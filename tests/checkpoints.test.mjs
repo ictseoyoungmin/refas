@@ -6,12 +6,17 @@ import {test} from 'node:test';
 
 import {
   CAPABILITY_ORDER,
+  REQUIRED_CLOSURE_GATE_IDS,
+  REQUIRED_REVIEW_VIEW_IDS,
+  REQUIRED_VISUAL_GATE_IDS,
   abortEdit,
+  assessCertification,
   auditProject,
   beginEdit,
   certifyProject,
   commitCheckpoint,
   contentReference,
+  createVisualReview,
   digestBytes,
   finishEdit,
   initProject,
@@ -67,6 +72,58 @@ async function advanceThrough(root, artifactPath, lastCapability) {
     if (capability === lastCapability) break;
   }
   return checkpoints;
+}
+
+function reviewInput({sourceSha256, assetSha256, evidenceClass = 'independent-reference', verdict = 'pass', gateStatuses = {}, unresolvedFindings = [], renderer = {}, requiredMaterialFeatures = ['base-color-factor', 'metallic-factor', 'roughness-factor']}) {
+  return {
+    scopeId: 'whole',
+    sourceSha256,
+    assetSha256,
+    evidenceClass,
+    verdict,
+    views: REQUIRED_REVIEW_VIEW_IDS.map((id) => ({id, status: 'pass', evidenceRefs: [`renders/final/${id}.png`]})),
+    gateVerdicts: REQUIRED_VISUAL_GATE_IDS.map((id) => ({id, status: gateStatuses[id] ?? 'pass', evidenceRefs: ['renders/final/multiview-review-board.png']})),
+    unresolvedFindings,
+    renderer: {
+      kind: 'test-visual-fidelity-renderer',
+      reportRef: 'renders/final/render-report.json',
+      claimScope: 'visual-fidelity',
+      supportedMaterialFeatures: ['base-color-factor', 'metallic-factor', 'roughness-factor'],
+      unsupportedMaterialFeatures: [],
+      ...renderer,
+    },
+    requiredMaterialFeatures,
+    attestation: {attested: true, evidenceRefs: ['source/reference.bin', 'renders/final/multiview-review-board.png']},
+  };
+}
+
+async function commitCertificationAttempt(root, artifactPath, source, {includeReview = true, reviewOverrides = {}} = {}) {
+  await fs.writeFile(artifactPath, Buffer.from('candidate asset bytes\n'));
+  const asset = await contentReference(artifactPath, {kind: 'glb', root});
+  const renderPath = path.join(root, 'renders', 'final', 'render-report.json');
+  await fs.mkdir(path.dirname(renderPath), {recursive: true});
+  await fs.writeFile(renderPath, `${JSON.stringify({schema: 'refas.multiview-render-report/v1', claimScope: 'visual-fidelity'})}\n`);
+  const renderReport = await contentReference(renderPath, {kind: 'render-report', root});
+  const artifactRefs = [asset, renderReport];
+  let review = null;
+  let reviewPath = 'reviews/visual-review.json';
+  if (includeReview) {
+    review = createVisualReview(reviewInput({sourceSha256: source.sha256, assetSha256: asset.sha256, ...reviewOverrides}));
+    const absoluteReviewPath = path.join(root, reviewPath);
+    await fs.mkdir(path.dirname(absoluteReviewPath), {recursive: true});
+    await fs.writeFile(absoluteReviewPath, `${JSON.stringify(review, null, 2)}\n`);
+    artifactRefs.push(await contentReference(absoluteReviewPath, {kind: 'visual-review', root}));
+  }
+  const gates = REQUIRED_CLOSURE_GATE_IDS.map((id) => ({
+    id,
+    status: 'pass',
+    evidenceRefs: [REQUIRED_VISUAL_GATE_IDS.includes(id) ? reviewPath : asset.path],
+  }));
+  const checkpoint = await commitCheckpoint(root, {
+    capability: 'whole-object-certification', scopeId: 'whole', reason: 'Certification attempt binds the candidate and declared closure evidence.',
+    artifactRefs, claims: ['Certification is issued only if the runtime independently accepts the visual review.'], gates,
+  });
+  return {checkpoint, review, asset};
 }
 
 test('checkpoint restore materializes exact content-addressed artifact bytes', async (t) => {
@@ -175,15 +232,16 @@ test('artifact paths cannot escape the project through traversal or symlinks', a
   }), /outside the project root/);
 });
 
-test('whole-object certification binds a passing head and survives audit', async (t) => {
+test('whole-object certification requires an independent digest-bound review and survives audit', async (t) => {
   const {root, artifactPath, source} = await makeProject(t, 'certification-study');
-  const checkpoints = await advanceThrough(root, artifactPath, 'whole-object-certification');
-  const head = checkpoints.at(-1);
-  assert.equal(head.capability, 'whole-object-certification');
+  await advanceThrough(root, artifactPath, 'visual-critique');
+  const {checkpoint: head, review} = await commitCertificationAttempt(root, artifactPath, source);
   const certificate = await certifyProject(root);
   assert.equal(certificate.checkpointId, head.id);
   assert.equal(certificate.sourceSha256, source.sha256);
   assert.equal(certificate.version, '1.0.0');
+  assert.equal(certificate.visualReview.reviewDigest, review.reviewDigest);
+  assert.equal(certificate.visualReview.evidenceClass, 'independent-reference');
   const guidance = await resumeProject(root);
   assert.equal(guidance.nextAction, 'DONE');
   assert.equal((await auditProject(root)).valid, true);
@@ -192,4 +250,53 @@ test('whole-object certification binds a passing head and survives audit', async
   const state = await loadProject(root);
   assert.equal(state.certification, null);
   await abortEdit(root, {reason: 'no change required'});
+});
+
+test('certification fails closed when the visual-review artifact is missing', async (t) => {
+  const {root, artifactPath, source} = await makeProject(t, 'missing-review-study');
+  await advanceThrough(root, artifactPath, 'visual-critique');
+  await commitCertificationAttempt(root, artifactPath, source, {includeReview: false});
+  await assert.rejects(() => certifyProject(root), /exactly one digest-bound visual-review artifact/);
+  assert.equal((await assessCertification(root)).ready, false);
+  assert.equal((await resumeProject(root)).nextAction, 'REQUEST_VISUAL_REVIEW');
+});
+
+test('self-generated contract fixtures cannot certify visual fidelity', async (t) => {
+  const {root, artifactPath, source} = await makeProject(t, 'self-generated-review-study');
+  await advanceThrough(root, artifactPath, 'visual-critique');
+  await commitCertificationAttempt(root, artifactPath, source, {reviewOverrides: {evidenceClass: 'self-generated-contract-fixture'}});
+  await assert.rejects(() => certifyProject(root), /self-generated contract fixtures cannot certify visual fidelity/);
+});
+
+test('unresolved major visual findings prevent certification', async (t) => {
+  const {root, artifactPath, source} = await makeProject(t, 'blocking-review-study');
+  await advanceThrough(root, artifactPath, 'visual-critique');
+  await commitCertificationAttempt(root, artifactPath, source, {reviewOverrides: {
+    verdict: 'fail',
+    gateStatuses: {'silhouette-and-mass': 'fail'},
+    unresolvedFindings: [{category: 'curvature-mismatch', severity: 'major', scopeId: 'whole', summary: 'The side profile is flat instead of folded.', evidenceRefs: ['renders/final/side.png']}],
+  }});
+  await assert.rejects(() => certifyProject(root), /unresolved major, critical, or blocking findings: curvature-mismatch/);
+});
+
+test('render-integrity-only output cannot pass appearance or unsupported material features', () => {
+  assert.throws(() => createVisualReview(reviewInput({
+    sourceSha256: 'a'.repeat(64),
+    assetSha256: 'b'.repeat(64),
+    renderer: {
+      claimScope: 'render-integrity-only',
+      supportedMaterialFeatures: ['base-color-factor', 'metallic-factor', 'roughness-factor'],
+      unsupportedMaterialFeatures: ['clearcoat'],
+    },
+  })), /appearance-plausibility cannot pass with a render-integrity-only renderer/);
+  assert.throws(() => createVisualReview(reviewInput({
+    sourceSha256: 'a'.repeat(64),
+    assetSha256: 'b'.repeat(64),
+    requiredMaterialFeatures: ['base-color-factor', 'clearcoat'],
+    renderer: {
+      claimScope: 'visual-fidelity',
+      supportedMaterialFeatures: ['base-color-factor'],
+      unsupportedMaterialFeatures: ['clearcoat'],
+    },
+  })), /renderer does not support: clearcoat/);
 });

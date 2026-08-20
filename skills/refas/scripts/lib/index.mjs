@@ -9,3 +9,4 @@ export * from './mesh.mjs';
 export * from './glb.mjs';
 export * from './surface-network.mjs';
 export * from './assembly.mjs';
+export * from './visual-review.mjs';

@@ -292,8 +292,14 @@ def main():
     make_board(reference, frames, board_path)
     report = {
         "schema": "refas.multiview-render-report/v1",
+        "claimScope": "render-integrity-only",
+        "statusMeaning": "All requested views rasterized from actual GLB geometry; visual similarity is not assessed.",
         "asset": {"path": str(glb_path), "sha256": sha256(glb_path), "generator": model.get("asset", {}).get("generator")},
         "runtime": {"kind": "offline-numpy-rasterizer", "networkRequests": 0, "deterministicInputs": True},
+        "materialSupport": {
+            "supported": ["base-color-factor", "metallic-factor", "roughness-factor"],
+            "unsupported": ["clearcoat", "image-based-lighting", "normal-maps", "textures"],
+        },
         "geometry": {"parts": len(primitives), "triangles": int(sum(len(primitive.indices) for primitive in primitives)), "bounds": {"min": minimum.tolist(), "max": maximum.tolist()}},
         "frames": [{key: value for key, value in frame.items() if key != "absolutePath"} for frame in frames],
         "board": {"path": board_path.name, "sha256": sha256(board_path)},
@@ -301,7 +307,7 @@ def main():
     }
     report_path = output / "render-report.json"
     report_path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
-    print(json.dumps({"status": report["status"], "report": str(report_path), "board": str(board_path), "triangles": report["geometry"]["triangles"]}, indent=2))
+    print(json.dumps({"status": report["status"], "claimScope": report["claimScope"], "report": str(report_path), "board": str(board_path), "triangles": report["geometry"]["triangles"]}, indent=2))
     if report["status"] != "PASS":
         raise SystemExit(1)
 

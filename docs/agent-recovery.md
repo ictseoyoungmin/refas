@@ -21,7 +21,8 @@ Interpret only the returned state:
 | `BEGIN_REPAIR_EDIT` | Work only on the first invalidated capability and returned scope. |
 | `REQUEST_REVIEW` | Stop mutation until evidence or ownership is resolved. |
 | `ADVANCE_CAPABILITY` | Load only the next capability's reference and work on its returned scope. |
-| `CERTIFY` | Create a whole-object-certification checkpoint, audit, then certify. |
+| `CERTIFY` | Create a whole-object-certification checkpoint with an independent digest-bound visual review, audit, then certify. |
+| `REQUEST_VISUAL_REVIEW` | Certification readiness failed; resolve the returned review, evidence, renderer-support, or finding errors without guessing a rollback point. |
 | `DONE` | The current head has a valid certificate. |
 
 ## Failure recovery

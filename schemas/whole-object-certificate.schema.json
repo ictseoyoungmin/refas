@@ -3,7 +3,7 @@
   "$id": "https://refas.dev/schemas/whole-object-certificate.schema.json",
   "title": "RefAs whole-object certificate",
   "type": "object",
-  "required": ["schema", "version", "projectId", "sourceSha256", "checkpointId", "checkpointDigest", "gateIds", "audit", "certificateDigest", "certifiedAt"],
+  "required": ["schema", "version", "projectId", "sourceSha256", "checkpointId", "checkpointDigest", "gateIds", "visualReview", "audit", "certificateDigest", "certifiedAt"],
   "properties": {
     "schema": {"const": "refas.whole-object-certificate/v1"},
     "version": {"const": "1.0.0"},
@@ -12,6 +12,17 @@
     "checkpointId": {"type": "string", "pattern": "^cp_[a-f0-9]{20}$"},
     "checkpointDigest": {"$ref": "common.schema.json#/$defs/digest"},
     "gateIds": {"type": "array", "minItems": 1, "items": {"$ref": "common.schema.json#/$defs/semanticId"}},
+    "visualReview": {
+      "type": "object",
+      "required": ["path", "sha256", "reviewDigest", "evidenceClass"],
+      "properties": {
+        "path": {"$ref": "common.schema.json#/$defs/relativePath"},
+        "sha256": {"$ref": "common.schema.json#/$defs/digest"},
+        "reviewDigest": {"$ref": "common.schema.json#/$defs/digest"},
+        "evidenceClass": {"const": "independent-reference"}
+      },
+      "additionalProperties": false
+    },
     "audit": {
       "type": "object",
       "required": ["checkpointCount", "objectCount"],
