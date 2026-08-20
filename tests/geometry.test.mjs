@@ -167,6 +167,42 @@ test('surface network realizes exactly one physical boundary per shared adjacenc
   }), /duplicate shared adjacency/);
 });
 
+test('GLB serialization preserves differentiated enamel, brass, and inlay PBR assignments', () => {
+  const materials = {
+    enamel: {baseColor: [0.5, 0.76, 0.77, 1], metallic: 0.025, roughness: 0.25},
+    'brass-dark': {baseColor: [0.56, 0.34, 0.1, 1], metallic: 0.92, roughness: 0.25},
+    'brass-light': {baseColor: [0.92, 0.72, 0.35, 1], metallic: 0.94, roughness: 0.18},
+    'rivet-inlay': {baseColor: [0.8, 0.71, 0.53, 1], metallic: 0.6, roughness: 0.22},
+  };
+  const plate = createCurvedPlate({polygon: [[0.1, 0.1], [0.9, 0.1], [0.85, 0.85], [0.15, 0.85]]});
+  const fastener = createCylinder({radius: 0.1, height: 0.05, segments: 16});
+  const glb = partsToGlb({
+    assetId: 'material-regression',
+    materials,
+    parts: [
+      {id: 'panel', role: 'observed-panel', materialId: 'enamel', mesh: plate},
+      {id: 'rim', role: 'outer-rim', materialId: 'brass-light', mesh: plate},
+      {id: 'base', role: 'fastener-base', materialId: 'brass-dark', mesh: fastener},
+      {id: 'inlay', role: 'fastener-inlay', materialId: 'rivet-inlay', mesh: fastener},
+    ],
+  });
+  const {json} = parseGlb(glb);
+  const serialized = Object.fromEntries(json.materials.map((material) => [material.name, {
+    baseColor: material.pbrMetallicRoughness.baseColorFactor,
+    metallic: material.pbrMetallicRoughness.metallicFactor,
+    roughness: material.pbrMetallicRoughness.roughnessFactor,
+  }]));
+  assert.deepEqual(serialized, materials);
+  assert.equal(json.extensionsUsed, undefined);
+  const assignments = Object.fromEntries(json.nodes.map((node) => [node.extras.role, node.extras.materialId]));
+  assert.deepEqual(assignments, {
+    'observed-panel': 'enamel',
+    'outer-rim': 'brass-light',
+    'fastener-base': 'brass-dark',
+    'fastener-inlay': 'rivet-inlay',
+  });
+});
+
 test('embedded GLB composition preserves the closed child payload', () => {
   const child = partsToGlb({
     assetId: 'closed-cover',

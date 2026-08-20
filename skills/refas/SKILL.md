@@ -23,6 +23,7 @@ Then load only the references owned by the active capability:
 | Camera, depth, spatial inference | `references/spatial-reasoning.md` |
 | Shape and surface construction | `references/construction.md` |
 | Parent/child placement | `references/assembly.md` |
+| Material identity and finish | `references/appearance.md` |
 | Render, comparison, closure | `references/validation.md` |
 
 Do not blend every reference into one undifferentiated prompt. Keep one capability and one visual scope active at a time.

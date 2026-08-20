@@ -109,5 +109,26 @@
     "hostShellDepthToWidth": 0.23394,
     "frontSurfaceFitP90Error": 0.019108,
     "allowedDepthToWidthError": 0.035
+  },
+  "appearanceRegression": {
+    "schema": "refas.appearance-regression-target/v1",
+    "basis": "PBR factors and semantic assignments measured from the user-supplied legacy comparison GLB; source bytes are not redistributed.",
+    "sourceSha256": "591dcf17b9529a5e91514b1759d130d101f6f864b39efb0bada0d662a703d0c6",
+    "materials": {
+      "enamel": {"baseColor": [0.5, 0.76, 0.77, 1], "metallic": 0.025, "roughness": 0.25},
+      "brass-dark": {"baseColor": [0.56, 0.34, 0.1, 1], "metallic": 0.92, "roughness": 0.25},
+      "brass-light": {"baseColor": [0.92, 0.72, 0.35, 1], "metallic": 0.94, "roughness": 0.18},
+      "rivet-inlay": {"baseColor": [0.8, 0.71, 0.53, 1], "metallic": 0.6, "roughness": 0.22}
+    },
+    "assignments": {
+      "dominant-shell": "brass-light",
+      "observed-panel": "enamel",
+      "shared-boundary": "brass-light",
+      "boundary-junction": "brass-light",
+      "outer-rim": "brass-light",
+      "fastener-base": "brass-dark",
+      "fastener-ring": "brass-light",
+      "fastener-inlay": "rivet-inlay"
+    }
   }
 }
