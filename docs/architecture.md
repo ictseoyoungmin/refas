@@ -18,7 +18,7 @@ The distributable skill at `skills/refas/` is the product boundary and the singl
 | 8 | `appearance` | evidence-supported color, roughness, metalness, and finish |
 | 9 | `rendering` | reproducible actual multiview images and camera records |
 | 10 | `visual-critique` | typed finding ledger with evidence references |
-| 11 | `whole-object-certification` | release certificate over current evidence |
+| 11 | `whole-object-certification` | fail-closed certificate over current gates and an independent digest-bound visual review |
 
 Each finding is owned by exactly one capability. Reopening an owner invalidates the owner and its transitive dependents, while upstream evidence and unrelated scopes remain intact.
 
@@ -53,6 +53,7 @@ Possible decisions are:
 - `REOPEN_OWNER`: a typed blocker selects an owner and pre-owner checkpoint.
 - `REQUEST_REVIEW`: evidence is insufficient or utility is tied; baseline remains active.
 - `MAY_CLOSE`: all declared local closure gates pass.
+- A whole-object certificate additionally requires a `refas.visual-review/v1` artifact bound to the exact source and asset digests. Local gate strings cannot override its verdict or findings.
 
 Rejected candidates remain in checkpoint history as evidence, but they do not become the active head.
 
@@ -66,6 +67,7 @@ The dependency-light JavaScript core owns:
 - deterministic mesh and embedded GLB construction;
 - shared-boundary surface networks;
 - immutable child composition and assembly validation;
+- digest-bound visual-review validation and fail-closed certification readiness;
 - checkpoint object storage, restore, audit, and failure routing.
 
 Pillow and NumPy provide portable evidence generation and software rendering. Their outputs are observation and validation aids. They never replace agent inspection of the raw source.

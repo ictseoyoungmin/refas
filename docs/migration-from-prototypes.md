@@ -27,6 +27,6 @@ Pre-1.0 snapshots mixed temporary work state with product architecture. RefAs 1.
 6. Translate observed cells and pairwise adjacency into a surface network. Do not import procedural regularization as observation truth.
 7. Create an assembly contract and validate it against actual parent renders.
 8. Commit fresh capability checkpoints with current artifact digests and evidence-backed gates.
-9. Run a typed rollback exercise, full audit, and whole-object certification.
+9. Run a typed rollback exercise and full audit, then attach an independent digest-bound visual review before whole-object certification.
 
 There is no compatibility alias for old stage identifiers. Silent aliasing would reintroduce the architecture defect that 1.0 removes.

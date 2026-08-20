@@ -142,9 +142,11 @@ import {
   createSegmentPrism,
   createSurfaceNetwork,
   createSurfaceNetworkParts,
+  createVisualReview,
   partsToGlb,
   surfacePoint,
   validateRealizedAssembly,
+  validateVisualReview,
 } from './scripts/lib/index.mjs';
 ```
 
@@ -166,6 +168,13 @@ python3 scripts/render_glb.py \
 ```
 
 Review hero, oblique, side, top, grazing, normal, object-ID, and albedo views. The software renderer is a portable validation baseline, not a substitute for a higher-quality project renderer when one is available.
+Its `PASS` status and `claimScope: render-integrity-only` mean only that actual GLB geometry rasterized in every requested view. Read `materialSupport`; do not use this report alone to pass appearance or visual fidelity.
+
+Create `reviews/visual-review.json` from `assets/templates/visual-review.json` with `createVisualReview`. Bind it to the exact source and asset SHA-256, identify whether the reference is independent or generated from the same fixture, record every standard view and visual gate verdict, disclose renderer feature support, and retain every unresolved typed finding. Validate it before checkpointing:
+
+```bash
+node scripts/refas.mjs validate-spec --file <project-dir>/reviews/visual-review.json
+```
 
 Preview a visual finding route without mutating state:
 
@@ -193,6 +202,9 @@ Whole-object closure requires all of the following with current evidence:
 - attachment, occlusion, support, penetration, and child integrity pass;
 - camera and render integrity pass;
 - hero and diagnostic multiviews contain no unresolved blocking finding;
+- one digest-bound `visual-review` artifact covers the exact source and asset bytes;
+- the visual review uses an independent reference rather than a source generated from the candidate's own model specification;
+- the renderer used to pass appearance supports every material feature required by the claim;
 - project audit is valid.
 
 Run:
@@ -202,5 +214,7 @@ node scripts/refas.mjs audit --root <project-dir>
 node scripts/refas.mjs inspect-glb --glb <asset.glb>
 node scripts/refas.mjs certify --root <project-dir>
 ```
+
+The certification checkpoint must contain exactly the canonical closure gates and cite the visual-review artifact for every visual gate. A self-generated fixture may exercise runtime contracts, but it cannot receive a visual-fidelity certificate. A `fail` or `insufficient` verdict, any unresolved major/critical/blocking finding, or an integrity-only renderer claiming appearance causes certification to refuse closure. Run `resume` to receive `REQUEST_VISUAL_REVIEW` and the exact refusal reasons.
 
 Closure is permission to publish the current evidence-bound state, not proof of unseen geometry.

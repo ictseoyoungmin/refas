@@ -11,7 +11,8 @@ RefAs is designed for work where a quick image-to-mesh approximation is not enou
 - **Projection-aware reconstruction.** Camera and reference-frame alternatives are tested before geometry is distorted to fit a view.
 - **Immutable child assembly.** A closed child GLB is reused byte-for-byte and registered into its parent instead of silently rebuilt.
 - **Shared surface topology.** Adjacent observed cells consume one physical boundary rather than nearly matching duplicate frames.
-- **Actual multiview QA.** Hero, oblique, side, top, grazing, normal, object-ID, and albedo renders drive critique.
+- **Actual multiview QA.** Hero, oblique, side, top, grazing, normal, object-ID, and albedo renders drive critique; rasterization success is never treated as visual similarity.
+- **Fail-closed visual certification.** An independent, digest-bound visual review must pass the exact source and asset bytes; self-generated fixtures and unsupported material claims cannot certify.
 - **Typed failure ownership.** Every blocker identifies its visual scope, owning capability, invalidated dependents, and safe checkpoint.
 - **Content-addressed rollback.** Checkpoints retain the exact artifact bytes required to restore a trustworthy state.
 
@@ -46,7 +47,7 @@ The executable runtime lives inside the distributable skill. Repository tests an
 7. Register immutable child assets into parent frames and validate attachment and occlusion.
 8. Render the standard diagnostic view set.
 9. Route localized findings to their owning capability and restore the selected checkpoint when required.
-10. Certify only when every release gate has current evidence.
+10. Certify only when every release gate and the independent visual review have current passing evidence.
 
 ## Repository layout
 
@@ -70,7 +71,7 @@ Development workflow state is intentionally absent from product schemas, filenam
 npm test             # deterministic Node test suite
 npm run test:python  # Python syntax gate
 npm run check        # repository architecture and naming audit
-npm run dogfood      # reconstruct and certify the wing-cover fixture
+npm run dogfood      # exercise reconstruction and prove the self-generated fixture is refused certification
 npm run release:audit
 ```
 

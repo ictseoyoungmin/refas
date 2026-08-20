@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/visual-review.schema.json",
+  "title": "RefAs digest-bound visual review",
+  "type": "object",
+  "required": ["schema", "scopeId", "sourceSha256", "assetSha256", "evidenceClass", "verdict", "views", "gateVerdicts", "unresolvedFindings", "renderer", "requiredMaterialFeatures", "attestation", "policy", "reviewDigest"],
+  "properties": {
+    "schema": {"const": "refas.visual-review/v1"},
+    "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "assetSha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "evidenceClass": {"enum": ["independent-reference", "self-generated-contract-fixture"]},
+    "verdict": {"enum": ["pass", "fail", "insufficient"]},
+    "views": {
+      "type": "array",
+      "minItems": 8,
+      "maxItems": 8,
+      "items": {"$ref": "#/$defs/verdict"}
+    },
+    "gateVerdicts": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "items": {"$ref": "#/$defs/verdict"}
+    },
+    "unresolvedFindings": {"type": "array", "items": {"$ref": "finding.schema.json"}},
+    "renderer": {
+      "type": "object",
+      "required": ["kind", "reportRef", "claimScope", "supportedMaterialFeatures", "unsupportedMaterialFeatures"],
+      "properties": {
+        "kind": {"type": "string", "minLength": 1},
+        "reportRef": {"$ref": "common.schema.json#/$defs/relativePath"},
+        "claimScope": {"enum": ["render-integrity-only", "visual-fidelity"]},
+        "supportedMaterialFeatures": {"type": "array", "uniqueItems": true, "items": {"$ref": "common.schema.json#/$defs/semanticId"}},
+        "unsupportedMaterialFeatures": {"type": "array", "uniqueItems": true, "items": {"$ref": "common.schema.json#/$defs/semanticId"}}
+      },
+      "additionalProperties": false
+    },
+    "requiredMaterialFeatures": {"type": "array", "uniqueItems": true, "items": {"$ref": "common.schema.json#/$defs/semanticId"}},
+    "attestation": {
+      "type": "object",
+      "required": ["evidenceRefs", "digest"],
+      "properties": {
+        "evidenceRefs": {"$ref": "common.schema.json#/$defs/evidenceRefs"},
+        "digest": {"$ref": "common.schema.json#/$defs/digest"}
+      },
+      "additionalProperties": false
+    },
+    "policy": {
+      "type": "object",
+      "required": ["selfGeneratedFixturesAreContractOnly", "renderIntegrityIsNotVisualAcceptance", "unsupportedMaterialFeaturesCannotPassAppearance", "unresolvedBlockingFindingsPreventClosure"],
+      "properties": {
+        "selfGeneratedFixturesAreContractOnly": {"const": true},
+        "renderIntegrityIsNotVisualAcceptance": {"const": true},
+        "unsupportedMaterialFeaturesCannotPassAppearance": {"const": true},
+        "unresolvedBlockingFindingsPreventClosure": {"const": true}
+      },
+      "additionalProperties": false
+    },
+    "reviewDigest": {"$ref": "common.schema.json#/$defs/digest"}
+  },
+  "$defs": {
+    "verdict": {
+      "type": "object",
+      "required": ["id", "status", "evidenceRefs", "summary"],
+      "properties": {
+        "id": {"$ref": "common.schema.json#/$defs/semanticId"},
+        "status": {"enum": ["pass", "fail", "insufficient"]},
+        "evidenceRefs": {"$ref": "common.schema.json#/$defs/evidenceRefs"},
+        "summary": {"type": "string"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

@@ -17,6 +17,8 @@ Every closure review includes actual images for:
 
 Include the raw reference beside the hero view. If a project has a higher-quality renderer, use it in addition to the bundled portable baseline.
 
+The bundled report has `claimScope: render-integrity-only`. Its status answers whether actual geometry produced every requested frame, not whether the asset resembles the reference. Record `materialSupport.supported` and `materialSupport.unsupported`; unsupported shading features remain unreviewed until a capable renderer supplies evidence.
+
 ## Critique order
 
 Review in this order:
@@ -48,6 +50,10 @@ Scores summarize evidence; they do not own repairs. A below-threshold score with
 
 ## Closure gates
 
+Before closure, create a digest-bound `refas.visual-review/v1` record from `assets/templates/visual-review.json`. It must bind the exact primary source digest and candidate asset digest, contain one verdict for every standard view and visual gate, disclose the renderer and its material support, and retain unresolved typed findings. The whole-object checkpoint includes this file with artifact kind `visual-review` and cites its path from every visual closure gate.
+
+`evidenceClass: independent-reference` means the comparison source was not generated from the candidate's own model specification. `self-generated-contract-fixture` can verify deterministic construction, rendering, rollback, and schema behavior, but can never certify visual fidelity.
+
 Whole-object certification requires current, passing evidence for:
 
 - source integrity;
@@ -61,5 +67,7 @@ Whole-object certification requires current, passing evidence for:
 - multiview render integrity;
 - no unresolved blocking findings;
 - project audit validity.
+
+Certification refuses closure when the review is missing or digest-stale, its verdict is not `pass`, a required view or visual gate is not `pass`, a major/critical/blocking finding remains, or appearance relies on an integrity-only renderer or an unsupported material feature. Gate strings and numeric scores cannot override those findings.
 
 Any upstream source or geometry change expires dependent gate evidence. Certification must be rerun after repair.

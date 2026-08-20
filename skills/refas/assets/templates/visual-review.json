@@ -1,0 +1,35 @@
+{
+  "scopeId": "whole",
+  "sourceSha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "assetSha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "evidenceClass": "independent-reference",
+  "verdict": "insufficient",
+  "views": [
+    {"id": "hero", "status": "insufficient", "evidenceRefs": ["renders/review-board.png"]},
+    {"id": "oblique", "status": "insufficient", "evidenceRefs": ["renders/oblique.png"]},
+    {"id": "side", "status": "insufficient", "evidenceRefs": ["renders/side.png"]},
+    {"id": "top", "status": "insufficient", "evidenceRefs": ["renders/top.png"]},
+    {"id": "grazing", "status": "insufficient", "evidenceRefs": ["renders/grazing.png"]},
+    {"id": "normal", "status": "insufficient", "evidenceRefs": ["renders/normal.png"]},
+    {"id": "object-id", "status": "insufficient", "evidenceRefs": ["renders/object-id.png"]},
+    {"id": "albedo", "status": "insufficient", "evidenceRefs": ["renders/albedo.png"]}
+  ],
+  "gateVerdicts": [
+    {"id": "silhouette-and-mass", "status": "insufficient", "evidenceRefs": ["renders/review-board.png"]},
+    {"id": "surface-topology", "status": "insufficient", "evidenceRefs": ["renders/review-board.png"]},
+    {"id": "assembly-integrity", "status": "insufficient", "evidenceRefs": ["renders/review-board.png"]},
+    {"id": "appearance-plausibility", "status": "insufficient", "evidenceRefs": ["renders/review-board.png"]},
+    {"id": "multiview-render-integrity", "status": "insufficient", "evidenceRefs": ["renders/render-report.json"]},
+    {"id": "no-blocking-findings", "status": "insufficient", "evidenceRefs": ["reviews/findings.json"]}
+  ],
+  "unresolvedFindings": [],
+  "renderer": {
+    "kind": "project-renderer",
+    "reportRef": "renders/render-report.json",
+    "claimScope": "visual-fidelity",
+    "supportedMaterialFeatures": ["base-color-factor", "metallic-factor", "roughness-factor"],
+    "unsupportedMaterialFeatures": []
+  },
+  "requiredMaterialFeatures": ["base-color-factor", "metallic-factor", "roughness-factor"],
+  "attestation": {"attested": true, "evidenceRefs": ["renders/review-board.png"]}
+}

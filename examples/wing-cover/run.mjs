@@ -7,7 +7,11 @@ import {fileURLToPath} from 'node:url';
 
 import {
   CAPABILITY_ORDER,
+  REQUIRED_CLOSURE_GATE_IDS,
+  REQUIRED_REVIEW_VIEW_IDS,
+  REQUIRED_VISUAL_GATE_IDS,
   appendPartsToClosedGlb,
+  assessCertification,
   auditProject,
   beginEdit,
   certifyProject,
@@ -22,6 +26,7 @@ import {
   createSpatialHypothesisSet,
   createSurfaceNetwork,
   createSurfaceNetworkParts,
+  createVisualReview,
   createVisualHierarchy,
   digestBytes,
   finishEdit,
@@ -444,33 +449,64 @@ async function main() {
     unresolvedNonBlocking: [{category: 'finish-mismatch', severity: 'minor', scopeId: 'whole', summary: 'Portable renderer color response is only a baseline approximation of the generated reference.', evidenceRefs: ['renders/final/multiview-review-board.png']}],
     critiqueOrder: ['source-and-camera', 'silhouette', 'mass-and-curvature', 'attachment-and-occlusion', 'surface-topology', 'appearance', 'microdetail'],
   });
-  await closeCapability('visual-critique', [findingsPath, finalBoardPath, rollbackProofPath], 'Whole-object critique is localized and contains no unresolved blocking finding.', 'no-blocking-findings');
+  await closeCapability('visual-critique', [findingsPath, finalBoardPath, rollbackProofPath], 'Contract-fixture critique artifacts are readable; independent visual acceptance remains pending.', 'contract-critique-integrity');
 
   const preClosureAudit = await auditProject(PROJECT);
   assert.equal(preClosureAudit.valid, true);
-  const closureGates = [
-    ['source-integrity', 'source/source-manifest.json'], ['hierarchy-coverage', 'model/visual-hierarchy.json'],
-    ['observation-authority', 'model/observation-whole.json'], ['spatial-plausibility', 'model/spatial-hypotheses.json'],
-    ['silhouette-and-mass', 'assets/shape.glb'], ['surface-topology', 'reviews/surface-network-validation.json'],
-    ['assembly-integrity', 'reviews/assembly-validation.json'], ['appearance-plausibility', 'model/appearance.json'],
-    ['multiview-render-integrity', 'renders/final/render-report.json'], ['no-blocking-findings', 'reviews/findings.json'],
-    ['project-audit', '.refas/project.json'],
-  ].map(([id, evidence]) => ({id, status: 'pass', evidenceRefs: [evidence]}));
-  const closurePath = await writeJson(path.join(PROJECT, 'reviews', 'closure-gates.json'), closureGates);
-  const certificationCheckpoint = await commitCheckpoint(PROJECT, {
-    capability: 'whole-object-certification', scopeId: 'whole', reason: 'All current semantic gates bind to actual source, asset, render, critique, and rollback evidence.',
-    artifactRefs: await references([finalAssetPath, closurePath, finalReportPath, finalBoardPath, findingsPath, rollbackProofPath]),
-    claims: ['Whole-object closure is evidence-bound and does not assert unseen geometry.'], gates: closureGates,
+  const visualReview = createVisualReview({
+    scopeId: 'whole', sourceSha256: source.sha256, assetSha256: await sha256File(finalAssetPath),
+    evidenceClass: 'self-generated-contract-fixture', verdict: 'fail',
+    views: REQUIRED_REVIEW_VIEW_IDS.map((id) => ({
+      id, status: ['hero', 'side', 'grazing', 'albedo'].includes(id) ? 'fail' : 'pass',
+      evidenceRefs: [`renders/final/${id}.png`, 'renders/final/multiview-review-board.png'],
+    })),
+    gateVerdicts: REQUIRED_VISUAL_GATE_IDS.map((id) => ({
+      id, status: ['silhouette-and-mass', 'appearance-plausibility', 'no-blocking-findings'].includes(id) ? 'fail' : 'pass',
+      evidenceRefs: ['renders/final/multiview-review-board.png'],
+    })),
+    unresolvedFindings: [
+      {category: 'curvature-mismatch', severity: 'major', scopeId: 'whole', summary: 'The contract fixture does not independently establish the folded compound profile required for a publishable reconstruction.', evidenceRefs: ['renders/final/side.png', 'renders/final/grazing.png']},
+      {category: 'material-mismatch', severity: 'major', scopeId: 'whole', summary: 'The portable renderer cannot establish the required enamel and clearcoated metal response.', evidenceRefs: ['renders/final/hero.png', 'renders/final/albedo.png']},
+    ],
+    renderer: {
+      kind: finalRenderReport.runtime.kind, reportRef: 'renders/final/render-report.json', claimScope: finalRenderReport.claimScope,
+      supportedMaterialFeatures: finalRenderReport.materialSupport.supported,
+      unsupportedMaterialFeatures: finalRenderReport.materialSupport.unsupported,
+    },
+    requiredMaterialFeatures: ['base-color-factor', 'metallic-factor', 'roughness-factor', 'clearcoat'],
+    attestation: {attested: true, evidenceRefs: ['source/reference.png', 'renders/final/multiview-review-board.png']},
   });
-  const certificate = await certifyProject(PROJECT);
+  const visualReviewPath = await writeJson(path.join(PROJECT, 'reviews', 'visual-review.json'), visualReview);
+  const closureGates = REQUIRED_CLOSURE_GATE_IDS.map((id) => ({
+    id, status: 'pass',
+    evidenceRefs: [REQUIRED_VISUAL_GATE_IDS.includes(id) ? 'reviews/visual-review.json' : id === 'project-audit' ? '.refas/project.json' : 'source/source-manifest.json'],
+  }));
+  const closurePath = await writeJson(path.join(PROJECT, 'reviews', 'closure-gates.json'), closureGates);
+  const certificationArtifacts = await references([finalAssetPath, closurePath, finalReportPath, finalBoardPath, findingsPath, rollbackProofPath]);
+  certificationArtifacts.push(await contentReference(visualReviewPath, {kind: 'visual-review', root: PROJECT}));
+  const certificationCheckpoint = await commitCheckpoint(PROJECT, {
+    capability: 'whole-object-certification', scopeId: 'whole', reason: 'Negative contract test: stale passing gate claims must not override the digest-bound visual review.',
+    artifactRefs: certificationArtifacts,
+    claims: ['This self-generated fixture tests runtime contracts only and is not publishable visual evidence.'], gates: closureGates,
+  });
+  let certificationRefusal = null;
+  try {
+    await certifyProject(PROJECT);
+    assert.fail('self-generated contract fixture unexpectedly certified');
+  } catch (error) {
+    certificationRefusal = error.message;
+    assert.match(certificationRefusal, /self-generated contract fixtures cannot certify visual fidelity/);
+  }
+  const readiness = await assessCertification(PROJECT);
+  assert.equal(readiness.ready, false);
   const finalAudit = await auditProject(PROJECT);
   assert.equal(finalAudit.valid, true);
-  assert.equal((await resumeProject(PROJECT)).nextAction, 'DONE');
+  assert.equal((await resumeProject(PROJECT)).nextAction, 'REQUEST_VISUAL_REVIEW');
   const inspection = inspectGlb(await fs.readFile(finalAssetPath));
   assert.equal(inspection.valid, true);
 
   const summary = {
-    schema: 'refas.dogfood-summary/v1', status: 'PASS', projectId: 'wing-cover-dogfood',
+    schema: 'refas.dogfood-summary/v1', status: 'PASS', projectId: 'wing-cover-dogfood', fixturePurpose: 'contract-only',
     sourceSha256: source.sha256, finalAssetSha256: await sha256File(finalAssetPath),
     hierarchyNodes: hierarchy.nodes.length, observations: observations.length, cells: networkValidation.cellCount,
     sharedAdjacencies: networkValidation.adjacencyCount, physicalSharedBoundaries: networkParts.invariant.physicalBoundaries,
@@ -478,10 +514,10 @@ async function main() {
     registration: {digest: registration.registrationDigest, rmse: registration.metrics.rmse, maxError: registration.metrics.maxError},
     assembly: assemblyValidation.metrics,
     rollback: {decision: decision.action, baselineSha256, candidateSha256, restoredSha256, byteExact: restoredSha256 === baselineSha256},
-    rendering: {frames: finalRenderReport.frames.length, status: finalRenderReport.status, board: path.relative(OUTPUT, finalBoardPath)},
+    rendering: {frames: finalRenderReport.frames.length, status: finalRenderReport.status, claimScope: finalRenderReport.claimScope, board: path.relative(OUTPUT, finalBoardPath)},
     glb: {nodes: inspection.nodeCount, meshes: inspection.meshCount, triangles: inspection.triangleCount},
     checkpoints: {count: finalAudit.checkpointCount, source: sourceCheckpoint.id, certification: certificationCheckpoint.id},
-    certificate: {checkpointId: certificate.checkpointId, digest: certificate.certificateDigest},
+    candidateCertification: {visualVerdict: visualReview.verdict, certificateIssued: false, expectedResult: 'REFUSED', refusal: certificationRefusal},
     audit: finalAudit,
     capabilityOrder: CAPABILITY_ORDER,
   };

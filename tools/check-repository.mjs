@@ -45,7 +45,7 @@ async function main() {
     '.github/ISSUE_TEMPLATE/release-readiness.yml', '.github/ISSUE_TEMPLATE/documentation-governance.yml',
     '.github/workflows/ci.yml', '.github/workflows/sync-labels.yml', 'docs/github-governance.md',
     'skills/refas/SKILL.md', 'skills/refas/scripts/refas.mjs', 'skills/refas/scripts/lib/index.mjs',
-    'schemas/source-manifest.schema.json', 'schemas/checkpoint.schema.json', 'schemas/whole-object-certificate.schema.json',
+    'schemas/source-manifest.schema.json', 'schemas/checkpoint.schema.json', 'schemas/visual-review.schema.json', 'schemas/whole-object-certificate.schema.json',
     'tests/contracts.test.mjs', 'tests/cli.test.mjs', 'tests/governance.test.mjs', 'examples/wing-cover/run.mjs',
   ];
   const missing = [];
@@ -86,7 +86,7 @@ async function main() {
     'refas.source-manifest/v1', 'refas.visual-hierarchy/v1', 'refas.visual-observation/v1',
     'refas.spatial-hypothesis-set/v1', 'refas.reference-registration/v1', 'refas.surface-network/v1',
     'refas.assembly-contract/v1', 'refas.finding/v1', 'refas.checkpoint/v1', 'refas.project-state/v1',
-    'refas.whole-object-certificate/v1',
+    'refas.visual-review/v1', 'refas.whole-object-certificate/v1',
   ]) if (!schemaContracts.has(contract)) throw new Error(`public schema missing for ${contract}`);
 
   const templateFiles = (await walk('skills/refas/assets/templates')).filter((file) => file.endsWith('.json'));

@@ -18,6 +18,11 @@ import {
   transitiveDependents,
 } from './ownership.mjs';
 import {normalizeFinding, routeFinding} from './failure-router.mjs';
+import {
+  REQUIRED_CLOSURE_GATE_IDS,
+  REQUIRED_VISUAL_GATE_IDS,
+  validateVisualReview,
+} from './visual-review.mjs';
 
 export const PROJECT_STATE_SCHEMA = 'refas.project-state/v1';
 export const CHECKPOINT_SCHEMA = 'refas.checkpoint/v1';
@@ -193,6 +198,80 @@ function checkpointLineage(checkpoints, headId) {
     cursor = cursor.parentId ? byId.get(cursor.parentId) : null;
   }
   return reverse.reverse();
+}
+
+function exactSetErrors(actual, expected, label) {
+  const errors = [];
+  const duplicates = actual.filter((value, index) => actual.indexOf(value) !== index);
+  const missing = expected.filter((value) => !actual.includes(value));
+  const unexpected = actual.filter((value) => !expected.includes(value));
+  if (duplicates.length) errors.push(`${label} contains duplicate IDs: ${[...new Set(duplicates)].join(', ')}`);
+  if (missing.length) errors.push(`${label} is missing: ${missing.join(', ')}`);
+  if (unexpected.length) errors.push(`${label} contains unexpected IDs: ${unexpected.join(', ')}`);
+  return errors;
+}
+
+async function inspectCertificationHead(root, state, head) {
+  const errors = [];
+  if (head.capability !== 'whole-object-certification' || head.scopeId !== 'whole') {
+    errors.push('the head must be a whole-object-certification checkpoint for whole');
+    return {ready: false, errors, visualReview: null, visualReviewArtifact: null};
+  }
+  errors.push(...exactSetErrors(head.gates.map((gate) => gate.id), REQUIRED_CLOSURE_GATE_IDS, 'closure gates'));
+  if (head.gates.some((gate) => gate.status !== 'pass')) errors.push('the certification checkpoint contains a non-pass gate');
+
+  const reviewArtifacts = head.artifactRefs.filter((artifact) => artifact.kind === 'visual-review');
+  if (reviewArtifacts.length !== 1) errors.push('the certification checkpoint requires exactly one digest-bound visual-review artifact');
+  const visualReviewArtifact = reviewArtifacts.length === 1 ? reviewArtifacts[0] : null;
+  let visualReview = null;
+  if (visualReviewArtifact) {
+    try {
+      const resolved = await assertExistingFileInside(root, visualReviewArtifact.path, 'visual-review artifact');
+      if (resolved.stat.size !== visualReviewArtifact.sizeBytes || await sha256File(resolved.realFile) !== visualReviewArtifact.sha256) {
+        errors.push('visual-review artifact bytes do not match the checkpoint reference');
+      }
+      visualReview = await readJson(resolved.realFile);
+      const validation = validateVisualReview(visualReview);
+      if (!validation.valid) errors.push(`visual review is invalid: ${validation.errors.join('; ')}`);
+      if (visualReview.scopeId !== 'whole') errors.push('visual review must cover whole');
+      if (visualReview.sourceSha256 !== state.source?.sha256) errors.push('visual review source digest does not match the bound primary reference');
+      if (!head.artifactRefs.some((artifact) => artifact.kind !== 'visual-review' && artifact.sha256 === visualReview.assetSha256)) {
+        errors.push('visual review asset digest is not present in the certification checkpoint');
+      }
+      if (!head.artifactRefs.some((artifact) => artifact.path === visualReview.renderer?.reportRef)) {
+        errors.push('visual review renderer report is not present in the certification checkpoint');
+      }
+      if (visualReview.evidenceClass !== 'independent-reference') errors.push('self-generated contract fixtures cannot certify visual fidelity');
+      if (visualReview.verdict !== 'pass') errors.push(`visual review verdict is ${visualReview.verdict ?? 'missing'}, not pass`);
+      const blocking = (visualReview.unresolvedFindings ?? []).filter((finding) => finding.blocking === true);
+      if (blocking.length) errors.push(`visual review has unresolved major, critical, or blocking findings: ${blocking.map((finding) => finding.category).join(', ')}`);
+      const reviewGates = new Map((visualReview.gateVerdicts ?? []).map((gate) => [gate.id, gate]));
+      for (const gateId of REQUIRED_VISUAL_GATE_IDS) {
+        if (reviewGates.get(gateId)?.status !== 'pass') errors.push(`visual review gate is not pass: ${gateId}`);
+        const checkpointGate = head.gates.find((gate) => gate.id === gateId);
+        if (checkpointGate && !checkpointGate.evidenceRefs.includes(visualReviewArtifact.path)) {
+          errors.push(`closure gate ${gateId} does not cite the digest-bound visual review`);
+        }
+      }
+    } catch (error) {
+      errors.push(`visual review unavailable: ${error.message}`);
+    }
+  }
+  return {ready: errors.length === 0, errors, visualReview, visualReviewArtifact};
+}
+
+function certificateCore(certificate) {
+  return {
+    schema: certificate.schema,
+    version: certificate.version,
+    projectId: certificate.projectId,
+    sourceSha256: certificate.sourceSha256,
+    checkpointId: certificate.checkpointId,
+    checkpointDigest: certificate.checkpointDigest,
+    gateIds: certificate.gateIds,
+    visualReview: certificate.visualReview,
+    audit: certificate.audit,
+  };
 }
 
 function ensurePrerequisites(capability, scopeId, lineage) {
@@ -630,6 +709,16 @@ export async function resumeProject(root) {
   }
   const head = await loadCheckpoint(root, state.head);
   const next = CAPABILITY_ORDER[capabilityIndex(head.capability) + 1] ?? null;
+  if (!next) {
+    const readiness = await inspectCertificationHead(projectRoot(root), state, head);
+    if (!readiness.ready) {
+      return {
+        schema: 'refas.resume-guidance/v1', status: state.status, safeCheckpointId: state.head,
+        activeWork: {capability: 'whole-object-certification', scopeId: 'whole'}, nextAction: 'REQUEST_VISUAL_REVIEW',
+        certificationErrors: readiness.errors, reason: readiness.errors[0],
+      };
+    }
+  }
   return {
     schema: 'refas.resume-guidance/v1', status: state.status, safeCheckpointId: state.head,
     activeWork: next ? {capability: next, scopeId: state.activeScopeId} : null,
@@ -690,11 +779,47 @@ export async function auditProject(root) {
     }
   }
   if (state.certification && state.certification.checkpointId !== state.head) errors.push('certification does not bind to the active head');
+  if (state.certification && state.head && byId.has(state.head)) {
+    try {
+      const certificate = await readJson(certificatePath(root));
+      if (certificate.schema !== 'refas.whole-object-certificate/v1') errors.push('certificate schema is invalid');
+      if (certificate.checkpointId !== state.head || certificate.checkpointDigest !== byId.get(state.head).contentDigest) errors.push('certificate checkpoint binding is invalid');
+      if (certificate.sourceSha256 !== state.source?.sha256) errors.push('certificate source binding is invalid');
+      if (digestJson(certificateCore(certificate)) !== certificate.certificateDigest) errors.push('certificate digest mismatch');
+      if (certificate.certificateDigest !== state.certification.certificateDigest) errors.push('project state certificate digest mismatch');
+      const readiness = await inspectCertificationHead(root, state, byId.get(state.head));
+      for (const error of readiness.errors) errors.push(`certification readiness: ${error}`);
+      if (readiness.visualReview?.reviewDigest !== certificate.visualReview?.reviewDigest || readiness.visualReviewArtifact?.sha256 !== certificate.visualReview?.sha256) {
+        errors.push('certificate visual-review binding is invalid');
+      }
+    } catch (error) {
+      errors.push(`certificate unavailable: ${error.message}`);
+    }
+  }
   return {
     schema: 'refas.project-audit/v1', valid: errors.length === 0, errors, warnings,
     checkpointCount: checkpoints.length, objectCount: new Set(checkpoints.flatMap((checkpoint) => checkpoint.artifactRefs.map((artifact) => artifact.sha256))).size,
     head: state.head, activeTransactionId: state.activeTransaction?.id ?? null,
   };
+}
+
+export async function assessCertification(root) {
+  root = projectRoot(root);
+  const state = await loadProject(root);
+  const errors = [];
+  if (state.activeTransaction) errors.push('cannot certify with an active edit');
+  if (state.reopenedCapability || state.invalidatedCapabilities.length) errors.push('cannot certify with invalidated capabilities');
+  if (!state.head) errors.push('cannot certify without a checkpoint head');
+  let inspection = {visualReview: null, visualReviewArtifact: null};
+  if (state.head) {
+    const head = await loadCheckpoint(root, state.head);
+    inspection = await inspectCertificationHead(root, state, head);
+    errors.push(...inspection.errors);
+  }
+  return deepFreeze({
+    schema: 'refas.certification-readiness/v1', ready: errors.length === 0, errors,
+    checkpointId: state.head, reviewDigest: inspection.visualReview?.reviewDigest ?? null,
+  });
 }
 
 export async function certifyProject(root) {
@@ -704,8 +829,8 @@ export async function certifyProject(root) {
   if (state.reopenedCapability || state.invalidatedCapabilities.length) throw new Error('cannot certify with invalidated capabilities');
   if (!state.head) throw new Error('cannot certify without a checkpoint head');
   const head = await loadCheckpoint(root, state.head);
-  if (head.capability !== 'whole-object-certification' || head.scopeId !== 'whole') throw new Error('the head must be a whole-object-certification checkpoint for whole');
-  if (!head.gates.length || head.gates.some((gate) => gate.status !== 'pass')) throw new Error('the certification checkpoint contains a non-pass gate');
+  const readiness = await inspectCertificationHead(root, state, head);
+  if (!readiness.ready) throw new Error(`certification refused: ${readiness.errors.join('; ')}`);
   const audit = await auditProject(root);
   if (!audit.valid) throw new Error(`project audit failed: ${audit.errors.join('; ')}`);
   const core = {
@@ -716,6 +841,12 @@ export async function certifyProject(root) {
     checkpointId: head.id,
     checkpointDigest: head.contentDigest,
     gateIds: head.gates.map((gate) => gate.id),
+    visualReview: {
+      path: readiness.visualReviewArtifact.path,
+      sha256: readiness.visualReviewArtifact.sha256,
+      reviewDigest: readiness.visualReview.reviewDigest,
+      evidenceClass: readiness.visualReview.evidenceClass,
+    },
     audit: {checkpointCount: audit.checkpointCount, objectCount: audit.objectCount},
   };
   const certificate = {...core, certificateDigest: digestJson(core), certifiedAt: nowIso()};
