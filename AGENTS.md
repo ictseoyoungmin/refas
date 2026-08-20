@@ -55,9 +55,12 @@ confirmation:
 - mark a Pull Request ready, rerun failed GitHub Actions jobs, and merge or
   enable auto-merge only when required checks pass, no unresolved review thread
   remains, the primary Issue is satisfied, and no release boundary is crossed.
+- delete a task branch after its Pull Request is merged only when no open Pull
+  Request or recorded follow-up work still uses that branch. Never delete the
+  default branch, an unmerged branch, or a release or protected branch.
 
-Standing authorization does not cover force-push, history rewrite, destructive
-deletion, tag or Release publication, package-registry publication, repository
+Standing authorization does not cover force-push, history rewrite, deletion
+outside the merged-task-branch rule above, tag or Release publication, package-registry publication, repository
 visibility or access changes, secrets or Actions-permission changes, security
 advisory disclosure, cross-repository writes, or bypassing branch protection.
 Those actions require new explicit user authorization. Stop for clarification

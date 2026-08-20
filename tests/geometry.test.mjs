@@ -151,7 +151,21 @@ test('surface network realizes exactly one physical boundary per shared adjacenc
   assert.equal(parts.panelParts.length, 3);
   assert.equal(parts.boundaryParts.length, 3);
   assert.equal(parts.junctionParts.length, 1);
+  assert.equal(parts.invariant.junctions, 1);
+  assert.deepEqual(parts.invariant.junctionCoverage[0].adjacencyIds, ['left-lower', 'left-upper', 'right-split']);
   assert.equal(new Set(parts.boundaryParts.map((part) => part.id)).size, 3);
+
+  const separated = structuredClone(network);
+  separated.adjacencies[0].polyline[1] = [0.49, 0.49];
+  separated.adjacencies[1].polyline[0] = [0.5, 0.51];
+  separated.adjacencies[2].polyline[0] = [0.51, 0.5];
+  const separatedPayload = structuredClone(separated);
+  delete separatedPayload.networkDigest;
+  separated.networkDigest = digestJson(separatedPayload);
+  assert.equal(createSurfaceNetworkParts(separated).junctionParts.length, 0);
+  const tolerantParts = createSurfaceNetworkParts(separated, {junctionTolerance: 0.025});
+  assert.equal(tolerantParts.junctionParts.length, 1);
+  assert.deepEqual(tolerantParts.invariant.junctionCoverage[0].adjacencyIds, ['left-lower', 'left-upper', 'right-split']);
 
   const invalidNetwork = structuredClone(network);
   invalidNetwork.adjacencies.push({...structuredClone(network.adjacencies[0]), id: 'duplicate-edge', a: 'upper-right', b: 'left'});

@@ -177,6 +177,7 @@ export function createSurfaceNetworkParts(network, {
   boundaryProfile = null,
   boundaryMiterLimit = 1.12,
   junctionRadius = 0.035,
+  junctionTolerance = 1e-4,
 } = {}) {
   const validation = validateSurfaceNetwork(network);
   if (!validation.valid) throw new Error(`surface network is invalid: ${validation.errors.join('; ')}`);
@@ -211,7 +212,8 @@ export function createSurfaceNetworkParts(network, {
         role: 'shared-boundary',
       }),
     }));
-  const junctionParts = deriveSurfaceJunctions(network).map((junction) => {
+  const junctions = deriveSurfaceJunctions(network, {tolerance: junctionTolerance});
+  const junctionParts = junctions.map((junction) => {
     const frame = surfaceFrame(junction.point, {...surface, normalOffset: boundaryLift - boundaryHeight / 2});
     return {
       id: `junction:${junction.id}`,
@@ -239,6 +241,12 @@ export function createSurfaceNetworkParts(network, {
       sharedAdjacencies: network.adjacencies.length,
       physicalBoundaries: boundaryParts.length,
       oneBoundaryPerAdjacency: boundaryParts.length === network.adjacencies.length,
+      junctions: junctionParts.length,
+      junctionTolerance,
+      junctionCoverage: junctions.map((junction) => ({
+        junctionId: junction.id,
+        adjacencyIds: junction.adjacencyIds,
+      })),
     },
   });
 }

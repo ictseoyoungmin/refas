@@ -99,7 +99,8 @@
     "shellSubdivisions": 4,
     "panelSubdivisions": 2,
     "boundarySamplesPerSegment": 1,
-    "rimSamplesPerSegment": 1
+    "rimSamplesPerSegment": 1,
+    "junctionTolerance": 0.046
   },
   "shapeRegression": {
     "schema": "refas.shape-regression-target/v1",
