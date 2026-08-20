@@ -22,8 +22,8 @@ import {
   createCylinder,
   createObservation,
   createReferenceRegistration,
-  createSegmentPrism,
   createSpatialHypothesisSet,
+  createSurfaceRibbon,
   createSurfaceNetwork,
   createSurfaceNetworkParts,
   createVisualReview,
@@ -35,7 +35,7 @@ import {
   partsToGlb,
   resumeProject,
   sha256File,
-  surfacePoint,
+  surfaceFrame,
   validateAssemblyContract,
   validateObservation,
   validateRealizedAssembly,
@@ -144,11 +144,89 @@ function sharedCenterline(polygonA, polygonB) {
   return [mul(add(a0, b0), 0.5), mul(add(a1, b1), 0.5)];
 }
 
+function signedArea(points) {
+  return points.reduce((sum, point, index) => {
+    const next = points[(index + 1) % points.length];
+    return sum + point[0] * next[1] - next[0] * point[1];
+  }, 0) / 2;
+}
+
+function offsetClosedPolyline(points, distance, miterLimit = 1.18) {
+  const polygon = signedArea(points) < 0 ? [...points].reverse() : points;
+  return polygon.map((point, index) => {
+    const previous = polygon[(index - 1 + polygon.length) % polygon.length];
+    const next = polygon[(index + 1) % polygon.length];
+    const incoming = normalize(sub(point, previous));
+    const outgoing = normalize(sub(next, point));
+    const normalIncoming = [-incoming[1], incoming[0]];
+    const normalOutgoing = [-outgoing[1], outgoing[0]];
+    const miter = normalize(add(normalIncoming, normalOutgoing));
+    const denominator = dot(miter, normalOutgoing);
+    const scale = Math.max(-miterLimit, Math.min(miterLimit, Math.abs(denominator) > 1e-6 ? 1 / denominator : 1));
+    return add(point, mul(miter, distance * scale));
+  });
+}
+
+function pointInPolygon(point, polygon) {
+  let inside = false;
+  for (let index = 0, previous = polygon.length - 1; index < polygon.length; previous = index, index += 1) {
+    const a = polygon[index], b = polygon[previous];
+    const crosses = (a[1] > point[1]) !== (b[1] > point[1]);
+    if (crosses && point[0] < (b[0] - a[0]) * (point[1] - a[1]) / (b[1] - a[1] + 1e-30) + a[0]) inside = !inside;
+  }
+  return inside;
+}
+
+function polygonDistance(point, polygon) {
+  let distance = Infinity;
+  for (let index = 0; index < polygon.length; index += 1) {
+    distance = Math.min(distance, length(sub(point, closestPoint(point, polygon[index], polygon[(index + 1) % polygon.length]))));
+  }
+  return pointInPolygon(point, polygon) ? distance : -distance;
+}
+
+function smoothClosedPolyline(points, {
+  iterations = 2,
+  strength = 0.38,
+  preserveTurnDegrees = 24,
+  maxPointShift,
+  boundary,
+  minimumMargin,
+} = {}) {
+  let result = points.map((point) => [...point]);
+  for (let iteration = 0; iteration < iterations; iteration += 1) {
+    const previousResult = result;
+    result = previousResult.map((point, index) => {
+      const previous = previousResult[(index - 1 + previousResult.length) % previousResult.length];
+      const next = previousResult[(index + 1) % previousResult.length];
+      const incoming = normalize(sub(point, previous));
+      const outgoing = normalize(sub(next, point));
+      const turn = Math.acos(Math.max(-1, Math.min(1, dot(incoming, outgoing)))) * 180 / Math.PI;
+      if (turn >= preserveTurnDegrees) return point;
+      const candidate = add(point, mul(sub(mul(add(previous, next), 0.5), point), strength));
+      const delta = sub(candidate, point);
+      const limited = length(delta) > maxPointShift ? add(point, mul(delta, maxPointShift / length(delta))) : candidate;
+      return polygonDistance(limited, boundary) >= minimumMargin ? limited : point;
+    });
+  }
+  return result;
+}
+
 function circlePolygon([centerX, centerY], radius, segments = 16) {
   return Array.from({length: segments}, (_, index) => {
     const angle = index / segments * Math.PI * 2;
     return [centerX + Math.cos(angle) * radius, centerY + Math.sin(angle) * radius];
   });
+}
+
+function meshProfile(mesh) {
+  const size = mesh.analysis.bounds.max.map((maximum, axis) => maximum - mesh.analysis.bounds.min[axis]);
+  return {
+    boundsSize: size.map((value) => Number(value.toFixed(6))),
+    depthToWidth: Number((size[2] / size[0]).toFixed(6)),
+    vertexCount: mesh.analysis.vertexCount,
+    triangleCount: mesh.analysis.triangleCount,
+  };
 }
 
 function evidenceRefs(manifest, scope, projectRelativeDirectory) {
@@ -272,12 +350,12 @@ async function main() {
   await closeCapability('visual-observation', [...observationPaths, ...evidenceScopes.map(([scope]) => path.join(PROJECT, 'evidence', scope, 'manifest.json'))], 'Visible facts, interpretations, hypotheses, and ambiguities are separated and source-cited.', 'observation-authority');
 
   const spatial = createSpatialHypothesisSet({
-    scopeId: 'whole', sourceSha256: source.sha256, selectedId: 'shallow-compound-crown',
+    scopeId: 'whole', sourceSha256: source.sha256, selectedId: 'projection-anchored-compound-bend',
     attestation: {attested: true, evidenceRefs: ['evidence/whole/evidence-board.png']},
     hypotheses: [
       {
-        id: 'shallow-compound-crown', description: 'A shallow compound crown under a near-orthographic view.', camera: {projection: 'perspective', fovY: 31}, hiddenForm: 'minimal rear thickness following the observed contour',
-        predictions: {silhouette: 'Taper remains stable.', occlusion: 'Fastener stays in front of the shell.', sideView: 'Thin crowned profile.', topView: 'Broad asymmetric plan.', grazing: 'Continuous rim and raised ribs.'},
+        id: 'projection-anchored-compound-bend', description: 'A projection-anchored compound bend controlled by multiple transverse profiles and a longitudinal guide.', camera: {projection: 'perspective', fovY: 31}, hiddenForm: 'normal-offset rear thickness following the guided front surface',
+        predictions: {silhouette: 'Taper remains stable in the reference camera.', occlusion: 'Fastener stays in front of the shell.', sideView: 'Thin continuous compound bend.', topView: 'Broad asymmetric plan.', grazing: 'Continuous folded profile, rim, and raised ribs.'},
         falsifiers: ['A side render requiring a deep bowl to retain the hero contour.'], evidenceRefs: ['evidence/whole/evidence-board.png'], evidenceCoverage: 0.92, assumptionCost: 0.18, status: 'selected-candidate',
       },
       {
@@ -310,12 +388,37 @@ async function main() {
     fastener: {baseColor: [0.9, 0.62, 0.2, 1], metallic: 0.88, roughness: 0.2, clearcoat: 0.45},
   };
   const surface = fixture.surface;
-  const shellMesh = createCurvedPlate({polygon: fixture.outline, ...surface, role: 'dominant-shell'});
+  const guidedBounds = surface.guidedSurface.bounds;
+  const domainScale = (guidedBounds.max[1] - guidedBounds.min[1]) / surface.guidedSurface.projection.observedHeight;
+  const domainDistance = (worldDistance) => worldDistance * domainScale;
+  const shellMesh = createCurvedPlate({
+    polygon: fixture.outline,
+    ...surface,
+    subdivisions: fixture.resolution.shellSubdivisions,
+    role: 'dominant-shell',
+  });
+  const shapeProfile = meshProfile(shellMesh);
+  const depthToWidthError = Math.abs(shapeProfile.depthToWidth - fixture.shapeRegression.hostShellDepthToWidth);
+  assert.ok(depthToWidthError <= fixture.shapeRegression.allowedDepthToWidthError);
+  assert.ok(shapeProfile.triangleCount >= 10_000);
   const shapeGlb = partsToGlb({parts: [{id: 'dominant-shell', role: 'dominant-shell', scopeId: 'whole', materialId: 'shell', mesh: shellMesh}], materials, assetId: 'wing-cover-shape'});
   const shapePath = path.join(PROJECT, 'assets', 'shape.glb');
   await fs.writeFile(shapePath, shapeGlb);
-  const shapeSpecPath = await writeJson(path.join(PROJECT, 'model', 'shape-spec.json'), {schema: 'refas.shape-spec/v1', sourceSha256: source.sha256, selectedHypothesisDigest: spatial.hypothesisSetDigest, outline: fixture.outline, surface, ambiguity: 'Rear geometry is least-committed support geometry.'});
-  await closeCapability('shape-reconstruction', [shapePath, shapeSpecPath], 'Dominant silhouette, shallow crown, thickness, and watertight shell are closed before decoration.', 'silhouette-and-mass', ['Shell mesh is finite, watertight, and winding-consistent.']);
+  const shapeSpecPath = await writeJson(path.join(PROJECT, 'model', 'shape-spec.json'), {
+    schema: 'refas.shape-spec/v1',
+    sourceSha256: source.sha256,
+    selectedHypothesisDigest: spatial.hypothesisSetDigest,
+    outline: fixture.outline,
+    surface,
+    resolution: fixture.resolution,
+    regression: {
+      target: fixture.shapeRegression,
+      actual: shapeProfile,
+      checks: {depthToWidthError: Number(depthToWidthError.toFixed(6)), profileWithinTolerance: true},
+    },
+    ambiguity: 'Rear geometry is least-committed support geometry.',
+  });
+  await closeCapability('shape-reconstruction', [shapePath, shapeSpecPath], 'Dominant silhouette, measured compound curvature, normal-aligned thickness, and watertight shell are closed before decoration.', 'silhouette-and-mass', ['Shell mesh is finite, watertight, winding-consistent, and within the legacy depth-profile tolerance.']);
 
   const cellsById = new Map(fixture.cells.map((cell) => [cell.id, cell]));
   const network = createSurfaceNetwork({
@@ -329,7 +432,19 @@ async function main() {
   assert.equal(networkValidation.valid, true);
   assert.equal(networkValidation.cellCount, 16);
   assert.equal(networkValidation.adjacencyCount, 31);
-  const networkParts = createSurfaceNetworkParts(network, {surface, panelLift: 0.018, panelThickness: 0.028, boundaryLift: 0.055, boundaryWidth: 0.04, boundaryHeight: 0.038, junctionRadius: 0.032});
+  const networkParts = createSurfaceNetworkParts(network, {
+    surface,
+    panelLift: 0.014,
+    panelThickness: 0.012,
+    panelSubdivisions: fixture.resolution.panelSubdivisions,
+    boundaryLift: 0.006,
+    boundaryWidth: domainDistance(0.048),
+    boundaryHeight: 0.032,
+    boundarySamplesPerSegment: 1,
+    boundaryProfile: 'beveled',
+    boundaryMiterLimit: 1.12,
+    junctionRadius: 0.032,
+  });
   assert.equal(networkParts.invariant.oneBoundaryPerAdjacency, true);
   assert.equal(networkParts.boundaryParts.length, 31);
   const surfaceGlb = partsToGlb({
@@ -342,12 +457,37 @@ async function main() {
   const networkReportPath = await writeJson(path.join(PROJECT, 'reviews', 'surface-network-validation.json'), {...networkValidation, invariant: networkParts.invariant});
   await closeCapability('surface-topology', [networkPath, surfaceAssetPath, networkReportPath], 'Sixteen observed cells and thirty-one unique shared adjacencies are realized without duplicate per-cell frames.', 'surface-topology', ['One physical boundary exists for each attested shared adjacency.']);
 
-  const rimParts = fixture.outline.map((point, index) => ({
-    id: `outer-rim-${String(index).padStart(2, '0')}`, role: 'outer-rim', scopeId: 'whole', materialId: 'boundary',
-    mesh: createSegmentPrism({start: surfacePoint(point, {...surface, lift: 0.07}), end: surfacePoint(fixture.outline[(index + 1) % fixture.outline.length], {...surface, lift: 0.07}), width: 0.055, height: 0.05, role: 'outer-rim'}),
-  }));
-  const fastenerMesh = createCylinder({center: surfacePoint(fixture.fastener.center, {...surface, lift: 0.08}), radius: 0.09, height: 0.09, segments: 32, role: 'center-fastener'});
-  const fastenerInsetMesh = createCylinder({center: surfacePoint(fixture.fastener.center, {...surface, lift: 0.17}), radius: 0.034, height: 0.022, segments: 24, role: 'fastener-inset'});
+  const rimWidth = domainDistance(0.092);
+  const rimCenterline = smoothClosedPolyline(
+    offsetClosedPolyline(fixture.outline, domainDistance(0.043), 1.18),
+    {
+      iterations: 2,
+      strength: 0.38,
+      preserveTurnDegrees: 24,
+      maxPointShift: rimWidth * 0.18,
+      boundary: fixture.outline,
+      minimumMargin: rimWidth * 0.18,
+    },
+  );
+  const rimParts = [{
+    id: 'outer-rim', role: 'outer-rim', scopeId: 'whole', materialId: 'boundary',
+    mesh: createSurfaceRibbon({
+      polyline: rimCenterline,
+      surface,
+      normalOffset: 0.004,
+      width: rimWidth,
+      height: 0.048,
+      samplesPerSegment: 1,
+      closed: true,
+      profile: 'crowned',
+      miterLimit: 1.16,
+      role: 'outer-rim',
+    }),
+  }];
+  const fastenerFrame = surfaceFrame(fixture.fastener.center, {...surface, normalOffset: 0.012});
+  const fastenerInsetFrame = surfaceFrame(fixture.fastener.center, {...surface, normalOffset: 0.078});
+  const fastenerMesh = createCylinder({center: fastenerFrame.point, axis: fastenerFrame.normal, radius: 0.075, height: 0.052, segments: 36, role: 'center-fastener'});
+  const fastenerInsetMesh = createCylinder({center: fastenerInsetFrame.point, axis: fastenerInsetFrame.normal, radius: 0.036, height: 0.028, segments: 36, role: 'fastener-inset'});
   const assemblyResult = appendPartsToClosedGlb(surfaceGlb, {
     parts: [
       ...rimParts,
@@ -395,8 +535,10 @@ async function main() {
   const baselineSha256 = await sha256File(finalAssetPath);
   await beginEdit(PROJECT, {ownerCapability: 'assembly', scopeId: 'whole', intent: 'test an alternative fastener root placement', protectedMetrics: ['attachment', 'child-integrity']});
   const badCenter = [0.25, 0.2];
-  const badFastener = createCylinder({center: surfacePoint(badCenter, {...surface, lift: 0.28}), radius: 0.09, height: 0.09, segments: 32, role: 'center-fastener'});
-  const badFastenerInset = createCylinder({center: surfacePoint(badCenter, {...surface, lift: 0.37}), radius: 0.034, height: 0.022, segments: 24, role: 'fastener-inset'});
+  const badFastenerFrame = surfaceFrame(badCenter, {...surface, normalOffset: 0.28});
+  const badFastenerInsetFrame = surfaceFrame(badCenter, {...surface, normalOffset: 0.37});
+  const badFastener = createCylinder({center: badFastenerFrame.point, axis: badFastenerFrame.normal, radius: 0.09, height: 0.09, segments: 32, role: 'center-fastener'});
+  const badFastenerInset = createCylinder({center: badFastenerInsetFrame.point, axis: badFastenerInsetFrame.normal, radius: 0.034, height: 0.022, segments: 24, role: 'fastener-inset'});
   const badAssembly = appendPartsToClosedGlb(surfaceGlb, {
     parts: [
       ...rimParts,

@@ -1,5 +1,5 @@
 import {assertDigest, assertId, deepFreeze, digestJson} from './canonical.mjs';
-import {createCurvedPlate, createCylinder, createSegmentPrism, mergeMeshes, surfacePoint, triangulatePolygon} from './mesh.mjs';
+import {createCurvedPlate, createCylinder, createSurfaceRibbon, surfaceFrame, triangulatePolygon} from './mesh.mjs';
 
 export const SURFACE_NETWORK_SCHEMA = 'refas.surface-network/v1';
 
@@ -169,9 +169,13 @@ export function createSurfaceNetworkParts(network, {
   boundaryMaterialId = 'boundary',
   panelLift = 0.015,
   panelThickness = 0.045,
+  panelSubdivisions = 2,
   boundaryLift = 0.055,
   boundaryWidth = 0.035,
   boundaryHeight = 0.035,
+  boundarySamplesPerSegment = 4,
+  boundaryProfile = null,
+  boundaryMiterLimit = 1.12,
   junctionRadius = 0.035,
 } = {}) {
   const validation = validateSurfaceNetwork(network);
@@ -181,36 +185,49 @@ export function createSurfaceNetworkParts(network, {
     role: 'observed-panel',
     scopeId: network.scopeId,
     materialId: panelMaterialId,
-    mesh: createCurvedPlate({polygon: cell.polygon, ...surface, lift: Number(surface.lift ?? 0) + panelLift, thickness: panelThickness, role: 'observed-panel'}),
+    mesh: createCurvedPlate({
+      polygon: cell.polygon,
+      ...surface,
+      normalOffset: panelLift,
+      thickness: panelThickness,
+      subdivisions: panelSubdivisions,
+      role: 'observed-panel',
+    }),
   }));
-  const boundaryParts = network.adjacencies.map((adjacency) => {
-    const segments = [];
-    for (let index = 1; index < adjacency.polyline.length; index += 1) {
-      const start = surfacePoint(adjacency.polyline[index - 1], {...surface, lift: Number(surface.lift ?? 0) + boundaryLift});
-      const end = surfacePoint(adjacency.polyline[index], {...surface, lift: Number(surface.lift ?? 0) + boundaryLift});
-      segments.push(createSegmentPrism({start, end, width: boundaryWidth, height: boundaryHeight, role: 'shared-boundary'}));
-    }
-    return {
+  const boundaryParts = network.adjacencies.map((adjacency) => ({
       id: `boundary:${adjacency.a}:${adjacency.b}`,
       role: 'shared-boundary',
       scopeId: network.scopeId,
       materialId: boundaryMaterialId,
-      mesh: mergeMeshes(segments, {role: 'shared-boundary', adjacencyId: adjacency.id}),
+      mesh: createSurfaceRibbon({
+        polyline: adjacency.polyline,
+        surface,
+        normalOffset: boundaryLift,
+        width: boundaryWidth,
+        height: boundaryHeight,
+        samplesPerSegment: boundarySamplesPerSegment,
+        profile: boundaryProfile,
+        miterLimit: boundaryMiterLimit,
+        role: 'shared-boundary',
+      }),
+    }));
+  const junctionParts = deriveSurfaceJunctions(network).map((junction) => {
+    const frame = surfaceFrame(junction.point, {...surface, normalOffset: boundaryLift - boundaryHeight / 2});
+    return {
+      id: `junction:${junction.id}`,
+      role: 'boundary-junction',
+      scopeId: network.scopeId,
+      materialId: boundaryMaterialId,
+      mesh: createCylinder({
+        center: frame.point,
+        axis: frame.normal,
+        radius: junctionRadius,
+        height: boundaryHeight,
+        segments: 16,
+        role: 'boundary-junction',
+      }),
     };
   });
-  const junctionParts = deriveSurfaceJunctions(network).map((junction) => ({
-    id: `junction:${junction.id}`,
-    role: 'boundary-junction',
-    scopeId: network.scopeId,
-    materialId: boundaryMaterialId,
-    mesh: createCylinder({
-      center: surfacePoint(junction.point, {...surface, lift: Number(surface.lift ?? 0) + boundaryLift}),
-      radius: junctionRadius,
-      height: boundaryHeight,
-      segments: 16,
-      role: 'boundary-junction',
-    }),
-  }));
   return deepFreeze({
     schema: 'refas.surface-network-parts/v1',
     networkDigest: network.networkDigest,
