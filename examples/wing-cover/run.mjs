@@ -32,6 +32,7 @@ import {
   finishEdit,
   initProject,
   inspectGlb,
+  parseGlb,
   partsToGlb,
   resumeProject,
   sha256File,
@@ -324,14 +325,14 @@ async function main() {
   const observations = [
     createObservation({
       hierarchy, nodeId: 'whole', evidence: evidenceRefs(manifests.whole, 'whole', 'evidence/whole'),
-      facts: [{claim: 'A tapered asymmetric cover silhouette contains blue cells separated by a bright structural network.', evidenceIds: ['whole.raw-reference', 'whole.crop']}],
-      interpretations: ['The blue cells read as shallow enamel panels over a darker support shell.'],
+      facts: [{claim: 'A tapered asymmetric cover silhouette contains pale cyan cells separated by a bright brass-colored structural network.', evidenceIds: ['whole.raw-reference', 'whole.crop']}],
+      interpretations: ['The pale cyan cells read as shallow enamel panels over a differentiated brass support and trim system.'],
       hypotheses: ['The shell has a shallow compound crown rather than being planar.'],
       ambiguities: ['The hidden rear support and exact physical thickness are not visible.'],
     }),
     createObservation({
       hierarchy, nodeId: 'panel-network', evidence: evidenceRefs(manifests.cover, 'cover', 'evidence/cover'),
-      facts: [{claim: 'Sixteen distinct blue cells are visible, with thirty-one attested pairwise adjacencies.', evidenceIds: ['cover.raw-reference', 'cover.crop']}],
+      facts: [{claim: 'Sixteen distinct pale cyan cells are visible, with thirty-one attested pairwise adjacencies.', evidenceIds: ['cover.raw-reference', 'cover.crop']}],
       interpretations: ['The bright gaps likely correspond to one shared raised boundary per adjacent pair.'],
       hypotheses: ['Each cell can be modeled as a thin curved plate conforming to one host surface.'],
       ambiguities: ['Some boundary endpoints merge into the outer rim and remain visually crowded.'],
@@ -381,12 +382,7 @@ async function main() {
   const registrationPath = await writeJson(path.join(PROJECT, 'model', 'reference-registration.json'), registration);
   await closeCapability('spatial-hypotheses', [spatialPath, registrationPath], 'Camera and hidden-form alternatives were compared before geometry construction.', 'spatial-plausibility', ['Deep-bowl competitor falsified by diagnostic predictions.']);
 
-  const materials = {
-    shell: {baseColor: [0.24, 0.16, 0.08, 1], metallic: 0.72, roughness: 0.33, clearcoat: 0.25},
-    panel: {baseColor: [0.04, 0.24, 0.38, 1], metallic: 0.38, roughness: 0.3, clearcoat: 0.5},
-    boundary: {baseColor: [0.82, 0.52, 0.13, 1], metallic: 0.82, roughness: 0.24, clearcoat: 0.35},
-    fastener: {baseColor: [0.9, 0.62, 0.2, 1], metallic: 0.88, roughness: 0.2, clearcoat: 0.45},
-  };
+  const materials = fixture.appearanceRegression.materials;
   const surface = fixture.surface;
   const guidedBounds = surface.guidedSurface.bounds;
   const domainScale = (guidedBounds.max[1] - guidedBounds.min[1]) / surface.guidedSurface.projection.observedHeight;
@@ -401,7 +397,7 @@ async function main() {
   const depthToWidthError = Math.abs(shapeProfile.depthToWidth - fixture.shapeRegression.hostShellDepthToWidth);
   assert.ok(depthToWidthError <= fixture.shapeRegression.allowedDepthToWidthError);
   assert.ok(shapeProfile.triangleCount >= 10_000);
-  const shapeGlb = partsToGlb({parts: [{id: 'dominant-shell', role: 'dominant-shell', scopeId: 'whole', materialId: 'shell', mesh: shellMesh}], materials, assetId: 'wing-cover-shape'});
+  const shapeGlb = partsToGlb({parts: [{id: 'dominant-shell', role: 'dominant-shell', scopeId: 'whole', materialId: 'brass-light', mesh: shellMesh}], materials, assetId: 'wing-cover-shape'});
   const shapePath = path.join(PROJECT, 'assets', 'shape.glb');
   await fs.writeFile(shapePath, shapeGlb);
   const shapeSpecPath = await writeJson(path.join(PROJECT, 'model', 'shape-spec.json'), {
@@ -434,6 +430,8 @@ async function main() {
   assert.equal(networkValidation.adjacencyCount, 31);
   const networkParts = createSurfaceNetworkParts(network, {
     surface,
+    panelMaterialId: 'enamel',
+    boundaryMaterialId: 'brass-light',
     panelLift: 0.014,
     panelThickness: 0.012,
     panelSubdivisions: fixture.resolution.panelSubdivisions,
@@ -448,7 +446,7 @@ async function main() {
   assert.equal(networkParts.invariant.oneBoundaryPerAdjacency, true);
   assert.equal(networkParts.boundaryParts.length, 31);
   const surfaceGlb = partsToGlb({
-    parts: [{id: 'support-shell', role: 'support-shell', scopeId: 'whole', materialId: 'shell', mesh: shellMesh}, ...networkParts.panelParts, ...networkParts.boundaryParts, ...networkParts.junctionParts],
+    parts: [{id: 'support-shell', role: 'dominant-shell', scopeId: 'whole', materialId: 'brass-light', mesh: shellMesh}, ...networkParts.panelParts, ...networkParts.boundaryParts, ...networkParts.junctionParts],
     materials, assetId: 'wing-cover-surface', extras: {networkDigest: network.networkDigest},
   });
   const networkPath = await writeJson(path.join(PROJECT, 'model', 'surface-network.json'), network);
@@ -470,7 +468,7 @@ async function main() {
     },
   );
   const rimParts = [{
-    id: 'outer-rim', role: 'outer-rim', scopeId: 'whole', materialId: 'boundary',
+    id: 'outer-rim', role: 'outer-rim', scopeId: 'whole', materialId: 'brass-light',
     mesh: createSurfaceRibbon({
       polyline: rimCenterline,
       surface,
@@ -484,20 +482,38 @@ async function main() {
       role: 'outer-rim',
     }),
   }];
-  const fastenerFrame = surfaceFrame(fixture.fastener.center, {...surface, normalOffset: 0.012});
-  const fastenerInsetFrame = surfaceFrame(fixture.fastener.center, {...surface, normalOffset: 0.078});
-  const fastenerMesh = createCylinder({center: fastenerFrame.point, axis: fastenerFrame.normal, radius: 0.075, height: 0.052, segments: 36, role: 'center-fastener'});
-  const fastenerInsetMesh = createCylinder({center: fastenerInsetFrame.point, axis: fastenerInsetFrame.normal, radius: 0.036, height: 0.028, segments: 36, role: 'fastener-inset'});
+  const fastenerBaseFrame = surfaceFrame(fixture.fastener.center, {...surface, normalOffset: 0.012});
+  const fastenerRingFrame = surfaceFrame(fixture.fastener.center, {...surface, normalOffset: 0.057});
+  const fastenerInlayFrame = surfaceFrame(fixture.fastener.center, {...surface, normalOffset: 0.075});
+  const fastenerMesh = createCylinder({center: fastenerBaseFrame.point, axis: fastenerBaseFrame.normal, radius: 0.075, height: 0.052, segments: 36, role: 'fastener-base'});
+  const fastenerRingMesh = createCylinder({center: fastenerRingFrame.point, axis: fastenerRingFrame.normal, radius: 0.055, height: 0.023, segments: 36, role: 'fastener-ring'});
+  const fastenerInlayMesh = createCylinder({center: fastenerInlayFrame.point, axis: fastenerInlayFrame.normal, radius: 0.035, height: 0.022, segments: 36, role: 'fastener-inlay'});
   const assemblyResult = appendPartsToClosedGlb(surfaceGlb, {
     parts: [
       ...rimParts,
-      {id: 'center-fastener', role: 'center-fastener', scopeId: 'whole.center-fastener', materialId: 'fastener', mesh: fastenerMesh},
-      {id: 'fastener-inset', role: 'fastener-inset', scopeId: 'whole.center-fastener', materialId: 'shell', mesh: fastenerInsetMesh},
+      {id: 'fastener-base', role: 'fastener-base', scopeId: 'whole.center-fastener', materialId: 'brass-dark', mesh: fastenerMesh},
+      {id: 'fastener-ring', role: 'fastener-ring', scopeId: 'whole.center-fastener', materialId: 'brass-light', mesh: fastenerRingMesh},
+      {id: 'fastener-inlay', role: 'fastener-inlay', scopeId: 'whole.center-fastener', materialId: 'rivet-inlay', mesh: fastenerInlayMesh},
     ], materials,
     name: 'Wing cover assembly', extras: {registrationDigest: registration.registrationDigest},
   });
   const finalAssetPath = path.join(PROJECT, 'assets', 'wing-cover.glb');
   await fs.writeFile(finalAssetPath, assemblyResult.glb);
+  const finalAssetJson = parseGlb(assemblyResult.glb).json;
+  const materialTable = Object.fromEntries(finalAssetJson.materials.map((material) => [material.name, {
+    baseColor: material.pbrMetallicRoughness.baseColorFactor,
+    metallic: material.pbrMetallicRoughness.metallicFactor,
+    roughness: material.pbrMetallicRoughness.roughnessFactor,
+  }]));
+  assert.deepEqual(materialTable, materials);
+  const materialAssignments = Object.fromEntries(finalAssetJson.nodes.map((node) => [node.extras?.role, node.extras?.materialId]).filter(([role]) => role));
+  for (const node of finalAssetJson.nodes) {
+    const expectedMaterial = fixture.appearanceRegression.assignments[node.extras?.role];
+    if (expectedMaterial) assert.equal(node.extras.materialId, expectedMaterial);
+  }
+  for (const role of ['dominant-shell', 'observed-panel', 'shared-boundary', 'outer-rim', 'fastener-base', 'fastener-ring', 'fastener-inlay']) {
+    assert.equal(materialAssignments[role], fixture.appearanceRegression.assignments[role]);
+  }
   const fastenerPolygon = circlePolygon(fixture.fastener.center, fixture.fastener.radius);
   const assemblyContract = createAssemblyContract({
     scopeId: 'whole', sourceSha256: source.sha256,
@@ -536,14 +552,17 @@ async function main() {
   await beginEdit(PROJECT, {ownerCapability: 'assembly', scopeId: 'whole', intent: 'test an alternative fastener root placement', protectedMetrics: ['attachment', 'child-integrity']});
   const badCenter = [0.25, 0.2];
   const badFastenerFrame = surfaceFrame(badCenter, {...surface, normalOffset: 0.28});
-  const badFastenerInsetFrame = surfaceFrame(badCenter, {...surface, normalOffset: 0.37});
-  const badFastener = createCylinder({center: badFastenerFrame.point, axis: badFastenerFrame.normal, radius: 0.09, height: 0.09, segments: 32, role: 'center-fastener'});
-  const badFastenerInset = createCylinder({center: badFastenerInsetFrame.point, axis: badFastenerInsetFrame.normal, radius: 0.034, height: 0.022, segments: 24, role: 'fastener-inset'});
+  const badFastenerRingFrame = surfaceFrame(badCenter, {...surface, normalOffset: 0.355});
+  const badFastenerInlayFrame = surfaceFrame(badCenter, {...surface, normalOffset: 0.37});
+  const badFastener = createCylinder({center: badFastenerFrame.point, axis: badFastenerFrame.normal, radius: 0.09, height: 0.09, segments: 32, role: 'fastener-base'});
+  const badFastenerRing = createCylinder({center: badFastenerRingFrame.point, axis: badFastenerRingFrame.normal, radius: 0.055, height: 0.03, segments: 24, role: 'fastener-ring'});
+  const badFastenerInlay = createCylinder({center: badFastenerInlayFrame.point, axis: badFastenerInlayFrame.normal, radius: 0.034, height: 0.022, segments: 24, role: 'fastener-inlay'});
   const badAssembly = appendPartsToClosedGlb(surfaceGlb, {
     parts: [
       ...rimParts,
-      {id: 'center-fastener', role: 'center-fastener', scopeId: 'whole.center-fastener', materialId: 'fastener', mesh: badFastener},
-      {id: 'fastener-inset', role: 'fastener-inset', scopeId: 'whole.center-fastener', materialId: 'shell', mesh: badFastenerInset},
+      {id: 'fastener-base', role: 'fastener-base', scopeId: 'whole.center-fastener', materialId: 'brass-dark', mesh: badFastener},
+      {id: 'fastener-ring', role: 'fastener-ring', scopeId: 'whole.center-fastener', materialId: 'brass-light', mesh: badFastenerRing},
+      {id: 'fastener-inlay', role: 'fastener-inlay', scopeId: 'whole.center-fastener', materialId: 'rivet-inlay', mesh: badFastenerInlay},
     ], materials,
     name: 'Rejected wing cover assembly', extras: {registrationDigest: registration.registrationDigest},
   });
@@ -574,10 +593,12 @@ async function main() {
 
   const appearancePath = await writeJson(path.join(PROJECT, 'model', 'appearance.json'), {
     schema: 'refas.appearance-spec/v1', sourceSha256: source.sha256, materials,
-    evidenceRefs: ['source/reference.png', 'evidence/cover/crop.png'],
-    ambiguities: ['Metalness and roughness are visually plausible parameters, not measured material facts.'],
+    regressionTarget: fixture.appearanceRegression,
+    materialAssignments,
+    evidenceRefs: ['source/reference.png', 'evidence/cover/crop.png', 'evidence/fastener/crop.png'],
+    ambiguities: ['The PBR factors and semantic assignments match the comparison GLB exactly; environment-dependent highlight appearance still requires independent visual review.'],
   });
-  await closeCapability('appearance', [finalAssetPath, appearancePath, rollbackProofPath], 'Color and finish remain subordinate to the already-closed geometry and source evidence.', 'appearance-plausibility');
+  await closeCapability('appearance', [finalAssetPath, appearancePath, rollbackProofPath], 'Pale cyan enamel, light and dark brass, and the fastener inlay preserve the exact comparison-GLB PBR factors and semantic assignments.', 'appearance-data-integrity');
 
   const finalRenderDirectory = path.join(PROJECT, 'renders', 'final');
   const finalRenderReport = await render(finalAssetPath, finalRenderDirectory, reference, 280);
@@ -587,8 +608,13 @@ async function main() {
 
   const findingsPath = await writeJson(path.join(PROJECT, 'reviews', 'findings.json'), {
     schema: 'refas.finding-ledger/v1', sourceSha256: source.sha256, assetSha256: await sha256File(finalAssetPath),
-    resolved: [{category: 'attachment-mismatch', decisionId: decision.id, resolution: 'byte-exact rollback'}], unresolvedBlocking: [],
-    unresolvedNonBlocking: [{category: 'finish-mismatch', severity: 'minor', scopeId: 'whole', summary: 'Portable renderer color response is only a baseline approximation of the generated reference.', evidenceRefs: ['renders/final/multiview-review-board.png']}],
+    resolved: [
+      {category: 'attachment-mismatch', decisionId: decision.id, resolution: 'byte-exact rollback'},
+      {category: 'material-mismatch', resolution: 'Exact four-material PBR table and semantic assignments restored from the digest-bound comparison asset.'},
+      {category: 'finish-mismatch', resolution: 'Enamel, light brass, dark brass, and rivet inlay remain distinct in the final GLB.'},
+    ],
+    unresolvedBlocking: [{category: 'closure-evidence-missing', severity: 'major', scopeId: 'whole', summary: 'The contract fixture is self-generated and cannot substitute for independent visual acceptance.', evidenceRefs: ['renders/final/multiview-review-board.png']}],
+    unresolvedNonBlocking: [],
     critiqueOrder: ['source-and-camera', 'silhouette', 'mass-and-curvature', 'attachment-and-occlusion', 'surface-topology', 'appearance', 'microdetail'],
   });
   await closeCapability('visual-critique', [findingsPath, finalBoardPath, rollbackProofPath], 'Contract-fixture critique artifacts are readable; independent visual acceptance remains pending.', 'contract-critique-integrity');
@@ -597,25 +623,24 @@ async function main() {
   assert.equal(preClosureAudit.valid, true);
   const visualReview = createVisualReview({
     scopeId: 'whole', sourceSha256: source.sha256, assetSha256: await sha256File(finalAssetPath),
-    evidenceClass: 'self-generated-contract-fixture', verdict: 'fail',
+    evidenceClass: 'self-generated-contract-fixture', verdict: 'insufficient',
     views: REQUIRED_REVIEW_VIEW_IDS.map((id) => ({
-      id, status: ['hero', 'side', 'grazing', 'albedo'].includes(id) ? 'fail' : 'pass',
+      id, status: 'insufficient',
       evidenceRefs: [`renders/final/${id}.png`, 'renders/final/multiview-review-board.png'],
     })),
     gateVerdicts: REQUIRED_VISUAL_GATE_IDS.map((id) => ({
-      id, status: ['silhouette-and-mass', 'appearance-plausibility', 'no-blocking-findings'].includes(id) ? 'fail' : 'pass',
+      id, status: id === 'multiview-render-integrity' ? 'pass' : id === 'no-blocking-findings' ? 'fail' : 'insufficient',
       evidenceRefs: ['renders/final/multiview-review-board.png'],
     })),
     unresolvedFindings: [
-      {category: 'curvature-mismatch', severity: 'major', scopeId: 'whole', summary: 'The contract fixture does not independently establish the folded compound profile required for a publishable reconstruction.', evidenceRefs: ['renders/final/side.png', 'renders/final/grazing.png']},
-      {category: 'material-mismatch', severity: 'major', scopeId: 'whole', summary: 'The portable renderer cannot establish the required enamel and clearcoated metal response.', evidenceRefs: ['renders/final/hero.png', 'renders/final/albedo.png']},
+      {category: 'closure-evidence-missing', severity: 'major', scopeId: 'whole', summary: 'The contract fixture demonstrates exact geometry and PBR data parity but does not independently attest visual fidelity.', evidenceRefs: ['renders/final/multiview-review-board.png']},
     ],
     renderer: {
       kind: finalRenderReport.runtime.kind, reportRef: 'renders/final/render-report.json', claimScope: finalRenderReport.claimScope,
       supportedMaterialFeatures: finalRenderReport.materialSupport.supported,
       unsupportedMaterialFeatures: finalRenderReport.materialSupport.unsupported,
     },
-    requiredMaterialFeatures: ['base-color-factor', 'metallic-factor', 'roughness-factor', 'clearcoat'],
+    requiredMaterialFeatures: ['base-color-factor', 'metallic-factor', 'roughness-factor'],
     attestation: {attested: true, evidenceRefs: ['source/reference.png', 'renders/final/multiview-review-board.png']},
   });
   const visualReviewPath = await writeJson(path.join(PROJECT, 'reviews', 'visual-review.json'), visualReview);
@@ -655,6 +680,12 @@ async function main() {
     oneBoundaryPerAdjacency: networkParts.invariant.oneBoundaryPerAdjacency,
     registration: {digest: registration.registrationDigest, rmse: registration.metrics.rmse, maxError: registration.metrics.maxError},
     assembly: assemblyValidation.metrics,
+    appearance: {
+      comparisonAssetSha256: fixture.appearanceRegression.sourceSha256,
+      materialIds: Object.keys(materials),
+      exactPbrParity: true,
+      semanticAssignmentsVerified: true,
+    },
     rollback: {decision: decision.action, baselineSha256, candidateSha256, restoredSha256, byteExact: restoredSha256 === baselineSha256},
     rendering: {frames: finalRenderReport.frames.length, status: finalRenderReport.status, claimScope: finalRenderReport.claimScope, board: path.relative(OUTPUT, finalBoardPath)},
     glb: {nodes: inspection.nodeCount, meshes: inspection.meshCount, triangles: inspection.triangleCount},

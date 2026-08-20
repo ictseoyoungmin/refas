@@ -38,23 +38,23 @@ def main():
     image = Image.alpha_composite(image.convert("RGBA"), shadow)
     draw = ImageDraw.Draw(image)
 
-    draw.polygon(outline, fill=(117, 79, 34, 255), outline=(238, 192, 88, 255), width=max(5, size // 90))
-    palette = [(29, 83, 116), (35, 101, 134), (43, 112, 139), (26, 74, 108)]
+    draw.polygon(outline, fill=(143, 87, 26, 255), outline=(235, 184, 89, 255), width=max(5, size // 90))
+    palette = [(128, 194, 196), (139, 202, 204), (117, 183, 187), (151, 211, 212)]
     for index, cell in enumerate(fixture["cells"]):
         polygon = pixels(cell["polygon"], size)
         base = palette[index % len(palette)]
-        draw.polygon(polygon, fill=(*base, 255), outline=(224, 171, 67, 255), width=max(3, size // 180))
-        highlight = tuple(min(255, channel + 35) for channel in base)
+        draw.polygon(polygon, fill=(*base, 255), outline=(235, 184, 89, 255), width=max(3, size // 180))
+        highlight = tuple(min(255, channel + 28) for channel in base)
         draw.line(polygon[: max(2, len(polygon) // 2 + 1)], fill=(*highlight, 210), width=max(1, size // 450), joint="curve")
 
-    draw.line(outline + [outline[0]], fill=(248, 204, 103, 255), width=max(7, size // 75), joint="curve")
-    draw.line(outline + [outline[0]], fill=(103, 62, 25, 255), width=max(2, size // 280), joint="curve")
+    draw.line(outline + [outline[0]], fill=(235, 184, 89, 255), width=max(7, size // 75), joint="curve")
+    draw.line(outline + [outline[0]], fill=(143, 87, 26, 255), width=max(2, size // 280), joint="curve")
     center = fixture["fastener"]["center"]
     radius = fixture["fastener"]["radius"]
     box = tuple(round(value * size) for value in (center[0] - radius, center[1] - radius, center[0] + radius, center[1] + radius))
-    draw.ellipse(box, fill=(199, 143, 50, 255), outline=(255, 224, 132, 255), width=max(3, size // 180))
+    draw.ellipse(box, fill=(143, 87, 26, 255), outline=(235, 184, 89, 255), width=max(3, size // 180))
     inner = tuple(round(value * size) for value in (center[0] - radius * 0.38, center[1] - radius * 0.38, center[0] + radius * 0.38, center[1] + radius * 0.38))
-    draw.ellipse(inner, fill=(93, 58, 28, 255))
+    draw.ellipse(inner, fill=(204, 181, 135, 255))
 
     output = Path(args.out)
     output.parent.mkdir(parents=True, exist_ok=True)
