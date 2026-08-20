@@ -4,8 +4,8 @@ Closes #<!-- exactly one primary Issue -->
 
 | Contract | Value |
 |---|---|
-| Owner capability | <!-- one capability label --> |
-| Semantic scope ID | <!-- one hierarchy scope --> |
+| Owner capability or repository boundary | <!-- one capability label, or an explicit non-runtime boundary --> |
+| Semantic scope ID | <!-- one hierarchy scope, or repository for non-runtime work --> |
 | Change type | <!-- type label --> |
 | Finding category | <!-- exact category or N/A with reason --> |
 | Severity | <!-- blocker / major / minor / polish --> |
@@ -75,7 +75,7 @@ npm run release:audit
 ## Review Gates
 
 - [ ] This Pull Request closes exactly one primary Issue.
-- [ ] One semantic capability and one hierarchy scope own the mutation.
+- [ ] One runtime capability and hierarchy scope, or one explicit repository boundary and the `repository` scope, owns the mutation.
 - [ ] No temporary stage code, attempt number, or status word became product identity.
 - [ ] The canonical runtime remains under `skills/refas/`; no duplicate implementation was added.
 - [ ] Source identity and provenance are current.

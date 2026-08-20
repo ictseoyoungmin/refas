@@ -5,7 +5,7 @@ RefAs accepts changes that improve reconstruction truthfulness, recoverability, 
 Before opening a change:
 
 1. Read the [GitHub governance contract](docs/github-governance.md).
-2. Open one structured Issue with one semantic capability, one hierarchy scope, acceptance evidence, and a safe recovery point.
+2. Open one structured Issue with one runtime capability and hierarchy scope, or one explicit non-runtime repository boundary and the `repository` scope, plus acceptance evidence and a safe recovery point.
 3. Wait until the Issue is routable and `workflow: ready`; only one implementation path may become `workflow: active`.
 4. Create a semantic feature branch and open one Draft Pull Request that closes the primary Issue.
 5. Keep reusable runtime logic asset-agnostic. Put benchmark coordinates and proportions in model specifications.

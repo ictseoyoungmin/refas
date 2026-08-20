@@ -10,9 +10,11 @@ RefAs artifacts; GitHub metadata must reflect that state but never replace it.
 1. **Use semantic identity only.** Name work by capability, hierarchy scope,
    and intent. Temporary stage codes, attempt numbers, and status words do not
    become filenames, APIs, schemas, or architectural identities.
-2. **One owner and one scope.** An implementation Issue owns one semantic
-   capability and one hierarchy scope. A Pull Request closes exactly one
-   primary Issue.
+2. **One owner and one scope.** A runtime implementation Issue owns one
+   semantic capability and one hierarchy scope. Non-runtime documentation,
+   governance, and repository automation name one explicit repository boundary
+   and use the `repository` scope. A Pull Request closes exactly one primary
+   Issue.
 3. **Evidence precedes status.** A metric, label, or green unit test cannot
    clear a visible mismatch. Visual changes require raw-reference context and
    actual rendered evidence.
@@ -32,8 +34,10 @@ schemas as work-state architecture.
 
 An actionable Issue contains:
 
-- one `ownerCapability` from the public capability order;
-- one semantic `scopeId` and hierarchy level;
+- one `ownerCapability` from the public capability order, or one explicit
+  repository boundary when runtime behavior is unchanged;
+- one semantic `scopeId` and hierarchy level, or the `repository` scope for
+  non-runtime work;
 - one problem or testable intent;
 - direct observations separated from interpretations, hypotheses, and
   ambiguities;
@@ -54,7 +58,7 @@ Labels are namespaced. Exact target versions belong in GitHub milestones; the
 | Axis | Required use |
 |---|---|
 | `type:` | Kind of repository work: visual finding, defect, capability change, documentation, governance, release, or security. |
-| `capability:` | Single runtime owner. Required for implementation and finding Issues. |
+| `capability:` | Single runtime owner. Required for runtime implementation and finding Issues; omit it for a declared non-runtime repository boundary. |
 | `finding:` | Exact normalized finding category. Required for visual findings after routing. |
 | `severity:` | `blocker`, `major`, `minor`, or `polish`. |
 | `release:` | `none`, `patch`, `minor`, or `major`; pair non-`none` work with a version milestone. |
@@ -121,9 +125,10 @@ Labels summarize that contract; they do not override it.
    `workflow: active` and create a semantic feature branch.
 5. **Review.** Open one Draft Pull Request that closes the Issue. When required
    evidence and checks are complete, move both items to `workflow: review`.
-6. **Close.** Merge only when the capability-local acceptance criteria and all
-   current dependent evidence pass. Close as not planned only with an explicit
-   rationale that preserves the unresolved evidence.
+6. **Close.** Merge only when the capability-local or repository-boundary
+   acceptance criteria and all current dependent evidence pass. Close as not
+   planned only with an explicit rationale that preserves the unresolved
+   evidence.
 7. **Reopen.** Reopen the same Issue when its accepted claim is invalidated.
    Create a new Issue only for a distinct owner, scope, or finding.
 
@@ -132,7 +137,8 @@ Labels summarize that contract; they do not override it.
 A Pull Request must:
 
 - use `Closes #<issue>` for exactly one primary Issue;
-- preserve one capability and one scope as the mutation owner;
+- preserve one runtime capability and hierarchy scope, or one explicit
+  repository boundary and the `repository` scope, as the mutation owner;
 - describe the bounded intent and public contract impact;
 - list the baseline and candidate checkpoints when artifact bytes change;
 - state the invalidation range and exact rollback point;

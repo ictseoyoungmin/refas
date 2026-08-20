@@ -76,7 +76,7 @@ npm run release:audit
 
 See [Architecture](docs/architecture.md), [Agent recovery](docs/agent-recovery.md), [Prototype migration](docs/migration-from-prototypes.md), [Development plan](docs/development-plan.md), and [Release criteria](docs/release-criteria.md) for the normative contracts and completed 1.0 route.
 
-Contributions follow the [Issue and Pull Request governance contract](docs/github-governance.md): one semantic capability, one hierarchy scope, one primary Issue, evidence-bound review, and an explicit recovery point.
+Contributions follow the [Issue and Pull Request governance contract](docs/github-governance.md): one runtime capability and hierarchy scope or one explicit repository boundary, one primary Issue, evidence-bound review, and an explicit recovery point.
 
 ## License
 

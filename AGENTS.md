@@ -20,8 +20,9 @@ here. Query GitHub and the RefAs project state at the start of each turn.
 
 1. Inspect existing Issues, Pull Requests, reviews, and CI before proposing new
    work. Reuse an existing matching work item.
-2. Use the structured Issue form. Keep one capability, one hierarchy scope,
-   one testable intent, and one recoverable result.
+2. Use the structured Issue form. Keep one runtime capability and hierarchy
+   scope, or one explicit non-runtime repository boundary and the `repository`
+   scope, plus one testable intent and one recoverable result.
 3. Apply exact namespaced labels from `.github/labels.json`. The normalized
    finding category must agree with the canonical owner map.
 4. Keep at most one implementation Issue and Pull Request at
