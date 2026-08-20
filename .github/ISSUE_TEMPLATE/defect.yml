@@ -1,0 +1,125 @@
+name: Runtime or tooling defect
+description: Report reproducible incorrect behavior that is not primarily a visual mismatch.
+title: "[Defect] "
+labels: ["type: defect", "workflow: needs-evidence"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use the Visual finding form when the failure is primarily visible in a reconstructed asset. Do not publish vulnerability details here.
+
+  - type: input
+    id: summary
+    attributes:
+      label: Defect summary
+      placeholder: Checkpoint restore accepts a stale artifact digest.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: owner_capability
+    attributes:
+      label: Affected capability or repository boundary
+      options:
+        - source-intake
+        - visual-hierarchy
+        - visual-observation
+        - spatial-hypotheses
+        - shape-reconstruction
+        - surface-topology
+        - assembly
+        - appearance
+        - rendering
+        - visual-critique
+        - whole-object-certification
+        - repository tooling or governance
+        - unknown
+    validations:
+      required: true
+
+  - type: input
+    id: scope_id
+    attributes:
+      label: Semantic scope ID
+      description: Use `repository` only when no reconstruction scope exists.
+      placeholder: project.asset.part or repository
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment and input identity
+      description: Include RefAs version, Node and Python versions, OS, source digest, and relevant artifact digests.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Provide deterministic commands and the smallest safe fixture.
+      render: shell
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected_actual
+    attributes:
+      label: Expected and actual behavior
+      description: Include the exact error and the violated public contract.
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Logs, artifacts, and evidence
+      description: Remove secrets and link only the evidence needed to reproduce the defect.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      options:
+        - blocker
+        - major
+        - minor
+        - polish
+    validations:
+      required: true
+
+  - type: dropdown
+    id: release_effect
+    attributes:
+      label: Expected semantic-version effect
+      options:
+        - none
+        - patch
+        - minor
+        - major
+        - unresolved
+    validations:
+      required: true
+
+  - type: textarea
+    id: recovery
+    attributes:
+      label: Recovery and regression boundary
+      description: Name the trustworthy baseline, invalidated dependents, rollback point, and required regression test.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: attestations
+    attributes:
+      label: Submission checks
+      options:
+        - label: The reproduction uses the canonical runtime under `skills/refas/`.
+          required: true
+        - label: I searched existing Issues for the same failure.
+          required: true
+        - label: This report contains no credentials, private source assets, or vulnerability details.
+          required: true

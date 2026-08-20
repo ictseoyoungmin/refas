@@ -1,0 +1,58 @@
+name: Documentation or governance
+description: Improve contributor guidance, release operations, or repository policy without changing runtime behavior.
+title: "[Documentation or governance] "
+labels: ["type: governance", "workflow: needs-evidence", "release: none"]
+body:
+  - type: dropdown
+    id: change_kind
+    attributes:
+      label: Change kind
+      options:
+        - documentation
+        - governance
+        - CI or repository automation
+        - contributor experience
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Current problem and evidence
+      description: Link the stale, missing, misleading, or unsafe guidance.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed_outcome
+    attributes:
+      label: Proposed outcome
+      description: Describe the behavior contributors should follow after the change.
+    validations:
+      required: true
+
+  - type: textarea
+    id: affected_contracts
+    attributes:
+      label: Product boundary check
+      description: Explain why runtime schemas and capability ownership do or do not change.
+    validations:
+      required: true
+
+  - type: textarea
+    id: validation
+    attributes:
+      label: Validation and rollback
+      description: State link checks, repository checks, workflow evidence, protected guidance, and the rollback path.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: boundaries
+    attributes:
+      label: Boundaries
+      options:
+        - label: Temporary work-state names will not enter product filenames, APIs, schemas, or runtime prose.
+          required: true
+        - label: Any runtime behavior change will move to a Capability change Issue.
+          required: true
