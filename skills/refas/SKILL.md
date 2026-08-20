@@ -142,8 +142,10 @@ import {
   createSegmentPrism,
   createSurfaceNetwork,
   createSurfaceNetworkParts,
+  createSurfaceRibbon,
   createVisualReview,
   partsToGlb,
+  surfaceFrame,
   surfacePoint,
   validateRealizedAssembly,
   validateVisualReview,
@@ -151,6 +153,8 @@ import {
 ```
 
 Use these as construction mechanisms, not visual assumptions. Put asset-specific polygons, proportions, and hypotheses in the project model specification. Keep them out of the reusable runtime.
+
+For a curved or folded shell, do not stop at an extruded boundary polygon. Use interior subdivisions, a normal-offset back surface, and either evidence-fitted compound coefficients or a projection-anchored guided surface with transverse profiles plus a longitudinal guide. Make panels, trim, and fastener axes consume the same `surfaceFrame`. Close shape only after side and grazing renders preserve the observed depth profile.
 
 For parent assembly, prefer `appendPartsToClosedGlb`. It preserves the original child binary payload as an exact prefix and records the child digest.
 

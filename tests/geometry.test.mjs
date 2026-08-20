@@ -7,12 +7,14 @@ import {
   createCurvedPlate,
   createCylinder,
   createSegmentPrism,
+  createSurfaceRibbon,
   createSurfaceNetwork,
   createSurfaceNetworkParts,
   digestJson,
   inspectGlb,
   parseGlb,
   partsToGlb,
+  surfaceFrame,
   validateSurfaceNetwork,
 } from '../skills/refas/scripts/lib/index.mjs';
 
@@ -34,6 +36,92 @@ test('mesh primitives are finite, watertight, and consistently wound', () => {
     assert.equal(analysis.watertight, true);
     assert.equal(analysis.windingConsistent, true);
   }
+});
+
+test('compound plates tessellate their interiors and keep thickness aligned to the surface normal', () => {
+  const polygon = [[0.08, 0.08], [0.92, 0.1], [0.88, 0.9], [0.12, 0.92]];
+  const surface = {
+    width: 2.05, height: 2.72,
+    crownX: 0.3, crownY: 0.22, twist: 0.016,
+    tiltX: -0.07, cubicY: -0.068, crossX2Y: -0.08,
+    lift: -0.21,
+    creases: [{axis: [1, 0.15], offset: -0.1, strength: -0.025, softness: 0.16}],
+  };
+  const thickness = 0.095;
+  const mesh = createCurvedPlate({polygon, ...surface, thickness, subdivisions: 3});
+  assert.ok(mesh.analysis.vertexCount > polygon.length * 20);
+  assert.ok(mesh.analysis.triangleCount > 300);
+  assert.equal(mesh.analysis.watertight, true);
+  const frontCount = mesh.positions.length / 2;
+  const frame = surfaceFrame(polygon[0], surface);
+  const thicknessVector = mesh.positions[0].map((coordinate, axis) => coordinate - mesh.positions[frontCount][axis]);
+  const normalDistance = thicknessVector.reduce((sum, coordinate, axis) => sum + coordinate * frame.normal[axis], 0);
+  const residual = thicknessVector.map((coordinate, axis) => coordinate - frame.normal[axis] * normalDistance);
+  assert.ok(Math.abs(normalDistance - thickness) < 1e-9);
+  assert.ok(Math.hypot(...residual) < 1e-9);
+});
+
+test('surface ribbons and normal-oriented cylinders conform to a compound host surface', () => {
+  const surface = {width: 2, height: 2.6, crownX: 0.28, crownY: 0.2, tiltX: -0.05};
+  const ribbon = createSurfaceRibbon({
+    polyline: [[0.1, 0.1], [0.9, 0.12], [0.88, 0.9], [0.12, 0.88]],
+    surface,
+    normalOffset: 0.06,
+    width: 0.05,
+    height: 0.04,
+    samplesPerSegment: 4,
+    closed: true,
+  });
+  assert.equal(ribbon.analysis.watertight, true);
+  assert.ok(ribbon.analysis.vertexCount >= 64);
+  const frame = surfaceFrame([0.75, 0.55], {...surface, normalOffset: 0.08});
+  const fastener = createCylinder({center: frame.point, axis: frame.normal, radius: 0.08, height: 0.07, segments: 24});
+  assert.equal(fastener.analysis.watertight, true);
+  const axisVector = fastener.positions[1].map((coordinate, axis) => coordinate - fastener.positions[0][axis]);
+  const alignment = axisVector.reduce((sum, coordinate, axis) => sum + coordinate * frame.normal[axis], 0);
+  assert.ok(Math.abs(alignment - 0.07) < 1e-9);
+
+  const profiled = createSurfaceRibbon({
+    polyline: [[0.25, 0.3], [0.75, 0.68]],
+    surface,
+    normalOffset: 0.006,
+    width: 0.02,
+    height: 0.032,
+    samplesPerSegment: 1,
+    profile: 'beveled',
+  });
+  assert.equal(profiled.analysis.vertexCount, 16);
+  assert.equal(profiled.analysis.triangleCount, 28);
+  assert.equal(profiled.analysis.watertight, true);
+});
+
+test('projection-anchored guided surfaces preserve reference coordinates while realizing depth', () => {
+  const polygon = [[0.2, 0.15], [0.82, 0.18], [0.78, 0.88], [0.24, 0.84]];
+  const guidedSurface = {
+    model: 'projection-anchored-guided',
+    bounds: {min: [0.2, 0.15], max: [0.82, 0.88]},
+    projection: {yawDegrees: 6, pitchDegrees: -3, cameraDistance: 6.2, observedHeight: 2.72, referenceYDown: true},
+    crossSections: [
+      {v: -1, profile: [{u: -1, z: 0}, {u: 0, z: 0.08}, {u: 1, z: 0}]},
+      {v: 0, profile: [{u: -1, z: -0.01}, {u: 0, z: 0.3}, {u: 1, z: 0.01}]},
+      {v: 1, profile: [{u: -1, z: 0}, {u: 0, z: 0.1}, {u: 1, z: 0}]},
+    ],
+    longitudinalGuide: [{v: -1, z: -0.01}, {v: 1, z: 0.01}],
+  };
+  const mesh = createCurvedPlate({polygon, guidedSurface, thickness: 0.09, subdivisions: 3});
+  assert.equal(mesh.analysis.watertight, true);
+  const cameraDistance = guidedSurface.projection.cameraDistance;
+  const point = mesh.positions[0];
+  const rayScale = -cameraDistance / (point[2] - cameraDistance);
+  const target = [point[0] * rayScale, point[1] * rayScale];
+  const boundsHeight = guidedSurface.bounds.max[1] - guidedSurface.bounds.min[1];
+  const boundsCenter = guidedSurface.bounds.min.map((minimum, axis) => (minimum + guidedSurface.bounds.max[axis]) / 2);
+  const recovered = [
+    boundsCenter[0] + target[0] / guidedSurface.projection.observedHeight * boundsHeight,
+    boundsCenter[1] - target[1] / guidedSurface.projection.observedHeight * boundsHeight,
+  ];
+  assert.ok(Math.hypot(recovered[0] - polygon[0][0], recovered[1] - polygon[0][1]) < 1e-10);
+  assert.ok(mesh.analysis.bounds.max[2] - mesh.analysis.bounds.min[2] > 0.2);
 });
 
 test('surface network realizes exactly one physical boundary per shared adjacency', () => {
