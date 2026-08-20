@@ -1,0 +1,18 @@
+{
+  "parentFrameId": "whole-frame",
+  "childFrameId": "part-frame",
+  "parentSourceSha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "childSourceSha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "model": "projective-homography",
+  "correspondences": [
+    {"id": "top-left", "parent": [0.2, 0.2], "child": [0.05, 0.05], "evidenceRefs": ["evidence/registration.png"]},
+    {"id": "top-right", "parent": [0.8, 0.2], "child": [0.95, 0.05], "evidenceRefs": ["evidence/registration.png"]},
+    {"id": "bottom-right", "parent": [0.8, 0.8], "child": [0.95, 0.95], "evidenceRefs": ["evidence/registration.png"]},
+    {"id": "bottom-left", "parent": [0.2, 0.8], "child": [0.05, 0.95], "evidenceRefs": ["evidence/registration.png"]}
+  ],
+  "attestation": {
+    "attested": true,
+    "evidenceRefs": ["evidence/registration.png"]
+  },
+  "ambiguities": ["Registration constrains placement, not unseen child shape."]
+}

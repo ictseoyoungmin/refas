@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/finding.schema.json",
+  "title": "RefAs normalized visual finding",
+  "type": "object",
+  "required": ["schema", "category", "severity", "scopeId", "summary", "evidenceRefs", "ownerCapability", "introducedByEdit", "routable", "blocking", "evidenceSufficient"],
+  "properties": {
+    "schema": {"const": "refas.finding/v1"},
+    "category": {"type": "string", "minLength": 1},
+    "severity": {"type": "string", "minLength": 1},
+    "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "summary": {"type": "string", "minLength": 1},
+    "evidenceRefs": {"type": "array", "items": {"type": "string"}},
+    "ownerCapability": {"anyOf": [{"type": "string"}, {"type": "null"}]},
+    "introducedByEdit": {"type": "boolean"},
+    "routable": {"type": "boolean"},
+    "blocking": {"type": "boolean"},
+    "evidenceSufficient": {"type": "boolean"}
+  },
+  "additionalProperties": false
+}

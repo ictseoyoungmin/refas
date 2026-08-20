@@ -1,0 +1,12 @@
+{
+  "checkpointId": "cp_replace_with_checkpoint_id",
+  "evidenceRefs": ["renders/multiview-review-board.png"],
+  "utilityScore": 0,
+  "hardFailures": [],
+  "protectedRegressions": [],
+  "visualReview": "complete",
+  "closureGates": {
+    "local-objective": true
+  },
+  "metrics": {}
+}

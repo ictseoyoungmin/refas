@@ -1,0 +1,28 @@
+{
+  "name": "refas",
+  "version": "1.0.0",
+  "description": "Vision-first, evidence-bound reference image to 3D reconstruction for AI agents",
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "bin": {
+    "refas": "skills/refas/scripts/refas.mjs"
+  },
+  "exports": {
+    ".": "./skills/refas/scripts/lib/index.mjs"
+  },
+  "files": [
+    "skills/refas",
+    "schemas",
+    "requirements.txt"
+  ],
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "test:python": "python3 -c \"import pathlib; [compile(pathlib.Path(p).read_text(encoding='utf-8'), p, 'exec') for p in ['skills/refas/scripts/evidence.py','skills/refas/scripts/render_glb.py','skills/refas/scripts/source_manifest.py']]\"",
+    "check": "node tools/check-repository.mjs",
+    "dogfood": "node examples/wing-cover/run.mjs",
+    "release:audit": "node tools/release-audit.mjs"
+  }
+}

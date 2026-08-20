@@ -1,0 +1,47 @@
+{
+  "scopeId": "whole",
+  "sourceSha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "selectedId": null,
+  "attestation": {
+    "attested": true,
+    "evidenceRefs": ["evidence/whole/evidence-board.png"]
+  },
+  "hypotheses": [
+    {
+      "id": "shallow-form",
+      "description": "A shallow form under a near-orthographic camera.",
+      "camera": {"projection": "orthographic"},
+      "hiddenForm": "least-committed shallow support",
+      "predictions": {
+        "silhouette": "Describe the predicted contour.",
+        "occlusion": "Describe the predicted depth order.",
+        "sideView": "Describe the diagnostic side view.",
+        "topView": "Describe the diagnostic top view.",
+        "grazing": "Describe the predicted grazing highlight."
+      },
+      "falsifiers": ["Name an observation or render that would disprove this hypothesis."],
+      "evidenceRefs": ["evidence/whole/evidence-board.png"],
+      "evidenceCoverage": 0.7,
+      "assumptionCost": 0.2,
+      "status": "plausible"
+    },
+    {
+      "id": "deep-form",
+      "description": "A deeper form under a perspective camera.",
+      "camera": {"projection": "perspective"},
+      "hiddenForm": "least-committed deep support",
+      "predictions": {
+        "silhouette": "Describe the competing contour.",
+        "occlusion": "Describe the competing depth order.",
+        "sideView": "Describe the diagnostic side view.",
+        "topView": "Describe the diagnostic top view.",
+        "grazing": "Describe the competing grazing highlight."
+      },
+      "falsifiers": ["Name an observation or render that would disprove this hypothesis."],
+      "evidenceRefs": ["evidence/whole/evidence-board.png"],
+      "evidenceCoverage": 0.6,
+      "assumptionCost": 0.35,
+      "status": "plausible"
+    }
+  ]
+}

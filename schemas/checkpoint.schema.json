@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/checkpoint.schema.json",
+  "title": "RefAs immutable checkpoint",
+  "type": "object",
+  "required": ["schema", "parentId", "capability", "scopeId", "reason", "artifactRefs", "claims", "gates", "metadata", "transactionId", "id", "createdAt", "contentDigest"],
+  "properties": {
+    "schema": {"const": "refas.checkpoint/v1"},
+    "parentId": {"anyOf": [{"type": "string", "pattern": "^cp_[a-f0-9]{20}$"}, {"type": "null"}]},
+    "capability": {"enum": ["source-intake", "visual-hierarchy", "visual-observation", "spatial-hypotheses", "shape-reconstruction", "surface-topology", "assembly", "appearance", "rendering", "visual-critique", "whole-object-certification"]},
+    "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "reason": {"type": "string", "minLength": 1},
+    "artifactRefs": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/artifactRef"}},
+    "claims": {"type": "array", "items": {"type": "string"}},
+    "gates": {"type": "array", "minItems": 1, "items": {"$ref": "common.schema.json#/$defs/gate"}},
+    "metadata": {"type": "object"},
+    "transactionId": {"anyOf": [{"type": "string"}, {"type": "null"}]},
+    "id": {"type": "string", "pattern": "^cp_[a-f0-9]{20}$"},
+    "createdAt": {"type": "string", "format": "date-time"},
+    "contentDigest": {"$ref": "common.schema.json#/$defs/digest"}
+  },
+  "additionalProperties": false
+}

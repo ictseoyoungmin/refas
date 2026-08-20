@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/project-state.schema.json",
+  "title": "RefAs project recovery state",
+  "type": "object",
+  "required": ["schema", "version", "projectId", "source", "head", "status", "activeScopeId", "activeTransaction", "reopenedCapability", "invalidatedCapabilities", "checkpointIds", "certification", "journal"],
+  "properties": {
+    "schema": {"const": "refas.project-state/v1"},
+    "version": {"const": "1.0.0"},
+    "projectId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "source": {"anyOf": [{"$ref": "source-manifest.schema.json"}, {"type": "null"}]},
+    "head": {"anyOf": [{"type": "string", "pattern": "^cp_[a-f0-9]{20}$"}, {"type": "null"}]},
+    "status": {"type": "string"},
+    "activeScopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "activeTransaction": {"anyOf": [{"type": "object"}, {"type": "null"}]},
+    "reopenedCapability": {"anyOf": [{"type": "string"}, {"type": "null"}]},
+    "invalidatedCapabilities": {"type": "array", "items": {"type": "string"}},
+    "checkpointIds": {"type": "array", "items": {"type": "string", "pattern": "^cp_[a-f0-9]{20}$"}},
+    "certification": {"anyOf": [{"type": "object"}, {"type": "null"}]},
+    "journal": {"type": "array", "items": {"type": "object"}}
+  },
+  "additionalProperties": false
+}

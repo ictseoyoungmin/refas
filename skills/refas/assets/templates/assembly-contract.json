@@ -1,0 +1,24 @@
+{
+  "scopeId": "whole",
+  "sourceSha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "parts": [
+    {"id": "parent-shell", "scopeId": "whole", "observedPolygon": [[0.1, 0.1], [0.9, 0.1], [0.9, 0.9], [0.1, 0.9]], "rootAnchor": [0.5, 0.5], "depthBand": [0.1, 0.3], "evidenceRefs": ["evidence/reference.png"]},
+    {"id": "child-part", "scopeId": "whole.child-part", "observedPolygon": [[0.4, 0.4], [0.6, 0.4], [0.6, 0.6], [0.4, 0.6]], "rootAnchor": [0.5, 0.5], "depthBand": [0.31, 0.5], "evidenceRefs": ["evidence/reference.png"]}
+  ],
+  "relations": [
+    {"kind": "attached-to", "subjectId": "child-part", "objectId": "parent-shell", "evidenceRefs": ["evidence/reference.png"]},
+    {"kind": "in-front-of", "subjectId": "child-part", "objectId": "parent-shell", "evidenceRefs": ["evidence/reference.png"]}
+  ],
+  "supportZones": [
+    {"id": "center-support", "polygon": [[0.35, 0.35], [0.65, 0.35], [0.65, 0.65], [0.35, 0.65]], "evidenceRefs": ["evidence/reference.png"]}
+  ],
+  "supportHypotheses": [
+    {"partId": "child-part", "ownerId": "parent-shell", "zoneId": "center-support", "status": "bounded-hypothesis", "evidenceRefs": ["evidence/reference.png"]}
+  ],
+  "closedChildren": [],
+  "attestation": {
+    "attested": true,
+    "evidenceRefs": ["evidence/reference.png"]
+  },
+  "ambiguities": ["The hidden support remains a bounded hypothesis."]
+}

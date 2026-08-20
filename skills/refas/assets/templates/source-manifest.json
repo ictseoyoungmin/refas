@@ -1,0 +1,15 @@
+{
+  "schema": "refas.source-manifest/v1",
+  "id": "primary-reference",
+  "path": "source/reference.png",
+  "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "sizeBytes": 1,
+  "width": 1024,
+  "height": 1024,
+  "authority": "primary",
+  "acquisition": {
+    "kind": "user-provided",
+    "capturedAt": null,
+    "camera": null
+  }
+}

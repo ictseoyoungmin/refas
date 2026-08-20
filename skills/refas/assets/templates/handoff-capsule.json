@@ -1,0 +1,11 @@
+{
+  "schema": "refas.handoff-capsule/v1",
+  "scopeId": "whole",
+  "closedCapability": "source-intake",
+  "checkpointId": "cp_replace_with_checkpoint_id",
+  "acceptedClaims": [],
+  "openAmbiguities": [],
+  "currentEvidenceRefs": [],
+  "nextCapability": "visual-hierarchy",
+  "nextSafeAction": "Resume from the named checkpoint and load only the next capability reference."
+}

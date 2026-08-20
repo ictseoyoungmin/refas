@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/reference-registration.schema.json",
+  "title": "RefAs reference registration",
+  "type": "object",
+  "required": ["schema", "parentFrameId", "childFrameId", "parentSourceSha256", "childSourceSha256", "model", "correspondences", "homographyParentToChild", "homographyChildToParent", "residuals", "metrics", "attestation", "ambiguities", "policy", "registrationDigest"],
+  "properties": {
+    "schema": {"const": "refas.reference-registration/v1"},
+    "parentFrameId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "childFrameId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "parentSourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "childSourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "model": {"enum": ["affine", "projective-homography"]},
+    "correspondences": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "type": "object",
+        "required": ["id", "parent", "child", "evidenceRefs"],
+        "properties": {
+          "id": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "parent": {"$ref": "common.schema.json#/$defs/point2"},
+          "child": {"$ref": "common.schema.json#/$defs/point2"},
+          "evidenceRefs": {"$ref": "common.schema.json#/$defs/evidenceRefs"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "homographyParentToChild": {"type": "array", "minItems": 9, "maxItems": 9, "items": {"type": "number"}},
+    "homographyChildToParent": {"type": "array", "minItems": 9, "maxItems": 9, "items": {"type": "number"}},
+    "residuals": {"type": "array"},
+    "metrics": {"type": "object", "required": ["correspondenceCount", "rmse", "maxError", "maxRoundTripError", "normalEquationPivotRatio"]},
+    "attestation": {"type": "object", "required": ["evidenceRefs", "digest"]},
+    "ambiguities": {"type": "array", "items": {"type": "string"}},
+    "policy": {"type": "object"},
+    "registrationDigest": {"$ref": "common.schema.json#/$defs/digest"}
+  },
+  "additionalProperties": false
+}

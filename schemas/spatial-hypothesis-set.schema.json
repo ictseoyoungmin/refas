@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/spatial-hypothesis-set.schema.json",
+  "title": "RefAs spatial hypothesis set",
+  "type": "object",
+  "required": ["schema", "scopeId", "sourceSha256", "hypotheses", "ranking", "selectedId", "attestation", "policy", "hypothesisSetDigest"],
+  "properties": {
+    "schema": {"const": "refas.spatial-hypothesis-set/v1"},
+    "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "hypotheses": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "required": ["id", "description", "camera", "hiddenForm", "predictions", "falsifiers", "evidenceRefs", "evidenceCoverage", "assumptionCost", "rankScore", "status"],
+        "properties": {
+          "id": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "description": {"type": "string", "minLength": 1},
+          "camera": {"type": "object"},
+          "hiddenForm": {"type": "string"},
+          "predictions": {
+            "type": "object",
+            "required": ["silhouette", "occlusion", "sideView", "topView", "grazing"],
+            "properties": {
+              "silhouette": {"type": "string", "minLength": 1},
+              "occlusion": {"type": "string", "minLength": 1},
+              "sideView": {"type": "string", "minLength": 1},
+              "topView": {"type": "string", "minLength": 1},
+              "grazing": {"type": "string", "minLength": 1}
+            },
+            "additionalProperties": false
+          },
+          "falsifiers": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+          "evidenceRefs": {"$ref": "common.schema.json#/$defs/evidenceRefs"},
+          "evidenceCoverage": {"type": "number", "minimum": 0},
+          "assumptionCost": {"type": "number", "minimum": 0},
+          "rankScore": {"type": "number"},
+          "status": {"type": "string"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "ranking": {"type": "array", "minItems": 2, "items": {"$ref": "common.schema.json#/$defs/semanticId"}},
+    "selectedId": {"anyOf": [{"$ref": "common.schema.json#/$defs/semanticId"}, {"type": "null"}]},
+    "attestation": {"type": "object", "required": ["evidenceRefs", "digest"]},
+    "policy": {"type": "object"},
+    "hypothesisSetDigest": {"$ref": "common.schema.json#/$defs/digest"}
+  },
+  "additionalProperties": false
+}

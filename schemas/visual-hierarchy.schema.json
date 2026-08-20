@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/visual-hierarchy.schema.json",
+  "title": "RefAs visual hierarchy",
+  "type": "object",
+  "required": ["schema", "source", "rootId", "nodes", "hierarchyDigest"],
+  "properties": {
+    "schema": {"const": "refas.visual-hierarchy/v1"},
+    "source": {
+      "type": "object",
+      "required": ["path", "sha256", "width", "height"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "sha256": {"$ref": "common.schema.json#/$defs/digest"},
+        "width": {"type": "integer", "minimum": 1},
+        "height": {"type": "integer", "minimum": 1}
+      },
+      "additionalProperties": false
+    },
+    "rootId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "nodes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "level", "parentId", "roi", "contextPadding", "status"],
+        "properties": {
+          "id": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "label": {"type": "string"},
+          "level": {"enum": ["whole", "region", "part", "subpart", "feature"]},
+          "parentId": {"anyOf": [{"$ref": "common.schema.json#/$defs/semanticId"}, {"type": "null"}]},
+          "roi": {"$ref": "common.schema.json#/$defs/roi"},
+          "contextPadding": {"type": "number", "minimum": 0, "maximum": 0.5},
+          "status": {"type": "string"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "hierarchyDigest": {"$ref": "common.schema.json#/$defs/digest"}
+  },
+  "additionalProperties": false
+}

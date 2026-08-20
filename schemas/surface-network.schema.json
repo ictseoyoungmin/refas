@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/surface-network.schema.json",
+  "title": "RefAs observed surface network",
+  "type": "object",
+  "required": ["schema", "scopeId", "sourceSha256", "cells", "adjacencies", "attestation", "ambiguities", "policy", "networkDigest"],
+  "properties": {
+    "schema": {"const": "refas.surface-network/v1"},
+    "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "cells": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "polygon", "polygonDigest", "evidenceRefs"],
+        "properties": {
+          "id": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "label": {"type": "string"},
+          "polygon": {"type": "array", "minItems": 3, "items": {"$ref": "common.schema.json#/$defs/point2"}},
+          "polygonDigest": {"$ref": "common.schema.json#/$defs/digest"},
+          "evidenceRefs": {"$ref": "common.schema.json#/$defs/evidenceRefs"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "adjacencies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "a", "b", "polyline", "evidenceRefs"],
+        "properties": {
+          "id": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "a": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "b": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "polyline": {"type": "array", "minItems": 2, "items": {"$ref": "common.schema.json#/$defs/point2"}},
+          "evidenceRefs": {"$ref": "common.schema.json#/$defs/evidenceRefs"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "attestation": {"type": "object", "required": ["evidenceRefs", "digest"]},
+    "ambiguities": {"type": "array", "items": {"type": "string"}},
+    "policy": {"type": "object"},
+    "networkDigest": {"$ref": "common.schema.json#/$defs/digest"}
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,14 @@
+interface:
+  display_name: RefAs
+  short_description: Vision-first reference-to-3D reconstruction
+  default_prompt: Use $refas to reconstruct a reference image as a validated 3D asset
+    with hierarchical observation and multiview QA.
+  icon_small: assets/icon.svg
+  icon_large: assets/icon.svg
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true

@@ -1,0 +1,24 @@
+{
+  "hierarchyDigest": "0000000000000000000000000000000000000000000000000000000000000000",
+  "nodeId": "whole",
+  "evidence": [
+    {
+      "id": "whole.raw-reference",
+      "kind": "primary",
+      "path": "source/reference.png",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "sourceSha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "primary": true,
+      "recipeDigest": null
+    }
+  ],
+  "facts": [
+    {
+      "claim": "Describe one directly visible fact without inventing geometry.",
+      "evidenceIds": ["whole.raw-reference"]
+    }
+  ],
+  "interpretations": [],
+  "hypotheses": [],
+  "ambiguities": ["Record what the visible evidence cannot decide."]
+}

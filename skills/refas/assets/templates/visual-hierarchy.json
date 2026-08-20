@@ -1,0 +1,28 @@
+{
+  "source": {
+    "path": "source/reference.png",
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "width": 1024,
+    "height": 1024
+  },
+  "nodes": [
+    {
+      "id": "whole",
+      "label": "Whole object",
+      "level": "whole",
+      "parentId": null,
+      "roi": [0, 0, 1, 1],
+      "contextPadding": 0,
+      "status": "unobserved"
+    },
+    {
+      "id": "primary-region",
+      "label": "Primary region",
+      "level": "region",
+      "parentId": "whole",
+      "roi": [0.15, 0.15, 0.7, 0.7],
+      "contextPadding": 0.08,
+      "status": "unobserved"
+    }
+  ]
+}

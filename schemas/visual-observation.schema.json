@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/visual-observation.schema.json",
+  "title": "RefAs visual observation",
+  "type": "object",
+  "required": ["schema", "hierarchyDigest", "nodeId", "ancestry", "evidence", "facts", "interpretations", "hypotheses", "ambiguities", "policy", "observationDigest"],
+  "properties": {
+    "schema": {"const": "refas.visual-observation/v1"},
+    "hierarchyDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "nodeId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "ancestry": {"type": "array", "minItems": 1, "items": {"$ref": "common.schema.json#/$defs/semanticId"}},
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "kind", "sha256", "primary", "sourceSha256", "recipeDigest", "path"],
+        "properties": {
+          "id": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "kind": {"type": "string"},
+          "sha256": {"$ref": "common.schema.json#/$defs/digest"},
+          "primary": {"type": "boolean"},
+          "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
+          "recipeDigest": {"anyOf": [{"$ref": "common.schema.json#/$defs/digest"}, {"type": "null"}]},
+          "path": {"anyOf": [{"type": "string"}, {"type": "null"}]}
+        },
+        "additionalProperties": false
+      }
+    },
+    "facts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["claim", "evidenceIds"],
+        "properties": {"claim": {"type": "string", "minLength": 1}, "evidenceIds": {"type": "array", "minItems": 1, "items": {"type": "string"}}},
+        "additionalProperties": false
+      }
+    },
+    "interpretations": {"type": "array", "items": {"type": "string"}},
+    "hypotheses": {"type": "array", "items": {"type": "string"}},
+    "ambiguities": {"type": "array", "items": {"type": "string"}},
+    "policy": {"type": "object"},
+    "observationDigest": {"$ref": "common.schema.json#/$defs/digest"}
+  },
+  "additionalProperties": false
+}

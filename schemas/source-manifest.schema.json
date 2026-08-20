@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/source-manifest.schema.json",
+  "title": "RefAs primary source manifest",
+  "type": "object",
+  "required": ["schema", "id", "path", "sha256", "sizeBytes", "width", "height", "authority", "acquisition"],
+  "properties": {
+    "schema": {"const": "refas.source-manifest/v1"},
+    "id": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "path": {"$ref": "common.schema.json#/$defs/relativePath"},
+    "sha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "sizeBytes": {"type": "integer", "minimum": 1},
+    "width": {"type": "integer", "minimum": 1},
+    "height": {"type": "integer", "minimum": 1},
+    "authority": {"const": "primary"},
+    "acquisition": {"type": "object"}
+  },
+  "additionalProperties": false
+}

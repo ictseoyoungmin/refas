@@ -1,0 +1,9 @@
+{
+  "category": "silhouette-mismatch",
+  "severity": "major",
+  "scopeId": "whole",
+  "summary": "Describe the localized visible mismatch.",
+  "evidenceRefs": ["renders/hero.png"],
+  "introducedByEdit": false,
+  "ownerCapability": null
+}

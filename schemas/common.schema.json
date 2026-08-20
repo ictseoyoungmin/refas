@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/common.schema.json",
+  "title": "RefAs common definitions",
+  "$defs": {
+    "digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "semanticId": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$"},
+    "relativePath": {"type": "string", "minLength": 1, "not": {"pattern": "^(?:/|[A-Za-z]:|.*(?:^|/)\\.\\.(?:/|$))"}},
+    "point2": {
+      "type": "array",
+      "prefixItems": [{"type": "number", "minimum": 0, "maximum": 1}, {"type": "number", "minimum": 0, "maximum": 1}],
+      "items": false
+    },
+    "roi": {
+      "type": "array",
+      "prefixItems": [
+        {"type": "number", "minimum": 0, "maximum": 1},
+        {"type": "number", "minimum": 0, "maximum": 1},
+        {"type": "number", "exclusiveMinimum": 0, "maximum": 1},
+        {"type": "number", "exclusiveMinimum": 0, "maximum": 1}
+      ],
+      "items": false
+    },
+    "evidenceRefs": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+    "artifactRef": {
+      "type": "object",
+      "required": ["kind", "path", "sha256", "sizeBytes"],
+      "properties": {
+        "kind": {"type": "string", "minLength": 1},
+        "path": {"$ref": "#/$defs/relativePath"},
+        "sha256": {"$ref": "#/$defs/digest"},
+        "sizeBytes": {"type": "integer", "minimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "gate": {
+      "type": "object",
+      "required": ["id", "status", "evidenceRefs"],
+      "properties": {
+        "id": {"$ref": "#/$defs/semanticId"},
+        "status": {"enum": ["pass", "fail", "pending", "blocked"]},
+        "evidenceRefs": {"type": "array", "items": {"type": "string"}}
+      },
+      "additionalProperties": false
+    }
+  }
+}
