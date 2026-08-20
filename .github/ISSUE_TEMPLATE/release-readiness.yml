@@ -1,0 +1,74 @@
+name: Release readiness
+description: Track evidence and certification for one exact RefAs version.
+title: "[Release] "
+labels: ["type: release", "capability: whole-object-certification", "workflow: needs-evidence"]
+body:
+  - type: input
+    id: target_version
+    attributes:
+      label: Target version and milestone
+      placeholder: 1.1.0 — link the matching GitHub milestone
+    validations:
+      required: true
+
+  - type: input
+    id: candidate_head
+    attributes:
+      label: Candidate commit and certificate checkpoint
+      placeholder: Git commit SHA and cp_ identifier
+    validations:
+      required: true
+
+  - type: textarea
+    id: included_work
+    attributes:
+      label: Included Issues and Pull Requests
+      description: Link every included change and its semantic-version effect.
+    validations:
+      required: true
+
+  - type: textarea
+    id: migrations
+    attributes:
+      label: Public contract and migration summary
+      description: State schema, CLI, ownership, and checkpoint compatibility.
+    validations:
+      required: true
+
+  - type: textarea
+    id: verification
+    attributes:
+      label: Verification results
+      description: Include CI URLs, tests, repository audit, dogfood, package audit, skill validation, and extracted-package verification.
+    validations:
+      required: true
+
+  - type: textarea
+    id: visual_evidence
+    attributes:
+      label: Whole-object visual evidence
+      description: Link raw references, actual final renders, multiview boards, and unresolved nonblocking findings.
+    validations:
+      required: true
+
+  - type: textarea
+    id: rollback
+    attributes:
+      label: Publication and rollback plan
+      description: Name the release artifact digests, previous trustworthy release, and recovery path.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: release_gates
+    attributes:
+      label: Release gates
+      options:
+        - label: Every included Issue has one merged primary Pull Request or an explicit documentation-only resolution.
+          required: true
+        - label: Current CI, complete dogfood, package audit, skill validation, changelog, and certificate all pass.
+          required: true
+        - label: Deferred findings remain open in an explicit later milestone.
+          required: true
+        - label: No aggregate score overrides a visible regression or missing evidence.
+          required: true

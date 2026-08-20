@@ -4,8 +4,11 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 
+import {readLabelCatalog, validateLabelCatalog} from '../.github/scripts/sync-labels.mjs';
+import {CAPABILITY_ORDER, FINDING_OWNERS} from '../skills/refas/scripts/lib/ownership.mjs';
+
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const PRODUCT_ROOTS = ['README.md', 'CONTRIBUTING.md', 'SECURITY.md', 'docs', 'schemas', 'skills/refas'];
+const PRODUCT_ROOTS = ['AGENTS.md', 'README.md', 'CONTRIBUTING.md', 'SECURITY.md', '.github', 'docs', 'schemas', 'skills/refas'];
 const TEXT_EXTENSIONS = new Set(['.md', '.json', '.mjs', '.py', '.yaml', '.yml', '.svg']);
 const FORBIDDEN = [
   {label: 'workflow methodology name', pattern: new RegExp(['bottle', 'neck'].join(''), 'iu')},
@@ -35,10 +38,15 @@ function getSchemaConst(schema) {
 
 async function main() {
   const required = [
-    'LICENSE', 'README.md', 'CONTRIBUTING.md', 'SECURITY.md', 'package.json', 'requirements.txt', '.github/workflows/ci.yml',
+    'AGENTS.md', 'LICENSE', 'README.md', 'CONTRIBUTING.md', 'SECURITY.md', 'package.json', 'requirements.txt',
+    '.github/labels.json', '.github/pull_request_template.md', '.github/scripts/sync-labels.mjs',
+    '.github/ISSUE_TEMPLATE/config.yml', '.github/ISSUE_TEMPLATE/visual-finding.yml',
+    '.github/ISSUE_TEMPLATE/defect.yml', '.github/ISSUE_TEMPLATE/capability-change.yml',
+    '.github/ISSUE_TEMPLATE/release-readiness.yml', '.github/ISSUE_TEMPLATE/documentation-governance.yml',
+    '.github/workflows/ci.yml', '.github/workflows/sync-labels.yml', 'docs/github-governance.md',
     'skills/refas/SKILL.md', 'skills/refas/scripts/refas.mjs', 'skills/refas/scripts/lib/index.mjs',
     'schemas/source-manifest.schema.json', 'schemas/checkpoint.schema.json', 'schemas/whole-object-certificate.schema.json',
-    'tests/contracts.test.mjs', 'tests/cli.test.mjs', 'examples/wing-cover/run.mjs',
+    'tests/contracts.test.mjs', 'tests/cli.test.mjs', 'tests/governance.test.mjs', 'examples/wing-cover/run.mjs',
   ];
   const missing = [];
   for (const file of required) {
@@ -84,13 +92,52 @@ async function main() {
   const templateFiles = (await walk('skills/refas/assets/templates')).filter((file) => file.endsWith('.json'));
   for (const relative of templateFiles) JSON.parse(await fs.readFile(path.join(ROOT, relative), 'utf8'));
 
+  const labelCatalog = await readLabelCatalog();
+  const governanceSummary = validateLabelCatalog(labelCatalog);
+  const managedLabels = new Set(labelCatalog.map((label) => label.name));
+  const issueForms = [
+    '.github/ISSUE_TEMPLATE/visual-finding.yml',
+    '.github/ISSUE_TEMPLATE/defect.yml',
+    '.github/ISSUE_TEMPLATE/capability-change.yml',
+    '.github/ISSUE_TEMPLATE/release-readiness.yml',
+    '.github/ISSUE_TEMPLATE/documentation-governance.yml',
+  ];
+  for (const relative of issueForms) {
+    const contents = await fs.readFile(path.join(ROOT, relative), 'utf8');
+    const match = contents.match(/^labels:\s*(\[[^\n]+\])$/mu);
+    assert.ok(match, `${relative}: inline default labels missing`);
+    for (const label of JSON.parse(match[1])) assert.ok(managedLabels.has(label), `${relative}: unmanaged default label ${label}`);
+    assert.match(contents, /^body:\s*$/mu, `${relative}: issue form body missing`);
+    assert.match(contents, /workflow: needs-evidence/u, `${relative}: intake must begin with needs-evidence`);
+  }
+  const visualFindingForm = await fs.readFile(path.join(ROOT, '.github/ISSUE_TEMPLATE/visual-finding.yml'), 'utf8');
+  for (const capability of CAPABILITY_ORDER) assert.ok(visualFindingForm.includes(`        - ${capability}\n`), `visual finding form missing capability ${capability}`);
+  for (const finding of Object.keys(FINDING_OWNERS)) assert.ok(visualFindingForm.includes(`        - ${finding}\n`), `visual finding form missing category ${finding}`);
+
+  const pullRequestTemplate = await fs.readFile(path.join(ROOT, '.github/pull_request_template.md'), 'utf8');
+  assert.equal((pullRequestTemplate.match(/Closes #/gu) ?? []).length, 1, 'PR template must close exactly one primary Issue');
+  for (const marker of ['Owner capability', 'Semantic scope ID', 'Recovery and Invalidation', 'Reopen Conditions']) {
+    assert.ok(pullRequestTemplate.includes(marker), `PR template missing ${marker}`);
+  }
+  const labelWorkflow = await fs.readFile(path.join(ROOT, '.github/workflows/sync-labels.yml'), 'utf8');
+  assert.match(labelWorkflow, /^\s*issues:\s*write\s*$/mu, 'label sync must declare issues write permission');
+  assert.doesNotMatch(labelWorkflow, /^\s*pull_request:\s*$/mu, 'label sync must not run with write permission on pull requests');
+
   const allFiles = await walk('.');
   const transient = allFiles.filter((file) => /(?:^|\/)(?:__pycache__|node_modules|\.refas|dist|release)(?:\/|$)|\.pyc$|\.zip$/u.test(file) && !file.startsWith('.git/'));
   if (transient.length) throw new Error(`transient files present: ${transient.join(', ')}`);
   const duplicateRuntime = allFiles.filter((file) => /(?:^|\/)src\/.*\.(?:mjs|js|ts)$/u.test(file));
   if (duplicateRuntime.length) throw new Error(`runtime exists outside the distributable skill: ${duplicateRuntime.join(', ')}`);
 
-  process.stdout.write(`${JSON.stringify({status: 'PASS', version: packageJson.version, productFiles: productFiles.length, publicSchemas: schemaContracts.size, templates: templateFiles.length}, null, 2)}\n`);
+  process.stdout.write(`${JSON.stringify({
+    status: 'PASS',
+    version: packageJson.version,
+    productFiles: productFiles.length,
+    publicSchemas: schemaContracts.size,
+    templates: templateFiles.length,
+    managedLabels: governanceSummary.labels,
+    issueForms: issueForms.length,
+  }, null, 2)}\n`);
 }
 
 main().catch((error) => {

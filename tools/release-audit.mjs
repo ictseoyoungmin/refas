@@ -24,7 +24,7 @@ function run(command, args) {
 
 async function main() {
   run(process.execPath, ['tools/check-repository.mjs']);
-  run(process.execPath, ['--test', 'tests/assembly-and-routing.test.mjs', 'tests/checkpoints.test.mjs', 'tests/cli.test.mjs', 'tests/contracts.test.mjs', 'tests/geometry.test.mjs']);
+  run(process.execPath, ['--test', 'tests/assembly-and-routing.test.mjs', 'tests/checkpoints.test.mjs', 'tests/cli.test.mjs', 'tests/contracts.test.mjs', 'tests/geometry.test.mjs', 'tests/governance.test.mjs']);
   const python = process.env.CODEX_PRIMARY_RUNTIME_PYTHON || 'python3';
   const sources = ['skills/refas/scripts/evidence.py', 'skills/refas/scripts/render_glb.py', 'skills/refas/scripts/source_manifest.py'];
   const compileProgram = 'import pathlib,sys; [compile(pathlib.Path(p).read_text(encoding="utf-8"), p, "exec") for p in sys.argv[1:]]';

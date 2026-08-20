@@ -1,0 +1,104 @@
+name: Capability change proposal
+description: Propose an additive or breaking change to one semantic RefAs capability.
+title: "[Capability change] "
+labels: ["type: capability-change", "workflow: needs-evidence"]
+body:
+  - type: dropdown
+    id: owner_capability
+    attributes:
+      label: Owning capability
+      options:
+        - source-intake
+        - visual-hierarchy
+        - visual-observation
+        - spatial-hypotheses
+        - shape-reconstruction
+        - surface-topology
+        - assembly
+        - appearance
+        - rendering
+        - visual-critique
+        - whole-object-certification
+    validations:
+      required: true
+
+  - type: input
+    id: scope_id
+    attributes:
+      label: Initial semantic scope
+      description: Use `reusable-runtime` for asset-agnostic contract work.
+      placeholder: reusable-runtime or project.asset.part
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Evidence-backed problem
+      description: Explain the missing capability using observed failures, not a preferred implementation.
+    validations:
+      required: true
+
+  - type: textarea
+    id: contract_change
+    attributes:
+      label: Proposed contract change
+      description: Identify public schemas, CLI behavior, ownership, or artifact semantics that would change.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Competing alternatives and falsifiers
+      description: Preserve meaningful alternatives and state what evidence would reject each one.
+    validations:
+      required: true
+
+  - type: textarea
+    id: invalidation
+    attributes:
+      label: Dependency and invalidation range
+      description: List affected capabilities and explain why unrelated upstream evidence remains valid.
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance, tests, and dogfood
+      description: Define objective checks, actual visual proof when applicable, protected regressions, and a reusable fixture.
+    validations:
+      required: true
+
+  - type: textarea
+    id: recovery
+    attributes:
+      label: Migration and rollback
+      description: State the baseline, migration path, safe rollback point, and retained evidence.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: release_effect
+    attributes:
+      label: Semantic-version effect
+      options:
+        - patch
+        - minor
+        - major
+        - unresolved
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: boundaries
+    attributes:
+      label: Product boundaries
+      options:
+        - label: Reusable logic remains asset-agnostic; object-specific coordinates and counts stay in fixtures or model specifications.
+          required: true
+        - label: This proposal does not create a second runtime implementation outside `skills/refas/`.
+          required: true
+        - label: The capability and scope can be closed as one recoverable work unit.
+          required: true

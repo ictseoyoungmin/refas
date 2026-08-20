@@ -1,0 +1,185 @@
+name: Visual finding
+description: Report a source-cited mismatch between a reference and an actual RefAs render.
+title: "[Visual finding] "
+labels: ["type: visual-finding", "workflow: needs-evidence"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Preserve whole-object context. Record direct observation separately from interpretation, and use a typed finding to select ownership. A score must not choose the owner or rollback point.
+
+  - type: input
+    id: summary
+    attributes:
+      label: Finding summary
+      description: State one visible mismatch without prescribing a fix.
+      placeholder: The center fastener floats above the cover in the left oblique render.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: finding_category
+    attributes:
+      label: Normalized finding category
+      description: Use the exact RefAs category. Maintainers apply the matching finding label after routing.
+      options:
+        - source-drift
+        - context-loss
+        - missing-part
+        - observation-unsupported
+        - evidence-insufficient
+        - perspective-mismatch
+        - depth-mismatch
+        - orientation-mismatch
+        - silhouette-mismatch
+        - mass-proportion-mismatch
+        - curvature-mismatch
+        - pattern-topology-mismatch
+        - relief-mismatch
+        - attachment-mismatch
+        - occlusion-mismatch
+        - penetration
+        - material-mismatch
+        - finish-mismatch
+        - camera-mismatch
+        - render-integrity
+        - unroutable-visual-finding
+        - closure-evidence-missing
+    validations:
+      required: true
+
+  - type: dropdown
+    id: owner_capability
+    attributes:
+      label: Expected owner capability
+      description: This must agree with the canonical finding-owner map before the Issue becomes ready.
+      options:
+        - source-intake
+        - visual-hierarchy
+        - visual-observation
+        - spatial-hypotheses
+        - shape-reconstruction
+        - surface-topology
+        - assembly
+        - appearance
+        - rendering
+        - visual-critique
+        - whole-object-certification
+        - Unresolved — maintainer routing required
+    validations:
+      required: true
+
+  - type: input
+    id: scope_id
+    attributes:
+      label: Semantic scope ID
+      description: Name the smallest hierarchy scope that contains the visible mismatch.
+      placeholder: wing-cover.fastener.center
+    validations:
+      required: true
+
+  - type: dropdown
+    id: hierarchy_level
+    attributes:
+      label: Hierarchy level
+      options:
+        - whole
+        - region
+        - part
+        - subpart
+        - feature
+    validations:
+      required: true
+
+  - type: textarea
+    id: direct_observation
+    attributes:
+      label: Direct observation
+      description: Describe only what is visible in the raw reference and actual render.
+      placeholder: Include view, location, contour, overlap, depth order, or appearance cues.
+    validations:
+      required: true
+
+  - type: textarea
+    id: inference
+    attributes:
+      label: Interpretation, hypotheses, and ambiguities
+      description: Separate inference from fact and retain plausible alternatives.
+      placeholder: State the leading interpretation, competitors, and what evidence would falsify each one.
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence_refs
+    attributes:
+      label: Evidence references
+      description: Link the raw source, full-context view, local crop, actual render, and split or overlay comparison. State missing evidence explicitly.
+      placeholder: |
+        - source SHA-256 and path or URL
+        - full-context reference
+        - context-preserving crop
+        - actual GLB render and camera record
+        - BEFORE / AFTER or reference / render comparison
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected_actual
+    attributes:
+      label: Expected and actual relationship
+      description: Describe the reference-supported expectation and the rendered result.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      description: Severity prioritizes work; it does not choose ownership or rollback.
+      options:
+        - blocker
+        - major
+        - minor
+        - polish
+    validations:
+      required: true
+
+  - type: dropdown
+    id: introduced_by_edit
+    attributes:
+      label: Introduced by the current bounded edit?
+      options:
+        - "yes"
+        - "no"
+        - unknown
+    validations:
+      required: true
+
+  - type: input
+    id: baseline_checkpoint
+    attributes:
+      label: Trustworthy baseline checkpoint
+      description: Provide the checkpoint ID when known; otherwise state why it is not yet available.
+      placeholder: cp_0123456789abcdefabcd or unavailable pending routing
+
+  - type: textarea
+    id: protected_regressions
+    attributes:
+      label: Protected regressions and acceptance
+      description: State what must not regress and what observable evidence would clear this finding.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: attestations
+    attributes:
+      label: Evidence discipline
+      options:
+        - label: I inspected the raw reference with whole-object context, not only a derived evidence view.
+          required: true
+        - label: I separated direct observations from interpretations, hypotheses, and ambiguities.
+          required: true
+        - label: I did not use an aggregate score to choose the owner or rollback checkpoint.
+          required: true
+        - label: This report contains no confidential vulnerability details; security reports follow SECURITY.md.
+          required: true
