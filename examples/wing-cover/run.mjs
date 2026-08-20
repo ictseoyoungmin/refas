@@ -61,13 +61,18 @@ const length = (a) => Math.hypot(a[0], a[1]);
 const normalize = (a) => length(a) > 1e-12 ? mul(a, 1 / length(a)) : [1, 0];
 
 function runPython(script, args) {
+  const startedAt = performance.now();
   const result = spawnSync(PYTHON, [script, ...args], {
     cwd: REPOSITORY,
     stdio: 'inherit',
     env: {...process.env, PYTHONDONTWRITEBYTECODE: '1'},
+    timeout: 120_000,
   });
+  const wallClockMs = Math.round(performance.now() - startedAt);
+  if (result.error?.code === 'ETIMEDOUT') throw new Error(`${path.basename(script)} exceeded the 120000ms validation timeout without reducing render quality`);
   if (result.error) throw result.error;
   if (result.status !== 0) throw new Error(`${path.basename(script)} exited with status ${result.status}`);
+  return {wallClockMs};
 }
 
 async function writeJson(file, value) {
@@ -267,11 +272,11 @@ async function closeCapability(capability, files, reason, gateId, claims = []) {
 }
 
 async function render(glb, directory, reference, size = 256) {
-  runPython(path.join(SKILL_SCRIPTS, 'render_glb.py'), ['--glb', glb, '--out', directory, '--reference', reference, '--size', String(size)]);
+  const timing = runPython(path.join(SKILL_SCRIPTS, 'render_glb.py'), ['--glb', glb, '--out', directory, '--reference', reference, '--size', String(size)]);
   const report = await readJson(path.join(directory, 'render-report.json'));
   assert.equal(report.status, 'PASS');
   assert.equal(report.frames.length, 8);
-  return report;
+  return {...report, validationWallClockMs: timing.wallClockMs, validationTimeoutMs: 120_000};
 }
 
 async function main() {
@@ -442,9 +447,11 @@ async function main() {
     boundaryProfile: 'beveled',
     boundaryMiterLimit: 1.12,
     junctionRadius: 0.032,
+    junctionTolerance: fixture.resolution.junctionTolerance,
   });
   assert.equal(networkParts.invariant.oneBoundaryPerAdjacency, true);
   assert.equal(networkParts.boundaryParts.length, 31);
+  assert.equal(networkParts.junctionParts.length, 14);
   const surfaceGlb = partsToGlb({
     parts: [{id: 'support-shell', role: 'dominant-shell', scopeId: 'whole', materialId: 'brass-light', mesh: shellMesh}, ...networkParts.panelParts, ...networkParts.boundaryParts, ...networkParts.junctionParts],
     materials, assetId: 'wing-cover-surface', extras: {networkDigest: network.networkDigest},
@@ -678,6 +685,8 @@ async function main() {
     hierarchyNodes: hierarchy.nodes.length, observations: observations.length, cells: networkValidation.cellCount,
     sharedAdjacencies: networkValidation.adjacencyCount, physicalSharedBoundaries: networkParts.invariant.physicalBoundaries,
     oneBoundaryPerAdjacency: networkParts.invariant.oneBoundaryPerAdjacency,
+    junctions: networkParts.invariant.junctions,
+    junctionCoverage: networkParts.invariant.junctionCoverage,
     registration: {digest: registration.registrationDigest, rmse: registration.metrics.rmse, maxError: registration.metrics.maxError},
     assembly: assemblyValidation.metrics,
     appearance: {
@@ -687,7 +696,7 @@ async function main() {
       semanticAssignmentsVerified: true,
     },
     rollback: {decision: decision.action, baselineSha256, candidateSha256, restoredSha256, byteExact: restoredSha256 === baselineSha256},
-    rendering: {frames: finalRenderReport.frames.length, status: finalRenderReport.status, claimScope: finalRenderReport.claimScope, board: path.relative(OUTPUT, finalBoardPath)},
+    rendering: {frames: finalRenderReport.frames.length, status: finalRenderReport.status, claimScope: finalRenderReport.claimScope, board: path.relative(OUTPUT, finalBoardPath), validationWallClockMs: finalRenderReport.validationWallClockMs, validationTimeoutMs: finalRenderReport.validationTimeoutMs},
     glb: {nodes: inspection.nodeCount, meshes: inspection.meshCount, triangles: inspection.triangleCount},
     checkpoints: {count: finalAudit.checkpointCount, source: sourceCheckpoint.id, certification: certificationCheckpoint.id},
     candidateCertification: {visualVerdict: visualReview.verdict, certificateIssued: false, expectedResult: 'REFUSED', refusal: certificationRefusal},

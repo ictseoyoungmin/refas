@@ -132,6 +132,17 @@ Labels summarize that contract; they do not override it.
 7. **Reopen.** Reopen the same Issue when its accepted claim is invalidated.
    Create a new Issue only for a distinct owner, scope, or finding.
 
+## Branch retention
+
+- Delete a task branch after its Pull Request is merged when no open Pull
+  Request or recorded follow-up work still depends on that branch.
+- Keep `main`, every unmerged branch, and every release or protected branch.
+- Branch deletion never removes the merged Pull Request, review discussion,
+  commits reachable from `main`, or the merge commit.
+- Before deletion, verify the exact branch, merged Pull Request, merge SHA, and
+  absence of an open dependent Pull Request. If any relation is ambiguous, keep
+  the branch and resolve the ambiguity first.
+
 ## Pull Request contract
 
 A Pull Request must:
