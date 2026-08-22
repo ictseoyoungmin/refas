@@ -11,6 +11,7 @@ RefAs is designed for work where a quick image-to-mesh approximation is not enou
 - **Projection-aware reconstruction.** Camera and reference-frame alternatives are tested before geometry is distorted to fit a view.
 - **Immutable child assembly.** A closed child GLB is reused byte-for-byte and registered into its parent instead of silently rebuilt.
 - **Shared surface topology.** Adjacent observed cells consume one physical boundary rather than nearly matching duplicate frames.
+- **Coherent hard-surface shells.** Curved shells, slots, and open-frame mounts compile as watertight parts with true apertures, deterministic edge treatments, and GLB-resident semantic attachment frames.
 - **Actual multiview QA.** Hero, oblique, side, top, grazing, normal, object-ID, and albedo renders drive critique; rasterization success is never treated as visual similarity.
 - **Registered local comparison.** Digest-bound source/render overlays, splits, edge differences, grids, landmarks, and normalized dimensions retain whole-to-feature ancestry; their metrics localize findings but never set a visual gate.
 - **Fail-closed visual certification.** An independent, digest-bound visual review must pass the exact source and asset bytes; self-generated fixtures and unsupported material claims cannot certify.
@@ -64,6 +65,7 @@ refas/
 ├── tests/                 unit, integration, and regression tests
 ├── examples/wing-cover/   reproducible end-to-end dogfood fixture
 ├── examples/material-fixture/ deterministic four-material PBR dogfood
+├── examples/hard-surface/ coherent slotted-shell and open-frame dogfood
 ├── tools/                 repository and release audits
 └── docs/                  architecture and quality contracts
 ```
@@ -78,6 +80,7 @@ npm run test:python  # Python syntax gate
 npm run check        # repository architecture and naming audit
 npm run dogfood      # exercise reconstruction and prove the self-generated fixture is refused certification
 npm run dogfood:pbr  # render four PBR finishes twice and require identical output digests
+npm run dogfood:hard-surface # prove true apertures, coherent thickness, and semantic topology
 npm run release:audit
 ```
 

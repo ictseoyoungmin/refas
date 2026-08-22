@@ -91,7 +91,8 @@ export function partsToGlb({parts, materials, assetId = 'refas-asset', name = 'R
       {bufferView: indexView, componentType: IndexArray === Uint16Array ? 5123 : 5125, count: part.mesh.indices.length, type: 'SCALAR'},
     );
     const meshIndex = json.meshes.length;
-    json.meshes.push({name: part.id, primitives: [{attributes: {POSITION: accessorStart, NORMAL: accessorStart + 1}, indices: accessorStart + 2, material: materialIds.get(part.materialId), mode: 4}]});
+    const topology = part.mesh.topology ?? part.mesh.meta?.topology ?? null;
+    json.meshes.push({name: part.id, primitives: [{attributes: {POSITION: accessorStart, NORMAL: accessorStart + 1}, indices: accessorStart + 2, material: materialIds.get(part.materialId), mode: 4}], ...(topology ? {extras: {refasTopology: topology}} : {})});
     const nodeIndex = json.nodes.length;
     json.nodes.push({name: part.id, mesh: meshIndex, extras: {refasPartId: part.id, role: part.role ?? null, scopeId: part.scopeId ?? null, materialId: part.materialId}});
     json.scenes[0].nodes.push(nodeIndex);
@@ -120,7 +121,8 @@ export function appendPartsToClosedGlb(sourceGlb, {parts, materials, name = 'Ref
     const positionData = new Float32Array(part.mesh.positions.flat()), normalData = new Float32Array(normals.flat()), maximum = Math.max(...part.mesh.indices), IndexArray = maximum <= 65535 ? Uint16Array : Uint32Array, indexData = new IndexArray(part.mesh.indices);
     const pv = push(positionData), nv = push(normalData), iv = push(indexData), start = json.accessors.length, extent = bounds(part.mesh.positions);
     json.accessors.push({bufferView: pv, componentType: 5126, count: part.mesh.positions.length, type: 'VEC3', min: extent.min, max: extent.max}, {bufferView: nv, componentType: 5126, count: normals.length, type: 'VEC3'}, {bufferView: iv, componentType: IndexArray === Uint16Array ? 5123 : 5125, count: part.mesh.indices.length, type: 'SCALAR'});
-    const meshIndex = json.meshes.length; json.meshes.push({name: part.id, primitives: [{attributes: {POSITION: start, NORMAL: start + 1}, indices: start + 2, material: materialIds.get(part.materialId), mode: 4}]});
+    const topology = part.mesh.topology ?? part.mesh.meta?.topology ?? null;
+    const meshIndex = json.meshes.length; json.meshes.push({name: part.id, primitives: [{attributes: {POSITION: start, NORMAL: start + 1}, indices: start + 2, material: materialIds.get(part.materialId), mode: 4}], ...(topology ? {extras: {refasTopology: topology}} : {})});
     const nodeIndex = json.nodes.length; json.nodes.push({name: part.id, mesh: meshIndex, extras: {refasPartId: part.id, role: part.role ?? null, scopeId: part.scopeId ?? null, materialId: part.materialId}}); json.scenes[json.scene].nodes.push(nodeIndex); newNodeIds.push(nodeIndex);
   }
   const binary = Buffer.alloc(align4(offset)); for (const chunk of chunks) chunk.bytes.copy(binary, chunk.offset); json.buffers = [{byteLength: binary.length}]; json.scenes[json.scene].name = name;

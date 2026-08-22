@@ -46,7 +46,7 @@ async function main() {
     '.github/workflows/ci.yml', '.github/workflows/sync-labels.yml', 'docs/github-governance.md',
     'skills/refas/SKILL.md', 'skills/refas/scripts/refas.mjs', 'skills/refas/scripts/render_pbr.py', 'skills/refas/scripts/lib/index.mjs',
     'schemas/source-manifest.schema.json', 'schemas/checkpoint.schema.json', 'schemas/visual-review.schema.json', 'schemas/whole-object-certificate.schema.json',
-    'tests/contracts.test.mjs', 'tests/cli.test.mjs', 'tests/governance.test.mjs', 'examples/wing-cover/run.mjs', 'examples/material-fixture/run.mjs',
+    'tests/contracts.test.mjs', 'tests/cli.test.mjs', 'tests/governance.test.mjs', 'examples/wing-cover/run.mjs', 'examples/material-fixture/run.mjs', 'examples/hard-surface/run.mjs',
   ];
   const missing = [];
   for (const file of required) {
@@ -88,6 +88,7 @@ async function main() {
     'refas.assembly-contract/v1', 'refas.finding/v1', 'refas.checkpoint/v1', 'refas.project-state/v1',
     'refas.canonical-object-frame/v1', 'refas.pbr-render-report/v1', 'refas.visual-review/v1', 'refas.whole-object-certificate/v1',
     'refas.registered-comparison/v1',
+    'refas.hard-surface-spec/v1',
   ]) if (!schemaContracts.has(contract)) throw new Error(`public schema missing for ${contract}`);
 
   const templateFiles = (await walk('skills/refas/assets/templates')).filter((file) => file.endsWith('.json'));

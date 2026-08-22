@@ -6,6 +6,7 @@ import {
   appendPartsToClosedGlb,
   createCurvedPlate,
   createCylinder,
+  createHardSurfaceShell,
   createSegmentPrism,
   createSurfaceRibbon,
   createSurfaceNetwork,
@@ -17,6 +18,33 @@ import {
   surfaceFrame,
   validateSurfaceNetwork,
 } from '../skills/refas/scripts/lib/index.mjs';
+
+test('hard-surface shells keep true apertures, curved thickness, treatments, and semantic topology', () => {
+  const mesh = createHardSurfaceShell({
+    schema: 'refas.hard-surface-spec/v1',
+    outerProfile: [[0.08, 0.1], [0.92, 0.1], [0.94, 0.88], [0.06, 0.88]],
+    cutouts: [{id: 'mount-aperture', profile: [[0.3, 0.3], [0.3, 0.7], [0.7, 0.7], [0.7, 0.3]]}],
+    thickness: 0.12,
+    surface: {width: 2.4, height: 1.8, crownX: 0.2, crownY: 0.1, twist: 0.02},
+    edgeTreatments: {outer: {type: 'fillet', width: 0.025, depth: 0.02, segments: 3}, cutouts: {type: 'chamfer', width: 0.02, depth: 0.018}},
+  });
+  assert.equal(mesh.analysis.valid, true);
+  assert.equal(mesh.analysis.watertight, true);
+  assert.equal(mesh.analysis.windingConsistent, true);
+  assert.equal(mesh.topology.schema, 'refas.hard-surface-topology/v1');
+  assert.ok(mesh.topology.faces['mount-aperture-wall']);
+  assert.ok(mesh.topology.attachmentFrames['mount-aperture.edge-0']);
+  assert.notDeepEqual(mesh.topology.attachmentFrames['mount-aperture.edge-0'].normal, [0, 0, 1]);
+  const glb = partsToGlb({parts: [{id: 'shell', materialId: 'panel', mesh}], materials: MATERIALS});
+  assert.deepEqual(parseGlb(glb).json.meshes[0].extras.refasTopology, mesh.topology);
+});
+
+test('hard-surface construction fails closed on invalid profiles and treatments', () => {
+  const base = {schema: 'refas.hard-surface-spec/v1', outerProfile: [[0, 0], [1, 0], [1, 1], [0, 1]], thickness: 0.1};
+  assert.throws(() => createHardSurfaceShell({...base, outerProfile: [[0, 0], [1, 1], [0, 1], [1, 0]]}), /self-intersecting|degenerate/);
+  assert.throws(() => createHardSurfaceShell({...base, cutouts: [{id: 'outside', profile: [[0.8, 0.8], [0.8, 1.2], [1.2, 1.2], [1.2, 0.8]]}]}), /strictly inside/);
+  assert.throws(() => createHardSurfaceShell({...base, edgeTreatments: {outer: {type: 'chamfer', width: 0.02, depth: 0.05}}}), /less than half/);
+});
 
 const SOURCE_DIGEST = 'e'.repeat(64);
 const MATERIALS = {
