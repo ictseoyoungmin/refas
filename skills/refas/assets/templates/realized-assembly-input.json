@@ -1,0 +1,9 @@
+{
+  "schema": "refas.realized-assembly-input/v1",
+  "modules": [
+    {"id": "base", "rootPartId": "base", "parentModuleId": null},
+    {"id": "carrier", "rootPartId": "carrier", "parentModuleId": "base"}
+  ],
+  "attachments": [{"id": "carrier-to-base", "childModuleId": "carrier", "parentModuleId": "base", "childSurface": {"partId": "carrier", "surfaceId": "mount"}, "parentSurface": {"partId": "base", "surfaceId": "socket"}, "clearanceRange": [0, 0.002], "tolerance": 0.001, "minimumNormalOpposition": 0.95}],
+  "objectIdEvidence": ["base", "carrier"]
+}

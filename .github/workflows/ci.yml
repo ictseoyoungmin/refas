@@ -46,6 +46,9 @@ jobs:
       - name: Hard-surface topology dogfood
         if: matrix.node == 24
         run: npm run dogfood:hard-surface
+      - name: Modular assembly contact dogfood
+        if: matrix.node == 24
+        run: npm run dogfood:assembly
       - name: Release audit
         if: matrix.node == 24
         run: npm run release:audit

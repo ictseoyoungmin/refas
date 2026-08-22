@@ -7,6 +7,7 @@ export * from './spatial-hypotheses.mjs';
 export * from './registration.mjs';
 export * from './mesh.mjs';
 export * from './hard-surface.mjs';
+export * from './realized-assembly.mjs';
 export * from './glb.mjs';
 export * from './surface-network.mjs';
 export * from './assembly.mjs';

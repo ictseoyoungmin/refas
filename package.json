@@ -25,6 +25,7 @@
     "dogfood": "node examples/wing-cover/run.mjs",
     "dogfood:pbr": "node examples/material-fixture/run.mjs",
     "dogfood:hard-surface": "node examples/hard-surface/run.mjs",
+    "dogfood:assembly": "node examples/modular-assembly/run.mjs",
     "release:audit": "node tools/release-audit.mjs"
   }
 }

@@ -4,13 +4,59 @@ import {test} from 'node:test';
 import {
   auditOwnershipRegistry,
   createAssemblyContract,
+  createRealizedAssemblyProof,
+  createSegmentPrism,
+  partsToGlb,
   routeFinding,
   routeLowScore,
   validateAssemblyContract,
   validateRealizedAssembly,
+  validateRealizedAssemblyProof,
 } from '../skills/refas/scripts/lib/index.mjs';
 
 const DIGEST = 'f'.repeat(64);
+const MODULE_MATERIALS = {metal: {baseColor: [0.3, 0.4, 0.5, 1], metallic: 0.8, roughness: 0.3}};
+const contact = (origin, normal) => ({origin, normal, supportRadius: 0.3});
+
+function modularFixture({gap = 0, worldSpace = false, missingRoot = false} = {}) {
+  const mesh = createSegmentPrism({start: [-0.25, 0, 0], end: [0.25, 0, 0], width: 0.5, height: 0.2});
+  const parts = [
+    {id: 'base', materialId: 'metal', mesh, moduleRoot: true, contactSurfaces: {socket: contact([0, 0, 0.1], [0, 0, 1])}},
+    {id: 'carrier', parentId: worldSpace ? null : 'base', translation: [0, 0, 0.2 + gap], materialId: 'metal', mesh, moduleRoot: !missingRoot, contactSurfaces: {mount: contact([0, 0, -0.1], [0, 0, -1]), socket: contact([0, 0, 0.1], [0, 0, 1])}},
+    {id: 'latch', parentId: worldSpace ? null : 'carrier', translation: [0, 0, 0.2], materialId: 'metal', mesh, moduleRoot: true, contactSurfaces: {mount: contact([0, 0, -0.1], [0, 0, -1])}},
+  ];
+  return partsToGlb({parts, materials: MODULE_MATERIALS});
+}
+
+function modularProof(glb, clearanceRange = [0, 0]) {
+  return createRealizedAssemblyProof({glb, modules: [
+    {id: 'base', rootPartId: 'base'}, {id: 'carrier', rootPartId: 'carrier', parentModuleId: 'base'}, {id: 'latch', rootPartId: 'latch', parentModuleId: 'carrier'},
+  ], attachments: [
+    {id: 'carrier-to-base', childModuleId: 'carrier', parentModuleId: 'base', childSurface: {partId: 'carrier', surfaceId: 'mount'}, parentSurface: {partId: 'base', surfaceId: 'socket'}, clearanceRange, tolerance: 0.001},
+    {id: 'latch-to-carrier', childModuleId: 'latch', parentModuleId: 'carrier', childSurface: {partId: 'latch', surfaceId: 'mount'}, parentSurface: {partId: 'carrier', surfaceId: 'socket'}, clearanceRange: [0, 0], tolerance: 0.001},
+  ], objectIdEvidence: ['base', 'carrier', 'latch']});
+}
+
+test('realized modular proof derives ancestry, contact, support, and penetration from GLB state', () => {
+  const valid = modularProof(modularFixture());
+  assert.equal(valid.valid, true, valid.errors.join('; '));
+  assert.equal(valid.metrics.nestedLevels, 3);
+  assert.deepEqual(validateRealizedAssemblyProof(valid), {valid: true, errors: []});
+  const floating = modularProof(modularFixture({gap: 0.05}));
+  assert.equal(floating.valid, false);
+  assert.match(floating.errors.join(' '), /realized contact failed/);
+  const intentionalClearance = modularProof(modularFixture({gap: 0.005}), [0.004, 0.006]);
+  assert.equal(intentionalClearance.valid, true);
+  const penetrating = modularProof(modularFixture({gap: -0.02}));
+  assert.equal(penetrating.valid, false);
+  assert.ok(penetrating.attachmentChecks[0].penetrationDepth > 0);
+  const unparented = modularProof(modularFixture({worldSpace: true}));
+  assert.equal(unparented.valid, false);
+  assert.match(unparented.errors.join(' '), /ancestry|parent-relative/);
+  const missingRoot = modularProof(modularFixture({missingRoot: true}));
+  assert.equal(missingRoot.valid, false);
+  assert.match(missingRoot.errors.join(' '), /lacks refasModuleRoot/);
+});
 
 function assemblyFixture() {
   return createAssemblyContract({
