@@ -86,7 +86,7 @@ async function main() {
     'refas.source-manifest/v1', 'refas.visual-hierarchy/v1', 'refas.visual-observation/v1',
     'refas.spatial-hypothesis-set/v1', 'refas.reference-registration/v1', 'refas.surface-network/v1',
     'refas.assembly-contract/v1', 'refas.finding/v1', 'refas.checkpoint/v1', 'refas.project-state/v1',
-    'refas.visual-review/v1', 'refas.whole-object-certificate/v1',
+    'refas.canonical-object-frame/v1', 'refas.visual-review/v1', 'refas.whole-object-certificate/v1',
   ]) if (!schemaContracts.has(contract)) throw new Error(`public schema missing for ${contract}`);
 
   const templateFiles = (await walk('skills/refas/assets/templates')).filter((file) => file.endsWith('.json'));

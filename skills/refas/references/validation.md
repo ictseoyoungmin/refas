@@ -17,6 +17,8 @@ Every closure review includes actual images for:
 
 Include the raw reference beside the hero view. If a project has a higher-quality renderer, use it in addition to the bundled portable baseline.
 
+Bind the standard set to a declared canonical object frame whenever semantic axes are known. Confirm that every frame record contains the canonical frame digest and local camera coordinates; a registered hero also contains the source registration digest. For a scope-local render, framing may use the selected module's exact current bounds, but surrounding parts remain visible so attachment and proportion are not judged out of context. Use the reported silhouette digest and covered-pixel count for deterministic projection regressions, not as a visual-fidelity score.
+
 The bundled report has `claimScope: render-integrity-only`. Its status answers whether actual geometry produced every requested frame, not whether the asset resembles the reference. Record `materialSupport.supported` and `materialSupport.unsupported`; unsupported shading features remain unreviewed until a capable renderer supplies evidence.
 
 ## Critique order

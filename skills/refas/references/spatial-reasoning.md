@@ -49,6 +49,12 @@ Use attested normalized 2D correspondences to register a child observation frame
 
 Registration owns placement evidence only. It never converts a low residual into shape truth, never outranks the raw reference, and never authorizes rebuilding a closed child to force a fit.
 
+## Canonical diagnostic frame
+
+Do not assume a file's world axes are semantic object axes. Declare a `refas.canonical-object-frame/v1` artifact with a right-handed orthonormal `right`, `up`, and `forward` basis, then pass it to `render --frame`. Standard diagnostic directions are transformed through this basis. Rotating the asset and its declared frame together must therefore preserve the meaning of side, top, and grazing views.
+
+The optional registered hero camera is written in canonical local coordinates and cites the source registration SHA-256. This changes the camera, never the geometry. For module inspection, list exact GLB part names in `scopeParts`: their current transformed vertices determine target, extent, and camera distance, while the renderer still draws the complete asset as context. An absent frame is an explicit legacy world-axis fallback, not an inferred semantic claim.
+
 ## Hidden geometry
 
 Choose the least committed geometry that supports:
