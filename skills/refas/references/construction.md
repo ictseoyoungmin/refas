@@ -27,6 +27,44 @@ every observed shared adjacency has one owning centerline
 
 Panel meshes are per observed cell; boundary data are owned per shared adjacency, never per cell. A downstream network compiler may merge collinear centerline fragments into fewer physical sweeps only when it records complete adjacency coverage. Junction geometry may connect three or more shared boundaries but does not duplicate them.
 
+## Open-frame mounts and structural negative space
+
+An **open-frame mount** is one connected structural frame whose members surround
+real negative spaces and provide a traceable support path between attachment
+lands. Think of the opening and its surrounding frame as a paired topology: the
+void is designed geometry, not missing decoration, and the frame is not a pile
+of bars that happens to resemble the reference from one camera.
+
+Observe and name the construction before choosing primitives:
+
+- the outer silhouette and each **void silhouette**;
+- frame members and the bridges that connect them;
+- junctions, gussets, shoulders, and changes in member section;
+- mounting feet or lands where loads can enter the parent;
+- wall thickness, inner walls, and bevel, chamfer, or fillet treatment;
+- visible contact, clearance, and occlusion at every attachment.
+
+The topology contract is one coherent load-bearing frame with true apertures,
+continuous member junctions, and consistent wall ownership. Adjacent members
+meet through shared or deliberately joined geometry; they do not terminate as
+floating struts or hide coplanar overlaps inside one another. A dark inset plate
+does not count as an opening, and a collection of independent prisms does not
+count as a frame merely because its hero projection looks correct.
+
+Treat structural interpretation with the same evidence discipline as shape.
+A visible sequence from one mounting land, through members and junctions, to
+another land may support a load-path hypothesis. Hidden continuity, internal
+reinforcement, fastener preload, and engineering capacity remain hypotheses
+unless the source or downstream specification attests them. Record ambiguity
+instead of inventing a mechanically authoritative interior.
+
+Validate an open frame in hero, reverse, side, top, grazing, normal, and
+object-ID views. The apertures must remain open, member thickness must remain
+coherent, junctions must not split or self-intersect, and mounting lands must
+remain attached. If a frame reads as a cage of separate sticks, a painted-on
+hole, or a solid slab outside the hero view, route the defect to
+`surface-topology`; route incorrect parent contact or penetration to `assembly`.
+
 ## Compound shells and conforming parts
 
 `createCurvedPlate` must tessellate the polygon interior whenever curvature affects the silhouette, side view, or shading. Set `subdivisions` from a measured fidelity target; do not use triangle count alone as a quality claim. The back face is offset along the local surface normal, not a global axis.

@@ -161,6 +161,13 @@ For parent assembly, prefer `appendPartsToClosedGlb`. It preserves the original 
 
 Represent every observed shared adjacency once with `createSurfaceNetwork`; `createSurfaceNetworkParts` realizes one physical boundary per adjacency. Use `createReferenceRegistration` to fit attested 2D frame correspondences. Registration is placement authority only and never licenses a child shape change. Use `createAssemblyContract` and `validateRealizedAssembly` to test projected overlap, depth order, support, penetration, and closed-child integrity.
 
+For an open-frame mount, bracket, handle, guard, stock, or architectural frame,
+read **Open-frame mounts and structural negative space** in
+`references/construction.md`. Reconstruct it as one coherent frame around true
+apertures with continuous junctions and explicit mounting lands—not as floating
+bars, dark plates posing as holes, or a one-view cage. Keep unseen structural
+continuity and load capacity as hypotheses unless evidence attests them.
+
 ## Render and review
 
 Generate actual multiview evidence with the bundled offline renderer:
