@@ -1,0 +1,8 @@
+{
+  "schema": "refas.hard-surface-spec/v1",
+  "outerProfile": [[0.08, 0.12], [0.92, 0.12], [0.92, 0.88], [0.08, 0.88]],
+  "cutouts": [{"id": "mount-aperture", "profile": [[0.28, 0.32], [0.28, 0.68], [0.72, 0.68], [0.72, 0.32]]}],
+  "thickness": 0.1,
+  "edgeTreatments": {"outer": {"type": "fillet", "width": 0.025, "depth": 0.02, "segments": 3}, "cutouts": {"type": "chamfer", "width": 0.018, "depth": 0.015}},
+  "role": "open-frame-mount"
+}

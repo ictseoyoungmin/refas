@@ -43,6 +43,9 @@ jobs:
       - name: Independent PBR material dogfood
         if: matrix.node == 24
         run: npm run dogfood:pbr
+      - name: Hard-surface topology dogfood
+        if: matrix.node == 24
+        run: npm run dogfood:hard-surface
       - name: Release audit
         if: matrix.node == 24
         run: npm run release:audit

@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/hard-surface-spec.schema.json",
+  "title": "RefAs hard-surface shell specification",
+  "type": "object",
+  "required": ["schema", "outerProfile", "thickness"],
+  "properties": {
+    "schema": {"const": "refas.hard-surface-spec/v1"},
+    "outerProfile": {"$ref": "#/$defs/loop"},
+    "cutouts": {"type": "array", "items": {"type": "object", "required": ["id", "profile"], "properties": {"id": {"type": "string", "minLength": 1}, "profile": {"$ref": "#/$defs/loop"}, "edgeTreatment": {"$ref": "#/$defs/treatment"}}, "additionalProperties": false}},
+    "thickness": {"type": "number", "exclusiveMinimum": 0},
+    "edgeTreatments": {"type": "object", "properties": {"outer": {"$ref": "#/$defs/treatment"}, "cutouts": {"$ref": "#/$defs/treatment"}}, "additionalProperties": false},
+    "surface": {"type": ["object", "null"]},
+    "role": {"type": "string"}
+  },
+  "$defs": {
+    "point": {"type": "array", "prefixItems": [{"type": "number"}, {"type": "number"}], "items": false},
+    "loop": {"type": "array", "minItems": 3, "items": {"$ref": "#/$defs/point"}},
+    "treatment": {"type": "object", "properties": {"type": {"enum": ["sharp", "chamfer", "fillet", "stepped"]}, "width": {"type": "number", "minimum": 0}, "depth": {"type": "number", "minimum": 0}, "segments": {"type": "integer", "minimum": 1, "maximum": 16}}, "additionalProperties": false}
+  },
+  "additionalProperties": false
+}

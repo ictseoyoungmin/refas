@@ -139,6 +139,7 @@ import {
   createAssemblyContract,
   createCurvedPlate,
   createCylinder,
+  createHardSurfaceShell,
   createReferenceRegistration,
   createSegmentPrism,
   createSurfaceNetwork,
@@ -154,6 +155,13 @@ import {
 ```
 
 Use these as construction mechanisms, not visual assumptions. Put asset-specific polygons, proportions, and hypotheses in the project model specification. Keep them out of the reusable runtime.
+
+For a coherent hard-surface shell with negative space, pass a
+`refas.hard-surface-spec/v1` document to `createHardSurfaceShell`. Cutouts become
+real front-to-back apertures, and selected outer/cutout edges receive actual
+sharp, chamfer, fillet, or stepped geometry. Preserve the returned semantic
+topology in GLB output; assembly may bind to its stable edge attachment frames.
+Reject invalid or intersecting profiles rather than repairing them silently.
 
 For a curved or folded shell, do not stop at an extruded boundary polygon. Use interior subdivisions, a normal-offset back surface, and either evidence-fitted compound coefficients or a projection-anchored guided surface with transverse profiles plus a longitudinal guide. Make panels, trim, and fastener axes consume the same `surfaceFrame`. Close shape only after side and grazing renders preserve the observed depth profile.
 

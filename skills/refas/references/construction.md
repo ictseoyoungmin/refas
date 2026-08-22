@@ -67,6 +67,23 @@ hole, or a solid slab outside the hero view, route the defect to
 
 ## Compound shells and conforming parts
 
+Use `createHardSurfaceShell` when a shell, cover, bracket, guard, or mount needs
+coherent thickness and true through-openings. Its public input contract is
+`refas.hard-surface-spec/v1`: one outer profile, zero or more uniquely named
+cutout profiles, thickness, an optional shared surface authority, and explicit
+outer/cutout edge treatments. `sharp`, `chamfer`, `fillet`, and `stepped`
+treatments change the real front, back, and wall geometry; they are not shading
+labels.
+
+The compiler emits one watertight mesh plus
+`refas.hard-surface-topology/v1`. Stable face and boundary-edge IDs, triangle
+ranges, and local attachment frames are serialized into the GLB mesh extras so
+downstream assembly can reference the aperture or outer frame without guessing
+from vertex order. Self-intersection, overlapping or exterior cutouts,
+degenerate faces, treatment inversion, and excessive treatment depth fail
+closed. A dark polygon, alpha mask, or independent lattice does not satisfy a
+through-opening requirement.
+
 `createCurvedPlate` must tessellate the polygon interior whenever curvature affects the silhouette, side view, or shading. Set `subdivisions` from a measured fidelity target; do not use triangle count alone as a quality claim. The back face is offset along the local surface normal, not a global axis.
 
 Use one surface authority for the full construction:
