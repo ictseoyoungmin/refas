@@ -12,6 +12,7 @@ RefAs is designed for work where a quick image-to-mesh approximation is not enou
 - **Immutable child assembly.** A closed child GLB is reused byte-for-byte and registered into its parent instead of silently rebuilt.
 - **Shared surface topology.** Adjacent observed cells consume one physical boundary rather than nearly matching duplicate frames.
 - **Actual multiview QA.** Hero, oblique, side, top, grazing, normal, object-ID, and albedo renders drive critique; rasterization success is never treated as visual similarity.
+- **Registered local comparison.** Digest-bound source/render overlays, splits, edge differences, grids, landmarks, and normalized dimensions retain whole-to-feature ancestry; their metrics localize findings but never set a visual gate.
 - **Fail-closed visual certification.** An independent, digest-bound visual review must pass the exact source and asset bytes; self-generated fixtures and unsupported material claims cannot certify.
 - **Independent PBR appearance evidence.** After portable integrity passes, the deterministic Cook–Torrance backend or an external renderer worker must bind its exact rig, color pipeline, feature coverage, and output digests.
 - **Typed failure ownership.** Every blocker identifies its visual scope, owning capability, invalidated dependents, and safe checkpoint.
@@ -48,8 +49,9 @@ The executable runtime lives inside the distributable skill. Repository tests an
 6. Build projection-anchored surface boundaries and shared adjacency.
 7. Register immutable child assets into parent frames and validate attachment and occlusion.
 8. Render the standard diagnostic view set.
-9. Route localized findings to their owning capability and restore the selected checkpoint when required.
-10. Certify only when every release gate and the independent visual review have current passing evidence.
+9. Register the exact source and current render, then inspect whole-to-feature comparison boards before routing a mismatch.
+10. Route localized findings to their owning capability and restore the selected checkpoint when required.
+11. Certify only when every release gate and the independent visual review have current passing evidence.
 
 ## Repository layout
 

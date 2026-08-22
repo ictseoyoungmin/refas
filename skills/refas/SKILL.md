@@ -189,6 +189,17 @@ The renderer has no default triangle-count ceiling. A well-justified asset may e
 Review hero, oblique, side, top, grazing, normal, object-ID, and albedo views. The software renderer is the mandatory portable validation baseline, not a visual-fidelity renderer. After this basic gate passes, run an independent PBR-capable renderer—Blender Cycles/Eevee headless, Three.js/WebGL, Filament, glTF Sample Viewer, VTK, or an equivalent backend—and normalize its evidence as `refas.pbr-render-report/v1`.
 Its `PASS` status and `claimScope: render-integrity-only` mean only that actual GLB geometry rasterized in every requested view. Read `materialSupport`; do not use this report alone to pass appearance or visual fidelity.
 
+After the exact hero frame is registered to the source, create scope-local critique evidence from `assets/templates/registered-comparison-input.json`:
+
+```bash
+node scripts/refas.mjs compare \
+  --input <project-dir>/registered-comparison-input.json \
+  --out <project-dir>/reviews/registered-comparison \
+  --timeout-seconds 120
+```
+
+The output retains each scope's ancestry and binds the source, asset, render frame, registration, hierarchy, input, and every generated image by digest. Inspect its whole context, registered crop, overlay, split, edge overlay, silhouette difference, landmark residuals, and normalized dimensions. These are `derived-observation-aid` artifacts: a better IoU or smaller residual cannot pass a visual gate, and a bad number cannot select rollback until the visible defect is localized as a typed finding.
+
 RefAs ships one deterministic, dependency-light Cook–Torrance implementation as an independently executed fallback:
 
 ```bash

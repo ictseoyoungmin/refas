@@ -14,11 +14,30 @@ import {
   validateObservation,
   validatePbrRenderReport,
   validateReferenceRegistration,
+  validateRegisteredComparison,
   validateSpatialHypothesisSet,
   validateVisualHierarchy,
 } from '../skills/refas/scripts/lib/index.mjs';
 
 const SOURCE_DIGEST = 'a'.repeat(64);
+
+test('registered comparison reports preserve ancestry and make metrics non-authoritative', () => {
+  const payload = {
+    schema: 'refas.registered-comparison/v1', claimScope: 'critique-evidence-only',
+    source: {sha256: '1'.repeat(64), manifestSha256: '8'.repeat(64)}, render: {assetSha256: '2'.repeat(64), frameSha256: '3'.repeat(64), reportSha256: '9'.repeat(64), frameId: 'hero'},
+    registration: {digest: '4'.repeat(64), fileSha256: 'a'.repeat(64)}, hierarchy: {digest: '5'.repeat(64), fileSha256: 'b'.repeat(64)}, inputDigest: '6'.repeat(64),
+    scopes: [{scopeId: 'feature', ancestry: ['whole', 'region', 'part', 'feature'], metrics: {silhouetteIoU: 0.93},
+      images: [{sha256: '7'.repeat(64)}], landmarks: [{id: 'center', evidenceClass: 'derived-observation-aid'}], dimensions: []}],
+    policy: {rawSourceRemainsPrimary: true, outputsAreDerivedObservationAids: true, metricsCannotSetVisualGate: true,
+      metricFailureRequiresTypedFindingBeforeRouting: true, registrationResidualIsNotShapeTruth: true},
+  };
+  const report = {...payload, comparisonDigest: digestJson(payload)};
+  assert.deepEqual(validateRegisteredComparison(report), {valid: true, errors: []});
+  const unsafe = structuredClone(report); unsafe.policy.metricsCannotSetVisualGate = false;
+  assert.equal(validateRegisteredComparison(unsafe).valid, false);
+  const contextLost = structuredClone(report); contextLost.scopes[0].ancestry = ['feature'];
+  assert.equal(validateRegisteredComparison(contextLost).valid, false);
+});
 
 test('independent PBR reports bind renderer, rig, color pipeline, features, and output digests', () => {
   const input = {

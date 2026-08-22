@@ -1,0 +1,15 @@
+{
+  "schema": "refas.registered-comparison-input/v1",
+  "sourceManifest": "source/source-manifest.json",
+  "renderReport": "renders/final/render-report.json",
+  "renderImage": "hero.png",
+  "frameId": "hero",
+  "registration": "model/source-to-render-registration.json",
+  "hierarchy": "model/visual-hierarchy.json",
+  "scopeIds": ["whole", "region", "part", "feature"],
+  "overlayOpacity": 0.5,
+  "landmarks": [
+    {"id": "feature-center", "scopeId": "feature", "source": [0.5, 0.5], "render": [0.5, 0.5]}
+  ],
+  "dimensions": []
+}

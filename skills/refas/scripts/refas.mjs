@@ -28,6 +28,7 @@ import {
   validateVisualHierarchy,
   validateVisualReview,
   validatePbrRenderReport,
+  validateRegisteredComparison,
 } from './lib/index.mjs';
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
@@ -99,6 +100,7 @@ function help() {
       evidence: 'evidence --image reference.png --out DIR --scope ID [--roi x,y,w,h] [--padding 0.08]',
       render: 'render --glb asset.glb --out DIR [--reference image.png] [--frame canonical-frame.json] [--size 640] [--timeout-seconds 300] [--max-working-mb 512] [--tile-size 256] [--max-triangles N]',
       'render-pbr': 'render-pbr --glb asset.glb --out DIR --frame canonical-frame.json [--reference image.png] [--size 420] [--timeout-seconds 180] [--max-working-mb 512]',
+      compare: 'compare --input registered-comparison-input.json --out DIR [--timeout-seconds 120]',
     },
   };
 }
@@ -175,6 +177,7 @@ async function main() {
     else if (spec.schema === 'refas.assembly-contract/v1') result = validateAssemblyContract(spec);
     else if (spec.schema === 'refas.visual-review/v1') result = validateVisualReview(spec);
     else if (spec.schema === 'refas.pbr-render-report/v1') result = validatePbrRenderReport(spec);
+    else if (spec.schema === 'refas.registered-comparison/v1') result = validateRegisteredComparison(spec);
     else throw new Error(`no validator for schema: ${spec.schema}`);
     print(result);
     if (!result.valid) process.exitCode = 1;
@@ -204,6 +207,12 @@ async function main() {
     if (options['timeout-seconds']) args.push('--timeout-seconds', options['timeout-seconds']); if (options['max-working-mb']) args.push('--max-working-mb', options['max-working-mb']);
     const timeoutSeconds = Number(options['timeout-seconds'] ?? 180); if (!Number.isFinite(timeoutSeconds) || timeoutSeconds <= 0) throw new Error('--timeout-seconds must be a positive number');
     runPython('render_pbr.py', args, {timeoutMs: Math.ceil(timeoutSeconds * 1000 + 5000)}); return;
+  }
+  if (command === 'compare') {
+    const args = ['--input', required(options, 'input'), '--out', required(options, 'out')];
+    const timeoutSeconds = Number(options['timeout-seconds'] ?? 120);
+    if (!Number.isFinite(timeoutSeconds) || timeoutSeconds <= 0) throw new Error('--timeout-seconds must be a positive number');
+    runPython('compare_registered.py', args, {timeoutMs: Math.ceil(timeoutSeconds * 1000 + 5000)}); return;
   }
   throw new Error(`unknown command: ${command}`);
 }
