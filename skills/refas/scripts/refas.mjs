@@ -27,6 +27,7 @@ import {
   validateSurfaceNetwork,
   validateVisualHierarchy,
   validateVisualReview,
+  validatePbrRenderReport,
 } from './lib/index.mjs';
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
@@ -172,6 +173,7 @@ async function main() {
     else if (spec.schema === 'refas.surface-network/v1') result = validateSurfaceNetwork(spec);
     else if (spec.schema === 'refas.assembly-contract/v1') result = validateAssemblyContract(spec);
     else if (spec.schema === 'refas.visual-review/v1') result = validateVisualReview(spec);
+    else if (spec.schema === 'refas.pbr-render-report/v1') result = validatePbrRenderReport(spec);
     else throw new Error(`no validator for schema: ${spec.schema}`);
     print(result);
     if (!result.valid) process.exitCode = 1;

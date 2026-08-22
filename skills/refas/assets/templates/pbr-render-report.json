@@ -1,0 +1,10 @@
+{
+  "assetSha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "frameDigest": "0000000000000000000000000000000000000000000000000000000000000000",
+  "renderer": {"family": "blender-eevee", "name": "Blender", "version": "declare-exact-version", "backend": "Eevee headless", "independentProcess": true},
+  "lighting": {"rigId": "fixed-review-rig", "digest": "0000000000000000000000000000000000000000000000000000000000000000"},
+  "colorPipeline": {"exposure": 0, "toneMapping": "declare-exact-transform", "outputColorSpace": "sRGB"},
+  "materialSupport": {"supported": ["base-color-factor", "metallic-factor", "roughness-factor"], "unsupported": []},
+  "outputs": [{"viewId": "hero", "path": "renders/pbr/hero.png", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"}],
+  "reproducibility": {"mode": "deterministic", "tolerance": ""}
+}

@@ -186,13 +186,16 @@ Copy `assets/templates/canonical-object-frame.json` when the GLB's semantic axes
 
 The renderer has no default triangle-count ceiling. A well-justified asset may exceed 30,000 triangles; remove redundant geometry because it is redundant, not merely to satisfy an arbitrary count. Resource safety is enforced independently: geometry decode, framebuffer, and bounded tile scratch memory are estimated before rasterization; triangles are processed without a full-frame per-triangle allocation; and both an internal wall-clock deadline and a parent-process timeout stop stalled work. Use `--max-triangles N` only when a project or CI job intentionally declares a hard policy cap. `--tile-size` controls locality, while `--max-working-mb` is a safety budget rather than a quality setting. Failed preflight or timeout attempts do not publish a partial render set.
 
-Review hero, oblique, side, top, grazing, normal, object-ID, and albedo views. The software renderer is a portable validation baseline, not a substitute for a higher-quality project renderer when one is available.
+Review hero, oblique, side, top, grazing, normal, object-ID, and albedo views. The software renderer is the mandatory portable validation baseline, not a visual-fidelity renderer. After this basic gate passes, run an independent PBR-capable renderer—Blender Cycles/Eevee headless, Three.js/WebGL, Filament, glTF Sample Viewer, VTK, or an equivalent backend—and normalize its evidence as `refas.pbr-render-report/v1`.
 Its `PASS` status and `claimScope: render-integrity-only` mean only that actual GLB geometry rasterized in every requested view. Read `materialSupport`; do not use this report alone to pass appearance or visual fidelity.
 
-Create `reviews/visual-review.json` from `assets/templates/visual-review.json` with `createVisualReview`. Bind it to the exact source and asset SHA-256, identify whether the reference is independent or generated from the same fixture, record every standard view and visual gate verdict, disclose renderer feature support, and retain every unresolved typed finding. Validate it before checkpointing:
+Copy `assets/templates/pbr-render-report.json` for the independent pass. Bind the exact asset and canonical-frame digests, renderer family/name/version/backend, fixed lighting rig, exposure/tone mapping/output color space, supported and unsupported material features, output frame digests, and reproducibility mode. A renderer's brand name never implies feature support. If the declared backend does not cover every required material feature, keep appearance insufficient and reopen the owning capability from the PBR evidence.
+
+Create `reviews/visual-review.json` from `assets/templates/visual-review.json` with `createVisualReview`. Bind it to the exact source and asset SHA-256, identify whether the reference is independent or generated from the same fixture, record every standard view and visual gate verdict, cite the exact independent PBR report SHA-256 and renderer feature support, and retain every unresolved typed finding. Validate both reports before checkpointing:
 
 ```bash
 node scripts/refas.mjs validate-spec --file <project-dir>/reviews/visual-review.json
+node scripts/refas.mjs validate-spec --file <project-dir>/renders/pbr/render-report.json
 ```
 
 Preview a visual finding route without mutating state:

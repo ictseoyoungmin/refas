@@ -15,11 +15,17 @@ Every closure review includes actual images for:
 | object-ID | reveal part boundaries and accidental merging |
 | albedo | separate color assignment from lighting |
 
-Include the raw reference beside the hero view. If a project has a higher-quality renderer, use it in addition to the bundled portable baseline.
+Include the raw reference beside the hero view. The portable baseline is the first gate. After it passes, an independent PBR-capable renderer is mandatory for appearance and final whole-object PASS/REOPEN.
 
 Bind the standard set to a declared canonical object frame whenever semantic axes are known. Confirm that every frame record contains the canonical frame digest and local camera coordinates; a registered hero also contains the source registration digest. For a scope-local render, framing may use the selected module's exact current bounds, but surrounding parts remain visible so attachment and proportion are not judged out of context. Use the reported silhouette digest and covered-pixel count for deterministic projection regressions, not as a visual-fidelity score.
 
 The bundled report has `claimScope: render-integrity-only`. Its status answers whether actual geometry produced every requested frame, not whether the asset resembles the reference. Record `materialSupport.supported` and `materialSupport.unsupported`; unsupported shading features remain unreviewed until a capable renderer supplies evidence.
+
+## Independent PBR gate
+
+Use an independently executed Blender Cycles/Eevee headless, Three.js/WebGL, Filament, glTF Sample Viewer, VTK, or equivalent renderer after the portable gate. Normalize its evidence as `refas.pbr-render-report/v1`. The report binds the exact GLB and canonical frame digests, renderer/version/backend, lighting rig, exposure, tone mapping, output color space, material feature coverage, output frame digests, and determinism or bounded-nondeterminism contract.
+
+Do not infer support from the renderer family. The configured version and backend must explicitly cover every `requiredMaterialFeature`; otherwise `appearance-plausibility` remains `insufficient` and final certification refuses closure. Portable evidence may reopen geometry, topology, assembly, camera, or render-integrity owners early. Only the independent PBR evidence may decide material/finish PASS or REOPEN and support the final appearance verdict.
 
 ## Critique order
 
@@ -52,7 +58,7 @@ Scores summarize evidence; they do not own repairs. A below-threshold score with
 
 ## Closure gates
 
-Before closure, create a digest-bound `refas.visual-review/v1` record from `assets/templates/visual-review.json`. It must bind the exact primary source digest and candidate asset digest, contain one verdict for every standard view and visual gate, disclose the renderer and its material support, and retain unresolved typed findings. The whole-object checkpoint includes this file with artifact kind `visual-review` and cites its path from every visual closure gate.
+Before closure, create a digest-bound `refas.visual-review/v1` record from `assets/templates/visual-review.json`. It must bind the exact primary source digest and candidate asset digest, contain one verdict for every standard view and visual gate, disclose the independent renderer and its material support, cite the exact PBR report digest, and retain unresolved typed findings. The whole-object checkpoint includes the visual review, PBR report, and every cited renderer output and cites the review path from every visual closure gate.
 
 `evidenceClass: independent-reference` means the comparison source was not generated from the candidate's own model specification. `self-generated-contract-fixture` can verify deterministic construction, rendering, rollback, and schema behavior, but can never certify visual fidelity.
 

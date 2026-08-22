@@ -34,11 +34,13 @@ Keep material IDs semantic, such as `enamel`, `brass-light`, or `fastener-inlay`
 1. Freeze the accepted geometry, camera, exposure, tone mapping, and environment.
 2. Inspect albedo independently of lighting to catch assignment and color-family errors.
 3. Inspect the serialized GLB to verify exact PBR factors, extensions, textures, and every node-to-material assignment.
-4. Render hero and grazing views in a renderer that supports every feature required by the appearance claim.
+4. After the portable integrity gate passes, render hero and grazing views in an independent PBR renderer that supports every feature required by the appearance claim.
 5. Compare before and after with identical render settings; review color, metalness, roughness, highlight width, and finish hierarchy separately.
 6. Route any mismatch as `material-mismatch` or `finish-mismatch` to appearance. Route a newly exposed shape, topology, or assembly defect to its actual owner instead of compensating with materials.
 
 The bundled software renderer is useful for render integrity, albedo, and coarse factor response. Its report declares `claimScope: render-integrity-only`; therefore it cannot by itself pass `appearance-plausibility`. Exact material-table parity is strong regression evidence, but it is not an independent visual-fidelity verdict.
+
+Use Blender Cycles or Eevee headless, Three.js/WebGL, Filament, glTF Sample Viewer, VTK, or another independently executed PBR-capable renderer. A family name is not proof of capability: record the exact version/backend and declare the supported and unsupported glTF material features for that run. The appearance gate passes only when a `refas.pbr-render-report/v1` binds the candidate, canonical frame, fixed lighting rig, color pipeline, and output digests, and its supported feature set covers the asset's required material features.
 
 ## Exit and recovery
 

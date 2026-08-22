@@ -25,7 +25,10 @@
   "unresolvedFindings": [],
   "renderer": {
     "kind": "project-renderer",
+    "family": "blender-eevee",
     "reportRef": "renders/render-report.json",
+    "reportSha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "independentProcess": true,
     "claimScope": "visual-fidelity",
     "supportedMaterialFeatures": ["base-color-factor", "metallic-factor", "roughness-factor"],
     "unsupportedMaterialFeatures": []
