@@ -23,6 +23,7 @@ import {
   REQUIRED_VISUAL_GATE_IDS,
   validateVisualReview,
 } from './visual-review.mjs';
+import {validatePbrRenderReport} from './pbr-render-report.mjs';
 
 export const PROJECT_STATE_SCHEMA = 'refas.project-state/v1';
 export const CHECKPOINT_SCHEMA = 'refas.checkpoint/v1';
@@ -238,8 +239,26 @@ async function inspectCertificationHead(root, state, head) {
       if (!head.artifactRefs.some((artifact) => artifact.kind !== 'visual-review' && artifact.sha256 === visualReview.assetSha256)) {
         errors.push('visual review asset digest is not present in the certification checkpoint');
       }
-      if (!head.artifactRefs.some((artifact) => artifact.path === visualReview.renderer?.reportRef)) {
+      const rendererArtifact = head.artifactRefs.find((artifact) => artifact.path === visualReview.renderer?.reportRef);
+      if (!rendererArtifact) {
         errors.push('visual review renderer report is not present in the certification checkpoint');
+      } else if (rendererArtifact.sha256 !== visualReview.renderer?.reportSha256) {
+        errors.push('visual review renderer report digest does not match the checkpoint artifact');
+      } else if (visualReview.renderer?.claimScope === 'visual-fidelity') {
+        const rendererReport = await readJson(path.join(root, rendererArtifact.path));
+        const rendererValidation = validatePbrRenderReport(rendererReport);
+        if (!rendererValidation.valid) errors.push(`PBR renderer report is invalid: ${rendererValidation.errors.join('; ')}`);
+        if (rendererReport.assetSha256 !== visualReview.assetSha256) errors.push('PBR renderer report asset digest does not match the visual review');
+        if (rendererReport.renderer?.family !== visualReview.renderer?.family) errors.push('PBR renderer family does not match the visual review');
+        const outputDigests = new Set((rendererReport.outputs ?? []).map((output) => output.sha256));
+        const outputPaths = new Set((rendererReport.outputs ?? []).map((output) => output.path));
+        for (const output of (rendererReport.outputs ?? [])) {
+          if (!head.artifactRefs.some((artifact) => artifact.path === output.path && artifact.sha256 === output.sha256)) errors.push(`PBR renderer output is not digest-bound in the checkpoint: ${output.path}`);
+        }
+        if (!outputDigests.size) errors.push('PBR renderer report has no digest-bound outputs');
+        for (const view of (visualReview.views ?? [])) {
+          if (!view.evidenceRefs.some((ref) => outputPaths.has(ref))) errors.push(`visual review view is not backed by the PBR renderer report: ${view.id}`);
+        }
       }
       if (visualReview.evidenceClass !== 'independent-reference') errors.push('self-generated contract fixtures cannot certify visual fidelity');
       if (visualReview.verdict !== 'pass') errors.push(`visual review verdict is ${visualReview.verdict ?? 'missing'}, not pass`);

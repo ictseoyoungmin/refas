@@ -3,6 +3,7 @@ import {test} from 'node:test';
 
 import {
   createObservation,
+  createPbrRenderReport,
   createReferenceRegistration,
   createSpatialHypothesisSet,
   createVisualHierarchy,
@@ -11,12 +12,29 @@ import {
   mapParentToChild,
   stableStringify,
   validateObservation,
+  validatePbrRenderReport,
   validateReferenceRegistration,
   validateSpatialHypothesisSet,
   validateVisualHierarchy,
 } from '../skills/refas/scripts/lib/index.mjs';
 
 const SOURCE_DIGEST = 'a'.repeat(64);
+
+test('independent PBR reports bind renderer, rig, color pipeline, features, and output digests', () => {
+  const input = {
+    assetSha256: '1'.repeat(64), frameDigest: '2'.repeat(64),
+    renderer: {family: 'blender-cycles', name: 'Blender', version: '4.x-test', backend: 'Cycles headless', independentProcess: true},
+    lighting: {rigId: 'fixed-review-rig', digest: '3'.repeat(64)},
+    colorPipeline: {exposure: 0, toneMapping: 'AgX', outputColorSpace: 'sRGB'},
+    materialSupport: {supported: ['base-color-factor', 'metallic-factor', 'roughness-factor'], unsupported: ['clearcoat']},
+    outputs: [{viewId: 'hero', path: 'renders/pbr/hero.png', sha256: '4'.repeat(64)}],
+    reproducibility: {mode: 'deterministic', tolerance: ''},
+  };
+  const report = createPbrRenderReport(input);
+  assert.deepEqual(validatePbrRenderReport(report), {valid: true, errors: []});
+  assert.throws(() => createPbrRenderReport({...input, renderer: {...input.renderer, independentProcess: false}}), /independent renderer process/);
+  assert.throws(() => createPbrRenderReport({...input, materialSupport: {supported: ['clearcoat'], unsupported: ['clearcoat']}}), /contradictory/);
+});
 
 function hierarchyFixture() {
   return createVisualHierarchy({

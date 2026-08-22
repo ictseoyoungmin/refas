@@ -26,10 +26,13 @@
     "unresolvedFindings": {"type": "array", "items": {"$ref": "finding.schema.json"}},
     "renderer": {
       "type": "object",
-      "required": ["kind", "reportRef", "claimScope", "supportedMaterialFeatures", "unsupportedMaterialFeatures"],
+      "required": ["kind", "family", "reportRef", "reportSha256", "independentProcess", "claimScope", "supportedMaterialFeatures", "unsupportedMaterialFeatures"],
       "properties": {
         "kind": {"type": "string", "minLength": 1},
+        "family": {"enum": ["blender-cycles", "blender-eevee", "threejs-webgl", "filament", "gltf-sample-viewer", "vtk", "other"]},
         "reportRef": {"$ref": "common.schema.json#/$defs/relativePath"},
+        "reportSha256": {"$ref": "common.schema.json#/$defs/digest"},
+        "independentProcess": {"type": "boolean"},
         "claimScope": {"enum": ["render-integrity-only", "visual-fidelity"]},
         "supportedMaterialFeatures": {"type": "array", "uniqueItems": true, "items": {"$ref": "common.schema.json#/$defs/semanticId"}},
         "unsupportedMaterialFeatures": {"type": "array", "uniqueItems": true, "items": {"$ref": "common.schema.json#/$defs/semanticId"}}
@@ -48,11 +51,12 @@
     },
     "policy": {
       "type": "object",
-      "required": ["selfGeneratedFixturesAreContractOnly", "renderIntegrityIsNotVisualAcceptance", "unsupportedMaterialFeaturesCannotPassAppearance", "unresolvedBlockingFindingsPreventClosure"],
+      "required": ["selfGeneratedFixturesAreContractOnly", "renderIntegrityIsNotVisualAcceptance", "unsupportedMaterialFeaturesCannotPassAppearance", "independentPbrRendererRequiredAfterPortableGate", "unresolvedBlockingFindingsPreventClosure"],
       "properties": {
         "selfGeneratedFixturesAreContractOnly": {"const": true},
         "renderIntegrityIsNotVisualAcceptance": {"const": true},
         "unsupportedMaterialFeaturesCannotPassAppearance": {"const": true},
+        "independentPbrRendererRequiredAfterPortableGate": {"const": true},
         "unresolvedBlockingFindingsPreventClosure": {"const": true}
       },
       "additionalProperties": false

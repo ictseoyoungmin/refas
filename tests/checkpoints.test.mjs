@@ -17,6 +17,7 @@ import {
   commitCheckpoint,
   contentReference,
   createVisualReview,
+  createPbrRenderReport,
   digestBytes,
   finishEdit,
   initProject,
@@ -86,7 +87,10 @@ function reviewInput({sourceSha256, assetSha256, evidenceClass = 'independent-re
     unresolvedFindings,
     renderer: {
       kind: 'test-visual-fidelity-renderer',
+      family: 'threejs-webgl',
       reportRef: 'renders/final/render-report.json',
+      reportSha256: 'c'.repeat(64),
+      independentProcess: true,
       claimScope: 'visual-fidelity',
       supportedMaterialFeatures: ['base-color-factor', 'metallic-factor', 'roughness-factor'],
       unsupportedMaterialFeatures: [],
@@ -102,13 +106,27 @@ async function commitCertificationAttempt(root, artifactPath, source, {includeRe
   const asset = await contentReference(artifactPath, {kind: 'glb', root});
   const renderPath = path.join(root, 'renders', 'final', 'render-report.json');
   await fs.mkdir(path.dirname(renderPath), {recursive: true});
-  await fs.writeFile(renderPath, `${JSON.stringify({schema: 'refas.multiview-render-report/v1', claimScope: 'visual-fidelity'})}\n`);
+  const frames = [];
+  for (const viewId of REQUIRED_REVIEW_VIEW_IDS) {
+    const framePath = path.join(root, 'renders', 'final', `${viewId}.png`);
+    await fs.writeFile(framePath, Buffer.from(`independent PBR ${viewId} frame bytes\n`));
+    frames.push(await contentReference(framePath, {kind: 'render-frame', root}));
+  }
+  const pbrReport = createPbrRenderReport({
+    assetSha256: asset.sha256, frameDigest: 'd'.repeat(64),
+    renderer: {family: 'threejs-webgl', name: 'Three.js', version: 'test', backend: 'headless-webgl', independentProcess: true},
+    lighting: {rigId: 'fixed-review-rig', digest: 'e'.repeat(64)},
+    colorPipeline: {exposure: 0, toneMapping: 'ACESFilmic', outputColorSpace: 'sRGB'},
+    materialSupport: {supported: ['base-color-factor', 'metallic-factor', 'roughness-factor'], unsupported: []},
+    outputs: frames.map((frame, index) => ({viewId: REQUIRED_REVIEW_VIEW_IDS[index], path: frame.path, sha256: frame.sha256})), reproducibility: {mode: 'deterministic', tolerance: ''},
+  });
+  await fs.writeFile(renderPath, `${JSON.stringify(pbrReport, null, 2)}\n`);
   const renderReport = await contentReference(renderPath, {kind: 'render-report', root});
-  const artifactRefs = [asset, renderReport];
+  const artifactRefs = [asset, renderReport, ...frames];
   let review = null;
   let reviewPath = 'reviews/visual-review.json';
   if (includeReview) {
-    review = createVisualReview(reviewInput({sourceSha256: source.sha256, assetSha256: asset.sha256, ...reviewOverrides}));
+    review = createVisualReview(reviewInput({sourceSha256: source.sha256, assetSha256: asset.sha256, renderer: {reportSha256: renderReport.sha256}, ...reviewOverrides}));
     const absoluteReviewPath = path.join(root, reviewPath);
     await fs.mkdir(path.dirname(absoluteReviewPath), {recursive: true});
     await fs.writeFile(absoluteReviewPath, `${JSON.stringify(review, null, 2)}\n`);
@@ -299,4 +317,8 @@ test('render-integrity-only output cannot pass appearance or unsupported materia
       unsupportedMaterialFeatures: ['clearcoat'],
     },
   })), /renderer does not support: clearcoat/);
+  assert.throws(() => createVisualReview(reviewInput({
+    sourceSha256: 'a'.repeat(64), assetSha256: 'b'.repeat(64),
+    renderer: {independentProcess: false},
+  })), /requires an independent PBR renderer process/);
 });

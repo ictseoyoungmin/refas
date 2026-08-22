@@ -53,7 +53,7 @@ Possible decisions are:
 - `REOPEN_OWNER`: a typed blocker selects an owner and pre-owner checkpoint.
 - `REQUEST_REVIEW`: evidence is insufficient or utility is tied; baseline remains active.
 - `MAY_CLOSE`: all declared local closure gates pass.
-- A whole-object certificate additionally requires a `refas.visual-review/v1` artifact bound to the exact source and asset digests. Local gate strings cannot override its verdict or findings.
+- A whole-object certificate additionally requires a `refas.visual-review/v1` artifact bound to the exact source and asset digests. When appearance passes, it must cite a valid `refas.pbr-render-report/v1` and digest-bound frames from an independent PBR renderer. Local gate strings cannot override its verdict or findings.
 
 Rejected candidates remain in checkpoint history as evidence, but they do not become the active head.
 
@@ -67,7 +67,7 @@ The dependency-light JavaScript core owns:
 - deterministic mesh and embedded GLB construction;
 - shared-boundary surface networks;
 - immutable child composition and assembly validation;
-- digest-bound visual-review validation and fail-closed certification readiness;
+- digest-bound portable-integrity and independent-PBR visual-review validation with fail-closed certification readiness;
 - checkpoint object storage, restore, audit, and failure routing.
 
 Pillow and NumPy provide portable evidence generation and software rendering. Their outputs are observation and validation aids. They never replace agent inspection of the raw source.

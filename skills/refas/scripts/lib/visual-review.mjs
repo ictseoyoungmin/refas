@@ -1,5 +1,6 @@
 import {assertDigest, assertId, deepFreeze, digestJson} from './canonical.mjs';
 import {normalizeFinding} from './failure-router.mjs';
+import {PBR_RENDERER_FAMILIES} from './pbr-render-report.mjs';
 
 export const VISUAL_REVIEW_SCHEMA = 'refas.visual-review/v1';
 export const REQUIRED_REVIEW_VIEW_IDS = Object.freeze([
@@ -32,6 +33,7 @@ export const REQUIRED_CLOSURE_GATE_IDS = Object.freeze([
 const REVIEW_STATUSES = new Set(['pass', 'fail', 'insufficient']);
 const EVIDENCE_CLASSES = new Set(['independent-reference', 'self-generated-contract-fixture']);
 const RENDERER_CLAIM_SCOPES = new Set(['render-integrity-only', 'visual-fidelity']);
+const PBR_RENDERER_FAMILY_SET = new Set(PBR_RENDERER_FAMILIES);
 
 function strings(values, label, {required = false, identifiers = false} = {}) {
   const normalized = [...new Set((values ?? []).map(String).filter(Boolean))].sort();
@@ -94,18 +96,23 @@ export function createVisualReview({
   const normalizedRequiredFeatures = strings(requiredMaterialFeatures, 'requiredMaterialFeatures', {identifiers: true});
   const normalizedRenderer = {
     kind: String(renderer.kind ?? ''),
+    family: String(renderer.family ?? ''),
     reportRef: String(renderer.reportRef ?? ''),
+    reportSha256: assertDigest(renderer.reportSha256, 'renderer.reportSha256'),
+    independentProcess: renderer.independentProcess === true,
     claimScope,
     supportedMaterialFeatures,
     unsupportedMaterialFeatures,
   };
-  if (!normalizedRenderer.kind || !normalizedRenderer.reportRef) throw new Error('renderer.kind and renderer.reportRef are required');
+  if (!normalizedRenderer.kind || !normalizedRenderer.family || !normalizedRenderer.reportRef) throw new Error('renderer.kind, renderer.family, and renderer.reportRef are required');
+  if (!PBR_RENDERER_FAMILY_SET.has(normalizedRenderer.family)) throw new Error(`renderer.family must be one of: ${PBR_RENDERER_FAMILIES.join(', ')}`);
 
   const findings = unresolvedFindings.map(normalizeFinding);
   const blockingFindings = findings.filter((finding) => finding.blocking);
   const appearanceVerdict = normalizedGateVerdicts.find((gate) => gate.id === 'appearance-plausibility');
   if (appearanceVerdict.status === 'pass') {
     if (claimScope !== 'visual-fidelity') throw new Error('appearance-plausibility cannot pass with a render-integrity-only renderer');
+    if (!normalizedRenderer.independentProcess) throw new Error('appearance-plausibility requires an independent PBR renderer process');
     const unsupportedRequired = normalizedRequiredFeatures.filter((feature) => !supportedMaterialFeatures.includes(feature));
     if (unsupportedRequired.length) throw new Error(`appearance-plausibility cannot pass because the renderer does not support: ${unsupportedRequired.join(', ')}`);
   }
@@ -133,6 +140,7 @@ export function createVisualReview({
       selfGeneratedFixturesAreContractOnly: true,
       renderIntegrityIsNotVisualAcceptance: true,
       unsupportedMaterialFeaturesCannotPassAppearance: true,
+      independentPbrRendererRequiredAfterPortableGate: true,
       unresolvedBlockingFindingsPreventClosure: true,
     },
   };

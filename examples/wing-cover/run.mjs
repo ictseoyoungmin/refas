@@ -643,7 +643,7 @@ async function main() {
       {category: 'closure-evidence-missing', severity: 'major', scopeId: 'whole', summary: 'The contract fixture demonstrates exact geometry and PBR data parity but does not independently attest visual fidelity.', evidenceRefs: ['renders/final/multiview-review-board.png']},
     ],
     renderer: {
-      kind: finalRenderReport.runtime.kind, reportRef: 'renders/final/render-report.json', claimScope: finalRenderReport.claimScope,
+      kind: finalRenderReport.runtime.kind, family: 'other', reportRef: 'renders/final/render-report.json', reportSha256: await sha256File(finalReportPath), independentProcess: false, claimScope: finalRenderReport.claimScope,
       supportedMaterialFeatures: finalRenderReport.materialSupport.supported,
       unsupportedMaterialFeatures: finalRenderReport.materialSupport.unsupported,
     },
