@@ -1,0 +1,15 @@
+{
+  "schema": "refas.canonical-object-frame/v1",
+  "id": "whole-object-frame",
+  "scopeId": "whole",
+  "origin": [0, 0, 0],
+  "axes": {"right": [1, 0, 0], "up": [0, 1, 0], "forward": [0, 0, 1]},
+  "scopeParts": [],
+  "hero": {
+    "position": [0, 0, 5],
+    "target": [0, 0, 0],
+    "up": [0, 1, 0],
+    "fovY": 31,
+    "registrationDigest": "0000000000000000000000000000000000000000000000000000000000000000"
+  }
+}

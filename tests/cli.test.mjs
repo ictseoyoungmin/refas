@@ -20,6 +20,7 @@ test('CLI help exposes recovery, validation, and certification commands', () => 
   assert.match(help.commands.render, /--timeout-seconds 300/);
   assert.match(help.commands.render, /--max-working-mb 512/);
   assert.match(help.commands.render, /--max-triangles N/);
+  assert.match(help.commands.render, /--frame canonical-frame.json/);
 });
 
 test('CLI resume returns one safe next action and unknown commands fail actionably', async (t) => {

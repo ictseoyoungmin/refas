@@ -207,11 +207,12 @@ def object_color(index: int):
     return np.array([(value & 255) / 255, ((value >> 8) & 255) / 255, ((value >> 16) & 255) / 255])
 
 
-def camera_basis(position, target):
+def camera_basis(position, target, up_hint=None):
     forward = normalize(np.asarray(target) - np.asarray(position))
-    up_hint = np.array([0.0, 1.0, 0.0])
+    up_hint = normalize(np.asarray(up_hint if up_hint is not None else [0.0, 1.0, 0.0], dtype=np.float64))
     if abs(float(np.dot(forward, up_hint))) > 0.97:
-        up_hint = np.array([0.0, 0.0, 1.0])
+        candidates = (np.array([0.0, 0.0, 1.0]), np.array([1.0, 0.0, 0.0]), np.array([0.0, 1.0, 0.0]))
+        up_hint = min(candidates, key=lambda candidate: abs(float(np.dot(forward, candidate))))
     right = normalize(np.cross(forward, up_hint))
     up = normalize(np.cross(right, forward))
     return right, up, forward
@@ -234,9 +235,9 @@ def shade(base, normal, view, metallic, roughness):
     return np.clip(color / (1.0 + color * 0.42), 0, 1)
 
 
-def render(primitives, position, target, output: Path, *, width=640, height=640, fov=31, mode="beauty", tile_size=256, deadline=None):
+def render(primitives, position, target, output: Path, *, width=640, height=640, fov=31, mode="beauty", up_hint=None, tile_size=256, deadline=None):
     started = time.perf_counter()
-    right, up, forward = camera_basis(position, target)
+    right, up, forward = camera_basis(position, target, up_hint)
     position = np.asarray(position, dtype=np.float64)
     scale_y = math.tan(math.radians(fov) / 2)
     scale_x = scale_y * width / height
@@ -304,7 +305,84 @@ def render(primitives, position, target, output: Path, *, width=640, height=640,
             if triangle_visible:
                 rendered_triangles += 1
     Image.fromarray(image, mode="RGB").save(output, format="PNG")
-    return {"path": output.name, "sha256": sha256(output), "mode": mode, "camera": {"position": list(map(float, position)), "target": list(map(float, target)), "fovY": fov}, "renderedTriangles": rendered_triangles, "durationMs": round((time.perf_counter() - started) * 1000, 2)}
+    silhouette = np.any(image != background, axis=2)
+    return {"path": output.name, "sha256": sha256(output), "silhouetteSha256": hashlib.sha256(silhouette.tobytes()).hexdigest(), "coveredPixels": int(np.count_nonzero(silhouette)), "mode": mode, "camera": {"position": list(map(float, position)), "target": list(map(float, target)), "up": list(map(float, up)), "fovY": fov}, "renderedTriangles": rendered_triangles, "durationMs": round((time.perf_counter() - started) * 1000, 2)}
+
+
+def frame_digest(value):
+    canonical = json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+
+
+def finite_vector(value, name):
+    vector = np.asarray(value, dtype=np.float64)
+    if vector.shape != (3,) or not np.all(np.isfinite(vector)):
+        raise ValueError(f"{name} must contain three finite numbers")
+    return vector
+
+
+def load_canonical_frame(path: Path | None):
+    if path is None:
+        value = {"schema": "refas.canonical-object-frame/v1", "id": "legacy-world-frame", "scopeId": "whole", "origin": [0, 0, 0], "axes": {"right": [1, 0, 0], "up": [0, 1, 0], "forward": [0, 0, 1]}, "fallback": "legacy-world-axis"}
+        return value, np.eye(3), np.zeros(3), frame_digest(value)
+    value = json.loads(path.read_text(encoding="utf-8"))
+    if value.get("schema") != "refas.canonical-object-frame/v1":
+        raise ValueError("canonical frame schema must be refas.canonical-object-frame/v1")
+    if not isinstance(value.get("id"), str) or not value["id"].strip() or not isinstance(value.get("scopeId"), str) or not value["scopeId"].strip():
+        raise ValueError("canonical frame id and scopeId are required")
+    origin = finite_vector(value.get("origin"), "origin")
+    axes = value.get("axes", {})
+    basis = np.column_stack(tuple(finite_vector(axes.get(name), f"axes.{name}") for name in ("right", "up", "forward")))
+    if not np.allclose(basis.T @ basis, np.eye(3), atol=1e-6) or np.linalg.det(basis) < 0.999999:
+        raise ValueError("canonical frame axes must be orthonormal and right-handed")
+    scope_parts = value.get("scopeParts", [])
+    if not isinstance(scope_parts, list) or any(not isinstance(name, str) or not name for name in scope_parts) or len(scope_parts) != len(set(scope_parts)):
+        raise ValueError("scopeParts must contain unique non-empty part names")
+    hero = value.get("hero")
+    if hero is not None:
+        if not isinstance(hero, dict):
+            raise ValueError("hero must be an object")
+        hero_position = finite_vector(hero.get("position"), "hero.position")
+        hero_target = finite_vector(hero.get("target"), "hero.target")
+        hero_up = finite_vector(hero.get("up", [0, 1, 0]), "hero.up")
+        hero_direction = hero_target - hero_position
+        if np.linalg.norm(hero_direction) <= 1e-12 or np.linalg.norm(hero_up) <= 1e-12 or abs(float(np.dot(normalize(hero_direction), normalize(hero_up)))) > 0.97:
+            raise ValueError("hero camera requires distinct position/target and a non-parallel up vector")
+        if not math.isfinite(float(hero.get("fovY", 31))) or not 1 <= float(hero.get("fovY", 31)) <= 170:
+            raise ValueError("hero.fovY must be between 1 and 170 degrees")
+        registration = hero.get("registrationDigest")
+        if not isinstance(registration, str) or len(registration) != 64 or any(character not in "0123456789abcdef" for character in registration.lower()):
+            raise ValueError("hero.registrationDigest must be a SHA-256 digest")
+    return value, basis, origin, frame_digest(value)
+
+
+def local_to_world(vector, basis, origin=None):
+    transformed = basis @ np.asarray(vector, dtype=np.float64)
+    return transformed if origin is None else np.asarray(origin, dtype=np.float64) + transformed
+
+
+def frame_bounds(primitives, frame, basis, origin):
+    names = set(frame.get("scopeParts", []))
+    selected = [primitive for primitive in primitives if not names or primitive.name in names]
+    missing = names - {primitive.name for primitive in selected}
+    if missing:
+        raise ValueError(f"canonical frame scopeParts not found in GLB: {', '.join(sorted(missing))}")
+    minimum, maximum = np.full(3, np.inf), np.full(3, -np.inf)
+    for primitive in selected:
+        local = (primitive.positions - origin) @ basis
+        minimum = np.minimum(minimum, local.min(axis=0))
+        maximum = np.maximum(maximum, local.max(axis=0))
+    center_local = (minimum + maximum) / 2
+    radius = max(float(np.linalg.norm(maximum - minimum) / 2), 0.25)
+    return {"min": minimum, "max": maximum, "centerLocal": center_local, "centerWorld": local_to_world(center_local, basis, origin), "radius": radius, "parts": sorted({primitive.name for primitive in selected})}
+
+
+def world_bounds(primitives):
+    minimum, maximum = np.full(3, np.inf), np.full(3, -np.inf)
+    for primitive in primitives:
+        minimum = np.minimum(minimum, primitive.positions.min(axis=0))
+        maximum = np.maximum(maximum, primitive.positions.max(axis=0))
+    return minimum, maximum
 
 
 def make_board(reference: Path | None, frames, output: Path):
@@ -333,6 +411,7 @@ def main():
     parser.add_argument("--glb", required=True)
     parser.add_argument("--out", required=True)
     parser.add_argument("--reference")
+    parser.add_argument("--frame")
     parser.add_argument("--size", type=int, default=640)
     parser.add_argument("--timeout-seconds", type=float, default=300.0)
     parser.add_argument("--max-working-mb", type=float, default=512.0)
@@ -340,6 +419,7 @@ def main():
     parser.add_argument("--max-triangles", type=int)
     args = parser.parse_args()
     glb_path, output = Path(args.glb).resolve(), Path(args.out).resolve()
+    canonical_frame_path = Path(args.frame).resolve() if args.frame else None
     output.parent.mkdir(parents=True, exist_ok=True)
     if args.timeout_seconds <= 0:
         raise ValueError("timeout seconds must be positive")
@@ -355,30 +435,47 @@ def main():
     if args.max_triangles is not None and triangle_count > args.max_triangles:
         raise ValueError(f"triangle count {triangle_count} exceeds explicit limit {args.max_triangles}")
     deadline = time.monotonic() + args.timeout_seconds
-    points = np.concatenate([primitive.positions for primitive in primitives], axis=0)
-    minimum, maximum = points.min(axis=0), points.max(axis=0)
-    center = (minimum + maximum) / 2
-    radius = max(float(np.linalg.norm(maximum - minimum) / 2), 0.25)
+    frame, basis, origin, canonical_frame_digest = load_canonical_frame(canonical_frame_path)
+    scoped_bounds = frame_bounds(primitives, frame, basis, origin)
+    minimum, maximum = world_bounds(primitives)
+    center, radius = scoped_bounds["centerWorld"], scoped_bounds["radius"]
     distance = radius * 3.1
     view_specs = [
-        ("hero", [0.0, 0.0, 1.0], "beauty", "HERO"),
-        ("oblique", [0.72, 0.20, 1.0], "beauty", "OBLIQUE"),
-        ("side", [1.0, 0.05, 0.15], "beauty", "SIDE"),
-        ("top", [0.18, 1.0, 0.35], "beauty", "TOP"),
-        ("grazing", [-1.0, 0.05, 0.18], "beauty", "GRAZING"),
-        ("normal", [0.0, 0.0, 1.0], "normal", "NORMAL"),
-        ("object-id", [0.0, 0.0, 1.0], "object-id", "OBJECT ID"),
-        ("albedo", [0.0, 0.0, 1.0], "albedo", "ALBEDO"),
+        ("hero", [0.0, 0.0, 1.0], [0, 1, 0], "beauty", "HERO"),
+        ("oblique", [0.72, 0.20, 1.0], [0, 1, 0], "beauty", "OBLIQUE"),
+        ("side", [1.0, 0.05, 0.15], [0, 1, 0], "beauty", "SIDE"),
+        ("top", [0.18, 1.0, 0.35], [0, 0, 1], "beauty", "TOP"),
+        ("grazing", [-1.0, 0.05, 0.18], [0, 1, 0], "beauty", "GRAZING"),
+        ("normal", [0.0, 0.0, 1.0], [0, 1, 0], "normal", "NORMAL"),
+        ("object-id", [0.0, 0.0, 1.0], [0, 1, 0], "object-id", "OBJECT ID"),
+        ("albedo", [0.0, 0.0, 1.0], [0, 1, 0], "albedo", "ALBEDO"),
     ]
     staging = Path(tempfile.mkdtemp(prefix=".refas-render-", dir=output.parent))
     try:
         frames = []
-        for name, direction, mode, label in view_specs:
+        for name, direction, view_up, mode, label in view_specs:
             check_deadline(deadline)
-            position = center + normalize(direction) * distance
+            hero = frame.get("hero") if name == "hero" else None
+            if hero:
+                position = local_to_world(hero["position"], basis, origin)
+                target = local_to_world(hero["target"], basis, origin)
+                up_hint = local_to_world(hero.get("up", [0, 1, 0]), basis)
+                fov = float(hero.get("fovY", 31))
+                local_position, local_target = hero["position"], hero["target"]
+            else:
+                position = center + normalize(local_to_world(direction, basis)) * distance
+                target = center
+                up_hint = local_to_world(view_up, basis)
+                fov = 31
+                local_position = (scoped_bounds["centerLocal"] + normalize(direction) * distance).tolist()
+                local_target = scoped_bounds["centerLocal"].tolist()
             frame_path = staging / f"{name}.png"
-            record = render(primitives, position, center, frame_path, width=args.size, height=args.size, mode=mode, tile_size=policy["tileSize"], deadline=deadline)
-            frames.append({**record, "label": label, "absolutePath": str(frame_path)})
+            record = render(primitives, position, target, frame_path, width=args.size, height=args.size, fov=fov, mode=mode, up_hint=up_hint, tile_size=policy["tileSize"], deadline=deadline)
+            local_direction = normalize(np.asarray(local_position) - np.asarray(local_target)).tolist()
+            binding = {"frameId": frame["id"], "scopeId": frame["scopeId"], "frameDigest": canonical_frame_digest, "localPosition": local_position, "localTarget": local_target, "localDirection": local_direction}
+            if hero:
+                binding["registrationDigest"] = hero["registrationDigest"]
+            frames.append({**record, "frameBinding": binding, "label": label, "absolutePath": str(frame_path)})
         board_path = staging / "multiview-review-board.png"
         reference = Path(args.reference).resolve() if args.reference else None
         check_deadline(deadline)
@@ -395,6 +492,7 @@ def main():
                 "unsupported": ["clearcoat", "image-based-lighting", "normal-maps", "textures"],
             },
             "geometry": {"parts": len(primitives), "triangles": triangle_count, "bounds": {"min": minimum.tolist(), "max": maximum.tolist()}},
+            "canonicalFrame": {"id": frame["id"], "scopeId": frame["scopeId"], "digest": canonical_frame_digest, "source": str(canonical_frame_path) if canonical_frame_path else None, "origin": origin.tolist(), "axes": {"right": basis[:, 0].tolist(), "up": basis[:, 1].tolist(), "forward": basis[:, 2].tolist()}, "scopeParts": scoped_bounds["parts"], "scopeBoundsLocal": {"min": scoped_bounds["min"].tolist(), "max": scoped_bounds["max"].tolist()}},
             "resourcePolicy": {**policy, "timeoutSeconds": args.timeout_seconds, "maxTriangles": args.max_triangles},
             "frames": [{key: value for key, value in frame.items() if key != "absolutePath"} for frame in frames],
             "board": {"path": board_path.name, "sha256": sha256(board_path)},

@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/canonical-object-frame.schema.json",
+  "title": "RefAs canonical object frame",
+  "type": "object",
+  "required": ["schema", "id", "scopeId", "origin", "axes"],
+  "properties": {
+    "schema": {"const": "refas.canonical-object-frame/v1"},
+    "id": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "origin": {"$ref": "#/$defs/vector3"},
+    "axes": {
+      "type": "object",
+      "required": ["right", "up", "forward"],
+      "properties": {
+        "right": {"$ref": "#/$defs/vector3"},
+        "up": {"$ref": "#/$defs/vector3"},
+        "forward": {"$ref": "#/$defs/vector3"}
+      },
+      "additionalProperties": false
+    },
+    "scopeParts": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "hero": {
+      "type": "object",
+      "required": ["position", "target", "registrationDigest"],
+      "properties": {
+        "position": {"$ref": "#/$defs/vector3"},
+        "target": {"$ref": "#/$defs/vector3"},
+        "up": {"$ref": "#/$defs/vector3"},
+        "fovY": {"type": "number", "minimum": 1, "maximum": 170},
+        "registrationDigest": {"$ref": "common.schema.json#/$defs/digest"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "$defs": {
+    "vector3": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}}
+  },
+  "additionalProperties": false
+}

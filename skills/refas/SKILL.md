@@ -177,9 +177,12 @@ python3 scripts/render_glb.py \
   --glb <asset.glb> \
   --out <render-dir> \
   --reference <reference.png> \
+  --frame <canonical-object-frame.json> \
   --timeout-seconds 300 \
   --max-working-mb 512
 ```
+
+Copy `assets/templates/canonical-object-frame.json` when the GLB's semantic axes are known. Its right, up, and forward axes are world-space unit vectors; its origin is the canonical local origin. `hero.position`, `hero.target`, and `hero.up` are expressed in that local frame and bind the source camera with `registrationDigest`. `scopeParts` may name exact GLB parts whose current bounds control framing while the renderer retains all parts as whole-object context. Without `--frame`, the renderer deliberately reports and uses the legacy world-axis fallback.
 
 The renderer has no default triangle-count ceiling. A well-justified asset may exceed 30,000 triangles; remove redundant geometry because it is redundant, not merely to satisfy an arbitrary count. Resource safety is enforced independently: geometry decode, framebuffer, and bounded tile scratch memory are estimated before rasterization; triangles are processed without a full-frame per-triangle allocation; and both an internal wall-clock deadline and a parent-process timeout stop stalled work. Use `--max-triangles N` only when a project or CI job intentionally declares a hard policy cap. `--tile-size` controls locality, while `--max-working-mb` is a safety budget rather than a quality setting. Failed preflight or timeout attempts do not publish a partial render set.
 

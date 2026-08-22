@@ -96,7 +96,7 @@ function help() {
       'validate-spec': 'validate-spec --file spec.json [--context hierarchy.json]',
       'inspect-glb': 'inspect-glb --glb asset.glb',
       evidence: 'evidence --image reference.png --out DIR --scope ID [--roi x,y,w,h] [--padding 0.08]',
-      render: 'render --glb asset.glb --out DIR [--reference image.png] [--size 640] [--timeout-seconds 300] [--max-working-mb 512] [--tile-size 256] [--max-triangles N]',
+      render: 'render --glb asset.glb --out DIR [--reference image.png] [--frame canonical-frame.json] [--size 640] [--timeout-seconds 300] [--max-working-mb 512] [--tile-size 256] [--max-triangles N]',
     },
   };
 }
@@ -186,6 +186,7 @@ async function main() {
   if (command === 'render') {
     const args = ['--glb', required(options, 'glb'), '--out', required(options, 'out')];
     if (options.reference) args.push('--reference', options.reference); if (options.size) args.push('--size', options.size);
+    if (options.frame) args.push('--frame', options.frame);
     if (options['timeout-seconds']) args.push('--timeout-seconds', options['timeout-seconds']);
     if (options['max-working-mb']) args.push('--max-working-mb', options['max-working-mb']);
     if (options['tile-size']) args.push('--tile-size', options['tile-size']);

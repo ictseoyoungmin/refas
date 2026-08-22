@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Added canonical object-frame rendering, registered hero cameras, scope-local bounds with whole-object context, and per-view frame/digest provenance while preserving the legacy world-axis fallback.
 - Removed the implicit assumption that portable validation assets should remain below 30,000 triangles.
 - Added bounded tile rasterization, decoded-geometry and framebuffer memory preflight, optional project triangle caps, staged render publication, and dual internal/parent wall-clock timeouts.
 
