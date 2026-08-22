@@ -68,6 +68,7 @@ The dependency-light JavaScript core owns:
 - shared-boundary surface networks;
 - immutable child composition and assembly validation;
 - digest-bound portable-integrity and independent-PBR visual-review validation with fail-closed certification readiness;
+- an external-process PBR boundary: the bundled Cook–Torrance fallback and optional Blender/Three.js/Filament/glTF Sample Viewer/VTK workers emit the same renderer report without linking those engines into RefAs;
 - checkpoint object storage, restore, audit, and failure routing.
 
 Pillow and NumPy provide portable evidence generation and software rendering. Their outputs are observation and validation aids. They never replace agent inspection of the raw source.

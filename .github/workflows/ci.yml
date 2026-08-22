@@ -40,6 +40,9 @@ jobs:
       - name: Complete dogfood
         if: matrix.node == 24
         run: npm run dogfood
+      - name: Independent PBR material dogfood
+        if: matrix.node == 24
+        run: npm run dogfood:pbr
       - name: Release audit
         if: matrix.node == 24
         run: npm run release:audit

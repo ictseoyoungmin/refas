@@ -13,6 +13,7 @@ RefAs is designed for work where a quick image-to-mesh approximation is not enou
 - **Shared surface topology.** Adjacent observed cells consume one physical boundary rather than nearly matching duplicate frames.
 - **Actual multiview QA.** Hero, oblique, side, top, grazing, normal, object-ID, and albedo renders drive critique; rasterization success is never treated as visual similarity.
 - **Fail-closed visual certification.** An independent, digest-bound visual review must pass the exact source and asset bytes; self-generated fixtures and unsupported material claims cannot certify.
+- **Independent PBR appearance evidence.** After portable integrity passes, the deterministic Cook–Torrance backend or an external renderer worker must bind its exact rig, color pipeline, feature coverage, and output digests.
 - **Typed failure ownership.** Every blocker identifies its visual scope, owning capability, invalidated dependents, and safe checkpoint.
 - **Bounded render resources without a quality ceiling.** The portable renderer accepts high-triangle assets by default, uses bounded tiles, preflights decoded geometry and framebuffer memory, and stops on explicit wall-clock deadlines; optional triangle caps remain project policy rather than a global quality limit.
 - **Content-addressed rollback.** Checkpoints retain the exact artifact bytes required to restore a trustworthy state.
@@ -22,7 +23,7 @@ RefAs is designed for work where a quick image-to-mesh approximation is not enou
 Requirements:
 
 - Node.js 20 or newer
-- Python 3 with Pillow and NumPy for evidence views and the portable offline renderer
+- Python 3 with Pillow and NumPy for evidence views, the portable integrity renderer, and the independent PBR fallback
 
 Install the Python dependencies with `python -m pip install --requirement requirements.txt`.
 
@@ -60,6 +61,7 @@ refas/
 ├── schemas/               public JSON Schemas
 ├── tests/                 unit, integration, and regression tests
 ├── examples/wing-cover/   reproducible end-to-end dogfood fixture
+├── examples/material-fixture/ deterministic four-material PBR dogfood
 ├── tools/                 repository and release audits
 └── docs/                  architecture and quality contracts
 ```
@@ -73,10 +75,11 @@ npm test             # deterministic Node test suite
 npm run test:python  # Python syntax gate
 npm run check        # repository architecture and naming audit
 npm run dogfood      # exercise reconstruction and prove the self-generated fixture is refused certification
+npm run dogfood:pbr  # render four PBR finishes twice and require identical output digests
 npm run release:audit
 ```
 
-See [Architecture](docs/architecture.md), [Agent recovery](docs/agent-recovery.md), [Prototype migration](docs/migration-from-prototypes.md), [Development plan](docs/development-plan.md), and [Release criteria](docs/release-criteria.md) for the normative contracts and completed 1.0 route.
+See [Architecture](docs/architecture.md), [Independent PBR renderer](docs/pbr-renderer.md), [Agent recovery](docs/agent-recovery.md), [Prototype migration](docs/migration-from-prototypes.md), [Development plan](docs/development-plan.md), and [Release criteria](docs/release-criteria.md) for the normative contracts and completed 1.0 route.
 
 Contributions follow the [Issue and Pull Request governance contract](docs/github-governance.md): one runtime capability and hierarchy scope or one explicit repository boundary, one primary Issue, evidence-bound review, and an explicit recovery point.
 

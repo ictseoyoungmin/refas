@@ -189,6 +189,19 @@ The renderer has no default triangle-count ceiling. A well-justified asset may e
 Review hero, oblique, side, top, grazing, normal, object-ID, and albedo views. The software renderer is the mandatory portable validation baseline, not a visual-fidelity renderer. After this basic gate passes, run an independent PBR-capable renderer—Blender Cycles/Eevee headless, Three.js/WebGL, Filament, glTF Sample Viewer, VTK, or an equivalent backend—and normalize its evidence as `refas.pbr-render-report/v1`.
 Its `PASS` status and `claimScope: render-integrity-only` mean only that actual GLB geometry rasterized in every requested view. Read `materialSupport`; do not use this report alone to pass appearance or visual fidelity.
 
+RefAs ships one deterministic, dependency-light Cook–Torrance implementation as an independently executed fallback:
+
+```bash
+node scripts/refas.mjs render-pbr \
+  --glb <asset.glb> \
+  --out <project-dir>/renders/pbr \
+  --frame <canonical-object-frame.json> \
+  --timeout-seconds 180 \
+  --max-working-mb 512
+```
+
+It supports base-color, metallic, and roughness factors. It explicitly reports clearcoat, image-based lighting, normal maps, and textures as unsupported. Prefer Blender, Three.js, Filament, glTF Sample Viewer, or VTK when the appearance claim needs those features; keep those renderers outside the RefAs distribution and adapt their outputs through the same report contract.
+
 Copy `assets/templates/pbr-render-report.json` for the independent pass. Bind the exact asset and canonical-frame digests, renderer family/name/version/backend, fixed lighting rig, exposure/tone mapping/output color space, supported and unsupported material features, output frame digests, and reproducibility mode. A renderer's brand name never implies feature support. If the declared backend does not cover every required material feature, keep appearance insufficient and reopen the owning capability from the PBR evidence.
 
 Create `reviews/visual-review.json` from `assets/templates/visual-review.json` with `createVisualReview`. Bind it to the exact source and asset SHA-256, identify whether the reference is independent or generated from the same fixture, record every standard view and visual gate verdict, cite the exact independent PBR report SHA-256 and renderer feature support, and retain every unresolved typed finding. Validate both reports before checkpointing:

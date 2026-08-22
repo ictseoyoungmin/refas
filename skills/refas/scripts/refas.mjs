@@ -69,7 +69,7 @@ async function writeJson(filePath, value) {
 
 function runPython(script, args, {timeoutMs} = {}) {
   const python = process.env.CODEX_PRIMARY_RUNTIME_PYTHON || 'python3';
-  const result = spawnSync(python, [path.join(SCRIPT_DIR, script), ...args], {stdio: 'inherit', timeout: timeoutMs, killSignal: 'SIGKILL'});
+  const result = spawnSync(python, [path.join(SCRIPT_DIR, script), ...args], {stdio: 'inherit', timeout: timeoutMs, killSignal: 'SIGKILL', env: {...process.env, PYTHONDONTWRITEBYTECODE: '1'}});
   if (result.error?.code === 'ETIMEDOUT') throw new Error(`renderer exceeded the parent-process timeout of ${Math.round(timeoutMs / 1000)} seconds`);
   if (result.error) throw result.error;
   if (result.status !== 0) process.exit(result.status ?? 1);
@@ -98,6 +98,7 @@ function help() {
       'inspect-glb': 'inspect-glb --glb asset.glb',
       evidence: 'evidence --image reference.png --out DIR --scope ID [--roi x,y,w,h] [--padding 0.08]',
       render: 'render --glb asset.glb --out DIR [--reference image.png] [--frame canonical-frame.json] [--size 640] [--timeout-seconds 300] [--max-working-mb 512] [--tile-size 256] [--max-triangles N]',
+      'render-pbr': 'render-pbr --glb asset.glb --out DIR --frame canonical-frame.json [--reference image.png] [--size 420] [--timeout-seconds 180] [--max-working-mb 512]',
     },
   };
 }
@@ -196,6 +197,13 @@ async function main() {
     const timeoutSeconds = Number(options['timeout-seconds'] ?? 300);
     if (!Number.isFinite(timeoutSeconds) || timeoutSeconds <= 0) throw new Error('--timeout-seconds must be a positive number');
     runPython('render_glb.py', args, {timeoutMs: Math.ceil(timeoutSeconds * 1000 + 5000)}); return;
+  }
+  if (command === 'render-pbr') {
+    const args = ['--glb', required(options, 'glb'), '--out', required(options, 'out'), '--frame', required(options, 'frame')];
+    if (options.reference) args.push('--reference', options.reference); if (options.size) args.push('--size', options.size);
+    if (options['timeout-seconds']) args.push('--timeout-seconds', options['timeout-seconds']); if (options['max-working-mb']) args.push('--max-working-mb', options['max-working-mb']);
+    const timeoutSeconds = Number(options['timeout-seconds'] ?? 180); if (!Number.isFinite(timeoutSeconds) || timeoutSeconds <= 0) throw new Error('--timeout-seconds must be a positive number');
+    runPython('render_pbr.py', args, {timeoutMs: Math.ceil(timeoutSeconds * 1000 + 5000)}); return;
   }
   throw new Error(`unknown command: ${command}`);
 }
