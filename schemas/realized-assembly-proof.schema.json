@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/realized-assembly-proof.schema.json",
+  "title": "RefAs realized modular assembly proof",
+  "type": "object",
+  "required": ["schema", "valid", "errors", "moduleChecks", "attachmentChecks", "immutableChildChecks", "objectIdCheck", "metrics", "proofDigest"],
+  "properties": {
+    "schema": {"const": "refas.realized-assembly-proof/v1"},
+    "valid": {"type": "boolean"},
+    "errors": {"type": "array", "items": {"type": "string"}},
+    "moduleChecks": {"type": "array", "items": {"type": "object"}},
+    "attachmentChecks": {"type": "array", "items": {"type": "object"}},
+    "immutableChildChecks": {"type": "array", "items": {"type": "object"}},
+    "objectIdCheck": {"type": "object", "required": ["partIds", "pass"]},
+    "metrics": {"type": "object", "required": ["modules", "nestedLevels", "attachments", "failures"]},
+    "proofDigest": {"$ref": "common.schema.json#/$defs/sha256"}
+  },
+  "additionalProperties": false
+}

@@ -78,6 +78,7 @@ export function partsToGlb({parts, materials, assetId = 'refas-asset', name = 'R
     const bytes = Buffer.from(typed.buffer, typed.byteOffset, typed.byteLength), aligned = align4(offset), index = json.bufferViews.length;
     json.bufferViews.push({buffer: 0, byteOffset: aligned, byteLength: bytes.length}); chunks.push({offset: aligned, bytes}); offset = aligned + bytes.length; return index;
   };
+  const nodeByPartId = new Map();
   for (const part of parts) {
     if (!part?.id || !part.mesh || !materialIds.has(part.materialId)) throw new Error('every part requires id, mesh, and known materialId');
     const analysis = analyzeMesh(part.mesh); if (!analysis.valid) throw new Error(`${part.id}: invalid mesh`);
@@ -94,8 +95,23 @@ export function partsToGlb({parts, materials, assetId = 'refas-asset', name = 'R
     const topology = part.mesh.topology ?? part.mesh.meta?.topology ?? null;
     json.meshes.push({name: part.id, primitives: [{attributes: {POSITION: accessorStart, NORMAL: accessorStart + 1}, indices: accessorStart + 2, material: materialIds.get(part.materialId), mode: 4}], ...(topology ? {extras: {refasTopology: topology}} : {})});
     const nodeIndex = json.nodes.length;
-    json.nodes.push({name: part.id, mesh: meshIndex, extras: {refasPartId: part.id, role: part.role ?? null, scopeId: part.scopeId ?? null, materialId: part.materialId}});
+    const node = {name: part.id, mesh: meshIndex, extras: {refasPartId: part.id, role: part.role ?? null, scopeId: part.scopeId ?? null, materialId: part.materialId,
+      ...(part.moduleRoot ? {refasModuleRoot: true} : {}), ...(part.contactSurfaces ? {refasContactSurfaces: part.contactSurfaces} : {})}};
+    if (part.matrix) node.matrix = [...part.matrix];
+    else {
+      if (part.translation) node.translation = [...part.translation];
+      if (part.rotation) node.rotation = [...part.rotation];
+      if (part.scale) node.scale = [...part.scale];
+    }
+    json.nodes.push(node);
+    nodeByPartId.set(part.id, nodeIndex);
     json.scenes[0].nodes.push(nodeIndex);
+  }
+  for (const part of parts) if (part.parentId != null) {
+    const child = nodeByPartId.get(part.id), parent = nodeByPartId.get(part.parentId);
+    if (parent == null) throw new Error(`${part.id}: unknown parentId ${part.parentId}`);
+    json.nodes[parent].children ??= []; json.nodes[parent].children.push(child);
+    json.scenes[0].nodes = json.scenes[0].nodes.filter((index) => index !== child);
   }
   const binary = Buffer.alloc(align4(offset)); for (const chunk of chunks) chunk.bytes.copy(binary, chunk.offset);
   json.buffers[0].byteLength = binary.length;
@@ -109,6 +125,7 @@ export function appendPartsToClosedGlb(sourceGlb, {parts, materials, name = 'Ref
   json.bufferViews ??= []; json.accessors ??= []; json.meshes ??= []; json.nodes ??= []; json.materials ??= []; json.scenes ??= [{nodes: []}]; json.scene = Number.isInteger(json.scene) ? json.scene : 0; json.scenes[json.scene].nodes ??= [];
   const sourceCounts = {nodes: json.nodes.length, meshes: json.meshes.length, materials: json.materials.length};
   const existingPartIds = new Set(json.nodes.map((node) => node.extras?.refasPartId ?? node.name).filter(Boolean));
+  const nodeByPartId = new Map(json.nodes.map((node, index) => [node.extras?.refasPartId ?? node.name, index]).filter(([id]) => id));
   if (new Set(parts.map((part) => part?.id)).size !== parts.length || parts.some((part) => existingPartIds.has(part?.id))) throw new Error('appended part IDs must be unique and must not replace a closed child part');
   const materialIds = new Map(json.materials.map((material, index) => [material.name, index]));
   for (const [id, material] of Object.entries(materials ?? {})) if (!materialIds.has(id)) { materialIds.set(id, json.materials.length); json.materials.push(materialJson(id, material)); }
@@ -123,7 +140,22 @@ export function appendPartsToClosedGlb(sourceGlb, {parts, materials, name = 'Ref
     json.accessors.push({bufferView: pv, componentType: 5126, count: part.mesh.positions.length, type: 'VEC3', min: extent.min, max: extent.max}, {bufferView: nv, componentType: 5126, count: normals.length, type: 'VEC3'}, {bufferView: iv, componentType: IndexArray === Uint16Array ? 5123 : 5125, count: part.mesh.indices.length, type: 'SCALAR'});
     const topology = part.mesh.topology ?? part.mesh.meta?.topology ?? null;
     const meshIndex = json.meshes.length; json.meshes.push({name: part.id, primitives: [{attributes: {POSITION: start, NORMAL: start + 1}, indices: start + 2, material: materialIds.get(part.materialId), mode: 4}], ...(topology ? {extras: {refasTopology: topology}} : {})});
-    const nodeIndex = json.nodes.length; json.nodes.push({name: part.id, mesh: meshIndex, extras: {refasPartId: part.id, role: part.role ?? null, scopeId: part.scopeId ?? null, materialId: part.materialId}}); json.scenes[json.scene].nodes.push(nodeIndex); newNodeIds.push(nodeIndex);
+    const nodeIndex = json.nodes.length;
+    const node = {name: part.id, mesh: meshIndex, extras: {refasPartId: part.id, role: part.role ?? null, scopeId: part.scopeId ?? null, materialId: part.materialId,
+      ...(part.moduleRoot ? {refasModuleRoot: true} : {}), ...(part.contactSurfaces ? {refasContactSurfaces: part.contactSurfaces} : {})}};
+    if (part.matrix) node.matrix = [...part.matrix];
+    else {
+      if (part.translation) node.translation = [...part.translation];
+      if (part.rotation) node.rotation = [...part.rotation];
+      if (part.scale) node.scale = [...part.scale];
+    }
+    json.nodes.push(node); nodeByPartId.set(part.id, nodeIndex); json.scenes[json.scene].nodes.push(nodeIndex); newNodeIds.push(nodeIndex);
+  }
+  for (const part of parts) if (part.parentId != null) {
+    const child = nodeByPartId.get(part.id), parent = nodeByPartId.get(part.parentId);
+    if (parent == null) throw new Error(`${part.id}: unknown parentId ${part.parentId}`);
+    json.nodes[parent].children ??= []; json.nodes[parent].children.push(child);
+    json.scenes[json.scene].nodes = json.scenes[json.scene].nodes.filter((index) => index !== child);
   }
   const binary = Buffer.alloc(align4(offset)); for (const chunk of chunks) chunk.bytes.copy(binary, chunk.offset); json.buffers = [{byteLength: binary.length}]; json.scenes[json.scene].name = name;
   if (json.materials.some((material) => material.extensions?.KHR_materials_clearcoat)) json.extensionsUsed = [...new Set([...(json.extensionsUsed ?? []), 'KHR_materials_clearcoat'])];

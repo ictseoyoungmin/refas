@@ -10,6 +10,7 @@ RefAs is designed for work where a quick image-to-mesh approximation is not enou
 - **Evidence-bound claims.** Facts, interpretations, hypotheses, and ambiguities remain separate.
 - **Projection-aware reconstruction.** Camera and reference-frame alternatives are tested before geometry is distorted to fit a view.
 - **Immutable child assembly.** A closed child GLB is reused byte-for-byte and registered into its parent instead of silently rebuilt.
+- **Geometry-bound modular assembly.** Detachable modules require actual GLB ancestry, parent-relative transforms, semantic contact frames, derived clearance/penetration/support, closed-child integrity, and object-ID separation.
 - **Shared surface topology.** Adjacent observed cells consume one physical boundary rather than nearly matching duplicate frames.
 - **Coherent hard-surface shells.** Curved shells, slots, and open-frame mounts compile as watertight parts with true apertures, deterministic edge treatments, and GLB-resident semantic attachment frames.
 - **Actual multiview QA.** Hero, oblique, side, top, grazing, normal, object-ID, and albedo renders drive critique; rasterization success is never treated as visual similarity.
@@ -66,6 +67,7 @@ refas/
 ├── examples/wing-cover/   reproducible end-to-end dogfood fixture
 ├── examples/material-fixture/ deterministic four-material PBR dogfood
 ├── examples/hard-surface/ coherent slotted-shell and open-frame dogfood
+├── examples/modular-assembly/ three-level contact and exploded-view dogfood
 ├── tools/                 repository and release audits
 └── docs/                  architecture and quality contracts
 ```
@@ -81,6 +83,7 @@ npm run check        # repository architecture and naming audit
 npm run dogfood      # exercise reconstruction and prove the self-generated fixture is refused certification
 npm run dogfood:pbr  # render four PBR finishes twice and require identical output digests
 npm run dogfood:hard-surface # prove true apertures, coherent thickness, and semantic topology
+npm run dogfood:assembly # prove three-level local-frame contact and reject the exploded candidate
 npm run release:audit
 ```
 

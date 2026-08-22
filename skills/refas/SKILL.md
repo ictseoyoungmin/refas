@@ -137,6 +137,7 @@ The JavaScript library in `scripts/lib/` provides deterministic, dependency-ligh
 import {
   appendPartsToClosedGlb,
   createAssemblyContract,
+  createRealizedAssemblyProof,
   createCurvedPlate,
   createCylinder,
   createHardSurfaceShell,
@@ -150,6 +151,7 @@ import {
   surfaceFrame,
   surfacePoint,
   validateRealizedAssembly,
+  validateRealizedAssemblyProof,
   validateVisualReview,
 } from './scripts/lib/index.mjs';
 ```
@@ -166,6 +168,14 @@ Reject invalid or intersecting profiles rather than repairing them silently.
 For a curved or folded shell, do not stop at an extruded boundary polygon. Use interior subdivisions, a normal-offset back surface, and either evidence-fitted compound coefficients or a projection-anchored guided surface with transverse profiles plus a longitudinal guide. Make panels, trim, and fastener axes consume the same `surfaceFrame`. Close shape only after side and grazing renders preserve the observed depth profile.
 
 For parent assembly, prefer `appendPartsToClosedGlb`. It preserves the original child binary payload as an exact prefix and records the child digest.
+
+When claiming modularity or disassembly, mark semantic module roots and contact
+surfaces in the GLB, store child transforms relative to their parent nodes, and
+run `createRealizedAssemblyProof` on the final bytes. The proof—not caller
+assertions—must establish mesh ancestry, bounded contact or intentional
+clearance, derived support, zero excessive penetration, immutable-child
+preservation, and object-ID separation. Validate it and inspect assembled plus
+exploded multiview evidence before closing assembly.
 
 Represent every observed shared adjacency once with `createSurfaceNetwork`; `createSurfaceNetworkParts` realizes one physical boundary per adjacency. Use `createReferenceRegistration` to fit attested 2D frame correspondences. Registration is placement authority only and never licenses a child shape change. Use `createAssemblyContract` and `validateRealizedAssembly` to test projected overlap, depth order, support, penetration, and closed-child integrity.
 

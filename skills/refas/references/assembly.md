@@ -37,6 +37,25 @@ Review the actual parent render for:
 
 Run `validateRealizedAssembly` against projected part polygons, depths, root support state, mesh analysis, penetration counts, and composition reports. Passing code or a low registration residual is not assembly evidence; an actual parent render is still required.
 
+For a modular or disassembly-ready claim, the observation-side validator is not
+sufficient. Build `refas.realized-assembly-proof/v1` with
+`createRealizedAssemblyProof` from the actual GLB bytes. Each detachable module
+must have a `refasModuleRoot` node, a stored parent-relative transform, complete
+mesh ancestry beneath that root, and a distinct object-ID part.
+
+Contact surfaces are semantic local frames serialized in node extras. The proof
+transforms both frames through the realized GLB hierarchy and derives signed
+clearance, lateral offset, normal opposition, penetration depth, and support.
+Intentional clearance passes only through an explicit bounded
+`clearanceRange`; a caller-provided `supported` boolean or penetration count is
+not accepted by this proof. Preserve the older assembly validation for
+observation and migration, but never use it alone to close a modular claim.
+
+Render both assembled and exploded states. The assembled side, top, and grazing
+views must show coherent contact; the exploded oblique/side views must expose
+the same three-dimensional parent→child order without changing module-local
+geometry. Keep closed-child prefix and digest evidence current.
+
 ## Reopening a child
 
 Parent assembly may reveal a true upstream defect. Reopen the child only when a typed finding is owned by the child's capability and is supported by actual render evidence. Preserve the old closed child and create a new candidate; never overwrite it.
