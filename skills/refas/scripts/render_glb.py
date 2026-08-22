@@ -7,7 +7,10 @@ import argparse
 import hashlib
 import json
 import math
+import os
+import shutil
 import struct
+import tempfile
 import time
 from dataclasses import dataclass
 from pathlib import Path
@@ -18,6 +21,45 @@ from PIL import Image, ImageDraw, ImageFont, ImageOps
 
 COMPONENT_DTYPES = {5120: np.int8, 5121: np.uint8, 5122: np.int16, 5123: np.uint16, 5125: np.uint32, 5126: np.float32}
 TYPE_DIMS = {"SCALAR": 1, "VEC2": 2, "VEC3": 3, "VEC4": 4, "MAT4": 16}
+MIB = 1024 * 1024
+PERSISTENT_BYTES_PER_PIXEL = 11  # RGB framebuffer + float64 depth buffer.
+SCRATCH_BYTES_PER_PIXEL = 128  # Conservative bound for tile-local raster arrays.
+
+
+class RenderTimeoutError(TimeoutError):
+    pass
+
+
+def resource_policy(width, height, *, max_working_mb=512.0, requested_tile_size=256, source_glb_bytes=0, decoded_geometry_bytes=0):
+    if width < 1 or height < 1:
+        raise ValueError("render dimensions must be positive")
+    if max_working_mb <= 0:
+        raise ValueError("max working memory must be positive")
+    if requested_tile_size < 1:
+        raise ValueError("tile size must be positive")
+    budget_bytes = int(max_working_mb * MIB)
+    persistent_bytes = width * height * PERSISTENT_BYTES_PER_PIXEL + source_glb_bytes + decoded_geometry_bytes
+    available_scratch = budget_bytes - persistent_bytes
+    if available_scratch < SCRATCH_BYTES_PER_PIXEL:
+        required_mb = (persistent_bytes + SCRATCH_BYTES_PER_PIXEL) / MIB
+        raise MemoryError(f"render requires at least {required_mb:.2f} MiB for the framebuffer; budget is {max_working_mb:.2f} MiB")
+    budget_tile = max(1, int(math.sqrt(available_scratch / SCRATCH_BYTES_PER_PIXEL)))
+    tile_size = min(requested_tile_size, budget_tile, width, height)
+    estimated_peak_bytes = persistent_bytes + tile_size * tile_size * SCRATCH_BYTES_PER_PIXEL
+    return {
+        "budgetMiB": round(max_working_mb, 3),
+        "sourceGlbMiB": round(source_glb_bytes / MIB, 3),
+        "decodedGeometryMiB": round(decoded_geometry_bytes / MIB, 3),
+        "persistentMiB": round(persistent_bytes / MIB, 3),
+        "estimatedPeakMiB": round(estimated_peak_bytes / MIB, 3),
+        "tileSize": tile_size,
+        "scratchBytesPerPixel": SCRATCH_BYTES_PER_PIXEL,
+    }
+
+
+def check_deadline(deadline):
+    if deadline is not None and time.monotonic() >= deadline:
+        raise RenderTimeoutError("render exceeded the configured wall-clock timeout")
 
 
 def sha256(path: Path) -> str:
@@ -102,8 +144,8 @@ class Primitive:
     name: str
 
 
-def load_primitives(path: Path):
-    model, binary = parse_glb(path)
+def load_primitives(path: Path, parsed=None):
+    model, binary = parsed if parsed is not None else parse_glb(path)
     materials = []
     for material in model.get("materials", []):
         pbr = material.get("pbrMetallicRoughness", {})
@@ -141,6 +183,25 @@ def load_primitives(path: Path):
     return model, primitives
 
 
+def estimate_decoded_geometry_bytes(model):
+    total = 0
+    for mesh in model.get("meshes", []):
+        for primitive in mesh.get("primitives", []):
+            attributes = primitive.get("attributes", {})
+            position = model.get("accessors", [])[attributes.get("POSITION", -1)] if "POSITION" in attributes else None
+            normal = model.get("accessors", [])[attributes.get("NORMAL", -1)] if "NORMAL" in attributes else None
+            indices = model.get("accessors", [])[primitive.get("indices", -1)] if "indices" in primitive else None
+            # Conservative peak: stored world geometry plus temporary homogeneous,
+            # camera-space, and transform arrays used one primitive at a time.
+            if position:
+                total += int(position.get("count", 0)) * 104
+            if normal:
+                total += int(normal.get("count", 0)) * 24
+            if indices:
+                total += int(indices.get("count", 0)) * 8
+    return total
+
+
 def object_color(index: int):
     value = ((index + 1) * 2654435761) & 0xFFFFFFFF
     return np.array([(value & 255) / 255, ((value >> 8) & 255) / 255, ((value >> 16) & 255) / 255])
@@ -173,7 +234,7 @@ def shade(base, normal, view, metallic, roughness):
     return np.clip(color / (1.0 + color * 0.42), 0, 1)
 
 
-def render(primitives, position, target, output: Path, *, width=640, height=640, fov=31, mode="beauty"):
+def render(primitives, position, target, output: Path, *, width=640, height=640, fov=31, mode="beauty", tile_size=256, deadline=None):
     started = time.perf_counter()
     right, up, forward = camera_basis(position, target)
     position = np.asarray(position, dtype=np.float64)
@@ -184,9 +245,11 @@ def render(primitives, position, target, output: Path, *, width=640, height=640,
     depth_buffer = np.full((height, width), np.inf, dtype=np.float64)
     rendered_triangles = 0
     for primitive in primitives:
+        check_deadline(deadline)
         relative = primitive.positions - position
         camera = np.column_stack((relative @ right, relative @ up, relative @ forward))
         for triangle in primitive.indices:
+            check_deadline(deadline)
             vertices = camera[triangle]
             if np.any(vertices[:, 2] <= 0.01):
                 continue
@@ -203,19 +266,6 @@ def render(primitives, position, target, output: Path, *, width=640, height=640,
             denominator = (b[1] - c[1]) * (a[0] - c[0]) + (c[0] - b[0]) * (a[1] - c[1])
             if abs(denominator) < 1e-10:
                 continue
-            yy, xx = np.mgrid[min_y:max_y + 1, min_x:max_x + 1]
-            w0 = ((b[1] - c[1]) * (xx - c[0]) + (c[0] - b[0]) * (yy - c[1])) / denominator
-            w1 = ((c[1] - a[1]) * (xx - c[0]) + (a[0] - c[0]) * (yy - c[1])) / denominator
-            w2 = 1.0 - w0 - w1
-            inside = (w0 >= -1e-7) & (w1 >= -1e-7) & (w2 >= -1e-7)
-            if not np.any(inside):
-                continue
-            inverse_depth = w0 / vertices[0, 2] + w1 / vertices[1, 2] + w2 / vertices[2, 2]
-            depth = np.where(inverse_depth > 1e-12, 1.0 / inverse_depth, np.inf)
-            region_depth = depth_buffer[min_y:max_y + 1, min_x:max_x + 1]
-            visible = inside & (depth < region_depth)
-            if not np.any(visible):
-                continue
             world_vertices = primitive.positions[triangle]
             face_normal = normalize(np.cross(world_vertices[1] - world_vertices[0], world_vertices[2] - world_vertices[0]))
             view = normalize(position - world_vertices.mean(axis=0))
@@ -227,10 +277,32 @@ def render(primitives, position, target, output: Path, *, width=640, height=640,
                 color = primitive.color
             else:
                 color = shade(primitive.color, face_normal, view, primitive.metallic, primitive.roughness)
-            region = image[min_y:max_y + 1, min_x:max_x + 1]
-            region[visible] = np.round(np.power(np.clip(color, 0, 1), 1 / 2.2) * 255).astype(np.uint8)
-            region_depth[visible] = depth[visible]
-            rendered_triangles += 1
+            encoded_color = np.round(np.power(np.clip(color, 0, 1), 1 / 2.2) * 255).astype(np.uint8)
+            triangle_visible = False
+            for tile_y in range(min_y, max_y + 1, tile_size):
+                for tile_x in range(min_x, max_x + 1, tile_size):
+                    check_deadline(deadline)
+                    tile_max_y = min(max_y, tile_y + tile_size - 1)
+                    tile_max_x = min(max_x, tile_x + tile_size - 1)
+                    yy, xx = np.mgrid[tile_y:tile_max_y + 1, tile_x:tile_max_x + 1]
+                    w0 = ((b[1] - c[1]) * (xx - c[0]) + (c[0] - b[0]) * (yy - c[1])) / denominator
+                    w1 = ((c[1] - a[1]) * (xx - c[0]) + (a[0] - c[0]) * (yy - c[1])) / denominator
+                    w2 = 1.0 - w0 - w1
+                    inside = (w0 >= -1e-7) & (w1 >= -1e-7) & (w2 >= -1e-7)
+                    if not np.any(inside):
+                        continue
+                    inverse_depth = w0 / vertices[0, 2] + w1 / vertices[1, 2] + w2 / vertices[2, 2]
+                    depth = np.where(inverse_depth > 1e-12, 1.0 / inverse_depth, np.inf)
+                    region_depth = depth_buffer[tile_y:tile_max_y + 1, tile_x:tile_max_x + 1]
+                    visible = inside & (depth < region_depth)
+                    if not np.any(visible):
+                        continue
+                    region = image[tile_y:tile_max_y + 1, tile_x:tile_max_x + 1]
+                    region[visible] = encoded_color
+                    region_depth[visible] = depth[visible]
+                    triangle_visible = True
+            if triangle_visible:
+                rendered_triangles += 1
     Image.fromarray(image, mode="RGB").save(output, format="PNG")
     return {"path": output.name, "sha256": sha256(output), "mode": mode, "camera": {"position": list(map(float, position)), "target": list(map(float, target)), "fovY": fov}, "renderedTriangles": rendered_triangles, "durationMs": round((time.perf_counter() - started) * 1000, 2)}
 
@@ -262,10 +334,27 @@ def main():
     parser.add_argument("--out", required=True)
     parser.add_argument("--reference")
     parser.add_argument("--size", type=int, default=640)
+    parser.add_argument("--timeout-seconds", type=float, default=300.0)
+    parser.add_argument("--max-working-mb", type=float, default=512.0)
+    parser.add_argument("--tile-size", type=int, default=256)
+    parser.add_argument("--max-triangles", type=int)
     args = parser.parse_args()
     glb_path, output = Path(args.glb).resolve(), Path(args.out).resolve()
-    output.mkdir(parents=True, exist_ok=True)
-    model, primitives = load_primitives(glb_path)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    if args.timeout_seconds <= 0:
+        raise ValueError("timeout seconds must be positive")
+    source_glb_bytes = glb_path.stat().st_size
+    budget_bytes = int(args.max_working_mb * MIB)
+    if source_glb_bytes * 2 >= budget_bytes:
+        raise MemoryError(f"source GLB parsing may peak above the {args.max_working_mb:.2f} MiB working-memory budget; file size is {source_glb_bytes / MIB:.2f} MiB")
+    model, binary = parse_glb(glb_path)
+    decoded_geometry_bytes = estimate_decoded_geometry_bytes(model)
+    policy = resource_policy(args.size, args.size, max_working_mb=args.max_working_mb, requested_tile_size=args.tile_size, source_glb_bytes=source_glb_bytes, decoded_geometry_bytes=decoded_geometry_bytes)
+    model, primitives = load_primitives(glb_path, parsed=(model, binary))
+    triangle_count = int(sum(len(primitive.indices) for primitive in primitives))
+    if args.max_triangles is not None and triangle_count > args.max_triangles:
+        raise ValueError(f"triangle count {triangle_count} exceeds explicit limit {args.max_triangles}")
+    deadline = time.monotonic() + args.timeout_seconds
     points = np.concatenate([primitive.positions for primitive in primitives], axis=0)
     minimum, maximum = points.min(axis=0), points.max(axis=0)
     center = (minimum + maximum) / 2
@@ -281,32 +370,45 @@ def main():
         ("object-id", [0.0, 0.0, 1.0], "object-id", "OBJECT ID"),
         ("albedo", [0.0, 0.0, 1.0], "albedo", "ALBEDO"),
     ]
-    frames = []
-    for name, direction, mode, label in view_specs:
-        position = center + normalize(direction) * distance
-        frame_path = output / f"{name}.png"
-        record = render(primitives, position, center, frame_path, width=args.size, height=args.size, mode=mode)
-        frames.append({**record, "label": label, "absolutePath": str(frame_path)})
-    board_path = output / "multiview-review-board.png"
-    reference = Path(args.reference).resolve() if args.reference else None
-    make_board(reference, frames, board_path)
-    report = {
-        "schema": "refas.multiview-render-report/v1",
-        "claimScope": "render-integrity-only",
-        "statusMeaning": "All requested views rasterized from actual GLB geometry; visual similarity is not assessed.",
-        "asset": {"path": str(glb_path), "sha256": sha256(glb_path), "generator": model.get("asset", {}).get("generator")},
-        "runtime": {"kind": "offline-numpy-rasterizer", "networkRequests": 0, "deterministicInputs": True},
-        "materialSupport": {
-            "supported": ["base-color-factor", "metallic-factor", "roughness-factor"],
-            "unsupported": ["clearcoat", "image-based-lighting", "normal-maps", "textures"],
-        },
-        "geometry": {"parts": len(primitives), "triangles": int(sum(len(primitive.indices) for primitive in primitives)), "bounds": {"min": minimum.tolist(), "max": maximum.tolist()}},
-        "frames": [{key: value for key, value in frame.items() if key != "absolutePath"} for frame in frames],
-        "board": {"path": board_path.name, "sha256": sha256(board_path)},
-        "status": "PASS" if all(frame["renderedTriangles"] > 0 for frame in frames) else "FAIL",
-    }
+    staging = Path(tempfile.mkdtemp(prefix=".refas-render-", dir=output.parent))
+    try:
+        frames = []
+        for name, direction, mode, label in view_specs:
+            check_deadline(deadline)
+            position = center + normalize(direction) * distance
+            frame_path = staging / f"{name}.png"
+            record = render(primitives, position, center, frame_path, width=args.size, height=args.size, mode=mode, tile_size=policy["tileSize"], deadline=deadline)
+            frames.append({**record, "label": label, "absolutePath": str(frame_path)})
+        board_path = staging / "multiview-review-board.png"
+        reference = Path(args.reference).resolve() if args.reference else None
+        check_deadline(deadline)
+        make_board(reference, frames, board_path)
+        check_deadline(deadline)
+        report = {
+            "schema": "refas.multiview-render-report/v1",
+            "claimScope": "render-integrity-only",
+            "statusMeaning": "All requested views rasterized from actual GLB geometry; visual similarity is not assessed.",
+            "asset": {"path": str(glb_path), "sha256": sha256(glb_path), "generator": model.get("asset", {}).get("generator")},
+            "runtime": {"kind": "offline-numpy-rasterizer", "networkRequests": 0, "deterministicInputs": True},
+            "materialSupport": {
+                "supported": ["base-color-factor", "metallic-factor", "roughness-factor"],
+                "unsupported": ["clearcoat", "image-based-lighting", "normal-maps", "textures"],
+            },
+            "geometry": {"parts": len(primitives), "triangles": triangle_count, "bounds": {"min": minimum.tolist(), "max": maximum.tolist()}},
+            "resourcePolicy": {**policy, "timeoutSeconds": args.timeout_seconds, "maxTriangles": args.max_triangles},
+            "frames": [{key: value for key, value in frame.items() if key != "absolutePath"} for frame in frames],
+            "board": {"path": board_path.name, "sha256": sha256(board_path)},
+            "status": "PASS" if all(frame["renderedTriangles"] > 0 for frame in frames) else "FAIL",
+        }
+        report_path = staging / "render-report.json"
+        report_path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+        output.mkdir(parents=True, exist_ok=True)
+        for staged in staging.iterdir():
+            os.replace(staged, output / staged.name)
+    finally:
+        shutil.rmtree(staging, ignore_errors=True)
     report_path = output / "render-report.json"
-    report_path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+    board_path = output / "multiview-review-board.png"
     print(json.dumps({"status": report["status"], "claimScope": report["claimScope"], "report": str(report_path), "board": str(board_path), "triangles": report["geometry"]["triangles"]}, indent=2))
     if report["status"] != "PASS":
         raise SystemExit(1)
