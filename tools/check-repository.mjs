@@ -44,9 +44,9 @@ async function main() {
     '.github/ISSUE_TEMPLATE/defect.yml', '.github/ISSUE_TEMPLATE/capability-change.yml',
     '.github/ISSUE_TEMPLATE/release-readiness.yml', '.github/ISSUE_TEMPLATE/documentation-governance.yml',
     '.github/workflows/ci.yml', '.github/workflows/sync-labels.yml', 'docs/github-governance.md',
-    'skills/refas/SKILL.md', 'skills/refas/scripts/refas.mjs', 'skills/refas/scripts/lib/index.mjs',
+    'skills/refas/SKILL.md', 'skills/refas/scripts/refas.mjs', 'skills/refas/scripts/render_pbr.py', 'skills/refas/scripts/lib/index.mjs',
     'schemas/source-manifest.schema.json', 'schemas/checkpoint.schema.json', 'schemas/visual-review.schema.json', 'schemas/whole-object-certificate.schema.json',
-    'tests/contracts.test.mjs', 'tests/cli.test.mjs', 'tests/governance.test.mjs', 'examples/wing-cover/run.mjs',
+    'tests/contracts.test.mjs', 'tests/cli.test.mjs', 'tests/governance.test.mjs', 'examples/wing-cover/run.mjs', 'examples/material-fixture/run.mjs',
   ];
   const missing = [];
   for (const file of required) {

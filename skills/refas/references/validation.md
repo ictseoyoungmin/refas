@@ -25,6 +25,8 @@ The bundled report has `claimScope: render-integrity-only`. Its status answers w
 
 Use an independently executed Blender Cycles/Eevee headless, Three.js/WebGL, Filament, glTF Sample Viewer, VTK, or equivalent renderer after the portable gate. Normalize its evidence as `refas.pbr-render-report/v1`. The report binds the exact GLB and canonical frame digests, renderer/version/backend, lighting rig, exposure, tone mapping, output color space, material feature coverage, output frame digests, and determinism or bounded-nondeterminism contract.
 
+The bundled `render-pbr` command is the canonical baseline implementation of this independent process contract. It uses a fixed three-light rig and deterministic Cook–Torrance metallic-roughness shading and emits all eight standard views. Its limited feature disclosure is authoritative; select an external adapter when the asset requires a feature it does not cover.
+
 Do not infer support from the renderer family. The configured version and backend must explicitly cover every `requiredMaterialFeature`; otherwise `appearance-plausibility` remains `insufficient` and final certification refuses closure. Portable evidence may reopen geometry, topology, assembly, camera, or render-integrity owners early. Only the independent PBR evidence may decide material/finish PASS or REOPEN and support the final appearance verdict.
 
 ## Critique order
