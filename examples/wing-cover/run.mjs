@@ -32,6 +32,7 @@ import {
   finishEdit,
   initProject,
   inspectGlb,
+  loadProject,
   parseGlb,
   partsToGlb,
   resumeProject,
@@ -321,6 +322,7 @@ async function main() {
       {id: 'upper-cover', label: 'Upper cover shell', level: 'region', parentId: 'whole', roi: [0.08, 0.01, 0.86, 0.97], contextPadding: 0.06, status: 'observed'},
       {id: 'panel-network', label: 'Observed panel network', level: 'part', parentId: 'upper-cover', roi: [0.18, 0.06, 0.64, 0.83], contextPadding: 0.08, status: 'observed'},
       {id: 'center-fastener', label: 'Center fastener', level: 'part', parentId: 'upper-cover', roi: [0.73, 0.51, 0.12, 0.13], contextPadding: 0.1, status: 'observed'},
+      {id: 'fastener-inlay', label: 'Fastener center inlay', level: 'feature', parentId: 'center-fastener', roi: [0.745, 0.54, 0.035, 0.04], contextPadding: 0.04, status: 'observed'},
     ],
   });
   assert.equal(validateVisualHierarchy(hierarchy).valid, true);
@@ -460,7 +462,8 @@ async function main() {
   const surfaceAssetPath = path.join(PROJECT, 'assets', 'surface-network.glb');
   await fs.writeFile(surfaceAssetPath, surfaceGlb);
   const networkReportPath = await writeJson(path.join(PROJECT, 'reviews', 'surface-network-validation.json'), {...networkValidation, invariant: networkParts.invariant});
-  await closeCapability('surface-topology', [networkPath, surfaceAssetPath, networkReportPath], 'Sixteen observed cells and thirty-one unique shared adjacencies are realized without duplicate per-cell frames.', 'surface-topology', ['One physical boundary exists for each attested shared adjacency.']);
+  const surfaceCheckpoint = await closeCapability('surface-topology', [networkPath, surfaceAssetPath, networkReportPath], 'Sixteen observed cells and thirty-one unique shared adjacencies are realized without duplicate per-cell frames.', 'surface-topology', ['One physical boundary exists for each attested shared adjacency.']);
+  assert.equal((await loadProject(PROJECT)).head, surfaceCheckpoint.id);
 
   const rimWidth = domainDistance(0.092);
   const rimCenterline = smoothClosedPolyline(
@@ -613,6 +616,65 @@ async function main() {
   const finalBoardPath = path.join(finalRenderDirectory, 'multiview-review-board.png');
   await closeCapability('rendering', [finalAssetPath, finalReportPath, finalBoardPath, ...finalRenderReport.frames.map((frame) => path.join(finalRenderDirectory, frame.path))], 'Actual GLB geometry renders in every standard diagnostic view with reproducible camera records.', 'multiview-render-integrity');
 
+  const heroFrame = finalRenderReport.frames.find((frame) => frame.path === 'hero.png');
+  const comparisonRegistration = createReferenceRegistration({
+    parentFrameId: 'whole-source-frame', childFrameId: 'hero-render-frame', parentSourceSha256: source.sha256,
+    childSourceSha256: heroFrame.sha256, model: 'projective-homography',
+    correspondences: [
+      {id: 'object-top-left', parent: [0.178, 0.039], child: [0.15, 0.054], evidenceRefs: ['source/reference.png', 'renders/final/hero.png']},
+      {id: 'object-top-right', parent: [0.861, 0.039], child: [0.846, 0.054], evidenceRefs: ['source/reference.png', 'renders/final/hero.png']},
+      {id: 'object-bottom-right', parent: [0.861, 0.933], child: [0.846, 0.957], evidenceRefs: ['source/reference.png', 'renders/final/hero.png']},
+      {id: 'object-bottom-left', parent: [0.178, 0.933], child: [0.15, 0.957], evidenceRefs: ['source/reference.png', 'renders/final/hero.png']},
+    ],
+    attestation: {attested: true, evidenceRefs: ['source/reference.png', 'renders/final/hero.png']},
+    ambiguities: ['The self-generated fixture tests comparison registration behavior, not independent visual fidelity.'],
+  });
+  const comparisonRegistrationPath = await writeJson(path.join(PROJECT, 'model', 'source-to-render-registration.json'), comparisonRegistration);
+  const comparisonInputPath = await writeJson(path.join(PROJECT, 'registered-comparison-input.json'), {
+    schema: 'refas.registered-comparison-input/v1', sourceManifest: 'source/source-manifest.json', renderReport: 'renders/final/render-report.json',
+    renderImage: 'hero.png', frameId: 'hero', registration: 'model/source-to-render-registration.json', hierarchy: 'model/visual-hierarchy.json',
+    scopeIds: ['whole', 'upper-cover', 'center-fastener', 'fastener-inlay'], overlayOpacity: 0.5,
+    landmarks: [
+      {id: 'fastener-center', scopeId: 'center-fastener', source: [0.749, 0.557], render: [0.742, 0.584]},
+      {id: 'inlay-center', scopeId: 'fastener-inlay', source: [0.749, 0.557], render: [0.742, 0.584]},
+      {id: 'inlay-left', scopeId: 'fastener-inlay', source: [0.735, 0.557], render: [0.728, 0.584]},
+      {id: 'inlay-right', scopeId: 'fastener-inlay', source: [0.763, 0.557], render: [0.756, 0.584]},
+    ],
+    dimensions: [{id: 'inlay-diameter', a: 'inlay-left', b: 'inlay-right'}],
+  });
+  const comparisonDirectory = path.join(PROJECT, 'reviews', 'registered-comparison');
+  runPython(path.join(SKILL_SCRIPTS, 'compare_registered.py'), ['--input', comparisonInputPath, '--out', comparisonDirectory]);
+  const comparisonReportPath = path.join(comparisonDirectory, 'comparison-report.json');
+  const comparisonReport = await readJson(comparisonReportPath);
+  assert.equal(comparisonReport.policy.metricsCannotSetVisualGate, true);
+  assert.deepEqual(comparisonReport.scopes.map((scope) => scope.level), ['whole', 'region', 'part', 'feature']);
+  const negativeRoot = path.join(PROJECT, 'reviews', 'registered-comparison-negative');
+  runPython(path.join(EXAMPLE, 'generate_comparison_candidates.py'), ['--source', reference, '--render', path.join(finalRenderDirectory, 'hero.png'),
+    '--render-report', finalReportPath, '--registration', comparisonRegistrationPath, '--out', negativeRoot]);
+  const negativeReports = {};
+  for (const name of ['shifted-scaled', 'better-global-worse-local']) {
+    const negativeRenderReport = await readJson(path.join(negativeRoot, name, 'render-report.json'));
+    const negativeHero = negativeRenderReport.frames.find((frame) => frame.path === 'hero.png');
+    const negativeRegistration = createReferenceRegistration({
+      parentFrameId: comparisonRegistration.parentFrameId, childFrameId: `${name}-hero-frame`, parentSourceSha256: source.sha256,
+      childSourceSha256: negativeHero.sha256, model: comparisonRegistration.model, correspondences: comparisonRegistration.correspondences,
+      attestation: {attested: true, evidenceRefs: ['../../../source/reference.png', 'hero.png']},
+      ambiguities: [`${name} is a declared deterministic negative fixture for critique evidence only.`],
+    });
+    await writeJson(path.join(negativeRoot, name, 'registration.json'), negativeRegistration);
+    const candidateInputPath = await writeJson(path.join(negativeRoot, name, 'comparison-input.json'), {
+      ...await readJson(comparisonInputPath), sourceManifest: '../../../source/source-manifest.json', renderReport: 'render-report.json', renderImage: 'hero.png',
+      registration: 'registration.json', hierarchy: '../../../model/visual-hierarchy.json',
+    });
+    const candidateComparisonDirectory = path.join(negativeRoot, name, 'comparison');
+    runPython(path.join(SKILL_SCRIPTS, 'compare_registered.py'), ['--input', candidateInputPath, '--out', candidateComparisonDirectory]);
+    negativeReports[name] = await readJson(path.join(candidateComparisonDirectory, 'comparison-report.json'));
+  }
+  const metric = (report, scope) => report.scopes.find((item) => item.scopeId === scope).metrics.silhouetteIoU;
+  assert.ok(metric(negativeReports['shifted-scaled'], 'whole') < metric(comparisonReport, 'whole'));
+  assert.ok(metric(negativeReports['better-global-worse-local'], 'whole') > metric(comparisonReport, 'whole'));
+  assert.ok(metric(negativeReports['better-global-worse-local'], 'fastener-inlay') < metric(comparisonReport, 'fastener-inlay'));
+
   const findingsPath = await writeJson(path.join(PROJECT, 'reviews', 'findings.json'), {
     schema: 'refas.finding-ledger/v1', sourceSha256: source.sha256, assetSha256: await sha256File(finalAssetPath),
     resolved: [
@@ -624,7 +686,8 @@ async function main() {
     unresolvedNonBlocking: [],
     critiqueOrder: ['source-and-camera', 'silhouette', 'mass-and-curvature', 'attachment-and-occlusion', 'surface-topology', 'appearance', 'microdetail'],
   });
-  await closeCapability('visual-critique', [findingsPath, finalBoardPath, rollbackProofPath], 'Contract-fixture critique artifacts are readable; independent visual acceptance remains pending.', 'contract-critique-integrity');
+  await closeCapability('visual-critique', [findingsPath, finalBoardPath, rollbackProofPath, comparisonReportPath, comparisonRegistrationPath,
+    ...comparisonReport.scopes.map((scope) => path.join(comparisonDirectory, scope.scopeId, 'comparison-board.png'))], 'Registered whole-to-feature comparison evidence localizes mismatches without promoting metrics to visual authority.', 'contract-critique-integrity');
 
   const preClosureAudit = await auditProject(PROJECT);
   assert.equal(preClosureAudit.valid, true);
@@ -697,6 +760,12 @@ async function main() {
     },
     rollback: {decision: decision.action, baselineSha256, candidateSha256, restoredSha256, byteExact: restoredSha256 === baselineSha256},
     rendering: {frames: finalRenderReport.frames.length, status: finalRenderReport.status, claimScope: finalRenderReport.claimScope, board: path.relative(OUTPUT, finalBoardPath), validationWallClockMs: finalRenderReport.validationWallClockMs, validationTimeoutMs: finalRenderReport.validationTimeoutMs},
+    registeredComparison: {digest: comparisonReport.comparisonDigest, scopes: comparisonReport.scopes.map((scope) => ({scopeId: scope.scopeId, level: scope.level, ancestry: scope.ancestry, silhouetteIoU: scope.metrics.silhouetteIoU})), metricsAreGateAuthority: false},
+    registeredComparisonNegativeFixtures: {
+      shiftedScaledWholeIoU: metric(negativeReports['shifted-scaled'], 'whole'),
+      betterGlobalWholeIoU: metric(negativeReports['better-global-worse-local'], 'whole'),
+      worseLocalFeatureIoU: metric(negativeReports['better-global-worse-local'], 'fastener-inlay'),
+    },
     glb: {nodes: inspection.nodeCount, meshes: inspection.meshCount, triangles: inspection.triangleCount},
     checkpoints: {count: finalAudit.checkpointCount, source: sourceCheckpoint.id, certification: certificationCheckpoint.id},
     candidateCertification: {visualVerdict: visualReview.verdict, certificateIssued: false, expectedResult: 'REFUSED', refusal: certificationRefusal},

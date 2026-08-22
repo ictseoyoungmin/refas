@@ -20,7 +20,7 @@
   ],
   "scripts": {
     "test": "node --test tests/*.test.mjs",
-    "test:python": "python3 -c \"import pathlib; [compile(pathlib.Path(p).read_text(encoding='utf-8'), p, 'exec') for p in ['skills/refas/scripts/evidence.py','skills/refas/scripts/render_glb.py','skills/refas/scripts/render_pbr.py','skills/refas/scripts/source_manifest.py']]\"",
+    "test:python": "python3 -c \"import pathlib; [compile(pathlib.Path(p).read_text(encoding='utf-8'), p, 'exec') for p in ['examples/wing-cover/generate_comparison_candidates.py','skills/refas/scripts/compare_registered.py','skills/refas/scripts/evidence.py','skills/refas/scripts/render_glb.py','skills/refas/scripts/render_pbr.py','skills/refas/scripts/source_manifest.py']]\"",
     "check": "node tools/check-repository.mjs",
     "dogfood": "node examples/wing-cover/run.mjs",
     "dogfood:pbr": "node examples/material-fixture/run.mjs",

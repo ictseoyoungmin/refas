@@ -43,6 +43,12 @@ Review in this order:
 
 Do not let attractive materials hide a structural mismatch.
 
+## Registered comparison evidence
+
+Use `compare` after source-to-render registration when whole-object inspection cannot localize a near-match defect. The `refas.registered-comparison/v1` report binds the exact source manifest, asset and render frame, registration, visual hierarchy, comparison input, and output image digests. Every scope board retains whole-context ancestry and may include overlays, splits, source/render edges, silhouette differences, landmark residuals, and normalized dimensions.
+
+Registration residual, silhouette IoU, and dimension ratios are critique aids only. They cannot set a view or closure gate to pass, cannot become source facts, and cannot choose a repair owner. A discrepancy must first be visible in the registered evidence and recorded as a typed finding. Always inspect local feature scopes even when the global silhouette improves; an attachment or relief regression may occupy too few pixels to lower a whole-object score.
+
 ## Findings
 
 Every actionable finding records category, severity, hierarchy scope, concise summary, evidence references, and whether the current edit introduced it. Use a category from `failure-routing.md`; otherwise provide an explicit owner for non-blocking experimental findings.
