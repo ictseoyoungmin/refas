@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Removed the implicit assumption that portable validation assets should remain below 30,000 triangles.
+- Added bounded tile rasterization, decoded-geometry and framebuffer memory preflight, optional project triangle caps, staged render publication, and dual internal/parent wall-clock timeouts.
+
 All notable RefAs changes are documented here. RefAs follows semantic versioning.
 
 ## 1.0.0 — 2026-08-20

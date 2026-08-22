@@ -17,6 +17,9 @@ test('CLI help exposes recovery, validation, and certification commands', () => 
   const help = JSON.parse(result.stdout);
   assert.equal(help.version, '1.0.0');
   for (const command of ['source-manifest', 'resume', 'abort-edit', 'report-finding', 'validate-spec', 'certify']) assert.ok(help.commands[command]);
+  assert.match(help.commands.render, /--timeout-seconds 300/);
+  assert.match(help.commands.render, /--max-working-mb 512/);
+  assert.match(help.commands.render, /--max-triangles N/);
 });
 
 test('CLI resume returns one safe next action and unknown commands fail actionably', async (t) => {

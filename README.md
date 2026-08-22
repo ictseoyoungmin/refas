@@ -14,6 +14,7 @@ RefAs is designed for work where a quick image-to-mesh approximation is not enou
 - **Actual multiview QA.** Hero, oblique, side, top, grazing, normal, object-ID, and albedo renders drive critique; rasterization success is never treated as visual similarity.
 - **Fail-closed visual certification.** An independent, digest-bound visual review must pass the exact source and asset bytes; self-generated fixtures and unsupported material claims cannot certify.
 - **Typed failure ownership.** Every blocker identifies its visual scope, owning capability, invalidated dependents, and safe checkpoint.
+- **Bounded render resources without a quality ceiling.** The portable renderer accepts high-triangle assets by default, uses bounded tiles, preflights decoded geometry and framebuffer memory, and stops on explicit wall-clock deadlines; optional triangle caps remain project policy rather than a global quality limit.
 - **Content-addressed rollback.** Checkpoints retain the exact artifact bytes required to restore a trustworthy state.
 
 ## Quick start

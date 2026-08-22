@@ -169,8 +169,12 @@ Generate actual multiview evidence with the bundled offline renderer:
 python3 scripts/render_glb.py \
   --glb <asset.glb> \
   --out <render-dir> \
-  --reference <reference.png>
+  --reference <reference.png> \
+  --timeout-seconds 300 \
+  --max-working-mb 512
 ```
+
+The renderer has no default triangle-count ceiling. A well-justified asset may exceed 30,000 triangles; remove redundant geometry because it is redundant, not merely to satisfy an arbitrary count. Resource safety is enforced independently: geometry decode, framebuffer, and bounded tile scratch memory are estimated before rasterization; triangles are processed without a full-frame per-triangle allocation; and both an internal wall-clock deadline and a parent-process timeout stop stalled work. Use `--max-triangles N` only when a project or CI job intentionally declares a hard policy cap. `--tile-size` controls locality, while `--max-working-mb` is a safety budget rather than a quality setting. Failed preflight or timeout attempts do not publish a partial render set.
 
 Review hero, oblique, side, top, grazing, normal, object-ID, and albedo views. The software renderer is a portable validation baseline, not a substitute for a higher-quality project renderer when one is available.
 Its `PASS` status and `claimScope: render-integrity-only` mean only that actual GLB geometry rasterized in every requested view. Read `materialSupport`; do not use this report alone to pass appearance or visual fidelity.
