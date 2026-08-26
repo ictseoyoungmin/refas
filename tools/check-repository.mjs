@@ -90,6 +90,7 @@ async function main() {
     'refas.registered-comparison/v1',
     'refas.hard-surface-spec/v1',
     'refas.realized-assembly-proof/v1',
+    'refas.construction-quality/v1',
   ]) if (!schemaContracts.has(contract)) throw new Error(`public schema missing for ${contract}`);
 
   const templateFiles = (await walk('skills/refas/assets/templates')).filter((file) => file.endsWith('.json'));

@@ -1,0 +1,19 @@
+{
+  "scopeId": "whole",
+  "sourceSha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "assetSha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "claim": "blockout",
+  "constructionFamilies": ["generic-primitive"],
+  "visibleFormGates": [
+    {"id": "whole-silhouette", "status": "insufficient", "evidenceRefs": ["reviews/registered-comparison/whole/board.png"]},
+    {"id": "major-landmarks", "status": "insufficient", "evidenceRefs": ["model/landmarks.json"]},
+    {"id": "principal-sections", "status": "insufficient", "evidenceRefs": ["model/section-profiles.json"]},
+    {"id": "curvature-transitions", "status": "insufficient", "evidenceRefs": ["renders/normal.png"]},
+    {"id": "coarse-negative-space", "status": "insufficient", "evidenceRefs": ["renders/hero.png"]},
+    {"id": "registered-source-comparison", "status": "insufficient", "evidenceRefs": ["reviews/registered-comparison/comparison-report.json"]}
+  ],
+  "identityFeatures": [],
+  "wholeDependency": {"scopeId": "whole", "status": "insufficient", "evidenceRefs": ["reviews/registered-comparison/whole/board.png"]},
+  "registeredComparison": {"path": "reviews/registered-comparison/comparison-report.json", "sha256": "0000000000000000000000000000000000000000000000000000000000000000", "scopeIds": ["whole"]},
+  "ambiguities": ["Hidden surfaces remain inferred."]
+}

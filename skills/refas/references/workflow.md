@@ -32,6 +32,14 @@ Examples: `shape-reconstruction × whole`, `surface-topology × upper-shell`, or
 
 Do not mix observation cleanup, camera tuning, geometry edits, and material polish in one candidate. A bounded edit must be attributable to one owner.
 
+This rule limits simultaneous work; it does not authorize skipping dependencies.
+During shape reconstruction, `shape-reconstruction × whole` remains the only
+closable shape scope until the whole-shape dependency barrier passes. The
+barrier requires current registered evidence for whole silhouette, major
+landmarks, principal sections, curvature transitions, and coarse negative
+spaces. Lower region, part, subpart, joint, and feature scopes may be observed
+or sketched beforehand, but they cannot receive trustworthy geometry closure.
+
 At the start of every new turn or handoff, run `resume --root <project>`. If it reports an active transaction, finish or abort that transaction before doing anything else. If it reports invalidated capabilities, repair the first named capability only. If it reports review-required or blocked, stop mutation and resolve evidence or ownership.
 
 ## Capability exit sequence
@@ -48,6 +56,11 @@ For each capability:
 8. Write a compact handoff capsule: scope, accepted claims, open ambiguities, checkpoint ID, and next owner.
 
 Use `assets/templates/handoff-capsule.json`. The capsule is a human/agent continuity aid; `resume` remains the executable state authority.
+
+For `shape-reconstruction`, step 7 additionally requires a valid
+`refas.construction-quality/v1` identity-bearing record. A blockout may be
+rendered and compared, but it remains an exploratory artifact rather than a
+closed shape checkpoint.
 
 ## Stop conditions
 

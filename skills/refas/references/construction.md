@@ -10,6 +10,28 @@
 
 Build these before seams, panels, fasteners, engravings, or material polish. A detailed wrong silhouette is still wrong.
 
+## Blockout and identity-bearing geometry
+
+A blockout establishes camera, pose, broad mass, and candidate negative space.
+Generic primitives and generic profiles are appropriate here. They are not
+identity-bearing merely because they are smooth, dense, watertight, rigged, or
+renderable.
+
+Identity-bearing geometry explains the reference-specific visible form through
+observed landmarks, silhouette inflections, principal sections, curvature
+transitions, openings, and plane changes. Before closing shape reconstruction:
+
+- render the exact candidate in the registered source camera;
+- compare the whole silhouette and declared landmarks in source coordinates;
+- cite evidence for principal longitudinal and transverse sections;
+- inspect side, top, grazing, and normal views for the selected depth hypothesis;
+- record coarse negative spaces and visible attachment cutaways;
+- validate `refas.construction-quality/v1` with an `identity-bearing` claim.
+
+A generic-primitive-only record must fail identity-bearing closure even if its
+triangle count, watertightness, and render integrity pass. Validation volume is
+not construction quality.
+
 ## Surface topology owns
 
 - projection-anchored boundary networks;

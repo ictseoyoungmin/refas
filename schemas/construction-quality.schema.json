@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/construction-quality.schema.json",
+  "title": "RefAs visible-form construction quality",
+  "type": "object",
+  "required": ["schema", "scopeId", "sourceSha256", "assetSha256", "claim", "constructionFamilies", "genericPrimitiveOnly", "visibleFormGates", "identityFeatures", "wholeDependency", "registeredComparison", "ambiguities", "policy", "constructionQualityDigest"],
+  "properties": {
+    "schema": {"const": "refas.construction-quality/v1"},
+    "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "assetSha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "claim": {"enum": ["blockout", "identity-bearing"]},
+    "constructionFamilies": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "genericPrimitiveOnly": {"type": "boolean"},
+    "visibleFormGates": {"type": "array", "minItems": 6, "maxItems": 6, "items": {"$ref": "#/$defs/verdict"}},
+    "identityFeatures": {"type": "array", "items": {"$ref": "#/$defs/identityFeature"}},
+    "wholeDependency": {
+      "type": "object",
+      "required": ["scopeId", "status", "evidenceRefs"],
+      "properties": {"scopeId": {"const": "whole"}, "status": {"enum": ["pass", "fail", "insufficient"]}, "evidenceRefs": {"$ref": "common.schema.json#/$defs/evidenceRefs"}},
+      "additionalProperties": false
+    },
+    "registeredComparison": {
+      "type": "object",
+      "required": ["path", "sha256", "scopeIds"],
+      "properties": {"path": {"$ref": "common.schema.json#/$defs/relativePath"}, "sha256": {"$ref": "common.schema.json#/$defs/digest"}, "scopeIds": {"type": "array", "minItems": 1, "uniqueItems": true, "contains": {"const": "whole"}, "items": {"$ref": "common.schema.json#/$defs/semanticId"}}},
+      "additionalProperties": false
+    },
+    "ambiguities": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+    "policy": {
+      "type": "object",
+      "required": ["primitiveOnlyIsBlockout", "wholeShapePrecedesLowerScopes", "visibleEvidenceCannotBeDeferredAsHiddenUncertainty", "triangleCountIsNotFidelityAuthority", "validationVolumeCannotReplaceConstructionQuality"],
+      "properties": {
+        "primitiveOnlyIsBlockout": {"const": true},
+        "wholeShapePrecedesLowerScopes": {"const": true},
+        "visibleEvidenceCannotBeDeferredAsHiddenUncertainty": {"const": true},
+        "triangleCountIsNotFidelityAuthority": {"const": true},
+        "validationVolumeCannotReplaceConstructionQuality": {"const": true}
+      },
+      "additionalProperties": false
+    },
+    "constructionQualityDigest": {"$ref": "common.schema.json#/$defs/digest"}
+  },
+  "$defs": {
+    "verdict": {
+      "type": "object",
+      "required": ["id", "status", "evidenceRefs", "summary"],
+      "properties": {"id": {"$ref": "common.schema.json#/$defs/semanticId"}, "status": {"enum": ["pass", "fail", "insufficient"]}, "evidenceRefs": {"$ref": "common.schema.json#/$defs/evidenceRefs"}, "summary": {"type": "string"}},
+      "additionalProperties": false
+    },
+    "identityFeature": {
+      "type": "object",
+      "required": ["id", "scopeId", "kind", "evidenceRefs"],
+      "properties": {"id": {"$ref": "common.schema.json#/$defs/semanticId"}, "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"}, "kind": {"$ref": "common.schema.json#/$defs/semanticId"}, "evidenceRefs": {"$ref": "common.schema.json#/$defs/evidenceRefs"}},
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
