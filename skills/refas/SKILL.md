@@ -22,6 +22,7 @@ Then load only the references owned by the active capability:
 | Source, hierarchy, observation | `references/observation.md`, `references/provenance.md` |
 | Camera, depth, spatial inference | `references/spatial-reasoning.md` |
 | Shape and surface construction | `references/construction.md` |
+| Organic or articulated manufactured shape | `references/organic-articulated-construction.md` after `references/construction.md` |
 | Parent/child placement | `references/assembly.md` |
 | Material identity and finish | `references/appearance.md` |
 | Render, comparison, closure | `references/validation.md` |
@@ -38,6 +39,7 @@ Do not blend every reference into one undifferentiated prompt. Keep one capabili
 - Preserve accepted child assets as immutable GLBs when assembling a parent. Reopen them only when parent evidence disproves their closure.
 - A low score alone does not select a repair owner. Localize a typed visual defect first.
 - A blocking defect without an owner fails closed. Do not guess a rollback point.
+- A completed render, watertight mesh, high triangle count, or large evidence bundle cannot promote a generic blockout into identity-bearing geometry.
 
 ## Start a project
 
@@ -79,12 +81,13 @@ Follow the semantic capability order in `references/workflow.md`.
 3. Record observations for the active node; keep uncertainty explicit.
 4. Propose multiple spatial hypotheses when depth or camera is ambiguous.
 5. Reconstruct the dominant silhouette and mass before decoration.
-6. Anchor visible boundaries and relief to the reference projection.
-7. Assemble closed children in a parent reference frame.
-8. Add appearance only after geometry can explain the image.
-9. Render the standard multiview set.
-10. Log typed findings, route them to the owning capability, and repair only the invalidated span.
-11. Certify the whole object only when every closure gate has current evidence.
+6. Pass the whole-shape dependency barrier: registered silhouette, major landmarks, principal sections, curvature transitions, and coarse negative spaces.
+7. Anchor visible boundaries and relief to the reference projection.
+8. Assemble closed children in a parent reference frame.
+9. Add appearance only after geometry can explain the image.
+10. Render the standard multiview set.
+11. Log typed findings, route them to the owning capability, and repair only the invalidated span.
+12. Certify the whole object only when every closure gate has current evidence.
 
 After each capability reaches a trustworthy state, commit a checkpoint:
 
@@ -131,6 +134,29 @@ If work must stop before a decision, use `abort-edit`; it restores the baseline 
 
 ## Build geometry
 
+### Close visible form before choosing convenient primitives
+
+Primitive helpers are blockout tools. Do not begin lower-scope hardening merely
+because `one capability × one scope` is active: that work-unit rule operates
+inside the dependency graph and never overrides the whole-shape barrier. A
+region, part, joint, or feature cannot close while the whole silhouette, pose,
+major landmarks, principal sections, curvature transitions, or coarse negative
+spaces remain unresolved.
+
+Create `refas.construction-quality/v1` from
+`assets/templates/construction-quality.json` before closing
+`shape-reconstruction`. Validate it with `validate-spec`. An
+`identity-bearing` claim fails when the candidate is generic-primitive-only,
+lacks observed identity features, omits whole-context comparison, or leaves any
+visible-form gate below pass. A `blockout` record may preserve exploratory work
+but is not a trustworthy shape checkpoint and cannot license downstream detail.
+
+Choose the construction backend that best preserves the evidence. Project-local
+lofts, subdivision surfaces, sculpted cages, CAD/NURBS, booleans, or external
+modeling tools are valid when their inputs, outputs, and provenance are
+recorded. Dependency-light runtime helpers are never preferred over a more
+faithful available method solely because they are bundled.
+
 The JavaScript library in `scripts/lib/` provides deterministic, dependency-light primitives:
 
 ```js
@@ -156,7 +182,13 @@ import {
 } from './scripts/lib/index.mjs';
 ```
 
-Use these as construction mechanisms, not visual assumptions. Put asset-specific polygons, proportions, and hypotheses in the project model specification. Keep them out of the reusable runtime.
+Use these as construction mechanisms, not visual assumptions. A sphere,
+ellipsoid, capsule, cylinder, prism, or uniform revolution remains blockout
+until evidence-fitted landmarks, sections, silhouette inflections, openings,
+and curvature transitions replace its generic visible form. Additional
+subdivision alone does not graduate it. Put asset-specific polygons,
+proportions, sections, and hypotheses in the project model specification. Keep
+them out of the reusable runtime.
 
 For a coherent hard-surface shell with negative space, pass a
 `refas.hard-surface-spec/v1` document to `createHardSurfaceShell`. Cutouts become
@@ -263,6 +295,7 @@ Whole-object closure requires all of the following with current evidence:
 - hierarchy coverage is complete for visually material parts;
 - primary-reference facts and explicit ambiguities exist;
 - silhouette, proportions, curvature, topology, and relief are reviewed;
+- the exact asset has a passing `refas.construction-quality/v1` record and registered whole-source comparison;
 - attachment, occlusion, support, penetration, and child integrity pass;
 - camera and render integrity pass;
 - hero and diagnostic multiviews contain no unresolved blocking finding;

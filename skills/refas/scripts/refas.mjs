@@ -30,6 +30,7 @@ import {
   validatePbrRenderReport,
   validateRegisteredComparison,
   validateRealizedAssemblyProof,
+  validateConstructionQuality,
 } from './lib/index.mjs';
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
@@ -180,6 +181,7 @@ async function main() {
     else if (spec.schema === 'refas.pbr-render-report/v1') result = validatePbrRenderReport(spec);
     else if (spec.schema === 'refas.registered-comparison/v1') result = validateRegisteredComparison(spec);
     else if (spec.schema === 'refas.realized-assembly-proof/v1') result = validateRealizedAssemblyProof(spec);
+    else if (spec.schema === 'refas.construction-quality/v1') result = validateConstructionQuality(spec);
     else throw new Error(`no validator for schema: ${spec.schema}`);
     print(result);
     if (!result.valid) process.exitCode = 1;

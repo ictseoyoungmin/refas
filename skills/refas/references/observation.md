@@ -57,3 +57,13 @@ Before moving to spatial hypotheses, confirm:
 - interpretations are not written as facts;
 - ambiguities are explicit;
 - missing or hidden parts are marked unknown rather than invented.
+
+## Visible obligations versus hidden uncertainty
+
+Use ambiguity only where the source does not decide. Hidden rear surfaces,
+internal fasteners, exact depth, and unobserved motion limits may remain
+hypotheses. A visible contour, landmark, cut line, opening, overlap,
+proportion, highlight break, or curvature transition is an observation
+obligation and cannot be replaced by a generic primitive under the label of
+uncertainty. Record the visible portion as a fact and only its unseen
+continuation as ambiguous.

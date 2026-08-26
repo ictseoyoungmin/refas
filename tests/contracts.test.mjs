@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import {test} from 'node:test';
 
 import {
+  createConstructionQuality,
   createObservation,
   createPbrRenderReport,
   createReferenceRegistration,
@@ -15,11 +16,35 @@ import {
   validatePbrRenderReport,
   validateReferenceRegistration,
   validateRegisteredComparison,
+  validateConstructionQuality,
   validateSpatialHypothesisSet,
   validateVisualHierarchy,
 } from '../skills/refas/scripts/lib/index.mjs';
 
 const SOURCE_DIGEST = 'a'.repeat(64);
+
+const visibleFormGates = (status = 'pass') => [
+  'whole-silhouette', 'major-landmarks', 'principal-sections',
+  'curvature-transitions', 'coarse-negative-space', 'registered-source-comparison',
+].map((id) => ({id, status, evidenceRefs: [`reviews/${id}.png`], summary: `${id} ${status}`}));
+
+test('construction quality keeps generic primitive candidates at blockout', () => {
+  const base = {
+    scopeId: 'whole', sourceSha256: SOURCE_DIGEST, assetSha256: 'b'.repeat(64),
+    visibleFormGates: visibleFormGates(),
+    identityFeatures: [{id: 'torso-waist-transition', scopeId: 'whole.torso', kind: 'section-transition', evidenceRefs: ['source/reference.png']}],
+    wholeDependency: {scopeId: 'whole', status: 'pass', evidenceRefs: ['reviews/whole-overlay.png']},
+    registeredComparison: {path: 'reviews/registered-comparison/comparison-report.json', sha256: 'c'.repeat(64), scopeIds: ['whole', 'whole.torso']},
+    ambiguities: ['Hidden rear surfaces remain inferred.'],
+  };
+  assert.throws(() => createConstructionQuality({...base, claim: 'identity-bearing', constructionFamilies: ['generic-primitive']}), /primitive-only geometry is blockout/);
+  const blockout = createConstructionQuality({...base, claim: 'blockout', constructionFamilies: ['generic-primitive']});
+  assert.deepEqual(validateConstructionQuality(blockout), {valid: true, errors: []});
+  const closed = createConstructionQuality({...base, claim: 'identity-bearing', constructionFamilies: ['landmark-cage', 'section-profile-loft']});
+  assert.deepEqual(validateConstructionQuality(closed), {valid: true, errors: []});
+  const tampered = structuredClone(closed); tampered.policy.validationVolumeCannotReplaceConstructionQuality = false;
+  assert.equal(validateConstructionQuality(tampered).valid, false);
+});
 
 test('registered comparison reports preserve ancestry and make metrics non-authoritative', () => {
   const payload = {

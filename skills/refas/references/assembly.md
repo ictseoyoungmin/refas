@@ -4,6 +4,13 @@
 
 Once a child asset passes its own gates, treat its GLB bytes, local coordinate frame, and digest as immutable inputs to parent assembly. Preserve the closed child rather than regenerating a look-alike inside the parent builder.
 
+Mesh integrity alone cannot close a child. Before making a visually material
+child immutable, require current identity-bearing construction coverage at the
+child scope and a passing whole-shape dependency. A primitive blockout, a child
+closed before its parent silhouette is trustworthy, or a child whose visible
+cutaways/sections remain generic stays mutable and must not become an immutable
+assembly authority.
+
 Use `appendPartsToClosedGlb` when the parent can be represented by appending nodes, meshes, materials, and binary payload. The implementation preserves the child binary payload as an exact prefix and records both the source GLB SHA-256 and embedded BIN SHA-256 in a composition report.
 
 ## Registration record

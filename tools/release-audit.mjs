@@ -36,7 +36,7 @@ async function main() {
   const names = pack.files.map((item) => item.path);
   const forbidden = names.filter((name) => /(?:^|\/)(?:__pycache__|\.refas|tests|examples|legacy)(?:\/|$)|\.pyc$|\.zip$/u.test(name));
   if (forbidden.length) throw new Error(`release package contains forbidden files: ${forbidden.join(', ')}`);
-  for (const required of ['package.json', 'requirements.txt', 'skills/refas/SKILL.md', 'skills/refas/scripts/refas.mjs', 'skills/refas/scripts/compare_registered.py', 'skills/refas/scripts/lib/index.mjs', 'schemas/checkpoint.schema.json', 'schemas/realized-assembly-proof.schema.json', 'schemas/registered-comparison.schema.json', 'schemas/visual-review.schema.json', 'schemas/whole-object-certificate.schema.json']) {
+  for (const required of ['package.json', 'requirements.txt', 'skills/refas/SKILL.md', 'skills/refas/scripts/refas.mjs', 'skills/refas/scripts/compare_registered.py', 'skills/refas/scripts/lib/index.mjs', 'schemas/checkpoint.schema.json', 'schemas/construction-quality.schema.json', 'schemas/realized-assembly-proof.schema.json', 'schemas/registered-comparison.schema.json', 'schemas/visual-review.schema.json', 'schemas/whole-object-certificate.schema.json']) {
     if (!names.includes(required)) throw new Error(`release package omits ${required}`);
   }
   const skillBytes = names.filter((name) => name.startsWith('skills/refas/')).reduce((total, name) => total + Number(pack.files.find((item) => item.path === name)?.size ?? 0), 0);
