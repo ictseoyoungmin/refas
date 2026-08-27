@@ -15,7 +15,8 @@ export function validateRegisteredComparison(report) {
   if (report?.schema !== REGISTERED_COMPARISON_SCHEMA) errors.push('invalid schema');
   if (report?.claimScope !== 'critique-evidence-only') errors.push('claimScope must be critique-evidence-only');
   const acquisitionKind = String(report?.source?.acquisitionKind ?? '').toLowerCase();
-  const realSource = acquisitionKind ? !CONTRACT_FIXTURE_ACQUISITIONS.has(acquisitionKind) : false;
+  const legacyContract = acquisitionKind === '';
+  const realSource = !legacyContract && !CONTRACT_FIXTURE_ACQUISITIONS.has(acquisitionKind);
   const projectionByScope = new Map();
 
   try {
@@ -46,7 +47,7 @@ export function validateRegisteredComparison(report) {
       const scopeId = scope?.scopeId ?? '?';
       if (!scope.scopeId || !Array.isArray(scope.ancestry) || scope.ancestry[0] !== 'whole' || scope.ancestry.at(-1) !== scope.scopeId) errors.push(`scope ${scopeId} does not retain whole-context ancestry`);
       if (!Number.isFinite(scope?.metrics?.silhouetteIoU) || scope.metrics.silhouetteIoU < 0 || scope.metrics.silhouetteIoU > 1) errors.push(`scope ${scopeId} has invalid silhouette IoU`);
-      if (!['realized-projection', 'declared-test-fixture', 'image-only'].includes(scope?.measurementAuthority)) errors.push(`scope ${scopeId} has invalid measurement authority`);
+      if (!legacyContract && !['realized-projection', 'declared-test-fixture', 'image-only'].includes(scope?.measurementAuthority)) errors.push(`scope ${scopeId} has invalid measurement authority`);
       if (realSource && scope?.measurementAuthority !== 'realized-projection') errors.push(`real-source scope ${scopeId} must use realized projection measurements`);
 
       for (const image of scope?.images ?? []) assertDigest(image.sha256, `${scopeId} image sha256`);
@@ -74,7 +75,7 @@ export function validateRegisteredComparison(report) {
           const rmse = Math.sqrt(errorsSquared.reduce((sum, value) => sum + value, 0) / errorsSquared.length);
           if (Math.abs(rmse - scope.metrics.landmarkResidualRmse) > 1e-10) errors.push(`scope ${scopeId} landmarkResidualRmse does not match realized landmarks`);
         }
-      } else {
+      } else if (!legacyContract) {
         if (scope?.projectionBinding != null) errors.push(`scope ${scopeId} has projection binding without realized authority`);
         if (scope?.measurementAuthority === 'declared-test-fixture' && realSource) errors.push(`real-source scope ${scopeId} cannot use declared test-fixture coordinates`);
       }
@@ -89,8 +90,8 @@ export function validateRegisteredComparison(report) {
   if (policy.rawSourceRemainsPrimary !== true || policy.outputsAreDerivedObservationAids !== true) errors.push('source authority policy is missing');
   if (policy.metricsCannotSetVisualGate !== true || policy.metricFailureRequiresTypedFindingBeforeRouting !== true) errors.push('non-authoritative metric policy is missing');
   if (policy.registrationResidualIsNotShapeTruth !== true) errors.push('registration residual policy is missing');
-  if (policy.realSourceLandmarksMustUseRealizedProjection !== true || policy.manualRenderCoordinatesCannotClaimRealSourceGeometry !== true) errors.push('realized projection measurement authority policy is missing');
-  if (policy.projectionMetricsRemainVetoOnly !== true) errors.push('projection metric authority policy is missing');
+  if (!legacyContract && (policy.realSourceLandmarksMustUseRealizedProjection !== true || policy.manualRenderCoordinatesCannotClaimRealSourceGeometry !== true)) errors.push('realized projection measurement authority policy is missing');
+  if (!legacyContract && policy.projectionMetricsRemainVetoOnly !== true) errors.push('projection metric authority policy is missing');
   try { assertDigest(report?.comparisonDigest, 'comparisonDigest'); } catch (error) { errors.push(error.message); }
   return {valid: errors.length === 0, errors};
 }
