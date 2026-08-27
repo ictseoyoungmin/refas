@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/projection-fit.schema.json",
+  "title": "RefAs model-to-reference projection fit",
+  "type": "object",
+  "required": ["schema", "scopeId", "sourceSha256", "referenceGeometryDigest", "cameraHypothesisId", "cameraDigest", "modelBindingDigest", "anchorProjections", "chainResiduals", "axisResiduals", "contactResiduals", "negativeSpaceProjections", "dimensionResiduals", "occlusionDepths", "metrics", "evidenceRefs", "policy", "projectionFitDigest"],
+  "properties": {
+    "schema": {"const": "refas.projection-fit/v1"},
+    "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "referenceGeometryDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "cameraHypothesisId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "cameraDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "modelBindingDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "anchorProjections": {"type": "array", "minItems": 1, "items": {"type": "object"}},
+    "chainResiduals": {"type": "array", "items": {"type": "object"}},
+    "axisResiduals": {"type": "array", "items": {"type": "object"}},
+    "contactResiduals": {"type": "array", "items": {"type": "object"}},
+    "negativeSpaceProjections": {"type": "array", "items": {"type": "object"}},
+    "dimensionResiduals": {"type": "array", "items": {"type": "object"}},
+    "occlusionDepths": {"type": "array", "items": {"type": "object"}},
+    "metrics": {"type": "object"},
+    "evidenceRefs": {"type": "array", "items": {"type": "string"}},
+    "policy": {
+      "type": "object",
+      "required": ["sourceGeometryRemainsAuthority", "projectionFitDoesNotMutateGeometry", "metricsCannotCertifyVisualFidelity", "materialDisagreementMayBecomeBlockingFinding"],
+      "properties": {
+        "sourceGeometryRemainsAuthority": {"const": true},
+        "projectionFitDoesNotMutateGeometry": {"const": true},
+        "metricsCannotCertifyVisualFidelity": {"const": true},
+        "materialDisagreementMayBecomeBlockingFinding": {"const": true}
+      },
+      "additionalProperties": false
+    },
+    "projectionFitDigest": {"$ref": "common.schema.json#/$defs/digest"}
+  },
+  "additionalProperties": false
+}
