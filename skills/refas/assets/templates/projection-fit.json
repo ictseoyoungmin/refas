@@ -1,0 +1,16 @@
+{
+  "cameraHypothesisId": "camera-candidate",
+  "cameraDigest": "0000000000000000000000000000000000000000000000000000000000000000",
+  "modelBindingDigest": "0000000000000000000000000000000000000000000000000000000000000000",
+  "anchorProjections": [
+    {
+      "referenceId": "whole.anchor-a",
+      "projectedXY": [0.4, 0.4],
+      "binding": {"kind": "node-local-point", "nodeId": "model-node", "localPoint": [0, 0, 0]},
+      "evidenceRefs": ["renders/hero.png"]
+    }
+  ],
+  "negativeSpaceProjections": [],
+  "occlusionDepths": [],
+  "evidenceRefs": ["renders/hero.png"]
+}
