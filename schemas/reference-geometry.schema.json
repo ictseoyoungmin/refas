@@ -1,0 +1,136 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/reference-geometry.schema.json",
+  "title": "RefAs source-space reference geometry",
+  "type": "object",
+  "required": ["schema", "scopeId", "sourceSha256", "coordinateSpace", "anchors", "chains", "axes", "contacts", "occlusions", "negativeSpaces", "contours", "dimensions", "attestation", "policy", "geometryDigest"],
+  "properties": {
+    "schema": {"const": "refas.reference-geometry/v1"},
+    "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "coordinateSpace": {
+      "type": "object",
+      "required": ["kind", "origin", "xRange", "yRange"],
+      "properties": {
+        "kind": {"const": "normalized-image"},
+        "origin": {"const": "top-left"},
+        "xRange": {"const": [0, 1]},
+        "yRange": {"const": [0, 1]}
+      },
+      "additionalProperties": false
+    },
+    "anchors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "importance", "evidenceRefs", "xy", "visibility", "confidence", "semanticRole"],
+        "properties": {
+          "id": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "importance": {"enum": ["macro", "identity", "detail"]},
+          "evidenceRefs": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+          "xy": {"$ref": "#/$defs/point2"},
+          "visibility": {"enum": ["visible", "occluded", "inferred"]},
+          "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+          "semanticRole": {"type": "string"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "chains": {"type": "array", "items": {"$ref": "#/$defs/chain"}},
+    "axes": {"type": "array", "items": {"$ref": "#/$defs/axis"}},
+    "contacts": {"type": "array", "items": {"$ref": "#/$defs/contact"}},
+    "occlusions": {"type": "array", "items": {"$ref": "#/$defs/occlusion"}},
+    "negativeSpaces": {"type": "array", "items": {"$ref": "#/$defs/negativeSpace"}},
+    "contours": {"type": "array", "items": {"$ref": "#/$defs/contour"}},
+    "dimensions": {"type": "array", "items": {"$ref": "#/$defs/dimension"}},
+    "attestation": {
+      "type": "object",
+      "required": ["evidenceRefs", "digest"],
+      "properties": {
+        "evidenceRefs": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "digest": {"$ref": "common.schema.json#/$defs/digest"}
+      },
+      "additionalProperties": false
+    },
+    "policy": {
+      "type": "object",
+      "required": ["rawSourceRemainsPrimary", "geometryIsObservedSourceEvidence", "referenceGeometryContainsNo3dCoordinates", "modelProjectionMustBindSeparately", "framingRegistrationCannotClaimShapeTruth"],
+      "properties": {
+        "rawSourceRemainsPrimary": {"const": true},
+        "geometryIsObservedSourceEvidence": {"const": true},
+        "referenceGeometryContainsNo3dCoordinates": {"const": true},
+        "modelProjectionMustBindSeparately": {"const": true},
+        "framingRegistrationCannotClaimShapeTruth": {"const": true}
+      },
+      "additionalProperties": false
+    },
+    "geometryDigest": {"$ref": "common.schema.json#/$defs/digest"}
+  },
+  "$defs": {
+    "point2": {
+      "type": "array",
+      "prefixItems": [{"type": "number", "minimum": 0, "maximum": 1}, {"type": "number", "minimum": 0, "maximum": 1}],
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "base": {
+      "type": "object",
+      "required": ["id", "importance", "evidenceRefs"],
+      "properties": {
+        "id": {"$ref": "common.schema.json#/$defs/semanticId"},
+        "importance": {"enum": ["macro", "identity", "detail"]},
+        "evidenceRefs": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}
+      }
+    },
+    "chain": {
+      "allOf": [
+        {"$ref": "#/$defs/base"},
+        {"type": "object", "required": ["anchorIds", "closed"], "properties": {"anchorIds": {"type": "array", "minItems": 2, "items": {"$ref": "common.schema.json#/$defs/semanticId"}}, "closed": {"type": "boolean"}}}
+      ],
+      "unevaluatedProperties": false
+    },
+    "axis": {
+      "allOf": [
+        {"$ref": "#/$defs/base"},
+        {"type": "object", "required": ["fromAnchorId", "toAnchorId"], "properties": {"fromAnchorId": {"$ref": "common.schema.json#/$defs/semanticId"}, "toAnchorId": {"$ref": "common.schema.json#/$defs/semanticId"}}}
+      ],
+      "unevaluatedProperties": false
+    },
+    "contact": {
+      "allOf": [
+        {"$ref": "#/$defs/base"},
+        {"type": "object", "required": ["aAnchorId", "bAnchorId", "relation", "toleranceNormalized"], "properties": {"aAnchorId": {"$ref": "common.schema.json#/$defs/semanticId"}, "bAnchorId": {"$ref": "common.schema.json#/$defs/semanticId"}, "relation": {"enum": ["touching", "near", "supported-by", "coincident"]}, "toleranceNormalized": {"type": "number", "minimum": 0, "maximum": 1}}}
+      ],
+      "unevaluatedProperties": false
+    },
+    "occlusion": {
+      "allOf": [
+        {"$ref": "#/$defs/base"},
+        {"type": "object", "required": ["frontId", "backId"], "properties": {"frontId": {"$ref": "common.schema.json#/$defs/semanticId"}, "backId": {"$ref": "common.schema.json#/$defs/semanticId"}}}
+      ],
+      "unevaluatedProperties": false
+    },
+    "negativeSpace": {
+      "allOf": [
+        {"$ref": "#/$defs/base"},
+        {"type": "object", "required": ["polygon"], "properties": {"polygon": {"type": "array", "minItems": 3, "items": {"$ref": "#/$defs/point2"}}}}
+      ],
+      "unevaluatedProperties": false
+    },
+    "contour": {
+      "allOf": [
+        {"$ref": "#/$defs/base"},
+        {"type": "object", "required": ["points", "closed"], "properties": {"points": {"type": "array", "minItems": 2, "items": {"$ref": "#/$defs/point2"}}, "closed": {"type": "boolean"}}}
+      ],
+      "unevaluatedProperties": false
+    },
+    "dimension": {
+      "allOf": [
+        {"$ref": "#/$defs/base"},
+        {"type": "object", "required": ["aAnchorId", "bAnchorId", "kind"], "properties": {"aAnchorId": {"$ref": "common.schema.json#/$defs/semanticId"}, "bAnchorId": {"$ref": "common.schema.json#/$defs/semanticId"}, "kind": {"enum": ["distance", "horizontal-span", "vertical-span"]}}}
+      ],
+      "unevaluatedProperties": false
+    }
+  },
+  "additionalProperties": false
+}
