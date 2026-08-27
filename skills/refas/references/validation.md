@@ -54,7 +54,9 @@ registered whole comparison, or non-pass visible-form gate reopens
 
 Use `compare` after source-to-render registration when whole-object inspection cannot localize a near-match defect. The `refas.registered-comparison/v1` report binds the exact source manifest, asset and render frame, registration, visual hierarchy, comparison input, and output image digests. Every scope board retains whole-context ancestry and may include overlays, splits, source/render edges, silhouette differences, landmark residuals, and normalized dimensions.
 
-Registration residual, silhouette IoU, and dimension ratios are critique aids only. They cannot set a view or closure gate to pass, cannot become source facts, and cannot choose a repair owner. A discrepancy must first be visible in the registered evidence and recorded as a typed finding. Always inspect local feature scopes even when the global silhouette improves; an attachment or relief regression may occupy too few pixels to lower a whole-object score.
+For a real source, every compared scope that reports geometry measurements must bind its `refas.reference-geometry/v1` and `refas.realized-projection/v1`. Landmark positions and dimensions are derived from the realized projection fit; do not hand-author render coordinates. A realized scope must have a finite `landmarkResidualRmse`, and its projection binding must reference the same rendered asset. Synthetic/test fixtures may retain declared render coordinates only as `declared-test-fixture` evidence; that compatibility path is lower-authority contract evidence and cannot stand in for real-source geometry correspondence.
+
+Registration residual, silhouette IoU, landmark residuals, and dimension ratios are critique aids only. They cannot set a view or closure gate to pass, cannot become source facts, and cannot choose a repair owner. A discrepancy must first be visible in the registered evidence and recorded as a typed finding. Always inspect local feature scopes even when the global silhouette improves; an attachment or relief regression may occupy too few pixels to lower a whole-object score.
 
 ## Projection-fit evidence and veto
 
@@ -89,8 +91,6 @@ Scores summarize evidence; they do not own repairs. A below-threshold score with
 
 Before closure, create a digest-bound `refas.visual-review/v1` record from `assets/templates/visual-review.json`. It must bind the exact primary source digest and candidate asset digest, contain one verdict for every standard view and visual gate, disclose the independent renderer and its material support, cite the exact PBR report digest, and retain unresolved typed findings. The whole-object checkpoint includes the visual review, PBR report, and every cited renderer output and cites the review path from every visual closure gate.
 
-For a real source acquisition, the whole-object certification checkpoint must additionally contain exactly one `reference-geometry` artifact, exactly one `realized-projection` artifact, and the exact GLB whose digest is named by both realized projection and visual review. Public `assessCertification`, `certifyProject`, `auditProject`, and `resumeProject` re-check this chain. Certification reproduces the realized projection from checkpoint bytes and refuses closure when the proof is missing, stale, bound to another GLB/source, or yields blocking projection findings. Synthetic and deterministic contract fixtures may omit this chain only because they test framework behavior rather than external visual fidelity.
-
 `evidenceClass: independent-reference` means the comparison source was not generated from the candidate's own model specification. `self-generated-contract-fixture` can verify deterministic construction, rendering, rollback, and schema behavior, but can never certify visual fidelity.
 
 Whole-object certification requires current, passing evidence for:
@@ -99,7 +99,6 @@ Whole-object certification requires current, passing evidence for:
 - hierarchy coverage;
 - observation authority;
 - spatial plausibility;
-- realized source-to-model reprojection for real references;
 - silhouette and mass;
 - surface topology and relief;
 - assembly relations and immutable child integrity;
@@ -108,6 +107,8 @@ Whole-object certification requires current, passing evidence for:
 - no unresolved blocking findings;
 - project audit validity.
 
-Certification refuses closure when the review is missing or digest-stale, its verdict is not `pass`, a required view or visual gate is not `pass`, a required passing observation summary is empty, a major/critical/blocking finding remains, a real-source realized projection is missing or irreproducible, a projection-aware review contains material geometric disagreement, or appearance relies on an integrity-only renderer or an unsupported material feature. Gate strings and numeric scores cannot override those findings.
+For a real source, certification additionally requires one digest-bound `refas.reference-geometry/v1` artifact, one `refas.realized-projection/v1` artifact, and the exact GLB whose digest is bound by the visual review. Certification reproduces the realized projection from those checkpoint artifacts before closure. Missing, stale, non-reproducible, or asset-mismatched projection evidence refuses certification. Synthetic/test acquisition kinds keep the contract-fixture compatibility path but cannot use it as visual-fidelity evidence.
 
-Any upstream source, camera, model binding, or geometry change expires dependent projection-fit and gate evidence. Recompute realized projection evidence from the current GLB before rerunning certification after repair.
+Certification refuses closure when the review is missing or digest-stale, its verdict is not `pass`, a required view or visual gate is not `pass`, a required passing observation summary is empty, a major/critical/blocking finding remains, a projection-aware review contains material geometric disagreement, or appearance relies on an integrity-only renderer or an unsupported material feature. Gate strings and numeric scores cannot override those findings.
+
+Any upstream source, camera, model binding, or geometry change expires dependent projection-fit and gate evidence. Recompute projection evidence before rerunning registered comparison and certification after repair.
