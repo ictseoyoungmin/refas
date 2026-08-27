@@ -9,6 +9,7 @@ export * from './reference-geometry.mjs';
 export * from './projection-fit.mjs';
 export * from './projection-findings.mjs';
 export * from './realized-projection.mjs';
+export * from './realized-projection-verification.mjs';
 export * from './mesh.mjs';
 export * from './hard-surface.mjs';
 export * from './realized-assembly.mjs';
