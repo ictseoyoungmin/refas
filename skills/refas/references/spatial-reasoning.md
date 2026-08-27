@@ -43,11 +43,17 @@ Visible boundaries are constraints in image space. When constructing seams, cell
 
 Do not trace pixels into unrelated planar geometry when the supporting surface is curved.
 
+When `refas.reference-geometry/v1` exists, create a `refas.projection-fit/v1` record for each serious whole-object camera/model hypothesis before committing to detailed shape work. Bind explicit semantic model points to the source anchors and retain the camera and model-binding digests. Every source `macro` anchor must be represented; missing macro bindings fail closed rather than being silently ignored.
+
+Inspect anchor RMSE together with chain length/angle, dominant-axis, contact, negative-space, dimension, and occlusion residuals when those source primitives exist. These measurements are comparison evidence, not optimization commands. They may support typed mismatch findings but cannot decide that a hypothesis is visually correct.
+
+Use `findingsFromProjectionFit` only after the fit is valid. Orientation disagreement belongs to spatial hypotheses; macro landmark/proportion and negative-space disagreement belongs to shape reconstruction; contact and occlusion disagreement belongs to assembly. The normal failure router then determines the reopen span. Do not let a numeric threshold bypass ownership.
+
 ## Reference-frame registration
 
 Use attested normalized 2D correspondences to register a child observation frame to its parent. `createReferenceRegistration` supports affine and projective homography models, records residual and inverse round-trip metrics, and binds both source digests. Use the `register` CLI command with `assets/templates/registration-input.json` when a JSON artifact is preferable.
 
-Registration owns placement evidence only. It never converts a low residual into shape truth, never outranks the raw reference, and never authorizes rebuilding a closed child to force a fit.
+Registration owns placement evidence only. It never converts a low residual into shape truth, never outranks the raw reference, and never authorizes rebuilding a closed child to force a fit. A registered hero can align the source and render frames while the projected body, landmarks, contacts, or negative spaces are still wrong; use projection fit for that separate question.
 
 ## Canonical diagnostic frame
 
