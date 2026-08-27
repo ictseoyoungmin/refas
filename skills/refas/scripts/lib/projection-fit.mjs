@@ -3,7 +3,6 @@ import {validateReferenceGeometry} from './reference-geometry.mjs';
 
 export const PROJECTION_FIT_SCHEMA = 'refas.projection-fit/v1';
 
-const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 const distance2 = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
 const angle = (a, b) => Math.atan2(b[1] - a[1], b[0] - a[0]);
 function angleDelta(a, b) {
@@ -17,9 +16,12 @@ function rmse(values) {
 function mean(values) {
   return values.length ? values.reduce((sum, value) => sum + value, 0) / values.length : null;
 }
-function point(value, label) {
+function finitePoint(value, label) {
   if (!Array.isArray(value) || value.length !== 2 || !value.every(Number.isFinite)) throw new Error(`${label} must be a finite [x, y] point`);
-  const normalized = value.map(Number);
+  return value.map(Number);
+}
+function sourcePoint(value, label) {
+  const normalized = finitePoint(value, label);
   if (normalized.some((v) => v < 0 || v > 1)) throw new Error(`${label} must be normalized to [0, 1]`);
   return normalized;
 }
@@ -92,13 +94,14 @@ export function createProjectionFit({
     const reference = anchorById.get(referenceId);
     if (!reference) throw new Error(`anchorProjections[${index}] references unknown anchor: ${referenceId}`);
     if (projectedById.has(referenceId)) throw new Error(`duplicate anchor projection: ${referenceId}`);
-    const projectedXY = point(raw?.projectedXY, `anchorProjections[${index}].projectedXY`);
+    const projectedXY = finitePoint(raw?.projectedXY, `anchorProjections[${index}].projectedXY`);
     const errorNormalized = distance2(reference.xy, projectedXY);
     const item = {
       referenceId,
       importance: reference.importance,
       sourceXY: reference.xy,
       projectedXY,
+      insideFrame: projectedXY.every((value) => value >= 0 && value <= 1),
       errorNormalized,
       binding: normalizeBinding(raw?.binding, `anchorProjections[${index}].binding`),
       evidenceRefs: [...new Set((raw?.evidenceRefs ?? []).map(String).filter(Boolean))].sort(),
@@ -140,7 +143,7 @@ export function createProjectionFit({
     const referenceId = assertId(raw?.referenceId, `negativeSpaceProjections[${index}].referenceId`);
     const reference = negativeById.get(referenceId);
     if (!reference) throw new Error(`negativeSpaceProjections[${index}] references unknown negative space: ${referenceId}`);
-    const polygon = (raw?.polygon ?? []).map((value, pointIndex) => point(value, `negativeSpaceProjections[${index}].polygon[${pointIndex}]`));
+    const polygon = (raw?.polygon ?? []).map((value, pointIndex) => finitePoint(value, `negativeSpaceProjections[${index}].polygon[${pointIndex}]`));
     if (polygon.length < 3 || polygonArea(polygon) < 1e-9) throw new Error(`negativeSpaceProjections[${index}].polygon is degenerate`);
     return {referenceId, importance: reference.importance, polygon, iou: polygonIoU(reference.polygon, polygon)};
   });
@@ -169,6 +172,7 @@ export function createProjectionFit({
     anchorRmseNormalized: rmse(allAnchorErrors),
     macroAnchorRmseNormalized: rmse(macroAnchorErrors),
     macroAnchorMaxErrorNormalized: macroAnchorErrors.length ? Math.max(...macroAnchorErrors) : null,
+    projectedAnchorsOutsideFrame: normalizedAnchorProjections.filter((item) => !item.insideFrame).length,
     chainAngleRmseDegrees: (() => { const value = rmse(chainResiduals.flatMap((chain) => chain.segments.map((segment) => segment.angleErrorRadians))); return value == null ? null : value * 180 / Math.PI; })(),
     axisAngleRmseDegrees: (() => { const value = rmse(axisResiduals.filter((item) => item.evaluable).map((item) => item.angleErrorRadians)); return value == null ? null : value * 180 / Math.PI; })(),
     contactMaxExcessNormalized: (() => { const values = contactResiduals.filter((item) => item.evaluable).map((item) => item.excessNormalized); return values.length ? Math.max(...values) : null; })(),
@@ -216,8 +220,8 @@ export function validateProjectionFit(fit) {
     if (!fit?.scopeId || !fit?.cameraHypothesisId) errors.push('scope and camera hypothesis are required');
     if (!(fit?.anchorProjections?.length > 0)) errors.push('at least one anchor projection is required');
     for (const item of fit?.anchorProjections ?? []) {
-      point(item.sourceXY, `anchor ${item.referenceId}.sourceXY`);
-      point(item.projectedXY, `anchor ${item.referenceId}.projectedXY`);
+      sourcePoint(item.sourceXY, `anchor ${item.referenceId}.sourceXY`);
+      finitePoint(item.projectedXY, `anchor ${item.referenceId}.projectedXY`);
       if (!Number.isFinite(item.errorNormalized) || item.errorNormalized < 0) errors.push(`anchor ${item.referenceId} has invalid error`);
     }
     const policy = fit?.policy ?? {};
