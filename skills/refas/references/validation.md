@@ -56,6 +56,16 @@ Use `compare` after source-to-render registration when whole-object inspection c
 
 Registration residual, silhouette IoU, and dimension ratios are critique aids only. They cannot set a view or closure gate to pass, cannot become source facts, and cannot choose a repair owner. A discrepancy must first be visible in the registered evidence and recorded as a typed finding. Always inspect local feature scopes even when the global silhouette improves; an attachment or relief regression may occupy too few pixels to lower a whole-object score.
 
+## Projection-fit evidence and veto
+
+When source-space `refas.reference-geometry/v1` exists, bind the current camera/model candidate back to it with `refas.projection-fit/v1`. The fit may contain anchor, chain angle/length, axis, contact, negative-space, dimension, and occlusion residuals. It is a geometry-consistency aid, not a visual verdict.
+
+A good fit never grants PASS. A material mismatch may, however, support a blocking typed finding because it demonstrates that the current model projection contradicts an explicit source-space obligation. Convert such disagreement with `findingsFromProjectionFit`, then route the finding through normal ownership. Do not let the residual itself choose rollback.
+
+For final review of a scope that has a projection fit, use `createProjectionAwareVisualReview`. It merges supported projection findings into the unresolved finding set before the normal visual-review rules run. Therefore a requested visual PASS is refused while a material source-to-model geometry mismatch remains. Registration cannot override this veto because registration answers frame placement, not shape agreement.
+
+A `verdict: pass` visual review also requires a substantive source-bound observation summary for every required view and visual gate. Empty summaries, boilerplate evidence-free PASS declarations, or a metrics-only explanation are not closure evidence.
+
 ## Findings
 
 Every actionable finding records category, severity, hierarchy scope, concise summary, evidence references, and whether the current edit introduced it. Use a category from `failure-routing.md`; otherwise provide an explicit owner for non-blocking experimental findings.
@@ -91,6 +101,6 @@ Whole-object certification requires current, passing evidence for:
 - no unresolved blocking findings;
 - project audit validity.
 
-Certification refuses closure when the review is missing or digest-stale, its verdict is not `pass`, a required view or visual gate is not `pass`, a major/critical/blocking finding remains, or appearance relies on an integrity-only renderer or an unsupported material feature. Gate strings and numeric scores cannot override those findings.
+Certification refuses closure when the review is missing or digest-stale, its verdict is not `pass`, a required view or visual gate is not `pass`, a required passing observation summary is empty, a major/critical/blocking finding remains, a projection-aware review contains material geometric disagreement, or appearance relies on an integrity-only renderer or an unsupported material feature. Gate strings and numeric scores cannot override those findings.
 
-Any upstream source or geometry change expires dependent gate evidence. Certification must be rerun after repair.
+Any upstream source, camera, model binding, or geometry change expires dependent projection-fit and gate evidence. Recompute projection evidence before rerunning certification after repair.
