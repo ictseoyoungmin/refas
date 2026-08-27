@@ -5,6 +5,7 @@ import {
   createRealizedProjection,
   createReferenceGeometry,
   createSegmentPrism,
+  findingsFromProjectionFit,
   partsToGlb,
   validateRealizedProjection,
   verifyRealizedProjection,
@@ -74,6 +75,17 @@ test('camera changes are digest-bound and change the realized reprojection', () 
   assert.notEqual(near.cameraDigest, far.cameraDigest);
   assert.notEqual(near.derivedAnchors[1].projectedXY[0], far.derivedAnchors[1].projectedXY[0]);
   assert.ok(far.projectionFit.metrics.macroAnchorRmseNormalized > near.projectionFit.metrics.macroAnchorRmseNormalized);
+});
+
+test('gross off-frame mismatch remains measurable and becomes blocking evidence', () => {
+  const proof = createRealizedProjection({referenceGeometry:geometry(), glb:asset({childX:6}), cameraHypothesisId:'camera-bad', camera, anchorBindings:bindings});
+  const child = proof.derivedAnchors.find((item) => item.referenceId === 'child-anchor');
+  assert.equal(child.insideFrame, false);
+  assert.ok(child.projectedXY[0] > 1);
+  assert.ok(proof.projectionFit.metrics.projectedAnchorsOutsideFrame > 0);
+  assert.ok(proof.projectionFit.metrics.macroAnchorRmseNormalized > .3);
+  assert.ok(findingsFromProjectionFit(proof.projectionFit).some((finding) => finding.blocking));
+  assert.equal(validateRealizedProjection(proof).valid, true);
 });
 
 test('caller projectedXY claims are ignored and proof tampering cannot reproduce against bound GLB', () => {
