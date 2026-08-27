@@ -53,7 +53,7 @@ test('source-visible segments remain observation evidence before physical assemb
   assert.equal(ref.interfaces[0].separation, 'explicit');
   assert.equal(ref.policy.observedSegmentationPrecedesPhysicalAssembly, true);
   assert.deepEqual(validateReferenceGeometry(ref), {valid:true, errors:[]});
-  assert.throws(() => createReferenceGeometry({...ref, segments:[{...ref.segments[0], depthBand:[0,1]}], geometryDigest:undefined}), /must not contain 3D geometry field/);
+  assert.throws(() => createReferenceGeometry({...ref, segments:[{...ref.segments[0], depthBand:[0,1]}], geometryDigest:undefined}), /must not contain 3D coordinates/);
 });
 
 test('realized segmentation is derived from actual GLB mesh ownership and projection', () => {
