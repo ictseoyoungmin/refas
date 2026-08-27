@@ -1,0 +1,19 @@
+{
+  "cameraHypothesisId": "camera-candidate",
+  "camera": {
+    "projection": "perspective",
+    "position": [0, 0, 5],
+    "target": [0, 0, 0],
+    "up": [0, 1, 0],
+    "fovY": 29,
+    "aspect": 1
+  },
+  "anchorBindings": [
+    {
+      "referenceId": "whole.anchor-a",
+      "nodeId": "model-node",
+      "localPoint": [0, 0, 0]
+    }
+  ],
+  "evidenceRefs": ["assets/model.glb", "renders/hero.png"]
+}
