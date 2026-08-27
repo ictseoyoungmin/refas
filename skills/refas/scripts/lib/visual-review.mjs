@@ -60,8 +60,12 @@ function normalizeVerdict(raw, index, label) {
   if (!REVIEW_STATUSES.has(status)) throw new Error(`${label}[${index}].status is invalid`);
   const evidenceRefs = strings(raw?.evidenceRefs, `${label}[${index}].evidenceRefs`, {required: true});
   const summary = String(raw?.summary ?? '').trim();
-  if (status === 'pass' && !summary) throw new Error(`${label}[${index}] requires a substantive observation summary to pass`);
   return {id, status, evidenceRefs, summary};
+}
+
+function requirePassingObservationSummaries(items, label) {
+  const empty = items.findIndex((item) => !item.summary);
+  if (empty >= 0) throw new Error(`${label}[${empty}] requires a substantive observation summary in a passing visual review`);
 }
 
 export function createVisualReview({
@@ -123,6 +127,8 @@ export function createVisualReview({
   if (normalizedVerdict === 'pass') {
     if (normalizedViews.some((view) => view.status !== 'pass')) throw new Error('a passing visual review requires every standard view to pass');
     if (normalizedGateVerdicts.some((gate) => gate.status !== 'pass')) throw new Error('a passing visual review requires every visual gate to pass');
+    requirePassingObservationSummaries(normalizedViews, 'views');
+    requirePassingObservationSummaries(normalizedGateVerdicts, 'gateVerdicts');
     if (blockingFindings.length) throw new Error('a passing visual review cannot contain unresolved major, critical, or blocking findings');
   }
 
