@@ -60,6 +60,10 @@ Registration residual, silhouette IoU, and dimension ratios are critique aids on
 
 When source-space `refas.reference-geometry/v1` exists, bind the current camera/model candidate back to it with `refas.projection-fit/v1`. The fit may contain anchor, chain angle/length, axis, contact, negative-space, dimension, and occlusion residuals. It is a geometry-consistency aid, not a visual verdict.
 
+For source-bound reconstruction, do not hand-author `projectedXY` as final evidence. Produce `refas.realized-projection/v1` from the actual GLB bytes, semantic node-local bindings, glTF parent/TRS hierarchy, and the selected digest-bound camera. The realized proof stores world points and image projections derived from those authoritative runtime inputs. `verifyRealizedProjection` must reproduce the proof from the exact checkpoint GLB and reference geometry; a different GLB, camera, binding, or geometry invalidates the proof.
+
+Keep gross failures measurable. Source observations remain normalized to the source frame, but realized projected coordinates may lie outside `[0,1]`; preserve those coordinates and `insideFrame: false` instead of clamping or discarding them. A model that projects outside the source frame is stronger disagreement evidence, not an unreviewable exception.
+
 A good fit never grants PASS. A material mismatch may, however, support a blocking typed finding because it demonstrates that the current model projection contradicts an explicit source-space obligation. Convert such disagreement with `findingsFromProjectionFit`, then route the finding through normal ownership. Do not let the residual itself choose rollback.
 
 For final review of a scope that has a projection fit, use `createProjectionAwareVisualReview`. It merges supported projection findings into the unresolved finding set before the normal visual-review rules run. Therefore a requested visual PASS is refused while a material source-to-model geometry mismatch remains. Registration cannot override this veto because registration answers frame placement, not shape agreement.
@@ -85,6 +89,8 @@ Scores summarize evidence; they do not own repairs. A below-threshold score with
 
 Before closure, create a digest-bound `refas.visual-review/v1` record from `assets/templates/visual-review.json`. It must bind the exact primary source digest and candidate asset digest, contain one verdict for every standard view and visual gate, disclose the independent renderer and its material support, cite the exact PBR report digest, and retain unresolved typed findings. The whole-object checkpoint includes the visual review, PBR report, and every cited renderer output and cites the review path from every visual closure gate.
 
+For a real source acquisition, the whole-object certification checkpoint must additionally contain exactly one `reference-geometry` artifact, exactly one `realized-projection` artifact, and the exact GLB whose digest is named by both realized projection and visual review. Public `assessCertification`, `certifyProject`, `auditProject`, and `resumeProject` re-check this chain. Certification reproduces the realized projection from checkpoint bytes and refuses closure when the proof is missing, stale, bound to another GLB/source, or yields blocking projection findings. Synthetic and deterministic contract fixtures may omit this chain only because they test framework behavior rather than external visual fidelity.
+
 `evidenceClass: independent-reference` means the comparison source was not generated from the candidate's own model specification. `self-generated-contract-fixture` can verify deterministic construction, rendering, rollback, and schema behavior, but can never certify visual fidelity.
 
 Whole-object certification requires current, passing evidence for:
@@ -93,6 +99,7 @@ Whole-object certification requires current, passing evidence for:
 - hierarchy coverage;
 - observation authority;
 - spatial plausibility;
+- realized source-to-model reprojection for real references;
 - silhouette and mass;
 - surface topology and relief;
 - assembly relations and immutable child integrity;
@@ -101,6 +108,6 @@ Whole-object certification requires current, passing evidence for:
 - no unresolved blocking findings;
 - project audit validity.
 
-Certification refuses closure when the review is missing or digest-stale, its verdict is not `pass`, a required view or visual gate is not `pass`, a required passing observation summary is empty, a major/critical/blocking finding remains, a projection-aware review contains material geometric disagreement, or appearance relies on an integrity-only renderer or an unsupported material feature. Gate strings and numeric scores cannot override those findings.
+Certification refuses closure when the review is missing or digest-stale, its verdict is not `pass`, a required view or visual gate is not `pass`, a required passing observation summary is empty, a major/critical/blocking finding remains, a real-source realized projection is missing or irreproducible, a projection-aware review contains material geometric disagreement, or appearance relies on an integrity-only renderer or an unsupported material feature. Gate strings and numeric scores cannot override those findings.
 
-Any upstream source, camera, model binding, or geometry change expires dependent projection-fit and gate evidence. Recompute projection evidence before rerunning certification after repair.
+Any upstream source, camera, model binding, or geometry change expires dependent projection-fit and gate evidence. Recompute realized projection evidence from the current GLB before rerunning certification after repair.
