@@ -28,12 +28,12 @@ test('projection fit computes source-to-model residuals without changing source 
   const fit = createProjectionFit({
     referenceGeometry:ref, cameraHypothesisId:'camera-a', cameraDigest:D('b'), modelBindingDigest:D('c'),
     anchorProjections:[projection('head',[.505,.205]),projection('shoulder',[.402,.342]),projection('elbow',[.345,.515]),projection('wrist',[.468,.282])],
-    negativeSpaceProjections:[{referenceId:'arm-gap',polygon:[[.402,.352],[.382,.451],[.352,.491],[.432,.412]]}],
+    negativeSpaceProjections:[{referenceId:'arm-gap',polygon:[[.40,.35],[.38,.45],[.35,.49],[.43,.41]]}],
     evidenceRefs:['render.png'],
   });
   assert.equal(validateProjectionFit(fit).valid,true);
   assert.ok(fit.metrics.macroAnchorRmseNormalized < .01);
-  assert.ok(fit.metrics.negativeSpaceMeanIoU > .9);
+  assert.ok(fit.metrics.negativeSpaceMeanIoU > .99);
   assert.equal(fit.policy.metricsCannotCertifyVisualFidelity,true);
   assert.equal(ref.anchors[0].xy[0],.5);
   const tampered=structuredClone(fit);tampered.anchorProjections[0].projectedXY[0]=.9;
