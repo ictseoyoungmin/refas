@@ -15,7 +15,7 @@ export function validateRegisteredComparison(report) {
   if (report?.schema !== REGISTERED_COMPARISON_SCHEMA) errors.push('invalid schema');
   if (report?.claimScope !== 'critique-evidence-only') errors.push('claimScope must be critique-evidence-only');
   const acquisitionKind = String(report?.source?.acquisitionKind ?? '').toLowerCase();
-  const realSource = !CONTRACT_FIXTURE_ACQUISITIONS.has(acquisitionKind);
+  const realSource = acquisitionKind ? !CONTRACT_FIXTURE_ACQUISITIONS.has(acquisitionKind) : false;
   const projectionByScope = new Map();
 
   try {
