@@ -3,16 +3,69 @@
   "$id": "https://refas.dev/schemas/registered-comparison.schema.json",
   "title": "RefAs Registered Comparison",
   "type": "object",
-  "required": ["schema", "claimScope", "source", "render", "registration", "hierarchy", "scopes", "policy", "inputDigest", "comparisonDigest"],
+  "required": ["schema", "claimScope", "source", "render", "registration", "hierarchy", "projectionEvidence", "scopes", "policy", "inputDigest", "comparisonDigest"],
   "properties": {
     "schema": {"const": "refas.registered-comparison/v1"},
     "claimScope": {"const": "critique-evidence-only"},
-    "source": {"type": "object", "required": ["sha256", "manifestSha256"]},
+    "source": {
+      "type": "object",
+      "required": ["sha256", "manifestSha256", "acquisitionKind"]
+    },
     "render": {"type": "object", "required": ["assetSha256", "frameId", "frameSha256", "reportSha256"]},
     "registration": {"type": "object", "required": ["digest", "fileSha256", "model", "metrics"]},
     "hierarchy": {"type": "object", "required": ["digest", "fileSha256"]},
-    "scopes": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["scopeId", "level", "ancestry", "metrics", "images"]}},
-    "policy": {"type": "object", "required": ["rawSourceRemainsPrimary", "outputsAreDerivedObservationAids", "metricsCannotSetVisualGate", "metricFailureRequiresTypedFindingBeforeRouting", "registrationResidualIsNotShapeTruth"]},
+    "projectionEvidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["scopeId", "referenceGeometryPath", "referenceGeometryFileSha256", "referenceGeometryDigest", "realizedProjectionPath", "realizedProjectionFileSha256", "realizedProjectionDigest", "projectionFitDigest", "assetSha256"],
+        "properties": {
+          "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "referenceGeometryPath": {"type": "string", "minLength": 1},
+          "referenceGeometryFileSha256": {"$ref": "common.schema.json#/$defs/sha256"},
+          "referenceGeometryDigest": {"$ref": "common.schema.json#/$defs/sha256"},
+          "realizedProjectionPath": {"type": "string", "minLength": 1},
+          "realizedProjectionFileSha256": {"$ref": "common.schema.json#/$defs/sha256"},
+          "realizedProjectionDigest": {"$ref": "common.schema.json#/$defs/sha256"},
+          "projectionFitDigest": {"$ref": "common.schema.json#/$defs/sha256"},
+          "assetSha256": {"$ref": "common.schema.json#/$defs/sha256"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "scopes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["scopeId", "level", "ancestry", "measurementAuthority", "projectionBinding", "metrics", "landmarks", "dimensions", "images"],
+        "properties": {
+          "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "measurementAuthority": {"enum": ["realized-projection", "declared-test-fixture", "image-only"]},
+          "projectionBinding": {"type": ["object", "null"]},
+          "metrics": {"type": "object"},
+          "landmarks": {"type": "array", "items": {"type": "object"}},
+          "dimensions": {"type": "array", "items": {"type": "object"}},
+          "images": {"type": "array", "minItems": 1, "items": {"type": "object"}}
+        },
+        "additionalProperties": true
+      }
+    },
+    "policy": {
+      "type": "object",
+      "required": ["rawSourceRemainsPrimary", "outputsAreDerivedObservationAids", "metricsCannotSetVisualGate", "metricFailureRequiresTypedFindingBeforeRouting", "registrationResidualIsNotShapeTruth", "realSourceLandmarksMustUseRealizedProjection", "manualRenderCoordinatesCannotClaimRealSourceGeometry", "projectionMetricsRemainVetoOnly"],
+      "properties": {
+        "rawSourceRemainsPrimary": {"const": true},
+        "outputsAreDerivedObservationAids": {"const": true},
+        "metricsCannotSetVisualGate": {"const": true},
+        "metricFailureRequiresTypedFindingBeforeRouting": {"const": true},
+        "registrationResidualIsNotShapeTruth": {"const": true},
+        "realSourceLandmarksMustUseRealizedProjection": {"const": true},
+        "manualRenderCoordinatesCannotClaimRealSourceGeometry": {"const": true},
+        "projectionMetricsRemainVetoOnly": {"const": true}
+      },
+      "additionalProperties": false
+    },
     "inputDigest": {"$ref": "common.schema.json#/$defs/sha256"},
     "comparisonDigest": {"$ref": "common.schema.json#/$defs/sha256"}
   },
