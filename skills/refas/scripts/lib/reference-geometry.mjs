@@ -2,10 +2,22 @@ import {assertDigest, assertId, deepFreeze, digestJson} from './canonical.mjs';
 
 export const REFERENCE_GEOMETRY_SCHEMA = 'refas.reference-geometry/v1';
 export const REFERENCE_GEOMETRY_IMPORTANCE = Object.freeze(['macro', 'identity', 'detail']);
-export const REFERENCE_GEOMETRY_VISIBILITY = Object.freeze(['visible', 'occluded', 'inferred']);
+export const REFERENCE_GEOMETRY_VISIBILITY = Object.freeze(['visible', 'partially-occluded', 'occluded', 'inferred']);
+export const REFERENCE_SEGMENT_SEPARATION = Object.freeze(['explicit', 'suggested', 'uncertain']);
+export const REFERENCE_INTERFACE_KINDS = Object.freeze([
+  'joint-gap',
+  'joint-boundary',
+  'seam',
+  'overlap-boundary',
+  'necked-transition',
+  'contact-boundary',
+  'unknown',
+]);
 
 const IMPORTANCE = new Set(REFERENCE_GEOMETRY_IMPORTANCE);
 const VISIBILITY = new Set(REFERENCE_GEOMETRY_VISIBILITY);
+const SEGMENT_SEPARATION = new Set(REFERENCE_SEGMENT_SEPARATION);
+const INTERFACE_KINDS = new Set(REFERENCE_INTERFACE_KINDS);
 const CONTACT_RELATIONS = new Set(['touching', 'near', 'supported-by', 'coincident']);
 const DIMENSION_KINDS = new Set(['distance', 'horizontal-span', 'vertical-span']);
 
@@ -21,11 +33,24 @@ function normalizeImportance(value, label) {
   return importance;
 }
 
+function normalizeVisibility(value, label, fallback = 'visible') {
+  const visibility = String(value ?? fallback).toLowerCase();
+  if (!VISIBILITY.has(visibility)) throw new Error(`${label} must be one of: ${REFERENCE_GEOMETRY_VISIBILITY.join(', ')}`);
+  return visibility;
+}
+
 function normalizePoint(value, label) {
   if (!Array.isArray(value) || value.length !== 2 || !value.every(Number.isFinite)) throw new Error(`${label} must be a finite [x, y] point`);
   const point = value.map(Number);
   if (point.some((component) => component < 0 || component > 1)) throw new Error(`${label} must use normalized image coordinates in [0, 1]`);
   return point;
+}
+
+function normalizePolyline(values, label, {minimum = 2, closed = false} = {}) {
+  const points = (values ?? []).map((point, index) => normalizePoint(point, `${label}[${index}]`));
+  if (points.length < minimum) throw new Error(`${label} requires at least ${minimum} points`);
+  if (closed && polygonArea(points) < 1e-6) throw new Error(`${label} is degenerate`);
+  return points;
 }
 
 function normalizePrimitiveBase(raw, label) {
@@ -55,12 +80,21 @@ function polygonArea(points) {
   return Math.abs(area) * 0.5;
 }
 
+function assertNo3dFields(raw, label) {
+  if (!raw || typeof raw !== 'object') return;
+  for (const key of ['xyz', 'z', 'point3d', 'position3d', 'depth', 'depthBand', 'localPoint']) {
+    if (key in raw) throw new Error(`${label} must not contain 3D geometry field: ${key}`);
+  }
+}
+
 export function createReferenceGeometry({
   scopeId,
   sourceSha256,
   anchors = [],
   chains = [],
   axes = [],
+  segments = [],
+  interfaces = [],
   contacts = [],
   occlusions = [],
   negativeSpaces = [],
@@ -69,17 +103,22 @@ export function createReferenceGeometry({
   attestation,
 } = {}) {
   const normalizedAnchors = anchors.map((raw, index) => {
-    if (raw && typeof raw === 'object' && ('xyz' in raw || 'z' in raw || 'point3d' in raw)) throw new Error(`anchors[${index}] must not contain 3D coordinates`);
+    assertNo3dFields(raw, `anchors[${index}]`);
     const base = normalizePrimitiveBase(raw, `anchors[${index}]`);
-    const visibility = String(raw?.visibility ?? 'visible').toLowerCase();
-    if (!VISIBILITY.has(visibility)) throw new Error(`anchors[${index}].visibility must be one of: ${REFERENCE_GEOMETRY_VISIBILITY.join(', ')}`);
     const confidence = Number(raw?.confidence ?? 1);
     if (!Number.isFinite(confidence) || confidence < 0 || confidence > 1) throw new Error(`anchors[${index}].confidence must be in [0, 1]`);
-    return {...base, xy: normalizePoint(raw?.xy, `anchors[${index}].xy`), visibility, confidence, semanticRole: String(raw?.semanticRole ?? '')};
+    return {
+      ...base,
+      xy: normalizePoint(raw?.xy, `anchors[${index}].xy`),
+      visibility: normalizeVisibility(raw?.visibility, `anchors[${index}].visibility`),
+      confidence,
+      semanticRole: String(raw?.semanticRole ?? ''),
+    };
   });
   const anchorIds = new Set(normalizedAnchors.map((item) => item.id));
 
   const normalizedChains = chains.map((raw, index) => {
+    assertNo3dFields(raw, `chains[${index}]`);
     const base = normalizePrimitiveBase(raw, `chains[${index}]`);
     const anchorIdsValue = (raw?.anchorIds ?? []).map((value, anchorIndex) => assertId(value, `chains[${index}].anchorIds[${anchorIndex}]`));
     if (anchorIdsValue.length < 2) throw new Error(`chains[${index}].anchorIds requires at least two anchors`);
@@ -88,6 +127,7 @@ export function createReferenceGeometry({
   });
 
   const normalizedAxes = axes.map((raw, index) => {
+    assertNo3dFields(raw, `axes[${index}]`);
     const base = normalizePrimitiveBase(raw, `axes[${index}]`);
     const fromAnchorId = assertId(raw?.fromAnchorId, `axes[${index}].fromAnchorId`);
     const toAnchorId = assertId(raw?.toAnchorId, `axes[${index}].toAnchorId`);
@@ -96,7 +136,49 @@ export function createReferenceGeometry({
     return {...base, fromAnchorId, toAnchorId};
   });
 
+  const normalizedSegments = segments.map((raw, index) => {
+    assertNo3dFields(raw, `segments[${index}]`);
+    const base = normalizePrimitiveBase(raw, `segments[${index}]`);
+    const separation = String(raw?.separation ?? 'uncertain').toLowerCase();
+    if (!SEGMENT_SEPARATION.has(separation)) throw new Error(`segments[${index}].separation must be one of: ${REFERENCE_SEGMENT_SEPARATION.join(', ')}`);
+    const polygon = normalizePolyline(raw?.polygon, `segments[${index}].polygon`, {minimum: 3, closed: true});
+    const anchorIdsValue = (raw?.anchorIds ?? []).map((value, anchorIndex) => assertId(value, `segments[${index}].anchorIds[${anchorIndex}]`));
+    for (const id of anchorIdsValue) if (!anchorIds.has(id)) throw new Error(`segments[${index}] references unknown anchor: ${id}`);
+    return {
+      ...base,
+      label: String(raw?.label ?? ''),
+      polygon,
+      anchorIds: anchorIdsValue,
+      visibility: normalizeVisibility(raw?.visibility, `segments[${index}].visibility`),
+      separation,
+    };
+  });
+  const segmentIds = new Set(normalizedSegments.map((item) => item.id));
+
+  const normalizedInterfaces = interfaces.map((raw, index) => {
+    assertNo3dFields(raw, `interfaces[${index}]`);
+    const base = normalizePrimitiveBase(raw, `interfaces[${index}]`);
+    const subjectSegmentId = assertId(raw?.subjectSegmentId, `interfaces[${index}].subjectSegmentId`);
+    const objectSegmentId = assertId(raw?.objectSegmentId, `interfaces[${index}].objectSegmentId`);
+    if (subjectSegmentId === objectSegmentId) throw new Error(`interfaces[${index}] must connect two different segments`);
+    for (const id of [subjectSegmentId, objectSegmentId]) if (!segmentIds.has(id)) throw new Error(`interfaces[${index}] references unknown segment: ${id}`);
+    const kind = String(raw?.kind ?? 'unknown').toLowerCase();
+    if (!INTERFACE_KINDS.has(kind)) throw new Error(`interfaces[${index}].kind must be one of: ${REFERENCE_INTERFACE_KINDS.join(', ')}`);
+    const separation = String(raw?.separation ?? 'uncertain').toLowerCase();
+    if (!SEGMENT_SEPARATION.has(separation)) throw new Error(`interfaces[${index}].separation must be one of: ${REFERENCE_SEGMENT_SEPARATION.join(', ')}`);
+    return {
+      ...base,
+      subjectSegmentId,
+      objectSegmentId,
+      kind,
+      separation,
+      boundary: normalizePolyline(raw?.boundary, `interfaces[${index}].boundary`, {minimum: 2}),
+      visibility: normalizeVisibility(raw?.visibility, `interfaces[${index}].visibility`),
+    };
+  });
+
   const normalizedContacts = contacts.map((raw, index) => {
+    assertNo3dFields(raw, `contacts[${index}]`);
     const base = normalizePrimitiveBase(raw, `contacts[${index}]`);
     const aAnchorId = assertId(raw?.aAnchorId, `contacts[${index}].aAnchorId`);
     const bAnchorId = assertId(raw?.bAnchorId, `contacts[${index}].bAnchorId`);
@@ -112,14 +194,18 @@ export function createReferenceGeometry({
     ...normalizedAnchors,
     ...normalizedChains,
     ...normalizedAxes,
+    ...normalizedSegments,
+    ...normalizedInterfaces,
   ]);
 
   const knownGeometryIds = new Set([
     ...normalizedAnchors.map((item) => item.id),
     ...normalizedChains.map((item) => item.id),
     ...normalizedAxes.map((item) => item.id),
+    ...normalizedSegments.map((item) => item.id),
   ]);
   const normalizedOcclusions = occlusions.map((raw, index) => {
+    assertNo3dFields(raw, `occlusions[${index}]`);
     const base = normalizePrimitiveBase(raw, `occlusions[${index}]`);
     const frontId = assertId(raw?.frontId, `occlusions[${index}].frontId`);
     const backId = assertId(raw?.backId, `occlusions[${index}].backId`);
@@ -129,22 +215,19 @@ export function createReferenceGeometry({
   });
 
   const normalizedNegativeSpaces = negativeSpaces.map((raw, index) => {
+    assertNo3dFields(raw, `negativeSpaces[${index}]`);
     const base = normalizePrimitiveBase(raw, `negativeSpaces[${index}]`);
-    const polygon = (raw?.polygon ?? []).map((point, pointIndex) => normalizePoint(point, `negativeSpaces[${index}].polygon[${pointIndex}]`));
-    if (polygon.length < 3) throw new Error(`negativeSpaces[${index}].polygon requires at least three points`);
-    if (polygonArea(polygon) < 1e-6) throw new Error(`negativeSpaces[${index}].polygon is degenerate`);
-    return {...base, polygon};
+    return {...base, polygon: normalizePolyline(raw?.polygon, `negativeSpaces[${index}].polygon`, {minimum: 3, closed: true})};
   });
 
   const normalizedContours = contours.map((raw, index) => {
+    assertNo3dFields(raw, `contours[${index}]`);
     const base = normalizePrimitiveBase(raw, `contours[${index}]`);
-    const points = (raw?.points ?? []).map((point, pointIndex) => normalizePoint(point, `contours[${index}].points[${pointIndex}]`));
-    if (points.length < 2) throw new Error(`contours[${index}].points requires at least two points`);
-    if (raw?.closed === true && points.length < 3) throw new Error(`contours[${index}] closed contour requires at least three points`);
-    return {...base, points, closed: raw?.closed === true};
+    return {...base, points: normalizePolyline(raw?.points, `contours[${index}].points`, {minimum: raw?.closed === true ? 3 : 2}), closed: raw?.closed === true};
   });
 
   const normalizedDimensions = dimensions.map((raw, index) => {
+    assertNo3dFields(raw, `dimensions[${index}]`);
     const base = normalizePrimitiveBase(raw, `dimensions[${index}]`);
     const aAnchorId = assertId(raw?.aAnchorId, `dimensions[${index}].aAnchorId`);
     const bAnchorId = assertId(raw?.bAnchorId, `dimensions[${index}].bAnchorId`);
@@ -158,6 +241,8 @@ export function createReferenceGeometry({
     ...normalizedAnchors,
     ...normalizedChains,
     ...normalizedAxes,
+    ...normalizedSegments,
+    ...normalizedInterfaces,
     ...normalizedContacts,
     ...normalizedOcclusions,
     ...normalizedNegativeSpaces,
@@ -176,6 +261,8 @@ export function createReferenceGeometry({
     anchors: normalizedAnchors,
     chains: normalizedChains,
     axes: normalizedAxes,
+    segments: normalizedSegments,
+    interfaces: normalizedInterfaces,
     contacts: normalizedContacts,
     occlusions: normalizedOcclusions,
     negativeSpaces: normalizedNegativeSpaces,
@@ -186,6 +273,8 @@ export function createReferenceGeometry({
       rawSourceRemainsPrimary: true,
       geometryIsObservedSourceEvidence: true,
       referenceGeometryContainsNo3dCoordinates: true,
+      observedSegmentationPrecedesPhysicalAssembly: true,
+      segmentSeparationMayRemainUncertain: true,
       modelProjectionMustBindSeparately: true,
       framingRegistrationCannotClaimShapeTruth: true,
     },
@@ -203,6 +292,8 @@ export function validateReferenceGeometry(geometry) {
       anchors: geometry?.anchors,
       chains: geometry?.chains,
       axes: geometry?.axes,
+      segments: geometry?.segments,
+      interfaces: geometry?.interfaces,
       contacts: geometry?.contacts,
       occlusions: geometry?.occlusions,
       negativeSpaces: geometry?.negativeSpaces,
@@ -217,6 +308,7 @@ export function validateReferenceGeometry(geometry) {
     const policy = geometry?.policy ?? {};
     if (policy.rawSourceRemainsPrimary !== true || policy.geometryIsObservedSourceEvidence !== true) errors.push('source authority policy is missing');
     if (policy.referenceGeometryContainsNo3dCoordinates !== true || policy.modelProjectionMustBindSeparately !== true) errors.push('2D/3D separation policy is missing');
+    if (policy.observedSegmentationPrecedesPhysicalAssembly !== true || policy.segmentSeparationMayRemainUncertain !== true) errors.push('observed segmentation policy is missing');
     if (policy.framingRegistrationCannotClaimShapeTruth !== true) errors.push('registration scope policy is missing');
   } catch (error) {
     errors.push(error.message);
