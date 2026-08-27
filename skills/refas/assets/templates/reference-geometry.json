@@ -9,7 +9,7 @@
       "xy": [0.4, 0.4],
       "visibility": "visible",
       "confidence": 1,
-      "semanticRole": "Replace with a directly observed source-space landmark."
+      "semanticRole": "Replace with a directly observed source-space structural landmark."
     },
     {
       "id": "whole.anchor-b",
@@ -18,7 +18,7 @@
       "xy": [0.6, 0.6],
       "visibility": "visible",
       "confidence": 1,
-      "semanticRole": "Replace with a directly observed source-space landmark."
+      "semanticRole": "Replace with a directly observed source-space structural landmark."
     }
   ],
   "chains": [
@@ -31,6 +31,41 @@
     }
   ],
   "axes": [],
+  "segments": [
+    {
+      "id": "whole.example-segment-a",
+      "importance": "identity",
+      "evidenceRefs": ["source/reference.png"],
+      "label": "Observed visible body segment A",
+      "polygon": [[0.32, 0.28], [0.5, 0.26], [0.52, 0.42], [0.34, 0.44]],
+      "anchorIds": ["whole.anchor-a"],
+      "visibility": "visible",
+      "separation": "suggested"
+    },
+    {
+      "id": "whole.example-segment-b",
+      "importance": "identity",
+      "evidenceRefs": ["source/reference.png"],
+      "label": "Observed visible body segment B",
+      "polygon": [[0.34, 0.44], [0.52, 0.42], [0.56, 0.58], [0.37, 0.6]],
+      "anchorIds": ["whole.anchor-b"],
+      "visibility": "visible",
+      "separation": "suggested"
+    }
+  ],
+  "interfaces": [
+    {
+      "id": "whole.example-interface",
+      "importance": "identity",
+      "evidenceRefs": ["source/reference.png"],
+      "subjectSegmentId": "whole.example-segment-a",
+      "objectSegmentId": "whole.example-segment-b",
+      "kind": "joint-boundary",
+      "separation": "suggested",
+      "boundary": [[0.34, 0.44], [0.52, 0.42]],
+      "visibility": "visible"
+    }
+  ],
   "contacts": [],
   "occlusions": [],
   "negativeSpaces": [],
