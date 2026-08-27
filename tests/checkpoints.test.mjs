@@ -82,8 +82,18 @@ function reviewInput({sourceSha256, assetSha256, evidenceClass = 'independent-re
     assetSha256,
     evidenceClass,
     verdict,
-    views: REQUIRED_REVIEW_VIEW_IDS.map((id) => ({id, status: 'pass', evidenceRefs: [`renders/final/${id}.png`]})),
-    gateVerdicts: REQUIRED_VISUAL_GATE_IDS.map((id) => ({id, status: gateStatuses[id] ?? 'pass', evidenceRefs: ['renders/final/multiview-review-board.png']})),
+    views: REQUIRED_REVIEW_VIEW_IDS.map((id) => ({
+      id,
+      status: 'pass',
+      evidenceRefs: [`renders/final/${id}.png`],
+      summary: `${id} was directly inspected against the bound reference evidence.`,
+    })),
+    gateVerdicts: REQUIRED_VISUAL_GATE_IDS.map((id) => ({
+      id,
+      status: gateStatuses[id] ?? 'pass',
+      evidenceRefs: ['renders/final/multiview-review-board.png'],
+      summary: `${id} was evaluated from current digest-bound review evidence.`,
+    })),
     unresolvedFindings,
     renderer: {
       kind: 'test-visual-fidelity-renderer',
