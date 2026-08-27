@@ -6,6 +6,7 @@ export * from './checkpoint-store.mjs';
 export * from './spatial-hypotheses.mjs';
 export * from './registration.mjs';
 export * from './reference-geometry.mjs';
+export * from './projection-fit.mjs';
 export * from './mesh.mjs';
 export * from './hard-surface.mjs';
 export * from './realized-assembly.mjs';
