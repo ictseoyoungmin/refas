@@ -1,5 +1,7 @@
 import {assertDigest, assertId, deepFreeze, digestJson} from './canonical.mjs';
 import {normalizeFinding} from './failure-router.mjs';
+import {findingsFromProjectionFit} from './projection-findings.mjs';
+import {validateProjectionFit} from './projection-fit.mjs';
 import {PBR_RENDERER_FAMILIES} from './pbr-render-report.mjs';
 
 export const VISUAL_REVIEW_SCHEMA = 'refas.visual-review/v1';
@@ -57,7 +59,9 @@ function normalizeVerdict(raw, index, label) {
   const status = String(raw?.status ?? 'insufficient').toLowerCase();
   if (!REVIEW_STATUSES.has(status)) throw new Error(`${label}[${index}].status is invalid`);
   const evidenceRefs = strings(raw?.evidenceRefs, `${label}[${index}].evidenceRefs`, {required: true});
-  return {id, status, evidenceRefs, summary: String(raw?.summary ?? '')};
+  const summary = String(raw?.summary ?? '').trim();
+  if (status === 'pass' && !summary) throw new Error(`${label}[${index}] requires a substantive observation summary to pass`);
+  return {id, status, evidenceRefs, summary};
 }
 
 export function createVisualReview({
@@ -145,6 +149,16 @@ export function createVisualReview({
     },
   };
   return deepFreeze({...payload, reviewDigest: digestJson(payload)});
+}
+
+export function createProjectionAwareVisualReview({projectionFit, projectionFindingThresholds, ...review} = {}) {
+  const validation = validateProjectionFit(projectionFit);
+  if (!validation.valid) throw new Error(`projectionFit is required and must be valid: ${validation.errors.join('; ')}`);
+  if (projectionFit.scopeId !== review.scopeId) throw new Error('projection fit scope does not match visual review scope');
+  if (projectionFit.sourceSha256 !== review.sourceSha256) throw new Error('projection fit source does not match visual review source');
+  const geometricFindings = findingsFromProjectionFit(projectionFit, projectionFindingThresholds);
+  const unresolvedFindings = [...(review.unresolvedFindings ?? []), ...geometricFindings];
+  return createVisualReview({...review, unresolvedFindings});
 }
 
 export function validateVisualReview(review) {
