@@ -13,40 +13,24 @@
     "camera": {"type": "object"},
     "cameraDigest": {"$ref": "common.schema.json#/$defs/digest"},
     "modelBindingDigest": {"$ref": "common.schema.json#/$defs/digest"},
-    "derivedAnchors": {
-      "type": "array",
-      "minItems": 1,
-      "items": {
-        "type": "object",
-        "required": ["referenceId", "nodeId", "nodeIndex", "localPoint", "worldPoint", "projectedXY", "cameraDepth", "insideFrame"],
-        "properties": {
-          "referenceId": {"$ref": "common.schema.json#/$defs/semanticId"},
-          "nodeId": {"$ref": "common.schema.json#/$defs/semanticId"},
-          "nodeIndex": {"type": "integer", "minimum": 0},
-          "localPoint": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}},
-          "worldPoint": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}},
-          "projectedXY": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "number"}},
-          "cameraDepth": {"type": "number", "exclusiveMinimum": 0},
-          "insideFrame": {"type": "boolean"}
-        },
-        "additionalProperties": false
-      }
+    "derivedAnchors": {"type": "array", "minItems": 1, "items": {"type": "object"}},
+    "derivedSegments": {"type": "array", "items": {"type": "object"}},
+    "derivedInterfaces": {"type": "array", "items": {"type": "object"}},
+    "segmentationMetrics": {
+      "type": "object",
+      "required": ["segmentCount", "materialSegmentMeanIoU", "interfaceBoundaryMeanErrorNormalized", "explicitOwnershipViolations"],
+      "properties": {
+        "segmentCount": {"type": "integer", "minimum": 0},
+        "materialSegmentMeanIoU": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+        "interfaceBoundaryMeanErrorNormalized": {"type": ["number", "null"], "minimum": 0},
+        "explicitOwnershipViolations": {"type": "integer", "minimum": 0}
+      },
+      "additionalProperties": false
     },
     "projectionFit": {"type": "object"},
     "projectionFitDigest": {"$ref": "common.schema.json#/$defs/digest"},
     "evidenceRefs": {"type": "array", "items": {"type": "string"}},
-    "policy": {
-      "type": "object",
-      "required": ["projectedCoordinatesDerivedFromRealizedGlb", "glbHierarchyAndNodeTransformsAreAuthoritative", "cameraParametersAreDigestBound", "callerCannotSupplyProjectedCoordinates", "metricsCannotCertifyVisualFidelity"],
-      "properties": {
-        "projectedCoordinatesDerivedFromRealizedGlb": {"const": true},
-        "glbHierarchyAndNodeTransformsAreAuthoritative": {"const": true},
-        "cameraParametersAreDigestBound": {"const": true},
-        "callerCannotSupplyProjectedCoordinates": {"const": true},
-        "metricsCannotCertifyVisualFidelity": {"const": true}
-      },
-      "additionalProperties": false
-    },
+    "policy": {"type": "object"},
     "realizedProjectionDigest": {"$ref": "common.schema.json#/$defs/digest"}
   },
   "additionalProperties": false
