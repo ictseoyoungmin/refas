@@ -33,6 +33,24 @@ Record four distinct lists:
 
 Facts must cite at least one primary evidence item bound to the raw source SHA-256. Geometry parameters never belong in facts.
 
+## Source-space reference geometry
+
+When visible geometry materially constrains reconstruction, record it separately as `refas.reference-geometry/v1` rather than burying it in prose or jumping directly to model-space coordinates.
+
+Reference geometry is an observation contract, not a pose solver. It may contain:
+
+- normalized 2D anchors for visible or explicitly occluded landmarks;
+- anchor chains and dominant axes;
+- observed contacts and front/back occlusion relations;
+- coarse negative-space polygons;
+- major contour samples and source-space dimensions.
+
+Every primitive must cite source evidence. Importance should distinguish `macro`, `identity`, and `detail` obligations so macro disagreement is handled before detail work.
+
+Reference geometry is strictly source-space evidence. It must not contain 3D coordinates, camera-space points, reconstructed depths, or model transforms. Those belong to spatial hypotheses and reconstruction. A later projection-fit contract binds 3D model points back to this source evidence.
+
+`refas.reference-registration/v1` remains a placement/framing transform between 2D evidence frames. Its residual can establish that crops or review frames are aligned, but it is not shape truth and cannot substitute for source-space geometry agreement.
+
 ## Derived evidence
 
 Useful aids include:
@@ -54,6 +72,8 @@ Before moving to spatial hypotheses, confirm:
 - every visually material region has an owner node;
 - attachment and occlusion neighborhoods retain context;
 - facts are source-cited;
+- visible macro geometry that constrains reconstruction is recorded as source-space reference geometry;
+- reference geometry contains no reconstructed 3D coordinates;
 - interpretations are not written as facts;
 - ambiguities are explicit;
 - missing or hidden parts are marked unknown rather than invented.
