@@ -45,8 +45,11 @@ async function main() {
     '.github/ISSUE_TEMPLATE/release-readiness.yml', '.github/ISSUE_TEMPLATE/documentation-governance.yml',
     '.github/workflows/ci.yml', '.github/workflows/sync-labels.yml', 'docs/github-governance.md',
     'skills/refas/SKILL.md', 'skills/refas/scripts/refas.mjs', 'skills/refas/scripts/render_pbr.py', 'skills/refas/scripts/lib/index.mjs',
+    'skills/refas/scripts/lib/reference-geometry.mjs', 'skills/refas/assets/templates/reference-geometry.json',
     'schemas/source-manifest.schema.json', 'schemas/checkpoint.schema.json', 'schemas/visual-review.schema.json', 'schemas/whole-object-certificate.schema.json',
-    'tests/contracts.test.mjs', 'tests/cli.test.mjs', 'tests/governance.test.mjs', 'examples/wing-cover/run.mjs', 'examples/material-fixture/run.mjs', 'examples/hard-surface/run.mjs', 'examples/modular-assembly/run.mjs',
+    'schemas/reference-geometry.schema.json',
+    'tests/contracts.test.mjs', 'tests/reference-geometry.test.mjs', 'tests/cli.test.mjs', 'tests/governance.test.mjs',
+    'examples/wing-cover/run.mjs', 'examples/material-fixture/run.mjs', 'examples/hard-surface/run.mjs', 'examples/modular-assembly/run.mjs',
   ];
   const missing = [];
   for (const file of required) {
@@ -84,7 +87,7 @@ async function main() {
   }
   for (const contract of [
     'refas.source-manifest/v1', 'refas.visual-hierarchy/v1', 'refas.visual-observation/v1',
-    'refas.spatial-hypothesis-set/v1', 'refas.reference-registration/v1', 'refas.surface-network/v1',
+    'refas.reference-geometry/v1', 'refas.spatial-hypothesis-set/v1', 'refas.reference-registration/v1', 'refas.surface-network/v1',
     'refas.assembly-contract/v1', 'refas.finding/v1', 'refas.checkpoint/v1', 'refas.project-state/v1',
     'refas.canonical-object-frame/v1', 'refas.pbr-render-report/v1', 'refas.visual-review/v1', 'refas.whole-object-certificate/v1',
     'refas.registered-comparison/v1',
