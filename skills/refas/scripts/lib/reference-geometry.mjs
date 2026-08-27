@@ -60,7 +60,9 @@ function uniqueIds(items) {
 }
 function assertNo3dFields(raw, label) {
   if (!raw || typeof raw !== 'object') return;
-  for (const key of ['xyz', 'z', 'point3d', 'position3d', 'depth', 'depthBand', 'localPoint', 'worldPoint']) if (key in raw) throw new Error(`${label} must not contain 3D geometry field: ${key}`);
+  for (const key of ['xyz', 'z', 'point3d', 'position3d', 'depth', 'depthBand', 'localPoint', 'worldPoint']) {
+    if (key in raw) throw new Error(`${label} must not contain 3D coordinates or model-space geometry fields: ${key}`);
+  }
 }
 
 export function createReferenceGeometry(input = {}) {
