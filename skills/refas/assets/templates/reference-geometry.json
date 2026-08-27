@@ -2,42 +2,24 @@
   "scopeId": "whole",
   "sourceSha256": "0000000000000000000000000000000000000000000000000000000000000000",
   "anchors": [
-    {
-      "id": "whole.anchor-a",
-      "importance": "macro",
-      "evidenceRefs": ["source/reference.png"],
-      "xy": [0.4, 0.4],
-      "visibility": "visible",
-      "confidence": 1,
-      "semanticRole": "Replace with a directly observed source-space landmark."
-    },
-    {
-      "id": "whole.anchor-b",
-      "importance": "macro",
-      "evidenceRefs": ["source/reference.png"],
-      "xy": [0.6, 0.6],
-      "visibility": "visible",
-      "confidence": 1,
-      "semanticRole": "Replace with a directly observed source-space landmark."
-    }
+    {"id": "whole.structural-anchor-a", "importance": "macro", "evidenceRefs": ["source/reference.png"], "xy": [0.4, 0.4], "visibility": "visible", "confidence": 1, "semanticRole": "Replace with a structural source-space landmark, not a convenient label position or unrelated contour extremum."},
+    {"id": "whole.structural-anchor-b", "importance": "macro", "evidenceRefs": ["source/reference.png"], "xy": [0.6, 0.6], "visibility": "visible", "confidence": 1, "semanticRole": "Replace with a directly observed structural landmark."}
   ],
   "chains": [
-    {
-      "id": "whole.example-chain",
-      "importance": "macro",
-      "evidenceRefs": ["source/reference.png"],
-      "anchorIds": ["whole.anchor-a", "whole.anchor-b"],
-      "closed": false
-    }
+    {"id": "whole.example-chain", "importance": "macro", "evidenceRefs": ["source/reference.png"], "anchorIds": ["whole.structural-anchor-a", "whole.structural-anchor-b"], "closed": false}
   ],
   "axes": [],
+  "segments": [
+    {"id": "whole.segment-a", "label": "Observed source-visible body A", "importance": "macro", "evidenceRefs": ["source/reference.png"], "polygon": [[0.25,0.25],[0.5,0.25],[0.5,0.55],[0.25,0.55]], "anchorIds": ["whole.structural-anchor-a"], "visibility": "visible", "separation": "suggested"},
+    {"id": "whole.segment-b", "label": "Observed source-visible body B", "importance": "macro", "evidenceRefs": ["source/reference.png"], "polygon": [[0.5,0.25],[0.75,0.25],[0.75,0.55],[0.5,0.55]], "anchorIds": ["whole.structural-anchor-b"], "visibility": "visible", "separation": "suggested"}
+  ],
+  "interfaces": [
+    {"id": "whole.segment-interface", "importance": "macro", "evidenceRefs": ["source/reference.png"], "subjectSegmentId": "whole.segment-a", "objectSegmentId": "whole.segment-b", "kind": "joint-boundary", "separation": "suggested", "boundary": [[0.5,0.25],[0.5,0.55]], "visibility": "visible"}
+  ],
   "contacts": [],
   "occlusions": [],
   "negativeSpaces": [],
   "contours": [],
   "dimensions": [],
-  "attestation": {
-    "attested": true,
-    "evidenceRefs": ["source/reference.png"]
-  }
+  "attestation": {"attested": true, "evidenceRefs": ["source/reference.png"]}
 }

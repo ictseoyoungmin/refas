@@ -1,6 +1,7 @@
 import {assertId, deepFreeze, digestBytes, digestJson} from './canonical.mjs';
 import {parseGlb} from './glb.mjs';
 import {createProjectionFit, validateProjectionFit} from './projection-fit.mjs';
+import {deriveRealizedSegmentation} from './realized-segmentation.mjs';
 
 export const REALIZED_PROJECTION_SCHEMA = 'refas.realized-projection/v1';
 
@@ -28,7 +29,6 @@ function multiply4(a, b) {
   }
   return out;
 }
-
 function trsMatrix(node) {
   if (node?.matrix) {
     if (!Array.isArray(node.matrix) || node.matrix.length !== 16 || !node.matrix.every(Number.isFinite)) throw new Error('glTF node.matrix must contain 16 finite values');
@@ -50,7 +50,6 @@ function trsMatrix(node) {
     t[0], t[1], t[2], 1,
   ];
 }
-
 function transformPoint(matrix, point) {
   const [x, y, z] = point;
   const w = matrix[3] * x + matrix[7] * y + matrix[11] * z + matrix[15];
@@ -61,7 +60,6 @@ function transformPoint(matrix, point) {
     (matrix[2] * x + matrix[6] * y + matrix[10] * z + matrix[14]) / w,
   ];
 }
-
 function worldMatrices(json) {
   const nodes = json.nodes ?? [];
   const parent = new Array(nodes.length).fill(null);
@@ -86,7 +84,6 @@ function worldMatrices(json) {
   nodes.forEach((_, index) => visit(index));
   return world;
 }
-
 function nodeIndexBySemanticId(json, nodeId) {
   const matches = [];
   (json.nodes ?? []).forEach((node, index) => {
@@ -120,7 +117,6 @@ export function normalizeProjectionCamera(raw = {}) {
   }
   return deepFreeze({...camera, basis: {right, up, forward}});
 }
-
 export function projectWorldPoint(cameraInput, worldPoint) {
   const camera = normalizeProjectionCamera(cameraInput);
   const point = v3(worldPoint, 'worldPoint');
@@ -141,17 +137,10 @@ export function projectWorldPoint(cameraInput, worldPoint) {
   return deepFreeze({xy: [(xNdc + 1) / 2, (1 - yNdc) / 2], depth, insideFrame: Math.abs(xNdc) <= 1 && Math.abs(yNdc) <= 1});
 }
 
-export function createRealizedProjection({
-  referenceGeometry,
-  glb,
-  cameraHypothesisId,
-  camera,
-  anchorBindings = [],
-  evidenceRefs = [],
-} = {}) {
+export function createRealizedProjection({referenceGeometry, glb, cameraHypothesisId, camera, anchorBindings = [], segmentBindings = [], evidenceRefs = []} = {}) {
   const bytes = Buffer.from(glb ?? []);
   if (!bytes.length) throw new Error('realized projection requires actual GLB bytes');
-  const {json} = parseGlb(bytes);
+  const {json, binary} = parseGlb(bytes);
   const matrices = worldMatrices(json);
   const normalizedCamera = normalizeProjectionCamera(camera);
   const assetSha256 = digestBytes(bytes);
@@ -169,23 +158,38 @@ export function createRealizedProjection({
     return {referenceId, nodeId, nodeIndex, localPoint, worldPoint, projectedXY: projection.xy, cameraDepth: projection.depth, insideFrame: projection.insideFrame};
   });
   const modelBindings = derived.map(({referenceId, nodeId, localPoint}) => ({referenceId, nodeId, localPoint}));
-  const modelBindingDigest = digestJson({assetSha256, modelBindings});
-
+  const segmentationDeclared = Array.isArray(referenceGeometry?.segments) || Array.isArray(referenceGeometry?.interfaces);
+  const segmentation = segmentationDeclared ? deriveRealizedSegmentation({
+    referenceGeometry,
+    segmentBindings,
+    json,
+    binary,
+    matrices,
+    nodeIndexBySemanticId: (nodeId) => nodeIndexBySemanticId(json, nodeId),
+    transformPoint,
+    projectWorldPoint: (worldPoint) => projectWorldPoint(normalizedCamera, worldPoint),
+  }) : null;
+  const modelBindingDigest = segmentationDeclared
+    ? digestJson({assetSha256, modelBindings, segmentBindings: segmentation.normalizedSegmentBindings})
+    : digestJson({assetSha256, modelBindings});
   const fit = createProjectionFit({
     referenceGeometry,
     cameraHypothesisId,
     cameraDigest,
     modelBindingDigest,
-    anchorProjections: derived.map((item) => ({
-      referenceId: item.referenceId,
-      projectedXY: item.projectedXY,
-      binding: {kind: 'node-local-point', nodeId: item.nodeId, localPoint: item.localPoint},
-      evidenceRefs,
-    })),
+    anchorProjections: derived.map((item) => ({referenceId: item.referenceId, projectedXY: item.projectedXY, binding: {kind: 'node-local-point', nodeId: item.nodeId, localPoint: item.localPoint}, evidenceRefs})),
     evidenceRefs,
   });
   const fitValidation = validateProjectionFit(fit);
   if (!fitValidation.valid) throw new Error(`derived projection fit is invalid: ${fitValidation.errors.join('; ')}`);
+  const policy = {
+    projectedCoordinatesDerivedFromRealizedGlb: true,
+    glbHierarchyAndNodeTransformsAreAuthoritative: true,
+    cameraParametersAreDigestBound: true,
+    callerCannotSupplyProjectedCoordinates: true,
+    metricsCannotCertifyVisualFidelity: true,
+  };
+  if (segmentationDeclared) Object.assign(policy, {segmentPolygonsDerivedFromRealizedGlb: true, explicitPartOwnershipChecked: true, callerCannotSupplySegmentPolygons: true});
   const payload = {
     schema: REALIZED_PROJECTION_SCHEMA,
     scopeId: fit.scopeId,
@@ -196,16 +200,11 @@ export function createRealizedProjection({
     cameraDigest,
     modelBindingDigest,
     derivedAnchors: derived,
+    ...(segmentationDeclared ? {derivedSegments: segmentation.derivedSegments, derivedInterfaces: segmentation.derivedInterfaces, segmentationMetrics: segmentation.segmentationMetrics} : {}),
     projectionFit: fit,
     projectionFitDigest: fit.projectionFitDigest,
     evidenceRefs: [...new Set(evidenceRefs.map(String).filter(Boolean))].sort(),
-    policy: {
-      projectedCoordinatesDerivedFromRealizedGlb: true,
-      glbHierarchyAndNodeTransformsAreAuthoritative: true,
-      cameraParametersAreDigestBound: true,
-      callerCannotSupplyProjectedCoordinates: true,
-      metricsCannotCertifyVisualFidelity: true,
-    },
+    policy,
   };
   return deepFreeze({...payload, realizedProjectionDigest: digestJson(payload)});
 }
@@ -219,9 +218,16 @@ export function validateRealizedProjection(proof) {
     if (proof?.cameraDigest !== digestJson(proof?.camera)) errors.push('camera digest mismatch');
     if (proof?.projectionFit?.cameraDigest !== proof?.cameraDigest) errors.push('projection fit camera digest is not realized-camera bound');
     if (proof?.projectionFit?.modelBindingDigest !== proof?.modelBindingDigest) errors.push('projection fit model binding digest is not realized-model bound');
+    const segmentationDeclared = Object.prototype.hasOwnProperty.call(proof ?? {}, 'derivedSegments') || Object.prototype.hasOwnProperty.call(proof ?? {}, 'derivedInterfaces') || Object.prototype.hasOwnProperty.call(proof ?? {}, 'segmentationMetrics');
+    if (segmentationDeclared) {
+      if (!Array.isArray(proof?.derivedSegments) || !Array.isArray(proof?.derivedInterfaces) || !proof?.segmentationMetrics) errors.push('realized segmentation evidence is incomplete');
+      for (const segment of proof?.derivedSegments ?? []) if (!Array.isArray(segment.projectedHull) || segment.projectedHull.length < 3 || !Number.isFinite(segment.iou) || segment.iou < 0 || segment.iou > 1) errors.push(`segment ${segment?.referenceId ?? '?'} has invalid realized projection evidence`);
+      for (const item of proof?.derivedInterfaces ?? []) if (item.evaluable && (!Number.isFinite(item.boundaryMeanErrorNormalized) || item.boundaryMeanErrorNormalized < 0)) errors.push(`interface ${item?.referenceId ?? '?'} has invalid realized residual`);
+    }
     const p = proof?.policy ?? {};
     if (p.projectedCoordinatesDerivedFromRealizedGlb !== true || p.glbHierarchyAndNodeTransformsAreAuthoritative !== true || p.cameraParametersAreDigestBound !== true || p.callerCannotSupplyProjectedCoordinates !== true) errors.push('realized projection authority policy is missing');
     if (p.metricsCannotCertifyVisualFidelity !== true) errors.push('metric authority policy is missing');
+    if (segmentationDeclared && (p.segmentPolygonsDerivedFromRealizedGlb !== true || p.explicitPartOwnershipChecked !== true || p.callerCannotSupplySegmentPolygons !== true)) errors.push('realized segmentation authority policy is missing');
     const payload = structuredClone(proof); delete payload.realizedProjectionDigest;
     if (digestJson(payload) !== proof?.realizedProjectionDigest) errors.push('realized projection digest mismatch');
   } catch (error) { errors.push(error.message); }
