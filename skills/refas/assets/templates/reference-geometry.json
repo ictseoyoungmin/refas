@@ -1,0 +1,43 @@
+{
+  "scopeId": "whole",
+  "sourceSha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "anchors": [
+    {
+      "id": "whole.anchor-a",
+      "importance": "macro",
+      "evidenceRefs": ["source/reference.png"],
+      "xy": [0.4, 0.4],
+      "visibility": "visible",
+      "confidence": 1,
+      "semanticRole": "Replace with a directly observed source-space landmark."
+    },
+    {
+      "id": "whole.anchor-b",
+      "importance": "macro",
+      "evidenceRefs": ["source/reference.png"],
+      "xy": [0.6, 0.6],
+      "visibility": "visible",
+      "confidence": 1,
+      "semanticRole": "Replace with a directly observed source-space landmark."
+    }
+  ],
+  "chains": [
+    {
+      "id": "whole.example-chain",
+      "importance": "macro",
+      "evidenceRefs": ["source/reference.png"],
+      "anchorIds": ["whole.anchor-a", "whole.anchor-b"],
+      "closed": false
+    }
+  ],
+  "axes": [],
+  "contacts": [],
+  "occlusions": [],
+  "negativeSpaces": [],
+  "contours": [],
+  "dimensions": [],
+  "attestation": {
+    "attested": true,
+    "evidenceRefs": ["source/reference.png"]
+  }
+}
