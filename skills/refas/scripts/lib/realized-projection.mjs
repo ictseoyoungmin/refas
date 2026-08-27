@@ -19,10 +19,6 @@ const normalize = (a, label) => {
   return a.map((v) => v / length);
 };
 
-function identity4() {
-  return [1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1];
-}
-
 function multiply4(a, b) {
   const out = new Array(16).fill(0);
   for (let col = 0; col < 4; col += 1) {
@@ -174,11 +170,6 @@ export function createRealizedProjection({
   });
   const modelBindings = derived.map(({referenceId, nodeId, localPoint}) => ({referenceId, nodeId, localPoint}));
   const modelBindingDigest = digestJson({assetSha256, modelBindings});
-
-  // createProjectionFit currently requires projected points to lie in the source frame.
-  // Fail loudly rather than clamp: clamping would hide a macro reconstruction error.
-  const outside = derived.filter((item) => !item.insideFrame);
-  if (outside.length) throw new Error(`realized projection places source-bound anchors outside the camera frame: ${outside.map((item) => item.referenceId).join(', ')}`);
 
   const fit = createProjectionFit({
     referenceGeometry,
