@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/realized-projection.schema.json",
+  "title": "RefAs realized model-to-reference projection proof",
+  "type": "object",
+  "required": ["schema", "scopeId", "sourceSha256", "assetSha256", "cameraHypothesisId", "camera", "cameraDigest", "modelBindingDigest", "derivedAnchors", "projectionFit", "projectionFitDigest", "evidenceRefs", "policy", "realizedProjectionDigest"],
+  "properties": {
+    "schema": {"const": "refas.realized-projection/v1"},
+    "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "assetSha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "cameraHypothesisId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "camera": {"type": "object"},
+    "cameraDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "modelBindingDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "derivedAnchors": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["referenceId", "nodeId", "nodeIndex", "localPoint", "worldPoint", "projectedXY", "cameraDepth", "insideFrame"],
+        "properties": {
+          "referenceId": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "nodeId": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "nodeIndex": {"type": "integer", "minimum": 0},
+          "localPoint": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}},
+          "worldPoint": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}},
+          "projectedXY": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "number"}},
+          "cameraDepth": {"type": "number", "exclusiveMinimum": 0},
+          "insideFrame": {"type": "boolean"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "projectionFit": {"type": "object"},
+    "projectionFitDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "evidenceRefs": {"type": "array", "items": {"type": "string"}},
+    "policy": {
+      "type": "object",
+      "required": ["projectedCoordinatesDerivedFromRealizedGlb", "glbHierarchyAndNodeTransformsAreAuthoritative", "cameraParametersAreDigestBound", "callerCannotSupplyProjectedCoordinates", "metricsCannotCertifyVisualFidelity"],
+      "properties": {
+        "projectedCoordinatesDerivedFromRealizedGlb": {"const": true},
+        "glbHierarchyAndNodeTransformsAreAuthoritative": {"const": true},
+        "cameraParametersAreDigestBound": {"const": true},
+        "callerCannotSupplyProjectedCoordinates": {"const": true},
+        "metricsCannotCertifyVisualFidelity": {"const": true}
+      },
+      "additionalProperties": false
+    },
+    "realizedProjectionDigest": {"$ref": "common.schema.json#/$defs/digest"}
+  },
+  "additionalProperties": false
+}
