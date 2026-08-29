@@ -87,6 +87,8 @@ Severity means:
 
 Scores summarize evidence; they do not own repairs. A below-threshold score without a typed finding returns `REQUEST_REVIEW`. Localize the visible defect before choosing a rollback point.
 
+Inside an active owner-local parameter fit, declared measurements may rank already-rendered trials. This does not grant them repair, rollback, gate, or certification authority. Inspect the selected whole-context and diagnostic renders, then apply normal typed-finding and bounded-edit decisions.
+
 ## Closure gates
 
 Before closure, create a digest-bound `refas.visual-review/v1` record from `assets/templates/visual-review.json`. It must bind the exact primary source digest and candidate asset digest, contain one verdict for every standard view and visual gate, disclose the independent renderer and its material support, cite the exact PBR report digest, and retain unresolved typed findings. The whole-object checkpoint includes the visual review, PBR report, and every cited renderer output and cites the review path from every visual closure gate.

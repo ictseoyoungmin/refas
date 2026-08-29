@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import {fileURLToPath} from 'node:url';
+import {fileURLToPath, pathToFileURL} from 'node:url';
 import {spawnSync} from 'node:child_process';
 import {
   abortEdit,
@@ -31,6 +31,11 @@ import {
   validateRegisteredComparison,
   validateRealizedAssemblyProof,
   validateConstructionQuality,
+  createParameterFitPlan,
+  fitParameters,
+  validateParameterFitPlan,
+  validateParameterFitReport,
+  sha256File,
 } from './lib/index.mjs';
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
@@ -103,6 +108,7 @@ function help() {
       render: 'render --glb asset.glb --out DIR [--reference image.png] [--frame canonical-frame.json] [--size 640] [--timeout-seconds 300] [--max-working-mb 512] [--tile-size 256] [--max-triangles N]',
       'render-pbr': 'render-pbr --glb asset.glb --out DIR --frame canonical-frame.json [--reference image.png] [--size 420] [--timeout-seconds 180] [--max-working-mb 512]',
       compare: 'compare --input registered-comparison-input.json --out DIR [--timeout-seconds 120]',
+      'fit-parameters': 'fit-parameters --root DIR --plan parameter-fit-plan.json --worker evaluator.mjs --out parameter-fit-report.json',
     },
   };
 }
@@ -182,6 +188,8 @@ async function main() {
     else if (spec.schema === 'refas.registered-comparison/v1') result = validateRegisteredComparison(spec);
     else if (spec.schema === 'refas.realized-assembly-proof/v1') result = validateRealizedAssemblyProof(spec);
     else if (spec.schema === 'refas.construction-quality/v1') result = validateConstructionQuality(spec);
+    else if (spec.schema === 'refas.parameter-fit-plan/v1') result = validateParameterFitPlan(spec);
+    else if (spec.schema === 'refas.parameter-fit-report/v1') result = validateParameterFitReport(spec);
     else throw new Error(`no validator for schema: ${spec.schema}`);
     print(result);
     if (!result.valid) process.exitCode = 1;
@@ -217,6 +225,29 @@ async function main() {
     const timeoutSeconds = Number(options['timeout-seconds'] ?? 120);
     if (!Number.isFinite(timeoutSeconds) || timeoutSeconds <= 0) throw new Error('--timeout-seconds must be a positive number');
     runPython('compare_registered.py', args, {timeoutMs: Math.ceil(timeoutSeconds * 1000 + 5000)}); return;
+  }
+  if (command === 'fit-parameters') {
+    const artifactRoot = path.resolve(required(options, 'root'));
+    const raw = await jsonFile(required(options, 'plan'));
+    const plan = raw?.planDigest ? raw : createParameterFitPlan(raw);
+    const validation = validateParameterFitPlan(plan);
+    if (!validation.valid) throw new Error(`parameter fit plan is invalid: ${validation.errors.join('; ')}`);
+    const workerPath = path.resolve(required(options, 'worker'));
+    const worker = await import(pathToFileURL(workerPath).href);
+    if (typeof worker.evaluate !== 'function') throw new Error('parameter fit worker must export evaluate(parameters, context)');
+    const rootReal = await fs.realpath(artifactRoot);
+    const verifyReference = async (reference, label) => {
+      const absolute = path.resolve(artifactRoot, reference.path);
+      const real = await fs.realpath(absolute);
+      if (real !== rootReal && !real.startsWith(`${rootReal}${path.sep}`)) throw new Error(`${label} escapes --root`);
+      const stat = await fs.stat(real);
+      if (!stat.isFile() || stat.size !== reference.sizeBytes) throw new Error(`${label} size does not match exact artifact bytes`);
+      if (await sha256File(real) !== reference.sha256) throw new Error(`${label} SHA-256 does not match exact artifact bytes`);
+    };
+    const report = await fitParameters(plan, (parameters, context) => worker.evaluate(parameters, {...context, plan, workerPath, artifactRoot}), {verifyReference});
+    const output = await writeJson(required(options, 'out'), report);
+    print({status: report.status, output, reportDigest: report.reportDigest, selectedTrialId: report.selectedTrialId, evaluationCount: report.evaluationCount, stopReason: report.stopReason});
+    return;
   }
   throw new Error(`unknown command: ${command}`);
 }

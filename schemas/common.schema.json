@@ -33,6 +33,18 @@
       },
       "additionalProperties": false
     },
+    "contentReference": {
+      "type": "object",
+      "required": ["schema", "kind", "path", "sha256", "sizeBytes"],
+      "properties": {
+        "schema": {"const": "refas.content-reference/v1"},
+        "kind": {"type": "string", "minLength": 1},
+        "path": {"$ref": "#/$defs/relativePath"},
+        "sha256": {"$ref": "#/$defs/digest"},
+        "sizeBytes": {"type": "integer", "minimum": 0}
+      },
+      "additionalProperties": false
+    },
     "gate": {
       "type": "object",
       "required": ["id", "status", "evidenceRefs"],

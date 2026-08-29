@@ -32,6 +32,8 @@ Examples: `shape-reconstruction × whole`, `surface-topology × upper-shell`, or
 
 Do not mix observation cleanup, camera tuning, geometry edits, and material polish in one candidate. A bounded edit must be attributable to one owner.
 
+Within `shape-reconstruction × one scope`, an evidence-bound parameter fit may jointly move multiple geometry values. Its trial ledger is an inner search, not multiple active work units or candidate checkpoints. Cross-owner camera, assembly, appearance, and lighting values remain prohibited in the same plan.
+
 This rule limits simultaneous work; it does not authorize skipping dependencies.
 During shape reconstruction, `shape-reconstruction × whole` remains the only
 closable shape scope until the whole-shape dependency barrier passes. The

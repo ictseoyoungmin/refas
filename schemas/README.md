@@ -5,3 +5,5 @@ These Draft 2020-12 schemas describe the immutable artifacts emitted by the cano
 Runtime validators remain authoritative for semantic invariants that JSON Schema cannot express compactly, including hierarchy ancestry, digest recomputation, registration invertibility, unique shared adjacency, acyclic occlusion, capability lineage, exact artifact-byte recovery, independent-reference certification, complete view and gate sets, blocking-finding refusal, independent PBR report binding, and renderer material support.
 
 `canonical-object-frame.schema.json` also documents the editable frame input consumed directly by the renderer. The renderer remains authoritative for orthonormality, handedness, finite coordinates, exact GLB part-name resolution, and the canonical frame digest.
+
+`parameter-fit-plan.schema.json` and `parameter-fit-report.schema.json` define owner-local joint geometry search. The runtime additionally enforces bounds, protected-regression semantics, deterministic trial order, exact plan/report digests, and candidate/render byte verification.

@@ -65,6 +65,7 @@ The dependency-light JavaScript core owns:
 - hierarchy and observation contracts;
 - spatial hypotheses and 2D reference registration;
 - deterministic mesh and embedded GLB construction;
+- evidence-bound joint geometry parameter fitting with verified trial bytes and candidate-ranking-only metrics;
 - shared-boundary surface networks;
 - immutable child composition and assembly validation;
 - digest-bound portable-integrity and independent-PBR visual-review validation with fail-closed certification readiness;

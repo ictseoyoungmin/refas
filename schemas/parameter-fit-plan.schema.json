@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/parameter-fit-plan.schema.json",
+  "title": "RefAs evidence-bound parameter fit plan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "id", "ownerCapability", "scopeId", "sourceSha256", "baselineAsset", "parameters", "objectives", "protectedTerms", "optimizer", "evidenceRefs", "policy", "planDigest"],
+  "properties": {
+    "schema": {"const": "refas.parameter-fit-plan/v1"},
+    "id": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "ownerCapability": {"const": "shape-reconstruction"},
+    "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "baselineAsset": {"$ref": "common.schema.json#/$defs/contentReference"},
+    "parameters": {
+      "type": "array", "minItems": 2,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "binding", "ownerCapability", "kind", "minimum", "maximum", "initial", "evidenceRefs"],
+        "properties": {
+          "id": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "binding": {"type": "string", "minLength": 1},
+          "ownerCapability": {"const": "shape-reconstruction"},
+          "kind": {"enum": ["continuous", "integer"]},
+          "minimum": {"type": "number"}, "maximum": {"type": "number"}, "initial": {"type": "number"},
+          "evidenceRefs": {"type": "array", "items": {"type": "string"}}
+        }
+      }
+    },
+    "objectives": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "goal", "scale", "weight"],
+        "properties": {
+          "id": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "goal": {"enum": ["minimize", "maximize", "target"]},
+          "target": {"type": "number"}, "scale": {"type": "number", "exclusiveMinimum": 0}, "weight": {"type": "number", "exclusiveMinimum": 0}
+        }
+      }
+    },
+    "protectedTerms": {"type": "array", "items": {"type": "object"}},
+    "optimizer": {
+      "type": "object", "additionalProperties": false,
+      "required": ["algorithm", "seed", "populationSize", "evaluationBudget", "differentialWeight", "crossoverRate", "improvementTolerance", "patience"],
+      "properties": {
+        "algorithm": {"const": "differential-evolution"},
+        "seed": {"type": "integer", "minimum": 0, "maximum": 4294967295},
+        "populationSize": {"type": "integer", "minimum": 4},
+        "evaluationBudget": {"type": "integer", "minimum": 5},
+        "differentialWeight": {"type": "number", "exclusiveMinimum": 0, "maximum": 2},
+        "crossoverRate": {"type": "number", "exclusiveMinimum": 0, "maximum": 1},
+        "improvementTolerance": {"type": "number", "minimum": 0},
+        "patience": {"type": "integer", "minimum": 1}
+      }
+    },
+    "evidenceRefs": {"type": "array", "items": {"type": "string"}},
+    "policy": {"type": "object"},
+    "planDigest": {"$ref": "common.schema.json#/$defs/digest"}
+  }
+}

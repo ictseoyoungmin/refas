@@ -138,6 +138,12 @@ Asset-specific model specifications contain:
 
 Never hard-code one benchmark's coordinates or iteration names into reusable runtime code.
 
+## Parameterized render fitting
+
+When a construction backend exposes semantic geometry parameters, use `refas.parameter-fit-plan/v1` and the `fit-parameters` CLI to jointly search coupled proportions, sections, curvature, or thickness. Read `parameter-fitting.md` before starting. Every evaluation must produce exact candidate GLB and render content references; analytic-only proxy tests do not replace the actual-render fixture or final source-bound inspection.
+
+The optimizer ranks trials but does not make generic primitives identity-bearing. If the selected representation still cannot express observed silhouette inflections, principal sections, curvature transitions, or negative spaces, reopen the representation instead of spending a larger evaluation budget.
+
 ## Geometry checks
 
 For every closed part, record:

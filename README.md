@@ -9,6 +9,7 @@ RefAs is designed for work where a quick image-to-mesh approximation is not enou
 - **Whole → region → part → subpart → feature observation.** A detail crop never erases its ancestry or the full reference.
 - **Evidence-bound claims.** Facts, interpretations, hypotheses, and ambiguities remain separate.
 - **Projection-aware reconstruction.** Camera and reference-frame alternatives are tested before geometry is distorted to fit a view.
+- **Evidence-bound joint geometry fitting.** A deterministic worker loop can move multiple owner-local shape parameters together, verify every candidate/render byte, and retain all trials without giving scores gate or rollback authority.
 - **Immutable child assembly.** A closed child GLB is reused byte-for-byte and registered into its parent instead of silently rebuilt.
 - **Geometry-bound modular assembly.** Detachable modules require actual GLB ancestry, parent-relative transforms, semantic contact frames, derived clearance/penetration/support, closed-child integrity, and object-ID separation.
 - **Shared surface topology.** Adjacent observed cells consume one physical boundary rather than nearly matching duplicate frames.
@@ -48,12 +49,13 @@ The executable runtime lives inside the distributable skill. Repository tests an
 3. Record source-cited facts and explicit ambiguities for one scope.
 4. Maintain competing spatial hypotheses where one image cannot decide depth or camera.
 5. Reconstruct silhouette, mass, curvature, and thickness before decoration.
-6. Build projection-anchored surface boundaries and shared adjacency.
-7. Register immutable child assets into parent frames and validate attachment and occlusion.
-8. Render the standard diagnostic view set.
-9. Register the exact source and current render, then inspect whole-to-feature comparison boards before routing a mismatch.
-10. Route localized findings to their owning capability and restore the selected checkpoint when required.
-11. Certify only when every release gate and the independent visual review have current passing evidence.
+6. When a parameterized geometry backend exists, jointly fit coupled shape parameters through actual-render trials and visually inspect the selected candidate.
+7. Build projection-anchored surface boundaries and shared adjacency.
+8. Register immutable child assets into parent frames and validate attachment and occlusion.
+9. Render the standard diagnostic view set.
+10. Register the exact source and current render, then inspect whole-to-feature comparison boards before routing a mismatch.
+11. Route localized findings to their owning capability and restore the selected checkpoint when required.
+12. Certify only when every release gate and the independent visual review have current passing evidence.
 
 ## Repository layout
 
@@ -68,6 +70,7 @@ refas/
 ├── examples/material-fixture/ deterministic four-material PBR dogfood
 ├── examples/hard-surface/ coherent slotted-shell and open-frame dogfood
 ├── examples/modular-assembly/ three-level contact and exploded-view dogfood
+├── examples/parameter-fit/ actual GLB/render joint-fitting dogfood
 ├── tools/                 repository and release audits
 └── docs/                  architecture and quality contracts
 ```
@@ -84,10 +87,11 @@ npm run dogfood      # exercise reconstruction and prove the self-generated fixt
 npm run dogfood:pbr  # render four PBR finishes twice and require identical output digests
 npm run dogfood:hard-surface # prove true apertures, coherent thickness, and semantic topology
 npm run dogfood:assembly # prove three-level local-frame contact and reject the exploded candidate
+npm run dogfood:parameter-fit # jointly fit real GLB renders and retain exact trial evidence
 npm run release:audit
 ```
 
-See [Architecture](docs/architecture.md), [Independent PBR renderer](docs/pbr-renderer.md), [Agent recovery](docs/agent-recovery.md), [Prototype migration](docs/migration-from-prototypes.md), [Development plan](docs/development-plan.md), and [Release criteria](docs/release-criteria.md) for the normative contracts and completed 1.0 route.
+See [Architecture](docs/architecture.md), [Joint parameter fitting](docs/parameter-fitting.md), [Independent PBR renderer](docs/pbr-renderer.md), [Agent recovery](docs/agent-recovery.md), [Prototype migration](docs/migration-from-prototypes.md), [Development plan](docs/development-plan.md), and [Release criteria](docs/release-criteria.md) for the normative contracts and completed 1.0 route.
 
 Contributions follow the [Issue and Pull Request governance contract](docs/github-governance.md): one runtime capability and hierarchy scope or one explicit repository boundary, one primary Issue, evidence-bound review, and an explicit recovery point.
 
