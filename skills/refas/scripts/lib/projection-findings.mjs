@@ -12,7 +12,7 @@ export const DEFAULT_PROJECTION_FINDING_THRESHOLDS = Object.freeze({
   negativeSpaceMeanIoU: 0.72,
   dimensionMeanRelativeError: 0.12,
   occlusionOrderViolations: 0,
-  materialSegmentMeanIoU: 0.68,
+  sourceVisibleSegmentMeanIoU: 0.68,
   interfaceBoundaryMeanErrorNormalized: 0.035,
   explicitOwnershipViolations: 0,
 });
@@ -62,8 +62,8 @@ export function findingsFromRealizedProjection(proof, thresholds = {}) {
   const findings = [...findingsFromProjectionFit(proof.projectionFit, thresholds)];
   if (!proof.segmentationMetrics) return deepFreeze(findings);
   const t = {...DEFAULT_PROJECTION_FINDING_THRESHOLDS, ...thresholds}, m = proof.segmentationMetrics;
-  if (m.materialSegmentMeanIoU != null && m.materialSegmentMeanIoU < t.materialSegmentMeanIoU) {
-    findings.push(typed('silhouette-mismatch', proof.scopeId, `Realized GLB part regions collapse or drift from source-visible macro/identity segments (mean segment IoU ${m.materialSegmentMeanIoU}).`, realizedEvidence(proof, 'segments')));
+  if (m.sourceVisibleSegmentMeanIoU != null && m.sourceVisibleSegmentMeanIoU < t.sourceVisibleSegmentMeanIoU) {
+    findings.push(typed('silhouette-mismatch', proof.scopeId, `Realized GLB part regions collapse or drift from source-visible macro/identity segments (mean segment IoU ${m.sourceVisibleSegmentMeanIoU}).`, realizedEvidence(proof, 'segments')));
   }
   if (m.interfaceBoundaryMeanErrorNormalized != null && m.interfaceBoundaryMeanErrorNormalized > t.interfaceBoundaryMeanErrorNormalized) {
     findings.push(typed('attachment-mismatch', proof.scopeId, `Realized part interfaces do not track source-visible boundaries (mean normalized boundary error ${m.interfaceBoundaryMeanErrorNormalized}).`, realizedEvidence(proof, 'interfaces')));

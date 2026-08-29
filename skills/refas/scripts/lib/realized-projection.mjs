@@ -221,6 +221,11 @@ export function validateRealizedProjection(proof) {
     const segmentationDeclared = Object.prototype.hasOwnProperty.call(proof ?? {}, 'derivedSegments') || Object.prototype.hasOwnProperty.call(proof ?? {}, 'derivedInterfaces') || Object.prototype.hasOwnProperty.call(proof ?? {}, 'segmentationMetrics');
     if (segmentationDeclared) {
       if (!Array.isArray(proof?.derivedSegments) || !Array.isArray(proof?.derivedInterfaces) || !proof?.segmentationMetrics) errors.push('realized segmentation evidence is incomplete');
+      const metrics = proof?.segmentationMetrics;
+      const metricKeys = new Set(['segmentCount', 'sourceVisibleSegmentMeanIoU', 'interfaceBoundaryMeanErrorNormalized', 'explicitOwnershipViolations']);
+      if (metrics && !Object.prototype.hasOwnProperty.call(metrics, 'sourceVisibleSegmentMeanIoU')) errors.push('realized segmentation metrics require sourceVisibleSegmentMeanIoU');
+      if (metrics && Object.keys(metrics).some((key) => !metricKeys.has(key))) errors.push('realized segmentation metrics contain an unknown field');
+      if (metrics && (!Number.isInteger(metrics.segmentCount) || metrics.segmentCount < 0 || (metrics.sourceVisibleSegmentMeanIoU != null && (!Number.isFinite(metrics.sourceVisibleSegmentMeanIoU) || metrics.sourceVisibleSegmentMeanIoU < 0 || metrics.sourceVisibleSegmentMeanIoU > 1)))) errors.push('realized segmentation metrics are invalid');
       for (const segment of proof?.derivedSegments ?? []) if (!Array.isArray(segment.projectedHull) || segment.projectedHull.length < 3 || !Number.isFinite(segment.iou) || segment.iou < 0 || segment.iou > 1) errors.push(`segment ${segment?.referenceId ?? '?'} has invalid realized projection evidence`);
       for (const item of proof?.derivedInterfaces ?? []) if (item.evaluable && (!Number.isFinite(item.boundaryMeanErrorNormalized) || item.boundaryMeanErrorNormalized < 0)) errors.push(`interface ${item?.referenceId ?? '?'} has invalid realized residual`);
     }

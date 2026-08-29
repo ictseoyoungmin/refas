@@ -12,14 +12,40 @@
     "cameraHypothesisId": {"$ref": "common.schema.json#/$defs/semanticId"},
     "cameraDigest": {"$ref": "common.schema.json#/$defs/digest"},
     "modelBindingDigest": {"$ref": "common.schema.json#/$defs/digest"},
-    "anchorProjections": {"type": "array", "minItems": 1, "items": {"type": "object"}},
-    "chainResiduals": {"type": "array", "items": {"type": "object"}},
-    "axisResiduals": {"type": "array", "items": {"type": "object"}},
-    "contactResiduals": {"type": "array", "items": {"type": "object"}},
-    "negativeSpaceProjections": {"type": "array", "items": {"type": "object"}},
-    "dimensionResiduals": {"type": "array", "items": {"type": "object"}},
-    "occlusionDepths": {"type": "array", "items": {"type": "object"}},
-    "metrics": {"type": "object"},
+    "anchorProjections": {
+      "type": "array", "minItems": 1, "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["referenceId", "importance", "sourceXY", "projectedXY", "insideFrame", "errorNormalized", "binding", "evidenceRefs"],
+        "properties": {
+          "referenceId": {"$ref": "common.schema.json#/$defs/semanticId"}, "importance": {"type": "string"},
+          "sourceXY": {"$ref": "common.schema.json#/$defs/point2"},
+          "projectedXY": {"type": "array", "prefixItems": [{"type": "number"}, {"type": "number"}], "items": false},
+          "insideFrame": {"type": "boolean"}, "errorNormalized": {"type": "number", "minimum": 0},
+          "binding": {
+            "oneOf": [
+              {"type": "object", "additionalProperties": false, "required": ["kind", "nodeId", "localPoint"], "properties": {"kind": {"const": "node-local-point"}, "nodeId": {"$ref": "common.schema.json#/$defs/semanticId"}, "localPoint": {"$ref": "common.schema.json#/$defs/point3"}}},
+              {"type": "object", "additionalProperties": false, "required": ["kind", "worldPoint"], "properties": {"kind": {"const": "world-point"}, "worldPoint": {"$ref": "common.schema.json#/$defs/point3"}}}
+            ]
+          },
+          "evidenceRefs": {"type": "array", "items": {"type": "string"}}
+        }
+      }
+    },
+    "chainResiduals": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["id", "importance", "segments", "angleRmseRadians", "lengthRmseNormalized"], "properties": {"id": {"$ref": "common.schema.json#/$defs/semanticId"}, "importance": {"type": "string"}, "segments": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["segment", "angleErrorRadians", "lengthErrorNormalized"], "properties": {"segment": {"type": "string", "minLength": 1}, "angleErrorRadians": {"type": "number", "minimum": 0}, "lengthErrorNormalized": {"type": "number", "minimum": 0}}}}, "angleRmseRadians": {"type": ["number", "null"], "minimum": 0}, "lengthRmseNormalized": {"type": ["number", "null"], "minimum": 0}}}},
+    "axisResiduals": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["id", "importance", "evaluable", "angleErrorRadians"], "properties": {"id": {"$ref": "common.schema.json#/$defs/semanticId"}, "importance": {"type": "string"}, "evaluable": {"type": "boolean"}, "angleErrorRadians": {"type": ["number", "null"], "minimum": 0}}}},
+    "contactResiduals": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["id", "importance", "evaluable", "projectedDistanceNormalized", "excessNormalized"], "properties": {"id": {"$ref": "common.schema.json#/$defs/semanticId"}, "importance": {"type": "string"}, "evaluable": {"type": "boolean"}, "projectedDistanceNormalized": {"type": ["number", "null"], "minimum": 0}, "toleranceNormalized": {"type": "number", "minimum": 0}, "excessNormalized": {"type": ["number", "null"], "minimum": 0}}}},
+    "negativeSpaceProjections": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["referenceId", "importance", "polygon", "iou"], "properties": {"referenceId": {"$ref": "common.schema.json#/$defs/semanticId"}, "importance": {"type": "string"}, "polygon": {"type": "array", "minItems": 3, "items": {"type": "array", "prefixItems": [{"type": "number"}, {"type": "number"}], "items": false}}, "iou": {"type": "number", "minimum": 0, "maximum": 1}}}},
+    "dimensionResiduals": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["id", "importance", "evaluable", "relativeError"], "properties": {"id": {"$ref": "common.schema.json#/$defs/semanticId"}, "importance": {"type": "string"}, "evaluable": {"type": "boolean"}, "sourceValue": {"type": "number", "minimum": 0}, "projectedValue": {"type": "number", "minimum": 0}, "relativeError": {"type": ["number", "null"], "minimum": 0}}}},
+    "occlusionDepths": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["referenceId", "frontDepth", "backDepth", "orderCorrect"], "properties": {"referenceId": {"$ref": "common.schema.json#/$defs/semanticId"}, "frontDepth": {"type": "number"}, "backDepth": {"type": "number"}, "orderCorrect": {"type": "boolean"}}}},
+    "metrics": {
+      "type": "object", "additionalProperties": false,
+      "required": ["anchorRmseNormalized", "macroAnchorRmseNormalized", "macroAnchorMaxErrorNormalized", "projectedAnchorsOutsideFrame", "chainAngleRmseDegrees", "axisAngleRmseDegrees", "contactMaxExcessNormalized", "negativeSpaceMeanIoU", "dimensionMeanRelativeError", "occlusionOrderViolations"],
+      "properties": {
+        "anchorRmseNormalized": {"type": ["number", "null"], "minimum": 0}, "macroAnchorRmseNormalized": {"type": ["number", "null"], "minimum": 0}, "macroAnchorMaxErrorNormalized": {"type": ["number", "null"], "minimum": 0},
+        "projectedAnchorsOutsideFrame": {"type": "integer", "minimum": 0}, "chainAngleRmseDegrees": {"type": ["number", "null"], "minimum": 0}, "axisAngleRmseDegrees": {"type": ["number", "null"], "minimum": 0},
+        "contactMaxExcessNormalized": {"type": ["number", "null"], "minimum": 0}, "negativeSpaceMeanIoU": {"type": ["number", "null"], "minimum": 0, "maximum": 1}, "dimensionMeanRelativeError": {"type": ["number", "null"], "minimum": 0}, "occlusionOrderViolations": {"type": "integer", "minimum": 0}
+      }
+    },
     "evidenceRefs": {"type": "array", "items": {"type": "string"}},
     "policy": {
       "type": "object",

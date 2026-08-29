@@ -8,18 +8,31 @@ The parameter-fit runtime closes the gap between source-bound measurements and a
 
 - `createParameterFitPlan`, `validateParameterFitPlan`
 - `fitParameters(plan, evaluate, {verifyReference})`, `validateParameterFitReport`
+- `createProjectionRepairPlan`, `projectionResidualMeasurements`, `repairShapeFromProjection`
 - `refas.parameter-fit-plan/v1` and `refas.parameter-fit-report/v1`
 - `refas fit-parameters --root DIR --plan PLAN --worker WORKER --out REPORT`
 
-The authoritative implementation is [parameter-fit.mjs](../skills/refas/scripts/lib/parameter-fit.mjs). Usage and bounded-edit routing are authoritative in [parameter-fitting.md](../skills/refas/references/parameter-fitting.md).
+The generic ledger is implemented in [parameter-fit.mjs](../skills/refas/scripts/lib/parameter-fit.mjs). The optional realized-GLB repair backend is implemented in [shape-repair.mjs](../skills/refas/scripts/lib/shape-repair.mjs). Usage and bounded-edit routing are authoritative in [parameter-fitting.md](../skills/refas/references/parameter-fitting.md).
+
+## Projection repair backend
+
+`repairShapeFromProjection` is the first concrete `shape-reconstruction` loop. It derives typed findings from the baseline's realized projection, binds only `model.shape.*` or `model.geometry.*` parameters, asks a project worker to rebuild exact GLB bytes, re-measures those bytes through the digest-bound camera and node hierarchy, and requires an actual render reference for every trial. The generic bounded search then ranks the declared residuals:
+
+`macro-anchor-rmse`, `chain-angle-error`, `negative-space-loss`, `segment-iou-loss`, and `interface-boundary-error`.
+
+Projection residual objectives are minimize-only; maximizing a discrepancy is rejected by the shape adapter.
+
+The result contains the baseline and selected realized proofs, typed findings, the immutable fit report, and an advisory `KEEP`/`ROLLBACK` decision. `KEEP` is returned only when the selected trial improves the objective without introducing a new blocking finding; neither decision mutates project state or creates a checkpoint. A selected `KEEP` candidate still requires whole-context visual review before the normal bounded-edit checkpoint flow.
 
 ## Frozen invariants
 
 - One plan owns `shape-reconstruction × one semantic scope` and contains at least two geometry parameters.
 - Camera, assembly, appearance, and lighting owners cannot enter the same plan.
+- The projection repair adapter rejects camera, lighting, appearance, and assembly bindings at the shape boundary; those variables remain separate owner capabilities.
 - Differential evolution proposes complete vectors rather than one-variable coordinate steps.
 - Source, baseline asset, normalized plan, seed, budget, every trial, selected trial, and stop reason are digest-bound.
 - Candidate and render references must match exact files under the CLI artifact root.
+- Projection repair additionally checks that each candidate reference's digest equals the generated GLB bytes before the trial is accepted.
 - Every reference is verified again before report publication; the local worker is trusted executable code, not sandboxed input.
 - Protected measurements reject regressions; aggregate objectives only rank trials.
 - The engine never mutates project state. One visually inspected selected result may become the bounded edit's sole checkpoint candidate.
@@ -32,6 +45,7 @@ Work is bounded by `evaluationBudget`; population size is at least four. Evaluat
 ## Integration evidence
 
 - Unit and misuse coverage: `tests/parameter-fit.test.mjs`
+- Realized projection repair coverage: `tests/shape-repair.test.mjs`
 - CLI integration: `tests/cli.test.mjs`
 - Actual GLB/render loop: `examples/parameter-fit/`
 - Generated comparison: `examples/parameter-fit/output/reference-before-after.png`
@@ -42,6 +56,7 @@ The fixture is self-generated contract evidence. It proves construction/render/e
 
 - The derivative-free backend does not guarantee a global optimum.
 - Project workers supply scalar measurements; perceptual embeddings or differentiable gradients may later sit behind the same evaluator boundary.
+- The first repair backend is intentionally bounded to projection residuals; it does not fit camera, lighting, or material appearance.
 - Cross-owner camera/geometry or geometry/material fitting is refused until recovery semantics define one safe owner and rollback span.
 - The runtime supplies no domain-specific geometry generator. A low-capacity representation remains a representation blocker.
 

@@ -1,6 +1,6 @@
 ---
 name: refas
-description: Reconstruct a reference image as a traceable, editable, and visually certified 3D asset. Use for image-to-3D work that requires whole-to-part observation, explicit uncertainty, projection-aware modeling, immutable child assembly, multiview rendering, objective visual critique, or safe checkpoint and rollback routing; especially when a quick img2threejs approximation is not sufficient.
+description: Reconstruct a reference image as a traceable, editable, and visually certified 3D asset. Use for image-to-3D work that requires whole-to-part observation, explicit uncertainty, projection-aware modeling, immutable child assembly, multiview rendering, objective visual critique, or safe checkpoint and rollback routing; especially when a quick approximation is not sufficient.
 ---
 
 # RefAs — Reference Asset Foundry
@@ -131,7 +131,7 @@ node scripts/refas.mjs finish-edit \
 
 The decision is one of `KEEP_EDIT`, `ROLLBACK_EDIT`, `REOPEN_OWNER`, `REQUEST_REVIEW`, or `MAY_CLOSE`. Never manually reinterpret a rollback result as success.
 
-An owner-local parameter fit may evaluate many digest-bound trials inside this transaction. Those trials are comparison evidence, not checkpoints. Only the visually inspected selected trial may become the transaction's one direct candidate; see `references/parameter-fitting.md`.
+An owner-local parameter fit may evaluate many digest-bound trials inside this transaction. Those trials are comparison evidence, not checkpoints. When an actual GLB and realized projection are available, use the optional `repairShapeFromProjection` backend to bind projection residuals to geometry parameters and return an advisory `KEEP`/`ROLLBACK`; only the visually inspected selected trial may become the transaction's one direct candidate. See `references/parameter-fitting.md`.
 
 If work must stop before a decision, use `abort-edit`; it restores the baseline artifact bytes. On a fresh agent turn, run `resume` before mutating anything. It returns one safe checkpoint, one capability × scope, and one next action.
 

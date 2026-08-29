@@ -8,6 +8,21 @@ Create `refas.parameter-fit-plan/v1` with the exact source digest and baseline G
 
 The evaluator receives one complete parameter vector. It must build a real candidate, measure the exact bytes through actual rendering when visual geometry is at issue, and return verified content references for both candidate GLB and render evidence. The CLI verifies path containment, byte size, and SHA-256 under `--root` before a trial enters the ledger.
 
+For a concrete realized-GLB loop, use `createProjectionRepairPlan` and `repairShapeFromProjection` from `scripts/lib/shape-repair.mjs`. The adapter derives the initial typed findings from `createRealizedProjection`, maps the allowed projection residual IDs (`macro-anchor-rmse`, `chain-angle-error`, `negative-space-loss`, `segment-iou-loss`, `interface-boundary-error`) to the existing plan objectives, and invokes the project callbacks below for every bounded candidate:
+
+```js
+const result = await repairShapeFromProjection({
+  plan, baselineGlb, referenceGeometry, cameraHypothesisId, camera,
+  anchorBindings, segmentBindings,
+  buildCandidate: (parameters, context) => buildExactGlb(parameters, context),
+  renderCandidate: ({glb, parameters, context, proof}) => renderAndReturnReferences(glb, parameters, context, proof),
+  verifyReference,
+});
+// result.decision is KEEP or ROLLBACK; project state is never mutated here.
+```
+
+`renderCandidate` must write an actual candidate render and return `candidateAsset` plus `renderEvidence` references. The adapter verifies that `candidateAsset.sha256` is the digest of the generated GLB, then the normal ledger verifier checks the exact files. `KEEP` only means that the ranked candidate improved without adding a blocking typed finding; visual review and the one-checkpoint bounded-edit rule still decide whether it is adopted.
+
 The worker is executable local code. Run only a project worker you trust and review; the artifact root limits evidence paths but is not a code sandbox.
 
 ```bash
@@ -43,7 +58,7 @@ The selected trial may become the bounded-edit candidate only when it improves t
 
 ## Authority limits
 
-Parameter-fit metrics have `candidate-ranking-only` authority. They may choose which already-evaluated trial deserves visual inspection. They cannot select a finding owner or rollback checkpoint, pass a visual or certification gate, mutate project state, turn a hidden-depth guess into fact, or combine camera, assembly, appearance, or lighting parameters with shape parameters in one plan.
+Parameter-fit metrics have `candidate-ranking-only` authority. They may choose which already-evaluated trial deserves visual inspection. They cannot select a finding owner or rollback checkpoint, pass a visual or certification gate, mutate project state, turn a hidden-depth guess into fact, or combine camera, assembly, appearance, or lighting parameters with shape parameters in one plan. The projection repair adapter preserves this boundary and reports `ROLLBACK` when a selected trial adds a blocking finding.
 
 An aggressive hypothesis is allowed as a trial. It remains a hypothesis until actual renders and normal RefAs evidence accept it.
 

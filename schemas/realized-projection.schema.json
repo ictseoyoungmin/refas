@@ -10,27 +10,102 @@
     "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
     "assetSha256": {"$ref": "common.schema.json#/$defs/digest"},
     "cameraHypothesisId": {"$ref": "common.schema.json#/$defs/semanticId"},
-    "camera": {"type": "object"},
+    "camera": {
+      "type": "object", "additionalProperties": false,
+      "required": ["projection", "position", "target", "up", "aspect", "basis"],
+      "properties": {
+        "projection": {"enum": ["perspective", "orthographic"]},
+        "position": {"$ref": "common.schema.json#/$defs/point3"},
+        "target": {"$ref": "common.schema.json#/$defs/point3"},
+        "up": {"$ref": "common.schema.json#/$defs/point3"},
+        "aspect": {"type": "number", "exclusiveMinimum": 0},
+        "fovY": {"type": "number", "exclusiveMinimum": 0, "exclusiveMaximum": 179},
+        "orthoHeight": {"type": "number", "exclusiveMinimum": 0},
+        "basis": {
+          "type": "object", "additionalProperties": false, "required": ["right", "up", "forward"],
+          "properties": {
+            "right": {"$ref": "common.schema.json#/$defs/point3"},
+            "up": {"$ref": "common.schema.json#/$defs/point3"},
+            "forward": {"$ref": "common.schema.json#/$defs/point3"}
+          }
+        }
+      },
+      "allOf": [
+        {"if": {"properties": {"projection": {"const": "perspective"}}}, "then": {"required": ["fovY"], "not": {"required": ["orthoHeight"]}}},
+        {"if": {"properties": {"projection": {"const": "orthographic"}}}, "then": {"required": ["orthoHeight"], "not": {"required": ["fovY"]}}}
+      ]
+    },
     "cameraDigest": {"$ref": "common.schema.json#/$defs/digest"},
     "modelBindingDigest": {"$ref": "common.schema.json#/$defs/digest"},
-    "derivedAnchors": {"type": "array", "minItems": 1, "items": {"type": "object"}},
-    "derivedSegments": {"type": "array", "items": {"type": "object"}},
-    "derivedInterfaces": {"type": "array", "items": {"type": "object"}},
+    "derivedAnchors": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["referenceId", "nodeId", "nodeIndex", "localPoint", "worldPoint", "projectedXY", "cameraDepth", "insideFrame"],
+        "properties": {
+          "referenceId": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "nodeId": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "nodeIndex": {"type": "integer", "minimum": 0},
+          "localPoint": {"$ref": "common.schema.json#/$defs/point3"},
+          "worldPoint": {"$ref": "common.schema.json#/$defs/point3"},
+          "projectedXY": {"type": "array", "prefixItems": [{"type": "number"}, {"type": "number"}], "items": false},
+          "cameraDepth": {"type": "number", "exclusiveMinimum": 0},
+          "insideFrame": {"type": "boolean"}
+        }
+      }
+    },
+    "derivedSegments": {
+      "type": "array", "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["referenceId", "importance", "nodeIds", "rootNodeIndices", "meshNodeIndices", "projectedHull", "sourcePolygon", "iou", "totalVertices", "insideFrameVertices", "insideFrameFraction"],
+        "properties": {
+          "referenceId": {"$ref": "common.schema.json#/$defs/semanticId"}, "importance": {"type": "string"},
+          "nodeIds": {"type": "array", "minItems": 1, "items": {"$ref": "common.schema.json#/$defs/semanticId"}},
+          "rootNodeIndices": {"type": "array", "minItems": 1, "items": {"type": "integer", "minimum": 0}},
+          "meshNodeIndices": {"type": "array", "minItems": 1, "items": {"type": "integer", "minimum": 0}},
+          "projectedHull": {"type": "array", "minItems": 3, "items": {"type": "array", "prefixItems": [{"type": "number"}, {"type": "number"}], "items": false}},
+          "sourcePolygon": {"type": "array", "minItems": 3, "items": {"$ref": "common.schema.json#/$defs/point2"}},
+          "iou": {"type": "number", "minimum": 0, "maximum": 1}, "totalVertices": {"type": "integer", "minimum": 0},
+          "insideFrameVertices": {"type": "integer", "minimum": 0}, "insideFrameFraction": {"type": "number", "minimum": 0, "maximum": 1}
+        }
+      }
+    },
+    "derivedInterfaces": {
+      "type": "array", "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["referenceId", "importance", "evaluable", "kind", "separation", "boundaryMeanErrorNormalized", "distinctOwnership", "requiresDistinctOwnership", "ownershipCorrect"],
+        "properties": {
+          "referenceId": {"$ref": "common.schema.json#/$defs/semanticId"}, "importance": {"type": "string"}, "evaluable": {"type": "boolean"},
+          "kind": {"type": "string"}, "separation": {"type": "string"},
+          "boundaryMeanErrorNormalized": {"type": ["number", "null"], "minimum": 0},
+          "distinctOwnership": {"type": ["boolean", "null"]}, "requiresDistinctOwnership": {"type": "boolean"},
+          "ownershipCorrect": {"type": ["boolean", "null"]}
+        }
+      }
+    },
     "segmentationMetrics": {
       "type": "object",
-      "required": ["segmentCount", "materialSegmentMeanIoU", "interfaceBoundaryMeanErrorNormalized", "explicitOwnershipViolations"],
+      "required": ["segmentCount", "sourceVisibleSegmentMeanIoU", "interfaceBoundaryMeanErrorNormalized", "explicitOwnershipViolations"],
       "properties": {
         "segmentCount": {"type": "integer", "minimum": 0},
-        "materialSegmentMeanIoU": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+        "sourceVisibleSegmentMeanIoU": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
         "interfaceBoundaryMeanErrorNormalized": {"type": ["number", "null"], "minimum": 0},
         "explicitOwnershipViolations": {"type": "integer", "minimum": 0}
       },
       "additionalProperties": false
     },
-    "projectionFit": {"type": "object"},
+    "projectionFit": {"$ref": "projection-fit.schema.json"},
     "projectionFitDigest": {"$ref": "common.schema.json#/$defs/digest"},
     "evidenceRefs": {"type": "array", "items": {"type": "string"}},
-    "policy": {"type": "object"},
+    "policy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["projectedCoordinatesDerivedFromRealizedGlb", "glbHierarchyAndNodeTransformsAreAuthoritative", "cameraParametersAreDigestBound", "callerCannotSupplyProjectedCoordinates", "metricsCannotCertifyVisualFidelity"],
+      "properties": {
+        "projectedCoordinatesDerivedFromRealizedGlb": {"const": true}, "glbHierarchyAndNodeTransformsAreAuthoritative": {"const": true},
+        "cameraParametersAreDigestBound": {"const": true}, "callerCannotSupplyProjectedCoordinates": {"const": true}, "metricsCannotCertifyVisualFidelity": {"const": true},
+        "segmentPolygonsDerivedFromRealizedGlb": {"const": true}, "explicitPartOwnershipChecked": {"const": true}, "callerCannotSupplySegmentPolygons": {"const": true}
+      }
+    },
     "realizedProjectionDigest": {"$ref": "common.schema.json#/$defs/digest"}
   },
   "additionalProperties": false

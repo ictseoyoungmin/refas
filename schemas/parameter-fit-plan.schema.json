@@ -39,7 +39,17 @@
         }
       }
     },
-    "protectedTerms": {"type": "array", "items": {"type": "object"}},
+    "protectedTerms": {
+      "type": "array", "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "goal", "maxRegression"],
+        "properties": {
+          "id": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "goal": {"enum": ["minimize", "maximize"]},
+          "maxRegression": {"type": "number", "minimum": 0}
+        }
+      }
+    },
     "optimizer": {
       "type": "object", "additionalProperties": false,
       "required": ["algorithm", "seed", "populationSize", "evaluationBudget", "differentialWeight", "crossoverRate", "improvementTolerance", "patience"],
@@ -55,7 +65,15 @@
       }
     },
     "evidenceRefs": {"type": "array", "items": {"type": "string"}},
-    "policy": {"type": "object"},
+    "policy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["selectionAuthority", "metricsCannotSelectOwner", "metricsCannotPassVisualGate", "fitCannotMutateProjectState", "selectedTrialRequiresActualVisualReview", "oneCheckpointCandidateAfterSelection", "trialContentReferencesMustVerify"],
+      "properties": {
+        "selectionAuthority": {"const": "candidate-ranking-only"}, "metricsCannotSelectOwner": {"const": true}, "metricsCannotPassVisualGate": {"const": true},
+        "fitCannotMutateProjectState": {"const": true}, "selectedTrialRequiresActualVisualReview": {"const": true},
+        "oneCheckpointCandidateAfterSelection": {"const": true}, "trialContentReferencesMustVerify": {"const": true}
+      }
+    },
     "planDigest": {"$ref": "common.schema.json#/$defs/digest"}
   }
 }
