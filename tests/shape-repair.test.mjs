@@ -98,6 +98,10 @@ test('projection repair binds residuals to shape parameters and keeps an improve
       ], {encoding: 'utf8', timeout: 60000});
       if (rendered.status !== 0) throw new Error(`portable renderer failed: ${rendered.stderr || rendered.stdout}`);
       const renderPath = path.join(renderDirectory, 'render-report.json');
+      const renderReport = JSON.parse(await fs.readFile(renderPath, 'utf8'));
+      assert.equal(renderReport.cameraDigest, proof.cameraDigest);
+      assert.equal(renderReport.heroCameraDigest, proof.cameraDigest);
+      assert.deepEqual(renderReport.heroCamera, proof.camera);
       return {
         candidateAsset: await contentReference(assetPath, {kind: 'glb', root}),
         renderEvidence: await contentReference(renderPath, {kind: 'render-report', root}),
@@ -181,4 +185,50 @@ test('projection repair rejects synthetic render evidence even when references a
     readReference: async (referenceRef) => fs.readFile(path.join(root, referenceRef.path)),
   });
   await assert.rejects(() => evaluator.evaluate({"root-x": 0.5, "child-offset": 1}, {trialId: 'trial-0001'}), /schema must be refas\.multiview-render-report\/v1/);
+});
+
+test('projection repair rejects a report whose hero camera digest is not computed from the rendered camera', async (t) => {
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'refas-shape-camera-binding-'));
+  t.after(() => fs.rm(root, {recursive: true, force: true}));
+  const reference = geometry(), baselineGlb = asset(), baselinePath = path.join(root, 'baseline.glb');
+  await fs.writeFile(baselinePath, baselineGlb);
+  const framePath = path.join(root, 'canonical-frame.json');
+  await fs.writeFile(framePath, `${JSON.stringify(canonicalFrame)}\n`);
+  const frameDigest = digestJson(canonicalFrame);
+  const plan = createProjectionRepairPlan({
+    id: 'camera-binding-plan', scopeId: 'whole', sourceSha256: reference.sourceSha256,
+    baselineAsset: await contentReference(baselinePath, {kind: 'glb', root}),
+    parameters: [
+      {id: 'root-x', binding: 'model.shape.root-x', minimum: 0.4, maximum: 0.6, initial: 0.5},
+      {id: 'child-offset', binding: 'model.geometry.child-offset', minimum: 0.3, maximum: 1.2, initial: 1},
+    ],
+    objectives: [{id: 'macro-anchor-rmse', goal: 'minimize'}],
+    optimizer: {seed: 1, populationSize: 4, evaluationBudget: 5, patience: 2},
+  });
+  const evaluator = createProjectionRepairEvaluator({
+    plan, referenceGeometry: reference, cameraHypothesisId: 'camera-a', camera, frameDigest, anchorBindings,
+    buildCandidate: () => baselineGlb,
+    renderCandidate: async ({glb, context}) => {
+      const directory = path.join(root, context.trialId), renderDirectory = path.join(directory, 'render');
+      await fs.mkdir(directory, {recursive: true});
+      const assetPath = path.join(directory, 'candidate.glb');
+      await fs.writeFile(assetPath, glb);
+      const rendered = spawnSync(process.env.CODEX_PRIMARY_RUNTIME_PYTHON || 'python3', [
+        path.resolve('skills/refas/scripts/render_glb.py'), '--glb', assetPath, '--out', renderDirectory,
+        '--frame', framePath, '--size', '48', '--timeout-seconds', '30', '--max-working-mb', '64',
+      ], {encoding: 'utf8', timeout: 60000});
+      if (rendered.status !== 0) throw new Error(`portable renderer failed: ${rendered.stderr || rendered.stdout}`);
+      const reportPath = path.join(renderDirectory, 'render-report.json');
+      const report = JSON.parse(await fs.readFile(reportPath, 'utf8'));
+      report.heroCamera.position = [0, 0, 6];
+      await fs.writeFile(reportPath, `${JSON.stringify(report)}\n`);
+      return {
+        candidateAsset: await contentReference(assetPath, {kind: 'glb', root}),
+        renderEvidence: await contentReference(reportPath, {kind: 'render-report', root}),
+        heroImage: await contentReference(path.join(renderDirectory, 'hero.png'), {kind: 'render-image', root}),
+      };
+    },
+    readReference: async (referenceRef) => fs.readFile(path.join(root, referenceRef.path)),
+  });
+  await assert.rejects(() => evaluator.evaluate({"root-x": 0.5, "child-offset": 1}, {trialId: 'trial-0001'}), /heroCameraDigest must be computed from the actual heroCamera/);
 });

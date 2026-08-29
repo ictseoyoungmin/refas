@@ -1,7 +1,7 @@
-import {assertDigest, deepFreeze, digestBytes} from './canonical.mjs';
+import {assertDigest, deepFreeze, digestBytes, digestJson} from './canonical.mjs';
 import {findingsFromRealizedProjection} from './projection-findings.mjs';
 import {fitParameters, createParameterFitPlan, validateParameterFitPlan} from './parameter-fit.mjs';
-import {createRealizedProjection, validateRealizedProjection} from './realized-projection.mjs';
+import {createRealizedProjection, normalizeProjectionCamera, validateRealizedProjection} from './realized-projection.mjs';
 
 export const PROJECTION_REPAIR_METRIC_IDS = Object.freeze([
   'macro-anchor-rmse',
@@ -150,13 +150,23 @@ async function readExactReference(reference, label, readReference) {
   return bytes;
 }
 
-function validateRenderReportBinding(report, {assetSha256, cameraDigest, frameDigest, label}) {
+function validateRenderReportBinding(report, {assetSha256, camera, cameraDigest, frameDigest, label}) {
   if (!report || typeof report !== 'object') throw new Error(`${label} must be a parsed actual render report`);
   if (report.schema !== 'refas.multiview-render-report/v1') throw new Error(`${label}.schema must be refas.multiview-render-report/v1 from the portable renderer`);
   if (report.status !== 'PASS') throw new Error(`${label}.status must be PASS`);
   if (report.assetSha256 !== assetSha256) throw new Error(`${label}.assetSha256 must bind the exact candidate GLB`);
   if (report.asset?.sha256 != null && report.asset.sha256 !== report.assetSha256) throw new Error(`${label}.asset.sha256 must agree with assetSha256`);
-  if (report.cameraDigest !== cameraDigest) throw new Error(`${label}.cameraDigest must bind the realized projection camera`);
+  if (report.cameraDigest !== report.heroCameraDigest) throw new Error(`${label}.cameraDigest must agree with the renderer's heroCameraDigest`);
+  assertDigest(report.heroCameraDigest, `${label}.heroCameraDigest`);
+  if (!report.heroCamera || typeof report.heroCamera !== 'object') throw new Error(`${label}.heroCamera is required and must describe the actual hero render camera`);
+  let normalizedHeroCamera;
+  try { normalizedHeroCamera = normalizeProjectionCamera(report.heroCamera); }
+  catch (error) { throw new Error(`${label}.heroCamera is invalid: ${error.message}`); }
+  if (digestJson(report.heroCamera) !== digestJson(normalizedHeroCamera)) throw new Error(`${label}.heroCamera must be normalized and must not contain an unverifiable camera basis`);
+  if (digestJson(normalizedHeroCamera) !== report.heroCameraDigest) throw new Error(`${label}.heroCameraDigest must be computed from the actual heroCamera`);
+  if (report.heroCameraDigest !== cameraDigest || digestJson(normalizedHeroCamera) !== cameraDigest || digestJson(normalizedHeroCamera) !== digestJson(camera)) {
+    throw new Error(`${label}.heroCamera must bind the realized projection camera`);
+  }
   if (report.frameDigest !== frameDigest) throw new Error(`${label}.frameDigest must bind the requested render frame`);
   assertDigest(report.heroImageSha256, `${label}.heroImageSha256`);
   if (!report.renderer || typeof report.renderer.name !== 'string' || !report.renderer.name || typeof report.renderer.version !== 'string' || !report.renderer.version) {
@@ -164,6 +174,7 @@ function validateRenderReportBinding(report, {assetSha256, cameraDigest, frameDi
   }
   const hero = Array.isArray(report.frames) ? report.frames.find((frame) => frame?.path === 'hero.png') : null;
   if (!hero || hero.sha256 !== report.heroImageSha256) throw new Error(`${label} must bind heroImageSha256 to the rendered hero frame`);
+  if (digestJson(hero.camera) !== digestJson(report.heroCamera)) throw new Error(`${label} hero frame camera must agree with heroCamera`);
   if (hero.frameBinding?.frameDigest !== frameDigest) throw new Error(`${label} hero frame binding must agree with frameDigest`);
 }
 
@@ -213,7 +224,7 @@ export function createProjectionRepairEvaluator({
     let report;
     try { report = JSON.parse(renderBytes.toString('utf8')); }
     catch (error) { throw new Error(`candidate ${context.trialId} renderEvidence is not valid JSON: ${error.message}`); }
-    validateRenderReportBinding(report, {assetSha256: proof.assetSha256, cameraDigest: proof.cameraDigest, frameDigest, label: `${context.trialId}.renderEvidence`});
+    validateRenderReportBinding(report, {assetSha256: proof.assetSha256, camera: proof.camera, cameraDigest: proof.cameraDigest, frameDigest, label: `${context.trialId}.renderEvidence`});
     const heroBytes = await readExactReference(rendered.heroImage, `${context.trialId}.heroImage`, readReference);
     if (digestBytes(heroBytes) !== report.heroImageSha256) throw new Error(`candidate ${context.trialId} heroImage must bind the report heroImageSha256`);
     proofs.set(context.trialId, proof);

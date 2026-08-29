@@ -32,7 +32,7 @@ function plan(overrides = {}) {
 
 const evidence = (context, measurements) => ({
   measurements,
-  candidateAsset: reference(`trials/${context.trialId}/candidate.glb`, 'glb'),
+  candidateAsset: context.phase === 'baseline' ? reference('assets/baseline.glb', 'glb') : reference(`trials/${context.trialId}/candidate.glb`, 'glb'),
   renderEvidence: reference(`trials/${context.trialId}/render-report.json`, 'render-report'),
   evidenceRefs: [`trials/${context.trialId}/hero.png`],
 });
@@ -56,6 +56,14 @@ test('joint differential evolution improves coupled geometry parameters determin
   assert.equal(first.policy.metricsCannotSelectOwner, true);
   assert.equal(first.policy.metricsCannotPassVisualGate, true);
   assert.equal(first.policy.fitCannotMutateProjectState, true);
+});
+
+test('baseline trial cannot score a candidate different from the plan baseline asset', async () => {
+  const input = plan({optimizer: {seed: 3, populationSize: 4, evaluationBudget: 5, patience: 2}});
+  await assert.rejects(() => fitParameters(input, async (parameters, context) => ({
+    ...evidence(context, {'shape-error': parameters.span ** 2 + parameters.bend ** 2}),
+    candidateAsset: reference('trials/not-the-baseline.glb', 'glb'),
+  }), {verifyReference}), /trial-0001 candidateAsset must match plan\.baselineAsset SHA-256/);
 });
 
 test('protected measurements reject regressions while another geometry parameter improves', async () => {
@@ -129,6 +137,11 @@ test('plan and report digest tampering is detected', async () => {
   }), {verifyReference});
   const alteredReport = structuredClone(report); alteredReport.trials[0].parameters.span += 0.1;
   assert.equal(validateParameterFitReport(alteredReport, input).valid, false);
+  const forgedBaseline = structuredClone(report);
+  forgedBaseline.trials[0].candidateAsset = {...forgedBaseline.trials[0].candidateAsset, sha256: D('e')};
+  delete forgedBaseline.reportDigest;
+  forgedBaseline.reportDigest = digestJson(forgedBaseline);
+  assert.match(validateParameterFitReport(forgedBaseline, input).errors.join('; '), /candidateAsset must match baselineAsset SHA-256/);
   const forgedSelection = structuredClone(report);
   forgedSelection.selectedTrialId = forgedSelection.baselineTrialId;
   delete forgedSelection.reportDigest;

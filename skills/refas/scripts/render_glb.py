@@ -237,8 +237,22 @@ def shade(base, normal, view, metallic, roughness):
 
 def render(primitives, position, target, output: Path, *, width=640, height=640, fov=31, mode="beauty", up_hint=None, tile_size=256, deadline=None):
     started = time.perf_counter()
-    right, up, forward = camera_basis(position, target, up_hint)
     position = np.asarray(position, dtype=np.float64)
+    target = np.asarray(target, dtype=np.float64)
+    right, up, forward = camera_basis(position, target, up_hint)
+    actual_camera = {
+        "projection": "perspective",
+        "position": list(map(float, position)),
+        "target": list(map(float, target)),
+        "up": list(map(float, up)),
+        "aspect": float(width / height),
+        "fovY": float(fov),
+        "basis": {
+            "right": list(map(float, right)),
+            "up": list(map(float, up)),
+            "forward": list(map(float, forward)),
+        },
+    }
     scale_y = math.tan(math.radians(fov) / 2)
     scale_x = scale_y * width / height
     background = np.array([12, 15, 19], dtype=np.uint8)
@@ -306,11 +320,29 @@ def render(primitives, position, target, output: Path, *, width=640, height=640,
                 rendered_triangles += 1
     Image.fromarray(image, mode="RGB").save(output, format="PNG")
     silhouette = np.any(image != background, axis=2)
-    return {"path": output.name, "sha256": sha256(output), "silhouetteSha256": hashlib.sha256(silhouette.tobytes()).hexdigest(), "coveredPixels": int(np.count_nonzero(silhouette)), "mode": mode, "camera": {"position": list(map(float, position)), "target": list(map(float, target)), "up": list(map(float, up)), "fovY": fov}, "renderedTriangles": rendered_triangles, "durationMs": round((time.perf_counter() - started) * 1000, 2)}
+    return {"path": output.name, "sha256": sha256(output), "silhouetteSha256": hashlib.sha256(silhouette.tobytes()).hexdigest(), "coveredPixels": int(np.count_nonzero(silhouette)), "mode": mode, "camera": actual_camera, "renderedTriangles": rendered_triangles, "durationMs": round((time.perf_counter() - started) * 1000, 2)}
+
+
+def canonical_json_value(value):
+    """Match RefAs stable JSON for the finite camera/frame values we hash."""
+    if isinstance(value, dict):
+        return {str(key): canonical_json_value(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [canonical_json_value(item) for item in value]
+    if isinstance(value, (np.integer,)):
+        return int(value)
+    if isinstance(value, (np.floating,)):
+        value = float(value)
+    if isinstance(value, float):
+        if not math.isfinite(value):
+            raise ValueError("canonical JSON cannot contain NaN or Infinity")
+        if value == 0 or (value.is_integer() and abs(value) < 1e21):
+            return int(value)
+    return value
 
 
 def frame_digest(value):
-    canonical = json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+    canonical = json.dumps(canonical_json_value(value), sort_keys=True, separators=(",", ":"), ensure_ascii=False, allow_nan=False)
     return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
 
 
@@ -417,7 +449,7 @@ def main():
     parser.add_argument("--max-working-mb", type=float, default=512.0)
     parser.add_argument("--tile-size", type=int, default=256)
     parser.add_argument("--max-triangles", type=int)
-    parser.add_argument("--camera-digest", help="digest of the digest-bound camera used by the fitting trial")
+    parser.add_argument("--camera-digest", help="optional expected digest; the renderer rejects a mismatch with its actual hero camera")
     args = parser.parse_args()
     if args.camera_digest is not None and (len(args.camera_digest) != 64 or any(character not in "0123456789abcdef" for character in args.camera_digest.lower())):
         raise ValueError("camera digest must be a lowercase SHA-256 digest")
@@ -484,13 +516,20 @@ def main():
         check_deadline(deadline)
         make_board(reference, frames, board_path)
         check_deadline(deadline)
+        hero_frame = next(frame for frame in frames if frame["path"] == "hero.png")
+        hero_camera = hero_frame["camera"]
+        hero_camera_digest = frame_digest(hero_camera)
+        if args.camera_digest is not None and args.camera_digest != hero_camera_digest:
+            raise ValueError("provided camera digest does not match the actual hero render camera")
         report = {
             "schema": "refas.multiview-render-report/v1",
             "claimScope": "render-integrity-only",
             "statusMeaning": "All requested views rasterized from actual GLB geometry; visual similarity is not assessed.",
             "asset": {"path": str(glb_path), "sha256": sha256(glb_path), "generator": model.get("asset", {}).get("generator")},
             "assetSha256": sha256(glb_path),
-            "cameraDigest": args.camera_digest,
+            "cameraDigest": hero_camera_digest,
+            "heroCamera": hero_camera,
+            "heroCameraDigest": hero_camera_digest,
             "frameDigest": canonical_frame_digest,
             "heroImageSha256": next((frame["sha256"] for frame in frames if frame["path"] == "hero.png"), None),
             "renderer": {"family": "other", "name": "RefAs Portable Rasterizer", "version": "1.0.0", "backend": "offline-numpy-rasterizer"},

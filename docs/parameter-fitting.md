@@ -16,7 +16,7 @@ The generic ledger is implemented in [parameter-fit.mjs](../skills/refas/scripts
 
 ## Projection repair backend
 
-`repairShapeFromProjection` is the first concrete `shape-reconstruction` loop. It derives typed findings from the baseline's realized projection, binds only `model.shape.*` or `model.geometry.*` parameters, asks a project worker to rebuild exact GLB bytes, re-measures those bytes through the digest-bound camera and node hierarchy, and requires an actual render reference for every trial. The adapter reads the referenced report bytes and requires `assetSha256`, `cameraDigest`, `frameDigest`, `heroImageSha256`, and `renderer.name`/`renderer.version` to match the candidate proof; it also verifies the referenced hero image bytes. The generic bounded search then ranks the declared residuals:
+`repairShapeFromProjection` is the first concrete `shape-reconstruction` loop. It derives typed findings from the baseline's realized projection, binds only `model.shape.*` or `model.geometry.*` parameters, asks a project worker to rebuild exact GLB bytes, re-measures those bytes through the digest-bound camera and node hierarchy, and requires an actual render reference for every trial. The adapter reads the referenced report bytes and requires `assetSha256`, the renderer-computed `heroCamera`/`heroCameraDigest` equal to the realized projection camera, `frameDigest`, `heroImageSha256`, and `renderer.name`/`renderer.version` to match the candidate proof; it also verifies the referenced hero image bytes. The generic bounded search then ranks the declared residuals:
 
 `macro-anchor-rmse`, `chain-angle-error`, `negative-space-loss`, `segment-iou-loss`, and `interface-boundary-error`.
 
@@ -31,8 +31,9 @@ The result contains the baseline and selected realized proofs, typed findings, t
 - The projection repair adapter rejects camera, lighting, appearance, and assembly bindings at the shape boundary; those variables remain separate owner capabilities.
 - Differential evolution proposes complete vectors rather than one-variable coordinate steps.
 - Source, baseline asset, normalized plan, seed, budget, every trial, selected trial, and stop reason are digest-bound.
+- The first trial is the baseline: its candidate content reference must carry the exact `baselineAsset` SHA-256 before any objective is scored or ranked.
 - Candidate and render references must match exact files under the CLI artifact root.
-- Projection repair additionally checks that each candidate reference's bytes equal the generated GLB, and that the render report and hero image are semantically bound to that GLB, camera, and frame before the trial is accepted.
+- Projection repair additionally checks that each candidate reference's bytes equal the generated GLB, and that the renderer's own hero-camera record/digest plus render report and hero image are semantically bound to that GLB, camera, and frame before the trial is accepted.
 - A projection finding carries a stable `checkId` (for example `projection.negative-space` or `projection.segment-iou`); rollback regression checks compare these checks rather than category totals.
 - An objective is unevaluable when its source evidence is absent. The repair plan rejects such objectives and never treats missing residuals as zero loss.
 - Every reference is verified again before report publication; the local worker is trusted executable code, not sandboxed input.

@@ -45,8 +45,9 @@ test('CLI runs a joint parameter evaluator and emits a validated report', async 
   await fs.writeFile(workerPath, `
     import fs from 'node:fs/promises'; import path from 'node:path'; import {createHash} from 'node:crypto';
     export async function evaluate(parameters, context) {
-      const make = async (name, kind) => { const bytes=Buffer.from(name); await fs.writeFile(path.join(context.artifactRoot,name),bytes); return {schema:'refas.content-reference/v1',kind,path:name,sha256:createHash('sha256').update(bytes).digest('hex'),sizeBytes:bytes.length}; };
-      return {measurements:{'fit-error':(parameters.span-0.7)**2+(parameters.bend+0.4)**2}, candidateAsset:await make(context.trialId+'.glb','glb'), renderEvidence:await make(context.trialId+'.json','render-report')};
+      const make = async (name, kind, contents=name) => { const bytes=Buffer.from(contents); await fs.writeFile(path.join(context.artifactRoot,name),bytes); return {schema:'refas.content-reference/v1',kind,path:name,sha256:createHash('sha256').update(bytes).digest('hex'),sizeBytes:bytes.length}; };
+      const candidateName = context.phase === 'baseline' ? 'baseline.glb' : context.trialId+'.glb';
+      return {measurements:{'fit-error':(parameters.span-0.7)**2+(parameters.bend+0.4)**2}, candidateAsset:await make(candidateName,'glb', context.phase === 'baseline' ? 'b' : candidateName), renderEvidence:await make(context.trialId+'.json','render-report')};
     }
   `);
   await fs.writeFile(path.join(root, 'baseline.glb'), 'b');

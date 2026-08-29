@@ -268,6 +268,9 @@ export async function fitParameters(plan, evaluate, {verifyReference} = {}) {
       throw new Error(`${id} evaluator failed: ${error.message}`);
     }
     const result = normalizeEvaluation(raw, id);
+    if (sequence === 1 && result.candidateAsset.sha256 !== plan.baselineAsset.sha256) {
+      throw new Error(`${id} candidateAsset must match plan.baselineAsset SHA-256; the baseline trial cannot evaluate a different asset`);
+    }
     await verifyReference(result.candidateAsset, `${id}.candidateAsset`);
     await verifyReference(result.renderEvidence, `${id}.renderEvidence`);
     const score = scoreMeasurements(result.measurements, plan, baselineMeasurements);
@@ -380,16 +383,18 @@ export function validateParameterFitReport(report, plan = null) {
     if (!Array.isArray(report?.trials) || !report.trials.length || report.evaluationCount !== report.trials.length) errors.push('trial ledger is missing or incomplete');
     const ids = new Set(report?.trials?.map((trial) => trial.id));
     if (!ids.has(report?.baselineTrialId) || !ids.has(report?.selectedTrialId)) errors.push('baseline or selected trial is missing');
+    const embeddedPlan = report?.plan;
+    const boundPlan = embeddedPlan ?? plan;
     for (const trial of report?.trials ?? []) {
       if (!Number.isFinite(trial.objectiveLoss)) errors.push(`${trial.id} has invalid objectiveLoss`);
       if (!['baseline', 'population', 'evolution'].includes(trial.phase) || !Number.isInteger(trial.generation) || trial.generation < 0) errors.push(`${trial.id} has invalid phase or generation`);
       const candidate = normalizeContentReference(trial.candidateAsset, `${trial.id}.candidateAsset`);
       const render = normalizeContentReference(trial.renderEvidence, `${trial.id}.renderEvidence`);
       if (digestJson(candidate) !== digestJson(trial.candidateAsset) || digestJson(render) !== digestJson(trial.renderEvidence)) errors.push(`${trial.id} content references are not canonical`);
+      if (trial.sequence === 1 && candidate.sha256 !== (boundPlan?.baselineAsset?.sha256 ?? report?.baselineAssetSha256)) errors.push(`${trial.id} candidateAsset must match baselineAsset SHA-256`);
     }
     const policy = report?.policy ?? {};
     if (policy.selectionAuthority !== 'candidate-ranking-only' || policy.metricsCannotSelectOwner !== true || policy.metricsCannotPassVisualGate !== true || policy.fitCannotMutateProjectState !== true || policy.selectedTrialRequiresActualVisualReview !== true || policy.oneCheckpointCandidateAfterSelection !== true || policy.trialContentReferencesMustVerify !== true) errors.push('parameter-fit authority policy is missing');
-    const embeddedPlan = report?.plan;
     if (!embeddedPlan) errors.push('report must embed its exact normalized plan');
     else {
       const embeddedValidation = validateParameterFitPlan(embeddedPlan);
@@ -397,7 +402,6 @@ export function validateParameterFitReport(report, plan = null) {
       if (report.planDigest !== embeddedPlan.planDigest) errors.push('report does not bind its embedded plan');
     }
     if (plan && embeddedPlan && plan.planDigest !== embeddedPlan.planDigest) errors.push('embedded plan does not match the supplied plan');
-    const boundPlan = embeddedPlan ?? plan;
     if (boundPlan) {
       const planValidation = validateParameterFitPlan(boundPlan);
       if (!planValidation.valid) errors.push(`plan is invalid: ${planValidation.errors.join('; ')}`);
