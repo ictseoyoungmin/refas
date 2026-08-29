@@ -40,6 +40,9 @@ jobs:
       - name: Complete dogfood
         if: matrix.node == 24
         run: npm run dogfood
+      - name: Joint parameter-fit dogfood
+        if: matrix.node == 24
+        run: npm run dogfood:parameter-fit
       - name: Independent PBR material dogfood
         if: matrix.node == 24
         run: npm run dogfood:pbr
