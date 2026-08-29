@@ -11,6 +11,7 @@
     "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
     "summary": {"type": "string", "minLength": 1},
     "evidenceRefs": {"type": "array", "items": {"type": "string"}},
+    "checkId": {"$ref": "common.schema.json#/$defs/semanticId"},
     "ownerCapability": {"anyOf": [{"type": "string"}, {"type": "null"}]},
     "introducedByEdit": {"type": "boolean"},
     "routable": {"type": "boolean"},

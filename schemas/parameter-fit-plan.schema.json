@@ -52,7 +52,7 @@
     },
     "optimizer": {
       "type": "object", "additionalProperties": false,
-      "required": ["algorithm", "seed", "populationSize", "evaluationBudget", "differentialWeight", "crossoverRate", "improvementTolerance", "patience"],
+      "required": ["algorithm", "seed", "populationSize", "evaluationBudget", "differentialWeight", "crossoverRate", "improvementTolerance", "patience", "initializationAttemptBudget"],
       "properties": {
         "algorithm": {"const": "differential-evolution"},
         "seed": {"type": "integer", "minimum": 0, "maximum": 4294967295},
@@ -61,7 +61,8 @@
         "differentialWeight": {"type": "number", "exclusiveMinimum": 0, "maximum": 2},
         "crossoverRate": {"type": "number", "exclusiveMinimum": 0, "maximum": 1},
         "improvementTolerance": {"type": "number", "minimum": 0},
-        "patience": {"type": "integer", "minimum": 1}
+        "patience": {"type": "integer", "minimum": 1},
+        "initializationAttemptBudget": {"type": "integer", "minimum": 1}
       }
     },
     "evidenceRefs": {"type": "array", "items": {"type": "string"}},

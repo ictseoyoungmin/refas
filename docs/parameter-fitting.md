@@ -16,7 +16,7 @@ The generic ledger is implemented in [parameter-fit.mjs](../skills/refas/scripts
 
 ## Projection repair backend
 
-`repairShapeFromProjection` is the first concrete `shape-reconstruction` loop. It derives typed findings from the baseline's realized projection, binds only `model.shape.*` or `model.geometry.*` parameters, asks a project worker to rebuild exact GLB bytes, re-measures those bytes through the digest-bound camera and node hierarchy, and requires an actual render reference for every trial. The generic bounded search then ranks the declared residuals:
+`repairShapeFromProjection` is the first concrete `shape-reconstruction` loop. It derives typed findings from the baseline's realized projection, binds only `model.shape.*` or `model.geometry.*` parameters, asks a project worker to rebuild exact GLB bytes, re-measures those bytes through the digest-bound camera and node hierarchy, and requires an actual render reference for every trial. The adapter reads the referenced report bytes and requires `assetSha256`, `cameraDigest`, `frameDigest`, `heroImageSha256`, and `renderer.name`/`renderer.version` to match the candidate proof; it also verifies the referenced hero image bytes. The generic bounded search then ranks the declared residuals:
 
 `macro-anchor-rmse`, `chain-angle-error`, `negative-space-loss`, `segment-iou-loss`, and `interface-boundary-error`.
 
@@ -32,7 +32,9 @@ The result contains the baseline and selected realized proofs, typed findings, t
 - Differential evolution proposes complete vectors rather than one-variable coordinate steps.
 - Source, baseline asset, normalized plan, seed, budget, every trial, selected trial, and stop reason are digest-bound.
 - Candidate and render references must match exact files under the CLI artifact root.
-- Projection repair additionally checks that each candidate reference's digest equals the generated GLB bytes before the trial is accepted.
+- Projection repair additionally checks that each candidate reference's bytes equal the generated GLB, and that the render report and hero image are semantically bound to that GLB, camera, and frame before the trial is accepted.
+- A projection finding carries a stable `checkId` (for example `projection.negative-space` or `projection.segment-iou`); rollback regression checks compare these checks rather than category totals.
+- An objective is unevaluable when its source evidence is absent. The repair plan rejects such objectives and never treats missing residuals as zero loss.
 - Every reference is verified again before report publication; the local worker is trusted executable code, not sandboxed input.
 - Protected measurements reject regressions; aggregate objectives only rank trials.
 - The engine never mutates project state. One visually inspected selected result may become the bounded edit's sole checkpoint candidate.
@@ -40,7 +42,7 @@ The result contains the baseline and selected realized proofs, typed findings, t
 
 ## Budget and performance
 
-Work is bounded by `evaluationBudget`; population size is at least four. Evaluation is sequential and deterministic because render workers often contend for GPU, framebuffer memory, or output paths. The independent fixture uses 32 actual portable-render evaluations. Projects choose a budget from measured worker latency and artifact storage, not a universal quality ceiling.
+Work is bounded by `evaluationBudget`; population size is at least four. Random population initialization also has a finite `initializationAttemptBudget`, and all-integer parameter spaces are capped at their exact unique-vector cardinality, so duplicate samples cannot loop forever. Evaluation is sequential and deterministic because render workers often contend for GPU, framebuffer memory, or output paths. The independent fixture uses actual portable-render evaluations. Projects choose a budget from measured worker latency and artifact storage, not a universal quality ceiling.
 
 ## Integration evidence
 

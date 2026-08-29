@@ -79,6 +79,7 @@ function normalizeOptimizer(raw = {}, parameterCount) {
   const crossoverRate = finite(raw.crossoverRate ?? 0.9, 'optimizer.crossoverRate');
   const improvementTolerance = finite(raw.improvementTolerance ?? 1e-6, 'optimizer.improvementTolerance');
   const patience = Number(raw.patience ?? Math.max(populationSize * 2, 12));
+  const initializationAttemptBudget = Number(raw.initializationAttemptBudget ?? Math.max(populationSize * 32, 64));
   if (String(raw.algorithm ?? ALGORITHM) !== ALGORITHM) throw new Error(`optimizer.algorithm must be ${ALGORITHM}`);
   if (!Number.isInteger(seed) || seed < 0 || seed > 0xffffffff) throw new Error('optimizer.seed must be an unsigned 32-bit integer');
   if (!Number.isInteger(populationSize) || populationSize < 4) throw new Error('optimizer.populationSize must be at least 4');
@@ -87,7 +88,8 @@ function normalizeOptimizer(raw = {}, parameterCount) {
   if (!(crossoverRate > 0 && crossoverRate <= 1)) throw new Error('optimizer.crossoverRate must be in (0, 1]');
   if (improvementTolerance < 0) throw new Error('optimizer.improvementTolerance must be non-negative');
   if (!Number.isInteger(patience) || patience < 1) throw new Error('optimizer.patience must be a positive integer');
-  return {algorithm: ALGORITHM, seed, populationSize, evaluationBudget, differentialWeight, crossoverRate, improvementTolerance, patience};
+  if (!Number.isInteger(initializationAttemptBudget) || initializationAttemptBudget < 1) throw new Error('optimizer.initializationAttemptBudget must be a positive integer');
+  return {algorithm: ALGORITHM, seed, populationSize, evaluationBudget, differentialWeight, crossoverRate, improvementTolerance, patience, initializationAttemptBudget};
 }
 
 export function createParameterFitPlan({
@@ -174,6 +176,26 @@ function encodeParameters(values, parameters) {
 
 function vectorKey(vector) {
   return vector.map((value) => Number(value).toPrecision(15)).join('|');
+}
+
+function finiteIntegerSearchSpaceCardinality(parameters) {
+  if (parameters.some((parameter) => parameter.kind !== 'integer')) return null;
+  let cardinality = 1;
+  for (const parameter of parameters) {
+    cardinality *= parameter.maximum - parameter.minimum + 1;
+    if (cardinality > Number.MAX_SAFE_INTEGER) return Number.MAX_SAFE_INTEGER;
+  }
+  return cardinality;
+}
+
+function integerVectorAt(index, parameters) {
+  let cursor = index;
+  return parameters.map((parameter) => {
+    const cardinality = parameter.maximum - parameter.minimum + 1;
+    const value = parameter.minimum + (cursor % cardinality);
+    cursor = Math.floor(cursor / cardinality);
+    return value;
+  });
 }
 
 function objectiveContribution(value, objective) {
@@ -267,12 +289,18 @@ export async function fitParameters(plan, evaluate, {verifyReference} = {}) {
   const initial = plan.parameters.map((parameter) => parameter.initial);
   const baseline = await run(initial, 'baseline', 0);
   const population = [baseline];
-  while (population.length < plan.optimizer.populationSize && trials.length < plan.optimizer.evaluationBudget) {
-    const vector = plan.parameters.map((parameter) => parameter.minimum + random() * (parameter.maximum - parameter.minimum));
+  const cardinality = finiteIntegerSearchSpaceCardinality(plan.parameters);
+  const populationTarget = cardinality == null ? plan.optimizer.populationSize : Math.min(plan.optimizer.populationSize, cardinality);
+  let initializationAttempts = 0;
+  while (population.length < populationTarget && trials.length < plan.optimizer.evaluationBudget && initializationAttempts < plan.optimizer.initializationAttemptBudget) {
+    initializationAttempts += 1;
+    const vector = cardinality == null
+      ? plan.parameters.map((parameter) => parameter.minimum + random() * (parameter.maximum - parameter.minimum))
+      : integerVectorAt(initializationAttempts - 1, plan.parameters);
     const evaluated = await run(vector, 'population', 0);
     if (evaluated) population.push(evaluated);
   }
-  if (population.length < 4) throw new Error('parameter search space produced fewer than four unique candidates');
+  if (population.length < 4) throw new Error('parameter search space was exhausted before four unique candidates could be initialized');
 
   let generation = 1;
   let stopReason = 'evaluation-budget';

@@ -15,12 +15,13 @@
     "baselineAssetSha256": {"$ref": "common.schema.json#/$defs/digest"},
     "optimizer": {
       "type": "object", "additionalProperties": false,
-      "required": ["algorithm", "seed", "populationSize", "evaluationBudget", "differentialWeight", "crossoverRate", "improvementTolerance", "patience"],
+      "required": ["algorithm", "seed", "populationSize", "evaluationBudget", "differentialWeight", "crossoverRate", "improvementTolerance", "patience", "initializationAttemptBudget"],
       "properties": {
         "algorithm": {"const": "differential-evolution"}, "seed": {"type": "integer", "minimum": 0, "maximum": 4294967295},
         "populationSize": {"type": "integer", "minimum": 4}, "evaluationBudget": {"type": "integer", "minimum": 5},
         "differentialWeight": {"type": "number", "exclusiveMinimum": 0, "maximum": 2}, "crossoverRate": {"type": "number", "exclusiveMinimum": 0, "maximum": 1},
-        "improvementTolerance": {"type": "number", "minimum": 0}, "patience": {"type": "integer", "minimum": 1}
+        "improvementTolerance": {"type": "number", "minimum": 0}, "patience": {"type": "integer", "minimum": 1},
+        "initializationAttemptBudget": {"type": "integer", "minimum": 1}
       }
     },
     "status": {"enum": ["IMPROVED", "NO_IMPROVEMENT"]},

@@ -417,7 +417,10 @@ def main():
     parser.add_argument("--max-working-mb", type=float, default=512.0)
     parser.add_argument("--tile-size", type=int, default=256)
     parser.add_argument("--max-triangles", type=int)
+    parser.add_argument("--camera-digest", help="digest of the digest-bound camera used by the fitting trial")
     args = parser.parse_args()
+    if args.camera_digest is not None and (len(args.camera_digest) != 64 or any(character not in "0123456789abcdef" for character in args.camera_digest.lower())):
+        raise ValueError("camera digest must be a lowercase SHA-256 digest")
     glb_path, output = Path(args.glb).resolve(), Path(args.out).resolve()
     canonical_frame_path = Path(args.frame).resolve() if args.frame else None
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -486,6 +489,11 @@ def main():
             "claimScope": "render-integrity-only",
             "statusMeaning": "All requested views rasterized from actual GLB geometry; visual similarity is not assessed.",
             "asset": {"path": str(glb_path), "sha256": sha256(glb_path), "generator": model.get("asset", {}).get("generator")},
+            "assetSha256": sha256(glb_path),
+            "cameraDigest": args.camera_digest,
+            "frameDigest": canonical_frame_digest,
+            "heroImageSha256": next((frame["sha256"] for frame in frames if frame["path"] == "hero.png"), None),
+            "renderer": {"family": "other", "name": "RefAs Portable Rasterizer", "version": "1.0.0", "backend": "offline-numpy-rasterizer"},
             "runtime": {"kind": "offline-numpy-rasterizer", "networkRequests": 0, "deterministicInputs": True},
             "materialSupport": {
                 "supported": ["base-color-factor", "metallic-factor", "roughness-factor"],

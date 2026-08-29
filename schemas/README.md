@@ -6,6 +6,6 @@ Runtime validators remain authoritative for semantic invariants that JSON Schema
 
 `canonical-object-frame.schema.json` also documents the editable frame input consumed directly by the renderer. The renderer remains authoritative for orthonormality, handedness, finite coordinates, exact GLB part-name resolution, and the canonical frame digest.
 
-`parameter-fit-plan.schema.json` and `parameter-fit-report.schema.json` define owner-local joint geometry search. The runtime additionally enforces bounds, protected-regression semantics, deterministic trial order, exact plan/report digests, and candidate/render byte verification.
+`parameter-fit-plan.schema.json` and `parameter-fit-report.schema.json` define owner-local joint geometry search. The runtime additionally enforces bounds, protected-regression semantics, deterministic trial order, bounded population initialization (`initializationAttemptBudget` plus finite integer-space cardinality), exact plan/report digests, and candidate/render byte verification.
 
-The optional shape-repair backend consumes those same plan/report contracts and derives its objective measurements from digest-bound realized projection proofs; it does not introduce a second evidence schema or mix material appearance terms into geometric segment IoU.
+The optional shape-repair backend consumes those same plan/report contracts and derives its objective measurements from digest-bound realized projection proofs; it binds each actual render report and hero image to the candidate GLB, camera, and frame, rejects unevaluable objectives, and does not introduce a second evidence schema or mix material appearance terms into geometric segment IoU.

@@ -81,6 +81,22 @@ test('protected measurements reject regressions while another geometry parameter
   assert.ok(report.trials.some((trial) => !trial.eligible && trial.protectedRegressions.some((item) => item.id === 'side-error')));
 });
 
+test('finite integer search spaces terminate population initialization', async () => {
+  const input = plan({
+    parameters: [
+      {id: 'span', binding: 'model.shape.span', kind: 'integer', minimum: 0, maximum: 1, initial: 0},
+      {id: 'bend', binding: 'model.shape.bend', kind: 'integer', minimum: 0, maximum: 1, initial: 0},
+    ],
+    optimizer: {seed: 5, populationSize: 8, evaluationBudget: 9, patience: 4, initializationAttemptBudget: 8},
+  });
+  const report = await fitParameters(input, async (parameters, context) => evidence(context, {
+    'shape-error': parameters.span + parameters.bend,
+  }), {verifyReference});
+  assert.ok(report.evaluationCount <= input.optimizer.evaluationBudget);
+  assert.ok(report.trials.length >= 4);
+  assert.ok(['evaluation-budget', 'search-space-exhausted'].includes(report.stopReason));
+});
+
 test('plans fail closed on cross-owner parameters and malformed evaluator evidence', async () => {
   assert.throws(() => plan({parameters: [
     {id: 'span', binding: 'model.shape.span', minimum: 0, maximum: 2, initial: 1},

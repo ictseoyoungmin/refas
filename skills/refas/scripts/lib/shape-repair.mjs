@@ -27,8 +27,8 @@ function assertGeometryBinding(binding, label) {
   return value;
 }
 
-function normalizedLoss(value, label, fallback = 0) {
-  if (value == null) return fallback;
+function requiredResidual(value, label) {
+  if (value == null) throw new Error(`${label} is unevaluable; the reference evidence required by this objective is missing`);
   return finiteMetric(value, label);
 }
 
@@ -37,21 +37,47 @@ function normalizedLoss(value, label, fallback = 0) {
  * vocabulary. These values are derived from the exact GLB hierarchy and
  * digest-bound camera; callers cannot provide projected coordinates here.
  */
-export function projectionResidualMeasurements(proof) {
+export function projectionResidualMeasurements(proof, objectiveIds = PROJECTION_REPAIR_METRIC_IDS) {
   const validation = validateRealizedProjection(proof);
   if (!validation.valid) throw new Error(`realized projection is invalid: ${validation.errors.join('; ')}`);
+  const requested = [...new Set(objectiveIds.map(String))];
+  for (const id of requested) if (!METRIC_SET.has(id)) throw new Error(`objective ${id} is not a projection repair metric`);
   const projection = proof.projectionFit.metrics;
-  const measurements = {
-    'macro-anchor-rmse': normalizedLoss(projection.macroAnchorRmseNormalized, 'macroAnchorRmseNormalized'),
-    'chain-angle-error': normalizedLoss(projection.chainAngleRmseDegrees, 'chainAngleRmseDegrees') / 180,
-    'negative-space-loss': projection.negativeSpaceMeanIoU == null ? 0 : 1 - finiteMetric(projection.negativeSpaceMeanIoU, 'negativeSpaceMeanIoU'),
-    'segment-iou-loss': proof.segmentationMetrics?.sourceVisibleSegmentMeanIoU == null ? 0 : 1 - finiteMetric(proof.segmentationMetrics.sourceVisibleSegmentMeanIoU, 'sourceVisibleSegmentMeanIoU'),
-    'interface-boundary-error': normalizedLoss(proof.segmentationMetrics?.interfaceBoundaryMeanErrorNormalized, 'interfaceBoundaryMeanErrorNormalized'),
-  };
+  const measurements = {};
+  for (const id of requested) {
+    measurements[id] = {
+      'macro-anchor-rmse': () => requiredResidual(projection.macroAnchorRmseNormalized, 'macroAnchorRmseNormalized'),
+      'chain-angle-error': () => requiredResidual(projection.chainAngleRmseDegrees, 'chainAngleRmseDegrees') / 180,
+      'negative-space-loss': () => 1 - requiredResidual(projection.negativeSpaceMeanIoU, 'negativeSpaceMeanIoU'),
+      'segment-iou-loss': () => 1 - requiredResidual(proof.segmentationMetrics?.sourceVisibleSegmentMeanIoU, 'sourceVisibleSegmentMeanIoU'),
+      'interface-boundary-error': () => requiredResidual(proof.segmentationMetrics?.interfaceBoundaryMeanErrorNormalized, 'interfaceBoundaryMeanErrorNormalized'),
+    }[id]();
+  }
   return deepFreeze(measurements);
 }
 
-export function validateProjectionRepairPlan(plan) {
+function referenceObjectiveErrors(referenceGeometry, objectives = []) {
+  if (!referenceGeometry) return [];
+  const errors = [];
+  const hasMacroAnchors = (referenceGeometry.anchors ?? []).some((anchor) => anchor.importance !== 'detail' && !['occluded', 'inferred'].includes(anchor.visibility));
+  const hasChain = (referenceGeometry.chains ?? []).some((chain) => (chain.anchorIds ?? []).length >= 2);
+  const hasNegativeSpace = (referenceGeometry.negativeSpaces ?? []).length > 0;
+  const hasSegments = (referenceGeometry.segments ?? []).some((segment) => segment.importance !== 'detail' && !['occluded', 'inferred'].includes(segment.visibility));
+  const hasInterface = (referenceGeometry.interfaces ?? []).length > 0;
+  for (const objective of objectives) {
+    const available = {
+      'macro-anchor-rmse': hasMacroAnchors,
+      'chain-angle-error': hasChain,
+      'negative-space-loss': hasNegativeSpace,
+      'segment-iou-loss': hasSegments,
+      'interface-boundary-error': hasInterface && hasSegments,
+    }[objective.id];
+    if (available === false) errors.push(`objective ${objective.id} requires reference evidence that is not declared by the reference geometry`);
+  }
+  return errors;
+}
+
+export function validateProjectionRepairPlan(plan, referenceGeometry = null) {
   const validation = validateParameterFitPlan(plan);
   const errors = [...validation.errors];
   for (const parameter of plan?.parameters ?? []) {
@@ -62,6 +88,7 @@ export function validateProjectionRepairPlan(plan) {
     if (!METRIC_SET.has(objective.id)) errors.push(`objective ${objective.id} is not a projection repair metric`);
     else if (objective.goal !== 'minimize') errors.push(`projection repair objective ${objective.id} must minimize residual error`);
   }
+  errors.push(...referenceObjectiveErrors(referenceGeometry, plan?.objectives ?? []));
   return {valid: errors.length === 0, errors};
 }
 
@@ -71,8 +98,9 @@ export function validateProjectionRepairPlan(plan) {
  * are rejected at this boundary and must be fitted by their owning capability.
  */
 export function createProjectionRepairPlan(options = {}) {
-  const plan = createParameterFitPlan(options);
-  const validation = validateProjectionRepairPlan(plan);
+  const {referenceGeometry = null, ...planOptions} = options;
+  const plan = createParameterFitPlan(planOptions);
+  const validation = validateProjectionRepairPlan(plan, referenceGeometry);
   if (!validation.valid) throw new Error(`projection repair plan is invalid: ${validation.errors.join('; ')}`);
   return plan;
 }
@@ -87,18 +115,56 @@ function normalizedFindings(proof, thresholds) {
   return findingsFromRealizedProjection(proof, thresholds);
 }
 
-function blockingCategoryCounts(findings) {
+function findingCheckId(finding) {
+  return finding.checkId ?? `${finding.category}:${finding.scopeId}`;
+}
+
+function blockingCheckCounts(findings) {
   const counts = new Map();
-  for (const finding of findings) if (finding.blocking) counts.set(finding.category, (counts.get(finding.category) ?? 0) + 1);
+  for (const finding of findings) if (finding.blocking) {
+    const checkId = findingCheckId(finding);
+    counts.set(checkId, (counts.get(checkId) ?? 0) + 1);
+  }
   return counts;
 }
 
 function blockingRegressions(baselineFindings, selectedFindings) {
-  const baseline = blockingCategoryCounts(baselineFindings);
-  const selected = blockingCategoryCounts(selectedFindings);
+  const baseline = blockingCheckCounts(baselineFindings);
+  const selected = blockingCheckCounts(selectedFindings);
   return [...selected.entries()]
-    .filter(([category, count]) => count > (baseline.get(category) ?? 0))
-    .map(([category, count]) => ({category, baselineCount: baseline.get(category) ?? 0, selectedCount: count}));
+    .filter(([checkId, count]) => count > (baseline.get(checkId) ?? 0))
+    .map(([checkId, count]) => ({checkId, baselineCount: baseline.get(checkId) ?? 0, selectedCount: count}));
+}
+
+function bytesFromReference(value, label) {
+  if (value instanceof Uint8Array || Buffer.isBuffer(value)) return Buffer.from(value);
+  if (typeof value === 'string') return Buffer.from(value);
+  throw new Error(`${label} reader must return exact bytes`);
+}
+
+async function readExactReference(reference, label, readReference) {
+  const bytes = bytesFromReference(await readReference(reference, label), label);
+  if (bytes.length !== reference.sizeBytes || digestBytes(bytes) !== reference.sha256) {
+    throw new Error(`${label} bytes do not match its content reference`);
+  }
+  return bytes;
+}
+
+function validateRenderReportBinding(report, {assetSha256, cameraDigest, frameDigest, label}) {
+  if (!report || typeof report !== 'object') throw new Error(`${label} must be a parsed actual render report`);
+  if (report.schema !== 'refas.multiview-render-report/v1') throw new Error(`${label}.schema must be refas.multiview-render-report/v1 from the portable renderer`);
+  if (report.status !== 'PASS') throw new Error(`${label}.status must be PASS`);
+  if (report.assetSha256 !== assetSha256) throw new Error(`${label}.assetSha256 must bind the exact candidate GLB`);
+  if (report.asset?.sha256 != null && report.asset.sha256 !== report.assetSha256) throw new Error(`${label}.asset.sha256 must agree with assetSha256`);
+  if (report.cameraDigest !== cameraDigest) throw new Error(`${label}.cameraDigest must bind the realized projection camera`);
+  if (report.frameDigest !== frameDigest) throw new Error(`${label}.frameDigest must bind the requested render frame`);
+  assertDigest(report.heroImageSha256, `${label}.heroImageSha256`);
+  if (!report.renderer || typeof report.renderer.name !== 'string' || !report.renderer.name || typeof report.renderer.version !== 'string' || !report.renderer.version) {
+    throw new Error(`${label}.renderer.name and renderer.version are required`);
+  }
+  const hero = Array.isArray(report.frames) ? report.frames.find((frame) => frame?.path === 'hero.png') : null;
+  if (!hero || hero.sha256 !== report.heroImageSha256) throw new Error(`${label} must bind heroImageSha256 to the rendered hero frame`);
+  if (hero.frameBinding?.frameDigest !== frameDigest) throw new Error(`${label} hero frame binding must agree with frameDigest`);
 }
 
 /**
@@ -114,30 +180,47 @@ export function createProjectionRepairEvaluator({
   camera,
   anchorBindings = [],
   segmentBindings = [],
+  frameDigest,
   buildCandidate,
   renderCandidate,
+  readReference,
   thresholds = {},
 } = {}) {
-  const validation = validateProjectionRepairPlan(plan);
+  const validation = validateProjectionRepairPlan(plan, referenceGeometry);
   if (!validation.valid) throw new Error(`projection repair plan is invalid: ${validation.errors.join('; ')}`);
   if (referenceGeometry?.scopeId !== plan.scopeId) throw new Error('reference geometry scope does not match the fit plan');
   if (referenceGeometry?.sourceSha256 !== plan.sourceSha256) throw new Error('reference geometry source digest does not match the fit plan');
   if (typeof buildCandidate !== 'function') throw new Error('buildCandidate must return exact GLB bytes for each parameter vector');
   if (typeof renderCandidate !== 'function') throw new Error('renderCandidate must render each exact candidate GLB and return verified content references');
+  if (typeof readReference !== 'function') throw new Error('readReference must return exact bytes for candidate and render references');
+  assertDigest(frameDigest, 'frameDigest');
 
   const proofs = new Map();
+  const heroImages = new Map();
   const projectionArgs = {referenceGeometry, cameraHypothesisId, camera, anchorBindings, segmentBindings, evidenceRefs: plan.evidenceRefs};
   const evaluate = async (parameters, context) => {
     const glb = normalizeGlb(await buildCandidate(parameters, context), `candidate ${context.trialId}`);
     const proof = createRealizedProjection({...projectionArgs, glb});
     const rendered = await renderCandidate({glb, parameters, context, proof});
     if (!rendered || typeof rendered !== 'object') throw new Error(`candidate ${context.trialId} renderer must return an object`);
-    if (rendered.candidateAsset?.sha256 !== digestBytes(glb)) throw new Error(`candidate ${context.trialId} candidateAsset must bind the exact generated GLB bytes`);
-    if (!rendered.candidateAsset || !rendered.renderEvidence) throw new Error(`candidate ${context.trialId} renderer must return candidateAsset and renderEvidence references`);
+    if (!rendered.candidateAsset || !rendered.renderEvidence || !rendered.heroImage) throw new Error(`candidate ${context.trialId} renderer must return candidateAsset, renderEvidence, and heroImage references`);
+    if (rendered.candidateAsset.kind !== 'glb') throw new Error(`candidate ${context.trialId} candidateAsset must be a GLB content reference`);
+    if (rendered.renderEvidence.kind !== 'render-report') throw new Error(`candidate ${context.trialId} renderEvidence must be a render-report content reference`);
+    if (rendered.heroImage.kind !== 'render-image') throw new Error(`candidate ${context.trialId} heroImage must be a render-image content reference`);
+    const candidateBytes = await readExactReference(rendered.candidateAsset, `${context.trialId}.candidateAsset`, readReference);
+    if (!candidateBytes.equals(glb)) throw new Error(`candidate ${context.trialId} candidateAsset must bind the exact generated GLB bytes`);
+    const renderBytes = await readExactReference(rendered.renderEvidence, `${context.trialId}.renderEvidence`, readReference);
+    let report;
+    try { report = JSON.parse(renderBytes.toString('utf8')); }
+    catch (error) { throw new Error(`candidate ${context.trialId} renderEvidence is not valid JSON: ${error.message}`); }
+    validateRenderReportBinding(report, {assetSha256: proof.assetSha256, cameraDigest: proof.cameraDigest, frameDigest, label: `${context.trialId}.renderEvidence`});
+    const heroBytes = await readExactReference(rendered.heroImage, `${context.trialId}.heroImage`, readReference);
+    if (digestBytes(heroBytes) !== report.heroImageSha256) throw new Error(`candidate ${context.trialId} heroImage must bind the report heroImageSha256`);
     proofs.set(context.trialId, proof);
-    return {measurements: projectionResidualMeasurements(proof), ...rendered};
+    heroImages.set(context.trialId, rendered.heroImage);
+    return {measurements: projectionResidualMeasurements(proof, plan.objectives.map((objective) => objective.id)), ...rendered};
   };
-  return deepFreeze({evaluate, proofs});
+  return deepFreeze({evaluate, proofs, heroImages});
 }
 
 /**
@@ -154,20 +237,27 @@ export async function repairShapeFromProjection({
   camera,
   anchorBindings = [],
   segmentBindings = [],
+  frameDigest,
   buildCandidate,
   renderCandidate,
   verifyReference,
+  readReference,
   thresholds = {},
 } = {}) {
-  const validation = validateProjectionRepairPlan(plan);
+  const validation = validateProjectionRepairPlan(plan, referenceGeometry);
   if (!validation.valid) throw new Error(`projection repair plan is invalid: ${validation.errors.join('; ')}`);
   const baselineBytes = normalizeGlb(baselineGlb, 'baselineGlb');
   assertDigest(plan.baselineAsset.sha256, 'plan.baselineAsset.sha256');
   if (digestBytes(baselineBytes) !== plan.baselineAsset.sha256) throw new Error('baselineGlb does not match plan.baselineAsset SHA-256');
   const baselineProof = createRealizedProjection({referenceGeometry, glb: baselineBytes, cameraHypothesisId, camera, anchorBindings, segmentBindings, evidenceRefs: plan.evidenceRefs});
   const baselineFindings = normalizedFindings(baselineProof, thresholds);
-  const evaluator = createProjectionRepairEvaluator({plan, referenceGeometry, cameraHypothesisId, camera, anchorBindings, segmentBindings, buildCandidate, renderCandidate, thresholds});
+  const evaluator = createProjectionRepairEvaluator({plan, referenceGeometry, cameraHypothesisId, camera, anchorBindings, segmentBindings, frameDigest, buildCandidate, renderCandidate, readReference, thresholds});
   const report = await fitParameters(plan, evaluator.evaluate, {verifyReference});
+  for (const trial of report.trials) {
+    const heroImage = evaluator.heroImages.get(trial.id);
+    if (!heroImage) throw new Error(`${trial.id} did not retain a hero image reference`);
+    await verifyReference(heroImage, `${trial.id}.heroImage.final`);
+  }
   const selectedProof = evaluator.proofs.get(report.selectedTrialId);
   if (!selectedProof) throw new Error(`selected trial ${report.selectedTrialId} did not produce realized projection evidence`);
   const selectedFindings = normalizedFindings(selectedProof, thresholds);
@@ -178,6 +268,7 @@ export async function repairShapeFromProjection({
     baselineFindings,
     report,
     selectedProof,
+    selectedHeroImage: evaluator.heroImages.get(report.selectedTrialId),
     selectedFindings,
     blockingRegressions: regressions,
     decision,

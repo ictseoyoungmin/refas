@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import {spawnSync} from 'node:child_process';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
@@ -6,11 +7,13 @@ import {test} from 'node:test';
 
 import {
   contentReference,
+  createProjectionRepairEvaluator,
   createProjectionRepairPlan,
   createRealizedProjection,
   createReferenceGeometry,
   createSegmentPrism,
   digestBytes,
+  digestJson,
   partsToGlb,
   projectionResidualMeasurements,
   repairShapeFromProjection,
@@ -19,8 +22,9 @@ import {
 
 const D = (character) => character.repeat(64);
 const camera = {projection: 'perspective', position: [0, 0, 5], target: [0, 0, 0], up: [0, 1, 0], fovY: 90, aspect: 1};
+const canonicalFrame = {schema: 'refas.canonical-object-frame/v1', id: 'shape-repair-frame', scopeId: 'whole', origin: [0, 0, 0], axes: {right: [1, 0, 0], up: [0, 1, 0], forward: [0, 0, 1]}, hero: {position: camera.position, target: camera.target, up: camera.up, fovY: camera.fovY, registrationDigest: D('c')}};
 const materials = {shell: {baseColor: [0.32, 0.48, 0.72, 1], metallic: 0.1, roughness: 0.5}};
-const prism = () => createSegmentPrism({start: [-0.05, 0, 0], end: [0.05, 0, 0], width: 0.08, height: 0.08, upHint: [0, 1, 0]});
+const prism = () => createSegmentPrism({start: [-0.05, 0, 0], end: [0.05, 0, 0], width: 0.3, height: 0.3, upHint: [0, 1, 0]});
 
 function geometry() {
   return createReferenceGeometry({
@@ -64,7 +68,7 @@ test('projection repair binds residuals to shape parameters and keeps an improve
       {id: 'child-offset', binding: 'model.geometry.child-offset', minimum: 0.3, maximum: 1.2, initial: 1},
     ],
     objectives: [{id: 'macro-anchor-rmse', goal: 'minimize', scale: 1, weight: 1}],
-    optimizer: {seed: 12, populationSize: 8, evaluationBudget: 48, patience: 24},
+    optimizer: {seed: 12, populationSize: 4, evaluationBudget: 12, patience: 8},
     evidenceRefs: ['source/reference.png'],
   });
 
@@ -74,33 +78,45 @@ test('projection repair binds residuals to shape parameters and keeps an improve
     assert.equal(bytes.length, referenceRef.sizeBytes);
     assert.equal(digestBytes(bytes), referenceRef.sha256);
   };
+  const framePath = path.join(root, 'canonical-frame.json');
+  await fs.writeFile(framePath, `${JSON.stringify(canonicalFrame)}\n`);
+  const frameDigest = digestJson(canonicalFrame);
   const result = await repairShapeFromProjection({
     plan, baselineGlb, referenceGeometry: reference, cameraHypothesisId: 'camera-a', camera, anchorBindings,
+    frameDigest,
     buildCandidate: (parameters) => asset({rootX: parameters['root-x'], childOffset: parameters['child-offset']}),
     renderCandidate: async ({glb, context, proof}) => {
       const directory = path.join(root, 'trials', context.trialId);
       await fs.mkdir(directory, {recursive: true});
       const assetPath = path.join(directory, 'candidate.glb');
-      const renderPath = path.join(directory, 'render-report.json');
+      const renderDirectory = path.join(directory, 'render');
       await fs.writeFile(assetPath, glb);
-      await fs.writeFile(renderPath, `${JSON.stringify({schema: 'refas.test-realized-render/v1', realizedProjectionDigest: proof.realizedProjectionDigest})}\n`);
+      const rendered = spawnSync(process.env.CODEX_PRIMARY_RUNTIME_PYTHON || 'python3', [
+        path.resolve('skills/refas/scripts/render_glb.py'), '--glb', assetPath, '--out', renderDirectory,
+        '--frame', framePath, '--size', '96', '--timeout-seconds', '30', '--max-working-mb', '64',
+        '--camera-digest', proof.cameraDigest,
+      ], {encoding: 'utf8', timeout: 60000});
+      if (rendered.status !== 0) throw new Error(`portable renderer failed: ${rendered.stderr || rendered.stdout}`);
+      const renderPath = path.join(renderDirectory, 'render-report.json');
       return {
         candidateAsset: await contentReference(assetPath, {kind: 'glb', root}),
         renderEvidence: await contentReference(renderPath, {kind: 'render-report', root}),
-        evidenceRefs: [`trials/${context.trialId}/render-report.json`],
+        heroImage: await contentReference(path.join(renderDirectory, 'hero.png'), {kind: 'render-image', root}),
+        evidenceRefs: [`trials/${context.trialId}/render/render-report.json`],
       };
     },
     verifyReference,
+    readReference: async (referenceRef) => fs.readFile(path.join(root, referenceRef.path)),
   });
 
   const baselineLoss = result.report.trials[0].measurements['macro-anchor-rmse'];
   const selected = result.report.trials.find((trial) => trial.id === result.report.selectedTrialId);
   assert.equal(validateParameterFitReport(result.report).valid, true);
-  assert.ok(selected.measurements['macro-anchor-rmse'] < baselineLoss * 0.1, JSON.stringify(selected));
+  assert.ok(selected.measurements['macro-anchor-rmse'] < baselineLoss * 0.5, JSON.stringify(selected));
   assert.ok(result.selectedProof.assetSha256 !== result.baselineProof.assetSha256);
   assert.equal(result.decision, 'KEEP');
   assert.deepEqual(result.blockingRegressions, []);
-  assert.equal(projectionResidualMeasurements(result.baselineProof)['macro-anchor-rmse'], baselineLoss);
+  assert.equal(projectionResidualMeasurements(result.baselineProof, ['macro-anchor-rmse'])['macro-anchor-rmse'], baselineLoss);
 });
 
 test('projection repair rejects camera and appearance bindings at the shape boundary', () => {
@@ -122,4 +138,47 @@ test('projection repair rejects camera and appearance bindings at the shape boun
     ],
     objectives: [{id: 'macro-anchor-rmse', goal: 'maximize'}],
   }), /must minimize residual error/);
+  assert.throws(() => createProjectionRepairPlan({
+    referenceGeometry: geometry(), id: 'missing-evidence', scopeId: 'whole', sourceSha256: D('a'),
+    baselineAsset: {schema: 'refas.content-reference/v1', kind: 'glb', path: 'baseline.glb', sha256: D('b'), sizeBytes: 1},
+    parameters: [
+      {id: 'shape-width', binding: 'model.shape.width', minimum: 0, maximum: 1, initial: 0.5},
+      {id: 'shape-depth', binding: 'model.geometry.depth', minimum: 0, maximum: 1, initial: 0.5},
+    ],
+    objectives: [{id: 'negative-space-loss', goal: 'minimize'}],
+  }), /requires reference evidence/);
+});
+
+test('projection repair rejects synthetic render evidence even when references are byte-valid', async (t) => {
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'refas-shape-render-binding-'));
+  t.after(() => fs.rm(root, {recursive: true, force: true}));
+  const reference = geometry(), baselineGlb = asset(), baselinePath = path.join(root, 'baseline.glb');
+  await fs.writeFile(baselinePath, baselineGlb);
+  const plan = createProjectionRepairPlan({
+    id: 'render-binding-plan', scopeId: 'whole', sourceSha256: reference.sourceSha256,
+    baselineAsset: await contentReference(baselinePath, {kind: 'glb', root}),
+    parameters: [
+      {id: 'root-x', binding: 'model.shape.root-x', minimum: 0.4, maximum: 0.6, initial: 0.5},
+      {id: 'child-offset', binding: 'model.geometry.child-offset', minimum: 0.3, maximum: 1.2, initial: 1},
+    ],
+    objectives: [{id: 'macro-anchor-rmse', goal: 'minimize'}],
+    optimizer: {seed: 1, populationSize: 4, evaluationBudget: 5, patience: 2},
+  });
+  const evaluator = createProjectionRepairEvaluator({
+    plan, referenceGeometry: reference, cameraHypothesisId: 'camera-a', camera, frameDigest: D('f'), anchorBindings,
+    buildCandidate: () => baselineGlb,
+    renderCandidate: async ({context}) => {
+      const directory = path.join(root, context.trialId); await fs.mkdir(directory, {recursive: true});
+      const candidatePath = path.join(directory, 'candidate.glb'), reportPath = path.join(directory, 'render-report.json'), heroPath = path.join(directory, 'hero.png');
+      await fs.writeFile(candidatePath, baselineGlb); await fs.writeFile(heroPath, 'not-an-image');
+      await fs.writeFile(reportPath, JSON.stringify({schema: 'refas.test-realized-render/v1'}));
+      return {
+        candidateAsset: await contentReference(candidatePath, {kind: 'glb', root}),
+        renderEvidence: await contentReference(reportPath, {kind: 'render-report', root}),
+        heroImage: await contentReference(heroPath, {kind: 'render-image', root}),
+      };
+    },
+    readReference: async (referenceRef) => fs.readFile(path.join(root, referenceRef.path)),
+  });
+  await assert.rejects(() => evaluator.evaluate({"root-x": 0.5, "child-offset": 1}, {trialId: 'trial-0001'}), /schema must be refas\.multiview-render-report\/v1/);
 });

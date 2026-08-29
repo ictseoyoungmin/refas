@@ -16,12 +16,14 @@ const result = await repairShapeFromProjection({
   anchorBindings, segmentBindings,
   buildCandidate: (parameters, context) => buildExactGlb(parameters, context),
   renderCandidate: ({glb, parameters, context, proof}) => renderAndReturnReferences(glb, parameters, context, proof),
+  frameDigest,
+  readReference,
   verifyReference,
 });
 // result.decision is KEEP or ROLLBACK; project state is never mutated here.
 ```
 
-`renderCandidate` must write an actual candidate render and return `candidateAsset` plus `renderEvidence` references. The adapter verifies that `candidateAsset.sha256` is the digest of the generated GLB, then the normal ledger verifier checks the exact files. `KEEP` only means that the ranked candidate improved without adding a blocking typed finding; visual review and the one-checkpoint bounded-edit rule still decide whether it is adopted.
+`renderCandidate` must write an actual candidate render and return `candidateAsset`, `renderEvidence`, and `heroImage` references. `renderEvidence` must be a portable render report whose file binds `assetSha256`, the realized `cameraDigest`, the requested `frameDigest`, a `heroImageSha256`, and a renderer name/version. The adapter reads and hashes all three referenced files, checks the report's hero entry against the hero image bytes, and rejects synthetic or cross-trial evidence. `KEEP` only means that the ranked candidate improved without adding a blocking typed finding; visual review and the one-checkpoint bounded-edit rule still decide whether it is adopted.
 
 The worker is executable local code. Run only a project worker you trust and review; the artifact root limits evidence paths but is not a code sandbox.
 
@@ -64,6 +66,6 @@ An aggressive hypothesis is allowed as a trial. It remains a hypothesis until ac
 
 ## Resource and failure semantics
 
-Set the evaluation budget from measured renderer time and storage. Evaluation is deterministic and sequential so trial order, evidence, and stop reason remain reproducible. Every reference is verified when returned and again before report publication so overwritten trial evidence fails closed. An evaluator exception, missing measurement, non-finite value, path escape, missing file, size mismatch, or digest mismatch fails closed instead of skipping a trial.
+Set the evaluation budget from measured renderer time and storage. Evaluation is deterministic and sequential so trial order, evidence, and stop reason remain reproducible. Every reference is verified when returned and again before report publication so overwritten trial evidence fails closed. An evaluator exception, missing measurement, non-finite value, path escape, missing file, size mismatch, semantic render binding mismatch, or digest mismatch fails closed instead of skipping a trial. Missing source evidence for a declared projection objective is rejected during plan validation; it is never converted to a zero (perfect) residual. Population initialization has a bounded attempt count and exact finite-space cardinality handling, so duplicate integer vectors cannot hang a fit.
 
 The derivative-free backend handles discontinuous render measurements and external generators but does not guarantee a global optimum. Reopen the representation when repeated populations converge to visibly inadequate geometry, required form cannot be expressed by declared parameters, or a different owner must move jointly.
