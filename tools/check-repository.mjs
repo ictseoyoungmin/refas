@@ -44,9 +44,9 @@ async function main() {
     '.github/ISSUE_TEMPLATE/defect.yml', '.github/ISSUE_TEMPLATE/capability-change.yml',
     '.github/ISSUE_TEMPLATE/release-readiness.yml', '.github/ISSUE_TEMPLATE/documentation-governance.yml',
     '.github/workflows/ci.yml', '.github/workflows/sync-labels.yml', 'docs/github-governance.md',
-    'skills/refas/SKILL.md', 'skills/refas/scripts/refas.mjs', 'skills/refas/scripts/render_pbr.py', 'skills/refas/scripts/lib/index.mjs',
+    'skills/refas/SKILL.md', 'skills/refas/references/parameter-fitting.md', 'skills/refas/scripts/refas.mjs', 'skills/refas/scripts/render_pbr.py', 'skills/refas/scripts/lib/index.mjs', 'skills/refas/scripts/lib/parameter-fit.mjs', 'skills/refas/scripts/lib/shape-repair.mjs',
     'schemas/source-manifest.schema.json', 'schemas/checkpoint.schema.json', 'schemas/visual-review.schema.json', 'schemas/whole-object-certificate.schema.json',
-    'tests/contracts.test.mjs', 'tests/cli.test.mjs', 'tests/governance.test.mjs', 'examples/wing-cover/run.mjs', 'examples/material-fixture/run.mjs', 'examples/hard-surface/run.mjs', 'examples/modular-assembly/run.mjs',
+    'tests/contracts.test.mjs', 'tests/cli.test.mjs', 'tests/parameter-fit.test.mjs', 'tests/shape-repair.test.mjs', 'tests/governance.test.mjs', 'examples/wing-cover/run.mjs', 'examples/material-fixture/run.mjs', 'examples/hard-surface/run.mjs', 'examples/modular-assembly/run.mjs', 'examples/parameter-fit/run.mjs',
   ];
   const missing = [];
   for (const file of required) {
@@ -91,6 +91,8 @@ async function main() {
     'refas.hard-surface-spec/v1',
     'refas.realized-assembly-proof/v1',
     'refas.construction-quality/v1',
+    'refas.parameter-fit-plan/v1',
+    'refas.parameter-fit-report/v1',
   ]) if (!schemaContracts.has(contract)) throw new Error(`public schema missing for ${contract}`);
 
   const templateFiles = (await walk('skills/refas/assets/templates')).filter((file) => file.endsWith('.json'));

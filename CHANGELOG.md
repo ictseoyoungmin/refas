@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Added deterministic evidence-bound joint geometry parameter fitting, exact-byte trial verification, protected-regression handling, a public worker CLI, and an actual GLB/render dogfood while preserving score, ownership, checkpoint, and certification boundaries.
+
 - Added an independently executed deterministic Cook–Torrance PBR renderer, canonical `render-pbr` CLI path, and a four-material eight-view reproducibility dogfood.
 - Added a fail-closed independent PBR renderer evidence contract for Blender Cycles/Eevee, Three.js/WebGL, Filament, glTF Sample Viewer, VTK, and equivalent backends after the portable integrity gate.
 - Bound final appearance review to exact renderer/version/backend, asset and frame digests, lighting and color pipeline, declared material support, and digest-addressed output frames.

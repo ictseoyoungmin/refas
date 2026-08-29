@@ -14,12 +14,14 @@ export function normalizeFinding(raw) {
   const scopeId = assertId(raw.scopeId, 'finding.scopeId');
   const ownerCapability = raw.ownerCapability ? assertCapability(raw.ownerCapability) : FINDING_OWNERS[category];
   const evidenceRefs = [...(raw.evidenceRefs ?? [])].map(String).filter(Boolean);
+  const checkId = raw.checkId == null ? null : assertId(raw.checkId, 'finding.checkId');
   if (!category) throw new Error('finding.category is required');
   if (!ownerCapability && BLOCKING_SEVERITIES.has(severity)) {
     return deepFreeze({
       schema: 'refas.finding/v1', category, severity, scopeId,
       summary: String(raw.summary ?? category),
       evidenceRefs,
+      ...(checkId ? {checkId} : {}),
       ownerCapability: null,
       introducedByEdit: raw.introducedByEdit === true,
       routable: false,
@@ -31,6 +33,7 @@ export function normalizeFinding(raw) {
     schema: 'refas.finding/v1', category, severity, scopeId,
     summary: String(raw.summary ?? category),
     evidenceRefs,
+    ...(checkId ? {checkId} : {}),
     ownerCapability: ownerCapability ?? null,
     introducedByEdit: raw.introducedByEdit === true,
     routable: ownerCapability != null,

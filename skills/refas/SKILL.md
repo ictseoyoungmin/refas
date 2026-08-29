@@ -1,6 +1,6 @@
 ---
 name: refas
-description: Reconstruct a reference image as a traceable, editable, and visually certified 3D asset. Use for image-to-3D work that requires whole-to-part observation, explicit uncertainty, projection-aware modeling, immutable child assembly, multiview rendering, objective visual critique, or safe checkpoint and rollback routing; especially when a quick img2threejs approximation is not sufficient.
+description: Reconstruct a reference image as a traceable, editable, and visually certified 3D asset. Use for image-to-3D work that requires whole-to-part observation, explicit uncertainty, projection-aware modeling, immutable child assembly, multiview rendering, objective visual critique, or safe checkpoint and rollback routing; especially when a quick approximation is not sufficient.
 ---
 
 # RefAs — Reference Asset Foundry
@@ -21,7 +21,7 @@ Then load only the references owned by the active capability:
 |---|---|
 | Source, hierarchy, observation | `references/observation.md`, `references/provenance.md` |
 | Camera, depth, spatial inference | `references/spatial-reasoning.md` |
-| Shape and surface construction | `references/construction.md` |
+| Shape and surface construction | `references/construction.md`; also `references/parameter-fitting.md` when measurements should drive parameter updates |
 | Organic or articulated manufactured shape | `references/organic-articulated-construction.md` after `references/construction.md` |
 | Parent/child placement | `references/assembly.md` |
 | Material identity and finish | `references/appearance.md` |
@@ -83,11 +83,12 @@ Follow the semantic capability order in `references/workflow.md`.
 5. Reconstruct the dominant silhouette and mass before decoration.
 6. Pass the whole-shape dependency barrier: registered silhouette, major landmarks, principal sections, curvature transitions, and coarse negative spaces.
 7. Anchor visible boundaries and relief to the reference projection.
-8. Assemble closed children in a parent reference frame.
-9. Add appearance only after geometry can explain the image.
-10. Render the standard multiview set.
-11. Log typed findings, route them to the owning capability, and repair only the invalidated span.
-12. Certify the whole object only when every closure gate has current evidence.
+8. When a parameterized shape backend exists, fit multiple owner-local geometry parameters through verified actual-render trials; inspect the selected trial before making it the edit's single checkpoint candidate.
+9. Assemble closed children in a parent reference frame.
+10. Add appearance only after geometry can explain the image.
+11. Render the standard multiview set.
+12. Log typed findings, route them to the owning capability, and repair only the invalidated span.
+13. Certify the whole object only when every closure gate has current evidence.
 
 After each capability reaches a trustworthy state, commit a checkpoint:
 
@@ -129,6 +130,8 @@ node scripts/refas.mjs finish-edit \
 ```
 
 The decision is one of `KEEP_EDIT`, `ROLLBACK_EDIT`, `REOPEN_OWNER`, `REQUEST_REVIEW`, or `MAY_CLOSE`. Never manually reinterpret a rollback result as success.
+
+An owner-local parameter fit may evaluate many digest-bound trials inside this transaction. Those trials are comparison evidence, not checkpoints. When an actual GLB and realized projection are available, use the optional `repairShapeFromProjection` backend to bind projection residuals to geometry parameters and return an advisory `KEEP`/`ROLLBACK`; only the visually inspected selected trial may become the transaction's one direct candidate. See `references/parameter-fitting.md`.
 
 If work must stop before a decision, use `abort-edit`; it restores the baseline artifact bytes. On a fresh agent turn, run `resume` before mutating anything. It returns one safe checkpoint, one capability × scope, and one next action.
 

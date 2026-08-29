@@ -1,0 +1,23 @@
+{
+  "schema": "refas.parameter-fit-plan/v1",
+  "id": "whole-shape-fit",
+  "scopeId": "whole",
+  "sourceSha256": "replace-with-source-sha256",
+  "baselineAsset": {
+    "schema": "refas.content-reference/v1",
+    "kind": "glb",
+    "path": "assets/baseline.glb",
+    "sha256": "replace-with-asset-sha256",
+    "sizeBytes": 0
+  },
+  "parameters": [
+    {"id": "span", "binding": "model.shape.span", "kind": "continuous", "minimum": 0.5, "maximum": 2, "initial": 1, "evidenceRefs": ["model/reference-geometry.json"]},
+    {"id": "curvature", "binding": "model.shape.curvature", "kind": "continuous", "minimum": -0.5, "maximum": 0.5, "initial": 0, "evidenceRefs": ["model/reference-geometry.json"]}
+  ],
+  "objectives": [
+    {"id": "silhouette-error", "goal": "minimize", "scale": 1, "weight": 1}
+  ],
+  "protectedTerms": [],
+  "optimizer": {"algorithm": "differential-evolution", "seed": 1, "populationSize": 12, "evaluationBudget": 80, "differentialWeight": 0.8, "crossoverRate": 0.9, "improvementTolerance": 0.000001, "patience": 24, "initializationAttemptBudget": 384},
+  "evidenceRefs": ["source/reference.png"]
+}

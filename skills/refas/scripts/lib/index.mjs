@@ -9,6 +9,8 @@ export * from './registration.mjs';
 export * from './reference-geometry.mjs';
 export * from './projection-fit.mjs';
 export * from './projection-findings.mjs';
+export * from './parameter-fit.mjs';
+export * from './shape-repair.mjs';
 export * from './realized-projection.mjs';
 export * from './realized-projection-verification.mjs';
 export * from './certification-projection-evidence.mjs';

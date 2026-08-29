@@ -139,7 +139,7 @@ export function deriveRealizedSegmentation({referenceGeometry, segmentBindings =
   }
   const required = (referenceGeometry?.segments ?? []).filter((item) => item.importance !== 'detail' && !['occluded','inferred'].includes(item.visibility));
   const missing = required.filter((item) => !bindingById.has(item.id));
-  if (missing.length) throw new Error(`realized projection is missing material source segments: ${missing.map((item) => item.id).join(', ')}`);
+  if (missing.length) throw new Error(`realized projection is missing source-visible segments: ${missing.map((item) => item.id).join(', ')}`);
   const derivedSegments = (referenceGeometry?.segments ?? []).filter((item) => bindingById.has(item.id)).map((reference) => deriveSegment({reference, binding:bindingById.get(reference.id), json, binary, matrices, nodeIndexBySemanticId, transformPoint, projectWorldPoint}));
   const realizedById = new Map(derivedSegments.map((item) => [item.referenceId, item]));
   const derivedInterfaces = (referenceGeometry?.interfaces ?? []).map((reference) => {
@@ -150,12 +150,12 @@ export function deriveRealizedSegmentation({referenceGeometry, segmentBindings =
     const requiresDistinctOwnership = reference.separation === 'explicit' && DISTINCT_INTERFACE_KINDS.has(reference.kind);
     return deepFreeze({referenceId:reference.id, importance:reference.importance, evaluable:true, kind:reference.kind, separation:reference.separation, boundaryMeanErrorNormalized:mean(distances), distinctOwnership, requiresDistinctOwnership, ownershipCorrect:!requiresDistinctOwnership || distinctOwnership});
   });
-  const materialIous = derivedSegments.filter((item) => item.importance !== 'detail').map((item) => item.iou);
+  const sourceVisibleIous = derivedSegments.filter((item) => item.importance !== 'detail').map((item) => item.iou);
   const interfaceErrors = derivedInterfaces.filter((item) => item.evaluable && item.importance !== 'detail').map((item) => item.boundaryMeanErrorNormalized);
   return deepFreeze({
     derivedSegments,
     derivedInterfaces,
-    segmentationMetrics:{segmentCount:derivedSegments.length, materialSegmentMeanIoU:mean(materialIous), interfaceBoundaryMeanErrorNormalized:mean(interfaceErrors), explicitOwnershipViolations:derivedInterfaces.filter((item) => item.requiresDistinctOwnership && item.ownershipCorrect === false).length},
+    segmentationMetrics:{segmentCount:derivedSegments.length, sourceVisibleSegmentMeanIoU:mean(sourceVisibleIous), interfaceBoundaryMeanErrorNormalized:mean(interfaceErrors), explicitOwnershipViolations:derivedInterfaces.filter((item) => item.requiresDistinctOwnership && item.ownershipCorrect === false).length},
     normalizedSegmentBindings:derivedSegments.map(({referenceId,nodeIds}) => ({referenceId,nodeIds})),
   });
 }
