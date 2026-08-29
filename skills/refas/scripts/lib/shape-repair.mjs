@@ -156,15 +156,13 @@ function validateRenderReportBinding(report, {assetSha256, camera, cameraDigest,
   if (report.status !== 'PASS') throw new Error(`${label}.status must be PASS`);
   if (report.assetSha256 !== assetSha256) throw new Error(`${label}.assetSha256 must bind the exact candidate GLB`);
   if (report.asset?.sha256 != null && report.asset.sha256 !== report.assetSha256) throw new Error(`${label}.asset.sha256 must agree with assetSha256`);
-  if (report.cameraDigest !== report.heroCameraDigest) throw new Error(`${label}.cameraDigest must agree with the renderer's heroCameraDigest`);
-  assertDigest(report.heroCameraDigest, `${label}.heroCameraDigest`);
   if (!report.heroCamera || typeof report.heroCamera !== 'object') throw new Error(`${label}.heroCamera is required and must describe the actual hero render camera`);
   let normalizedHeroCamera;
   try { normalizedHeroCamera = normalizeProjectionCamera(report.heroCamera); }
   catch (error) { throw new Error(`${label}.heroCamera is invalid: ${error.message}`); }
-  if (digestJson(report.heroCamera) !== digestJson(normalizedHeroCamera)) throw new Error(`${label}.heroCamera must be normalized and must not contain an unverifiable camera basis`);
-  if (digestJson(normalizedHeroCamera) !== report.heroCameraDigest) throw new Error(`${label}.heroCameraDigest must be computed from the actual heroCamera`);
-  if (report.heroCameraDigest !== cameraDigest || digestJson(normalizedHeroCamera) !== cameraDigest || digestJson(normalizedHeroCamera) !== digestJson(camera)) {
+  const expectedCameraKeys = ['aspect', 'position', 'projection', 'target', 'up', normalizedHeroCamera.projection === 'perspective' ? 'fovY' : 'orthoHeight'].sort();
+  if (digestJson(Object.keys(report.heroCamera).sort()) !== digestJson(expectedCameraKeys)) throw new Error(`${label}.heroCamera must contain only the renderer's actual camera parameters`);
+  if (digestJson(normalizedHeroCamera) !== cameraDigest || digestJson(normalizedHeroCamera) !== digestJson(camera)) {
     throw new Error(`${label}.heroCamera must bind the realized projection camera`);
   }
   if (report.frameDigest !== frameDigest) throw new Error(`${label}.frameDigest must bind the requested render frame`);

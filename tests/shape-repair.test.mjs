@@ -14,6 +14,7 @@ import {
   createSegmentPrism,
   digestBytes,
   digestJson,
+  normalizeProjectionCamera,
   partsToGlb,
   projectionResidualMeasurements,
   repairShapeFromProjection,
@@ -21,7 +22,7 @@ import {
 } from '../skills/refas/scripts/lib/index.mjs';
 
 const D = (character) => character.repeat(64);
-const camera = {projection: 'perspective', position: [0, 0, 5], target: [0, 0, 0], up: [0, 1, 0], fovY: 90, aspect: 1};
+const camera = {projection: 'perspective', position: [1.73, 0.61, 4.27], target: [0.12, -0.24, 0.31], up: [0.03, 1.0, 0.07], fovY: 37.25, aspect: 1};
 const canonicalFrame = {schema: 'refas.canonical-object-frame/v1', id: 'shape-repair-frame', scopeId: 'whole', origin: [0, 0, 0], axes: {right: [1, 0, 0], up: [0, 1, 0], forward: [0, 0, 1]}, hero: {position: camera.position, target: camera.target, up: camera.up, fovY: camera.fovY, registrationDigest: D('c')}};
 const materials = {shell: {baseColor: [0.32, 0.48, 0.72, 1], metallic: 0.1, roughness: 0.5}};
 const prism = () => createSegmentPrism({start: [-0.05, 0, 0], end: [0.05, 0, 0], width: 0.3, height: 0.3, upHint: [0, 1, 0]});
@@ -94,14 +95,14 @@ test('projection repair binds residuals to shape parameters and keeps an improve
       const rendered = spawnSync(process.env.CODEX_PRIMARY_RUNTIME_PYTHON || 'python3', [
         path.resolve('skills/refas/scripts/render_glb.py'), '--glb', assetPath, '--out', renderDirectory,
         '--frame', framePath, '--size', '96', '--timeout-seconds', '30', '--max-working-mb', '64',
-        '--camera-digest', proof.cameraDigest,
       ], {encoding: 'utf8', timeout: 60000});
       if (rendered.status !== 0) throw new Error(`portable renderer failed: ${rendered.stderr || rendered.stdout}`);
       const renderPath = path.join(renderDirectory, 'render-report.json');
       const renderReport = JSON.parse(await fs.readFile(renderPath, 'utf8'));
-      assert.equal(renderReport.cameraDigest, proof.cameraDigest);
-      assert.equal(renderReport.heroCameraDigest, proof.cameraDigest);
-      assert.deepEqual(renderReport.heroCamera, proof.camera);
+      assert.equal(renderReport.heroCamera.position.length, 3);
+      assert.equal(renderReport.heroCamera.fovY, canonicalFrame.hero.fovY);
+      assert.equal(renderReport.heroCamera.aspect, proof.camera.aspect);
+      assert.deepEqual(normalizeProjectionCamera(renderReport.heroCamera), proof.camera);
       return {
         candidateAsset: await contentReference(assetPath, {kind: 'glb', root}),
         renderEvidence: await contentReference(renderPath, {kind: 'render-report', root}),
@@ -187,7 +188,7 @@ test('projection repair rejects synthetic render evidence even when references a
   await assert.rejects(() => evaluator.evaluate({"root-x": 0.5, "child-offset": 1}, {trialId: 'trial-0001'}), /schema must be refas\.multiview-render-report\/v1/);
 });
 
-test('projection repair rejects a report whose hero camera digest is not computed from the rendered camera', async (t) => {
+test('projection repair rejects a report whose recorded hero camera differs from the realized camera', async (t) => {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), 'refas-shape-camera-binding-'));
   t.after(() => fs.rm(root, {recursive: true, force: true}));
   const reference = geometry(), baselineGlb = asset(), baselinePath = path.join(root, 'baseline.glb');
@@ -230,5 +231,5 @@ test('projection repair rejects a report whose hero camera digest is not compute
     },
     readReference: async (referenceRef) => fs.readFile(path.join(root, referenceRef.path)),
   });
-  await assert.rejects(() => evaluator.evaluate({"root-x": 0.5, "child-offset": 1}, {trialId: 'trial-0001'}), /heroCameraDigest must be computed from the actual heroCamera/);
+  await assert.rejects(() => evaluator.evaluate({"root-x": 0.5, "child-offset": 1}, {trialId: 'trial-0001'}), /heroCamera must bind the realized projection camera/);
 });

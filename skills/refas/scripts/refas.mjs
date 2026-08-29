@@ -105,7 +105,7 @@ function help() {
       'validate-spec': 'validate-spec --file spec.json [--context hierarchy.json]',
       'inspect-glb': 'inspect-glb --glb asset.glb',
       evidence: 'evidence --image reference.png --out DIR --scope ID [--roi x,y,w,h] [--padding 0.08]',
-      render: 'render --glb asset.glb --out DIR [--reference image.png] [--frame canonical-frame.json] [--camera-digest SHA256] [--size 640] [--timeout-seconds 300] [--max-working-mb 512] [--tile-size 256] [--max-triangles N]',
+      render: 'render --glb asset.glb --out DIR [--reference image.png] [--frame canonical-frame.json] [--size 640] [--timeout-seconds 300] [--max-working-mb 512] [--tile-size 256] [--max-triangles N]',
       'render-pbr': 'render-pbr --glb asset.glb --out DIR --frame canonical-frame.json [--reference image.png] [--size 420] [--timeout-seconds 180] [--max-working-mb 512]',
       compare: 'compare --input registered-comparison-input.json --out DIR [--timeout-seconds 120]',
       'fit-parameters': 'fit-parameters --root DIR --plan parameter-fit-plan.json --worker evaluator.mjs --out parameter-fit-report.json',
@@ -209,7 +209,6 @@ async function main() {
     if (options['max-working-mb']) args.push('--max-working-mb', options['max-working-mb']);
     if (options['tile-size']) args.push('--tile-size', options['tile-size']);
     if (options['max-triangles']) args.push('--max-triangles', options['max-triangles']);
-    if (options['camera-digest']) args.push('--camera-digest', options['camera-digest']);
     const timeoutSeconds = Number(options['timeout-seconds'] ?? 300);
     if (!Number.isFinite(timeoutSeconds) || timeoutSeconds <= 0) throw new Error('--timeout-seconds must be a positive number');
     runPython('render_glb.py', args, {timeoutMs: Math.ceil(timeoutSeconds * 1000 + 5000)}); return;

@@ -244,14 +244,11 @@ def render(primitives, position, target, output: Path, *, width=640, height=640,
         "projection": "perspective",
         "position": list(map(float, position)),
         "target": list(map(float, target)),
-        "up": list(map(float, up)),
+        # Keep the camera inputs as recorded values. The JS verifier is the
+        # sole authority that normalizes these values and computes the digest.
+        "up": list(map(float, np.asarray(up_hint if up_hint is not None else [0.0, 1.0, 0.0], dtype=np.float64))),
         "aspect": float(width / height),
         "fovY": float(fov),
-        "basis": {
-            "right": list(map(float, right)),
-            "up": list(map(float, up)),
-            "forward": list(map(float, forward)),
-        },
     }
     scale_y = math.tan(math.radians(fov) / 2)
     scale_x = scale_y * width / height
@@ -449,10 +446,7 @@ def main():
     parser.add_argument("--max-working-mb", type=float, default=512.0)
     parser.add_argument("--tile-size", type=int, default=256)
     parser.add_argument("--max-triangles", type=int)
-    parser.add_argument("--camera-digest", help="optional expected digest; the renderer rejects a mismatch with its actual hero camera")
     args = parser.parse_args()
-    if args.camera_digest is not None and (len(args.camera_digest) != 64 or any(character not in "0123456789abcdef" for character in args.camera_digest.lower())):
-        raise ValueError("camera digest must be a lowercase SHA-256 digest")
     glb_path, output = Path(args.glb).resolve(), Path(args.out).resolve()
     canonical_frame_path = Path(args.frame).resolve() if args.frame else None
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -518,18 +512,13 @@ def main():
         check_deadline(deadline)
         hero_frame = next(frame for frame in frames if frame["path"] == "hero.png")
         hero_camera = hero_frame["camera"]
-        hero_camera_digest = frame_digest(hero_camera)
-        if args.camera_digest is not None and args.camera_digest != hero_camera_digest:
-            raise ValueError("provided camera digest does not match the actual hero render camera")
         report = {
             "schema": "refas.multiview-render-report/v1",
             "claimScope": "render-integrity-only",
             "statusMeaning": "All requested views rasterized from actual GLB geometry; visual similarity is not assessed.",
             "asset": {"path": str(glb_path), "sha256": sha256(glb_path), "generator": model.get("asset", {}).get("generator")},
             "assetSha256": sha256(glb_path),
-            "cameraDigest": hero_camera_digest,
             "heroCamera": hero_camera,
-            "heroCameraDigest": hero_camera_digest,
             "frameDigest": canonical_frame_digest,
             "heroImageSha256": next((frame["sha256"] for frame in frames if frame["path"] == "hero.png"), None),
             "renderer": {"family": "other", "name": "RefAs Portable Rasterizer", "version": "1.0.0", "backend": "offline-numpy-rasterizer"},

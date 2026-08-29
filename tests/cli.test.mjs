@@ -22,7 +22,6 @@ test('CLI help exposes recovery, validation, and certification commands', () => 
   assert.match(help.commands.render, /--max-working-mb 512/);
   assert.match(help.commands.render, /--max-triangles N/);
   assert.match(help.commands.render, /--frame canonical-frame.json/);
-  assert.match(help.commands.render, /--camera-digest SHA256/);
   assert.match(help.commands['render-pbr'], /--frame canonical-frame.json/);
   assert.match(help.commands['render-pbr'], /--timeout-seconds 180/);
   assert.match(help.commands['fit-parameters'], /--root DIR/);
