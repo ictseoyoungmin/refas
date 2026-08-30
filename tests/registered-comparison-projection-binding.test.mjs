@@ -32,7 +32,10 @@ test('Python registered comparison reproduces JavaScript canonical double format
     'spec.loader.exec_module(module)',
     'print(module.digest_json(json.loads(sys.stdin.read())))',
   ].join(';');
-  const result = spawnSync(PYTHON, ['-c', script], {input: JSON.stringify(payload), encoding: 'utf8'});
+  const result = spawnSync(PYTHON, ['-c', script], {
+    input: JSON.stringify(payload), encoding: 'utf8',
+    env: {...process.env, PYTHONDONTWRITEBYTECODE: '1'},
+  });
   assert.equal(result.status, 0, result.stderr);
   assert.equal(result.stdout.trim(), digestJson(payload));
 });
