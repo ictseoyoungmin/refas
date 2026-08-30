@@ -6,6 +6,7 @@ import {
   createReferenceGeometry,
   createSegmentPrism,
   findingsFromProjectionFit,
+  normalizeProjectionCamera,
   partsToGlb,
   validateRealizedProjection,
   verifyRealizedProjection,
@@ -75,6 +76,14 @@ test('camera changes are digest-bound and change the realized reprojection', () 
   assert.notEqual(near.cameraDigest, far.cameraDigest);
   assert.notEqual(near.derivedAnchors[1].projectedXY[0], far.derivedAnchors[1].projectedXY[0]);
   assert.ok(far.projectionFit.metrics.macroAnchorRmseNormalized > near.projectionFit.metrics.macroAnchorRmseNormalized);
+});
+
+test('normalized off-axis cameras are idempotent and reproduce exactly', () => {
+  const ref = geometry(), glb = asset();
+  const offAxis = {projection:'perspective', position:[.12,1.72,14.6], target:[.10,1.48,0], up:[0,1,0], fovY:31, aspect:1};
+  const proof = createRealizedProjection({referenceGeometry:ref, glb, cameraHypothesisId:'camera-off-axis', camera:offAxis, anchorBindings:bindings});
+  assert.deepEqual(normalizeProjectionCamera(proof.camera), proof.camera);
+  assert.equal(verifyRealizedProjection({proof, referenceGeometry:ref, glb}).valid, true);
 });
 
 test('gross off-frame mismatch remains measurable and becomes blocking evidence', () => {

@@ -13,6 +13,7 @@ import {
   createSegmentPrism,
   createVisualHierarchy,
   digestBytes,
+  digestJson,
   partsToGlb,
   sha256File,
   validateRegisteredComparison,
@@ -21,6 +22,23 @@ import {
 const PYTHON = process.env.CODEX_PRIMARY_RUNTIME_PYTHON || 'python3';
 const REPOSITORY = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const COMPARE = path.join(REPOSITORY, 'skills/refas/scripts/compare_registered.py');
+
+test('Python registered comparison reproduces JavaScript canonical double formatting', () => {
+  const payload = {basis: [-2.2515212045446777e-5, 1, 1e-7, 1e21], nested: {value: 0.30000000000000004}};
+  const script = [
+    'import importlib.util,json,sys',
+    `spec=importlib.util.spec_from_file_location("compare_registered",${JSON.stringify(COMPARE)})`,
+    'module=importlib.util.module_from_spec(spec)',
+    'spec.loader.exec_module(module)',
+    'print(module.digest_json(json.loads(sys.stdin.read())))',
+  ].join(';');
+  const result = spawnSync(PYTHON, ['-c', script], {
+    input: JSON.stringify(payload), encoding: 'utf8',
+    env: {...process.env, PYTHONDONTWRITEBYTECODE: '1'},
+  });
+  assert.equal(result.status, 0, result.stderr);
+  assert.equal(result.stdout.trim(), digestJson(payload));
+});
 
 async function writeJson(file, value) {
   await fs.mkdir(path.dirname(file), {recursive: true});

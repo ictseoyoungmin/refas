@@ -6,6 +6,8 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
+from decimal import Decimal
 from pathlib import Path
 
 import numpy as np
@@ -24,8 +26,37 @@ def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def javascript_number(value: float) -> str:
+    """Serialize a finite double with the exponent thresholds used by JSON.stringify."""
+    if not math.isfinite(value):
+        raise ValueError("canonical JSON cannot contain NaN or Infinity")
+    if value == 0:
+        return "0"
+    magnitude = abs(value)
+    if 1e-6 <= magnitude < 1e21:
+        return format(Decimal(repr(value)), "f").rstrip("0").rstrip(".")
+    mantissa, exponent = repr(value).lower().split("e")
+    mantissa = mantissa.rstrip("0").rstrip(".")
+    exponent_value = int(exponent)
+    sign = "+" if exponent_value >= 0 else ""
+    return f"{mantissa}e{sign}{exponent_value}"
+
+
+def stable_json(value: object) -> str:
+    if value is None: return "null"
+    if value is True: return "true"
+    if value is False: return "false"
+    if isinstance(value, int): return str(value)
+    if isinstance(value, float): return javascript_number(value)
+    if isinstance(value, str): return json.dumps(value, ensure_ascii=False, separators=(",", ":"))
+    if isinstance(value, list): return "[" + ",".join(stable_json(item) for item in value) + "]"
+    if isinstance(value, dict):
+        return "{" + ",".join(f"{json.dumps(str(key), ensure_ascii=False)}:{stable_json(value[key])}" for key in sorted(value)) + "}"
+    raise TypeError(f"unsupported canonical JSON value: {type(value).__name__}")
+
+
 def digest_json(value: object) -> str:
-    payload = json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()
+    payload = stable_json(value).encode()
     return hashlib.sha256(payload).hexdigest()
 
 
