@@ -100,9 +100,23 @@ export function normalizeProjectionCamera(raw = {}) {
   const position = v3(raw.position, 'camera.position');
   const target = v3(raw.target, 'camera.target');
   const upInput = normalize(v3(raw.up ?? [0,1,0], 'camera.up'), 'camera.up');
-  const forward = normalize(sub(target, position), 'camera view direction');
-  const right = normalize(cross(forward, upInput), 'camera right axis');
-  const up = normalize(cross(right, forward), 'camera orthogonal up axis');
+  let forward = normalize(sub(target, position), 'camera view direction');
+  let right = normalize(cross(forward, upInput), 'camera right axis');
+  let up = normalize(cross(right, forward), 'camera orthogonal up axis');
+  if (raw.basis != null) {
+    const supplied = {
+      right: v3(raw.basis?.right, 'camera.basis.right'),
+      up: v3(raw.basis?.up, 'camera.basis.up'),
+      forward: v3(raw.basis?.forward, 'camera.basis.forward'),
+    };
+    const calculated = {right, up, forward};
+    for (const axis of ['right', 'up', 'forward']) {
+      if (Math.abs(norm(supplied[axis]) - 1) > 1e-12 || supplied[axis].some((value, index) => Math.abs(value - calculated[axis][index]) > 1e-12)) {
+        throw new Error(`camera.basis.${axis} does not match the camera position, target, and up vector`);
+      }
+    }
+    right = supplied.right; up = supplied.up; forward = supplied.forward;
+  }
   const aspect = Number(raw.aspect ?? 1);
   if (!(aspect > 0) || !Number.isFinite(aspect)) throw new Error('camera.aspect must be positive and finite');
   const camera = {projection, position, target, up, aspect};
