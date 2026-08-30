@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
 import {test} from 'node:test';
 import {inspectGlb, parseGlb} from '../skills/refas/scripts/lib/index.mjs';
 import {buildArticulatedFigure, materials} from '../examples/articulated-figure/model.mjs';
@@ -15,6 +16,13 @@ test('articulated figure is a portable identity-bearing GLB', () => {
     assert.equal(material.baseColor.length, 4);
     assert.ok(Number.isFinite(material.metallic)); assert.ok(Number.isFinite(material.roughness));
   }
+});
+
+test('viewer pose URLs match the generated GLB filenames', () => {
+  const viewer = fs.readFileSync(new URL('../examples/articulated-figure/viewer.html', import.meta.url), 'utf8');
+  assert.match(viewer, /output\/project\/assets\/articulated-figure\.glb/);
+  assert.match(viewer, /output\/project\/assets\/articulated-figure-neutral\.glb/);
+  assert.doesNotMatch(viewer, /reference-pose\.glb|neutral-pose\.glb/);
 });
 
 test('reference and neutral poses share local meshes under a real parent hierarchy', () => {
