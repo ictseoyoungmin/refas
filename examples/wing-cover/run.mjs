@@ -701,6 +701,12 @@ async function main() {
     gateVerdicts: REQUIRED_VISUAL_GATE_IDS.map((id) => ({
       id, status: id === 'multiview-render-integrity' ? 'pass' : id === 'no-blocking-findings' ? 'fail' : 'insufficient',
       evidenceRefs: ['renders/final/multiview-review-board.png'],
+      ...(id === 'multiview-render-integrity' ? {observation: {
+        sourceObservation: 'The source-bound multiview frame set was inspected for complete render coverage.',
+        renderObservation: 'The current portable render report and multiview board contain every requested frame.',
+        comparisonConclusion: 'Render integrity is supported; visual fidelity remains insufficient for this contract fixture.',
+        evidenceRefs: ['renders/final/multiview-review-board.png'],
+      }} : {}),
     })),
     unresolvedFindings: [
       {category: 'closure-evidence-missing', severity: 'major', scopeId: 'whole', summary: 'The contract fixture demonstrates exact geometry and PBR data parity but does not independently attest visual fidelity.', evidenceRefs: ['renders/final/multiview-review-board.png']},

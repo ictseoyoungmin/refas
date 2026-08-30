@@ -83,7 +83,7 @@ Follow the semantic capability order in `references/workflow.md`.
 5. Reconstruct the dominant silhouette and mass before decoration.
 6. Pass the whole-shape dependency barrier: registered silhouette, major landmarks, principal sections, curvature transitions, and coarse negative spaces.
 7. Anchor visible boundaries and relief to the reference projection.
-8. When a parameterized shape backend exists, fit multiple owner-local geometry parameters through verified actual-render trials; inspect the selected trial before making it the edit's single checkpoint candidate.
+8. When a parameterized shape backend exists, fit multiple owner-local geometry parameters through verified actual-render trials; inspect the selected trial before making it the edit's single checkpoint candidate. High-impact camera, pose, appearance, and lighting fitters remain owner-local and are sequenced by a non-authoritative camera → pose → shape coordinator.
 9. Assemble closed children in a parent reference frame.
 10. Add appearance only after geometry can explain the image.
 11. Render the standard multiview set.
@@ -131,7 +131,7 @@ node scripts/refas.mjs finish-edit \
 
 The decision is one of `KEEP_EDIT`, `ROLLBACK_EDIT`, `REOPEN_OWNER`, `REQUEST_REVIEW`, or `MAY_CLOSE`. Never manually reinterpret a rollback result as success.
 
-An owner-local parameter fit may evaluate many digest-bound trials inside this transaction. Those trials are comparison evidence, not checkpoints. When an actual GLB and realized projection are available, use the optional `repairShapeFromProjection` backend to bind projection residuals to geometry parameters and return an advisory `KEEP`/`ROLLBACK`; only the visually inspected selected trial may become the transaction's one direct candidate. See `references/parameter-fitting.md`.
+An owner-local parameter fit may evaluate many digest-bound trials inside this transaction. Those trials are comparison evidence, not checkpoints. When an actual GLB and realized projection are available, use the optional `repairShapeFromProjection` backend to bind projection residuals to geometry parameters and return an advisory `KEEP`/`ROLLBACK`; only the visually inspected selected trial may become the transaction's one direct candidate. Camera and pose trials must preserve geometry bytes, while appearance and lighting trials must bind a frozen geometry digest. See `references/parameter-fitting.md`.
 
 If work must stop before a decision, use `abort-edit`; it restores the baseline artifact bytes. On a fresh agent turn, run `resume` before mutating anything. It returns one safe checkpoint, one capability × scope, and one next action.
 

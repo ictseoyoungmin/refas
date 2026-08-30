@@ -34,6 +34,8 @@ Do not mix observation cleanup, camera tuning, geometry edits, and material poli
 
 Within `shape-reconstruction × one scope`, an evidence-bound parameter fit may jointly move multiple geometry values. Its trial ledger is an inner search, not multiple active work units or candidate checkpoints. Cross-owner camera, assembly, appearance, and lighting values remain prohibited in the same plan.
 
+High-impact fitting remains owner-local: camera candidates belong to `spatial-hypotheses`, parent-local pose variables to `assembly`, geometry variables to `shape-reconstruction`, material variables to `appearance`, and illumination/background variables to `rendering`. The project coordinator may alternate these stages and record exact digests, but has no gate or finding-owner authority.
+
 This rule limits simultaneous work; it does not authorize skipping dependencies.
 During shape reconstruction, `shape-reconstruction × whole` remains the only
 closable shape scope until the whole-shape dependency barrier passes. The

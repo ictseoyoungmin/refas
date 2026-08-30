@@ -23,6 +23,8 @@
     {"id": "no-blocking-findings", "status": "insufficient", "evidenceRefs": ["reviews/findings.json"]}
   ],
   "unresolvedFindings": [],
+  "registeredComparison": null,
+  "comparisonAssessment": null,
   "renderer": {
     "kind": "project-renderer",
     "family": "blender-eevee",

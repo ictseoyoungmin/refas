@@ -53,7 +53,7 @@ Possible decisions are:
 - `REOPEN_OWNER`: a typed blocker selects an owner and pre-owner checkpoint.
 - `REQUEST_REVIEW`: evidence is insufficient or utility is tied; baseline remains active.
 - `MAY_CLOSE`: all declared local closure gates pass.
-- A whole-object certificate additionally requires a `refas.visual-review/v1` artifact bound to the exact source and asset digests. When appearance passes, it must cite a valid `refas.pbr-render-report/v1` and digest-bound frames from an independent PBR renderer. Local gate strings cannot override its verdict or findings.
+- A whole-object certificate additionally requires a `refas.visual-review/v1` artifact bound to the exact source and asset digests. Passing view and gate verdicts carry structured source observation, render observation, comparison conclusion, and evidence references. An independent pass must bind the exact current registered-comparison report, its source/asset/hero-frame/render-report/registration/hierarchy/input digests, and every compared scope. When appearance passes, it must cite a valid `refas.pbr-render-report/v1` and digest-bound frames from an independent PBR renderer. Local gate strings cannot override its verdict or findings.
 
 Rejected candidates remain in checkpoint history as evidence, but they do not become the active head.
 
@@ -66,6 +66,8 @@ The dependency-light JavaScript core owns:
 - spatial hypotheses and 2D reference registration;
 - deterministic mesh and embedded GLB construction;
 - evidence-bound joint geometry parameter fitting with verified trial bytes and candidate-ranking-only metrics;
+- owner-local camera, pose, appearance, and lighting fitters plus a non-authoritative alternating macro coordinator;
+- deterministic model-free discrepancy evidence and generic landmark/guide/section-loft construction capacity reports;
 - shared-boundary surface networks;
 - immutable child composition and assembly validation;
 - digest-bound portable-integrity and independent-PBR visual-review validation with fail-closed certification readiness;

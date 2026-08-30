@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/perceptual-discrepancy.schema.json",
+  "title": "RefAs model-free perceptual discrepancy evidence",
+  "type": "object",
+  "properties": {
+    "schema": {"const": "refas.perceptual-discrepancy/v1"},
+    "scopeId": {"$ref": "common.schema.json#/$defs/id"},
+    "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "assetSha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "metrics": {"type": "object"},
+    "segments": {"type": "array"},
+    "negativeSpaces": {"type": "array"},
+    "policy": {"type": "object"},
+    "discrepancyDigest": {"$ref": "common.schema.json#/$defs/digest"}
+  },
+  "required": ["schema", "scopeId", "sourceSha256", "assetSha256", "metrics", "policy"],
+  "additionalProperties": true
+}

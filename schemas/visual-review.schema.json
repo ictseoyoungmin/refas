@@ -3,7 +3,7 @@
   "$id": "https://refas.dev/schemas/visual-review.schema.json",
   "title": "RefAs digest-bound visual review",
   "type": "object",
-  "required": ["schema", "scopeId", "sourceSha256", "assetSha256", "evidenceClass", "verdict", "views", "gateVerdicts", "unresolvedFindings", "renderer", "requiredMaterialFeatures", "attestation", "policy", "reviewDigest"],
+  "required": ["schema", "scopeId", "sourceSha256", "assetSha256", "evidenceClass", "verdict", "views", "gateVerdicts", "unresolvedFindings", "renderer", "requiredMaterialFeatures", "attestation", "registeredComparison", "comparisonAssessment", "policy", "reviewDigest"],
   "properties": {
     "schema": {"const": "refas.visual-review/v1"},
     "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
@@ -40,6 +40,49 @@
       "additionalProperties": false
     },
     "requiredMaterialFeatures": {"type": "array", "uniqueItems": true, "items": {"$ref": "common.schema.json#/$defs/semanticId"}},
+    "registeredComparison": {
+      "type": ["object", "null"],
+      "required": ["path", "sha256", "comparisonDigest", "sourceSha256", "sourceManifestSha256", "assetSha256", "renderReportPath", "renderReportSha256", "framePath", "frameSha256", "registrationDigest", "hierarchyDigest", "inputDigest", "scopeIds"],
+      "properties": {
+        "path": {"$ref": "common.schema.json#/$defs/relativePath"},
+        "sha256": {"$ref": "common.schema.json#/$defs/digest"},
+        "comparisonDigest": {"$ref": "common.schema.json#/$defs/digest"},
+        "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
+        "sourceManifestSha256": {"$ref": "common.schema.json#/$defs/digest"},
+        "assetSha256": {"$ref": "common.schema.json#/$defs/digest"},
+        "renderReportPath": {"$ref": "common.schema.json#/$defs/relativePath"},
+        "renderReportSha256": {"$ref": "common.schema.json#/$defs/digest"},
+        "framePath": {"$ref": "common.schema.json#/$defs/relativePath"},
+        "frameSha256": {"$ref": "common.schema.json#/$defs/digest"},
+        "registrationDigest": {"$ref": "common.schema.json#/$defs/digest"},
+        "hierarchyDigest": {"$ref": "common.schema.json#/$defs/digest"},
+        "inputDigest": {"$ref": "common.schema.json#/$defs/digest"},
+        "scopeIds": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "common.schema.json#/$defs/semanticId"}}
+      },
+      "additionalProperties": false
+    },
+    "comparisonAssessment": {
+      "type": ["object", "null"],
+      "required": ["sourceObservation", "renderObservation", "comparisonConclusion", "evidenceRefs", "contradictionResolution"],
+      "properties": {
+        "sourceObservation": {"type": "string", "minLength": 1},
+        "renderObservation": {"type": "string", "minLength": 1},
+        "comparisonConclusion": {"type": "string", "minLength": 1},
+        "evidenceRefs": {"$ref": "common.schema.json#/$defs/evidenceRefs"},
+        "contradictionResolution": {
+          "type": "object",
+          "required": ["status", "explanation", "evidenceRefs", "findingRefs"],
+          "properties": {
+            "status": {"enum": ["not-present", "resolved", "unresolved"]},
+            "explanation": {"type": "string"},
+            "evidenceRefs": {"type": "array", "items": {"type": "string"}},
+            "findingRefs": {"type": "array", "items": {"type": "string"}}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
     "attestation": {
       "type": "object",
       "required": ["evidenceRefs", "digest"],
@@ -51,13 +94,16 @@
     },
     "policy": {
       "type": "object",
-      "required": ["selfGeneratedFixturesAreContractOnly", "renderIntegrityIsNotVisualAcceptance", "unsupportedMaterialFeaturesCannotPassAppearance", "independentPbrRendererRequiredAfterPortableGate", "unresolvedBlockingFindingsPreventClosure"],
+      "required": ["selfGeneratedFixturesAreContractOnly", "renderIntegrityIsNotVisualAcceptance", "unsupportedMaterialFeaturesCannotPassAppearance", "independentPbrRendererRequiredAfterPortableGate", "unresolvedBlockingFindingsPreventClosure", "substantiveObservationsRequiredForPass", "independentPassRequiresRegisteredComparison", "contradictionEvidenceRequiresResolution"],
       "properties": {
         "selfGeneratedFixturesAreContractOnly": {"const": true},
         "renderIntegrityIsNotVisualAcceptance": {"const": true},
         "unsupportedMaterialFeaturesCannotPassAppearance": {"const": true},
         "independentPbrRendererRequiredAfterPortableGate": {"const": true},
-        "unresolvedBlockingFindingsPreventClosure": {"const": true}
+        "unresolvedBlockingFindingsPreventClosure": {"const": true},
+        "substantiveObservationsRequiredForPass": {"const": true},
+        "independentPassRequiresRegisteredComparison": {"const": true},
+        "contradictionEvidenceRequiresResolution": {"const": true}
       },
       "additionalProperties": false
     },
@@ -71,7 +117,18 @@
         "id": {"$ref": "common.schema.json#/$defs/semanticId"},
         "status": {"enum": ["pass", "fail", "insufficient"]},
         "evidenceRefs": {"$ref": "common.schema.json#/$defs/evidenceRefs"},
-        "summary": {"type": "string"}
+        "summary": {"type": "string"},
+        "observation": {
+          "type": "object",
+          "required": ["sourceObservation", "renderObservation", "comparisonConclusion", "evidenceRefs"],
+          "properties": {
+            "sourceObservation": {"type": "string", "minLength": 1},
+            "renderObservation": {"type": "string", "minLength": 1},
+            "comparisonConclusion": {"type": "string", "minLength": 1},
+            "evidenceRefs": {"$ref": "common.schema.json#/$defs/evidenceRefs"}
+          },
+          "additionalProperties": false
+        }
       },
       "additionalProperties": false
     }

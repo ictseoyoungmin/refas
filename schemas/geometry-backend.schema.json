@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/geometry-backend.schema.json",
+  "title": "RefAs generic geometry backend",
+  "type": "object",
+  "properties": {
+    "schema": {"const": "refas.geometry-backend/v1"},
+    "id": {"$ref": "common.schema.json#/$defs/id"},
+    "guide": {"type": "object"},
+    "sections": {"type": "array", "minItems": 2},
+    "capacity": {"type": "object"},
+    "loftDigest": {"$ref": "common.schema.json#/$defs/digest"}
+  },
+  "required": ["schema", "id", "guide", "sections", "capacity"],
+  "additionalProperties": true
+}

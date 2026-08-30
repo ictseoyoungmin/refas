@@ -19,6 +19,31 @@ function buildGlb(json, binary) {
   return output;
 }
 
+const eulerQuaternion = (rotation = {}) => {
+  const x = Number(rotation.x ?? 0), y = Number(rotation.y ?? 0), z = Number(rotation.z ?? 0);
+  const cx = Math.cos(x / 2), sx = Math.sin(x / 2), cy = Math.cos(y / 2), sy = Math.sin(y / 2), cz = Math.cos(z / 2), sz = Math.sin(z / 2);
+  return [sx * cy * cz - cx * sy * sz, cx * sy * cz + sx * cy * sz, cx * cy * sz - sx * sy * cz, cx * cy * cz + sx * sy * sz];
+};
+
+/** Apply only parent-local TRS edits to a GLB while preserving its BIN chunk. */
+export function applyParentLocalTransformEdits(sourceGlb, edits = []) {
+  const source = Buffer.from(sourceGlb), parsed = parseGlb(source), json = clone(parsed.json), byId = new Map((json.nodes ?? []).map((node, index) => [node.extras?.refasPartId ?? node.name, index]));
+  for (const edit of edits) {
+    const nodeIndex = byId.get(String(edit?.nodeId ?? ''));
+    if (nodeIndex == null) throw new Error(`pose edit references unknown node: ${edit?.nodeId ?? '?'}`);
+    const node = json.nodes[nodeIndex];
+    if (edit.translation) {
+      const translation = [...(node.translation ?? [0, 0, 0])];
+      for (const axis of ['x', 'y', 'z']) if (edit.translation[axis] != null) translation[['x', 'y', 'z'].indexOf(axis)] = Number(edit.translation[axis]);
+      node.translation = translation; delete node.matrix;
+    }
+    if (edit.rotation) { node.rotation = eulerQuaternion(edit.rotation); delete node.matrix; }
+    if (edit.angle != null) { node.rotation = eulerQuaternion({y: Number(edit.angle)}); delete node.matrix; }
+    if (![...(node.translation ?? []), ...(node.rotation ?? [])].every(Number.isFinite)) throw new Error(`pose edit for ${edit.nodeId} contains non-finite transform values`);
+  }
+  return buildGlb(json, parsed.binary);
+}
+
 export function parseGlb(input) {
   const bytes = Buffer.from(input);
   if (bytes.length < 20) throw new Error('GLB is truncated');

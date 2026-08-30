@@ -70,7 +70,9 @@ A good fit never grants PASS. A material mismatch may, however, support a blocki
 
 For final review of a scope that has a projection fit, use `createProjectionAwareVisualReview`. It merges supported projection findings into the unresolved finding set before the normal visual-review rules run. Therefore a requested visual PASS is refused while a material source-to-model geometry mismatch remains. Registration cannot override this veto because registration answers frame placement, not shape agreement.
 
-A `verdict: pass` visual review also requires a substantive source-bound observation summary for every required view and visual gate. Empty summaries, boilerplate evidence-free PASS declarations, or a metrics-only explanation are not closure evidence.
+Registered comparisons may also carry deterministic model-free perceptual aids (boundary/edge disagreement, foreground occupancy and dimensions, coarse luminance/color, negative-space masks, and segment IoU). These measurements are useful for ranking trials and surfacing contrary evidence, but remain non-authoritative: they cannot certify fidelity or choose the repair owner. An unsupported pass with strong contrary evidence is insufficient until a typed finding or substantive source-grounded resolution is recorded.
+
+A `verdict: pass` visual review also requires a substantive structured observation for every required view and visual gate. Each observation states what the source shows, what the current render shows, whether they agree, and which evidence was inspected. Empty summaries, boilerplate evidence-free PASS declarations, or a metrics-only explanation are not closure evidence. Strong screening-only contradiction signals from the registered comparison require either a typed finding path or a substantive source-grounded resolution; the signals never become universal visual-fidelity thresholds.
 
 ## Findings
 
@@ -91,7 +93,7 @@ Inside an active owner-local parameter fit, declared measurements may rank alrea
 
 ## Closure gates
 
-Before closure, create a digest-bound `refas.visual-review/v1` record from `assets/templates/visual-review.json`. It must bind the exact primary source digest and candidate asset digest, contain one verdict for every standard view and visual gate, disclose the independent renderer and its material support, cite the exact PBR report digest, and retain unresolved typed findings. The whole-object checkpoint includes the visual review, PBR report, and every cited renderer output and cites the review path from every visual closure gate.
+Before closure, create a digest-bound `refas.visual-review/v1` record from `assets/templates/visual-review.json`. It must bind the exact primary source digest and candidate asset digest, contain one structured verdict for every standard view and visual gate, disclose the independent renderer and its material support, cite the exact PBR report digest, bind the current registered comparison identity tuple for an independent pass, and retain unresolved typed findings. The whole-object checkpoint includes the visual review, registered comparison, PBR report, portable hero/report, and every cited renderer output and cites the review path from every visual closure gate.
 
 `evidenceClass: independent-reference` means the comparison source was not generated from the candidate's own model specification. `self-generated-contract-fixture` can verify deterministic construction, rendering, rollback, and schema behavior, but can never certify visual fidelity.
 
@@ -111,6 +113,6 @@ Whole-object certification requires current, passing evidence for:
 
 For a real source, certification additionally requires one digest-bound `refas.reference-geometry/v1` artifact, one `refas.realized-projection/v1` artifact, and the exact GLB whose digest is bound by the visual review. Certification reproduces the realized projection from those checkpoint artifacts before closure. Missing, stale, non-reproducible, or asset-mismatched projection evidence refuses certification. Synthetic/test acquisition kinds keep the contract-fixture compatibility path but cannot use it as visual-fidelity evidence.
 
-Certification refuses closure when the review is missing or digest-stale, its verdict is not `pass`, a required view or visual gate is not `pass`, a required passing observation summary is empty, a major/critical/blocking finding remains, a projection-aware review contains material geometric disagreement, or appearance relies on an integrity-only renderer or an unsupported material feature. Gate strings and numeric scores cannot override those findings.
+Certification refuses closure when the review is missing or digest-stale, its verdict is not `pass`, a required view or visual gate is not `pass`, a required passing structured observation is missing, an independent pass lacks an exact registered comparison or its current identity tuple, strong contrary comparison evidence is not resolved by source-grounded evidence, a major/critical/blocking finding remains, a projection-aware review contains material geometric disagreement, or appearance relies on an integrity-only renderer or an unsupported material feature. Gate strings and numeric scores cannot override those findings.
 
 Any upstream source, camera, model binding, or geometry change expires dependent projection-fit and gate evidence. Recompute projection evidence before rerunning registered comparison and certification after repair.

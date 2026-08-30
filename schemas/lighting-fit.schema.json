@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/lighting-fit.schema.json",
+  "title": "RefAs bounded lighting calibration plan/report",
+  "type": "object",
+  "properties": {
+    "schema": {"const": "refas.lighting-fit/v1"},
+    "ownerCapability": {"const": "rendering"},
+    "scopeId": {"$ref": "common.schema.json#/$defs/id"},
+    "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "baselineAsset": {"type": "object"},
+    "geometryDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "frameDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "variables": {"type": "array", "minItems": 1},
+    "objectives": {"type": "array", "minItems": 1},
+    "policy": {"type": "object"}
+  },
+  "required": ["schema", "ownerCapability", "scopeId", "sourceSha256", "baselineAsset", "variables", "objectives", "policy"],
+  "additionalProperties": true
+}

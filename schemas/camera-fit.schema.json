@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/camera-fit.schema.json",
+  "title": "RefAs bounded camera fitting plan/report",
+  "type": "object",
+  "properties": {
+    "schema": {"const": "refas.camera-fit/v1"},
+    "ownerCapability": {"const": "spatial-hypotheses"},
+    "scopeId": {"$ref": "common.schema.json#/$defs/id"},
+    "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "planDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "reportDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "baselineCameraDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "hypothesisId": {"$ref": "common.schema.json#/$defs/id"},
+    "baselineCamera": {"type": "object"},
+    "projectionCandidates": {"type": "array", "items": {"enum": ["perspective", "orthographic"]}, "minItems": 1},
+    "variables": {"type": "array", "minItems": 1},
+    "objectives": {"type": "array", "minItems": 1},
+    "evaluationBudget": {"type": "integer", "minimum": 2},
+    "trials": {"type": "array"},
+    "policy": {"type": "object"}
+  },
+  "required": ["schema", "ownerCapability", "scopeId", "sourceSha256", "hypothesisId", "baselineCamera", "variables", "objectives", "policy"],
+  "additionalProperties": true
+}

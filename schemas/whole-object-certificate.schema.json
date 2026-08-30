@@ -3,7 +3,7 @@
   "$id": "https://refas.dev/schemas/whole-object-certificate.schema.json",
   "title": "RefAs whole-object certificate",
   "type": "object",
-  "required": ["schema", "version", "projectId", "sourceSha256", "checkpointId", "checkpointDigest", "gateIds", "visualReview", "audit", "certificateDigest", "certifiedAt"],
+  "required": ["schema", "version", "projectId", "sourceSha256", "checkpointId", "checkpointDigest", "gateIds", "visualReview", "registeredComparison", "audit", "certificateDigest", "certifiedAt"],
   "properties": {
     "schema": {"const": "refas.whole-object-certificate/v1"},
     "version": {"const": "1.0.0"},
@@ -20,6 +20,27 @@
         "sha256": {"$ref": "common.schema.json#/$defs/digest"},
         "reviewDigest": {"$ref": "common.schema.json#/$defs/digest"},
         "evidenceClass": {"const": "independent-reference"}
+      },
+      "additionalProperties": false
+    },
+    "registeredComparison": {
+      "type": "object",
+      "required": ["path", "sha256", "comparisonDigest", "sourceSha256", "sourceManifestSha256", "assetSha256", "renderReportPath", "renderReportSha256", "framePath", "frameSha256", "registrationDigest", "hierarchyDigest", "inputDigest", "scopeIds"],
+      "properties": {
+        "path": {"$ref": "common.schema.json#/$defs/relativePath"},
+        "sha256": {"$ref": "common.schema.json#/$defs/digest"},
+        "comparisonDigest": {"$ref": "common.schema.json#/$defs/digest"},
+        "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
+        "sourceManifestSha256": {"$ref": "common.schema.json#/$defs/digest"},
+        "assetSha256": {"$ref": "common.schema.json#/$defs/digest"},
+        "renderReportPath": {"$ref": "common.schema.json#/$defs/relativePath"},
+        "renderReportSha256": {"$ref": "common.schema.json#/$defs/digest"},
+        "framePath": {"$ref": "common.schema.json#/$defs/relativePath"},
+        "frameSha256": {"$ref": "common.schema.json#/$defs/digest"},
+        "registrationDigest": {"$ref": "common.schema.json#/$defs/digest"},
+        "hierarchyDigest": {"$ref": "common.schema.json#/$defs/digest"},
+        "inputDigest": {"$ref": "common.schema.json#/$defs/digest"},
+        "scopeIds": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "common.schema.json#/$defs/semanticId"}}
       },
       "additionalProperties": false
     },

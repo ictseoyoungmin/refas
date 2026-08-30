@@ -153,6 +153,35 @@ def edge_mask(image: Image.Image):
     return mag >= max(10.0, float(np.percentile(mag, 82)))
 
 
+def perceptual_metrics(source: Image.Image, render: Image.Image, source_mask, render_mask):
+    """Deterministic, model-free discrepancy aids; never a visual gate."""
+    source_rgb = np.asarray(source.convert("RGB"), dtype=np.float32) / 255.0
+    render_rgb = np.asarray(render.convert("RGB"), dtype=np.float32) / 255.0
+    source_gray = np.asarray(ImageOps.grayscale(source), dtype=np.float32) / 255.0
+    render_gray = np.asarray(ImageOps.grayscale(render), dtype=np.float32) / 255.0
+    source_gy, source_gx = np.gradient(source_gray)
+    render_gy, render_gx = np.gradient(render_gray)
+    edge_disagreement = float(np.mean(np.minimum(1.0, np.hypot(source_gx - render_gx, source_gy - render_gy))))
+    source_pixels = int(source_mask.sum()); render_pixels = int(render_mask.sum())
+    def box(mask):
+        ys, xs = np.where(mask)
+        if not len(xs): return {"x": 0, "y": 0, "width": 0, "height": 0}
+        return {"x": int(xs.min()), "y": int(ys.min()), "width": int(xs.max() - xs.min() + 1), "height": int(ys.max() - ys.min() + 1)}
+    source_box, render_box = box(source_mask), box(render_mask)
+    return {
+        "edgeDisagreement": edge_disagreement,
+        "foregroundAreaRatio": float(render_pixels / max(1, source_pixels)),
+        "normalizedWidthError": float(abs(render_box["width"] - source_box["width"]) / max(1, source_box["width"])),
+        "normalizedHeightError": float(abs(render_box["height"] - source_box["height"]) / max(1, source_box["height"])),
+        "luminanceDifference": float(abs(float(source_gray.mean()) - float(render_gray.mean()))),
+        "coarseColorDifference": float(np.linalg.norm(source_rgb.mean(axis=(0, 1)) - render_rgb.mean(axis=(0, 1)))),
+        "sourceBoundingBox": source_box,
+        "renderBoundingBox": render_box,
+        "sourceForegroundPixels": source_pixels,
+        "renderForegroundPixels": render_pixels,
+    }
+
+
 def fit_tile(image: Image.Image, size=(360, 300)):
     canvas = Image.new("RGB", size, (14, 17, 21))
     fitted = ImageOps.contain(image.convert("RGB"), (size[0] - 12, size[1] - 12), Image.Resampling.LANCZOS)
@@ -439,6 +468,7 @@ def main():
             "macroLandmarkResidualRmse": fit_metrics.get("macroAnchorRmseNormalized"),
             "projectedAnchorsOutsideFrame": fit_metrics.get("projectedAnchorsOutsideFrame"),
             "dimensionMeanRelativeError": fit_metrics.get("dimensionMeanRelativeError"),
+            "perceptual": perceptual_metrics(src_crop, render_crop, source_mask, render_mask),
         }
         if measurements["measurementAuthority"] == "realized-projection" and metrics["landmarkResidualRmse"] is None:
             raise ValueError(f"realized projection scope {scope_id} cannot emit null landmarkResidualRmse")

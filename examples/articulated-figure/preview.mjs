@@ -24,7 +24,7 @@ const framePath = path.join(OUTPUT, 'canonical-frame.json');
 await fs.writeFile(framePath, `${JSON.stringify({
   schema:'refas.canonical-object-frame/v1', id:'articulated-figure-frame', scopeId:'whole', origin:[0,0,0],
   axes:{right:[1,0,0],up:[0,1,0],forward:[0,0,1]}, scopeParts:[],
-  hero:{position:[.12,1.72,14.6],target:[.10,1.48,0],up:[0,1,0],fovY:31,registrationDigest:'a'.repeat(64)},
+  hero:{position:[1.15,2.35,14.6],target:[0,2.35,0],up:[0,1,0],fovY:31,registrationDigest:'a'.repeat(64)},
 }, null, 2)}\n`);
 const neutralFramePath = path.join(OUTPUT, 'neutral-frame.json');
 await fs.writeFile(neutralFramePath, `${JSON.stringify({

@@ -76,6 +76,12 @@ async function advanceThrough(root, artifactPath, lastCapability) {
 }
 
 function reviewInput({sourceSha256, assetSha256, evidenceClass = 'independent-reference', verdict = 'pass', gateStatuses = {}, unresolvedFindings = [], renderer = {}, requiredMaterialFeatures = ['base-color-factor', 'metallic-factor', 'roughness-factor']}) {
+  const observation = (id) => ({
+    sourceObservation: `The source ${id} evidence is visible in the bound reference.`,
+    renderObservation: `The current ${id} render is visible in the bound candidate evidence.`,
+    comparisonConclusion: `The ${id} comparison was directly reviewed for a blocking mismatch.`,
+    evidenceRefs: [`renders/final/${id}.png`],
+  });
   return {
     scopeId: 'whole',
     sourceSha256,
@@ -86,15 +92,30 @@ function reviewInput({sourceSha256, assetSha256, evidenceClass = 'independent-re
       id,
       status: 'pass',
       evidenceRefs: [`renders/final/${id}.png`],
+      observation: observation(id),
       summary: `${id} was directly inspected against the bound reference evidence.`,
     })),
     gateVerdicts: REQUIRED_VISUAL_GATE_IDS.map((id) => ({
       id,
       status: gateStatuses[id] ?? 'pass',
       evidenceRefs: ['renders/final/multiview-review-board.png'],
+      observation: (gateStatuses[id] ?? 'pass') === 'pass' ? observation(id) : undefined,
       summary: `${id} was evaluated from current digest-bound review evidence.`,
     })),
     unresolvedFindings,
+    registeredComparison: {
+      path: 'reviews/registered-comparison/comparison-report.json', sha256: 'f'.repeat(64), comparisonDigest: '0'.repeat(64),
+      sourceSha256, sourceManifestSha256: '1'.repeat(64), assetSha256,
+      renderReportPath: 'renders/final/render-report.json', renderReportSha256: '2'.repeat(64), framePath: 'renders/final/hero.png', frameSha256: '3'.repeat(64),
+      registrationDigest: '4'.repeat(64), hierarchyDigest: '5'.repeat(64), inputDigest: '6'.repeat(64), scopeIds: ['whole'],
+    },
+    comparisonAssessment: {
+      sourceObservation: 'The source whole object and its visible macro boundaries were inspected.',
+      renderObservation: 'The current whole render and registered comparison board were inspected.',
+      comparisonConclusion: 'The registered comparison is sufficient for this review.',
+      evidenceRefs: ['source/reference.bin', 'reviews/registered-comparison/comparison-report.json'],
+      contradictionResolution: {status: 'not-present', explanation: '', evidenceRefs: [], findingRefs: []},
+    },
     renderer: {
       kind: 'test-visual-fidelity-renderer',
       family: 'threejs-webgl',
@@ -171,7 +192,8 @@ test('checkpoint restore materializes exact content-addressed artifact bytes', a
   const guidance = await resumeProject(root);
   assert.equal(guidance.activeWork.capability, 'visual-hierarchy');
   assert.equal(guidance.nextAction, 'BEGIN_REPAIR_EDIT');
-  assert.equal((await auditProject(root)).valid, true);
+  const audit = await auditProject(root);
+  assert.equal(audit.valid, true, audit.errors.join('\n'));
 });
 
 test('failed bounded edit restores baseline bytes and preserves rejected candidate history', async (t) => {
@@ -193,7 +215,8 @@ test('failed bounded edit restores baseline bytes and preserves rejected candida
   const state = await loadProject(root);
   assert.equal(state.head, baseline.id);
   assert.ok(state.checkpointIds.includes(candidate.id));
-  assert.equal((await auditProject(root)).valid, true);
+  const audit = await auditProject(root);
+  assert.equal(audit.valid, true, audit.errors.join('\n'));
 });
 
 test('abort edit restores the baseline even before a candidate checkpoint exists', async (t) => {

@@ -203,8 +203,16 @@ function createGeometry() {
     {y: .05, radiusX: .36, radiusZ: .42, exponent: 2.85, centerZ: .02},
     {y: .23, radiusX: .28, radiusZ: .36, exponent: 2.6},
   ], {segments: 28, role: 'hip-socket-cup'});
+  // The independent reference includes a box support under the seated figure.
+  // Keep it in the pelvis-owned mesh so the public part hierarchy remains
+  // stable while the high-capacity geometry preserves this macro obligation.
+  const supportBlock = polygonPrism([
+    // The source block is single-sided: it projects clearly to the hanging-arm
+    // side of the pelvis instead of disappearing behind the two thighs.
+    [-1.80, -1.86], [.04, -1.86], [.04, -.22], [-1.80, -.22],
+  ], -.16, .86, 'observed-seat-support-block');
   return {
-    pelvis: mergeMeshes([pelvisBand, transformMesh(hipCup, frameMatrix([-.47, -.10, 0])), transformMesh(hipCup, frameMatrix([.47, -.10, 0]))], {role: 'pelvis-band-with-bilateral-leg-openings'}),
+    pelvis: mergeMeshes([pelvisBand, transformMesh(hipCup, frameMatrix([-.47, -.10, 0])), transformMesh(hipCup, frameMatrix([.47, -.10, 0])), supportBlock], {role: 'pelvis-band-with-bilateral-leg-openings-and-seat-support'}),
     waist: sectionLoft([{y:.03,radiusX:.48,radiusZ:.32,exponent:2.4},{y:.24,radiusX:.50,radiusZ:.34,centerX:-.02,exponent:2.5},{y:.54,radiusX:.55,radiusZ:.36,centerX:-.05,exponent:2.45}], {segments:28,role:'narrow-intermediate-waist-connector'}),
     chest: mergeMeshes([chestCore, leftChest, rightChest], {role: 'ribcage-shell-and-bilateral-front-planes'}),
     neck: sectionLoft([{y:.02,radiusX:.26,radiusZ:.24},{y:.20,radiusX:.24,radiusZ:.23},{y:.43,radiusX:.22,radiusZ:.22}], {segments:24,role:'neck-connector'}),
@@ -236,11 +244,20 @@ function createGeometry() {
 }
 
 const referencePose = {
-  pelvis:[-.05,.88,-.04], waistBase:[-.04,1.24,-.015], chestBase:[.10,1.69,.02], neckBase:[-.08,3.18,.07], head:[.08,3.98,.10], noseDirection:[.68,-.03,.73],
-  hangingShoulder:[-1.02,2.91,.07], hangingElbow:[-1.30,1.58,.18], hangingWrist:[-1.24,.18,.28], hangingHand:[-1.20,-.48,.25],
-  restingShoulder:[.58,3.02,.16], restingElbow:[1.10,2.25,.08], restingWrist:[1.56,1.82,-.55], restingHand:[1.82,1.16,-.81],
-  kneelingHip:[-.59,.78,.03], kneelingKnee:[-.72,-1.52,.22], kneelingAnkle:[-.84,-.41,-1.05], kneelingToe:[-.66,-.55,-1.84],
-  raisedHip:[.50,.80,.16], raisedKnee:[1.88,.78,-.82], raisedAnkle:[1.35,-.55,-.48], raisedToe:[2.72,-.88,-.26],
+  // Seated, forward-leaning source pose: both thighs rest on the support,
+  // shins drop toward the ground, and the right forearm returns to the face.
+  pelvis:[-.04,1.72,-.04], waistBase:[-.07,2.10,-.015], chestBase:[-.16,2.76,.10], neckBase:[.30,3.86,.24], head:[.72,4.60,.34], noseDirection:[.72,-.48,.58],
+  // The viewer-left shoulder carries the forearm back up to the lower face;
+  // the opposite arm drops diagonally across the lap to the near thigh.
+  hangingShoulder:[-.88,3.27,.07], hangingElbow:[-.92,2.48,1.10], hangingWrist:[.20,3.40,1.00], hangingHand:[.22,3.86,1.18],
+  restingShoulder:[.52,3.30,.16], restingElbow:[.72,2.64,.72], restingWrist:[-.78,1.72,1.84], restingHand:[-.70,1.35,2.18],
+  // Both source thighs read as broad, almost horizontal spans from the hips
+  // toward the image-right knees.  Keep the forward offset moderate so the
+  // camera does not collapse those spans into foreshortened vertical pads.
+  kneelingHip:[-.46,1.70,.03], kneelingKnee:[.99,1.52,1.30], kneelingAnkle:[.99,0.00,1.30], kneelingToe:[1.65,-.07,2.05],
+  // The near/right chain lands beside the first one with a near-vertical
+  // shin, then turns into the same planted, image-right foot direction.
+  raisedHip:[.43,1.70,.16], raisedKnee:[1.83,1.52,1.30], raisedAnkle:[1.83,0.00,1.30], raisedToe:[2.48,-.07,2.05],
 };
 
 const neutralPose = {

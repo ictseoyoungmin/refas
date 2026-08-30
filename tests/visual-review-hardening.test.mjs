@@ -1,4 +1,6 @@
 import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import path from 'node:path';
 import {test} from 'node:test';
 
 import {
@@ -8,13 +10,24 @@ import {
   createProjectionFit,
   createReferenceGeometry,
   createVisualReview,
+  assessCertification,
+  auditProject,
+  certifyProject,
+  findComparisonContradictions,
 } from '../skills/refas/scripts/lib/index.mjs';
 
 const D = (char) => char.repeat(64);
+const observation = (id) => ({
+  sourceObservation: `The source ${id} evidence is visible in the bound reference.`,
+  renderObservation: `The current ${id} render is visible in the bound candidate evidence.`,
+  comparisonConclusion: `The ${id} comparison was directly reviewed for a blocking mismatch.`,
+  evidenceRefs: [`reviews/${id}.png`],
+});
 const passVerdicts = (ids, prefix) => ids.map((id) => ({
   id,
   status: 'pass',
   evidenceRefs: [`reviews/${prefix}-${id}.png`],
+  observation: observation(`${prefix}-${id}`),
   summary: `${id} was directly compared against current source-bound evidence and has no blocking mismatch.`,
 }));
 
@@ -82,6 +95,19 @@ function reviewInput() {
     views: passVerdicts(REQUIRED_REVIEW_VIEW_IDS, 'view'),
     gateVerdicts: passVerdicts(REQUIRED_VISUAL_GATE_IDS, 'gate'),
     unresolvedFindings: [],
+    registeredComparison: {
+      path: 'reviews/registered-comparison/comparison-report.json', sha256: D('f'), comparisonDigest: D('0'),
+      sourceSha256: D('a'), sourceManifestSha256: D('b'), assetSha256: D('d'),
+      renderReportPath: 'renders/pbr/report.json', renderReportSha256: D('1'), framePath: 'renders/pbr/hero.png', frameSha256: D('2'),
+      registrationDigest: D('3'), hierarchyDigest: D('4'), inputDigest: D('5'), scopeIds: ['whole'],
+    },
+    comparisonAssessment: {
+      sourceObservation: 'The source whole object and its visible macro boundaries were inspected.',
+      renderObservation: 'The current whole render and registered comparison board were inspected.',
+      comparisonConclusion: 'The registered comparison is sufficient for this review.',
+      evidenceRefs: ['source/reference.png', 'reviews/registered-comparison/comparison-report.json'],
+      contradictionResolution: {status: 'not-present', explanation: '', evidenceRefs: [], findingRefs: []},
+    },
     renderer: {
       kind: 'independent-pbr',
       family: 'blender-cycles',
@@ -99,10 +125,12 @@ function reviewInput() {
 
 test('passing visual evidence cannot use empty or whitespace-only summaries', () => {
   const emptyView = reviewInput();
+  delete emptyView.views[0].observation;
   emptyView.views[0].summary = '   ';
   assert.throws(() => createVisualReview(emptyView), /substantive observation summary/);
 
   const emptyGate = reviewInput();
+  delete emptyGate.gateVerdicts[0].observation;
   emptyGate.gateVerdicts[0].summary = '';
   assert.throws(() => createVisualReview(emptyGate), /substantive observation summary/);
 });
@@ -119,4 +147,43 @@ test('projection-aware review preserves human visual authority when geometry is 
   assert.equal(review.verdict, 'pass');
   assert.deepEqual(review.unresolvedFindings, []);
   assert.equal(review.policy.unresolvedBlockingFindingsPreventClosure, true);
+});
+
+test('independent passing review requires an exact registered comparison and assessment', () => {
+  const missingComparison = reviewInput();
+  delete missingComparison.registeredComparison;
+  assert.throws(() => createVisualReview(missingComparison), /exact registered comparison binding/);
+
+  const missingAssessment = reviewInput();
+  delete missingAssessment.comparisonAssessment;
+  assert.throws(() => createVisualReview(missingAssessment), /comparison assessment/);
+});
+
+test('comparison screening emits evidence without becoming a visual gate', () => {
+  const report = {
+    comparisonDigest: D('0'),
+    scopes: [{scopeId: 'whole', metrics: {silhouetteIoU: 0.424, sourceForegroundPixels: 1000, renderForegroundPixels: 300}, images: [{path: 'whole/comparison-board.png'}]}],
+  };
+  const signals = findComparisonContradictions(report);
+  assert.deepEqual(signals.map((signal) => signal.category), ['silhouette-mismatch', 'mass-proportion-mismatch']);
+  assert.ok(signals.every((signal) => signal.evidenceRefs.includes('whole/comparison-board.png')));
+});
+
+test('historical thinker all-pass empty review cannot be certified after migration', async () => {
+  const root = path.resolve('temp/refas-thinker-articulated-figure-certified/articulated-drawing-figure/output/project');
+  try { await fs.access(root); } catch {
+    // Keep the regression portable for clean checkouts where the user-supplied
+    // artifact is not redistributed: the same legacy shape is rejected at the
+    // validator boundary even without its project bytes.
+    const legacy = reviewInput();
+    legacy.views.forEach((item) => { delete item.observation; item.summary = ''; });
+    legacy.gateVerdicts.forEach((item) => { delete item.observation; item.summary = ''; });
+    assert.throws(() => createVisualReview(legacy), /substantive observation summary/);
+    return;
+  }
+  const readiness = await assessCertification(root);
+  assert.equal(readiness.ready, false);
+  assert.match(readiness.errors.join('\n'), /visual review is invalid|substantive observation/);
+  await assert.rejects(() => certifyProject(root), /certification refused/);
+  assert.equal((await auditProject(root)).valid, false);
 });

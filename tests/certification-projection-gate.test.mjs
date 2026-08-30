@@ -102,20 +102,40 @@ async function commitCertification(root, source, {projection='none'}={}) {
   });
   const reportPath = await json(path.join(root,'renders','final','render-report.json'), report);
   const reportRef = await contentReference(reportPath, {kind:'render-report', root});
+  const comparison = {
+    schema:'refas.registered-comparison/v1', claimScope:'critique-evidence-only',
+    source:{sha256:source.sha256, manifestSha256:'f'.repeat(64)},
+    render:{assetSha256:asset.sha256, frameId:'hero', frameSha256:frames[0].sha256, reportSha256:reportRef.sha256},
+    registration:{digest:'a'.repeat(64), fileSha256:'b'.repeat(64), model:'test', metrics:{}},
+    hierarchy:{digest:'c'.repeat(64), fileSha256:'d'.repeat(64)}, projectionEvidence:[],
+    scopes:[{scopeId:'whole', level:'whole', ancestry:['whole'], sourceRoi:[0,0,1,1], registeredRenderRoi:[0,0,1,1],
+      measurementAuthority:'image-only', projectionBinding:null,
+      metrics:{silhouetteIoU:1, sourceForegroundPixels:100, renderForegroundPixels:100, landmarkResidualRmse:null},
+      landmarks:[], dimensions:[], images:[{path:'renders/final/hero.png',sha256:frames[0].sha256,width:1,height:1,evidenceClass:'derived-observation-aid'}]}],
+    policy:{rawSourceRemainsPrimary:true, outputsAreDerivedObservationAids:true, metricsCannotSetVisualGate:true,
+      metricFailureRequiresTypedFindingBeforeRouting:true, registrationResidualIsNotShapeTruth:true,
+      realSourceLandmarksMustUseRealizedProjection:true, manualRenderCoordinatesCannotClaimRealSourceGeometry:true,
+      projectionMetricsRemainVetoOnly:true}, inputDigest:'e'.repeat(64), comparisonDigest:'1'.repeat(64),
+  };
+  const comparisonPath = await json(path.join(root,'reviews','registered-comparison','comparison-report.json'), comparison);
+  const comparisonRef = await contentReference(comparisonPath, {kind:'registered-comparison', root});
+  const reviewObservation = (id) => ({sourceObservation:`The source ${id} evidence is visible in the bound reference.`,renderObservation:`The current ${id} render is visible in the bound candidate evidence.`,comparisonConclusion:`The ${id} comparison was directly reviewed.`,evidenceRefs:[`renders/final/${id}.png`]});
 
   const review = createVisualReview({
     scopeId:'whole', sourceSha256:source.sha256, assetSha256:asset.sha256,
     evidenceClass:'independent-reference', verdict:'pass',
-    views:REQUIRED_REVIEW_VIEW_IDS.map((id)=>({id,status:'pass',evidenceRefs:[`renders/final/${id}.png`],summary:`${id} directly inspected against the source.`})),
-    gateVerdicts:REQUIRED_VISUAL_GATE_IDS.map((id)=>({id,status:'pass',evidenceRefs:['renders/final/multiview-review-board.png'],summary:`${id} directly inspected against current source-bound evidence.`})),
+    views:REQUIRED_REVIEW_VIEW_IDS.map((id)=>({id,status:'pass',evidenceRefs:[`renders/final/${id}.png`],observation:reviewObservation(id),summary:`${id} directly inspected against the source.`})),
+    gateVerdicts:REQUIRED_VISUAL_GATE_IDS.map((id)=>({id,status:'pass',evidenceRefs:['renders/final/multiview-review-board.png'],observation:reviewObservation(id),summary:`${id} directly inspected against current source-bound evidence.`})),
     unresolvedFindings:[],
+    registeredComparison:{path:'reviews/registered-comparison/comparison-report.json',sha256:comparisonRef.sha256,comparisonDigest:comparison.comparisonDigest,sourceSha256:source.sha256,sourceManifestSha256:comparison.source.manifestSha256,assetSha256:asset.sha256,renderReportPath:'renders/final/render-report.json',renderReportSha256:reportRef.sha256,framePath:'renders/final/hero.png',frameSha256:frames[0].sha256,registrationDigest:comparison.registration.digest,hierarchyDigest:comparison.hierarchy.digest,inputDigest:comparison.inputDigest,scopeIds:['whole']},
+    comparisonAssessment:{sourceObservation:'The source whole object and visible macro boundaries were inspected.',renderObservation:'The current whole render and registered comparison board were inspected.',comparisonConclusion:'The registered comparison is sufficient for this synthetic real-source gate.',evidenceRefs:['source/reference.bin','reviews/registered-comparison/comparison-report.json'],contradictionResolution:{status:'not-present',explanation:'',evidenceRefs:[],findingRefs:[]}},
     renderer:{kind:'test-renderer',family:'threejs-webgl',reportRef:'renders/final/render-report.json',reportSha256:reportRef.sha256,independentProcess:true,claimScope:'visual-fidelity',supportedMaterialFeatures:['base-color-factor','metallic-factor','roughness-factor'],unsupportedMaterialFeatures:[]},
     requiredMaterialFeatures:['base-color-factor','metallic-factor','roughness-factor'],
     attestation:{attested:true,evidenceRefs:['source/reference.bin','renders/final/hero.png']},
   });
   const reviewPath = await json(path.join(root,'reviews','visual-review.json'), review);
   const reviewRef = await contentReference(reviewPath, {kind:'visual-review', root});
-  const refs = [asset, reportRef, ...frames, reviewRef];
+  const refs = [asset, reportRef, ...frames, comparisonRef, reviewRef];
 
   if (projection !== 'none') {
     const geometry = sourceGeometry(source);
@@ -158,7 +178,8 @@ test('good realized reprojection allows real source certification and remains au
   assert.ok(readiness.realizedProjectionDigest);
   const certificate = await certifyProject(root);
   assert.equal(certificate.sourceSha256, source.sha256);
-  assert.equal((await auditProject(root)).valid, true);
+  const audit = await auditProject(root);
+  assert.equal(audit.valid, true, audit.errors.join('\n'));
 });
 
 test('blocking realized reprojection vetoes certification even when visual review declares pass', async (t) => {
@@ -178,5 +199,6 @@ test('contract fixtures remain compatible with legacy synthetic certification te
   const readiness = await assessCertification(root);
   assert.equal(readiness.ready, true, readiness.errors.join('\n'));
   await certifyProject(root);
-  assert.equal((await auditProject(root)).valid, true);
+  const audit = await auditProject(root);
+  assert.equal(audit.valid, true, audit.errors.join('\n'));
 });

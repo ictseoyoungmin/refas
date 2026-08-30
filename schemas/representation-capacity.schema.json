@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/representation-capacity.schema.json",
+  "title": "RefAs representation capacity report",
+  "type": "object",
+  "properties": {
+    "schema": {"const": "refas.representation-capacity/v1"},
+    "backend": {"type": "string", "minLength": 1},
+    "obligations": {"type": "array"},
+    "supported": {"type": "array"},
+    "unsupported": {"type": "array"},
+    "blockers": {"type": "array"},
+    "capacityDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "policy": {"type": "object"}
+  },
+  "required": ["schema", "backend", "obligations", "supported", "unsupported", "blockers", "policy"],
+  "additionalProperties": true
+}

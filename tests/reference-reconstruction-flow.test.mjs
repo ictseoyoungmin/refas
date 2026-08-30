@@ -18,6 +18,12 @@ const projection = (referenceId, projectedXY) => ({
   binding: {kind: 'node-local-point', nodeId: `node-${referenceId}`, localPoint: [0, 0, 0]},
   evidenceRefs: ['renders/hero.png'],
 });
+const observation = (id) => ({
+  sourceObservation: `The source ${id} evidence is visible in the bound reference.`,
+  renderObservation: `The current ${id} render is visible in the bound candidate evidence.`,
+  comparisonConclusion: `The ${id} comparison was directly reviewed for a blocking mismatch.`,
+  evidenceRefs: [`reviews/${id}.png`],
+});
 
 function geometry() {
   return createReferenceGeometry({
@@ -59,6 +65,7 @@ function fit(kind) {
 
 const passItems = (ids, prefix) => ids.map((id) => ({
   id, status: 'pass', evidenceRefs: [`reviews/${prefix}-${id}.png`],
+  observation: observation(`${prefix}-${id}`),
   summary: `${id} was compared against current source-bound evidence and no blocking mismatch remains.`,
 }));
 
@@ -70,6 +77,19 @@ function reviewInput(projectionFit) {
     views: passItems(REQUIRED_REVIEW_VIEW_IDS, 'view'),
     gateVerdicts: passItems(REQUIRED_VISUAL_GATE_IDS, 'gate'),
     unresolvedFindings: [],
+    registeredComparison: {
+      path: 'reviews/registered-comparison/comparison-report.json', sha256: D('f'), comparisonDigest: D('0'),
+      sourceSha256: D('a'), sourceManifestSha256: D('b'), assetSha256: D('d'),
+      renderReportPath: 'renders/pbr/report.json', renderReportSha256: D('1'), framePath: 'renders/pbr/hero.png', frameSha256: D('2'),
+      registrationDigest: D('3'), hierarchyDigest: D('4'), inputDigest: D('5'), scopeIds: ['whole'],
+    },
+    comparisonAssessment: {
+      sourceObservation: 'The source whole object and its visible macro boundaries were inspected.',
+      renderObservation: 'The current whole render and registered comparison board were inspected.',
+      comparisonConclusion: 'The registered comparison is sufficient for this review.',
+      evidenceRefs: ['source/reference.png', 'reviews/registered-comparison/comparison-report.json'],
+      contradictionResolution: {status: 'not-present', explanation: '', evidenceRefs: [], findingRefs: []},
+    },
     renderer: {
       kind: 'independent-pbr', family: 'blender-cycles', reportRef: 'renders/pbr/report.json', reportSha256: D('e'),
       independentProcess: true, claimScope: 'visual-fidelity',

@@ -3,6 +3,7 @@ import {normalizeFinding} from './failure-router.mjs';
 import {findingsFromProjectionFit} from './projection-findings.mjs';
 import {validateProjectionFit} from './projection-fit.mjs';
 import {PBR_RENDERER_FAMILIES} from './pbr-render-report.mjs';
+import {assertRegisteredComparisonBinding} from './registered-comparison.mjs';
 
 export const VISUAL_REVIEW_SCHEMA = 'refas.visual-review/v1';
 export const REQUIRED_REVIEW_VIEW_IDS = Object.freeze([
@@ -59,13 +60,62 @@ function normalizeVerdict(raw, index, label) {
   const status = String(raw?.status ?? 'insufficient').toLowerCase();
   if (!REVIEW_STATUSES.has(status)) throw new Error(`${label}[${index}].status is invalid`);
   const evidenceRefs = strings(raw?.evidenceRefs, `${label}[${index}].evidenceRefs`, {required: true});
-  const summary = String(raw?.summary ?? '').trim();
-  return {id, status, evidenceRefs, summary};
+  const rawObservation = raw?.observation;
+  let observation = null;
+  if (rawObservation != null) {
+    if (!rawObservation || typeof rawObservation !== 'object') throw new Error(`${label}[${index}].observation must be an object`);
+    const sourceObservation = String(rawObservation.sourceObservation ?? '').trim();
+    const renderObservation = String(rawObservation.renderObservation ?? '').trim();
+    const comparisonConclusion = String(rawObservation.comparisonConclusion ?? '').trim();
+    const observationEvidenceRefs = strings(rawObservation.evidenceRefs, `${label}[${index}].observation.evidenceRefs`, {required: true});
+    if (!sourceObservation || !renderObservation || !comparisonConclusion) {
+      throw new Error(`${label}[${index}].observation requires sourceObservation, renderObservation, and comparisonConclusion`);
+    }
+    observation = {sourceObservation, renderObservation, comparisonConclusion, evidenceRefs: observationEvidenceRefs};
+  }
+  if (status === 'pass' && !observation) {
+    throw new Error(`${label}[${index}] requires a substantive observation summary or structured observation for a passing visual review`);
+  }
+  const summary = String(raw?.summary ?? '').trim() || observation?.comparisonConclusion || '';
+  return observation ? {id, status, evidenceRefs, summary, observation} : {id, status, evidenceRefs, summary};
 }
 
 function requirePassingObservationSummaries(items, label) {
-  const empty = items.findIndex((item) => !item.summary);
-  if (empty >= 0) throw new Error(`${label}[${empty}] requires a substantive observation summary in a passing visual review`);
+  const empty = items.findIndex((item) => !item.observation);
+  if (empty >= 0) throw new Error(`${label}[${empty}] requires substantive structured observation in a passing visual review`);
+}
+
+function normalizeComparisonAssessment(raw, {required = false} = {}) {
+  if (raw == null) {
+    if (required) throw new Error('independent passing visual review requires a comparison assessment');
+    return null;
+  }
+  if (!raw || typeof raw !== 'object') throw new Error('comparisonAssessment must be an object');
+  const sourceObservation = String(raw.sourceObservation ?? '').trim();
+  const renderObservation = String(raw.renderObservation ?? '').trim();
+  const comparisonConclusion = String(raw.comparisonConclusion ?? '').trim();
+  const evidenceRefs = strings(raw.evidenceRefs, 'comparisonAssessment.evidenceRefs', {required: true});
+  if (!sourceObservation || !renderObservation || !comparisonConclusion) {
+    throw new Error('comparisonAssessment requires sourceObservation, renderObservation, and comparisonConclusion');
+  }
+  const resolution = raw.contradictionResolution;
+  if (!resolution || typeof resolution !== 'object') throw new Error('comparisonAssessment.contradictionResolution is required');
+  const status = String(resolution.status ?? '').toLowerCase();
+  if (!['not-present', 'resolved', 'unresolved'].includes(status)) throw new Error('comparisonAssessment.contradictionResolution.status is invalid');
+  const explanation = String(resolution.explanation ?? '').trim();
+  const resolutionEvidenceRefs = strings(resolution.evidenceRefs, 'comparisonAssessment.contradictionResolution.evidenceRefs');
+  const findingRefs = strings(resolution.findingRefs, 'comparisonAssessment.contradictionResolution.findingRefs');
+  if (status === 'resolved' && (!explanation || !resolutionEvidenceRefs.length)) {
+    throw new Error('a resolved contradiction requires a substantive explanation and evidenceRefs');
+  }
+  if (required && status === 'unresolved') throw new Error('a passing visual review cannot declare contradictionResolution unresolved');
+  return {
+    sourceObservation,
+    renderObservation,
+    comparisonConclusion,
+    evidenceRefs,
+    contradictionResolution: {status, explanation, evidenceRefs: resolutionEvidenceRefs, findingRefs},
+  };
 }
 
 export function createVisualReview({
@@ -80,6 +130,8 @@ export function createVisualReview({
   renderer,
   requiredMaterialFeatures = [],
   attestation,
+  registeredComparison,
+  comparisonAssessment,
 } = {}) {
   const normalizedEvidenceClass = String(evidenceClass ?? '');
   if (!EVIDENCE_CLASSES.has(normalizedEvidenceClass)) throw new Error('evidenceClass must distinguish an independent reference from a self-generated contract fixture');
@@ -102,6 +154,13 @@ export function createVisualReview({
   const overlap = supportedMaterialFeatures.filter((feature) => unsupportedMaterialFeatures.includes(feature));
   if (overlap.length) throw new Error(`renderer material support is contradictory: ${overlap.join(', ')}`);
   const normalizedRequiredFeatures = strings(requiredMaterialFeatures, 'requiredMaterialFeatures', {identifiers: true});
+  const normalizedRegisteredComparison = registeredComparison == null ? null : assertRegisteredComparisonBinding(registeredComparison);
+  const normalizedComparisonAssessment = normalizeComparisonAssessment(comparisonAssessment, {
+    required: normalizedEvidenceClass === 'independent-reference' && normalizedVerdict === 'pass',
+  });
+  if (normalizedEvidenceClass === 'independent-reference' && normalizedVerdict === 'pass' && !normalizedRegisteredComparison) {
+    throw new Error('an independent passing visual review requires an exact registered comparison binding');
+  }
   const normalizedRenderer = {
     kind: String(renderer.kind ?? ''),
     family: String(renderer.family ?? ''),
@@ -145,6 +204,8 @@ export function createVisualReview({
     unresolvedFindings: findings,
     renderer: normalizedRenderer,
     requiredMaterialFeatures: normalizedRequiredFeatures,
+    registeredComparison: normalizedRegisteredComparison,
+    comparisonAssessment: normalizedComparisonAssessment,
     attestation: {evidenceRefs: attestationEvidenceRefs, digest: digestJson({attested: true, evidenceRefs: attestationEvidenceRefs})},
     policy: {
       selfGeneratedFixturesAreContractOnly: true,
@@ -152,6 +213,9 @@ export function createVisualReview({
       unsupportedMaterialFeaturesCannotPassAppearance: true,
       independentPbrRendererRequiredAfterPortableGate: true,
       unresolvedBlockingFindingsPreventClosure: true,
+      substantiveObservationsRequiredForPass: true,
+      independentPassRequiresRegisteredComparison: true,
+      contradictionEvidenceRequiresResolution: true,
     },
   };
   return deepFreeze({...payload, reviewDigest: digestJson(payload)});
@@ -183,6 +247,8 @@ export function validateVisualReview(review) {
       renderer: review.renderer,
       requiredMaterialFeatures: review.requiredMaterialFeatures,
       attestation: {attested: true, evidenceRefs: review.attestation?.evidenceRefs ?? []},
+      registeredComparison: review.registeredComparison,
+      comparisonAssessment: review.comparisonAssessment,
     });
     if (recreated.reviewDigest !== review.reviewDigest) errors.push('visual review normalization mismatch');
     const payload = structuredClone(review);

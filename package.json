@@ -28,6 +28,7 @@
     "dogfood:assembly": "node examples/modular-assembly/run.mjs",
     "dogfood:parameter-fit": "node examples/parameter-fit/run.mjs",
     "dogfood:articulated": "node examples/articulated-figure/run.mjs",
+    "benchmark:matrix": "node examples/benchmark-matrix/run.mjs",
     "release:audit": "node tools/release-audit.mjs"
   }
 }

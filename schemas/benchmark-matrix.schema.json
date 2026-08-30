@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/benchmark-matrix.schema.json",
+  "title": "RefAs independent-reference benchmark matrix",
+  "type": "object",
+  "properties": {
+    "schema": {"const": "refas.benchmark-matrix/v1"},
+    "id": {"$ref": "common.schema.json#/$defs/id"},
+    "benchmarks": {"type": "array", "minItems": 1},
+    "policy": {"type": "object"},
+    "matrixDigest": {"$ref": "common.schema.json#/$defs/digest"}
+  },
+  "required": ["schema", "id", "benchmarks", "policy"],
+  "additionalProperties": true
+}

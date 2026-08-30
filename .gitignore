@@ -9,3 +9,4 @@ __pycache__/
 .refas/
 examples/**/output/
 temp/
+docs/works/

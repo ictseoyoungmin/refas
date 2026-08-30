@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/macro-fit.schema.json",
+  "title": "RefAs alternating macro fitting coordinator",
+  "type": "object",
+  "properties": {
+    "schema": {"const": "refas.macro-fit/v1"},
+    "ownerCapability": {"const": "shape-reconstruction"},
+    "scopeId": {"$ref": "common.schema.json#/$defs/id"},
+    "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "planDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "reportDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "cycles": {"type": "array"},
+    "policy": {"type": "object"}
+  },
+  "required": ["schema", "ownerCapability", "scopeId", "sourceSha256", "policy"],
+  "additionalProperties": true
+}

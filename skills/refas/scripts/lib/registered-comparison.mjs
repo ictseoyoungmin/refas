@@ -1,6 +1,102 @@
-import {assertDigest} from './canonical.mjs';
+import {assertDigest, assertId, deepFreeze} from './canonical.mjs';
 
 export const REGISTERED_COMPARISON_SCHEMA = 'refas.registered-comparison/v1';
+
+const BINDING_PATH = /^(?!\/)(?![A-Za-z]:)(?!.*(?:^|\/)\.\.(?:\/|$)).+$/u;
+
+function bindingPath(value, label) {
+  const normalized = String(value ?? '').trim();
+  if (!BINDING_PATH.test(normalized)) throw new Error(`${label} must be a non-empty project-relative path`);
+  return normalized;
+}
+
+function bindingStrings(values, label, {required = false, identifiers = false} = {}) {
+  const normalized = [...new Set((values ?? []).map(String).map((value) => value.trim()).filter(Boolean))].sort();
+  if (required && !normalized.length) throw new Error(`${label} requires at least one value`);
+  if (identifiers) normalized.forEach((value, index) => assertId(value, `${label}[${index}]`));
+  return normalized;
+}
+
+/**
+ * Normalize the identity tuple a certification-valid visual review must cite.
+ * This is a binding contract only; it does not read files or decide fidelity.
+ */
+export function assertRegisteredComparisonBinding(raw) {
+  if (!raw || typeof raw !== 'object') throw new Error('registeredComparison binding is required');
+  const binding = {
+    path: bindingPath(raw.path, 'registeredComparison.path'),
+    sha256: assertDigest(raw.sha256 ?? raw.fileSha256, 'registeredComparison.sha256'),
+    comparisonDigest: assertDigest(raw.comparisonDigest, 'registeredComparison.comparisonDigest'),
+    sourceSha256: assertDigest(raw.sourceSha256, 'registeredComparison.sourceSha256'),
+    sourceManifestSha256: assertDigest(raw.sourceManifestSha256, 'registeredComparison.sourceManifestSha256'),
+    assetSha256: assertDigest(raw.assetSha256, 'registeredComparison.assetSha256'),
+    renderReportPath: bindingPath(raw.renderReportPath, 'registeredComparison.renderReportPath'),
+    renderReportSha256: assertDigest(raw.renderReportSha256, 'registeredComparison.renderReportSha256'),
+    framePath: bindingPath(raw.framePath, 'registeredComparison.framePath'),
+    frameSha256: assertDigest(raw.frameSha256, 'registeredComparison.frameSha256'),
+    registrationDigest: assertDigest(raw.registrationDigest, 'registeredComparison.registrationDigest'),
+    hierarchyDigest: assertDigest(raw.hierarchyDigest, 'registeredComparison.hierarchyDigest'),
+    inputDigest: assertDigest(raw.inputDigest, 'registeredComparison.inputDigest'),
+    scopeIds: bindingStrings(raw.scopeIds, 'registeredComparison.scopeIds', {required: true, identifiers: true}),
+  };
+  if (!binding.scopeIds.includes('whole')) throw new Error('registeredComparison.scopeIds must include whole');
+  return deepFreeze(binding);
+}
+
+/**
+ * Produce screening-only contrary signals from an already validated report.
+ * These values are deliberately not acceptance thresholds: callers must still
+ * obtain a typed finding or a substantive source-grounded resolution.
+ */
+export function findComparisonContradictions(report, {silhouetteIoUBelow = 0.5, foregroundAreaRatioOutside = [0.55, 1.8], landmarkResidualAbove = 0.12, dimensionRelativeErrorAbove = 0.35, edgeDisagreementAbove = 0.45} = {}) {
+  const whole = (report?.scopes ?? []).find((scope) => scope?.scopeId === 'whole');
+  if (!whole) return [];
+  const signals = [];
+  const metricEvidence = [...new Set((whole.images ?? []).map((image) => image?.path).filter(Boolean))];
+  const evidenceRefs = metricEvidence.length ? metricEvidence : [`comparison:${report.comparisonDigest ?? 'unbound'}:whole`];
+  const silhouetteIoU = Number(whole.metrics?.silhouetteIoU);
+  if (Number.isFinite(silhouetteIoU) && silhouetteIoU < silhouetteIoUBelow) {
+    signals.push({
+      id: 'whole-silhouette-screen', category: 'silhouette-mismatch', metric: 'silhouetteIoU', value: silhouetteIoU,
+      summary: `Registered whole-source silhouette agreement is ${silhouetteIoU.toFixed(6)}, below the contradiction-screening band.`,
+      evidenceRefs,
+    });
+  }
+  const sourcePixels = Number(whole.metrics?.sourceForegroundPixels);
+  const renderPixels = Number(whole.metrics?.renderForegroundPixels);
+  if (sourcePixels > 0 && renderPixels >= 0) {
+    const ratio = renderPixels / sourcePixels;
+    if (ratio < foregroundAreaRatioOutside[0] || ratio > foregroundAreaRatioOutside[1]) {
+      signals.push({
+        id: 'whole-foreground-area-screen', category: 'mass-proportion-mismatch', metric: 'foregroundAreaRatio', value: ratio,
+        summary: `Registered foreground occupancy ratio is ${ratio.toFixed(6)}, outside the contradiction-screening band.`,
+        evidenceRefs,
+      });
+    }
+  }
+  const landmarkResidual = Number(whole.metrics?.macroLandmarkResidualRmse ?? whole.metrics?.landmarkResidualRmse);
+  if (Number.isFinite(landmarkResidual) && landmarkResidual > landmarkResidualAbove) {
+    signals.push({
+      id: 'whole-landmark-screen', category: 'landmark-mismatch', metric: 'macroLandmarkResidualRmse', value: landmarkResidual,
+      summary: `Registered whole-source landmark residual is ${landmarkResidual.toFixed(6)}, above the contradiction-screening band.`, evidenceRefs,
+    });
+  }
+  const dimensionError = Number(whole.metrics?.dimensionMeanRelativeError);
+  if (Number.isFinite(dimensionError) && dimensionError > dimensionRelativeErrorAbove) {
+    signals.push({
+      id: 'whole-dimension-screen', category: 'mass-proportion-mismatch', metric: 'dimensionMeanRelativeError', value: dimensionError,
+      summary: `Registered whole-source dimension error is ${dimensionError.toFixed(6)}, above the contradiction-screening band.`, evidenceRefs,
+    });
+  }
+  const edgeDisagreement = Number(whole.metrics?.perceptual?.edgeDisagreement);
+  if (Number.isFinite(edgeDisagreement) && edgeDisagreement > edgeDisagreementAbove) {
+    signals.push({
+      id: 'whole-edge-screen', category: 'silhouette-mismatch', metric: 'perceptual.edgeDisagreement', value: edgeDisagreement,
+      summary: `Registered edge disagreement is ${edgeDisagreement.toFixed(6)}, above the contradiction-screening band.`, evidenceRefs,
+    });
+  }
+  return signals;
+}
 
 const CONTRACT_FIXTURE_ACQUISITIONS = new Set([
   'test-fixture',

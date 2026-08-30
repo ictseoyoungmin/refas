@@ -24,6 +24,7 @@ import {
   validateVisualReview,
 } from './visual-review.mjs';
 import {validatePbrRenderReport} from './pbr-render-report.mjs';
+import {findComparisonContradictions, validateRegisteredComparison} from './registered-comparison.mjs';
 
 export const PROJECT_STATE_SCHEMA = 'refas.project-state/v1';
 export const CHECKPOINT_SCHEMA = 'refas.checkpoint/v1';
@@ -262,6 +263,7 @@ async function inspectCertificationHead(root, state, head) {
       }
       if (visualReview.evidenceClass !== 'independent-reference') errors.push('self-generated contract fixtures cannot certify visual fidelity');
       if (visualReview.verdict !== 'pass') errors.push(`visual review verdict is ${visualReview.verdict ?? 'missing'}, not pass`);
+      await inspectRegisteredComparison(root, state, head, visualReview, errors);
       const blocking = (visualReview.unresolvedFindings ?? []).filter((finding) => finding.blocking === true);
       if (blocking.length) errors.push(`visual review has unresolved major, critical, or blocking findings: ${blocking.map((finding) => finding.category).join(', ')}`);
       const reviewGates = new Map((visualReview.gateVerdicts ?? []).map((gate) => [gate.id, gate]));
@@ -279,6 +281,68 @@ async function inspectCertificationHead(root, state, head) {
   return {ready: errors.length === 0, errors, visualReview, visualReviewArtifact};
 }
 
+async function inspectRegisteredComparison(root, state, head, visualReview, errors) {
+  if (visualReview?.evidenceClass !== 'independent-reference' || visualReview?.verdict !== 'pass') return null;
+  const acquisitionKind = String(state.source?.acquisition?.kind ?? '').toLowerCase();
+  if (['test-fixture', 'deterministic-project-fixture', 'synthetic-test-fixture'].includes(acquisitionKind)) return null;
+  const binding = visualReview.registeredComparison;
+  if (!binding) {
+    errors.push('independent passing visual review requires an exact registered comparison binding');
+    return null;
+  }
+  const matching = head.artifactRefs.filter((artifact) => artifact.path === binding.path && artifact.kind === 'registered-comparison');
+  if (matching.length !== 1) {
+    errors.push('certification checkpoint requires exactly one digest-bound registered comparison matching the visual review');
+    return null;
+  }
+  let report;
+  try {
+    const artifact = matching[0];
+    const resolved = await assertExistingFileInside(root, artifact.path, 'registered comparison artifact');
+    if (artifact.sha256 !== binding.sha256 || artifact.sizeBytes !== resolved.stat.size || await sha256File(resolved.realFile) !== binding.sha256) {
+      errors.push('registered comparison artifact bytes do not match the visual review binding');
+    }
+    report = await readJson(resolved.realFile);
+    const validation = validateRegisteredComparison(report);
+    if (!validation.valid) errors.push(`registered comparison is invalid: ${validation.errors.join('; ')}`);
+  } catch (error) {
+    errors.push(`registered comparison unavailable: ${error.message}`);
+    return null;
+  }
+  if (!report) return null;
+  const checks = [
+    [report.comparisonDigest, binding.comparisonDigest, 'registered comparison digest'],
+    [report.source?.sha256, state.source?.sha256, 'registered comparison source digest'],
+    [report.source?.sha256, binding.sourceSha256, 'registered comparison source binding'],
+    [report.source?.manifestSha256, binding.sourceManifestSha256, 'registered comparison source manifest binding'],
+    [report.render?.assetSha256, visualReview.assetSha256, 'registered comparison asset digest'],
+    [report.render?.assetSha256, binding.assetSha256, 'registered comparison asset binding'],
+    [report.render?.frameSha256, binding.frameSha256, 'registered comparison hero frame binding'],
+    [report.render?.reportSha256, binding.renderReportSha256, 'registered comparison render report binding'],
+    [report.registration?.digest, binding.registrationDigest, 'registered comparison registration binding'],
+    [report.hierarchy?.digest, binding.hierarchyDigest, 'registered comparison hierarchy binding'],
+    [report.inputDigest, binding.inputDigest, 'registered comparison input binding'],
+  ];
+  for (const [actual, expected, label] of checks) if (actual !== expected) errors.push(`${label} is invalid`);
+  const reportScopes = (report.scopes ?? []).map((scope) => scope.scopeId).sort();
+  if (JSON.stringify(reportScopes) !== JSON.stringify([...binding.scopeIds].sort())) errors.push('registered comparison scope binding is invalid');
+
+  const renderReportArtifact = head.artifactRefs.find((artifact) => artifact.path === binding.renderReportPath && artifact.sha256 === binding.renderReportSha256 && ['render-report', 'artifact'].includes(artifact.kind));
+  if (!renderReportArtifact) errors.push('registered comparison render report is not digest-bound in the certification checkpoint');
+  const frameArtifact = head.artifactRefs.find((artifact) => artifact.path === binding.framePath && artifact.sha256 === binding.frameSha256 && ['render-frame', 'render-image', 'artifact'].includes(artifact.kind));
+  if (!frameArtifact) errors.push('registered comparison hero frame is not digest-bound in the certification checkpoint');
+
+  const contradictions = findComparisonContradictions(report);
+  if (contradictions.length) {
+    const resolution = visualReview.comparisonAssessment?.contradictionResolution;
+    const refs = new Set([...(visualReview.comparisonAssessment?.evidenceRefs ?? []), ...(resolution?.evidenceRefs ?? [])]);
+    if (resolution?.status !== 'resolved' || !resolution.explanation || !refs.has(binding.path)) {
+      errors.push(`registered comparison has unresolved strong contrary evidence: ${contradictions.map((signal) => signal.category).join(', ')}`);
+    }
+  }
+  return {report, contradictions};
+}
+
 function certificateCore(certificate) {
   return {
     schema: certificate.schema,
@@ -289,6 +353,7 @@ function certificateCore(certificate) {
     checkpointDigest: certificate.checkpointDigest,
     gateIds: certificate.gateIds,
     visualReview: certificate.visualReview,
+    registeredComparison: certificate.registeredComparison,
     audit: certificate.audit,
   };
 }
@@ -866,6 +931,7 @@ export async function certifyProject(root) {
       reviewDigest: readiness.visualReview.reviewDigest,
       evidenceClass: readiness.visualReview.evidenceClass,
     },
+    registeredComparison: readiness.visualReview.registeredComparison,
     audit: {checkpointCount: audit.checkpointCount, objectCount: audit.objectCount},
   };
   const certificate = {...core, certificateDigest: digestJson(core), certifiedAt: nowIso()};

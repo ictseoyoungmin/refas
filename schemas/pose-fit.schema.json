@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/pose-fit.schema.json",
+  "title": "RefAs owner-local pose fitting plan/report",
+  "type": "object",
+  "properties": {
+    "schema": {"const": "refas.pose-fit/v1"},
+    "ownerCapability": {"const": "assembly"},
+    "scopeId": {"$ref": "common.schema.json#/$defs/id"},
+    "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "planDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "reportDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "baselineAsset": {"type": "object"},
+    "variables": {"type": "array", "minItems": 1},
+    "constraints": {"type": "array"},
+    "objectives": {"type": "array", "minItems": 1},
+    "trials": {"type": "array"},
+    "policy": {"type": "object"}
+  },
+  "required": ["schema", "ownerCapability", "scopeId", "sourceSha256", "baselineAsset", "variables", "objectives", "policy"],
+  "additionalProperties": true
+}
