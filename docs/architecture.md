@@ -53,6 +53,12 @@ A GLB is normally a realized artifact, not the default editable source of semant
 
 `refas.canonical-edit-intent/v1` records the owner, hierarchy scope, edit class, canonical bindings, realization operations, and mutation boundary. It provides the stable boundary that later attachment propagation and contact validation can depend on. The detailed contract is in `docs/canonical-edit-boundary.md`.
 
+## Attachment semantic layer
+
+Assembly relationships are explicit canonical construction state rather than proximity guesses. `refas.attachment-semantics/v1` classifies every declared entity as one of `FUSED`, `RIGID_FOLLOW`, `SURFACE_OFFSET`, `MULTI_ANCHOR`, `ARTICULATED`, `SUPPORTED_CLEARANCE`, or `FREE`, with directed owner/dependent relationships and evidence basis.
+
+The semantic layer is declarative: it rejects missing modes, invalid owner cardinality, unknown owners, self attachment, and ownership cycles, but it does not yet solve transforms or validate realized mesh contact. Later surface-anchor, propagation, fusion, and contact stages consume this graph so that owner edits cannot silently leave stale dependents behind.
+
 ## Bounded edit transaction
 
 A transaction contains one baseline checkpoint, one capability, one hierarchy scope, one testable intent, protected metrics, and exactly one direct candidate checkpoint.
@@ -74,6 +80,7 @@ The dependency-light JavaScript core owns:
 
 - canonical JSON and SHA-256;
 - canonical edit-class and GLB mutation-boundary contracts;
+- explicit attachment semantic graphs and owner/dependent invariants;
 - hierarchy and observation contracts;
 - spatial hypotheses and 2D reference registration;
 - deterministic mesh and embedded GLB construction;
