@@ -57,7 +57,7 @@ A GLB is normally a realized artifact, not the default editable source of semant
 
 Assembly relationships are explicit canonical construction state rather than proximity guesses. `refas.attachment-semantics/v1` classifies every declared entity as one of `FUSED`, `RIGID_FOLLOW`, `SURFACE_OFFSET`, `MULTI_ANCHOR`, `ARTICULATED`, `SUPPORTED_CLEARANCE`, or `FREE`, with directed owner/dependent relationships and evidence basis.
 
-The semantic layer is declarative: it rejects missing modes, invalid owner cardinality, unknown owners, self attachment, and ownership cycles, but it does not yet solve transforms or validate realized mesh contact. Later surface-anchor, propagation, fusion, and contact stages consume this graph so that owner edits cannot silently leave stale dependents behind.
+The semantic layer is declarative: it rejects missing modes, invalid owner cardinality, unknown entities, self attachment, duplicate IDs, cycles, and implicit attachment, but it does not yet solve transforms or validate realized mesh contact. Later surface-anchor, propagation, fusion, and contact stages consume this graph so that owner edits cannot silently leave stale dependents behind.
 
 ## Logical fusion layer
 
@@ -76,6 +76,12 @@ When owner geometry changes, `refas.surface-anchor-rebind/v1` may recover the an
 `refas.attachment-follow-state/v1` provides the two deterministic one-owner propagation primitives used before graph-wide solving. `RIGID_FOLLOW` preserves the baseline owner-relative subject frame. `SURFACE_OFFSET` consumes a current surface-anchor frame and a subject-local contact frame so the contact frame lands on the owner surface with the declared signed offset and orientation.
 
 `refas.attachment-follow-report/v1` emits exact subject target rigid frames from explicit owner world frames. This layer is intentionally one-step: it does not order transitive dependencies, approximate `MULTI_ANCHOR`, edit mesh bytes, or authorize closure. Graph ordering and simultaneous constraints remain separate later layers.
+
+## Multi-anchor rigid solver layer
+
+`refas.multi-anchor-plan/v1` represents one `MULTI_ANCHOR` relation as a simultaneous rigid-body fitting problem. Every owner declared by the relation must contribute a current surface anchor and explicit owner world frame, while the subject contributes matching local anchor frames and bounded position/orientation tolerances.
+
+`refas.multi-anchor-report/v1` estimates only translation and rotation. It never scales or deforms the subject. A best-fit pose becomes eligible for realization only when weighted RMS error and every declared local tolerance pass. Otherwise the result is `INFEASIBLE`: the approximate pose remains diagnostic evidence, but downstream assembly must not apply it as a valid attachment solution. This prevents contradictory nose/ear contacts from being hidden by stretching or warping glasses.
 
 ## Bounded edit transaction
 
@@ -102,6 +108,7 @@ The dependency-light JavaScript core owns:
 - logical fusion groups and digest-bound group invalidation without physical mesh mutation;
 - owner-local surface anchor frames with bounded semantic-patch retessellation recovery;
 - deterministic one-owner rigid-follow and surface-offset target propagation;
+- simultaneous rigid multi-anchor fitting with explicit infeasibility and no hidden scale/deformation;
 - hierarchy and observation contracts;
 - spatial hypotheses and 2D reference registration;
 - deterministic mesh and embedded GLB construction;
