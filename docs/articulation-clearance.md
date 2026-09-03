@@ -35,22 +35,22 @@ panel ──supported by──> bracket ──rigidly follows──> housing
   └──── intentional 0.08–0.12 gap from housing
 ```
 
-The support path must be a real path through the attachment semantic graph. An edge cannot be invented merely because two parts are nearby. Every path edge is also bound to a realized-assembly attachment proof ID.
+The support path must be a real path through the attachment semantic graph. An edge cannot be invented merely because two parts are nearby. Every path edge is bound to a realized-assembly attachment proof ID and to the exact child/parent module pair that proof must describe. A passing proof for some unrelated pair cannot be reused as support evidence.
 
-The clearance contract separately declares one or more counterpart gap ranges. A positive gap is allowed; direct contact with the clearance counterpart is not required. However, the gap and the complete support path must be demonstrated by a valid, digest-bound `refas.realized-assembly-proof/v1` derived from the realized GLB.
+The clearance contract separately declares one or more counterpart gap ranges and the exact subject/counterpart module pair whose realized attachment check supplies the signed-clearance value. A positive gap is allowed; direct contact with the clearance counterpart is not required. However, the gap and the complete support path must be demonstrated by a valid, digest-bound `refas.realized-assembly-proof/v1` derived from the realized GLB.
 
 `SATISFIED` therefore means both:
 
-1. every declared support edge has passing realized support/contact evidence with no penetration; and
-2. every declared signed-clearance measurement is inside its local bound.
+1. every declared support edge has passing realized support/contact evidence for the bound module pair with no penetration; and
+2. every declared signed-clearance measurement comes from the bound subject/counterpart module pair and lies inside its local range.
 
-If either condition fails, the report is `BLOCKED`. The runtime must not invent a hidden brace, convert a gap to contact, or move geometry to force a pass.
+If either condition fails, the report is `BLOCKED`. The runtime must not invent a hidden brace, substitute an unrelated passing contact, convert a gap to contact, or move geometry to force a pass.
 
 ## Public artifacts
 
 - `refas.articulated-joint/v1`: bounded revolute definition, joint frames, axis convention, and limits.
 - `refas.articulated-joint-report/v1`: one angle evaluation and deterministic subject target frame.
-- `refas.supported-clearance/v1`: semantic support path, realized-proof bindings, and local gap bounds.
+- `refas.supported-clearance/v1`: semantic support path, realized-proof/module-pair bindings, and local gap bounds.
 - `refas.supported-clearance-report/v1`: digest-bound evaluation against one exact realized assembly proof.
 
 These artifacts are assembly state/evidence. They do not replace later graph ordering, transform realization, whole-object contact review, or certification.
