@@ -71,6 +71,12 @@ Surface-following relationships do not store canonical world XYZ. `refas.surface
 
 When owner geometry changes, `refas.surface-anchor-rebind/v1` may recover the anchor only inside the same semantic patch and only within the anchor's distance and normal-deviation limits. This makes modest shape edits and retessellation recoverable without silently snapping an attachment to unrelated geometry. Surface anchors still do not move the dependent object; rigid-follow, surface-offset, and multi-anchor propagation consume these frames later.
 
+## One-owner attachment follow layer
+
+`refas.attachment-follow-state/v1` provides the two deterministic one-owner propagation primitives used before graph-wide solving. `RIGID_FOLLOW` preserves the baseline owner-relative subject frame. `SURFACE_OFFSET` consumes a current surface-anchor frame and a subject-local contact frame so the contact frame lands on the owner surface with the declared signed offset and orientation.
+
+`refas.attachment-follow-report/v1` emits exact subject target rigid frames from explicit owner world frames. This layer is intentionally one-step: it does not order transitive dependencies, approximate `MULTI_ANCHOR`, edit mesh bytes, or authorize closure. Graph ordering and simultaneous constraints remain separate later layers.
+
 ## Bounded edit transaction
 
 A transaction contains one baseline checkpoint, one capability, one hierarchy scope, one testable intent, protected metrics, and exactly one direct candidate checkpoint.
@@ -95,6 +101,7 @@ The dependency-light JavaScript core owns:
 - explicit attachment semantic graphs and owner/dependent invariants;
 - logical fusion groups and digest-bound group invalidation without physical mesh mutation;
 - owner-local surface anchor frames with bounded semantic-patch retessellation recovery;
+- deterministic one-owner rigid-follow and surface-offset target propagation;
 - hierarchy and observation contracts;
 - spatial hypotheses and 2D reference registration;
 - deterministic mesh and embedded GLB construction;
