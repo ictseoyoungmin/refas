@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/articulated-joint.schema.json",
+  "title": "RefAs articulated revolute joint",
+  "type": "object",
+  "required": ["schema", "id", "scopeId", "sourceSha256", "attachmentSemanticsDigest", "relationId", "subjectId", "ownerId", "jointType", "axisConvention", "zeroConfiguration", "ownerJointFrame", "subjectJointFrame", "limits", "evidenceRefs", "policy", "jointDigest"],
+  "properties": {
+    "schema": {"const": "refas.articulated-joint/v1"},
+    "id": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "attachmentSemanticsDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "relationId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "subjectId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "ownerId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "jointType": {"const": "REVOLUTE"},
+    "axisConvention": {"const": "owner-joint-z"},
+    "zeroConfiguration": {"const": "owner-and-subject-joint-frames-coincident"},
+    "ownerJointFrame": {"$ref": "#/$defs/frame"},
+    "subjectJointFrame": {"$ref": "#/$defs/frame"},
+    "limits": {
+      "type": "object",
+      "required": ["minimumAngle", "maximumAngle"],
+      "properties": {
+        "minimumAngle": {"type": "number"},
+        "maximumAngle": {"type": "number"}
+      },
+      "additionalProperties": false
+    },
+    "evidenceRefs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "policy": {
+      "type": "object",
+      "required": ["boundedRevoluteOnly", "jointAxisIsOwnerFrameZ", "subjectGeometryRemainsRigid", "evaluationProducesTargetFrameOnly", "jointDoesNotAuthorizeClosure"],
+      "properties": {
+        "boundedRevoluteOnly": {"const": true},
+        "jointAxisIsOwnerFrameZ": {"const": true},
+        "subjectGeometryRemainsRigid": {"const": true},
+        "evaluationProducesTargetFrameOnly": {"const": true},
+        "jointDoesNotAuthorizeClosure": {"const": true}
+      },
+      "additionalProperties": false
+    },
+    "jointDigest": {"$ref": "common.schema.json#/$defs/digest"}
+  },
+  "$defs": {
+    "vec3": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}},
+    "frame": {
+      "type": "object",
+      "required": ["origin", "xAxis", "yAxis", "zAxis"],
+      "properties": {
+        "origin": {"$ref": "#/$defs/vec3"},
+        "xAxis": {"$ref": "#/$defs/vec3"},
+        "yAxis": {"$ref": "#/$defs/vec3"},
+        "zAxis": {"$ref": "#/$defs/vec3"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
