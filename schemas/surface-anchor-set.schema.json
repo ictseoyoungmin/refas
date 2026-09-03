@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/surface-anchor-set.schema.json",
+  "title": "RefAs surface anchor set",
+  "type": "object",
+  "required": ["schema", "scopeId", "sourceSha256", "attachmentSemanticsDigest", "anchors", "evidenceRefs", "policy", "anchorSetDigest"],
+  "properties": {
+    "schema": {"const": "refas.surface-anchor-set/v1"},
+    "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "attachmentSemanticsDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "anchors": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "relationId", "subjectAnchorId", "ownerId", "patchId", "triangleId", "barycentric", "tangentHint", "offset", "maxRebindDistance", "maxNormalDeviationRadians", "ownerGeometryDigest", "ownerSurfaceDigest", "frame", "evidenceRefs"],
+        "properties": {
+          "id": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "relationId": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "subjectAnchorId": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "ownerId": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "patchId": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "triangleId": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "barycentric": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number", "minimum": 0, "maximum": 1}},
+          "tangentHint": {"$ref": "#/$defs/vec3"},
+          "offset": {"type": "number"},
+          "maxRebindDistance": {"type": "number", "exclusiveMinimum": 0},
+          "maxNormalDeviationRadians": {"type": "number", "exclusiveMinimum": 0, "maximum": 3.141592653589793},
+          "ownerGeometryDigest": {"$ref": "common.schema.json#/$defs/digest"},
+          "ownerSurfaceDigest": {"$ref": "common.schema.json#/$defs/digest"},
+          "frame": {
+            "type": "object",
+            "required": ["position", "normal", "tangent", "bitangent", "offsetPosition"],
+            "properties": {
+              "position": {"$ref": "#/$defs/vec3"},
+              "normal": {"$ref": "#/$defs/vec3"},
+              "tangent": {"$ref": "#/$defs/vec3"},
+              "bitangent": {"$ref": "#/$defs/vec3"},
+              "offsetPosition": {"$ref": "#/$defs/vec3"}
+            },
+            "additionalProperties": false
+          },
+          "evidenceRefs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+        },
+        "additionalProperties": false
+      }
+    },
+    "evidenceRefs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "policy": {
+      "type": "object",
+      "required": ["anchorsAreOwnerLocal", "worldCoordinatesAreNotCanonicalAnchors", "semanticPatchRequired", "barycentricLocatorRequired", "surfaceNormalAndTangentArePartOfFrame", "retessellationMustStayWithinSemanticPatch", "rebindDistanceIsAnchorLocalPolicy", "surfaceAnchorsDoNotMoveDependents", "surfaceAnchorsDoNotAuthorizeClosure"],
+      "properties": {
+        "anchorsAreOwnerLocal": {"const": true},
+        "worldCoordinatesAreNotCanonicalAnchors": {"const": true},
+        "semanticPatchRequired": {"const": true},
+        "barycentricLocatorRequired": {"const": true},
+        "surfaceNormalAndTangentArePartOfFrame": {"const": true},
+        "retessellationMustStayWithinSemanticPatch": {"const": true},
+        "rebindDistanceIsAnchorLocalPolicy": {"const": true},
+        "surfaceAnchorsDoNotMoveDependents": {"const": true},
+        "surfaceAnchorsDoNotAuthorizeClosure": {"const": true}
+      },
+      "additionalProperties": false
+    },
+    "anchorSetDigest": {"$ref": "common.schema.json#/$defs/digest"}
+  },
+  "$defs": {
+    "vec3": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}}
+  },
+  "additionalProperties": false
+}

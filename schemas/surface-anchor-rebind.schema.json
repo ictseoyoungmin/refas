@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/surface-anchor-rebind.schema.json",
+  "title": "RefAs surface anchor rebind report",
+  "type": "object",
+  "required": ["schema", "scopeId", "sourceSha256", "attachmentSemanticsDigest", "previousAnchorSetDigest", "nextAnchorSetDigest", "entries", "evidenceRefs", "policy", "rebindDigest"],
+  "properties": {
+    "schema": {"const": "refas.surface-anchor-rebind/v1"},
+    "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "attachmentSemanticsDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "previousAnchorSetDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "nextAnchorSetDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "entries": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["anchorId", "ownerId", "status", "previousGeometryDigest", "nextGeometryDigest", "previousTriangleId", "nextTriangleId", "rebindDistance"],
+        "properties": {
+          "anchorId": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "ownerId": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "status": {"enum": ["UNCHANGED", "REBOUND"]},
+          "previousGeometryDigest": {"$ref": "common.schema.json#/$defs/digest"},
+          "nextGeometryDigest": {"$ref": "common.schema.json#/$defs/digest"},
+          "previousTriangleId": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "nextTriangleId": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "rebindDistance": {"type": "number", "minimum": 0}
+        },
+        "additionalProperties": false
+      }
+    },
+    "evidenceRefs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "policy": {
+      "type": "object",
+      "required": ["sameSemanticPatchRequired", "normalDeviationBoundRequired", "rebindDistanceBoundRequired", "rebindDoesNotMoveDependentGeometry", "rebindDoesNotAuthorizeClosure"],
+      "properties": {
+        "sameSemanticPatchRequired": {"const": true},
+        "normalDeviationBoundRequired": {"const": true},
+        "rebindDistanceBoundRequired": {"const": true},
+        "rebindDoesNotMoveDependentGeometry": {"const": true},
+        "rebindDoesNotAuthorizeClosure": {"const": true}
+      },
+      "additionalProperties": false
+    },
+    "rebindDigest": {"$ref": "common.schema.json#/$defs/digest"}
+  },
+  "additionalProperties": false
+}

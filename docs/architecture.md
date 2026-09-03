@@ -65,6 +65,12 @@ The semantic layer is declarative: it rejects missing modes, invalid owner cardi
 
 Logical fusion never moves geometry, welds vertices, removes faces, or authorizes closure. Non-fused dependents such as glasses remain outside the group and are handled later by attachment propagation. Physical fusion is a separate controlled finalization operation and must retain an exact semantic reopen path.
 
+## Surface anchor frame layer
+
+Surface-following relationships do not store canonical world XYZ. `refas.surface-anchor-set/v1` binds an attachment owner to a semantic surface patch, triangle, barycentric coordinate, tangent hint, normal offset, and local rebind bounds. The evaluated owner-local frame contains position, normal, tangent, bitangent, and offset position.
+
+When owner geometry changes, `refas.surface-anchor-rebind/v1` may recover the anchor only inside the same semantic patch and only within the anchor's distance and normal-deviation limits. This makes modest shape edits and retessellation recoverable without silently snapping an attachment to unrelated geometry. Surface anchors still do not move the dependent object; rigid-follow, surface-offset, and multi-anchor propagation consume these frames later.
+
 ## Bounded edit transaction
 
 A transaction contains one baseline checkpoint, one capability, one hierarchy scope, one testable intent, protected metrics, and exactly one direct candidate checkpoint.
@@ -88,6 +94,7 @@ The dependency-light JavaScript core owns:
 - canonical edit-class and GLB mutation-boundary contracts;
 - explicit attachment semantic graphs and owner/dependent invariants;
 - logical fusion groups and digest-bound group invalidation without physical mesh mutation;
+- owner-local surface anchor frames with bounded semantic-patch retessellation recovery;
 - hierarchy and observation contracts;
 - spatial hypotheses and 2D reference registration;
 - deterministic mesh and embedded GLB construction;
