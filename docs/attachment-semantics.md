@@ -16,7 +16,7 @@ Attachment semantics are canonical construction state. They do not move geometry
 | `SUPPORTED_CLEARANCE` | subject may remain physically separated from one or more owners while a declared support path keeps it valid | 1+ | yes |
 | `FREE` | subject intentionally has no attachment owner | 0 | no |
 
-Every declared entity must have an explicit relation, including `FREE`. There is no implicit "looks attached" default.
+Every declared entity must have exactly one primary semantic relation, including `FREE`. Multi-owner behavior belongs inside one `MULTI_ANCHOR` or `SUPPORTED_CLEARANCE` relation rather than by assigning several competing primary modes to the same subject. There is no implicit "looks attached" default.
 
 ## Owner and dependent direction
 
@@ -34,7 +34,7 @@ left-ear ────┼─ MULTI_ANCHOR → glasses
 right-ear ───┘
 ```
 
-This direction makes stale dependent state detectable. The runtime rejects self-attachment, unknown owners, and ownership cycles.
+This direction makes stale dependent state detectable. The runtime rejects self-attachment, unknown owners, competing primary modes, and ownership cycles.
 
 ## Mannequin glasses example
 
@@ -68,6 +68,7 @@ Every relation and entity carries evidence references so later repair can distin
 
 - missing or unknown modes;
 - entities without an explicit relation;
+- more than one primary relation for the same subject;
 - a `FREE` entity with an owner;
 - `MULTI_ANCHOR` with fewer than two owners;
 - single-owner modes with the wrong owner count;
