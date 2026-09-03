@@ -69,6 +69,14 @@ If a fused member changes, create `refas.logical-fusion-invalidation/v1`. The en
 
 Do not weld, boolean-union, remove internal faces, or optimize a logical fusion group during reconstruction. Those operations belong to controlled finalization. If a physically fused artifact is later reopened, restore semantic pre-fusion state rather than treating the fused GLB as the canonical sculpting source. See `docs/logical-fusion.md`.
 
+## Surface anchor frames
+
+For `SURFACE_OFFSET`, `MULTI_ANCHOR`, and `SUPPORTED_CLEARANCE`, do not store a world-space XYZ as the durable attachment point. Create a `refas.surface-anchor-set/v1` whose owner locator is a semantic patch plus triangle and barycentric coordinates, with an owner-local tangent hint, normal offset, and explicit local rebind bounds.
+
+After an owner shape rebuild, run `rebindSurfaceAnchorSet` before solving dependent transforms. Rebind may move to a different triangle only inside the same semantic patch, within the anchor's distance bound, and within its normal-deviation bound. If the patch disappears or the anchor would need to jump too far, stop and reopen/review rather than snapping to unrelated geometry.
+
+Surface-anchor rebind updates owner-side frames only. It does not move glasses, badges, or other dependents by itself and cannot authorize closure. The next propagation/solver stage consumes the rebound frames. See `docs/surface-anchor-frames.md`.
+
 This rule limits simultaneous work; it does not authorize skipping dependencies.
 During shape reconstruction, `shape-reconstruction × whole` remains the only
 closable shape scope until the whole-shape dependency barrier passes. The
