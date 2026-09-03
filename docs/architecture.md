@@ -42,6 +42,17 @@ project/
 
 Checkpoint IDs are content-derived. Timestamps are metadata and do not decide identity. An artifact reference is recoverable only when its exact bytes exist in `.refas/objects/` and match the recorded SHA-256.
 
+## Canonical edit boundary
+
+A GLB is normally a realized artifact, not the default editable source of semantic shape truth. Durable edits originate in the state owned by their capability and then realize a new exact asset.
+
+- Shape edits update construction state and rebuild GLB bytes. Arbitrary vertex or mesh-binary patches are not canonical shape edits.
+- Pose edits may update parent-local node/joint transforms directly while preserving exact mesh/accessor bytes.
+- Appearance edits update material, texture, or vertex-color source state before rebaking or rebuilding the asset.
+- Finalization may perform controlled fusion, welding, internal-face cleanup, and optimization only after semantic construction is closed.
+
+`refas.canonical-edit-intent/v1` records the owner, hierarchy scope, edit class, canonical bindings, realization operations, and mutation boundary. It provides the stable boundary that later attachment propagation and contact validation can depend on. The detailed contract is in `docs/canonical-edit-boundary.md`.
+
 ## Bounded edit transaction
 
 A transaction contains one baseline checkpoint, one capability, one hierarchy scope, one testable intent, protected metrics, and exactly one direct candidate checkpoint.
@@ -62,6 +73,7 @@ Rejected candidates remain in checkpoint history as evidence, but they do not be
 The dependency-light JavaScript core owns:
 
 - canonical JSON and SHA-256;
+- canonical edit-class and GLB mutation-boundary contracts;
 - hierarchy and observation contracts;
 - spatial hypotheses and 2D reference registration;
 - deterministic mesh and embedded GLB construction;

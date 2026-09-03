@@ -36,6 +36,17 @@ Within `shape-reconstruction × one scope`, an evidence-bound parameter fit may 
 
 High-impact fitting remains owner-local: camera candidates belong to `spatial-hypotheses`, parent-local pose variables to `assembly`, geometry variables to `shape-reconstruction`, material variables to `appearance`, and illumination/background variables to `rendering`. The project coordinator may alternate these stages and record exact digests, but has no gate or finding-owner authority.
 
+## Canonical edit boundary
+
+GLB is normally a realized artifact, not the editable source of semantic shape truth. Durable edits must originate in the state owned by the capability and then realize a new asset.
+
+- **Shape:** edit `model.shape.*`, `model.geometry.*`, construction, surface-network, or attachment state and rebuild the exact GLB. Arbitrary vertex or mesh-binary patches are diagnostic shortcuts, not canonical shape edits.
+- **Pose:** parent-local node/joint transforms may be applied directly to a GLB only while mesh/accessor bytes remain immutable.
+- **Appearance:** edit material, texture, or vertex-color source state first; rebaking or rebuilding the GLB is a realization step rather than the sole record of the change.
+- **Finalization:** after semantic construction is closed, controlled fuse/weld/internal-face cleanup/optimization may operate on the realized asset. Reopening restores semantic pre-fusion state rather than sculpting the fused result by default.
+
+Use `createCanonicalEditIntent` to make the owner, scope, canonical bindings, and allowed realization operation explicit. A candidate that violates this boundary is invalid before visual ranking. See `docs/canonical-edit-boundary.md` for the repository-level contract.
+
 This rule limits simultaneous work; it does not authorize skipping dependencies.
 During shape reconstruction, `shape-reconstruction × whole` remains the only
 closable shape scope until the whole-shape dependency barrier passes. The
