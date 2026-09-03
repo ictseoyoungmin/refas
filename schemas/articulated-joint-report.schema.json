@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/articulated-joint-report.schema.json",
+  "title": "RefAs articulated joint evaluation report",
+  "type": "object",
+  "required": ["schema", "jointDigest", "scopeId", "sourceSha256", "attachmentSemanticsDigest", "relationId", "subjectId", "ownerId", "angle", "ownerWorldFrame", "subjectWorldFrame", "evidenceRefs", "policy", "reportDigest"],
+  "properties": {
+    "schema": {"const": "refas.articulated-joint-report/v1"},
+    "jointDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "attachmentSemanticsDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "relationId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "subjectId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "ownerId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "angle": {"type": "number"},
+    "ownerWorldFrame": {"$ref": "#/$defs/frame"},
+    "subjectWorldFrame": {"$ref": "#/$defs/frame"},
+    "evidenceRefs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "policy": {
+      "type": "object",
+      "required": ["angleWithinDeclaredLimits", "meshBytesAreNotMutated", "targetFrameDoesNotAuthorizeClosure"],
+      "properties": {
+        "angleWithinDeclaredLimits": {"const": true},
+        "meshBytesAreNotMutated": {"const": true},
+        "targetFrameDoesNotAuthorizeClosure": {"const": true}
+      },
+      "additionalProperties": false
+    },
+    "reportDigest": {"$ref": "common.schema.json#/$defs/digest"}
+  },
+  "$defs": {
+    "vec3": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}},
+    "frame": {
+      "type": "object",
+      "required": ["origin", "xAxis", "yAxis", "zAxis"],
+      "properties": {
+        "origin": {"$ref": "#/$defs/vec3"}, "xAxis": {"$ref": "#/$defs/vec3"}, "yAxis": {"$ref": "#/$defs/vec3"}, "zAxis": {"$ref": "#/$defs/vec3"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
