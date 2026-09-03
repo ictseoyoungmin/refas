@@ -13,31 +13,23 @@
     "realizedAssemblyProofDigest": {"$ref": "common.schema.json#/$defs/digest"},
     "status": {"enum": ["SATISFIED", "BLOCKED"]},
     "satisfied": {"type": "boolean"},
-    "supportResults": {
-      "type": "array", "minItems": 1,
-      "items": {"type": "object", "required": ["childId", "parentId", "proofAttachmentId", "evidenceRefs", "pass"], "properties": {
-        "childId": {"$ref": "common.schema.json#/$defs/semanticId"}, "parentId": {"$ref": "common.schema.json#/$defs/semanticId"}, "proofAttachmentId": {"$ref": "common.schema.json#/$defs/semanticId"},
-        "evidenceRefs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}, "pass": {"type": "boolean"}
-      }, "additionalProperties": false}
-    },
-    "clearanceResults": {
-      "type": "array", "minItems": 1,
-      "items": {"type": "object", "required": ["counterpartId", "proofAttachmentId", "minimumClearance", "maximumClearance", "evidenceRefs", "signedClearance", "pass"], "properties": {
-        "counterpartId": {"$ref": "common.schema.json#/$defs/semanticId"}, "proofAttachmentId": {"$ref": "common.schema.json#/$defs/semanticId"},
-        "minimumClearance": {"type": "number", "minimum": 0}, "maximumClearance": {"type": "number", "minimum": 0},
-        "evidenceRefs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
-        "signedClearance": {"oneOf": [{"type": "number"}, {"type": "null"}]}, "pass": {"type": "boolean"}
-      }, "additionalProperties": false}
-    },
+    "supportResults": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["childId", "parentId", "proofAttachmentId", "proofChildModuleId", "proofParentModuleId", "evidenceRefs", "modulePairPass", "pass"], "properties": {
+      "childId": {"$ref": "common.schema.json#/$defs/semanticId"}, "parentId": {"$ref": "common.schema.json#/$defs/semanticId"}, "proofAttachmentId": {"$ref": "common.schema.json#/$defs/semanticId"},
+      "proofChildModuleId": {"$ref": "common.schema.json#/$defs/semanticId"}, "proofParentModuleId": {"$ref": "common.schema.json#/$defs/semanticId"},
+      "evidenceRefs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}, "modulePairPass": {"type": "boolean"}, "pass": {"type": "boolean"}
+    }, "additionalProperties": false}},
+    "clearanceResults": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["counterpartId", "proofAttachmentId", "subjectModuleId", "counterpartModuleId", "minimumClearance", "maximumClearance", "evidenceRefs", "signedClearance", "modulePairPass", "pass"], "properties": {
+      "counterpartId": {"$ref": "common.schema.json#/$defs/semanticId"}, "proofAttachmentId": {"$ref": "common.schema.json#/$defs/semanticId"},
+      "subjectModuleId": {"$ref": "common.schema.json#/$defs/semanticId"}, "counterpartModuleId": {"$ref": "common.schema.json#/$defs/semanticId"},
+      "minimumClearance": {"type": "number", "minimum": 0}, "maximumClearance": {"type": "number", "minimum": 0},
+      "evidenceRefs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+      "signedClearance": {"oneOf": [{"type": "number"}, {"type": "null"}]}, "modulePairPass": {"type": "boolean"}, "pass": {"type": "boolean"}
+    }, "additionalProperties": false}},
     "evidenceRefs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
-    "policy": {
-      "type": "object",
-      "required": ["onlyDigestBoundRealizedAssemblyEvidenceIsAccepted", "blockedClearanceCannotBeTreatedAsSatisfied", "evaluationDoesNotMoveGeometry", "evaluationDoesNotAuthorizeClosure"],
-      "properties": {
-        "onlyDigestBoundRealizedAssemblyEvidenceIsAccepted": {"const": true}, "blockedClearanceCannotBeTreatedAsSatisfied": {"const": true},
-        "evaluationDoesNotMoveGeometry": {"const": true}, "evaluationDoesNotAuthorizeClosure": {"const": true}
-      }, "additionalProperties": false
-    },
+    "policy": {"type": "object", "required": ["onlyDigestBoundRealizedAssemblyEvidenceIsAccepted", "proofModulePairMustMatchBinding", "blockedClearanceCannotBeTreatedAsSatisfied", "evaluationDoesNotMoveGeometry", "evaluationDoesNotAuthorizeClosure"], "properties": {
+      "onlyDigestBoundRealizedAssemblyEvidenceIsAccepted": {"const": true}, "proofModulePairMustMatchBinding": {"const": true}, "blockedClearanceCannotBeTreatedAsSatisfied": {"const": true},
+      "evaluationDoesNotMoveGeometry": {"const": true}, "evaluationDoesNotAuthorizeClosure": {"const": true}
+    }, "additionalProperties": false},
     "reportDigest": {"$ref": "common.schema.json#/$defs/digest"}
   },
   "allOf": [
