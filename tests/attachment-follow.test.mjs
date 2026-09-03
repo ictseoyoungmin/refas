@@ -129,11 +129,12 @@ test('multi-anchor relations are not silently approximated by the single-owner f
 test('follow state and report are digest-bound and tamper detectable', () => {
   const {attachmentSemantics, surfaces, surfaceAnchorSet, followState} = stateFixture();
   const tamperedState = structuredClone(followState);
-  tamperedState.bindings[0].relativeFrame.origin = [99, 99, 99];
+  const rigidBinding = tamperedState.bindings.find((binding) => binding.mode === 'RIGID_FOLLOW');
+  rigidBinding.relativeFrame.origin = [99, 99, 99];
   assert.equal(validateAttachmentFollowState(tamperedState, {attachmentSemantics, surfaceAnchorSet, surfaces}).valid, false);
 
   const report = propagateAttachmentFollow({followState, attachmentSemantics, surfaceAnchorSet, surfaces, ownerWorldFrames: [{entityId: 'forearm', frame: I()}]});
   const tamperedReport = structuredClone(report);
-  tamperedReport.targets[0].worldFrame.origin = [42, 0, 0];
+  tamperedReport.targets.find((target) => target.subjectId === 'cuff').worldFrame.origin = [42, 0, 0];
   assert.equal(validateAttachmentFollowReport(tamperedReport, {followState, attachmentSemantics, surfaceAnchorSet, surfaces}).valid, false);
 });
