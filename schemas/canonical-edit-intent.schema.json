@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/canonical-edit-intent.schema.json",
+  "title": "RefAs canonical edit intent",
+  "type": "object",
+  "required": [
+    "schema",
+    "id",
+    "ownerCapability",
+    "scopeId",
+    "editClass",
+    "intent",
+    "sourceOfTruth",
+    "canonicalBindings",
+    "realizationOperations",
+    "evidenceRefs",
+    "mutationBoundary",
+    "policy",
+    "intentDigest"
+  ],
+  "properties": {
+    "schema": {"const": "refas.canonical-edit-intent/v1"},
+    "id": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "ownerCapability": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "editClass": {"enum": ["shape", "pose", "appearance", "finalization"]},
+    "intent": {"type": "string", "minLength": 1},
+    "sourceOfTruth": {"enum": ["construction-state", "realized-transform-state", "appearance-state", "realized-asset"]},
+    "canonicalBindings": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "realizationOperations": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "evidenceRefs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "mutationBoundary": {
+      "type": "object",
+      "required": ["directGlbMutation", "rebuildRequired"],
+      "properties": {
+        "directGlbMutation": {"enum": ["forbidden", "controlled-transform-only", "realization-only", "controlled-finalization-only"]},
+        "rebuildRequired": {"type": "boolean"}
+      },
+      "additionalProperties": false
+    },
+    "policy": {
+      "type": "object",
+      "required": [
+        "glbIsRealizedArtifact",
+        "semanticShapeEditsHappenUpstream",
+        "arbitraryMeshBinaryPatchForbidden",
+        "poseDirectEditTransformOnly",
+        "appearanceCanonicalStatePrecedesBake",
+        "finalizationDirectEditMustBeControlled"
+      ],
+      "properties": {
+        "glbIsRealizedArtifact": {"const": true},
+        "semanticShapeEditsHappenUpstream": {"const": true},
+        "arbitraryMeshBinaryPatchForbidden": {"const": true},
+        "poseDirectEditTransformOnly": {"const": true},
+        "appearanceCanonicalStatePrecedesBake": {"const": true},
+        "finalizationDirectEditMustBeControlled": {"const": true}
+      },
+      "additionalProperties": false
+    },
+    "intentDigest": {"$ref": "common.schema.json#/$defs/digest"}
+  },
+  "additionalProperties": false
+}
