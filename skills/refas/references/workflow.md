@@ -47,6 +47,20 @@ GLB is normally a realized artifact, not the editable source of semantic shape t
 
 Use `createCanonicalEditIntent` to make the owner, scope, canonical bindings, and allowed realization operation explicit. A candidate that violates this boundary is invalid before visual ranking. See `docs/canonical-edit-boundary.md` for the repository-level contract.
 
+## Attachment semantics
+
+Before an assembly depends on proximity or world coordinates, declare the relationship that should survive future edits. Every semantic entity participating in an attachment graph must have an explicit mode, including intentionally independent `FREE` entities.
+
+- `FUSED`: same logical body as one owner; physical mesh fusion happens only in a later finalization step.
+- `RIGID_FOLLOW`: fixed owner-local transform.
+- `SURFACE_OFFSET`: preserve a future surface-relative offset from one owner.
+- `MULTI_ANCHOR`: satisfy two or more owners, such as glasses supported by nose and ears.
+- `ARTICULATED`: attached through a joint frame.
+- `SUPPORTED_CLEARANCE`: may remain separated from owners while a later support path proves validity.
+- `FREE`: intentionally no owner.
+
+Use `createAttachmentSemantics` to record owner/dependent direction, evidence basis, and mode. Missing modes, unknown owners, self attachment, invalid owner counts, and ownership cycles are blockers before geometry propagation. This contract declares intent only; surface frames, solvers, fusion bake, and realized contact validation are later stages. See `docs/attachment-semantics.md`.
+
 This rule limits simultaneous work; it does not authorize skipping dependencies.
 During shape reconstruction, `shape-reconstruction × whole` remains the only
 closable shape scope until the whole-shape dependency barrier passes. The
