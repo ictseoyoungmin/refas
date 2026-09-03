@@ -50,10 +50,11 @@
     "evidenceRefs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
     "policy": {
       "type": "object",
-      "required": ["implicitAttachmentForbidden", "everyEntityRequiresExplicitMode", "ownerDependentRolesAreExplicit", "ownershipCyclesForbidden", "modeSpecificOwnerArityRequired", "semanticsDoNotMutateGeometry", "semanticsDoNotAuthorizeClosure"],
+      "required": ["implicitAttachmentForbidden", "everyEntityRequiresExplicitMode", "exactlyOnePrimaryRelationPerEntity", "ownerDependentRolesAreExplicit", "ownershipCyclesForbidden", "modeSpecificOwnerArityRequired", "semanticsDoNotMutateGeometry", "semanticsDoNotAuthorizeClosure"],
       "properties": {
         "implicitAttachmentForbidden": {"const": true},
         "everyEntityRequiresExplicitMode": {"const": true},
+        "exactlyOnePrimaryRelationPerEntity": {"const": true},
         "ownerDependentRolesAreExplicit": {"const": true},
         "ownershipCyclesForbidden": {"const": true},
         "modeSpecificOwnerArityRequired": {"const": true},
