@@ -59,6 +59,12 @@ Assembly relationships are explicit canonical construction state rather than pro
 
 The semantic layer is declarative: it rejects missing modes, invalid owner cardinality, unknown owners, self attachment, and ownership cycles, but it does not yet solve transforms or validate realized mesh contact. Later surface-anchor, propagation, fusion, and contact stages consume this graph so that owner edits cannot silently leave stale dependents behind.
 
+## Logical fusion layer
+
+`FUSED` does not mean that RefAs immediately welds mesh bytes. `refas.logical-fusion/v1` deterministically collapses nested `FUSED` owner chains into logical groups while keeping every semantic part independently addressable. A change to any group member produces `refas.logical-fusion-invalidation/v1`, which invalidates the entire logical body and requires reconstruction from semantic pre-fusion state.
+
+Logical fusion never moves geometry, welds vertices, removes faces, or authorizes closure. Non-fused dependents such as glasses remain outside the group and are handled later by attachment propagation. Physical fusion is a separate controlled finalization operation and must retain an exact semantic reopen path.
+
 ## Bounded edit transaction
 
 A transaction contains one baseline checkpoint, one capability, one hierarchy scope, one testable intent, protected metrics, and exactly one direct candidate checkpoint.
@@ -81,6 +87,7 @@ The dependency-light JavaScript core owns:
 - canonical JSON and SHA-256;
 - canonical edit-class and GLB mutation-boundary contracts;
 - explicit attachment semantic graphs and owner/dependent invariants;
+- logical fusion groups and digest-bound group invalidation without physical mesh mutation;
 - hierarchy and observation contracts;
 - spatial hypotheses and 2D reference registration;
 - deterministic mesh and embedded GLB construction;

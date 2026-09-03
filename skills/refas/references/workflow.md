@@ -61,6 +61,14 @@ Before an assembly depends on proximity or world coordinates, declare the relati
 
 Use `createAttachmentSemantics` to record owner/dependent direction, evidence basis, and mode. Missing modes, unknown owners, self attachment, invalid owner counts, and ownership cycles are blockers before geometry propagation. This contract declares intent only; surface frames, solvers, fusion bake, and realized contact validation are later stages. See `docs/attachment-semantics.md`.
 
+## Logical fusion
+
+After attachment semantics are valid, derive logical fusion before any physical mesh fusion. `createLogicalFusion` follows only `FUSED` relations, collapses nested fused chains to one logical root, and leaves all semantic members addressable.
+
+If a fused member changes, create `refas.logical-fusion-invalidation/v1`. The entire logical group is invalidated and must be rebuilt from semantic state. The invalidation artifact itself is digest-bound and cannot move geometry or authorize closure. Non-fused dependents are deliberately left for the later attachment-propagation stage.
+
+Do not weld, boolean-union, remove internal faces, or optimize a logical fusion group during reconstruction. Those operations belong to controlled finalization. If a physically fused artifact is later reopened, restore semantic pre-fusion state rather than treating the fused GLB as the canonical sculpting source. See `docs/logical-fusion.md`.
+
 This rule limits simultaneous work; it does not authorize skipping dependencies.
 During shape reconstruction, `shape-reconstruction × whole` remains the only
 closable shape scope until the whole-shape dependency barrier passes. The

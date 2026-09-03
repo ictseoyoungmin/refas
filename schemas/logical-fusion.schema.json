@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/logical-fusion.schema.json",
+  "title": "RefAs logical fusion",
+  "type": "object",
+  "required": ["schema", "scopeId", "sourceSha256", "attachmentSemanticsDigest", "groups", "nonFusionEntityIds", "evidenceRefs", "policy", "fusionDigest"],
+  "properties": {
+    "schema": {"const": "refas.logical-fusion/v1"},
+    "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "attachmentSemanticsDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "groups": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "rootId", "memberIds", "relationIds", "state"],
+        "properties": {
+          "id": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "rootId": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "memberIds": {"type": "array", "minItems": 2, "uniqueItems": true, "items": {"$ref": "common.schema.json#/$defs/semanticId"}},
+          "relationIds": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "common.schema.json#/$defs/semanticId"}},
+          "state": {"const": "logical"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "nonFusionEntityIds": {"type": "array", "uniqueItems": true, "items": {"$ref": "common.schema.json#/$defs/semanticId"}},
+    "evidenceRefs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "policy": {
+      "type": "object",
+      "required": ["logicalFusionPrecedesPhysicalFusion", "semanticPartsRemainAddressable", "groupIdentityDerivedFromAttachmentSemantics", "memberEditInvalidatesWholeFusionGroup", "physicalMeshMutationForbidden", "physicalFusionRequiresFinalization", "reopenRequiresPreFusionSemanticState", "logicalFusionDoesNotPropagateNonFusedDependents", "logicalFusionDoesNotAuthorizeClosure"],
+      "properties": {
+        "logicalFusionPrecedesPhysicalFusion": {"const": true},
+        "semanticPartsRemainAddressable": {"const": true},
+        "groupIdentityDerivedFromAttachmentSemantics": {"const": true},
+        "memberEditInvalidatesWholeFusionGroup": {"const": true},
+        "physicalMeshMutationForbidden": {"const": true},
+        "physicalFusionRequiresFinalization": {"const": true},
+        "reopenRequiresPreFusionSemanticState": {"const": true},
+        "logicalFusionDoesNotPropagateNonFusedDependents": {"const": true},
+        "logicalFusionDoesNotAuthorizeClosure": {"const": true}
+      },
+      "additionalProperties": false
+    },
+    "fusionDigest": {"$ref": "common.schema.json#/$defs/digest"}
+  },
+  "additionalProperties": false
+}

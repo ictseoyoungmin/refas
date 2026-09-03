@@ -1,6 +1,7 @@
 export * from './canonical.mjs';
 export * from './canonical-edit.mjs';
 export * from './attachment-semantics.mjs';
+export * from './logical-fusion.mjs';
 export * from './hierarchy.mjs';
 export * from './ownership.mjs';
 export * from './failure-router.mjs';
