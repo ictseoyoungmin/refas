@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/attachment-follow-report.schema.json",
+  "title": "RefAs attachment follow report",
+  "type": "object",
+  "required": ["schema", "scopeId", "sourceSha256", "attachmentSemanticsDigest", "surfaceAnchorSetDigest", "followStateDigest", "ownerWorldFrames", "targets", "evidenceRefs", "policy", "followReportDigest"],
+  "properties": {
+    "schema": {"const": "refas.attachment-follow-report/v1"},
+    "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "attachmentSemanticsDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "surfaceAnchorSetDigest": {"oneOf": [{"$ref": "common.schema.json#/$defs/digest"}, {"type": "null"}]},
+    "followStateDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "ownerWorldFrames": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["entityId", "frame"],
+        "properties": {
+          "entityId": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "frame": {"$ref": "#/$defs/frame"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "targets": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["bindingId", "relationId", "mode", "subjectId", "ownerId", "worldFrame"],
+        "properties": {
+          "bindingId": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "relationId": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "mode": {"enum": ["RIGID_FOLLOW", "SURFACE_OFFSET"]},
+          "subjectId": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "ownerId": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "surfaceAnchorId": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "worldFrame": {"$ref": "#/$defs/frame"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "evidenceRefs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "policy": {
+      "type": "object",
+      "required": ["targetsAreDeterministic", "meshBytesAreNotMutated", "graphPropagationIsNotImplied", "reportDoesNotAuthorizeClosure"],
+      "properties": {
+        "targetsAreDeterministic": {"const": true},
+        "meshBytesAreNotMutated": {"const": true},
+        "graphPropagationIsNotImplied": {"const": true},
+        "reportDoesNotAuthorizeClosure": {"const": true}
+      },
+      "additionalProperties": false
+    },
+    "followReportDigest": {"$ref": "common.schema.json#/$defs/digest"}
+  },
+  "$defs": {
+    "vec3": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}},
+    "frame": {
+      "type": "object",
+      "required": ["origin", "xAxis", "yAxis", "zAxis"],
+      "properties": {
+        "origin": {"$ref": "#/$defs/vec3"},
+        "xAxis": {"$ref": "#/$defs/vec3"},
+        "yAxis": {"$ref": "#/$defs/vec3"},
+        "zAxis": {"$ref": "#/$defs/vec3"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
