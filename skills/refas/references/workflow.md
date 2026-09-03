@@ -77,6 +77,14 @@ After an owner shape rebuild, run `rebindSurfaceAnchorSet` before solving depend
 
 Surface-anchor rebind updates owner-side frames only. It does not move glasses, badges, or other dependents by itself and cannot authorize closure. The next propagation/solver stage consumes the rebound frames. See `docs/surface-anchor-frames.md`.
 
+## Rigid follow and surface offset
+
+For a one-owner `RIGID_FOLLOW`, preserve the trusted baseline owner-to-subject rigid frame and recompute the subject target from the current owner world frame. For a one-owner `SURFACE_OFFSET`, consume the current surface-anchor frame and the subject-local contact frame so the contact, orientation, and signed offset align with the owner surface.
+
+Use `createAttachmentFollowState` to bind the canonical relation state and `propagateAttachmentFollow` to emit deterministic target frames. Every required owner world frame must be explicit. This layer is intentionally one-step: do not recursively propagate an owner produced by the same report, and do not approximate `MULTI_ANCHOR` through a single owner. Graph ordering and simultaneous constraints are separate later stages.
+
+The report is a target calculation, not permission to mutate a mesh or close assembly. Realization must still pass through the canonical pose/assembly boundary and later structural validation. See `docs/attachment-follow.md`.
+
 This rule limits simultaneous work; it does not authorize skipping dependencies.
 During shape reconstruction, `shape-reconstruction × whole` remains the only
 closable shape scope until the whole-shape dependency barrier passes. The
