@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/multi-anchor-report.schema.json",
+  "title": "RefAs multi-anchor rigid-fit report",
+  "type": "object",
+  "required": ["schema", "planDigest", "scopeId", "sourceSha256", "attachmentSemanticsDigest", "surfaceAnchorSetDigest", "ownerWorldFrames", "status", "subjectId", "worldFrame", "quaternion", "rmsPositionError", "maximumRmsPositionError", "constraintResults", "eligibleForRealization", "evidenceRefs", "policy", "reportDigest"],
+  "properties": {
+    "schema": {"const": "refas.multi-anchor-report/v1"},
+    "planDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "attachmentSemanticsDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "surfaceAnchorSetDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "ownerWorldFrames": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "required": ["entityId", "frame"],
+        "properties": {
+          "entityId": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "frame": {"$ref": "#/$defs/frame"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "status": {"enum": ["SOLVED", "INFEASIBLE"]},
+    "subjectId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "worldFrame": {"$ref": "#/$defs/frame"},
+    "quaternion": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"type": "number"}},
+    "rmsPositionError": {"type": "number", "minimum": 0},
+    "maximumRmsPositionError": {"type": "number", "exclusiveMinimum": 0},
+    "constraintResults": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "required": ["constraintId", "ownerId", "surfaceAnchorId", "subjectAnchorId", "targetPosition", "realizedPosition", "positionError", "orientationErrorRadians", "positionPass", "orientationPass"],
+        "properties": {
+          "constraintId": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "ownerId": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "surfaceAnchorId": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "subjectAnchorId": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "targetPosition": {"$ref": "#/$defs/vec3"},
+          "realizedPosition": {"$ref": "#/$defs/vec3"},
+          "positionError": {"type": "number", "minimum": 0},
+          "orientationErrorRadians": {"type": "number", "minimum": 0, "maximum": 3.141592653589793},
+          "positionPass": {"type": "boolean"},
+          "orientationPass": {"type": "boolean"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "eligibleForRealization": {"type": "boolean"},
+    "evidenceRefs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "policy": {
+      "type": "object",
+      "required": ["rigidOnly", "noScaleApplied", "noMeshDeformationApplied", "infeasibleResultCannotBeRealized", "reportDoesNotAuthorizeClosure"],
+      "properties": {
+        "rigidOnly": {"const": true},
+        "noScaleApplied": {"const": true},
+        "noMeshDeformationApplied": {"const": true},
+        "infeasibleResultCannotBeRealized": {"const": true},
+        "reportDoesNotAuthorizeClosure": {"const": true}
+      },
+      "additionalProperties": false
+    },
+    "reportDigest": {"$ref": "common.schema.json#/$defs/digest"}
+  },
+  "$defs": {
+    "vec3": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}},
+    "frame": {
+      "type": "object",
+      "required": ["origin", "xAxis", "yAxis", "zAxis"],
+      "properties": {
+        "origin": {"$ref": "#/$defs/vec3"},
+        "xAxis": {"$ref": "#/$defs/vec3"},
+        "yAxis": {"$ref": "#/$defs/vec3"},
+        "zAxis": {"$ref": "#/$defs/vec3"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"status": {"const": "SOLVED"}}},
+      "then": {"properties": {"eligibleForRealization": {"const": true}}}
+    },
+    {
+      "if": {"properties": {"status": {"const": "INFEASIBLE"}}},
+      "then": {"properties": {"eligibleForRealization": {"const": false}}}
+    }
+  ],
+  "additionalProperties": false
+}
