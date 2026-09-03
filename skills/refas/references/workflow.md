@@ -85,6 +85,14 @@ Use `createAttachmentFollowState` to bind the canonical relation state and `prop
 
 The report is a target calculation, not permission to mutate a mesh or close assembly. Realization must still pass through the canonical pose/assembly boundary and later structural validation. See `docs/attachment-follow.md`.
 
+## Multi-anchor rigid fitting
+
+For `MULTI_ANCHOR`, solve all declared owners simultaneously. Create a `refas.multi-anchor-plan/v1` with one or more subject-local anchor constraints for every owner named by the semantic relation. Each constraint points at a current surface anchor and declares position/orientation weights plus local pass tolerances.
+
+Before solving, rebind any owner surface that changed. Then call `solveMultiAnchor` with the exact current anchor set and explicit owner world frames. The solver may change only the dependent's translation and rotation; it must not scale or deform the subject to force a pass.
+
+Treat `SOLVED` and `INFEASIBLE` as semantically different states. A `SOLVED` report is eligible for later realization only because every local tolerance and the plan RMS tolerance pass. An `INFEASIBLE` report retains the best rigid pose as diagnostic evidence but must not be applied to the asset. Reopen the relevant owner geometry, subject geometry, or attachment assumption instead of hiding the contradiction. See `docs/multi-anchor-solver.md`.
+
 This rule limits simultaneous work; it does not authorize skipping dependencies.
 During shape reconstruction, `shape-reconstruction × whole` remains the only
 closable shape scope until the whole-shape dependency barrier passes. The

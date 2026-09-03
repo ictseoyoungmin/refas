@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/multi-anchor-plan.schema.json",
+  "title": "RefAs multi-anchor rigid-fit plan",
+  "type": "object",
+  "required": ["schema", "id", "scopeId", "sourceSha256", "attachmentSemanticsDigest", "relationId", "subjectId", "constraints", "maximumRmsPositionError", "orientationLever", "evidenceRefs", "policy", "planDigest"],
+  "properties": {
+    "schema": {"const": "refas.multi-anchor-plan/v1"},
+    "id": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "attachmentSemanticsDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "relationId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "subjectId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "constraints": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "required": ["id", "ownerId", "surfaceAnchorId", "subjectAnchorId", "subjectAnchorFrame", "positionWeight", "orientationWeight", "maxPositionError", "maxOrientationErrorRadians", "evidenceRefs"],
+        "properties": {
+          "id": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "ownerId": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "surfaceAnchorId": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "subjectAnchorId": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "subjectAnchorFrame": {"$ref": "#/$defs/frame"},
+          "positionWeight": {"type": "number", "exclusiveMinimum": 0},
+          "orientationWeight": {"type": "number", "minimum": 0},
+          "maxPositionError": {"type": "number", "exclusiveMinimum": 0},
+          "maxOrientationErrorRadians": {"type": "number", "exclusiveMinimum": 0, "maximum": 3.141592653589793},
+          "evidenceRefs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+        },
+        "additionalProperties": false
+      }
+    },
+    "maximumRmsPositionError": {"type": "number", "exclusiveMinimum": 0},
+    "orientationLever": {"type": "number", "exclusiveMinimum": 0},
+    "evidenceRefs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "policy": {
+      "type": "object",
+      "required": ["rigidTransformOnly", "scaleForbidden", "hiddenMeshDeformationForbidden", "everyDeclaredOwnerMustBeCovered", "currentSurfaceAnchorSetRequiredAtSolveTime", "infeasibleSolutionCannotBeRealized", "solverDoesNotAuthorizeClosure"],
+      "properties": {
+        "rigidTransformOnly": {"const": true},
+        "scaleForbidden": {"const": true},
+        "hiddenMeshDeformationForbidden": {"const": true},
+        "everyDeclaredOwnerMustBeCovered": {"const": true},
+        "currentSurfaceAnchorSetRequiredAtSolveTime": {"const": true},
+        "infeasibleSolutionCannotBeRealized": {"const": true},
+        "solverDoesNotAuthorizeClosure": {"const": true}
+      },
+      "additionalProperties": false
+    },
+    "planDigest": {"$ref": "common.schema.json#/$defs/digest"}
+  },
+  "$defs": {
+    "vec3": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}},
+    "frame": {
+      "type": "object",
+      "required": ["origin", "xAxis", "yAxis", "zAxis"],
+      "properties": {
+        "origin": {"$ref": "#/$defs/vec3"},
+        "xAxis": {"$ref": "#/$defs/vec3"},
+        "yAxis": {"$ref": "#/$defs/vec3"},
+        "zAxis": {"$ref": "#/$defs/vec3"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

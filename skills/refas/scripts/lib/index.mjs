@@ -4,6 +4,7 @@ export * from './attachment-semantics.mjs';
 export * from './logical-fusion.mjs';
 export * from './surface-anchor.mjs';
 export * from './attachment-follow.mjs';
+export * from './multi-anchor.mjs';
 export * from './hierarchy.mjs';
 export * from './ownership.mjs';
 export * from './failure-router.mjs';
