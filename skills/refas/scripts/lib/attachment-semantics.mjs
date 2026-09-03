@@ -104,6 +104,12 @@ export function createAttachmentSemantics({
   if (entityIds.size !== normalizedEntities.length) throw new Error('attachment entity IDs must be unique');
   const normalizedRelations = relations.map((relation, index) => normalizeRelation(relation, index, entityIds));
   if (new Set(normalizedRelations.map((relation) => relation.id)).size !== normalizedRelations.length) throw new Error('attachment relation IDs must be unique');
+
+  const relationCountBySubject = new Map();
+  for (const relation of normalizedRelations) relationCountBySubject.set(relation.subjectId, (relationCountBySubject.get(relation.subjectId) ?? 0) + 1);
+  const multiplyClassified = [...relationCountBySubject.entries()].filter(([, count]) => count !== 1).map(([subjectId]) => subjectId);
+  if (multiplyClassified.length) throw new Error(`each attachment entity must have exactly one primary semantic relation: ${multiplyClassified.join(', ')}`);
+
   if (findCycle(entityIds, normalizedRelations)) throw new Error('attachment ownership graph contains a cycle');
 
   const relatedSubjects = new Set(normalizedRelations.map((relation) => relation.subjectId));
@@ -120,6 +126,7 @@ export function createAttachmentSemantics({
     policy: {
       implicitAttachmentForbidden: true,
       everyEntityRequiresExplicitMode: true,
+      exactlyOnePrimaryRelationPerEntity: true,
       ownerDependentRolesAreExplicit: true,
       ownershipCyclesForbidden: true,
       modeSpecificOwnerArityRequired: true,
