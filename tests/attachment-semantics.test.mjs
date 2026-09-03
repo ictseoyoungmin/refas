@@ -80,7 +80,7 @@ test('unknown owners, self attachment, and ownership cycles are rejected', () =>
     scopeId: 'whole', sourceSha256: D(), entities: [E('root')], relations: [R('self', 'RIGID_FOLLOW', 'root', ['root'])],
   }), /may not attach an entity to itself/);
   assert.throws(() => createAttachmentSemantics({
-    scopeId: 'whole', sourceSha256: D(), entities: [E('a'), E('b')],
-    relations: [R('a-to-b', 'RIGID_FOLLOW', 'a', ['b']), R('b-to-a', 'RIGID_FOLLOW', 'b', ['a'])],
+    scopeId: 'whole', sourceSha256: D(), entities: [E('part-a'), E('part-b')],
+    relations: [R('a-to-b', 'RIGID_FOLLOW', 'part-a', ['part-b']), R('b-to-a', 'RIGID_FOLLOW', 'part-b', ['part-a'])],
   }), /ownership graph contains a cycle/);
 });
