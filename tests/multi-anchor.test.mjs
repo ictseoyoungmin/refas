@@ -16,6 +16,7 @@ const E = (id) => ({id, scopeId: id, evidenceRefs: [`model/${id}.json`]});
 const R = (id, mode, subjectId, ownerIds = []) => ({id, mode, subjectId, ownerIds, basis: 'construction', evidenceRefs: [`model/attachments/${id}.json`]});
 const I = (origin = [0, 0, 0]) => ({origin, xAxis: [1, 0, 0], yAxis: [0, 1, 0], zAxis: [0, 0, 1]});
 const Z90 = (origin = [0, 0, 0]) => ({origin, xAxis: [0, 1, 0], yAxis: [-1, 0, 0], zAxis: [0, 0, 1]});
+const rounded = (values, scale = 1e8) => values.map((value) => Math.abs(value) < 1 / scale ? 0 : Math.round(value * scale) / scale);
 
 function semantics() {
   return createAttachmentSemantics({
@@ -82,8 +83,8 @@ test('three glasses anchors recover an exact known rigid transform without scale
   assert.equal(report.status, 'SOLVED');
   assert.equal(report.eligibleForRealization, true);
   assert.ok(report.rmsPositionError < 1e-8);
-  assert.deepEqual(report.worldFrame.origin.map((value) => Math.round(value * 1e8) / 1e8), [2, 3, 4]);
-  assert.deepEqual(report.worldFrame.xAxis.map((value) => Math.round(value * 1e8) / 1e8), [0, 1, 0]);
+  assert.deepEqual(rounded(report.worldFrame.origin), [2, 3, 4]);
+  assert.deepEqual(rounded(report.worldFrame.xAxis), [0, 1, 0]);
   assert.equal(report.policy.noScaleApplied, true);
   assert.equal(report.policy.noMeshDeformationApplied, true);
 });
