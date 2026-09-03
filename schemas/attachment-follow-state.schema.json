@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/attachment-follow-state.schema.json",
+  "title": "RefAs attachment follow state",
+  "type": "object",
+  "required": ["schema", "scopeId", "sourceSha256", "attachmentSemanticsDigest", "surfaceAnchorSetDigest", "bindings", "evidenceRefs", "policy", "followStateDigest"],
+  "properties": {
+    "schema": {"const": "refas.attachment-follow-state/v1"},
+    "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "attachmentSemanticsDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "surfaceAnchorSetDigest": {"oneOf": [{"$ref": "common.schema.json#/$defs/digest"}, {"type": "null"}]},
+    "bindings": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "oneOf": [
+          {"$ref": "#/$defs/rigidFollowBinding"},
+          {"$ref": "#/$defs/surfaceOffsetBinding"}
+        ]
+      }
+    },
+    "evidenceRefs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "policy": {
+      "type": "object",
+      "required": ["rigidFollowPreservesOwnerRelativeFrame", "surfaceOffsetConsumesOwnerLocalSurfaceFrame", "propagationProducesTargetsNotMeshMutation", "oneStepPropagationOnly", "graphOrderingDeferred", "followPropagationDoesNotAuthorizeClosure"],
+      "properties": {
+        "rigidFollowPreservesOwnerRelativeFrame": {"const": true},
+        "surfaceOffsetConsumesOwnerLocalSurfaceFrame": {"const": true},
+        "propagationProducesTargetsNotMeshMutation": {"const": true},
+        "oneStepPropagationOnly": {"const": true},
+        "graphOrderingDeferred": {"const": true},
+        "followPropagationDoesNotAuthorizeClosure": {"const": true}
+      },
+      "additionalProperties": false
+    },
+    "followStateDigest": {"$ref": "common.schema.json#/$defs/digest"}
+  },
+  "$defs": {
+    "vec3": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}},
+    "frame": {
+      "type": "object",
+      "required": ["origin", "xAxis", "yAxis", "zAxis"],
+      "properties": {
+        "origin": {"$ref": "#/$defs/vec3"},
+        "xAxis": {"$ref": "#/$defs/vec3"},
+        "yAxis": {"$ref": "#/$defs/vec3"},
+        "zAxis": {"$ref": "#/$defs/vec3"}
+      },
+      "additionalProperties": false
+    },
+    "baseBinding": {
+      "type": "object",
+      "required": ["id", "relationId", "mode", "subjectId", "ownerId", "evidenceRefs"],
+      "properties": {
+        "id": {"$ref": "common.schema.json#/$defs/semanticId"},
+        "relationId": {"$ref": "common.schema.json#/$defs/semanticId"},
+        "subjectId": {"$ref": "common.schema.json#/$defs/semanticId"},
+        "ownerId": {"$ref": "common.schema.json#/$defs/semanticId"},
+        "evidenceRefs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+      }
+    },
+    "rigidFollowBinding": {
+      "allOf": [
+        {"$ref": "#/$defs/baseBinding"},
+        {
+          "type": "object",
+          "required": ["mode", "baselineOwnerFrame", "baselineSubjectFrame", "relativeFrame"],
+          "properties": {
+            "mode": {"const": "RIGID_FOLLOW"},
+            "baselineOwnerFrame": {"$ref": "#/$defs/frame"},
+            "baselineSubjectFrame": {"$ref": "#/$defs/frame"},
+            "relativeFrame": {"$ref": "#/$defs/frame"}
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "surfaceOffsetBinding": {
+      "allOf": [
+        {"$ref": "#/$defs/baseBinding"},
+        {
+          "type": "object",
+          "required": ["mode", "surfaceAnchorId", "subjectAnchorFrame"],
+          "properties": {
+            "mode": {"const": "SURFACE_OFFSET"},
+            "surfaceAnchorId": {"$ref": "common.schema.json#/$defs/semanticId"},
+            "subjectAnchorFrame": {"$ref": "#/$defs/frame"}
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    }
+  },
+  "additionalProperties": false
+}
