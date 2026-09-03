@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/supported-clearance.schema.json",
+  "title": "RefAs supported clearance contract",
+  "type": "object",
+  "required": ["schema", "id", "scopeId", "sourceSha256", "attachmentSemanticsDigest", "relationId", "subjectId", "directOwnerIds", "supportPathEntityIds", "supportEdges", "supportProofBindings", "clearanceBounds", "evidenceRefs", "policy", "clearanceDigest"],
+  "properties": {
+    "schema": {"const": "refas.supported-clearance/v1"},
+    "id": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "attachmentSemanticsDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "relationId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "subjectId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "directOwnerIds": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "common.schema.json#/$defs/semanticId"}},
+    "supportPathEntityIds": {"type": "array", "minItems": 2, "uniqueItems": true, "items": {"$ref": "common.schema.json#/$defs/semanticId"}},
+    "supportEdges": {
+      "type": "array", "minItems": 1,
+      "items": {"type": "object", "required": ["childId", "parentId"], "properties": {"childId": {"$ref": "common.schema.json#/$defs/semanticId"}, "parentId": {"$ref": "common.schema.json#/$defs/semanticId"}}, "additionalProperties": false}
+    },
+    "supportProofBindings": {
+      "type": "array", "minItems": 1,
+      "items": {"type": "object", "required": ["childId", "parentId", "proofAttachmentId", "evidenceRefs"], "properties": {
+        "childId": {"$ref": "common.schema.json#/$defs/semanticId"}, "parentId": {"$ref": "common.schema.json#/$defs/semanticId"}, "proofAttachmentId": {"$ref": "common.schema.json#/$defs/semanticId"},
+        "evidenceRefs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+      }, "additionalProperties": false}
+    },
+    "clearanceBounds": {
+      "type": "array", "minItems": 1,
+      "items": {"type": "object", "required": ["counterpartId", "proofAttachmentId", "minimumClearance", "maximumClearance", "evidenceRefs"], "properties": {
+        "counterpartId": {"$ref": "common.schema.json#/$defs/semanticId"}, "proofAttachmentId": {"$ref": "common.schema.json#/$defs/semanticId"},
+        "minimumClearance": {"type": "number", "minimum": 0}, "maximumClearance": {"type": "number", "minimum": 0},
+        "evidenceRefs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+      }, "additionalProperties": false}
+    },
+    "evidenceRefs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "policy": {
+      "type": "object",
+      "required": ["explicitSupportPathRequired", "supportPathMustFollowAttachmentSemantics", "directContactWithClearanceCounterpartNotRequired", "realizedAssemblyProofRequired", "semanticContractDoesNotMoveGeometry", "contractDoesNotAuthorizeClosure"],
+      "properties": {
+        "explicitSupportPathRequired": {"const": true}, "supportPathMustFollowAttachmentSemantics": {"const": true}, "directContactWithClearanceCounterpartNotRequired": {"const": true},
+        "realizedAssemblyProofRequired": {"const": true}, "semanticContractDoesNotMoveGeometry": {"const": true}, "contractDoesNotAuthorizeClosure": {"const": true}
+      }, "additionalProperties": false
+    },
+    "clearanceDigest": {"$ref": "common.schema.json#/$defs/digest"}
+  },
+  "additionalProperties": false
+}
