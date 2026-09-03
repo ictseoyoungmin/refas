@@ -61,6 +61,17 @@ test('implicit attachment is forbidden: every entity must declare a mode includi
   }), /every attachment entity must have an explicit semantic relation/);
 });
 
+test('each entity has exactly one primary attachment relation', () => {
+  assert.throws(() => createAttachmentSemantics({
+    scopeId: 'head', sourceSha256: D(), entities: [E('head'), E('nose')],
+    relations: [
+      R('head-free', 'FREE', 'head'),
+      R('nose-fused', 'FUSED', 'nose', ['head']),
+      R('nose-follow', 'RIGID_FOLLOW', 'nose', ['head']),
+    ],
+  }), /exactly one primary semantic relation/);
+});
+
 test('mode-specific owner cardinality is fail-closed', () => {
   assert.throws(() => createAttachmentSemantics({
     scopeId: 'head', sourceSha256: D(), entities: [E('head'), E('glasses')],
