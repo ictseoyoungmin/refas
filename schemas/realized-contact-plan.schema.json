@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/realized-contact-plan.schema.json",
+  "title": "RefAs realized contact plan",
+  "type": "object",
+  "required": ["schema", "id", "scopeId", "sourceSha256", "assetSha256", "attachmentSemanticsDigest", "fusionBindings", "supportRoots", "supportRequiredEntityIds", "pairExpectations", "broadPhaseMargin", "contactTolerance", "penetrationTolerance", "unexpectedContactPolicy", "evidenceRefs", "policy", "planDigest"],
+  "properties": {
+    "schema": {"const": "refas.realized-contact-plan/v1"},
+    "id": {"type": "string"},
+    "scopeId": {"type": "string"},
+    "sourceSha256": {"$ref": "common.schema.json#/$defs/sha256"},
+    "assetSha256": {"$ref": "common.schema.json#/$defs/sha256"},
+    "attachmentSemanticsDigest": {"$ref": "common.schema.json#/$defs/sha256"},
+    "propagationReportDigest": {"anyOf": [{"$ref": "common.schema.json#/$defs/sha256"}, {"type": "null"}]},
+    "fusionBindings": {"type": "array", "items": {"type": "object"}},
+    "supportRoots": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "supportRequiredEntityIds": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "pairExpectations": {"type": "array", "items": {"type": "object"}},
+    "broadPhaseMargin": {"type": "number", "minimum": 0},
+    "contactTolerance": {"type": "number", "minimum": 0},
+    "penetrationTolerance": {"type": "number", "minimum": 0},
+    "unexpectedContactPolicy": {"enum": ["BLOCK", "REPORT", "IGNORE"]},
+    "evidenceRefs": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "policy": {"type": "object"},
+    "planDigest": {"$ref": "common.schema.json#/$defs/sha256"}
+  },
+  "additionalProperties": false
+}
