@@ -37,7 +37,7 @@ function cube(x0, x1) {
 
 function fixture() {
   const attachmentSemantics = createAttachmentSemantics({
-    scopeId: 'head-shell', sourceSha256: D('s'),
+    scopeId: 'head-shell', sourceSha256: D('f'),
     entities: [E('head-shell'), E('face'), E('nose'), E('glasses')],
     relations: [
       R('head-free', 'FREE', 'head-shell'),
