@@ -31,6 +31,7 @@ export function createFitStructuralEligibility({
   const candidateAssetSha256 = digestBytes(bytes);
   const required = normalizeRequiredStages(requiredStages);
   if (!required.length) throw new Error('structural eligibility requires at least one structural stage');
+  if (!required.includes('realized-contact')) throw new Error('structural eligibility requires realized-contact so required structural evidence is bound to the exact candidate GLB');
   const checks = [];
   const blockers = [];
 
@@ -112,6 +113,7 @@ export function validateFitStructuralEligibility(value, candidateGlb = null) {
     assertDigest(value?.eligibilityDigest, 'eligibilityDigest');
     const required = normalizeRequiredStages(value?.requiredStages ?? []);
     if (!required.length) errors.push('structural eligibility must bind at least one required stage');
+    if (!required.includes('realized-contact')) errors.push('structural eligibility must require realized-contact to bind required structural evidence to the exact candidate GLB');
     if (digestJson(required) !== digestJson(value?.requiredStages ?? [])) errors.push('requiredStages are not canonical');
     if (!['ELIGIBLE', 'INELIGIBLE'].includes(value?.status)) errors.push('invalid status');
     if (value?.eligible !== (value?.status === 'ELIGIBLE')) errors.push('eligible does not match status');
