@@ -89,6 +89,14 @@ When owner geometry changes, `refas.surface-anchor-rebind/v1` may recover the an
 
 `refas.supported-clearance/v1` represents intentional separation without treating floating geometry as valid by default. The subject must have an explicit acyclic support path through the attachment semantic graph, every path edge and clearance counterpart binds to realized-assembly proof evidence, and each signed gap has a local non-negative range. `refas.supported-clearance-report/v1` accepts only a valid digest-bound realized assembly proof; missing support, penetration, or an out-of-range gap yields `BLOCKED` rather than invented hidden support or forced contact.
 
+## Attachment propagation graph layer
+
+`refas.attachment-propagation-plan/v1` turns the validated attachment ownership graph into one deterministic topological execution order. It does not implement another solver: `RIGID_FOLLOW` and `SURFACE_OFFSET` call the one-owner follow runtime, `MULTI_ANCHOR` calls the rigid multi-anchor solver, and `ARTICULATED` calls the bounded joint evaluator. Each resolved target frame becomes the owner input for later dependents in the same graph execution.
+
+`FREE`, `FUSED`, and `SUPPORTED_CLEARANCE` are never assigned guessed transforms by the graph. Their current canonical world frames enter only through explicit external bindings that record the exact semantic state digest, exact rigid-frame digest, and the exact current frame digest of every semantic owner. A stale fused child, an old supported-clearance pose, or an attempted world-frame override for a solver-owned relation therefore fails closed before it can feed a dependent.
+
+`refas.attachment-propagation-report/v1` records `READY_FOR_REALIZATION` only when every required world frame resolved without a blocker. `INFEASIBLE` multi-anchor state, out-of-limit articulation, stale external state, or a missing owner frame stops transitive propagation. `SUPPORTED_CLEARANCE` remains `PENDING_REALIZED_VALIDATION` even in a ready report, because support, penetration, and signed gap still require the realized-assembly proof after GLB realization. Propagation never mutates mesh bytes and never grants closure.
+
 ## Bounded edit transaction
 
 A transaction contains one baseline checkpoint, one capability, one hierarchy scope, one testable intent, protected metrics, and exactly one direct candidate checkpoint.
@@ -116,6 +124,7 @@ The dependency-light JavaScript core owns:
 - deterministic one-owner rigid-follow and surface-offset target propagation;
 - simultaneous rigid multi-anchor fitting with explicit infeasibility and no hidden scale/deformation;
 - bounded revolute articulation plus support-chain-aware clearance evaluation against realized assembly proof;
+- deterministic fail-closed attachment DAG propagation that reuses those relation-specific solvers and binds external canonical frames to exact pose state;
 - hierarchy and observation contracts;
 - spatial hypotheses and 2D reference registration;
 - deterministic mesh and embedded GLB construction;

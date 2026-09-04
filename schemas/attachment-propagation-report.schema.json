@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/attachment-propagation-report.schema.json",
+  "title": "RefAs attachment propagation report",
+  "type": "object",
+  "required": ["schema", "planDigest", "scopeId", "sourceSha256", "attachmentSemanticsDigest", "surfaceAnchorSetDigest", "initialWorldFrames", "status", "eligibleForRealization", "pendingRealizedValidationRelationIds", "topologicalEntityOrder", "entityResults", "blockers", "evidenceRefs", "policy", "reportDigest"],
+  "properties": {
+    "schema": {"const": "refas.attachment-propagation-report/v1"},
+    "planDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "attachmentSemanticsDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "surfaceAnchorSetDigest": {"anyOf": [{"$ref": "common.schema.json#/$defs/digest"}, {"type": "null"}]},
+    "initialWorldFrames": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["entityId", "stateDigest", "frame"],
+        "properties": {
+          "entityId": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "stateDigest": {"$ref": "common.schema.json#/$defs/digest"},
+          "frame": {"$ref": "#/$defs/frame"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "status": {"enum": ["READY_FOR_REALIZATION", "BLOCKED"]},
+    "eligibleForRealization": {"type": "boolean"},
+    "pendingRealizedValidationRelationIds": {"type": "array", "uniqueItems": true, "items": {"$ref": "common.schema.json#/$defs/semanticId"}},
+    "topologicalEntityOrder": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "common.schema.json#/$defs/semanticId"}},
+    "entityResults": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["entityId", "relationId", "mode", "status", "ownerIds", "worldFrame", "stateDigest", "solverReportDigest", "requiresRealizedValidation"],
+        "properties": {
+          "entityId": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "relationId": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "mode": {"enum": ["FUSED", "RIGID_FOLLOW", "SURFACE_OFFSET", "MULTI_ANCHOR", "ARTICULATED", "SUPPORTED_CLEARANCE", "FREE"]},
+          "status": {"enum": ["CURRENT_EXTERNAL", "PENDING_REALIZED_VALIDATION", "RESOLVED", "BLOCKED"]},
+          "ownerIds": {"type": "array", "uniqueItems": true, "items": {"$ref": "common.schema.json#/$defs/semanticId"}},
+          "worldFrame": {"anyOf": [{"$ref": "#/$defs/frame"}, {"type": "null"}]},
+          "stateDigest": {"anyOf": [{"$ref": "common.schema.json#/$defs/digest"}, {"type": "null"}]},
+          "solverReportDigest": {"anyOf": [{"$ref": "common.schema.json#/$defs/digest"}, {"type": "null"}]},
+          "requiresRealizedValidation": {"type": "boolean"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["code", "entityId", "relationId", "mode", "ownerIds", "message"],
+        "properties": {
+          "code": {"enum": ["MISSING_EXTERNAL_FRAME", "STALE_EXTERNAL_STATE", "STALE_EXTERNAL_FRAME", "STALE_OWNER_FRAME", "UNRESOLVED_OWNER", "INFEASIBLE_MULTI_ANCHOR", "SOLVER_FAILED"]},
+          "entityId": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "relationId": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "mode": {"enum": ["FUSED", "RIGID_FOLLOW", "SURFACE_OFFSET", "MULTI_ANCHOR", "ARTICULATED", "SUPPORTED_CLEARANCE", "FREE"]},
+          "ownerIds": {"type": "array", "uniqueItems": true, "items": {"$ref": "common.schema.json#/$defs/semanticId"}},
+          "message": {"type": "string", "minLength": 1}
+        },
+        "additionalProperties": false
+      }
+    },
+    "evidenceRefs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "policy": {
+      "type": "object",
+      "required": ["derivedOwnerFramesFeedDownstreamDependents", "externalPoseCannotOverrideSolvedRelations", "staleExternalPoseStateOrOwnerFrameFailsClosed", "infeasibleSolverResultIsNotPropagated", "supportedClearanceStillRequiresPostRealizationProof", "reportDoesNotMutateMeshBytes", "reportDoesNotAuthorizeClosure"],
+      "properties": {
+        "derivedOwnerFramesFeedDownstreamDependents": {"const": true},
+        "externalPoseCannotOverrideSolvedRelations": {"const": true},
+        "staleExternalPoseStateOrOwnerFrameFailsClosed": {"const": true},
+        "infeasibleSolverResultIsNotPropagated": {"const": true},
+        "supportedClearanceStillRequiresPostRealizationProof": {"const": true},
+        "reportDoesNotMutateMeshBytes": {"const": true},
+        "reportDoesNotAuthorizeClosure": {"const": true}
+      },
+      "additionalProperties": false
+    },
+    "reportDigest": {"$ref": "common.schema.json#/$defs/digest"}
+  },
+  "$defs": {
+    "vec3": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}},
+    "frame": {
+      "type": "object",
+      "required": ["origin", "xAxis", "yAxis", "zAxis"],
+      "properties": {
+        "origin": {"$ref": "#/$defs/vec3"},
+        "xAxis": {"$ref": "#/$defs/vec3"},
+        "yAxis": {"$ref": "#/$defs/vec3"},
+        "zAxis": {"$ref": "#/$defs/vec3"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

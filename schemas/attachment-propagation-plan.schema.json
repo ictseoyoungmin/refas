@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/attachment-propagation-plan.schema.json",
+  "title": "RefAs attachment propagation plan",
+  "type": "object",
+  "required": ["schema", "id", "scopeId", "sourceSha256", "attachmentSemanticsDigest", "surfaceAnchorSetDigest", "followStateDigest", "multiAnchorBindings", "articulatedBindings", "externalFrameBindings", "topologicalEntityOrder", "topologicalRelationOrder", "evidenceRefs", "policy", "planDigest"],
+  "properties": {
+    "schema": {"const": "refas.attachment-propagation-plan/v1"},
+    "id": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "attachmentSemanticsDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "surfaceAnchorSetDigest": {"anyOf": [{"$ref": "common.schema.json#/$defs/digest"}, {"type": "null"}]},
+    "followStateDigest": {"anyOf": [{"$ref": "common.schema.json#/$defs/digest"}, {"type": "null"}]},
+    "multiAnchorBindings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["relationId", "subjectId", "planDigest"],
+        "properties": {
+          "relationId": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "subjectId": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "planDigest": {"$ref": "common.schema.json#/$defs/digest"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "articulatedBindings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["relationId", "subjectId", "jointId", "jointDigest", "angle", "evidenceRefs"],
+        "properties": {
+          "relationId": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "subjectId": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "jointId": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "jointDigest": {"$ref": "common.schema.json#/$defs/digest"},
+          "angle": {"type": "number"},
+          "evidenceRefs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+        },
+        "additionalProperties": false
+      }
+    },
+    "externalFrameBindings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["entityId", "relationId", "mode", "stateDigest", "frameDigest", "ownerFrameDigests", "evidenceRefs"],
+        "properties": {
+          "entityId": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "relationId": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "mode": {"enum": ["FREE", "FUSED", "SUPPORTED_CLEARANCE"]},
+          "stateDigest": {"$ref": "common.schema.json#/$defs/digest"},
+          "frameDigest": {"$ref": "common.schema.json#/$defs/digest"},
+          "ownerFrameDigests": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["ownerId", "frameDigest"],
+              "properties": {
+                "ownerId": {"$ref": "common.schema.json#/$defs/semanticId"},
+                "frameDigest": {"$ref": "common.schema.json#/$defs/digest"}
+              },
+              "additionalProperties": false
+            }
+          },
+          "evidenceRefs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+        },
+        "additionalProperties": false
+      }
+    },
+    "topologicalEntityOrder": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "common.schema.json#/$defs/semanticId"}},
+    "topologicalRelationOrder": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "common.schema.json#/$defs/semanticId"}},
+    "evidenceRefs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "policy": {
+      "type": "object",
+      "required": ["dependencyDagIsDeterministic", "existingAttachmentSolversAreReused", "solvedModesCannotUseExternalPoseOverride", "externalFramesBindExactPoseStateAndOwnerFrames", "staleOrInfeasibleStateBlocksDependents", "supportedClearanceWaitsForRealizedValidation", "propagationDoesNotMutateMeshBytes", "propagationDoesNotAuthorizeClosure"],
+      "properties": {
+        "dependencyDagIsDeterministic": {"const": true},
+        "existingAttachmentSolversAreReused": {"const": true},
+        "solvedModesCannotUseExternalPoseOverride": {"const": true},
+        "externalFramesBindExactPoseStateAndOwnerFrames": {"const": true},
+        "staleOrInfeasibleStateBlocksDependents": {"const": true},
+        "supportedClearanceWaitsForRealizedValidation": {"const": true},
+        "propagationDoesNotMutateMeshBytes": {"const": true},
+        "propagationDoesNotAuthorizeClosure": {"const": true}
+      },
+      "additionalProperties": false
+    },
+    "planDigest": {"$ref": "common.schema.json#/$defs/digest"}
+  },
+  "additionalProperties": false
+}
