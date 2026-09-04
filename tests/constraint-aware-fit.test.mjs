@@ -134,6 +134,7 @@ function fixtureEligibility(candidate, eligible) {
     schema: 'refas.fit-structural-eligibility/v1',
     candidateAssetSha256: digestBytes(candidate),
     requiredStages: ['attachment-propagation', 'realized-contact'],
+    realizationBindings: {propagationReportDigest: D('b'), fusionReportDigests: []},
     status: eligible ? 'ELIGIBLE' : 'INELIGIBLE',
     eligible,
     blockers: eligible ? [] : ['REALIZED_CONTACT_BLOCKED'],
@@ -148,6 +149,7 @@ function fixtureEligibility(candidate, eligible) {
       structuralInvalidityIsNeverScorePenalty: true,
       visualMetricsCannotOverrideStructuralEligibility: true,
       exactCandidateBytesAreBound: true,
+      structuralStagesMustBindThroughRealizedContact: true,
       artifactDoesNotAuthorizeClosure: true,
     },
   };
