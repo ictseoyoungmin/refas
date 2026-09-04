@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/physical-fusion-report.schema.json",
+  "title": "RefAs physical fusion report",
+  "type": "object",
+  "required": ["schema", "planDigest", "scopeId", "groupId", "status", "blockingReason", "backendInputDigest", "backendId", "inputAssetSha256", "outputMeshDigest", "provenanceDigest", "topology", "metrics", "reopen", "evidenceRefs", "policy", "reportDigest"],
+  "properties": {
+    "schema": {"const": "refas.physical-fusion-report/v1"},
+    "planDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "groupId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "status": {"enum": ["BAKED", "BLOCKED_BACKEND_REQUIRED", "BLOCKED_TOPOLOGY"]},
+    "blockingReason": {"oneOf": [{"type": "null"}, {"type": "string", "minLength": 1}]},
+    "backendInputDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "backendId": {"oneOf": [{"type": "null"}, {"$ref": "common.schema.json#/$defs/semanticId"}]},
+    "inputAssetSha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "outputMeshDigest": {"oneOf": [{"type": "null"}, {"$ref": "common.schema.json#/$defs/digest"}]},
+    "provenanceDigest": {"oneOf": [{"type": "null"}, {"$ref": "common.schema.json#/$defs/digest"}]},
+    "topology": {"oneOf": [{"type": "null"}, {"type": "object"}]},
+    "metrics": {"oneOf": [{"type": "null"}, {"type": "object"}]},
+    "reopen": {
+      "type": "object",
+      "required": ["checkpointId", "stateDigest"],
+      "properties": {
+        "checkpointId": {"$ref": "common.schema.json#/$defs/semanticId"},
+        "stateDigest": {"$ref": "common.schema.json#/$defs/digest"}
+      },
+      "additionalProperties": false
+    },
+    "evidenceRefs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "policy": {"type": "object"},
+    "reportDigest": {"$ref": "common.schema.json#/$defs/digest"}
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/physical-fusion-plan.schema.json",
+  "title": "RefAs physical fusion plan",
+  "type": "object",
+  "required": ["schema", "id", "scopeId", "sourceSha256", "attachmentSemanticsDigest", "logicalFusionDigest", "canonicalEditIntentDigest", "groupId", "fusionRootId", "inputAssetSha256", "preFusionCheckpointId", "preFusionStateDigest", "fusionRootFrame", "fusionRootFrameDigest", "members", "strategy", "weldTolerance", "topologyObligation", "evidenceRefs", "policy", "planDigest"],
+  "properties": {
+    "schema": {"const": "refas.physical-fusion-plan/v1"},
+    "id": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "attachmentSemanticsDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "logicalFusionDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "canonicalEditIntentDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "groupId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "fusionRootId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "inputAssetSha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "preFusionCheckpointId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "preFusionStateDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "fusionRootFrame": {"type": "object"},
+    "fusionRootFrameDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "members": {
+      "type": "array", "minItems": 2,
+      "items": {
+        "type": "object",
+        "required": ["memberId", "geometryDigest", "frameDigest", "materialRegionId", "evidenceRefs"],
+        "properties": {
+          "memberId": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "geometryDigest": {"$ref": "common.schema.json#/$defs/digest"},
+          "frameDigest": {"$ref": "common.schema.json#/$defs/digest"},
+          "materialRegionId": {"oneOf": [{"type": "null"}, {"$ref": "common.schema.json#/$defs/semanticId"}]},
+          "evidenceRefs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+        },
+        "additionalProperties": false
+      }
+    },
+    "strategy": {"enum": ["WELD_SHARED_BOUNDARY", "SOLID_UNION"]},
+    "weldTolerance": {"type": "number", "exclusiveMinimum": 0},
+    "topologyObligation": {"enum": ["watertight", "manifold-shell", "open-surface"]},
+    "evidenceRefs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "policy": {"type": "object"},
+    "planDigest": {"$ref": "common.schema.json#/$defs/digest"}
+  },
+  "additionalProperties": false
+}
