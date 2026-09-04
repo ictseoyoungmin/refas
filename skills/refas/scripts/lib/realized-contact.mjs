@@ -26,6 +26,13 @@ function evidence(values, label) {
 }
 const pairKey = (a, b) => [String(a), String(b)].sort().join('::');
 const sameStrings = (a, b) => digestJson(uniqueStrings(a)) === digestJson(uniqueStrings(b));
+function artifactDigestMatches(value, field) {
+  if (!value || typeof value !== 'object') return false;
+  const payload = structuredClone(value), claimed = payload[field];
+  if (typeof claimed !== 'string') return false;
+  delete payload[field];
+  return digestJson(payload) === claimed;
+}
 
 function normalizeFusionBindings(rawBindings, entityIds) {
   const memberOwner = new Map(), physicalIds = new Set();
@@ -77,6 +84,12 @@ function normalizeExpectation(raw, index, entityIds) {
   };
 }
 
+function semanticAliasResolver(bindings) {
+  const map = new Map();
+  for (const binding of bindings) for (const id of binding.semanticMemberIds) map.set(id, binding.physicalEntityId);
+  return (id) => map.get(id) ?? id;
+}
+
 export function createRealizedContactPlan({
   attachmentSemantics,
   id,
@@ -102,6 +115,10 @@ export function createRealizedContactPlan({
   const bindings = normalizeFusionBindings(fusionBindings, entityIds);
   const expectations = pairExpectations.map((raw, index) => normalizeExpectation(raw, index, entityIds)).sort((a, b) => a.id.localeCompare(b.id));
   if (new Set(expectations.map((item) => item.id)).size !== expectations.length) throw new Error('pair expectation IDs must be unique');
+  const resolvePhysical = semanticAliasResolver(bindings);
+  for (const expectation of expectations) if (resolvePhysical(expectation.subjectId) === resolvePhysical(expectation.ownerId) && ['CLEARANCE', 'FORBID'].includes(expectation.kind)) {
+    throw new Error(`${expectation.id}: ${expectation.kind} is incompatible with semantic members baked into the same physical fusion`);
+  }
   const policy = String(unexpectedContactPolicy);
   if (!UNEXPECTED_POLICIES.has(policy)) throw new Error(`unexpectedContactPolicy must be one of ${[...UNEXPECTED_POLICIES].join(', ')}`);
   const payload = {
@@ -128,6 +145,7 @@ export function createRealizedContactPlan({
       supportRootsMustBeExplicit: true,
       freeDoesNotImplySupportExemption: true,
       penetrationIsNotContactSuccess: true,
+      propagationReportMustMatchWhenBound: true,
       physicalFusionAliasesMustBeDigestBound: true,
       reportDoesNotAuthorizeClosure: true,
     },
@@ -190,7 +208,11 @@ function worldMatrices(json) {
     if (!node) throw new Error(`missing GLB node ${index}`);
     const matrix = multiply(parentMatrix, nodeMatrix(node));
     world.set(index, matrix);
-    for (const child of node.children ?? []) { if (parent.has(child)) throw new Error(`GLB node ${child} has multiple parents`); parent.set(child, index); walk(child, matrix); }
+    for (const child of node.children ?? []) {
+      if (parent.has(child)) throw new Error(`GLB node ${child} has multiple parents`);
+      parent.set(child, index);
+      walk(child, matrix);
+    }
   };
   for (const root of roots) walk(root);
   for (let index = 0; index < (json.nodes?.length ?? 0); index += 1) if (json.nodes[index]?.mesh != null && !world.has(index)) throw new Error(`mesh node ${index} is not reachable from active scene`);
@@ -253,7 +275,17 @@ function segmentSegmentDistanceSq(p1, q1, p2, q2) {
   const d1 = sub(q1,p1), d2 = sub(q2,p2), r = sub(p1,p2), a = dot(d1,d1), e = dot(d2,d2), f = dot(d2,r); let s = 0, t = 0;
   if (a <= EPS && e <= EPS) return distanceSq(p1,p2);
   if (a <= EPS) t = Math.max(0, Math.min(1, f/e));
-  else { const c = dot(d1,r); if (e <= EPS) s = Math.max(0, Math.min(1, -c/a)); else { const b = dot(d1,d2), denom = a*e-b*b; if (Math.abs(denom) > EPS) s = Math.max(0, Math.min(1, (b*f-c*e)/denom)); t = (b*s+f)/e; if (t < 0) { t = 0; s = Math.max(0, Math.min(1, -c/a)); } else if (t > 1) { t = 1; s = Math.max(0, Math.min(1, (b-c)/a)); } } }
+  else {
+    const c = dot(d1,r);
+    if (e <= EPS) s = Math.max(0, Math.min(1, -c/a));
+    else {
+      const b = dot(d1,d2), denom = a*e-b*b;
+      if (Math.abs(denom) > EPS) s = Math.max(0, Math.min(1, (b*f-c*e)/denom));
+      t = (b*s+f)/e;
+      if (t < 0) { t = 0; s = Math.max(0, Math.min(1, -c/a)); }
+      else if (t > 1) { t = 1; s = Math.max(0, Math.min(1, (b-c)/a)); }
+    }
+  }
   return distanceSq(add(p1,scale(d1,s)), add(p2,scale(d2,t)));
 }
 
@@ -286,7 +318,8 @@ function buildBvh(triangles, indices = null) {
 function nearestTriangles(meshA, meshB) {
   let best = {distanceSq: Infinity, aIndex: null, bIndex: null, intersects: false}, stack = [[meshA.bvh, meshB.bvh]];
   while (stack.length) {
-    const [aNode,bNode] = stack.pop(); if (boundsGapSq(aNode.bounds,bNode.bounds) > best.distanceSq + EPS) continue;
+    const [aNode,bNode] = stack.pop();
+    if (boundsGapSq(aNode.bounds,bNode.bounds) > best.distanceSq + EPS) continue;
     if (aNode.ids && bNode.ids) {
       for (const ai of aNode.ids) for (const bi of bNode.ids) {
         if (boundsGapSq(meshA.triangles[ai].bounds,meshB.triangles[bi].bounds) > best.distanceSq + EPS) continue;
@@ -295,14 +328,19 @@ function nearestTriangles(meshA, meshB) {
       }
       continue;
     }
-    if (!aNode.ids && (bNode.ids || aNode.count >= bNode.count)) { stack.push([aNode.right,bNode],[aNode.left,bNode]); }
-    else { stack.push([aNode,bNode.right],[aNode,bNode.left]); }
+    if (!aNode.ids && (bNode.ids || aNode.count >= bNode.count)) stack.push([aNode.right,bNode],[aNode.left,bNode]);
+    else stack.push([aNode,bNode.right],[aNode,bNode.left]);
   }
   return best;
 }
 function pointMeshDistanceSq(point, mesh) {
   let best = Infinity, stack = [mesh.bvh];
-  while (stack.length) { const node = stack.pop(); if (pointBoundsGapSq(point,node.bounds) > best+EPS) continue; if (node.ids) for (const id of node.ids) best = Math.min(best,pointTriangleDistanceSq(point,mesh.triangles[id].points)); else stack.push(node.right,node.left); }
+  while (stack.length) {
+    const node = stack.pop();
+    if (pointBoundsGapSq(point,node.bounds) > best+EPS) continue;
+    if (node.ids) for (const id of node.ids) best = Math.min(best,pointTriangleDistanceSq(point,mesh.triangles[id].points));
+    else stack.push(node.right,node.left);
+  }
   return best;
 }
 function rayTriangleT(origin, direction, tri) {
@@ -321,7 +359,9 @@ function pointInsideMesh(point, mesh) {
 function deterministicSample(values, maximum) { if (values.length<=maximum) return values; const out=[]; for (let i=0;i<maximum;i+=1) out.push(values[Math.floor(i*values.length/maximum)]); return out; }
 function contactAreaEstimate(source, target, tolerance) {
   const sample=deterministicSample(source.triangles,128), sampleArea=sample.reduce((sum,t)=>sum+t.area,0), totalArea=source.triangles.reduce((sum,t)=>sum+t.area,0);
-  if (sampleArea<=EPS) return 0; const near=sample.reduce((sum,t)=>sum+(Math.sqrt(pointMeshDistanceSq(t.centroid,target))<=tolerance?t.area:0),0); return totalArea*(near/sampleArea);
+  if (sampleArea<=EPS) return 0;
+  const near=sample.reduce((sum,t)=>sum+(Math.sqrt(pointMeshDistanceSq(t.centroid,target))<=tolerance?t.area:0),0);
+  return totalArea*(near/sampleArea);
 }
 function penetrationEstimate(a,b) {
   let maximum=0;
@@ -334,27 +374,47 @@ function extractPhysicalMeshes(glb) {
   const {json,binary}=parseGlb(glb), world=worldMatrices(json), meshes=[], ids=new Set();
   for (let nodeIndex=0;nodeIndex<(json.nodes?.length??0);nodeIndex+=1) {
     const node=json.nodes[nodeIndex]; if (node.mesh==null) continue;
-    const id=assertId(node.extras?.refasPartId??node.name,`GLB mesh node ${nodeIndex} ID`); if(ids.has(id)) throw new Error(`duplicate realized physical entity ${id}`); ids.add(id);
+    const id=assertId(node.extras?.refasPartId??node.name,`GLB mesh node ${nodeIndex} ID`);
+    if(ids.has(id)) throw new Error(`duplicate realized physical entity ${id}`); ids.add(id);
     const meshSpec=json.meshes?.[node.mesh]; if(!meshSpec) throw new Error(`${id}: missing mesh ${node.mesh}`);
     const vertices=[], triangles=[];
     for (const primitive of meshSpec.primitives??[]) {
       if ((primitive.mode??4)!==4) throw new Error(`${id}: realized contact supports TRIANGLES primitives only`);
-      const local=readAccessor(json,binary,primitive.attributes?.POSITION); if(!local.length||!local.every((p)=>Array.isArray(p)&&p.length===3&&p.every(Number.isFinite))) throw new Error(`${id}: invalid POSITION accessor`);
+      const local=readAccessor(json,binary,primitive.attributes?.POSITION);
+      if(!local.length||!local.every((p)=>Array.isArray(p)&&p.length===3&&p.every(Number.isFinite))) throw new Error(`${id}: invalid POSITION accessor`);
       const transformed=local.map((p)=>transformPoint(world.get(nodeIndex),p)), indices=primitive.indices==null?transformed.map((_,i)=>i):readAccessor(json,binary,primitive.indices);
       if(indices.length%3!==0||!indices.every(Number.isInteger)) throw new Error(`${id}: triangle index accessor is invalid`);
       const base=vertices.length; vertices.push(...transformed);
-      for(let i=0;i<indices.length;i+=3){ const points=[transformed[indices[i]],transformed[indices[i+1]],transformed[indices[i+2]]]; if(points.some((p)=>!p)) throw new Error(`${id}: triangle index is out of range`); const area=triangleArea(points); if(area<=EPS) continue; const bounds=triangleBounds(points); triangles.push({points,area,bounds,centroid:scale(add(add(points[0],points[1]),points[2]),1/3),normal:triangleNormal(points),source:[base+indices[i],base+indices[i+1],base+indices[i+2]]}); }
+      for(let i=0;i<indices.length;i+=3){
+        const points=[transformed[indices[i]],transformed[indices[i+1]],transformed[indices[i+2]]];
+        if(points.some((p)=>!p)) throw new Error(`${id}: triangle index is out of range`);
+        const area=triangleArea(points); if(area<=EPS) continue;
+        const bounds=triangleBounds(points);
+        triangles.push({points,area,bounds,centroid:scale(add(add(points[0],points[1]),points[2]),1/3),normal:triangleNormal(points),source:[base+indices[i],base+indices[i+1],base+indices[i+2]]});
+      }
     }
     if(!triangles.length) throw new Error(`${id}: no non-degenerate triangles`);
-    const bounds=mergeBounds(triangles.map((triangle)=>triangle.bounds)); meshes.push({id,nodeIndex,vertices,triangles,bounds,bvh:buildBvh(triangles)});
+    const bounds=mergeBounds(triangles.map((triangle)=>triangle.bounds));
+    meshes.push({id,nodeIndex,vertices,triangles,bounds,bvh:buildBvh(triangles)});
   }
   return meshes.sort((a,b)=>a.id.localeCompare(b.id));
 }
 
+function verifyPropagationArtifact(plan, propagationReport) {
+  if (plan.propagationReportDigest == null) return {required:false, reportDigest:null, pass:true};
+  const pass = propagationReport?.schema === 'refas.attachment-propagation-report/v1' &&
+    propagationReport?.reportDigest === plan.propagationReportDigest &&
+    artifactDigestMatches(propagationReport, 'reportDigest');
+  if (!pass) throw new Error('attachment propagation report does not match the digest-bound realized-contact plan');
+  return {required:true, reportDigest:plan.propagationReportDigest, pass:true};
+}
+
 function verifyFusionArtifacts(plan, fusionArtifacts, actualIds) {
   const artifacts=new Map((fusionArtifacts??[]).map((entry)=>[entry?.report?.reportDigest,entry])), checks=[];
-  for(const binding of plan.fusionBindings){ const artifact=artifacts.get(binding.fusionReportDigest), report=artifact?.report, provenance=artifact?.provenance; let pass=true, reason=null;
+  for(const binding of plan.fusionBindings){
+    const artifact=artifacts.get(binding.fusionReportDigest), report=artifact?.report, provenance=artifact?.provenance; let pass=true, reason=null;
     if(!report||!provenance) {pass=false;reason='fusion artifact is missing';}
+    else if(report.schema!=='refas.physical-fusion-report/v1'||provenance.schema!=='refas.fusion-provenance/v1'||!artifactDigestMatches(report,'reportDigest')||!artifactDigestMatches(provenance,'provenanceDigest')) {pass=false;reason='fusion artifact digest validation failed';}
     else if(report.status!=='BAKED'||report.provenanceDigest!==binding.provenanceDigest||provenance.provenanceDigest!==binding.provenanceDigest){pass=false;reason='fusion report/provenance digest or status mismatch';}
     else if(provenance.fusionRootId!==binding.physicalEntityId||!sameStrings(provenance.sourceMemberIds,binding.semanticMemberIds)){pass=false;reason='fusion provenance members do not match binding';}
     else if(!actualIds.has(binding.physicalEntityId)){pass=false;reason='fused physical entity is absent from realized GLB';}
@@ -363,16 +423,21 @@ function verifyFusionArtifacts(plan, fusionArtifacts, actualIds) {
   if(checks.some((check)=>!check.pass)) throw new Error(`fusion binding verification failed: ${checks.filter((check)=>!check.pass).map((check)=>`${check.physicalEntityId}: ${check.reason}`).join('; ')}`);
   return checks;
 }
-function semanticPhysicalMap(plan) { const map=new Map(); for(const binding of plan.fusionBindings) for(const id of binding.semanticMemberIds) map.set(id,binding.physicalEntityId); return (id)=>map.get(id)??id; }
 
-function pairMeasurement(a,b,plan){ const nearest=nearestTriangles(a,b), minimumSurfaceDistance=Math.sqrt(nearest.distanceSq), ta=a.triangles[nearest.aIndex], tb=b.triangles[nearest.bIndex], normalOpposition=ta&&tb?-dot(ta.normal,tb.normal):null;
+function pairMeasurement(a,b,plan){
+  const nearest=nearestTriangles(a,b), minimumSurfaceDistance=Math.sqrt(nearest.distanceSq), ta=a.triangles[nearest.aIndex], tb=b.triangles[nearest.bIndex], normalOpposition=ta&&tb?-dot(ta.normal,tb.normal):null;
   const penetrationDepthEstimate=penetrationEstimate(a,b), crossingIntersection=Boolean(nearest.intersects&&Math.abs(dot(ta?.normal??[0,0,0],tb?.normal??[0,0,0]))<0.999999), areaA=contactAreaEstimate(a,b,plan.contactTolerance), areaB=contactAreaEstimate(b,a,plan.contactTolerance), contactAreaEstimateValue=Math.min(areaA,areaB);
   const type=(penetrationDepthEstimate>plan.penetrationTolerance||crossingIntersection)?'PENETRATION':minimumSurfaceDistance<=plan.contactTolerance?'CONTACT':'CLEARANCE';
   return {aId:a.id,bId:b.id,type,minimumSurfaceDistance,penetrationDepthEstimate,crossingIntersection,contactAreaEstimate:contactAreaEstimateValue,normalOpposition,broadPhaseGap:Math.sqrt(boundsGapSq(a.bounds,b.bounds))};
 }
 
-function evaluateExpectation(expectation, measurement, resolvePhysical, fusionBindings, plan){ const subjectPhysicalId=resolvePhysical(expectation.subjectId), ownerPhysicalId=resolvePhysical(expectation.ownerId);
-  if(subjectPhysicalId===ownerPhysicalId){ const binding=fusionBindings.find((item)=>item.physicalEntityId===subjectPhysicalId), fused=Boolean(binding&&binding.semanticMemberIds.includes(expectation.subjectId)&&binding.semanticMemberIds.includes(expectation.ownerId)); return {...expectation,subjectPhysicalId,ownerPhysicalId,status:fused?'SATISFIED_BY_FUSION':'BLOCKED',pass:fused,measurement:null}; }
+function evaluateExpectation(expectation, measurement, resolvePhysical, fusionBindings, plan){
+  const subjectPhysicalId=resolvePhysical(expectation.subjectId), ownerPhysicalId=resolvePhysical(expectation.ownerId);
+  if(subjectPhysicalId===ownerPhysicalId){
+    const binding=fusionBindings.find((item)=>item.physicalEntityId===subjectPhysicalId), fused=Boolean(binding&&binding.semanticMemberIds.includes(expectation.subjectId)&&binding.semanticMemberIds.includes(expectation.ownerId));
+    const pass=fused&&['CONTACT','SUPPORT','IGNORE'].includes(expectation.kind);
+    return {...expectation,subjectPhysicalId,ownerPhysicalId,status:pass?'SATISFIED_BY_FUSION':'BLOCKED',pass,measurement:null};
+  }
   if(!measurement) return {...expectation,subjectPhysicalId,ownerPhysicalId,status:'BLOCKED',pass:false,measurement:null};
   const penetrationPass=measurement.penetrationDepthEstimate<=expectation.maxPenetration+EPS&&(!measurement.crossingIntersection||expectation.maxPenetration>0);
   let pass=false;
@@ -383,18 +448,30 @@ function evaluateExpectation(expectation, measurement, resolvePhysical, fusionBi
   return {...expectation,subjectPhysicalId,ownerPhysicalId,status:pass?'SATISFIED':'BLOCKED',pass,measurement};
 }
 
-function supportPath(entityId, roots, edges){ const rootSet=new Set(roots); if(rootSet.has(entityId)) return [entityId]; const byChild=new Map(); for(const edge of edges){const list=byChild.get(edge.subjectPhysicalId)??[];list.push(edge.ownerPhysicalId);byChild.set(edge.subjectPhysicalId,list.sort());}
-  const queue=[[entityId,[entityId]]],seen=new Set([entityId]); while(queue.length){const [current,path]=queue.shift(); for(const next of byChild.get(current)??[]){if(rootSet.has(next))return[...path,next];if(!seen.has(next)){seen.add(next);queue.push([next,[...path,next]]);}}} return null; }
+function supportPath(entityId, roots, edges){
+  const rootSet=new Set(roots); if(rootSet.has(entityId)) return [entityId];
+  const byChild=new Map();
+  for(const edge of edges){const list=byChild.get(edge.subjectPhysicalId)??[];list.push(edge.ownerPhysicalId);byChild.set(edge.subjectPhysicalId,list.sort());}
+  const queue=[[entityId,[entityId]]],seen=new Set([entityId]);
+  while(queue.length){const [current,path]=queue.shift();for(const next of byChild.get(current)??[]){if(rootSet.has(next))return[...path,next];if(!seen.has(next)){seen.add(next);queue.push([next,[...path,next]]);}}}
+  return null;
+}
 
-export function analyzeRealizedContact({plan,attachmentSemantics,glb,fusionArtifacts=[],evidenceRefs=[]}={}){
+export function analyzeRealizedContact({plan,attachmentSemantics,glb,propagationReport=null,fusionArtifacts=[],evidenceRefs=[]}={}){
   const validation=validateRealizedContactPlan(plan,attachmentSemantics); if(!validation.valid) throw new Error(`realized contact plan is invalid: ${validation.errors.join('; ')}`);
   const bytes=Buffer.from(glb??[]),actualSha=sha256(bytes); if(actualSha!==plan.assetSha256) throw new Error('realized contact GLB SHA-256 does not match plan');
-  const physical=extractPhysicalMeshes(bytes),byId=new Map(physical.map((mesh)=>[mesh.id,mesh])),actualIds=new Set(byId.keys()),fusionChecks=verifyFusionArtifacts(plan,fusionArtifacts,actualIds),resolvePhysical=semanticPhysicalMap(plan);
+  const propagationCheck=verifyPropagationArtifact(plan,propagationReport);
+  const physical=extractPhysicalMeshes(bytes),byId=new Map(physical.map((mesh)=>[mesh.id,mesh])),actualIds=new Set(byId.keys()),fusionChecks=verifyFusionArtifacts(plan,fusionArtifacts,actualIds),resolvePhysical=semanticAliasResolver(plan.fusionBindings);
   for(const id of [...plan.supportRoots,...plan.supportRequiredEntityIds]) if(!actualIds.has(resolvePhysical(id))) throw new Error(`support entity ${id} resolves to missing physical node ${resolvePhysical(id)}`);
-  const expectedPhysicalKeys=new Set(),candidateKeys=new Set();
-  for(const expectation of plan.pairExpectations){const a=resolvePhysical(expectation.subjectId),b=resolvePhysical(expectation.ownerId);if(a!==b){expectedPhysicalKeys.add(pairKey(a,b));candidateKeys.add(pairKey(a,b));}}
+  const candidateKeys=new Set();
+  for(const expectation of plan.pairExpectations){const a=resolvePhysical(expectation.subjectId),b=resolvePhysical(expectation.ownerId);if(a!==b)candidateKeys.add(pairKey(a,b));}
   for(let i=0;i<physical.length;i+=1)for(let j=i+1;j<physical.length;j+=1)if(Math.sqrt(boundsGapSq(physical[i].bounds,physical[j].bounds))<=plan.broadPhaseMargin+EPS)candidateKeys.add(pairKey(physical[i].id,physical[j].id));
-  const measurements=[]; for(const key of [...candidateKeys].sort()){const[a,b]=key.split('::'),ma=byId.get(a),mb=byId.get(b);if(!ma||!mb)throw new Error(`expected realized pair ${key} is missing from GLB`);measurements.push(pairMeasurement(ma,mb,plan));}
+  const measurements=[];
+  for(const key of [...candidateKeys].sort()){
+    const[a,b]=key.split('::'),ma=byId.get(a),mb=byId.get(b);
+    if(!ma||!mb)throw new Error(`expected realized pair ${key} is missing from GLB`);
+    measurements.push(pairMeasurement(ma,mb,plan));
+  }
   const measurementByKey=new Map(measurements.map((entry)=>[pairKey(entry.aId,entry.bId),entry]));
   const expectationResults=plan.pairExpectations.map((expectation)=>evaluateExpectation(expectation,measurementByKey.get(pairKey(resolvePhysical(expectation.subjectId),resolvePhysical(expectation.ownerId))),resolvePhysical,plan.fusionBindings,plan));
   const supportEdges=expectationResults.filter((result)=>result.kind==='SUPPORT'&&result.pass&&result.subjectPhysicalId!==result.ownerPhysicalId).map((result)=>({expectationId:result.id,subjectPhysicalId:result.subjectPhysicalId,ownerPhysicalId:result.ownerPhysicalId}));
@@ -404,11 +481,23 @@ export function analyzeRealizedContact({plan,attachmentSemantics,glb,fusionArtif
   const unexpectedContacts=measurements.filter((entry)=>!coveredKeys.has(pairKey(entry.aId,entry.bId))&&(entry.type==='CONTACT'||entry.type==='PENETRATION')).map((entry)=>({...entry,blocking:entry.type==='PENETRATION'||plan.unexpectedContactPolicy==='BLOCK'}));
   const penetrations=measurements.filter((entry)=>entry.type==='PENETRATION').map((entry)=>({...entry,coveredByExpectation:coveredKeys.has(pairKey(entry.aId,entry.bId))}));
   const nodes=physical.map((mesh)=>({physicalEntityId:mesh.id,semanticEntityIds:uniqueStrings([mesh.id,...plan.fusionBindings.filter((binding)=>binding.physicalEntityId===mesh.id).flatMap((binding)=>binding.semanticMemberIds)]),bounds:mesh.bounds,vertices:mesh.vertices.length,triangles:mesh.triangles.length}));
-  const graphPayload={schema:REALIZED_CONTACT_GRAPH_SCHEMA,planDigest:plan.planDigest,assetSha256:plan.assetSha256,nodes,edges:measurements,fusionChecks,broadPhase:{margin:plan.broadPhaseMargin,candidatePairs:candidateKeys.size,totalPossiblePairs:physical.length*(physical.length-1)/2,authority:'candidate-discovery-only'},metrics:{physicalNodes:physical.length,contactEdges:measurements.filter((e)=>e.type==='CONTACT').length,clearanceEdges:measurements.filter((e)=>e.type==='CLEARANCE').length,penetrationEdges:penetrations.length},evidenceRefs:uniqueStrings(evidenceRefs)};
+  const graphPayload={schema:REALIZED_CONTACT_GRAPH_SCHEMA,planDigest:plan.planDigest,assetSha256:plan.assetSha256,propagationCheck,nodes,edges:measurements,fusionChecks,broadPhase:{margin:plan.broadPhaseMargin,candidatePairs:candidateKeys.size,totalPossiblePairs:physical.length*(physical.length-1)/2,authority:'candidate-discovery-only'},metrics:{physicalNodes:physical.length,contactEdges:measurements.filter((e)=>e.type==='CONTACT').length,clearanceEdges:measurements.filter((e)=>e.type==='CLEARANCE').length,penetrationEdges:penetrations.length},evidenceRefs:uniqueStrings(evidenceRefs)};
   const graph=deepFreeze({...graphPayload,graphDigest:digestJson(graphPayload)});
-  const blockers=[]; for(const result of expectationResults)if(!result.pass)blockers.push(`EXPECTATION:${result.id}`);for(const check of supportChecks)if(!check.pass)blockers.push(`UNSUPPORTED:${check.physicalEntityId}`);for(const entry of unexpectedContacts)if(entry.blocking)blockers.push(`${entry.type}:${pairKey(entry.aId,entry.bId)}`);
+  const blockers=[];
+  for(const result of expectationResults)if(!result.pass)blockers.push(`EXPECTATION:${result.id}`);
+  for(const check of supportChecks)if(!check.pass)blockers.push(`UNSUPPORTED:${check.physicalEntityId}`);
+  for(const entry of unexpectedContacts)if(entry.blocking)blockers.push(`${entry.type}:${pairKey(entry.aId,entry.bId)}`);
   const reportPayload={schema:REALIZED_CONTACT_REPORT_SCHEMA,planDigest:plan.planDigest,graphDigest:graph.graphDigest,assetSha256:plan.assetSha256,status:blockers.length?'BLOCKED':'PASS',blockers:uniqueStrings(blockers),expectationResults,supportRoots:physicalRoots,supportChecks,unsupportedPhysicalEntityIds:supportChecks.filter((check)=>!check.pass).map((check)=>check.physicalEntityId),unexpectedContacts,penetrations,evidenceRefs:uniqueStrings(evidenceRefs),policy:{supportRequiresRealizedPathToExplicitRoot:true,unexpectedPenetrationAlwaysBlocks:true,unexpectedContactPolicy:plan.unexpectedContactPolicy,graphDoesNotAuthorizeClosure:true}};
-  const report=deepFreeze({...reportPayload,reportDigest:digestJson(reportPayload)}); return deepFreeze({graph,report});
+  const report=deepFreeze({...reportPayload,reportDigest:digestJson(reportPayload)});
+  return deepFreeze({graph,report});
 }
 
-export function validateRealizedContactResult(value,{plan,attachmentSemantics,glb,fusionArtifacts=[]}={}){const errors=[];try{const recreated=analyzeRealizedContact({plan,attachmentSemantics,glb,fusionArtifacts,evidenceRefs:value?.report?.evidenceRefs});if(digestJson(recreated.graph)!==digestJson(value?.graph))errors.push('realized contact graph mismatch');if(digestJson(recreated.report)!==digestJson(value?.report))errors.push('realized contact report mismatch');}catch(error){errors.push(error.message);}return{valid:errors.length===0,errors};}
+export function validateRealizedContactResult(value,{plan,attachmentSemantics,glb,propagationReport=null,fusionArtifacts=[]}={}){
+  const errors=[];
+  try{
+    const recreated=analyzeRealizedContact({plan,attachmentSemantics,glb,propagationReport,fusionArtifacts,evidenceRefs:value?.report?.evidenceRefs});
+    if(digestJson(recreated.graph)!==digestJson(value?.graph))errors.push('realized contact graph mismatch');
+    if(digestJson(recreated.report)!==digestJson(value?.report))errors.push('realized contact report mismatch');
+  }catch(error){errors.push(error.message);}
+  return{valid:errors.length===0,errors};
+}
