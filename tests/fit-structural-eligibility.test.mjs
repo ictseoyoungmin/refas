@@ -74,6 +74,14 @@ test('structural eligibility cannot use semantic propagation as a substitute for
   assert.match(validation.errors.join('; '), /must require realized-contact/);
 });
 
+test('missing realized evidence remains a valid ineligible candidate artifact', () => {
+  const eligibility = createFitStructuralEligibility({candidateGlb: candidate, requiredStages: ['realized-contact']});
+  assert.equal(eligibility.status, 'INELIGIBLE');
+  assert.equal(eligibility.eligible, false);
+  assert.ok(eligibility.blockers.includes('REALIZED_CONTACT_MISSING'));
+  assert.deepEqual(validateFitStructuralEligibility(eligibility, candidate), {valid: true, errors: []});
+});
+
 test('structural stage digests must be cross-bound through the realized-contact proof', () => {
   const validation = validateFitStructuralEligibility(forgedCrossBindingMismatch(), candidate);
   assert.equal(validation.valid, false);
