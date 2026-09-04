@@ -117,5 +117,5 @@ test('policy mutation and altered finding bytes fail closed', () => {
     transaction,
     policy,
     evidenceBytesById:new Map([['render-report',render],['visual-review',alteredReview]]),
-  }), /do not match transaction evidence/);
+  }), /evidence bytes mismatch for visual-review/);
 });
