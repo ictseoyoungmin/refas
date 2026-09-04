@@ -303,13 +303,23 @@ export async function resumeProject(root) {
   const base = await resumeProjectBase(root);
   if (!['CERTIFY', 'DONE'].includes(base.nextAction)) return base;
   const [projection, claims] = await Promise.all([assessProjectionCertification(root), assessClaimCertification(root)]);
-  if (projection.valid && claims.valid) return base;
-  const errors = [...projection.errors, ...claims.errors];
-  return {
-    ...base,
-    activeWork: {capability: 'whole-object-certification', scopeId: 'whole'},
-    nextAction: 'REQUEST_CERTIFICATION_EVIDENCE',
-    certificationErrors: errors,
-    reason: errors[0],
-  };
+  if (!projection.valid) {
+    return {
+      ...base,
+      activeWork: {capability: 'whole-object-certification', scopeId: 'whole'},
+      nextAction: 'REQUEST_VISUAL_REVIEW',
+      certificationErrors: projection.errors,
+      reason: projection.errors[0],
+    };
+  }
+  if (!claims.valid) {
+    return {
+      ...base,
+      activeWork: {capability: 'whole-object-certification', scopeId: 'whole'},
+      nextAction: 'REQUEST_CERTIFICATION_EVIDENCE',
+      certificationErrors: claims.errors,
+      reason: claims.errors[0],
+    };
+  }
+  return base;
 }
