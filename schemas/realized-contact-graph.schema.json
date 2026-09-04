@@ -3,11 +3,12 @@
   "$id": "https://refas.dev/schemas/realized-contact-graph.schema.json",
   "title": "RefAs realized contact graph",
   "type": "object",
-  "required": ["schema", "planDigest", "assetSha256", "nodes", "edges", "fusionChecks", "broadPhase", "metrics", "evidenceRefs", "graphDigest"],
+  "required": ["schema", "planDigest", "assetSha256", "propagationCheck", "nodes", "edges", "fusionChecks", "broadPhase", "metrics", "evidenceRefs", "graphDigest"],
   "properties": {
     "schema": {"const": "refas.realized-contact-graph/v1"},
     "planDigest": {"$ref": "common.schema.json#/$defs/sha256"},
     "assetSha256": {"$ref": "common.schema.json#/$defs/sha256"},
+    "propagationCheck": {"type": "object", "required": ["required", "reportDigest", "pass"]},
     "nodes": {"type": "array", "items": {"type": "object"}},
     "edges": {"type": "array", "items": {"type": "object"}},
     "fusionChecks": {"type": "array", "items": {"type": "object"}},
