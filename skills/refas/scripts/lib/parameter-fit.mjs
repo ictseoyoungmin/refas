@@ -1,4 +1,5 @@
 import {assertDigest, assertId, deepFreeze, digestJson} from './canonical.mjs';
+import {validateFitStructuralEligibility} from './fit-structural-eligibility.mjs';
 
 export const PARAMETER_FIT_PLAN_SCHEMA = 'refas.parameter-fit-plan/v1';
 export const PARAMETER_FIT_REPORT_SCHEMA = 'refas.parameter-fit-report/v1';
@@ -101,6 +102,7 @@ export function createParameterFitPlan({
   objectives = [],
   protectedTerms = [],
   optimizer = {},
+  structuralEligibilityRequired = false,
   evidenceRefs = [],
 } = {}) {
   if (parameters.length < 2) throw new Error('joint parameter fitting requires at least two parameters');
@@ -125,6 +127,7 @@ export function createParameterFitPlan({
     objectives: normalizedObjectives,
     protectedTerms: normalizedProtected,
     optimizer: normalizeOptimizer(optimizer, normalizedParameters.length),
+    structuralEligibilityRequired: Boolean(structuralEligibilityRequired),
     evidenceRefs: uniqueStrings(evidenceRefs),
     policy: {
       selectionAuthority: 'candidate-ranking-only',
@@ -134,6 +137,8 @@ export function createParameterFitPlan({
       selectedTrialRequiresActualVisualReview: true,
       oneCheckpointCandidateAfterSelection: true,
       trialContentReferencesMustVerify: true,
+      structuralInvalidityIsHardBarrier: true,
+      structuralInvalidityIsNeverScorePenalty: true,
     },
   };
   return deepFreeze({...payload, planDigest: digestJson(payload)});
@@ -226,16 +231,24 @@ function scoreMeasurements(measurements, plan, baselineMeasurements) {
 
 function compareTrials(a, b) {
   if (a.eligible !== b.eligible) return a.eligible ? -1 : 1;
+  if (!a.eligible && !b.eligible) return a.sequence - b.sequence;
   if (a.objectiveLoss !== b.objectiveLoss) return a.objectiveLoss - b.objectiveLoss;
   return a.sequence - b.sequence;
 }
 
 function normalizeEvaluation(raw, label) {
   if (!raw || typeof raw !== 'object') throw new Error(`${label} evaluator result must be an object`);
+  let structuralEligibility = null;
+  if (raw.structuralEligibility != null) {
+    const validation = validateFitStructuralEligibility(raw.structuralEligibility);
+    if (!validation.valid) throw new Error(`${label}.structuralEligibility is invalid: ${validation.errors.join('; ')}`);
+    structuralEligibility = raw.structuralEligibility;
+  }
   return {
     measurements: raw.measurements,
     candidateAsset: normalizeContentReference(raw.candidateAsset, `${label}.candidateAsset`),
     renderEvidence: normalizeContentReference(raw.renderEvidence, `${label}.renderEvidence`),
+    structuralEligibility,
     evidenceRefs: uniqueStrings(raw.evidenceRefs),
   };
 }
@@ -273,10 +286,21 @@ export async function fitParameters(plan, evaluate, {verifyReference} = {}) {
     }
     await verifyReference(result.candidateAsset, `${id}.candidateAsset`);
     await verifyReference(result.renderEvidence, `${id}.renderEvidence`);
+    if (plan.structuralEligibilityRequired && !result.structuralEligibility) throw new Error(`${id} structural eligibility is required by the fit plan`);
+    if (result.structuralEligibility && result.structuralEligibility.candidateAssetSha256 !== result.candidateAsset.sha256) throw new Error(`${id} structural eligibility does not bind candidateAsset SHA-256`);
     const score = scoreMeasurements(result.measurements, plan, baselineMeasurements);
     if (sequence === 1) baselineMeasurements = score.measurements;
+    const objectiveEligible = score.eligible;
+    const structuralPass = result.structuralEligibility ? result.structuralEligibility.eligible === true : !plan.structuralEligibilityRequired;
     const trial = deepFreeze({
-      id, sequence, phase, generation, parameters, ...score,
+      id, sequence, phase, generation, parameters,
+      measurements: score.measurements,
+      decomposition: score.decomposition,
+      objectiveLoss: score.objectiveLoss,
+      objectiveEligible,
+      structuralEligibility: result.structuralEligibility,
+      eligible: objectiveEligible && structuralPass,
+      protectedRegressions: score.protectedRegressions,
       candidateAsset: result.candidateAsset,
       renderEvidence: result.renderEvidence,
       evidenceRefs: result.evidenceRefs,
@@ -343,10 +367,11 @@ export async function fitParameters(plan, evaluate, {verifyReference} = {}) {
     await verifyReference(trial.renderEvidence, `${trial.id}.renderEvidence.final`);
   }
 
-  const ordered = [...trials].sort(compareTrials);
-  const selected = ordered[0];
+  const eligibleTrials = trials.filter((trial) => trial.eligible).sort(compareTrials);
+  const selected = eligibleTrials[0] ?? null;
   const baselineTrial = trials[0];
-  const improvement = baselineTrial.objectiveLoss - selected.objectiveLoss;
+  const improvement = selected ? baselineTrial.objectiveLoss - selected.objectiveLoss : 0;
+  const status = !selected ? 'NO_ELIGIBLE_CANDIDATE' : selected.id !== baselineTrial.id && improvement > plan.optimizer.improvementTolerance ? 'IMPROVED' : 'NO_IMPROVEMENT';
   const payload = {
     schema: PARAMETER_FIT_REPORT_SCHEMA,
     plan,
@@ -356,11 +381,11 @@ export async function fitParameters(plan, evaluate, {verifyReference} = {}) {
     sourceSha256: plan.sourceSha256,
     baselineAssetSha256: plan.baselineAsset.sha256,
     optimizer: plan.optimizer,
-    status: selected.id !== baselineTrial.id && improvement > plan.optimizer.improvementTolerance ? 'IMPROVED' : 'NO_IMPROVEMENT',
+    status,
     stopReason,
     evaluationCount: trials.length,
     baselineTrialId: baselineTrial.id,
-    selectedTrialId: selected.id,
+    selectedTrialId: selected?.id ?? null,
     objectiveImprovement: improvement,
     trials,
     policy: plan.policy,
@@ -377,12 +402,14 @@ export function validateParameterFitReport(report, plan = null) {
     assertDigest(report?.baselineAssetSha256, 'baselineAssetSha256');
     assertDigest(report?.reportDigest, 'reportDigest');
     if (report?.ownerCapability !== OWNER) errors.push(`report owner must be ${OWNER}`);
-    if (!['IMPROVED', 'NO_IMPROVEMENT'].includes(report?.status)) errors.push('invalid status');
+    if (!['IMPROVED', 'NO_IMPROVEMENT', 'NO_ELIGIBLE_CANDIDATE'].includes(report?.status)) errors.push('invalid status');
     if (!Number.isFinite(report?.objectiveImprovement)) errors.push('objectiveImprovement must be finite');
     if (!['evaluation-budget', 'patience', 'search-space-exhausted'].includes(report?.stopReason)) errors.push('invalid stopReason');
     if (!Array.isArray(report?.trials) || !report.trials.length || report.evaluationCount !== report.trials.length) errors.push('trial ledger is missing or incomplete');
     const ids = new Set(report?.trials?.map((trial) => trial.id));
-    if (!ids.has(report?.baselineTrialId) || !ids.has(report?.selectedTrialId)) errors.push('baseline or selected trial is missing');
+    if (!ids.has(report?.baselineTrialId)) errors.push('baseline trial is missing');
+    if (report?.selectedTrialId != null && !ids.has(report.selectedTrialId)) errors.push('selected trial is missing');
+    if (report?.selectedTrialId == null && report?.status !== 'NO_ELIGIBLE_CANDIDATE') errors.push('selectedTrialId may be null only when no eligible candidate exists');
     const embeddedPlan = report?.plan;
     const boundPlan = embeddedPlan ?? plan;
     for (const trial of report?.trials ?? []) {
@@ -392,9 +419,14 @@ export function validateParameterFitReport(report, plan = null) {
       const render = normalizeContentReference(trial.renderEvidence, `${trial.id}.renderEvidence`);
       if (digestJson(candidate) !== digestJson(trial.candidateAsset) || digestJson(render) !== digestJson(trial.renderEvidence)) errors.push(`${trial.id} content references are not canonical`);
       if (trial.sequence === 1 && candidate.sha256 !== (boundPlan?.baselineAsset?.sha256 ?? report?.baselineAssetSha256)) errors.push(`${trial.id} candidateAsset must match baselineAsset SHA-256`);
+      if (trial.structuralEligibility != null) {
+        const structuralValidation = validateFitStructuralEligibility(trial.structuralEligibility);
+        if (!structuralValidation.valid) errors.push(`${trial.id} structural eligibility is invalid: ${structuralValidation.errors.join('; ')}`);
+        if (trial.structuralEligibility.candidateAssetSha256 !== candidate.sha256) errors.push(`${trial.id} structural eligibility does not bind candidateAsset`);
+      }
     }
     const policy = report?.policy ?? {};
-    if (policy.selectionAuthority !== 'candidate-ranking-only' || policy.metricsCannotSelectOwner !== true || policy.metricsCannotPassVisualGate !== true || policy.fitCannotMutateProjectState !== true || policy.selectedTrialRequiresActualVisualReview !== true || policy.oneCheckpointCandidateAfterSelection !== true || policy.trialContentReferencesMustVerify !== true) errors.push('parameter-fit authority policy is missing');
+    if (policy.selectionAuthority !== 'candidate-ranking-only' || policy.metricsCannotSelectOwner !== true || policy.metricsCannotPassVisualGate !== true || policy.fitCannotMutateProjectState !== true || policy.selectedTrialRequiresActualVisualReview !== true || policy.oneCheckpointCandidateAfterSelection !== true || policy.trialContentReferencesMustVerify !== true || policy.structuralInvalidityIsHardBarrier !== true || policy.structuralInvalidityIsNeverScorePenalty !== true) errors.push('parameter-fit authority policy is missing');
     if (!embeddedPlan) errors.push('report must embed its exact normalized plan');
     else {
       const embeddedValidation = validateParameterFitPlan(embeddedPlan);
@@ -413,11 +445,15 @@ export function validateParameterFitReport(report, plan = null) {
       if (report.evaluationCount > boundPlan.optimizer.evaluationBudget) errors.push('report exceeds the plan evaluation budget');
       if (report.stopReason === 'evaluation-budget' && report.evaluationCount !== boundPlan.optimizer.evaluationBudget) errors.push('evaluation-budget stop must consume the declared budget');
       const baseline = report.trials?.find((trial) => trial.id === report.baselineTrialId);
-      const selected = report.trials?.find((trial) => trial.id === report.selectedTrialId);
-      if (baseline && selected) {
+      const selected = report.selectedTrialId == null ? null : report.trials?.find((trial) => trial.id === report.selectedTrialId);
+      const eligibleTrials = (report.trials ?? []).filter((trial) => trial.eligible).sort(compareTrials);
+      const expectedSelected = eligibleTrials[0] ?? null;
+      if ((selected?.id ?? null) !== (expectedSelected?.id ?? null)) errors.push('selected trial is not the best structurally eligible ranked trial');
+      if (!expectedSelected) {
+        if (report.status !== 'NO_ELIGIBLE_CANDIDATE') errors.push('report without eligible trials must use NO_ELIGIBLE_CANDIDATE');
+        if (Math.abs(report.objectiveImprovement) > 1e-12) errors.push('report without eligible trials must report zero objective improvement');
+      } else if (baseline && selected) {
         if (baseline.sequence !== 1 || baseline.phase !== 'baseline') errors.push('baseline trial must be the first evaluated trial');
-        const expected = [...report.trials].sort(compareTrials)[0];
-        if (selected.id !== expected.id) errors.push('selected trial is not the best eligible ranked trial');
         const improvement = baseline.objectiveLoss - selected.objectiveLoss;
         if (Math.abs(improvement - report.objectiveImprovement) > 1e-10) errors.push('objectiveImprovement does not match baseline and selected trials');
         const expectedStatus = selected.id !== baseline.id && improvement > boundPlan.optimizer.improvementTolerance ? 'IMPROVED' : 'NO_IMPROVEMENT';
@@ -437,7 +473,10 @@ export function validateParameterFitReport(report, plan = null) {
         if (new Set(Object.keys(trial.measurements ?? {})).size !== objectiveIds.size || Object.keys(trial.measurements ?? {}).some((id) => !objectiveIds.has(id))) errors.push(`${trial.id} measurements do not match plan objectives`);
         try {
           const expectedScore = scoreMeasurements(trial.measurements, boundPlan, index === 0 ? null : baseline?.measurements);
-          if (Math.abs(expectedScore.objectiveLoss - trial.objectiveLoss) > 1e-10 || expectedScore.eligible !== trial.eligible) errors.push(`${trial.id} score or eligibility does not match the plan`);
+          const structuralPass = trial.structuralEligibility ? trial.structuralEligibility.eligible === true : !boundPlan.structuralEligibilityRequired;
+          const expectedEligible = expectedScore.eligible && structuralPass;
+          if (Math.abs(expectedScore.objectiveLoss - trial.objectiveLoss) > 1e-10 || expectedScore.eligible !== trial.objectiveEligible || expectedEligible !== trial.eligible) errors.push(`${trial.id} objective or structural eligibility does not match the plan`);
+          if (boundPlan.structuralEligibilityRequired && !trial.structuralEligibility) errors.push(`${trial.id} is missing required structural eligibility`);
           if (digestJson(expectedScore.decomposition) !== digestJson(trial.decomposition) || digestJson(expectedScore.protectedRegressions) !== digestJson(trial.protectedRegressions)) errors.push(`${trial.id} score decomposition is not reproducible`);
         } catch (error) { errors.push(`${trial.id}: ${error.message}`); }
       }

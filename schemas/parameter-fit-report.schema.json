@@ -24,23 +24,25 @@
         "initializationAttemptBudget": {"type": "integer", "minimum": 1}
       }
     },
-    "status": {"enum": ["IMPROVED", "NO_IMPROVEMENT"]},
+    "status": {"enum": ["IMPROVED", "NO_IMPROVEMENT", "NO_ELIGIBLE_CANDIDATE"]},
     "stopReason": {"enum": ["evaluation-budget", "patience", "search-space-exhausted"]},
     "evaluationCount": {"type": "integer", "minimum": 1},
     "baselineTrialId": {"$ref": "common.schema.json#/$defs/semanticId"},
-    "selectedTrialId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "selectedTrialId": {"anyOf": [{"$ref": "common.schema.json#/$defs/semanticId"}, {"type": "null"}]},
     "objectiveImprovement": {"type": "number"},
     "trials": {
       "type": "array", "minItems": 1, "items": {
         "type": "object", "additionalProperties": false,
-        "required": ["id", "sequence", "phase", "generation", "parameters", "measurements", "decomposition", "objectiveLoss", "eligible", "protectedRegressions", "candidateAsset", "renderEvidence", "evidenceRefs"],
+        "required": ["id", "sequence", "phase", "generation", "parameters", "measurements", "decomposition", "objectiveLoss", "objectiveEligible", "structuralEligibility", "eligible", "protectedRegressions", "candidateAsset", "renderEvidence", "evidenceRefs"],
         "properties": {
           "id": {"$ref": "common.schema.json#/$defs/semanticId"}, "sequence": {"type": "integer", "minimum": 1},
           "phase": {"enum": ["baseline", "population", "evolution"]}, "generation": {"type": "integer", "minimum": 0},
           "parameters": {"type": "object", "additionalProperties": {"type": "number"}},
           "measurements": {"type": "object", "additionalProperties": {"type": "number"}},
           "decomposition": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["id", "value", "contribution"], "properties": {"id": {"$ref": "common.schema.json#/$defs/semanticId"}, "value": {"type": "number"}, "contribution": {"type": "number"}}}},
-          "objectiveLoss": {"type": "number"}, "eligible": {"type": "boolean"},
+          "objectiveLoss": {"type": "number"}, "objectiveEligible": {"type": "boolean"},
+          "structuralEligibility": {"anyOf": [{"$ref": "fit-structural-eligibility.schema.json"}, {"type": "null"}]},
+          "eligible": {"type": "boolean"},
           "protectedRegressions": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["id", "baseline", "value", "regression", "maxRegression"], "properties": {"id": {"$ref": "common.schema.json#/$defs/semanticId"}, "baseline": {"type": "number"}, "value": {"type": "number"}, "regression": {"type": "number"}, "maxRegression": {"type": "number", "minimum": 0}}}},
           "candidateAsset": {"$ref": "common.schema.json#/$defs/contentReference"}, "renderEvidence": {"$ref": "common.schema.json#/$defs/contentReference"},
           "evidenceRefs": {"type": "array", "items": {"type": "string"}}
@@ -49,11 +51,12 @@
     },
     "policy": {
       "type": "object", "additionalProperties": false,
-      "required": ["selectionAuthority", "metricsCannotSelectOwner", "metricsCannotPassVisualGate", "fitCannotMutateProjectState", "selectedTrialRequiresActualVisualReview", "oneCheckpointCandidateAfterSelection", "trialContentReferencesMustVerify"],
+      "required": ["selectionAuthority", "metricsCannotSelectOwner", "metricsCannotPassVisualGate", "fitCannotMutateProjectState", "selectedTrialRequiresActualVisualReview", "oneCheckpointCandidateAfterSelection", "trialContentReferencesMustVerify", "structuralInvalidityIsHardBarrier", "structuralInvalidityIsNeverScorePenalty"],
       "properties": {
         "selectionAuthority": {"const": "candidate-ranking-only"}, "metricsCannotSelectOwner": {"const": true}, "metricsCannotPassVisualGate": {"const": true},
         "fitCannotMutateProjectState": {"const": true}, "selectedTrialRequiresActualVisualReview": {"const": true},
-        "oneCheckpointCandidateAfterSelection": {"const": true}, "trialContentReferencesMustVerify": {"const": true}
+        "oneCheckpointCandidateAfterSelection": {"const": true}, "trialContentReferencesMustVerify": {"const": true},
+        "structuralInvalidityIsHardBarrier": {"const": true}, "structuralInvalidityIsNeverScorePenalty": {"const": true}
       }
     },
     "reportDigest": {"$ref": "common.schema.json#/$defs/digest"}

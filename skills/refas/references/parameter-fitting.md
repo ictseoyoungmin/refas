@@ -52,6 +52,22 @@ Keep object-specific parameter paths, bounds, generator logic, and measurement r
 
 Programmatic callers use `fitParameters(plan, evaluate, {verifyReference})`. The verifier is required and must reject any content reference whose exact bytes are unavailable or mismatched. The CLI supplies the filesystem verifier automatically.
 
+## Structural eligibility barrier
+
+Assembly-sensitive shape fitting must set `structuralEligibilityRequired: true`. In that mode every trial must include a digest-bound `refas.fit-structural-eligibility/v1` artifact whose `candidateAssetSha256` equals the exact candidate GLB content reference.
+
+Build structural eligibility after realizing the candidate. `realized-contact` is always required because it is the stage that proves the exact candidate GLB actually realizes the declared contact/support structure. Regenerate attachment propagation and physical-fusion evidence as additional prerequisites whenever the candidate depends on them. Propagation or fusion evidence alone can never make a candidate eligible because neither one proves the realized candidate bytes. A failed but valid realized structural proof creates an `INELIGIBLE` trial; it is not converted into a large objective penalty.
+
+When propagation or physical fusion participates, its exact report digest must also appear in the realized-contact graph. The eligibility artifact records those links in `realizationBindings`; this prevents a current contact proof from being paired with stale but independently valid upstream structural evidence.
+
+The ledger still stores the trial's actual render and projection loss for diagnosis. It records protected-objective validity separately as `objectiveEligible`, then computes final `eligible` from both objective protection and structural validity. Only final-eligible trials enter ranking. Two ineligible trials are never ordered by visual loss. When no candidate is structurally eligible the report uses `NO_ELIGIBLE_CANDIDATE` and has no selected trial.
+
+For `repairShapeFromProjection`, an assembly-sensitive plan uses the same path: `renderCandidate` returns `candidateAsset`, `renderEvidence`, `heroImage`, and the `structuralEligibility` artifact for the exact GLB that was rendered. The generic parameter ledger verifies the artifact and candidate digest before it can participate in ranking.
+
+Pose fitting uses the same hard-barrier artifact through `evaluateStructure`. Any pose plan with a grounded, support, or collision constraint forces structural eligibility and requires both attachment-propagation and realized-contact stages. Unconstrained transform-only diagnostics may leave the structural gate disabled, but that exception never authorizes assembly closure.
+
+Structural validity is not an objective term. Do not add `Infinity`, a huge constant, or another weighted penalty for floating parts, penetration, failed support, stale propagation, or failed fusion. Route those blockers to their owning capability instead.
+
 ## Relationship to bounded edits
 
 Begin one bounded edit before fitting a protected shape state. Optimizer trials are retained evidence inside that edit; they are not trustworthy checkpoints. After inspecting the selected trial's whole-context hero plus side, top, grazing, normal, and object-ID evidence, create exactly one candidate checkpoint and finish the edit normally.
@@ -60,12 +76,12 @@ The selected trial may become the bounded-edit candidate only when it improves t
 
 ## Authority limits
 
-Parameter-fit metrics have `candidate-ranking-only` authority. They may choose which already-evaluated trial deserves visual inspection. They cannot select a finding owner or rollback checkpoint, pass a visual or certification gate, mutate project state, turn a hidden-depth guess into fact, or combine camera, assembly, appearance, or lighting parameters with shape parameters in one plan. The projection repair adapter preserves this boundary and reports `ROLLBACK` when a selected trial adds a blocking finding.
+Parameter-fit metrics have `candidate-ranking-only` authority. They may choose which already-evaluated, structurally eligible trial deserves visual inspection. They cannot select a finding owner or rollback checkpoint, pass a visual or certification gate, mutate project state, turn a hidden-depth guess into fact, or combine camera, assembly, appearance, or lighting parameters with shape parameters in one plan. The projection repair adapter preserves this boundary and reports `ROLLBACK` when a selected trial adds a blocking finding.
 
-An aggressive hypothesis is allowed as a trial. It remains a hypothesis until actual renders and normal RefAs evidence accept it.
+An aggressive hypothesis is allowed as a trial. It remains a hypothesis until actual renders, structural eligibility, and normal RefAs evidence accept it.
 
 ## Resource and failure semantics
 
-Set the evaluation budget from measured renderer time and storage. Evaluation is deterministic and sequential so trial order, evidence, and stop reason remain reproducible. Every reference is verified when returned and again before report publication so overwritten trial evidence fails closed. An evaluator exception, missing measurement, non-finite value, path escape, missing file, size mismatch, semantic render binding mismatch, or digest mismatch fails closed instead of skipping a trial. Missing source evidence for a declared projection objective is rejected during plan validation; it is never converted to a zero (perfect) residual. Population initialization has a bounded attempt count and exact finite-space cardinality handling, so duplicate integer vectors cannot hang a fit. The first baseline trial must return a candidate reference with the exact plan baseline SHA-256; otherwise fitting stops before scoring, preventing baseline findings from being compared with a different generated asset.
+Set the evaluation budget from measured renderer time and storage. Evaluation is deterministic and sequential so trial order, evidence, and stop reason remain reproducible. Every reference is verified when returned and again before report publication so overwritten trial evidence fails closed. An evaluator exception, missing measurement, non-finite value, path escape, missing file, size mismatch, semantic render binding mismatch, structural-evidence mismatch, or digest mismatch fails closed instead of skipping a trial. Missing source evidence for a declared projection objective is rejected during plan validation; it is never converted to a zero (perfect) residual. Population initialization has a bounded attempt count and exact finite-space cardinality handling, so duplicate integer vectors cannot hang a fit. The first baseline trial must return a candidate reference with the exact plan baseline SHA-256; otherwise fitting stops before scoring, preventing baseline findings from being compared with a different generated asset.
 
 The derivative-free backend handles discontinuous render measurements and external generators but does not guarantee a global optimum. Reopen the representation when repeated populations converge to visibly inadequate geometry, required form cannot be expressed by declared parameters, or a different owner must move jointly.
