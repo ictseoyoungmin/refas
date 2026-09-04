@@ -101,6 +101,16 @@ For `SUPPORTED_CLEARANCE`, use `createSupportedClearance` to declare an acyclic 
 
 Evaluate clearance only with `evaluateSupportedClearance` and a valid digest-bound `refas.realized-assembly-proof/v1`. `SATISFIED` requires every support edge plus every gap bound to pass with no penetration. `BLOCKED` means stop realization/closure and repair the support path, geometry, pose, or semantic assumption; never invent hidden bracing or force a positive intentional gap into contact. See `docs/articulation-clearance.md`.
 
+## Attachment propagation graph
+
+After relation-specific state is valid, use `createAttachmentPropagationPlan` to bind one exact attachment DAG, current surface anchors, one-owner follow state, multi-anchor plans, articulated joint state, and every canonical external frame required by `FREE`, `FUSED`, or `SUPPORTED_CLEARANCE` entities. External frame bindings must include the entity state digest, exact rigid-frame digest, and the current rigid-frame digest of every semantic owner.
+
+Call `propagateAttachmentGraph` instead of manually running relation solvers in arbitrary order. The graph uses deterministic topological ordering and reuses the existing authoritative runtimes. A frame resolved by one relation immediately becomes the owner frame for later dependents. Do not provide external world frames for `RIGID_FOLLOW`, `SURFACE_OFFSET`, `MULTI_ANCHOR`, or `ARTICULATED`; that is an invalid attempt to bypass the relation's solver.
+
+Treat `BLOCKED` as a hard stop for that entity and its downstream dependents. Stale external state/frame, stale owner-frame bindings, `INFEASIBLE` multi-anchor results, missing owner frames, or articulated solver failures are not best-effort poses. They remain unresolved until the responsible upstream state is rebuilt or corrected.
+
+A `READY_FOR_REALIZATION` propagation report is still not assembly closure. Any `SUPPORTED_CLEARANCE` result remains `PENDING_REALIZED_VALIDATION`; after GLB realization, evaluate its support chain, module-pair binding, penetration, and signed gap through the realized-assembly proof. See `docs/attachment-propagation.md`.
+
 This rule limits simultaneous work; it does not authorize skipping dependencies.
 During shape reconstruction, `shape-reconstruction × whole` remains the only
 closable shape scope until the whole-shape dependency barrier passes. The
