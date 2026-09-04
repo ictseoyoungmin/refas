@@ -4,7 +4,7 @@
   "title": "RefAs evidence-bound parameter fit plan",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema", "id", "ownerCapability", "scopeId", "sourceSha256", "baselineAsset", "parameters", "objectives", "protectedTerms", "optimizer", "evidenceRefs", "policy", "planDigest"],
+  "required": ["schema", "id", "ownerCapability", "scopeId", "sourceSha256", "baselineAsset", "parameters", "objectives", "protectedTerms", "optimizer", "structuralEligibilityRequired", "evidenceRefs", "policy", "planDigest"],
   "properties": {
     "schema": {"const": "refas.parameter-fit-plan/v1"},
     "id": {"$ref": "common.schema.json#/$defs/semanticId"},
@@ -65,14 +65,16 @@
         "initializationAttemptBudget": {"type": "integer", "minimum": 1}
       }
     },
+    "structuralEligibilityRequired": {"type": "boolean"},
     "evidenceRefs": {"type": "array", "items": {"type": "string"}},
     "policy": {
       "type": "object", "additionalProperties": false,
-      "required": ["selectionAuthority", "metricsCannotSelectOwner", "metricsCannotPassVisualGate", "fitCannotMutateProjectState", "selectedTrialRequiresActualVisualReview", "oneCheckpointCandidateAfterSelection", "trialContentReferencesMustVerify"],
+      "required": ["selectionAuthority", "metricsCannotSelectOwner", "metricsCannotPassVisualGate", "fitCannotMutateProjectState", "selectedTrialRequiresActualVisualReview", "oneCheckpointCandidateAfterSelection", "trialContentReferencesMustVerify", "structuralInvalidityIsHardBarrier", "structuralInvalidityIsNeverScorePenalty"],
       "properties": {
         "selectionAuthority": {"const": "candidate-ranking-only"}, "metricsCannotSelectOwner": {"const": true}, "metricsCannotPassVisualGate": {"const": true},
         "fitCannotMutateProjectState": {"const": true}, "selectedTrialRequiresActualVisualReview": {"const": true},
-        "oneCheckpointCandidateAfterSelection": {"const": true}, "trialContentReferencesMustVerify": {"const": true}
+        "oneCheckpointCandidateAfterSelection": {"const": true}, "trialContentReferencesMustVerify": {"const": true},
+        "structuralInvalidityIsHardBarrier": {"const": true}, "structuralInvalidityIsNeverScorePenalty": {"const": true}
       }
     },
     "planDigest": {"$ref": "common.schema.json#/$defs/digest"}
