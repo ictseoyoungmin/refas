@@ -51,7 +51,46 @@
       "additionalProperties": false
     },
     "certificateDigest": {"$ref": "common.schema.json#/$defs/digest"},
-    "certifiedAt": {"type": "string", "format": "date-time"}
+    "certifiedAt": {"type": "string", "format": "date-time"},
+    "claimCertification": {
+      "type": "object",
+      "required": ["transaction", "policy", "decision"],
+      "properties": {
+        "transaction": {
+          "type": "object",
+          "required": ["id", "transactionDigest", "source"],
+          "properties": {
+            "id": {"type": "string", "pattern": "^ctx_[a-f0-9]{20}$"},
+            "transactionDigest": {"$ref": "common.schema.json#/$defs/digest"},
+            "source": {"enum": ["checkpoint-artifact", "runtime-synthesized"]}
+          },
+          "additionalProperties": false
+        },
+        "policy": {
+          "type": "object",
+          "required": ["id", "policyDigest", "source"],
+          "properties": {
+            "id": {"$ref": "common.schema.json#/$defs/semanticId"},
+            "policyDigest": {"$ref": "common.schema.json#/$defs/digest"},
+            "source": {"enum": ["checkpoint-artifact", "runtime-default"]}
+          },
+          "additionalProperties": false
+        },
+        "decision": {
+          "type": "object",
+          "required": ["decisionDigest", "source", "authorizedClaimIds", "refusedClaimIds"],
+          "properties": {
+            "decisionDigest": {"$ref": "common.schema.json#/$defs/digest"},
+            "source": {"enum": ["checkpoint-artifact", "runtime-evaluated"]},
+            "authorizedClaimIds": {"type": "array", "uniqueItems": true, "items": {"$ref": "common.schema.json#/$defs/semanticId"}},
+            "refusedClaimIds": {"type": "array", "uniqueItems": true, "items": {"$ref": "common.schema.json#/$defs/semanticId"}}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "claimCertificationDigest": {"$ref": "common.schema.json#/$defs/digest"}
   },
   "additionalProperties": false
 }
