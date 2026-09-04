@@ -141,6 +141,30 @@ test('dependency substitution fails even when both artifacts are individually pr
   assert.throws(() => create({evidence: data.evidence}), /dependency proof does not bind the exact artifact bytes/);
 });
 
+test('re-signing a substituted dependency cannot make stale provenance valid', () => {
+  const data = create();
+  const tampered = structuredClone(data.transaction);
+  tampered.evidenceNodes.find((node) => node.id === 'review.final').dependencies[0].nodeId = 'render.frame';
+  tampered.decisionNodeIds = ['render.report', 'review.final'];
+  const core = structuredClone(tampered);
+  delete core.id;
+  delete core.transactionDigest;
+  tampered.transactionDigest = digestJson(core);
+  tampered.id = `ctx_${tampered.transactionDigest.slice(0, 20)}`;
+
+  const validation = validateCandidateTransaction(tampered, {
+    candidateBytes: candidate,
+    checkpoint: checkpoint(),
+    evidenceBytesById: {
+      'render.frame': data.frame,
+      'render.report': data.report,
+      'review.final': data.review,
+    },
+  });
+  assert.equal(validation.valid, false);
+  assert.match(validation.errors.join('; '), /dependency proof mismatch for review\.final -> render\.frame/);
+});
+
 test('orphan evidence and cyclic dependency graphs fail closed', () => {
   const orphanData = fixture();
   orphanData.evidence.push({
