@@ -31,7 +31,7 @@
       "minItems": 1,
       "items": {
         "type": "object",
-        "required": ["id", "role", "schema", "artifactSha256", "sizeBytes", "subjectBinding", "dependsOn"],
+        "required": ["id", "role", "schema", "artifactSha256", "sizeBytes", "subjectBinding", "dependencies"],
         "properties": {
           "id": {"$ref": "common.schema.json#/$defs/semanticId"},
           "role": {"$ref": "common.schema.json#/$defs/semanticId"},
@@ -58,10 +58,26 @@
               }
             ]
           },
-          "dependsOn": {
+          "dependencies": {
             "type": "array",
-            "uniqueItems": true,
-            "items": {"$ref": "common.schema.json#/$defs/semanticId"}
+            "items": {
+              "type": "object",
+              "required": ["nodeId", "proof"],
+              "properties": {
+                "nodeId": {"$ref": "common.schema.json#/$defs/semanticId"},
+                "proof": {
+                  "type": "object",
+                  "required": ["kind", "holder", "pointer"],
+                  "properties": {
+                    "kind": {"const": "json-pointer-artifact-sha256"},
+                    "holder": {"enum": ["self", "dependency"]},
+                    "pointer": {"type": "string", "pattern": "^/"}
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "additionalProperties": false
+            }
           }
         },
         "additionalProperties": false
@@ -102,11 +118,12 @@
     },
     "policy": {
       "type": "object",
-      "required": ["exactCandidateBytesAreBound", "exactCheckpointContentIsBound", "evidenceGraphMustBeAcyclic", "everyEvidenceNodeMustReachADecision", "everyEvidenceNodeMustResolveToRootCandidate", "evidenceRolesArePolicyInputsNotCertificationClaims", "transactionDoesNotMutateArtifacts", "transactionDoesNotAuthorizeCertification"],
+      "required": ["exactCandidateBytesAreBound", "exactCheckpointContentIsBound", "evidenceGraphMustBeAcyclic", "dependencyEdgesMustBindExactArtifactBytes", "everyEvidenceNodeMustReachADecision", "everyEvidenceNodeMustResolveToRootCandidate", "evidenceRolesArePolicyInputsNotCertificationClaims", "transactionDoesNotMutateArtifacts", "transactionDoesNotAuthorizeCertification"],
       "properties": {
         "exactCandidateBytesAreBound": {"const": true},
         "exactCheckpointContentIsBound": {"const": true},
         "evidenceGraphMustBeAcyclic": {"const": true},
+        "dependencyEdgesMustBindExactArtifactBytes": {"const": true},
         "everyEvidenceNodeMustReachADecision": {"const": true},
         "everyEvidenceNodeMustResolveToRootCandidate": {"const": true},
         "evidenceRolesArePolicyInputsNotCertificationClaims": {"const": true},
