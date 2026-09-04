@@ -3,7 +3,7 @@
   "$id": "https://refas.dev/schemas/fit-structural-eligibility.schema.json",
   "title": "RefAs fitter structural eligibility",
   "type": "object",
-  "required": ["schema", "candidateAssetSha256", "requiredStages", "status", "eligible", "blockers", "stageChecks", "evidenceRefs", "policy", "eligibilityDigest"],
+  "required": ["schema", "candidateAssetSha256", "requiredStages", "realizationBindings", "status", "eligible", "blockers", "stageChecks", "evidenceRefs", "policy", "eligibilityDigest"],
   "properties": {
     "schema": {"const": "refas.fit-structural-eligibility/v1"},
     "candidateAssetSha256": {"$ref": "common.schema.json#/$defs/sha256"},
@@ -13,6 +13,15 @@
       "uniqueItems": true,
       "items": {"enum": ["attachment-propagation", "physical-fusion", "realized-contact"]},
       "contains": {"const": "realized-contact"}
+    },
+    "realizationBindings": {
+      "type": "object",
+      "required": ["propagationReportDigest", "fusionReportDigests"],
+      "properties": {
+        "propagationReportDigest": {"anyOf": [{"$ref": "common.schema.json#/$defs/digest"}, {"type": "null"}]},
+        "fusionReportDigests": {"type": "array", "uniqueItems": true, "items": {"$ref": "common.schema.json#/$defs/digest"}}
+      },
+      "additionalProperties": false
     },
     "status": {"enum": ["ELIGIBLE", "INELIGIBLE"]},
     "eligible": {"type": "boolean"},
@@ -39,12 +48,13 @@
     "evidenceRefs": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
     "policy": {
       "type": "object",
-      "required": ["structuralInvalidityIsHardBarrier", "structuralInvalidityIsNeverScorePenalty", "visualMetricsCannotOverrideStructuralEligibility", "exactCandidateBytesAreBound", "artifactDoesNotAuthorizeClosure"],
+      "required": ["structuralInvalidityIsHardBarrier", "structuralInvalidityIsNeverScorePenalty", "visualMetricsCannotOverrideStructuralEligibility", "exactCandidateBytesAreBound", "structuralStagesMustBindThroughRealizedContact", "artifactDoesNotAuthorizeClosure"],
       "properties": {
         "structuralInvalidityIsHardBarrier": {"const": true},
         "structuralInvalidityIsNeverScorePenalty": {"const": true},
         "visualMetricsCannotOverrideStructuralEligibility": {"const": true},
         "exactCandidateBytesAreBound": {"const": true},
+        "structuralStagesMustBindThroughRealizedContact": {"const": true},
         "artifactDoesNotAuthorizeClosure": {"const": true}
       },
       "additionalProperties": false
