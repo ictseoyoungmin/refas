@@ -27,6 +27,8 @@ A fitter must never add a very large loss or `Infinity` to represent floating pa
 
 `realized-contact` is always required. Propagation and physical fusion are optional additional prerequisites, but neither can stand alone as candidate eligibility evidence because they do not themselves prove that the exact candidate GLB realizes the declared structure. Missing required evidence produces an ineligible artifact; omitting `realized-contact` is an invalid eligibility contract. A valid ineligible artifact is still useful evidence: its failed stage and blocker remain explicit rather than being disguised as malformed data or a score penalty.
 
+The stages must also describe one continuous realization chain. When attachment propagation is supplied, the realized-contact graph must bind that exact propagation report digest. When physical-fusion results are supplied, the realized-contact graph must bind every corresponding fusion report digest. `realizationBindings` records these links, so individually valid proofs from different candidate states cannot be combined into one eligible trial.
+
 The artifact binds the exact candidate SHA-256. Reusing it after any GLB-byte change is invalid.
 
 ## Shape and parameter fitting
