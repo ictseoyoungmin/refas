@@ -60,6 +60,18 @@ A repair route may instead identify the nearest checkpoint before the finding ow
 
 Use `abort-edit` when an edit cannot be evaluated. It restores the baseline even if no candidate checkpoint exists. Use `resume` at every handoff or fresh turn. Its answer is authoritative for the next safe capability, scope, and action.
 
+## Candidate provenance transaction
+
+A bounded edit transaction and a candidate provenance transaction have different responsibilities. The edit transaction controls one mutation attempt and rollback decision. `refas.candidate-transaction/v1` is created after evidence exists and seals the exact candidate, checkpoint, and evidence graph used by a later decision.
+
+The candidate transaction recomputes the checkpoint content digest and requires that the checkpoint artifact set contain the exact root candidate SHA-256. It then content-addresses every evidence node and requires every dependency edge to prove the exact bytes of the related artifact through a JSON Pointer stored in one of the two artifacts. Binary evidence therefore needs a digest-bearing JSON report or manifest rather than a bare caller assertion.
+
+Evidence roles and schemas are generic policy inputs. Do not hard-code a reconstruction-stage list into the transaction. A static mesh, articulated assembly, material review, animation, or another future asset class may declare different obligations while using the same graph contract.
+
+Before a later certification step consumes a transaction, call `validateCandidateTransaction` with the current candidate bytes, checkpoint record, and exact evidence bytes. A transaction that validates without external context proves only internal canonical structure and digest integrity; final use must recheck the external bytes.
+
+Read `candidate-transactions.md` for construction and dependency-proof rules. A sealed candidate transaction does not modify checkpoint state, does not replace rollback, and does not authorize certification.
+
 ## Audit
 
 `audit` verifies checkpoint content digests, parent lineage, content objects, active-head artifact bytes, source identity, transaction structure, and certificate binding. An invalid audit is a closure blocker.
