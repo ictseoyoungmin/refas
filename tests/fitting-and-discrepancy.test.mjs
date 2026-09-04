@@ -32,7 +32,7 @@ test('camera fitter evaluates declared perspective and orthographic hypotheses',
 
 test('pose fitter preserves exact mesh bytes while changing only transform edits', async () => {
   const glb = partsToGlb({parts: [{id: 'root-part', scopeId: 'whole', materialId: 'wood', mesh: createSegmentPrism({start: [-.1, 0, 0], end: [.1, 0, 0], width: .1, height: .1})}], materials: {wood: {baseColor: [0.6, 0.4, 0.2, 1], roughness: .7, metallic: 0}}});
-  const plan = createPoseFitPlan({id: 'pose-fit', scopeId: 'whole', sourceSha256: D(), baselineAsset: {...sourceRef, sizeBytes: glb.length, sha256: '0'.repeat(64)}, variables: [{id: 'bend', binding: 'assembly.joint.root-part.angle', minimum: -1, maximum: 1, initial: 0}], evaluationBudget: 4});
+  const plan = createPoseFitPlan({id: 'pose-fit', scopeId: 'whole', sourceSha256: D(), baselineAsset: {...sourceRef, sizeBytes: glb.length, sha256: '0'.repeat(64)}, variables: [{id: 'bend', binding: 'assembly.joint.root-part.angle', minimum: -1, maximum: 1, initial: 0}], evaluationBudget: 4, structuralEligibilityRequired: false});
   // Bind the real baseline digest after construction to keep the fixture explicit.
   const bound = createPoseFitPlan({...plan, evaluationBudget: 6, baselineAsset: {...plan.baselineAsset, sha256: (await import('../skills/refas/scripts/lib/index.mjs')).digestBytes(glb)}});
   assert.equal(validatePoseFitPlan(bound).valid, true);
