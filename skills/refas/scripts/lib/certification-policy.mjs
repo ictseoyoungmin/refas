@@ -188,7 +188,7 @@ function decisionCore(value) {
 }
 
 export function evaluateCertificationPolicy({transaction, policy, evidenceBytesById = {}} = {}) {
-  const transactionValidation = validateCandidateTransaction(transaction);
+  const transactionValidation = validateCandidateTransaction(transaction, {evidenceBytesById});
   if (!transactionValidation.valid) throw new Error(`candidate transaction is invalid: ${transactionValidation.errors.join('; ')}`);
   const policyValidation = validateCertificationPolicy(policy);
   if (!policyValidation.valid) throw new Error(`certification policy is invalid: ${policyValidation.errors.join('; ')}`);
