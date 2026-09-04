@@ -34,10 +34,11 @@ function normalizeConstraint(raw, index) {
   return {kind, nodeId, axis, minimum: raw?.minimum == null ? null : finite(raw.minimum, `${label}.minimum`), maximum: raw?.maximum == null ? null : finite(raw.maximum, `${label}.maximum`), evidenceRefs: uniqueStrings(raw?.evidenceRefs)};
 }
 
-export function createPoseFitPlan({id, scopeId, sourceSha256, baselineAsset, variables = [], constraints = [], objectives = [], evaluationBudget = 64, improvementTolerance = 1e-6, structuralEligibilityRequired = true, evidenceRefs = []} = {}) {
+export function createPoseFitPlan({id, scopeId, sourceSha256, baselineAsset, variables = [], constraints = [], objectives = [], evaluationBudget = 64, improvementTolerance = 1e-6, structuralEligibilityRequired = false, evidenceRefs = []} = {}) {
   if (!variables.length) throw new Error('pose fitting requires at least one transform variable');
   const normalizedVariables = variables.map(normalizeVariable);
   if (new Set(normalizedVariables.map((item) => item.id)).size !== normalizedVariables.length) throw new Error('pose variable IDs must be unique');
+  const normalizedConstraints = constraints.map(normalizeConstraint);
   const asset = baselineAsset && typeof baselineAsset === 'object' ? {...baselineAsset} : null;
   if (asset?.schema !== 'refas.content-reference/v1' || !asset?.sha256 || asset.kind !== 'glb' || !asset.path || asset.path.startsWith('/') || asset.path.includes('..') || !Number.isInteger(Number(asset.sizeBytes)) || Number(asset.sizeBytes) < 0) throw new Error('baselineAsset must be a GLB content reference');
   assertDigest(asset.sha256, 'baselineAsset.sha256');
@@ -50,11 +51,12 @@ export function createPoseFitPlan({id, scopeId, sourceSha256, baselineAsset, var
     if (!(weight > 0)) throw new Error(`objectives[${index}].weight must be positive`);
     return {id, goal, weight};
   });
+  const structuralGateRequired = normalizedConstraints.length > 0 || Boolean(structuralEligibilityRequired);
   const payload = {
     schema: POSE_FIT_SCHEMA, id: assertId(id, 'id'), ownerCapability: POSE_FIT_OWNER,
     scopeId: assertId(scopeId, 'scopeId'), sourceSha256: assertDigest(sourceSha256, 'sourceSha256'),
-    baselineAsset: asset, variables: normalizedVariables, constraints: constraints.map(normalizeConstraint), objectives: normalizedObjectives,
-    evaluationBudget: budget, improvementTolerance: finite(improvementTolerance, 'improvementTolerance'), structuralEligibilityRequired: Boolean(structuralEligibilityRequired), evidenceRefs: uniqueStrings(evidenceRefs),
+    baselineAsset: asset, variables: normalizedVariables, constraints: normalizedConstraints, objectives: normalizedObjectives,
+    evaluationBudget: budget, improvementTolerance: finite(improvementTolerance, 'improvementTolerance'), structuralEligibilityRequired: structuralGateRequired, evidenceRefs: uniqueStrings(evidenceRefs),
     policy: {poseOwnerOnly: true, parentLocalTransformsOnly: true, meshBytesImmutable: true, collisionAndSupportConstraintsRequired: true, metricsCannotSelectOwner: true, metricsCannotPassVisualGate: true, selectedCandidateRequiresActualVisualReview: true, oneCheckpointCandidateAfterSelection: true, structuralInvalidityIsHardBarrier: true, structuralInvalidityIsNeverScorePenalty: true, poseStructuralGateRequiresPropagationAndRealizedContact: true},
   };
   if (payload.improvementTolerance < 0) throw new Error('improvementTolerance must be non-negative');
@@ -69,6 +71,7 @@ export function validatePoseFitPlan(plan) {
     const recreated = createPoseFitPlan(plan);
     if (recreated.planDigest !== plan.planDigest) errors.push('pose fit plan digest mismatch');
     if (digestJson(recreated) !== digestJson(plan)) errors.push('pose fit plan is not canonical');
+    if ((plan?.constraints?.length ?? 0) > 0 && plan?.structuralEligibilityRequired !== true) errors.push('constrained pose fitting requires structural eligibility');
   } catch (error) { errors.push(error.message); }
   return {valid: errors.length === 0, errors};
 }
@@ -180,6 +183,7 @@ export function validatePoseFitReport(report, plan = null) {
     if (!report?.policy?.meshBytesImmutable || !report?.policy?.parentLocalTransformsOnly || !report?.policy?.structuralInvalidityIsHardBarrier || !report?.policy?.structuralInvalidityIsNeverScorePenalty || !report?.policy?.poseStructuralGateRequiresPropagationAndRealizedContact) errors.push('pose structural/mesh policy is missing');
     const bound = plan ?? report?.plan;
     if (!bound || report?.planDigest !== bound.planDigest) errors.push('pose report does not bind its plan');
+    if ((bound?.constraints?.length ?? 0) > 0 && bound?.structuralEligibilityRequired !== true) errors.push('constrained pose report is bound to a plan without structural eligibility');
     const eligibleTrials = [];
     for (const trial of report?.trials ?? []) {
       if (trial.candidateBinarySha256 !== trial.baselineBinarySha256) errors.push(`${trial.id} changed mesh bytes during pose fitting`);
