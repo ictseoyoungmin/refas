@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/realized-contact-report.schema.json",
+  "title": "RefAs realized contact report",
+  "type": "object",
+  "required": ["schema", "planDigest", "graphDigest", "assetSha256", "status", "blockers", "expectationResults", "supportRoots", "supportChecks", "unsupportedPhysicalEntityIds", "unexpectedContacts", "penetrations", "evidenceRefs", "policy", "reportDigest"],
+  "properties": {
+    "schema": {"const": "refas.realized-contact-report/v1"},
+    "planDigest": {"$ref": "common.schema.json#/$defs/sha256"},
+    "graphDigest": {"$ref": "common.schema.json#/$defs/sha256"},
+    "assetSha256": {"$ref": "common.schema.json#/$defs/sha256"},
+    "status": {"enum": ["PASS", "BLOCKED"]},
+    "blockers": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "expectationResults": {"type": "array", "items": {"type": "object"}},
+    "supportRoots": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "supportChecks": {"type": "array", "items": {"type": "object"}},
+    "unsupportedPhysicalEntityIds": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "unexpectedContacts": {"type": "array", "items": {"type": "object"}},
+    "penetrations": {"type": "array", "items": {"type": "object"}},
+    "evidenceRefs": {"type": "array", "items": {"type": "string"}},
+    "policy": {"type": "object"},
+    "reportDigest": {"$ref": "common.schema.json#/$defs/sha256"}
+  },
+  "additionalProperties": false
+}
