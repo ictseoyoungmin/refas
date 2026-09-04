@@ -121,7 +121,8 @@ export function validateFitStructuralEligibility(value, candidateGlb = null) {
       const byStage = new Map(value.stageChecks.map((item) => [item.stage, item]));
       for (const stage of required) {
         const check = byStage.get(stage);
-        if (!check?.present || !check?.valid || !check?.pass) errors.push(`required stage ${stage} does not have passing evidence`);
+        if (!check?.present || !check?.valid) errors.push(`required stage ${stage} does not have valid evidence`);
+        if (value?.eligible && !check?.pass) errors.push(`eligible artifact has failing required stage ${stage}`);
       }
     }
     const blockers = uniqueStrings(value?.blockers ?? []);
