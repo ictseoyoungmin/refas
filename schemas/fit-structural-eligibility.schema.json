@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/fit-structural-eligibility.schema.json",
+  "title": "RefAs fitter structural eligibility",
+  "type": "object",
+  "required": ["schema", "candidateAssetSha256", "requiredStages", "status", "eligible", "blockers", "stageChecks", "evidenceRefs", "policy", "eligibilityDigest"],
+  "properties": {
+    "schema": {"const": "refas.fit-structural-eligibility/v1"},
+    "candidateAssetSha256": {"$ref": "common.schema.json#/$defs/sha256"},
+    "requiredStages": {"type": "array", "uniqueItems": true, "items": {"enum": ["attachment-propagation", "physical-fusion", "realized-contact"]}},
+    "status": {"enum": ["ELIGIBLE", "INELIGIBLE"]},
+    "eligible": {"type": "boolean"},
+    "blockers": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "stageChecks": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "required": ["stage", "present", "valid", "pass", "digest", "status", "reasons"],
+        "properties": {
+          "stage": {"enum": ["attachment-propagation", "physical-fusion", "realized-contact"]},
+          "present": {"type": "boolean"},
+          "valid": {"type": "boolean"},
+          "pass": {"type": "boolean"},
+          "digest": {"anyOf": [{"$ref": "common.schema.json#/$defs/digest"}, {"type": "null"}]},
+          "status": {"anyOf": [{"type": "string"}, {"type": "null"}]},
+          "reasons": {"type": "array", "uniqueItems": true, "items": {"type": "string"}}
+        },
+        "additionalProperties": false
+      }
+    },
+    "evidenceRefs": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+    "policy": {
+      "type": "object",
+      "required": ["structuralInvalidityIsHardBarrier", "structuralInvalidityIsNeverScorePenalty", "visualMetricsCannotOverrideStructuralEligibility", "exactCandidateBytesAreBound", "artifactDoesNotAuthorizeClosure"],
+      "properties": {
+        "structuralInvalidityIsHardBarrier": {"const": true},
+        "structuralInvalidityIsNeverScorePenalty": {"const": true},
+        "visualMetricsCannotOverrideStructuralEligibility": {"const": true},
+        "exactCandidateBytesAreBound": {"const": true},
+        "artifactDoesNotAuthorizeClosure": {"const": true}
+      },
+      "additionalProperties": false
+    },
+    "eligibilityDigest": {"$ref": "common.schema.json#/$defs/digest"}
+  },
+  "additionalProperties": false
+}
