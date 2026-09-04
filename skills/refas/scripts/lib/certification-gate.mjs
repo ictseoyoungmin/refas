@@ -278,22 +278,25 @@ export async function auditProject(root) {
   if (!state.head) return base;
   const head = await loadCheckpoint(root, state.head);
   if (head.capability !== 'whole-object-certification' || head.scopeId !== 'whole') return base;
-  const [projection, claims] = await Promise.all([assessProjectionCertification(root), assessClaimCertification(root)]);
+  const projection = await assessProjectionCertification(root);
   const errors = [
     ...base.errors,
     ...projection.errors.map((error) => `certification reprojection: ${error}`),
-    ...claims.errors.map((error) => `claim certification: ${error}`),
   ];
-  if (state.certification && claims.valid) {
-    try {
-      const certificate = await readJson(certificateFile(root));
-      const expectedBinding = claimBinding(claims);
-      const expectedDigest = digestJson(expectedBinding);
-      if (digestJson(certificate.claimCertification ?? {}) !== digestJson(expectedBinding)) errors.push('certificate claim binding does not reproduce from current transaction and policy');
-      if (certificate.claimCertificationDigest !== expectedDigest) errors.push('certificate claim certification digest mismatch');
-      if (state.certification.claimCertificationDigest !== expectedDigest) errors.push('project state claim certification digest mismatch');
-    } catch (error) {
-      errors.push(`claim certificate unavailable: ${error.message}`);
+  if (state.certification) {
+    const claims = await assessClaimCertification(root);
+    errors.push(...claims.errors.map((error) => `claim certification: ${error}`));
+    if (claims.valid) {
+      try {
+        const certificate = await readJson(certificateFile(root));
+        const expectedBinding = claimBinding(claims);
+        const expectedDigest = digestJson(expectedBinding);
+        if (digestJson(certificate.claimCertification ?? {}) !== digestJson(expectedBinding)) errors.push('certificate claim binding does not reproduce from current transaction and policy');
+        if (certificate.claimCertificationDigest !== expectedDigest) errors.push('certificate claim certification digest mismatch');
+        if (state.certification.claimCertificationDigest !== expectedDigest) errors.push('project state claim certification digest mismatch');
+      } catch (error) {
+        errors.push(`claim certificate unavailable: ${error.message}`);
+      }
     }
   }
   return {...base, valid: errors.length === 0, errors};
