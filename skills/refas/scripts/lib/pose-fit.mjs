@@ -1,5 +1,6 @@
 import {assertDigest, assertId, deepFreeze, digestBytes, digestJson} from './canonical.mjs';
 import {parseGlb} from './glb.mjs';
+import {validateFitStructuralEligibility} from './fit-structural-eligibility.mjs';
 
 export const POSE_FIT_SCHEMA = 'refas.pose-fit/v1';
 export const POSE_FIT_OWNER = 'assembly';
@@ -33,7 +34,7 @@ function normalizeConstraint(raw, index) {
   return {kind, nodeId, axis, minimum: raw?.minimum == null ? null : finite(raw.minimum, `${label}.minimum`), maximum: raw?.maximum == null ? null : finite(raw.maximum, `${label}.maximum`), evidenceRefs: uniqueStrings(raw?.evidenceRefs)};
 }
 
-export function createPoseFitPlan({id, scopeId, sourceSha256, baselineAsset, variables = [], constraints = [], objectives = [], evaluationBudget = 64, improvementTolerance = 1e-6, evidenceRefs = []} = {}) {
+export function createPoseFitPlan({id, scopeId, sourceSha256, baselineAsset, variables = [], constraints = [], objectives = [], evaluationBudget = 64, improvementTolerance = 1e-6, structuralEligibilityRequired = true, evidenceRefs = []} = {}) {
   if (!variables.length) throw new Error('pose fitting requires at least one transform variable');
   const normalizedVariables = variables.map(normalizeVariable);
   if (new Set(normalizedVariables.map((item) => item.id)).size !== normalizedVariables.length) throw new Error('pose variable IDs must be unique');
@@ -53,8 +54,8 @@ export function createPoseFitPlan({id, scopeId, sourceSha256, baselineAsset, var
     schema: POSE_FIT_SCHEMA, id: assertId(id, 'id'), ownerCapability: POSE_FIT_OWNER,
     scopeId: assertId(scopeId, 'scopeId'), sourceSha256: assertDigest(sourceSha256, 'sourceSha256'),
     baselineAsset: asset, variables: normalizedVariables, constraints: constraints.map(normalizeConstraint), objectives: normalizedObjectives,
-    evaluationBudget: budget, improvementTolerance: finite(improvementTolerance, 'improvementTolerance'), evidenceRefs: uniqueStrings(evidenceRefs),
-    policy: {poseOwnerOnly: true, parentLocalTransformsOnly: true, meshBytesImmutable: true, collisionAndSupportConstraintsRequired: true, metricsCannotSelectOwner: true, metricsCannotPassVisualGate: true, selectedCandidateRequiresActualVisualReview: true, oneCheckpointCandidateAfterSelection: true},
+    evaluationBudget: budget, improvementTolerance: finite(improvementTolerance, 'improvementTolerance'), structuralEligibilityRequired: Boolean(structuralEligibilityRequired), evidenceRefs: uniqueStrings(evidenceRefs),
+    policy: {poseOwnerOnly: true, parentLocalTransformsOnly: true, meshBytesImmutable: true, collisionAndSupportConstraintsRequired: true, metricsCannotSelectOwner: true, metricsCannotPassVisualGate: true, selectedCandidateRequiresActualVisualReview: true, oneCheckpointCandidateAfterSelection: true, structuralInvalidityIsHardBarrier: true, structuralInvalidityIsNeverScorePenalty: true, poseStructuralGateRequiresPropagationAndRealizedContact: true},
   };
   if (payload.improvementTolerance < 0) throw new Error('improvementTolerance must be non-negative');
   return deepFreeze({...payload, planDigest: digestJson(payload)});
@@ -125,12 +126,14 @@ export function poseTransformEdits(plan, parameters) {
 
 /**
  * Run an owner-local pose search. `buildCandidate` receives parent-local edit
- * records and must preserve the baseline mesh/accessor bytes.
+ * records and must preserve the baseline mesh/accessor bytes. Structural
+ * eligibility is evaluated separately from visual/objective scoring.
  */
-export async function fitPose(plan, {baselineGlb, buildCandidate, evaluate, verifyReference = null} = {}) {
+export async function fitPose(plan, {baselineGlb, buildCandidate, evaluate, evaluateStructure = null, verifyReference = null} = {}) {
   const validation = validatePoseFitPlan(plan);
   if (!validation.valid) throw new Error(`pose fit plan is invalid: ${validation.errors.join('; ')}`);
   if (typeof buildCandidate !== 'function' || typeof evaluate !== 'function') throw new Error('buildCandidate and evaluate are required');
+  if (plan.structuralEligibilityRequired && typeof evaluateStructure !== 'function') throw new Error('evaluateStructure is required when pose structural eligibility is required');
   const baselineBytes = Buffer.from(baselineGlb ?? []);
   if (!baselineBytes.length || digestBytes(baselineBytes) !== plan.baselineAsset.sha256) throw new Error('baselineGlb does not match plan.baselineAsset SHA-256');
   const baselineParsed = parseGlb(baselineBytes);
@@ -138,18 +141,33 @@ export async function fitPose(plan, {baselineGlb, buildCandidate, evaluate, veri
   for (const vector of candidateVectors(plan)) {
     const sequence = trials.length + 1, id = `pose-trial-${String(sequence).padStart(4, '0')}`;
     const parameters = poseParametersFromVector(plan, vector), edits = poseTransformEdits(plan, parameters);
+    const context = deepFreeze({parameters, edits, constraints: plan.constraints, trialId: id, sequence, planDigest: plan.planDigest});
     const candidate = Buffer.from(await buildCandidate({parameters: deepFreeze(parameters), edits: deepFreeze(edits), baselineGlb: baselineBytes, context: {trialId: id, sequence, planDigest: plan.planDigest}}));
     if (!candidate.length) throw new Error(`${id} buildCandidate returned empty bytes`);
     const candidateParsed = parseGlb(candidate);
     if (!candidateParsed.binary.equals(baselineParsed.binary)) throw new Error(`${id} changed mesh/accessor bytes; pose fitting may only alter parent-local transforms`);
-    const raw = await evaluate(candidate, deepFreeze({parameters, edits, constraints: plan.constraints, trialId: id, sequence, planDigest: plan.planDigest}));
+    let structuralEligibility = null;
+    if (typeof evaluateStructure === 'function') {
+      structuralEligibility = await evaluateStructure(candidate, context);
+      const structuralValidation = validateFitStructuralEligibility(structuralEligibility, candidate);
+      if (!structuralValidation.valid) throw new Error(`${id} structural eligibility is invalid: ${structuralValidation.errors.join('; ')}`);
+      if (plan.structuralEligibilityRequired) {
+        const stages = new Set(structuralEligibility.requiredStages ?? []);
+        if (!stages.has('attachment-propagation') || !stages.has('realized-contact')) throw new Error(`${id} pose structural eligibility must require attachment-propagation and realized-contact`);
+      }
+    }
+    if (plan.structuralEligibilityRequired && !structuralEligibility) throw new Error(`${id} structural eligibility is required`);
+    const raw = await evaluate(candidate, context);
     const scored = score(raw?.measurements ?? raw, plan.objectives);
     if (raw?.renderEvidence && typeof verifyReference === 'function') await verifyReference(raw.renderEvidence, `${id}.renderEvidence`);
-    trials.push(deepFreeze({id, sequence, parameters, edits, candidateSha256: digestBytes(candidate), candidateBinarySha256: digestBytes(candidateParsed.binary), baselineBinarySha256: digestBytes(baselineParsed.binary), ...scored, renderEvidence: raw?.renderEvidence ?? null, evidenceRefs: uniqueStrings(raw?.evidenceRefs)}));
+    const eligible = structuralEligibility ? structuralEligibility.eligible === true : !plan.structuralEligibilityRequired;
+    trials.push(deepFreeze({id, sequence, parameters, edits, candidateSha256: digestBytes(candidate), candidateBinarySha256: digestBytes(candidateParsed.binary), baselineBinarySha256: digestBytes(baselineParsed.binary), ...scored, structuralEligibility, eligible, renderEvidence: raw?.renderEvidence ?? null, evidenceRefs: uniqueStrings(raw?.evidenceRefs)}));
   }
-  const selected = [...trials].sort((a, b) => a.objectiveLoss - b.objectiveLoss || a.sequence - b.sequence)[0], baseline = trials[0];
-  const improvement = baseline.objectiveLoss - selected.objectiveLoss;
-  const payload = {schema: POSE_FIT_SCHEMA, plan, planDigest: plan.planDigest, ownerCapability: POSE_FIT_OWNER, scopeId: plan.scopeId, sourceSha256: plan.sourceSha256, baselineTrialId: baseline.id, selectedTrialId: selected.id, status: selected.id !== baseline.id && improvement > plan.improvementTolerance ? 'IMPROVED' : 'NO_IMPROVEMENT', objectiveImprovement: improvement, evaluationCount: trials.length, trials, policy: plan.policy};
+  const eligibleTrials = trials.filter((trial) => trial.eligible).sort((a, b) => a.objectiveLoss - b.objectiveLoss || a.sequence - b.sequence);
+  const selected = eligibleTrials[0] ?? null, baseline = trials[0];
+  const improvement = selected ? baseline.objectiveLoss - selected.objectiveLoss : 0;
+  const status = !selected ? 'NO_ELIGIBLE_CANDIDATE' : selected.id !== baseline.id && improvement > plan.improvementTolerance ? 'IMPROVED' : 'NO_IMPROVEMENT';
+  const payload = {schema: POSE_FIT_SCHEMA, plan, planDigest: plan.planDigest, ownerCapability: POSE_FIT_OWNER, scopeId: plan.scopeId, sourceSha256: plan.sourceSha256, baselineTrialId: baseline.id, selectedTrialId: selected?.id ?? null, status, objectiveImprovement: improvement, evaluationCount: trials.length, trials, policy: plan.policy};
   return deepFreeze({...payload, reportDigest: digestJson(payload)});
 }
 
@@ -158,10 +176,33 @@ export function validatePoseFitReport(report, plan = null) {
   try {
     if (report?.schema !== POSE_FIT_SCHEMA) errors.push('invalid schema');
     if (report?.ownerCapability !== POSE_FIT_OWNER) errors.push(`pose fit owner must be ${POSE_FIT_OWNER}`);
-    if (!report?.policy?.meshBytesImmutable || !report?.policy?.parentLocalTransformsOnly) errors.push('pose mesh immutability policy is missing');
+    if (!['IMPROVED', 'NO_IMPROVEMENT', 'NO_ELIGIBLE_CANDIDATE'].includes(report?.status)) errors.push('invalid status');
+    if (!report?.policy?.meshBytesImmutable || !report?.policy?.parentLocalTransformsOnly || !report?.policy?.structuralInvalidityIsHardBarrier || !report?.policy?.structuralInvalidityIsNeverScorePenalty || !report?.policy?.poseStructuralGateRequiresPropagationAndRealizedContact) errors.push('pose structural/mesh policy is missing');
     const bound = plan ?? report?.plan;
     if (!bound || report?.planDigest !== bound.planDigest) errors.push('pose report does not bind its plan');
-    for (const trial of report?.trials ?? []) if (trial.candidateBinarySha256 !== trial.baselineBinarySha256) errors.push(`${trial.id} changed mesh bytes during pose fitting`);
+    const eligibleTrials = [];
+    for (const trial of report?.trials ?? []) {
+      if (trial.candidateBinarySha256 !== trial.baselineBinarySha256) errors.push(`${trial.id} changed mesh bytes during pose fitting`);
+      if (trial.structuralEligibility != null) {
+        const validation = validateFitStructuralEligibility(trial.structuralEligibility);
+        if (!validation.valid) errors.push(`${trial.id} structural eligibility is invalid: ${validation.errors.join('; ')}`);
+        if (trial.structuralEligibility.candidateAssetSha256 !== trial.candidateSha256) errors.push(`${trial.id} structural eligibility does not bind candidate SHA-256`);
+        if (bound?.structuralEligibilityRequired) {
+          const stages = new Set(trial.structuralEligibility.requiredStages ?? []);
+          if (!stages.has('attachment-propagation') || !stages.has('realized-contact')) errors.push(`${trial.id} structural eligibility lacks required pose stages`);
+        }
+      } else if (bound?.structuralEligibilityRequired) errors.push(`${trial.id} is missing required structural eligibility`);
+      const expectedEligible = trial.structuralEligibility ? trial.structuralEligibility.eligible === true : !bound?.structuralEligibilityRequired;
+      if (trial.eligible !== expectedEligible) errors.push(`${trial.id} eligible flag does not match structural eligibility`);
+      if (trial.eligible) eligibleTrials.push(trial);
+    }
+    eligibleTrials.sort((a, b) => a.objectiveLoss - b.objectiveLoss || a.sequence - b.sequence);
+    const expectedSelected = eligibleTrials[0] ?? null;
+    if ((report?.selectedTrialId ?? null) !== (expectedSelected?.id ?? null)) errors.push('pose selected trial is not the best structurally eligible trial');
+    if (!expectedSelected) {
+      if (report?.status !== 'NO_ELIGIBLE_CANDIDATE') errors.push('pose report without eligible trials must use NO_ELIGIBLE_CANDIDATE');
+      if (Math.abs(Number(report?.objectiveImprovement ?? Infinity)) > 1e-12) errors.push('pose report without eligible trials must report zero objective improvement');
+    }
     const payload = structuredClone(report); delete payload.reportDigest; if (digestJson(payload) !== report.reportDigest) errors.push('pose fit report digest mismatch');
   } catch (error) { errors.push(error.message); }
   return {valid: errors.length === 0, errors};
