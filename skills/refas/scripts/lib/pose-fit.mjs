@@ -180,16 +180,67 @@ export function validatePoseFitReport(report, plan = null) {
     if (report?.schema !== POSE_FIT_SCHEMA) errors.push('invalid schema');
     if (report?.ownerCapability !== POSE_FIT_OWNER) errors.push(`pose fit owner must be ${POSE_FIT_OWNER}`);
     if (!['IMPROVED', 'NO_IMPROVEMENT', 'NO_ELIGIBLE_CANDIDATE'].includes(report?.status)) errors.push('invalid status');
-    if (!report?.policy?.meshBytesImmutable || !report?.policy?.parentLocalTransformsOnly || !report?.policy?.structuralInvalidityIsHardBarrier || !report?.policy?.structuralInvalidityIsNeverScorePenalty || !report?.policy?.poseStructuralGateRequiresPropagationAndRealizedContact) errors.push('pose structural/mesh policy is missing');
-    const bound = plan ?? report?.plan;
+    if (!Number.isFinite(report?.objectiveImprovement)) errors.push('objectiveImprovement must be finite');
+    assertDigest(report?.reportDigest, 'reportDigest');
+
+    const embeddedPlan = report?.plan;
+    if (!embeddedPlan) errors.push('pose report must embed its exact normalized plan');
+    else {
+      const planValidation = validatePoseFitPlan(embeddedPlan);
+      if (!planValidation.valid) errors.push(`embedded pose plan is invalid: ${planValidation.errors.join('; ')}`);
+      if (report?.planDigest !== embeddedPlan.planDigest) errors.push('pose report does not bind its embedded plan');
+    }
+    if (plan && embeddedPlan && plan.planDigest !== embeddedPlan.planDigest) errors.push('embedded pose plan does not match the supplied plan');
+    const bound = embeddedPlan ?? plan;
     if (!bound || report?.planDigest !== bound.planDigest) errors.push('pose report does not bind its plan');
-    if ((bound?.constraints?.length ?? 0) > 0 && bound?.structuralEligibilityRequired !== true) errors.push('constrained pose report is bound to a plan without structural eligibility');
+    if (bound) {
+      if (report?.scopeId !== bound.scopeId || report?.sourceSha256 !== bound.sourceSha256) errors.push('pose report scope or source does not match the plan');
+      if (digestJson(report?.policy) !== digestJson(bound.policy)) errors.push('pose report policy does not match the plan');
+      if ((bound.constraints?.length ?? 0) > 0 && bound.structuralEligibilityRequired !== true) errors.push('constrained pose report is bound to a plan without structural eligibility');
+    }
+    if (!report?.policy?.meshBytesImmutable || !report?.policy?.parentLocalTransformsOnly || !report?.policy?.structuralInvalidityIsHardBarrier || !report?.policy?.structuralInvalidityIsNeverScorePenalty || !report?.policy?.poseStructuralGateRequiresPropagationAndRealizedContact) errors.push('pose structural/mesh policy is missing');
+
+    const trials = report?.trials ?? [];
+    if (!Array.isArray(report?.trials) || !trials.length || report?.evaluationCount !== trials.length) errors.push('pose trial ledger is missing or incomplete');
+    if (bound && trials.length > bound.evaluationBudget) errors.push('pose report exceeds the evaluation budget');
+    const ids = new Set(trials.map((trial) => trial.id));
+    if (!ids.has(report?.baselineTrialId)) errors.push('pose baseline trial is missing');
+    if (report?.selectedTrialId != null && !ids.has(report.selectedTrialId)) errors.push('pose selected trial is missing');
+    if (report?.selectedTrialId == null && report?.status !== 'NO_ELIGIBLE_CANDIDATE') errors.push('pose selectedTrialId may be null only when no eligible candidate exists');
+
     const eligibleTrials = [];
-    for (const trial of report?.trials ?? []) {
+    let baselineBinarySha256 = null;
+    for (const [index, trial] of trials.entries()) {
+      if (trial.sequence !== index + 1) errors.push(`${trial.id} sequence is not contiguous`);
+      try {
+        assertDigest(trial.candidateSha256, `${trial.id}.candidateSha256`);
+        assertDigest(trial.candidateBinarySha256, `${trial.id}.candidateBinarySha256`);
+        assertDigest(trial.baselineBinarySha256, `${trial.id}.baselineBinarySha256`);
+      } catch (error) { errors.push(error.message); }
+      if (baselineBinarySha256 == null) baselineBinarySha256 = trial.baselineBinarySha256;
+      if (trial.baselineBinarySha256 !== baselineBinarySha256) errors.push(`${trial.id} baseline binary digest changed within one pose report`);
       if (trial.candidateBinarySha256 !== trial.baselineBinarySha256) errors.push(`${trial.id} changed mesh bytes during pose fitting`);
+
+      if (bound) {
+        const parameterIds = new Set(bound.variables.map((variable) => variable.id));
+        const actualParameterIds = Object.keys(trial.parameters ?? {});
+        if (actualParameterIds.length !== parameterIds.size || actualParameterIds.some((id) => !parameterIds.has(id))) errors.push(`${trial.id} parameter set does not match the pose plan`);
+        for (const variable of bound.variables) {
+          const value = trial.parameters?.[variable.id];
+          if (!Number.isFinite(value) || value < variable.minimum || value > variable.maximum) errors.push(`${trial.id} parameter ${variable.id} violates the pose plan`);
+        }
+        try {
+          const expectedEdits = poseTransformEdits(bound, trial.parameters);
+          if (digestJson(expectedEdits) !== digestJson(trial.edits)) errors.push(`${trial.id} transform edits do not match its pose parameters`);
+          const expectedScore = score(trial.measurements, bound.objectives);
+          if (Math.abs(expectedScore.objectiveLoss - trial.objectiveLoss) > 1e-10) errors.push(`${trial.id} objectiveLoss does not match measurements`);
+          if (digestJson(expectedScore.measurements) !== digestJson(trial.measurements) || digestJson(expectedScore.decomposition) !== digestJson(trial.decomposition)) errors.push(`${trial.id} score decomposition is not reproducible`);
+        } catch (error) { errors.push(`${trial.id}: ${error.message}`); }
+      }
+
       if (trial.structuralEligibility != null) {
-        const validation = validateFitStructuralEligibility(trial.structuralEligibility);
-        if (!validation.valid) errors.push(`${trial.id} structural eligibility is invalid: ${validation.errors.join('; ')}`);
+        const structuralValidation = validateFitStructuralEligibility(trial.structuralEligibility);
+        if (!structuralValidation.valid) errors.push(`${trial.id} structural eligibility is invalid: ${structuralValidation.errors.join('; ')}`);
         if (trial.structuralEligibility.candidateAssetSha256 !== trial.candidateSha256) errors.push(`${trial.id} structural eligibility does not bind candidate SHA-256`);
         if (bound?.structuralEligibilityRequired) {
           const stages = new Set(trial.structuralEligibility.requiredStages ?? []);
@@ -200,14 +251,26 @@ export function validatePoseFitReport(report, plan = null) {
       if (trial.eligible !== expectedEligible) errors.push(`${trial.id} eligible flag does not match structural eligibility`);
       if (trial.eligible) eligibleTrials.push(trial);
     }
+
+    const baseline = trials.find((trial) => trial.id === report?.baselineTrialId) ?? null;
+    if (baseline && (baseline.sequence !== 1 || baseline.id !== trials[0]?.id)) errors.push('pose baseline trial must be the first evaluated trial');
     eligibleTrials.sort((a, b) => a.objectiveLoss - b.objectiveLoss || a.sequence - b.sequence);
     const expectedSelected = eligibleTrials[0] ?? null;
     if ((report?.selectedTrialId ?? null) !== (expectedSelected?.id ?? null)) errors.push('pose selected trial is not the best structurally eligible trial');
     if (!expectedSelected) {
       if (report?.status !== 'NO_ELIGIBLE_CANDIDATE') errors.push('pose report without eligible trials must use NO_ELIGIBLE_CANDIDATE');
       if (Math.abs(Number(report?.objectiveImprovement ?? Infinity)) > 1e-12) errors.push('pose report without eligible trials must report zero objective improvement');
+    } else if (baseline) {
+      const improvement = baseline.objectiveLoss - expectedSelected.objectiveLoss;
+      if (Math.abs(improvement - report.objectiveImprovement) > 1e-10) errors.push('pose objectiveImprovement does not match baseline and selected trials');
+      if (bound) {
+        const expectedStatus = expectedSelected.id !== baseline.id && improvement > bound.improvementTolerance ? 'IMPROVED' : 'NO_IMPROVEMENT';
+        if (report.status !== expectedStatus) errors.push('pose status does not match selected improvement');
+      }
     }
-    const payload = structuredClone(report); delete payload.reportDigest; if (digestJson(payload) !== report.reportDigest) errors.push('pose fit report digest mismatch');
+
+    const payload = structuredClone(report); delete payload.reportDigest;
+    if (digestJson(payload) !== report.reportDigest) errors.push('pose fit report digest mismatch');
   } catch (error) { errors.push(error.message); }
   return {valid: errors.length === 0, errors};
 }
