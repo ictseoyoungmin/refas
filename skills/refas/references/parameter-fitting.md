@@ -56,7 +56,7 @@ Programmatic callers use `fitParameters(plan, evaluate, {verifyReference})`. The
 
 Assembly-sensitive shape fitting must set `structuralEligibilityRequired: true`. In that mode every trial must include a digest-bound `refas.fit-structural-eligibility/v1` artifact whose `candidateAssetSha256` equals the exact candidate GLB content reference.
 
-Build structural eligibility after realizing the candidate and regenerate whichever stages the plan depends on: attachment propagation, physical fusion, and realized contact/support validation. At least one structural stage is required. A failed but valid structural proof creates an `INELIGIBLE` trial; it is not converted into a large objective penalty.
+Build structural eligibility after realizing the candidate. `realized-contact` is always required because it is the stage that proves the exact candidate GLB actually realizes the declared contact/support structure. Regenerate attachment propagation and physical-fusion evidence as additional prerequisites whenever the candidate depends on them. Propagation or fusion evidence alone can never make a candidate eligible because neither one proves the realized candidate bytes. A failed but valid realized structural proof creates an `INELIGIBLE` trial; it is not converted into a large objective penalty.
 
 The ledger still stores the trial's actual render and projection loss for diagnosis. It records protected-objective validity separately as `objectiveEligible`, then computes final `eligible` from both objective protection and structural validity. Only final-eligible trials enter ranking. Two ineligible trials are never ordered by visual loss. When no candidate is structurally eligible the report uses `NO_ELIGIBLE_CANDIDATE` and has no selected trial.
 
