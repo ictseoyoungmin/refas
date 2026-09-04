@@ -14,9 +14,12 @@
     "variables": {"type": "array", "minItems": 1},
     "constraints": {"type": "array"},
     "objectives": {"type": "array", "minItems": 1},
+    "structuralEligibilityRequired": {"type": "boolean"},
+    "selectedTrialId": {"anyOf": [{"$ref": "common.schema.json#/$defs/id"}, {"type": "null"}]},
+    "status": {"enum": ["IMPROVED", "NO_IMPROVEMENT", "NO_ELIGIBLE_CANDIDATE"]},
     "trials": {"type": "array"},
     "policy": {"type": "object"}
   },
-  "required": ["schema", "ownerCapability", "scopeId", "sourceSha256", "baselineAsset", "variables", "objectives", "policy"],
+  "required": ["schema", "ownerCapability", "scopeId", "sourceSha256", "baselineAsset", "variables", "objectives", "structuralEligibilityRequired", "policy"],
   "additionalProperties": true
 }
