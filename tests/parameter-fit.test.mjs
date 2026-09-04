@@ -146,5 +146,5 @@ test('plan and report digest tampering is detected', async () => {
   forgedSelection.selectedTrialId = forgedSelection.baselineTrialId;
   delete forgedSelection.reportDigest;
   forgedSelection.reportDigest = digestJson(forgedSelection);
-  assert.match(validateParameterFitReport(forgedSelection, input).errors.join('; '), /selected trial is not the best eligible ranked trial/);
+  assert.match(validateParameterFitReport(forgedSelection, input).errors.join('; '), /selected trial is not the best structurally eligible ranked trial/);
 });
