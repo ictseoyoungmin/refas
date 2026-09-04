@@ -90,11 +90,9 @@ export function createFitStructuralEligibility({
       fusionReportDigests: graphFusionChecks.filter((check) => check?.pass === true).map((check) => check.fusionReportDigest),
     });
     const crossReasons = [];
-    if (propagation) {
-      if (realizationBindings.propagationReportDigest !== propagationReportDigest) {
-        crossReasons.push('realized contact does not bind the supplied attachment propagation report');
-        blockers.push('REALIZED_CONTACT_PROPAGATION_BINDING_MISMATCH');
-      }
+    if (propagation && realizationBindings.propagationReportDigest !== propagationReportDigest) {
+      crossReasons.push('realized contact does not bind the supplied attachment propagation report');
+      blockers.push('REALIZED_CONTACT_PROPAGATION_BINDING_MISMATCH');
     }
     if (physicalFusions.length) {
       const expectedFusionDigests = uniqueStrings(physicalFusionReportDigests);
@@ -152,24 +150,29 @@ export function validateFitStructuralEligibility(value, candidateGlb = null) {
     if (digestJson(bindings) !== digestJson(value?.realizationBindings ?? {})) errors.push('realizationBindings are not canonical');
     if (!['ELIGIBLE', 'INELIGIBLE'].includes(value?.status)) errors.push('invalid status');
     if (value?.eligible !== (value?.status === 'ELIGIBLE')) errors.push('eligible does not match status');
+    const blockers = uniqueStrings(value?.blockers ?? []);
+    if (digestJson(blockers) !== digestJson(value?.blockers ?? [])) errors.push('blockers are not canonical');
+    if (value?.eligible && blockers.length) errors.push('eligible artifact cannot contain blockers');
+    if (!value?.eligible && !blockers.length) errors.push('ineligible artifact requires blockers');
+
     if (!Array.isArray(value?.stageChecks) || value.stageChecks.length !== FIT_STRUCTURAL_STAGES.length) errors.push('stageChecks must cover every structural stage exactly once');
     else {
       if (digestJson(value.stageChecks.map((item) => item.stage)) !== digestJson(FIT_STRUCTURAL_STAGES)) errors.push('stageChecks are not in canonical stage order');
       const byStage = new Map(value.stageChecks.map((item) => [item.stage, item]));
       for (const stage of required) {
         const check = byStage.get(stage);
-        if (!check?.present || !check?.valid) errors.push(`required stage ${stage} does not have valid evidence`);
-        if (value?.eligible && !check?.pass) errors.push(`eligible artifact has failing required stage ${stage}`);
+        if (!check) errors.push(`required stage ${stage} is missing from stageChecks`);
+        else if (value?.eligible && (!check.present || !check.valid || !check.pass)) errors.push(`eligible artifact requires a valid passing ${stage} stage`);
       }
       const propagationCheck = byStage.get('attachment-propagation');
-      if (propagationCheck?.present && propagationCheck?.digest !== bindings.propagationReportDigest) errors.push('attachment propagation stage is not cross-bound through realized contact');
+      const propagationMismatch = propagationCheck?.present && propagationCheck?.digest !== bindings.propagationReportDigest;
+      if (propagationMismatch && (value?.eligible || !blockers.includes('REALIZED_CONTACT_PROPAGATION_BINDING_MISMATCH'))) errors.push('attachment propagation stage is not cross-bound through realized contact');
       const fusionCheck = byStage.get('physical-fusion');
-      if (fusionCheck?.present && fusionCheck?.digest !== digestJson(bindings.fusionReportDigests)) errors.push('physical fusion stage is not cross-bound through realized contact');
+      const fusionMismatch = fusionCheck?.present && fusionCheck?.digest !== digestJson(bindings.fusionReportDigests);
+      if (fusionMismatch && (value?.eligible || !blockers.includes('REALIZED_CONTACT_FUSION_BINDING_MISMATCH'))) errors.push('physical fusion stage is not cross-bound through realized contact');
+      if (!value?.eligible && !value.stageChecks.some((item) => item.pass === false) && !propagationMismatch && !fusionMismatch) errors.push('ineligible artifact must retain at least one failing or mismatched structural check');
     }
-    const blockers = uniqueStrings(value?.blockers ?? []);
-    if (digestJson(blockers) !== digestJson(value?.blockers ?? [])) errors.push('blockers are not canonical');
-    if (value?.eligible && blockers.length) errors.push('eligible artifact cannot contain blockers');
-    if (!value?.eligible && !blockers.length) errors.push('ineligible artifact requires blockers');
+
     if (candidateGlb != null && digestBytes(Buffer.from(candidateGlb)) !== value.candidateAssetSha256) errors.push('structural eligibility does not bind the exact candidate GLB');
     const policy = value?.policy ?? {};
     if (!policy.structuralInvalidityIsHardBarrier || !policy.structuralInvalidityIsNeverScorePenalty || !policy.visualMetricsCannotOverrideStructuralEligibility || !policy.exactCandidateBytesAreBound || !policy.structuralStagesMustBindThroughRealizedContact || !policy.artifactDoesNotAuthorizeClosure) errors.push('structural eligibility policy is incomplete');
