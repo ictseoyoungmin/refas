@@ -7,6 +7,8 @@ import {
   createCanonicalEditIntent,
   createLogicalFusion,
   createPhysicalFusionPlan,
+  parseGlb,
+  partsToGlb,
   physicalFusionFrameDigest,
   physicalFusionGeometryDigest,
   physicalFusionReopenTarget,
@@ -96,6 +98,21 @@ test('shared-boundary bake produces one connected watertight physical mesh and r
   assert.equal(result.provenance.sourceMemberIds.includes('glasses'), false);
   assert.deepEqual(result.provenance.sourceMemberIds, ['face', 'head-shell', 'nose']);
   assert.equal(result.provenance.outputFaces.length, 28);
+
+  const glb = partsToGlb({
+    assetId: 'physical-head-shell',
+    name: 'Physical Head Shell',
+    parts: [{id: 'head-shell-fused', mesh: result.mesh, materialId: 'skin', role: 'physical-fusion-output', scopeId: 'head-shell'}],
+    materials: {skin: {baseColor: [0.72, 0.58, 0.48, 1], metallic: 0, roughness: 0.55}},
+    extras: {physicalFusionReportDigest: result.report.reportDigest, fusionProvenanceDigest: result.provenance.provenanceDigest},
+  });
+  const realized = parseGlb(glb).json;
+  assert.equal(realized.meshes.length, 1);
+  assert.equal(realized.nodes.length, 1);
+  assert.deepEqual(realized.extras.refas.partIds, ['head-shell-fused']);
+  assert.equal(realized.extras.refas.physicalFusionReportDigest, result.report.reportDigest);
+  assert.equal(realized.extras.refas.fusionProvenanceDigest, result.provenance.provenanceDigest);
+
   assert.equal(validatePhysicalFusionResult(result, {
     ...f, plan: f.plan, currentInputAssetSha256: D('a'), currentPreFusionStateDigest: D('b'),
   }).valid, true);
