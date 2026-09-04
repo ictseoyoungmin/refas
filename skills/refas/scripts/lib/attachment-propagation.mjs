@@ -13,10 +13,8 @@ import {validateSurfaceAnchorSet} from './surface-anchor.mjs';
 export const ATTACHMENT_PROPAGATION_PLAN_SCHEMA = 'refas.attachment-propagation-plan/v1';
 export const ATTACHMENT_PROPAGATION_REPORT_SCHEMA = 'refas.attachment-propagation-report/v1';
 
-const SOLVED_MODES = new Set(['RIGID_FOLLOW', 'SURFACE_OFFSET', 'MULTI_ANCHOR', 'ARTICULATED']);
 const EXTERNAL_MODES = new Set(['FREE', 'FUSED', 'SUPPORTED_CLEARANCE']);
 const SURFACE_MODES = new Set(['SURFACE_OFFSET', 'MULTI_ANCHOR']);
-
 const uniqueStrings = (values = []) => [...new Set(values.map(String).filter(Boolean))].sort();
 
 function evidence(value, label) {
@@ -103,6 +101,7 @@ function normalizeExternalFrameBinding(raw, index, maps) {
     relationId: relation.id,
     mode: relation.mode,
     stateDigest: assertDigest(raw?.stateDigest, `${label}.stateDigest`),
+    frameDigest: assertDigest(raw?.frameDigest, `${label}.frameDigest`),
     ownerFrameDigests: normalizeOwnerFrameDigests(raw?.ownerFrameDigests, relation, label),
     evidenceRefs: evidence(raw?.evidenceRefs, `${label}.evidenceRefs`),
   };
@@ -221,7 +220,7 @@ export function createAttachmentPropagationPlan({
       dependencyDagIsDeterministic: true,
       existingAttachmentSolversAreReused: true,
       solvedModesCannotUseExternalPoseOverride: true,
-      externalFramesBindCurrentStateAndOwnerFrames: true,
+      externalFramesBindExactPoseStateAndOwnerFrames: true,
       staleOrInfeasibleStateBlocksDependents: true,
       supportedClearanceWaitsForRealizedValidation: true,
       propagationDoesNotMutateMeshBytes: true,
@@ -275,6 +274,7 @@ function blocker(code, relation, message, ownerIds = relation.ownerIds) {
 function externalResult({relation, binding, initial, resolvedFrames}) {
   if (!initial) return {result: null, blocker: blocker('MISSING_EXTERNAL_FRAME', relation, `missing current external frame for ${relation.subjectId}`)};
   if (initial.stateDigest !== binding.stateDigest) return {result: null, blocker: blocker('STALE_EXTERNAL_STATE', relation, `${relation.subjectId} state digest does not match the propagation plan`)};
+  if (rigidFrameDigest(initial.frame) !== binding.frameDigest) return {result: null, blocker: blocker('STALE_EXTERNAL_FRAME', relation, `${relation.subjectId} rigid frame does not match the propagation plan`)};
   for (const expected of binding.ownerFrameDigests) {
     const ownerFrame = resolvedFrames.get(expected.ownerId);
     if (!ownerFrame) return {result: null, blocker: blocker('UNRESOLVED_OWNER', relation, `${relation.subjectId} owner ${expected.ownerId} has no current frame`)};
@@ -428,7 +428,7 @@ export function propagateAttachmentGraph({
     policy: {
       derivedOwnerFramesFeedDownstreamDependents: true,
       externalPoseCannotOverrideSolvedRelations: true,
-      staleExternalStateOrOwnerFrameFailsClosed: true,
+      staleExternalPoseStateOrOwnerFrameFailsClosed: true,
       infeasibleSolverResultIsNotPropagated: true,
       supportedClearanceStillRequiresPostRealizationProof: true,
       reportDoesNotMutateMeshBytes: true,
