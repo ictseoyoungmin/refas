@@ -19,13 +19,13 @@ A fitter must never add a very large loss or `Infinity` to represent floating pa
 
 ## Structural eligibility artifact
 
-`createFitStructuralEligibility` accepts one exact candidate GLB and one or more required structural stages:
+`createFitStructuralEligibility` accepts one exact candidate GLB and declared structural stages:
 
-- `attachment-propagation` — the declared attachment graph must be recompute-valid and ready for realization;
-- `physical-fusion` — every supplied fusion result must recompute, be `BAKED`, and satisfy its topology obligation;
+- `attachment-propagation` — the declared attachment graph must be recompute-valid and ready for realization when this prerequisite applies;
+- `physical-fusion` — every supplied fusion result must recompute, be `BAKED`, and satisfy its topology obligation when fusion applies;
 - `realized-contact` — the contact/support graph must recompute against the same candidate bytes and report `PASS` with no unsupported required entity or blocker.
 
-At least one stage is required. Missing required evidence produces an ineligible artifact. A valid ineligible artifact is still useful evidence: its failed stage and blocker remain explicit rather than being disguised as malformed data or a score penalty.
+`realized-contact` is always required. Propagation and physical fusion are optional additional prerequisites, but neither can stand alone as candidate eligibility evidence because they do not themselves prove that the exact candidate GLB realizes the declared structure. Missing required evidence produces an ineligible artifact; omitting `realized-contact` is an invalid eligibility contract. A valid ineligible artifact is still useful evidence: its failed stage and blocker remain explicit rather than being disguised as malformed data or a score penalty.
 
 The artifact binds the exact candidate SHA-256. Reusing it after any GLB-byte change is invalid.
 
