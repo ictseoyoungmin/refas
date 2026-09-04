@@ -93,6 +93,14 @@ Before solving, rebind any owner surface that changed. Then call `solveMultiAnch
 
 Treat `SOLVED` and `INFEASIBLE` as semantically different states. A `SOLVED` report is eligible for later realization only because every local tolerance and the plan RMS tolerance pass. An `INFEASIBLE` report retains the best rigid pose as diagnostic evidence but must not be applied to the asset. Reopen the relevant owner geometry, subject geometry, or attachment assumption instead of hiding the contradiction. See `docs/multi-anchor-solver.md`.
 
+## Articulation and supported clearance
+
+For `ARTICULATED`, use `createArticulatedJoint` to bind the semantic relation to explicit owner-local and subject-local pivot frames. The first supported joint is bounded `REVOLUTE`: owner-joint local Z is the axis and the zero pose is where both joint frames coincide. Call `evaluateArticulatedJoint` with an explicit owner world frame and an in-range angle. It emits the subject target frame only; do not rotate about the subject origin when the joint pivot is offset, and do not clamp an out-of-range angle silently.
+
+For `SUPPORTED_CLEARANCE`, use `createSupportedClearance` to declare an acyclic support path beginning at the subject. Every edge in that path must already exist in attachment semantics and must bind a realized-assembly proof attachment ID. Declare local non-negative signed-clearance bounds separately for each relevant counterpart.
+
+Evaluate clearance only with `evaluateSupportedClearance` and a valid digest-bound `refas.realized-assembly-proof/v1`. `SATISFIED` requires every support edge plus every gap bound to pass with no penetration. `BLOCKED` means stop realization/closure and repair the support path, geometry, pose, or semantic assumption; never invent hidden bracing or force a positive intentional gap into contact. See `docs/articulation-clearance.md`.
+
 This rule limits simultaneous work; it does not authorize skipping dependencies.
 During shape reconstruction, `shape-reconstruction × whole` remains the only
 closable shape scope until the whole-shape dependency barrier passes. The

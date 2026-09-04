@@ -83,6 +83,12 @@ When owner geometry changes, `refas.surface-anchor-rebind/v1` may recover the an
 
 `refas.multi-anchor-report/v1` estimates only translation and rotation. It never scales or deforms the subject. A best-fit pose becomes eligible for realization only when weighted RMS error and every declared local tolerance pass. Otherwise the result is `INFEASIBLE`: the approximate pose remains diagnostic evidence, but downstream assembly must not apply it as a valid attachment solution. This prevents contradictory nose/ear contacts from being hidden by stretching or warping glasses.
 
+## Articulation and supported-clearance layer
+
+`refas.articulated-joint/v1` defines the first `ARTICULATED` primitive as a bounded revolute joint. Owner-local and subject-local joint frames encode the pivot, the owner joint frame Z axis is the rotation axis, and the angle interval is fail-closed. Evaluation emits only a rigid subject target frame, so an offset pivot remains an actual pivot rather than degrading into rotation around the subject origin.
+
+`refas.supported-clearance/v1` represents intentional separation without treating floating geometry as valid by default. The subject must have an explicit acyclic support path through the attachment semantic graph, every path edge and clearance counterpart binds to realized-assembly proof evidence, and each signed gap has a local non-negative range. `refas.supported-clearance-report/v1` accepts only a valid digest-bound realized assembly proof; missing support, penetration, or an out-of-range gap yields `BLOCKED` rather than invented hidden support or forced contact.
+
 ## Bounded edit transaction
 
 A transaction contains one baseline checkpoint, one capability, one hierarchy scope, one testable intent, protected metrics, and exactly one direct candidate checkpoint.
@@ -109,6 +115,7 @@ The dependency-light JavaScript core owns:
 - owner-local surface anchor frames with bounded semantic-patch retessellation recovery;
 - deterministic one-owner rigid-follow and surface-offset target propagation;
 - simultaneous rigid multi-anchor fitting with explicit infeasibility and no hidden scale/deformation;
+- bounded revolute articulation plus support-chain-aware clearance evaluation against realized assembly proof;
 - hierarchy and observation contracts;
 - spatial hypotheses and 2D reference registration;
 - deterministic mesh and embedded GLB construction;

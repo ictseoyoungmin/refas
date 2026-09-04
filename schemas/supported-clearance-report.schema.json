@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/supported-clearance-report.schema.json",
+  "title": "RefAs supported clearance evaluation report",
+  "type": "object",
+  "required": ["schema", "clearanceDigest", "scopeId", "sourceSha256", "attachmentSemanticsDigest", "realizedAssemblyProofDigest", "status", "satisfied", "supportResults", "clearanceResults", "evidenceRefs", "policy", "reportDigest"],
+  "properties": {
+    "schema": {"const": "refas.supported-clearance-report/v1"},
+    "clearanceDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "attachmentSemanticsDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "realizedAssemblyProofDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "status": {"enum": ["SATISFIED", "BLOCKED"]},
+    "satisfied": {"type": "boolean"},
+    "supportResults": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["childId", "parentId", "proofAttachmentId", "proofChildModuleId", "proofParentModuleId", "evidenceRefs", "modulePairPass", "pass"], "properties": {
+      "childId": {"$ref": "common.schema.json#/$defs/semanticId"}, "parentId": {"$ref": "common.schema.json#/$defs/semanticId"}, "proofAttachmentId": {"$ref": "common.schema.json#/$defs/semanticId"},
+      "proofChildModuleId": {"$ref": "common.schema.json#/$defs/semanticId"}, "proofParentModuleId": {"$ref": "common.schema.json#/$defs/semanticId"},
+      "evidenceRefs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}, "modulePairPass": {"type": "boolean"}, "pass": {"type": "boolean"}
+    }, "additionalProperties": false}},
+    "clearanceResults": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["counterpartId", "proofAttachmentId", "subjectModuleId", "counterpartModuleId", "minimumClearance", "maximumClearance", "evidenceRefs", "signedClearance", "modulePairPass", "pass"], "properties": {
+      "counterpartId": {"$ref": "common.schema.json#/$defs/semanticId"}, "proofAttachmentId": {"$ref": "common.schema.json#/$defs/semanticId"},
+      "subjectModuleId": {"$ref": "common.schema.json#/$defs/semanticId"}, "counterpartModuleId": {"$ref": "common.schema.json#/$defs/semanticId"},
+      "minimumClearance": {"type": "number", "minimum": 0}, "maximumClearance": {"type": "number", "minimum": 0},
+      "evidenceRefs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+      "signedClearance": {"oneOf": [{"type": "number"}, {"type": "null"}]}, "modulePairPass": {"type": "boolean"}, "pass": {"type": "boolean"}
+    }, "additionalProperties": false}},
+    "evidenceRefs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "policy": {"type": "object", "required": ["onlyDigestBoundRealizedAssemblyEvidenceIsAccepted", "proofModulePairMustMatchBinding", "blockedClearanceCannotBeTreatedAsSatisfied", "evaluationDoesNotMoveGeometry", "evaluationDoesNotAuthorizeClosure"], "properties": {
+      "onlyDigestBoundRealizedAssemblyEvidenceIsAccepted": {"const": true}, "proofModulePairMustMatchBinding": {"const": true}, "blockedClearanceCannotBeTreatedAsSatisfied": {"const": true},
+      "evaluationDoesNotMoveGeometry": {"const": true}, "evaluationDoesNotAuthorizeClosure": {"const": true}
+    }, "additionalProperties": false},
+    "reportDigest": {"$ref": "common.schema.json#/$defs/digest"}
+  },
+  "allOf": [
+    {"if": {"properties": {"status": {"const": "SATISFIED"}}}, "then": {"properties": {"satisfied": {"const": true}}}},
+    {"if": {"properties": {"status": {"const": "BLOCKED"}}}, "then": {"properties": {"satisfied": {"const": false}}}}
+  ],
+  "additionalProperties": false
+}
