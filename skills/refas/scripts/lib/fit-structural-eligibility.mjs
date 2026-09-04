@@ -30,6 +30,7 @@ export function createFitStructuralEligibility({
   if (!bytes.length) throw new Error('candidateGlb is required for structural eligibility');
   const candidateAssetSha256 = digestBytes(bytes);
   const required = normalizeRequiredStages(requiredStages);
+  if (!required.length) throw new Error('structural eligibility requires at least one structural stage');
   const checks = [];
   const blockers = [];
 
@@ -110,11 +111,19 @@ export function validateFitStructuralEligibility(value, candidateGlb = null) {
     assertDigest(value?.candidateAssetSha256, 'candidateAssetSha256');
     assertDigest(value?.eligibilityDigest, 'eligibilityDigest');
     const required = normalizeRequiredStages(value?.requiredStages ?? []);
+    if (!required.length) errors.push('structural eligibility must bind at least one required stage');
     if (digestJson(required) !== digestJson(value?.requiredStages ?? [])) errors.push('requiredStages are not canonical');
     if (!['ELIGIBLE', 'INELIGIBLE'].includes(value?.status)) errors.push('invalid status');
     if (value?.eligible !== (value?.status === 'ELIGIBLE')) errors.push('eligible does not match status');
     if (!Array.isArray(value?.stageChecks) || value.stageChecks.length !== FIT_STRUCTURAL_STAGES.length) errors.push('stageChecks must cover every structural stage exactly once');
-    else if (digestJson(value.stageChecks.map((item) => item.stage)) !== digestJson(FIT_STRUCTURAL_STAGES)) errors.push('stageChecks are not in canonical stage order');
+    else {
+      if (digestJson(value.stageChecks.map((item) => item.stage)) !== digestJson(FIT_STRUCTURAL_STAGES)) errors.push('stageChecks are not in canonical stage order');
+      const byStage = new Map(value.stageChecks.map((item) => [item.stage, item]));
+      for (const stage of required) {
+        const check = byStage.get(stage);
+        if (!check?.present || !check?.valid || !check?.pass) errors.push(`required stage ${stage} does not have passing evidence`);
+      }
+    }
     const blockers = uniqueStrings(value?.blockers ?? []);
     if (digestJson(blockers) !== digestJson(value?.blockers ?? [])) errors.push('blockers are not canonical');
     if (value?.eligible && blockers.length) errors.push('eligible artifact cannot contain blockers');
