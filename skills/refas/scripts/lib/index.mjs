@@ -9,6 +9,7 @@ export * from './articulation-clearance.mjs';
 export * from './attachment-propagation.mjs';
 export * from './physical-fusion.mjs';
 export * from './realized-contact.mjs';
+export * from './fit-structural-eligibility.mjs';
 export * from './hierarchy.mjs';
 export * from './ownership.mjs';
 export * from './failure-router.mjs';
