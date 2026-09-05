@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/orientation-evidence.schema.json",
+  "title": "RefAs orientation evidence set",
+  "type": "object",
+  "required": ["schema", "scopeId", "sourceSha256", "observations", "evidenceRefs", "policy", "evidenceDigest"],
+  "properties": {
+    "schema": {"const": "refas.orientation-evidence-set/v1"},
+    "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "observations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "entityId", "parentId", "primaryAxis", "facing", "visiblePlane", "nearSide", "relativeTwist", "confidence", "evidenceRefs", "notes"],
+        "properties": {
+          "id": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "entityId": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "parentId": {"anyOf": [{"$ref": "common.schema.json#/$defs/semanticId"}, {"type": "null"}]},
+          "primaryAxis": {
+            "anyOf": [
+              {"type": "null"},
+              {
+                "type": "object",
+                "required": ["screenDirection"],
+                "properties": {
+                  "screenDirection": {
+                    "type": "array",
+                    "prefixItems": [{"type": "number"}, {"type": "number"}],
+                    "items": false
+                  }
+                },
+                "additionalProperties": false
+              }
+            ]
+          },
+          "facing": {"enum": ["toward-camera", "away-from-camera", "upward", "downward", "leftward", "rightward", "toward-parent", "away-from-parent", "ambiguous", "unknown"]},
+          "visiblePlane": {"enum": ["broad-face-dominant", "edge-dominant", "mixed", "occluded", "unknown"]},
+          "nearSide": {"type": ["string", "null"]},
+          "relativeTwist": {"enum": ["pronated", "supinated", "clockwise", "counterclockwise", "neutral", "ambiguous", "unknown"]},
+          "confidence": {"enum": ["high", "medium", "low"]},
+          "evidenceRefs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+          "notes": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+        },
+        "additionalProperties": false
+      }
+    },
+    "evidenceRefs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "policy": {
+      "type": "object",
+      "required": ["positionAndPrimaryAxisDoNotFullySpecifyOrientation", "cameraRelativeEvidencePreferredOverInventedEulerAngles", "terminalFacingAndTwistRemainExplicit", "ambiguousRollMustRemainAmbiguousUntilResolved", "orientationEvidenceDoesNotAuthorizeVisualClosure"],
+      "properties": {
+        "positionAndPrimaryAxisDoNotFullySpecifyOrientation": {"const": true},
+        "cameraRelativeEvidencePreferredOverInventedEulerAngles": {"const": true},
+        "terminalFacingAndTwistRemainExplicit": {"const": true},
+        "ambiguousRollMustRemainAmbiguousUntilResolved": {"const": true},
+        "orientationEvidenceDoesNotAuthorizeVisualClosure": {"const": true}
+      },
+      "additionalProperties": false
+    },
+    "evidenceDigest": {"$ref": "common.schema.json#/$defs/digest"}
+  },
+  "additionalProperties": false
+}

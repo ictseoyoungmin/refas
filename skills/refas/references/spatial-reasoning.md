@@ -28,6 +28,16 @@ When a shape mismatch appears, test in this order:
 
 This prevents baking a camera error into geometry.
 
+## Orientation is a frame, not an axis
+
+A part is not spatially specified by its position and primary direction alone. When orientation affects visible form, contact, articulation, or function, preserve a second independent cue for roll/twist: a visible-plane or facing normal, a lateral/handedness cue, or an explicitly inherited parent-frame direction.
+
+Use `refas.orientation-evidence-set/v1` to record source-supported camera-relative evidence such as projected primary direction, broad-face versus edge exposure, near side, terminal facing, and parent-relative twist. Prefer comparative statements over invented absolute Euler angles. `downward`, `edge-dominant`, `thumb-side nearer`, or `pronated` are valid source observations when visible; an unsupported `rotationX=37.6deg` is not.
+
+Do not silently complete an axis-only observation with a global up vector. `resolveOrientedFrame` fails closed when roll is underdetermined unless a facing/lateral cue is supplied or an explicit parent-inheritance policy is requested. If several roll hypotheses remain plausible, keep them as competing spatial hypotheses and falsify them with plane exposure, near/far edges, overlap, negative space, highlights, or diagnostic renders.
+
+A correct projected endpoint does not prove a correct 3D pose. Two candidates may share the same wrist, fingertip, and hand axis while one exposes the palm broad face and the other points it downward. Treat that as an orientation mismatch even when landmark error is near zero.
+
 ## Depth and occlusion
 
 Use T-junctions, overlap, cast shadows, contour termination, relative sharpness, and grazing highlights as cues. Store the inferred front-to-back relation and its confidence. A relation with weak evidence remains a hypothesis.
