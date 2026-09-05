@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/orientation-pose-fit.schema.json",
+  "title": "RefAs orientation-aware pose fit plan/report",
+  "type": "object",
+  "required": ["schema"],
+  "properties": {
+    "schema": {"const": "refas.orientation-pose-fit/v1"}
+  },
+  "additionalProperties": true
+}
