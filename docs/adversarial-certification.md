@@ -1,6 +1,6 @@
 # Adversarial certification hardening
 
-A13 treats the A11 candidate transaction and A12 claim policy as an authority chain that must remain fail-closed under hostile substitution, replay, mutation, and re-signing.
+The sealed candidate transaction and claim policy form an authority chain that must remain fail-closed under hostile substitution, replay, mutation, and re-signing.
 
 ## Attack boundaries
 
@@ -27,8 +27,8 @@ For the mandatory claim, an explicit policy must preserve:
 - every mandatory veto severity;
 - registered-comparison evidence when the source class requires it.
 
-A structurally valid and freshly re-digested policy that removes any of these is still refused by whole-object certification. This keeps policy extensibility without allowing policy substitution to erase the authority RefAs already required before A12.
+A structurally valid and freshly re-digested policy that removes any of these is still refused by whole-object certification. This keeps policy extensibility without allowing policy substitution to erase the authority RefAs already requires.
 
 ## Non-goals
 
-A13 does not add geometry repair, mutate checkpoint evidence, or make policy evaluation a visual judge. Evidence truth remains owned by its producer and existing visual/reprojection/PBR gates. A13 only ensures that later provenance, policy, decision, and certificate layers cannot weaken or replay those upstream authorities.
+This hardening layer does not add geometry repair, mutate checkpoint evidence, or make policy evaluation a visual judge. Evidence truth remains owned by its producer and existing visual/reprojection/PBR gates. It only ensures that later provenance, policy, decision, and certificate layers cannot weaken or replay those upstream authorities.
