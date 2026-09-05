@@ -16,7 +16,7 @@ test('CLI help exposes recovery, validation, and certification commands', () => 
   const result = run(['--help']);
   assert.equal(result.status, 0);
   const help = JSON.parse(result.stdout);
-  assert.equal(help.version, '1.0.0');
+  assert.equal(help.version, '1.0.1');
   for (const command of ['source-manifest', 'resume', 'abort-edit', 'report-finding', 'validate-spec', 'certify']) assert.ok(help.commands[command]);
   assert.match(help.commands.render, /--timeout-seconds 300/);
   assert.match(help.commands.render, /--max-working-mb 512/);

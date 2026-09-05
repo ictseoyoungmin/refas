@@ -4,6 +4,7 @@ import path from 'node:path';
 import {fileURLToPath, pathToFileURL} from 'node:url';
 import {spawnSync} from 'node:child_process';
 import {
+  REFAS_VERSION,
   abortEdit,
   auditProject,
   beginEdit,
@@ -85,7 +86,7 @@ function runPython(script, args, {timeoutMs} = {}) {
 
 function help() {
   return {
-    name: 'refas', version: '1.0.0',
+    name: 'refas', version: REFAS_VERSION,
     commands: {
       init: 'init --root DIR --project ID [--source source.json]',
       'source-manifest': 'source-manifest --root DIR --image reference.png --id ID --out source.json [--acquisition JSON]',
@@ -116,7 +117,7 @@ function help() {
 async function main() {
   const {command, options} = parseArgs(process.argv.slice(2));
   if (command === 'help' || command === '--help' || command === '-h' || options.help) { print(help()); return; }
-  if (command === '--version' || command === '-v') { process.stdout.write('1.0.0\n'); return; }
+  if (command === '--version' || command === '-v') { process.stdout.write(`${REFAS_VERSION}\n`); return; }
   if (command === 'init') {
     print(await initProject(required(options, 'root'), {projectId: required(options, 'project'), source: await jsonFile(options.source)}));
     return;

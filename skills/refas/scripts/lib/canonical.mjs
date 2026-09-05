@@ -2,7 +2,7 @@ import {createHash} from 'node:crypto';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
-export const REFAS_VERSION = '1.0.0';
+export const REFAS_VERSION = '1.0.1';
 
 export function canonicalize(value) {
   if (Array.isArray(value)) return value.map(canonicalize);
