@@ -29,27 +29,31 @@ export function digestJson(value) {
   return digestBytes(stableStringify(value));
 }
 
+export async function sha256File(filePath) {
+  return digestBytes(await fs.readFile(filePath));
+}
+
 export function assertDigest(value, label = 'digest') {
-  if (!/^[a-f0-9]{64}$/u.test(String(value ?? ''))) {
+  if (!/^[a-f0-9]{64}$/.test(String(value ?? ''))) {
     throw new Error(`${label} must be a lowercase SHA-256 digest`);
   }
   return String(value);
 }
 
 export function assertId(value, label = 'id') {
-  const text = String(value ?? '');
-  if (!/^[a-z0-9][a-z0-9._:-]*$/u.test(text)) {
-    throw new Error(`${label} must be a stable lowercase semantic ID`);
+  const id = String(value ?? '');
+  if (!/^[a-z0-9][a-z0-9._:-]{1,127}$/.test(id)) {
+    throw new Error(`${label} must be 2-128 lowercase identifier characters`);
   }
-  return text;
+  return id;
 }
 
-export async function sha256File(filePath) {
-  return digestBytes(await fs.readFile(filePath));
-}
-
-export async function readJson(filePath) {
-  return JSON.parse(await fs.readFile(filePath, 'utf8'));
+export function deepFreeze(value) {
+  if (value && typeof value === 'object' && !Object.isFrozen(value)) {
+    Object.freeze(value);
+    for (const child of Object.values(value)) deepFreeze(child);
+  }
+  return value;
 }
 
 export async function writeJsonAtomic(filePath, value) {
@@ -59,9 +63,19 @@ export async function writeJsonAtomic(filePath, value) {
   await fs.rename(temporary, filePath);
 }
 
-export function deepFreeze(value) {
-  if (!value || typeof value !== 'object' || Object.isFrozen(value)) return value;
-  Object.freeze(value);
-  for (const child of Object.values(value)) deepFreeze(child);
-  return value;
+export async function readJson(filePath) {
+  return JSON.parse(await fs.readFile(filePath, 'utf8'));
+}
+
+export async function contentReference(filePath, {kind = 'artifact', root = process.cwd()} = {}) {
+  const absolute = path.resolve(filePath);
+  const stat = await fs.stat(absolute);
+  if (!stat.isFile()) throw new Error(`artifact is not a file: ${absolute}`);
+  return deepFreeze({
+    schema: 'refas.content-reference/v1',
+    kind,
+    path: path.relative(path.resolve(root), absolute).replaceAll(path.sep, '/'),
+    sha256: await sha256File(absolute),
+    sizeBytes: stat.size,
+  });
 }
