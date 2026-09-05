@@ -74,14 +74,13 @@ jobs:
           }
 
           function extractReleaseNotes(changelog) {
-            const escaped = version.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-            const heading = new RegExp(`^##\\s+${escaped}(?:\\s|$)`);
-            const lines = changelog.split(/\\r?\\n/);
-            const start = lines.findIndex((line) => heading.test(line));
+            const lines = changelog.split('\n').map((line) => line.endsWith('\r') ? line.slice(0, -1) : line);
+            const headingPrefix = `## ${version}`;
+            const start = lines.findIndex((line) => line === headingPrefix || line.startsWith(`${headingPrefix} `));
             if (start < 0) throw new Error(`CHANGELOG.md has no section for ${version}`);
-            let end = lines.findIndex((line, index) => index > start && /^##\\s+/.test(line));
+            let end = lines.findIndex((line, index) => index > start && line.startsWith('## '));
             if (end < 0) end = lines.length;
-            const notes = lines.slice(start + 1, end).join('\\n').trim();
+            const notes = lines.slice(start + 1, end).join('\n').trim();
             if (!notes) throw new Error(`CHANGELOG.md section for ${version} is empty`);
             return notes;
           }
@@ -111,7 +110,7 @@ jobs:
             if (body?.type !== 'file' || body?.encoding !== 'base64' || typeof body?.content !== 'string') {
               throw new Error(`${filePath} at ${ref} is not a base64 GitHub file response`);
             }
-            return Buffer.from(body.content.replace(/\\n/g, ''), 'base64').toString('utf8');
+            return Buffer.from(body.content, 'base64').toString('utf8');
           }
 
           function verifyReleaseMetadata(release, releaseSha, desired) {
