@@ -1,0 +1,121 @@
+name: Publish verified release
+
+on:
+  workflow_run:
+    workflows: ["RefAs CI"]
+    types: [completed]
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    if: >-
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_branch == 'main' &&
+      github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          persist-credentials: false
+
+      - name: Resolve release metadata
+        id: metadata
+        shell: bash
+        run: |
+          node <<'NODE' >> "$GITHUB_OUTPUT"
+          const fs = require('node:fs');
+          const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+          if (!/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/.test(pkg.version)) {
+            throw new Error(`package.json contains unsupported semantic version: ${pkg.version}`);
+          }
+          console.log(`version=${pkg.version}`);
+          console.log(`tag=v${pkg.version}`);
+          NODE
+
+      - name: Publish or verify GitHub Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_SHA: ${{ github.event.workflow_run.head_sha }}
+          RELEASE_TAG: ${{ steps.metadata.outputs.tag }}
+          RELEASE_VERSION: ${{ steps.metadata.outputs.version }}
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+
+          const token = process.env.GITHUB_TOKEN;
+          const repo = process.env.GITHUB_REPOSITORY;
+          const apiBase = process.env.GITHUB_API_URL || 'https://api.github.com';
+          const sha = process.env.RELEASE_SHA;
+          const tag = process.env.RELEASE_TAG;
+          const version = process.env.RELEASE_VERSION;
+          if (!token || !repo || !sha || !tag || !version) throw new Error('release environment is incomplete');
+
+          const headers = {
+            Accept: 'application/vnd.github+json',
+            Authorization: `Bearer ${token}`,
+            'X-GitHub-Api-Version': '2022-11-28',
+            'Content-Type': 'application/json',
+          };
+
+          async function request(path, options = {}) {
+            const response = await fetch(`${apiBase}/repos/${repo}${path}`, {
+              ...options,
+              headers: {...headers, ...(options.headers || {})},
+            });
+            const text = await response.text();
+            let body = null;
+            if (text) {
+              try { body = JSON.parse(text); } catch { body = text; }
+            }
+            return {response, body};
+          }
+
+          function releaseNotes() {
+            const changelog = fs.readFileSync('CHANGELOG.md', 'utf8');
+            const escaped = version.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const match = changelog.match(new RegExp(`^## ${escaped}[^\\n]*\\n([\\s\\S]*?)(?=^## |\\s*$)`, 'm'));
+            if (!match) throw new Error(`CHANGELOG.md has no section for ${version}`);
+            return match[1].trim();
+          }
+
+          async function readTagRef() {
+            const {response, body} = await request(`/git/ref/tags/${encodeURIComponent(tag)}`);
+            if (response.status === 404) return null;
+            if (!response.ok) throw new Error(`unable to read ${tag}: ${response.status} ${JSON.stringify(body)}`);
+            return body;
+          }
+
+          const existingRef = await readTagRef();
+          if (existingRef) {
+            if (existingRef.object?.type !== 'commit' || existingRef.object?.sha !== sha) {
+              throw new Error(`${tag} already exists but does not point to verified commit ${sha}`);
+            }
+            const {response, body} = await request(`/releases/tags/${encodeURIComponent(tag)}`);
+            if (!response.ok) throw new Error(`${tag} exists without a readable GitHub Release: ${response.status} ${JSON.stringify(body)}`);
+            console.log(`${tag} already exists at verified commit ${sha}; release id=${body.id}`);
+            process.exit(0);
+          }
+
+          const {response, body} = await request('/releases', {
+            method: 'POST',
+            body: JSON.stringify({
+              tag_name: tag,
+              target_commitish: sha,
+              name: `RefAs ${tag}`,
+              body: releaseNotes(),
+              draft: false,
+              prerelease: version.includes('-'),
+              make_latest: version.includes('-') ? 'false' : 'true',
+            }),
+          });
+          if (!response.ok) throw new Error(`release creation failed: ${response.status} ${JSON.stringify(body)}`);
+
+          const createdRef = await readTagRef();
+          if (!createdRef || createdRef.object?.type !== 'commit' || createdRef.object?.sha !== sha) {
+            throw new Error(`${tag} was created but does not resolve to verified commit ${sha}`);
+          }
+          console.log(`published ${tag} at ${sha}: ${body.html_url}`);
+          NODE
