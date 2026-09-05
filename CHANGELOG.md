@@ -1,28 +1,39 @@
 # Changelog
 
-## Unreleased
-
-- Added deterministic evidence-bound joint geometry parameter fitting, exact-byte trial verification, protected-regression handling, a public worker CLI, and an actual GLB/render dogfood while preserving score, ownership, checkpoint, and certification boundaries.
-
-- Added an independently executed deterministic Cook–Torrance PBR renderer, canonical `render-pbr` CLI path, and a four-material eight-view reproducibility dogfood.
-- Added a fail-closed independent PBR renderer evidence contract for Blender Cycles/Eevee, Three.js/WebGL, Filament, glTF Sample Viewer, VTK, and equivalent backends after the portable integrity gate.
-- Bound final appearance review to exact renderer/version/backend, asset and frame digests, lighting and color pipeline, declared material support, and digest-addressed output frames.
-- Added canonical object-frame rendering, registered hero cameras, scope-local bounds with whole-object context, and per-view frame/digest provenance while preserving the legacy world-axis fallback.
-- Removed the implicit assumption that portable validation assets should remain below 30,000 triangles.
-- Added bounded tile rasterization, decoded-geometry and framebuffer memory preflight, optional project triangle caps, staged render publication, and dual internal/parent wall-clock timeouts.
-
 All notable RefAs changes are documented here. RefAs follows semantic versioning.
 
-## 1.0.0 — 2026-08-20
+## 1.0.0 — 2026-09-05
+
+### Reconstruction and evidence
 
 - Established the semantic eleven-capability reconstruction and ownership graph.
 - Added whole-to-feature hierarchy, source-authoritative observation, explicit ambiguity, and competing spatial-hypothesis contracts.
-- Added attested affine/projective reference registration with inverse and residual evidence.
-- Added deterministic watertight mesh primitives, embedded GLB inspection, and immutable closed-child composition.
-- Added observed surface networks with one physical boundary per shared adjacency.
-- Added assembly contracts and realized checks for overlap, depth order, support, penetration, and child integrity.
-- Added content-addressed checkpoint objects, exact byte restore, bounded edit decisions, applied finding routes, resumption guidance, audit, and certification.
-- Added portable evidence generation and actual eight-view GLB rendering.
-- Added public Draft 2020-12 schemas, input templates, regression tests, repository audits, and the complete wing-cover dogfood fixture.
+- Added attested reference registration, projection-aware reconstruction, shared-boundary surface topology, coherent hard-surface geometry, and immutable child composition.
+- Added deterministic watertight mesh construction, embedded GLB inspection, actual multiview rendering, registered source/render comparison, and deterministic discrepancy evidence.
+- Added evidence-bound joint geometry parameter fitting plus owner-local camera, pose, appearance, and lighting fitting while keeping metrics limited to diagnosis and candidate ranking rather than gate authority.
+- Added deterministic independent Cook–Torrance PBR evidence and an external-renderer report boundary for Blender, Three.js, Filament, glTF Sample Viewer, VTK, and equivalent backends.
+- Removed a global triangle-quality ceiling in favor of bounded tile rasterization, memory preflight, staged publication, explicit timeouts, and optional project-local caps.
 
-This release intentionally contains no development-stage identity in filenames, schemas, runtime APIs, or agent instructions.
+### Recovery and structural integrity
+
+- Added content-addressed checkpoints, exact-byte restore, bounded edit decisions, typed finding ownership, transitive invalidation, safe resume routing, and repository audit.
+- Added attachment semantics, logical fusion, surface anchors, rigid/surface follow, multi-anchor solving, bounded articulation, supported clearance, graph-wide propagation, realized contact/support evidence, and controlled physical-fusion provenance.
+
+### Certification authority
+
+- Added sealed candidate provenance transactions that bind one exact candidate, checkpoint, evidence DAG, dependencies, and declared obligations by content digest.
+- Added claim-driven certification policies with explicit role/schema obligations and reproducible per-claim authorization decisions.
+- Bound whole-object certificates to the exact candidate transaction, policy, claim decision, visual review, registered comparison, and independent PBR evidence required by the active claim set.
+- Added adversarial hardening against candidate/evidence substitution, stale checkpoint replay, forged decisions, cross-claim evidence contamination, and freshly re-signed policies that weaken the mandatory whole-object authority floor.
+
+### Reproducible examples and distribution
+
+- Added repository dogfoods for end-to-end reconstruction, joint parameter fitting, independent PBR materials, hard-surface topology, modular assembly, articulated geometry, and benchmark coverage.
+- Added a dependency-free `demo/` page that explains the current release boundary and routes to reproducible examples rather than treating opaque screenshots as proof.
+- Kept the distributable runtime singular under `skills/refas/` with public JSON Schemas under `schemas/` and Node.js 20+ support.
+
+### Known limits
+
+RefAs 1.0 does not claim fully resolved terminal 3D orientation from ambiguous single views, unseen manufacturer-internal mechanisms, or calibrated simulation-ready mass/collider/actuator truth without additional evidence. See `docs/known-limitations.md`.
+
+This release intentionally contains no development-iteration identity in public schemas, runtime APIs, or deployable skill instructions.
