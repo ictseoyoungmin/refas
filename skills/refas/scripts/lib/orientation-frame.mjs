@@ -21,12 +21,19 @@ function unit(value, label) {
   return mul(vector, 1 / size);
 }
 
-function perpendicularHint(hint, axis, label) {
+function projectPerpendicular(hint, axis, label, {allowDegenerate = false} = {}) {
   const raw = vec3(hint, label);
   const projected = sub(raw, mul(axis, dot(raw, axis)));
   const size = magnitude(projected);
-  if (!(size > EPS)) throw new Error(`${label} is parallel to the primary axis and cannot determine roll`);
+  if (!(size > EPS)) {
+    if (allowDegenerate) return null;
+    throw new Error(`${label} is parallel to the primary axis and cannot determine roll`);
+  }
   return mul(projected, 1 / size);
+}
+
+function perpendicularHint(hint, axis, label) {
+  return projectPerpendicular(hint, axis, label);
 }
 
 /**
@@ -109,14 +116,20 @@ function angleBetween(a, b) {
   return Math.acos(Math.max(-1, Math.min(1, dot(unit(a, 'axisA'), unit(b, 'axisB')))));
 }
 
+/**
+ * Compare two valid full frames without assuming their primary axes are close.
+ * Twist is measured around the reference primary axis. When the candidate
+ * facing becomes parallel to that axis, twist is geometrically undefined; the
+ * residual records a bounded pi/2 ambiguity penalty instead of throwing.
+ */
 export function orientationFrameResidual(referenceFrame, candidateFrame) {
   const reference = normalizeRigidFrame(referenceFrame, 'referenceFrame');
   const candidate = normalizeRigidFrame(candidateFrame, 'candidateFrame');
   const primaryAxisErrorRadians = angleBetween(reference.zAxis, candidate.zAxis);
   const facingErrorRadians = angleBetween(reference.yAxis, candidate.yAxis);
   const lateralErrorRadians = angleBetween(reference.xAxis, candidate.xAxis);
-  const projectedFacing = perpendicularHint(candidate.yAxis, reference.zAxis, 'candidateFrame.yAxis');
-  const twistErrorRadians = Math.abs(Math.atan2(
+  const projectedFacing = projectPerpendicular(candidate.yAxis, reference.zAxis, 'candidateFrame.yAxis', {allowDegenerate: true});
+  const twistErrorRadians = projectedFacing == null ? Math.PI / 2 : Math.abs(Math.atan2(
     dot(reference.zAxis, cross(reference.yAxis, projectedFacing)),
     Math.max(-1, Math.min(1, dot(reference.yAxis, projectedFacing))),
   ));
