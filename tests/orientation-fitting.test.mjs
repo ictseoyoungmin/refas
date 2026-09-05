@@ -52,16 +52,26 @@ test('orientation pose fitting evaluates the smallest responsible chain as a cou
   const report = await fitOrientationPose(plan, {
     baselineGlb: glb,
     buildCandidate: ({baselineGlb, edits}) => applyParentLocalTransformEdits(baselineGlb, edits),
-    evaluate: async (_candidate, context) => ({
-      measurements: {'orientation-loss': (context.parameters['forearm-twist'] - .5) ** 2 + (context.parameters['palm-twist'] - .5) ** 2},
-      orientationDiscrepancyDigest: D('f'),
-      evidenceRefs: ['orientation:left-palm'],
-    }),
+    evaluate: async (candidate, context) => {
+      const angle = Math.min(Math.PI, Math.hypot(context.parameters['forearm-twist'] - .5, context.parameters['palm-twist'] - .5));
+      return {
+        orientationDiscrepancy: createOrientationDiscrepancy({
+          scopeId: plan.scopeId,
+          sourceSha256: plan.sourceSha256,
+          assetSha256: digestBytes(candidate),
+          orientationEvidenceDigest: plan.orientationEvidenceDigest,
+          residuals: [{id: 'palm-frame', entityId: 'palm', primaryAxisErrorRadians: 0, facingErrorRadians: angle, lateralErrorRadians: angle, twistErrorRadians: angle, evidenceRefs: ['orientation:left-palm']}],
+          evidenceRefs: ['orientation:left-palm'],
+        }),
+        evidenceRefs: ['orientation:left-palm'],
+      };
+    },
   });
   const selected = report.trials.find((trial) => trial.id === report.selectedTrialId);
   assert.equal(report.status, 'IMPROVED');
   assert.equal(selected.parameters['forearm-twist'], .5);
   assert.equal(selected.parameters['palm-twist'], .5);
+  assert.equal(selected.measurements['orientation-loss'], 0);
   assert.equal(report.trials.every((trial) => trial.candidateBinarySha256 === trial.baselineBinarySha256), true);
   assert.equal(validateOrientationPoseFitReport(report, plan).valid, true);
 });
@@ -87,6 +97,7 @@ test('orientation chain plans fail closed when a terminal chain cites an unknown
     id: 'tool-pose', scopeId: 'whole', sourceSha256: D(),
     baselineAsset: {schema: 'refas.content-reference/v1', kind: 'glb', path: 'tool.glb', sha256: digestBytes(glb), sizeBytes: glb.length},
     variables: [{id: 'tool-roll', binding: 'assembly.node.tool.rotation.z', minimum: -1, maximum: 1, initial: 0}],
+    objectives: [{id: 'orientation-loss', goal: 'minimize', weight: 1}],
     evaluationBudget: 4,
   });
   assert.throws(() => createOrientationPoseFitPlan({
