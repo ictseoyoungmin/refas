@@ -43,7 +43,7 @@ jobs:
           RELEASE_VERSION: ${{ steps.metadata.outputs.version }}
         run: |
           node <<'NODE'
-          const fs = require('node:fs');
+          import fs from 'node:fs';
 
           const token = process.env.GITHUB_TOKEN;
           const repo = process.env.GITHUB_REPOSITORY;
