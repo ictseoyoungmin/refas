@@ -116,8 +116,14 @@ export function poseTransformEdits(plan, parameters) {
   const edits = {};
   for (const variable of plan.variables) {
     const value = finite(parameters[variable.id], variable.id);
-    const match = variable.binding.match(/^assembly\.(joint|node)\.([a-z0-9._:-]+)\.(.+)$/u);
-    const [, kind, nodeId, property] = match;
+    const jointMatch = variable.binding.match(/^assembly\.joint\.([a-z0-9._:-]+)\.angle$/u);
+    const nodeMatch = variable.binding.match(/^assembly\.node\.([a-z0-9._:-]+)\.(translation|rotation)\.([xyz])$/u);
+    let kind, nodeId, property;
+    if (jointMatch) {
+      kind = 'joint'; nodeId = jointMatch[1]; property = 'angle';
+    } else if (nodeMatch) {
+      kind = 'node'; nodeId = nodeMatch[1]; property = `${nodeMatch[2]}.${nodeMatch[3]}`;
+    } else throw new Error(`unsupported pose binding: ${variable.binding}`);
     const item = edits[nodeId] ?? {nodeId, kind};
     if (kind === 'joint') item.angle = value;
     else if (property.startsWith('translation.')) (item.translation ??= {})[property.at(-1)] = value;
