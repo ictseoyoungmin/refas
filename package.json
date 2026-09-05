@@ -1,6 +1,6 @@
 {
   "name": "refas",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Vision-first, evidence-bound reference image to 3D reconstruction for AI agents",
   "type": "module",
   "license": "MIT",
