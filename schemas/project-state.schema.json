@@ -6,7 +6,7 @@
   "required": ["schema", "version", "projectId", "source", "head", "status", "activeScopeId", "activeTransaction", "reopenedCapability", "invalidatedCapabilities", "checkpointIds", "certification", "journal"],
   "properties": {
     "schema": {"const": "refas.project-state/v1"},
-    "version": {"const": "1.0.0"},
+    "version": {"enum": ["1.0.0", "1.0.1"]},
     "projectId": {"$ref": "common.schema.json#/$defs/semanticId"},
     "source": {"anyOf": [{"$ref": "source-manifest.schema.json"}, {"type": "null"}]},
     "head": {"anyOf": [{"type": "string", "pattern": "^cp_[a-f0-9]{20}$"}, {"type": "null"}]},
