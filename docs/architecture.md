@@ -2,7 +2,14 @@
 
 ## Architecture contract
 
-The distributable skill at `skills/refas/` is the product boundary and the single runtime authority. Tests, examples, and package exports import it directly. Repository tooling may validate or package the skill but must not implement a competing reconstruction engine.
+The distributable skill at `skills/refas/` is the product boundary and the single runtime authority. Tests, examples, package exports, and repository tools consume that runtime rather than implementing a competing reconstruction engine.
+
+RefAs separates four concerns that are easy to accidentally collapse:
+
+1. **source truth** — what the reference and bound evidence actually support;
+2. **construction state** — editable semantic geometry, pose, assembly, and appearance owned by capabilities;
+3. **realized artifacts** — exact GLB/render/report bytes produced from construction state;
+4. **certification authority** — whether a declared claim is allowed for one exact candidate under one exact evidence policy.
 
 ## Capability graph
 
@@ -14,13 +21,13 @@ The distributable skill at `skills/refas/` is the product boundary and the singl
 | 4 | `spatial-hypotheses` | ranked camera, depth, orientation, and hidden-form alternatives |
 | 5 | `shape-reconstruction` | silhouette, mass, curvature, thickness, coarse negative space |
 | 6 | `surface-topology` | projection-anchored cells, seams, ribs, relief, and shared boundaries |
-| 7 | `assembly` | reference-frame registration and immutable child placement |
+| 7 | `assembly` | parent-local placement, attachment relations, articulation and realized structural evidence |
 | 8 | `appearance` | evidence-supported color, roughness, metalness, and finish |
-| 9 | `rendering` | reproducible actual multiview images and camera records |
+| 9 | `rendering` | reproducible actual multiview images, camera records and renderer reports |
 | 10 | `visual-critique` | typed finding ledger with evidence references |
-| 11 | `whole-object-certification` | fail-closed certificate over current gates and an independent digest-bound visual review |
+| 11 | `whole-object-certification` | fail-closed claim authorization and certificate over one exact candidate/evidence chain |
 
-Each finding is owned by exactly one capability. Reopening an owner invalidates the owner and its transitive dependents, while upstream evidence and unrelated scopes remain intact.
+Each finding is owned by exactly one capability. Reopening an owner invalidates that owner and its transitive dependents while preserving upstream evidence and unrelated scopes.
 
 ## Project state
 
@@ -28,10 +35,10 @@ Each finding is owned by exactly one capability. Reopening an owner invalidates 
 project/
 ├── source/                 primary images and manifests
 ├── evidence/               deterministic observation aids
-├── model/                  hierarchy, observations, hypotheses, specifications
-├── assets/                 GLB assets and closed children
+├── model/                  hierarchy, observations, hypotheses, semantic construction state
+├── assets/                 realized GLB assets and closed children
 ├── renders/                actual frames and review boards
-├── reviews/                findings, metrics, and gate evidence
+├── reviews/                findings, comparison reports, policies and evidence artifacts
 └── .refas/
     ├── project.json        active head and recovery state
     ├── checkpoints/        immutable semantic checkpoint records
@@ -44,103 +51,140 @@ Checkpoint IDs are content-derived. Timestamps are metadata and do not decide id
 
 ## Canonical edit boundary
 
-A GLB is normally a realized artifact, not the default editable source of semantic shape truth. Durable edits originate in the state owned by their capability and then realize a new exact asset.
+A GLB is normally a realized artifact, not the default editable source of semantic truth.
 
-- Shape edits update construction state and rebuild GLB bytes. Arbitrary vertex or mesh-binary patches are not canonical shape edits.
-- Pose edits may update parent-local node/joint transforms directly while preserving exact mesh/accessor bytes.
-- Appearance edits update material, texture, or vertex-color source state before rebaking or rebuilding the asset.
-- Finalization may perform controlled fusion, welding, internal-face cleanup, and optimization only after semantic construction is closed.
+- Shape edits update construction state and rebuild geometry.
+- Pose edits may update parent-local node or joint transforms while preserving mesh/accessor bytes.
+- Appearance edits update material/texture/vertex-color source state before rebaking or rebuilding.
+- Finalization may perform controlled fusion, welding, internal-face cleanup, and optimization only after semantic construction is closed and reopen provenance remains available.
 
-`refas.canonical-edit-intent/v1` records the owner, hierarchy scope, edit class, canonical bindings, realization operations, and mutation boundary. It provides the stable boundary that later attachment propagation and contact validation can depend on. The detailed contract is in `docs/canonical-edit-boundary.md`.
+`refas.canonical-edit-intent/v1` records the owner, hierarchy scope, edit class, canonical bindings, realization operations, and mutation boundary. See `docs/canonical-edit-boundary.md`.
 
-## Attachment semantic layer
+## Assembly and structural realization
 
-Assembly relationships are explicit canonical construction state rather than proximity guesses. `refas.attachment-semantics/v1` classifies every declared entity as one of `FUSED`, `RIGID_FOLLOW`, `SURFACE_OFFSET`, `MULTI_ANCHOR`, `ARTICULATED`, `SUPPORTED_CLEARANCE`, or `FREE`, with directed owner/dependent relationships and evidence basis.
+Assembly is explicit construction state rather than a proximity guess.
 
-The semantic layer is declarative: it rejects missing modes, invalid owner cardinality, unknown entities, self attachment, duplicate IDs, cycles, and implicit attachment, but it does not yet solve transforms or validate realized mesh contact. Later surface-anchor, propagation, fusion, and contact stages consume this graph so that owner edits cannot silently leave stale dependents behind.
+The reusable structural graph is composed from contracts with separate responsibilities:
 
-## Logical fusion layer
+- `refas.attachment-semantics/v1` declares ownership modes such as fused, rigid-follow, surface-offset, multi-anchor, articulated, supported-clearance, or free;
+- logical fusion groups preserve semantic reopenability before controlled physical fusion;
+- surface anchors retain semantic patch identity and bounded rebind rules instead of durable world-space XYZ guesses;
+- one-owner follow and multi-anchor solving produce rigid target frames without hidden scale/deformation;
+- articulated joints provide bounded owner-local pivots;
+- propagation executes the validated attachment graph in deterministic topological order;
+- supported-clearance and realized-contact reports prove support, penetration, clearance, and contact only after realization;
+- physical-fusion reports bind controlled finalization back to semantic source state.
 
-`FUSED` does not mean that RefAs immediately welds mesh bytes. `refas.logical-fusion/v1` deterministically collapses nested `FUSED` owner chains into logical groups while keeping every semantic part independently addressable. A change to any group member produces `refas.logical-fusion-invalidation/v1`, which invalidates the entire logical body and requires reconstruction from semantic pre-fusion state.
+A missing or stale owner frame, infeasible multi-anchor solve, out-of-limit articulation, unresolved support state, or invalid realized contact blocks the structural path rather than becoming a score penalty.
 
-Logical fusion never moves geometry, welds vertices, removes faces, or authorizes closure. Non-fused dependents such as glasses remain outside the group and are handled later by attachment propagation. Physical fusion is a separate controlled finalization operation and must retain an exact semantic reopen path.
+Detailed contracts live in `docs/attachment-semantics.md`, `docs/surface-anchor-frames.md`, `docs/attachment-follow.md`, `docs/multi-anchor-solver.md`, `docs/articulation-clearance.md`, `docs/attachment-propagation.md`, `docs/realized-contact-support.md`, and `docs/physical-fusion.md`.
 
-## Surface anchor frame layer
+## Fitting and discrepancy
 
-Surface-following relationships do not store canonical world XYZ. `refas.surface-anchor-set/v1` binds an attachment owner to a semantic surface patch, triangle, barycentric coordinate, tangent hint, normal offset, and local rebind bounds. The evaluated owner-local frame contains position, normal, tangent, bitangent, and offset position.
+High-impact fitting remains owner-local:
 
-When owner geometry changes, `refas.surface-anchor-rebind/v1` may recover the anchor only inside the same semantic patch and only within the anchor's distance and normal-deviation limits. This makes modest shape edits and retessellation recoverable without silently snapping an attachment to unrelated geometry. Surface anchors still do not move the dependent object; rigid-follow, surface-offset, and multi-anchor propagation consume these frames later.
+- camera candidates belong to `spatial-hypotheses`;
+- parent-local pose variables belong to `assembly`;
+- geometry parameters belong to `shape-reconstruction`;
+- appearance variables belong to `appearance`;
+- illumination/background variables belong to `rendering`.
 
-## One-owner attachment follow layer
+The fitters retain every candidate trial, bind exact candidate and render bytes, and separate structural eligibility from numeric objective loss. A structurally invalid candidate is ineligible rather than merely penalized. Metrics and discrepancy maps may rank or localize candidates but cannot choose a repair owner or pass a visual gate.
 
-`refas.attachment-follow-state/v1` provides the two deterministic one-owner propagation primitives used before graph-wide solving. `RIGID_FOLLOW` preserves the baseline owner-relative subject frame. `SURFACE_OFFSET` consumes a current surface-anchor frame and a subject-local contact frame so the contact frame lands on the owner surface with the declared signed offset and orientation.
+The macro coordinator may alternate owner-local fitters and record exact digests, but it has no independent gate or finding authority.
 
-`refas.attachment-follow-report/v1` emits exact subject target rigid frames from explicit owner world frames. This layer is intentionally one-step: it does not order transitive dependencies, approximate `MULTI_ANCHOR`, edit mesh bytes, or authorize closure. Graph ordering and simultaneous constraints remain separate later layers.
+See `docs/parameter-fitting.md`, `docs/constraint-aware-fitting.md`, and `docs/fitting-and-discrepancy.md`.
 
-## Multi-anchor rigid solver layer
+## Rendering and visual evidence
 
-`refas.multi-anchor-plan/v1` represents one `MULTI_ANCHOR` relation as a simultaneous rigid-body fitting problem. Every owner declared by the relation must contribute a current surface anchor and explicit owner world frame, while the subject contributes matching local anchor frames and bounded position/orientation tolerances.
+RefAs requires actual realized geometry to produce review evidence.
 
-`refas.multi-anchor-report/v1` estimates only translation and rotation. It never scales or deforms the subject. A best-fit pose becomes eligible for realization only when weighted RMS error and every declared local tolerance pass. Otherwise the result is `INFEASIBLE`: the approximate pose remains diagnostic evidence, but downstream assembly must not apply it as a valid attachment solution. This prevents contradictory nose/ear contacts from being hidden by stretching or warping glasses.
+- Portable rendering provides deterministic integrity views and bounded resource behavior.
+- Registered comparison binds the exact source, candidate, hero render, camera/registration hypothesis, hierarchy and compared scopes.
+- Independent PBR evidence binds renderer/backend/version, lighting, color pipeline, declared material support and output frame digests.
+- Visual review remains a human/agent visual authority rather than a raster-success flag or metric threshold.
 
-## Articulation and supported-clearance layer
+A renderer can prove that it rendered exact bytes under a declared configuration; it cannot turn unsupported source or material identity into truth.
 
-`refas.articulated-joint/v1` defines the first `ARTICULATED` primitive as a bounded revolute joint. Owner-local and subject-local joint frames encode the pivot, the owner joint frame Z axis is the rotation axis, and the angle interval is fail-closed. Evaluation emits only a rigid subject target frame, so an offset pivot remains an actual pivot rather than degrading into rotation around the subject origin.
+## Bounded edit transactions and recovery
 
-`refas.supported-clearance/v1` represents intentional separation without treating floating geometry as valid by default. The subject must have an explicit acyclic support path through the attachment semantic graph, every path edge and clearance counterpart binds to realized-assembly proof evidence, and each signed gap has a local non-negative range. `refas.supported-clearance-report/v1` accepts only a valid digest-bound realized assembly proof; missing support, penetration, or an out-of-range gap yields `BLOCKED` rather than invented hidden support or forced contact.
+A bounded edit contains one baseline checkpoint, one owner capability, one hierarchy scope, one testable intent, protected metrics, and exactly one direct candidate checkpoint.
 
-## Attachment propagation graph layer
+Possible outcomes include keeping the candidate, rolling back exact baseline bytes, reopening the responsible owner, requesting more review, or allowing local closure when declared gates pass.
 
-`refas.attachment-propagation-plan/v1` turns the validated attachment ownership graph into one deterministic topological execution order. It does not implement another solver: `RIGID_FOLLOW` and `SURFACE_OFFSET` call the one-owner follow runtime, `MULTI_ANCHOR` calls the rigid multi-anchor solver, and `ARTICULATED` calls the bounded joint evaluator. Each resolved target frame becomes the owner input for later dependents in the same graph execution.
+Rejected candidates remain in checkpoint history as evidence but do not become trusted head state merely because they scored well.
 
-`FREE`, `FUSED`, and `SUPPORTED_CLEARANCE` are never assigned guessed transforms by the graph. Their current canonical world frames enter only through explicit external bindings that record the exact semantic state digest, exact rigid-frame digest, and the exact current frame digest of every semantic owner. A stale fused child, an old supported-clearance pose, or an attempted world-frame override for a solver-owned relation therefore fails closed before it can feed a dependent.
+## Candidate provenance transaction
 
-`refas.attachment-propagation-report/v1` records `READY_FOR_REALIZATION` only when every required world frame resolved without a blocker. `INFEASIBLE` multi-anchor state, out-of-limit articulation, stale external state, or a missing owner frame stops transitive propagation. `SUPPORTED_CLEARANCE` remains `PENDING_REALIZED_VALIDATION` even in a ready report, because support, penetration, and signed gap still require the realized-assembly proof after GLB realization. Propagation never mutates mesh bytes and never grants closure.
+Before whole-object certification, one exact candidate may be sealed into `refas.candidate-transaction/v1`.
 
-## Bounded edit transaction
+The transaction binds:
 
-A transaction contains one baseline checkpoint, one capability, one hierarchy scope, one testable intent, protected metrics, and exactly one direct candidate checkpoint.
+- candidate SHA-256 and byte size;
+- the exact checkpoint content digest;
+- evidence nodes with semantic roles and optional public schemas;
+- exact evidence byte digests;
+- candidate-subject bindings proved from artifact bytes;
+- evidence dependency edges proved by content-addressed references inside the participating artifacts;
+- decision nodes and declared evidence obligations.
 
-Possible decisions are:
+The evidence graph must be canonical and acyclic. Decision evidence must remain reachable from the candidate provenance chain. Changing candidate bytes, checkpoint content, evidence bytes, dependency proof, subject binding, or obligation changes the transaction identity or makes validation fail.
 
-- `KEEP_EDIT`: objective improved without a protected regression.
-- `ROLLBACK_EDIT`: the baseline bytes are restored.
-- `REOPEN_OWNER`: a typed blocker selects an owner and pre-owner checkpoint.
-- `REQUEST_REVIEW`: evidence is insufficient or utility is tied; baseline remains active.
-- `MAY_CLOSE`: all declared local closure gates pass.
-- A whole-object certificate additionally requires a `refas.visual-review/v1` artifact bound to the exact source and asset digests. Passing view and gate verdicts carry structured source observation, render observation, comparison conclusion, and evidence references. An independent pass must bind the exact current registered-comparison report, its source/asset/hero-frame/render-report/registration/hierarchy/input digests, and every compared scope. When appearance passes, it must cite a valid `refas.pbr-render-report/v1` and digest-bound frames from an independent PBR renderer. Local gate strings cannot override its verdict or findings.
+A valid candidate transaction proves provenance consistency. It does **not** certify a claim. See `docs/candidate-transactions.md`.
 
-Rejected candidates remain in checkpoint history as evidence, but they do not become the active head.
+## Claim-driven certification
+
+`refas.certification-policy/v1` declares which claims exist and what each claim requires.
+
+For each claim, policy may require:
+
+- specific evidence roles and public schemas;
+- minimum evidence counts;
+- registered-comparison evidence for source classes that require it;
+- finding sources and JSON-pointer locations;
+- veto severities;
+- required/optional claim status.
+
+The evaluator first revalidates the sealed candidate transaction and exact evidence bytes, then reproduces a `refas.claim-certification-decision/v1`. Transaction validity alone is never authorization.
+
+Whole-object certification additionally preserves a mandatory authority floor. A checkpoint-bound custom policy may add claims or make requirements stricter, but a freshly re-digested policy cannot delete mandatory evidence obligations, finding sources, required status, veto severities, or source-specific registered-comparison requirements.
+
+See `docs/claim-certification.md`.
+
+## Whole-object certificate
+
+A whole-object certificate binds the active head and the exact authority chain that justified it.
+
+Conceptually:
+
+```text
+exact source + candidate + checkpoint
+              ↓
+sealed candidate transaction
+              ↓
+certification policy
+              ↓
+reproduced per-claim decision
+              ↓
+required visual / comparison / PBR / structural gates
+              ↓
+whole-object certificate
+```
+
+The certificate binds candidate/checkpoint/source identity plus transaction, policy and decision digests and the authorized claim set. Audit reproduces those bindings from current evidence rather than trusting a historical boolean.
+
+Substitution, stale-checkpoint replay, decision forgery, cross-claim evidence reuse, weaker policy re-signing, or post-certification divergence fail closed at the appropriate provenance, policy, decision, checkpoint or audit boundary. See `docs/adversarial-certification.md`.
 
 ## Runtime boundary
 
-The dependency-light JavaScript core owns:
+The dependency-light JavaScript core owns semantic contracts, deterministic geometry/GLB construction, attachment and structural validators, owner-local fitting, candidate provenance, claim evaluation, checkpoint storage, recovery, audit and certification.
 
-- canonical JSON and SHA-256;
-- canonical edit-class and GLB mutation-boundary contracts;
-- explicit attachment semantic graphs and owner/dependent invariants;
-- logical fusion groups and digest-bound group invalidation without physical mesh mutation;
-- owner-local surface anchor frames with bounded semantic-patch retessellation recovery;
-- deterministic one-owner rigid-follow and surface-offset target propagation;
-- simultaneous rigid multi-anchor fitting with explicit infeasibility and no hidden scale/deformation;
-- bounded revolute articulation plus support-chain-aware clearance evaluation against realized assembly proof;
-- deterministic fail-closed attachment DAG propagation that reuses those relation-specific solvers and binds external canonical frames to exact pose state;
-- hierarchy and observation contracts;
-- spatial hypotheses and 2D reference registration;
-- deterministic mesh and embedded GLB construction;
-- evidence-bound joint geometry parameter fitting with verified trial bytes and candidate-ranking-only metrics;
-- owner-local camera, pose, appearance, and lighting fitters plus a non-authoritative alternating macro coordinator;
-- deterministic model-free discrepancy evidence and generic landmark/guide/section-loft construction capacity reports;
-- shared-boundary surface networks;
-- immutable child composition and assembly validation;
-- digest-bound portable-integrity and independent-PBR visual-review validation with fail-closed certification readiness;
-- an external-process PBR boundary: the bundled Cook–Torrance fallback and optional Blender/Three.js/Filament/glTF Sample Viewer/VTK workers emit the same renderer report without linking those engines into RefAs;
-- checkpoint object storage, restore, audit, and failure routing.
-
-Pillow and NumPy provide portable evidence generation and software rendering. Their outputs are observation and validation aids. They never replace agent inspection of the raw source.
+Python with Pillow and NumPy provides portable evidence generation and software rendering support. External renderers may participate only through digest-bound report contracts. Observation aids and renderer outputs never replace inspection of the raw reference.
 
 ## Truth and uncertainty
 
-Single-view depth, hidden topology, symmetry, physical dimensions, and material identity are not facts unless evidence supports them. RefAs stores plausible alternatives and falsifiers instead of collapsing uncertainty into a convenient mesh.
+Single-view depth, hidden topology, symmetry, physical dimensions, full terminal orientation, internal mechanisms and material identity are not facts unless evidence supports them.
 
-Metrics summarize evidence but cannot choose a repair owner. The repair unit is always a localized, typed visual finding.
+RefAs stores plausible alternatives and falsifiers instead of collapsing uncertainty into a convenient mesh. Metrics summarize evidence but do not own truth, repair routing or certification.
+
+Important non-guarantees for the first stable release are listed in `docs/known-limitations.md`.
