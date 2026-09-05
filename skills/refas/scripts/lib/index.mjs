@@ -12,6 +12,7 @@ export * from './realized-contact.mjs';
 export * from './fit-structural-eligibility.mjs';
 export * from './candidate-transaction.mjs';
 export * from './certification-policy.mjs';
+export * from './certification-authority.mjs';
 export * from './hierarchy.mjs';
 export * from './ownership.mjs';
 export * from './failure-router.mjs';
