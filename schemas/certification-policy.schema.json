@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/certification-policy.schema.json",
+  "title": "RefAs claim certification policy",
+  "type": "object",
+  "required": ["schema", "id", "claims", "policy", "policyDigest"],
+  "properties": {
+    "schema": {"const": "refas.certification-policy/v1"},
+    "id": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "claims": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "description", "required", "obligations", "findingSources", "vetoSeverities"],
+        "properties": {
+          "id": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "description": {"type": "string"},
+          "required": {"type": "boolean"},
+          "obligations": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["id", "role", "schema", "minCount"],
+              "properties": {
+                "id": {"$ref": "common.schema.json#/$defs/semanticId"},
+                "role": {"anyOf": [{"$ref": "common.schema.json#/$defs/semanticId"}, {"type": "null"}]},
+                "schema": {"type": ["string", "null"]},
+                "minCount": {"type": "integer", "minimum": 1}
+              },
+              "additionalProperties": false
+            }
+          },
+          "findingSources": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["role", "schema", "pointer"],
+              "properties": {
+                "role": {"anyOf": [{"$ref": "common.schema.json#/$defs/semanticId"}, {"type": "null"}]},
+                "schema": {"type": ["string", "null"]},
+                "pointer": {"type": "string", "pattern": "^/"}
+              },
+              "additionalProperties": false
+            }
+          },
+          "vetoSeverities": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+        },
+        "additionalProperties": false
+      }
+    },
+    "policy": {
+      "type": "object",
+      "required": ["transactionValidityAloneCannotAuthorizeClaims", "claimEvidenceObligationsAreExplicit", "blockingFindingsVetoAffectedClaims", "nonBlockingFindingsRemainDisclosed", "certificationPolicyDoesNotMutateArtifacts"],
+      "properties": {
+        "transactionValidityAloneCannotAuthorizeClaims": {"const": true},
+        "claimEvidenceObligationsAreExplicit": {"const": true},
+        "blockingFindingsVetoAffectedClaims": {"const": true},
+        "nonBlockingFindingsRemainDisclosed": {"const": true},
+        "certificationPolicyDoesNotMutateArtifacts": {"const": true}
+      },
+      "additionalProperties": false
+    },
+    "policyDigest": {"$ref": "common.schema.json#/$defs/digest"}
+  },
+  "additionalProperties": false
+}
