@@ -17,6 +17,7 @@ import {
   validateCertificationPolicy,
   validateClaimCertificationDecision,
 } from './certification-policy.mjs';
+import {validateWholeObjectPolicyAuthority} from './certification-authority.mjs';
 import {inspectCertificationProjectionEvidence} from './certification-projection-evidence.mjs';
 
 const CONTRACT_FIXTURE_ACQUISITIONS = new Set(['test-fixture', 'deterministic-project-fixture', 'synthetic-test-fixture']);
@@ -122,13 +123,16 @@ async function synthesizedTransactionContext(root, state, head, reviewArtifact, 
 async function policyForHead(root, state, head) {
   const policyArtifacts = (head.artifactRefs ?? []).filter((artifact) => artifact.kind === 'certification-policy');
   if (policyArtifacts.length > 1) throw new Error('certification checkpoint may bind at most one certification-policy artifact');
+  const requiresRegisteredComparison = !isFixtureSource(state);
   if (!policyArtifacts.length) {
-    return {policy: createDefaultWholeObjectCertificationPolicy({requiresRegisteredComparison: !isFixtureSource(state)}), policySource: 'runtime-default'};
+    return {policy: createDefaultWholeObjectCertificationPolicy({requiresRegisteredComparison}), policySource: 'runtime-default'};
   }
   const bytes = await readBoundArtifact(root, policyArtifacts[0], 'certification-policy artifact');
   const policy = jsonBytes(bytes, 'certification-policy artifact');
   const validation = validateCertificationPolicy(policy);
   if (!validation.valid) throw new Error(`certification policy is invalid: ${validation.errors.join('; ')}`);
+  const authority = validateWholeObjectPolicyAuthority(policy, {requiresRegisteredComparison});
+  if (!authority.valid) throw new Error(`certification policy weakens mandatory whole-object authority: ${authority.errors.join('; ')}`);
   return {policy, policySource: 'checkpoint-artifact'};
 }
 
