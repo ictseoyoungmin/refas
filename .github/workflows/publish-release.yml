@@ -73,12 +73,26 @@ jobs:
             return {response, body};
           }
 
-          function releaseNotes() {
-            const changelog = fs.readFileSync('CHANGELOG.md', 'utf8');
+          function extractReleaseNotes(changelog) {
             const escaped = version.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-            const match = changelog.match(new RegExp(`^## ${escaped}[^\\n]*\\n([\\s\\S]*?)(?=^## |\\s*$)`, 'm'));
-            if (!match) throw new Error(`CHANGELOG.md has no section for ${version}`);
-            return match[1].trim();
+            const heading = new RegExp(`^##\\s+${escaped}(?:\\s|$)`);
+            const lines = changelog.split(/\\r?\\n/);
+            const start = lines.findIndex((line) => heading.test(line));
+            if (start < 0) throw new Error(`CHANGELOG.md has no section for ${version}`);
+            let end = lines.findIndex((line, index) => index > start && /^##\\s+/.test(line));
+            if (end < 0) end = lines.length;
+            const notes = lines.slice(start + 1, end).join('\\n').trim();
+            if (!notes) throw new Error(`CHANGELOG.md section for ${version} is empty`);
+            return notes;
+          }
+
+          function desiredRelease(notes) {
+            return {
+              name: `RefAs ${tag}`,
+              body: notes,
+              draft: false,
+              prerelease: version.includes('-'),
+            };
           }
 
           async function readTagRef() {
@@ -88,26 +102,82 @@ jobs:
             return body;
           }
 
+          async function readTextFileAtRef(filePath, ref) {
+            const encodedPath = filePath.split('/').map(encodeURIComponent).join('/');
+            const {response, body} = await request(`/contents/${encodedPath}?ref=${encodeURIComponent(ref)}`);
+            if (!response.ok) {
+              throw new Error(`unable to read ${filePath} at ${ref}: ${response.status} ${JSON.stringify(body)}`);
+            }
+            if (body?.type !== 'file' || body?.encoding !== 'base64' || typeof body?.content !== 'string') {
+              throw new Error(`${filePath} at ${ref} is not a base64 GitHub file response`);
+            }
+            return Buffer.from(body.content.replace(/\\n/g, ''), 'base64').toString('utf8');
+          }
+
+          function verifyReleaseMetadata(release, releaseSha, desired) {
+            if (release.target_commitish !== releaseSha) {
+              throw new Error(`${tag} release target ${release.target_commitish} does not match tag commit ${releaseSha}`);
+            }
+            for (const [key, expected] of Object.entries(desired)) {
+              if (release[key] !== expected) {
+                throw new Error(`${tag} release ${key} mismatch after publication repair`);
+              }
+            }
+          }
+
           const existingRef = await readTagRef();
           if (existingRef) {
-            if (existingRef.object?.type !== 'commit' || existingRef.object?.sha !== sha) {
-              throw new Error(`${tag} already exists but does not point to verified commit ${sha}`);
+            if (existingRef.object?.type !== 'commit') {
+              throw new Error(`${tag} exists but is not a lightweight commit tag`);
             }
-            const {response, body} = await request(`/releases/tags/${encodeURIComponent(tag)}`);
-            if (!response.ok) throw new Error(`${tag} exists without a readable GitHub Release: ${response.status} ${JSON.stringify(body)}`);
-            console.log(`${tag} already exists at verified commit ${sha}; release id=${body.id}`);
+
+            const releaseSha = existingRef.object.sha;
+            const taggedPackage = JSON.parse(await readTextFileAtRef('package.json', releaseSha));
+            if (taggedPackage.version !== version) {
+              throw new Error(`${tag} points to package version ${taggedPackage.version}, expected ${version}`);
+            }
+            const notes = extractReleaseNotes(await readTextFileAtRef('CHANGELOG.md', releaseSha));
+            const desired = desiredRelease(notes);
+
+            const {response, body: release} = await request(`/releases/tags/${encodeURIComponent(tag)}`);
+            if (!response.ok) {
+              throw new Error(`${tag} exists without a readable GitHub Release: ${response.status} ${JSON.stringify(release)}`);
+            }
+            if (release.target_commitish !== releaseSha) {
+              throw new Error(`${tag} release target ${release.target_commitish} does not match tag commit ${releaseSha}`);
+            }
+
+            const patch = {};
+            for (const [key, expected] of Object.entries(desired)) {
+              if (release[key] !== expected) patch[key] = expected;
+            }
+            if (Object.keys(patch).length > 0) {
+              const {response: patchResponse, body: patchBody} = await request(`/releases/${release.id}`, {
+                method: 'PATCH',
+                body: JSON.stringify(patch),
+              });
+              if (!patchResponse.ok) {
+                throw new Error(`unable to repair ${tag} release metadata: ${patchResponse.status} ${JSON.stringify(patchBody)}`);
+              }
+            }
+
+            const {response: verifyResponse, body: verifiedRelease} = await request(`/releases/tags/${encodeURIComponent(tag)}`);
+            if (!verifyResponse.ok) {
+              throw new Error(`unable to re-read ${tag} release: ${verifyResponse.status} ${JSON.stringify(verifiedRelease)}`);
+            }
+            verifyReleaseMetadata(verifiedRelease, releaseSha, desired);
+            console.log(`${tag} remains immutable at ${releaseSha}; release metadata verified from the tagged source snapshot`);
             process.exit(0);
           }
 
+          const notes = extractReleaseNotes(fs.readFileSync('CHANGELOG.md', 'utf8'));
+          const desired = desiredRelease(notes);
           const {response, body} = await request('/releases', {
             method: 'POST',
             body: JSON.stringify({
               tag_name: tag,
               target_commitish: sha,
-              name: `RefAs ${tag}`,
-              body: releaseNotes(),
-              draft: false,
-              prerelease: version.includes('-'),
+              ...desired,
               make_latest: version.includes('-') ? 'false' : 'true',
             }),
           });
@@ -117,5 +187,10 @@ jobs:
           if (!createdRef || createdRef.object?.type !== 'commit' || createdRef.object?.sha !== sha) {
             throw new Error(`${tag} was created but does not resolve to verified commit ${sha}`);
           }
+          const {response: verifyResponse, body: verifiedRelease} = await request(`/releases/tags/${encodeURIComponent(tag)}`);
+          if (!verifyResponse.ok) {
+            throw new Error(`unable to verify created ${tag} release: ${verifyResponse.status} ${JSON.stringify(verifiedRelease)}`);
+          }
+          verifyReleaseMetadata(verifiedRelease, sha, desired);
           console.log(`published ${tag} at ${sha}: ${body.html_url}`);
           NODE
