@@ -7,7 +7,7 @@ const FACING_RELATIONS = new Set([
   'toward-parent', 'away-from-parent', 'ambiguous', 'unknown',
 ]);
 const PLANE_VISIBILITY = new Set(['broad-face-dominant', 'edge-dominant', 'mixed', 'occluded', 'unknown']);
-const TWIST_RELATIONS = new Set(['pronated', 'supinated', 'clockwise', 'counterclockwise', 'neutral', 'ambiguous', 'unknown']);
+const TWIST_RELATIONS = new Set(['clockwise', 'counterclockwise', 'neutral', 'ambiguous', 'unknown']);
 const CONFIDENCE = new Set(['high', 'medium', 'low']);
 const uniqueStrings = (values = []) => [...new Set(values.map(String).filter(Boolean))].sort();
 
@@ -67,6 +67,7 @@ export function createOrientationEvidenceSet({scopeId, sourceSha256, observation
       cameraRelativeEvidencePreferredOverInventedEulerAngles: true,
       terminalFacingAndTwistRemainExplicit: true,
       ambiguousRollMustRemainAmbiguousUntilResolved: true,
+      domainSpecificTwistVocabularyStaysOutsideCore: true,
       orientationEvidenceDoesNotAuthorizeVisualClosure: true,
     },
   };
