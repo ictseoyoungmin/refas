@@ -6,43 +6,19 @@
   "required": ["schema", "scopeId", "sourceSha256", "assetSha256", "orientationEvidenceDigest", "residuals", "metrics", "evidenceRefs", "policy", "discrepancyDigest"],
   "properties": {
     "schema": {"const": "refas.orientation-discrepancy/v1"},
-    "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
-    "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
-    "assetSha256": {"$ref": "common.schema.json#/$defs/digest"},
-    "orientationEvidenceDigest": {"$ref": "common.schema.json#/$defs/digest"},
-    "residuals": {
-      "type": "array",
-      "minItems": 1,
-      "items": {
-        "type": "object",
-        "required": ["id", "entityId", "primaryAxisErrorRadians", "facingErrorRadians", "lateralErrorRadians", "twistErrorRadians", "evidenceRefs"],
-        "properties": {
-          "id": {"$ref": "common.schema.json#/$defs/semanticId"},
-          "entityId": {"$ref": "common.schema.json#/$defs/semanticId"},
-          "primaryAxisErrorRadians": {"type": "number", "minimum": 0, "maximum": 3.141592653589793},
-          "facingErrorRadians": {"type": "number", "minimum": 0, "maximum": 3.141592653589793},
-          "lateralErrorRadians": {"type": "number", "minimum": 0, "maximum": 3.141592653589793},
-          "twistErrorRadians": {"type": "number", "minimum": 0, "maximum": 3.141592653589793},
-          "evidenceRefs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
-        },
-        "additionalProperties": false
-      }
-    },
-    "metrics": {"type": "object"},
+    "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"}, "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"}, "assetSha256": {"$ref": "common.schema.json#/$defs/digest"}, "orientationEvidenceDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "residuals": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["id", "entityId", "primaryAxisErrorRadians", "facingErrorRadians", "lateralErrorRadians", "twistErrorRadians", "evidenceRefs"], "properties": {
+      "id": {"$ref": "common.schema.json#/$defs/semanticId"}, "entityId": {"$ref": "common.schema.json#/$defs/semanticId"},
+      "primaryAxisErrorRadians": {"type": "number", "minimum": 0, "maximum": 3.141592653589793}, "facingErrorRadians": {"type": "number", "minimum": 0, "maximum": 3.141592653589793}, "lateralErrorRadians": {"type": "number", "minimum": 0, "maximum": 3.141592653589793}, "twistErrorRadians": {"type": "number", "minimum": 0, "maximum": 3.141592653589793},
+      "evidenceRefs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+    }, "additionalProperties": false}},
+    "metrics": {"type": "object", "required": ["primaryAxisMeanRadians", "facingMeanRadians", "lateralMeanRadians", "twistMeanRadians", "primaryAxisMaxRadians", "facingMaxRadians", "twistMaxRadians"], "properties": {
+      "primaryAxisMeanRadians": {"type": "number", "minimum": 0, "maximum": 3.141592653589793}, "facingMeanRadians": {"type": "number", "minimum": 0, "maximum": 3.141592653589793}, "lateralMeanRadians": {"type": "number", "minimum": 0, "maximum": 3.141592653589793}, "twistMeanRadians": {"type": "number", "minimum": 0, "maximum": 3.141592653589793}, "primaryAxisMaxRadians": {"type": "number", "minimum": 0, "maximum": 3.141592653589793}, "facingMaxRadians": {"type": "number", "minimum": 0, "maximum": 3.141592653589793}, "twistMaxRadians": {"type": "number", "minimum": 0, "maximum": 3.141592653589793}
+    }, "additionalProperties": false},
     "evidenceRefs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
-    "policy": {
-      "type": "object",
-      "required": ["samePrimaryAxisDoesNotImplySameOrientation", "orientationMetricsRankCandidatesOnly", "orientationMetricsCannotSelectOwner", "orientationMetricsCannotPassVisualGate", "actualVisualReviewRemainsRequired"],
-      "properties": {
-        "samePrimaryAxisDoesNotImplySameOrientation": {"const": true},
-        "orientationMetricsRankCandidatesOnly": {"const": true},
-        "orientationMetricsCannotSelectOwner": {"const": true},
-        "orientationMetricsCannotPassVisualGate": {"const": true},
-        "actualVisualReviewRemainsRequired": {"const": true}
-      },
-      "additionalProperties": false
-    },
+    "policy": {"type": "object", "required": ["samePrimaryAxisDoesNotImplySameOrientation", "orientationMetricsRankCandidatesOnly", "orientationMetricsCannotSelectOwner", "orientationMetricsCannotPassVisualGate", "actualVisualReviewRemainsRequired"], "properties": {
+      "samePrimaryAxisDoesNotImplySameOrientation": {"const": true}, "orientationMetricsRankCandidatesOnly": {"const": true}, "orientationMetricsCannotSelectOwner": {"const": true}, "orientationMetricsCannotPassVisualGate": {"const": true}, "actualVisualReviewRemainsRequired": {"const": true}
+    }, "additionalProperties": false},
     "discrepancyDigest": {"$ref": "common.schema.json#/$defs/digest"}
-  },
-  "additionalProperties": false
+  }, "additionalProperties": false
 }

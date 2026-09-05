@@ -14,15 +14,16 @@ const D = (c = 'a') => c.repeat(64);
 
 test('orientation evidence preserves facing and twist without inventing Euler angles', () => {
   const evidence = createOrientationEvidenceSet({
-    scopeId: 'left-palm', sourceSha256: D(), evidenceRefs: ['source/reference.png'],
+    scopeId: 'terminal-part', sourceSha256: D(), evidenceRefs: ['source/reference.png'],
     observations: [{
-      id: 'left-palm-orientation', entityId: 'left-palm', parentId: 'left-wrist',
+      id: 'terminal-orientation', entityId: 'terminal-part', parentId: 'parent-part',
       primaryAxis: {screenDirection: [0.62, -0.78]}, facing: 'downward', visiblePlane: 'edge-dominant',
-      nearSide: 'thumb-side', relativeTwist: 'pronated', confidence: 'high', evidenceRefs: ['crop:palm'],
+      nearSide: 'keyed-side', relativeTwist: 'clockwise', confidence: 'high', evidenceRefs: ['crop:terminal'],
     }],
   });
   assert.equal(validateOrientationEvidenceSet(evidence).valid, true);
   assert.equal(evidence.observations[0].facing, 'downward');
+  assert.equal(evidence.observations[0].relativeTwist, 'clockwise');
   assert.equal('rotation' in evidence.observations[0], false);
   assert.equal(evidence.policy.cameraRelativeEvidencePreferredOverInventedEulerAngles, true);
 });

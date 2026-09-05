@@ -2,10 +2,146 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://refas.dev/schemas/orientation-pose-fit.schema.json",
   "title": "RefAs orientation-aware pose fit plan/report",
-  "type": "object",
-  "required": ["schema"],
-  "properties": {
-    "schema": {"const": "refas.orientation-pose-fit/v1"}
-  },
-  "additionalProperties": true
+  "oneOf": [
+    {"$ref": "#/$defs/plan"},
+    {"$ref": "#/$defs/report"}
+  ],
+  "$defs": {
+    "digest": {"$ref": "common.schema.json#/$defs/digest"},
+    "semanticId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "weights": {
+      "type": "object",
+      "required": ["primaryAxis", "facing", "lateral", "twist"],
+      "properties": {
+        "primaryAxis": {"type": "number", "minimum": 0},
+        "facing": {"type": "number", "minimum": 0},
+        "lateral": {"type": "number", "minimum": 0},
+        "twist": {"type": "number", "minimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "chain": {
+      "type": "object",
+      "required": ["id", "terminalNodeId", "variableIds", "evidenceRefs"],
+      "properties": {
+        "id": {"$ref": "#/$defs/semanticId"},
+        "terminalNodeId": {"$ref": "#/$defs/semanticId"},
+        "variableIds": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/semanticId"}},
+        "evidenceRefs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+      },
+      "additionalProperties": false
+    },
+    "policy": {
+      "type": "object",
+      "required": [
+        "terminalMismatchReopensSmallestResponsibleChain",
+        "chainVariablesRemainParentLocal",
+        "meshBytesImmutable",
+        "structuralEligibilityRemainsHardBarrier",
+        "orientationEvidenceMustBindExactCandidate",
+        "orientationLossIsDerivedFromBoundDiscrepancy",
+        "orientationMetricsCannotPassVisualGate",
+        "selectedCandidateRequiresActualVisualReview"
+      ],
+      "properties": {
+        "terminalMismatchReopensSmallestResponsibleChain": {"const": true},
+        "chainVariablesRemainParentLocal": {"const": true},
+        "meshBytesImmutable": {"const": true},
+        "structuralEligibilityRemainsHardBarrier": {"const": true},
+        "orientationEvidenceMustBindExactCandidate": {"const": true},
+        "orientationLossIsDerivedFromBoundDiscrepancy": {"const": true},
+        "orientationMetricsCannotPassVisualGate": {"const": true},
+        "selectedCandidateRequiresActualVisualReview": {"const": true}
+      },
+      "additionalProperties": false
+    },
+    "posePlan": {
+      "type": "object",
+      "required": ["schema", "planDigest", "variables", "objectives", "evaluationBudget", "improvementTolerance"],
+      "properties": {
+        "schema": {"const": "refas.pose-fit/v1"},
+        "planDigest": {"$ref": "#/$defs/digest"},
+        "variables": {"type": "array", "minItems": 1},
+        "objectives": {"type": "array", "minItems": 1},
+        "evaluationBudget": {"type": "integer", "minimum": 2},
+        "improvementTolerance": {"type": "number", "minimum": 0}
+      },
+      "additionalProperties": true
+    },
+    "plan": {
+      "type": "object",
+      "required": ["schema", "id", "ownerCapability", "scopeId", "sourceSha256", "posePlan", "posePlanDigest", "orientationEvidenceDigest", "chains", "chainFractions", "orientationWeights", "evidenceRefs", "policy", "planDigest"],
+      "properties": {
+        "schema": {"const": "refas.orientation-pose-fit/v1"},
+        "id": {"$ref": "#/$defs/semanticId"},
+        "ownerCapability": {"const": "assembly"},
+        "scopeId": {"$ref": "#/$defs/semanticId"},
+        "sourceSha256": {"$ref": "#/$defs/digest"},
+        "posePlan": {"$ref": "#/$defs/posePlan"},
+        "posePlanDigest": {"$ref": "#/$defs/digest"},
+        "orientationEvidenceDigest": {"$ref": "#/$defs/digest"},
+        "chains": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/chain"}},
+        "chainFractions": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "number", "minimum": -1, "maximum": 1}},
+        "orientationWeights": {"$ref": "#/$defs/weights"},
+        "evidenceRefs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "policy": {"$ref": "#/$defs/policy"},
+        "planDigest": {"$ref": "#/$defs/digest"}
+      },
+      "additionalProperties": false
+    },
+    "decompositionEntry": {
+      "type": "object",
+      "required": ["id", "value", "contribution"],
+      "properties": {
+        "id": {"$ref": "#/$defs/semanticId"},
+        "value": {"type": "number"},
+        "contribution": {"type": "number"}
+      },
+      "additionalProperties": false
+    },
+    "trial": {
+      "type": "object",
+      "required": ["id", "sequence", "parameters", "edits", "candidateSha256", "candidateBinarySha256", "baselineBinarySha256", "measurements", "decomposition", "objectiveLoss", "structuralEligibility", "eligible", "renderEvidence", "orientationDiscrepancy", "orientationDiscrepancyDigest", "evidenceRefs"],
+      "properties": {
+        "id": {"$ref": "#/$defs/semanticId"},
+        "sequence": {"type": "integer", "minimum": 1},
+        "parameters": {"type": "object", "additionalProperties": {"type": "number"}},
+        "edits": {"type": "array"},
+        "candidateSha256": {"$ref": "#/$defs/digest"},
+        "candidateBinarySha256": {"$ref": "#/$defs/digest"},
+        "baselineBinarySha256": {"$ref": "#/$defs/digest"},
+        "measurements": {"type": "object", "required": ["orientation-loss"], "properties": {"orientation-loss": {"type": "number", "minimum": 0, "maximum": 1}}, "additionalProperties": {"type": "number"}},
+        "decomposition": {"type": "array", "items": {"$ref": "#/$defs/decompositionEntry"}},
+        "objectiveLoss": {"type": "number"},
+        "structuralEligibility": {"type": ["object", "null"]},
+        "eligible": {"type": "boolean"},
+        "renderEvidence": {},
+        "orientationDiscrepancy": {"$ref": "orientation-discrepancy.schema.json"},
+        "orientationDiscrepancyDigest": {"$ref": "#/$defs/digest"},
+        "evidenceRefs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+      },
+      "additionalProperties": false
+    },
+    "report": {
+      "type": "object",
+      "required": ["schema", "plan", "planDigest", "ownerCapability", "scopeId", "sourceSha256", "baselineTrialId", "selectedTrialId", "status", "objectiveImprovement", "evaluationCount", "trials", "policy", "reportDigest"],
+      "properties": {
+        "schema": {"const": "refas.orientation-pose-fit/v1"},
+        "plan": {"$ref": "#/$defs/plan"},
+        "planDigest": {"$ref": "#/$defs/digest"},
+        "ownerCapability": {"const": "assembly"},
+        "scopeId": {"$ref": "#/$defs/semanticId"},
+        "sourceSha256": {"$ref": "#/$defs/digest"},
+        "baselineTrialId": {"$ref": "#/$defs/semanticId"},
+        "selectedTrialId": {"anyOf": [{"$ref": "#/$defs/semanticId"}, {"type": "null"}]},
+        "status": {"enum": ["IMPROVED", "NO_IMPROVEMENT", "NO_ELIGIBLE_CANDIDATE"]},
+        "objectiveImprovement": {"type": "number"},
+        "evaluationCount": {"type": "integer", "minimum": 1},
+        "trials": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/trial"}},
+        "policy": {"$ref": "#/$defs/policy"},
+        "reportDigest": {"$ref": "#/$defs/digest"}
+      },
+      "additionalProperties": false
+    }
+  }
 }
