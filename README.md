@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="skills/refas/assets/icon.svg" width="180" alt="RefAs robotic arm icon">
+</p>
+
 # RefAs
 
 **Reference Asset Foundry** is a vision-first reconstruction system for AI agents that must turn reference images into traceable, editable, and evidence-bound 3D assets.
