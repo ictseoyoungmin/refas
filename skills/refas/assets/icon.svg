@@ -83,7 +83,7 @@
     <path id="shoulder-joint-side-wall" d="M382 412 C395 416 408 428 414 442 L414 458 C408 467 400 475 392 480 C394 458 390 433 382 412 Z" fill="url(#graySide)" opacity="0.96"/>
     <g id="shoulder-joint" transform="translate(2 7)">
       <circle cx="307" cy="462" r="83" fill="url(#jointOuter)"/>
-      <path d="M264 389 A83 83 0 0 0 373 509 A83 83 0 0 1 265 523 A83 83 0 0 1 264 389 Z" fill="#f5f6f7" opacity="0.62"/>
+      <path d="M264 389 A 83 83 0 0 0 373 509 A 83 83 0 0 1 265 523 A 83 83 0 0 1 264 389 Z" fill="#f5f6f7" opacity="0.62"/>
       <circle cx="307" cy="462" r="53" fill="url(#jointCore)"/>
       <circle cx="307" cy="462" r="25" fill="url(#centerDisc)"/>
     </g>
