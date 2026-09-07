@@ -1,6 +1,133 @@
-<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M7 20.4524C6.225 20.4524 5.53333 20.2857 4.925 19.9524C4.31667 19.6107 3.84167 19.1357 3.5 18.5274C3.16667 17.9191 3 17.2274 3 16.4524V6.45239C3 5.67739 3.16667 4.98573 3.5 4.37739C3.84167 3.76906 4.31667 3.29823 4.925 2.96489C5.53333 2.62323 6.225 2.45239 7 2.45239H17C17.775 2.45239 18.4667 2.62323 19.075 2.96489C19.6833 3.29823 20.1542 3.76906 20.4875 4.37739C20.8292 4.98573 21 5.67739 21 6.45239V16.4524C21 17.2274 20.8292 17.9191 20.4875 18.5274C20.1542 19.1357 19.6833 19.6107 19.075 19.9524C18.4667 20.2857 17.775 20.4524 17 20.4524H7Z" fill="#4D4D4D"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M7.95981 8.77245C8.22487 8.41907 8.72648 8.34735 9.07992 8.6123C9.43319 8.87741 9.50509 9.37903 9.24008 9.73241L7.79965 11.6523L9.24008 13.5723C9.50496 13.9257 9.43325 14.4273 9.07992 14.6924C8.72654 14.9573 8.22491 14.8854 7.95981 14.5322L6.16 12.1328C5.94667 11.8484 5.94667 11.4563 6.16 11.1719L7.95981 8.77245Z" fill="white"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M12.6844 8.89452C12.882 8.49943 13.3625 8.33957 13.7577 8.5371C14.1526 8.73474 14.3136 9.21526 14.1161 9.61034L11.7157 14.4101C11.5181 14.8051 11.0375 14.9649 10.6424 14.7676C10.2473 14.57 10.0865 14.0895 10.284 13.6943L12.6844 8.89452Z" fill="white"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M15.3202 8.6123C15.6736 8.34741 16.1752 8.41908 16.4403 8.77245L18.2401 11.1719C18.4533 11.4563 18.4534 11.8484 18.2401 12.1328L16.4403 14.5322C16.1753 14.8855 15.6736 14.9571 15.3202 14.6924C14.9667 14.4273 14.8949 13.9257 15.16 13.5723L16.5995 11.6523L15.16 9.73241C14.8949 9.37896 14.9667 8.87738 15.3202 8.6123Z" fill="white"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-labelledby="title desc">
+  <title id="title">RefAs robotic arm icon · hardened</title>
+  <desc id="desc">Monochrome geometric robotic arm on a rounded dark charcoal square.</desc>
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="42%" r="75%">
+      <stop offset="0" stop-color="#10161d"/>
+      <stop offset="0.68" stop-color="#0b1015"/>
+      <stop offset="1" stop-color="#080b0f"/>
+    </radialGradient>
+    <linearGradient id="whiteTop" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="0.55" stop-color="#f4f5f6"/>
+      <stop offset="1" stop-color="#d8dbe0"/>
+    </linearGradient>
+    <linearGradient id="whiteSoft" x1="0" y1="0" x2="0.9" y2="1">
+      <stop offset="0" stop-color="#fafafa"/>
+      <stop offset="0.6" stop-color="#eceef1"/>
+      <stop offset="1" stop-color="#cfd3d8"/>
+    </linearGradient>
+    <linearGradient id="graySide" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#8e949d"/>
+      <stop offset="1" stop-color="#525860"/>
+    </linearGradient>
+    <linearGradient id="darkBand" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#151a20"/>
+      <stop offset="1" stop-color="#343a43"/>
+    </linearGradient>
+    <linearGradient id="wristBand" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#2a3038"/>
+      <stop offset="0.55" stop-color="#4b515a"/>
+      <stop offset="1" stop-color="#373d46"/>
+    </linearGradient>
+    <linearGradient id="jointOuter" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="0.72" stop-color="#f3f4f6"/>
+      <stop offset="1" stop-color="#dfe2e6"/>
+    </linearGradient>
+    <linearGradient id="jointCore" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1c2128"/>
+      <stop offset="1" stop-color="#0c1015"/>
+    </linearGradient>
+    <linearGradient id="centerDisc" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#6f7680"/>
+      <stop offset="1" stop-color="#494f58"/>
+    </linearGradient>
+    <filter id="softShadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="16" stdDeviation="18" flood-color="#000000" flood-opacity="0.28"/>
+    </filter>
+    <clipPath id="pedestalClip">
+      <path d="M314 622 Q314 602 340 592 Q378 578 432 586 Q478 593 499 616 L499 673 Q499 691 476 701 Q431 718 358 704 Q314 694 314 670 Z"/>
+    </clipPath>
+    <clipPath id="upperArmFrontClip">
+      <path d="M266 400 L501 220 L536 249 L503 309 L379 416 L341 407 Z"/>
+    </clipPath>
+  </defs>
+
+  <rect x="0" y="0" width="1024" height="1024" rx="170" fill="url(#bg)"/>
+
+  <g filter="url(#softShadow)">
+    <path d="M238 667 Q238 655 252 646 L350 594 Q364 587 380 592 L563 648 Q575 652 575 664 L575 681 L434 756 Q428 759 420 758 L366 754 L250 694 Q238 690 238 679 Z" fill="url(#whiteTop)"/>
+    <path d="M238 679 L366 754 L362 820 L246 765 Q238 761 238 750 Z" fill="#5d626a"/>
+    <path d="M366 754 L434 756 L440 822 L362 820 Z" fill="#545961"/>
+    <path d="M434 756 L575 681 L575 748 Q575 756 566 762 L440 822 Z" fill="#5f646c"/>
+
+    <path d="M314 622 Q314 602 340 592 Q378 578 432 586 Q478 593 499 616 L499 673 Q499 691 476 701 Q431 718 358 704 Q314 694 314 670 Z" fill="url(#darkBand)"/>
+    <rect x="314" y="586" width="56" height="132" fill="#11161c" opacity="0.42" clip-path="url(#pedestalClip)"/>
+    <rect x="370" y="586" width="129" height="132" fill="#4a5059" opacity="0.10" clip-path="url(#pedestalClip)"/>
+
+    <g id="shoulder-shell" transform="matrix(1.165 0 0 1 -72.6 6)">
+      <path d="M306 451 C288 475 293 507 306 542 L330 611 C338 636 355 649 384 653 C423 658 464 648 486 631 C500 620 501 599 492 579 L417 454 Z" fill="url(#whiteSoft)"/>
+      <path d="M305 477 C292 504 303 538 317 576 L335 621 C343 641 357 650 376 653 L383 653 L326 482 Z" fill="#8a9099" opacity="0.88"/>
+      <path d="M417 454 L492 579 C501 599 500 621 486 633 C474 641 459 647 443 650 L386 459 Z" fill="#e5e7ea" opacity="0.72"/>
+      <path d="M322 463 C353 446 378 448 395 454" fill="none" stroke="#c8ccd1" stroke-width="8" stroke-linecap="round" opacity="0.46"/>
+    </g>
+
+    <g id="upper-arm">
+      <path d="M350 403 L503 309 L542 337 L409 455 L379 416 Z" fill="url(#graySide)"/>
+      <path d="M266 400 L501 220 L536 249 L503 309 L379 416 L341 407 Z" fill="url(#whiteTop)"/>
+      <path d="M282 383 L489 232" fill="none" stroke="#ffffff" stroke-width="8" stroke-linecap="round" opacity="0.18" clip-path="url(#upperArmFrontClip)"/>
+    </g>
+
+    <circle id="shoulder-rear-depth" cx="321" cy="457" r="80" fill="#747b85" opacity="0.92"/>
+    <path id="shoulder-joint-side-wall" d="M382 412 C395 416 408 428 414 442 L414 458 C408 467 400 475 392 480 C394 458 390 433 382 412 Z" fill="url(#graySide)" opacity="0.96"/>
+    <g id="shoulder-joint" transform="translate(2 7)">
+      <circle cx="307" cy="462" r="83" fill="url(#jointOuter)"/>
+      <path d="M264 389 A83 83 0 0 0 373 509 A83 83 0 0 1 265 523 A83 83 0 0 1 264 389 Z" fill="#f5f6f7" opacity="0.62"/>
+      <circle cx="307" cy="462" r="53" fill="url(#jointCore)"/>
+      <circle cx="307" cy="462" r="25" fill="url(#centerDisc)"/>
+    </g>
+
+    <path d="M492 251 C515 230 551 224 585 236 C621 249 640 281 638 317 C637 333 631 347 620 359 L603 370 L585 337 L522 297 Z" fill="#69707a" opacity="0.75"/>
+
+    <g id="forearm">
+      <path d="M564 335 L608 335 L704 449 L671 463 Z" fill="url(#graySide)"/>
+      <path d="M608 335 L616 287 Q632 270 647 263 L762 390 Q770 397 769 405 Q769 411 764 415 L704 449 Z" fill="url(#whiteSoft)"/>
+      <path d="M649 276 L752 390" fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round" opacity="0.15"/>
+    </g>
+
+    <g id="elbow-joint">
+      <ellipse cx="585" cy="263" rx="77" ry="73" fill="#969ca5"/>
+      <circle cx="553" cy="263" r="73" fill="url(#jointOuter)"/>
+      <circle cx="553" cy="263" r="45" fill="url(#jointCore)"/>
+      <circle cx="553" cy="263" r="20" fill="url(#centerDisc)"/>
+    </g>
+
+    <g id="wrist-body">
+      <path d="M690 458 C692 440 701 423 717 413 C730 405 748 403 761 407 Q769 409 773 416 L770 428 C758 422 744 423 731 430 C716 439 707 454 706 471 L700 479 Q691 475 689 467 Z" fill="#171c22"/>
+      <path d="M718 417 C731 410 750 407 763 412 Q768 414 770 421 L783 462 L732 467 L716 480 L704 455 Q704 437 718 417 Z" fill="#30363f"/>
+      <path d="M718 417 C732 410 751 408 763 413 L782 463 L732 465 L718 436 Z" fill="#565d67"/>
+    </g>
+
+    <g id="gripper-left">
+      <path d="M698 484 L651 530 Q650 531 650 585 Q650 592 655 596 L707 651 Q713 656 718 653 L724 643 L687 590 L687 543 L730 499 L710 492 L705 484 Z" fill="url(#whiteTop)"/>
+      <path d="M688 542 L730 500 L730 527 L705 555 L705 579 L724 609 L724 642 L713 652 L688 590 Z" fill="#707681"/>
+    </g>
+
+    <g id="gripper-right">
+      <path d="M806 484 L799 484 L793 493 L774 499 L817 543 L817 589 L780 643 L786 653 Q792 655 797 651 L853 588 L853 531 Z" fill="url(#whiteTop)"/>
+      <path d="M774 500 L817 543 L817 590 L780 642 L780 609 L799 581 L799 555 L771 527 L771 502 Z" fill="#707681"/>
+    </g>
+
+    <g id="gripper-neck">
+      <path d="M734 493 L770 493 L770 526 L762 531 L742 531 L734 526 Z" fill="#171c22"/>
+      <path d="M758 494 L770 494 L770 526 L762 531 L758 530 Z" fill="#252b33" opacity="0.72"/>
+    </g>
+
+    <g id="wrist-cap">
+      <path d="M705 474 C708 465 726 459 750 459 C775 459 792 465 795 474 L795 486 C793 495 774 501 750 501 C726 501 707 495 705 486 Z" fill="#9da3ab"/>
+      <path d="M735 489 C756 493 780 490 795 481 L795 486 C793 495 774 501 750 501 C744 501 739 500 735 499 Z" fill="#252b32"/>
+      <ellipse cx="750" cy="474" rx="45" ry="15" fill="url(#whiteTop)"/>
+    </g>
+  </g>
 </svg>
