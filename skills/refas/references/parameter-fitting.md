@@ -68,20 +68,47 @@ Pose fitting uses the same hard-barrier artifact through `evaluateStructure`. An
 
 Structural validity is not an objective term. Do not add `Infinity`, a huge constant, or another weighted penalty for floating parts, penetration, failed support, stale propagation, or failed fusion. Route those blockers to their owning capability instead.
 
+## Relational eligibility barrier
+
+When a shape search can alter macro or identity relationships, set `relationalEligibilityRequired: true` and bind the plan to the exact `relationalStructureDigest`. Every trial must then return a valid `refas.relational-discrepancy/v1` for the exact candidate GLB SHA-256.
+
+Create the discrepancy from the current `refas.relational-structure/v1` and one observation for every macro/identity whole-system obligation. The contract evaluates the relation according to its declared kind:
+
+- `distance-ratio` and `volume-ratio`: compare a realized ratio against the declared range;
+- `alignment`: compare a realized error against the relation's explicit tolerance; no tolerance means unresolved rather than an invented pass;
+- `ordering`: compare the realized entity order against the declared forward/reverse order;
+- `plane-chain`: compare current continuity against the declared continuity; `unknown` remains unresolved.
+
+A pass or fail must cite evidence. Missing measurement remains `unresolved`. The discrepancy embeds the exact relation graph, binds the candidate bytes, recomputes derived checks during validation, and records failed and unresolved relation IDs separately.
+
+Relational validity is a hard eligibility barrier, not an objective term. The final trial condition is:
+
+```text
+eligible = objectiveEligible
+        && structuralEligible
+        && relationalEligible
+```
+
+A candidate with lower silhouette, reprojection, or perceptual loss cannot enter optimizer ranking when a required whole-system relation fails or remains unresolved. Do not encode relation failure as `Infinity`, a giant constant, or a weighted penalty. The ledger retains its low visual loss as diagnostic evidence while excluding it from selection.
+
+The fit plan pins the relation-graph digest so a trial cannot substitute a weaker graph. Each discrepancy pins the exact candidate SHA-256 so a passing relation artifact from another trial cannot be replayed. If an evaluator supplies relational evidence even when the plan did not require it, a valid failing discrepancy still makes that trial ineligible; supplied blockers are never ignored.
+
+This barrier does not decide semantic authority. `refas.semantic-authority-set/v1` and the whole-system relational barrier remain upstream authority contracts. Relation-aware fitting answers whether the exact candidate realizes the already-authorized relational obligations; it does not promote inferred or engineered structure to observed source truth.
+
 ## Relationship to bounded edits
 
 Begin one bounded edit before fitting a protected shape state. Optimizer trials are retained evidence inside that edit; they are not trustworthy checkpoints. After inspecting the selected trial's whole-context hero plus side, top, grazing, normal, and object-ID evidence, create exactly one candidate checkpoint and finish the edit normally.
 
-The selected trial may become the bounded-edit candidate only when it improves the declared objective without protected regression, its exact GLB and render references verify, the visible defect improves in source-bound comparison, and no new typed blocker appears. Otherwise keep the baseline, route a typed finding, or request review.
+The selected trial may become the bounded-edit candidate only when it improves the declared objective without protected regression, its exact GLB and render references verify, every required structural and relational hard barrier passes, the visible defect improves in source-bound comparison, and no new typed blocker appears. Otherwise keep the baseline, route a typed finding, or request review.
 
 ## Authority limits
 
-Parameter-fit metrics have `candidate-ranking-only` authority. They may choose which already-evaluated, structurally eligible trial deserves visual inspection. They cannot select a finding owner or rollback checkpoint, pass a visual or certification gate, mutate project state, turn a hidden-depth guess into fact, or combine camera, assembly, appearance, or lighting parameters with shape parameters in one plan. The projection repair adapter preserves this boundary and reports `ROLLBACK` when a selected trial adds a blocking finding.
+Parameter-fit metrics have `candidate-ranking-only` authority. They may choose which already-evaluated, structurally and relationally eligible trial deserves visual inspection. They cannot select a finding owner or rollback checkpoint, pass a visual or certification gate, mutate project state, turn a hidden-depth guess into fact, or combine camera, assembly, appearance, or lighting parameters with shape parameters in one plan. The projection repair adapter preserves this boundary and reports `ROLLBACK` when a selected trial adds a blocking finding.
 
-An aggressive hypothesis is allowed as a trial. It remains a hypothesis until actual renders, structural eligibility, and normal RefAs evidence accept it.
+An aggressive hypothesis is allowed as a trial. It remains a hypothesis until actual renders, hard eligibility barriers, and normal RefAs evidence accept it.
 
 ## Resource and failure semantics
 
-Set the evaluation budget from measured renderer time and storage. Evaluation is deterministic and sequential so trial order, evidence, and stop reason remain reproducible. Every reference is verified when returned and again before report publication so overwritten trial evidence fails closed. An evaluator exception, missing measurement, non-finite value, path escape, missing file, size mismatch, semantic render binding mismatch, structural-evidence mismatch, or digest mismatch fails closed instead of skipping a trial. Missing source evidence for a declared projection objective is rejected during plan validation; it is never converted to a zero (perfect) residual. Population initialization has a bounded attempt count and exact finite-space cardinality handling, so duplicate integer vectors cannot hang a fit. The first baseline trial must return a candidate reference with the exact plan baseline SHA-256; otherwise fitting stops before scoring, preventing baseline findings from being compared with a different generated asset.
+Set the evaluation budget from measured renderer time and storage. Evaluation is deterministic and sequential so trial order, evidence, and stop reason remain reproducible. Every reference is verified when returned and again before report publication so overwritten trial evidence fails closed. An evaluator exception, missing measurement, non-finite value, path escape, missing file, size mismatch, semantic render binding mismatch, structural-evidence mismatch, relational-evidence mismatch, or digest mismatch fails closed instead of skipping a trial. Missing source evidence for a declared projection objective is rejected during plan validation; it is never converted to a zero (perfect) residual. Population initialization has a bounded attempt count and exact finite-space cardinality handling, so duplicate integer vectors cannot hang a fit. The first baseline trial must return a candidate reference with the exact plan baseline SHA-256; otherwise fitting stops before scoring, preventing baseline findings from being compared with a different generated asset.
 
 The derivative-free backend handles discontinuous render measurements and external generators but does not guarantee a global optimum. Reopen the representation when repeated populations converge to visibly inadequate geometry, required form cannot be expressed by declared parameters, or a different owner must move jointly.
