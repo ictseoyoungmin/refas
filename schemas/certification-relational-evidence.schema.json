@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/certification-relational-evidence.schema.json",
+  "title": "RefAs certification relational evidence",
+  "type": "object",
+  "required": ["schema", "scopeId", "sourceSha256", "candidateAssetSha256", "artifacts", "requiredRelationIds", "status", "policy", "relationalCertificationDigest"],
+  "properties": {
+    "schema": {"const": "refas.certification-relational-evidence/v1"},
+    "scopeId": {"const": "whole"},
+    "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "candidateAssetSha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "artifacts": {
+      "type": "object",
+      "required": ["relationalStructure", "semanticAuthority", "relationalBarrier", "relationalDiscrepancy"],
+      "properties": {
+        "relationalStructure": {"$ref": "#/$defs/artifactBinding"},
+        "semanticAuthority": {"$ref": "#/$defs/artifactBinding"},
+        "relationalBarrier": {"$ref": "#/$defs/artifactBinding"},
+        "relationalDiscrepancy": {"$ref": "#/$defs/artifactBinding"}
+      },
+      "additionalProperties": false
+    },
+    "requiredRelationIds": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "common.schema.json#/$defs/semanticId"}},
+    "status": {"const": "PASS"},
+    "policy": {
+      "type": "object",
+      "required": ["exactCandidateBytesAreRelationallyBound", "exactRelationalArtifactBytesAreBound", "semanticAuthorityMustCoverWholeSystemRelations", "relationalBarrierMustPass", "candidateRelationalDiscrepancyMustPass", "barrierChecksMustReproduceFromCandidateDiscrepancy", "relationalEvidenceCannotBeReplayedAcrossCandidates", "relationalEvidenceCannotBeDowngradedToAVisualScore"],
+      "properties": {
+        "exactCandidateBytesAreRelationallyBound": {"const": true},
+        "exactRelationalArtifactBytesAreBound": {"const": true},
+        "semanticAuthorityMustCoverWholeSystemRelations": {"const": true},
+        "relationalBarrierMustPass": {"const": true},
+        "candidateRelationalDiscrepancyMustPass": {"const": true},
+        "barrierChecksMustReproduceFromCandidateDiscrepancy": {"const": true},
+        "relationalEvidenceCannotBeReplayedAcrossCandidates": {"const": true},
+        "relationalEvidenceCannotBeDowngradedToAVisualScore": {"const": true}
+      },
+      "additionalProperties": false
+    },
+    "relationalCertificationDigest": {"$ref": "common.schema.json#/$defs/digest"}
+  },
+  "$defs": {
+    "artifactBinding": {
+      "type": "object",
+      "required": ["role", "schema", "artifactSha256", "sizeBytes", "logicalDigest"],
+      "properties": {
+        "role": {"$ref": "common.schema.json#/$defs/semanticId"},
+        "schema": {"type": "string", "minLength": 1},
+        "artifactSha256": {"$ref": "common.schema.json#/$defs/digest"},
+        "sizeBytes": {"type": "integer", "minimum": 1},
+        "logicalDigest": {"$ref": "common.schema.json#/$defs/digest"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
