@@ -1,5 +1,6 @@
 import {assertId, deepFreeze, digestJson} from './canonical.mjs';
 import {CAPABILITY_ORDER, FINDING_OWNERS, assertCapability, capabilityIndex, transitiveDependents} from './ownership.mjs';
+import {validateWholeSystemRelationalBarrier} from './whole-system-relational-barrier.mjs';
 
 const BLOCKING_SEVERITIES = new Set(['critical', 'major', 'blocking']);
 
@@ -94,6 +95,41 @@ export function routeFinding({finding, checkpoints = [], headId = null}) {
     reason: `reopen ${normalized.ownerCapability}; invalidate its downstream dependents`,
   };
   return deepFreeze({...payload, routeDigest: digestJson(payload)});
+}
+
+export function routeRelationalBarrier({barrier, relationalStructure = null, authoritySet = null, checkpoints = [], headId = null} = {}) {
+  const validation = validateWholeSystemRelationalBarrier(barrier, {relationalStructure, authoritySet});
+  if (!validation.valid) {
+    return routeFinding({
+      finding: {
+        category: 'relational-authority-unresolved', severity: 'blocking', scopeId: barrier?.scopeId ?? 'whole',
+        summary: `whole-system relational barrier is invalid: ${validation.errors.join('; ')}`,
+        evidenceRefs: [], ownerCapability: 'spatial-hypotheses',
+      },
+      checkpoints, headId,
+    });
+  }
+  if (barrier.status === 'PASS' && barrier.mayHardenLocal === true) return {action: 'NO_ROUTE', reason: 'whole-system relational barrier passes'};
+
+  const blocker = barrier.blockers[0] ?? 'RELATION_UNRESOLVED:whole-system';
+  const separator = blocker.indexOf(':');
+  const code = separator === -1 ? blocker : blocker.slice(0, separator);
+  const relationId = separator === -1 ? 'whole-system' : blocker.slice(separator + 1);
+  const common = {
+    severity: 'major', scopeId: barrier.scopeId, checkId: relationId,
+    evidenceRefs: [`barrier:${barrier.barrierDigest}`],
+  };
+  let finding;
+  if (code === 'AUTHORITY_MISSING' || code === 'AUTHORITY_UNKNOWN' || code === 'AUTHORITY_INVALID') {
+    finding = {...common, category: 'relational-authority-unresolved', summary: `${relationId} lacks authority that can license positive construction`};
+  } else if (code === 'AUTHORITY_FORBIDDEN') {
+    finding = {...common, category: 'relational-constraint-conflict', summary: `${relationId} is explicitly forbidden by current evidence or a hard constraint`};
+  } else if (code === 'RELATION_FAILED') {
+    finding = {...common, category: 'whole-system-relation-mismatch', summary: `${relationId} fails its current whole-system relation check`};
+  } else {
+    finding = {...common, category: 'evidence-insufficient', summary: `${relationId} remains unresolved at the whole-system barrier`};
+  }
+  return routeFinding({finding, checkpoints, headId});
 }
 
 export function routeLowScore({score, threshold, scopeId, checkpoints = [], headId = null, typedFindings = []}) {
