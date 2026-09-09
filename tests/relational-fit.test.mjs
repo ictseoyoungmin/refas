@@ -20,12 +20,12 @@ function relationalStructure(range = [0, 1]) {
   return createRelationalStructure({
     scopeId: 'whole', sourceSha256: D('a'),
     entities: [
-      {id: 'a', kind: 'landmark'}, {id: 'b', kind: 'landmark'},
-      {id: 'c', kind: 'landmark'}, {id: 'd', kind: 'landmark'},
+      {id: 'landmark-a', kind: 'landmark'}, {id: 'landmark-b', kind: 'landmark'},
+      {id: 'landmark-c', kind: 'landmark'}, {id: 'landmark-d', kind: 'landmark'},
     ],
     relations: [{
       id: 'span-ratio', kind: 'distance-ratio', scope: 'whole-system', importance: 'macro',
-      entityIds: ['a', 'b', 'c', 'd'], range, basisRefs: ['source:front'],
+      entityIds: ['landmark-a', 'landmark-b', 'landmark-c', 'landmark-d'], range, basisRefs: ['source:front'],
     }],
   });
 }
