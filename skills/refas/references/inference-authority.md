@@ -83,3 +83,9 @@ This is deliberately asymmetric:
 - `inferred` and `engineered` may support construction but still cannot assert source truth.
 
 When the barrier is blocked, use `routeRelationalBarrier()` rather than manually preserving downstream CLOSED states. See `references/whole-system-relational-barrier.md`.
+
+## Certification does not promote authority
+
+For real-source whole-object certification, the exact semantic-authority-set bytes are sealed into `refas.certification-relational-evidence/v1` together with the exact relation graph, whole-system barrier, candidate-bound discrepancy, and candidate SHA-256.
+
+This protects the declared authority from omission, substitution, stale replay, and policy downgrade. It does not change the authority class. A certified `inferred` proposition remains inferred; a certified `engineered` proposition remains an explicit design choice. Neither may be reported as source-observed or manufacturer-original unless new direct evidence supports an explicit transition to `observed`.
