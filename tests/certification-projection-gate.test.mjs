@@ -17,13 +17,19 @@ import {
   createPbrRenderReport,
   createRealizedProjection,
   createReferenceGeometry,
+  createRelationalDiscrepancy,
+  createRelationalStructure,
   createSegmentPrism,
+  createSemanticAuthoritySet,
   createVisualReview,
+  createWholeSystemRelationalBarrier,
   digestBytes,
   initProject,
   partsToGlb,
   resumeProject,
 } from '../skills/refas/scripts/lib/index.mjs';
+
+const CONTRACT_FIXTURES = new Set(['test-fixture','deterministic-project-fixture','synthetic-test-fixture']);
 
 async function json(file, value) {
   await fs.mkdir(path.dirname(file), {recursive:true});
@@ -76,6 +82,47 @@ function sourceGeometry(source) {
     anchors:[{id:'whole-center', xy:[.5,.5], importance:'macro', visibility:'visible', confidence:1, evidenceRefs:['source/reference.bin']}],
     attestation:{attested:true, evidenceRefs:['source/reference.bin']},
   });
+}
+
+async function appendRelationalCertificationEvidence(root, source, asset, refs) {
+  const structure = createRelationalStructure({
+    scopeId:'whole', sourceSha256:source.sha256, basisRefs:['source/reference.bin'],
+    entities:[
+      {id:'span-left-a',kind:'landmark'}, {id:'span-right-a',kind:'landmark'},
+      {id:'span-left-b',kind:'landmark'}, {id:'span-right-b',kind:'landmark'},
+    ],
+    relations:[{
+      id:'whole-span-ratio', kind:'distance-ratio', scope:'whole-system', importance:'identity',
+      entityIds:['span-left-a','span-right-a','span-left-b','span-right-b'], range:[0.9,1.1],
+      basisRefs:['source/reference.bin'],
+    }],
+  });
+  const authority = createSemanticAuthoritySet({
+    scopeId:'whole', sourceSha256:source.sha256, targetSchema:structure.schema, targetDigest:structure.structureDigest,
+    entries:[{
+      id:'whole-span-authority', subjectId:'whole-span-ratio', authority:'observed',
+      proposition:'The two visible whole-object spans are approximately equal.',
+      basis:[{kind:'source-evidence',ref:'source/reference.bin'}],
+    }],
+  });
+  const discrepancy = createRelationalDiscrepancy({
+    relationalStructure:structure, candidateAssetSha256:asset.sha256,
+    observations:[{relationId:'whole-span-ratio',value:1,evidenceRefs:['reviews/registered-comparison/comparison-report.json']}],
+  });
+  const barrier = createWholeSystemRelationalBarrier({
+    relationalStructure:structure, authoritySet:authority,
+    relationChecks:discrepancy.checks.map(({relationId,status,evidenceRefs})=>({relationId,status,evidenceRefs})),
+  });
+  const documents = [
+    ['model/relational-structure.json',structure,'relational-structure'],
+    ['model/semantic-authority.json',authority,'semantic-authority'],
+    ['model/whole-system-relational-barrier.json',barrier,'whole-system-relational-barrier'],
+    ['model/relational-discrepancy.json',discrepancy,'relational-discrepancy'],
+  ];
+  for (const [relative,value,kind] of documents) {
+    const file = await json(path.join(root,relative),value);
+    refs.push(await contentReference(file,{kind,root}));
+  }
 }
 
 async function commitCertification(root, source, {projection='none'}={}) {
@@ -137,6 +184,10 @@ async function commitCertification(root, source, {projection='none'}={}) {
   const reviewRef = await contentReference(reviewPath, {kind:'visual-review', root});
   const refs = [asset, reportRef, ...frames, comparisonRef, reviewRef];
 
+  if (!CONTRACT_FIXTURES.has(String(source.acquisition?.kind ?? '').toLowerCase())) {
+    await appendRelationalCertificationEvidence(root,source,asset,refs);
+  }
+
   if (projection !== 'none') {
     const geometry = sourceGeometry(source);
     const geometryPath = await json(path.join(root,'model','reference-geometry.json'), geometry);
@@ -176,8 +227,11 @@ test('good realized reprojection allows real source certification and remains au
   const readiness = await assessCertification(root);
   assert.equal(readiness.ready, true, readiness.errors.join('\n'));
   assert.ok(readiness.realizedProjectionDigest);
+  assert.ok(readiness.relationalCertificationDigest);
+  assert.ok(readiness.authorizedClaimIds.includes('whole-system-relational-fidelity'));
   const certificate = await certifyProject(root);
   assert.equal(certificate.sourceSha256, source.sha256);
+  assert.equal(certificate.claimCertification.relationalClosure.relationalCertificationDigest, readiness.relationalCertificationDigest);
   const audit = await auditProject(root);
   assert.equal(audit.valid, true, audit.errors.join('\n'));
 });
@@ -198,6 +252,7 @@ test('contract fixtures remain compatible with legacy synthetic certification te
   await commitCertification(root, source, {projection:'none'});
   const readiness = await assessCertification(root);
   assert.equal(readiness.ready, true, readiness.errors.join('\n'));
+  assert.equal(readiness.relationalCertificationDigest,null);
   await certifyProject(root);
   const audit = await auditProject(root);
   assert.equal(audit.valid, true, audit.errors.join('\n'));
