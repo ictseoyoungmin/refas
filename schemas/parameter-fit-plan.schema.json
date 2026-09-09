@@ -5,6 +5,10 @@
   "type": "object",
   "additionalProperties": false,
   "required": ["schema", "id", "ownerCapability", "scopeId", "sourceSha256", "baselineAsset", "parameters", "objectives", "protectedTerms", "optimizer", "structuralEligibilityRequired", "evidenceRefs", "policy", "planDigest"],
+  "dependentRequired": {
+    "relationalEligibilityRequired": ["relationalStructureDigest"],
+    "relationalStructureDigest": ["relationalEligibilityRequired"]
+  },
   "properties": {
     "schema": {"const": "refas.parameter-fit-plan/v1"},
     "id": {"$ref": "common.schema.json#/$defs/semanticId"},
@@ -66,6 +70,8 @@
       }
     },
     "structuralEligibilityRequired": {"type": "boolean"},
+    "relationalEligibilityRequired": {"const": true},
+    "relationalStructureDigest": {"$ref": "common.schema.json#/$defs/digest"},
     "evidenceRefs": {"type": "array", "items": {"type": "string"}},
     "policy": {
       "type": "object", "additionalProperties": false,
@@ -74,7 +80,8 @@
         "selectionAuthority": {"const": "candidate-ranking-only"}, "metricsCannotSelectOwner": {"const": true}, "metricsCannotPassVisualGate": {"const": true},
         "fitCannotMutateProjectState": {"const": true}, "selectedTrialRequiresActualVisualReview": {"const": true},
         "oneCheckpointCandidateAfterSelection": {"const": true}, "trialContentReferencesMustVerify": {"const": true},
-        "structuralInvalidityIsHardBarrier": {"const": true}, "structuralInvalidityIsNeverScorePenalty": {"const": true}
+        "structuralInvalidityIsHardBarrier": {"const": true}, "structuralInvalidityIsNeverScorePenalty": {"const": true},
+        "relationalInvalidityIsHardBarrier": {"const": true}, "relationalInvalidityIsNeverScorePenalty": {"const": true}
       }
     },
     "planDigest": {"$ref": "common.schema.json#/$defs/digest"}
