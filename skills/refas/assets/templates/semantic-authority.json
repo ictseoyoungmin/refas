@@ -1,0 +1,37 @@
+{
+  "scopeId": "whole",
+  "sourceSha256": "<64-char-source-sha256>",
+  "targetSchema": "refas.relational-structure/v1",
+  "targetDigest": "<64-char-target-digest>",
+  "entries": [
+    {
+      "id": "authority-visible-proportion",
+      "subjectId": "visible-proportion",
+      "authority": "observed",
+      "proposition": "The relation is directly supported by source evidence.",
+      "basis": [
+        {"kind": "source-evidence", "ref": "source:primary", "digest": null}
+      ]
+    },
+    {
+      "id": "authority-hidden-continuation",
+      "subjectId": "hidden-continuation",
+      "authority": "inferred",
+      "proposition": "The unseen continuation is a structural hypothesis.",
+      "reason": "Visible relations and coarse volume continuity constrain the hidden form.",
+      "basis": [
+        {"kind": "relation", "ref": "relation:coarse-volume", "digest": null}
+      ]
+    },
+    {
+      "id": "authority-engineered-support",
+      "subjectId": "engineered-support",
+      "authority": "engineered",
+      "proposition": "A support is deliberately introduced for the declared downstream use.",
+      "reason": "The downstream requirement needs support while the source does not resolve the interior.",
+      "basis": [
+        {"kind": "downstream-requirement", "ref": "requirement:stable-support", "digest": null}
+      ]
+    }
+  ]
+}

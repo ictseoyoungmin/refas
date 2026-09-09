@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/semantic-authority.schema.json",
+  "title": "RefAs semantic authority set",
+  "type": "object",
+  "required": ["schema", "scopeId", "sourceSha256", "targetSchema", "targetDigest", "entries", "policy", "authoritySetDigest"],
+  "properties": {
+    "schema": {"const": "refas.semantic-authority-set/v1"},
+    "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "targetSchema": {"type": "string", "minLength": 1},
+    "targetDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "entries": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "subjectId", "authority", "proposition", "reason", "basis", "capabilities", "authorityDigest"],
+        "properties": {
+          "id": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "subjectId": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "authority": {"enum": ["observed", "inferred", "engineered", "unknown", "forbidden"]},
+          "proposition": {"type": "string", "minLength": 1},
+          "reason": {"type": "string"},
+          "basis": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["kind", "ref", "digest"],
+              "properties": {
+                "kind": {"enum": ["source-evidence", "source-contradiction", "relation", "structural-prior", "functional-requirement", "downstream-requirement", "external-spec", "hard-constraint"]},
+                "ref": {"type": "string", "minLength": 1},
+                "digest": {"anyOf": [{"$ref": "common.schema.json#/$defs/digest"}, {"type": "null"}]}
+              },
+              "additionalProperties": false
+            }
+          },
+          "capabilities": {
+            "type": "object",
+            "required": ["canAssertSourceFact", "canInstantiateConstruction", "canServeAsHypothesis", "requiresResolutionBeforePositiveClaim", "prohibitsConstruction"],
+            "properties": {
+              "canAssertSourceFact": {"type": "boolean"},
+              "canInstantiateConstruction": {"type": "boolean"},
+              "canServeAsHypothesis": {"type": "boolean"},
+              "requiresResolutionBeforePositiveClaim": {"type": "boolean"},
+              "prohibitsConstruction": {"type": "boolean"}
+            },
+            "additionalProperties": false
+          },
+          "authorityDigest": {"$ref": "common.schema.json#/$defs/digest"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "policy": {
+      "type": "object",
+      "required": ["unknownIsNotForbidden", "unobservedDoesNotMeanForbidden", "engineeredIsNotObserved", "inferredIsNotObserved", "positiveConstructionRequiresNonUnknownAuthority", "forbiddenIsExplicitContradictionOrConstraint", "authorityNeverPromotesItselfToSourceFact"],
+      "properties": {
+        "unknownIsNotForbidden": {"const": true},
+        "unobservedDoesNotMeanForbidden": {"const": true},
+        "engineeredIsNotObserved": {"const": true},
+        "inferredIsNotObserved": {"const": true},
+        "positiveConstructionRequiresNonUnknownAuthority": {"const": true},
+        "forbiddenIsExplicitContradictionOrConstraint": {"const": true},
+        "authorityNeverPromotesItselfToSourceFact": {"const": true}
+      },
+      "additionalProperties": false
+    },
+    "authoritySetDigest": {"$ref": "common.schema.json#/$defs/digest"}
+  },
+  "additionalProperties": false
+}

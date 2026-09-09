@@ -9,6 +9,7 @@ export * from './orientation-frame.mjs';
 export * from './orientation-discrepancy.mjs';
 export * from './orientation-pose-fit.mjs';
 export * from './relational-structure.mjs';
+export * from './semantic-authority.mjs';
 export * from './multi-anchor.mjs';
 export * from './articulation-clearance.mjs';
 export * from './attachment-propagation.mjs';
