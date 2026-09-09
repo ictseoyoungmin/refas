@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/whole-system-relational-barrier.schema.json",
+  "title": "RefAs whole-system relational barrier",
+  "type": "object",
+  "required": ["schema", "scopeId", "sourceSha256", "relationalStructureDigest", "semanticAuthoritySetDigest", "requiredRelationIds", "relationChecks", "blockers", "status", "mayHardenLocal", "policy", "barrierDigest"],
+  "properties": {
+    "schema": {"const": "refas.whole-system-relational-barrier/v1"},
+    "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "relationalStructureDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "semanticAuthoritySetDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "requiredRelationIds": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "common.schema.json#/$defs/semanticId"}},
+    "relationChecks": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["relationId", "relationKind", "importance", "status", "evidenceRefs", "authority", "authorityDigest"],
+        "properties": {
+          "relationId": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "relationKind": {"enum": ["distance-ratio", "alignment", "ordering", "plane-chain", "volume-ratio"]},
+          "importance": {"enum": ["macro", "identity"]},
+          "status": {"enum": ["pass", "fail", "unresolved"]},
+          "evidenceRefs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+          "authority": {"type": ["string", "null"], "enum": ["observed", "inferred", "engineered", "unknown", "forbidden", null]},
+          "authorityDigest": {"anyOf": [{"$ref": "common.schema.json#/$defs/digest"}, {"type": "null"}]}
+        },
+        "additionalProperties": false
+      }
+    },
+    "blockers": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "status": {"enum": ["PASS", "BLOCKED"]},
+    "mayHardenLocal": {"type": "boolean"},
+    "policy": {
+      "type": "object",
+      "required": ["wholeSystemRelationsPrecedeLocalHardening", "macroAndIdentityRelationsRequireCurrentEvidence", "unknownAuthorityCannotAuthorizePositiveConstruction", "forbiddenAuthorityBlocksConstruction", "localDetailCannotSatisfyWholeSystemRelations", "visualScoreCannotOverrideRelationalBarrier", "exactStructureAndAuthorityDigestsAreBound"],
+      "properties": {
+        "wholeSystemRelationsPrecedeLocalHardening": {"const": true},
+        "macroAndIdentityRelationsRequireCurrentEvidence": {"const": true},
+        "unknownAuthorityCannotAuthorizePositiveConstruction": {"const": true},
+        "forbiddenAuthorityBlocksConstruction": {"const": true},
+        "localDetailCannotSatisfyWholeSystemRelations": {"const": true},
+        "visualScoreCannotOverrideRelationalBarrier": {"const": true},
+        "exactStructureAndAuthorityDigestsAreBound": {"const": true}
+      },
+      "additionalProperties": false
+    },
+    "barrierDigest": {"$ref": "common.schema.json#/$defs/digest"}
+  },
+  "additionalProperties": false
+}

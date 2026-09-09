@@ -103,14 +103,16 @@ Labels summarize that contract; they do not override it.
 | `source-intake` | `source-drift` |
 | `visual-hierarchy` | `context-loss`, `missing-part` |
 | `visual-observation` | `observation-unsupported`, `evidence-insufficient` |
-| `spatial-hypotheses` | `perspective-mismatch`, `depth-mismatch`, `orientation-mismatch` |
-| `shape-reconstruction` | `silhouette-mismatch`, `mass-proportion-mismatch`, `curvature-mismatch` |
+| `spatial-hypotheses` | `perspective-mismatch`, `depth-mismatch`, `orientation-mismatch`, `relational-authority-unresolved`, `relational-constraint-conflict` |
+| `shape-reconstruction` | `silhouette-mismatch`, `mass-proportion-mismatch`, `curvature-mismatch`, `whole-system-relation-mismatch` |
 | `surface-topology` | `pattern-topology-mismatch`, `relief-mismatch` |
 | `assembly` | `attachment-mismatch`, `occlusion-mismatch`, `penetration` |
 | `appearance` | `material-mismatch`, `finish-mismatch` |
 | `rendering` | `camera-mismatch`, `render-integrity` |
 | `visual-critique` | `unroutable-visual-finding` |
 | `whole-object-certification` | `closure-evidence-missing` |
+
+Relation authority and relation realization have deliberately different owners. An unresolved or contradicted authority premise is repaired in `spatial-hypotheses`; a licensed whole-system relation that the current geometry fails is repaired in `shape-reconstruction`. Evidence that cannot yet distinguish either case remains `evidence-insufficient` and is not forced into an owner.
 
 ## Issue lifecycle
 

@@ -70,8 +70,16 @@ Authority transitions are explicit semantic changes. Keep the same `subjectId`, 
 
 Checkpoints and provenance retain the old state; never rewrite history to make an inference look as though it had always been observed.
 
-## Relation coverage
+## Relation coverage and closure
 
 When an authority set targets `refas.relational-structure/v1`, bind its exact structure digest. `validateRelationalAuthorityCoverage()` checks source identity, exact target digest, missing whole-system relations, and authority entries that refer outside the relational graph.
 
-This is preparation for the next closure-barrier slice. Authority coverage alone does not certify a relationship or visual result.
+Authority coverage alone does not certify a relation. Feed the exact relation graph plus authority set into `createWholeSystemRelationalBarrier()` with current relation checks. The barrier authorizes lower-scope hardening only when every macro/identity whole-system relation both passes current evidence and carries `observed`, `inferred`, or `engineered` authority.
+
+This is deliberately asymmetric:
+
+- `unknown` means **do not positively construct yet; gather evidence or choose an explicit engineered/inferred basis**;
+- `forbidden` means **do not construct under the current contradiction/constraint**;
+- `inferred` and `engineered` may support construction but still cannot assert source truth.
+
+When the barrier is blocked, use `routeRelationalBarrier()` rather than manually preserving downstream CLOSED states. See `references/whole-system-relational-barrier.md`.

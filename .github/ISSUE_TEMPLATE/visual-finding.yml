@@ -31,9 +31,12 @@ body:
         - perspective-mismatch
         - depth-mismatch
         - orientation-mismatch
+        - relational-authority-unresolved
+        - relational-constraint-conflict
         - silhouette-mismatch
         - mass-proportion-mismatch
         - curvature-mismatch
+        - whole-system-relation-mismatch
         - pattern-topology-mismatch
         - relief-mismatch
         - attachment-mismatch
