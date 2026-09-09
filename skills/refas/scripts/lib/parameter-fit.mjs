@@ -1,5 +1,6 @@
 import {assertDigest, assertId, deepFreeze, digestJson} from './canonical.mjs';
 import {validateFitStructuralEligibility} from './fit-structural-eligibility.mjs';
+import {validateRelationalDiscrepancy} from './relational-discrepancy.mjs';
 
 export const PARAMETER_FIT_PLAN_SCHEMA = 'refas.parameter-fit-plan/v1';
 export const PARAMETER_FIT_REPORT_SCHEMA = 'refas.parameter-fit-report/v1';
@@ -103,6 +104,8 @@ export function createParameterFitPlan({
   protectedTerms = [],
   optimizer = {},
   structuralEligibilityRequired = false,
+  relationalEligibilityRequired = false,
+  relationalStructureDigest = null,
   evidenceRefs = [],
 } = {}) {
   if (parameters.length < 2) throw new Error('joint parameter fitting requires at least two parameters');
@@ -116,6 +119,24 @@ export function createParameterFitPlan({
   }
   const objectiveIds = new Set(normalizedObjectives.map((item) => item.id));
   for (const item of normalizedProtected) if (!objectiveIds.has(item.id)) throw new Error(`protected term ${item.id} must also be an objective measurement`);
+  const relationalRequired = Boolean(relationalEligibilityRequired);
+  if (relationalRequired && relationalStructureDigest == null) throw new Error('relationalStructureDigest is required when relationalEligibilityRequired is true');
+  if (!relationalRequired && relationalStructureDigest != null) throw new Error('relationalStructureDigest requires relationalEligibilityRequired');
+  const policy = {
+    selectionAuthority: 'candidate-ranking-only',
+    metricsCannotSelectOwner: true,
+    metricsCannotPassVisualGate: true,
+    fitCannotMutateProjectState: true,
+    selectedTrialRequiresActualVisualReview: true,
+    oneCheckpointCandidateAfterSelection: true,
+    trialContentReferencesMustVerify: true,
+    structuralInvalidityIsHardBarrier: true,
+    structuralInvalidityIsNeverScorePenalty: true,
+  };
+  if (relationalRequired) {
+    policy.relationalInvalidityIsHardBarrier = true;
+    policy.relationalInvalidityIsNeverScorePenalty = true;
+  }
   const payload = {
     schema: PARAMETER_FIT_PLAN_SCHEMA,
     id: assertId(id, 'id'),
@@ -129,18 +150,12 @@ export function createParameterFitPlan({
     optimizer: normalizeOptimizer(optimizer, normalizedParameters.length),
     structuralEligibilityRequired: Boolean(structuralEligibilityRequired),
     evidenceRefs: uniqueStrings(evidenceRefs),
-    policy: {
-      selectionAuthority: 'candidate-ranking-only',
-      metricsCannotSelectOwner: true,
-      metricsCannotPassVisualGate: true,
-      fitCannotMutateProjectState: true,
-      selectedTrialRequiresActualVisualReview: true,
-      oneCheckpointCandidateAfterSelection: true,
-      trialContentReferencesMustVerify: true,
-      structuralInvalidityIsHardBarrier: true,
-      structuralInvalidityIsNeverScorePenalty: true,
-    },
+    policy,
   };
+  if (relationalRequired) {
+    payload.relationalEligibilityRequired = true;
+    payload.relationalStructureDigest = assertDigest(relationalStructureDigest, 'relationalStructureDigest');
+  }
   return deepFreeze({...payload, planDigest: digestJson(payload)});
 }
 
@@ -244,13 +259,27 @@ function normalizeEvaluation(raw, label) {
     if (!validation.valid) throw new Error(`${label}.structuralEligibility is invalid: ${validation.errors.join('; ')}`);
     structuralEligibility = raw.structuralEligibility;
   }
+  let relationalDiscrepancy = null;
+  if (raw.relationalDiscrepancy != null) {
+    const validation = validateRelationalDiscrepancy(raw.relationalDiscrepancy);
+    if (!validation.valid) throw new Error(`${label}.relationalDiscrepancy is invalid: ${validation.errors.join('; ')}`);
+    relationalDiscrepancy = raw.relationalDiscrepancy;
+  }
   return {
     measurements: raw.measurements,
     candidateAsset: normalizeContentReference(raw.candidateAsset, `${label}.candidateAsset`),
     renderEvidence: normalizeContentReference(raw.renderEvidence, `${label}.renderEvidence`),
     structuralEligibility,
+    relationalDiscrepancy,
     evidenceRefs: uniqueStrings(raw.evidenceRefs),
   };
+}
+
+function validateRelationalBinding(discrepancy, candidateAsset, plan, label) {
+  if (!discrepancy) return;
+  if (discrepancy.candidateAssetSha256 !== candidateAsset.sha256) throw new Error(`${label} relational discrepancy does not bind candidateAsset SHA-256`);
+  if (discrepancy.scopeId !== plan.scopeId || discrepancy.sourceSha256 !== plan.sourceSha256) throw new Error(`${label} relational discrepancy source or scope does not match the plan`);
+  if (plan.relationalStructureDigest != null && discrepancy.relationalStructureDigest !== plan.relationalStructureDigest) throw new Error(`${label} relational discrepancy does not bind the plan relationalStructureDigest`);
 }
 
 export async function fitParameters(plan, evaluate, {verifyReference} = {}) {
@@ -288,23 +317,28 @@ export async function fitParameters(plan, evaluate, {verifyReference} = {}) {
     await verifyReference(result.renderEvidence, `${id}.renderEvidence`);
     if (plan.structuralEligibilityRequired && !result.structuralEligibility) throw new Error(`${id} structural eligibility is required by the fit plan`);
     if (result.structuralEligibility && result.structuralEligibility.candidateAssetSha256 !== result.candidateAsset.sha256) throw new Error(`${id} structural eligibility does not bind candidateAsset SHA-256`);
+    if (plan.relationalEligibilityRequired && !result.relationalDiscrepancy) throw new Error(`${id} relational discrepancy is required by the fit plan`);
+    validateRelationalBinding(result.relationalDiscrepancy, result.candidateAsset, plan, id);
     const score = scoreMeasurements(result.measurements, plan, baselineMeasurements);
     if (sequence === 1) baselineMeasurements = score.measurements;
     const objectiveEligible = score.eligible;
     const structuralPass = result.structuralEligibility ? result.structuralEligibility.eligible === true : !plan.structuralEligibilityRequired;
-    const trial = deepFreeze({
+    const relationalPass = result.relationalDiscrepancy ? result.relationalDiscrepancy.eligible === true : !plan.relationalEligibilityRequired;
+    const trialPayload = {
       id, sequence, phase, generation, parameters,
       measurements: score.measurements,
       decomposition: score.decomposition,
       objectiveLoss: score.objectiveLoss,
       objectiveEligible,
       structuralEligibility: result.structuralEligibility,
-      eligible: objectiveEligible && structuralPass,
+      eligible: objectiveEligible && structuralPass && relationalPass,
       protectedRegressions: score.protectedRegressions,
       candidateAsset: result.candidateAsset,
       renderEvidence: result.renderEvidence,
       evidenceRefs: result.evidenceRefs,
-    });
+    };
+    if (result.relationalDiscrepancy) trialPayload.relationalDiscrepancy = result.relationalDiscrepancy;
+    const trial = deepFreeze(trialPayload);
     trials.push(trial);
     if (trial.eligible && (bestLoss == null || trial.objectiveLoss < bestLoss - plan.optimizer.improvementTolerance)) {
       bestLoss = trial.objectiveLoss;
@@ -424,9 +458,17 @@ export function validateParameterFitReport(report, plan = null) {
         if (!structuralValidation.valid) errors.push(`${trial.id} structural eligibility is invalid: ${structuralValidation.errors.join('; ')}`);
         if (trial.structuralEligibility.candidateAssetSha256 !== candidate.sha256) errors.push(`${trial.id} structural eligibility does not bind candidateAsset`);
       }
+      if (trial.relationalDiscrepancy != null) {
+        const relationalValidation = validateRelationalDiscrepancy(trial.relationalDiscrepancy);
+        if (!relationalValidation.valid) errors.push(`${trial.id} relational discrepancy is invalid: ${relationalValidation.errors.join('; ')}`);
+        if (trial.relationalDiscrepancy.candidateAssetSha256 !== candidate.sha256) errors.push(`${trial.id} relational discrepancy does not bind candidateAsset`);
+        if (boundPlan && (trial.relationalDiscrepancy.scopeId !== boundPlan.scopeId || trial.relationalDiscrepancy.sourceSha256 !== boundPlan.sourceSha256)) errors.push(`${trial.id} relational discrepancy source or scope does not match plan`);
+        if (boundPlan?.relationalStructureDigest != null && trial.relationalDiscrepancy.relationalStructureDigest !== boundPlan.relationalStructureDigest) errors.push(`${trial.id} relational discrepancy does not bind plan relationalStructureDigest`);
+      }
     }
     const policy = report?.policy ?? {};
     if (policy.selectionAuthority !== 'candidate-ranking-only' || policy.metricsCannotSelectOwner !== true || policy.metricsCannotPassVisualGate !== true || policy.fitCannotMutateProjectState !== true || policy.selectedTrialRequiresActualVisualReview !== true || policy.oneCheckpointCandidateAfterSelection !== true || policy.trialContentReferencesMustVerify !== true || policy.structuralInvalidityIsHardBarrier !== true || policy.structuralInvalidityIsNeverScorePenalty !== true) errors.push('parameter-fit authority policy is missing');
+    if (boundPlan?.relationalEligibilityRequired && (policy.relationalInvalidityIsHardBarrier !== true || policy.relationalInvalidityIsNeverScorePenalty !== true)) errors.push('parameter-fit relational authority policy is missing');
     if (!embeddedPlan) errors.push('report must embed its exact normalized plan');
     else {
       const embeddedValidation = validateParameterFitPlan(embeddedPlan);
@@ -474,9 +516,11 @@ export function validateParameterFitReport(report, plan = null) {
         try {
           const expectedScore = scoreMeasurements(trial.measurements, boundPlan, index === 0 ? null : baseline?.measurements);
           const structuralPass = trial.structuralEligibility ? trial.structuralEligibility.eligible === true : !boundPlan.structuralEligibilityRequired;
-          const expectedEligible = expectedScore.eligible && structuralPass;
+          const relationalPass = trial.relationalDiscrepancy ? trial.relationalDiscrepancy.eligible === true : !boundPlan.relationalEligibilityRequired;
+          const expectedEligible = expectedScore.eligible && structuralPass && relationalPass;
           if (Math.abs(expectedScore.objectiveLoss - trial.objectiveLoss) > 1e-10 || expectedScore.eligible !== trial.objectiveEligible || expectedEligible !== trial.eligible) errors.push(`${trial.id} objective or structural eligibility does not match the plan`);
           if (boundPlan.structuralEligibilityRequired && !trial.structuralEligibility) errors.push(`${trial.id} is missing required structural eligibility`);
+          if (boundPlan.relationalEligibilityRequired && !trial.relationalDiscrepancy) errors.push(`${trial.id} is missing required relational discrepancy`);
           if (digestJson(expectedScore.decomposition) !== digestJson(trial.decomposition) || digestJson(expectedScore.protectedRegressions) !== digestJson(trial.protectedRegressions)) errors.push(`${trial.id} score decomposition is not reproducible`);
         } catch (error) { errors.push(`${trial.id}: ${error.message}`); }
       }
