@@ -42,6 +42,7 @@
           "decomposition": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["id", "value", "contribution"], "properties": {"id": {"$ref": "common.schema.json#/$defs/semanticId"}, "value": {"type": "number"}, "contribution": {"type": "number"}}}},
           "objectiveLoss": {"type": "number"}, "objectiveEligible": {"type": "boolean"},
           "structuralEligibility": {"anyOf": [{"$ref": "fit-structural-eligibility.schema.json"}, {"type": "null"}]},
+          "relationalDiscrepancy": {"$ref": "relational-discrepancy.schema.json"},
           "eligible": {"type": "boolean"},
           "protectedRegressions": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["id", "baseline", "value", "regression", "maxRegression"], "properties": {"id": {"$ref": "common.schema.json#/$defs/semanticId"}, "baseline": {"type": "number"}, "value": {"type": "number"}, "regression": {"type": "number"}, "maxRegression": {"type": "number", "minimum": 0}}}},
           "candidateAsset": {"$ref": "common.schema.json#/$defs/contentReference"}, "renderEvidence": {"$ref": "common.schema.json#/$defs/contentReference"},
@@ -56,7 +57,8 @@
         "selectionAuthority": {"const": "candidate-ranking-only"}, "metricsCannotSelectOwner": {"const": true}, "metricsCannotPassVisualGate": {"const": true},
         "fitCannotMutateProjectState": {"const": true}, "selectedTrialRequiresActualVisualReview": {"const": true},
         "oneCheckpointCandidateAfterSelection": {"const": true}, "trialContentReferencesMustVerify": {"const": true},
-        "structuralInvalidityIsHardBarrier": {"const": true}, "structuralInvalidityIsNeverScorePenalty": {"const": true}
+        "structuralInvalidityIsHardBarrier": {"const": true}, "structuralInvalidityIsNeverScorePenalty": {"const": true},
+        "relationalInvalidityIsHardBarrier": {"const": true}, "relationalInvalidityIsNeverScorePenalty": {"const": true}
       }
     },
     "reportDigest": {"$ref": "common.schema.json#/$defs/digest"}
