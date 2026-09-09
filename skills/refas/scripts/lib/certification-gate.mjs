@@ -18,12 +18,23 @@ import {
   validateClaimCertificationDecision,
 } from './certification-policy.mjs';
 import {validateWholeObjectPolicyAuthority} from './certification-authority.mjs';
+import {
+  CERTIFICATION_RELATIONAL_EVIDENCE_SCHEMA,
+  createCertificationRelationalEvidence,
+  validateCertificationRelationalEvidence,
+} from './certification-relational-evidence.mjs';
 import {inspectCertificationProjectionEvidence} from './certification-projection-evidence.mjs';
 
 const CONTRACT_FIXTURE_ACQUISITIONS = new Set(['test-fixture', 'deterministic-project-fixture', 'synthetic-test-fixture']);
 const INTERNAL_ROOT = '.refas';
 const certificateFile = (root) => path.join(path.resolve(root), INTERNAL_ROOT, 'certification.json');
 const projectStateFile = (root) => path.join(path.resolve(root), INTERNAL_ROOT, 'project.json');
+const RELATIONAL_ARTIFACT_SPECS = Object.freeze([
+  {key:'relationalStructure', id:'relational-structure', role:'relational-structure', kind:'relational-structure', schema:'refas.relational-structure/v1'},
+  {key:'semanticAuthority', id:'semantic-authority', role:'semantic-authority', kind:'semantic-authority', schema:'refas.semantic-authority-set/v1'},
+  {key:'relationalBarrier', id:'relational-barrier', role:'relational-barrier', kind:'whole-system-relational-barrier', schema:'refas.whole-system-relational-barrier/v1'},
+  {key:'relationalDiscrepancy', id:'relational-discrepancy', role:'relational-discrepancy', kind:'relational-discrepancy', schema:'refas.relational-discrepancy/v1'},
+]);
 
 async function readVisualReview(root, head) {
   const artifacts = (head?.artifactRefs ?? []).filter((artifact) => artifact.kind === 'visual-review');
@@ -61,6 +72,19 @@ function candidateArtifactFromReview(head, review) {
   return candidates.find((artifact) => artifact.kind === 'glb' || String(artifact.path).toLowerCase().endsWith('.glb')) ?? candidates[0] ?? null;
 }
 
+async function readHeadRelationalArtifacts(root, head) {
+  const result = {};
+  for (const spec of RELATIONAL_ARTIFACT_SPECS) {
+    const matches = (head.artifactRefs ?? []).filter((artifact) => artifact.kind === spec.kind);
+    if (matches.length !== 1) throw new Error(`real-source certification requires exactly one digest-bound ${spec.kind} artifact`);
+    const bytes = await readBoundArtifact(root, matches[0], `${spec.kind} artifact`);
+    const document = jsonBytes(bytes, `${spec.kind} artifact`);
+    if (document.schema !== spec.schema) throw new Error(`${spec.kind} artifact schema is invalid`);
+    result[spec.key] = {artifact: matches[0], bytes, document, spec};
+  }
+  return result;
+}
+
 async function explicitTransactionContext(root, head, candidateArtifact, candidateBytes, transactionArtifact) {
   const transactionBytes = await readBoundArtifact(root, transactionArtifact, 'candidate transaction artifact');
   const transaction = jsonBytes(transactionBytes, 'candidate transaction artifact');
@@ -79,6 +103,16 @@ async function explicitTransactionContext(root, head, candidateArtifact, candida
   return {transaction, evidenceBytesById, transactionSource: 'checkpoint-artifact'};
 }
 
+function relationalEvidenceNode(spec, item) {
+  return {
+    id: spec.id,
+    role: spec.role,
+    schema: spec.schema,
+    bytes: item.bytes,
+    ...(spec.key === 'relationalDiscrepancy' ? {subjectPointer:'/candidateAssetSha256'} : {}),
+  };
+}
+
 async function synthesizedTransactionContext(root, state, head, reviewArtifact, review, candidateBytes) {
   const renderArtifact = (head.artifactRefs ?? []).find((artifact) => artifact.path === review?.renderer?.reportRef && artifact.sha256 === review?.renderer?.reportSha256);
   if (!renderArtifact) throw new Error('claim certification requires the exact visual-review renderer report artifact');
@@ -92,7 +126,9 @@ async function synthesizedTransactionContext(root, state, head, reviewArtifact, 
   const evidence = [
     {id: 'render-report', role: 'render-report', schema: renderReport.schema, bytes: renderBytes, subjectPointer: '/assetSha256'},
   ];
-  const requiresRegisteredComparison = !isFixtureSource(state);
+  const fixture = isFixtureSource(state);
+  const requiresRegisteredComparison = !fixture;
+  const requiresRelationalClosure = !fixture;
   if (requiresRegisteredComparison) {
     const binding = review?.registeredComparison;
     const comparisonArtifact = (head.artifactRefs ?? []).find((artifact) => artifact.kind === 'registered-comparison' && artifact.path === binding?.path && artifact.sha256 === binding?.sha256);
@@ -108,30 +144,107 @@ async function synthesizedTransactionContext(root, state, head, reviewArtifact, 
   evidence.push({
     id: 'visual-review', role: 'visual-review', schema: review.schema, bytes: reviewBytes, subjectPointer: '/assetSha256', dependencies,
   });
+
   const obligations = [
     {id: 'visual-review', role: 'visual-review', schema: 'refas.visual-review/v1'},
     {id: 'render-report', role: 'render-report', schema: 'refas.pbr-render-report/v1'},
   ];
+  const decisionNodeIds = ['visual-review'];
   if (requiresRegisteredComparison) obligations.push({id: 'registered-comparison', role: 'registered-comparison', schema: 'refas.registered-comparison/v1'});
-  const transaction = createCandidateTransaction({candidateBytes, checkpoint: head, evidence, decisionNodeIds: ['visual-review'], obligations});
+
+  if (requiresRelationalClosure) {
+    const relational = await readHeadRelationalArtifacts(root, head);
+    for (const spec of RELATIONAL_ARTIFACT_SPECS) evidence.push(relationalEvidenceNode(spec, relational[spec.key]));
+    const closure = createCertificationRelationalEvidence({
+      candidateAssetSha256: review.assetSha256,
+      relationalStructureBytes: relational.relationalStructure.bytes,
+      semanticAuthorityBytes: relational.semanticAuthority.bytes,
+      relationalBarrierBytes: relational.relationalBarrier.bytes,
+      relationalDiscrepancyBytes: relational.relationalDiscrepancy.bytes,
+    });
+    const closureBytes = Buffer.from(`${JSON.stringify(closure)}\n`, 'utf8');
+    const closureDependencies = RELATIONAL_ARTIFACT_SPECS.map((spec) => ({
+      nodeId: spec.id,
+      proof: {kind:'json-pointer-artifact-sha256', holder:'self', pointer:`/artifacts/${spec.key}/artifactSha256`},
+    }));
+    evidence.push({
+      id:'relational-closure', role:'relational-closure', schema:CERTIFICATION_RELATIONAL_EVIDENCE_SCHEMA,
+      bytes:closureBytes, subjectPointer:'/candidateAssetSha256', dependencies:closureDependencies,
+    });
+    decisionNodeIds.push('relational-closure');
+    obligations.push(
+      {id:'relational-structure-evidence', role:'relational-structure', schema:'refas.relational-structure/v1'},
+      {id:'semantic-authority-evidence', role:'semantic-authority', schema:'refas.semantic-authority-set/v1'},
+      {id:'relational-barrier-evidence', role:'relational-barrier', schema:'refas.whole-system-relational-barrier/v1'},
+      {id:'relational-discrepancy-evidence', role:'relational-discrepancy', schema:'refas.relational-discrepancy/v1'},
+      {id:'relational-closure-evidence', role:'relational-closure', schema:CERTIFICATION_RELATIONAL_EVIDENCE_SCHEMA},
+    );
+  }
+
+  const transaction = createCandidateTransaction({candidateBytes, checkpoint: head, evidence, decisionNodeIds, obligations});
   const evidenceBytesById = new Map(evidence.map((item) => [item.id, Buffer.from(item.bytes)]));
   const validation = validateCandidateTransaction(transaction, {candidateBytes, checkpoint: head, evidenceBytesById});
   if (!validation.valid) throw new Error(`synthesized candidate transaction is invalid: ${validation.errors.join('; ')}`);
   return {transaction, evidenceBytesById, transactionSource: 'runtime-synthesized'};
 }
 
+function evidenceBytes(context, nodeId) {
+  return context.evidenceBytesById instanceof Map ? context.evidenceBytesById.get(nodeId) : context.evidenceBytesById?.[nodeId];
+}
+
+function matchingEvidenceNodes(transaction, binding, spec) {
+  return transaction.evidenceNodes.filter((node) =>
+    node.role === spec.role && node.schema === spec.schema && node.artifactSha256 === binding?.artifactSha256);
+}
+
+function validateTransactionRelationalClosure(transactionContext, {required = true} = {}) {
+  const {transaction} = transactionContext;
+  const closureNodes = transaction.evidenceNodes.filter((node) => node.role === 'relational-closure' && node.schema === CERTIFICATION_RELATIONAL_EVIDENCE_SCHEMA);
+  if (!closureNodes.length) {
+    if (required) throw new Error('real-source certification requires exactly one sealed relational-closure evidence node');
+    return null;
+  }
+  if (closureNodes.length !== 1) throw new Error('certification transaction may contain exactly one relational-closure evidence node');
+  const closureNode = closureNodes[0];
+  if (closureNode.subjectBinding?.kind !== 'json-pointer' || closureNode.subjectBinding.pointer !== '/candidateAssetSha256' || closureNode.subjectBinding.candidateSha256 !== transaction.rootCandidate.sha256) {
+    throw new Error('relational closure must directly bind the exact certification candidate');
+  }
+  const closureBytes = evidenceBytes(transactionContext, closureNode.id);
+  if (closureBytes == null) throw new Error('relational closure evidence bytes are missing');
+  const closure = jsonBytes(closureBytes, 'relational closure evidence');
+  const context = {candidateAssetSha256:transaction.rootCandidate.sha256};
+  for (const spec of RELATIONAL_ARTIFACT_SPECS) {
+    const binding = closure?.artifacts?.[spec.key];
+    const matches = matchingEvidenceNodes(transaction, binding, spec);
+    if (matches.length !== 1) throw new Error(`relational closure must bind exactly one ${spec.role} transaction node`);
+    const dependency = closureNode.dependencies.find((item) => item.nodeId === matches[0].id);
+    const expectedPointer = `/artifacts/${spec.key}/artifactSha256`;
+    if (!dependency || dependency.proof?.holder !== 'self' || dependency.proof?.pointer !== expectedPointer) {
+      throw new Error(`relational closure dependency graph does not bind ${spec.role} through ${expectedPointer}`);
+    }
+    const bytes = evidenceBytes(transactionContext, matches[0].id);
+    if (bytes == null) throw new Error(`relational closure support bytes are missing for ${spec.role}`);
+    context[`${spec.key}Bytes`] = bytes;
+  }
+  const validation = validateCertificationRelationalEvidence(closure, context);
+  if (!validation.valid) throw new Error(`certification relational evidence is invalid: ${validation.errors.join('; ')}`);
+  return {evidence:closure, source:transactionContext.transactionSource};
+}
+
 async function policyForHead(root, state, head) {
   const policyArtifacts = (head.artifactRefs ?? []).filter((artifact) => artifact.kind === 'certification-policy');
   if (policyArtifacts.length > 1) throw new Error('certification checkpoint may bind at most one certification-policy artifact');
-  const requiresRegisteredComparison = !isFixtureSource(state);
+  const fixture = isFixtureSource(state);
+  const requiresRegisteredComparison = !fixture;
+  const requiresRelationalClosure = !fixture;
   if (!policyArtifacts.length) {
-    return {policy: createDefaultWholeObjectCertificationPolicy({requiresRegisteredComparison}), policySource: 'runtime-default'};
+    return {policy: createDefaultWholeObjectCertificationPolicy({requiresRegisteredComparison, requiresRelationalClosure}), policySource: 'runtime-default'};
   }
   const bytes = await readBoundArtifact(root, policyArtifacts[0], 'certification-policy artifact');
   const policy = jsonBytes(bytes, 'certification-policy artifact');
   const validation = validateCertificationPolicy(policy);
   if (!validation.valid) throw new Error(`certification policy is invalid: ${validation.errors.join('; ')}`);
-  const authority = validateWholeObjectPolicyAuthority(policy, {requiresRegisteredComparison});
+  const authority = validateWholeObjectPolicyAuthority(policy, {requiresRegisteredComparison, requiresRelationalClosure});
   if (!authority.valid) throw new Error(`certification policy weakens mandatory whole-object authority: ${authority.errors.join('; ')}`);
   return {policy, policySource: 'checkpoint-artifact'};
 }
@@ -139,10 +252,10 @@ async function policyForHead(root, state, head) {
 export async function assessClaimCertification(root) {
   root = path.resolve(root);
   const state = await loadProject(root);
-  if (!state.head) return {required: false, valid: true, errors: [], transaction: null, policy: null, decision: null};
+  if (!state.head) return {required: false, valid: true, errors: [], transaction: null, policy: null, decision: null, relationalClosure:null};
   const head = await loadCheckpoint(root, state.head);
   if (head.capability !== 'whole-object-certification' || head.scopeId !== 'whole') {
-    return {required: false, valid: true, errors: [], transaction: null, policy: null, decision: null};
+    return {required: false, valid: true, errors: [], transaction: null, policy: null, decision: null, relationalClosure:null};
   }
   const errors = [];
   try {
@@ -159,6 +272,7 @@ export async function assessClaimCertification(root) {
     const transactionContext = transactionArtifacts.length
       ? await explicitTransactionContext(root, head, candidateArtifact, candidateBytes, transactionArtifacts[0])
       : await synthesizedTransactionContext(root, state, head, reviewArtifacts[0], review, candidateBytes);
+    const relationalClosure = validateTransactionRelationalClosure(transactionContext, {required:!isFixtureSource(state)});
 
     const {policy, policySource} = await policyForHead(root, state, head);
     const recomputedDecision = evaluateCertificationPolicy({
@@ -193,10 +307,12 @@ export async function assessClaimCertification(root) {
       policySource,
       decision,
       decisionSource,
+      relationalClosure: relationalClosure?.evidence ?? null,
+      relationalClosureSource: relationalClosure?.source ?? null,
     };
   } catch (error) {
     errors.push(error.message);
-    return {required: true, valid: false, errors, transaction: null, policy: null, decision: null};
+    return {required: true, valid: false, errors, transaction: null, policy: null, decision: null, relationalClosure:null};
   }
 }
 
@@ -218,6 +334,10 @@ function claimBinding(assessment) {
       authorizedClaimIds: assessment.decision.authorizedClaimIds,
       refusedClaimIds: assessment.decision.refusedClaimIds,
     },
+    relationalClosure: assessment.relationalClosure ? {
+      relationalCertificationDigest: assessment.relationalClosure.relationalCertificationDigest,
+      source: assessment.relationalClosureSource,
+    } : null,
   };
 }
 
@@ -246,6 +366,7 @@ export async function assessCertification(root) {
     candidateTransactionDigest: claims.transaction?.transactionDigest ?? null,
     certificationPolicyDigest: claims.policy?.policyDigest ?? null,
     claimDecisionDigest: claims.decision?.decisionDigest ?? null,
+    relationalCertificationDigest: claims.relationalClosure?.relationalCertificationDigest ?? null,
     authorizedClaimIds: claims.decision?.authorizedClaimIds ?? [],
   });
 }
@@ -268,6 +389,7 @@ export async function certifyProject(root) {
     transactionDigest: binding.transaction.transactionDigest,
     policyDigest: binding.policy.policyDigest,
     decisionDigest: binding.decision.decisionDigest,
+    relationalCertificationDigest: binding.relationalClosure?.relationalCertificationDigest ?? null,
     claimCertificationDigest,
     at: certificate.certifiedAt,
   });
