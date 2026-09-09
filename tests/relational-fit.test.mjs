@@ -38,7 +38,7 @@ function relationalPlan(structure) {
       {id: 'bend', binding: 'model.shape.bend', kind: 'integer', minimum: 0, maximum: 1, initial: 0},
     ],
     objectives: [{id: 'shape-error', goal: 'minimize', scale: 1, weight: 1}],
-    optimizer: {seed: 3, populationSize: 8, evaluationBudget: 8, patience: 8, initializationAttemptBudget: 16},
+    optimizer: {seed: 3, populationSize: 8, evaluationBudget: 9, patience: 8, initializationAttemptBudget: 16},
     relationalEligibilityRequired: true,
     relationalStructureDigest: structure.structureDigest,
     evidenceRefs: ['source:reference'],
