@@ -1,0 +1,35 @@
+{
+  "scopeId": "whole",
+  "sourceSha256": "<64-char-source-sha256>",
+  "basisRefs": ["source:primary-reference"],
+  "entities": [
+    {"id": "left-landmark", "kind": "landmark", "role": "paired-left", "basisRefs": []},
+    {"id": "right-landmark", "kind": "landmark", "role": "paired-right", "basisRefs": []},
+    {"id": "top-boundary", "kind": "landmark", "role": "whole-top", "basisRefs": []},
+    {"id": "bottom-boundary", "kind": "landmark", "role": "whole-bottom", "basisRefs": []},
+    {"id": "primary-plane", "kind": "plane", "role": "coarse-primary-plane", "basisRefs": []},
+    {"id": "secondary-plane", "kind": "plane", "role": "coarse-secondary-plane", "basisRefs": []}
+  ],
+  "relations": [
+    {
+      "id": "paired-span-ratio",
+      "kind": "distance-ratio",
+      "scope": "whole-system",
+      "importance": "identity",
+      "entityIds": ["left-landmark", "right-landmark", "top-boundary", "bottom-boundary"],
+      "dependsOn": [],
+      "basisRefs": ["source:front-view"],
+      "range": [0.2, 0.45]
+    },
+    {
+      "id": "coarse-plane-transition",
+      "kind": "plane-chain",
+      "scope": "whole-system",
+      "importance": "macro",
+      "entityIds": ["primary-plane", "secondary-plane"],
+      "dependsOn": [],
+      "basisRefs": ["source:oblique-view"],
+      "continuity": "broken"
+    }
+  ]
+}

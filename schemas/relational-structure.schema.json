@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/relational-structure.schema.json",
+  "title": "RefAs relational structure",
+  "type": "object",
+  "required": ["schema", "scopeId", "sourceSha256", "entities", "relations", "dependencyOrder", "wholeSystemRelationIds", "basisRefs", "policy", "structureDigest"],
+  "properties": {
+    "schema": {"const": "refas.relational-structure/v1"},
+    "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "entities": {
+      "type": "array", "minItems": 2,
+      "items": {
+        "type": "object",
+        "required": ["id", "kind", "role", "basisRefs"],
+        "properties": {
+          "id": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "kind": {"enum": ["landmark", "axis", "plane", "volume", "region", "interface", "system"]},
+          "role": {"type": "string"},
+          "basisRefs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+        },
+        "additionalProperties": false
+      }
+    },
+    "relations": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "kind", "scope", "importance", "entityIds", "dependsOn", "basisRefs"],
+        "properties": {
+          "id": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "kind": {"enum": ["distance-ratio", "alignment", "ordering", "plane-chain", "volume-ratio"]},
+          "scope": {"enum": ["whole-system", "local"]},
+          "importance": {"enum": ["macro", "identity", "detail"]},
+          "entityIds": {"type": "array", "minItems": 2, "uniqueItems": true, "items": {"$ref": "common.schema.json#/$defs/semanticId"}},
+          "dependsOn": {"type": "array", "uniqueItems": true, "items": {"$ref": "common.schema.json#/$defs/semanticId"}},
+          "basisRefs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+          "range": {"type": "array", "prefixItems": [{"type": "number", "minimum": 0}, {"type": "number", "minimum": 0}], "items": false},
+          "mode": {"enum": ["collinear", "parallel", "perpendicular", "coplanar", "centered", "symmetric"]},
+          "tolerance": {"type": "number", "minimum": 0},
+          "axis": {"enum": ["reference-right", "reference-up", "reference-forward"]},
+          "direction": {"enum": ["forward", "reverse"]},
+          "continuity": {"enum": ["smooth", "broken", "stepped", "unknown"]}
+        },
+        "additionalProperties": false
+      }
+    },
+    "dependencyOrder": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "common.schema.json#/$defs/semanticId"}},
+    "wholeSystemRelationIds": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "common.schema.json#/$defs/semanticId"}},
+    "basisRefs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "policy": {
+      "type": "object",
+      "required": ["relationsPrecedeLocalFeatureHardening", "visibleEvidenceConstrainsButDoesNotDefineWholeModel", "relationBasisDoesNotAutomaticallyBecomeSourceFact", "wholeSystemRelationsRemainExplicitDependencies", "assetSpecificVocabularyStaysOutsideCore"],
+      "properties": {
+        "relationsPrecedeLocalFeatureHardening": {"const": true},
+        "visibleEvidenceConstrainsButDoesNotDefineWholeModel": {"const": true},
+        "relationBasisDoesNotAutomaticallyBecomeSourceFact": {"const": true},
+        "wholeSystemRelationsRemainExplicitDependencies": {"const": true},
+        "assetSpecificVocabularyStaysOutsideCore": {"const": true}
+      },
+      "additionalProperties": false
+    },
+    "structureDigest": {"$ref": "common.schema.json#/$defs/digest"}
+  },
+  "additionalProperties": false
+}
