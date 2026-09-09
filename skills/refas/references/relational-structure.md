@@ -39,3 +39,29 @@ A correct collection of landmarks can still produce a wrong 3D form when the pla
 The barrier binds the exact relational-structure digest and semantic-authority-set digest. It passes only when every required relation has current passing evidence and authority that can license positive construction. `unknown` blocks the barrier without becoming `forbidden`; explicit `forbidden` authority is a construction conflict.
 
 Use `routeRelationalBarrier()` when blocked. Failed whole-system geometry routes to `shape-reconstruction`; missing/unknown/forbidden authority routes upstream to `spatial-hypotheses`; genuinely unresolved evidence requests review instead of inventing a repair owner. See `references/whole-system-relational-barrier.md`.
+
+## Candidate-bound discrepancy and fitting
+
+Once a candidate exists, evaluate the same whole-system macro/identity obligations against that exact candidate with `refas.relational-discrepancy/v1`. The discrepancy embeds the exact relational graph, binds the candidate SHA-256, and records current measurements/evidence for each required relation.
+
+Missing quantitative evidence remains `unresolved`. A resolved pass/fail requires evidence references. When a parameter-fit plan requests relational eligibility, the fitter treats the discrepancy as a hard admission condition:
+
+```text
+eligible = objective-eligible AND structurally-eligible AND relationally-eligible
+```
+
+Do not turn relation failure into an arbitrary large loss or `Infinity`. A candidate with a better silhouette or perceptual score cannot win by trading away a required whole-system relation. Relational residuals remain diagnostic and cannot pass visual-review authority.
+
+## Certification closure
+
+For real-source whole-object certification, the current relation system enters the sealed authority chain through `refas.certification-relational-evidence/v1`. It binds:
+
+- the exact certification candidate SHA-256;
+- exact relational-structure bytes and structure digest;
+- exact semantic-authority bytes and authority-set digest;
+- exact whole-system-barrier bytes and barrier digest;
+- exact candidate-bound relational-discrepancy bytes and discrepancy digest.
+
+The closure revalidates source/scope agreement, authority coverage, passing barrier/discrepancy state, and that barrier checks reproduce from the candidate-bound discrepancy. Substitution, replay against another candidate, or freshly re-signed contradictory relational artifacts cannot preserve the same closure.
+
+A passing relational closure is certification evidence for the declared relational claim. It does not convert inferred or engineered propositions into observed source facts and does not replace independent visual, projection, PBR, or structural gates.
