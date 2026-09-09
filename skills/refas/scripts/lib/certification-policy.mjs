@@ -91,21 +91,31 @@ export function createCertificationPolicy({id = 'whole-object-claim-policy', cla
   return deepFreeze({...core, policyDigest: digestJson(core)});
 }
 
-export function createDefaultWholeObjectCertificationPolicy({requiresRegisteredComparison = true} = {}) {
+export function createDefaultWholeObjectCertificationPolicy({requiresRegisteredComparison = true, requiresRelationalClosure = requiresRegisteredComparison} = {}) {
   const obligations = [
     {id: 'independent-visual-review', role: 'visual-review', schema: 'refas.visual-review/v1', minCount: 1},
     {id: 'independent-render-report', role: 'render-report', schema: 'refas.pbr-render-report/v1', minCount: 1},
   ];
   if (requiresRegisteredComparison) obligations.push({id: 'registered-source-comparison', role: 'registered-comparison', schema: 'refas.registered-comparison/v1', minCount: 1});
-  return createCertificationPolicy({
-    id: requiresRegisteredComparison ? 'source-bound-whole-object-policy' : 'fixture-whole-object-policy',
-    claims: [{
-      id: 'visual-source-fidelity',
-      description: 'The exact candidate is supported by current independent visual evidence under the existing RefAs visual and projection gates.',
-      obligations,
-      findingSources: [{role: 'visual-review', schema: 'refas.visual-review/v1', pointer: '/unresolvedFindings'}],
+  const claims = [{
+    id: 'visual-source-fidelity',
+    description: 'The exact candidate is supported by current independent visual evidence under the existing RefAs visual and projection gates.',
+    obligations,
+    findingSources: [{role: 'visual-review', schema: 'refas.visual-review/v1', pointer: '/unresolvedFindings'}],
+    vetoSeverities: BLOCKING_SEVERITIES,
+  }];
+  if (requiresRelationalClosure) {
+    claims.push({
+      id: 'whole-system-relational-fidelity',
+      description: 'The exact candidate is supported by a passing whole-system relational graph under explicit semantic authority, sealed to exact evidence bytes.',
+      obligations: [{id: 'sealed-relational-closure', role: 'relational-closure', schema: 'refas.certification-relational-evidence/v1', minCount: 1}],
+      findingSources: [],
       vetoSeverities: BLOCKING_SEVERITIES,
-    }],
+    });
+  }
+  return createCertificationPolicy({
+    id: requiresRegisteredComparison || requiresRelationalClosure ? 'source-bound-whole-object-policy' : 'fixture-whole-object-policy',
+    claims,
   });
 }
 
