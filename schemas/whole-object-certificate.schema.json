@@ -54,7 +54,7 @@
     "certifiedAt": {"type": "string", "format": "date-time"},
     "claimCertification": {
       "type": "object",
-      "required": ["transaction", "policy", "decision"],
+      "required": ["transaction", "policy", "decision", "relationalClosure"],
       "properties": {
         "transaction": {
           "type": "object",
@@ -86,6 +86,20 @@
             "refusedClaimIds": {"type": "array", "uniqueItems": true, "items": {"$ref": "common.schema.json#/$defs/semanticId"}}
           },
           "additionalProperties": false
+        },
+        "relationalClosure": {
+          "oneOf": [
+            {"type": "null"},
+            {
+              "type": "object",
+              "required": ["relationalCertificationDigest", "source"],
+              "properties": {
+                "relationalCertificationDigest": {"$ref": "common.schema.json#/$defs/digest"},
+                "source": {"enum": ["checkpoint-artifact", "runtime-synthesized"]}
+              },
+              "additionalProperties": false
+            }
+          ]
         }
       },
       "additionalProperties": false
