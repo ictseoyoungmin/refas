@@ -12,6 +12,7 @@ export * from './relational-structure.mjs';
 export * from './relational-discrepancy.mjs';
 export * from './semantic-authority.mjs';
 export * from './whole-system-relational-barrier.mjs';
+export * from './certification-relational-evidence.mjs';
 export * from './multi-anchor.mjs';
 export * from './articulation-clearance.mjs';
 export * from './attachment-propagation.mjs';
