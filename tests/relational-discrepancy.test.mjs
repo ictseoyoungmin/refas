@@ -13,16 +13,16 @@ function structure() {
   return createRelationalStructure({
     scopeId: 'whole', sourceSha256: D('a'), basisRefs: ['source:primary'],
     entities: [
-      {id: 'a', kind: 'landmark'}, {id: 'b', kind: 'landmark'},
-      {id: 'c', kind: 'landmark'}, {id: 'd', kind: 'landmark'},
+      {id: 'landmark-a', kind: 'landmark'}, {id: 'landmark-b', kind: 'landmark'},
+      {id: 'landmark-c', kind: 'landmark'}, {id: 'landmark-d', kind: 'landmark'},
       {id: 'axis-a', kind: 'axis'}, {id: 'axis-b', kind: 'axis'},
       {id: 'plane-a', kind: 'plane'}, {id: 'plane-b', kind: 'plane'},
       {id: 'volume-a', kind: 'volume'}, {id: 'volume-b', kind: 'volume'},
     ],
     relations: [
-      {id: 'span-ratio', kind: 'distance-ratio', scope: 'whole-system', importance: 'identity', entityIds: ['a', 'b', 'c', 'd'], range: [0.4, 0.6], basisRefs: ['source:front']},
+      {id: 'span-ratio', kind: 'distance-ratio', scope: 'whole-system', importance: 'identity', entityIds: ['landmark-a', 'landmark-b', 'landmark-c', 'landmark-d'], range: [0.4, 0.6], basisRefs: ['source:front']},
       {id: 'axis-parallel', kind: 'alignment', scope: 'whole-system', importance: 'macro', entityIds: ['axis-a', 'axis-b'], mode: 'parallel', tolerance: 0.05, basisRefs: ['source:front']},
-      {id: 'front-order', kind: 'ordering', scope: 'whole-system', importance: 'macro', entityIds: ['a', 'b', 'c'], axis: 'reference-forward', direction: 'forward', basisRefs: ['source:oblique']},
+      {id: 'front-order', kind: 'ordering', scope: 'whole-system', importance: 'macro', entityIds: ['landmark-a', 'landmark-b', 'landmark-c'], axis: 'reference-forward', direction: 'forward', basisRefs: ['source:oblique']},
       {id: 'plane-break', kind: 'plane-chain', scope: 'whole-system', importance: 'identity', entityIds: ['plane-a', 'plane-b'], continuity: 'broken', basisRefs: ['source:oblique']},
       {id: 'volume-balance', kind: 'volume-ratio', scope: 'whole-system', importance: 'macro', entityIds: ['volume-a', 'volume-b'], range: [1.5, 2.5], basisRefs: ['inference:mass']},
     ],
@@ -32,7 +32,7 @@ function structure() {
 const passingObservations = () => [
   {relationId: 'span-ratio', value: 0.5, evidenceRefs: ['proof:span']},
   {relationId: 'axis-parallel', error: 0.02, evidenceRefs: ['proof:axis']},
-  {relationId: 'front-order', orderedEntityIds: ['a', 'b', 'c'], evidenceRefs: ['proof:depth']},
+  {relationId: 'front-order', orderedEntityIds: ['landmark-a', 'landmark-b', 'landmark-c'], evidenceRefs: ['proof:depth']},
   {relationId: 'plane-break', continuity: 'broken', evidenceRefs: ['proof:plane']},
   {relationId: 'volume-balance', value: 2, evidenceRefs: ['proof:volume']},
 ];
@@ -52,15 +52,15 @@ test('out-of-range, wrong ordering, and missing quantitative thresholds remain i
   const input = structure();
   const observations = passingObservations();
   observations.find((item) => item.relationId === 'span-ratio').value = 0.9;
-  observations.find((item) => item.relationId === 'front-order').orderedEntityIds = ['b', 'a', 'c'];
+  observations.find((item) => item.relationId === 'front-order').orderedEntityIds = ['landmark-b', 'landmark-a', 'landmark-c'];
   const value = createRelationalDiscrepancy({relationalStructure: input, candidateAssetSha256: D('c'), observations});
   assert.equal(value.eligible, false);
   assert.deepEqual(value.failedRelationIds, ['front-order', 'span-ratio']);
 
   const noTolerance = createRelationalStructure({
     scopeId: 'whole', sourceSha256: D('a'),
-    entities: [{id: 'x', kind: 'axis'}, {id: 'y', kind: 'axis'}],
-    relations: [{id: 'alignment-without-threshold', kind: 'alignment', scope: 'whole-system', importance: 'macro', entityIds: ['x', 'y'], mode: 'parallel', basisRefs: ['source:x']}],
+    entities: [{id: 'axis-x', kind: 'axis'}, {id: 'axis-y', kind: 'axis'}],
+    relations: [{id: 'alignment-without-threshold', kind: 'alignment', scope: 'whole-system', importance: 'macro', entityIds: ['axis-x', 'axis-y'], mode: 'parallel', basisRefs: ['source:x']}],
   });
   const unresolved = createRelationalDiscrepancy({
     relationalStructure: noTolerance, candidateAssetSha256: D('c'),
