@@ -20,8 +20,8 @@
 | `source-drift` | `source-intake` |
 | `context-loss`, `missing-part` | `visual-hierarchy` |
 | `observation-unsupported`, `evidence-insufficient` | `visual-observation` |
-| `perspective-mismatch`, `depth-mismatch`, `orientation-mismatch` | `spatial-hypotheses` |
-| `silhouette-mismatch`, `mass-proportion-mismatch`, `curvature-mismatch` | `shape-reconstruction` |
+| `perspective-mismatch`, `depth-mismatch`, `orientation-mismatch`, `relational-authority-unresolved`, `relational-constraint-conflict` | `spatial-hypotheses` |
+| `silhouette-mismatch`, `mass-proportion-mismatch`, `curvature-mismatch`, `whole-system-relation-mismatch` | `shape-reconstruction` |
 | `pattern-topology-mismatch`, `relief-mismatch` | `surface-topology` |
 | `attachment-mismatch`, `occlusion-mismatch`, `penetration` | `assembly` |
 | `material-mismatch`, `finish-mismatch` | `appearance` |
@@ -30,6 +30,8 @@
 | `closure-evidence-missing` | `whole-object-certification` |
 
 The executable registry is `scripts/lib/ownership.mjs`. Keep this table synchronized with it.
+
+Relational routing is deliberately split by premise ownership. Missing, unknown, invalid, or explicitly forbidden relation authority belongs to `spatial-hypotheses`; a current candidate that fails a licensed macro/identity relation belongs to `shape-reconstruction`. A relation that is genuinely unresolved for lack of evidence remains `evidence-insufficient` and requests review instead of guessing an owner.
 
 ## Routing algorithm
 
@@ -43,14 +45,18 @@ The executable registry is `scripts/lib/ownership.mjs`. Keep this table synchron
 
 `route` previews this decision. `report-finding` persists the decision, restores the selected checkpoint's artifact bytes, updates the active head, and records the first invalidated owner. Run `resume` after it; do not infer the repair start from checkpoint names.
 
+Use `routeRelationalBarrier()` for `refas.whole-system-relational-barrier/v1`. It converts exact barrier blocker codes into the typed relational findings above before using the same checkpoint and invalidation machinery.
+
 ## Common routing mistakes
 
 - Do not route `silhouette-mismatch` to rendering because it was first seen in a render.
 - Do not route `camera-mismatch` to shape reconstruction until camera alternatives are tested.
 - Do not route attachment failure to the closed child when parent registration is wrong.
+- Do not route an authority gap as a geometry defect merely because geometry exposes it.
+- Do not route a failed realized whole-system relation upstream to observation when its authority/evidence premise is already valid.
 - Do not use a composite score as a finding category.
 - Do not silently assign a blocker to the current capability because it is convenient.
 
 ## Adding a category
 
-Add a new category only when its repair authority is unambiguous. Update the executable registry, this reference, router tests, and the ownership audit in one change.
+Add a new category only when its repair authority is unambiguous. Update the executable registry, this reference, the managed label catalog, Issue form, governance reference, router tests, and the ownership audit in one change.
