@@ -2,6 +2,40 @@
 
 All notable RefAs changes are documented here. RefAs follows semantic versioning.
 
+## 1.0.2 — 2026-09-10
+
+### Relational structure and inference authority
+
+- Added `refas.relational-structure/v1` for domain-neutral distance ratios, alignments, ordering, plane chains, volume ratios, explicit dependencies, and whole-system versus local importance.
+- Added `refas.semantic-authority-set/v1` with `observed`, `inferred`, `engineered`, `unknown`, and `forbidden` authority classes. `unknown` and unobserved no longer imply forbidden; inferred or engineered construction remains distinct from source truth.
+- Added exact authority coverage validation so whole-system relations cannot silently lose their semantic basis or be rebound to another relation graph.
+- Added `refas.whole-system-relational-barrier/v1` before lower-scope geometry hardening. Macro/identity relations require current passing evidence and positive construction authority; local detail and numeric visual scores cannot substitute.
+
+### Relation-aware fitting
+
+- Added `refas.relational-discrepancy/v1`, bound to one exact candidate SHA-256 and one exact embedded relational graph.
+- Added deterministic evaluation for distance/volume ratios, alignments, ordering, and plane-chain obligations while preserving missing measurements as unresolved rather than inventing a pass.
+- Integrated relational eligibility into parameter fitting as a hard candidate-admission barrier beside objective protection and structural eligibility. A lower visual or perceptual loss cannot select a candidate whose required whole-system relations fail or remain unresolved.
+- Kept relational residuals diagnostic: they are not weighted penalties that can be traded against unrelated visual gains and cannot pass visual-review authority.
+
+### Certification closure
+
+- Added `refas.certification-relational-evidence/v1` to seal the exact candidate together with the exact bytes and logical digests of the relational structure, semantic authority set, whole-system barrier, and candidate-bound relational discrepancy.
+- Real-source whole-object certification now requires a mandatory `whole-system-relational-fidelity` claim in addition to the existing visual/source-fidelity evidence chain.
+- The relational closure revalidates authority coverage, source identity, whole scope, passing barrier/discrepancy state, and exact barrier-check reproduction from candidate-bound discrepancy evidence.
+- Candidate/evidence substitution, relational replay across candidates, freshly re-signed relational artifacts, and custom certification policies that delete or weaken the mandatory relational claim fail closed.
+- Whole-object certificates and audits bind the resulting relational certification digest. Contract-fixture acquisition classes retain patch-compatible synthetic certification behavior.
+
+### Release and compatibility boundary
+
+- New project state and whole-object certificates identify runtime 1.0.2; public v1 schemas continue accepting 1.0.0 and 1.0.1 artifacts.
+- The release audit now treats relational structure, inference authority, relational discrepancy, the whole-system barrier, and relational certification closure as required distributable Core contracts.
+- Robotics-specific actuator, collider, mass/inertia, MJCF/URDF, calibrated simulation, and manufacturer-internal mechanism claims remain outside Core. Domain packs may add those semantics later without changing the general authority model.
+
+### Known limits
+
+RefAs 1.0.2 can justify hidden construction as `inferred` or `engineered` when typed evidence, priors, specifications, or functional/downstream requirements support it. That permission does not identify unseen manufacturer truth. Ambiguous single-view orientation, absolute scale, material composition, and simulation-ready physical calibration still require additional evidence. See `docs/known-limitations.md`.
+
 ## 1.0.1 — 2026-09-06
 
 ### Orientation correctness
