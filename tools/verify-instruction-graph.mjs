@@ -17,6 +17,10 @@ function stripRouteSuffix(value) {
   return value.replace(/[?#].*$/u, '').replace(/[.,;:]+$/u, '');
 }
 
+function isFileRoute(route) {
+  return !route.endsWith('/') && path.posix.extname(route).length > 1;
+}
+
 export function resolveInstructionRoute(route) {
   const clean = stripRouteSuffix(route.trim());
   if (!clean || clean.includes('..')) throw new Error(`unsafe instruction route: ${route}`);
@@ -34,7 +38,7 @@ export function extractInstructionRoutes(markdown) {
   for (const expression of [inline, link]) {
     for (const match of markdown.matchAll(expression)) {
       const route = stripRouteSuffix(match[1]);
-      if (ROUTABLE_PREFIXES.some((prefix) => route.startsWith(prefix))) routes.add(route);
+      if (ROUTABLE_PREFIXES.some((prefix) => route.startsWith(prefix)) && isFileRoute(route)) routes.add(route);
     }
   }
   return [...routes].sort();
