@@ -1,6 +1,6 @@
 # RefAs instruction router
 
-This file is the canonical progressive-load router for the RefAs skill. `SKILL.md` enters the instruction graph here; every Markdown leaf under `references/` is registered here exactly once as a routable instruction target.
+This file is the canonical progressive-load router for the RefAs skill. `SKILL.md` enters the instruction graph here; every Markdown leaf under `references/` is canonically registered here as a routable instruction target. A leaf may be referenced again inside an execution chain without creating a second graph identity.
 
 ## Path roots
 
