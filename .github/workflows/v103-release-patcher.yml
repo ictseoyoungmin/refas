@@ -1,0 +1,63 @@
+name: v1.0.3 release patcher
+
+on:
+  push:
+    branches: [release/v1.0.3-semantic-instruction-graph]
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: github.event.head_commit.message == 'Run v1.0.3 release patcher'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: release/v1.0.3-semantic-instruction-graph
+      - name: Apply exact release-tail edits
+        shell: python
+        run: |
+          from pathlib import Path
+
+          def replace_exact(path, old, new):
+              p = Path(path)
+              text = p.read_text(encoding='utf-8')
+              if old not in text:
+                  raise SystemExit(f'missing expected text in {path}: {old!r}')
+              p.write_text(text.replace(old, new), encoding='utf-8')
+
+          replace_exact('tests/checkpoints.test.mjs', "assert.equal(certificate.version, '1.0.2');", "assert.equal(certificate.version, '1.0.3');")
+          replace_exact('skills/refas/SKILL.md', 'defines the path-root convention for skill-root versus package-root files.', 'defines the installed skill-root convention and semantic routing boundary.')
+          replace_exact('docs/github-governance.md', '| `spatial-hypotheses` | `perspective-mismatch`, `depth-mismatch`, `orientation-mismatch`, `relational-authority-unresolved`, `relational-constraint-conflict` |', '| `spatial-hypotheses` | `perspective-mismatch`, `depth-mismatch`, `orientation-mismatch`, `camera-hypothesis-mismatch`, `relational-authority-unresolved`, `relational-constraint-conflict` |')
+          replace_exact('docs/github-governance.md', '| `rendering` | `camera-mismatch`, `render-integrity` |', '| `rendering` | `render-camera-integrity`, `render-integrity` |')
+
+          for path in ['README.md','docs/architecture.md','docs/release-criteria.md','docs/known-limitations.md','demo/README.md','demo/index.html']:
+              p = Path(path)
+              text = p.read_text(encoding='utf-8')
+              if '1.0.2' not in text:
+                  raise SystemExit(f'expected current-version marker missing in {path}')
+              p.write_text(text.replace('1.0.2', '1.0.3'), encoding='utf-8')
+
+          release_criteria = Path('docs/release-criteria.md')
+          text = release_criteria.read_text(encoding='utf-8')
+          semantic_section = '''\n\n## Semantic instruction graph\n\n- `skills/refas/references/GRAPH.json` exactly covers every reference leaf and its hard prerequisite DAG is acyclic.\n- Every semantic graph owner is either a runtime capability or the control plane, and finding ownership matches `FINDING_OWNERS`.\n- `camera-hypothesis-mismatch` belongs to `spatial-hypotheses`; `render-camera-integrity` belongs to `rendering`; legacy `camera-mismatch` is compatibility-only and is not offered for new findings.\n- Bare sibling Markdown routes are forbidden; every agent-facing dependency uses a canonical installed-skill path.\n- Real-source final authorization requires `refas.certification-relational-evidence/v1` in addition to current visual/projection/provenance evidence.\n- Both installation-boundary and semantic-graph verifiers pass after copying only `skills/refas/` into an isolated directory.\n'''
+          if '## Semantic instruction graph' not in text:
+              release_criteria.write_text(text.rstrip() + semantic_section + '\n', encoding='utf-8')
+
+          changelog = Path('CHANGELOG.md')
+          text = changelog.read_text(encoding='utf-8')
+          marker = '## 1.0.2 — 2026-09-10'
+          if marker not in text:
+              raise SystemExit('CHANGELOG 1.0.2 marker missing')
+          section = '''## 1.0.3 — 2026-09-11\n\n- Added `references/GRAPH.json`, a machine-readable semantic instruction DAG covering all installed-skill reference leaves, owners, prerequisites, conditional dependencies, authority, closure effects, finding ownership, and real-source certification prerequisites.\n- Added an installed-skill semantic graph verifier with isolated-copy regression, DAG/owner validation, exact runtime finding-owner alignment, real-source certification-floor checks, and rejection of ambiguous bare sibling Markdown routes.\n- Split new camera findings into `camera-hypothesis-mismatch` owned by `spatial-hypotheses` and `render-camera-integrity` owned by `rendering`; retained `camera-mismatch` only as deprecated runtime compatibility.\n- Made `refas.certification-relational-evidence/v1` an explicit mandatory real-source final-certification authority floor in the agent instruction path.\n- Preserved the `skills/refas/` installation boundary: semantic graph, contracts, verifier, scripts, assets, and Python dependency manifest remain self-contained.\n\n'''
+          changelog.write_text(text.replace(marker, section + marker, 1), encoding='utf-8')
+
+          Path('.github/workflows/v103-release-patcher.yml').unlink()
+      - name: Commit patch batch
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add -A
+          git commit -m "Apply v1.0.3 release patch batch"
+          git push origin HEAD:release/v1.0.3-semantic-instruction-graph
