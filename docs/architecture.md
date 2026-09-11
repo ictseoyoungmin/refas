@@ -1,4 +1,4 @@
-# RefAs 1.0.2 architecture
+# RefAs 1.0.3 architecture
 
 ## Architecture contract
 
@@ -33,7 +33,7 @@ Each finding is owned by exactly one capability. Reopening an owner invalidates 
 
 ## Relational structure and inference authority
 
-A coherent model is constrained by relationships as well as visible local features. RefAs 1.0.2 makes that system explicit:
+A coherent model is constrained by relationships as well as visible local features. RefAs 1.0.3 makes that system explicit:
 
 ```text
 raw source / observations

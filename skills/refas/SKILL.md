@@ -16,7 +16,7 @@ Before doing any reconstruction, read:
 3. `references/checkpointing.md`
 4. `references/failure-routing.md`
 
-`references/INDEX.md` is the canonical instruction router and defines the path-root convention for skill-root versus package-root files. Do not bypass it when adding or loading a reference leaf.
+`references/INDEX.md` is the canonical instruction router and defines the installed skill-root convention and semantic routing boundary. Do not bypass it when adding or loading a reference leaf.
 
 Then load only the references owned by the active capability:
 
