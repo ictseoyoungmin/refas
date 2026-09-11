@@ -44,7 +44,6 @@ async function main() {
     danglingRoutes: result.danglingRoutes.length,
     outsideSkillRoutes: result.outsideSkillRoutes.length,
     runtimeDependencyEscapes: result.codeEscapes.length,
-    compatibilityDrift: result.compatibilityDrift.length,
   }, null, 2)}\n`);
 }
 

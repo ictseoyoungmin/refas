@@ -7,18 +7,8 @@ const DEFAULT_SKILL_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.u
 const SKILL_ENTRY = 'SKILL.md';
 const INDEX_PATH = 'references/INDEX.md';
 const SELF_PATH = 'scripts/verify_installation_boundary.mjs';
-const ALLOWED_ROUTE_PREFIXES = ['references/', 'assets/', 'scripts/', 'docs/'];
-const FORBIDDEN_REPO_PREFIXES = ['schemas/', 'tests/', 'examples/', 'tools/', '.github/', 'skills/refas/'];
-const COMPAT_CONTRACTS = [
-  'canonical-edit-boundary.md',
-  'attachment-semantics.md',
-  'logical-fusion.md',
-  'surface-anchor-frames.md',
-  'attachment-follow.md',
-  'multi-anchor-solver.md',
-  'articulation-clearance.md',
-  'attachment-propagation.md',
-];
+const ALLOWED_ROUTE_PREFIXES = ['references/', 'assets/', 'scripts/'];
+const FORBIDDEN_REPO_PREFIXES = ['docs/', 'schemas/', 'tests/', 'examples/', 'tools/', '.github/', 'skills/refas/'];
 
 const portable = (value) => value.split(path.sep).join('/');
 const stripRouteSuffix = (value) => value.replace(/[?#].*$/u, '').replace(/[.,;:]+$/u, '');
@@ -102,21 +92,6 @@ async function referenceLeaves(skillRoot) {
   return files.filter((file) => file.endsWith('.md') && file !== 'INDEX.md').map((file) => `references/${file}`).sort();
 }
 
-async function verifyCompatibilityContracts(skillRoot) {
-  const drift = [];
-  for (const name of COMPAT_CONTRACTS) {
-    const canonical = path.join(skillRoot, 'references', 'contracts', name);
-    const compatibility = path.join(skillRoot, 'docs', name);
-    if (!await existsFile(canonical) || !await existsFile(compatibility)) {
-      drift.push({name, reason: 'missing canonical or compatibility file'});
-      continue;
-    }
-    const [left, right] = await Promise.all([fs.readFile(canonical), fs.readFile(compatibility)]);
-    if (!left.equals(right)) drift.push({name, reason: 'compatibility copy differs from canonical contract'});
-  }
-  return drift;
-}
-
 async function analyzeCodeDependencies(skillRoot) {
   const files = (await walk(skillRoot)).filter((file) => /\.(?:mjs|js|cjs|py)$/u.test(file));
   const escapes = [];
@@ -194,12 +169,11 @@ export async function analyzeInstallationBoundary({skillRoot = DEFAULT_SKILL_ROO
   const danglingRoutes = routeRecords.filter((record) => record.target && !record.exists);
   const outsideSkillRoutes = routeRecords.filter((record) => record.error);
   const skillRoutesToIndex = (graph.get(SKILL_ENTRY) ?? []).includes(INDEX_PATH);
-  const compatibilityDrift = await verifyCompatibilityContracts(skillRoot);
   const codeEscapes = await analyzeCodeDependencies(skillRoot);
   const requirementsPresent = await existsFile(path.join(skillRoot, 'requirements.txt'));
 
-  const status = skillRoutesToIndex && indexMissing.length === 0 && indexUnknown.length === 0 && indexUnknownRoutes.length === 0 && orphanReferences.length === 0 && danglingRoutes.length === 0 && outsideSkillRoutes.length === 0 && compatibilityDrift.length === 0 && codeEscapes.length === 0 && requirementsPresent ? 'PASS' : 'FAIL';
-  return {status, skillRoot, referenceLeaves: leaves.length, reachableLeaves: leaves.length - orphanReferences.length, skillRoutesToIndex, indexMissing, indexUnknown, indexUnknownRoutes, orphanReferences, danglingRoutes, outsideSkillRoutes, compatibilityDrift, codeEscapes, requirementsPresent, routedSkillPaths: [...new Set(routeRecords.filter((record) => record.target).map((record) => record.target))].sort()};
+  const status = skillRoutesToIndex && indexMissing.length === 0 && indexUnknown.length === 0 && indexUnknownRoutes.length === 0 && orphanReferences.length === 0 && danglingRoutes.length === 0 && outsideSkillRoutes.length === 0 && codeEscapes.length === 0 && requirementsPresent ? 'PASS' : 'FAIL';
+  return {status, skillRoot, referenceLeaves: leaves.length, reachableLeaves: leaves.length - orphanReferences.length, skillRoutesToIndex, indexMissing, indexUnknown, indexUnknownRoutes, orphanReferences, danglingRoutes, outsideSkillRoutes, codeEscapes, requirementsPresent, routedSkillPaths: [...new Set(routeRecords.filter((record) => record.target).map((record) => record.target))].sort()};
 }
 
 export async function verifyInstallationBoundary(options = {}) {
@@ -212,7 +186,6 @@ export async function verifyInstallationBoundary(options = {}) {
     if (result.orphanReferences.length) problems.push(`orphan reference leaves: ${result.orphanReferences.join(', ')}`);
     if (result.danglingRoutes.length) problems.push(`dangling installed-skill routes: ${result.danglingRoutes.map((item) => `${item.source} -> ${item.route}`).join(', ')}`);
     if (result.outsideSkillRoutes.length) problems.push(`instruction routes outside installed skill: ${result.outsideSkillRoutes.map((item) => `${item.source} -> ${item.route}`).join(', ')}`);
-    if (result.compatibilityDrift.length) problems.push(`compatibility contract drift: ${result.compatibilityDrift.map((item) => `${item.name}: ${item.reason}`).join(', ')}`);
     if (result.codeEscapes.length) problems.push(`runtime dependency escapes: ${result.codeEscapes.map((item) => `${item.source} -> ${item.dependency}`).join(', ')}`);
     if (!result.requirementsPresent) problems.push('skill-local requirements.txt is missing');
     throw new Error(problems.join('\n'));
@@ -222,7 +195,7 @@ export async function verifyInstallationBoundary(options = {}) {
 
 async function main() {
   const result = await verifyInstallationBoundary();
-  process.stdout.write(`${JSON.stringify({status: result.status, referenceLeaves: result.referenceLeaves, reachableLeaves: result.reachableLeaves, danglingRoutes: result.danglingRoutes.length, outsideSkillRoutes: result.outsideSkillRoutes.length, runtimeDependencyEscapes: result.codeEscapes.length, compatibilityDrift: result.compatibilityDrift.length, requirementsPresent: result.requirementsPresent}, null, 2)}\n`);
+  process.stdout.write(`${JSON.stringify({status: result.status, referenceLeaves: result.referenceLeaves, reachableLeaves: result.reachableLeaves, danglingRoutes: result.danglingRoutes.length, outsideSkillRoutes: result.outsideSkillRoutes.length, runtimeDependencyEscapes: result.codeEscapes.length, requirementsPresent: result.requirementsPresent}, null, 2)}\n`);
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

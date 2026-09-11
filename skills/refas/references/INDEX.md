@@ -6,11 +6,10 @@ This file is the canonical progressive-load router for the installed RefAs skill
 
 Every executable instruction and runtime dependency must resolve inside the installed skill root.
 
-- `references/...`, `assets/...`, `scripts/...`, and the temporary compatibility routes `docs/...` resolve from the **installed skill root**.
+- `references/...`, `assets/...`, and `scripts/...` resolve from the **installed skill root**.
 - `references/contracts/...` is the authoritative home for detailed agent-facing contracts.
-- `docs/...` inside the skill is compatibility-only and must be byte-identical to its matching `references/contracts/...` file.
 - Repository-root `docs/`, `schemas/`, `tests/`, `examples/`, `tools/`, `.github/`, and `package.json` are support-layer resources, never skill execution dependencies.
-- `../` traversal, absolute repository paths, and `skills/refas/...` self-prefixing are forbidden in skill instruction routes.
+- `docs/...`, `../` traversal, absolute repository paths, and `skills/refas/...` self-prefixing are forbidden in skill instruction routes.
 - `requirements.txt` at the skill root is the canonical Python dependency manifest.
 
 The repository may depend on the skill. The skill must never depend on the repository around it. CI copies `skills/refas/` into an isolated temporary directory and reruns the boundary verifier there.
@@ -70,4 +69,4 @@ When constructing the certification evidence transaction used by the final autho
 
 ## Graph invariant
 
-Every Markdown leaf under `references/` must remain reachable from `SKILL.md -> references/INDEX.md`. A new reference file is incomplete until it is registered here. Every routed file must exist inside the copied skill tree. Instruction routes that escape the skill, runtime imports that escape the skill, compatibility docs that drift from their canonical contracts, or a missing skill-local dependency manifest are CI failures.
+Every Markdown leaf under `references/` must remain reachable from `SKILL.md -> references/INDEX.md`. A new reference file is incomplete until it is registered here. Every routed file must exist inside the copied skill tree. Instruction routes that escape the skill, runtime imports that escape the skill, forbidden `docs/...` routes, or a missing skill-local dependency manifest are CI failures.

@@ -104,7 +104,7 @@ GLB is normally a realized artifact, not the editable source of semantic shape t
 - **Appearance:** edit material, texture, or vertex-color source state first; rebaking or rebuilding the GLB is a realization step rather than the sole record of the change.
 - **Finalization:** after semantic construction is closed, controlled fuse/weld/internal-face cleanup/optimization may operate on the realized asset. Reopening restores semantic pre-fusion state rather than sculpting the fused result by default.
 
-Use `createCanonicalEditIntent` to make the owner, scope, canonical bindings, and allowed realization operation explicit. A candidate that violates this boundary is invalid before visual ranking. See `docs/canonical-edit-boundary.md` for the repository-level contract.
+Use `createCanonicalEditIntent` to make the owner, scope, canonical bindings, and allowed realization operation explicit. A candidate that violates this boundary is invalid before visual ranking. See `references/contracts/canonical-edit-boundary.md` for the canonical skill contract.
 
 ## Attachment semantics
 
@@ -118,7 +118,7 @@ Before an assembly depends on proximity or world coordinates, declare the relati
 - `SUPPORTED_CLEARANCE`: may remain separated from owners while a later support path proves validity.
 - `FREE`: intentionally no owner.
 
-Use `createAttachmentSemantics` to record owner/dependent direction, evidence basis, and mode. Missing modes, unknown owners, self attachment, invalid owner counts, and ownership cycles are blockers before geometry propagation. This contract declares intent only; surface frames, solvers, fusion bake, and realized contact validation are later stages. See `docs/attachment-semantics.md`.
+Use `createAttachmentSemantics` to record owner/dependent direction, evidence basis, and mode. Missing modes, unknown owners, self attachment, invalid owner counts, and ownership cycles are blockers before geometry propagation. This contract declares intent only; surface frames, solvers, fusion bake, and realized contact validation are later stages. See `references/contracts/attachment-semantics.md`.
 
 ## Logical fusion
 
@@ -126,7 +126,7 @@ After attachment semantics are valid, derive logical fusion before any physical 
 
 If a fused member changes, create `refas.logical-fusion-invalidation/v1`. The entire logical group is invalidated and must be rebuilt from semantic state. The invalidation artifact itself is digest-bound and cannot move geometry or authorize closure. Non-fused dependents are deliberately left for the later attachment-propagation stage.
 
-Do not weld, boolean-union, remove internal faces, or optimize a logical fusion group during reconstruction. Those operations belong to controlled finalization. If a physically fused artifact is later reopened, restore semantic pre-fusion state rather than treating the fused GLB as the canonical sculpting source. See `docs/logical-fusion.md`.
+Do not weld, boolean-union, remove internal faces, or optimize a logical fusion group during reconstruction. Those operations belong to controlled finalization. If a physically fused artifact is later reopened, restore semantic pre-fusion state rather than treating the fused GLB as the canonical sculpting source. See `references/contracts/logical-fusion.md`.
 
 ## Surface anchor frames
 
@@ -134,7 +134,7 @@ For `SURFACE_OFFSET`, `MULTI_ANCHOR`, and `SUPPORTED_CLEARANCE`, do not store a 
 
 After an owner shape rebuild, run `rebindSurfaceAnchorSet` before solving dependent transforms. Rebind may move to a different triangle only inside the same semantic patch, within the anchor's distance bound, and within its normal-deviation bound. If the patch disappears or the anchor would need to jump too far, stop and reopen/review rather than snapping to unrelated geometry.
 
-Surface-anchor rebind updates owner-side frames only. It does not move glasses, badges, or other dependents by itself and cannot authorize closure. The next propagation/solver stage consumes the rebound frames. See `docs/surface-anchor-frames.md`.
+Surface-anchor rebind updates owner-side frames only. It does not move glasses, badges, or other dependents by itself and cannot authorize closure. The next propagation/solver stage consumes the rebound frames. See `references/contracts/surface-anchor-frames.md`.
 
 ## Rigid follow and surface offset
 
@@ -142,7 +142,7 @@ For a one-owner `RIGID_FOLLOW`, preserve the trusted baseline owner-to-subject r
 
 Use `createAttachmentFollowState` to bind the canonical relation state and `propagateAttachmentFollow` to emit deterministic target frames. Every required owner world frame must be explicit. This layer is intentionally one-step: do not recursively propagate an owner produced by the same report, and do not approximate `MULTI_ANCHOR` through a single owner. Graph ordering and simultaneous constraints are separate later stages.
 
-The report is a target calculation, not permission to mutate a mesh or close assembly. Realization must still pass through the canonical pose/assembly boundary and later structural validation. See `docs/attachment-follow.md`.
+The report is a target calculation, not permission to mutate a mesh or close assembly. Realization must still pass through the canonical pose/assembly boundary and later structural validation. See `references/contracts/attachment-follow.md`.
 
 ## Multi-anchor rigid fitting
 
@@ -150,7 +150,7 @@ For `MULTI_ANCHOR`, solve all declared owners simultaneously. Create a `refas.mu
 
 Before solving, rebind any owner surface that changed. Then call `solveMultiAnchor` with the exact current anchor set and explicit owner world frames. The solver may change only the dependent's translation and rotation; it must not scale or deform the subject to force a pass.
 
-Treat `SOLVED` and `INFEASIBLE` as semantically different states. A `SOLVED` report is eligible for later realization only because every local tolerance and the plan RMS tolerance pass. An `INFEASIBLE` report retains the best rigid pose as diagnostic evidence but must not be applied to the asset. Reopen the relevant owner geometry, subject geometry, or attachment assumption instead of hiding the contradiction. See `docs/multi-anchor-solver.md`.
+Treat `SOLVED` and `INFEASIBLE` as semantically different states. A `SOLVED` report is eligible for later realization only because every local tolerance and the plan RMS tolerance pass. An `INFEASIBLE` report retains the best rigid pose as diagnostic evidence but must not be applied to the asset. Reopen the relevant owner geometry, subject geometry, or attachment assumption instead of hiding the contradiction. See `references/contracts/multi-anchor-solver.md`.
 
 ## Articulation and supported clearance
 
@@ -158,7 +158,7 @@ For `ARTICULATED`, use `createArticulatedJoint` to bind the semantic relation to
 
 For `SUPPORTED_CLEARANCE`, use `createSupportedClearance` to declare an acyclic support path beginning at the subject. Every edge in that path must already exist in attachment semantics and must bind a realized-assembly proof attachment ID. Declare local non-negative signed-clearance bounds separately for each relevant counterpart.
 
-Evaluate clearance only with `evaluateSupportedClearance` and a valid digest-bound `refas.realized-assembly-proof/v1`. `SATISFIED` requires every support edge plus every gap bound to pass with no penetration. `BLOCKED` means stop realization/closure and repair the support path, geometry, pose, or semantic assumption; never invent hidden bracing or force a positive intentional gap into contact. See `docs/articulation-clearance.md`.
+Evaluate clearance only with `evaluateSupportedClearance` and a valid digest-bound `refas.realized-assembly-proof/v1`. `SATISFIED` requires every support edge plus every gap bound to pass with no penetration. `BLOCKED` means stop realization/closure and repair the support path, geometry, pose, or semantic assumption; never invent hidden bracing or force a positive intentional gap into contact. See `references/contracts/articulation-clearance.md`.
 
 ## Attachment propagation graph
 
@@ -168,7 +168,7 @@ Call `propagateAttachmentGraph` instead of manually running relation solvers in 
 
 Treat `BLOCKED` as a hard stop for that entity and its downstream dependents. Stale external state/frame, stale owner-frame bindings, `INFEASIBLE` multi-anchor results, missing owner frames, or articulated solver failures are not best-effort poses. They remain unresolved until the responsible upstream state is rebuilt or corrected.
 
-A `READY_FOR_REALIZATION` propagation report is still not assembly closure. Any `SUPPORTED_CLEARANCE` result remains `PENDING_REALIZED_VALIDATION`; after GLB realization, evaluate its support chain, module-pair binding, penetration, and signed gap through the realized-assembly proof. See `docs/attachment-propagation.md`.
+A `READY_FOR_REALIZATION` propagation report is still not assembly closure. Any `SUPPORTED_CLEARANCE` result remains `PENDING_REALIZED_VALIDATION`; after GLB realization, evaluate its support chain, module-pair binding, penetration, and signed gap through the realized-assembly proof. See `references/contracts/attachment-propagation.md`.
 
 This rule limits simultaneous work; it does not authorize skipping dependencies.
 During shape reconstruction, `shape-reconstruction × whole` remains the only
