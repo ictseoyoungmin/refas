@@ -25,22 +25,21 @@ test('installed-skill instruction graph reaches every reference leaf with no bou
   assert.deepEqual(graph.danglingRoutes, []);
   assert.deepEqual(graph.outsideSkillRoutes, []);
   assert.deepEqual(graph.codeEscapes, []);
-  assert.deepEqual(graph.compatibilityDrift, []);
   assert.equal(graph.requirementsPresent, true);
 });
 
 test('instruction routes resolve only inside skills/refas', () => {
   assert.equal(resolveInstructionRoute('references/validation.md'), 'skills/refas/references/validation.md');
   assert.equal(resolveInstructionRoute('references/contracts/canonical-edit-boundary.md'), 'skills/refas/references/contracts/canonical-edit-boundary.md');
-  assert.equal(resolveInstructionRoute('docs/canonical-edit-boundary.md'), 'skills/refas/docs/canonical-edit-boundary.md');
   assert.equal(resolveInstructionRoute('assets/templates/visual-review.json'), 'skills/refas/assets/templates/visual-review.json');
   assert.equal(resolveInstructionRoute('scripts/refas.mjs'), 'skills/refas/scripts/refas.mjs');
+  assert.throws(() => resolveInstructionRoute('docs/canonical-edit-boundary.md'), /repository-local route is forbidden/);
   assert.throws(() => resolveInstructionRoute('schemas/visual-review.schema.json'), /repository-local route is forbidden/);
   assert.throws(() => resolveInstructionRoute('../docs/architecture.md'), /unsafe skill route/);
   assert.throws(() => resolveInstructionRoute('skills/refas/references/validation.md'), /repository-local route is forbidden/);
 });
 
-test('route extraction exposes both allowed and forbidden repository routes to the verifier', () => {
+test('route extraction exposes allowed and forbidden repository routes to the verifier', () => {
   const routes = extractInstructionRoutes([
     'Read `references/validation.md` and `docs/canonical-edit-boundary.md`.',
     '[policy](references/claim-certification.md)',
@@ -71,7 +70,6 @@ test('a bare copied skills/refas directory verifies with the repository absent',
     assert.equal(report.referenceLeaves, 27);
     assert.equal(report.outsideSkillRoutes, 0);
     assert.equal(report.runtimeDependencyEscapes, 0);
-    assert.equal(report.compatibilityDrift, 0);
   } finally {
     await fs.rm(temp, {recursive: true, force: true});
   }
