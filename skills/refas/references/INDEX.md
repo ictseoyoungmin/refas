@@ -1,17 +1,19 @@
 # RefAs instruction router
 
-This file is the canonical progressive-load router for the RefAs skill. `SKILL.md` enters the instruction graph here; every Markdown leaf under `references/` is canonically registered here as a routable instruction target. A leaf may be referenced again inside an execution chain without creating a second graph identity.
+This file is the canonical progressive-load router for the installed RefAs skill. `SKILL.md` enters the instruction graph here. The physical installation boundary is the directory that contains this file's parent `references/` directory: normally `skills/refas/` in the repository, but Claude/Codex may install only that directory.
 
-## Path roots
+## Installation-root invariant
 
-Instruction paths are root-qualified by convention even when written without a prefix marker:
+Every executable instruction and runtime dependency must resolve inside the installed skill root.
 
-- `references/...`, `assets/...`, and `scripts/...` are resolved from the **skill root** `skills/refas/`.
-- `docs/...` and `schemas/...` are resolved from the **package/repository root**.
-- Never resolve these paths relative to the Markdown file that mentions them.
-- Do not introduce `../` traversal or a second spelling for the same instruction target.
+- `references/...`, `assets/...`, `scripts/...`, and the temporary compatibility routes `docs/...` resolve from the **installed skill root**.
+- `references/contracts/...` is the authoritative home for detailed agent-facing contracts.
+- `docs/...` inside the skill is compatibility-only and must be byte-identical to its matching `references/contracts/...` file.
+- Repository-root `docs/`, `schemas/`, `tests/`, `examples/`, `tools/`, `.github/`, and `package.json` are support-layer resources, never skill execution dependencies.
+- `../` traversal, absolute repository paths, and `skills/refas/...` self-prefixing are forbidden in skill instruction routes.
+- `requirements.txt` at the skill root is the canonical Python dependency manifest.
 
-The npm distributable must contain every routed target. Repository CI verifies reachability and the package boundary.
+The repository may depend on the skill. The skill must never depend on the repository around it. CI copies `skills/refas/` into an isolated temporary directory and reruns the boundary verifier there.
 
 ## Always-load control path
 
@@ -42,6 +44,14 @@ Load only the references needed by the active capability or conditional closure 
 | Controlled physical weld/boolean finalization of a logically fused group | `references/physical-fusion.md` |
 | Final-GLB contact, support, penetration, and support-root validation | `references/realized-contact-support.md` |
 | Claim policy, claim decision, and final authorization | `references/claim-certification.md` |
+| Canonical edit source/realization boundary | `references/contracts/canonical-edit-boundary.md` |
+| Attachment mode semantics | `references/contracts/attachment-semantics.md` |
+| Logical fusion before physical fusion | `references/contracts/logical-fusion.md` |
+| Surface-relative anchor frames | `references/contracts/surface-anchor-frames.md` |
+| Rigid-follow and surface-offset propagation | `references/contracts/attachment-follow.md` |
+| Simultaneous multi-owner rigid fitting | `references/contracts/multi-anchor-solver.md` |
+| Articulation and supported-clearance semantics | `references/contracts/articulation-clearance.md` |
+| Deterministic attachment dependency propagation | `references/contracts/attachment-propagation.md` |
 
 ## Conditional finalization and closure chain
 
@@ -60,4 +70,4 @@ When constructing the certification evidence transaction used by the final autho
 
 ## Graph invariant
 
-Every reference leaf must remain reachable from `SKILL.md -> references/INDEX.md`. A new reference file is incomplete until it is registered here. A route to a missing file, a leaf omitted from this index, or a routed package-root document omitted from the npm distributable is a CI failure.
+Every Markdown leaf under `references/` must remain reachable from `SKILL.md -> references/INDEX.md`. A new reference file is incomplete until it is registered here. Every routed file must exist inside the copied skill tree. Instruction routes that escape the skill, runtime imports that escape the skill, compatibility docs that drift from their canonical contracts, or a missing skill-local dependency manifest are CI failures.
