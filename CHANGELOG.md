@@ -2,6 +2,14 @@
 
 All notable RefAs changes are documented here. RefAs follows semantic versioning.
 
+## 1.0.3 — 2026-09-11
+
+- Added `references/GRAPH.json`, a machine-readable semantic instruction DAG covering all installed-skill reference leaves, owners, prerequisites, conditional dependencies, authority, closure effects, finding ownership, and real-source certification prerequisites.
+- Added an installed-skill semantic graph verifier with isolated-copy regression, DAG/owner validation, exact runtime finding-owner alignment, real-source certification-floor checks, and rejection of ambiguous bare sibling Markdown routes.
+- Split new camera findings into `camera-hypothesis-mismatch` owned by `spatial-hypotheses` and `render-camera-integrity` owned by `rendering`; retained `camera-mismatch` only as deprecated runtime compatibility.
+- Made `refas.certification-relational-evidence/v1` an explicit mandatory real-source final-certification authority floor in the agent instruction path.
+- Preserved the `skills/refas/` installation boundary: semantic graph, contracts, verifier, scripts, assets, and Python dependency manifest remain self-contained.
+
 ## 1.0.2 — 2026-09-10
 
 ### Relational structure and inference authority

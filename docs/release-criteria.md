@@ -1,6 +1,6 @@
-# RefAs 1.0.2 release criteria
+# RefAs 1.0.3 release criteria
 
-RefAs 1.0.2 is releasable only when the current exact head satisfies the gates below without relying on historical CI, stale evidence, or undocumented runtime behavior.
+RefAs 1.0.3 is releasable only when the current exact head satisfies the gates below without relying on historical CI, stale evidence, or undocumented runtime behavior.
 
 ## Runtime and recovery
 
@@ -80,10 +80,22 @@ RefAs 1.0.2 is releasable only when the current exact head satisfies the gates b
 
 ## Compatibility
 
-- New project state and whole-object certificates identify runtime 1.0.2.
+- New project state and whole-object certificates identify runtime 1.0.3.
 - Public v1 project-state and certificate schemas continue accepting 1.0.0 and 1.0.1 artifacts, and the runtime continues loading existing v1 state without in-place migration.
 - This patch does not introduce robotics-specific actuator, collider, mass/inertia, MJCF/URDF, calibrated simulation, or manufacturer-truth claims into Core.
 
 ## Release cut
 
-The `v1.0.2` tag and GitHub Release must point to the exact `main` commit that passed post-merge CI. Existing release tags remain immutable. Any source change after exact-head CI requires a new validation before release.
+The `v1.0.3` tag and GitHub Release must point to the exact `main` commit that passed post-merge CI. Existing release tags remain immutable. Any source change after exact-head CI requires a new validation before release.
+
+Automated or bot-authored branch mutations are never accepted as release evidence by themselves; the resulting exact head must receive a fresh normal PR CI run before merge.
+
+## Semantic instruction graph
+
+- `skills/refas/references/GRAPH.json` exactly covers every reference leaf and its hard prerequisite DAG is acyclic.
+- Every semantic graph owner is either a runtime capability or the control plane, and finding ownership matches `FINDING_OWNERS`.
+- `camera-hypothesis-mismatch` belongs to `spatial-hypotheses`; `render-camera-integrity` belongs to `rendering`; legacy `camera-mismatch` is compatibility-only and is not offered for new findings.
+- Bare sibling Markdown routes are forbidden; every agent-facing dependency uses a canonical installed-skill path.
+- Real-source final authorization requires `refas.certification-relational-evidence/v1` in addition to current visual/projection/provenance evidence.
+- Both installation-boundary and semantic-graph verifiers pass after copying only `skills/refas/` into an isolated directory.
+

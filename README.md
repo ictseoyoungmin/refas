@@ -10,7 +10,7 @@ RefAs is designed for work where a quick image-to-mesh approximation is not enou
 
 ## Demo
 
-Open [`demo/index.html`](demo/index.html) for a dependency-free overview of the current 1.0.2 capability boundary and the repository's reproducible examples.
+Open [`demo/index.html`](demo/index.html) for a dependency-free overview of the current 1.0.3 capability boundary and the repository's reproducible examples.
 
 The demo intentionally does not treat committed screenshots or opaque binary assets as proof. Actual geometry, render evidence, rollback behavior, fitting, assembly checks, relational authority, and certification are reproduced by repository tests and example commands.
 
@@ -40,7 +40,7 @@ The demo intentionally does not treat committed screenshots or opaque binary ass
 
 ## What 1.0.x does not claim
 
-RefAs does **not** automatically establish unseen manufacturer-internal mechanisms, calibrated mass/inertia/collider/actuator truth, real-world scale, unknown material composition, or an unambiguous full 3D terminal orientation from a single ambiguous view. Version 1.0.2 may construct hidden form as explicit `inferred` or `engineered` state when its typed basis justifies that construction; this is not a claim that the photographed manufacturer used the same hidden mechanism. See [Known limitations](docs/known-limitations.md).
+RefAs does **not** automatically establish unseen manufacturer-internal mechanisms, calibrated mass/inertia/collider/actuator truth, real-world scale, unknown material composition, or an unambiguous full 3D terminal orientation from a single ambiguous view. Version 1.0.3 may construct hidden form as explicit `inferred` or `engineered` state when its typed basis justifies that construction; this is not a claim that the photographed manufacturer used the same hidden mechanism. See [Known limitations](docs/known-limitations.md).
 
 ## Quick start
 

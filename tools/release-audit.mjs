@@ -6,6 +6,7 @@ import {spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 
 import {verifyInstructionGraph} from './verify-instruction-graph.mjs';
+import {verifySemanticInstructionGraph} from '../skills/refas/scripts/verify_semantic_instruction_graph.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -27,8 +28,9 @@ function run(command, args) {
 async function main() {
   run(process.execPath, ['tools/check-repository.mjs']);
   const instructionGraph = await verifyInstructionGraph({root: ROOT});
+  const semanticGraph = await verifySemanticInstructionGraph({skillRoot: path.join(ROOT, 'skills/refas')});
   run(process.execPath, ['--test',
-    'tests/assembly-and-routing.test.mjs','tests/checkpoints.test.mjs','tests/cli.test.mjs','tests/contracts.test.mjs','tests/geometry.test.mjs','tests/governance.test.mjs','tests/instruction-graph.test.mjs',
+    'tests/assembly-and-routing.test.mjs','tests/checkpoints.test.mjs','tests/cli.test.mjs','tests/contracts.test.mjs','tests/geometry.test.mjs','tests/governance.test.mjs','tests/instruction-graph.test.mjs','tests/semantic-instruction-graph.test.mjs',
     'tests/orientation-frame.test.mjs','tests/orientation-fitting.test.mjs','tests/orientation-hardening.test.mjs',
     'tests/relational-structure.test.mjs','tests/semantic-authority.test.mjs','tests/whole-system-relational-barrier.test.mjs','tests/relational-discrepancy.test.mjs','tests/relational-fit.test.mjs','tests/certification-relational-evidence.test.mjs',
   ]);
@@ -45,7 +47,7 @@ async function main() {
   if (forbidden.length) throw new Error(`release package contains forbidden files: ${forbidden.join(', ')}`);
 
   for (const required of [
-    'package.json','requirements.txt','skills/refas/SKILL.md','skills/refas/references/INDEX.md','skills/refas/scripts/refas.mjs','skills/refas/scripts/compare_registered.py','skills/refas/scripts/lib/index.mjs',
+    'package.json','requirements.txt','skills/refas/SKILL.md','skills/refas/references/INDEX.md','skills/refas/references/GRAPH.json','skills/refas/scripts/refas.mjs','skills/refas/scripts/verify_installation_boundary.mjs','skills/refas/scripts/verify_semantic_instruction_graph.mjs','skills/refas/scripts/compare_registered.py','skills/refas/scripts/lib/index.mjs',
     'skills/refas/scripts/lib/parameter-fit.mjs','skills/refas/scripts/lib/shape-repair.mjs','skills/refas/scripts/lib/orientation-evidence.mjs','skills/refas/scripts/lib/orientation-frame.mjs','skills/refas/scripts/lib/orientation-discrepancy.mjs','skills/refas/scripts/lib/orientation-pose-fit.mjs',
     'skills/refas/scripts/lib/relational-structure.mjs','skills/refas/scripts/lib/relational-discrepancy.mjs','skills/refas/scripts/lib/semantic-authority.mjs','skills/refas/scripts/lib/whole-system-relational-barrier.mjs','skills/refas/scripts/lib/certification-relational-evidence.mjs',
     'skills/refas/references/parameter-fitting.md','skills/refas/references/relational-structure.md','skills/refas/references/inference-authority.md','skills/refas/references/whole-system-relational-barrier.md','skills/refas/references/physical-fusion.md','skills/refas/references/realized-contact-support.md','skills/refas/references/claim-certification.md',
@@ -60,7 +62,7 @@ async function main() {
 
   const skillBytes = names.filter((name)=>name.startsWith('skills/refas/')).reduce((total,name)=>total+Number(pack.files.find((item)=>item.path===name)?.size??0),0);
   const packageJson = JSON.parse(await fs.readFile(path.join(ROOT,'package.json'),'utf8'));
-  process.stdout.write(`${JSON.stringify({status:'PASS',version:packageJson.version,packagedFiles:names.length,unpackedBytes:pack.unpackedSize,skillBytes,instructionReferenceLeaves:instructionGraph.referenceLeaves,routedInstructionTargets:instructionGraph.routedPackagePaths.length},null,2)}\n`);
+  process.stdout.write(`${JSON.stringify({status:'PASS',version:packageJson.version,packagedFiles:names.length,unpackedBytes:pack.unpackedSize,skillBytes,instructionReferenceLeaves:instructionGraph.referenceLeaves,semanticInstructionNodes:semanticGraph.nodeCount,routedInstructionTargets:instructionGraph.routedPackagePaths.length},null,2)}\n`);
 }
 
 main().catch((error)=>{process.stderr.write(`Release audit failed: ${error.message}\n`);process.exit(1);});

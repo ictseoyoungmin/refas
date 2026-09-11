@@ -103,12 +103,12 @@ Labels summarize that contract; they do not override it.
 | `source-intake` | `source-drift` |
 | `visual-hierarchy` | `context-loss`, `missing-part` |
 | `visual-observation` | `observation-unsupported`, `evidence-insufficient` |
-| `spatial-hypotheses` | `perspective-mismatch`, `depth-mismatch`, `orientation-mismatch`, `relational-authority-unresolved`, `relational-constraint-conflict` |
+| `spatial-hypotheses` | `perspective-mismatch`, `depth-mismatch`, `orientation-mismatch`, `camera-hypothesis-mismatch`, `relational-authority-unresolved`, `relational-constraint-conflict` |
 | `shape-reconstruction` | `silhouette-mismatch`, `mass-proportion-mismatch`, `curvature-mismatch`, `whole-system-relation-mismatch` |
 | `surface-topology` | `pattern-topology-mismatch`, `relief-mismatch` |
 | `assembly` | `attachment-mismatch`, `occlusion-mismatch`, `penetration` |
 | `appearance` | `material-mismatch`, `finish-mismatch` |
-| `rendering` | `camera-mismatch`, `render-integrity` |
+| `rendering` | `render-camera-integrity`, `render-integrity` |
 | `visual-critique` | `unroutable-visual-finding` |
 | `whole-object-certification` | `closure-evidence-missing` |
 

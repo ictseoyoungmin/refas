@@ -20,16 +20,18 @@
 | `source-drift` | `source-intake` |
 | `context-loss`, `missing-part` | `visual-hierarchy` |
 | `observation-unsupported`, `evidence-insufficient` | `visual-observation` |
-| `perspective-mismatch`, `depth-mismatch`, `orientation-mismatch`, `relational-authority-unresolved`, `relational-constraint-conflict` | `spatial-hypotheses` |
+| `perspective-mismatch`, `depth-mismatch`, `orientation-mismatch`, `camera-hypothesis-mismatch`, `relational-authority-unresolved`, `relational-constraint-conflict` | `spatial-hypotheses` |
 | `silhouette-mismatch`, `mass-proportion-mismatch`, `curvature-mismatch`, `whole-system-relation-mismatch` | `shape-reconstruction` |
 | `pattern-topology-mismatch`, `relief-mismatch` | `surface-topology` |
 | `attachment-mismatch`, `occlusion-mismatch`, `penetration` | `assembly` |
 | `material-mismatch`, `finish-mismatch` | `appearance` |
-| `camera-mismatch`, `render-integrity` | `rendering` |
+| `render-camera-integrity`, `render-integrity` | `rendering` |
 | `unroutable-visual-finding` | `visual-critique` |
 | `closure-evidence-missing` | `whole-object-certification` |
 
-The executable registry is `scripts/lib/ownership.mjs`. Keep this table synchronized with it.
+The executable registry is `scripts/lib/ownership.mjs`. Keep this table synchronized with it and with `references/GRAPH.json`.
+
+`camera-hypothesis-mismatch` means the selected reconstruction camera/framing/projection hypothesis is wrong relative to the source; it therefore reopens `spatial-hypotheses`. `render-camera-integrity` means the renderer did not execute the already-declared camera/frame faithfully; it belongs to `rendering`. The historical `camera-mismatch` category remains a deprecated runtime compatibility alias owned by `rendering`; do not author new findings with it.
 
 Relational routing is deliberately split by premise ownership. Missing, unknown, invalid, or explicitly forbidden relation authority belongs to `spatial-hypotheses`; a current candidate that fails a licensed macro/identity relation belongs to `shape-reconstruction`. A relation that is genuinely unresolved for lack of evidence remains `evidence-insufficient` and requests review instead of guessing an owner.
 
@@ -50,7 +52,8 @@ Use `routeRelationalBarrier()` for `refas.whole-system-relational-barrier/v1`. I
 ## Common routing mistakes
 
 - Do not route `silhouette-mismatch` to rendering because it was first seen in a render.
-- Do not route `camera-mismatch` to shape reconstruction until camera alternatives are tested.
+- Do not route a wrong source/model camera hypothesis to rendering; use `camera-hypothesis-mismatch` and reopen `spatial-hypotheses`.
+- Do not route renderer camera/frame execution drift upstream to spatial reasoning; use `render-camera-integrity`.
 - Do not route attachment failure to the closed child when parent registration is wrong.
 - Do not route an authority gap as a geometry defect merely because geometry exposes it.
 - Do not route a failed realized whole-system relation upstream to observation when its authority/evidence premise is already valid.
@@ -59,4 +62,4 @@ Use `routeRelationalBarrier()` for `refas.whole-system-relational-barrier/v1`. I
 
 ## Adding a category
 
-Add a new category only when its repair authority is unambiguous. Update the executable registry, this reference, the managed label catalog, Issue form, governance reference, router tests, and the ownership audit in one change.
+Add a new category only when its repair authority is unambiguous. Update the executable registry, `references/GRAPH.json`, this reference, the managed label catalog, Issue form, governance reference, router tests, and the ownership audit in one change.

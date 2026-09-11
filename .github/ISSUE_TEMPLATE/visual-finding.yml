@@ -21,7 +21,7 @@ body:
     id: finding_category
     attributes:
       label: Normalized finding category
-      description: Use the exact RefAs category. Maintainers apply the matching finding label after routing.
+      description: Use the exact RefAs category. Maintainers apply the matching finding label after routing. Legacy camera-mismatch is intentionally not offered for new reports.
       options:
         - source-drift
         - context-loss
@@ -31,6 +31,7 @@ body:
         - perspective-mismatch
         - depth-mismatch
         - orientation-mismatch
+        - camera-hypothesis-mismatch
         - relational-authority-unresolved
         - relational-constraint-conflict
         - silhouette-mismatch
@@ -44,7 +45,7 @@ body:
         - penetration
         - material-mismatch
         - finish-mismatch
-        - camera-mismatch
+        - render-camera-integrity
         - render-integrity
         - unroutable-visual-finding
         - closure-evidence-missing
