@@ -76,7 +76,7 @@ A `verdict: pass` visual review also requires a substantive structured observati
 
 ## Findings
 
-Every actionable finding records category, severity, hierarchy scope, concise summary, evidence references, and whether the current edit introduced it. Use a category from `failure-routing.md`; otherwise provide an explicit owner for non-blocking experimental findings.
+Every actionable finding records category, severity, hierarchy scope, concise summary, evidence references, and whether the current edit introduced it. Use a category from `references/failure-routing.md`; otherwise provide an explicit owner for non-blocking experimental findings.
 
 Severity means:
 
@@ -84,6 +84,8 @@ Severity means:
 - `major`: materially changes object identity or construction;
 - `minor`: local mismatch that does not invalidate upstream structure;
 - `note`: observation without a required repair.
+
+A wrong source/model camera hypothesis is `camera-hypothesis-mismatch` and reopens `spatial-hypotheses`. A renderer that fails to execute the declared camera or canonical frame is `render-camera-integrity` and reopens `rendering`. Do not author new `camera-mismatch` findings; that name remains only as a legacy runtime compatibility alias.
 
 ## Scores
 
@@ -103,16 +105,18 @@ Whole-object certification requires current, passing evidence for:
 - hierarchy coverage;
 - observation authority;
 - spatial plausibility;
+- whole-system relational structure and semantic authority;
 - silhouette and mass;
 - surface topology and relief;
 - assembly relations and immutable child integrity;
+- realized contact/support when the asset makes those structural claims;
 - appearance plausibility;
 - multiview render integrity;
 - no unresolved blocking findings;
 - project audit validity.
 
-For a real source, certification additionally requires one digest-bound `refas.reference-geometry/v1` artifact, one `refas.realized-projection/v1` artifact, and the exact GLB whose digest is bound by the visual review. Certification reproduces the realized projection from those checkpoint artifacts before closure. Missing, stale, non-reproducible, or asset-mismatched projection evidence refuses certification. Synthetic/test acquisition kinds keep the contract-fixture compatibility path but cannot use it as visual-fidelity evidence.
+For a real source, certification additionally requires one digest-bound `refas.reference-geometry/v1` artifact, one `refas.realized-projection/v1` artifact, one current `refas.certification-relational-evidence/v1` artifact, and the exact GLB whose digest is bound by the visual review. The relational closure must bind the exact current relation graph, semantic-authority set, passing whole-system barrier, passing candidate-bound relational discrepancy, and certification candidate SHA-256. Certification reproduces the realized projection and revalidates relational closure from the checkpoint artifacts before authorization. Missing, stale, non-reproducible, substituted, replayed, or asset-mismatched projection/relational evidence refuses certification. Synthetic/test acquisition kinds keep the contract-fixture compatibility path but cannot use it as visual-fidelity evidence.
 
-Certification refuses closure when the review is missing or digest-stale, its verdict is not `pass`, a required view or visual gate is not `pass`, a required passing structured observation is missing, an independent pass lacks an exact registered comparison or its current identity tuple, strong contrary comparison evidence is not resolved by source-grounded evidence, a major/critical/blocking finding remains, a projection-aware review contains material geometric disagreement, or appearance relies on an integrity-only renderer or an unsupported material feature. Gate strings and numeric scores cannot override those findings.
+Certification refuses closure when the review is missing or digest-stale, its verdict is not `pass`, a required view or visual gate is not `pass`, a required passing structured observation is missing, an independent pass lacks an exact registered comparison or its current identity tuple, strong contrary comparison evidence is not resolved by source-grounded evidence, a major/critical/blocking finding remains, a projection-aware review contains material geometric disagreement, real-source relational closure is absent or invalid, or appearance relies on an integrity-only renderer or an unsupported material feature. Gate strings and numeric scores cannot override those findings.
 
-Any upstream source, camera, model binding, or geometry change expires dependent projection-fit and gate evidence. Recompute projection evidence before rerunning registered comparison and certification after repair.
+Any upstream source, camera hypothesis, model binding, relational structure/authority, or geometry change expires the dependent projection, relational discrepancy/closure, comparison, and gate evidence. Recompute the affected evidence before rerunning registered comparison and certification after repair.
