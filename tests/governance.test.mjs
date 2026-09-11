@@ -7,9 +7,9 @@ test('managed labels exactly cover the semantic governance contract', async () =
   const labels = await readLabelCatalog();
   assert.deepEqual(validateLabelCatalog(labels), {
     status: 'PASS',
-    labels: 57,
+    labels: 59,
     capabilities: 11,
-    findings: 25,
+    findings: 27,
   });
 });
 
@@ -35,12 +35,12 @@ test('label sync creates or updates managed labels without deleting unrelated la
     assert.deepEqual(result, {
       status: 'PASS',
       repository: 'owner/refas',
-      created: 55,
+      created: 57,
       updated: 1,
       unchanged: 1,
       unmanagedPreserved: 1,
     });
-    assert.equal(calls.filter((call) => (call.options.method ?? 'GET') === 'POST').length, 55);
+    assert.equal(calls.filter((call) => (call.options.method ?? 'GET') === 'POST').length, 57);
     assert.equal(calls.filter((call) => call.options.method === 'PATCH').length, 1);
   } finally {
     globalThis.fetch = originalFetch;
