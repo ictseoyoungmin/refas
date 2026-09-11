@@ -88,6 +88,8 @@ RefAs 1.0.3 is releasable only when the current exact head satisfies the gates b
 
 The `v1.0.3` tag and GitHub Release must point to the exact `main` commit that passed post-merge CI. Existing release tags remain immutable. Any source change after exact-head CI requires a new validation before release.
 
+Automated or bot-authored branch mutations are never accepted as release evidence by themselves; the resulting exact head must receive a fresh normal PR CI run before merge.
+
 ## Semantic instruction graph
 
 - `skills/refas/references/GRAPH.json` exactly covers every reference leaf and its hard prerequisite DAG is acyclic.
