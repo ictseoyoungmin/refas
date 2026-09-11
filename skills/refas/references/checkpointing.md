@@ -70,7 +70,7 @@ Evidence roles and schemas are generic policy inputs. Do not hard-code a reconst
 
 Before a later certification step consumes a transaction, call `validateCandidateTransaction` with the current candidate bytes, checkpoint record, and exact evidence bytes. A transaction that validates without external context proves only internal canonical structure and digest integrity; final use must recheck the external bytes.
 
-Read `candidate-transactions.md` for construction and dependency-proof rules. A sealed candidate transaction does not modify checkpoint state, does not replace rollback, and does not authorize certification.
+Read `references/candidate-transactions.md` for construction and dependency-proof rules. A sealed candidate transaction does not modify checkpoint state, does not replace rollback, and does not authorize certification.
 
 ## Audit
 
