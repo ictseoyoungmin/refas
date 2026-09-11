@@ -37,6 +37,7 @@ export const FINDING_OWNERS = deepFreeze({
   'perspective-mismatch': 'spatial-hypotheses',
   'depth-mismatch': 'spatial-hypotheses',
   'orientation-mismatch': 'spatial-hypotheses',
+  'camera-hypothesis-mismatch': 'spatial-hypotheses',
   'relational-authority-unresolved': 'spatial-hypotheses',
   'relational-constraint-conflict': 'spatial-hypotheses',
   'silhouette-mismatch': 'shape-reconstruction',
@@ -50,7 +51,11 @@ export const FINDING_OWNERS = deepFreeze({
   'penetration': 'assembly',
   'material-mismatch': 'appearance',
   'finish-mismatch': 'appearance',
+  // Deprecated compatibility category. New work must distinguish a wrong
+  // reconstruction camera hypothesis from a renderer that failed to execute
+  // the declared camera/frame.
   'camera-mismatch': 'rendering',
+  'render-camera-integrity': 'rendering',
   'render-integrity': 'rendering',
   'unroutable-visual-finding': 'visual-critique',
   'closure-evidence-missing': 'whole-object-certification',
