@@ -35,6 +35,8 @@ jobs:
         run: npm test
       - name: Python syntax gate
         run: npm run test:python
+      - name: Instruction graph audit
+        run: npm run check:instructions
       - name: Product-boundary audit
         run: npm run check
       - name: Complete dogfood

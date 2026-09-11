@@ -11,9 +11,12 @@ RefAs turns visual evidence into a 3D asset without pretending that a single ima
 
 Before doing any reconstruction, read:
 
-1. `references/workflow.md`
-2. `references/checkpointing.md`
-3. `references/failure-routing.md`
+1. `references/INDEX.md`
+2. `references/workflow.md`
+3. `references/checkpointing.md`
+4. `references/failure-routing.md`
+
+`references/INDEX.md` is the canonical instruction router and defines the path-root convention for skill-root versus package-root files. Do not bypass it when adding or loading a reference leaf.
 
 Then load only the references owned by the active capability:
 
@@ -26,6 +29,7 @@ Then load only the references owned by the active capability:
 | Parent/child placement | `references/assembly.md` |
 | Material identity and finish | `references/appearance.md` |
 | Render, comparison, closure | `references/validation.md` |
+| Conditional finalization and release authorization | Follow the chain in `references/INDEX.md`: `references/physical-fusion.md` when justified, then `references/realized-contact-support.md`, `references/validation.md`, and `references/claim-certification.md`; load `references/candidate-transactions.md` when sealing the evidence transaction |
 
 Do not blend every reference into one undifferentiated prompt. Keep one capability and one visual scope active at a time.
 
@@ -306,6 +310,8 @@ Whole-object closure requires all of the following with current evidence:
 - the visual review uses an independent reference rather than a source generated from the candidate's own model specification;
 - the renderer used to pass appearance supports every material feature required by the claim;
 - project audit is valid.
+
+Before final authorization, follow the conditional finalization/closure chain in `references/INDEX.md`. If logical fusion is physically finalized, validate that final GLB through `references/realized-contact-support.md`; then complete current visual validation and apply `references/claim-certification.md` to the sealed candidate/evidence transaction before issuing the whole-object certificate.
 
 Run:
 
