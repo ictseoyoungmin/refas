@@ -7,6 +7,7 @@ export const HOST_SESSION_STATE_SCHEMA = 'refas.host-session-state/v1';
 const HOST_STATE_DIR = path.join('.refas', 'host');
 const HOST_SESSION_FILE = 'session.json';
 const mutationTails = new Map();
+const STALE_LOCK_MS = 30_000;
 
 function rootPath(root) { return path.resolve(root); }
 export function hostStatePath(root) { return path.join(rootPath(root), HOST_STATE_DIR, HOST_SESSION_FILE); }
@@ -37,6 +38,21 @@ export async function createHostState(root, {sessionId, projectId} = {}) {
   return structuredClone(state);
 }
 
+async function acquireHostLock(lockPath) {
+  try { await fs.mkdir(lockPath); return; }
+  catch (error) {
+    if (error.code !== 'EEXIST') throw error;
+    const stat = await fs.stat(lockPath).catch(() => null);
+    if (!stat || Date.now() - stat.mtimeMs <= STALE_LOCK_MS) throw new Error('host state is locked by another mutating process');
+    await fs.rm(lockPath, {recursive:true, force:true});
+    try { await fs.mkdir(lockPath); }
+    catch (retryError) {
+      if (retryError.code === 'EEXIST') throw new Error('host state is locked by another mutating process');
+      throw retryError;
+    }
+  }
+}
+
 export async function mutateHostState(root, mutation) {
   root = rootPath(root);
   const previous = mutationTails.get(root) ?? Promise.resolve();
@@ -46,12 +62,10 @@ export async function mutateHostState(root, mutation) {
   mutationTails.set(root, tail);
   await previous.catch(() => {});
   const lockPath = hostLockPath(root);
-  try {
-    await fs.mkdir(lockPath);
-  } catch (error) {
+  try { await acquireHostLock(lockPath); }
+  catch (error) {
     release();
     if (mutationTails.get(root) === tail) mutationTails.delete(root);
-    if (error.code === 'EEXIST') throw new Error('host state is locked by another mutating process');
     throw error;
   }
   try {

@@ -86,6 +86,33 @@ test('event replay detects persisted sequence gaps', async (t) => {
   await assert.rejects(getHostEvents(root), /sequence gap|does not match persisted event history/);
 });
 
+test('persisted event tampering and hidden fields are detected during replay', async (t) => {
+  const {root} = await project(t);
+  await emitHostEvent(root, {kind:'warning',message:'original'});
+  let state = await readPrivateState(root);
+  state.events[1].message = 'tampered';
+  await writePrivateState(root, state);
+  await assert.rejects(getHostEvents(root), /ID\/content digest mismatch/);
+  state = await readPrivateState(root);
+  state.events[1].message = 'original';
+  state.events[1].reasoning = 'private scratchpad';
+  await writePrivateState(root, state);
+  await assert.rejects(getHostEvents(root), /unsupported persisted host event field: reasoning/);
+});
+
+test('stale host-state locks recover after restart while live locks fail closed', async (t) => {
+  const {root} = await project(t);
+  const lockPath = `${path.join(root,'.refas','host','session.json')}.lock`;
+  await fs.mkdir(lockPath);
+  const stale = new Date(Date.now() - 60_000);
+  await fs.utimes(lockPath, stale, stale);
+  const recovered = await emitHostEvent(root, {kind:'warning'});
+  assert.equal(recovered.sequence, 2);
+  await fs.mkdir(lockPath);
+  await assert.rejects(emitHostEvent(root, {kind:'warning'}), /locked by another mutating process/);
+  await fs.rm(lockPath, {recursive:true, force:true});
+});
+
 test('subscription replays then delivers live events without sequence duplicates', async (t) => {
   const {root} = await project(t);
   const received = [];

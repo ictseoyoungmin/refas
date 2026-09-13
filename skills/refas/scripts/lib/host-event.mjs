@@ -15,6 +15,7 @@ export const HOST_EVENT_KINDS = Object.freeze([
 ]);
 
 const EVENT_INPUT_FIELDS = new Set(['kind','operationId','scopeId','capability','message','artifactRefs','recoverable']);
+const EVENT_FIELDS = new Set(['schema','eventId','sessionId','sequence','time','kind','operationId','scopeId','capability','message','artifactRefs','recoverable']);
 const listeners = new Map();
 
 function rootPath(root) { return path.resolve(root); }
@@ -44,10 +45,14 @@ async function exactArtifact(root, raw, index) {
 
 function validateEvent(event, sessionId, expectedSequence) {
   if (!event || event.schema !== HOST_EVENT_SCHEMA) throw new Error('unknown host event schema');
+  for (const key of Object.keys(event)) if (!EVENT_FIELDS.has(key)) throw new Error(`unsupported persisted host event field: ${key}`);
+  for (const key of EVENT_FIELDS) if (!(key in event)) throw new Error(`persisted host event is missing field: ${key}`);
   if (event.sessionId !== sessionId) throw new Error('host event session mismatch');
   if (event.sequence !== expectedSequence) throw new Error(`host event sequence gap at ${expectedSequence}`);
   if (!HOST_EVENT_KINDS.includes(event.kind)) throw new Error(`unknown host event kind: ${event.kind}`);
-  if (typeof event.eventId !== 'string' || !event.eventId.startsWith('event_')) throw new Error('host event ID is invalid');
+  const {eventId, ...core} = event;
+  const expectedId = `event_${digestJson(core).slice(0, 20)}`;
+  if (eventId !== expectedId) throw new Error('host event ID/content digest mismatch');
 }
 
 function assertHistory(state) {
