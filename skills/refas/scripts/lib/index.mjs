@@ -26,6 +26,7 @@ export * from './hierarchy.mjs';
 export * from './ownership.mjs';
 export * from './failure-router.mjs';
 export * from './checkpoint-store.mjs';
+export * from './host-session.mjs';
 export {assessCertification, auditProject, certifyProject, resumeProject, assessProjectionCertification, assessClaimCertification} from './certification-gate.mjs';
 export * from './spatial-hypotheses.mjs';
 export * from './registration.mjs';
