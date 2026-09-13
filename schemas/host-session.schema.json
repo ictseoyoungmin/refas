@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/host-session.schema.json",
+  "title": "RefAs host session snapshot",
+  "type": "object",
+  "required": [
+    "schema",
+    "sessionId",
+    "projectId",
+    "root",
+    "sourceDigest",
+    "status",
+    "headCheckpointId",
+    "currentCandidate",
+    "sequence"
+  ],
+  "properties": {
+    "schema": {"const": "refas.host-session/v1"},
+    "sessionId": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$"},
+    "projectId": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$"},
+    "root": {"type": "string", "minLength": 1},
+    "sourceDigest": {
+      "anyOf": [
+        {"type": "null"},
+        {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+      ]
+    },
+    "status": {
+      "enum": ["idle", "active", "paused", "cancelling", "cancelled", "blocked", "reviewable", "completed", "failed"]
+    },
+    "headCheckpointId": {
+      "anyOf": [
+        {"type": "null"},
+        {"type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$"}
+      ]
+    },
+    "currentCandidate": {
+      "anyOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "required": ["sha256", "kind"],
+          "properties": {
+            "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+            "kind": {"const": "glb"}
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "sequence": {"type": "integer", "minimum": 0}
+  },
+  "additionalProperties": false
+}
