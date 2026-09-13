@@ -45,6 +45,10 @@ async function checkpointArtifact(root, bytes, kind = 'model-spec') {
   return {file, reference:await contentReference(file, {kind,root})};
 }
 
+function passingGate(reference) {
+  return [{id:'source-intake-gate',status:'pass',evidenceRefs:[reference.path]}];
+}
+
 function abortWait(signal) {
   return new Promise((resolve, reject) => {
     if (signal.aborted) { reject(signal.reason); return; }
@@ -120,7 +124,7 @@ test('pause does not abandon an existing bounded edit', async (t) => {
   const root = await tempRoot(t);
   await sourceProject(root);
   const baselineArtifact = await checkpointArtifact(root, 'pause baseline bytes\n');
-  const baseline = await commitCheckpoint(root, {capability:'source-intake',scopeId:'whole',reason:'Pause fixture baseline.',artifactRefs:[baselineArtifact.reference],claims:[],gates:[]});
+  const baseline = await commitCheckpoint(root, {capability:'source-intake',scopeId:'whole',reason:'Pause fixture baseline.',artifactRefs:[baselineArtifact.reference],claims:[],gates:passingGate(baselineArtifact.reference)});
   const edit = await beginEdit(root, {ownerCapability:'source-intake',scopeId:'whole',intent:'Keep this bounded edit active across pause.'});
   await openHostSession(root, {sessionId:'studio-session',projectId:'host-project'});
   let started = false;
@@ -140,10 +144,10 @@ test('cancel abandons an active bounded edit through RefAs abort authority', asy
   const root = await tempRoot(t);
   await sourceProject(root);
   const baselineArtifact = await checkpointArtifact(root, 'baseline model bytes\n');
-  const baseline = await commitCheckpoint(root, {capability:'source-intake',scopeId:'whole',reason:'Host cancellation baseline.',artifactRefs:[baselineArtifact.reference],claims:[],gates:[]});
+  const baseline = await commitCheckpoint(root, {capability:'source-intake',scopeId:'whole',reason:'Host cancellation baseline.',artifactRefs:[baselineArtifact.reference],claims:[],gates:passingGate(baselineArtifact.reference)});
   await beginEdit(root, {ownerCapability:'source-intake',scopeId:'whole',intent:'Create a cancellable candidate.'});
   const candidateArtifact = await checkpointArtifact(root, 'candidate model bytes\n');
-  await commitCheckpoint(root, {capability:'source-intake',scopeId:'whole',reason:'Candidate that must be abandoned on cancel.',artifactRefs:[candidateArtifact.reference],claims:[],gates:[]});
+  await commitCheckpoint(root, {capability:'source-intake',scopeId:'whole',reason:'Candidate that must be abandoned on cancel.',artifactRefs:[candidateArtifact.reference],claims:[],gates:passingGate(candidateArtifact.reference)});
   await openHostSession(root, {sessionId:'studio-session',projectId:'host-project'});
 
   let started = false;
