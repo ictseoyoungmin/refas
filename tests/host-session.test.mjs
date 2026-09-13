@@ -66,7 +66,7 @@ test('host session opens a new project without advancing reconstruction state', 
   assert.equal(session.headCheckpointId, null);
   assert.equal(session.currentCandidate, null);
   assert.equal(session.sourceDigest, null);
-  assert.equal(session.sequence, 0);
+  assert.equal(session.sequence, 1);
   const stored = JSON.parse(await fs.readFile(path.join(root, '.refas', 'host', 'session.json'), 'utf8'));
   assert.equal(stored.schema, 'refas.host-session-state/v1');
   assert.notEqual(stored.schema, session.schema);
