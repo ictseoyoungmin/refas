@@ -1,3 +1,5 @@
+import path from 'node:path';
+
 import {assertDigest, assertId, deepFreeze, digestJson} from './canonical.mjs';
 import {abortEdit, loadProject} from './checkpoint-store.mjs';
 import {emitHostEvent} from './host-event.mjs';
@@ -15,7 +17,7 @@ const OPERATION_FIELDS = new Set([
 ]);
 const runtimeControllers = new Map();
 
-function runtimeKey(root, operationId) { return `${new URL(`file://${String(root)}`).pathname}::${operationId}`; }
+function runtimeKey(root, operationId) { return `${path.resolve(root)}::${operationId}`; }
 function now() { return new Date().toISOString(); }
 function terminalStatus(status) { return ['cancelled','completed','failed'].includes(status); }
 
@@ -82,8 +84,8 @@ async function updateOperation(root, operationId, mutate) {
   await mutateHostState(root, async (state) => {
     const raw = locate(state, operationId);
     validateOperation(raw, state);
-    mutate(raw, state);
-    raw.updatedAt = now();
+    const changed = mutate(raw, state) !== false;
+    if (changed) raw.updatedAt = now();
     result = validateOperation(raw, state);
   });
   return result;
@@ -91,8 +93,7 @@ async function updateOperation(root, operationId, mutate) {
 
 async function finalizePaused(root, operationId) {
   const current = await snapshot(root, operationId);
-  if (current.status === 'paused') return current;
-  if (terminalStatus(current.status)) return current;
+  if (current.status === 'paused' || terminalStatus(current.status)) return current;
   if (!['active','resuming','pausing'].includes(current.status)) throw new Error(`cannot pause host operation from ${current.status}`);
   const operation = await updateOperation(root, operationId, (raw) => { raw.status = 'paused'; });
   await emitHostEvent(root, {kind:'session-paused',operationId,message:'Host operation paused at a safe boundary.',recoverable:true});
@@ -100,14 +101,17 @@ async function finalizePaused(root, operationId) {
 }
 
 async function finalizeCancelled(root, operationId) {
+  const before = await snapshot(root, operationId);
+  if (terminalStatus(before.status)) return before;
+  if (before.status !== 'cancelling') throw new Error(`cannot finalize cancellation from ${before.status}`);
   let project = await loadProject(root);
   if (project.activeTransaction) {
     await abortEdit(root, {reason:`host operation ${operationId} cancelled`});
     project = await loadProject(root);
   }
   const current = await snapshot(root, operationId);
-  if (current.status === 'cancelled') return current;
-  if (current.status === 'completed') return current;
+  if (terminalStatus(current.status)) return current;
+  if (current.status !== 'cancelling') throw new Error(`host operation left cancelling state before cancellation finalized: ${current.status}`);
   const operation = await updateOperation(root, operationId, (raw, state) => {
     raw.status = 'cancelled';
     raw.terminal = {status:'cancelled',headCheckpointId:project.head ?? null,errorCode:null};
@@ -122,10 +126,11 @@ async function finalizeCompleted(root, operationId) {
   if (terminalStatus(current.status)) return current;
   const checkpointId = await headId(root);
   const operation = await updateOperation(root, operationId, (raw, state) => {
-    if (raw.status === 'pausing' || raw.status === 'paused' || raw.status === 'cancelling') return;
+    if (raw.status === 'pausing' || raw.status === 'paused' || raw.status === 'cancelling') return false;
     raw.status = 'completed';
     raw.terminal = {status:'completed',headCheckpointId:checkpointId,errorCode:null};
     if (raw.mode === 'mutating') state.currentOperationId = operationId;
+    return true;
   });
   if (operation.status === 'completed') await emitHostEvent(root, {kind:'completed',operationId,message:'Host operation completed.',recoverable:true});
   return operation;
@@ -220,11 +225,12 @@ export async function pauseHostOperation(root, {operationId} = {}) {
   operationId = assertId(operationId, 'operationId');
   let changed = false;
   const operation = await updateOperation(root, operationId, (raw) => {
-    if (terminalStatus(raw.status) || raw.status === 'paused' || raw.status === 'pausing') return;
+    if (terminalStatus(raw.status) || raw.status === 'paused' || raw.status === 'pausing') return false;
     if (!['active','resuming'].includes(raw.status)) throw new Error(`cannot request pause from ${raw.status}`);
     raw.status = 'pausing';
     raw.pauseRequestedAt = now();
     changed = true;
+    return true;
   });
   if (!changed) return operation;
   const controller = runtimeControllers.get(runtimeKey(root, operationId));
@@ -243,7 +249,7 @@ export async function resumeHostOperation(root, {operationId} = {}, executor) {
     if (raw.mode === 'mutating') state.currentOperationId = operationId;
   });
   await emitHostEvent(root, {kind:'session-resumed',operationId,message:'Host operation resumed.',recoverable:true});
-  await updateOperation(root, operationId, (raw) => { if (raw.status === 'resuming') raw.status = 'active'; });
+  await updateOperation(root, operationId, (raw) => { if (raw.status === 'resuming') { raw.status = 'active'; return true; } return false; });
   return runExecutor(root, operationId, executor);
 }
 
@@ -251,10 +257,11 @@ export async function cancelHostOperation(root, {operationId} = {}) {
   operationId = assertId(operationId, 'operationId');
   let changed = false;
   const operation = await updateOperation(root, operationId, (raw) => {
-    if (terminalStatus(raw.status) || raw.status === 'cancelling') return;
+    if (terminalStatus(raw.status) || raw.status === 'cancelling') return false;
     raw.status = 'cancelling';
     raw.cancelRequestedAt = now();
     changed = true;
+    return true;
   });
   if (!changed) return operation;
   await emitHostEvent(root, {kind:'session-cancel-requested',operationId,message:'Host operation cancellation requested.',recoverable:true});

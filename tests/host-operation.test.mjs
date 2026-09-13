@@ -7,7 +7,9 @@ import {test} from 'node:test';
 import {
   beginEdit,
   commitCheckpoint,
+  contentReference,
   digestBytes,
+  digestJson,
   executeHostOperation,
   getHostEvents,
   getHostOperation,
@@ -34,6 +36,13 @@ async function sourceProject(root) {
     schema:'refas.source-manifest/v1',id:'primary-reference',path:'source/reference.bin',sha256:digestBytes(bytes),sizeBytes:bytes.length,
     width:32,height:32,authority:'primary',acquisition:{kind:'test-fixture'},
   }});
+}
+
+async function checkpointArtifact(root, bytes, kind = 'model-spec') {
+  await fs.mkdir(path.join(root, 'model'), {recursive:true});
+  const file = path.join(root, 'model', 'state.bin');
+  await fs.writeFile(file, Buffer.from(bytes));
+  return {file, reference:await contentReference(file, {kind,root})};
 }
 
 function abortWait(signal) {
@@ -107,12 +116,34 @@ test('pause preserves exact reconstruction state and resume keeps the same opera
   assert.deepEqual(kinds, ['work-started','session-paused','session-resumed','completed']);
 });
 
+test('pause does not abandon an existing bounded edit', async (t) => {
+  const root = await tempRoot(t);
+  await sourceProject(root);
+  const baselineArtifact = await checkpointArtifact(root, 'pause baseline bytes\n');
+  const baseline = await commitCheckpoint(root, {capability:'source-intake',scopeId:'whole',reason:'Pause fixture baseline.',artifactRefs:[baselineArtifact.reference],claims:[],gates:[]});
+  const edit = await beginEdit(root, {ownerCapability:'source-intake',scopeId:'whole',intent:'Keep this bounded edit active across pause.'});
+  await openHostSession(root, {sessionId:'studio-session',projectId:'host-project'});
+  let started = false;
+  const running = executeHostOperation(root, {operationId:'operation-pause-edit',intent:'Pause without rolling back RefAs edit state.'}, async ({signal}) => {
+    started = true;
+    await abortWait(signal);
+  });
+  while (!started) await new Promise((resolve) => setTimeout(resolve, 1));
+  await pauseHostOperation(root, {operationId:'operation-pause-edit'});
+  assert.equal((await running).status, 'paused');
+  const project = await loadProject(root);
+  assert.equal(project.head, baseline.id);
+  assert.equal(project.activeTransaction.id, edit.id);
+});
+
 test('cancel abandons an active bounded edit through RefAs abort authority', async (t) => {
   const root = await tempRoot(t);
   await sourceProject(root);
-  const baseline = await commitCheckpoint(root, {capability:'source-intake',scopeId:'whole',reason:'Host cancellation baseline.',artifactRefs:[],claims:[],gates:[]});
+  const baselineArtifact = await checkpointArtifact(root, 'baseline model bytes\n');
+  const baseline = await commitCheckpoint(root, {capability:'source-intake',scopeId:'whole',reason:'Host cancellation baseline.',artifactRefs:[baselineArtifact.reference],claims:[],gates:[]});
   await beginEdit(root, {ownerCapability:'source-intake',scopeId:'whole',intent:'Create a cancellable candidate.'});
-  await commitCheckpoint(root, {capability:'source-intake',scopeId:'whole',reason:'Candidate that must be abandoned on cancel.',artifactRefs:[],claims:[],gates:[]});
+  const candidateArtifact = await checkpointArtifact(root, 'candidate model bytes\n');
+  await commitCheckpoint(root, {capability:'source-intake',scopeId:'whole',reason:'Candidate that must be abandoned on cancel.',artifactRefs:[candidateArtifact.reference],claims:[],gates:[]});
   await openHostSession(root, {sessionId:'studio-session',projectId:'host-project'});
 
   let started = false;
@@ -128,6 +159,7 @@ test('cancel abandons an active bounded edit through RefAs abort authority', asy
   const project = await loadProject(root);
   assert.equal(project.head, baseline.id);
   assert.equal(project.activeTransaction, null);
+  assert.equal(await fs.readFile(baselineArtifact.file, 'utf8'), 'baseline model bytes\n');
   assert.equal((await loadHostSession(root)).status, 'cancelled');
 });
 
@@ -148,4 +180,27 @@ test('late executor success after cancellation cannot become authoritative compl
   const operationEvents = (await getHostEvents(root)).filter((event) => event.operationId === 'operation-late');
   assert.equal(operationEvents.some((event) => event.kind === 'completed'), false);
   assert.equal(operationEvents.at(-1).kind, 'session-cancelled');
+});
+
+test('opening after process loss recovers a ghost active operation as paused', async (t) => {
+  const root = await tempRoot(t);
+  await openHostSession(root, {sessionId:'studio-session',projectId:'host-project'});
+  const statePath = path.join(root, '.refas', 'host', 'session.json');
+  const state = JSON.parse(await fs.readFile(statePath, 'utf8'));
+  const time = new Date().toISOString();
+  const intent = 'Recover this operation after simulated process loss.';
+  state.operations.push({
+    schema:'refas.host-operation/v1',operationId:'operation-restart',sessionId:state.sessionId,projectId:state.projectId,
+    requestDigest:digestJson({mode:'mutating',intent,inputDigest:null}),mode:'mutating',intent,inputDigest:null,status:'active',
+    startedAt:time,updatedAt:time,pauseRequestedAt:null,cancelRequestedAt:null,resumeCount:0,terminal:null,
+  });
+  state.currentOperationId = 'operation-restart';
+  await fs.writeFile(statePath, `${JSON.stringify(state, null, 2)}\n`, 'utf8');
+
+  const reopened = await openHostSession(root, {sessionId:'studio-session',projectId:'host-project'});
+  assert.equal(reopened.status, 'paused');
+  assert.equal((await getHostOperation(root, {operationId:'operation-restart'})).status, 'paused');
+  const last = (await getHostEvents(root)).at(-1);
+  assert.equal(last.kind, 'session-paused');
+  assert.equal(last.operationId, 'operation-restart');
 });
