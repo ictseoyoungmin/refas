@@ -1,0 +1,271 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/host-review-bundle.schema.json",
+  "title": "RefAs host review bundle",
+  "type": "object",
+  "required": [
+    "schema",
+    "sessionId",
+    "projectId",
+    "checkpoint",
+    "source",
+    "candidate",
+    "artifacts",
+    "artifactKinds",
+    "gates",
+    "claims",
+    "review",
+    "policy",
+    "bundleDigest"
+  ],
+  "properties": {
+    "schema": {
+      "const": "refas.host-review-bundle/v1"
+    },
+    "sessionId": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$"
+    },
+    "projectId": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$"
+    },
+    "checkpoint": {
+      "type": "object",
+      "required": ["id", "contentDigest", "capability", "scopeId"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$"
+        },
+        "contentDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "capability": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$"
+        },
+        "scopeId": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": {
+      "$ref": "#/$defs/contentReference"
+    },
+    "candidate": {
+      "anyOf": [
+        {"type": "null"},
+        {"$ref": "#/$defs/contentReference"}
+      ]
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/contentReference"}
+    },
+    "artifactKinds": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$"
+      },
+      "uniqueItems": true
+    },
+    "gates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "status", "evidenceRefs"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$"
+          },
+          "status": {
+            "enum": ["pass", "fail", "pending", "blocked"]
+          },
+          "evidenceRefs": {
+            "type": "array",
+            "items": {"type": "string"}
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "claims": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "review": {
+      "anyOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "required": [
+            "reference",
+            "verdict",
+            "evidenceClass",
+            "reviewDigest",
+            "unresolvedFindings",
+            "renderer",
+            "registeredComparison"
+          ],
+          "properties": {
+            "reference": {"$ref": "#/$defs/contentReference"},
+            "verdict": {
+              "enum": ["pass", "fail", "insufficient"]
+            },
+            "evidenceClass": {
+              "enum": ["independent-reference", "self-generated-contract-fixture"]
+            },
+            "reviewDigest": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "unresolvedFindings": {
+              "type": "array",
+              "items": {"$ref": "#/$defs/finding"}
+            },
+            "renderer": {
+              "type": "object",
+              "required": ["reference", "kind", "family", "claimScope", "independentProcess"],
+              "properties": {
+                "reference": {"$ref": "#/$defs/contentReference"},
+                "kind": {"type": "string", "minLength": 1},
+                "family": {"type": "string", "minLength": 1},
+                "claimScope": {
+                  "enum": ["render-integrity-only", "visual-fidelity"]
+                },
+                "independentProcess": {"type": "boolean"}
+              },
+              "additionalProperties": false
+            },
+            "registeredComparison": {
+              "anyOf": [
+                {"type": "null"},
+                {
+                  "type": "object",
+                  "required": ["reference", "comparisonDigest", "scopeIds"],
+                  "properties": {
+                    "reference": {"$ref": "#/$defs/contentReference"},
+                    "comparisonDigest": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    },
+                    "scopeIds": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$"
+                      },
+                      "minItems": 1,
+                      "uniqueItems": true
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              ]
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "policy": {
+      "type": "object",
+      "required": [
+        "readOnlyPresentationEnvelope",
+        "checkpointAuthorityRemainsRefAs",
+        "visualReviewAuthorityNotDuplicated",
+        "metricsCannotPassReview",
+        "bundleCannotResolveFindings",
+        "bundleCannotCertify"
+      ],
+      "properties": {
+        "readOnlyPresentationEnvelope": {"const": true},
+        "checkpointAuthorityRemainsRefAs": {"const": true},
+        "visualReviewAuthorityNotDuplicated": {"const": true},
+        "metricsCannotPassReview": {"const": true},
+        "bundleCannotResolveFindings": {"const": true},
+        "bundleCannotCertify": {"const": true}
+      },
+      "additionalProperties": false
+    },
+    "bundleDigest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  },
+  "$defs": {
+    "contentReference": {
+      "type": "object",
+      "required": ["schema", "kind", "path", "sha256", "sizeBytes"],
+      "properties": {
+        "schema": {"const": "refas.content-reference/v1"},
+        "kind": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$"
+        },
+        "path": {"type": "string", "minLength": 1},
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "sizeBytes": {"type": "integer", "minimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "finding": {
+      "type": "object",
+      "required": [
+        "schema",
+        "category",
+        "severity",
+        "scopeId",
+        "summary",
+        "evidenceRefs",
+        "ownerCapability",
+        "introducedByEdit",
+        "routable",
+        "blocking",
+        "evidenceSufficient"
+      ],
+      "properties": {
+        "schema": {"const": "refas.finding/v1"},
+        "category": {"type": "string", "minLength": 1},
+        "severity": {"type": "string", "minLength": 1},
+        "scopeId": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$"
+        },
+        "summary": {"type": "string"},
+        "evidenceRefs": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "checkId": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$"
+        },
+        "ownerCapability": {
+          "anyOf": [
+            {"type": "null"},
+            {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$"
+            }
+          ]
+        },
+        "introducedByEdit": {"type": "boolean"},
+        "routable": {"type": "boolean"},
+        "blocking": {"type": "boolean"},
+        "evidenceSufficient": {"type": "boolean"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
