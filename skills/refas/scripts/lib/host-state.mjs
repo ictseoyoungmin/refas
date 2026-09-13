@@ -19,21 +19,47 @@ function sequence(value) {
   return result;
 }
 
+function operations(value) {
+  if (value == null) return [];
+  if (!Array.isArray(value)) throw new Error('host operations persistence must be an array');
+  const out = value.map((item, index) => {
+    if (!item || typeof item !== 'object') throw new Error(`host operations[${index}] must be an object`);
+    assertId(item.operationId, `host operations[${index}].operationId`);
+    return structuredClone(item);
+  });
+  const ids = out.map((item) => item.operationId);
+  if (new Set(ids).size !== ids.length) throw new Error('host operation IDs must be unique');
+  return out;
+}
+
 export function normalizeHostState(raw) {
   if (!raw || typeof raw !== 'object' || raw.schema !== HOST_SESSION_STATE_SCHEMA) throw new Error('invalid RefAs host session persistence state');
+  const normalizedOperations = operations(raw.operations);
+  const currentOperationId = raw.currentOperationId == null ? null : assertId(raw.currentOperationId, 'currentOperationId');
+  if (currentOperationId && !normalizedOperations.some((item) => item.operationId === currentOperationId)) throw new Error('current host operation is missing from persistence');
   return {
     schema: HOST_SESSION_STATE_SCHEMA,
     sessionId: assertId(raw.sessionId, 'sessionId'),
     projectId: assertId(raw.projectId, 'projectId'),
     sequence: sequence(raw.sequence),
     events: Array.isArray(raw.events) ? structuredClone(raw.events) : [],
+    operations: normalizedOperations,
+    currentOperationId,
   };
 }
 
 export async function readHostState(root) { return normalizeHostState(await readJson(hostStatePath(root))); }
 
 export async function createHostState(root, {sessionId, projectId} = {}) {
-  const state = {schema: HOST_SESSION_STATE_SCHEMA, sessionId: assertId(sessionId, 'sessionId'), projectId: assertId(projectId, 'projectId'), sequence: 0, events: []};
+  const state = {
+    schema: HOST_SESSION_STATE_SCHEMA,
+    sessionId: assertId(sessionId, 'sessionId'),
+    projectId: assertId(projectId, 'projectId'),
+    sequence: 0,
+    events: [],
+    operations: [],
+    currentOperationId: null,
+  };
   await writeJsonAtomic(hostStatePath(root), state);
   return structuredClone(state);
 }

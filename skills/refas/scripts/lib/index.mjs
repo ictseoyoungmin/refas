@@ -28,6 +28,7 @@ export * from './failure-router.mjs';
 export * from './checkpoint-store.mjs';
 export * from './host-session.mjs';
 export * from './host-event.mjs';
+export * from './host-operation.mjs';
 export {assessCertification, auditProject, certifyProject, resumeProject, assessProjectionCertification, assessClaimCertification} from './certification-gate.mjs';
 export * from './spatial-hypotheses.mjs';
 export * from './registration.mjs';

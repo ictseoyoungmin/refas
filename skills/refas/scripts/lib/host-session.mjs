@@ -4,6 +4,7 @@ import path from 'node:path';
 import {assertId, deepFreeze, sha256File} from './canonical.mjs';
 import {initProject, loadCheckpoint, loadProject} from './checkpoint-store.mjs';
 import {emitHostEvent} from './host-event.mjs';
+import {hostOperationStatus, recoverInterruptedHostOperation} from './host-operation.mjs';
 import {createHostState, readHostState} from './host-state.mjs';
 
 export const HOST_SESSION_SCHEMA = 'refas.host-session/v1';
@@ -18,7 +19,9 @@ function isInside(root, candidate) {
   return relative !== '' && relative !== '..' && !relative.startsWith(`..${path.sep}`) && !path.isAbsolute(relative);
 }
 
-function deriveHostStatus(state) {
+function deriveHostStatus(state, stored) {
+  const operationStatus = hostOperationStatus(stored);
+  if (operationStatus) return operationStatus;
   switch (state.status) {
     case 'source-required':
     case 'ready': return 'idle';
@@ -58,7 +61,7 @@ async function buildSnapshot(root, stored, state) {
     projectId:stored.projectId,
     root:projectRoot(root),
     sourceDigest:state.source?.sha256 ?? null,
-    status:deriveHostStatus(state),
+    status:deriveHostStatus(state, stored),
     headCheckpointId:state.head ?? null,
     currentCandidate:currentArtifact ? {sha256:currentArtifact.sha256,kind:currentArtifact.kind} : null,
     sequence:stored.sequence,
@@ -90,8 +93,11 @@ export async function openHostSession(root, {sessionId, projectId} = {}) {
   }
   if (created) {
     await emitHostEvent(root, {kind:'session-opened',message:'RefAs host session opened.',recoverable:true});
-    stored = await readHostState(root);
+  } else {
+    await recoverInterruptedHostOperation(root);
   }
+  stored = await readHostState(root);
+  state = await loadProject(root);
   return buildSnapshot(root, stored, state);
 }
 
