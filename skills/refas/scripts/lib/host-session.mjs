@@ -27,6 +27,7 @@ export const HOST_SESSION_STATUSES = Object.freeze([
   'failed',
 ]);
 
+const HOST_SESSION_STATE_SCHEMA = 'refas.host-session-state/v1';
 const HOST_STATE_DIR = path.join('.refas', 'host');
 const HOST_SESSION_FILE = 'session.json';
 
@@ -50,9 +51,9 @@ function normalizeSequence(value) {
 }
 
 function validateStoredSession(raw) {
-  if (!raw || typeof raw !== 'object' || raw.schema !== HOST_SESSION_SCHEMA) throw new Error('invalid RefAs host session state');
+  if (!raw || typeof raw !== 'object' || raw.schema !== HOST_SESSION_STATE_SCHEMA) throw new Error('invalid RefAs host session persistence state');
   return {
-    schema: HOST_SESSION_SCHEMA,
+    schema: HOST_SESSION_STATE_SCHEMA,
     sessionId: assertId(raw.sessionId, 'sessionId'),
     projectId: assertId(raw.projectId, 'projectId'),
     sequence: normalizeSequence(raw.sequence),
@@ -142,7 +143,7 @@ export async function openHostSession(root, {sessionId, projectId} = {}) {
     if (stored.projectId !== projectId) throw new Error(`host session already belongs to project ${stored.projectId}`);
   } catch (error) {
     if (error.code !== 'ENOENT') throw error;
-    stored = {schema: HOST_SESSION_SCHEMA, sessionId, projectId, sequence: 0};
+    stored = {schema: HOST_SESSION_STATE_SCHEMA, sessionId, projectId, sequence: 0};
     await writeJsonAtomic(sessionPath(root), stored);
   }
 

@@ -67,6 +67,9 @@ test('host session opens a new project without advancing reconstruction state', 
   assert.equal(session.currentCandidate, null);
   assert.equal(session.sourceDigest, null);
   assert.equal(session.sequence, 0);
+  const stored = JSON.parse(await fs.readFile(path.join(root, '.refas', 'host', 'session.json'), 'utf8'));
+  assert.equal(stored.schema, 'refas.host-session-state/v1');
+  assert.notEqual(stored.schema, session.schema);
   const state = await loadProject(root);
   assert.equal(state.status, 'source-required');
   assert.equal(state.head, null);
