@@ -2,6 +2,25 @@
 
 All notable RefAs changes are documented here. RefAs follows semantic versioning.
 
+## 1.0.4 — 2026-09-15
+
+### Host integration facade
+
+- Added stable `refas.host-session/v1` identity/status projection without creating a second reconstruction state machine.
+- Added durable monotonic `refas.host-event/v1` replay with exact artifact references and parent-owned worker lifecycle events.
+- Added `refas.host-operation/v1` pause/resume/cancel semantics with one mutating project owner, safe restart recovery, and existing bounded-edit rollback authority for cancellation.
+- Added digest-bound `refas.host-review-bundle/v1` presentation envelopes over exact checkpoint/source/candidate/review evidence without duplicating visual-review authority.
+- Added `refas.artifact-handoff/v1` for exact current GLB transfer identity bound to checkpoint, candidate transaction, and existing certification state.
+- Added `refas.worker-request/v1` / `refas.worker-response/v1` child-process framing with one-object stdout protocol, diagnostics-only stderr, parent verification of output bytes, and distinct pause/cancel/timeout/failure behavior.
+
+### Host hardening and distribution
+
+- Added `references/host-integration.md` as a conditional control-plane leaf; ordinary reconstruction and certification do not depend on host integration.
+- Added the `refas-host` companion CLI for host open/status, durable event replay/JSONL polling, review bundles, artifact handoff/currentness, and worker wire validation while keeping the reconstruction-oriented `refas` CLI unchanged.
+- Hardened host-session initialization so a pristine zero-sequence state left by a process loss repairs exactly one `session-opened` event on reopen without rewriting existing history.
+- Advanced package/runtime/project-state/certificate compatibility to 1.0.4 while retaining the existing public v1 contract namespaces.
+- Release publication remains a separate protected boundary: this release-hardening change does not itself create an npm publication, Git tag, or GitHub Release.
+
 ## 1.0.3 — 2026-09-11
 
 - Added `references/GRAPH.json`, a machine-readable semantic instruction DAG covering all installed-skill reference leaves, owners, prerequisites, conditional dependencies, authority, closure effects, finding ownership, and real-source certification prerequisites.
@@ -91,8 +110,8 @@ RefAs 1.0.1 can preserve and fit full orientation only when evidence or an expli
 
 ### Certification authority
 
-- Added sealed candidate provenance transactions that bind one exact candidate, checkpoint, evidence DAG, dependencies, and declared obligations by content digest.
-- Added claim-driven certification policies with explicit role/schema obligations and reproducible per-claim authorization decisions.
+- Added sealed candidate provenance transactions that bind one exact candidate, checkpoint, evidence DAG, dependencies, and declared obligations.
+- Added claim-driven certification policies with explicit per-claim evidence role/schema obligations and reproducible per-claim authorization decisions.
 - Bound whole-object certificates to the exact candidate transaction, policy, claim decision, visual review, registered comparison, and independent PBR evidence required by the active claim set.
 - Added adversarial hardening against candidate/evidence substitution, stale checkpoint replay, forged decisions, cross-claim evidence contamination, and freshly re-signed policies that weaken the mandatory whole-object authority floor.
 

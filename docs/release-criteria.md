@@ -1,6 +1,6 @@
-# RefAs 1.0.3 release criteria
+# RefAs 1.0.4 release criteria
 
-RefAs 1.0.3 is releasable only when the current exact head satisfies the gates below without relying on historical CI, stale evidence, or undocumented runtime behavior.
+RefAs 1.0.4 is releasable only when the current exact head satisfies the gates below without relying on historical CI, stale evidence, or undocumented runtime behavior.
 
 ## Runtime and recovery
 
@@ -12,6 +12,7 @@ RefAs 1.0.3 is releasable only when the current exact head satisfies the gates b
 - Closed-child composition preserves original child binary payloads.
 - Attachment, support, clearance, contact, articulation, and fusion evidence cannot be replaced by proximity guesses.
 - Portable and independent render reports bind exact candidate bytes, renderer configuration, frames, and declared feature support.
+- A pristine host state left at sequence zero may repair exactly one initial `session-opened` event on reopen; existing event/operation history is never rewritten.
 
 ## Orientation correctness
 
@@ -53,6 +54,15 @@ RefAs 1.0.3 is releasable only when the current exact head satisfies the gates b
 - Whole-object certificates and audits bind the exact relational certification digest in addition to transaction, policy, claim decision, source, checkpoint, candidate, visual comparison and required PBR evidence.
 - Candidate/evidence substitution, stale checkpoint replay, forged decisions, cross-claim contamination, relational replay, re-signed relational substitution, and weaker policies fail closed.
 
+## Host Integration authority
+
+- `refas.host-session/v1`, `refas.host-event/v1`, `refas.host-operation/v1`, `refas.host-review-bundle/v1`, `refas.artifact-handoff/v1`, `refas.worker-request/v1`, and `refas.worker-response/v1` are additive facades over existing RefAs truth.
+- Host Integration is conditional infrastructure and is not a prerequisite for ordinary reconstruction, visual closure, or certification.
+- Durable host events remain monotonic and replayable by sequence; pause and cancel remain distinct; cancellation reuses bounded-edit rollback authority.
+- Review bundles cannot pass review, resolve findings, or certify. Artifact handoff cannot promote certification and must remain exact-candidate/checkpoint/transaction bound.
+- External workers cannot own checkpoint state, event sequencing, operation finalization, candidate authority, rollback, or certification. Stdout is protocol only and stderr is diagnostics only.
+- The host companion CLI must expose public facts without exposing `.refas/` internals or product-specific states.
+
 ## Visual and appearance authority
 
 - Actual GLB geometry produces the required diagnostic views.
@@ -67,6 +77,7 @@ RefAs 1.0.3 is releasable only when the current exact head satisfies the gates b
 - Joint parameter-fit dogfood verifies real candidate/render trial bytes and keeps metric ranking outside authority.
 - Orientation regressions cover same-axis/wrong-facing terminal cases, large-axis mismatch, mixed-sign chain correction, wrong-candidate evidence and re-signed report tampering.
 - Relational regressions cover graph validation, semantic authority separation, whole-system barrier/routing, candidate-bound discrepancy, lower-loss ineligible candidates, relational closure substitution and candidate replay.
+- Host regressions cover session initialization/recovery, replayable events, operation interruption, review bundles, handoff currentness, worker framing/lifecycle, and companion CLI JSON/JSONL behavior.
 - Independent PBR, hard-surface and modular-assembly dogfoods remain reproducible and pass their existing integrity gates.
 
 ## Distribution
@@ -75,18 +86,22 @@ RefAs 1.0.3 is releasable only when the current exact head satisfies the gates b
 - CI passes on Node 20, 22, and 24; the Node 24 job also runs the full repository dogfood chain and release audit.
 - The npm dry-run contains only the intended distributable skill, schemas, package metadata and Python requirements; it contains no examples, tests, caches, transient project state, duplicate runtime, private references, or ZIP artifacts.
 - The distributable package includes orientation runtime plus relational structure, semantic authority, relational barrier, relational discrepancy and certification-relational closure runtime/reference/schema contracts.
+- The distributable package also includes the Host Integration reference leaf, runtime modules, public schemas, and both `refas` and `refas-host` CLI entry points.
 - README/demo describe only shipped behavior and link to reproducible repository evidence.
 - `docs/known-limitations.md` states important non-guarantees rather than promoting future domain-pack or physical-simulation work into release claims.
 
 ## Compatibility
 
-- New project state and whole-object certificates identify runtime 1.0.3.
-- Public v1 project-state and certificate schemas continue accepting 1.0.0 and 1.0.1 artifacts, and the runtime continues loading existing v1 state without in-place migration.
+- New project state and whole-object certificates identify runtime 1.0.4.
+- Public v1 project-state and certificate schemas continue accepting 1.0.0 through 1.0.3 artifacts, and the runtime continues loading existing v1 state without in-place migration.
+- Host Integration uses additive public v1 contracts and does not alter existing reconstruction/certification contract namespaces.
 - This patch does not introduce robotics-specific actuator, collider, mass/inertia, MJCF/URDF, calibrated simulation, or manufacturer-truth claims into Core.
 
 ## Release cut
 
-The `v1.0.3` tag and GitHub Release must point to the exact `main` commit that passed post-merge CI. Existing release tags remain immutable. Any source change after exact-head CI requires a new validation before release.
+The `v1.0.4` tag and GitHub Release must point to the exact `main` commit that passed post-merge CI. Existing release tags remain immutable. Any source change after exact-head CI requires a new validation before release.
+
+Merging release hardening is not publication authorization. Creating the `v1.0.4` tag, GitHub Release, or package publication remains a separate protected action requiring explicit approval after the final `main` state is inspected.
 
 Automated or bot-authored branch mutations are never accepted as release evidence by themselves; the resulting exact head must receive a fresh normal PR CI run before merge.
 
@@ -97,5 +112,5 @@ Automated or bot-authored branch mutations are never accepted as release evidenc
 - `camera-hypothesis-mismatch` belongs to `spatial-hypotheses`; `render-camera-integrity` belongs to `rendering`; legacy `camera-mismatch` is compatibility-only and is not offered for new findings.
 - Bare sibling Markdown routes are forbidden; every agent-facing dependency uses a canonical installed-skill path.
 - Real-source final authorization requires `refas.certification-relational-evidence/v1` in addition to current visual/projection/provenance evidence.
+- The Host Integration leaf is reachable but no reconstruction/certification node depends on it.
 - Both installation-boundary and semantic-graph verifiers pass after copying only `skills/refas/` into an isolated directory.
-

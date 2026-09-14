@@ -46,6 +46,7 @@ Load only the references needed by the active capability or conditional closure 
 | Controlled physical weld/boolean finalization of a logically fused group | `references/physical-fusion.md` |
 | Final-GLB contact, support, penetration, and support-root validation | `references/realized-contact-support.md` |
 | Claim policy, relational authority floor, claim decision, and final authorization | `references/claim-certification.md` |
+| External host sessions, events, operations, review bundles, artifact handoff, and workers | `references/host-integration.md` |
 | Canonical edit source/realization boundary | `references/contracts/canonical-edit-boundary.md` |
 | Attachment mode semantics | `references/contracts/attachment-semantics.md` |
 | Logical fusion before physical fusion | `references/contracts/logical-fusion.md` |
@@ -54,6 +55,8 @@ Load only the references needed by the active capability or conditional closure 
 | Simultaneous multi-owner rigid fitting | `references/contracts/multi-anchor-solver.md` |
 | Articulation and supported-clearance semantics | `references/contracts/articulation-clearance.md` |
 | Deterministic attachment dependency propagation | `references/contracts/attachment-propagation.md` |
+
+Host integration is conditional infrastructure. It is never a prerequisite for reconstruction, visual closure, or certification. Load `references/host-integration.md` only when an external host or worker boundary is actually being used.
 
 ## Conditional finalization and closure chain
 

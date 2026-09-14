@@ -3,6 +3,7 @@
   "nodes": [
     {"id":"workflow","path":"references/workflow.md","owners":["control"],"requires":[],"conditionalRequires":[],"authority":"router","closureEffects":[]},
     {"id":"checkpointing","path":"references/checkpointing.md","owners":["control"],"requires":["workflow"],"conditionalRequires":[],"authority":"recovery-control","closureEffects":[]},
+    {"id":"host-integration","path":"references/host-integration.md","owners":["control"],"requires":["workflow","checkpointing"],"conditionalRequires":[],"authority":"host-facade","closureEffects":[]},
     {"id":"failure-routing","path":"references/failure-routing.md","owners":["control"],"requires":["workflow"],"conditionalRequires":[],"authority":"repair-routing","closureEffects":[]},
     {"id":"provenance","path":"references/provenance.md","owners":["source-intake"],"requires":["workflow"],"conditionalRequires":[],"authority":"source-provenance","closureEffects":[]},
     {"id":"observation","path":"references/observation.md","owners":["visual-observation"],"requires":["provenance"],"conditionalRequires":[],"authority":"source-observation","closureEffects":[]},
