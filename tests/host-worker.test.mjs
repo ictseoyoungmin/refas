@@ -46,7 +46,7 @@ function nodeWorkerArgs(script) {
   return ['--input-type=module','-e',script];
 }
 
-function successWorkerScript({extraStdout = false, badDigest = false, delayMs = 0} = {}) {
+function successWorkerScript({extraStdout = false, badDigest = false, wrongRequestDigest = false, delayMs = 0} = {}) {
   return `
 import fs from 'node:fs';
 import path from 'node:path';
@@ -65,7 +65,7 @@ const response = {
   schema:'refas.worker-response/v1',
   workerRunId:request.workerRunId,
   operationId:request.operationId,
-  requestDigest:request.requestDigest,
+  requestDigest:${wrongRequestDigest ? "'f'.repeat(64)" : 'request.requestDigest'},
   status:'completed',
   message:'worker completed',
   artifactRefs:[{
@@ -149,6 +149,7 @@ test('worker stdout chatter and stale output digests fail closed as worker-faile
   for (const [suffix, script, expected] of [
     ['chatter', successWorkerScript({extraStdout:true}), /exactly one JSON object line/],
     ['digest', successWorkerScript({badDigest:true}), /artifact verification failed/],
+    ['binding', successWorkerScript({wrongRequestDigest:true}), /requestDigest mismatch/],
   ]) {
     await assert.rejects(
       () => executeHostOperation(root, {
@@ -338,4 +339,19 @@ test('worker event binding and intrinsic response fields are fail-closed', async
   const hiddenValidation = validateWorkerResponse(hidden);
   assert.equal(hiddenValidation.valid, false);
   assert.match(hiddenValidation.errors.join('\n'), /unsupported or missing fields/);
+
+  const internal = {
+    ...response,
+    status:'completed',
+    artifactRefs:[{
+      schema:'refas.content-reference/v1',
+      kind:'internal-state',
+      path:'.refas/project.json',
+      sha256:'b'.repeat(64),
+      sizeBytes:1,
+    }],
+  };
+  const internalValidation = validateWorkerResponse(internal);
+  assert.equal(internalValidation.valid, false);
+  assert.match(internalValidation.errors.join('\n'), /internal or parent state/);
 });
