@@ -11,11 +11,15 @@ export const HOST_EVENT_KINDS = Object.freeze([
   'source-bound','work-started','scope-entered','checkpoint-created','checkpoint-restored',
   'candidate-created','candidate-updated','candidate-rejected','evidence-ready','render-ready','comparison-ready',
   'finding-opened','finding-updated','finding-resolved','reopen-required','review-bundle-ready',
-  'certification-started','certification-passed','certification-failed','blocked','warning','failed','completed',
+  'certification-started','certification-passed','certification-failed',
+  'worker-started','worker-completed','worker-cancelled','worker-timeout','worker-failed',
+  'blocked','warning','failed','completed',
 ]);
 
-const EVENT_INPUT_FIELDS = new Set(['kind','operationId','scopeId','capability','message','artifactRefs','recoverable']);
-const EVENT_FIELDS = new Set(['schema','eventId','sessionId','sequence','time','kind','operationId','scopeId','capability','message','artifactRefs','recoverable']);
+const WORKER_EVENT_KINDS = new Set(['worker-started','worker-completed','worker-cancelled','worker-timeout','worker-failed']);
+const EVENT_INPUT_FIELDS = new Set(['kind','operationId','workerRunId','scopeId','capability','message','artifactRefs','recoverable']);
+const REQUIRED_EVENT_FIELDS = new Set(['schema','eventId','sessionId','sequence','time','kind','operationId','scopeId','capability','message','artifactRefs','recoverable']);
+const ALLOWED_EVENT_FIELDS = new Set([...REQUIRED_EVENT_FIELDS,'workerRunId']);
 const listeners = new Map();
 
 function rootPath(root) { return path.resolve(root); }
@@ -43,13 +47,23 @@ async function exactArtifact(root, raw, index) {
   return {schema:'refas.content-reference/v1',kind,path:path.relative(realRoot,realFile).split(path.sep).join('/'),sha256,sizeBytes};
 }
 
+function validateWorkerBinding(event) {
+  const isWorker = WORKER_EVENT_KINDS.has(event.kind);
+  const workerRunId = event.workerRunId == null ? null : assertId(event.workerRunId, 'workerRunId');
+  if (isWorker && workerRunId == null) throw new Error(`worker event ${event.kind} requires workerRunId`);
+  if (!isWorker && workerRunId != null) throw new Error(`non-worker host event ${event.kind} cannot carry workerRunId`);
+  if (isWorker && event.operationId == null) throw new Error(`worker event ${event.kind} requires operationId`);
+  return workerRunId;
+}
+
 function validateEvent(event, sessionId, expectedSequence) {
   if (!event || event.schema !== HOST_EVENT_SCHEMA) throw new Error('unknown host event schema');
-  for (const key of Object.keys(event)) if (!EVENT_FIELDS.has(key)) throw new Error(`unsupported persisted host event field: ${key}`);
-  for (const key of EVENT_FIELDS) if (!(key in event)) throw new Error(`persisted host event is missing field: ${key}`);
+  for (const key of Object.keys(event)) if (!ALLOWED_EVENT_FIELDS.has(key)) throw new Error(`unsupported persisted host event field: ${key}`);
+  for (const key of REQUIRED_EVENT_FIELDS) if (!(key in event)) throw new Error(`persisted host event is missing field: ${key}`);
   if (event.sessionId !== sessionId) throw new Error('host event session mismatch');
   if (event.sequence !== expectedSequence) throw new Error(`host event sequence gap at ${expectedSequence}`);
   if (!HOST_EVENT_KINDS.includes(event.kind)) throw new Error(`unknown host event kind: ${event.kind}`);
+  validateWorkerBinding(event);
   const {eventId, ...core} = event;
   const expectedId = `event_${digestJson(core).slice(0, 20)}`;
   if (eventId !== expectedId) throw new Error('host event ID/content digest mismatch');
@@ -72,6 +86,7 @@ export async function emitHostEvent(root, input = {}) {
   const kind = String(input.kind ?? '');
   if (!HOST_EVENT_KINDS.includes(kind)) throw new Error(`unknown host event kind: ${kind}`);
   const operationId = input.operationId == null ? null : assertId(input.operationId, 'operationId');
+  const workerRunId = input.workerRunId == null ? null : assertId(input.workerRunId, 'workerRunId');
   const scopeId = input.scopeId == null ? null : assertId(input.scopeId, 'scopeId');
   const capability = input.capability == null ? null : assertCapability(input.capability);
   const message = input.message == null ? null : String(input.message);
@@ -79,11 +94,17 @@ export async function emitHostEvent(root, input = {}) {
   const refs = [];
   for (const [index, raw] of (input.artifactRefs ?? []).entries()) refs.push(await exactArtifact(root, raw, index));
   const recoverable = input.recoverable !== false;
+  const workerBound = WORKER_EVENT_KINDS.has(kind);
+  if (workerBound && workerRunId == null) throw new Error(`worker event ${kind} requires workerRunId`);
+  if (!workerBound && workerRunId != null) throw new Error(`non-worker host event ${kind} cannot carry workerRunId`);
+  if (workerBound && operationId == null) throw new Error(`worker event ${kind} requires operationId`);
+
   let event;
   await mutateHostState(root, async (state) => {
     assertHistory(state);
     const sequence = state.sequence + 1;
     const core = {schema:HOST_EVENT_SCHEMA,sessionId:state.sessionId,sequence,time:new Date().toISOString(),kind,operationId,scopeId,capability,message,artifactRefs:refs,recoverable};
+    if (workerRunId != null) core.workerRunId = workerRunId;
     const eventId = `event_${digestJson(core).slice(0, 20)}`;
     event = deepFreeze({...core,eventId});
     state.sequence = sequence;

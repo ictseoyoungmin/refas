@@ -3,34 +3,35 @@
   "$id": "https://refas.dev/schemas/host-event.schema.json",
   "title": "RefAs observable host event",
   "type": "object",
-  "required": ["schema","eventId","sessionId","sequence","time","kind","operationId","scopeId","capability","message","artifactRefs","recoverable"],
+  "required": ["schema", "eventId", "sessionId", "sequence", "time", "kind", "operationId", "scopeId", "capability", "message", "artifactRefs", "recoverable"],
   "properties": {
     "schema": {"const": "refas.host-event/v1"},
     "eventId": {"type": "string", "pattern": "^event_[a-f0-9]{20}$"},
     "sessionId": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$"},
     "sequence": {"type": "integer", "minimum": 1},
     "time": {"type": "string", "format": "date-time"},
-    "kind": {"enum": ["session-opened","session-resumed","session-paused","session-cancel-requested","session-cancelled","source-bound","work-started","scope-entered","checkpoint-created","checkpoint-restored","candidate-created","candidate-updated","candidate-rejected","evidence-ready","render-ready","comparison-ready","finding-opened","finding-updated","finding-resolved","reopen-required","review-bundle-ready","certification-started","certification-passed","certification-failed","blocked","warning","failed","completed"]},
-    "operationId": {"anyOf": [{"type":"null"},{"type":"string","pattern":"^[a-z0-9][a-z0-9._:-]{1,127}$"}]},
-    "scopeId": {"anyOf": [{"type":"null"},{"type":"string","pattern":"^[a-z0-9][a-z0-9._:-]{1,127}$"}]},
-    "capability": {"anyOf": [{"type":"null"},{"enum":["source-intake","visual-hierarchy","visual-observation","spatial-hypotheses","shape-reconstruction","surface-topology","assembly","appearance","rendering","visual-critique","whole-object-certification"]}]},
-    "message": {"anyOf": [{"type":"null"},{"type":"string","maxLength":1000}]},
+    "kind": {"enum": ["session-opened", "session-resumed", "session-paused", "session-cancel-requested", "session-cancelled", "source-bound", "work-started", "scope-entered", "checkpoint-created", "checkpoint-restored", "candidate-created", "candidate-updated", "candidate-rejected", "evidence-ready", "render-ready", "comparison-ready", "finding-opened", "finding-updated", "finding-resolved", "reopen-required", "review-bundle-ready", "certification-started", "certification-passed", "certification-failed", "worker-started", "worker-completed", "worker-cancelled", "worker-timeout", "worker-failed", "blocked", "warning", "failed", "completed"]},
+    "operationId": {"anyOf": [{"type": "null"}, {"type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$"}]},
+    "workerRunId": {"anyOf": [{"type": "null"}, {"type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$"}]},
+    "scopeId": {"anyOf": [{"type": "null"}, {"type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$"}]},
+    "capability": {"anyOf": [{"type": "null"}, {"enum": ["source-intake", "visual-hierarchy", "visual-observation", "spatial-hypotheses", "shape-reconstruction", "surface-topology", "assembly", "appearance", "rendering", "visual-critique", "whole-object-certification"]}]},
+    "message": {"anyOf": [{"type": "null"}, {"type": "string", "maxLength": 1000}]},
     "artifactRefs": {
-      "type":"array",
+      "type": "array",
       "items": {
-        "type":"object",
-        "required":["schema","kind","path","sha256","sizeBytes"],
+        "type": "object",
+        "required": ["schema", "kind", "path", "sha256", "sizeBytes"],
         "properties": {
-          "schema":{"const":"refas.content-reference/v1"},
-          "kind":{"type":"string","minLength":2},
-          "path":{"type":"string","minLength":1},
-          "sha256":{"type":"string","pattern":"^[a-f0-9]{64}$"},
-          "sizeBytes":{"type":"integer","minimum":0}
+          "schema": {"const": "refas.content-reference/v1"},
+          "kind": {"type": "string", "minLength": 2},
+          "path": {"type": "string", "minLength": 1},
+          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+          "sizeBytes": {"type": "integer", "minimum": 0}
         },
-        "additionalProperties":false
+        "additionalProperties": false
       }
     },
-    "recoverable":{"type":"boolean"}
+    "recoverable": {"type": "boolean"}
   },
-  "additionalProperties":false
+  "additionalProperties": false
 }
