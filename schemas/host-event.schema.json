@@ -3,7 +3,20 @@
   "$id": "https://refas.dev/schemas/host-event.schema.json",
   "title": "RefAs observable host event",
   "type": "object",
-  "required": ["schema", "eventId", "sessionId", "sequence", "time", "kind", "operationId", "scopeId", "capability", "message", "artifactRefs", "recoverable"],
+  "required": [
+    "schema",
+    "eventId",
+    "sessionId",
+    "sequence",
+    "time",
+    "kind",
+    "operationId",
+    "scopeId",
+    "capability",
+    "message",
+    "artifactRefs",
+    "recoverable"
+  ],
   "properties": {
     "schema": {"const": "refas.host-event/v1"},
     "eventId": {"type": "string", "pattern": "^event_[a-f0-9]{20}$"},
@@ -33,5 +46,29 @@
     },
     "recoverable": {"type": "boolean"}
   },
-  "additionalProperties": false
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "enum": ["worker-started", "worker-completed", "worker-cancelled", "worker-timeout", "worker-failed"]
+          }
+        },
+        "required": ["kind"]
+      },
+      "then": {
+        "required": ["workerRunId"],
+        "properties": {
+          "workerRunId": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$"},
+          "operationId": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$"}
+        }
+      },
+      "else": {
+        "properties": {
+          "workerRunId": {"type": "null"}
+        }
+      }
+    }
+  ]
 }
