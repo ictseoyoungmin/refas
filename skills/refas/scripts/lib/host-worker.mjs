@@ -373,6 +373,7 @@ export async function runExternalWorker(root, options = {}, {signal = null} = {}
 
   const abortListener = () => terminate('aborted');
   signal?.addEventListener('abort', abortListener, {once:true});
+  if (signal?.aborted) terminate('aborted');
 
   const outcomePromise = new Promise((resolve) => {
     const finish = (value) => {
