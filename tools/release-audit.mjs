@@ -33,6 +33,7 @@ async function main() {
     'tests/assembly-and-routing.test.mjs','tests/checkpoints.test.mjs','tests/cli.test.mjs','tests/contracts.test.mjs','tests/geometry.test.mjs','tests/governance.test.mjs','tests/instruction-graph.test.mjs','tests/semantic-instruction-graph.test.mjs',
     'tests/orientation-frame.test.mjs','tests/orientation-fitting.test.mjs','tests/orientation-hardening.test.mjs',
     'tests/relational-structure.test.mjs','tests/semantic-authority.test.mjs','tests/whole-system-relational-barrier.test.mjs','tests/relational-discrepancy.test.mjs','tests/relational-fit.test.mjs','tests/certification-relational-evidence.test.mjs',
+    'tests/host-session.test.mjs','tests/host-session-recovery.test.mjs','tests/host-events.test.mjs','tests/host-operation.test.mjs','tests/host-review-bundle.test.mjs','tests/host-artifact-handoff.test.mjs','tests/host-worker.test.mjs','tests/host-cli.test.mjs',
   ]);
   const python = process.env.CODEX_PRIMARY_RUNTIME_PYTHON || 'python3';
   const sources = ['examples/parameter-fit/create_comparison.py','skills/refas/scripts/compare_registered.py','skills/refas/scripts/evidence.py','skills/refas/scripts/render_glb.py','skills/refas/scripts/render_pbr.py','skills/refas/scripts/source_manifest.py'];
@@ -47,13 +48,15 @@ async function main() {
   if (forbidden.length) throw new Error(`release package contains forbidden files: ${forbidden.join(', ')}`);
 
   for (const required of [
-    'package.json','requirements.txt','skills/refas/SKILL.md','skills/refas/references/INDEX.md','skills/refas/references/GRAPH.json','skills/refas/scripts/refas.mjs','skills/refas/scripts/verify_installation_boundary.mjs','skills/refas/scripts/verify_semantic_instruction_graph.mjs','skills/refas/scripts/compare_registered.py','skills/refas/scripts/lib/index.mjs',
+    'package.json','requirements.txt','skills/refas/SKILL.md','skills/refas/references/INDEX.md','skills/refas/references/GRAPH.json','skills/refas/references/host-integration.md','skills/refas/scripts/refas.mjs','skills/refas/scripts/refas-host.mjs','skills/refas/scripts/verify_installation_boundary.mjs','skills/refas/scripts/verify_semantic_instruction_graph.mjs','skills/refas/scripts/compare_registered.py','skills/refas/scripts/lib/index.mjs',
+    'skills/refas/scripts/lib/host-state.mjs','skills/refas/scripts/lib/host-session.mjs','skills/refas/scripts/lib/host-event.mjs','skills/refas/scripts/lib/host-operation.mjs','skills/refas/scripts/lib/host-review-bundle.mjs','skills/refas/scripts/lib/host-artifact-handoff.mjs','skills/refas/scripts/lib/host-worker.mjs',
     'skills/refas/scripts/lib/parameter-fit.mjs','skills/refas/scripts/lib/shape-repair.mjs','skills/refas/scripts/lib/orientation-evidence.mjs','skills/refas/scripts/lib/orientation-frame.mjs','skills/refas/scripts/lib/orientation-discrepancy.mjs','skills/refas/scripts/lib/orientation-pose-fit.mjs',
     'skills/refas/scripts/lib/relational-structure.mjs','skills/refas/scripts/lib/relational-discrepancy.mjs','skills/refas/scripts/lib/semantic-authority.mjs','skills/refas/scripts/lib/whole-system-relational-barrier.mjs','skills/refas/scripts/lib/certification-relational-evidence.mjs',
     'skills/refas/references/parameter-fitting.md','skills/refas/references/relational-structure.md','skills/refas/references/inference-authority.md','skills/refas/references/whole-system-relational-barrier.md','skills/refas/references/physical-fusion.md','skills/refas/references/realized-contact-support.md','skills/refas/references/claim-certification.md',
     'schemas/checkpoint.schema.json','schemas/construction-quality.schema.json','schemas/parameter-fit-plan.schema.json','schemas/parameter-fit-report.schema.json','schemas/orientation-evidence.schema.json','schemas/orientation-discrepancy.schema.json','schemas/orientation-pose-fit.schema.json',
     'schemas/relational-structure.schema.json','schemas/relational-discrepancy.schema.json','schemas/semantic-authority.schema.json','schemas/whole-system-relational-barrier.schema.json','schemas/certification-relational-evidence.schema.json',
     'schemas/realized-assembly-proof.schema.json','schemas/registered-comparison.schema.json','schemas/visual-review.schema.json','schemas/whole-object-certificate.schema.json',
+    'schemas/host-session.schema.json','schemas/host-event.schema.json','schemas/host-operation.schema.json','schemas/host-review-bundle.schema.json','schemas/artifact-handoff.schema.json','schemas/worker-request.schema.json','schemas/worker-response.schema.json',
   ]) if (!names.includes(required)) throw new Error(`release package omits ${required}`);
 
   for (const routed of instructionGraph.routedPackagePaths) {
@@ -62,6 +65,7 @@ async function main() {
 
   const skillBytes = names.filter((name)=>name.startsWith('skills/refas/')).reduce((total,name)=>total+Number(pack.files.find((item)=>item.path===name)?.size??0),0);
   const packageJson = JSON.parse(await fs.readFile(path.join(ROOT,'package.json'),'utf8'));
+  if (packageJson.version !== '1.0.4') throw new Error(`release audit expected version 1.0.4, found ${packageJson.version}`);
   process.stdout.write(`${JSON.stringify({status:'PASS',version:packageJson.version,packagedFiles:names.length,unpackedBytes:pack.unpackedSize,skillBytes,instructionReferenceLeaves:instructionGraph.referenceLeaves,semanticInstructionNodes:semanticGraph.nodeCount,routedInstructionTargets:instructionGraph.routedPackagePaths.length},null,2)}\n`);
 }
 
