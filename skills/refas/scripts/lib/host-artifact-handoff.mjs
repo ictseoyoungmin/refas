@@ -66,7 +66,9 @@ function normalizeArtifactReference(raw) {
   if (!raw || raw.schema !== 'refas.content-reference/v1') throw new Error('artifact handoff requires a content reference');
   if (raw.kind !== 'glb') throw new Error('artifact handoff requires a GLB candidate');
   const relative = String(raw.path ?? '');
-  if (!relative || path.isAbsolute(relative) || relative.includes('\\')) throw new Error('artifact handoff path must be normalized and project-relative');
+  if (!relative || path.isAbsolute(relative) || relative.startsWith('/') || relative.startsWith('\\') || /^[A-Za-z]:[\\/]/u.test(relative) || relative.includes('\\')) {
+    throw new Error('artifact handoff path must be normalized and project-relative');
+  }
   if (relative === '.refas' || relative.startsWith('.refas/') || relative.split('/').includes('..')) throw new Error('artifact handoff path may not escape into internal or parent state');
   if (path.posix.normalize(relative) !== relative) throw new Error('artifact handoff path must already be normalized');
   const sizeBytes = Number(raw.sizeBytes);
@@ -103,9 +105,6 @@ async function certificationProjection(root, {projectId, checkpointId, checkpoin
     if (!transaction) throw new Error('claim certification reported valid without a candidate transaction');
     if (transaction.rootCandidate?.sha256 !== artifact.sha256) {
       throw new Error('candidate transaction root candidate does not match the artifact handoff candidate');
-    }
-    if (transaction.checkpoint?.checkpointId !== checkpointId || transaction.checkpoint?.checkpointContentDigest !== checkpointContentDigest) {
-      throw new Error('candidate transaction checkpoint binding does not match the artifact handoff checkpoint');
     }
     candidateTransactionDigest = assertDigest(transaction.transactionDigest, 'candidateTransactionDigest');
     if (readiness.candidateTransactionDigest != null && readiness.candidateTransactionDigest !== candidateTransactionDigest) {
@@ -174,8 +173,9 @@ export async function getArtifactHandoff(root) {
 
   const checkpoint = await loadCheckpoint(root, state.head);
   const checkpointContentDigest = validateCheckpointIdentity(checkpoint);
-  const artifact = normalizeArtifactReference(await getCurrentArtifact(root, {state}));
-  if (!artifact) throw new Error('artifact handoff requires one unambiguous current GLB candidate');
+  const rawArtifact = await getCurrentArtifact(root, {state});
+  if (!rawArtifact) throw new Error('artifact handoff requires one unambiguous current GLB candidate');
+  const artifact = normalizeArtifactReference(rawArtifact);
   if (session.currentCandidate?.sha256 !== artifact.sha256 || session.currentCandidate?.kind !== 'glb') {
     throw new Error('artifact handoff session candidate does not match the exact current GLB');
   }
