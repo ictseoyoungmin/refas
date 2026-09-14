@@ -212,14 +212,17 @@ export function validateArtifactHandoff(handoff) {
 
     exactKeys(handoff.certification, ['status', 'certificateDigest'], 'artifact handoff certification');
     if (!ARTIFACT_HANDOFF_CERTIFICATION_STATUSES.includes(handoff.certification.status)) throw new Error('artifact handoff certification status is invalid');
+    if (['ready', 'certified'].includes(handoff.certification.status) && handoff.candidateTransactionDigest == null) {
+      throw new Error(`${handoff.certification.status} artifact handoff requires candidateTransactionDigest`);
+    }
     if (handoff.certification.status === 'certified') {
       assertDigest(handoff.certification.certificateDigest, 'certification.certificateDigest');
-      if (handoff.candidateTransactionDigest == null) throw new Error('certified artifact handoff requires candidateTransactionDigest');
     } else if (handoff.certification.certificateDigest !== null) {
       throw new Error('uncertified or ready artifact handoff cannot expose a certificate digest');
     }
 
     if (stableStringify(handoff.policy) !== stableStringify(POLICY)) throw new Error('artifact handoff authority policy mismatch');
+    assertDigest(handoff.handoffDigest, 'handoffDigest');
     const payload = structuredClone(handoff);
     delete payload.handoffDigest;
     if (handoff.handoffDigest !== digestJson(payload)) throw new Error('artifact handoff digest mismatch');
