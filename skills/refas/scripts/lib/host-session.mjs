@@ -68,6 +68,10 @@ async function buildSnapshot(root, stored, state) {
   });
 }
 
+function needsInitialSessionEvent(stored) {
+  return stored.sequence === 0 && stored.events.length === 0 && stored.operations.length === 0 && stored.currentOperationId == null;
+}
+
 export async function openHostSession(root, {sessionId, projectId} = {}) {
   root = projectRoot(root);
   sessionId = assertId(sessionId, 'sessionId');
@@ -81,7 +85,6 @@ export async function openHostSession(root, {sessionId, projectId} = {}) {
   if (state.projectId !== projectId) throw new Error(`project already initialized as ${state.projectId}`);
 
   let stored;
-  let created = false;
   try {
     stored = await readHostState(root);
     if (stored.sessionId !== sessionId) throw new Error(`project already has host session ${stored.sessionId}`);
@@ -89,9 +92,9 @@ export async function openHostSession(root, {sessionId, projectId} = {}) {
   } catch (error) {
     if (error.code !== 'ENOENT') throw error;
     stored = await createHostState(root, {sessionId, projectId});
-    created = true;
   }
-  if (created) {
+
+  if (needsInitialSessionEvent(stored)) {
     await emitHostEvent(root, {kind:'session-opened',message:'RefAs host session opened.',recoverable:true});
   } else {
     await recoverInterruptedHostOperation(root);
