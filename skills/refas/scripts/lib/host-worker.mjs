@@ -252,8 +252,9 @@ function normalizeRunOptions(options = {}) {
   for (const key of Object.keys(options)) if (!RUN_FIELDS.has(key)) throw new Error(`unsupported external worker option: ${key}`);
   const command = String(options.command ?? '');
   if (!command || command.length > 4096) throw new Error('external worker command must contain 1..4096 characters');
-  if (!Array.isArray(options.args) || options.args.length > 64) throw new Error('external worker args must be an array of at most 64 strings');
-  const args = options.args.map((value, index) => {
+  const rawArgs = options.args ?? [];
+  if (!Array.isArray(rawArgs) || rawArgs.length > 64) throw new Error('external worker args must be an array of at most 64 strings');
+  const args = rawArgs.map((value, index) => {
     const arg = String(value);
     if (arg.length > 4096) throw new Error(`external worker args[${index}] exceeds 4096 characters`);
     return arg;
@@ -325,6 +326,15 @@ export async function runExternalWorker(root, options = {}, {signal = null} = {}
   });
   if (signal?.aborted) return classifyAbort(root, request, '');
 
+  await emitHostEvent(root, {
+    kind:'worker-started',
+    operationId:request.operationId,
+    workerRunId:request.workerRunId,
+    message:'External worker run started by the parent host.',
+    recoverable:true,
+  });
+  if (signal?.aborted) return classifyAbort(root, request, '');
+
   const child = spawn(normalized.command, normalized.args, {
     cwd:root,
     shell:false,
@@ -388,6 +398,7 @@ export async function runExternalWorker(root, options = {}, {signal = null} = {}
   if (!spawnResult.ok) {
     signal?.removeEventListener('abort', abortListener);
     const diagnostics = captureText(stderr, {markTruncated:true});
+    if (terminalCause === 'aborted' || signal?.aborted) return classifyAbort(root, request, diagnostics);
     await emitWorkerTerminal(root, {
       kind:'worker-failed',
       operationId:request.operationId,
@@ -396,14 +407,6 @@ export async function runExternalWorker(root, options = {}, {signal = null} = {}
     });
     throw new ExternalWorkerError('worker-failed', `external worker failed to start: ${spawnResult.error.message}`, {diagnostics});
   }
-
-  await emitHostEvent(root, {
-    kind:'worker-started',
-    operationId:request.operationId,
-    workerRunId:request.workerRunId,
-    message:'External worker process started.',
-    recoverable:true,
-  });
 
   child.stdin.on('error', () => { /* close/error path remains authoritative */ });
   child.stdin.end(`${JSON.stringify(request)}\n`, 'utf8');
@@ -511,6 +514,29 @@ export async function runExternalWorker(root, options = {}, {signal = null} = {}
   }
 
   const response = deepFreeze({...intrinsic, artifactRefs});
+  if (signal?.aborted) return classifyAbort(root, request, diagnostics);
+  const completionOperation = await getHostOperation(root, {operationId:request.operationId});
+  if (completionOperation.status === 'cancelling' || completionOperation.status === 'cancelled') {
+    await emitWorkerTerminal(root, {
+      kind:'worker-cancelled',
+      operationId:request.operationId,
+      workerRunId:request.workerRunId,
+      message:'External worker completion was superseded by host cancellation.',
+    });
+    throw new ExternalWorkerError('worker-cancelled', 'external worker completion was superseded by host cancellation', {diagnostics});
+  }
+  if (completionOperation.status === 'pausing' || completionOperation.status === 'paused') {
+    throw new ExternalWorkerError('worker-paused', 'external worker completion was superseded by host pause', {diagnostics});
+  }
+  if (!['active','resuming'].includes(completionOperation.status)) {
+    await emitWorkerTerminal(root, {
+      kind:'worker-failed',
+      operationId:request.operationId,
+      workerRunId:request.workerRunId,
+      message:'External worker completion arrived after the owning operation left its runnable state.',
+    });
+    throw new ExternalWorkerError('worker-failed', `external worker completion cannot bind operation status ${completionOperation.status}`, {diagnostics});
+  }
   await emitWorkerTerminal(root, {
     kind:'worker-completed',
     operationId:request.operationId,
