@@ -92,6 +92,27 @@
       "pattern": "^[a-f0-9]{64}$"
     }
   },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "certification": {
+            "properties": {
+              "status": {"enum": ["ready", "certified"]}
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "candidateTransactionDigest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        }
+      }
+    }
+  ],
   "$defs": {
     "glbReference": {
       "type": "object",
