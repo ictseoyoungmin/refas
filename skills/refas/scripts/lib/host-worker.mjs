@@ -335,11 +335,23 @@ export async function runExternalWorker(root, options = {}, {signal = null} = {}
   });
   if (signal?.aborted) return classifyAbort(root, request, '');
 
-  const child = spawn(normalized.command, normalized.args, {
-    cwd:root,
-    shell:false,
-    stdio:['pipe','pipe','pipe'],
-  });
+  let child;
+  try {
+    child = spawn(normalized.command, normalized.args, {
+      cwd:root,
+      shell:false,
+      stdio:['pipe','pipe','pipe'],
+    });
+  } catch (error) {
+    if (signal?.aborted) return classifyAbort(root, request, '');
+    await emitWorkerTerminal(root, {
+      kind:'worker-failed',
+      operationId:request.operationId,
+      workerRunId:request.workerRunId,
+      message:'External worker launch failed before process creation.',
+    });
+    throw new ExternalWorkerError('worker-failed', `external worker launch failed: ${error.message}`);
+  }
   const stdout = captureState(MAX_STDOUT_BYTES);
   const stderr = captureState(MAX_STDERR_BYTES);
   let terminalCause = null;
