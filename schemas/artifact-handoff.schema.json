@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/artifact-handoff.schema.json",
+  "title": "RefAs artifact handoff",
+  "type": "object",
+  "required": [
+    "schema",
+    "sessionId",
+    "projectId",
+    "checkpointId",
+    "checkpointContentDigest",
+    "artifact",
+    "candidateTransactionDigest",
+    "certification",
+    "policy",
+    "handoffDigest"
+  ],
+  "properties": {
+    "schema": {"const": "refas.artifact-handoff/v1"},
+    "sessionId": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$"
+    },
+    "projectId": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$"
+    },
+    "checkpointId": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$"
+    },
+    "checkpointContentDigest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "artifact": {"$ref": "#/$defs/glbReference"},
+    "candidateTransactionDigest": {
+      "anyOf": [
+        {"type": "null"},
+        {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+      ]
+    },
+    "certification": {
+      "type": "object",
+      "required": ["status", "certificateDigest"],
+      "properties": {
+        "status": {"enum": ["uncertified", "ready", "certified"]},
+        "certificateDigest": {
+          "anyOf": [
+            {"type": "null"},
+            {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"status": {"const": "certified"}}},
+          "then": {
+            "properties": {
+              "certificateDigest": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+            }
+          },
+          "else": {
+            "properties": {
+              "certificateDigest": {"type": "null"}
+            }
+          }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "policy": {
+      "type": "object",
+      "required": [
+        "readOnlyTransferDescriptor",
+        "checkpointAuthorityRemainsRefAs",
+        "candidateTransactionAuthorityRemainsRefAs",
+        "certificationAuthorityRemainsRefAs",
+        "handoffCannotCertify"
+      ],
+      "properties": {
+        "readOnlyTransferDescriptor": {"const": true},
+        "checkpointAuthorityRemainsRefAs": {"const": true},
+        "candidateTransactionAuthorityRemainsRefAs": {"const": true},
+        "certificationAuthorityRemainsRefAs": {"const": true},
+        "handoffCannotCertify": {"const": true}
+      },
+      "additionalProperties": false
+    },
+    "handoffDigest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  },
+  "$defs": {
+    "glbReference": {
+      "type": "object",
+      "required": ["schema", "kind", "path", "sha256", "sizeBytes"],
+      "properties": {
+        "schema": {"const": "refas.content-reference/v1"},
+        "kind": {"const": "glb"},
+        "path": {"type": "string", "minLength": 1},
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "sizeBytes": {"type": "integer", "minimum": 0}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
