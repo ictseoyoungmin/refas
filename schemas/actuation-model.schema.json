@@ -28,6 +28,7 @@
         "actuatorAndRuntimeBindingRemainDistinct",
         "supportedControlModesAreCapabilityNotTuning",
         "unresolvedValuesRemainNull",
+        "continuousIsNotUnknown",
         "fabricatedDefaultsForbidden",
         "unitsAreCoordinateClassSpecific",
         "scopedIdentityBinding",
@@ -42,6 +43,7 @@
         "actuatorAndRuntimeBindingRemainDistinct": {"const": true},
         "supportedControlModesAreCapabilityNotTuning": {"const": true},
         "unresolvedValuesRemainNull": {"const": true},
+        "continuousIsNotUnknown": {"const": true},
         "fabricatedDefaultsForbidden": {"const": true},
         "unitsAreCoordinateClassSpecific": {"const": true},
         "scopedIdentityBinding": {"const": true},
@@ -85,14 +87,28 @@
       "additionalProperties": false
     },
     "positionRange": {
-      "type": "object",
-      "required": ["minimum", "maximum", "unit"],
-      "properties": {
-        "minimum": {"type": "number"},
-        "maximum": {"type": "number"},
-        "unit": {"enum": ["rad", "m"]}
-      },
-      "additionalProperties": false
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["kind", "minimum", "maximum", "unit"],
+          "properties": {
+            "kind": {"const": "BOUNDED"},
+            "minimum": {"type": "number"},
+            "maximum": {"type": "number"},
+            "unit": {"enum": ["rad", "m"]}
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["kind", "unit"],
+          "properties": {
+            "kind": {"const": "CONTINUOUS"},
+            "unit": {"const": "rad"}
+          },
+          "additionalProperties": false
+        }
+      ]
     },
     "limit": {
       "type": "object",
