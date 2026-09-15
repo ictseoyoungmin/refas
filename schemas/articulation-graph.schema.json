@@ -49,7 +49,7 @@
       "minItems": 1,
       "items": {
         "type": "object",
-        "required": ["virtualJointId", "parentLinkId", "childLinkId", "jointContract", "parentJointFrame", "childJointFrame", "authoritySubjectId"],
+        "required": ["virtualJointId", "parentLinkId", "childLinkId", "jointContract", "parentJointFrame", "childJointFrame", "referenceAngle", "referenceChildFrameInParent", "authoritySubjectId"],
         "properties": {
           "virtualJointId": {"$ref": "common.schema.json#/$defs/semanticId"},
           "parentLinkId": {"$ref": "common.schema.json#/$defs/semanticId"},
@@ -66,6 +66,8 @@
           },
           "parentJointFrame": {"$ref": "#/$defs/transform"},
           "childJointFrame": {"$ref": "#/$defs/transform"},
+          "referenceAngle": {"type": "number"},
+          "referenceChildFrameInParent": {"$ref": "#/$defs/transform"},
           "authoritySubjectId": {"$ref": "common.schema.json#/$defs/semanticId"}
         },
         "additionalProperties": false
@@ -73,12 +75,14 @@
     },
     "policy": {
       "type": "object",
-      "required": ["existingTypedJointContractsRemainAuthoritative", "parentChildDirectionOwnedByArticulationGraph", "attachmentInterfacesRemainDistinctFromJoints", "canonicalJointFramesUseMetersAndQuaternion", "treeTopologyOnly", "closedChainsRequireLaterMechanismSemantics", "backendOrderingIsNotSemanticIdentity", "scopedIdentityBinding", "unrelatedIdentityGraphEditsDoNotInvalidateArticulation", "graphDoesNotAuthorizeClosure"],
+      "required": ["existingTypedJointContractsRemainAuthoritative", "parentChildDirectionOwnedByArticulationGraph", "attachmentInterfacesRemainDistinctFromJoints", "canonicalJointFramesUseMetersAndQuaternion", "referenceConfigurationMustMatchIdentityPose", "resolvedRelativePoseBound", "treeTopologyOnly", "closedChainsRequireLaterMechanismSemantics", "backendOrderingIsNotSemanticIdentity", "scopedIdentityBinding", "unrelatedIdentityGraphEditsDoNotInvalidateArticulation", "graphDoesNotAuthorizeClosure"],
       "properties": {
         "existingTypedJointContractsRemainAuthoritative": {"const": true},
         "parentChildDirectionOwnedByArticulationGraph": {"const": true},
         "attachmentInterfacesRemainDistinctFromJoints": {"const": true},
         "canonicalJointFramesUseMetersAndQuaternion": {"const": true},
+        "referenceConfigurationMustMatchIdentityPose": {"const": true},
+        "resolvedRelativePoseBound": {"const": true},
         "treeTopologyOnly": {"const": true},
         "closedChainsRequireLaterMechanismSemantics": {"const": true},
         "backendOrderingIsNotSemanticIdentity": {"const": true},
