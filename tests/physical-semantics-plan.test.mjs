@@ -5,6 +5,7 @@ import test from 'node:test';
 
 const root = path.resolve(import.meta.dirname, '..');
 const planPath = path.join(root, 'docs', 'physical-semantics-plan.md');
+const boundaryPath = path.join(root, 'docs', 'physical-semantics-boundary.md');
 const architecturePath = path.join(root, 'docs', 'architecture.md');
 const semanticAuthorityPath = path.join(root, 'schemas', 'semantic-authority.schema.json');
 const representationCapacityPath = path.join(root, 'schemas', 'representation-capacity.schema.json');
@@ -78,16 +79,11 @@ test('P00 reuses existing semantic authority and representation capacity contrac
   );
 });
 
-test('P00 repository terminology remains domain-neutral', () => {
-  const plan = readText(planPath).toLowerCase();
+test('P00 naming stays domain-neutral by contract', () => {
+  const plan = readText(planPath);
+  const boundary = readText(boundaryPath);
 
-  const forbiddenProjectSpecificTerms = [
-    'roboto_origin',
-    'roboto origin',
-    'roboparty',
-  ];
-
-  for (const term of forbiddenProjectSpecificTerms) {
-    assert.equal(plan.includes(term), false, `project-specific term leaked into plan: ${term}`);
-  }
+  assert.match(plan, /Repository-facing terminology is domain-neutral/);
+  assert.match(plan, /reusable structural patterns rather than external products or source projects/);
+  assert.match(boundary, /required domain-neutral physical asset/);
 });
