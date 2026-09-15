@@ -1,5 +1,5 @@
 import {assertDigest, assertId, deepFreeze, digestJson} from './canonical.mjs';
-import {validatePhysicalIdentityGraph} from './physical-identity-graph.mjs';
+import {canonicalizePhysicalQuaternion, validatePhysicalIdentityGraph} from './physical-identity-graph.mjs';
 import {validateSemanticAuthoritySet} from './semantic-authority.mjs';
 
 export const RIGID_BODY_DYNAMICS_SCHEMA = 'refas.rigid-body-dynamics/v1';
@@ -61,6 +61,23 @@ function determinant3(matrix) {
   return a * (e * i - f * h) - b * (d * i - f * g) + c * (d * h - e * g);
 }
 
+function assertPositiveSemidefinite3(matrix, scale, label) {
+  const linearTolerance = Math.max(scale * 1e-12, Number.EPSILON * scale * 64);
+  const quadraticTolerance = Math.max(scale ** 2 * 1e-12, Number.EPSILON * scale ** 2 * 128);
+  const cubicTolerance = Math.max(scale ** 3 * 1e-12, Number.EPSILON * scale ** 3 * 256);
+
+  for (let axis = 0; axis < 3; axis += 1) {
+    if (matrix[axis][axis] < -linearTolerance) throw new Error(label);
+  }
+  for (let first = 0; first < 3; first += 1) {
+    for (let second = first + 1; second < 3; second += 1) {
+      const principal2 = matrix[first][first] * matrix[second][second] - matrix[first][second] ** 2;
+      if (principal2 < -quadraticTolerance) throw new Error(label);
+    }
+  }
+  if (determinant3(matrix) < -cubicTolerance) throw new Error(label);
+}
+
 function normalizeInertiaTensor(value, label) {
   if (!Array.isArray(value) || value.length !== 3) throw new Error(`${label} must be a 3x3 matrix`);
   const matrix = value.map((row, index) => normalizeVector3(row, `${label}[${index}]`));
@@ -91,14 +108,21 @@ function normalizeInertiaTensor(value, label) {
   }
   if (!(determinant3(matrix) > scale ** 3 * 1e-12)) throw new Error(`${label} must be positive definite`);
 
-  const diagonal = [matrix[0][0], matrix[1][1], matrix[2][2]];
-  const triangleTolerance = scale * 1e-12;
-  for (let axis = 0; axis < 3; axis += 1) {
-    const others = diagonal.filter((_, index) => index !== axis);
-    if (diagonal[axis] > others[0] + others[1] + triangleTolerance) {
-      throw new Error(`${label} violates rigid-body inertia triangle inequality`);
-    }
-  }
+  // A physical inertia tensor I about COM must admit a positive-semidefinite
+  // second-moment matrix C = 0.5 * trace(I) * 1 - I. This is equivalent
+  // to applying triangle inequalities to the basis-invariant principal moments,
+  // not merely to the diagonal entries in the current coordinate frame.
+  const halfTrace = (matrix[0][0] + matrix[1][1] + matrix[2][2]) / 2;
+  const secondMoment = matrix.map((row, rowIndex) => row.map((item, columnIndex) => {
+    const valueAt = (rowIndex === columnIndex ? halfTrace : 0) - item;
+    return Object.is(valueAt, -0) ? 0 : valueAt;
+  }));
+  assertPositiveSemidefinite3(
+    secondMoment,
+    Math.max(scale, ...secondMoment.flat().map((item) => Math.abs(item))),
+    `${label} violates rigid-body principal-moment triangle inequality`,
+  );
+
   return matrix.map((row) => row.map((item) => Object.is(item, -0) ? 0 : item));
 }
 
@@ -193,6 +217,96 @@ function validateLinkBindings(links, identityGraph) {
   }
 }
 
+function multiplyQuaternion(left, right) {
+  const [lx, ly, lz, lw] = left;
+  const [rx, ry, rz, rw] = right;
+  return canonicalizePhysicalQuaternion([
+    lw * rx + lx * rw + ly * rz - lz * ry,
+    lw * ry - lx * rz + ly * rw + lz * rx,
+    lw * rz + lx * ry - ly * rx + lz * rw,
+    lw * rw - lx * rx - ly * ry - lz * rz,
+  ], 'composed rotation_quat_xyzw');
+}
+
+function conjugateQuaternion(quaternion) {
+  return [-quaternion[0], -quaternion[1], -quaternion[2], quaternion[3]];
+}
+
+function rotateVectorByQuaternion(quaternion, vector) {
+  const [x, y, z, w] = quaternion;
+  const [vx, vy, vz] = vector;
+  const tx = 2 * (y * vz - z * vy);
+  const ty = 2 * (z * vx - x * vz);
+  const tz = 2 * (x * vy - y * vx);
+  return [
+    vx + w * tx + (y * tz - z * ty),
+    vy + w * ty + (z * tx - x * tz),
+    vz + w * tz + (x * ty - y * tx),
+  ].map((item) => Object.is(item, -0) ? 0 : item);
+}
+
+function identityTransform() {
+  return {translation_m: [0, 0, 0], rotation_quat_xyzw: [0, 0, 0, 1]};
+}
+
+function composeTransforms(parentTransform, localTransform) {
+  const rotatedTranslation = rotateVectorByQuaternion(parentTransform.rotation_quat_xyzw, localTransform.translation_m);
+  return {
+    translation_m: parentTransform.translation_m.map((item, index) => {
+      const valueAt = item + rotatedTranslation[index];
+      return Object.is(valueAt, -0) ? 0 : valueAt;
+    }),
+    rotation_quat_xyzw: multiplyQuaternion(parentTransform.rotation_quat_xyzw, localTransform.rotation_quat_xyzw),
+  };
+}
+
+function frameChainToRoot(entityById, entityId) {
+  const chain = [];
+  const visited = new Set();
+  let currentId = entityId;
+  while (true) {
+    if (visited.has(currentId)) throw new Error(`physical frame ancestry contains a cycle at ${currentId}`);
+    visited.add(currentId);
+    const entity = entityById.get(currentId);
+    if (!entity) throw new Error(`physical frame ancestry references unknown entity: ${currentId}`);
+    chain.push(currentId);
+    if (!entity.frame) return chain;
+    currentId = entity.frame.parentId;
+  }
+}
+
+function transformFromAncestor(entityById, ancestorId, descendantId) {
+  if (ancestorId === descendantId) return identityTransform();
+  const frames = [];
+  const visited = new Set();
+  let currentId = descendantId;
+  while (currentId !== ancestorId) {
+    if (visited.has(currentId)) throw new Error(`physical frame ancestry contains a cycle at ${currentId}`);
+    visited.add(currentId);
+    const entity = entityById.get(currentId);
+    if (!entity?.frame) throw new Error(`entities ${ancestorId} and ${descendantId} do not share a resolvable frame ancestry`);
+    frames.push(entity.frame);
+    currentId = entity.frame.parentId;
+  }
+  return frames.reverse().reduce((transform, frame) => composeTransforms(transform, frame), identityTransform());
+}
+
+function relativeFrameTransform(entityById, referenceId, targetId) {
+  const referenceChain = frameChainToRoot(entityById, referenceId);
+  const targetAncestors = new Set(frameChainToRoot(entityById, targetId));
+  const commonAncestorId = referenceChain.find((id) => targetAncestors.has(id));
+  if (!commonAncestorId) throw new Error(`entities ${referenceId} and ${targetId} do not share a physical frame root`);
+
+  const referencePose = transformFromAncestor(entityById, commonAncestorId, referenceId);
+  const targetPose = transformFromAncestor(entityById, commonAncestorId, targetId);
+  const inverseReferenceRotation = conjugateQuaternion(referencePose.rotation_quat_xyzw);
+  const delta = targetPose.translation_m.map((item, index) => item - referencePose.translation_m[index]);
+  return {
+    translation_m: rotateVectorByQuaternion(inverseReferenceRotation, delta),
+    rotation_quat_xyzw: multiplyQuaternion(inverseReferenceRotation, targetPose.rotation_quat_xyzw),
+  };
+}
+
 export function physicalDynamicsIdentityProjection(identityGraph, linkIds) {
   validateIdentityGraph(identityGraph);
   if (!Array.isArray(linkIds) || !linkIds.length) throw new Error('physical dynamics identity projection requires at least one link ID');
@@ -218,6 +332,11 @@ export function physicalDynamicsIdentityProjection(identityGraph, linkIds) {
     if (!entity || entity.kind !== 'physical-part') throw new Error(`aggregation source ${id} must resolve to a physical-part`);
     return structuredClone(entity);
   });
+  const partLinkTransforms = aggregations.map(({partId, linkId}) => ({
+    partId,
+    linkId,
+    transform: relativeFrameTransform(entityById, linkId, partId),
+  }));
 
   return deepFreeze({
     schema: PHYSICAL_DYNAMICS_IDENTITY_PROJECTION_SCHEMA,
@@ -226,6 +345,7 @@ export function physicalDynamicsIdentityProjection(identityGraph, linkIds) {
     links,
     parts,
     aggregations,
+    partLinkTransforms,
   });
 }
 
