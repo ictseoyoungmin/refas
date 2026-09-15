@@ -5,6 +5,7 @@ import {
   createPhysicalIdentityGraph,
   createRigidBodyDynamics,
   createSemanticAuthoritySet,
+  physicalDynamicsIdentityProjection,
   rigidBodyDynamicsAuthoritySubjectId,
   rigidBodyDynamicsAuthoritySubjectIds,
   rigidBodyDynamicsForLink,
@@ -165,6 +166,8 @@ test('rigid-body dynamics canonicalizes ordering and preserves unresolved values
   assert.equal(dynamics.links[1].inertia.tensor_kg_m2, null);
   assert.equal(dynamics.policy.fabricatedDefaultsForbidden, true);
   assert.equal(dynamics.policy.referenceFrameIsBoundLink, true);
+  assert.equal(dynamics.policy.scopedIdentityBinding, true);
+  assert.equal(dynamics.policy.unrelatedIdentityGraphEditsDoNotInvalidateDynamics, true);
   assert.deepEqual(rigidBodyDynamicsForLink(dynamics, 'link-a').centerOfMass.value_m, [0.01, -0.02, 0.03]);
 
   const reorderedInput = dynamicsInput(graph);
@@ -178,6 +181,10 @@ test('rigid-body dynamics canonicalizes ordering and preserves unresolved values
     'link-a:com', 'link-a:inertia', 'link-a:mass',
     'link-b:com', 'link-b:inertia', 'link-b:mass',
   ]);
+  const projection = physicalDynamicsIdentityProjection(graph, ['link-b', 'link-a']);
+  assert.deepEqual(projection.links.map((entity) => entity.id), ['link-a', 'link-b']);
+  assert.deepEqual(projection.parts.map((entity) => entity.id), ['part-a']);
+  assert.deepEqual(projection.aggregations, [{partId: 'part-a', linkId: 'link-a'}]);
 });
 
 test('rigid-body dynamics rejects fabricated, nonfinite, and nonphysical values', () => {
@@ -238,21 +245,23 @@ test('rigid-body dynamics binds only rigid-link identities in their own canonica
   assert.throws(() => createRigidBodyDynamics(unknown), /unknown physical identity/);
 });
 
-test('rigid-body dynamics binding detects stale physical identity graphs', () => {
+test('scoped identity binding ignores unrelated graph edits and catches dynamics-relevant drift', () => {
   const graph = identityGraph();
   const dynamics = createRigidBodyDynamics(dynamicsInput(graph));
 
-  const changedInput = identityGraphInput();
-  changedInput.entities.push({
-    id: 'part-b',
-    kind: 'physical-part',
-    frame: {parentId: 'module-root', translation_m: [0.2, 0, 0], rotation_quat_xyzw: [0, 0, 0, 1]},
-  });
-  changedInput.relations.push({id: 'contains-part-b', kind: 'CONTAINS', sourceId: 'module-root', targetIds: ['part-b']});
-  const changedGraph = createPhysicalIdentityGraph(changedInput);
-  const validation = validateRigidBodyDynamicsBindings(dynamics, changedGraph);
+  const unrelatedInput = identityGraphInput();
+  unrelatedInput.entities.push({id: 'controller-extra', kind: 'controller'});
+  unrelatedInput.relations.push({id: 'contains-controller-extra', kind: 'CONTAINS', sourceId: 'module-root', targetIds: ['controller-extra']});
+  const unrelatedGraph = createPhysicalIdentityGraph(unrelatedInput);
+  assert.notEqual(unrelatedGraph.graphDigest, graph.graphDigest);
+  assert.deepEqual(validateRigidBodyDynamicsBindings(dynamics, unrelatedGraph), {valid: true, errors: []});
+
+  const relevantInput = identityGraphInput();
+  relevantInput.entities.find((entity) => entity.id === 'part-a').frame.translation_m = [0.1, 0, 0];
+  const relevantGraph = createPhysicalIdentityGraph(relevantInput);
+  const validation = validateRigidBodyDynamicsBindings(dynamics, relevantGraph);
   assert.equal(validation.valid, false);
-  assert.equal(validation.errors.some((error) => /exact physical identity graph/.test(error)), true);
+  assert.equal(validation.errors.some((error) => /dynamics-relevant identity projection/.test(error)), true);
 });
 
 test('resolved dynamics require construction-authorizing semantic authority while null remains unknown', () => {
