@@ -148,7 +148,6 @@ test('mechanism graph binds exact P01 REALIZES targets and P04 realized joints',
   assert.throws(() => createMechanismGraph(wrongRelation), /must be REALIZES/);
   const missingJoint = structuredClone(input); missingJoint.mechanisms[0].realizedJointIds = ['joint-a'];
   assert.throws(() => createMechanismGraph(missingJoint), /must equal the union/);
-
   const articulationProjection = mechanismArticulationProjection(input.articulationGraph, ['joint-b', 'joint-a']);
   assert.deepEqual(articulationProjection.joints.map((joint) => joint.virtualJointId), ['joint-a', 'joint-b']);
   assert.throws(() => mechanismArticulationProjection(input.articulationGraph, ['joint-a', 'missing-joint']), /not present in the current articulation graph/);
@@ -162,10 +161,8 @@ test('GEAR mechanism requires connected contact topology and physical members', 
   assert.throws(() => createMechanismGraph(missingMesh), /requires at least one MESHES_WITH/);
   const dangling = structuredClone(input); dangling.mechanisms[0].edges[0].memberIds[1] = 'missing-member';
   assert.throws(() => createMechanismGraph(dangling), /unknown mechanism member/);
-  const nonPhysical = structuredClone(identityInput()); nonPhysical.entities.find((entity) => entity.id === 'gear-a-part').kind = 'controller';
-  const wrongIdentity = createPhysicalIdentityGraph(nonPhysical);
-  const wrongInput = mechanismInput({identityGraph: wrongIdentity, articulationGraph: articulationFixture({identityGraph: wrongIdentity}).graph});
-  assert.throws(() => createMechanismGraph(wrongInput), /must reference physical-part or rigid-link/);
+  const wrongKind = structuredClone(input); wrongKind.mechanisms[0].members[0].physicalIdentityId = 'joint-a';
+  assert.throws(() => createMechanismGraph(wrongKind), /must reference physical-part or rigid-link/);
 });
 
 test('mechanism scoped identity binding ignores unrelated controller edits but catches resolved member-pose drift', () => {
