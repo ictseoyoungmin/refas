@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/articulation-graph.schema.json",
+  "title": "RefAs articulation graph",
+  "type": "object",
+  "required": ["schema", "scopeId", "sourceSha256", "identityGraph", "identityBinding", "attachmentSemanticsRef", "topology", "rootLinkId", "linkBindings", "joints", "policy", "articulationDigest"],
+  "properties": {
+    "schema": {"const": "refas.articulation-graph/v1"},
+    "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "identityGraph": {"type": "object"},
+    "identityBinding": {
+      "type": "object",
+      "required": ["schema", "sourceSchema", "projectionDigest"],
+      "properties": {
+        "schema": {"const": "refas.physical-articulation-identity-binding/v1"},
+        "sourceSchema": {"const": "refas.physical-identity-graph/v1"},
+        "projectionDigest": {"$ref": "common.schema.json#/$defs/digest"}
+      },
+      "additionalProperties": false
+    },
+    "attachmentSemanticsRef": {
+      "type": "object",
+      "required": ["schema", "digest"],
+      "properties": {
+        "schema": {"const": "refas.attachment-semantics/v1"},
+        "digest": {"$ref": "common.schema.json#/$defs/digest"}
+      },
+      "additionalProperties": false
+    },
+    "topology": {"const": "TREE"},
+    "rootLinkId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "linkBindings": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "required": ["linkId", "attachmentEntityId", "attachmentFrameInLink", "authoritySubjectId"],
+        "properties": {
+          "linkId": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "attachmentEntityId": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "attachmentFrameInLink": {"$ref": "#/$defs/transform"},
+          "authoritySubjectId": {"$ref": "common.schema.json#/$defs/semanticId"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "joints": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["virtualJointId", "parentLinkId", "childLinkId", "jointContract", "parentJointFrame", "childJointFrame", "authoritySubjectId"],
+        "properties": {
+          "virtualJointId": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "parentLinkId": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "childLinkId": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "jointContract": {
+            "type": "object",
+            "required": ["schema", "id", "jointDigest"],
+            "properties": {
+              "schema": {"const": "refas.articulated-joint/v1"},
+              "id": {"$ref": "common.schema.json#/$defs/semanticId"},
+              "jointDigest": {"$ref": "common.schema.json#/$defs/digest"}
+            },
+            "additionalProperties": false
+          },
+          "parentJointFrame": {"$ref": "#/$defs/transform"},
+          "childJointFrame": {"$ref": "#/$defs/transform"},
+          "authoritySubjectId": {"$ref": "common.schema.json#/$defs/semanticId"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "policy": {
+      "type": "object",
+      "required": ["existingTypedJointContractsRemainAuthoritative", "parentChildDirectionOwnedByArticulationGraph", "attachmentInterfacesRemainDistinctFromJoints", "canonicalJointFramesUseMetersAndQuaternion", "treeTopologyOnly", "closedChainsRequireLaterMechanismSemantics", "backendOrderingIsNotSemanticIdentity", "graphDoesNotAuthorizeClosure"],
+      "properties": {
+        "existingTypedJointContractsRemainAuthoritative": {"const": true},
+        "parentChildDirectionOwnedByArticulationGraph": {"const": true},
+        "attachmentInterfacesRemainDistinctFromJoints": {"const": true},
+        "canonicalJointFramesUseMetersAndQuaternion": {"const": true},
+        "treeTopologyOnly": {"const": true},
+        "closedChainsRequireLaterMechanismSemantics": {"const": true},
+        "backendOrderingIsNotSemanticIdentity": {"const": true},
+        "graphDoesNotAuthorizeClosure": {"const": true}
+      },
+      "additionalProperties": false
+    },
+    "articulationDigest": {"$ref": "common.schema.json#/$defs/digest"}
+  },
+  "$defs": {
+    "transform": {
+      "type": "object",
+      "required": ["translation_m", "rotation_quat_xyzw"],
+      "properties": {
+        "translation_m": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}},
+        "rotation_quat_xyzw": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"type": "number"}}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
