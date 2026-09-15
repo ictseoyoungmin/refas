@@ -29,6 +29,8 @@ effort_in  = J(q_in)^T effort_out
 
 For directly executable affine mappings, `F(q) = A q + b` and `J = A`.
 
+The affine `offset` is part of the canonical mechanical/mathematical coordinate map. It is **not** a runtime encoder zero, device calibration offset, or backend index convention; those remain P09 runtime-binding semantics.
+
 Do not silently reverse this convention per backend. An exporter that needs the opposite direction must derive or solve it explicitly and must not rewrite canonical transmission truth.
 
 ## Semantic coordinate spaces and ordering
