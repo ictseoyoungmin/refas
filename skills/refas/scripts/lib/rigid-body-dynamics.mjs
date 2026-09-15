@@ -3,6 +3,8 @@ import {validatePhysicalIdentityGraph} from './physical-identity-graph.mjs';
 import {validateSemanticAuthoritySet} from './semantic-authority.mjs';
 
 export const RIGID_BODY_DYNAMICS_SCHEMA = 'refas.rigid-body-dynamics/v1';
+export const PHYSICAL_DYNAMICS_IDENTITY_BINDING_SCHEMA = 'refas.physical-dynamics-identity-binding/v1';
+export const PHYSICAL_DYNAMICS_IDENTITY_PROJECTION_SCHEMA = 'refas.physical-dynamics-identity-projection/v1';
 
 export const RIGID_BODY_DYNAMICS_PROPERTIES = Object.freeze([
   'mass',
@@ -16,12 +18,12 @@ const TOP_LEVEL_KEYS = new Set([
   'scopeId',
   'sourceSha256',
   'identityGraph',
-  'identityGraphRef',
+  'identityBinding',
   'links',
   'policy',
   'dynamicsDigest',
 ]);
-const IDENTITY_REF_KEYS = new Set(['schema', 'digest']);
+const IDENTITY_BINDING_KEYS = new Set(['schema', 'sourceSchema', 'projectionDigest']);
 const LINK_KEYS = new Set(['linkId', 'referenceFrameId', 'mass', 'centerOfMass', 'inertia']);
 const MASS_KEYS = new Set(['value_kg', 'authoritySubjectId']);
 const COM_KEYS = new Set(['value_m', 'authoritySubjectId']);
@@ -100,10 +102,15 @@ function normalizeInertiaTensor(value, label) {
   return matrix.map((row) => row.map((item) => Object.is(item, -0) ? 0 : item));
 }
 
-function normalizeIdentityGraphRef(raw, label = 'identityGraphRef') {
-  assertKnownKeys(raw, IDENTITY_REF_KEYS, label);
-  if (raw.schema !== 'refas.physical-identity-graph/v1') throw new Error(`${label}.schema must be refas.physical-identity-graph/v1`);
-  return {schema: raw.schema, digest: assertDigest(raw.digest, `${label}.digest`)};
+function normalizeIdentityBinding(raw, label = 'identityBinding') {
+  assertKnownKeys(raw, IDENTITY_BINDING_KEYS, label);
+  if (raw.schema !== PHYSICAL_DYNAMICS_IDENTITY_BINDING_SCHEMA) throw new Error(`${label}.schema must be ${PHYSICAL_DYNAMICS_IDENTITY_BINDING_SCHEMA}`);
+  if (raw.sourceSchema !== 'refas.physical-identity-graph/v1') throw new Error(`${label}.sourceSchema must be refas.physical-identity-graph/v1`);
+  return {
+    schema: raw.schema,
+    sourceSchema: raw.sourceSchema,
+    projectionDigest: assertDigest(raw.projectionDigest, `${label}.projectionDigest`),
+  };
 }
 
 export function rigidBodyDynamicsAuthoritySubjectId(linkId, property) {
@@ -171,10 +178,10 @@ function normalizeLink(raw, index) {
   };
 }
 
-function graphReference(identityGraph) {
+function validateIdentityGraph(identityGraph) {
   const validation = validatePhysicalIdentityGraph(identityGraph);
   if (!validation.valid) throw new Error(`identityGraph is invalid: ${validation.errors.join('; ')}`);
-  return {schema: identityGraph.schema, digest: identityGraph.graphDigest};
+  return identityGraph;
 }
 
 function validateLinkBindings(links, identityGraph) {
@@ -186,6 +193,52 @@ function validateLinkBindings(links, identityGraph) {
   }
 }
 
+export function physicalDynamicsIdentityProjection(identityGraph, linkIds) {
+  validateIdentityGraph(identityGraph);
+  if (!Array.isArray(linkIds) || !linkIds.length) throw new Error('physical dynamics identity projection requires at least one link ID');
+  const normalizedLinkIds = linkIds.map((id, index) => assertId(id, `linkIds[${index}]`)).sort();
+  if (new Set(normalizedLinkIds).size !== normalizedLinkIds.length) throw new Error('physical dynamics identity projection link IDs must be unique');
+
+  const linkIdSet = new Set(normalizedLinkIds);
+  const entityById = new Map(identityGraph.entities.map((entity) => [entity.id, entity]));
+  const links = normalizedLinkIds.map((id) => {
+    const entity = entityById.get(id);
+    if (!entity) throw new Error(`dynamics link references unknown physical identity: ${id}`);
+    if (entity.kind !== 'rigid-link') throw new Error(`dynamics subject ${id} must be a rigid-link, found ${entity.kind}`);
+    return structuredClone(entity);
+  });
+
+  const aggregations = identityGraph.relations
+    .filter((relation) => relation.kind === 'AGGREGATES_INTO' && relation.targetIds.some((id) => linkIdSet.has(id)))
+    .map((relation) => ({partId: relation.sourceId, linkId: relation.targetIds[0]}))
+    .sort((a, b) => `${a.linkId}:${a.partId}`.localeCompare(`${b.linkId}:${b.partId}`));
+  const partIds = [...new Set(aggregations.map((item) => item.partId))].sort();
+  const parts = partIds.map((id) => {
+    const entity = entityById.get(id);
+    if (!entity || entity.kind !== 'physical-part') throw new Error(`aggregation source ${id} must resolve to a physical-part`);
+    return structuredClone(entity);
+  });
+
+  return deepFreeze({
+    schema: PHYSICAL_DYNAMICS_IDENTITY_PROJECTION_SCHEMA,
+    scopeId: identityGraph.scopeId,
+    sourceSha256: identityGraph.sourceSha256,
+    links,
+    parts,
+    aggregations,
+  });
+}
+
+function identityBindingFromGraph(identityGraph, links) {
+  validateIdentityGraph(identityGraph);
+  const projection = physicalDynamicsIdentityProjection(identityGraph, links.map((link) => link.linkId));
+  return {
+    schema: PHYSICAL_DYNAMICS_IDENTITY_BINDING_SCHEMA,
+    sourceSchema: identityGraph.schema,
+    projectionDigest: digestJson(projection),
+  };
+}
+
 function buildRigidBodyDynamics(raw, {identityGraph = raw?.identityGraph ?? null, requireLiveIdentityGraph = false} = {}) {
   assertKnownKeys(raw, TOP_LEVEL_KEYS, 'rigid-body dynamics input');
   if (!Array.isArray(raw.links) || !raw.links.length) throw new Error('rigid-body dynamics requires at least one link record');
@@ -195,31 +248,35 @@ function buildRigidBodyDynamics(raw, {identityGraph = raw?.identityGraph ?? null
   const links = raw.links.map(normalizeLink).sort((a, b) => a.linkId.localeCompare(b.linkId));
   if (new Set(links.map((link) => link.linkId)).size !== links.length) throw new Error('rigid-body dynamics link IDs must be unique');
 
-  let identityGraphRef;
+  let identityBinding;
   if (identityGraph) {
-    const liveRef = graphReference(identityGraph);
+    validateIdentityGraph(identityGraph);
     if (identityGraph.scopeId !== scopeId) throw new Error('identity graph and dynamics scopeId differ');
     if (identityGraph.sourceSha256 !== sourceSha256) throw new Error('identity graph and dynamics sourceSha256 differ');
-    if (raw.identityGraphRef != null) {
-      const declared = normalizeIdentityGraphRef(raw.identityGraphRef);
-      if (declared.schema !== liveRef.schema || declared.digest !== liveRef.digest) throw new Error('identityGraphRef does not bind the exact identity graph');
-    }
-    identityGraphRef = liveRef;
     validateLinkBindings(links, identityGraph);
+    const liveBinding = identityBindingFromGraph(identityGraph, links);
+    if (raw.identityBinding != null) {
+      const declared = normalizeIdentityBinding(raw.identityBinding);
+      if (declared.schema !== liveBinding.schema || declared.sourceSchema !== liveBinding.sourceSchema || declared.projectionDigest !== liveBinding.projectionDigest) {
+        throw new Error('identityBinding does not bind the current dynamics-relevant identity projection');
+      }
+    }
+    identityBinding = liveBinding;
   } else {
-    if (requireLiveIdentityGraph) throw new Error('rigid-body dynamics creation requires the exact physical identity graph contract');
-    identityGraphRef = normalizeIdentityGraphRef(raw.identityGraphRef);
+    if (requireLiveIdentityGraph) throw new Error('rigid-body dynamics creation requires the physical identity graph contract');
+    identityBinding = normalizeIdentityBinding(raw.identityBinding);
   }
 
   const payload = {
     schema: RIGID_BODY_DYNAMICS_SCHEMA,
     scopeId,
     sourceSha256,
-    identityGraphRef,
+    identityBinding,
     links,
     policy: {
       rigidLinkIdentityRequired: true,
-      exactIdentityGraphBinding: true,
+      scopedIdentityBinding: true,
+      unrelatedIdentityGraphEditsDoNotInvalidateDynamics: true,
       referenceFrameIsBoundLink: true,
       centerOfMassUsesMeters: true,
       inertiaAboutCenterOfMass: true,
@@ -258,13 +315,16 @@ export function validateRigidBodyDynamicsBindings(value, identityGraph) {
   const validation = validateRigidBodyDynamics(value);
   if (!validation.valid) errors.push(`rigid-body dynamics invalid: ${validation.errors.join('; ')}`);
   try {
-    const liveRef = graphReference(identityGraph);
+    validateIdentityGraph(identityGraph);
     if (value?.scopeId !== identityGraph?.scopeId) errors.push('dynamics and identity graph scopeId differ');
     if (value?.sourceSha256 !== identityGraph?.sourceSha256) errors.push('dynamics and identity graph sourceSha256 differ');
-    if (value?.identityGraphRef?.schema !== liveRef.schema || value?.identityGraphRef?.digest !== liveRef.digest) {
-      errors.push('dynamics does not bind the exact physical identity graph');
+    if (!errors.length) {
+      validateLinkBindings(value.links, identityGraph);
+      const liveBinding = identityBindingFromGraph(identityGraph, value.links);
+      if (value.identityBinding.schema !== liveBinding.schema || value.identityBinding.sourceSchema !== liveBinding.sourceSchema || value.identityBinding.projectionDigest !== liveBinding.projectionDigest) {
+        errors.push('dynamics does not bind the current dynamics-relevant identity projection');
+      }
     }
-    if (!errors.length) validateLinkBindings(value.links, identityGraph);
   } catch (error) {
     errors.push(error.message);
   }
