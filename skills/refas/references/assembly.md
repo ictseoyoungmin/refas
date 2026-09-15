@@ -29,6 +29,53 @@ Keep registration in data, not hidden constants.
 
 Create an assembly contract before placement. It records observed polygons, root anchors, depth bands, relations, support zones, bounded hidden-support hypotheses, closed-child digests, and evidence attestation. Reject cyclic front-to-back claims.
 
+## Physical semantic identity graph
+
+When the asset makes modular, articulated, mechanism, actuation, control, or runtime-binding claims, create `refas.physical-identity-graph/v1` with `createPhysicalIdentityGraph` before downstream physical contracts.
+
+The graph gives stable semantic identity to these distinct construction concepts:
+
+```text
+assembly module
+    != attachment interface
+    != physical part
+    != rigid link
+    != virtual joint
+    != mechanism
+    != transmission
+    != actuator
+    != controller
+    != runtime endpoint
+```
+
+Do not use backend array order, exporter indices, node order, or runtime device indices as semantic identity. `physical-part` may aggregate into a `rigid-link`, but they remain separate identities. `attachment-interface` is a mount/socket identity and is never implicitly a `virtual-joint`.
+
+Use typed identity relations instead of encoding these meanings in names:
+
+- `CONTAINS` — module ownership of reusable construction identities;
+- `EXPOSES` — a module exposes an attachment interface;
+- `COMPATIBLE_WITH` — two attachment interfaces are explicitly compatible and must share at least one declared compatibility family;
+- `BINDS_TO` — two attachment interfaces are currently bound;
+- `AGGREGATES_INTO` — a physical part contributes to one rigid link;
+- `CONNECTS` — a virtual joint identifies the two rigid links it connects, without yet declaring parent/child DOF semantics;
+- `REALIZES` — a mechanism realizes one or more generalized joint identities;
+- `MAPS` — a transmission names the semantic spaces it maps;
+- `DRIVES` — an actuator drives a transmission, mechanism, or direct joint coordinate;
+- `COMMANDS` — a controller commands an actuator;
+- `BINDS_RUNTIME` — a runtime endpoint binds a semantic physical/control identity without becoming that identity.
+
+`compatibilityFamilyIds` are canonical mount-family identities, not presentation tags and not an implicit pairwise compatibility relation. Sharing a family is a necessary precondition for an explicit `COMPATIBLE_WITH` edge, but family membership alone does not create that edge. When both bound interfaces declare compatibility families, `BINDS_TO` rejects disjoint families. A later mount/interface-standard contract may attach dimensions, clearance, load, power, or other semantics to the same stable family IDs without changing interface identity.
+
+`BINDS_TO` must reference an existing relation from `refas.attachment-semantics/v1`. It does not redeclare `FUSED`, `RIGID_FOLLOW`, `ARTICULATED`, or other attachment modes. The physical identity graph binds the exact attachment-semantics digest and relation ID, and live binding proof must match the same `scopeId` and source SHA-256, preserving one attachment authority.
+
+Canonical physical frames use meters and `rotation_quat_xyzw: [x,y,z,w]`. The runtime normalizes quaternion magnitude and sign so `q` and `-q` serialize identically. Semantic frames carry no scale, reject non-finite values, require an existing physical parent identity, and reject frame cycles. Mirroring/handedness remains an explicit derivative rather than negative runtime scale.
+
+Module ownership also bounds transform ownership. An entity owned through `CONTAINS`, or an interface owned through `EXPOSES`, must resolve its frame ancestry back to that owning module without crossing another module boundary. A socket may therefore be parented to a local part/link/actuator inside the same module, but it may not silently reference a sibling or ancestor module frame. Nested child modules carry their own local subtree so an immutable child remains transform-local when composed into a larger assembly.
+
+`refas.semantic-authority-set/v1` remains the authority system for graph identities and relations. Bind an authority set to this graph through `targetSchema: refas.physical-identity-graph/v1` and the exact `graphDigest`; do not add observed/inferred/engineered flags inside the identity graph itself.
+
+This graph declares identity and relation structure only. It does not define mass/inertia, collision proxies, joint limits/DOFs, mechanism equations, transmission ratios/Jacobians, actuator limits, controller gains, or runtime signs/zeros. Those remain downstream physical contracts.
+
 ## Parent-child orientation chain
 
 Do not repair a terminal part by rotating it independently when the source-facing evidence implies upstream rotation. A hand, foot, tool face, wheel plane, wing tip, or other terminal surface can have the correct endpoint and primary axis while still carrying the wrong roll/twist.
