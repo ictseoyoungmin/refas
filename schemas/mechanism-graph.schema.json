@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/mechanism-graph.schema.json",
+  "title": "RefAs mechanism graph",
+  "type": "object",
+  "required": ["schema", "scopeId", "sourceSha256", "identityBinding", "articulationBinding", "mechanisms", "policy", "mechanismDigest"],
+  "properties": {
+    "schema": {"const": "refas.mechanism-graph/v1"},
+    "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "identityBinding": {
+      "type": "object",
+      "required": ["schema", "sourceSchema", "projectionDigest"],
+      "properties": {
+        "schema": {"const": "refas.physical-mechanism-identity-binding/v1"},
+        "sourceSchema": {"const": "refas.physical-identity-graph/v1"},
+        "projectionDigest": {"$ref": "common.schema.json#/$defs/digest"}
+      },
+      "additionalProperties": false
+    },
+    "articulationBinding": {
+      "type": "object",
+      "required": ["schema", "sourceSchema", "projectionDigest"],
+      "properties": {
+        "schema": {"const": "refas.mechanism-articulation-binding/v1"},
+        "sourceSchema": {"const": "refas.articulation-graph/v1"},
+        "projectionDigest": {"$ref": "common.schema.json#/$defs/digest"}
+      },
+      "additionalProperties": false
+    },
+    "mechanisms": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["mechanismId", "kind", "realizesRelationIds", "realizedJointIds", "members", "edges", "authoritySubjectId"],
+        "properties": {
+          "mechanismId": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "kind": {"enum": ["DIRECT", "GEAR", "BELT", "LINKAGE", "PARALLEL_LINKAGE", "TENDON", "DIFFERENTIAL", "COUPLED", "CUSTOM"]},
+          "realizesRelationIds": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {"$ref": "common.schema.json#/$defs/semanticId"}
+          },
+          "realizedJointIds": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {"$ref": "common.schema.json#/$defs/semanticId"}
+          },
+          "members": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["id", "physicalIdentityId", "role"],
+              "properties": {
+                "id": {"$ref": "common.schema.json#/$defs/semanticId"},
+                "physicalIdentityId": {"$ref": "common.schema.json#/$defs/semanticId"},
+                "role": {"enum": ["CONTACT_ELEMENT", "LINK_ELEMENT", "CARRIER", "GUIDE", "TENSION_ELEMENT", "SUPPORT", "CUSTOM"]}
+              },
+              "additionalProperties": false
+            }
+          },
+          "edges": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["id", "kind", "memberIds", "authoritySubjectId"],
+              "properties": {
+                "id": {"$ref": "common.schema.json#/$defs/semanticId"},
+                "kind": {"enum": ["FIXED_TO", "MESHES_WITH", "BELT_CONTACT", "PIN_CONNECTED", "SLIDING_CONTACT", "ROUTES_OVER", "COUPLED_WITH", "CUSTOM"]},
+                "memberIds": {
+                  "type": "array",
+                  "minItems": 2,
+                  "uniqueItems": true,
+                  "items": {"$ref": "common.schema.json#/$defs/semanticId"}
+                },
+                "authoritySubjectId": {"$ref": "common.schema.json#/$defs/semanticId"}
+              },
+              "additionalProperties": false
+            }
+          },
+          "authoritySubjectId": {"$ref": "common.schema.json#/$defs/semanticId"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "policy": {
+      "type": "object",
+      "required": ["mechanismIdentityRemainsDistinctFromVirtualJoint", "physicalStructureDoesNotImplyTransmission", "stableMemberAndEdgeIdsRequired", "backendIndicesAreNotSemanticIdentity", "scopedIdentityBinding", "scopedArticulationBinding", "resolvedMemberPoseBound", "semanticAuthorityRemainsExternal", "mechanismGraphDoesNotAuthorizeClosure"],
+      "properties": {
+        "mechanismIdentityRemainsDistinctFromVirtualJoint": {"const": true},
+        "physicalStructureDoesNotImplyTransmission": {"const": true},
+        "stableMemberAndEdgeIdsRequired": {"const": true},
+        "backendIndicesAreNotSemanticIdentity": {"const": true},
+        "scopedIdentityBinding": {"const": true},
+        "scopedArticulationBinding": {"const": true},
+        "resolvedMemberPoseBound": {"const": true},
+        "semanticAuthorityRemainsExternal": {"const": true},
+        "mechanismGraphDoesNotAuthorizeClosure": {"const": true}
+      },
+      "additionalProperties": false
+    },
+    "mechanismDigest": {"$ref": "common.schema.json#/$defs/digest"}
+  },
+  "additionalProperties": false
+}
