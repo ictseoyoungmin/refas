@@ -1,0 +1,396 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/physical-identity-graph.schema.json",
+  "title": "RefAs physical identity graph",
+  "type": "object",
+  "required": [
+    "schema",
+    "scopeId",
+    "sourceSha256",
+    "entities",
+    "relations",
+    "attachmentSemanticsRef",
+    "policy",
+    "graphDigest"
+  ],
+  "properties": {
+    "schema": {
+      "const": "refas.physical-identity-graph/v1"
+    },
+    "scopeId": {
+      "$ref": "common.schema.json#/$defs/semanticId"
+    },
+    "sourceSha256": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "entities": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/entity"
+      }
+    },
+    "relations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/relation"
+      }
+    },
+    "attachmentSemanticsRef": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "required": [
+            "schema",
+            "digest"
+          ],
+          "properties": {
+            "schema": {
+              "const": "refas.attachment-semantics/v1"
+            },
+            "digest": {
+              "$ref": "common.schema.json#/$defs/digest"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "policy": {
+      "type": "object",
+      "required": [
+        "globalSemanticIds",
+        "relationIdsDisjointFromEntityIds",
+        "backendIndicesNeverSemanticIdentity",
+        "attachmentInterfacesAreNotJoints",
+        "bindingReusesAttachmentSemantics",
+        "canonicalFramesUseMeters",
+        "canonicalFramesUseQuaternionXyzw",
+        "canonicalQuaternionSign",
+        "semanticFramesHaveNoScale",
+        "containmentCyclesForbidden",
+        "frameCyclesForbidden",
+        "relationsDoNotAuthorizeSourceTruth"
+      ],
+      "properties": {
+        "globalSemanticIds": {
+          "const": true
+        },
+        "relationIdsDisjointFromEntityIds": {
+          "const": true
+        },
+        "backendIndicesNeverSemanticIdentity": {
+          "const": true
+        },
+        "attachmentInterfacesAreNotJoints": {
+          "const": true
+        },
+        "bindingReusesAttachmentSemantics": {
+          "const": true
+        },
+        "canonicalFramesUseMeters": {
+          "const": true
+        },
+        "canonicalFramesUseQuaternionXyzw": {
+          "const": true
+        },
+        "canonicalQuaternionSign": {
+          "const": true
+        },
+        "semanticFramesHaveNoScale": {
+          "const": true
+        },
+        "containmentCyclesForbidden": {
+          "const": true
+        },
+        "frameCyclesForbidden": {
+          "const": true
+        },
+        "relationsDoNotAuthorizeSourceTruth": {
+          "const": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "graphDigest": {
+      "$ref": "common.schema.json#/$defs/digest"
+    }
+  },
+  "$defs": {
+    "frame": {
+      "type": "object",
+      "required": [
+        "parentId",
+        "translation_m",
+        "rotation_quat_xyzw"
+      ],
+      "properties": {
+        "parentId": {
+          "$ref": "common.schema.json#/$defs/semanticId"
+        },
+        "translation_m": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "items": false
+        },
+        "rotation_quat_xyzw": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "items": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "entity": {
+      "type": "object",
+      "required": [
+        "id",
+        "kind"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "common.schema.json#/$defs/semanticId"
+        },
+        "kind": {
+          "enum": [
+            "assembly-module",
+            "attachment-interface",
+            "physical-part",
+            "rigid-link",
+            "virtual-joint",
+            "mechanism",
+            "transmission",
+            "actuator",
+            "controller",
+            "runtime-endpoint"
+          ]
+        },
+        "frame": {
+          "$ref": "#/$defs/frame"
+        },
+        "compatibilityFamilyIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "common.schema.json#/$defs/semanticId"
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "attachment-interface"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "required": [
+              "frame"
+            ]
+          },
+          "else": {
+            "not": {
+              "required": [
+                "compatibilityFamilyIds"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "enum": [
+                  "transmission",
+                  "controller",
+                  "runtime-endpoint"
+                ]
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "not": {
+              "required": [
+                "frame"
+              ]
+            }
+          }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "relation": {
+      "type": "object",
+      "required": [
+        "id",
+        "kind",
+        "sourceId",
+        "targetIds"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "common.schema.json#/$defs/semanticId"
+        },
+        "kind": {
+          "enum": [
+            "CONTAINS",
+            "EXPOSES",
+            "COMPATIBLE_WITH",
+            "BINDS_TO",
+            "AGGREGATES_INTO",
+            "CONNECTS",
+            "REALIZES",
+            "MAPS",
+            "DRIVES",
+            "COMMANDS",
+            "BINDS_RUNTIME"
+          ]
+        },
+        "sourceId": {
+          "$ref": "common.schema.json#/$defs/semanticId"
+        },
+        "targetIds": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "common.schema.json#/$defs/semanticId"
+          }
+        },
+        "attachmentRelationId": {
+          "$ref": "common.schema.json#/$defs/semanticId"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "enum": [
+                  "CONTAINS",
+                  "EXPOSES",
+                  "COMPATIBLE_WITH",
+                  "BINDS_TO",
+                  "AGGREGATES_INTO",
+                  "DRIVES",
+                  "COMMANDS",
+                  "BINDS_RUNTIME"
+                ]
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "properties": {
+              "targetIds": {
+                "minItems": 1,
+                "maxItems": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "CONNECTS"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "properties": {
+              "targetIds": {
+                "minItems": 2,
+                "maxItems": 2
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "MAPS"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "properties": {
+              "targetIds": {
+                "minItems": 2
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "BINDS_TO"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "required": [
+              "attachmentRelationId"
+            ]
+          },
+          "else": {
+            "not": {
+              "required": [
+                "attachmentRelationId"
+              ]
+            }
+          }
+        }
+      ],
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
