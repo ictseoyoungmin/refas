@@ -16,8 +16,8 @@ const REPOSITORY = path.resolve(path.dirname(new URL(import.meta.url).pathname),
 test('installed-skill instruction graph reaches every reference leaf with no boundary escapes', async () => {
   const graph = await analyzeInstructionGraph();
   assert.equal(graph.status, 'PASS', JSON.stringify(graph, null, 2));
-  assert.equal(graph.referenceLeaves, 29);
-  assert.equal(graph.reachableLeaves, 29);
+  assert.equal(graph.referenceLeaves, 30);
+  assert.equal(graph.reachableLeaves, 30);
   assert.equal(graph.skillRoutesToIndex, true);
   assert.deepEqual(graph.indexMissing, []);
   assert.deepEqual(graph.indexUnknown, []);
@@ -67,7 +67,7 @@ test('a bare copied skills/refas directory verifies with the repository absent',
     assert.equal(result.status, 0, result.stderr || result.stdout);
     const report = JSON.parse(result.stdout);
     assert.equal(report.status, 'PASS');
-    assert.equal(report.referenceLeaves, 29);
+    assert.equal(report.referenceLeaves, 30);
     assert.equal(report.outsideSkillRoutes, 0);
     assert.equal(report.runtimeDependencyEscapes, 0);
   } finally {
