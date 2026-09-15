@@ -1,0 +1,152 @@
+# Actuation model contract
+
+Load this leaf when an asset makes an explicit actuator physical-capability claim. Ordinary visual reconstruction and passive assembly do not require it. If the actuator drives a canonical transmission, load `references/contracts/transmission-model.md` as the upstream mapping contract as well.
+
+## Ownership boundary
+
+`refas.actuation-model/v1` is assembly-owned construction semantics for actuator physical capability. It does not collapse adjacent identities:
+
+```text
+virtual joint
+    != mechanism
+    != transmission
+    != actuator
+    != controller
+    != runtime endpoint
+```
+
+P06 owns coordinate/velocity/effort mapping. P07 owns what the actuator itself can physically support. P08 owns controller command/tuning semantics. P09 owns runtime device/index/sign/zero/bus calibration.
+
+A transmission ratio never implies actuator torque, velocity, or position capability. Conversely an actuator effort limit never rewrites the transmission mapping.
+
+## P01 identity and DRIVES binding
+
+Every P07 actuator record binds:
+
+- exactly one P01 `actuator` identity;
+- exactly one P01 `DRIVES` relation sourced by that actuator;
+- exactly one declared driven target;
+- the current target kind: `transmission`, `mechanism`, or `virtual-joint`.
+
+The scoped identity projection includes only the bound actuator, its exact `DRIVES` relation, and the driven target identity. Unrelated controller, runtime endpoint, attachment, or other actuator edits do not stale P07. Changing the actuator identity, relation, driven target, or target kind does.
+
+When `DRIVES` targets a transmission, P07 additionally binds only the referenced P06 transmission record and its current P01 coordinate-participant identity projection. An unrelated transmission elsewhere in the asset may change without invalidating the actuator. A change to the selected transmission mapping or selected transmission participants invalidates the P07 transmission binding.
+
+## Actuator kinds and coordinate class
+
+Supported kinds are:
+
+- `ROTARY_ELECTRIC`
+- `LINEAR_ELECTRIC`
+- `HYDRAULIC`
+- `PNEUMATIC`
+- `ABSTRACT`
+
+Every actuator has a `coordinateClass` of `ROTARY` or `LINEAR`.
+
+`ROTARY_ELECTRIC` must be `ROTARY`. `LINEAR_ELECTRIC` must be `LINEAR`. Hydraulic, pneumatic, and abstract actuators must state the coordinate class explicitly rather than inheriting a backend convention.
+
+## Canonical units
+
+Rotary capability uses:
+
+```text
+position range   rad
+velocity limit   rad_s
+effort limit     N_m
+stiffness        N_m_per_rad
+damping          N_m_s_per_rad
+armature         kg_m2
+```
+
+Linear capability uses:
+
+```text
+position range   m
+velocity limit   m_s
+effort limit     N
+stiffness        N_per_m
+damping          N_s_per_m
+armature         kg
+```
+
+Intrinsic actuator response latency uses seconds for either coordinate class.
+
+Do not infer a unit from a simulator, file format, exporter, backend index, or display convention. A unit mismatch is a contract failure.
+
+## Capability fields
+
+Each actuator declares independent authority-bearing properties for:
+
+- supported control modes;
+- position range;
+- maximum absolute velocity;
+- maximum absolute effort;
+- stiffness;
+- damping;
+- armature/effective reflected inertia or mass;
+- intrinsic response latency.
+
+Supported control modes are capability labels only: `POSITION`, `VELOCITY`, `EFFORT`, and `IMPEDANCE`. They do not contain gains, desired commands, setpoints, or tuning.
+
+Resolved velocity and effort limits must be finite and strictly positive. Resolved position range must satisfy `minimum <= maximum`. Stiffness, damping, armature, and intrinsic response latency are finite and non-negative.
+
+## Intrinsic latency vs controller/runtime delay
+
+P07 `responseLatency` means an intrinsic actuator physical response property. It is not:
+
+- P08 controller computation/command delay;
+- a communication period;
+- a bus delay;
+- a runtime motor-index convention;
+- encoder zero calibration.
+
+Later controller/runtime contracts may carry their own latency/delay semantics without rewriting P07.
+
+## Explicit unresolved state
+
+Every optional capability property stores either a resolved canonical value or explicit `null`.
+
+Do not fabricate convenience defaults such as:
+
+- `1 N_m` torque;
+- `1 rad_s` velocity;
+- zero stiffness;
+- zero latency;
+- a guessed position range;
+- a guessed supported control mode.
+
+`null` means unresolved. It does not mean zero, unlimited, unsupported, or forbidden.
+
+## Semantic authority
+
+Reuse `refas.semantic-authority-set/v1`.
+
+P07 uses deterministic property subjects for the actuator definition and each capability field. The definition requires `observed`, `inferred`, or `engineered` authority. A resolved property likewise requires one of those positive construction authorities. An explicit `null` property requires `unknown` authority.
+
+`forbidden` cannot authorize a positive actuator capability. Downstream controller tuning or runtime convenience never promotes actuator capability to observed source truth.
+
+## Fail-closed rules
+
+Reject at least:
+
+- a non-actuator P01 owner;
+- a relation that is not exact `DRIVES` from the declared actuator;
+- target ID or target-kind drift;
+- a missing selected P06 transmission when `DRIVES` targets transmission;
+- stale selected P06 mapping/participant semantics;
+- rotary/linear unit mismatch;
+- `ROTARY_ELECTRIC` with linear coordinate class;
+- `LINEAR_ELECTRIC` with rotary coordinate class;
+- non-finite values;
+- zero/negative resolved velocity or effort limits;
+- inverted position range;
+- negative stiffness, damping, armature, or intrinsic response latency;
+- duplicate/unsupported control modes;
+- controller gain fields such as `kp`/`kd`;
+- runtime fields such as motor index, bus, encoder sign, zero offset, or scale;
+- unsupported fields and noncanonical serialization.
+
+## Non-goals
+
+P07 does not define controller gains, command trajectories, desired setpoints, runtime endpoint/device indices, encoder calibration, backend export approximations, or physical certification claim levels. Those remain later contracts.
