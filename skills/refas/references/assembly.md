@@ -78,7 +78,7 @@ This graph declares identity and relation structure only. It does not define mas
 
 ## Rigid-body dynamics
 
-When an asset makes a dynamics or simulation claim, create `refas.rigid-body-dynamics/v1` with `createRigidBodyDynamics` against the exact `refas.physical-identity-graph/v1` candidate.
+When an asset makes a dynamics or simulation claim, create `refas.rigid-body-dynamics/v1` with `createRigidBodyDynamics` using the current `refas.physical-identity-graph/v1` candidate.
 
 Dynamics attach only to `rigid-link` identities. They do not attach directly to visible parts, joints, mechanisms, actuators, or backend body indices. Each link record binds:
 
@@ -90,6 +90,8 @@ Dynamics attach only to `rigid-link` identities. They do not attach directly to 
 
 The canonical inertia convention is deliberately unambiguous: the tensor is about the center of mass and expressed in the rigid-link frame. Backend-specific inertial frames or axis conventions must later normalize into this representation rather than changing canonical dynamics semantics.
 
+Dynamics use a scoped identity projection rather than the whole P01 graph digest. The projection includes the bound rigid-link identities and frames, the physical-part identities/frames currently aggregated into those links, and the `AGGREGATES_INTO` membership. A change to those dynamics-relevant identities invalidates the binding. Adding or editing an unrelated controller, runtime endpoint, socket, or other graph identity does not invalidate otherwise unchanged mass/inertia state. Scope and source SHA-256 must still match the live identity graph.
+
 A property that cannot be justified remains explicitly `null`. Do not insert `1 kg`, identity inertia, zero COM, geometry-derived estimates, or other convenient defaults merely to satisfy a simulator. `mass`, COM, and inertia may resolve independently.
 
 Authority remains external to the dynamics value contract. `validateRigidBodyDynamicsAuthority` requires a `refas.semantic-authority-set/v1` bound to the exact `dynamicsDigest`:
@@ -99,7 +101,7 @@ Authority remains external to the dynamics value contract. `validateRigidBodyDyn
 - `forbidden` cannot authorize a positive dynamics construction value;
 - authority-set scope, source SHA-256, target schema, target digest, and property subjects must match exactly.
 
-The dynamics runtime rejects stale physical-identity graphs, non-rigid-link subjects, duplicate link records, cross-link reference frames, non-finite values, non-positive mass, asymmetric or non-positive-definite inertia, rigid-body diagonal triangle-inequality violations, unsupported fields, and noncanonical serialization.
+The dynamics runtime rejects a stale dynamics-relevant identity projection, non-rigid-link subjects, duplicate link records, cross-link reference frames, non-finite values, non-positive mass, asymmetric or non-positive-definite inertia, rigid-body diagonal triangle-inequality violations, unsupported fields, and noncanonical serialization.
 
 P02 does not define collision geometry, joint DOFs/limits, mechanism topology, transmission equations, actuator limits, controller gains, or runtime calibration. Those remain separate downstream contracts.
 
