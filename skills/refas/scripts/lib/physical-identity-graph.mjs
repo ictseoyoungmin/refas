@@ -149,9 +149,8 @@ function assertKnownKeys(value, allowed, label) {
 }
 
 function finiteNumber(value, label) {
-  const number = Number(value);
-  if (!Number.isFinite(number)) throw new Error(`${label} must be a finite number`);
-  return Object.is(number, -0) ? 0 : number;
+  if (typeof value !== 'number' || !Number.isFinite(value)) throw new Error(`${label} must be a finite number`);
+  return Object.is(value, -0) ? 0 : value;
 }
 
 function normalizeVector(values, length, label) {
@@ -194,12 +193,8 @@ function normalizeEntity(raw, index) {
   const kind = String(raw.kind ?? '').trim().toLowerCase();
   if (!KIND_SET.has(kind)) throw new Error(`${label}.kind must be one of: ${PHYSICAL_IDENTITY_KINDS.join(', ')}`);
 
-  if (raw.frame != null && !FRAME_KINDS.has(kind)) {
-    throw new Error(`${label}.frame is not valid for ${kind}`);
-  }
-  if (kind === 'attachment-interface' && raw.frame == null) {
-    throw new Error(`${label}.frame is required for attachment-interface`);
-  }
+  if (raw.frame != null && !FRAME_KINDS.has(kind)) throw new Error(`${label}.frame is not valid for ${kind}`);
+  if (kind === 'attachment-interface' && raw.frame == null) throw new Error(`${label}.frame is required for attachment-interface`);
 
   const entity = {id, kind};
   if (raw.frame != null) entity.frame = normalizeFrame(raw.frame, `${label}.frame`);
@@ -221,10 +216,7 @@ function normalizeAttachmentRef(raw, label = 'attachmentSemanticsRef') {
   if (raw == null) return null;
   assertKnownKeys(raw, new Set(['schema', 'digest']), label);
   if (raw.schema !== 'refas.attachment-semantics/v1') throw new Error(`${label}.schema must be refas.attachment-semantics/v1`);
-  return {
-    schema: raw.schema,
-    digest: assertDigest(raw.digest, `${label}.digest`),
-  };
+  return {schema: raw.schema, digest: assertDigest(raw.digest, `${label}.digest`)};
 }
 
 function normalizeRelation(raw, index, entityById) {
@@ -237,7 +229,6 @@ function normalizeRelation(raw, index, entityById) {
 
   let sourceId = assertId(raw.sourceId, `${label}.sourceId`);
   if (!entityById.has(sourceId)) throw new Error(`${label}.sourceId references unknown entity: ${sourceId}`);
-
   if (!Array.isArray(raw.targetIds)) throw new Error(`${label}.targetIds must be an array`);
   let targetIds = raw.targetIds.map((targetId, targetIndex) => assertId(targetId, `${label}.targetIds[${targetIndex}]`));
   if (new Set(targetIds).size !== targetIds.length) throw new Error(`${label}.targetIds must be unique`);
@@ -252,9 +243,7 @@ function normalizeRelation(raw, index, entityById) {
   }
 
   if (rule.symmetric) {
-    const pair = [sourceId, targetIds[0]].sort();
-    [sourceId] = pair;
-    targetIds = [pair[1]];
+    [sourceId, targetIds] = [[sourceId, targetIds[0]].sort()[0], [[sourceId, targetIds[0]].sort()[1]]];
   }
 
   const sourceKind = entityById.get(sourceId).kind;
@@ -320,32 +309,43 @@ function validateContainment(relations, entityById) {
   if (containmentEdges.length && findDirectedCycle(moduleNodes, containmentEdges)) throw new Error('assembly module containment graph contains a cycle');
 }
 
+function exposureMap(relations) {
+  const owners = new Map();
+  for (const relation of relations.filter((item) => item.kind === 'EXPOSES')) {
+    const interfaceId = relation.targetIds[0];
+    if (owners.has(interfaceId)) throw new Error(`attachment interfaces may be exposed by at most one module: ${interfaceId}`);
+    owners.set(interfaceId, relation.sourceId);
+  }
+  return owners;
+}
+
 function validateRelationUniqueness(relations) {
-  const semanticKeys = relations.map((relation) => {
-    const attachment = relation.attachmentRelationId ?? '';
-    return `${relation.kind}|${relation.sourceId}|${relation.targetIds.join(',')}|${attachment}`;
-  });
+  const semanticKeys = relations.map((relation) => `${relation.kind}|${relation.sourceId}|${relation.targetIds.join(',')}|${relation.attachmentRelationId ?? ''}`);
   if (new Set(semanticKeys).size !== semanticKeys.length) throw new Error('physical identity graph contains duplicate semantic relations');
 
-  const exposed = new Map();
   const aggregateSource = new Map();
   const connectedJoint = new Map();
   for (const relation of relations) {
-    if (relation.kind === 'EXPOSES') {
-      const targetId = relation.targetIds[0];
-      exposed.set(targetId, (exposed.get(targetId) ?? 0) + 1);
-    } else if (relation.kind === 'AGGREGATES_INTO') {
-      aggregateSource.set(relation.sourceId, (aggregateSource.get(relation.sourceId) ?? 0) + 1);
-    } else if (relation.kind === 'CONNECTS') {
-      connectedJoint.set(relation.sourceId, (connectedJoint.get(relation.sourceId) ?? 0) + 1);
-    }
+    if (relation.kind === 'AGGREGATES_INTO') aggregateSource.set(relation.sourceId, (aggregateSource.get(relation.sourceId) ?? 0) + 1);
+    if (relation.kind === 'CONNECTS') connectedJoint.set(relation.sourceId, (connectedJoint.get(relation.sourceId) ?? 0) + 1);
   }
-  const multiplyExposed = [...exposed.entries()].filter(([, count]) => count > 1).map(([id]) => id).sort();
-  if (multiplyExposed.length) throw new Error(`attachment interfaces may be exposed by at most one module: ${multiplyExposed.join(', ')}`);
   const multiplyAggregated = [...aggregateSource.entries()].filter(([, count]) => count > 1).map(([id]) => id).sort();
   if (multiplyAggregated.length) throw new Error(`physical parts may aggregate into at most one rigid link: ${multiplyAggregated.join(', ')}`);
   const multiplyConnected = [...connectedJoint.entries()].filter(([, count]) => count > 1).map(([id]) => id).sort();
   if (multiplyConnected.length) throw new Error(`virtual joints may have at most one CONNECTS relation: ${multiplyConnected.join(', ')}`);
+}
+
+function assertBindingMatchesAttachmentRelation(binding, attachmentRelation, interfaceOwners) {
+  const sourceModuleId = interfaceOwners.get(binding.sourceId);
+  const targetModuleId = interfaceOwners.get(binding.targetIds[0]);
+  if (!sourceModuleId || !targetModuleId) {
+    throw new Error(`BINDS_TO endpoints must each be exposed by an assembly module: ${binding.id}`);
+  }
+  const sourceIsSubject = attachmentRelation.subjectId === sourceModuleId && attachmentRelation.ownerIds.includes(targetModuleId);
+  const targetIsSubject = attachmentRelation.subjectId === targetModuleId && attachmentRelation.ownerIds.includes(sourceModuleId);
+  if (!sourceIsSubject && !targetIsSubject) {
+    throw new Error(`BINDS_TO ${binding.id} does not match subject/owner modules of attachment relation ${binding.attachmentRelationId}`);
+  }
 }
 
 function validateAttachmentBindingProof({relations, sourceSha256, attachmentSemantics, attachmentSemanticsRef, requireLiveBindingProof}) {
@@ -360,18 +360,14 @@ function validateAttachmentBindingProof({relations, sourceSha256, attachmentSema
     if (!validation.valid) throw new Error(`attachment semantics is invalid: ${validation.errors.join('; ')}`);
     if (attachmentSemantics.sourceSha256 !== sourceSha256) throw new Error('attachment semantics and physical identity graph sourceSha256 differ');
     const relationById = new Map(attachmentSemantics.relations.map((relation) => [relation.id, relation]));
-    const used = new Set();
+    const interfaceOwners = exposureMap(relations);
     for (const binding of bindings) {
-      if (used.has(binding.attachmentRelationId)) throw new Error(`attachment relation is reused by multiple BINDS_TO relations: ${binding.attachmentRelationId}`);
-      used.add(binding.attachmentRelationId);
       const relation = relationById.get(binding.attachmentRelationId);
       if (!relation) throw new Error(`BINDS_TO references unknown attachment relation: ${binding.attachmentRelationId}`);
       if (relation.mode === 'FREE') throw new Error(`BINDS_TO cannot reference FREE attachment relation: ${binding.attachmentRelationId}`);
+      assertBindingMatchesAttachmentRelation(binding, relation, interfaceOwners);
     }
-    return {
-      schema: attachmentSemantics.schema,
-      digest: attachmentSemantics.semanticsDigest,
-    };
+    return {schema: attachmentSemantics.schema, digest: attachmentSemantics.semanticsDigest};
   }
 
   if (requireLiveBindingProof) throw new Error('BINDS_TO requires the exact attachment semantics contract');
@@ -391,7 +387,6 @@ function buildPhysicalIdentityGraph(raw, {requireLiveBindingProof = false, attac
     if (entityById.has(entity.id)) throw new Error(`physical identity IDs must be globally unique: ${entity.id}`);
     entityById.set(entity.id, entity);
   }
-
   validateFrameReferences(entities, entityById);
 
   const relations = raw.relations.map((relation, index) => normalizeRelation(relation, index, entityById)).sort((a, b) => a.id.localeCompare(b.id));
@@ -403,6 +398,7 @@ function buildPhysicalIdentityGraph(raw, {requireLiveBindingProof = false, attac
   }
 
   validateContainment(relations, entityById);
+  exposureMap(relations);
   validateRelationUniqueness(relations);
 
   const sourceSha256 = assertDigest(raw.sourceSha256, 'sourceSha256');
@@ -436,7 +432,6 @@ function buildPhysicalIdentityGraph(raw, {requireLiveBindingProof = false, attac
       relationsDoNotAuthorizeSourceTruth: true,
     },
   };
-
   return {...payload, graphDigest: digestJson(payload)};
 }
 
@@ -479,13 +474,12 @@ export function validatePhysicalIdentityGraphBindings(graph, attachmentSemantics
       throw new Error('physical identity graph does not bind the exact attachment semantics contract');
     }
     const relationById = new Map(attachmentSemantics.relations.map((relation) => [relation.id, relation]));
-    const used = new Set();
+    const interfaceOwners = exposureMap(graph.relations);
     for (const binding of bindings) {
-      if (used.has(binding.attachmentRelationId)) throw new Error(`attachment relation is reused by multiple BINDS_TO relations: ${binding.attachmentRelationId}`);
-      used.add(binding.attachmentRelationId);
       const relation = relationById.get(binding.attachmentRelationId);
       if (!relation) throw new Error(`BINDS_TO references unknown attachment relation: ${binding.attachmentRelationId}`);
       if (relation.mode === 'FREE') throw new Error(`BINDS_TO cannot reference FREE attachment relation: ${binding.attachmentRelationId}`);
+      assertBindingMatchesAttachmentRelation(binding, relation, interfaceOwners);
     }
   } catch (error) {
     errors.push(error.message);
