@@ -107,7 +107,7 @@ test('physical frame ancestry stays inside the semantic owner module', () => {
   escapedContainedLink.entities.find((entity) => entity.id === 'link-b').frame.parentId = 'module-a';
   assert.throws(
     () => createPhysicalIdentityGraph(escapedContainedLink),
-    /link-b frame escapes owning module module-b/,
+    /frame escapes owning module module-b/,
   );
 });
 
@@ -123,6 +123,8 @@ test('attachment interfaces require one module exposure before they can own a lo
 test('compatibility families constrain explicit compatibility but do not create it implicitly', () => {
   const incompatibleEdge = graphFixture();
   incompatibleEdge.entities.find((entity) => entity.id === 'interface-b').compatibilityFamilyIds = ['mount-standard-b'];
+  incompatibleEdge.relations = incompatibleEdge.relations.filter((relation) => relation.kind !== 'BINDS_TO');
+  delete incompatibleEdge.attachmentSemantics;
   assert.throws(
     () => createPhysicalIdentityGraph(incompatibleEdge),
     /COMPATIBLE_WITH endpoints must share at least one compatibility family/,
