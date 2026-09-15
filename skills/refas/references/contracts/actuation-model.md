@@ -74,12 +74,40 @@ Intrinsic actuator response latency uses seconds for either coordinate class.
 
 Do not infer a unit from a simulator, file format, exporter, backend index, or display convention. A unit mismatch is a contract failure.
 
+## Position semantics
+
+A resolved position capability is explicit and is never inferred from missing bounds.
+
+`BOUNDED` means a finite canonical range:
+
+```text
+{ kind: BOUNDED, minimum, maximum, unit }
+```
+
+with `minimum <= maximum` and a unit matching the coordinate class.
+
+`CONTINUOUS` means a known continuous rotary coordinate with no finite positional stop in canonical state:
+
+```text
+{ kind: CONTINUOUS, unit: rad }
+```
+
+`CONTINUOUS` is valid only for `ROTARY`. It is not valid for linear travel, and it does not mean that velocity or effort are unlimited.
+
+Most importantly:
+
+```text
+null != CONTINUOUS
+```
+
+`null` means the position capability is unresolved and therefore requires `unknown` semantic authority. `CONTINUOUS` is a resolved positive capability claim and requires observed, inferred, or engineered authority.
+
 ## Capability fields
 
 Each actuator declares independent authority-bearing properties for:
 
 - supported control modes;
-- position range;
+- position range/domain;
 - maximum absolute velocity;
 - maximum absolute effort;
 - stiffness;
@@ -89,7 +117,7 @@ Each actuator declares independent authority-bearing properties for:
 
 Supported control modes are capability labels only: `POSITION`, `VELOCITY`, `EFFORT`, and `IMPEDANCE`. They do not contain gains, desired commands, setpoints, or tuning.
 
-Resolved velocity and effort limits must be finite and strictly positive. Resolved position range must satisfy `minimum <= maximum`. Stiffness, damping, armature, and intrinsic response latency are finite and non-negative.
+Resolved velocity and effort limits must be finite and strictly positive. A bounded position range must satisfy `minimum <= maximum`. Stiffness, damping, armature, and intrinsic response latency are finite and non-negative.
 
 ## Intrinsic latency vs controller/runtime delay
 
@@ -113,10 +141,10 @@ Do not fabricate convenience defaults such as:
 - `1 rad_s` velocity;
 - zero stiffness;
 - zero latency;
-- a guessed position range;
+- a guessed bounded or continuous position domain;
 - a guessed supported control mode.
 
-`null` means unresolved. It does not mean zero, unlimited, unsupported, or forbidden.
+`null` means unresolved. It does not mean zero, unlimited, continuous, unsupported, or forbidden.
 
 ## Semantic authority
 
@@ -138,9 +166,11 @@ Reject at least:
 - rotary/linear unit mismatch;
 - `ROTARY_ELECTRIC` with linear coordinate class;
 - `LINEAR_ELECTRIC` with rotary coordinate class;
+- `CONTINUOUS` on a linear coordinate;
+- finite bounds attached to a `CONTINUOUS` position domain;
 - non-finite values;
 - zero/negative resolved velocity or effort limits;
-- inverted position range;
+- inverted bounded position range;
 - negative stiffness, damping, armature, or intrinsic response latency;
 - duplicate/unsupported control modes;
 - controller gain fields such as `kp`/`kd`;
