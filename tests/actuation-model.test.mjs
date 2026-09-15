@@ -76,7 +76,7 @@ function resolvedActuator() {
     kind: 'ROTARY_ELECTRIC',
     coordinateClass: 'ROTARY',
     supportedControlModes: {value: ['POSITION', 'EFFORT']},
-    positionRange: {value: {minimum: -3.1, maximum: 3.1, unit: 'rad'}},
+    positionRange: {value: {kind: 'BOUNDED', minimum: -3.1, maximum: 3.1, unit: 'rad'}},
     velocityLimit: {value: {maxAbs: 8, unit: 'rad_s'}},
     effortLimit: {value: {maxAbs: 12, unit: 'N_m'}},
     stiffness: {value: null},
@@ -138,6 +138,7 @@ test('actuation model keeps actuator, transmission, controller, and runtime owne
   assert.equal(model.policy.actuatorAndControllerRemainDistinct, true);
   assert.equal(model.policy.actuatorAndRuntimeBindingRemainDistinct, true);
   assert.equal(model.policy.supportedControlModesAreCapabilityNotTuning, true);
+  assert.equal(model.policy.continuousIsNotUnknown, true);
   assert.equal('identityGraph' in model, false);
   assert.equal('transmissionModel' in model, false);
   assert.notEqual(model.identityBinding, null);
@@ -160,8 +161,33 @@ test('rotary and linear capability units are explicit and cannot silently cross'
   assert.throws(() => createActuationModel({scopeId: 'whole', sourceSha256: D(), identityGraph: base.identityGraph, transmissionModel: base.transmissionModel, actuators: [wrongEffort]}), /must be positive/);
 
   const wrongRange = resolvedActuator();
-  wrongRange.positionRange.value = {minimum: 2, maximum: -2, unit: 'rad'};
+  wrongRange.positionRange.value = {kind: 'BOUNDED', minimum: 2, maximum: -2, unit: 'rad'};
   assert.throws(() => createActuationModel({scopeId: 'whole', sourceSha256: D(), identityGraph: base.identityGraph, transmissionModel: base.transmissionModel, actuators: [wrongRange]}), /minimum must be <= maximum/);
+});
+
+test('bounded, continuous, and unresolved position semantics remain distinct', () => {
+  const stack = modelStack();
+  const continuous = resolvedActuator();
+  continuous.positionRange.value = {kind: 'CONTINUOUS', unit: 'rad'};
+  const continuousModel = createActuationModel({scopeId: 'whole', sourceSha256: D(), identityGraph: stack.identityGraph, transmissionModel: stack.transmissionModel, actuators: [continuous]});
+  assert.deepEqual(continuousModel.actuators[0].positionRange.value, {kind: 'CONTINUOUS', unit: 'rad'});
+  assert.notEqual(continuousModel.actuationDigest, stack.model.actuationDigest);
+
+  const linearContinuous = resolvedActuator();
+  linearContinuous.kind = 'ABSTRACT';
+  linearContinuous.coordinateClass = 'LINEAR';
+  linearContinuous.positionRange.value = {kind: 'CONTINUOUS', unit: 'rad'};
+  linearContinuous.velocityLimit.value = {maxAbs: 1, unit: 'm_s'};
+  linearContinuous.effortLimit.value = {maxAbs: 1, unit: 'N'};
+  linearContinuous.damping.value = {value: 0, unit: 'N_s_per_m'};
+  linearContinuous.armature.value = {value: 0, unit: 'kg'};
+  assert.throws(() => createActuationModel({scopeId: 'whole', sourceSha256: D(), identityGraph: stack.identityGraph, transmissionModel: stack.transmissionModel, actuators: [linearContinuous]}), /CONTINUOUS is valid only for ROTARY/);
+
+  const unresolved = resolvedActuator();
+  unresolved.positionRange.value = null;
+  const unresolvedModel = createActuationModel({scopeId: 'whole', sourceSha256: D(), identityGraph: stack.identityGraph, transmissionModel: stack.transmissionModel, actuators: [unresolved]});
+  assert.equal(unresolvedModel.actuators[0].positionRange.value, null);
+  assert.notEqual(unresolvedModel.actuationDigest, continuousModel.actuationDigest);
 });
 
 test('unresolved physical capability stays null instead of receiving simulator defaults', () => {
