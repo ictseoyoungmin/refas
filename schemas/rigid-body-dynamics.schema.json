@@ -7,7 +7,7 @@
     "schema",
     "scopeId",
     "sourceSha256",
-    "identityGraphRef",
+    "identityBinding",
     "links",
     "policy",
     "dynamicsDigest"
@@ -16,12 +16,13 @@
     "schema": {"const": "refas.rigid-body-dynamics/v1"},
     "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
     "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
-    "identityGraphRef": {
+    "identityBinding": {
       "type": "object",
-      "required": ["schema", "digest"],
+      "required": ["schema", "sourceSchema", "projectionDigest"],
       "properties": {
-        "schema": {"const": "refas.physical-identity-graph/v1"},
-        "digest": {"$ref": "common.schema.json#/$defs/digest"}
+        "schema": {"const": "refas.physical-dynamics-identity-binding/v1"},
+        "sourceSchema": {"const": "refas.physical-identity-graph/v1"},
+        "projectionDigest": {"$ref": "common.schema.json#/$defs/digest"}
       },
       "additionalProperties": false
     },
@@ -34,7 +35,8 @@
       "type": "object",
       "required": [
         "rigidLinkIdentityRequired",
-        "exactIdentityGraphBinding",
+        "scopedIdentityBinding",
+        "unrelatedIdentityGraphEditsDoNotInvalidateDynamics",
         "referenceFrameIsBoundLink",
         "centerOfMassUsesMeters",
         "inertiaAboutCenterOfMass",
@@ -46,7 +48,8 @@
       ],
       "properties": {
         "rigidLinkIdentityRequired": {"const": true},
-        "exactIdentityGraphBinding": {"const": true},
+        "scopedIdentityBinding": {"const": true},
+        "unrelatedIdentityGraphEditsDoNotInvalidateDynamics": {"const": true},
         "referenceFrameIsBoundLink": {"const": true},
         "centerOfMassUsesMeters": {"const": true},
         "inertiaAboutCenterOfMass": {"const": true},
