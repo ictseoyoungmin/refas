@@ -8,7 +8,7 @@ export const ARTICULATION_GRAPH_SCHEMA = 'refas.articulation-graph/v1';
 export const PHYSICAL_ARTICULATION_IDENTITY_BINDING_SCHEMA = 'refas.physical-articulation-identity-binding/v1';
 export const PHYSICAL_ARTICULATION_IDENTITY_PROJECTION_SCHEMA = 'refas.physical-articulation-identity-projection/v1';
 
-const TOP_LEVEL_KEYS = new Set(['schema','scopeId','sourceSha256','identityGraph','identityBinding','attachmentSemanticsRef','topology','rootLinkId','linkBindings','joints','policy','articulationDigest']);
+const TOP_LEVEL_KEYS = new Set(['schema','scopeId','sourceSha256','identityGraph','attachmentSemantics','jointContracts','identityBinding','attachmentSemanticsRef','topology','rootLinkId','linkBindings','joints','policy','articulationDigest']);
 const IDENTITY_BINDING_KEYS = new Set(['schema','sourceSchema','projectionDigest']);
 const ATTACHMENT_REF_KEYS = new Set(['schema','digest']);
 const LINK_BINDING_KEYS = new Set(['linkId','attachmentEntityId','attachmentFrameInLink','authoritySubjectId']);
