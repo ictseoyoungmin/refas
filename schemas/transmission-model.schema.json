@@ -1,0 +1,154 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/transmission-model.schema.json",
+  "title": "RefAs transmission model",
+  "type": "object",
+  "required": ["schema", "scopeId", "sourceSha256", "identityBinding", "mechanismBinding", "transmissions", "policy", "transmissionDigest"],
+  "properties": {
+    "schema": {"const": "refas.transmission-model/v1"},
+    "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "identityBinding": {
+      "type": "object",
+      "required": ["schema", "sourceSchema", "projectionDigest"],
+      "properties": {
+        "schema": {"const": "refas.physical-transmission-identity-binding/v1"},
+        "sourceSchema": {"const": "refas.physical-identity-graph/v1"},
+        "projectionDigest": {"$ref": "common.schema.json#/$defs/digest"}
+      },
+      "additionalProperties": false
+    },
+    "mechanismBinding": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "required": ["schema", "sourceSchema", "projectionDigest"],
+          "properties": {
+            "schema": {"const": "refas.transmission-mechanism-binding/v1"},
+            "sourceSchema": {"const": "refas.mechanism-graph/v1"},
+            "projectionDigest": {"$ref": "common.schema.json#/$defs/digest"}
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "transmissions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/transmission"}
+    },
+    "policy": {
+      "type": "object",
+      "required": ["mechanismAndTransmissionRemainDistinct", "coordinateAndActuatorCapabilityRemainDistinct", "vectorOrderIsExplicitSemanticState", "backendOrderingIsNotSemanticIdentity", "canonicalDirectionIsInputToOutput", "velocityUsesJacobian", "effortUsesJacobianTranspose", "mechanismStructureDoesNotImplyMapping", "transmissionMappingDoesNotImplyActuatorLimits", "nonlinearExecutionRequiresDigestBoundModel", "externalExecutionRequiresDigestBoundSolver", "scopedIdentityBinding", "graphDoesNotAuthorizeClosure"],
+      "properties": {
+        "mechanismAndTransmissionRemainDistinct": {"const": true},
+        "coordinateAndActuatorCapabilityRemainDistinct": {"const": true},
+        "vectorOrderIsExplicitSemanticState": {"const": true},
+        "backendOrderingIsNotSemanticIdentity": {"const": true},
+        "canonicalDirectionIsInputToOutput": {"const": true},
+        "velocityUsesJacobian": {"const": true},
+        "effortUsesJacobianTranspose": {"const": true},
+        "mechanismStructureDoesNotImplyMapping": {"const": true},
+        "transmissionMappingDoesNotImplyActuatorLimits": {"const": true},
+        "nonlinearExecutionRequiresDigestBoundModel": {"const": true},
+        "externalExecutionRequiresDigestBoundSolver": {"const": true},
+        "scopedIdentityBinding": {"const": true},
+        "graphDoesNotAuthorizeClosure": {"const": true}
+      },
+      "additionalProperties": false
+    },
+    "transmissionDigest": {"$ref": "common.schema.json#/$defs/digest"}
+  },
+  "$defs": {
+    "coordinate": {
+      "type": "object",
+      "required": ["id", "semanticIdentityId"],
+      "properties": {
+        "id": {"$ref": "common.schema.json#/$defs/semanticId"},
+        "semanticIdentityId": {"$ref": "common.schema.json#/$defs/semanticId"}
+      },
+      "additionalProperties": false
+    },
+    "space": {
+      "type": "object",
+      "required": ["id", "coordinates", "order"],
+      "properties": {
+        "id": {"$ref": "common.schema.json#/$defs/semanticId"},
+        "coordinates": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/coordinate"}},
+        "order": {"type": "array", "minItems": 1, "items": {"$ref": "common.schema.json#/$defs/semanticId"}}
+      },
+      "additionalProperties": false
+    },
+    "modelRef": {
+      "type": "object",
+      "required": ["schema", "id", "digest"],
+      "properties": {
+        "schema": {"type": "string", "minLength": 1},
+        "id": {"$ref": "common.schema.json#/$defs/semanticId"},
+        "digest": {"$ref": "common.schema.json#/$defs/digest"}
+      },
+      "additionalProperties": false
+    },
+    "mapping": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["kind"],
+          "properties": {"kind": {"const": "IDENTITY"}},
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["kind", "ratio", "offset"],
+          "properties": {"kind": {"const": "RATIO"}, "ratio": {"type": "number"}, "offset": {"type": "number"}},
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["kind", "matrix", "offset"],
+          "properties": {
+            "kind": {"const": "LINEAR_MATRIX"},
+            "matrix": {"type": "array", "minItems": 1, "items": {"type": "array", "minItems": 1, "items": {"type": "number"}}},
+            "offset": {"type": "array", "minItems": 1, "items": {"type": "number"}}
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["kind", "positionModelRef", "jacobianModelRef"],
+          "properties": {
+            "kind": {"const": "NONLINEAR"},
+            "positionModelRef": {"allOf": [{"$ref": "#/$defs/modelRef"}, {"properties": {"schema": {"const": "refas.transmission-nonlinear-position/v1"}}}]},
+            "jacobianModelRef": {"allOf": [{"$ref": "#/$defs/modelRef"}, {"properties": {"schema": {"const": "refas.transmission-nonlinear-jacobian/v1"}}}]}
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["kind", "solverRef"],
+          "properties": {
+            "kind": {"const": "EXTERNAL_SOLVER"},
+            "solverRef": {"allOf": [{"$ref": "#/$defs/modelRef"}, {"properties": {"schema": {"const": "refas.transmission-solver/v1"}}}]}
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "transmission": {
+      "type": "object",
+      "required": ["transmissionId", "mapsRelationIds", "contextMechanismIds", "inputSpace", "outputSpace", "mapping", "authoritySubjectId"],
+      "properties": {
+        "transmissionId": {"$ref": "common.schema.json#/$defs/semanticId"},
+        "mapsRelationIds": {"type": "array", "minItems": 1, "items": {"$ref": "common.schema.json#/$defs/semanticId"}},
+        "contextMechanismIds": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/semanticId"}},
+        "inputSpace": {"$ref": "#/$defs/space"},
+        "outputSpace": {"$ref": "#/$defs/space"},
+        "mapping": {"$ref": "#/$defs/mapping"},
+        "authoritySubjectId": {"$ref": "common.schema.json#/$defs/semanticId"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

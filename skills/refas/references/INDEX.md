@@ -40,6 +40,7 @@ Load only the references needed by the active capability or conditional closure 
 | Evidence-bound parameter search and actual-render trial fitting | `references/parameter-fitting.md` |
 | Organic or articulated manufactured form | `references/organic-articulated-construction.md` after `references/construction.md` |
 | Parent/child placement, attachment, modular assembly | `references/assembly.md` |
+| Explicit q/dq/effort mapping between semantic joint/actuator spaces | `references/contracts/transmission-model.md` after `references/assembly.md` |
 | Material identity and finish | `references/appearance.md` |
 | Render integrity, registered comparison, visual review, closure evidence | `references/validation.md` |
 | Candidate/checkpoint/evidence provenance sealing | `references/candidate-transactions.md` |
