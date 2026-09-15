@@ -54,7 +54,7 @@ Use typed identity relations instead of encoding these meanings in names:
 
 - `CONTAINS` — module ownership of reusable construction identities;
 - `EXPOSES` — a module exposes an attachment interface;
-- `COMPATIBLE_WITH` — two attachment interfaces are explicitly compatible;
+- `COMPATIBLE_WITH` — two attachment interfaces are explicitly compatible and must share at least one declared compatibility family;
 - `BINDS_TO` — two attachment interfaces are currently bound;
 - `AGGREGATES_INTO` — a physical part contributes to one rigid link;
 - `CONNECTS` — a virtual joint identifies the two rigid links it connects, without yet declaring parent/child DOF semantics;
@@ -64,9 +64,13 @@ Use typed identity relations instead of encoding these meanings in names:
 - `COMMANDS` — a controller commands an actuator;
 - `BINDS_RUNTIME` — a runtime endpoint binds a semantic physical/control identity without becoming that identity.
 
-`BINDS_TO` must reference an existing relation from `refas.attachment-semantics/v1`. It does not redeclare `FUSED`, `RIGID_FOLLOW`, `ARTICULATED`, or other attachment modes. The physical identity graph binds the exact attachment-semantics digest and the relation ID, preserving one attachment authority.
+`compatibilityFamilyIds` are canonical mount-family identities, not presentation tags and not an implicit pairwise compatibility relation. Sharing a family is a necessary precondition for an explicit `COMPATIBLE_WITH` edge, but family membership alone does not create that edge. When both bound interfaces declare compatibility families, `BINDS_TO` rejects disjoint families. A later mount/interface-standard contract may attach dimensions, clearance, load, power, or other semantics to the same stable family IDs without changing interface identity.
+
+`BINDS_TO` must reference an existing relation from `refas.attachment-semantics/v1`. It does not redeclare `FUSED`, `RIGID_FOLLOW`, `ARTICULATED`, or other attachment modes. The physical identity graph binds the exact attachment-semantics digest and relation ID, and live binding proof must match the same `scopeId` and source SHA-256, preserving one attachment authority.
 
 Canonical physical frames use meters and `rotation_quat_xyzw: [x,y,z,w]`. The runtime normalizes quaternion magnitude and sign so `q` and `-q` serialize identically. Semantic frames carry no scale, reject non-finite values, require an existing physical parent identity, and reject frame cycles. Mirroring/handedness remains an explicit derivative rather than negative runtime scale.
+
+Module ownership also bounds transform ownership. An entity owned through `CONTAINS`, or an interface owned through `EXPOSES`, must resolve its frame ancestry back to that owning module without crossing another module boundary. A socket may therefore be parented to a local part/link/actuator inside the same module, but it may not silently reference a sibling or ancestor module frame. Nested child modules carry their own local subtree so an immutable child remains transform-local when composed into a larger assembly.
 
 `refas.semantic-authority-set/v1` remains the authority system for graph identities and relations. Bind an authority set to this graph through `targetSchema: refas.physical-identity-graph/v1` and the exact `graphDigest`; do not add observed/inferred/engineered flags inside the identity graph itself.
 
