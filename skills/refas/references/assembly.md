@@ -139,6 +139,46 @@ The collision runtime fails closed on non-rigid-link subjects, stale scoped iden
 
 P03 does not define friction, restitution, contact materials, articulation topology, joint-specific collision-disable pairs, mechanism/transmission behavior, actuator capability, controller tuning, backend bit assignments, or runtime calibration.
 
+## Articulation graph
+
+When an asset makes an articulated-ready claim across more than one rigid body, compose the existing typed joint contracts with `createArticulationGraph` into `refas.articulation-graph/v1`. Do not replace or widen `refas.articulated-joint/v1`; the typed joint remains the owner of its revolute axis, limits, zero configuration, and legacy attachment relation.
+
+P04 gives direction and topology to the otherwise unordered physical identities:
+
+```text
+root rigid link
+  -> virtual joint
+  -> child rigid link
+```
+
+The P01 `CONNECTS` relation remains an unordered identity statement over exactly two rigid links. P04 names one as `parentLinkId` and one as `childLinkId` without mutating P01. Every participating virtual joint must have exactly one `CONNECTS` relation over the same pair, and every graph joint references one exact typed joint ID plus `jointDigest`.
+
+Do not assume the legacy attachment entity frame and the canonical rigid-link frame are the same. Every participating link must declare one explicit `attachmentFrameInLink` mapping from its `refas.attachment-semantics/v1` entity frame into the rigid-link frame. The existing typed joint's owner/subject frames are composed through those mappings and persisted as canonical graph-level `parentJointFrame` / `childJointFrame` transforms in meters plus normalized `rotation_quat_xyzw`.
+
+The P01 `virtual-joint` identity must itself carry a canonical physical frame parented by the declared parent rigid link. That frame must match the graph's derived parent joint frame. This creates one stable joint identity across P01 and P04 without collapsing the legacy attachment entity, rigid link, attachment interface, or backend joint index into that identity.
+
+Every graph joint must also declare an explicit `referenceAngle`. This is the reconstructed source/reference configuration, not controller state and not a runtime calibration value. It must lie inside the existing typed joint limits; do not silently default it to zero. P04 derives and persists `referenceChildFrameInParent` as:
+
+`parentJointFrame × revolute(referenceAngle) × inverse(childJointFrame)`.
+
+That derived transform must equal the live P01 resolved parent-link → child-link relative pose. A reference image captured away from the typed joint's zero configuration therefore remains representable without redefining the joint's zero convention. A disagreement means the identity frames, link/attachment mapping, typed joint frames, or reference angle are stale and the articulation candidate fails closed.
+
+Initial P04 topology is `TREE` only:
+
+- exactly one `rootLinkId`;
+- root has no parent joint;
+- every other participating rigid link has exactly one parent joint;
+- the graph is connected and acyclic;
+- closed chains are not represented by pretending a tree edge is sufficient; P05 mechanism semantics owns those structures.
+
+Articulation invalidation is scoped. The graph binds participating rigid-link and virtual-joint identities/frames, their exact `CONNECTS` relations, and each directed joint edge's **resolved parent→child relative pose**. Resolving the relative pose walks the live P01 frame ancestry, so changing an intermediate local part/link/mechanism/actuator frame cannot leave a stale articulation graph valid. A common upstream frame motion that preserves the participating links' relative pose does not create unnecessary invalidation. Controller, runtime endpoint, unrelated socket/interface, or other unrelated P01 edits likewise do not stale the articulation graph. Typed joint digests and attachment-semantics digest are separately exact-bound.
+
+Authority remains `refas.semantic-authority-set/v1`. Link-to-attachment frame mappings and directed topology each receive deterministic authority subjects, and `validateArticulationGraphAuthority` requires `observed`, `inferred`, or `engineered` authority for positive construction. Do not introduce articulation-specific provenance states.
+
+The articulation graph fails closed on missing/out-of-limit reference angles, reference-pose disagreement, transitive frame-ancestor drift, stale joint digests, owner/subject-to-link mismatch, missing explicit link mappings, joint-frame disagreement, duplicate joint use, multi-parent children, disconnected topology, cycles, invalid roots, `CONNECTS` pair drift, unsupported typed joint schemas, backend-index identity, or noncanonical serialization.
+
+P04 does not define mechanisms, transmission ratios/Jacobians, actuator capability, controller tuning, runtime indices, backend export, or additional joint types. Those remain later slices.
+
 ## Parent-child orientation chain
 
 Do not repair a terminal part by rotating it independently when the source-facing evidence implies upstream rotation. A hand, foot, tool face, wheel plane, wing tip, or other terminal surface can have the correct endpoint and primary axis while still carrying the wrong roll/twist.
