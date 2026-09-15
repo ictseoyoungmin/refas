@@ -13,6 +13,7 @@ import {
   physicalArticulationIdentityProjection,
   validateArticulationGraph,
   validateArticulationGraphAuthority,
+  validateArticulationGraphBindings,
 } from '../skills/refas/scripts/lib/index.mjs';
 
 const D = (value = 'a') => value.repeat(64);
@@ -73,7 +74,7 @@ function jointContracts(attachmentSemantics) {
 
 function graphInput({identityGraph = identityFixture(), attachmentSemantics = attachmentFixture(), jointContracts: contracts = jointContracts(attachmentSemantics)} = {}) {
   return {
-    identityGraph, attachmentSemantics, jointContracts: contracts, rootLinkId: 'base-link',
+    identityGraph, attachmentSemantics, jointContracts: contracts, rootLinkId: 'base-link', scopeId: identityGraph.scopeId, sourceSha256: identityGraph.sourceSha256,
     linkBindings: [
       {linkId: 'base-link', attachmentEntityId: 'base-body', attachmentFrameInLink: T()},
       {linkId: 'arm-link', attachmentEntityId: 'arm-body', attachmentFrameInLink: T()},
@@ -101,6 +102,7 @@ test('articulation graph composes existing typed joints into a deterministic roo
   assert.equal(graph.topology, 'TREE');
   assert.equal(graph.rootLinkId, 'base-link');
   assert.equal(graph.joints.length, 2);
+  assert.equal('identityGraph' in graph, false);
   assert.deepEqual(graph.joints[0].parentJointFrame, T());
   assert.deepEqual(graph.joints[1].parentJointFrame, T());
   assert.equal(graph.policy.existingTypedJointContractsRemainAuthoritative, true);
@@ -141,14 +143,21 @@ test('articulation graph rejects malformed parent assignments and incomplete top
   assert.throws(() => createArticulationGraph(missing), /exactly links - 1 joints|cover exactly/);
 });
 
-test('articulation identity binding is scoped and ignores unrelated controller edits', () => {
+test('articulation identity binding and contract digest ignore unrelated P01 edits but fail on relevant drift', () => {
   const base = graphInput(), graph = createArticulationGraph(base);
   const unrelatedIdentity = identityFixture({withController: true});
-  const graph2 = createArticulationGraph(graphInput({identityGraph: unrelatedIdentity, attachmentSemantics: base.attachmentSemantics, jointContracts: base.jointContracts}));
+  const graph2Input = graphInput({identityGraph: unrelatedIdentity, attachmentSemantics: base.attachmentSemantics, jointContracts: base.jointContracts});
+  const graph2 = createArticulationGraph(graph2Input);
   assert.equal(graph2.identityBinding.projectionDigest, graph.identityBinding.projectionDigest);
+  assert.equal(graph2.articulationDigest, graph.articulationDigest);
+  assert.deepEqual(graph2, graph);
+  assert.equal(validateArticulationGraphBindings(graph, unrelatedIdentity, {attachmentSemantics: base.attachmentSemantics, jointContracts: base.jointContracts}).valid, true);
+
   const changedIdentityInput = identityInput(); changedIdentityInput.entities.find((entity) => entity.id === 'joint-tip').frame.rotation_quat_xyzw = [0, 0, 1, 0];
-  const projection = physicalArticulationIdentityProjection(createPhysicalIdentityGraph(changedIdentityInput), ['base-link', 'arm-link', 'tip-link'], ['joint-shoulder', 'joint-tip']);
+  const changedIdentity = createPhysicalIdentityGraph(changedIdentityInput);
+  const projection = physicalArticulationIdentityProjection(changedIdentity, ['base-link', 'arm-link', 'tip-link'], ['joint-shoulder', 'joint-tip']);
   assert.notEqual(graph.identityBinding.projectionDigest, digestJson(projection));
+  assert.equal(validateArticulationGraphBindings(graph, changedIdentity, {attachmentSemantics: base.attachmentSemantics, jointContracts: base.jointContracts}).valid, false);
 });
 
 test('articulation graph requires existing semantic authority for link mappings and topology', () => {
