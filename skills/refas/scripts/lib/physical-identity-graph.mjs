@@ -297,16 +297,16 @@ function validateFrameReferences(entities, entityById) {
 
 function validateContainment(relations, entityById) {
   const containmentEdges = [];
-  const incoming = new Map();
+  const owners = new Map();
   for (const relation of relations.filter((item) => item.kind === 'CONTAINS')) {
     const targetId = relation.targetIds[0];
-    incoming.set(targetId, (incoming.get(targetId) ?? 0) + 1);
+    if (owners.has(targetId)) throw new Error(`entities may have at most one containing module: ${targetId}`);
+    owners.set(targetId, relation.sourceId);
     if (entityById.get(targetId).kind === 'assembly-module') containmentEdges.push([relation.sourceId, targetId]);
   }
-  const multiplyOwned = [...incoming.entries()].filter(([, count]) => count > 1).map(([id]) => id).sort();
-  if (multiplyOwned.length) throw new Error(`entities may have at most one containing module: ${multiplyOwned.join(', ')}`);
   const moduleNodes = new Set(containmentEdges.flat());
   if (containmentEdges.length && findDirectedCycle(moduleNodes, containmentEdges)) throw new Error('assembly module containment graph contains a cycle');
+  return owners;
 }
 
 function exposureMap(relations) {
@@ -317,6 +317,68 @@ function exposureMap(relations) {
     owners.set(interfaceId, relation.sourceId);
   }
   return owners;
+}
+
+function semanticOwnerId(entity, containmentOwners, interfaceOwners) {
+  if (entity.kind === 'attachment-interface') return interfaceOwners.get(entity.id) ?? null;
+  return containmentOwners.get(entity.id) ?? null;
+}
+
+function validateFrameOwnershipLocality(entities, entityById, containmentOwners, interfaceOwners) {
+  for (const entity of entities) {
+    if (entity.kind === 'attachment-interface' && !interfaceOwners.has(entity.id)) {
+      throw new Error(`attachment interface ${entity.id} must be exposed by exactly one assembly module`);
+    }
+    if (!entity.frame) continue;
+
+    const ownerModuleId = semanticOwnerId(entity, containmentOwners, interfaceOwners);
+    if (entity.kind === 'assembly-module' && !ownerModuleId) {
+      throw new Error(`root assembly module ${entity.id} may not declare a parent frame without CONTAINS ownership`);
+    }
+    if (!ownerModuleId) continue;
+
+    let cursorId = entity.frame.parentId;
+    const visited = new Set();
+    while (cursorId !== ownerModuleId) {
+      if (visited.has(cursorId)) throw new Error(`entity ${entity.id} frame ancestry contains a cycle`);
+      visited.add(cursorId);
+      const cursor = entityById.get(cursorId);
+      if (!cursor) throw new Error(`entity ${entity.id} frame ancestry references unknown parent: ${cursorId}`);
+      if (cursor.kind === 'assembly-module') {
+        throw new Error(`entity ${entity.id} frame escapes owning module ${ownerModuleId} through module ${cursor.id}`);
+      }
+      const cursorOwnerId = semanticOwnerId(cursor, containmentOwners, interfaceOwners);
+      if (cursorOwnerId !== ownerModuleId) {
+        throw new Error(`entity ${entity.id} frame escapes owning module ${ownerModuleId} through ${cursor.id}`);
+      }
+      if (!cursor.frame) {
+        throw new Error(`entity ${entity.id} frame ancestry does not resolve to owning module ${ownerModuleId}`);
+      }
+      cursorId = cursor.frame.parentId;
+    }
+  }
+}
+
+function sharedCompatibilityFamilyIds(source, target) {
+  const targetFamilies = new Set(target.compatibilityFamilyIds ?? []);
+  return (source.compatibilityFamilyIds ?? []).filter((familyId) => targetFamilies.has(familyId));
+}
+
+function validateCompatibilityRelations(relations, entityById) {
+  for (const relation of relations) {
+    if (relation.kind !== 'COMPATIBLE_WITH' && relation.kind !== 'BINDS_TO') continue;
+    const source = entityById.get(relation.sourceId);
+    const target = entityById.get(relation.targetIds[0]);
+    const sharedFamilies = sharedCompatibilityFamilyIds(source, target);
+    if (relation.kind === 'COMPATIBLE_WITH' && sharedFamilies.length === 0) {
+      throw new Error(`COMPATIBLE_WITH endpoints must share at least one compatibility family: ${relation.id}`);
+    }
+    const sourceFamilies = source.compatibilityFamilyIds ?? [];
+    const targetFamilies = target.compatibilityFamilyIds ?? [];
+    if (relation.kind === 'BINDS_TO' && sourceFamilies.length && targetFamilies.length && sharedFamilies.length === 0) {
+      throw new Error(`BINDS_TO endpoints declare disjoint compatibility families: ${relation.id}`);
+    }
+  }
 }
 
 function validateRelationUniqueness(relations) {
@@ -348,7 +410,7 @@ function assertBindingMatchesAttachmentRelation(binding, attachmentRelation, int
   }
 }
 
-function validateAttachmentBindingProof({relations, sourceSha256, attachmentSemantics, attachmentSemanticsRef, requireLiveBindingProof}) {
+function validateAttachmentBindingProof({relations, scopeId, sourceSha256, attachmentSemantics, attachmentSemanticsRef, requireLiveBindingProof}) {
   const bindings = relations.filter((relation) => relation.kind === 'BINDS_TO');
   if (!bindings.length) {
     if (attachmentSemantics != null || attachmentSemanticsRef != null) throw new Error('attachment semantics reference is only valid when BINDS_TO relations exist');
@@ -358,6 +420,7 @@ function validateAttachmentBindingProof({relations, sourceSha256, attachmentSema
   if (attachmentSemantics != null) {
     const validation = validateAttachmentSemantics(attachmentSemantics);
     if (!validation.valid) throw new Error(`attachment semantics is invalid: ${validation.errors.join('; ')}`);
+    if (attachmentSemantics.scopeId !== scopeId) throw new Error('attachment semantics and physical identity graph scopeId differ');
     if (attachmentSemantics.sourceSha256 !== sourceSha256) throw new Error('attachment semantics and physical identity graph sourceSha256 differ');
     const relationById = new Map(attachmentSemantics.relations.map((relation) => [relation.id, relation]));
     const interfaceOwners = exposureMap(relations);
@@ -397,13 +460,17 @@ function buildPhysicalIdentityGraph(raw, {requireLiveBindingProof = false, attac
     relationIds.add(relation.id);
   }
 
-  validateContainment(relations, entityById);
-  exposureMap(relations);
+  const containmentOwners = validateContainment(relations, entityById);
+  const interfaceOwners = exposureMap(relations);
+  validateFrameOwnershipLocality(entities, entityById, containmentOwners, interfaceOwners);
+  validateCompatibilityRelations(relations, entityById);
   validateRelationUniqueness(relations);
 
+  const scopeId = assertId(raw.scopeId, 'scopeId');
   const sourceSha256 = assertDigest(raw.sourceSha256, 'sourceSha256');
   const attachmentSemanticsRef = validateAttachmentBindingProof({
     relations,
+    scopeId,
     sourceSha256,
     attachmentSemantics,
     attachmentSemanticsRef: raw.attachmentSemanticsRef,
@@ -412,7 +479,7 @@ function buildPhysicalIdentityGraph(raw, {requireLiveBindingProof = false, attac
 
   const payload = {
     schema: PHYSICAL_IDENTITY_GRAPH_SCHEMA,
-    scopeId: assertId(raw.scopeId, 'scopeId'),
+    scopeId,
     sourceSha256,
     entities,
     relations,
@@ -469,6 +536,7 @@ export function validatePhysicalIdentityGraphBindings(graph, attachmentSemantics
     }
     const validation = validateAttachmentSemantics(attachmentSemantics);
     if (!validation.valid) throw new Error(`attachment semantics is invalid: ${validation.errors.join('; ')}`);
+    if (attachmentSemantics.scopeId !== graph.scopeId) throw new Error('attachment semantics and physical identity graph scopeId differ');
     if (attachmentSemantics.sourceSha256 !== graph.sourceSha256) throw new Error('attachment semantics and physical identity graph sourceSha256 differ');
     if (graph.attachmentSemanticsRef?.schema !== attachmentSemantics.schema || graph.attachmentSemanticsRef?.digest !== attachmentSemantics.semanticsDigest) {
       throw new Error('physical identity graph does not bind the exact attachment semantics contract');
