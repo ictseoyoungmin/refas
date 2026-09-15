@@ -6,7 +6,7 @@ RefAs extends physical and mechatronic reconstruction as native construction sem
 
 The governing rule is:
 
-> A physical asset may project into multiple backend representations while preserving semantic identity, authority, and declared physical meaning.
+> A physical asset may project into multiple backend representations while preserving semantic identity, authority, modular composition, canonical frames, and declared physical meaning.
 
 Physical semantics remain inside the existing RefAs architecture:
 
@@ -28,6 +28,7 @@ Existing observation / hypothesis / semantic authority
       v
 Assembly-owned construction state
       |
+      +-- modular composition / attachment interfaces
       +-- structural assembly
       +-- articulation
       +-- rigid-body dynamics
@@ -59,6 +60,10 @@ Cross-representation validation is not a truth owner. It compares canonical sema
 The following identities must remain distinct even when a simple asset happens to map them one-to-one:
 
 ```text
+assembly module
+    !=
+attachment interface
+    !=
 physical part
     !=
 rigid link
@@ -76,7 +81,62 @@ controller
 runtime endpoint
 ```
 
-A future contract may connect these identities explicitly, but must not collapse them by array position, shared display name, or backend index.
+An `assembly module` is a reusable construction unit. An `attachment interface` is a semantic mount/socket exposed by a module. An attachment interface may define compatibility, frame, clearance, and load constraints without implying any articulated degree of freedom. A fixed socket is therefore not silently promoted into a joint.
+
+A future contract may connect these identities explicitly, but must not collapse them by array position, shared display name, backend index, or accidental one-to-one geometry.
+
+## Canonical transform contract
+
+P00 reserves one canonical semantic-frame convention before P01 introduces identity schemas.
+
+Canonical interface and physical frames use:
+
+```text
+translation_m: [x, y, z]
+rotation_quat_xyzw: [x, y, z, w]
+```
+
+Rules:
+
+- translation is expressed in meters in the declared parent frame;
+- rotation is a normalized quaternion in `[x,y,z,w]` order;
+- quaternion sign is canonical: prefer `w > 0`; when `w == 0`, the first non-zero component in `x,y,z` is positive;
+- `q` and `-q` describe the same physical orientation but canonical serialization emits only one sign;
+- semantic attachment-interface frames do not carry scale;
+- geometry realization may have explicit positive scale where the owning construction contract permits it;
+- negative runtime scale is not used to express handedness; mirrored/handed variants are explicit derivatives with their own realized geometry/provenance while preserving the intended semantic relationship;
+- authoring UI may expose Euler angles or gizmos, but persisted canonical orientation remains quaternion-based.
+
+Later backend normalization must compare semantic orientation after quaternion normalization/canonicalization rather than treating representation-specific Euler order or quaternion sign as physical drift.
+
+## Sub-ownership and invalidation
+
+`assembly` remains the single top-level RefAs capability owner for physical construction semantics. It must not become an undifferentiated god-object.
+
+Later contracts preserve scoped semantic subdomains:
+
+```text
+composition     module / attachment interface / mount compatibility
+articulation    rigid link / virtual joint / joint frame / joint limit
+dynamics        mass / center of mass / inertia
+collision       collision realization / contact filtering
+mechanism       mechanism topology
+transmission    coordinate / velocity / effort mapping
+actuation       actuator physical capability
+control         controller tuning / command profile
+runtime         endpoint / bus / index binding
+```
+
+These subdomains do not create new top-level capabilities or source-truth owners. They define dependency and invalidation granularity inside assembly-owned construction state.
+
+Required behavior:
+
+- a controller-gain edit does not invalidate unrelated geometric assembly closure;
+- a runtime endpoint/index edit does not mutate actuator, joint, module, or source authority;
+- an actuator-capability edit invalidates dependent control/runtime claims but not unrelated shape evidence;
+- a joint-frame or module-interface edit may invalidate articulation, mechanism, collision, and downstream backend projections that depend on that frame;
+- authority promotion is never implied by downstream tuning;
+- invalidation dependencies must become explicit and deterministic rather than inferred from file timestamps or backend ordering.
 
 ## Existing contracts retained
 
@@ -101,9 +161,9 @@ No second provenance enum is introduced.
 - semantics the backend cannot represent;
 - blockers that prevent a valid projection.
 
-### Existing articulation
+### Existing attachment and articulation semantics
 
-Existing articulated-joint contracts remain valid. Later slices add an articulation graph around typed joint contracts rather than redefining current joint semantics in P00.
+Existing attachment and articulated-joint contracts remain valid. P01 must connect new module/interface identities to existing assembly attachment semantics rather than inventing a competing socket system. Later articulation slices add a graph around typed joint contracts rather than redefining current joint semantics in P00.
 
 ## Canonical representation rule
 
@@ -162,15 +222,34 @@ Close when:
 - no new top-level runtime capability is introduced;
 - physical semantics are explicitly assembly-owned construction contracts;
 - cross-representation validation is explicitly cross-cutting and non-authoritative;
-- semantic identity separation is documented;
-- existing semantic-authority and representation-capacity contracts are reused;
+- module and attachment-interface identities are distinct from parts and joints;
+- canonical semantic frames are meters + normalized canonical `[x,y,z,w]` quaternion with no interface scale;
+- downstream control/runtime state has scoped invalidation rather than owning upstream assembly truth;
+- existing semantic-authority, attachment-semantics, and representation-capacity contracts are reused;
 - the P01-P17 plan is present in the repository.
 
 ### P01 — Semantic Identity Graph
 
-Introduce stable domain-neutral identities and typed relations between part, link, joint, mechanism, transmission, actuator, controller, and runtime endpoint.
+Introduce stable domain-neutral identities and typed relations between assembly module, attachment interface, physical part, rigid link, virtual joint, mechanism, transmission, actuator, controller, and runtime endpoint.
 
-Close when dangling references, invalid relation types, identity collisions, and forbidden cycles fail deterministically.
+Initial relation vocabulary must be able to express at least:
+
+```text
+module CONTAINS part/link
+module EXPOSES attachment-interface
+attachment-interface COMPATIBLE_WITH mount-standard/interface family
+attachment-interface BINDS_TO attachment-interface
+joint CONNECTS link -> link
+mechanism REALIZES generalized coordinates
+transmission MAPS semantic spaces
+actuator DRIVES transmission/mechanism coordinate
+controller COMMANDS actuator
+runtime-endpoint BINDS actuator/controller/sensor-facing semantic identity
+```
+
+P01 must bridge attachment interfaces to existing RefAs attachment semantics instead of duplicating anchors or attachment ownership.
+
+Close when dangling references, invalid relation types, identity collisions, forbidden cycles, accidental joint/socket conflation, and backend-index identity fail deterministically. Canonical transform-bearing identities must validate quaternion normalization/sign convention and parent-frame reference.
 
 ### P02 — Rigid Body Dynamics
 
@@ -188,7 +267,7 @@ Close when visual/collision reuse requires an explicit declaration and collision
 
 Compose typed joint contracts into a link/joint topology without replacing existing articulated-joint semantics.
 
-Close when roots, parent-child relationships, joint references, and supported topology invariants validate deterministically.
+Close when roots, parent-child relationships, joint references, canonical joint frames, and supported topology invariants validate deterministically. Attachment interfaces remain distinct from joints even when an articulated module connection references both.
 
 ### P05 — Mechanism Graph
 
@@ -212,19 +291,21 @@ Close when actuator limits cannot silently substitute for joint limits and vice 
 
 Represent control tuning separately from actuator physical capability, including mode, gains, command space, latency, and update rate.
 
-Close when controller parameters cannot mutate actuator or joint source truth.
+Close when controller parameters cannot mutate actuator or joint source truth and controller-only changes invalidate only dependent control/runtime projections and claims.
 
 ### P09 — Runtime Binding
 
 Optionally bind semantic actuators to runtime endpoints such as indices, device identifiers, buses, sign, zero offset, scale, and sensor frames.
 
-Close when simulation-ready assets remain valid without runtime binding and runtime-ready claims require it explicitly.
+Close when simulation-ready assets remain valid without runtime binding, runtime-ready claims require it explicitly, and runtime-binding edits do not invalidate unrelated assembly geometry or promote backend indices to semantic identity.
 
 ### P10 — Physical Asset Bundle
 
 Introduce a digest-bound manifest over physical construction contracts rather than a monolithic data object.
 
-Close when exact component digests reproduce deterministically and stale component substitution fails.
+The bundle must preserve reusable module identity, exposed attachment interfaces, canonical frame digests, and exact child-component digests so a larger system can consume a closed child module without rewriting it.
+
+Close when exact component digests reproduce deterministically, stale component substitution fails, and immutable child-module reuse remains distinguishable from a reopened upstream module.
 
 ### P11 — Representation Profile
 
@@ -242,13 +323,13 @@ Close when adapters consume canonical semantics directly and no backend-to-backe
 
 Read supported backend representations into normalized semantic views for comparison without promoting backend data to canonical truth.
 
-Close when semantic IDs, frames, limits, dynamics, collision, and actuator mappings can be compared independent of backend ordering.
+Close when semantic IDs, canonicalized transforms, interfaces, frames, limits, dynamics, collision, and actuator mappings can be compared independent of backend ordering, Euler convention, or quaternion sign.
 
 ### P14 — Cross-Representation Validator
 
 Compare canonical semantics and normalized representations and emit typed findings with `EQUIVALENT`, `LOSSY`, `DRIFT`, `UNRESOLVED`, or `INVALID` outcomes.
 
-Close when a deliberately altered representable property produces a deterministic `DRIFT` finding rather than only a numeric score.
+Close when a deliberately altered representable property produces a deterministic `DRIFT` finding rather than only a numeric score, while `q` versus `-q` and equivalent normalized frame encodings do not create false drift.
 
 ### P15 — Declared Divergence
 
@@ -260,17 +341,27 @@ Close when the same altered property is `DRIFT` without a declaration and `DECLA
 
 Add claim-specific obligations for articulated-ready, simulation-ready, control-ready, and runtime-ready certification without weakening visual-source fidelity claims.
 
-Close when each claim fails closed on its own missing physical obligations and unrelated assets do not inherit unnecessary requirements.
+Close when each claim fails closed on its own missing physical obligations and unrelated assets do not inherit unnecessary requirements. Scoped invalidation must not turn a controller/runtime edit into a false visual or geometric reconstruction failure.
 
 ### P17 — Integrated Physical Fixture
 
-Dogfood the complete stack on a domain-neutral coupled parallel 2-DOF fixture with two virtual coordinates, two actuators, nonlinear transmission, physical linkage, collision proxies, dynamics, optional control, and runtime binding.
+Dogfood the complete stack on a domain-neutral coupled parallel 2-DOF fixture assembled from at least two reusable modules through explicit attachment interfaces, with two virtual coordinates, two actuators, nonlinear transmission, physical linkage, collision proxies, dynamics, optional control, and runtime binding.
 
-Close when multiple backend projections normalize back without undeclared semantic drift, deliberate drift is detected, declared divergence is distinguished, identity never collapses to backend index, and digest reproduction is deterministic.
+Close when:
+
+- child-module identity and interface contracts survive composition;
+- fixed attachment interfaces are not confused with joints;
+- multiple backend projections normalize back without undeclared semantic drift;
+- quaternion sign or backend Euler-order differences do not create false drift;
+- deliberate representable drift is detected;
+- declared divergence is distinguished;
+- control/runtime-only edits have scoped invalidation;
+- identity never collapses to backend index;
+- digest reproduction is deterministic.
 
 ## Scope discipline
 
-P00 intentionally does not add P01 schemas, exporters, physics solvers, backend adapters, or new certification claims. Those belong to later slices and must reopen P00 only if implementation evidence proves this boundary insufficient.
+P00 intentionally does not add P01 schemas, exporters, physics solvers, backend adapters, or new certification claims. It reserves the architecture rules that those later slices must obey. Those later slices must reopen P00 only if implementation evidence proves this boundary insufficient.
 
 ## Naming policy
 
