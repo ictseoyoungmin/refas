@@ -262,7 +262,7 @@ Add claim-specific obligations for articulated-ready, simulation-ready, control-
 
 Close when each claim fails closed on its own missing physical obligations and unrelated assets do not inherit unnecessary requirements.
 
-### P17 — Integrated Bottleneck
+### P17 — Integrated Physical Fixture
 
 Dogfood the complete stack on a domain-neutral coupled parallel 2-DOF fixture with two virtual coordinates, two actuators, nonlinear transmission, physical linkage, collision proxies, dynamics, optional control, and runtime binding.
 
