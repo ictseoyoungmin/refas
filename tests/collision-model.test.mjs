@@ -7,6 +7,7 @@ import {
   collisionFilterAuthoritySubjectId,
   collisionForLink,
   createCollisionModel,
+  createCollisionVisualGeometryManifest,
   createPhysicalIdentityGraph,
   createSemanticAuthoritySet,
   physicalCollisionIdentityProjection,
@@ -237,16 +238,35 @@ test('collision model validates primitive dimensions and convex hull realizabili
 test('mesh collision never inherits visual geometry implicitly', () => {
   const graph = identityGraph();
   const contract = createCollisionModel(collisionInput(graph));
+  const visualArtifactDigest = D('c');
+  const validManifest = createCollisionVisualGeometryManifest({
+    scopeId: contract.scopeId,
+    sourceSha256: contract.sourceSha256,
+    visualArtifactDigest,
+    geometries: [{geometryId: 'visual-shell-a', geometryDigest: D('b')}],
+  });
   assert.deepEqual(
-    validateCollisionVisualReuseBindings(contract, [{geometryId: 'visual-shell-a', geometryDigest: D('b')}]),
+    validateCollisionVisualReuseBindings(contract, validManifest, {expectedVisualArtifactDigest: visualArtifactDigest}),
     {valid: true, errors: []},
   );
 
-  const staleVisual = validateCollisionVisualReuseBindings(contract, [{geometryId: 'visual-shell-a', geometryDigest: D('c')}]);
+  const staleManifest = createCollisionVisualGeometryManifest({
+    scopeId: contract.scopeId,
+    sourceSha256: contract.sourceSha256,
+    visualArtifactDigest,
+    geometries: [{geometryId: 'visual-shell-a', geometryDigest: D('d')}],
+  });
+  const staleVisual = validateCollisionVisualReuseBindings(contract, staleManifest, {expectedVisualArtifactDigest: visualArtifactDigest});
   assert.equal(staleVisual.valid, false);
   assert.equal(staleVisual.errors.some((error) => /digest drift/.test(error)), true);
 
-  const missingVisual = validateCollisionVisualReuseBindings(contract, []);
+  const missingManifest = createCollisionVisualGeometryManifest({
+    scopeId: contract.scopeId,
+    sourceSha256: contract.sourceSha256,
+    visualArtifactDigest,
+    geometries: [],
+  });
+  const missingVisual = validateCollisionVisualReuseBindings(contract, missingManifest, {expectedVisualArtifactDigest: visualArtifactDigest});
   assert.equal(missingVisual.valid, false);
   assert.equal(missingVisual.errors.some((error) => /missing/.test(error)), true);
 
