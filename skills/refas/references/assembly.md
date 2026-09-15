@@ -105,6 +105,38 @@ The dynamics runtime rejects a stale dynamics-relevant identity projection, non-
 
 P02 does not define collision geometry, joint DOFs/limits, mechanism topology, transmission equations, actuator limits, controller gains, or runtime calibration. Those remain separate downstream contracts.
 
+## Collision semantics
+
+When an asset makes a collision or simulation claim, create `refas.collision-model/v1` with `createCollisionModel` using the current physical identity graph.
+
+Collision attaches only to `rigid-link` identities. A collider has its own stable collision identity and a link-local frame; it is not the visible mesh, physical part, backend body index, or renderer node identity. Canonical collider frames use meters plus normalized canonical `rotation_quat_xyzw` and carry no scale.
+
+Supported canonical proxy kinds are:
+
+- `BOX` — positive `size_m`;
+- `SPHERE` — positive `radius_m`;
+- `CAPSULE` — positive radius plus non-negative axial `segmentLength_m`;
+- `CYLINDER` — positive radius and height;
+- `CONVEX_HULL` — a canonical finite set of at least four unique non-coplanar link-local vertices;
+- `MESH` — a stable collision mesh identity plus canonical geometry digest.
+
+Render geometry is never collision geometry by implication. A mesh collider must declare exactly one reuse mode:
+
+- `COLLISION_ONLY` — the collision mesh is independent and `visualGeometryRef` must be `null`;
+- `DECLARED_VISUAL_REUSE` — the contract explicitly names a visual geometry identity and the visual/collision canonical geometry digests must match exactly.
+
+Use `validateCollisionVisualReuseBindings` when live visual-geometry facts are available. Matching display names, file paths, node order, or backend mesh indices never count as reuse proof.
+
+Collision filtering is semantic rather than backend-indexed. Declare stable collision group IDs on the contract. Each collider declares one or more `groupIds` plus explicit `maskGroupIds`; exporters may assign backend bit fields later but those bits are not canonical identity. Each link also declares `selfCollisionPolicy: ENABLED | DISABLED`. P03 does not infer articulation adjacency or pairwise joint collision exclusions; P04 and later realization logic may add those semantics without changing P03 collider identity.
+
+Collision uses a scoped P01 identity projection containing only the bound rigid-link identities and frames. An unrelated controller, runtime endpoint, socket, or other identity edit does not stale collision state. A bound link identity/frame change does. Collision proxy geometry and filtering changes are already covered by `collisionDigest` itself.
+
+Authority remains external. Each collider and each link filtering policy has a deterministic semantic-authority subject. `validateCollisionModelAuthority` requires the exact `refas.semantic-authority-set/v1` for the current `collisionDigest`; positive collision construction requires `observed`, `inferred`, or `engineered` authority. Do not introduce a collision-specific provenance enum.
+
+The collision runtime fails closed on non-rigid-link subjects, stale scoped identity binding, duplicate collider IDs, undeclared filter groups, non-finite or non-positive primitive dimensions, degenerate hulls, unsupported fields, noncanonical frames, ambiguous mesh-ID reuse, implicit visual reuse, or stale declared visual geometry digests.
+
+P03 does not define friction, restitution, contact materials, articulation topology, joint-specific collision-disable pairs, mechanism/transmission behavior, actuator capability, controller tuning, backend bit assignments, or runtime calibration.
+
 ## Parent-child orientation chain
 
 Do not repair a terminal part by rotating it independently when the source-facing evidence implies upstream rotation. A hand, foot, tool face, wheel plane, wing tip, or other terminal surface can have the correct endpoint and primary axis while still carrying the wrong roll/twist.
