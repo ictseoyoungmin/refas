@@ -35,7 +35,7 @@ Do not silently reverse this convention per backend. An exporter that needs the 
 
 ## Semantic coordinate spaces and ordering
 
-Coordinate definitions carry stable local coordinate IDs and exact P01 semantic identity references. P06 initially permits `virtual-joint` and `actuator` coordinate subjects. Physical mechanism identities, when relevant, are declared separately through `contextMechanismIds`.
+Coordinate definitions carry stable local coordinate IDs, exact P01 semantic identity references, and canonical `semanticKind` (`virtual-joint` or `actuator`). `semanticKind` is resolved from the live P01 graph during construction and persisted so later intrinsic validation can distinguish joint-coordinate obligations from actuator-only spaces.
 
 Each space has an explicit `order`. Coordinate definition array order is presentation-only and is canonicalized independently; the `order` array is semantic vector ordering and contributes to `transmissionDigest`.
 
@@ -50,6 +50,14 @@ Every transmission binds one P01 `transmission` identity and one or more exact P
 
 No target may disappear silently and no undeclared participant may be added. A transmission contract cannot invent an actuator or mechanism association that is absent from P01 identity semantics.
 
+## Direct P04 articulation binding
+
+Every coordinate whose canonical `semanticKind` is `virtual-joint` must bind the exact current P04 articulation semantics even when no P05 mechanism context is declared.
+
+`transmissionArticulationProjection` is scoped to the joint identities actually used by the transmission. It carries the selected P04 joint records plus their live P01 articulation projection, including the resolved parent→child reference pose. Therefore a direct-drive transmission cannot remain valid after the meaning/direction/reference configuration of one of its joint coordinates becomes stale.
+
+Do not require unrelated P04 branches. A controller edit, unrelated mechanism, or unrelated articulation branch must not invalidate an unchanged transmission.
+
 ## Mapping kinds
 
 Supported mapping kinds are:
@@ -62,7 +70,19 @@ Supported mapping kinds are:
 
 `IDENTITY`, `RATIO`, and `LINEAR_MATRIX` are directly executable with `evaluateTransmissionMapping`.
 
-`NONLINEAR` and `EXTERNAL_SOLVER` do not receive hidden JavaScript callbacks, guessed formulas, finite-difference defaults, or backend-specific fallbacks. Their exact referenced implementation is required before execution. A missing nonlinear model/Jacobian or solver remains unresolved rather than being approximated silently.
+`NONLINEAR` and `EXTERNAL_SOLVER` do not receive hidden JavaScript callbacks, guessed formulas, finite-difference defaults, or backend-specific fallbacks. They additionally require a canonical `refas.transmission-implementation-manifest/v1` witness plus an independently supplied expected current implementation-artifact digest.
+
+The live implementation manifest binds each referenced implementation by:
+
+- implementation schema;
+- implementation ID;
+- exact implementation digest;
+- ordered input semantic identity signature;
+- ordered output semantic identity signature.
+
+Only the referenced implementation entries contribute to the scoped `implementationBinding`; unrelated implementation entries do not stale an unchanged transmission. The manifest's `artifactDigest` must independently match the current artifact digest supplied by the caller. A self-asserted 64-hex string inside the transmission contract is never sufficient live proof.
+
+For `NONLINEAR`, both the position and Jacobian implementations must be present in the same verified manifest and must expose the same declared transmission coordinate signature. For `EXTERNAL_SOLVER`, the solver entry must expose that same signature.
 
 ## Mechanism context and scoped liveness
 
@@ -76,7 +96,7 @@ The scoped projection includes:
 
 This catches referenced mechanism topology/member/REALIZES/articulation drift while avoiding invalidation from an unrelated mechanism elsewhere in the asset.
 
-P01 transmission identity binding is also scoped: unrelated controller/runtime/interface edits do not stale a transmission, while its transmission identity, `MAPS` relation, coordinate participant identity, or declared mechanism-context identity changes do.
+P01 transmission identity binding is also scoped: unrelated controller/runtime/interface edits do not stale a transmission, while its transmission identity, `MAPS` relation, coordinate participant identity/kind, or declared mechanism-context identity changes do.
 
 ## Authority
 
@@ -92,11 +112,15 @@ Reject at least:
 - non-`MAPS` or wrong-source relation references;
 - target union mismatch;
 - coordinate subjects outside supported semantic identity kinds;
+- stale or missing canonical `semanticKind`;
 - duplicate coordinate IDs or incomplete/duplicate explicit vector order;
+- any virtual-joint coordinate without its scoped current P04 articulation binding;
+- stale P04 joint/reference-pose meaning for a bound joint coordinate;
 - zero/non-finite ratio;
 - matrix or offset dimension mismatch;
 - non-finite affine parameters;
-- missing or stale nonlinear/Jacobian/solver references;
+- `NONLINEAR` / `EXTERNAL_SOLVER` construction without a verified current implementation manifest;
+- missing implementation entries, digest drift, coordinate-signature drift, or current implementation-artifact digest mismatch;
 - stale scoped P01 or P05/P04 mechanism dependencies;
 - actuator-limit, controller-gain, runtime-index, or backend-index fields inside the transmission contract;
 - unsupported fields and noncanonical serialization.
