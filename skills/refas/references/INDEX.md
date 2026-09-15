@@ -41,6 +41,7 @@ Load only the references needed by the active capability or conditional closure 
 | Organic or articulated manufactured form | `references/organic-articulated-construction.md` after `references/construction.md` |
 | Parent/child placement, attachment, modular assembly | `references/assembly.md` |
 | Explicit q/dq/effort mapping between semantic joint/actuator spaces | `references/contracts/transmission-model.md` after `references/assembly.md` |
+| Explicit actuator physical capability and limits | `references/contracts/actuation-model.md` after `references/assembly.md`; also load `references/contracts/transmission-model.md` when the actuator drives a transmission |
 | Material identity and finish | `references/appearance.md` |
 | Render integrity, registered comparison, visual review, closure evidence | `references/validation.md` |
 | Candidate/checkpoint/evidence provenance sealing | `references/candidate-transactions.md` |
