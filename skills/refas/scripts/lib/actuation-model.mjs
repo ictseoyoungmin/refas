@@ -14,6 +14,7 @@ export const ACTUATION_TRANSMISSION_PROJECTION_SCHEMA = 'refas.actuation-transmi
 export const ACTUATOR_KINDS = Object.freeze(['ROTARY_ELECTRIC', 'LINEAR_ELECTRIC', 'HYDRAULIC', 'PNEUMATIC', 'ABSTRACT']);
 export const ACTUATOR_COORDINATE_CLASSES = Object.freeze(['ROTARY', 'LINEAR']);
 export const ACTUATOR_CONTROL_MODES = Object.freeze(['POSITION', 'VELOCITY', 'EFFORT', 'IMPEDANCE']);
+export const ACTUATOR_POSITION_RANGE_KINDS = Object.freeze(['BOUNDED', 'CONTINUOUS']);
 export const ACTUATION_AUTHORITY_PROPERTIES = Object.freeze([
   'definition',
   'supported-control-modes',
@@ -29,6 +30,7 @@ export const ACTUATION_AUTHORITY_PROPERTIES = Object.freeze([
 const KIND_SET = new Set(ACTUATOR_KINDS);
 const COORDINATE_CLASS_SET = new Set(ACTUATOR_COORDINATE_CLASSES);
 const CONTROL_MODE_SET = new Set(ACTUATOR_CONTROL_MODES);
+const POSITION_RANGE_KIND_SET = new Set(ACTUATOR_POSITION_RANGE_KINDS);
 const DRIVE_TARGET_KINDS = new Set(['transmission', 'mechanism', 'virtual-joint']);
 const CONSTRUCTION_AUTHORITIES = new Set(['observed', 'inferred', 'engineered']);
 const AUTHORITY_PROPERTY_SET = new Set(ACTUATION_AUTHORITY_PROPERTIES);
@@ -43,7 +45,8 @@ const ACTUATOR_KEYS = new Set([
   'stiffness', 'damping', 'armature', 'responseLatency',
 ]);
 const AUTHORITY_VALUE_KEYS = new Set(['value', 'authoritySubjectId']);
-const RANGE_KEYS = new Set(['minimum', 'maximum', 'unit']);
+const BOUNDED_RANGE_KEYS = new Set(['kind', 'minimum', 'maximum', 'unit']);
+const CONTINUOUS_RANGE_KEYS = new Set(['kind', 'unit']);
 const LIMIT_KEYS = new Set(['maxAbs', 'unit']);
 const QUANTITY_KEYS = new Set(['value', 'unit']);
 
@@ -139,13 +142,24 @@ function normalizeControlModes(value, label) {
 }
 
 function normalizePositionRange(value, label, coordinateClass) {
-  assertKnownKeys(value, RANGE_KEYS, label);
+  assertRecord(value, label);
+  const kind = String(value.kind ?? '').trim().toUpperCase();
+  if (!POSITION_RANGE_KIND_SET.has(kind)) throw new Error(`${label}.kind must be BOUNDED or CONTINUOUS`);
+  const expectedUnit = UNITS[coordinateClass].position;
+
+  if (kind === 'CONTINUOUS') {
+    assertKnownKeys(value, CONTINUOUS_RANGE_KEYS, label);
+    if (coordinateClass !== 'ROTARY') throw new Error(`${label} CONTINUOUS is valid only for ROTARY coordinateClass`);
+    if (value.unit !== 'rad') throw new Error(`${label}.unit must be rad for CONTINUOUS rotary position`);
+    return {kind, unit: 'rad'};
+  }
+
+  assertKnownKeys(value, BOUNDED_RANGE_KEYS, label);
   const minimum = finite(value.minimum, `${label}.minimum`);
   const maximum = finite(value.maximum, `${label}.maximum`);
   if (minimum > maximum) throw new Error(`${label}.minimum must be <= maximum`);
-  const expectedUnit = UNITS[coordinateClass].position;
   if (value.unit !== expectedUnit) throw new Error(`${label}.unit must be ${expectedUnit} for ${coordinateClass}`);
-  return {minimum, maximum, unit: expectedUnit};
+  return {kind, minimum, maximum, unit: expectedUnit};
 }
 
 function normalizeLimit(value, label, expectedUnit) {
@@ -323,6 +337,7 @@ function buildPayload(raw, {identityGraph = null, transmissionModel = null, requ
       actuatorAndRuntimeBindingRemainDistinct: true,
       supportedControlModesAreCapabilityNotTuning: true,
       unresolvedValuesRemainNull: true,
+      continuousIsNotUnknown: true,
       fabricatedDefaultsForbidden: true,
       unitsAreCoordinateClassSpecific: true,
       scopedIdentityBinding: true,
