@@ -21,7 +21,7 @@ test('P00 physical semantics plan stays native to existing RefAs ownership', () 
   assert.match(plan, /refas\.semantic-authority-set\/v1/);
   assert.match(plan, /refas\.representation-capacity\/v1/);
   assert.match(plan, /P01 — Semantic Identity Graph/);
-  assert.match(plan, /P17 — Integrated Bottleneck/);
+  assert.match(plan, /P17 — Integrated Physical Fixture/);
 });
 
 test('P00 preserves RefAs architecture authority boundaries', () => {
