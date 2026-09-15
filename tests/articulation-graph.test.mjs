@@ -123,17 +123,20 @@ test('articulation graph binds exact P01 joint identities and CONNECTS pairs', (
 
 test('articulation graph rejects attachment-owner mismatch and canonical joint-frame drift', () => {
   const input = graphInput();
-  const ownerMismatch = structuredClone(input); ownerMismatch.linkBindings.find((binding) => binding.linkId === 'base-link').attachmentEntityId = 'tip-body';
+  const ownerMismatch = structuredClone(input);
+  const baseBinding = ownerMismatch.linkBindings.find((binding) => binding.linkId === 'base-link');
+  const tipBinding = ownerMismatch.linkBindings.find((binding) => binding.linkId === 'tip-link');
+  [baseBinding.attachmentEntityId, tipBinding.attachmentEntityId] = [tipBinding.attachmentEntityId, baseBinding.attachmentEntityId];
   assert.throws(() => createArticulationGraph(ownerMismatch), /typed joint owner does not map to parent rigid link/);
   const frameDriftInput = identityInput(); frameDriftInput.entities.find((entity) => entity.id === 'joint-shoulder').frame.translation_m = [.1, 0, 0];
   const frameDrift = graphInput({identityGraph: createPhysicalIdentityGraph(frameDriftInput)});
   assert.throws(() => createArticulationGraph(frameDrift), /canonical frame does not match/);
 });
 
-test('articulation graph rejects multi-parent and incomplete topology', () => {
+test('articulation graph rejects malformed parent assignments and incomplete topology', () => {
   const input = graphInput();
-  const multiParent = structuredClone(input); multiParent.joints[1].childLinkId = 'arm-link';
-  assert.throws(() => createArticulationGraph(multiParent), /CONNECTS relation does not match|multiple parent joints/);
+  const malformed = structuredClone(input); malformed.joints[1].childLinkId = 'arm-link';
+  assert.throws(() => createArticulationGraph(malformed), /parent and child links must differ|CONNECTS relation does not match|multiple parent joints/);
   const missing = structuredClone(input); missing.joints.pop();
   assert.throws(() => createArticulationGraph(missing), /exactly links - 1 joints|cover exactly/);
 });
