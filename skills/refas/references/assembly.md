@@ -179,6 +179,38 @@ The articulation graph fails closed on missing/out-of-limit reference angles, re
 
 P04 does not define mechanisms, transmission ratios/Jacobians, actuator capability, controller tuning, runtime indices, backend export, or additional joint types. Those remain later slices.
 
+## Mechanism graph
+
+When articulated coordinates are physically realized by gears, belts, linkages, tendons, coupled structures, or another mechanism, create `refas.mechanism-graph/v1` with `createMechanismGraph` from the current physical identity graph and articulation graph.
+
+A mechanism is not a virtual joint and is not a transmission. Preserve the separation:
+
+```text
+virtual joint = generalized articulation coordinate
+mechanism     = physical structure that realizes coordinate(s)
+transmission  = q / dq / effort mapping between semantic spaces
+```
+
+P05 supports the domain-neutral mechanism kinds `DIRECT`, `GEAR`, `BELT`, `LINKAGE`, `PARALLEL_LINKAGE`, `TENDON`, `DIFFERENTIAL`, `COUPLED`, and `CUSTOM`. These labels classify physical structure only. They do not authorize a ratio, Jacobian, actuator mapping, controller gain, runtime index, or backend-specific constraint.
+
+Every mechanism record binds one existing P01 `mechanism` identity and one or more exact P01 `REALIZES` relations. The union of those relation targets must equal the record's `realizedJointIds`, and every target remains a distinct P01 `virtual-joint`. P05 separately binds the corresponding current P04 joint records through a scoped articulation projection; it does not copy or redefine P04 parent/child, typed-joint, reference-angle, or joint-frame authority.
+
+Mechanism members are stable mechanism-local records that point to existing P01 `physical-part` or `rigid-link` identities. Member IDs and structural edge IDs are semantic within their mechanism and never derive from array position or backend index. Supported structural member roles are `CONTACT_ELEMENT`, `LINK_ELEMENT`, `CARRIER`, `GUIDE`, `TENSION_ELEMENT`, `SUPPORT`, and `CUSTOM`. Supported structural edges are `FIXED_TO`, `MESHES_WITH`, `BELT_CONTACT`, `PIN_CONNECTED`, `SLIDING_CONTACT`, `ROUTES_OVER`, `COUPLED_WITH`, and `CUSTOM`.
+
+Physical-part members must retain exactly one P01 `AGGREGATES_INTO` rigid-link membership. The scoped P01 mechanism projection binds that aggregation relation as well as the member's **resolved pose relative to the mechanism frame**. This makes rigid-body membership changes and transitive frame-ancestor drift invalidate stale mechanism state even when leaf frame bytes or coincident world poses might otherwise hide the change. Rigid-link members bind directly to their rigid-link identity/frame.
+
+Structural topology must be connected whenever a mechanism has more than one member. Kind-specific minimum structure is fail-closed: a `GEAR` requires `MESHES_WITH`, `BELT` requires `BELT_CONTACT`, linkage kinds require `PIN_CONNECTED`, `TENDON` requires `ROUTES_OVER`, and differential/coupled kinds require `COUPLED_WITH`. `MESHES_WITH` connects exactly two `CONTACT_ELEMENT` members.
+
+A geared mechanism deliberately does **not** store gear ratio, tooth-count-derived coordinate mapping, velocity mapping, effort mapping, Jacobian, motor sign, or actuator index. Such values belong to P06 transmission semantics even when they can be inferred from the physical mechanism. Reject convenience fields that collapse these layers.
+
+Mechanism invalidation is scoped twice: P01 binding covers the exact mechanism identity, exact `REALIZES` relations, realized virtual-joint identities, member identities, physical-part aggregation membership, and resolved member poses; P04 binding covers only the realized articulation joint records. Unrelated controller/runtime/interface edits do not stale an unchanged mechanism, and unrelated articulation branches do not invalidate it.
+
+Authority remains `refas.semantic-authority-set/v1`. Each mechanism topology and each structural edge receives a deterministic authority subject. `validateMechanismGraphAuthority` requires `observed`, `inferred`, or `engineered` authority for positive construction. Do not add mechanism-specific provenance states.
+
+The mechanism graph fails closed on mechanism/joint identity collapse, stale `REALIZES` targets, absent realized P04 joints, nonphysical members, missing or ambiguous physical-part aggregation, disconnected topology, invalid kind-specific structure, backend-index identity, transmission leakage, stale scoped bindings, unsupported fields, or noncanonical serialization.
+
+P05 does not define q/dq/effort transforms, gear ratios, Jacobians, actuator capability, controller tuning, runtime bindings, backend export semantics, or dynamic contact simulation. Those remain later slices.
+
 ## Parent-child orientation chain
 
 Do not repair a terminal part by rotating it independently when the source-facing evidence implies upstream rotation. A hand, foot, tool face, wheel plane, wing tip, or other terminal surface can have the correct endpoint and primary axis while still carrying the wrong roll/twist.
