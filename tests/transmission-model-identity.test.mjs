@@ -15,17 +15,17 @@ function identityGraph() {
     scopeId: 'whole', sourceSha256: D(),
     entities: [
       {id: 'module-root', kind: 'assembly-module'},
-      {id: 'joint-a', kind: 'virtual-joint', frame: Q('module-root')},
+      {id: 'actuator-in', kind: 'actuator', frame: Q('module-root')},
       {id: 'actuator-a', kind: 'actuator', frame: Q('module-root')},
       {id: 'actuator-b', kind: 'actuator', frame: Q('module-root')},
       {id: 'tx', kind: 'transmission'},
     ],
     relations: [
-      {id: 'contains-joint', kind: 'CONTAINS', sourceId: 'module-root', targetIds: ['joint-a']},
+      {id: 'contains-actuator-in', kind: 'CONTAINS', sourceId: 'module-root', targetIds: ['actuator-in']},
       {id: 'contains-actuator-a', kind: 'CONTAINS', sourceId: 'module-root', targetIds: ['actuator-a']},
       {id: 'contains-actuator-b', kind: 'CONTAINS', sourceId: 'module-root', targetIds: ['actuator-b']},
       {id: 'contains-tx', kind: 'CONTAINS', sourceId: 'module-root', targetIds: ['tx']},
-      {id: 'tx-maps', kind: 'MAPS', sourceId: 'tx', targetIds: ['joint-a', 'actuator-a', 'actuator-b']},
+      {id: 'tx-maps', kind: 'MAPS', sourceId: 'tx', targetIds: ['actuator-in', 'actuator-a', 'actuator-b']},
     ],
   });
 }
@@ -36,7 +36,7 @@ function modelInput() {
     scopeId: 'whole', sourceSha256: D(), identityGraph: graph,
     transmissions: [{
       transmissionId: 'tx', mapsRelationIds: ['tx-maps'], contextMechanismIds: [],
-      inputSpace: {id: 'in', coordinates: [{id: 'joint-q', semanticIdentityId: 'joint-a'}], order: ['joint-q']},
+      inputSpace: {id: 'in', coordinates: [{id: 'input-q', semanticIdentityId: 'actuator-in'}], order: ['input-q']},
       outputSpace: {id: 'out', coordinates: [{id: 'actuator-q', semanticIdentityId: 'actuator-a'}, {id: 'actuator-q2', semanticIdentityId: 'actuator-b'}], order: ['actuator-q', 'actuator-q2']},
       mapping: {kind: 'IDENTITY'},
     }],
@@ -51,22 +51,22 @@ test('IDENTITY requires equal dimensions and executes exact q/dq/effort transfer
     scopeId: 'whole', sourceSha256: D(),
     entities: [
       {id: 'module-root', kind: 'assembly-module'},
-      {id: 'joint-a', kind: 'virtual-joint', frame: Q('module-root')},
+      {id: 'actuator-in', kind: 'actuator', frame: Q('module-root')},
       {id: 'actuator-a', kind: 'actuator', frame: Q('module-root')},
       {id: 'tx', kind: 'transmission'},
     ],
     relations: [
-      {id: 'contains-joint', kind: 'CONTAINS', sourceId: 'module-root', targetIds: ['joint-a']},
+      {id: 'contains-actuator-in', kind: 'CONTAINS', sourceId: 'module-root', targetIds: ['actuator-in']},
       {id: 'contains-actuator', kind: 'CONTAINS', sourceId: 'module-root', targetIds: ['actuator-a']},
       {id: 'contains-tx', kind: 'CONTAINS', sourceId: 'module-root', targetIds: ['tx']},
-      {id: 'tx-maps', kind: 'MAPS', sourceId: 'tx', targetIds: ['joint-a', 'actuator-a']},
+      {id: 'tx-maps', kind: 'MAPS', sourceId: 'tx', targetIds: ['actuator-in', 'actuator-a']},
     ],
   });
   const model = createTransmissionModel({
     scopeId: 'whole', sourceSha256: D(), identityGraph: graph,
     transmissions: [{
       transmissionId: 'tx', mapsRelationIds: ['tx-maps'], contextMechanismIds: [],
-      inputSpace: {id: 'in', coordinates: [{id: 'joint-q', semanticIdentityId: 'joint-a'}], order: ['joint-q']},
+      inputSpace: {id: 'in', coordinates: [{id: 'input-q', semanticIdentityId: 'actuator-in'}], order: ['input-q']},
       outputSpace: {id: 'out', coordinates: [{id: 'actuator-q', semanticIdentityId: 'actuator-a'}], order: ['actuator-q']},
       mapping: {kind: 'IDENTITY'},
     }],
