@@ -38,17 +38,19 @@ function attachmentFixture() {
   });
 }
 
-function identityInput({withController = false} = {}) {
+function identityInput({withController = false, armThroughCarrier = false} = {}) {
   const entities = [
     {id: 'module-root', kind: 'assembly-module'},
     {id: 'base-link', kind: 'rigid-link', frame: Q('module-root')},
-    {id: 'arm-link', kind: 'rigid-link', frame: Q('module-root', [1, 0, 0])},
+    ...(armThroughCarrier ? [{id: 'carrier-part', kind: 'physical-part', frame: Q('module-root', [1, 0, 0])}] : []),
+    {id: 'arm-link', kind: 'rigid-link', frame: armThroughCarrier ? Q('carrier-part') : Q('module-root', [1, 0, 0])},
     {id: 'tip-link', kind: 'rigid-link', frame: Q('module-root', [2, 0, 0])},
-    {id: 'joint-shoulder', kind: 'virtual-joint', frame: Q('base-link')},
-    {id: 'joint-tip', kind: 'virtual-joint', frame: Q('arm-link')},
+    {id: 'joint-shoulder', kind: 'virtual-joint', frame: Q('base-link', [1, 0, 0])},
+    {id: 'joint-tip', kind: 'virtual-joint', frame: Q('arm-link', [1, 0, 0])},
   ];
   const relations = [
     {id: 'contains-base', kind: 'CONTAINS', sourceId: 'module-root', targetIds: ['base-link']},
+    ...(armThroughCarrier ? [{id: 'contains-carrier', kind: 'CONTAINS', sourceId: 'module-root', targetIds: ['carrier-part']}] : []),
     {id: 'contains-arm', kind: 'CONTAINS', sourceId: 'module-root', targetIds: ['arm-link']},
     {id: 'contains-tip', kind: 'CONTAINS', sourceId: 'module-root', targetIds: ['tip-link']},
     {id: 'contains-shoulder', kind: 'CONTAINS', sourceId: 'module-root', targetIds: ['joint-shoulder']},
@@ -67,8 +69,8 @@ const identityFixture = (options = {}) => createPhysicalIdentityGraph(identityIn
 
 function jointContracts(attachmentSemantics) {
   return [
-    createArticulatedJoint({attachmentSemantics, id: 'joint-shoulder', relationId: 'arm-hinge', ownerJointFrame: I(), subjectJointFrame: I(), minimumAngle: -1, maximumAngle: 1, evidenceRefs: ['model/shoulder.json']}),
-    createArticulatedJoint({attachmentSemantics, id: 'joint-tip', relationId: 'tip-hinge', ownerJointFrame: I(), subjectJointFrame: I(), minimumAngle: -.5, maximumAngle: .5, evidenceRefs: ['model/tip.json']}),
+    createArticulatedJoint({attachmentSemantics, id: 'joint-shoulder', relationId: 'arm-hinge', ownerJointFrame: I([1, 0, 0]), subjectJointFrame: I(), minimumAngle: -1, maximumAngle: 1, evidenceRefs: ['model/shoulder.json']}),
+    createArticulatedJoint({attachmentSemantics, id: 'joint-tip', relationId: 'tip-hinge', ownerJointFrame: I([1, 0, 0]), subjectJointFrame: I(), minimumAngle: -.5, maximumAngle: .5, evidenceRefs: ['model/tip.json']}),
   ];
 }
 
@@ -81,8 +83,8 @@ function graphInput({identityGraph = identityFixture(), attachmentSemantics = at
       {linkId: 'tip-link', attachmentEntityId: 'tip-body', attachmentFrameInLink: T()},
     ],
     joints: [
-      {virtualJointId: 'joint-shoulder', parentLinkId: 'base-link', childLinkId: 'arm-link', jointContract: {schema: contracts[0].schema, id: contracts[0].id, jointDigest: contracts[0].jointDigest}},
-      {virtualJointId: 'joint-tip', parentLinkId: 'arm-link', childLinkId: 'tip-link', jointContract: {schema: contracts[1].schema, id: contracts[1].id, jointDigest: contracts[1].jointDigest}},
+      {virtualJointId: 'joint-shoulder', parentLinkId: 'base-link', childLinkId: 'arm-link', referenceAngle: 0, jointContract: {schema: contracts[0].schema, id: contracts[0].id, jointDigest: contracts[0].jointDigest}},
+      {virtualJointId: 'joint-tip', parentLinkId: 'arm-link', childLinkId: 'tip-link', referenceAngle: 0, jointContract: {schema: contracts[1].schema, id: contracts[1].id, jointDigest: contracts[1].jointDigest}},
     ],
   };
 }
@@ -103,9 +105,13 @@ test('articulation graph composes existing typed joints into a deterministic roo
   assert.equal(graph.rootLinkId, 'base-link');
   assert.equal(graph.joints.length, 2);
   assert.equal('identityGraph' in graph, false);
-  assert.deepEqual(graph.joints[0].parentJointFrame, T());
-  assert.deepEqual(graph.joints[1].parentJointFrame, T());
+  assert.deepEqual(graph.joints[0].parentJointFrame, T([1, 0, 0]));
+  assert.deepEqual(graph.joints[0].referenceChildFrameInParent, T([1, 0, 0]));
+  assert.deepEqual(graph.joints[1].parentJointFrame, T([1, 0, 0]));
+  assert.equal(graph.joints[0].referenceAngle, 0);
   assert.equal(graph.policy.existingTypedJointContractsRemainAuthoritative, true);
+  assert.equal(graph.policy.referenceConfigurationMustMatchIdentityPose, true);
+  assert.equal(graph.policy.resolvedRelativePoseBound, true);
   assert.equal(graph.policy.attachmentInterfacesRemainDistinctFromJoints, true);
   const reordered = graphInput(); reordered.linkBindings.reverse(); reordered.joints.reverse(); reordered.jointContracts.reverse();
   const graph2 = createArticulationGraph(reordered);
@@ -121,6 +127,16 @@ test('articulation graph binds exact P01 joint identities and CONNECTS pairs', (
   assert.throws(() => createArticulationGraph(wrongId), /must equal virtualJointId/);
   const stale = structuredClone(input); stale.joints[0].jointContract.jointDigest = D('f');
   assert.throws(() => createArticulationGraph(stale), /typed joint digest is stale/);
+});
+
+test('articulation graph requires an explicit in-limit reference configuration that reproduces the P01 pose', () => {
+  const input = graphInput();
+  const missing = structuredClone(input); delete missing.joints[0].referenceAngle;
+  assert.throws(() => createArticulationGraph(missing), /referenceAngle must be a finite number/);
+  const outside = structuredClone(input); outside.joints[0].referenceAngle = 2;
+  assert.throws(() => createArticulationGraph(outside), /referenceAngle must be within typed joint limits/);
+  const mismatched = structuredClone(input); mismatched.joints[0].referenceAngle = .25;
+  assert.throws(() => createArticulationGraph(mismatched), /reference configuration does not match the resolved P01 parent-to-child pose/);
 });
 
 test('articulation graph rejects attachment-owner mismatch and canonical joint-frame drift', () => {
@@ -155,9 +171,24 @@ test('articulation identity binding and contract digest ignore unrelated P01 edi
 
   const changedIdentityInput = identityInput(); changedIdentityInput.entities.find((entity) => entity.id === 'joint-tip').frame.rotation_quat_xyzw = [0, 0, 1, 0];
   const changedIdentity = createPhysicalIdentityGraph(changedIdentityInput);
-  const projection = physicalArticulationIdentityProjection(changedIdentity, ['base-link', 'arm-link', 'tip-link'], ['joint-shoulder', 'joint-tip']);
+  const projection = physicalArticulationIdentityProjection(changedIdentity, ['base-link', 'arm-link', 'tip-link'], ['joint-shoulder', 'joint-tip'], graph.joints);
   assert.notEqual(graph.identityBinding.projectionDigest, digestJson(projection));
   assert.equal(validateArticulationGraphBindings(graph, changedIdentity, {attachmentSemantics: base.attachmentSemantics, jointContracts: base.jointContracts}).valid, false);
+});
+
+test('articulation identity binding catches transitive frame-ancestor drift through resolved relative poses', () => {
+  const identityGraph = identityFixture({armThroughCarrier: true});
+  const input = graphInput({identityGraph});
+  const graph = createArticulationGraph(input);
+
+  const driftedInput = identityInput({armThroughCarrier: true});
+  driftedInput.entities.find((entity) => entity.id === 'carrier-part').frame.translation_m = [1.125, 0, 0];
+  const driftedIdentity = createPhysicalIdentityGraph(driftedInput);
+  const projection = physicalArticulationIdentityProjection(driftedIdentity, ['base-link', 'arm-link', 'tip-link'], ['joint-shoulder', 'joint-tip'], graph.joints);
+  assert.notEqual(graph.identityBinding.projectionDigest, digestJson(projection));
+  const validation = validateArticulationGraphBindings(graph, driftedIdentity, {attachmentSemantics: input.attachmentSemantics, jointContracts: input.jointContracts});
+  assert.equal(validation.valid, false);
+  assert.equal(validation.errors.some((error) => /reference configuration|articulation-relevant identity projection/.test(error)), true);
 });
 
 test('articulation graph requires existing semantic authority for link mappings and topology', () => {
@@ -169,7 +200,7 @@ test('articulation graph requires existing semantic authority for link mappings 
 
 test('articulation graph remains tamper detectable without mutating legacy joint contracts', () => {
   const input = graphInput(), legacyDigest = input.jointContracts[0].jointDigest, graph = createArticulationGraph(input), tampered = structuredClone(graph);
-  tampered.joints[0].childJointFrame.translation_m[0] = .25;
+  tampered.joints[0].referenceChildFrameInParent.translation_m[0] = .25;
   assert.equal(validateArticulationGraph(tampered, {attachmentSemantics: input.attachmentSemantics, jointContracts: input.jointContracts}).valid, false);
   assert.equal(input.jointContracts[0].jointDigest, legacyDigest);
   assert.equal(input.jointContracts[0].schema, 'refas.articulated-joint/v1');
