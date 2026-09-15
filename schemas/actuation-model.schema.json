@@ -115,7 +115,7 @@
     "actuator": {
       "type": "object",
       "required": [
-        "actuatorId", "drivesRelationId", "drivenTargetId", "kind", "coordinateClass",
+        "actuatorId", "drivesRelationId", "drivenTargetId", "drivenTargetKind", "kind", "coordinateClass",
         "definitionAuthoritySubjectId", "supportedControlModes", "positionRange", "velocityLimit",
         "effortLimit", "stiffness", "damping", "armature", "responseLatency"
       ],
@@ -123,6 +123,7 @@
         "actuatorId": {"$ref": "common.schema.json#/$defs/semanticId"},
         "drivesRelationId": {"$ref": "common.schema.json#/$defs/semanticId"},
         "drivenTargetId": {"$ref": "common.schema.json#/$defs/semanticId"},
+        "drivenTargetKind": {"enum": ["transmission", "mechanism", "virtual-joint"]},
         "kind": {"enum": ["ROTARY_ELECTRIC", "LINEAR_ELECTRIC", "HYDRAULIC", "PNEUMATIC", "ABSTRACT"]},
         "coordinateClass": {"enum": ["ROTARY", "LINEAR"]},
         "definitionAuthoritySubjectId": {"$ref": "common.schema.json#/$defs/semanticId"},
