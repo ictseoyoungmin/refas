@@ -143,14 +143,8 @@ test('physical identity graph preserves separate identities and canonicalizes or
   assert.deepEqual(validatePhysicalIdentityGraphBindings(graph, attachmentSemantics), {valid: true, errors: []});
   assert.equal(graph.policy.attachmentInterfacesAreNotJoints, true);
   assert.equal(graph.policy.backendIndicesNeverSemanticIdentity, true);
-  assert.deepEqual(
-    physicalIdentityById(graph, 'part-shell').frame.rotation_quat_xyzw,
-    [0, 0, 0, 1],
-  );
-  assert.deepEqual(
-    physicalIdentityById(graph, 'interface-b').frame.rotation_quat_xyzw,
-    [1, 0, 0, 0],
-  );
+  assert.deepEqual(physicalIdentityById(graph, 'part-shell').frame.rotation_quat_xyzw, [0, 0, 0, 1]);
+  assert.deepEqual(physicalIdentityById(graph, 'interface-b').frame.rotation_quat_xyzw, [1, 0, 0, 0]);
   assert.deepEqual(
     graph.relations.find((relation) => relation.id === 'interfaces-bound'),
     {
@@ -229,7 +223,7 @@ test('physical identity graph rejects invalid canonical frames and cycles', () =
   assert.throws(() => createPhysicalIdentityGraph(containmentCycle), /containment graph contains a cycle/);
 });
 
-test('interface binding reuses exact attachment semantics instead of declaring a second attachment mode', () => {
+test('interface binding reuses exact attachment semantics and matches exposing modules', () => {
   const attachmentSemantics = attachmentFixture();
   const input = graphInput({attachmentSemantics});
 
@@ -245,10 +239,85 @@ test('interface binding reuses exact attachment semantics instead of declaring a
   freeRelation.relations.find((relation) => relation.kind === 'BINDS_TO').attachmentRelationId = 'attachment-root';
   assert.throws(() => createPhysicalIdentityGraph(freeRelation), /cannot reference FREE/);
 
+  const mismatchedAttachment = createAttachmentSemantics({
+    scopeId: 'whole',
+    sourceSha256: SOURCE_DIGEST,
+    entities: [
+      {id: 'module-a', scopeId: 'whole', evidenceRefs: ['source/reference.png']},
+      {id: 'module-c', scopeId: 'whole', evidenceRefs: ['source/reference.png']},
+    ],
+    relations: [
+      {
+        id: 'attachment-root', mode: 'FREE', subjectId: 'module-a', ownerIds: [], basis: 'construction', evidenceRefs: ['source/reference.png'],
+      },
+      {
+        id: 'attachment-module-b', mode: 'RIGID_FOLLOW', subjectId: 'module-c', ownerIds: ['module-a'], basis: 'construction', evidenceRefs: ['source/reference.png'],
+      },
+    ],
+    evidenceRefs: ['source/reference.png'],
+  });
+  assert.throws(
+    () => createPhysicalIdentityGraph(graphInput({attachmentSemantics: mismatchedAttachment})),
+    /does not match subject\/owner modules/,
+  );
+
   const graph = createPhysicalIdentityGraph(input);
   const otherAttachment = structuredClone(attachmentSemantics);
   otherAttachment.semanticsDigest = 'f'.repeat(64);
   assert.equal(validatePhysicalIdentityGraphBindings(graph, otherAttachment).valid, false);
+});
+
+test('one multi-owner attachment relation may back multiple explicit interface bindings', () => {
+  const multiAnchor = createAttachmentSemantics({
+    scopeId: 'whole',
+    sourceSha256: SOURCE_DIGEST,
+    entities: [
+      {id: 'module-a', scopeId: 'whole', evidenceRefs: ['source/reference.png']},
+      {id: 'module-b', scopeId: 'whole', evidenceRefs: ['source/reference.png']},
+      {id: 'module-c', scopeId: 'whole', evidenceRefs: ['source/reference.png']},
+    ],
+    relations: [
+      {id: 'root-a', mode: 'FREE', subjectId: 'module-a', ownerIds: [], basis: 'construction', evidenceRefs: ['source/reference.png']},
+      {id: 'root-c', mode: 'FREE', subjectId: 'module-c', ownerIds: [], basis: 'construction', evidenceRefs: ['source/reference.png']},
+      {
+        id: 'multi-module-b',
+        mode: 'MULTI_ANCHOR',
+        subjectId: 'module-b',
+        ownerIds: ['module-a', 'module-c'],
+        basis: 'construction',
+        evidenceRefs: ['source/reference.png'],
+      },
+    ],
+    evidenceRefs: ['source/reference.png'],
+  });
+
+  const input = {
+    scopeId: 'whole',
+    sourceSha256: SOURCE_DIGEST,
+    attachmentSemantics: multiAnchor,
+    entities: [
+      {id: 'module-a', kind: 'assembly-module'},
+      {id: 'module-b', kind: 'assembly-module'},
+      {id: 'module-c', kind: 'assembly-module'},
+      {id: 'interface-a', kind: 'attachment-interface', frame: {parentId: 'module-a', translation_m: [0, 0, 0], rotation_quat_xyzw: [0, 0, 0, 1]}},
+      {id: 'interface-b-left', kind: 'attachment-interface', frame: {parentId: 'module-b', translation_m: [-0.1, 0, 0], rotation_quat_xyzw: [0, 0, 0, 1]}},
+      {id: 'interface-b-right', kind: 'attachment-interface', frame: {parentId: 'module-b', translation_m: [0.1, 0, 0], rotation_quat_xyzw: [0, 0, 0, 1]}},
+      {id: 'interface-c', kind: 'attachment-interface', frame: {parentId: 'module-c', translation_m: [0, 0, 0], rotation_quat_xyzw: [0, 0, 0, 1]}},
+    ],
+    relations: [
+      {id: 'expose-a', kind: 'EXPOSES', sourceId: 'module-a', targetIds: ['interface-a']},
+      {id: 'expose-b-left', kind: 'EXPOSES', sourceId: 'module-b', targetIds: ['interface-b-left']},
+      {id: 'expose-b-right', kind: 'EXPOSES', sourceId: 'module-b', targetIds: ['interface-b-right']},
+      {id: 'expose-c', kind: 'EXPOSES', sourceId: 'module-c', targetIds: ['interface-c']},
+      {id: 'bind-left', kind: 'BINDS_TO', sourceId: 'interface-a', targetIds: ['interface-b-left'], attachmentRelationId: 'multi-module-b'},
+      {id: 'bind-right', kind: 'BINDS_TO', sourceId: 'interface-b-right', targetIds: ['interface-c'], attachmentRelationId: 'multi-module-b'},
+    ],
+  };
+
+  const graph = createPhysicalIdentityGraph(input);
+  assert.deepEqual(validatePhysicalIdentityGraph(graph), {valid: true, errors: []});
+  assert.deepEqual(validatePhysicalIdentityGraphBindings(graph, multiAnchor), {valid: true, errors: []});
+  assert.equal(graph.relations.filter((relation) => relation.attachmentRelationId === 'multi-module-b').length, 2);
 });
 
 test('persisted physical identity graphs fail canonical validation after re-signed noncanonical mutation', () => {
