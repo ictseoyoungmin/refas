@@ -76,6 +76,33 @@ Module ownership also bounds transform ownership. An entity owned through `CONTA
 
 This graph declares identity and relation structure only. It does not define mass/inertia, collision proxies, joint limits/DOFs, mechanism equations, transmission ratios/Jacobians, actuator limits, controller gains, or runtime signs/zeros. Those remain downstream physical contracts.
 
+## Rigid-body dynamics
+
+When an asset makes a dynamics or simulation claim, create `refas.rigid-body-dynamics/v1` with `createRigidBodyDynamics` against the exact `refas.physical-identity-graph/v1` candidate.
+
+Dynamics attach only to `rigid-link` identities. They do not attach directly to visible parts, joints, mechanisms, actuators, or backend body indices. Each link record binds:
+
+- `mass.value_kg` — strictly positive kilograms when resolved;
+- `centerOfMass.value_m` — link-local COM in meters when resolved;
+- `inertia.tensor_kg_m2` — a symmetric positive-definite 3×3 inertia tensor about COM, expressed in the same link-local axes;
+- `referenceFrameId` — exactly the bound `rigid-link` identity;
+- one semantic-authority subject for each property.
+
+The canonical inertia convention is deliberately unambiguous: the tensor is about the center of mass and expressed in the rigid-link frame. Backend-specific inertial frames or axis conventions must later normalize into this representation rather than changing canonical dynamics semantics.
+
+A property that cannot be justified remains explicitly `null`. Do not insert `1 kg`, identity inertia, zero COM, geometry-derived estimates, or other convenient defaults merely to satisfy a simulator. `mass`, COM, and inertia may resolve independently.
+
+Authority remains external to the dynamics value contract. `validateRigidBodyDynamicsAuthority` requires a `refas.semantic-authority-set/v1` bound to the exact `dynamicsDigest`:
+
+- resolved values require `observed`, `inferred`, or `engineered` authority;
+- unresolved `null` values require `unknown` authority;
+- `forbidden` cannot authorize a positive dynamics construction value;
+- authority-set scope, source SHA-256, target schema, target digest, and property subjects must match exactly.
+
+The dynamics runtime rejects stale physical-identity graphs, non-rigid-link subjects, duplicate link records, cross-link reference frames, non-finite values, non-positive mass, asymmetric or non-positive-definite inertia, rigid-body diagonal triangle-inequality violations, unsupported fields, and noncanonical serialization.
+
+P02 does not define collision geometry, joint DOFs/limits, mechanism topology, transmission equations, actuator limits, controller gains, or runtime calibration. Those remain separate downstream contracts.
+
 ## Parent-child orientation chain
 
 Do not repair a terminal part by rotating it independently when the source-facing evidence implies upstream rotation. A hand, foot, tool face, wheel plane, wing tip, or other terminal surface can have the correct endpoint and primary axis while still carrying the wrong roll/twist.
