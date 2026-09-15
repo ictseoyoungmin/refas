@@ -3,12 +3,11 @@
   "$id": "https://refas.dev/schemas/articulation-graph.schema.json",
   "title": "RefAs articulation graph",
   "type": "object",
-  "required": ["schema", "scopeId", "sourceSha256", "identityGraph", "identityBinding", "attachmentSemanticsRef", "topology", "rootLinkId", "linkBindings", "joints", "policy", "articulationDigest"],
+  "required": ["schema", "scopeId", "sourceSha256", "identityBinding", "attachmentSemanticsRef", "topology", "rootLinkId", "linkBindings", "joints", "policy", "articulationDigest"],
   "properties": {
     "schema": {"const": "refas.articulation-graph/v1"},
     "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
     "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
-    "identityGraph": {"type": "object"},
     "identityBinding": {
       "type": "object",
       "required": ["schema", "sourceSchema", "projectionDigest"],
@@ -74,7 +73,7 @@
     },
     "policy": {
       "type": "object",
-      "required": ["existingTypedJointContractsRemainAuthoritative", "parentChildDirectionOwnedByArticulationGraph", "attachmentInterfacesRemainDistinctFromJoints", "canonicalJointFramesUseMetersAndQuaternion", "treeTopologyOnly", "closedChainsRequireLaterMechanismSemantics", "backendOrderingIsNotSemanticIdentity", "graphDoesNotAuthorizeClosure"],
+      "required": ["existingTypedJointContractsRemainAuthoritative", "parentChildDirectionOwnedByArticulationGraph", "attachmentInterfacesRemainDistinctFromJoints", "canonicalJointFramesUseMetersAndQuaternion", "treeTopologyOnly", "closedChainsRequireLaterMechanismSemantics", "backendOrderingIsNotSemanticIdentity", "scopedIdentityBinding", "unrelatedIdentityGraphEditsDoNotInvalidateArticulation", "graphDoesNotAuthorizeClosure"],
       "properties": {
         "existingTypedJointContractsRemainAuthoritative": {"const": true},
         "parentChildDirectionOwnedByArticulationGraph": {"const": true},
@@ -83,6 +82,8 @@
         "treeTopologyOnly": {"const": true},
         "closedChainsRequireLaterMechanismSemantics": {"const": true},
         "backendOrderingIsNotSemanticIdentity": {"const": true},
+        "scopedIdentityBinding": {"const": true},
+        "unrelatedIdentityGraphEditsDoNotInvalidateArticulation": {"const": true},
         "graphDoesNotAuthorizeClosure": {"const": true}
       },
       "additionalProperties": false
