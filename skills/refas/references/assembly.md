@@ -101,7 +101,7 @@ Authority remains external to the dynamics value contract. `validateRigidBodyDyn
 - `forbidden` cannot authorize a positive dynamics construction value;
 - authority-set scope, source SHA-256, target schema, target digest, and property subjects must match exactly.
 
-The dynamics runtime rejects a stale dynamics-relevant identity projection, non-rigid-link subjects, duplicate link records, cross-link reference frames, non-finite values, non-positive mass, asymmetric or non-positive-definite inertia, rigid-body diagonal triangle-inequality violations, unsupported fields, and noncanonical serialization.
+The dynamics runtime rejects a stale dynamics-relevant identity projection, non-rigid-link subjects, duplicate link records, cross-link reference frames, non-finite values, non-positive mass, asymmetric or non-positive-definite inertia, rigid-body principal-moment triangle-inequality violations, unsupported fields, and noncanonical serialization.
 
 P02 does not define collision geometry, joint DOFs/limits, mechanism topology, transmission equations, actuator limits, controller gains, or runtime calibration. Those remain separate downstream contracts.
 
@@ -125,15 +125,17 @@ Render geometry is never collision geometry by implication. A mesh collider must
 - `COLLISION_ONLY` — the collision mesh is independent and `visualGeometryRef` must be `null`;
 - `DECLARED_VISUAL_REUSE` — the contract explicitly names a visual geometry identity and the visual/collision canonical geometry digests must match exactly.
 
-Use `validateCollisionVisualReuseBindings` when live visual-geometry facts are available. Matching display names, file paths, node order, or backend mesh indices never count as reuse proof.
+A `meshId` identifies collision geometry bytes, not a reuse relationship. Reusing the same `meshId` is valid only when its `geometryDigest` is identical; different collider use-sites may independently choose `COLLISION_ONLY` or `DECLARED_VISUAL_REUSE` for those same bytes.
 
-Collision filtering is semantic rather than backend-indexed. Declare stable collision group IDs on the contract. Each collider declares one or more `groupIds` plus explicit `maskGroupIds`; exporters may assign backend bit fields later but those bits are not canonical identity. Each link also declares `selfCollisionPolicy: ENABLED | DISABLED`. P03 does not infer articulation adjacency or pairwise joint collision exclusions; P04 and later realization logic may add those semantics without changing P03 collider identity.
+Declared visual reuse is not verified by a caller-supplied list of matching IDs/digests. Build a canonical collision visual-geometry manifest with `createCollisionVisualGeometryManifest`, binding `scopeId`, source SHA-256, the exact current visual artifact digest, canonical visual geometry IDs/digests, and the manifest digest. Then call `validateCollisionVisualReuseBindings` with an `expectedVisualArtifactDigest` obtained independently from current artifact authority. Never copy the manifest's own `visualArtifactDigest` into that argument without verifying the current artifact first. Matching display names, file paths, node order, or backend mesh indices never count as reuse proof.
+
+Collision filtering is semantic rather than backend-indexed. Declare stable collision group IDs on the contract. Each collider declares one or more `groupIds` plus explicit `maskGroupIds`; exporters may assign backend bit fields later but those bits are not canonical identity. Canonical pair filtering is symmetric: collider A may collide with collider B only when `A.maskGroupIds` intersects `B.groupIds` **and** `B.maskGroupIds` intersects `A.groupIds`. Use `collisionPairAllowed` as the canonical predicate rather than reinterpreting masks per backend. A collider never collides with itself. For two distinct colliders on the same rigid link, `selfCollisionPolicy: DISABLED` rejects the pair before mask evaluation; `ENABLED` permits the normal bilateral mask test. P03 does not infer articulation adjacency or joint-specific pair exclusions across different links; P04 and later realization logic may add those semantics without changing P03 collider identity.
 
 Collision uses a scoped P01 identity projection containing only the bound rigid-link identities and frames. An unrelated controller, runtime endpoint, socket, or other identity edit does not stale collision state. A bound link identity/frame change does. Collision proxy geometry and filtering changes are already covered by `collisionDigest` itself.
 
 Authority remains external. Each collider and each link filtering policy has a deterministic semantic-authority subject. `validateCollisionModelAuthority` requires the exact `refas.semantic-authority-set/v1` for the current `collisionDigest`; positive collision construction requires `observed`, `inferred`, or `engineered` authority. Do not introduce a collision-specific provenance enum.
 
-The collision runtime fails closed on non-rigid-link subjects, stale scoped identity binding, duplicate collider IDs, undeclared filter groups, non-finite or non-positive primitive dimensions, degenerate hulls, unsupported fields, noncanonical frames, ambiguous mesh-ID reuse, implicit visual reuse, or stale declared visual geometry digests.
+The collision runtime fails closed on non-rigid-link subjects, stale scoped identity binding, duplicate collider IDs, undeclared filter groups, non-finite or non-positive primitive dimensions, degenerate hulls, unsupported fields, noncanonical frames, collision mesh-ID/digest disagreement, implicit visual reuse, unbound visual-artifact manifests, or stale declared visual geometry digests.
 
 P03 does not define friction, restitution, contact materials, articulation topology, joint-specific collision-disable pairs, mechanism/transmission behavior, actuator capability, controller tuning, backend bit assignments, or runtime calibration.
 

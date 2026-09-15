@@ -5,6 +5,7 @@ import {validateSemanticAuthoritySet} from './semantic-authority.mjs';
 export const COLLISION_MODEL_SCHEMA = 'refas.collision-model/v1';
 export const PHYSICAL_COLLISION_IDENTITY_BINDING_SCHEMA = 'refas.physical-collision-identity-binding/v1';
 export const PHYSICAL_COLLISION_IDENTITY_PROJECTION_SCHEMA = 'refas.physical-collision-identity-projection/v1';
+export const COLLISION_VISUAL_GEOMETRY_MANIFEST_SCHEMA = 'refas.collision-visual-geometry-manifest/v1';
 
 export const COLLISION_GEOMETRY_KINDS = Object.freeze([
   'BOX',
@@ -43,6 +44,14 @@ const CYLINDER_KEYS = new Set(['kind', 'radius_m', 'height_m']);
 const HULL_KEYS = new Set(['kind', 'vertices_m']);
 const MESH_KEYS = new Set(['kind', 'meshId', 'geometryDigest', 'reuseMode', 'visualGeometryRef']);
 const VISUAL_REF_KEYS = new Set(['geometryId', 'geometryDigest']);
+const VISUAL_MANIFEST_KEYS = new Set([
+  'schema',
+  'scopeId',
+  'sourceSha256',
+  'visualArtifactDigest',
+  'geometries',
+  'manifestDigest',
+]);
 
 function assertRecord(value, label) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error(`${label} must be an object`);
@@ -166,6 +175,16 @@ function normalizeVisualGeometryRef(raw, label) {
     geometryId: assertId(raw.geometryId, `${label}.geometryId`),
     geometryDigest: assertDigest(raw.geometryDigest, `${label}.geometryDigest`),
   };
+}
+
+function normalizeVisualGeometryRefs(value, label) {
+  if (!Array.isArray(value)) throw new Error(`${label} must be an array`);
+  const geometries = value.map((item, index) => normalizeVisualGeometryRef(item, `${label}[${index}]`))
+    .sort((left, right) => left.geometryId.localeCompare(right.geometryId));
+  if (new Set(geometries.map((item) => item.geometryId)).size !== geometries.length) {
+    throw new Error(`${label} contains duplicate visual geometry IDs`);
+  }
+  return geometries;
 }
 
 function normalizeGeometry(raw, label) {
@@ -339,12 +358,12 @@ function validateMeshIdentityConsistency(links) {
   for (const link of links) {
     for (const collider of link.colliders) {
       if (collider.geometry.kind !== 'MESH') continue;
-      const signature = digestJson(collider.geometry);
+      const geometryDigest = collider.geometry.geometryDigest;
       const previous = byMeshId.get(collider.geometry.meshId);
-      if (previous && previous !== signature) {
-        throw new Error(`meshId ${collider.geometry.meshId} is reused with different collision geometry semantics`);
+      if (previous && previous !== geometryDigest) {
+        throw new Error(`meshId ${collider.geometry.meshId} is reused with different collision geometry digests`);
       }
-      byMeshId.set(collider.geometry.meshId, signature);
+      byMeshId.set(collider.geometry.meshId, geometryDigest);
     }
   }
 }
@@ -490,23 +509,73 @@ export function validateCollisionModelAuthority(contract, authoritySet) {
   return {valid: errors.length === 0, errors, missingSubjectIds, unknownSubjectIds};
 }
 
-export function validateCollisionVisualReuseBindings(contract, visualGeometries = []) {
+function buildCollisionVisualGeometryManifest(raw) {
+  assertKnownKeys(raw, VISUAL_MANIFEST_KEYS, 'collision visual geometry manifest');
+  if (raw.schema !== COLLISION_VISUAL_GEOMETRY_MANIFEST_SCHEMA) {
+    throw new Error(`collision visual geometry manifest.schema must be ${COLLISION_VISUAL_GEOMETRY_MANIFEST_SCHEMA}`);
+  }
+  const payload = {
+    schema: COLLISION_VISUAL_GEOMETRY_MANIFEST_SCHEMA,
+    scopeId: assertId(raw.scopeId, 'collision visual geometry manifest.scopeId'),
+    sourceSha256: assertDigest(raw.sourceSha256, 'collision visual geometry manifest.sourceSha256'),
+    visualArtifactDigest: assertDigest(raw.visualArtifactDigest, 'collision visual geometry manifest.visualArtifactDigest'),
+    geometries: normalizeVisualGeometryRefs(raw.geometries, 'collision visual geometry manifest.geometries'),
+  };
+  return {...payload, manifestDigest: digestJson(payload)};
+}
+
+export function createCollisionVisualGeometryManifest(input = {}) {
+  const normalizedInput = {
+    ...input,
+    schema: input.schema ?? COLLISION_VISUAL_GEOMETRY_MANIFEST_SCHEMA,
+    manifestDigest: input.manifestDigest ?? null,
+  };
+  const built = buildCollisionVisualGeometryManifest(normalizedInput);
+  if (input.manifestDigest != null && assertDigest(input.manifestDigest, 'manifestDigest') !== built.manifestDigest) {
+    throw new Error('collision visual geometry manifest digest mismatch');
+  }
+  return deepFreeze(built);
+}
+
+export function validateCollisionVisualGeometryManifest(value) {
+  const errors = [];
+  try {
+    const rebuilt = buildCollisionVisualGeometryManifest(value);
+    if (rebuilt.manifestDigest !== value?.manifestDigest) errors.push('collision visual geometry manifest digest mismatch');
+    if (digestJson(rebuilt) !== digestJson(value)) errors.push('collision visual geometry manifest is not canonical');
+  } catch (error) {
+    errors.push(error.message);
+  }
+  return {valid: errors.length === 0, errors};
+}
+
+export function validateCollisionVisualReuseBindings(contract, visualManifest, {expectedVisualArtifactDigest = null} = {}) {
   const errors = [];
   const validation = validateCollisionModel(contract);
   if (!validation.valid) return {valid: false, errors: [`collision model invalid: ${validation.errors.join('; ')}`]};
-  if (!Array.isArray(visualGeometries)) return {valid: false, errors: ['visualGeometries must be an array']};
 
-  const visualById = new Map();
-  try {
-    for (let index = 0; index < visualGeometries.length; index += 1) {
-      const normalized = normalizeVisualGeometryRef(visualGeometries[index], `visualGeometries[${index}]`);
-      if (visualById.has(normalized.geometryId)) throw new Error(`duplicate visual geometry ID: ${normalized.geometryId}`);
-      visualById.set(normalized.geometryId, normalized.geometryDigest);
-    }
-  } catch (error) {
-    return {valid: false, errors: [error.message]};
+  const manifestValidation = validateCollisionVisualGeometryManifest(visualManifest);
+  if (!manifestValidation.valid) {
+    return {valid: false, errors: [`visual geometry manifest invalid: ${manifestValidation.errors.join('; ')}`]};
   }
 
+  if (visualManifest.scopeId !== contract.scopeId) errors.push('visual geometry manifest and collision model scopeId differ');
+  if (visualManifest.sourceSha256 !== contract.sourceSha256) errors.push('visual geometry manifest and collision model sourceSha256 differ');
+
+  if (expectedVisualArtifactDigest == null) {
+    errors.push('expectedVisualArtifactDigest is required to verify declared visual reuse against the current visual artifact');
+  } else {
+    try {
+      const expected = assertDigest(expectedVisualArtifactDigest, 'expectedVisualArtifactDigest');
+      if (visualManifest.visualArtifactDigest !== expected) {
+        errors.push('visual geometry manifest does not bind the expected current visual artifact digest');
+      }
+    } catch (error) {
+      errors.push(error.message);
+    }
+  }
+
+  const visualById = new Map(visualManifest.geometries.map((item) => [item.geometryId, item.geometryDigest]));
   for (const link of contract.links) {
     for (const collider of link.colliders) {
       const geometry = collider.geometry;
@@ -522,6 +591,36 @@ export function validateCollisionVisualReuseBindings(contract, visualGeometries 
     }
   }
   return {valid: errors.length === 0, errors};
+}
+
+function collisionRecordById(contract, colliderId) {
+  const id = assertId(colliderId, 'colliderId');
+  for (const link of contract.links) {
+    const collider = link.colliders.find((item) => item.id === id);
+    if (collider) return {link, collider};
+  }
+  throw new Error(`unknown collider ID: ${id}`);
+}
+
+function idSetsIntersect(left, right) {
+  const rightSet = new Set(right);
+  return left.some((id) => rightSet.has(id));
+}
+
+export function collisionPairAllowed(contract, firstColliderId, secondColliderId) {
+  const validation = validateCollisionModel(contract);
+  if (!validation.valid) throw new Error(`collision model is invalid: ${validation.errors.join('; ')}`);
+  const firstId = assertId(firstColliderId, 'firstColliderId');
+  const secondId = assertId(secondColliderId, 'secondColliderId');
+  if (firstId === secondId) return false;
+
+  const first = collisionRecordById(contract, firstId);
+  const second = collisionRecordById(contract, secondId);
+  if (first.link.linkId === second.link.linkId && first.link.selfCollisionPolicy === 'DISABLED') return false;
+
+  const firstAcceptsSecond = idSetsIntersect(first.collider.filter.maskGroupIds, second.collider.filter.groupIds);
+  const secondAcceptsFirst = idSetsIntersect(second.collider.filter.maskGroupIds, first.collider.filter.groupIds);
+  return firstAcceptsSecond && secondAcceptsFirst;
 }
 
 export function collisionForLink(contract, linkId) {
