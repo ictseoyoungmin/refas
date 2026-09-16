@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/physical-claim-evidence.schema.json",
+  "title": "RefAs physical claim evidence",
+  "type": "object",
+  "required": ["schema","evidenceId","claimId","scopeId","sourceSha256","bundleBinding","validationBinding","divergenceBinding","requirements","representationChecks","findings","status","policy","evidenceDigest"],
+  "properties": {
+    "schema": {"const":"refas.physical-claim-evidence/v1"},
+    "evidenceId": {"$ref":"common.schema.json#/$defs/semanticId"},
+    "claimId": {"enum":["articulated-ready","simulation-ready","control-ready","runtime-ready"]},
+    "scopeId": {"$ref":"common.schema.json#/$defs/semanticId"},
+    "sourceSha256": {"$ref":"common.schema.json#/$defs/digest"},
+    "bundleBinding": {"$ref":"#/$defs/bundleBinding"},
+    "validationBinding": {"$ref":"#/$defs/validationBinding"},
+    "divergenceBinding": {"anyOf":[{"type":"null"},{"$ref":"#/$defs/divergenceBinding"}]},
+    "requirements": {"type":"array","minItems":1,"items":{"$ref":"#/$defs/requirement"}},
+    "representationChecks": {"type":"array","items":{"$ref":"#/$defs/representationCheck"}},
+    "findings": {"type":"array","items":{"$ref":"#/$defs/finding"}},
+    "status": {"enum":["PASS","FAIL"]},
+    "policy": {"$ref":"#/$defs/policy"},
+    "evidenceDigest": {"$ref":"common.schema.json#/$defs/digest"}
+  },
+  "$defs": {
+    "bundleBinding": {"type":"object","required":["schema","bundleId","rootModuleId","projectionDigest"],"properties":{"schema":{"const":"refas.physical-claim-bundle-binding/v1"},"bundleId":{"$ref":"common.schema.json#/$defs/semanticId"},"rootModuleId":{"$ref":"common.schema.json#/$defs/semanticId"},"projectionDigest":{"$ref":"common.schema.json#/$defs/digest"}},"additionalProperties":false},
+    "validationBinding": {"type":"object","required":["schema","validationId","backend","projectionDigest"],"properties":{"schema":{"const":"refas.physical-claim-validation-binding/v1"},"validationId":{"$ref":"common.schema.json#/$defs/semanticId"},"backend":{"type":"string","minLength":1,"maxLength":256},"projectionDigest":{"$ref":"common.schema.json#/$defs/digest"}},"additionalProperties":false},
+    "divergenceBinding": {"type":"object","required":["schema","authorizationId","projectionDigest"],"properties":{"schema":{"const":"refas.physical-claim-divergence-binding/v1"},"authorizationId":{"$ref":"common.schema.json#/$defs/semanticId"},"projectionDigest":{"$ref":"common.schema.json#/$defs/digest"}},"additionalProperties":false},
+    "requirement": {"type":"object","required":["requirementId","kind","domain","identityKind","componentSchema","subjectIds","componentIds","missingSubjectIds","status"],"properties":{"requirementId":{"$ref":"common.schema.json#/$defs/semanticId"},"kind":{"enum":["IDENTITY_PRESENCE","COMPONENT_COVERAGE"]},"domain":{"type":"string","minLength":1,"maxLength":96},"identityKind":{"anyOf":[{"type":"null"},{"type":"string","minLength":1,"maxLength":96}]},"componentSchema":{"anyOf":[{"type":"null"},{"type":"string","minLength":1,"maxLength":160}]},"subjectIds":{"type":"array","uniqueItems":true,"items":{"$ref":"common.schema.json#/$defs/semanticId"}},"componentIds":{"type":"array","uniqueItems":true,"items":{"$ref":"common.schema.json#/$defs/semanticId"}},"missingSubjectIds":{"type":"array","uniqueItems":true,"items":{"$ref":"common.schema.json#/$defs/semanticId"}},"status":{"enum":["PASS","FAIL"]}},"additionalProperties":false},
+    "representationCheck": {"type":"object","required":["obligationId","semanticPath","subjectIds","sourceOutcome","effectiveOutcome","status"],"properties":{"obligationId":{"$ref":"common.schema.json#/$defs/semanticId"},"semanticPath":{"type":"string","minLength":1,"maxLength":160},"subjectIds":{"type":"array","minItems":1,"uniqueItems":true,"items":{"$ref":"common.schema.json#/$defs/semanticId"}},"sourceOutcome":{"enum":["EQUIVALENT","LOSSY","DRIFT","UNRESOLVED","INVALID"]},"effectiveOutcome":{"enum":["EQUIVALENT","LOSSY","DRIFT","DECLARED_DIVERGENCE","UNRESOLVED","INVALID"]},"status":{"enum":["PASS","BLOCKING"]}},"additionalProperties":false},
+    "finding": {"type":"object","required":["findingId","category","severity","blocking","summary","requirementId","obligationId","semanticPath","subjectIds","sourceOutcome","effectiveOutcome"],"properties":{"findingId":{"$ref":"common.schema.json#/$defs/semanticId"},"category":{"type":"string","minLength":1,"maxLength":128},"severity":{"type":"string","minLength":1,"maxLength":32},"blocking":{"type":"boolean"},"summary":{"type":"string","minLength":1},"requirementId":{"anyOf":[{"type":"null"},{"$ref":"common.schema.json#/$defs/semanticId"}]},"obligationId":{"anyOf":[{"type":"null"},{"$ref":"common.schema.json#/$defs/semanticId"}]},"semanticPath":{"anyOf":[{"type":"null"},{"type":"string","minLength":1,"maxLength":160}]},"subjectIds":{"type":"array","uniqueItems":true,"items":{"$ref":"common.schema.json#/$defs/semanticId"}},"sourceOutcome":{"anyOf":[{"type":"null"},{"enum":["EQUIVALENT","LOSSY","DRIFT","UNRESOLVED","INVALID"]}]},"effectiveOutcome":{"anyOf":[{"type":"null"},{"enum":["EQUIVALENT","LOSSY","DRIFT","DECLARED_DIVERGENCE","UNRESOLVED","INVALID"]}]}},"additionalProperties":false},
+    "policy": {"type":"object","required":["canonicalPhysicalStateRemainsAuthoritative","physicalClaimsAreScopedAndOptIn","higherLevelRequirementsDoNotBackPropagate","visualSourceFidelityRemainsIndependent","p14FindingsRemainImmutableEvidence","p15DeclaredDivergenceRequiresLiveBindingValidation","onlyEquivalentOrDeclaredDivergenceSupportsRequiredRepresentation","missingApplicableSemanticsFailClosed","genericCertificationRemainsFinalClaimEvaluator","physicalClaimEvidenceDoesNotMutateConstructionOrBackendState"],"properties":{"canonicalPhysicalStateRemainsAuthoritative":{"const":true},"physicalClaimsAreScopedAndOptIn":{"const":true},"higherLevelRequirementsDoNotBackPropagate":{"const":true},"visualSourceFidelityRemainsIndependent":{"const":true},"p14FindingsRemainImmutableEvidence":{"const":true},"p15DeclaredDivergenceRequiresLiveBindingValidation":{"const":true},"onlyEquivalentOrDeclaredDivergenceSupportsRequiredRepresentation":{"const":true},"missingApplicableSemanticsFailClosed":{"const":true},"genericCertificationRemainsFinalClaimEvaluator":{"const":true},"physicalClaimEvidenceDoesNotMutateConstructionOrBackendState":{"const":true}},"additionalProperties":false}
+  },
+  "additionalProperties": false
+}
