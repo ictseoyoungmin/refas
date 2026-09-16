@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/physical-asset-bundle.schema.json",
+  "title": "RefAs physical asset bundle",
+  "type": "object",
+  "required": [
+    "schema", "bundleId", "scopeId", "sourceSha256", "rootModuleId",
+    "identityBinding", "componentRefs", "moduleClosures", "rootClosureDigest", "policy", "bundleDigest"
+  ],
+  "properties": {
+    "schema": {"const": "refas.physical-asset-bundle/v1"},
+    "bundleId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "rootModuleId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "identityBinding": {"$ref": "#/$defs/identityBinding"},
+    "componentRefs": {"type": "array", "items": {"$ref": "#/$defs/componentRef"}},
+    "moduleClosures": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/moduleClosure"}},
+    "rootClosureDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "policy": {"$ref": "#/$defs/policy"},
+    "bundleDigest": {"$ref": "common.schema.json#/$defs/digest"}
+  },
+  "$defs": {
+    "identityBinding": {
+      "type": "object",
+      "required": ["schema", "sourceSchema", "projectionDigest"],
+      "properties": {
+        "schema": {"const": "refas.physical-asset-bundle-identity-binding/v1"},
+        "sourceSchema": {"const": "refas.physical-identity-graph/v1"},
+        "projectionDigest": {"$ref": "common.schema.json#/$defs/digest"}
+      },
+      "additionalProperties": false
+    },
+    "componentSchema": {
+      "enum": [
+        "refas.rigid-body-dynamics/v1",
+        "refas.collision-model/v1",
+        "refas.articulation-graph/v1",
+        "refas.mechanism-graph/v1",
+        "refas.transmission-model/v1",
+        "refas.actuation-model/v1",
+        "refas.control-profile/v1",
+        "refas.runtime-binding/v1"
+      ]
+    },
+    "componentRef": {
+      "type": "object",
+      "required": ["componentId", "ownerModuleId", "schema", "digest"],
+      "properties": {
+        "componentId": {"$ref": "common.schema.json#/$defs/semanticId"},
+        "ownerModuleId": {"$ref": "common.schema.json#/$defs/semanticId"},
+        "schema": {"$ref": "#/$defs/componentSchema"},
+        "digest": {"$ref": "common.schema.json#/$defs/digest"}
+      },
+      "additionalProperties": false
+    },
+    "localComponentRef": {
+      "type": "object",
+      "required": ["componentId", "schema", "digest"],
+      "properties": {
+        "componentId": {"$ref": "common.schema.json#/$defs/semanticId"},
+        "schema": {"$ref": "#/$defs/componentSchema"},
+        "digest": {"$ref": "common.schema.json#/$defs/digest"}
+      },
+      "additionalProperties": false
+    },
+    "placementFrame": {
+      "type": "object",
+      "required": ["parentId", "translation_m", "rotation_quat_xyzw"],
+      "properties": {
+        "parentId": {"$ref": "common.schema.json#/$defs/semanticId"},
+        "translation_m": {
+          "type": "array", "minItems": 3, "maxItems": 3,
+          "items": {"type": "number"}
+        },
+        "rotation_quat_xyzw": {
+          "type": "array", "minItems": 4, "maxItems": 4,
+          "items": {"type": "number"}
+        }
+      },
+      "additionalProperties": false
+    },
+    "childModule": {
+      "type": "object",
+      "required": ["relationId", "moduleId", "placementFrame", "closureDigest"],
+      "properties": {
+        "relationId": {"$ref": "common.schema.json#/$defs/semanticId"},
+        "moduleId": {"$ref": "common.schema.json#/$defs/semanticId"},
+        "placementFrame": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/placementFrame"}]},
+        "closureDigest": {"$ref": "common.schema.json#/$defs/digest"}
+      },
+      "additionalProperties": false
+    },
+    "moduleClosure": {
+      "type": "object",
+      "required": ["schema", "moduleId", "identityProjectionDigest", "componentRefs", "childModules", "closureDigest"],
+      "properties": {
+        "schema": {"const": "refas.physical-module-closure/v1"},
+        "moduleId": {"$ref": "common.schema.json#/$defs/semanticId"},
+        "identityProjectionDigest": {"$ref": "common.schema.json#/$defs/digest"},
+        "componentRefs": {"type": "array", "items": {"$ref": "#/$defs/localComponentRef"}},
+        "childModules": {"type": "array", "items": {"$ref": "#/$defs/childModule"}},
+        "closureDigest": {"$ref": "common.schema.json#/$defs/digest"}
+      },
+      "additionalProperties": false
+    },
+    "policy": {
+      "type": "object",
+      "required": [
+        "bundleIsManifestNotTruthOwner",
+        "componentPayloadsRemainExternal",
+        "scopedIdentityProjection",
+        "rootIncomingPlacementExcludedFromModuleClosure",
+        "childPlacementOwnedByParentClosure",
+        "childClosureReusedByExactDigest",
+        "backendOrderingIsNotSemanticIdentity",
+        "bundleDoesNotAuthorizePhysicalClaims"
+      ],
+      "properties": {
+        "bundleIsManifestNotTruthOwner": {"const": true},
+        "componentPayloadsRemainExternal": {"const": true},
+        "scopedIdentityProjection": {"const": true},
+        "rootIncomingPlacementExcludedFromModuleClosure": {"const": true},
+        "childPlacementOwnedByParentClosure": {"const": true},
+        "childClosureReusedByExactDigest": {"const": true},
+        "backendOrderingIsNotSemanticIdentity": {"const": true},
+        "bundleDoesNotAuthorizePhysicalClaims": {"const": true}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
