@@ -3,6 +3,8 @@ import {validatePhysicalIdentityGraph} from './physical-identity-graph.mjs';
 import {createActuationModel, validateActuationModel} from './actuation-model.mjs';
 import {transmissionArticulationProjection} from './transmission-model.mjs';
 import {ARTICULATED_JOINT_SCHEMA} from './articulation-clearance.mjs';
+import {normalizeRigidFrame} from './attachment-follow.mjs';
+import {validateAttachmentSemantics} from './attachment-semantics.mjs';
 import {validateSemanticAuthoritySet} from './semantic-authority.mjs';
 
 export const RUNTIME_BINDING_SCHEMA = 'refas.runtime-binding/v1';
@@ -35,6 +37,10 @@ const ZERO_OFFSET_KEYS = new Set(['value', 'unit']);
 const ENCODER_SCALE_KEYS = new Set(['value', 'unit']);
 const DELAY_KEYS = new Set(['value_s']);
 const TARGET_KINDS = new Set(['actuator', 'controller', 'virtual-joint', 'rigid-link', 'attachment-interface']);
+const ARTICULATED_JOINT_KEYS = new Set([
+  'schema', 'id', 'scopeId', 'sourceSha256', 'attachmentSemanticsDigest', 'relationId', 'subjectId', 'ownerId',
+  'jointType', 'axisConvention', 'zeroConfiguration', 'ownerJointFrame', 'subjectJointFrame', 'limits', 'evidenceRefs', 'policy', 'jointDigest',
+]);
 const RUNTIME_LOCATOR_MAX_LENGTH = 512;
 const RUNTIME_LOCATOR_CONTROL_RE = /[\u0000-\u001f\u007f]/u;
 
@@ -287,9 +293,7 @@ function actuatorSemanticProjection(binding, actuationModel, identityGraph, depe
 }
 
 function runtimeJointCoordinateSemantics(joint) {
-  if (joint?.jointContract?.schema !== ARTICULATED_JOINT_SCHEMA) {
-    throw new Error(`runtime virtual-joint target requires ${ARTICULATED_JOINT_SCHEMA}`);
-  }
+  if (joint?.jointContract?.schema !== ARTICULATED_JOINT_SCHEMA) throw new Error(`runtime virtual-joint target requires ${ARTICULATED_JOINT_SCHEMA}`);
   if (joint.jointContract.id !== joint.virtualJointId) throw new Error('runtime virtual-joint jointContract.id must equal virtualJointId');
   return {
     virtualJointId: joint.virtualJointId,
@@ -303,13 +307,55 @@ function runtimeJointCoordinateSemantics(joint) {
   };
 }
 
-function virtualJointSemanticProjection(binding, articulationGraph, identityGraph) {
+function currentTypedJointCoordinateSemantics(binding, joint, jointContracts, attachmentSemantics, identityGraph) {
+  if (!Array.isArray(jointContracts)) throw new Error(`runtime binding ${binding.bindingId} requires jointContracts for virtual-joint target`);
+  const contract = jointContracts.find((item) => item?.id === joint.virtualJointId);
+  if (!contract) throw new Error(`runtime binding ${binding.bindingId} requires current typed joint ${joint.virtualJointId}`);
+  const label = `runtime binding ${binding.bindingId} typed joint`;
+  assertKnownKeys(contract, ARTICULATED_JOINT_KEYS, label);
+  if (contract.schema !== ARTICULATED_JOINT_SCHEMA) throw new Error(`${label}.schema must be ${ARTICULATED_JOINT_SCHEMA}`);
+  const payload = structuredClone(contract);
+  const jointDigest = assertDigest(payload.jointDigest, `${label}.jointDigest`);
+  delete payload.jointDigest;
+  if (digestJson(payload) !== jointDigest) throw new Error(`${label} digest mismatch`);
+  if (contract.id !== joint.virtualJointId) throw new Error(`${label}.id must equal selected virtualJointId`);
+  if (contract.scopeId !== identityGraph.scopeId || contract.sourceSha256 !== identityGraph.sourceSha256) throw new Error(`${label} scope/source does not match identityGraph`);
+  if (contract.jointType !== 'REVOLUTE') throw new Error(`${label}.jointType must be REVOLUTE for ${ARTICULATED_JOINT_SCHEMA}`);
+  if (contract.axisConvention !== 'owner-joint-z') throw new Error(`${label}.axisConvention must be owner-joint-z`);
+  if (contract.zeroConfiguration !== 'owner-and-subject-joint-frames-coincident') throw new Error(`${label}.zeroConfiguration is unsupported`);
+
+  if (!attachmentSemantics) throw new Error(`runtime binding ${binding.bindingId} requires attachmentSemantics for virtual-joint target`);
+  const attachmentValidation = validateAttachmentSemantics(attachmentSemantics);
+  if (!attachmentValidation.valid) throw new Error(`attachmentSemantics is invalid: ${attachmentValidation.errors.join('; ')}`);
+  if (attachmentSemantics.scopeId !== identityGraph.scopeId || attachmentSemantics.sourceSha256 !== identityGraph.sourceSha256) throw new Error('attachmentSemantics scope/source does not match identityGraph');
+  const relation = attachmentSemantics.relations.find((item) => item.id === contract.relationId);
+  if (!relation) throw new Error(`${label} relation ${contract.relationId} is absent from current attachment semantics`);
+  if (relation.mode !== 'ARTICULATED') throw new Error(`${label} relation ${contract.relationId} is not ARTICULATED`);
+  if (relation.subjectId !== contract.subjectId || relation.ownerIds.length !== 1 || relation.ownerIds[0] !== contract.ownerId) throw new Error(`${label} selected attachment relation owner/subject drift`);
+
+  return {
+    schema: contract.schema,
+    id: contract.id,
+    relationId: assertId(contract.relationId, `${label}.relationId`),
+    subjectId: assertId(contract.subjectId, `${label}.subjectId`),
+    ownerId: assertId(contract.ownerId, `${label}.ownerId`),
+    jointType: contract.jointType,
+    axisConvention: contract.axisConvention,
+    zeroConfiguration: contract.zeroConfiguration,
+    ownerJointFrame: normalizeRigidFrame(contract.ownerJointFrame, `${label}.ownerJointFrame`),
+    subjectJointFrame: normalizeRigidFrame(contract.subjectJointFrame, `${label}.subjectJointFrame`),
+  };
+}
+
+function virtualJointSemanticProjection(binding, articulationGraph, identityGraph, {attachmentSemantics = null, jointContracts = null} = {}) {
   if (!articulationGraph) throw new Error(`runtime binding ${binding.bindingId} requires articulationGraph for virtual-joint target`);
   const live = transmissionArticulationProjection(articulationGraph, identityGraph, [binding.selector.targetId]);
   const joint = live.joints.find((item) => item.virtualJointId === binding.selector.targetId);
   if (!joint) throw new Error(`runtime binding ${binding.bindingId} target virtual-joint ${binding.selector.targetId} is absent from articulation graph`);
   const articulationJoint = runtimeJointCoordinateSemantics(joint);
-  const coordinateClass = 'ROTARY';
+  const typedJoint = currentTypedJointCoordinateSemantics(binding, joint, jointContracts, attachmentSemantics, identityGraph);
+  const coordinateClass = typedJoint.jointType === 'REVOLUTE' ? 'ROTARY' : null;
+  if (!coordinateClass) throw new Error(`runtime binding ${binding.bindingId} typed joint has no supported scalar runtime coordinate class`);
   if (binding.coordinateClass !== coordinateClass) throw new Error(`runtime binding ${binding.bindingId} coordinateClass is stale; expected ${coordinateClass}`);
   return {
     bindingId: binding.bindingId,
@@ -317,6 +363,7 @@ function virtualJointSemanticProjection(binding, articulationGraph, identityGrap
     targetId: binding.selector.targetId,
     coordinateClass,
     articulationJoint,
+    typedJoint,
     liveIdentityProjection: live.liveIdentityProjection,
   };
 }
@@ -332,8 +379,6 @@ export function runtimeTargetProjection(bindings, identityGraph, {
   expectedImplementationArtifactDigest = null,
 } = {}) {
   validateIdentityGraph(identityGraph);
-  void attachmentSemantics;
-  void jointContracts;
   const projected = bindings.map((binding) => {
     if (binding.selector.targetKind === 'actuator') {
       if (!actuationModel) throw new Error(`runtime binding ${binding.bindingId} requires actuationModel for actuator target`);
@@ -342,7 +387,7 @@ export function runtimeTargetProjection(bindings, identityGraph, {
       });
     }
     if (binding.selector.targetKind === 'virtual-joint') {
-      return virtualJointSemanticProjection(binding, articulationGraph, identityGraph);
+      return virtualJointSemanticProjection(binding, articulationGraph, identityGraph, {attachmentSemantics, jointContracts});
     }
     if (binding.coordinateClass !== 'NONE') throw new Error(`runtime binding ${binding.bindingId} target kind ${binding.selector.targetKind} requires NONE coordinate class`);
     return {bindingId: binding.bindingId, targetKind: binding.selector.targetKind, targetId: binding.selector.targetId, coordinateClass: 'NONE'};
