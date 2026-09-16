@@ -3,10 +3,12 @@ import test from 'node:test';
 
 import {
   assertRepresentationCapacityExportable,
+  createActuationModel,
   createPhysicalAssetBundle,
   createPhysicalIdentityGraph,
   createRepresentationCapacityProfile,
   createRigidBodyDynamics,
+  createTransmissionModel,
   deriveRepresentationCapacityObligations,
   digestJson,
   representationCapacityDecision,
@@ -80,12 +82,94 @@ function profileFor(f = fixture(), {blockers = []} = {}) {
   });
 }
 
+function twoLinkFixture() {
+  const identityGraph = createPhysicalIdentityGraph({
+    scopeId: 'whole', sourceSha256: D(),
+    entities: [
+      {id: 'module-root', kind: 'assembly-module'},
+      {id: 'link-a', kind: 'rigid-link', frame: {parentId: 'module-root', translation_m: [0,0,0], rotation_quat_xyzw: [0,0,0,1]}},
+      {id: 'link-b', kind: 'rigid-link', frame: {parentId: 'module-root', translation_m: [1,0,0], rotation_quat_xyzw: [0,0,0,1]}},
+    ],
+    relations: [
+      {id: 'contains-link-a', kind: 'CONTAINS', sourceId: 'module-root', targetIds: ['link-a']},
+      {id: 'contains-link-b', kind: 'CONTAINS', sourceId: 'module-root', targetIds: ['link-b']},
+    ],
+  });
+  const contract = createRigidBodyDynamics({
+    scopeId: 'whole', sourceSha256: D(), identityGraph,
+    links: [
+      {
+        linkId: 'link-a', referenceFrameId: 'link-a', mass: {value_kg: 1}, centerOfMass: {value_m: [0,0,0]},
+        inertia: {tensor_kg_m2: [[0.01,0,0],[0,0.01,0],[0,0,0.01]]},
+      },
+      {
+        linkId: 'link-b', referenceFrameId: 'link-b', mass: {value_kg: 2}, centerOfMass: {value_m: [0,0,0]},
+        inertia: {tensor_kg_m2: [[0.02,0,0],[0,0.02,0],[0,0,0.02]]},
+      },
+    ],
+  });
+  const components = [{componentId: 'dynamics-two-link', ownerModuleId: 'module-root', contract}];
+  const bundle = createPhysicalAssetBundle({bundleId: 'physical-two-link', identityGraph, rootModuleId: 'module-root', components});
+  return {identityGraph, contract, components, bundle};
+}
+
+function actuationFixture() {
+  const identityGraph = createPhysicalIdentityGraph({
+    scopeId: 'whole', sourceSha256: D(),
+    entities: [
+      {id: 'module-root', kind: 'assembly-module'},
+      {id: 'actuator-drive', kind: 'actuator'},
+      {id: 'actuator-load', kind: 'actuator'},
+      {id: 'tx-drive', kind: 'transmission'},
+    ],
+    relations: [
+      {id: 'contains-actuator-drive', kind: 'CONTAINS', sourceId: 'module-root', targetIds: ['actuator-drive']},
+      {id: 'contains-actuator-load', kind: 'CONTAINS', sourceId: 'module-root', targetIds: ['actuator-load']},
+      {id: 'contains-tx-drive', kind: 'CONTAINS', sourceId: 'module-root', targetIds: ['tx-drive']},
+      {id: 'tx-drive-maps', kind: 'MAPS', sourceId: 'tx-drive', targetIds: ['actuator-drive', 'actuator-load']},
+      {id: 'actuator-drive-drives', kind: 'DRIVES', sourceId: 'actuator-drive', targetIds: ['tx-drive']},
+    ],
+  });
+  const transmission = createTransmissionModel({
+    scopeId: 'whole', sourceSha256: D(), identityGraph,
+    transmissions: [{
+      transmissionId: 'tx-drive', mapsRelationIds: ['tx-drive-maps'], contextMechanismIds: [],
+      inputSpace: {id: 'drive-in', coordinates: [{id: 'drive-q', semanticIdentityId: 'actuator-drive'}], order: ['drive-q']},
+      outputSpace: {id: 'drive-out', coordinates: [{id: 'load-q', semanticIdentityId: 'actuator-load'}], order: ['load-q']},
+      mapping: {kind: 'RATIO', ratio: 2, offset: 0},
+    }],
+  });
+  const actuation = createActuationModel({
+    scopeId: 'whole', sourceSha256: D(), identityGraph, transmissionModel: transmission,
+    actuators: [{
+      actuatorId: 'actuator-drive', drivesRelationId: 'actuator-drive-drives', drivenTargetId: 'tx-drive', drivenTargetKind: 'transmission',
+      kind: 'ROTARY_ELECTRIC', coordinateClass: 'ROTARY',
+      supportedControlModes: {value: ['POSITION', 'EFFORT']},
+      positionRange: {value: {kind: 'BOUNDED', minimum: -3.1, maximum: 3.1, unit: 'rad'}},
+      velocityLimit: {value: {maxAbs: 8, unit: 'rad_s'}},
+      effortLimit: {value: {maxAbs: 12, unit: 'N_m'}},
+      stiffness: {value: null},
+      damping: {value: {value: 0.05, unit: 'N_m_s_per_rad'}},
+      armature: {value: {value: 0.001, unit: 'kg_m2'}},
+      responseLatency: {value: {value: 0.002, unit: 's'}},
+    }],
+  });
+  const components = [
+    {componentId: 'transmission-main', ownerModuleId: 'module-root', contract: transmission},
+    {componentId: 'actuation-main', ownerModuleId: 'module-root', contract: actuation},
+  ];
+  const bundle = createPhysicalAssetBundle({bundleId: 'physical-actuation', identityGraph, rootModuleId: 'module-root', components});
+  return {identityGraph, components, bundle};
+}
+
 test('P11 derives a complete canonical obligation inventory and classifies every obligation exactly once', () => {
   const f = fixture();
   const obligations = deriveRepresentationCapacityObligations(f);
-  assert.deepEqual(obligations.map((item) => item.semanticPath).sort(), [
+  assert.deepEqual([...new Set(obligations.map((item) => item.semanticPath))].sort(), [
     'composition.contains', 'dynamics.center-of-mass', 'dynamics.inertia', 'dynamics.mass', 'frame.transform', 'identity.entity', 'identity.relation',
   ]);
+  assert.equal(obligations.filter((item) => item.semanticPath === 'identity.entity').length, 3);
+  assert.equal(obligations.filter((item) => item.semanticPath === 'identity.relation').length, 3);
   const profile = profileFor(f);
   assert.deepEqual(validateRepresentationCapacityProfile(profile), {valid: true, errors: []});
   assert.deepEqual(validateRepresentationCapacityBindings(profile, f), {valid: true, errors: []});
@@ -94,6 +178,37 @@ test('P11 derives a complete canonical obligation inventory and classifies every
   assert.equal(representationCapacityDecision(profile, obligations.find((item) => item.semanticPath === 'dynamics.center-of-mass').obligationId).status, 'APPROXIMATED');
   assert.equal(representationCapacityDecision(profile, obligations.find((item) => item.semanticPath === 'dynamics.inertia').obligationId).status, 'UNSUPPORTED');
   assert.equal(assertRepresentationCapacityExportable(profile, f), profile);
+});
+
+test('P11 uses schema-aware subject granularity instead of one component-wide decision', () => {
+  const f = twoLinkFixture();
+  const obligations = deriveRepresentationCapacityObligations(f);
+  const masses = obligations.filter((item) => item.semanticPath === 'dynamics.mass');
+  assert.equal(masses.length, 2);
+  assert.deepEqual(masses.map((item) => item.subjectIds).sort((a,b) => a[0].localeCompare(b[0])), [['link-a'], ['link-b']]);
+
+  const supported = [], approximated = [], unsupported = [];
+  for (const item of obligations) {
+    if (item.semanticPath === 'dynamics.mass' && item.subjectIds[0] === 'link-a') supported.push({obligationId: item.obligationId});
+    else if (item.semanticPath === 'dynamics.mass' && item.subjectIds[0] === 'link-b') unsupported.push({obligationId: item.obligationId, reason: 'Backend omits mass for link-b.'});
+    else supported.push({obligationId: item.obligationId});
+  }
+  const profile = createRepresentationCapacityProfile({profileId: 'per-link-profile', backend: 'mixed-backend', ...f, supported, approximated, unsupported});
+  assert.equal(representationCapacityDecision(profile, masses.find((item) => item.subjectIds[0] === 'link-a').obligationId).status, 'SUPPORTED');
+  assert.equal(representationCapacityDecision(profile, masses.find((item) => item.subjectIds[0] === 'link-b').obligationId).status, 'UNSUPPORTED');
+});
+
+test('P11 inventory includes P07 response latency and independent actuator properties', () => {
+  const f = actuationFixture();
+  const obligations = deriveRepresentationCapacityObligations(f);
+  const actuation = obligations.filter((item) => item.source.kind === 'COMPONENT' && item.source.componentId === 'actuation-main');
+  const paths = new Set(actuation.map((item) => item.semanticPath));
+  for (const path of [
+    'actuation.kind', 'actuation.coordinate-class', 'actuation.position-range', 'actuation.velocity-limit', 'actuation.effort-limit',
+    'actuation.stiffness', 'actuation.damping', 'actuation.armature', 'actuation.control-modes', 'actuation.response-latency',
+  ]) assert.equal(paths.has(path), true, `missing ${path}`);
+  const latency = actuation.find((item) => item.semanticPath === 'actuation.response-latency');
+  assert.deepEqual(latency.subjectIds, ['actuator-drive']);
 });
 
 test('ordering does not affect the P11 digest', () => {

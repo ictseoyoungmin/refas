@@ -31,11 +31,31 @@ Do not hand-author a partial list of backend obligations. Use the runtime deriva
 
 Each obligation has a canonical ID derived from:
 
-- exact identity/component source digest,
-- canonical semantic field path,
+- exact identity/component source digest;
+- canonical semantic field path;
 - stable semantic subject IDs.
 
 This makes omission detectable. An unsupported semantic field cannot disappear merely because a backend lacks a matching field.
+
+### Schema-aware semantic units
+
+An obligation must be small enough that one backend decision is true for every subject in that obligation. Do not collapse an entire component into one decision merely because the fields share a source digest.
+
+Use schema-aware units:
+
+- P01 entity identity, relation identity, frame, interface, compatibility family, and each `CONTAINS` composition relation are independently classifiable;
+- P02 mass, center of mass, and inertia are per rigid link;
+- P03 self-collision policy is per rigid link, while collider frame/geometry/filter are per collider + owning link;
+- P04 joint frame, reference configuration, and limits are per articulated joint; topology may retain the multi-subject link/joint context required to define that joint;
+- P05 mechanism kind/topology are per mechanism;
+- P06 coordinate space and q/dq/effort mappings are per transmission and may remain multi-subject because the mapping semantics inherently couple their input/output identities;
+- P07 actuator properties are per actuator, including coordinate class, position/velocity/effort limits, stiffness, damping, armature, supported control modes, and **response latency**;
+- P08 mode, command space, gains, controller delay, and coordinate class are per control profile;
+- P09 endpoint mapping, coordinate class, locator, index, calibration, and transport delay are per runtime binding.
+
+A backend may therefore classify two links, actuators, colliders, joints, or runtime bindings differently even when they originate from the same P02–P09 component contract. Conversely, inherently coupled topology/mapping semantics may keep multiple stable subject IDs in one obligation.
+
+P11 must cover canonical construction semantics that can affect backend representation. It must not silently merge distinct P07 response latency with P08 controller delay or P09 transport delay.
 
 ## Classification
 
@@ -47,9 +67,9 @@ Every derived obligation must appear in exactly one classification:
 
 Approximation is not exact support. Every approximation must declare:
 
-- strategy,
-- reason,
-- retained semantics,
+- strategy;
+- reason;
+- retained semantics;
 - lost semantics.
 
 The same semantic may not be declared both retained and lost.
@@ -73,7 +93,7 @@ This flag authorizes only progression to P12 export work. It does not authorize 
 
 Rigid orientation remains quaternion-canonical. Backend Euler/RPY forms, if needed, are later P12 projections and must not become P11 truth.
 
-Likewise, revolute/prismatic generalized coordinates, transmission coordinates, controller commands, and runtime calibration remain the semantics owned by P04–P09. P11 only states backend representational capacity for those semantics.
+Likewise, generalized coordinates, transmission coordinates, actuator capability, controller commands, and runtime calibration remain the semantics owned by P04–P09. P11 only states backend representational capacity for those semantics.
 
 ## Fail closed
 
@@ -82,6 +102,8 @@ Reject the profile when:
 - the P10 bundle binding is stale;
 - the derived obligation inventory is incomplete or stale;
 - an obligation is unclassified or multiply classified;
+- distinct independently representable semantic subjects were collapsed so a single classification cannot describe them truthfully;
+- a canonical P02–P09 semantic family required for backend projection is omitted;
 - an approximation lacks explicit retained/lost semantics;
 - a blocker references an unknown or exactly supported obligation;
 - backend ordering or indices are used as semantic identity;
