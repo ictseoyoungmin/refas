@@ -8,6 +8,7 @@ export * from './articulation-graph.mjs';
 export * from './mechanism-graph.mjs';
 export * from './transmission-model.mjs';
 export * from './actuation-model.mjs';
+export * from './control-profile.mjs';
 export * from './logical-fusion.mjs';
 export * from './surface-anchor.mjs';
 export * from './attachment-follow.mjs';

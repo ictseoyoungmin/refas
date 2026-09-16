@@ -17,8 +17,8 @@ test('typed semantic instruction graph covers every leaf and matches runtime own
   const report = await analyzeSemanticInstructionGraph();
   assert.equal(report.status, 'PASS', report.errors.join('\n'));
   assert.equal(report.schema, 'refas.instruction-graph/v1');
-  assert.equal(report.nodeCount, 30);
-  assert.equal(report.referenceLeaves, 30);
+  assert.equal(report.nodeCount, 31);
+  assert.equal(report.referenceLeaves, 31);
   assert.equal(report.cycle, null);
   assert.deepEqual(report.bareMarkdownRoutes, []);
   assert.equal(FINDING_OWNERS['camera-hypothesis-mismatch'], 'spatial-hypotheses');
@@ -42,8 +42,8 @@ test('semantic graph verifies from a bare copied installed skill with repository
     assert.equal(result.status, 0, result.stderr || result.stdout);
     const report = JSON.parse(result.stdout);
     assert.equal(report.status, 'PASS');
-    assert.equal(report.nodeCount, 30);
-    assert.equal(report.referenceLeaves, 30);
+    assert.equal(report.nodeCount, 31);
+    assert.equal(report.referenceLeaves, 31);
     assert.equal(report.bareMarkdownRoutes, 0);
   } finally {
     await fs.rm(temp, {recursive: true, force: true});
