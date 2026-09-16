@@ -44,6 +44,7 @@ Load only the references needed by the active capability or conditional closure 
 | Explicit actuator physical capability and limits | `references/contracts/actuation-model.md` after `references/assembly.md`; also load `references/contracts/transmission-model.md` when the actuator drives a transmission |
 | Controller mode, command space, feedback tuning, and controller-side delay | `references/contracts/control-profile.md` after `references/contracts/actuation-model.md` |
 | Runtime endpoint/device/bus/index binding and runtime coordinate calibration | `references/contracts/runtime-binding.md` after `references/assembly.md`; also load `references/contracts/actuation-model.md` for actuator targets and articulation contracts for virtual-joint targets |
+| Digest-bound packaging of reusable physical modules and exact physical component refs | `references/contracts/physical-asset-bundle.md` after `references/assembly.md`; load P06–P09 leaves when those component types are included |
 | Material identity and finish | `references/appearance.md` |
 | Render integrity, registered comparison, visual review, closure evidence | `references/validation.md` |
 | Candidate/checkpoint/evidence provenance sealing | `references/candidate-transactions.md` |
