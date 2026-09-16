@@ -11,6 +11,7 @@ export * from './actuation-model.mjs';
 export * from './control-profile.mjs';
 export * from './runtime-binding.mjs';
 export * from './physical-asset-bundle.mjs';
+export * from './representation-capacity.mjs';
 export * from './logical-fusion.mjs';
 export * from './surface-anchor.mjs';
 export * from './attachment-follow.mjs';
