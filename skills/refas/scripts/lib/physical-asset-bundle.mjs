@@ -1,5 +1,5 @@
 import {assertDigest, assertId, deepFreeze, digestJson} from './canonical.mjs';
-import {validatePhysicalIdentityGraph} from './physical-identity-graph.mjs';
+import {canonicalizePhysicalQuaternion, validatePhysicalIdentityGraph} from './physical-identity-graph.mjs';
 
 export const PHYSICAL_ASSET_BUNDLE_SCHEMA = 'refas.physical-asset-bundle/v1';
 export const PHYSICAL_ASSET_BUNDLE_IDENTITY_BINDING_SCHEMA = 'refas.physical-asset-bundle-identity-binding/v1';
@@ -89,7 +89,7 @@ function normalizePlacementFrame(raw, label) {
   return {
     parentId: assertId(raw.parentId, `${label}.parentId`),
     translation_m: normalizeVector(raw.translation_m, 3, `${label}.translation_m`),
-    rotation_quat_xyzw: normalizeVector(raw.rotation_quat_xyzw, 4, `${label}.rotation_quat_xyzw`),
+    rotation_quat_xyzw: canonicalizePhysicalQuaternion(raw.rotation_quat_xyzw, `${label}.rotation_quat_xyzw`),
   };
 }
 
@@ -334,6 +334,7 @@ function normalizeModuleClosure(raw, label) {
   const childModules = (raw.childModules ?? []).map((item, index) => normalizeChildModule(item, `${label}.childModules[${index}]`))
     .sort((a, b) => a.moduleId.localeCompare(b.moduleId));
   if (new Set(childModules.map((item) => item.moduleId)).size !== childModules.length) throw new Error(`${label}.childModules contains duplicate moduleId values`);
+  if (new Set(childModules.map((item) => item.relationId)).size !== childModules.length) throw new Error(`${label}.childModules contains duplicate relationId values`);
   const payload = {
     schema: raw.schema,
     moduleId: assertId(raw.moduleId, `${label}.moduleId`),
@@ -350,6 +351,26 @@ function normalizePolicy(raw) {
   assertKnownKeys(raw, POLICY_KEYS, 'policy');
   if (digestJson(raw) !== digestJson(CANONICAL_POLICY)) throw new Error('policy must equal the canonical P10 policy');
   return {...CANONICAL_POLICY};
+}
+
+function validateClosureReachability(rootModuleId, closureByModule) {
+  const visited = new Set();
+  const visiting = new Set();
+  function walk(moduleId) {
+    if (visiting.has(moduleId)) throw new Error(`module closure graph contains a cycle at ${moduleId}`);
+    if (visited.has(moduleId)) return;
+    const closure = closureByModule.get(moduleId);
+    if (!closure) throw new Error(`module closure graph references missing module ${moduleId}`);
+    visiting.add(moduleId);
+    for (const child of closure.childModules) walk(child.moduleId);
+    visiting.delete(moduleId);
+    visited.add(moduleId);
+  }
+  walk(rootModuleId);
+  if (visited.size !== closureByModule.size) {
+    const unreachable = [...closureByModule.keys()].filter((moduleId) => !visited.has(moduleId)).sort();
+    throw new Error(`module closure graph contains unreachable module(s): ${unreachable.join(', ')}`);
+  }
 }
 
 function normalizePersistedBundle(value) {
@@ -398,6 +419,7 @@ function normalizePersistedBundle(value) {
     if (moduleId === rootModuleId) continue;
     if (count !== 1) throw new Error(`non-root module closure ${moduleId} must have exactly one parent closure`);
   }
+  validateClosureReachability(rootModuleId, closureByModule);
 
   const rootClosure = closureByModule.get(rootModuleId);
   if (identityBinding.projectionDigest !== rootClosure.identityProjectionDigest) throw new Error('identityBinding must match the root module scoped identity projection digest');
