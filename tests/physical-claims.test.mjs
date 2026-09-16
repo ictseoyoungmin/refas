@@ -121,13 +121,13 @@ async function pipeline({massOverride,unrelated=false}={}) {
 }
 function claimContext(data, extra={}) { return {bundle:data.bundle,identityGraph:data.identityGraph,components:data.components,validation:data.validation,capacityProfile:data.capacityProfile,manifest:data.manifest,files:data.files,normalizedRepresentation:data.normalizedRepresentation,normalizer:data.normalizer,...extra}; }
 
-function authorityEntry(subjectId) {return{id:'p16-divergence-authority',subjectId,authority:'engineered',proposition:'The exact backend-specific override is authorized for this target.',reason:'The downstream backend requires this explicit construction choice.',basis:[{kind:'downstream-requirement',ref:'backend:physical-claim-fixture'}]};}
-async function authorizeMassDrift(data) {
+function authorityEntry(subjectId, reason='The downstream backend requires this explicit construction choice.') {return{id:'p16-divergence-authority',subjectId,authority:'engineered',proposition:'The exact backend-specific override is authorized for this target.',reason,basis:[{kind:'downstream-requirement',ref:'backend:physical-claim-fixture'}]};}
+async function authorizeMassDrift(data,{authorityReason,authorizationId='p16-mass-authorization'}={}) {
   const finding=data.validation.findings.find((item)=>item.semanticPath==='dynamics.mass');
   const raw={findingId:finding.findingId,obligationId:finding.obligationId,targetBackend:data.validation.capacityBinding.backend,semanticPath:finding.semanticPath,subjectIds:[...finding.subjectIds],fieldPath:'',canonicalValue:finding.canonicalValue,overrideValue:finding.normalizedValue,reason:'Backend-specific mass realization is required by the declared downstream target.'};
   const subjectId=divergenceAuthoritySubjectId(data.validation.validationDigest,finding.findingId,'');
-  const authoritySet=createSemanticAuthoritySet({scopeId:data.validation.scopeId,sourceSha256:data.identityGraph.sourceSha256,targetSchema:data.validation.schema,targetDigest:data.validation.validationDigest,entries:[authorityEntry(subjectId)]});
-  const divergenceAuthorization=await createDivergenceAuthorization({authorizationId:'p16-mass-authorization',validation:data.validation,declarations:[raw],authoritySet,...claimContext(data)});
+  const authoritySet=createSemanticAuthoritySet({scopeId:data.validation.scopeId,sourceSha256:data.identityGraph.sourceSha256,targetSchema:data.validation.schema,targetDigest:data.validation.validationDigest,entries:[authorityEntry(subjectId,authorityReason)]});
+  const divergenceAuthorization=await createDivergenceAuthorization({authorizationId,validation:data.validation,declarations:[raw],authoritySet,...claimContext(data)});
   return{divergenceAuthorization,authoritySet};
 }
 
@@ -177,8 +177,12 @@ test('P16 relevant P14 DRIFT blocks simulation-ready until an exact live P15 dec
   const declared=await createPhysicalClaimEvidence({evidenceId:'simulation-drift',claimId:'simulation-ready',...claimContext(data,{divergenceAuthorization,authoritySet})});
   assert.equal(declared.status,'PASS');assert.equal(declared.findings.some((item)=>item.semanticPath==='dynamics.mass'&&item.effectiveOutcome==='DECLARED_DIVERGENCE'&&!item.blocking),true);assert.notEqual(declared.divergenceBinding,null);
 
-  const changedAuthority=createSemanticAuthoritySet({scopeId:data.validation.scopeId,sourceSha256:data.identityGraph.sourceSha256,targetSchema:data.validation.schema,targetDigest:data.validation.validationDigest,entries:[{...authorityEntry(divergenceAuthoritySubjectId(data.validation.validationDigest,mass.findingId,'')),reason:'A changed rationale must invalidate the old P15 live binding.'}]});
-  await assert.rejects(createPhysicalClaimEvidence({evidenceId:'simulation-drift',claimId:'simulation-ready',...claimContext(data,{divergenceAuthorization,authoritySet:changedAuthority})}),/P15 divergence authorization is not live/);
+  const replacement=await authorizeMassDrift(data,{authorityReason:'A changed engineered rationale must produce a new exact authority entry digest.'});
+  const replacementEvidence=await createPhysicalClaimEvidence({evidenceId:'simulation-drift',claimId:'simulation-ready',...claimContext(data,replacement)});
+  assert.equal(replacementEvidence.status,'PASS');
+  assert.notEqual(replacementEvidence.evidenceDigest,declared.evidenceDigest);
+  const stale=await validatePhysicalClaimEvidenceBindings(declared,claimContext(data,replacement));
+  assert.equal(stale.valid,false);
 });
 
 test('P16 persisted tamper fails intrinsic validation and claim-relevant upstream edits fail live replay',async()=>{
