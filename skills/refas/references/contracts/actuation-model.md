@@ -42,6 +42,8 @@ Current `refas.articulation-graph/v1` joint coordinates are revolute. Therefore 
 
 When `DRIVES` targets a transmission, P07 binds only the selected P06 transmission records rather than the whole transmission model.
 
+P01 `DRIVES` is not by itself proof that the actuator participates in that transmission's generalized coordinates. The driving actuator identity must also appear as `semanticIdentityId` in at least one selected P06 input or output coordinate. P07 deliberately does not infer physical causal direction from P06's canonical mapping direction, so participation on either side is valid; absence from both sides fails closed.
+
 P07 does not treat intrinsic `validateTransmissionModel()` success as proof that a selected P06 record is still live. For each selected transmission it reconstructs a scoped current P06 model from the present dependencies required by that record:
 
 - current P01 transmission / `MAPS` / coordinate identities;
@@ -185,6 +187,7 @@ Reject at least:
 - a direct `virtual-joint` target without current scoped P04 articulation proof;
 - a direct current P04 revolute joint paired with `LINEAR` coordinate class;
 - a missing selected P06 transmission when `DRIVES` targets transmission;
+- a selected transmission whose input/output semantic coordinate identities do not include the driving actuator;
 - stale selected P06 P01/P04/P05 mapping dependencies;
 - missing or stale selected nonlinear/solver implementation proof;
 - rotary/linear unit mismatch;
