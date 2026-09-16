@@ -117,7 +117,7 @@ test('P13 semantic JSON normalizer reads verified P12 bytes without canonical co
   assert.equal(normalized.entries.length, profile.obligations.length);
   assert.ok(normalized.entries.every((entry) => entry.status === 'NORMALIZED'));
   const frame = normalized.entries.find((entry) => entry.semanticPath === 'frame.transform' && entry.subjectIds.includes('link-a'));
-  assert.deepEqual(frame.value, {parentId: 'module-root', translation_m: [0.1,-0.2,0.3], rotation_quat_xyzw: Z90});
+  assert.deepEqual(frame.value, {parentId: 'module-root', ...canonicalizeBackendRigidTransform({translation_m: [0.1,-0.2,0.3], rotation_quat_xyzw: Z90})});
   assert.equal('bundle' in normalized, false);
   assert.equal(normalized.policy.backendDataNeverCanonical, true);
 });
