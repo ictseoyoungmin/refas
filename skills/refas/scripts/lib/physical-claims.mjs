@@ -304,6 +304,7 @@ function divergenceProjection(authorization, relevantFindings, obligationById) {
       overrideValue: structuredClone(item.overrideValue),
       reason: item.reason,
       authority: 'engineered',
+      authorityEntryDigest: assertDigest(item.authorityEntryDigest, 'P15 declaration authorityEntryDigest'),
     }))
     .sort((a,b)=>`${a.obligationId}:${a.fieldPath}`.localeCompare(`${b.obligationId}:${b.fieldPath}`));
   return declared.length ? {schema:'refas.physical-claim-divergence-projection/v1', declarations: declared} : null;
