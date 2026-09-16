@@ -56,7 +56,7 @@ function jointIdentityInput({driveX = 1, directJointDrive = false} = {}) {
       {id: 'contains-actuator-load', kind: 'CONTAINS', sourceId: 'module-root', targetIds: ['actuator-load']},
       {id: 'contains-transmission', kind: 'CONTAINS', sourceId: 'module-root', targetIds: ['tx-drive']},
       {id: 'joint-connects', kind: 'CONNECTS', sourceId: 'joint-drive', targetIds: ['base-link', 'drive-link']},
-      {id: 'tx-maps', kind: 'MAPS', sourceId: 'tx-drive', targetIds: ['joint-drive', 'actuator-load']},
+      {id: 'tx-maps', kind: 'MAPS', sourceId: 'tx-drive', targetIds: ['joint-drive', 'actuator-drive', 'actuator-load']},
       {id: 'actuator-drives', kind: 'DRIVES', sourceId: 'actuator-drive', targetIds: [directJointDrive ? 'joint-drive' : 'tx-drive']},
     ],
   };
@@ -114,9 +114,16 @@ function jointTransmission(stack) {
     scopeId: 'whole', sourceSha256: D(), identityGraph: stack.identityGraph, articulationGraph: stack.articulationGraph,
     transmissions: [{
       transmissionId: 'tx-drive', mapsRelationIds: ['tx-maps'], contextMechanismIds: [],
-      inputSpace: {id: 'joint-space', coordinates: [{id: 'joint-q', semanticIdentityId: 'joint-drive'}], order: ['joint-q']},
+      inputSpace: {
+        id: 'joint-space',
+        coordinates: [
+          {id: 'joint-q', semanticIdentityId: 'joint-drive'},
+          {id: 'drive-q', semanticIdentityId: 'actuator-drive'},
+        ],
+        order: ['joint-q', 'drive-q'],
+      },
       outputSpace: {id: 'load-space', coordinates: [{id: 'load-q', semanticIdentityId: 'actuator-load'}], order: ['load-q']},
-      mapping: {kind: 'RATIO', ratio: 2, offset: 0},
+      mapping: {kind: 'LINEAR_MATRIX', matrix: [[2, 0]], offset: [0]},
     }],
   });
 }
