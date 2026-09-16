@@ -107,6 +107,34 @@ export function physicalClaimEvidenceRole(value) {
   return assertId(`physical-claim-${claimId(value)}`, 'physical claim evidence role');
 }
 
+function stableObligationSource(source) {
+  if (source?.kind === 'IDENTITY') return {kind: 'IDENTITY'};
+  if (source?.kind === 'COMPONENT') {
+    return {
+      kind: 'COMPONENT',
+      componentId: assertId(source.componentId, 'obligation source componentId'),
+      schema: text(source.schema, 'obligation source schema', {maxLength: 160}),
+    };
+  }
+  throw new Error('physical claim obligation source must be IDENTITY or COMPONENT');
+}
+
+export function physicalClaimObligationId(obligation) {
+  const semanticPath = text(obligation?.semanticPath, 'semanticPath', {maxLength: 160});
+  const subjectIds = ids(obligation?.subjectIds, 'subjectIds');
+  const source = stableObligationSource(obligation?.source);
+  return assertId(
+    `physical-claim-obligation:${digestJson({source, semanticPath, subjectIds}).slice(0, 48)}`,
+    'physical claim obligationId',
+  );
+}
+
+function claimObligationIdFromP11(p11ObligationId, obligationById) {
+  const obligation = obligationById.get(p11ObligationId);
+  if (!obligation) throw new Error(`P16 cannot resolve claim-scoped P11 obligation ${p11ObligationId}`);
+  return physicalClaimObligationId(obligation);
+}
+
 function identityKinds(projection) {
   const result = new Map();
   for (const entity of projection.entities ?? []) {
@@ -250,10 +278,10 @@ function relevantObligations(capacityProfile, requirements, projection) {
       return intersects(obligation.subjectIds, relationIds) || intersects(obligation.subjectIds, entityIds);
     }
     return false;
-  }).sort((a,b)=>a.obligationId.localeCompare(b.obligationId));
+  }).sort((a,b)=>physicalClaimObligationId(a).localeCompare(physicalClaimObligationId(b)));
 }
 
-function divergenceProjection(authorization, relevantFindings) {
+function divergenceProjection(authorization, relevantFindings, obligationById) {
   if (!authorization) return null;
   const findingIds = new Set(relevantFindings.map((item) => item.findingId));
   const declarationById = new Map(authorization.declarations.map((item) => [item.declarationId, item]));
@@ -261,7 +289,7 @@ function divergenceProjection(authorization, relevantFindings) {
     .filter((item) => findingIds.has(item.findingId) && item.outcome === 'DECLARED_DIVERGENCE')
     .flatMap((resolution) => resolution.declarationIds.map((id) => declarationById.get(id)).filter(Boolean))
     .map((item) => ({
-      obligationId: item.obligationId,
+      obligationId: claimObligationIdFromP11(item.obligationId, obligationById),
       targetBackend: item.targetBackend,
       semanticPath: item.semanticPath,
       subjectIds: [...item.subjectIds].sort(),
@@ -275,12 +303,12 @@ function divergenceProjection(authorization, relevantFindings) {
   return declared.length ? {schema:'refas.physical-claim-divergence-projection/v1', declarations: declared} : null;
 }
 
-function validationProjection(validation, relevantFindings, effectiveByFinding) {
+function validationProjection(validation, relevantFindings, effectiveByFinding, obligationById) {
   return {
     schema: 'refas.physical-claim-validation-projection/v1',
     backend: validation.capacityBinding.backend,
     findings: relevantFindings.map((item) => ({
-      obligationId: item.obligationId,
+      obligationId: claimObligationIdFromP11(item.obligationId, obligationById),
       semanticPath: item.semanticPath,
       subjectIds: [...item.subjectIds].sort(),
       sourceOutcome: item.outcome,
@@ -293,11 +321,11 @@ function validationProjection(validation, relevantFindings, effectiveByFinding) 
   };
 }
 
-function representationChecks(relevantFindings, effectiveByFinding) {
+function representationChecks(relevantFindings, effectiveByFinding, obligationById) {
   return relevantFindings.map((finding) => {
     const effectiveOutcome = effectiveByFinding.get(finding.findingId) ?? finding.outcome;
     return {
-      obligationId: finding.obligationId,
+      obligationId: claimObligationIdFromP11(finding.obligationId, obligationById),
       semanticPath: finding.semanticPath,
       subjectIds: [...finding.subjectIds].sort(),
       sourceOutcome: finding.outcome,
@@ -409,8 +437,9 @@ export async function createPhysicalClaimEvidence({
   const projection = physicalAssetBundleIdentityProjection(identityGraph,bundle.rootModuleId);
   const requirements = deriveRequirements(id,projection,components);
   const obligations = relevantObligations(capacityProfile,requirements,projection);
-  const obligationIds = new Set(obligations.map((item) => item.obligationId));
-  const relevantFindings = validation.findings.filter((item) => obligationIds.has(item.obligationId)).sort((a,b)=>a.obligationId.localeCompare(b.obligationId));
+  const obligationById = new Map(obligations.map((item) => [item.obligationId,item]));
+  const obligationIds = new Set(obligationById.keys());
+  const relevantFindings = validation.findings.filter((item) => obligationIds.has(item.obligationId));
   if (relevantFindings.length !== obligations.length) throw new Error('P16 relevant P14 findings do not cover every claim-scoped P11 obligation');
 
   const relevantDrift = relevantFindings.some((item) => item.outcome === 'DRIFT');
@@ -427,11 +456,11 @@ export async function createPhysicalClaimEvidence({
   }
   const resolutionByFinding = new Map((activeAuthorization?.resolutions ?? []).map((item) => [item.findingId,item.outcome]));
   const effectiveByFinding = new Map(relevantFindings.map((item) => [item.findingId,resolutionByFinding.get(item.findingId) ?? item.outcome]));
-  const checks = representationChecks(relevantFindings,effectiveByFinding);
+  const checks = representationChecks(relevantFindings,effectiveByFinding,obligationById);
   const findings = findingsFor(requirements,checks);
   const claimBundleProjection = bundleProjection(bundle,projection,requirements);
-  const claimValidationProjection = validationProjection(validation,relevantFindings,effectiveByFinding);
-  const claimDivergenceProjection = divergenceProjection(activeAuthorization,relevantFindings);
+  const claimValidationProjection = validationProjection(validation,relevantFindings,effectiveByFinding,obligationById);
+  const claimDivergenceProjection = divergenceProjection(activeAuthorization,relevantFindings,obligationById);
   const claimStatus = requirements.every((item) => item.status === 'PASS') && checks.every((item) => item.status === 'PASS') ? 'PASS' : 'FAIL';
   const payload = {
     schema: PHYSICAL_CLAIM_EVIDENCE_SCHEMA,
