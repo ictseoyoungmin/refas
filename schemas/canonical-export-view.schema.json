@@ -8,10 +8,7 @@
     "schema": {"const": "refas.canonical-export-view/v1"},
     "bundleBinding": {"$ref": "#/$defs/bundleBinding"},
     "identityProjection": {"type": "object"},
-    "components": {
-      "type": "array",
-      "items": {"$ref": "#/$defs/component"}
-    },
+    "components": {"type": "array", "items": {"$ref": "#/$defs/component"}},
     "canonicalViewDigest": {"$ref": "common.schema.json#/$defs/digest"}
   },
   "$defs": {
@@ -29,15 +26,28 @@
       },
       "additionalProperties": false
     },
+    "dependency": {
+      "type": "object",
+      "required": ["dependencyId", "kind", "schema", "digest", "contract"],
+      "properties": {
+        "dependencyId": {"$ref": "common.schema.json#/$defs/semanticId"},
+        "kind": {"enum": ["ATTACHMENT_SEMANTICS", "ARTICULATED_JOINT"]},
+        "schema": {"type": "string", "minLength": 1},
+        "digest": {"$ref": "common.schema.json#/$defs/digest"},
+        "contract": {"type": "object"}
+      },
+      "additionalProperties": false
+    },
     "component": {
       "type": "object",
-      "required": ["componentId", "ownerModuleId", "schema", "digest", "contract"],
+      "required": ["componentId", "ownerModuleId", "schema", "digest", "contract", "dependencies"],
       "properties": {
         "componentId": {"$ref": "common.schema.json#/$defs/semanticId"},
         "ownerModuleId": {"$ref": "common.schema.json#/$defs/semanticId"},
         "schema": {"type": "string", "minLength": 1},
         "digest": {"$ref": "common.schema.json#/$defs/digest"},
-        "contract": {"type": "object"}
+        "contract": {"type": "object"},
+        "dependencies": {"type": "array", "items": {"$ref": "#/$defs/dependency"}}
       },
       "additionalProperties": false
     }
