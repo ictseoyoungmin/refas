@@ -84,7 +84,7 @@ test('P11 derives a complete canonical obligation inventory and classifies every
   const f = fixture();
   const obligations = deriveRepresentationCapacityObligations(f);
   assert.deepEqual(obligations.map((item) => item.semanticPath).sort(), [
-    'composition.contains', 'dynamics.center-of-mass', 'dynamics.inertia', 'dynamics.mass', 'frame.transform', 'identity.entity',
+    'composition.contains', 'dynamics.center-of-mass', 'dynamics.inertia', 'dynamics.mass', 'frame.transform', 'identity.entity', 'identity.relation',
   ]);
   const profile = profileFor(f);
   assert.deepEqual(validateRepresentationCapacityProfile(profile), {valid: true, errors: []});
@@ -93,7 +93,7 @@ test('P11 derives a complete canonical obligation inventory and classifies every
   assert.equal(profile.policy.obligationsDerivedFromCanonicalBundle, true);
   assert.equal(representationCapacityDecision(profile, obligations.find((item) => item.semanticPath === 'dynamics.center-of-mass').obligationId).status, 'APPROXIMATED');
   assert.equal(representationCapacityDecision(profile, obligations.find((item) => item.semanticPath === 'dynamics.inertia').obligationId).status, 'UNSUPPORTED');
-  assert.equal(assertRepresentationCapacityExportable(profile), profile);
+  assert.equal(assertRepresentationCapacityExportable(profile, f), profile);
 });
 
 test('ordering does not affect the P11 digest', () => {
@@ -123,7 +123,7 @@ test('blockers are explicit, cannot target exact support, and deterministically 
   const inertia = obligations.find((item) => item.semanticPath === 'dynamics.inertia');
   const blocked = profileFor(f, {blockers:[{blockerId:'missing-inertia', obligationIds:[inertia.obligationId], reason:'Target runtime requires exact inertia.'}]});
   assert.equal(blocked.exportable, false);
-  assert.throws(() => assertRepresentationCapacityExportable(blocked), /blocked/);
+  assert.throws(() => assertRepresentationCapacityExportable(blocked, f), /blocked/);
   const supportedId = decisions(obligations).supported[0].obligationId;
   const d = decisions(obligations);
   assert.throws(() => createRepresentationCapacityProfile({profileId:'bad',backend:'fixture',...f,...d,blockers:[{blockerId:'bad-blocker',obligationIds:[supportedId],reason:'invalid'}]}), /may not block exactly supported/);
@@ -134,6 +134,7 @@ test('exact P10 bundle substitution or incomplete persisted obligation inventory
   const profile = profileFor(original);
   const changed = fixture(3.25);
   assert.equal(validateRepresentationCapacityBindings(profile, changed).valid, false);
+  assert.throws(() => assertRepresentationCapacityExportable(profile, changed), /not live/);
 
   const incomplete = structuredClone(profile);
   const removed = incomplete.obligations.pop();
