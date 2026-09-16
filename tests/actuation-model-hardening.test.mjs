@@ -4,7 +4,6 @@ import {test} from 'node:test';
 import {
   actuationArticulationProjection,
   actuationTransmissionProjection,
-  createActuatedJoint,
   createActuationModel,
   createArticulatedJoint,
   createArticulationGraph,
