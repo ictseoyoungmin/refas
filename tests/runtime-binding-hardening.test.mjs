@@ -96,14 +96,14 @@ function attachmentFixture() {
   });
 }
 
-function articulationIdentity() {
+function articulationIdentity({armX = 1, tipX = 2} = {}) {
   return createPhysicalIdentityGraph({
     scopeId: 'whole', sourceSha256: D(),
     entities: [
       {id: 'module-root', kind: 'assembly-module'},
       {id: 'base-link', kind: 'rigid-link', frame: Q('module-root')},
-      {id: 'arm-link', kind: 'rigid-link', frame: Q('module-root', [1, 0, 0])},
-      {id: 'tip-link', kind: 'rigid-link', frame: Q('module-root', [2, 0, 0])},
+      {id: 'arm-link', kind: 'rigid-link', frame: Q('module-root', [armX, 0, 0])},
+      {id: 'tip-link', kind: 'rigid-link', frame: Q('module-root', [tipX, 0, 0])},
       {id: 'joint-shoulder', kind: 'virtual-joint', frame: Q('base-link', [1, 0, 0])},
       {id: 'joint-tip', kind: 'virtual-joint', frame: Q('arm-link', [1, 0, 0])},
       {id: 'runtime-joint', kind: 'runtime-endpoint'},
@@ -154,7 +154,7 @@ function jointRuntimeBinding() {
   };
 }
 
-test('virtual-joint target binding is scoped to the selected P04 joint', () => {
+test('virtual-joint target binding tracks selected P04 coordinate semantics only', () => {
   const identityGraph = articulationIdentity();
   const attachmentSemantics = attachmentFixture();
   const initialContracts = contracts(attachmentSemantics);
@@ -171,10 +171,17 @@ test('virtual-joint target binding is scoped to the selected P04 joint', () => {
   });
   assert.equal(unrelatedValidation.valid, true, unrelatedValidation.errors.join('\n'));
 
-  const selectedContracts = contracts(attachmentSemantics, {shoulderMaximum: 0.75});
-  const selectedGraph = articulationGraph(identityGraph, attachmentSemantics, selectedContracts);
-  const selectedValidation = validateRuntimeBindingBindings(model, identityGraph, {
-    articulationGraph: selectedGraph, attachmentSemantics, jointContracts: selectedContracts,
+  const selectedLimitContracts = contracts(attachmentSemantics, {shoulderMaximum: 0.75});
+  const selectedLimitGraph = articulationGraph(identityGraph, attachmentSemantics, selectedLimitContracts);
+  const selectedLimitValidation = validateRuntimeBindingBindings(model, identityGraph, {
+    articulationGraph: selectedLimitGraph, attachmentSemantics, jointContracts: selectedLimitContracts,
   });
-  assert.equal(selectedValidation.valid, false);
+  assert.equal(selectedLimitValidation.valid, true, selectedLimitValidation.errors.join('\n'));
+
+  const driftIdentity = articulationIdentity({armX: 1.1});
+  const selectedPoseValidation = validateRuntimeBindingBindings(model, driftIdentity, {
+    articulationGraph: initialGraph, attachmentSemantics, jointContracts: initialContracts,
+  });
+  assert.equal(selectedPoseValidation.valid, false);
+  assert.match(selectedPoseValidation.errors.join('\n'), /reference pose is stale|target semantics|scoped dependencies/);
 });
