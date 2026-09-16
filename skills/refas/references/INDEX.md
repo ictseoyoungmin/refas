@@ -48,6 +48,7 @@ Load only the references needed by the active capability or conditional closure 
 | Backend representation-capacity preflight and explicit support/approximation/loss classification | `references/contracts/representation-capacity.md` after `references/contracts/physical-asset-bundle.md` |
 | One-way canonical physical semantics to backend artifact export | `references/contracts/backend-export.md` after `references/contracts/representation-capacity.md` |
 | Backend artifact parsing into backend-independent normalized semantics | `references/contracts/representation-normalizer.md` after `references/contracts/backend-export.md` |
+| Canonical-versus-normalized backend semantic comparison with typed equivalence/loss/drift/unresolved/invalid findings | `references/contracts/cross-representation-validation.md` after `references/contracts/representation-normalizer.md` |
 | Material identity and finish | `references/appearance.md` |
 | Render integrity, registered comparison, visual review, closure evidence | `references/validation.md` |
 | Candidate/checkpoint/evidence provenance sealing | `references/candidate-transactions.md` |

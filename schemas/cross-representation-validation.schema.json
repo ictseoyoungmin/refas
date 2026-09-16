@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/cross-representation-validation.schema.json",
+  "title": "RefAs cross-representation validation",
+  "type": "object",
+  "required": ["schema","validationId","scopeId","canonicalBinding","capacityBinding","representationBinding","findings","summary","policy","validationDigest"],
+  "properties": {
+    "schema": {"const":"refas.cross-representation-validation/v1"},
+    "validationId": {"$ref":"common.schema.json#/$defs/semanticId"},
+    "scopeId": {"$ref":"common.schema.json#/$defs/semanticId"},
+    "canonicalBinding": {"$ref":"#/$defs/canonicalBinding"},
+    "capacityBinding": {"$ref":"#/$defs/capacityBinding"},
+    "representationBinding": {"$ref":"#/$defs/representationBinding"},
+    "findings": {"type":"array","minItems":1,"items":{"$ref":"#/$defs/finding"}},
+    "summary": {"$ref":"#/$defs/summary"},
+    "policy": {"$ref":"#/$defs/policy"},
+    "validationDigest": {"$ref":"common.schema.json#/$defs/digest"}
+  },
+  "$defs": {
+    "canonicalBinding": {"type":"object","required":["canonicalViewDigest","bundleDigest","rootClosureDigest","rootModuleId","identityProjectionDigest"],"properties":{"canonicalViewDigest":{"$ref":"common.schema.json#/$defs/digest"},"bundleDigest":{"$ref":"common.schema.json#/$defs/digest"},"rootClosureDigest":{"$ref":"common.schema.json#/$defs/digest"},"rootModuleId":{"$ref":"common.schema.json#/$defs/semanticId"},"identityProjectionDigest":{"$ref":"common.schema.json#/$defs/digest"}},"additionalProperties":false},
+    "capacityBinding": {"type":"object","required":["profileId","backend","capacityDigest"],"properties":{"profileId":{"$ref":"common.schema.json#/$defs/semanticId"},"backend":{"type":"string","minLength":1,"maxLength":256},"capacityDigest":{"$ref":"common.schema.json#/$defs/digest"}},"additionalProperties":false},
+    "representationBinding": {"type":"object","required":["normalizationId","normalizationDigest","semanticDigest","exportId","exportDigest","normalizerImplementationDigest"],"properties":{"normalizationId":{"$ref":"common.schema.json#/$defs/semanticId"},"normalizationDigest":{"$ref":"common.schema.json#/$defs/digest"},"semanticDigest":{"$ref":"common.schema.json#/$defs/digest"},"exportId":{"$ref":"common.schema.json#/$defs/semanticId"},"exportDigest":{"$ref":"common.schema.json#/$defs/digest"},"normalizerImplementationDigest":{"$ref":"common.schema.json#/$defs/digest"}},"additionalProperties":false},
+    "loss": {"type":"object","required":["kind","reason","strategy","retainedSemantics","lossSemantics"],"properties":{"kind":{"enum":["APPROXIMATION","UNSUPPORTED"]},"reason":{"type":"string","minLength":1},"strategy":{"type":["string","null"]},"retainedSemantics":{"type":"array","uniqueItems":true,"items":{"type":"string","minLength":1}},"lossSemantics":{"type":"array","uniqueItems":true,"items":{"type":"string","minLength":1}}},"additionalProperties":false},
+    "finding": {"type":"object","required":["findingId","obligationId","semanticPath","subjectIds","ownerCapability","outcome","exportDisposition","reasonCode","summary","canonicalValue","normalizedValue","loss"],"properties":{"findingId":{"$ref":"common.schema.json#/$defs/semanticId"},"obligationId":{"$ref":"common.schema.json#/$defs/semanticId"},"semanticPath":{"type":"string","minLength":1,"maxLength":160},"subjectIds":{"type":"array","minItems":1,"uniqueItems":true,"items":{"$ref":"common.schema.json#/$defs/semanticId"}},"ownerCapability":{"const":"assembly"},"outcome":{"enum":["EQUIVALENT","LOSSY","DRIFT","UNRESOLVED","INVALID"]},"exportDisposition":{"enum":["EMITTED_EXACT","EMITTED_APPROXIMATION","OMITTED_UNSUPPORTED"]},"reasonCode":{"type":"string","minLength":1,"maxLength":96},"summary":{"type":"string","minLength":1},"canonicalValue":{},"normalizedValue":{},"loss":{"oneOf":[{"type":"null"},{"$ref":"#/$defs/loss"}]}},"additionalProperties":false},
+    "summary": {"type":"object","required":["total","equivalent","lossy","drift","unresolved","invalid"],"properties":{"total":{"type":"integer","minimum":1},"equivalent":{"type":"integer","minimum":0},"lossy":{"type":"integer","minimum":0},"drift":{"type":"integer","minimum":0},"unresolved":{"type":"integer","minimum":0},"invalid":{"type":"integer","minimum":0}},"additionalProperties":false},
+    "policy": {"type":"object","required":["canonicalStateRemainsAuthoritative","normalizedRepresentationIsEvidenceOnly","p11ObligationIdentityIsComparisonIdentity","p13ReplayRequiredBeforeComparison","oneTypedOutcomePerObligation","declaredRepresentationLossStaysExplicit","aggregateScoresCannotOverrideFindings","declaredDivergenceRequiresDownstreamContract","validationDoesNotAuthorizePhysicalClaims"],"properties":{"canonicalStateRemainsAuthoritative":{"const":true},"normalizedRepresentationIsEvidenceOnly":{"const":true},"p11ObligationIdentityIsComparisonIdentity":{"const":true},"p13ReplayRequiredBeforeComparison":{"const":true},"oneTypedOutcomePerObligation":{"const":true},"declaredRepresentationLossStaysExplicit":{"const":true},"aggregateScoresCannotOverrideFindings":{"const":true},"declaredDivergenceRequiresDownstreamContract":{"const":true},"validationDoesNotAuthorizePhysicalClaims":{"const":true}},"additionalProperties":false}
+  },
+  "additionalProperties": false
+}
