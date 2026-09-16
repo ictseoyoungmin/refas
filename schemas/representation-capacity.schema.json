@@ -32,6 +32,18 @@
       },
       "additionalProperties":false
     },
+    "componentSchema": {
+      "enum":[
+        "refas.rigid-body-dynamics/v1",
+        "refas.collision-model/v1",
+        "refas.articulation-graph/v1",
+        "refas.mechanism-graph/v1",
+        "refas.transmission-model/v1",
+        "refas.actuation-model/v1",
+        "refas.control-profile/v1",
+        "refas.runtime-binding/v1"
+      ]
+    },
     "identitySource": {
       "type":"object","required":["kind","projectionDigest"],
       "properties":{"kind":{"const":"IDENTITY"},"projectionDigest":{"$ref":"common.schema.json#/$defs/digest"}},
@@ -39,7 +51,7 @@
     },
     "componentSource": {
       "type":"object","required":["kind","componentId","schema","digest"],
-      "properties":{"kind":{"const":"COMPONENT"},"componentId":{"$ref":"common.schema.json#/$defs/semanticId"},"schema":{"type":"string","minLength":1},"digest":{"$ref":"common.schema.json#/$defs/digest"}},
+      "properties":{"kind":{"const":"COMPONENT"},"componentId":{"$ref":"common.schema.json#/$defs/semanticId"},"schema":{"$ref":"#/$defs/componentSchema"},"digest":{"$ref":"common.schema.json#/$defs/digest"}},
       "additionalProperties":false
     },
     "obligation": {
