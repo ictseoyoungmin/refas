@@ -31,7 +31,12 @@
       "required": ["dependencyId", "kind", "schema", "digest", "contract"],
       "properties": {
         "dependencyId": {"$ref": "common.schema.json#/$defs/semanticId"},
-        "kind": {"enum": ["ATTACHMENT_SEMANTICS", "ARTICULATED_JOINT"]},
+        "kind": {"enum": [
+          "ATTACHMENT_SEMANTICS",
+          "ARTICULATED_JOINT",
+          "COLLISION_VISUAL_GEOMETRY_MANIFEST",
+          "TRANSMISSION_IMPLEMENTATION_MANIFEST"
+        ]},
         "schema": {"type": "string", "minLength": 1},
         "digest": {"$ref": "common.schema.json#/$defs/digest"},
         "contract": {"type": "object"}

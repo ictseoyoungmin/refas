@@ -39,12 +39,33 @@ as a canonical realization chain. A backend artifact is never promoted into RefA
 
 Before invoking an adapter:
 
-1. validate the exact current P10 physical asset bundle and its live P01-P09 inputs;
-2. validate the exact current P11 representation-capacity profile;
-3. require the P11 profile backend to match the adapter backend;
-4. require `exportable == true` through the live P11 binding check.
+1. validate the exact current P10 physical asset bundle and its current P01 identity projection;
+2. validate every bundled P02-P09 component against its own current upstream bindings, not only its persisted digest;
+3. validate the exact current P11 representation-capacity profile;
+4. require the P11 profile backend to match the adapter backend;
+5. require `exportable == true` through the live P11 binding check.
 
-A blocked or stale P11 profile must stop **before adapter code runs**.
+A blocked or stale P11 profile, or any stale P02-P09 upstream binding, must stop **before adapter code runs**.
+
+P10 proves that a component payload is a canonical member of one physical bundle. That is not sufficient to prove that every upstream dependency captured by the component is still current. P12 therefore delegates live revalidation to the existing P02-P09 binding validators before constructing adapter input.
+
+Examples:
+
+```text
+P06 transmission digest unchanged
++ current P04/P05/implementation dependency changed
+=> P12 preflight fails
+
+P07 actuation digest unchanged
++ selected P06/P04 dependency changed
+=> P12 preflight fails
+
+P09 runtime binding digest unchanged
++ selected actuator/joint dependency changed
+=> P12 preflight fails
+```
+
+P12 does not invent new liveness semantics. It reuses the upstream owners' validators.
 
 ## Canonical export view
 
@@ -60,11 +81,44 @@ The view contains:
 
 The view is immutable adapter input. It contains no previous backend artifact, backend parse result, normalized backend view, or backend-derived replacement value.
 
-### Canonical dependency closure
+### P10 component closure remains authoritative
+
+A P02-P09 contract supplied through a component `validationContext` is not allowed to become a hidden parallel input. When that dependency is itself a P10 component schema, the exact referenced contract must also exist in the current P10 bundle.
+
+For example:
+
+```text
+P08 control profile
+  -> current P07 actuation model
+  -> current P06 transmission model
+```
+
+The P07/P06 contracts used for live validation must be exact bundled component payloads. P12 may not validate against an unbundled replacement and then silently export it outside the P10 closure.
+
+Runtime-only `validationContext` is used to prove liveness. It is not copied wholesale into the canonical export view.
+
+## Canonical dependency closure
 
 Do not copy an opaque validation context into the export view. Only promote dependencies that a canonical component explicitly references and whose live payload is required to realize the declared semantics.
 
-For P04 articulation, the articulation graph intentionally keeps typed joints authoritative by digest reference. Therefore its canonical export component must include:
+### P03 collision visual reuse
+
+When a P03 mesh collider declares `DECLARED_VISUAL_REUSE`, current reuse proof requires the exact `refas.collision-visual-geometry-manifest/v1` plus an independently supplied current visual artifact digest.
+
+The canonical export component therefore carries:
+
+```text
+collision component
+  +-- COLLISION_VISUAL_GEOMETRY_MANIFEST dependency
+```
+
+The manifest must validate, match every declared visual geometry reference, and bind the independently verified current visual artifact digest before adapter invocation.
+
+The persisted dependency carries the manifest, including its `visualArtifactDigest`; the transient independently supplied expected digest remains a liveness input and is not promoted as a second truth source.
+
+### P04 articulation
+
+The articulation graph intentionally keeps typed joints authoritative by digest reference. Therefore its canonical export component must include:
 
 ```text
 articulation component
@@ -83,6 +137,21 @@ full typed-joint semantic payload
 ```
 
 For example, `articulation.joint-limit` cannot be realized from a joint digest alone. The exact typed-joint dependency carries the authoritative limit, axis convention, and owner/subject joint frames into P12 without making validation context itself canonical state.
+
+### P06 external implementations
+
+`NONLINEAR` and `EXTERNAL_SOLVER` transmissions intentionally keep implementation payloads outside the P06 transmission record and bind them through `refas.transmission-implementation-manifest/v1`.
+
+The canonical export component therefore carries:
+
+```text
+transmission component with implementationBinding
+  +-- TRANSMISSION_IMPLEMENTATION_MANIFEST dependency
+```
+
+The manifest must validate against the exact P06 implementation binding and the independently supplied current implementation artifact digest before adapter invocation.
+
+This makes `transmission.external-implementation` realizable without copying opaque runtime validation context or trusting a self-asserted digest.
 
 ## Adapter surface
 
@@ -155,7 +224,7 @@ When artifact bytes are available again, re-hash them and require the artifact s
 
 ## Reference semantic JSON adapter
 
-P12 includes a deterministic `refas-semantic-json` reference adapter. It serializes the canonical export view directly and therefore requires a P11 profile that marks every obligation exactly supported.
+P12 includes a deterministic `refas-semantic-json` reference adapter. It serializes the **hardened canonical export view**, including explicit canonical dependency envelopes, and therefore requires a P11 profile that marks every obligation exactly supported.
 
 Its purpose is to exercise the one-way adapter contract and provide a lossless reference representation for later normalization work. It is not canonical truth merely because it contains canonical data.
 
@@ -164,10 +233,14 @@ Its purpose is to exercise the one-way adapter contract and provide a lossless r
 Reject export when:
 
 - P10 or P11 live bindings are stale;
+- any bundled P02-P09 component fails its current upstream binding validator;
+- a P02-P09 validation context points at an unbundled P10 component contract;
 - P11 is blocked;
 - adapter backend and P11 backend differ;
 - adapter input/output violates the narrow contract;
 - a canonical component dependency is missing, stale, unreferenced, or digest-mismatched;
+- declared P03 visual reuse does not bind the current visual artifact proof;
+- P06 external implementation does not bind the current implementation manifest/artifact proof;
 - a supported/approximated obligation lacks an emitted target;
 - an unsupported obligation is emitted;
 - approximation metadata differs from P11;
