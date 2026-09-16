@@ -1,7 +1,9 @@
 import {assertDigest, assertId, deepFreeze, digestJson} from './canonical.mjs';
 import {validatePhysicalIdentityGraph} from './physical-identity-graph.mjs';
 import {
+  createTransmissionModel,
   physicalTransmissionIdentityProjection,
+  transmissionArticulationProjection,
   validateTransmissionModel,
 } from './transmission-model.mjs';
 import {validateSemanticAuthoritySet} from './semantic-authority.mjs';
@@ -9,6 +11,8 @@ import {validateSemanticAuthoritySet} from './semantic-authority.mjs';
 export const ACTUATION_MODEL_SCHEMA = 'refas.actuation-model/v1';
 export const PHYSICAL_ACTUATION_IDENTITY_BINDING_SCHEMA = 'refas.physical-actuation-identity-binding/v1';
 export const PHYSICAL_ACTUATION_IDENTITY_PROJECTION_SCHEMA = 'refas.physical-actuation-identity-projection/v1';
+export const ACTUATION_ARTICULATION_BINDING_SCHEMA = 'refas.actuation-articulation-binding/v1';
+export const ACTUATION_ARTICULATION_PROJECTION_SCHEMA = 'refas.actuation-articulation-projection/v1';
 export const ACTUATION_TRANSMISSION_BINDING_SCHEMA = 'refas.actuation-transmission-binding/v1';
 export const ACTUATION_TRANSMISSION_PROJECTION_SCHEMA = 'refas.actuation-transmission-projection/v1';
 export const ACTUATOR_KINDS = Object.freeze(['ROTARY_ELECTRIC', 'LINEAR_ELECTRIC', 'HYDRAULIC', 'PNEUMATIC', 'ABSTRACT']);
@@ -35,8 +39,11 @@ const DRIVE_TARGET_KINDS = new Set(['transmission', 'mechanism', 'virtual-joint'
 const CONSTRUCTION_AUTHORITIES = new Set(['observed', 'inferred', 'engineered']);
 const AUTHORITY_PROPERTY_SET = new Set(ACTUATION_AUTHORITY_PROPERTIES);
 const TOP_LEVEL_KEYS = new Set([
-  'schema', 'scopeId', 'sourceSha256', 'identityGraph', 'transmissionModel',
-  'identityBinding', 'transmissionBinding', 'actuators', 'policy', 'actuationDigest',
+  'schema', 'scopeId', 'sourceSha256',
+  'identityGraph', 'transmissionModel', 'mechanismGraph', 'articulationGraph',
+  'implementationManifest', 'expectedImplementationArtifactDigest',
+  'identityBinding', 'articulationBinding', 'transmissionBinding',
+  'actuators', 'policy', 'actuationDigest',
 ]);
 const BINDING_KEYS = new Set(['schema', 'sourceSchema', 'projectionDigest']);
 const ACTUATOR_KEYS = new Set([
@@ -99,6 +106,14 @@ function normalizeIdentityBinding(raw, label = 'identityBinding') {
   assertKnownKeys(raw, BINDING_KEYS, label);
   if (raw.schema !== PHYSICAL_ACTUATION_IDENTITY_BINDING_SCHEMA) throw new Error(`${label}.schema must be ${PHYSICAL_ACTUATION_IDENTITY_BINDING_SCHEMA}`);
   if (raw.sourceSchema !== 'refas.physical-identity-graph/v1') throw new Error(`${label}.sourceSchema must be refas.physical-identity-graph/v1`);
+  return {schema: raw.schema, sourceSchema: raw.sourceSchema, projectionDigest: assertDigest(raw.projectionDigest, `${label}.projectionDigest`)};
+}
+
+function normalizeArticulationBinding(raw, label = 'articulationBinding') {
+  if (raw == null) return null;
+  assertKnownKeys(raw, BINDING_KEYS, label);
+  if (raw.schema !== ACTUATION_ARTICULATION_BINDING_SCHEMA) throw new Error(`${label}.schema must be ${ACTUATION_ARTICULATION_BINDING_SCHEMA}`);
+  if (raw.sourceSchema !== 'refas.articulation-graph/v1') throw new Error(`${label}.sourceSchema must be refas.articulation-graph/v1`);
   return {schema: raw.schema, sourceSchema: raw.sourceSchema, projectionDigest: assertDigest(raw.projectionDigest, `${label}.projectionDigest`)};
 }
 
@@ -232,9 +247,9 @@ export function physicalActuationIdentityProjection(identityGraph, actuators) {
     if (!DRIVE_TARGET_KINDS.has(target.kind)) throw new Error(`actuation driven target ${target.id} has invalid kind ${target.kind}`);
     if (actuator.drivenTargetKind !== target.kind) throw new Error(`actuation ${actuator.actuatorId} drivenTargetKind is stale; expected ${target.kind}`);
     return {
-      actuator: structuredClone(actuatorEntity),
-      drivesRelation: structuredClone(relation),
-      drivenTarget: structuredClone(target),
+      actuator: {id: actuatorEntity.id, kind: actuatorEntity.kind},
+      drivesRelation: {id: relation.id, kind: relation.kind, sourceId: relation.sourceId, targetIds: [...relation.targetIds]},
+      drivenTarget: {id: target.id, kind: target.kind},
     };
   }).sort((a, b) => a.actuator.id.localeCompare(b.actuator.id));
   return deepFreeze({
@@ -253,7 +268,43 @@ function identityBindingFor(identityGraph, actuators) {
   };
 }
 
-export function actuationTransmissionProjection(transmissionModel, transmissionIds, identityGraph) {
+export function actuationArticulationProjection(articulationGraph, jointIds, identityGraph) {
+  const ids = [...new Set((jointIds ?? []).map((id, index) => assertId(id, `jointIds[${index}]`)))].sort();
+  if (!ids.length) return null;
+  const live = transmissionArticulationProjection(articulationGraph, identityGraph, ids);
+  return deepFreeze({
+    schema: ACTUATION_ARTICULATION_PROJECTION_SCHEMA,
+    scopeId: identityGraph.scopeId,
+    sourceSha256: identityGraph.sourceSha256,
+    joints: live.joints,
+    liveIdentityProjection: live.liveIdentityProjection,
+  });
+}
+
+function articulationBindingFor(articulationGraph, jointIds, identityGraph) {
+  const projection = actuationArticulationProjection(articulationGraph, jointIds, identityGraph);
+  return projection == null ? null : {
+    schema: ACTUATION_ARTICULATION_BINDING_SCHEMA,
+    sourceSchema: 'refas.articulation-graph/v1',
+    projectionDigest: digestJson(projection),
+  };
+}
+
+function assertDirectJointCoordinateCompatibility(actuators) {
+  for (const actuator of actuators) {
+    if (actuator.drivenTargetKind !== 'virtual-joint') continue;
+    if (actuator.coordinateClass !== 'ROTARY') {
+      throw new Error(`actuation ${actuator.actuatorId} directly drives P04 virtual-joint ${actuator.drivenTargetId}; current P04 articulation joints are revolute and require ROTARY coordinateClass`);
+    }
+  }
+}
+
+export function actuationTransmissionProjection(
+  transmissionModel,
+  transmissionIds,
+  identityGraph,
+  {mechanismGraph = null, articulationGraph = null, implementationManifest = null, expectedImplementationArtifactDigest = null} = {},
+) {
   const ids = [...new Set((transmissionIds ?? []).map((id, index) => assertId(id, `transmissionIds[${index}]`)))].sort();
   if (!ids.length) return null;
   const transmissionValidation = validateTransmissionModel(transmissionModel);
@@ -266,17 +317,34 @@ export function actuationTransmissionProjection(transmissionModel, transmissionI
     if (!transmission) throw new Error(`actuation references transmission ${id} not present in current transmission model`);
     return structuredClone(transmission);
   });
+
+  const liveScopedModel = createTransmissionModel({
+    scopeId: transmissionModel.scopeId,
+    sourceSha256: transmissionModel.sourceSha256,
+    identityGraph,
+    mechanismGraph,
+    articulationGraph,
+    implementationManifest,
+    expectedImplementationArtifactDigest,
+    transmissions,
+  });
+
   return deepFreeze({
     schema: ACTUATION_TRANSMISSION_PROJECTION_SCHEMA,
     scopeId: identityGraph.scopeId,
     sourceSha256: identityGraph.sourceSha256,
     transmissions,
     physicalIdentityProjection: physicalTransmissionIdentityProjection(identityGraph, transmissions),
+    liveDependencyBindings: {
+      articulationBinding: liveScopedModel.articulationBinding,
+      mechanismBinding: liveScopedModel.mechanismBinding,
+      implementationBinding: liveScopedModel.implementationBinding,
+    },
   });
 }
 
-function transmissionBindingFor(transmissionModel, transmissionIds, identityGraph) {
-  const projection = actuationTransmissionProjection(transmissionModel, transmissionIds, identityGraph);
+function transmissionBindingFor(transmissionModel, transmissionIds, identityGraph, dependencies = {}) {
+  const projection = actuationTransmissionProjection(transmissionModel, transmissionIds, identityGraph, dependencies);
   return projection == null ? null : {
     schema: ACTUATION_TRANSMISSION_BINDING_SCHEMA,
     sourceSchema: 'refas.transmission-model/v1',
@@ -284,7 +352,15 @@ function transmissionBindingFor(transmissionModel, transmissionIds, identityGrap
   };
 }
 
-function buildPayload(raw, {identityGraph = null, transmissionModel = null, requireLiveIdentityGraph = false} = {}) {
+function buildPayload(raw, {
+  identityGraph = null,
+  transmissionModel = null,
+  mechanismGraph = null,
+  articulationGraph = null,
+  implementationManifest = null,
+  expectedImplementationArtifactDigest = null,
+  requireLiveIdentityGraph = false,
+} = {}) {
   assertKnownKeys(raw, TOP_LEVEL_KEYS, 'actuationModel');
   const scopeId = assertId(raw.scopeId, 'scopeId');
   const sourceSha256 = assertDigest(raw.sourceSha256, 'sourceSha256');
@@ -306,12 +382,36 @@ function buildPayload(raw, {identityGraph = null, transmissionModel = null, requ
     identityBinding = normalizeIdentityBinding(raw.identityBinding);
   }
 
+  const directJointIds = actuators.filter((actuator) => actuator.drivenTargetKind === 'virtual-joint').map((actuator) => actuator.drivenTargetId).sort();
+  let articulationBinding;
+  if (directJointIds.length) {
+    assertDirectJointCoordinateCompatibility(actuators);
+    if (identityGraph && articulationGraph) {
+      const live = articulationBindingFor(articulationGraph, directJointIds, identityGraph);
+      if (raw.articulationBinding != null && digestJson(normalizeArticulationBinding(raw.articulationBinding)) !== digestJson(live)) throw new Error('articulationBinding does not bind the current directly driven joint projection');
+      articulationBinding = live;
+    } else if (requireLiveIdentityGraph) {
+      throw new Error('articulationGraph is required when an actuator directly DRIVES a virtual-joint');
+    } else {
+      articulationBinding = normalizeArticulationBinding(raw.articulationBinding);
+      if (articulationBinding == null) throw new Error('articulationBinding is required when an actuator directly DRIVES a virtual-joint');
+    }
+  } else {
+    if (raw.articulationBinding != null) throw new Error('articulationBinding must be null when no actuator directly DRIVES a virtual-joint');
+    articulationBinding = null;
+  }
+
   const transmissionIds = actuators.filter((actuator) => actuator.drivenTargetKind === 'transmission').map((actuator) => actuator.drivenTargetId).sort();
   let transmissionBinding;
   if (transmissionIds.length) {
     if (identityGraph && transmissionModel) {
-      const live = transmissionBindingFor(transmissionModel, transmissionIds, identityGraph);
-      if (raw.transmissionBinding != null && digestJson(normalizeTransmissionBinding(raw.transmissionBinding)) !== digestJson(live)) throw new Error('transmissionBinding does not bind the current referenced transmission projection');
+      const live = transmissionBindingFor(transmissionModel, transmissionIds, identityGraph, {
+        mechanismGraph,
+        articulationGraph,
+        implementationManifest,
+        expectedImplementationArtifactDigest,
+      });
+      if (raw.transmissionBinding != null && digestJson(normalizeTransmissionBinding(raw.transmissionBinding)) !== digestJson(live)) throw new Error('transmissionBinding does not bind the current referenced transmission projection and live upstream dependencies');
       transmissionBinding = live;
     } else if (requireLiveIdentityGraph) {
       throw new Error('transmissionModel is required when an actuator DRIVES a transmission');
@@ -329,6 +429,7 @@ function buildPayload(raw, {identityGraph = null, transmissionModel = null, requ
     scopeId,
     sourceSha256,
     identityBinding,
+    articulationBinding,
     transmissionBinding,
     actuators,
     policy: {
@@ -340,7 +441,11 @@ function buildPayload(raw, {identityGraph = null, transmissionModel = null, requ
       continuousIsNotUnknown: true,
       fabricatedDefaultsForbidden: true,
       unitsAreCoordinateClassSpecific: true,
+      directVirtualJointRequiresLiveArticulation: true,
+      directVirtualJointCoordinateClassMustMatch: true,
+      selectedTransmissionRequiresLiveUpstreamDependencies: true,
       scopedIdentityBinding: true,
+      scopedArticulationBinding: true,
       scopedTransmissionBinding: true,
       semanticAuthorityRemainsExternal: true,
       actuationDoesNotAssertSourceTruth: true,
@@ -353,6 +458,10 @@ export function createActuationModel(input = {}) {
   const payload = buildPayload(input, {
     identityGraph: input.identityGraph ?? null,
     transmissionModel: input.transmissionModel ?? null,
+    mechanismGraph: input.mechanismGraph ?? null,
+    articulationGraph: input.articulationGraph ?? null,
+    implementationManifest: input.implementationManifest ?? null,
+    expectedImplementationArtifactDigest: input.expectedImplementationArtifactDigest ?? null,
     requireLiveIdentityGraph: true,
   });
   return deepFreeze({...payload, actuationDigest: digestJson(payload)});
@@ -372,15 +481,33 @@ export function validateActuationModel(value) {
   return {valid: errors.length === 0, errors};
 }
 
-export function validateActuationModelBindings(value, identityGraph, {transmissionModel = null} = {}) {
+export function validateActuationModelBindings(value, identityGraph, {
+  transmissionModel = null,
+  mechanismGraph = null,
+  articulationGraph = null,
+  implementationManifest = null,
+  expectedImplementationArtifactDigest = null,
+} = {}) {
   const errors = [];
   const validation = validateActuationModel(value);
   if (!validation.valid) errors.push(`actuation model invalid: ${validation.errors.join('; ')}`);
   try {
     if (!errors.length) {
-      const payload = buildPayload({...value, identityGraph, transmissionModel}, {
+      const payload = buildPayload({
+        ...value,
         identityGraph,
         transmissionModel,
+        mechanismGraph,
+        articulationGraph,
+        implementationManifest,
+        expectedImplementationArtifactDigest,
+      }, {
+        identityGraph,
+        transmissionModel,
+        mechanismGraph,
+        articulationGraph,
+        implementationManifest,
+        expectedImplementationArtifactDigest,
         requireLiveIdentityGraph: true,
       });
       const recreated = {...payload, actuationDigest: digestJson(payload)};

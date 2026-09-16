@@ -3,12 +3,18 @@
   "$id": "https://refas.dev/schemas/actuation-model.schema.json",
   "title": "RefAs actuation model",
   "type": "object",
-  "required": ["schema", "scopeId", "sourceSha256", "identityBinding", "transmissionBinding", "actuators", "policy", "actuationDigest"],
+  "required": ["schema", "scopeId", "sourceSha256", "identityBinding", "articulationBinding", "transmissionBinding", "actuators", "policy", "actuationDigest"],
   "properties": {
     "schema": {"const": "refas.actuation-model/v1"},
     "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
     "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
     "identityBinding": {"$ref": "#/$defs/identityBinding"},
+    "articulationBinding": {
+      "oneOf": [
+        {"type": "null"},
+        {"$ref": "#/$defs/articulationBinding"}
+      ]
+    },
     "transmissionBinding": {
       "oneOf": [
         {"type": "null"},
@@ -31,7 +37,11 @@
         "continuousIsNotUnknown",
         "fabricatedDefaultsForbidden",
         "unitsAreCoordinateClassSpecific",
+        "directVirtualJointRequiresLiveArticulation",
+        "directVirtualJointCoordinateClassMustMatch",
+        "selectedTransmissionRequiresLiveUpstreamDependencies",
         "scopedIdentityBinding",
+        "scopedArticulationBinding",
         "scopedTransmissionBinding",
         "semanticAuthorityRemainsExternal",
         "actuationDoesNotAssertSourceTruth",
@@ -46,7 +56,11 @@
         "continuousIsNotUnknown": {"const": true},
         "fabricatedDefaultsForbidden": {"const": true},
         "unitsAreCoordinateClassSpecific": {"const": true},
+        "directVirtualJointRequiresLiveArticulation": {"const": true},
+        "directVirtualJointCoordinateClassMustMatch": {"const": true},
+        "selectedTransmissionRequiresLiveUpstreamDependencies": {"const": true},
         "scopedIdentityBinding": {"const": true},
+        "scopedArticulationBinding": {"const": true},
         "scopedTransmissionBinding": {"const": true},
         "semanticAuthorityRemainsExternal": {"const": true},
         "actuationDoesNotAssertSourceTruth": {"const": true},
@@ -63,6 +77,16 @@
       "properties": {
         "schema": {"const": "refas.physical-actuation-identity-binding/v1"},
         "sourceSchema": {"const": "refas.physical-identity-graph/v1"},
+        "projectionDigest": {"$ref": "common.schema.json#/$defs/digest"}
+      },
+      "additionalProperties": false
+    },
+    "articulationBinding": {
+      "type": "object",
+      "required": ["schema", "sourceSchema", "projectionDigest"],
+      "properties": {
+        "schema": {"const": "refas.actuation-articulation-binding/v1"},
+        "sourceSchema": {"const": "refas.articulation-graph/v1"},
         "projectionDigest": {"$ref": "common.schema.json#/$defs/digest"}
       },
       "additionalProperties": false
