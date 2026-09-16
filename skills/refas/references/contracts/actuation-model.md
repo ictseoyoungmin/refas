@@ -1,6 +1,6 @@
 # Actuation model contract
 
-Load this leaf when an asset makes an explicit actuator physical-capability claim. Ordinary visual reconstruction and passive assembly do not require it. If the actuator drives a canonical transmission, load `references/contracts/transmission-model.md` as the upstream mapping contract as well.
+Load this leaf when an asset makes an explicit actuator physical-capability claim. Ordinary visual reconstruction and passive assembly do not require it. If the actuator drives a canonical transmission, load `references/contracts/transmission-model.md` as the upstream mapping contract as well. If it directly drives a canonical virtual joint, load the articulation contract because current P04 joint meaning is part of the drive target.
 
 ## Ownership boundary
 
@@ -28,9 +28,30 @@ Every P07 actuator record binds:
 - exactly one declared driven target;
 - the current target kind: `transmission`, `mechanism`, or `virtual-joint`.
 
-The scoped identity projection includes only the bound actuator, its exact `DRIVES` relation, and the driven target identity. Unrelated controller, runtime endpoint, attachment, or other actuator edits do not stale P07. Changing the actuator identity, relation, driven target, or target kind does.
+The scoped identity projection binds only the semantic identity facts P07 owns: actuator `{id, kind}`, the exact `DRIVES` relation identity/source/targets, and driven-target `{id, kind}`. It does not bind unrelated actuator or target frame metadata. Unrelated controller, runtime endpoint, attachment, frame-placement, or other actuator edits therefore do not stale P07. Changing the actuator identity/kind, relation, driven target, or target kind does.
 
-When `DRIVES` targets a transmission, P07 additionally binds only the referenced P06 transmission record and its current P01 coordinate-participant identity projection. An unrelated transmission elsewhere in the asset may change without invalidating the actuator. A change to the selected transmission mapping or selected transmission participants invalidates the P07 transmission binding.
+## Direct P04 virtual-joint binding
+
+When `DRIVES` targets a `virtual-joint`, P01 identity alone is not sufficient proof of coordinate meaning. P07 additionally binds only that directly driven joint through a current scoped P04 articulation projection.
+
+The projection reuses the P04 live identity/reference-pose check, so a stale joint direction, parent/child assignment, reference configuration, or resolved P01 parent→child pose invalidates P07. Unrelated P04 branches remain outside this binding.
+
+Current `refas.articulation-graph/v1` joint coordinates are revolute. Therefore a direct P04 virtual-joint drive requires P07 `coordinateClass: ROTARY`. A `LINEAR` actuator capability cannot directly claim to drive the same revolute semantic coordinate merely because P01 contains a `DRIVES` edge. If a later P04 version adds a canonical linear/prismatic joint coordinate, this compatibility rule must be extended explicitly rather than guessed from backend type names.
+
+## Selected P06 transmission liveness
+
+When `DRIVES` targets a transmission, P07 binds only the selected P06 transmission records rather than the whole transmission model.
+
+P07 does not treat intrinsic `validateTransmissionModel()` success as proof that a selected P06 record is still live. For each selected transmission it reconstructs a scoped current P06 model from the present dependencies required by that record:
+
+- current P01 transmission / `MAPS` / coordinate identities;
+- current P04 articulation semantics for any selected virtual-joint coordinates;
+- current P05 mechanism context when the selected transmission declares one;
+- current verified implementation manifest/artifact witness for selected `NONLINEAR` or `EXTERNAL_SOLVER` mappings.
+
+The P07 transmission projection persists the selected transmission records, their current P01 projection, and the resulting scoped P06 articulation/mechanism/implementation bindings. Thus a selected transmission cannot remain valid in P07 after its own P04/P05/external implementation meaning becomes stale.
+
+The scope remains narrow. An unrelated transmission record, unrelated P04 branch, unrelated P05 mechanism, or unrelated implementation-manifest entry does not invalidate an unchanged P07 actuator. A whole implementation artifact may change because an unrelated implementation changed; if the selected implementation entry/signature is unchanged and the caller supplies the new verified current artifact digest, the selected P07 binding remains equivalent.
 
 ## Actuator kinds and coordinate class
 
@@ -161,8 +182,11 @@ Reject at least:
 - a non-actuator P01 owner;
 - a relation that is not exact `DRIVES` from the declared actuator;
 - target ID or target-kind drift;
+- a direct `virtual-joint` target without current scoped P04 articulation proof;
+- a direct current P04 revolute joint paired with `LINEAR` coordinate class;
 - a missing selected P06 transmission when `DRIVES` targets transmission;
-- stale selected P06 mapping/participant semantics;
+- stale selected P06 P01/P04/P05 mapping dependencies;
+- missing or stale selected nonlinear/solver implementation proof;
 - rotary/linear unit mismatch;
 - `ROTARY_ELECTRIC` with linear coordinate class;
 - `LINEAR_ELECTRIC` with rotary coordinate class;
