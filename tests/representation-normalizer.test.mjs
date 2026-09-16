@@ -11,6 +11,7 @@ import {
   createSemanticJsonExportAdapter,
   createSemanticJsonRepresentationNormalizer,
   deriveRepresentationCapacityObligations,
+  digestJson,
   runExportAdapter,
   runRepresentationNormalizer,
   validateNormalizedRepresentation,
@@ -89,7 +90,7 @@ function fixtureExportAdapter({encoding = 'wxyz-cm', reverse = false} = {}) {
   }};
 }
 function fixtureNormalizer(probe = null) {
-  return {id: 'fixture-representation-normalizer', backend: 'fixture-normalized', version: '1', normalize({manifest, obligations, artifacts}) {
+  return {id: 'fixture-representation-normalizer', backend: 'fixture-normalized', version: '1', implementationDigest: D('f'), normalize({manifest, obligations, artifacts}) {
     if (probe) probe.calls += 1;
     const artifact = artifacts.find((item) => item.path === 'fixture/representation.json');
     const document = JSON.parse(Buffer.from(artifact.content).toString('utf8'));
@@ -107,19 +108,33 @@ function fixtureNormalizer(probe = null) {
     return {readings};
   }};
 }
+function semanticProjection(entries) {
+  return entries.map((entry) => ({obligationId: entry.obligationId, semanticPath: entry.semanticPath, subjectIds: [...entry.subjectIds], status: entry.status, value: structuredClone(entry.value)}));
+}
+function resignNormalized(value) {
+  const next = structuredClone(value);
+  next.semanticDigest = digestJson(semanticProjection(next.entries));
+  const payload = structuredClone(next);
+  delete payload.normalizationDigest;
+  next.normalizationDigest = digestJson(payload);
+  return next;
+}
 
 test('P13 semantic JSON normalizer reads verified P12 bytes without canonical construction input', async () => {
   const context = fixture(), profile = allSupportedProfile(context, 'refas-semantic-json', 'profile-semantic');
+  const normalizer = createSemanticJsonRepresentationNormalizer();
   const exported = await runExportAdapter({exportId: 'export-semantic', adapter: createSemanticJsonExportAdapter(), capacityProfile: profile, ...context});
-  const normalized = await runRepresentationNormalizer({normalizationId: 'normalized-semantic', normalizer: createSemanticJsonRepresentationNormalizer(), capacityProfile: profile, manifest: exported.manifest, files: exported.files});
+  const normalized = await runRepresentationNormalizer({normalizationId: 'normalized-semantic', normalizer, capacityProfile: profile, manifest: exported.manifest, files: exported.files});
   assert.deepEqual(validateNormalizedRepresentation(normalized), {valid: true, errors: []});
-  assert.deepEqual(validateNormalizedRepresentationBindings(normalized, {capacityProfile: profile, manifest: exported.manifest, files: exported.files}), {valid: true, errors: []});
+  assert.deepEqual(await validateNormalizedRepresentationBindings(normalized, {capacityProfile: profile, manifest: exported.manifest, files: exported.files, normalizer}), {valid: true, errors: []});
   assert.equal(normalized.entries.length, profile.obligations.length);
   assert.ok(normalized.entries.every((entry) => entry.status === 'NORMALIZED'));
   const frame = normalized.entries.find((entry) => entry.semanticPath === 'frame.transform' && entry.subjectIds.includes('link-a'));
   assert.deepEqual(frame.value, {parentId: 'module-root', ...canonicalizeBackendRigidTransform({translation_m: [0.1,-0.2,0.3], rotation_quat_xyzw: Z90})});
   assert.equal('bundle' in normalized, false);
   assert.equal(normalized.policy.backendDataNeverCanonical, true);
+  assert.equal(normalized.policy.persistedReadingsMustReplayFromVerifiedBytes, true);
+  assert.equal(normalized.policy.normalizerImplementationIsDigestBound, true);
 });
 
 test('P13 canonicalizes translation units, quaternion sign/component order, and Euler conventions', () => {
@@ -166,6 +181,43 @@ test('P13 verifies P12 artifact bytes and exact P11 binding before normalizer co
   const wrongProfile = allSupportedProfile(context, 'refas-semantic-json', 'profile-wrong-backend');
   await assert.rejects(runRepresentationNormalizer({normalizationId: 'normalized-wrong-profile', normalizer: fixtureNormalizer(probe), capacityProfile: wrongProfile, manifest: exported.manifest, files: exported.files}), /capacity binding|backend/);
   assert.equal(probe.calls, 0);
+});
+
+test('P13 persisted values must replay from verified backend bytes even after attacker recomputes both digests', async () => {
+  const context = fixture(), profile = allSupportedProfile(context, 'fixture-normalized', 'profile-replay-proof');
+  const normalizer = fixtureNormalizer();
+  const exported = await runExportAdapter({exportId: 'export-replay-proof', adapter: fixtureExportAdapter(), capacityProfile: profile, ...context});
+  const normalized = await runRepresentationNormalizer({normalizationId: 'normalized-replay-proof', normalizer, capacityProfile: profile, manifest: exported.manifest, files: exported.files});
+  const modified = structuredClone(normalized);
+  modified.entries.find((entry) => entry.semanticPath === 'dynamics.mass').value = 99;
+  const resigned = resignNormalized(modified);
+  assert.deepEqual(validateNormalizedRepresentation(resigned), {valid: true, errors: []});
+  const validation = await validateNormalizedRepresentationBindings(resigned, {capacityProfile: profile, manifest: exported.manifest, files: exported.files, normalizer});
+  assert.equal(validation.valid, false);
+  assert.match(validation.errors.join('; '), /does not replay from verified backend artifact bytes/);
+});
+
+test('P13 binds exact normalizer implementation identity and replay catches behavior drift even under a copied digest', async () => {
+  const context = fixture(), profile = allSupportedProfile(context, 'fixture-normalized', 'profile-normalizer-binding');
+  const normalizer = fixtureNormalizer();
+  const exported = await runExportAdapter({exportId: 'export-normalizer-binding', adapter: fixtureExportAdapter(), capacityProfile: profile, ...context});
+  const normalized = await runRepresentationNormalizer({normalizationId: 'normalized-normalizer-binding', normalizer, capacityProfile: profile, manifest: exported.manifest, files: exported.files});
+
+  const wrongRegistration = {...normalizer, implementationDigest: D('e')};
+  const wrongRegistrationValidation = await validateNormalizedRepresentationBindings(normalized, {capacityProfile: profile, manifest: exported.manifest, files: exported.files, normalizer: wrongRegistration});
+  assert.equal(wrongRegistrationValidation.valid, false);
+  assert.match(wrongRegistrationValidation.errors.join('; '), /normalizer implementation binding is stale/);
+
+  const drifted = {...normalizer, normalize(input) {
+    const raw = normalizer.normalize(input);
+    const changed = structuredClone(raw);
+    const massId = profile.obligations.find((obligation) => obligation.semanticPath === 'dynamics.mass').obligationId;
+    changed.readings.find((reading) => reading.obligationId === massId).value = 123;
+    return changed;
+  }};
+  const driftedValidation = await validateNormalizedRepresentationBindings(normalized, {capacityProfile: profile, manifest: exported.manifest, files: exported.files, normalizer: drifted});
+  assert.equal(driftedValidation.valid, false);
+  assert.match(driftedValidation.errors.join('; '), /does not replay from verified backend artifact bytes/);
 });
 
 test('P13 fails closed on missing, duplicate, or unrelated-locator readings', async () => {
