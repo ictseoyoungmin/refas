@@ -299,6 +299,22 @@ function assertDirectJointCoordinateCompatibility(actuators) {
   }
 }
 
+function assertTransmissionParticipantIncidence(actuators, transmissionModel) {
+  const transmissionById = new Map(transmissionModel.transmissions.map((transmission) => [transmission.transmissionId, transmission]));
+  for (const actuator of actuators) {
+    if (actuator.drivenTargetKind !== 'transmission') continue;
+    const transmission = transmissionById.get(actuator.drivenTargetId);
+    if (!transmission) throw new Error(`actuation ${actuator.actuatorId} references transmission ${actuator.drivenTargetId} not present in current transmission model`);
+    const participantIds = new Set([
+      ...transmission.inputSpace.coordinates.map((coordinate) => coordinate.semanticIdentityId),
+      ...transmission.outputSpace.coordinates.map((coordinate) => coordinate.semanticIdentityId),
+    ]);
+    if (!participantIds.has(actuator.actuatorId)) {
+      throw new Error(`actuation ${actuator.actuatorId} DRIVES transmission ${actuator.drivenTargetId} but is not a semantic coordinate participant of that transmission`);
+    }
+  }
+}
+
 export function actuationTransmissionProjection(
   transmissionModel,
   transmissionIds,
@@ -411,6 +427,7 @@ function buildPayload(raw, {
         implementationManifest,
         expectedImplementationArtifactDigest,
       });
+      assertTransmissionParticipantIncidence(actuators, transmissionModel);
       if (raw.transmissionBinding != null && digestJson(normalizeTransmissionBinding(raw.transmissionBinding)) !== digestJson(live)) throw new Error('transmissionBinding does not bind the current referenced transmission projection and live upstream dependencies');
       transmissionBinding = live;
     } else if (requireLiveIdentityGraph) {
