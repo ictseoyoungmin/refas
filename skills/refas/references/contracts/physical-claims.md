@@ -54,7 +54,7 @@ For a required representation obligation:
 - `DECLARED_DIVERGENCE` supports the claim only after the exact current P15 artifact successfully passes `validateDivergenceAuthorizationBindings(...)` with its exact current semantic-authority set and P11-P14 inputs.
 - `LOSSY`, undeclared `DRIFT`, `UNRESOLVED`, and `INVALID` are blocking.
 
-A P15 artifact must never be trusted by intrinsic digest validity alone for a positive physical claim.
+A P15 artifact must never be trusted by intrinsic digest validity alone for a positive physical claim. When a declared divergence is actually used, the P16 scoped divergence projection also seals the exact P15 declaration `authorityEntryDigest`, so re-authorizing the same override with changed engineered rationale produces new P16 evidence.
 
 ### Claim-local obligation identity
 
