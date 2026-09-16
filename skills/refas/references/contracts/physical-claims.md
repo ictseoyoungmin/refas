@@ -56,6 +56,19 @@ For a required representation obligation:
 
 A P15 artifact must never be trusted by intrinsic digest validity alone for a positive physical claim.
 
+### Claim-local obligation identity
+
+P11 obligation IDs are exact identities for one complete representation-capacity inventory and may therefore change when an unrelated identity changes the P11 identity-projection digest. P16 must not reuse that global inventory identity as persisted claim identity.
+
+`physicalClaimObligationId(...)` derives a claim-local semantic obligation identity from:
+
+- source kind,
+- component ID and component schema for component obligations,
+- semantic path,
+- exact semantic subject IDs.
+
+It deliberately excludes the P11 identity-projection digest and component-content digest from the persisted P16 obligation ID. The scoped validation projection still stores the exact canonical/normalized values and outcomes, so a relevant semantic edit changes the P16 projection/evidence digest even when the claim-local obligation identity remains stable.
+
 ## Scoped invalidation
 
 P16 intentionally seals claim-scoped projections rather than global P10/P14/P15 digests.
