@@ -18,32 +18,42 @@ function selectorUsesPhysicalClaimEvidence(selector) {
     || String(selector?.role ?? '').startsWith(PHYSICAL_CLAIM_ROLE_PREFIX);
 }
 
+function nodeUsesPhysicalClaimEvidence(node) {
+  return node?.schema === PHYSICAL_CLAIM_EVIDENCE_SCHEMA
+    || String(node?.role ?? '').startsWith(PHYSICAL_CLAIM_ROLE_PREFIX);
+}
+
 function selectorMatchesNode(selector, node) {
   return (selector?.role == null || node.role === selector.role)
     && (selector?.schema == null || node.schema === selector.schema);
 }
 
-function physicalSelectors(policy) {
+function policySelectors(policy) {
   const selectors = [];
   for (const claim of policy?.claims ?? []) {
-    for (const obligation of claim.obligations ?? []) {
-      if (selectorUsesPhysicalClaimEvidence(obligation)) selectors.push(obligation);
-    }
-    for (const source of claim.findingSources ?? []) {
-      if (selectorUsesPhysicalClaimEvidence(source)) selectors.push(source);
-    }
+    selectors.push(...(claim.obligations ?? []), ...(claim.findingSources ?? []));
   }
   return selectors;
 }
 
+function physicalSelectors(policy) {
+  return policySelectors(policy).filter(selectorUsesPhysicalClaimEvidence);
+}
+
 function selectedPhysicalNodeIds(transaction, policy) {
   const ids = new Set();
-  for (const selector of physicalSelectors(policy)) {
+  for (const selector of policySelectors(policy)) {
+    const selectorIsPhysical = selectorUsesPhysicalClaimEvidence(selector);
     for (const node of transaction?.evidenceNodes ?? []) {
-      if (selectorMatchesNode(selector, node)) ids.add(node.id);
+      if (!selectorMatchesNode(selector, node)) continue;
+      if (selectorIsPhysical || nodeUsesPhysicalClaimEvidence(node)) ids.add(node.id);
     }
   }
   return [...ids].sort();
+}
+
+function policyConsumesPhysicalEvidence(transaction, policy) {
+  return physicalSelectors(policy).length > 0 || selectedPhysicalNodeIds(transaction, policy).length > 0;
 }
 
 function evidenceBytes(bytesById, id) {
@@ -57,14 +67,14 @@ function evidenceContext(contexts, id) {
 }
 
 export function evaluateCertificationPolicy(args = {}) {
-  if (physicalSelectors(args.policy).length) {
+  if (policyConsumesPhysicalEvidence(args.transaction, args.policy)) {
     throw new Error('physical claim evidence is live-gated; use evaluatePhysicalClaimCertification(...) so current P10-P15 bindings are validated before claim evaluation');
   }
   return evaluateCertificationPolicyCore(args);
 }
 
 export function validateClaimCertificationDecision(value, context = {}) {
-  if (physicalSelectors(context?.policy).length) {
+  if (policyConsumesPhysicalEvidence(context?.transaction, context?.policy)) {
     return {
       valid: false,
       errors: ['physical claim certification decisions are live-gated; use validatePhysicalClaimCertificationDecision(...)'],
