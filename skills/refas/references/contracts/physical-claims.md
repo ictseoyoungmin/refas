@@ -94,7 +94,11 @@ Do not invent another claim evaluator.
 - role `physical-claim-<claim-id>`
 - finding source `/findings`
 
-`evaluatePhysicalClaimCertification(...)` is the typed P16 preflight adapter. It first live-validates every physical claim evidence node against current P10-P15 inputs, then delegates the actual claim decision to the existing generic certification-policy evaluator.
+The package-level `evaluateCertificationPolicy(...)` public route refuses any policy selector that consumes physical-claim evidence. This prevents candidate-transaction validity, schema labeling, or a stale persisted P16 artifact from bypassing live P10-P15 checks.
+
+`evaluatePhysicalClaimCertification(...)` is the typed P16 preflight adapter. It computes the physical evidence nodes actually selected by the active policy, live-validates only those nodes against their current P10-P15 contexts, then delegates the final decision to the existing generic certification-policy engine. Unrelated higher-level P16 nodes that are present in the same transaction but are not consumed by the active policy are not preflighted and cannot back-propagate into a lower claim.
+
+The package-level generic decision validator likewise refuses physical-claim decisions. Use `validatePhysicalClaimCertificationDecision(...)` when reproducing a physical-readiness decision from current live evidence.
 
 Candidate-transaction validity or schema labeling alone never authorizes physical readiness.
 
