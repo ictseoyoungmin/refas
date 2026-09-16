@@ -1,8 +1,8 @@
 import {assertDigest, assertId, deepFreeze, digestJson} from './canonical.mjs';
 import {validatePhysicalIdentityGraph} from './physical-identity-graph.mjs';
-import {validateActuationModel} from './actuation-model.mjs';
-import {controlActuationProjection} from './control-profile.mjs';
-import {validateArticulationGraphBindings} from './articulation-graph.mjs';
+import {createActuationModel, validateActuationModel} from './actuation-model.mjs';
+import {transmissionArticulationProjection} from './transmission-model.mjs';
+import {ARTICULATED_JOINT_SCHEMA, validateArticulatedJoint} from './articulation-clearance.mjs';
 import {validateSemanticAuthoritySet} from './semantic-authority.mjs';
 
 export const RUNTIME_BINDING_SCHEMA = 'refas.runtime-binding/v1';
@@ -35,6 +35,8 @@ const ZERO_OFFSET_KEYS = new Set(['value', 'unit']);
 const ENCODER_SCALE_KEYS = new Set(['value', 'unit']);
 const DELAY_KEYS = new Set(['value_s']);
 const TARGET_KINDS = new Set(['actuator', 'controller', 'virtual-joint', 'rigid-link', 'attachment-interface']);
+const RUNTIME_LOCATOR_MAX_LENGTH = 512;
+const RUNTIME_LOCATOR_CONTROL_RE = /[\u0000-\u001f\u007f]/u;
 
 function assertRecord(value, label) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error(`${label} must be an object`);
@@ -111,8 +113,16 @@ function normalizeAuthorityValue(raw, bindingId, property, normalizeValue, label
   return {value: raw.value == null ? null : normalizeValue(raw.value, `${label}.value`), authoritySubjectId};
 }
 
-function normalizeDevice(value, label) { return assertId(value, label); }
-function normalizeBus(value, label) { return assertId(value, label); }
+function normalizeRuntimeLocator(value, label) {
+  if (typeof value !== 'string') throw new Error(`${label} must be a runtime locator string`);
+  if (!value.length || value.length > RUNTIME_LOCATOR_MAX_LENGTH) throw new Error(`${label} must contain 1-${RUNTIME_LOCATOR_MAX_LENGTH} characters`);
+  if (value.trim() !== value) throw new Error(`${label} must not contain leading or trailing whitespace`);
+  if (RUNTIME_LOCATOR_CONTROL_RE.test(value)) throw new Error(`${label} must not contain control characters`);
+  return value;
+}
+
+function normalizeDevice(value, label) { return normalizeRuntimeLocator(value, label); }
+function normalizeBus(value, label) { return normalizeRuntimeLocator(value, label); }
 function normalizeRuntimeIndex(value, label) { return nonnegativeInteger(value, label); }
 function normalizeSign(value, label) {
   const normalized = finite(value, label);
@@ -182,6 +192,32 @@ function normalizeBinding(raw, index) {
   return binding;
 }
 
+function resolvedCalibration(rawBinding) {
+  const binding = normalizeBinding(rawBinding, 0);
+  if (binding.coordinateClass === 'NONE') throw new Error(`runtime binding ${binding.bindingId} has no scalar runtime coordinate`);
+  if (binding.sign.value == null || binding.zeroOffset.value == null || binding.encoderScale.value == null) {
+    throw new Error(`runtime binding ${binding.bindingId} calibration is unresolved; sign, zeroOffset, and encoderScale are required for conversion`);
+  }
+  return {
+    binding,
+    sign: binding.sign.value,
+    zeroOffset: binding.zeroOffset.value.value,
+    encoderScale: binding.encoderScale.value.value,
+  };
+}
+
+export function runtimeValueToCanonical(rawBinding, runtimeValue) {
+  const {sign, zeroOffset, encoderScale} = resolvedCalibration(rawBinding);
+  const raw = finite(runtimeValue, 'runtimeValue');
+  return finite(zeroOffset + sign * encoderScale * raw, 'canonicalValue');
+}
+
+export function canonicalValueToRuntime(rawBinding, canonicalValue) {
+  const {sign, zeroOffset, encoderScale} = resolvedCalibration(rawBinding);
+  const canonical = finite(canonicalValue, 'canonicalValue');
+  return finite(sign * (canonical - zeroOffset) / encoderScale, 'runtimeValue');
+}
+
 export function physicalRuntimeIdentityProjection(identityGraph, bindings) {
   validateIdentityGraph(identityGraph);
   if (!Array.isArray(bindings) || !bindings.length) throw new Error('physical runtime identity projection requires bindings');
@@ -226,18 +262,43 @@ function actuatorSemanticProjection(binding, actuationModel, identityGraph, depe
   const actuator = actuationModel.actuators.find((item) => item.actuatorId === binding.selector.targetId);
   if (!actuator) throw new Error(`runtime binding ${binding.bindingId} target actuator ${binding.selector.targetId} is absent from actuation model`);
   if (binding.coordinateClass !== actuator.coordinateClass) throw new Error(`runtime binding ${binding.bindingId} coordinateClass is stale; expected ${actuator.coordinateClass}`);
-  const scoped = controlActuationProjection(actuationModel, [actuator.actuatorId], identityGraph, dependencies);
-  return {bindingId: binding.bindingId, targetKind: 'actuator', targetId: actuator.actuatorId, coordinateClass: actuator.coordinateClass, scopedActuationDigest: digestJson(scoped)};
+  const liveScopedModel = createActuationModel({
+    scopeId: actuationModel.scopeId,
+    sourceSha256: actuationModel.sourceSha256,
+    identityGraph,
+    transmissionModel: dependencies.transmissionModel ?? null,
+    mechanismGraph: dependencies.mechanismGraph ?? null,
+    articulationGraph: dependencies.articulationGraph ?? null,
+    implementationManifest: dependencies.implementationManifest ?? null,
+    expectedImplementationArtifactDigest: dependencies.expectedImplementationArtifactDigest ?? null,
+    actuators: [actuator],
+  });
+  return {
+    bindingId: binding.bindingId,
+    targetKind: 'actuator',
+    targetId: actuator.actuatorId,
+    coordinateClass: actuator.coordinateClass,
+    liveDependencyBindings: {
+      identityBinding: liveScopedModel.identityBinding,
+      articulationBinding: liveScopedModel.articulationBinding,
+      transmissionBinding: liveScopedModel.transmissionBinding,
+    },
+  };
 }
 
 function virtualJointSemanticProjection(binding, articulationGraph, identityGraph, {attachmentSemantics = null, jointContracts = null} = {}) {
   if (!articulationGraph) throw new Error(`runtime binding ${binding.bindingId} requires articulationGraph for virtual-joint target`);
-  const validation = validateArticulationGraphBindings(articulationGraph, identityGraph, {attachmentSemantics, jointContracts});
-  if (!validation.valid) throw new Error(`articulationGraph is not live for runtime binding ${binding.bindingId}: ${validation.errors.join('; ')}`);
-  const joint = articulationGraph.joints.find((item) => item.virtualJointId === binding.selector.targetId);
+  if (!attachmentSemantics) throw new Error(`runtime binding ${binding.bindingId} requires attachmentSemantics for virtual-joint target`);
+  if (!Array.isArray(jointContracts)) throw new Error(`runtime binding ${binding.bindingId} requires jointContracts for virtual-joint target`);
+  const live = transmissionArticulationProjection(articulationGraph, identityGraph, [binding.selector.targetId]);
+  const joint = live.joints.find((item) => item.virtualJointId === binding.selector.targetId);
   if (!joint) throw new Error(`runtime binding ${binding.bindingId} target virtual-joint ${binding.selector.targetId} is absent from articulation graph`);
-  const contract = (jointContracts ?? []).find((item) => item.id === joint.jointContract.id);
+  const contract = jointContracts.find((item) => item.id === joint.jointContract.id);
   if (!contract) throw new Error(`runtime binding ${binding.bindingId} requires live joint contract ${joint.jointContract.id}`);
+  if (contract.schema !== ARTICULATED_JOINT_SCHEMA) throw new Error(`runtime binding ${binding.bindingId} joint contract ${contract.id} uses unsupported schema ${contract.schema}`);
+  if (contract.jointDigest !== joint.jointContract.jointDigest) throw new Error(`runtime binding ${binding.bindingId} joint contract ${contract.id} digest is stale`);
+  const contractValidation = validateArticulatedJoint(contract, attachmentSemantics);
+  if (!contractValidation.valid) throw new Error(`runtime binding ${binding.bindingId} joint contract ${contract.id} is not live: ${contractValidation.errors.join('; ')}`);
   const coordinateClass = contract.jointType === 'REVOLUTE' ? 'ROTARY' : contract.jointType === 'PRISMATIC' ? 'LINEAR' : null;
   if (!coordinateClass) throw new Error(`runtime binding ${binding.bindingId} joint type ${contract.jointType} has no scalar runtime coordinate class`);
   if (binding.coordinateClass !== coordinateClass) throw new Error(`runtime binding ${binding.bindingId} coordinateClass is stale; expected ${coordinateClass}`);
@@ -247,6 +308,7 @@ function virtualJointSemanticProjection(binding, articulationGraph, identityGrap
     targetId: binding.selector.targetId,
     coordinateClass,
     articulationJoint: structuredClone(joint),
+    liveIdentityProjection: live.liveIdentityProjection,
     jointContract: {schema: contract.schema, id: contract.id, jointType: contract.jointType, jointDigest: contract.jointDigest},
   };
 }
@@ -336,7 +398,9 @@ function buildPayload(raw, {
     policy: {
       runtimeEndpointRemainsDistinctFromTarget: true,
       runtimeIndexIsNotSemanticIdentity: true,
+      runtimeLocatorsAreConfigurationStrings: true,
       runtimeCalibrationDoesNotRewriteUpstreamSemantics: true,
+      canonicalCalibrationEquationDefined: true,
       zeroOffsetUsesGeneralizedCoordinateUnits: true,
       zeroOffsetIsNotEulerOrientation: true,
       signAndScaleRemainSeparate: true,
@@ -344,6 +408,7 @@ function buildPayload(raw, {
       unknownCalibrationRemainsExplicit: true,
       scopedIdentityBinding: true,
       scopedTargetBinding: true,
+      targetBindingTracksCoordinateSemanticsOnly: true,
       semanticAuthorityRemainsExternal: true,
       fabricatedDefaultsForbidden: true,
       runtimeBindingDoesNotAssertSourceTruth: true,
