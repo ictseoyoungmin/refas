@@ -39,6 +39,12 @@ const COMPONENT_SCHEMA = Object.freeze({
   control: 'refas.control-profile/v1',
   runtime: 'refas.runtime-binding/v1',
 });
+const RELATION_KINDS_BY_CLAIM = Object.freeze({
+  'articulated-ready': Object.freeze(['CONTAINS', 'CONNECTS']),
+  'simulation-ready': Object.freeze(['CONTAINS', 'AGGREGATES_INTO', 'CONNECTS', 'REALIZES', 'MAPS', 'DRIVES']),
+  'control-ready': Object.freeze(['CONTAINS', 'AGGREGATES_INTO', 'CONNECTS', 'REALIZES', 'MAPS', 'DRIVES', 'COMMANDS']),
+  'runtime-ready': Object.freeze(['CONTAINS', 'AGGREGATES_INTO', 'CONNECTS', 'REALIZES', 'MAPS', 'DRIVES', 'COMMANDS', 'BINDS_RUNTIME']),
+});
 const POLICY = Object.freeze({
   canonicalPhysicalStateRemainsAuthoritative: true,
   physicalClaimsAreScopedAndOptIn: true,
@@ -246,17 +252,19 @@ function deriveRequirements(id, projection, components) {
 function activeEntityIds(requirements) {
   return new Set(requirements.flatMap((item) => item.subjectIds));
 }
-function activeRelationIds(projection, entities) {
+function activeRelationIds(projection, entities, id) {
+  const allowedKinds = new Set(RELATION_KINDS_BY_CLAIM[id] ?? []);
   return new Set((projection.relations ?? [])
-    .filter((relation) => entities.has(relation.sourceId) || relation.targetIds.some((id) => entities.has(id)))
+    .filter((relation) => allowedKinds.has(relation.kind))
+    .filter((relation) => entities.has(relation.sourceId) || relation.targetIds.some((identityId) => entities.has(identityId)))
     .map((relation) => relation.id));
 }
 function requiredComponentIds(requirements) {
   return new Set(requirements.filter((item) => item.kind === 'COMPONENT_COVERAGE').flatMap((item) => item.componentIds));
 }
 
-function bundleProjection(bundle, projection, requirements) {
-  const entityIds = activeEntityIds(requirements), relationIds = activeRelationIds(projection, entityIds), componentIds = requiredComponentIds(requirements);
+function bundleProjection(bundle, projection, requirements, id) {
+  const entityIds = activeEntityIds(requirements), relationIds = activeRelationIds(projection, entityIds, id), componentIds = requiredComponentIds(requirements);
   return {
     schema: 'refas.physical-claim-bundle-projection/v1',
     scopeId: bundle.scopeId,
@@ -268,15 +276,13 @@ function bundleProjection(bundle, projection, requirements) {
   };
 }
 
-function relevantObligations(capacityProfile, requirements, projection) {
-  const componentIds = requiredComponentIds(requirements), entityIds = activeEntityIds(requirements), relationIds = activeRelationIds(projection, entityIds);
+function relevantObligations(capacityProfile, requirements, projection, id) {
+  const componentIds = requiredComponentIds(requirements), entityIds = activeEntityIds(requirements), relationIds = activeRelationIds(projection, entityIds, id);
   return capacityProfile.obligations.filter((obligation) => {
     if (obligation.source?.kind === 'COMPONENT') return componentIds.has(obligation.source.componentId);
     if (obligation.source?.kind !== 'IDENTITY') return false;
     if (['identity.entity','frame.transform'].includes(obligation.semanticPath)) return intersects(obligation.subjectIds, entityIds);
-    if (['identity.relation','composition.contains'].includes(obligation.semanticPath)) {
-      return intersects(obligation.subjectIds, relationIds) || intersects(obligation.subjectIds, entityIds);
-    }
+    if (['identity.relation','composition.contains'].includes(obligation.semanticPath)) return intersects(obligation.subjectIds, relationIds);
     return false;
   }).sort((a,b)=>physicalClaimObligationId(a).localeCompare(physicalClaimObligationId(b)));
 }
@@ -287,7 +293,7 @@ function divergenceProjection(authorization, relevantFindings, obligationById) {
   const declarationById = new Map(authorization.declarations.map((item) => [item.declarationId, item]));
   const declared = authorization.resolutions
     .filter((item) => findingIds.has(item.findingId) && item.outcome === 'DECLARED_DIVERGENCE')
-    .flatMap((resolution) => resolution.declarationIds.map((id) => declarationById.get(id)).filter(Boolean))
+    .flatMap((resolution) => resolution.declarationIds.map((declarationId) => declarationById.get(declarationId)).filter(Boolean))
     .map((item) => ({
       obligationId: claimObligationIdFromP11(item.obligationId, obligationById),
       targetBackend: item.targetBackend,
@@ -436,7 +442,7 @@ export async function createPhysicalClaimEvidence({
   await validateLiveInputs({bundle,identityGraph,components,validation,capacityProfile,manifest,files,normalizedRepresentation,normalizer});
   const projection = physicalAssetBundleIdentityProjection(identityGraph,bundle.rootModuleId);
   const requirements = deriveRequirements(id,projection,components);
-  const obligations = relevantObligations(capacityProfile,requirements,projection);
+  const obligations = relevantObligations(capacityProfile,requirements,projection,id);
   const obligationById = new Map(obligations.map((item) => [item.obligationId,item]));
   const obligationIds = new Set(obligationById.keys());
   const relevantFindings = validation.findings.filter((item) => obligationIds.has(item.obligationId));
@@ -458,7 +464,7 @@ export async function createPhysicalClaimEvidence({
   const effectiveByFinding = new Map(relevantFindings.map((item) => [item.findingId,resolutionByFinding.get(item.findingId) ?? item.outcome]));
   const checks = representationChecks(relevantFindings,effectiveByFinding,obligationById);
   const findings = findingsFor(requirements,checks);
-  const claimBundleProjection = bundleProjection(bundle,projection,requirements);
+  const claimBundleProjection = bundleProjection(bundle,projection,requirements,id);
   const claimValidationProjection = validationProjection(validation,relevantFindings,effectiveByFinding,obligationById);
   const claimDivergenceProjection = divergenceProjection(activeAuthorization,relevantFindings,obligationById);
   const claimStatus = requirements.every((item) => item.status === 'PASS') && checks.every((item) => item.status === 'PASS') ? 'PASS' : 'FAIL';
