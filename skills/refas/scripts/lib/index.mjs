@@ -16,6 +16,7 @@ export * from './backend-export.mjs';
 export * from './representation-normalizer.mjs';
 export * from './cross-representation-validator.mjs';
 export * from './divergence-authorization.mjs';
+export * from './physical-claims.mjs';
 export * from './logical-fusion.mjs';
 export * from './surface-anchor.mjs';
 export * from './attachment-follow.mjs';
