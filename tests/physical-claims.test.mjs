@@ -188,6 +188,7 @@ test('P16 relevant P14 DRIFT blocks simulation-ready until an exact live P15 dec
 test('P16 persisted tamper fails intrinsic validation and claim-relevant upstream edits fail live replay',async()=>{
   const data=await pipeline(),evidence=await createPhysicalClaimEvidence({evidenceId:'simulation-tamper',claimId:'simulation-ready',...claimContext(data)});
   const tampered=structuredClone(evidence);tampered.status='FAIL';assert.equal(validatePhysicalClaimEvidence(tampered).valid,false);
+  const forged=structuredClone(evidence);forged.representationChecks[0].sourceOutcome='DECLARED_DIVERGENCE';const forgedPayload=structuredClone(forged);delete forgedPayload.evidenceDigest;forged.evidenceDigest=digestJson(forgedPayload);assert.equal(validatePhysicalClaimEvidence(forged).valid,false);
   const changed=physicalFixture();
   const changedDynamics=structuredClone(changed.components.find((item)=>item.componentId==='dynamics-main').contract);
   changedDynamics.links[0].mass.value_kg=3.0;
