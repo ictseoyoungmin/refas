@@ -40,6 +40,7 @@ function identityInput({unrelated = false} = {}) {
     relations.push(
       {id:'contains-controller-extra',kind:'CONTAINS',sourceId:'module-root',targetIds:['controller-extra']},
       {id:'contains-endpoint-extra',kind:'CONTAINS',sourceId:'module-root',targetIds:['endpoint-extra']},
+      {id:'runtime-link-binding-extra',kind:'BINDS_RUNTIME',sourceId:'endpoint-extra',targetIds:['link-a']},
     );
   }
   return {scopeId:'whole',sourceSha256:D(),entities,relations};
@@ -148,7 +149,7 @@ function transactionForEvidence(evidence) {
   return{candidate,transaction,evidenceBytesById:{'candidate-anchor':anchorBytes,[nodeId]:evidenceBytes},nodeId};
 }
 
-test('P16 simulation-ready passes for a static rigid asset while higher unrelated control/runtime identities do not back-propagate',async()=>{
+test('P16 simulation-ready passes for a static rigid asset while higher unrelated control/runtime identities and runtime relations do not back-propagate',async()=>{
   const base=await pipeline(),baseEvidence=await createPhysicalClaimEvidence({evidenceId:'simulation-evidence',claimId:'simulation-ready',...claimContext(base)});
   assert.equal(baseEvidence.status,'PASS');assert.equal(baseEvidence.findings.length,0);assert.deepEqual(validatePhysicalClaimEvidence(baseEvidence),{valid:true,errors:[]});
   const unrelated=await pipeline({unrelated:true}),unrelatedEvidence=await createPhysicalClaimEvidence({evidenceId:'simulation-evidence',claimId:'simulation-ready',...claimContext(unrelated)});
