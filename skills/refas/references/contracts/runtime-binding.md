@@ -114,13 +114,13 @@ Do not collapse these into one canonical latency merely because a backend expose
 
 ## Live target semantics
 
-P09 must validate the selected target against its owning upstream semantics without binding unrelated branches.
+P09 validates only the selected runtime target semantics required to interpret runtime coordinates. It must not bind unrelated upstream capability or provenance state.
 
 - actuator target: rebuild only the selected P07 actuator against current P01/P04/P05/P06 dependencies, then bind the actuator identity/routing dependency bindings plus its coordinate class. P07 capability-only edits such as effort, velocity, stiffness, or supported-control-mode changes do not invalidate P09 when runtime coordinate semantics and routing are unchanged;
-- virtual-joint target: use the selected-joint P04 projection only, require the exact current typed joint contract digest, and validate that contract against current attachment semantics. An unrelated P04 joint or attachment branch must not invalidate the binding;
+- virtual-joint target: use the selected-joint P04 projection and bind only runtime-coordinate semantics: parent/child direction, derived joint frames, reference configuration, current resolved P01 pose, and the typed-joint contract schema/ID. P04 limit/evidence/provenance digest changes do not invalidate P09 when those coordinate semantics are unchanged. The current P04 public articulated-joint schema is revolute-only, so its runtime coordinate class is `ROTARY`;
 - controller/rigid-link/interface target: P01 identity binding is sufficient for P09 because P09 must not become dependent on controller tuning, render state, or unrelated assembly details.
 
-An upstream change that alters the selected target's coordinate class, selected joint contract, selected actuator routing, selected transmission/articulation dependency, or exact P01 runtime relation invalidates the P09 target binding. Unrelated P04 branches, P07 capability limits, runtime endpoints, or controller tuning must not.
+An upstream change that alters the selected target's coordinate class, selected joint direction/frame/reference pose, selected actuator routing, selected transmission/articulation dependency, or exact P01 runtime relation invalidates the P09 target binding. Unrelated P04 joints, joint limits/evidence, P07 capability limits, runtime endpoints, or controller tuning must not.
 
 ## Unknown values and authority
 
