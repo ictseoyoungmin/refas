@@ -47,6 +47,7 @@ Load only the references needed by the active capability or conditional closure 
 | Digest-bound packaging of reusable physical modules and exact physical component refs | `references/contracts/physical-asset-bundle.md` after `references/assembly.md`; load P06–P09 leaves when those component types are included |
 | Backend representation-capacity preflight and explicit support/approximation/loss classification | `references/contracts/representation-capacity.md` after `references/contracts/physical-asset-bundle.md` |
 | One-way canonical physical semantics to backend artifact export | `references/contracts/backend-export.md` after `references/contracts/representation-capacity.md` |
+| Backend artifact parsing into backend-independent normalized semantics | `references/contracts/representation-normalizer.md` after `references/contracts/backend-export.md` |
 | Material identity and finish | `references/appearance.md` |
 | Render integrity, registered comparison, visual review, closure evidence | `references/validation.md` |
 | Candidate/checkpoint/evidence provenance sealing | `references/candidate-transactions.md` |

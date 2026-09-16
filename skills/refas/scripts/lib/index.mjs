@@ -13,6 +13,7 @@ export * from './runtime-binding.mjs';
 export * from './physical-asset-bundle.mjs';
 export * from './representation-capacity.mjs';
 export * from './backend-export.mjs';
+export * from './representation-normalizer.mjs';
 export * from './logical-fusion.mjs';
 export * from './surface-anchor.mjs';
 export * from './attachment-follow.mjs';
