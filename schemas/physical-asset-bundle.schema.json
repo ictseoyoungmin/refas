@@ -69,14 +69,8 @@
       "required": ["parentId", "translation_m", "rotation_quat_xyzw"],
       "properties": {
         "parentId": {"$ref": "common.schema.json#/$defs/semanticId"},
-        "translation_m": {
-          "type": "array", "minItems": 3, "maxItems": 3,
-          "items": {"type": "number"}
-        },
-        "rotation_quat_xyzw": {
-          "type": "array", "minItems": 4, "maxItems": 4,
-          "items": {"type": "number"}
-        }
+        "translation_m": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}},
+        "rotation_quat_xyzw": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"type": "number"}}
       },
       "additionalProperties": false
     },
@@ -110,6 +104,8 @@
         "bundleIsManifestNotTruthOwner",
         "componentPayloadsRemainExternal",
         "scopedIdentityProjection",
+        "componentCanonicalityDelegatedUpstream",
+        "componentOwnershipMustCoverSemanticReferences",
         "rootIncomingPlacementExcludedFromModuleClosure",
         "childPlacementOwnedByParentClosure",
         "childClosureReusedByExactDigest",
@@ -120,6 +116,8 @@
         "bundleIsManifestNotTruthOwner": {"const": true},
         "componentPayloadsRemainExternal": {"const": true},
         "scopedIdentityProjection": {"const": true},
+        "componentCanonicalityDelegatedUpstream": {"const": true},
+        "componentOwnershipMustCoverSemanticReferences": {"const": true},
         "rootIncomingPlacementExcludedFromModuleClosure": {"const": true},
         "childPlacementOwnedByParentClosure": {"const": true},
         "childClosureReusedByExactDigest": {"const": true},
