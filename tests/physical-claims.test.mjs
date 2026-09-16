@@ -171,10 +171,10 @@ test('P16 relevant P14 DRIFT blocks simulation-ready until an exact live P15 dec
   const data=await pipeline({massOverride:3.5});
   const mass=data.validation.findings.find((item)=>item.semanticPath==='dynamics.mass');assert.equal(mass.outcome,'DRIFT');
   const blocked=await createPhysicalClaimEvidence({evidenceId:'simulation-drift',claimId:'simulation-ready',...claimContext(data)});
-  assert.equal(blocked.status,'FAIL');assert.equal(blocked.findings.some((item)=>item.obligationId===mass.obligationId&&item.effectiveOutcome==='DRIFT'&&item.blocking),true);
+  assert.equal(blocked.status,'FAIL');assert.equal(blocked.findings.some((item)=>item.semanticPath==='dynamics.mass'&&item.effectiveOutcome==='DRIFT'&&item.blocking),true);
   const{divergenceAuthorization,authoritySet}=await authorizeMassDrift(data);
   const declared=await createPhysicalClaimEvidence({evidenceId:'simulation-drift',claimId:'simulation-ready',...claimContext(data,{divergenceAuthorization,authoritySet})});
-  assert.equal(declared.status,'PASS');assert.equal(declared.findings.some((item)=>item.obligationId===mass.obligationId&&item.effectiveOutcome==='DECLARED_DIVERGENCE'&&!item.blocking),true);assert.notEqual(declared.divergenceBinding,null);
+  assert.equal(declared.status,'PASS');assert.equal(declared.findings.some((item)=>item.semanticPath==='dynamics.mass'&&item.effectiveOutcome==='DECLARED_DIVERGENCE'&&!item.blocking),true);assert.notEqual(declared.divergenceBinding,null);
 
   const changedAuthority=createSemanticAuthoritySet({scopeId:data.validation.scopeId,sourceSha256:data.identityGraph.sourceSha256,targetSchema:data.validation.schema,targetDigest:data.validation.validationDigest,entries:[{...authorityEntry(divergenceAuthoritySubjectId(data.validation.validationDigest,mass.findingId,'')),reason:'A changed rationale must invalidate the old P15 live binding.'}]});
   await assert.rejects(createPhysicalClaimEvidence({evidenceId:'simulation-drift',claimId:'simulation-ready',...claimContext(data,{divergenceAuthorization,authoritySet:changedAuthority})}),/P15 divergence authorization is not live/);
