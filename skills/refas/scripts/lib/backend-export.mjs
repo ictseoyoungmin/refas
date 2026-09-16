@@ -1,6 +1,8 @@
 import {Buffer} from 'node:buffer';
 
 import {assertDigest, assertId, deepFreeze, digestBytes, digestJson, stableStringify} from './canonical.mjs';
+import {ATTACHMENT_SEMANTICS_SCHEMA, validateAttachmentSemantics} from './attachment-semantics.mjs';
+import {ARTICULATED_JOINT_SCHEMA, validateArticulatedJoint} from './articulation-clearance.mjs';
 import {
   physicalAssetBundleIdentityProjection,
   validatePhysicalAssetBundleBindings,
@@ -14,6 +16,7 @@ import {
 export const CANONICAL_EXPORT_VIEW_SCHEMA = 'refas.canonical-export-view/v1';
 export const BACKEND_EXPORT_SCHEMA = 'refas.backend-export/v1';
 export const BACKEND_EXPORT_DISPOSITIONS = Object.freeze(['EMITTED_EXACT', 'EMITTED_APPROXIMATION', 'OMITTED_UNSUPPORTED']);
+export const CANONICAL_EXPORT_DEPENDENCY_KINDS = Object.freeze(['ATTACHMENT_SEMANTICS', 'ARTICULATED_JOINT']);
 
 const COMPONENT_DIGEST_FIELD = new Map([
   ['refas.rigid-body-dynamics/v1', 'dynamicsDigest'],
@@ -25,9 +28,14 @@ const COMPONENT_DIGEST_FIELD = new Map([
   ['refas.control-profile/v1', 'controlProfileDigest'],
   ['refas.runtime-binding/v1', 'runtimeBindingDigest'],
 ]);
+const DEPENDENCY_DIGEST_FIELD = new Map([
+  ['ATTACHMENT_SEMANTICS', {schema: ATTACHMENT_SEMANTICS_SCHEMA, field: 'semanticsDigest'}],
+  ['ARTICULATED_JOINT', {schema: ARTICULATED_JOINT_SCHEMA, field: 'jointDigest'}],
+]);
 const VIEW_KEYS = new Set(['schema', 'bundleBinding', 'identityProjection', 'components', 'canonicalViewDigest']);
 const VIEW_BINDING_KEYS = new Set(['bundleId', 'scopeId', 'sourceSha256', 'bundleDigest', 'rootClosureDigest', 'rootModuleId', 'identityProjectionDigest']);
-const VIEW_COMPONENT_KEYS = new Set(['componentId', 'ownerModuleId', 'schema', 'digest', 'contract']);
+const VIEW_COMPONENT_KEYS = new Set(['componentId', 'ownerModuleId', 'schema', 'digest', 'contract', 'dependencies']);
+const VIEW_DEPENDENCY_KEYS = new Set(['dependencyId', 'kind', 'schema', 'digest', 'contract']);
 const MANIFEST_KEYS = new Set(['schema', 'exportId', 'adapter', 'canonicalBinding', 'capacityBinding', 'artifacts', 'dispositions', 'policy', 'exportDigest']);
 const ADAPTER_KEYS = new Set(['id', 'backend', 'version']);
 const CANONICAL_BINDING_KEYS = new Set(['canonicalViewDigest', 'bundleDigest', 'rootClosureDigest', 'rootModuleId', 'identityProjectionDigest']);
@@ -43,6 +51,7 @@ const POLICY_KEYS = new Set([
   'everyCapacityObligationHasDisposition',
   'unsupportedSemanticsRemainExplicitOmissions',
   'backendLocatorsAreNotSemanticIdentity',
+  'canonicalDependenciesAreExplicit',
   'normalizationRemainsDownstream',
   'crossRepresentationValidationRemainsDownstream',
   'declaredDivergenceRemainsDownstream',
@@ -56,6 +65,7 @@ const CANONICAL_POLICY = Object.freeze({
   everyCapacityObligationHasDisposition: true,
   unsupportedSemanticsRemainExplicitOmissions: true,
   backendLocatorsAreNotSemanticIdentity: true,
+  canonicalDependenciesAreExplicit: true,
   normalizationRemainsDownstream: true,
   crossRepresentationValidationRemainsDownstream: true,
   declaredDivergenceRemainsDownstream: true,
@@ -107,16 +117,33 @@ function cloneJson(value, label) {
     throw new Error(`${label} must be structured-cloneable canonical data`);
   }
 }
+function digestBoundPayload(contract, digestField, label) {
+  const digest = assertDigest(contract[digestField], `${label}.${digestField}`);
+  const payload = {...contract};
+  delete payload[digestField];
+  if (digestJson(payload) !== digest) throw new Error(`${label}.${digestField} does not reproduce`);
+  return digest;
+}
 function componentDigest(contract, schema, label) {
   assertRecord(contract, label);
   if (contract.schema !== schema) throw new Error(`${label}.schema does not match component schema ${schema}`);
   const field = COMPONENT_DIGEST_FIELD.get(schema);
   if (!field) throw new Error(`${label}.schema is not a P10 physical component schema: ${schema}`);
-  const digest = assertDigest(contract[field], `${label}.${field}`);
-  const payload = {...contract};
-  delete payload[field];
-  if (digestJson(payload) !== digest) throw new Error(`${label}.${field} does not reproduce`);
-  return digest;
+  return digestBoundPayload(contract, field, label);
+}
+function canonicalDependencyId(kind, schema, digest) {
+  return assertId(`dependency:${digestJson({kind, schema, digest}).slice(0, 48)}`, 'dependencyId');
+}
+function dependencyEnvelope(kind, contract, digestField, label) {
+  const schema = text(contract?.schema, `${label}.schema`, {maxLength: 160});
+  const digest = digestBoundPayload(assertRecord(contract, label), digestField, label);
+  return {
+    dependencyId: canonicalDependencyId(kind, schema, digest),
+    kind,
+    schema,
+    digest,
+    contract: cloneJson(contract, label),
+  };
 }
 
 function canonicalViewBundleBinding(bundle) {
@@ -129,6 +156,46 @@ function canonicalViewBundleBinding(bundle) {
     rootModuleId: assertId(bundle.rootModuleId, 'bundle.rootModuleId'),
     identityProjectionDigest: assertDigest(bundle.identityBinding?.projectionDigest, 'bundle.identityBinding.projectionDigest'),
   };
+}
+
+function articulationDependencies(live, componentId) {
+  const graph = live.contract;
+  const context = live.validationContext;
+  if (!context || typeof context !== 'object' || Array.isArray(context)) {
+    throw new Error(`articulation component ${componentId} requires validationContext for canonical export dependencies`);
+  }
+  const attachment = context.attachmentSemantics;
+  const attachmentValidation = validateAttachmentSemantics(attachment);
+  if (!attachmentValidation.valid) throw new Error(`articulation component ${componentId} attachment semantics is invalid: ${attachmentValidation.errors.join('; ')}`);
+  if (attachment.schema !== graph.attachmentSemanticsRef?.schema || attachment.semanticsDigest !== graph.attachmentSemanticsRef?.digest) {
+    throw new Error(`articulation component ${componentId} attachment semantics dependency is stale`);
+  }
+  const dependencies = [dependencyEnvelope('ATTACHMENT_SEMANTICS', attachment, 'semanticsDigest', `articulation component ${componentId} attachmentSemantics`)];
+  if (!Array.isArray(context.jointContracts)) throw new Error(`articulation component ${componentId} validationContext.jointContracts must be an array`);
+  const jointById = new Map();
+  for (const [index, joint] of context.jointContracts.entries()) {
+    const id = assertId(joint?.id, `articulation component ${componentId} jointContracts[${index}].id`);
+    if (jointById.has(id)) throw new Error(`articulation component ${componentId} has duplicate joint contract ${id}`);
+    jointById.set(id, joint);
+  }
+  const referenced = new Set();
+  for (const [index, record] of (graph.joints ?? []).entries()) {
+    const ref = record?.jointContract;
+    const id = assertId(ref?.id, `articulation component ${componentId} joints[${index}].jointContract.id`);
+    if (referenced.has(id)) throw new Error(`articulation component ${componentId} references joint contract ${id} more than once`);
+    referenced.add(id);
+    const joint = jointById.get(id);
+    if (!joint) throw new Error(`articulation component ${componentId} is missing typed joint dependency ${id}`);
+    const jointValidation = validateArticulatedJoint(joint, attachment);
+    if (!jointValidation.valid) throw new Error(`articulation component ${componentId} typed joint ${id} is invalid: ${jointValidation.errors.join('; ')}`);
+    if (joint.schema !== ref.schema || joint.jointDigest !== ref.jointDigest) throw new Error(`articulation component ${componentId} typed joint dependency ${id} is stale`);
+    dependencies.push(dependencyEnvelope('ARTICULATED_JOINT', joint, 'jointDigest', `articulation component ${componentId} joint ${id}`));
+  }
+  return dependencies.sort((left, right) => left.dependencyId.localeCompare(right.dependencyId));
+}
+function canonicalDependenciesForComponent(live, ref) {
+  if (ref.schema === 'refas.articulation-graph/v1') return articulationDependencies(live, ref.componentId);
+  return [];
 }
 
 export function createCanonicalExportView({bundle, identityGraph, components = []} = {}) {
@@ -146,6 +213,7 @@ export function createCanonicalExportView({bundle, identityGraph, components = [
       schema: ref.schema,
       digest: ref.digest,
       contract: cloneJson(live.contract, `components[${index}].contract`),
+      dependencies: canonicalDependenciesForComponent(live, ref),
     };
   }).sort((left, right) => left.componentId.localeCompare(right.componentId));
   const identityProjection = cloneJson(physicalAssetBundleIdentityProjection(identityGraph, bundle.rootModuleId), 'identityProjection');
@@ -170,6 +238,51 @@ function normalizeViewBinding(raw) {
     identityProjectionDigest: assertDigest(raw.identityProjectionDigest, 'bundleBinding.identityProjectionDigest'),
   };
 }
+function normalizeViewDependency(raw, index, componentLabel) {
+  const label = `${componentLabel}.dependencies[${index}]`;
+  assertKnownKeys(raw, VIEW_DEPENDENCY_KEYS, label);
+  const kind = text(raw.kind, `${label}.kind`, {maxLength: 64});
+  const rule = DEPENDENCY_DIGEST_FIELD.get(kind);
+  if (!rule) throw new Error(`${label}.kind is not a supported canonical dependency kind`);
+  const schema = text(raw.schema, `${label}.schema`, {maxLength: 160});
+  if (schema !== rule.schema) throw new Error(`${label}.schema must be ${rule.schema} for ${kind}`);
+  const contract = cloneJson(assertRecord(raw.contract, `${label}.contract`), `${label}.contract`);
+  if (contract.schema !== schema) throw new Error(`${label}.contract.schema does not match dependency schema`);
+  const actualDigest = digestBoundPayload(contract, rule.field, `${label}.contract`);
+  const digest = assertDigest(raw.digest, `${label}.digest`);
+  if (actualDigest !== digest) throw new Error(`${label}.digest does not match dependency contract`);
+  const dependencyId = assertId(raw.dependencyId, `${label}.dependencyId`);
+  const expectedId = canonicalDependencyId(kind, schema, digest);
+  if (dependencyId !== expectedId) throw new Error(`${label}.dependencyId must be canonical ID ${expectedId}`);
+  return {dependencyId, kind, schema, digest, contract};
+}
+function validateArticulationDependencySet(component, label) {
+  const attachments = component.dependencies.filter((dependency) => dependency.kind === 'ATTACHMENT_SEMANTICS');
+  if (attachments.length !== 1) throw new Error(`${label} must contain exactly one ATTACHMENT_SEMANTICS dependency`);
+  const attachment = attachments[0].contract;
+  const attachmentValidation = validateAttachmentSemantics(attachment);
+  if (!attachmentValidation.valid) throw new Error(`${label} attachment dependency is invalid: ${attachmentValidation.errors.join('; ')}`);
+  if (attachment.semanticsDigest !== component.contract.attachmentSemanticsRef?.digest || attachment.schema !== component.contract.attachmentSemanticsRef?.schema) {
+    throw new Error(`${label} attachment dependency does not match articulation attachmentSemanticsRef`);
+  }
+  const jointDependencies = component.dependencies.filter((dependency) => dependency.kind === 'ARTICULATED_JOINT');
+  const jointById = new Map();
+  for (const dependency of jointDependencies) {
+    const id = assertId(dependency.contract.id, `${label} typed joint dependency id`);
+    if (jointById.has(id)) throw new Error(`${label} contains duplicate typed joint dependency ${id}`);
+    const validation = validateArticulatedJoint(dependency.contract, attachment);
+    if (!validation.valid) throw new Error(`${label} typed joint dependency ${id} is invalid: ${validation.errors.join('; ')}`);
+    jointById.set(id, dependency);
+  }
+  const refs = component.contract.joints ?? [];
+  if (jointById.size !== refs.length) throw new Error(`${label} typed joint dependency set must exactly cover articulation joint refs`);
+  for (const [index, joint] of refs.entries()) {
+    const ref = joint.jointContract;
+    const dependency = jointById.get(ref?.id);
+    if (!dependency) throw new Error(`${label} is missing typed joint dependency ${ref?.id ?? `at index ${index}`}`);
+    if (dependency.schema !== ref.schema || dependency.digest !== ref.jointDigest) throw new Error(`${label} typed joint dependency ${ref.id} does not match articulation joint ref`);
+  }
+}
 function normalizeViewComponent(raw, index) {
   const label = `components[${index}]`;
   assertKnownKeys(raw, VIEW_COMPONENT_KEYS, label);
@@ -178,13 +291,20 @@ function normalizeViewComponent(raw, index) {
   const digest = componentDigest(contract, schema, `${label}.contract`);
   const declaredDigest = assertDigest(raw.digest, `${label}.digest`);
   if (digest !== declaredDigest) throw new Error(`${label}.digest does not match the canonical component payload`);
-  return {
+  if (!Array.isArray(raw.dependencies)) throw new Error(`${label}.dependencies must be an array`);
+  const dependencies = raw.dependencies.map((dependency, dependencyIndex) => normalizeViewDependency(dependency, dependencyIndex, label)).sort((left, right) => left.dependencyId.localeCompare(right.dependencyId));
+  if (new Set(dependencies.map((dependency) => dependency.dependencyId)).size !== dependencies.length) throw new Error(`${label}.dependencies contains duplicate dependencyId values`);
+  const component = {
     componentId: assertId(raw.componentId, `${label}.componentId`),
     ownerModuleId: assertId(raw.ownerModuleId, `${label}.ownerModuleId`),
     schema,
     digest: declaredDigest,
     contract,
+    dependencies,
   };
+  if (schema === 'refas.articulation-graph/v1') validateArticulationDependencySet(component, label);
+  else if (dependencies.length) throw new Error(`${label} may not carry canonical dependencies for schema ${schema}`);
+  return component;
 }
 function normalizeCanonicalExportView(value) {
   assertKnownKeys(value, VIEW_KEYS, 'canonical export view');
@@ -277,7 +397,7 @@ function normalizeRawBindings(rawBindings) {
       };
     }).sort((left, right) => left.path.localeCompare(right.path) || left.locator.localeCompare(right.locator));
     const targetKeys = targets.map((target) => `${target.path}\u0000${target.locator}`);
-    if (new Set(targetKeys).size !== targetKeys.length) throw new Error(`${label}.targets contains duplicates`);
+    if (new Set(targetKeys).size !== targets.length) throw new Error(`${label}.targets contains duplicates`);
     return {obligationId: assertId(raw.obligationId, `${label}.obligationId`), targets};
   }).sort((left, right) => left.obligationId.localeCompare(right.obligationId));
   if (new Set(bindings.map((item) => item.obligationId)).size !== bindings.length) throw new Error('adapter result bindings contain duplicate obligationId values');
@@ -378,7 +498,7 @@ function normalizeTargets(raw, label) {
     return {artifactId: assertId(target.artifactId, `${targetLabel}.artifactId`), locator: text(target.locator, `${targetLabel}.locator`, {maxLength: 1024})};
   }).sort((left, right) => left.artifactId.localeCompare(right.artifactId) || left.locator.localeCompare(right.locator));
   const keys = targets.map((target) => `${target.artifactId}\u0000${target.locator}`);
-  if (new Set(keys).size !== keys.length) throw new Error(`${label} contains duplicate targets`);
+  if (new Set(keys).size !== targets.length) throw new Error(`${label} contains duplicate targets`);
   return targets;
 }
 function normalizeApproximation(raw, label) {
