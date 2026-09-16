@@ -1,18 +1,88 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://refas.dev/schemas/representation-capacity.schema.json",
-  "title": "RefAs representation capacity report",
+  "title": "RefAs representation capacity profile",
   "type": "object",
+  "required": ["schema","profileId","backend","bundleBinding","obligations","supported","approximated","unsupported","blockers","exportable","policy","capacityDigest"],
   "properties": {
     "schema": {"const": "refas.representation-capacity/v1"},
-    "backend": {"type": "string", "minLength": 1},
-    "obligations": {"type": "array"},
-    "supported": {"type": "array"},
-    "unsupported": {"type": "array"},
-    "blockers": {"type": "array"},
-    "capacityDigest": {"$ref": "common.schema.json#/$defs/digest"},
-    "policy": {"type": "object"}
+    "profileId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "backend": {"type":"string","minLength":1,"maxLength":256},
+    "bundleBinding": {"$ref":"#/$defs/bundleBinding"},
+    "obligations": {"type":"array","minItems":1,"items":{"$ref":"#/$defs/obligation"}},
+    "supported": {"type":"array","items":{"$ref":"#/$defs/supported"}},
+    "approximated": {"type":"array","items":{"$ref":"#/$defs/approximated"}},
+    "unsupported": {"type":"array","items":{"$ref":"#/$defs/unsupported"}},
+    "blockers": {"type":"array","items":{"$ref":"#/$defs/blocker"}},
+    "exportable": {"type":"boolean"},
+    "policy": {"$ref":"#/$defs/policy"},
+    "capacityDigest": {"$ref":"common.schema.json#/$defs/digest"}
   },
-  "required": ["schema", "backend", "obligations", "supported", "unsupported", "blockers", "policy"],
-  "additionalProperties": true
+  "$defs": {
+    "bundleBinding": {
+      "type":"object",
+      "required":["schema","bundleSchema","bundleDigest","rootClosureDigest","rootModuleId","identityProjectionDigest"],
+      "properties":{
+        "schema":{"const":"refas.representation-capacity-bundle-binding/v1"},
+        "bundleSchema":{"const":"refas.physical-asset-bundle/v1"},
+        "bundleDigest":{"$ref":"common.schema.json#/$defs/digest"},
+        "rootClosureDigest":{"$ref":"common.schema.json#/$defs/digest"},
+        "rootModuleId":{"$ref":"common.schema.json#/$defs/semanticId"},
+        "identityProjectionDigest":{"$ref":"common.schema.json#/$defs/digest"}
+      },
+      "additionalProperties":false
+    },
+    "componentSchema": {
+      "enum":[
+        "refas.rigid-body-dynamics/v1",
+        "refas.collision-model/v1",
+        "refas.articulation-graph/v1",
+        "refas.mechanism-graph/v1",
+        "refas.transmission-model/v1",
+        "refas.actuation-model/v1",
+        "refas.control-profile/v1",
+        "refas.runtime-binding/v1"
+      ]
+    },
+    "identitySource": {
+      "type":"object","required":["kind","projectionDigest"],
+      "properties":{"kind":{"const":"IDENTITY"},"projectionDigest":{"$ref":"common.schema.json#/$defs/digest"}},
+      "additionalProperties":false
+    },
+    "componentSource": {
+      "type":"object","required":["kind","componentId","schema","digest"],
+      "properties":{"kind":{"const":"COMPONENT"},"componentId":{"$ref":"common.schema.json#/$defs/semanticId"},"schema":{"$ref":"#/$defs/componentSchema"},"digest":{"$ref":"common.schema.json#/$defs/digest"}},
+      "additionalProperties":false
+    },
+    "obligation": {
+      "type":"object","required":["obligationId","source","semanticPath","subjectIds"],
+      "properties":{
+        "obligationId":{"$ref":"common.schema.json#/$defs/semanticId"},
+        "source":{"oneOf":[{"$ref":"#/$defs/identitySource"},{"$ref":"#/$defs/componentSource"}]},
+        "semanticPath":{"type":"string","pattern":"^[a-z][a-z0-9-]*(\\.[a-z][a-z0-9-]*)*$"},
+        "subjectIds":{"type":"array","minItems":1,"uniqueItems":true,"items":{"$ref":"common.schema.json#/$defs/semanticId"}}
+      },"additionalProperties":false
+    },
+    "supported":{"type":"object","required":["obligationId"],"properties":{"obligationId":{"$ref":"common.schema.json#/$defs/semanticId"}},"additionalProperties":false},
+    "approximated":{
+      "type":"object","required":["obligationId","strategy","reason","retainedSemantics","lossSemantics"],
+      "properties":{
+        "obligationId":{"$ref":"common.schema.json#/$defs/semanticId"},
+        "strategy":{"enum":["BAKED","REDUCED","SURROGATE","BACKEND_EXTENSION","CUSTOM"]},
+        "reason":{"type":"string","minLength":1},
+        "retainedSemantics":{"type":"array","minItems":1,"uniqueItems":true,"items":{"type":"string","minLength":1}},
+        "lossSemantics":{"type":"array","minItems":1,"uniqueItems":true,"items":{"type":"string","minLength":1}}
+      },"additionalProperties":false
+    },
+    "unsupported":{"type":"object","required":["obligationId","reason"],"properties":{"obligationId":{"$ref":"common.schema.json#/$defs/semanticId"},"reason":{"type":"string","minLength":1}},"additionalProperties":false},
+    "blocker":{"type":"object","required":["blockerId","obligationIds","reason"],"properties":{"blockerId":{"$ref":"common.schema.json#/$defs/semanticId"},"obligationIds":{"type":"array","minItems":1,"uniqueItems":true,"items":{"$ref":"common.schema.json#/$defs/semanticId"}},"reason":{"type":"string","minLength":1}},"additionalProperties":false},
+    "policy":{
+      "type":"object",
+      "required":["bundleIsCanonicalInput","profileDoesNotOwnCanonicalTruth","obligationsDerivedFromCanonicalBundle","everyObligationClassifiedExactlyOnce","approximationMustBeExplicit","unsupportedSemanticsRemainExplicit","blockerPreventsExport","backendOrderingIsNotSemanticIdentity","profileDoesNotAuthorizeClaims","exporterImplementationRemainsDownstream"],
+      "properties":{
+        "bundleIsCanonicalInput":{"const":true},"profileDoesNotOwnCanonicalTruth":{"const":true},"obligationsDerivedFromCanonicalBundle":{"const":true},"everyObligationClassifiedExactlyOnce":{"const":true},"approximationMustBeExplicit":{"const":true},"unsupportedSemanticsRemainExplicit":{"const":true},"blockerPreventsExport":{"const":true},"backendOrderingIsNotSemanticIdentity":{"const":true},"profileDoesNotAuthorizeClaims":{"const":true},"exporterImplementationRemainsDownstream":{"const":true}
+      },"additionalProperties":false
+    }
+  },
+  "additionalProperties": false
 }
