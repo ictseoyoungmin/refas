@@ -54,7 +54,14 @@ export * from './host-operation.mjs';
 export * from './host-review-bundle.mjs';
 export * from './host-artifact-handoff.mjs';
 export * from './host-worker.mjs';
-export {assessCertification, auditProject, certifyProject, resumeProject, assessProjectionCertification, assessClaimCertification} from './certification-gate.mjs';
+export {
+  assessCertification,
+  assessClaimCertification,
+  assessProjectionCertification,
+  auditProject,
+  certifyProject,
+  resumeProject,
+} from './physical-claim-certification-gate.mjs';
 export * from './spatial-hypotheses.mjs';
 export * from './registration.mjs';
 export * from './reference-geometry.mjs';
