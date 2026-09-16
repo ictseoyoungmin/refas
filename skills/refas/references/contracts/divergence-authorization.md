@@ -47,12 +47,17 @@ field path
 exact canonical value
 exact normalized backend override value
 authority subject
+exact semantic-authority entry digest
 reason
 ```
 
 `fieldPath` is an RFC 6901 JSON Pointer relative to the P14 finding's `canonicalValue` / `normalizedValue`. The empty pointer means the entire semantic value.
 
 Declaration IDs and authority-subject IDs are deterministic functions of the exact P14 validation digest, finding ID, and field path. Backend array positions, runtime indices, artifact paths, and display names never become declaration identity.
+
+`authorityEntryDigest` is filled by RefAs from the exact `refas.semantic-authority-set/v1` entry that covers the declaration's authority subject. Callers may omit it when creating a fresh authorization. Persisted P15 artifacts must carry it. If a caller supplies it during recreation, it must match the current exact authority entry.
+
+This gives every declaration an explicit audit link to the precise engineered proposition, reason, and basis that licensed it, rather than only to an authority subject name or the authority set as a whole.
 
 ## Exact coverage rule
 
@@ -91,6 +96,8 @@ The authority set must:
 - use `engineered` authority for every declaration.
 
 The existing semantic-authority contract already requires `engineered` authority to carry a functional or downstream requirement basis and forbids it from ignoring source contradiction.
+
+For every declaration, P15 also binds the exact covering authority entry's `authorityDigest`. If the engineered proposition, rationale, or basis changes, the authority entry digest changes and the previous P15 authorization is no longer live.
 
 `DECLARED_DIVERGENCE` and `engineered` are intentionally different concepts:
 
@@ -138,17 +145,24 @@ Persist `refas.divergence-authorization/v1` with:
 
 - authorization and scope identity;
 - exact P14/canonical/capacity/normalization/backend binding;
-- exact semantic-authority binding;
+- exact semantic-authority set binding;
+- exact per-declaration semantic-authority entry digest;
 - deterministic declarations;
 - one resolution per P14 finding;
 - deterministic outcome counts;
 - canonical P15 policy;
 - `authorizationDigest`.
 
-`validateDivergenceAuthorizationBindings(...)` recreates the authorization from the current P14 evidence chain and exact semantic-authority set. Re-signed stale declarations do not become current evidence.
+`validateDivergenceAuthorization(...)` validates the persisted P15 artifact's intrinsic schema, canonical form, deterministic identities, policy, outcome relationships, and digest. It does **not** prove that the P14/P11–P13 evidence chain or semantic authority is still current.
+
+`validateDivergenceAuthorizationBindings(...)` is the liveness proof. It recreates the authorization from the current P14 evidence chain and exact semantic-authority set, including each declaration's exact authority-entry digest. Re-signed stale declarations or stale authority rationale do not become current evidence.
 
 ## P16 boundary
 
 P15 does not authorize `articulated-ready`, `simulation-ready`, `control-ready`, or `runtime-ready` claims.
 
-P16 may consume current P14/P15 evidence under claim-specific policy, but a declared divergence alone is never a readiness certificate.
+Any P16 or later positive physical/readiness claim that consumes P15 **must** first require `validateDivergenceAuthorizationBindings(...)` to return `valid: true` against the current P14/P11–P13 chain and current semantic-authority set. Calling only `validateDivergenceAuthorization(...)` is insufficient for a downstream positive claim.
+
+The canonical policy records this boundary as `downstreamClaimsRequireLiveBindingValidation: true`.
+
+A declared divergence alone is never a readiness certificate.
