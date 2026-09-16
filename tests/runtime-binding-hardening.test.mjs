@@ -122,9 +122,9 @@ function articulationIdentity({armX = 1, tipX = 2} = {}) {
   });
 }
 
-function contracts(attachmentSemantics, {shoulderMaximum = 1, tipMaximum = 0.5} = {}) {
+function contracts(attachmentSemantics, {shoulderMaximum = 1, tipMaximum = 0.5, shoulderOwnerX = 1} = {}) {
   return [
-    createArticulatedJoint({attachmentSemantics, id: 'joint-shoulder', relationId: 'arm-hinge', ownerJointFrame: I([1, 0, 0]), subjectJointFrame: I(), minimumAngle: -1, maximumAngle: shoulderMaximum, evidenceRefs: ['model/shoulder.json']}),
+    createArticulatedJoint({attachmentSemantics, id: 'joint-shoulder', relationId: 'arm-hinge', ownerJointFrame: I([shoulderOwnerX, 0, 0]), subjectJointFrame: I(), minimumAngle: -1, maximumAngle: shoulderMaximum, evidenceRefs: ['model/shoulder.json']}),
     createArticulatedJoint({attachmentSemantics, id: 'joint-tip', relationId: 'tip-hinge', ownerJointFrame: I([1, 0, 0]), subjectJointFrame: I(), minimumAngle: -0.5, maximumAngle: tipMaximum, evidenceRefs: ['model/tip.json']}),
   ];
 }
@@ -177,6 +177,13 @@ test('virtual-joint target binding tracks selected P04 coordinate semantics only
     articulationGraph: selectedLimitGraph, attachmentSemantics, jointContracts: selectedLimitContracts,
   });
   assert.equal(selectedLimitValidation.valid, true, selectedLimitValidation.errors.join('\n'));
+
+  const selectedFrameContracts = contracts(attachmentSemantics, {shoulderOwnerX: 1.1});
+  const selectedFrameValidation = validateRuntimeBindingBindings(model, identityGraph, {
+    articulationGraph: initialGraph, attachmentSemantics, jointContracts: selectedFrameContracts,
+  });
+  assert.equal(selectedFrameValidation.valid, false);
+  assert.match(selectedFrameValidation.errors.join('\n'), /target semantics|scoped dependencies/);
 
   const driftIdentity = articulationIdentity({armX: 1.1});
   const selectedPoseValidation = validateRuntimeBindingBindings(model, driftIdentity, {
