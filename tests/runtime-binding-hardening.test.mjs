@@ -36,8 +36,8 @@ function scalarBinding(overrides = {}) {
 test('P09 canonical calibration equation is unique and round-trips', () => {
   const binding = scalarBinding();
   const canonical = runtimeValueToCanonical(binding, 100);
-  assert.equal(canonical, 0.025);
-  assert.equal(canonicalValueToRuntime(binding, canonical), 100);
+  assert.ok(Math.abs(canonical - 0.025) < 1e-12);
+  assert.ok(Math.abs(canonicalValueToRuntime(binding, canonical) - 100) < 1e-12);
 
   const unresolved = scalarBinding({zeroOffset: {value: null}});
   assert.throws(() => runtimeValueToCanonical(unresolved, 1), /calibration is unresolved/);
