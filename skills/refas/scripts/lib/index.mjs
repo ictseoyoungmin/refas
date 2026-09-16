@@ -38,6 +38,12 @@ export * from './fit-structural-eligibility.mjs';
 export * from './candidate-transaction.mjs';
 export * from './certification-policy.mjs';
 export * from './certification-authority.mjs';
+export {
+  evaluateCertificationPolicy,
+  evaluatePhysicalClaimCertification,
+  validateClaimCertificationDecision,
+  validatePhysicalClaimCertificationDecision,
+} from './physical-claim-certification.mjs';
 export * from './hierarchy.mjs';
 export * from './ownership.mjs';
 export * from './failure-router.mjs';
