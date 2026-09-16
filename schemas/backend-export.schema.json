@@ -1,0 +1,153 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/backend-export.schema.json",
+  "title": "RefAs backend export manifest",
+  "type": "object",
+  "required": ["schema", "exportId", "adapter", "canonicalBinding", "capacityBinding", "artifacts", "dispositions", "policy", "exportDigest"],
+  "properties": {
+    "schema": {"const": "refas.backend-export/v1"},
+    "exportId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "adapter": {"$ref": "#/$defs/adapter"},
+    "canonicalBinding": {"$ref": "#/$defs/canonicalBinding"},
+    "capacityBinding": {"$ref": "#/$defs/capacityBinding"},
+    "artifacts": {"type": "array", "items": {"$ref": "#/$defs/artifact"}},
+    "dispositions": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/disposition"}},
+    "policy": {"$ref": "#/$defs/policy"},
+    "exportDigest": {"$ref": "common.schema.json#/$defs/digest"}
+  },
+  "$defs": {
+    "adapter": {
+      "type": "object",
+      "required": ["id", "backend", "version"],
+      "properties": {
+        "id": {"$ref": "common.schema.json#/$defs/semanticId"},
+        "backend": {"type": "string", "minLength": 1, "maxLength": 256},
+        "version": {"type": "string", "minLength": 1, "maxLength": 128}
+      },
+      "additionalProperties": false
+    },
+    "canonicalBinding": {
+      "type": "object",
+      "required": ["canonicalViewDigest", "bundleDigest", "rootClosureDigest", "rootModuleId", "identityProjectionDigest"],
+      "properties": {
+        "canonicalViewDigest": {"$ref": "common.schema.json#/$defs/digest"},
+        "bundleDigest": {"$ref": "common.schema.json#/$defs/digest"},
+        "rootClosureDigest": {"$ref": "common.schema.json#/$defs/digest"},
+        "rootModuleId": {"$ref": "common.schema.json#/$defs/semanticId"},
+        "identityProjectionDigest": {"$ref": "common.schema.json#/$defs/digest"}
+      },
+      "additionalProperties": false
+    },
+    "capacityBinding": {
+      "type": "object",
+      "required": ["profileId", "backend", "capacityDigest"],
+      "properties": {
+        "profileId": {"$ref": "common.schema.json#/$defs/semanticId"},
+        "backend": {"type": "string", "minLength": 1, "maxLength": 256},
+        "capacityDigest": {"$ref": "common.schema.json#/$defs/digest"}
+      },
+      "additionalProperties": false
+    },
+    "artifact": {
+      "type": "object",
+      "required": ["artifactId", "path", "mediaType", "sha256", "sizeBytes"],
+      "properties": {
+        "artifactId": {"$ref": "common.schema.json#/$defs/semanticId"},
+        "path": {"$ref": "common.schema.json#/$defs/relativePath"},
+        "mediaType": {"type": "string", "minLength": 1, "maxLength": 256},
+        "sha256": {"$ref": "common.schema.json#/$defs/digest"},
+        "sizeBytes": {"type": "integer", "minimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "target": {
+      "type": "object",
+      "required": ["artifactId", "locator"],
+      "properties": {
+        "artifactId": {"$ref": "common.schema.json#/$defs/semanticId"},
+        "locator": {"type": "string", "minLength": 1, "maxLength": 1024}
+      },
+      "additionalProperties": false
+    },
+    "approximation": {
+      "type": "object",
+      "required": ["strategy", "reason", "retainedSemantics", "lossSemantics"],
+      "properties": {
+        "strategy": {"enum": ["BAKED", "REDUCED", "SURROGATE", "BACKEND_EXTENSION", "CUSTOM"]},
+        "reason": {"type": "string", "minLength": 1},
+        "retainedSemantics": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "lossSemantics": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+      },
+      "additionalProperties": false
+    },
+    "disposition": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["obligationId", "status", "targets"],
+          "properties": {
+            "obligationId": {"$ref": "common.schema.json#/$defs/semanticId"},
+            "status": {"const": "EMITTED_EXACT"},
+            "targets": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/target"}}
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["obligationId", "status", "targets", "approximation"],
+          "properties": {
+            "obligationId": {"$ref": "common.schema.json#/$defs/semanticId"},
+            "status": {"const": "EMITTED_APPROXIMATION"},
+            "targets": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/target"}},
+            "approximation": {"$ref": "#/$defs/approximation"}
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["obligationId", "status", "targets", "reason"],
+          "properties": {
+            "obligationId": {"$ref": "common.schema.json#/$defs/semanticId"},
+            "status": {"const": "OMITTED_UNSUPPORTED"},
+            "targets": {"type": "array", "maxItems": 0},
+            "reason": {"type": "string", "minLength": 1}
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "policy": {
+      "type": "object",
+      "required": [
+        "canonicalInputOnly",
+        "backendArtifactsNeverCanonical",
+        "backendToBackendCanonicalChainsForbidden",
+        "artifactDigestsComputedByRefAs",
+        "everyCapacityObligationHasDisposition",
+        "unsupportedSemanticsRemainExplicitOmissions",
+        "backendLocatorsAreNotSemanticIdentity",
+        "canonicalDependenciesAreExplicit",
+        "normalizationRemainsDownstream",
+        "crossRepresentationValidationRemainsDownstream",
+        "declaredDivergenceRemainsDownstream",
+        "physicalClaimsRemainDownstream"
+      ],
+      "properties": {
+        "canonicalInputOnly": {"const": true},
+        "backendArtifactsNeverCanonical": {"const": true},
+        "backendToBackendCanonicalChainsForbidden": {"const": true},
+        "artifactDigestsComputedByRefAs": {"const": true},
+        "everyCapacityObligationHasDisposition": {"const": true},
+        "unsupportedSemanticsRemainExplicitOmissions": {"const": true},
+        "backendLocatorsAreNotSemanticIdentity": {"const": true},
+        "canonicalDependenciesAreExplicit": {"const": true},
+        "normalizationRemainsDownstream": {"const": true},
+        "crossRepresentationValidationRemainsDownstream": {"const": true},
+        "declaredDivergenceRemainsDownstream": {"const": true},
+        "physicalClaimsRemainDownstream": {"const": true}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
