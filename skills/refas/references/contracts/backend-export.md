@@ -55,9 +55,34 @@ The view contains:
 - exact P10 bundle/root closure binding;
 - scoped P01 identity projection for the root module;
 - exact live P02-P09 component payloads keyed by stable component identity;
+- explicit digest-bound canonical dependencies that are referenced by a component but not embedded in that component payload;
 - a deterministic `canonicalViewDigest`.
 
 The view is immutable adapter input. It contains no previous backend artifact, backend parse result, normalized backend view, or backend-derived replacement value.
+
+### Canonical dependency closure
+
+Do not copy an opaque validation context into the export view. Only promote dependencies that a canonical component explicitly references and whose live payload is required to realize the declared semantics.
+
+For P04 articulation, the articulation graph intentionally keeps typed joints authoritative by digest reference. Therefore its canonical export component must include:
+
+```text
+articulation component
+  +-- ATTACHMENT_SEMANTICS dependency
+  +-- ARTICULATED_JOINT dependency for every referenced virtual joint
+```
+
+The attachment dependency must reproduce `attachmentSemanticsRef`. Every typed-joint dependency must validate against that exact attachment contract and match the joint reference ID/schema/digest in the articulation graph. Extra validation-context material is not exported by implication.
+
+This closes an important distinction:
+
+```text
+P04 graph joint reference
+    !=
+full typed-joint semantic payload
+```
+
+For example, `articulation.joint-limit` cannot be realized from a joint digest alone. The exact typed-joint dependency carries the authoritative limit, axis convention, and owner/subject joint frames into P12 without making validation context itself canonical state.
 
 ## Adapter surface
 
@@ -142,6 +167,7 @@ Reject export when:
 - P11 is blocked;
 - adapter backend and P11 backend differ;
 - adapter input/output violates the narrow contract;
+- a canonical component dependency is missing, stale, unreferenced, or digest-mismatched;
 - a supported/approximated obligation lacks an emitted target;
 - an unsupported obligation is emitted;
 - approximation metadata differs from P11;
