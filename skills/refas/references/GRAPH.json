@@ -28,6 +28,7 @@
     {"id":"control-profile","path":"references/contracts/control-profile.md","owners":["assembly"],"requires":["assembly","actuation-model"],"conditionalRequires":[],"authority":"assembly-control","closureEffects":[]},
     {"id":"runtime-binding","path":"references/contracts/runtime-binding.md","owners":["assembly"],"requires":["assembly"],"conditionalRequires":[{"when":"runtime target is actuator","nodes":["actuation-model"]},{"when":"runtime target is virtual-joint","nodes":["articulation-clearance"]}],"authority":"assembly-runtime","closureEffects":[]},
     {"id":"physical-asset-bundle","path":"references/contracts/physical-asset-bundle.md","owners":["assembly"],"requires":["assembly"],"conditionalRequires":[{"when":"bundle includes transmission component","nodes":["transmission-model"]},{"when":"bundle includes actuation component","nodes":["actuation-model"]},{"when":"bundle includes control component","nodes":["control-profile"]},{"when":"bundle includes runtime component","nodes":["runtime-binding"]}],"authority":"assembly-packaging","closureEffects":[]},
+    {"id":"representation-capacity","path":"references/contracts/representation-capacity.md","owners":["assembly"],"requires":["physical-asset-bundle"],"conditionalRequires":[],"authority":"representation-preflight","closureEffects":[]},
     {"id":"physical-fusion","path":"references/physical-fusion.md","owners":["assembly"],"requires":["assembly","logical-fusion","attachment-propagation"],"conditionalRequires":[{"when":"physical fusion is justified","nodes":[]}],"authority":"finalization-only","closureEffects":["requires-revalidation-after-bake"]},
     {"id":"realized-contact-support","path":"references/realized-contact-support.md","owners":["assembly"],"requires":["assembly","attachment-propagation"],"conditionalRequires":[{"when":"physical fusion was used","nodes":["physical-fusion"]}],"authority":"realized-structure-gate","closureEffects":["gates-structural-closure"]},
     {"id":"appearance","path":"references/appearance.md","owners":["appearance"],"requires":["assembly"],"conditionalRequires":[],"authority":"appearance","closureEffects":[]},
@@ -36,40 +37,8 @@
     {"id":"claim-certification","path":"references/claim-certification.md","owners":["whole-object-certification"],"requires":["candidate-transactions","validation"],"conditionalRequires":[{"when":"real source","nodes":["relational-structure","inference-authority","whole-system-relational-barrier"]},{"when":"asset makes assembly/contact/support claims","nodes":["realized-contact-support"]}],"authority":"final-authorization","closureEffects":["authorizes-whole-object-certificate"]}
   ],
   "findingOwners": {
-    "source-drift":"source-intake",
-    "context-loss":"visual-hierarchy",
-    "missing-part":"visual-hierarchy",
-    "observation-unsupported":"visual-observation",
-    "evidence-insufficient":"visual-observation",
-    "perspective-mismatch":"spatial-hypotheses",
-    "depth-mismatch":"spatial-hypotheses",
-    "orientation-mismatch":"spatial-hypotheses",
-    "camera-hypothesis-mismatch":"spatial-hypotheses",
-    "relational-authority-unresolved":"spatial-hypotheses",
-    "relational-constraint-conflict":"spatial-hypotheses",
-    "silhouette-mismatch":"shape-reconstruction",
-    "mass-proportion-mismatch":"shape-reconstruction",
-    "curvature-mismatch":"shape-reconstruction",
-    "whole-system-relation-mismatch":"shape-reconstruction",
-    "pattern-topology-mismatch":"surface-topology",
-    "relief-mismatch":"surface-topology",
-    "attachment-mismatch":"assembly",
-    "occlusion-mismatch":"assembly",
-    "penetration":"assembly",
-    "material-mismatch":"appearance",
-    "finish-mismatch":"appearance",
-    "camera-mismatch":"rendering",
-    "render-camera-integrity":"rendering",
-    "render-integrity":"rendering",
-    "unroutable-visual-finding":"visual-critique",
-    "closure-evidence-missing":"whole-object-certification"
+    "source-drift":"source-intake","context-loss":"visual-hierarchy","missing-part":"visual-hierarchy","observation-unsupported":"visual-observation","evidence-insufficient":"visual-observation","perspective-mismatch":"spatial-hypotheses","depth-mismatch":"spatial-hypotheses","orientation-mismatch":"spatial-hypotheses","camera-hypothesis-mismatch":"spatial-hypotheses","relational-authority-unresolved":"spatial-hypotheses","relational-constraint-conflict":"spatial-hypotheses","silhouette-mismatch":"shape-reconstruction","mass-proportion-mismatch":"shape-reconstruction","curvature-mismatch":"shape-reconstruction","whole-system-relation-mismatch":"shape-reconstruction","pattern-topology-mismatch":"surface-topology","relief-mismatch":"surface-topology","attachment-mismatch":"assembly","occlusion-mismatch":"assembly","penetration":"assembly","material-mismatch":"appearance","finish-mismatch":"appearance","camera-mismatch":"rendering","render-camera-integrity":"rendering","render-integrity":"rendering","unroutable-visual-finding":"visual-critique","closure-evidence-missing":"whole-object-certification"
   },
-  "deprecatedFindings": {
-    "camera-mismatch":"Legacy compatibility only. New findings must use camera-hypothesis-mismatch for a wrong source/model camera hypothesis or render-camera-integrity when the renderer fails to execute the declared camera/frame."
-  },
-  "certification": {
-    "node":"claim-certification",
-    "realSourceRequires":["candidate-transactions","validation","relational-structure","inference-authority","whole-system-relational-barrier"],
-    "realSourceArtifactRequirements":["refas.certification-relational-evidence/v1"]
-  }
+  "deprecatedFindings": {"camera-mismatch":"Legacy compatibility only. New findings must use camera-hypothesis-mismatch for a wrong source/model camera hypothesis or render-camera-integrity when the renderer fails to execute the declared camera/frame."},
+  "certification": {"node":"claim-certification","realSourceRequires":["candidate-transactions","validation","relational-structure","inference-authority","whole-system-relational-barrier"],"realSourceArtifactRequirements":["refas.certification-relational-evidence/v1"]}
 }
