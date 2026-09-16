@@ -79,21 +79,22 @@ test('runtime locator strings are configuration values, not semantic IDs', () =>
   assert.throws(() => createRuntimeBinding({scopeId: 'whole', sourceSha256: D(), identityGraph, bindings: [controllerBinding(' /dev/ttyUSB0')]}), /leading or trailing whitespace/);
 });
 
-function attachmentFixture() {
-  return createAttachmentSemantics({
-    scopeId: 'whole', sourceSha256: D(),
-    entities: [
-      {id: 'base-body', scopeId: 'whole', evidenceRefs: ['source/ref.png']},
-      {id: 'arm-body', scopeId: 'whole', evidenceRefs: ['source/ref.png']},
-      {id: 'tip-body', scopeId: 'whole', evidenceRefs: ['source/ref.png']},
-    ],
-    relations: [
-      {id: 'base-free', mode: 'FREE', subjectId: 'base-body', ownerIds: [], basis: 'construction', evidenceRefs: ['source/ref.png']},
-      {id: 'arm-hinge', mode: 'ARTICULATED', subjectId: 'arm-body', ownerIds: ['base-body'], basis: 'construction', evidenceRefs: ['source/ref.png']},
-      {id: 'tip-hinge', mode: 'ARTICULATED', subjectId: 'tip-body', ownerIds: ['arm-body'], basis: 'construction', evidenceRefs: ['source/ref.png']},
-    ],
-    evidenceRefs: ['source/ref.png'],
-  });
+function attachmentFixture({withUnrelatedAttachment = false} = {}) {
+  const entities = [
+    {id: 'base-body', scopeId: 'whole', evidenceRefs: ['source/ref.png']},
+    {id: 'arm-body', scopeId: 'whole', evidenceRefs: ['source/ref.png']},
+    {id: 'tip-body', scopeId: 'whole', evidenceRefs: ['source/ref.png']},
+  ];
+  const relations = [
+    {id: 'base-free', mode: 'FREE', subjectId: 'base-body', ownerIds: [], basis: 'construction', evidenceRefs: ['source/ref.png']},
+    {id: 'arm-hinge', mode: 'ARTICULATED', subjectId: 'arm-body', ownerIds: ['base-body'], basis: 'construction', evidenceRefs: ['source/ref.png']},
+    {id: 'tip-hinge', mode: 'ARTICULATED', subjectId: 'tip-body', ownerIds: ['arm-body'], basis: 'construction', evidenceRefs: ['source/ref.png']},
+  ];
+  if (withUnrelatedAttachment) {
+    entities.push({id: 'decor-body', scopeId: 'whole', evidenceRefs: ['source/decor.png']});
+    relations.push({id: 'decor-free', mode: 'FREE', subjectId: 'decor-body', ownerIds: [], basis: 'construction', evidenceRefs: ['source/decor.png']});
+  }
+  return createAttachmentSemantics({scopeId: 'whole', sourceSha256: D(), entities, relations, evidenceRefs: ['source/ref.png']});
 }
 
 function articulationIdentity({armX = 1, tipX = 2} = {}) {
@@ -170,6 +171,12 @@ test('virtual-joint target binding tracks selected P04 coordinate semantics only
     articulationGraph: unrelatedGraph, attachmentSemantics, jointContracts: unrelatedContracts,
   });
   assert.equal(unrelatedValidation.valid, true, unrelatedValidation.errors.join('\n'));
+
+  const expandedAttachmentSemantics = attachmentFixture({withUnrelatedAttachment: true});
+  const unrelatedAttachmentValidation = validateRuntimeBindingBindings(model, identityGraph, {
+    articulationGraph: initialGraph, attachmentSemantics: expandedAttachmentSemantics, jointContracts: initialContracts,
+  });
+  assert.equal(unrelatedAttachmentValidation.valid, true, unrelatedAttachmentValidation.errors.join('\n'));
 
   const selectedLimitContracts = contracts(attachmentSemantics, {shoulderMaximum: 0.75});
   const selectedLimitGraph = articulationGraph(identityGraph, attachmentSemantics, selectedLimitContracts);
