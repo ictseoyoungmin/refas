@@ -38,6 +38,23 @@ P13 verifies before normalizer code runs:
 - artifact bytes reproduce the P12 artifact descriptors;
 - the selected normalizer backend matches the P12 backend.
 
+## Normalizer implementation identity
+
+A persisted normalizer descriptor contains:
+
+```text
+id
+backend
+version
+implementationDigest
+```
+
+`implementationDigest` is registration provenance for the exact normalizer implementation selected by the host/registry. It is not computed from normalizer output and it does not replace replay verification.
+
+When a persisted P13 record is validated against current backend bytes, the supplied runtime normalizer must reproduce the exact persisted descriptor. A different implementation digest fails before its readings are trusted.
+
+The digest alone is not treated as proof of behavior. Even code that presents the same ID/version/digest must replay the verified bytes to the same normalized representation.
+
 ## Semantic identity
 
 Backend indices, array order, node order, traversal order, object names, and runtime addresses are not semantic identity.
@@ -59,7 +76,7 @@ This prevents a parser from silently replacing a stable RefAs actuator/link/join
 Persist `refas.normalized-representation/v1` with:
 
 - normalization identity;
-- normalizer identity/backend/version;
+- normalizer identity/backend/version plus `implementationDigest`;
 - exact P12 export/canonical-view/P11-capacity/artifact-set binding;
 - one entry for every P11 obligation;
 - a backend-independent `semanticDigest`;
@@ -90,13 +107,35 @@ A normalizer may not fabricate a value for an unsupported omission. An emitted o
 
 `exportDisposition` is preserved as provenance. It is not a P13 equivalence verdict.
 
+## Replay proof for persisted readings
+
+Intrinsic digest reproduction is necessary but not sufficient evidence that a persisted normalized value came from the bound backend artifacts.
+
+`validateNormalizedRepresentationBindings(...)` is therefore asynchronous and requires the exact runtime normalizer in addition to the P11 profile, P12 manifest, and artifact bytes.
+
+Validation proceeds as:
+
+```text
+persisted P13 intrinsic validation
+  -> exact P11/P12/source binding validation
+  -> exact normalizer implementation descriptor match
+  -> verify P12 artifact bytes
+  -> rerun normalizer over those verified bytes
+  -> rebuild canonical P13 entries and digests
+  -> exact persisted-vs-replayed record comparison
+```
+
+A record whose `entry.value`, `semanticDigest`, and `normalizationDigest` were all recomputed by an editor still fails if the verified backend bytes do not replay to that exact value.
+
+This replay requirement is the evidence bridge between P12 artifact integrity and P13 semantic readings. P14 may consume a persisted P13 record as backend evidence only after this binding validation succeeds.
+
 ## Two digests
 
 `semanticDigest` covers only backend-independent normalized semantic entries. It intentionally excludes export IDs, artifact hashes, locators, normalizer identity, and P12 exact-vs-approximation provenance.
 
 Therefore two independently realized backends may have different P12/P13 provenance digests while sharing the same `semanticDigest` when their normalized semantics are equal.
 
-`normalizationDigest` seals the complete P13 record including source binding and provenance.
+`normalizationDigest` seals the complete P13 record including source binding and provenance. Neither digest replaces replay proof against verified backend bytes.
 
 ## Rigid transform normalization
 
@@ -139,7 +178,7 @@ Locators remain provenance metadata only and are excluded from `semanticDigest`.
 
 P13 includes `createSemanticJsonRepresentationNormalizer()` for the P12 `refas-semantic-json` backend.
 
-It parses the realized semantic JSON bytes and derives normalized values for the P11 semantic paths currently emitted by P01–P09, including:
+It carries a deterministic built-in implementation registration digest and parses the realized semantic JSON bytes to derive normalized values for the P11 semantic paths currently emitted by P01–P09, including:
 
 - identities, relations, interfaces, compatibility families, and frames;
 - rigid-body dynamics;
@@ -155,11 +194,13 @@ The reference normalizer reads those values from the **backend artifact bytes**,
 
 ## Fail closed
 
-Reject normalization when:
+Reject normalization or persisted binding validation when:
 
 - P11/P12 profile binding differs;
 - P12 artifact bytes fail hash/size/path reproduction;
 - normalizer backend differs from P12 backend;
+- the runtime normalizer descriptor or `implementationDigest` differs from the persisted P13 descriptor;
+- verified backend bytes replay to entries or digests different from the persisted P13 record;
 - a normalizer returns an unknown or duplicate obligation ID;
 - an emitted obligation lacks a reading;
 - an unsupported omission receives a fabricated reading;
