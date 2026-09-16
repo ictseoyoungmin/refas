@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/canonical-export-view.schema.json",
+  "title": "RefAs canonical export view",
+  "type": "object",
+  "required": ["schema", "bundleBinding", "identityProjection", "components", "canonicalViewDigest"],
+  "properties": {
+    "schema": {"const": "refas.canonical-export-view/v1"},
+    "bundleBinding": {"$ref": "#/$defs/bundleBinding"},
+    "identityProjection": {"type": "object"},
+    "components": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/component"}
+    },
+    "canonicalViewDigest": {"$ref": "common.schema.json#/$defs/digest"}
+  },
+  "$defs": {
+    "bundleBinding": {
+      "type": "object",
+      "required": ["bundleId", "scopeId", "sourceSha256", "bundleDigest", "rootClosureDigest", "rootModuleId", "identityProjectionDigest"],
+      "properties": {
+        "bundleId": {"$ref": "common.schema.json#/$defs/semanticId"},
+        "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
+        "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
+        "bundleDigest": {"$ref": "common.schema.json#/$defs/digest"},
+        "rootClosureDigest": {"$ref": "common.schema.json#/$defs/digest"},
+        "rootModuleId": {"$ref": "common.schema.json#/$defs/semanticId"},
+        "identityProjectionDigest": {"$ref": "common.schema.json#/$defs/digest"}
+      },
+      "additionalProperties": false
+    },
+    "component": {
+      "type": "object",
+      "required": ["componentId", "ownerModuleId", "schema", "digest", "contract"],
+      "properties": {
+        "componentId": {"$ref": "common.schema.json#/$defs/semanticId"},
+        "ownerModuleId": {"$ref": "common.schema.json#/$defs/semanticId"},
+        "schema": {"type": "string", "minLength": 1},
+        "digest": {"$ref": "common.schema.json#/$defs/digest"},
+        "contract": {"type": "object"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
