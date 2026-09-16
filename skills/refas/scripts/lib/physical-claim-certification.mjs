@@ -52,7 +52,7 @@ function selectedPhysicalNodeIds(transaction, policy) {
   return [...ids].sort();
 }
 
-function policyConsumesPhysicalEvidence(transaction, policy) {
+export function certificationContextConsumesPhysicalEvidence(transaction, policy) {
   return physicalSelectors(policy).length > 0 || selectedPhysicalNodeIds(transaction, policy).length > 0;
 }
 
@@ -67,14 +67,14 @@ function evidenceContext(contexts, id) {
 }
 
 export function evaluateCertificationPolicy(args = {}) {
-  if (policyConsumesPhysicalEvidence(args.transaction, args.policy)) {
+  if (certificationContextConsumesPhysicalEvidence(args.transaction, args.policy)) {
     throw new Error('physical claim evidence is live-gated; use evaluatePhysicalClaimCertification(...) so current P10-P15 bindings are validated before claim evaluation');
   }
   return evaluateCertificationPolicyCore(args);
 }
 
 export function validateClaimCertificationDecision(value, context = {}) {
-  if (policyConsumesPhysicalEvidence(context?.transaction, context?.policy)) {
+  if (certificationContextConsumesPhysicalEvidence(context?.transaction, context?.policy)) {
     return {
       valid: false,
       errors: ['physical claim certification decisions are live-gated; use validatePhysicalClaimCertificationDecision(...)'],
