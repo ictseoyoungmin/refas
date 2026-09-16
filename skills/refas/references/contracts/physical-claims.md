@@ -80,6 +80,8 @@ A lower claim binds only:
 - exact P14 obligations/findings relevant to those subjects/components,
 - any live P15 declaration semantics actually used by that claim.
 
+Identity relations are also claim-scoped. `articulated-ready` consumes articulation/containment relations; `simulation-ready` consumes physical structure and drive/mapping relations but excludes controller/runtime relations; `control-ready` additionally admits `COMMANDS`; only `runtime-ready` admits `BINDS_RUNTIME`. A higher-level relation merely touching a lower-level identity must not back-propagate into that lower claim.
+
 Therefore a controller-only or runtime-only edit must not, by itself, stale `articulated-ready` or `simulation-ready` evidence. A change to a required link, collision, dynamics, articulation, or other claim-relevant semantic input does invalidate the affected claim evidence.
 
 ## Certification integration
