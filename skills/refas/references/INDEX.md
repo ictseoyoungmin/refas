@@ -49,6 +49,7 @@ Load only the references needed by the active capability or conditional closure 
 | One-way canonical physical semantics to backend artifact export | `references/contracts/backend-export.md` after `references/contracts/representation-capacity.md` |
 | Backend artifact parsing into backend-independent normalized semantics | `references/contracts/representation-normalizer.md` after `references/contracts/backend-export.md` |
 | Canonical-versus-normalized backend semantic comparison with typed equivalence/loss/drift/unresolved/invalid findings | `references/contracts/cross-representation-validation.md` after `references/contracts/representation-normalizer.md` |
+| Exact backend-specific divergence authorization over current P14 DRIFT evidence | `references/contracts/divergence-authorization.md` after `references/contracts/cross-representation-validation.md`; also load `references/inference-authority.md` for the required engineered authority |
 | Material identity and finish | `references/appearance.md` |
 | Render integrity, registered comparison, visual review, closure evidence | `references/validation.md` |
 | Candidate/checkpoint/evidence provenance sealing | `references/candidate-transactions.md` |
