@@ -136,9 +136,12 @@ test('runtime binding keeps endpoint identity, locator, and upstream semantics d
   const {model} = stack();
   assert.deepEqual(validateRuntimeBinding(model), {valid: true, errors: []});
   assert.equal(model.policy.runtimeIndexIsNotSemanticIdentity, true);
+  assert.equal(model.policy.runtimeLocatorsAreConfigurationStrings, true);
   assert.equal(model.policy.runtimeCalibrationDoesNotRewriteUpstreamSemantics, true);
+  assert.equal(model.policy.canonicalCalibrationEquationDefined, true);
   assert.equal(model.policy.zeroOffsetIsNotEulerOrientation, true);
   assert.equal(model.policy.controllerDelayAndTransportDelayRemainDistinct, true);
+  assert.equal(model.policy.targetBindingTracksCoordinateSemanticsOnly, true);
   assert.equal(runtimeBindingForEndpoint(model, 'runtime-actuator')?.selector.targetId, 'actuator-drive');
   assert.equal('identityGraph' in model, false);
   assert.equal('actuationModel' in model, false);
@@ -183,7 +186,7 @@ test('NONE targets reject coordinate calibration instead of inventing orientatio
   assert.throws(() => createRuntimeBinding({scopeId: 'whole', sourceSha256: D(), identityGraph: base.identityGraph, actuationModel: base.actuationModel, transmissionModel: base.transmissionModel, bindings: [leak, actuatorBinding()]}), /unsupported field/);
 });
 
-test('scoped target binding ignores unrelated runtime locator edits but catches selected actuator semantic drift', () => {
+test('scoped target binding ignores runtime locator edits and unrelated actuator capability drift', () => {
   const base = stack();
   const changedIndex = createRuntimeBinding({
     scopeId: 'whole', sourceSha256: D(), identityGraph: base.identityGraph, actuationModel: base.actuationModel, transmissionModel: base.transmissionModel,
@@ -194,7 +197,8 @@ test('scoped target binding ignores unrelated runtime locator edits but catches 
   assert.notEqual(changedIndex.runtimeBindingDigest, base.model.runtimeBindingDigest);
 
   const changedActuation = actuationModel(base.identityGraph, base.transmissionModel, 20);
-  assert.equal(validateRuntimeBindingBindings(base.model, base.identityGraph, {actuationModel: changedActuation, transmissionModel: base.transmissionModel}).valid, false);
+  const validation = validateRuntimeBindingBindings(base.model, base.identityGraph, {actuationModel: changedActuation, transmissionModel: base.transmissionModel});
+  assert.equal(validation.valid, true, validation.errors.join('\n'));
 });
 
 test('P06 drift underneath selected actuator invalidates P09 target binding', () => {
