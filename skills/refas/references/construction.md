@@ -75,10 +75,7 @@ count as a frame merely because its hero projection looks correct.
 
 Treat structural interpretation with the same evidence discipline as shape.
 A visible sequence from one mounting land, through members and junctions, to
-another land may support a load-path hypothesis. Hidden continuity, internal
-reinforcement, fastener preload, and engineering capacity remain hypotheses
-unless the source or downstream specification attests them. Record ambiguity
-instead of inventing a mechanically authoritative interior.
+another land may support a load-path hypothesis.
 
 Validate an open frame in hero, reverse, side, top, grazing, normal, and
 object-ID views. The apertures must remain open, member thickness must remain
