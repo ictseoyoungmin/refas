@@ -3,8 +3,12 @@
 Use this recipe for drawing mannequins, dolls, robots, prosthetic forms,
 segmented creatures, and manufactured products whose identity depends on
 organic section changes and movable joints. It supplements the general shape,
-surface, and assembly contracts; it does not authorize invented anatomy or
-hidden mechanisms.
+surface, and assembly contracts. Source evidence constrains what may be
+reported as observed, but lack of observation is not a default prohibition on
+constructing the rest of the 3D form. Where the source does not determine a
+shape, continuation, or mechanism, use an explicit hypothesis, structural
+prior, or downstream requirement and keep that choice distinct from source
+fact.
 
 ## Whole-shape authority
 
@@ -41,28 +45,41 @@ unchanged generic primitive adds density, not observed information.
 
 ## Articulation topology
 
-Treat each physical joint as a relation among visible bodies, not as a sphere
-merged into a limb:
+Treat each physical joint as a relation among bodies, not as a sphere merged
+into a limb:
 
-- name proximal shell, distal shell, joint center, rotation axis, visible ball
-  or pin, socket or opening, clearance gap, stop surface, and occlusion order;
-- model the socket/opening as real negative space when visible;
-- preserve shell thickness and the silhouette of the cutaway around the joint;
+- name proximal shell, distal shell, joint center, rotation axis, and any ball,
+  pin, socket, opening, clearance, stop, or occlusion element that belongs to
+  the selected construction hypothesis; keep observed, inferred, and engineered
+  elements distinguishable;
+- model a socket/opening as real negative space when source evidence requires
+  that opening;
+- preserve the selected shell-thickness hypothesis and the silhouette of any
+  visible cutaway around the joint;
 - keep the moving child in a local frame whose origin is the joint center;
-- store inferred limits separately from observed pose;
+- store inferred or engineered limits separately from observed pose;
 - test at least the reference pose and one materially different pose without
   changing part-local geometry.
 
 Use rigid node hierarchy for a segmented physical mannequin. Use skinning only
-when the source shows deformable material spanning a joint.
+when the source or selected construction hypothesis requires deformable material
+spanning a joint.
 
-## Visible obligations and hidden uncertainty
+## Observed obligations and completion hypotheses
 
-Uncertainty applies to genuinely hidden depth, rear surfaces, internal pins,
-and manufacturer-specific limits. It does not excuse generic treatment of a
-visible contour, cut line, opening, overlap, proportion, highlight break, or
-curvature transition. Record visible obligations as facts with source evidence;
-record only the unseen continuation as an ambiguity.
+A visible contour, cut line, opening, overlap, proportion, highlight break, or
+curvature transition is a source-backed obligation when the evidence supports
+it. Geometry not determined by the current views—such as depth continuation,
+rear surfaces, internal joint structure, or manufacturer-specific limits—may be
+completed by a bounded inferred or engineered hypothesis when needed for a
+coherent 3D asset or downstream function. Do not report that completion as
+observed merely because it was instantiated.
+
+Do not create authority entries for every geometric degree of freedom. Use the
+semantic-authority contract when a proposition is explicitly tracked or later
+claims depend on its provenance. If new evidence contradicts a completion
+hypothesis, reopen its owner and revise it rather than preserving the old
+construction as source truth.
 
 ## Closure evidence
 

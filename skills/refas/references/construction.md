@@ -10,6 +10,12 @@
 
 Build these before seams, panels, fasteners, engravings, or material polish. A detailed wrong silhouette is still wrong.
 
+## Relational applicability
+
+When the active scope has declared or otherwise material macro/identity `whole-system` relational obligations, pass the current `refas.whole-system-relational-barrier/v1` before lower-scope geometry hardening that depends on those relations. If no such obligation applies to the current construction decision, do not invent a placeholder relation merely to enter shape construction; proceed under the normal spatial-hypothesis, canonical-edit, construction-quality, projection, and visual-review gates.
+
+This construction boundary does not weaken the separate real-source certification floor. Before real-source whole-object certification, a meaningful current relational structure, semantic-authority set, passing barrier, and candidate-bound relational discrepancy are still required by the certification path.
+
 ## Blockout and identity-bearing geometry
 
 A blockout establishes camera, pose, broad mass, and candidate negative space.

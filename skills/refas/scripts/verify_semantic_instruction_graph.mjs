@@ -17,6 +17,22 @@ const REQUIRED_REAL_SOURCE_NODES = Object.freeze([
 ]);
 const REQUIRED_REAL_SOURCE_ARTIFACT = 'refas.certification-relational-evidence/v1';
 const ALLOWED_BARE_MARKDOWN = new Set(['SKILL.md', 'INDEX.md']);
+const RELATIONAL_BARRIER_NODE = 'whole-system-relational-barrier';
+const LEGACY_HIDDEN_GEOMETRY_POLICY_PATTERNS = Object.freeze([
+  {id: 'invented-hidden-mechanism-prohibition', pattern: /does not authorize invented anatomy or hidden mechanisms/iu},
+  {id: 'hidden-uncertainty-heading', pattern: /visible obligations and hidden uncertainty/iu},
+  {id: 'hidden-geometry-default-ambiguity', pattern: /genuinely hidden depth, rear surfaces, internal pins/iu},
+  {id: 'unseen-continuation-only-ambiguity', pattern: /record only the unseen continuation as an ambiguity/iu},
+]);
+const HIDDEN_GEOMETRY_POLICY_SOURCES = Object.freeze([
+  'SKILL.md',
+  'references/workflow.md',
+  'references/observation.md',
+  'references/spatial-reasoning.md',
+  'references/inference-authority.md',
+  'references/construction.md',
+  'references/organic-articulated-construction.md',
+]);
 
 const portable = (value) => value.split(path.sep).join('/');
 
@@ -92,6 +108,21 @@ function hardDependencyCycle(nodesById) {
   return null;
 }
 
+function conditionalDependencyIds(node) {
+  return new Set((node?.conditionalRequires ?? []).flatMap((edge) => edge?.nodes ?? []));
+}
+
+async function findLegacyHiddenGeometryPolicy(skillRoot) {
+  const hits = [];
+  for (const source of HIDDEN_GEOMETRY_POLICY_SOURCES) {
+    const text = await fs.readFile(path.join(skillRoot, source), 'utf8');
+    for (const {id, pattern} of LEGACY_HIDDEN_GEOMETRY_POLICY_PATTERNS) {
+      if (pattern.test(text)) hits.push({source, id});
+    }
+  }
+  return hits;
+}
+
 export async function analyzeSemanticInstructionGraph({skillRoot = DEFAULT_SKILL_ROOT} = {}) {
   skillRoot = path.resolve(skillRoot);
   const graph = JSON.parse(await fs.readFile(path.join(skillRoot, GRAPH_PATH), 'utf8'));
@@ -132,6 +163,24 @@ export async function analyzeSemanticInstructionGraph({skillRoot = DEFAULT_SKILL
     if (!Array.isArray(node.closureEffects)) errors.push(`node ${node.id} closureEffects must be an array`);
   }
 
+  const instructionOwners = new Set(nodes.flatMap((node) => node.owners ?? []));
+  const missingCapabilityOwners = CAPABILITY_ORDER.filter((capability) => !instructionOwners.has(capability));
+  for (const capability of missingCapabilityOwners) errors.push(`runtime capability has no instruction-graph owner: ${capability}`);
+
+  const observationOwners = new Set(nodesById.get('observation')?.owners ?? []);
+  if (!observationOwners.has('visual-hierarchy')) errors.push('observation instruction node must explicitly own visual-hierarchy routing');
+  if (!observationOwners.has('visual-observation')) errors.push('observation instruction node must own visual-observation routing');
+
+  for (const nodeId of ['construction', 'parameter-fitting']) {
+    const node = nodesById.get(nodeId);
+    if ((node?.requires ?? []).includes(RELATIONAL_BARRIER_NODE)) {
+      errors.push(`${nodeId} must not hard-require ${RELATIONAL_BARRIER_NODE}; relational eligibility is applicability-scoped`);
+    }
+    if (!conditionalDependencyIds(node).has(RELATIONAL_BARRIER_NODE)) {
+      errors.push(`${nodeId} must conditionally require ${RELATIONAL_BARRIER_NODE} when relational obligations apply`);
+    }
+  }
+
   const cycle = hardDependencyCycle(nodesById);
   if (cycle) errors.push(`hard semantic dependency cycle: ${cycle.join(' -> ')}`);
 
@@ -167,13 +216,18 @@ export async function analyzeSemanticInstructionGraph({skillRoot = DEFAULT_SKILL
   }
   for (const item of bareMarkdownRoutes) errors.push(`bare Markdown route must use canonical skill-root path: ${item.source} -> ${item.route}`);
 
+  const legacyHiddenGeometryPolicyHits = await findLegacyHiddenGeometryPolicy(skillRoot);
+  for (const hit of legacyHiddenGeometryPolicyHits) errors.push(`legacy hidden-geometry suppression policy detected: ${hit.source} (${hit.id})`);
+
   return {
     status: errors.length === 0 ? 'PASS' : 'FAIL',
     schema: graph.schema,
     nodeCount: nodes.length,
     referenceLeaves: leaves.length,
     cycle,
+    missingCapabilityOwners,
     bareMarkdownRoutes,
+    legacyHiddenGeometryPolicyHits,
     errors,
   };
 }
@@ -186,7 +240,15 @@ export async function verifySemanticInstructionGraph(options = {}) {
 
 async function main() {
   const result = await verifySemanticInstructionGraph();
-  process.stdout.write(`${JSON.stringify({status: result.status, schema: result.schema, nodeCount: result.nodeCount, referenceLeaves: result.referenceLeaves, bareMarkdownRoutes: result.bareMarkdownRoutes.length}, null, 2)}\n`);
+  process.stdout.write(`${JSON.stringify({
+    status: result.status,
+    schema: result.schema,
+    nodeCount: result.nodeCount,
+    referenceLeaves: result.referenceLeaves,
+    missingCapabilityOwners: result.missingCapabilityOwners.length,
+    bareMarkdownRoutes: result.bareMarkdownRoutes.length,
+    legacyHiddenGeometryPolicyHits: result.legacyHiddenGeometryPolicyHits.length,
+  }, null, 2)}\n`);
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

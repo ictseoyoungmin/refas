@@ -4,6 +4,8 @@ RefAs reconstructs a coherent 3D system, not a bag of independently matched visi
 
 Use `refas.relational-structure/v1` when identity or function depends on the relationship between entities: proportions, alignments, ordered landmarks, plane transitions, or volume balance. Keep the contract domain-neutral; face-specific, robotics-specific, architectural, or product-specific names belong in the project specification, not Core runtime.
 
+Do not invent a placeholder relation solely because shape construction is active. The construction path consumes the whole-system relational barrier only when macro/identity whole-system obligations are actually declared or otherwise material to the active scope. Real-source whole-object certification is stricter: before certification it requires a meaningful current relational structure and sealed relational authority closure even if an earlier rough construction step did not need the barrier.
+
 ## What belongs here
 
 Represent semantic entities such as landmarks, axes, planes, volumes, regions, interfaces, and systems. Then declare relations between them. The initial Core relation kinds are:
@@ -14,7 +16,7 @@ Represent semantic entities such as landmarks, axes, planes, volumes, regions, i
 - `plane-chain` — ordered coarse surface-plane transitions without hard-coding any asset class;
 - `volume-ratio` — relative volume/mass-envelope relationship between two semantic volumes or systems.
 
-Every relation declares whether it is `whole-system` or `local` and whether its importance is `macro`, `identity`, or `detail`. Local feature work never substitutes for unresolved whole-system relations.
+Every relation declares whether it is `whole-system` or `local` and whether its importance is `macro`, `identity`, or `detail`. Local feature work never substitutes for unresolved applicable whole-system relations.
 
 ## Relation graph
 
@@ -30,19 +32,19 @@ Do not inject population-average, manufacturer, anatomical, or category priors a
 
 ## Plane and volume reasoning
 
-A correct collection of landmarks can still produce a wrong 3D form when the planes and volumes connecting them are wrong. Declare important plane chains and volume ratios before polishing local features. If the large relational system is wrong, reopen the responsible structure instead of adding local geometry until one view looks plausible.
+A correct collection of landmarks can still produce a wrong 3D form when the planes and volumes connecting them are wrong. Declare important plane chains and volume ratios before polishing local features when those relationships are material to identity or function. If the large relational system is wrong, reopen the responsible structure instead of adding local geometry until one view looks plausible.
 
 ## Whole-system barrier
 
-`wholeSystemRelationalObligations()` returns the macro/identity whole-system relation IDs that must be resolved before lower-scope geometry hardening. Evaluate those obligations with current evidence and create `refas.whole-system-relational-barrier/v1`.
+`wholeSystemRelationalObligations()` returns the macro/identity whole-system relation IDs that must be resolved before lower-scope geometry hardening that depends on those relations. When the returned obligations are applicable to the active construction scope, evaluate them with current evidence and create `refas.whole-system-relational-barrier/v1` before dependent local hardening. If the active construction has no applicable whole-system obligation, do not fabricate one merely to pass a construction prerequisite.
 
-The barrier binds the exact relational-structure digest and semantic-authority-set digest. It passes only when every required relation has current passing evidence and authority that can license positive construction. `unknown` blocks the barrier without becoming `forbidden`; explicit `forbidden` authority is a construction conflict.
+The barrier binds the exact relational-structure digest and semantic-authority-set digest. It passes only when every required relation has current passing evidence and authority that can license positive construction. `unknown` blocks the dependent positive construction without becoming `forbidden`; explicit `forbidden` authority is a construction conflict.
 
-Use `routeRelationalBarrier()` when blocked. Failed whole-system geometry routes to `shape-reconstruction`; missing/unknown/forbidden authority routes upstream to `spatial-hypotheses`; genuinely unresolved evidence requests review instead of inventing a repair owner. See `references/whole-system-relational-barrier.md`.
+Use `routeRelationalBarrier()` when an applicable barrier is blocked. Failed whole-system geometry routes to `shape-reconstruction`; missing/unknown/forbidden authority routes upstream to `spatial-hypotheses`; genuinely unresolved evidence requests review instead of inventing a repair owner. See `references/whole-system-relational-barrier.md`.
 
 ## Candidate-bound discrepancy and fitting
 
-Once a candidate exists, evaluate the same whole-system macro/identity obligations against that exact candidate with `refas.relational-discrepancy/v1`. The discrepancy embeds the exact relational graph, binds the candidate SHA-256, and records current measurements/evidence for each required relation.
+Once a candidate exists and relational eligibility is active, evaluate the same whole-system macro/identity obligations against that exact candidate with `refas.relational-discrepancy/v1`. The discrepancy embeds the exact relational graph, binds the candidate SHA-256, and records current measurements/evidence for each required relation.
 
 Missing quantitative evidence remains `unresolved`. A resolved pass/fail requires evidence references. When a parameter-fit plan requests relational eligibility, the fitter treats the discrepancy as a hard admission condition:
 
@@ -54,7 +56,7 @@ Do not turn relation failure into an arbitrary large loss or `Infinity`. A candi
 
 ## Certification closure
 
-For real-source whole-object certification, the current relation system enters the sealed authority chain through `refas.certification-relational-evidence/v1`. It binds:
+For real-source whole-object certification, the current relation system enters the sealed authority chain through `refas.certification-relational-evidence/v1`. This certification floor is mandatory and is separate from whether an earlier construction edit needed the relational barrier. Before certification, provide a meaningful current relation system rather than a synthetic no-op relation. The closure binds:
 
 - the exact certification candidate SHA-256;
 - exact relational-structure bytes and structure digest;
