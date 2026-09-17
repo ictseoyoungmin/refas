@@ -9,7 +9,7 @@ RefAs separates concerns that must not collapse into one another:
 1. **source truth** — what the reference and bound evidence directly support;
 2. **construction state** — editable semantic geometry, pose, assembly, relations, appearance, and explicit inference/engineering choices;
 3. **physical construction semantics** — assembly-owned identities and physical contracts used only when required by the asset or claim;
-4. **realized representations** — exact GLB/render/backend/report bytes projected from canonical construction state;
+4. **realized artifacts** — exact GLB/render/backend/report bytes projected from canonical construction state;
 5. **certification authority** — whether a declared claim is allowed for one exact candidate under one exact evidence policy.
 
 ## Top-level capability graph remains stable
@@ -31,6 +31,8 @@ RefAs 1.1.0 does not create a parallel robotics capability hierarchy. The eleven
 | 11 | `whole-object-certification` | fail-closed claim authorization over one exact candidate/evidence chain |
 
 Physical semantics use scoped subdomains inside `assembly`: composition, articulation, dynamics, collision, mechanism, transmission, actuation, control, and runtime. This granularity drives dependency and invalidation without creating new top-level truth owners.
+
+Assembly is explicit construction state rather than a proximity guess. Physical contracts refine that state without creating a second source-truth owner.
 
 ## Source, relation, and authority boundary
 
