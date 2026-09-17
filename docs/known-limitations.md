@@ -1,49 +1,81 @@
-# Known limitations in RefAs 1.0.3
+# Known limitations in RefAs 1.1.0
 
-RefAs 1.0.3 is deliberately conservative about what it can certify from reference evidence. The limits below are product boundaries, not hidden claims.
+RefAs 1.1.0 can represent and validate explicit physical construction semantics, but it remains conservative about what those semantics are entitled to claim. The limits below are product boundaries, not hidden guarantees.
 
-## Ambiguous full 3D orientation
+## Single-view observation remains incomplete
 
-A single image can strongly constrain position, projected direction, overlap and visible planes while still leaving rotation about a part's primary axis ambiguous. RefAs makes camera-relative orientation cues, full local frames, terminal facing and parent-child twist explicit when evidence supports them, and it refuses to treat a primary axis alone as a complete orientation.
+A single image can strongly constrain projected shape, overlap, visible planes, relative proportions, and some orientation cues while still leaving depth, scale, roll, hidden topology, and internal construction ambiguous.
 
-This does not make genuinely ambiguous roll observable. When facing/lateral evidence is absent, roll remains unresolved unless an explicit parent-frame inheritance policy is justified. A correct projected endpoint or primary axis therefore does not by itself prove a correct full 3D orientation. Hands, feet, tools, gears and other direction-sensitive parts may still require additional views or explicit review.
+RefAs preserves that ambiguity. A correct projected endpoint or primary axis does not prove a complete 3D frame. Additional views, calibration evidence, specifications, or explicit engineering authority may be required for a physically useful result.
 
-## Hidden form and manufacturer truth
+## Physical semantics do not create manufacturer truth
 
-RefAs 1.0.3 no longer treats unobserved structure as prohibited by default. `refas.semantic-authority-set/v1` distinguishes `observed`, `inferred`, `engineered`, `unknown`, and `forbidden` propositions. A hidden continuation or support may be constructed as `inferred` when evidence, relational constraints, structural priors, or external specifications justify it, or as `engineered` when an explicit functional/downstream requirement justifies it.
+RefAs 1.1.0 adds typed identities and contracts for modules, interfaces, rigid links, joints, dynamics, collision, mechanisms, transmissions, actuators, controllers, and runtime endpoints. Those contracts say **what a current construction means**; they do not prove that an unseen real product was manufactured the same way.
 
-That permission is not manufacturer truth. Only `observed` authority can assert a source fact. An inferred shaft, concealed brace, rear surface, internal support, or engineered linkage remains an inference/design choice unless independent evidence promotes the specific proposition. `unknown` remains unresolved; only `forbidden` asserts a contradiction or hard prohibition.
+`refas.semantic-authority-set/v1` remains decisive:
 
-## Simulation-ready physical truth
+- `observed` — directly supported source fact;
+- `inferred` — evidence/prior/specification-supported hypothesis;
+- `engineered` — explicit functional or downstream construction choice;
+- `unknown` — unresolved;
+- `forbidden` — contradicted or prohibited.
 
-Mass, center of mass, inertia, collision geometry, actuator dynamics, friction, contact parameters and physically calibrated joint limits are outside the general 1.0.x certified capability set unless a project supplies its own evidence and validators.
+An inferred shaft, engineered linkage, estimated inertia, or designed collision proxy remains inferred/engineered unless independent evidence supports promotion of that exact proposition. Unknown values remain unresolved rather than receiving simulator-friendly defaults.
 
-A GLB that is visually and structurally useful is not automatically a calibrated simulation model. Robotics-specific physical assembly, MJCF/URDF export and simulation validation are not part of the 1.0.3 Core release. Optional domain packs may add these semantics later without changing the general evidence/authority contract.
+## Readiness is scoped, not universal calibration
 
-## Absolute scale and calibration
+`articulated-ready`, `simulation-ready`, `control-ready`, and `runtime-ready` are scoped evidence claims over the current semantic selection. They do not mean that every physical quantity has been measured from a real object.
 
-Single-view imagery does not establish physical dimensions by itself. Real-world scale, camera intrinsics and lens distortion require calibration evidence when they matter to a claim.
+For example, a `simulation-ready` claim may be valid when its required dynamics, collision, articulation, mechanism, transmission, and actuation obligations are present and supported under their declared authority. That does not turn an engineered mass or collision approximation into an observed measurement.
 
-## Material identity
+Likewise, `runtime-ready` means the applicable control/runtime obligations and exact current bindings close. It does not guarantee compatibility with every external runtime, robot, simulator, controller implementation, or hardware revision.
 
-PBR rendering can validate that a declared appearance is rendered reproducibly, but appearance similarity does not identify an unknown real material composition. Unsupported material identity remains a hypothesis.
+## Calibration quality depends on evidence
 
-## Relational structure is only as strong as its basis
+Mass, center of mass, inertia, friction, damping, stiffness, effort/velocity limits, actuator response, controller gains, latency, sensor offsets, runtime sign/zero/scale, and collision geometry can be represented explicitly. Their real-world accuracy is only as strong as their basis.
 
-A relational graph can express proportions, alignments, ordering, plane chains and volume relationships that are not well represented by independent local features. It does not make an unsupported relationship true. Every whole-system relation still needs semantic authority and current evidence before it can pass the relational barrier.
+A model built from a single photograph usually does not have enough evidence to certify calibrated physical truth. Measurements, datasheets, system identification, calibration captures, or other independent evidence may be necessary.
 
-`inferred` and `engineered` authority can license construction but cannot be silently promoted to `observed`. A passing relational barrier proves that the declared current relation obligations are satisfied under their declared authority; it does not prove that every hidden part or physical mechanism matches the photographed object.
+## Collision is semantic realization, not contact truth by itself
 
-## Metrics and automated fitting
+RefAs separates collision geometry from render geometry and can require explicit reuse/approximation declarations. A valid collision model still does not prove a particular physics engine will reproduce real contact behavior without suitable solver, friction, restitution, timestep, and material parameters.
 
-Projection, silhouette, landmark, orientation and perceptual metrics are diagnostic/ranking evidence. Relational discrepancy is stricter: when a fit plan requests relational eligibility, failed or unresolved whole-system relations make a candidate ineligible rather than adding a tunable loss penalty. A lower numeric loss therefore cannot trade away a required relation.
+## Backend equivalence has a declared scope
 
-These metrics still do not own repair routing or visual certification. Independent visual evidence and the existing structural/projection gates retain their authority.
+Representation normalization removes differences that are semantically equivalent under the supported contract, including canonical quaternion sign/component handling, supported unit conversions, and equivalent transform conventions.
 
-## Certification scope
+That does not make every backend feature equivalent. If a backend cannot represent a required semantic, the result is explicitly lossy. If it can represent the semantic but differs without authorization, the result is drift. If the canonical authority is insufficient, comparison remains unresolved.
 
-For real-source whole-object certification, RefAs 1.0.3 seals the exact candidate together with exact relational-structure, semantic-authority, whole-system-barrier and candidate-bound relational-discrepancy bytes. This protects provenance and authority from omission, substitution, replay and policy downgrade; it does not expand what those evidence artifacts are semantically entitled to claim.
+## Declared divergence is not silent permission
+
+P15 divergence authorization is exact and field-scoped. It must bind the current P14 drift, backend, semantic subject/path, canonical value, normalized override, and current engineered authority. A stale or substituted authority set fails live validation even if the persisted artifact is internally well formed.
+
+A declared divergence does not mutate canonical construction state and does not justify unrelated backend differences.
+
+## Higher-level state remains downstream
+
+Controller tuning and runtime binding/calibration are intentionally downstream-scoped. Editing those values does not promote them into joint, actuator, module, geometry, or source identity and does not automatically invalidate unrelated lower-level physical or visual evidence.
+
+Conversely, an upstream joint frame, mechanism, dynamics, or module-interface change may invalidate the downstream physical claims and backend projections that depend on it.
+
+## Absolute scale still requires calibration
+
+Single-view imagery does not establish physical dimensions by itself. Real-world scale, camera intrinsics, and lens distortion require calibration evidence when they matter to a claim.
+
+## Material identity remains epistemically limited
+
+PBR rendering can prove that a declared appearance was rendered reproducibly under an exact configuration. Appearance similarity does not identify unknown real material composition, internal layers, coatings, or manufacturing process without supporting evidence.
+
+## Metrics do not own truth
+
+Projection, silhouette, landmark, orientation, perceptual, relational, and representation-comparison metrics remain diagnostic or eligibility evidence under their contracts. They cannot override visible failure, source authority, typed physical blockers, live divergence validation, or claim-specific certification requirements.
+
+## Integrated fixture proves contract integration, not every asset class
+
+The P17 coupled parallel 2-DOF fixture exercises the complete physical-semantic chain, including reusable modules, articulation, dynamics, collision, nonlinear transmission, actuation, control, runtime binding, two backend representations, normalization, deliberate drift, live divergence authorization, and `runtime-ready` certification.
+
+That fixture proves the contracts work together deterministically. It is not evidence that every future asset class, simulator backend, mechanism family, or hardware runtime is already supported without additional adapters, validators, or domain evidence.
 
 ## Release boundary
 
-These limitations describe the 1.0.3 release as shipped. The patch adds domain-neutral relational structure, explicit inference/engineering authority, hard relational fitting eligibility and sealed relational certification. It does not introduce robotics-specific actuator/collider/mass/inertia/simulation vocabulary into Core. Calibrated multi-representation physical validation and optional domain packs remain later capabilities rather than retroactive 1.0.3 guarantees.
+RefAs 1.1.0 ships typed physical construction and scoped readiness semantics as Core contracts while keeping the existing vision-first evidence policy. The release does not claim observed manufacturer internals or calibrated real-world physics where evidence is absent, and it does not rename public `.../v1` namespaces merely because the package version advanced.

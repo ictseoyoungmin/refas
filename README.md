@@ -4,82 +4,142 @@
 
 # RefAs
 
-**Reference Asset Foundry** is a vision-first reconstruction system for AI agents that must turn reference images into traceable, editable, and evidence-bound 3D assets.
+**Reference Asset Foundry** is a vision-first reconstruction system for AI agents that turn reference images into traceable, editable, evidence-bound 3D assets and, when justified, explicit physical construction semantics.
 
-RefAs is designed for work where a quick image-to-mesh approximation is not enough. It keeps the raw reference authoritative, preserves whole-object context while inspecting parts, distinguishes observation from inference and engineering choice, compares actual renders, makes risky edits recoverable, and refuses certification when the evidence chain does not reproduce.
+RefAs is designed for work where a quick image-to-mesh approximation is not enough. The raw reference remains authoritative, whole-object context survives part inspection, observation stays distinct from inference and engineering choice, actual renders are compared, risky edits remain recoverable, and certification fails when the exact evidence chain cannot be reproduced.
 
 ## Demo
 
-Open [`demo/index.html`](demo/index.html) for a dependency-free overview of the current 1.0.3 capability boundary and the repository's reproducible examples.
+Open [`demo/index.html`](demo/index.html) for a dependency-free overview of the current 1.1.0 capability boundary and reproducible repository evidence.
 
-The demo intentionally does not treat committed screenshots or opaque binary assets as proof. Actual geometry, render evidence, rollback behavior, fitting, assembly checks, relational authority, and certification are reproduced by repository tests and example commands.
+The demo does not treat committed screenshots or opaque binary assets as proof. Geometry, render evidence, rollback, fitting, assembly checks, relational authority, physical semantics, backend normalization, readiness claims, and certification are exercised by tests and dogfood commands.
 
 ## What RefAs guarantees
 
 - **Whole → region → part → subpart → feature observation.** A detail crop never erases its ancestry or the full reference.
 - **Evidence-bound claims.** Facts, interpretations, hypotheses, ambiguities, inferred propositions, and engineered choices remain distinguishable.
-- **Projection-aware reconstruction.** Camera and reference-frame alternatives are tested before geometry is distorted to fit a view.
-- **Full-frame orientation evidence.** Position or a primary axis alone never proves roll, terminal facing, or parent-child twist.
-- **Relational structure before local hardening.** `refas.relational-structure/v1` expresses domain-neutral proportions, alignments, ordering, plane chains, volume ratios, and dependencies; macro/identity whole-system relations must close before local geometry is trusted.
-- **Explicit inference authority.** `observed`, `inferred`, `engineered`, `unknown`, and `forbidden` are distinct. Unobserved/unknown does not mean forbidden, while inferred or engineered construction never becomes source truth by relabeling.
-- **Hard relational candidate eligibility.** Candidate-bound relational discrepancy can make a lower-loss fit ineligible; failed relations are never traded against visual gains as weighted penalties.
-- **Evidence-bound joint geometry fitting.** Deterministic worker loops can move coupled owner-local parameters through actual GLB/render trials while keeping metrics outside gate and rollback authority.
-- **Immutable child assembly.** A closed child GLB is reused byte-for-byte and registered into its parent instead of silently rebuilt.
-- **Geometry-bound modular assembly.** Detachable modules require actual GLB ancestry, parent-relative transforms, semantic contact frames, derived clearance/penetration/support, closed-child integrity, and object-ID separation.
-- **Shared surface topology.** Adjacent observed cells consume one physical boundary rather than nearly matching duplicate frames.
-- **Coherent hard-surface shells.** Curved shells, slots, and open-frame mounts compile as watertight parts with true apertures, deterministic edge treatments, and semantic attachment frames.
-- **Actual multiview QA.** Hero, oblique, side, top, grazing, normal, object-ID, and albedo renders drive critique; rasterization success is never treated as visual similarity.
-- **Registered local comparison.** Digest-bound source/render overlays, splits, edge differences, grids, landmarks, and normalized dimensions retain whole-to-feature ancestry; metrics localize findings but never set a visual gate.
-- **Sealed candidate provenance.** A candidate transaction binds the exact candidate, checkpoint, evidence DAG, dependency proofs, and declared obligations by content digest.
-- **Claim-driven certification.** Certification policy decides which evidence roles/schemas are required for each claim; a valid transaction alone never implies a valid claim.
-- **Sealed relational certification for real sources.** The exact candidate plus exact relation graph, semantic authority, whole-system barrier, and candidate relational discrepancy are jointly rebound and audited before the required relational claim may pass.
-- **Adversarially hardened authority.** Candidate/evidence substitution, stale replay, forged decisions, cross-claim contamination, relational replay/substitution, and freshly re-signed weaker policies fail closed.
-- **Independent PBR appearance evidence.** After portable integrity passes, the deterministic Cook–Torrance backend or an external renderer worker binds exact rig, color pipeline, feature coverage, and output digests.
-- **Typed failure ownership and content-addressed rollback.** Blockers have an owner/recovery point and checkpoints retain exact bytes required to restore trustworthy state.
-- **Bounded render resources without a quality ceiling.** Resource safety is handled by memory preflight, tiles, deadlines, and optional project policy rather than an arbitrary global triangle cap.
+- **Projection-aware reconstruction.** Camera and reference-frame alternatives are tested before geometry is distorted to fit one view.
+- **Full-frame orientation evidence.** Position or one primary axis alone never proves roll, terminal facing, or parent-child twist.
+- **Relational structure before local hardening.** Domain-neutral proportions, alignments, ordering, plane chains, volume ratios, and dependencies must close before local detail can substitute for the whole.
+- **Explicit semantic authority.** `observed`, `inferred`, `engineered`, `unknown`, and `forbidden` remain distinct. Unknown is unresolved, not absence; engineered construction is not source truth.
+- **Hard candidate eligibility.** Structural and relational failures cannot be traded away by a lower visual or numeric loss.
+- **Immutable child assembly.** Closed child assets remain reusable by exact identity and bytes rather than silently rebuilt.
+- **Actual multiview QA.** Hero, oblique, side, top, grazing, normal, object-ID, and albedo evidence drives critique; raster success is never visual similarity.
+- **Sealed provenance and claim-driven certification.** Candidate, checkpoint, evidence DAG, dependencies, policy, and decision are digest-bound and reproduced before authorization.
+- **Content-addressed rollback.** Typed findings route to one owner and trustworthy bytes can be restored when a downstream edit fails.
 
-## What 1.0.x does not claim
+## Physical semantics in 1.1.0
 
-RefAs does **not** automatically establish unseen manufacturer-internal mechanisms, calibrated mass/inertia/collider/actuator truth, real-world scale, unknown material composition, or an unambiguous full 3D terminal orientation from a single ambiguous view. Version 1.0.3 may construct hidden form as explicit `inferred` or `engineered` state when its typed basis justifies that construction; this is not a claim that the photographed manufacturer used the same hidden mechanism. See [Known limitations](docs/known-limitations.md).
+Physical semantics are native **assembly-owned construction contracts**, not a parallel robotics state machine and not a second source of truth. The following identities remain semantically distinct even when a simple asset maps them one-to-one:
+
+```text
+assembly module
+  != attachment interface
+  != physical part
+  != rigid link
+  != virtual joint
+  != mechanism
+  != transmission
+  != actuator
+  != controller
+  != runtime endpoint
+```
+
+Canonical physical frames use meters plus normalized canonical quaternion `[x,y,z,w]`. Backend order, array position, motor index, device index, Euler convention, and serialization order never become semantic identity.
+
+The physical stack covers:
+
+- rigid-body mass, center of mass, inertia, and frame binding;
+- visual-independent collision semantics and filtering;
+- typed articulation and link/joint topology;
+- mechanism topology and explicit transmission mappings for coordinate, velocity, and effort spaces;
+- actuator capability distinct from joint limits;
+- controller profiles distinct from actuator source truth;
+- optional runtime endpoint/device/bus/index calibration distinct from canonical identity;
+- digest-bound reusable physical asset bundles;
+- representation-capacity preflight, one-way export, normalization, and canonical-versus-backend validation;
+- exact field-scoped declared divergence that never mutates canonical construction state.
+
+The representation flow is intentionally one-way from canonical construction semantics:
+
+```text
+canonical physical construction
+        ├──> backend representation A ──> normalized semantic view A
+        └──> backend representation B ──> normalized semantic view B
+                         │
+                         └── canonical-versus-normalized validation
+```
+
+Backend A is never promoted into truth for backend B. Equivalent quaternion sign/component order, translation units, or equivalent Euler conventions normalize before comparison. Representable undeclared differences remain `DRIFT`; unsupported semantics remain explicit `LOSSY`; insufficient authority remains `UNRESOLVED`; broken invariants remain `INVALID`.
+
+## Scoped physical readiness
+
+RefAs 1.1.0 adds opt-in readiness claims without weakening visual/source-fidelity authority:
+
+- `articulated-ready` — applicable link/joint articulation obligations are closed;
+- `simulation-ready` — required dynamics/collision and applicable physical semantics are closed;
+- `control-ready` — simulation obligations plus applicable actuator/controller evidence are closed;
+- `runtime-ready` — control obligations plus current runtime binding/calibration are closed.
+
+Physical readiness is not inferred from a valid candidate transaction alone. `refas.physical-claim-evidence/v1` must validate against the **current live P10–P15 chain**. If a claim relies on a declared backend divergence, the exact current P15 authority and P14 drift binding are revalidated before P16 evidence may pass. Public generic certification cannot bypass that typed preflight.
+
+Higher-level edits remain scoped: changing controller tuning or runtime indices does not retroactively invalidate an unchanged lower simulation claim or unrelated visual reconstruction evidence.
+
+## What 1.1.0 does not claim
+
+Typed physical semantics do not manufacture physical truth. RefAs can preserve evidence-backed `observed` values and can construct explicit `inferred` or `engineered` values when their basis permits it, but it does not identify unseen manufacturer internals or guarantee calibrated real-world mass, inertia, friction, collision, actuator, controller, runtime, scale, or material composition without supporting evidence.
+
+A `simulation-ready` or `runtime-ready` result means the selected claim obligations close against the current typed evidence and representation chain. It does **not** mean every parameter was measured from the real object. See [Known limitations](docs/known-limitations.md).
+
+## Integrated physical fixture
+
+The P17 integration fixture closes the 1.1.0 physical-semantics implementation plan with a domain-neutral coupled parallel 2-DOF assembly composed from reusable modules. It exercises fixed attachment interfaces, virtual joints, rigid dynamics, collision proxies, a nonlinear transmission, actuation, control, runtime binding, two independent backend projections, normalization, deliberate semantic drift, live divergence authorization, and `runtime-ready` certification.
+
+The final positive path is intentionally not an all-equivalent shortcut:
+
+```text
+P14 DRIFT
+  → exact live P15 DECLARED_DIVERGENCE
+  → P16 runtime-ready evidence
+  → typed live preflight
+  → generic certification decision
+```
+
+Substituted or stale authority fails closed. Repeated runs reproduce the same P15-bound integration evidence digest. See [Integrated physical fixture](docs/integrated-physical-fixture.md).
 
 ## Quick start
 
 Requirements:
 
 - Node.js 20 or newer
-- Python 3 with Pillow and NumPy for evidence views, the portable integrity renderer, and the independent PBR fallback
-
-Install the Python dependencies with `python -m pip install --requirement requirements.txt`.
+- Python 3 with Pillow and NumPy for evidence views, portable integrity rendering, and the independent PBR fallback
 
 ```bash
+python -m pip install --requirement requirements.txt
 npm test
+npm run check
 node skills/refas/scripts/refas.mjs --help
-node skills/refas/scripts/refas.mjs init \
-  --root ./work/object \
-  --project object-study \
-  --source ./work/object/source/source-manifest.json
+node skills/refas/scripts/refas-host.mjs --help
 ```
 
-The executable runtime lives inside the distributable skill. Repository tests and examples import that same code; there is no second implementation to drift.
+The executable runtime lives inside the distributable skill. Tests and examples import that same code; there is no second runtime implementation to drift.
 
-## Reconstruction and certification flow
+## Reconstruction, physical closure, and certification flow
 
-1. Bind the source image to a SHA-256 manifest.
-2. Observe the full frame and define a semantic visual hierarchy.
-3. Record source-cited facts and explicit ambiguities for one scope.
-4. Maintain competing spatial hypotheses where one image cannot decide depth, camera, orientation, or hidden form.
-5. Declare important whole-system relationships in `refas.relational-structure/v1` and classify each proposition's authority with `refas.semantic-authority-set/v1`.
-6. Reconstruct silhouette, mass, curvature, thickness, large negative space, and the declared macro relational system before decoration.
-7. Pass the whole-system relational barrier before lower-scope geometry hardening; `unknown` requests resolution rather than becoming `forbidden`.
-8. When a parameterized backend exists, evaluate candidate-bound relational discrepancy beside structural eligibility and numeric objectives. A failed/unresolved required relation makes the candidate ineligible.
-9. Build projection-anchored surface boundaries and shared adjacency.
-10. Register immutable child assets into parent frames and validate attachment, contact, support, clearance, and articulation as applicable.
-11. Add appearance only after geometry can explain the image, then render the standard diagnostic view set and independent PBR evidence when required.
-12. Register the exact source and current render, inspect whole-to-feature comparison boards, and route localized typed findings to their owning capability.
-13. Seal the exact candidate, checkpoint, evidence nodes, dependency proofs, and obligations into a candidate transaction.
-14. For real sources, seal exact relational-structure, semantic-authority, relational-barrier and candidate-discrepancy bytes into `refas.certification-relational-evidence/v1` and bind that closure into the transaction.
-15. Evaluate explicit claims against the active certification policy. Transaction validity, relational closure, or good metrics alone are not visual/source-truth authority.
-16. Issue a whole-object certificate only when the exact transaction, relational closure when required, policy, decision, visual evidence, and required gates reproduce together.
+1. Bind the primary source to immutable digest identity.
+2. Observe the whole frame and build a context-preserving hierarchy.
+3. Record visible facts separately from hypotheses, ambiguities, inferences, and engineered choices.
+4. Maintain camera/depth/orientation alternatives where one image cannot decide the hidden state.
+5. Close whole-system relational obligations and semantic authority before lower-scope hardening.
+6. Reconstruct shape, surface topology, parent-local assembly, and appearance from current evidence.
+7. Produce actual multiview and independent rendering evidence and route visible failures to their owner.
+8. When physical semantics are required, construct stable identities and only the applicable dynamics/collision/articulation/mechanism/transmission/actuation/control/runtime contracts.
+9. Seal physical components into a reusable bundle and derive backend representation obligations before export.
+10. Export each backend independently from canonical semantics, normalize it, and compare it back to canonical meaning.
+11. Resolve representable drift by fixing construction/export or, only when justified, by exact live declared divergence.
+12. Create the selected physical-readiness evidence and run typed live preflight.
+13. Seal candidate provenance and all evidence required by the active claim policy.
+14. Issue whole-object or physical claim authorization only when the exact current evidence chain reproduces.
 
 ## Repository layout
 
@@ -87,25 +147,17 @@ The executable runtime lives inside the distributable skill. Repository tests an
 refas/
 ├── AGENTS.md                    stable repository instructions for coding agents
 ├── CHANGELOG.md                 release history
-├── .github/                     issue forms, PR contract, labels, and CI
+├── .github/                     issue forms, PR contract, CI, and release workflow
 ├── demo/                        dependency-free release showcase
 ├── skills/refas/                distributable skill and canonical runtime
 ├── schemas/                     public JSON Schemas
 ├── tests/                       unit, integration, adversarial, and regression tests
-├── examples/wing-cover/         end-to-end reconstruction/recovery fixture
-├── examples/parameter-fit/      actual GLB/render joint-fitting dogfood
-├── examples/material-fixture/   deterministic independent-PBR dogfood
-├── examples/hard-surface/       coherent shell/topology dogfood
-├── examples/modular-assembly/   contact/clearance/support assembly dogfood
-├── examples/articulated-figure/ articulated geometry and pose dogfood
-├── examples/benchmark-matrix/   cross-capability benchmark runner
+├── examples/                    reproducible reconstruction/render/assembly dogfoods
 ├── tools/                       repository and release audits
-└── docs/                        architecture, quality, recovery, and claim contracts
+└── docs/                        architecture, physical closure, quality, recovery, and claim contracts
 ```
 
-Development workflow state is intentionally absent from product schemas, filenames, APIs, and prose. Work may be managed by any production method without becoming part of RefAs runtime architecture.
-
-## Commands
+## Verification commands
 
 ```bash
 npm test
@@ -116,12 +168,11 @@ npm run dogfood:parameter-fit
 npm run dogfood:pbr
 npm run dogfood:hard-surface
 npm run dogfood:assembly
-npm run dogfood:articulated
-npm run benchmark:matrix
+node --test tests/integrated-physical-fixture.test.mjs
 npm run release:audit
 ```
 
-See [Architecture](docs/architecture.md), [Candidate transactions](docs/candidate-transactions.md), [Claim certification](docs/claim-certification.md), [Adversarial certification hardening](docs/adversarial-certification.md), [Joint parameter fitting](docs/parameter-fitting.md), [Independent PBR renderer](docs/pbr-renderer.md), [Agent recovery](docs/agent-recovery.md), [Known limitations](docs/known-limitations.md), and [Release criteria](docs/release-criteria.md). The distributable skill also includes `references/relational-structure.md`, `references/inference-authority.md`, and `references/whole-system-relational-barrier.md` for the current relational reasoning contract.
+See [Architecture](docs/architecture.md), [Physical semantics plan](docs/physical-semantics-plan.md), [Integrated physical fixture](docs/integrated-physical-fixture.md), [Candidate transactions](docs/candidate-transactions.md), [Claim certification](docs/claim-certification.md), [Known limitations](docs/known-limitations.md), and [Release criteria](docs/release-criteria.md).
 
 Contributions follow the [Issue and Pull Request governance contract](docs/github-governance.md): one runtime capability and hierarchy scope or one explicit repository boundary, one primary Issue, evidence-bound review, and an explicit recovery point.
 

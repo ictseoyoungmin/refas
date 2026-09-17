@@ -1,17 +1,20 @@
-# RefAs 1.0.3 architecture
+# RefAs 1.1.0 architecture
 
 ## Architecture contract
 
-The distributable skill at `skills/refas/` is the product boundary and the single runtime authority. Tests, examples, package exports, and repository tools consume that runtime rather than implementing a competing reconstruction engine.
+The distributable skill at `skills/refas/` is the product boundary and the single runtime authority. Tests, examples, package exports, repository tools, host facades, and release verification consume that runtime rather than implementing a competing reconstruction engine.
 
-RefAs separates four concerns that must not collapse into one another:
+RefAs separates concerns that must not collapse into one another:
 
 1. **source truth** — what the reference and bound evidence directly support;
-2. **construction state** — editable semantic geometry, pose, assembly, appearance, relations, and explicit inference/engineering choices owned by existing capabilities;
-3. **realized artifacts** — exact GLB/render/report bytes produced from construction state;
-4. **certification authority** — whether a declared claim is allowed for one exact candidate under one exact evidence policy.
+2. **construction state** — editable semantic geometry, pose, assembly, relations, appearance, and explicit inference/engineering choices;
+3. **physical construction semantics** — assembly-owned identities and physical contracts used only when required by the asset or claim;
+4. **realized representations** — exact GLB/render/backend/report bytes projected from canonical construction state;
+5. **certification authority** — whether a declared claim is allowed for one exact candidate under one exact evidence policy.
 
-## Capability graph
+## Top-level capability graph remains stable
+
+RefAs 1.1.0 does not create a parallel robotics capability hierarchy. The eleven top-level reconstruction owners remain:
 
 | Order | Capability | Authoritative output |
 |---:|---|---|
@@ -21,43 +24,17 @@ RefAs separates four concerns that must not collapse into one another:
 | 4 | `spatial-hypotheses` | ranked camera/depth/orientation/hidden-form alternatives plus relation/authority hypotheses |
 | 5 | `shape-reconstruction` | silhouette, mass, curvature, thickness and current whole-system relation realization |
 | 6 | `surface-topology` | projection-anchored cells, seams, ribs, relief and shared boundaries |
-| 7 | `assembly` | parent-local placement, attachment relations, articulation and realized structural evidence |
+| 7 | `assembly` | parent-local placement, composition, physical construction semantics, articulation and realized structural evidence |
 | 8 | `appearance` | evidence-supported color, roughness, metalness and finish |
 | 9 | `rendering` | reproducible actual multiview images, camera records and renderer reports |
 | 10 | `visual-critique` | typed finding ledger with evidence references |
 | 11 | `whole-object-certification` | fail-closed claim authorization over one exact candidate/evidence chain |
 
-Relational structure and semantic authority are cross-cutting Core contracts, not new capability owners. They are authored and revised inside the existing observation/spatial/shape ownership graph so they do not become a parallel runtime architecture.
+Physical semantics use scoped subdomains inside `assembly`: composition, articulation, dynamics, collision, mechanism, transmission, actuation, control, and runtime. This granularity drives dependency and invalidation without creating new top-level truth owners.
 
-Each finding is owned by exactly one capability. Reopening an owner invalidates that owner and its transitive dependents while preserving upstream evidence and unrelated scopes.
+## Source, relation, and authority boundary
 
-## Relational structure and inference authority
-
-A coherent model is constrained by relationships as well as visible local features. RefAs 1.0.3 makes that system explicit:
-
-```text
-raw source / observations
-        ↓
-refas.relational-structure/v1
-        ↓
-refas.semantic-authority-set/v1
-        ↓
-current whole-system relation checks
-        ↓
-refas.whole-system-relational-barrier/v1
-        ↓
-shape realization / lower-scope hardening
-        ↓
-exact candidate
-        ↓
-refas.relational-discrepancy/v1
-        ↓
-fit eligibility + later certification
-```
-
-`refas.relational-structure/v1` is domain-neutral. It represents entities such as landmarks, axes, planes, volumes, regions, interfaces and systems, then connects them with distance ratios, alignments, ordering, plane chains and volume ratios. Relations may depend on other relations, but the dependency graph must be acyclic. Every relation declares whole-system/local scope and macro/identity/detail importance.
-
-`refas.semantic-authority-set/v1` states what a proposition is allowed to mean:
+Relational structure and semantic authority remain cross-cutting contracts. `refas.semantic-authority-set/v1` preserves five meanings:
 
 ```text
 observed   = direct source fact
@@ -67,110 +44,160 @@ unknown    = unresolved; not evidence of absence
 forbidden  = source contradiction or hard prohibition
 ```
 
-Only `observed` can assert source truth. `inferred` and `engineered` can license construction under valid typed basis without becoming source facts. `unknown` blocks positive closure but remains reopenable; only `forbidden` positively prohibits construction.
+Only `observed` asserts source truth. `inferred` and `engineered` may license construction when their typed basis is valid. `unknown` blocks positive closure but remains reopenable. Downstream physical readiness cannot silently promote an inference or engineering choice into observation.
 
-`refas.whole-system-relational-barrier/v1` binds the exact relation graph and authority set. Every macro/identity whole-system relation must have current passing evidence and construction-capable authority before lower-scope geometry may become trustworthy. Local details and numeric scores cannot satisfy this barrier.
+## Canonical physical identity
 
-## Candidate-bound relational discrepancy and fitting
-
-After realization, `refas.relational-discrepancy/v1` embeds the exact relation graph, binds one exact candidate SHA-256, and re-evaluates the same whole-system macro/identity obligations against current evidence. Missing measurements remain unresolved.
-
-Parameter fitting keeps objective, structural and relational eligibility separate:
+Physical identity is semantic and stable. These identities do not collapse because a backend happens to serialize them in the same order:
 
 ```text
-candidate eligible
-  = objective eligibility
-  AND structural eligibility
-  AND relational eligibility
+assembly module
+    != attachment interface
+    != physical part
+    != rigid link
+    != virtual joint
+    != mechanism
+    != transmission
+    != actuator
+    != controller
+    != runtime endpoint
 ```
 
-A relational failure is not encoded as a large loss, `Infinity`, or another weighted penalty. A lower silhouette/perceptual loss cannot buy permission to violate a required whole-system relation. Discrepancy metrics remain diagnostic/ranking evidence and cannot pass independent visual review.
+Runtime indices, backend array order, display names, and serializer positions are configuration, not identity.
 
-## Project state and canonical edit boundary
-
-Checkpoint IDs are content-derived. Artifact references are trustworthy only when exact bytes exist in `.refas/objects/` and match their SHA-256.
-
-A GLB is normally a realized artifact, not the default editable source of semantic truth:
-
-- shape edits update construction state and rebuild geometry;
-- pose edits may update parent-local transforms while preserving mesh/accessor bytes;
-- appearance edits update material/texture/vertex-color source state before rebaking/rebuilding;
-- controlled finalization may fuse/weld/clean/optimize only after semantic construction closes and reopen provenance remains available.
-
-## Assembly and structural realization
-
-Assembly is explicit construction state rather than a proximity guess. Reusable contracts cover attachment semantics, logical fusion, surface anchors, one-owner follow, multi-anchor solving, bounded articulation, deterministic graph propagation, supported clearance, realized contact/support, and controlled physical fusion.
-
-Missing/stale owner frames, infeasible multi-anchor solves, out-of-limit articulation, unresolved support, invalid contact or stale fusion provenance block the structural path instead of becoming score penalties.
-
-## Rendering and visual evidence
-
-RefAs requires actual realized geometry to produce review evidence.
-
-- Portable rendering provides deterministic integrity views and bounded resource behavior.
-- Registered comparison binds the exact source, candidate, hero render, camera/registration hypothesis, hierarchy and scopes.
-- Independent PBR evidence binds renderer/backend/version, lighting, color pipeline, declared feature support and output frame digests.
-- Independent visual review remains visual authority rather than a raster-success flag or metric threshold.
-
-A renderer can prove it rendered exact bytes under a declared configuration; it cannot turn unsupported source identity, relational assumptions or material identity into truth.
-
-## Candidate provenance transaction
-
-Before whole-object certification, one exact candidate is sealed into `refas.candidate-transaction/v1`. The transaction binds candidate bytes, exact checkpoint content, evidence nodes, evidence byte digests, subject bindings, dependency proofs, decision nodes and declared obligations. The graph must be canonical, acyclic and connected to the candidate.
-
-A valid transaction proves provenance consistency. It does **not** certify a claim.
-
-## Relational certification closure
-
-For real-source certification, `refas.certification-relational-evidence/v1` seals a second, explicit relational authority boundary before claim authorization. It binds:
-
-- exact certification candidate SHA-256;
-- exact `refas.relational-structure/v1` bytes + logical digest;
-- exact `refas.semantic-authority-set/v1` bytes + logical digest;
-- exact `refas.whole-system-relational-barrier/v1` bytes + logical digest;
-- exact `refas.relational-discrepancy/v1` bytes + logical digest.
-
-Validation replays the contracts from those exact bytes, verifies common source/whole scope, authority coverage, passing barrier/discrepancy state, common relation graph, and barrier checks reproduced from candidate-bound discrepancy evidence. The closure itself becomes candidate-bound transaction evidence.
-
-This prevents omission, byte substitution, stale candidate replay, contradictory re-signing and policy downgrades from preserving the same relational claim authority. It does not promote inferred/engineered propositions to observed truth.
-
-## Claim-driven certification
-
-`refas.certification-policy/v1` declares claims and their required evidence roles/schemas, counts, finding sources, veto severities and required/optional status. The evaluator revalidates the candidate transaction and exact evidence bytes, then reproduces `refas.claim-certification-decision/v1`.
-
-Real-source default policy contains both visual-source-fidelity obligations and the mandatory `whole-system-relational-fidelity` claim. The whole-object authority floor allows custom policies to add or strengthen requirements, but not remove, make optional, or weaken mandatory claims/evidence even after the custom policy receives a fresh valid digest.
-
-## Whole-object certificate
-
-The current authority chain is:
+Canonical interface/physical transforms use:
 
 ```text
-source + exact candidate + checkpoint
-             │
-             ├── visual / projection / PBR / structural evidence
-             │
-             └── relation graph
-                  → semantic authority
-                  → whole-system barrier
-                  → candidate relational discrepancy
-                  → sealed relational closure
-                             │
-                             ▼
-                 sealed candidate transaction
-                             ↓
-                    certification policy
-                             ↓
-                    reproduced decision
-                             ↓
-                 whole-object certificate
+translation_m: [x, y, z]
+rotation_quat_xyzw: [x, y, z, w]
 ```
 
-The certificate binds candidate/checkpoint/source identity plus transaction, policy, decision and relational-closure digest when required. Audit reproduces those bindings from current exact evidence rather than trusting a historical boolean.
+Translation is in meters. Persisted orientation is a normalized canonical quaternion. Interface scale is not part of the semantic frame. Representation-specific Euler conventions, quaternion component order/sign, and unit encodings are normalized before semantic comparison.
 
-Substitution, stale-checkpoint or stale-candidate replay, decision forgery, cross-claim contamination, relational evidence replacement, weaker policy re-signing, or post-certification divergence fail closed at the appropriate boundary.
+## P01–P10: canonical physical construction
 
-## Runtime boundary and truth policy
+The physical construction chain is additive and evidence-bound:
 
-The dependency-light JavaScript Core owns semantic contracts, deterministic geometry/GLB construction, structural validators, owner-local fitting, relational authority, candidate provenance, claim evaluation, checkpoint storage, recovery, audit and certification. Python with Pillow and NumPy provides portable evidence generation/software-rendering support. External renderers participate only through digest-bound report contracts.
+```text
+P01 semantic identity graph
+  ├─ P02 rigid-body dynamics
+  ├─ P03 collision semantics
+  ├─ P04 articulation graph
+  ├─ P05 mechanism graph
+  ├─ P06 transmission model
+  ├─ P07 actuation model
+  ├─ P08 control profile
+  └─ P09 runtime binding
+          ↓
+     P10 physical asset bundle
+```
 
-Single-view depth, hidden topology, symmetry, absolute dimensions, full terminal orientation, internal manufacturer mechanisms and material composition are not facts unless evidence supports them. RefAs may preserve, infer, or engineer hidden construction under explicit authority without confusing that choice with source truth. Important non-guarantees are listed in `docs/known-limitations.md`.
+The P10 bundle is a digest-bound manifest over exact component closures. It preserves reusable module identity and child closure instead of becoming a monolithic second truth object.
+
+Unknown physical values remain unknown. RefAs does not fill missing mass, inertia, limits, calibration, or collision properties merely because a downstream simulator prefers defaults.
+
+## P11–P15: representation closure
+
+Backend representations are projections from canonical construction state:
+
+```text
+canonical P10 construction
+      ↓
+P11 representation capacity
+      ↓
+P12 one-way export adapter
+      ↓
+backend artifact
+      ↓
+P13 normalized semantic view
+      ↓
+P14 canonical-versus-normalized validation
+      ↓
+optional P15 exact declared divergence
+```
+
+There is no canonical backend-to-backend conversion chain. A backend file never becomes authoritative construction state merely because another backend can import it.
+
+P14 outcomes are semantic:
+
+- `EQUIVALENT` — required meaning is preserved;
+- `LOSSY` — a declared semantic cannot be preserved by the representation;
+- `DRIFT` — a representable semantic differs without authorization;
+- `UNRESOLVED` — canonical authority is insufficient for a positive comparison;
+- `INVALID` — identity, topology, references, or another hard invariant is broken.
+
+A valid P15 authorization can resolve only the exact current drift it binds. It stores exact backend, semantic subject/path, canonical value, normalized override, reason, and engineered authority entry. Intrinsic artifact integrity is not enough for downstream trust: live binding validation against the current P14 chain and current authority set is mandatory.
+
+## P16: physical readiness as typed evidence
+
+Physical readiness is opt-in and claim-specific:
+
+```text
+articulated-ready
+simulation-ready
+control-ready
+runtime-ready
+```
+
+Each claim derives only the obligations applicable to the selected semantic scope. Higher claim levels add downstream obligations; they do not retroactively become prerequisites for lower unrelated claims.
+
+The trust boundary is deliberate:
+
+```text
+current P10 bundle
+ + current P14 representation findings
+ + current live P15 divergence authority when used
+          ↓
+refas.physical-claim-evidence/v1
+          ↓
+typed live physical preflight
+          ↓
+generic certification evaluator
+```
+
+The public generic certification route cannot directly authorize live-gated P16 evidence. A stale/re-signed P16 artifact may be internally canonical yet still fail because its current P10–P15 bindings no longer reproduce.
+
+## P17: integrated physical closure
+
+The integrated fixture exercises the full physical stack on a reusable coupled parallel 2-DOF construction. Two independent backend projections encode equivalent transforms differently; normalization proves equivalent quaternion sign/order, translation units, and Euler convention/order do not create false drift.
+
+The final positive path deliberately includes one representable mass drift:
+
+```text
+P14 DRIFT
+  → exact live P15 DECLARED_DIVERGENCE
+  → P16 runtime-ready
+  → certification
+```
+
+Substituted authority fails. Control/runtime-only edits remain downstream-scoped. Repeated runs reproduce deterministic closure evidence. The fixture envelope `refas.p17-integration-evidence/v1` is integration-test evidence only, not a public canonical construction schema.
+
+## Project state and recovery
+
+Checkpoint IDs are content-derived. Artifact references are trustworthy only when exact bytes exist in the object store and match their SHA-256.
+
+A GLB or backend export is normally a realized artifact, not the default editable source of semantic truth. Reopening an owner invalidates the dependent closure that consumes it while preserving upstream evidence and unrelated scopes. Failed bounded edits restore the baseline bytes, not merely a pointer.
+
+Physical invalidation is similarly scoped: an actuator-capability edit can invalidate dependent control/runtime claims without invalidating unrelated visual shape evidence; a runtime-index edit does not mutate actuator/joint/module identity; an upstream joint-frame or interface edit may invalidate dependent articulation, mechanism, collision, representation, and readiness evidence.
+
+## Rendering and visual authority remain independent
+
+Physical readiness does not weaken the visual reconstruction path. Actual geometry must still produce current review evidence. Registered comparison, independent PBR evidence, and visual review retain their own authority for visual/source-fidelity claims.
+
+A physically well-typed asset may still be visually wrong. A visually excellent asset may still lack the evidence required for a physical-readiness claim.
+
+## Candidate provenance and certification
+
+`refas.candidate-transaction/v1` seals exact candidate bytes, checkpoint content, evidence nodes, dependencies, decisions, and declared obligations. A valid transaction proves provenance consistency, not claim validity.
+
+`refas.certification-policy/v1` selects required claims and evidence. For real-source visual certification, the relational authority floor remains mandatory. For P16 physical claims, typed live physical preflight is mandatory before generic claim evaluation.
+
+The result is one certification architecture with multiple evidence types, not multiple competing certification engines.
+
+## Runtime and host boundary
+
+The dependency-light JavaScript Core owns semantic contracts, geometry/GLB construction, physical semantics, representation normalization/validation, fitting, candidate provenance, checkpoints, recovery, audit, and certification. Python with Pillow and NumPy provides portable evidence-generation/software-rendering support. External renderers and workers participate only through exact digest-bound contracts.
+
+Host Integration remains a conditional facade. It can expose sessions, events, operations, review bundles, handoff, and worker framing, but it cannot own checkpoint state, rollback, candidate authority, physical truth, or certification.
+
+Important non-guarantees are documented in `docs/known-limitations.md`; the exact release gates are documented in `docs/release-criteria.md` and `docs/v1.1.0-release-readiness.md`.
