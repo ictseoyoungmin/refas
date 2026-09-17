@@ -195,7 +195,7 @@ function actuatorRecord(actuatorId, relationId) {
     positionRange: {value: {kind: 'BOUNDED', minimum: -1.5, maximum: 1.5, unit: 'rad'}},
     velocityLimit: {value: {maxAbs: 6, unit: 'rad_s'}},
     effortLimit: {value: {maxAbs: 18, unit: 'N_m'}},
-    stiffness: {value: null},
+    stiffness: {value: {value: 0.4, unit: 'N_m_per_rad'}},
     damping: {value: {value: 0.08, unit: 'N_m_s_per_rad'}},
     armature: {value: {value: 0.0015, unit: 'kg_m2'}},
     responseLatency: {value: {value: 0.002, unit: 's'}},
