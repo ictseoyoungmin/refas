@@ -1,6 +1,6 @@
 # Inference and engineering authority
 
-RefAs must distinguish lack of observation from prohibition. A single image is incomplete; an incomplete source does not imply that unseen structure may not exist or may not be constructed.
+RefAs distinguishes lack of observation from prohibition. The authority contract records what an explicitly tracked semantic proposition is allowed to claim; it does not prescribe how much geometry a reconstruction should contain.
 
 The Core rule is:
 
@@ -11,26 +11,15 @@ ENGINEERED != OBSERVED
 INFERRED != OBSERVED
 ```
 
-Use `refas.semantic-authority-set/v1` to classify the authority of a semantic relation, entity, property, or construction proposition without changing what the source actually shows.
+Use `refas.semantic-authority-set/v1` when a semantic relation, entity, property, or construction proposition needs explicit provenance or downstream authority. It is not a requirement to create an authority entry for every unobserved surface, depth, thickness, continuation, or other geometric degree of freedom.
 
 ## Authority classes
 
 - `observed` — directly supported by source evidence. This is the only class that can assert a source fact.
 - `inferred` — a testable explanation supported by source evidence, relational constraints, a structural prior, or an external specification. It may guide construction but remains an inference.
 - `engineered` — deliberately chosen to satisfy an explicit functional or downstream requirement. It may be instantiated in the model but is not a claim about what the source or original manufacturer contains.
-- `unknown` — unresolved. It is neither evidence for existence nor evidence for absence. It may remain a competing hypothesis or later transition to inferred/engineered/forbidden when new basis appears.
+- `unknown` — an explicitly tracked proposition whose status is unresolved. It is neither evidence for existence nor evidence for absence.
 - `forbidden` — explicitly contradicted by source evidence or blocked by a hard constraint. This is the only authority class that positively prohibits construction.
-
-## Positive hidden-form reasoning
-
-Do not stop at `unknown` merely because a surface, continuation, support, or internal relation is invisible. Ask what the coherent 3D system requires.
-
-1. If visible evidence plus relational structure constrain a continuation, record it as `inferred`.
-2. If a declared functional/downstream requirement needs a construction that the source does not resolve, record it as `engineered`.
-3. If the source does not decide and no structural/functional basis is strong enough, keep `unknown`.
-4. Use `forbidden` only when a contradiction or hard constraint exists.
-
-Examples are intentionally domain-neutral. A concealed brace, internal support, rear surface continuation, anatomical volume, or linkage support can all be inferred or engineered under the same Core policy. Domain packs may provide stronger priors and validators later, but they do not change the authority classes.
 
 ## Basis kinds
 
@@ -57,7 +46,7 @@ The runtime derives capability flags rather than trusting caller declarations:
 - `requiresResolutionBeforePositiveClaim`
 - `prohibitsConstruction`
 
-The crucial distinction is that both `unknown` and `forbidden` currently block positive construction, but only `forbidden` asserts that construction is prohibited. `unknown` remains reopenable without contradicting prior evidence.
+For a proposition that has been explicitly placed under this authority contract, both `unknown` and `forbidden` currently block positive construction, but only `forbidden` asserts that construction is prohibited. This runtime rule applies to the declared proposition; it is not a blanket instruction to classify or suppress unobserved geometry.
 
 ## Transitions
 
@@ -76,10 +65,10 @@ When an authority set targets `refas.relational-structure/v1`, bind its exact st
 
 Authority coverage alone does not certify a relation. Feed the exact relation graph plus authority set into `createWholeSystemRelationalBarrier()` with current relation checks. The barrier authorizes lower-scope hardening only when every macro/identity whole-system relation both passes current evidence and carries `observed`, `inferred`, or `engineered` authority.
 
-This is deliberately asymmetric:
+For relations deliberately placed under that barrier:
 
-- `unknown` means **do not positively construct yet; gather evidence or choose an explicit engineered/inferred basis**;
-- `forbidden` means **do not construct under the current contradiction/constraint**;
+- `unknown` remains unresolved for barrier closure;
+- `forbidden` records a contradiction or hard constraint;
 - `inferred` and `engineered` may support construction but still cannot assert source truth.
 
 When the barrier is blocked, use `routeRelationalBarrier()` rather than manually preserving downstream CLOSED states. See `references/whole-system-relational-barrier.md`.
