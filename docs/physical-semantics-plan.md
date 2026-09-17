@@ -1,5 +1,11 @@
 # RefAs Physical Semantics Implementation Plan
 
+## Status — implemented through P17
+
+The physical-semantics expansion described by this plan is implemented through P17 as of 2026-09-17. End-to-end closure is documented in `docs/integrated-physical-fixture.md` and exercised by `tests/integrated-physical-fixture.test.mjs`.
+
+This document remains the detailed architecture and acceptance history for P00–P17. Current 1.1.0 release gates are owned by `docs/release-criteria.md` and `docs/v1.1.0-release-readiness.md`.
+
 ## Purpose
 
 RefAs extends physical and mechatronic reconstruction as native construction semantics. This work does not introduce a parallel robotics subsystem or a new top-level reconstruction capability.
@@ -359,9 +365,11 @@ Close when:
 - identity never collapses to backend index;
 - digest reproduction is deterministic.
 
+P17 is now closed by the integrated fixture. The final positive closure path includes deliberate P14 drift, exact live P15 declared divergence, P16 `runtime-ready` evidence, typed live preflight, and the existing certification evaluator rather than relying only on an all-equivalent shortcut.
+
 ## Scope discipline
 
-P00 intentionally does not add P01 schemas, exporters, physics solvers, backend adapters, or new certification claims. It reserves the architecture rules that those later slices must obey. Those later slices must reopen P00 only if implementation evidence proves this boundary insufficient.
+P00 intentionally did not add P01 schemas, exporters, physics solvers, backend adapters, or new certification claims. It reserved the architecture rules that later slices obey. The completed implementation keeps that boundary: no physical slice created a new top-level RefAs capability or a second canonical truth owner.
 
 ## Naming policy
 
