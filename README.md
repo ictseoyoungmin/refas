@@ -1,8 +1,14 @@
-<p align="center">
+<div align="center">
   <img src="skills/refas/assets/icon.svg" width="180" alt="RefAs robotic arm icon">
-</p>
-
-# RefAs
+  <h1>RefAs</h1>
+  <p>
+    <a href="https://github.com/ictseoyoungmin/refas/releases/tag/v1.1.0"><img src="https://img.shields.io/badge/version-v1.1.0-6f5a46" alt="Version v1.1.0"></a>
+    <a href="https://github.com/ictseoyoungmin/refas/actions/workflows/ci.yml"><img src="https://github.com/ictseoyoungmin/refas/actions/workflows/ci.yml/badge.svg" alt="CI status"></a>
+    <img src="https://img.shields.io/badge/node-20%2B-339933" alt="Node.js 20+">
+    <img src="https://img.shields.io/badge/Agent%20Skill-Vision--first%203D-b06f47" alt="Agent Skill: Vision-first 3D">
+    <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-59636e" alt="MIT License"></a>
+  </p>
+</div>
 
 **Reference Asset Foundry** is a vision-first reconstruction system for AI agents that turn reference images into traceable, editable, evidence-bound 3D assets and, when justified, explicit physical construction semantics.
 
