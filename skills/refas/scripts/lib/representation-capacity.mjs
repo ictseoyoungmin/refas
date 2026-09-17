@@ -273,7 +273,9 @@ function componentSemanticUnits(contract) {
     case 'refas.runtime-binding/v1':
       for (const binding of contract.bindings ?? []) {
         const subjects = [binding.bindingId, binding.selector?.runtimeEndpointId, binding.selector?.targetId];
-        for (const path of ['runtime.endpoint', 'runtime.coordinate-class', 'runtime.locator', 'runtime.index', 'runtime.calibration', 'runtime.transport-delay']) units.push({path, subjects});
+        for (const path of ['runtime.endpoint', 'runtime.coordinate-class', 'runtime.locator', 'runtime.index']) units.push({path, subjects});
+        if (binding.coordinateClass !== 'NONE') units.push({path: 'runtime.calibration', subjects});
+        units.push({path: 'runtime.transport-delay', subjects});
       }
       break;
     default:
