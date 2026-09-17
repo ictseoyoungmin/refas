@@ -24,8 +24,8 @@ test('typed semantic instruction graph covers every leaf and matches runtime own
   const report = await analyzeSemanticInstructionGraph();
   assert.equal(report.status, 'PASS', report.errors.join('\n'));
   assert.equal(report.schema, 'refas.instruction-graph/v1');
-  assert.equal(report.nodeCount, 39);
-  assert.equal(report.referenceLeaves, 39);
+  assert.equal(report.nodeCount, 40);
+  assert.equal(report.referenceLeaves, 40);
   assert.equal(report.cycle, null);
   assert.deepEqual(report.missingCapabilityOwners, []);
   assert.deepEqual(report.bareMarkdownRoutes, []);
@@ -103,8 +103,8 @@ test('semantic graph verifies from a bare copied installed skill with repository
     assert.equal(result.status, 0, result.stderr || result.stdout);
     const report = JSON.parse(result.stdout);
     assert.equal(report.status, 'PASS');
-    assert.equal(report.nodeCount, 39);
-    assert.equal(report.referenceLeaves, 39);
+    assert.equal(report.nodeCount, 40);
+    assert.equal(report.referenceLeaves, 40);
     assert.equal(report.missingCapabilityOwners, 0);
     assert.equal(report.bareMarkdownRoutes, 0);
     assert.equal(report.legacyHiddenGeometryPolicyHits, 0);
