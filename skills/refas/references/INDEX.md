@@ -33,7 +33,7 @@ Load only the references needed by the active capability or conditional closure 
 |---|---|
 | Source provenance, hierarchy, visible facts | `references/observation.md`, `references/provenance.md` |
 | Camera, depth, orientation, competing spatial hypotheses | `references/spatial-reasoning.md` |
-| Single-view subject risks billboard/planar collapse or needs a worked example separating source facts from 3D completion | `references/examples/single-view-volumetric-reasoning.md` after `references/spatial-reasoning.md` and `references/construction.md` |
+| Single-view subject risks billboard/planar collapse or needs a worked example separating source facts from 3D completion | `references/single-view-volumetric-reasoning-example.md` after `references/spatial-reasoning.md` and `references/construction.md` |
 | Whole-system proportions, alignments, ordering, planes, volumes | `references/relational-structure.md` |
 | Observed vs inferred vs engineered vs unknown vs forbidden authority | `references/inference-authority.md` |
 | Transition from macro relational closure to lower-scope hardening | `references/whole-system-relational-barrier.md` |
