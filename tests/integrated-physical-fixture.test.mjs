@@ -3,6 +3,7 @@ import test from 'node:test';
 
 import {
   createPhysicalClaimEvidence,
+  createSemanticAuthoritySet,
   digestJson,
   physicalModuleClosureById,
   validatePhysicalAssetBundle,
@@ -13,11 +14,11 @@ import {
 import {
   authorizeIntegratedMassDrift,
   certifyIntegratedRuntimeReady,
-  integratedFixtureEvidenceDigest,
   physicalClaimContext,
   projectIntegratedPhysicalConstruction,
 } from './fixtures/integrated-physical-fixture.mjs';
 import {createClosedIntegratedPhysicalConstruction} from './fixtures/integrated-physical-fixture-closure.mjs';
+import {integratedFixtureClosureEvidenceDigest} from './fixtures/integrated-physical-fixture-evidence.mjs';
 
 function relation(graph, id) {
   const found = graph.relations.find((item) => item.id === id);
@@ -136,6 +137,25 @@ test('P17 deliberate representable drift is blocking until exact current P15 div
   assert.equal(certification.decision.authorized, true);
   assert.deepEqual(certification.decision.authorizedClaimIds, ['runtime-ready']);
   assert.equal(construction.components.find((item) => item.componentId === 'dynamics-arm-a').contract.links[0].mass.value_kg, 1.2);
+
+  const substitutedAuthoritySet = createSemanticAuthoritySet({
+    scopeId: authorized.authoritySet.scopeId,
+    sourceSha256: authorized.authoritySet.sourceSha256,
+    targetSchema: authorized.authoritySet.targetSchema,
+    targetDigest: authorized.authoritySet.targetDigest,
+    entries: authorized.authoritySet.entries.map((entry, index) => ({
+      id: entry.id,
+      subjectId: entry.subjectId,
+      authority: entry.authority,
+      proposition: entry.proposition,
+      reason: index === 0 ? `${entry.reason} substituted` : entry.reason,
+      basis: entry.basis,
+    })),
+  });
+  await assert.rejects(
+    () => certifyIntegratedRuntimeReady(drifted, {...authorized, authoritySet: substitutedAuthoritySet}),
+    /P15 divergence authorization is not live/,
+  );
 });
 
 test('P17 control/runtime-only edits do not stale simulation-ready evidence', async () => {
@@ -158,20 +178,29 @@ test('P17 control/runtime-only edits do not stale simulation-ready evidence', as
   );
 });
 
-test('P17 full integration evidence reproduces deterministically', async () => {
+test('P17 full P14 drift through live P15 authorization to P16 certification reproduces deterministically', async () => {
   async function run() {
     const construction = createClosedIntegratedPhysicalConstruction();
     const semanticProjection = await projectIntegratedPhysicalConstruction(construction, {backend: 'semantic'});
-    const encodedProjection = await projectIntegratedPhysicalConstruction(construction, {backend: 'encoded'});
-    const runtimeCertification = await certifyIntegratedRuntimeReady(encodedProjection);
+    const encodedProjection = await projectIntegratedPhysicalConstruction(construction, {backend: 'encoded', massOverride: 1.35});
+    const authorization = await authorizeIntegratedMassDrift(encodedProjection);
+    const runtimeCertification = await certifyIntegratedRuntimeReady(encodedProjection, authorization);
     assert.equal(runtimeCertification.evidence.status, 'PASS', JSON.stringify(runtimeCertification.evidence.findings, null, 2));
     assert.equal(runtimeCertification.decision.authorized, true);
     return {
       construction,
       semanticProjection,
       encodedProjection,
+      authorization,
       runtimeCertification,
-      digest: integratedFixtureEvidenceDigest({construction, semanticProjection, encodedProjection, runtimeCertification}),
+      digest: integratedFixtureClosureEvidenceDigest({
+        construction,
+        semanticProjection,
+        encodedProjection,
+        divergenceAuthorization: authorization.divergenceAuthorization,
+        authoritySet: authorization.authoritySet,
+        runtimeCertification,
+      }),
     };
   }
 
@@ -181,5 +210,7 @@ test('P17 full integration evidence reproduces deterministically', async () => {
   assert.equal(first.construction.bundle.bundleDigest, second.construction.bundle.bundleDigest);
   assert.equal(first.semanticProjection.manifest.exportDigest, second.semanticProjection.manifest.exportDigest);
   assert.equal(first.encodedProjection.normalizedRepresentation.normalizationDigest, second.encodedProjection.normalizedRepresentation.normalizationDigest);
+  assert.equal(first.authorization.divergenceAuthorization.authorizationDigest, second.authorization.divergenceAuthorization.authorizationDigest);
+  assert.equal(first.authorization.authoritySet.authoritySetDigest, second.authorization.authoritySet.authoritySetDigest);
   assert.equal(digestJson(first.runtimeCertification.decision), digestJson(second.runtimeCertification.decision));
 });
