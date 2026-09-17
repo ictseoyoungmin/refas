@@ -26,6 +26,10 @@ function guardClaimAssessment(assessment) {
   });
 }
 
+function projectGateErrors(assessment) {
+  return (assessment?.errors ?? []).filter((error) => error === PROJECT_GATE_ERROR);
+}
+
 export async function assessClaimCertification(root) {
   return guardClaimAssessment(await assessClaimCertificationCore(root));
 }
@@ -56,11 +60,12 @@ export async function auditProject(root) {
     auditProjectCore(root),
     assessClaimCertification(root),
   ]);
-  if (!claims?.required || claims.valid) return base;
+  const gateErrors = projectGateErrors(claims);
+  if (!gateErrors.length) return base;
   return {
     ...base,
     valid: false,
-    errors: unique([...(base.errors ?? []), ...(claims.errors ?? []).map((error) => `claim certification: ${error}`)]),
+    errors: unique([...(base.errors ?? []), ...gateErrors.map((error) => `claim certification: ${error}`)]),
   };
 }
 
