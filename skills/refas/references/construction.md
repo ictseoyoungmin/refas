@@ -170,3 +170,7 @@ Add a feature only when it is:
 - required by the user's downstream use.
 
 Do not spend geometry budget on unsupported microdetail while a whole-object blocker remains.
+
+## Worked example
+
+For a concrete single-view case where a convincing frontal reconstruction can still collapse into a billboard, read `references/examples/single-view-volumetric-reasoning.md`. It shows how major volumes, genuinely thin parts, layered structures, and articulated/mechanical hypotheses can coexist without turning an inferred side or rear surface into an observed source fact.
