@@ -113,6 +113,23 @@ P14 DRIFT
 
 Substituted or stale authority fails closed. Repeated runs reproduce the same P15-bound integration evidence digest. See [Integrated physical fixture](docs/integrated-physical-fixture.md).
 
+## Install
+
+**With the Skills CLI (recommended):**
+
+```bash
+npx skills add ictseoyoungmin/refas --skill refas --agent claude-code
+npx skills add ictseoyoungmin/refas --skill refas --agent codex
+```
+
+Use the matching `--agent` value for another supported agent. RefAs also ships thin discovery manifests for Claude, Codex, and generic agent marketplaces under `.claude-plugin/`, `.codex-plugin/`, and `.agents/plugins/`. Every adapter routes to the same canonical `./skills/` tree; there is no plugin-specific copy of the instructions or runtime.
+
+**Manual skill install** — copy the canonical skill folder into wherever your agent loads skills from:
+
+```bash
+cp -r skills/refas /path/to/your/skills/
+```
+
 ## Quick start
 
 Requirements:
@@ -153,13 +170,16 @@ The executable runtime lives inside the distributable skill. Tests and examples 
 refas/
 ├── AGENTS.md                    stable repository instructions for coding agents
 ├── CHANGELOG.md                 release history
+├── .agents/plugins/             generic agent marketplace adapter
+├── .claude-plugin/              Claude plugin metadata and marketplace adapter
+├── .codex-plugin/               Codex plugin metadata and product interface
 ├── .github/                     issue forms, PR contract, CI, and release workflow
 ├── demo/                        dependency-free release showcase
 ├── skills/refas/                distributable skill and canonical runtime
 ├── schemas/                     public JSON Schemas
 ├── tests/                       unit, integration, adversarial, and regression tests
 ├── examples/                    reproducible reconstruction/render/assembly dogfoods
-├── tools/                       repository and release audits
+├── tools/                       repository, plugin, and release audits
 └── docs/                        architecture, physical closure, quality, recovery, and claim contracts
 ```
 
@@ -169,6 +189,7 @@ refas/
 npm test
 npm run test:python
 npm run check
+npm run check:plugins
 npm run dogfood
 npm run dogfood:parameter-fit
 npm run dogfood:pbr
