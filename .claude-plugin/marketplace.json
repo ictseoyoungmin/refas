@@ -1,0 +1,14 @@
+{
+  "name": "refas",
+  "owner": {
+    "name": "ictseoyoungmin"
+  },
+  "description": "Claude Code marketplace for RefAs.",
+  "plugins": [
+    {
+      "name": "refas",
+      "source": "./skills/",
+      "description": "Vision-first reference reconstruction with evidence-bound 3D, multiview QA, and explicit physical semantics."
+    }
+  ]
+}
