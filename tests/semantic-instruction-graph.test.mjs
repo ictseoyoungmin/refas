@@ -30,9 +30,78 @@ test('typed semantic instruction graph covers every leaf and matches runtime own
   assert.deepEqual(report.missingCapabilityOwners, []);
   assert.deepEqual(report.bareMarkdownRoutes, []);
   assert.deepEqual(report.legacyHiddenGeometryPolicyHits, []);
+  assert.equal(report.interfaceSchema, 'refas.instruction-node-interface/v1');
+  assert.equal(report.interfaceNodes, 40);
+  assert.equal(report.interfaceOperations, 83);
+  assert.equal(report.runtimeCapabilitiesCovered.length, 11);
+  assert.deepEqual(report.runtimeCapabilitiesCovered.sort(), [
+    'appearance',
+    'assembly',
+    'rendering',
+    'shape-reconstruction',
+    'source-intake',
+    'spatial-hypotheses',
+    'surface-topology',
+    'visual-critique',
+    'visual-hierarchy',
+    'visual-observation',
+    'whole-object-certification',
+  ].sort());
   assert.equal(FINDING_OWNERS['camera-hypothesis-mismatch'], 'spatial-hypotheses');
   assert.equal(FINDING_OWNERS['render-camera-integrity'], 'rendering');
   assert.equal(FINDING_OWNERS['camera-mismatch'], 'rendering');
+});
+
+test('semantic graph requires interface metadata on every instruction node', async () => {
+  const {temp, installed} = await copyInstalledSkill('refas-interface-required-');
+  try {
+    const graphPath = path.join(installed, 'references/GRAPH.json');
+    const graph = JSON.parse(await fs.readFile(graphPath, 'utf8'));
+    delete graph.nodes[0].interface;
+    await fs.writeFile(graphPath, `${JSON.stringify(graph, null, 2)}\n`);
+
+    const report = await analyzeSemanticInstructionGraph({skillRoot: installed});
+    assert.equal(report.status, 'FAIL');
+    assert.ok(report.errors.some((error) => error.includes('node workflow must declare interface metadata')));
+  } finally {
+    await fs.rm(temp, {recursive: true, force: true});
+  }
+});
+
+test('semantic graph separates runtime capabilities from routing owner tags', async () => {
+  const {temp, installed} = await copyInstalledSkill('refas-interface-owner-');
+  try {
+    const graphPath = path.join(installed, 'references/GRAPH.json');
+    const graph = JSON.parse(await fs.readFile(graphPath, 'utf8'));
+    const observation = graph.nodes.find((node) => node.id === 'observation');
+    observation.runtimeCapabilities = ['visual-observation'];
+    await fs.writeFile(graphPath, `${JSON.stringify(graph, null, 2)}\n`);
+
+    const report = await analyzeSemanticInstructionGraph({skillRoot: installed});
+    assert.equal(report.status, 'FAIL');
+    assert.ok(report.errors.some((error) => error.includes('node observation runtimeCapabilities must equal canonical runtime owners')));
+  } finally {
+    await fs.rm(temp, {recursive: true, force: true});
+  }
+});
+
+test('semantic graph rejects implementation paths and missing public symbols in interface metadata', async () => {
+  const {temp, installed} = await copyInstalledSkill('refas-interface-public-');
+  try {
+    const graphPath = path.join(installed, 'references/GRAPH.json');
+    const graph = JSON.parse(await fs.readFile(graphPath, 'utf8'));
+    const attachment = graph.nodes.find((node) => node.id === 'attachment-follow');
+    attachment.interface.interfaces[0].library.entrypoint = 'scripts/lib/attachment-follow.mjs';
+    attachment.interface.interfaces[0].library.symbol = 'missingPublicSymbol';
+    await fs.writeFile(graphPath, `${JSON.stringify(graph, null, 2)}\n`);
+
+    const report = await analyzeSemanticInstructionGraph({skillRoot: installed});
+    assert.equal(report.status, 'FAIL');
+    assert.ok(report.errors.some((error) => error.includes('library.entrypoint must be scripts/lib/index.mjs')));
+    assert.ok(report.errors.some((error) => error.includes('library.symbol is not exported by scripts/lib/index.mjs: missingPublicSymbol')));
+  } finally {
+    await fs.rm(temp, {recursive: true, force: true});
+  }
 });
 
 test('bare sibling Markdown instruction references are rejected as ambiguous routes', () => {
@@ -108,6 +177,10 @@ test('semantic graph verifies from a bare copied installed skill with repository
     assert.equal(report.missingCapabilityOwners, 0);
     assert.equal(report.bareMarkdownRoutes, 0);
     assert.equal(report.legacyHiddenGeometryPolicyHits, 0);
+    assert.equal(report.interfaceSchema, 'refas.instruction-node-interface/v1');
+    assert.equal(report.interfaceNodes, 40);
+    assert.equal(report.interfaceOperations, 83);
+    assert.equal(report.runtimeCapabilitiesCovered, 11);
   } finally {
     await fs.rm(temp, {recursive: true, force: true});
   }

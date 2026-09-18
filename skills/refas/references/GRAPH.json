@@ -1,50 +1,2470 @@
 {
   "schema": "refas.instruction-graph/v1",
   "nodes": [
-    {"id":"workflow","path":"references/workflow.md","owners":["control"],"requires":[],"conditionalRequires":[],"authority":"router","closureEffects":[]},
-    {"id":"checkpointing","path":"references/checkpointing.md","owners":["control"],"requires":["workflow"],"conditionalRequires":[],"authority":"recovery-control","closureEffects":[]},
-    {"id":"host-integration","path":"references/host-integration.md","owners":["control"],"requires":["workflow","checkpointing"],"conditionalRequires":[],"authority":"host-facade","closureEffects":[]},
-    {"id":"failure-routing","path":"references/failure-routing.md","owners":["control"],"requires":["workflow"],"conditionalRequires":[],"authority":"repair-routing","closureEffects":[]},
-    {"id":"provenance","path":"references/provenance.md","owners":["source-intake"],"requires":["workflow"],"conditionalRequires":[],"authority":"source-provenance","closureEffects":[]},
-    {"id":"observation","path":"references/observation.md","owners":["visual-hierarchy","visual-observation"],"requires":["provenance"],"conditionalRequires":[],"authority":"source-observation","closureEffects":[]},
-    {"id":"spatial-reasoning","path":"references/spatial-reasoning.md","owners":["spatial-hypotheses"],"requires":["observation"],"conditionalRequires":[],"authority":"hypothesis","closureEffects":[]},
-    {"id":"single-view-volumetric-reasoning-example","path":"references/single-view-volumetric-reasoning-example.md","owners":["spatial-hypotheses","shape-reconstruction"],"requires":["spatial-reasoning","construction"],"conditionalRequires":[],"authority":"worked-example","closureEffects":[]},
-    {"id":"relational-structure","path":"references/relational-structure.md","owners":["visual-observation","spatial-hypotheses","shape-reconstruction"],"requires":["observation"],"conditionalRequires":[],"authority":"cross-cutting-structure","closureEffects":[]},
-    {"id":"inference-authority","path":"references/inference-authority.md","owners":["visual-observation","spatial-hypotheses","shape-reconstruction"],"requires":["relational-structure"],"conditionalRequires":[],"authority":"cross-cutting-authority","closureEffects":[]},
-    {"id":"whole-system-relational-barrier","path":"references/whole-system-relational-barrier.md","owners":["spatial-hypotheses","shape-reconstruction"],"requires":["spatial-reasoning","relational-structure","inference-authority"],"conditionalRequires":[],"authority":"hard-gate","closureEffects":["gates-lower-scope-hardening"]},
-    {"id":"canonical-edit-boundary","path":"references/contracts/canonical-edit-boundary.md","owners":["control"],"requires":["workflow"],"conditionalRequires":[],"authority":"mutation-boundary","closureEffects":[]},
-    {"id":"construction","path":"references/construction.md","owners":["shape-reconstruction","surface-topology"],"requires":["spatial-reasoning","canonical-edit-boundary"],"conditionalRequires":[{"when":"macro/identity whole-system relational obligations are declared or otherwise applicable to the active construction scope","nodes":["whole-system-relational-barrier"]}],"authority":"construction","closureEffects":["gates-identity-bearing-shape"]},
-    {"id":"organic-articulated-construction","path":"references/organic-articulated-construction.md","owners":["shape-reconstruction"],"requires":["construction"],"conditionalRequires":[],"authority":"specialized-construction","closureEffects":[]},
-    {"id":"parameter-fitting","path":"references/parameter-fitting.md","owners":["shape-reconstruction"],"requires":["construction"],"conditionalRequires":[{"when":"the fit plan requires relational eligibility or can alter applicable macro/identity whole-system relations","nodes":["whole-system-relational-barrier"]}],"authority":"candidate-ranking-only","closureEffects":[]},
-    {"id":"attachment-semantics","path":"references/contracts/attachment-semantics.md","owners":["assembly"],"requires":["construction","canonical-edit-boundary"],"conditionalRequires":[],"authority":"assembly-semantics","closureEffects":[]},
-    {"id":"logical-fusion","path":"references/contracts/logical-fusion.md","owners":["assembly"],"requires":["attachment-semantics"],"conditionalRequires":[],"authority":"semantic-fusion","closureEffects":[]},
-    {"id":"surface-anchor-frames","path":"references/contracts/surface-anchor-frames.md","owners":["assembly"],"requires":["attachment-semantics"],"conditionalRequires":[],"authority":"assembly-anchor","closureEffects":[]},
-    {"id":"attachment-follow","path":"references/contracts/attachment-follow.md","owners":["assembly"],"requires":["attachment-semantics","surface-anchor-frames"],"conditionalRequires":[],"authority":"assembly-solver","closureEffects":[]},
-    {"id":"multi-anchor-solver","path":"references/contracts/multi-anchor-solver.md","owners":["assembly"],"requires":["attachment-semantics","surface-anchor-frames"],"conditionalRequires":[],"authority":"assembly-solver","closureEffects":[]},
-    {"id":"articulation-clearance","path":"references/contracts/articulation-clearance.md","owners":["assembly"],"requires":["attachment-semantics","surface-anchor-frames"],"conditionalRequires":[],"authority":"assembly-constraint","closureEffects":[]},
-    {"id":"attachment-propagation","path":"references/contracts/attachment-propagation.md","owners":["assembly"],"requires":["attachment-semantics"],"conditionalRequires":[{"when":"RIGID_FOLLOW or SURFACE_OFFSET","nodes":["attachment-follow"]},{"when":"MULTI_ANCHOR","nodes":["multi-anchor-solver"]},{"when":"ARTICULATED or SUPPORTED_CLEARANCE","nodes":["articulation-clearance"]}],"authority":"assembly-propagation","closureEffects":["ready-for-realization-only"]},
-    {"id":"assembly","path":"references/assembly.md","owners":["assembly"],"requires":["construction","attachment-semantics","attachment-propagation"],"conditionalRequires":[],"authority":"assembly","closureEffects":["gates-realized-assembly"]},
-    {"id":"transmission-model","path":"references/contracts/transmission-model.md","owners":["assembly"],"requires":["assembly"],"conditionalRequires":[],"authority":"assembly-mapping","closureEffects":[]},
-    {"id":"actuation-model","path":"references/contracts/actuation-model.md","owners":["assembly"],"requires":["assembly"],"conditionalRequires":[{"when":"actuator DRIVES transmission","nodes":["transmission-model"]}],"authority":"assembly-actuation","closureEffects":[]},
-    {"id":"control-profile","path":"references/contracts/control-profile.md","owners":["assembly"],"requires":["assembly","actuation-model"],"conditionalRequires":[],"authority":"assembly-control","closureEffects":[]},
-    {"id":"runtime-binding","path":"references/contracts/runtime-binding.md","owners":["assembly"],"requires":["assembly"],"conditionalRequires":[{"when":"runtime target is actuator","nodes":["actuation-model"]},{"when":"runtime target is virtual-joint","nodes":["articulation-clearance"]}],"authority":"assembly-runtime","closureEffects":[]},
-    {"id":"physical-asset-bundle","path":"references/contracts/physical-asset-bundle.md","owners":["assembly"],"requires":["assembly"],"conditionalRequires":[{"when":"bundle includes transmission component","nodes":["transmission-model"]},{"when":"bundle includes actuation component","nodes":["actuation-model"]},{"when":"bundle includes control component","nodes":["control-profile"]},{"when":"bundle includes runtime component","nodes":["runtime-binding"]}],"authority":"assembly-packaging","closureEffects":[]},
-    {"id":"representation-capacity","path":"references/contracts/representation-capacity.md","owners":["assembly"],"requires":["physical-asset-bundle"],"conditionalRequires":[],"authority":"representation-preflight","closureEffects":[]},
-    {"id":"backend-export","path":"references/contracts/backend-export.md","owners":["assembly"],"requires":["representation-capacity"],"conditionalRequires":[],"authority":"representation-projection","closureEffects":[]},
-    {"id":"representation-normalizer","path":"references/contracts/representation-normalizer.md","owners":["assembly"],"requires":["backend-export"],"conditionalRequires":[],"authority":"representation-normalization","closureEffects":[]},
-    {"id":"cross-representation-validation","path":"references/contracts/cross-representation-validation.md","owners":["assembly"],"requires":["representation-normalizer"],"conditionalRequires":[],"authority":"cross-representation-evidence","closureEffects":[]},
-    {"id":"divergence-authorization","path":"references/contracts/divergence-authorization.md","owners":["assembly"],"requires":["cross-representation-validation","inference-authority"],"conditionalRequires":[],"authority":"declared-divergence-authorization","closureEffects":[]},
-    {"id":"physical-claims","path":"references/contracts/physical-claims.md","owners":["assembly","whole-object-certification"],"requires":["physical-asset-bundle","cross-representation-validation"],"conditionalRequires":[{"when":"claim relies on declared backend divergence","nodes":["divergence-authorization"]},{"when":"physical claim is being finally authorized","nodes":["claim-certification"]}],"authority":"physical-readiness-evidence","closureEffects":[]},
-    {"id":"physical-fusion","path":"references/physical-fusion.md","owners":["assembly"],"requires":["assembly","logical-fusion","attachment-propagation"],"conditionalRequires":[{"when":"physical fusion is justified","nodes":[]}],"authority":"finalization-only","closureEffects":["requires-revalidation-after-bake"]},
-    {"id":"realized-contact-support","path":"references/realized-contact-support.md","owners":["assembly"],"requires":["assembly","attachment-propagation"],"conditionalRequires":[{"when":"physical fusion was used","nodes":["physical-fusion"]}],"authority":"realized-structure-gate","closureEffects":["gates-structural-closure"]},
-    {"id":"appearance","path":"references/appearance.md","owners":["appearance"],"requires":["assembly"],"conditionalRequires":[],"authority":"appearance","closureEffects":[]},
-    {"id":"validation","path":"references/validation.md","owners":["rendering","visual-critique","whole-object-certification"],"requires":["appearance"],"conditionalRequires":[{"when":"asset makes assembly/contact/support claims","nodes":["realized-contact-support"]}],"authority":"visual-gate","closureEffects":["gates-visual-closure"]},
-    {"id":"candidate-transactions","path":"references/candidate-transactions.md","owners":["whole-object-certification"],"requires":["checkpointing"],"conditionalRequires":[],"authority":"provenance-sealing-only","closureEffects":[]},
-    {"id":"claim-certification","path":"references/claim-certification.md","owners":["whole-object-certification"],"requires":["candidate-transactions","validation"],"conditionalRequires":[{"when":"real source","nodes":["relational-structure","inference-authority","whole-system-relational-barrier"]},{"when":"asset makes assembly/contact/support claims","nodes":["realized-contact-support"]}],"authority":"final-authorization","closureEffects":["authorizes-whole-object-certificate"]}
+    {
+      "id": "workflow",
+      "path": "references/workflow.md",
+      "owners": [
+        "control"
+      ],
+      "requires": [],
+      "conditionalRequires": [],
+      "authority": "router",
+      "closureEffects": [],
+      "runtimeCapabilities": [],
+      "interface": {
+        "mode": "hybrid",
+        "interfaces": [
+          {
+            "id": "init-project",
+            "operation": "create",
+            "cli": {
+              "bin": "refas",
+              "command": "init"
+            },
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "initProject"
+            },
+            "template": null,
+            "inputContract": "project root + semantic project ID + optional bound source",
+            "outputSchema": "refas.project-state/v1",
+            "validator": null,
+            "minimumInvocation": "references/workflow.md",
+            "example": null
+          },
+          {
+            "id": "resume-project",
+            "operation": "inspect",
+            "cli": {
+              "bin": "refas",
+              "command": "resume"
+            },
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "resumeProject"
+            },
+            "template": null,
+            "inputContract": "initialized project root",
+            "outputSchema": null,
+            "validator": null,
+            "minimumInvocation": "references/workflow.md",
+            "example": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "checkpointing",
+      "path": "references/checkpointing.md",
+      "owners": [
+        "control"
+      ],
+      "requires": [
+        "workflow"
+      ],
+      "conditionalRequires": [],
+      "authority": "recovery-control",
+      "closureEffects": [],
+      "runtimeCapabilities": [],
+      "interface": {
+        "mode": "hybrid",
+        "interfaces": [
+          {
+            "id": "commit-checkpoint",
+            "operation": "create",
+            "cli": {
+              "bin": "refas",
+              "command": "checkpoint"
+            },
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "commitCheckpoint"
+            },
+            "template": null,
+            "inputContract": "capability + scope + reason + digest-bound artifact refs + gate results",
+            "outputSchema": "refas.checkpoint/v1",
+            "validator": null,
+            "minimumInvocation": "references/checkpointing.md",
+            "example": null
+          },
+          {
+            "id": "restore-checkpoint",
+            "operation": "restore",
+            "cli": {
+              "bin": "refas",
+              "command": "restore"
+            },
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "restoreCheckpoint"
+            },
+            "template": null,
+            "inputContract": "project root + checkpoint ID + restore reason",
+            "outputSchema": null,
+            "validator": null,
+            "minimumInvocation": "references/checkpointing.md",
+            "example": null
+          },
+          {
+            "id": "begin-edit",
+            "operation": "create",
+            "cli": {
+              "bin": "refas",
+              "command": "begin-edit"
+            },
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "beginEdit"
+            },
+            "template": null,
+            "inputContract": "owner capability + scope + single testable intent + protected metrics",
+            "outputSchema": null,
+            "validator": null,
+            "minimumInvocation": "references/checkpointing.md",
+            "example": null
+          },
+          {
+            "id": "finish-edit",
+            "operation": "evaluate",
+            "cli": {
+              "bin": "refas",
+              "command": "finish-edit"
+            },
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "finishEdit"
+            },
+            "template": null,
+            "inputContract": "candidate checkpoint + before/after evaluation + typed findings",
+            "outputSchema": null,
+            "validator": null,
+            "minimumInvocation": "references/checkpointing.md",
+            "example": null
+          },
+          {
+            "id": "abort-edit",
+            "operation": "restore",
+            "cli": {
+              "bin": "refas",
+              "command": "abort-edit"
+            },
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "abortEdit"
+            },
+            "template": null,
+            "inputContract": "active edit transaction + abort reason",
+            "outputSchema": null,
+            "validator": null,
+            "minimumInvocation": "references/checkpointing.md",
+            "example": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "host-integration",
+      "path": "references/host-integration.md",
+      "owners": [
+        "control"
+      ],
+      "requires": [
+        "workflow",
+        "checkpointing"
+      ],
+      "conditionalRequires": [],
+      "authority": "host-facade",
+      "closureEffects": [],
+      "runtimeCapabilities": [],
+      "interface": {
+        "mode": "hybrid",
+        "interfaces": [
+          {
+            "id": "open-host-session",
+            "operation": "create",
+            "cli": {
+              "bin": "refas-host",
+              "command": "open"
+            },
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "openHostSession"
+            },
+            "template": null,
+            "inputContract": "project root plus host-session options",
+            "outputSchema": null,
+            "validator": null,
+            "minimumInvocation": "references/host-integration.md",
+            "example": null
+          },
+          {
+            "id": "review-bundle",
+            "operation": "inspect",
+            "cli": {
+              "bin": "refas-host",
+              "command": "review-bundle"
+            },
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "getHostReviewBundle"
+            },
+            "template": null,
+            "inputContract": "current host session/project context",
+            "outputSchema": null,
+            "validator": {
+              "library": "validateHostReviewBundle"
+            },
+            "minimumInvocation": "references/host-integration.md",
+            "example": null
+          },
+          {
+            "id": "artifact-handoff",
+            "operation": "inspect",
+            "cli": {
+              "bin": "refas-host",
+              "command": "handoff"
+            },
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "getArtifactHandoff"
+            },
+            "template": null,
+            "inputContract": "current host session/project context",
+            "outputSchema": null,
+            "validator": {
+              "library": "validateArtifactHandoff"
+            },
+            "minimumInvocation": "references/host-integration.md",
+            "example": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "failure-routing",
+      "path": "references/failure-routing.md",
+      "owners": [
+        "control"
+      ],
+      "requires": [
+        "workflow"
+      ],
+      "conditionalRequires": [],
+      "authority": "repair-routing",
+      "closureEffects": [],
+      "runtimeCapabilities": [],
+      "interface": {
+        "mode": "hybrid",
+        "interfaces": [
+          {
+            "id": "route-finding",
+            "operation": "evaluate",
+            "cli": {
+              "bin": "refas",
+              "command": "route"
+            },
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "routeFinding"
+            },
+            "template": "assets/templates/finding.json",
+            "inputContract": "typed finding + current checkpoint lineage",
+            "outputSchema": null,
+            "validator": null,
+            "minimumInvocation": "references/failure-routing.md",
+            "example": null
+          },
+          {
+            "id": "report-finding",
+            "operation": "mutate",
+            "cli": {
+              "bin": "refas",
+              "command": "report-finding"
+            },
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "reportFinding"
+            },
+            "template": "assets/templates/finding.json",
+            "inputContract": "project root + verified typed finding",
+            "outputSchema": null,
+            "validator": null,
+            "minimumInvocation": "references/failure-routing.md",
+            "example": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "provenance",
+      "path": "references/provenance.md",
+      "owners": [
+        "source-intake"
+      ],
+      "requires": [
+        "workflow"
+      ],
+      "conditionalRequires": [],
+      "authority": "source-provenance",
+      "closureEffects": [],
+      "runtimeCapabilities": [
+        "source-intake"
+      ],
+      "interface": {
+        "mode": "hybrid",
+        "interfaces": [
+          {
+            "id": "source-manifest",
+            "operation": "create",
+            "cli": {
+              "bin": "refas",
+              "command": "source-manifest"
+            },
+            "library": null,
+            "template": "assets/templates/source-manifest.json",
+            "inputContract": "project-local source image + semantic source ID + acquisition context",
+            "outputSchema": "refas.source-manifest/v1",
+            "validator": null,
+            "minimumInvocation": "references/provenance.md",
+            "example": null
+          },
+          {
+            "id": "bind-source",
+            "operation": "bind",
+            "cli": {
+              "bin": "refas",
+              "command": "bind-source"
+            },
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "bindSource"
+            },
+            "template": "assets/templates/source-manifest.json",
+            "inputContract": "project root + verified source manifest",
+            "outputSchema": "refas.source-manifest/v1",
+            "validator": null,
+            "minimumInvocation": "references/provenance.md",
+            "example": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "observation",
+      "path": "references/observation.md",
+      "owners": [
+        "visual-hierarchy",
+        "visual-observation"
+      ],
+      "requires": [
+        "provenance"
+      ],
+      "conditionalRequires": [],
+      "authority": "source-observation",
+      "closureEffects": [],
+      "runtimeCapabilities": [
+        "visual-hierarchy",
+        "visual-observation"
+      ],
+      "interface": {
+        "mode": "hybrid",
+        "interfaces": [
+          {
+            "id": "visual-hierarchy",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createVisualHierarchy"
+            },
+            "template": "assets/templates/visual-hierarchy.json",
+            "inputContract": "whole-to-feature semantic hierarchy input",
+            "outputSchema": "refas.visual-hierarchy/v1",
+            "validator": {
+              "library": "validateVisualHierarchy"
+            },
+            "minimumInvocation": "references/observation.md",
+            "example": null
+          },
+          {
+            "id": "visual-observation",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createObservation"
+            },
+            "template": "assets/templates/visual-observation.json",
+            "inputContract": "active hierarchy node + source-grounded facts/inferences/ambiguities",
+            "outputSchema": "refas.visual-observation/v1",
+            "validator": {
+              "library": "validateObservation"
+            },
+            "minimumInvocation": "references/observation.md",
+            "example": null
+          },
+          {
+            "id": "reference-geometry",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createReferenceGeometry"
+            },
+            "template": "assets/templates/reference-geometry.json",
+            "inputContract": "normalized source-space anchors/chains/axes/contacts/occlusions/negative spaces",
+            "outputSchema": "refas.reference-geometry/v1",
+            "validator": {
+              "library": "validateReferenceGeometry"
+            },
+            "minimumInvocation": "references/observation.md",
+            "example": null
+          },
+          {
+            "id": "evidence-view",
+            "operation": "derive",
+            "cli": {
+              "bin": "refas",
+              "command": "evidence"
+            },
+            "library": null,
+            "template": null,
+            "inputContract": "source image + semantic scope + optional normalized ROI",
+            "outputSchema": null,
+            "validator": null,
+            "minimumInvocation": "references/observation.md",
+            "example": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "spatial-reasoning",
+      "path": "references/spatial-reasoning.md",
+      "owners": [
+        "spatial-hypotheses"
+      ],
+      "requires": [
+        "observation"
+      ],
+      "conditionalRequires": [],
+      "authority": "hypothesis",
+      "closureEffects": [],
+      "runtimeCapabilities": [
+        "spatial-hypotheses"
+      ],
+      "interface": {
+        "mode": "hybrid",
+        "interfaces": [
+          {
+            "id": "spatial-hypothesis-set",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createSpatialHypothesisSet"
+            },
+            "template": "assets/templates/spatial-hypotheses.json",
+            "inputContract": "competing camera/depth/orientation/hidden-form hypotheses",
+            "outputSchema": "refas.spatial-hypothesis-set/v1",
+            "validator": {
+              "library": "validateSpatialHypothesisSet"
+            },
+            "minimumInvocation": "references/spatial-reasoning.md",
+            "example": "references/single-view-volumetric-reasoning-example.md"
+          },
+          {
+            "id": "reference-registration",
+            "operation": "create",
+            "cli": {
+              "bin": "refas",
+              "command": "register"
+            },
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createReferenceRegistration"
+            },
+            "template": "assets/templates/registration-input.json",
+            "inputContract": "attested 2D frame correspondences",
+            "outputSchema": "refas.reference-registration/v1",
+            "validator": {
+              "library": "validateReferenceRegistration"
+            },
+            "minimumInvocation": "references/spatial-reasoning.md",
+            "example": null
+          },
+          {
+            "id": "projection-fit",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createProjectionFit"
+            },
+            "template": "assets/templates/projection-fit.json",
+            "inputContract": "reference geometry + camera hypothesis + model-space bindings",
+            "outputSchema": "refas.projection-fit/v1",
+            "validator": {
+              "library": "validateProjectionFit"
+            },
+            "minimumInvocation": "references/spatial-reasoning.md",
+            "example": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "single-view-volumetric-reasoning-example",
+      "path": "references/single-view-volumetric-reasoning-example.md",
+      "owners": [
+        "spatial-hypotheses",
+        "shape-reconstruction"
+      ],
+      "requires": [
+        "spatial-reasoning",
+        "construction"
+      ],
+      "conditionalRequires": [],
+      "authority": "worked-example",
+      "closureEffects": [],
+      "runtimeCapabilities": [
+        "spatial-hypotheses",
+        "shape-reconstruction"
+      ],
+      "interface": {
+        "mode": "instruction-only",
+        "interfaces": []
+      }
+    },
+    {
+      "id": "relational-structure",
+      "path": "references/relational-structure.md",
+      "owners": [
+        "visual-observation",
+        "spatial-hypotheses",
+        "shape-reconstruction"
+      ],
+      "requires": [
+        "observation"
+      ],
+      "conditionalRequires": [],
+      "authority": "cross-cutting-structure",
+      "closureEffects": [],
+      "runtimeCapabilities": [
+        "visual-observation",
+        "spatial-hypotheses",
+        "shape-reconstruction"
+      ],
+      "interface": {
+        "mode": "library",
+        "interfaces": [
+          {
+            "id": "relational-structure",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createRelationalStructure"
+            },
+            "template": "assets/templates/relational-structure.json",
+            "inputContract": "semantic entities + source-supported whole-system relations",
+            "outputSchema": "refas.relational-structure/v1",
+            "validator": {
+              "library": "validateRelationalStructure"
+            },
+            "minimumInvocation": "references/relational-structure.md",
+            "example": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "inference-authority",
+      "path": "references/inference-authority.md",
+      "owners": [
+        "visual-observation",
+        "spatial-hypotheses",
+        "shape-reconstruction"
+      ],
+      "requires": [
+        "relational-structure"
+      ],
+      "conditionalRequires": [],
+      "authority": "cross-cutting-authority",
+      "closureEffects": [],
+      "runtimeCapabilities": [
+        "visual-observation",
+        "spatial-hypotheses",
+        "shape-reconstruction"
+      ],
+      "interface": {
+        "mode": "library",
+        "interfaces": [
+          {
+            "id": "semantic-authority",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createSemanticAuthoritySet"
+            },
+            "template": "assets/templates/semantic-authority.json",
+            "inputContract": "semantic claims classified by observed/inferred/engineered/unknown/forbidden authority",
+            "outputSchema": "refas.semantic-authority-set/v1",
+            "validator": {
+              "library": "validateSemanticAuthoritySet"
+            },
+            "minimumInvocation": "references/inference-authority.md",
+            "example": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "whole-system-relational-barrier",
+      "path": "references/whole-system-relational-barrier.md",
+      "owners": [
+        "spatial-hypotheses",
+        "shape-reconstruction"
+      ],
+      "requires": [
+        "spatial-reasoning",
+        "relational-structure",
+        "inference-authority"
+      ],
+      "conditionalRequires": [],
+      "authority": "hard-gate",
+      "closureEffects": [
+        "gates-lower-scope-hardening"
+      ],
+      "runtimeCapabilities": [
+        "spatial-hypotheses",
+        "shape-reconstruction"
+      ],
+      "interface": {
+        "mode": "library",
+        "interfaces": [
+          {
+            "id": "relational-barrier",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createWholeSystemRelationalBarrier"
+            },
+            "template": null,
+            "inputContract": "relational obligations + semantic authority + current evidence checks",
+            "outputSchema": "refas.whole-system-relational-barrier/v1",
+            "validator": {
+              "library": "validateWholeSystemRelationalBarrier"
+            },
+            "minimumInvocation": "references/whole-system-relational-barrier.md",
+            "example": null
+          },
+          {
+            "id": "route-relational-barrier",
+            "operation": "evaluate",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "routeRelationalBarrier"
+            },
+            "template": null,
+            "inputContract": "validated whole-system relational barrier result",
+            "outputSchema": null,
+            "validator": null,
+            "minimumInvocation": "references/whole-system-relational-barrier.md",
+            "example": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "canonical-edit-boundary",
+      "path": "references/contracts/canonical-edit-boundary.md",
+      "owners": [
+        "control"
+      ],
+      "requires": [
+        "workflow"
+      ],
+      "conditionalRequires": [],
+      "authority": "mutation-boundary",
+      "closureEffects": [],
+      "runtimeCapabilities": [],
+      "interface": {
+        "mode": "library",
+        "interfaces": [
+          {
+            "id": "canonical-edit-intent",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createCanonicalEditIntent"
+            },
+            "template": null,
+            "inputContract": "semantic edit class + source/realization boundary declaration",
+            "outputSchema": "refas.canonical-edit-intent/v1",
+            "validator": {
+              "library": "validateCanonicalEditIntent"
+            },
+            "minimumInvocation": "references/contracts/canonical-edit-boundary.md",
+            "example": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "construction",
+      "path": "references/construction.md",
+      "owners": [
+        "shape-reconstruction",
+        "surface-topology"
+      ],
+      "requires": [
+        "spatial-reasoning",
+        "canonical-edit-boundary"
+      ],
+      "conditionalRequires": [
+        {
+          "when": "macro/identity whole-system relational obligations are declared or otherwise applicable to the active construction scope",
+          "nodes": [
+            "whole-system-relational-barrier"
+          ]
+        }
+      ],
+      "authority": "construction",
+      "closureEffects": [
+        "gates-identity-bearing-shape"
+      ],
+      "runtimeCapabilities": [
+        "shape-reconstruction",
+        "surface-topology"
+      ],
+      "interface": {
+        "mode": "hybrid",
+        "interfaces": [
+          {
+            "id": "construction-quality",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createConstructionQuality"
+            },
+            "template": "assets/templates/construction-quality.json",
+            "inputContract": "identity-bearing/blockout quality claim + visible-form gates + whole-context evidence",
+            "outputSchema": "refas.construction-quality/v1",
+            "validator": {
+              "library": "validateConstructionQuality"
+            },
+            "minimumInvocation": "references/construction.md",
+            "example": "references/single-view-volumetric-reasoning-example.md"
+          },
+          {
+            "id": "hard-surface-shell",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createHardSurfaceShell"
+            },
+            "template": "assets/templates/hard-surface-spec.json",
+            "inputContract": "hard-surface profile/cutout/edge-treatment specification",
+            "outputSchema": null,
+            "validator": {
+              "library": "validateHardSurfaceSpec"
+            },
+            "minimumInvocation": "references/construction.md",
+            "example": null
+          },
+          {
+            "id": "surface-network",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createSurfaceNetwork"
+            },
+            "template": "assets/templates/surface-network.json",
+            "inputContract": "semantic cells and observed shared adjacencies",
+            "outputSchema": "refas.surface-network/v1",
+            "validator": {
+              "library": "validateSurfaceNetwork"
+            },
+            "minimumInvocation": "references/construction.md",
+            "example": null
+          },
+          {
+            "id": "inspect-glb",
+            "operation": "inspect",
+            "cli": {
+              "bin": "refas",
+              "command": "inspect-glb"
+            },
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "inspectGlb"
+            },
+            "template": null,
+            "inputContract": "GLB bytes or path",
+            "outputSchema": null,
+            "validator": null,
+            "minimumInvocation": "references/construction.md",
+            "example": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "organic-articulated-construction",
+      "path": "references/organic-articulated-construction.md",
+      "owners": [
+        "shape-reconstruction"
+      ],
+      "requires": [
+        "construction"
+      ],
+      "conditionalRequires": [],
+      "authority": "specialized-construction",
+      "closureEffects": [],
+      "runtimeCapabilities": [
+        "shape-reconstruction"
+      ],
+      "interface": {
+        "mode": "instruction-only",
+        "interfaces": []
+      }
+    },
+    {
+      "id": "parameter-fitting",
+      "path": "references/parameter-fitting.md",
+      "owners": [
+        "shape-reconstruction"
+      ],
+      "requires": [
+        "construction"
+      ],
+      "conditionalRequires": [
+        {
+          "when": "the fit plan requires relational eligibility or can alter applicable macro/identity whole-system relations",
+          "nodes": [
+            "whole-system-relational-barrier"
+          ]
+        }
+      ],
+      "authority": "candidate-ranking-only",
+      "closureEffects": [],
+      "runtimeCapabilities": [
+        "shape-reconstruction"
+      ],
+      "interface": {
+        "mode": "hybrid",
+        "interfaces": [
+          {
+            "id": "parameter-fit-plan",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createParameterFitPlan"
+            },
+            "template": "assets/templates/parameter-fit-plan.json",
+            "inputContract": "owner-local fit parameters + bounds + measurements + digest-bound references",
+            "outputSchema": "refas.parameter-fit-plan/v1",
+            "validator": {
+              "library": "validateParameterFitPlan"
+            },
+            "minimumInvocation": "references/parameter-fitting.md",
+            "example": null
+          },
+          {
+            "id": "fit-parameters",
+            "operation": "evaluate",
+            "cli": {
+              "bin": "refas",
+              "command": "fit-parameters"
+            },
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "fitParameters"
+            },
+            "template": "assets/templates/parameter-fit-plan.json",
+            "inputContract": "parameter-fit plan + deterministic evaluator worker",
+            "outputSchema": "refas.parameter-fit-report/v1",
+            "validator": {
+              "library": "validateParameterFitReport"
+            },
+            "minimumInvocation": "references/parameter-fitting.md",
+            "example": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "attachment-semantics",
+      "path": "references/contracts/attachment-semantics.md",
+      "owners": [
+        "assembly"
+      ],
+      "requires": [
+        "construction",
+        "canonical-edit-boundary"
+      ],
+      "conditionalRequires": [],
+      "authority": "assembly-semantics",
+      "closureEffects": [],
+      "runtimeCapabilities": [
+        "assembly"
+      ],
+      "interface": {
+        "mode": "library",
+        "interfaces": [
+          {
+            "id": "attachment-semantics",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createAttachmentSemantics"
+            },
+            "template": null,
+            "inputContract": "semantic entities + owner/dependent relations + evidence basis + attachment mode",
+            "outputSchema": "refas.attachment-semantics/v1",
+            "validator": {
+              "library": "validateAttachmentSemantics"
+            },
+            "minimumInvocation": "references/contracts/attachment-semantics.md",
+            "example": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "logical-fusion",
+      "path": "references/contracts/logical-fusion.md",
+      "owners": [
+        "assembly"
+      ],
+      "requires": [
+        "attachment-semantics"
+      ],
+      "conditionalRequires": [],
+      "authority": "semantic-fusion",
+      "closureEffects": [],
+      "runtimeCapabilities": [
+        "assembly"
+      ],
+      "interface": {
+        "mode": "library",
+        "interfaces": [
+          {
+            "id": "logical-fusion",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createLogicalFusion"
+            },
+            "template": null,
+            "inputContract": "validated attachment semantics with FUSED relations",
+            "outputSchema": "refas.logical-fusion/v1",
+            "validator": {
+              "library": "validateLogicalFusion"
+            },
+            "minimumInvocation": "references/contracts/logical-fusion.md",
+            "example": null
+          },
+          {
+            "id": "logical-fusion-invalidation",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createLogicalFusionInvalidation"
+            },
+            "template": null,
+            "inputContract": "logical fusion group + changed semantic member",
+            "outputSchema": "refas.logical-fusion-invalidation/v1",
+            "validator": {
+              "library": "validateLogicalFusionInvalidation"
+            },
+            "minimumInvocation": "references/contracts/logical-fusion.md",
+            "example": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "surface-anchor-frames",
+      "path": "references/contracts/surface-anchor-frames.md",
+      "owners": [
+        "assembly"
+      ],
+      "requires": [
+        "attachment-semantics"
+      ],
+      "conditionalRequires": [],
+      "authority": "assembly-anchor",
+      "closureEffects": [],
+      "runtimeCapabilities": [
+        "assembly"
+      ],
+      "interface": {
+        "mode": "library",
+        "interfaces": [
+          {
+            "id": "surface-anchor-set",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createSurfaceAnchorSet"
+            },
+            "template": null,
+            "inputContract": "semantic owner patches + triangle/barycentric locators + tangent hints + rebind bounds",
+            "outputSchema": "refas.surface-anchor-set/v1",
+            "validator": {
+              "library": "validateSurfaceAnchorSet"
+            },
+            "minimumInvocation": "references/contracts/surface-anchor-frames.md",
+            "example": null
+          },
+          {
+            "id": "rebind-surface-anchor-set",
+            "operation": "evaluate",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "rebindSurfaceAnchorSet"
+            },
+            "template": null,
+            "inputContract": "existing anchor set + rebuilt owner surface within semantic patch",
+            "outputSchema": "refas.surface-anchor-rebind/v1",
+            "validator": {
+              "library": "validateSurfaceAnchorRebind"
+            },
+            "minimumInvocation": "references/contracts/surface-anchor-frames.md",
+            "example": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "attachment-follow",
+      "path": "references/contracts/attachment-follow.md",
+      "owners": [
+        "assembly"
+      ],
+      "requires": [
+        "attachment-semantics",
+        "surface-anchor-frames"
+      ],
+      "conditionalRequires": [],
+      "authority": "assembly-solver",
+      "closureEffects": [],
+      "runtimeCapabilities": [
+        "assembly"
+      ],
+      "interface": {
+        "mode": "library",
+        "interfaces": [
+          {
+            "id": "attachment-follow-state",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createAttachmentFollowState"
+            },
+            "template": null,
+            "inputContract": "attachment relation + trusted owner-to-subject/contact frames",
+            "outputSchema": "refas.attachment-follow-state/v1",
+            "validator": {
+              "library": "validateAttachmentFollowState"
+            },
+            "minimumInvocation": "references/contracts/attachment-follow.md",
+            "example": null
+          },
+          {
+            "id": "propagate-attachment-follow",
+            "operation": "evaluate",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "propagateAttachmentFollow"
+            },
+            "template": null,
+            "inputContract": "follow state + explicit current owner world frame",
+            "outputSchema": "refas.attachment-follow-report/v1",
+            "validator": {
+              "library": "validateAttachmentFollowReport"
+            },
+            "minimumInvocation": "references/contracts/attachment-follow.md",
+            "example": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "multi-anchor-solver",
+      "path": "references/contracts/multi-anchor-solver.md",
+      "owners": [
+        "assembly"
+      ],
+      "requires": [
+        "attachment-semantics",
+        "surface-anchor-frames"
+      ],
+      "conditionalRequires": [],
+      "authority": "assembly-solver",
+      "closureEffects": [],
+      "runtimeCapabilities": [
+        "assembly"
+      ],
+      "interface": {
+        "mode": "library",
+        "interfaces": [
+          {
+            "id": "multi-anchor-plan",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createMultiAnchorPlan"
+            },
+            "template": null,
+            "inputContract": "subject-local anchor constraints + weights + tolerances for every semantic owner",
+            "outputSchema": "refas.multi-anchor-plan/v1",
+            "validator": {
+              "library": "validateMultiAnchorPlan"
+            },
+            "minimumInvocation": "references/contracts/multi-anchor-solver.md",
+            "example": null
+          },
+          {
+            "id": "solve-multi-anchor",
+            "operation": "evaluate",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "solveMultiAnchor"
+            },
+            "template": null,
+            "inputContract": "multi-anchor plan + current anchor set + explicit owner world frames",
+            "outputSchema": "refas.multi-anchor-report/v1",
+            "validator": {
+              "library": "validateMultiAnchorReport"
+            },
+            "minimumInvocation": "references/contracts/multi-anchor-solver.md",
+            "example": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "articulation-clearance",
+      "path": "references/contracts/articulation-clearance.md",
+      "owners": [
+        "assembly"
+      ],
+      "requires": [
+        "attachment-semantics",
+        "surface-anchor-frames"
+      ],
+      "conditionalRequires": [],
+      "authority": "assembly-constraint",
+      "closureEffects": [],
+      "runtimeCapabilities": [
+        "assembly"
+      ],
+      "interface": {
+        "mode": "library",
+        "interfaces": [
+          {
+            "id": "articulated-joint",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createArticulatedJoint"
+            },
+            "template": null,
+            "inputContract": "semantic articulated relation + owner-local/subject-local pivot frames + bounds",
+            "outputSchema": "refas.articulated-joint/v1",
+            "validator": {
+              "library": "validateArticulatedJoint"
+            },
+            "minimumInvocation": "references/contracts/articulation-clearance.md",
+            "example": null
+          },
+          {
+            "id": "evaluate-articulated-joint",
+            "operation": "evaluate",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "evaluateArticulatedJoint"
+            },
+            "template": null,
+            "inputContract": "articulated joint + owner world frame + in-range joint value",
+            "outputSchema": "refas.articulated-joint-report/v1",
+            "validator": {
+              "library": "validateArticulatedJointReport"
+            },
+            "minimumInvocation": "references/contracts/articulation-clearance.md",
+            "example": null
+          },
+          {
+            "id": "supported-clearance",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createSupportedClearance"
+            },
+            "template": null,
+            "inputContract": "acyclic support path + realized-proof attachment bindings + signed-clearance bounds",
+            "outputSchema": "refas.supported-clearance/v1",
+            "validator": {
+              "library": "validateSupportedClearance"
+            },
+            "minimumInvocation": "references/contracts/articulation-clearance.md",
+            "example": null
+          },
+          {
+            "id": "evaluate-supported-clearance",
+            "operation": "evaluate",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "evaluateSupportedClearance"
+            },
+            "template": null,
+            "inputContract": "supported-clearance contract + digest-bound realized assembly proof",
+            "outputSchema": "refas.supported-clearance-report/v1",
+            "validator": {
+              "library": "validateSupportedClearanceReport"
+            },
+            "minimumInvocation": "references/contracts/articulation-clearance.md",
+            "example": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "attachment-propagation",
+      "path": "references/contracts/attachment-propagation.md",
+      "owners": [
+        "assembly"
+      ],
+      "requires": [
+        "attachment-semantics"
+      ],
+      "conditionalRequires": [
+        {
+          "when": "RIGID_FOLLOW or SURFACE_OFFSET",
+          "nodes": [
+            "attachment-follow"
+          ]
+        },
+        {
+          "when": "MULTI_ANCHOR",
+          "nodes": [
+            "multi-anchor-solver"
+          ]
+        },
+        {
+          "when": "ARTICULATED or SUPPORTED_CLEARANCE",
+          "nodes": [
+            "articulation-clearance"
+          ]
+        }
+      ],
+      "authority": "assembly-propagation",
+      "closureEffects": [
+        "ready-for-realization-only"
+      ],
+      "runtimeCapabilities": [
+        "assembly"
+      ],
+      "interface": {
+        "mode": "library",
+        "interfaces": [
+          {
+            "id": "attachment-propagation-plan",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createAttachmentPropagationPlan"
+            },
+            "template": null,
+            "inputContract": "attachment DAG + current relation states + required external canonical frames",
+            "outputSchema": "refas.attachment-propagation-plan/v1",
+            "validator": {
+              "library": "validateAttachmentPropagationPlan"
+            },
+            "minimumInvocation": "references/contracts/attachment-propagation.md",
+            "example": null
+          },
+          {
+            "id": "propagate-attachment-graph",
+            "operation": "evaluate",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "propagateAttachmentGraph"
+            },
+            "template": null,
+            "inputContract": "propagation plan + exact current relation inputs",
+            "outputSchema": "refas.attachment-propagation-report/v1",
+            "validator": {
+              "library": "validateAttachmentPropagationReport"
+            },
+            "minimumInvocation": "references/contracts/attachment-propagation.md",
+            "example": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "assembly",
+      "path": "references/assembly.md",
+      "owners": [
+        "assembly"
+      ],
+      "requires": [
+        "construction",
+        "attachment-semantics",
+        "attachment-propagation"
+      ],
+      "conditionalRequires": [],
+      "authority": "assembly",
+      "closureEffects": [
+        "gates-realized-assembly"
+      ],
+      "runtimeCapabilities": [
+        "assembly"
+      ],
+      "interface": {
+        "mode": "library",
+        "interfaces": [
+          {
+            "id": "assembly-contract",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createAssemblyContract"
+            },
+            "template": "assets/templates/assembly-contract.json",
+            "inputContract": "closed child identities + parent frame + semantic transforms/relations",
+            "outputSchema": "refas.assembly-contract/v1",
+            "validator": {
+              "library": "validateAssemblyContract"
+            },
+            "minimumInvocation": "references/assembly.md",
+            "example": null
+          },
+          {
+            "id": "realized-assembly-proof",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createRealizedAssemblyProof"
+            },
+            "template": "assets/templates/realized-assembly-input.json",
+            "inputContract": "final GLB + semantic modules + expected attachments/contact/support constraints",
+            "outputSchema": "refas.realized-assembly-proof/v1",
+            "validator": {
+              "library": "validateRealizedAssemblyProof"
+            },
+            "minimumInvocation": "references/assembly.md",
+            "example": null
+          },
+          {
+            "id": "append-closed-child-glb",
+            "operation": "mutate",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "appendPartsToClosedGlb"
+            },
+            "template": null,
+            "inputContract": "accepted immutable child GLB + parent-local added parts/transforms",
+            "outputSchema": null,
+            "validator": null,
+            "minimumInvocation": "references/assembly.md",
+            "example": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "transmission-model",
+      "path": "references/contracts/transmission-model.md",
+      "owners": [
+        "assembly"
+      ],
+      "requires": [
+        "assembly"
+      ],
+      "conditionalRequires": [],
+      "authority": "assembly-mapping",
+      "closureEffects": [],
+      "runtimeCapabilities": [
+        "assembly"
+      ],
+      "interface": {
+        "mode": "library",
+        "interfaces": [
+          {
+            "id": "transmission-model",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createTransmissionModel"
+            },
+            "template": null,
+            "inputContract": "semantic transmission identity + joint/actuator coordinate mapping",
+            "outputSchema": "refas.transmission-model/v1",
+            "validator": {
+              "library": "validateTransmissionModel"
+            },
+            "minimumInvocation": "references/contracts/transmission-model.md",
+            "example": null
+          },
+          {
+            "id": "evaluate-transmission",
+            "operation": "evaluate",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "evaluateTransmissionMapping"
+            },
+            "template": null,
+            "inputContract": "validated transmission model + source coordinate/effort value",
+            "outputSchema": null,
+            "validator": null,
+            "minimumInvocation": "references/contracts/transmission-model.md",
+            "example": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "actuation-model",
+      "path": "references/contracts/actuation-model.md",
+      "owners": [
+        "assembly"
+      ],
+      "requires": [
+        "assembly"
+      ],
+      "conditionalRequires": [
+        {
+          "when": "actuator DRIVES transmission",
+          "nodes": [
+            "transmission-model"
+          ]
+        }
+      ],
+      "authority": "assembly-actuation",
+      "closureEffects": [],
+      "runtimeCapabilities": [
+        "assembly"
+      ],
+      "interface": {
+        "mode": "library",
+        "interfaces": [
+          {
+            "id": "actuation-model",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createActuationModel"
+            },
+            "template": null,
+            "inputContract": "actuator identity + coordinate class + control mode + physical limits + optional transmission binding",
+            "outputSchema": "refas.actuation-model/v1",
+            "validator": {
+              "library": "validateActuationModel"
+            },
+            "minimumInvocation": "references/contracts/actuation-model.md",
+            "example": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "control-profile",
+      "path": "references/contracts/control-profile.md",
+      "owners": [
+        "assembly"
+      ],
+      "requires": [
+        "assembly",
+        "actuation-model"
+      ],
+      "conditionalRequires": [],
+      "authority": "assembly-control",
+      "closureEffects": [],
+      "runtimeCapabilities": [
+        "assembly"
+      ],
+      "interface": {
+        "mode": "library",
+        "interfaces": [
+          {
+            "id": "control-profile",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createControlProfile"
+            },
+            "template": null,
+            "inputContract": "actuation target + controller mode + command/feedback spaces + tuning/delay",
+            "outputSchema": "refas.control-profile/v1",
+            "validator": {
+              "library": "validateControlProfile"
+            },
+            "minimumInvocation": "references/contracts/control-profile.md",
+            "example": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "runtime-binding",
+      "path": "references/contracts/runtime-binding.md",
+      "owners": [
+        "assembly"
+      ],
+      "requires": [
+        "assembly"
+      ],
+      "conditionalRequires": [
+        {
+          "when": "runtime target is actuator",
+          "nodes": [
+            "actuation-model"
+          ]
+        },
+        {
+          "when": "runtime target is virtual-joint",
+          "nodes": [
+            "articulation-clearance"
+          ]
+        }
+      ],
+      "authority": "assembly-runtime",
+      "closureEffects": [],
+      "runtimeCapabilities": [
+        "assembly"
+      ],
+      "interface": {
+        "mode": "library",
+        "interfaces": [
+          {
+            "id": "runtime-binding",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createRuntimeBinding"
+            },
+            "template": null,
+            "inputContract": "runtime endpoint/device/bus/index target + coordinate calibration",
+            "outputSchema": "refas.runtime-binding/v1",
+            "validator": {
+              "library": "validateRuntimeBinding"
+            },
+            "minimumInvocation": "references/contracts/runtime-binding.md",
+            "example": null
+          },
+          {
+            "id": "runtime-to-canonical",
+            "operation": "evaluate",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "runtimeValueToCanonical"
+            },
+            "template": null,
+            "inputContract": "validated runtime binding + runtime-space value",
+            "outputSchema": null,
+            "validator": null,
+            "minimumInvocation": "references/contracts/runtime-binding.md",
+            "example": null
+          },
+          {
+            "id": "canonical-to-runtime",
+            "operation": "evaluate",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "canonicalValueToRuntime"
+            },
+            "template": null,
+            "inputContract": "validated runtime binding + canonical-space value",
+            "outputSchema": null,
+            "validator": null,
+            "minimumInvocation": "references/contracts/runtime-binding.md",
+            "example": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "physical-asset-bundle",
+      "path": "references/contracts/physical-asset-bundle.md",
+      "owners": [
+        "assembly"
+      ],
+      "requires": [
+        "assembly"
+      ],
+      "conditionalRequires": [
+        {
+          "when": "bundle includes transmission component",
+          "nodes": [
+            "transmission-model"
+          ]
+        },
+        {
+          "when": "bundle includes actuation component",
+          "nodes": [
+            "actuation-model"
+          ]
+        },
+        {
+          "when": "bundle includes control component",
+          "nodes": [
+            "control-profile"
+          ]
+        },
+        {
+          "when": "bundle includes runtime component",
+          "nodes": [
+            "runtime-binding"
+          ]
+        }
+      ],
+      "authority": "assembly-packaging",
+      "closureEffects": [],
+      "runtimeCapabilities": [
+        "assembly"
+      ],
+      "interface": {
+        "mode": "library",
+        "interfaces": [
+          {
+            "id": "physical-asset-bundle",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createPhysicalAssetBundle"
+            },
+            "template": null,
+            "inputContract": "module identity + exact digest-bound physical component contracts",
+            "outputSchema": "refas.physical-asset-bundle/v1",
+            "validator": {
+              "library": "validatePhysicalAssetBundle"
+            },
+            "minimumInvocation": "references/contracts/physical-asset-bundle.md",
+            "example": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "representation-capacity",
+      "path": "references/contracts/representation-capacity.md",
+      "owners": [
+        "assembly"
+      ],
+      "requires": [
+        "physical-asset-bundle"
+      ],
+      "conditionalRequires": [],
+      "authority": "representation-preflight",
+      "closureEffects": [],
+      "runtimeCapabilities": [
+        "assembly"
+      ],
+      "interface": {
+        "mode": "library",
+        "interfaces": [
+          {
+            "id": "derive-representation-obligations",
+            "operation": "derive",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "deriveRepresentationCapacityObligations"
+            },
+            "template": null,
+            "inputContract": "current physical asset bundle",
+            "outputSchema": null,
+            "validator": null,
+            "minimumInvocation": "references/contracts/representation-capacity.md",
+            "example": null
+          },
+          {
+            "id": "representation-capacity-profile",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createRepresentationCapacityProfile"
+            },
+            "template": null,
+            "inputContract": "backend identity + derived obligations + supported/approximated/lost classifications",
+            "outputSchema": "refas.representation-capacity/v1",
+            "validator": {
+              "library": "validateRepresentationCapacityProfile"
+            },
+            "minimumInvocation": "references/contracts/representation-capacity.md",
+            "example": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "backend-export",
+      "path": "references/contracts/backend-export.md",
+      "owners": [
+        "assembly"
+      ],
+      "requires": [
+        "representation-capacity"
+      ],
+      "conditionalRequires": [],
+      "authority": "representation-projection",
+      "closureEffects": [],
+      "runtimeCapabilities": [
+        "assembly"
+      ],
+      "interface": {
+        "mode": "library",
+        "interfaces": [
+          {
+            "id": "canonical-export-view",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createCanonicalExportView"
+            },
+            "template": null,
+            "inputContract": "current physical bundle + live component validation context",
+            "outputSchema": "refas.canonical-export-view/v1",
+            "validator": {
+              "library": "validateCanonicalExportView"
+            },
+            "minimumInvocation": "references/contracts/backend-export.md",
+            "example": null
+          },
+          {
+            "id": "run-export-adapter",
+            "operation": "export",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "runExportAdapter"
+            },
+            "template": null,
+            "inputContract": "canonical export view + validated capacity profile + one-way backend adapter",
+            "outputSchema": "refas.backend-export/v1",
+            "validator": {
+              "library": "validateBackendExportResult"
+            },
+            "minimumInvocation": "references/contracts/backend-export.md",
+            "example": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "representation-normalizer",
+      "path": "references/contracts/representation-normalizer.md",
+      "owners": [
+        "assembly"
+      ],
+      "requires": [
+        "backend-export"
+      ],
+      "conditionalRequires": [],
+      "authority": "representation-normalization",
+      "closureEffects": [],
+      "runtimeCapabilities": [
+        "assembly"
+      ],
+      "interface": {
+        "mode": "library",
+        "interfaces": [
+          {
+            "id": "semantic-json-normalizer",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createSemanticJsonRepresentationNormalizer"
+            },
+            "template": null,
+            "inputContract": "backend semantic JSON normalization configuration",
+            "outputSchema": null,
+            "validator": null,
+            "minimumInvocation": "references/contracts/representation-normalizer.md",
+            "example": null
+          },
+          {
+            "id": "run-representation-normalizer",
+            "operation": "normalize",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "runRepresentationNormalizer"
+            },
+            "template": null,
+            "inputContract": "backend artifact + selected representation normalizer",
+            "outputSchema": "refas.normalized-representation/v1",
+            "validator": {
+              "library": "validateNormalizedRepresentation"
+            },
+            "minimumInvocation": "references/contracts/representation-normalizer.md",
+            "example": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "cross-representation-validation",
+      "path": "references/contracts/cross-representation-validation.md",
+      "owners": [
+        "assembly"
+      ],
+      "requires": [
+        "representation-normalizer"
+      ],
+      "conditionalRequires": [],
+      "authority": "cross-representation-evidence",
+      "closureEffects": [],
+      "runtimeCapabilities": [
+        "assembly"
+      ],
+      "interface": {
+        "mode": "library",
+        "interfaces": [
+          {
+            "id": "cross-representation-validation",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createCrossRepresentationValidation"
+            },
+            "template": null,
+            "inputContract": "canonical export view + normalized backend representation",
+            "outputSchema": "refas.cross-representation-validation/v1",
+            "validator": {
+              "library": "validateCrossRepresentationValidation"
+            },
+            "minimumInvocation": "references/contracts/cross-representation-validation.md",
+            "example": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "divergence-authorization",
+      "path": "references/contracts/divergence-authorization.md",
+      "owners": [
+        "assembly"
+      ],
+      "requires": [
+        "cross-representation-validation",
+        "inference-authority"
+      ],
+      "conditionalRequires": [],
+      "authority": "declared-divergence-authorization",
+      "closureEffects": [],
+      "runtimeCapabilities": [
+        "assembly"
+      ],
+      "interface": {
+        "mode": "library",
+        "interfaces": [
+          {
+            "id": "divergence-authorization",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createDivergenceAuthorization"
+            },
+            "template": null,
+            "inputContract": "current DRIFT evidence + exact backend divergence declaration + engineered semantic authority",
+            "outputSchema": "refas.divergence-authorization/v1",
+            "validator": {
+              "library": "validateDivergenceAuthorization"
+            },
+            "minimumInvocation": "references/contracts/divergence-authorization.md",
+            "example": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "physical-claims",
+      "path": "references/contracts/physical-claims.md",
+      "owners": [
+        "assembly",
+        "whole-object-certification"
+      ],
+      "requires": [
+        "physical-asset-bundle",
+        "cross-representation-validation"
+      ],
+      "conditionalRequires": [
+        {
+          "when": "claim relies on declared backend divergence",
+          "nodes": [
+            "divergence-authorization"
+          ]
+        },
+        {
+          "when": "physical claim is being finally authorized",
+          "nodes": [
+            "claim-certification"
+          ]
+        }
+      ],
+      "authority": "physical-readiness-evidence",
+      "closureEffects": [],
+      "runtimeCapabilities": [
+        "assembly",
+        "whole-object-certification"
+      ],
+      "interface": {
+        "mode": "library",
+        "interfaces": [
+          {
+            "id": "physical-claim-evidence",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createPhysicalClaimEvidence"
+            },
+            "template": null,
+            "inputContract": "claim scope + exact bundle/cross-validation/divergence evidence bindings",
+            "outputSchema": "refas.physical-claim-evidence/v1",
+            "validator": {
+              "library": "validatePhysicalClaimEvidence"
+            },
+            "minimumInvocation": "references/contracts/physical-claims.md",
+            "example": null
+          },
+          {
+            "id": "physical-claim-policy",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createPhysicalClaimCertificationPolicy"
+            },
+            "template": null,
+            "inputContract": "physical claim IDs + required evidence/authority obligations",
+            "outputSchema": "refas.certification-policy/v1",
+            "validator": {
+              "library": "validateCertificationPolicy"
+            },
+            "minimumInvocation": "references/contracts/physical-claims.md",
+            "example": null
+          },
+          {
+            "id": "evaluate-physical-claim",
+            "operation": "evaluate",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "evaluatePhysicalClaimCertification"
+            },
+            "template": null,
+            "inputContract": "physical claim certification policy + sealed candidate/evidence transaction",
+            "outputSchema": "refas.claim-certification-decision/v1",
+            "validator": {
+              "library": "validatePhysicalClaimCertificationDecision"
+            },
+            "minimumInvocation": "references/contracts/physical-claims.md",
+            "example": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "physical-fusion",
+      "path": "references/physical-fusion.md",
+      "owners": [
+        "assembly"
+      ],
+      "requires": [
+        "assembly",
+        "logical-fusion",
+        "attachment-propagation"
+      ],
+      "conditionalRequires": [
+        {
+          "when": "physical fusion is justified",
+          "nodes": []
+        }
+      ],
+      "authority": "finalization-only",
+      "closureEffects": [
+        "requires-revalidation-after-bake"
+      ],
+      "runtimeCapabilities": [
+        "assembly"
+      ],
+      "interface": {
+        "mode": "library",
+        "interfaces": [
+          {
+            "id": "physical-fusion-plan",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createPhysicalFusionPlan"
+            },
+            "template": null,
+            "inputContract": "logical fusion group + canonical semantic members + finalization policy",
+            "outputSchema": "refas.physical-fusion-plan/v1",
+            "validator": {
+              "library": "validatePhysicalFusionPlan"
+            },
+            "minimumInvocation": "references/physical-fusion.md",
+            "example": null
+          },
+          {
+            "id": "bake-physical-fusion",
+            "operation": "mutate",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "bakePhysicalFusion"
+            },
+            "template": null,
+            "inputContract": "validated physical fusion plan + exact source GLB/geometry inputs",
+            "outputSchema": "refas.physical-fusion-report/v1",
+            "validator": {
+              "library": "validatePhysicalFusionResult"
+            },
+            "minimumInvocation": "references/physical-fusion.md",
+            "example": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "realized-contact-support",
+      "path": "references/realized-contact-support.md",
+      "owners": [
+        "assembly"
+      ],
+      "requires": [
+        "assembly",
+        "attachment-propagation"
+      ],
+      "conditionalRequires": [
+        {
+          "when": "physical fusion was used",
+          "nodes": [
+            "physical-fusion"
+          ]
+        }
+      ],
+      "authority": "realized-structure-gate",
+      "closureEffects": [
+        "gates-structural-closure"
+      ],
+      "runtimeCapabilities": [
+        "assembly"
+      ],
+      "interface": {
+        "mode": "library",
+        "interfaces": [
+          {
+            "id": "realized-contact-plan",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createRealizedContactPlan"
+            },
+            "template": null,
+            "inputContract": "final realized modules + expected contact/support/clearance relations",
+            "outputSchema": "refas.realized-contact-plan/v1",
+            "validator": {
+              "library": "validateRealizedContactPlan"
+            },
+            "minimumInvocation": "references/realized-contact-support.md",
+            "example": null
+          },
+          {
+            "id": "analyze-realized-contact",
+            "operation": "evaluate",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "analyzeRealizedContact"
+            },
+            "template": null,
+            "inputContract": "validated realized-contact plan + final GLB geometry evidence",
+            "outputSchema": "refas.realized-contact-report/v1",
+            "validator": {
+              "library": "validateRealizedContactResult"
+            },
+            "minimumInvocation": "references/realized-contact-support.md",
+            "example": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "appearance",
+      "path": "references/appearance.md",
+      "owners": [
+        "appearance"
+      ],
+      "requires": [
+        "assembly"
+      ],
+      "conditionalRequires": [],
+      "authority": "appearance",
+      "closureEffects": [],
+      "runtimeCapabilities": [
+        "appearance"
+      ],
+      "interface": {
+        "mode": "hybrid",
+        "interfaces": [
+          {
+            "id": "render-pbr",
+            "operation": "render",
+            "cli": {
+              "bin": "refas",
+              "command": "render-pbr"
+            },
+            "library": null,
+            "template": "assets/templates/canonical-object-frame.json",
+            "inputContract": "GLB + canonical object frame + optional reference image",
+            "outputSchema": "refas.pbr-render-report/v1",
+            "validator": null,
+            "minimumInvocation": "references/appearance.md",
+            "example": null
+          },
+          {
+            "id": "pbr-render-report",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createPbrRenderReport"
+            },
+            "template": "assets/templates/pbr-render-report.json",
+            "inputContract": "exact asset/frame digests + renderer identity/features + output frame digests",
+            "outputSchema": "refas.pbr-render-report/v1",
+            "validator": {
+              "library": "validatePbrRenderReport"
+            },
+            "minimumInvocation": "references/appearance.md",
+            "example": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "validation",
+      "path": "references/validation.md",
+      "owners": [
+        "rendering",
+        "visual-critique",
+        "whole-object-certification"
+      ],
+      "requires": [
+        "appearance"
+      ],
+      "conditionalRequires": [
+        {
+          "when": "asset makes assembly/contact/support claims",
+          "nodes": [
+            "realized-contact-support"
+          ]
+        }
+      ],
+      "authority": "visual-gate",
+      "closureEffects": [
+        "gates-visual-closure"
+      ],
+      "runtimeCapabilities": [
+        "rendering",
+        "visual-critique",
+        "whole-object-certification"
+      ],
+      "interface": {
+        "mode": "hybrid",
+        "interfaces": [
+          {
+            "id": "render-multiview",
+            "operation": "render",
+            "cli": {
+              "bin": "refas",
+              "command": "render"
+            },
+            "library": null,
+            "template": "assets/templates/canonical-object-frame.json",
+            "inputContract": "GLB + optional reference + canonical object frame",
+            "outputSchema": null,
+            "validator": null,
+            "minimumInvocation": "references/validation.md",
+            "example": null
+          },
+          {
+            "id": "registered-comparison",
+            "operation": "compare",
+            "cli": {
+              "bin": "refas",
+              "command": "compare"
+            },
+            "library": null,
+            "template": "assets/templates/registered-comparison-input.json",
+            "inputContract": "source/render/registration/hierarchy bindings + critique scopes",
+            "outputSchema": "refas.registered-comparison/v1",
+            "validator": null,
+            "minimumInvocation": "references/validation.md",
+            "example": null
+          },
+          {
+            "id": "visual-review",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createVisualReview"
+            },
+            "template": "assets/templates/visual-review.json",
+            "inputContract": "exact source/asset digests + standard views + visual gate verdicts + findings",
+            "outputSchema": "refas.visual-review/v1",
+            "validator": {
+              "library": "validateVisualReview"
+            },
+            "minimumInvocation": "references/validation.md",
+            "example": null
+          },
+          {
+            "id": "projection-aware-visual-review",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createProjectionAwareVisualReview"
+            },
+            "template": null,
+            "inputContract": "visual-review input plus realized projection/reference geometry evidence",
+            "outputSchema": "refas.visual-review/v1",
+            "validator": {
+              "library": "validateVisualReview"
+            },
+            "minimumInvocation": "references/validation.md",
+            "example": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "candidate-transactions",
+      "path": "references/candidate-transactions.md",
+      "owners": [
+        "whole-object-certification"
+      ],
+      "requires": [
+        "checkpointing"
+      ],
+      "conditionalRequires": [],
+      "authority": "provenance-sealing-only",
+      "closureEffects": [],
+      "runtimeCapabilities": [
+        "whole-object-certification"
+      ],
+      "interface": {
+        "mode": "library",
+        "interfaces": [
+          {
+            "id": "candidate-transaction",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createCandidateTransaction"
+            },
+            "template": null,
+            "inputContract": "candidate checkpoint + exact artifact roles + dependency proofs + evidence bindings",
+            "outputSchema": "refas.candidate-transaction/v1",
+            "validator": {
+              "library": "validateCandidateTransaction"
+            },
+            "minimumInvocation": "references/candidate-transactions.md",
+            "example": "references/candidate-transactions.md"
+          }
+        ]
+      }
+    },
+    {
+      "id": "claim-certification",
+      "path": "references/claim-certification.md",
+      "owners": [
+        "whole-object-certification"
+      ],
+      "requires": [
+        "candidate-transactions",
+        "validation"
+      ],
+      "conditionalRequires": [
+        {
+          "when": "real source",
+          "nodes": [
+            "relational-structure",
+            "inference-authority",
+            "whole-system-relational-barrier"
+          ]
+        },
+        {
+          "when": "asset makes assembly/contact/support claims",
+          "nodes": [
+            "realized-contact-support"
+          ]
+        }
+      ],
+      "authority": "final-authorization",
+      "closureEffects": [
+        "authorizes-whole-object-certificate"
+      ],
+      "runtimeCapabilities": [
+        "whole-object-certification"
+      ],
+      "interface": {
+        "mode": "hybrid",
+        "interfaces": [
+          {
+            "id": "certify-project",
+            "operation": "certify",
+            "cli": {
+              "bin": "refas",
+              "command": "certify"
+            },
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "certifyProject"
+            },
+            "template": null,
+            "inputContract": "current project head + sealed candidate/evidence + applicable closure obligations",
+            "outputSchema": null,
+            "validator": null,
+            "minimumInvocation": "references/claim-certification.md",
+            "example": null
+          },
+          {
+            "id": "certification-policy",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createCertificationPolicy"
+            },
+            "template": null,
+            "inputContract": "claim IDs + evidence/authority requirements + decision policy",
+            "outputSchema": "refas.certification-policy/v1",
+            "validator": {
+              "library": "validateCertificationPolicy"
+            },
+            "minimumInvocation": "references/claim-certification.md",
+            "example": null
+          },
+          {
+            "id": "evaluate-certification-policy",
+            "operation": "evaluate",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "evaluateCertificationPolicy"
+            },
+            "template": null,
+            "inputContract": "certification policy + sealed candidate transaction + current evidence set",
+            "outputSchema": "refas.claim-certification-decision/v1",
+            "validator": {
+              "library": "validateClaimCertificationDecision"
+            },
+            "minimumInvocation": "references/claim-certification.md",
+            "example": null
+          }
+        ]
+      }
+    }
   ],
   "findingOwners": {
-    "source-drift":"source-intake","context-loss":"visual-hierarchy","missing-part":"visual-hierarchy","observation-unsupported":"visual-observation","evidence-insufficient":"visual-observation","perspective-mismatch":"spatial-hypotheses","depth-mismatch":"spatial-hypotheses","orientation-mismatch":"spatial-hypotheses","camera-hypothesis-mismatch":"spatial-hypotheses","relational-authority-unresolved":"spatial-hypotheses","relational-constraint-conflict":"spatial-hypotheses","silhouette-mismatch":"shape-reconstruction","mass-proportion-mismatch":"shape-reconstruction","curvature-mismatch":"shape-reconstruction","whole-system-relation-mismatch":"shape-reconstruction","pattern-topology-mismatch":"surface-topology","relief-mismatch":"surface-topology","attachment-mismatch":"assembly","occlusion-mismatch":"assembly","penetration":"assembly","material-mismatch":"appearance","finish-mismatch":"appearance","camera-mismatch":"rendering","render-camera-integrity":"rendering","render-integrity":"rendering","unroutable-visual-finding":"visual-critique","closure-evidence-missing":"whole-object-certification"
+    "source-drift": "source-intake",
+    "context-loss": "visual-hierarchy",
+    "missing-part": "visual-hierarchy",
+    "observation-unsupported": "visual-observation",
+    "evidence-insufficient": "visual-observation",
+    "perspective-mismatch": "spatial-hypotheses",
+    "depth-mismatch": "spatial-hypotheses",
+    "orientation-mismatch": "spatial-hypotheses",
+    "camera-hypothesis-mismatch": "spatial-hypotheses",
+    "relational-authority-unresolved": "spatial-hypotheses",
+    "relational-constraint-conflict": "spatial-hypotheses",
+    "silhouette-mismatch": "shape-reconstruction",
+    "mass-proportion-mismatch": "shape-reconstruction",
+    "curvature-mismatch": "shape-reconstruction",
+    "whole-system-relation-mismatch": "shape-reconstruction",
+    "pattern-topology-mismatch": "surface-topology",
+    "relief-mismatch": "surface-topology",
+    "attachment-mismatch": "assembly",
+    "occlusion-mismatch": "assembly",
+    "penetration": "assembly",
+    "material-mismatch": "appearance",
+    "finish-mismatch": "appearance",
+    "camera-mismatch": "rendering",
+    "render-camera-integrity": "rendering",
+    "render-integrity": "rendering",
+    "unroutable-visual-finding": "visual-critique",
+    "closure-evidence-missing": "whole-object-certification"
   },
-  "deprecatedFindings": {"camera-mismatch":"Legacy compatibility only. New findings must use camera-hypothesis-mismatch for a wrong source/model camera hypothesis or render-camera-integrity when the renderer fails to execute the declared camera/frame."},
-  "certification": {"node":"claim-certification","realSourceRequires":["candidate-transactions","validation","relational-structure","inference-authority","whole-system-relational-barrier"],"realSourceArtifactRequirements":["refas.certification-relational-evidence/v1"]}
+  "deprecatedFindings": {
+    "camera-mismatch": "Legacy compatibility only. New findings must use camera-hypothesis-mismatch for a wrong source/model camera hypothesis or render-camera-integrity when the renderer fails to execute the declared camera/frame."
+  },
+  "certification": {
+    "node": "claim-certification",
+    "realSourceRequires": [
+      "candidate-transactions",
+      "validation",
+      "relational-structure",
+      "inference-authority",
+      "whole-system-relational-barrier"
+    ],
+    "realSourceArtifactRequirements": [
+      "refas.certification-relational-evidence/v1"
+    ]
+  },
+  "interfaceSchema": "refas.instruction-node-interface/v1"
 }
