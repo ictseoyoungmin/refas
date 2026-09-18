@@ -525,7 +525,7 @@ export function fixtureForCapabilityInterface(key, context, outputs = new Map())
       propagationAttachmentSemantics:context.propagation.attachmentSemantics,
       propagationSurfaceAnchorSet:context.propagation.surfaceAnchorSet,
       propagationSurfaces:context.propagation.surfaces,
-      propagationOwnerWorldFrames:[{entityId:'root',frame:I()}],
+      propagationOwnerWorldFrames:[{entityId:'root',stateDigest:D('c'),frame:I()}],
     });
   } else if (key === 'multi-anchor-solver/multi-anchor-plan') {
     bindings.multiAttachmentSemantics = context.multi.attachmentSemantics;
@@ -568,7 +568,7 @@ export function fixtureForCapabilityInterface(key, context, outputs = new Map())
       propagationFollowState:context.propagation.followState,
       propagationMultiAnchorPlans:context.propagation.multiAnchorPlans,
       propagationArticulatedJoints:context.propagation.articulatedJoints,
-      propagationOwnerWorldFrames:[{entityId:'root',frame:I()}],
+      propagationOwnerWorldFrames:[{entityId:'root',stateDigest:D('c'),frame:I()}],
     });
   } else if (key === 'assembly/realized-assembly-proof') {
     Object.assign(bindings,{realizedAssemblyGlb:context.realizedAssembly.glb,realizedAssemblyModules:context.realizedAssembly.modules,realizedAssemblyAttachments:context.realizedAssembly.attachments,realizedAssemblyObjectIds:context.realizedAssembly.objectIdEvidence});
@@ -636,6 +636,8 @@ export function fixtureForCapabilityInterface(key, context, outputs = new Map())
     bindings.parameterFitPlan=plan;
     bindings.parameterFitEvaluator=async (parameters,run)=>({measurements:{'silhouette-error':Math.abs(parameters.span-1)+Math.abs(parameters.bend)},candidateAsset:plan.baselineAsset,renderEvidence:{schema:'refas.content-reference/v1',kind:'render-report',path:`trials/${run.trialId}/render.json`,sha256:API.digestBytes(`render-${run.trialId}`),sizeBytes:Buffer.byteLength(`render-${run.trialId}`)},evidenceRefs:[`trials/${run.trialId}/hero.png`]});
     bindings.parameterFitVerifyReference=async()=>true;
+  } else if (key === 'validation/projection-aware-visual-review') {
+    bindings.projectionFit=outputs.get('spatial-reasoning/projection-fit');
   } else if (key === 'candidate-transactions/candidate-transaction') {
     Object.assign(bindings,{candidateBytes:context.candidate.candidateBytes,candidateCheckpoint:context.candidate.checkpoint,candidateEvidence:context.candidate.evidence,candidateDecisionNodeIds:context.candidate.decisionNodeIds,candidateObligations:context.candidate.obligations,candidateValidationContext:{candidateBytes:context.candidate.candidateBytes,checkpoint:context.candidate.checkpoint,evidenceBytesById:context.candidate.evidenceBytesById}});
   } else if (key === 'claim-certification/evaluate-certification-policy') {

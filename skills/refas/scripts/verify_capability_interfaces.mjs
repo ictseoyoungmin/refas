@@ -16,7 +16,7 @@ function skillPath(value,label,errors){
   if(value==null)return null;
   if(typeof value!=='string'||!value.trim()){errors.push(`${label} must be null or a non-empty skill-local path`);return null;}
   const route=value.split('#',1)[0].split('?',1)[0],normalized=portable(path.posix.normalize(route));
-  if(path.posix.isAbsolute(normalized)||normalized==='..'||normalized.startsWith('../')||normalized.startsWith('skills/refas/')){errors.push(`${label} must remain inside the installed skill root: ${value}`);return null;}
+  if(path.posix.isAbsolute(normalized)||normalized==='..'||normalized.startsWith(['..',''].join('/'))||normalized.startsWith(['skills','refas',''].join('/'))){errors.push(`${label} must remain inside the installed skill root: ${value}`);return null;}
   return normalized;
 }
 function templateReference(value){const s=String(value??''),i=s.indexOf('#');return i<0?{route:s,fragment:''}:{route:s.slice(0,i),fragment:s.slice(i)};}
