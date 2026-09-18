@@ -91,7 +91,7 @@ export function normalizeCheckpointGateRequests(capability, raw = []) {
   return requests;
 }
 
-export function createCheckpointGateVerdict({capability, id, status, evidenceRefs = []} = {}) {
+function createCheckpointGateVerdict({capability, id, status, evidenceRefs = []} = {}) {
   capability = assertCapability(capability);
   id = assertId(id, 'gate.id');
   const policy = checkpointGatePolicy(capability, id);
