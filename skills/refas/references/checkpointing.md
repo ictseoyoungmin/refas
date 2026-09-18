@@ -8,12 +8,26 @@ A checkpoint is an immutable, content-addressed record of a trustworthy state. I
 - parent checkpoint;
 - reason the state is trustworthy;
 - artifact paths, sizes, and SHA-256 values;
-- accepted claims and gate results;
+- accepted claims and **runtime-derived gate verdicts**;
 - optional owner metadata.
 
 Checkpoint files live under `.refas/checkpoints/`. Exact artifact bytes live in the content-addressed `.refas/objects/` store. Restoring materializes those bytes at their recorded project-relative paths, changes the active head, invalidates semantic dependents, and preserves all history.
 
-A checkpoint is rejected when an artifact is missing, its size or SHA-256 does not match, its real path escapes the project through traversal or a symlink, a prerequisite capability is absent, or any declared gate is not `pass`.
+A checkpoint is rejected when an artifact is missing, its size or SHA-256 does not match, its real path escapes the project through traversal or a symlink, a prerequisite capability is absent, or any runtime-evaluated gate is not `pass`.
+
+## Gate authority
+
+Checkpoint callers submit **gate requests**, never gate verdicts:
+
+```json
+{"id":"assembly-gate","evidenceRefs":["model/assembly.json"]}
+```
+
+Do not send `status`, evaluator IDs, policy digests, or decision digests. Those fields are runtime-authoritative and caller-supplied values are rejected.
+
+The canonical policy is exported as `CHECKPOINT_GATE_POLICIES` and `CHECKPOINT_GATE_POLICY_DIGEST`. Local capability gates use the runtime `bound-evidence` evaluator and pass only when every cited reference is the bound primary source or a current candidate artifact. Whole-object closure gates use specialized evaluators for source integrity, trusted lineage coverage, the exact digest-bound visual review, and precommit project integrity.
+
+Persisted checkpoint gates are `refas.checkpoint-gate-verdict/v1` records. They include the runtime evaluator, policy digest, and decision digest. `audit` validates that authority and rechecks the evidence binding; rewriting a verdict and re-signing only the checkpoint content digest does not make it trustworthy.
 
 ## When to checkpoint
 
