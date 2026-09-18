@@ -200,11 +200,22 @@ function checkpointLineage(checkpoints, headId) {
 
 function validatePersistedGateSet(checkpoint) {
   const errors = [];
-  const expected = expectedCheckpointGateIds(checkpoint.capability);
-  errors.push(...exactSetErrors((checkpoint.gates ?? []).map((gate) => gate.id), expected, `${checkpoint.id ?? checkpoint.capability} gates`));
-  for (const gate of checkpoint.gates ?? []) {
+  const gates = checkpoint.gates ?? [];
+  const allLegacy = gates.length > 0 && gates.every(isLegacyCheckpointGate);
+  if (allLegacy && checkpoint.capability !== 'whole-object-certification') {
+    const ids = gates.map((gate) => gate.id);
+    const duplicates = ids.filter((value, index) => ids.indexOf(value) !== index);
+    if (duplicates.length) errors.push(`${checkpoint.id ?? checkpoint.capability} legacy gates contain duplicate IDs: ${[...new Set(duplicates)].join(', ')}`);
+  } else {
+    const expected = expectedCheckpointGateIds(checkpoint.capability);
+    errors.push(...exactSetErrors(gates.map((gate) => gate.id), expected, `${checkpoint.id ?? checkpoint.capability} gates`));
+  }
+  if (!gates.length) errors.push(`${checkpoint.id ?? checkpoint.capability} requires at least one persisted gate`);
+  for (const gate of gates) {
     if (isLegacyCheckpointGate(gate)) {
-      if (!checkpointGatePolicy(checkpoint.capability, gate.id)) errors.push(`legacy gate is not canonical for ${checkpoint.capability}: ${gate.id}`);
+      if (checkpoint.capability === 'whole-object-certification' && !checkpointGatePolicy(checkpoint.capability, gate.id)) {
+        errors.push(`legacy closure gate is not canonical: ${gate.id}`);
+      }
       if (String(gate.status).toLowerCase() !== 'pass') errors.push(`legacy checkpoint contains non-pass gate: ${gate.id}`);
       if (!(gate.evidenceRefs?.length > 0)) errors.push(`legacy passing gate has no evidenceRefs: ${gate.id}`);
       continue;
@@ -333,9 +344,15 @@ async function auditGateAuthority(root, state, checkpoint, checkpoints) {
   const lineage = checkpointLineage(checkpoints, checkpoint.parentId);
 
   for (const gate of checkpoint.gates ?? []) {
-    const policy = checkpointGatePolicy(checkpoint.capability, gate.id);
-    if (!policy) continue;
     const legacy = isLegacyCheckpointGate(gate);
+    let policy = checkpointGatePolicy(checkpoint.capability, gate.id);
+    if (!policy && legacy && checkpoint.capability !== 'whole-object-certification') {
+      policy = checkpointGatePolicy(checkpoint.capability, `${checkpoint.capability}-gate`);
+    }
+    if (!policy) {
+      errors.push(`${checkpoint.id} gate has no runtime authority policy: ${gate.id}`);
+      continue;
+    }
 
     if (policy.evaluator === 'bound-evidence') {
       const allowed = new Set([state.source?.path, ...checkpoint.artifactRefs.map((artifact) => artifact.path)].filter(Boolean));
