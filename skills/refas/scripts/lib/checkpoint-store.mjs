@@ -25,6 +25,13 @@ import {
 } from './visual-review.mjs';
 import {validatePbrRenderReport} from './pbr-render-report.mjs';
 import {findComparisonContradictions, validateRegisteredComparison} from './registered-comparison.mjs';
+import {
+  checkpointGatePolicy,
+  createCheckpointGateVerdict,
+  expectedCheckpointGateIds,
+  normalizeCheckpointGateRequests,
+  validateCheckpointGateVerdict,
+} from './checkpoint-gates.mjs';
 
 export const PROJECT_STATE_SCHEMA = 'refas.project-state/v1';
 export const CHECKPOINT_SCHEMA = 'refas.checkpoint/v1';
@@ -79,18 +86,6 @@ async function writeBytesAtomic(root, relativePath, bytes) {
   await fs.writeFile(temporary, bytes);
   await fs.rename(temporary, resolved.absolute);
   return resolved.relative;
-}
-
-function normalizeGate(raw, index) {
-  const status = String(raw?.status ?? 'pending').toLowerCase();
-  if (!['pass', 'fail', 'pending', 'blocked'].includes(status)) throw new Error(`gates[${index}].status is invalid`);
-  const gate = {
-    id: assertId(raw.id, `gates[${index}].id`),
-    status,
-    evidenceRefs: [...(raw.evidenceRefs ?? [])].map(String).filter(Boolean),
-  };
-  if (gate.status === 'pass' && !gate.evidenceRefs.length) throw new Error(`gates[${index}] requires current evidenceRefs to pass`);
-  return gate;
 }
 
 function normalizeSourceManifest(raw) {
@@ -200,6 +195,179 @@ function checkpointLineage(checkpoints, headId) {
     cursor = cursor.parentId ? byId.get(cursor.parentId) : null;
   }
   return reverse.reverse();
+}
+
+function validatePersistedGateSet(checkpoint) {
+  const errors = [];
+  const expected = expectedCheckpointGateIds(checkpoint.capability);
+  errors.push(...exactSetErrors((checkpoint.gates ?? []).map((gate) => gate.id), expected, `${checkpoint.id ?? checkpoint.capability} gates`));
+  for (const gate of checkpoint.gates ?? []) {
+    const validation = validateCheckpointGateVerdict(checkpoint.capability, gate);
+    errors.push(...validation.errors);
+    if (gate.status !== 'pass') errors.push(`checkpoint contains non-pass runtime gate: ${gate.id}`);
+  }
+  return errors;
+}
+
+async function precommitProjectIntegrityErrors(root, state, lineage, storedArtifacts) {
+  const errors = [];
+  try {
+    await verifySource(root, normalizeSourceManifest(state.source));
+  } catch (error) {
+    errors.push(`source integrity: ${error.message}`);
+  }
+  for (const checkpoint of lineage) {
+    if (digestJson(checkpointContent(checkpoint)) !== checkpoint.contentDigest) errors.push(`${checkpoint.id} content digest mismatch`);
+    errors.push(...validatePersistedGateSet(checkpoint));
+    for (const artifact of checkpoint.artifactRefs) {
+      const objectError = await verifyStoredObject(root, artifact);
+      if (objectError) errors.push(`${checkpoint.id}:${artifact.path}: ${objectError}`);
+    }
+  }
+  for (const artifact of storedArtifacts) {
+    const objectError = await verifyStoredObject(root, artifact);
+    if (objectError) errors.push(`candidate:${artifact.path}: ${objectError}`);
+  }
+  return errors;
+}
+
+function boundEvidenceStatus(state, storedArtifacts, request) {
+  const allowed = new Set([state.source?.path, ...storedArtifacts.map((artifact) => artifact.path)].filter(Boolean));
+  const missing = request.evidenceRefs.filter((ref) => !allowed.has(ref));
+  return {
+    status: request.evidenceRefs.length > 0 && missing.length === 0 ? 'pass' : 'fail',
+    evidenceRefs: request.evidenceRefs,
+    missing,
+  };
+}
+
+async function evaluateCheckpointGateRequests(root, {state, capability, scopeId, requests, storedArtifacts, lineage}) {
+  const verdicts = [];
+  const visualReviewArtifacts = storedArtifacts.filter((artifact) => artifact.kind === 'visual-review');
+
+  for (const request of requests) {
+    const policy = checkpointGatePolicy(capability, request.id);
+    if (!policy) throw new Error(`no runtime gate policy for ${capability}/${request.id}`);
+
+    if (policy.evaluator === 'bound-evidence') {
+      const result = boundEvidenceStatus(state, storedArtifacts, request);
+      verdicts.push(createCheckpointGateVerdict({capability, id: request.id, status: result.status, evidenceRefs: result.evidenceRefs}));
+      continue;
+    }
+
+    if (policy.evaluator === 'source-integrity') {
+      let status = 'pass';
+      try {
+        await verifySource(root, normalizeSourceManifest(state.source));
+      } catch {
+        status = 'fail';
+      }
+      verdicts.push(createCheckpointGateVerdict({
+        capability, id: request.id, status, evidenceRefs: state.source?.path ? [state.source.path] : [],
+      }));
+      continue;
+    }
+
+    if (policy.evaluator === 'lineage-capability') {
+      const dependency = [...lineage].reverse().find((checkpoint) =>
+        checkpoint.capability === policy.capability && scopeContains(checkpoint.scopeId, scopeId));
+      const valid = dependency && validatePersistedGateSet(dependency).length === 0;
+      verdicts.push(createCheckpointGateVerdict({
+        capability,
+        id: request.id,
+        status: valid ? 'pass' : 'fail',
+        evidenceRefs: valid ? dependency.artifactRefs.map((artifact) => artifact.path) : [],
+      }));
+      continue;
+    }
+
+    if (policy.evaluator === 'visual-review-gate') {
+      let status = 'fail';
+      let evidenceRefs = [];
+      if (visualReviewArtifacts.length === 1) {
+        const artifact = visualReviewArtifacts[0];
+        try {
+          const review = await readJson(path.join(root, artifact.path));
+          const validation = validateVisualReview(review);
+          const gate = (review.gateVerdicts ?? []).find((item) => item.id === policy.visualGateId);
+          if (validation.valid && review.scopeId === scopeId && gate) {
+            status = gate.status === 'pass' ? 'pass' : 'fail';
+            evidenceRefs = [artifact.path];
+          }
+        } catch {
+          status = 'fail';
+        }
+      }
+      verdicts.push(createCheckpointGateVerdict({capability, id: request.id, status, evidenceRefs}));
+      continue;
+    }
+
+    if (policy.evaluator === 'project-integrity') {
+      const errors = await precommitProjectIntegrityErrors(root, state, lineage, storedArtifacts);
+      verdicts.push(createCheckpointGateVerdict({
+        capability,
+        id: request.id,
+        status: errors.length ? 'fail' : 'pass',
+        evidenceRefs: errors.length ? [] : storedArtifacts.map((artifact) => artifact.path),
+      }));
+      continue;
+    }
+
+    throw new Error(`unsupported checkpoint gate evaluator: ${policy.evaluator}`);
+  }
+
+  return verdicts;
+}
+
+async function auditGateAuthority(root, state, checkpoint, checkpoints) {
+  const errors = validatePersistedGateSet(checkpoint);
+  const byId = new Map(checkpoints.map((item) => [item.id, item]));
+  const lineage = checkpointLineage(checkpoints, checkpoint.parentId);
+
+  for (const gate of checkpoint.gates ?? []) {
+    const policy = checkpointGatePolicy(checkpoint.capability, gate.id);
+    if (!policy) continue;
+
+    if (policy.evaluator === 'bound-evidence') {
+      const allowed = new Set([state.source?.path, ...checkpoint.artifactRefs.map((artifact) => artifact.path)].filter(Boolean));
+      if (gate.evidenceRefs.some((ref) => !allowed.has(ref))) errors.push(`${checkpoint.id} gate ${gate.id} cites unbound evidence`);
+    } else if (policy.evaluator === 'source-integrity') {
+      if (JSON.stringify(gate.evidenceRefs) !== JSON.stringify(state.source?.path ? [state.source.path] : [])) {
+        errors.push(`${checkpoint.id} source-integrity gate evidence binding mismatch`);
+      }
+    } else if (policy.evaluator === 'lineage-capability') {
+      const dependency = [...lineage].reverse().find((item) =>
+        item.capability === policy.capability && scopeContains(item.scopeId, checkpoint.scopeId));
+      const expectedRefs = dependency ? dependency.artifactRefs.map((artifact) => artifact.path).sort() : [];
+      if (!dependency || JSON.stringify([...gate.evidenceRefs].sort()) !== JSON.stringify(expectedRefs)) {
+        errors.push(`${checkpoint.id} gate ${gate.id} lineage authority mismatch`);
+      }
+    } else if (policy.evaluator === 'visual-review-gate') {
+      const reviewArtifacts = checkpoint.artifactRefs.filter((artifact) => artifact.kind === 'visual-review');
+      if (reviewArtifacts.length !== 1 || gate.evidenceRefs.length !== 1 || gate.evidenceRefs[0] !== reviewArtifacts[0]?.path) {
+        errors.push(`${checkpoint.id} gate ${gate.id} visual-review binding mismatch`);
+      } else {
+        try {
+          const bytes = await fs.readFile(objectPath(root, reviewArtifacts[0].sha256), 'utf8');
+          const review = JSON.parse(bytes);
+          const validation = validateVisualReview(review);
+          const reviewGate = (review.gateVerdicts ?? []).find((item) => item.id === policy.visualGateId);
+          if (!validation.valid || reviewGate?.status !== gate.status) errors.push(`${checkpoint.id} gate ${gate.id} does not match the stored visual review`);
+        } catch (error) {
+          errors.push(`${checkpoint.id} gate ${gate.id} visual-review authority unavailable: ${error.message}`);
+        }
+      }
+    } else if (policy.evaluator === 'project-integrity') {
+      const expectedRefs = checkpoint.artifactRefs.map((artifact) => artifact.path).sort();
+      if (JSON.stringify([...gate.evidenceRefs].sort()) !== JSON.stringify(expectedRefs)) {
+        errors.push(`${checkpoint.id} project-audit gate evidence binding mismatch`);
+      }
+      for (const ancestor of lineage) {
+        if (!byId.has(ancestor.id)) errors.push(`${checkpoint.id} project-audit lineage member missing: ${ancestor.id}`);
+      }
+    }
+  }
+  return errors;
 }
 
 function exactSetErrors(actual, expected, label) {
@@ -472,8 +640,7 @@ export async function commitCheckpoint(root, {
   scopeId = assertId(scopeId, 'scopeId');
   if (!state.source) throw new Error('bind and verify a primary source before creating a trustworthy checkpoint');
   if (!Array.isArray(artifactRefs) || !artifactRefs.length) throw new Error('a trustworthy checkpoint requires at least one recoverable artifact');
-  const normalizedGates = gates.map(normalizeGate);
-  if (!normalizedGates.length || normalizedGates.some((gate) => gate.status !== 'pass')) throw new Error('a trustworthy checkpoint requires one or more passing gates and no non-pass gate');
+  const gateRequests = normalizeCheckpointGateRequests(capability, gates);
   const checkpoints = await listCheckpoints(root);
   const lineage = checkpointLineage(checkpoints, state.head);
   ensurePrerequisites(capability, scopeId, lineage);
@@ -500,6 +667,13 @@ export async function commitCheckpoint(root, {
   if (new Set(declaredPaths).size !== declaredPaths.length) throw new Error('checkpoint artifact paths must be unique');
   const storedArtifacts = [];
   for (let index = 0; index < artifactRefs.length; index += 1) storedArtifacts.push(await storeArtifact(root, artifactRefs[index], index));
+  const runtimeGates = await evaluateCheckpointGateRequests(root, {
+    state, capability, scopeId, requests: gateRequests, storedArtifacts, lineage,
+  });
+  const rejectedGates = runtimeGates.filter((gate) => gate.status !== 'pass');
+  if (rejectedGates.length) {
+    throw new Error(`runtime gate evaluation rejected checkpoint: ${rejectedGates.map((gate) => `${gate.id}=${gate.status}`).join(', ')}`);
+  }
   const content = {
     schema: CHECKPOINT_SCHEMA,
     parentId: parent ?? null,
@@ -508,7 +682,7 @@ export async function commitCheckpoint(root, {
     reason: String(reason ?? ''),
     artifactRefs: storedArtifacts,
     claims: claims.map(String),
-    gates: normalizedGates,
+    gates: runtimeGates,
     metadata: structuredClone(metadata),
     transactionId,
   };
@@ -831,6 +1005,7 @@ export async function auditProject(root) {
   for (const checkpoint of checkpoints) {
     if (digestJson(checkpointContent(checkpoint)) !== checkpoint.contentDigest) errors.push(`${checkpoint.id} content digest mismatch`);
     if (checkpoint.parentId && !byId.has(checkpoint.parentId)) errors.push(`${checkpoint.id} parent missing`);
+    errors.push(...await auditGateAuthority(root, state, checkpoint, checkpoints));
     for (const artifact of checkpoint.artifactRefs) {
       const objectError = await verifyStoredObject(root, artifact);
       if (objectError) errors.push(`${checkpoint.id}:${artifact.path}: ${objectError}`);
