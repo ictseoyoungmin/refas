@@ -19,6 +19,7 @@ import {
   createVisualReview,
   createPbrRenderReport,
   digestBytes,
+  digestJson,
   finishEdit,
   initProject,
   loadProject,
@@ -62,7 +63,7 @@ async function checkpoint(root, artifactPath, capability, content, scopeId = 'wh
     reason: `${capability} fixture is trustworthy`,
     artifactRefs: [artifact],
     claims: [`${capability} closed`],
-    gates: gates ?? [{id: `${capability}-gate`, status: 'pass', evidenceRefs: [artifact.path]}],
+    gates: gates ?? [{id: `${capability}-gate`, evidenceRefs: [artifact.path]}],
   });
 }
 
@@ -165,7 +166,6 @@ async function commitCertificationAttempt(root, artifactPath, source, {includeRe
   }
   const gates = REQUIRED_CLOSURE_GATE_IDS.map((id) => ({
     id,
-    status: 'pass',
     evidenceRefs: [REQUIRED_VISUAL_GATE_IDS.includes(id) ? reviewPath : asset.path],
   }));
   const checkpoint = await commitCheckpoint(root, {
@@ -174,6 +174,75 @@ async function commitCertificationAttempt(root, artifactPath, source, {includeRe
   });
   return {checkpoint, review, asset};
 }
+
+test('checkpoint gates reject caller-authored verdict fields and derive trusted verdicts', async (t) => {
+  const {root, artifactPath} = await makeProject(t, 'gate-authority-study');
+  const artifact = await writeArtifact(root, artifactPath, Buffer.from('trusted source intake\n'));
+
+  await assert.rejects(() => commitCheckpoint(root, {
+    capability: 'source-intake',
+    scopeId: 'whole',
+    reason: 'caller must not author gate status',
+    artifactRefs: [artifact],
+    gates: [{id: 'source-intake-gate', status: 'pass', evidenceRefs: [artifact.path]}],
+  }), /status is runtime-authoritative/);
+
+  await assert.rejects(() => commitCheckpoint(root, {
+    capability: 'source-intake',
+    scopeId: 'whole',
+    reason: 'unbound evidence cannot pass',
+    artifactRefs: [artifact],
+    gates: [{id: 'source-intake-gate', evidenceRefs: ['reviews/not-bound.json']}],
+  }), /runtime gate evaluation rejected checkpoint: source-intake-gate=fail/);
+
+  const checkpoint = await commitCheckpoint(root, {
+    capability: 'source-intake',
+    scopeId: 'whole',
+    reason: 'runtime derives the gate verdict',
+    artifactRefs: [artifact],
+    gates: [{id: 'source-intake-gate', evidenceRefs: [artifact.path]}],
+  });
+  assert.equal(checkpoint.gates.length, 1);
+  assert.equal(checkpoint.gates[0].schema, 'refas.checkpoint-gate-verdict/v1');
+  assert.equal(checkpoint.gates[0].status, 'pass');
+  assert.equal(checkpoint.gates[0].evaluator, 'bound-evidence');
+  assert.match(checkpoint.gates[0].policyDigest, /^[a-f0-9]{64}$/);
+  assert.match(checkpoint.gates[0].decisionDigest, /^[a-f0-9]{64}$/);
+});
+
+test('project audit rejects a re-signed gate verdict whose evidence was not runtime-bound', async (t) => {
+  const {root, artifactPath} = await makeProject(t, 'gate-tamper-study');
+  const checkpoint = await checkpoint(root, artifactPath, 'source-intake', 'trusted:source-intake\n');
+  const file = path.join(root, '.refas', 'checkpoints', `${checkpoint.id}.json`);
+  const attacked = JSON.parse(await fs.readFile(file, 'utf8'));
+  attacked.gates[0].evidenceRefs = ['reviews/forged-pass.json'];
+  const gateCore = {
+    schema: attacked.gates[0].schema,
+    id: attacked.gates[0].id,
+    status: attacked.gates[0].status,
+    evidenceRefs: attacked.gates[0].evidenceRefs,
+    evaluator: attacked.gates[0].evaluator,
+    policyDigest: attacked.gates[0].policyDigest,
+  };
+  attacked.gates[0].decisionDigest = digestJson(gateCore);
+  const content = {
+    schema: attacked.schema,
+    parentId: attacked.parentId,
+    capability: attacked.capability,
+    scopeId: attacked.scopeId,
+    reason: attacked.reason,
+    artifactRefs: attacked.artifactRefs,
+    claims: attacked.claims,
+    gates: attacked.gates,
+    metadata: attacked.metadata,
+    transactionId: attacked.transactionId,
+  };
+  attacked.contentDigest = digestJson(content);
+  await fs.writeFile(file, `${JSON.stringify(attacked, null, 2)}\n`);
+  const audit = await auditProject(root);
+  assert.equal(audit.valid, false);
+  assert.match(audit.errors.join('\n'), /cites unbound evidence/);
+});
 
 test('checkpoint restore materializes exact content-addressed artifact bytes', async (t) => {
   const {root, artifactPath} = await makeProject(t);
@@ -252,24 +321,24 @@ test('artifact paths cannot escape the project through traversal or symlinks', a
   const fake = {kind: 'model-spec', path: '../escape.bin', sha256: digestBytes(Buffer.from('safe\n')), sizeBytes: 5};
   await assert.rejects(() => commitCheckpoint(root, {
     capability: 'source-intake', scopeId: 'whole', reason: 'unsafe path should fail', artifactRefs: [fake],
-    gates: [{id: 'source-gate', status: 'pass', evidenceRefs: ['source/reference.bin']}],
+    gates: [{id: 'source-intake-gate', evidenceRefs: ['source/reference.bin']}],
   }), /escapes the project root/);
 
   await assert.rejects(() => commitCheckpoint(root, {
     capability: 'source-intake', scopeId: 'whole', reason: 'internal path should fail',
     artifactRefs: [{...fake, path: '.refas/project.json'}],
-    gates: [{id: 'source-gate', status: 'pass', evidenceRefs: ['source/reference.bin']}],
+    gates: [{id: 'source-intake-gate', evidenceRefs: ['source/reference.bin']}],
   }), /internal state/);
 
   await assert.rejects(() => commitCheckpoint(root, {
     capability: 'source-intake', scopeId: 'whole', reason: 'empty artifact set should fail', artifactRefs: [],
-    gates: [{id: 'source-gate', status: 'pass', evidenceRefs: ['source/reference.bin']}],
+    gates: [{id: 'source-intake-gate', evidenceRefs: ['source/reference.bin']}],
   }), /recoverable artifact/);
 
   const safeRef = await contentReference(artifactPath, {root});
   await assert.rejects(() => commitCheckpoint(root, {
     capability: 'source-intake', scopeId: 'whole', reason: 'evidence-free gate should fail', artifactRefs: [safeRef],
-    gates: [{id: 'source-gate', status: 'pass', evidenceRefs: []}],
+    gates: [{id: 'source-intake-gate', evidenceRefs: []}],
   }), /current evidenceRefs/);
 
   const outside = await fs.mkdtemp(path.join(os.tmpdir(), 'refas-outside-'));
@@ -279,7 +348,7 @@ test('artifact paths cannot escape the project through traversal or symlinks', a
   const linked = {...await contentReference(path.join(outside, 'payload.bin'), {root}), path: 'model/outside-link/payload.bin'};
   await assert.rejects(() => commitCheckpoint(root, {
     capability: 'source-intake', scopeId: 'whole', reason: 'symlink should fail', artifactRefs: [linked],
-    gates: [{id: 'source-gate', status: 'pass', evidenceRefs: ['source/reference.bin']}],
+    gates: [{id: 'source-intake-gate', evidenceRefs: ['source/reference.bin']}],
   }), /outside the project root/);
 });
 
