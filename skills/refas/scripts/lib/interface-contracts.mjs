@@ -1,5 +1,3 @@
-import {deepFreeze} from './canonical.mjs';
-
 function record(value, label) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error(`${label} must be an object`);
   return value;
@@ -30,7 +28,7 @@ function materialize(value, bindings, values, path) {
     const key = String(value.$bind ?? '');
     if (!key) throw new Error(`${path}.$bind must name a public input binding`);
     if (!Object.hasOwn(bindings, key)) throw new Error(`missing public input binding: ${key}`);
-    return clone(bindings[key], `binding ${key}`);
+    return bindings[key];
   }
   if (kind === '$value') {
     const key = String(value.$value ?? '');
@@ -79,7 +77,33 @@ export function materializeCapabilityInputTemplate(template, {bindings = {}, val
   record(template, 'capability input template');
   record(bindings, 'capability input bindings');
   record(values, 'capability input values');
-  return deepFreeze(materialize(template, bindings, values, '$'));
+  return materialize(template, bindings, values, '
+}
+
+export function inspectCapabilityInputTemplate(template) {
+  record(template, 'capability input template');
+  const output = {bindings: [], values: []};
+  inspect(template, output, '$');
+  output.bindings.sort((a, b) => a.name.localeCompare(b.name) || a.path.localeCompare(b.path));
+  output.values.sort((a, b) => a.name.localeCompare(b.name) || a.path.localeCompare(b.path));
+  return deepFreeze(output);
+}
+
+export function resolveCapabilityTemplatePointer(document, fragment = '') {
+  if (fragment === '' || fragment === '#') return clone(document, 'template document');
+  const raw = String(fragment);
+  if (!raw.startsWith('#/')) throw new Error(`template fragment must be a JSON pointer: ${fragment}`);
+  let current = document;
+  for (const encoded of raw.slice(2).split('/')) {
+    const token = encoded.replaceAll('~1', '/').replaceAll('~0', '~');
+    if (!current || typeof current !== 'object' || !Object.hasOwn(current, token)) {
+      throw new Error(`template fragment does not resolve: ${fragment}`);
+    }
+    current = current[token];
+  }
+  return clone(current, `template fragment ${fragment}`);
+}
+);
 }
 
 export function inspectCapabilityInputTemplate(template) {
