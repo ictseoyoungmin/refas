@@ -17,6 +17,17 @@ Every executable instruction and runtime dependency must resolve inside the inst
 
 The repository may depend on the skill. The skill must never depend on the repository around it. CI copies `skills/refas/` into an isolated temporary directory and reruns both the installation-boundary verifier and semantic-graph verifier there.
 
+## Public discovery lookup
+
+After `references/GRAPH.json` routes the active work, use the installed CLI when the exact executable surface is needed:
+
+```text
+refas describe node <instruction-node-id>
+refas describe capability <runtime-capability-id>
+```
+
+The node form returns that instruction node's routing identity, prerequisites, runtime-capability projection, closure effects, and full AD01 interface descriptors. The capability form accepts only one of the 11 canonical runtime capability IDs and aggregates owning nodes in graph order. These namespaces are intentionally explicit: `refas describe <id>` does not guess whether an ID is an instruction node or a runtime capability, and routing-only owner tags such as `control` are not runtime capabilities.
+
 ## Always-load control path
 
 Read these before reconstruction work:
