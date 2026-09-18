@@ -3,6 +3,7 @@ import {CAPABILITY_ORDER, assertCapability} from './ownership.mjs';
 import {REQUIRED_CLOSURE_GATE_IDS, REQUIRED_VISUAL_GATE_IDS} from './visual-review.mjs';
 
 export const CHECKPOINT_GATE_VERDICT_SCHEMA = 'refas.checkpoint-gate-verdict/v1';
+export const CHECKPOINT_GATE_EXECUTABLE_POLICY_SCHEMA = 'refas.checkpoint-gate-executable-policy/v1';
 
 const localPolicy = Object.fromEntries(CAPABILITY_ORDER
   .filter((capability) => capability !== 'whole-object-certification')
@@ -45,6 +46,9 @@ export const CHECKPOINT_GATE_POLICIES = deepFreeze({
   },
 });
 
+// Discovery/versioning digest only. Persisted gate verdicts intentionally do not
+// bind to this whole-set digest because unrelated policy additions or prose
+// changes must not invalidate an already trustworthy checkpoint.
 export const CHECKPOINT_GATE_POLICY_DIGEST = digestJson(CHECKPOINT_GATE_POLICIES);
 
 export function expectedCheckpointGateIds(capability) {
@@ -56,6 +60,26 @@ export function checkpointGatePolicy(capability, gateId) {
   capability = assertCapability(capability);
   gateId = assertId(gateId, 'gate.id');
   return CHECKPOINT_GATE_POLICIES.capabilities[capability].find((policy) => policy.id === gateId) ?? null;
+}
+
+export function checkpointGateExecutablePolicy(capability, gateId) {
+  capability = assertCapability(capability);
+  gateId = assertId(gateId, 'gate.id');
+  const policy = checkpointGatePolicy(capability, gateId);
+  if (!policy) throw new Error(`unknown canonical gate for ${capability}: ${gateId}`);
+  const executable = {
+    schema: CHECKPOINT_GATE_EXECUTABLE_POLICY_SCHEMA,
+    capability,
+    id: gateId,
+    evaluator: policy.evaluator,
+  };
+  if (policy.evaluator === 'lineage-capability') executable.requiredCapability = policy.capability;
+  if (policy.evaluator === 'visual-review-gate') executable.visualGateId = policy.visualGateId;
+  return deepFreeze(executable);
+}
+
+export function checkpointGatePolicyDigest(capability, gateId) {
+  return digestJson(checkpointGateExecutablePolicy(capability, gateId));
 }
 
 function exactSetErrors(actual, expected) {
@@ -91,6 +115,21 @@ export function normalizeCheckpointGateRequests(capability, raw = []) {
   return requests;
 }
 
+export function isLegacyCheckpointGate(gate) {
+  return Boolean(
+    gate
+    && typeof gate === 'object'
+    && !Array.isArray(gate)
+    && !Object.hasOwn(gate, 'schema')
+    && !Object.hasOwn(gate, 'evaluator')
+    && !Object.hasOwn(gate, 'policyDigest')
+    && !Object.hasOwn(gate, 'decisionDigest')
+    && typeof gate.id === 'string'
+    && typeof gate.status === 'string'
+    && Array.isArray(gate.evidenceRefs),
+  );
+}
+
 export function createCheckpointGateVerdict({capability, id, status, evidenceRefs = []} = {}) {
   capability = assertCapability(capability);
   id = assertId(id, 'gate.id');
@@ -106,7 +145,7 @@ export function createCheckpointGateVerdict({capability, id, status, evidenceRef
     status,
     evidenceRefs: normalizedEvidence,
     evaluator: policy.evaluator,
-    policyDigest: CHECKPOINT_GATE_POLICY_DIGEST,
+    policyDigest: checkpointGatePolicyDigest(capability, id),
   };
   return deepFreeze({...core, decisionDigest: digestJson(core)});
 }
@@ -119,7 +158,7 @@ export function validateCheckpointGateVerdict(capability, gate) {
     const policy = checkpointGatePolicy(capability, gate?.id);
     if (!policy) errors.push(`gate is not canonical for ${capability}: ${gate?.id ?? 'missing'}`);
     if (policy && gate?.evaluator !== policy.evaluator) errors.push(`gate evaluator mismatch for ${gate.id}`);
-    if (gate?.policyDigest !== CHECKPOINT_GATE_POLICY_DIGEST) errors.push(`gate policy digest mismatch for ${gate?.id ?? 'missing'}`);
+    if (policy && gate?.policyDigest !== checkpointGatePolicyDigest(capability, gate.id)) errors.push(`gate scoped policy digest mismatch for ${gate?.id ?? 'missing'}`);
     if (!['pass', 'fail', 'blocked'].includes(gate?.status)) errors.push(`gate status is invalid for ${gate?.id ?? 'missing'}`);
     if (gate?.status === 'pass' && !(gate?.evidenceRefs?.length > 0)) errors.push(`passing gate has no evidenceRefs: ${gate?.id ?? 'missing'}`);
     const core = {
