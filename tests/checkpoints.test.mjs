@@ -6,6 +6,8 @@ import {test} from 'node:test';
 
 import {
   CAPABILITY_ORDER,
+  CHECKPOINT_GATE_EXECUTABLE_POLICY_SCHEMA,
+  CHECKPOINT_GATE_POLICY_DIGEST,
   REQUIRED_CLOSURE_GATE_IDS,
   REQUIRED_REVIEW_VIEW_IDS,
   REQUIRED_VISUAL_GATE_IDS,
@@ -14,6 +16,7 @@ import {
   auditProject,
   beginEdit,
   certifyProject,
+  checkpointGatePolicyDigest,
   commitCheckpoint,
   contentReference,
   createVisualReview,
@@ -74,6 +77,41 @@ async function advanceThrough(root, artifactPath, lastCapability) {
     if (capability === lastCapability) break;
   }
   return checkpoints;
+}
+
+async function rewriteCheckpointAsLegacyV1(root, checkpoint, {evidenceRefsByGate = {}} = {}) {
+  const currentPath = path.join(root, '.refas', 'checkpoints', `${checkpoint.id}.json`);
+  const legacy = JSON.parse(await fs.readFile(currentPath, 'utf8'));
+  legacy.gates = legacy.gates.map((gate) => ({
+    id: gate.id,
+    status: gate.status,
+    evidenceRefs: evidenceRefsByGate[gate.id] ?? gate.evidenceRefs,
+  }));
+  const content = {
+    schema: legacy.schema,
+    parentId: legacy.parentId,
+    capability: legacy.capability,
+    scopeId: legacy.scopeId,
+    reason: legacy.reason,
+    artifactRefs: legacy.artifactRefs,
+    claims: legacy.claims,
+    gates: legacy.gates,
+    metadata: legacy.metadata,
+    transactionId: legacy.transactionId,
+  };
+  legacy.contentDigest = digestJson(content);
+  const previousId = legacy.id;
+  legacy.id = `cp_${legacy.contentDigest.slice(0, 20)}`;
+  const legacyPath = path.join(root, '.refas', 'checkpoints', `${legacy.id}.json`);
+  await fs.writeFile(legacyPath, `${JSON.stringify(legacy, null, 2)}\n`);
+  if (legacyPath !== currentPath) await fs.rm(currentPath);
+
+  const projectPath = path.join(root, '.refas', 'project.json');
+  const project = JSON.parse(await fs.readFile(projectPath, 'utf8'));
+  project.checkpointIds = project.checkpointIds.map((id) => id === previousId ? legacy.id : id);
+  if (project.head === previousId) project.head = legacy.id;
+  await fs.writeFile(projectPath, `${JSON.stringify(project, null, 2)}\n`);
+  return legacy;
 }
 
 function reviewInput({sourceSha256, assetSha256, evidenceClass = 'independent-reference', verdict = 'pass', gateStatuses = {}, unresolvedFindings = [], renderer = {}, requiredMaterialFeatures = ['base-color-factor', 'metallic-factor', 'roughness-factor']}) {
@@ -174,6 +212,46 @@ async function commitCertificationAttempt(root, artifactPath, source, {includeRe
   });
   return {checkpoint, review, asset};
 }
+
+test('checkpoint gate verdicts bind only to scoped executable policy', () => {
+  const scoped = checkpointGatePolicyDigest('source-intake', 'source-intake-gate');
+  const expected = digestJson({
+    schema: CHECKPOINT_GATE_EXECUTABLE_POLICY_SCHEMA,
+    capability: 'source-intake',
+    id: 'source-intake-gate',
+    evaluator: 'bound-evidence',
+  });
+  assert.equal(scoped, expected);
+  assert.notEqual(scoped, CHECKPOINT_GATE_POLICY_DIGEST);
+  assert.notEqual(scoped, checkpointGatePolicyDigest('visual-hierarchy', 'visual-hierarchy-gate'));
+});
+
+test('legacy refas.checkpoint/v1 gates are re-evaluated on read and remain usable', async (t) => {
+  const {root, artifactPath} = await makeProject(t, 'legacy-gate-read-study');
+  const sourceCheckpoint = await checkpoint(root, artifactPath, 'source-intake', 'trusted:source-intake\n');
+  const legacy = await rewriteCheckpointAsLegacyV1(root, sourceCheckpoint);
+
+  assert.deepEqual(Object.keys(legacy.gates[0]).sort(), ['evidenceRefs', 'id', 'status']);
+  const legacyAudit = await auditProject(root);
+  assert.equal(legacyAudit.valid, true, legacyAudit.errors.join('\n'));
+
+  const hierarchy = await checkpoint(root, artifactPath, 'visual-hierarchy', 'trusted:visual-hierarchy\n');
+  assert.equal(hierarchy.parentId, legacy.id);
+  const finalAudit = await auditProject(root);
+  assert.equal(finalAudit.valid, true, finalAudit.errors.join('\n'));
+});
+
+test('legacy refas.checkpoint/v1 self-PASS is rejected when current evidence re-evaluation fails', async (t) => {
+  const {root, artifactPath} = await makeProject(t, 'legacy-gate-forgery-study');
+  const sourceCheckpoint = await checkpoint(root, artifactPath, 'source-intake', 'trusted:source-intake\n');
+  await rewriteCheckpointAsLegacyV1(root, sourceCheckpoint, {
+    evidenceRefsByGate: {'source-intake-gate': ['reviews/forged-pass.json']},
+  });
+
+  const audit = await auditProject(root);
+  assert.equal(audit.valid, false);
+  assert.match(audit.errors.join('\n'), /cites unbound evidence/);
+});
 
 test('checkpoint gates reject caller-authored verdict fields and derive trusted verdicts', async (t) => {
   const {root, artifactPath} = await makeProject(t, 'gate-authority-study');
