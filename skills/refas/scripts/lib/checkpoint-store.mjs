@@ -29,6 +29,7 @@ import {
   checkpointGatePolicy,
   createCheckpointGateVerdict,
   expectedCheckpointGateIds,
+  isLegacyCheckpointGate,
   normalizeCheckpointGateRequests,
   validateCheckpointGateVerdict,
 } from './checkpoint-gates.mjs';
@@ -202,6 +203,12 @@ function validatePersistedGateSet(checkpoint) {
   const expected = expectedCheckpointGateIds(checkpoint.capability);
   errors.push(...exactSetErrors((checkpoint.gates ?? []).map((gate) => gate.id), expected, `${checkpoint.id ?? checkpoint.capability} gates`));
   for (const gate of checkpoint.gates ?? []) {
+    if (isLegacyCheckpointGate(gate)) {
+      if (!checkpointGatePolicy(checkpoint.capability, gate.id)) errors.push(`legacy gate is not canonical for ${checkpoint.capability}: ${gate.id}`);
+      if (String(gate.status).toLowerCase() !== 'pass') errors.push(`legacy checkpoint contains non-pass gate: ${gate.id}`);
+      if (!(gate.evidenceRefs?.length > 0)) errors.push(`legacy passing gate has no evidenceRefs: ${gate.id}`);
+      continue;
+    }
     const validation = validateCheckpointGateVerdict(checkpoint.capability, gate);
     errors.push(...validation.errors);
     if (gate.status !== 'pass') errors.push(`checkpoint contains non-pass runtime gate: ${gate.id}`);
@@ -218,7 +225,7 @@ async function precommitProjectIntegrityErrors(root, state, lineage, storedArtif
   }
   for (const checkpoint of lineage) {
     if (digestJson(checkpointContent(checkpoint)) !== checkpoint.contentDigest) errors.push(`${checkpoint.id} content digest mismatch`);
-    errors.push(...validatePersistedGateSet(checkpoint));
+    errors.push(...await auditGateAuthority(root, state, checkpoint, lineage));
     for (const artifact of checkpoint.artifactRefs) {
       const objectError = await verifyStoredObject(root, artifact);
       if (objectError) errors.push(`${checkpoint.id}:${artifact.path}: ${objectError}`);
@@ -271,7 +278,8 @@ async function evaluateCheckpointGateRequests(root, {state, capability, scopeId,
     if (policy.evaluator === 'lineage-capability') {
       const dependency = [...lineage].reverse().find((checkpoint) =>
         checkpoint.capability === policy.capability && scopeContains(checkpoint.scopeId, scopeId));
-      const valid = dependency && validatePersistedGateSet(dependency).length === 0;
+      const dependencyErrors = dependency ? await auditGateAuthority(root, state, dependency, lineage) : ['dependency missing'];
+      const valid = Boolean(dependency) && dependencyErrors.length === 0;
       verdicts.push(createCheckpointGateVerdict({
         capability,
         id: request.id,
@@ -327,43 +335,87 @@ async function auditGateAuthority(root, state, checkpoint, checkpoints) {
   for (const gate of checkpoint.gates ?? []) {
     const policy = checkpointGatePolicy(checkpoint.capability, gate.id);
     if (!policy) continue;
+    const legacy = isLegacyCheckpointGate(gate);
 
     if (policy.evaluator === 'bound-evidence') {
       const allowed = new Set([state.source?.path, ...checkpoint.artifactRefs.map((artifact) => artifact.path)].filter(Boolean));
-      if (gate.evidenceRefs.some((ref) => !allowed.has(ref))) errors.push(`${checkpoint.id} gate ${gate.id} cites unbound evidence`);
+      if (!gate.evidenceRefs.length || gate.evidenceRefs.some((ref) => !allowed.has(ref))) {
+        errors.push(`${checkpoint.id} gate ${gate.id} cites unbound evidence`);
+      }
     } else if (policy.evaluator === 'source-integrity') {
-      if (JSON.stringify(gate.evidenceRefs) !== JSON.stringify(state.source?.path ? [state.source.path] : [])) {
+      try {
+        await verifySource(root, normalizeSourceManifest(state.source));
+      } catch (error) {
+        errors.push(`${checkpoint.id} source-integrity gate failed re-evaluation: ${error.message}`);
+      }
+      if (!legacy && JSON.stringify(gate.evidenceRefs) !== JSON.stringify(state.source?.path ? [state.source.path] : [])) {
         errors.push(`${checkpoint.id} source-integrity gate evidence binding mismatch`);
       }
     } else if (policy.evaluator === 'lineage-capability') {
       const dependency = [...lineage].reverse().find((item) =>
         item.capability === policy.capability && scopeContains(item.scopeId, checkpoint.scopeId));
-      const expectedRefs = dependency ? dependency.artifactRefs.map((artifact) => artifact.path).sort() : [];
-      if (!dependency || JSON.stringify([...gate.evidenceRefs].sort()) !== JSON.stringify(expectedRefs)) {
+      if (!dependency) {
         errors.push(`${checkpoint.id} gate ${gate.id} lineage authority mismatch`);
+      } else {
+        const dependencyErrors = await auditGateAuthority(root, state, dependency, lineage);
+        if (dependencyErrors.length) errors.push(`${checkpoint.id} gate ${gate.id} dependency is not trustworthy: ${dependencyErrors.join('; ')}`);
+        if (!legacy) {
+          const expectedRefs = dependency.artifactRefs.map((artifact) => artifact.path).sort();
+          if (JSON.stringify([...gate.evidenceRefs].sort()) !== JSON.stringify(expectedRefs)) {
+            errors.push(`${checkpoint.id} gate ${gate.id} lineage authority mismatch`);
+          }
+        }
       }
     } else if (policy.evaluator === 'visual-review-gate') {
       const reviewArtifacts = checkpoint.artifactRefs.filter((artifact) => artifact.kind === 'visual-review');
-      if (reviewArtifacts.length !== 1 || gate.evidenceRefs.length !== 1 || gate.evidenceRefs[0] !== reviewArtifacts[0]?.path) {
+      if (reviewArtifacts.length !== 1) {
         errors.push(`${checkpoint.id} gate ${gate.id} visual-review binding mismatch`);
       } else {
+        if (!legacy && (gate.evidenceRefs.length !== 1 || gate.evidenceRefs[0] !== reviewArtifacts[0].path)) {
+          errors.push(`${checkpoint.id} gate ${gate.id} visual-review binding mismatch`);
+        }
         try {
           const bytes = await fs.readFile(objectPath(root, reviewArtifacts[0].sha256), 'utf8');
           const review = JSON.parse(bytes);
           const validation = validateVisualReview(review);
           const reviewGate = (review.gateVerdicts ?? []).find((item) => item.id === policy.visualGateId);
-          if (!validation.valid || reviewGate?.status !== gate.status) errors.push(`${checkpoint.id} gate ${gate.id} does not match the stored visual review`);
+          if (!validation.valid || reviewGate?.status !== 'pass') {
+            errors.push(`${checkpoint.id} gate ${gate.id} does not pass current stored visual-review re-evaluation`);
+          } else if (!legacy && reviewGate.status !== gate.status) {
+            errors.push(`${checkpoint.id} gate ${gate.id} does not match the stored visual review`);
+          }
         } catch (error) {
           errors.push(`${checkpoint.id} gate ${gate.id} visual-review authority unavailable: ${error.message}`);
         }
       }
     } else if (policy.evaluator === 'project-integrity') {
-      const expectedRefs = checkpoint.artifactRefs.map((artifact) => artifact.path).sort();
-      if (JSON.stringify([...gate.evidenceRefs].sort()) !== JSON.stringify(expectedRefs)) {
-        errors.push(`${checkpoint.id} project-audit gate evidence binding mismatch`);
+      try {
+        await verifySource(root, normalizeSourceManifest(state.source));
+      } catch (error) {
+        errors.push(`${checkpoint.id} project-audit source integrity failed: ${error.message}`);
       }
       for (const ancestor of lineage) {
-        if (!byId.has(ancestor.id)) errors.push(`${checkpoint.id} project-audit lineage member missing: ${ancestor.id}`);
+        if (!byId.has(ancestor.id)) {
+          errors.push(`${checkpoint.id} project-audit lineage member missing: ${ancestor.id}`);
+          continue;
+        }
+        if (digestJson(checkpointContent(ancestor)) !== ancestor.contentDigest) errors.push(`${ancestor.id} content digest mismatch`);
+        const ancestorErrors = await auditGateAuthority(root, state, ancestor, lineage);
+        if (ancestorErrors.length) errors.push(`${checkpoint.id} project-audit ancestor is not trustworthy: ${ancestor.id}: ${ancestorErrors.join('; ')}`);
+        for (const artifact of ancestor.artifactRefs) {
+          const objectError = await verifyStoredObject(root, artifact);
+          if (objectError) errors.push(`${ancestor.id}:${artifact.path}: ${objectError}`);
+        }
+      }
+      for (const artifact of checkpoint.artifactRefs) {
+        const objectError = await verifyStoredObject(root, artifact);
+        if (objectError) errors.push(`${checkpoint.id}:${artifact.path}: ${objectError}`);
+      }
+      if (!legacy) {
+        const expectedRefs = checkpoint.artifactRefs.map((artifact) => artifact.path).sort();
+        if (JSON.stringify([...gate.evidenceRefs].sort()) !== JSON.stringify(expectedRefs)) {
+          errors.push(`${checkpoint.id} project-audit gate evidence binding mismatch`);
+        }
       }
     }
   }
