@@ -1,13 +1,46 @@
 [
-  {"id": "source-integrity", "status": "pending", "evidenceRefs": []},
-  {"id": "hierarchy-coverage", "status": "pending", "evidenceRefs": []},
-  {"id": "observation-authority", "status": "pending", "evidenceRefs": []},
-  {"id": "spatial-plausibility", "status": "pending", "evidenceRefs": []},
-  {"id": "silhouette-and-mass", "status": "pending", "evidenceRefs": []},
-  {"id": "surface-topology", "status": "pending", "evidenceRefs": []},
-  {"id": "assembly-integrity", "status": "pending", "evidenceRefs": []},
-  {"id": "appearance-plausibility", "status": "pending", "evidenceRefs": []},
-  {"id": "multiview-render-integrity", "status": "pending", "evidenceRefs": []},
-  {"id": "no-blocking-findings", "status": "pending", "evidenceRefs": []},
-  {"id": "project-audit", "status": "pending", "evidenceRefs": []}
+  {
+    "id": "source-integrity",
+    "evidenceRefs": []
+  },
+  {
+    "id": "hierarchy-coverage",
+    "evidenceRefs": []
+  },
+  {
+    "id": "observation-authority",
+    "evidenceRefs": []
+  },
+  {
+    "id": "spatial-plausibility",
+    "evidenceRefs": []
+  },
+  {
+    "id": "silhouette-and-mass",
+    "evidenceRefs": []
+  },
+  {
+    "id": "surface-topology",
+    "evidenceRefs": []
+  },
+  {
+    "id": "assembly-integrity",
+    "evidenceRefs": []
+  },
+  {
+    "id": "appearance-plausibility",
+    "evidenceRefs": []
+  },
+  {
+    "id": "multiview-render-integrity",
+    "evidenceRefs": []
+  },
+  {
+    "id": "no-blocking-findings",
+    "evidenceRefs": []
+  },
+  {
+    "id": "project-audit",
+    "evidenceRefs": []
+  }
 ]
