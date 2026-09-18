@@ -71,6 +71,13 @@ Do not assume a file's world axes are semantic object axes. Declare a `refas.can
 
 The optional registered hero camera is written in canonical local coordinates and cites the source registration SHA-256. This changes the camera, never the geometry. For module inspection, list exact GLB part names in `scopeParts`: their current transformed vertices determine target, extent, and camera distance, while the renderer still draws the complete asset as context. An absent frame is an explicit legacy world-axis fallback, not an inferred semantic claim.
 
-## Worked example
+## Hidden geometry
 
-When a single frontal view can be matched by a deceptively flat candidate, or when it is unclear how to distinguish source facts from the 3D completion needed for a coherent asset, read `references/single-view-volumetric-reasoning-example.md`. The example demonstrates observation -> spatial hypothesis -> orthogonal self-check -> revision while keeping inferred geometry distinct from observed source truth.
+Choose the least committed geometry that supports:
+
+- the observed view;
+- diagnostic side, top, and grazing views;
+- physical attachment and support;
+- future edits.
+
+Label synthesized hidden surfaces as inferred. They cannot become source facts through repetition.

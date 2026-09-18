@@ -8,7 +8,7 @@
     {
       "name": "refas",
       "source": "./skills/",
-      "description": "Vision-first reference reconstruction with evidence-bound 3D, multiview QA, and explicit physical semantics."
+      "description": "Vision-first reference reconstruction with evidence-bound 3D and multiview QA."
     }
   ]
 }

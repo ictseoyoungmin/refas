@@ -2,37 +2,6 @@
 
 All notable RefAs changes are documented here. RefAs follows semantic versioning.
 
-## 1.1.0 — 2026-09-17
-
-### Native physical semantics
-
-- Added stable semantic identities for assembly modules, attachment interfaces, physical parts, rigid links, virtual joints, mechanisms, transmissions, actuators, controllers, and runtime endpoints without collapsing identity into backend order or indices.
-- Added assembly-owned rigid-body dynamics, collision semantics, articulation graphs, mechanism graphs, explicit q/dq/effort transmission mappings, actuator capabilities, controller profiles, and optional runtime bindings.
-- Preserved RefAs truth separation: physical construction may be `observed`, `inferred`, `engineered`, `unknown`, or `forbidden`; unobserved values are not fabricated and engineered values do not become source facts.
-- Added digest-bound physical asset bundles so reusable child modules and exact physical component closures can be composed without rewriting their semantic identity.
-
-### Representation closure and readiness claims
-
-- Added representation-capacity preflight, one-way export adapters, backend-independent normalization, and cross-representation validation over canonical physical semantics.
-- Added semantic outcomes `EQUIVALENT`, `LOSSY`, `DRIFT`, `UNRESOLVED`, and `INVALID`, with quaternion sign/order, unit conversion, and equivalent frame conventions normalized before comparison.
-- Added exact field-scoped divergence authorization. A backend-specific override may become `DECLARED_DIVERGENCE` only when the current P14 drift and exact engineered authority validate live; canonical construction state remains unchanged.
-- Added scoped `articulated-ready`, `simulation-ready`, `control-ready`, and `runtime-ready` evidence. Physical readiness uses typed live P10–P15 preflight before the generic certification engine and cannot be authorized through the public generic path alone.
-- Kept higher-level control/runtime edits downstream-scoped so they do not retroactively invalidate unrelated lower physical readiness or visual reconstruction truth.
-
-### Integrated closure and hardening
-
-- Added the P17 integrated physical fixture: a coupled parallel 2-DOF assembly composed from reusable modules with fixed interfaces, virtual joints, dynamics, collision proxies, a nonlinear transmission, actuation, control, and runtime binding.
-- Proved independent backend projections normalize without false drift for quaternion sign/component order, translation units, and equivalent Euler convention/order.
-- Proved the end-to-end deliberate-drift path `P14 DRIFT → live P15 DECLARED_DIVERGENCE → P16 runtime-ready → certification`, including stale/substituted authority rejection and deterministic closure evidence.
-- Included the separately hardened runtime calibration/binding path so runtime configuration remains deployment state rather than semantic identity.
-
-### Compatibility and release boundary
-
-- Advanced package, runtime, new project state, and new whole-object certificate identity to 1.1.0 while public `.../v1` contract namespaces remain stable.
-- Public v1 project-state and certificate schemas continue accepting existing 1.0.0–1.0.4 artifacts; no in-place migration is required merely because the package minor version advances.
-- Strengthened repository and release audits so the physical runtime, public schemas, routed physical contract references, and P17 integration regression are required release evidence and required npm-package contents where applicable.
-- RefAs 1.1.0 can express and certify evidence-backed physical readiness; it does not manufacture observed manufacturer truth or calibrated real-world mass, inertia, collision, actuator, controller, or runtime values when supporting evidence is absent.
-
 ## 1.0.4 — 2026-09-15
 
 ### Host integration facade
