@@ -63,7 +63,7 @@ async function advanceToReview(root) {
     await commitCheckpoint(root, {
       capability, scopeId:'whole', reason:`${capability} fixture is trustworthy`,
       artifactRefs:[artifact], claims:[`${capability} closed`],
-      gates:[{id:`${capability}-gate`, status:'pass', evidenceRefs:[artifact.path]}],
+      gates:[{id:`${capability}-gate`, evidenceRefs:[artifact.path]}],
     });
   }
 }
@@ -205,7 +205,7 @@ async function commitCertification(root, source, {projection='none'}={}) {
   return commitCheckpoint(root, {
     capability:'whole-object-certification', scopeId:'whole', reason:'Candidate closure evidence is digest-bound.',
     artifactRefs:refs, claims:['Visual fidelity requires source-bound realized reprojection for real references.'],
-    gates:REQUIRED_CLOSURE_GATE_IDS.map((id)=>({id,status:'pass',evidenceRefs:[REQUIRED_VISUAL_GATE_IDS.includes(id)?reviewRef.path:asset.path]})),
+    gates:REQUIRED_CLOSURE_GATE_IDS.map((id)=>({id,evidenceRefs:[REQUIRED_VISUAL_GATE_IDS.includes(id)?reviewRef.path:asset.path]})),
   });
 }
 
