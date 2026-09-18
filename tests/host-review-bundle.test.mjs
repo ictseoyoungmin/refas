@@ -114,7 +114,7 @@ async function reviewCheckpointFixture(root, {reviewAssetSha256 = null, includeR
     reason: 'Host review bundle fixture seals exact reviewable bytes.',
     artifactRefs,
     claims: ['Review evidence remains presentation-only.'],
-    gates: [{id:'source-intake-gate', status:'pass', evidenceRefs:[candidate.path, render.path, reviewRef.path]}],
+    gates: [{id:'source-intake-gate', evidenceRefs:[candidate.path, render.path, reviewRef.path]}],
   });
   await openHostSession(root, {sessionId:'review-session', projectId:'review-project'});
   return {source, candidate, render, report, reviewRef, checkpoint, candidatePath, renderPath, reportPath, reviewPath};
