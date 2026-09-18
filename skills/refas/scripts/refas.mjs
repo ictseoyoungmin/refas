@@ -39,6 +39,7 @@ import {
   validateParameterFitReport,
   sha256File,
 } from './lib/index.mjs';
+import * as PUBLIC_API from './lib/index.mjs';
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const SKILL_ROOT = path.dirname(SCRIPT_DIR);
@@ -67,7 +68,32 @@ async function instructionGraph() {
   return JSON.parse(await fs.readFile(INSTRUCTION_GRAPH_PATH, 'utf8'));
 }
 
-function describeNode(graph, id) {
+async function interfaceTemplateDescriptor(entry) {
+  if (!entry.template) return null;
+  const [route, rawFragment] = String(entry.template).split('#', 2);
+  const document = JSON.parse(await fs.readFile(path.join(SKILL_ROOT, route), 'utf8'));
+  const fragment = rawFragment == null ? '' : `#${rawFragment}`;
+  const template = PUBLIC_API.resolveCapabilityTemplatePointer(document, fragment);
+  return {
+    path: entry.template,
+    processor: entry.templateProcessor ?? null,
+    requirements: PUBLIC_API.inspectCapabilityInputTemplate(template),
+  };
+}
+
+async function enrichInterface(entry) {
+  const publicConstants = Object.fromEntries((entry.publicConstants ?? []).map((symbol) => {
+    if (!(symbol in PUBLIC_API)) throw new Error(`interface public constant is not exported: ${symbol}`);
+    return [symbol, PUBLIC_API[symbol]];
+  }));
+  return {
+    ...entry,
+    ...(entry.publicConstants?.length ? {publicConstantValues: publicConstants} : {}),
+    ...(entry.template ? {templateContract: await interfaceTemplateDescriptor(entry)} : {}),
+  };
+}
+
+async function describeNode(graph, id) {
   const node = graph.nodes.find((candidate) => candidate.id === id);
   if (!node) throw new Error(`unknown instruction node: ${id}`);
   return {
@@ -81,21 +107,24 @@ function describeNode(graph, id) {
     conditionalRequires: node.conditionalRequires,
     closureEffects: node.closureEffects,
     interface: node.interface,
+    resolvedInterfaces: await Promise.all(node.interface.interfaces.map(enrichInterface)),
   };
 }
 
-function describeCapability(graph, capability) {
+async function describeCapability(graph, capability) {
   if (!CAPABILITY_ORDER.includes(capability)) throw new Error(`unknown runtime capability: ${capability}`);
-  const nodes = graph.nodes
-    .filter((node) => node.runtimeCapabilities.includes(capability))
-    .map((node) => ({
+  const nodes = [];
+  for (const node of graph.nodes.filter((candidate) => candidate.runtimeCapabilities.includes(capability))) {
+    nodes.push({
       id: node.id,
       path: node.path,
       authority: node.authority,
       owners: node.owners,
       runtimeCapabilities: node.runtimeCapabilities,
       interface: node.interface,
-    }));
+      resolvedInterfaces: await Promise.all(node.interface.interfaces.map(enrichInterface)),
+    });
+  }
   return {
     namespace: 'capability',
     id: capability,
@@ -113,7 +142,7 @@ async function describe(options) {
     throw new Error(`describe ${namespace} requires exactly one ID: refas describe ${namespace} ${placeholder}`);
   }
   const graph = await instructionGraph();
-  return namespace === 'node' ? describeNode(graph, id) : describeCapability(graph, id);
+  return namespace === 'node' ? await describeNode(graph, id) : await describeCapability(graph, id);
 }
 
 function required(options, key) {

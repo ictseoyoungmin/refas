@@ -89,3 +89,4 @@ export * from './visual-review.mjs';
 export * from './registered-comparison.mjs';
 export * from './pbr-render-report.mjs';
 export * from './construction-quality.mjs';
+export * from './interface-contracts.mjs';
