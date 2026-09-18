@@ -212,8 +212,8 @@ test('checkpoint gates reject caller-authored verdict fields and derive trusted 
 
 test('project audit rejects a re-signed gate verdict whose evidence was not runtime-bound', async (t) => {
   const {root, artifactPath} = await makeProject(t, 'gate-tamper-study');
-  const checkpoint = await checkpoint(root, artifactPath, 'source-intake', 'trusted:source-intake\n');
-  const file = path.join(root, '.refas', 'checkpoints', `${checkpoint.id}.json`);
+  const sealed = await checkpoint(root, artifactPath, 'source-intake', 'trusted:source-intake\n');
+  const file = path.join(root, '.refas', 'checkpoints', `${sealed.id}.json`);
   const attacked = JSON.parse(await fs.readFile(file, 'utf8'));
   attacked.gates[0].evidenceRefs = ['reviews/forged-pass.json'];
   const gateCore = {
@@ -339,7 +339,7 @@ test('artifact paths cannot escape the project through traversal or symlinks', a
   await assert.rejects(() => commitCheckpoint(root, {
     capability: 'source-intake', scopeId: 'whole', reason: 'evidence-free gate should fail', artifactRefs: [safeRef],
     gates: [{id: 'source-intake-gate', evidenceRefs: []}],
-  }), /current evidenceRefs/);
+  }), /runtime gate evaluation rejected checkpoint: source-intake-gate=fail/);
 
   const outside = await fs.mkdtemp(path.join(os.tmpdir(), 'refas-outside-'));
   t.after(() => fs.rm(outside, {recursive: true, force: true}));
@@ -372,13 +372,15 @@ test('whole-object certification requires an independent digest-bound review and
   await abortEdit(root, {reason: 'no change required'});
 });
 
-test('certification fails closed when the visual-review artifact is missing', async (t) => {
+test('checkpoint admission fails closed when the visual-review artifact is missing', async (t) => {
   const {root, artifactPath, source} = await makeProject(t, 'missing-review-study');
   await advanceThrough(root, artifactPath, 'visual-critique');
-  await commitCertificationAttempt(root, artifactPath, source, {includeReview: false});
-  await assert.rejects(() => certifyProject(root), /exactly one digest-bound visual-review artifact/);
-  assert.equal((await assessCertification(root)).ready, false);
-  assert.equal((await resumeProject(root)).nextAction, 'REQUEST_VISUAL_REVIEW');
+  await assert.rejects(
+    () => commitCertificationAttempt(root, artifactPath, source, {includeReview: false}),
+    /runtime gate evaluation rejected checkpoint: .*silhouette-and-mass=fail/,
+  );
+  const guidance = await resumeProject(root);
+  assert.equal(guidance.activeWork.capability, 'whole-object-certification');
 });
 
 test('self-generated contract fixtures cannot certify visual fidelity', async (t) => {
@@ -388,15 +390,14 @@ test('self-generated contract fixtures cannot certify visual fidelity', async (t
   await assert.rejects(() => certifyProject(root), /self-generated contract fixtures cannot certify visual fidelity/);
 });
 
-test('unresolved major visual findings prevent certification', async (t) => {
+test('runtime visual gate authority rejects unresolved major visual findings before checkpoint admission', async (t) => {
   const {root, artifactPath, source} = await makeProject(t, 'blocking-review-study');
   await advanceThrough(root, artifactPath, 'visual-critique');
-  await commitCertificationAttempt(root, artifactPath, source, {reviewOverrides: {
+  await assert.rejects(() => commitCertificationAttempt(root, artifactPath, source, {reviewOverrides: {
     verdict: 'fail',
     gateStatuses: {'silhouette-and-mass': 'fail'},
     unresolvedFindings: [{category: 'curvature-mismatch', severity: 'major', scopeId: 'whole', summary: 'The side profile is flat instead of folded.', evidenceRefs: ['renders/final/side.png']}],
-  }});
-  await assert.rejects(() => certifyProject(root), /unresolved major, critical, or blocking findings: curvature-mismatch/);
+  }}), /runtime gate evaluation rejected checkpoint: silhouette-and-mass=fail/);
 });
 
 test('render-integrity-only output cannot pass appearance or unsupported material features', () => {
