@@ -53,7 +53,7 @@ async function commitGlbHead(root) {
     reason: 'Host session fixture binds one exact current GLB candidate.',
     artifactRefs: [artifact],
     claims: ['Current host candidate is exact and digest-bound.'],
-    gates: [{id: 'source-intake-gate', status: 'pass', evidenceRefs: [artifact.path]}],
+    gates: [{id: 'source-intake-gate', evidenceRefs: [artifact.path]}],
   });
   return {artifact, checkpoint, candidatePath};
 }
