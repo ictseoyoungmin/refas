@@ -5,6 +5,7 @@ import {fileURLToPath, pathToFileURL} from 'node:url';
 import {spawnSync} from 'node:child_process';
 import {
   REFAS_VERSION,
+  CAPABILITY_ORDER,
   abortEdit,
   auditProject,
   beginEdit,
@@ -40,6 +41,8 @@ import {
 } from './lib/index.mjs';
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
+const SKILL_ROOT = path.dirname(SCRIPT_DIR);
+const INSTRUCTION_GRAPH_PATH = path.join(SKILL_ROOT, 'references', 'GRAPH.json');
 
 function parseArgs(argv) {
   const [command = 'help', ...rest] = argv;
@@ -58,6 +61,59 @@ function parseArgs(argv) {
 async function jsonFile(filePath, fallback = null) {
   if (!filePath) return fallback;
   return JSON.parse(await fs.readFile(path.resolve(filePath), 'utf8'));
+}
+
+async function instructionGraph() {
+  return JSON.parse(await fs.readFile(INSTRUCTION_GRAPH_PATH, 'utf8'));
+}
+
+function describeNode(graph, id) {
+  const node = graph.nodes.find((candidate) => candidate.id === id);
+  if (!node) throw new Error(`unknown instruction node: ${id}`);
+  return {
+    namespace: 'node',
+    id: node.id,
+    path: node.path,
+    authority: node.authority,
+    owners: node.owners,
+    runtimeCapabilities: node.runtimeCapabilities,
+    requires: node.requires,
+    conditionalRequires: node.conditionalRequires,
+    closureEffects: node.closureEffects,
+    interface: node.interface,
+  };
+}
+
+function describeCapability(graph, capability) {
+  if (!CAPABILITY_ORDER.includes(capability)) throw new Error(`unknown runtime capability: ${capability}`);
+  const nodes = graph.nodes
+    .filter((node) => node.runtimeCapabilities.includes(capability))
+    .map((node) => ({
+      id: node.id,
+      path: node.path,
+      authority: node.authority,
+      owners: node.owners,
+      runtimeCapabilities: node.runtimeCapabilities,
+      interface: node.interface,
+    }));
+  return {
+    namespace: 'capability',
+    id: capability,
+    nodes,
+  };
+}
+
+async function describe(options) {
+  const [namespace, id, ...extra] = options._positional;
+  if (!namespace || !['node', 'capability'].includes(namespace)) {
+    throw new Error('describe requires namespace "node" or "capability": refas describe node <instruction-node-id> | refas describe capability <runtime-capability-id>');
+  }
+  if (!id || extra.length) {
+    const placeholder = namespace === 'node' ? '<instruction-node-id>' : '<runtime-capability-id>';
+    throw new Error(`describe ${namespace} requires exactly one ID: refas describe ${namespace} ${placeholder}`);
+  }
+  const graph = await instructionGraph();
+  return namespace === 'node' ? describeNode(graph, id) : describeCapability(graph, id);
 }
 
 function required(options, key) {
@@ -102,6 +158,7 @@ function help() {
       'report-finding': 'report-finding --root DIR --finding finding.json',
       audit: 'audit --root DIR',
       certify: 'certify --root DIR',
+      describe: 'describe node <instruction-node-id> | describe capability <runtime-capability-id>',
       register: 'register --input registration-input.json --out registration.json',
       'validate-spec': 'validate-spec --file spec.json [--context hierarchy.json]',
       'inspect-glb': 'inspect-glb --glb asset.glb',
@@ -169,6 +226,7 @@ async function main() {
   }
   if (command === 'audit') { print(await auditProject(required(options, 'root'))); return; }
   if (command === 'certify') { print(await certifyProject(required(options, 'root'))); return; }
+  if (command === 'describe') { print(await describe(options)); return; }
   if (command === 'register') {
     const registration = createReferenceRegistration(await jsonFile(required(options, 'input')));
     const output = await writeJson(required(options, 'out'), registration);
