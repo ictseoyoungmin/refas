@@ -1,4 +1,4 @@
-# AD00 — Public Capability Discovery Audit
+# AD00 — Public Instruction-Node / Runtime Capability Discovery Audit
 
 Baseline: `main@b7f5b7abfdebfac24359ef893ea020ff73cde44f`  
 Primary issue: #186  
@@ -6,23 +6,29 @@ Scope: repository-support audit only; no runtime, API, graph, gate, or volume-cl
 
 ## Audit question
 
-Can a fresh worker perform normal RefAs work through:
+Can a fresh worker perform normal RefAs work through the **effective installed-skill reading path**:
 
 ```text
 SKILL.md
-  -> references/INDEX.md
-  -> references/GRAPH.json
-  -> active reference leaf
+  -> required always-load control path
+       references/INDEX.md
+       references/workflow.md
+       references/checkpointing.md
+       references/failure-routing.md
+  -> references/GRAPH.json routing
+  -> active reference leaf(s)
   -> canonical template / public CLI / scripts/lib/index.mjs API
 ```
 
 without reading `scripts/lib/*.mjs` implementation or repository-only tests/examples to discover the callable contract?
 
+The always-load files are part of the discoverability surface for **every** routed node. A function or execution rule exposed in `workflow.md`, `checkpointing.md`, or `failure-routing.md` must therefore be credited even when it is absent from the active leaf.
+
 For this audit, **no** means that implementation/test inspection is needed to learn any normal-use fact that should have been available at the agent-facing boundary: the public creator/evaluator name, validator name, minimum input shape, required enum, output contract, or smallest working invocation.
 
 ## Method and grading
 
-The inventory was made from the installed-skill boundary first: `SKILL.md`, `references/INDEX.md`, all 40 nodes in `references/GRAPH.json`, every routed reference leaf, `scripts/refas.mjs`, `scripts/refas-host.mjs`, `scripts/lib/index.mjs`, and all 24 `assets/templates/**` files. The implementation modules under `scripts/lib/*.mjs` were then inspected **only as comparison evidence** to determine what public functions/enums actually exist and which facts the instruction surface fails to expose. Repository-only tests/examples are likewise not counted as normal agent-facing documentation.
+The inventory was made from the installed-skill boundary first: `SKILL.md`; the four required always-load documents `references/INDEX.md`, `references/workflow.md`, `references/checkpointing.md`, and `references/failure-routing.md`; all 40 nodes in `references/GRAPH.json`; every routed active leaf; `scripts/refas.mjs`; `scripts/refas-host.mjs`; `scripts/lib/index.mjs`; and all 24 `assets/templates/**` files. The implementation modules under `scripts/lib/*.mjs` were then inspected **only as comparison evidence** to determine what public functions/enums actually exist and which facts the effective instruction surface fails to expose. Repository-only tests/examples are likewise not counted as normal agent-facing documentation.
 
 `scripts/lib/index.mjs` is the public library entrypoint, but it mainly uses `export * from './module.mjs'`. A module re-export proves availability; it does not tell a fresh worker which symbol to call or how to construct its input. Such a re-export alone does not improve a grade.
 
@@ -37,7 +43,7 @@ Grades:
 
 Each row records all requested AD00 fields:
 
-1. capability ID and owner;
+1. instruction-node ID and owner tags, with canonical runtime-capability ownership kept separate;
 2. instruction leaf;
 3. hard/conditional prerequisites;
 4. public CLI availability;
@@ -51,9 +57,44 @@ Each row records all requested AD00 fields:
 12. whether raw implementation inspection is needed;
 13. exact missing surface when it is.
 
-## Canonical capability inventory
+## Identity model: 40 instruction nodes are not 11 runtime capabilities
 
-| # | capability / owner | leaf + prerequisites | CLI | public JS create/build/evaluate | public validator | canonical template | output contract discoverable? | enum / required shape without raw code? | minimum invocation | worked example | raw implementation needed? / exact gap | grade |
+This audit has two different identity axes and must not conflate them.
+
+### Canonical runtime capabilities
+
+The executable checkpoint/repair capability set is defined by `CAPABILITY_ORDER` in the public runtime ownership layer and contains exactly **11** capabilities:
+
+| Runtime capability | Routed instruction nodes that name it as an owner |
+|---|---|
+| `source-intake` | `provenance` |
+| `visual-hierarchy` | `observation` |
+| `visual-observation` | `observation`, `relational-structure`, `inference-authority` |
+| `spatial-hypotheses` | `spatial-reasoning`, `single-view-volumetric-reasoning-example`, `relational-structure`, `inference-authority`, `whole-system-relational-barrier` |
+| `shape-reconstruction` | `single-view-volumetric-reasoning-example`, `relational-structure`, `inference-authority`, `whole-system-relational-barrier`, `construction`, `organic-articulated-construction`, `parameter-fitting` |
+| `surface-topology` | `construction` |
+| `assembly` | 21 nodes from `attachment-semantics` through `realized-contact-support` |
+| `appearance` | `appearance` |
+| `rendering` | `validation` |
+| `visual-critique` | `validation` |
+| `whole-object-certification` | `physical-claims`, `validation`, `candidate-transactions`, `claim-certification` |
+
+`control` appears as a `GRAPH.json` owner tag for router/checkpoint/host/edit-boundary nodes, but it is **not** one of the 11 canonical runtime capabilities accepted by checkpoint ownership.
+
+### Instruction-node identity
+
+`references/GRAPH.json` currently contains **40 instruction nodes**. A node is a routing/contract unit and may:
+
+- map to one runtime capability;
+- map to multiple runtime capabilities;
+- be control/instruction-only;
+- expose multiple public operations and multiple output artifacts.
+
+Therefore the A/B/C/D numbers below are **instruction-node discovery grades**, not counts of runtime capabilities.
+
+## Instruction-node discovery inventory (40 GRAPH nodes)
+
+| # | instruction node / owner tags | leaf + prerequisites | CLI | public JS create/build/evaluate | public validator | canonical template | output contract discoverable? | enum / required shape without raw code? | minimum invocation | worked example | raw implementation needed? / exact gap | grade |
 |---:|---|---|---|---|---|---|---|---|---|---|---|:---:|
 | 1 | `workflow` / control | `references/workflow.md`; none | lifecycle commands are routed from SKILL | routing/control functions are named where needed | N/A: router leaf | `handoff-capsule.json` is named for handoff | yes; capability order/ownership/closure effects are explicit | yes for routing semantics | SKILL lifecycle examples | no separate executable worked example required | **No.** Router is authoritative instruction rather than a separate artifact constructor. | A |
 | 2 | `checkpointing` / control | `references/checkpointing.md`; workflow | `checkpoint`, `restore`, `begin-edit`, `finish-edit`, `abort-edit`, `status`, `resume`, `audit` | checkpoint/edit runtime is public through index, but normal worker is directed to CLI | candidate transaction validator is named; gate evaluator is not | `closure-gates.json`, `evaluation.json` exist but are not mapped here as trusted evaluators | checkpoint/candidate semantics yes | **partly**; gate record shape is visible, gate decision authority is not | checkpoint CLI syntax exists | bounded-edit semantics are documented | **Yes.** `checkpoint --gates` accepts caller-authored gate status. There is no first-class public “evaluate this gate from evidence” mapping for the whole gate set. | C |
@@ -73,10 +114,10 @@ Each row records all requested AD00 fields:
 | 16 | `attachment-semantics` / assembly | contract leaf; construction + canonical-edit | no dedicated CLI | `createAttachmentSemantics` named | implementation exposes `validateAttachmentSemantics`, not named in leaf | none | attachment semantics contract/modes explicit | modes/owner-count/evidence rules explicit; exact entity/relation object shape incomplete | no minimum JS object | mannequin relation example only | **Yes, partially.** Creator is discoverable, but validator and minimum input object must be inferred/read from code/tests. | C |
 | 17 | `logical-fusion` / assembly | contract leaf; attachment-semantics | no dedicated CLI | `createLogicalFusion` named | validator/invalidation creators exist publicly but are not mapped | none | logical-fusion/invalidation schemas named | semantics are clear; exact call shape incomplete | none | narrative example | **Yes, partially.** Missing validator/invalidation/minimum-call mapping. | C |
 | 18 | `surface-anchor-frames` / assembly | contract leaf; attachment-semantics | no CLI | leaf names only `rebindSurfaceAnchorSet`; implementation has `createSurfaceAnchorSet` | create/rebind validators exist but are not mapped | none | anchor-set/rebind schemas named | conceptual fields/tolerances are listed, exact creator shape is not | none | retessellation narrative | **Yes.** Fresh worker must discover `createSurfaceAnchorSet`, validator names, and minimum record shape from implementation/tests. | D |
-| 19 | `attachment-follow` / assembly | contract leaf; attachment-semantics + surface-anchor-frames | no CLI | implementation has `createAttachmentFollowState`, `propagateAttachmentFollow`; leaf names neither | validators exist, not mapped | none | state/report schemas named | transform equations clear, object/input schema not | none | equations only | **Yes.** Principal callable surface is absent from the leaf. | D |
-| 20 | `multi-anchor-solver` / assembly | contract leaf; attachment-semantics + surface-anchor-frames | no CLI | implementation has `createMultiAnchorPlan`, `solveMultiAnchor`; leaf names neither | validators exist, not mapped | none | plan/report schemas named | solver policy/tolerances clear, exact input shape not | none | glasses narrative | **Yes.** Plan/solve/validate entrypoints and minimum plan require raw/test discovery. | D |
-| 21 | `articulation-clearance` / assembly | contract leaf; attachment-semantics + surface-anchor-frames | no CLI | implementation has create/evaluate APIs for joint and supported-clearance; leaf names no callable entrypoint | validators exist, not mapped | none | four public artifact schemas named | joint equation/support rules clear, minimum object not | none | equation/support example | **Yes.** Create/evaluate/validate mapping is entirely missing from routed interface. | D |
-| 22 | `attachment-propagation` / assembly | contract leaf; attachment-semantics; conditional follow/multi/articulation | no CLI | implementation has `createAttachmentPropagationPlan`, `propagateAttachmentGraph`; leaf names neither | validators exist, not mapped | none | plan/report schemas named | orchestration rules clear, call/input contract not | none | dependency-chain narrative | **Yes.** Principal plan/execute/validate surface must be reverse-engineered. | D |
+| 19 | `attachment-follow` / assembly | contract leaf; attachment-semantics + surface-anchor-frames | no CLI | **always-load `workflow.md` explicitly names `createAttachmentFollowState` and `propagateAttachmentFollow`** | validators exist publicly but are not named in the effective instruction path | none | state/report schemas named | equations, owner-frame requirements, and one-step policy are explicit; exact constructor/validator object shape is incomplete | workflow gives the create→propagate sequence but not a copyable JS call | equations + workflow procedure | **Yes, but not for operation discovery.** Raw/test inspection is still needed for exact constructor/validator fields; the public operation names are already discoverable from always-load workflow. | C |
+| 20 | `multi-anchor-solver` / assembly | contract leaf; attachment-semantics + surface-anchor-frames | no CLI | **always-load `workflow.md` explicitly names `solveMultiAnchor`** and instructs creation of `refas.multi-anchor-plan/v1`; implementation also has `createMultiAnchorPlan` | validators exist publicly, not named | none | plan/report schemas named | owner coverage, weights, tolerances, current anchor set, and explicit owner frames are described; exact persisted plan shape is incomplete | workflow gives plan→solve sequence, but no creator symbol or copyable minimum object | glasses narrative + workflow procedure | **Yes, partially.** Solver discovery no longer requires raw code, but plan creator/validator and exact minimum plan shape do. | C |
+| 21 | `articulation-clearance` / assembly | contract leaf; attachment-semantics + surface-anchor-frames | no CLI | **always-load `workflow.md` names `createArticulatedJoint`, `evaluateArticulatedJoint`, `createSupportedClearance`, and `evaluateSupportedClearance`** | validators exist publicly, not named | none | four public artifact schemas named | joint axis/zero/limit rules and support-path/gap bindings are explicit; exact constructor object layouts are incomplete | workflow provides both create→evaluate sequences, but no copyable minimum JS object | equation/support examples + workflow procedure | **Yes, partially.** Core operation discovery is public; exact constructor/validator field contracts still require implementation/tests. | C |
+| 22 | `attachment-propagation` / assembly | contract leaf; attachment-semantics; conditional follow/multi/articulation | no CLI | **always-load `workflow.md` names `createAttachmentPropagationPlan` and `propagateAttachmentGraph`** | validators exist publicly, not named | none | plan/report schemas named | DAG inputs, external-frame restrictions, blocked/ready semantics, and relation-specific prerequisites are described; exact object shape is incomplete | workflow gives create-plan→propagate sequence, but no copyable JS object | dependency-chain narrative + workflow procedure | **Yes, partially.** Operation discovery is public; exact plan/report validation shape still requires source/tests. | C |
 | 23 | `assembly` / assembly | `references/assembly.md`; construction + attachment-semantics + propagation | no single assembly CLI; render/inspect/checkpoint flows available | leaf/SKILL name many assembly and P01-P05 creation/validation APIs and `appendPartsToClosedGlb` | several validators named; many nested physical validators only discoverable by code/tests | `assembly-contract.json`, `realized-assembly-input.json` exist | assembly/physical/realized schemas extensively named | high-level rules strong; exact nested P01-P05 object shapes/enums are uneven | no single minimal end-to-end library invocation | repo dogfoods exist, but they are outside installed skill and do not count | **Yes, partially.** Normal physical assembly beyond the basic assembly contract needs tests/source to recover exact nested input structures and function pairing. | C |
 | 24 | `transmission-model` / assembly | contract leaf; assembly | no CLI | leaf names `evaluateTransmissionMapping` but not `createTransmissionModel`; implementation also has implementation-manifest creator | leaf names authority validator, not the primary model validator | none | transmission/implementation schemas named | mapping kinds/equations are strong; exact model/manifest shape remains incomplete | no minimum create call | mapping examples, not constructor | **Yes.** The principal create/validate path is not exposed despite detailed semantics. | D |
 | 25 | `actuation-model` / assembly | contract leaf; assembly; conditional transmission-model | no CLI | implementation has `createActuationModel`; leaf does not name it | validators/bindings/authority exist, not mapped | none | actuation schema named | actuator kinds/coordinate classes/control modes/range semantics described, exact object shape not | none | semantic examples only | **Yes.** Principal create/validate invocation is missing. | D |
@@ -98,14 +139,14 @@ Each row records all requested AD00 fields:
 
 ### Totals
 
-The inventory covers **all 40 nodes in the current instruction graph**.
+The instruction-node matrix covers **all 40 nodes in the current instruction graph**. The separate runtime-capability roster above covers **all 11 canonical runtime capabilities**.
 
 | Grade | Count |
 |---|---:|
 | A | 7 |
 | B | 2 |
-| C | 13 |
-| D | 18 |
+| C | 17 |
+| D | 14 |
 | **Total** | **40** |
 
 The count is intentionally conservative. A node is graded by the least-discoverable normal execution surface that it owns; a strong prose contract does not earn A/B when a worker still has to open implementation/tests to find the function or minimum object.
@@ -157,15 +198,19 @@ The closure requirement is explicit and the canonical `construction-quality.json
 
 ### Physical P04–P15 contract chain
 
-The physical semantics leaves are often semantically excellent and operationally weak. The recurring failure is not lack of rules; it is lack of a stable interface map.
+The physical semantics leaves are often semantically excellent but uneven in executable contract detail. The always-load `workflow.md` closes more operation-discovery gaps than the active leaves alone suggest.
 
-Examples confirmed only by implementation comparison:
+Operations already discoverable from the effective instruction path include:
 
-- surface anchors: `createSurfaceAnchorSet` / `validateSurfaceAnchorSet`;
-- attachment follow: `createAttachmentFollowState` / `propagateAttachmentFollow`;
-- multi-anchor: `createMultiAnchorPlan` / `solveMultiAnchor`;
-- articulation/clearance: create/evaluate/validate pairs for both artifacts;
-- propagation: `createAttachmentPropagationPlan` / `propagateAttachmentGraph`;
+- attachment follow: `createAttachmentFollowState` + `propagateAttachmentFollow`;
+- multi-anchor execution: `solveMultiAnchor`;
+- articulation/clearance: `createArticulatedJoint`, `evaluateArticulatedJoint`, `createSupportedClearance`, `evaluateSupportedClearance`;
+- propagation: `createAttachmentPropagationPlan` + `propagateAttachmentGraph`.
+
+Remaining examples that still require implementation/test comparison for a creator, validator, exact minimum input, or a complete operation pair include:
+
+- surface anchors: initial `createSurfaceAnchorSet` / validators; workflow only exposes `rebindSurfaceAnchorSet`;
+- multi-anchor plan creation/validation: `createMultiAnchorPlan` / validators;
 - P07 actuation: `createActuationModel` / validators;
 - P08 control: `createControlProfile` / validators;
 - P09 runtime: `createRuntimeBinding` / validators + forward/inverse coordinate evaluators;
@@ -211,10 +256,10 @@ The intended path is already architecturally sound:
 ```text
 install canonical skills/refas/
   -> SKILL.md
-  -> references/INDEX.md
+  -> always-load INDEX + workflow + checkpointing + failure-routing
   -> references/GRAPH.json
-  -> active reference leaf only
-  -> public capability interface
+  -> active reference leaf(s)
+  -> public interface operation(s)
        - CLI, when one exists
        - scripts/lib/index.mjs symbol(s)
        - canonical input template
@@ -224,15 +269,15 @@ install canonical skills/refas/
   -> runtime implementation (debug/framework work only)
 ```
 
-The defect is not the progressive-load graph. The defect is that the **public capability interface box is implicit and incomplete**. In many nodes the graph gets the worker to the correct semantic leaf, then stops one step before executable discovery.
+The defect is not the progressive-load graph. The defect is that the **public operation/interface layer is implicit and incomplete**. The always-load workflow already supplies some cross-cutting operation names, so discovery must be evaluated over the union of always-load guidance and the active leaf. Even after that union, many nodes still stop before exact creator/validator/input/output discovery.
 
 ## 2. Actual raw-code fallback points
 
 The recurring fallback is:
 
 ```text
-leaf says what the artifact means
-  -> creator/validator/template mapping missing
+effective instruction set says what the artifact means
+  -> creator/validator/template or exact-operation mapping still missing
   -> scripts/lib/index.mjs reveals only export * from a module
   -> worker opens scripts/lib/<module>.mjs or repository tests
   -> worker discovers exact symbol / enum / required field
@@ -252,23 +297,37 @@ Highest-cost clusters:
 
 ## 3. Minimum architecture required across AD01–AD06
 
-### AD01 — graph interface metadata
+### AD01 — graph interface metadata with explicit identity separation
 
-Add one machine-readable interface descriptor to every graph node that has an agent-executable artifact/operation. It must name only the **public** execution boundary. Do not embed implementation-module ownership paths.
+Add machine-readable interface metadata to every graph node that has agent-executable work, while preserving two separate identities:
+
+- **instruction node ID** — the routing/contract leaf identity from `GRAPH.json`;
+- **runtime capability owners** — zero, one, or several members of the canonical 11-capability set.
+
+Each node must support **multiple named `interfaces[]` operations/artifacts**. One node may create, evaluate, validate, render, normalize, or route several different contracts; a singular create/validate/template tuple is insufficient.
 
 Required outcomes:
 
-- map capability -> public CLI when present;
-- map capability -> exact `scripts/lib/index.mjs` create/evaluate and validate symbols;
-- bind canonical template when one exists;
-- identify the persisted output schema;
-- link one minimum invocation or worked example.
+- node identity remains unambiguous;
+- canonical runtime-capability ownership is explicit and separate from non-runtime owner tags such as `control`;
+- each operation maps to its public CLI and/or exact `scripts/lib/index.mjs` symbol(s);
+- each operation can bind its own input template, output schema, validator, minimum invocation, and example;
+- implementation-module paths remain non-authoritative.
 
-Instruction-only nodes may declare an explicit `mode: "instruction-only"` so the verifier does not demand fake APIs.
+Instruction-only nodes may declare an empty `interfaces` array plus `mode: "instruction-only"` so the verifier does not demand fake APIs.
 
-### AD02 — `refas describe <capability>`
+### AD02 — namespaced discovery
 
-Render the AD01 metadata in a fresh-worker-friendly form. It should answer “what do I read, what do I copy, what do I call, what comes out, how do I validate it?” without implementation grep.
+Do **not** use ambiguous `refas describe <capability>`.
+
+Use separate lookup namespaces, for example:
+
+```text
+refas describe node <instruction-node-id>
+refas describe capability <runtime-capability-id>
+```
+
+The node view should answer “what do I read and which operations are public here?” The capability view should aggregate all routed nodes/interfaces owned by one of the canonical 11 runtime capabilities.
 
 ### AD03 — template/schema/API alignment
 
@@ -297,42 +356,69 @@ CI should fail on:
 
 Proposal only; **not implemented by AD00**.
 
-A graph node that owns executable work should gain a descriptor of this shape:
+A graph node that owns executable work should use a structure capable of representing multiple operations and separate runtime-capability ownership:
 
 ```json
 {
+  "id": "articulation-clearance",
+  "owners": ["assembly"],
+  "runtimeCapabilities": ["assembly"],
   "interface": {
-    "mode": "hybrid",
-    "cli": {
-      "command": "register",
-      "inputTemplate": "assets/templates/registration-input.json"
-    },
-    "library": {
-      "entrypoint": "scripts/lib/index.mjs",
-      "create": "createReferenceRegistration",
-      "validate": "validateReferenceRegistration"
-    },
-    "template": "assets/templates/registration-input.json",
-    "outputSchema": "refas.reference-registration/v1",
-    "minimumInvocation": "references/spatial-reasoning.md#reference-frame-registration",
-    "example": "references/single-view-volumetric-reasoning-example.md"
+    "mode": "library",
+    "interfaces": [
+      {
+        "id": "create-articulated-joint",
+        "operation": "create",
+        "library": {
+          "entrypoint": "scripts/lib/index.mjs",
+          "symbol": "createArticulatedJoint"
+        },
+        "template": null,
+        "inputContract": "refas.articulated-joint/v1 input",
+        "outputSchema": "refas.articulated-joint/v1",
+        "validator": {
+          "library": "validateArticulatedJoint"
+        },
+        "minimumInvocation": "references/workflow.md#articulation-and-supported-clearance",
+        "example": null
+      },
+      {
+        "id": "evaluate-articulated-joint",
+        "operation": "evaluate",
+        "library": {
+          "entrypoint": "scripts/lib/index.mjs",
+          "symbol": "evaluateArticulatedJoint"
+        },
+        "template": null,
+        "inputContract": "articulated joint + owner world frame + angle",
+        "outputSchema": "refas.articulated-joint-report/v1",
+        "validator": {
+          "library": "validateArticulatedJointReport"
+        },
+        "minimumInvocation": "references/workflow.md#articulation-and-supported-clearance",
+        "example": null
+      }
+    ]
   }
 }
 ```
 
 Rules for AD01:
 
-- `entrypoint` is the public aggregator, never `scripts/lib/<implementation>.mjs`;
-- fields may be `null` when not applicable;
-- library-only capabilities still provide create/evaluate + validate + minimum invocation;
-- CLI-only capabilities identify the command and any required template;
-- instruction-only nodes use `{"mode":"instruction-only"}`;
-- `outputSchema` names the persisted contract, not a TypeScript/JS implementation type;
-- no implementation path, test file, or repository-root schema may become a skill execution dependency;
-- gate-producing interfaces should reserve an authority/evaluator field in AD01 metadata only if AD04 defines a trusted public gate evaluator; AD01 must not pre-commit the gate redesign.
+- `id` is always the **instruction-node ID**;
+- `runtimeCapabilities` contains only members of the canonical 11-capability runtime set and may contain zero, one, or several values;
+- existing `owners` may retain non-runtime routing tags such as `control`, but those are not silently treated as checkpoint capabilities;
+- `interfaces[]` is operation-oriented and supports multiple artifacts/actions per node;
+- every interface has a stable operation ID and may independently declare CLI and/or library entrypoints;
+- public library entrypoints name `scripts/lib/index.mjs`, never `scripts/lib/<implementation>.mjs`;
+- `template`, `validator`, `minimumInvocation`, and `example` may be `null` when genuinely inapplicable, not when undiscovered;
+- `outputSchema` names the persisted public contract where an artifact is emitted;
+- instruction-only nodes use `mode: "instruction-only"` and `interfaces: []`;
+- AD01 metadata must credit operations already exposed in required always-load documents rather than duplicating contradictory leaf-only descriptions;
+- gate-producing interfaces should reserve an authority/evaluator field only if AD04 defines a trusted public gate evaluator; AD01 must not pre-commit the gate redesign.
 
 ## AD00 architecture decision
 
-The current RefAs instruction graph is **semantically much more complete than its public execution discovery layer**. The correct next step is not to add more reconstruction semantics or another broad API. It is to make the existing public functions/templates/validators discoverable as a coherent interface and then verify that interface against runtime.
+The current RefAs instruction graph is **semantically much more complete than its public execution discovery layer**, but the always-load workflow already exposes more of that layer than a leaf-only audit suggests. The correct next step is not to add more reconstruction semantics or another broad API. It is to formalize the existing node→multi-operation→runtime-capability relationships and then verify those public operations against runtime.
 
 AD00 therefore recommends **AD01 GO** once this inventory is reviewed. The audit itself must be reopened if any current graph node is missing from this matrix or if a fresh-worker replay reveals an additional normal-use raw-code dependency not represented above.
