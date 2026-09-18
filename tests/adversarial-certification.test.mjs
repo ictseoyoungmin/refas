@@ -235,7 +235,7 @@ async function projectWithExplicitPolicy(t, policy) {
     const artifact = await contentReference(statePath, {kind:'model-spec', root});
     await commitCheckpoint(root, {
       capability, scopeId:'whole', reason:`${capability} adversarial prerequisite`, artifactRefs:[artifact],
-      claims:[`${capability} closed`], gates:[{id:`${capability}-gate`, status:'pass', evidenceRefs:[artifact.path]}],
+      claims:[`${capability} closed`], gates:[{id:`${capability}-gate`, evidenceRefs:[artifact.path]}],
     });
   }
 
@@ -264,7 +264,7 @@ async function projectWithExplicitPolicy(t, policy) {
   await fs.writeFile(policyPath, `${JSON.stringify(policy)}\n`);
   const policyRef = await contentReference(policyPath, {kind:'certification-policy', root});
   const gates = REQUIRED_CLOSURE_GATE_IDS.map((id) => ({
-    id, status:'pass', evidenceRefs:[REQUIRED_VISUAL_GATE_IDS.includes(id) ? reviewRef.path : candidate.path],
+    id, evidenceRefs:[REQUIRED_VISUAL_GATE_IDS.includes(id) ? reviewRef.path : candidate.path],
   }));
   await commitCheckpoint(root, {
     capability:'whole-object-certification', scopeId:'whole', reason:'A13 explicit policy attack target',
