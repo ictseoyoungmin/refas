@@ -38,19 +38,19 @@ Within `shape-reconstruction × one scope`, an evidence-bound parameter fit may 
 
 High-impact fitting remains owner-local: camera candidates belong to `spatial-hypotheses`, parent-local pose variables to `assembly`, geometry variables to `shape-reconstruction`, material variables to `appearance`, and illumination/background variables to `rendering`. The project coordinator may alternate these stages and record exact digests, but has no gate or finding-owner authority.
 
-The work-unit rule never means that a local scope may close independently of unresolved whole-system premises that are material to that scope. A local eye, fastener, branch, joint, panel, or handle can be observed or sketched while an applicable macro structure remains open, but trustworthy lower-scope geometry closure is downstream of the relational barrier when such macro/identity whole-system obligations are active.
+The work-unit rule never means that a local scope may close independently of unresolved whole-system premises. A local eye, fastener, branch, joint, panel, or handle can be observed or sketched while macro structure remains open, but trustworthy lower-scope geometry closure is downstream of the relational barrier below.
 
 ## Relational structure, authority, and whole-system barrier
 
 Visible evidence constrains the model; it does not define the entire model. Position and a primary axis do not fully specify a spatial part, and a collection of locally plausible features does not prove globally coherent proportions, planes, volumes, ordering, or twist.
 
-When macro/identity `whole-system` relational obligations are declared or otherwise material to the active construction scope, read:
+Before lower-scope geometry hardening, read:
 
 1. `references/relational-structure.md`
 2. `references/inference-authority.md`
 3. `references/whole-system-relational-barrier.md`
 
-Do not invent a placeholder relation merely because shape construction is active. For an applicable relational dependency, the required order is:
+The required order is:
 
 ```text
 raw source / observation
@@ -58,7 +58,7 @@ raw source / observation
   -> refas.semantic-authority-set/v1
   -> current macro + identity relation checks
   -> refas.whole-system-relational-barrier/v1
-  -> dependent lower-scope geometry hardening
+  -> lower-scope geometry hardening
 ```
 
 `refas.relational-structure/v1` records domain-neutral relationships such as distance ratios, alignment, ordering, plane chains, and volume ratios. Mark relations as `whole-system` or `local` and as `macro`, `identity`, or `detail`. Relation dependencies must be explicit and acyclic.
@@ -82,9 +82,9 @@ ENGINEERED != OBSERVED
 INFERRED != OBSERVED
 ```
 
-An inferred or engineered unobserved continuation may be instantiated when its typed basis is valid; it must not be promoted to source truth. Unknown authority cannot authorize positive construction for the proposition it governs yet, but it does not claim the structure is prohibited. Only forbidden authority positively blocks construction.
+An inferred or engineered hidden continuation may be instantiated when its typed basis is valid; it must not be promoted to source truth. Unknown authority cannot authorize positive construction yet, but it does not claim the structure is prohibited. Only forbidden authority positively blocks construction.
 
-Create `refas.whole-system-relational-barrier/v1` from the exact relation graph, exact authority set, and current checks for every applicable macro/identity whole-system obligation. The barrier passes only when all required relation checks pass with evidence and every required relation has `observed`, `inferred`, or `engineered` authority. A passing local-detail relation cannot satisfy a whole-system obligation, and a good visual score cannot override an applicable barrier.
+Create `refas.whole-system-relational-barrier/v1` from the exact relation graph, exact authority set, and current checks for every macro/identity whole-system obligation. The barrier passes only when all required relation checks pass with evidence and every required relation has `observed`, `inferred`, or `engineered` authority. A passing local-detail relation cannot satisfy a whole-system obligation, and a good visual score cannot override this barrier.
 
 When blocked, call `routeRelationalBarrier()`:
 
@@ -93,9 +93,7 @@ When blocked, call `routeRelationalBarrier()`:
 - failed whole-system relation -> reopen `shape-reconstruction` and invalidate downstream dependents;
 - unresolved relation evidence -> `REQUEST_REVIEW` rather than guessing a repair owner.
 
-This barrier authorizes only the transition from applicable macro relational closure to dependent lower-scope hardening. It does not certify visual fidelity, topology, assembly, appearance, rendering, or whole-object release.
-
-Real-source whole-object certification keeps a separate mandatory relational authority floor. Before certification, a meaningful current relation graph, authority set, passing barrier, and candidate-bound discrepancy must exist even if an earlier rough construction edit did not require the barrier.
+This barrier authorizes only the transition from macro relational closure to lower-scope hardening. It does not certify visual fidelity, topology, assembly, appearance, rendering, or whole-object release.
 
 ## Canonical edit boundary
 
@@ -174,16 +172,14 @@ A `READY_FOR_REALIZATION` propagation report is still not assembly closure. Any 
 
 This rule limits simultaneous work; it does not authorize skipping dependencies.
 During shape reconstruction, `shape-reconstruction × whole` remains the only
-closable shape scope while the visible whole-shape dependency barrier is open.
-When macro/identity whole-system relational obligations are applicable, their
-relational barrier must also pass before dependent lower-scope closure. The
-visible barrier requires current registered evidence for whole silhouette,
-major landmarks, principal sections, curvature transitions, and coarse negative
-spaces. The applicable relational barrier requires current macro/identity
-proportion, alignment, ordering, plane, and volume obligations plus valid
-semantic authority. Lower region, part, subpart, joint, and feature scopes may
-be observed or sketched beforehand, but they cannot receive trustworthy
-geometry closure while an applicable upstream barrier is blocked.
+closable shape scope until both the visible whole-shape dependency barrier and
+the whole-system relational barrier pass. The visible barrier requires current
+registered evidence for whole silhouette, major landmarks, principal sections,
+curvature transitions, and coarse negative spaces. The relational barrier
+requires current macro/identity proportion, alignment, ordering, plane, and
+volume obligations plus valid semantic authority. Lower region, part, subpart,
+joint, and feature scopes may be observed or sketched beforehand, but they
+cannot receive trustworthy geometry closure while either barrier is blocked.
 
 At the start of every new turn or handoff, run `resume --root <project>`. If it reports an active transaction, finish or abort that transaction before doing anything else. If it reports invalidated capabilities, repair the first named capability only. If it reports review-required or blocked, stop mutation and resolve evidence or ownership.
 
@@ -237,10 +233,9 @@ rendered and compared, but it remains an exploratory artifact rather than a
 closed shape checkpoint. When source-space reference geometry is present, the
 same checkpoint also requires the current projection-fit barrier above; passing
 construction-quality alone cannot override unresolved macro reprojection error.
-Before a lower-scope shape checkpoint that depends on declared macro/identity
-whole-system relations is treated as trustworthy, the current
+Before any lower-scope shape checkpoint is treated as trustworthy, the current
 `refas.whole-system-relational-barrier/v1` must also be `PASS`; local detail
-cannot compensate for unresolved or forbidden applicable upstream relations.
+cannot compensate for unresolved or forbidden upstream relations.
 
 ## Stop conditions
 
@@ -254,7 +249,7 @@ Stop and request review when:
 - a score is low but the defect is not localized;
 - required macro reference geometry has no semantic model projection;
 - a projection mismatch is material but cannot yet be localized to a typed finding;
-- an applicable macro/identity whole-system relation remains unresolved;
+- a macro/identity whole-system relation remains unresolved;
 - semantic authority is `unknown` where positive construction is required and no inference/engineering basis has been chosen;
 - semantic authority is `forbidden` under current contradiction or hard constraint;
 - the candidate is not demonstrably better and not demonstrably worse.

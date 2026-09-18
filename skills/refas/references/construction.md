@@ -10,12 +10,6 @@
 
 Build these before seams, panels, fasteners, engravings, or material polish. A detailed wrong silhouette is still wrong.
 
-## Relational applicability
-
-When the active scope has declared or otherwise material macro/identity `whole-system` relational obligations, pass the current `refas.whole-system-relational-barrier/v1` before lower-scope geometry hardening that depends on those relations. If no such obligation applies to the current construction decision, do not invent a placeholder relation merely to enter shape construction; proceed under the normal spatial-hypothesis, canonical-edit, construction-quality, projection, and visual-review gates.
-
-This construction boundary does not weaken the separate real-source certification floor. Before real-source whole-object certification, a meaningful current relational structure, semantic-authority set, passing barrier, and candidate-bound relational discrepancy are still required by the certification path.
-
 ## Blockout and identity-bearing geometry
 
 A blockout establishes camera, pose, broad mass, and candidate negative space.
@@ -81,7 +75,10 @@ count as a frame merely because its hero projection looks correct.
 
 Treat structural interpretation with the same evidence discipline as shape.
 A visible sequence from one mounting land, through members and junctions, to
-another land may support a load-path hypothesis.
+another land may support a load-path hypothesis. Hidden continuity, internal
+reinforcement, fastener preload, and engineering capacity remain hypotheses
+unless the source or downstream specification attests them. Record ambiguity
+instead of inventing a mechanically authoritative interior.
 
 Validate an open frame in hero, reverse, side, top, grazing, normal, and
 object-ID views. The apertures must remain open, member thickness must remain
@@ -170,7 +167,3 @@ Add a feature only when it is:
 - required by the user's downstream use.
 
 Do not spend geometry budget on unsupported microdetail while a whole-object blocker remains.
-
-## Worked example
-
-For a concrete single-view case where a convincing frontal reconstruction can still collapse into a billboard, read `references/single-view-volumetric-reasoning-example.md`. It shows how major volumes, genuinely thin parts, layered structures, and articulated/mechanical hypotheses can coexist without turning an inferred side or rear surface into an observed source fact.

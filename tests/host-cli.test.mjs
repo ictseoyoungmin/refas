@@ -17,13 +17,13 @@ function run(args, {expect = 0} = {}) {
   return result;
 }
 
-test('refas-host exposes v1.1.0 host commands and durable JSONL replay', async (t) => {
+test('refas-host exposes v1.0.4 host commands and durable JSONL replay', async (t) => {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), 'refas-host-cli-'));
   t.after(() => fs.rm(root, {recursive:true, force:true}));
 
   const help = JSON.parse(run(['help']).stdout);
   assert.equal(help.name, 'refas-host');
-  assert.equal(help.version, '1.1.0');
+  assert.equal(help.version, '1.0.4');
   for (const command of ['open','status','events','review-bundle','handoff','validate-worker']) {
     assert.equal(typeof help.commands[command], 'string');
   }

@@ -1,7 +1,7 @@
 {
   "name": "refas",
-  "version": "1.1.0",
-  "description": "Vision-first, evidence-bound reference image to 3D reconstruction with multiview QA and explicit physical semantics.",
+  "version": "1.0.4",
+  "description": "Vision-first, evidence-bound reference image to 3D reconstruction with multiview QA.",
   "author": {
     "name": "ictseoyoungmin",
     "url": "https://github.com/ictseoyoungmin"
@@ -15,7 +15,6 @@
     "agent-skill",
     "visual-qa",
     "reference-image",
-    "physical-semantics",
     "multiview"
   ]
 }
