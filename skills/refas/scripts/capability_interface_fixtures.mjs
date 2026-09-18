@@ -32,7 +32,7 @@ function fusionFixture() {
     scopeId: 'head-shell',
     editClass: 'finalization',
     canonicalBindings: ['finalization.head-shell'],
-    realizationOperations: ['mesh-fuse'],
+    realizationOperations: ['mesh-fuse', 'mesh-weld', 'internal-face-cleanup', 'mesh-optimize'],
     evidenceRefs: ['reviews/head-ready.json'],
     intent: 'Finalize a closed logical fusion group.',
   });
