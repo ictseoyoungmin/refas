@@ -4,10 +4,16 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 
 import {CAPABILITY_ORDER, FINDING_OWNERS} from './lib/ownership.mjs';
+import * as PUBLIC_API from './lib/index.mjs';
 
 const DEFAULT_SKILL_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const GRAPH_PATH = 'references/GRAPH.json';
 const ALLOWED_CONTROL_OWNER = 'control';
+const INTERFACE_SCHEMA = 'refas.instruction-node-interface/v1';
+const PUBLIC_LIBRARY_ENTRYPOINT = 'scripts/lib/index.mjs';
+const ALLOWED_INTERFACE_MODES = new Set(['instruction-only', 'cli', 'library', 'hybrid']);
+const ALLOWED_CLI_BINS = new Set(['refas', 'refas-host']);
+const ALLOWED_INTERFACE_PATH_ROOTS = Object.freeze(['references/', 'assets/']);
 const REQUIRED_REAL_SOURCE_NODES = Object.freeze([
   'candidate-transactions',
   'validation',
@@ -112,6 +118,127 @@ function conditionalDependencyIds(node) {
   return new Set((node?.conditionalRequires ?? []).flatMap((edge) => edge?.nodes ?? []));
 }
 
+function sortedUnique(values) {
+  return [...new Set(values)].sort();
+}
+
+function normalizeInterfacePath(value, label, errors) {
+  if (value == null) return null;
+  if (typeof value !== 'string' || !value.trim()) {
+    errors.push(`${label} must be null or a non-empty skill-local path`);
+    return null;
+  }
+  const route = value.split('#', 1)[0].split('?', 1)[0];
+  const normalized = portable(path.posix.normalize(route));
+  const allowed = normalized === 'SKILL.md' || ALLOWED_INTERFACE_PATH_ROOTS.some((prefix) => normalized.startsWith(prefix));
+  if (!allowed || path.posix.isAbsolute(normalized) || normalized === '..' || normalized.startsWith('../') || normalized.startsWith('skills/refas/')) {
+    errors.push(`${label} must remain inside the installed skill root: ${value}`);
+    return null;
+  }
+  return normalized;
+}
+
+async function verifyInterfacePath(skillRoot, value, label, errors) {
+  const normalized = normalizeInterfacePath(value, label, errors);
+  if (!normalized) return;
+  try {
+    const stat = await fs.stat(path.join(skillRoot, normalized));
+    if (!stat.isFile()) errors.push(`${label} does not reference a file: ${value}`);
+  } catch {
+    errors.push(`${label} references a missing installed-skill file: ${value}`);
+  }
+}
+
+async function validateNodeInterface(skillRoot, node, errors) {
+  const runtimeCapabilities = node?.runtimeCapabilities;
+  if (!Array.isArray(runtimeCapabilities)) {
+    errors.push(`node ${node.id} runtimeCapabilities must be an array`);
+  } else {
+    for (const capability of runtimeCapabilities) {
+      if (!CAPABILITY_ORDER.includes(capability)) errors.push(`node ${node.id} has unknown runtime capability: ${capability}`);
+    }
+    if (runtimeCapabilities.length !== new Set(runtimeCapabilities).size) errors.push(`node ${node.id} runtimeCapabilities must not contain duplicates`);
+    const expected = sortedUnique((node.owners ?? []).filter((owner) => CAPABILITY_ORDER.includes(owner)));
+    const actual = sortedUnique(runtimeCapabilities);
+    if (JSON.stringify(actual) !== JSON.stringify(expected)) {
+      errors.push(`node ${node.id} runtimeCapabilities must equal canonical runtime owners: expected=${expected.join(',')} actual=${actual.join(',')}`);
+    }
+  }
+
+  const descriptor = node?.interface;
+  if (!descriptor || typeof descriptor !== 'object' || Array.isArray(descriptor)) {
+    errors.push(`node ${node.id} must declare interface metadata`);
+    return {operationCount: 0};
+  }
+  if (!ALLOWED_INTERFACE_MODES.has(descriptor.mode)) errors.push(`node ${node.id} has invalid interface mode: ${descriptor.mode}`);
+  if (!Array.isArray(descriptor.interfaces)) {
+    errors.push(`node ${node.id} interface.interfaces must be an array`);
+    return {operationCount: 0};
+  }
+
+  const ids = descriptor.interfaces.map((entry) => String(entry?.id ?? ''));
+  for (const duplicate of duplicateValues(ids)) errors.push(`node ${node.id} has duplicate interface id: ${duplicate}`);
+
+  let hasCli = false;
+  let hasLibrary = false;
+  for (const [index, entry] of descriptor.interfaces.entries()) {
+    const label = `node ${node.id} interface[${index}]`;
+    if (!entry || typeof entry !== 'object' || Array.isArray(entry)) {
+      errors.push(`${label} must be an object`);
+      continue;
+    }
+    if (typeof entry.id !== 'string' || !entry.id.trim()) errors.push(`${label}.id must be a non-empty string`);
+    if (typeof entry.operation !== 'string' || !entry.operation.trim()) errors.push(`${label}.operation must be a non-empty string`);
+    if (typeof entry.inputContract !== 'string' || !entry.inputContract.trim()) errors.push(`${label}.inputContract must be a non-empty string`);
+    if (entry.outputSchema != null && (typeof entry.outputSchema !== 'string' || !entry.outputSchema.trim())) errors.push(`${label}.outputSchema must be null or a non-empty string`);
+
+    if (entry.cli != null) {
+      hasCli = true;
+      if (!entry.cli || typeof entry.cli !== 'object' || Array.isArray(entry.cli)) errors.push(`${label}.cli must be null or an object`);
+      else {
+        if (!ALLOWED_CLI_BINS.has(entry.cli.bin)) errors.push(`${label}.cli.bin is invalid: ${entry.cli.bin}`);
+        if (typeof entry.cli.command !== 'string' || !entry.cli.command.trim()) errors.push(`${label}.cli.command must be a non-empty string`);
+      }
+    }
+
+    if (entry.library != null) {
+      hasLibrary = true;
+      if (!entry.library || typeof entry.library !== 'object' || Array.isArray(entry.library)) errors.push(`${label}.library must be null or an object`);
+      else {
+        if (entry.library.entrypoint !== PUBLIC_LIBRARY_ENTRYPOINT) errors.push(`${label}.library.entrypoint must be ${PUBLIC_LIBRARY_ENTRYPOINT}`);
+        if (typeof entry.library.symbol !== 'string' || !entry.library.symbol.trim()) errors.push(`${label}.library.symbol must be a non-empty string`);
+        else if (!(entry.library.symbol in PUBLIC_API)) errors.push(`${label}.library.symbol is not exported by ${PUBLIC_LIBRARY_ENTRYPOINT}: ${entry.library.symbol}`);
+      }
+    }
+
+    if (entry.cli == null && entry.library == null) errors.push(`${label} must expose a CLI or public library operation`);
+
+    if (entry.validator != null) {
+      if (!entry.validator || typeof entry.validator !== 'object' || Array.isArray(entry.validator)) errors.push(`${label}.validator must be null or an object`);
+      else if (typeof entry.validator.library !== 'string' || !entry.validator.library.trim()) errors.push(`${label}.validator.library must be a non-empty string`);
+      else if (!(entry.validator.library in PUBLIC_API)) errors.push(`${label}.validator.library is not exported by ${PUBLIC_LIBRARY_ENTRYPOINT}: ${entry.validator.library}`);
+    }
+
+    await verifyInterfacePath(skillRoot, entry.template, `${label}.template`, errors);
+    await verifyInterfacePath(skillRoot, entry.minimumInvocation, `${label}.minimumInvocation`, errors);
+    await verifyInterfacePath(skillRoot, entry.example, `${label}.example`, errors);
+    if (entry.minimumInvocation == null) errors.push(`${label}.minimumInvocation is required for executable interface discovery`);
+  }
+
+  const expectedMode = descriptor.interfaces.length === 0
+    ? 'instruction-only'
+    : hasCli && hasLibrary
+      ? 'hybrid'
+      : hasCli
+        ? 'cli'
+        : 'library';
+  if (descriptor.mode !== expectedMode) errors.push(`node ${node.id} interface mode must be ${expectedMode}, got ${descriptor.mode}`);
+  if (descriptor.mode === 'instruction-only' && descriptor.interfaces.length !== 0) errors.push(`node ${node.id} instruction-only interface must not declare executable operations`);
+  if (descriptor.mode !== 'instruction-only' && descriptor.interfaces.length === 0) errors.push(`node ${node.id} executable interface mode requires at least one operation`);
+
+  return {operationCount: descriptor.interfaces.length};
+}
+
 async function findLegacyHiddenGeometryPolicy(skillRoot) {
   const hits = [];
   for (const source of HIDDEN_GEOMETRY_POLICY_SOURCES) {
@@ -129,6 +256,7 @@ export async function analyzeSemanticInstructionGraph({skillRoot = DEFAULT_SKILL
   const errors = [];
 
   if (graph.schema !== 'refas.instruction-graph/v1') errors.push(`unexpected graph schema: ${graph.schema}`);
+  if (graph.interfaceSchema !== INTERFACE_SCHEMA) errors.push(`unexpected instruction interface schema: ${graph.interfaceSchema}`);
   if (!Array.isArray(graph.nodes)) errors.push('graph.nodes must be an array');
   const nodes = Array.isArray(graph.nodes) ? graph.nodes : [];
   const ids = nodes.map((node) => String(node.id ?? ''));
@@ -162,6 +290,13 @@ export async function analyzeSemanticInstructionGraph({skillRoot = DEFAULT_SKILL
     if (typeof node.authority !== 'string' || !node.authority) errors.push(`node ${node.id} must declare authority`);
     if (!Array.isArray(node.closureEffects)) errors.push(`node ${node.id} closureEffects must be an array`);
   }
+
+  let interfaceOperations = 0;
+  for (const node of nodes) {
+    const result = await validateNodeInterface(skillRoot, node, errors);
+    interfaceOperations += result.operationCount;
+  }
+  const runtimeCapabilitiesCovered = sortedUnique(nodes.flatMap((node) => node.runtimeCapabilities ?? [])).filter((capability) => CAPABILITY_ORDER.includes(capability));
 
   const instructionOwners = new Set(nodes.flatMap((node) => node.owners ?? []));
   const missingCapabilityOwners = CAPABILITY_ORDER.filter((capability) => !instructionOwners.has(capability));
@@ -228,6 +363,10 @@ export async function analyzeSemanticInstructionGraph({skillRoot = DEFAULT_SKILL
     missingCapabilityOwners,
     bareMarkdownRoutes,
     legacyHiddenGeometryPolicyHits,
+    interfaceSchema: graph.interfaceSchema,
+    interfaceNodes: nodes.filter((node) => node.interface).length,
+    interfaceOperations,
+    runtimeCapabilitiesCovered,
     errors,
   };
 }
@@ -248,6 +387,10 @@ async function main() {
     missingCapabilityOwners: result.missingCapabilityOwners.length,
     bareMarkdownRoutes: result.bareMarkdownRoutes.length,
     legacyHiddenGeometryPolicyHits: result.legacyHiddenGeometryPolicyHits.length,
+    interfaceSchema: result.interfaceSchema,
+    interfaceNodes: result.interfaceNodes,
+    interfaceOperations: result.interfaceOperations,
+    runtimeCapabilitiesCovered: result.runtimeCapabilitiesCovered.length,
   }, null, 2)}\n`);
 }
 
