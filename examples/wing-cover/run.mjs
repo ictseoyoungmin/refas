@@ -584,7 +584,7 @@ async function main() {
   const candidateCheckpoint = await commitCheckpoint(PROJECT, {
     capability: 'assembly', scopeId: 'whole', reason: 'Alternative root placement is materialized with actual multiview evidence for bounded comparison.',
     artifactRefs: await references([finalAssetPath, path.join(candidateRenderDirectory, 'render-report.json'), path.join(candidateRenderDirectory, 'multiview-review-board.png')]),
-    gates: [{id: 'candidate-observable', status: 'pass', evidenceRefs: ['renders/assembly-candidate/multiview-review-board.png']}],
+    gates: [{id: 'assembly-gate', evidenceRefs: ['renders/assembly-candidate/multiview-review-board.png']}],
   });
   const decision = await finishEdit(PROJECT, {
     candidateCheckpointId: candidateCheckpoint.id,
