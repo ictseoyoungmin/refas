@@ -79,11 +79,11 @@ async function advanceThrough(root, artifactPath, lastCapability) {
   return checkpoints;
 }
 
-async function rewriteCheckpointAsLegacyV1(root, checkpoint, {evidenceRefsByGate = {}} = {}) {
+async function rewriteCheckpointAsLegacyV1(root, checkpoint, {evidenceRefsByGate = {}, gateIds = {}} = {}) {
   const currentPath = path.join(root, '.refas', 'checkpoints', `${checkpoint.id}.json`);
   const legacy = JSON.parse(await fs.readFile(currentPath, 'utf8'));
   legacy.gates = legacy.gates.map((gate) => ({
-    id: gate.id,
+    id: gateIds[gate.id] ?? gate.id,
     status: gate.status,
     evidenceRefs: evidenceRefsByGate[gate.id] ?? gate.evidenceRefs,
   }));
@@ -229,7 +229,9 @@ test('checkpoint gate verdicts bind only to scoped executable policy', () => {
 test('legacy refas.checkpoint/v1 gates are re-evaluated on read and remain usable', async (t) => {
   const {root, artifactPath} = await makeProject(t, 'legacy-gate-read-study');
   const sourceCheckpoint = await checkpoint(root, artifactPath, 'source-intake', 'trusted:source-intake\n');
-  const legacy = await rewriteCheckpointAsLegacyV1(root, sourceCheckpoint);
+  const legacy = await rewriteCheckpointAsLegacyV1(root, sourceCheckpoint, {
+    gateIds: {'source-intake-gate': 'legacy-source-evidence'},
+  });
 
   assert.deepEqual(Object.keys(legacy.gates[0]).sort(), ['evidenceRefs', 'id', 'status']);
   const legacyAudit = await auditProject(root);
