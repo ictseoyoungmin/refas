@@ -43,7 +43,7 @@ test('AD03 describe exposes canonical placeholders and public enum constants', (
   const relation = runCli(['describe', 'node', 'relational-structure']);
   assert.equal(relation.status, 0, relation.stderr);
   const relationJson = JSON.parse(relation.stdout);
-  const relationInterface = relationJson.interface.interfaces.find((item) => item.id === 'relational-structure');
+  const relationInterface = relationJson.resolvedInterfaces.find((item) => item.id === 'relational-structure');
   assert.equal(relationInterface.templateProcessor.library, 'materializeCapabilityInputTemplate');
   assert.ok(relationInterface.templateContract.requirements.values.some((item) => item.name === 'sourceSha256'));
   assert.ok(Array.isArray(relationInterface.publicConstantValues.RELATIONAL_RELATION_KINDS));
@@ -51,7 +51,7 @@ test('AD03 describe exposes canonical placeholders and public enum constants', (
   const authority = runCli(['describe', 'node', 'inference-authority']);
   assert.equal(authority.status, 0, authority.stderr);
   const authorityJson = JSON.parse(authority.stdout);
-  const authorityInterface = authorityJson.interface.interfaces.find((item) => item.id === 'semantic-authority');
+  const authorityInterface = authorityJson.resolvedInterfaces.find((item) => item.id === 'semantic-authority');
   assert.ok(authorityInterface.templateContract.requirements.values.some((item) => item.name === 'targetDigest'));
   assert.ok(authorityInterface.publicConstantValues.SEMANTIC_AUTHORITY_CLASSES.includes('observed'));
 });
