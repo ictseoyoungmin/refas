@@ -73,7 +73,7 @@ The executable checkpoint/repair capability set is defined by `CAPABILITY_ORDER`
 | `spatial-hypotheses` | `spatial-reasoning`, `single-view-volumetric-reasoning-example`, `relational-structure`, `inference-authority`, `whole-system-relational-barrier` |
 | `shape-reconstruction` | `single-view-volumetric-reasoning-example`, `relational-structure`, `inference-authority`, `whole-system-relational-barrier`, `construction`, `organic-articulated-construction`, `parameter-fitting` |
 | `surface-topology` | `construction` |
-| `assembly` | 21 nodes from `attachment-semantics` through `realized-contact-support` |
+| `assembly` | `attachment-semantics`, `logical-fusion`, `surface-anchor-frames`, `attachment-follow`, `multi-anchor-solver`, `articulation-clearance`, `attachment-propagation`, `assembly`, `transmission-model`, `actuation-model`, `control-profile`, `runtime-binding`, `physical-asset-bundle`, `representation-capacity`, `backend-export`, `representation-normalizer`, `cross-representation-validation`, `divergence-authorization`, `physical-claims`, `physical-fusion`, `realized-contact-support` |
 | `appearance` | `appearance` |
 | `rendering` | `validation` |
 | `visual-critique` | `validation` |
@@ -151,6 +151,21 @@ The instruction-node matrix covers **all 40 nodes in the current instruction gra
 
 The count is intentionally conservative. A node is graded by the least-discoverable normal execution surface that it owns; a strong prose contract does not earn A/B when a worker still has to open implementation/tests to find the function or minimum object.
 
+### Always-load regrade delta
+
+All 40 rows were rechecked against the union of `SKILL.md` + the four required always-load documents + the active routed leaf + named templates/public surfaces.
+
+The prior leaf-biased audit under-credited four assembly instruction nodes:
+
+- row 19 `attachment-follow`: D -> C because `workflow.md` names `createAttachmentFollowState` and `propagateAttachmentFollow`;
+- row 20 `multi-anchor-solver`: D -> C because `workflow.md` names `solveMultiAnchor` and describes the plan→solve path, although the exact plan creator/validator remains undiscoverable;
+- row 21 `articulation-clearance`: D -> C because `workflow.md` names all four create/evaluate operations;
+- row 22 `attachment-propagation`: D -> C because `workflow.md` names both plan creation and graph propagation.
+
+Related rows were also rechecked but retain their prior grades: `canonical-edit-boundary`, `attachment-semantics`, and `logical-fusion` remain C because workflow exposes their creator but not a complete validator/minimum-input contract; `surface-anchor-frames` remains D because workflow exposes only rebind, while initial `createSurfaceAnchorSet` discovery is still absent. Relational barrier routing exposed in workflow likewise does not expose the missing relation/authority/barrier constructors, so rows 9–11 remain D.
+
+No other instruction-node grade changes under the corrected effective-instruction methodology.
+
 ## Known-risk surface findings
 
 ### Visual hierarchy and visual observation
@@ -173,7 +188,7 @@ Reference geometry has the same defect more severely: a canonical `reference-geo
 
 Registration is a good counterexample: the leaf names `createReferenceRegistration`, points to `assets/templates/registration-input.json`, and gives the public `register` CLI route. A fresh worker can execute it without implementation inspection.
 
-The principal spatial hypothesis set is different. `spatial-hypotheses.json`, `createSpatialHypothesisSet`, and `validateSpatialHypothesisSet` all exist, and `validate-spec` can validate the produced output, but the leaf does not connect those pieces. This is exactly the “contract exists but capability -> callable interface is absent” pattern AD01 must solve.
+The principal spatial hypothesis set is different. `spatial-hypotheses.json`, `createSpatialHypothesisSet`, and `validateSpatialHypothesisSet` all exist, and `validate-spec` can validate the produced output, but the leaf does not connect those pieces. This is exactly the “instruction node exists but node -> public operation mapping is incomplete” pattern AD01 must solve.
 
 ### Relational structure, semantic authority, and barrier
 
