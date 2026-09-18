@@ -94,7 +94,7 @@
               "symbol": "commitCheckpoint"
             },
             "template": null,
-            "inputContract": "capability + scope + reason + digest-bound artifact refs + gate results",
+            "inputContract": "capability + scope + reason + digest-bound artifact refs + canonical gate requests (id + evidenceRefs only); runtime derives persisted gate verdicts",
             "outputSchema": "refas.checkpoint/v1",
             "validator": null,
             "minimumInvocation": "references/checkpointing.md",
@@ -104,7 +104,11 @@
               "schema": "refas.capability-invocation/v1",
               "verification": "structural",
               "reason": "stateful, filesystem-bound, renderer-bound, or CLI-only operation; command discovery is verified separately"
-            }
+            },
+            "publicConstants": [
+              "CHECKPOINT_GATE_POLICIES",
+              "CHECKPOINT_GATE_POLICY_DIGEST"
+            ]
           },
           {
             "id": "restore-checkpoint",
