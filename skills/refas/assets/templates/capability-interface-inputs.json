@@ -2377,6 +2377,10 @@
       "obligations": {
         "$bind": "candidateObligations",
         "description": "Admission obligations for the evidence DAG"
+      },
+      "validationContext": {
+        "$bind": "candidateValidationContext",
+        "description": "Exact bytes/checkpoint context required by validateCandidateTransaction"
       }
     },
     "claim-certification/certification-policy": {
@@ -2401,6 +2405,240 @@
           ]
         }
       ]
+    },
+    "parameter-fitting/fit-parameters": {
+      "plan": {
+        "$bind": "parameterFitPlan",
+        "description": "Validated refas.parameter-fit-plan/v1 from the preceding public create operation"
+      },
+      "evaluate": {
+        "$bind": "parameterFitEvaluator",
+        "description": "Public evaluator callback returning measurements plus candidate/render content references"
+      },
+      "options": {
+        "verifyReference": {
+          "$bind": "parameterFitVerifyReference",
+          "description": "Callback that verifies exact referenced bytes before and after fitting"
+        }
+      }
+    },
+    "surface-anchor-frames/rebind-surface-anchor-set": {
+      "anchorSet": {
+        "$bind": "surfaceAnchorSet"
+      },
+      "attachmentSemantics": {
+        "$bind": "surfaceAttachmentSemantics"
+      },
+      "previousSurfaces": {
+        "$bind": "surfaceDescriptors"
+      },
+      "currentSurfaces": {
+        "$bind": "surfaceDescriptors"
+      },
+      "evidenceRefs": [
+        "reviews/rebind.json"
+      ]
+    },
+    "attachment-follow/propagate-attachment-follow": {
+      "followState": {
+        "$bind": "propagationFollowState"
+      },
+      "attachmentSemantics": {
+        "$bind": "propagationAttachmentSemantics"
+      },
+      "surfaceAnchorSet": {
+        "$bind": "propagationSurfaceAnchorSet"
+      },
+      "surfaces": {
+        "$bind": "propagationSurfaces"
+      },
+      "ownerWorldFrames": {
+        "$bind": "propagationOwnerWorldFrames"
+      },
+      "evidenceRefs": [
+        "reviews/follow-report.json"
+      ]
+    },
+    "multi-anchor-solver/solve-multi-anchor": {
+      "plan": {
+        "$bind": "multiAnchorPlan"
+      },
+      "attachmentSemantics": {
+        "$bind": "multiAttachmentSemantics"
+      },
+      "surfaceAnchorSet": {
+        "$bind": "multiSurfaceAnchorSet"
+      },
+      "surfaces": {
+        "$bind": "multiSurfaces"
+      },
+      "ownerWorldFrames": {
+        "$bind": "multiOwnerWorldFrames"
+      },
+      "evidenceRefs": [
+        "reviews/multi-anchor-report.json"
+      ]
+    },
+    "articulation-clearance/evaluate-articulated-joint": {
+      "joint": {
+        "$bind": "articulatedJoint"
+      },
+      "attachmentSemantics": {
+        "$bind": "articulatedAttachmentSemantics"
+      },
+      "ownerWorldFrame": {
+        "$bind": "articulatedOwnerWorldFrame"
+      },
+      "angle": 0.25,
+      "evidenceRefs": [
+        "reviews/articulated-report.json"
+      ]
+    },
+    "articulation-clearance/evaluate-supported-clearance": {
+      "contract": {
+        "$bind": "supportedClearanceContract"
+      },
+      "attachmentSemantics": {
+        "$bind": "clearanceAttachmentSemantics"
+      },
+      "realizedAssemblyProof": {
+        "$bind": "clearanceRealizedProof"
+      },
+      "evidenceRefs": [
+        "reviews/clearance-report.json"
+      ]
+    },
+    "attachment-propagation/propagate-attachment-graph": {
+      "plan": {
+        "$bind": "attachmentPropagationPlan"
+      },
+      "attachmentSemantics": {
+        "$bind": "propagationAttachmentSemantics"
+      },
+      "surfaceAnchorSet": {
+        "$bind": "propagationSurfaceAnchorSet"
+      },
+      "surfaces": {
+        "$bind": "propagationSurfaces"
+      },
+      "followState": {
+        "$bind": "propagationFollowState"
+      },
+      "multiAnchorPlans": {
+        "$bind": "propagationMultiAnchorPlans"
+      },
+      "articulatedJoints": {
+        "$bind": "propagationArticulatedJoints"
+      },
+      "initialWorldFrames": {
+        "$bind": "propagationOwnerWorldFrames"
+      },
+      "evidenceRefs": [
+        "reviews/propagation-report.json"
+      ]
+    },
+    "backend-export/run-export-adapter": {
+      "exportId": "alignment-public-export",
+      "adapter": {
+        "$bind": "publicExportAdapter"
+      },
+      "capacityProfile": {
+        "$bind": "capacityProfile"
+      },
+      "bundle": {
+        "$bind": "bundle"
+      },
+      "identityGraph": {
+        "$bind": "bundleIdentityGraph"
+      },
+      "components": {
+        "$bind": "bundleComponents"
+      }
+    },
+    "representation-normalizer/run-representation-normalizer": {
+      "normalizationId": "alignment-public-normalized",
+      "normalizer": {
+        "$bind": "representationNormalizer"
+      },
+      "capacityProfile": {
+        "$bind": "capacityProfile"
+      },
+      "manifest": {
+        "$bind": "exportManifest"
+      },
+      "files": {
+        "$bind": "exportFiles"
+      }
+    },
+    "physical-claims/evaluate-physical-claim": {
+      "transaction": {
+        "$bind": "physicalClaimTransaction"
+      },
+      "policy": {
+        "$bind": "physicalClaimPolicy"
+      },
+      "evidenceBytesById": {
+        "$bind": "physicalClaimEvidenceBytesById"
+      },
+      "physicalClaimContextsByNodeId": {
+        "$bind": "physicalClaimContextsByNodeId"
+      }
+    },
+    "physical-fusion/bake-physical-fusion": {
+      "plan": {
+        "$bind": "physicalFusionPlan"
+      },
+      "attachmentSemantics": {
+        "$bind": "fusionAttachmentSemantics"
+      },
+      "logicalFusion": {
+        "$bind": "logicalFusion"
+      },
+      "canonicalEditIntent": {
+        "$bind": "fusionCanonicalEditIntent"
+      },
+      "currentInputAssetSha256": {
+        "$value": "inputAssetSha256",
+        "example": "0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "currentPreFusionStateDigest": {
+        "$value": "preFusionStateDigest",
+        "example": "0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "realizedMembers": {
+        "$bind": "fusionRealizedMembers"
+      },
+      "backendResult": null,
+      "evidenceRefs": [
+        "reviews/fusion-bake.json"
+      ]
+    },
+    "realized-contact-support/analyze-realized-contact": {
+      "plan": {
+        "$bind": "realizedContactPlan"
+      },
+      "attachmentSemantics": {
+        "$bind": "contactAttachmentSemantics"
+      },
+      "glb": {
+        "$bind": "contactGlb"
+      },
+      "propagationReport": null,
+      "fusionArtifacts": [],
+      "evidenceRefs": [
+        "reviews/realized-contact-report.json"
+      ]
+    },
+    "claim-certification/evaluate-certification-policy": {
+      "transaction": {
+        "$bind": "genericCertificationTransaction"
+      },
+      "policy": {
+        "$bind": "genericCertificationPolicy"
+      },
+      "evidenceBytesById": {
+        "$bind": "genericCertificationEvidenceBytesById"
+      }
     }
   }
 }

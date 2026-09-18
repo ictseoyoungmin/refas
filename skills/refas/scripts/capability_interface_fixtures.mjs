@@ -37,17 +37,19 @@ function fusionFixture() {
     intent: 'Finalize a closed logical fusion group.',
   });
   const frame = I();
-  const members = [
+  const sourceMembers = [
     {memberId: 'head-shell', mesh: cube(-1, 0)},
     {memberId: 'fused-child', mesh: cube(0, 1)},
-  ].map(({memberId, mesh}) => ({
+  ];
+  const members = sourceMembers.map(({memberId, mesh}) => ({
     memberId,
     geometryDigest: API.physicalFusionGeometryDigest(mesh),
     frameDigest: API.physicalFusionFrameDigest(frame),
     materialRegionId: 'fixture',
     evidenceRefs: [`model/${memberId}.json`],
   }));
-  return {attachmentSemantics, logicalFusion, canonicalEditIntent, members};
+  const realizedMembers = sourceMembers.map(({memberId, mesh}) => ({memberId, mesh, worldFrame: frame}));
+  return {attachmentSemantics, logicalFusion, canonicalEditIntent, members, realizedMembers};
 }
 
 function surfaceFixture() {
@@ -92,15 +94,27 @@ function multiFixture() {
   const attachmentSemantics = API.createAttachmentSemantics({
     scopeId: 'multi-anchor',
     sourceSha256: D(),
-    entities: [E('nose'), E('left-ear'), E('right-ear'), E('glasses')],
+    entities: [E('head-shell'), E('nose'), E('left-ear'), E('right-ear'), E('glasses')],
     relations: [
-      R('nose-free', 'FREE', 'nose'),
-      R('left-free', 'FREE', 'left-ear'),
-      R('right-free', 'FREE', 'right-ear'),
+      R('head-free', 'FREE', 'head-shell'),
+      R('nose-fused', 'FUSED', 'nose', ['head-shell']),
+      R('left-ear-fused', 'FUSED', 'left-ear', ['head-shell']),
+      R('right-ear-fused', 'FUSED', 'right-ear', ['head-shell']),
       R('glasses-fit', 'MULTI_ANCHOR', 'glasses', ['nose','left-ear','right-ear']),
     ],
   });
-  return {attachmentSemantics};
+  const surfaces = [
+    {ownerId:'nose',geometryDigest:D('b'),vertices:[[-.2,-.2,0],[.2,-.2,0],[0,.2,0]],triangles:[{id:'nose-tri',patchId:'nose-bridge',indices:[0,1,2]}]},
+    {ownerId:'left-ear',geometryDigest:D('c'),vertices:[[-1.2,.8,0],[-.8,.8,0],[-1,1.2,0]],triangles:[{id:'left-tri',patchId:'left-contact',indices:[0,1,2]}]},
+    {ownerId:'right-ear',geometryDigest:D('d'),vertices:[[.8,.8,0],[1.2,.8,0],[1,1.2,0]],triangles:[{id:'right-tri',patchId:'right-contact',indices:[0,1,2]}]},
+  ];
+  const surfaceAnchorSet = API.createSurfaceAnchorSet({attachmentSemantics,surfaces,anchors:[
+    {id:'bridge-target',relationId:'glasses-fit',subjectAnchorId:'bridge',ownerId:'nose',patchId:'nose-bridge',triangleId:'nose-tri',barycentric:[.25,.25,.5],tangentHint:[1,0,0],offset:0,maxRebindDistance:.3,maxNormalDeviationRadians:.5,evidenceRefs:['model/bridge.json']},
+    {id:'left-target',relationId:'glasses-fit',subjectAnchorId:'left-temple',ownerId:'left-ear',patchId:'left-contact',triangleId:'left-tri',barycentric:[.25,.25,.5],tangentHint:[1,0,0],offset:0,maxRebindDistance:.3,maxNormalDeviationRadians:.5,evidenceRefs:['model/left.json']},
+    {id:'right-target',relationId:'glasses-fit',subjectAnchorId:'right-temple',ownerId:'right-ear',patchId:'right-contact',triangleId:'right-tri',barycentric:[.25,.25,.5],tangentHint:[1,0,0],offset:0,maxRebindDistance:.3,maxNormalDeviationRadians:.5,evidenceRefs:['model/right.json']},
+  ]});
+  const ownerWorldFrames=['nose','left-ear','right-ear'].map((entityId)=>({entityId,frame:I()}));
+  return {attachmentSemantics,surfaces,surfaceAnchorSet,ownerWorldFrames};
 }
 
 function articulatedFixture() {
@@ -115,18 +129,22 @@ function articulatedFixture() {
 }
 
 function clearanceFixture() {
-  return {
-    attachmentSemantics: API.createAttachmentSemantics({
-      scopeId: 'spaced-panel',
-      sourceSha256: D(),
-      entities: [E('housing'), E('bracket'), E('panel')],
-      relations: [
-        R('housing-free', 'FREE', 'housing'),
-        R('bracket-follow', 'RIGID_FOLLOW', 'bracket', ['housing']),
-        R('panel-clearance', 'SUPPORTED_CLEARANCE', 'panel', ['bracket']),
-      ],
-    }),
-  };
+  const attachmentSemantics = API.createAttachmentSemantics({
+    scopeId: 'spaced-panel',
+    sourceSha256: D(),
+    entities: [E('housing'), E('bracket'), E('panel')],
+    relations: [
+      R('housing-free', 'FREE', 'housing'),
+      R('bracket-follow', 'RIGID_FOLLOW', 'bracket', ['housing']),
+      R('panel-clearance', 'SUPPORTED_CLEARANCE', 'panel', ['bracket']),
+    ],
+  });
+  const payload={schema:'refas.realized-assembly-proof/v1',valid:true,errors:[],moduleChecks:[],attachmentChecks:[
+    {id:'panel-bracket-support',childModuleId:'panel',parentModuleId:'bracket',pass:true,supportDerivedFromContact:true,penetrationDepth:0,signedClearance:0},
+    {id:'bracket-housing-support',childModuleId:'bracket',parentModuleId:'housing',pass:true,supportDerivedFromContact:true,penetrationDepth:0,signedClearance:0},
+    {id:'panel-housing-gap',childModuleId:'panel',parentModuleId:'housing',pass:true,supportDerivedFromContact:true,penetrationDepth:0,signedClearance:.1},
+  ],immutableChildChecks:[],objectIdCheck:{partIds:[],pass:true},metrics:{modules:0,nestedLevels:0,attachments:3,failures:0}};
+  return {attachmentSemantics,realizedProof:{...payload,proofDigest:API.digestJson(payload)}};
 }
 
 function propagationFixture() {
@@ -384,6 +402,20 @@ function realizedAssemblyFixture() {
   };
 }
 
+function contactFixture() {
+  const attachmentSemantics=API.createAttachmentSemantics({
+    scopeId:'support-stack',sourceSha256:D(),
+    entities:[E('base'),E('leg'),E('body')],
+    relations:[R('base-free','FREE','base'),R('leg-follow','RIGID_FOLLOW','leg',['base']),R('body-follow','RIGID_FOLLOW','body',['leg'])],
+  });
+  const glb=API.partsToGlb({
+    assetId:'alignment-contact',
+    parts:[{id:'base',mesh:cube(),materialId:'fixture'},{id:'leg',mesh:cube(),materialId:'fixture'},{id:'body',mesh:cube(),materialId:'fixture'}],
+    materials:{fixture:{baseColor:[.5,.5,.5,1],metallic:0,roughness:.5}},
+  });
+  return {attachmentSemantics,glb};
+}
+
 function candidateFixture() {
   const candidateBytes = Buffer.from('alignment-candidate-bytes');
   const candidateSha256 = API.digestBytes(candidateBytes);
@@ -436,6 +468,7 @@ export async function createCapabilityAlignmentContext() {
   const drift = await driftPipeline(bundle);
   const realizedAssembly = realizedAssemblyFixture();
   const candidate = candidateFixture();
+  const contact = contactFixture();
 
   return {
     sourceSha256: D(),
@@ -451,17 +484,16 @@ export async function createCapabilityAlignmentContext() {
     drift,
     realizedAssembly,
     candidate,
+    contact,
   };
 }
 
 export function fixtureForCapabilityInterface(key, context, outputs = new Map()) {
   const values = {sourceSha256: context.sourceSha256};
   const bindings = {};
-  let validatorArgs = () => [];
 
   if (key === 'observation/visual-observation') {
     bindings.hierarchy = outputs.get('observation/visual-hierarchy');
-    validatorArgs = (_output, input) => [input.hierarchy];
   } else if (key === 'spatial-reasoning/projection-fit') {
     bindings.referenceGeometry = outputs.get('observation/reference-geometry');
   } else if (key === 'inference-authority/semantic-authority') {
@@ -471,55 +503,75 @@ export function fixtureForCapabilityInterface(key, context, outputs = new Map())
   } else if (key === 'whole-system-relational-barrier/relational-barrier') {
     bindings.relationalStructure = outputs.get('relational-structure/relational-structure');
     bindings.authoritySet = outputs.get('inference-authority/semantic-authority');
-    validatorArgs = (_output, input) => [{relationalStructure: input.relationalStructure, authoritySet: input.authoritySet}];
   } else if (key === 'logical-fusion/logical-fusion') {
     bindings.fusionAttachmentSemantics = context.fusion.attachmentSemantics;
-    validatorArgs = (_output, input) => [input.attachmentSemantics];
   } else if (key === 'logical-fusion/logical-fusion-invalidation') {
     bindings.fusionAttachmentSemantics = context.fusion.attachmentSemantics;
     bindings.logicalFusion = outputs.get('logical-fusion/logical-fusion');
-    validatorArgs = (_output, input) => [input.logicalFusion, input.attachmentSemantics];
   } else if (key === 'surface-anchor-frames/surface-anchor-set') {
     bindings.surfaceAttachmentSemantics = context.surface.attachmentSemantics;
     bindings.surfaceDescriptors = context.surface.surfaces;
-    validatorArgs = (_output, input) => [input.attachmentSemantics, input.surfaces];
+  } else if (key === 'surface-anchor-frames/rebind-surface-anchor-set') {
+    bindings.surfaceAnchorSet = context.surface.surfaceAnchorSet;
+    bindings.surfaceAttachmentSemantics = context.surface.attachmentSemantics;
+    bindings.surfaceDescriptors = context.surface.surfaces;
   } else if (key === 'attachment-follow/attachment-follow-state') {
     bindings.surfaceAttachmentSemantics = context.surface.attachmentSemantics;
     bindings.surfaceAnchorSet = context.surface.surfaceAnchorSet;
     bindings.surfaceDescriptors = context.surface.surfaces;
-    validatorArgs = (_output, input) => [{attachmentSemantics: input.attachmentSemantics, surfaceAnchorSet: input.surfaceAnchorSet, surfaces: input.surfaces}];
+  } else if (key === 'attachment-follow/propagate-attachment-follow') {
+    Object.assign(bindings,{
+      propagationFollowState:context.propagation.followState,
+      propagationAttachmentSemantics:context.propagation.attachmentSemantics,
+      propagationSurfaceAnchorSet:context.propagation.surfaceAnchorSet,
+      propagationSurfaces:context.propagation.surfaces,
+      propagationOwnerWorldFrames:[{entityId:'root',frame:I()}],
+    });
   } else if (key === 'multi-anchor-solver/multi-anchor-plan') {
     bindings.multiAttachmentSemantics = context.multi.attachmentSemantics;
-    validatorArgs = (_output, input) => [input.attachmentSemantics];
+  } else if (key === 'multi-anchor-solver/solve-multi-anchor') {
+    Object.assign(bindings,{
+      multiAnchorPlan:outputs.get('multi-anchor-solver/multi-anchor-plan'),
+      multiAttachmentSemantics:context.multi.attachmentSemantics,
+      multiSurfaceAnchorSet:context.multi.surfaceAnchorSet,
+      multiSurfaces:context.multi.surfaces,
+      multiOwnerWorldFrames:context.multi.ownerWorldFrames,
+    });
   } else if (key === 'articulation-clearance/articulated-joint') {
     bindings.articulatedAttachmentSemantics = context.articulated.attachmentSemantics;
-    validatorArgs = (_output, input) => [input.attachmentSemantics];
+  } else if (key === 'articulation-clearance/evaluate-articulated-joint') {
+    bindings.articulatedJoint=outputs.get('articulation-clearance/articulated-joint');
+    bindings.articulatedAttachmentSemantics=context.articulated.attachmentSemantics;
+    bindings.articulatedOwnerWorldFrame=I([2,3,4]);
   } else if (key === 'articulation-clearance/supported-clearance') {
     bindings.clearanceAttachmentSemantics = context.clearance.attachmentSemantics;
-    validatorArgs = (_output, input) => [input.attachmentSemantics];
+  } else if (key === 'articulation-clearance/evaluate-supported-clearance') {
+    bindings.supportedClearanceContract=outputs.get('articulation-clearance/supported-clearance');
+    bindings.clearanceAttachmentSemantics=context.clearance.attachmentSemantics;
+    bindings.clearanceRealizedProof=context.clearance.realizedProof;
   } else if (key === 'attachment-propagation/attachment-propagation-plan') {
-    bindings.propagationAttachmentSemantics = context.propagation.attachmentSemantics;
-    bindings.propagationSurfaceAnchorSet = context.propagation.surfaceAnchorSet;
-    bindings.propagationSurfaces = context.propagation.surfaces;
-    bindings.propagationFollowState = context.propagation.followState;
-    bindings.propagationMultiAnchorPlans = context.propagation.multiAnchorPlans;
-    bindings.propagationArticulatedJoints = context.propagation.articulatedJoints;
-    bindings.propagationExternalFrameBindings = context.propagation.externalFrameBindings;
-    validatorArgs = (_output, input) => [{
-      attachmentSemantics: input.attachmentSemantics,
-      surfaceAnchorSet: input.surfaceAnchorSet,
-      surfaces: input.surfaces,
-      followState: input.followState,
-      multiAnchorPlans: input.multiAnchorPlans,
-      articulatedJoints: input.articulatedJoints,
-    }];
-  } else if (key === 'assembly/realized-assembly-proof') {
-    Object.assign(bindings, {
-      realizedAssemblyGlb: context.realizedAssembly.glb,
-      realizedAssemblyModules: context.realizedAssembly.modules,
-      realizedAssemblyAttachments: context.realizedAssembly.attachments,
-      realizedAssemblyObjectIds: context.realizedAssembly.objectIdEvidence,
+    Object.assign(bindings,{
+      propagationAttachmentSemantics:context.propagation.attachmentSemantics,
+      propagationSurfaceAnchorSet:context.propagation.surfaceAnchorSet,
+      propagationSurfaces:context.propagation.surfaces,
+      propagationFollowState:context.propagation.followState,
+      propagationMultiAnchorPlans:context.propagation.multiAnchorPlans,
+      propagationArticulatedJoints:context.propagation.articulatedJoints,
+      propagationExternalFrameBindings:context.propagation.externalFrameBindings,
     });
+  } else if (key === 'attachment-propagation/propagate-attachment-graph') {
+    Object.assign(bindings,{
+      attachmentPropagationPlan:outputs.get('attachment-propagation/attachment-propagation-plan'),
+      propagationAttachmentSemantics:context.propagation.attachmentSemantics,
+      propagationSurfaceAnchorSet:context.propagation.surfaceAnchorSet,
+      propagationSurfaces:context.propagation.surfaces,
+      propagationFollowState:context.propagation.followState,
+      propagationMultiAnchorPlans:context.propagation.multiAnchorPlans,
+      propagationArticulatedJoints:context.propagation.articulatedJoints,
+      propagationOwnerWorldFrames:[{entityId:'root',frame:I()}],
+    });
+  } else if (key === 'assembly/realized-assembly-proof') {
+    Object.assign(bindings,{realizedAssemblyGlb:context.realizedAssembly.glb,realizedAssemblyModules:context.realizedAssembly.modules,realizedAssemblyAttachments:context.realizedAssembly.attachments,realizedAssemblyObjectIds:context.realizedAssembly.objectIdEvidence});
   } else if (key === 'transmission-model/transmission-model') {
     bindings.physicalIdentityGraph = context.control.identityGraph;
   } else if (key === 'actuation-model/actuation-model') {
@@ -537,90 +589,61 @@ export function fixtureForCapabilityInterface(key, context, outputs = new Map())
     bindings.bundleIdentityGraph = context.bundle.identityGraph;
     bindings.bundleComponents = context.bundle.components;
   } else if (key === 'representation-capacity/representation-capacity-profile') {
-    Object.assign(bindings, {
-      bundle: context.bundle.bundle,
-      bundleIdentityGraph: context.bundle.identityGraph,
-      bundleComponents: context.bundle.components,
-      capacitySupported: context.representation.capacityProfile.supported,
-      capacityApproximated: context.representation.capacityProfile.approximated,
-      capacityUnsupported: context.representation.capacityProfile.unsupported,
-    });
+    Object.assign(bindings,{bundle:context.bundle.bundle,bundleIdentityGraph:context.bundle.identityGraph,bundleComponents:context.bundle.components,capacitySupported:context.representation.capacityProfile.supported,capacityApproximated:context.representation.capacityProfile.approximated,capacityUnsupported:context.representation.capacityProfile.unsupported});
   } else if (key === 'backend-export/canonical-export-view') {
-    bindings.bundle = context.bundle.bundle;
-    bindings.bundleIdentityGraph = context.bundle.identityGraph;
-    bindings.bundleComponents = context.bundle.components;
+    bindings.bundle=context.bundle.bundle; bindings.bundleIdentityGraph=context.bundle.identityGraph; bindings.bundleComponents=context.bundle.components;
+  } else if (key === 'backend-export/run-export-adapter') {
+    Object.assign(bindings,{publicExportAdapter:API.createSemanticJsonExportAdapter(),capacityProfile:context.representation.capacityProfile,bundle:context.bundle.bundle,bundleIdentityGraph:context.bundle.identityGraph,bundleComponents:context.bundle.components});
+  } else if (key === 'representation-normalizer/run-representation-normalizer') {
+    Object.assign(bindings,{representationNormalizer:context.representation.normalizer,capacityProfile:context.representation.capacityProfile,exportManifest:context.representation.manifest,exportFiles:context.representation.files});
   } else if (key === 'cross-representation-validation/cross-representation-validation') {
-    Object.assign(bindings, {
-      capacityProfile: context.representation.capacityProfile,
-      exportManifest: context.representation.manifest,
-      exportFiles: context.representation.files,
-      normalizedRepresentation: context.representation.normalizedRepresentation,
-      representationNormalizer: context.representation.normalizer,
-      bundle: context.bundle.bundle,
-      bundleIdentityGraph: context.bundle.identityGraph,
-      bundleComponents: context.bundle.components,
-    });
+    Object.assign(bindings,{capacityProfile:context.representation.capacityProfile,exportManifest:context.representation.manifest,exportFiles:context.representation.files,normalizedRepresentation:context.representation.normalizedRepresentation,representationNormalizer:context.representation.normalizer,bundle:context.bundle.bundle,bundleIdentityGraph:context.bundle.identityGraph,bundleComponents:context.bundle.components});
   } else if (key === 'divergence-authorization/divergence-authorization') {
-    Object.assign(bindings, {
-      crossValidation: context.drift.validation,
-      divergenceDeclarations: context.drift.declarations,
-      divergenceAuthoritySet: context.drift.authoritySet,
-      capacityProfile: context.drift.capacityProfile,
-      exportManifest: context.drift.manifest,
-      exportFiles: context.drift.files,
-      normalizedRepresentation: context.drift.normalizedRepresentation,
-      representationNormalizer: context.drift.normalizer,
-      bundle: context.bundle.bundle,
-      bundleIdentityGraph: context.bundle.identityGraph,
-      bundleComponents: context.bundle.components,
-    });
+    Object.assign(bindings,{crossValidation:context.drift.validation,divergenceDeclarations:context.drift.declarations,divergenceAuthoritySet:context.drift.authoritySet,capacityProfile:context.drift.capacityProfile,exportManifest:context.drift.manifest,exportFiles:context.drift.files,normalizedRepresentation:context.drift.normalizedRepresentation,representationNormalizer:context.drift.normalizer,bundle:context.bundle.bundle,bundleIdentityGraph:context.bundle.identityGraph,bundleComponents:context.bundle.components});
   } else if (key === 'physical-claims/physical-claim-evidence') {
-    Object.assign(bindings, {
-      bundle: context.bundle.bundle,
-      bundleIdentityGraph: context.bundle.identityGraph,
-      bundleComponents: context.bundle.components,
-      crossValidation: context.representation.validation,
-      capacityProfile: context.representation.capacityProfile,
-      exportManifest: context.representation.manifest,
-      exportFiles: context.representation.files,
-      normalizedRepresentation: context.representation.normalizedRepresentation,
-      representationNormalizer: context.representation.normalizer,
+    Object.assign(bindings,{bundle:context.bundle.bundle,bundleIdentityGraph:context.bundle.identityGraph,bundleComponents:context.bundle.components,crossValidation:context.representation.validation,capacityProfile:context.representation.capacityProfile,exportManifest:context.representation.manifest,exportFiles:context.representation.files,normalizedRepresentation:context.representation.normalizedRepresentation,representationNormalizer:context.representation.normalizer});
+  } else if (key === 'physical-claims/evaluate-physical-claim') {
+    const evidence=outputs.get('physical-claims/physical-claim-evidence');
+    const policy=outputs.get('physical-claims/physical-claim-policy');
+    const candidate=Buffer.from('alignment-physical-claim-candidate');
+    const candidateSha256=API.digestBytes(candidate);
+    const evidenceBytes=Buffer.from(`${JSON.stringify(evidence)}\n`);
+    const nodeId='physical-claim-evidence';
+    const anchorDocument={schema:'refas.fixture-physical-claim-anchor/v1',candidateSha256,physicalClaimSha256:API.digestBytes(evidenceBytes)};
+    const anchorBytes=Buffer.from(JSON.stringify(anchorDocument));
+    const content={schema:'refas.checkpoint/v1',parentId:null,capability:'whole-object-certification',scopeId:'whole',reason:'alignment physical claim',artifactRefs:[{kind:'asset',path:'candidate.bin',sha256:candidateSha256,sizeBytes:candidate.length}],claims:[],gates:[],metadata:{},transactionId:null};
+    const contentDigest=API.digestJson(content);
+    const checkpoint={...content,id:`cp_${contentDigest.slice(0,20)}`,createdAt:'2026-09-19T00:00:00.000Z',contentDigest};
+    const transaction=API.createCandidateTransaction({candidateBytes:candidate,checkpoint,evidence:[
+      {id:'candidate-anchor',role:'candidate-anchor',schema:anchorDocument.schema,bytes:anchorBytes,subjectPointer:'/candidateSha256'},
+      {id:nodeId,role:API.physicalClaimEvidenceRole(evidence.claimId),schema:API.PHYSICAL_CLAIM_EVIDENCE_SCHEMA,bytes:evidenceBytes,dependencies:[{nodeId:'candidate-anchor',proof:{kind:'json-pointer-artifact-sha256',holder:'dependency',pointer:'/physicalClaimSha256'}}]},
+    ],decisionNodeIds:[nodeId],obligations:[{id:'physical-claim-obligation',role:API.physicalClaimEvidenceRole(evidence.claimId),schema:API.PHYSICAL_CLAIM_EVIDENCE_SCHEMA}]});
+    Object.assign(bindings,{
+      physicalClaimTransaction:transaction,physicalClaimPolicy:policy,
+      physicalClaimEvidenceBytesById:{'candidate-anchor':anchorBytes,[nodeId]:evidenceBytes},
+      physicalClaimContextsByNodeId:{[nodeId]:{bundle:context.bundle.bundle,identityGraph:context.bundle.identityGraph,components:context.bundle.components,validation:context.representation.validation,capacityProfile:context.representation.capacityProfile,manifest:context.representation.manifest,files:context.representation.files,normalizedRepresentation:context.representation.normalizedRepresentation,normalizer:context.representation.normalizer}},
     });
   } else if (key === 'physical-fusion/physical-fusion-plan') {
-    bindings.fusionAttachmentSemantics = context.fusion.attachmentSemantics;
-    bindings.logicalFusion = outputs.get('logical-fusion/logical-fusion') ?? context.fusion.logicalFusion;
-    bindings.fusionCanonicalEditIntent = context.fusion.canonicalEditIntent;
-    bindings.fusionMembers = context.fusion.members;
-    validatorArgs = (_output, input) => [{attachmentSemantics: input.attachmentSemantics, logicalFusion: input.logicalFusion, canonicalEditIntent: input.canonicalEditIntent}];
+    bindings.fusionAttachmentSemantics=context.fusion.attachmentSemantics; bindings.logicalFusion=outputs.get('logical-fusion/logical-fusion')??context.fusion.logicalFusion; bindings.fusionCanonicalEditIntent=context.fusion.canonicalEditIntent; bindings.fusionMembers=context.fusion.members;
+  } else if (key === 'physical-fusion/bake-physical-fusion') {
+    bindings.physicalFusionPlan=outputs.get('physical-fusion/physical-fusion-plan'); bindings.fusionAttachmentSemantics=context.fusion.attachmentSemantics; bindings.logicalFusion=outputs.get('logical-fusion/logical-fusion')??context.fusion.logicalFusion; bindings.fusionCanonicalEditIntent=context.fusion.canonicalEditIntent; bindings.fusionRealizedMembers=context.fusion.realizedMembers;
   } else if (key === 'realized-contact-support/realized-contact-plan') {
-    const semantics = API.createAttachmentSemantics({
-      scopeId: 'support-stack',
-      sourceSha256: D(),
-      entities: [E('base'),E('leg'),E('body')],
-      relations: [R('base-free','FREE','base'),R('leg-follow','RIGID_FOLLOW','leg',['base']),R('body-follow','RIGID_FOLLOW','body',['leg'])],
-    });
-    bindings.contactAttachmentSemantics = semantics;
-    validatorArgs = (_output, input) => [input.attachmentSemantics];
-  } else if (key === 'validation/projection-aware-visual-review') {
-    bindings.projectionFit = outputs.get('spatial-reasoning/projection-fit');
+    bindings.contactAttachmentSemantics=context.contact.attachmentSemantics; values.contactAssetSha256=API.digestBytes(context.contact.glb);
+  } else if (key === 'realized-contact-support/analyze-realized-contact') {
+    bindings.realizedContactPlan=outputs.get('realized-contact-support/realized-contact-plan'); bindings.contactAttachmentSemantics=context.contact.attachmentSemantics; bindings.contactGlb=context.contact.glb;
+  } else if (key === 'parameter-fitting/fit-parameters') {
+    const plan=outputs.get('parameter-fitting/parameter-fit-plan');
+    bindings.parameterFitPlan=plan;
+    bindings.parameterFitEvaluator=async (parameters,run)=>({measurements:{'silhouette-error':Math.abs(parameters.span-1)+Math.abs(parameters.bend)},candidateAsset:plan.baselineAsset,renderEvidence:{schema:'refas.content-reference/v1',kind:'render-report',path:`trials/${run.trialId}/render.json`,sha256:API.digestBytes(`render-${run.trialId}`),sizeBytes:Buffer.byteLength(`render-${run.trialId}`)},evidenceRefs:[`trials/${run.trialId}/hero.png`]});
+    bindings.parameterFitVerifyReference=async()=>true;
   } else if (key === 'candidate-transactions/candidate-transaction') {
-    Object.assign(bindings, {
-      candidateBytes: context.candidate.candidateBytes,
-      candidateCheckpoint: context.candidate.checkpoint,
-      candidateEvidence: context.candidate.evidence,
-      candidateDecisionNodeIds: context.candidate.decisionNodeIds,
-      candidateObligations: context.candidate.obligations,
-    });
-    validatorArgs = () => [{
-      candidateBytes: context.candidate.candidateBytes,
-      checkpoint: context.candidate.checkpoint,
-      evidenceBytesById: context.candidate.evidenceBytesById,
-    }];
+    Object.assign(bindings,{candidateBytes:context.candidate.candidateBytes,candidateCheckpoint:context.candidate.checkpoint,candidateEvidence:context.candidate.evidence,candidateDecisionNodeIds:context.candidate.decisionNodeIds,candidateObligations:context.candidate.obligations,candidateValidationContext:{candidateBytes:context.candidate.candidateBytes,checkpoint:context.candidate.checkpoint,evidenceBytesById:context.candidate.evidenceBytesById}});
+  } else if (key === 'claim-certification/evaluate-certification-policy') {
+    bindings.genericCertificationTransaction=outputs.get('candidate-transactions/candidate-transaction');
+    bindings.genericCertificationPolicy=outputs.get('claim-certification/certification-policy');
+    bindings.genericCertificationEvidenceBytesById=context.candidate.evidenceBytesById;
   }
 
-  if (key === 'validation/visual-review' || key === 'validation/projection-aware-visual-review') {
-    values.sourceSha256 = outputs.get('observation/reference-geometry')?.sourceSha256 ?? D();
-  }
-
-  return {bindings, values, validatorArgs};
+  if (key === 'validation/visual-review' || key === 'validation/projection-aware-visual-review') values.sourceSha256=outputs.get('observation/reference-geometry')?.sourceSha256??D();
+  return {bindings,values};
 }

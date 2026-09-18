@@ -31,7 +31,13 @@
             "outputSchema": "refas.project-state/v1",
             "validator": null,
             "minimumInvocation": "references/workflow.md",
-            "example": null
+            "example": null,
+            "usageReference": "references/workflow.md",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "stateful, filesystem-bound, renderer-bound, or CLI-only operation; command discovery is verified separately"
+            }
           },
           {
             "id": "resume-project",
@@ -49,7 +55,13 @@
             "outputSchema": null,
             "validator": null,
             "minimumInvocation": "references/workflow.md",
-            "example": null
+            "example": null,
+            "usageReference": "references/workflow.md",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "stateful, filesystem-bound, renderer-bound, or CLI-only operation; command discovery is verified separately"
+            }
           }
         ]
       }
@@ -86,7 +98,13 @@
             "outputSchema": "refas.checkpoint/v1",
             "validator": null,
             "minimumInvocation": "references/checkpointing.md",
-            "example": null
+            "example": null,
+            "usageReference": "references/checkpointing.md",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "stateful, filesystem-bound, renderer-bound, or CLI-only operation; command discovery is verified separately"
+            }
           },
           {
             "id": "restore-checkpoint",
@@ -104,7 +122,13 @@
             "outputSchema": null,
             "validator": null,
             "minimumInvocation": "references/checkpointing.md",
-            "example": null
+            "example": null,
+            "usageReference": "references/checkpointing.md",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "stateful, filesystem-bound, renderer-bound, or CLI-only operation; command discovery is verified separately"
+            }
           },
           {
             "id": "begin-edit",
@@ -122,7 +146,13 @@
             "outputSchema": null,
             "validator": null,
             "minimumInvocation": "references/checkpointing.md",
-            "example": null
+            "example": null,
+            "usageReference": "references/checkpointing.md",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "stateful, filesystem-bound, renderer-bound, or CLI-only operation; command discovery is verified separately"
+            }
           },
           {
             "id": "finish-edit",
@@ -140,7 +170,13 @@
             "outputSchema": null,
             "validator": null,
             "minimumInvocation": "references/checkpointing.md",
-            "example": null
+            "example": null,
+            "usageReference": "references/checkpointing.md",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "stateful, filesystem-bound, renderer-bound, or CLI-only operation; command discovery is verified separately"
+            }
           },
           {
             "id": "abort-edit",
@@ -158,7 +194,13 @@
             "outputSchema": null,
             "validator": null,
             "minimumInvocation": "references/checkpointing.md",
-            "example": null
+            "example": null,
+            "usageReference": "references/checkpointing.md",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "stateful, filesystem-bound, renderer-bound, or CLI-only operation; command discovery is verified separately"
+            }
           }
         ]
       }
@@ -196,7 +238,13 @@
             "outputSchema": null,
             "validator": null,
             "minimumInvocation": "references/host-integration.md",
-            "example": null
+            "example": null,
+            "usageReference": "references/host-integration.md",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "stateful, filesystem-bound, renderer-bound, or CLI-only operation; command discovery is verified separately"
+            }
           },
           {
             "id": "review-bundle",
@@ -216,7 +264,13 @@
               "library": "validateHostReviewBundle"
             },
             "minimumInvocation": "references/host-integration.md",
-            "example": null
+            "example": null,
+            "usageReference": "references/host-integration.md",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "stateful, filesystem-bound, renderer-bound, or CLI-only operation; command discovery is verified separately"
+            }
           },
           {
             "id": "artifact-handoff",
@@ -236,7 +290,13 @@
               "library": "validateArtifactHandoff"
             },
             "minimumInvocation": "references/host-integration.md",
-            "example": null
+            "example": null,
+            "usageReference": "references/host-integration.md",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "stateful, filesystem-bound, renderer-bound, or CLI-only operation; command discovery is verified separately"
+            }
           }
         ]
       }
@@ -273,7 +333,14 @@
             "outputSchema": null,
             "validator": null,
             "minimumInvocation": "references/failure-routing.md",
-            "example": null
+            "example": null,
+            "usageReference": "references/failure-routing.md",
+            "templateRole": "artifact-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "stateful, filesystem-bound, renderer-bound, or CLI-only operation; command discovery is verified separately"
+            }
           },
           {
             "id": "report-finding",
@@ -291,7 +358,14 @@
             "outputSchema": null,
             "validator": null,
             "minimumInvocation": "references/failure-routing.md",
-            "example": null
+            "example": null,
+            "usageReference": "references/failure-routing.md",
+            "templateRole": "artifact-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "stateful, filesystem-bound, renderer-bound, or CLI-only operation; command discovery is verified separately"
+            }
           }
         ]
       }
@@ -327,7 +401,14 @@
             "outputSchema": "refas.source-manifest/v1",
             "validator": null,
             "minimumInvocation": "references/provenance.md",
-            "example": null
+            "example": null,
+            "usageReference": "references/provenance.md",
+            "templateRole": "artifact-example",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "stateful, filesystem-bound, renderer-bound, or CLI-only operation; command discovery is verified separately"
+            }
           },
           {
             "id": "bind-source",
@@ -345,7 +426,14 @@
             "outputSchema": "refas.source-manifest/v1",
             "validator": null,
             "minimumInvocation": "references/provenance.md",
-            "example": null
+            "example": null,
+            "usageReference": "references/provenance.md",
+            "templateRole": "artifact-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "stateful, filesystem-bound, renderer-bound, or CLI-only operation; command discovery is verified separately"
+            }
           }
         ]
       }
@@ -391,7 +479,28 @@
             },
             "publicConstants": [
               "HIERARCHY_LEVELS"
-            ]
+            ],
+            "usageReference": "references/observation.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
+            }
           },
           {
             "id": "visual-observation",
@@ -411,6 +520,31 @@
             "example": null,
             "templateProcessor": {
               "library": "materializeCapabilityInputTemplate"
+            },
+            "usageReference": "references/observation.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  },
+                  {
+                    "source": "input",
+                    "pointer": "/hierarchy"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
             }
           },
           {
@@ -437,7 +571,28 @@
               "REFERENCE_GEOMETRY_VISIBILITY",
               "REFERENCE_SEGMENT_SEPARATION",
               "REFERENCE_INTERFACE_KINDS"
-            ]
+            ],
+            "usageReference": "references/observation.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
+            }
           },
           {
             "id": "evidence-view",
@@ -452,7 +607,13 @@
             "outputSchema": null,
             "validator": null,
             "minimumInvocation": "references/observation.md",
-            "example": null
+            "example": null,
+            "usageReference": "references/observation.md",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "stateful, filesystem-bound, renderer-bound, or CLI-only operation; command discovery is verified separately"
+            }
           }
         ]
       }
@@ -493,6 +654,27 @@
             "example": "references/single-view-volumetric-reasoning-example.md",
             "templateProcessor": {
               "library": "materializeCapabilityInputTemplate"
+            },
+            "usageReference": "references/spatial-reasoning.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
             }
           },
           {
@@ -516,6 +698,27 @@
             "example": null,
             "templateProcessor": {
               "library": "materializeCapabilityInputTemplate"
+            },
+            "usageReference": "references/spatial-reasoning.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
             }
           },
           {
@@ -536,6 +739,27 @@
             "example": null,
             "templateProcessor": {
               "library": "materializeCapabilityInputTemplate"
+            },
+            "usageReference": "references/spatial-reasoning.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
             }
           }
         ]
@@ -610,7 +834,28 @@
               "RELATIONAL_RELATION_KINDS",
               "RELATIONAL_IMPORTANCE",
               "RELATIONAL_SCOPES"
-            ]
+            ],
+            "usageReference": "references/relational-structure.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
+            }
           }
         ]
       }
@@ -659,7 +904,28 @@
             "publicConstants": [
               "SEMANTIC_AUTHORITY_CLASSES",
               "SEMANTIC_BASIS_KINDS"
-            ]
+            ],
+            "usageReference": "references/inference-authority.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
+            }
           }
         ]
       }
@@ -709,7 +975,41 @@
             },
             "publicConstants": [
               "RELATIONAL_CHECK_STATUSES"
-            ]
+            ],
+            "usageReference": "references/whole-system-relational-barrier.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  },
+                  {
+                    "source": "object",
+                    "properties": {
+                      "relationalStructure": {
+                        "source": "input",
+                        "pointer": "/relationalStructure"
+                      },
+                      "authoritySet": {
+                        "source": "input",
+                        "pointer": "/authoritySet"
+                      }
+                    }
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
+            }
           },
           {
             "id": "route-relational-barrier",
@@ -724,7 +1024,13 @@
             "outputSchema": null,
             "validator": null,
             "minimumInvocation": "references/whole-system-relational-barrier.md",
-            "example": null
+            "example": null,
+            "usageReference": "references/whole-system-relational-barrier.md",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "public helper has no artifact validator/schema contract requiring AD03 execution proof"
+            }
           }
         ]
       }
@@ -766,7 +1072,28 @@
             },
             "publicConstants": [
               "CANONICAL_EDIT_CLASSES"
-            ]
+            ],
+            "usageReference": "references/contracts/canonical-edit-boundary.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
+            }
           }
         ]
       }
@@ -822,7 +1149,28 @@
             },
             "publicConstants": [
               "REQUIRED_VISIBLE_FORM_GATES"
-            ]
+            ],
+            "usageReference": "references/construction.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
+            }
           },
           {
             "id": "hard-surface-shell",
@@ -839,7 +1187,29 @@
               "library": "validateHardSurfaceSpec"
             },
             "minimumInvocation": "references/construction.md",
-            "example": null
+            "example": null,
+            "usageReference": "references/construction.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "outputSchemaPointer": null,
+              "note": "validator checks the public hard-surface input spec; shell output is geometry rather than a schema artifact"
+            }
           },
           {
             "id": "surface-network",
@@ -859,6 +1229,27 @@
             "example": null,
             "templateProcessor": {
               "library": "materializeCapabilityInputTemplate"
+            },
+            "usageReference": "references/construction.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
             }
           },
           {
@@ -877,7 +1268,13 @@
             "outputSchema": null,
             "validator": null,
             "minimumInvocation": "references/construction.md",
-            "example": null
+            "example": null,
+            "usageReference": "references/construction.md",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "stateful, filesystem-bound, renderer-bound, or CLI-only operation; command discovery is verified separately"
+            }
           }
         ]
       }
@@ -945,6 +1342,27 @@
             "example": null,
             "templateProcessor": {
               "library": "materializeCapabilityInputTemplate"
+            },
+            "usageReference": "references/parameter-fitting.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
             }
           },
           {
@@ -958,14 +1376,51 @@
               "entrypoint": "scripts/lib/index.mjs",
               "symbol": "fitParameters"
             },
-            "template": "assets/templates/parameter-fit-plan.json",
+            "template": "assets/templates/capability-interface-inputs.json#/templates/parameter-fitting~1fit-parameters",
             "inputContract": "parameter-fit plan + deterministic evaluator worker",
             "outputSchema": "refas.parameter-fit-report/v1",
             "validator": {
               "library": "validateParameterFitReport"
             },
             "minimumInvocation": "references/parameter-fitting.md",
-            "example": null
+            "example": null,
+            "usageReference": "references/parameter-fitting.md",
+            "templateProcessor": {
+              "library": "materializeCapabilityInputTemplate"
+            },
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input",
+                    "pointer": "/plan"
+                  },
+                  {
+                    "source": "input",
+                    "pointer": "/evaluate"
+                  },
+                  {
+                    "source": "input",
+                    "pointer": "/options"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  },
+                  {
+                    "source": "input",
+                    "pointer": "/plan"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
+            }
           }
         ]
       }
@@ -1010,7 +1465,28 @@
             },
             "publicConstants": [
               "ATTACHMENT_MODES"
-            ]
+            ],
+            "usageReference": "references/contracts/attachment-semantics.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
+            }
           }
         ]
       }
@@ -1051,6 +1527,31 @@
             "example": null,
             "templateProcessor": {
               "library": "materializeCapabilityInputTemplate"
+            },
+            "usageReference": "references/contracts/logical-fusion.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  },
+                  {
+                    "source": "input",
+                    "pointer": "/attachmentSemantics"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
             }
           },
           {
@@ -1071,6 +1572,35 @@
             "example": null,
             "templateProcessor": {
               "library": "materializeCapabilityInputTemplate"
+            },
+            "usageReference": "references/contracts/logical-fusion.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  },
+                  {
+                    "source": "input",
+                    "pointer": "/logicalFusion"
+                  },
+                  {
+                    "source": "input",
+                    "pointer": "/attachmentSemantics"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
             }
           }
         ]
@@ -1112,6 +1642,35 @@
             "example": null,
             "templateProcessor": {
               "library": "materializeCapabilityInputTemplate"
+            },
+            "usageReference": "references/contracts/surface-anchor-frames.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  },
+                  {
+                    "source": "input",
+                    "pointer": "/attachmentSemantics"
+                  },
+                  {
+                    "source": "input",
+                    "pointer": "/surfaces"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
             }
           },
           {
@@ -1122,14 +1681,64 @@
               "entrypoint": "scripts/lib/index.mjs",
               "symbol": "rebindSurfaceAnchorSet"
             },
-            "template": null,
+            "template": "assets/templates/capability-interface-inputs.json#/templates/surface-anchor-frames~1rebind-surface-anchor-set",
             "inputContract": "existing anchor set + rebuilt owner surface within semantic patch",
             "outputSchema": "refas.surface-anchor-rebind/v1",
             "validator": {
               "library": "validateSurfaceAnchorRebind"
             },
             "minimumInvocation": "references/contracts/surface-anchor-frames.md",
-            "example": null
+            "example": null,
+            "usageReference": "references/contracts/surface-anchor-frames.md",
+            "templateProcessor": {
+              "library": "materializeCapabilityInputTemplate"
+            },
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output",
+                    "pointer": "/report"
+                  },
+                  {
+                    "source": "object",
+                    "properties": {
+                      "previousAnchorSet": {
+                        "source": "input",
+                        "pointer": "/anchorSet"
+                      },
+                      "nextAnchorSet": {
+                        "source": "output",
+                        "pointer": "/anchorSet"
+                      },
+                      "attachmentSemantics": {
+                        "source": "input",
+                        "pointer": "/attachmentSemantics"
+                      },
+                      "previousSurfaces": {
+                        "source": "input",
+                        "pointer": "/previousSurfaces"
+                      },
+                      "currentSurfaces": {
+                        "source": "input",
+                        "pointer": "/currentSurfaces"
+                      }
+                    }
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/report/schema"
+            }
           }
         ]
       }
@@ -1171,6 +1780,30 @@
             "example": null,
             "templateProcessor": {
               "library": "materializeCapabilityInputTemplate"
+            },
+            "usageReference": "references/contracts/attachment-follow.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  },
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
             }
           },
           {
@@ -1181,14 +1814,41 @@
               "entrypoint": "scripts/lib/index.mjs",
               "symbol": "propagateAttachmentFollow"
             },
-            "template": null,
+            "template": "assets/templates/capability-interface-inputs.json#/templates/attachment-follow~1propagate-attachment-follow",
             "inputContract": "follow state + explicit current owner world frame",
             "outputSchema": "refas.attachment-follow-report/v1",
             "validator": {
               "library": "validateAttachmentFollowReport"
             },
             "minimumInvocation": "references/contracts/attachment-follow.md",
-            "example": null
+            "example": null,
+            "usageReference": "references/contracts/attachment-follow.md",
+            "templateProcessor": {
+              "library": "materializeCapabilityInputTemplate"
+            },
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  },
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
+            }
           }
         ]
       }
@@ -1230,6 +1890,31 @@
             "example": null,
             "templateProcessor": {
               "library": "materializeCapabilityInputTemplate"
+            },
+            "usageReference": "references/contracts/multi-anchor-solver.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  },
+                  {
+                    "source": "input",
+                    "pointer": "/attachmentSemantics"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
             }
           },
           {
@@ -1240,14 +1925,41 @@
               "entrypoint": "scripts/lib/index.mjs",
               "symbol": "solveMultiAnchor"
             },
-            "template": null,
+            "template": "assets/templates/capability-interface-inputs.json#/templates/multi-anchor-solver~1solve-multi-anchor",
             "inputContract": "multi-anchor plan + current anchor set + explicit owner world frames",
             "outputSchema": "refas.multi-anchor-report/v1",
             "validator": {
               "library": "validateMultiAnchorReport"
             },
             "minimumInvocation": "references/contracts/multi-anchor-solver.md",
-            "example": null
+            "example": null,
+            "usageReference": "references/contracts/multi-anchor-solver.md",
+            "templateProcessor": {
+              "library": "materializeCapabilityInputTemplate"
+            },
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  },
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
+            }
           }
         ]
       }
@@ -1289,6 +2001,31 @@
             "example": null,
             "templateProcessor": {
               "library": "materializeCapabilityInputTemplate"
+            },
+            "usageReference": "references/contracts/articulation-clearance.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  },
+                  {
+                    "source": "input",
+                    "pointer": "/attachmentSemantics"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
             }
           },
           {
@@ -1299,14 +2036,41 @@
               "entrypoint": "scripts/lib/index.mjs",
               "symbol": "evaluateArticulatedJoint"
             },
-            "template": null,
+            "template": "assets/templates/capability-interface-inputs.json#/templates/articulation-clearance~1evaluate-articulated-joint",
             "inputContract": "articulated joint + owner world frame + in-range joint value",
             "outputSchema": "refas.articulated-joint-report/v1",
             "validator": {
               "library": "validateArticulatedJointReport"
             },
             "minimumInvocation": "references/contracts/articulation-clearance.md",
-            "example": null
+            "example": null,
+            "usageReference": "references/contracts/articulation-clearance.md",
+            "templateProcessor": {
+              "library": "materializeCapabilityInputTemplate"
+            },
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  },
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
+            }
           },
           {
             "id": "supported-clearance",
@@ -1326,6 +2090,31 @@
             "example": null,
             "templateProcessor": {
               "library": "materializeCapabilityInputTemplate"
+            },
+            "usageReference": "references/contracts/articulation-clearance.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  },
+                  {
+                    "source": "input",
+                    "pointer": "/attachmentSemantics"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
             }
           },
           {
@@ -1336,14 +2125,41 @@
               "entrypoint": "scripts/lib/index.mjs",
               "symbol": "evaluateSupportedClearance"
             },
-            "template": null,
+            "template": "assets/templates/capability-interface-inputs.json#/templates/articulation-clearance~1evaluate-supported-clearance",
             "inputContract": "supported-clearance contract + digest-bound realized assembly proof",
             "outputSchema": "refas.supported-clearance-report/v1",
             "validator": {
               "library": "validateSupportedClearanceReport"
             },
             "minimumInvocation": "references/contracts/articulation-clearance.md",
-            "example": null
+            "example": null,
+            "usageReference": "references/contracts/articulation-clearance.md",
+            "templateProcessor": {
+              "library": "materializeCapabilityInputTemplate"
+            },
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  },
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
+            }
           }
         ]
       }
@@ -1405,6 +2221,30 @@
             "example": null,
             "templateProcessor": {
               "library": "materializeCapabilityInputTemplate"
+            },
+            "usageReference": "references/contracts/attachment-propagation.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  },
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
             }
           },
           {
@@ -1415,14 +2255,41 @@
               "entrypoint": "scripts/lib/index.mjs",
               "symbol": "propagateAttachmentGraph"
             },
-            "template": null,
+            "template": "assets/templates/capability-interface-inputs.json#/templates/attachment-propagation~1propagate-attachment-graph",
             "inputContract": "propagation plan + exact current relation inputs",
             "outputSchema": "refas.attachment-propagation-report/v1",
             "validator": {
               "library": "validateAttachmentPropagationReport"
             },
             "minimumInvocation": "references/contracts/attachment-propagation.md",
-            "example": null
+            "example": null,
+            "usageReference": "references/contracts/attachment-propagation.md",
+            "templateProcessor": {
+              "library": "materializeCapabilityInputTemplate"
+            },
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  },
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
+            }
           }
         ]
       }
@@ -1467,6 +2334,27 @@
             "example": null,
             "templateProcessor": {
               "library": "materializeCapabilityInputTemplate"
+            },
+            "usageReference": "references/assembly.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
             }
           },
           {
@@ -1487,6 +2375,27 @@
             "example": null,
             "templateProcessor": {
               "library": "materializeCapabilityInputTemplate"
+            },
+            "usageReference": "references/assembly.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
             }
           },
           {
@@ -1502,7 +2411,13 @@
             "outputSchema": null,
             "validator": null,
             "minimumInvocation": "references/assembly.md",
-            "example": null
+            "example": null,
+            "usageReference": "references/assembly.md",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "public helper has no artifact validator/schema contract requiring AD03 execution proof"
+            }
           }
         ]
       }
@@ -1546,7 +2461,28 @@
             },
             "publicConstants": [
               "TRANSMISSION_MAPPING_KINDS"
-            ]
+            ],
+            "usageReference": "references/contracts/transmission-model.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
+            }
           },
           {
             "id": "evaluate-transmission",
@@ -1561,7 +2497,13 @@
             "outputSchema": null,
             "validator": null,
             "minimumInvocation": "references/contracts/transmission-model.md",
-            "example": null
+            "example": null,
+            "usageReference": "references/contracts/transmission-model.md",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "public helper has no artifact validator/schema contract requiring AD03 execution proof"
+            }
           }
         ]
       }
@@ -1615,7 +2557,28 @@
               "ACTUATOR_COORDINATE_CLASSES",
               "ACTUATOR_CONTROL_MODES",
               "ACTUATOR_POSITION_RANGE_KINDS"
-            ]
+            ],
+            "usageReference": "references/contracts/actuation-model.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
+            }
           }
         ]
       }
@@ -1661,7 +2624,28 @@
             "publicConstants": [
               "CONTROL_MODES",
               "CONTROL_GAIN_MODEL_KINDS"
-            ]
+            ],
+            "usageReference": "references/contracts/control-profile.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
+            }
           }
         ]
       }
@@ -1718,7 +2702,28 @@
             },
             "publicConstants": [
               "RUNTIME_COORDINATE_CLASSES"
-            ]
+            ],
+            "usageReference": "references/contracts/runtime-binding.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
+            }
           },
           {
             "id": "runtime-to-canonical",
@@ -1733,7 +2738,13 @@
             "outputSchema": null,
             "validator": null,
             "minimumInvocation": "references/contracts/runtime-binding.md",
-            "example": null
+            "example": null,
+            "usageReference": "references/contracts/runtime-binding.md",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "public helper has no artifact validator/schema contract requiring AD03 execution proof"
+            }
           },
           {
             "id": "canonical-to-runtime",
@@ -1748,7 +2759,13 @@
             "outputSchema": null,
             "validator": null,
             "minimumInvocation": "references/contracts/runtime-binding.md",
-            "example": null
+            "example": null,
+            "usageReference": "references/contracts/runtime-binding.md",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "public helper has no artifact validator/schema contract requiring AD03 execution proof"
+            }
           }
         ]
       }
@@ -1814,6 +2831,27 @@
             "example": null,
             "templateProcessor": {
               "library": "materializeCapabilityInputTemplate"
+            },
+            "usageReference": "references/contracts/physical-asset-bundle.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
             }
           }
         ]
@@ -1850,7 +2888,13 @@
             "outputSchema": null,
             "validator": null,
             "minimumInvocation": "references/contracts/representation-capacity.md",
-            "example": null
+            "example": null,
+            "usageReference": "references/contracts/representation-capacity.md",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "public helper has no artifact validator/schema contract requiring AD03 execution proof"
+            }
           },
           {
             "id": "representation-capacity-profile",
@@ -1874,7 +2918,28 @@
             "publicConstants": [
               "REPRESENTATION_SOURCE_KINDS",
               "REPRESENTATION_APPROXIMATION_STRATEGIES"
-            ]
+            ],
+            "usageReference": "references/contracts/representation-capacity.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
+            }
           }
         ]
       }
@@ -1915,6 +2980,27 @@
             "example": null,
             "templateProcessor": {
               "library": "materializeCapabilityInputTemplate"
+            },
+            "usageReference": "references/contracts/backend-export.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
             }
           },
           {
@@ -1925,14 +3011,41 @@
               "entrypoint": "scripts/lib/index.mjs",
               "symbol": "runExportAdapter"
             },
-            "template": null,
+            "template": "assets/templates/capability-interface-inputs.json#/templates/backend-export~1run-export-adapter",
             "inputContract": "canonical export view + validated capacity profile + one-way backend adapter",
             "outputSchema": "refas.backend-export/v1",
             "validator": {
               "library": "validateBackendExportResult"
             },
             "minimumInvocation": "references/contracts/backend-export.md",
-            "example": null
+            "example": null,
+            "usageReference": "references/contracts/backend-export.md",
+            "templateProcessor": {
+              "library": "materializeCapabilityInputTemplate"
+            },
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  },
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/manifest/schema"
+            }
           }
         ]
       }
@@ -1968,7 +3081,13 @@
             "outputSchema": null,
             "validator": null,
             "minimumInvocation": "references/contracts/representation-normalizer.md",
-            "example": null
+            "example": null,
+            "usageReference": "references/contracts/representation-normalizer.md",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "public helper has no artifact validator/schema contract requiring AD03 execution proof"
+            }
           },
           {
             "id": "run-representation-normalizer",
@@ -1978,14 +3097,38 @@
               "entrypoint": "scripts/lib/index.mjs",
               "symbol": "runRepresentationNormalizer"
             },
-            "template": null,
+            "template": "assets/templates/capability-interface-inputs.json#/templates/representation-normalizer~1run-representation-normalizer",
             "inputContract": "backend artifact + selected representation normalizer",
             "outputSchema": "refas.normalized-representation/v1",
             "validator": {
               "library": "validateNormalizedRepresentation"
             },
             "minimumInvocation": "references/contracts/representation-normalizer.md",
-            "example": null
+            "example": null,
+            "usageReference": "references/contracts/representation-normalizer.md",
+            "templateProcessor": {
+              "library": "materializeCapabilityInputTemplate"
+            },
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
+            }
           }
         ]
       }
@@ -2029,7 +3172,28 @@
             },
             "publicConstants": [
               "CROSS_REPRESENTATION_OUTCOMES"
-            ]
+            ],
+            "usageReference": "references/contracts/cross-representation-validation.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
+            }
           }
         ]
       }
@@ -2074,7 +3238,28 @@
             },
             "publicConstants": [
               "DIVERGENCE_AUTHORIZED_OUTCOMES"
-            ]
+            ],
+            "usageReference": "references/contracts/divergence-authorization.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
+            }
           }
         ]
       }
@@ -2134,7 +3319,28 @@
             },
             "publicConstants": [
               "PHYSICAL_CLAIM_IDS"
-            ]
+            ],
+            "usageReference": "references/contracts/physical-claims.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
+            }
           },
           {
             "id": "physical-claim-policy",
@@ -2157,7 +3363,28 @@
             },
             "publicConstants": [
               "PHYSICAL_CLAIM_IDS"
-            ]
+            ],
+            "usageReference": "references/contracts/physical-claims.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
+            }
           },
           {
             "id": "evaluate-physical-claim",
@@ -2167,14 +3394,41 @@
               "entrypoint": "scripts/lib/index.mjs",
               "symbol": "evaluatePhysicalClaimCertification"
             },
-            "template": null,
+            "template": "assets/templates/capability-interface-inputs.json#/templates/physical-claims~1evaluate-physical-claim",
             "inputContract": "physical claim certification policy + sealed candidate/evidence transaction",
             "outputSchema": "refas.claim-certification-decision/v1",
             "validator": {
               "library": "validatePhysicalClaimCertificationDecision"
             },
             "minimumInvocation": "references/contracts/physical-claims.md",
-            "example": null
+            "example": null,
+            "usageReference": "references/contracts/physical-claims.md",
+            "templateProcessor": {
+              "library": "materializeCapabilityInputTemplate"
+            },
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  },
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
+            }
           }
         ]
       }
@@ -2224,6 +3478,30 @@
             "example": null,
             "templateProcessor": {
               "library": "materializeCapabilityInputTemplate"
+            },
+            "usageReference": "references/physical-fusion.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  },
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
             }
           },
           {
@@ -2234,14 +3512,41 @@
               "entrypoint": "scripts/lib/index.mjs",
               "symbol": "bakePhysicalFusion"
             },
-            "template": null,
+            "template": "assets/templates/capability-interface-inputs.json#/templates/physical-fusion~1bake-physical-fusion",
             "inputContract": "validated physical fusion plan + exact source GLB/geometry inputs",
             "outputSchema": "refas.physical-fusion-report/v1",
             "validator": {
               "library": "validatePhysicalFusionResult"
             },
             "minimumInvocation": "references/physical-fusion.md",
-            "example": null
+            "example": null,
+            "usageReference": "references/physical-fusion.md",
+            "templateProcessor": {
+              "library": "materializeCapabilityInputTemplate"
+            },
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  },
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/report/schema"
+            }
           }
         ]
       }
@@ -2292,6 +3597,31 @@
             "example": null,
             "templateProcessor": {
               "library": "materializeCapabilityInputTemplate"
+            },
+            "usageReference": "references/realized-contact-support.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  },
+                  {
+                    "source": "input",
+                    "pointer": "/attachmentSemantics"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
             }
           },
           {
@@ -2302,14 +3632,41 @@
               "entrypoint": "scripts/lib/index.mjs",
               "symbol": "analyzeRealizedContact"
             },
-            "template": null,
+            "template": "assets/templates/capability-interface-inputs.json#/templates/realized-contact-support~1analyze-realized-contact",
             "inputContract": "validated realized-contact plan + final GLB geometry evidence",
             "outputSchema": "refas.realized-contact-report/v1",
             "validator": {
               "library": "validateRealizedContactResult"
             },
             "minimumInvocation": "references/realized-contact-support.md",
-            "example": null
+            "example": null,
+            "usageReference": "references/realized-contact-support.md",
+            "templateProcessor": {
+              "library": "materializeCapabilityInputTemplate"
+            },
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  },
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/report/schema"
+            }
           }
         ]
       }
@@ -2345,7 +3702,14 @@
             "outputSchema": "refas.pbr-render-report/v1",
             "validator": null,
             "minimumInvocation": "references/appearance.md",
-            "example": null
+            "example": null,
+            "usageReference": "references/appearance.md",
+            "templateRole": "supporting-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "stateful, filesystem-bound, renderer-bound, or CLI-only operation; command discovery is verified separately"
+            }
           },
           {
             "id": "pbr-render-report",
@@ -2368,7 +3732,28 @@
             },
             "publicConstants": [
               "PBR_RENDERER_FAMILIES"
-            ]
+            ],
+            "usageReference": "references/appearance.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
+            }
           }
         ]
       }
@@ -2417,7 +3802,14 @@
             "outputSchema": null,
             "validator": null,
             "minimumInvocation": "references/validation.md",
-            "example": null
+            "example": null,
+            "usageReference": "references/validation.md",
+            "templateRole": "supporting-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "stateful, filesystem-bound, renderer-bound, or CLI-only operation; command discovery is verified separately"
+            }
           },
           {
             "id": "registered-comparison",
@@ -2432,7 +3824,14 @@
             "outputSchema": "refas.registered-comparison/v1",
             "validator": null,
             "minimumInvocation": "references/validation.md",
-            "example": null
+            "example": null,
+            "usageReference": "references/validation.md",
+            "templateRole": "project-file-manifest",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "stateful, filesystem-bound, renderer-bound, or CLI-only operation; command discovery is verified separately"
+            }
           },
           {
             "id": "visual-review",
@@ -2456,7 +3855,28 @@
             "publicConstants": [
               "REQUIRED_REVIEW_VIEW_IDS",
               "REQUIRED_VISUAL_GATE_IDS"
-            ]
+            ],
+            "usageReference": "references/validation.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
+            }
           },
           {
             "id": "projection-aware-visual-review",
@@ -2480,7 +3900,28 @@
             "publicConstants": [
               "REQUIRED_REVIEW_VIEW_IDS",
               "REQUIRED_VISUAL_GATE_IDS"
-            ]
+            ],
+            "usageReference": "references/validation.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
+            }
           }
         ]
       }
@@ -2521,6 +3962,31 @@
             "example": "references/candidate-transactions.md",
             "templateProcessor": {
               "library": "materializeCapabilityInputTemplate"
+            },
+            "usageReference": "references/candidate-transactions.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  },
+                  {
+                    "source": "input",
+                    "pointer": "/validationContext"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
             }
           }
         ]
@@ -2578,7 +4044,13 @@
             "outputSchema": null,
             "validator": null,
             "minimumInvocation": "references/claim-certification.md",
-            "example": null
+            "example": null,
+            "usageReference": "references/claim-certification.md",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "stateful, filesystem-bound, renderer-bound, or CLI-only operation; command discovery is verified separately"
+            }
           },
           {
             "id": "certification-policy",
@@ -2598,6 +4070,27 @@
             "example": null,
             "templateProcessor": {
               "library": "materializeCapabilityInputTemplate"
+            },
+            "usageReference": "references/claim-certification.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
             }
           },
           {
@@ -2608,14 +4101,41 @@
               "entrypoint": "scripts/lib/index.mjs",
               "symbol": "evaluateCertificationPolicy"
             },
-            "template": null,
+            "template": "assets/templates/capability-interface-inputs.json#/templates/claim-certification~1evaluate-certification-policy",
             "inputContract": "certification policy + sealed candidate transaction + current evidence set",
             "outputSchema": "refas.claim-certification-decision/v1",
             "validator": {
               "library": "validateClaimCertificationDecision"
             },
             "minimumInvocation": "references/claim-certification.md",
-            "example": null
+            "example": null,
+            "usageReference": "references/claim-certification.md",
+            "templateProcessor": {
+              "library": "materializeCapabilityInputTemplate"
+            },
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  },
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
+            }
           }
         ]
       }
@@ -2667,5 +4187,6 @@
     ]
   },
   "interfaceSchema": "refas.instruction-node-interface/v1",
-  "interfaceContractSchema": "refas.capability-interface-input-catalog/v1"
+  "interfaceContractSchema": "refas.capability-interface-input-catalog/v1",
+  "invocationSchema": "refas.capability-invocation/v1"
 }
