@@ -106,10 +106,8 @@ async function describeNode(graph, id) {
     requires: node.requires,
     conditionalRequires: node.conditionalRequires,
     closureEffects: node.closureEffects,
-    interface: {
-      ...node.interface,
-      interfaces: await Promise.all(node.interface.interfaces.map(enrichInterface)),
-    },
+    interface: node.interface,
+    resolvedInterfaces: await Promise.all(node.interface.interfaces.map(enrichInterface)),
   };
 }
 
@@ -123,10 +121,8 @@ async function describeCapability(graph, capability) {
       authority: node.authority,
       owners: node.owners,
       runtimeCapabilities: node.runtimeCapabilities,
-      interface: {
-        ...node.interface,
-        interfaces: await Promise.all(node.interface.interfaces.map(enrichInterface)),
-      },
+      interface: node.interface,
+      resolvedInterfaces: await Promise.all(node.interface.interfaces.map(enrichInterface)),
     });
   }
   return {
