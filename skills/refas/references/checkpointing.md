@@ -25,9 +25,15 @@ Checkpoint callers submit **gate requests**, never gate verdicts:
 
 Do not send `status`, evaluator IDs, policy digests, or decision digests. Those fields are runtime-authoritative and caller-supplied values are rejected.
 
-The canonical policy is exported as `CHECKPOINT_GATE_POLICIES` and `CHECKPOINT_GATE_POLICY_DIGEST`. Local capability gates use the runtime `bound-evidence` evaluator and pass only when every cited reference is the bound primary source or a current candidate artifact. Whole-object closure gates use specialized evaluators for source integrity, trusted lineage coverage, the exact digest-bound visual review, and precommit project integrity.
+The canonical policy set is exported as `CHECKPOINT_GATE_POLICIES`; `CHECKPOINT_GATE_POLICY_DIGEST` is a discovery/versioning digest for that whole set and is **not** persisted as gate authority. Each persisted verdict instead binds to `checkpointGatePolicyDigest(capability, gateId)`, which hashes only the executable policy identity for that gate: capability, gate ID, evaluator, and evaluator-specific parameters. Descriptive prose and unrelated capability policies are excluded, so adding or documenting another gate does not invalidate untouched checkpoints.
 
-Persisted checkpoint gates are `refas.checkpoint-gate-verdict/v1` records. They include the runtime evaluator, policy digest, and decision digest. `audit` validates that authority and rechecks the evidence binding; rewriting a verdict and re-signing only the checkpoint content digest does not make it trustworthy.
+Local capability gates use the runtime `bound-evidence` evaluator and pass only when every cited reference is the bound primary source or a current candidate artifact. Whole-object closure gates use specialized evaluators for source integrity, trusted lineage coverage, the exact digest-bound visual review, and precommit project integrity.
+
+Newly persisted checkpoint gates are `refas.checkpoint-gate-verdict/v1` records. They include the runtime evaluator, scoped policy digest, and decision digest. `audit` validates that authority and rechecks the evidence binding; rewriting a verdict and re-signing only the checkpoint content digest does not make it trustworthy.
+
+### Legacy `refas.checkpoint/v1` read compatibility
+
+Pre-AD04 checkpoints may contain legacy gate records shaped only as `{id,status,evidenceRefs}`. They remain readable under the same checkpoint v1 container. RefAs does **not** trust the stored legacy `status` as authority: on audit, prerequisite admission, or downstream gate evaluation, the current runtime re-evaluates the legacy gate against the bound source, stored artifacts, trustworthy lineage, visual review, or project-integrity policy as applicable. A legacy self-PASS whose evidence no longer satisfies the runtime policy fails closed. New checkpoint writes never emit the legacy gate shape.
 
 ## When to checkpoint
 
