@@ -47,6 +47,7 @@ export {
 export * from './hierarchy.mjs';
 export * from './ownership.mjs';
 export * from './failure-router.mjs';
+export * from './checkpoint-gates.mjs';
 export * from './checkpoint-store.mjs';
 export * from './host-session.mjs';
 export * from './host-event.mjs';
