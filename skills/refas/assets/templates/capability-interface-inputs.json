@@ -740,6 +740,17 @@
           "evidenceRefs": [
             "model/reference-geometry.json"
           ]
+        },
+        {
+          "id": "bend",
+          "binding": "model.shape.bend",
+          "kind": "continuous",
+          "minimum": -1,
+          "maximum": 1,
+          "initial": 0,
+          "evidenceRefs": [
+            "model/reference-geometry.json"
+          ]
         }
       ],
       "objectives": [
@@ -2061,7 +2072,7 @@
         "example": "0000000000000000000000000000000000000000000000000000000000000000",
         "description": "candidate asset digest"
       },
-      "evidenceClass": "contract-fixture",
+      "evidenceClass": "self-generated-contract-fixture",
       "verdict": "insufficient",
       "views": [
         {
@@ -2210,7 +2221,7 @@
         "example": "0000000000000000000000000000000000000000000000000000000000000000",
         "description": "candidate asset digest"
       },
-      "evidenceClass": "contract-fixture",
+      "evidenceClass": "self-generated-contract-fixture",
       "verdict": "insufficient",
       "views": [
         {
