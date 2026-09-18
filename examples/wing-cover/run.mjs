@@ -268,7 +268,7 @@ async function closeCapability(capability, files, reason, gateId, claims = []) {
     reason,
     artifactRefs: await references(files),
     claims,
-    gates: [{id: gateId, status: 'pass', evidenceRefs: files.map((file) => path.relative(PROJECT, file).split(path.sep).join('/'))}],
+    gates: [{id: `${capability}-gate`, evidenceRefs: files.map((file) => path.relative(PROJECT, file).split(path.sep).join('/'))}],
   });
 }
 
