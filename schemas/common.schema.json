@@ -140,6 +140,35 @@
       "additionalProperties": false
     },
     "gate": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/gateVerdict"
+        },
+        {
+          "$ref": "#/$defs/legacyGate"
+        }
+      ]
+    },
+    "gateRequest": {
+      "type": "object",
+      "required": [
+        "id",
+        "evidenceRefs"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/semanticId"
+        },
+        "evidenceRefs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "gateVerdict": {
       "type": "object",
       "required": [
         "schema",
@@ -183,15 +212,24 @@
       },
       "additionalProperties": false
     },
-    "gateRequest": {
+    "legacyGate": {
       "type": "object",
       "required": [
         "id",
+        "status",
         "evidenceRefs"
       ],
       "properties": {
         "id": {
           "$ref": "#/$defs/semanticId"
+        },
+        "status": {
+          "enum": [
+            "pass",
+            "fail",
+            "pending",
+            "blocked"
+          ]
         },
         "evidenceRefs": {
           "type": "array",
