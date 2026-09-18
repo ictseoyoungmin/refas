@@ -1,0 +1,2403 @@
+{
+  "schema": "refas.capability-interface-input-catalog/v1",
+  "placeholderContract": {
+    "bind": "$bind names an upstream public artifact/object that must be supplied to materializeCapabilityInputTemplate.",
+    "value": "$value names a source-specific scalar/JSON value; example is structurally valid and may be replaced without opening implementation source."
+  },
+  "templates": {
+    "observation/visual-hierarchy": {
+      "source": {
+        "path": "source/reference.png",
+        "sha256": {
+          "$value": "sourceSha256",
+          "example": "0000000000000000000000000000000000000000000000000000000000000000",
+          "description": "SHA-256 of the bound primary source"
+        },
+        "width": 1024,
+        "height": 1024
+      },
+      "nodes": [
+        {
+          "id": "whole",
+          "label": "Whole object",
+          "level": "whole",
+          "parentId": null,
+          "roi": [
+            0,
+            0,
+            1,
+            1
+          ],
+          "contextPadding": 0,
+          "status": "unobserved"
+        },
+        {
+          "id": "primary-region",
+          "label": "Primary region",
+          "level": "region",
+          "parentId": "whole",
+          "roi": [
+            0.15,
+            0.15,
+            0.7,
+            0.7
+          ],
+          "contextPadding": 0.08,
+          "status": "unobserved"
+        }
+      ]
+    },
+    "observation/visual-observation": {
+      "hierarchy": {
+        "$bind": "hierarchy",
+        "description": "Output of observation/visual-hierarchy"
+      },
+      "nodeId": "whole",
+      "evidence": [
+        {
+          "id": "whole.raw-reference",
+          "kind": "primary",
+          "path": "source/reference.png",
+          "sha256": {
+            "$value": "sourceSha256",
+            "example": "0000000000000000000000000000000000000000000000000000000000000000",
+            "description": "SHA-256 of the bound primary source"
+          },
+          "sourceSha256": {
+            "$value": "sourceSha256",
+            "example": "0000000000000000000000000000000000000000000000000000000000000000",
+            "description": "same primary source digest"
+          },
+          "primary": true,
+          "recipeDigest": null
+        }
+      ],
+      "facts": [
+        {
+          "claim": "Replace with one directly visible fact.",
+          "evidenceIds": [
+            "whole.raw-reference"
+          ]
+        }
+      ],
+      "interpretations": [],
+      "hypotheses": [],
+      "ambiguities": [
+        "Record what visible evidence cannot decide."
+      ]
+    },
+    "observation/reference-geometry": {
+      "scopeId": "whole",
+      "sourceSha256": {
+        "$value": "sourceSha256",
+        "example": "0000000000000000000000000000000000000000000000000000000000000000",
+        "description": "SHA-256 of the primary source"
+      },
+      "anchors": [
+        {
+          "id": "whole.anchor-a",
+          "importance": "macro",
+          "evidenceRefs": [
+            "source/reference.png"
+          ],
+          "xy": [
+            0.4,
+            0.4
+          ],
+          "visibility": "visible",
+          "confidence": 1,
+          "semanticRole": "Observed structural landmark A."
+        },
+        {
+          "id": "whole.anchor-b",
+          "importance": "macro",
+          "evidenceRefs": [
+            "source/reference.png"
+          ],
+          "xy": [
+            0.6,
+            0.6
+          ],
+          "visibility": "visible",
+          "confidence": 1,
+          "semanticRole": "Observed structural landmark B."
+        }
+      ],
+      "chains": [
+        {
+          "id": "whole.chain",
+          "importance": "macro",
+          "evidenceRefs": [
+            "source/reference.png"
+          ],
+          "anchorIds": [
+            "whole.anchor-a",
+            "whole.anchor-b"
+          ],
+          "closed": false
+        }
+      ],
+      "axes": [],
+      "segments": [],
+      "interfaces": [],
+      "contacts": [],
+      "occlusions": [],
+      "negativeSpaces": [],
+      "contours": [],
+      "dimensions": [],
+      "attestation": {
+        "attested": true,
+        "evidenceRefs": [
+          "source/reference.png"
+        ]
+      }
+    },
+    "spatial-reasoning/spatial-hypothesis-set": {
+      "scopeId": "whole",
+      "sourceSha256": {
+        "$value": "sourceSha256",
+        "example": "0000000000000000000000000000000000000000000000000000000000000000",
+        "description": "SHA-256 of the primary source"
+      },
+      "selectedId": null,
+      "attestation": {
+        "attested": true,
+        "evidenceRefs": [
+          "evidence/whole/evidence-board.png"
+        ]
+      },
+      "hypotheses": [
+        {
+          "id": "shallow-form",
+          "description": "Shallow form under near-orthographic camera.",
+          "camera": {
+            "projection": "orthographic"
+          },
+          "hiddenForm": "least-committed shallow support",
+          "predictions": {
+            "silhouette": "predicted contour",
+            "occlusion": "predicted depth order",
+            "sideView": "diagnostic side view",
+            "topView": "diagnostic top view",
+            "grazing": "diagnostic grazing response"
+          },
+          "falsifiers": [
+            "A side/top render showing substantially deeper mass."
+          ],
+          "evidenceRefs": [
+            "evidence/whole/evidence-board.png"
+          ],
+          "evidenceCoverage": 0.7,
+          "assumptionCost": 0.2,
+          "status": "plausible"
+        },
+        {
+          "id": "deep-form",
+          "description": "Deeper form under perspective camera.",
+          "camera": {
+            "projection": "perspective"
+          },
+          "hiddenForm": "least-committed deep support",
+          "predictions": {
+            "silhouette": "competing contour",
+            "occlusion": "competing depth order",
+            "sideView": "diagnostic side view",
+            "topView": "diagnostic top view",
+            "grazing": "diagnostic grazing response"
+          },
+          "falsifiers": [
+            "A registered comparison contradicting the deeper form."
+          ],
+          "evidenceRefs": [
+            "evidence/whole/evidence-board.png"
+          ],
+          "evidenceCoverage": 0.6,
+          "assumptionCost": 0.35,
+          "status": "plausible"
+        }
+      ]
+    },
+    "spatial-reasoning/reference-registration": {
+      "parentFrameId": "whole-frame",
+      "childFrameId": "part-frame",
+      "parentSourceSha256": {
+        "$value": "sourceSha256",
+        "example": "0000000000000000000000000000000000000000000000000000000000000000",
+        "description": "parent source SHA-256"
+      },
+      "childSourceSha256": {
+        "$value": "sourceSha256",
+        "example": "0000000000000000000000000000000000000000000000000000000000000000",
+        "description": "child source SHA-256"
+      },
+      "model": "projective-homography",
+      "correspondences": [
+        {
+          "id": "top-left",
+          "parent": [
+            0.2,
+            0.2
+          ],
+          "child": [
+            0.05,
+            0.05
+          ],
+          "evidenceRefs": [
+            "evidence/registration.png"
+          ]
+        },
+        {
+          "id": "top-right",
+          "parent": [
+            0.8,
+            0.2
+          ],
+          "child": [
+            0.95,
+            0.05
+          ],
+          "evidenceRefs": [
+            "evidence/registration.png"
+          ]
+        },
+        {
+          "id": "bottom-right",
+          "parent": [
+            0.8,
+            0.8
+          ],
+          "child": [
+            0.95,
+            0.95
+          ],
+          "evidenceRefs": [
+            "evidence/registration.png"
+          ]
+        },
+        {
+          "id": "bottom-left",
+          "parent": [
+            0.2,
+            0.8
+          ],
+          "child": [
+            0.05,
+            0.95
+          ],
+          "evidenceRefs": [
+            "evidence/registration.png"
+          ]
+        }
+      ],
+      "attestation": {
+        "attested": true,
+        "evidenceRefs": [
+          "evidence/registration.png"
+        ]
+      },
+      "ambiguities": [
+        "Registration constrains placement, not unseen child shape."
+      ]
+    },
+    "spatial-reasoning/projection-fit": {
+      "referenceGeometry": {
+        "$bind": "referenceGeometry",
+        "description": "Output of observation/reference-geometry"
+      },
+      "cameraHypothesisId": "camera-candidate",
+      "cameraDigest": {
+        "$value": "cameraDigest",
+        "example": "0000000000000000000000000000000000000000000000000000000000000000",
+        "description": "digest of the selected camera hypothesis"
+      },
+      "modelBindingDigest": {
+        "$value": "modelBindingDigest",
+        "example": "0000000000000000000000000000000000000000000000000000000000000000",
+        "description": "digest binding the current model realization"
+      },
+      "anchorProjections": [
+        {
+          "referenceId": "whole.anchor-a",
+          "projectedXY": [
+            0.4,
+            0.4
+          ],
+          "binding": {
+            "kind": "node-local-point",
+            "nodeId": "model-node",
+            "localPoint": [
+              0,
+              0,
+              0
+            ]
+          },
+          "evidenceRefs": [
+            "renders/hero.png"
+          ]
+        },
+        {
+          "referenceId": "whole.anchor-b",
+          "projectedXY": [
+            0.6,
+            0.6
+          ],
+          "binding": {
+            "kind": "node-local-point",
+            "nodeId": "model-node",
+            "localPoint": [
+              1,
+              0,
+              0
+            ]
+          },
+          "evidenceRefs": [
+            "renders/hero.png"
+          ]
+        }
+      ],
+      "negativeSpaceProjections": [],
+      "occlusionDepths": [],
+      "evidenceRefs": [
+        "renders/hero.png"
+      ]
+    },
+    "relational-structure/relational-structure": {
+      "scopeId": "whole",
+      "sourceSha256": {
+        "$value": "sourceSha256",
+        "example": "0000000000000000000000000000000000000000000000000000000000000000",
+        "description": "SHA-256 of the primary source"
+      },
+      "basisRefs": [
+        "source:primary-reference"
+      ],
+      "entities": [
+        {
+          "id": "left-landmark",
+          "kind": "landmark",
+          "role": "paired-left",
+          "basisRefs": []
+        },
+        {
+          "id": "right-landmark",
+          "kind": "landmark",
+          "role": "paired-right",
+          "basisRefs": []
+        },
+        {
+          "id": "top-boundary",
+          "kind": "landmark",
+          "role": "whole-top",
+          "basisRefs": []
+        },
+        {
+          "id": "bottom-boundary",
+          "kind": "landmark",
+          "role": "whole-bottom",
+          "basisRefs": []
+        },
+        {
+          "id": "primary-plane",
+          "kind": "plane",
+          "role": "coarse-primary-plane",
+          "basisRefs": []
+        },
+        {
+          "id": "secondary-plane",
+          "kind": "plane",
+          "role": "coarse-secondary-plane",
+          "basisRefs": []
+        }
+      ],
+      "relations": [
+        {
+          "id": "paired-span-ratio",
+          "kind": "distance-ratio",
+          "scope": "whole-system",
+          "importance": "identity",
+          "entityIds": [
+            "left-landmark",
+            "right-landmark",
+            "top-boundary",
+            "bottom-boundary"
+          ],
+          "dependsOn": [],
+          "basisRefs": [
+            "source:front-view"
+          ],
+          "range": [
+            0.2,
+            0.45
+          ]
+        },
+        {
+          "id": "coarse-plane-transition",
+          "kind": "plane-chain",
+          "scope": "whole-system",
+          "importance": "macro",
+          "entityIds": [
+            "primary-plane",
+            "secondary-plane"
+          ],
+          "dependsOn": [],
+          "basisRefs": [
+            "source:oblique-view"
+          ],
+          "continuity": "broken"
+        }
+      ]
+    },
+    "inference-authority/semantic-authority": {
+      "scopeId": "whole",
+      "sourceSha256": {
+        "$value": "sourceSha256",
+        "example": "0000000000000000000000000000000000000000000000000000000000000000",
+        "description": "must match the target relational structure source"
+      },
+      "targetSchema": {
+        "$value": "targetSchema",
+        "example": "refas.relational-structure/v1",
+        "description": "schema of the exact authority target"
+      },
+      "targetDigest": {
+        "$value": "targetDigest",
+        "example": "0000000000000000000000000000000000000000000000000000000000000000",
+        "description": "digest of the exact authority target"
+      },
+      "entries": [
+        {
+          "id": "authority-paired-span",
+          "subjectId": "paired-span-ratio",
+          "authority": "observed",
+          "proposition": "The span relation is directly supported by source evidence.",
+          "basis": [
+            {
+              "kind": "source-evidence",
+              "ref": "source:front-view",
+              "digest": null
+            }
+          ]
+        },
+        {
+          "id": "authority-plane-transition",
+          "subjectId": "coarse-plane-transition",
+          "authority": "inferred",
+          "proposition": "The visible plane transition supports a coherent hidden continuation.",
+          "reason": "Visible plane evidence constrains but does not fully reveal the hidden continuation.",
+          "basis": [
+            {
+              "kind": "relation",
+              "ref": "relation:coarse-plane-transition",
+              "digest": null
+            }
+          ]
+        }
+      ]
+    },
+    "whole-system-relational-barrier/relational-barrier": {
+      "relationalStructure": {
+        "$bind": "relationalStructure",
+        "description": "Output of relational-structure/relational-structure"
+      },
+      "authoritySet": {
+        "$bind": "authoritySet",
+        "description": "Output of inference-authority/semantic-authority bound to that structure"
+      },
+      "relationChecks": [
+        {
+          "relationId": "paired-span-ratio",
+          "status": "pass",
+          "evidenceRefs": [
+            "review:registered-front"
+          ]
+        },
+        {
+          "relationId": "coarse-plane-transition",
+          "status": "pass",
+          "evidenceRefs": [
+            "review:oblique-plane"
+          ]
+        }
+      ]
+    },
+    "canonical-edit-boundary/canonical-edit-intent": {
+      "id": "finalize-scope",
+      "ownerCapability": "assembly",
+      "scopeId": "whole",
+      "editClass": "finalization",
+      "canonicalBindings": [
+        "finalization.whole"
+      ],
+      "realizationOperations": [
+        "mesh-fuse"
+      ],
+      "evidenceRefs": [
+        "reviews/finalization.json"
+      ],
+      "intent": "Finalize an already closed canonical semantic scope without changing upstream evidence."
+    },
+    "construction/construction-quality": {
+      "scopeId": "whole",
+      "sourceSha256": {
+        "$value": "sourceSha256",
+        "example": "0000000000000000000000000000000000000000000000000000000000000000",
+        "description": "primary source digest"
+      },
+      "assetSha256": {
+        "$value": "assetSha256",
+        "example": "0000000000000000000000000000000000000000000000000000000000000000",
+        "description": "current asset digest"
+      },
+      "claim": "blockout",
+      "constructionFamilies": [
+        "generic-primitive"
+      ],
+      "visibleFormGates": [
+        {
+          "id": "whole-silhouette",
+          "status": "insufficient",
+          "evidenceRefs": [
+            "reviews/whole.png"
+          ]
+        },
+        {
+          "id": "major-landmarks",
+          "status": "insufficient",
+          "evidenceRefs": [
+            "model/landmarks.json"
+          ]
+        },
+        {
+          "id": "principal-sections",
+          "status": "insufficient",
+          "evidenceRefs": [
+            "model/sections.json"
+          ]
+        },
+        {
+          "id": "curvature-transitions",
+          "status": "insufficient",
+          "evidenceRefs": [
+            "renders/normal.png"
+          ]
+        },
+        {
+          "id": "coarse-negative-space",
+          "status": "insufficient",
+          "evidenceRefs": [
+            "renders/hero.png"
+          ]
+        },
+        {
+          "id": "registered-source-comparison",
+          "status": "insufficient",
+          "evidenceRefs": [
+            "reviews/comparison.json"
+          ]
+        }
+      ],
+      "identityFeatures": [],
+      "wholeDependency": {
+        "scopeId": "whole",
+        "status": "insufficient",
+        "evidenceRefs": [
+          "reviews/whole.png"
+        ]
+      },
+      "registeredComparison": {
+        "path": "reviews/comparison.json",
+        "sha256": {
+          "$value": "comparisonSha256",
+          "example": "0000000000000000000000000000000000000000000000000000000000000000",
+          "description": "registered comparison artifact digest"
+        },
+        "scopeIds": [
+          "whole"
+        ]
+      },
+      "ambiguities": [
+        "Hidden surfaces remain inferred."
+      ]
+    },
+    "construction/surface-network": {
+      "scopeId": "primary-region",
+      "sourceSha256": {
+        "$value": "sourceSha256",
+        "example": "0000000000000000000000000000000000000000000000000000000000000000",
+        "description": "primary source digest"
+      },
+      "cells": [
+        {
+          "id": "left-cell",
+          "label": "Left observed cell",
+          "polygon": [
+            [
+              0.1,
+              0.1
+            ],
+            [
+              0.48,
+              0.1
+            ],
+            [
+              0.48,
+              0.9
+            ],
+            [
+              0.1,
+              0.9
+            ]
+          ],
+          "evidenceRefs": [
+            "evidence/reference.png"
+          ]
+        },
+        {
+          "id": "right-cell",
+          "label": "Right observed cell",
+          "polygon": [
+            [
+              0.52,
+              0.1
+            ],
+            [
+              0.9,
+              0.1
+            ],
+            [
+              0.9,
+              0.9
+            ],
+            [
+              0.52,
+              0.9
+            ]
+          ],
+          "evidenceRefs": [
+            "evidence/reference.png"
+          ]
+        }
+      ],
+      "adjacencies": [
+        {
+          "id": "left-right",
+          "a": "left-cell",
+          "b": "right-cell",
+          "polyline": [
+            [
+              0.5,
+              0.1
+            ],
+            [
+              0.5,
+              0.9
+            ]
+          ],
+          "evidenceRefs": [
+            "evidence/reference.png"
+          ]
+        }
+      ],
+      "attestation": {
+        "attested": true,
+        "evidenceRefs": [
+          "evidence/reference.png"
+        ]
+      },
+      "ambiguities": []
+    },
+    "parameter-fitting/parameter-fit-plan": {
+      "id": "whole-shape-fit",
+      "scopeId": "whole",
+      "sourceSha256": {
+        "$value": "sourceSha256",
+        "example": "0000000000000000000000000000000000000000000000000000000000000000",
+        "description": "primary source digest"
+      },
+      "baselineAsset": {
+        "schema": "refas.content-reference/v1",
+        "kind": "glb",
+        "path": "assets/baseline.glb",
+        "sha256": {
+          "$value": "baselineAssetSha256",
+          "example": "0000000000000000000000000000000000000000000000000000000000000000",
+          "description": "exact baseline GLB digest"
+        },
+        "sizeBytes": {
+          "$value": "baselineAssetSizeBytes",
+          "example": 1,
+          "description": "exact baseline GLB byte length"
+        }
+      },
+      "parameters": [
+        {
+          "id": "span",
+          "binding": "model.shape.span",
+          "kind": "continuous",
+          "minimum": 0.5,
+          "maximum": 2,
+          "initial": 1,
+          "evidenceRefs": [
+            "model/reference-geometry.json"
+          ]
+        }
+      ],
+      "objectives": [
+        {
+          "id": "silhouette-error",
+          "goal": "minimize",
+          "scale": 1,
+          "weight": 1
+        }
+      ],
+      "protectedTerms": [],
+      "optimizer": {
+        "algorithm": "differential-evolution",
+        "seed": 1,
+        "populationSize": 6,
+        "evaluationBudget": 12,
+        "differentialWeight": 0.8,
+        "crossoverRate": 0.9,
+        "improvementTolerance": 0.000001,
+        "patience": 8,
+        "initializationAttemptBudget": 96
+      },
+      "evidenceRefs": [
+        "source/reference.png"
+      ]
+    },
+    "attachment-semantics/attachment-semantics": {
+      "scopeId": "assembly",
+      "sourceSha256": {
+        "$value": "sourceSha256",
+        "example": "0000000000000000000000000000000000000000000000000000000000000000",
+        "description": "primary source digest"
+      },
+      "entities": [
+        {
+          "id": "root",
+          "scopeId": "root",
+          "evidenceRefs": [
+            "model/root.json"
+          ]
+        },
+        {
+          "id": "child",
+          "scopeId": "child",
+          "evidenceRefs": [
+            "model/child.json"
+          ]
+        }
+      ],
+      "relations": [
+        {
+          "id": "root-free",
+          "mode": "FREE",
+          "subjectId": "root",
+          "ownerIds": [],
+          "basis": "construction",
+          "evidenceRefs": [
+            "model/attachments/root-free.json"
+          ]
+        },
+        {
+          "id": "child-follow",
+          "mode": "RIGID_FOLLOW",
+          "subjectId": "child",
+          "ownerIds": [
+            "root"
+          ],
+          "basis": "construction",
+          "evidenceRefs": [
+            "model/attachments/child-follow.json"
+          ]
+        }
+      ],
+      "evidenceRefs": [
+        "source/reference.png"
+      ]
+    },
+    "logical-fusion/logical-fusion": {
+      "attachmentSemantics": {
+        "$bind": "fusionAttachmentSemantics",
+        "description": "Attachment semantics containing at least one FUSED relation"
+      },
+      "evidenceRefs": [
+        "source/reference.png"
+      ]
+    },
+    "logical-fusion/logical-fusion-invalidation": {
+      "logicalFusion": {
+        "$bind": "logicalFusion",
+        "description": "Output of logical-fusion/logical-fusion"
+      },
+      "attachmentSemantics": {
+        "$bind": "fusionAttachmentSemantics",
+        "description": "Same exact attachment semantics used by logical fusion"
+      },
+      "changedEntityIds": [
+        "fused-child"
+      ],
+      "evidenceRefs": [
+        "reviews/fused-child-change.json"
+      ]
+    },
+    "surface-anchor-frames/surface-anchor-set": {
+      "attachmentSemantics": {
+        "$bind": "surfaceAttachmentSemantics",
+        "description": "Attachment semantics containing a SURFACE_OFFSET relation"
+      },
+      "surfaces": {
+        "$bind": "surfaceDescriptors",
+        "description": "Public owner-local surface descriptors"
+      },
+      "anchors": [
+        {
+          "id": "badge-surface-anchor",
+          "relationId": "badge-offset",
+          "subjectAnchorId": "badge-contact",
+          "ownerId": "root",
+          "patchId": "root-front",
+          "triangleId": "root-front-tri",
+          "barycentric": [
+            0.25,
+            0.25,
+            0.5
+          ],
+          "tangentHint": [
+            1,
+            0,
+            0
+          ],
+          "offset": 0.1,
+          "maxRebindDistance": 0.3,
+          "maxNormalDeviationRadians": 0.5,
+          "evidenceRefs": [
+            "model/badge-anchor.json"
+          ]
+        }
+      ],
+      "evidenceRefs": [
+        "source/reference.png"
+      ]
+    },
+    "attachment-follow/attachment-follow-state": {
+      "attachmentSemantics": {
+        "$bind": "surfaceAttachmentSemantics",
+        "description": "Attachment semantics containing RIGID_FOLLOW and/or SURFACE_OFFSET"
+      },
+      "surfaceAnchorSet": {
+        "$bind": "surfaceAnchorSet",
+        "description": "Surface anchor set when SURFACE_OFFSET bindings are present"
+      },
+      "surfaces": {
+        "$bind": "surfaceDescriptors",
+        "description": "Same surface descriptors used by the anchor set"
+      },
+      "bindings": [
+        {
+          "id": "child-follow-state",
+          "relationId": "child-follow",
+          "subjectId": "child",
+          "ownerId": "root",
+          "baselineOwnerFrame": {
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "xAxis": [
+              1,
+              0,
+              0
+            ],
+            "yAxis": [
+              0,
+              1,
+              0
+            ],
+            "zAxis": [
+              0,
+              0,
+              1
+            ]
+          },
+          "baselineSubjectFrame": {
+            "origin": [
+              0,
+              1,
+              0
+            ],
+            "xAxis": [
+              1,
+              0,
+              0
+            ],
+            "yAxis": [
+              0,
+              1,
+              0
+            ],
+            "zAxis": [
+              0,
+              0,
+              1
+            ]
+          },
+          "evidenceRefs": [
+            "model/child-follow.json"
+          ]
+        },
+        {
+          "id": "badge-offset-state",
+          "relationId": "badge-offset",
+          "subjectId": "badge",
+          "ownerId": "root",
+          "surfaceAnchorId": "badge-surface-anchor",
+          "subjectAnchorFrame": {
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "xAxis": [
+              1,
+              0,
+              0
+            ],
+            "yAxis": [
+              0,
+              1,
+              0
+            ],
+            "zAxis": [
+              0,
+              0,
+              1
+            ]
+          },
+          "evidenceRefs": [
+            "model/badge-offset.json"
+          ]
+        }
+      ],
+      "evidenceRefs": [
+        "source/reference.png"
+      ]
+    },
+    "multi-anchor-solver/multi-anchor-plan": {
+      "attachmentSemantics": {
+        "$bind": "multiAttachmentSemantics",
+        "description": "Attachment semantics containing MULTI_ANCHOR subject glasses with nose/left-ear/right-ear owners"
+      },
+      "id": "glasses-rigid-fit",
+      "relationId": "glasses-fit",
+      "subjectId": "glasses",
+      "maximumRmsPositionError": 0.02,
+      "constraints": [
+        {
+          "id": "bridge",
+          "ownerId": "nose",
+          "surfaceAnchorId": "bridge-target",
+          "subjectAnchorId": "bridge",
+          "subjectAnchorFrame": {
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "xAxis": [
+              1,
+              0,
+              0
+            ],
+            "yAxis": [
+              0,
+              1,
+              0
+            ],
+            "zAxis": [
+              0,
+              0,
+              1
+            ]
+          },
+          "positionWeight": 2,
+          "orientationWeight": 0,
+          "maxPositionError": 0.03,
+          "evidenceRefs": [
+            "model/bridge.json"
+          ]
+        },
+        {
+          "id": "left",
+          "ownerId": "left-ear",
+          "surfaceAnchorId": "left-target",
+          "subjectAnchorId": "left-temple",
+          "subjectAnchorFrame": {
+            "origin": [
+              -1,
+              1,
+              0
+            ],
+            "xAxis": [
+              1,
+              0,
+              0
+            ],
+            "yAxis": [
+              0,
+              1,
+              0
+            ],
+            "zAxis": [
+              0,
+              0,
+              1
+            ]
+          },
+          "positionWeight": 1,
+          "orientationWeight": 0,
+          "maxPositionError": 0.03,
+          "evidenceRefs": [
+            "model/left.json"
+          ]
+        },
+        {
+          "id": "right",
+          "ownerId": "right-ear",
+          "surfaceAnchorId": "right-target",
+          "subjectAnchorId": "right-temple",
+          "subjectAnchorFrame": {
+            "origin": [
+              1,
+              1,
+              0
+            ],
+            "xAxis": [
+              1,
+              0,
+              0
+            ],
+            "yAxis": [
+              0,
+              1,
+              0
+            ],
+            "zAxis": [
+              0,
+              0,
+              1
+            ]
+          },
+          "positionWeight": 1,
+          "orientationWeight": 0,
+          "maxPositionError": 0.03,
+          "evidenceRefs": [
+            "model/right.json"
+          ]
+        }
+      ],
+      "evidenceRefs": [
+        "source/reference.png"
+      ]
+    },
+    "articulation-clearance/articulated-joint": {
+      "attachmentSemantics": {
+        "$bind": "articulatedAttachmentSemantics",
+        "description": "Attachment semantics containing ARTICULATED door-hinge"
+      },
+      "id": "door-revolute",
+      "relationId": "door-hinge",
+      "ownerJointFrame": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "xAxis": [
+          1,
+          0,
+          0
+        ],
+        "yAxis": [
+          0,
+          1,
+          0
+        ],
+        "zAxis": [
+          0,
+          0,
+          1
+        ]
+      },
+      "subjectJointFrame": {
+        "origin": [
+          1,
+          0,
+          0
+        ],
+        "xAxis": [
+          1,
+          0,
+          0
+        ],
+        "yAxis": [
+          0,
+          1,
+          0
+        ],
+        "zAxis": [
+          0,
+          0,
+          1
+        ]
+      },
+      "minimumAngle": -1.5707963267948966,
+      "maximumAngle": 1.5707963267948966,
+      "evidenceRefs": [
+        "model/door-hinge.json"
+      ]
+    },
+    "articulation-clearance/supported-clearance": {
+      "attachmentSemantics": {
+        "$bind": "clearanceAttachmentSemantics",
+        "description": "Attachment semantics for panel→bracket→housing support chain"
+      },
+      "id": "panel-gap-contract",
+      "relationId": "panel-clearance",
+      "supportPathEntityIds": [
+        "panel",
+        "bracket",
+        "housing"
+      ],
+      "supportProofBindings": [
+        {
+          "childId": "panel",
+          "parentId": "bracket",
+          "proofAttachmentId": "panel-bracket-support",
+          "proofChildModuleId": "panel",
+          "proofParentModuleId": "bracket",
+          "evidenceRefs": [
+            "reviews/panel-bracket-support.json"
+          ]
+        },
+        {
+          "childId": "bracket",
+          "parentId": "housing",
+          "proofAttachmentId": "bracket-housing-support",
+          "proofChildModuleId": "bracket",
+          "proofParentModuleId": "housing",
+          "evidenceRefs": [
+            "reviews/bracket-housing-support.json"
+          ]
+        }
+      ],
+      "clearanceBounds": [
+        {
+          "counterpartId": "housing",
+          "proofAttachmentId": "panel-housing-gap",
+          "subjectModuleId": "panel",
+          "counterpartModuleId": "housing",
+          "minimumClearance": 0.08,
+          "maximumClearance": 0.12,
+          "evidenceRefs": [
+            "reviews/panel-housing-gap.json"
+          ]
+        }
+      ],
+      "evidenceRefs": [
+        "source/reference.png"
+      ]
+    },
+    "attachment-propagation/attachment-propagation-plan": {
+      "attachmentSemantics": {
+        "$bind": "propagationAttachmentSemantics",
+        "description": "Exact attachment semantics for the propagation fixture"
+      },
+      "id": "assembly-propagation",
+      "surfaceAnchorSet": {
+        "$bind": "propagationSurfaceAnchorSet",
+        "description": "Surface anchor set for the same semantics"
+      },
+      "surfaces": {
+        "$bind": "propagationSurfaces",
+        "description": "Surface descriptors for propagation"
+      },
+      "followState": {
+        "$bind": "propagationFollowState",
+        "description": "Follow state for RIGID_FOLLOW/SURFACE_OFFSET relations"
+      },
+      "multiAnchorPlans": {
+        "$bind": "propagationMultiAnchorPlans",
+        "description": "Array of multi-anchor plans"
+      },
+      "articulatedJoints": {
+        "$bind": "propagationArticulatedJoints",
+        "description": "Array of articulated joints"
+      },
+      "articulatedAngles": [
+        {
+          "relationId": "hinge-joint",
+          "angle": 0,
+          "evidenceRefs": [
+            "model/hinge-angle.json"
+          ]
+        }
+      ],
+      "externalFrameBindings": {
+        "$bind": "propagationExternalFrameBindings",
+        "description": "Exact external-frame bindings with current state/frame digests"
+      },
+      "evidenceRefs": [
+        "source/reference.png"
+      ]
+    },
+    "assembly/assembly-contract": {
+      "scopeId": "whole",
+      "sourceSha256": {
+        "$value": "sourceSha256",
+        "example": "0000000000000000000000000000000000000000000000000000000000000000",
+        "description": "primary source digest"
+      },
+      "parts": [
+        {
+          "id": "parent-shell",
+          "scopeId": "whole",
+          "observedPolygon": [
+            [
+              0.1,
+              0.1
+            ],
+            [
+              0.9,
+              0.1
+            ],
+            [
+              0.9,
+              0.9
+            ],
+            [
+              0.1,
+              0.9
+            ]
+          ],
+          "rootAnchor": [
+            0.5,
+            0.5
+          ],
+          "depthBand": [
+            0.1,
+            0.3
+          ],
+          "evidenceRefs": [
+            "evidence/reference.png"
+          ]
+        },
+        {
+          "id": "child-part",
+          "scopeId": "whole.child",
+          "observedPolygon": [
+            [
+              0.4,
+              0.4
+            ],
+            [
+              0.6,
+              0.4
+            ],
+            [
+              0.6,
+              0.6
+            ],
+            [
+              0.4,
+              0.6
+            ]
+          ],
+          "rootAnchor": [
+            0.5,
+            0.5
+          ],
+          "depthBand": [
+            0.31,
+            0.5
+          ],
+          "evidenceRefs": [
+            "evidence/reference.png"
+          ]
+        }
+      ],
+      "relations": [
+        {
+          "kind": "attached-to",
+          "subjectId": "child-part",
+          "objectId": "parent-shell",
+          "evidenceRefs": [
+            "evidence/reference.png"
+          ]
+        },
+        {
+          "kind": "in-front-of",
+          "subjectId": "child-part",
+          "objectId": "parent-shell",
+          "evidenceRefs": [
+            "evidence/reference.png"
+          ]
+        }
+      ],
+      "supportZones": [
+        {
+          "id": "center-support",
+          "polygon": [
+            [
+              0.35,
+              0.35
+            ],
+            [
+              0.65,
+              0.35
+            ],
+            [
+              0.65,
+              0.65
+            ],
+            [
+              0.35,
+              0.65
+            ]
+          ],
+          "evidenceRefs": [
+            "evidence/reference.png"
+          ]
+        }
+      ],
+      "supportHypotheses": [
+        {
+          "partId": "child-part",
+          "ownerId": "parent-shell",
+          "zoneId": "center-support",
+          "status": "bounded-hypothesis",
+          "evidenceRefs": [
+            "evidence/reference.png"
+          ]
+        }
+      ],
+      "closedChildren": [],
+      "attestation": {
+        "attested": true,
+        "evidenceRefs": [
+          "evidence/reference.png"
+        ]
+      },
+      "ambiguities": [
+        "Hidden support remains a bounded hypothesis."
+      ]
+    },
+    "assembly/realized-assembly-proof": {
+      "glb": {
+        "$bind": "realizedAssemblyGlb",
+        "description": "Exact GLB bytes containing declared module roots and contact-surface extras"
+      },
+      "modules": {
+        "$bind": "realizedAssemblyModules",
+        "description": "Module declarations matching GLB module-root nodes"
+      },
+      "attachments": {
+        "$bind": "realizedAssemblyAttachments",
+        "description": "Contact/support declarations matching GLB surface extras"
+      },
+      "compositionReports": [],
+      "objectIdEvidence": {
+        "$bind": "realizedAssemblyObjectIds",
+        "description": "Object-ID evidence containing every module root part ID"
+      }
+    },
+    "transmission-model/transmission-model": {
+      "scopeId": "whole",
+      "sourceSha256": {
+        "$value": "sourceSha256",
+        "example": "0000000000000000000000000000000000000000000000000000000000000000",
+        "description": "primary source digest"
+      },
+      "identityGraph": {
+        "$bind": "physicalIdentityGraph",
+        "description": "Exact physical identity graph containing tx-drive MAPS actuator-drive→actuator-load"
+      },
+      "transmissions": [
+        {
+          "transmissionId": "tx-drive",
+          "mapsRelationIds": [
+            "tx-drive-maps"
+          ],
+          "contextMechanismIds": [],
+          "inputSpace": {
+            "id": "drive-in",
+            "coordinates": [
+              {
+                "id": "drive-q",
+                "semanticIdentityId": "actuator-drive"
+              }
+            ],
+            "order": [
+              "drive-q"
+            ]
+          },
+          "outputSpace": {
+            "id": "drive-out",
+            "coordinates": [
+              {
+                "id": "load-q",
+                "semanticIdentityId": "actuator-load"
+              }
+            ],
+            "order": [
+              "load-q"
+            ]
+          },
+          "mapping": {
+            "kind": "RATIO",
+            "ratio": 2,
+            "offset": 0
+          }
+        }
+      ]
+    },
+    "actuation-model/actuation-model": {
+      "scopeId": "whole",
+      "sourceSha256": {
+        "$value": "sourceSha256",
+        "example": "0000000000000000000000000000000000000000000000000000000000000000",
+        "description": "primary source digest"
+      },
+      "identityGraph": {
+        "$bind": "physicalIdentityGraph",
+        "description": "Exact physical identity graph"
+      },
+      "transmissionModel": {
+        "$bind": "transmissionModel",
+        "description": "Exact P06 transmission model"
+      },
+      "actuators": [
+        {
+          "actuatorId": "actuator-drive",
+          "drivesRelationId": "actuator-drive-drives",
+          "drivenTargetId": "tx-drive",
+          "drivenTargetKind": "transmission",
+          "kind": "ROTARY_ELECTRIC",
+          "coordinateClass": "ROTARY",
+          "supportedControlModes": {
+            "value": [
+              "POSITION",
+              "EFFORT"
+            ]
+          },
+          "positionRange": {
+            "value": {
+              "kind": "BOUNDED",
+              "minimum": -3.1,
+              "maximum": 3.1,
+              "unit": "rad"
+            }
+          },
+          "velocityLimit": {
+            "value": {
+              "maxAbs": 8,
+              "unit": "rad_s"
+            }
+          },
+          "effortLimit": {
+            "value": {
+              "maxAbs": 12,
+              "unit": "N_m"
+            }
+          },
+          "stiffness": {
+            "value": null
+          },
+          "damping": {
+            "value": {
+              "value": 0.05,
+              "unit": "N_m_s_per_rad"
+            }
+          },
+          "armature": {
+            "value": {
+              "value": 0.001,
+              "unit": "kg_m2"
+            }
+          },
+          "responseLatency": {
+            "value": {
+              "value": 0.002,
+              "unit": "s"
+            }
+          }
+        }
+      ]
+    },
+    "control-profile/control-profile": {
+      "scopeId": "whole",
+      "sourceSha256": {
+        "$value": "sourceSha256",
+        "example": "0000000000000000000000000000000000000000000000000000000000000000",
+        "description": "primary source digest"
+      },
+      "identityGraph": {
+        "$bind": "controlIdentityGraph",
+        "description": "Identity graph containing controller COMMANDS actuator relation"
+      },
+      "actuationModel": {
+        "$bind": "controlActuationModel",
+        "description": "Exact actuation model for the commanded actuator"
+      },
+      "transmissionModel": {
+        "$bind": "controlTransmissionModel",
+        "description": "Exact transmission model upstream of actuation"
+      },
+      "profiles": [
+        {
+          "profileId": "control-drive",
+          "selector": {
+            "controllerId": "controller-main",
+            "commandsRelationId": "controller-main-commands-drive",
+            "actuatorId": "actuator-drive"
+          },
+          "coordinateClass": "ROTARY",
+          "mode": {
+            "value": "POSITION"
+          },
+          "commandSpace": {
+            "channels": [
+              {
+                "quantity": "POSITION",
+                "unit": "rad"
+              }
+            ]
+          },
+          "gainModel": {
+            "value": {
+              "kind": "PD",
+              "kp": {
+                "value": 20,
+                "unit": "N_m_per_rad"
+              },
+              "kd": {
+                "value": 0.4,
+                "unit": "N_m_s_per_rad"
+              }
+            }
+          },
+          "controllerDelay": {
+            "value": {
+              "value_s": 0.001
+            }
+          }
+        }
+      ]
+    },
+    "runtime-binding/runtime-binding": {
+      "scopeId": "whole",
+      "sourceSha256": {
+        "$value": "sourceSha256",
+        "example": "0000000000000000000000000000000000000000000000000000000000000000",
+        "description": "primary source digest"
+      },
+      "identityGraph": {
+        "$bind": "runtimeIdentityGraph",
+        "description": "Identity graph containing runtime endpoints and BINDS_RUNTIME relations"
+      },
+      "actuationModel": {
+        "$bind": "runtimeActuationModel",
+        "description": "Exact actuation model for runtime-bound actuator"
+      },
+      "transmissionModel": {
+        "$bind": "runtimeTransmissionModel",
+        "description": "Exact transmission model upstream of actuation"
+      },
+      "bindings": [
+        {
+          "bindingId": "binding-controller",
+          "selector": {
+            "runtimeEndpointId": "runtime-controller",
+            "bindsRuntimeRelationId": "runtime-binds-controller",
+            "targetId": "controller-main",
+            "targetKind": "controller"
+          },
+          "coordinateClass": "NONE",
+          "device": {
+            "value": "device-controller"
+          },
+          "bus": {
+            "value": "bus-main"
+          },
+          "runtimeIndex": {
+            "value": 1
+          },
+          "sign": {
+            "value": null
+          },
+          "zeroOffset": {
+            "value": null
+          },
+          "encoderScale": {
+            "value": null
+          },
+          "transportDelay": {
+            "value": {
+              "value_s": 0.001
+            }
+          }
+        },
+        {
+          "bindingId": "binding-actuator",
+          "selector": {
+            "runtimeEndpointId": "runtime-actuator",
+            "bindsRuntimeRelationId": "runtime-binds-actuator",
+            "targetId": "actuator-drive",
+            "targetKind": "actuator"
+          },
+          "coordinateClass": "ROTARY",
+          "device": {
+            "value": "device-drive"
+          },
+          "bus": {
+            "value": "bus-main"
+          },
+          "runtimeIndex": {
+            "value": 4
+          },
+          "sign": {
+            "value": -1
+          },
+          "zeroOffset": {
+            "value": {
+              "value": 0.125,
+              "unit": "rad"
+            }
+          },
+          "encoderScale": {
+            "value": {
+              "value": 0.001,
+              "unit": "rad_per_runtime_unit"
+            }
+          },
+          "transportDelay": {
+            "value": {
+              "value_s": 0.002
+            }
+          }
+        }
+      ]
+    },
+    "physical-asset-bundle/physical-asset-bundle": {
+      "bundleId": "physical-main",
+      "identityGraph": {
+        "$bind": "bundleIdentityGraph",
+        "description": "Exact physical identity graph"
+      },
+      "rootModuleId": "module-root",
+      "components": {
+        "$bind": "bundleComponents",
+        "description": "Validated physical component records with ownerModuleId"
+      }
+    },
+    "representation-capacity/representation-capacity-profile": {
+      "profileId": "backend-profile",
+      "backend": {
+        "$value": "backend",
+        "example": "semantic-json",
+        "description": "backend identifier"
+      },
+      "bundle": {
+        "$bind": "bundle",
+        "description": "Exact P10 physical asset bundle"
+      },
+      "identityGraph": {
+        "$bind": "bundleIdentityGraph",
+        "description": "Exact P01 identity graph"
+      },
+      "components": {
+        "$bind": "bundleComponents",
+        "description": "Exact bundle components"
+      },
+      "supported": {
+        "$bind": "capacitySupported",
+        "description": "Supported obligation decisions covering the current obligation inventory"
+      },
+      "approximated": {
+        "$bind": "capacityApproximated",
+        "description": "Approximated obligation decisions"
+      },
+      "unsupported": {
+        "$bind": "capacityUnsupported",
+        "description": "Unsupported obligation decisions"
+      },
+      "blockers": []
+    },
+    "backend-export/canonical-export-view": {
+      "bundle": {
+        "$bind": "bundle",
+        "description": "Exact P10 bundle"
+      },
+      "identityGraph": {
+        "$bind": "bundleIdentityGraph",
+        "description": "Exact identity graph"
+      },
+      "components": {
+        "$bind": "bundleComponents",
+        "description": "Exact live components"
+      }
+    },
+    "cross-representation-validation/cross-representation-validation": {
+      "validationId": "cross-validation",
+      "capacityProfile": {
+        "$bind": "capacityProfile",
+        "description": "Exact P11 profile"
+      },
+      "manifest": {
+        "$bind": "exportManifest",
+        "description": "Verified P12 export manifest"
+      },
+      "files": {
+        "$bind": "exportFiles",
+        "description": "Exact verified export artifact bytes"
+      },
+      "normalizedRepresentation": {
+        "$bind": "normalizedRepresentation",
+        "description": "P13 normalized representation"
+      },
+      "normalizer": {
+        "$bind": "representationNormalizer",
+        "description": "Exact public normalizer used for P13"
+      },
+      "bundle": {
+        "$bind": "bundle",
+        "description": "Exact P10 bundle"
+      },
+      "identityGraph": {
+        "$bind": "bundleIdentityGraph",
+        "description": "Exact P01 identity graph"
+      },
+      "components": {
+        "$bind": "bundleComponents",
+        "description": "Exact live components"
+      }
+    },
+    "divergence-authorization/divergence-authorization": {
+      "authorizationId": "divergence-authorization",
+      "validation": {
+        "$bind": "crossValidation",
+        "description": "Exact P14 validation containing DRIFT finding(s)"
+      },
+      "declarations": {
+        "$bind": "divergenceDeclarations",
+        "description": "Field-scoped declarations copied from exact P14 findings"
+      },
+      "authoritySet": {
+        "$bind": "divergenceAuthoritySet",
+        "description": "Semantic authority set targeting the exact P14 validation"
+      },
+      "capacityProfile": {
+        "$bind": "capacityProfile",
+        "description": "Exact P11 profile"
+      },
+      "manifest": {
+        "$bind": "exportManifest",
+        "description": "Exact P12 manifest"
+      },
+      "files": {
+        "$bind": "exportFiles",
+        "description": "Exact P12 files"
+      },
+      "normalizedRepresentation": {
+        "$bind": "normalizedRepresentation",
+        "description": "Exact P13 output"
+      },
+      "normalizer": {
+        "$bind": "representationNormalizer",
+        "description": "Exact P13 normalizer"
+      },
+      "bundle": {
+        "$bind": "bundle",
+        "description": "Exact P10 bundle"
+      },
+      "identityGraph": {
+        "$bind": "bundleIdentityGraph",
+        "description": "Exact identity graph"
+      },
+      "components": {
+        "$bind": "bundleComponents",
+        "description": "Exact components"
+      }
+    },
+    "physical-claims/physical-claim-evidence": {
+      "evidenceId": "simulation-evidence",
+      "claimId": "simulation-ready",
+      "bundle": {
+        "$bind": "bundle",
+        "description": "Exact P10 bundle"
+      },
+      "identityGraph": {
+        "$bind": "bundleIdentityGraph",
+        "description": "Exact identity graph"
+      },
+      "components": {
+        "$bind": "bundleComponents",
+        "description": "Exact components"
+      },
+      "validation": {
+        "$bind": "crossValidation",
+        "description": "Exact P14 validation"
+      },
+      "capacityProfile": {
+        "$bind": "capacityProfile",
+        "description": "Exact P11 profile"
+      },
+      "manifest": {
+        "$bind": "exportManifest",
+        "description": "Exact P12 manifest"
+      },
+      "files": {
+        "$bind": "exportFiles",
+        "description": "Exact P12 files"
+      },
+      "normalizedRepresentation": {
+        "$bind": "normalizedRepresentation",
+        "description": "Exact P13 output"
+      },
+      "normalizer": {
+        "$bind": "representationNormalizer",
+        "description": "Exact P13 normalizer"
+      },
+      "divergenceAuthorization": null,
+      "authoritySet": null
+    },
+    "physical-claims/physical-claim-policy": {
+      "claimIds": [
+        "simulation-ready"
+      ],
+      "id": "physical-readiness-policy"
+    },
+    "physical-fusion/physical-fusion-plan": {
+      "attachmentSemantics": {
+        "$bind": "fusionAttachmentSemantics",
+        "description": "Attachment semantics containing a FUSED group"
+      },
+      "logicalFusion": {
+        "$bind": "logicalFusion",
+        "description": "Exact logical fusion"
+      },
+      "canonicalEditIntent": {
+        "$bind": "fusionCanonicalEditIntent",
+        "description": "Finalization edit intent"
+      },
+      "id": "physical-fusion-plan",
+      "groupId": "fusion-head-shell",
+      "inputAssetSha256": {
+        "$value": "inputAssetSha256",
+        "example": "0000000000000000000000000000000000000000000000000000000000000000",
+        "description": "exact pre-fusion asset digest"
+      },
+      "preFusionCheckpointId": "checkpoint-before-fusion",
+      "preFusionStateDigest": {
+        "$value": "preFusionStateDigest",
+        "example": "0000000000000000000000000000000000000000000000000000000000000000",
+        "description": "exact semantic state digest"
+      },
+      "fusionRootFrame": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "xAxis": [
+          1,
+          0,
+          0
+        ],
+        "yAxis": [
+          0,
+          1,
+          0
+        ],
+        "zAxis": [
+          0,
+          0,
+          1
+        ]
+      },
+      "members": {
+        "$bind": "fusionMembers",
+        "description": "Canonical member geometry/frame digest records"
+      },
+      "strategy": "WELD_SHARED_BOUNDARY",
+      "weldTolerance": 1e-8,
+      "topologyObligation": "watertight",
+      "evidenceRefs": [
+        "reviews/fusion.json"
+      ]
+    },
+    "realized-contact-support/realized-contact-plan": {
+      "attachmentSemantics": {
+        "$bind": "contactAttachmentSemantics",
+        "description": "Attachment semantics matching the realized contact asset"
+      },
+      "id": "support-stack-contact",
+      "assetSha256": {
+        "$value": "contactAssetSha256",
+        "example": "0000000000000000000000000000000000000000000000000000000000000000",
+        "description": "SHA-256 of exact GLB bytes"
+      },
+      "propagationReportDigest": null,
+      "fusionBindings": [],
+      "supportRoots": [
+        "base"
+      ],
+      "supportRequiredEntityIds": [
+        "leg",
+        "body"
+      ],
+      "pairExpectations": [
+        {
+          "id": "leg-base-support",
+          "kind": "SUPPORT",
+          "subjectId": "leg",
+          "ownerId": "base",
+          "relationId": "leg-follow",
+          "maxGap": 0.000001,
+          "maxPenetration": 1e-7,
+          "minContactArea": 0.5,
+          "evidenceRefs": [
+            "reviews/leg-base.json"
+          ]
+        },
+        {
+          "id": "body-leg-support",
+          "kind": "SUPPORT",
+          "subjectId": "body",
+          "ownerId": "leg",
+          "relationId": "body-follow",
+          "maxGap": 0.000001,
+          "maxPenetration": 1e-7,
+          "minContactArea": 0.5,
+          "evidenceRefs": [
+            "reviews/body-leg.json"
+          ]
+        }
+      ],
+      "broadPhaseMargin": 0.05,
+      "contactTolerance": 0.002,
+      "penetrationTolerance": 1e-7,
+      "unexpectedContactPolicy": "REPORT",
+      "evidenceRefs": [
+        "reviews/support-stack.json"
+      ]
+    },
+    "appearance/pbr-render-report": {
+      "assetSha256": {
+        "$value": "assetSha256",
+        "example": "0000000000000000000000000000000000000000000000000000000000000000",
+        "description": "rendered asset digest"
+      },
+      "frameDigest": {
+        "$value": "frameDigest",
+        "example": "0000000000000000000000000000000000000000000000000000000000000000",
+        "description": "canonical object-frame digest"
+      },
+      "renderer": {
+        "family": "blender-eevee",
+        "name": "Blender",
+        "version": "declare-exact-version",
+        "backend": "Eevee headless",
+        "independentProcess": true
+      },
+      "lighting": {
+        "rigId": "fixed-review-rig",
+        "digest": {
+          "$value": "lightingDigest",
+          "example": "0000000000000000000000000000000000000000000000000000000000000000",
+          "description": "lighting-rig digest"
+        }
+      },
+      "colorPipeline": {
+        "exposure": 0,
+        "toneMapping": "AgX",
+        "outputColorSpace": "sRGB"
+      },
+      "materialSupport": {
+        "supported": [
+          "base-color-factor",
+          "metallic-factor",
+          "roughness-factor"
+        ],
+        "unsupported": []
+      },
+      "outputs": [
+        {
+          "viewId": "hero",
+          "path": "renders/pbr/hero.png",
+          "sha256": {
+            "$value": "heroSha256",
+            "example": "0000000000000000000000000000000000000000000000000000000000000000",
+            "description": "exact hero frame digest"
+          }
+        }
+      ],
+      "reproducibility": {
+        "mode": "deterministic",
+        "tolerance": ""
+      }
+    },
+    "validation/visual-review": {
+      "scopeId": "whole",
+      "sourceSha256": {
+        "$value": "sourceSha256",
+        "example": "0000000000000000000000000000000000000000000000000000000000000000",
+        "description": "primary source digest"
+      },
+      "assetSha256": {
+        "$value": "assetSha256",
+        "example": "0000000000000000000000000000000000000000000000000000000000000000",
+        "description": "candidate asset digest"
+      },
+      "evidenceClass": "contract-fixture",
+      "verdict": "insufficient",
+      "views": [
+        {
+          "id": "hero",
+          "status": "insufficient",
+          "evidenceRefs": [
+            "renders/hero.png"
+          ]
+        },
+        {
+          "id": "oblique",
+          "status": "insufficient",
+          "evidenceRefs": [
+            "renders/oblique.png"
+          ]
+        },
+        {
+          "id": "side",
+          "status": "insufficient",
+          "evidenceRefs": [
+            "renders/side.png"
+          ]
+        },
+        {
+          "id": "top",
+          "status": "insufficient",
+          "evidenceRefs": [
+            "renders/top.png"
+          ]
+        },
+        {
+          "id": "grazing",
+          "status": "insufficient",
+          "evidenceRefs": [
+            "renders/grazing.png"
+          ]
+        },
+        {
+          "id": "normal",
+          "status": "insufficient",
+          "evidenceRefs": [
+            "renders/normal.png"
+          ]
+        },
+        {
+          "id": "object-id",
+          "status": "insufficient",
+          "evidenceRefs": [
+            "renders/object-id.png"
+          ]
+        },
+        {
+          "id": "albedo",
+          "status": "insufficient",
+          "evidenceRefs": [
+            "renders/albedo.png"
+          ]
+        }
+      ],
+      "gateVerdicts": [
+        {
+          "id": "silhouette-and-mass",
+          "status": "insufficient",
+          "evidenceRefs": [
+            "renders/review-board.png"
+          ]
+        },
+        {
+          "id": "surface-topology",
+          "status": "insufficient",
+          "evidenceRefs": [
+            "renders/review-board.png"
+          ]
+        },
+        {
+          "id": "assembly-integrity",
+          "status": "insufficient",
+          "evidenceRefs": [
+            "renders/review-board.png"
+          ]
+        },
+        {
+          "id": "appearance-plausibility",
+          "status": "insufficient",
+          "evidenceRefs": [
+            "renders/review-board.png"
+          ]
+        },
+        {
+          "id": "multiview-render-integrity",
+          "status": "insufficient",
+          "evidenceRefs": [
+            "renders/review-board.png"
+          ]
+        },
+        {
+          "id": "no-blocking-findings",
+          "status": "insufficient",
+          "evidenceRefs": [
+            "renders/review-board.png"
+          ]
+        }
+      ],
+      "unresolvedFindings": [],
+      "renderer": {
+        "kind": "project-renderer",
+        "family": "blender-eevee",
+        "reportRef": "renders/render-report.json",
+        "reportSha256": {
+          "$value": "renderReportSha256",
+          "example": "0000000000000000000000000000000000000000000000000000000000000000",
+          "description": "PBR/render report digest"
+        },
+        "independentProcess": true,
+        "claimScope": "visual-fidelity",
+        "supportedMaterialFeatures": [
+          "base-color-factor",
+          "metallic-factor",
+          "roughness-factor"
+        ],
+        "unsupportedMaterialFeatures": []
+      },
+      "requiredMaterialFeatures": [
+        "base-color-factor",
+        "metallic-factor",
+        "roughness-factor"
+      ],
+      "attestation": {
+        "attested": true,
+        "evidenceRefs": [
+          "renders/review-board.png"
+        ]
+      },
+      "registeredComparison": null,
+      "comparisonAssessment": null
+    },
+    "validation/projection-aware-visual-review": {
+      "scopeId": "whole",
+      "sourceSha256": {
+        "$value": "sourceSha256",
+        "example": "0000000000000000000000000000000000000000000000000000000000000000",
+        "description": "primary source digest"
+      },
+      "assetSha256": {
+        "$value": "assetSha256",
+        "example": "0000000000000000000000000000000000000000000000000000000000000000",
+        "description": "candidate asset digest"
+      },
+      "evidenceClass": "contract-fixture",
+      "verdict": "insufficient",
+      "views": [
+        {
+          "id": "hero",
+          "status": "insufficient",
+          "evidenceRefs": [
+            "renders/hero.png"
+          ]
+        },
+        {
+          "id": "oblique",
+          "status": "insufficient",
+          "evidenceRefs": [
+            "renders/oblique.png"
+          ]
+        },
+        {
+          "id": "side",
+          "status": "insufficient",
+          "evidenceRefs": [
+            "renders/side.png"
+          ]
+        },
+        {
+          "id": "top",
+          "status": "insufficient",
+          "evidenceRefs": [
+            "renders/top.png"
+          ]
+        },
+        {
+          "id": "grazing",
+          "status": "insufficient",
+          "evidenceRefs": [
+            "renders/grazing.png"
+          ]
+        },
+        {
+          "id": "normal",
+          "status": "insufficient",
+          "evidenceRefs": [
+            "renders/normal.png"
+          ]
+        },
+        {
+          "id": "object-id",
+          "status": "insufficient",
+          "evidenceRefs": [
+            "renders/object-id.png"
+          ]
+        },
+        {
+          "id": "albedo",
+          "status": "insufficient",
+          "evidenceRefs": [
+            "renders/albedo.png"
+          ]
+        }
+      ],
+      "gateVerdicts": [
+        {
+          "id": "silhouette-and-mass",
+          "status": "insufficient",
+          "evidenceRefs": [
+            "renders/review-board.png"
+          ]
+        },
+        {
+          "id": "surface-topology",
+          "status": "insufficient",
+          "evidenceRefs": [
+            "renders/review-board.png"
+          ]
+        },
+        {
+          "id": "assembly-integrity",
+          "status": "insufficient",
+          "evidenceRefs": [
+            "renders/review-board.png"
+          ]
+        },
+        {
+          "id": "appearance-plausibility",
+          "status": "insufficient",
+          "evidenceRefs": [
+            "renders/review-board.png"
+          ]
+        },
+        {
+          "id": "multiview-render-integrity",
+          "status": "insufficient",
+          "evidenceRefs": [
+            "renders/review-board.png"
+          ]
+        },
+        {
+          "id": "no-blocking-findings",
+          "status": "insufficient",
+          "evidenceRefs": [
+            "renders/review-board.png"
+          ]
+        }
+      ],
+      "unresolvedFindings": [],
+      "renderer": {
+        "kind": "project-renderer",
+        "family": "blender-eevee",
+        "reportRef": "renders/render-report.json",
+        "reportSha256": {
+          "$value": "renderReportSha256",
+          "example": "0000000000000000000000000000000000000000000000000000000000000000",
+          "description": "PBR/render report digest"
+        },
+        "independentProcess": true,
+        "claimScope": "visual-fidelity",
+        "supportedMaterialFeatures": [
+          "base-color-factor",
+          "metallic-factor",
+          "roughness-factor"
+        ],
+        "unsupportedMaterialFeatures": []
+      },
+      "requiredMaterialFeatures": [
+        "base-color-factor",
+        "metallic-factor",
+        "roughness-factor"
+      ],
+      "attestation": {
+        "attested": true,
+        "evidenceRefs": [
+          "renders/review-board.png"
+        ]
+      },
+      "registeredComparison": null,
+      "comparisonAssessment": null,
+      "projectionFit": {
+        "$bind": "projectionFit",
+        "description": "Exact projection-fit artifact"
+      },
+      "projectionFindingThresholds": {
+        "anchorRmseNormalized": 0.02
+      }
+    },
+    "candidate-transactions/candidate-transaction": {
+      "candidateBytes": {
+        "$bind": "candidateBytes",
+        "description": "Exact candidate bytes"
+      },
+      "checkpoint": {
+        "$bind": "candidateCheckpoint",
+        "description": "Checkpoint binding the candidate bytes"
+      },
+      "evidence": {
+        "$bind": "candidateEvidence",
+        "description": "Evidence byte records and dependency proofs"
+      },
+      "decisionNodeIds": {
+        "$bind": "candidateDecisionNodeIds",
+        "description": "Evidence node IDs that authorize the transaction graph"
+      },
+      "obligations": {
+        "$bind": "candidateObligations",
+        "description": "Admission obligations for the evidence DAG"
+      }
+    },
+    "claim-certification/certification-policy": {
+      "id": "fixture-policy",
+      "claims": [
+        {
+          "id": "fixture-claim",
+          "description": "Fixture claim for public contract verification.",
+          "required": true,
+          "obligations": [
+            {
+              "id": "fixture-evidence",
+              "role": "fixture-evidence",
+              "schema": "refas.fixture-evidence/v1",
+              "minCount": 1
+            }
+          ],
+          "findingSources": [],
+          "vetoSeverities": [
+            "critical",
+            "major"
+          ]
+        }
+      ]
+    }
+  }
+}
