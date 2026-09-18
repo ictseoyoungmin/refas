@@ -1247,15 +1247,7 @@
         "$bind": "propagationArticulatedJoints",
         "description": "Array of articulated joints"
       },
-      "articulatedAngles": [
-        {
-          "relationId": "hinge-joint",
-          "angle": 0,
-          "evidenceRefs": [
-            "model/hinge-angle.json"
-          ]
-        }
-      ],
+      "articulatedAngles": [],
       "externalFrameBindings": {
         "$bind": "propagationExternalFrameBindings",
         "description": "Exact external-frame bindings with current state/frame digests"
