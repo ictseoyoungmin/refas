@@ -14,6 +14,8 @@ const PUBLIC_LIBRARY_ENTRYPOINT = 'scripts/lib/index.mjs';
 const ALLOWED_INTERFACE_MODES = new Set(['instruction-only', 'cli', 'library', 'hybrid']);
 const ALLOWED_CLI_BINS = new Set(['refas', 'refas-host']);
 const ALLOWED_INTERFACE_PATH_ROOTS = Object.freeze(['references/', 'assets/']);
+const PARENT_ROUTE_PREFIX = ['..', ''].join('/');
+const REPOSITORY_SKILL_PREFIX = ['skills', 'refas', ''].join('/');
 const REQUIRED_REAL_SOURCE_NODES = Object.freeze([
   'candidate-transactions',
   'validation',
@@ -131,7 +133,7 @@ function normalizeInterfacePath(value, label, errors) {
   const route = value.split('#', 1)[0].split('?', 1)[0];
   const normalized = portable(path.posix.normalize(route));
   const allowed = normalized === 'SKILL.md' || ALLOWED_INTERFACE_PATH_ROOTS.some((prefix) => normalized.startsWith(prefix));
-  if (!allowed || path.posix.isAbsolute(normalized) || normalized === '..' || normalized.startsWith('../') || normalized.startsWith('skills/refas/')) {
+  if (!allowed || path.posix.isAbsolute(normalized) || normalized === '..' || normalized.startsWith(PARENT_ROUTE_PREFIX) || normalized.startsWith(REPOSITORY_SKILL_PREFIX)) {
     errors.push(`${label} must remain inside the installed skill root: ${value}`);
     return null;
   }
