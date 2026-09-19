@@ -37,31 +37,6 @@ function polygonArea(points) {
   }
   return Math.abs(area) * 0.5;
 }
-function pointInPolygon([x, y], polygon) {
-  let inside = false;
-  for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-    const [xi, yi] = polygon[i], [xj, yj] = polygon[j];
-    if (((yi > y) !== (yj > y)) && x < ((xj - xi) * (y - yi)) / ((yj - yi) || Number.EPSILON) + xi) inside = !inside;
-  }
-  return inside;
-}
-function polygonIoU(a, b, resolution = 96) {
-  if (a.length < 3 || b.length < 3 || polygonArea(a) < 1e-9 || polygonArea(b) < 1e-9) return 0;
-  const xs = [...a, ...b].map((p) => p[0]), ys = [...a, ...b].map((p) => p[1]);
-  const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
-  if (maxX - minX < 1e-9 || maxY - minY < 1e-9) return 0;
-  let intersection = 0, union = 0;
-  for (let iy = 0; iy < resolution; iy += 1) {
-    const y = minY + ((iy + 0.5) / resolution) * (maxY - minY);
-    for (let ix = 0; ix < resolution; ix += 1) {
-      const x = minX + ((ix + 0.5) / resolution) * (maxX - minX);
-      const ia = pointInPolygon([x, y], a), ib = pointInPolygon([x, y], b);
-      if (ia || ib) union += 1;
-      if (ia && ib) intersection += 1;
-    }
-  }
-  return union ? intersection / union : 0;
-}
 function normalizeBinding(raw, label) {
   const kind = String(raw?.kind ?? 'node-local-point');
   if (kind !== 'node-local-point' && kind !== 'world-point') throw new Error(`${label}.kind is invalid`);
