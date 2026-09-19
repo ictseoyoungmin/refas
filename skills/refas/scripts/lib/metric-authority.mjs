@@ -1,4 +1,5 @@
-import {assertDigest, deepFreeze} from './canonical.mjs';
+import {assertDigest, deepFreeze, digestJson} from './canonical.mjs';
+import {validateRegisteredComparison} from './registered-comparison.mjs';
 
 export const METRIC_AUTHORITIES = Object.freeze([
   'RANKING_ALLOWED',
@@ -43,32 +44,61 @@ export function isIouDerivedMetric(metricId) {
   return IOU_DERIVED_METRICS.has(key) || key.endsWith('iou') || key.includes('-iou-');
 }
 
-function normalizeRegisteredSourceViews(raw, {currentSourceSha256 = null, currentCandidateAssetSha256 = null} = {}) {
+function validateComparisonDigest(report, label) {
+  const validation = validateRegisteredComparison(report);
+  if (!validation.valid) throw new Error(`${label} is not a valid registered comparison: ${validation.errors.join('; ')}`);
+  const payload = structuredClone(report);
+  delete payload.comparisonDigest;
+  if (digestJson(payload) !== report.comparisonDigest) throw new Error(`${label} comparison digest mismatch`);
+}
+
+function normalizeRegisteredSourceViews(raw, {
+  currentViewId = null,
+  currentSourceSha256 = null,
+  currentCandidateAssetSha256 = null,
+} = {}) {
   if (raw == null) return [];
-  if (!Array.isArray(raw)) throw new Error('registeredSourceViews must be an array');
-  const views = raw.map((view, index) => {
-    const viewId = String(view?.viewId ?? '').trim();
-    if (!viewId) throw new Error(`registeredSourceViews[${index}].viewId is required`);
+  if (!Array.isArray(raw)) throw new Error('registeredComparisons must be an array');
+  const views = raw.map((item, index) => {
+    const label = `registeredComparisons[${index}]`;
+    const viewId = String(item?.viewId ?? '').trim();
+    if (!viewId) throw new Error(`${label}.viewId is required`);
+    const report = item?.report;
+    if (!report || typeof report !== 'object') throw new Error(`${label}.report is required`);
+    validateComparisonDigest(report, `${label}.report`);
     return {
       viewId,
-      sourceSha256: assertDigest(view?.sourceSha256, `registeredSourceViews[${index}].sourceSha256`),
-      registrationDigest: assertDigest(view?.registrationDigest, `registeredSourceViews[${index}].registrationDigest`),
-      candidateAssetSha256: assertDigest(view?.candidateAssetSha256, `registeredSourceViews[${index}].candidateAssetSha256`),
+      sourceSha256: assertDigest(report.source?.sha256, `${label}.report.source.sha256`),
+      registrationDigest: assertDigest(report.registration?.digest, `${label}.report.registration.digest`),
+      candidateAssetSha256: assertDigest(report.render?.assetSha256, `${label}.report.render.assetSha256`),
+      comparisonDigest: assertDigest(report.comparisonDigest, `${label}.report.comparisonDigest`),
     };
   });
-  if (new Set(views.map((view) => view.viewId)).size !== views.length) throw new Error('registeredSourceViews viewId values must be unique');
-  if (new Set(views.map((view) => view.sourceSha256)).size !== views.length) throw new Error('registeredSourceViews must be independently source-backed');
-  if (new Set(views.map((view) => view.registrationDigest)).size !== views.length) throw new Error('registeredSourceViews registration digests must be unique');
+  if (new Set(views.map((view) => view.viewId)).size !== views.length) throw new Error('registeredComparisons viewId values must be unique');
+  if (new Set(views.map((view) => view.sourceSha256)).size !== views.length) throw new Error('registeredComparisons must be independently source-backed');
+  if (new Set(views.map((view) => view.registrationDigest)).size !== views.length) throw new Error('registeredComparisons registration digests must be unique');
+  if (new Set(views.map((view) => view.comparisonDigest)).size !== views.length) throw new Error('registeredComparisons comparison digests must be unique');
   const candidates = new Set(views.map((view) => view.candidateAssetSha256));
-  if (candidates.size > 1) throw new Error('registeredSourceViews must bind the same 3D candidate');
+  if (candidates.size > 1) throw new Error('registeredComparisons must bind the same 3D candidate');
+
   if (currentSourceSha256 != null) {
     const source = assertDigest(currentSourceSha256, 'currentSourceSha256');
-    if (!views.some((view) => view.sourceSha256 === source)) throw new Error('current source is not present in registeredSourceViews');
+    if (!views.some((view) => view.sourceSha256 === source)) throw new Error('current source is not present in registeredComparisons');
   }
   if (currentCandidateAssetSha256 != null) {
     const candidate = assertDigest(currentCandidateAssetSha256, 'currentCandidateAssetSha256');
-    if (views.length && views[0].candidateAssetSha256 !== candidate) throw new Error('current candidate is not the candidate bound by registeredSourceViews');
+    if (views.length && views[0].candidateAssetSha256 !== candidate) throw new Error('current candidate is not the candidate bound by registeredComparisons');
   }
+  if (currentViewId != null) {
+    const id = String(currentViewId).trim();
+    const current = views.find((view) => view.viewId === id);
+    if (!current) throw new Error('current view is not present in registeredComparisons');
+    if (currentSourceSha256 != null && current.sourceSha256 !== currentSourceSha256) throw new Error('current view does not bind the current source');
+    if (currentCandidateAssetSha256 != null && current.candidateAssetSha256 !== currentCandidateAssetSha256) throw new Error('current view does not bind the current candidate');
+  } else if (views.length >= 2) {
+    throw new Error('currentViewId is required for multiview IoU authority');
+  }
+
   return views;
 }
 
@@ -84,7 +114,8 @@ function allowedUses(authority) {
 
 export function metricAuthority(metricId, {
   declaredAuthority = 'RANKING_ALLOWED',
-  registeredSourceViews = null,
+  registeredComparisons = null,
+  currentViewId = null,
   currentSourceSha256 = null,
   currentCandidateAssetSha256 = null,
 } = {}) {
@@ -92,7 +123,7 @@ export function metricAuthority(metricId, {
   if (!id) throw new Error('metricId is required');
 
   if (isIouDerivedMetric(id)) {
-    const views = normalizeRegisteredSourceViews(registeredSourceViews, {currentSourceSha256, currentCandidateAssetSha256});
+    const views = normalizeRegisteredSourceViews(registeredComparisons, {currentViewId, currentSourceSha256, currentCandidateAssetSha256});
     const multiview = views.length >= 2;
     return deepFreeze({
       metricId: id,
@@ -100,9 +131,10 @@ export function metricAuthority(metricId, {
       allowedUses: multiview ? ['correspondence-gate', 'diagnostic'] : [],
       registeredSourceViewCount: views.length,
       sourceViewIds: views.map((view) => view.viewId),
+      comparisonDigests: views.map((view) => view.comparisonDigest),
       reason: multiview
-        ? 'IoU is admitted only for two or more independently source-backed digest-bound registered views of the same 3D candidate; it never ranks candidates or proves resemblance.'
-        : 'IoU is forbidden unless two or more independently source-backed digest-bound registered views of the same 3D candidate are provided.',
+        ? 'IoU is admitted only for two or more independently source-backed, digest-valid registered-comparison artifacts of the same 3D candidate; it never ranks candidates or proves resemblance.'
+        : 'IoU is forbidden unless two or more independently source-backed, digest-valid registered-comparison artifacts of the same 3D candidate are provided.',
     });
   }
 
