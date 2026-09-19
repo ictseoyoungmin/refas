@@ -8,7 +8,7 @@ Create `refas.parameter-fit-plan/v1` with the exact source digest and baseline G
 
 The evaluator receives one complete parameter vector. It must build a real candidate, measure the exact bytes through actual rendering when visual geometry is at issue, and return verified content references for both candidate GLB and render evidence. The CLI verifies path containment, byte size, and SHA-256 under `--root` before a trial enters the ledger.
 
-For a concrete realized-GLB loop, use `createProjectionRepairPlan` and `repairShapeFromProjection` from `scripts/lib/shape-repair.mjs`. The adapter derives the initial typed findings from `createRealizedProjection`, maps the allowed projection residual IDs (`macro-anchor-rmse`, `chain-angle-error`, `negative-space-loss`, `segment-iou-loss`, `interface-boundary-error`) to the existing plan objectives, and invokes the project callbacks below for every bounded candidate:
+For a concrete realized-GLB loop, use the public `createProjectionRepairPlan` and `repairShapeFromProjection` exports from `scripts/lib/index.mjs`. The adapter derives the initial typed findings from `createRealizedProjection`, maps the allowed projection residual IDs (`macro-anchor-rmse`, `chain-angle-error`, `negative-space-loss`, `segment-iou-loss`, `interface-boundary-error`) to the existing plan objectives, and invokes the project callbacks below for every bounded candidate:
 
 ```js
 const result = await repairShapeFromProjection({

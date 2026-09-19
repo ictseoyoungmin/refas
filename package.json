@@ -22,7 +22,7 @@
   "scripts": {
     "test": "node --test tests/*.test.mjs",
     "test:python": "python3 -c \"import pathlib; [compile(pathlib.Path(p).read_text(encoding='utf-8'), p, 'exec') for p in ['examples/articulated-figure/create_comparison.py','examples/parameter-fit/create_comparison.py','examples/wing-cover/generate_comparison_candidates.py','skills/refas/scripts/compare_registered.py','skills/refas/scripts/evidence.py','skills/refas/scripts/render_glb.py','skills/refas/scripts/render_pbr.py','skills/refas/scripts/source_manifest.py']]\"",
-    "check": "node tools/check-repository.mjs && npm run check:plugins && node skills/refas/scripts/verify_installation_boundary.mjs && node skills/refas/scripts/verify_semantic_instruction_graph.mjs && node skills/refas/scripts/verify_capability_interfaces.mjs",
+    "check": "node tools/check-repository.mjs && npm run check:plugins && node skills/refas/scripts/verify_installation_boundary.mjs && node skills/refas/scripts/verify_semantic_instruction_graph.mjs && node skills/refas/scripts/verify_capability_interfaces.mjs && node skills/refas/scripts/verify_discovery_closure.mjs --no-fresh-worker",
     "check:plugins": "node tools/verify-plugin-distribution.mjs",
     "check:instructions": "node skills/refas/scripts/verify_installation_boundary.mjs && node skills/refas/scripts/verify_semantic_instruction_graph.mjs && node skills/refas/scripts/verify_capability_interfaces.mjs",
     "dogfood": "node examples/wing-cover/run.mjs",
@@ -34,6 +34,7 @@
     "benchmark:matrix": "node examples/benchmark-matrix/run.mjs",
     "release:audit": "node tools/verify-plugin-distribution.mjs && node tools/release-audit.mjs",
     "check:interfaces": "node skills/refas/scripts/verify_capability_interfaces.mjs",
-    "dogfood:fresh-worker": "node skills/refas/scripts/verify_fresh_worker_dogfood.mjs"
+    "dogfood:fresh-worker": "node skills/refas/scripts/verify_fresh_worker_dogfood.mjs",
+    "check:discovery-closure": "node skills/refas/scripts/verify_discovery_closure.mjs"
   }
 }
