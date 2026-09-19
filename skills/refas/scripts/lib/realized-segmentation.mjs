@@ -67,30 +67,6 @@ function polygonArea(points) {
   for (let index = 0; index < points.length; index += 1) { const a = points[index], b = points[(index + 1) % points.length]; area += a[0]*b[1] - b[0]*a[1]; }
   return Math.abs(area) * 0.5;
 }
-function pointInPolygon([x, y], polygon) {
-  let inside = false;
-  for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-    const [xi, yi] = polygon[i], [xj, yj] = polygon[j];
-    if (((yi > y) !== (yj > y)) && x < ((xj-xi)*(y-yi))/((yj-yi)||Number.EPSILON)+xi) inside = !inside;
-  }
-  return inside;
-}
-function polygonIoU(a, b, resolution = 96) {
-  if (a.length < 3 || b.length < 3 || polygonArea(a) < EPS || polygonArea(b) < EPS) return 0;
-  const xs = [...a, ...b].map((p) => p[0]), ys = [...a, ...b].map((p) => p[1]);
-  const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
-  if (maxX-minX < EPS || maxY-minY < EPS) return 0;
-  let intersection = 0, union = 0;
-  for (let iy = 0; iy < resolution; iy += 1) {
-    const y = minY + ((iy + .5) / resolution) * (maxY-minY);
-    for (let ix = 0; ix < resolution; ix += 1) {
-      const x = minX + ((ix + .5) / resolution) * (maxX-minX), ia = pointInPolygon([x,y], a), ib = pointInPolygon([x,y], b);
-      if (ia || ib) union += 1;
-      if (ia && ib) intersection += 1;
-    }
-  }
-  return union ? intersection / union : 0;
-}
 function pointSegmentDistance(point, a, b) {
   const dx = b[0]-a[0], dy = b[1]-a[1], length2 = dx*dx+dy*dy;
   if (length2 < EPS) return Math.hypot(point[0]-a[0], point[1]-a[1]);
