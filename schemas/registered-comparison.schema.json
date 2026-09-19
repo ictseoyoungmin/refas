@@ -62,7 +62,8 @@
         "registrationResidualIsNotShapeTruth": {"const": true},
         "realSourceLandmarksMustUseRealizedProjection": {"const": true},
         "manualRenderCoordinatesCannotClaimRealSourceGeometry": {"const": true},
-        "projectionMetricsRemainVetoOnly": {"const": true}
+        "projectionMetricsRemainVetoOnly": {"const": true},
+        "singleViewIouDisabled": {"const": true}
       },
       "additionalProperties": false
     },
