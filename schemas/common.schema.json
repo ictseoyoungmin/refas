@@ -3,60 +3,240 @@
   "$id": "https://refas.dev/schemas/common.schema.json",
   "title": "RefAs common definitions",
   "$defs": {
-    "digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
-    "semanticId": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$"},
-    "relativePath": {"type": "string", "minLength": 1, "not": {"pattern": "^(?:/|[A-Za-z]:|.*(?:^|/)\\.\\.(?:/|$))"}},
+    "digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "semanticId": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._:-]{1,127}$"
+    },
+    "relativePath": {
+      "type": "string",
+      "minLength": 1,
+      "not": {
+        "pattern": "^(?:/|[A-Za-z]:|.*(?:^|/)\\.\\.(?:/|$))"
+      }
+    },
     "point2": {
       "type": "array",
-      "prefixItems": [{"type": "number", "minimum": 0, "maximum": 1}, {"type": "number", "minimum": 0, "maximum": 1}],
+      "prefixItems": [
+        {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      ],
       "items": false
     },
     "point3": {
       "type": "array",
-      "prefixItems": [{"type": "number"}, {"type": "number"}, {"type": "number"}],
+      "prefixItems": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "number"
+        }
+      ],
       "items": false
     },
     "roi": {
       "type": "array",
       "prefixItems": [
-        {"type": "number", "minimum": 0, "maximum": 1},
-        {"type": "number", "minimum": 0, "maximum": 1},
-        {"type": "number", "exclusiveMinimum": 0, "maximum": 1},
-        {"type": "number", "exclusiveMinimum": 0, "maximum": 1}
+        {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1
+        },
+        {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1
+        }
       ],
       "items": false
     },
-    "evidenceRefs": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+    "evidenceRefs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
     "artifactRef": {
       "type": "object",
-      "required": ["kind", "path", "sha256", "sizeBytes"],
+      "required": [
+        "kind",
+        "path",
+        "sha256",
+        "sizeBytes"
+      ],
       "properties": {
-        "kind": {"type": "string", "minLength": 1},
-        "path": {"$ref": "#/$defs/relativePath"},
-        "sha256": {"$ref": "#/$defs/digest"},
-        "sizeBytes": {"type": "integer", "minimum": 0}
+        "kind": {
+          "type": "string",
+          "minLength": 1
+        },
+        "path": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "sha256": {
+          "$ref": "#/$defs/digest"
+        },
+        "sizeBytes": {
+          "type": "integer",
+          "minimum": 0
+        }
       },
       "additionalProperties": false
     },
     "contentReference": {
       "type": "object",
-      "required": ["schema", "kind", "path", "sha256", "sizeBytes"],
+      "required": [
+        "schema",
+        "kind",
+        "path",
+        "sha256",
+        "sizeBytes"
+      ],
       "properties": {
-        "schema": {"const": "refas.content-reference/v1"},
-        "kind": {"type": "string", "minLength": 1},
-        "path": {"$ref": "#/$defs/relativePath"},
-        "sha256": {"$ref": "#/$defs/digest"},
-        "sizeBytes": {"type": "integer", "minimum": 0}
+        "schema": {
+          "const": "refas.content-reference/v1"
+        },
+        "kind": {
+          "type": "string",
+          "minLength": 1
+        },
+        "path": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "sha256": {
+          "$ref": "#/$defs/digest"
+        },
+        "sizeBytes": {
+          "type": "integer",
+          "minimum": 0
+        }
       },
       "additionalProperties": false
     },
     "gate": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/gateVerdict"
+        },
+        {
+          "$ref": "#/$defs/legacyGate"
+        }
+      ]
+    },
+    "gateRequest": {
       "type": "object",
-      "required": ["id", "status", "evidenceRefs"],
+      "required": [
+        "id",
+        "evidenceRefs"
+      ],
       "properties": {
-        "id": {"$ref": "#/$defs/semanticId"},
-        "status": {"enum": ["pass", "fail", "pending", "blocked"]},
-        "evidenceRefs": {"type": "array", "items": {"type": "string"}}
+        "id": {
+          "$ref": "#/$defs/semanticId"
+        },
+        "evidenceRefs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "gateVerdict": {
+      "type": "object",
+      "required": [
+        "schema",
+        "id",
+        "status",
+        "evidenceRefs",
+        "evaluator",
+        "policyDigest",
+        "decisionDigest"
+      ],
+      "properties": {
+        "schema": {
+          "const": "refas.checkpoint-gate-verdict/v1"
+        },
+        "id": {
+          "$ref": "#/$defs/semanticId"
+        },
+        "status": {
+          "enum": [
+            "pass",
+            "fail",
+            "blocked"
+          ]
+        },
+        "evidenceRefs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "evaluator": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policyDigest": {
+          "$ref": "#/$defs/digest"
+        },
+        "decisionDigest": {
+          "$ref": "#/$defs/digest"
+        }
+      },
+      "additionalProperties": false
+    },
+    "legacyGate": {
+      "type": "object",
+      "required": [
+        "id",
+        "status",
+        "evidenceRefs"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/semanticId"
+        },
+        "status": {
+          "enum": [
+            "pass",
+            "fail",
+            "pending",
+            "blocked"
+          ]
+        },
+        "evidenceRefs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
       },
       "additionalProperties": false
     }

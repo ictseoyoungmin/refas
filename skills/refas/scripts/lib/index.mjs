@@ -47,6 +47,19 @@ export {
 export * from './hierarchy.mjs';
 export * from './ownership.mjs';
 export * from './failure-router.mjs';
+export {
+  CHECKPOINT_GATE_EXECUTABLE_POLICY_SCHEMA,
+  CHECKPOINT_GATE_POLICIES,
+  CHECKPOINT_GATE_POLICY_DIGEST,
+  CHECKPOINT_GATE_VERDICT_SCHEMA,
+  checkpointGateExecutablePolicy,
+  checkpointGatePolicy,
+  checkpointGatePolicyDigest,
+  expectedCheckpointGateIds,
+  isLegacyCheckpointGate,
+  normalizeCheckpointGateRequests,
+  validateCheckpointGateVerdict,
+} from './checkpoint-gates.mjs';
 export * from './checkpoint-store.mjs';
 export * from './host-session.mjs';
 export * from './host-event.mjs';

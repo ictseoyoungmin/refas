@@ -268,7 +268,7 @@ async function closeCapability(capability, files, reason, gateId, claims = []) {
     reason,
     artifactRefs: await references(files),
     claims,
-    gates: [{id: gateId, status: 'pass', evidenceRefs: files.map((file) => path.relative(PROJECT, file).split(path.sep).join('/'))}],
+    gates: [{id: `${capability}-gate`, evidenceRefs: files.map((file) => path.relative(PROJECT, file).split(path.sep).join('/'))}],
   });
 }
 
@@ -584,7 +584,7 @@ async function main() {
   const candidateCheckpoint = await commitCheckpoint(PROJECT, {
     capability: 'assembly', scopeId: 'whole', reason: 'Alternative root placement is materialized with actual multiview evidence for bounded comparison.',
     artifactRefs: await references([finalAssetPath, path.join(candidateRenderDirectory, 'render-report.json'), path.join(candidateRenderDirectory, 'multiview-review-board.png')]),
-    gates: [{id: 'candidate-observable', status: 'pass', evidenceRefs: ['renders/assembly-candidate/multiview-review-board.png']}],
+    gates: [{id: 'assembly-gate', evidenceRefs: ['renders/assembly-candidate/multiview-review-board.png']}],
   });
   const decision = await finishEdit(PROJECT, {
     candidateCheckpointId: candidateCheckpoint.id,
@@ -721,30 +721,31 @@ async function main() {
   });
   const visualReviewPath = await writeJson(path.join(PROJECT, 'reviews', 'visual-review.json'), visualReview);
   const closureGates = REQUIRED_CLOSURE_GATE_IDS.map((id) => ({
-    id, status: 'pass',
-    evidenceRefs: [REQUIRED_VISUAL_GATE_IDS.includes(id) ? 'reviews/visual-review.json' : id === 'project-audit' ? '.refas/project.json' : 'source/source-manifest.json'],
+    id,
+    evidenceRefs: [REQUIRED_VISUAL_GATE_IDS.includes(id) ? 'reviews/visual-review.json' : 'source/source-manifest.json'],
   }));
   const closurePath = await writeJson(path.join(PROJECT, 'reviews', 'closure-gates.json'), closureGates);
   const certificationArtifacts = await references([finalAssetPath, closurePath, finalReportPath, finalBoardPath, findingsPath, rollbackProofPath]);
   certificationArtifacts.push(await contentReference(visualReviewPath, {kind: 'visual-review', root: PROJECT}));
-  const certificationCheckpoint = await commitCheckpoint(PROJECT, {
-    capability: 'whole-object-certification', scopeId: 'whole', reason: 'Negative contract test: stale passing gate claims must not override the digest-bound visual review.',
-    artifactRefs: certificationArtifacts,
-    claims: ['This self-generated fixture tests runtime contracts only and is not publishable visual evidence.'], gates: closureGates,
-  });
+  let certificationCheckpoint = null;
   let certificationRefusal = null;
   try {
-    await certifyProject(PROJECT);
-    assert.fail('self-generated contract fixture unexpectedly certified');
+    certificationCheckpoint = await commitCheckpoint(PROJECT, {
+      capability: 'whole-object-certification', scopeId: 'whole', reason: 'Negative contract test: caller gate requests cannot override the digest-bound visual review.',
+      artifactRefs: certificationArtifacts,
+      claims: ['This self-generated fixture tests runtime contracts only and is not publishable visual evidence.'], gates: closureGates,
+    });
+    assert.fail('self-generated failing visual review unexpectedly produced a closure checkpoint');
   } catch (error) {
     certificationRefusal = error.message;
-    assert.match(certificationRefusal, /self-generated contract fixtures cannot certify visual fidelity/);
+    assert.match(certificationRefusal, /runtime gate evaluation rejected checkpoint/);
   }
   const readiness = await assessCertification(PROJECT);
   assert.equal(readiness.ready, false);
   const finalAudit = await auditProject(PROJECT);
   assert.equal(finalAudit.valid, true);
-  assert.equal((await resumeProject(PROJECT)).nextAction, 'REQUEST_VISUAL_REVIEW');
+  const guidance = await resumeProject(PROJECT);
+  assert.equal(guidance.activeWork.capability, 'whole-object-certification');
   const inspection = inspectGlb(await fs.readFile(finalAssetPath));
   assert.equal(inspection.valid, true);
 
@@ -773,7 +774,7 @@ async function main() {
       worseLocalFeatureIoU: metric(negativeReports['better-global-worse-local'], 'fastener-inlay'),
     },
     glb: {nodes: inspection.nodeCount, meshes: inspection.meshCount, triangles: inspection.triangleCount},
-    checkpoints: {count: finalAudit.checkpointCount, source: sourceCheckpoint.id, certification: certificationCheckpoint.id},
+    checkpoints: {count: finalAudit.checkpointCount, source: sourceCheckpoint.id, certification: certificationCheckpoint?.id ?? null},
     candidateCertification: {visualVerdict: visualReview.verdict, certificateIssued: false, expectedResult: 'REFUSED', refusal: certificationRefusal},
     audit: finalAudit,
     capabilityOrder: CAPABILITY_ORDER,

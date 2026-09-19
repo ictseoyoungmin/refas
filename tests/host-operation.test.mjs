@@ -46,7 +46,7 @@ async function checkpointArtifact(root, bytes, kind = 'model-spec') {
 }
 
 function passingGate(reference) {
-  return [{id:'source-intake-gate',status:'pass',evidenceRefs:[reference.path]}];
+  return [{id:'source-intake-gate',evidenceRefs:[reference.path]}];
 }
 
 function abortWait(signal) {
