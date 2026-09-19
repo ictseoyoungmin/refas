@@ -1,4 +1,4 @@
-import {assertDigest, assertId, deepFreeze} from './canonical.mjs';
+import {assertDigest, assertId, deepFreeze, digestJson} from './canonical.mjs';
 
 export const REGISTERED_COMPARISON_SCHEMA = 'refas.registered-comparison/v1';
 
@@ -181,6 +181,11 @@ export function validateRegisteredComparison(report) {
   if (!legacyContract && (policy.realSourceLandmarksMustUseRealizedProjection !== true || policy.manualRenderCoordinatesCannotClaimRealSourceGeometry !== true)) errors.push('realized projection measurement authority policy is missing');
   if (!legacyContract && policy.projectionMetricsRemainVetoOnly !== true) errors.push('projection metric authority policy is missing');
   if (!legacyContract && policy.singleViewIouDisabled !== true) errors.push('single-view IoU retirement policy is missing');
-  try { assertDigest(report?.comparisonDigest, 'comparisonDigest'); } catch (error) { errors.push(error.message); }
+  try {
+    assertDigest(report?.comparisonDigest, 'comparisonDigest');
+    const payload = structuredClone(report);
+    delete payload.comparisonDigest;
+    if (digestJson(payload) !== report.comparisonDigest) errors.push('comparison digest mismatch');
+  } catch (error) { errors.push(error.message); }
   return {valid: errors.length === 0, errors};
 }
