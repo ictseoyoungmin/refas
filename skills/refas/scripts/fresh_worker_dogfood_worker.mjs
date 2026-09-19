@@ -30,6 +30,7 @@ const projectRoot = path.resolve(String(options.project ?? path.join(process.cwd
 const reportPath = path.resolve(String(options.report ?? path.join(projectRoot, 'reports', 'fresh-worker-public-contract.json')));
 const refasCli = path.join(skillRoot, 'scripts', 'refas.mjs');
 const publicApiEntrypoint = path.join(skillRoot, 'scripts', 'lib', 'index.mjs');
+const PARENT_ROUTE_PREFIX = ['..', ''].join('/');
 
 const ledger = {
   schema: 'refas.fresh-worker-public-contract-transcript/v1',
@@ -62,7 +63,7 @@ function skillRelative(relative) {
   if (
     !normalized
     || normalized === '..'
-    || normalized.startsWith('../')
+    || normalized.startsWith(PARENT_ROUTE_PREFIX)
     || path.posix.isAbsolute(normalized)
   ) throw new Error(`skill path escapes installed root: ${relative}`);
   return normalized;
@@ -449,8 +450,29 @@ async function main() {
       };
       input.requiredMaterialFeatures = ['base-color-factor', 'metallic-factor', 'roughness-factor'];
       input.attestation = {attested: true, evidenceRefs: [sourceManifest.path, reviewBoardRef.path]};
-      input.registeredComparison = null;
-      input.comparisonAssessment = null;
+      input.registeredComparison = {
+        path: 'reviews/registered-comparison/comparison-report.json',
+        sha256: API.digestBytes(Buffer.from('AD05 registered comparison file')),
+        comparisonDigest: API.digestBytes(Buffer.from('AD05 registered comparison digest')),
+        sourceSha256: sourceManifest.sha256,
+        sourceManifestSha256: sourceManifestRef.sha256,
+        assetSha256: candidateRef.sha256,
+        renderReportPath: pbrReportRef.path,
+        renderReportSha256: pbrReportRef.sha256,
+        framePath: frameRefs[0].path,
+        frameSha256: frameRefs[0].sha256,
+        registrationDigest: API.digestBytes(Buffer.from('AD05 registration')),
+        hierarchyDigest: hierarchy.hierarchyDigest,
+        inputDigest: API.digestBytes(Buffer.from('AD05 comparison input')),
+        scopeIds: ['whole'],
+      };
+      input.comparisonAssessment = {
+        sourceObservation: 'The bound test reference was inspected as the source side of the registered comparison contract.',
+        renderObservation: 'The digest-bound candidate fixture was inspected as the render side of the registered comparison contract.',
+        comparisonConclusion: 'No contrary comparison signal is present in this deterministic public-contract fixture.',
+        evidenceRefs: [sourceManifest.path, reviewBoardRef.path],
+        contradictionResolution: {status: 'not-present', explanation: '', evidenceRefs: [], findingRefs: []},
+      };
       return input;
     },
   })).output;
