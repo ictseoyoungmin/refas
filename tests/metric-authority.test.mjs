@@ -35,8 +35,8 @@ test('generic shape parameter fitting rejects IoU-derived objective aliases', ()
   const base = {
     id:'fit', scopeId:'whole', sourceSha256:D('b'), baselineAsset:baseline,
     parameters:[
-      {id:'a',binding:'model.shape.a',minimum:0,maximum:1,initial:.5},
-      {id:'b',binding:'model.shape.b',minimum:0,maximum:1,initial:.5},
+      {id:'aa',binding:'model.shape.a',minimum:0,maximum:1,initial:.5},
+      {id:'bb',binding:'model.shape.b',minimum:0,maximum:1,initial:.5},
     ],
     optimizer:{populationSize:4,evaluationBudget:5},
   };
