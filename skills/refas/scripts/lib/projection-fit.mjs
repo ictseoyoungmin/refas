@@ -227,7 +227,7 @@ export function validateProjectionFit(fit) {
     }
     const policy = fit?.policy ?? {};
     if (policy.sourceGeometryRemainsAuthority !== true || policy.projectionFitDoesNotMutateGeometry !== true) errors.push('projection/source authority policy is missing');
-    if (policy.metricsCannotCertifyVisualFidelity !== true || policy.materialDisagreementMayBecomeBlockingFinding !== true) errors.push('metric authority policy is missing');
+    if (policy.metricsCannotCertifyVisualFidelity !== true || policy.materialDisagreementMayBecomeBlockingFinding !== true || policy.singleViewIouIsForbidden !== true) errors.push('metric authority policy is missing');
     const payload = structuredClone(fit); delete payload.projectionFitDigest;
     if (digestJson(payload) !== fit.projectionFitDigest) errors.push('projection fit digest mismatch');
   } catch (error) { errors.push(error.message); }
