@@ -180,6 +180,7 @@ export function validateRegisteredComparison(report) {
   if (policy.registrationResidualIsNotShapeTruth !== true) errors.push('registration residual policy is missing');
   if (!legacyContract && (policy.realSourceLandmarksMustUseRealizedProjection !== true || policy.manualRenderCoordinatesCannotClaimRealSourceGeometry !== true)) errors.push('realized projection measurement authority policy is missing');
   if (!legacyContract && policy.projectionMetricsRemainVetoOnly !== true) errors.push('projection metric authority policy is missing');
+  if (!legacyContract && policy.singleViewIouDisabled !== true) errors.push('single-view IoU retirement policy is missing');
   try { assertDigest(report?.comparisonDigest, 'comparisonDigest'); } catch (error) { errors.push(error.message); }
   return {valid: errors.length === 0, errors};
 }
