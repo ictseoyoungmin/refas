@@ -58,9 +58,17 @@ function blockedError(kind, op, target) {
   return error;
 }
 
+function isNodeModuleLoaderRead() {
+  const stack = String(new Error().stack || '');
+  return stack.includes('node:internal/modules/esm/')
+    || stack.includes('node:internal/modules/cjs/loader');
+}
+
 function assertNoRawRead(op, target) {
   const resolved = toPath(target);
-  if (resolved && inside(restrictedRoot, resolved)) throw blockedError('raw-implementation-read', op, resolved);
+  if (resolved && inside(restrictedRoot, resolved) && !isNodeModuleLoaderRead()) {
+    throw blockedError('raw-implementation-read', op, resolved);
+  }
 }
 
 function assertNoInstalledWrite(op, target) {
