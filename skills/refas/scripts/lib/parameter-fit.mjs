@@ -1,6 +1,7 @@
 import {assertDigest, assertId, deepFreeze, digestJson} from './canonical.mjs';
 import {validateFitStructuralEligibility} from './fit-structural-eligibility.mjs';
 import {validateRelationalDiscrepancy} from './relational-discrepancy.mjs';
+import {assertMetricUseAllowed} from './metric-authority.mjs';
 
 export const PARAMETER_FIT_PLAN_SCHEMA = 'refas.parameter-fit-plan/v1';
 export const PARAMETER_FIT_REPORT_SCHEMA = 'refas.parameter-fit-report/v1';
@@ -59,7 +60,10 @@ function normalizeObjective(raw, index) {
   const scale = finite(raw?.scale ?? 1, `${label}.scale`);
   const weight = finite(raw?.weight ?? 1, `${label}.weight`);
   if (!(scale > 0) || !(weight > 0)) throw new Error(`${label} scale and weight must be positive`);
-  const objective = {id: assertId(raw?.id, `${label}.id`), goal, scale, weight};
+  const id = assertId(raw?.id, `${label}.id`);
+  const authority = String(raw?.authority ?? 'RANKING_ALLOWED').trim().toUpperCase();
+  assertMetricUseAllowed(id, 'objective', {declaredAuthority: authority});
+  const objective = {id, goal, scale, weight, authority};
   if (goal === 'target') objective.target = finite(raw?.target, `${label}.target`);
   return objective;
 }
@@ -132,6 +136,9 @@ export function createParameterFitPlan({
     trialContentReferencesMustVerify: true,
     structuralInvalidityIsHardBarrier: true,
     structuralInvalidityIsNeverScorePenalty: true,
+    metricAuthorityIsExecutable: true,
+    singleViewIouIsForbidden: true,
+    iouNeverRanksOrOptimizes: true,
   };
   if (relationalRequired) {
     policy.relationalInvalidityIsHardBarrier = true;
