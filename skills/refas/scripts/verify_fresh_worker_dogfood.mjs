@@ -213,12 +213,19 @@ export async function runFreshWorkerDogfood({skillRoot = DEFAULT_SKILL_ROOT, kee
     name: 'child-process-read',
     source: `import {spawnSync} from 'node:child_process';\nconst code = "require('node:fs').readFileSync(process.env.REFAS_AD05_RAW_TARGET, 'utf8')";\nspawnSync(process.execPath, ['-e', code], {env: process.env});\n`,
   });
+  const createRequireProbe = await runBlockedBoundaryProbe({
+    tempRoot,
+    env,
+    name: 'create-require-escape',
+    source: `import * as moduleApi from 'node:module';\nconst create = moduleApi['create' + 'Require'];\nconst require = create(import.meta.url);\nrequire('node:fs').readFileSync(process.env.REFAS_AD05_RAW_TARGET, 'utf8');\n`,
+  });
   const boundaryEvents = await readAccessAudit(accessAuditPath);
   const eventKinds = new Set(boundaryEvents.map((event) => event.kind));
   assert.ok(eventKinds.has('raw-implementation-read'), 'direct filesystem bypass was not independently blocked');
   assert.ok(eventKinds.has('raw-implementation-import'), 'dynamic internal import bypass was not independently blocked');
   assert.ok(eventKinds.has('child-process-bypass'), 'child-process bypass was not independently blocked');
-  for (const probePath of [directReadProbe, dynamicImportProbe, childProcessProbe]) {
+  assert.ok(eventKinds.has('raw-implementation-import'), 'module/import escape was not independently blocked');
+  for (const probePath of [directReadProbe, dynamicImportProbe, childProcessProbe, createRequireProbe]) {
     const resolvedProbe = path.resolve(probePath);
     assert.ok(
       boundaryEvents.some((event) => event.processEntry === resolvedProbe || event.parent === resolvedProbe),
@@ -241,7 +248,7 @@ export async function runFreshWorkerDogfood({skillRoot = DEFAULT_SKILL_ROOT, kee
     forbiddenRawReadProbe: blocked.status,
     verifierOwnedAccessBoundary: true,
     normalBoundaryViolations: normalBoundaryEvents.length,
-    bypassProbesBlocked: 3,
+    bypassProbesBlocked: 4,
     certificateDigest: report.certificate.certificateDigest,
   };
 
