@@ -124,7 +124,7 @@ test('explicit multiview context admits IoU only as correspondence evidence', ()
 test('generic fitting rejects objectives without an explicit authority', () => {
   assert.throws(() => createParameterFitPlan({
     id:'fit-explicit-authority', scopeId:'whole', sourceSha256:D('a'), baselineAsset:baseline,
-    parameters:[{id:'aa',binding:'model.shape.a',minimum:0,maximum:1,initial:.5}],
+    parameters:[{id:'aa',binding:'model.shape.a',minimum:0,maximum:1,initial:.5},{id:'bb',binding:'model.shape.b',minimum:0,maximum:1,initial:.5}],
     objectives:[{id:'edge-orientation-error',goal:'minimize'}],
     optimizer:{populationSize:4,evaluationBudget:5},
   }), /authority is required/);
