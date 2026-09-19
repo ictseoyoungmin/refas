@@ -9,4 +9,4 @@ export const execSync = (command, ...rest) => { guardChildProcess('execSync', co
 export const exec = (command, ...rest) => { guardChildProcess('exec', command, []); return real.exec(command, ...rest); };
 export const fork = (modulePath, args = [], ...rest) => { guardChildProcess('fork', process.execPath, [modulePath, ...args]); return real.fork(modulePath, args, ...rest); };
 
-export default {...real, spawnSync, spawn, execFileSync, execFile, execSync, exec, fork};
+export default {spawnSync, spawn, execFileSync, execFile, execSync, exec, fork};
