@@ -1,12 +1,16 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import {fileURLToPath} from 'node:url';
+import {fileURLToPath, pathToFileURL} from 'node:url';
 
 const installedRoot = path.resolve(process.env.REFAS_AD05_INSTALLED_ROOT || '.');
 const restrictedRoot = path.join(installedRoot, 'scripts', 'lib');
 const trustedScriptsRoot = path.join(installedRoot, 'scripts');
 const publicIndex = path.join(restrictedRoot, 'index.mjs');
+const untrustedEntry = process.env.REFAS_AD05_UNTRUSTED_ENTRY ? path.resolve(process.env.REFAS_AD05_UNTRUSTED_ENTRY) : null;
 const auditPath = process.env.REFAS_AD05_ACCESS_AUDIT ? path.resolve(process.env.REFAS_AD05_ACCESS_AUDIT) : null;
+const guardedFs = path.join(trustedScriptsRoot, 'fresh_worker_guarded_fs.mjs');
+const guardedFsPromises = path.join(trustedScriptsRoot, 'fresh_worker_guarded_fs_promises.mjs');
+const guardedChildProcess = path.join(trustedScriptsRoot, 'fresh_worker_guarded_child_process.mjs');
 
 function inside(root, candidate) {
   const relative = path.relative(root, candidate);
@@ -34,14 +38,30 @@ function log(op, target, parent) {
   }) + '\n');
 }
 
+function isUntrustedParent(parent) {
+  if (!parent) return false;
+  if (untrustedEntry && parent === untrustedEntry) return true;
+  return !inside(trustedScriptsRoot, parent);
+}
+
+function proxyUrl(specifier) {
+  if (specifier === 'node:fs' || specifier === 'fs') return pathToFileURL(guardedFs).href;
+  if (specifier === 'node:fs/promises' || specifier === 'fs/promises') return pathToFileURL(guardedFsPromises).href;
+  if (specifier === 'node:child_process' || specifier === 'child_process') return pathToFileURL(guardedChildProcess).href;
+  return null;
+}
+
 export async function resolve(specifier, context, nextResolve) {
+  const parent = pathFromUrl(context.parentURL);
+  const proxy = isUntrustedParent(parent) ? proxyUrl(specifier) : null;
+  if (proxy) return {url: proxy, shortCircuit: true};
+
   const resolved = await nextResolve(specifier, context);
   const target = pathFromUrl(resolved.url);
   if (!target || !inside(restrictedRoot, target) || target === publicIndex) return resolved;
 
-  const parent = pathFromUrl(context.parentURL);
   const trustedInternalParent = Boolean(parent && inside(restrictedRoot, parent));
-  const trustedInstalledScriptParent = Boolean(parent && inside(trustedScriptsRoot, parent) && !parent.endsWith('fresh_worker_dogfood_worker.mjs'));
+  const trustedInstalledScriptParent = Boolean(parent && inside(trustedScriptsRoot, parent) && parent !== untrustedEntry);
 
   if (!trustedInternalParent && !trustedInstalledScriptParent) {
     log('esm-resolve', target, parent);
