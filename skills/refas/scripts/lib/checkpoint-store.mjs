@@ -595,10 +595,35 @@ function certificateCore(certificate) {
   };
 }
 
-function ensurePrerequisites(capability, scopeId, lineage) {
+async function ensurePrerequisites(root, state, capability, scopeId, lineage) {
+  try {
+    await verifySource(root, normalizeSourceManifest(state.source));
+  } catch (error) {
+    throw new Error(`${capability} prerequisite source is not trustworthy: ${error.message}`);
+  }
+
   for (const dependency of CAPABILITY_DEPENDENCIES[capability]) {
-    const found = lineage.some((checkpoint) => checkpoint.capability === dependency && scopeContains(checkpoint.scopeId, scopeId));
+    const found = [...lineage].reverse().find((checkpoint) =>
+      checkpoint.capability === dependency && scopeContains(checkpoint.scopeId, scopeId));
     if (!found) throw new Error(`${capability} requires a trustworthy ${dependency} checkpoint for ${scopeId}`);
+
+    const prerequisiteIndex = lineage.findIndex((checkpoint) => checkpoint.id === found.id);
+    const prerequisiteLineage = lineage.slice(0, prerequisiteIndex + 1);
+    for (const checkpoint of prerequisiteLineage) {
+      if (digestJson(checkpointContent(checkpoint)) !== checkpoint.contentDigest) {
+        throw new Error(`${capability} prerequisite lineage is not trustworthy: ${checkpoint.id} content digest mismatch`);
+      }
+      const authorityErrors = await auditGateAuthority(root, state, checkpoint, prerequisiteLineage);
+      if (authorityErrors.length) {
+        throw new Error(`${capability} prerequisite lineage is not trustworthy at ${checkpoint.capability}/${checkpoint.scopeId}: ${authorityErrors.join('; ')}`);
+      }
+      for (const artifact of checkpoint.artifactRefs) {
+        const objectError = await verifyStoredObject(root, artifact);
+        if (objectError) {
+          throw new Error(`${capability} prerequisite lineage is not trustworthy at ${checkpoint.capability}/${checkpoint.scopeId}: ${artifact.path}: ${objectError}`);
+        }
+      }
+    }
   }
 }
 
@@ -712,7 +737,7 @@ export async function commitCheckpoint(root, {
   const gateRequests = normalizeCheckpointGateRequests(capability, gates);
   const checkpoints = await listCheckpoints(root);
   const lineage = checkpointLineage(checkpoints, state.head);
-  ensurePrerequisites(capability, scopeId, lineage);
+  await ensurePrerequisites(root, state, capability, scopeId, lineage);
 
   const recoveryOwner = nextInvalidated(state);
   if (recoveryOwner && capability !== recoveryOwner) throw new Error(`recovery must close ${recoveryOwner} before ${capability}`);
