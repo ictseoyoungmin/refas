@@ -634,7 +634,7 @@ export function fixtureForCapabilityInterface(key, context, outputs = new Map())
   } else if (key === 'parameter-fitting/fit-parameters') {
     const plan=outputs.get('parameter-fitting/parameter-fit-plan');
     bindings.parameterFitPlan=plan;
-    bindings.parameterFitEvaluator=async (parameters,run)=>({measurements:{'edge-orientation-error':Math.abs(parameters.span-1)+Math.abs(parameters.bend)},candidateAsset:plan.baselineAsset,renderEvidence:{schema:'refas.content-reference/v1',kind:'render-report',path:`trials/${run.trialId}/render.json`,sha256:API.digestBytes(`render-${run.trialId}`),sizeBytes:Buffer.byteLength(`render-${run.trialId}`)},evidenceRefs:[`trials/${run.trialId}/hero.png`]});
+    bindings.parameterFitEvaluator=async (parameters,run)=>({measurements:Object.fromEntries(plan.objectives.map((objective)=>[objective.id,Math.abs(parameters.span-1)+Math.abs(parameters.bend)])),candidateAsset:plan.baselineAsset,renderEvidence:{schema:'refas.content-reference/v1',kind:'render-report',path:`trials/${run.trialId}/render.json`,sha256:API.digestBytes(`render-${run.trialId}`),sizeBytes:Buffer.byteLength(`render-${run.trialId}`)},evidenceRefs:[`trials/${run.trialId}/hero.png`]});
     bindings.parameterFitVerifyReference=async()=>true;
   } else if (key === 'validation/projection-aware-visual-review') {
     bindings.projectionFit=outputs.get('spatial-reasoning/projection-fit');
