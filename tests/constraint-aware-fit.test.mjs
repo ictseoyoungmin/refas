@@ -99,7 +99,7 @@ test('parameter fitting never selects a visually better candidate with broken re
       {id: 'gap', binding: 'model.shape.gap', kind: 'integer', minimum: 0, maximum: 1, initial: 0},
       {id: 'tune', binding: 'model.shape.tune', kind: 'integer', minimum: 0, maximum: 1, initial: 0},
     ],
-    objectives: [{id: 'visual-loss', goal: 'minimize', scale: 1, weight: 1}],
+    objectives: [{id: 'visual-loss', goal: 'minimize', scale: 1, weight: 1, authority: 'RANKING_ALLOWED'}],
     optimizer: {seed: 1, populationSize: 4, evaluationBudget: 5, patience: 5, initializationAttemptBudget: 16},
     structuralEligibilityRequired: true,
     evidenceRefs: ['source/fit-contact.png'],
