@@ -4,12 +4,38 @@ import {test} from 'node:test';
 import {
   createParameterFitPlan,
   createPerceptualDiscrepancy,
+  digestJson,
   rankDiscrepancyCandidates,
 } from '../skills/refas/scripts/lib/index.mjs';
 import {assertMetricUseAllowed, isIouDerivedMetric, metricAuthority} from '../skills/refas/scripts/lib/metric-authority.mjs';
 
 const D = (c) => c.repeat(64);
 const baseline = {schema:'refas.content-reference/v1',kind:'glb',path:'asset.glb',sha256:D('a'),sizeBytes:1};
+
+function registeredComparison({sourceSha256, registrationDigest, candidateAssetSha256, salt}) {
+  const report = {
+    schema:'refas.registered-comparison/v1',
+    claimScope:'critique-evidence-only',
+    source:{sha256:sourceSha256,manifestSha256:D(salt),acquisitionKind:'synthetic-test-fixture'},
+    render:{assetSha256:candidateAssetSha256,frameId:'hero',frameSha256:D(String((Number.parseInt(salt,16)+1)%16).replace('10','a')),reportSha256:D(String((Number.parseInt(salt,16)+2)%16).replace('10','a'))},
+    registration:{digest:registrationDigest,fileSha256:D(String((Number.parseInt(salt,16)+3)%16).replace('10','a')),model:'affine',metrics:{}},
+    hierarchy:{digest:D(String((Number.parseInt(salt,16)+4)%16).replace('10','a')),fileSha256:D(String((Number.parseInt(salt,16)+5)%16).replace('10','a'))},
+    projectionEvidence:[],
+    scopes:[{
+      scopeId:'whole',level:'whole',ancestry:['whole'],measurementAuthority:'image-only',projectionBinding:null,
+      metrics:{silhouetteIoU:null},landmarks:[],dimensions:[],images:[],
+    }],
+    policy:{
+      rawSourceRemainsPrimary:true,outputsAreDerivedObservationAids:true,metricsCannotSetVisualGate:true,
+      metricFailureRequiresTypedFindingBeforeRouting:true,registrationResidualIsNotShapeTruth:true,
+      realSourceLandmarksMustUseRealizedProjection:true,manualRenderCoordinatesCannotClaimRealSourceGeometry:true,
+      projectionMetricsRemainVetoOnly:true,singleViewIouDisabled:true,
+    },
+    inputDigest:D(String((Number.parseInt(salt,16)+6)%16).replace('10','a')),
+  };
+  report.comparisonDigest = digestJson(report);
+  return report;
+}
 
 test('single-view IoU is forbidden everywhere', () => {
   assert.equal(isIouDerivedMetric('silhouetteIoU'), true);
@@ -21,10 +47,11 @@ test('single-view IoU is forbidden everywhere', () => {
 
 test('multiview IoU is correspondence-only and never ranks or optimizes', () => {
   const context = {
-    registeredSourceViews:[
-      {viewId:'front',sourceSha256:D('1'),registrationDigest:D('2'),candidateAssetSha256:D('3')},
-      {viewId:'side',sourceSha256:D('4'),registrationDigest:D('5'),candidateAssetSha256:D('3')},
+    registeredComparisons:[
+      {viewId:'front',report:registeredComparison({sourceSha256:D('1'),registrationDigest:D('2'),candidateAssetSha256:D('3'),salt:'4'})},
+      {viewId:'side',report:registeredComparison({sourceSha256:D('5'),registrationDigest:D('6'),candidateAssetSha256:D('3'),salt:'7'})},
     ],
+    currentViewId:'front',
     currentSourceSha256:D('1'),
     currentCandidateAssetSha256:D('3'),
   };
@@ -47,28 +74,32 @@ test('count-only multiview claims cannot re-enable IoU', () => {
   assert.equal(authority.registeredSourceViewCount, 0);
 });
 
-test('multiview IoU rejects duplicate sources, mixed candidates, and missing current binding', () => {
-  const duplicateSource = {
-    registeredSourceViews:[
-      {viewId:'front',sourceSha256:D('1'),registrationDigest:D('2'),candidateAssetSha256:D('3')},
-      {viewId:'side',sourceSha256:D('1'),registrationDigest:D('5'),candidateAssetSha256:D('3')},
-    ],
-  };
-  assert.throws(() => metricAuthority('silhouetteIoU', duplicateSource), /independently source-backed/);
+test('multiview IoU rejects duplicate sources, mixed candidates, missing current binding, and forged comparison digests', () => {
+  const front = registeredComparison({sourceSha256:D('1'),registrationDigest:D('2'),candidateAssetSha256:D('3'),salt:'4'});
+  const duplicateSource = registeredComparison({sourceSha256:D('1'),registrationDigest:D('5'),candidateAssetSha256:D('3'),salt:'6'});
   assert.throws(() => metricAuthority('silhouetteIoU', {
-    registeredSourceViews:[
-      {viewId:'front',sourceSha256:D('1'),registrationDigest:D('2'),candidateAssetSha256:D('3')},
-      {viewId:'side',sourceSha256:D('4'),registrationDigest:D('5'),candidateAssetSha256:D('6')},
-    ],
+    registeredComparisons:[{viewId:'front',report:front},{viewId:'side',report:duplicateSource}],
+    currentViewId:'front',currentSourceSha256:D('1'),currentCandidateAssetSha256:D('3'),
+  }), /independently source-backed/);
+
+  const mixedCandidate = registeredComparison({sourceSha256:D('7'),registrationDigest:D('8'),candidateAssetSha256:D('9'),salt:'a'});
+  assert.throws(() => metricAuthority('silhouetteIoU', {
+    registeredComparisons:[{viewId:'front',report:front},{viewId:'side',report:mixedCandidate}],
+    currentViewId:'front',currentSourceSha256:D('1'),currentCandidateAssetSha256:D('3'),
   }), /same 3D candidate/);
+
+  const side = registeredComparison({sourceSha256:D('7'),registrationDigest:D('8'),candidateAssetSha256:D('3'),salt:'a'});
   assert.throws(() => metricAuthority('silhouetteIoU', {
-    registeredSourceViews:[
-      {viewId:'front',sourceSha256:D('1'),registrationDigest:D('2'),candidateAssetSha256:D('3')},
-      {viewId:'side',sourceSha256:D('4'),registrationDigest:D('5'),candidateAssetSha256:D('3')},
-    ],
-    currentSourceSha256:D('7'),
-    currentCandidateAssetSha256:D('3'),
+    registeredComparisons:[{viewId:'front',report:front},{viewId:'side',report:side}],
+    currentViewId:'front',currentSourceSha256:D('b'),currentCandidateAssetSha256:D('3'),
   }), /current source is not present/);
+
+  const forged = structuredClone(side);
+  forged.registration.digest = D('c');
+  assert.throws(() => metricAuthority('silhouetteIoU', {
+    registeredComparisons:[{viewId:'front',report:front},{viewId:'side',report:forged}],
+    currentViewId:'front',currentSourceSha256:D('1'),currentCandidateAssetSha256:D('3'),
+  }), /comparison digest mismatch/);
 });
 
 test('generic shape parameter fitting rejects IoU-derived objective aliases', () => {
@@ -111,10 +142,13 @@ test('explicit multiview context admits IoU only as correspondence evidence', ()
     render:raster([255,0,255,0]),
     sourceSha256:D('e'),
     assetSha256:D('f'),
-    sourceViewContext:{registeredSourceViews:[
-      {viewId:'front',sourceSha256:D('e'),registrationDigest:D('8'),candidateAssetSha256:D('f')},
-      {viewId:'side',sourceSha256:D('7'),registrationDigest:D('9'),candidateAssetSha256:D('f')},
-    ]},
+    sourceViewContext:{
+      currentViewId:'front',
+      registeredComparisons:[
+        {viewId:'front',report:registeredComparison({sourceSha256:D('e'),registrationDigest:D('8'),candidateAssetSha256:D('f'),salt:'1'})},
+        {viewId:'side',report:registeredComparison({sourceSha256:D('7'),registrationDigest:D('9'),candidateAssetSha256:D('f'),salt:'2'})},
+      ],
+    },
   });
   assert.equal(typeof report.metrics.silhouetteIoU, 'number');
   assert.equal(report.policy.iouAuthority, 'CORRESPONDENCE_AID');
