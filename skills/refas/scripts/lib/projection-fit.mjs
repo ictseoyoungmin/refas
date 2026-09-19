@@ -145,7 +145,7 @@ export function createProjectionFit({
     if (!reference) throw new Error(`negativeSpaceProjections[${index}] references unknown negative space: ${referenceId}`);
     const polygon = (raw?.polygon ?? []).map((value, pointIndex) => finitePoint(value, `negativeSpaceProjections[${index}].polygon[${pointIndex}]`));
     if (polygon.length < 3 || polygonArea(polygon) < 1e-9) throw new Error(`negativeSpaceProjections[${index}].polygon is degenerate`);
-    return {referenceId, importance: reference.importance, polygon, iou: polygonIoU(reference.polygon, polygon)};
+    return {referenceId, importance: reference.importance, polygon, iou: null};
   });
 
   const dimensionResiduals = referenceGeometry.dimensions.map((dimension) => {
@@ -176,7 +176,7 @@ export function createProjectionFit({
     chainAngleRmseDegrees: (() => { const value = rmse(chainResiduals.flatMap((chain) => chain.segments.map((segment) => segment.angleErrorRadians))); return value == null ? null : value * 180 / Math.PI; })(),
     axisAngleRmseDegrees: (() => { const value = rmse(axisResiduals.filter((item) => item.evaluable).map((item) => item.angleErrorRadians)); return value == null ? null : value * 180 / Math.PI; })(),
     contactMaxExcessNormalized: (() => { const values = contactResiduals.filter((item) => item.evaluable).map((item) => item.excessNormalized); return values.length ? Math.max(...values) : null; })(),
-    negativeSpaceMeanIoU: mean(normalizedNegativeSpaces.map((item) => item.iou)),
+    negativeSpaceMeanIoU: null,
     dimensionMeanRelativeError: mean(dimensionResiduals.filter((item) => item.evaluable && item.relativeError != null).map((item) => item.relativeError)),
     occlusionOrderViolations: normalizedOcclusions.filter((item) => !item.orderCorrect).length,
   };
@@ -203,6 +203,7 @@ export function createProjectionFit({
       projectionFitDoesNotMutateGeometry: true,
       metricsCannotCertifyVisualFidelity: true,
       materialDisagreementMayBecomeBlockingFinding: true,
+      singleViewIouIsForbidden: true,
     },
   };
   return deepFreeze({...payload, projectionFitDigest: digestJson(payload)});
