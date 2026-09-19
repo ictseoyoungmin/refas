@@ -53,9 +53,9 @@ function proxyUrl(specifier) {
 
 export async function resolve(specifier, context, nextResolve) {
   const parent = pathFromUrl(context.parentURL);
-  if (isUntrustedParent(parent) && (specifier === 'node:module' || specifier === 'module')) {
+  if (isUntrustedParent(parent) && ['node:module', 'module', 'node:worker_threads', 'worker_threads', 'node:cluster', 'cluster'].includes(specifier)) {
     log('builtin-escape', specifier, parent);
-    const error = new Error('AD05 verifier access boundary blocked module escape hatch: ' + specifier);
+    const error = new Error('AD05 verifier access boundary blocked process/module escape hatch: ' + specifier);
     error.code = 'EACCES';
     throw error;
   }
