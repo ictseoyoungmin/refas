@@ -33,7 +33,9 @@ test('projection fit computes source-to-model residuals without changing source 
   });
   assert.equal(validateProjectionFit(fit).valid,true);
   assert.ok(fit.metrics.macroAnchorRmseNormalized < .01);
-  assert.ok(fit.metrics.negativeSpaceMeanIoU > .99);
+  assert.equal(fit.metrics.negativeSpaceMeanIoU, null);
+  assert.equal(fit.negativeSpaceProjections[0].iou, null);
+  assert.equal(fit.policy.singleViewIouIsForbidden, true);
   assert.equal(fit.policy.metricsCannotCertifyVisualFidelity,true);
   assert.equal(ref.anchors[0].xy[0],.5);
   const tampered=structuredClone(fit);tampered.anchorProjections[0].projectedXY[0]=.9;
