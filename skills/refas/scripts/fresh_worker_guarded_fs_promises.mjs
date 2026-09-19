@@ -27,7 +27,6 @@ export const link = (source, target, ...args) => { guardTwoPathWrite('link', sou
 export const symlink = (source, target, ...args) => { guardTwoPathWrite('symlink', source, target); return real.symlink(source, target, ...args); };
 
 export default {
-  ...real,
   readFile, open, readdir, opendir, access, stat, lstat, realpath, readlink,
   writeFile, appendFile, mkdir, rm, unlink, truncate, chmod, chown, utimes,
   rename, copyFile, cp, link, symlink,
