@@ -53,7 +53,7 @@
     },
     "policy": {
       "type": "object",
-      "required": ["rawSourceRemainsPrimary", "outputsAreDerivedObservationAids", "metricsCannotSetVisualGate", "metricFailureRequiresTypedFindingBeforeRouting", "registrationResidualIsNotShapeTruth", "realSourceLandmarksMustUseRealizedProjection", "manualRenderCoordinatesCannotClaimRealSourceGeometry", "projectionMetricsRemainVetoOnly"],
+      "required": ["rawSourceRemainsPrimary", "outputsAreDerivedObservationAids", "metricsCannotSetVisualGate", "metricFailureRequiresTypedFindingBeforeRouting", "registrationResidualIsNotShapeTruth", "realSourceLandmarksMustUseRealizedProjection", "manualRenderCoordinatesCannotClaimRealSourceGeometry", "projectionMetricsRemainVetoOnly", "singleViewIouDisabled"],
       "properties": {
         "rawSourceRemainsPrimary": {"const": true},
         "outputsAreDerivedObservationAids": {"const": true},
