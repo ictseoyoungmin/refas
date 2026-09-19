@@ -80,7 +80,6 @@ export * from './registration.mjs';
 export * from './reference-geometry.mjs';
 export * from './projection-fit.mjs';
 export * from './projection-findings.mjs';
-export * from './metric-authority.mjs';
 export * from './parameter-fit.mjs';
 export * from './camera-fit.mjs';
 export * from './pose-fit.mjs';
