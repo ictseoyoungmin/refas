@@ -1,0 +1,73 @@
+{
+  "schema": "refas.vc00-regression-fixture-set/v1",
+  "slice": "VC00",
+  "title": "Volume-closure regression evidence lock",
+  "baseline": "rc/post-1.1@4522406c8abaef12314f6ed3469a209cab8b53be",
+  "historicalPlan": "https://app.notion.com/p/3dfc6a3b5bf181e09af5db2d6a131dca",
+  "policy": {
+    "oracleOnly": true,
+    "notProductionClassificationRules": true,
+    "universalThicknessThresholdForbidden": true,
+    "historicalSurrogatesAreNotExactReproductions": true
+  },
+  "cases": [
+    {
+      "id": "gpt-planar-bird-surrogate",
+      "sourceKind": "historical-surrogate",
+      "exactHistoricalArtifactAvailable": false,
+      "geometrySource": "deterministic-surrogate",
+      "futureSpatialExpectation": "volumetric",
+      "historicalObservation": [
+        "source-facing reconstruction was reasonably matched",
+        "SIDE/TOP/GRAZING views collapsed strongly",
+        "major masses behaved like a billboard or thin 2.5D solution",
+        "the historical run still reached certified/DONE"
+      ],
+      "oracle": {
+        "planarCollapse": "MUST_FAIL",
+        "thinnessSemantics": "NOT_APPLICABLE"
+      }
+    },
+    {
+      "id": "claude-volumetric-bird-surrogate",
+      "sourceKind": "historical-surrogate",
+      "exactHistoricalArtifactAvailable": false,
+      "geometrySource": "deterministic-surrogate",
+      "futureSpatialExpectation": "volumetric",
+      "historicalObservation": [
+        "body and head retained real volume",
+        "an unseen far-side wing was instantiated as inferred geometry",
+        "body mass, wing separation, underside volume, and leg lateral separation remained 3D in side/top/grazing views",
+        "the historical run is positive or partial-positive evidence for volumetric reasoning"
+      ],
+      "oracle": {
+        "planarCollapse": "MUST_NOT_FAIL",
+        "thinnessSemantics": "NOT_APPLICABLE"
+      }
+    },
+    {
+      "id": "intentionally-thin-panel",
+      "sourceKind": "synthetic-control",
+      "exactHistoricalArtifactAvailable": null,
+      "geometrySource": "deterministic-synthetic",
+      "futureSpatialExpectation": "intentionally-planar",
+      "historicalObservation": [],
+      "oracle": {
+        "planarCollapse": "MUST_NOT_FAIL",
+        "thinnessSemantics": "MUST_PASS"
+      }
+    },
+    {
+      "id": "synthetic-degenerate-volume",
+      "sourceKind": "synthetic-negative",
+      "exactHistoricalArtifactAvailable": null,
+      "geometrySource": "deterministic-synthetic",
+      "futureSpatialExpectation": "volumetric",
+      "historicalObservation": [],
+      "oracle": {
+        "planarCollapse": "MUST_FAIL",
+        "thinnessSemantics": "NOT_APPLICABLE"
+      }
+    }
+  ]
+}
