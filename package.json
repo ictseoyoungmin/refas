@@ -33,6 +33,7 @@
     "dogfood:articulated": "node examples/articulated-figure/run.mjs",
     "benchmark:matrix": "node examples/benchmark-matrix/run.mjs",
     "release:audit": "node tools/verify-plugin-distribution.mjs && node tools/release-audit.mjs",
-    "check:interfaces": "node skills/refas/scripts/verify_capability_interfaces.mjs"
+    "check:interfaces": "node skills/refas/scripts/verify_capability_interfaces.mjs",
+    "dogfood:fresh-worker": "node skills/refas/scripts/verify_fresh_worker_dogfood.mjs"
   }
 }
