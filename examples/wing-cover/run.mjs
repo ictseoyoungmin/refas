@@ -670,10 +670,10 @@ async function main() {
     runPython(path.join(SKILL_SCRIPTS, 'compare_registered.py'), ['--input', candidateInputPath, '--out', candidateComparisonDirectory]);
     negativeReports[name] = await readJson(path.join(candidateComparisonDirectory, 'comparison-report.json'));
   }
-  const metric = (report, scope) => report.scopes.find((item) => item.scopeId === scope).metrics.silhouetteIoU;
-  assert.ok(metric(negativeReports['shifted-scaled'], 'whole') < metric(comparisonReport, 'whole'));
-  assert.ok(metric(negativeReports['better-global-worse-local'], 'whole') > metric(comparisonReport, 'whole'));
-  assert.ok(metric(negativeReports['better-global-worse-local'], 'fastener-inlay') < metric(comparisonReport, 'fastener-inlay'));
+  const edgeMetric = (report, scope) => report.scopes.find((item) => item.scopeId === scope).metrics.perceptual.edgeDisagreement;
+  assert.ok(edgeMetric(negativeReports['shifted-scaled'], 'whole') > edgeMetric(comparisonReport, 'whole'));
+  assert.ok(edgeMetric(negativeReports['better-global-worse-local'], 'whole') < edgeMetric(comparisonReport, 'whole'));
+  assert.ok(edgeMetric(negativeReports['better-global-worse-local'], 'fastener-inlay') > edgeMetric(comparisonReport, 'fastener-inlay'));
 
   const findingsPath = await writeJson(path.join(PROJECT, 'reviews', 'findings.json'), {
     schema: 'refas.finding-ledger/v1', sourceSha256: source.sha256, assetSha256: await sha256File(finalAssetPath),
