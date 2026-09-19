@@ -4,6 +4,7 @@ import {test} from 'node:test';
 import {
   assertMetricUseAllowed,
   createParameterFitPlan,
+  createPerceptualDiscrepancy,
   isIouDerivedMetric,
   metricAuthority,
   rankDiscrepancyCandidates,
@@ -43,6 +44,39 @@ test('generic shape parameter fitting rejects IoU-derived objective aliases', ()
   for (const id of ['silhouette-iou','segment-iou-loss','negative-space-loss']) {
     assert.throws(() => createParameterFitPlan({...base,objectives:[{id,goal:'minimize'}]}), /cannot be used for objective/);
   }
+});
+
+
+test('single-view perceptual evidence does not emit IoU values', () => {
+  const raster = (values) => ({width:2,height:2,channels:1,data:values});
+  const report = createPerceptualDiscrepancy({
+    source:raster([255,255,0,0]),
+    render:raster([255,0,255,0]),
+    sourceSha256:D('c'),
+    assetSha256:D('d'),
+    segmentMasks:[{id:'part',source:[1,1,0,0],render:[1,0,1,0]}],
+    negativeSpaceMasks:[{id:'gap',source:[0,0,1,1],render:[0,1,0,1]}],
+  });
+  assert.equal(report.metrics.silhouetteIoU, null);
+  assert.equal(report.metrics.segmentMeanIoU, null);
+  assert.equal(report.metrics.negativeSpaceMeanIoU, null);
+  assert.equal(report.segments[0].iou, null);
+  assert.equal(report.negativeSpaces[0].iou, null);
+  assert.equal(report.policy.iouAuthority, 'FORBIDDEN_SINGLE_VIEW_IOU');
+});
+
+test('explicit multiview context admits IoU only as correspondence evidence', () => {
+  const raster = (values) => ({width:2,height:2,channels:1,data:values});
+  const report = createPerceptualDiscrepancy({
+    source:raster([255,255,0,0]),
+    render:raster([255,0,255,0]),
+    sourceSha256:D('e'),
+    assetSha256:D('f'),
+    sourceViewContext:{sourceViewCount:2,independentlySourceBackedViewCount:2,registeredSourceViewCount:2},
+  });
+  assert.equal(typeof report.metrics.silhouetteIoU, 'number');
+  assert.equal(report.policy.iouAuthority, 'CORRESPONDENCE_AID');
+  assert.throws(() => rankDiscrepancyCandidates([{id:'x',metrics:report.metrics},{id:'y',metrics:report.metrics}],{metric:'silhouetteIoU'}), /cannot be used for ranking/);
 });
 
 test('candidate ranking requires an explicit non-IoU metric', () => {
