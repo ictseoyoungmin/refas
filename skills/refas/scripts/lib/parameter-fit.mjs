@@ -61,7 +61,8 @@ function normalizeObjective(raw, index) {
   const weight = finite(raw?.weight ?? 1, `${label}.weight`);
   if (!(scale > 0) || !(weight > 0)) throw new Error(`${label} scale and weight must be positive`);
   const id = assertId(raw?.id, `${label}.id`);
-  const authority = String(raw?.authority ?? 'RANKING_ALLOWED').trim().toUpperCase();
+  if (raw?.authority == null) throw new Error(`${label}.authority is required`);
+  const authority = String(raw.authority).trim().toUpperCase();
   assertMetricUseAllowed(id, 'objective', {declaredAuthority: authority});
   const objective = {id, goal, scale, weight, authority};
   if (goal === 'target') objective.target = finite(raw?.target, `${label}.target`);
