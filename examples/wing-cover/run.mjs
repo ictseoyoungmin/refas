@@ -673,7 +673,7 @@ async function main() {
   const perceptualMetric = (report, scope, key) => report.scopes.find((item) => item.scopeId === scope).metrics.perceptual[key];
   assert.ok(perceptualMetric(negativeReports['shifted-scaled'], 'whole', 'edgeDisagreement') > perceptualMetric(comparisonReport, 'whole', 'edgeDisagreement'));
   assert.ok(perceptualMetric(negativeReports['better-global-worse-local'], 'whole', 'edgeDisagreement') < perceptualMetric(comparisonReport, 'whole', 'edgeDisagreement'));
-  assert.ok(perceptualMetric(negativeReports['better-global-worse-local'], 'fastener-inlay', 'colorDifference') > perceptualMetric(comparisonReport, 'fastener-inlay', 'colorDifference'));
+  assert.ok(perceptualMetric(negativeReports['better-global-worse-local'], 'fastener-inlay', 'coarseColorDifference') > perceptualMetric(comparisonReport, 'fastener-inlay', 'colorDifference'));
 
   const findingsPath = await writeJson(path.join(PROJECT, 'reviews', 'findings.json'), {
     schema: 'refas.finding-ledger/v1', sourceSha256: source.sha256, assetSha256: await sha256File(finalAssetPath),
@@ -771,7 +771,7 @@ async function main() {
     registeredComparisonNegativeFixtures: {
       shiftedScaledWholeEdgeDisagreement: perceptualMetric(negativeReports['shifted-scaled'], 'whole', 'edgeDisagreement'),
       betterGlobalWholeEdgeDisagreement: perceptualMetric(negativeReports['better-global-worse-local'], 'whole', 'edgeDisagreement'),
-      worseLocalFeatureColorDifference: perceptualMetric(negativeReports['better-global-worse-local'], 'fastener-inlay', 'colorDifference'),
+      worseLocalFeatureCoarseColorDifference: perceptualMetric(negativeReports['better-global-worse-local'], 'fastener-inlay', 'coarseColorDifference'),
     },
     glb: {nodes: inspection.nodeCount, meshes: inspection.meshCount, triangles: inspection.triangleCount},
     checkpoints: {count: finalAudit.checkpointCount, source: sourceCheckpoint.id, certification: certificationCheckpoint?.id ?? null},
