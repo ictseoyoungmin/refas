@@ -57,6 +57,31 @@ function assertWorkerSourceIsPublicOnly(source) {
   assert.doesNotMatch(source, /spawnSync\(\s*['"](?:grep|sed|rg|ripgrep)['"]/);
 }
 
+async function readAccessAudit(auditPath) {
+  try {
+    const text = await fs.readFile(auditPath, 'utf8');
+    return text.split(/\r?\n/).filter(Boolean).map((line) => JSON.parse(line));
+  } catch (error) {
+    if (error.code === 'ENOENT') return [];
+    throw error;
+  }
+}
+
+async function runBlockedBoundaryProbe({tempRoot, env, name, source}) {
+  const probePath = path.join(tempRoot, 'probes', `${name}.mjs`);
+  await fs.mkdir(path.dirname(probePath), {recursive: true});
+  await fs.writeFile(probePath, source);
+  const result = spawnSync(process.execPath, [probePath], {
+    cwd: tempRoot,
+    encoding: 'utf8',
+    env: {...env, REFAS_AD05_UNTRUSTED_ENTRY: probePath},
+    timeout: 30000,
+  });
+  assert.notEqual(result.status, 0, `${name} bypass probe unexpectedly succeeded`);
+  assert.match(String(result.stderr || result.stdout), /AD05 verifier access boundary blocked/);
+  return probePath;
+}
+
 export async function runFreshWorkerDogfood({skillRoot = DEFAULT_SKILL_ROOT, keep = false} = {}) {
   skillRoot = path.resolve(skillRoot);
   const workerSourcePath = path.join(skillRoot, 'scripts', 'fresh_worker_dogfood_worker.mjs');
@@ -83,7 +108,21 @@ export async function runFreshWorkerDogfood({skillRoot = DEFAULT_SKILL_ROOT, kee
   assert.ok(Object.values(absentRepositorySurfaces).every(Boolean), 'temporary fresh-worker root contains repository-only surfaces');
 
   const installedWorker = path.join(installedRoot, 'scripts', 'fresh_worker_dogfood_worker.mjs');
-  const env = minimalEnv(tempRoot);
+  const accessGuard = path.join(installedRoot, 'scripts', 'fresh_worker_access_guard.cjs');
+  const accessLoader = path.join(installedRoot, 'scripts', 'fresh_worker_access_loader.mjs');
+  const accessAuditPath = path.join(tempRoot, 'fresh-worker-access-audit.jsonl');
+  const rawImplementationTarget = path.join(installedRoot, 'scripts', 'lib', 'checkpoint-store.mjs');
+  await fs.writeFile(accessAuditPath, '');
+  const env = {
+    ...minimalEnv(tempRoot),
+    NODE_NO_WARNINGS: '1',
+    NODE_OPTIONS: `--require=${accessGuard} --experimental-loader=${accessLoader}`,
+    REFAS_AD05_INSTALLED_ROOT: installedRoot,
+    REFAS_AD05_ACCESS_AUDIT: accessAuditPath,
+    REFAS_AD05_UNTRUSTED_ENTRY: installedWorker,
+    REFAS_AD05_ALLOWED_CLI: path.join(installedRoot, 'scripts', 'refas.mjs'),
+    REFAS_AD05_RAW_TARGET: rawImplementationTarget,
+  };
   const normal = spawnSync(process.execPath, [
     installedWorker,
     '--skill-root', installedRoot,
@@ -104,6 +143,9 @@ export async function runFreshWorkerDogfood({skillRoot = DEFAULT_SKILL_ROOT, kee
   assert.equal(summary.checkpoints, CAPABILITY_ORDER.length);
   assert.equal(summary.rawImplementationReads, 0);
   assert.equal(summary.implementationSearchCommands, 0);
+
+  const normalBoundaryEvents = await readAccessAudit(accessAuditPath);
+  assert.deepEqual(normalBoundaryEvents, [], 'normal fresh-worker run attempted verifier-blocked implementation access');
 
   const report = JSON.parse(await fs.readFile(reportPath, 'utf8'));
   assert.equal(report.status, 'PASS');
@@ -153,6 +195,33 @@ export async function runFreshWorkerDogfood({skillRoot = DEFAULT_SKILL_ROOT, kee
   assert.deepEqual(blocked.rawImplementationReads, ['scripts/lib/checkpoint-store.mjs']);
   assert.match(blocked.message, /raw implementation read blocked/);
 
+  const directReadProbe = await runBlockedBoundaryProbe({
+    tempRoot,
+    env,
+    name: 'direct-fs-read',
+    source: `import fs from 'node:fs/promises';\nawait fs.readFile(process.env.REFAS_AD05_RAW_TARGET, 'utf8');\n`,
+  });
+  const dynamicImportProbe = await runBlockedBoundaryProbe({
+    tempRoot,
+    env,
+    name: 'dynamic-internal-import',
+    source: `import {pathToFileURL} from 'node:url';\nawait import(pathToFileURL(process.env.REFAS_AD05_RAW_TARGET).href);\n`,
+  });
+  const childProcessProbe = await runBlockedBoundaryProbe({
+    tempRoot,
+    env,
+    name: 'child-process-read',
+    source: `import {spawnSync} from 'node:child_process';\nconst code = "require('node:fs').readFileSync(process.env.REFAS_AD05_RAW_TARGET, 'utf8')";\nspawnSync(process.execPath, ['-e', code], {env: process.env});\n`,
+  });
+  const boundaryEvents = await readAccessAudit(accessAuditPath);
+  const eventKinds = new Set(boundaryEvents.map((event) => event.kind));
+  assert.ok(eventKinds.has('raw-implementation-read'), 'direct filesystem bypass was not independently blocked');
+  assert.ok(eventKinds.has('raw-implementation-import'), 'dynamic internal import bypass was not independently blocked');
+  assert.ok(eventKinds.has('child-process-bypass'), 'child-process bypass was not independently blocked');
+  for (const probePath of [directReadProbe, dynamicImportProbe, childProcessProbe]) {
+    assert.ok(boundaryEvents.some((event) => event.processEntry === path.resolve(probePath)), `missing verifier-owned access event for ${probePath}`);
+  }
+
   const result = {
     status: 'PASS',
     schema: 'refas.fresh-worker-public-contract-dogfood-report/v1',
@@ -166,6 +235,9 @@ export async function runFreshWorkerDogfood({skillRoot = DEFAULT_SKILL_ROOT, kee
     rawImplementationReads: report.rawImplementationReads.length,
     implementationSearchCommands: report.implementationSearchCommands.length,
     forbiddenRawReadProbe: blocked.status,
+    verifierOwnedAccessBoundary: true,
+    normalBoundaryViolations: normalBoundaryEvents.length,
+    bypassProbesBlocked: 3,
     certificateDigest: report.certificate.certificateDigest,
   };
 
