@@ -1,4 +1,5 @@
 import {assertDigest, deepFreeze, digestJson} from './canonical.mjs';
+import {assertMetricUseAllowed} from './metric-authority.mjs';
 
 export const PERCEPTUAL_DISCREPANCY_SCHEMA = 'refas.perceptual-discrepancy/v1';
 
@@ -142,8 +143,11 @@ export function validatePerceptualDiscrepancy(report) {
   return {valid: errors.length === 0, errors};
 }
 
-export function rankDiscrepancyCandidates(candidates, {metric = 'silhouetteIoU', direction = 'max'} = {}) {
+export function rankDiscrepancyCandidates(candidates, {metric, direction = 'min', authority = 'RANKING_ALLOWED'} = {}) {
   if (!Array.isArray(candidates)) throw new Error('candidates must be an array');
+  if (!metric) throw new Error('metric is required; RefAs has no implicit discrepancy-ranking metric');
+  if (!['min', 'max'].includes(direction)) throw new Error('direction must be min or max');
+  assertMetricUseAllowed(metric, 'ranking', {declaredAuthority: authority});
   return [...candidates].sort((a, b) => {
     const av = Number(a?.metrics?.[metric]), bv = Number(b?.metrics?.[metric]);
     if (!Number.isFinite(av) || !Number.isFinite(bv)) throw new Error(`candidate metric ${metric} must be finite`);
