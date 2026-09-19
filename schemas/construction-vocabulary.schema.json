@@ -1,0 +1,181 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/construction-vocabulary.schema.json",
+  "title": "RefAs construction vocabulary decision",
+  "type": "object",
+  "required": [
+    "schema",
+    "scopeId",
+    "sourceSha256",
+    "vocabulary",
+    "cues",
+    "contraryCues",
+    "ambiguities",
+    "evidenceRefs",
+    "identityScopes",
+    "childDecisions",
+    "mechanicalDecomposition",
+    "policy",
+    "vocabularyDigest"
+  ],
+  "properties": {
+    "schema": {
+      "const": "refas.construction-vocabulary/v1"
+    },
+    "scopeId": {
+      "$ref": "common.schema.json#/$defs/semanticId"
+    },
+    "sourceSha256": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "vocabulary": {
+      "enum": [
+        "hard-surface",
+        "organic",
+        "mechanical-articulated",
+        "hybrid",
+        "unresolved"
+      ]
+    },
+    "cues": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/cue"
+      }
+    },
+    "contraryCues": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/cue"
+      }
+    },
+    "ambiguities": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string"
+      }
+    },
+    "evidenceRefs": {
+      "$ref": "common.schema.json#/$defs/evidenceRefs"
+    },
+    "identityScopes": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "common.schema.json#/$defs/semanticId"
+      }
+    },
+    "childDecisions": {
+      "type": "array",
+      "items": {
+        "$ref": "construction-vocabulary.schema.json"
+      }
+    },
+    "mechanicalDecomposition": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#/$defs/mechanicalDecomposition"
+        }
+      ]
+    },
+    "policy": {
+      "type": "object",
+      "required": [
+        "decisionPrecedesIdentityGeometry",
+        "unresolvedIsBlockoutOnly",
+        "compositeWholeCannotUseOneUndifferentiatedGeometryFamily",
+        "mechanicalWholeRequiresExplicitDecomposition",
+        "evidenceRemainsPrimary"
+      ],
+      "properties": {
+        "decisionPrecedesIdentityGeometry": {
+          "const": true
+        },
+        "unresolvedIsBlockoutOnly": {
+          "const": true
+        },
+        "compositeWholeCannotUseOneUndifferentiatedGeometryFamily": {
+          "const": true
+        },
+        "mechanicalWholeRequiresExplicitDecomposition": {
+          "const": true
+        },
+        "evidenceRemainsPrimary": {
+          "const": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "vocabularyDigest": {
+      "$ref": "common.schema.json#/$defs/digest"
+    }
+  },
+  "$defs": {
+    "cue": {
+      "type": "object",
+      "required": [
+        "id",
+        "description",
+        "evidenceRefs"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "common.schema.json#/$defs/semanticId"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidenceRefs": {
+          "$ref": "common.schema.json#/$defs/evidenceRefs"
+        }
+      },
+      "additionalProperties": false
+    },
+    "mechanicalDecomposition": {
+      "type": "object",
+      "required": [
+        "partIds",
+        "interfaceIds",
+        "articulationIds",
+        "evidenceRefs"
+      ],
+      "properties": {
+        "partIds": {
+          "type": "array",
+          "minItems": 2,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "common.schema.json#/$defs/semanticId"
+          }
+        },
+        "interfaceIds": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "common.schema.json#/$defs/semanticId"
+          }
+        },
+        "articulationIds": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "common.schema.json#/$defs/semanticId"
+          }
+        },
+        "evidenceRefs": {
+          "$ref": "common.schema.json#/$defs/evidenceRefs"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
