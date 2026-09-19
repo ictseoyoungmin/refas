@@ -673,7 +673,7 @@ async function main() {
   const perceptualMetric = (report, scope, key) => report.scopes.find((item) => item.scopeId === scope).metrics.perceptual[key];
   assert.ok(perceptualMetric(negativeReports['shifted-scaled'], 'whole', 'edgeDisagreement') > perceptualMetric(comparisonReport, 'whole', 'edgeDisagreement'));
   assert.ok(perceptualMetric(negativeReports['better-global-worse-local'], 'whole', 'edgeDisagreement') < perceptualMetric(comparisonReport, 'whole', 'edgeDisagreement'));
-  assert.ok(perceptualMetric(negativeReports['better-global-worse-local'], 'fastener-inlay', 'coarseColorDifference') > perceptualMetric(comparisonReport, 'fastener-inlay', 'colorDifference'));
+  assert.ok(perceptualMetric(negativeReports['better-global-worse-local'], 'fastener-inlay', 'coarseColorDifference') > perceptualMetric(comparisonReport, 'fastener-inlay', 'coarseColorDifference'));
 
   const findingsPath = await writeJson(path.join(PROJECT, 'reviews', 'findings.json'), {
     schema: 'refas.finding-ledger/v1', sourceSha256: source.sha256, assetSha256: await sha256File(finalAssetPath),
