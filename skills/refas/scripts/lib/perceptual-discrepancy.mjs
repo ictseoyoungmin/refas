@@ -105,7 +105,7 @@ export function createPerceptualDiscrepancy({source, render, sourceSha256, asset
   const normalizedWidthError = sourceBox.width ? Math.abs(renderBox.width - sourceBox.width) / sourceBox.width : null;
   const normalizedHeightError = sourceBox.height ? Math.abs(renderBox.height - sourceBox.height) / sourceBox.height : null;
   const colorDifference = Math.hypot(...sourceStats.meanRGB.map((value, index) => value - renderStats.meanRGB[index]));
-  const iouAuthority = metricAuthority('silhouetteIoU', sourceViewContext ?? {});
+  const iouAuthority = metricAuthority('silhouetteIoU', {...(sourceViewContext ?? {}), currentSourceSha256: sourceSha256, currentCandidateAssetSha256: assetSha256});
   const iouAllowed = iouAuthority.authority === 'CORRESPONDENCE_AID';
   const segments = segmentMasks.map((entry, index) => {
     const a = Uint8Array.from(entry.source), b = Uint8Array.from(entry.render);
