@@ -1,5 +1,3 @@
-import path from 'node:path';
-
 import {recordAccessBoundary} from './fresh_worker_access_policy.mjs';
 
 const restrictedBuiltins = new Set([
@@ -34,5 +32,3 @@ if (originalGetBuiltinModule) {
     },
   });
 }
-
-recordAccessBoundary('verifier-preload', 'installed', process.argv[1] ? path.resolve(process.argv[1]) : null);
