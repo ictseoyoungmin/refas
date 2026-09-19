@@ -12,5 +12,8 @@ test('AD05 fresh worker executes the canonical chain without raw implementation 
   assert.equal(report.rawImplementationReads, 0);
   assert.equal(report.implementationSearchCommands, 0);
   assert.equal(report.forbiddenRawReadProbe, 'BLOCKED');
+  assert.equal(report.verifierOwnedAccessBoundary, true);
+  assert.equal(report.normalBoundaryViolations, 0);
+  assert.equal(report.bypassProbesBlocked, 3);
   assert.match(report.certificateDigest, /^[a-f0-9]{64}$/);
 });
