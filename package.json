@@ -35,6 +35,7 @@
     "release:audit": "node tools/verify-plugin-distribution.mjs && node tools/release-audit.mjs",
     "check:interfaces": "node skills/refas/scripts/verify_capability_interfaces.mjs",
     "dogfood:fresh-worker": "node skills/refas/scripts/verify_fresh_worker_dogfood.mjs",
+    "dogfood:volume-regression": "node examples/volume-closure-regression/run.mjs",
     "check:discovery-closure": "node skills/refas/scripts/verify_discovery_closure.mjs"
   }
 }

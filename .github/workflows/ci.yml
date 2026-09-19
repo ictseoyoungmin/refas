@@ -48,6 +48,9 @@ jobs:
       - name: Discovery closure verifier
         if: matrix.node == 24
         run: npm run check:discovery-closure
+      - name: VC00 volume-closure regression fixtures
+        if: matrix.node == 24
+        run: npm run dogfood:volume-regression
       - name: Joint parameter-fit dogfood
         if: matrix.node == 24
         run: npm run dogfood:parameter-fit
