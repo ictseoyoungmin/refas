@@ -38,7 +38,6 @@ export const symlinkSync = (source, target, ...args) => { guardTwoPathWrite('sym
 export const symlink = (source, target, ...args) => { guardTwoPathWrite('symlink', source, target); return real.symlink(source, target, ...args); };
 
 export default {
-  ...real,
   readFileSync, readFile, createReadStream, openSync, open, readdirSync, readdir,
   statSync, lstatSync, accessSync, realpathSync, readlinkSync, promises,
   writeFileSync, writeFile, appendFileSync, appendFile, mkdirSync, mkdir, rmSync, rm,
