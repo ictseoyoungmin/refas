@@ -92,7 +92,11 @@ export function validateProjectionRepairPlan(plan, referenceGeometry = null) {
  */
 export function createProjectionRepairPlan(options = {}) {
   const {referenceGeometry = null, ...planOptions} = options;
-  const plan = createParameterFitPlan(planOptions);
+  const objectives = (planOptions.objectives ?? []).map((objective) => ({
+    ...objective,
+    authority: objective?.authority ?? 'RANKING_ALLOWED',
+  }));
+  const plan = createParameterFitPlan({...planOptions, objectives});
   const validation = validateProjectionRepairPlan(plan, referenceGeometry);
   if (!validation.valid) throw new Error(`projection repair plan is invalid: ${validation.errors.join('; ')}`);
   return plan;
