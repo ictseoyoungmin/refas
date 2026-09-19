@@ -90,7 +90,7 @@ export function createConstructionQuality({
     normalizedVocabulary = constructionVocabulary;
     if (normalizedVocabulary.sourceSha256 !== sourceSha256) throw new Error('constructionVocabulary does not bind sourceSha256');
     for (const [index, permit] of constructionPermits.entries()) {
-      const permitValidation = validateConstructionOperationPermit(normalizedVocabulary, permit);
+      const permitValidation = validateConstructionOperationPermit(permit, normalizedVocabulary);
       if (!permitValidation.valid) throw new Error(`constructionPermits[${index}] is invalid: ${permitValidation.errors.join('; ')}`);
       normalizedPermits.push(permit);
     }
