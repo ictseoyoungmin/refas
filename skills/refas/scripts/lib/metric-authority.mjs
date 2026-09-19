@@ -53,7 +53,7 @@ function allowedUses(authority) {
     RANKING_ALLOWED: ['objective', 'ranking', 'diagnostic'],
     GATE_ONLY: ['correspondence-gate', 'diagnostic'],
     DIAGNOSTIC_ONLY: ['diagnostic'],
-    RESEMBLANCE_SIGNAL: ['ranking', 'diagnostic', 'resemblance'],
+    RESEMBLANCE_SIGNAL: ['objective', 'ranking', 'diagnostic', 'resemblance'],
     CORRESPONDENCE_AID: ['correspondence-gate', 'diagnostic'],
   }[authority] ?? [];
 }
