@@ -32,3 +32,18 @@ if (originalGetBuiltinModule) {
     },
   });
 }
+for (const bindingName of ['binding', '_linkedBinding']) {
+  const original = typeof process[bindingName] === 'function' ? process[bindingName].bind(process) : null;
+  if (!original) continue;
+  Object.defineProperty(process, bindingName, {
+    configurable: false,
+    enumerable: false,
+    writable: false,
+    value(specifier) {
+      recordAccessBoundary('builtin-escape', 'process.' + bindingName, String(specifier));
+      const error = new Error('AD05 verifier access boundary blocked legacy builtin escape: ' + bindingName);
+      error.code = 'EACCES';
+      throw error;
+    },
+  });
+}
