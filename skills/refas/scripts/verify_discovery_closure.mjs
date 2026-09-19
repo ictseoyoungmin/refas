@@ -75,7 +75,7 @@ function schemaOccurrencesInValue(value, output = [], pointer = '$', rootSchema 
   }
   if (!value || typeof value !== 'object') return output;
   const localRootSchema = pointer === '$' && typeof value.schema === 'string' ? value.schema : rootSchema;
-  if (typeof value.schema === 'string' && /^refas\\.[A-Za-z0-9._-]+\\/v\\d+$/u.test(value.schema)) {
+  if (typeof value.schema === 'string' && /^refas\.[A-Za-z0-9._-]+\/v\d+$/u.test(value.schema)) {
     output.push({
       schemaId: value.schema,
       pointer: pointer + '.schema',
