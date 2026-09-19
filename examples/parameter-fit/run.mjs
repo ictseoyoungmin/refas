@@ -59,9 +59,9 @@ async function main() {
       {id: 'depth', binding: 'model.shape.depth', minimum: 0.15, maximum: 1.05, initial: 0.22, evidenceRefs: ['source/render/side.png', 'source/render/top.png']},
     ],
     objectives: [
-      {id: 'hero-coverage-error', goal: 'minimize', scale: 1, weight: 1},
-      {id: 'side-coverage-error', goal: 'minimize', scale: 1, weight: 1},
-      {id: 'top-coverage-error', goal: 'minimize', scale: 1, weight: 1},
+      {id: 'hero-coverage-error', goal: 'minimize', scale: 1, weight: 1, authority: 'RANKING_ALLOWED'},
+      {id: 'side-coverage-error', goal: 'minimize', scale: 1, weight: 1, authority: 'RANKING_ALLOWED'},
+      {id: 'top-coverage-error', goal: 'minimize', scale: 1, weight: 1, authority: 'RANKING_ALLOWED'},
     ],
     protectedTerms: [], evidenceRefs: ['source/reference.png', 'source/render/side.png', 'source/render/top.png'],
     optimizer: {algorithm: 'differential-evolution', seed: 17, populationSize: 8, evaluationBudget: 32, differentialWeight: 0.8, crossoverRate: 0.9, improvementTolerance: 0.000001, patience: 28},

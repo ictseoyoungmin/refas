@@ -24,6 +24,7 @@ import {
   createVisualReview,
   createWholeSystemRelationalBarrier,
   digestBytes,
+  digestJson,
   initProject,
   partsToGlb,
   resumeProject,
@@ -162,8 +163,9 @@ async function commitCertification(root, source, {projection='none'}={}) {
     policy:{rawSourceRemainsPrimary:true, outputsAreDerivedObservationAids:true, metricsCannotSetVisualGate:true,
       metricFailureRequiresTypedFindingBeforeRouting:true, registrationResidualIsNotShapeTruth:true,
       realSourceLandmarksMustUseRealizedProjection:true, manualRenderCoordinatesCannotClaimRealSourceGeometry:true,
-      projectionMetricsRemainVetoOnly:true}, inputDigest:'e'.repeat(64), comparisonDigest:'1'.repeat(64),
+      projectionMetricsRemainVetoOnly:true, singleViewIouDisabled:true}, inputDigest:'e'.repeat(64),
   };
+  comparison.comparisonDigest = digestJson(comparison);
   const comparisonPath = await json(path.join(root,'reviews','registered-comparison','comparison-report.json'), comparison);
   const comparisonRef = await contentReference(comparisonPath, {kind:'registered-comparison', root});
   const reviewObservation = (id) => ({sourceObservation:`The source ${id} evidence is visible in the bound reference.`,renderObservation:`The current ${id} render is visible in the bound candidate evidence.`,comparisonConclusion:`The ${id} comparison was directly reviewed.`,evidenceRefs:[`renders/final/${id}.png`]});

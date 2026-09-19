@@ -53,7 +53,7 @@
     },
     "policy": {
       "type": "object",
-      "required": ["rawSourceRemainsPrimary", "outputsAreDerivedObservationAids", "metricsCannotSetVisualGate", "metricFailureRequiresTypedFindingBeforeRouting", "registrationResidualIsNotShapeTruth", "realSourceLandmarksMustUseRealizedProjection", "manualRenderCoordinatesCannotClaimRealSourceGeometry", "projectionMetricsRemainVetoOnly"],
+      "required": ["rawSourceRemainsPrimary", "outputsAreDerivedObservationAids", "metricsCannotSetVisualGate", "metricFailureRequiresTypedFindingBeforeRouting", "registrationResidualIsNotShapeTruth", "realSourceLandmarksMustUseRealizedProjection", "manualRenderCoordinatesCannotClaimRealSourceGeometry", "projectionMetricsRemainVetoOnly", "singleViewIouDisabled"],
       "properties": {
         "rawSourceRemainsPrimary": {"const": true},
         "outputsAreDerivedObservationAids": {"const": true},
@@ -62,7 +62,8 @@
         "registrationResidualIsNotShapeTruth": {"const": true},
         "realSourceLandmarksMustUseRealizedProjection": {"const": true},
         "manualRenderCoordinatesCannotClaimRealSourceGeometry": {"const": true},
-        "projectionMetricsRemainVetoOnly": {"const": true}
+        "projectionMetricsRemainVetoOnly": {"const": true},
+        "singleViewIouDisabled": {"const": true}
       },
       "additionalProperties": false
     },

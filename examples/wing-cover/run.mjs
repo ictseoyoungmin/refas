@@ -670,10 +670,10 @@ async function main() {
     runPython(path.join(SKILL_SCRIPTS, 'compare_registered.py'), ['--input', candidateInputPath, '--out', candidateComparisonDirectory]);
     negativeReports[name] = await readJson(path.join(candidateComparisonDirectory, 'comparison-report.json'));
   }
-  const metric = (report, scope) => report.scopes.find((item) => item.scopeId === scope).metrics.silhouetteIoU;
-  assert.ok(metric(negativeReports['shifted-scaled'], 'whole') < metric(comparisonReport, 'whole'));
-  assert.ok(metric(negativeReports['better-global-worse-local'], 'whole') > metric(comparisonReport, 'whole'));
-  assert.ok(metric(negativeReports['better-global-worse-local'], 'fastener-inlay') < metric(comparisonReport, 'fastener-inlay'));
+  const perceptualMetric = (report, scope, key) => report.scopes.find((item) => item.scopeId === scope).metrics.perceptual[key];
+  assert.ok(perceptualMetric(negativeReports['shifted-scaled'], 'whole', 'edgeDisagreement') > perceptualMetric(comparisonReport, 'whole', 'edgeDisagreement'));
+  assert.ok(perceptualMetric(negativeReports['better-global-worse-local'], 'whole', 'edgeDisagreement') < perceptualMetric(comparisonReport, 'whole', 'edgeDisagreement'));
+  assert.ok(perceptualMetric(negativeReports['better-global-worse-local'], 'fastener-inlay', 'coarseColorDifference') > perceptualMetric(comparisonReport, 'fastener-inlay', 'coarseColorDifference'));
 
   const findingsPath = await writeJson(path.join(PROJECT, 'reviews', 'findings.json'), {
     schema: 'refas.finding-ledger/v1', sourceSha256: source.sha256, assetSha256: await sha256File(finalAssetPath),
@@ -767,11 +767,11 @@ async function main() {
     },
     rollback: {decision: decision.action, baselineSha256, candidateSha256, restoredSha256, byteExact: restoredSha256 === baselineSha256},
     rendering: {frames: finalRenderReport.frames.length, status: finalRenderReport.status, claimScope: finalRenderReport.claimScope, board: path.relative(OUTPUT, finalBoardPath), validationWallClockMs: finalRenderReport.validationWallClockMs, validationTimeoutMs: finalRenderReport.validationTimeoutMs},
-    registeredComparison: {digest: comparisonReport.comparisonDigest, scopes: comparisonReport.scopes.map((scope) => ({scopeId: scope.scopeId, level: scope.level, ancestry: scope.ancestry, silhouetteIoU: scope.metrics.silhouetteIoU})), metricsAreGateAuthority: false},
+    registeredComparison: {digest: comparisonReport.comparisonDigest, scopes: comparisonReport.scopes.map((scope) => ({scopeId: scope.scopeId, level: scope.level, ancestry: scope.ancestry, edgeDisagreement: scope.metrics.perceptual.edgeDisagreement})), metricsAreGateAuthority: false},
     registeredComparisonNegativeFixtures: {
-      shiftedScaledWholeIoU: metric(negativeReports['shifted-scaled'], 'whole'),
-      betterGlobalWholeIoU: metric(negativeReports['better-global-worse-local'], 'whole'),
-      worseLocalFeatureIoU: metric(negativeReports['better-global-worse-local'], 'fastener-inlay'),
+      shiftedScaledWholeEdgeDisagreement: perceptualMetric(negativeReports['shifted-scaled'], 'whole', 'edgeDisagreement'),
+      betterGlobalWholeEdgeDisagreement: perceptualMetric(negativeReports['better-global-worse-local'], 'whole', 'edgeDisagreement'),
+      worseLocalFeatureCoarseColorDifference: perceptualMetric(negativeReports['better-global-worse-local'], 'fastener-inlay', 'coarseColorDifference'),
     },
     glb: {nodes: inspection.nodeCount, meshes: inspection.meshCount, triangles: inspection.triangleCount},
     checkpoints: {count: finalAudit.checkpointCount, source: sourceCheckpoint.id, certification: certificationCheckpoint?.id ?? null},

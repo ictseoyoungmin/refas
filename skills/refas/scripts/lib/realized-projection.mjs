@@ -202,6 +202,7 @@ export function createRealizedProjection({referenceGeometry, glb, cameraHypothes
     cameraParametersAreDigestBound: true,
     callerCannotSupplyProjectedCoordinates: true,
     metricsCannotCertifyVisualFidelity: true,
+    singleViewIouIsForbidden: true,
   };
   if (segmentationDeclared) Object.assign(policy, {segmentPolygonsDerivedFromRealizedGlb: true, explicitPartOwnershipChecked: true, callerCannotSupplySegmentPolygons: true});
   const payload = {
@@ -240,7 +241,7 @@ export function validateRealizedProjection(proof) {
       if (metrics && !Object.prototype.hasOwnProperty.call(metrics, 'sourceVisibleSegmentMeanIoU')) errors.push('realized segmentation metrics require sourceVisibleSegmentMeanIoU');
       if (metrics && Object.keys(metrics).some((key) => !metricKeys.has(key))) errors.push('realized segmentation metrics contain an unknown field');
       if (metrics && (!Number.isInteger(metrics.segmentCount) || metrics.segmentCount < 0 || (metrics.sourceVisibleSegmentMeanIoU != null && (!Number.isFinite(metrics.sourceVisibleSegmentMeanIoU) || metrics.sourceVisibleSegmentMeanIoU < 0 || metrics.sourceVisibleSegmentMeanIoU > 1)))) errors.push('realized segmentation metrics are invalid');
-      for (const segment of proof?.derivedSegments ?? []) if (!Array.isArray(segment.projectedHull) || segment.projectedHull.length < 3 || !Number.isFinite(segment.iou) || segment.iou < 0 || segment.iou > 1) errors.push(`segment ${segment?.referenceId ?? '?'} has invalid realized projection evidence`);
+      for (const segment of proof?.derivedSegments ?? []) if (!Array.isArray(segment.projectedHull) || segment.projectedHull.length < 3 || (segment.iou != null && (!Number.isFinite(segment.iou) || segment.iou < 0 || segment.iou > 1))) errors.push(`segment ${segment?.referenceId ?? '?'} has invalid realized projection evidence`);
       for (const item of proof?.derivedInterfaces ?? []) if (item.evaluable && (!Number.isFinite(item.boundaryMeanErrorNormalized) || item.boundaryMeanErrorNormalized < 0)) errors.push(`interface ${item?.referenceId ?? '?'} has invalid realized residual`);
     }
     const p = proof?.policy ?? {};

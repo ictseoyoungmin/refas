@@ -9,7 +9,7 @@ import json
 import sys
 from pathlib import Path
 
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageStat
 
 
 def sha256(path: Path):
@@ -38,10 +38,15 @@ def main():
     resized = render.resize((round(render.width * 0.86), round(render.height * 0.86)), Image.Resampling.BICUBIC)
     shifted.paste(resized, (30, 4))
     improved = warp_source(source, render.size, registration["homographyChildToParent"])
-    # Preserve the near-perfect whole silhouette while making the local attachment visibly wrong.
+    # Preserve the near-perfect whole registration while making the local attachment
+    # unambiguously wrong under a non-IoU perceptual signal. Choose the RGB cube
+    # corner farthest from the source-aligned local mean so coarse color discrepancy
+    # is guaranteed to increase strongly instead of depending on an arbitrary color.
     fastener_box = (190, 138, 226, 177)
     patch = improved.crop(fastener_box)
-    ImageDraw.Draw(improved).rectangle(fastener_box, fill=(123, 190, 194))
+    local_mean = ImageStat.Stat(patch.convert("RGB")).mean
+    farthest = tuple(0 if value >= 127.5 else 255 for value in local_mean)
+    ImageDraw.Draw(improved).rectangle(fastener_box, fill=farthest)
     improved.paste(patch, (fastener_box[0] - 38, fastener_box[1] - 20))
 
     for name, image, purpose in (

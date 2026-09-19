@@ -37,7 +37,7 @@ function relationalPlan(structure) {
       {id: 'span', binding: 'model.shape.span', kind: 'integer', minimum: 0, maximum: 3, initial: 0},
       {id: 'bend', binding: 'model.shape.bend', kind: 'integer', minimum: 0, maximum: 1, initial: 0},
     ],
-    objectives: [{id: 'shape-error', goal: 'minimize', scale: 1, weight: 1}],
+    objectives: [{id: 'shape-error', goal: 'minimize', scale: 1, weight: 1, authority: 'RANKING_ALLOWED'}],
     optimizer: {seed: 3, populationSize: 8, evaluationBudget: 9, patience: 8, initializationAttemptBudget: 16},
     relationalEligibilityRequired: true,
     relationalStructureDigest: structure.structureDigest,
@@ -121,7 +121,7 @@ test('legacy fit plans remain canonical when no relational gate is requested', a
       {id: 'span', binding: 'model.shape.span', kind: 'integer', minimum: 0, maximum: 1, initial: 0},
       {id: 'bend', binding: 'model.shape.bend', kind: 'integer', minimum: 0, maximum: 1, initial: 0},
     ],
-    objectives: [{id: 'shape-error', goal: 'minimize', scale: 1, weight: 1}],
+    objectives: [{id: 'shape-error', goal: 'minimize', scale: 1, weight: 1, authority: 'RANKING_ALLOWED'}],
     optimizer: {seed: 2, populationSize: 4, evaluationBudget: 5, patience: 4, initializationAttemptBudget: 8},
   });
   assert.equal(Object.hasOwn(plan, 'relationalEligibilityRequired'), false);
