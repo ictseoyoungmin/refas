@@ -18,9 +18,9 @@ The generic ledger is implemented in [parameter-fit.mjs](../skills/refas/scripts
 
 `repairShapeFromProjection` is the first concrete `shape-reconstruction` loop. It derives typed findings from the baseline's realized projection, binds only `model.shape.*` or `model.geometry.*` parameters, asks a project worker to rebuild exact GLB bytes, re-measures those bytes through the digest-bound camera and node hierarchy, and requires an actual render reference for every trial. The adapter reads the referenced report bytes and requires `assetSha256`, the renderer-recorded `heroCamera` normalized and digested by the JavaScript runtime to equal the realized projection camera, `frameDigest`, `heroImageSha256`, and `renderer.name`/`renderer.version` to match the candidate proof; it also verifies the referenced hero image bytes. The generic bounded search then ranks the declared residuals:
 
-`macro-anchor-rmse`, `chain-angle-error`, `negative-space-loss`, `segment-iou-loss`, and `interface-boundary-error`.
+`macro-anchor-rmse`, `chain-angle-error`, and `interface-boundary-error`.
 
-Projection residual objectives are minimize-only; maximizing a discrepancy is rejected by the shape adapter.
+Projection residual objectives are minimize-only; maximizing a discrepancy is rejected by the shape adapter. Single-view IoU and IoU-derived losses are not projection-repair objectives.
 
 The result contains the baseline and selected realized proofs, typed findings, the immutable fit report, and an advisory `KEEP`/`ROLLBACK` decision. `KEEP` is returned only when the selected trial improves the objective without introducing a new blocking finding; neither decision mutates project state or creates a checkpoint. A selected `KEEP` candidate still requires whole-context visual review before the normal bounded-edit checkpoint flow.
 
