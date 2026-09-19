@@ -2,13 +2,11 @@ import assert from 'node:assert/strict';
 import {test} from 'node:test';
 
 import {
-  assertMetricUseAllowed,
   createParameterFitPlan,
   createPerceptualDiscrepancy,
-  isIouDerivedMetric,
-  metricAuthority,
   rankDiscrepancyCandidates,
 } from '../skills/refas/scripts/lib/index.mjs';
+import {assertMetricUseAllowed, isIouDerivedMetric, metricAuthority} from '../skills/refas/scripts/lib/metric-authority.mjs';
 
 const D = (c) => c.repeat(64);
 const baseline = {schema:'refas.content-reference/v1',kind:'glb',path:'asset.glb',sha256:D('a'),sizeBytes:1};
