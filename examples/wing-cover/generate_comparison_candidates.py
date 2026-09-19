@@ -38,10 +38,19 @@ def main():
     resized = render.resize((round(render.width * 0.86), round(render.height * 0.86)), Image.Resampling.BICUBIC)
     shifted.paste(resized, (30, 4))
     improved = warp_source(source, render.size, registration["homographyChildToParent"])
-    # Preserve the near-perfect whole silhouette while making the local attachment visibly wrong.
+    # Preserve the near-perfect whole registration while making the local attachment
+    # unambiguously wrong under non-IoU perceptual evidence. The checker corruption
+    # adds both strong local edge disagreement and large color disagreement, while
+    # the displaced original patch preserves the intended attachment-error fixture.
     fastener_box = (190, 138, 226, 177)
     patch = improved.crop(fastener_box)
-    ImageDraw.Draw(improved).rectangle(fastener_box, fill=(123, 190, 194))
+    draw = ImageDraw.Draw(improved)
+    tile = 4
+    for y in range(fastener_box[1], fastener_box[3], tile):
+        for x in range(fastener_box[0], fastener_box[2], tile):
+            phase = ((x - fastener_box[0]) // tile + (y - fastener_box[1]) // tile) % 2
+            fill = (255, 0, 255) if phase == 0 else (0, 255, 64)
+            draw.rectangle((x, y, min(x + tile - 1, fastener_box[2] - 1), min(y + tile - 1, fastener_box[3] - 1)), fill=fill)
     improved.paste(patch, (fastener_box[0] - 38, fastener_box[1] - 20))
 
     for name, image, purpose in (
