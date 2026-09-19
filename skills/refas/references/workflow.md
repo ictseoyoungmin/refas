@@ -18,7 +18,7 @@ RefAs uses semantic capabilities. Each capability owns its decisions, artifacts,
 | 10 | `visual-critique` | localized visual findings | typed finding ledger |
 | 11 | `whole-object-certification` | release closure | current, complete gate record |
 
-Dependencies are implemented in `scripts/lib/ownership.mjs`. Repair routing invalidates the owner plus all transitive dependents.
+Canonical capability dependencies are exposed through the public `CAPABILITY_DEPENDENCIES`/`CAPABILITY_ORDER` contract from `scripts/lib/index.mjs`. Repair routing invalidates the owner plus all transitive dependents.
 
 Relational structure and inference authority are cross-cutting Core contracts, not extra capability owners. They are created and revised inside the existing observation/spatial/shape owners so the capability graph does not become a parallel runtime architecture.
 
