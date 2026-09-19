@@ -22,7 +22,14 @@ test('single-view IoU is forbidden everywhere', () => {
 });
 
 test('multiview IoU is correspondence-only and never ranks or optimizes', () => {
-  const context = {sourceViewCount:2, independentlySourceBackedViewCount:2, registeredSourceViewCount:2};
+  const context = {
+    registeredSourceViews:[
+      {viewId:'front',sourceSha256:D('1'),registrationDigest:D('2'),candidateAssetSha256:D('3')},
+      {viewId:'side',sourceSha256:D('4'),registrationDigest:D('5'),candidateAssetSha256:D('3')},
+    ],
+    currentSourceSha256:D('1'),
+    currentCandidateAssetSha256:D('3'),
+  };
   const authority = metricAuthority('segment-iou', context);
   assert.equal(authority.authority, 'CORRESPONDENCE_AID');
   assert.doesNotThrow(() => assertMetricUseAllowed('segment-iou', 'correspondence-gate', context));
@@ -30,6 +37,40 @@ test('multiview IoU is correspondence-only and never ranks or optimizes', () => 
   assert.throws(() => assertMetricUseAllowed('segment-iou', 'objective', context), /cannot be used for objective/);
   assert.throws(() => assertMetricUseAllowed('segment-iou', 'ranking', context), /cannot be used for ranking/);
   assert.throws(() => assertMetricUseAllowed('segment-iou', 'resemblance', context), /cannot be used for resemblance/);
+});
+
+test('count-only multiview claims cannot re-enable IoU', () => {
+  const authority = metricAuthority('silhouetteIoU', {
+    sourceViewCount:2,
+    independentlySourceBackedViewCount:2,
+    registeredSourceViewCount:2,
+  });
+  assert.equal(authority.authority, 'FORBIDDEN_SINGLE_VIEW_IOU');
+  assert.equal(authority.registeredSourceViewCount, 0);
+});
+
+test('multiview IoU rejects duplicate sources, mixed candidates, and missing current binding', () => {
+  const duplicateSource = {
+    registeredSourceViews:[
+      {viewId:'front',sourceSha256:D('1'),registrationDigest:D('2'),candidateAssetSha256:D('3')},
+      {viewId:'side',sourceSha256:D('1'),registrationDigest:D('5'),candidateAssetSha256:D('3')},
+    ],
+  };
+  assert.throws(() => metricAuthority('silhouetteIoU', duplicateSource), /independently source-backed/);
+  assert.throws(() => metricAuthority('silhouetteIoU', {
+    registeredSourceViews:[
+      {viewId:'front',sourceSha256:D('1'),registrationDigest:D('2'),candidateAssetSha256:D('3')},
+      {viewId:'side',sourceSha256:D('4'),registrationDigest:D('5'),candidateAssetSha256:D('6')},
+    ],
+  }), /same 3D candidate/);
+  assert.throws(() => metricAuthority('silhouetteIoU', {
+    registeredSourceViews:[
+      {viewId:'front',sourceSha256:D('1'),registrationDigest:D('2'),candidateAssetSha256:D('3')},
+      {viewId:'side',sourceSha256:D('4'),registrationDigest:D('5'),candidateAssetSha256:D('3')},
+    ],
+    currentSourceSha256:D('7'),
+    currentCandidateAssetSha256:D('3'),
+  }), /current source is not present/);
 });
 
 test('generic shape parameter fitting rejects IoU-derived objective aliases', () => {
@@ -72,7 +113,10 @@ test('explicit multiview context admits IoU only as correspondence evidence', ()
     render:raster([255,0,255,0]),
     sourceSha256:D('e'),
     assetSha256:D('f'),
-    sourceViewContext:{sourceViewCount:2,independentlySourceBackedViewCount:2,registeredSourceViewCount:2},
+    sourceViewContext:{registeredSourceViews:[
+      {viewId:'front',sourceSha256:D('e'),registrationDigest:D('8'),candidateAssetSha256:D('f')},
+      {viewId:'side',sourceSha256:D('7'),registrationDigest:D('9'),candidateAssetSha256:D('f')},
+    ]},
   });
   assert.equal(typeof report.metrics.silhouetteIoU, 'number');
   assert.equal(report.policy.iouAuthority, 'CORRESPONDENCE_AID');
