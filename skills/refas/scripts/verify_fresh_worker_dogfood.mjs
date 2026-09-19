@@ -235,6 +235,18 @@ export async function runFreshWorkerDogfood({skillRoot = DEFAULT_SKILL_ROOT, kee
       source: `const getter = process['getBuiltin' + 'Module'];\ngetter('node:fs').readFileSync(process.env.REFAS_AD05_RAW_TARGET, 'utf8');\n`,
     });
   }
+  const legacyBindingProbe = await runBlockedBoundaryProbe({
+    tempRoot,
+    env,
+    name: 'legacy-binding-escape',
+    source: `const getter = process['bind' + 'ing'];\ngetter('fs');\n`,
+  });
+  const workerThreadProbe = await runBlockedBoundaryProbe({
+    tempRoot,
+    env,
+    name: 'worker-thread-escape',
+    source: `await import('node:worker_threads');\n`,
+  });
   const boundaryEvents = await readAccessAudit(accessAuditPath);
   const eventKinds = new Set(boundaryEvents.map((event) => event.kind));
   assert.ok(eventKinds.has('raw-implementation-read'), 'direct filesystem bypass was not independently blocked');
@@ -244,7 +256,7 @@ export async function runFreshWorkerDogfood({skillRoot = DEFAULT_SKILL_ROOT, kee
   if (typeof process.getBuiltinModule === 'function') {
     assert.ok(eventKinds.has('builtin-escape'), 'process.getBuiltinModule bypass was not independently blocked');
   }
-  const verifierProbes = [directReadProbe, fsPromisesPropertyProbe, dynamicImportProbe, childProcessProbe, createRequireProbe, getBuiltinModuleProbe].filter(Boolean);
+  const verifierProbes = [directReadProbe, fsPromisesPropertyProbe, dynamicImportProbe, childProcessProbe, createRequireProbe, getBuiltinModuleProbe, legacyBindingProbe, workerThreadProbe].filter(Boolean);
   for (const probePath of verifierProbes) {
     const resolvedProbe = path.resolve(probePath);
     assert.ok(
