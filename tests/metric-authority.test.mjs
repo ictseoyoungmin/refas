@@ -121,7 +121,7 @@ test('camera, appearance, lighting, and pose plans reject IoU-derived objective 
     id:'camera-fit', scopeId:'whole', sourceSha256:D('1'), hypothesisId:'camera-hypothesis',
     baselineCamera:{projection:'perspective',position:[0,0,4],target:[0,0,0],up:[0,1,0],fovY:45},
     variables:[{id:'camera-z',binding:'camera.position.z',minimum:3,maximum:5,initial:4}],
-    objectives:[{id:'silhouetteIoU',goal:'minimize',weight:1,scale:1}],
+    objectives:[{id:'silhouette-iou',goal:'minimize',weight:1,scale:1}],
     evaluationBudget:2,
   };
   assert.throws(() => createCameraFitPlan(cameraBase), /cannot be used for objective/);
