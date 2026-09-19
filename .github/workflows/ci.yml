@@ -45,6 +45,9 @@ jobs:
       - name: Fresh-worker public-contract dogfood
         if: matrix.node == 24
         run: npm run dogfood:fresh-worker
+      - name: Discovery closure verifier
+        if: matrix.node == 24
+        run: npm run check:discovery-closure
       - name: Joint parameter-fit dogfood
         if: matrix.node == 24
         run: npm run dogfood:parameter-fit
