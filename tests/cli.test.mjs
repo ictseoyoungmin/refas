@@ -117,7 +117,7 @@ test('CLI runs a joint parameter evaluator and emits a validated report', async 
       {id: 'span', binding: 'shape.span', minimum: -2, maximum: 2, initial: -1},
       {id: 'bend', binding: 'shape.bend', minimum: -2, maximum: 2, initial: 1},
     ],
-    objectives: [{id: 'fit-error', goal: 'minimize', scale: 1, weight: 1}],
+    objectives: [{id: 'fit-error', goal: 'minimize', scale: 1, weight: 1, authority: 'RANKING_ALLOWED'}],
     optimizer: {seed: 7, populationSize: 6, evaluationBudget: 20, patience: 18},
   }));
   await fs.writeFile(workerPath, `
