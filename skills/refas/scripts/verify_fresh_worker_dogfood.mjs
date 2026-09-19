@@ -108,7 +108,7 @@ export async function runFreshWorkerDogfood({skillRoot = DEFAULT_SKILL_ROOT, kee
   assert.ok(Object.values(absentRepositorySurfaces).every(Boolean), 'temporary fresh-worker root contains repository-only surfaces');
 
   const installedWorker = path.join(installedRoot, 'scripts', 'fresh_worker_dogfood_worker.mjs');
-  const accessGuard = path.join(installedRoot, 'scripts', 'fresh_worker_access_guard.cjs');
+  const accessGuard = path.join(installedRoot, 'scripts', 'fresh_worker_access_guard.mjs');
   const accessLoader = path.join(installedRoot, 'scripts', 'fresh_worker_access_loader.mjs');
   const accessAuditPath = path.join(tempRoot, 'fresh-worker-access-audit.jsonl');
   const rawImplementationTarget = path.join(installedRoot, 'scripts', 'lib', 'checkpoint-store.mjs');
@@ -116,7 +116,7 @@ export async function runFreshWorkerDogfood({skillRoot = DEFAULT_SKILL_ROOT, kee
   const env = {
     ...minimalEnv(tempRoot),
     NODE_NO_WARNINGS: '1',
-    NODE_OPTIONS: `--require=${accessGuard} --experimental-loader=${accessLoader}`,
+    NODE_OPTIONS: `--import=${accessGuard} --experimental-loader=${accessLoader}`,
     REFAS_AD05_INSTALLED_ROOT: installedRoot,
     REFAS_AD05_ACCESS_AUDIT: accessAuditPath,
     REFAS_AD05_UNTRUSTED_ENTRY: installedWorker,
