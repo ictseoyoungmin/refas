@@ -311,7 +311,56 @@ async function main() {
   const sourceManifest = JSON.parse(await fs.readFile(sourceManifestPath, 'utf8'));
   const sourceManifestRef = await writeJsonArtifact('source/source-manifest.json', sourceManifest, 'source-manifest');
 
-  const candidateRef = await writeBytesArtifact('model/candidate.glb', Buffer.from('AD05 deterministic candidate fixture\n'), 'glb');
+  recordSymbol('createCylinder');
+  recordSymbol('partsToGlb');
+  const candidateMesh = API.createCylinder({
+    center: [0, -0.6, 0],
+    axis: [0, 1, 0],
+    radius: 0.65,
+    height: 1.2,
+    segments: 24,
+    role: 'ad05-public-contract-cylinder',
+  });
+  const candidateBytes = API.partsToGlb({
+    assetId: 'ad05-public-contract-candidate',
+    name: 'AD05 Public Contract Candidate',
+    parts: [{id: 'candidate-body', mesh: candidateMesh, materialId: 'fixture', role: 'whole', scopeId: 'whole'}],
+    materials: {fixture: {baseColor: [0.82, 0.64, 0.24, 1], metallic: 0.15, roughness: 0.48}},
+  });
+  const candidateRef = await writeBytesArtifact('model/candidate.glb', candidateBytes, 'glb');
+
+  const frameTemplate = JSON.parse(await readSkillText('assets/templates/canonical-object-frame.json'));
+  recordUnique(ledger.templatesLoaded, 'assets/templates/canonical-object-frame.json');
+  recordSymbol('digestBytes');
+  frameTemplate.hero.registrationDigest = API.digestBytes(Buffer.from('AD05 public-contract registration'));
+  frameTemplate.hero.position = [0, 0, 4];
+  frameTemplate.hero.target = [0, 0, 0];
+  frameTemplate.scopeParts = ['candidate-body'];
+  const canonicalFramePath = await writeProjectFile('model/canonical-object-frame.json', `${JSON.stringify(frameTemplate, null, 2)}\n`);
+
+  const portableRenderDir = path.join(projectRoot, 'renders', 'portable');
+  runCli([
+    'render',
+    '--glb', path.join(projectRoot, candidateRef.path),
+    '--out', portableRenderDir,
+    '--reference', sourceImage,
+    '--frame', canonicalFramePath,
+    '--size', '96',
+    '--timeout-seconds', '60',
+    '--max-working-mb', '128',
+  ]);
+
+  const pbrRenderDir = path.join(projectRoot, 'renders', 'pbr');
+  runCli([
+    'render-pbr',
+    '--glb', path.join(projectRoot, candidateRef.path),
+    '--out', pbrRenderDir,
+    '--reference', sourceImage,
+    '--frame', canonicalFramePath,
+    '--size', '96',
+    '--timeout-seconds', '60',
+    '--max-working-mb', '128',
+  ]);
 
   const visualInterface = await discoverInterface('validation', 'visual-review');
   const publicConstants = visualInterface.entry.publicConstantValues ?? {};
@@ -319,11 +368,16 @@ async function main() {
   const visualGateIds = publicConstants.REQUIRED_VISUAL_GATE_IDS;
   if (!Array.isArray(viewIds) || !Array.isArray(visualGateIds)) throw new Error('visual-review public constants are not discoverable');
 
+  const portableFrameRefs = [];
   const frameRefs = [];
   for (const viewId of viewIds) {
-    frameRefs.push(await writeBytesArtifact(`renders/final/${viewId}.png`, Buffer.from(`AD05 frame ${viewId}\n`), 'render-frame'));
+    recordSymbol('contentReference');
+    portableFrameRefs.push(await API.contentReference(path.join(portableRenderDir, `${viewId}.png`), {kind: 'render-frame', root: projectRoot}));
+    frameRefs.push(await API.contentReference(path.join(pbrRenderDir, `${viewId}.png`), {kind: 'render-frame', root: projectRoot}));
   }
-  const reviewBoardRef = await writeBytesArtifact('renders/final/review-board.png', Buffer.from('AD05 review board\n'), 'render-frame');
+  const portableReportRef = await API.contentReference(path.join(portableRenderDir, 'render-report.json'), {kind: 'render-report', root: projectRoot});
+  const portableBoardRef = await API.contentReference(path.join(portableRenderDir, 'multiview-review-board.png'), {kind: 'render-frame', root: projectRoot});
+  const reviewBoardRef = await API.contentReference(path.join(pbrRenderDir, 'pbr-review-board.png'), {kind: 'render-frame', root: projectRoot});
 
   const hierarchy = (await invokeTemplateContract('observation', 'visual-hierarchy', {
     values: {sourceSha256: sourceManifest.sha256},
@@ -395,25 +449,16 @@ async function main() {
   })).output;
   const assemblyRef = await writeJsonArtifact('model/assembly-contract.json', assemblyContract, 'assembly-contract');
 
-  recordSymbol('digestBytes');
-  const pbrReport = (await invokeTemplateContract('appearance', 'pbr-render-report', {
-    values: {
-      assetSha256: candidateRef.sha256,
-      frameDigest: API.digestBytes(Buffer.from('AD05 canonical frame')),
-      lightingDigest: API.digestBytes(Buffer.from('AD05 fixed lighting rig')),
-      heroSha256: frameRefs.find((item) => item.path.endsWith('/hero.png'))?.sha256 ?? frameRefs[0].sha256,
-    },
-    mutate(input) {
-      input.renderer.version = 'AD05-public-contract-fixture';
-      input.outputs = frameRefs.map((frame, index) => ({
-        viewId: viewIds[index],
-        path: frame.path,
-        sha256: frame.sha256,
-      }));
-      return input;
-    },
-  })).output;
-  const pbrReportRef = await writeJsonArtifact('renders/final/render-report.json', pbrReport, 'render-report');
+  const pbrInterface = await discoverInterface('appearance', 'pbr-render-report');
+  const rawPbrReport = JSON.parse(await fs.readFile(path.join(pbrRenderDir, 'render-report.json'), 'utf8'));
+  recordSymbol(pbrInterface.entry.library.symbol);
+  const pbrReport = await API[pbrInterface.entry.library.symbol](rawPbrReport);
+  if (pbrInterface.entry.validator?.library) {
+    recordSymbol(pbrInterface.entry.validator.library);
+    const pbrValidation = await API[pbrInterface.entry.validator.library](pbrReport);
+    if (pbrValidation?.valid !== true) throw new Error(`actual PBR report failed public validation: ${(pbrValidation?.errors ?? []).join('; ')}`);
+  }
+  const pbrReportRef = await writeJsonArtifact('renders/pbr/render-report.json', pbrReport, 'render-report');
 
   const visualReview = (await invokeTemplateContract('validation', 'visual-review', {
     values: {
@@ -512,10 +557,10 @@ async function main() {
   await commitCapability('surface-topology', [surfaceRef]);
   await commitCapability('assembly', [assemblyRef]);
   await commitCapability('appearance', [pbrReportRef]);
-  await commitCapability('rendering', [candidateRef, pbrReportRef, ...frameRefs, reviewBoardRef]);
+  await commitCapability('rendering', [candidateRef, portableReportRef, portableBoardRef, pbrReportRef, ...portableFrameRefs, ...frameRefs, reviewBoardRef]);
   await commitCapability('visual-critique', [visualReviewRef]);
 
-  const finalRefs = [candidateRef, pbrReportRef, ...frameRefs, reviewBoardRef, visualReviewRef];
+  const finalRefs = [candidateRef, portableReportRef, portableBoardRef, pbrReportRef, ...portableFrameRefs, ...frameRefs, reviewBoardRef, visualReviewRef];
   await commitCapability('whole-object-certification', finalRefs);
 
   const certificationDiscovery = await discoverInterface('claim-certification', 'certify-project');
