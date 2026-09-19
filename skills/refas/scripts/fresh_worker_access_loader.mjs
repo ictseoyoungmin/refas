@@ -53,6 +53,12 @@ function proxyUrl(specifier) {
 
 export async function resolve(specifier, context, nextResolve) {
   const parent = pathFromUrl(context.parentURL);
+  if (isUntrustedParent(parent) && (specifier === 'node:module' || specifier === 'module')) {
+    log('builtin-escape', specifier, parent);
+    const error = new Error('AD05 verifier access boundary blocked module escape hatch: ' + specifier);
+    error.code = 'EACCES';
+    throw error;
+  }
   const proxy = isUntrustedParent(parent) ? proxyUrl(specifier) : null;
   if (proxy) return {url: proxy, shortCircuit: true};
 
