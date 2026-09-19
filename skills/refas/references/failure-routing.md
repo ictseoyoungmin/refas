@@ -29,7 +29,7 @@
 | `unroutable-visual-finding` | `visual-critique` |
 | `closure-evidence-missing` | `whole-object-certification` |
 
-The executable registry is `scripts/lib/ownership.mjs`. Keep this table synchronized with it and with `references/GRAPH.json`.
+The executable registry is exposed as public `FINDING_OWNERS` through `scripts/lib/index.mjs`. Keep this table synchronized with that public contract and with `references/GRAPH.json`.
 
 `camera-hypothesis-mismatch` means the selected reconstruction camera/framing/projection hypothesis is wrong relative to the source; it therefore reopens `spatial-hypotheses`. `render-camera-integrity` means the renderer did not execute the already-declared camera/frame faithfully; it belongs to `rendering`. The historical `camera-mismatch` category remains a deprecated runtime compatibility alias owned by `rendering`; do not author new findings with it.
 
