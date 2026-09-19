@@ -230,7 +230,7 @@ export function createConstructionOperationPermit({
   return deepFreeze({...payload, permitDigest: digestJson(payload)});
 }
 
-export function validateConstructionOperationPermit(decision, permit, {scopeId = null, operation = null} = {}) {
+export function validateConstructionOperationPermit(permit, decision, {scopeId = null, operation = null} = {}) {
   const errors = [];
   try {
     if (permit?.schema !== CONSTRUCTION_OPERATION_PERMIT_SCHEMA) errors.push('invalid permit schema');
@@ -249,7 +249,7 @@ export function validateConstructionOperationPermit(decision, permit, {scopeId =
 }
 
 function requirePermit(decision, permit, operation, scopeId) {
-  const validation = validateConstructionOperationPermit(decision, permit, {operation, scopeId});
+  const validation = validateConstructionOperationPermit(permit, decision, {operation, scopeId});
   if (!validation.valid) throw new Error(`construction operation permit is invalid: ${validation.errors.join('; ')}`);
 }
 
