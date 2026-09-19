@@ -540,6 +540,7 @@ def main():
             "realSourceLandmarksMustUseRealizedProjection": True,
             "manualRenderCoordinatesCannotClaimRealSourceGeometry": True,
             "projectionMetricsRemainVetoOnly": True,
+            "singleViewIouDisabled": True,
         },
         "inputDigest": digest_json(spec),
     }
