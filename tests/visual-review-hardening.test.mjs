@@ -165,7 +165,8 @@ test('comparison screening emits evidence without becoming a visual gate', () =>
     scopes: [{scopeId: 'whole', metrics: {silhouetteIoU: 0.424, sourceForegroundPixels: 1000, renderForegroundPixels: 300}, images: [{path: 'whole/comparison-board.png'}]}],
   };
   const signals = findComparisonContradictions(report);
-  assert.deepEqual(signals.map((signal) => signal.category), ['silhouette-mismatch', 'mass-proportion-mismatch']);
+  assert.deepEqual(signals.map((signal) => signal.category), ['mass-proportion-mismatch']);
+  assert.ok(!signals.some((signal) => signal.metric === 'silhouetteIoU'));
   assert.ok(signals.every((signal) => signal.evidenceRefs.includes('whole/comparison-board.png')));
 });
 
