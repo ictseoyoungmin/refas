@@ -34,7 +34,7 @@ The result contains the baseline and selected realized proofs, typed findings, t
 - The first trial is the baseline: its candidate content reference must carry the exact `baselineAsset` SHA-256 before any objective is scored or ranked.
 - Candidate and render references must match exact files under the CLI artifact root.
 - Projection repair additionally checks that each candidate reference's bytes equal the generated GLB, and that the renderer's hero-camera values plus render report and hero image are semantically bound to that GLB, camera, and frame before the trial is accepted. Camera canonicalization and digesting happen in one JavaScript runtime so Python/NumPy float formatting cannot create a false mismatch.
-- A projection finding carries a stable `checkId` (for example `projection.negative-space` or `projection.segment-iou`); rollback regression checks compare these checks rather than category totals.
+- A projection finding carries a stable `checkId` (for example `projection.macro-anchor` or `projection.interface-boundary`); rollback regression checks compare these checks rather than category totals.
 - An objective is unevaluable when its source evidence is absent. The repair plan rejects such objectives and never treats missing residuals as zero loss.
 - Every reference is verified again before report publication; the local worker is trusted executable code, not sandboxed input.
 - Protected measurements reject regressions; aggregate objectives only rank trials.
