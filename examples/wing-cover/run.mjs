@@ -670,10 +670,10 @@ async function main() {
     runPython(path.join(SKILL_SCRIPTS, 'compare_registered.py'), ['--input', candidateInputPath, '--out', candidateComparisonDirectory]);
     negativeReports[name] = await readJson(path.join(candidateComparisonDirectory, 'comparison-report.json'));
   }
-  const edgeMetric = (report, scope) => report.scopes.find((item) => item.scopeId === scope).metrics.perceptual.edgeDisagreement;
-  assert.ok(edgeMetric(negativeReports['shifted-scaled'], 'whole') > edgeMetric(comparisonReport, 'whole'));
-  assert.ok(edgeMetric(negativeReports['better-global-worse-local'], 'whole') < edgeMetric(comparisonReport, 'whole'));
-  assert.ok(edgeMetric(negativeReports['better-global-worse-local'], 'fastener-inlay') > edgeMetric(comparisonReport, 'fastener-inlay'));
+  const perceptualMetric = (report, scope, key) => report.scopes.find((item) => item.scopeId === scope).metrics.perceptual[key];
+  assert.ok(perceptualMetric(negativeReports['shifted-scaled'], 'whole', 'edgeDisagreement') > perceptualMetric(comparisonReport, 'whole', 'edgeDisagreement'));
+  assert.ok(perceptualMetric(negativeReports['better-global-worse-local'], 'whole', 'edgeDisagreement') < perceptualMetric(comparisonReport, 'whole', 'edgeDisagreement'));
+  assert.ok(perceptualMetric(negativeReports['better-global-worse-local'], 'fastener-inlay', 'colorDifference') > perceptualMetric(comparisonReport, 'fastener-inlay', 'colorDifference'));
 
   const findingsPath = await writeJson(path.join(PROJECT, 'reviews', 'findings.json'), {
     schema: 'refas.finding-ledger/v1', sourceSha256: source.sha256, assetSha256: await sha256File(finalAssetPath),
