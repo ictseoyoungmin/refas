@@ -1,4 +1,5 @@
 import real from 'node:fs';
+import guardedPromises from './fresh_worker_guarded_fs_promises.mjs';
 import {guardInstalledWrite, guardRawRead, guardTwoPathWrite} from './fresh_worker_access_policy.mjs';
 
 export const readFileSync = (target, ...args) => { guardRawRead('readFileSync', target); return real.readFileSync(target, ...args); };
@@ -13,6 +14,7 @@ export const lstatSync = (target, ...args) => { guardRawRead('lstatSync', target
 export const accessSync = (target, ...args) => { guardRawRead('accessSync', target); return real.accessSync(target, ...args); };
 export const realpathSync = (target, ...args) => { guardRawRead('realpathSync', target); return real.realpathSync(target, ...args); };
 export const readlinkSync = (target, ...args) => { guardRawRead('readlinkSync', target); return real.readlinkSync(target, ...args); };
+export const promises = guardedPromises;
 
 export const writeFileSync = (target, ...args) => { guardInstalledWrite('writeFileSync', target); return real.writeFileSync(target, ...args); };
 export const writeFile = (target, ...args) => { guardInstalledWrite('writeFile', target); return real.writeFile(target, ...args); };
@@ -38,7 +40,7 @@ export const symlink = (source, target, ...args) => { guardTwoPathWrite('symlink
 export default {
   ...real,
   readFileSync, readFile, createReadStream, openSync, open, readdirSync, readdir,
-  statSync, lstatSync, accessSync, realpathSync, readlinkSync,
+  statSync, lstatSync, accessSync, realpathSync, readlinkSync, promises,
   writeFileSync, writeFile, appendFileSync, appendFile, mkdirSync, mkdir, rmSync, rm,
   unlinkSync, unlink, renameSync, rename, copyFileSync, copyFile, cpSync, cp,
   linkSync, link, symlinkSync, symlink,
