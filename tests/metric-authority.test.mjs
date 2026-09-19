@@ -81,7 +81,7 @@ test('generic shape parameter fitting rejects IoU-derived objective aliases', ()
     optimizer:{populationSize:4,evaluationBudget:5},
   };
   for (const id of ['silhouette-iou','segment-iou-loss','negative-space-loss']) {
-    assert.throws(() => createParameterFitPlan({...base,objectives:[{id,goal:'minimize'}]}), /cannot be used for objective/);
+    assert.throws(() => createParameterFitPlan({...base,objectives:[{id,goal:'minimize',authority:'RANKING_ALLOWED'}]}), /cannot be used for objective/);
   }
 });
 
@@ -119,6 +119,15 @@ test('explicit multiview context admits IoU only as correspondence evidence', ()
   assert.equal(typeof report.metrics.silhouetteIoU, 'number');
   assert.equal(report.policy.iouAuthority, 'CORRESPONDENCE_AID');
   assert.throws(() => rankDiscrepancyCandidates([{id:'x',metrics:report.metrics},{id:'y',metrics:report.metrics}],{metric:'silhouetteIoU'}), /cannot be used for ranking/);
+});
+
+test('generic fitting rejects objectives without an explicit authority', () => {
+  assert.throws(() => createParameterFitPlan({
+    id:'fit-explicit-authority', scopeId:'whole', sourceSha256:D('a'), baselineAsset:baseline,
+    parameters:[{id:'aa',binding:'model.shape.a',minimum:0,maximum:1,initial:.5}],
+    objectives:[{id:'edge-orientation-error',goal:'minimize'}],
+    optimizer:{populationSize:4,evaluationBudget:5},
+  }), /authority is required/);
 });
 
 test('candidate ranking requires an explicit non-IoU metric', () => {
