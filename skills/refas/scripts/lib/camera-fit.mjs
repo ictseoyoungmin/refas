@@ -270,7 +270,6 @@ export function cameraFitMeasurementsFromProjection(proof) {
   return {
     'macro-anchor-rmse': Number(metrics.macroAnchorRmseNormalized ?? Infinity),
     'chain-angle-error': Number(metrics.chainAngleRmseDegrees ?? Infinity) / 180,
-    'negative-space-loss': metrics.negativeSpaceMeanIoU == null ? Infinity : 1 - Number(metrics.negativeSpaceMeanIoU),
     'bbox-loss': metrics.dimensionMeanRelativeError == null ? Infinity : Number(metrics.dimensionMeanRelativeError),
     'occlusion-loss': Number(metrics.occlusionOrderViolations ?? 0),
   };

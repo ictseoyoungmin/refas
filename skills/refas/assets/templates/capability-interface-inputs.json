@@ -755,10 +755,11 @@
       ],
       "objectives": [
         {
-          "id": "silhouette-error",
+          "id": "edge-orientation-error",
           "goal": "minimize",
           "scale": 1,
-          "weight": 1
+          "weight": 1,
+          "authority": "RESEMBLANCE_SIGNAL"
         }
       ],
       "protectedTerms": [],

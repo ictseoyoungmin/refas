@@ -6,8 +6,6 @@ import {createRealizedProjection, normalizeProjectionCamera, validateRealizedPro
 export const PROJECTION_REPAIR_METRIC_IDS = Object.freeze([
   'macro-anchor-rmse',
   'chain-angle-error',
-  'negative-space-loss',
-  'segment-iou-loss',
   'interface-boundary-error',
 ]);
 
@@ -48,8 +46,6 @@ export function projectionResidualMeasurements(proof, objectiveIds = PROJECTION_
     measurements[id] = {
       'macro-anchor-rmse': () => requiredResidual(projection.macroAnchorRmseNormalized, 'macroAnchorRmseNormalized'),
       'chain-angle-error': () => requiredResidual(projection.chainAngleRmseDegrees, 'chainAngleRmseDegrees') / 180,
-      'negative-space-loss': () => 1 - requiredResidual(projection.negativeSpaceMeanIoU, 'negativeSpaceMeanIoU'),
-      'segment-iou-loss': () => 1 - requiredResidual(proof.segmentationMetrics?.sourceVisibleSegmentMeanIoU, 'sourceVisibleSegmentMeanIoU'),
       'interface-boundary-error': () => requiredResidual(proof.segmentationMetrics?.interfaceBoundaryMeanErrorNormalized, 'interfaceBoundaryMeanErrorNormalized'),
     }[id]();
   }
@@ -61,15 +57,12 @@ function referenceObjectiveErrors(referenceGeometry, objectives = []) {
   const errors = [];
   const hasMacroAnchors = (referenceGeometry.anchors ?? []).some((anchor) => anchor.importance !== 'detail' && !['occluded', 'inferred'].includes(anchor.visibility));
   const hasChain = (referenceGeometry.chains ?? []).some((chain) => (chain.anchorIds ?? []).length >= 2);
-  const hasNegativeSpace = (referenceGeometry.negativeSpaces ?? []).length > 0;
   const hasSegments = (referenceGeometry.segments ?? []).some((segment) => segment.importance !== 'detail' && !['occluded', 'inferred'].includes(segment.visibility));
   const hasInterface = (referenceGeometry.interfaces ?? []).length > 0;
   for (const objective of objectives) {
     const available = {
       'macro-anchor-rmse': hasMacroAnchors,
       'chain-angle-error': hasChain,
-      'negative-space-loss': hasNegativeSpace,
-      'segment-iou-loss': hasSegments,
       'interface-boundary-error': hasInterface && hasSegments,
     }[objective.id];
     if (available === false) errors.push(`objective ${objective.id} requires reference evidence that is not declared by the reference geometry`);

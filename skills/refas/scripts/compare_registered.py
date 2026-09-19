@@ -197,7 +197,7 @@ def make_board(title, ancestry, images, metrics, output):
     landmark_text = ""
     if metrics.get("landmarkResidualRmse") is not None:
         landmark_text = f"   anchor RMSE {metrics['landmarkResidualRmse']:.4f}"
-    draw.text((14, 40), f"ANCESTRY: {' > '.join(ancestry)}   IoU {metrics['silhouetteIoU']:.4f}{landmark_text} (aids only)",
+    draw.text((14, 40), f"ANCESTRY: {' > '.join(ancestry)}{landmark_text}   single-view IoU disabled",
               fill=(164, 178, 196), font=font(14))
     for index, (label, image) in enumerate(images):
         x, y = (index % 3) * cell_w, 74 + (index // 3) * (cell_h + header)
@@ -444,9 +444,6 @@ def main():
         edges[render_edges] = np.maximum(edges[render_edges], [42, 205, 255])
         edge_image = Image.fromarray(edges)
         source_mask, render_mask = foreground_mask(src_crop), foreground_mask(render_crop)
-        union = np.logical_or(source_mask, render_mask)
-        intersection = np.logical_and(source_mask, render_mask)
-        iou = float(intersection.sum() / max(1, union.sum()))
         diff = np.zeros((src_crop.height, src_crop.width, 3), dtype=np.uint8)
         diff[np.logical_and(source_mask, ~render_mask)] = [255, 68, 68]
         diff[np.logical_and(~source_mask, render_mask)] = [45, 199, 255]
@@ -461,7 +458,7 @@ def main():
         dimensions = measurements["dimensions"]
         fit_metrics = measurements["fitMetrics"]
         metrics = {
-            "silhouetteIoU": iou,
+            "silhouetteIoU": None,
             "sourceForegroundPixels": int(source_mask.sum()),
             "renderForegroundPixels": int(render_mask.sum()),
             "landmarkResidualRmse": float(np.sqrt(np.mean([x["residualNormalized"] ** 2 for x in local_landmarks]))) if local_landmarks else None,

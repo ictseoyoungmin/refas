@@ -52,12 +52,13 @@
     },
     "policy": {
       "type": "object", "additionalProperties": false,
-      "required": ["selectionAuthority", "metricsCannotSelectOwner", "metricsCannotPassVisualGate", "fitCannotMutateProjectState", "selectedTrialRequiresActualVisualReview", "oneCheckpointCandidateAfterSelection", "trialContentReferencesMustVerify", "structuralInvalidityIsHardBarrier", "structuralInvalidityIsNeverScorePenalty"],
+      "required": ["selectionAuthority", "metricsCannotSelectOwner", "metricsCannotPassVisualGate", "fitCannotMutateProjectState", "selectedTrialRequiresActualVisualReview", "oneCheckpointCandidateAfterSelection", "trialContentReferencesMustVerify", "structuralInvalidityIsHardBarrier", "structuralInvalidityIsNeverScorePenalty", "metricAuthorityIsExecutable", "singleViewIouIsForbidden", "iouNeverRanksOrOptimizes"],
       "properties": {
         "selectionAuthority": {"const": "candidate-ranking-only"}, "metricsCannotSelectOwner": {"const": true}, "metricsCannotPassVisualGate": {"const": true},
         "fitCannotMutateProjectState": {"const": true}, "selectedTrialRequiresActualVisualReview": {"const": true},
         "oneCheckpointCandidateAfterSelection": {"const": true}, "trialContentReferencesMustVerify": {"const": true},
         "structuralInvalidityIsHardBarrier": {"const": true}, "structuralInvalidityIsNeverScorePenalty": {"const": true},
+        "metricAuthorityIsExecutable": {"const": true}, "singleViewIouIsForbidden": {"const": true}, "iouNeverRanksOrOptimizes": {"const": true},
         "relationalInvalidityIsHardBarrier": {"const": true}, "relationalInvalidityIsNeverScorePenalty": {"const": true}
       }
     },

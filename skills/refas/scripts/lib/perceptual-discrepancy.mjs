@@ -1,4 +1,5 @@
 import {assertDigest, deepFreeze, digestJson} from './canonical.mjs';
+import {assertMetricUseAllowed, metricAuthority} from './metric-authority.mjs';
 
 export const PERCEPTUAL_DISCREPANCY_SCHEMA = 'refas.perceptual-discrepancy/v1';
 
@@ -92,7 +93,7 @@ function requireSameFrame(source, render) {
 }
 
 /** Compute deterministic model-free source/render discrepancy evidence. */
-export function createPerceptualDiscrepancy({source, render, sourceSha256, assetSha256, scopeId = 'whole', sourceMask, renderMask, threshold = 0.08, segmentMasks = [], negativeSpaceMasks = [], evidenceRefs = []} = {}) {
+export function createPerceptualDiscrepancy({source, render, sourceSha256, assetSha256, scopeId = 'whole', sourceMask, renderMask, threshold = 0.08, segmentMasks = [], negativeSpaceMasks = [], evidenceRefs = [], sourceViewContext = null} = {}) {
   const s = raster(source, 'source'), r = raster(render, 'render'); requireSameFrame(s, r);
   const sm = sourceMask ? Uint8Array.from(sourceMask) : maskOf(s, threshold), rm = renderMask ? Uint8Array.from(renderMask) : maskOf(r, threshold);
   if (sm.length !== s.width * s.height || rm.length !== r.width * r.height) throw new Error('explicit masks must match raster dimensions');
@@ -104,24 +105,26 @@ export function createPerceptualDiscrepancy({source, render, sourceSha256, asset
   const normalizedWidthError = sourceBox.width ? Math.abs(renderBox.width - sourceBox.width) / sourceBox.width : null;
   const normalizedHeightError = sourceBox.height ? Math.abs(renderBox.height - sourceBox.height) / sourceBox.height : null;
   const colorDifference = Math.hypot(...sourceStats.meanRGB.map((value, index) => value - renderStats.meanRGB[index]));
+  const iouAuthority = metricAuthority('silhouetteIoU', sourceViewContext ?? {});
+  const iouAllowed = iouAuthority.authority === 'CORRESPONDENCE_AID';
   const segments = segmentMasks.map((entry, index) => {
     const a = Uint8Array.from(entry.source), b = Uint8Array.from(entry.render);
     if (a.length !== sm.length || b.length !== sm.length) throw new Error(`segmentMasks[${index}] dimensions do not match frame`);
-    return {id: String(entry.id ?? `segment-${index}`), iou: iou(a, b)};
+    return {id: String(entry.id ?? `segment-${index}`), iou: iouAllowed ? iou(a, b) : null};
   });
   const negativeSpaces = negativeSpaceMasks.map((entry, index) => {
     const a = Uint8Array.from(entry.source), b = Uint8Array.from(entry.render);
     if (a.length !== sm.length || b.length !== sm.length) throw new Error(`negativeSpaceMasks[${index}] dimensions do not match frame`);
-    return {id: String(entry.id ?? `negative-space-${index}`), iou: iou(a, b)};
+    return {id: String(entry.id ?? `negative-space-${index}`), iou: iouAllowed ? iou(a, b) : null};
   });
   const metrics = {
-    silhouetteIoU: iou(sm, rm), boundaryChamferNormalized: normalizedChamfer,
+    silhouetteIoU: iouAllowed ? iou(sm, rm) : null, boundaryChamferNormalized: normalizedChamfer,
     edgeDisagreement: edgeDisagreement(s, r), foregroundAreaRatio: ratio,
     sourceForegroundPixels: sourceBox.count, renderForegroundPixels: renderBox.count,
     sourceBoundingBox: sourceBox, renderBoundingBox: renderBox,
     normalizedWidthError, normalizedHeightError, landmarkResidualRmse: null,
-    segmentMeanIoU: segments.length ? segments.reduce((sum, item) => sum + item.iou, 0) / segments.length : null,
-    negativeSpaceMeanIoU: negativeSpaces.length ? negativeSpaces.reduce((sum, item) => sum + item.iou, 0) / negativeSpaces.length : null,
+    segmentMeanIoU: iouAllowed && segments.length ? segments.reduce((sum, item) => sum + item.iou, 0) / segments.length : null,
+    negativeSpaceMeanIoU: iouAllowed && negativeSpaces.length ? negativeSpaces.reduce((sum, item) => sum + item.iou, 0) / negativeSpaces.length : null,
     luminanceDifference: Math.abs(sourceStats.luminanceMean - renderStats.luminanceMean), colorDifference,
     gradientOrientationDisagreement: null,
   };
@@ -129,7 +132,7 @@ export function createPerceptualDiscrepancy({source, render, sourceSha256, asset
     schema: PERCEPTUAL_DISCREPANCY_SCHEMA, scopeId, sourceSha256: assertDigest(sourceSha256, 'sourceSha256'), assetSha256: assertDigest(assetSha256, 'assetSha256'),
     frame: {width: s.width, height: s.height}, metrics, segments, negativeSpaces,
     evidenceRefs: [...new Set(evidenceRefs.map(String).filter(Boolean))].sort(),
-    policy: {modelFreeDefault: true, deterministic: true, metricsRankCandidatesOnly: true, metricsCannotSelectOwner: true, metricsCannotPassVisualGate: true, sourceRemainsPrimary: true},
+    policy: {modelFreeDefault: true, deterministic: true, metricsRankCandidatesOnly: true, metricsCannotSelectOwner: true, metricsCannotPassVisualGate: true, sourceRemainsPrimary: true, iouAuthority: iouAuthority.authority, iouNeverRanksCandidates: true},
   };
   return deepFreeze({...payload, discrepancyDigest: digestJson(payload)});
 }
@@ -142,8 +145,11 @@ export function validatePerceptualDiscrepancy(report) {
   return {valid: errors.length === 0, errors};
 }
 
-export function rankDiscrepancyCandidates(candidates, {metric = 'silhouetteIoU', direction = 'max'} = {}) {
+export function rankDiscrepancyCandidates(candidates, {metric, direction = 'min', authority = 'RANKING_ALLOWED'} = {}) {
   if (!Array.isArray(candidates)) throw new Error('candidates must be an array');
+  if (!metric) throw new Error('metric is required; RefAs has no implicit discrepancy-ranking metric');
+  if (!['min', 'max'].includes(direction)) throw new Error('direction must be min or max');
+  assertMetricUseAllowed(metric, 'ranking', {declaredAuthority: authority});
   return [...candidates].sort((a, b) => {
     const av = Number(a?.metrics?.[metric]), bv = Number(b?.metrics?.[metric]);
     if (!Number.isFinite(av) || !Number.isFinite(bv)) throw new Error(`candidate metric ${metric} must be finite`);

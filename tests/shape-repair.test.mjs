@@ -150,7 +150,7 @@ test('projection repair rejects camera and appearance bindings at the shape boun
       {id: 'shape-width', binding: 'model.shape.width', minimum: 0, maximum: 1, initial: 0.5},
       {id: 'shape-depth', binding: 'model.geometry.depth', minimum: 0, maximum: 1, initial: 0.5},
     ],
-    objectives: [{id: 'negative-space-loss', goal: 'minimize'}],
+    objectives: [{id: 'interface-boundary-error', goal: 'minimize'}],
   }), /requires reference evidence/);
 });
 

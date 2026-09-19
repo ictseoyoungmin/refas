@@ -37,31 +37,6 @@ function polygonArea(points) {
   }
   return Math.abs(area) * 0.5;
 }
-function pointInPolygon([x, y], polygon) {
-  let inside = false;
-  for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-    const [xi, yi] = polygon[i], [xj, yj] = polygon[j];
-    if (((yi > y) !== (yj > y)) && x < ((xj - xi) * (y - yi)) / ((yj - yi) || Number.EPSILON) + xi) inside = !inside;
-  }
-  return inside;
-}
-function polygonIoU(a, b, resolution = 96) {
-  if (a.length < 3 || b.length < 3 || polygonArea(a) < 1e-9 || polygonArea(b) < 1e-9) return 0;
-  const xs = [...a, ...b].map((p) => p[0]), ys = [...a, ...b].map((p) => p[1]);
-  const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
-  if (maxX - minX < 1e-9 || maxY - minY < 1e-9) return 0;
-  let intersection = 0, union = 0;
-  for (let iy = 0; iy < resolution; iy += 1) {
-    const y = minY + ((iy + 0.5) / resolution) * (maxY - minY);
-    for (let ix = 0; ix < resolution; ix += 1) {
-      const x = minX + ((ix + 0.5) / resolution) * (maxX - minX);
-      const ia = pointInPolygon([x, y], a), ib = pointInPolygon([x, y], b);
-      if (ia || ib) union += 1;
-      if (ia && ib) intersection += 1;
-    }
-  }
-  return union ? intersection / union : 0;
-}
 function normalizeBinding(raw, label) {
   const kind = String(raw?.kind ?? 'node-local-point');
   if (kind !== 'node-local-point' && kind !== 'world-point') throw new Error(`${label}.kind is invalid`);
@@ -145,7 +120,7 @@ export function createProjectionFit({
     if (!reference) throw new Error(`negativeSpaceProjections[${index}] references unknown negative space: ${referenceId}`);
     const polygon = (raw?.polygon ?? []).map((value, pointIndex) => finitePoint(value, `negativeSpaceProjections[${index}].polygon[${pointIndex}]`));
     if (polygon.length < 3 || polygonArea(polygon) < 1e-9) throw new Error(`negativeSpaceProjections[${index}].polygon is degenerate`);
-    return {referenceId, importance: reference.importance, polygon, iou: polygonIoU(reference.polygon, polygon)};
+    return {referenceId, importance: reference.importance, polygon, iou: null};
   });
 
   const dimensionResiduals = referenceGeometry.dimensions.map((dimension) => {
@@ -176,7 +151,7 @@ export function createProjectionFit({
     chainAngleRmseDegrees: (() => { const value = rmse(chainResiduals.flatMap((chain) => chain.segments.map((segment) => segment.angleErrorRadians))); return value == null ? null : value * 180 / Math.PI; })(),
     axisAngleRmseDegrees: (() => { const value = rmse(axisResiduals.filter((item) => item.evaluable).map((item) => item.angleErrorRadians)); return value == null ? null : value * 180 / Math.PI; })(),
     contactMaxExcessNormalized: (() => { const values = contactResiduals.filter((item) => item.evaluable).map((item) => item.excessNormalized); return values.length ? Math.max(...values) : null; })(),
-    negativeSpaceMeanIoU: mean(normalizedNegativeSpaces.map((item) => item.iou)),
+    negativeSpaceMeanIoU: null,
     dimensionMeanRelativeError: mean(dimensionResiduals.filter((item) => item.evaluable && item.relativeError != null).map((item) => item.relativeError)),
     occlusionOrderViolations: normalizedOcclusions.filter((item) => !item.orderCorrect).length,
   };
@@ -203,6 +178,7 @@ export function createProjectionFit({
       projectionFitDoesNotMutateGeometry: true,
       metricsCannotCertifyVisualFidelity: true,
       materialDisagreementMayBecomeBlockingFinding: true,
+      singleViewIouIsForbidden: true,
     },
   };
   return deepFreeze({...payload, projectionFitDigest: digestJson(payload)});
@@ -226,7 +202,7 @@ export function validateProjectionFit(fit) {
     }
     const policy = fit?.policy ?? {};
     if (policy.sourceGeometryRemainsAuthority !== true || policy.projectionFitDoesNotMutateGeometry !== true) errors.push('projection/source authority policy is missing');
-    if (policy.metricsCannotCertifyVisualFidelity !== true || policy.materialDisagreementMayBecomeBlockingFinding !== true) errors.push('metric authority policy is missing');
+    if (policy.metricsCannotCertifyVisualFidelity !== true || policy.materialDisagreementMayBecomeBlockingFinding !== true || policy.singleViewIouIsForbidden !== true) errors.push('metric authority policy is missing');
     const payload = structuredClone(fit); delete payload.projectionFitDigest;
     if (digestJson(payload) !== fit.projectionFitDigest) errors.push('projection fit digest mismatch');
   } catch (error) { errors.push(error.message); }

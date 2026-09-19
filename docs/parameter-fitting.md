@@ -18,9 +18,9 @@ The generic ledger is implemented in [parameter-fit.mjs](../skills/refas/scripts
 
 `repairShapeFromProjection` is the first concrete `shape-reconstruction` loop. It derives typed findings from the baseline's realized projection, binds only `model.shape.*` or `model.geometry.*` parameters, asks a project worker to rebuild exact GLB bytes, re-measures those bytes through the digest-bound camera and node hierarchy, and requires an actual render reference for every trial. The adapter reads the referenced report bytes and requires `assetSha256`, the renderer-recorded `heroCamera` normalized and digested by the JavaScript runtime to equal the realized projection camera, `frameDigest`, `heroImageSha256`, and `renderer.name`/`renderer.version` to match the candidate proof; it also verifies the referenced hero image bytes. The generic bounded search then ranks the declared residuals:
 
-`macro-anchor-rmse`, `chain-angle-error`, `negative-space-loss`, `segment-iou-loss`, and `interface-boundary-error`.
+`macro-anchor-rmse`, `chain-angle-error`, and `interface-boundary-error`.
 
-Projection residual objectives are minimize-only; maximizing a discrepancy is rejected by the shape adapter.
+Projection residual objectives are minimize-only; maximizing a discrepancy is rejected by the shape adapter. Single-view IoU and IoU-derived losses are not projection-repair objectives.
 
 The result contains the baseline and selected realized proofs, typed findings, the immutable fit report, and an advisory `KEEP`/`ROLLBACK` decision. `KEEP` is returned only when the selected trial improves the objective without introducing a new blocking finding; neither decision mutates project state or creates a checkpoint. A selected `KEEP` candidate still requires whole-context visual review before the normal bounded-edit checkpoint flow.
 
@@ -34,7 +34,7 @@ The result contains the baseline and selected realized proofs, typed findings, t
 - The first trial is the baseline: its candidate content reference must carry the exact `baselineAsset` SHA-256 before any objective is scored or ranked.
 - Candidate and render references must match exact files under the CLI artifact root.
 - Projection repair additionally checks that each candidate reference's bytes equal the generated GLB, and that the renderer's hero-camera values plus render report and hero image are semantically bound to that GLB, camera, and frame before the trial is accepted. Camera canonicalization and digesting happen in one JavaScript runtime so Python/NumPy float formatting cannot create a false mismatch.
-- A projection finding carries a stable `checkId` (for example `projection.negative-space` or `projection.segment-iou`); rollback regression checks compare these checks rather than category totals.
+- A projection finding carries a stable `checkId` (for example `projection.macro-anchor` or `projection.interface-boundary`); rollback regression checks compare these checks rather than category totals.
 - An objective is unevaluable when its source evidence is absent. The repair plan rejects such objectives and never treats missing residuals as zero loss.
 - Every reference is verified again before report publication; the local worker is trusted executable code, not sandboxed input.
 - Protected measurements reject regressions; aggregate objectives only rank trials.
