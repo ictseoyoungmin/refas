@@ -28,6 +28,28 @@ refas describe capability <runtime-capability-id>
 
 The node form returns that instruction node's routing identity, prerequisites, runtime-capability projection, closure effects, and full AD01 interface descriptors. The capability form accepts only one of the 11 canonical runtime capability IDs and aggregates owning nodes in graph order. These namespaces are intentionally explicit: `refas describe <id>` does not guess whether an ID is an instruction node or a runtime capability, and routing-only owner tags such as `control` are not runtime capabilities.
 
+### Canonical standalone templates
+
+Most executable operation inputs are exposed through the interface catalog returned by `describe`. The following standalone templates remain public convenience/contracts and are routed explicitly so workers never need to guess filenames:
+
+| Template | Route |
+|---|---|
+| `assets/templates/assembly-contract.json` | `references/assembly.md` |
+| `assets/templates/closure-gates.json` | `references/checkpointing.md`, `references/claim-certification.md` |
+| `assets/templates/evaluation.json` | `references/checkpointing.md` |
+| `assets/templates/parameter-fit-plan.json` | `references/parameter-fitting.md` |
+| `assets/templates/projection-fit.json` | `references/spatial-reasoning.md`, `references/validation.md` |
+| `assets/templates/realized-assembly-input.json` | `references/assembly.md` |
+| `assets/templates/realized-projection-input.json` | `references/spatial-reasoning.md`, `references/validation.md` |
+| `assets/templates/reference-geometry.json` | `references/observation.md` |
+| `assets/templates/relational-structure.json` | `references/relational-structure.md` |
+| `assets/templates/semantic-authority.json` | `references/inference-authority.md` |
+| `assets/templates/spatial-hypotheses.json` | `references/spatial-reasoning.md` |
+| `assets/templates/surface-network.json` | `references/construction.md` |
+
+A standalone template does not override the operation-specific input catalog. When `describe` returns an interface template, that interface metadata is authoritative for the executable minimum input.
+
+
 ## Always-load control path
 
 Read these before reconstruction work:
