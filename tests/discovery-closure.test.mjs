@@ -35,6 +35,8 @@ test('AD06 public discovery surface is statically closed', {timeout: 120000}, as
   assert.equal(report.publicTemplates, report.reachableTemplates);
   assert.ok(report.outputSchemaContracts > 0);
   assert.ok(report.workerFacingSchemaIds >= report.outputSchemaContracts);
+  assert.equal(report.resolvedWorkerFacingSchemaIds, report.workerFacingSchemaIds);
+  assert.equal(Object.keys(report.schemaAuthorities).length, report.workerFacingSchemaIds);
   assert.equal(report.concreteSchemaFilesAvailable, true);
   assert.equal(report.missing.length, 0);
   assert.equal(report.orphan.length, 0);
@@ -49,10 +51,37 @@ test('AD06 closure verifier passes from copied installed skill without repositor
   assert.equal(report.installedSkillOnly, true);
   assert.equal(report.describedNodes, 40);
   assert.equal(report.describedCapabilities, 11);
+  assert.equal(report.resolvedWorkerFacingSchemaIds, report.workerFacingSchemaIds);
   assert.equal(report.missing.length, 0);
   assert.equal(report.orphan.length, 0);
   assert.equal(report.privateDependencies.length, 0);
   assert.equal(report.unreachable.length, 0);
+});
+
+test('AD06 copied installed-skill authority detects a missing copied public export', async (t) => {
+  const {skillRoot} = await copySkill(t, 'missing-copied-export');
+  const file = path.join(skillRoot, 'scripts', 'lib', 'index.mjs');
+  const text = await fs.readFile(file, 'utf8');
+  const mutated = text.replace("export * from './visual-review.mjs';\n", '');
+  assert.notEqual(mutated, text, 'expected visual-review public export anchor');
+  await fs.writeFile(file, mutated);
+  const report = await analyzeDiscoveryClosure({skillRoot, schemaRoot: null, runFreshWorker: false});
+  assert.equal(report.status, 'FAIL');
+  assert.ok(
+    report.missing.some((item) => item.includes('createVisualReview') || item.includes('visual-review')),
+    JSON.stringify(report, null, 2),
+  );
+});
+
+test('AD06 catches an unknown standalone template-only schema identity', async (t) => {
+  const {skillRoot} = await copySkill(t, 'unknown-template-schema');
+  const file = path.join(skillRoot, 'assets', 'templates', 'handoff-capsule.json');
+  const json = JSON.parse(await fs.readFile(file, 'utf8'));
+  json.schema = 'refas.missing-template-schema/v1';
+  await fs.writeFile(file, JSON.stringify(json, null, 2) + '\n');
+  const report = await analyzeDiscoveryClosure({skillRoot, schemaRoot: SCHEMA_ROOT, runFreshWorker: false});
+  assert.equal(report.status, 'FAIL');
+  assert.ok(report.missing.includes('schema-unresolved:refas.missing-template-schema/v1'), JSON.stringify(report, null, 2));
 });
 
 test('AD06 catches a missing routed node leaf', async (t) => {
