@@ -134,7 +134,7 @@ export function validateRegisteredComparison(report) {
     for (const scope of report?.scopes ?? []) {
       const scopeId = scope?.scopeId ?? '?';
       if (!scope.scopeId || !Array.isArray(scope.ancestry) || scope.ancestry[0] !== 'whole' || scope.ancestry.at(-1) !== scope.scopeId) errors.push(`scope ${scopeId} does not retain whole-context ancestry`);
-      if (!Number.isFinite(scope?.metrics?.silhouetteIoU) || scope.metrics.silhouetteIoU < 0 || scope.metrics.silhouetteIoU > 1) errors.push(`scope ${scopeId} has invalid silhouette IoU`);
+      if (scope?.metrics?.silhouetteIoU != null && (!Number.isFinite(scope.metrics.silhouetteIoU) || scope.metrics.silhouetteIoU < 0 || scope.metrics.silhouetteIoU > 1)) errors.push(`scope ${scopeId} has invalid legacy silhouette IoU`);
       if (!legacyContract && !['realized-projection', 'declared-test-fixture', 'image-only'].includes(scope?.measurementAuthority)) errors.push(`scope ${scopeId} has invalid measurement authority`);
       if (realSource && scope?.measurementAuthority !== 'realized-projection') errors.push(`real-source scope ${scopeId} must use realized projection measurements`);
 
