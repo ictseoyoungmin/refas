@@ -253,6 +253,11 @@ test('legacy refas.checkpoint/v1 self-PASS is rejected when current evidence re-
   const audit = await auditProject(root);
   assert.equal(audit.valid, false);
   assert.match(audit.errors.join('\n'), /cites unbound evidence/);
+
+  await assert.rejects(
+    () => checkpoint(root, artifactPath, 'visual-hierarchy', 'trusted:visual-hierarchy\n'),
+    /visual-hierarchy prerequisite lineage is not trustworthy.*cites unbound evidence/,
+  );
 });
 
 test('checkpoint gates reject caller-authored verdict fields and derive trusted verdicts', async (t) => {
