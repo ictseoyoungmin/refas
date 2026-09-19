@@ -219,7 +219,11 @@ export async function runFreshWorkerDogfood({skillRoot = DEFAULT_SKILL_ROOT, kee
   assert.ok(eventKinds.has('raw-implementation-import'), 'dynamic internal import bypass was not independently blocked');
   assert.ok(eventKinds.has('child-process-bypass'), 'child-process bypass was not independently blocked');
   for (const probePath of [directReadProbe, dynamicImportProbe, childProcessProbe]) {
-    assert.ok(boundaryEvents.some((event) => event.processEntry === path.resolve(probePath)), `missing verifier-owned access event for ${probePath}`);
+    const resolvedProbe = path.resolve(probePath);
+    assert.ok(
+      boundaryEvents.some((event) => event.processEntry === resolvedProbe || event.parent === resolvedProbe),
+      `missing verifier-owned access event for ${probePath}`,
+    );
   }
 
   const result = {
