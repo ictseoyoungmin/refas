@@ -1,6 +1,7 @@
 import {assertDigest, assertId, deepFreeze, digestBytes, digestJson} from './canonical.mjs';
 import {parseGlb} from './glb.mjs';
 import {validateFitStructuralEligibility} from './fit-structural-eligibility.mjs';
+import {assertMetricUseAllowed} from './metric-authority.mjs';
 
 export const POSE_FIT_SCHEMA = 'refas.pose-fit/v1';
 export const POSE_FIT_OWNER = 'assembly';
@@ -49,6 +50,7 @@ export function createPoseFitPlan({id, scopeId, sourceSha256, baselineAsset, var
     if (goal !== 'minimize') throw new Error(`objectives[${index}].goal must minimize`);
     const weight = finite(raw?.weight ?? 1, `objectives[${index}].weight`);
     if (!(weight > 0)) throw new Error(`objectives[${index}].weight must be positive`);
+    assertMetricUseAllowed(id, 'objective', {declaredAuthority: 'RANKING_ALLOWED'});
     return {id, goal, weight};
   });
   const structuralGateRequired = normalizedConstraints.length > 0 || Boolean(structuralEligibilityRequired);
