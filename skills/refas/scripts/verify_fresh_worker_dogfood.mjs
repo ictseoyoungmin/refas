@@ -110,13 +110,14 @@ export async function runFreshWorkerDogfood({skillRoot = DEFAULT_SKILL_ROOT, kee
 
   const installedWorker = path.join(installedRoot, 'scripts', 'fresh_worker_dogfood_worker.mjs');
   const accessLoader = path.join(installedRoot, 'scripts', 'fresh_worker_access_loader.mjs');
+  const accessPreload = path.join(installedRoot, 'scripts', 'fresh_worker_access_preload.mjs');
   const accessAuditPath = path.join(tempRoot, 'fresh-worker-access-audit.jsonl');
   const rawImplementationTarget = path.join(installedRoot, 'scripts', 'lib', 'checkpoint-store.mjs');
   await fs.writeFile(accessAuditPath, '');
   const env = {
     ...minimalEnv(tempRoot),
     NODE_NO_WARNINGS: '1',
-    NODE_OPTIONS: `--experimental-loader=${accessLoader}`,
+    NODE_OPTIONS: `--import=${accessPreload} --experimental-loader=${accessLoader}`,
     REFAS_AD05_INSTALLED_ROOT: installedRoot,
     REFAS_AD05_ACCESS_AUDIT: accessAuditPath,
     REFAS_AD05_UNTRUSTED_ENTRY: installedWorker,
@@ -219,13 +220,26 @@ export async function runFreshWorkerDogfood({skillRoot = DEFAULT_SKILL_ROOT, kee
     name: 'create-require-escape',
     source: `import * as moduleApi from 'node:module';\nconst create = moduleApi['create' + 'Require'];\nconst require = create(import.meta.url);\nrequire('node:fs').readFileSync(process.env.REFAS_AD05_RAW_TARGET, 'utf8');\n`,
   });
+  let getBuiltinModuleProbe = null;
+  if (typeof process.getBuiltinModule === 'function') {
+    getBuiltinModuleProbe = await runBlockedBoundaryProbe({
+      tempRoot,
+      env,
+      name: 'get-builtin-module-escape',
+      source: `const getter = process['getBuiltin' + 'Module'];\ngetter('node:fs').readFileSync(process.env.REFAS_AD05_RAW_TARGET, 'utf8');\n`,
+    });
+  }
   const boundaryEvents = await readAccessAudit(accessAuditPath);
   const eventKinds = new Set(boundaryEvents.map((event) => event.kind));
   assert.ok(eventKinds.has('raw-implementation-read'), 'direct filesystem bypass was not independently blocked');
   assert.ok(eventKinds.has('raw-implementation-import'), 'dynamic internal import bypass was not independently blocked');
   assert.ok(eventKinds.has('child-process-bypass'), 'child-process bypass was not independently blocked');
   assert.ok(eventKinds.has('raw-implementation-import'), 'module/import escape was not independently blocked');
-  for (const probePath of [directReadProbe, dynamicImportProbe, childProcessProbe, createRequireProbe]) {
+  if (typeof process.getBuiltinModule === 'function') {
+    assert.ok(eventKinds.has('builtin-escape'), 'process.getBuiltinModule bypass was not independently blocked');
+  }
+  const verifierProbes = [directReadProbe, dynamicImportProbe, childProcessProbe, createRequireProbe, getBuiltinModuleProbe].filter(Boolean);
+  for (const probePath of verifierProbes) {
     const resolvedProbe = path.resolve(probePath);
     assert.ok(
       boundaryEvents.some((event) => event.processEntry === resolvedProbe || event.parent === resolvedProbe),
@@ -248,7 +262,7 @@ export async function runFreshWorkerDogfood({skillRoot = DEFAULT_SKILL_ROOT, kee
     forbiddenRawReadProbe: blocked.status,
     verifierOwnedAccessBoundary: true,
     normalBoundaryViolations: normalBoundaryEvents.length,
-    bypassProbesBlocked: 4,
+    bypassProbesBlocked: verifierProbes.length,
     certificateDigest: report.certificate.certificateDigest,
   };
 
