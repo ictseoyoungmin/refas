@@ -39,6 +39,7 @@ Do not blend every reference into one undifferentiated prompt. Keep one capabili
 - Observe the whole image before regions or parts. Every part retains an ancestry chain and a context-preserving crop.
 - Store visible facts separately from interpretations, hypotheses, and ambiguities.
 - Compare actual renders, not code, parameter values, manifests, or agent confidence.
+- Single-view IoU is forbidden. IoU may be used only with at least two independently source-backed registered views of the same candidate, and then only as correspondence evidence—not as a fit objective, ranking metric, resemblance signal, or standalone certification gate.
 - Preserve accepted child assets as immutable GLBs when assembling a parent. Reopen them only when parent evidence disproves their closure.
 - A low score alone does not select a repair owner. Localize a typed visual defect first.
 - A blocking defect without an owner fails closed. Do not guess a rollback point.
