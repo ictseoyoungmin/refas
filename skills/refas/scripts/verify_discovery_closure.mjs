@@ -20,6 +20,7 @@ const ALWAYS_LOAD = Object.freeze([
   'references/failure-routing.md',
 ]);
 const PARENT_PREFIX = ['..', ''].join('/');
+const REPOSITORY_SKILL_PREFIX = ['skills', 'refas', ''].join('/');
 
 const portable = (value) => String(value).split(path.sep).join('/');
 const sorted = (values) => [...new Set(values)].sort();
@@ -50,7 +51,7 @@ function skillRoute(value) {
     path.posix.isAbsolute(normalized)
     || normalized === '..'
     || normalized.startsWith(PARENT_PREFIX)
-    || normalized.startsWith('skills/refas/')
+    || normalized.startsWith(REPOSITORY_SKILL_PREFIX)
   ) return null;
   return normalized;
 }
@@ -315,7 +316,7 @@ export async function analyzeDiscoveryClosure({
   const schemaCatalog = await concreteSchemaCatalog(schemaRoot);
   const concreteSchemaIds = sorted(schemaCatalog.ids.keys());
   if (schemaCatalog.available) {
-    for (const schemaId of workerFacingSchemaIds) {
+    for (const schemaId of sorted(outputSchemaIds)) {
       if (!schemaCatalog.ids.has(schemaId)) missing.push(`schema:${schemaId}`);
       else if (schemaCatalog.ids.get(schemaId).length !== 1) missing.push(`schema-duplicate:${schemaId}`);
     }
