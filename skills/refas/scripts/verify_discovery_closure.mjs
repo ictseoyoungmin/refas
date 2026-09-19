@@ -66,7 +66,58 @@ function privateImplementationRoutes(text) {
   return sorted(output);
 }
 
-function schemaOccurrencesInValue(value, output = [], pointer = '
+function schemaOccurrencesInValue(value, output = [], pointer = '$', rootSchema = null) {
+  if (Array.isArray(value)) {
+    for (let index = 0; index < value.length; index += 1) {
+      schemaOccurrencesInValue(value[index], output, pointer + '[' + index + ']', rootSchema);
+    }
+    return output;
+  }
+  if (!value || typeof value !== 'object') return output;
+  const localRootSchema = pointer === '$' && typeof value.schema === 'string' ? value.schema : rootSchema;
+  if (typeof value.schema === 'string' && /^refas\\.[A-Za-z0-9._-]+\\/v\\d+$/u.test(value.schema)) {
+    output.push({
+      schemaId: value.schema,
+      pointer: pointer + '.schema',
+      root: pointer === '$',
+      rootSchema: localRootSchema,
+    });
+  }
+  for (const [key, child] of Object.entries(value)) {
+    if (key === 'schema') continue;
+    schemaOccurrencesInValue(child, output, pointer + '.' + key, localRootSchema);
+  }
+  return output;
+}
+
+function canonicalTemplateSchemaId(template) {
+  const base = path.posix.basename(template, '.json');
+  return 'refas.' + base + '/v1';
+}
+
+function targetModuleUrl(skillRoot, relative) {
+  return pathToFileURL(path.join(skillRoot, 'scripts', relative)).href;
+}
+
+async function loadTargetAuthority(skillRoot) {
+  const [publicApi, semanticModule, interfaceModule, freshWorkerModule] = await Promise.all([
+    import(targetModuleUrl(skillRoot, 'lib/index.mjs')),
+    import(targetModuleUrl(skillRoot, 'verify_semantic_instruction_graph.mjs')),
+    import(targetModuleUrl(skillRoot, 'verify_capability_interfaces.mjs')),
+    import(targetModuleUrl(skillRoot, 'verify_fresh_worker_dogfood.mjs')),
+  ]);
+  if (!Array.isArray(publicApi.CAPABILITY_ORDER)) throw new Error('target public API does not export CAPABILITY_ORDER');
+  if (typeof semanticModule.analyzeSemanticInstructionGraph !== 'function') throw new Error('target semantic instruction verifier is unavailable');
+  if (typeof interfaceModule.analyzeCapabilityInterfaces !== 'function') throw new Error('target capability interface verifier is unavailable');
+  if (typeof freshWorkerModule.runFreshWorkerDogfood !== 'function') throw new Error('target fresh-worker verifier is unavailable');
+  return {
+    PUBLIC_API: publicApi,
+    CAPABILITY_ORDER: publicApi.CAPABILITY_ORDER,
+    analyzeSemanticInstructionGraph: semanticModule.analyzeSemanticInstructionGraph,
+    analyzeCapabilityInterfaces: interfaceModule.analyzeCapabilityInterfaces,
+    runFreshWorkerDogfood: freshWorkerModule.runFreshWorkerDogfood,
+  };
+}
 async function concreteSchemaCatalog(schemaRoot) {
   if (!schemaRoot || !await exists(path.join(schemaRoot, 'README.md'))) return {available: false, ids: new Map(), files: []};
   const files = (await walk(schemaRoot)).filter((file) => file.endsWith('.schema.json'));
