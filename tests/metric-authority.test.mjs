@@ -2,8 +2,12 @@ import assert from 'node:assert/strict';
 import {test} from 'node:test';
 
 import {
+  createAppearanceFitPlan,
+  createCameraFitPlan,
+  createLightingCalibrationPlan,
   createParameterFitPlan,
   createPerceptualDiscrepancy,
+  createPoseFitPlan,
   digestJson,
   rankDiscrepancyCandidates,
 } from '../skills/refas/scripts/lib/index.mjs';
@@ -101,6 +105,50 @@ test('multiview IoU rejects duplicate sources, mixed candidates, missing current
     registeredComparisons:[{viewId:'front',report:front},{viewId:'side',report:forged}],
     currentViewId:'front',currentSourceSha256:D('1'),currentCandidateAssetSha256:D('3'),
   }), /comparison digest mismatch/);
+});
+
+test('multiview IoU requires explicit current source and candidate bindings', () => {
+  const front = registeredComparison({sourceSha256:D('1'),registrationDigest:D('2'),candidateAssetSha256:D('3'),salt:'4'});
+  const side = registeredComparison({sourceSha256:D('5'),registrationDigest:D('6'),candidateAssetSha256:D('3'),salt:'7'});
+  assert.throws(() => metricAuthority('silhouetteIoU', {
+    registeredComparisons:[{viewId:'front',report:front},{viewId:'side',report:side}],
+    currentViewId:'front',
+  }), /requires currentViewId, currentSourceSha256, and currentCandidateAssetSha256/);
+});
+
+test('camera, appearance, lighting, and pose plans reject IoU-derived objective injection', () => {
+  const cameraBase = {
+    id:'camera-fit', scopeId:'whole', sourceSha256:D('1'), hypothesisId:'camera-hypothesis',
+    baselineCamera:{projection:'perspective',position:[0,0,4],target:[0,0,0],up:[0,1,0],fovY:45},
+    variables:[{id:'camera-z',binding:'camera.position.z',minimum:3,maximum:5,initial:4}],
+    objectives:[{id:'silhouette-iou',goal:'minimize',weight:1,scale:1}],
+    evaluationBudget:2,
+  };
+  assert.throws(() => createCameraFitPlan(cameraBase), /cannot be used for objective/);
+
+  const appearanceBase = {
+    id:'appearance-fit',scopeId:'whole',sourceSha256:D('1'),baselineAsset:baseline,
+    variables:[{id:'roughness',binding:'appearance.material.body.roughness',minimum:0,maximum:1,initial:.5}],
+    objectives:[{id:'segment-iou-loss',goal:'minimize',weight:1}],
+    evaluationBudget:2,
+  };
+  assert.throws(() => createAppearanceFitPlan(appearanceBase), /cannot be used for objective/);
+
+  const lightingBase = {
+    id:'lighting-fit',scopeId:'whole',sourceSha256:D('1'),baselineAsset:baseline,
+    variables:[{id:'exposure',binding:'lighting.exposure',minimum:-1,maximum:1,initial:0}],
+    objectives:[{id:'negative-space-loss',goal:'minimize',weight:1}],
+    evaluationBudget:2,
+  };
+  assert.throws(() => createLightingCalibrationPlan(lightingBase), /cannot be used for objective/);
+
+  const poseBase = {
+    id:'pose-fit',scopeId:'whole',sourceSha256:D('1'),baselineAsset:baseline,
+    variables:[{id:'joint-a',binding:'assembly.joint.joint-a.angle',minimum:-1,maximum:1,initial:0}],
+    objectives:[{id:'silhouette-iou',goal:'minimize',weight:1}],
+    evaluationBudget:2,
+  };
+  assert.throws(() => createPoseFitPlan(poseBase), /cannot be used for objective/);
 });
 
 test('generic shape parameter fitting rejects IoU-derived objective aliases', () => {

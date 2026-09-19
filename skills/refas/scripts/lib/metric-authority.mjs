@@ -80,6 +80,9 @@ function normalizeRegisteredSourceViews(raw, {
   if (new Set(views.map((view) => view.comparisonDigest)).size !== views.length) throw new Error('registeredComparisons comparison digests must be unique');
   const candidates = new Set(views.map((view) => view.candidateAssetSha256));
   if (candidates.size > 1) throw new Error('registeredComparisons must bind the same 3D candidate');
+  if (views.length >= 2 && (currentViewId == null || currentSourceSha256 == null || currentCandidateAssetSha256 == null)) {
+    throw new Error('multiview IoU authority requires currentViewId, currentSourceSha256, and currentCandidateAssetSha256');
+  }
 
   if (currentSourceSha256 != null) {
     const source = assertDigest(currentSourceSha256, 'currentSourceSha256');
