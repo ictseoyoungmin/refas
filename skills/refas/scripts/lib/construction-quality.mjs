@@ -1,4 +1,5 @@
 import {assertDigest, assertId, deepFreeze, digestJson} from './canonical.mjs';
+import {assertConstructionFamilyCompatible, validateConstructionVocabularyDecision} from './construction-vocabulary.mjs';
 
 export const CONSTRUCTION_QUALITY_SCHEMA = 'refas.construction-quality/v1';
 export const REQUIRED_VISIBLE_FORM_GATES = Object.freeze([
@@ -46,6 +47,7 @@ export function createConstructionQuality({
   assetSha256,
   claim = 'blockout',
   constructionFamilies = [],
+  vocabularyDecision,
   visibleFormGates = [],
   identityFeatures = [],
   wholeDependency,
@@ -55,6 +57,14 @@ export function createConstructionQuality({
   const normalizedClaim = String(claim);
   if (!CLAIMS.has(normalizedClaim)) throw new Error('claim must be blockout or identity-bearing');
   const families = uniqueStrings(constructionFamilies, 'constructionFamilies');
+  const vocabularyValidation = validateConstructionVocabularyDecision(vocabularyDecision);
+  if (!vocabularyValidation.valid) throw new Error(`construction vocabulary decision is invalid: ${vocabularyValidation.errors.join('; ')}`);
+  const normalizedVocabularyDecision = structuredClone(vocabularyDecision);
+  const vocabularyCompatibility = assertConstructionFamilyCompatible(
+    normalizedVocabularyDecision,
+    families,
+    {claim: normalizedClaim, scopeId, sourceSha256},
+  );
   const gates = visibleFormGates.map(normalizeGate);
   exactGateSet(gates);
   const normalizedFeatures = identityFeatures.map((feature, index) => ({
@@ -95,6 +105,12 @@ export function createConstructionQuality({
     assetSha256: assertDigest(assetSha256, 'assetSha256'),
     claim: normalizedClaim,
     constructionFamilies: families,
+    vocabularyDecision: normalizedVocabularyDecision,
+    vocabularyCompatibility: {
+      vocabulary: vocabularyCompatibility.vocabulary,
+      productionFamilies: vocabularyCompatibility.productionFamilies,
+      valid: vocabularyCompatibility.valid,
+    },
     genericPrimitiveOnly,
     visibleFormGates: gates,
     identityFeatures: normalizedFeatures,
@@ -103,6 +119,9 @@ export function createConstructionQuality({
     ambiguities: [...new Set(ambiguities.map(String).filter(Boolean))].sort(),
     policy: {
       primitiveOnlyIsBlockout: true,
+      constructionVocabularyIsRequired: true,
+      vocabularyMustPrecedeIdentityBearingConstruction: true,
+      unresolvedCannotCloseIdentityBearing: true,
       wholeShapePrecedesLowerScopes: true,
       visibleEvidenceCannotBeDeferredAsHiddenUncertainty: true,
       triangleCountIsNotFidelityAuthority: true,
