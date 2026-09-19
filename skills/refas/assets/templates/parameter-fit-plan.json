@@ -11,13 +11,51 @@
     "sizeBytes": 0
   },
   "parameters": [
-    {"id": "span", "binding": "model.shape.span", "kind": "continuous", "minimum": 0.5, "maximum": 2, "initial": 1, "evidenceRefs": ["model/reference-geometry.json"]},
-    {"id": "curvature", "binding": "model.shape.curvature", "kind": "continuous", "minimum": -0.5, "maximum": 0.5, "initial": 0, "evidenceRefs": ["model/reference-geometry.json"]}
+    {
+      "id": "span",
+      "binding": "model.shape.span",
+      "kind": "continuous",
+      "minimum": 0.5,
+      "maximum": 2,
+      "initial": 1,
+      "evidenceRefs": [
+        "model/reference-geometry.json"
+      ]
+    },
+    {
+      "id": "curvature",
+      "binding": "model.shape.curvature",
+      "kind": "continuous",
+      "minimum": -0.5,
+      "maximum": 0.5,
+      "initial": 0,
+      "evidenceRefs": [
+        "model/reference-geometry.json"
+      ]
+    }
   ],
   "objectives": [
-    {"id": "silhouette-error", "goal": "minimize", "scale": 1, "weight": 1}
+    {
+      "id": "edge-orientation-error",
+      "goal": "minimize",
+      "scale": 1,
+      "weight": 1,
+      "authority": "RESEMBLANCE_SIGNAL"
+    }
   ],
   "protectedTerms": [],
-  "optimizer": {"algorithm": "differential-evolution", "seed": 1, "populationSize": 12, "evaluationBudget": 80, "differentialWeight": 0.8, "crossoverRate": 0.9, "improvementTolerance": 0.000001, "patience": 24, "initializationAttemptBudget": 384},
-  "evidenceRefs": ["source/reference.png"]
+  "optimizer": {
+    "algorithm": "differential-evolution",
+    "seed": 1,
+    "populationSize": 12,
+    "evaluationBudget": 80,
+    "differentialWeight": 0.8,
+    "crossoverRate": 0.9,
+    "improvementTolerance": 0.000001,
+    "patience": 24,
+    "initializationAttemptBudget": 384
+  },
+  "evidenceRefs": [
+    "source/reference.png"
+  ]
 }
