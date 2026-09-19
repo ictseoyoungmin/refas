@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/construction-vocabulary-decision.schema.json",
+  "title": "RefAs source-bound construction vocabulary decision",
+  "type": "object",
+  "required": ["schema", "scopeId", "sourceSha256", "vocabulary", "evidenceRefs", "rationale", "ambiguities", "assignments", "policyDigest", "policy", "decisionDigest"],
+  "properties": {
+    "schema": {"const": "refas.construction-vocabulary-decision/v1"},
+    "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "vocabulary": {"enum": ["hard-surface", "organic", "mechanical-articulated", "hybrid", "unresolved"]},
+    "evidenceRefs": {"$ref": "common.schema.json#/$defs/evidenceRefs"},
+    "rationale": {"type": "string", "minLength": 1},
+    "ambiguities": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "assignments": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "required": ["scopeId", "vocabulary", "evidenceRefs"],
+        "properties": {
+          "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
+          "vocabulary": {"enum": ["hard-surface", "organic", "mechanical-articulated"]},
+          "evidenceRefs": {"$ref": "common.schema.json#/$defs/evidenceRefs"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "policyDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "policy": {
+      "type": "object",
+      "required": ["sourceBound", "decisionPrecedesIdentityBearingConstruction", "hybridIsNotUncertaintyFallback", "unresolvedBlocksIdentityBearingClosure", "genericPrimitiveRemainsBlockoutOnly"],
+      "properties": {
+        "sourceBound": {"const": true},
+        "decisionPrecedesIdentityBearingConstruction": {"const": true},
+        "hybridIsNotUncertaintyFallback": {"const": true},
+        "unresolvedBlocksIdentityBearingClosure": {"const": true},
+        "genericPrimitiveRemainsBlockoutOnly": {"const": true}
+      },
+      "additionalProperties": false
+    },
+    "decisionDigest": {"$ref": "common.schema.json#/$defs/digest"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"vocabulary": {"const": "hybrid"}}},
+      "then": {"properties": {"assignments": {"minItems": 2}}}
+    },
+    {
+      "if": {"properties": {"vocabulary": {"const": "unresolved"}}},
+      "then": {"properties": {"ambiguities": {"minItems": 1}, "assignments": {"maxItems": 0}}}
+    },
+    {
+      "if": {"properties": {"vocabulary": {"enum": ["hard-surface", "organic", "mechanical-articulated"]}}},
+      "then": {"properties": {"assignments": {"maxItems": 0}}}
+    }
+  ],
+  "additionalProperties": false
+}
