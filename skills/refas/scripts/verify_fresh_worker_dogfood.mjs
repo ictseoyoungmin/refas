@@ -202,6 +202,12 @@ export async function runFreshWorkerDogfood({skillRoot = DEFAULT_SKILL_ROOT, kee
     name: 'direct-fs-read',
     source: `import fs from 'node:fs/promises';\nawait fs.readFile(process.env.REFAS_AD05_RAW_TARGET, 'utf8');\n`,
   });
+  const fsPromisesPropertyProbe = await runBlockedBoundaryProbe({
+    tempRoot,
+    env,
+    name: 'fs-promises-property-read',
+    source: `import fs from 'node:fs';\nawait fs.promises.readFile(process.env.REFAS_AD05_RAW_TARGET, 'utf8');\n`,
+  });
   const dynamicImportProbe = await runBlockedBoundaryProbe({
     tempRoot,
     env,
@@ -238,7 +244,7 @@ export async function runFreshWorkerDogfood({skillRoot = DEFAULT_SKILL_ROOT, kee
   if (typeof process.getBuiltinModule === 'function') {
     assert.ok(eventKinds.has('builtin-escape'), 'process.getBuiltinModule bypass was not independently blocked');
   }
-  const verifierProbes = [directReadProbe, dynamicImportProbe, childProcessProbe, createRequireProbe, getBuiltinModuleProbe].filter(Boolean);
+  const verifierProbes = [directReadProbe, fsPromisesPropertyProbe, dynamicImportProbe, childProcessProbe, createRequireProbe, getBuiltinModuleProbe].filter(Boolean);
   for (const probePath of verifierProbes) {
     const resolvedProbe = path.resolve(probePath);
     assert.ok(
