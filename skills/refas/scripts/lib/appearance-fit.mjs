@@ -1,4 +1,5 @@
 import {assertDigest, assertId, deepFreeze, digestJson} from './canonical.mjs';
+import {assertMetricUseAllowed} from './metric-authority.mjs';
 
 export const APPEARANCE_FIT_SCHEMA = 'refas.appearance-fit/v1';
 export const LIGHTING_FIT_SCHEMA = 'refas.lighting-fit/v1';
@@ -35,6 +36,7 @@ function createPlan({kind, schema, ownerCapability, id, scopeId, sourceSha256, b
   const normalizedObjectives = (objectives.length ? objectives : [{id: `${kind}-loss`, goal: 'minimize', weight: 1}]).map((raw, index) => {
     const objective = {id: assertId(raw?.id, `objectives[${index}].id`), goal: String(raw?.goal ?? 'minimize'), weight: finite(raw?.weight ?? 1, `objectives[${index}].weight`)};
     if (objective.goal !== 'minimize' || !(objective.weight > 0)) throw new Error(`objectives[${index}] must minimize with positive weight`);
+    assertMetricUseAllowed(objective.id, 'objective', {declaredAuthority: 'RANKING_ALLOWED'});
     return objective;
   });
   const payload = {schema, id: assertId(id, 'id'), ownerCapability, scopeId: assertId(scopeId, 'scopeId'), sourceSha256: assertDigest(sourceSha256, 'sourceSha256'), baselineAsset: asset, variables: variables.map((raw, index) => normalizeVariable(raw, index, kind)), objectives: normalizedObjectives, evaluationBudget: budget, improvementTolerance: finite(improvementTolerance, 'improvementTolerance'), geometryDigest: geometryDigest == null ? null : assertDigest(geometryDigest, 'geometryDigest'), frameDigest: frameDigest == null ? null : assertDigest(frameDigest, 'frameDigest'), evidenceRefs: uniqueStrings(evidenceRefs), policy: {ownerLocalOnly: true, geometryFrozen: true, illuminationSeparatedFromMaterial: kind === 'appearance' ? true : undefined, backgroundMustBeBound: kind === 'lighting' ? true : undefined, metricsCannotSelectOwner: true, metricsCannotPassVisualGate: true, selectedCandidateRequiresActualVisualReview: true, oneCheckpointCandidateAfterSelection: true} };
