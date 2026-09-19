@@ -10,6 +10,7 @@ import {
 import {assertMetricUseAllowed, isIouDerivedMetric, metricAuthority} from '../skills/refas/scripts/lib/metric-authority.mjs';
 
 const D = (c) => c.repeat(64);
+const H = (value) => ((Number.parseInt(value, 16) || 0) % 16).toString(16);
 const baseline = {schema:'refas.content-reference/v1',kind:'glb',path:'asset.glb',sha256:D('a'),sizeBytes:1};
 
 function registeredComparison({sourceSha256, registrationDigest, candidateAssetSha256, salt}) {
@@ -17,9 +18,9 @@ function registeredComparison({sourceSha256, registrationDigest, candidateAssetS
     schema:'refas.registered-comparison/v1',
     claimScope:'critique-evidence-only',
     source:{sha256:sourceSha256,manifestSha256:D(salt),acquisitionKind:'synthetic-test-fixture'},
-    render:{assetSha256:candidateAssetSha256,frameId:'hero',frameSha256:D(String((Number.parseInt(salt,16)+1)%16).replace('10','a')),reportSha256:D(String((Number.parseInt(salt,16)+2)%16).replace('10','a'))},
-    registration:{digest:registrationDigest,fileSha256:D(String((Number.parseInt(salt,16)+3)%16).replace('10','a')),model:'affine',metrics:{}},
-    hierarchy:{digest:D(String((Number.parseInt(salt,16)+4)%16).replace('10','a')),fileSha256:D(String((Number.parseInt(salt,16)+5)%16).replace('10','a'))},
+    render:{assetSha256:candidateAssetSha256,frameId:'hero',frameSha256:D(H((Number.parseInt(salt,16)+1).toString(16))),reportSha256:D(H((Number.parseInt(salt,16)+2).toString(16)))},
+    registration:{digest:registrationDigest,fileSha256:D(H((Number.parseInt(salt,16)+3).toString(16))),model:'affine',metrics:{}},
+    hierarchy:{digest:D(H((Number.parseInt(salt,16)+4).toString(16))),fileSha256:D(H((Number.parseInt(salt,16)+5).toString(16)))},
     projectionEvidence:[],
     scopes:[{
       scopeId:'whole',level:'whole',ancestry:['whole'],measurementAuthority:'image-only',projectionBinding:null,
@@ -31,7 +32,7 @@ function registeredComparison({sourceSha256, registrationDigest, candidateAssetS
       realSourceLandmarksMustUseRealizedProjection:true,manualRenderCoordinatesCannotClaimRealSourceGeometry:true,
       projectionMetricsRemainVetoOnly:true,singleViewIouDisabled:true,
     },
-    inputDigest:D(String((Number.parseInt(salt,16)+6)%16).replace('10','a')),
+    inputDigest:D(H((Number.parseInt(salt,16)+6).toString(16))),
   };
   report.comparisonDigest = digestJson(report);
   return report;
