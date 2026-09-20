@@ -278,4 +278,11 @@ test('R04 upgrade rejects legacy real-source downstream lineage without R04 admi
   const readiness = await assessCertification(root);
   assert.equal(readiness.ready, false);
   assert.match(readiness.errors.join('\n'), /early resemblance admission: .*requires exactly one early-resemblance-barrier artifact/);
+
+  const certifiedState = JSON.parse(await fs.readFile(projectPath, 'utf8'));
+  certifiedState.status = 'certified';
+  await fs.writeFile(projectPath, `${JSON.stringify(certifiedState, null, 2)}\n`);
+  const guidance = await resumeProject(root);
+  assert.equal(guidance.nextAction, 'REQUEST_RESEMBLANCE_REVIEW');
+  assert.match(guidance.reason, /stored certification predates or fails current early resemblance admission/);
 });
