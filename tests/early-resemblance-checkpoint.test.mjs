@@ -9,6 +9,8 @@ import {
   NEUTRAL_CLAY_PRESENTATION_PRESET,
   NEUTRAL_CLAY_PRESENTATION_PRESET_DIGEST,
   NEUTRAL_CLAY_REQUIRED_VIEW_IDS,
+  auditProject,
+  assessCertification,
   commitCheckpoint,
   contentReference,
   createEarlyResemblanceBarrier,
@@ -238,4 +240,42 @@ test('R04 real-source admission rejects canonical barrier whose nested R03 evide
     () => commitLocal(root, 'surface-topology', [surfaceRef]),
     /resemblance evidence ref is not bound in current checkpoint lineage: evidence\/unbound-resemblance\.png/,
   );
+});
+
+
+test('R04 upgrade rejects legacy real-source downstream lineage without R04 admission', async (t) => {
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'refas-r04-legacy-'));
+  t.after(() => fs.rm(root, {recursive: true, force: true}));
+
+  const sourceBytes = Buffer.from('legacy source bytes\n');
+  const sourceRef = await writeRef(root, 'source/reference.bin', sourceBytes, 'source-image');
+  const source = {
+    schema: 'refas.source-manifest/v1',
+    id: 'primary-reference',
+    path: sourceRef.path,
+    sha256: sourceRef.sha256,
+    sizeBytes: sourceRef.sizeBytes,
+    width: 64,
+    height: 64,
+    authority: 'primary',
+    acquisition: {kind: 'test-fixture'},
+  };
+  await initProject(root, {projectId: 'r04-legacy-upgrade', source});
+  const stateRef = await writeRef(root, 'model/state.bin', Buffer.from('legacy state\n'), 'model-spec');
+  for (const capability of ['source-intake','visual-hierarchy','visual-observation','spatial-hypotheses','shape-reconstruction','surface-topology']) {
+    await commitLocal(root, capability, [stateRef]);
+  }
+
+  const projectPath = path.join(root, '.refas', 'project.json');
+  const project = JSON.parse(await fs.readFile(projectPath, 'utf8'));
+  project.source.acquisition = {kind: 'user-provided-reference'};
+  await fs.writeFile(projectPath, `${JSON.stringify(project, null, 2)}\n`);
+
+  const audit = await auditProject(root);
+  assert.equal(audit.valid, false);
+  assert.match(audit.errors.join('\n'), /early resemblance admission: .*requires exactly one early-resemblance-barrier artifact/);
+
+  const readiness = await assessCertification(root);
+  assert.equal(readiness.ready, false);
+  assert.match(readiness.errors.join('\n'), /early resemblance admission: .*requires exactly one early-resemblance-barrier artifact/);
 });
