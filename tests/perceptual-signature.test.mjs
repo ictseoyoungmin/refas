@@ -188,3 +188,34 @@ test('R03 never promotes single-view IoU to resemblance authority', () => {
     currentCandidateAssetSha256: ASSET,
   }), /FORBIDDEN_SINGLE_VIEW_IOU/);
 });
+
+
+test('R03 ambiguous signature families route to visual critique instead of guessing a repair owner', () => {
+  const set = createPerceptualSignatureSet({
+    scopeId: 'whole',
+    sourceSha256: SOURCE,
+    signatures: [{
+      id: 'negative-space',
+      scopeId: 'whole',
+      family: 'negative-space-structure',
+      importance: 'identity',
+      sourceObservation: 'A source-specific open void separates the two dominant masses.',
+      evidenceRefs: ['source/reference.png'],
+    }],
+    evidenceRefs: ['source/reference.png'],
+  });
+  const evidence = createPerceptualSignatureEvidence({
+    signatureSet: set,
+    assetSha256: ASSET,
+    observations: [{
+      signatureId: 'negative-space',
+      status: 'mismatch',
+      candidateObservation: 'The candidate closes the void, but this evidence alone does not prove whether shape, topology, or assembly owns the defect.',
+      comparisonConclusion: 'The negative-space identity signature is lost and ownership requires visual critique.',
+      evidenceRefs: ['source/reference.png', 'renders/hero.png'],
+    }],
+    evidenceRefs: ['source/reference.png', 'renders/hero.png'],
+  });
+  assert.equal(evidence.findings[0].category, 'unroutable-visual-finding');
+  assert.equal(evidence.findings[0].ownerCapability, 'visual-critique');
+});
