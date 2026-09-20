@@ -107,7 +107,7 @@ export function validateRegisteredComparison(report, {trustedContractFixture = f
   const legacyContract = acquisitionKind === '';
   const declaredFixture = CONTRACT_FIXTURE_ACQUISITIONS.has(acquisitionKind);
   if (declaredFixture && trustedContractFixture !== true) errors.push('declared fixture comparison authority requires trusted contract-fixture project context');
-  if (!legacyContract && expectedKind && trustedContractFixture !== true && acquisitionKind !== expectedKind) {
+  if (expectedKind && trustedContractFixture !== true && acquisitionKind !== expectedKind) {
     errors.push('registered comparison acquisition kind does not match the bound project source');
   }
   const realSource = !legacyContract && trustedContractFixture !== true;
