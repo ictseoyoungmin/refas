@@ -37,6 +37,7 @@ import {
   partsToGlb,
   resumeProject,
 } from '../skills/refas/scripts/lib/index.mjs';
+import {initTrustedContractFixtureProject} from '../skills/refas/scripts/lib/contract-fixture-project.mjs';
 
 const CONTRACT_FIXTURES = new Set(['test-fixture','deterministic-project-fixture','synthetic-test-fixture']);
 
@@ -58,7 +59,11 @@ async function makeProject(t, acquisitionKind='user-provided-reference') {
     sha256:digestBytes(sourceBytes), sizeBytes:sourceBytes.length, width:256, height:256,
     authority:'primary', acquisition:{kind:acquisitionKind},
   };
-  await initProject(root, {projectId:'projection-cert-study', source});
+  if (CONTRACT_FIXTURES.has(acquisitionKind)) {
+    await initTrustedContractFixtureProject(root, {projectId:'projection-cert-study', source, fixtureId:'projection-cert-contract'});
+  } else {
+    await initProject(root, {projectId:'projection-cert-study', source});
+  }
   return {root, source};
 }
 
