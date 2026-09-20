@@ -492,7 +492,9 @@ export function fixtureForCapabilityInterface(key, context, outputs = new Map())
   const values = {sourceSha256: context.sourceSha256};
   const bindings = {};
 
-  if (key === 'observation/visual-observation') {
+  if (key === 'observation/perceptual-signature-set') {
+    bindings.perceptualSignatureHierarchy = outputs.get('observation/visual-hierarchy');
+  } else if (key === 'observation/visual-observation') {
     bindings.hierarchy = outputs.get('observation/visual-hierarchy');
   } else if (key === 'spatial-reasoning/projection-fit') {
     bindings.referenceGeometry = outputs.get('observation/reference-geometry');
@@ -636,6 +638,9 @@ export function fixtureForCapabilityInterface(key, context, outputs = new Map())
     bindings.parameterFitPlan=plan;
     bindings.parameterFitEvaluator=async (parameters,run)=>({measurements:Object.fromEntries(plan.objectives.map((objective)=>[objective.id,Math.abs(parameters.span-1)+Math.abs(parameters.bend)])),candidateAsset:plan.baselineAsset,renderEvidence:{schema:'refas.content-reference/v1',kind:'render-report',path:`trials/${run.trialId}/render.json`,sha256:API.digestBytes(`render-${run.trialId}`),sizeBytes:Buffer.byteLength(`render-${run.trialId}`)},evidenceRefs:[`trials/${run.trialId}/hero.png`]});
     bindings.parameterFitVerifyReference=async()=>true;
+  } else if (key === 'validation/perceptual-signature-evidence') {
+    bindings.perceptualSignatureSet=outputs.get('observation/perceptual-signature-set');
+    values.assetSha256=API.digestBytes(context.candidate.candidateBytes);
   } else if (key === 'validation/projection-aware-visual-review') {
     bindings.projectionFit=outputs.get('spatial-reasoning/projection-fit');
   } else if (key === 'candidate-transactions/candidate-transaction') {

@@ -1,5 +1,6 @@
 import {assertDigest, deepFreeze, digestJson} from './canonical.mjs';
 import {validateRegisteredComparison} from './registered-comparison.mjs';
+import {validatePerceptualSignatureEvidence} from './perceptual-signature.mjs';
 
 export const METRIC_AUTHORITIES = Object.freeze([
   'RANKING_ALLOWED',
@@ -110,7 +111,7 @@ function allowedUses(authority) {
     RANKING_ALLOWED: ['objective', 'ranking', 'diagnostic'],
     GATE_ONLY: ['correspondence-gate', 'diagnostic'],
     DIAGNOSTIC_ONLY: ['diagnostic'],
-    RESEMBLANCE_SIGNAL: ['objective', 'ranking', 'diagnostic', 'resemblance'],
+    RESEMBLANCE_SIGNAL: ['diagnostic'],
     CORRESPONDENCE_AID: ['correspondence-gate', 'diagnostic'],
   }[authority] ?? [];
 }
@@ -121,6 +122,7 @@ export function metricAuthority(metricId, {
   currentViewId = null,
   currentSourceSha256 = null,
   currentCandidateAssetSha256 = null,
+  resemblanceEvidence = null,
 } = {}) {
   const id = String(metricId ?? '').trim();
   if (!id) throw new Error('metricId is required');
@@ -143,6 +145,25 @@ export function metricAuthority(metricId, {
 
   const authority = String(declaredAuthority ?? '').trim().toUpperCase();
   if (!AUTHORITIES.has(authority)) throw new Error(`unknown metric authority: ${declaredAuthority}`);
+  if (authority === 'RESEMBLANCE_SIGNAL') {
+    if (!resemblanceEvidence) throw new Error('RESEMBLANCE_SIGNAL requires current perceptual-signature evidence');
+    if (currentSourceSha256 == null || currentCandidateAssetSha256 == null) {
+      throw new Error('RESEMBLANCE_SIGNAL requires explicit currentSourceSha256 and currentCandidateAssetSha256 bindings');
+    }
+    const validation = validatePerceptualSignatureEvidence(resemblanceEvidence, {
+      sourceSha256: currentSourceSha256,
+      assetSha256: currentCandidateAssetSha256,
+    });
+    if (!validation.valid) throw new Error(`RESEMBLANCE_SIGNAL evidence is invalid: ${validation.errors.join('; ')}`);
+    return deepFreeze({
+      metricId: id,
+      authority,
+      allowedUses: allowedUses(authority),
+      resemblanceEvidenceDigest: resemblanceEvidence.evidenceDigest,
+      signatureSetDigest: resemblanceEvidence.signatureSetDigest,
+      reason: 'R03 keeps numeric resemblance signals diagnostic-only; actual resemblance authority remains in current source/candidate-bound perceptual-signature observations.',
+    });
+  }
   return deepFreeze({
     metricId: id,
     authority,

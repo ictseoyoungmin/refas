@@ -72,6 +72,16 @@ Reference geometry is strictly source-space evidence. It must not contain 3D coo
 
 `refas.reference-registration/v1` remains a placement/framing transform between 2D evidence frames. Its residual can establish that crops or review frames are aligned, but it is not shape truth and cannot substitute for source-space geometry agreement.
 
+## Perceptual identity signatures
+
+Before candidate evaluation, record what visually makes the source look like itself as `refas.perceptual-signature-set/v1`. This is a source-observation artifact, not a similarity score and not a construction-family guess.
+
+Use a small domain-neutral vocabulary: silhouette character, mass proportion, curvature character, plane/edge language, negative-space structure, part-segmentation rhythm, junction transition, and surface-pattern structure. Each macro or identity signature states a substantive source observation and cites the raw source or source-derived evidence that supports it. Bind signatures to hierarchy scopes and, where useful, to reference-geometry artifacts or related scopes.
+
+A perceptual signature is not a pixel metric. “Angular stepped plane breaks remain visible around the torso-to-wing junction” is a source identity observation; IoU, edge count, landmark RMSE, and other numeric residuals are not. Numeric evidence may later help inspect a signature, but correspondence does not define identity and cannot replace the source observation.
+
+Keep ambiguity explicit. Do not infer hidden construction, material category, or object class merely to fill a signature. The signature set is candidate-independent and never certifies resemblance by itself.
+
 ## Derived evidence
 
 Useful aids include:

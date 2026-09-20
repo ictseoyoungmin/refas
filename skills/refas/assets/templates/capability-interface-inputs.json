@@ -762,7 +762,7 @@
           "goal": "minimize",
           "scale": 1,
           "weight": 1,
-          "authority": "RESEMBLANCE_SIGNAL"
+          "authority": "RANKING_ALLOWED"
         }
       ],
       "protectedTerms": [],
@@ -2665,6 +2665,87 @@
       "ambiguities": [],
       "evidenceRefs": [
         "evidence/reference.png"
+      ]
+    },
+    "observation/perceptual-signature-set": {
+      "scopeId": "whole",
+      "sourceSha256": {
+        "$value": "sourceSha256",
+        "example": "0000000000000000000000000000000000000000000000000000000000000000",
+        "description": "SHA-256 of the primary source"
+      },
+      "signatures": [
+        {
+          "id": "whole-silhouette-character",
+          "scopeId": "whole",
+          "family": "silhouette-character",
+          "importance": "macro",
+          "sourceObservation": "Replace with the source-specific dominant silhouette character and its major inflections.",
+          "evidenceRefs": [
+            "source/reference.png"
+          ],
+          "relatedScopeIds": [],
+          "referenceGeometryRefs": [
+            "model/reference-geometry.json"
+          ],
+          "ambiguity": null
+        },
+        {
+          "id": "whole-plane-edge-language",
+          "scopeId": "whole",
+          "family": "plane-edge-language",
+          "importance": "identity",
+          "sourceObservation": "Replace with the source-specific plane, edge, or continuous-curvature language that carries visual identity.",
+          "evidenceRefs": [
+            "source/reference.png"
+          ],
+          "relatedScopeIds": [],
+          "referenceGeometryRefs": [],
+          "ambiguity": null
+        }
+      ],
+      "ambiguities": [],
+      "evidenceRefs": [
+        "source/reference.png"
+      ],
+      "hierarchy": {
+        "$bind": "perceptualSignatureHierarchy",
+        "description": "Current refas.visual-hierarchy/v1 for source/scope binding"
+      }
+    },
+    "validation/perceptual-signature-evidence": {
+      "signatureSet": {
+        "$bind": "perceptualSignatureSet",
+        "description": "Output of observation/perceptual-signature-set"
+      },
+      "assetSha256": {
+        "$value": "assetSha256",
+        "example": "0000000000000000000000000000000000000000000000000000000000000000",
+        "description": "current candidate asset digest"
+      },
+      "observations": [
+        {
+          "signatureId": "whole-plane-edge-language",
+          "status": "insufficient",
+          "candidateObservation": "The current candidate evidence does not yet resolve this identity signature.",
+          "comparisonConclusion": "More source/candidate comparison evidence is required before declaring agreement or mismatch.",
+          "evidenceRefs": [
+            "renders/hero.png"
+          ]
+        },
+        {
+          "signatureId": "whole-silhouette-character",
+          "status": "insufficient",
+          "candidateObservation": "The current candidate evidence does not yet resolve this macro signature.",
+          "comparisonConclusion": "More source/candidate comparison evidence is required before declaring agreement or mismatch.",
+          "evidenceRefs": [
+            "renders/hero.png"
+          ]
+        }
+      ],
+      "evidenceRefs": [
+        "source/reference.png",
+        "renders/hero.png"
       ]
     }
   }
