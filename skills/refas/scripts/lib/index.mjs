@@ -86,6 +86,7 @@ export * from './pose-fit.mjs';
 export * from './geometry-backend.mjs';
 export * from './perceptual-discrepancy.mjs';
 export * from './perceptual-signature.mjs';
+export * from './early-resemblance-barrier.mjs';
 export * from './appearance-fit.mjs';
 export * from './macro-fit.mjs';
 export * from './benchmark.mjs';
