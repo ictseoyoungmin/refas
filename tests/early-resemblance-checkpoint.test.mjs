@@ -40,8 +40,17 @@ async function commitLocal(root, capability, refs) {
   });
 }
 
-function clayReport(assetSha256) {
-  return createPbrRenderReport({
+async function clayEvidence(root, assetSha256) {
+  const frameRefs = [];
+  for (const viewId of NEUTRAL_CLAY_REQUIRED_VIEW_IDS) {
+    frameRefs.push(await writeRef(
+      root,
+      `renders/clay/${viewId}.png`,
+      Buffer.from(`neutral clay ${viewId} frame\n`),
+      'render-frame',
+    ));
+  }
+  const report = createPbrRenderReport({
     assetSha256,
     frameDigest: D('c'),
     renderer: {
@@ -60,10 +69,10 @@ function clayReport(assetSha256) {
       supported: ['base-color-factor', 'metallic-factor', 'roughness-factor'],
       unsupported: ['textures'],
     },
-    outputs: NEUTRAL_CLAY_REQUIRED_VIEW_IDS.map((viewId, index) => ({
-      viewId,
-      path: `renders/clay/${viewId}.png`,
-      sha256: D(String((index % 8) + 1)),
+    outputs: frameRefs.map((frame, index) => ({
+      viewId: NEUTRAL_CLAY_REQUIRED_VIEW_IDS[index],
+      path: frame.path,
+      sha256: frame.sha256,
     })),
     reproducibility: {mode: 'deterministic', tolerance: ''},
     presentation: {
@@ -72,6 +81,13 @@ function clayReport(assetSha256) {
       presetDigest: NEUTRAL_CLAY_PRESENTATION_PRESET_DIGEST,
     },
   });
+  const reportRef = await writeRef(
+    root,
+    'renders/clay/render-report.json',
+    Buffer.from(`${JSON.stringify(report, null, 2)}\n`),
+    'render-report',
+  );
+  return {report, reportRef, frameRefs};
 }
 
 async function makeRealSourceProject(t, verdictStatus) {
@@ -118,6 +134,8 @@ async function makeRealSourceProject(t, verdictStatus) {
 
   const candidateBytes = Buffer.from('candidate glb bytes\n');
   const candidateRef = await writeRef(root, 'model/candidate.glb', candidateBytes, 'glb');
+  const clay = await clayEvidence(root, candidateRef.sha256);
+  const clayHeroRef = clay.frameRefs.find((frame) => frame.path === 'renders/clay/hero.png');
 
   const signatureSet = createPerceptualSignatureSet({
     hierarchy,
@@ -145,17 +163,17 @@ async function makeRealSourceProject(t, verdictStatus) {
         : verdictStatus === 'mismatch'
           ? 'The required source silhouette identity is absent.'
           : 'The current evidence cannot resolve the required silhouette identity.',
-      evidenceRefs: [source.path, 'renders/clay/hero.png'],
+      evidenceRefs: [source.path, clayHeroRef.path],
     }],
-    evidenceRefs: [source.path, 'renders/clay/hero.png'],
+    evidenceRefs: [source.path, clayHeroRef.path],
   });
   const barrier = createEarlyResemblanceBarrier({
     sourceSha256: source.sha256,
     hierarchyDigest: hierarchy.hierarchyDigest,
     assetSha256: candidateRef.sha256,
     signatureEvidence,
-    clayRenderReport: clayReport(candidateRef.sha256),
-    evidenceRefs: [source.path, 'renders/clay/hero.png'],
+    clayRenderReport: clay.report,
+    evidenceRefs: [source.path, clayHeroRef.path],
   });
   const barrierRef = await writeRef(
     root,
@@ -163,7 +181,7 @@ async function makeRealSourceProject(t, verdictStatus) {
     Buffer.from(`${JSON.stringify(barrier, null, 2)}\n`),
     'early-resemblance-barrier',
   );
-  await commitLocal(root, 'shape-reconstruction', [candidateRef, barrierRef]);
+  await commitLocal(root, 'shape-reconstruction', [candidateRef, barrierRef, clay.reportRef, ...clay.frameRefs]);
 
   const surfaceRef = await writeRef(root, 'model/surface.json', Buffer.from('{"surface":true}\n'), 'surface-network');
   return {root, barrier, surfaceRef};
