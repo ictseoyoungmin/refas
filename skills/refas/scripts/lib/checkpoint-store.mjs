@@ -617,6 +617,46 @@ async function readCheckpointJsonArtifact(root, checkpoint, kind, label) {
   return {artifact, value: await readJson(resolved.realFile)};
 }
 
+async function verifyEarlyResemblanceEvidenceArtifacts(root, state, shapeCheckpoint, barrier, label) {
+  const reportArtifacts = (shapeCheckpoint.artifactRefs ?? []).filter((artifact) => artifact.kind === 'render-report');
+  const matchingReports = [];
+  for (const artifact of reportArtifacts) {
+    const resolved = await assertExistingFileInside(root, artifact.path, `${label} render-report artifact`);
+    if (resolved.stat.size !== artifact.sizeBytes || await sha256File(resolved.realFile) !== artifact.sha256) {
+      throw new Error(`${label} render-report artifact bytes are stale or mismatched`);
+    }
+    const report = await readJson(resolved.realFile);
+    if (report?.schema !== 'refas.pbr-render-report/v1' || report?.reportDigest !== barrier.clayRenderReportDigest) continue;
+    matchingReports.push({artifact, report});
+  }
+  if (matchingReports.length !== 1) {
+    throw new Error(`${label} requires exactly one shape-checkpoint neutral-clay render report matching the barrier`);
+  }
+
+  const {report} = matchingReports[0];
+  const validation = validatePbrRenderReport(report);
+  if (!validation.valid) throw new Error(`${label} neutral-clay render report is invalid: ${validation.errors.join('; ')}`);
+  if (digestJson(report) !== digestJson(barrier.clayRenderReport)) {
+    throw new Error(`${label} barrier embeds a different neutral-clay render report`);
+  }
+
+  for (const output of report.outputs ?? []) {
+    const matches = (shapeCheckpoint.artifactRefs ?? []).filter((artifact) =>
+      artifact.kind === 'render-frame' && artifact.path === output.path && artifact.sha256 === output.sha256);
+    if (matches.length !== 1) {
+      throw new Error(`${label} neutral-clay output is not exact-byte bound in the shape checkpoint: ${output.viewId}`);
+    }
+  }
+
+  const artifactPaths = new Set((shapeCheckpoint.artifactRefs ?? []).map((artifact) => artifact.path));
+  for (const evidenceRef of barrier.evidenceRefs ?? []) {
+    if (evidenceRef === state.source.path) continue;
+    if (!artifactPaths.has(evidenceRef)) {
+      throw new Error(`${label} barrier evidence ref is not bound in the shape checkpoint: ${evidenceRef}`);
+    }
+  }
+}
+
 async function ensureEarlyResemblanceAdmission(root, state, capability, scopeId, lineage) {
   if (isContractFixtureSource(state)) return;
   if (capabilityIndex(capability) < capabilityIndex('surface-topology')) return;
@@ -645,6 +685,14 @@ async function ensureEarlyResemblanceAdmission(root, state, capability, scopeId,
     root,
     hierarchyCheckpoint,
     'visual-hierarchy',
+    `${capability} early resemblance admission`,
+  );
+
+  await verifyEarlyResemblanceEvidenceArtifacts(
+    root,
+    state,
+    shapeCheckpoint,
+    barrier,
     `${capability} early resemblance admission`,
   );
 
