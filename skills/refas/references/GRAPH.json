@@ -1133,6 +1133,143 @@
         "mode": "hybrid",
         "interfaces": [
           {
+            "id": "construction-vocabulary",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createConstructionVocabulary"
+            },
+            "template": "assets/templates/capability-interface-inputs.json#/templates/construction~1construction-vocabulary",
+            "inputContract": "source-grounded construction vocabulary decision before identity-bearing geometry",
+            "outputSchema": "refas.construction-vocabulary/v1",
+            "validator": {
+              "library": "validateConstructionVocabulary"
+            },
+            "minimumInvocation": "references/construction.md",
+            "example": "references/single-view-volumetric-reasoning-example.md",
+            "templateProcessor": {
+              "library": "materializeCapabilityInputTemplate"
+            },
+            "publicConstants": [
+              "CONSTRUCTION_VOCABULARIES",
+              "CONSTRUCTION_OPERATIONS"
+            ],
+            "usageReference": "references/construction.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
+            }
+          },
+          {
+            "id": "construction-operation-permit",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createConstructionOperationPermit"
+            },
+            "template": null,
+            "inputContract": "validated construction-vocabulary decision + target scope + requested high-level construction operation",
+            "outputSchema": "refas.construction-operation-permit/v1",
+            "validator": {
+              "library": "validateConstructionOperationPermit"
+            },
+            "minimumInvocation": "references/construction.md",
+            "example": null,
+            "publicConstants": [
+              "CONSTRUCTION_OPERATIONS"
+            ],
+            "usageReference": "references/construction.md",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "permit creation consumes the digest-bearing output of construction-vocabulary; fresh-worker execution verifies this chained public call"
+            }
+          },
+          {
+            "id": "surface-network-parts",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createPermittedSurfaceNetworkParts"
+            },
+            "template": null,
+            "inputContract": "validated construction vocabulary + matching surface-network permit + source-bound surface network",
+            "outputSchema": null,
+            "validator": null,
+            "minimumInvocation": "references/construction.md",
+            "example": null,
+            "usageReference": "references/construction.md",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "permit-consuming high-level geometry wrapper"
+            },
+            "note": "The permitted wrapper returns a geometry/parts bundle carrying constructionAuthority rather than a persisted public schema artifact. Candidate serialization turns that authority into refas.construction-execution/v1 evidence."
+          },
+          {
+            "id": "section-profile-loft",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createPermittedSectionProfileLoft"
+            },
+            "template": null,
+            "inputContract": "validated construction vocabulary + matching rigid/organic loft permit + section-profile loft spec",
+            "outputSchema": null,
+            "validator": null,
+            "minimumInvocation": "references/construction.md",
+            "example": "references/single-view-volumetric-reasoning-example.md",
+            "usageReference": "references/construction.md",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "permit-consuming high-level geometry wrapper"
+            }
+          },
+          {
+            "id": "construction-execution-proof",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createConstructionExecutionProof"
+            },
+            "template": null,
+            "inputContract": "candidate GLB bytes + validated construction vocabulary + exact permit set",
+            "outputSchema": "refas.construction-execution-proof/v1",
+            "validator": {
+              "library": "validateConstructionExecutionProof"
+            },
+            "minimumInvocation": "references/construction.md",
+            "example": null,
+            "usageReference": "references/construction.md",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "candidate-bound chained operation; fresh-worker dogfood executes this path"
+            }
+          },
+          {
             "id": "construction-quality",
             "operation": "create",
             "cli": null,
@@ -1182,38 +1319,22 @@
             "cli": null,
             "library": {
               "entrypoint": "scripts/lib/index.mjs",
-              "symbol": "createHardSurfaceShell"
+              "symbol": "createPermittedHardSurfaceShell"
             },
             "template": "assets/templates/hard-surface-spec.json",
-            "inputContract": "hard-surface profile/cutout/edge-treatment specification",
+            "inputContract": "validated construction vocabulary + matching permit + hard-surface profile/cutout/edge-treatment specification",
             "outputSchema": null,
-            "validator": {
-              "library": "validateHardSurfaceSpec"
-            },
+            "validator": null,
             "minimumInvocation": "references/construction.md",
             "example": null,
             "usageReference": "references/construction.md",
-            "templateRole": "operation-input",
+            "templateRole": "artifact-input",
             "invocation": {
               "schema": "refas.capability-invocation/v1",
-              "verification": "execute",
-              "call": {
-                "arguments": [
-                  {
-                    "source": "input"
-                  }
-                ]
-              },
-              "validator": {
-                "arguments": [
-                  {
-                    "source": "input"
-                  }
-                ]
-              },
-              "outputSchemaPointer": null,
-              "note": "validator checks the public hard-surface input spec; shell output is geometry rather than a schema artifact"
-            }
+              "verification": "structural",
+              "reason": "identity-bearing hard-surface construction consumes chained vocabulary/permit authority; fresh-worker dogfood executes this path"
+            },
+            "note": "The template is the public `spec` subdocument. Identity-bearing execution remains the chained createConstructionVocabulary → createConstructionOperationPermit → createPermittedHardSurfaceShell path; raw createHardSurfaceShell remains blockout/support/backward compatibility only."
           },
           {
             "id": "surface-network",

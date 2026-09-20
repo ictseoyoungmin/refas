@@ -617,7 +617,10 @@
       },
       "ambiguities": [
         "Hidden surfaces remain inferred."
-      ]
+      ],
+      "constructionVocabulary": null,
+      "constructionPermits": [],
+      "constructionExecutionProof": null
     },
     "construction/surface-network": {
       "scopeId": "primary-region",
@@ -2640,6 +2643,29 @@
       "evidenceBytesById": {
         "$bind": "genericCertificationEvidenceBytesById"
       }
+    },
+    "construction/construction-vocabulary": {
+      "scopeId": "whole",
+      "sourceSha256": {
+        "$value": "sourceSha256",
+        "example": "0000000000000000000000000000000000000000000000000000000000000000",
+        "description": "primary source digest"
+      },
+      "vocabulary": "hard-surface",
+      "cues": [
+        {
+          "id": "designed-boundaries",
+          "description": "Observed planes, controlled curvature, apertures, or explicit manufactured edge transitions require a rigid hard-surface vocabulary.",
+          "evidenceRefs": [
+            "evidence/reference.png"
+          ]
+        }
+      ],
+      "contraryCues": [],
+      "ambiguities": [],
+      "evidenceRefs": [
+        "evidence/reference.png"
+      ]
     }
   }
 }

@@ -1,0 +1,158 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/construction-execution-proof.schema.json",
+  "title": "RefAs candidate-bound construction execution proof",
+  "type": "object",
+  "required": [
+    "schema",
+    "assetSha256",
+    "sourceSha256",
+    "vocabularyDigest",
+    "permitDigests",
+    "executions",
+    "evidenceRefs",
+    "policy",
+    "proofDigest"
+  ],
+  "properties": {
+    "schema": {
+      "const": "refas.construction-execution-proof/v1"
+    },
+    "assetSha256": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "sourceSha256": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "vocabularyDigest": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "permitDigests": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "common.schema.json#/$defs/digest"
+      }
+    },
+    "executions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/execution"
+      }
+    },
+    "evidenceRefs": {
+      "$ref": "common.schema.json#/$defs/evidenceRefs"
+    },
+    "policy": {
+      "type": "object",
+      "required": [
+        "candidateBytesCarryConstructionExecutions",
+        "detachedPermitsCannotCloseIdentity",
+        "rawGeometryWithoutAuthorityIsBlockoutOnly"
+      ],
+      "properties": {
+        "candidateBytesCarryConstructionExecutions": {
+          "const": true
+        },
+        "detachedPermitsCannotCloseIdentity": {
+          "const": true
+        },
+        "rawGeometryWithoutAuthorityIsBlockoutOnly": {
+          "const": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "proofDigest": {
+      "$ref": "common.schema.json#/$defs/digest"
+    }
+  },
+  "$defs": {
+    "execution": {
+      "type": "object",
+      "required": [
+        "schema",
+        "partId",
+        "rootScopeId",
+        "scopeId",
+        "sourceSha256",
+        "vocabulary",
+        "operation",
+        "vocabularyDigest",
+        "effectiveVocabularyDigest",
+        "mechanicalDecompositionDigest",
+        "permitDigest",
+        "authorityDigest",
+        "geometrySha256",
+        "executionDigest"
+      ],
+      "properties": {
+        "schema": {
+          "const": "refas.construction-execution/v1"
+        },
+        "partId": {
+          "$ref": "common.schema.json#/$defs/semanticId"
+        },
+        "rootScopeId": {
+          "$ref": "common.schema.json#/$defs/semanticId"
+        },
+        "scopeId": {
+          "$ref": "common.schema.json#/$defs/semanticId"
+        },
+        "sourceSha256": {
+          "$ref": "common.schema.json#/$defs/digest"
+        },
+        "vocabulary": {
+          "enum": [
+            "hard-surface",
+            "organic",
+            "mechanical-articulated",
+            "hybrid",
+            "unresolved"
+          ]
+        },
+        "operation": {
+          "enum": [
+            "hard-surface-shell",
+            "surface-network-parts",
+            "section-profile-loft-rigid",
+            "section-profile-loft-organic",
+            "assembly-decomposition"
+          ]
+        },
+        "vocabularyDigest": {
+          "$ref": "common.schema.json#/$defs/digest"
+        },
+        "effectiveVocabularyDigest": {
+          "$ref": "common.schema.json#/$defs/digest"
+        },
+        "mechanicalDecompositionDigest": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "common.schema.json#/$defs/digest"
+            }
+          ]
+        },
+        "permitDigest": {
+          "$ref": "common.schema.json#/$defs/digest"
+        },
+        "authorityDigest": {
+          "$ref": "common.schema.json#/$defs/digest"
+        },
+        "geometrySha256": {
+          "$ref": "common.schema.json#/$defs/digest"
+        },
+        "executionDigest": {
+          "$ref": "common.schema.json#/$defs/digest"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

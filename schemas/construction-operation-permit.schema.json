@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/construction-operation-permit.schema.json",
+  "title": "RefAs construction operation permit",
+  "type": "object",
+  "required": [
+    "schema",
+    "rootScopeId",
+    "scopeId",
+    "sourceSha256",
+    "vocabulary",
+    "operation",
+    "vocabularyDigest",
+    "effectiveVocabularyDigest",
+    "mechanicalDecompositionDigest",
+    "evidenceRefs",
+    "policy",
+    "permitDigest"
+  ],
+  "properties": {
+    "schema": {
+      "const": "refas.construction-operation-permit/v1"
+    },
+    "rootScopeId": {
+      "$ref": "common.schema.json#/$defs/semanticId"
+    },
+    "scopeId": {
+      "$ref": "common.schema.json#/$defs/semanticId"
+    },
+    "sourceSha256": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "vocabulary": {
+      "enum": [
+        "hard-surface",
+        "organic",
+        "mechanical-articulated",
+        "hybrid",
+        "unresolved"
+      ]
+    },
+    "operation": {
+      "enum": [
+        "hard-surface-shell",
+        "surface-network-parts",
+        "section-profile-loft-rigid",
+        "section-profile-loft-organic",
+        "assembly-decomposition"
+      ]
+    },
+    "vocabularyDigest": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "effectiveVocabularyDigest": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "mechanicalDecompositionDigest": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "common.schema.json#/$defs/digest"
+        }
+      ]
+    },
+    "evidenceRefs": {
+      "$ref": "common.schema.json#/$defs/evidenceRefs"
+    },
+    "policy": {
+      "type": "object",
+      "required": [
+        "identityGeometryRequiresPermit",
+        "permitIsScopeSourceDecisionAndOperationBound",
+        "lowLevelPrimitivesDoNotImplyIdentityAuthority"
+      ],
+      "properties": {
+        "identityGeometryRequiresPermit": {
+          "const": true
+        },
+        "permitIsScopeSourceDecisionAndOperationBound": {
+          "const": true
+        },
+        "lowLevelPrimitivesDoNotImplyIdentityAuthority": {
+          "const": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "permitDigest": {
+      "$ref": "common.schema.json#/$defs/digest"
+    }
+  },
+  "additionalProperties": false
+}
