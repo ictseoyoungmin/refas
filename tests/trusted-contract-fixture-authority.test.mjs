@@ -29,30 +29,31 @@ async function sourceAt(root, {kind = 'photo-reference'} = {}) {
   };
 }
 
-test('public project initialization rejects every reserved contract-fixture acquisition kind', async (t) => {
+test('reserved fixture-looking source labels are inert public metadata', async (t) => {
   for (const kind of ['test-fixture', 'deterministic-project-fixture', 'synthetic-test-fixture']) {
-    const root = await fs.mkdtemp(path.join(os.tmpdir(), 'refas-fixture-reject-'));
+    const root = await fs.mkdtemp(path.join(os.tmpdir(), 'refas-fixture-inert-'));
     t.after(() => fs.rm(root, {recursive: true, force: true}));
     const source = await sourceAt(root, {kind});
-    await assert.rejects(
-      () => PublicApi.initProject(root, {projectId: `reject-${kind}`, source}),
-      /contract fixture acquisition kinds are runtime-internal/,
-    );
+    const state = await PublicApi.initProject(root, {projectId: `inert-${kind}`, source});
+    assert.equal(state.source.acquisition.kind, kind);
+    assert.equal(state.contractFixtureAuthority, undefined);
+    assert.equal(isTrustedContractFixtureProject(state), false);
   }
 });
 
-test('public source binding cannot mint fixture authority after project creation', async (t) => {
+test('public source binding preserves fixture-looking labels without minting authority', async (t) => {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), 'refas-fixture-bind-'));
   t.after(() => fs.rm(root, {recursive: true, force: true}));
-  await PublicApi.initProject(root, {projectId: 'fixture-bind-reject'});
+  await PublicApi.initProject(root, {projectId: 'fixture-bind-inert'});
   const source = await sourceAt(root, {kind: 'test-fixture'});
-  await assert.rejects(
-    () => PublicApi.bindSource(root, source),
-    /contract fixture acquisition kinds are runtime-internal/,
-  );
+  await PublicApi.bindSource(root, source);
+  const state = await PublicApi.loadProject(root);
+  assert.equal(state.source.acquisition.kind, 'test-fixture');
+  assert.equal(state.contractFixtureAuthority, undefined);
+  assert.equal(isTrustedContractFixtureProject(state), false);
 });
 
-test('source metadata relabeling does not create trusted fixture authority', async (t) => {
+test('source metadata relabeling cannot mint trusted fixture authority', async (t) => {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), 'refas-fixture-tamper-'));
   t.after(() => fs.rm(root, {recursive: true, force: true}));
   const source = await sourceAt(root);
@@ -65,9 +66,7 @@ test('source metadata relabeling does not create trusted fixture authority', asy
 
   const tampered = await PublicApi.loadProject(root);
   assert.equal(isTrustedContractFixtureProject(tampered), false);
-  const audit = await PublicApi.auditProject(root);
-  assert.equal(audit.valid, false);
-  assert.match(audit.errors.join('\n'), /contract fixture acquisition kinds are runtime-internal/);
+  assert.equal(tampered.contractFixtureAuthority, undefined);
 });
 
 test('trusted contract harness binds authority to exact source digest and stays outside public index', async (t) => {
@@ -93,4 +92,26 @@ test('trusted contract harness binds authority to exact source digest and stays 
   const drifted = structuredClone(state);
   drifted.source.sha256 = 'f'.repeat(64);
   assert.equal(isTrustedContractFixtureProject(drifted), false);
+});
+
+test('forged fixture authority with source-digest drift fails closed', async (t) => {
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'refas-fixture-forge-'));
+  t.after(() => fs.rm(root, {recursive: true, force: true}));
+  const source = await sourceAt(root);
+  const state = await initTrustedContractFixtureProject(root, {
+    projectId: 'trusted-fixture-forge',
+    source,
+    fixtureId: 'trusted-regression',
+  });
+
+  const projectFile = path.join(root, '.refas', 'project.json');
+  const forged = JSON.parse(await fs.readFile(projectFile, 'utf8'));
+  forged.contractFixtureAuthority.sourceSha256 = 'e'.repeat(64);
+  await fs.writeFile(projectFile, `${JSON.stringify(forged, null, 2)}\n`);
+
+  const loaded = await PublicApi.loadProject(root);
+  assert.equal(isTrustedContractFixtureProject(loaded), false);
+  const audit = await PublicApi.auditProject(root);
+  assert.equal(audit.valid, false);
+  assert.match(audit.errors.join('\n'), /contract fixture authority/);
 });
