@@ -4,57 +4,161 @@
   "title": "RefAs early resemblance neutral-clay barrier",
   "type": "object",
   "required": [
-    "schema", "scopeId", "sourceSha256", "hierarchyDigest", "assetSha256",
-    "signatureEvidence", "clayRenderReport", "signatureSetDigest", "signatureEvidenceDigest",
-    "clayRenderReportDigest", "clayPresetId", "clayPresetDigest", "requiredSignatureIds",
-    "blockingSignatureIds", "detailSignatureIds", "verdict", "findings", "evidenceRefs",
-    "policy", "barrierDigest"
+    "schema",
+    "scopeId",
+    "sourceSha256",
+    "hierarchyDigest",
+    "assetSha256",
+    "signatureEvidence",
+    "clayRenderReport",
+    "signatureSetDigest",
+    "signatureEvidenceDigest",
+    "clayRenderReportDigest",
+    "clayPresetId",
+    "clayPresetDigest",
+    "requiredSignatureIds",
+    "blockingSignatureIds",
+    "detailSignatureIds",
+    "verdict",
+    "findings",
+    "evidenceRefs",
+    "policy",
+    "barrierDigest"
   ],
   "properties": {
-    "schema": {"const": "refas.early-resemblance-barrier/v1"},
-    "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
-    "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
-    "hierarchyDigest": {"$ref": "common.schema.json#/$defs/digest"},
-    "assetSha256": {"$ref": "common.schema.json#/$defs/digest"},
-    "signatureEvidence": {"$ref": "perceptual-signature-evidence.schema.json"},
-    "clayRenderReport": {"$ref": "pbr-render-report.schema.json"},
-    "signatureSetDigest": {"$ref": "common.schema.json#/$defs/digest"},
-    "signatureEvidenceDigest": {"$ref": "common.schema.json#/$defs/digest"},
-    "clayRenderReportDigest": {"$ref": "common.schema.json#/$defs/digest"},
-    "clayPresetId": {"const": "refas-neutral-clay-v1"},
-    "clayPresetDigest": {"$ref": "common.schema.json#/$defs/digest"},
-    "requiredSignatureIds": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "common.schema.json#/$defs/semanticId"}},
-    "blockingSignatureIds": {"type": "array", "uniqueItems": true, "items": {"$ref": "common.schema.json#/$defs/semanticId"}},
-    "detailSignatureIds": {"type": "array", "uniqueItems": true, "items": {"$ref": "common.schema.json#/$defs/semanticId"}},
-    "verdict": {"enum": ["PROCEED", "REWORK", "HOLD"]},
-    "findings": {"type": "array", "items": {"type": "object"}},
-    "evidenceRefs": {"$ref": "common.schema.json#/$defs/evidenceRefs"},
+    "schema": {
+      "const": "refas.early-resemblance-barrier/v1"
+    },
+    "scopeId": {
+      "$ref": "common.schema.json#/$defs/semanticId"
+    },
+    "sourceSha256": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "hierarchyDigest": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "assetSha256": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "signatureEvidence": {
+      "$ref": "perceptual-signature-evidence.schema.json"
+    },
+    "clayRenderReport": {
+      "$ref": "pbr-render-report.schema.json"
+    },
+    "signatureSetDigest": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "signatureEvidenceDigest": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "clayRenderReportDigest": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "clayPresetId": {
+      "const": "refas-neutral-clay-v1"
+    },
+    "clayPresetDigest": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "requiredSignatureIds": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "common.schema.json#/$defs/semanticId"
+      }
+    },
+    "blockingSignatureIds": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "common.schema.json#/$defs/semanticId"
+      }
+    },
+    "detailSignatureIds": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "common.schema.json#/$defs/semanticId"
+      }
+    },
+    "verdict": {
+      "enum": [
+        "PROCEED",
+        "REWORK",
+        "HOLD"
+      ]
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "evidenceRefs": {
+      "$ref": "common.schema.json#/$defs/evidenceRefs"
+    },
     "policy": {
       "type": "object",
       "required": [
-        "neutralClayPresentationRequired", "macroAndIdentityRequiredForProceed",
-        "detailSignaturesDoNotBlockEarlyAdmission", "noNumericAggregateScore",
-        "singleViewIouExcluded", "multiviewIouRemainsCorrespondenceOnly",
-        "proceedOnlyAuthorizesDownstreamDetail", "proceedDoesNotPassVisualReview",
-        "proceedDoesNotCertify", "holdDoesNotInventRepairOwner",
+        "neutralClayPresentationRequired",
+        "macroAndIdentityRequiredForProceed",
+        "requiredSignaturesMustCiteClayOutput",
+        "detailSignaturesDoNotBlockEarlyAdmission",
+        "noNumericAggregateScore",
+        "singleViewIouExcluded",
+        "multiviewIouRemainsCorrespondenceOnly",
+        "proceedOnlyAuthorizesDownstreamDetail",
+        "proceedDoesNotPassVisualReview",
+        "proceedDoesNotCertify",
+        "holdDoesNotInventRepairOwner",
         "mismatchFindingsRemainOwnerAuthoritative"
       ],
       "properties": {
-        "neutralClayPresentationRequired": {"const": true},
-        "macroAndIdentityRequiredForProceed": {"const": true},
-        "detailSignaturesDoNotBlockEarlyAdmission": {"const": true},
-        "noNumericAggregateScore": {"const": true},
-        "singleViewIouExcluded": {"const": true},
-        "multiviewIouRemainsCorrespondenceOnly": {"const": true},
-        "proceedOnlyAuthorizesDownstreamDetail": {"const": true},
-        "proceedDoesNotPassVisualReview": {"const": true},
-        "proceedDoesNotCertify": {"const": true},
-        "holdDoesNotInventRepairOwner": {"const": true},
-        "mismatchFindingsRemainOwnerAuthoritative": {"const": true}
+        "neutralClayPresentationRequired": {
+          "const": true
+        },
+        "macroAndIdentityRequiredForProceed": {
+          "const": true
+        },
+        "detailSignaturesDoNotBlockEarlyAdmission": {
+          "const": true
+        },
+        "noNumericAggregateScore": {
+          "const": true
+        },
+        "singleViewIouExcluded": {
+          "const": true
+        },
+        "multiviewIouRemainsCorrespondenceOnly": {
+          "const": true
+        },
+        "proceedOnlyAuthorizesDownstreamDetail": {
+          "const": true
+        },
+        "proceedDoesNotPassVisualReview": {
+          "const": true
+        },
+        "proceedDoesNotCertify": {
+          "const": true
+        },
+        "holdDoesNotInventRepairOwner": {
+          "const": true
+        },
+        "mismatchFindingsRemainOwnerAuthoritative": {
+          "const": true
+        },
+        "requiredSignaturesMustCiteClayOutput": {
+          "const": true
+        }
       },
       "additionalProperties": false
     },
-    "barrierDigest": {"$ref": "common.schema.json#/$defs/digest"}
+    "barrierDigest": {
+      "$ref": "common.schema.json#/$defs/digest"
+    }
   },
   "additionalProperties": false
 }
