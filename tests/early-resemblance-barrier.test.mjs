@@ -226,3 +226,26 @@ test('R04 fails closed on native presentation and source/hierarchy/candidate dri
   assert.equal(validateEarlyResemblanceBarrier(barrier, {hierarchyDigest: D('e')}).valid, false);
   assert.equal(validateEarlyResemblanceBarrier(barrier, {assetSha256: D('f')}).valid, false);
 });
+
+
+test('R04 required signatures must cite an exact neutral-clay output', () => {
+  const set = sourceSignatures();
+  const evidence = createPerceptualSignatureEvidence({
+    signatureSet: set,
+    assetSha256: ASSET,
+    observations: set.signatures.map((signature) => ({
+      signatureId: signature.id,
+      status: 'match',
+      candidateObservation: `Candidate observation for ${signature.id}.`,
+      comparisonConclusion: `Comparison conclusion for ${signature.id}.`,
+      evidenceRefs: signature.importance === 'detail'
+        ? ['source/reference.png']
+        : ['source/reference.png'],
+    })),
+    evidenceRefs: ['source/reference.png'],
+  });
+  assert.throws(
+    () => barrierFor(evidence),
+    /required perceptual signature .* must cite at least one exact neutral-clay render output/,
+  );
+});
