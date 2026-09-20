@@ -57,7 +57,6 @@ function normalizeRegisteredSourceViews(raw, {
   currentViewId = null,
   currentSourceSha256 = null,
   currentCandidateAssetSha256 = null,
-  resemblanceEvidence = null,
 } = {}) {
   if (raw == null) return [];
   if (!Array.isArray(raw)) throw new Error('registeredComparisons must be an array');
@@ -123,6 +122,7 @@ export function metricAuthority(metricId, {
   currentViewId = null,
   currentSourceSha256 = null,
   currentCandidateAssetSha256 = null,
+  resemblanceEvidence = null,
 } = {}) {
   const id = String(metricId ?? '').trim();
   if (!id) throw new Error('metricId is required');
