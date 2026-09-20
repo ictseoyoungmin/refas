@@ -47,7 +47,7 @@ async function makeProject(t, projectId = 'checkpoint-study') {
     width: 32,
     height: 24,
     authority: 'primary',
-    acquisition: {kind: 'test-fixture'},
+    acquisition: {kind: 'generated-contract-reference'},
   };
   await initTrustedContractFixtureProject(root, {projectId, source, fixtureId:`${projectId}-contract`});
   await fs.mkdir(path.join(root, 'model'), {recursive: true});
