@@ -25,6 +25,7 @@ import {
 } from './visual-review.mjs';
 import {validatePbrRenderReport} from './pbr-render-report.mjs';
 import {findComparisonContradictions, validateRegisteredComparison} from './registered-comparison.mjs';
+import {assertEarlyResemblanceAdmission} from './early-resemblance-barrier.mjs';
 import {
   checkpointGatePolicy,
   createCheckpointGateVerdict,
@@ -595,6 +596,65 @@ function certificateCore(certificate) {
   };
 }
 
+const CONTRACT_FIXTURE_ACQUISITIONS = new Set([
+  'test-fixture',
+  'deterministic-project-fixture',
+  'synthetic-test-fixture',
+]);
+
+function isContractFixtureSource(state) {
+  return CONTRACT_FIXTURE_ACQUISITIONS.has(String(state?.source?.acquisition?.kind ?? '').toLowerCase());
+}
+
+async function readCheckpointJsonArtifact(root, checkpoint, kind, label) {
+  const matching = (checkpoint?.artifactRefs ?? []).filter((artifact) => artifact.kind === kind);
+  if (matching.length !== 1) throw new Error(`${label} requires exactly one ${kind} artifact`);
+  const artifact = matching[0];
+  const resolved = await assertExistingFileInside(root, artifact.path, `${label} ${kind} artifact`);
+  if (resolved.stat.size !== artifact.sizeBytes || await sha256File(resolved.realFile) !== artifact.sha256) {
+    throw new Error(`${label} ${kind} artifact bytes are stale or mismatched`);
+  }
+  return {artifact, value: await readJson(resolved.realFile)};
+}
+
+async function ensureEarlyResemblanceAdmission(root, state, capability, scopeId, lineage) {
+  if (isContractFixtureSource(state)) return;
+  if (capabilityIndex(capability) < capabilityIndex('surface-topology')) return;
+
+  const shapeCheckpoint = [...lineage].reverse().find((checkpoint) =>
+    checkpoint.capability === 'shape-reconstruction' && scopeContains(checkpoint.scopeId, scopeId));
+  if (!shapeCheckpoint) throw new Error(`${capability} requires a trustworthy shape-reconstruction checkpoint before early resemblance admission`);
+
+  const {value: barrier} = await readCheckpointJsonArtifact(
+    root,
+    shapeCheckpoint,
+    'early-resemblance-barrier',
+    `${capability} early resemblance admission`,
+  );
+
+  const candidateMatches = (shapeCheckpoint.artifactRefs ?? []).filter((artifact) =>
+    artifact.kind === 'glb' && artifact.sha256 === barrier.assetSha256);
+  if (candidateMatches.length !== 1) {
+    throw new Error(`${capability} early resemblance barrier does not bind exactly one shape-reconstruction candidate GLB`);
+  }
+
+  const hierarchyCheckpoint = [...lineage].reverse().find((checkpoint) =>
+    checkpoint.capability === 'visual-hierarchy' && scopeContains(checkpoint.scopeId, scopeId));
+  if (!hierarchyCheckpoint) throw new Error(`${capability} early resemblance admission requires current visual-hierarchy lineage`);
+  const {value: hierarchy} = await readCheckpointJsonArtifact(
+    root,
+    hierarchyCheckpoint,
+    'visual-hierarchy',
+    `${capability} early resemblance admission`,
+  );
+
+  assertEarlyResemblanceAdmission(barrier, {
+    sourceSha256: state.source.sha256,
+    hierarchyDigest: hierarchy.hierarchyDigest,
+    assetSha256: candidateMatches[0].sha256,
+  });
+}
+
 async function ensurePrerequisites(root, state, capability, scopeId, lineage) {
   try {
     await verifySource(root, normalizeSourceManifest(state.source));
@@ -623,6 +683,8 @@ async function ensurePrerequisites(root, state, capability, scopeId, lineage) {
       checkpoint.capability === dependency && scopeContains(checkpoint.scopeId, scopeId));
     if (!found) throw new Error(`${capability} requires a trustworthy ${dependency} checkpoint for ${scopeId}`);
   }
+
+  await ensureEarlyResemblanceAdmission(root, state, capability, scopeId, lineage);
 }
 
 function nextInvalidated(state) {
