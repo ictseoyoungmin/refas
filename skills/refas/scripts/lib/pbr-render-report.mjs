@@ -5,6 +5,14 @@ export const PBR_RENDERER_FAMILIES = Object.freeze([
   'blender-cycles', 'blender-eevee', 'threejs-webgl', 'filament', 'gltf-sample-viewer', 'vtk', 'other',
 ]);
 
+export const NEUTRAL_CLAY_RENDERER_PROFILE = deepFreeze({
+  family: 'other',
+  name: 'RefAs Independent PBR',
+  version: '1.0.0',
+  backend: 'numpy-cook-torrance-headless',
+  independentProcess: true,
+});
+
 export const NEUTRAL_CLAY_LIGHTING_RIG = deepFreeze({
   lights: 'three-directional-calibrated-v1',
   keyIntensity: 2.8,
@@ -88,6 +96,7 @@ export function createPbrRenderReport({assetSha256, frameDigest, renderer, light
     };
     if (normalizedPresentation.presetId !== NEUTRAL_CLAY_PRESENTATION_PRESET.id) throw new Error('neutral-clay presentation presetId is not canonical');
     if (normalizedPresentation.presetDigest !== NEUTRAL_CLAY_PRESENTATION_PRESET_DIGEST) throw new Error('neutral-clay presentation preset digest mismatch');
+    if (digestJson(normalizedRenderer) !== digestJson(NEUTRAL_CLAY_RENDERER_PROFILE)) throw new Error('neutral-clay renderer profile is not canonical');
     const requiredViews = new Set(NEUTRAL_CLAY_REQUIRED_VIEW_IDS);
     const actualViews = new Set(normalizedOutputs.map((output) => output.viewId));
     const missingViews = [...requiredViews].filter((viewId) => !actualViews.has(viewId));
