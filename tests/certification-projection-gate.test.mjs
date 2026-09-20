@@ -243,7 +243,7 @@ async function commitCertification(root, source, {projection='none'}={}) {
   const reportRef = await contentReference(reportPath, {kind:'render-report', root});
   const comparison = {
     schema:'refas.registered-comparison/v1', claimScope:'critique-evidence-only',
-    source:{sha256:source.sha256, manifestSha256:'f'.repeat(64)},
+    source:{sha256:source.sha256, manifestSha256:'f'.repeat(64), acquisitionKind:source.acquisition?.kind ?? ''},
     render:{assetSha256:asset.sha256, frameId:'hero', frameSha256:frames[0].sha256, reportSha256:reportRef.sha256},
     registration:{digest:'a'.repeat(64), fileSha256:'b'.repeat(64), model:'test', metrics:{}},
     hierarchy:{digest:'c'.repeat(64), fileSha256:'d'.repeat(64)}, projectionEvidence:[],
