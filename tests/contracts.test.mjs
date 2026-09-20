@@ -2,7 +2,9 @@ import assert from 'node:assert/strict';
 import {test} from 'node:test';
 
 import {
+  createConstructionOperationPermit,
   createConstructionQuality,
+  createConstructionVocabulary,
   createObservation,
   createPbrRenderReport,
   createReferenceRegistration,
@@ -40,7 +42,29 @@ test('construction quality keeps generic primitive candidates at blockout', () =
   assert.throws(() => createConstructionQuality({...base, claim: 'identity-bearing', constructionFamilies: ['generic-primitive']}), /primitive-only geometry is blockout/);
   const blockout = createConstructionQuality({...base, claim: 'blockout', constructionFamilies: ['generic-primitive']});
   assert.deepEqual(validateConstructionQuality(blockout), {valid: true, errors: []});
-  const closed = createConstructionQuality({...base, claim: 'identity-bearing', constructionFamilies: ['landmark-cage', 'section-profile-loft']});
+  const vocabulary = createConstructionVocabulary({
+    scopeId: 'whole',
+    sourceSha256: SOURCE_DIGEST,
+    vocabulary: 'hard-surface',
+    cues: [{
+      id: 'controlled-sections',
+      description: 'The identity-bearing fixture requires controlled rigid section transitions.',
+      evidenceRefs: ['source/reference.png'],
+    }],
+    evidenceRefs: ['source/reference.png'],
+  });
+  const permit = createConstructionOperationPermit({
+    decision: vocabulary,
+    scopeId: 'whole',
+    operation: 'section-profile-loft-rigid',
+  });
+  const closed = createConstructionQuality({
+    ...base,
+    claim: 'identity-bearing',
+    constructionFamilies: ['landmark-cage', 'section-profile-loft'],
+    constructionVocabulary: vocabulary,
+    constructionPermits: [permit],
+  });
   assert.deepEqual(validateConstructionQuality(closed), {valid: true, errors: []});
   const tampered = structuredClone(closed); tampered.policy.validationVolumeCannotReplaceConstructionQuality = false;
   assert.equal(validateConstructionQuality(tampered).valid, false);
