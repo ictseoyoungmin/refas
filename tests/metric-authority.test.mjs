@@ -21,7 +21,7 @@ function registeredComparison({sourceSha256, registrationDigest, candidateAssetS
   const report = {
     schema:'refas.registered-comparison/v1',
     claimScope:'critique-evidence-only',
-    source:{sha256:sourceSha256,manifestSha256:D(salt),acquisitionKind:'synthetic-test-fixture'},
+    source:{sha256:sourceSha256,manifestSha256:D(salt),acquisitionKind:''},
     render:{assetSha256:candidateAssetSha256,frameId:'hero',frameSha256:D(H((Number.parseInt(salt,16)+1).toString(16))),reportSha256:D(H((Number.parseInt(salt,16)+2).toString(16)))},
     registration:{digest:registrationDigest,fileSha256:D(H((Number.parseInt(salt,16)+3).toString(16))),model:'affine',metrics:{}},
     hierarchy:{digest:D(H((Number.parseInt(salt,16)+4).toString(16))),fileSha256:D(H((Number.parseInt(salt,16)+5).toString(16)))},
