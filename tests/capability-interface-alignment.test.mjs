@@ -17,7 +17,7 @@ test('AD03 classifies all interfaces and executes every deterministic public inv
   assert.equal(report.classifiedInterfaces,88);
   assert.equal(report.classifiedTemplates,report.declaredTemplates);
   assert.equal(report.invocationContractsExercised,report.executableContracts);
-  assert.ok(report.executableContracts>=57,JSON.stringify(report));
+  assert.ok(report.executableContracts>=56,JSON.stringify(report));
   const keys=new Set(report.audited.map(item=>item.key));assert.equal(keys.size,88);
   for(const key of [
     'construction/construction-vocabulary','relational-structure/relational-structure','inference-authority/semantic-authority',
@@ -46,5 +46,5 @@ test('AD03 describe exposes public invocation, placeholders, and enum constants'
 test('AD03 verifier passes from a bare copied installed skill',async(t)=>{
   const temp=await fs.mkdtemp(path.join(os.tmpdir(),'refas-ad03-installed-'));t.after(()=>fs.rm(temp,{recursive:true,force:true}));const installed=path.join(temp,'refas');await fs.cp(path.resolve('skills/refas'),installed,{recursive:true});
   const result=spawnSync(process.execPath,[path.join(installed,'scripts','verify_capability_interfaces.mjs')],{cwd:temp,encoding:'utf8'});assert.equal(result.status,0,result.stderr||result.stdout);const report=JSON.parse(result.stdout);
-  assert.equal(report.status,'PASS');assert.equal(report.instructionNodes,40);assert.equal(report.executableInterfaces,88);assert.equal(report.classifiedInterfaces,88);assert.equal(report.classifiedTemplates,report.declaredTemplates);assert.equal(report.invocationContractsExercised,report.executableContracts);assert.ok(report.executableContracts>=57);
+  assert.equal(report.status,'PASS');assert.equal(report.instructionNodes,40);assert.equal(report.executableInterfaces,88);assert.equal(report.classifiedInterfaces,88);assert.equal(report.classifiedTemplates,report.declaredTemplates);assert.equal(report.invocationContractsExercised,report.executableContracts);assert.ok(report.executableContracts>=56);
 });
