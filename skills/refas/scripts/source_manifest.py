@@ -53,9 +53,7 @@ def main() -> None:
     if not isinstance(acquisition, dict):
         raise ValueError("acquisition must be a JSON object")
     kind = str(acquisition.get("kind", "")).strip()
-    if not kind:
-        raise ValueError("acquisition.kind is required")
-    if kind.lower() in RESERVED_CONTRACT_FIXTURE_ACQUISITIONS:
+    if kind and kind.lower() in RESERVED_CONTRACT_FIXTURE_ACQUISITIONS:
         raise ValueError("contract fixture acquisition kinds are runtime-internal and cannot be supplied through public source manifests")
     manifest = {
         "schema": "refas.source-manifest/v1",
