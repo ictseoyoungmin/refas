@@ -1213,7 +1213,7 @@
             },
             "template": null,
             "inputContract": "validated construction vocabulary + matching surface-network permit + source-bound surface network",
-            "outputSchema": "refas.surface-network-parts/v1",
+            "outputSchema": null,
             "validator": null,
             "minimumInvocation": "references/construction.md",
             "example": null,
@@ -1222,7 +1222,8 @@
               "schema": "refas.capability-invocation/v1",
               "verification": "structural",
               "reason": "permit-consuming high-level geometry wrapper"
-            }
+            },
+            "note": "The permitted wrapper returns a geometry/parts bundle carrying constructionAuthority rather than a persisted public schema artifact. Candidate serialization turns that authority into refas.construction-execution/v1 evidence."
           },
           {
             "id": "section-profile-loft",
