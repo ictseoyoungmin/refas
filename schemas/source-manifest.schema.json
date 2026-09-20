@@ -3,17 +3,65 @@
   "$id": "https://refas.dev/schemas/source-manifest.schema.json",
   "title": "RefAs primary source manifest",
   "type": "object",
-  "required": ["schema", "id", "path", "sha256", "sizeBytes", "width", "height", "authority", "acquisition"],
+  "required": [
+    "schema",
+    "id",
+    "path",
+    "sha256",
+    "sizeBytes",
+    "width",
+    "height",
+    "authority",
+    "acquisition"
+  ],
   "properties": {
-    "schema": {"const": "refas.source-manifest/v1"},
-    "id": {"$ref": "common.schema.json#/$defs/semanticId"},
-    "path": {"$ref": "common.schema.json#/$defs/relativePath"},
-    "sha256": {"$ref": "common.schema.json#/$defs/digest"},
-    "sizeBytes": {"type": "integer", "minimum": 1},
-    "width": {"type": "integer", "minimum": 1},
-    "height": {"type": "integer", "minimum": 1},
-    "authority": {"const": "primary"},
-    "acquisition": {"type": "object"}
+    "schema": {
+      "const": "refas.source-manifest/v1"
+    },
+    "id": {
+      "$ref": "common.schema.json#/$defs/semanticId"
+    },
+    "path": {
+      "$ref": "common.schema.json#/$defs/relativePath"
+    },
+    "sha256": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "sizeBytes": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "width": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "height": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "authority": {
+      "const": "primary"
+    },
+    "acquisition": {
+      "type": "object",
+      "required": [
+        "kind"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "minLength": 1,
+          "not": {
+            "enum": [
+              "test-fixture",
+              "deterministic-project-fixture",
+              "synthetic-test-fixture"
+            ]
+          }
+        }
+      },
+      "additionalProperties": true
+    }
   },
   "additionalProperties": false
 }
