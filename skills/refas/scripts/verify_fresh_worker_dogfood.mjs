@@ -6,7 +6,8 @@ import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 
-import {CAPABILITY_ORDER} from './lib/index.mjs';
+import {CAPABILITY_ORDER, digestBytes} from './lib/index.mjs';
+import {initTrustedContractFixtureProject} from './lib/contract-fixture-project.mjs';
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_SKILL_ROOT = path.dirname(SCRIPT_DIR);
@@ -108,6 +109,39 @@ export async function runFreshWorkerDogfood({skillRoot = DEFAULT_SKILL_ROOT, kee
   }
   assert.ok(Object.values(absentRepositorySurfaces).every(Boolean), 'temporary fresh-worker root contains repository-only surfaces');
 
+  const ppm = [
+    'P3',
+    '8 8',
+    '255',
+    ...Array.from({length: 64}, (_, index) => {
+      const x = index % 8;
+      const y = Math.floor(index / 8);
+      return x >= 2 && x <= 5 && y >= 1 && y <= 6 ? '210 170 90' : '30 35 42';
+    }),
+    '',
+  ].join('\n');
+  const sourceBytes = Buffer.from(ppm);
+  const sourceDir = path.join(projectRoot, 'source');
+  await fs.mkdir(sourceDir, {recursive: true});
+  await fs.writeFile(path.join(sourceDir, 'reference.ppm'), sourceBytes);
+  const sourceManifest = {
+    schema: 'refas.source-manifest/v1',
+    id: 'primary-reference',
+    path: 'source/reference.ppm',
+    sha256: digestBytes(sourceBytes),
+    sizeBytes: sourceBytes.length,
+    width: 8,
+    height: 8,
+    authority: 'primary',
+    acquisition: {kind: 'generated-contract-reference', origin: 'AD05 trusted verifier bootstrap'},
+  };
+  await fs.writeFile(path.join(sourceDir, 'source-manifest.json'), `${JSON.stringify(sourceManifest, null, 2)}\n`);
+  await initTrustedContractFixtureProject(projectRoot, {
+    projectId: 'fresh-worker-public-contract',
+    source: sourceManifest,
+    fixtureId: 'ad05-fresh-worker',
+  });
+
   const installedWorker = path.join(installedRoot, 'scripts', 'fresh_worker_dogfood_worker.mjs');
   const accessLoader = path.join(installedRoot, 'scripts', 'fresh_worker_access_loader.mjs');
   const accessPreload = path.join(installedRoot, 'scripts', 'fresh_worker_access_preload.mjs');
@@ -129,6 +163,7 @@ export async function runFreshWorkerDogfood({skillRoot = DEFAULT_SKILL_ROOT, kee
     '--skill-root', installedRoot,
     '--project', projectRoot,
     '--report', reportPath,
+    '--trusted-fixture-preinitialized',
   ], {
     cwd: tempRoot,
     encoding: 'utf8',
