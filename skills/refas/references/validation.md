@@ -58,7 +58,7 @@ Each observation records what the source signature says, what the current candid
 
 This artifact is resemblance evidence, not a visual gate. A `match` cannot set final visual PASS or certify the asset. R03 does not introduce a universal weighted similarity score. A later early-resemblance barrier may consume these source/candidate observations, but it must preserve source identity and typed-finding authority rather than collapse them into one opaque number.
 
-Numeric `RESEMBLANCE_SIGNAL` authority is fail-closed unless current perceptual-signature evidence is bound to the same source and candidate. In R03 such a signal is diagnostic/resemblance-only: it cannot become an optimization objective, rank candidates, or certify closure. Single-view IoU remains forbidden; multiview IoU remains correspondence/diagnostic-only.
+Numeric `RESEMBLANCE_SIGNAL` authority is fail-closed unless current perceptual-signature evidence is explicitly bound to the same current source and candidate. In R03 such a signal is diagnostic-only: it cannot itself be used as resemblance evidence, become an optimization objective, rank candidates, pass a gate, or certify closure. The structured perceptual-signature observations are the resemblance evidence. Single-view IoU remains forbidden; multiview IoU remains correspondence/diagnostic-only.
 
 ## Registered comparison evidence
 
