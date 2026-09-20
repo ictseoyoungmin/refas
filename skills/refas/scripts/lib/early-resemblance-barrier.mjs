@@ -57,6 +57,12 @@ export function createEarlyResemblanceBarrier({
 
   const required = signatureEvidence.observations.filter((observation) => REQUIRED_IMPORTANCE.has(observation.importance));
   if (required.length === 0) throw new Error('early resemblance barrier requires at least one macro or identity signature');
+  const clayOutputPaths = new Set((clayRenderReport.outputs ?? []).map((output) => output.path));
+  for (const observation of required) {
+    if (!(observation.evidenceRefs ?? []).some((ref) => clayOutputPaths.has(ref))) {
+      throw new Error(`required perceptual signature ${observation.signatureId} must cite at least one exact neutral-clay render output`);
+    }
+  }
 
   const mismatches = required.filter((observation) => observation.status === 'mismatch');
   const insufficient = required.filter((observation) => observation.status === 'insufficient');
@@ -86,6 +92,7 @@ export function createEarlyResemblanceBarrier({
     policy: {
       neutralClayPresentationRequired: true,
       macroAndIdentityRequiredForProceed: true,
+      requiredSignaturesMustCiteClayOutput: true,
       detailSignaturesDoNotBlockEarlyAdmission: true,
       noNumericAggregateScore: true,
       singleViewIouExcluded: true,
