@@ -1291,6 +1291,17 @@ export async function auditProject(root) {
     } catch (error) {
       errors.push(`source integrity: ${error.message}`);
     }
+    if (state.head && byId.has(state.head) && !isContractFixtureSource(state)) {
+      const headCheckpoint = byId.get(state.head);
+      if (capabilityIndex(headCheckpoint.capability) >= capabilityIndex('surface-topology')) {
+        try {
+          const lineage = checkpointLineage(checkpoints, state.head);
+          await ensureEarlyResemblanceAdmission(root, state, headCheckpoint.capability, headCheckpoint.scopeId, lineage);
+        } catch (error) {
+          errors.push(`early resemblance admission: ${error.message}`);
+        }
+      }
+    }
   } else {
     warnings.push('primary source is not bound');
   }
@@ -1336,6 +1347,15 @@ export async function assessCertification(root) {
   let inspection = {visualReview: null, visualReviewArtifact: null};
   if (state.head) {
     const head = await loadCheckpoint(root, state.head);
+    if (!isContractFixtureSource(state) && capabilityIndex(head.capability) >= capabilityIndex('surface-topology')) {
+      try {
+        const checkpoints = await listCheckpoints(root);
+        const lineage = checkpointLineage(checkpoints, state.head);
+        await ensureEarlyResemblanceAdmission(root, state, head.capability, head.scopeId, lineage);
+      } catch (error) {
+        errors.push(`early resemblance admission: ${error.message}`);
+      }
+    }
     inspection = await inspectCertificationHead(root, state, head);
     errors.push(...inspection.errors);
   }
