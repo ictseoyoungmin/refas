@@ -58,7 +58,9 @@ For a real source, shape reconstruction may checkpoint a candidate even when its
 - current R03 perceptual-signature evidence;
 - the canonical neutral-clay render report for that same candidate;
 
-and the runtime-derived barrier verdict is `PROCEED`.
+and the runtime-derived barrier verdict is `PROCEED`. The shape checkpoint must also retain the exact neutral-clay render report and each report output byte cited by that barrier; required R03 macro/identity observations must cite at least one of those exact outputs, and all resemblance evidence refs must remain bound in current lineage.
+
+`resume` mirrors this admission rule: `HOLD` returns `GATHER_RESEMBLANCE_EVIDENCE`, `REWORK` returns `REPORT_RESEMBLANCE_FINDINGS`, and `PROCEED` alone advances to the next semantic capability.
 
 This is an admission rule, not certification. A later mismatch can still reopen shape reconstruction, and final visual review/certification remain independently authoritative.
 
