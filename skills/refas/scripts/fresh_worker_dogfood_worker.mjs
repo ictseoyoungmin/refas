@@ -311,16 +311,58 @@ async function main() {
   const sourceManifest = JSON.parse(await fs.readFile(sourceManifestPath, 'utf8'));
   const sourceManifestRef = await writeJsonArtifact('source/source-manifest.json', sourceManifest, 'source-manifest');
 
-  recordSymbol('createCylinder');
-  recordSymbol('partsToGlb');
-  const candidateMesh = API.createCylinder({
-    center: [0, -0.6, 0],
-    axis: [0, 1, 0],
-    radius: 0.65,
-    height: 1.2,
-    segments: 24,
-    role: 'ad05-public-contract-cylinder',
+  const constructionVocabulary = (await invokeTemplateContract('construction', 'construction-vocabulary', {
+    values: {sourceSha256: sourceManifest.sha256},
+    mutate(input) {
+      input.evidenceRefs = [sourceManifest.path];
+      input.cues = [{
+        id: 'fixture-designed-boundaries',
+        description: 'The public-contract fixture uses an explicitly selected rigid manufactured-form vocabulary for this construction path.',
+        evidenceRefs: [sourceManifest.path],
+      }];
+      return input;
+    },
+  })).output;
+  const constructionVocabularyRef = await writeJsonArtifact('model/construction-vocabulary.json', constructionVocabulary, 'construction-vocabulary');
+
+  const permitDiscovery = await discoverInterface('construction', 'construction-operation-permit');
+  const permitSymbol = permitDiscovery.entry.library?.symbol;
+  if (!permitSymbol) throw new Error('construction-operation-permit public library symbol is not discoverable');
+  recordSymbol(permitSymbol);
+  const constructionPermit = await API[permitSymbol]({
+    decision: constructionVocabulary,
+    scopeId: 'whole',
+    operation: 'hard-surface-shell',
+    evidenceRefs: [sourceManifest.path],
   });
+  if (permitDiscovery.entry.outputSchema && constructionPermit?.schema !== permitDiscovery.entry.outputSchema) {
+    throw new Error('construction-operation-permit output schema mismatch');
+  }
+  if (permitDiscovery.entry.validator?.library) {
+    recordSymbol(permitDiscovery.entry.validator.library);
+    const permitValidation = await API[permitDiscovery.entry.validator.library](
+      constructionPermit,
+      constructionVocabulary,
+      {scopeId: 'whole', operation: 'hard-surface-shell'},
+    );
+    if (permitValidation?.valid !== true) {
+      throw new Error(`construction-operation-permit validator rejected output: ${(permitValidation?.errors ?? []).join('; ')}`);
+    }
+  }
+  const constructionPermitRef = await writeJsonArtifact('model/construction-operation-permit.json', constructionPermit, 'construction-operation-permit');
+
+  const hardSurfaceDiscovery = await discoverInterface('construction', 'hard-surface-shell');
+  const hardSurfaceSymbol = hardSurfaceDiscovery.entry.library?.symbol;
+  if (hardSurfaceSymbol !== 'createPermittedHardSurfaceShell') throw new Error('canonical hard-surface interface is not permit-consuming');
+  recordSymbol(hardSurfaceSymbol);
+  const hardSurfaceSpec = JSON.parse(await readSkillText('assets/templates/hard-surface-spec.json'));
+  recordUnique(ledger.templatesLoaded, 'assets/templates/hard-surface-spec.json');
+  const candidateMesh = await API[hardSurfaceSymbol]({
+    decision: constructionVocabulary,
+    permit: constructionPermit,
+    spec: hardSurfaceSpec,
+  });
+  recordSymbol('partsToGlb');
   const candidateBytes = API.partsToGlb({
     assetId: 'ad05-public-contract-candidate',
     name: 'AD05 Public Contract Candidate',
@@ -328,6 +370,26 @@ async function main() {
     materials: {fixture: {baseColor: [0.82, 0.64, 0.24, 1], metallic: 0.15, roughness: 0.48}},
   });
   const candidateRef = await writeBytesArtifact('model/candidate.glb', candidateBytes, 'glb');
+
+  const proofDiscovery = await discoverInterface('construction', 'construction-execution-proof');
+  const proofSymbol = proofDiscovery.entry.library?.symbol;
+  if (proofSymbol !== 'createConstructionExecutionProof') throw new Error('construction execution proof is not discoverable');
+  recordSymbol(proofSymbol);
+  const constructionExecutionProof = await API[proofSymbol]({
+    assetBytes: candidateBytes,
+    decision: constructionVocabulary,
+    permits: [constructionPermit],
+    evidenceRefs: [sourceManifest.path],
+  });
+  recordSymbol(proofDiscovery.entry.validator.library);
+  const proofValidation = await API[proofDiscovery.entry.validator.library](
+    constructionExecutionProof,
+    constructionVocabulary,
+    [constructionPermit],
+    {assetSha256: candidateRef.sha256},
+  );
+  if (proofValidation?.valid !== true) throw new Error(`construction execution proof validator rejected output: ${(proofValidation?.errors ?? []).join('; ')}`);
+  const constructionExecutionProofRef = await writeJsonArtifact('model/construction-execution-proof.json', constructionExecutionProof, 'construction-execution-proof');
 
   const frameTemplate = JSON.parse(await readSkillText('assets/templates/canonical-object-frame.json'));
   recordUnique(ledger.templatesLoaded, 'assets/templates/canonical-object-frame.json');
@@ -425,45 +487,6 @@ async function main() {
   })).output;
   const spatialRef = await writeJsonArtifact('model/spatial-hypotheses.json', spatialHypotheses, 'spatial-hypotheses');
 
-  const constructionVocabulary = (await invokeTemplateContract('construction', 'construction-vocabulary', {
-    values: {sourceSha256: sourceManifest.sha256},
-    mutate(input) {
-      input.evidenceRefs = [sourceManifest.path];
-      input.cues = [{
-        id: 'fixture-designed-boundaries',
-        description: 'The public-contract fixture uses an explicitly selected rigid manufactured-form vocabulary for this construction path.',
-        evidenceRefs: [sourceManifest.path],
-      }];
-      return input;
-    },
-  })).output;
-  const constructionVocabularyRef = await writeJsonArtifact('model/construction-vocabulary.json', constructionVocabulary, 'construction-vocabulary');
-
-  const permitDiscovery = await discoverInterface('construction', 'construction-operation-permit');
-  const permitSymbol = permitDiscovery.entry.library?.symbol;
-  if (!permitSymbol) throw new Error('construction-operation-permit public library symbol is not discoverable');
-  recordSymbol(permitSymbol);
-  const constructionPermit = await API[permitSymbol]({
-    decision: constructionVocabulary,
-    scopeId: 'whole',
-    operation: 'hard-surface-shell',
-    evidenceRefs: [sourceManifest.path],
-  });
-  if (permitDiscovery.entry.outputSchema && constructionPermit?.schema !== permitDiscovery.entry.outputSchema) {
-    throw new Error('construction-operation-permit output schema mismatch');
-  }
-  if (permitDiscovery.entry.validator?.library) {
-    recordSymbol(permitDiscovery.entry.validator.library);
-    const permitValidation = await API[permitDiscovery.entry.validator.library](
-      constructionPermit,
-      constructionVocabulary,
-      {scopeId: 'whole', operation: 'hard-surface-shell'},
-    );
-    if (permitValidation?.valid !== true) {
-      throw new Error(`construction-operation-permit validator rejected output: ${(permitValidation?.errors ?? []).join('; ')}`);
-    }
-  }
-  const constructionPermitRef = await writeJsonArtifact('model/construction-operation-permit.json', constructionPermit, 'construction-operation-permit');
 
   const constructionQuality = (await invokeTemplateContract('construction', 'construction-quality', {
     values: {
@@ -472,8 +495,26 @@ async function main() {
       comparisonSha256: reviewBoardRef.sha256,
     },
     mutate(input) {
+      input.claim = 'identity-bearing';
+      input.constructionFamilies = ['hard-surface-shell'];
+      input.visibleFormGates = input.visibleFormGates.map((gate) => ({
+        ...gate,
+        status: 'pass',
+        evidenceRefs: [reviewBoardRef.path],
+        summary: `${gate.id} closed by the candidate-bound fresh-worker review fixture.`,
+      }));
+      input.identityFeatures = [{
+        id: 'open-frame-aperture',
+        scopeId: 'whole',
+        kind: 'reference-specific-form',
+        evidenceRefs: [sourceManifest.path, reviewBoardRef.path],
+      }];
+      input.wholeDependency = {scopeId: 'whole', status: 'pass', evidenceRefs: [reviewBoardRef.path]};
       input.registeredComparison.path = reviewBoardRef.path;
       input.registeredComparison.sha256 = reviewBoardRef.sha256;
+      input.constructionVocabulary = constructionVocabulary;
+      input.constructionPermits = [constructionPermit];
+      input.constructionExecutionProof = constructionExecutionProof;
       return input;
     },
   })).output;
@@ -593,7 +634,7 @@ async function main() {
   await commitCapability('visual-hierarchy', [hierarchyRef]);
   await commitCapability('visual-observation', [observationRef, referenceGeometryRef, relationalRef, authorityRef]);
   await commitCapability('spatial-hypotheses', [spatialRef]);
-  await commitCapability('shape-reconstruction', [constructionVocabularyRef, constructionPermitRef, constructionRef, candidateRef]);
+  await commitCapability('shape-reconstruction', [constructionVocabularyRef, constructionPermitRef, constructionExecutionProofRef, constructionRef, candidateRef]);
   await commitCapability('surface-topology', [surfaceRef]);
   await commitCapability('assembly', [assemblyRef]);
   await commitCapability('appearance', [pbrReportRef]);
