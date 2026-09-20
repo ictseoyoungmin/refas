@@ -5,6 +5,8 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 
+import {initTrustedContractFixtureProject} from '../../skills/refas/scripts/lib/contract-fixture-project.mjs';
+
 import {
   CAPABILITY_ORDER,
   REQUIRED_CLOSURE_GATE_IDS,
@@ -292,10 +294,10 @@ async function main() {
   const sourceManifestPath = path.join(PROJECT, 'source', 'source-manifest.json');
   runPython(path.join(SKILL_SCRIPTS, 'source_manifest.py'), [
     '--root', PROJECT, '--image', reference, '--id', 'wing-cover-reference', '--out', sourceManifestPath,
-    '--acquisition', JSON.stringify({kind: 'deterministic-project-fixture', license: fixture.license}),
+    '--acquisition', JSON.stringify({kind: 'generated-contract-reference', license: fixture.license}),
   ]);
   const source = await readJson(sourceManifestPath);
-  await initProject(PROJECT, {projectId: 'wing-cover-dogfood', source});
+  await initTrustedContractFixtureProject(PROJECT, {projectId: 'wing-cover-dogfood', source, fixtureId: 'wing-cover-complete-dogfood'});
 
   const sourceCheckpoint = await closeCapability(
     'source-intake', [reference, sourceManifestPath], 'Primary reference bytes and acquisition context are bound.',
@@ -630,8 +632,16 @@ async function main() {
     ambiguities: ['The self-generated fixture tests comparison registration behavior, not independent visual fidelity.'],
   });
   const comparisonRegistrationPath = await writeJson(path.join(PROJECT, 'model', 'source-to-render-registration.json'), comparisonRegistration);
+  const diagnosticComparisonSourceManifestPath = await writeJson(
+    path.join(PROJECT, 'reviews', 'diagnostic-comparison-source-manifest.json'),
+    {
+      ...source,
+      path: 'source/reference.png',
+      acquisition: {kind: 'deterministic-project-fixture', purpose: 'diagnostic-comparison-only'},
+    },
+  );
   const comparisonInputPath = await writeJson(path.join(PROJECT, 'registered-comparison-input.json'), {
-    schema: 'refas.registered-comparison-input/v1', sourceManifest: 'source/source-manifest.json', renderReport: 'renders/final/render-report.json',
+    schema: 'refas.registered-comparison-input/v1', sourceManifest: 'reviews/diagnostic-comparison-source-manifest.json', renderReport: 'renders/final/render-report.json',
     renderImage: 'hero.png', frameId: 'hero', registration: 'model/source-to-render-registration.json', hierarchy: 'model/visual-hierarchy.json',
     scopeIds: ['whole', 'upper-cover', 'center-fastener', 'fastener-inlay'], overlayOpacity: 0.5,
     landmarks: [
@@ -663,7 +673,7 @@ async function main() {
     });
     await writeJson(path.join(negativeRoot, name, 'registration.json'), negativeRegistration);
     const candidateInputPath = await writeJson(path.join(negativeRoot, name, 'comparison-input.json'), {
-      ...await readJson(comparisonInputPath), sourceManifest: '../../../source/source-manifest.json', renderReport: 'render-report.json', renderImage: 'hero.png',
+      ...await readJson(comparisonInputPath), sourceManifest: '../../../reviews/diagnostic-comparison-source-manifest.json', renderReport: 'render-report.json', renderImage: 'hero.png',
       registration: 'registration.json', hierarchy: '../../../model/visual-hierarchy.json',
     });
     const candidateComparisonDirectory = path.join(negativeRoot, name, 'comparison');
