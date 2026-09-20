@@ -599,6 +599,51 @@
             }
           },
           {
+            "id": "perceptual-signature-set",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createPerceptualSignatureSet"
+            },
+            "template": "assets/templates/capability-interface-inputs.json#/templates/observation~1perceptual-signature-set",
+            "inputContract": "source-bound identity-bearing visual signatures before candidate evaluation",
+            "outputSchema": "refas.perceptual-signature-set/v1",
+            "validator": {
+              "library": "validatePerceptualSignatureSet"
+            },
+            "minimumInvocation": "references/observation.md",
+            "example": null,
+            "templateProcessor": {
+              "library": "materializeCapabilityInputTemplate"
+            },
+            "publicConstants": [
+              "PERCEPTUAL_SIGNATURE_FAMILIES",
+              "PERCEPTUAL_SIGNATURE_IMPORTANCE"
+            ],
+            "usageReference": "references/observation.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
+            }
+          },
+          {
             "id": "evidence-view",
             "operation": "derive",
             "cli": {
@@ -3956,6 +4001,50 @@
               "schema": "refas.capability-invocation/v1",
               "verification": "structural",
               "reason": "stateful, filesystem-bound, renderer-bound, or CLI-only operation; command discovery is verified separately"
+            }
+          },
+          {
+            "id": "perceptual-signature-evidence",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createPerceptualSignatureEvidence"
+            },
+            "template": "assets/templates/capability-interface-inputs.json#/templates/validation~1perceptual-signature-evidence",
+            "inputContract": "exact source signature set + candidate digest + structured signature observations",
+            "outputSchema": "refas.perceptual-signature-evidence/v1",
+            "validator": {
+              "library": "validatePerceptualSignatureEvidence"
+            },
+            "minimumInvocation": "references/validation.md",
+            "example": null,
+            "templateProcessor": {
+              "library": "materializeCapabilityInputTemplate"
+            },
+            "publicConstants": [
+              "PERCEPTUAL_SIGNATURE_STATUSES"
+            ],
+            "usageReference": "references/validation.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
             }
           },
           {
