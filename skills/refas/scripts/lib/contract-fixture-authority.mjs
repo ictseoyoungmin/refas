@@ -16,8 +16,7 @@ export function isReservedContractFixtureAcquisition(kind) {
 export function assertPublicSourceAcquisition(acquisition) {
   const normalized = acquisition && typeof acquisition === 'object' ? structuredClone(acquisition) : {};
   const kind = String(normalized.kind ?? '').trim();
-  if (!kind) throw new Error('source acquisition.kind is required');
-  if (isReservedContractFixtureAcquisition(kind)) {
+  if (kind && isReservedContractFixtureAcquisition(kind)) {
     throw new Error('contract fixture acquisition kinds are runtime-internal and cannot be supplied through public source binding');
   }
   return normalized;
