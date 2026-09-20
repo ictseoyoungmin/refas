@@ -112,7 +112,7 @@ export function createPbrRenderReport({assetSha256, frameDigest, renderer, light
 
   const payload = {
     schema: PBR_RENDER_REPORT_SCHEMA,
-    claimScope: 'visual-fidelity',
+    claimScope: normalizedPresentation ? 'shape-resemblance-only' : 'visual-fidelity',
     assetSha256: assertDigest(assetSha256, 'assetSha256'),
     frameDigest: assertDigest(frameDigest, 'frameDigest'),
     renderer: normalizedRenderer,
