@@ -122,9 +122,9 @@ function findingForSignature(signature, observation) {
     'mass-proportion': 'mass-proportion-mismatch',
     'curvature-character': 'curvature-mismatch',
     'plane-edge-language': 'curvature-mismatch',
-    'negative-space-structure': 'silhouette-mismatch',
-    'part-segmentation-rhythm': 'pattern-topology-mismatch',
-    'junction-transition': 'curvature-mismatch',
+    'negative-space-structure': 'unroutable-visual-finding',
+    'part-segmentation-rhythm': 'unroutable-visual-finding',
+    'junction-transition': 'unroutable-visual-finding',
     'surface-pattern-structure': 'pattern-topology-mismatch',
   }[signature.family] ?? 'unroutable-visual-finding';
 
