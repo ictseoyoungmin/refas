@@ -90,7 +90,7 @@ async function clayEvidence(root, assetSha256) {
   return {report, reportRef, frameRefs};
 }
 
-async function makeRealSourceProject(t, verdictStatus) {
+async function makeRealSourceProject(t, verdictStatus, {unboundObservationEvidence = false} = {}) {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), 'refas-r04-real-'));
   t.after(() => fs.rm(root, {recursive: true, force: true}));
 
@@ -163,7 +163,9 @@ async function makeRealSourceProject(t, verdictStatus) {
         : verdictStatus === 'mismatch'
           ? 'The required source silhouette identity is absent.'
           : 'The current evidence cannot resolve the required silhouette identity.',
-      evidenceRefs: [source.path, clayHeroRef.path],
+      evidenceRefs: unboundObservationEvidence
+        ? [source.path, 'evidence/unbound-resemblance.png']
+        : [source.path, clayHeroRef.path],
     }],
     evidenceRefs: [source.path, clayHeroRef.path],
   });
@@ -213,4 +215,14 @@ test('R04 real-source PROCEED admits surface-topology but grants no certificatio
   assert.equal(barrier.policy.proceedDoesNotCertify, true);
   const surface = await commitLocal(root, 'surface-topology', [surfaceRef]);
   assert.equal(surface.capability, 'surface-topology');
+});
+
+
+test('R04 real-source admission rejects canonical barrier whose nested R03 evidence is not lineage-bound', async (t) => {
+  const {root, barrier, surfaceRef} = await makeRealSourceProject(t, 'match', {unboundObservationEvidence: true});
+  assert.equal(barrier.verdict, 'PROCEED');
+  await assert.rejects(
+    () => commitLocal(root, 'surface-topology', [surfaceRef]),
+    /resemblance evidence ref is not bound in current checkpoint lineage: evidence\/unbound-resemblance\.png/,
+  );
 });
