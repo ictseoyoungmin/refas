@@ -16,7 +16,9 @@ import {
   certifyProject,
   commitCheckpoint,
   contentReference,
+  createConstructionOperationPermit,
   createConstructionQuality,
+  createConstructionVocabulary,
   createRealizedProjection,
   createReferenceGeometry,
   createReferenceRegistration,
@@ -118,6 +120,57 @@ async function main() {
   const spatialPath = await json(path.join(PROJECT, 'model/spatial-hypotheses.json'), spatial);
   await close('spatial-hypotheses', [spatialPath], 'The depth-bearing local-pivot hypothesis beats the flattened long-lens alternative.');
 
+  const articulatedScopes = ['body', 'hanging-arm', 'resting-arm', 'kneeling-leg', 'raised-leg'];
+  const articulatedChildDecisions = articulatedScopes.map((scopeId) => createConstructionVocabulary({
+    scopeId,
+    sourceSha256: source.sha256,
+    vocabulary: 'hard-surface',
+    cues: [{
+      id: `${scopeId}-rigid-manufactured-form`,
+      description: 'Observed wooden mannequin sections are rigid manufactured forms with controlled section transitions.',
+      evidenceRefs: ['source/reference.png'],
+    }],
+    evidenceRefs: ['source/reference.png'],
+  }));
+  const articulatedVocabulary = createConstructionVocabulary({
+    scopeId: 'whole',
+    sourceSha256: source.sha256,
+    vocabulary: 'mechanical-articulated',
+    cues: [{
+      id: 'explicit-articulated-rigid-links',
+      description: 'The mannequin identity depends on separable rigid body/limb links, visible joint recesses, and articulated local pivots.',
+      evidenceRefs: ['source/reference.png'],
+    }],
+    evidenceRefs: ['source/reference.png'],
+    identityScopes: articulatedScopes,
+    childDecisions: articulatedChildDecisions,
+    mechanicalDecomposition: {
+      partIds: articulatedScopes,
+      interfaceIds: ['shoulder-interfaces', 'hip-interfaces', 'knee-interfaces', 'ankle-interfaces'],
+      articulationIds: ['shoulder-pivots', 'hip-pivots', 'knee-pivots', 'ankle-pivots'],
+      evidenceRefs: ['source/reference.png'],
+    },
+  });
+  const articulatedPermits = [
+    createConstructionOperationPermit({
+      decision: articulatedVocabulary,
+      scopeId: 'whole',
+      operation: 'assembly-decomposition',
+      evidenceRefs: ['source/reference.png'],
+    }),
+    ...articulatedScopes.map((scopeId) => createConstructionOperationPermit({
+      decision: articulatedVocabulary,
+      scopeId,
+      operation: 'section-profile-loft-rigid',
+      evidenceRefs: ['source/reference.png'],
+    })),
+  ];
+  const articulatedVocabularyPath = await json(path.join(PROJECT, 'model/construction-vocabulary.json'), articulatedVocabulary);
+  const articulatedPermitsPath = await json(path.join(PROJECT, 'model/construction-permits.json'), {
+    vocabularyDigest: articulatedVocabulary.vocabularyDigest,
+    permits: articulatedPermits,
+  });
+
   const referenceFigure = buildArticulatedFigure('reference');
   const neutralFigure = buildArticulatedFigure('neutral');
   assert.equal(parseGlb(referenceFigure.glb).binary.equals(parseGlb(neutralFigure.glb).binary), true);
@@ -130,7 +183,7 @@ async function main() {
   assert.equal(inspection.valid, true);
   assert.ok(inspection.triangleCount >= 12_500);
   const shapePath = await json(path.join(PROJECT, 'model/shape-spec.json'), {schema:'refas.articulated-shape/v1',sourceSha256:source.sha256,partCount:referenceFigure.parts.length,triangleCount:inspection.triangleCount,identityFeatures:['section-profile chest','bilateral pectoral breaks','pelvis band and hip cups','rimmed recessed joints','separated-finger hands','wedge planted foot'],evidenceRefs:['source/reference.png','assets/articulated-figure.glb']});
-  await close('shape-reconstruction', [assetPath, shapePath], 'Source-specific section profiles replace generic blockout masses.');
+  await close('shape-reconstruction', [assetPath, shapePath, articulatedVocabularyPath, articulatedPermitsPath], 'Source-specific section profiles are admitted through the pre-geometry mechanical-articulated vocabulary and bound child permits.');
   const topologyPath = await json(path.join(PROJECT, 'model/topology-spec.json'), {schema:'refas.articulated-topology/v1',partCount:referenceFigure.parts.length,triangleCount:inspection.triangleCount,checks:{closedCaps:true,consistentWinding:true,facetsConcentratedAtIdentityFeatures:true}});
   await close('surface-topology', [assetPath, topologyPath], 'Closed lofts and corrected cap winding preserve readable faceted planes.');
   const assemblyPath = await json(path.join(PROJECT, 'model/assembly-spec.json'), {schema:'refas.articulated-assembly/v1',localMeshBytesInvariant:true,poseVariants:['reference','neutral'],checks:{parentLocalPivots:true,ankleConnected:true,raisedFootPlanted:true,kneeCutawayVisible:true}});
@@ -188,6 +241,8 @@ async function main() {
     ],
     wholeDependency:{scopeId:'whole',status:'pass',evidenceRefs:['reviews/registered-comparison/whole/comparison-board.png']},
     registeredComparison:{path:'reviews/registered-comparison/comparison-report.json',sha256:await sha256File(comparisonReportPath),scopeIds:['whole']},
+    constructionVocabulary: articulatedVocabulary,
+    constructionPermits: articulatedPermits,
     ambiguities:['Hidden rear joint hardware remains inferred.'],
   });
   assert.equal(validateConstructionQuality(constructionQuality).valid,true);
