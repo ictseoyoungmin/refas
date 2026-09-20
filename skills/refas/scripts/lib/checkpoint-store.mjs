@@ -27,7 +27,7 @@ import {validatePbrRenderReport} from './pbr-render-report.mjs';
 import {findComparisonContradictions, validateRegisteredComparison} from './registered-comparison.mjs';
 import {assertEarlyResemblanceAdmission} from './early-resemblance-barrier.mjs';
 import {
-  assertPublicSourceAcquisition,
+  normalizePublicSourceAcquisition,
   isTrustedContractFixtureProject,
   validateContractFixtureAuthority,
 } from './contract-fixture-authority.mjs';
@@ -106,7 +106,7 @@ function normalizeSourceManifest(raw) {
     width: Number(raw.width),
     height: Number(raw.height),
     authority: String(raw.authority ?? 'primary'),
-    acquisition: assertPublicSourceAcquisition(raw.acquisition),
+    acquisition: normalizePublicSourceAcquisition(raw.acquisition),
   };
   if (!source.path || !Number.isInteger(source.sizeBytes) || source.sizeBytes < 1) throw new Error('source path and positive sizeBytes are required');
   if (!Number.isInteger(source.width) || source.width < 1 || !Number.isInteger(source.height) || source.height < 1) throw new Error('source width and height must be positive integers');
