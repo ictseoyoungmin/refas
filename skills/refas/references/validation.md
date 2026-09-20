@@ -60,6 +60,24 @@ This artifact is resemblance evidence, not a visual gate. A `match` cannot set f
 
 Numeric `RESEMBLANCE_SIGNAL` authority is fail-closed unless current perceptual-signature evidence is explicitly bound to the same current source and candidate. In R03 such a signal is diagnostic-only: it cannot itself be used as resemblance evidence, become an optimization objective, rank candidates, pass a gate, or certify closure. The structured perceptual-signature observations are the resemblance evidence. Single-view IoU remains forbidden; multiview IoU remains correspondence/diagnostic-only.
 
+## Early resemblance / neutral-clay barrier
+
+Before downstream surface-topology, assembly, or appearance detail on a real source, run the early resemblance barrier. Render the exact current candidate with `refas render-pbr --neutral-clay`, then compare that neutral presentation against the R03 source-bound perceptual signatures.
+
+The neutral-clay renderer replaces candidate beauty/albedo material response with the runtime-owned `refas-neutral-clay-v1` preset and records its exact preset digest, renderer profile, fixed lighting-rig digest, canonical frame digest, candidate SHA-256, and all eight standard output digests. A neutral-clay report has `claimScope: shape-resemblance-only`; it is not appearance evidence and cannot support `appearance-plausibility`.
+
+Create `refas.early-resemblance-barrier/v1` from the current perceptual-signature evidence plus that exact neutral-clay report. The verdict is runtime-derived with no aggregate score:
+
+- `PROCEED`: every macro and identity signature is `match`;
+- `REWORK`: at least one macro or identity signature is `mismatch`;
+- `HOLD`: no required mismatch exists, but at least one macro or identity signature is `insufficient`.
+
+Detail signatures are recorded but do not block this early admission. `PROCEED` authorizes only downstream detail work. It does not set a visual-review PASS, certify the object, or imply topology, assembly, or appearance closure. `REWORK` preserves R03 typed findings and their owners. `HOLD` does not invent an owner.
+
+For non-fixture sources, the checkpoint runtime enforces this admission before `surface-topology` and every later capability: the current shape-reconstruction checkpoint must contain one exact-candidate R04 barrier whose source and visual-hierarchy bindings are current and whose verdict is `PROCEED`. Contract-only acquisition kinds (`test-fixture`, `deterministic-project-fixture`, `synthetic-test-fixture`) are exempt from production admission so fresh-worker and schema dogfoods can intentionally prove `HOLD` without manufacturing resemblance.
+
+Single-view IoU remains forbidden. Multiview IoU remains correspondence/diagnostic-only and is not an input to this barrier.
+
 ## Registered comparison evidence
 
 Use `compare` after source-to-render registration when whole-object inspection cannot localize a near-match defect. The `refas.registered-comparison/v1` report binds the exact source manifest, asset and render frame, registration, visual hierarchy, comparison input, and output image digests. Every scope board retains whole-context ancestry and may include overlays, splits, source/render edges, silhouette differences, landmark residuals, and normalized dimensions.
