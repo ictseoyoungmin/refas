@@ -43,21 +43,7 @@
       "const": "primary"
     },
     "acquisition": {
-      "type": "object",
-      "properties": {
-        "kind": {
-          "type": "string",
-          "minLength": 1,
-          "not": {
-            "enum": [
-              "test-fixture",
-              "deterministic-project-fixture",
-              "synthetic-test-fixture"
-            ]
-          }
-        }
-      },
-      "additionalProperties": true
+      "type": "object"
     }
   },
   "additionalProperties": false
