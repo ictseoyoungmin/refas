@@ -311,8 +311,20 @@ async function main() {
   const sourceManifest = JSON.parse(await fs.readFile(sourceManifestPath, 'utf8'));
   const sourceManifestRef = await writeJsonArtifact('source/source-manifest.json', sourceManifest, 'source-manifest');
 
+  const hierarchy = (await invokeTemplateContract('observation', 'visual-hierarchy', {
+    values: {sourceSha256: sourceManifest.sha256},
+    mutate(input) {
+      input.source.path = sourceManifest.path;
+      input.source.width = sourceManifest.width;
+      input.source.height = sourceManifest.height;
+      return input;
+    },
+  })).output;
+  const hierarchyRef = await writeJsonArtifact('model/visual-hierarchy.json', hierarchy, 'visual-hierarchy');
+
   const perceptualSignatureSet = (await invokeTemplateContract('observation', 'perceptual-signature-set', {
     values: {sourceSha256: sourceManifest.sha256},
+    bindings: {perceptualSignatureHierarchy: hierarchy},
     mutate(input) {
       input.evidenceRefs = [sourceManifest.path];
       input.signatures = input.signatures.map((signature) => ({
@@ -325,6 +337,7 @@ async function main() {
       }));
       return input;
     },
+    validatorArgs: [hierarchy],
   })).output;
   const perceptualSignatureSetRef = await writeJsonArtifact(
     'model/perceptual-signature-set.json',
@@ -482,17 +495,6 @@ async function main() {
     perceptualSignatureEvidence,
     'perceptual-signature-evidence',
   );
-
-  const hierarchy = (await invokeTemplateContract('observation', 'visual-hierarchy', {
-    values: {sourceSha256: sourceManifest.sha256},
-    mutate(input) {
-      input.source.path = sourceManifest.path;
-      input.source.width = sourceManifest.width;
-      input.source.height = sourceManifest.height;
-      return input;
-    },
-  })).output;
-  const hierarchyRef = await writeJsonArtifact('model/visual-hierarchy.json', hierarchy, 'visual-hierarchy');
 
   const observation = (await invokeTemplateContract('observation', 'visual-observation', {
     values: {sourceSha256: sourceManifest.sha256},
