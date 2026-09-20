@@ -1204,6 +1204,71 @@
             }
           },
           {
+            "id": "surface-network-parts",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createPermittedSurfaceNetworkParts"
+            },
+            "template": null,
+            "inputContract": "validated construction vocabulary + matching surface-network permit + source-bound surface network",
+            "outputSchema": "refas.surface-network-parts/v1",
+            "validator": null,
+            "minimumInvocation": "references/construction.md",
+            "example": null,
+            "usageReference": "references/construction.md",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "permit-consuming high-level geometry wrapper"
+            }
+          },
+          {
+            "id": "section-profile-loft",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createPermittedSectionProfileLoft"
+            },
+            "template": null,
+            "inputContract": "validated construction vocabulary + matching rigid/organic loft permit + section-profile loft spec",
+            "outputSchema": null,
+            "validator": null,
+            "minimumInvocation": "references/construction.md",
+            "example": "references/single-view-volumetric-reasoning-example.md",
+            "usageReference": "references/construction.md",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "permit-consuming high-level geometry wrapper"
+            }
+          },
+          {
+            "id": "construction-execution-proof",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createConstructionExecutionProof"
+            },
+            "template": null,
+            "inputContract": "candidate GLB bytes + validated construction vocabulary + exact permit set",
+            "outputSchema": "refas.construction-execution-proof/v1",
+            "validator": {
+              "library": "validateConstructionExecutionProof"
+            },
+            "minimumInvocation": "references/construction.md",
+            "example": null,
+            "usageReference": "references/construction.md",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "candidate-bound chained operation; fresh-worker dogfood executes this path"
+            }
+          },
+          {
             "id": "construction-quality",
             "operation": "create",
             "cli": null,
@@ -1253,38 +1318,22 @@
             "cli": null,
             "library": {
               "entrypoint": "scripts/lib/index.mjs",
-              "symbol": "createHardSurfaceShell"
+              "symbol": "createPermittedHardSurfaceShell"
             },
-            "template": "assets/templates/hard-surface-spec.json",
-            "inputContract": "hard-surface profile/cutout/edge-treatment specification",
+            "template": null,
+            "inputContract": "validated construction vocabulary + matching permit + hard-surface profile/cutout/edge-treatment specification",
             "outputSchema": null,
-            "validator": {
-              "library": "validateHardSurfaceSpec"
-            },
+            "validator": null,
             "minimumInvocation": "references/construction.md",
             "example": null,
             "usageReference": "references/construction.md",
             "templateRole": "operation-input",
             "invocation": {
               "schema": "refas.capability-invocation/v1",
-              "verification": "execute",
-              "call": {
-                "arguments": [
-                  {
-                    "source": "input"
-                  }
-                ]
-              },
-              "validator": {
-                "arguments": [
-                  {
-                    "source": "input"
-                  }
-                ]
-              },
-              "outputSchemaPointer": null,
-              "note": "validator checks the public hard-surface input spec; shell output is geometry rather than a schema artifact"
-            }
+              "verification": "structural",
+              "reason": "identity-bearing hard-surface construction consumes chained vocabulary/permit authority; fresh-worker dogfood executes this path"
+            },
+            "note": "Raw createHardSurfaceShell remains public for blockout/support/backward compatibility but is not the canonical identity-bearing interface."
           },
           {
             "id": "surface-network",
