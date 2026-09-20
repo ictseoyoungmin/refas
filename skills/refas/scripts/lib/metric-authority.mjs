@@ -111,7 +111,7 @@ function allowedUses(authority) {
     RANKING_ALLOWED: ['objective', 'ranking', 'diagnostic'],
     GATE_ONLY: ['correspondence-gate', 'diagnostic'],
     DIAGNOSTIC_ONLY: ['diagnostic'],
-    RESEMBLANCE_SIGNAL: ['diagnostic', 'resemblance'],
+    RESEMBLANCE_SIGNAL: ['diagnostic'],
     CORRESPONDENCE_AID: ['correspondence-gate', 'diagnostic'],
   }[authority] ?? [];
 }
@@ -147,6 +147,9 @@ export function metricAuthority(metricId, {
   if (!AUTHORITIES.has(authority)) throw new Error(`unknown metric authority: ${declaredAuthority}`);
   if (authority === 'RESEMBLANCE_SIGNAL') {
     if (!resemblanceEvidence) throw new Error('RESEMBLANCE_SIGNAL requires current perceptual-signature evidence');
+    if (currentSourceSha256 == null || currentCandidateAssetSha256 == null) {
+      throw new Error('RESEMBLANCE_SIGNAL requires explicit currentSourceSha256 and currentCandidateAssetSha256 bindings');
+    }
     const validation = validatePerceptualSignatureEvidence(resemblanceEvidence, {
       sourceSha256: currentSourceSha256,
       assetSha256: currentCandidateAssetSha256,
@@ -158,7 +161,7 @@ export function metricAuthority(metricId, {
       allowedUses: allowedUses(authority),
       resemblanceEvidenceDigest: resemblanceEvidence.evidenceDigest,
       signatureSetDigest: resemblanceEvidence.signatureSetDigest,
-      reason: 'Resemblance signal authority is bound to current candidate perceptual-signature evidence and remains non-ranking/non-certifying in R03.',
+      reason: 'R03 keeps numeric resemblance signals diagnostic-only; actual resemblance authority remains in current source/candidate-bound perceptual-signature observations.',
     });
   }
   return deepFreeze({
