@@ -1,5 +1,6 @@
 import {assertDigest, assertId, deepFreeze, digestJson} from './canonical.mjs';
 import {normalizeFinding} from './failure-router.mjs';
+import {validateVisualHierarchy} from './hierarchy.mjs';
 
 export const PERCEPTUAL_SIGNATURE_SET_SCHEMA = 'refas.perceptual-signature-set/v1';
 export const PERCEPTUAL_SIGNATURE_EVIDENCE_SCHEMA = 'refas.perceptual-signature-evidence/v1';
@@ -37,10 +38,18 @@ function requiredText(value, label) {
   return out;
 }
 
-function normalizeSignature(raw, index, {sourceSha256, defaultScopeId}) {
+function assertHierarchyBinding(hierarchy, sourceSha256) {
+  const validation = validateVisualHierarchy(hierarchy);
+  if (!validation.valid) throw new Error(`hierarchy is invalid: ${validation.errors.join('; ')}`);
+  if (hierarchy.source.sha256 !== sourceSha256) throw new Error('perceptual signature hierarchy must bind the same source SHA-256');
+  return new Set(hierarchy.nodes.map((node) => node.id));
+}
+
+function normalizeSignature(raw, index, {sourceSha256, defaultScopeId, allowedScopeIds = null}) {
   if (!raw || typeof raw !== 'object') throw new Error(`signatures[${index}] must be an object`);
   const id = assertId(raw.id, `signatures[${index}].id`);
   const scopeId = assertId(raw.scopeId ?? defaultScopeId, `signatures[${index}].scopeId`);
+  if (allowedScopeIds && !allowedScopeIds.has(scopeId)) throw new Error(`signatures[${index}].scopeId is not present in the bound visual hierarchy: ${scopeId}`);
   const family = String(raw.family ?? '').trim();
   const importance = String(raw.importance ?? '').trim();
   if (!FAMILY_SET.has(family)) throw new Error(`signatures[${index}].family is unsupported: ${family || 'empty'}`);
@@ -48,6 +57,9 @@ function normalizeSignature(raw, index, {sourceSha256, defaultScopeId}) {
   const sourceObservation = requiredText(raw.sourceObservation, `signatures[${index}].sourceObservation`);
   const evidenceRefs = strings(raw.evidenceRefs, `signatures[${index}].evidenceRefs`, {required: true});
   const relatedScopeIds = strings(raw.relatedScopeIds, `signatures[${index}].relatedScopeIds`, {ids: true});
+  if (allowedScopeIds) for (const related of relatedScopeIds) {
+    if (!allowedScopeIds.has(related)) throw new Error(`signatures[${index}].relatedScopeIds contains an unknown hierarchy scope: ${related}`);
+  }
   const referenceGeometryRefs = strings(raw.referenceGeometryRefs, `signatures[${index}].referenceGeometryRefs`);
   const ambiguity = raw.ambiguity == null ? null : requiredText(raw.ambiguity, `signatures[${index}].ambiguity`);
   return {
@@ -64,51 +76,85 @@ function normalizeSignature(raw, index, {sourceSha256, defaultScopeId}) {
   };
 }
 
-export function createPerceptualSignatureSet({
+function normalizedSignaturePayload({
   scopeId = 'whole',
   sourceSha256,
+  hierarchyDigest,
   signatures = [],
   ambiguities = [],
   evidenceRefs = [],
-} = {}) {
+}, {allowedScopeIds = null} = {}) {
   const normalizedScopeId = assertId(scopeId, 'scopeId');
   const source = assertDigest(sourceSha256, 'sourceSha256');
+  const hierarchy = assertDigest(hierarchyDigest, 'hierarchyDigest');
+  if (allowedScopeIds && !allowedScopeIds.has(normalizedScopeId)) throw new Error(`scopeId is not present in the bound visual hierarchy: ${normalizedScopeId}`);
   if (!Array.isArray(signatures) || signatures.length === 0) throw new Error('perceptual signature set requires at least one signature');
   const normalized = signatures.map((item, index) => normalizeSignature(item, index, {
     sourceSha256: source,
     defaultScopeId: normalizedScopeId,
+    allowedScopeIds,
   }));
   if (new Set(normalized.map((item) => item.id)).size !== normalized.length) throw new Error('perceptual signature IDs must be unique');
 
-  const payload = {
+  return {
     schema: PERCEPTUAL_SIGNATURE_SET_SCHEMA,
     scopeId: normalizedScopeId,
     sourceSha256: source,
+    hierarchyDigest: hierarchy,
     signatures: normalized.sort((a, b) => a.id.localeCompare(b.id)),
     ambiguities: strings(ambiguities, 'ambiguities'),
     evidenceRefs: strings(evidenceRefs, 'evidenceRefs', {required: true}),
     policy: {
       sourceDerivedOnly: true,
       candidateIndependent: true,
+      hierarchyScopeBound: true,
       metricsDoNotDefineIdentity: true,
       correspondenceDoesNotImplyResemblance: true,
       signatureSetDoesNotCertify: true,
     },
   };
+}
+
+export function createPerceptualSignatureSet({
+  hierarchy,
+  scopeId = 'whole',
+  sourceSha256,
+  signatures = [],
+  ambiguities = [],
+  evidenceRefs = [],
+} = {}) {
+  const source = assertDigest(sourceSha256, 'sourceSha256');
+  const allowedScopeIds = assertHierarchyBinding(hierarchy, source);
+  const payload = normalizedSignaturePayload({
+    scopeId,
+    sourceSha256: source,
+    hierarchyDigest: hierarchy.hierarchyDigest,
+    signatures,
+    ambiguities,
+    evidenceRefs,
+  }, {allowedScopeIds});
   return deepFreeze({...payload, signatureDigest: digestJson(payload)});
 }
 
-export function validatePerceptualSignatureSet(record) {
+export function validatePerceptualSignatureSet(record, hierarchy = null) {
   const errors = [];
   if (record?.schema !== PERCEPTUAL_SIGNATURE_SET_SCHEMA) errors.push('invalid schema');
   try {
-    const expected = createPerceptualSignatureSet({
+    let allowedScopeIds = null;
+    if (hierarchy != null) {
+      const source = assertDigest(record?.sourceSha256, 'sourceSha256');
+      allowedScopeIds = assertHierarchyBinding(hierarchy, source);
+      if (hierarchy.hierarchyDigest !== record?.hierarchyDigest) errors.push('perceptual signature hierarchy binding mismatch');
+    }
+    const payload = normalizedSignaturePayload({
       scopeId: record?.scopeId,
       sourceSha256: record?.sourceSha256,
+      hierarchyDigest: record?.hierarchyDigest,
       signatures: record?.signatures,
       ambiguities: record?.ambiguities,
       evidenceRefs: record?.evidenceRefs,
-    });
+    }, {allowedScopeIds});
+    const expected = {...payload, signatureDigest: digestJson(payload)};
     if (digestJson(expected) !== digestJson(record)) errors.push('perceptual signature set is not canonical');
   } catch (error) {
     errors.push(error.message);
@@ -192,6 +238,7 @@ export function createPerceptualSignatureEvidence({
     schema: PERCEPTUAL_SIGNATURE_EVIDENCE_SCHEMA,
     scopeId: signatureSet.scopeId,
     sourceSha256: signatureSet.sourceSha256,
+    hierarchyDigest: signatureSet.hierarchyDigest,
     assetSha256: asset,
     signatureSet,
     signatureSetDigest: signatureSet.signatureDigest,
@@ -213,10 +260,13 @@ export function createPerceptualSignatureEvidence({
 export function validatePerceptualSignatureEvidence(record, {
   sourceSha256 = null,
   assetSha256 = null,
+  hierarchy = null,
 } = {}) {
   const errors = [];
   if (record?.schema !== PERCEPTUAL_SIGNATURE_EVIDENCE_SCHEMA) errors.push('invalid schema');
   try {
+    const setValidation = validatePerceptualSignatureSet(record?.signatureSet, hierarchy);
+    if (!setValidation.valid) throw new Error(`signatureSet is invalid: ${setValidation.errors.join('; ')}`);
     const observations = (record?.observations ?? []).map((item) => ({
       signatureId: item.signatureId,
       status: item.status,
