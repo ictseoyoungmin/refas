@@ -1320,20 +1320,20 @@
               "entrypoint": "scripts/lib/index.mjs",
               "symbol": "createPermittedHardSurfaceShell"
             },
-            "template": null,
+            "template": "assets/templates/hard-surface-spec.json",
             "inputContract": "validated construction vocabulary + matching permit + hard-surface profile/cutout/edge-treatment specification",
             "outputSchema": null,
             "validator": null,
             "minimumInvocation": "references/construction.md",
             "example": null,
             "usageReference": "references/construction.md",
-            "templateRole": "operation-input",
+            "templateRole": "artifact-input",
             "invocation": {
               "schema": "refas.capability-invocation/v1",
               "verification": "structural",
               "reason": "identity-bearing hard-surface construction consumes chained vocabulary/permit authority; fresh-worker dogfood executes this path"
             },
-            "note": "Raw createHardSurfaceShell remains public for blockout/support/backward compatibility but is not the canonical identity-bearing interface."
+            "note": "The template is the public `spec` subdocument. Identity-bearing execution remains the chained createConstructionVocabulary → createConstructionOperationPermit → createPermittedHardSurfaceShell path; raw createHardSurfaceShell remains blockout/support/backward compatibility only."
           },
           {
             "id": "surface-network",
