@@ -299,16 +299,13 @@ async function main() {
   ].join('\n');
   const sourceImage = await writeProjectFile('source/reference.ppm', ppm);
   const sourceManifestPath = path.join(projectRoot, 'source', 'source-manifest.json');
-  runCli([
-    'source-manifest',
-    '--root', projectRoot,
-    '--image', sourceImage,
-    '--id', 'primary-reference',
-    '--out', sourceManifestPath,
-    '--acquisition', JSON.stringify({kind: 'test-fixture', origin: 'AD05 fresh-worker public-contract dogfood'}),
-  ]);
-  runCli(['init', '--root', projectRoot, '--project', 'fresh-worker-public-contract', '--source', sourceManifestPath]);
+  if (options['trusted-fixture-preinitialized'] !== true) {
+    throw new Error('fresh-worker full contract dogfood requires trusted verifier fixture bootstrap');
+  }
   const sourceManifest = JSON.parse(await fs.readFile(sourceManifestPath, 'utf8'));
+  if (sourceManifest.acquisition?.kind !== 'generated-contract-reference') {
+    throw new Error('fresh-worker fixture source was not initialized by the trusted verifier');
+  }
   const sourceManifestRef = await writeJsonArtifact('source/source-manifest.json', sourceManifest, 'source-manifest');
 
   const hierarchy = (await invokeTemplateContract('observation', 'visual-hierarchy', {
