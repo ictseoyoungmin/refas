@@ -124,3 +124,17 @@ export function validateEarlyResemblanceBarrier(record, {
   }
   return {valid: errors.length === 0, errors};
 }
+
+
+export function assertEarlyResemblanceAdmission(record, {
+  sourceSha256,
+  hierarchyDigest,
+  assetSha256,
+} = {}) {
+  const validation = validateEarlyResemblanceBarrier(record, {sourceSha256, hierarchyDigest, assetSha256});
+  if (!validation.valid) throw new Error(`early resemblance barrier is invalid: ${validation.errors.join('; ')}`);
+  if (record.verdict !== 'PROCEED') {
+    throw new Error(`downstream detail requires early resemblance PROCEED; current verdict is ${record.verdict}`);
+  }
+  return record;
+}
