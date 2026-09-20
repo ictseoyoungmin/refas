@@ -5,6 +5,16 @@ export const PBR_RENDERER_FAMILIES = Object.freeze([
   'blender-cycles', 'blender-eevee', 'threejs-webgl', 'filament', 'gltf-sample-viewer', 'vtk', 'other',
 ]);
 
+export const NEUTRAL_CLAY_LIGHTING_RIG = deepFreeze({
+  lights: 'three-directional-calibrated-v1',
+  keyIntensity: 2.8,
+  fillIntensity: 1.2,
+  rimIntensity: 0.55,
+  background: [24, 24, 26],
+  cameraFovY: 31,
+});
+export const NEUTRAL_CLAY_LIGHTING_RIG_DIGEST = digestJson(NEUTRAL_CLAY_LIGHTING_RIG);
+
 export const NEUTRAL_CLAY_PRESENTATION_PRESET = deepFreeze({
   id: 'refas-neutral-clay-v1',
   material: {
@@ -83,6 +93,7 @@ export function createPbrRenderReport({assetSha256, frameDigest, renderer, light
     const missingViews = [...requiredViews].filter((viewId) => !actualViews.has(viewId));
     if (missingViews.length) throw new Error(`neutral-clay presentation is missing required views: ${missingViews.join(', ')}`);
     if (lighting?.rigId !== NEUTRAL_CLAY_PRESENTATION_PRESET.lighting.rigId) throw new Error('neutral-clay lighting rigId is not canonical');
+    if (lighting?.digest !== NEUTRAL_CLAY_LIGHTING_RIG_DIGEST) throw new Error('neutral-clay lighting digest is not canonical');
     if (Number(colorPipeline?.exposure) !== NEUTRAL_CLAY_PRESENTATION_PRESET.colorPipeline.exposure
       || String(colorPipeline?.toneMapping ?? '') !== NEUTRAL_CLAY_PRESENTATION_PRESET.colorPipeline.toneMapping
       || String(colorPipeline?.outputColorSpace ?? '') !== NEUTRAL_CLAY_PRESENTATION_PRESET.colorPipeline.outputColorSpace) {
