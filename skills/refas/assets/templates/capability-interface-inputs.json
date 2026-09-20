@@ -762,7 +762,7 @@
           "goal": "minimize",
           "scale": 1,
           "weight": 1,
-          "authority": "RESEMBLANCE_SIGNAL"
+          "authority": "RANKING_ALLOWED"
         }
       ],
       "protectedTerms": [],
