@@ -492,7 +492,9 @@ export function fixtureForCapabilityInterface(key, context, outputs = new Map())
   const values = {sourceSha256: context.sourceSha256};
   const bindings = {};
 
-  if (key === 'observation/visual-observation') {
+  if (key === 'observation/perceptual-signature-set') {
+    bindings.perceptualSignatureHierarchy = outputs.get('observation/visual-hierarchy');
+  } else if (key === 'observation/visual-observation') {
     bindings.hierarchy = outputs.get('observation/visual-hierarchy');
   } else if (key === 'spatial-reasoning/projection-fit') {
     bindings.referenceGeometry = outputs.get('observation/reference-geometry');
