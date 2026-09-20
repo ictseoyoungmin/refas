@@ -16,6 +16,38 @@ When the active scope has declared or otherwise material macro/identity `whole-s
 
 This construction boundary does not weaken the separate real-source certification floor. Before real-source whole-object certification, a meaningful current relational structure, semantic-authority set, passing barrier, and candidate-bound relational discrepancy are still required by the certification path.
 
+## Construction vocabulary authority
+
+Choose the representation vocabulary **before** identity-bearing high-level geometry is generated. The canonical decision is `refas.construction-vocabulary/v1` and must bind the active scope, primary source digest, source-grounded cues, contrary cues, ambiguities, and evidence references.
+
+The allowed vocabulary is deliberately small:
+
+- `hard-surface` — designed planes, shells, controlled curvature, apertures, panels, frames, and rigid manufactured boundaries;
+- `organic` — continuously varying biological, grown, sculpted, or soft-form sections and curvature flow;
+- `mechanical-articulated` — multiple rigid parts whose identity depends on explicit interfaces, joints, axes, or separable mechanisms;
+- `hybrid` — materially different resolved vocabularies across explicitly declared child scopes;
+- `unresolved` — evidence is not yet strong enough to choose a production vocabulary.
+
+`unresolved` is blockout-only. `hybrid` and `mechanical-articulated` must cover every identity-bearing child scope. Mechanical-articulated whole construction additionally requires explicit part, interface, articulation, and evidence records before the whole can authorize decomposition.
+
+A resolved decision does not directly authorize every geometry API. Request `refas.construction-operation-permit/v1` for the exact scope and high-level operation. Permits bind the source, root/effective vocabulary digests, scope, requested operation, evidence, and mechanical decomposition when applicable. A permit from another source, scope, decision, or operation fails closed.
+
+The public sequence is:
+
+```js
+const decision = createConstructionVocabulary(vocabularyInput);
+const permit = createConstructionOperationPermit({
+  decision,
+  scopeId: 'whole',
+  operation: 'hard-surface-shell',
+});
+const shell = createPermittedHardSurfaceShell({decision, permit, spec});
+```
+
+Use the corresponding permit-aware wrappers for section-profile lofts and surface-network identity construction. Existing lower-level geometry functions remain available for blockout, support implementation, and backward compatibility, but calling them directly does **not** establish identity-bearing construction authority. `refas.construction-quality/v1` rejects identity-bearing closure unless the current vocabulary and the required scope permits are present.
+
+The compatibility matrix is runtime-owned. Do not copy or override it in project data, templates, or agent prose. If the evidence and the chosen vocabulary disagree, reopen the decision instead of forcing a convenient primitive family.
+
 ## Blockout and identity-bearing geometry
 
 A blockout establishes camera, pose, broad mass, and candidate negative space.
