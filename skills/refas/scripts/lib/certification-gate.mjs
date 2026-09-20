@@ -24,8 +24,8 @@ import {
   validateCertificationRelationalEvidence,
 } from './certification-relational-evidence.mjs';
 import {inspectCertificationProjectionEvidence} from './certification-projection-evidence.mjs';
+import {isTrustedContractFixtureProject} from './contract-fixture-authority.mjs';
 
-const CONTRACT_FIXTURE_ACQUISITIONS = new Set(['test-fixture', 'deterministic-project-fixture', 'synthetic-test-fixture']);
 const INTERNAL_ROOT = '.refas';
 const certificateFile = (root) => path.join(path.resolve(root), INTERNAL_ROOT, 'certification.json');
 const projectStateFile = (root) => path.join(path.resolve(root), INTERNAL_ROOT, 'project.json');
@@ -61,10 +61,6 @@ function jsonBytes(bytes, label) {
   } catch {
     throw new Error(`${label} is not valid JSON`);
   }
-}
-
-function isFixtureSource(state) {
-  return CONTRACT_FIXTURE_ACQUISITIONS.has(String(state.source?.acquisition?.kind ?? '').toLowerCase());
 }
 
 function candidateArtifactFromReview(head, review) {
@@ -126,7 +122,7 @@ async function synthesizedTransactionContext(root, state, head, reviewArtifact, 
   const evidence = [
     {id: 'render-report', role: 'render-report', schema: renderReport.schema, bytes: renderBytes, subjectPointer: '/assetSha256'},
   ];
-  const fixture = isFixtureSource(state);
+  const fixture = isTrustedContractFixtureProject(state);
   const requiresRegisteredComparison = !fixture;
   const requiresRelationalClosure = !fixture;
   if (requiresRegisteredComparison) {
@@ -234,7 +230,7 @@ function validateTransactionRelationalClosure(transactionContext, {required = tr
 async function policyForHead(root, state, head) {
   const policyArtifacts = (head.artifactRefs ?? []).filter((artifact) => artifact.kind === 'certification-policy');
   if (policyArtifacts.length > 1) throw new Error('certification checkpoint may bind at most one certification-policy artifact');
-  const fixture = isFixtureSource(state);
+  const fixture = isTrustedContractFixtureProject(state);
   const requiresRegisteredComparison = !fixture;
   const requiresRelationalClosure = !fixture;
   if (!policyArtifacts.length) {
@@ -272,7 +268,7 @@ export async function assessClaimCertification(root) {
     const transactionContext = transactionArtifacts.length
       ? await explicitTransactionContext(root, head, candidateArtifact, candidateBytes, transactionArtifacts[0])
       : await synthesizedTransactionContext(root, state, head, reviewArtifacts[0], review, candidateBytes);
-    const relationalClosure = validateTransactionRelationalClosure(transactionContext, {required:!isFixtureSource(state)});
+    const relationalClosure = validateTransactionRelationalClosure(transactionContext, {required:!isTrustedContractFixtureProject(state)});
 
     const {policy, policySource} = await policyForHead(root, state, head);
     const recomputedDecision = evaluateCertificationPolicy({
