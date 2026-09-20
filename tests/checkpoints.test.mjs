@@ -30,6 +30,7 @@ import {
   restoreCheckpoint,
   resumeProject,
 } from '../skills/refas/scripts/lib/index.mjs';
+import {initTrustedContractFixtureProject} from '../skills/refas/scripts/lib/contract-fixture-project.mjs';
 
 async function makeProject(t, projectId = 'checkpoint-study') {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), 'refas-test-'));
@@ -46,9 +47,9 @@ async function makeProject(t, projectId = 'checkpoint-study') {
     width: 32,
     height: 24,
     authority: 'primary',
-    acquisition: {kind: 'test-fixture'},
+    acquisition: {kind: 'generated-contract-reference'},
   };
-  await initProject(root, {projectId, source});
+  await initTrustedContractFixtureProject(root, {projectId, source, fixtureId:`${projectId}-contract`});
   await fs.mkdir(path.join(root, 'model'), {recursive: true});
   return {root, source, artifactPath: path.join(root, 'model', 'state.bin')};
 }

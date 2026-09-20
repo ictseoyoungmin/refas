@@ -64,7 +64,7 @@ and the runtime-derived barrier verdict is `PROCEED`. The shape checkpoint must 
 
 This is an admission rule, not certification. A later mismatch can still reopen shape reconstruction, and final visual review/certification remain independently authoritative.
 
-Synthetic/test acquisition kinds are contract-only exceptions. They may retain an intentional `HOLD` barrier while continuing downstream API dogfoods, because those fixtures do not claim source resemblance or production readiness.
+`source.acquisition` is provenance metadata and never grants a production exemption. Reserved labels such as `test-fixture`, `deterministic-project-fixture`, and `synthetic-test-fixture` are rejected by public source binding. Contract-only dogfoods may retain an intentional `HOLD` barrier only when the trusted internal test harness has attached a source-digest-bound fixture authority inside RefAs runtime state. That authority is not exported through the public API or discovery graph and cannot be minted by a worker or source manifest.
 
 ## Bounded edit transaction
 

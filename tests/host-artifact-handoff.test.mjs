@@ -23,6 +23,7 @@ import {
   openHostSession,
   validateArtifactHandoff,
 } from '../skills/refas/scripts/lib/index.mjs';
+import {initTrustedContractFixtureProject} from '../skills/refas/scripts/lib/contract-fixture-project.mjs';
 
 async function tempProject(t, projectId = 'handoff-project') {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), 'refas-handoff-'));
@@ -43,9 +44,9 @@ async function tempProject(t, projectId = 'handoff-project') {
     width: 48,
     height: 32,
     authority: 'primary',
-    acquisition: {kind: 'test-fixture'},
+    acquisition: {kind: 'generated-contract-reference'},
   };
-  await initProject(root, {projectId, source});
+  await initTrustedContractFixtureProject(root, {projectId, source, fixtureId:`${projectId}-handoff`});
   return {root, source, artifactPath: path.join(root, 'model', 'candidate.glb')};
 }
 

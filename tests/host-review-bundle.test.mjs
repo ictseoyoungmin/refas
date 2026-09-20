@@ -20,6 +20,7 @@ import {
   REQUIRED_VISUAL_GATE_IDS,
   validateHostReviewBundle,
 } from '../skills/refas/scripts/lib/index.mjs';
+import {initTrustedContractFixtureProject} from '../skills/refas/scripts/lib/contract-fixture-project.mjs';
 
 async function tempRoot(t) {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), 'refas-host-review-'));
@@ -41,9 +42,9 @@ async function sourceFixture(root, projectId = 'review-project') {
     width: 64,
     height: 64,
     authority: 'primary',
-    acquisition: {kind: 'test-fixture'},
+    acquisition: {kind: 'generated-contract-reference'},
   };
-  await initProject(root, {projectId, source});
+  await initTrustedContractFixtureProject(root, {projectId, source, fixtureId:`${projectId}-review`});
   return source;
 }
 

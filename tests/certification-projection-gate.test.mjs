@@ -37,6 +37,7 @@ import {
   partsToGlb,
   resumeProject,
 } from '../skills/refas/scripts/lib/index.mjs';
+import {initTrustedContractFixtureProject} from '../skills/refas/scripts/lib/contract-fixture-project.mjs';
 
 const CONTRACT_FIXTURES = new Set(['test-fixture','deterministic-project-fixture','synthetic-test-fixture']);
 
@@ -58,7 +59,11 @@ async function makeProject(t, acquisitionKind='user-provided-reference') {
     sha256:digestBytes(sourceBytes), sizeBytes:sourceBytes.length, width:256, height:256,
     authority:'primary', acquisition:{kind:acquisitionKind},
   };
-  await initProject(root, {projectId:'projection-cert-study', source});
+  if (CONTRACT_FIXTURES.has(acquisitionKind)) {
+    await initTrustedContractFixtureProject(root, {projectId:'projection-cert-study', source, fixtureId:'projection-cert-contract'});
+  } else {
+    await initProject(root, {projectId:'projection-cert-study', source});
+  }
   return {root, source};
 }
 
@@ -236,16 +241,57 @@ async function commitCertification(root, source, {projection='none'}={}) {
   });
   const reportPath = await json(path.join(root,'renders','final','render-report.json'), report);
   const reportRef = await contentReference(reportPath, {kind:'render-report', root});
+
+  let projectionBundle = null;
+  if (projection !== 'none') {
+    const geometry = sourceGeometry(source);
+    const geometryPath = await json(path.join(root,'model','reference-geometry.json'), geometry);
+    const geometryRef = await contentReference(geometryPath, {kind:'reference-geometry', root});
+    const proof = createRealizedProjection({
+      referenceGeometry:geometry, glb, cameraHypothesisId:'camera-source',
+      camera:{projection:'perspective',position:[0,0,5],target:[0,0,0],up:[0,1,0],fovY:90,aspect:1},
+      anchorBindings:[{referenceId:'whole-center',nodeId:'model-node',localPoint:[0,0,0]}],
+      evidenceRefs:['model/candidate.glb','source/reference.bin'],
+    });
+    const proofPath = await json(path.join(root,'model','realized-projection.json'), proof);
+    const proofRef = await contentReference(proofPath, {kind:'realized-projection', root});
+    const anchor = proof.projectionFit.anchorProjections[0];
+    projectionBundle = {
+      geometryRef,
+      proofRef,
+      proof,
+      binding:{
+        scopeId:'whole',
+        referenceGeometryFileSha256:geometryRef.sha256,
+        referenceGeometryDigest:geometry.geometryDigest,
+        realizedProjectionFileSha256:proofRef.sha256,
+        realizedProjectionDigest:proof.realizedProjectionDigest,
+        projectionFitDigest:proof.projectionFitDigest,
+        assetSha256:asset.sha256,
+      },
+      landmarks:[{
+        id:'whole-center',
+        evidenceClass:'derived-observation-aid',
+        sourceNormalized:anchor.sourceXY,
+        registeredSourceNormalized:anchor.sourceXY,
+        realizedRenderNormalized:anchor.projectedXY,
+        residualNormalized:anchor.errorNormalized,
+      }],
+      landmarkResidualRmse:proof.projectionFit.metrics.anchorRmseNormalized,
+    };
+  }
+
   const comparison = {
     schema:'refas.registered-comparison/v1', claimScope:'critique-evidence-only',
-    source:{sha256:source.sha256, manifestSha256:'f'.repeat(64)},
+    source:{sha256:source.sha256, manifestSha256:'f'.repeat(64), acquisitionKind:source.acquisition?.kind ?? ''},
     render:{assetSha256:asset.sha256, frameId:'hero', frameSha256:frames[0].sha256, reportSha256:reportRef.sha256},
     registration:{digest:'a'.repeat(64), fileSha256:'b'.repeat(64), model:'test', metrics:{}},
-    hierarchy:{digest:'c'.repeat(64), fileSha256:'d'.repeat(64)}, projectionEvidence:[],
+    hierarchy:{digest:'c'.repeat(64), fileSha256:'d'.repeat(64)}, projectionEvidence:projectionBundle ? [projectionBundle.binding] : [],
     scopes:[{scopeId:'whole', level:'whole', ancestry:['whole'], sourceRoi:[0,0,1,1], registeredRenderRoi:[0,0,1,1],
-      measurementAuthority:'image-only', projectionBinding:null,
-      metrics:{silhouetteIoU:1, sourceForegroundPixels:100, renderForegroundPixels:100, landmarkResidualRmse:null},
-      landmarks:[], dimensions:[], images:[{path:'renders/final/hero.png',sha256:frames[0].sha256,width:1,height:1,evidenceClass:'derived-observation-aid'}]}],
+      measurementAuthority:projectionBundle ? 'realized-projection' : 'image-only',
+      projectionBinding:projectionBundle?.binding ?? null,
+      metrics:{silhouetteIoU:null, sourceForegroundPixels:100, renderForegroundPixels:100, landmarkResidualRmse:projectionBundle?.landmarkResidualRmse ?? null},
+      landmarks:projectionBundle?.landmarks ?? [], dimensions:[], images:[{path:'renders/final/hero.png',sha256:frames[0].sha256,width:1,height:1,evidenceClass:'derived-observation-aid'}]}],
     policy:{rawSourceRemainsPrimary:true, outputsAreDerivedObservationAids:true, metricsCannotSetVisualGate:true,
       metricFailureRequiresTypedFindingBeforeRouting:true, registrationResidualIsNotShapeTruth:true,
       realSourceLandmarksMustUseRealizedProjection:true, manualRenderCoordinatesCannotClaimRealSourceGeometry:true,
@@ -276,18 +322,8 @@ async function commitCertification(root, source, {projection='none'}={}) {
     await appendRelationalCertificationEvidence(root,source,asset,refs);
   }
 
-  if (projection !== 'none') {
-    const geometry = sourceGeometry(source);
-    const geometryPath = await json(path.join(root,'model','reference-geometry.json'), geometry);
-    refs.push(await contentReference(geometryPath, {kind:'reference-geometry', root}));
-    const proof = createRealizedProjection({
-      referenceGeometry:geometry, glb, cameraHypothesisId:'camera-source',
-      camera:{projection:'perspective',position:[0,0,5],target:[0,0,0],up:[0,1,0],fovY:90,aspect:1},
-      anchorBindings:[{referenceId:'whole-center',nodeId:'model-node',localPoint:[0,0,0]}],
-      evidenceRefs:['model/candidate.glb','source/reference.bin'],
-    });
-    const proofPath = await json(path.join(root,'model','realized-projection.json'), proof);
-    refs.push(await contentReference(proofPath, {kind:'realized-projection', root}));
+  if (projectionBundle) {
+    refs.push(projectionBundle.geometryRef, projectionBundle.proofRef);
   }
 
   return commitCheckpoint(root, {

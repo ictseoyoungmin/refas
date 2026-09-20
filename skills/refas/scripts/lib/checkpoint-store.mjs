@@ -27,6 +27,11 @@ import {validatePbrRenderReport} from './pbr-render-report.mjs';
 import {findComparisonContradictions, validateRegisteredComparison} from './registered-comparison.mjs';
 import {assertEarlyResemblanceAdmission} from './early-resemblance-barrier.mjs';
 import {
+  assertPublicSourceAcquisition,
+  isTrustedContractFixtureProject,
+  validateContractFixtureAuthority,
+} from './contract-fixture-authority.mjs';
+import {
   checkpointGatePolicy,
   createCheckpointGateVerdict,
   expectedCheckpointGateIds,
@@ -101,7 +106,7 @@ function normalizeSourceManifest(raw) {
     width: Number(raw.width),
     height: Number(raw.height),
     authority: String(raw.authority ?? 'primary'),
-    acquisition: raw.acquisition && typeof raw.acquisition === 'object' ? structuredClone(raw.acquisition) : {},
+    acquisition: assertPublicSourceAcquisition(raw.acquisition),
   };
   if (!source.path || !Number.isInteger(source.sizeBytes) || source.sizeBytes < 1) throw new Error('source path and positive sizeBytes are required');
   if (!Number.isInteger(source.width) || source.width < 1 || !Number.isInteger(source.height) || source.height < 1) throw new Error('source width and height must be positive integers');
@@ -521,8 +526,7 @@ async function inspectCertificationHead(root, state, head) {
 
 async function inspectRegisteredComparison(root, state, head, visualReview, errors) {
   if (visualReview?.evidenceClass !== 'independent-reference' || visualReview?.verdict !== 'pass') return null;
-  const acquisitionKind = String(state.source?.acquisition?.kind ?? '').toLowerCase();
-  if (['test-fixture', 'deterministic-project-fixture', 'synthetic-test-fixture'].includes(acquisitionKind)) return null;
+  if (isTrustedContractFixtureProject(state)) return null;
   const binding = visualReview.registeredComparison;
   if (!binding) {
     errors.push('independent passing visual review requires an exact registered comparison binding');
@@ -541,7 +545,10 @@ async function inspectRegisteredComparison(root, state, head, visualReview, erro
       errors.push('registered comparison artifact bytes do not match the visual review binding');
     }
     report = await readJson(resolved.realFile);
-    const validation = validateRegisteredComparison(report);
+    const validation = validateRegisteredComparison(report, {
+      trustedContractFixture: isTrustedContractFixtureProject(state),
+      expectedAcquisitionKind: state.source?.acquisition?.kind ?? null,
+    });
     if (!validation.valid) errors.push(`registered comparison is invalid: ${validation.errors.join('; ')}`);
   } catch (error) {
     errors.push(`registered comparison unavailable: ${error.message}`);
@@ -594,16 +601,6 @@ function certificateCore(certificate) {
     registeredComparison: certificate.registeredComparison,
     audit: certificate.audit,
   };
-}
-
-const CONTRACT_FIXTURE_ACQUISITIONS = new Set([
-  'test-fixture',
-  'deterministic-project-fixture',
-  'synthetic-test-fixture',
-]);
-
-function isContractFixtureSource(state) {
-  return CONTRACT_FIXTURE_ACQUISITIONS.has(String(state?.source?.acquisition?.kind ?? '').toLowerCase());
 }
 
 async function readCheckpointJsonArtifact(root, checkpoint, kind, label) {
@@ -667,7 +664,7 @@ async function verifyEarlyResemblanceEvidenceArtifacts(root, state, shapeCheckpo
 }
 
 async function ensureEarlyResemblanceAdmission(root, state, capability, scopeId, lineage) {
-  if (isContractFixtureSource(state)) return;
+  if (isTrustedContractFixtureProject(state)) return;
   if (capabilityIndex(capability) < capabilityIndex('surface-topology')) return;
 
   const shapeCheckpoint = [...lineage].reverse().find((checkpoint) =>
@@ -1172,7 +1169,7 @@ export async function resumeProject(root) {
     };
   }
   if (state.status === 'certified') {
-    if (!isContractFixtureSource(state) && state.head) {
+    if (!isTrustedContractFixtureProject(state) && state.head) {
       try {
         const checkpoints = await listCheckpoints(root);
         const lineage = checkpointLineage(checkpoints, state.head);
@@ -1197,7 +1194,7 @@ export async function resumeProject(root) {
   const head = await loadCheckpoint(root, state.head);
   const next = CAPABILITY_ORDER[capabilityIndex(head.capability) + 1] ?? null;
 
-  if (next && !isContractFixtureSource(state) && capabilityIndex(next) >= capabilityIndex('surface-topology')) {
+  if (next && !isTrustedContractFixtureProject(state) && capabilityIndex(next) >= capabilityIndex('surface-topology')) {
     const checkpoints = await listCheckpoints(root);
     const lineage = checkpointLineage(checkpoints, state.head);
     try {
@@ -1308,7 +1305,11 @@ export async function auditProject(root) {
     } catch (error) {
       errors.push(`source integrity: ${error.message}`);
     }
-    if (state.head && byId.has(state.head) && !isContractFixtureSource(state)) {
+    if (state.contractFixtureAuthority != null) {
+      const fixtureAuthority = validateContractFixtureAuthority(state.contractFixtureAuthority, {sourceSha256: state.source.sha256});
+      if (!fixtureAuthority.valid) errors.push(`contract fixture authority: ${fixtureAuthority.errors.join('; ')}`);
+    }
+    if (state.head && byId.has(state.head) && !isTrustedContractFixtureProject(state)) {
       const headCheckpoint = byId.get(state.head);
       if (capabilityIndex(headCheckpoint.capability) >= capabilityIndex('surface-topology')) {
         try {
@@ -1364,7 +1365,7 @@ export async function assessCertification(root) {
   let inspection = {visualReview: null, visualReviewArtifact: null};
   if (state.head) {
     const head = await loadCheckpoint(root, state.head);
-    if (!isContractFixtureSource(state) && capabilityIndex(head.capability) >= capabilityIndex('surface-topology')) {
+    if (!isTrustedContractFixtureProject(state) && capabilityIndex(head.capability) >= capabilityIndex('surface-topology')) {
       try {
         const checkpoints = await listCheckpoints(root);
         const lineage = checkpointLineage(checkpoints, state.head);

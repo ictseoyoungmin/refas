@@ -22,6 +22,7 @@ import {
   initProject,
   resumeProject,
 } from '../skills/refas/scripts/lib/index.mjs';
+import {initTrustedContractFixtureProject} from '../skills/refas/scripts/lib/contract-fixture-project.mjs';
 
 const D = (ch) => ch.repeat(64);
 
@@ -258,9 +259,9 @@ test('R04 upgrade rejects legacy real-source downstream lineage without R04 admi
     width: 64,
     height: 64,
     authority: 'primary',
-    acquisition: {kind: 'test-fixture'},
+    acquisition: {kind: 'generated-contract-reference'},
   };
-  await initProject(root, {projectId: 'r04-legacy-upgrade', source});
+  await initTrustedContractFixtureProject(root, {projectId: 'r04-legacy-upgrade', source, fixtureId:'r04-legacy-bootstrap'});
   const stateRef = await writeRef(root, 'model/state.bin', Buffer.from('legacy state\n'), 'model-spec');
   for (const capability of ['source-intake','visual-hierarchy','visual-observation','spatial-hypotheses','shape-reconstruction','surface-topology']) {
     await commitLocal(root, capability, [stateRef]);
@@ -269,6 +270,7 @@ test('R04 upgrade rejects legacy real-source downstream lineage without R04 admi
   const projectPath = path.join(root, '.refas', 'project.json');
   const project = JSON.parse(await fs.readFile(projectPath, 'utf8'));
   project.source.acquisition = {kind: 'user-provided-reference'};
+  project.contractFixtureAuthority = null;
   await fs.writeFile(projectPath, `${JSON.stringify(project, null, 2)}\n`);
 
   const audit = await auditProject(root);
