@@ -44,9 +44,6 @@
     },
     "acquisition": {
       "type": "object",
-      "required": [
-        "kind"
-      ],
       "properties": {
         "kind": {
           "type": "string",
