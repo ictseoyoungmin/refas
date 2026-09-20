@@ -4,6 +4,7 @@ import test from 'node:test';
 import {
   createPerceptualSignatureEvidence,
   createPerceptualSignatureSet,
+  createVisualHierarchy,
   validatePerceptualSignatureEvidence,
   validatePerceptualSignatureSet,
 } from '../skills/refas/scripts/lib/index.mjs';
@@ -15,9 +16,17 @@ import {
 const D = (ch) => ch.repeat(64);
 const SOURCE = D('a');
 const ASSET = D('b');
+const HIERARCHY = createVisualHierarchy({
+  source: {path: 'source/reference.png', sha256: SOURCE, width: 1024, height: 1024},
+  nodes: [
+    {id: 'whole', label: 'Whole', level: 'whole', parentId: null, roi: [0, 0, 1, 1]},
+    {id: 'primary-region', label: 'Primary region', level: 'region', parentId: 'whole', roi: [0.1, 0.1, 0.8, 0.8]},
+  ],
+});
 
 function signatureSet() {
   return createPerceptualSignatureSet({
+    hierarchy: HIERARCHY,
     scopeId: 'whole',
     sourceSha256: SOURCE,
     signatures: [
@@ -68,12 +77,13 @@ function signatureEvidence(set = signatureSet()) {
 
 test('R03 source perceptual signatures are canonical, source-bound, and domain-neutral', () => {
   const set = signatureSet();
-  assert.equal(validatePerceptualSignatureSet(set).valid, true);
+  assert.equal(validatePerceptualSignatureSet(set, HIERARCHY).valid, true);
   assert.equal(set.signatures.length, 2);
   assert.ok(set.signatures.every((item) => item.sourceSha256 === SOURCE));
   assert.equal(set.policy.correspondenceDoesNotImplyResemblance, true);
 
   assert.throws(() => createPerceptualSignatureSet({
+    hierarchy: HIERARCHY,
     scopeId: 'whole',
     sourceSha256: SOURCE,
     signatures: [
@@ -84,6 +94,7 @@ test('R03 source perceptual signatures are canonical, source-bound, and domain-n
   }), /IDs must be unique/);
 
   assert.throws(() => createPerceptualSignatureSet({
+    hierarchy: HIERARCHY,
     scopeId: 'whole',
     sourceSha256: SOURCE,
     signatures: [{id: 'bad', family: 'mechanical-bird-style', importance: 'identity', sourceObservation: 'Asset-specific category.', evidenceRefs: ['source.png']}],
@@ -91,11 +102,20 @@ test('R03 source perceptual signatures are canonical, source-bound, and domain-n
   }), /family is unsupported/);
 
   assert.throws(() => createPerceptualSignatureSet({
+    hierarchy: HIERARCHY,
     scopeId: 'whole',
     sourceSha256: SOURCE,
     signatures: [{id: 'empty', family: 'curvature-character', importance: 'identity', sourceObservation: '', evidenceRefs: ['source.png']}],
     evidenceRefs: ['source.png'],
   }), /sourceObservation is required/);
+
+  assert.throws(() => createPerceptualSignatureSet({
+    hierarchy: HIERARCHY,
+    scopeId: 'whole',
+    sourceSha256: SOURCE,
+    signatures: [{id: 'unknown-scope', scopeId: 'missing-region', family: 'mass-proportion', importance: 'macro', sourceObservation: 'Missing scope.', evidenceRefs: ['source.png']}],
+    evidenceRefs: ['source.png'],
+  }), /not present in the bound visual hierarchy/);
 });
 
 test('R03 candidate evidence covers every signature exactly once and emits typed mismatches', () => {
@@ -192,6 +212,7 @@ test('R03 never promotes single-view IoU to resemblance authority', () => {
 
 test('R03 ambiguous signature families route to visual critique instead of guessing a repair owner', () => {
   const set = createPerceptualSignatureSet({
+    hierarchy: HIERARCHY,
     scopeId: 'whole',
     sourceSha256: SOURCE,
     signatures: [{
