@@ -30,6 +30,7 @@ import {
   validateVisualHierarchy,
   validateVisualReview,
   validatePbrRenderReport,
+  validateEarlyResemblanceBarrier,
   validateRegisteredComparison,
   validateRealizedAssemblyProof,
   validateConstructionQuality,
@@ -273,6 +274,7 @@ async function main() {
     else if (spec.schema === 'refas.assembly-contract/v1') result = validateAssemblyContract(spec);
     else if (spec.schema === 'refas.visual-review/v1') result = validateVisualReview(spec);
     else if (spec.schema === 'refas.pbr-render-report/v1') result = validatePbrRenderReport(spec);
+    else if (spec.schema === 'refas.early-resemblance-barrier/v1') result = validateEarlyResemblanceBarrier(spec);
     else if (spec.schema === 'refas.registered-comparison/v1') result = validateRegisteredComparison(spec);
     else if (spec.schema === 'refas.realized-assembly-proof/v1') result = validateRealizedAssemblyProof(spec);
     else if (spec.schema === 'refas.construction-quality/v1') result = validateConstructionQuality(spec);
