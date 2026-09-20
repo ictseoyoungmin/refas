@@ -15,6 +15,14 @@ import {
   commitCheckpoint,
   contentReference,
   createPbrRenderReport,
+  createEarlyResemblanceBarrier,
+  createPerceptualSignatureEvidence,
+  createPerceptualSignatureSet,
+  createVisualHierarchy,
+  NEUTRAL_CLAY_LIGHTING_RIG_DIGEST,
+  NEUTRAL_CLAY_PRESENTATION_PRESET,
+  NEUTRAL_CLAY_PRESENTATION_PRESET_DIGEST,
+  NEUTRAL_CLAY_REQUIRED_VIEW_IDS,
   createRealizedProjection,
   createReferenceGeometry,
   createRelationalDiscrepancy,
@@ -54,11 +62,90 @@ async function makeProject(t, acquisitionKind='user-provided-reference') {
   return {root, source};
 }
 
-async function advanceToReview(root) {
+async function advanceToReview(root, source, {projection='none'}={}) {
   const file = path.join(root, 'model', 'state.bin');
   await fs.mkdir(path.dirname(file), {recursive:true});
+  let hierarchy = null;
+
   for (const capability of CAPABILITY_ORDER) {
     if (capability === 'whole-object-certification') break;
+
+    if (capability === 'visual-hierarchy') {
+      hierarchy = createVisualHierarchy({
+        source:{path:source.path,sha256:source.sha256,width:source.width,height:source.height},
+        nodes:[{id:'whole',label:'Whole',level:'whole',parentId:null,roi:[0,0,1,1]}],
+      });
+      const hierarchyPath = await json(path.join(root,'model','visual-hierarchy.json'), hierarchy);
+      const hierarchyRef = await contentReference(hierarchyPath,{kind:'visual-hierarchy',root});
+      await commitCheckpoint(root,{
+        capability,scopeId:'whole',reason:'visual-hierarchy fixture is trustworthy',
+        artifactRefs:[hierarchyRef],claims:['visual-hierarchy closed'],
+        gates:[{id:'visual-hierarchy-gate',evidenceRefs:[hierarchyRef.path]}],
+      });
+      continue;
+    }
+
+    if (capability === 'shape-reconstruction') {
+      if (!hierarchy) throw new Error('R04 migration fixture requires visual hierarchy before shape');
+      const assetPath = path.join(root,'model','candidate.glb');
+      const glb = mannequinGlb(projection === 'bad' ? 4 : 0);
+      await fs.writeFile(assetPath,glb);
+      const asset = await contentReference(assetPath,{kind:'glb',root});
+      const clayFrames = [];
+      for (const viewId of NEUTRAL_CLAY_REQUIRED_VIEW_IDS) {
+        const clayPath = path.join(root,'renders','clay',`${viewId}.png`);
+        await fs.mkdir(path.dirname(clayPath),{recursive:true});
+        await fs.writeFile(clayPath,Buffer.from(`neutral clay ${viewId} frame\n`));
+        clayFrames.push(await contentReference(clayPath,{kind:'render-frame',root}));
+      }
+      const clayHero = clayFrames.find((frame)=>frame.path==='renders/clay/hero.png');
+
+      const signatureSet = createPerceptualSignatureSet({
+        hierarchy,scopeId:'whole',sourceSha256:source.sha256,
+        signatures:[{
+          id:'whole-form',scopeId:'whole',family:'silhouette-character',importance:'macro',
+          sourceObservation:'The projection certification fixture establishes its whole-form identity before downstream detail.',
+          evidenceRefs:[source.path],
+        }],
+        evidenceRefs:[source.path],
+      });
+      const signatureEvidence = createPerceptualSignatureEvidence({
+        signatureSet,assetSha256:asset.sha256,
+        observations:[{
+          signatureId:'whole-form',status:'match',
+          candidateObservation:'The candidate is the exact shape checkpoint GLB reviewed for this certification fixture.',
+          comparisonConclusion:'This fixture explicitly authorizes downstream detail so projection certification can test its own authority.',
+          evidenceRefs:[source.path,clayHero.path],
+        }],
+        evidenceRefs:[source.path,clayHero.path],
+      });
+      const clayReport = createPbrRenderReport({
+        assetSha256:asset.sha256,frameDigest:'9'.repeat(64),
+        renderer:{family:'other',name:'RefAs Independent PBR',version:'1.0.0',backend:'numpy-cook-torrance-headless',independentProcess:true},
+        lighting:{rigId:NEUTRAL_CLAY_PRESENTATION_PRESET.lighting.rigId,digest:NEUTRAL_CLAY_LIGHTING_RIG_DIGEST},
+        colorPipeline:{...NEUTRAL_CLAY_PRESENTATION_PRESET.colorPipeline},
+        materialSupport:{supported:['base-color-factor','metallic-factor','roughness-factor'],unsupported:['textures']},
+        outputs:clayFrames.map((frame,index)=>({viewId:NEUTRAL_CLAY_REQUIRED_VIEW_IDS[index],path:frame.path,sha256:frame.sha256})),
+        reproducibility:{mode:'deterministic',tolerance:''},
+        presentation:{mode:'neutral-clay',presetId:NEUTRAL_CLAY_PRESENTATION_PRESET.id,presetDigest:NEUTRAL_CLAY_PRESENTATION_PRESET_DIGEST},
+      });
+      const clayReportPath = await json(path.join(root,'renders','clay','render-report.json'),clayReport);
+      const clayReportRef = await contentReference(clayReportPath,{kind:'render-report',root});
+      const earlyBarrier = createEarlyResemblanceBarrier({
+        sourceSha256:source.sha256,hierarchyDigest:hierarchy.hierarchyDigest,assetSha256:asset.sha256,
+        signatureEvidence,clayRenderReport:clayReport,evidenceRefs:[source.path,clayHero.path],
+      });
+      assert.equal(earlyBarrier.verdict,'PROCEED');
+      const barrierPath = await json(path.join(root,'reviews','early-resemblance-barrier.json'),earlyBarrier);
+      const barrierRef = await contentReference(barrierPath,{kind:'early-resemblance-barrier',root});
+      await commitCheckpoint(root,{
+        capability,scopeId:'whole',reason:'shape-reconstruction fixture is R04-admitted',
+        artifactRefs:[asset,barrierRef,clayReportRef,...clayFrames],claims:['shape-reconstruction closed after early resemblance admission'],
+        gates:[{id:'shape-reconstruction-gate',evidenceRefs:[asset.path,barrierRef.path,clayReportRef.path,...clayFrames.map((frame)=>frame.path)]}],
+      });
+      continue;
+    }
+
     await fs.writeFile(file, Buffer.from(`trusted:${capability}\n`));
     const artifact = await contentReference(file, {kind:'model-spec', root});
     await commitCheckpoint(root, {
@@ -128,8 +215,7 @@ async function appendRelationalCertificationEvidence(root, source, asset, refs) 
 
 async function commitCertification(root, source, {projection='none'}={}) {
   const assetPath = path.join(root, 'model', 'candidate.glb');
-  const glb = mannequinGlb(projection === 'bad' ? 4 : 0);
-  await fs.writeFile(assetPath, glb);
+  const glb = await fs.readFile(assetPath);
   const asset = await contentReference(assetPath, {kind:'glb', root});
 
   const frames = [];
@@ -213,7 +299,7 @@ async function commitCertification(root, source, {projection='none'}={}) {
 
 test('real source cannot bypass certification by omitting realized reprojection', async (t) => {
   const {root, source} = await makeProject(t);
-  await advanceToReview(root);
+  await advanceToReview(root, source);
   await commitCertification(root, source, {projection:'none'});
   const readiness = await assessCertification(root);
   assert.equal(readiness.ready, false);
@@ -224,7 +310,7 @@ test('real source cannot bypass certification by omitting realized reprojection'
 
 test('good realized reprojection allows real source certification and remains audit-valid', async (t) => {
   const {root, source} = await makeProject(t);
-  await advanceToReview(root);
+  await advanceToReview(root, source);
   await commitCertification(root, source, {projection:'good'});
   const readiness = await assessCertification(root);
   assert.equal(readiness.ready, true, readiness.errors.join('\n'));
@@ -240,7 +326,7 @@ test('good realized reprojection allows real source certification and remains au
 
 test('blocking realized reprojection vetoes certification even when visual review declares pass', async (t) => {
   const {root, source} = await makeProject(t);
-  await advanceToReview(root);
+  await advanceToReview(root, source, {projection:'bad'});
   await commitCertification(root, source, {projection:'bad'});
   const readiness = await assessCertification(root);
   assert.equal(readiness.ready, false);
@@ -250,7 +336,7 @@ test('blocking realized reprojection vetoes certification even when visual revie
 
 test('contract fixtures remain compatible with legacy synthetic certification tests', async (t) => {
   const {root, source} = await makeProject(t, 'test-fixture');
-  await advanceToReview(root);
+  await advanceToReview(root, source);
   await commitCertification(root, source, {projection:'none'});
   const readiness = await assessCertification(root);
   assert.equal(readiness.ready, true, readiness.errors.join('\n'));

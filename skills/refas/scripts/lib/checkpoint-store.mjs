@@ -25,6 +25,7 @@ import {
 } from './visual-review.mjs';
 import {validatePbrRenderReport} from './pbr-render-report.mjs';
 import {findComparisonContradictions, validateRegisteredComparison} from './registered-comparison.mjs';
+import {assertEarlyResemblanceAdmission} from './early-resemblance-barrier.mjs';
 import {
   checkpointGatePolicy,
   createCheckpointGateVerdict,
@@ -595,6 +596,123 @@ function certificateCore(certificate) {
   };
 }
 
+const CONTRACT_FIXTURE_ACQUISITIONS = new Set([
+  'test-fixture',
+  'deterministic-project-fixture',
+  'synthetic-test-fixture',
+]);
+
+function isContractFixtureSource(state) {
+  return CONTRACT_FIXTURE_ACQUISITIONS.has(String(state?.source?.acquisition?.kind ?? '').toLowerCase());
+}
+
+async function readCheckpointJsonArtifact(root, checkpoint, kind, label) {
+  const matching = (checkpoint?.artifactRefs ?? []).filter((artifact) => artifact.kind === kind);
+  if (matching.length !== 1) throw new Error(`${label} requires exactly one ${kind} artifact`);
+  const artifact = matching[0];
+  const resolved = await assertExistingFileInside(root, artifact.path, `${label} ${kind} artifact`);
+  if (resolved.stat.size !== artifact.sizeBytes || await sha256File(resolved.realFile) !== artifact.sha256) {
+    throw new Error(`${label} ${kind} artifact bytes are stale or mismatched`);
+  }
+  return {artifact, value: await readJson(resolved.realFile)};
+}
+
+async function verifyEarlyResemblanceEvidenceArtifacts(root, state, shapeCheckpoint, barrier, lineage, label) {
+  const reportArtifacts = (shapeCheckpoint.artifactRefs ?? []).filter((artifact) => artifact.kind === 'render-report');
+  const matchingReports = [];
+  for (const artifact of reportArtifacts) {
+    const resolved = await assertExistingFileInside(root, artifact.path, `${label} render-report artifact`);
+    if (resolved.stat.size !== artifact.sizeBytes || await sha256File(resolved.realFile) !== artifact.sha256) {
+      throw new Error(`${label} render-report artifact bytes are stale or mismatched`);
+    }
+    const report = await readJson(resolved.realFile);
+    if (report?.schema !== 'refas.pbr-render-report/v1' || report?.reportDigest !== barrier.clayRenderReportDigest) continue;
+    matchingReports.push({artifact, report});
+  }
+  if (matchingReports.length !== 1) {
+    throw new Error(`${label} requires exactly one shape-checkpoint neutral-clay render report matching the barrier`);
+  }
+
+  const {report} = matchingReports[0];
+  const validation = validatePbrRenderReport(report);
+  if (!validation.valid) throw new Error(`${label} neutral-clay render report is invalid: ${validation.errors.join('; ')}`);
+  if (digestJson(report) !== digestJson(barrier.clayRenderReport)) {
+    throw new Error(`${label} barrier embeds a different neutral-clay render report`);
+  }
+
+  for (const output of report.outputs ?? []) {
+    const matches = (shapeCheckpoint.artifactRefs ?? []).filter((artifact) =>
+      artifact.kind === 'render-frame' && artifact.path === output.path && artifact.sha256 === output.sha256);
+    if (matches.length !== 1) {
+      throw new Error(`${label} neutral-clay output is not exact-byte bound in the shape checkpoint: ${output.viewId}`);
+    }
+  }
+
+  const lineageArtifactPaths = new Set([
+    state.source.path,
+    ...lineage.flatMap((checkpoint) => (checkpoint.artifactRefs ?? []).map((artifact) => artifact.path)),
+  ].filter(Boolean));
+  const resemblanceEvidenceRefs = new Set([
+    ...(barrier.evidenceRefs ?? []),
+    ...(barrier.signatureEvidence?.evidenceRefs ?? []),
+    ...(barrier.signatureEvidence?.signatureSet?.evidenceRefs ?? []),
+    ...(barrier.signatureEvidence?.observations ?? []).flatMap((observation) => observation.evidenceRefs ?? []),
+    ...(barrier.signatureEvidence?.signatureSet?.signatures ?? []).flatMap((signature) => signature.evidenceRefs ?? []),
+  ].filter(Boolean));
+  for (const evidenceRef of resemblanceEvidenceRefs) {
+    if (!lineageArtifactPaths.has(evidenceRef)) {
+      throw new Error(`${label} resemblance evidence ref is not bound in current checkpoint lineage: ${evidenceRef}`);
+    }
+  }
+}
+
+async function ensureEarlyResemblanceAdmission(root, state, capability, scopeId, lineage) {
+  if (isContractFixtureSource(state)) return;
+  if (capabilityIndex(capability) < capabilityIndex('surface-topology')) return;
+
+  const shapeCheckpoint = [...lineage].reverse().find((checkpoint) =>
+    checkpoint.capability === 'shape-reconstruction' && scopeContains(checkpoint.scopeId, scopeId));
+  if (!shapeCheckpoint) throw new Error(`${capability} requires a trustworthy shape-reconstruction checkpoint before early resemblance admission`);
+
+  const {value: barrier} = await readCheckpointJsonArtifact(
+    root,
+    shapeCheckpoint,
+    'early-resemblance-barrier',
+    `${capability} early resemblance admission`,
+  );
+
+  const candidateMatches = (shapeCheckpoint.artifactRefs ?? []).filter((artifact) =>
+    artifact.kind === 'glb' && artifact.sha256 === barrier.assetSha256);
+  if (candidateMatches.length !== 1) {
+    throw new Error(`${capability} early resemblance barrier does not bind exactly one shape-reconstruction candidate GLB`);
+  }
+
+  const hierarchyCheckpoint = [...lineage].reverse().find((checkpoint) =>
+    checkpoint.capability === 'visual-hierarchy' && scopeContains(checkpoint.scopeId, scopeId));
+  if (!hierarchyCheckpoint) throw new Error(`${capability} early resemblance admission requires current visual-hierarchy lineage`);
+  const {value: hierarchy} = await readCheckpointJsonArtifact(
+    root,
+    hierarchyCheckpoint,
+    'visual-hierarchy',
+    `${capability} early resemblance admission`,
+  );
+
+  await verifyEarlyResemblanceEvidenceArtifacts(
+    root,
+    state,
+    shapeCheckpoint,
+    barrier,
+    lineage,
+    `${capability} early resemblance admission`,
+  );
+
+  assertEarlyResemblanceAdmission(barrier, {
+    sourceSha256: state.source.sha256,
+    hierarchyDigest: hierarchy.hierarchyDigest,
+    assetSha256: candidateMatches[0].sha256,
+  });
+}
+
 async function ensurePrerequisites(root, state, capability, scopeId, lineage) {
   try {
     await verifySource(root, normalizeSourceManifest(state.source));
@@ -623,6 +741,8 @@ async function ensurePrerequisites(root, state, capability, scopeId, lineage) {
       checkpoint.capability === dependency && scopeContains(checkpoint.scopeId, scopeId));
     if (!found) throw new Error(`${capability} requires a trustworthy ${dependency} checkpoint for ${scopeId}`);
   }
+
+  await ensureEarlyResemblanceAdmission(root, state, capability, scopeId, lineage);
 }
 
 function nextInvalidated(state) {
@@ -1052,6 +1172,23 @@ export async function resumeProject(root) {
     };
   }
   if (state.status === 'certified') {
+    if (!isContractFixtureSource(state) && state.head) {
+      try {
+        const checkpoints = await listCheckpoints(root);
+        const lineage = checkpointLineage(checkpoints, state.head);
+        const certifiedHead = await loadCheckpoint(root, state.head);
+        await ensureEarlyResemblanceAdmission(root, state, certifiedHead.capability, certifiedHead.scopeId, lineage);
+      } catch (error) {
+        return {
+          schema: 'refas.resume-guidance/v1',
+          status: state.status,
+          safeCheckpointId: state.head,
+          activeWork: {capability: 'visual-critique', scopeId: state.activeScopeId},
+          nextAction: 'REQUEST_RESEMBLANCE_REVIEW',
+          reason: `the stored certification predates or fails current early resemblance admission: ${error.message}`,
+        };
+      }
+    }
     return {
       schema: 'refas.resume-guidance/v1', status: state.status, safeCheckpointId: state.head,
       activeWork: null, nextAction: 'DONE', reason: 'the current head has a valid whole-object certificate',
@@ -1059,6 +1196,58 @@ export async function resumeProject(root) {
   }
   const head = await loadCheckpoint(root, state.head);
   const next = CAPABILITY_ORDER[capabilityIndex(head.capability) + 1] ?? null;
+
+  if (next && !isContractFixtureSource(state) && capabilityIndex(next) >= capabilityIndex('surface-topology')) {
+    const checkpoints = await listCheckpoints(root);
+    const lineage = checkpointLineage(checkpoints, state.head);
+    try {
+      await ensureEarlyResemblanceAdmission(root, state, next, state.activeScopeId, lineage);
+    } catch (error) {
+      const verdictMatch = String(error.message).match(/downstream detail requires early resemblance PROCEED; current verdict is (HOLD|REWORK)/);
+      if (verdictMatch) {
+        const shapeCheckpoint = [...lineage].reverse().find((checkpoint) =>
+          checkpoint.capability === 'shape-reconstruction' && scopeContains(checkpoint.scopeId, state.activeScopeId));
+        const {value: barrier} = await readCheckpointJsonArtifact(
+          root,
+          shapeCheckpoint,
+          'early-resemblance-barrier',
+          'resume early resemblance guidance',
+        );
+        if (verdictMatch[1] === 'HOLD') {
+          return {
+            schema: 'refas.resume-guidance/v1',
+            status: state.status,
+            safeCheckpointId: state.head,
+            activeWork: {capability: 'visual-critique', scopeId: barrier.scopeId},
+            nextAction: 'GATHER_RESEMBLANCE_EVIDENCE',
+            earlyResemblanceVerdict: barrier.verdict,
+            blockingSignatureIds: [...barrier.blockingSignatureIds],
+            reason: 'required macro or identity resemblance evidence remains insufficient; gather stronger source/candidate clay evidence before downstream detail',
+          };
+        }
+        return {
+          schema: 'refas.resume-guidance/v1',
+          status: state.status,
+          safeCheckpointId: state.head,
+          activeWork: {capability: 'visual-critique', scopeId: barrier.scopeId},
+          nextAction: 'REPORT_RESEMBLANCE_FINDINGS',
+          earlyResemblanceVerdict: barrier.verdict,
+          blockingSignatureIds: [...barrier.blockingSignatureIds],
+          findings: structuredClone(barrier.findings),
+          reason: 'required macro or identity signatures mismatch; report the typed findings so normal ownership routing can reopen the correct capability',
+        };
+      }
+      return {
+        schema: 'refas.resume-guidance/v1',
+        status: state.status,
+        safeCheckpointId: state.head,
+        activeWork: {capability: 'visual-critique', scopeId: state.activeScopeId},
+        nextAction: 'REQUEST_RESEMBLANCE_REVIEW',
+        reason: `early resemblance admission evidence is missing, stale, or invalid: ${error.message}`,
+      };
+    }
+  }
+
   if (!next) {
     const readiness = await inspectCertificationHead(projectRoot(root), state, head);
     if (!readiness.ready) {
@@ -1119,6 +1308,17 @@ export async function auditProject(root) {
     } catch (error) {
       errors.push(`source integrity: ${error.message}`);
     }
+    if (state.head && byId.has(state.head) && !isContractFixtureSource(state)) {
+      const headCheckpoint = byId.get(state.head);
+      if (capabilityIndex(headCheckpoint.capability) >= capabilityIndex('surface-topology')) {
+        try {
+          const lineage = checkpointLineage(checkpoints, state.head);
+          await ensureEarlyResemblanceAdmission(root, state, headCheckpoint.capability, headCheckpoint.scopeId, lineage);
+        } catch (error) {
+          errors.push(`early resemblance admission: ${error.message}`);
+        }
+      }
+    }
   } else {
     warnings.push('primary source is not bound');
   }
@@ -1164,6 +1364,15 @@ export async function assessCertification(root) {
   let inspection = {visualReview: null, visualReviewArtifact: null};
   if (state.head) {
     const head = await loadCheckpoint(root, state.head);
+    if (!isContractFixtureSource(state) && capabilityIndex(head.capability) >= capabilityIndex('surface-topology')) {
+      try {
+        const checkpoints = await listCheckpoints(root);
+        const lineage = checkpointLineage(checkpoints, state.head);
+        await ensureEarlyResemblanceAdmission(root, state, head.capability, head.scopeId, lineage);
+      } catch (error) {
+        errors.push(`early resemblance admission: ${error.message}`);
+      }
+    }
     inspection = await inspectCertificationHead(root, state, head);
     errors.push(...inspection.errors);
   }

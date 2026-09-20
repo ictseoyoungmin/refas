@@ -451,6 +451,40 @@ function candidateFixture() {
   };
 }
 
+function neutralClayAlignmentReport(assetSha256) {
+  return API.createPbrRenderReport({
+    assetSha256,
+    frameDigest: D('f'),
+    renderer: {
+      family: 'other',
+      name: 'RefAs Independent PBR',
+      version: '1.0.0',
+      backend: 'numpy-cook-torrance-headless',
+      independentProcess: true,
+    },
+    lighting: {
+      rigId: API.NEUTRAL_CLAY_PRESENTATION_PRESET.lighting.rigId,
+      digest: API.NEUTRAL_CLAY_LIGHTING_RIG_DIGEST,
+    },
+    colorPipeline: {...API.NEUTRAL_CLAY_PRESENTATION_PRESET.colorPipeline},
+    materialSupport: {
+      supported: ['base-color-factor', 'metallic-factor', 'roughness-factor'],
+      unsupported: ['textures'],
+    },
+    outputs: API.NEUTRAL_CLAY_REQUIRED_VIEW_IDS.map((viewId, index) => ({
+      viewId,
+      path: `renders/clay/${viewId}.png`,
+      sha256: D(String((index % 8) + 1)),
+    })),
+    reproducibility: {mode: 'deterministic', tolerance: ''},
+    presentation: {
+      mode: 'neutral-clay',
+      presetId: API.NEUTRAL_CLAY_PRESENTATION_PRESET.id,
+      presetDigest: API.NEUTRAL_CLAY_PRESENTATION_PRESET_DIGEST,
+    },
+  });
+}
+
 export async function createCapabilityAlignmentContext() {
   const fusion = fusionFixture();
   const surface = surfaceFixture();
@@ -641,6 +675,29 @@ export function fixtureForCapabilityInterface(key, context, outputs = new Map())
   } else if (key === 'validation/perceptual-signature-evidence') {
     bindings.perceptualSignatureSet=outputs.get('observation/perceptual-signature-set');
     values.assetSha256=API.digestBytes(context.candidate.candidateBytes);
+  } else if (key === 'validation/early-resemblance-barrier') {
+    const priorSignatureEvidence=outputs.get('validation/perceptual-signature-evidence');
+    const assetSha256=API.digestBytes(context.candidate.candidateBytes);
+    const clayReport=neutralClayAlignmentReport(assetSha256);
+    const clayHero=clayReport.outputs.find((output)=>output.viewId==='hero')?.path;
+    if (!clayHero) throw new Error('alignment neutral-clay report is missing hero output');
+    const signatureEvidence=API.createPerceptualSignatureEvidence({
+      signatureSet: priorSignatureEvidence.signatureSet,
+      assetSha256,
+      observations: priorSignatureEvidence.observations.map((observation)=>({
+        signatureId:observation.signatureId,
+        status:observation.status,
+        candidateObservation:observation.candidateObservation,
+        comparisonConclusion:observation.comparisonConclusion,
+        evidenceRefs:[...new Set([...(observation.evidenceRefs??[]),clayHero])],
+      })),
+      evidenceRefs:[...new Set([...(priorSignatureEvidence.evidenceRefs??[]),clayHero])],
+    });
+    bindings.earlyResemblanceSignatureEvidence=signatureEvidence;
+    bindings.earlyResemblanceClayRenderReport=clayReport;
+    values.sourceSha256=signatureEvidence.sourceSha256;
+    values.hierarchyDigest=signatureEvidence.hierarchyDigest;
+    values.assetSha256=assetSha256;
   } else if (key === 'validation/projection-aware-visual-review') {
     bindings.projectionFit=outputs.get('spatial-reasoning/projection-fit');
   } else if (key === 'candidate-transactions/candidate-transaction') {

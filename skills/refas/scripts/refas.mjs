@@ -30,6 +30,7 @@ import {
   validateVisualHierarchy,
   validateVisualReview,
   validatePbrRenderReport,
+  validateEarlyResemblanceBarrier,
   validateRegisteredComparison,
   validateRealizedAssemblyProof,
   validateConstructionQuality,
@@ -193,7 +194,7 @@ function help() {
       'inspect-glb': 'inspect-glb --glb asset.glb',
       evidence: 'evidence --image reference.png --out DIR --scope ID [--roi x,y,w,h] [--padding 0.08]',
       render: 'render --glb asset.glb --out DIR [--reference image.png] [--frame canonical-frame.json] [--size 640] [--timeout-seconds 300] [--max-working-mb 512] [--tile-size 256] [--max-triangles N]',
-      'render-pbr': 'render-pbr --glb asset.glb --out DIR --frame canonical-frame.json [--reference image.png] [--size 420] [--timeout-seconds 180] [--max-working-mb 512]',
+      'render-pbr': 'render-pbr --glb asset.glb --out DIR --frame canonical-frame.json [--reference image.png] [--size 420] [--timeout-seconds 180] [--max-working-mb 512] [--neutral-clay]',
       compare: 'compare --input registered-comparison-input.json --out DIR [--timeout-seconds 120]',
       'fit-parameters': 'fit-parameters --root DIR --plan parameter-fit-plan.json --worker evaluator.mjs --out parameter-fit-report.json',
     },
@@ -273,6 +274,7 @@ async function main() {
     else if (spec.schema === 'refas.assembly-contract/v1') result = validateAssemblyContract(spec);
     else if (spec.schema === 'refas.visual-review/v1') result = validateVisualReview(spec);
     else if (spec.schema === 'refas.pbr-render-report/v1') result = validatePbrRenderReport(spec);
+    else if (spec.schema === 'refas.early-resemblance-barrier/v1') result = validateEarlyResemblanceBarrier(spec);
     else if (spec.schema === 'refas.registered-comparison/v1') result = validateRegisteredComparison(spec);
     else if (spec.schema === 'refas.realized-assembly-proof/v1') result = validateRealizedAssemblyProof(spec);
     else if (spec.schema === 'refas.construction-quality/v1') result = validateConstructionQuality(spec);
@@ -305,6 +307,7 @@ async function main() {
     const args = ['--glb', required(options, 'glb'), '--out', required(options, 'out'), '--frame', required(options, 'frame')];
     if (options.reference) args.push('--reference', options.reference); if (options.size) args.push('--size', options.size);
     if (options['timeout-seconds']) args.push('--timeout-seconds', options['timeout-seconds']); if (options['max-working-mb']) args.push('--max-working-mb', options['max-working-mb']);
+    if (options['neutral-clay'] === true) args.push('--neutral-clay');
     const timeoutSeconds = Number(options['timeout-seconds'] ?? 180); if (!Number.isFinite(timeoutSeconds) || timeoutSeconds <= 0) throw new Error('--timeout-seconds must be a positive number');
     runPython('render_pbr.py', args, {timeoutMs: Math.ceil(timeoutSeconds * 1000 + 5000)}); return;
   }
