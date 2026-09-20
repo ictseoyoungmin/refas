@@ -164,6 +164,11 @@ test('R03 resemblance signal authority requires current signature evidence and c
     declaredAuthority: 'RESEMBLANCE_SIGNAL',
   }), /requires current perceptual-signature evidence/);
 
+  assert.throws(() => metricAuthority('edge-character-score', {
+    declaredAuthority: 'RESEMBLANCE_SIGNAL',
+    resemblanceEvidence: evidence,
+  }), /requires explicit currentSourceSha256 and currentCandidateAssetSha256 bindings/);
+
   const authority = metricAuthority('edge-character-score', {
     declaredAuthority: 'RESEMBLANCE_SIGNAL',
     resemblanceEvidence: evidence,
@@ -173,12 +178,18 @@ test('R03 resemblance signal authority requires current signature evidence and c
   assert.equal(authority.authority, 'RESEMBLANCE_SIGNAL');
   assert.equal(authority.resemblanceEvidenceDigest, evidence.evidenceDigest);
 
-  assert.doesNotThrow(() => assertMetricUseAllowed('edge-character-score', 'resemblance', {
+  assert.doesNotThrow(() => assertMetricUseAllowed('edge-character-score', 'diagnostic', {
     declaredAuthority: 'RESEMBLANCE_SIGNAL',
     resemblanceEvidence: evidence,
     currentSourceSha256: SOURCE,
     currentCandidateAssetSha256: ASSET,
   }));
+  assert.throws(() => assertMetricUseAllowed('edge-character-score', 'resemblance', {
+    declaredAuthority: 'RESEMBLANCE_SIGNAL',
+    resemblanceEvidence: evidence,
+    currentSourceSha256: SOURCE,
+    currentCandidateAssetSha256: ASSET,
+  }), /cannot be used for resemblance/);
   assert.throws(() => assertMetricUseAllowed('edge-character-score', 'objective', {
     declaredAuthority: 'RESEMBLANCE_SIGNAL',
     resemblanceEvidence: evidence,
