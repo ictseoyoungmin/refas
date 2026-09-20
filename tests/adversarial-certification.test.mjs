@@ -25,6 +25,7 @@ import {
   validateClaimCertificationDecision,
   validateWholeObjectPolicyAuthority,
 } from '../skills/refas/scripts/lib/index.mjs';
+import {initTrustedContractFixtureProject} from '../skills/refas/scripts/lib/contract-fixture-project.mjs';
 
 function checkpointFor(candidateBytes, reason = 'adversarial fixture') {
   const artifact = {kind: 'glb', path: 'assets/candidate.glb', sha256: digestBytes(candidateBytes), sizeBytes: candidateBytes.length};
@@ -221,12 +222,13 @@ async function projectWithExplicitPolicy(t, policy) {
   await fs.mkdir(path.join(root, 'source'), {recursive:true});
   const sourceBytes = Buffer.from('fixture source\n');
   await fs.writeFile(path.join(root, 'source', 'reference.bin'), sourceBytes);
-  await initProject(root, {
+  await initTrustedContractFixtureProject(root, {
     projectId:'a13-policy-gate',
+    fixtureId:'a13-policy-gate',
     source:{
       schema:'refas.source-manifest/v1', id:'primary-reference', path:'source/reference.bin',
       sha256:digestBytes(sourceBytes), sizeBytes:sourceBytes.length, width:32, height:24,
-      authority:'primary', acquisition:{kind:'test-fixture'},
+      authority:'primary', acquisition:{kind:'generated-contract-reference'},
     },
   });
   await fs.mkdir(path.join(root, 'model'), {recursive:true});
