@@ -1179,6 +1179,58 @@ export async function resumeProject(root) {
   }
   const head = await loadCheckpoint(root, state.head);
   const next = CAPABILITY_ORDER[capabilityIndex(head.capability) + 1] ?? null;
+
+  if (next && !isContractFixtureSource(state) && capabilityIndex(next) >= capabilityIndex('surface-topology')) {
+    const checkpoints = await listCheckpoints(root);
+    const lineage = checkpointLineage(checkpoints, state.head);
+    try {
+      await ensureEarlyResemblanceAdmission(root, state, next, state.activeScopeId, lineage);
+    } catch (error) {
+      const verdictMatch = String(error.message).match(/downstream detail requires early resemblance PROCEED; current verdict is (HOLD|REWORK)/);
+      if (verdictMatch) {
+        const shapeCheckpoint = [...lineage].reverse().find((checkpoint) =>
+          checkpoint.capability === 'shape-reconstruction' && scopeContains(checkpoint.scopeId, state.activeScopeId));
+        const {value: barrier} = await readCheckpointJsonArtifact(
+          root,
+          shapeCheckpoint,
+          'early-resemblance-barrier',
+          'resume early resemblance guidance',
+        );
+        if (verdictMatch[1] === 'HOLD') {
+          return {
+            schema: 'refas.resume-guidance/v1',
+            status: state.status,
+            safeCheckpointId: state.head,
+            activeWork: {capability: 'visual-critique', scopeId: barrier.scopeId},
+            nextAction: 'GATHER_RESEMBLANCE_EVIDENCE',
+            earlyResemblanceVerdict: barrier.verdict,
+            blockingSignatureIds: [...barrier.blockingSignatureIds],
+            reason: 'required macro or identity resemblance evidence remains insufficient; gather stronger source/candidate clay evidence before downstream detail',
+          };
+        }
+        return {
+          schema: 'refas.resume-guidance/v1',
+          status: state.status,
+          safeCheckpointId: state.head,
+          activeWork: {capability: 'visual-critique', scopeId: barrier.scopeId},
+          nextAction: 'REPORT_RESEMBLANCE_FINDINGS',
+          earlyResemblanceVerdict: barrier.verdict,
+          blockingSignatureIds: [...barrier.blockingSignatureIds],
+          findings: structuredClone(barrier.findings),
+          reason: 'required macro or identity signatures mismatch; report the typed findings so normal ownership routing can reopen the correct capability',
+        };
+      }
+      return {
+        schema: 'refas.resume-guidance/v1',
+        status: state.status,
+        safeCheckpointId: state.head,
+        activeWork: {capability: 'visual-critique', scopeId: state.activeScopeId},
+        nextAction: 'REQUEST_RESEMBLANCE_REVIEW',
+        reason: `early resemblance admission evidence is missing, stale, or invalid: ${error.message}`,
+      };
+    }
+  }
+
   if (!next) {
     const readiness = await inspectCertificationHead(projectRoot(root), state, head);
     if (!readiness.ready) {
