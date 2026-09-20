@@ -13,13 +13,8 @@ export function isReservedContractFixtureAcquisition(kind) {
   return RESERVED.has(String(kind ?? '').toLowerCase());
 }
 
-export function assertPublicSourceAcquisition(acquisition) {
-  const normalized = acquisition && typeof acquisition === 'object' ? structuredClone(acquisition) : {};
-  const kind = String(normalized.kind ?? '').trim();
-  if (kind && isReservedContractFixtureAcquisition(kind)) {
-    throw new Error('contract fixture acquisition kinds are runtime-internal and cannot be supplied through public source binding');
-  }
-  return normalized;
+export function normalizePublicSourceAcquisition(acquisition) {
+  return acquisition && typeof acquisition === 'object' ? structuredClone(acquisition) : {};
 }
 
 export function createContractFixtureAuthority({sourceSha256, fixtureId, purpose = 'contract-testing-only'} = {}) {

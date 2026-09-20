@@ -10,12 +10,6 @@ from pathlib import Path
 
 from PIL import Image
 
-RESERVED_CONTRACT_FIXTURE_ACQUISITIONS = {
-    "test-fixture",
-    "deterministic-project-fixture",
-    "synthetic-test-fixture",
-}
-
 
 def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
@@ -52,9 +46,6 @@ def main() -> None:
     acquisition = json.loads(args.acquisition) if args.acquisition else {}
     if not isinstance(acquisition, dict):
         raise ValueError("acquisition must be a JSON object")
-    kind = str(acquisition.get("kind", "")).strip()
-    if kind and kind.lower() in RESERVED_CONTRACT_FIXTURE_ACQUISITIONS:
-        raise ValueError("contract fixture acquisition kinds are runtime-internal and cannot be supplied through public source manifests")
     manifest = {
         "schema": "refas.source-manifest/v1",
         "id": args.id,
