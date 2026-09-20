@@ -8,6 +8,7 @@ import {fileURLToPath} from 'node:url';
 
 import {CAPABILITY_ORDER, digestBytes} from './lib/index.mjs';
 import {initTrustedContractFixtureProject} from './lib/contract-fixture-project.mjs';
+import {isTrustedContractFixtureProject} from './lib/contract-fixture-authority.mjs';
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_SKILL_ROOT = path.dirname(SCRIPT_DIR);
@@ -136,11 +137,12 @@ export async function runFreshWorkerDogfood({skillRoot = DEFAULT_SKILL_ROOT, kee
     acquisition: {kind: 'generated-contract-reference', origin: 'AD05 trusted verifier bootstrap'},
   };
   await fs.writeFile(path.join(sourceDir, 'source-manifest.json'), `${JSON.stringify(sourceManifest, null, 2)}\n`);
-  await initTrustedContractFixtureProject(projectRoot, {
+  const trustedFixtureState = await initTrustedContractFixtureProject(projectRoot, {
     projectId: 'fresh-worker-public-contract',
     source: sourceManifest,
     fixtureId: 'ad05-fresh-worker',
   });
+  assert.equal(isTrustedContractFixtureProject(trustedFixtureState), true, 'trusted verifier failed to mint source-bound fixture authority');
 
   const installedWorker = path.join(installedRoot, 'scripts', 'fresh_worker_dogfood_worker.mjs');
   const accessLoader = path.join(installedRoot, 'scripts', 'fresh_worker_access_loader.mjs');
@@ -182,6 +184,9 @@ export async function runFreshWorkerDogfood({skillRoot = DEFAULT_SKILL_ROOT, kee
 
   const normalBoundaryEvents = await readAccessAudit(accessAuditPath);
   assert.deepEqual(normalBoundaryEvents, [], 'normal fresh-worker run attempted verifier-blocked implementation access');
+
+  const postWorkerState = JSON.parse(await fs.readFile(path.join(projectRoot, '.refas', 'project.json'), 'utf8'));
+  assert.equal(isTrustedContractFixtureProject(postWorkerState), true, 'fresh worker lost trusted fixture authority');
 
   const report = JSON.parse(await fs.readFile(reportPath, 'utf8'));
   assert.equal(report.status, 'PASS');
