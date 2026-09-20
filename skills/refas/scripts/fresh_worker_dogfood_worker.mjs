@@ -425,6 +425,46 @@ async function main() {
   })).output;
   const spatialRef = await writeJsonArtifact('model/spatial-hypotheses.json', spatialHypotheses, 'spatial-hypotheses');
 
+  const constructionVocabulary = (await invokeTemplateContract('construction', 'construction-vocabulary', {
+    values: {sourceSha256: sourceManifest.sha256},
+    mutate(input) {
+      input.evidenceRefs = [sourceManifest.path];
+      input.cues = [{
+        id: 'fixture-designed-boundaries',
+        description: 'The public-contract fixture uses an explicitly selected rigid manufactured-form vocabulary for this construction path.',
+        evidenceRefs: [sourceManifest.path],
+      }];
+      return input;
+    },
+  })).output;
+  const constructionVocabularyRef = await writeJsonArtifact('model/construction-vocabulary.json', constructionVocabulary, 'construction-vocabulary');
+
+  const permitDiscovery = await discoverInterface('construction', 'construction-operation-permit');
+  const permitSymbol = permitDiscovery.entry.library?.symbol;
+  if (!permitSymbol) throw new Error('construction-operation-permit public library symbol is not discoverable');
+  recordSymbol(permitSymbol);
+  const constructionPermit = await API[permitSymbol]({
+    decision: constructionVocabulary,
+    scopeId: 'whole',
+    operation: 'hard-surface-shell',
+    evidenceRefs: [sourceManifest.path],
+  });
+  if (permitDiscovery.entry.outputSchema && constructionPermit?.schema !== permitDiscovery.entry.outputSchema) {
+    throw new Error('construction-operation-permit output schema mismatch');
+  }
+  if (permitDiscovery.entry.validator?.library) {
+    recordSymbol(permitDiscovery.entry.validator.library);
+    const permitValidation = await API[permitDiscovery.entry.validator.library](
+      constructionPermit,
+      constructionVocabulary,
+      {scopeId: 'whole', operation: 'hard-surface-shell'},
+    );
+    if (permitValidation?.valid !== true) {
+      throw new Error(`construction-operation-permit validator rejected output: ${(permitValidation?.errors ?? []).join('; ')}`);
+    }
+  }
+  const constructionPermitRef = await writeJsonArtifact('model/construction-operation-permit.json', constructionPermit, 'construction-operation-permit');
+
   const constructionQuality = (await invokeTemplateContract('construction', 'construction-quality', {
     values: {
       sourceSha256: sourceManifest.sha256,
@@ -553,7 +593,7 @@ async function main() {
   await commitCapability('visual-hierarchy', [hierarchyRef]);
   await commitCapability('visual-observation', [observationRef, referenceGeometryRef, relationalRef, authorityRef]);
   await commitCapability('spatial-hypotheses', [spatialRef]);
-  await commitCapability('shape-reconstruction', [constructionRef, candidateRef]);
+  await commitCapability('shape-reconstruction', [constructionVocabularyRef, constructionPermitRef, constructionRef, candidateRef]);
   await commitCapability('surface-topology', [surfaceRef]);
   await commitCapability('assembly', [assemblyRef]);
   await commitCapability('appearance', [pbrReportRef]);
