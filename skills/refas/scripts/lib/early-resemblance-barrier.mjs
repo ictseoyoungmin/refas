@@ -25,6 +25,7 @@ function assertCanonicalClayReport(report, assetSha256) {
   if (!validation.valid) throw new Error(`clayRenderReport is invalid: ${validation.errors.join('; ')}`);
   if (report.assetSha256 !== assetSha256) throw new Error('neutral-clay render report binds a different candidate');
   if (report.presentation?.mode !== 'neutral-clay') throw new Error('early resemblance barrier requires a neutral-clay render report');
+  if (report.claimScope !== 'shape-resemblance-only') throw new Error('neutral-clay report must be shape-resemblance-only');
   if (report.presentation?.presetId !== NEUTRAL_CLAY_PRESENTATION_PRESET.id) throw new Error('neutral-clay presetId is not canonical');
   if (report.presentation?.presetDigest !== NEUTRAL_CLAY_PRESENTATION_PRESET_DIGEST) throw new Error('neutral-clay preset digest mismatch');
   if (report.lighting?.rigId !== NEUTRAL_CLAY_PRESENTATION_PRESET.lighting.rigId) throw new Error('neutral-clay lighting rigId is not canonical');
