@@ -174,6 +174,26 @@ test('real-source comparison derives non-null landmarks and dimensions from real
   assert.ok(!('declaredRenderNormalized' in scope.landmarks[0]));
   assert.deepEqual(scope.landmarks[0].realizedRenderNormalized, [.55,.5]);
 
+  const fixtureSpoof = structuredClone(report);
+  fixtureSpoof.source.acquisitionKind = 'test-fixture';
+  const fixtureSpoofValidation = validateRegisteredComparison(fixtureSpoof);
+  assert.equal(fixtureSpoofValidation.valid, false);
+  assert.match(
+    fixtureSpoofValidation.errors.join('\n'),
+    /declared fixture comparison authority requires trusted contract-fixture project context/,
+  );
+
+  const acquisitionDrift = structuredClone(report);
+  acquisitionDrift.source.acquisitionKind = 'retrieved-reference';
+  const acquisitionDriftValidation = validateRegisteredComparison(acquisitionDrift, {
+    expectedAcquisitionKind: 'user-upload',
+  });
+  assert.equal(acquisitionDriftValidation.valid, false);
+  assert.match(
+    acquisitionDriftValidation.errors.join('\n'),
+    /registered comparison acquisition kind does not match the bound project source/,
+  );
+
   const tampered = structuredClone(report);
   tampered.scopes[0].metrics.landmarkResidualRmse = null;
   assert.equal(validateRegisteredComparison(tampered).valid, false);
