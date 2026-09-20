@@ -1,5 +1,5 @@
 import {assertDigest, assertId, deepFreeze, digestJson} from './canonical.mjs';
-import {validateConstructionOperationPermit, validateConstructionVocabulary} from './construction-vocabulary.mjs';
+import {validateConstructionExecutionProof, validateConstructionOperationPermit, validateConstructionVocabulary} from './construction-vocabulary.mjs';
 
 export const CONSTRUCTION_QUALITY_SCHEMA = 'refas.construction-quality/v1';
 export const REQUIRED_VISIBLE_FORM_GATES = Object.freeze([
@@ -14,6 +14,12 @@ export const REQUIRED_VISIBLE_FORM_GATES = Object.freeze([
 const CLAIMS = new Set(['blockout', 'identity-bearing']);
 const STATUSES = new Set(['pass', 'fail', 'insufficient']);
 const GENERIC_ONLY_FAMILIES = new Set(['generic-primitive']);
+const OPERATION_FAMILIES = Object.freeze({
+  'hard-surface-shell': new Set(['hard-surface-shell']),
+  'surface-network-parts': new Set(['surface-network', 'surface-network-parts']),
+  'section-profile-loft-rigid': new Set(['section-profile-loft', 'section-profile-loft-rigid']),
+  'section-profile-loft-organic': new Set(['section-profile-loft', 'section-profile-loft-organic']),
+});
 
 function uniqueStrings(values, label) {
   const output = [...new Set((values ?? []).map(String).filter(Boolean))].sort();
@@ -53,6 +59,7 @@ export function createConstructionQuality({
   registeredComparison,
   constructionVocabulary = null,
   constructionPermits = [],
+  constructionExecutionProof = null,
   ambiguities = [],
 } = {}) {
   const normalizedClaim = String(claim);
@@ -83,6 +90,7 @@ export function createConstructionQuality({
   if (!normalizedComparison.scopeIds.includes('whole')) throw new Error('registered comparison must cover whole');
 
   let normalizedVocabulary = null;
+  let normalizedExecutionProof = null;
   const normalizedPermits = [];
   if (constructionVocabulary != null) {
     const vocabularyValidation = validateConstructionVocabulary(constructionVocabulary);
@@ -94,8 +102,13 @@ export function createConstructionQuality({
       if (!permitValidation.valid) throw new Error(`constructionPermits[${index}] is invalid: ${permitValidation.errors.join('; ')}`);
       normalizedPermits.push(permit);
     }
-  } else if (constructionPermits.length) {
-    throw new Error('constructionPermits require constructionVocabulary');
+    if (constructionExecutionProof != null) {
+      const proofValidation = validateConstructionExecutionProof(constructionExecutionProof, normalizedVocabulary, normalizedPermits, {assetSha256});
+      if (!proofValidation.valid) throw new Error(`constructionExecutionProof is invalid: ${proofValidation.errors.join('; ')}`);
+      normalizedExecutionProof = constructionExecutionProof;
+    }
+  } else if (constructionPermits.length || constructionExecutionProof != null) {
+    throw new Error('constructionPermits/constructionExecutionProof require constructionVocabulary');
   }
 
   const closureErrors = [];
@@ -109,12 +122,22 @@ export function createConstructionQuality({
     } else if (normalizedVocabulary.vocabulary === 'unresolved') {
       closureErrors.push('unresolved construction vocabulary is blockout-only');
     } else {
+      if (!normalizedExecutionProof) closureErrors.push('identity-bearing construction requires a candidate-bound construction execution proof');
       const identityPermits = normalizedPermits.filter((permit) => permit.operation !== 'assembly-decomposition');
       const effectiveScopes = normalizedVocabulary.vocabulary === 'hybrid' || normalizedVocabulary.vocabulary === 'mechanical-articulated'
         ? normalizedVocabulary.identityScopes
         : [normalizedVocabulary.scopeId];
       for (const identityScope of effectiveScopes) {
         if (!identityPermits.some((permit) => permit.scopeId === identityScope)) closureErrors.push(`identity scope ${identityScope} lacks a permitted construction operation`);
+      }
+      if (normalizedExecutionProof) {
+        for (const identityScope of effectiveScopes) {
+          if (!normalizedExecutionProof.executions.some((execution) => execution.scopeId === identityScope)) closureErrors.push(`identity scope ${identityScope} lacks candidate-bound construction execution`);
+        }
+        for (const execution of normalizedExecutionProof.executions) {
+          const allowedFamilies = OPERATION_FAMILIES[execution.operation];
+          if (allowedFamilies && !families.some((family) => allowedFamilies.has(family))) closureErrors.push(`construction family does not match executed operation ${execution.operation}`);
+        }
       }
       if (normalizedVocabulary.vocabulary === 'mechanical-articulated') {
         if (!normalizedPermits.some((permit) => permit.scopeId === normalizedVocabulary.scopeId && permit.operation === 'assembly-decomposition')) {
@@ -141,6 +164,7 @@ export function createConstructionQuality({
     registeredComparison: normalizedComparison,
     constructionVocabulary: normalizedVocabulary,
     constructionPermits: normalizedPermits,
+    constructionExecutionProof: normalizedExecutionProof,
     ambiguities: [...new Set(ambiguities.map(String).filter(Boolean))].sort(),
     policy: {
       primitiveOnlyIsBlockout: true,
@@ -149,6 +173,7 @@ export function createConstructionQuality({
       triangleCountIsNotFidelityAuthority: true,
       validationVolumeCannotReplaceConstructionQuality: true,
       identityBearingRequiresVocabularyPermit: true,
+      identityBearingRequiresCandidateBoundConstructionProof: true,
     },
   };
   return deepFreeze({...payload, constructionQualityDigest: digestJson(payload)});
