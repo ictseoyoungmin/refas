@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/perceptual-signature-set.schema.json",
+  "title": "RefAs source-bound perceptual signature set",
+  "type": "object",
+  "required": ["schema", "scopeId", "sourceSha256", "signatures", "ambiguities", "evidenceRefs", "policy", "signatureDigest"],
+  "properties": {
+    "schema": {"const": "refas.perceptual-signature-set/v1"},
+    "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "signatures": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/signature"}},
+    "ambiguities": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+    "evidenceRefs": {"$ref": "common.schema.json#/$defs/evidenceRefs"},
+    "policy": {
+      "type": "object",
+      "required": ["sourceDerivedOnly", "candidateIndependent", "metricsDoNotDefineIdentity", "correspondenceDoesNotImplyResemblance", "signatureSetDoesNotCertify"],
+      "properties": {
+        "sourceDerivedOnly": {"const": true},
+        "candidateIndependent": {"const": true},
+        "metricsDoNotDefineIdentity": {"const": true},
+        "correspondenceDoesNotImplyResemblance": {"const": true},
+        "signatureSetDoesNotCertify": {"const": true}
+      },
+      "additionalProperties": false
+    },
+    "signatureDigest": {"$ref": "common.schema.json#/$defs/digest"}
+  },
+  "$defs": {
+    "signature": {
+      "type": "object",
+      "required": ["id", "scopeId", "sourceSha256", "family", "importance", "sourceObservation", "evidenceRefs", "relatedScopeIds", "referenceGeometryRefs", "ambiguity"],
+      "properties": {
+        "id": {"$ref": "common.schema.json#/$defs/semanticId"},
+        "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
+        "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
+        "family": {"enum": ["silhouette-character", "mass-proportion", "curvature-character", "plane-edge-language", "negative-space-structure", "part-segmentation-rhythm", "junction-transition", "surface-pattern-structure"]},
+        "importance": {"enum": ["macro", "identity", "detail"]},
+        "sourceObservation": {"type": "string", "minLength": 1},
+        "evidenceRefs": {"$ref": "common.schema.json#/$defs/evidenceRefs"},
+        "relatedScopeIds": {"type": "array", "uniqueItems": true, "items": {"$ref": "common.schema.json#/$defs/semanticId"}},
+        "referenceGeometryRefs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "ambiguity": {"oneOf": [{"type": "null"}, {"type": "string", "minLength": 1}]}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
