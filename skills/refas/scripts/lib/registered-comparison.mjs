@@ -98,13 +98,19 @@ const CONTRACT_FIXTURE_ACQUISITIONS = new Set([
 
 const finitePoint = (value) => Array.isArray(value) && value.length === 2 && value.every(Number.isFinite);
 
-export function validateRegisteredComparison(report) {
+export function validateRegisteredComparison(report, {trustedContractFixture = false, expectedAcquisitionKind = null} = {}) {
   const errors = [];
   if (report?.schema !== REGISTERED_COMPARISON_SCHEMA) errors.push('invalid schema');
   if (report?.claimScope !== 'critique-evidence-only') errors.push('claimScope must be critique-evidence-only');
   const acquisitionKind = String(report?.source?.acquisitionKind ?? '').toLowerCase();
+  const expectedKind = expectedAcquisitionKind == null ? null : String(expectedAcquisitionKind).toLowerCase();
   const legacyContract = acquisitionKind === '';
-  const realSource = !legacyContract && !CONTRACT_FIXTURE_ACQUISITIONS.has(acquisitionKind);
+  const declaredFixture = CONTRACT_FIXTURE_ACQUISITIONS.has(acquisitionKind);
+  if (declaredFixture && trustedContractFixture !== true) errors.push('declared fixture comparison authority requires trusted contract-fixture project context');
+  if (!legacyContract && expectedKind && trustedContractFixture !== true && acquisitionKind !== expectedKind) {
+    errors.push('registered comparison acquisition kind does not match the bound project source');
+  }
+  const realSource = !legacyContract && trustedContractFixture !== true;
   const projectionByScope = new Map();
 
   try {
