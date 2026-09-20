@@ -1,10 +1,14 @@
-import {assertDigest, assertId, deepFreeze, digestJson} from './canonical.mjs';
+import {assertDigest, assertId, deepFreeze, digestBytes, digestJson} from './canonical.mjs';
+import {parseGlb} from './glb.mjs';
 import {createHardSurfaceShell} from './hard-surface.mjs';
 import {createSectionProfileLoft} from './geometry-backend.mjs';
 import {createSurfaceNetworkParts, validateSurfaceNetwork} from './surface-network.mjs';
 
 export const CONSTRUCTION_VOCABULARY_SCHEMA = 'refas.construction-vocabulary/v1';
 export const CONSTRUCTION_OPERATION_PERMIT_SCHEMA = 'refas.construction-operation-permit/v1';
+export const CONSTRUCTION_AUTHORITY_SCHEMA = 'refas.construction-authority/v1';
+export const CONSTRUCTION_EXECUTION_SCHEMA = 'refas.construction-execution/v1';
+export const CONSTRUCTION_EXECUTION_PROOF_SCHEMA = 'refas.construction-execution-proof/v1';
 
 export const CONSTRUCTION_VOCABULARIES = Object.freeze([
   'hard-surface',
@@ -253,23 +257,117 @@ function requirePermit(decision, permit, operation, scopeId) {
   if (!validation.valid) throw new Error(`construction operation permit is invalid: ${validation.errors.join('; ')}`);
 }
 
-function constructionAuthority(decision, permit) {
-  return {
-    schema: CONSTRUCTION_OPERATION_PERMIT_SCHEMA,
+export function createConstructionAuthority({decision, permit} = {}) {
+  const validation = validateConstructionOperationPermit(permit, decision);
+  if (!validation.valid) throw new Error(`construction operation permit is invalid: ${validation.errors.join('; ')}`);
+  const payload = {
+    schema: CONSTRUCTION_AUTHORITY_SCHEMA,
+    rootScopeId: permit.rootScopeId,
     scopeId: permit.scopeId,
     sourceSha256: permit.sourceSha256,
     vocabulary: permit.vocabulary,
     operation: permit.operation,
     vocabularyDigest: permit.vocabularyDigest,
     effectiveVocabularyDigest: permit.effectiveVocabularyDigest,
+    mechanicalDecompositionDigest: permit.mechanicalDecompositionDigest,
     permitDigest: permit.permitDigest,
   };
+  return deepFreeze({...payload, authorityDigest: digestJson(payload)});
+}
+
+function verifyExecutionRecord(execution, permitByDigest) {
+  if (!execution || execution.schema !== CONSTRUCTION_EXECUTION_SCHEMA) throw new Error('candidate contains an invalid construction execution schema');
+  const permit = permitByDigest.get(execution.permitDigest);
+  if (!permit) throw new Error(`candidate construction execution references an undeclared permit: ${execution.permitDigest ?? '?'}`);
+  const authorityPayload = {
+    schema: CONSTRUCTION_AUTHORITY_SCHEMA,
+    rootScopeId: execution.rootScopeId,
+    scopeId: execution.scopeId,
+    sourceSha256: execution.sourceSha256,
+    vocabulary: execution.vocabulary,
+    operation: execution.operation,
+    vocabularyDigest: execution.vocabularyDigest,
+    effectiveVocabularyDigest: execution.effectiveVocabularyDigest,
+    mechanicalDecompositionDigest: execution.mechanicalDecompositionDigest,
+    permitDigest: execution.permitDigest,
+  };
+  if (digestJson(authorityPayload) !== execution.authorityDigest) throw new Error('candidate construction authority digest mismatch');
+  for (const field of ['rootScopeId','scopeId','sourceSha256','vocabulary','operation','vocabularyDigest','effectiveVocabularyDigest','mechanicalDecompositionDigest','permitDigest']) {
+    if (execution[field] !== permit[field]) throw new Error(`candidate construction execution does not match permit field ${field}`);
+  }
+  assertDigest(execution.geometrySha256, 'construction execution geometrySha256');
+  const payload = structuredClone(execution); delete payload.executionDigest;
+  if (digestJson(payload) !== execution.executionDigest) throw new Error('candidate construction execution digest mismatch');
+  return execution;
+}
+
+function normalizedExecutionContext(decision, permits) {
+  const decisionValidation = validateConstructionVocabulary(decision);
+  if (!decisionValidation.valid) throw new Error(`construction vocabulary is invalid: ${decisionValidation.errors.join('; ')}`);
+  const permitByDigest = new Map();
+  for (const [index, permit] of permits.entries()) {
+    const permitValidation = validateConstructionOperationPermit(permit, decision);
+    if (!permitValidation.valid) throw new Error(`constructionPermits[${index}] is invalid: ${permitValidation.errors.join('; ')}`);
+    if (permitByDigest.has(permit.permitDigest)) throw new Error('construction execution proof cannot repeat a permit');
+    permitByDigest.set(permit.permitDigest, permit);
+  }
+  return {permitByDigest, identityPermits: permits.filter((permit) => permit.operation !== 'assembly-decomposition')};
+}
+
+export function createConstructionExecutionProof({assetBytes, decision, permits = [], evidenceRefs = []} = {}) {
+  const bytes = Buffer.from(assetBytes ?? []);
+  if (!bytes.length) throw new Error('construction execution proof requires candidate asset bytes');
+  const {permitByDigest, identityPermits} = normalizedExecutionContext(decision, permits);
+  if (!identityPermits.length) throw new Error('construction execution proof requires at least one identity-bearing construction permit');
+  const parsed = parseGlb(bytes);
+  const executions = [...(parsed.json?.extras?.refas?.constructionExecutions ?? [])]
+    .map((execution) => verifyExecutionRecord(execution, permitByDigest))
+    .sort((a, b) => a.scopeId.localeCompare(b.scopeId) || a.partId.localeCompare(b.partId));
+  if (!executions.length) throw new Error('candidate asset carries no permit-bound construction executions');
+  for (const permit of identityPermits) {
+    if (!executions.some((execution) => execution.permitDigest === permit.permitDigest)) throw new Error(`candidate asset does not carry construction execution for permit ${permit.permitDigest}`);
+  }
+  const payload = {
+    schema: CONSTRUCTION_EXECUTION_PROOF_SCHEMA,
+    assetSha256: digestBytes(bytes),
+    sourceSha256: decision.sourceSha256,
+    vocabularyDigest: decision.vocabularyDigest,
+    permitDigests: [...permitByDigest.keys()].sort(),
+    executions,
+    evidenceRefs: requiredStrings(evidenceRefs, 'evidenceRefs'),
+    policy: {
+      candidateBytesCarryConstructionExecutions: true,
+      detachedPermitsCannotCloseIdentity: true,
+      rawGeometryWithoutAuthorityIsBlockoutOnly: true,
+    },
+  };
+  return deepFreeze({...payload, proofDigest: digestJson(payload)});
+}
+
+export function validateConstructionExecutionProof(proof, decision, permits = [], {assetSha256 = null} = {}) {
+  const errors = [];
+  try {
+    if (proof?.schema !== CONSTRUCTION_EXECUTION_PROOF_SCHEMA) errors.push('invalid construction execution proof schema');
+    const {permitByDigest, identityPermits} = normalizedExecutionContext(decision, permits);
+    if (proof?.sourceSha256 !== decision?.sourceSha256) errors.push('construction execution proof source mismatch');
+    if (proof?.vocabularyDigest !== decision?.vocabularyDigest) errors.push('construction execution proof vocabulary mismatch');
+    if (assetSha256 != null && proof?.assetSha256 !== assertDigest(assetSha256, 'assetSha256')) errors.push('construction execution proof asset mismatch');
+    const executions = Array.isArray(proof?.executions) ? proof.executions : [];
+    if (!executions.length) errors.push('construction execution proof has no executions');
+    for (const execution of executions) verifyExecutionRecord(execution, permitByDigest);
+    for (const permit of identityPermits) if (!executions.some((execution) => execution.permitDigest === permit.permitDigest)) errors.push(`construction execution proof does not cover permit ${permit.permitDigest}`);
+    const expectedPermitDigests = [...permitByDigest.keys()].sort();
+    if (JSON.stringify(proof?.permitDigests ?? []) !== JSON.stringify(expectedPermitDigests)) errors.push('construction execution proof permit set mismatch');
+    const payload = structuredClone(proof); delete payload.proofDigest;
+    if (digestJson(payload) !== proof?.proofDigest) errors.push('construction execution proof digest mismatch');
+  } catch (error) { errors.push(error.message); }
+  return {valid: errors.length === 0, errors};
 }
 
 export function createPermittedHardSurfaceShell({decision, permit, spec = {}} = {}) {
   requirePermit(decision, permit, 'hard-surface-shell', permit?.scopeId);
   const mesh = createHardSurfaceShell(spec);
-  return deepFreeze({...mesh, constructionAuthority: constructionAuthority(decision, permit)});
+  return deepFreeze({...mesh, constructionAuthority: createConstructionAuthority({decision, permit})});
 }
 
 export function createPermittedSectionProfileLoft({decision, permit, spec = {}} = {}) {
@@ -278,7 +376,7 @@ export function createPermittedSectionProfileLoft({decision, permit, spec = {}} 
   }
   requirePermit(decision, permit, permit.operation, permit.scopeId);
   const mesh = createSectionProfileLoft(spec);
-  return deepFreeze({...mesh, constructionAuthority: constructionAuthority(decision, permit)});
+  return deepFreeze({...mesh, constructionAuthority: createConstructionAuthority({decision, permit})});
 }
 
 export function createPermittedSurfaceNetworkParts({decision, permit, network, options = {}} = {}) {
@@ -288,5 +386,13 @@ export function createPermittedSurfaceNetworkParts({decision, permit, network, o
   if (network.scopeId !== permit.scopeId) throw new Error('surface network scope does not match construction permit');
   if (network.sourceSha256 !== permit.sourceSha256) throw new Error('surface network source does not match construction permit');
   const parts = createSurfaceNetworkParts(network, options);
-  return deepFreeze({...parts, constructionAuthority: constructionAuthority(decision, permit)});
+  const authority = createConstructionAuthority({decision, permit});
+  const bind = (part) => deepFreeze({...part, constructionAuthority: authority});
+  return deepFreeze({
+    ...parts,
+    panelParts: parts.panelParts.map(bind),
+    boundaryParts: parts.boundaryParts.map(bind),
+    junctionParts: parts.junctionParts.map(bind),
+    constructionAuthority: authority,
+  });
 }
