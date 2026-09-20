@@ -730,7 +730,7 @@ async function main() {
   await commitCapability('visual-hierarchy', [hierarchyRef]);
   await commitCapability('visual-observation', [observationRef, referenceGeometryRef, perceptualSignatureSetRef, relationalRef, authorityRef]);
   await commitCapability('spatial-hypotheses', [spatialRef]);
-  await commitCapability('shape-reconstruction', [constructionVocabularyRef, constructionPermitRef, constructionExecutionProofRef, constructionRef, candidateRef, earlyResemblanceBarrierRef]);
+  await commitCapability('shape-reconstruction', [constructionVocabularyRef, constructionPermitRef, constructionExecutionProofRef, constructionRef, candidateRef, earlyResemblanceBarrierRef, clayPbrReportRef, ...clayFrameRefs, clayBoardRef]);
   await commitCapability('surface-topology', [surfaceRef]);
   await commitCapability('assembly', [assemblyRef]);
   await commitCapability('appearance', [pbrReportRef]);
