@@ -637,6 +637,10 @@
                 "arguments": [
                   {
                     "source": "output"
+                  },
+                  {
+                    "source": "input",
+                    "pointer": "/hierarchy"
                   }
                 ]
               },
