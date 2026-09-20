@@ -165,7 +165,7 @@ async function makeRealSourceProject(t, verdictStatus, {unboundObservationEviden
           ? 'The required source silhouette identity is absent.'
           : 'The current evidence cannot resolve the required silhouette identity.',
       evidenceRefs: unboundObservationEvidence
-        ? [source.path, 'evidence/unbound-resemblance.png']
+        ? [source.path, clayHeroRef.path, 'evidence/unbound-resemblance.png']
         : [source.path, clayHeroRef.path],
     }],
     evidenceRefs: [source.path, clayHeroRef.path],
