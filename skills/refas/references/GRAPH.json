@@ -1133,6 +1133,77 @@
         "mode": "hybrid",
         "interfaces": [
           {
+            "id": "construction-vocabulary",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createConstructionVocabulary"
+            },
+            "template": "assets/templates/capability-interface-inputs.json#/templates/construction~1construction-vocabulary",
+            "inputContract": "source-grounded construction vocabulary decision before identity-bearing geometry",
+            "outputSchema": "refas.construction-vocabulary/v1",
+            "validator": {
+              "library": "validateConstructionVocabulary"
+            },
+            "minimumInvocation": "references/construction.md",
+            "example": "references/single-view-volumetric-reasoning-example.md",
+            "templateProcessor": {
+              "library": "materializeCapabilityInputTemplate"
+            },
+            "publicConstants": [
+              "CONSTRUCTION_VOCABULARIES",
+              "CONSTRUCTION_OPERATIONS"
+            ],
+            "usageReference": "references/construction.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
+            }
+          },
+          {
+            "id": "construction-operation-permit",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createConstructionOperationPermit"
+            },
+            "template": null,
+            "inputContract": "validated construction-vocabulary decision + target scope + requested high-level construction operation",
+            "outputSchema": "refas.construction-operation-permit/v1",
+            "validator": {
+              "library": "validateConstructionOperationPermit"
+            },
+            "minimumInvocation": "references/construction.md",
+            "example": null,
+            "publicConstants": [
+              "CONSTRUCTION_OPERATIONS"
+            ],
+            "usageReference": "references/construction.md",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "permit creation consumes the digest-bearing output of construction-vocabulary; fresh-worker execution verifies this chained public call"
+            }
+          },
+          {
             "id": "construction-quality",
             "operation": "create",
             "cli": null,
