@@ -9,6 +9,20 @@ from pathlib import Path
 import numpy as np
 from PIL import Image
 
+NEUTRAL_CLAY_PRESET = {
+    "id": "refas-neutral-clay-v1",
+    "material": {"baseColor": [0.58, 0.58, 0.58], "metallic": 0, "roughness": 0.78},
+    "lighting": {
+        "rigId": "neutral-clay-three-light-v1",
+        "keyIntensity": 2.8,
+        "fillIntensity": 1.2,
+        "rimIntensity": 0.55,
+        "background": [24, 24, 26],
+        "cameraFovY": 31,
+    },
+    "colorPipeline": {"exposure": 0, "toneMapping": "Reinhard", "outputColorSpace": "sRGB"},
+}
+
 from render_glb import (MIB, camera_basis, check_deadline, frame_bounds, frame_digest,
                         load_canonical_frame, load_primitives, local_to_world, make_board,
                         normalize, object_color, parse_glb, resource_policy, sha256, world_bounds,
@@ -96,23 +110,56 @@ def render(primitives, position, target, output, *, size, mode, up_hint, deadlin
 
 
 def main():
-    p=argparse.ArgumentParser(); p.add_argument('--glb',required=True); p.add_argument('--out',required=True); p.add_argument('--frame',required=True); p.add_argument('--reference'); p.add_argument('--size',type=int,default=420); p.add_argument('--timeout-seconds',type=float,default=180); p.add_argument('--max-working-mb',type=float,default=512); p.add_argument('--exposure',type=float,default=0.0); p.add_argument('--background',default='15,18,23'); p.add_argument('--key-intensity',type=float,default=3.4); p.add_argument('--fill-intensity',type=float,default=1.5); p.add_argument('--rim-intensity',type=float,default=0.65); a=p.parse_args()
+    p=argparse.ArgumentParser(); p.add_argument('--glb',required=True); p.add_argument('--out',required=True); p.add_argument('--frame',required=True); p.add_argument('--reference'); p.add_argument('--size',type=int,default=420); p.add_argument('--timeout-seconds',type=float,default=180); p.add_argument('--max-working-mb',type=float,default=512); p.add_argument('--exposure',type=float,default=0.0); p.add_argument('--background',default='15,18,23'); p.add_argument('--key-intensity',type=float,default=3.4); p.add_argument('--fill-intensity',type=float,default=1.5); p.add_argument('--rim-intensity',type=float,default=0.65); p.add_argument('--neutral-clay',action='store_true'); a=p.parse_args()
     glb=Path(a.glb).resolve(); out=Path(a.out).resolve(); out.parent.mkdir(parents=True,exist_ok=True); frame_path=Path(a.frame).resolve(); model,binary=parse_glb(glb); decoded=estimate_decoded_geometry_bytes(model)
     policy=resource_policy(a.size,a.size,max_working_mb=a.max_working_mb,requested_tile_size=a.size,source_glb_bytes=glb.stat().st_size,decoded_geometry_bytes=decoded)
     if policy['tileSize'] < a.size:
         raise MemoryError(f"PBR render full-frame scratch exceeds the {a.max_working_mb:.2f} MiB working-memory budget; reduce --size or increase --max-working-mb")
-    model,primitives=load_primitives(glb,parsed=(model,binary)); frame,basis,origin,fd=load_canonical_frame(frame_path); bounds=frame_bounds(primitives,frame,basis,origin); center=bounds['centerWorld']; distance=bounds['radius']*4.25; deadline=time.monotonic()+a.timeout_seconds
-    background=tuple(max(0,min(255,int(value))) for value in a.background.split(','));
-    if len(background) != 3: raise ValueError('--background must be r,g,b')
-    lights=[([-0.55, 0.75, 0.65], a.key_intensity, [1.0, 0.96, 0.90]), ([0.72, 0.18, 0.54], a.fill_intensity, [0.70, 0.82, 1.0]), ([-0.15, -0.62, 0.77], a.rim_intensity, [1.0, 0.76, 0.58])]
+    model,primitives=load_primitives(glb,parsed=(model,binary));
+    if a.neutral_clay:
+        clay = NEUTRAL_CLAY_PRESET["material"]
+        for primitive in primitives:
+            primitive.color = np.array(clay["baseColor"], dtype=np.float64)
+            primitive.metallic = float(clay["metallic"])
+            primitive.roughness = float(clay["roughness"])
+    frame,basis,origin,fd=load_canonical_frame(frame_path); bounds=frame_bounds(primitives,frame,basis,origin); center=bounds['centerWorld']; distance=bounds['radius']*4.25; deadline=time.monotonic()+a.timeout_seconds
+    if a.neutral_clay:
+        preset_lighting = NEUTRAL_CLAY_PRESET["lighting"]
+        background = tuple(preset_lighting["background"])
+        key_intensity = float(preset_lighting["keyIntensity"])
+        fill_intensity = float(preset_lighting["fillIntensity"])
+        rim_intensity = float(preset_lighting["rimIntensity"])
+        exposure = float(NEUTRAL_CLAY_PRESET["colorPipeline"]["exposure"])
+    else:
+        background=tuple(max(0,min(255,int(value))) for value in a.background.split(','))
+        if len(background) != 3: raise ValueError('--background must be r,g,b')
+        key_intensity = a.key_intensity
+        fill_intensity = a.fill_intensity
+        rim_intensity = a.rim_intensity
+        exposure = a.exposure
+    lights=[([-0.55, 0.75, 0.65], key_intensity, [1.0, 0.96, 0.90]), ([0.72, 0.18, 0.54], fill_intensity, [0.70, 0.82, 1.0]), ([-0.15, -0.62, 0.77], rim_intensity, [1.0, 0.76, 0.58])]
     specs=[('hero',[0,0,1],[0,1,0],'beauty','PBR HERO'),('oblique',[.72,.2,1],[0,1,0],'beauty','PBR OBLIQUE'),('side',[1,.05,.15],[0,1,0],'beauty','PBR SIDE'),('top',[.18,1,.35],[0,0,1],'beauty','PBR TOP'),('grazing',[-1,.05,.18],[0,1,0],'beauty','PBR GRAZING'),('normal',[0,0,1],[0,1,0],'normal','NORMAL'),('object-id',[0,0,1],[0,1,0],'object-id','OBJECT ID'),('albedo',[0,0,1],[0,1,0],'albedo','ALBEDO')]
     staging=Path(tempfile.mkdtemp(prefix='.refas-pbr-',dir=out.parent)); frames=[]
     try:
         for name,direction,up,mode,label in specs:
-            pos=center+normalize(local_to_world(direction,basis))*distance; target=center; path=staging/f'{name}.png'; rec=render(primitives,pos,target,path,size=a.size,mode=mode,up_hint=local_to_world(up,basis),deadline=deadline,lights=lights,exposure=a.exposure,background=background); frames.append({**rec,'viewId':name,'label':label,'absolutePath':str(path)})
+            pos=center+normalize(local_to_world(direction,basis))*distance; target=center; path=staging/f'{name}.png'; rec=render(primitives,pos,target,path,size=a.size,mode=mode,up_hint=local_to_world(up,basis),deadline=deadline,lights=lights,exposure=exposure,background=background); frames.append({**rec,'viewId':name,'label':label,'absolutePath':str(path)})
         board=staging/'pbr-review-board.png'; make_board(Path(a.reference).resolve() if a.reference else None,frames,board)
-        rig={"lights":"three-directional-calibrated-v1","keyIntensity":a.key_intensity,"fillIntensity":a.fill_intensity,"rimIntensity":a.rim_intensity,"background":list(background),"cameraFovY":31}; color={"exposure":a.exposure,"toneMapping":"Reinhard","outputColorSpace":"sRGB"}
-        payload={"schema":"refas.pbr-render-report/v1","claimScope":"visual-fidelity","assetSha256":sha256(glb),"frameDigest":fd,"renderer":{"family":"other","name":"RefAs Independent PBR","version":"1.0.0","backend":"numpy-cook-torrance-headless","independentProcess":True},"lighting":{"rigId":"fixed-three-light-review-rig","digest":canonical_digest(rig)},"colorPipeline":color,"materialSupport":{"supported":["base-color-factor","metallic-factor","roughness-factor"],"unsupported":["clearcoat","image-based-lighting","normal-maps","textures"]},"outputs":[{"viewId":f['viewId'],"path":f"renders/pbr/{f['path']}","sha256":f['sha256']} for f in frames],"reproducibility":{"mode":"deterministic","tolerance":""}}
+        rig={"lights":"three-directional-calibrated-v1","keyIntensity":key_intensity,"fillIntensity":fill_intensity,"rimIntensity":rim_intensity,"background":list(background),"cameraFovY":31}; color={"exposure":exposure,"toneMapping":"Reinhard","outputColorSpace":"sRGB"}
+        rig_id="fixed-three-light-review-rig"
+        if a.neutral_clay:
+            rig_id=NEUTRAL_CLAY_PRESET["lighting"]["rigId"]
+            rig={
+                "lights":"three-directional-calibrated-v1",
+                "keyIntensity":key_intensity,
+                "fillIntensity":fill_intensity,
+                "rimIntensity":rim_intensity,
+                "background":list(background),
+                "cameraFovY":NEUTRAL_CLAY_PRESET["lighting"]["cameraFovY"],
+            }
+            color=dict(NEUTRAL_CLAY_PRESET["colorPipeline"])
+        payload={"schema":"refas.pbr-render-report/v1","claimScope":"visual-fidelity","assetSha256":sha256(glb),"frameDigest":fd,"renderer":{"family":"other","name":"RefAs Independent PBR","version":"1.0.0","backend":"numpy-cook-torrance-headless","independentProcess":True},"lighting":{"rigId":rig_id,"digest":canonical_digest(rig)},"colorPipeline":color,"materialSupport":{"supported":["base-color-factor","metallic-factor","roughness-factor"],"unsupported":["clearcoat","image-based-lighting","normal-maps","textures"]},"outputs":[{"viewId":f['viewId'],"path":f"renders/pbr/{f['path']}","sha256":f['sha256']} for f in frames],"reproducibility":{"mode":"deterministic","tolerance":""}}
+        if a.neutral_clay:
+            payload["presentation"]={"mode":"neutral-clay","presetId":NEUTRAL_CLAY_PRESET["id"],"presetDigest":canonical_digest(NEUTRAL_CLAY_PRESET)}
         payload['reportDigest']=canonical_digest(payload); (staging/'render-report.json').write_text(json.dumps(payload,indent=2)+'\n'); out.mkdir(parents=True,exist_ok=True)
         for item in staging.iterdir(): os.replace(item,out/item.name)
     finally: shutil.rmtree(staging,ignore_errors=True)
