@@ -183,6 +183,17 @@ test('real-source comparison derives non-null landmarks and dimensions from real
     /declared fixture comparison authority requires trusted contract-fixture project context/,
   );
 
+  const missingAcquisition = structuredClone(report);
+  missingAcquisition.source.acquisitionKind = '';
+  const missingAcquisitionValidation = validateRegisteredComparison(missingAcquisition, {
+    expectedAcquisitionKind: 'user-upload',
+  });
+  assert.equal(missingAcquisitionValidation.valid, false);
+  assert.match(
+    missingAcquisitionValidation.errors.join('\n'),
+    /registered comparison acquisition kind does not match the bound project source/,
+  );
+
   const acquisitionDrift = structuredClone(report);
   acquisitionDrift.source.acquisitionKind = 'retrieved-reference';
   const acquisitionDriftValidation = validateRegisteredComparison(acquisitionDrift, {
