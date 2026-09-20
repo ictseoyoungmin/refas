@@ -3,9 +3,15 @@ import test from 'node:test';
 
 import {
   REQUIRED_VISIBLE_FORM_GATES,
+  createConstructionAuthority,
+  createConstructionExecutionProof,
   createConstructionOperationPermit,
   createConstructionQuality,
   createConstructionVocabulary,
+  createHardSurfaceShell,
+  digestBytes,
+  partsToGlb,
+  validateConstructionExecutionProof,
   validateConstructionOperationPermit,
   validateConstructionQuality,
   validateConstructionVocabulary,
@@ -36,16 +42,52 @@ function leaf(scopeId, vocabulary, sourceSha256 = SOURCE) {
   });
 }
 
+function candidateFor(decision, permits, {authorized = true} = {}) {
+  const identityPermits = permits.filter((permit) => permit.operation !== 'assembly-decomposition');
+  const parts = identityPermits.map((permit, index) => {
+    const mesh = createHardSurfaceShell({
+      schema: 'refas.hard-surface-spec/v1',
+      outerProfile: [[0, 0], [1, 0], [1, 1], [0, 1]],
+      cutouts: [],
+      thickness: 0.1,
+      edgeTreatments: {outer: {type: 'sharp'}},
+      role: 'r02-test-candidate',
+    });
+    return {
+      id: `candidate-${index}`,
+      mesh,
+      materialId: 'fixture',
+      role: 'identity-part',
+      scopeId: permit.scopeId,
+      ...(authorized ? {constructionAuthority: createConstructionAuthority({decision, permit})} : {}),
+    };
+  });
+  const bytes = partsToGlb({
+    assetId: 'r02-test-candidate',
+    parts,
+    materials: {fixture: {baseColor: [0.7, 0.7, 0.7, 1], metallic: 0, roughness: 0.5}},
+  });
+  const proof = authorized ? createConstructionExecutionProof({
+    assetBytes: bytes,
+    decision,
+    permits,
+    evidenceRefs: ['evidence/reference.png'],
+  }) : null;
+  return {bytes, assetSha256: digestBytes(bytes), proof};
+}
+
 function qualityInput({
   claim = 'identity-bearing',
   families = ['hard-surface-shell'],
   vocabulary = null,
   permits = [],
+  assetSha256 = ASSET,
+  executionProof = null,
 } = {}) {
   return {
     scopeId: 'whole',
     sourceSha256: SOURCE,
-    assetSha256: ASSET,
+    assetSha256,
     claim,
     constructionFamilies: families,
     visibleFormGates: REQUIRED_VISIBLE_FORM_GATES.map((id) => ({
@@ -72,6 +114,7 @@ function qualityInput({
     },
     constructionVocabulary: vocabulary,
     constructionPermits: permits,
+    constructionExecutionProof: executionProof,
     ambiguities: [],
   };
 }
@@ -87,9 +130,13 @@ test('R02 hard-surface vocabulary authorizes only compatible identity-bearing co
   });
   assert.equal(validateConstructionOperationPermit(permit, decision).valid, true);
 
+  const candidate = candidateFor(decision, [permit]);
+  assert.equal(validateConstructionExecutionProof(candidate.proof, decision, [permit], {assetSha256: candidate.assetSha256}).valid, true);
   const quality = createConstructionQuality(qualityInput({
     vocabulary: decision,
     permits: [permit],
+    assetSha256: candidate.assetSha256,
+    executionProof: candidate.proof,
   }));
   assert.equal(validateConstructionQuality(quality).valid, true);
 
@@ -113,10 +160,13 @@ test('R02 organic vocabulary rejects hard-surface identity operations', () => {
     scopeId: 'whole',
     operation: 'section-profile-loft-organic',
   });
+  const candidate = candidateFor(decision, [permit]);
   const quality = createConstructionQuality(qualityInput({
     families: ['section-profile-loft-organic'],
     vocabulary: decision,
     permits: [permit],
+    assetSha256: candidate.assetSha256,
+    executionProof: candidate.proof,
   }));
   assert.equal(validateConstructionQuality(quality).valid, true);
 });
@@ -198,10 +248,13 @@ test('R02 mechanical-articulated whole requires decomposition plus child permits
     permits: [leftPermit, rightPermit],
   })), /requires an assembly-decomposition permit/);
 
+  const candidate = candidateFor(decision, [assemblyPermit, leftPermit, rightPermit]);
   const quality = createConstructionQuality(qualityInput({
     families: ['hard-surface-shell', 'assembly-decomposition'],
     vocabulary: decision,
     permits: [assemblyPermit, leftPermit, rightPermit],
+    assetSha256: candidate.assetSha256,
+    executionProof: candidate.proof,
   }));
   assert.equal(validateConstructionQuality(quality).valid, true);
 });
@@ -252,10 +305,13 @@ test('R02 hybrid requires complete child decisions and only child-compatible ope
     operation: 'hard-surface-shell',
   }), /incompatible with vocabulary organic/);
 
+  const candidate = candidateFor(hybrid, [shellPermit, softPermit]);
   const quality = createConstructionQuality(qualityInput({
     families: ['hard-surface-shell', 'section-profile-loft-organic'],
     vocabulary: hybrid,
     permits: [shellPermit, softPermit],
+    assetSha256: candidate.assetSha256,
+    executionProof: candidate.proof,
   }));
   assert.equal(validateConstructionQuality(quality).valid, true);
 });
@@ -285,4 +341,44 @@ test('R02 permits fail closed across source, scope, decision, and requested oper
     operation: 'section-profile-loft-organic',
     compatibilityMatrix: {'hard-surface': ['section-profile-loft-organic']},
   }), /incompatible with vocabulary hard-surface/);
+});
+
+
+test('R02 detached permit cannot authorize raw high-level geometry', () => {
+  const decision = leaf('whole', 'hard-surface');
+  const permit = createConstructionOperationPermit({
+    decision,
+    scopeId: 'whole',
+    operation: 'hard-surface-shell',
+  });
+  const rawCandidate = candidateFor(decision, [permit], {authorized: false});
+  assert.throws(() => createConstructionExecutionProof({
+    assetBytes: rawCandidate.bytes,
+    decision,
+    permits: [permit],
+    evidenceRefs: ['evidence/reference.png'],
+  }), /no permit-bound construction executions/);
+  assert.throws(() => createConstructionQuality(qualityInput({
+    vocabulary: decision,
+    permits: [permit],
+    assetSha256: rawCandidate.assetSha256,
+    executionProof: null,
+  })), /candidate-bound construction execution proof/);
+});
+
+test('R02 construction family must agree with candidate-bound executed operation', () => {
+  const decision = leaf('whole', 'hard-surface');
+  const permit = createConstructionOperationPermit({
+    decision,
+    scopeId: 'whole',
+    operation: 'hard-surface-shell',
+  });
+  const candidate = candidateFor(decision, [permit]);
+  assert.throws(() => createConstructionQuality(qualityInput({
+    families: ['section-profile-loft'],
+    vocabulary: decision,
+    permits: [permit],
+    assetSha256: candidate.assetSha256,
+    executionProof: candidate.proof,
+  })), /does not match executed operation hard-surface-shell/);
 });
