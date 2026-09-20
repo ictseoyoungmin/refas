@@ -2747,6 +2747,35 @@
         "source/reference.png",
         "renders/hero.png"
       ]
+    },
+    "validation/early-resemblance-barrier": {
+      "sourceSha256": {
+        "$value": "sourceSha256",
+        "example": "0000000000000000000000000000000000000000000000000000000000000000",
+        "description": "current primary source SHA-256"
+      },
+      "hierarchyDigest": {
+        "$value": "hierarchyDigest",
+        "example": "0000000000000000000000000000000000000000000000000000000000000000",
+        "description": "current visual hierarchy digest"
+      },
+      "assetSha256": {
+        "$value": "assetSha256",
+        "example": "0000000000000000000000000000000000000000000000000000000000000000",
+        "description": "exact current candidate asset digest"
+      },
+      "signatureEvidence": {
+        "$bind": "earlyResemblanceSignatureEvidence",
+        "description": "current refas.perceptual-signature-evidence/v1"
+      },
+      "clayRenderReport": {
+        "$bind": "earlyResemblanceClayRenderReport",
+        "description": "current canonical neutral-clay refas.pbr-render-report/v1"
+      },
+      "evidenceRefs": [
+        "source/reference.png",
+        "renders/clay/review-board.png"
+      ]
     }
   }
 }
