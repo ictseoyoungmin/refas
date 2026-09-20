@@ -138,10 +138,12 @@ test('R04 keeps native PBR reports backward compatible and validates canonical n
     reproducibility: {mode: 'deterministic', tolerance: ''},
   });
   assert.equal(native.presentation, undefined);
+  assert.equal(native.claimScope, 'visual-fidelity');
   assert.equal(validatePbrRenderReport(native).valid, true);
 
   const clay = clayReport();
   assert.equal(validatePbrRenderReport(clay).valid, true);
+  assert.equal(clay.claimScope, 'shape-resemblance-only');
   assert.equal(clay.presentation.mode, 'neutral-clay');
   assert.equal(clay.presentation.presetDigest, NEUTRAL_CLAY_PRESENTATION_PRESET_DIGEST);
 
@@ -149,6 +151,11 @@ test('R04 keeps native PBR reports backward compatible and validates canonical n
     ...clay,
     presentation: {...clay.presentation, presetDigest: D('f')},
   }), /preset digest mismatch/);
+
+  assert.throws(() => createPbrRenderReport({
+    ...clay,
+    renderer: {...clay.renderer, name: 'Arbitrary Clay Renderer'},
+  }), /neutral-clay renderer profile is not canonical/);
 });
 
 test('R04 all macro and identity signatures match -> PROCEED while detail mismatch remains non-blocking', () => {
@@ -166,6 +173,10 @@ test('R04 all macro and identity signatures match -> PROCEED while detail mismat
     hierarchyDigest: HIERARCHY.hierarchyDigest,
     assetSha256: ASSET,
   }).valid, true);
+
+  const tamperedBarrier = structuredClone(barrier);
+  tamperedBarrier.verdict = 'REWORK';
+  assert.equal(validateEarlyResemblanceBarrier(tamperedBarrier).valid, false);
 });
 
 test('R04 required mismatch -> REWORK and preserves typed finding authority', () => {
