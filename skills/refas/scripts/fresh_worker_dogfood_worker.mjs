@@ -501,7 +501,7 @@ async function main() {
         status: 'insufficient',
         candidateObservation: 'The deterministic public-contract fixture render is available, but this dogfood does not claim source resemblance.',
         comparisonConclusion: 'R03 public binding is exercised without manufacturing a resemblance PASS from contract-fixture evidence.',
-        evidenceRefs: [sourceManifest.path, clayBoardRef.path],
+        evidenceRefs: [sourceManifest.path, clayFrameRefs[0].path, clayBoardRef.path],
       }));
       return input;
     },
