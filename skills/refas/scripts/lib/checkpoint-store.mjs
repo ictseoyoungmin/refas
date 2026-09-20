@@ -545,7 +545,10 @@ async function inspectRegisteredComparison(root, state, head, visualReview, erro
       errors.push('registered comparison artifact bytes do not match the visual review binding');
     }
     report = await readJson(resolved.realFile);
-    const validation = validateRegisteredComparison(report);
+    const validation = validateRegisteredComparison(report, {
+      trustedContractFixture: isTrustedContractFixtureProject(state),
+      expectedAcquisitionKind: state.source?.acquisition?.kind ?? null,
+    });
     if (!validation.valid) errors.push(`registered comparison is invalid: ${validation.errors.join('; ')}`);
   } catch (error) {
     errors.push(`registered comparison unavailable: ${error.message}`);
