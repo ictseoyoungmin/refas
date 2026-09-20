@@ -72,7 +72,11 @@ Create `refas.early-resemblance-barrier/v1` from the current perceptual-signatur
 - `REWORK`: at least one macro or identity signature is `mismatch`;
 - `HOLD`: no required mismatch exists, but at least one macro or identity signature is `insufficient`.
 
+Every macro or identity observation must cite at least one exact output path from the bound neutral-clay render report. A generic review board, native beauty render, or unattached file is not sufficient evidence for a required signature. All R03 source/signature/observation evidence refs used by a production barrier must remain bound in the current checkpoint lineage.
+
 Detail signatures are recorded but do not block this early admission. `PROCEED` authorizes only downstream detail work. It does not set a visual-review PASS, certify the object, or imply topology, assembly, or appearance closure. `REWORK` preserves R03 typed findings and their owners. `HOLD` does not invent an owner.
+
+For non-fixture sources, `resume` also obeys the barrier instead of blindly recommending the next capability: `HOLD` requests stronger resemblance evidence, `REWORK` asks for the preserved typed findings to be reported through normal ownership routing, and only `PROCEED` recommends `surface-topology`.
 
 For non-fixture sources, the checkpoint runtime enforces this admission before `surface-topology` and every later capability: the current shape-reconstruction checkpoint must contain one exact-candidate R04 barrier whose source and visual-hierarchy bindings are current and whose verdict is `PROCEED`. Contract-only acquisition kinds (`test-fixture`, `deterministic-project-fixture`, `synthetic-test-fixture`) are exempt from production admission so fresh-worker and schema dogfoods can intentionally prove `HOLD` without manufacturing resemblance.
 
