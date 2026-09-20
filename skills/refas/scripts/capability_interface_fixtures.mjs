@@ -676,10 +676,25 @@ export function fixtureForCapabilityInterface(key, context, outputs = new Map())
     bindings.perceptualSignatureSet=outputs.get('observation/perceptual-signature-set');
     values.assetSha256=API.digestBytes(context.candidate.candidateBytes);
   } else if (key === 'validation/early-resemblance-barrier') {
-    const signatureEvidence=outputs.get('validation/perceptual-signature-evidence');
+    const priorSignatureEvidence=outputs.get('validation/perceptual-signature-evidence');
     const assetSha256=API.digestBytes(context.candidate.candidateBytes);
+    const clayReport=neutralClayAlignmentReport(assetSha256);
+    const clayHero=clayReport.outputs.find((output)=>output.viewId==='hero')?.path;
+    if (!clayHero) throw new Error('alignment neutral-clay report is missing hero output');
+    const signatureEvidence=API.createPerceptualSignatureEvidence({
+      signatureSet: priorSignatureEvidence.signatureSet,
+      assetSha256,
+      observations: priorSignatureEvidence.observations.map((observation)=>({
+        signatureId:observation.signatureId,
+        status:observation.status,
+        candidateObservation:observation.candidateObservation,
+        comparisonConclusion:observation.comparisonConclusion,
+        evidenceRefs:[...new Set([...(observation.evidenceRefs??[]),clayHero])],
+      })),
+      evidenceRefs:[...new Set([...(priorSignatureEvidence.evidenceRefs??[]),clayHero])],
+    });
     bindings.earlyResemblanceSignatureEvidence=signatureEvidence;
-    bindings.earlyResemblanceClayRenderReport=neutralClayAlignmentReport(assetSha256);
+    bindings.earlyResemblanceClayRenderReport=clayReport;
     values.sourceSha256=signatureEvidence.sourceSha256;
     values.hierarchyDigest=signatureEvidence.hierarchyDigest;
     values.assetSha256=assetSha256;
