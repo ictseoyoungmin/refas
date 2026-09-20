@@ -2707,7 +2707,11 @@
       "ambiguities": [],
       "evidenceRefs": [
         "source/reference.png"
-      ]
+      ],
+      "hierarchy": {
+        "$bind": "perceptualSignatureHierarchy",
+        "description": "Current refas.visual-hierarchy/v1 for source/scope binding"
+      }
     },
     "validation/perceptual-signature-evidence": {
       "signatureSet": {
