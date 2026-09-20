@@ -16,6 +16,8 @@ import {
   certifyProject,
   commitCheckpoint,
   contentReference,
+  createConstructionAuthority,
+  createConstructionExecutionProof,
   createConstructionOperationPermit,
   createConstructionQuality,
   createConstructionVocabulary,
@@ -165,25 +167,36 @@ async function main() {
       evidenceRefs: ['source/reference.png'],
     })),
   ];
+  const constructionAuthorities = Object.fromEntries(articulatedScopes.map((scopeId) => {
+    const permit = articulatedPermits.find((candidate) => candidate.scopeId === scopeId && candidate.operation !== 'assembly-decomposition');
+    return [scopeId, createConstructionAuthority({decision: articulatedVocabulary, permit})];
+  }));
   const articulatedVocabularyPath = await json(path.join(PROJECT, 'model/construction-vocabulary.json'), articulatedVocabulary);
   const articulatedPermitsPath = await json(path.join(PROJECT, 'model/construction-permits.json'), {
     vocabularyDigest: articulatedVocabulary.vocabularyDigest,
     permits: articulatedPermits,
   });
 
-  const referenceFigure = buildArticulatedFigure('reference');
-  const neutralFigure = buildArticulatedFigure('neutral');
+  const referenceFigure = buildArticulatedFigure('reference', {constructionAuthorities});
+  const neutralFigure = buildArticulatedFigure('neutral', {constructionAuthorities});
   assert.equal(parseGlb(referenceFigure.glb).binary.equals(parseGlb(neutralFigure.glb).binary), true);
   const assetPath = path.join(PROJECT, 'assets/articulated-figure.glb');
   const neutralPath = path.join(PROJECT, 'assets/articulated-figure-neutral.glb');
   await fs.mkdir(path.dirname(assetPath), {recursive:true});
   await fs.writeFile(assetPath, referenceFigure.glb);
   await fs.writeFile(neutralPath, neutralFigure.glb);
+  const articulatedExecutionProof = createConstructionExecutionProof({
+    assetBytes: referenceFigure.glb,
+    decision: articulatedVocabulary,
+    permits: articulatedPermits,
+    evidenceRefs: ['source/reference.png', 'assets/articulated-figure.glb'],
+  });
+  const articulatedExecutionProofPath = await json(path.join(PROJECT, 'model/construction-execution-proof.json'), articulatedExecutionProof);
   const inspection = inspectGlb(referenceFigure.glb);
   assert.equal(inspection.valid, true);
   assert.ok(inspection.triangleCount >= 12_500);
   const shapePath = await json(path.join(PROJECT, 'model/shape-spec.json'), {schema:'refas.articulated-shape/v1',sourceSha256:source.sha256,partCount:referenceFigure.parts.length,triangleCount:inspection.triangleCount,identityFeatures:['section-profile chest','bilateral pectoral breaks','pelvis band and hip cups','rimmed recessed joints','separated-finger hands','wedge planted foot'],evidenceRefs:['source/reference.png','assets/articulated-figure.glb']});
-  await close('shape-reconstruction', [assetPath, shapePath, articulatedVocabularyPath, articulatedPermitsPath], 'Source-specific section profiles are admitted through the pre-geometry mechanical-articulated vocabulary and bound child permits.');
+  await close('shape-reconstruction', [assetPath, shapePath, articulatedVocabularyPath, articulatedPermitsPath, articulatedExecutionProofPath], 'Source-specific section profiles are admitted through the pre-geometry mechanical-articulated vocabulary and bound child permits.');
   const topologyPath = await json(path.join(PROJECT, 'model/topology-spec.json'), {schema:'refas.articulated-topology/v1',partCount:referenceFigure.parts.length,triangleCount:inspection.triangleCount,checks:{closedCaps:true,consistentWinding:true,facetsConcentratedAtIdentityFeatures:true}});
   await close('surface-topology', [assetPath, topologyPath], 'Closed lofts and corrected cap winding preserve readable faceted planes.');
   const assemblyPath = await json(path.join(PROJECT, 'model/assembly-spec.json'), {schema:'refas.articulated-assembly/v1',localMeshBytesInvariant:true,poseVariants:['reference','neutral'],checks:{parentLocalPivots:true,ankleConnected:true,raisedFootPlanted:true,kneeCutawayVisible:true}});
@@ -243,6 +256,7 @@ async function main() {
     registeredComparison:{path:'reviews/registered-comparison/comparison-report.json',sha256:await sha256File(comparisonReportPath),scopeIds:['whole']},
     constructionVocabulary: articulatedVocabulary,
     constructionPermits: articulatedPermits,
+    constructionExecutionProof: articulatedExecutionProof,
     ambiguities:['Hidden rear joint hardware remains inferred.'],
   });
   assert.equal(validateConstructionQuality(constructionQuality).valid,true);
