@@ -458,6 +458,19 @@ async function main() {
     '--max-working-mb', '128',
   ]);
 
+  const clayRenderDir = path.join(projectRoot, 'renders', 'clay');
+  runCli([
+    'render-pbr',
+    '--glb', path.join(projectRoot, candidateRef.path),
+    '--out', clayRenderDir,
+    '--reference', sourceImage,
+    '--frame', canonicalFramePath,
+    '--size', '96',
+    '--timeout-seconds', '60',
+    '--max-working-mb', '128',
+    '--neutral-clay',
+  ]);
+
   const visualInterface = await discoverInterface('validation', 'visual-review');
   const publicConstants = visualInterface.entry.publicConstantValues ?? {};
   const viewIds = publicConstants.REQUIRED_REVIEW_VIEW_IDS;
@@ -466,26 +479,29 @@ async function main() {
 
   const portableFrameRefs = [];
   const frameRefs = [];
+  const clayFrameRefs = [];
   for (const viewId of viewIds) {
     recordSymbol('contentReference');
     portableFrameRefs.push(await API.contentReference(path.join(portableRenderDir, `${viewId}.png`), {kind: 'render-frame', root: projectRoot}));
     frameRefs.push(await API.contentReference(path.join(pbrRenderDir, `${viewId}.png`), {kind: 'render-frame', root: projectRoot}));
+    clayFrameRefs.push(await API.contentReference(path.join(clayRenderDir, `${viewId}.png`), {kind: 'render-frame', root: projectRoot}));
   }
   const portableReportRef = await API.contentReference(path.join(portableRenderDir, 'render-report.json'), {kind: 'render-report', root: projectRoot});
   const portableBoardRef = await API.contentReference(path.join(portableRenderDir, 'multiview-review-board.png'), {kind: 'render-frame', root: projectRoot});
   const reviewBoardRef = await API.contentReference(path.join(pbrRenderDir, 'pbr-review-board.png'), {kind: 'render-frame', root: projectRoot});
+  const clayBoardRef = await API.contentReference(path.join(clayRenderDir, 'pbr-review-board.png'), {kind: 'render-frame', root: projectRoot});
 
   const perceptualSignatureEvidence = (await invokeTemplateContract('validation', 'perceptual-signature-evidence', {
     values: {assetSha256: candidateRef.sha256},
     bindings: {perceptualSignatureSet},
     mutate(input) {
-      input.evidenceRefs = [sourceManifest.path, reviewBoardRef.path];
+      input.evidenceRefs = [sourceManifest.path, clayBoardRef.path];
       input.observations = perceptualSignatureSet.signatures.map((signature) => ({
         signatureId: signature.id,
         status: 'insufficient',
         candidateObservation: 'The deterministic public-contract fixture render is available, but this dogfood does not claim source resemblance.',
         comparisonConclusion: 'R03 public binding is exercised without manufacturing a resemblance PASS from contract-fixture evidence.',
-        evidenceRefs: [sourceManifest.path, reviewBoardRef.path],
+        evidenceRefs: [sourceManifest.path, clayBoardRef.path],
       }));
       return input;
     },
@@ -494,6 +510,42 @@ async function main() {
     'reviews/perceptual-signature-evidence.json',
     perceptualSignatureEvidence,
     'perceptual-signature-evidence',
+  );
+
+  const clayPbrInterface = await discoverInterface('appearance', 'pbr-render-report');
+  const rawClayReport = JSON.parse(await fs.readFile(path.join(clayRenderDir, 'render-report.json'), 'utf8'));
+  recordSymbol(clayPbrInterface.entry.library.symbol);
+  const clayPbrReport = await API[clayPbrInterface.entry.library.symbol](rawClayReport);
+  if (clayPbrInterface.entry.validator?.library) {
+    recordSymbol(clayPbrInterface.entry.validator.library);
+    const clayValidation = await API[clayPbrInterface.entry.validator.library](clayPbrReport);
+    if (clayValidation?.valid !== true) throw new Error(`actual neutral-clay report failed public validation: ${(clayValidation?.errors ?? []).join('; ')}`);
+  }
+  if (clayPbrReport.presentation?.mode !== 'neutral-clay') throw new Error('fresh-worker neutral-clay render did not retain canonical presentation authority');
+  const clayPbrReportRef = await writeJsonArtifact('renders/clay/render-report.json', clayPbrReport, 'render-report');
+
+  const earlyResemblanceBarrier = (await invokeTemplateContract('validation', 'early-resemblance-barrier', {
+    values: {
+      sourceSha256: sourceManifest.sha256,
+      hierarchyDigest: hierarchy.hierarchyDigest,
+      assetSha256: candidateRef.sha256,
+    },
+    bindings: {
+      earlyResemblanceSignatureEvidence: perceptualSignatureEvidence,
+      earlyResemblanceClayRenderReport: clayPbrReport,
+    },
+    mutate(input) {
+      input.evidenceRefs = [sourceManifest.path, clayBoardRef.path];
+      return input;
+    },
+  })).output;
+  if (earlyResemblanceBarrier.verdict !== 'HOLD') {
+    throw new Error(`contract-fixture R04 barrier must remain HOLD instead of manufacturing resemblance: ${earlyResemblanceBarrier.verdict}`);
+  }
+  const earlyResemblanceBarrierRef = await writeJsonArtifact(
+    'reviews/early-resemblance-barrier.json',
+    earlyResemblanceBarrier,
+    'early-resemblance-barrier',
   );
 
   const observation = (await invokeTemplateContract('observation', 'visual-observation', {
@@ -678,14 +730,14 @@ async function main() {
   await commitCapability('visual-hierarchy', [hierarchyRef]);
   await commitCapability('visual-observation', [observationRef, referenceGeometryRef, perceptualSignatureSetRef, relationalRef, authorityRef]);
   await commitCapability('spatial-hypotheses', [spatialRef]);
-  await commitCapability('shape-reconstruction', [constructionVocabularyRef, constructionPermitRef, constructionExecutionProofRef, constructionRef, candidateRef]);
+  await commitCapability('shape-reconstruction', [constructionVocabularyRef, constructionPermitRef, constructionExecutionProofRef, constructionRef, candidateRef, earlyResemblanceBarrierRef]);
   await commitCapability('surface-topology', [surfaceRef]);
   await commitCapability('assembly', [assemblyRef]);
   await commitCapability('appearance', [pbrReportRef]);
-  await commitCapability('rendering', [candidateRef, portableReportRef, portableBoardRef, pbrReportRef, ...portableFrameRefs, ...frameRefs, reviewBoardRef]);
-  await commitCapability('visual-critique', [perceptualSignatureEvidenceRef, visualReviewRef]);
+  await commitCapability('rendering', [candidateRef, portableReportRef, portableBoardRef, pbrReportRef, clayPbrReportRef, ...portableFrameRefs, ...frameRefs, ...clayFrameRefs, reviewBoardRef, clayBoardRef]);
+  await commitCapability('visual-critique', [perceptualSignatureEvidenceRef, earlyResemblanceBarrierRef, visualReviewRef]);
 
-  const finalRefs = [candidateRef, portableReportRef, portableBoardRef, pbrReportRef, ...portableFrameRefs, ...frameRefs, reviewBoardRef, perceptualSignatureEvidenceRef, visualReviewRef];
+  const finalRefs = [candidateRef, portableReportRef, portableBoardRef, pbrReportRef, clayPbrReportRef, ...portableFrameRefs, ...frameRefs, ...clayFrameRefs, reviewBoardRef, clayBoardRef, perceptualSignatureEvidenceRef, earlyResemblanceBarrierRef, visualReviewRef];
   await commitCapability('whole-object-certification', finalRefs);
 
   const certificationDiscovery = await discoverInterface('claim-certification', 'certify-project');
