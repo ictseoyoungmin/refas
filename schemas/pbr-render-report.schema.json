@@ -21,7 +21,10 @@
       "const": "refas.pbr-render-report/v1"
     },
     "claimScope": {
-      "const": "visual-fidelity"
+      "enum": [
+        "visual-fidelity",
+        "shape-resemblance-only"
+      ]
     },
     "assetSha256": {
       "$ref": "common.schema.json#/$defs/digest"
