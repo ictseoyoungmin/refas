@@ -311,6 +311,27 @@ async function main() {
   const sourceManifest = JSON.parse(await fs.readFile(sourceManifestPath, 'utf8'));
   const sourceManifestRef = await writeJsonArtifact('source/source-manifest.json', sourceManifest, 'source-manifest');
 
+  const perceptualSignatureSet = (await invokeTemplateContract('observation', 'perceptual-signature-set', {
+    values: {sourceSha256: sourceManifest.sha256},
+    mutate(input) {
+      input.evidenceRefs = [sourceManifest.path];
+      input.signatures = input.signatures.map((signature) => ({
+        ...signature,
+        sourceObservation: signature.family === 'silhouette-character'
+          ? 'The source fixture has one compact upright dominant silhouette with a narrower dark surround.'
+          : 'The source fixture identity uses explicit high-contrast rigid boundaries rather than an unconstrained smooth-form claim.',
+        evidenceRefs: [sourceManifest.path],
+        referenceGeometryRefs: [],
+      }));
+      return input;
+    },
+  })).output;
+  const perceptualSignatureSetRef = await writeJsonArtifact(
+    'model/perceptual-signature-set.json',
+    perceptualSignatureSet,
+    'perceptual-signature-set',
+  );
+
   const constructionVocabulary = (await invokeTemplateContract('construction', 'construction-vocabulary', {
     values: {sourceSha256: sourceManifest.sha256},
     mutate(input) {
@@ -440,6 +461,27 @@ async function main() {
   const portableReportRef = await API.contentReference(path.join(portableRenderDir, 'render-report.json'), {kind: 'render-report', root: projectRoot});
   const portableBoardRef = await API.contentReference(path.join(portableRenderDir, 'multiview-review-board.png'), {kind: 'render-frame', root: projectRoot});
   const reviewBoardRef = await API.contentReference(path.join(pbrRenderDir, 'pbr-review-board.png'), {kind: 'render-frame', root: projectRoot});
+
+  const perceptualSignatureEvidence = (await invokeTemplateContract('validation', 'perceptual-signature-evidence', {
+    values: {assetSha256: candidateRef.sha256},
+    bindings: {perceptualSignatureSet},
+    mutate(input) {
+      input.evidenceRefs = [sourceManifest.path, reviewBoardRef.path];
+      input.observations = perceptualSignatureSet.signatures.map((signature) => ({
+        signatureId: signature.id,
+        status: 'insufficient',
+        candidateObservation: 'The deterministic public-contract fixture render is available, but this dogfood does not claim source resemblance.',
+        comparisonConclusion: 'R03 public binding is exercised without manufacturing a resemblance PASS from contract-fixture evidence.',
+        evidenceRefs: [sourceManifest.path, reviewBoardRef.path],
+      }));
+      return input;
+    },
+  })).output;
+  const perceptualSignatureEvidenceRef = await writeJsonArtifact(
+    'reviews/perceptual-signature-evidence.json',
+    perceptualSignatureEvidence,
+    'perceptual-signature-evidence',
+  );
 
   const hierarchy = (await invokeTemplateContract('observation', 'visual-hierarchy', {
     values: {sourceSha256: sourceManifest.sha256},
@@ -632,16 +674,16 @@ async function main() {
 
   await commitCapability('source-intake', [sourceManifestRef]);
   await commitCapability('visual-hierarchy', [hierarchyRef]);
-  await commitCapability('visual-observation', [observationRef, referenceGeometryRef, relationalRef, authorityRef]);
+  await commitCapability('visual-observation', [observationRef, referenceGeometryRef, perceptualSignatureSetRef, relationalRef, authorityRef]);
   await commitCapability('spatial-hypotheses', [spatialRef]);
   await commitCapability('shape-reconstruction', [constructionVocabularyRef, constructionPermitRef, constructionExecutionProofRef, constructionRef, candidateRef]);
   await commitCapability('surface-topology', [surfaceRef]);
   await commitCapability('assembly', [assemblyRef]);
   await commitCapability('appearance', [pbrReportRef]);
   await commitCapability('rendering', [candidateRef, portableReportRef, portableBoardRef, pbrReportRef, ...portableFrameRefs, ...frameRefs, reviewBoardRef]);
-  await commitCapability('visual-critique', [visualReviewRef]);
+  await commitCapability('visual-critique', [perceptualSignatureEvidenceRef, visualReviewRef]);
 
-  const finalRefs = [candidateRef, portableReportRef, portableBoardRef, pbrReportRef, ...portableFrameRefs, ...frameRefs, reviewBoardRef, visualReviewRef];
+  const finalRefs = [candidateRef, portableReportRef, portableBoardRef, pbrReportRef, ...portableFrameRefs, ...frameRefs, reviewBoardRef, perceptualSignatureEvidenceRef, visualReviewRef];
   await commitCapability('whole-object-certification', finalRefs);
 
   const certificationDiscovery = await discoverInterface('claim-certification', 'certify-project');
