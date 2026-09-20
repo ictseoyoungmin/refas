@@ -48,6 +48,22 @@ Commit after a capability passes its local gates and before:
 
 Do not checkpoint every keystroke. Checkpoint states worth returning to.
 
+## Early resemblance admission
+
+For a real source, shape reconstruction may checkpoint a candidate even when its early resemblance result is `HOLD` or `REWORK`; this preserves the attempted candidate and evidence. However, `surface-topology` and every downstream capability are refused until the current shape-reconstruction checkpoint contains a canonical `refas.early-resemblance-barrier/v1` bound to:
+
+- the current primary source SHA-256;
+- the current visual-hierarchy digest;
+- exactly one candidate GLB in that shape checkpoint;
+- current R03 perceptual-signature evidence;
+- the canonical neutral-clay render report for that same candidate;
+
+and the runtime-derived barrier verdict is `PROCEED`.
+
+This is an admission rule, not certification. A later mismatch can still reopen shape reconstruction, and final visual review/certification remain independently authoritative.
+
+Synthetic/test acquisition kinds are contract-only exceptions. They may retain an intentional `HOLD` barrier while continuing downstream API dogfoods, because those fixtures do not claim source resemblance or production readiness.
+
 ## Bounded edit transaction
 
 One transaction has:
