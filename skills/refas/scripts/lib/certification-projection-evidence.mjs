@@ -6,13 +6,8 @@ import {validateReferenceGeometry} from './reference-geometry.mjs';
 import {validateRealizedProjection} from './realized-projection.mjs';
 import {verifyRealizedProjection} from './realized-projection-verification.mjs';
 import {findingsFromRealizedProjection} from './projection-findings.mjs';
+import {isTrustedContractFixtureProject} from './contract-fixture-authority.mjs';
 
-const CONTRACT_FIXTURE_ACQUISITIONS = new Set(['test-fixture', 'deterministic-project-fixture', 'synthetic-test-fixture']);
-
-function sourceRequiresRealizedProjection(source) {
-  const kind = String(source?.acquisition?.kind ?? '').toLowerCase();
-  return !CONTRACT_FIXTURE_ACQUISITIONS.has(kind);
-}
 async function readBoundArtifact(root, artifact, label) {
   if (!artifact) throw new Error(`${label} artifact is missing`);
   const absolute = path.resolve(root, artifact.path), relative = path.relative(path.resolve(root), absolute);
@@ -25,7 +20,7 @@ async function readBoundArtifact(root, artifact, label) {
 
 export async function inspectCertificationProjectionEvidence(root, state, head, visualReview) {
   const errors = [], geometryArtifacts = head.artifactRefs.filter((artifact) => artifact.kind === 'reference-geometry'), realizedArtifacts = head.artifactRefs.filter((artifact) => artifact.kind === 'realized-projection');
-  const required = sourceRequiresRealizedProjection(state.source) || geometryArtifacts.length > 0 || realizedArtifacts.length > 0;
+  const required = !isTrustedContractFixtureProject(state) || geometryArtifacts.length > 0 || realizedArtifacts.length > 0;
   if (!required) return {required: false, valid: true, errors, geometryArtifact: null, realizedArtifact: null, proof: null};
   if (geometryArtifacts.length !== 1) errors.push('source-bound certification requires exactly one digest-bound reference-geometry artifact');
   if (realizedArtifacts.length !== 1) errors.push('source-bound certification requires exactly one digest-bound realized-projection artifact');
