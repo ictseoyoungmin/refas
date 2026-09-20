@@ -69,6 +69,8 @@ export function createEarlyResemblanceBarrier({
     sourceSha256: source,
     hierarchyDigest: hierarchy,
     assetSha256: asset,
+    signatureEvidence,
+    clayRenderReport,
     signatureSetDigest: signatureEvidence.signatureSetDigest,
     signatureEvidenceDigest: signatureEvidence.evidenceDigest,
     clayRenderReportDigest: clayRenderReport.reportDigest,
