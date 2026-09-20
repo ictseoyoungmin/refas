@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/perceptual-signature-evidence.schema.json",
+  "title": "RefAs candidate-bound perceptual signature evidence",
+  "type": "object",
+  "required": ["schema", "scopeId", "sourceSha256", "assetSha256", "signatureSet", "signatureSetDigest", "observations", "findings", "evidenceRefs", "policy", "evidenceDigest"],
+  "properties": {
+    "schema": {"const": "refas.perceptual-signature-evidence/v1"},
+    "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "assetSha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "signatureSet": {"$ref": "perceptual-signature-set.schema.json"},
+    "signatureSetDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "observations": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/observation"}},
+    "findings": {"type": "array", "items": {"type": "object"}},
+    "evidenceRefs": {"$ref": "common.schema.json#/$defs/evidenceRefs"},
+    "policy": {
+      "type": "object",
+      "required": ["matchCannotPassVisualGate", "matchCannotCertify", "mismatchMayRouteTypedFinding", "insufficientDoesNotSelectOwner", "numericMetricsDoNotReplaceSignatureObservation", "sourceSignatureRemainsPrimary"],
+      "properties": {
+        "matchCannotPassVisualGate": {"const": true},
+        "matchCannotCertify": {"const": true},
+        "mismatchMayRouteTypedFinding": {"const": true},
+        "insufficientDoesNotSelectOwner": {"const": true},
+        "numericMetricsDoNotReplaceSignatureObservation": {"const": true},
+        "sourceSignatureRemainsPrimary": {"const": true}
+      },
+      "additionalProperties": false
+    },
+    "evidenceDigest": {"$ref": "common.schema.json#/$defs/digest"}
+  },
+  "$defs": {
+    "observation": {
+      "type": "object",
+      "required": ["signatureId", "scopeId", "family", "importance", "status", "sourceObservation", "candidateObservation", "comparisonConclusion", "evidenceRefs", "finding"],
+      "properties": {
+        "signatureId": {"$ref": "common.schema.json#/$defs/semanticId"},
+        "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
+        "family": {"enum": ["silhouette-character", "mass-proportion", "curvature-character", "plane-edge-language", "negative-space-structure", "part-segmentation-rhythm", "junction-transition", "surface-pattern-structure"]},
+        "importance": {"enum": ["macro", "identity", "detail"]},
+        "status": {"enum": ["match", "mismatch", "insufficient"]},
+        "sourceObservation": {"type": "string", "minLength": 1},
+        "candidateObservation": {"type": "string", "minLength": 1},
+        "comparisonConclusion": {"type": "string", "minLength": 1},
+        "evidenceRefs": {"$ref": "common.schema.json#/$defs/evidenceRefs"},
+        "finding": {"oneOf": [{"type": "null"}, {"type": "object"}]}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
