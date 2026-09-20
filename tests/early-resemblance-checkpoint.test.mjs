@@ -18,6 +18,7 @@ import {
   createVisualHierarchy,
   digestBytes,
   initProject,
+  resumeProject,
 } from '../skills/refas/scripts/lib/index.mjs';
 
 const D = (ch) => ch.repeat(64);
@@ -192,6 +193,10 @@ async function makeRealSourceProject(t, verdictStatus, {unboundObservationEviden
 test('R04 real-source HOLD blocks surface-topology admission', async (t) => {
   const {root, barrier, surfaceRef} = await makeRealSourceProject(t, 'insufficient');
   assert.equal(barrier.verdict, 'HOLD');
+  const guidance = await resumeProject(root);
+  assert.equal(guidance.nextAction, 'GATHER_RESEMBLANCE_EVIDENCE');
+  assert.equal(guidance.earlyResemblanceVerdict, 'HOLD');
+  assert.equal(guidance.activeWork.capability, 'visual-critique');
   await assert.rejects(
     () => commitLocal(root, 'surface-topology', [surfaceRef]),
     /downstream detail requires early resemblance PROCEED; current verdict is HOLD/,
@@ -201,6 +206,11 @@ test('R04 real-source HOLD blocks surface-topology admission', async (t) => {
 test('R04 real-source REWORK blocks surface-topology admission', async (t) => {
   const {root, barrier, surfaceRef} = await makeRealSourceProject(t, 'mismatch');
   assert.equal(barrier.verdict, 'REWORK');
+  const guidance = await resumeProject(root);
+  assert.equal(guidance.nextAction, 'REPORT_RESEMBLANCE_FINDINGS');
+  assert.equal(guidance.earlyResemblanceVerdict, 'REWORK');
+  assert.ok(guidance.findings.length > 0);
+  assert.equal(guidance.activeWork.capability, 'visual-critique');
   await assert.rejects(
     () => commitLocal(root, 'surface-topology', [surfaceRef]),
     /downstream detail requires early resemblance PROCEED; current verdict is REWORK/,
@@ -213,6 +223,9 @@ test('R04 real-source PROCEED admits surface-topology but grants no certificatio
   assert.equal(barrier.policy.proceedOnlyAuthorizesDownstreamDetail, true);
   assert.equal(barrier.policy.proceedDoesNotPassVisualReview, true);
   assert.equal(barrier.policy.proceedDoesNotCertify, true);
+  const guidance = await resumeProject(root);
+  assert.equal(guidance.nextAction, 'ADVANCE_CAPABILITY');
+  assert.equal(guidance.activeWork.capability, 'surface-topology');
   const surface = await commitLocal(root, 'surface-topology', [surfaceRef]);
   assert.equal(surface.capability, 'surface-topology');
 });
