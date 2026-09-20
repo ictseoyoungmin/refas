@@ -617,7 +617,7 @@ async function readCheckpointJsonArtifact(root, checkpoint, kind, label) {
   return {artifact, value: await readJson(resolved.realFile)};
 }
 
-async function verifyEarlyResemblanceEvidenceArtifacts(root, state, shapeCheckpoint, barrier, label) {
+async function verifyEarlyResemblanceEvidenceArtifacts(root, state, shapeCheckpoint, barrier, lineage, label) {
   const reportArtifacts = (shapeCheckpoint.artifactRefs ?? []).filter((artifact) => artifact.kind === 'render-report');
   const matchingReports = [];
   for (const artifact of reportArtifacts) {
@@ -648,11 +648,20 @@ async function verifyEarlyResemblanceEvidenceArtifacts(root, state, shapeCheckpo
     }
   }
 
-  const artifactPaths = new Set((shapeCheckpoint.artifactRefs ?? []).map((artifact) => artifact.path));
-  for (const evidenceRef of barrier.evidenceRefs ?? []) {
-    if (evidenceRef === state.source.path) continue;
-    if (!artifactPaths.has(evidenceRef)) {
-      throw new Error(`${label} barrier evidence ref is not bound in the shape checkpoint: ${evidenceRef}`);
+  const lineageArtifactPaths = new Set([
+    state.source.path,
+    ...lineage.flatMap((checkpoint) => (checkpoint.artifactRefs ?? []).map((artifact) => artifact.path)),
+  ].filter(Boolean));
+  const resemblanceEvidenceRefs = new Set([
+    ...(barrier.evidenceRefs ?? []),
+    ...(barrier.signatureEvidence?.evidenceRefs ?? []),
+    ...(barrier.signatureEvidence?.signatureSet?.evidenceRefs ?? []),
+    ...(barrier.signatureEvidence?.observations ?? []).flatMap((observation) => observation.evidenceRefs ?? []),
+    ...(barrier.signatureEvidence?.signatureSet?.signatures ?? []).flatMap((signature) => signature.evidenceRefs ?? []),
+  ].filter(Boolean));
+  for (const evidenceRef of resemblanceEvidenceRefs) {
+    if (!lineageArtifactPaths.has(evidenceRef)) {
+      throw new Error(`${label} resemblance evidence ref is not bound in current checkpoint lineage: ${evidenceRef}`);
     }
   }
 }
@@ -693,6 +702,7 @@ async function ensureEarlyResemblanceAdmission(root, state, capability, scopeId,
     state,
     shapeCheckpoint,
     barrier,
+    lineage,
     `${capability} early resemblance admission`,
   );
 
