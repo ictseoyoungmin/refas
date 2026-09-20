@@ -17,6 +17,7 @@
     "registeredComparison",
     "constructionVocabulary",
     "constructionPermits",
+    "constructionExecutionProof",
     "ambiguities",
     "policy",
     "constructionQualityDigest"
@@ -133,7 +134,8 @@
         "visibleEvidenceCannotBeDeferredAsHiddenUncertainty",
         "triangleCountIsNotFidelityAuthority",
         "validationVolumeCannotReplaceConstructionQuality",
-        "identityBearingRequiresVocabularyPermit"
+        "identityBearingRequiresVocabularyPermit",
+        "identityBearingRequiresCandidateBoundConstructionProof"
       ],
       "properties": {
         "primitiveOnlyIsBlockout": {
@@ -152,6 +154,9 @@
           "const": true
         },
         "identityBearingRequiresVocabularyPermit": {
+          "const": true
+        },
+        "identityBearingRequiresCandidateBoundConstructionProof": {
           "const": true
         }
       },
@@ -175,6 +180,16 @@
       "items": {
         "$ref": "construction-operation-permit.schema.json"
       }
+    },
+    "constructionExecutionProof": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "construction-execution-proof.schema.json"
+        }
+      ]
     }
   },
   "$defs": {
