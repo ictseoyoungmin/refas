@@ -2,13 +2,15 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 
 import {
-  assertMetricUseAllowed,
   createPerceptualSignatureEvidence,
   createPerceptualSignatureSet,
-  metricAuthority,
   validatePerceptualSignatureEvidence,
   validatePerceptualSignatureSet,
 } from '../skills/refas/scripts/lib/index.mjs';
+import {
+  assertMetricUseAllowed,
+  metricAuthority,
+} from '../skills/refas/scripts/lib/metric-authority.mjs';
 
 const D = (ch) => ch.repeat(64);
 const SOURCE = D('a');
