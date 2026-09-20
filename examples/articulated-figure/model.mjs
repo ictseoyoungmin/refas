@@ -268,11 +268,17 @@ const neutralPose = {
   raisedHip:[.48,.08,0], raisedKnee:[.48,-1.87,0], raisedAnkle:[.48,-3.35,0], raisedToe:[.47,-4.25,.12],
 };
 
-function poseParts(pose, geometry) {
+const constructionScopeForPart = (id) => {
+  for (const scopeId of ['hanging-arm', 'resting-arm', 'kneeling-leg', 'raised-leg']) if (id.startsWith(scopeId)) return scopeId;
+  return 'body';
+};
+
+function poseParts(pose, geometry, constructionAuthorities = {}) {
   const world = new Map(), parts = [];
-  const addPart = (id, mesh, matrix, parentId = null, materialId = 'wood-body', role = null, scopeId = `articulated-figure.${id}`) => {
+  const addPart = (id, mesh, matrix, parentId = null, materialId = 'wood-body', role = null, scopeId = constructionScopeForPart(id)) => {
     world.set(id, matrix);
-    parts.push({id, mesh, materialId, role, scopeId, parentId, _world: matrix});
+    const constructionAuthority = constructionAuthorities[scopeId] ?? null;
+    parts.push({id, mesh, materialId, role, scopeId, parentId, _world: matrix, ...(constructionAuthority ? {constructionAuthority} : {})});
   };
   const addOriented = (id, mesh, origin, endpoint, parentId, materialId, role, zHint = [0,0,1]) => addPart(id, mesh, frameMatrix(origin, sub(endpoint, origin), zHint), parentId, materialId, role);
   const bodyFacing = pose === referencePose ? [.34,0,.94] : [0,0,1];
@@ -332,10 +338,10 @@ export const materials = {
   'joint-dark': {baseColor:[.24,.12,.055,1], metallic:0, roughness:.62},
 };
 
-export function buildArticulatedFigure(poseName = 'reference') {
+export function buildArticulatedFigure(poseName = 'reference', {constructionAuthorities = {}} = {}) {
   const geometry = createGeometry();
   const pose = poseName === 'reference' ? referencePose : neutralPose;
-  const parts = poseParts(pose, geometry);
+  const parts = poseParts(pose, geometry, constructionAuthorities);
   const glb = partsToGlb({
     assetId: `articulated-drawing-mannequin-${poseName}`,
     name: `Articulated drawing mannequin — ${poseName} pose`,
