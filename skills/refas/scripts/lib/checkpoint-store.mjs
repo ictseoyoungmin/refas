@@ -1172,6 +1172,23 @@ export async function resumeProject(root) {
     };
   }
   if (state.status === 'certified') {
+    if (!isContractFixtureSource(state) && state.head) {
+      try {
+        const checkpoints = await listCheckpoints(root);
+        const lineage = checkpointLineage(checkpoints, state.head);
+        const certifiedHead = await loadCheckpoint(root, state.head);
+        await ensureEarlyResemblanceAdmission(root, state, certifiedHead.capability, certifiedHead.scopeId, lineage);
+      } catch (error) {
+        return {
+          schema: 'refas.resume-guidance/v1',
+          status: state.status,
+          safeCheckpointId: state.head,
+          activeWork: {capability: 'visual-critique', scopeId: state.activeScopeId},
+          nextAction: 'REQUEST_RESEMBLANCE_REVIEW',
+          reason: `the stored certification predates or fails current early resemblance admission: ${error.message}`,
+        };
+      }
+    }
     return {
       schema: 'refas.resume-guidance/v1', status: state.status, safeCheckpointId: state.head,
       activeWork: null, nextAction: 'DONE', reason: 'the current head has a valid whole-object certificate',
