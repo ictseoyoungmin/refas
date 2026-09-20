@@ -3905,7 +3905,11 @@
               "library": "materializeCapabilityInputTemplate"
             },
             "publicConstants": [
-              "PBR_RENDERER_FAMILIES"
+              "PBR_RENDERER_FAMILIES",
+              "NEUTRAL_CLAY_PRESENTATION_PRESET",
+              "NEUTRAL_CLAY_PRESENTATION_PRESET_DIGEST",
+              "NEUTRAL_CLAY_LIGHTING_RIG_DIGEST",
+              "NEUTRAL_CLAY_REQUIRED_VIEW_IDS"
             ],
             "usageReference": "references/appearance.md",
             "templateRole": "operation-input",
@@ -4028,6 +4032,51 @@
             },
             "publicConstants": [
               "PERCEPTUAL_SIGNATURE_STATUSES"
+            ],
+            "usageReference": "references/validation.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
+            }
+          },
+          {
+            "id": "early-resemblance-barrier",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createEarlyResemblanceBarrier"
+            },
+            "template": "assets/templates/capability-interface-inputs.json#/templates/validation~1early-resemblance-barrier",
+            "inputContract": "current source/hierarchy/candidate bindings + R03 signature evidence + canonical neutral-clay render report",
+            "outputSchema": "refas.early-resemblance-barrier/v1",
+            "validator": {
+              "library": "validateEarlyResemblanceBarrier"
+            },
+            "minimumInvocation": "references/validation.md",
+            "example": null,
+            "templateProcessor": {
+              "library": "materializeCapabilityInputTemplate"
+            },
+            "publicConstants": [
+              "EARLY_RESEMBLANCE_VERDICTS",
+              "EARLY_RESEMBLANCE_REQUIRED_IMPORTANCE"
             ],
             "usageReference": "references/validation.md",
             "templateRole": "operation-input",
