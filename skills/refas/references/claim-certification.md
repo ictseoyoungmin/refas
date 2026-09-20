@@ -21,7 +21,7 @@ A real-source whole-object certification must include a current `refas.certifica
 
 The relational closure is a mandatory authority floor, not optional supporting evidence. Missing, stale, candidate-mismatched, substituted, replayed, or internally contradictory relational closure refuses real-source certification. It does not promote `inferred` or `engineered` propositions to `observed` source facts.
 
-Synthetic/test fixture compatibility may omit this real-source floor only where the runtime explicitly permits that acquisition class. Such fixtures cannot use the compatibility path to make a real-source fidelity claim.
+Contract-fixture compatibility may omit this real-source floor only when RefAs runtime state contains a current source-digest-bound fixture authority issued by the trusted internal test harness. `source.acquisition` metadata never supplies that privilege, and public source binding rejects reserved fixture labels. Such contract fixtures cannot use the compatibility path to make a real-source fidelity claim.
 
 ## Rules
 
