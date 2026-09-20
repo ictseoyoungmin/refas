@@ -30,9 +30,9 @@ function constructionExecutionForPart(part, positionData, normalData, indexData)
     Buffer.from(indexData.buffer, indexData.byteOffset, indexData.byteLength),
   ]));
   const payload = {
+    ...authorityPayload,
     schema: 'refas.construction-execution/v1',
     partId: String(part.id),
-    ...authorityPayload,
     authorityDigest: authority.authorityDigest,
     geometrySha256,
   };
