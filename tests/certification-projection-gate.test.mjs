@@ -91,6 +91,14 @@ async function advanceToReview(root, source, {projection='none'}={}) {
       const glb = mannequinGlb(projection === 'bad' ? 4 : 0);
       await fs.writeFile(assetPath,glb);
       const asset = await contentReference(assetPath,{kind:'glb',root});
+      const clayFrames = [];
+      for (const viewId of NEUTRAL_CLAY_REQUIRED_VIEW_IDS) {
+        const clayPath = path.join(root,'renders','clay',`${viewId}.png`);
+        await fs.mkdir(path.dirname(clayPath),{recursive:true});
+        await fs.writeFile(clayPath,Buffer.from(`neutral clay ${viewId} frame\n`));
+        clayFrames.push(await contentReference(clayPath,{kind:'render-frame',root}));
+      }
+      const clayHero = clayFrames.find((frame)=>frame.path==='renders/clay/hero.png');
 
       const signatureSet = createPerceptualSignatureSet({
         hierarchy,scopeId:'whole',sourceSha256:source.sha256,
@@ -107,9 +115,9 @@ async function advanceToReview(root, source, {projection='none'}={}) {
           signatureId:'whole-form',status:'match',
           candidateObservation:'The candidate is the exact shape checkpoint GLB reviewed for this certification fixture.',
           comparisonConclusion:'This fixture explicitly authorizes downstream detail so projection certification can test its own authority.',
-          evidenceRefs:[source.path,'renders/clay/hero.png'],
+          evidenceRefs:[source.path,clayHero.path],
         }],
-        evidenceRefs:[source.path,'renders/clay/hero.png'],
+        evidenceRefs:[source.path,clayHero.path],
       });
       const clayReport = createPbrRenderReport({
         assetSha256:asset.sha256,frameDigest:'9'.repeat(64),
@@ -117,21 +125,23 @@ async function advanceToReview(root, source, {projection='none'}={}) {
         lighting:{rigId:NEUTRAL_CLAY_PRESENTATION_PRESET.lighting.rigId,digest:NEUTRAL_CLAY_LIGHTING_RIG_DIGEST},
         colorPipeline:{...NEUTRAL_CLAY_PRESENTATION_PRESET.colorPipeline},
         materialSupport:{supported:['base-color-factor','metallic-factor','roughness-factor'],unsupported:['textures']},
-        outputs:NEUTRAL_CLAY_REQUIRED_VIEW_IDS.map((viewId,index)=>({viewId,path:`renders/clay/${viewId}.png`,sha256:String((index%8)+1).repeat(64)})),
+        outputs:clayFrames.map((frame,index)=>({viewId:NEUTRAL_CLAY_REQUIRED_VIEW_IDS[index],path:frame.path,sha256:frame.sha256})),
         reproducibility:{mode:'deterministic',tolerance:''},
         presentation:{mode:'neutral-clay',presetId:NEUTRAL_CLAY_PRESENTATION_PRESET.id,presetDigest:NEUTRAL_CLAY_PRESENTATION_PRESET_DIGEST},
       });
+      const clayReportPath = await json(path.join(root,'renders','clay','render-report.json'),clayReport);
+      const clayReportRef = await contentReference(clayReportPath,{kind:'render-report',root});
       const earlyBarrier = createEarlyResemblanceBarrier({
         sourceSha256:source.sha256,hierarchyDigest:hierarchy.hierarchyDigest,assetSha256:asset.sha256,
-        signatureEvidence,clayRenderReport:clayReport,evidenceRefs:[source.path,'renders/clay/hero.png'],
+        signatureEvidence,clayRenderReport:clayReport,evidenceRefs:[source.path,clayHero.path],
       });
       assert.equal(earlyBarrier.verdict,'PROCEED');
       const barrierPath = await json(path.join(root,'reviews','early-resemblance-barrier.json'),earlyBarrier);
       const barrierRef = await contentReference(barrierPath,{kind:'early-resemblance-barrier',root});
       await commitCheckpoint(root,{
         capability,scopeId:'whole',reason:'shape-reconstruction fixture is R04-admitted',
-        artifactRefs:[asset,barrierRef],claims:['shape-reconstruction closed after early resemblance admission'],
-        gates:[{id:'shape-reconstruction-gate',evidenceRefs:[asset.path,barrierRef.path]}],
+        artifactRefs:[asset,barrierRef,clayReportRef,...clayFrames],claims:['shape-reconstruction closed after early resemblance admission'],
+        gates:[{id:'shape-reconstruction-gate',evidenceRefs:[asset.path,barrierRef.path,clayReportRef.path,...clayFrames.map((frame)=>frame.path)]}],
       });
       continue;
     }
