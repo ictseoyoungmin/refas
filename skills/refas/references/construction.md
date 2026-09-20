@@ -44,7 +44,7 @@ const permit = createConstructionOperationPermit({
 const shell = createPermittedHardSurfaceShell({decision, permit, spec});
 ```
 
-Use the corresponding permit-aware wrappers for section-profile lofts and surface-network identity construction. Existing lower-level geometry functions remain available for blockout, support implementation, and backward compatibility, but calling them directly does **not** establish identity-bearing construction authority. `refas.construction-quality/v1` rejects identity-bearing closure unless the current vocabulary and the required scope permits are present.
+Use the corresponding permit-aware wrappers for section-profile lofts and surface-network identity construction. Existing lower-level geometry functions remain available for blockout, support implementation, and backward compatibility, but calling them directly does **not** establish identity-bearing construction authority. Permit-consuming wrappers carry `refas.construction-authority/v1` into GLB serialization; serialization emits per-part `refas.construction-execution/v1` records, and `createConstructionExecutionProof` binds those executions to the exact candidate GLB digest. `refas.construction-quality/v1` rejects identity-bearing closure unless the current vocabulary, required permits, and matching candidate-bound execution proof are present.
 
 The compatibility matrix is runtime-owned. Do not copy or override it in project data, templates, or agent prose. If the evidence and the chosen vocabulary disagree, reopen the decision instead of forcing a convenient primitive family.
 
@@ -124,8 +124,8 @@ hole, or a solid slab outside the hero view, route the defect to
 
 ## Compound shells and conforming parts
 
-Use `createHardSurfaceShell` when a shell, cover, bracket, guard, or mount needs
-coherent thickness and true through-openings. Its public input contract is
+For identity-bearing work, use `createPermittedHardSurfaceShell({decision, permit, spec})` when a shell, cover, bracket, guard, or mount needs
+coherent thickness and true through-openings. Direct `createHardSurfaceShell(spec)` remains a blockout/support/backward-compatibility mechanism and cannot establish identity-bearing construction authority. Its public input contract is
 `refas.hard-surface-spec/v1`: one outer profile, zero or more uniquely named
 cutout profiles, thickness, an optional shared surface authority, and explicit
 outer/cutout edge treatments. `sharp`, `chamfer`, `fillet`, and `stepped`
