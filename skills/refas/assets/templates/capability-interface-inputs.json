@@ -619,7 +619,8 @@
         "Hidden surfaces remain inferred."
       ],
       "constructionVocabulary": null,
-      "constructionPermits": []
+      "constructionPermits": [],
+      "constructionExecutionProof": null
     },
     "construction/surface-network": {
       "scopeId": "primary-region",
