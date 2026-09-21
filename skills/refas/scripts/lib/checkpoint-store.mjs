@@ -973,8 +973,6 @@ async function resolveSpatialRoleAuthorityFromLineage(root, state, lineage, {sco
   let authority = null;
   const carryForwardCheckpointIds = [];
   const cutoff = capabilityIndex('spatial-hypotheses');
-  const allowedEvidencePaths = spatialRoleEvidencePaths(state, lineage);
-
   for (let index = 0; index < lineage.length; index += 1) {
     const checkpoint = lineage[index];
     const artifacts = (checkpoint.artifactRefs ?? []).filter((artifact) => artifact.kind === 'spatial-role-expectation');
@@ -982,7 +980,9 @@ async function resolveSpatialRoleAuthorityFromLineage(root, state, lineage, {sco
     if (!artifacts.length) continue;
 
     const label = `${checkpoint.capability} spatial role expectation`;
-    const hierarchy = await hierarchyForSpatialRoleCheckpoint(root, checkpoint, lineage.slice(0, index + 1), label);
+    const prefix = lineage.slice(0, index + 1);
+    const hierarchy = await hierarchyForSpatialRoleCheckpoint(root, checkpoint, prefix, label);
+    const allowedEvidencePaths = spatialRoleEvidencePaths(state, prefix);
     const value = await validateSpatialRoleArtifact(root, state, artifacts[0], hierarchy, allowedEvidencePaths, label);
 
     if (!authority) {
