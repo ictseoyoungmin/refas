@@ -101,3 +101,42 @@ const check = validateSpatialClosureEvidence(evidence, {glb: candidateBytes});
 ```
 
 Do not pass a caller-selected candidate digest as authority. The digest in the evidence is derived from the measured bytes.
+
+
+## VC02 pre-bound spatial role expectation
+
+Use `createSpatialRoleExpectationSet({hierarchy, sourceSha256, expectations})` to state what spatial role a source/hierarchy scope is expected to have **before candidate geometry is evaluated**.
+
+Supported roles are:
+
+- `volumetric`
+- `layered-volume`
+- `thin-shell`
+- `rod-tubular`
+- `intentionally-planar`
+- `unresolved`
+
+Each scope expectation must cite the exact raw source path, explain the source observation, and give the rationale for that role. `unresolved` is a first-class role and requires explicit ambiguity; do not guess a stronger role when the source does not justify one.
+
+The creator is deliberately strict. Candidate- or classifier-derived fields such as candidate digests, GLB inputs, VC01 evidence digests, classifier labels, or verdicts are not role-authoring inputs and are rejected instead of ignored.
+
+Checkpoint authority is time-sensitive:
+
+1. the first valid `spatial-role-expectation` artifact committed no later than `spatial-hypotheses` freezes VC02 authority;
+2. its source SHA-256 and hierarchy digest must match current lineage;
+3. every evidence reference must already exist in the pre-candidate lineage;
+4. a later checkpoint may repeat the exact same expectation-set digest for continuity;
+5. a later role/evidence-basis mutation is rejected;
+6. first introduction at `shape-reconstruction` or later is rejected as too late.
+
+Use `resolveSpatialRoleAuthority(root, {checkpointId, scopeId})` to retrieve the frozen authority. Scope lookup is exact: an expectation for `whole` does not silently substitute for a missing major-scope expectation.
+
+Authority separation remains:
+
+```text
+VC01 = what spatial support exists in the exact candidate
+VC02 = what spatial role the source/scope expects
+VC03 = whether candidate support contradicts the frozen role
+```
+
+VC02 does not emit `PLANAR_COLLAPSE`, PASS/FAIL, or certification readiness and does not define a universal thickness threshold.
