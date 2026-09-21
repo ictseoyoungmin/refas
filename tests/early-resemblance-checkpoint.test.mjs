@@ -367,7 +367,7 @@ test('VC04 public resolver honors its requested scope selector', async (t) => {
   assert.equal(resolved.barrierDigest, volumeBarrier.barrierDigest);
   await assert.rejects(
     () => resolveVolumeBarrierAdmission(root, {scopeId: 'whole.missing'}),
-    /does not contain requested scope whole\.missing/u,
+    /requested scope is not present in current visual hierarchy: whole\.missing/u,
   );
 });
 
