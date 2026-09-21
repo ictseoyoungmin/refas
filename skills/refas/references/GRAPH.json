@@ -939,6 +939,33 @@
               "verification": "structural",
               "reason": "stateful filesystem-bound lineage resolution; VC02 project regression exercises exact runtime authority"
             }
+          },
+          {
+            "id": "planar-collapse-classifier",
+            "operation": "evaluate",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "classifySpatialCollapse"
+            },
+            "template": null,
+            "inputContract": "project root + exact candidate GLB bytes + canonical VC01 spatial evidence + optional checkpoint/scope selector; runtime resolves frozen VC02 role authority",
+            "outputSchema": "refas.spatial-collapse-classification/v1",
+            "validator": {
+              "library": "validateSpatialCollapseClassification"
+            },
+            "minimumInvocation": "references/spatial-reasoning.md",
+            "example": "references/single-view-volumetric-reasoning-example.md",
+            "publicConstants": [
+              "SPATIAL_COLLAPSE_CLASSIFICATION_SCHEMA",
+              "SPATIAL_COLLAPSE_STATES"
+            ],
+            "usageReference": "references/spatial-reasoning.md",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "stateful filesystem-bound classifier resolves frozen VC02 authority from checkpoint lineage and revalidates VC01 evidence against exact GLB bytes"
+            }
           }
         ]
       }

@@ -1,0 +1,204 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/spatial-collapse-classification.schema.json",
+  "title": "RefAs role-aware spatial collapse classification",
+  "type": "object",
+  "required": [
+    "schema",
+    "candidateSha256",
+    "spatialEvidenceDigest",
+    "sourceSha256",
+    "hierarchyDigest",
+    "expectationSetDigest",
+    "roleAuthorityDigest",
+    "scopeId",
+    "frozenRole",
+    "classification",
+    "signals",
+    "decisionBasis",
+    "policy",
+    "classificationDigest"
+  ],
+  "properties": {
+    "schema": {
+      "const": "refas.spatial-collapse-classification/v1"
+    },
+    "candidateSha256": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "spatialEvidenceDigest": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "sourceSha256": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "hierarchyDigest": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "expectationSetDigest": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "roleAuthorityDigest": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "scopeId": {
+      "$ref": "common.schema.json#/$defs/semanticId"
+    },
+    "frozenRole": {
+      "enum": [
+        "volumetric",
+        "layered-volume",
+        "thin-shell",
+        "rod-tubular",
+        "intentionally-planar",
+        "unresolved"
+      ]
+    },
+    "classification": {
+      "enum": [
+        "PLANAR_COLLAPSE",
+        "NO_PLANAR_COLLAPSE",
+        "INDETERMINATE",
+        "NOT_APPLICABLE"
+      ]
+    },
+    "signals": {
+      "type": "object",
+      "required": [
+        "volumetricFamilies",
+        "roleSpecific"
+      ],
+      "properties": {
+        "volumetricFamilies": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": {
+            "$ref": "#/$defs/signal"
+          }
+        },
+        "roleSpecific": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/signal"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "decisionBasis": {
+      "type": "object",
+      "required": [
+        "usedSignalIds",
+        "noAggregateScore",
+        "reason"
+      ],
+      "properties": {
+        "usedSignalIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "noAggregateScore": {
+          "const": true
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "policy": {
+      "type": "object",
+      "required": [
+        "findingOnly",
+        "certificationAuthority",
+        "roleMutationAllowed",
+        "singleViewIouAuthority",
+        "multiViewIouAuthority"
+      ],
+      "properties": {
+        "findingOnly": {
+          "const": true
+        },
+        "certificationAuthority": {
+          "const": false
+        },
+        "roleMutationAllowed": {
+          "const": false
+        },
+        "singleViewIouAuthority": {
+          "const": false
+        },
+        "multiViewIouAuthority": {
+          "const": "diagnostic-only"
+        }
+      },
+      "additionalProperties": false
+    },
+    "classificationDigest": {
+      "$ref": "common.schema.json#/$defs/digest"
+    }
+  },
+  "$defs": {
+    "signal": {
+      "type": "object",
+      "required": [
+        "id",
+        "family",
+        "value",
+        "band",
+        "collapsedAtOrBelow",
+        "clearAtOrAbove",
+        "usedForDecision",
+        "reason"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "family": {
+          "enum": [
+            "principal-extents",
+            "canonical-projections",
+            "cross-sections",
+            "local-thickness"
+          ]
+        },
+        "value": {
+          "type": "number",
+          "minimum": 0
+        },
+        "band": {
+          "enum": [
+            "collapsed",
+            "ambiguous",
+            "clear"
+          ]
+        },
+        "collapsedAtOrBelow": {
+          "type": "number",
+          "minimum": 0
+        },
+        "clearAtOrAbove": {
+          "type": "number",
+          "minimum": 0
+        },
+        "usedForDecision": {
+          "type": "boolean"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

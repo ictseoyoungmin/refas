@@ -140,3 +140,53 @@ VC03 = whether candidate support contradicts the frozen role
 ```
 
 VC02 does not emit `PLANAR_COLLAPSE`, PASS/FAIL, or certification readiness and does not define a universal thickness threshold.
+
+
+## VC03 role-aware multi-signal planar-collapse classifier
+
+Use `classifySpatialCollapse(root, {checkpointId, scopeId, glb, spatialEvidence})` only after VC01 evidence exists and VC02 role authority has been frozen.
+
+The public classifier does **not** accept a role string. It resolves the exact VC02 authority from project lineage, requires an exact selected expectation for the same scope as VC01, and revalidates the complete VC01 evidence against the supplied candidate GLB bytes before classifying anything.
+
+The output is `refas.spatial-collapse-classification/v1` with one of:
+
+- `PLANAR_COLLAPSE`
+- `NO_PLANAR_COLLAPSE`
+- `INDETERMINATE`
+- `NOT_APPLICABLE`
+
+These are classifier findings, not checkpoint/certification PASS/FAIL.
+
+### Volumetric / layered-volume decision
+
+VC03 keeps four independent VC01 measurement families visible:
+
+1. **principal extents** — minor principal extent relative to the middle principal extent;
+2. **canonical projections** — lower SIDE/TOP projected support relative to the strongest canonical projection;
+3. **cross sections** — median Z-bearing support across deterministic X/Y sections;
+4. **local thickness** — median local Z thickness relative to canonical lateral scale.
+
+Each signal retains its measured ratio and its own `collapsed | ambiguous | clear` band. The bands are intentionally not one shared depth/width threshold. `PLANAR_COLLAPSE` requires at least three independent families to land in their collapse bands. `NO_PLANAR_COLLAPSE` likewise requires at least three clear families. Mixed evidence remains `INDETERMINATE`.
+
+### Role-aware exceptions
+
+- `intentionally-planar` → `NOT_APPLICABLE`; expected thinness is not failure.
+- `thin-shell` → `NOT_APPLICABLE`; thinness alone cannot create planar-collapse authority.
+- `unresolved` → `INDETERMINATE`; uncertainty is preserved.
+- `rod-tubular` uses a separate transverse profile: transverse principal balance, transverse local-thickness balance, and transverse cross-section balance. A long tube may have one dominant longitudinal axis; ribbon-like collapse requires agreement from at least two transverse families.
+
+VC03 never rewrites VC02 role authority and does not use single-view IoU. Multiview IoU remains diagnostic/correspondence-only.
+
+### Authority boundary
+
+VC03 is finding authority only:
+
+```text
+VC01 measurement
+      +
+VC02 frozen role
+      ↓
+VC03 contradiction classification
+```
+
+It does not set certification readiness, issue trusted gate PASS, or satisfy final spatial closure. Those remain later VC04/VC05/VC07 responsibilities.
