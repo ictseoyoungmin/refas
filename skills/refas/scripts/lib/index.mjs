@@ -79,6 +79,7 @@ export {
 export * from './spatial-hypotheses.mjs';
 export * from './spatial-role-expectation.mjs';
 export * from './spatial-closure-evidence.mjs';
+export {SPATIAL_COLLAPSE_CLASSIFICATION_SCHEMA, SPATIAL_COLLAPSE_STATES, classifySpatialCollapse, validateSpatialCollapseClassification} from './spatial-collapse-classifier.mjs';
 export * from './registration.mjs';
 export * from './reference-geometry.mjs';
 export * from './projection-fit.mjs';
