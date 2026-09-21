@@ -698,8 +698,47 @@ export function fixtureForCapabilityInterface(key, context, outputs = new Map())
     values.sourceSha256=signatureEvidence.sourceSha256;
     values.hierarchyDigest=signatureEvidence.hierarchyDigest;
     values.assetSha256=assetSha256;
+  } else if (key === 'validation/final-resemblance-closure') {
+    const priorSignatureEvidence=outputs.get('validation/perceptual-signature-evidence');
+    const assetSha256=API.digestBytes(context.candidate.candidateBytes);
+    const clayReport=neutralClayAlignmentReport(assetSha256);
+    const clayHero=clayReport.outputs.find((output)=>output.viewId==='hero')?.path;
+    if (!clayHero) throw new Error('alignment final neutral-clay report is missing hero output');
+    const signatureEvidence=API.createPerceptualSignatureEvidence({
+      signatureSet:priorSignatureEvidence.signatureSet,
+      assetSha256,
+      observations:priorSignatureEvidence.observations.map((observation)=>({
+        signatureId:observation.signatureId,
+        status:['macro','identity'].includes(observation.importance)?'match':observation.status,
+        candidateObservation:`Final candidate was rechecked for ${observation.signatureId}.`,
+        comparisonConclusion:['macro','identity'].includes(observation.importance)
+          ? 'The final neutral-clay evidence matches the required source signature.'
+          : observation.comparisonConclusion,
+        evidenceRefs:[...new Set([...(observation.evidenceRefs??[]),clayHero])],
+      })),
+      evidenceRefs:[...new Set([...(priorSignatureEvidence.evidenceRefs??[]),clayHero])],
+    });
+    bindings.finalResemblanceSignatureEvidence=signatureEvidence;
+    bindings.finalResemblanceClayRenderReport=clayReport;
+    values.finalResemblanceSourceSha256=signatureEvidence.sourceSha256;
+    values.finalResemblanceHierarchyDigest=signatureEvidence.hierarchyDigest;
+    values.finalResemblanceAssetSha256=assetSha256;
   } else if (key === 'validation/projection-aware-visual-review') {
     bindings.projectionFit=outputs.get('spatial-reasoning/projection-fit');
+  } else if (key === 'candidate-transactions/candidate-transition') {
+    values.candidateTransitionInputSha256='1'.repeat(64);
+    values.candidateTransitionOutputSha256='2'.repeat(64);
+    values.candidateTransitionInputCheckpointId='cp_shape_candidate';
+    values.candidateTransitionParentCheckpointId='cp_parent';
+    values.candidateTransitionCapability='surface-topology';
+    values.candidateTransitionScopeId='whole';
+  } else if (key === 'candidate-transactions/candidate-lineage-proof') {
+    values.candidateLineageSourceSha256='0'.repeat(64);
+    values.candidateLineageInitialSha256='1'.repeat(64);
+    values.candidateLineageInitialCheckpointId='cp_shape_candidate';
+    values.candidateLineageFinalSha256='1'.repeat(64);
+    values.candidateLineageFinalCheckpointId='cp_shape_candidate';
+    bindings.candidateLineageTransitions=[];
   } else if (key === 'candidate-transactions/candidate-transaction') {
     Object.assign(bindings,{candidateBytes:context.candidate.candidateBytes,candidateCheckpoint:context.candidate.checkpoint,candidateEvidence:context.candidate.evidence,candidateDecisionNodeIds:context.candidate.decisionNodeIds,candidateObligations:context.candidate.obligations,candidateValidationContext:{candidateBytes:context.candidate.candidateBytes,checkpoint:context.candidate.checkpoint,evidenceBytesById:context.candidate.evidenceBytesById}});
   } else if (key === 'claim-certification/evaluate-certification-policy') {
