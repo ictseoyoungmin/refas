@@ -27,6 +27,12 @@ import {validatePbrRenderReport} from './pbr-render-report.mjs';
 import {findComparisonContradictions, validateRegisteredComparison} from './registered-comparison.mjs';
 import {assertEarlyResemblanceAdmission} from './early-resemblance-barrier.mjs';
 import {
+  createCandidateLineageProof,
+  isCandidateMutationCapability,
+  validateCandidateLineageProof,
+  validateCandidateTransition,
+} from './candidate-authority.mjs';
+import {
   normalizePublicSourceAcquisition,
   isTrustedContractFixtureProject,
   validateContractFixtureAuthority,
@@ -710,6 +716,188 @@ async function ensureEarlyResemblanceAdmission(root, state, capability, scopeId,
   });
 }
 
+
+function candidateGlbArtifacts(artifacts = []) {
+  return artifacts.filter((artifact) => artifact.kind === 'glb' || String(artifact.path ?? '').toLowerCase().endsWith('.glb'));
+}
+
+async function readStoredJsonArtifact(root, artifact, label) {
+  const resolved = await assertExistingFileInside(root, artifact.path, label);
+  if (resolved.stat.size !== artifact.sizeBytes || await sha256File(resolved.realFile) !== artifact.sha256) {
+    throw new Error(`${label} bytes are stale or mismatched`);
+  }
+  return readJson(resolved.realFile);
+}
+
+async function resolveCandidateAuthorityFromLineage(root, state, lineage) {
+  let initial = null;
+  let current = null;
+  let transitions = [];
+  const seenPaths = new Set([state.source?.path].filter(Boolean));
+
+  for (const checkpoint of lineage) {
+    for (const artifact of checkpoint.artifactRefs ?? []) seenPaths.add(artifact.path);
+    if (capabilityIndex(checkpoint.capability) < capabilityIndex('shape-reconstruction')) continue;
+
+    const candidates = candidateGlbArtifacts(checkpoint.artifactRefs);
+    const transitionArtifacts = (checkpoint.artifactRefs ?? []).filter((artifact) => artifact.kind === 'candidate-transition');
+
+    if (checkpoint.capability === 'shape-reconstruction') {
+      if (candidates.length !== 1) {
+        throw new Error(`shape-reconstruction must establish exactly one authoritative candidate GLB; found ${candidates.length}`);
+      }
+      if (transitionArtifacts.length) throw new Error('shape-reconstruction starts candidate authority and must not carry a downstream candidate transition');
+      initial = {assetSha256: candidates[0].sha256, checkpointId: checkpoint.id, path: candidates[0].path};
+      current = {...initial};
+      transitions = [];
+      continue;
+    }
+
+    if (!current) {
+      if (candidates.length || transitionArtifacts.length) throw new Error(`${checkpoint.capability} candidate authority appears before shape-reconstruction`);
+      continue;
+    }
+    if (candidates.length > 1) throw new Error(`${checkpoint.capability} contains competing candidate GLBs`);
+    if (!candidates.length) {
+      if (transitionArtifacts.length) throw new Error(`${checkpoint.capability} has a candidate transition without an output candidate GLB`);
+      continue;
+    }
+
+    const output = candidates[0];
+    if (output.sha256 === current.assetSha256) {
+      if (transitionArtifacts.length) throw new Error(`${checkpoint.capability} same-digest carry-forward must not create a candidate transition`);
+      continue;
+    }
+
+    if (!isCandidateMutationCapability(checkpoint.capability)) {
+      throw new Error(`${checkpoint.capability} may not replace the authoritative candidate GLB`);
+    }
+    if (transitionArtifacts.length !== 1) {
+      throw new Error(`${checkpoint.capability} changed the authoritative candidate and requires exactly one candidate-transition artifact`);
+    }
+    const transition = await readStoredJsonArtifact(root, transitionArtifacts[0], `${checkpoint.capability} candidate-transition artifact`);
+    const validation = validateCandidateTransition(transition);
+    if (!validation.valid) throw new Error(`${checkpoint.capability} candidate transition is invalid: ${validation.errors.join('; ')}`);
+    const checks = [
+      [transition.capability, checkpoint.capability, 'capability'],
+      [transition.scopeId, checkpoint.scopeId, 'scope'],
+      [transition.parentCheckpointId, checkpoint.parentId, 'parent checkpoint'],
+      [transition.inputCandidate.assetSha256, current.assetSha256, 'input candidate digest'],
+      [transition.inputCandidate.checkpointId, current.checkpointId, 'input candidate checkpoint'],
+      [transition.outputCandidate.assetSha256, output.sha256, 'output candidate digest'],
+    ];
+    for (const [actual, expected, label] of checks) if (actual !== expected) throw new Error(`${checkpoint.capability} candidate transition ${label} mismatch`);
+    if (!(transition.evidenceRefs ?? []).includes(output.path)) {
+      throw new Error(`${checkpoint.capability} candidate transition must cite the exact output candidate path`);
+    }
+    for (const ref of transition.evidenceRefs ?? []) {
+      if (!seenPaths.has(ref)) throw new Error(`${checkpoint.capability} candidate transition evidence is not bound in current lineage: ${ref}`);
+    }
+    transitions.push({
+      checkpointId: checkpoint.id,
+      transitionDigest: transition.transitionDigest,
+      capability: checkpoint.capability,
+      scopeId: checkpoint.scopeId,
+      inputAssetSha256: current.assetSha256,
+      outputAssetSha256: output.sha256,
+    });
+    current = {assetSha256: output.sha256, checkpointId: checkpoint.id, path: output.path};
+  }
+
+  if (!current || !initial) throw new Error('candidate authority requires a shape-reconstruction candidate');
+  const proof = createCandidateLineageProof({
+    sourceSha256: state.source.sha256,
+    initialCandidate: initial,
+    finalCandidate: current,
+    transitions,
+  });
+  return {initialCandidate: initial, finalCandidate: current, transitions, proof};
+}
+
+async function validateProspectiveCandidateAuthority(root, state, {
+  capability,
+  scopeId,
+  parentId,
+  parentLineage,
+  storedArtifacts,
+} = {}) {
+  if (isTrustedContractFixtureProject(state)) return null;
+
+  if (capability === 'shape-reconstruction') {
+    const candidates = candidateGlbArtifacts(storedArtifacts);
+    if (candidates.length !== 1) throw new Error(`shape-reconstruction must establish exactly one authoritative candidate GLB; found ${candidates.length}`);
+    if (storedArtifacts.some((artifact) => artifact.kind === 'candidate-transition')) {
+      throw new Error('shape-reconstruction must not carry a candidate-transition artifact');
+    }
+    return {input: null, output: candidates[0], changed: true};
+  }
+
+  if (capabilityIndex(capability) < capabilityIndex('surface-topology')) return null;
+  const authority = await resolveCandidateAuthorityFromLineage(root, state, parentLineage);
+  const candidates = candidateGlbArtifacts(storedArtifacts);
+  const transitionArtifacts = storedArtifacts.filter((artifact) => artifact.kind === 'candidate-transition');
+
+  if (candidates.length > 1) throw new Error(`${capability} contains competing candidate GLBs`);
+  if (!candidates.length) {
+    if (transitionArtifacts.length) throw new Error(`${capability} has a candidate transition without an output candidate GLB`);
+  } else {
+    const output = candidates[0];
+    if (output.sha256 === authority.finalCandidate.assetSha256) {
+      if (transitionArtifacts.length) throw new Error(`${capability} same-digest carry-forward must not create a candidate transition`);
+    } else {
+      if (!isCandidateMutationCapability(capability)) throw new Error(`${capability} may not replace the authoritative candidate GLB`);
+      if (transitionArtifacts.length !== 1) throw new Error(`${capability} changed the authoritative candidate and requires exactly one candidate-transition artifact`);
+      const transition = await readStoredJsonArtifact(root, transitionArtifacts[0], `${capability} candidate-transition artifact`);
+      const validation = validateCandidateTransition(transition);
+      if (!validation.valid) throw new Error(`${capability} candidate transition is invalid: ${validation.errors.join('; ')}`);
+      const checks = [
+        [transition.capability, capability, 'capability'],
+        [transition.scopeId, scopeId, 'scope'],
+        [transition.parentCheckpointId, parentId, 'parent checkpoint'],
+        [transition.inputCandidate.assetSha256, authority.finalCandidate.assetSha256, 'input candidate digest'],
+        [transition.inputCandidate.checkpointId, authority.finalCandidate.checkpointId, 'input candidate checkpoint'],
+        [transition.outputCandidate.assetSha256, output.sha256, 'output candidate digest'],
+      ];
+      for (const [actual, expected, label] of checks) if (actual !== expected) throw new Error(`${capability} candidate transition ${label} mismatch`);
+      const availablePaths = new Set([
+        state.source.path,
+        ...parentLineage.flatMap((checkpoint) => (checkpoint.artifactRefs ?? []).map((artifact) => artifact.path)),
+        ...storedArtifacts.map((artifact) => artifact.path),
+      ]);
+      if (!(transition.evidenceRefs ?? []).includes(output.path)) throw new Error(`${capability} candidate transition must cite the exact output candidate path`);
+      for (const ref of transition.evidenceRefs ?? []) if (!availablePaths.has(ref)) throw new Error(`${capability} candidate transition evidence is not bound in current lineage: ${ref}`);
+    }
+  }
+
+  if (capability === 'whole-object-certification') {
+    if (candidates.length !== 1 || candidates[0].sha256 !== authority.finalCandidate.assetSha256) {
+      throw new Error('whole-object-certification must carry exactly the current authoritative candidate GLB');
+    }
+    const proofArtifacts = storedArtifacts.filter((artifact) => artifact.kind === 'candidate-lineage-proof');
+    if (proofArtifacts.length !== 1) throw new Error('whole-object-certification requires exactly one candidate-lineage-proof artifact');
+    const proof = await readStoredJsonArtifact(root, proofArtifacts[0], 'candidate-lineage-proof artifact');
+    const validation = validateCandidateLineageProof(proof, {
+      sourceSha256: state.source.sha256,
+      finalAssetSha256: authority.finalCandidate.assetSha256,
+    });
+    if (!validation.valid) throw new Error(`candidate lineage proof is invalid: ${validation.errors.join('; ')}`);
+    if (digestJson(proof) !== digestJson(authority.proof)) throw new Error('candidate lineage proof does not reproduce from current checkpoint lineage');
+  }
+  return authority;
+}
+
+export async function resolveAuthoritativeCandidateLineage(root, {checkpointId = null} = {}) {
+  root = projectRoot(root);
+  const state = await loadProject(root);
+  if (!state.source) throw new Error('candidate authority requires a bound source');
+  if (isTrustedContractFixtureProject(state)) return null;
+  const checkpoints = await listCheckpoints(root);
+  const target = checkpointId ?? state.head;
+  if (!target) throw new Error('candidate authority requires a checkpoint lineage');
+  const lineage = checkpointLineage(checkpoints, target);
+  return deepFreeze(await resolveCandidateAuthorityFromLineage(root, state, lineage));
+}
+
 async function ensurePrerequisites(root, state, capability, scopeId, lineage) {
   try {
     await verifySource(root, normalizeSourceManifest(state.source));
@@ -876,6 +1064,10 @@ export async function commitCheckpoint(root, {
   if (new Set(declaredPaths).size !== declaredPaths.length) throw new Error('checkpoint artifact paths must be unique');
   const storedArtifacts = [];
   for (let index = 0; index < artifactRefs.length; index += 1) storedArtifacts.push(await storeArtifact(root, artifactRefs[index], index));
+  const parentLineage = checkpointLineage(checkpoints, parent);
+  await validateProspectiveCandidateAuthority(root, state, {
+    capability, scopeId, parentId: parent, parentLineage, storedArtifacts,
+  });
   const runtimeGates = await evaluateCheckpointGateRequests(root, {
     state, capability, scopeId, requests: gateRequests, storedArtifacts, lineage,
   });
@@ -1275,10 +1467,21 @@ export async function auditProject(root) {
     byId.set(checkpoint.id, checkpoint);
   }
   if (state.head && !byId.has(state.head)) errors.push('head checkpoint is missing');
+  let auditedLineage = [];
   try {
-    checkpointLineage(checkpoints, state.head);
+    auditedLineage = checkpointLineage(checkpoints, state.head);
   } catch (error) {
     errors.push(error.message);
+  }
+  if (state.source && state.head && !isTrustedContractFixtureProject(state)) {
+    const headCheckpoint = byId.get(state.head);
+    if (headCheckpoint && capabilityIndex(headCheckpoint.capability) >= capabilityIndex('shape-reconstruction')) {
+      try {
+        await resolveCandidateAuthorityFromLineage(root, state, auditedLineage);
+      } catch (error) {
+        errors.push(`candidate authority: ${error.message}`);
+      }
+    }
   }
   for (const checkpoint of checkpoints) {
     if (digestJson(checkpointContent(checkpoint)) !== checkpoint.contentDigest) errors.push(`${checkpoint.id} content digest mismatch`);
