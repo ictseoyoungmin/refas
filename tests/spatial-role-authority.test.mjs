@@ -177,3 +177,57 @@ test('VC02 rejects pre-bind evidence that is not available before candidate eval
     /evidence is not pre-candidate lineage-bound/u,
   );
 });
+
+
+test('VC02 may freeze authority at visual-observation before spatial-hypotheses', async (t) => {
+  const root=await fs.mkdtemp(path.join(os.tmpdir(),'refas-vc02-early-'));
+  t.after(()=>fs.rm(root,{recursive:true,force:true}));
+  const sourceBytes=Buffer.from('vc02 early source bytes\n');
+  await fs.mkdir(path.join(root,'source'),{recursive:true});
+  await fs.writeFile(path.join(root,'source','reference.bin'),sourceBytes);
+  const source={
+    schema:'refas.source-manifest/v1',
+    id:'primary-reference',
+    path:'source/reference.bin',
+    sha256:digestBytes(sourceBytes),
+    sizeBytes:sourceBytes.length,
+    width:128,
+    height:96,
+    authority:'primary',
+    acquisition:{kind:'generated-contract-reference'},
+  };
+  await initTrustedContractFixtureProject(root,{projectId:'vc02-early-authority',source,fixtureId:'vc02-early-contract'});
+  const sourceRef=await writeRef(root,'model/source.json',Buffer.from('{"source":true}\n'),'source-manifest');
+  await commitLocal(root,'source-intake',[sourceRef]);
+
+  const hierarchy=createVisualHierarchy({
+    source:{path:source.path,sha256:source.sha256,width:source.width,height:source.height},
+    nodes:[{id:'whole',label:'Whole',level:'whole',parentId:null,roi:[0,0,1,1]}],
+  });
+  const hierarchyRef=await writeRef(root,'model/hierarchy.json',Buffer.from(`${JSON.stringify(hierarchy,null,2)}\n`),'visual-hierarchy');
+  await commitLocal(root,'visual-hierarchy',[hierarchyRef]);
+
+  const early=createSpatialRoleExpectationSet({
+    hierarchy,
+    sourceSha256:source.sha256,
+    expectations:[{
+      scopeId:'whole',
+      role:'volumetric',
+      sourceObservation:'The source shows a front/back mass cue.',
+      rationale:'Freeze the whole-object role before candidate evaluation.',
+      evidenceRefs:[source.path],
+      ambiguity:null,
+    }],
+  });
+  const earlyRef=await writeRef(root,'model/early-role.json',Buffer.from(`${JSON.stringify(early,null,2)}\n`),'spatial-role-expectation');
+  const observationRef=await writeRef(root,'model/observation.json',Buffer.from('{"observation":true}\n'),'visual-observation');
+  const observation=await commitLocal(root,'visual-observation',[observationRef,earlyRef]);
+
+  const spatialRef=await writeRef(root,'model/spatial.json',Buffer.from('{"spatial":true}\n'),'spatial-hypotheses');
+  await commitLocal(root,'spatial-hypotheses',[spatialRef]);
+
+  const authority=await resolveSpatialRoleAuthority(root);
+  assert.equal(authority.authorityCheckpointId,observation.id);
+  assert.equal(authority.authorityCapability,'visual-observation');
+  assert.equal(authority.expectations[0].role,'volumetric');
+});
