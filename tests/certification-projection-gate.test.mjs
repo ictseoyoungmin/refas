@@ -16,6 +16,7 @@ import {
   contentReference,
   createPbrRenderReport,
   createEarlyResemblanceBarrier,
+  createFinalResemblanceClosure,
   createPerceptualSignatureEvidence,
   createPerceptualSignatureSet,
   createVisualHierarchy,
@@ -35,6 +36,7 @@ import {
   digestJson,
   initProject,
   partsToGlb,
+  resolveAuthoritativeCandidateLineage,
   resumeProject,
 } from '../skills/refas/scripts/lib/index.mjs';
 import {initTrustedContractFixtureProject} from '../skills/refas/scripts/lib/contract-fixture-project.mjs';
@@ -218,6 +220,69 @@ async function appendRelationalCertificationEvidence(root, source, asset, refs) 
   }
 }
 
+async function appendFinalCandidateAuthority(root, source, asset, refs) {
+  const hierarchy = JSON.parse(await fs.readFile(path.join(root,'model','visual-hierarchy.json'),'utf8'));
+  const authority = await resolveAuthoritativeCandidateLineage(root);
+  assert.equal(authority.finalCandidate.assetSha256,asset.sha256);
+
+  const lineagePath = await json(path.join(root,'reviews','candidate-lineage-proof.json'),authority.proof);
+  refs.push(await contentReference(lineagePath,{kind:'candidate-lineage-proof',root}));
+
+  const clayFrames = [];
+  for (const viewId of NEUTRAL_CLAY_REQUIRED_VIEW_IDS) {
+    const framePath = path.join(root,'renders','final-clay',`${viewId}.png`);
+    await fs.mkdir(path.dirname(framePath),{recursive:true});
+    await fs.writeFile(framePath,Buffer.from(`final neutral clay ${viewId} frame\n`));
+    clayFrames.push(await contentReference(framePath,{kind:'render-frame',root}));
+  }
+  const clayHero = clayFrames.find((frame)=>frame.path==='renders/final-clay/hero.png');
+  const signatureSet = createPerceptualSignatureSet({
+    hierarchy,scopeId:'whole',sourceSha256:source.sha256,
+    signatures:[{
+      id:'whole-form',scopeId:'whole',family:'silhouette-character',importance:'macro',
+      sourceObservation:'The projection certification fixture retains its source-specific whole-form identity at final certification.',
+      evidenceRefs:[source.path],
+    }],
+    evidenceRefs:[source.path],
+  });
+  const signatureEvidence = createPerceptualSignatureEvidence({
+    signatureSet,assetSha256:asset.sha256,
+    observations:[{
+      signatureId:'whole-form',status:'match',
+      candidateObservation:'The exact final certification candidate was rechecked in canonical neutral clay.',
+      comparisonConclusion:'The final candidate still matches the source-specific whole-form signature.',
+      evidenceRefs:[source.path,clayHero.path],
+    }],
+    evidenceRefs:[source.path,clayHero.path],
+  });
+  const signaturePath = await json(path.join(root,'reviews','final-perceptual-signature-evidence.json'),signatureEvidence);
+  refs.push(await contentReference(signaturePath,{kind:'perceptual-signature-evidence',root}));
+
+  const clayReport = createPbrRenderReport({
+    assetSha256:asset.sha256,frameDigest:'8'.repeat(64),
+    renderer:{family:'other',name:'RefAs Independent PBR',version:'1.0.0',backend:'numpy-cook-torrance-headless',independentProcess:true},
+    lighting:{rigId:NEUTRAL_CLAY_PRESENTATION_PRESET.lighting.rigId,digest:NEUTRAL_CLAY_LIGHTING_RIG_DIGEST},
+    colorPipeline:{...NEUTRAL_CLAY_PRESENTATION_PRESET.colorPipeline},
+    materialSupport:{supported:['base-color-factor','metallic-factor','roughness-factor'],unsupported:['textures']},
+    outputs:clayFrames.map((frame,index)=>({viewId:NEUTRAL_CLAY_REQUIRED_VIEW_IDS[index],path:frame.path,sha256:frame.sha256})),
+    reproducibility:{mode:'deterministic',tolerance:''},
+    presentation:{mode:'neutral-clay',presetId:NEUTRAL_CLAY_PRESENTATION_PRESET.id,presetDigest:NEUTRAL_CLAY_PRESENTATION_PRESET_DIGEST},
+  });
+  const clayReportPath = await json(path.join(root,'renders','final-clay','render-report.json'),clayReport);
+  refs.push(await contentReference(clayReportPath,{kind:'render-report',root}),...clayFrames);
+
+  const closure = createFinalResemblanceClosure({
+    sourceSha256:source.sha256,
+    hierarchyDigest:hierarchy.hierarchyDigest,
+    assetSha256:asset.sha256,
+    signatureEvidence,
+    clayRenderReport:clayReport,
+    evidenceRefs:[source.path,clayHero.path],
+  });
+  const closurePath = await json(path.join(root,'reviews','final-resemblance-closure.json'),closure);
+  refs.push(await contentReference(closurePath,{kind:'final-resemblance-closure',root}));
+}
+
 async function commitCertification(root, source, {projection='none'}={}) {
   const assetPath = path.join(root, 'model', 'candidate.glb');
   const glb = await fs.readFile(assetPath);
@@ -319,6 +384,7 @@ async function commitCertification(root, source, {projection='none'}={}) {
   const refs = [asset, reportRef, ...frames, comparisonRef, reviewRef];
 
   if (!CONTRACT_FIXTURES.has(String(source.acquisition?.kind ?? '').toLowerCase())) {
+    await appendFinalCandidateAuthority(root,source,asset,refs);
     await appendRelationalCertificationEvidence(root,source,asset,refs);
   }
 
