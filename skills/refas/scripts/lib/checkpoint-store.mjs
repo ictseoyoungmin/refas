@@ -26,6 +26,7 @@ import {
 import {validatePbrRenderReport} from './pbr-render-report.mjs';
 import {findComparisonContradictions, validateRegisteredComparison} from './registered-comparison.mjs';
 import {assertEarlyResemblanceAdmission} from './early-resemblance-barrier.mjs';
+import {validateFinalResemblanceClosure} from './final-resemblance-closure.mjs';
 import {
   createCandidateLineageProof,
   isCandidateMutationCapability,
@@ -717,6 +718,107 @@ async function ensureEarlyResemblanceAdmission(root, state, capability, scopeId,
 }
 
 
+
+async function verifyFinalResemblanceClosureArtifacts(root, state, {
+  scopeId,
+  parentLineage,
+  storedArtifacts,
+  finalAssetSha256,
+} = {}) {
+  const label = 'whole-object-certification final resemblance closure';
+  const closureArtifacts = (storedArtifacts ?? []).filter((artifact) => artifact.kind === 'final-resemblance-closure');
+  if (closureArtifacts.length !== 1) throw new Error(`${label} requires exactly one final-resemblance-closure artifact`);
+  const closure = await readStoredJsonArtifact(root, closureArtifacts[0], `${label} artifact`);
+
+  const hierarchyCheckpoint = [...(parentLineage ?? [])].reverse().find((checkpoint) =>
+    checkpoint.capability === 'visual-hierarchy' && scopeContains(checkpoint.scopeId, scopeId));
+  if (!hierarchyCheckpoint) throw new Error(`${label} requires current visual-hierarchy lineage`);
+  const {value: hierarchy} = await readCheckpointJsonArtifact(root, hierarchyCheckpoint, 'visual-hierarchy', label);
+
+  const validation = validateFinalResemblanceClosure(closure, {
+    sourceSha256: state.source.sha256,
+    hierarchyDigest: hierarchy.hierarchyDigest,
+    assetSha256: finalAssetSha256,
+  });
+  if (!validation.valid) throw new Error(`${label} is invalid: ${validation.errors.join('; ')}`);
+
+  const signatureMatches = [];
+  for (const artifact of (storedArtifacts ?? []).filter((item) => item.kind === 'perceptual-signature-evidence')) {
+    const value = await readStoredJsonArtifact(root, artifact, `${label} perceptual-signature-evidence artifact`);
+    if (value?.evidenceDigest === closure.signatureEvidenceDigest) signatureMatches.push({artifact, value});
+  }
+  if (signatureMatches.length !== 1) throw new Error(`${label} requires exactly one exact final perceptual-signature-evidence artifact`);
+  if (digestJson(signatureMatches[0].value) !== digestJson(closure.signatureEvidence)) {
+    throw new Error(`${label} embeds different perceptual-signature evidence bytes`);
+  }
+
+  const reportMatches = [];
+  for (const artifact of (storedArtifacts ?? []).filter((item) => item.kind === 'render-report')) {
+    const value = await readStoredJsonArtifact(root, artifact, `${label} render-report artifact`);
+    if (value?.reportDigest === closure.clayRenderReportDigest) reportMatches.push({artifact, value});
+  }
+  if (reportMatches.length !== 1) throw new Error(`${label} requires exactly one exact final neutral-clay render report artifact`);
+  if (digestJson(reportMatches[0].value) !== digestJson(closure.clayRenderReport)) {
+    throw new Error(`${label} embeds a different final neutral-clay render report`);
+  }
+
+  for (const output of closure.clayRenderReport?.outputs ?? []) {
+    const matches = (storedArtifacts ?? []).filter((artifact) =>
+      artifact.kind === 'render-frame' && artifact.path === output.path && artifact.sha256 === output.sha256);
+    if (matches.length !== 1) {
+      throw new Error(`${label} neutral-clay output is not exact-byte bound in the certification checkpoint: ${output.viewId}`);
+    }
+  }
+
+  const availablePaths = new Set([
+    state.source.path,
+    ...(parentLineage ?? []).flatMap((checkpoint) => (checkpoint.artifactRefs ?? []).map((artifact) => artifact.path)),
+    ...(storedArtifacts ?? []).map((artifact) => artifact.path),
+  ].filter(Boolean));
+  const evidenceRefs = new Set([
+    ...(closure.evidenceRefs ?? []),
+    ...(closure.signatureEvidence?.evidenceRefs ?? []),
+    ...(closure.signatureEvidence?.signatureSet?.evidenceRefs ?? []),
+    ...(closure.signatureEvidence?.observations ?? []).flatMap((observation) => observation.evidenceRefs ?? []),
+    ...(closure.signatureEvidence?.signatureSet?.signatures ?? []).flatMap((signature) => signature.evidenceRefs ?? []),
+    ...(closure.clayRenderReport?.outputs ?? []).map((output) => output.path),
+  ].filter(Boolean));
+  for (const evidenceRef of evidenceRefs) {
+    if (!availablePaths.has(evidenceRef)) throw new Error(`${label} evidence ref is not bound in current checkpoint lineage: ${evidenceRef}`);
+  }
+  return closure;
+}
+
+async function verifyWholeObjectCandidateAuthorityArtifacts(root, state, {
+  scopeId,
+  parentLineage,
+  storedArtifacts,
+  authority = null,
+} = {}) {
+  const resolvedAuthority = authority ?? await resolveCandidateAuthorityFromLineage(root, state, parentLineage);
+  const candidates = candidateGlbArtifacts(storedArtifacts);
+  if (candidates.length !== 1 || candidates[0].sha256 !== resolvedAuthority.finalCandidate.assetSha256) {
+    throw new Error('whole-object-certification must carry exactly the current authoritative candidate GLB');
+  }
+  const proofArtifacts = (storedArtifacts ?? []).filter((artifact) => artifact.kind === 'candidate-lineage-proof');
+  if (proofArtifacts.length !== 1) throw new Error('whole-object-certification requires exactly one candidate-lineage-proof artifact');
+  const proof = await readStoredJsonArtifact(root, proofArtifacts[0], 'candidate-lineage-proof artifact');
+  const validation = validateCandidateLineageProof(proof, {
+    sourceSha256: state.source.sha256,
+    finalAssetSha256: resolvedAuthority.finalCandidate.assetSha256,
+  });
+  if (!validation.valid) throw new Error(`candidate lineage proof is invalid: ${validation.errors.join('; ')}`);
+  if (digestJson(proof) !== digestJson(resolvedAuthority.proof)) throw new Error('candidate lineage proof does not reproduce from current checkpoint lineage');
+
+  await verifyFinalResemblanceClosureArtifacts(root, state, {
+    scopeId,
+    parentLineage,
+    storedArtifacts,
+    finalAssetSha256: resolvedAuthority.finalCandidate.assetSha256,
+  });
+  return resolvedAuthority;
+}
+
 function candidateGlbArtifacts(artifacts = []) {
   return artifacts.filter((artifact) => artifact.kind === 'glb' || String(artifact.path ?? '').toLowerCase().endsWith('.glb'));
 }
@@ -870,18 +972,12 @@ async function validateProspectiveCandidateAuthority(root, state, {
   }
 
   if (capability === 'whole-object-certification') {
-    if (candidates.length !== 1 || candidates[0].sha256 !== authority.finalCandidate.assetSha256) {
-      throw new Error('whole-object-certification must carry exactly the current authoritative candidate GLB');
-    }
-    const proofArtifacts = storedArtifacts.filter((artifact) => artifact.kind === 'candidate-lineage-proof');
-    if (proofArtifacts.length !== 1) throw new Error('whole-object-certification requires exactly one candidate-lineage-proof artifact');
-    const proof = await readStoredJsonArtifact(root, proofArtifacts[0], 'candidate-lineage-proof artifact');
-    const validation = validateCandidateLineageProof(proof, {
-      sourceSha256: state.source.sha256,
-      finalAssetSha256: authority.finalCandidate.assetSha256,
+    await verifyWholeObjectCandidateAuthorityArtifacts(root, state, {
+      scopeId,
+      parentLineage,
+      storedArtifacts,
+      authority,
     });
-    if (!validation.valid) throw new Error(`candidate lineage proof is invalid: ${validation.errors.join('; ')}`);
-    if (digestJson(proof) !== digestJson(authority.proof)) throw new Error('candidate lineage proof does not reproduce from current checkpoint lineage');
   }
   return authority;
 }
@@ -1478,6 +1574,16 @@ export async function auditProject(root) {
     if (headCheckpoint && capabilityIndex(headCheckpoint.capability) >= capabilityIndex('shape-reconstruction')) {
       try {
         await resolveCandidateAuthorityFromLineage(root, state, auditedLineage);
+        if (headCheckpoint.capability === 'whole-object-certification' && headCheckpoint.scopeId === 'whole') {
+          const parentLineage = auditedLineage.slice(0, -1);
+          const parentAuthority = await resolveCandidateAuthorityFromLineage(root, state, parentLineage);
+          await verifyWholeObjectCandidateAuthorityArtifacts(root, state, {
+            scopeId: headCheckpoint.scopeId,
+            parentLineage,
+            storedArtifacts: headCheckpoint.artifactRefs,
+            authority: parentAuthority,
+          });
+        }
       } catch (error) {
         errors.push(`candidate authority: ${error.message}`);
       }

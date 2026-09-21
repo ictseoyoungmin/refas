@@ -36,6 +36,7 @@ export * from './physical-fusion.mjs';
 export * from './realized-contact.mjs';
 export * from './fit-structural-eligibility.mjs';
 export * from './candidate-transaction.mjs';
+export * from './candidate-authority.mjs';
 export * from './certification-policy.mjs';
 export * from './certification-authority.mjs';
 export {
@@ -87,6 +88,7 @@ export * from './geometry-backend.mjs';
 export * from './perceptual-discrepancy.mjs';
 export * from './perceptual-signature.mjs';
 export * from './early-resemblance-barrier.mjs';
+export * from './final-resemblance-closure.mjs';
 export * from './appearance-fit.mjs';
 export * from './macro-fit.mjs';
 export * from './benchmark.mjs';
