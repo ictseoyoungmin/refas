@@ -832,16 +832,6 @@ async function verifyVolumeBarrierArtifacts(root, state, {
   return barrier;
 }
 
-async function validateProspectiveVolumeBarrier(root, state, {capability, parentLineage, storedArtifacts} = {}) {
-  if (isTrustedContractFixtureProject(state) || capability !== 'shape-reconstruction') return null;
-  return verifyVolumeBarrierArtifacts(root, state, {
-    parentLineage,
-    shapeArtifacts: storedArtifacts,
-    requireProceed: false,
-    label: 'shape-reconstruction volume barrier',
-  });
-}
-
 async function ensureVolumeBarrierAdmission(root, state, capability, scopeId, lineage) {
   if (isTrustedContractFixtureProject(state)) return;
   if (capabilityIndex(capability) < capabilityIndex('surface-topology')) return;
@@ -1485,9 +1475,6 @@ export async function commitCheckpoint(root, {
   await validateProspectiveCandidateAuthority(root, state, {
     capability, scopeId, parentId: parent, parentLineage, storedArtifacts,
   });
-  await validateProspectiveVolumeBarrier(root, state, {
-    capability, parentLineage, storedArtifacts,
-  });
   const runtimeGates = await evaluateCheckpointGateRequests(root, {
     state, capability, scopeId, requests: gateRequests, storedArtifacts, lineage,
   });
@@ -1787,6 +1774,7 @@ export async function resumeProject(root) {
         const lineage = checkpointLineage(checkpoints, state.head);
         const certifiedHead = await loadCheckpoint(root, state.head);
         await ensureEarlyResemblanceAdmission(root, state, certifiedHead.capability, certifiedHead.scopeId, lineage);
+        await ensureVolumeBarrierAdmission(root, state, certifiedHead.capability, certifiedHead.scopeId, lineage);
       } catch (error) {
         return {
           schema: 'refas.resume-guidance/v1',
@@ -1853,6 +1841,45 @@ export async function resumeProject(root) {
         activeWork: {capability: 'visual-critique', scopeId: state.activeScopeId},
         nextAction: 'REQUEST_RESEMBLANCE_REVIEW',
         reason: `early resemblance admission evidence is missing, stale, or invalid: ${error.message}`,
+      };
+    }
+
+    try {
+      await ensureVolumeBarrierAdmission(root, state, next, state.activeScopeId, lineage);
+    } catch (error) {
+      const verdictMatch = String(error.message).match(/downstream detail requires volume barrier PROCEED; current verdict is (HOLD|REWORK)/);
+      if (verdictMatch) {
+        const shapeCheckpoint = [...lineage].reverse().find((checkpoint) =>
+          checkpoint.capability === 'shape-reconstruction' && scopeContains(checkpoint.scopeId, state.activeScopeId));
+        const {value: volumeBarrier} = await readCheckpointJsonArtifact(
+          root,
+          shapeCheckpoint,
+          'volume-barrier',
+          'resume volume barrier guidance',
+        );
+        const blockingScopeIds = (volumeBarrier.entries ?? [])
+          .filter((entry) => entry.status !== 'ADMITTED')
+          .map((entry) => entry.scopeId);
+        return {
+          schema: 'refas.resume-guidance/v1',
+          status: state.status,
+          safeCheckpointId: state.head,
+          activeWork: {capability: 'shape-reconstruction', scopeId: blockingScopeIds[0] ?? state.activeScopeId},
+          nextAction: verdictMatch[1] === 'HOLD' ? 'GATHER_SPATIAL_EVIDENCE' : 'REWORK_SHAPE_VOLUME',
+          volumeBarrierVerdict: volumeBarrier.verdict,
+          blockingScopeIds,
+          reason: verdictMatch[1] === 'HOLD'
+            ? 'protected whole or identity-bearing spatial evidence remains indeterminate; gather candidate-bound volume evidence before downstream detail'
+            : 'protected whole or identity-bearing scope has PLANAR_COLLAPSE; repair shape volume before downstream detail',
+        };
+      }
+      return {
+        schema: 'refas.resume-guidance/v1',
+        status: state.status,
+        safeCheckpointId: state.head,
+        activeWork: {capability: 'shape-reconstruction', scopeId: state.activeScopeId},
+        nextAction: 'REQUEST_REVIEW',
+        reason: `whole-before-parts volume admission evidence is missing, stale, or invalid: ${error.message}`,
       };
     }
   }
@@ -1958,6 +1985,12 @@ export async function auditProject(root) {
         } catch (error) {
           errors.push(`early resemblance admission: ${error.message}`);
         }
+        try {
+          const lineage = checkpointLineage(checkpoints, state.head);
+          await ensureVolumeBarrierAdmission(root, state, headCheckpoint.capability, headCheckpoint.scopeId, lineage);
+        } catch (error) {
+          errors.push(`volume admission: ${error.message}`);
+        }
       }
     }
   } else {
@@ -2012,6 +2045,13 @@ export async function assessCertification(root) {
         await ensureEarlyResemblanceAdmission(root, state, head.capability, head.scopeId, lineage);
       } catch (error) {
         errors.push(`early resemblance admission: ${error.message}`);
+      }
+      try {
+        const checkpoints = await listCheckpoints(root);
+        const lineage = checkpointLineage(checkpoints, state.head);
+        await ensureVolumeBarrierAdmission(root, state, head.capability, head.scopeId, lineage);
+      } catch (error) {
+        errors.push(`volume admission: ${error.message}`);
       }
     }
     inspection = await inspectCertificationHead(root, state, head);
