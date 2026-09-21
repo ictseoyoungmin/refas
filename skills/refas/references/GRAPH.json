@@ -918,6 +918,27 @@
               },
               "outputSchemaPointer": "/schema"
             }
+          },
+          {
+            "id": "resolve-spatial-role-authority",
+            "operation": "inspect",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "resolveSpatialRoleAuthority"
+            },
+            "template": null,
+            "inputContract": "initialized project root + optional checkpoint ID and exact scope ID; runtime resolves earliest valid pre-candidate spatial role authority from checkpoint lineage",
+            "outputSchema": null,
+            "validator": null,
+            "minimumInvocation": "references/spatial-reasoning.md",
+            "example": null,
+            "usageReference": "references/spatial-reasoning.md",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "stateful filesystem-bound lineage resolution; VC02 project regression exercises exact runtime authority"
+            }
           }
         ]
       }
