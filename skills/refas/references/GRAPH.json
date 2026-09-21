@@ -1005,7 +1005,7 @@
             },
             "template": null,
             "inputContract": "initialized project root + optional checkpoint/scope selector; runtime replays exact VC01/VC02/VC03 authority and returns shape-stage whole-before-parts barrier",
-            "outputSchema": "refas.volume-barrier/v1",
+            "outputSchema": null,
             "validator": null,
             "minimumInvocation": "references/spatial-reasoning.md",
             "example": null,

@@ -12,6 +12,7 @@ import {
   assessCertification,
   auditProject,
   certifyProject,
+  classifySpatialCollapse,
   commitCheckpoint,
   contentReference,
   createPbrRenderReport,
@@ -19,7 +20,10 @@ import {
   createFinalResemblanceClosure,
   createPerceptualSignatureEvidence,
   createPerceptualSignatureSet,
+  createSpatialClosureEvidence,
+  createSpatialRoleExpectationSet,
   createVisualHierarchy,
+  createVolumeBarrier,
   NEUTRAL_CLAY_LIGHTING_RIG_DIGEST,
   NEUTRAL_CLAY_PRESENTATION_PRESET,
   NEUTRAL_CLAY_PRESENTATION_PRESET_DIGEST,
@@ -92,6 +96,34 @@ async function advanceToReview(root, source, {projection='none'}={}) {
       continue;
     }
 
+    if (capability === 'spatial-hypotheses') {
+      if (!hierarchy) throw new Error('VC02 migration fixture requires visual hierarchy before spatial hypotheses');
+      const spatialPath = path.join(root,'model','spatial-role.json');
+      const roleSet = createSpatialRoleExpectationSet({
+        hierarchy,
+        sourceSha256: source.sha256,
+        expectations: [{
+          scopeId:'whole',
+          role:'volumetric',
+          sourceObservation:'The certification fixture source represents a spatially volumetric whole object.',
+          rationale:'Freeze volumetric role before candidate reconstruction so VC03/VC04 cannot relabel it afterward.',
+          evidenceRefs:[source.path],
+          ambiguity:null,
+        }],
+      });
+      await json(spatialPath, roleSet);
+      const roleRef = await contentReference(spatialPath,{kind:'spatial-role-expectation',root});
+      const spatialStatePath = path.join(root,'model','spatial.json');
+      await json(spatialStatePath,{spatial:true});
+      const spatialRef = await contentReference(spatialStatePath,{kind:'spatial-hypotheses',root});
+      await commitCheckpoint(root,{
+        capability,scopeId:'whole',reason:'spatial-hypotheses fixture freezes VC02 role authority',
+        artifactRefs:[spatialRef,roleRef],claims:['spatial-hypotheses closed with frozen role'],
+        gates:[{id:'spatial-hypotheses-gate',evidenceRefs:[spatialRef.path,roleRef.path]}],
+      });
+      continue;
+    }
+
     if (capability === 'shape-reconstruction') {
       if (!hierarchy) throw new Error('R04 migration fixture requires visual hierarchy before shape');
       const assetPath = path.join(root,'model','candidate.glb');
@@ -145,10 +177,30 @@ async function advanceToReview(root, source, {projection='none'}={}) {
       assert.equal(earlyBarrier.verdict,'PROCEED');
       const barrierPath = await json(path.join(root,'reviews','early-resemblance-barrier.json'),earlyBarrier);
       const barrierRef = await contentReference(barrierPath,{kind:'early-resemblance-barrier',root});
+
+      const spatialEvidence = createSpatialClosureEvidence({glb,scopeId:'whole'});
+      const spatialEvidencePath = await json(path.join(root,'reviews','spatial-closure-whole.json'),spatialEvidence);
+      const spatialEvidenceRef = await contentReference(spatialEvidencePath,{kind:'spatial-closure-evidence',root});
+      const classification = await classifySpatialCollapse(root,{glb,spatialEvidence,scopeId:'whole'});
+      assert.equal(classification.classification,'NO_PLANAR_COLLAPSE');
+      const classificationPath = await json(path.join(root,'reviews','spatial-collapse-whole.json'),classification);
+      const classificationRef = await contentReference(classificationPath,{kind:'spatial-collapse-classification',root});
+      const volumeBarrier = createVolumeBarrier({
+        sourceSha256:source.sha256,
+        hierarchyDigest:hierarchy.hierarchyDigest,
+        assetSha256:asset.sha256,
+        signatureSet,
+        classifications:[classification],
+      });
+      assert.equal(volumeBarrier.verdict,'PROCEED');
+      const volumeBarrierPath = await json(path.join(root,'reviews','volume-barrier.json'),volumeBarrier);
+      const volumeBarrierRef = await contentReference(volumeBarrierPath,{kind:'volume-barrier',root});
+
+      const shapeRefs=[asset,barrierRef,clayReportRef,...clayFrames,spatialEvidenceRef,classificationRef,volumeBarrierRef];
       await commitCheckpoint(root,{
-        capability,scopeId:'whole',reason:'shape-reconstruction fixture is R04-admitted',
-        artifactRefs:[asset,barrierRef,clayReportRef,...clayFrames],claims:['shape-reconstruction closed after early resemblance admission'],
-        gates:[{id:'shape-reconstruction-gate',evidenceRefs:[asset.path,barrierRef.path,clayReportRef.path,...clayFrames.map((frame)=>frame.path)]}],
+        capability,scopeId:'whole',reason:'shape-reconstruction fixture is R04/VC04-admitted',
+        artifactRefs:shapeRefs,claims:['shape-reconstruction closed after resemblance and volume admission'],
+        gates:[{id:'shape-reconstruction-gate',evidenceRefs:shapeRefs.map((ref)=>ref.path)}],
       });
       continue;
     }
