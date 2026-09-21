@@ -77,6 +77,7 @@ export {
   resumeProject,
 } from './physical-claim-certification-gate.mjs';
 export * from './spatial-hypotheses.mjs';
+export * from './spatial-closure-evidence.mjs';
 export * from './registration.mjs';
 export * from './reference-geometry.mjs';
 export * from './projection-fit.mjs';

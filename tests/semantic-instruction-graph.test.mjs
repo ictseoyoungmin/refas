@@ -32,7 +32,7 @@ test('typed semantic instruction graph covers every leaf and matches runtime own
   assert.deepEqual(report.legacyHiddenGeometryPolicyHits, []);
   assert.equal(report.interfaceSchema, 'refas.instruction-node-interface/v1');
   assert.equal(report.interfaceNodes, 40);
-  assert.equal(report.interfaceOperations, 95);
+  assert.equal(report.interfaceOperations, 96);
   assert.equal(report.runtimeCapabilitiesCovered.length, 11);
   assert.deepEqual(report.runtimeCapabilitiesCovered.sort(), [
     'appearance',
@@ -179,7 +179,7 @@ test('semantic graph verifies from a bare copied installed skill with repository
     assert.equal(report.legacyHiddenGeometryPolicyHits, 0);
     assert.equal(report.interfaceSchema, 'refas.instruction-node-interface/v1');
     assert.equal(report.interfaceNodes, 40);
-    assert.equal(report.interfaceOperations, 95);
+    assert.equal(report.interfaceOperations, 96);
     assert.equal(report.runtimeCapabilitiesCovered, 11);
   } finally {
     await fs.rm(temp, {recursive: true, force: true});

@@ -814,6 +814,61 @@
               },
               "outputSchemaPointer": "/schema"
             }
+          },
+          {
+            "id": "spatial-closure-evidence",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createSpatialClosureEvidence"
+            },
+            "template": "assets/templates/capability-interface-inputs.json#/templates/spatial-reasoning~1spatial-closure-evidence",
+            "inputContract": "exact embedded GLB bytes + whole or exact node extras.scopeId + deterministic cross-section/grid sampling configuration",
+            "outputSchema": "refas.spatial-closure-evidence/v1",
+            "validator": {
+              "library": "validateSpatialClosureEvidence"
+            },
+            "minimumInvocation": "references/spatial-reasoning.md",
+            "example": "references/single-view-volumetric-reasoning-example.md",
+            "templateProcessor": {
+              "library": "materializeCapabilityInputTemplate"
+            },
+            "publicConstants": [
+              "SPATIAL_CLOSURE_EVIDENCE_SCHEMA",
+              "SPATIAL_CLOSURE_DEFAULT_CROSS_SECTIONS",
+              "SPATIAL_CLOSURE_DEFAULT_GRID_RESOLUTION"
+            ],
+            "usageReference": "references/spatial-reasoning.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  },
+                  {
+                    "source": "object",
+                    "properties": {
+                      "glb": {
+                        "source": "input",
+                        "pointer": "/glb"
+                      }
+                    }
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
+            }
           }
         ]
       }
