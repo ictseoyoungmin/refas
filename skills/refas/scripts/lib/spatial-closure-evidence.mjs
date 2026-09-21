@@ -123,6 +123,23 @@ function readAccessor(json, binary, accessorIndex) {
   return output;
 }
 
+function readPositionAccessor(json, binary, accessorIndex, partId) {
+  const accessor = json.accessors?.[accessorIndex];
+  if (!accessor || accessor.componentType !== 5126 || accessor.type !== 'VEC3' || accessor.normalized === true) {
+    throw new Error(`${partId}: POSITION accessor must be non-normalized FLOAT VEC3`);
+  }
+  return readAccessor(json, binary, accessorIndex);
+}
+
+function readIndexAccessor(json, binary, accessorIndex, partId) {
+  if (accessorIndex == null) return null;
+  const accessor = json.accessors?.[accessorIndex];
+  if (!accessor || accessor.type !== 'SCALAR' || ![5121, 5123, 5125].includes(accessor.componentType) || accessor.normalized === true) {
+    throw new Error(`${partId}: index accessor must be non-normalized unsigned SCALAR`);
+  }
+  return readAccessor(json, binary, accessorIndex);
+}
+
 const subtract = (a, b) => a.map((value, index) => value - b[index]);
 const cross = (a, b) => [a[1]*b[2]-a[2]*b[1], a[2]*b[0]-a[0]*b[2], a[0]*b[1]-a[1]*b[0]];
 const vectorLength = (value) => Math.hypot(...value);
@@ -161,10 +178,10 @@ function extractGeometry(glb, scopeId) {
     for (const primitive of mesh.primitives ?? []) {
       primitiveCount += 1;
       if ((primitive.mode ?? 4) !== 4) throw new Error(`${partId}: spatial closure evidence supports TRIANGLES primitives only`);
-      const local = readAccessor(json, binary, primitive.attributes?.POSITION);
+      const local = readPositionAccessor(json, binary, primitive.attributes?.POSITION, partId);
       if (!local.length || !local.every((point) => Array.isArray(point) && point.length === 3 && point.every(Number.isFinite))) throw new Error(`${partId}: invalid POSITION accessor`);
       const transformed = local.map((point) => transformPoint(world.get(nodeIndex), point));
-      const indices = primitive.indices == null ? transformed.map((_, index) => index) : readAccessor(json, binary, primitive.indices);
+      const indices = primitive.indices == null ? transformed.map((_, index) => index) : readIndexAccessor(json, binary, primitive.indices, partId);
       if (indices.length % 3 !== 0 || !indices.every(Number.isInteger)) throw new Error(`${partId}: triangle indices are invalid`);
       vertices.push(...transformed);
       nodeVertices += transformed.length;

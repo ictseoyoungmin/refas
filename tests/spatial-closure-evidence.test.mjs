@@ -34,6 +34,21 @@ function zeroEmbeddedBin(glb) {
   throw new Error('fixture GLB has no BIN chunk');
 }
 
+
+function mutateFirstPositionAccessorToUnsignedShort(glb) {
+  const bytes=Buffer.from(glb);
+  const jsonLength=bytes.readUInt32LE(12);
+  const jsonStart=20;
+  const text=bytes.subarray(jsonStart,jsonStart+jsonLength).toString('utf8');
+  const needle='"componentType":5126';
+  const index=text.indexOf(needle);
+  if(index<0) throw new Error('fixture GLB has no FLOAT accessor to mutate');
+  const replacement='"componentType":5123';
+  const mutated=text.slice(0,index)+replacement+text.slice(index+needle.length);
+  Buffer.from(mutated,'utf8').copy(bytes,jsonStart);
+  return bytes;
+}
+
 test('VC01 derives byte-deterministic observation evidence from the exact candidate', () => {
   const fixture = buildVolumeClosureRegressionFixture('claude-volumetric-bird-surrogate');
   const first = createSpatialClosureEvidence({glb: fixture.glb, scopeId: 'whole'});
@@ -161,4 +176,14 @@ test('VC01 measures an exact declared major scope without including sibling geom
   assert.deepEqual(major.bounds.max,[1,2,0.5]);
   assert.deepEqual(major.bounds.extent,[2,4,1]);
   assert.notDeepEqual(major.bounds,whole.bounds);
+});
+
+
+test('VC01 rejects malformed non-FLOAT POSITION accessors instead of measuring permissive numeric data', () => {
+  const fixture=buildVolumeClosureRegressionFixture('claude-volumetric-bird-surrogate');
+  const malformed=mutateFirstPositionAccessorToUnsignedShort(fixture.glb);
+  assert.throws(
+    () => createSpatialClosureEvidence({glb:malformed,scopeId:'whole'}),
+    /POSITION accessor must be non-normalized FLOAT VEC3/u,
+  );
 });
