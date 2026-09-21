@@ -2888,6 +2888,29 @@
         0.875
       ],
       "gridResolution": 8
+    },
+    "spatial-reasoning/spatial-role-expectation-set": {
+      "hierarchy": {
+        "$bind": "spatialRoleHierarchy",
+        "description": "Current refas.visual-hierarchy/v1; role scopes must exist in this hierarchy"
+      },
+      "sourceSha256": {
+        "$value": "sourceSha256",
+        "example": "0000000000000000000000000000000000000000000000000000000000000000",
+        "description": "SHA-256 of the bound primary source"
+      },
+      "expectations": [
+        {
+          "scopeId": "whole",
+          "role": "volumetric",
+          "sourceObservation": "Replace with source-visible evidence about whether the whole object carries front/back mass, layered depth, shell, tubular, or intentionally planar structure.",
+          "rationale": "Bind the expected spatial role from source evidence before candidate geometry or VC01/VC03 outputs are inspected.",
+          "evidenceRefs": [
+            "source/reference.png"
+          ],
+          "ambiguity": null
+        }
+      ]
     }
   }
 }

@@ -869,6 +869,76 @@
               },
               "outputSchemaPointer": "/schema"
             }
+          },
+          {
+            "id": "spatial-role-expectation-set",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createSpatialRoleExpectationSet"
+            },
+            "template": "assets/templates/capability-interface-inputs.json#/templates/spatial-reasoning~1spatial-role-expectation-set",
+            "inputContract": "bound visual hierarchy + exact source SHA-256 + source-evidenced pre-candidate scope roles; candidate/classifier fields forbidden",
+            "outputSchema": "refas.spatial-role-expectation-set/v1",
+            "validator": {
+              "library": "validateSpatialRoleExpectationSet"
+            },
+            "minimumInvocation": "references/spatial-reasoning.md",
+            "example": "references/single-view-volumetric-reasoning-example.md",
+            "templateProcessor": {
+              "library": "materializeCapabilityInputTemplate"
+            },
+            "publicConstants": [
+              "SPATIAL_ROLE_EXPECTATION_SET_SCHEMA",
+              "SPATIAL_ROLE_VALUES"
+            ],
+            "usageReference": "references/spatial-reasoning.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  },
+                  {
+                    "source": "input",
+                    "pointer": "/hierarchy"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
+            }
+          },
+          {
+            "id": "resolve-spatial-role-authority",
+            "operation": "inspect",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "resolveSpatialRoleAuthority"
+            },
+            "template": null,
+            "inputContract": "initialized project root + optional checkpoint ID and exact scope ID; runtime resolves earliest valid pre-candidate spatial role authority from checkpoint lineage",
+            "outputSchema": null,
+            "validator": null,
+            "minimumInvocation": "references/spatial-reasoning.md",
+            "example": null,
+            "usageReference": "references/spatial-reasoning.md",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "stateful filesystem-bound lineage resolution; VC02 project regression exercises exact runtime authority"
+            }
           }
         ]
       }

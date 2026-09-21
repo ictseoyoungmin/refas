@@ -27,6 +27,7 @@ import {validatePbrRenderReport} from './pbr-render-report.mjs';
 import {findComparisonContradictions, validateRegisteredComparison} from './registered-comparison.mjs';
 import {assertEarlyResemblanceAdmission} from './early-resemblance-barrier.mjs';
 import {validateFinalResemblanceClosure} from './final-resemblance-closure.mjs';
+import {validateSpatialRoleExpectationSet} from './spatial-role-expectation.mjs';
 import {
   createCandidateLineageProof,
   isCandidateMutationCapability,
@@ -916,6 +917,178 @@ async function resolveCandidateAuthorityFromLineage(root, state, lineage) {
   return {initialCandidate: initial, finalCandidate: current, transitions, proof};
 }
 
+
+async function hierarchyForSpatialRoleCheckpoint(root, checkpoint, lineagePrefix, label) {
+  if (checkpoint.capability === 'visual-hierarchy') {
+    return (await readCheckpointJsonArtifact(root, checkpoint, 'visual-hierarchy', label)).value;
+  }
+  const hierarchyCheckpoint = [...lineagePrefix].reverse().find((item) => item.capability === 'visual-hierarchy');
+  if (!hierarchyCheckpoint) throw new Error(`${label} requires a visual-hierarchy checkpoint before spatial role authority`);
+  return (await readCheckpointJsonArtifact(root, hierarchyCheckpoint, 'visual-hierarchy', label)).value;
+}
+
+async function prospectiveSpatialRoleHierarchy(root, capability, parentLineage, storedArtifacts, label) {
+  if (capability === 'visual-hierarchy') {
+    const matching = storedArtifacts.filter((artifact) => artifact.kind === 'visual-hierarchy');
+    if (matching.length !== 1) throw new Error(`${label} on visual-hierarchy requires exactly one visual-hierarchy artifact`);
+    return readStoredJsonArtifact(root, matching[0], `${label} visual-hierarchy artifact`);
+  }
+  const hierarchyCheckpoint = [...parentLineage].reverse().find((item) => item.capability === 'visual-hierarchy');
+  if (!hierarchyCheckpoint) throw new Error(`${label} requires current visual-hierarchy lineage`);
+  return (await readCheckpointJsonArtifact(root, hierarchyCheckpoint, 'visual-hierarchy', label)).value;
+}
+
+function spatialRoleEvidencePaths(state, lineage, currentCapability = null, storedArtifacts = []) {
+  const cutoff = capabilityIndex('spatial-hypotheses');
+  const paths = new Set([state.source?.path].filter(Boolean));
+  for (const checkpoint of lineage) {
+    if (capabilityIndex(checkpoint.capability) > cutoff) continue;
+    for (const artifact of checkpoint.artifactRefs ?? []) paths.add(artifact.path);
+  }
+  if (currentCapability != null && capabilityIndex(currentCapability) <= cutoff) {
+    for (const artifact of storedArtifacts) {
+      if (artifact.kind !== 'spatial-role-expectation') paths.add(artifact.path);
+    }
+  }
+  return paths;
+}
+
+async function validateSpatialRoleArtifact(root, state, artifact, hierarchy, allowedEvidencePaths, label) {
+  const value = await readStoredJsonArtifact(root, artifact, label);
+  const validation = validateSpatialRoleExpectationSet(value, hierarchy);
+  if (!validation.valid) throw new Error(`${label} is invalid: ${validation.errors.join('; ')}`);
+  if (value.sourceSha256 !== state.source.sha256) throw new Error(`${label} source binding mismatch`);
+  if (value.hierarchyDigest !== hierarchy.hierarchyDigest) throw new Error(`${label} hierarchy binding mismatch`);
+  for (const expectation of value.expectations ?? []) {
+    for (const evidenceRef of expectation.evidenceRefs ?? []) {
+      if (!allowedEvidencePaths.has(evidenceRef)) {
+        throw new Error(`${label} evidence is not pre-candidate lineage-bound: ${evidenceRef}`);
+      }
+    }
+  }
+  return value;
+}
+
+async function resolveSpatialRoleAuthorityFromLineage(root, state, lineage, {scopeId = null} = {}) {
+  let authority = null;
+  const carryForwardCheckpointIds = [];
+  const cutoff = capabilityIndex('spatial-hypotheses');
+  for (let index = 0; index < lineage.length; index += 1) {
+    const checkpoint = lineage[index];
+    const artifacts = (checkpoint.artifactRefs ?? []).filter((artifact) => artifact.kind === 'spatial-role-expectation');
+    if (artifacts.length > 1) throw new Error(`${checkpoint.capability} contains competing spatial-role-expectation artifacts`);
+    if (!artifacts.length) continue;
+
+    const label = `${checkpoint.capability} spatial role expectation`;
+    const prefix = lineage.slice(0, index + 1);
+    const hierarchy = await hierarchyForSpatialRoleCheckpoint(root, checkpoint, prefix, label);
+    const allowedEvidencePaths = spatialRoleEvidencePaths(state, prefix);
+    const value = await validateSpatialRoleArtifact(root, state, artifacts[0], hierarchy, allowedEvidencePaths, label);
+
+    if (!authority) {
+      if (capabilityIndex(checkpoint.capability) > cutoff) {
+        throw new Error(`spatial role expectation was introduced too late at ${checkpoint.capability}; authority must be frozen no later than spatial-hypotheses`);
+      }
+      authority = {
+        sourceSha256: value.sourceSha256,
+        hierarchyDigest: value.hierarchyDigest,
+        expectationSetDigest: value.expectationSetDigest,
+        expectations: value.expectations,
+        authorityCheckpointId: checkpoint.id,
+        authorityCapability: checkpoint.capability,
+        artifactPath: artifacts[0].path,
+      };
+      continue;
+    }
+
+    if (value.expectationSetDigest !== authority.expectationSetDigest) {
+      throw new Error(`spatial role expectation mutation is forbidden after authority freeze at ${authority.authorityCheckpointId}`);
+    }
+    carryForwardCheckpointIds.push(checkpoint.id);
+  }
+
+  if (!authority) return null;
+
+  const latestHierarchyCheckpoint = [...lineage].reverse().find((checkpoint) => checkpoint.capability === 'visual-hierarchy');
+  if (!latestHierarchyCheckpoint) throw new Error('spatial role authority lost its visual hierarchy lineage');
+  const latestHierarchy = (await readCheckpointJsonArtifact(root, latestHierarchyCheckpoint, 'visual-hierarchy', 'spatial role authority audit')).value;
+  if (latestHierarchy.hierarchyDigest !== authority.hierarchyDigest) {
+    throw new Error('spatial role authority is stale for the current visual hierarchy');
+  }
+
+  let selectedExpectation = null;
+  if (scopeId != null) {
+    const normalizedScopeId = assertId(scopeId, 'scopeId');
+    selectedExpectation = authority.expectations.find((item) => item.scopeId === normalizedScopeId) ?? null;
+    if (!selectedExpectation) throw new Error(`spatial role authority has no exact expectation for scope ${normalizedScopeId}`);
+  }
+
+  const payload = {
+    schema: 'refas.spatial-role-authority/v1',
+    sourceSha256: authority.sourceSha256,
+    hierarchyDigest: authority.hierarchyDigest,
+    expectationSetDigest: authority.expectationSetDigest,
+    authorityCheckpointId: authority.authorityCheckpointId,
+    authorityCapability: authority.authorityCapability,
+    artifactPath: authority.artifactPath,
+    expectations: authority.expectations,
+    selectedExpectation,
+    carryForwardCheckpointIds,
+    policy: {
+      earliestPreBoundExpectationIsAuthority: true,
+      postShapeRelabelForbidden: true,
+      identicalCarryForwardAllowed: true,
+      candidateIndependent: true,
+      classifierIndependent: true,
+    },
+  };
+  return deepFreeze({...payload, authorityDigest: digestJson(payload)});
+}
+
+async function validateProspectiveSpatialRoleAuthority(root, state, {
+  capability,
+  parentLineage,
+  storedArtifacts,
+} = {}) {
+  const artifacts = storedArtifacts.filter((artifact) => artifact.kind === 'spatial-role-expectation');
+  if (artifacts.length > 1) throw new Error(`${capability} contains competing spatial-role-expectation artifacts`);
+  if (!artifacts.length) return resolveSpatialRoleAuthorityFromLineage(root, state, parentLineage);
+
+  const existing = await resolveSpatialRoleAuthorityFromLineage(root, state, parentLineage);
+  const cutoff = capabilityIndex('spatial-hypotheses');
+  if (!existing && capabilityIndex(capability) > cutoff) {
+    throw new Error(`spatial role expectation was introduced too late at ${capability}; authority must be frozen no later than spatial-hypotheses`);
+  }
+
+  const label = `${capability} spatial role expectation`;
+  const hierarchy = await prospectiveSpatialRoleHierarchy(root, capability, parentLineage, storedArtifacts, label);
+  const allowedEvidencePaths = spatialRoleEvidencePaths(state, parentLineage, capability, storedArtifacts);
+  const value = await validateSpatialRoleArtifact(root, state, artifacts[0], hierarchy, allowedEvidencePaths, label);
+
+  if (existing && value.expectationSetDigest !== existing.expectationSetDigest) {
+    throw new Error(`spatial role expectation mutation is forbidden after authority freeze at ${existing.authorityCheckpointId}`);
+  }
+  return existing ?? {
+    schema: 'refas.spatial-role-authority-preview/v1',
+    sourceSha256: value.sourceSha256,
+    hierarchyDigest: value.hierarchyDigest,
+    expectationSetDigest: value.expectationSetDigest,
+    expectations: value.expectations,
+    authorityCapability: capability,
+  };
+}
+
+export async function resolveSpatialRoleAuthority(root, {checkpointId = null, scopeId = null} = {}) {
+  root = projectRoot(root);
+  const state = await loadProject(root);
+  if (!state.source) throw new Error('spatial role authority requires a bound source');
+  const checkpoints = await listCheckpoints(root);
+  const target = checkpointId ?? state.head;
+  if (!target) throw new Error('spatial role authority requires a checkpoint lineage');
+  const lineage = checkpointLineage(checkpoints, target);
+  return resolveSpatialRoleAuthorityFromLineage(root, state, lineage, {scopeId});
+}
+
 async function validateProspectiveCandidateAuthority(root, state, {
   capability,
   scopeId,
@@ -1024,6 +1197,7 @@ async function ensurePrerequisites(root, state, capability, scopeId, lineage) {
   }
 
   await ensureEarlyResemblanceAdmission(root, state, capability, scopeId, lineage);
+  await resolveSpatialRoleAuthorityFromLineage(root, state, lineage);
 }
 
 function nextInvalidated(state) {
@@ -1161,6 +1335,9 @@ export async function commitCheckpoint(root, {
   const storedArtifacts = [];
   for (let index = 0; index < artifactRefs.length; index += 1) storedArtifacts.push(await storeArtifact(root, artifactRefs[index], index));
   const parentLineage = checkpointLineage(checkpoints, parent);
+  await validateProspectiveSpatialRoleAuthority(root, state, {
+    capability, parentLineage, storedArtifacts,
+  });
   await validateProspectiveCandidateAuthority(root, state, {
     capability, scopeId, parentId: parent, parentLineage, storedArtifacts,
   });
@@ -1568,6 +1745,13 @@ export async function auditProject(root) {
     auditedLineage = checkpointLineage(checkpoints, state.head);
   } catch (error) {
     errors.push(error.message);
+  }
+  if (state.source && state.head) {
+    try {
+      await resolveSpatialRoleAuthorityFromLineage(root, state, auditedLineage);
+    } catch (error) {
+      errors.push(`spatial role authority: ${error.message}`);
+    }
   }
   if (state.source && state.head && !isTrustedContractFixtureProject(state)) {
     const headCheckpoint = byId.get(state.head);
