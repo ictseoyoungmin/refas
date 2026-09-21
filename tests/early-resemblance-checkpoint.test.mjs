@@ -11,6 +11,7 @@ import {
   NEUTRAL_CLAY_REQUIRED_VIEW_IDS,
   auditProject,
   assessCertification,
+  classifySpatialCollapse,
   commitCheckpoint,
   contentReference,
   createCandidateTransition,
@@ -18,9 +19,14 @@ import {
   createPbrRenderReport,
   createPerceptualSignatureEvidence,
   createPerceptualSignatureSet,
+  createSpatialClosureEvidence,
+  createSpatialRoleExpectationSet,
   createVisualHierarchy,
+  createVolumeBarrier,
   digestBytes,
+  finalizeMesh,
   initProject,
+  partsToGlb,
   resolveAuthoritativeCandidateLineage,
   resumeProject,
 } from '../skills/refas/scripts/lib/index.mjs';
@@ -44,6 +50,19 @@ async function commitLocal(root, capability, refs) {
     claims: [`${capability} fixture`],
     gates: [{id: `${capability}-gate`, evidenceRefs: refs.map((ref) => ref.path)}],
   });
+}
+
+function vc04BoxMesh(depth=1) {
+  const hx=0.5, hy=0.5, hz=depth/2;
+  const positions=[
+    [-hx,-hy,-hz],[hx,-hy,-hz],[hx,hy,-hz],[-hx,hy,-hz],
+    [-hx,-hy,hz],[hx,-hy,hz],[hx,hy,hz],[-hx,hy,hz],
+  ];
+  const indices=[
+    0,2,1,0,3,2,4,5,6,4,6,7,0,1,5,0,5,4,
+    3,7,6,3,6,2,0,4,7,0,7,3,1,2,6,1,6,5,
+  ];
+  return finalizeMesh(positions,indices,{primitive:'vc04-box'});
 }
 
 async function clayEvidence(root, assetSha256) {
@@ -96,7 +115,12 @@ async function clayEvidence(root, assetSha256) {
   return {report, reportRef, frameRefs};
 }
 
-async function makeRealSourceProject(t, verdictStatus, {unboundObservationEvidence = false} = {}) {
+async function makeRealSourceProject(t, verdictStatus, {
+  unboundObservationEvidence = false,
+  spatialRole = 'volumetric',
+  candidateDepth = 1,
+  omitVolumeBarrier = false,
+} = {}) {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), 'refas-r04-real-'));
   t.after(() => fs.rm(root, {recursive: true, force: true}));
 
@@ -136,9 +160,37 @@ async function makeRealSourceProject(t, verdictStatus, {unboundObservationEviden
   await commitLocal(root, 'visual-observation', [observationRef]);
 
   const spatialRef = await writeRef(root, 'model/spatial.json', Buffer.from('{"spatial":true}\n'), 'spatial-hypotheses');
-  await commitLocal(root, 'spatial-hypotheses', [spatialRef]);
+  const roleSet = createSpatialRoleExpectationSet({
+    hierarchy,
+    sourceSha256: source.sha256,
+    expectations: [{
+      scopeId: 'whole',
+      role: spatialRole,
+      sourceObservation: `The source whole scope is pre-bound as ${spatialRole} for the VC04 fixture.`,
+      rationale: 'Freeze the spatial role before candidate evaluation.',
+      evidenceRefs: [source.path],
+      ambiguity: spatialRole === 'unresolved' ? 'The source does not resolve whole-object depth.' : null,
+    }],
+  });
+  const roleRef = await writeRef(
+    root,
+    'model/spatial-role.json',
+    Buffer.from(`${JSON.stringify(roleSet, null, 2)}\n`),
+    'spatial-role-expectation',
+  );
+  await commitLocal(root, 'spatial-hypotheses', [spatialRef, roleRef]);
 
-  const candidateBytes = Buffer.from('candidate glb bytes\n');
+  const candidateBytes = partsToGlb({
+    assetId: 'vc04-r04-candidate',
+    materials: {fixture: {baseColor: [0.5, 0.5, 0.5, 1], metallic: 0, roughness: 0.5}},
+    parts: [{
+      id: 'whole-body',
+      scopeId: 'whole',
+      role: 'whole-body',
+      materialId: 'fixture',
+      mesh: vc04BoxMesh(candidateDepth),
+    }],
+  });
   const candidateRef = await writeRef(root, 'model/candidate.glb', candidateBytes, 'glb');
   const clay = await clayEvidence(root, candidateRef.sha256);
   const clayHeroRef = clay.frameRefs.find((frame) => frame.path === 'renders/clay/hero.png');
@@ -189,10 +241,43 @@ async function makeRealSourceProject(t, verdictStatus, {unboundObservationEviden
     Buffer.from(`${JSON.stringify(barrier, null, 2)}\n`),
     'early-resemblance-barrier',
   );
-  const shapeCheckpoint = await commitLocal(root, 'shape-reconstruction', [candidateRef, barrierRef, clay.reportRef, ...clay.frameRefs]);
+  const spatialEvidence = createSpatialClosureEvidence({glb: candidateBytes, scopeId: 'whole'});
+  const spatialEvidenceRef = await writeRef(
+    root,
+    'reviews/spatial-closure-whole.json',
+    Buffer.from(`${JSON.stringify(spatialEvidence, null, 2)}\n`),
+    'spatial-closure-evidence',
+  );
+  const classification = await classifySpatialCollapse(root, {
+    glb: candidateBytes,
+    spatialEvidence,
+    scopeId: 'whole',
+  });
+  const classificationRef = await writeRef(
+    root,
+    'reviews/spatial-collapse-whole.json',
+    Buffer.from(`${JSON.stringify(classification, null, 2)}\n`),
+    'spatial-collapse-classification',
+  );
+  const volumeBarrier = createVolumeBarrier({
+    sourceSha256: source.sha256,
+    hierarchyDigest: hierarchy.hierarchyDigest,
+    assetSha256: candidateRef.sha256,
+    signatureSet,
+    classifications: [classification],
+  });
+  const volumeBarrierRef = await writeRef(
+    root,
+    'reviews/volume-barrier.json',
+    Buffer.from(`${JSON.stringify(volumeBarrier, null, 2)}\n`),
+    'volume-barrier',
+  );
+  const shapeRefs = [candidateRef, barrierRef, clay.reportRef, ...clay.frameRefs];
+  if (!omitVolumeBarrier) shapeRefs.push(spatialEvidenceRef, classificationRef, volumeBarrierRef);
+  const shapeCheckpoint = await commitLocal(root, 'shape-reconstruction', shapeRefs);
 
   const surfaceRef = await writeRef(root, 'model/surface.json', Buffer.from('{"surface":true}\n'), 'surface-network');
-  return {root, source, hierarchy, barrier, surfaceRef, candidateRef, shapeCheckpoint};
+  return {root, source, hierarchy, barrier, volumeBarrier, classification, spatialEvidence, surfaceRef, candidateRef, shapeCheckpoint};
 }
 
 test('R04 real-source HOLD blocks surface-topology admission', async (t) => {
@@ -223,8 +308,11 @@ test('R04 real-source REWORK blocks surface-topology admission', async (t) => {
 });
 
 test('R04 real-source PROCEED admits surface-topology but grants no certification authority', async (t) => {
-  const {root, barrier, surfaceRef} = await makeRealSourceProject(t, 'match');
+  const {root, barrier, volumeBarrier, surfaceRef} = await makeRealSourceProject(t, 'match');
   assert.equal(barrier.verdict, 'PROCEED');
+  assert.equal(volumeBarrier.verdict, 'PROCEED');
+  assert.equal(volumeBarrier.policy.proceedOnlyAuthorizesDownstreamDetail, true);
+  assert.equal(volumeBarrier.policy.proceedDoesNotCertify, true);
   assert.equal(barrier.policy.proceedOnlyAuthorizesDownstreamDetail, true);
   assert.equal(barrier.policy.proceedDoesNotPassVisualReview, true);
   assert.equal(barrier.policy.proceedDoesNotCertify, true);
@@ -235,6 +323,50 @@ test('R04 real-source PROCEED admits surface-topology but grants no certificatio
   assert.equal(surface.capability, 'surface-topology');
 });
 
+
+
+test('VC04 PLANAR_COLLAPSE blocks surface-topology even when early resemblance proceeds', async (t) => {
+  const {root, barrier, volumeBarrier, surfaceRef} = await makeRealSourceProject(t, 'match', {candidateDepth: 0.02});
+  assert.equal(barrier.verdict, 'PROCEED');
+  assert.equal(volumeBarrier.verdict, 'REWORK');
+  const guidance = await resumeProject(root);
+  assert.equal(guidance.nextAction, 'REWORK_SHAPE_VOLUME');
+  assert.equal(guidance.volumeBarrierVerdict, 'REWORK');
+  await assert.rejects(
+    () => commitLocal(root, 'surface-topology', [surfaceRef]),
+    /downstream detail requires volume barrier PROCEED; current verdict is REWORK/u,
+  );
+});
+
+test('VC04 unresolved protected role remains HOLD', async (t) => {
+  const {root, volumeBarrier, surfaceRef} = await makeRealSourceProject(t, 'match', {spatialRole: 'unresolved'});
+  assert.equal(volumeBarrier.verdict, 'HOLD');
+  const guidance = await resumeProject(root);
+  assert.equal(guidance.nextAction, 'GATHER_SPATIAL_EVIDENCE');
+  await assert.rejects(
+    () => commitLocal(root, 'surface-topology', [surfaceRef]),
+    /downstream detail requires volume barrier PROCEED; current verdict is HOLD/u,
+  );
+});
+
+test('VC04 intentionally-planar protected scope preserves role-aware exception', async (t) => {
+  const {root, volumeBarrier, surfaceRef} = await makeRealSourceProject(t, 'match', {
+    spatialRole: 'intentionally-planar',
+    candidateDepth: 0.02,
+  });
+  assert.equal(volumeBarrier.verdict, 'PROCEED');
+  assert.equal(volumeBarrier.entries[0].classification, 'NOT_APPLICABLE');
+  const surface = await commitLocal(root, 'surface-topology', [surfaceRef]);
+  assert.equal(surface.capability, 'surface-topology');
+});
+
+test('VC04 missing shape-stage barrier fails downstream admission', async (t) => {
+  const {root, surfaceRef} = await makeRealSourceProject(t, 'match', {omitVolumeBarrier: true});
+  await assert.rejects(
+    () => commitLocal(root, 'surface-topology', [surfaceRef]),
+    /requires exactly one volume-barrier artifact/u,
+  );
+});
 
 test('candidate authority rejects a downstream GLB replacement without a transition', async (t) => {
   const {root, surfaceRef} = await makeRealSourceProject(t, 'match');
