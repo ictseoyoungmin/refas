@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/candidate-transition.schema.json",
+  "title": "RefAs authoritative candidate transition",
+  "type": "object",
+  "required": ["schema","capability","scopeId","transitionKind","parentCheckpointId","inputCandidate","outputCandidate","evidenceRefs","policy","transitionDigest"],
+  "properties": {
+    "schema": {"const":"refas.candidate-transition/v1"},
+    "capability": {"enum":["surface-topology","assembly","appearance"]},
+    "scopeId": {"$ref":"common.schema.json#/$defs/semanticId"},
+    "transitionKind": {"enum":["surface-topology-edit","assembly-edit","appearance-edit"]},
+    "parentCheckpointId": {"$ref":"common.schema.json#/$defs/semanticId"},
+    "inputCandidate": {"type":"object","required":["assetSha256","checkpointId"],"properties":{"assetSha256":{"$ref":"common.schema.json#/$defs/digest"},"checkpointId":{"$ref":"common.schema.json#/$defs/semanticId"}},"additionalProperties":false},
+    "outputCandidate": {"type":"object","required":["assetSha256"],"properties":{"assetSha256":{"$ref":"common.schema.json#/$defs/digest"}},"additionalProperties":false},
+    "evidenceRefs": {"$ref":"common.schema.json#/$defs/evidenceRefs"},
+    "policy": {"type":"object"},
+    "transitionDigest": {"$ref":"common.schema.json#/$defs/digest"}
+  },
+  "additionalProperties": false
+}
