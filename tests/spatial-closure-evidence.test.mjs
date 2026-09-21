@@ -4,6 +4,7 @@ import {test} from 'node:test';
 import {
   createSpatialClosureEvidence,
   digestBytes,
+  partsToGlb,
   validateSpatialClosureEvidence,
 } from '../skills/refas/scripts/lib/index.mjs';
 import {buildVolumeClosureRegressionFixture} from './fixtures/volume-closure-regression-fixtures.mjs';
@@ -111,4 +112,53 @@ test('VC01 rejects geometry with no non-degenerate measured triangles', () => {
     () => createSpatialClosureEvidence({glb: zeroEmbeddedBin(fixture.glb), scopeId: 'whole'}),
     /no non-degenerate triangles/u,
   );
+});
+
+
+function scopedBox({min, max}) {
+  const [x0,y0,z0]=min, [x1,y1,z1]=max;
+  return {
+    positions:[
+      [x0,y0,z0],[x1,y0,z0],[x1,y1,z0],[x0,y1,z0],
+      [x0,y0,z1],[x1,y0,z1],[x1,y1,z1],[x0,y1,z1],
+    ],
+    indices:[
+      0,2,1,0,3,2,4,5,6,4,6,7,
+      0,1,5,0,5,4,3,7,6,3,6,2,
+      0,4,7,0,7,3,1,2,6,1,6,5,
+    ],
+  };
+}
+
+test('VC01 measures an exact declared major scope without including sibling geometry', () => {
+  const glb=partsToGlb({
+    assetId:'vc01-major-scope',
+    materials:{fixture:{baseColor:[0.5,0.5,0.5,1],metallic:0,roughness:0.5}},
+    parts:[
+      {
+        id:'body',
+        scopeId:'major-body',
+        role:'major-body-volume',
+        materialId:'fixture',
+        mesh:scopedBox({min:[-1,-2,-0.6],max:[1,2,0.6]}),
+      },
+      {
+        id:'badge',
+        scopeId:'detail-badge',
+        role:'detail',
+        materialId:'fixture',
+        mesh:scopedBox({min:[4,4,4],max:[5,5,5]}),
+      },
+    ],
+  });
+  const whole=createSpatialClosureEvidence({glb,scopeId:'whole'});
+  const major=createSpatialClosureEvidence({glb,scopeId:'major-body'});
+  assert.equal(whole.selection.selectedNodes.length,2);
+  assert.equal(major.selection.strategy,'exact-node-extras-scope-id');
+  assert.equal(major.selection.selectedNodes.length,1);
+  assert.equal(major.selection.selectedNodes[0].partId,'body');
+  assert.deepEqual(major.bounds.min,[-1,-2,-0.6]);
+  assert.deepEqual(major.bounds.max,[1,2,0.6]);
+  assert.deepEqual(major.bounds.extent,[2,4,1.2]);
+  assert.notDeepEqual(major.bounds,whole.bounds);
 });
