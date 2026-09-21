@@ -850,6 +850,12 @@ export async function resolveVolumeBarrierAdmission(root, {checkpointId = null, 
     throw new Error(`volume barrier shape scope ${shapeCheckpoint.scopeId} does not contain requested scope ${resolvedScopeId}`);
   }
   const prefix = lineage.slice(0, shapeIndex);
+  const hierarchyCheckpoint = [...prefix].reverse().find((checkpoint) => checkpoint.capability === 'visual-hierarchy');
+  if (!hierarchyCheckpoint) throw new Error('volume barrier authority requires current visual-hierarchy lineage');
+  const {value: hierarchy} = await readCheckpointJsonArtifact(root, hierarchyCheckpoint, 'visual-hierarchy', 'volume barrier authority');
+  if (!(hierarchy.nodes ?? []).some((node) => node.id === resolvedScopeId)) {
+    throw new Error(`volume barrier requested scope is not present in current visual hierarchy: ${resolvedScopeId}`);
+  }
   return deepFreeze(await verifyVolumeBarrierArtifacts(root, state, {
     lineage,
     shapeCheckpoint,
