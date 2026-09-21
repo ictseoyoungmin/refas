@@ -15,6 +15,7 @@ import {
   digestJson,
   finalizeMesh,
   partsToGlb,
+  validateSpatialCollapseClassification,
 } from '../skills/refas/scripts/lib/index.mjs';
 import {_classifySpatialCollapseFromAuthority} from '../skills/refas/scripts/lib/spatial-collapse-classifier.mjs';
 import {initTrustedContractFixtureProject} from '../skills/refas/scripts/lib/contract-fixture-project.mjs';
@@ -221,6 +222,11 @@ test('VC03 public classifier resolves the frozen VC02 role from project lineage'
   const result=await classifySpatialCollapse(root,{glb:fixture.glb,spatialEvidence:evidence,scopeId:'whole'});
   assert.equal(result.frozenRole,'volumetric');
   assert.equal(result.classification,'PLANAR_COLLAPSE');
+  assert.equal((await validateSpatialCollapseClassification(root,result,{glb:fixture.glb,spatialEvidence:evidence})).valid,true);
+
+  const tampered=structuredClone(result);
+  tampered.classification='NO_PLANAR_COLLAPSE';
+  assert.equal((await validateSpatialCollapseClassification(root,tampered,{glb:fixture.glb,spatialEvidence:evidence})).valid,false);
 });
 
 
