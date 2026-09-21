@@ -78,6 +78,7 @@ export {
 } from './physical-claim-certification-gate.mjs';
 export * from './spatial-hypotheses.mjs';
 export * from './spatial-role-expectation.mjs';
+export * from './volume-barrier.mjs';
 export * from './spatial-closure-evidence.mjs';
 export {SPATIAL_COLLAPSE_CLASSIFICATION_SCHEMA, SPATIAL_COLLAPSE_STATES, classifySpatialCollapse, validateSpatialCollapseClassification} from './spatial-collapse-classifier.mjs';
 export * from './registration.mjs';
