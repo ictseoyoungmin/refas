@@ -297,6 +297,104 @@ test('candidate authority rejects a re-signed transition with stale runtime inpu
 });
 
 
+test('candidate authority keeps explicit same-digest carry-forward compatible without a transition', async (t) => {
+  const {root, surfaceRef, candidateRef} = await makeRealSourceProject(t, 'match');
+  const checkpoint = await commitLocal(root, 'surface-topology', [surfaceRef, candidateRef]);
+  const authority = await resolveAuthoritativeCandidateLineage(root);
+  assert.equal(authority.finalCandidate.assetSha256,candidateRef.sha256);
+  assert.equal(authority.finalCandidate.checkpointId,authority.initialCandidate.checkpointId);
+  assert.equal(authority.transitions.length,0);
+  assert.equal(checkpoint.capability,'surface-topology');
+});
+
+test('candidate authority rejects stale parent, wrong output, wrong capability, and wrong scope transitions', async (t) => {
+  for (const attack of ['parent','output','capability','scope']) {
+    await t.test(attack, async (t2) => {
+      const {root, surfaceRef} = await makeRealSourceProject(t2, 'match');
+      const before = await resolveAuthoritativeCandidateLineage(root);
+      const replacement = await writeRef(root, `model/candidate-${attack}.glb`, Buffer.from(`candidate ${attack} bytes\n`), 'glb');
+      const transition = createCandidateTransition({
+        inputAssetSha256:before.finalCandidate.assetSha256,
+        outputAssetSha256:attack==='output'?D('e'):replacement.sha256,
+        inputCandidateCheckpointId:before.finalCandidate.checkpointId,
+        parentCheckpointId:attack==='parent'?'cp_stale_parent':before.finalCandidate.checkpointId,
+        capability:attack==='capability'?'assembly':'surface-topology',
+        scopeId:attack==='scope'?'whole.part':'whole',
+        evidenceRefs:[replacement.path],
+      });
+      const transitionRef = await writeRef(
+        root,
+        `model/candidate-transition-${attack}.json`,
+        Buffer.from(`${JSON.stringify(transition, null, 2)}\n`),
+        'candidate-transition',
+      );
+      const expected = {
+        parent:/parent checkpoint mismatch/,
+        output:/output candidate digest mismatch/,
+        capability:/capability mismatch/,
+        scope:/scope mismatch/,
+      }[attack];
+      await assert.rejects(
+        () => commitLocal(root, 'surface-topology', [surfaceRef, replacement, transitionRef]),
+        expected,
+      );
+    });
+  }
+});
+
+test('candidate authority rejects competing downstream output candidates', async (t) => {
+  const {root, surfaceRef} = await makeRealSourceProject(t, 'match');
+  const first = await writeRef(root, 'model/candidate-competing-a.glb', Buffer.from('candidate competing a\n'), 'glb');
+  const second = await writeRef(root, 'model/candidate-competing-b.glb', Buffer.from('candidate competing b\n'), 'glb');
+  await assert.rejects(
+    () => commitLocal(root, 'surface-topology', [surfaceRef, first, second]),
+    /contains competing candidate GLBs/,
+  );
+});
+
+test('runtime candidate authority resolves chained downstream transitions to one final candidate', async (t) => {
+  const {root, surfaceRef} = await makeRealSourceProject(t, 'match');
+  const initial = await resolveAuthoritativeCandidateLineage(root);
+  const surfaceCandidate = await writeRef(root, 'model/candidate-chain-surface.glb', Buffer.from('chain surface candidate\n'), 'glb');
+  const surfaceTransition = createCandidateTransition({
+    inputAssetSha256:initial.finalCandidate.assetSha256,
+    outputAssetSha256:surfaceCandidate.sha256,
+    inputCandidateCheckpointId:initial.finalCandidate.checkpointId,
+    parentCheckpointId:initial.finalCandidate.checkpointId,
+    capability:'surface-topology',scopeId:'whole',evidenceRefs:[surfaceCandidate.path],
+  });
+  const surfaceTransitionRef = await writeRef(
+    root,'model/candidate-chain-surface-transition.json',
+    Buffer.from(`${JSON.stringify(surfaceTransition, null, 2)}\n`),'candidate-transition',
+  );
+  const surfaceCheckpoint = await commitLocal(root,'surface-topology',[surfaceRef,surfaceCandidate,surfaceTransitionRef]);
+
+  const assemblyRef = await writeRef(root,'model/assembly-chain.json',Buffer.from('{"assembly":true}\n'),'assembly-plan');
+  const assemblyCandidate = await writeRef(root,'model/candidate-chain-assembly.glb',Buffer.from('chain assembly candidate\n'),'glb');
+  const assemblyTransition = createCandidateTransition({
+    inputAssetSha256:surfaceCandidate.sha256,
+    outputAssetSha256:assemblyCandidate.sha256,
+    inputCandidateCheckpointId:surfaceCheckpoint.id,
+    parentCheckpointId:surfaceCheckpoint.id,
+    capability:'assembly',scopeId:'whole',evidenceRefs:[assemblyCandidate.path],
+  });
+  const assemblyTransitionRef = await writeRef(
+    root,'model/candidate-chain-assembly-transition.json',
+    Buffer.from(`${JSON.stringify(assemblyTransition, null, 2)}\n`),'candidate-transition',
+  );
+  const assemblyCheckpoint = await commitLocal(root,'assembly',[assemblyRef,assemblyCandidate,assemblyTransitionRef]);
+  const final = await resolveAuthoritativeCandidateLineage(root);
+  assert.equal(final.initialCandidate.assetSha256,initial.initialCandidate.assetSha256);
+  assert.equal(final.finalCandidate.assetSha256,assemblyCandidate.sha256);
+  assert.equal(final.finalCandidate.checkpointId,assemblyCheckpoint.id);
+  assert.equal(final.transitions.length,2);
+  assert.deepEqual(final.transitions.map((item)=>item.transitionDigest),[
+    surfaceTransition.transitionDigest,
+    assemblyTransition.transitionDigest,
+  ]);
+});
+
+
 test('R04 real-source admission rejects canonical barrier whose nested R03 evidence is not lineage-bound', async (t) => {
   const {root, barrier, surfaceRef} = await makeRealSourceProject(t, 'match', {unboundObservationEvidence: true});
   assert.equal(barrier.verdict, 'PROCEED');

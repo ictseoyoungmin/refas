@@ -283,7 +283,7 @@ async function appendFinalCandidateAuthority(root, source, asset, refs) {
   refs.push(await contentReference(closurePath,{kind:'final-resemblance-closure',root}));
 }
 
-async function commitCertification(root, source, {projection='none'}={}) {
+async function commitCertification(root, source, {projection='none', includeFinalAuthority=true}={}) {
   const assetPath = path.join(root, 'model', 'candidate.glb');
   const glb = await fs.readFile(assetPath);
   const asset = await contentReference(assetPath, {kind:'glb', root});
@@ -384,7 +384,7 @@ async function commitCertification(root, source, {projection='none'}={}) {
   const refs = [asset, reportRef, ...frames, comparisonRef, reviewRef];
 
   if (!CONTRACT_FIXTURES.has(String(source.acquisition?.kind ?? '').toLowerCase())) {
-    await appendFinalCandidateAuthority(root,source,asset,refs);
+    if (includeFinalAuthority) await appendFinalCandidateAuthority(root,source,asset,refs);
     await appendRelationalCertificationEvidence(root,source,asset,refs);
   }
 
@@ -398,6 +398,35 @@ async function commitCertification(root, source, {projection='none'}={}) {
     gates:REQUIRED_CLOSURE_GATE_IDS.map((id)=>({id,evidenceRefs:[REQUIRED_VISUAL_GATE_IDS.includes(id)?reviewRef.path:asset.path]})),
   });
 }
+
+test('real-source whole-object certification cannot be committed without final candidate authority', async (t) => {
+  const {root, source} = await makeProject(t);
+  await advanceToReview(root, source);
+  await assert.rejects(
+    () => commitCertification(root, source, {projection:'good', includeFinalAuthority:false}),
+    /requires exactly one candidate-lineage-proof artifact/,
+  );
+});
+
+test('legacy stored certification without final candidate authority reopens under current runtime', async (t) => {
+  const {root, source} = await makeProject(t, 'test-fixture');
+  await advanceToReview(root, source);
+  await commitCertification(root, source, {projection:'good'});
+  await certifyProject(root);
+
+  const projectPath = path.join(root,'.refas','project.json');
+  const state = JSON.parse(await fs.readFile(projectPath,'utf8'));
+  state.source.acquisition = {kind:'user-provided-reference'};
+  state.contractFixtureAuthority = null;
+  await fs.writeFile(projectPath,`${JSON.stringify(state, null, 2)}\n`);
+
+  const audit = await auditProject(root);
+  assert.equal(audit.valid,false);
+  assert.match(audit.errors.join('\n'),/candidate authority: whole-object-certification requires exactly one candidate-lineage-proof artifact/);
+  const guidance = await resumeProject(root);
+  assert.notEqual(guidance.nextAction,'DONE');
+});
+
 
 test('real source cannot bypass certification by omitting realized reprojection', async (t) => {
   const {root, source} = await makeProject(t);
