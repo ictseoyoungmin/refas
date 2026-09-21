@@ -832,6 +832,30 @@ async function verifyVolumeBarrierArtifacts(root, state, {
   return barrier;
 }
 
+export async function resolveVolumeBarrierAdmission(root, {checkpointId = null, scopeId = null} = {}) {
+  root = projectRoot(root);
+  const state = await loadProject(root);
+  if (!state.source) throw new Error('volume barrier authority requires a bound source');
+  if (isTrustedContractFixtureProject(state)) return null;
+  const checkpoints = await listCheckpoints(root);
+  const targetId = checkpointId ?? state.head;
+  if (!targetId) throw new Error('volume barrier authority requires a checkpoint lineage');
+  const lineage = checkpointLineage(checkpoints, targetId);
+  const target = lineage.at(-1);
+  const resolvedScopeId = assertId(scopeId ?? target.scopeId, 'scopeId');
+  const shapeIndex = [...lineage].map((checkpoint) => checkpoint.capability).lastIndexOf('shape-reconstruction');
+  if (shapeIndex < 0) throw new Error('volume barrier authority requires shape-reconstruction in current lineage');
+  const shapeCheckpoint = lineage[shapeIndex];
+  const prefix = lineage.slice(0, shapeIndex);
+  return deepFreeze(await verifyVolumeBarrierArtifacts(root, state, {
+    lineage,
+    shapeCheckpoint,
+    parentLineage: prefix,
+    requireProceed: false,
+    label: 'volume barrier authority',
+  }));
+}
+
 async function ensureVolumeBarrierAdmission(root, state, capability, scopeId, lineage) {
   if (isTrustedContractFixtureProject(state)) return;
   if (capabilityIndex(capability) < capabilityIndex('surface-topology')) return;
