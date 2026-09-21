@@ -846,6 +846,9 @@ export async function resolveVolumeBarrierAdmission(root, {checkpointId = null, 
   const shapeIndex = [...lineage].map((checkpoint) => checkpoint.capability).lastIndexOf('shape-reconstruction');
   if (shapeIndex < 0) throw new Error('volume barrier authority requires shape-reconstruction in current lineage');
   const shapeCheckpoint = lineage[shapeIndex];
+  if (!scopeContains(shapeCheckpoint.scopeId, resolvedScopeId)) {
+    throw new Error(`volume barrier shape scope ${shapeCheckpoint.scopeId} does not contain requested scope ${resolvedScopeId}`);
+  }
   const prefix = lineage.slice(0, shapeIndex);
   return deepFreeze(await verifyVolumeBarrierArtifacts(root, state, {
     lineage,

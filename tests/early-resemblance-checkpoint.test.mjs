@@ -28,6 +28,7 @@ import {
   initProject,
   partsToGlb,
   resolveAuthoritativeCandidateLineage,
+  resolveVolumeBarrierAdmission,
   resumeProject,
 } from '../skills/refas/scripts/lib/index.mjs';
 import {initTrustedContractFixtureProject} from '../skills/refas/scripts/lib/contract-fixture-project.mjs';
@@ -358,6 +359,16 @@ test('VC04 intentionally-planar protected scope preserves role-aware exception',
   assert.equal(volumeBarrier.entries[0].classification, 'NOT_APPLICABLE');
   const surface = await commitLocal(root, 'surface-topology', [surfaceRef]);
   assert.equal(surface.capability, 'surface-topology');
+});
+
+test('VC04 public resolver honors its requested scope selector', async (t) => {
+  const {root, volumeBarrier} = await makeRealSourceProject(t, 'match');
+  const resolved = await resolveVolumeBarrierAdmission(root, {scopeId: 'whole'});
+  assert.equal(resolved.barrierDigest, volumeBarrier.barrierDigest);
+  await assert.rejects(
+    () => resolveVolumeBarrierAdmission(root, {scopeId: 'whole.missing'}),
+    /does not contain requested scope whole\.missing/u,
+  );
 });
 
 test('VC04 missing shape-stage barrier fails downstream admission', async (t) => {
