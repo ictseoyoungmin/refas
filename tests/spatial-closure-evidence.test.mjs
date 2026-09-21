@@ -140,7 +140,7 @@ test('VC01 measures an exact declared major scope without including sibling geom
         scopeId:'major-body',
         role:'major-body-volume',
         materialId:'fixture',
-        mesh:scopedBox({min:[-1,-2,-0.6],max:[1,2,0.6]}),
+        mesh:scopedBox({min:[-1,-2,-0.5],max:[1,2,0.5]}),
       },
       {
         id:'badge',
@@ -157,8 +157,8 @@ test('VC01 measures an exact declared major scope without including sibling geom
   assert.equal(major.selection.strategy,'exact-node-extras-scope-id');
   assert.equal(major.selection.selectedNodes.length,1);
   assert.equal(major.selection.selectedNodes[0].partId,'body');
-  assert.deepEqual(major.bounds.min,[-1,-2,-0.6]);
-  assert.deepEqual(major.bounds.max,[1,2,0.6]);
-  assert.deepEqual(major.bounds.extent,[2,4,1.2]);
+  assert.deepEqual(major.bounds.min,[-1,-2,-0.5]);
+  assert.deepEqual(major.bounds.max,[1,2,0.5]);
+  assert.deepEqual(major.bounds.extent,[2,4,1]);
   assert.notDeepEqual(major.bounds,whole.bounds);
 });
