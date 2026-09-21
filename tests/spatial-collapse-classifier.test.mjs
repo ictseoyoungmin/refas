@@ -96,6 +96,14 @@ test('VC03 separates planar and volumetric controls under the same frozen volume
   assert.equal(planar.decisionBasis.noAggregateScore,true);
 });
 
+test('VC03 applies the same multi-signal contradiction rule to layered-volume',()=> {
+  const planar=classifyFixture('gpt-planar-bird-surrogate','layered-volume');
+  const volumetric=classifyFixture('claude-volumetric-bird-surrogate','layered-volume');
+  assert.equal(planar.classification,'PLANAR_COLLAPSE');
+  assert.equal(volumetric.classification,'NO_PLANAR_COLLAPSE');
+  assert.equal(planar.frozenRole,'layered-volume');
+});
+
 test('VC03 preserves legitimate thin semantics and proves role changes matter without rewriting VC02',()=>{
   const expectedPlanar=classifyFixture('intentionally-thin-panel','intentionally-planar');
   const shell=classifyFixture('intentionally-thin-panel','thin-shell');
@@ -128,16 +136,16 @@ test('VC03 rod/tubular logic distinguishes a tube from a ribbon using transverse
 });
 
 test('VC03 does not promote one suspicious signal into PLANAR_COLLAPSE',()=>{
-  const fixture=buildVolumeClosureRegressionFixture('claude-volumetric-bird-surrogate');
-  const evidence=createSpatialClosureEvidence({glb:fixture.glb});
-  const altered=structuredClone(evidence);
-  altered.principal.axes[2].extent=altered.principal.axes[1].extent*0.05;
-  const auth=authority('volumetric');
-  // Pure decision helper is deliberately not exposed publicly; use a canonical evidence fixture
-  // whose role-specific tube logic yields mixed evidence instead.
-  const mixed=rodGlb([5,0.6,0.18]);
-  const mixedEvidence=createSpatialClosureEvidence({glb:mixed});
-  const result=_classifySpatialCollapseFromAuthority({glb:mixed,spatialEvidence:mixedEvidence,roleAuthority:authority('rod-tubular')});
+  const elongated=rodGlb([0.5,5,0.5]);
+  const evidence=createSpatialClosureEvidence({glb:elongated});
+  const result=_classifySpatialCollapseFromAuthority({
+    glb:elongated,
+    spatialEvidence:evidence,
+    roleAuthority:authority('volumetric'),
+  });
+  const used=result.signals.volumetricFamilies.filter((signal)=>signal.band==='collapsed');
+  assert.equal(used.length,1);
+  assert.equal(used[0].id,'orthogonal-projection-support');
   assert.notEqual(result.classification,'PLANAR_COLLAPSE');
 });
 
