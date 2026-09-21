@@ -28,6 +28,9 @@ import {findComparisonContradictions, validateRegisteredComparison} from './regi
 import {assertEarlyResemblanceAdmission} from './early-resemblance-barrier.mjs';
 import {validateFinalResemblanceClosure} from './final-resemblance-closure.mjs';
 import {validateSpatialRoleExpectationSet} from './spatial-role-expectation.mjs';
+import {validateSpatialClosureEvidence} from './spatial-closure-evidence.mjs';
+import {_classifySpatialCollapseFromAuthority} from './spatial-collapse-core.mjs';
+import {assertVolumeBarrierAdmission, validateVolumeBarrier} from './volume-barrier.mjs';
 import {
   createCandidateLineageProof,
   isCandidateMutationCapability,
@@ -718,6 +721,146 @@ async function ensureEarlyResemblanceAdmission(root, state, capability, scopeId,
   });
 }
 
+async function parseJsonArtifacts(root, artifacts, kind, label) {
+  const out = [];
+  for (const artifact of artifacts.filter((item) => item.kind === kind)) {
+    out.push({artifact, value: await readStoredJsonArtifact(root, artifact, `${label} ${kind}`)});
+  }
+  return out;
+}
+
+async function verifyVolumeBarrierArtifacts(root, state, {
+  lineage = [],
+  shapeCheckpoint = null,
+  shapeArtifacts = null,
+  parentLineage = null,
+  requireProceed = false,
+  label = 'volume barrier',
+} = {}) {
+  const artifacts = shapeArtifacts ?? shapeCheckpoint?.artifactRefs ?? [];
+  const candidateArtifacts = candidateGlbArtifacts(artifacts);
+  if (candidateArtifacts.length !== 1) throw new Error(`${label} requires exactly one shape candidate GLB`);
+  const candidate = candidateArtifacts[0];
+  const glb = await fs.readFile(objectPath(root, candidate.sha256));
+
+  const earlyArtifacts = artifacts.filter((artifact) => artifact.kind === 'early-resemblance-barrier');
+  if (earlyArtifacts.length !== 1) throw new Error(`${label} requires exactly one early-resemblance-barrier artifact`);
+  const early = await readStoredJsonArtifact(root, earlyArtifacts[0], `${label} early resemblance artifact`);
+  if (early.assetSha256 !== candidate.sha256) throw new Error(`${label} early resemblance candidate binding mismatch`);
+  const signatureSet = early.signatureEvidence?.signatureSet;
+  if (!signatureSet) throw new Error(`${label} requires the exact R03 signature set embedded in early resemblance evidence`);
+
+  const barrierArtifacts = artifacts.filter((artifact) => artifact.kind === 'volume-barrier');
+  if (barrierArtifacts.length !== 1) throw new Error(`${label} requires exactly one volume-barrier artifact`);
+  const barrier = await readStoredJsonArtifact(root, barrierArtifacts[0], `${label} artifact`);
+
+  const evidenceRecords = await parseJsonArtifacts(root, artifacts, 'spatial-closure-evidence', label);
+  const classificationRecords = await parseJsonArtifacts(root, artifacts, 'spatial-collapse-classification', label);
+  const classificationByScope = new Map();
+  for (const record of classificationRecords) {
+    const scopeId = record.value?.scopeId;
+    if (!scopeId) throw new Error(`${label} contains classification without scopeId`);
+    if (classificationByScope.has(scopeId)) throw new Error(`${label} contains competing VC03 classifications for scope ${scopeId}`);
+    classificationByScope.set(scopeId, record);
+  }
+
+  const evidenceByDigest = new Map();
+  for (const record of evidenceRecords) {
+    const digest = record.value?.evidenceDigest;
+    if (!digest) throw new Error(`${label} contains VC01 evidence without evidenceDigest`);
+    if (evidenceByDigest.has(digest)) throw new Error(`${label} contains duplicate VC01 evidence digest ${digest}`);
+    evidenceByDigest.set(digest, record);
+  }
+
+  const authorityLineage = parentLineage ?? lineage;
+  const canonicalClassifications = [];
+  for (const entry of barrier.entries ?? []) {
+    const classificationRecord = classificationByScope.get(entry.scopeId);
+    if (!classificationRecord) throw new Error(`${label} is missing exact VC03 classification artifact for protected scope ${entry.scopeId}`);
+    const classification = classificationRecord.value;
+    if (classification.classificationDigest !== entry.classificationDigest) {
+      throw new Error(`${label} classification digest binding mismatch for scope ${entry.scopeId}`);
+    }
+    const evidenceRecord = evidenceByDigest.get(classification.spatialEvidenceDigest);
+    if (!evidenceRecord) throw new Error(`${label} is missing exact VC01 evidence for protected scope ${entry.scopeId}`);
+    const evidence = evidenceRecord.value;
+    const evidenceValidation = validateSpatialClosureEvidence(evidence, {glb});
+    if (!evidenceValidation.valid) {
+      throw new Error(`${label} VC01 evidence is invalid for scope ${entry.scopeId}: ${evidenceValidation.errors.join('; ')}`);
+    }
+    if (evidence.scopeId !== entry.scopeId) throw new Error(`${label} VC01 scope mismatch for protected scope ${entry.scopeId}`);
+
+    const roleAuthority = await resolveSpatialRoleAuthorityFromLineage(root, state, authorityLineage, {scopeId: entry.scopeId});
+    if (!roleAuthority) throw new Error(`${label} requires frozen VC02 role authority for protected scope ${entry.scopeId}`);
+    const expectedClassification = _classifySpatialCollapseFromAuthority({
+      glb,
+      spatialEvidence: evidence,
+      roleAuthority,
+    });
+    if (digestJson(expectedClassification) !== digestJson(classification)) {
+      throw new Error(`${label} VC03 classification is stale or non-canonical for protected scope ${entry.scopeId}`);
+    }
+    canonicalClassifications.push(classification);
+  }
+
+  for (const record of classificationRecords) {
+    if (!canonicalClassifications.some((item) => item.scopeId === record.value.scopeId)) canonicalClassifications.push(record.value);
+  }
+
+  const hierarchyCheckpoint = [...authorityLineage].reverse().find((checkpoint) => checkpoint.capability === 'visual-hierarchy');
+  if (!hierarchyCheckpoint) throw new Error(`${label} requires current visual-hierarchy lineage`);
+  const {value: hierarchy} = await readCheckpointJsonArtifact(root, hierarchyCheckpoint, 'visual-hierarchy', label);
+
+  const validation = validateVolumeBarrier(barrier, {
+    sourceSha256: state.source.sha256,
+    hierarchyDigest: hierarchy.hierarchyDigest,
+    assetSha256: candidate.sha256,
+    signatureSet,
+    classifications: canonicalClassifications,
+  });
+  if (!validation.valid) throw new Error(`${label} is invalid: ${validation.errors.join('; ')}`);
+
+  if (requireProceed) {
+    assertVolumeBarrierAdmission(barrier, {
+      sourceSha256: state.source.sha256,
+      hierarchyDigest: hierarchy.hierarchyDigest,
+      assetSha256: candidate.sha256,
+      signatureSet,
+      classifications: canonicalClassifications,
+    });
+  }
+  return barrier;
+}
+
+async function validateProspectiveVolumeBarrier(root, state, {capability, parentLineage, storedArtifacts} = {}) {
+  if (isTrustedContractFixtureProject(state) || capability !== 'shape-reconstruction') return null;
+  return verifyVolumeBarrierArtifacts(root, state, {
+    parentLineage,
+    shapeArtifacts: storedArtifacts,
+    requireProceed: false,
+    label: 'shape-reconstruction volume barrier',
+  });
+}
+
+async function ensureVolumeBarrierAdmission(root, state, capability, scopeId, lineage) {
+  if (isTrustedContractFixtureProject(state)) return;
+  if (capabilityIndex(capability) < capabilityIndex('surface-topology')) return;
+  const shapeIndex = [...lineage].map((checkpoint) => checkpoint.capability).lastIndexOf('shape-reconstruction');
+  if (shapeIndex < 0) throw new Error(`${capability} requires a trustworthy shape-reconstruction checkpoint before volume admission`);
+  const shapeCheckpoint = lineage[shapeIndex];
+  if (!scopeContains(shapeCheckpoint.scopeId, scopeId)) {
+    throw new Error(`${capability} volume barrier shape scope does not contain ${scopeId}`);
+  }
+  const prefix = lineage.slice(0, shapeIndex);
+  return verifyVolumeBarrierArtifacts(root, state, {
+    lineage,
+    shapeCheckpoint,
+    parentLineage: prefix,
+    requireProceed: true,
+    label: `${capability} whole-before-parts volume admission`,
+  });
+}
+
 
 
 async function verifyFinalResemblanceClosureArtifacts(root, state, {
@@ -1198,6 +1341,7 @@ async function ensurePrerequisites(root, state, capability, scopeId, lineage) {
 
   await ensureEarlyResemblanceAdmission(root, state, capability, scopeId, lineage);
   await resolveSpatialRoleAuthorityFromLineage(root, state, lineage);
+  await ensureVolumeBarrierAdmission(root, state, capability, scopeId, lineage);
 }
 
 function nextInvalidated(state) {
@@ -1340,6 +1484,9 @@ export async function commitCheckpoint(root, {
   });
   await validateProspectiveCandidateAuthority(root, state, {
     capability, scopeId, parentId: parent, parentLineage, storedArtifacts,
+  });
+  await validateProspectiveVolumeBarrier(root, state, {
+    capability, parentLineage, storedArtifacts,
   });
   const runtimeGates = await evaluateCheckpointGateRequests(root, {
     state, capability, scopeId, requests: gateRequests, storedArtifacts, lineage,
