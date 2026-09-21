@@ -13,6 +13,7 @@ import {
   assessCertification,
   commitCheckpoint,
   contentReference,
+  createCandidateTransition,
   createEarlyResemblanceBarrier,
   createPbrRenderReport,
   createPerceptualSignatureEvidence,
@@ -20,6 +21,7 @@ import {
   createVisualHierarchy,
   digestBytes,
   initProject,
+  resolveAuthoritativeCandidateLineage,
   resumeProject,
 } from '../skills/refas/scripts/lib/index.mjs';
 import {initTrustedContractFixtureProject} from '../skills/refas/scripts/lib/contract-fixture-project.mjs';
@@ -187,10 +189,10 @@ async function makeRealSourceProject(t, verdictStatus, {unboundObservationEviden
     Buffer.from(`${JSON.stringify(barrier, null, 2)}\n`),
     'early-resemblance-barrier',
   );
-  await commitLocal(root, 'shape-reconstruction', [candidateRef, barrierRef, clay.reportRef, ...clay.frameRefs]);
+  const shapeCheckpoint = await commitLocal(root, 'shape-reconstruction', [candidateRef, barrierRef, clay.reportRef, ...clay.frameRefs]);
 
   const surfaceRef = await writeRef(root, 'model/surface.json', Buffer.from('{"surface":true}\n'), 'surface-network');
-  return {root, barrier, surfaceRef};
+  return {root, source, hierarchy, barrier, surfaceRef, candidateRef, shapeCheckpoint};
 }
 
 test('R04 real-source HOLD blocks surface-topology admission', async (t) => {
@@ -231,6 +233,67 @@ test('R04 real-source PROCEED admits surface-topology but grants no certificatio
   assert.equal(guidance.activeWork.capability, 'surface-topology');
   const surface = await commitLocal(root, 'surface-topology', [surfaceRef]);
   assert.equal(surface.capability, 'surface-topology');
+});
+
+
+test('candidate authority rejects a downstream GLB replacement without a transition', async (t) => {
+  const {root, surfaceRef} = await makeRealSourceProject(t, 'match');
+  const replacement = await writeRef(root, 'model/candidate-v2.glb', Buffer.from('candidate v2 bytes\n'), 'glb');
+  await assert.rejects(
+    () => commitLocal(root, 'surface-topology', [surfaceRef, replacement]),
+    /changed the authoritative candidate and requires exactly one candidate-transition artifact/,
+  );
+});
+
+test('candidate authority accepts one exact transition and resolves the new final candidate', async (t) => {
+  const {root, surfaceRef} = await makeRealSourceProject(t, 'match');
+  const before = await resolveAuthoritativeCandidateLineage(root);
+  const replacement = await writeRef(root, 'model/candidate-v2.glb', Buffer.from('candidate v2 bytes\n'), 'glb');
+  const transition = createCandidateTransition({
+    inputAssetSha256:before.finalCandidate.assetSha256,
+    outputAssetSha256:replacement.sha256,
+    inputCandidateCheckpointId:before.finalCandidate.checkpointId,
+    parentCheckpointId:before.finalCandidate.checkpointId,
+    capability:'surface-topology',
+    scopeId:'whole',
+    evidenceRefs:[replacement.path],
+  });
+  const transitionRef = await writeRef(
+    root,
+    'model/candidate-transition-surface.json',
+    Buffer.from(`${JSON.stringify(transition, null, 2)}\n`),
+    'candidate-transition',
+  );
+  const checkpoint = await commitLocal(root, 'surface-topology', [surfaceRef, replacement, transitionRef]);
+  const after = await resolveAuthoritativeCandidateLineage(root);
+  assert.equal(after.finalCandidate.assetSha256,replacement.sha256);
+  assert.equal(after.finalCandidate.checkpointId,checkpoint.id);
+  assert.equal(after.transitions.length,1);
+  assert.equal(after.transitions[0].transitionDigest,transition.transitionDigest);
+});
+
+test('candidate authority rejects a re-signed transition with stale runtime input', async (t) => {
+  const {root, surfaceRef, shapeCheckpoint} = await makeRealSourceProject(t, 'match');
+  const replacement = await writeRef(root, 'model/candidate-v2.glb', Buffer.from('candidate v2 stale input bytes\n'), 'glb');
+  const transition = createCandidateTransition({
+    inputAssetSha256:D('f'),
+    outputAssetSha256:replacement.sha256,
+    inputCandidateCheckpointId:shapeCheckpoint.id,
+    parentCheckpointId:shapeCheckpoint.id,
+    capability:'surface-topology',
+    scopeId:'whole',
+    evidenceRefs:[replacement.path],
+  });
+  const transitionRef = await writeRef(
+    root,
+    'model/candidate-transition-stale.json',
+    Buffer.from(`${JSON.stringify(transition, null, 2)}\n`),
+    'candidate-transition',
+  );
+  await assert.rejects(
+    () => commitLocal(root, 'surface-topology', [surfaceRef, replacement, transitionRef]),
+    /input candidate digest mismatch/,
+  );
 });
 
 
