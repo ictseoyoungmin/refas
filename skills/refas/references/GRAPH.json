@@ -966,6 +966,55 @@
               "verification": "structural",
               "reason": "stateful filesystem-bound classifier resolves frozen VC02 authority from checkpoint lineage and revalidates VC01 evidence against exact GLB bytes"
             }
+          },
+          {
+            "id": "volume-barrier",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createVolumeBarrier"
+            },
+            "template": null,
+            "inputContract": "source/hierarchy/candidate bindings + exact R03 signature set + canonical VC03 classifications for whole and identity-bearing scopes",
+            "outputSchema": "refas.volume-barrier/v1",
+            "validator": {
+              "library": "validateVolumeBarrier"
+            },
+            "minimumInvocation": "references/spatial-reasoning.md",
+            "example": null,
+            "publicConstants": [
+              "VOLUME_BARRIER_SCHEMA",
+              "VOLUME_BARRIER_VERDICTS",
+              "VOLUME_BARRIER_SCOPE_STATUSES"
+            ],
+            "usageReference": "references/spatial-reasoning.md",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "VC04 barrier construction binds multiple upstream canonical artifacts; runtime regression verifies exact candidate/role/classification replay"
+            }
+          },
+          {
+            "id": "resolve-volume-barrier-authority",
+            "operation": "inspect",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "resolveVolumeBarrierAdmission"
+            },
+            "template": null,
+            "inputContract": "initialized project root + optional checkpoint/scope selector; runtime replays exact VC01/VC02/VC03 authority and returns shape-stage whole-before-parts barrier",
+            "outputSchema": "refas.volume-barrier/v1",
+            "validator": null,
+            "minimumInvocation": "references/spatial-reasoning.md",
+            "example": null,
+            "usageReference": "references/spatial-reasoning.md",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "stateful filesystem-bound authority resolution over checkpoint lineage and immutable candidate evidence"
+            }
           }
         ]
       }

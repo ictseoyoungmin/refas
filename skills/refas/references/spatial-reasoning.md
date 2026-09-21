@@ -190,3 +190,69 @@ VC03 contradiction classification
 ```
 
 It does not set certification readiness, issue trusted gate PASS, or satisfy final spatial closure. Those remain later VC04/VC05/VC07 responsibilities.
+
+
+## VC04 whole-before-parts volume barrier
+
+VC04 turns VC01/VC02/VC03 into **shape-stage downstream admission authority** without turning them into final certification.
+
+Create `refas.volume-barrier/v1` from:
+
+- exact source SHA-256;
+- exact visual-hierarchy digest;
+- exact shape candidate asset SHA-256;
+- the exact R03 perceptual-signature set embedded in the early-resemblance evidence;
+- canonical VC03 classifications.
+
+Protected scopes are derived, not caller-selected:
+
+1. `whole` is always protected;
+2. every scope carrying at least one R03 `macro` or `identity` signature is protected;
+3. detail-only scopes may be measured/classified, but they are recorded as ignored for barrier authority and cannot compensate for a failed whole or major identity scope.
+
+### Role-aware scope admission
+
+For protected `volumetric`, `layered-volume`, and `rod-tubular` scopes:
+
+- VC03 `NO_PLANAR_COLLAPSE` → `ADMITTED`;
+- VC03 `PLANAR_COLLAPSE` → `REWORK`;
+- VC03 `INDETERMINATE` → `HOLD`.
+
+For protected `intentionally-planar` or `thin-shell` scopes, exact VC03 `NOT_APPLICABLE` is an admitted role-aware exception.
+
+For protected `unresolved` scopes, VC03 `INDETERMINATE` remains `HOLD`.
+
+Overall barrier verdict:
+
+```text
+any REWORK → REWORK
+else any HOLD → HOLD
+else → PROCEED
+```
+
+There is no aggregate score and no majority vote. One failed protected major scope blocks the whole barrier.
+
+### Runtime replay
+
+Before `surface-topology` and later capabilities, RefAs locates the shape-reconstruction checkpoint and replays the barrier from exact stored artifacts:
+
+- shape candidate GLB bytes;
+- R03 signature set through the early-resemblance barrier;
+- one VC01 spatial-evidence artifact per protected scope;
+- one VC03 classification artifact per protected scope;
+- frozen VC02 authority resolved independently for each protected scope.
+
+Each VC01 record is revalidated against the exact shape GLB. Each VC03 classification is recomputed through the pure classifier core using the frozen VC02 role. The stored volume barrier is then regenerated and compared canonically. Caller-authored barrier verdicts therefore have no authority.
+
+`resolveVolumeBarrierAdmission(root, {checkpointId, scopeId})` exposes the replayed barrier for inspection.
+
+### Authority boundary
+
+`PROCEED` authorizes downstream detail only. It does **not**:
+
+- certify the asset;
+- prove the final downstream-mutated candidate remains spatially closed;
+- replace VC06 candidate-bound multiview continuity;
+- replace VC07 certification integration.
+
+This distinction is deliberate: VC04 prevents polishing a collapsed base shape, while later slices preserve volume authority across candidate mutation and final closure.
