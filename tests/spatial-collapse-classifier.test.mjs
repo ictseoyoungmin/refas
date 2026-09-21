@@ -222,3 +222,13 @@ test('VC03 public classifier resolves the frozen VC02 role from project lineage'
   assert.equal(result.frozenRole,'volumetric');
   assert.equal(result.classification,'PLANAR_COLLAPSE');
 });
+
+
+test('VC03 public classifier rejects caller role override attempts',async(t)=>{
+  const root=await fs.mkdtemp(path.join(os.tmpdir(),'refas-vc03-override-'));
+  t.after(()=>fs.rm(root,{recursive:true,force:true}));
+  await assert.rejects(
+    ()=>classifySpatialCollapse(root,{role:'thin-shell'}),
+    /unsupported field role; frozen VC02 role cannot be overridden/u,
+  );
+});

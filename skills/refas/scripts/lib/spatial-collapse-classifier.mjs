@@ -258,7 +258,13 @@ export function _classifySpatialCollapseFromAuthority({glb,spatialEvidence,roleA
   return deepFreeze({...payload,classificationDigest:digestJson(payload)});
 }
 
-export async function classifySpatialCollapse(root,{checkpointId=null,scopeId=null,glb,spatialEvidence}={}){
+export async function classifySpatialCollapse(root,input={}){
+  const allowed=new Set(['checkpointId','scopeId','glb','spatialEvidence']);
+  if(!input||typeof input!=='object'||Array.isArray(input)) throw new Error('VC03 classifier input must be an object');
+  for(const key of Object.keys(input)){
+    if(!allowed.has(key)) throw new Error(`VC03 classifier input contains unsupported field ${key}; frozen VC02 role cannot be overridden`);
+  }
+  const {checkpointId=null,scopeId=null,glb,spatialEvidence}=input;
   const resolvedScope=assertId(scopeId??spatialEvidence?.scopeId,'scopeId');
   if(spatialEvidence?.scopeId!==resolvedScope) throw new Error('VC03 requested scope must exactly match VC01 evidence scope');
   const roleAuthority=await resolveSpatialRoleAuthority(root,{checkpointId,scopeId:resolvedScope});
