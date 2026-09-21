@@ -49,6 +49,24 @@ function mutateFirstPositionAccessorToUnsignedShort(glb) {
   return bytes;
 }
 
+
+function shrinkFirstPositionBufferView(glb) {
+  const bytes=Buffer.from(glb);
+  const jsonLength=bytes.readUInt32LE(12);
+  const jsonStart=20;
+  const json=JSON.parse(bytes.subarray(jsonStart,jsonStart+jsonLength).toString('utf8').trim());
+  const positionAccessor=json.accessors.find((entry)=>entry?.componentType===5126&&entry?.type==='VEC3');
+  if(!positionAccessor) throw new Error('fixture GLB has no FLOAT VEC3 POSITION accessor');
+  const view=json.bufferViews[positionAccessor.bufferView];
+  if(!view) throw new Error('fixture POSITION accessor has no bufferView');
+  view.byteLength=4;
+  const encoded=Buffer.from(JSON.stringify(json),'utf8');
+  if(encoded.length>jsonLength) throw new Error('mutated JSON no longer fits original GLB JSON chunk');
+  bytes.fill(0x20,jsonStart,jsonStart+jsonLength);
+  encoded.copy(bytes,jsonStart);
+  return bytes;
+}
+
 test('VC01 derives byte-deterministic observation evidence from the exact candidate', () => {
   const fixture = buildVolumeClosureRegressionFixture('claude-volumetric-bird-surrogate');
   const first = createSpatialClosureEvidence({glb: fixture.glb, scopeId: 'whole'});
@@ -185,5 +203,47 @@ test('VC01 rejects malformed non-FLOAT POSITION accessors instead of measuring p
   assert.throws(
     () => createSpatialClosureEvidence({glb:malformed,scopeId:'whole'}),
     /POSITION accessor must be non-normalized FLOAT VEC3/u,
+  );
+});
+
+
+test('VC01 rejects accessors that spill beyond their declared bufferView even when BIN bytes exist', () => {
+  const fixture=buildVolumeClosureRegressionFixture('claude-volumetric-bird-surrogate');
+  const malformed=shrinkFirstPositionBufferView(fixture.glb);
+  assert.throws(
+    () => createSpatialClosureEvidence({glb:malformed,scopeId:'whole'}),
+    /accessor \d+ exceeds its declared bufferView/u,
+  );
+});
+
+
+test('VC01 volumetric control retains material front/back and orthogonal projected support', () => {
+  const fixture=buildVolumeClosureRegressionFixture('claude-volumetric-bird-surrogate');
+  const evidence=createSpatialClosureEvidence({glb:fixture.glb,scopeId:'whole'});
+  assert.ok(evidence.frontBackSupport.vertices.front.count>0);
+  assert.ok(evidence.frontBackSupport.vertices.back.count>0);
+  assert.ok(evidence.frontBackSupport.triangles.front.count>0);
+  assert.ok(evidence.frontBackSupport.triangles.back.count>0);
+  assert.ok(evidence.projectedSupport.SIDE.boundsArea>0);
+  assert.ok(evidence.projectedSupport.TOP.boundsArea>0);
+  assert.ok(evidence.localThickness.z.thickness.maximum>0);
+});
+
+test('VC01 rejects world-transformed near-zero geometry as non-measurable', () => {
+  const glb=partsToGlb({
+    assetId:'vc01-near-zero-world-scale',
+    materials:{fixture:{baseColor:[0.5,0.5,0.5,1],metallic:0,roughness:0.5}},
+    parts:[{
+      id:'near-zero',
+      scopeId:'whole',
+      role:'degenerate-control',
+      materialId:'fixture',
+      mesh:scopedBox({min:[-0.5,-0.5,-0.5],max:[0.5,0.5,0.5]}),
+      scale:[1e-14,1e-14,1e-14],
+    }],
+  });
+  assert.throws(
+    () => createSpatialClosureEvidence({glb,scopeId:'whole'}),
+    /no non-degenerate triangles/u,
   );
 });

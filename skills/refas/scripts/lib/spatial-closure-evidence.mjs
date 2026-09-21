@@ -109,13 +109,28 @@ function readAccessor(json, binary, accessorIndex) {
   const width = TYPE_WIDTH[accessor?.type];
   if (!accessor || !bufferView || !component || !width || accessor.sparse) throw new Error(`unsupported accessor ${accessorIndex}`);
   if (bufferView.buffer !== 0) throw new Error('spatial closure evidence requires the embedded GLB buffer');
-  const stride = Number(bufferView.byteStride ?? component.size * width);
-  const start = Number(bufferView.byteOffset ?? 0) + Number(accessor.byteOffset ?? 0);
-  if (stride < component.size * width) throw new Error(`accessor ${accessorIndex} byteStride is too small`);
+
+  const count = Number(accessor.count);
+  const viewStart = Number(bufferView.byteOffset ?? 0);
+  const viewLength = Number(bufferView.byteLength);
+  const accessorOffset = Number(accessor.byteOffset ?? 0);
+  const elementSize = component.size * width;
+  const stride = Number(bufferView.byteStride ?? elementSize);
+
+  if (!Number.isInteger(count) || count < 1) throw new Error(`accessor ${accessorIndex} count must be a positive integer`);
+  if (!Number.isInteger(viewStart) || viewStart < 0 || !Number.isInteger(viewLength) || viewLength < 0) throw new Error(`accessor ${accessorIndex} bufferView range is invalid`);
+  if (!Number.isInteger(accessorOffset) || accessorOffset < 0) throw new Error(`accessor ${accessorIndex} byteOffset must be a non-negative integer`);
+  if (!Number.isInteger(stride) || stride < elementSize || stride % component.size !== 0) throw new Error(`accessor ${accessorIndex} byteStride is invalid`);
+
+  const viewEnd = viewStart + viewLength;
+  const start = viewStart + accessorOffset;
+  const end = start + (count - 1) * stride + elementSize;
+  if (viewEnd > binary.length) throw new Error(`accessor ${accessorIndex} bufferView exceeds BIN chunk`);
+  if (start < viewStart || end > viewEnd) throw new Error(`accessor ${accessorIndex} exceeds its declared bufferView`);
+
   const data = new DataView(binary.buffer, binary.byteOffset, binary.byteLength), output = [];
-  for (let item = 0; item < accessor.count; item += 1) {
+  for (let item = 0; item < count; item += 1) {
     const base = start + item * stride;
-    if (base + component.size * width > binary.length) throw new Error(`accessor ${accessorIndex} exceeds BIN chunk`);
     const values = [];
     for (let lane = 0; lane < width; lane += 1) values.push(component.read(data, base + lane * component.size));
     output.push(width === 1 ? values[0] : values);
