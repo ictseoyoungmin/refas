@@ -215,3 +215,35 @@ test('VC01 rejects accessors that spill beyond their declared bufferView even wh
     /accessor \d+ exceeds its declared bufferView/u,
   );
 });
+
+
+test('VC01 volumetric control retains material front/back and orthogonal projected support', () => {
+  const fixture=buildVolumeClosureRegressionFixture('claude-volumetric-bird-surrogate');
+  const evidence=createSpatialClosureEvidence({glb:fixture.glb,scopeId:'whole'});
+  assert.ok(evidence.frontBackSupport.vertices.front.count>0);
+  assert.ok(evidence.frontBackSupport.vertices.back.count>0);
+  assert.ok(evidence.frontBackSupport.triangles.front.count>0);
+  assert.ok(evidence.frontBackSupport.triangles.back.count>0);
+  assert.ok(evidence.projectedSupport.SIDE.boundsArea>0);
+  assert.ok(evidence.projectedSupport.TOP.boundsArea>0);
+  assert.ok(evidence.localThickness.z.thickness.maximum>0);
+});
+
+test('VC01 rejects world-transformed near-zero geometry as non-measurable', () => {
+  const glb=partsToGlb({
+    assetId:'vc01-near-zero-world-scale',
+    materials:{fixture:{baseColor:[0.5,0.5,0.5,1],metallic:0,roughness:0.5}},
+    parts:[{
+      id:'near-zero',
+      scopeId:'whole',
+      role:'degenerate-control',
+      materialId:'fixture',
+      mesh:scopedBox({min:[-0.5,-0.5,-0.5],max:[0.5,0.5,0.5]}),
+      scale:[1e-14,1e-14,1e-14],
+    }],
+  });
+  assert.throws(
+    () => createSpatialClosureEvidence({glb,scopeId:'whole'}),
+    /no non-degenerate triangles/u,
+  );
+});
