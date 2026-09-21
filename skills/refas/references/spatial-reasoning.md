@@ -74,3 +74,30 @@ The optional registered hero camera is written in canonical local coordinates an
 ## Worked example
 
 When a single frontal view can be matched by a deceptively flat candidate, or when it is unclear how to distinguish source facts from the 3D completion needed for a coherent asset, read `references/single-view-volumetric-reasoning-example.md`. The example demonstrates observation -> spatial hypothesis -> orthogonal self-check -> revision while keeping inferred geometry distinct from observed source truth.
+
+
+## VC01 candidate-bound spatial closure evidence
+
+Use `createSpatialClosureEvidence({glb, scopeId, crossSectionFractions, gridResolution})` when the task needs deterministic observation of the actual 3D support present in one exact candidate.
+
+The creator hashes the supplied GLB bytes itself and measures active-scene world-space geometry. `scopeId: "whole"` selects every active-scene mesh node. Any other scope ID selects only mesh nodes whose `node.extras.scopeId` exactly matches; an unknown scope fails instead of silently falling back to the whole object.
+
+The `refas.spatial-closure-evidence/v1` artifact records:
+
+- canonical XYZ bounds/extents and surface/geometry counts;
+- covariance-derived principal axes/extents;
+- deterministic cross-section support at fixed fractions on X/Y/Z;
+- positive-Z/negative-Z front/back support relative to the selected bounds center;
+- FRONT/XY, SIDE/ZY, and TOP/XZ projected support;
+- local thickness distributions on deterministic orthogonal grids.
+
+This is **VC01 observation evidence only**. It deliberately does not contain a spatial role, `PLANAR_COLLAPSE` classification, PASS/FAIL verdict, or certification readiness. A thin panel and a collapsed torso may both produce very small depth measurements here; VC02 must bind the intended spatial role before VC03 interprets those measurements.
+
+Validation must receive the exact GLB bytes again:
+
+```js
+const evidence = createSpatialClosureEvidence({glb: candidateBytes, scopeId: 'whole'});
+const check = validateSpatialClosureEvidence(evidence, {glb: candidateBytes});
+```
+
+Do not pass a caller-selected candidate digest as authority. The digest in the evidence is derived from the measured bytes.

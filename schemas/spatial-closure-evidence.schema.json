@@ -1,0 +1,549 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/spatial-closure-evidence.schema.json",
+  "title": "RefAs candidate-bound spatial closure evidence",
+  "type": "object",
+  "required": [
+    "schema",
+    "assetSha256",
+    "scopeId",
+    "frame",
+    "selection",
+    "sampling",
+    "geometry",
+    "bounds",
+    "principal",
+    "crossSections",
+    "frontBackSupport",
+    "projectedSupport",
+    "localThickness",
+    "policy",
+    "evidenceDigest"
+  ],
+  "properties": {
+    "schema": {
+      "const": "refas.spatial-closure-evidence/v1"
+    },
+    "assetSha256": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "scopeId": {
+      "$ref": "common.schema.json#/$defs/semanticId"
+    },
+    "frame": {
+      "type": "object",
+      "required": [
+        "convention",
+        "axes",
+        "canonicalViews"
+      ],
+      "properties": {
+        "convention": {
+          "const": "gltf-active-scene-world"
+        },
+        "axes": {
+          "type": "object"
+        },
+        "canonicalViews": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    },
+    "selection": {
+      "type": "object",
+      "required": [
+        "strategy",
+        "selectedNodes"
+      ],
+      "properties": {
+        "strategy": {
+          "enum": [
+            "active-scene-all-mesh-nodes",
+            "exact-node-extras-scope-id"
+          ]
+        },
+        "selectedNodes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "nodeIndex",
+              "meshIndex",
+              "partId",
+              "declaredScopeId",
+              "vertexCount",
+              "triangleCount"
+            ],
+            "properties": {
+              "nodeIndex": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "meshIndex": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "partId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "declaredScopeId": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "vertexCount": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "triangleCount": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "sampling": {
+      "type": "object",
+      "required": [
+        "deterministic",
+        "crossSectionFractions",
+        "gridResolution",
+        "vertexSubsampling",
+        "triangleSubsampling"
+      ],
+      "properties": {
+        "deterministic": {
+          "const": true
+        },
+        "crossSectionFractions": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "exclusiveMaximum": 1
+          }
+        },
+        "gridResolution": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 64
+        },
+        "vertexSubsampling": {
+          "const": "none"
+        },
+        "triangleSubsampling": {
+          "const": "none"
+        }
+      },
+      "additionalProperties": false
+    },
+    "geometry": {
+      "type": "object",
+      "required": [
+        "nodeCount",
+        "primitiveCount",
+        "vertexCount",
+        "triangleCount",
+        "surfaceArea"
+      ],
+      "properties": {
+        "nodeCount": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "primitiveCount": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "vertexCount": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "triangleCount": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "surfaceArea": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "bounds": {
+      "$ref": "#/$defs/bounds3"
+    },
+    "principal": {
+      "type": "object",
+      "required": [
+        "centroid",
+        "axes"
+      ],
+      "properties": {
+        "centroid": {
+          "$ref": "#/$defs/vec3"
+        },
+        "axes": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "vector",
+              "variance",
+              "minimum",
+              "maximum",
+              "extent"
+            ],
+            "properties": {
+              "id": {
+                "enum": [
+                  "p1",
+                  "p2",
+                  "p3"
+                ]
+              },
+              "vector": {
+                "$ref": "#/$defs/vec3"
+              },
+              "variance": {
+                "type": "number",
+                "minimum": 0
+              },
+              "minimum": {
+                "type": "number"
+              },
+              "maximum": {
+                "type": "number"
+              },
+              "extent": {
+                "type": "number",
+                "minimum": 0
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "crossSections": {
+      "type": "object",
+      "required": [
+        "x",
+        "y",
+        "z"
+      ],
+      "properties": {
+        "x": {
+          "$ref": "#/$defs/crossSectionArray"
+        },
+        "y": {
+          "$ref": "#/$defs/crossSectionArray"
+        },
+        "z": {
+          "$ref": "#/$defs/crossSectionArray"
+        }
+      },
+      "additionalProperties": false
+    },
+    "frontBackSupport": {
+      "type": "object"
+    },
+    "projectedSupport": {
+      "type": "object",
+      "required": [
+        "FRONT",
+        "SIDE",
+        "TOP"
+      ],
+      "properties": {
+        "FRONT": {
+          "$ref": "#/$defs/projected"
+        },
+        "SIDE": {
+          "$ref": "#/$defs/projected"
+        },
+        "TOP": {
+          "$ref": "#/$defs/projected"
+        }
+      },
+      "additionalProperties": false
+    },
+    "localThickness": {
+      "type": "object",
+      "required": [
+        "x",
+        "y",
+        "z"
+      ],
+      "properties": {
+        "x": {
+          "$ref": "#/$defs/thickness"
+        },
+        "y": {
+          "$ref": "#/$defs/thickness"
+        },
+        "z": {
+          "$ref": "#/$defs/thickness"
+        }
+      },
+      "additionalProperties": false
+    },
+    "policy": {
+      "type": "object",
+      "required": [
+        "observationOnly",
+        "semanticInterpretationDeferred",
+        "classifierAuthority",
+        "certificationAuthority",
+        "candidateBytesAreAuthority"
+      ],
+      "properties": {
+        "observationOnly": {
+          "const": true
+        },
+        "semanticInterpretationDeferred": {
+          "const": true
+        },
+        "classifierAuthority": {
+          "const": false
+        },
+        "certificationAuthority": {
+          "const": false
+        },
+        "candidateBytesAreAuthority": {
+          "const": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "evidenceDigest": {
+      "$ref": "common.schema.json#/$defs/digest"
+    }
+  },
+  "$defs": {
+    "vec2": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {
+        "type": "number"
+      }
+    },
+    "vec3": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "number"
+      }
+    },
+    "bounds3": {
+      "type": "object",
+      "required": [
+        "min",
+        "max",
+        "extent",
+        "diagonal"
+      ],
+      "properties": {
+        "min": {
+          "$ref": "#/$defs/vec3"
+        },
+        "max": {
+          "$ref": "#/$defs/vec3"
+        },
+        "extent": {
+          "$ref": "#/$defs/vec3"
+        },
+        "diagonal": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "crossSectionArray": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "fraction",
+          "coordinate",
+          "intersectedTriangles",
+          "supportPointCount",
+          "supportExtent2d",
+          "bboxArea",
+          "bboxAreaRatioToFullProjection"
+        ],
+        "properties": {
+          "fraction": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "exclusiveMaximum": 1
+          },
+          "coordinate": {
+            "type": "number"
+          },
+          "intersectedTriangles": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "supportPointCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "supportExtent2d": {
+            "$ref": "#/$defs/vec2"
+          },
+          "bboxArea": {
+            "type": "number",
+            "minimum": 0
+          },
+          "bboxAreaRatioToFullProjection": {
+            "type": "number",
+            "minimum": 0
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "projected": {
+      "type": "object",
+      "required": [
+        "plane",
+        "min",
+        "max",
+        "extent",
+        "boundsArea",
+        "normalizedBoundsArea",
+        "triangleAreaSum"
+      ],
+      "properties": {
+        "plane": {
+          "type": "string"
+        },
+        "min": {
+          "$ref": "#/$defs/vec2"
+        },
+        "max": {
+          "$ref": "#/$defs/vec2"
+        },
+        "extent": {
+          "$ref": "#/$defs/vec2"
+        },
+        "boundsArea": {
+          "type": "number",
+          "minimum": 0
+        },
+        "normalizedBoundsArea": {
+          "type": "number",
+          "minimum": 0
+        },
+        "triangleAreaSum": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "distribution": {
+      "type": "object",
+      "required": [
+        "minimum",
+        "q25",
+        "median",
+        "q75",
+        "maximum",
+        "mean"
+      ],
+      "properties": {
+        "minimum": {
+          "type": "number",
+          "minimum": 0
+        },
+        "q25": {
+          "type": "number",
+          "minimum": 0
+        },
+        "median": {
+          "type": "number",
+          "minimum": 0
+        },
+        "q75": {
+          "type": "number",
+          "minimum": 0
+        },
+        "maximum": {
+          "type": "number",
+          "minimum": 0
+        },
+        "mean": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "thickness": {
+      "type": "object",
+      "required": [
+        "depthAxis",
+        "gridPlane",
+        "gridResolution",
+        "occupiedCells",
+        "totalCells",
+        "occupiedCellFraction",
+        "thickness"
+      ],
+      "properties": {
+        "depthAxis": {
+          "enum": [
+            "x",
+            "y",
+            "z"
+          ]
+        },
+        "gridPlane": {
+          "type": "string"
+        },
+        "gridResolution": {
+          "type": "integer",
+          "minimum": 2
+        },
+        "occupiedCells": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "totalCells": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "occupiedCellFraction": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "thickness": {
+          "$ref": "#/$defs/distribution"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

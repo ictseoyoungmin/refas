@@ -530,6 +530,8 @@ export function fixtureForCapabilityInterface(key, context, outputs = new Map())
     bindings.perceptualSignatureHierarchy = outputs.get('observation/visual-hierarchy');
   } else if (key === 'observation/visual-observation') {
     bindings.hierarchy = outputs.get('observation/visual-hierarchy');
+  } else if (key === 'spatial-reasoning/spatial-closure-evidence') {
+    bindings.spatialClosureGlb = context.realizedAssembly.glb;
   } else if (key === 'spatial-reasoning/projection-fit') {
     bindings.referenceGeometry = outputs.get('observation/reference-geometry');
   } else if (key === 'inference-authority/semantic-authority') {

@@ -2871,6 +2871,23 @@
         "source/reference.png",
         "renders/final-clay/hero.png"
       ]
+    },
+    "spatial-reasoning/spatial-closure-evidence": {
+      "glb": {
+        "$bind": "spatialClosureGlb",
+        "description": "Exact current candidate GLB bytes; creator hashes and measures these bytes directly"
+      },
+      "scopeId": "whole",
+      "crossSectionFractions": [
+        0.125,
+        0.25,
+        0.375,
+        0.5,
+        0.625,
+        0.75,
+        0.875
+      ],
+      "gridResolution": 8
     }
   }
 }
