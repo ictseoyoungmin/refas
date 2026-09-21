@@ -49,6 +49,24 @@ function mutateFirstPositionAccessorToUnsignedShort(glb) {
   return bytes;
 }
 
+
+function shrinkFirstPositionBufferView(glb) {
+  const bytes=Buffer.from(glb);
+  const jsonLength=bytes.readUInt32LE(12);
+  const jsonStart=20;
+  const json=JSON.parse(bytes.subarray(jsonStart,jsonStart+jsonLength).toString('utf8').trim());
+  const positionAccessor=json.accessors.find((entry)=>entry?.componentType===5126&&entry?.type==='VEC3');
+  if(!positionAccessor) throw new Error('fixture GLB has no FLOAT VEC3 POSITION accessor');
+  const view=json.bufferViews[positionAccessor.bufferView];
+  if(!view) throw new Error('fixture POSITION accessor has no bufferView');
+  view.byteLength=4;
+  const encoded=Buffer.from(JSON.stringify(json),'utf8');
+  if(encoded.length>jsonLength) throw new Error('mutated JSON no longer fits original GLB JSON chunk');
+  bytes.fill(0x20,jsonStart,jsonStart+jsonLength);
+  encoded.copy(bytes,jsonStart);
+  return bytes;
+}
+
 test('VC01 derives byte-deterministic observation evidence from the exact candidate', () => {
   const fixture = buildVolumeClosureRegressionFixture('claude-volumetric-bird-surrogate');
   const first = createSpatialClosureEvidence({glb: fixture.glb, scopeId: 'whole'});
@@ -185,5 +203,15 @@ test('VC01 rejects malformed non-FLOAT POSITION accessors instead of measuring p
   assert.throws(
     () => createSpatialClosureEvidence({glb:malformed,scopeId:'whole'}),
     /POSITION accessor must be non-normalized FLOAT VEC3/u,
+  );
+});
+
+
+test('VC01 rejects accessors that spill beyond their declared bufferView even when BIN bytes exist', () => {
+  const fixture=buildVolumeClosureRegressionFixture('claude-volumetric-bird-surrogate');
+  const malformed=shrinkFirstPositionBufferView(fixture.glb);
+  assert.throws(
+    () => createSpatialClosureEvidence({glb:malformed,scopeId:'whole'}),
+    /accessor \d+ exceeds its declared bufferView/u,
   );
 });
