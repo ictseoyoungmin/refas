@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/candidate-lineage-proof.schema.json",
+  "title": "RefAs candidate lineage proof",
+  "type": "object",
+  "required": ["schema","sourceSha256","initialCandidate","finalCandidate","transitions","policy","lineageDigest"],
+  "properties": {
+    "schema":{"const":"refas.candidate-lineage-proof/v1"},
+    "sourceSha256":{"$ref":"common.schema.json#/$defs/digest"},
+    "initialCandidate":{"type":"object"},
+    "finalCandidate":{"type":"object"},
+    "transitions":{"type":"array"},
+    "policy":{"type":"object"},
+    "lineageDigest":{"$ref":"common.schema.json#/$defs/digest"}
+  },
+  "additionalProperties":false
+}

@@ -7,6 +7,7 @@ import {
   certifyProject as certifyProjectBase,
   loadCheckpoint,
   loadProject,
+  resolveAuthoritativeCandidateLineage,
   resumeProject as resumeProjectBase,
 } from './checkpoint-store.mjs';
 import {digestJson, readJson, sha256File, writeJsonAtomic} from './canonical.mjs';
@@ -25,6 +26,8 @@ import {
 } from './certification-relational-evidence.mjs';
 import {inspectCertificationProjectionEvidence} from './certification-projection-evidence.mjs';
 import {isTrustedContractFixtureProject} from './contract-fixture-authority.mjs';
+import {validateCandidateLineageProof} from './candidate-authority.mjs';
+import {validateFinalResemblanceClosure} from './final-resemblance-closure.mjs';
 
 const INTERNAL_ROOT = '.refas';
 const certificateFile = (root) => path.join(path.resolve(root), INTERNAL_ROOT, 'certification.json');
@@ -125,6 +128,7 @@ async function synthesizedTransactionContext(root, state, head, reviewArtifact, 
   const fixture = isTrustedContractFixtureProject(state);
   const requiresRegisteredComparison = !fixture;
   const requiresRelationalClosure = !fixture;
+  const requiresFinalCandidateAuthority = !fixture;
   if (requiresRegisteredComparison) {
     const binding = review?.registeredComparison;
     const comparisonArtifact = (head.artifactRefs ?? []).find((artifact) => artifact.kind === 'registered-comparison' && artifact.path === binding?.path && artifact.sha256 === binding?.sha256);
@@ -177,6 +181,37 @@ async function synthesizedTransactionContext(root, state, head, reviewArtifact, 
     );
   }
 
+  if (requiresFinalCandidateAuthority) {
+    const lineageArtifacts = (head.artifactRefs ?? []).filter((artifact) => artifact.kind === 'candidate-lineage-proof');
+    if (lineageArtifacts.length !== 1) throw new Error('real-source claim certification requires exactly one candidate-lineage-proof artifact');
+    const lineageBytes = await readBoundArtifact(root, lineageArtifacts[0], 'candidate-lineage-proof artifact');
+    const lineageProof = jsonBytes(lineageBytes, 'candidate-lineage-proof artifact');
+    evidence.push({
+      id:'candidate-lineage-proof',
+      role:'candidate-lineage-proof',
+      schema:lineageProof.schema,
+      bytes:lineageBytes,
+      subjectPointer:'/finalCandidate/assetSha256',
+    });
+
+    const closureArtifacts = (head.artifactRefs ?? []).filter((artifact) => artifact.kind === 'final-resemblance-closure');
+    if (closureArtifacts.length !== 1) throw new Error('real-source claim certification requires exactly one final-resemblance-closure artifact');
+    const closureBytes = await readBoundArtifact(root, closureArtifacts[0], 'final-resemblance-closure artifact');
+    const closure = jsonBytes(closureBytes, 'final-resemblance-closure artifact');
+    evidence.push({
+      id:'final-resemblance-closure',
+      role:'final-resemblance-closure',
+      schema:closure.schema,
+      bytes:closureBytes,
+      subjectPointer:'/assetSha256',
+    });
+    decisionNodeIds.push('candidate-lineage-proof', 'final-resemblance-closure');
+    obligations.push(
+      {id:'candidate-lineage-proof-evidence', role:'candidate-lineage-proof', schema:'refas.candidate-lineage-proof/v1'},
+      {id:'final-resemblance-closure-evidence', role:'final-resemblance-closure', schema:'refas.final-resemblance-closure/v1'},
+    );
+  }
+
   const transaction = createCandidateTransaction({candidateBytes, checkpoint: head, evidence, decisionNodeIds, obligations});
   const evidenceBytesById = new Map(evidence.map((item) => [item.id, Buffer.from(item.bytes)]));
   const validation = validateCandidateTransaction(transaction, {candidateBytes, checkpoint: head, evidenceBytesById});
@@ -191,6 +226,127 @@ function evidenceBytes(context, nodeId) {
 function matchingEvidenceNodes(transaction, binding, spec) {
   return transaction.evidenceNodes.filter((node) =>
     node.role === spec.role && node.schema === spec.schema && node.artifactSha256 === binding?.artifactSha256);
+}
+
+async function checkpointLineage(root, head) {
+  const reverse = [];
+  const seen = new Set();
+  let cursor = head;
+  while (cursor) {
+    if (seen.has(cursor.id)) throw new Error(`checkpoint cycle at ${cursor.id}`);
+    reverse.push(cursor);
+    seen.add(cursor.id);
+    cursor = cursor.parentId ? await loadCheckpoint(root, cursor.parentId) : null;
+  }
+  return reverse.reverse();
+}
+
+async function currentHierarchyDigest(root, head) {
+  const lineage = await checkpointLineage(root, head);
+  const hierarchyCheckpoint = [...lineage].reverse().find((checkpoint) =>
+    checkpoint.capability === 'visual-hierarchy'
+    && (checkpoint.scopeId === 'whole' || head.scopeId === checkpoint.scopeId || head.scopeId.startsWith(`${checkpoint.scopeId}.`)));
+  if (!hierarchyCheckpoint) throw new Error('final candidate authority requires current visual-hierarchy lineage');
+  const artifacts = (hierarchyCheckpoint.artifactRefs ?? []).filter((artifact) => artifact.kind === 'visual-hierarchy');
+  if (artifacts.length !== 1) throw new Error('final candidate authority requires exactly one visual-hierarchy artifact');
+  const bytes = await readBoundArtifact(root, artifacts[0], 'visual-hierarchy artifact');
+  const hierarchy = jsonBytes(bytes, 'visual-hierarchy artifact');
+  if (!hierarchy?.hierarchyDigest) throw new Error('visual-hierarchy artifact has no hierarchyDigest');
+  return {hierarchyDigest:hierarchy.hierarchyDigest, lineage};
+}
+
+function exactSemanticNode(transactionContext, {role, schema, pointer} = {}) {
+  const nodes = transactionContext.transaction.evidenceNodes.filter((node) => node.role === role && node.schema === schema);
+  if (nodes.length !== 1) throw new Error(`certification transaction requires exactly one ${role} evidence node`);
+  const node = nodes[0];
+  if (node.subjectBinding?.kind !== 'json-pointer'
+      || node.subjectBinding.pointer !== pointer
+      || node.subjectBinding.candidateSha256 !== transactionContext.transaction.rootCandidate.sha256) {
+    throw new Error(`${role} must directly bind the exact certification candidate through ${pointer}`);
+  }
+  const bytes = evidenceBytes(transactionContext, node.id);
+  if (bytes == null) throw new Error(`${role} evidence bytes are missing`);
+  return {node, bytes, value:jsonBytes(bytes, `${role} evidence`)};
+}
+
+async function validateTransactionFinalCandidateAuthority(root, state, head, transactionContext, {required = true} = {}) {
+  if (!required) return null;
+  const lineageNode = exactSemanticNode(transactionContext, {
+    role:'candidate-lineage-proof',
+    schema:'refas.candidate-lineage-proof/v1',
+    pointer:'/finalCandidate/assetSha256',
+  });
+  const closureNode = exactSemanticNode(transactionContext, {
+    role:'final-resemblance-closure',
+    schema:'refas.final-resemblance-closure/v1',
+    pointer:'/assetSha256',
+  });
+  const candidateSha256 = transactionContext.transaction.rootCandidate.sha256;
+
+  const lineageValidation = validateCandidateLineageProof(lineageNode.value, {
+    sourceSha256:state.source.sha256,
+    finalAssetSha256:candidateSha256,
+  });
+  if (!lineageValidation.valid) throw new Error(`candidate lineage proof is invalid: ${lineageValidation.errors.join('; ')}`);
+  const runtimeAuthority = await resolveAuthoritativeCandidateLineage(root, {checkpointId:head.id});
+  if (!runtimeAuthority || digestJson(runtimeAuthority.proof) !== digestJson(lineageNode.value)) {
+    throw new Error('candidate lineage proof does not reproduce from current project lineage');
+  }
+
+  const {hierarchyDigest, lineage} = await currentHierarchyDigest(root, head);
+  const closureValidation = validateFinalResemblanceClosure(closureNode.value, {
+    sourceSha256:state.source.sha256,
+    hierarchyDigest,
+    assetSha256:candidateSha256,
+  });
+  if (!closureValidation.valid) throw new Error(`final resemblance closure is invalid: ${closureValidation.errors.join('; ')}`);
+
+  const signatureMatches = [];
+  for (const artifact of (head.artifactRefs ?? []).filter((item) => item.kind === 'perceptual-signature-evidence')) {
+    const bytes = await readBoundArtifact(root, artifact, 'final perceptual-signature-evidence artifact');
+    const value = jsonBytes(bytes, 'final perceptual-signature-evidence artifact');
+    if (value?.evidenceDigest === closureNode.value.signatureEvidenceDigest) signatureMatches.push(value);
+  }
+  if (signatureMatches.length !== 1 || digestJson(signatureMatches[0]) !== digestJson(closureNode.value.signatureEvidence)) {
+    throw new Error('final resemblance closure must bind exactly one exact final perceptual-signature-evidence artifact');
+  }
+
+  const reportMatches = [];
+  for (const artifact of (head.artifactRefs ?? []).filter((item) => item.kind === 'render-report')) {
+    const bytes = await readBoundArtifact(root, artifact, 'final neutral-clay render-report artifact');
+    const value = jsonBytes(bytes, 'final neutral-clay render-report artifact');
+    if (value?.reportDigest === closureNode.value.clayRenderReportDigest) reportMatches.push(value);
+  }
+  if (reportMatches.length !== 1 || digestJson(reportMatches[0]) !== digestJson(closureNode.value.clayRenderReport)) {
+    throw new Error('final resemblance closure must bind exactly one exact final neutral-clay render report artifact');
+  }
+  for (const output of closureNode.value.clayRenderReport?.outputs ?? []) {
+    const matches = (head.artifactRefs ?? []).filter((artifact) =>
+      artifact.kind === 'render-frame' && artifact.path === output.path && artifact.sha256 === output.sha256);
+    if (matches.length !== 1) throw new Error(`final neutral-clay output is not exact-byte bound: ${output.viewId}`);
+  }
+
+  const availablePaths = new Set([
+    state.source.path,
+    ...lineage.flatMap((checkpoint) => (checkpoint.artifactRefs ?? []).map((artifact) => artifact.path)),
+  ].filter(Boolean));
+  const refs = new Set([
+    ...(closureNode.value.evidenceRefs ?? []),
+    ...(closureNode.value.signatureEvidence?.evidenceRefs ?? []),
+    ...(closureNode.value.signatureEvidence?.signatureSet?.evidenceRefs ?? []),
+    ...(closureNode.value.signatureEvidence?.observations ?? []).flatMap((observation) => observation.evidenceRefs ?? []),
+    ...(closureNode.value.signatureEvidence?.signatureSet?.signatures ?? []).flatMap((signature) => signature.evidenceRefs ?? []),
+    ...(closureNode.value.clayRenderReport?.outputs ?? []).map((output) => output.path),
+  ].filter(Boolean));
+  for (const ref of refs) {
+    if (!availablePaths.has(ref)) throw new Error(`final resemblance closure evidence ref is outside current lineage: ${ref}`);
+  }
+
+  return {
+    lineageProof:lineageNode.value,
+    finalResemblanceClosure:closureNode.value,
+    source:transactionContext.transactionSource,
+  };
 }
 
 function validateTransactionRelationalClosure(transactionContext, {required = true} = {}) {
@@ -233,14 +389,26 @@ async function policyForHead(root, state, head) {
   const fixture = isTrustedContractFixtureProject(state);
   const requiresRegisteredComparison = !fixture;
   const requiresRelationalClosure = !fixture;
+  const requiresFinalCandidateAuthority = !fixture;
   if (!policyArtifacts.length) {
-    return {policy: createDefaultWholeObjectCertificationPolicy({requiresRegisteredComparison, requiresRelationalClosure}), policySource: 'runtime-default'};
+    return {
+      policy: createDefaultWholeObjectCertificationPolicy({
+        requiresRegisteredComparison,
+        requiresRelationalClosure,
+        requiresFinalCandidateAuthority,
+      }),
+      policySource: 'runtime-default',
+    };
   }
   const bytes = await readBoundArtifact(root, policyArtifacts[0], 'certification-policy artifact');
   const policy = jsonBytes(bytes, 'certification-policy artifact');
   const validation = validateCertificationPolicy(policy);
   if (!validation.valid) throw new Error(`certification policy is invalid: ${validation.errors.join('; ')}`);
-  const authority = validateWholeObjectPolicyAuthority(policy, {requiresRegisteredComparison, requiresRelationalClosure});
+  const authority = validateWholeObjectPolicyAuthority(policy, {
+    requiresRegisteredComparison,
+    requiresRelationalClosure,
+    requiresFinalCandidateAuthority,
+  });
   if (!authority.valid) throw new Error(`certification policy weakens mandatory whole-object authority: ${authority.errors.join('; ')}`);
   return {policy, policySource: 'checkpoint-artifact'};
 }
@@ -268,7 +436,15 @@ export async function assessClaimCertification(root) {
     const transactionContext = transactionArtifacts.length
       ? await explicitTransactionContext(root, head, candidateArtifact, candidateBytes, transactionArtifacts[0])
       : await synthesizedTransactionContext(root, state, head, reviewArtifacts[0], review, candidateBytes);
-    const relationalClosure = validateTransactionRelationalClosure(transactionContext, {required:!isTrustedContractFixtureProject(state)});
+    const fixture = isTrustedContractFixtureProject(state);
+    const finalCandidateAuthority = await validateTransactionFinalCandidateAuthority(
+      root,
+      state,
+      head,
+      transactionContext,
+      {required:!fixture},
+    );
+    const relationalClosure = validateTransactionRelationalClosure(transactionContext, {required:!fixture});
 
     const {policy, policySource} = await policyForHead(root, state, head);
     const recomputedDecision = evaluateCertificationPolicy({
@@ -303,12 +479,26 @@ export async function assessClaimCertification(root) {
       policySource,
       decision,
       decisionSource,
+      candidateLineageProof: finalCandidateAuthority?.lineageProof ?? null,
+      finalResemblanceClosure: finalCandidateAuthority?.finalResemblanceClosure ?? null,
+      finalCandidateAuthoritySource: finalCandidateAuthority?.source ?? null,
       relationalClosure: relationalClosure?.evidence ?? null,
       relationalClosureSource: relationalClosure?.source ?? null,
     };
   } catch (error) {
     errors.push(error.message);
-    return {required: true, valid: false, errors, transaction: null, policy: null, decision: null, relationalClosure:null};
+    return {
+      required:true,
+      valid:false,
+      errors,
+      transaction:null,
+      policy:null,
+      decision:null,
+      candidateLineageProof:null,
+      finalResemblanceClosure:null,
+      finalCandidateAuthoritySource:null,
+      relationalClosure:null,
+    };
   }
 }
 
@@ -330,6 +520,11 @@ function claimBinding(assessment) {
       authorizedClaimIds: assessment.decision.authorizedClaimIds,
       refusedClaimIds: assessment.decision.refusedClaimIds,
     },
+    candidateAuthority: assessment.candidateLineageProof && assessment.finalResemblanceClosure ? {
+      candidateLineageDigest: assessment.candidateLineageProof.lineageDigest,
+      finalResemblanceClosureDigest: assessment.finalResemblanceClosure.closureDigest,
+      source: assessment.finalCandidateAuthoritySource,
+    } : null,
     relationalClosure: assessment.relationalClosure ? {
       relationalCertificationDigest: assessment.relationalClosure.relationalCertificationDigest,
       source: assessment.relationalClosureSource,
@@ -362,6 +557,8 @@ export async function assessCertification(root) {
     candidateTransactionDigest: claims.transaction?.transactionDigest ?? null,
     certificationPolicyDigest: claims.policy?.policyDigest ?? null,
     claimDecisionDigest: claims.decision?.decisionDigest ?? null,
+    candidateLineageDigest: claims.candidateLineageProof?.lineageDigest ?? null,
+    finalResemblanceClosureDigest: claims.finalResemblanceClosure?.closureDigest ?? null,
     relationalCertificationDigest: claims.relationalClosure?.relationalCertificationDigest ?? null,
     authorizedClaimIds: claims.decision?.authorizedClaimIds ?? [],
   });
@@ -385,6 +582,8 @@ export async function certifyProject(root) {
     transactionDigest: binding.transaction.transactionDigest,
     policyDigest: binding.policy.policyDigest,
     decisionDigest: binding.decision.decisionDigest,
+    candidateLineageDigest: binding.candidateAuthority?.candidateLineageDigest ?? null,
+    finalResemblanceClosureDigest: binding.candidateAuthority?.finalResemblanceClosureDigest ?? null,
     relationalCertificationDigest: binding.relationalClosure?.relationalCertificationDigest ?? null,
     claimCertificationDigest,
     at: certificate.certifiedAt,

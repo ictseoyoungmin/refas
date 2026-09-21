@@ -4102,6 +4102,50 @@
             }
           },
           {
+            "id": "final-resemblance-closure",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createFinalResemblanceClosure"
+            },
+            "template": "assets/templates/capability-interface-inputs.json#/templates/validation~1final-resemblance-closure",
+            "inputContract": "current source/hierarchy + exact final candidate + final perceptual signatures + canonical final neutral-clay render report",
+            "outputSchema": "refas.final-resemblance-closure/v1",
+            "validator": {
+              "library": "validateFinalResemblanceClosure"
+            },
+            "minimumInvocation": "references/validation.md",
+            "example": null,
+            "templateProcessor": {
+              "library": "materializeCapabilityInputTemplate"
+            },
+            "publicConstants": [
+              "FINAL_RESEMBLANCE_REQUIRED_IMPORTANCE"
+            ],
+            "usageReference": "references/validation.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
+            }
+          },
+          {
             "id": "visual-review",
             "operation": "create",
             "cli": null,
@@ -4255,6 +4299,112 @@
                 ]
               },
               "outputSchemaPointer": "/schema"
+            }
+          },
+          {
+            "id": "candidate-transition",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createCandidateTransition"
+            },
+            "template": "assets/templates/capability-interface-inputs.json#/templates/candidate-transactions~1candidate-transition",
+            "inputContract": "runtime-resolved input candidate + changed output candidate + mutation capability/scope + parent checkpoint + exact evidence refs",
+            "outputSchema": "refas.candidate-transition/v1",
+            "validator": {
+              "library": "validateCandidateTransition"
+            },
+            "minimumInvocation": "references/candidate-transactions.md",
+            "example": "references/candidate-transactions.md",
+            "templateProcessor": {
+              "library": "materializeCapabilityInputTemplate"
+            },
+            "publicConstants": [
+              "CANDIDATE_MUTATION_KINDS"
+            ],
+            "usageReference": "references/candidate-transactions.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
+            }
+          },
+          {
+            "id": "candidate-lineage-proof",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createCandidateLineageProof"
+            },
+            "template": "assets/templates/capability-interface-inputs.json#/templates/candidate-transactions~1candidate-lineage-proof",
+            "inputContract": "source digest + shape candidate + ordered candidate-transition summaries + uniquely resolved final candidate",
+            "outputSchema": "refas.candidate-lineage-proof/v1",
+            "validator": {
+              "library": "validateCandidateLineageProof"
+            },
+            "minimumInvocation": "references/candidate-transactions.md",
+            "example": "references/candidate-transactions.md",
+            "templateProcessor": {
+              "library": "materializeCapabilityInputTemplate"
+            },
+            "usageReference": "references/candidate-transactions.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
+            }
+          },
+          {
+            "id": "resolve-candidate-lineage",
+            "operation": "inspect",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "resolveAuthoritativeCandidateLineage"
+            },
+            "template": null,
+            "inputContract": "initialized project root + optional checkpoint ID; runtime reconstructs authoritative candidate continuity from checkpoint bytes",
+            "outputSchema": null,
+            "validator": null,
+            "minimumInvocation": "references/candidate-transactions.md",
+            "example": null,
+            "usageReference": "references/candidate-transactions.md",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "stateful filesystem-bound lineage resolution; project-level dogfood exercises the runtime path"
             }
           }
         ]

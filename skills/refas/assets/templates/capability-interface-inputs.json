@@ -2776,6 +2776,101 @@
         "source/reference.png",
         "renders/clay/review-board.png"
       ]
+    },
+    "candidate-transactions/candidate-transition": {
+      "inputAssetSha256": {
+        "$value": "candidateTransitionInputSha256",
+        "example": "1111111111111111111111111111111111111111111111111111111111111111",
+        "description": "runtime-resolved current authoritative candidate digest"
+      },
+      "outputAssetSha256": {
+        "$value": "candidateTransitionOutputSha256",
+        "example": "2222222222222222222222222222222222222222222222222222222222222222",
+        "description": "changed candidate digest produced by the current mutation checkpoint"
+      },
+      "inputCandidateCheckpointId": {
+        "$value": "candidateTransitionInputCheckpointId",
+        "example": "cp_shape_candidate",
+        "description": "checkpoint that last established the input candidate"
+      },
+      "parentCheckpointId": {
+        "$value": "candidateTransitionParentCheckpointId",
+        "example": "cp_parent",
+        "description": "actual parent checkpoint of the mutation checkpoint"
+      },
+      "capability": {
+        "$value": "candidateTransitionCapability",
+        "example": "surface-topology",
+        "description": "authorized candidate mutation capability"
+      },
+      "scopeId": {
+        "$value": "candidateTransitionScopeId",
+        "example": "whole",
+        "description": "mutation scope"
+      },
+      "evidenceRefs": [
+        "model/candidate.glb"
+      ]
+    },
+    "candidate-transactions/candidate-lineage-proof": {
+      "sourceSha256": {
+        "$value": "candidateLineageSourceSha256",
+        "example": "0000000000000000000000000000000000000000000000000000000000000000",
+        "description": "current primary source digest"
+      },
+      "initialCandidate": {
+        "assetSha256": {
+          "$value": "candidateLineageInitialSha256",
+          "example": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "checkpointId": {
+          "$value": "candidateLineageInitialCheckpointId",
+          "example": "cp_shape_candidate"
+        }
+      },
+      "finalCandidate": {
+        "assetSha256": {
+          "$value": "candidateLineageFinalSha256",
+          "example": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "checkpointId": {
+          "$value": "candidateLineageFinalCheckpointId",
+          "example": "cp_shape_candidate"
+        }
+      },
+      "transitions": {
+        "$bind": "candidateLineageTransitions",
+        "description": "ordered transition summaries; empty when the shape candidate is carried forward byte-identically"
+      }
+    },
+    "validation/final-resemblance-closure": {
+      "sourceSha256": {
+        "$value": "finalResemblanceSourceSha256",
+        "example": "0000000000000000000000000000000000000000000000000000000000000000",
+        "description": "current primary source digest"
+      },
+      "hierarchyDigest": {
+        "$value": "finalResemblanceHierarchyDigest",
+        "example": "0000000000000000000000000000000000000000000000000000000000000000",
+        "description": "current visual hierarchy digest"
+      },
+      "assetSha256": {
+        "$value": "finalResemblanceAssetSha256",
+        "example": "0000000000000000000000000000000000000000000000000000000000000000",
+        "description": "exact final candidate digest"
+      },
+      "signatureEvidence": {
+        "$bind": "finalResemblanceSignatureEvidence",
+        "description": "final-candidate perceptual signature evidence with macro/identity signatures matched"
+      },
+      "clayRenderReport": {
+        "$bind": "finalResemblanceClayRenderReport",
+        "description": "canonical neutral-clay render report for the exact final candidate"
+      },
+      "evidenceRefs": [
+        "source/reference.png",
+        "renders/final-clay/hero.png"
+      ]
     }
   }
 }

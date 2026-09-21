@@ -82,6 +82,16 @@ For production sources, the checkpoint runtime enforces this admission before `s
 
 Single-view IoU remains forbidden. Multiview IoU remains correspondence/diagnostic-only and is not an input to this barrier.
 
+## Final resemblance closure
+
+R04 is an early admission barrier, not final resemblance authority. Before a real-source whole-object certification checkpoint, rerun the R03 perceptual-signature contract against the **exact final candidate bytes** and render that same final candidate through the canonical neutral-clay presentation.
+
+Create one `refas.final-resemblance-closure/v1` artifact. It must bind the current primary source digest, current visual-hierarchy digest, exact final candidate SHA-256, one exact final `refas.perceptual-signature-evidence/v1`, and one exact canonical neutral-clay `refas.pbr-render-report/v1`. Every macro and identity signature must be `match`; `mismatch` or `insufficient` refuses final form closure. Detail signatures remain disclosed but do not block form identity.
+
+Every required signature must cite at least one exact final neutral-clay frame. The certification checkpoint preserves the closure, the exact final signature-evidence artifact, the neutral-clay report, and every report output byte. Runtime audit/certification revalidates those bytes against the current source, hierarchy, and authoritative candidate lineage. An R04-era early barrier for candidate A cannot authorize a different downstream candidate B.
+
+This closure still does not replace the final independent visual review, registered comparison, relational closure, or appearance evidence. It only closes the source-specific resemblance question for the final candidate.
+
 ## Registered comparison evidence
 
 Use `compare` after source-to-render registration when whole-object inspection cannot localize a near-match defect. The `refas.registered-comparison/v1` report binds the exact source manifest, asset and render frame, registration, visual hierarchy, comparison input, and output image digests. Every scope board retains whole-context ancestry and may include overlays, splits, source/render edges, silhouette differences, landmark residuals, and normalized dimensions.
@@ -147,7 +157,7 @@ Whole-object certification requires current, passing evidence for:
 - no unresolved blocking findings;
 - project audit validity.
 
-For a real source, certification additionally requires one digest-bound `refas.reference-geometry/v1` artifact, one `refas.realized-projection/v1` artifact, one current `refas.certification-relational-evidence/v1` artifact, and the exact GLB whose digest is bound by the visual review. The relational closure must bind the exact current relation graph, semantic-authority set, passing whole-system barrier, passing candidate-bound relational discrepancy, and certification candidate SHA-256. Certification reproduces the realized projection and revalidates relational closure from the checkpoint artifacts before authorization. Missing, stale, non-reproducible, substituted, replayed, or asset-mismatched projection/relational evidence refuses certification. Only runtime-authorized contract fixtures keep the compatibility path, and they still cannot use it as visual-fidelity evidence. Caller-declared acquisition kinds do not qualify.
+For a real source, certification additionally requires one digest-bound `refas.reference-geometry/v1` artifact, one `refas.realized-projection/v1` artifact, one current `refas.candidate-lineage-proof/v1`, one current `refas.final-resemblance-closure/v1`, one current `refas.certification-relational-evidence/v1` artifact, and the exact GLB whose digest is bound by the visual review. The relational closure must bind the exact current relation graph, semantic-authority set, passing whole-system barrier, passing candidate-bound relational discrepancy, and certification candidate SHA-256. Certification reproduces the realized projection and revalidates relational closure from the checkpoint artifacts before authorization. Missing, stale, non-reproducible, substituted, replayed, or asset-mismatched projection/relational evidence refuses certification. Only runtime-authorized contract fixtures keep the compatibility path, and they still cannot use it as visual-fidelity evidence. Caller-declared acquisition kinds do not qualify.
 
 Certification refuses closure when the review is missing or digest-stale, its verdict is not `pass`, a required view or visual gate is not `pass`, a required passing structured observation is missing, an independent pass lacks an exact registered comparison or its current identity tuple, strong contrary comparison evidence is not resolved by source-grounded evidence, a major/critical/blocking finding remains, a projection-aware review contains material geometric disagreement, real-source relational closure is absent or invalid, or appearance relies on an integrity-only renderer or an unsupported material feature. Gate strings and numeric scores cannot override those findings.
 

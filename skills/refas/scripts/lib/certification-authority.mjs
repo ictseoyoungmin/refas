@@ -14,12 +14,20 @@ function hasRequiredFindingSource(actualClaim, requiredSource) {
     sameEvidenceSelector(actual, requiredSource) && actual.pointer === requiredSource.pointer);
 }
 
-export function validateWholeObjectPolicyAuthority(policy, {requiresRegisteredComparison = true, requiresRelationalClosure = requiresRegisteredComparison} = {}) {
+export function validateWholeObjectPolicyAuthority(policy, {
+  requiresRegisteredComparison = true,
+  requiresRelationalClosure = requiresRegisteredComparison,
+  requiresFinalCandidateAuthority = requiresRegisteredComparison,
+} = {}) {
   const errors = [];
   const generic = validateCertificationPolicy(policy);
   if (!generic.valid) return {valid: false, errors: [...generic.errors]};
 
-  const baseline = createDefaultWholeObjectCertificationPolicy({requiresRegisteredComparison, requiresRelationalClosure});
+  const baseline = createDefaultWholeObjectCertificationPolicy({
+    requiresRegisteredComparison,
+    requiresRelationalClosure,
+    requiresFinalCandidateAuthority,
+  });
   for (const requiredClaim of baseline.claims) {
     const actualClaim = policy.claims.find((claim) => claim.id === requiredClaim.id);
     if (!actualClaim) {
