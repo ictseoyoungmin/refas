@@ -317,3 +317,62 @@ VC07 = final certification integration
 ```
 
 VC05 intentionally does not claim that a downstream-mutated final candidate still matches the shape-stage spatial authority.
+
+
+## VC06 exact final-candidate spatial continuity
+
+VC06 closes the gap between **shape-stage spatial authority** and the **authoritative final candidate**.
+
+Use `resolveFinalSpatialContinuity(root, {checkpointId})` to derive `refas.final-spatial-continuity/v1` from an exact selected checkpoint lineage. The resolver does not accept a caller-selected mode or verdict.
+
+Two modes are possible.
+
+### Same-digest carry-forward
+
+If candidate lineage proves:
+
+```text
+shape candidate SHA-256 == authoritative final candidate SHA-256
+```
+
+VC06 reuses the exact replayed VC04 barrier. This is allowed only because candidate bytes are identical. The continuity record binds the shape checkpoint ID/content digest, candidate-lineage digest, VC04 barrier digest, protected scopes, and final candidate digest.
+
+A canonical neutral-clay multiview report must still be produced **after** the candidate authority checkpoint and bind the exact final candidate.
+
+### Changed-digest re-verification
+
+If any canonical candidate transition changes the candidate digest:
+
+```text
+shape candidate SHA-256 != authoritative final candidate SHA-256
+```
+
+shape-stage VC01/VC03 evidence cannot satisfy continuity.
+
+For every VC04-protected scope the selected lineage must contain fresh evidence on the exact final GLB bytes:
+
+1. canonical VC01 spatial-closure evidence;
+2. canonical VC03 classification recomputed from the frozen VC02 role.
+
+RefAs rebuilds the role-aware volume barrier for the final candidate. Stale evidence from the shape candidate is rejected by exact-GLB validation, and re-signed stale VC03 output fails canonical replay.
+
+### Multiview requirement
+
+VC06 requires one canonical neutral-clay PBR report created after the final-candidate authority checkpoint and bound to that exact asset. All canonical neutral-clay outputs are digest-bound, including hero, oblique, side, top, grazing, normal, object-id, and albedo.
+
+This is multiview observation evidence, not a numeric aggregate resemblance score.
+
+- single-view silhouette IoU has no authority;
+- multiview IoU remains correspondence/diagnostic-only;
+- no good view compensates for a failed protected spatial scope.
+
+### Authority boundary
+
+```text
+VC04 = shape-stage spatial admission
+VC05 = trusted issuer for protected shape-stage spatial gate
+VC06 = exact final-candidate spatial continuity
+VC07 = certification integration
+```
+
+VC06 does not add a certification-policy obligation and does not mint a certificate. A project may therefore possess or lack VC06 continuity independently until VC07 integrates the authority into final certification.

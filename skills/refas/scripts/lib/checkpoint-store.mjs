@@ -30,8 +30,9 @@ import {validateFinalResemblanceClosure} from './final-resemblance-closure.mjs';
 import {validateSpatialRoleExpectationSet} from './spatial-role-expectation.mjs';
 import {validateSpatialClosureEvidence} from './spatial-closure-evidence.mjs';
 import {_classifySpatialCollapseFromAuthority} from './spatial-collapse-core.mjs';
-import {assertVolumeBarrierAdmission, validateVolumeBarrier} from './volume-barrier.mjs';
+import {assertVolumeBarrierAdmission, createVolumeBarrier, validateVolumeBarrier} from './volume-barrier.mjs';
 import {createRuntimeSpatialGateAuthority} from './spatial-gate-authority.mjs';
+import {createFinalSpatialContinuity} from './final-spatial-continuity.mjs';
 import {
   createCandidateLineageProof,
   isCandidateMutationCapability,
@@ -919,6 +920,136 @@ export async function resolveTrustedSpatialGateAuthority(root,{checkpointId=null
   if(!targetId) throw new Error('trusted spatial gate authority requires a checkpoint lineage');
   const lineage=checkpointLineage(checkpoints,targetId);
   return deriveTrustedSpatialGateAuthority(root,state,lineage,scopeId);
+}
+
+async function readImmutableJsonArtifact(root, artifact, label) {
+  const error=await verifyStoredObject(root,artifact);
+  if(error) throw new Error(`${label}: ${error}`);
+  try{
+    return JSON.parse((await fs.readFile(objectPath(root,artifact.sha256))).toString('utf8'));
+  }catch{
+    throw new Error(`${label} is not valid JSON`);
+  }
+}
+
+async function findFinalNeutralClayEvidence(root,lineage,startIndex,assetSha256){
+  const matches=[];
+  for(let index=startIndex+1;index<lineage.length;index+=1){
+    const checkpoint=lineage[index];
+    for(const artifact of checkpoint.artifactRefs??[]){
+      if(artifact.kind!=='render-report') continue;
+      const report=await readImmutableJsonArtifact(root,artifact,'final spatial continuity render report');
+      if(report?.schema!=='refas.pbr-render-report/v1'||report?.assetSha256!==assetSha256||report?.presentation?.mode!=='neutral-clay') continue;
+      const validation=validatePbrRenderReport(report);
+      if(!validation.valid) throw new Error(`final spatial continuity neutral-clay report is invalid: ${validation.errors.join('; ')}`);
+      for(const output of report.outputs??[]){
+        const frameMatches=(checkpoint.artifactRefs??[]).filter((item)=>
+          item.kind==='render-frame'&&item.path===output.path&&item.sha256===output.sha256);
+        if(frameMatches.length!==1) throw new Error(`final spatial continuity neutral-clay output is not exact-byte bound: ${output.viewId}`);
+      }
+      matches.push({checkpoint,artifact,report});
+    }
+  }
+  if(matches.length!==1) throw new Error(`final spatial continuity requires exactly one post-candidate neutral-clay report; found ${matches.length}`);
+  return matches[0];
+}
+
+async function resolveFinalSpatialContinuityFromLineage(root,state,lineage){
+  if(isTrustedContractFixtureProject(state)) return null;
+  const authority=await resolveCandidateAuthorityFromLineage(root,state,lineage);
+  if(!authority?.initialCandidate||!authority?.finalCandidate) throw new Error('final spatial continuity requires authoritative candidate lineage');
+
+  const shapeIndex=lineage.findIndex((checkpoint)=>checkpoint.id===authority.initialCandidate.checkpointId);
+  if(shapeIndex<0) throw new Error('final spatial continuity shape checkpoint is missing from selected lineage');
+  const shapeCheckpoint=lineage[shapeIndex];
+  const shapePrefix=lineage.slice(0,shapeIndex);
+  const shapeBarrier=await verifyVolumeBarrierArtifacts(root,state,{
+    lineage,
+    shapeCheckpoint,
+    parentLineage:shapePrefix,
+    requireProceed:false,
+    label:'final spatial continuity shape authority',
+  });
+  const earlyArtifact=(shapeCheckpoint.artifactRefs??[]).find((artifact)=>artifact.kind==='early-resemblance-barrier');
+  if(!earlyArtifact) throw new Error('final spatial continuity requires shape-stage early resemblance authority');
+  const early=await readImmutableJsonArtifact(root,earlyArtifact,'final spatial continuity early resemblance barrier');
+  const signatureSet=early.signatureEvidence?.signatureSet;
+  if(!signatureSet) throw new Error('final spatial continuity requires exact R03 signature set');
+
+  const finalIndex=lineage.findIndex((checkpoint)=>checkpoint.id===authority.finalCandidate.checkpointId);
+  if(finalIndex<0) throw new Error('final spatial continuity final candidate checkpoint is missing from selected lineage');
+  const finalCheckpoint=lineage[finalIndex];
+  const finalArtifact=(finalCheckpoint.artifactRefs??[]).find((artifact)=>
+    candidateGlbArtifacts([artifact]).length===1&&artifact.sha256===authority.finalCandidate.assetSha256);
+  if(!finalArtifact) throw new Error('final spatial continuity cannot locate exact final candidate bytes');
+  const finalGlb=await fs.readFile(objectPath(root,finalArtifact.sha256));
+
+  let finalBarrier=shapeBarrier;
+  if(authority.finalCandidate.assetSha256!==authority.initialCandidate.assetSha256){
+    const evidenceByScope=new Map();
+    const classificationByScope=new Map();
+    for(const checkpoint of lineage.slice(finalIndex)){
+      for(const artifact of checkpoint.artifactRefs??[]){
+        if(artifact.kind==='spatial-closure-evidence'){
+          const value=await readImmutableJsonArtifact(root,artifact,'final spatial continuity VC01 evidence');
+          if(value?.assetSha256!==authority.finalCandidate.assetSha256) continue;
+          if(evidenceByScope.has(value.scopeId)) throw new Error(`final spatial continuity has competing VC01 evidence for scope ${value.scopeId}`);
+          evidenceByScope.set(value.scopeId,value);
+        }
+        if(artifact.kind==='spatial-collapse-classification'){
+          const value=await readImmutableJsonArtifact(root,artifact,'final spatial continuity VC03 classification');
+          if(value?.candidateSha256!==authority.finalCandidate.assetSha256) continue;
+          if(classificationByScope.has(value.scopeId)) throw new Error(`final spatial continuity has competing VC03 classifications for scope ${value.scopeId}`);
+          classificationByScope.set(value.scopeId,value);
+        }
+      }
+    }
+
+    const canonicalClassifications=[];
+    for(const scopeId of shapeBarrier.protectedScopeIds??[]){
+      const evidence=evidenceByScope.get(scopeId);
+      if(!evidence) throw new Error(`changed final candidate requires fresh VC01 evidence for protected scope ${scopeId}`);
+      const evidenceValidation=validateSpatialClosureEvidence(evidence,{glb:finalGlb});
+      if(!evidenceValidation.valid) throw new Error(`final VC01 evidence is invalid for ${scopeId}: ${evidenceValidation.errors.join('; ')}`);
+      const storedClassification=classificationByScope.get(scopeId);
+      if(!storedClassification) throw new Error(`changed final candidate requires fresh VC03 classification for protected scope ${scopeId}`);
+      const roleAuthority=await resolveSpatialRoleAuthorityFromLineage(root,state,lineage.slice(0,finalIndex+1),{scopeId});
+      if(!roleAuthority) throw new Error(`final spatial continuity requires frozen VC02 role authority for ${scopeId}`);
+      const expected=_classifySpatialCollapseFromAuthority({glb:finalGlb,spatialEvidence:evidence,roleAuthority});
+      if(digestJson(expected)!==digestJson(storedClassification)) throw new Error(`final VC03 classification is stale or non-canonical for protected scope ${scopeId}`);
+      canonicalClassifications.push(storedClassification);
+    }
+    finalBarrier=createVolumeBarrier({
+      sourceSha256:state.source.sha256,
+      hierarchyDigest:shapeBarrier.hierarchyDigest,
+      assetSha256:authority.finalCandidate.assetSha256,
+      signatureSet,
+      classifications:canonicalClassifications,
+    });
+  }
+
+  const multiview=await findFinalNeutralClayEvidence(root,lineage,finalIndex,authority.finalCandidate.assetSha256);
+  return createFinalSpatialContinuity({
+    sourceSha256:state.source.sha256,
+    hierarchyDigest:shapeBarrier.hierarchyDigest,
+    candidateLineageProof:authority.proof,
+    shapeCheckpointId:shapeCheckpoint.id,
+    shapeCheckpointDigest:shapeCheckpoint.contentDigest,
+    shapeBarrier,
+    finalBarrier,
+    finalMultiviewReport:multiview.report,
+  });
+}
+
+export async function resolveFinalSpatialContinuity(root,{checkpointId=null}={}){
+  root=projectRoot(root);
+  const state=await loadProject(root);
+  if(!state.source) throw new Error('final spatial continuity requires a bound source');
+  const checkpoints=await listCheckpoints(root);
+  const target=checkpointId??state.head;
+  if(!target) throw new Error('final spatial continuity requires a checkpoint lineage');
+  const lineage=checkpointLineage(checkpoints,target);
+  return deepFreeze(await resolveFinalSpatialContinuityFromLineage(root,state,lineage));
 }
 
 export async function resolveVolumeBarrierAdmission(root, {checkpointId = null, scopeId = null} = {}) {
