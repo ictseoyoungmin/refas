@@ -569,6 +569,15 @@ test('VC06 validator rejects re-signed mode and multiview tampering', async (t) 
   delete missingView.continuityDigest;
   missingView.continuityDigest=digestJson(missingView);
   assert.equal(validateFinalSpatialContinuity(missingView).valid,false);
+
+  const semanticTamper=structuredClone(continuity);
+  semanticTamper.scopeBindings[0].classification='PLANAR_COLLAPSE';
+  semanticTamper.scopeBindings[0].status='ADMITTED';
+  delete semanticTamper.continuityDigest;
+  semanticTamper.continuityDigest=digestJson(semanticTamper);
+  const semanticValidation=validateFinalSpatialContinuity(semanticTamper);
+  assert.equal(semanticValidation.valid,false);
+  assert.match(semanticValidation.errors.join('\n'),/status does not match frozen role\/classification semantics/u);
 });
 
 test('VC06 changed final candidate cannot inherit shape-stage spatial authority without fresh final evidence', async (t) => {

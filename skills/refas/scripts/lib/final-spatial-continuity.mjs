@@ -13,6 +13,25 @@ export const FINAL_SPATIAL_CONTINUITY_MODES=Object.freeze([
 export const FINAL_SPATIAL_CONTINUITY_VERDICTS=Object.freeze(['PROCEED','REWORK','HOLD']);
 
 const requiredViews=new Set(NEUTRAL_CLAY_REQUIRED_VIEW_IDS);
+
+function expectedScopeStatus(role,classification){
+  if(['volumetric','layered-volume','rod-tubular'].includes(role)){
+    if(classification==='NO_PLANAR_COLLAPSE') return 'ADMITTED';
+    if(classification==='PLANAR_COLLAPSE') return 'REWORK';
+    if(classification==='INDETERMINATE') return 'HOLD';
+    throw new Error(`role ${role} has incompatible final classification ${classification}`);
+  }
+  if(['intentionally-planar','thin-shell'].includes(role)){
+    if(classification==='NOT_APPLICABLE') return 'ADMITTED';
+    if(classification==='INDETERMINATE') return 'HOLD';
+    throw new Error(`role ${role} requires NOT_APPLICABLE or INDETERMINATE, got ${classification}`);
+  }
+  if(role==='unresolved'){
+    if(classification!=='INDETERMINATE') throw new Error('unresolved role must remain INDETERMINATE');
+    return 'HOLD';
+  }
+  throw new Error(`unsupported frozen role ${role}`);
+}
 const canonicalBarrier=(barrier,label)=>{
   if(barrier?.schema!=='refas.volume-barrier/v1') throw new Error(`${label} must be refas.volume-barrier/v1`);
   const {barrierDigest,...payload}=barrier;
@@ -165,7 +184,16 @@ export function validateFinalSpatialContinuity(value){
       assertDigest(binding?.spatialEvidenceDigest,`scopeBindings[${index}].spatialEvidenceDigest`);
       assertDigest(binding?.classificationDigest,`scopeBindings[${index}].classificationDigest`);
       assertDigest(binding?.roleAuthorityDigest,`scopeBindings[${index}].roleAuthorityDigest`);
-      if(!['ADMITTED','REWORK','HOLD'].includes(binding?.status)) errors.push(`scopeBindings[${index}] status is invalid`);
+      if(!['ADMITTED','REWORK','HOLD'].includes(binding?.status)) {
+        errors.push(`scopeBindings[${index}] status is invalid`);
+      } else {
+        try{
+          const expectedStatus=expectedScopeStatus(binding?.frozenRole,binding?.classification);
+          if(binding.status!==expectedStatus) errors.push(`scopeBindings[${index}] status does not match frozen role/classification semantics`);
+        }catch(error){
+          errors.push(`scopeBindings[${index}] ${error.message}`);
+        }
+      }
     }
     if(digestJson([...protectedIds].sort())!==digestJson([...bindingIds].sort())) errors.push('scopeBindings do not exactly match protectedScopeIds');
 
