@@ -823,3 +823,150 @@ test('contract fixtures remain compatible with legacy synthetic certification te
   const audit = await auditProject(root);
   assert.equal(audit.valid, true, audit.errors.join('\n'));
 });
+
+
+test('VC08 planar billboard shortcut cannot cross the VC04 downstream barrier', async (t) => {
+  const {root,source}=await makeProject(t);
+  await advanceToReview(root,source,{
+    candidateThickness:0.002,
+    expectedSpatialClassification:'PLANAR_COLLAPSE',
+    expectedVolumeVerdict:'REWORK',
+    stopAfterShape:true,
+  });
+  const authority=await resolveTrustedSpatialGateAuthority(root);
+  assert.equal(authority.gateStatus,'fail');
+
+  const statePath=await json(path.join(root,'model','vc08-planar-downstream.json'),{attack:'hero-first-planar-billboard'});
+  const stateRef=await contentReference(statePath,{kind:'model-spec',root});
+  await assert.rejects(
+    ()=>commitCheckpoint(root,{
+      capability:'surface-topology',scopeId:'whole',
+      reason:'VC08 adversarial worker attempts to continue after a planar hero-fit shape.',
+      artifactRefs:[stateRef],claims:['hero view appears plausible'],
+      gates:[{id:'surface-topology-gate',evidenceRefs:[stateRef.path]}],
+    }),
+    /volume barrier PROCEED; current verdict is REWORK/u,
+  );
+});
+
+test('VC08 frozen volumetric role rejects a post-shape thin-shell relabel attempt', async (t) => {
+  const {root,source}=await makeProject(t);
+  await advanceToReview(root,source,{stopAfterShape:true});
+  const hierarchy=JSON.parse(await fs.readFile(path.join(root,'model','visual-hierarchy.json'),'utf8'));
+  const forgedThinRole=createSpatialRoleExpectationSet({
+    hierarchy,
+    sourceSha256:source.sha256,
+    expectations:[{
+      scopeId:'whole',
+      role:'thin-shell',
+      sourceObservation:'The adversarial worker now claims the already reconstructed whole is a thin shell.',
+      rationale:'This intentionally changes the frozen pre-candidate role after shape inspection.',
+      evidenceRefs:[source.path],
+    }],
+  });
+  const rolePath=await json(path.join(root,'model','vc08-post-shape-thin-shell.json'),forgedThinRole);
+  const roleRef=await contentReference(rolePath,{kind:'spatial-role-expectation',root});
+  const statePath=await json(path.join(root,'model','vc08-relabel-attempt.json'),{attack:'post-shape-thin-shell-relabel'});
+  const stateRef=await contentReference(statePath,{kind:'model-spec',root});
+  await assert.rejects(
+    ()=>commitCheckpoint(root,{
+      capability:'surface-topology',scopeId:'whole',
+      reason:'VC08 adversarial worker attempts to relabel a frozen volumetric source after shape reconstruction.',
+      artifactRefs:[stateRef,roleRef],
+      claims:['relabel whole as thin-shell'],
+      gates:[{id:'surface-topology-gate',evidenceRefs:[stateRef.path]}],
+    }),
+    /spatial role expectation mutation is forbidden after authority freeze/u,
+  );
+  const frozen=await resolveSpatialRoleAuthority(root,{scopeId:'whole'});
+  assert.equal(frozen.selectedExpectation.role,'volumetric');
+});
+
+test('VC08 caller-authored gate PASS remains non-authoritative', () => {
+  assert.throws(
+    ()=>normalizeCheckpointGateRequests('whole-object-certification',REQUIRED_CLOSURE_GATE_IDS.map((id)=>(
+      id==='spatial-plausibility'
+        ? {id,status:'pass',evaluator:'caller',evidenceRefs:['reviews/forged-spatial-gate-authority.json']}
+        : {id,evidenceRefs:['model/candidate.glb']}
+    ))),
+    /runtime-authoritative/u,
+  );
+});
+
+test('VC08 changed final candidate cannot reuse stale shape spatial evidence', async (t) => {
+  const {root,source}=await makeProject(t);
+  await advanceToReview(root,source,{mutateAtAppearance:true});
+  await assert.rejects(
+    ()=>commitCertification(root,source,{
+      projection:'good',
+      attachForgedSpatialAuthority:true,
+      attachForgedFinalContinuity:true,
+      includeFreshFinalSpatial:false,
+    }),
+    /changed final candidate requires fresh VC01 evidence for protected scope whole/u,
+  );
+});
+
+test('VC08 selected checkpoint lineage does not borrow later current-head final evidence', async (t) => {
+  const {root,source}=await makeProject(t);
+  await advanceToReview(root,source);
+  const before=await loadProject(root);
+  const selectedCheckpointId=before.head;
+  const certification=await commitCertification(root,source,{projection:'good'});
+  const current=await loadProject(root);
+  assert.equal(current.head,certification.id);
+  assert.notEqual(selectedCheckpointId,current.head);
+  await assert.rejects(
+    ()=>resolveFinalSpatialContinuity(root,{checkpointId:selectedCheckpointId}),
+    /(candidate authority|candidate-lineage-proof|final.*multiview|final candidate)/iu,
+  );
+});
+
+test('VC08 formal multiview intent cannot compensate for a collapsed protected whole', async (t) => {
+  const {root,source}=await makeProject(t);
+  await assert.rejects(
+    ()=>advanceToReview(root,source,{
+      candidateThickness:0.002,
+      expectedSpatialClassification:'PLANAR_COLLAPSE',
+      expectedVolumeVerdict:'REWORK',
+      stopAfterShape:false,
+    }),
+    /volume barrier PROCEED; current verdict is REWORK/u,
+  );
+});
+
+test('VC08 genuinely volumetric positive remains admitted downstream', async (t) => {
+  const {root,source}=await makeProject(t);
+  await advanceToReview(root,source,{stopAfterShape:true});
+  const statePath=await json(path.join(root,'model','vc08-volumetric-positive.json'),{control:'volumetric-positive'});
+  const stateRef=await contentReference(statePath,{kind:'model-spec',root});
+  const checkpoint=await commitCheckpoint(root,{
+    capability:'surface-topology',scopeId:'whole',
+    reason:'VC08 volumetric positive control continues after trusted VC04 admission.',
+    artifactRefs:[stateRef],claims:['volumetric positive remains admissible'],
+    gates:[{id:'surface-topology-gate',evidenceRefs:[stateRef.path]}],
+  });
+  assert.equal(checkpoint.capability,'surface-topology');
+});
+
+test('VC08 intentionally thin positive preserves thin-shell semantics and remains admitted', async (t) => {
+  const {root,source}=await makeProject(t);
+  await advanceToReview(root,source,{
+    spatialRole:'thin-shell',
+    candidateThickness:0.002,
+    expectedSpatialClassification:'NOT_APPLICABLE',
+    expectedVolumeVerdict:'PROCEED',
+    stopAfterShape:true,
+  });
+  const frozen=await resolveSpatialRoleAuthority(root,{scopeId:'whole'});
+  assert.equal(frozen.selectedExpectation.role,'thin-shell');
+  const statePath=await json(path.join(root,'model','vc08-thin-positive.json'),{control:'intentionally-thin-positive'});
+  const stateRef=await contentReference(statePath,{kind:'model-spec',root});
+  const checkpoint=await commitCheckpoint(root,{
+    capability:'surface-topology',scopeId:'whole',
+    reason:'VC08 intentionally thin positive control continues under frozen thin-shell semantics.',
+    artifactRefs:[stateRef],claims:['thin-shell semantics preserved'],
+    gates:[{id:'surface-topology-gate',evidenceRefs:[stateRef.path]}],
+  });
+  assert.equal(checkpoint.capability,'surface-topology');
+});
