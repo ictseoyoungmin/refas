@@ -331,6 +331,17 @@ async function evaluateCheckpointGateRequests(root, {state, capability, scopeId,
       continue;
     }
 
+    if (policy.evaluator === 'final-spatial-continuity') {
+      const authority = await deriveFinalSpatialCertificationGateAuthority(root, state, lineage, storedArtifacts, scopeId);
+      verdicts.push(createCheckpointGateVerdict({
+        capability,
+        id: request.id,
+        status: authority.gateStatus,
+        evidenceRefs: authority.evidenceRefs,
+      }));
+      continue;
+    }
+
     if (policy.evaluator === 'visual-review-gate') {
       let status = 'fail';
       let evidenceRefs = [];
@@ -429,6 +440,21 @@ async function auditGateAuthority(root, state, checkpoint, checkpoints) {
       } catch (error) {
         errors.push(`${checkpoint.id} gate ${gate.id} trusted spatial authority unavailable: ${error.message}`);
       }
+    } else if (policy.evaluator === 'final-spatial-continuity') {
+      try {
+        const authority = await deriveFinalSpatialCertificationGateAuthority(root, state, lineage, checkpoint.artifactRefs, checkpoint.scopeId);
+        if (authority.gateStatus !== gate.status) {
+          errors.push(`${checkpoint.id} gate ${gate.id} does not match final spatial continuity runtime authority: ${authority.gateStatus}`);
+        }
+        if (!legacy && JSON.stringify([...gate.evidenceRefs].sort()) !== JSON.stringify([...authority.evidenceRefs].sort())) {
+          errors.push(`${checkpoint.id} gate ${gate.id} final spatial continuity evidence binding mismatch`);
+        }
+        if (authority.gateStatus !== 'pass') {
+          errors.push(`${checkpoint.id} gate ${gate.id} final spatial continuity is not pass: ${authority.gateStatus}`);
+        }
+      } catch (error) {
+        errors.push(`${checkpoint.id} gate ${gate.id} final spatial continuity authority unavailable: ${error.message}`);
+      }
     } else if (policy.evaluator === 'visual-review-gate') {
       const reviewArtifacts = checkpoint.artifactRefs.filter((artifact) => artifact.kind === 'visual-review');
       if (reviewArtifacts.length !== 1) {
@@ -500,10 +526,27 @@ async function inspectCertificationHead(root, state, head) {
   const errors = [];
   if (head.capability !== 'whole-object-certification' || head.scopeId !== 'whole') {
     errors.push('the head must be a whole-object-certification checkpoint for whole');
-    return {ready: false, errors, visualReview: null, visualReviewArtifact: null};
+    return {ready: false, errors, visualReview: null, visualReviewArtifact: null, finalSpatialContinuity: null};
   }
   errors.push(...exactSetErrors(head.gates.map((gate) => gate.id), REQUIRED_CLOSURE_GATE_IDS, 'closure gates'));
   if (head.gates.some((gate) => gate.status !== 'pass')) errors.push('the certification checkpoint contains a non-pass gate');
+
+  let finalSpatialContinuity=null;
+  if(!isTrustedContractFixtureProject(state)){
+    try{
+      const checkpoints=await listCheckpoints(root);
+      const lineage=checkpointLineage(checkpoints,head.id);
+      finalSpatialContinuity=await resolveFinalSpatialContinuityFromLineage(root,state,lineage);
+      if(finalSpatialContinuity?.verdict!=='PROCEED'){
+        errors.push(`final spatial continuity verdict is ${finalSpatialContinuity?.verdict ?? "missing"}, not PROCEED`);
+      }
+      const exactCandidates=candidateGlbArtifacts(head.artifactRefs)
+        .filter((artifact)=>artifact.sha256===finalSpatialContinuity?.finalCandidate?.assetSha256);
+      if(exactCandidates.length!==1) errors.push('final spatial continuity final candidate is not exact-byte bound in the certification checkpoint');
+    }catch(error){
+      errors.push(`final spatial continuity unavailable: ${error.message}`);
+    }
+  }
 
   const reviewArtifacts = head.artifactRefs.filter((artifact) => artifact.kind === 'visual-review');
   if (reviewArtifacts.length !== 1) errors.push('the certification checkpoint requires exactly one digest-bound visual-review artifact');
@@ -561,7 +604,7 @@ async function inspectCertificationHead(root, state, head) {
       errors.push(`visual review unavailable: ${error.message}`);
     }
   }
-  return {ready: errors.length === 0, errors, visualReview, visualReviewArtifact};
+  return {ready: errors.length === 0, errors, visualReview, visualReviewArtifact, finalSpatialContinuity};
 }
 
 async function inspectRegisteredComparison(root, state, head, visualReview, errors) {
@@ -637,6 +680,7 @@ function certificateCore(certificate) {
     checkpointId: certificate.checkpointId,
     checkpointDigest: certificate.checkpointDigest,
     gateIds: certificate.gateIds,
+    finalSpatialContinuity: certificate.finalSpatialContinuity,
     visualReview: certificate.visualReview,
     registeredComparison: certificate.registeredComparison,
     audit: certificate.audit,
@@ -1050,6 +1094,59 @@ export async function resolveFinalSpatialContinuity(root,{checkpointId=null}={})
   if(!target) throw new Error('final spatial continuity requires a checkpoint lineage');
   const lineage=checkpointLineage(checkpoints,target);
   return deepFreeze(await resolveFinalSpatialContinuityFromLineage(root,state,lineage));
+}
+
+async function finalSpatialContinuityEvidenceRefs(root, continuity, storedArtifacts) {
+  const refs=[];
+  const candidates=candidateGlbArtifacts(storedArtifacts)
+    .filter((artifact)=>artifact.sha256===continuity.finalCandidate.assetSha256);
+  if(candidates.length!==1) throw new Error('final spatial continuity gate requires exactly one exact final candidate artifact');
+  refs.push(candidates[0].path);
+
+  const proofArtifacts=storedArtifacts.filter((artifact)=>artifact.kind==='candidate-lineage-proof');
+  if(proofArtifacts.length!==1) throw new Error('final spatial continuity gate requires exactly one candidate-lineage-proof artifact');
+  const proof=await readImmutableJsonArtifact(root,proofArtifacts[0],'final spatial continuity certification lineage proof');
+  if(proof.lineageDigest!==continuity.candidateLineageDigest) throw new Error('final spatial continuity certification lineage digest mismatch');
+  refs.push(proofArtifacts[0].path);
+
+  const reportMatches=[];
+  for(const artifact of storedArtifacts.filter((item)=>item.kind==='render-report')){
+    const report=await readImmutableJsonArtifact(root,artifact,'final spatial continuity certification render report');
+    if(report?.reportDigest===continuity.finalMultiview.reportDigest) reportMatches.push(artifact);
+  }
+  if(reportMatches.length!==1) throw new Error('final spatial continuity gate requires exactly one canonical final multiview report');
+  refs.push(reportMatches[0].path);
+
+  for(const output of continuity.finalMultiview.outputs){
+    const matches=storedArtifacts.filter((artifact)=>
+      artifact.kind==='render-frame'&&artifact.path===output.path&&artifact.sha256===output.sha256);
+    if(matches.length!==1) throw new Error(`final spatial continuity gate output is not exact-byte bound: ${output.viewId}`);
+    refs.push(matches[0].path);
+  }
+  return [...new Set(refs)].sort();
+}
+
+async function deriveFinalSpatialCertificationGateAuthority(root,state,parentLineage,storedArtifacts,scopeId='whole'){
+  const resolvedScope=assertId(scopeId,'scopeId');
+  if(resolvedScope!=='whole') throw new Error('final spatial continuity certification authority is defined for whole-object certification only');
+  if(isTrustedContractFixtureProject(state)){
+    return {
+      gateStatus:'pass',
+      evidenceRefs:[...new Set(storedArtifacts.map((artifact)=>artifact.path))].sort(),
+      continuity:null,
+    };
+  }
+  const prospective={
+    id:'prospective-vc07-whole-object-certification',
+    parentId:parentLineage.at(-1)?.id??null,
+    capability:'whole-object-certification',
+    scopeId:resolvedScope,
+    artifactRefs:storedArtifacts,
+  };
+  const continuity=await resolveFinalSpatialContinuityFromLineage(root,state,[...parentLineage,prospective]);
+  const gateStatus=continuity.verdict==='PROCEED'?'pass':continuity.verdict==='REWORK'?'fail':'blocked';
+  const evidenceRefs=await finalSpatialContinuityEvidenceRefs(root,continuity,storedArtifacts);
+  return {gateStatus,evidenceRefs,continuity};
 }
 
 export async function resolveVolumeBarrierAdmission(root, {checkpointId = null, scopeId = null} = {}) {
@@ -2038,6 +2135,19 @@ export async function resumeProject(root) {
           reason: `the stored certification predates or fails current early resemblance admission: ${error.message}`,
         };
       }
+      try {
+        const continuity=await resolveFinalSpatialContinuityFromLineage(root,state,lineage);
+        if(continuity?.verdict!=='PROCEED') throw new Error(`current VC06 verdict is ${continuity?.verdict ?? "missing"}`);
+      } catch (error) {
+        return {
+          schema: 'refas.resume-guidance/v1',
+          status: state.status,
+          safeCheckpointId: state.head,
+          activeWork: {capability: 'whole-object-certification', scopeId: 'whole'},
+          nextAction: 'REVERIFY_FINAL_SPATIAL_CONTINUITY',
+          reason: `the stored certification predates or fails current final-candidate spatial continuity: ${error.message}`,
+        };
+      }
     }
     return {
       schema: 'refas.resume-guidance/v1', status: state.status, safeCheckpointId: state.head,
@@ -2270,6 +2380,19 @@ export async function auditProject(root) {
       if (readiness.visualReview?.reviewDigest !== certificate.visualReview?.reviewDigest || readiness.visualReviewArtifact?.sha256 !== certificate.visualReview?.sha256) {
         errors.push('certificate visual-review binding is invalid');
       }
+      if (readiness.finalSpatialContinuity) {
+        const binding=certificate.finalSpatialContinuity;
+        if (
+          binding?.continuityDigest!==readiness.finalSpatialContinuity.continuityDigest
+          || binding?.finalCandidateSha256!==readiness.finalSpatialContinuity.finalCandidate.assetSha256
+          || binding?.mode!==readiness.finalSpatialContinuity.mode
+          || binding?.finalMultiviewReportDigest!==readiness.finalSpatialContinuity.finalMultiview.reportDigest
+        ) {
+          errors.push('certificate final-spatial-continuity binding is invalid');
+        }
+      } else if (certificate.finalSpatialContinuity != null) {
+        errors.push('trusted contract fixture certificate must not claim final spatial continuity authority');
+      }
     } catch (error) {
       errors.push(`certificate unavailable: ${error.message}`);
     }
@@ -2312,7 +2435,11 @@ export async function assessCertification(root) {
   }
   return deepFreeze({
     schema: 'refas.certification-readiness/v1', ready: errors.length === 0, errors,
-    checkpointId: state.head, reviewDigest: inspection.visualReview?.reviewDigest ?? null,
+    checkpointId: state.head,
+    reviewDigest: inspection.visualReview?.reviewDigest ?? null,
+    finalSpatialContinuityDigest: inspection.finalSpatialContinuity?.continuityDigest ?? null,
+    finalCandidateSha256: inspection.finalSpatialContinuity?.finalCandidate?.assetSha256 ?? null,
+    finalSpatialContinuityMode: inspection.finalSpatialContinuity?.mode ?? null,
   });
 }
 
@@ -2335,6 +2462,12 @@ export async function certifyProject(root) {
     checkpointId: head.id,
     checkpointDigest: head.contentDigest,
     gateIds: head.gates.map((gate) => gate.id),
+    finalSpatialContinuity: readiness.finalSpatialContinuity ? {
+      continuityDigest: readiness.finalSpatialContinuity.continuityDigest,
+      finalCandidateSha256: readiness.finalSpatialContinuity.finalCandidate.assetSha256,
+      mode: readiness.finalSpatialContinuity.mode,
+      finalMultiviewReportDigest: readiness.finalSpatialContinuity.finalMultiview.reportDigest,
+    } : null,
     visualReview: {
       path: readiness.visualReviewArtifact.path,
       sha256: readiness.visualReviewArtifact.sha256,
