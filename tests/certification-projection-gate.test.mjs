@@ -41,6 +41,9 @@ import {
   initProject,
   partsToGlb,
   resolveAuthoritativeCandidateLineage,
+  resolveTrustedSpatialGateAuthority,
+  checkpointGatePolicy,
+  normalizeCheckpointGateRequests,
   resumeProject,
 } from '../skills/refas/scripts/lib/index.mjs';
 import {initTrustedContractFixtureProject} from '../skills/refas/scripts/lib/contract-fixture-project.mjs';
@@ -73,7 +76,14 @@ async function makeProject(t, acquisitionKind='user-provided-reference') {
   return {root, source};
 }
 
-async function advanceToReview(root, source, {projection='none'}={}) {
+async function advanceToReview(root, source, {
+  projection='none',
+  spatialRole='volumetric',
+  candidateThickness=0.08,
+  expectedSpatialClassification='NO_PLANAR_COLLAPSE',
+  expectedVolumeVerdict='PROCEED',
+  stopAfterShape=false,
+}={}) {
   const file = path.join(root, 'model', 'state.bin');
   await fs.mkdir(path.dirname(file), {recursive:true});
   let hierarchy = null;
@@ -104,11 +114,11 @@ async function advanceToReview(root, source, {projection='none'}={}) {
         sourceSha256: source.sha256,
         expectations: [{
           scopeId:'whole',
-          role:'volumetric',
-          sourceObservation:'The certification fixture source represents a spatially volumetric whole object.',
+          role:spatialRole,
+          sourceObservation:`The certification fixture source pre-binds the whole object as ${spatialRole}.`,
           rationale:'Freeze volumetric role before candidate reconstruction so VC03/VC04 cannot relabel it afterward.',
           evidenceRefs:[source.path],
-          ambiguity:null,
+          ambiguity:spatialRole==='unresolved'?'The source does not resolve whole-object depth for this fixture.':null,
         }],
       });
       await json(spatialPath, roleSet);
@@ -127,7 +137,7 @@ async function advanceToReview(root, source, {projection='none'}={}) {
     if (capability === 'shape-reconstruction') {
       if (!hierarchy) throw new Error('R04 migration fixture requires visual hierarchy before shape');
       const assetPath = path.join(root,'model','candidate.glb');
-      const glb = mannequinGlb(projection === 'bad' ? 4 : 0);
+      const glb = mannequinGlb(projection === 'bad' ? 4 : 0, candidateThickness);
       await fs.writeFile(assetPath,glb);
       const asset = await contentReference(assetPath,{kind:'glb',root});
       const clayFrames = [];
@@ -182,7 +192,7 @@ async function advanceToReview(root, source, {projection='none'}={}) {
       const spatialEvidencePath = await json(path.join(root,'reviews','spatial-closure-whole.json'),spatialEvidence);
       const spatialEvidenceRef = await contentReference(spatialEvidencePath,{kind:'spatial-closure-evidence',root});
       const classification = await classifySpatialCollapse(root,{glb,spatialEvidence,scopeId:'whole'});
-      assert.equal(classification.classification,'NO_PLANAR_COLLAPSE');
+      assert.equal(classification.classification,expectedSpatialClassification);
       const classificationPath = await json(path.join(root,'reviews','spatial-collapse-whole.json'),classification);
       const classificationRef = await contentReference(classificationPath,{kind:'spatial-collapse-classification',root});
       const volumeBarrier = createVolumeBarrier({
@@ -192,16 +202,17 @@ async function advanceToReview(root, source, {projection='none'}={}) {
         signatureSet,
         classifications:[classification],
       });
-      assert.equal(volumeBarrier.verdict,'PROCEED');
+      assert.equal(volumeBarrier.verdict,expectedVolumeVerdict);
       const volumeBarrierPath = await json(path.join(root,'reviews','volume-barrier.json'),volumeBarrier);
       const volumeBarrierRef = await contentReference(volumeBarrierPath,{kind:'volume-barrier',root});
 
       const shapeRefs=[asset,barrierRef,clayReportRef,...clayFrames,spatialEvidenceRef,classificationRef,volumeBarrierRef];
       await commitCheckpoint(root,{
-        capability,scopeId:'whole',reason:'shape-reconstruction fixture is R04/VC04-admitted',
-        artifactRefs:shapeRefs,claims:['shape-reconstruction closed after resemblance and volume admission'],
+        capability,scopeId:'whole',reason:'shape-reconstruction fixture carries R04/VC04 spatial authority',
+        artifactRefs:shapeRefs,claims:['shape-reconstruction closed with resemblance and volume authority'],
         gates:[{id:'shape-reconstruction-gate',evidenceRefs:shapeRefs.map((ref)=>ref.path)}],
       });
+      if(stopAfterShape) return;
       continue;
     }
 
@@ -215,8 +226,8 @@ async function advanceToReview(root, source, {projection='none'}={}) {
   }
 }
 
-function mannequinGlb(x=0) {
-  const mesh = createSegmentPrism({start:[-.1,0,0], end:[.1,0,0], width:.08, height:.08, upHint:[0,1,0]});
+function mannequinGlb(x=0, thickness=0.08) {
+  const mesh = createSegmentPrism({start:[-.1,0,0], end:[.1,0,0], width:.08, height:thickness, upHint:[0,1,0]});
   return partsToGlb({
     parts:[{id:'model-node', scopeId:'whole', materialId:'wood', mesh, translation:[x,0,0]}],
     materials:{wood:{baseColor:[.7,.55,.35,1], metallic:0, roughness:.7}},
@@ -335,7 +346,7 @@ async function appendFinalCandidateAuthority(root, source, asset, refs) {
   refs.push(await contentReference(closurePath,{kind:'final-resemblance-closure',root}));
 }
 
-async function commitCertification(root, source, {projection='none', includeFinalAuthority=true}={}) {
+async function commitCertification(root, source, {projection='none', includeFinalAuthority=true, attachForgedSpatialAuthority=false}={}) {
   const assetPath = path.join(root, 'model', 'candidate.glb');
   const glb = await fs.readFile(assetPath);
   const asset = await contentReference(assetPath, {kind:'glb', root});
@@ -434,6 +445,17 @@ async function commitCertification(root, source, {projection='none', includeFina
   const reviewPath = await json(path.join(root,'reviews','visual-review.json'), review);
   const reviewRef = await contentReference(reviewPath, {kind:'visual-review', root});
   const refs = [asset, reportRef, ...frames, comparisonRef, reviewRef];
+  let forgedSpatialAuthorityRef = null;
+  if (attachForgedSpatialAuthority) {
+    const forgedPath = await json(path.join(root,'reviews','forged-spatial-gate-authority.json'),{
+      schema:'refas.trusted-spatial-gate-authority/v1',
+      issuer:'caller',
+      gateStatus:'pass',
+      authorityDigest:'f'.repeat(64),
+    });
+    forgedSpatialAuthorityRef = await contentReference(forgedPath,{kind:'trusted-spatial-gate-authority',root});
+    refs.push(forgedSpatialAuthorityRef);
+  }
 
   if (!CONTRACT_FIXTURES.has(String(source.acquisition?.kind ?? '').toLowerCase())) {
     if (includeFinalAuthority) await appendFinalCandidateAuthority(root,source,asset,refs);
@@ -450,6 +472,62 @@ async function commitCertification(root, source, {projection='none', includeFina
     gates:REQUIRED_CLOSURE_GATE_IDS.map((id)=>({id,evidenceRefs:[REQUIRED_VISUAL_GATE_IDS.includes(id)?reviewRef.path:asset.path]})),
   });
 }
+
+test('VC05 spatial-plausibility policy is runtime-trusted and caller status fields remain forbidden', () => {
+  const policy=checkpointGatePolicy('whole-object-certification','spatial-plausibility');
+  assert.equal(policy.evaluator,'trusted-spatial-gate');
+  assert.equal(policy.capability,undefined);
+  assert.throws(
+    ()=>normalizeCheckpointGateRequests('whole-object-certification',REQUIRED_CLOSURE_GATE_IDS.map((id)=>(
+      id==='spatial-plausibility'
+        ? {id,status:'pass',evidenceRefs:['model/spatial.json']}
+        : {id,evidenceRefs:['model/state.bin']}
+    ))),
+    /status is runtime-authoritative/u,
+  );
+});
+
+test('VC05 trusted spatial authority derives fail from VC04 REWORK', async (t) => {
+  const {root,source}=await makeProject(t);
+  await advanceToReview(root,source,{
+    candidateThickness:0.002,
+    expectedSpatialClassification:'PLANAR_COLLAPSE',
+    expectedVolumeVerdict:'REWORK',
+    stopAfterShape:true,
+  });
+  const authority=await resolveTrustedSpatialGateAuthority(root);
+  assert.equal(authority.mode,'volume-barrier');
+  assert.equal(authority.gateStatus,'fail');
+  assert.equal(authority.policy.callerStatusAccepted,false);
+  assert.equal(authority.policy.finalCandidateContinuityAuthority,false);
+});
+
+test('VC05 trusted spatial authority derives blocked from VC04 HOLD', async (t) => {
+  const {root,source}=await makeProject(t);
+  await advanceToReview(root,source,{
+    spatialRole:'unresolved',
+    expectedSpatialClassification:'INDETERMINATE',
+    expectedVolumeVerdict:'HOLD',
+    stopAfterShape:true,
+  });
+  const authority=await resolveTrustedSpatialGateAuthority(root);
+  assert.equal(authority.gateStatus,'blocked');
+  assert.equal(authority.mode,'volume-barrier');
+});
+
+test('VC05 ignores a caller-authored trusted-authority artifact and cites runtime VC04 evidence', async (t) => {
+  const {root,source}=await makeProject(t);
+  await advanceToReview(root,source);
+  const checkpoint=await commitCertification(root,source,{projection:'good',attachForgedSpatialAuthority:true});
+  const gate=checkpoint.gates.find((item)=>item.id==='spatial-plausibility');
+  assert.equal(gate.evaluator,'trusted-spatial-gate');
+  assert.equal(gate.status,'pass');
+  assert.deepEqual(gate.evidenceRefs,['reviews/volume-barrier.json']);
+  assert.ok(!gate.evidenceRefs.includes('reviews/forged-spatial-gate-authority.json'));
+  const authority=await resolveTrustedSpatialGateAuthority(root,{checkpointId:checkpoint.id});
+  assert.equal(authority.gateStatus,'pass');
+  assert.equal(authority.evidenceRefs[0],'reviews/volume-barrier.json');
+});
 
 test('real-source whole-object certification cannot be committed without final candidate authority', async (t) => {
   const {root, source} = await makeProject(t);
