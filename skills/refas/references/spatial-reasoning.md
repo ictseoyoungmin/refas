@@ -402,3 +402,30 @@ finalSpatialContinuity.finalMultiviewReportDigest
 Project audit recomputes VC06 and checks those bindings. Certified resume also replays current VC06 before returning `DONE`; missing, stale, corrupted, REWORK, or HOLD authority routes back to final spatial re-verification.
 
 VC07 does not introduce a global thickness score, aggregate resemblance score, or single-view IoU authority. Visual review and final resemblance closure remain independent obligations.
+
+## VC08 adversarial dogfood harness
+
+VC08 adds an installed-skill-only adversarial worker and verifier around the integrated VC00–VC07 chain. The deterministic harness is **not** itself final VC08 closure; it exists to make real fresh-model dogfood reproducible and to prevent regressions between external worker runs.
+
+Run:
+
+```bash
+npm run dogfood:adversarial
+```
+
+The verifier copies only the installed `skills/refas/` tree into an isolated temporary root. Repository-only surfaces such as `tests/`, `docs/`, `examples/`, `.git`, and root `package.json` are absent from the worker environment. The adversarial worker reads only `SKILL.md`, routed references/templates, `refas describe`, and the public `scripts/lib/index.mjs` entrypoint.
+
+The deterministic matrix exercises:
+
+- volumetric planar/billboard collapse with formally complete neutral-clay multiview;
+- attempted post-failure `thin-shell` relabel after VC02 freeze;
+- caller-authored checkpoint `status: pass` plus forged VC05/VC06-looking files;
+- changed-final-candidate stale VC01/VC03 reuse;
+- selected-lineage isolation from a current sibling carrying fresh final spatial evidence;
+- HERO-oriented resemblance plus formally complete multiview that still cannot override VC04 spatial contradiction;
+- a true volumetric positive control;
+- a legitimate thin-shell positive control.
+
+The harness report schema is `refas.vc08-adversarial-dogfood-report/v1`. A report may have `status: PASS` while still carrying `closureReady: false`. This means the deterministic attack matrix is healthy, **not** that VC08 is canonically closed.
+
+Final VC08 closure still requires independent fresh GPT and Claude sessions against the same current RefAs snapshot and comparable budget. Their transcripts should be evaluated with this matrix, including attempted bypass, first multiview point, runtime verdict, certification reachability, and any shortcut not represented by the deterministic harness. `timeToFirstMultiview` is a performance observation only and has no certification authority.

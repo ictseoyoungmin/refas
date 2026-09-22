@@ -51,6 +51,9 @@ jobs:
       - name: VC00 volume-closure regression fixtures
         if: matrix.node == 24
         run: npm run dogfood:volume-regression
+      - name: VC08 adversarial public-boundary dogfood
+        if: matrix.node == 24
+        run: npm run dogfood:adversarial
       - name: Joint parameter-fit dogfood
         if: matrix.node == 24
         run: npm run dogfood:parameter-fit
