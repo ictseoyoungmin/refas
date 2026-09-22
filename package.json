@@ -37,7 +37,6 @@
     "dogfood:fresh-worker": "node skills/refas/scripts/verify_fresh_worker_dogfood.mjs",
     "dogfood:adversarial": "node skills/refas/scripts/verify_vc08_adversarial_dogfood.mjs",
     "dogfood:volume-regression": "node examples/volume-closure-regression/run.mjs",
-    "dogfood:adversarial": "node skills/refas/scripts/verify_adversarial_dogfood.mjs",
     "check:discovery-closure": "node skills/refas/scripts/verify_discovery_closure.mjs"
   }
 }
