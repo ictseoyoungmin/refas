@@ -1027,7 +1027,9 @@
             "template": null,
             "inputContract": "initialized project root + optional checkpoint selector; runtime derives whole-object protected spatial gate authority from VC04 replay or runtime-owned contract-fixture authority",
             "outputSchema": "refas.trusted-spatial-gate-authority/v1",
-            "validator": null,
+            "validator": {
+              "library": "validateTrustedSpatialGateAuthority"
+            },
             "minimumInvocation": "references/spatial-reasoning.md",
             "example": null,
             "usageReference": "references/spatial-reasoning.md",

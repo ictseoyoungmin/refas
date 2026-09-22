@@ -33,6 +33,7 @@ import {
   createRelationalDiscrepancy,
   createRelationalStructure,
   createSegmentPrism,
+  finalizeMesh,
   createSemanticAuthoritySet,
   createVisualReview,
   createWholeSystemRelationalBarrier,
@@ -226,8 +227,23 @@ async function advanceToReview(root, source, {
   }
 }
 
+function vc05BoxMesh(depth=0.02) {
+  const hx=0.5, hy=0.5, hz=depth/2;
+  const positions=[
+    [-hx,-hy,-hz],[hx,-hy,-hz],[hx,hy,-hz],[-hx,hy,-hz],
+    [-hx,-hy,hz],[hx,-hy,hz],[hx,hy,hz],[-hx,hy,hz],
+  ];
+  const indices=[
+    0,2,1,0,3,2,4,5,6,4,6,7,0,1,5,0,5,4,
+    3,7,6,3,6,2,0,4,7,3,0,7,1,2,6,1,6,5,
+  ];
+  return finalizeMesh(positions,indices,{primitive:'vc05-box'});
+}
+
 function mannequinGlb(x=0, thickness=0.08) {
-  const mesh = createSegmentPrism({start:[-.1,0,0], end:[.1,0,0], width:.08, height:thickness, upHint:[0,1,0]});
+  const mesh = thickness <= 0.02
+    ? vc05BoxMesh(thickness)
+    : createSegmentPrism({start:[-.1,0,0], end:[.1,0,0], width:.08, height:thickness, upHint:[0,1,0]});
   return partsToGlb({
     parts:[{id:'model-node', scopeId:'whole', materialId:'wood', mesh, translation:[x,0,0]}],
     materials:{wood:{baseColor:[.7,.55,.35,1], metallic:0, roughness:.7}},
