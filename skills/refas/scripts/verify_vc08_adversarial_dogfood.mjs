@@ -100,6 +100,8 @@ export async function runVc08AdversarialDogfood({skillRoot=DEFAULT_SKILL_ROOT,ke
   assert.equal(byId['thin-shell-relabel'].result.attemptedRole,'thin-shell');
   assert.equal(byId['thin-shell-relabel'].result.frozenRole,'volumetric');
   assert.equal(byId['thin-shell-relabel'].result.replayedClassification,'PLANAR_COLLAPSE');
+  assert.equal(byId['thin-shell-relabel'].result.lateCheckpointRejected,true);
+  assert.match(byId['thin-shell-relabel'].result.lateCheckpointError,/spatial role expectation mutation is forbidden/u);
   assert.equal(byId['thin-shell-relabel'].result.bypassAccepted,false);
 
   assert.equal(byId['self-authored-pass'].result.callerStatusRejected,true);
