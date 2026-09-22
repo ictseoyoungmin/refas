@@ -85,13 +85,13 @@ function candidateGlb({depth=1,variant='base'}={}){
     extras:{vc08Scenario:scenario,variant},
   });
 }
-async function genericCheckpoint(capability,label=capability){
+async function genericCheckpoint(capability,label=capability,{extraRefs=[]}={}){
   const relative=`model/${label}.bin`;
   await write(relative,Buffer.from(`vc08:${scenario}:${label}\n`));
   const artifact=await ref(relative,'model-spec');
   return API.commitCheckpoint(projectRoot,{
     capability,scopeId:'whole',reason:`VC08 ${scenario} ${capability} public-boundary checkpoint`,
-    artifactRefs:[artifact],claims:[`${capability} exercised by VC08`],
+    artifactRefs:[artifact,...extraRefs],claims:[`${capability} exercised by VC08`],
     gates:[{id:`${capability}-gate`,evidenceRefs:[artifact.path]}],
   });
 }
@@ -285,8 +285,8 @@ async function scenarioRelabel(){
 }
 
 async function scenarioSelfPass(){
-  const setup=await initBase({role:'volumetric',depth:.002});
-  transcript.attemptedBypasses.push('caller-authored gate status pass + forged trusted authority/continuity files');
+  const setup=await initBase({role:'volumetric',depth:1});
+  transcript.attemptedBypasses.push('caller-authored gate status pass + forged trusted authority attached to downstream checkpoint');
   let callerStatusRejected=false;
   try{
     API.normalizeCheckpointGateRequests('whole-object-certification',API.REQUIRED_CLOSURE_GATE_IDS.map((id)=>(
@@ -298,29 +298,44 @@ async function scenarioSelfPass(){
   await writeJson('reviews/forged-spatial-gate-authority.json',{
     schema:'refas.trusted-spatial-gate-authority/v1',issuer:'caller',gateStatus:'pass',authorityDigest:'f'.repeat(64),
   });
-  await writeJson('reviews/forged-final-spatial-continuity.json',{
-    schema:'refas.final-spatial-continuity/v1',verdict:'PROCEED',continuityDigest:'e'.repeat(64),
-    finalCandidate:{assetSha256:setup.asset.sha256},
-  });
-  const authority=await API.resolveTrustedSpatialGateAuthority(projectRoot);
-  if(!callerStatusRejected||authority.gateStatus!=='fail') throw new Error('self-authored PASS bypass was not rejected');
-  return {callerStatusRejected,forgedFilesConsulted:false,runtimeGateStatus:authority.gateStatus};
+  const forgedSpatialRef=await ref('reviews/forged-spatial-gate-authority.json','trusted-spatial-gate-authority');
+  const downstream=await genericCheckpoint('surface-topology','surface-topology-forged-authority',{extraRefs:[forgedSpatialRef]});
+  const authority=await API.resolveTrustedSpatialGateAuthority(projectRoot,{checkpointId:downstream.id});
+  const forgedConsulted=authority.evidenceRefs.includes(forgedSpatialRef.path);
+  if(!callerStatusRejected||authority.gateStatus!=='pass'||forgedConsulted) throw new Error('self-authored PASS or forged trusted authority influenced runtime authority');
+  return {
+    callerStatusRejected,
+    forgedAuthorityAttached:true,
+    forgedFilesConsulted:forgedConsulted,
+    runtimeGateStatus:authority.gateStatus,
+    runtimeEvidenceRefs:authority.evidenceRefs,
+  };
 }
 
 async function scenarioStaleEvidence(){
   await initBase({role:'volumetric',depth:1});
   await advanceAfterShape({mutate:true});
-  transcript.attemptedBypasses.push('reuse shape-stage VC01/VC03 after changed final candidate digest');
+  transcript.attemptedBypasses.push('reuse shape-stage VC01/VC03 and attach forged VC06 continuity after changed final candidate digest');
   const authority=await API.resolveAuthoritativeCandidateLineage(projectRoot);
+  await writeJson('reviews/forged-final-spatial-continuity.json',{
+    schema:'refas.final-spatial-continuity/v1',
+    verdict:'PROCEED',
+    continuityDigest:'e'.repeat(64),
+    finalCandidate:{assetSha256:authority.finalCandidate.assetSha256},
+  });
+  const forgedContinuityRef=await ref('reviews/forged-final-spatial-continuity.json','final-spatial-continuity');
+  const forgedHead=await genericCheckpoint('visual-critique','visual-critique-forged-continuity',{extraRefs:[forgedContinuityRef]});
   let blocked=null;
-  try{ await API.resolveFinalSpatialContinuity(projectRoot); }
+  try{ await API.resolveFinalSpatialContinuity(projectRoot,{checkpointId:forgedHead.id}); }
   catch(error){ blocked=error.message; }
   if(!blocked||!/fresh VC01 evidence/u.test(blocked)) throw new Error(`stale evidence reuse was not blocked as expected: ${blocked}`);
   return {
     shapeCandidateSha256:authority.initialCandidate.assetSha256,
     finalCandidateSha256:authority.finalCandidate.assetSha256,
     candidateChanged:authority.initialCandidate.assetSha256!==authority.finalCandidate.assetSha256,
-    staleReuseBlocked:true,blockReason:blocked,
+    forgedContinuityAttached:true,
+    staleReuseBlocked:true,
+    blockReason:blocked,
   };
 }
 
