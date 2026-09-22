@@ -256,3 +256,64 @@ Each VC01 record is revalidated against the exact shape GLB. Each VC03 classific
 - replace VC07 certification integration.
 
 This distinction is deliberate: VC04 prevents polishing a collapsed base shape, while later slices preserve volume authority across candidate mutation and final closure.
+
+
+## VC05 trusted spatial gate authority
+
+VC05 removes the protected spatial gate's remaining self-certification path.
+
+Whole-object closure gate `spatial-plausibility` no longer means “a trustworthy spatial-hypotheses checkpoint exists.” Its executable policy is now `trusted-spatial-gate`.
+
+The runtime derives `refas.trusted-spatial-gate-authority/v1` by replaying canonical upstream state. There is no public creator that accepts a status.
+
+For real-source projects the authority binds:
+
+- source SHA-256;
+- exact shape-reconstruction checkpoint ID + content digest;
+- exact shape candidate SHA-256;
+- exact VC04 volume-barrier digest;
+- exact VC02 expectation-set digest;
+- protected scope IDs;
+- per-scope VC03 classification digests;
+- scoped `spatial-plausibility` executable-policy digest;
+- runtime-selected evidence refs.
+
+Gate status is derived only from VC04:
+
+```text
+VC04 PROCEED → pass
+VC04 REWORK  → fail
+VC04 HOLD    → blocked
+```
+
+Caller gate requests may still name `spatial-plausibility`, but caller-supplied `status`, `evaluator`, policy digest, or decision digest remain forbidden. Caller-supplied evidence refs do not decide spatial authority; runtime replaces them with the exact VC04 barrier evidence binding.
+
+A self-authored artifact claiming `refas.trusted-spatial-gate-authority/v1` is not consulted by the evaluator.
+
+### Trusted contract fixtures
+
+A contract fixture can use the fixture path only when `.refas` contains valid runtime-owned `refas.contract-fixture-authority/v1`. Public `source.acquisition.kind` text alone cannot enable the shortcut.
+
+### Audit replay
+
+Persisted certification gates are not trusted by their own digest. Audit re-derives the current trusted spatial authority and requires:
+
+- persisted gate evaluator = `trusted-spatial-gate`;
+- persisted status equals runtime-derived status;
+- persisted evidence refs exactly equal runtime-selected authority refs;
+- runtime-derived status remains `pass`.
+
+Thus a re-signed stored `pass` cannot survive if the underlying VC04 authority becomes `REWORK`, `HOLD`, stale, or invalid.
+
+### Authority boundary
+
+VC05 is protected checkpoint-gate authority, not final spatial continuity authority.
+
+```text
+VC04 = shape-stage downstream admission
+VC05 = trusted issuer for protected spatial gate
+VC06 = candidate-bound multiview/final-candidate spatial continuity
+VC07 = final certification integration
+```
+
+VC05 intentionally does not claim that a downstream-mutated final candidate still matches the shape-stage spatial authority.
