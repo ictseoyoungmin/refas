@@ -409,6 +409,7 @@ async function commitCertification(root, source, {
   projection='none',
   includeFinalAuthority=true,
   attachForgedSpatialAuthority=false,
+  attachForgedFinalContinuity=false,
   includeFreshFinalSpatial=false,
 }={}) {
   const assetPath = path.join(root, 'model', 'candidate.glb');
@@ -520,6 +521,15 @@ async function commitCertification(root, source, {
     forgedSpatialAuthorityRef = await contentReference(forgedPath,{kind:'trusted-spatial-gate-authority',root});
     refs.push(forgedSpatialAuthorityRef);
   }
+  if (attachForgedFinalContinuity) {
+    const forgedPath = await json(path.join(root,'reviews','forged-final-spatial-continuity.json'),{
+      schema:'refas.final-spatial-continuity/v1',
+      verdict:'PROCEED',
+      finalCandidate:{assetSha256:asset.sha256},
+      continuityDigest:'e'.repeat(64),
+    });
+    refs.push(await contentReference(forgedPath,{kind:'final-spatial-continuity',root}));
+  }
 
   if (!CONTRACT_FIXTURES.has(String(source.acquisition?.kind ?? '').toLowerCase())) {
     if (includeFinalAuthority) await appendFinalCandidateAuthority(root,source,asset,refs,{includeFreshFinalSpatial});
@@ -583,11 +593,14 @@ test('VC06 validator rejects re-signed mode and multiview tampering', async (t) 
 test('VC06 changed final candidate cannot inherit shape-stage spatial authority without fresh final evidence', async (t) => {
   const {root,source}=await makeProject(t);
   await advanceToReview(root,source,{mutateAtAppearance:true});
-  const checkpoint=await commitCertification(root,source,{projection:'good'});
-  const authority=await resolveAuthoritativeCandidateLineage(root,{checkpointId:checkpoint.id});
+  const authority=await resolveAuthoritativeCandidateLineage(root);
   assert.notEqual(authority.initialCandidate.assetSha256,authority.finalCandidate.assetSha256);
   await assert.rejects(
-    ()=>resolveFinalSpatialContinuity(root,{checkpointId:checkpoint.id}),
+    ()=>resolveFinalSpatialContinuity(root),
+    /changed final candidate requires fresh VC01 evidence for protected scope whole/u,
+  );
+  await assert.rejects(
+    ()=>commitCertification(root,source,{projection:'good'}),
     /changed final candidate requires fresh VC01 evidence for protected scope whole/u,
   );
 });
@@ -602,6 +615,79 @@ test('VC06 changed final candidate closes only after fresh exact VC01 and VC03 e
   assert.notEqual(continuity.shapeCheckpoint.assetSha256,continuity.finalCandidate.assetSha256);
   assert.equal(continuity.scopeBindings[0].classification,'NO_PLANAR_COLLAPSE');
   assert.equal(continuity.policy.changedDigestRequiresFreshSpatialEvidence,true);
+});
+
+test('VC07 keeps shape-stage spatial plausibility and final-candidate continuity as independent runtime gates', () => {
+  const shapePolicy=checkpointGatePolicy('whole-object-certification','spatial-plausibility');
+  const finalPolicy=checkpointGatePolicy('whole-object-certification','final-spatial-continuity');
+  assert.equal(shapePolicy.evaluator,'trusted-spatial-gate');
+  assert.equal(finalPolicy.evaluator,'final-spatial-continuity');
+  assert.ok(REQUIRED_CLOSURE_GATE_IDS.includes('spatial-plausibility'));
+  assert.ok(REQUIRED_CLOSURE_GATE_IDS.includes('final-spatial-continuity'));
+});
+
+test('VC07 final continuity gate replays VC06 and ignores a caller-authored continuity artifact', async (t) => {
+  const {root,source}=await makeProject(t);
+  await advanceToReview(root,source);
+  const checkpoint=await commitCertification(root,source,{projection:'good',attachForgedFinalContinuity:true});
+  const gate=checkpoint.gates.find((item)=>item.id==='final-spatial-continuity');
+  assert.equal(gate.evaluator,'final-spatial-continuity');
+  assert.equal(gate.status,'pass');
+  assert.ok(gate.evidenceRefs.includes('model/candidate.glb'));
+  assert.ok(gate.evidenceRefs.includes('reviews/candidate-lineage-proof.json'));
+  assert.ok(gate.evidenceRefs.includes('renders/final-clay/render-report.json'));
+  assert.ok(!gate.evidenceRefs.includes('reviews/forged-final-spatial-continuity.json'));
+});
+
+test('VC07 readiness and certificate bind exact VC06 continuity and final candidate', async (t) => {
+  const {root,source}=await makeProject(t);
+  await advanceToReview(root,source);
+  const checkpoint=await commitCertification(root,source,{projection:'good'});
+  const continuity=await resolveFinalSpatialContinuity(root,{checkpointId:checkpoint.id});
+  const readiness=await assessCertification(root);
+  assert.equal(readiness.ready,true,readiness.errors.join('\n'));
+  assert.equal(readiness.finalSpatialContinuityDigest,continuity.continuityDigest);
+  assert.equal(readiness.finalCandidateSha256,continuity.finalCandidate.assetSha256);
+  assert.equal(readiness.finalSpatialContinuityMode,continuity.mode);
+  const certificate=await certifyProject(root);
+  assert.equal(certificate.finalSpatialContinuity.continuityDigest,continuity.continuityDigest);
+  assert.equal(certificate.finalSpatialContinuity.finalCandidateSha256,continuity.finalCandidate.assetSha256);
+  assert.equal(certificate.finalSpatialContinuity.mode,continuity.mode);
+  assert.equal(certificate.finalSpatialContinuity.finalMultiviewReportDigest,continuity.finalMultiview.reportDigest);
+});
+
+test('VC07 audit rejects a re-signed certificate with stale final continuity binding', async (t) => {
+  const {root,source}=await makeProject(t);
+  await advanceToReview(root,source);
+  await commitCertification(root,source,{projection:'good'});
+  await certifyProject(root);
+  const certificatePath=path.join(root,'.refas','certification.json');
+  const certificate=JSON.parse(await fs.readFile(certificatePath,'utf8'));
+  certificate.finalSpatialContinuity.continuityDigest='f'.repeat(64);
+  const {certificateDigest:ignoredDigest,certifiedAt,...core}=certificate;
+  void ignoredDigest;
+  certificate.certificateDigest=digestJson(core);
+  await fs.writeFile(certificatePath,`${JSON.stringify(certificate, null, 2)}\n`,'utf8');
+  const audit=await auditProject(root);
+  assert.equal(audit.valid,false);
+  assert.match(audit.errors.join('\n'),/certificate final-spatial-continuity binding is invalid/u);
+  const guidance=await resumeProject(root);
+  assert.equal(guidance.nextAction,'REVERIFY_FINAL_SPATIAL_CONTINUITY');
+  assert.match(guidance.reason,/stored certificate final-spatial-continuity binding/u);
+});
+
+test('VC07 certified resume refuses DONE when current VC06 immutable evidence no longer replays', async (t) => {
+  const {root,source}=await makeProject(t);
+  await advanceToReview(root,source);
+  const checkpoint=await commitCertification(root,source,{projection:'good'});
+  await certifyProject(root);
+  const report=checkpoint.artifactRefs.find((artifact)=>artifact.path==='renders/final-clay/render-report.json');
+  assert.ok(report);
+  const objectFile=path.join(root,'.refas','objects',report.sha256.slice(0,2),report.sha256.slice(2));
+  await fs.writeFile(objectFile,'corrupt-final-clay-report\n','utf8');
+  const guidance=await resumeProject(root);
+  assert.equal(guidance.nextAction,'REVERIFY_FINAL_SPATIAL_CONTINUITY');
+  assert.match(guidance.reason,/final-candidate spatial continuity/u);
 });
 
 test('VC05 spatial-plausibility policy is runtime-trusted and caller status fields remain forbidden', () => {

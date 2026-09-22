@@ -29,6 +29,9 @@ const closurePolicies = REQUIRED_CLOSURE_GATE_IDS.map((id) => {
   if (id === 'spatial-plausibility') {
     return {id, evaluator: 'trusted-spatial-gate', description: 'Derive protected spatial gate authority by replaying canonical VC04 shape-stage volume authority in the runtime.'};
   }
+  if (id === 'final-spatial-continuity') {
+    return {id, evaluator: 'final-spatial-continuity', description: 'Derive final certification authority by replaying canonical VC06 against the exact authoritative final candidate and current certification evidence.'};
+  }
   if (REQUIRED_VISUAL_GATE_IDS.includes(id)) {
     return {id, evaluator: 'visual-review-gate', visualGateId: id, description: 'Derive the verdict from the exact digest-bound visual-review artifact.'};
   }

@@ -29,6 +29,7 @@ export const REQUIRED_CLOSURE_GATE_IDS = Object.freeze([
   'hierarchy-coverage',
   'observation-authority',
   'spatial-plausibility',
+  'final-spatial-continuity',
   ...REQUIRED_VISUAL_GATE_IDS,
   'project-audit',
 ]);

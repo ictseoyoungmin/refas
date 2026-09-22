@@ -376,3 +376,29 @@ VC07 = certification integration
 ```
 
 VC06 does not add a certification-policy obligation and does not mint a certificate. A project may therefore possess or lack VC06 continuity independently until VC07 integrates the authority into final certification.
+
+## VC07 final certification integration
+
+VC07 keeps VC05 and VC06 as separate authorities and joins them only at final certification.
+
+Whole-object certification now requires both:
+
+- `spatial-plausibility` — VC05 trusted replay of shape-stage VC04 authority;
+- `final-spatial-continuity` — runtime replay of VC06 against the exact authoritative final candidate and the current certification evidence.
+
+The second gate is not satisfied by a stored object that merely claims `refas.final-spatial-continuity/v1`. During checkpoint creation the runtime constructs a prospective certification lineage, replays VC06, and derives `PROCEED -> pass`, `REWORK -> fail`, and `HOLD -> blocked`. Caller-supplied gate status remains forbidden.
+
+For real-source certification, the gate binds the exact final candidate GLB, candidate-lineage proof, canonical final neutral-clay report, and every exact required final-clay frame. Same-digest carry-forward remains legal only because VC06 proves byte identity. A changed final candidate still requires the fresh exact VC01/VC03 evidence already enforced by VC06.
+
+The whole-object certificate explicitly records:
+
+```text
+finalSpatialContinuity.continuityDigest
+finalSpatialContinuity.finalCandidateSha256
+finalSpatialContinuity.mode
+finalSpatialContinuity.finalMultiviewReportDigest
+```
+
+Project audit recomputes VC06 and checks those bindings. Certified resume also replays current VC06 before returning `DONE`; missing, stale, corrupted, REWORK, or HOLD authority routes back to final spatial re-verification.
+
+VC07 does not introduce a global thickness score, aggregate resemblance score, or single-view IoU authority. Visual review and final resemblance closure remain independent obligations.
