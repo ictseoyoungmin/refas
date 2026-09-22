@@ -178,7 +178,7 @@ async function initBase({role='volumetric',depth=1}={}){
   });
   const clayReport=API.createPbrRenderReport({
     assetSha256:asset.sha256,frameDigest:'9'.repeat(64),
-    renderer:{family:'other',name:'VC08 deterministic worker',version:'1.0.0',backend:'fixture',independentProcess:true},
+    renderer:{...API.NEUTRAL_CLAY_RENDERER_PROFILE},
     lighting:{rigId:API.NEUTRAL_CLAY_PRESENTATION_PRESET.lighting.rigId,digest:API.NEUTRAL_CLAY_LIGHTING_RIG_DIGEST},
     colorPipeline:{...API.NEUTRAL_CLAY_PRESENTATION_PRESET.colorPipeline},
     materialSupport:{supported:['base-color-factor','metallic-factor','roughness-factor'],unsupported:['textures']},
