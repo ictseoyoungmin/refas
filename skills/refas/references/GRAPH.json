@@ -1038,6 +1038,29 @@
               "verification": "structural",
               "reason": "inspect-only runtime authority; no public creator accepts or mints a caller-supplied gate status"
             }
+          },
+          {
+            "id": "resolve-final-spatial-continuity",
+            "operation": "inspect",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "resolveFinalSpatialContinuity"
+            },
+            "template": null,
+            "inputContract": "initialized real-source project root + optional selected checkpoint; runtime resolves authoritative candidate lineage, exact VC04 shape authority, changed-candidate fresh VC01/VC03 evidence when required, and a post-candidate canonical neutral-clay multiview report",
+            "outputSchema": "refas.final-spatial-continuity/v1",
+            "validator": {
+              "library": "validateFinalSpatialContinuity"
+            },
+            "minimumInvocation": "references/spatial-reasoning.md",
+            "example": null,
+            "usageReference": "references/spatial-reasoning.md",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "inspect-only stateful continuity authority; runtime derives mode and verdict from exact selected lineage"
+            }
           }
         ]
       }

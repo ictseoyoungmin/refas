@@ -1,0 +1,258 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/final-spatial-continuity.schema.json",
+  "title": "RefAs exact final-candidate spatial continuity",
+  "type": "object",
+  "required": [
+    "schema",
+    "sourceSha256",
+    "hierarchyDigest",
+    "candidateLineageDigest",
+    "shapeCheckpoint",
+    "finalCandidate",
+    "mode",
+    "expectationSetDigest",
+    "protectedScopeIds",
+    "scopeBindings",
+    "finalVolumeBarrierDigest",
+    "finalMultiview",
+    "verdict",
+    "policy",
+    "continuityDigest"
+  ],
+  "properties": {
+    "schema": {
+      "const": "refas.final-spatial-continuity/v1"
+    },
+    "sourceSha256": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "hierarchyDigest": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "candidateLineageDigest": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "shapeCheckpoint": {
+      "type": "object",
+      "required": [
+        "id",
+        "contentDigest",
+        "assetSha256",
+        "volumeBarrierDigest"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "common.schema.json#/$defs/semanticId"
+        },
+        "contentDigest": {
+          "$ref": "common.schema.json#/$defs/digest"
+        },
+        "assetSha256": {
+          "$ref": "common.schema.json#/$defs/digest"
+        },
+        "volumeBarrierDigest": {
+          "$ref": "common.schema.json#/$defs/digest"
+        }
+      },
+      "additionalProperties": false
+    },
+    "finalCandidate": {
+      "type": "object",
+      "required": [
+        "checkpointId",
+        "assetSha256"
+      ],
+      "properties": {
+        "checkpointId": {
+          "$ref": "common.schema.json#/$defs/semanticId"
+        },
+        "assetSha256": {
+          "$ref": "common.schema.json#/$defs/digest"
+        }
+      },
+      "additionalProperties": false
+    },
+    "mode": {
+      "enum": [
+        "same-digest-carry-forward",
+        "changed-digest-reverified"
+      ]
+    },
+    "expectationSetDigest": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "protectedScopeIds": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "common.schema.json#/$defs/semanticId"
+      }
+    },
+    "scopeBindings": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "scopeId",
+          "frozenRole",
+          "classification",
+          "spatialEvidenceDigest",
+          "classificationDigest",
+          "roleAuthorityDigest",
+          "status"
+        ],
+        "properties": {
+          "scopeId": {
+            "$ref": "common.schema.json#/$defs/semanticId"
+          },
+          "frozenRole": {
+            "enum": [
+              "volumetric",
+              "layered-volume",
+              "thin-shell",
+              "rod-tubular",
+              "intentionally-planar",
+              "unresolved"
+            ]
+          },
+          "classification": {
+            "enum": [
+              "PLANAR_COLLAPSE",
+              "NO_PLANAR_COLLAPSE",
+              "INDETERMINATE",
+              "NOT_APPLICABLE"
+            ]
+          },
+          "spatialEvidenceDigest": {
+            "$ref": "common.schema.json#/$defs/digest"
+          },
+          "classificationDigest": {
+            "$ref": "common.schema.json#/$defs/digest"
+          },
+          "roleAuthorityDigest": {
+            "$ref": "common.schema.json#/$defs/digest"
+          },
+          "status": {
+            "enum": [
+              "ADMITTED",
+              "REWORK",
+              "HOLD"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "finalVolumeBarrierDigest": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "finalMultiview": {
+      "type": "object",
+      "required": [
+        "reportDigest",
+        "requiredViewIds",
+        "outputs"
+      ],
+      "properties": {
+        "reportDigest": {
+          "$ref": "common.schema.json#/$defs/digest"
+        },
+        "requiredViewIds": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "common.schema.json#/$defs/semanticId"
+          }
+        },
+        "outputs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "viewId",
+              "path",
+              "sha256"
+            ],
+            "properties": {
+              "viewId": {
+                "$ref": "common.schema.json#/$defs/semanticId"
+              },
+              "path": {
+                "$ref": "common.schema.json#/$defs/relativePath"
+              },
+              "sha256": {
+                "$ref": "common.schema.json#/$defs/digest"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "verdict": {
+      "enum": [
+        "PROCEED",
+        "REWORK",
+        "HOLD"
+      ]
+    },
+    "policy": {
+      "type": "object",
+      "required": [
+        "exactFinalCandidateRequired",
+        "changedDigestRequiresFreshSpatialEvidence",
+        "sameDigestCarryForwardRequiresByteIdentity",
+        "finalMultiviewMustPostdateFinalCandidateAuthority",
+        "protectedScopesCannotCompensate",
+        "noAggregateScore",
+        "singleViewIouAuthority",
+        "multiviewIouAuthority",
+        "doesNotReplaceFinalResemblanceClosure",
+        "finalCertificationAuthority"
+      ],
+      "properties": {
+        "exactFinalCandidateRequired": {
+          "const": true
+        },
+        "changedDigestRequiresFreshSpatialEvidence": {
+          "const": true
+        },
+        "sameDigestCarryForwardRequiresByteIdentity": {
+          "const": true
+        },
+        "finalMultiviewMustPostdateFinalCandidateAuthority": {
+          "const": true
+        },
+        "protectedScopesCannotCompensate": {
+          "const": true
+        },
+        "noAggregateScore": {
+          "const": true
+        },
+        "singleViewIouAuthority": {
+          "const": false
+        },
+        "multiviewIouAuthority": {
+          "const": "diagnostic-only"
+        },
+        "doesNotReplaceFinalResemblanceClosure": {
+          "const": true
+        },
+        "finalCertificationAuthority": {
+          "const": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "continuityDigest": {
+      "$ref": "common.schema.json#/$defs/digest"
+    }
+  },
+  "additionalProperties": false
+}
