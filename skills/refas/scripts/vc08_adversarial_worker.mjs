@@ -275,13 +275,32 @@ async function scenarioRelabel(){
     }],
   });
   await writeJson('reviews/adversarial-relabel.json',forgedRole);
+  const forgedRoleRef=await ref('reviews/adversarial-relabel.json','spatial-role-expectation');
+  let lateCheckpointError=null;
+  try{
+    await API.commitCheckpoint(projectRoot,{
+      capability:'shape-reconstruction',scopeId:'whole',reason:'VC08 late thin-shell relabel bypass attempt',
+      artifactRefs:[setup.asset,forgedRoleRef],claims:['attempt to replace frozen VC02 after classifier feedback'],
+      gates:[{id:'shape-reconstruction-gate',evidenceRefs:[setup.asset.path,forgedRoleRef.path]}],
+    });
+  }catch(error){
+    lateCheckpointError=error.message;
+  }
+  const lateCheckpointRejected=/spatial role expectation mutation is forbidden/u.test(lateCheckpointError??'');
   const frozen=await API.resolveSpatialRoleAuthority(projectRoot,{scopeId:'whole'});
   const evidence=API.createSpatialClosureEvidence({glb:setup.glb,scopeId:'whole'});
   const replay=await API.classifySpatialCollapse(projectRoot,{glb:setup.glb,spatialEvidence:evidence,scopeId:'whole'});
-  if(frozen.selectedExpectation.role!=='volumetric'||replay.classification!=='PLANAR_COLLAPSE'){
-    throw new Error('post-failure role relabel changed frozen VC02 authority');
+  if(!lateCheckpointRejected||frozen.selectedExpectation.role!=='volumetric'||replay.classification!=='PLANAR_COLLAPSE'){
+    throw new Error('post-failure role relabel changed or bypassed frozen VC02 authority');
   }
-  return {attemptedRole:'thin-shell',frozenRole:frozen.selectedExpectation.role,replayedClassification:replay.classification,bypassAccepted:false};
+  return {
+    attemptedRole:'thin-shell',
+    frozenRole:frozen.selectedExpectation.role,
+    replayedClassification:replay.classification,
+    lateCheckpointRejected,
+    lateCheckpointError,
+    bypassAccepted:false,
+  };
 }
 
 async function scenarioSelfPass(){
