@@ -25,6 +25,7 @@ import {
   createSpatialRoleExpectationSet,
   createVisualHierarchy,
   createVolumeBarrier,
+  validateFinalSpatialContinuity,
   NEUTRAL_CLAY_LIGHTING_RIG_DIGEST,
   NEUTRAL_CLAY_PRESENTATION_PRESET,
   NEUTRAL_CLAY_PRESENTATION_PRESET_DIGEST,
@@ -547,6 +548,27 @@ test('VC06 same-digest final candidate carries forward exact shape spatial autho
   assert.equal(continuity.policy.finalCertificationAuthority,false);
   assert.ok(continuity.finalMultiview.requiredViewIds.includes('side'));
   assert.ok(continuity.finalMultiview.requiredViewIds.includes('top'));
+  assert.equal(validateFinalSpatialContinuity(continuity).valid,true);
+});
+
+test('VC06 validator rejects re-signed mode and multiview tampering', async (t) => {
+  const {root,source}=await makeProject(t);
+  await advanceToReview(root,source);
+  const checkpoint=await commitCertification(root,source,{projection:'good'});
+  const continuity=await resolveFinalSpatialContinuity(root,{checkpointId:checkpoint.id});
+
+  const wrongMode=structuredClone(continuity);
+  wrongMode.mode='changed-digest-reverified';
+  delete wrongMode.continuityDigest;
+  wrongMode.continuityDigest=digestJson(wrongMode);
+  assert.equal(validateFinalSpatialContinuity(wrongMode).valid,false);
+
+  const missingView=structuredClone(continuity);
+  missingView.finalMultiview.requiredViewIds=missingView.finalMultiview.requiredViewIds.filter((id)=>id!=='side');
+  missingView.finalMultiview.outputs=missingView.finalMultiview.outputs.filter((output)=>output.viewId!=='side');
+  delete missingView.continuityDigest;
+  missingView.continuityDigest=digestJson(missingView);
+  assert.equal(validateFinalSpatialContinuity(missingView).valid,false);
 });
 
 test('VC06 changed final candidate cannot inherit shape-stage spatial authority without fresh final evidence', async (t) => {

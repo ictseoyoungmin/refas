@@ -134,17 +134,84 @@ export function validateFinalSpatialContinuity(value){
   const errors=[];
   try{
     if(value?.schema!==FINAL_SPATIAL_CONTINUITY_SCHEMA) errors.push('invalid final spatial continuity schema');
+    assertDigest(value?.sourceSha256,'sourceSha256');
+    assertDigest(value?.hierarchyDigest,'hierarchyDigest');
+    assertDigest(value?.candidateLineageDigest,'candidateLineageDigest');
+    assertId(value?.shapeCheckpoint?.id,'shapeCheckpoint.id');
+    assertDigest(value?.shapeCheckpoint?.contentDigest,'shapeCheckpoint.contentDigest');
+    assertDigest(value?.shapeCheckpoint?.assetSha256,'shapeCheckpoint.assetSha256');
+    assertDigest(value?.shapeCheckpoint?.volumeBarrierDigest,'shapeCheckpoint.volumeBarrierDigest');
+    assertId(value?.finalCandidate?.checkpointId,'finalCandidate.checkpointId');
+    assertDigest(value?.finalCandidate?.assetSha256,'finalCandidate.assetSha256');
+    assertDigest(value?.expectationSetDigest,'expectationSetDigest');
+    assertDigest(value?.finalVolumeBarrierDigest,'finalVolumeBarrierDigest');
+
+    if(!FINAL_SPATIAL_CONTINUITY_MODES.includes(value?.mode)) errors.push('final spatial continuity mode is invalid');
+    const sameDigest=value?.shapeCheckpoint?.assetSha256===value?.finalCandidate?.assetSha256;
+    if(value?.mode==='same-digest-carry-forward'&&!sameDigest) errors.push('same-digest mode requires identical shape and final candidate digests');
+    if(value?.mode==='changed-digest-reverified'&&sameDigest) errors.push('changed-digest mode requires a changed final candidate digest');
+    if(value?.mode==='same-digest-carry-forward'&&value?.shapeCheckpoint?.volumeBarrierDigest!==value?.finalVolumeBarrierDigest){
+      errors.push('same-digest mode must retain the exact shape volume barrier');
+    }
+
+    const protectedIds=[...(value?.protectedScopeIds??[])];
+    if(!protectedIds.length||new Set(protectedIds).size!==protectedIds.length) errors.push('protectedScopeIds must be non-empty and unique');
+    protectedIds.forEach((id,index)=>assertId(id,`protectedScopeIds[${index}]`));
+    const bindings=value?.scopeBindings??[];
+    if(!Array.isArray(bindings)||bindings.length!==protectedIds.length) errors.push('scopeBindings must exactly cover protected scopes');
+    const bindingIds=[];
+    for(const [index,binding] of bindings.entries()){
+      bindingIds.push(assertId(binding?.scopeId,`scopeBindings[${index}].scopeId`));
+      assertDigest(binding?.spatialEvidenceDigest,`scopeBindings[${index}].spatialEvidenceDigest`);
+      assertDigest(binding?.classificationDigest,`scopeBindings[${index}].classificationDigest`);
+      assertDigest(binding?.roleAuthorityDigest,`scopeBindings[${index}].roleAuthorityDigest`);
+      if(!['ADMITTED','REWORK','HOLD'].includes(binding?.status)) errors.push(`scopeBindings[${index}] status is invalid`);
+    }
+    if(digestJson([...protectedIds].sort())!==digestJson([...bindingIds].sort())) errors.push('scopeBindings do not exactly match protectedScopeIds');
+
+    if(!FINAL_SPATIAL_CONTINUITY_VERDICTS.includes(value?.verdict)) errors.push('final spatial continuity verdict is invalid');
+    const derivedVerdict=bindings.some((item)=>item.status==='REWORK')
+      ?'REWORK'
+      :bindings.some((item)=>item.status==='HOLD')
+        ?'HOLD'
+        :'PROCEED';
+    if(value?.verdict!==derivedVerdict) errors.push('final spatial continuity verdict does not reproduce from protected scope status');
+
+    assertDigest(value?.finalMultiview?.reportDigest,'finalMultiview.reportDigest');
+    const declaredViews=value?.finalMultiview?.requiredViewIds??[];
+    if(digestJson([...declaredViews].sort())!==digestJson([...NEUTRAL_CLAY_REQUIRED_VIEW_IDS].sort())) {
+      errors.push('final multiview required view set is not canonical');
+    }
+    const outputs=value?.finalMultiview?.outputs??[];
+    const outputIds=outputs.map((output,index)=>{
+      const id=assertId(output?.viewId,`finalMultiview.outputs[${index}].viewId`);
+      if(!String(output?.path??'')) errors.push(`finalMultiview.outputs[${index}].path is required`);
+      assertDigest(output?.sha256,`finalMultiview.outputs[${index}].sha256`);
+      return id;
+    });
+    if(new Set(outputIds).size!==outputIds.length||digestJson([...outputIds].sort())!==digestJson([...NEUTRAL_CLAY_REQUIRED_VIEW_IDS].sort())){
+      errors.push('final multiview outputs must exactly cover canonical required views');
+    }
+
+    const expectedPolicy={
+      exactFinalCandidateRequired:true,
+      changedDigestRequiresFreshSpatialEvidence:true,
+      sameDigestCarryForwardRequiresByteIdentity:true,
+      finalMultiviewMustPostdateFinalCandidateAuthority:true,
+      protectedScopesCannotCompensate:true,
+      noAggregateScore:true,
+      singleViewIouAuthority:false,
+      multiviewIouAuthority:'diagnostic-only',
+      doesNotReplaceFinalResemblanceClosure:true,
+      finalCertificationAuthority:false,
+    };
+    if(digestJson(value?.policy)!==digestJson(expectedPolicy)) errors.push('final spatial continuity policy is altered');
+
     const payload=structuredClone(value);
     const digest=payload.continuityDigest;
     delete payload.continuityDigest;
     assertDigest(digest,'continuityDigest');
     if(digestJson(payload)!==digest) errors.push('final spatial continuity digest mismatch');
-    if(!FINAL_SPATIAL_CONTINUITY_MODES.includes(value?.mode)) errors.push('final spatial continuity mode is invalid');
-    if(!FINAL_SPATIAL_CONTINUITY_VERDICTS.includes(value?.verdict)) errors.push('final spatial continuity verdict is invalid');
-    if(value?.policy?.exactFinalCandidateRequired!==true) errors.push('final spatial continuity must require exact final candidate');
-    if(value?.policy?.changedDigestRequiresFreshSpatialEvidence!==true) errors.push('changed candidate must require fresh spatial evidence');
-    if(value?.policy?.sameDigestCarryForwardRequiresByteIdentity!==true) errors.push('same-digest carry-forward must require byte identity');
-    if(value?.policy?.finalCertificationAuthority!==false) errors.push('VC06 must not claim final certification authority');
   }catch(error){errors.push(error.message);}
   return {valid:errors.length===0,errors};
 }
