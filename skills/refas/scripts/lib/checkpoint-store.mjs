@@ -2119,9 +2119,9 @@ export async function resumeProject(root) {
   }
   if (state.status === 'certified') {
     if (!isTrustedContractFixtureProject(state) && state.head) {
+      const checkpoints = await listCheckpoints(root);
+      const lineage = checkpointLineage(checkpoints, state.head);
       try {
-        const checkpoints = await listCheckpoints(root);
-        const lineage = checkpointLineage(checkpoints, state.head);
         const certifiedHead = await loadCheckpoint(root, state.head);
         await ensureEarlyResemblanceAdmission(root, state, certifiedHead.capability, certifiedHead.scopeId, lineage);
         await ensureVolumeBarrierAdmission(root, state, certifiedHead.capability, certifiedHead.scopeId, lineage);
