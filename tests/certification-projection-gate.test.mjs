@@ -330,7 +330,7 @@ async function appendRelationalCertificationEvidence(root, source, asset, refs) 
   }
 }
 
-async function appendFinalCandidateAuthority(root, source, asset, refs) {
+async function appendFinalCandidateAuthority(root, source, asset, refs, {includeFreshFinalSpatial=false}={}) {
   const hierarchy = JSON.parse(await fs.readFile(path.join(root,'model','visual-hierarchy.json'),'utf8'));
   const authority = await resolveAuthoritativeCandidateLineage(root);
   assert.equal(authority.finalCandidate.assetSha256,asset.sha256);
@@ -391,9 +391,25 @@ async function appendFinalCandidateAuthority(root, source, asset, refs) {
   });
   const closurePath = await json(path.join(root,'reviews','final-resemblance-closure.json'),closure);
   refs.push(await contentReference(closurePath,{kind:'final-resemblance-closure',root}));
+
+  if (includeFreshFinalSpatial) {
+    const glb=await fs.readFile(path.join(root,'model','candidate.glb'));
+    const spatialEvidence=createSpatialClosureEvidence({glb,scopeId:'whole'});
+    assert.equal(spatialEvidence.assetSha256,asset.sha256);
+    const spatialPath=await json(path.join(root,'reviews','final-spatial-closure-whole.json'),spatialEvidence);
+    refs.push(await contentReference(spatialPath,{kind:'spatial-closure-evidence',root}));
+    const classification=await classifySpatialCollapse(root,{glb,spatialEvidence,scopeId:'whole'});
+    const classificationPath=await json(path.join(root,'reviews','final-spatial-collapse-whole.json'),classification);
+    refs.push(await contentReference(classificationPath,{kind:'spatial-collapse-classification',root}));
+  }
 }
 
-async function commitCertification(root, source, {projection='none', includeFinalAuthority=true, attachForgedSpatialAuthority=false}={}) {
+async function commitCertification(root, source, {
+  projection='none',
+  includeFinalAuthority=true,
+  attachForgedSpatialAuthority=false,
+  includeFreshFinalSpatial=false,
+}={}) {
   const assetPath = path.join(root, 'model', 'candidate.glb');
   const glb = await fs.readFile(assetPath);
   const asset = await contentReference(assetPath, {kind:'glb', root});
@@ -505,7 +521,7 @@ async function commitCertification(root, source, {projection='none', includeFina
   }
 
   if (!CONTRACT_FIXTURES.has(String(source.acquisition?.kind ?? '').toLowerCase())) {
-    if (includeFinalAuthority) await appendFinalCandidateAuthority(root,source,asset,refs);
+    if (includeFinalAuthority) await appendFinalCandidateAuthority(root,source,asset,refs,{includeFreshFinalSpatial});
     await appendRelationalCertificationEvidence(root,source,asset,refs);
   }
 
@@ -519,6 +535,43 @@ async function commitCertification(root, source, {projection='none', includeFina
     gates:REQUIRED_CLOSURE_GATE_IDS.map((id)=>({id,evidenceRefs:[REQUIRED_VISUAL_GATE_IDS.includes(id)?reviewRef.path:asset.path]})),
   });
 }
+
+test('VC06 same-digest final candidate carries forward exact shape spatial authority with fresh multiview', async (t) => {
+  const {root,source}=await makeProject(t);
+  await advanceToReview(root,source);
+  const checkpoint=await commitCertification(root,source,{projection:'good'});
+  const continuity=await resolveFinalSpatialContinuity(root,{checkpointId:checkpoint.id});
+  assert.equal(continuity.mode,'same-digest-carry-forward');
+  assert.equal(continuity.verdict,'PROCEED');
+  assert.equal(continuity.shapeCheckpoint.assetSha256,continuity.finalCandidate.assetSha256);
+  assert.equal(continuity.policy.finalCertificationAuthority,false);
+  assert.ok(continuity.finalMultiview.requiredViewIds.includes('side'));
+  assert.ok(continuity.finalMultiview.requiredViewIds.includes('top'));
+});
+
+test('VC06 changed final candidate cannot inherit shape-stage spatial authority without fresh final evidence', async (t) => {
+  const {root,source}=await makeProject(t);
+  await advanceToReview(root,source,{mutateAtAppearance:true});
+  const checkpoint=await commitCertification(root,source,{projection:'good'});
+  const authority=await resolveAuthoritativeCandidateLineage(root,{checkpointId:checkpoint.id});
+  assert.notEqual(authority.initialCandidate.assetSha256,authority.finalCandidate.assetSha256);
+  await assert.rejects(
+    ()=>resolveFinalSpatialContinuity(root,{checkpointId:checkpoint.id}),
+    /changed final candidate requires fresh VC01 evidence for protected scope whole/u,
+  );
+});
+
+test('VC06 changed final candidate closes only after fresh exact VC01 and VC03 evidence', async (t) => {
+  const {root,source}=await makeProject(t);
+  await advanceToReview(root,source,{mutateAtAppearance:true});
+  const checkpoint=await commitCertification(root,source,{projection:'good',includeFreshFinalSpatial:true});
+  const continuity=await resolveFinalSpatialContinuity(root,{checkpointId:checkpoint.id});
+  assert.equal(continuity.mode,'changed-digest-reverified');
+  assert.equal(continuity.verdict,'PROCEED');
+  assert.notEqual(continuity.shapeCheckpoint.assetSha256,continuity.finalCandidate.assetSha256);
+  assert.equal(continuity.scopeBindings[0].classification,'NO_PLANAR_COLLAPSE');
+  assert.equal(continuity.policy.changedDigestRequiresFreshSpatialEvidence,true);
+});
 
 test('VC05 spatial-plausibility policy is runtime-trusted and caller status fields remain forbidden', () => {
   const policy=checkpointGatePolicy('whole-object-certification','spatial-plausibility');
