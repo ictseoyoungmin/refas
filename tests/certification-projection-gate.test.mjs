@@ -16,6 +16,7 @@ import {
   commitCheckpoint,
   contentReference,
   createPbrRenderReport,
+  createCandidateTransition,
   createEarlyResemblanceBarrier,
   createFinalResemblanceClosure,
   createPerceptualSignatureEvidence,
@@ -40,8 +41,10 @@ import {
   digestBytes,
   digestJson,
   initProject,
+  loadProject,
   partsToGlb,
   resolveAuthoritativeCandidateLineage,
+  resolveFinalSpatialContinuity,
   resolveTrustedSpatialGateAuthority,
   checkpointGatePolicy,
   normalizeCheckpointGateRequests,
@@ -84,6 +87,7 @@ async function advanceToReview(root, source, {
   expectedSpatialClassification='NO_PLANAR_COLLAPSE',
   expectedVolumeVerdict='PROCEED',
   stopAfterShape=false,
+  mutateAtAppearance=false,
 }={}) {
   const file = path.join(root, 'model', 'state.bin');
   await fs.mkdir(path.dirname(file), {recursive:true});
@@ -214,6 +218,33 @@ async function advanceToReview(root, source, {
         gates:[{id:'shape-reconstruction-gate',evidenceRefs:shapeRefs.map((ref)=>ref.path)}],
       });
       if(stopAfterShape) return;
+      continue;
+    }
+
+    if (capability === 'appearance' && mutateAtAppearance) {
+      const authority=await resolveAuthoritativeCandidateLineage(root);
+      const state=await loadProject(root);
+      const assetPath=path.join(root,'model','candidate.glb');
+      const changed=mannequinGlb(0.21,0.08);
+      await fs.writeFile(assetPath,changed);
+      const output=await contentReference(assetPath,{kind:'glb',root});
+      assert.notEqual(output.sha256,authority.finalCandidate.assetSha256);
+      const transition=createCandidateTransition({
+        inputAssetSha256:authority.finalCandidate.assetSha256,
+        outputAssetSha256:output.sha256,
+        inputCandidateCheckpointId:authority.finalCandidate.checkpointId,
+        parentCheckpointId:state.head,
+        capability:'appearance',
+        scopeId:'whole',
+        evidenceRefs:[output.path],
+      });
+      const transitionPath=await json(path.join(root,'model','appearance-candidate-transition.json'),transition);
+      const transitionRef=await contentReference(transitionPath,{kind:'candidate-transition',root});
+      await commitCheckpoint(root,{
+        capability,scopeId:'whole',reason:'appearance fixture mutates the authoritative candidate for VC06 continuity testing',
+        artifactRefs:[output,transitionRef],claims:['appearance candidate mutation is explicitly lineage-bound'],
+        gates:[{id:'appearance-gate',evidenceRefs:[output.path,transitionRef.path]}],
+      });
       continue;
     }
 
