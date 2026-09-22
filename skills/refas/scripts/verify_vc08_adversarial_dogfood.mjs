@@ -51,6 +51,7 @@ export async function runVc08AdversarialDogfood({skillRoot=DEFAULT_SKILL_ROOT,ke
 
   const tempRoot=await fs.mkdtemp(path.join(os.tmpdir(),'refas-vc08-adversarial-'));
   const installedRoot=path.join(tempRoot,'installed','refas');
+  await fs.mkdir(path.join(tempRoot,'tmp'),{recursive:true});
   await fs.mkdir(path.dirname(installedRoot),{recursive:true});
   await fs.cp(skillRoot,installedRoot,{recursive:true});
 
