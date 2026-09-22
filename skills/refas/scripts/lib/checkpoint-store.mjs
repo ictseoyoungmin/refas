@@ -2138,6 +2138,16 @@ export async function resumeProject(root) {
       try {
         const continuity=await resolveFinalSpatialContinuityFromLineage(root,state,lineage);
         if(continuity?.verdict!=='PROCEED') throw new Error(`current VC06 verdict is ${continuity?.verdict ?? "missing"}`);
+        const certificate=await readJson(certificatePath(root));
+        const binding=certificate.finalSpatialContinuity;
+        if (
+          binding?.continuityDigest!==continuity.continuityDigest
+          || binding?.finalCandidateSha256!==continuity.finalCandidate.assetSha256
+          || binding?.mode!==continuity.mode
+          || binding?.finalMultiviewReportDigest!==continuity.finalMultiview.reportDigest
+        ) {
+          throw new Error('stored certificate final-spatial-continuity binding does not match current VC06 replay');
+        }
       } catch (error) {
         return {
           schema: 'refas.resume-guidance/v1',
