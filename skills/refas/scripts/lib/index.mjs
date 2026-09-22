@@ -79,6 +79,7 @@ export {
 export * from './spatial-hypotheses.mjs';
 export * from './spatial-role-expectation.mjs';
 export * from './volume-barrier.mjs';
+export {FINAL_SPATIAL_CONTINUITY_SCHEMA, FINAL_SPATIAL_CONTINUITY_MODES, FINAL_SPATIAL_CONTINUITY_VERDICTS, validateFinalSpatialContinuity} from './final-spatial-continuity.mjs';
 export {TRUSTED_SPATIAL_GATE_AUTHORITY_SCHEMA, validateTrustedSpatialGateAuthority} from './spatial-gate-authority.mjs';
 export * from './spatial-closure-evidence.mjs';
 export {SPATIAL_COLLAPSE_CLASSIFICATION_SCHEMA, SPATIAL_COLLAPSE_STATES, classifySpatialCollapse, validateSpatialCollapseClassification} from './spatial-collapse-classifier.mjs';
