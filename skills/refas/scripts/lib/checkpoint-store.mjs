@@ -1598,7 +1598,7 @@ export async function commitCheckpoint(root, {
     capability, scopeId, parentId: parent, parentLineage, storedArtifacts,
   });
   const runtimeGates = await evaluateCheckpointGateRequests(root, {
-    state, capability, scopeId, requests: gateRequests, storedArtifacts, lineage,
+    state, capability, scopeId, requests: gateRequests, storedArtifacts, lineage: parentLineage,
   });
   const rejectedGates = runtimeGates.filter((gate) => gate.status !== 'pass');
   if (rejectedGates.length) {
