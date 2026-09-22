@@ -671,6 +671,9 @@ test('VC07 audit rejects a re-signed certificate with stale final continuity bin
   const audit=await auditProject(root);
   assert.equal(audit.valid,false);
   assert.match(audit.errors.join('\n'),/certificate final-spatial-continuity binding is invalid/u);
+  const guidance=await resumeProject(root);
+  assert.equal(guidance.nextAction,'REVERIFY_FINAL_SPATIAL_CONTINUITY');
+  assert.match(guidance.reason,/stored certificate final-spatial-continuity binding/u);
 });
 
 test('VC07 certified resume refuses DONE when current VC06 immutable evidence no longer replays', async (t) => {
