@@ -319,7 +319,6 @@ function attemptSelfAuthoredPass() {
 }
 
 async function advancePositiveToAppearanceMutation(caseState) {
-  await commitGeneric(caseState.root, 'surface-topology', 'positive control surface topology');
   await commitGeneric(caseState.root, 'assembly', 'positive control assembly');
 
   const authority = await resolveAuthoritativeCandidateLineage(caseState.root);
