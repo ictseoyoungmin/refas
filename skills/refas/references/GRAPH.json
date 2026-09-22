@@ -1015,6 +1015,29 @@
               "verification": "structural",
               "reason": "stateful filesystem-bound authority resolution over checkpoint lineage and immutable candidate evidence"
             }
+          },
+          {
+            "id": "resolve-trusted-spatial-gate-authority",
+            "operation": "inspect",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "resolveTrustedSpatialGateAuthority"
+            },
+            "template": null,
+            "inputContract": "initialized project root + optional checkpoint selector; runtime derives whole-object protected spatial gate authority from VC04 replay or runtime-owned contract-fixture authority",
+            "outputSchema": "refas.trusted-spatial-gate-authority/v1",
+            "validator": {
+              "library": "validateTrustedSpatialGateAuthority"
+            },
+            "minimumInvocation": "references/spatial-reasoning.md",
+            "example": null,
+            "usageReference": "references/spatial-reasoning.md",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "inspect-only runtime authority; no public creator accepts or mints a caller-supplied gate status"
+            }
           }
         ]
       }

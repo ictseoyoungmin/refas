@@ -1,0 +1,193 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/trusted-spatial-gate-authority.schema.json",
+  "title": "RefAs trusted spatial gate authority",
+  "type": "object",
+  "required": [
+    "schema",
+    "issuer",
+    "evaluator",
+    "mode",
+    "sourceSha256",
+    "scopeId",
+    "policyDigest",
+    "shapeCheckpointId",
+    "shapeCheckpointDigest",
+    "assetSha256",
+    "volumeBarrierDigest",
+    "expectationSetDigest",
+    "protectedScopeIds",
+    "classificationDigests",
+    "fixtureAuthorityDigest",
+    "fixtureDependencyCheckpointId",
+    "fixtureDependencyCheckpointDigest",
+    "gateStatus",
+    "evidenceRefs",
+    "policy",
+    "authorityDigest"
+  ],
+  "properties": {
+    "schema": {
+      "const": "refas.trusted-spatial-gate-authority/v1"
+    },
+    "issuer": {
+      "const": "refas-runtime-policy"
+    },
+    "evaluator": {
+      "const": "trusted-spatial-gate"
+    },
+    "mode": {
+      "enum": [
+        "volume-barrier",
+        "trusted-contract-fixture"
+      ]
+    },
+    "sourceSha256": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "scopeId": {
+      "const": "whole"
+    },
+    "policyDigest": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "shapeCheckpointId": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "shapeCheckpointDigest": {
+      "anyOf": [
+        {
+          "$ref": "common.schema.json#/$defs/digest"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "assetSha256": {
+      "anyOf": [
+        {
+          "$ref": "common.schema.json#/$defs/digest"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "volumeBarrierDigest": {
+      "anyOf": [
+        {
+          "$ref": "common.schema.json#/$defs/digest"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "expectationSetDigest": {
+      "anyOf": [
+        {
+          "$ref": "common.schema.json#/$defs/digest"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "protectedScopeIds": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "common.schema.json#/$defs/semanticId"
+      }
+    },
+    "classificationDigests": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "common.schema.json#/$defs/digest"
+      }
+    },
+    "fixtureAuthorityDigest": {
+      "anyOf": [
+        {
+          "$ref": "common.schema.json#/$defs/digest"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "fixtureDependencyCheckpointId": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "fixtureDependencyCheckpointDigest": {
+      "anyOf": [
+        {
+          "$ref": "common.schema.json#/$defs/digest"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "gateStatus": {
+      "enum": [
+        "pass",
+        "fail",
+        "blocked"
+      ]
+    },
+    "evidenceRefs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "policy": {
+      "type": "object",
+      "required": [
+        "runtimeDerived",
+        "callerStatusAccepted",
+        "selfAuthoredAuthorityArtifactAccepted",
+        "shapeStageAuthorityOnly",
+        "finalCandidateContinuityAuthority",
+        "finalCertificationAuthority"
+      ],
+      "properties": {
+        "runtimeDerived": {
+          "const": true
+        },
+        "callerStatusAccepted": {
+          "const": false
+        },
+        "selfAuthoredAuthorityArtifactAccepted": {
+          "const": false
+        },
+        "shapeStageAuthorityOnly": {
+          "const": true
+        },
+        "finalCandidateContinuityAuthority": {
+          "const": false
+        },
+        "finalCertificationAuthority": {
+          "const": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "authorityDigest": {
+      "$ref": "common.schema.json#/$defs/digest"
+    }
+  },
+  "additionalProperties": false
+}
