@@ -31,6 +31,7 @@ import {validateSpatialRoleExpectationSet} from './spatial-role-expectation.mjs'
 import {validateSpatialClosureEvidence} from './spatial-closure-evidence.mjs';
 import {_classifySpatialCollapseFromAuthority} from './spatial-collapse-core.mjs';
 import {assertVolumeBarrierAdmission, validateVolumeBarrier} from './volume-barrier.mjs';
+import {createRuntimeSpatialGateAuthority} from './spatial-gate-authority.mjs';
 import {
   createCandidateLineageProof,
   isCandidateMutationCapability,
@@ -44,6 +45,7 @@ import {
 } from './contract-fixture-authority.mjs';
 import {
   checkpointGatePolicy,
+  checkpointGatePolicyDigest,
   createCheckpointGateVerdict,
   expectedCheckpointGateIds,
   isLegacyCheckpointGate,
@@ -317,6 +319,17 @@ async function evaluateCheckpointGateRequests(root, {state, capability, scopeId,
       continue;
     }
 
+    if (policy.evaluator === 'trusted-spatial-gate') {
+      const authority = await deriveTrustedSpatialGateAuthority(root, state, lineage, scopeId);
+      verdicts.push(createCheckpointGateVerdict({
+        capability,
+        id: request.id,
+        status: authority.gateStatus,
+        evidenceRefs: authority.evidenceRefs,
+      }));
+      continue;
+    }
+
     if (policy.evaluator === 'visual-review-gate') {
       let status = 'fail';
       let evidenceRefs = [];
@@ -399,6 +412,21 @@ async function auditGateAuthority(root, state, checkpoint, checkpoints) {
             errors.push(`${checkpoint.id} gate ${gate.id} lineage authority mismatch`);
           }
         }
+      }
+    } else if (policy.evaluator === 'trusted-spatial-gate') {
+      try {
+        const authority = await deriveTrustedSpatialGateAuthority(root, state, lineage, checkpoint.scopeId);
+        if (authority.gateStatus !== gate.status) {
+          errors.push(`${checkpoint.id} gate ${gate.id} does not match trusted spatial runtime authority: ${authority.gateStatus}`);
+        }
+        if (!legacy && JSON.stringify([...gate.evidenceRefs].sort()) !== JSON.stringify([...authority.evidenceRefs].sort())) {
+          errors.push(`${checkpoint.id} gate ${gate.id} trusted spatial evidence binding mismatch`);
+        }
+        if (authority.gateStatus !== 'pass') {
+          errors.push(`${checkpoint.id} gate ${gate.id} trusted spatial authority is not pass: ${authority.gateStatus}`);
+        }
+      } catch (error) {
+        errors.push(`${checkpoint.id} gate ${gate.id} trusted spatial authority unavailable: ${error.message}`);
       }
     } else if (policy.evaluator === 'visual-review-gate') {
       const reviewArtifacts = checkpoint.artifactRefs.filter((artifact) => artifact.kind === 'visual-review');
@@ -830,6 +858,67 @@ async function verifyVolumeBarrierArtifacts(root, state, {
     });
   }
   return barrier;
+}
+
+async function deriveTrustedSpatialGateAuthority(root, state, lineage, scopeId='whole') {
+  const resolvedScope=assertId(scopeId,'scopeId');
+  if(resolvedScope!=='whole') throw new Error('trusted spatial gate authority is currently defined for whole-object certification scope only');
+  const policyDigest=checkpointGatePolicyDigest('whole-object-certification','spatial-plausibility');
+
+  if(isTrustedContractFixtureProject(state)){
+    const fixtureValidation=validateContractFixtureAuthority(state.contractFixtureAuthority,{sourceSha256:state.source.sha256});
+    const dependency=[...lineage].reverse().find((checkpoint)=>checkpoint.capability==='spatial-hypotheses'&&scopeContains(checkpoint.scopeId,resolvedScope));
+    if(!dependency) throw new Error('trusted contract fixture spatial gate requires spatial-hypotheses lineage');
+    const dependencyErrors=await auditGateAuthority(root,state,dependency,lineage);
+    const trusted=fixtureValidation.valid&&dependencyErrors.length===0;
+    return createRuntimeSpatialGateAuthority({
+      sourceSha256:state.source.sha256,
+      scopeId:resolvedScope,
+      policyDigest,
+      mode:'trusted-contract-fixture',
+      fixtureAuthorityDigest:state.contractFixtureAuthority.authorityDigest,
+      fixtureDependencyCheckpointId:dependency.id,
+      fixtureDependencyCheckpointDigest:dependency.contentDigest,
+      fixtureTrusted:trusted,
+      evidenceRefs:dependency.artifactRefs.map((artifact)=>artifact.path),
+    });
+  }
+
+  const shapeIndex=[...lineage].map((checkpoint)=>checkpoint.capability).lastIndexOf('shape-reconstruction');
+  if(shapeIndex<0) throw new Error('trusted spatial gate requires shape-reconstruction in current lineage');
+  const shapeCheckpoint=lineage[shapeIndex];
+  const prefix=lineage.slice(0,shapeIndex);
+  const barrier=await verifyVolumeBarrierArtifacts(root,state,{
+    lineage,
+    shapeCheckpoint,
+    parentLineage:prefix,
+    requireProceed:false,
+    label:'trusted spatial gate authority',
+  });
+  const barrierArtifact=(shapeCheckpoint.artifactRefs??[]).find((artifact)=>artifact.kind==='volume-barrier');
+  if(!barrierArtifact) throw new Error('trusted spatial gate requires exact VC04 barrier artifact');
+  return createRuntimeSpatialGateAuthority({
+    sourceSha256:state.source.sha256,
+    scopeId:resolvedScope,
+    policyDigest,
+    mode:'volume-barrier',
+    shapeCheckpointId:shapeCheckpoint.id,
+    shapeCheckpointDigest:shapeCheckpoint.contentDigest,
+    assetSha256:barrier.assetSha256,
+    volumeBarrier:barrier,
+    evidenceRefs:[barrierArtifact.path],
+  });
+}
+
+export async function resolveTrustedSpatialGateAuthority(root,{checkpointId=null,scopeId='whole'}={}){
+  root=projectRoot(root);
+  const state=await loadProject(root);
+  if(!state.source) throw new Error('trusted spatial gate authority requires a bound source');
+  const checkpoints=await listCheckpoints(root);
+  const targetId=checkpointId??state.head;
+  if(!targetId) throw new Error('trusted spatial gate authority requires a checkpoint lineage');
+  const lineage=checkpointLineage(checkpoints,targetId);
+  return deriveTrustedSpatialGateAuthority(root,state,lineage,scopeId);
 }
 
 export async function resolveVolumeBarrierAdmission(root, {checkpointId = null, scopeId = null} = {}) {

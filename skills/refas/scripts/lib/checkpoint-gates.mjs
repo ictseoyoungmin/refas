@@ -27,7 +27,7 @@ const closurePolicies = REQUIRED_CLOSURE_GATE_IDS.map((id) => {
     return {id, evaluator: 'lineage-capability', capability: 'visual-observation', description: 'Require a trustworthy visual-observation checkpoint in current lineage.'};
   }
   if (id === 'spatial-plausibility') {
-    return {id, evaluator: 'lineage-capability', capability: 'spatial-hypotheses', description: 'Require a trustworthy spatial-hypotheses checkpoint in current lineage.'};
+    return {id, evaluator: 'trusted-spatial-gate', description: 'Derive protected spatial gate authority by replaying canonical VC04 shape-stage volume authority in the runtime.'};
   }
   if (REQUIRED_VISUAL_GATE_IDS.includes(id)) {
     return {id, evaluator: 'visual-review-gate', visualGateId: id, description: 'Derive the verdict from the exact digest-bound visual-review artifact.'};
