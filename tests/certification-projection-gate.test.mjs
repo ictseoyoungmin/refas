@@ -46,6 +46,7 @@ import {
   partsToGlb,
   resolveAuthoritativeCandidateLineage,
   resolveFinalSpatialContinuity,
+  resolveSpatialRoleAuthority,
   resolveTrustedSpatialGateAuthority,
   checkpointGatePolicy,
   normalizeCheckpointGateRequests,
