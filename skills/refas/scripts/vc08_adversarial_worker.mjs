@@ -278,10 +278,10 @@ async function scenarioRelabel(){
   const frozen=await API.resolveSpatialRoleAuthority(projectRoot,{scopeId:'whole'});
   const evidence=API.createSpatialClosureEvidence({glb:setup.glb,scopeId:'whole'});
   const replay=await API.classifySpatialCollapse(projectRoot,{glb:setup.glb,spatialEvidence:evidence,scopeId:'whole'});
-  if(frozen.expectation.role!=='volumetric'||replay.classification!=='PLANAR_COLLAPSE'){
+  if(frozen.selectedExpectation.role!=='volumetric'||replay.classification!=='PLANAR_COLLAPSE'){
     throw new Error('post-failure role relabel changed frozen VC02 authority');
   }
-  return {attemptedRole:'thin-shell',frozenRole:frozen.expectation.role,replayedClassification:replay.classification,bypassAccepted:false};
+  return {attemptedRole:'thin-shell',frozenRole:frozen.selectedExpectation.role,replayedClassification:replay.classification,bypassAccepted:false};
 }
 
 async function scenarioSelfPass(){
@@ -381,10 +381,10 @@ async function scenarioThinPositive(){
   const setup=await initBase({role:'thin-shell',depth:.002});
   const downstream=await genericCheckpoint('surface-topology','surface-topology-thin-positive');
   const frozen=await API.resolveSpatialRoleAuthority(projectRoot,{scopeId:'whole'});
-  if(setup.classification.classification!=='NOT_APPLICABLE'||setup.barrier.verdict!=='PROCEED'||frozen.expectation.role!=='thin-shell'){
+  if(setup.classification.classification!=='NOT_APPLICABLE'||setup.barrier.verdict!=='PROCEED'||frozen.selectedExpectation.role!=='thin-shell'){
     throw new Error('legitimate thin-shell semantics were rejected');
   }
-  return {frozenRole:frozen.expectation.role,classification:setup.classification.classification,barrier:setup.barrier.verdict,downstreamCheckpointId:downstream.id,thinSemanticsPreserved:true};
+  return {frozenRole:frozen.selectedExpectation.role,classification:setup.classification.classification,barrier:setup.barrier.verdict,downstreamCheckpointId:downstream.id,thinSemanticsPreserved:true};
 }
 
 await readPublic('SKILL.md');
