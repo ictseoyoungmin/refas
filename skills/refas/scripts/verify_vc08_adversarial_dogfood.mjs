@@ -103,10 +103,13 @@ export async function runVc08AdversarialDogfood({skillRoot=DEFAULT_SKILL_ROOT,ke
   assert.equal(byId['thin-shell-relabel'].result.bypassAccepted,false);
 
   assert.equal(byId['self-authored-pass'].result.callerStatusRejected,true);
-  assert.equal(byId['self-authored-pass'].result.runtimeGateStatus,'fail');
+  assert.equal(byId['self-authored-pass'].result.forgedAuthorityAttached,true);
+  assert.equal(byId['self-authored-pass'].result.runtimeGateStatus,'pass');
   assert.equal(byId['self-authored-pass'].result.forgedFilesConsulted,false);
+  assert.ok(!byId['self-authored-pass'].result.runtimeEvidenceRefs.includes('reviews/forged-spatial-gate-authority.json'));
 
   assert.equal(byId['stale-evidence-reuse'].result.candidateChanged,true);
+  assert.equal(byId['stale-evidence-reuse'].result.forgedContinuityAttached,true);
   assert.equal(byId['stale-evidence-reuse'].result.staleReuseBlocked,true);
 
   assert.equal(byId['sibling-lineage-leakage'].result.selectedLineageBlocked,true);
