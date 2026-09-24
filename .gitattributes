@@ -1,0 +1,13 @@
+# Tests and verifiers match exact source text; keep checkouts LF on every platform.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.ppm binary
+*.glb binary
+*.bin binary
+*.exr binary
+*.hdr binary
+*.pdf binary

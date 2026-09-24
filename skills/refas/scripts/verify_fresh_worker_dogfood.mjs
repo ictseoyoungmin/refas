@@ -37,6 +37,15 @@ function parseSingleJsonLine(stdout, label) {
   return JSON.parse(lines[0]);
 }
 
+// An isolated HOME also relocates Python's user site; keep the host's so
+// user-installed renderer dependencies stay importable by the worker.
+function hostPythonUserBase() {
+  if (process.env.PYTHONUSERBASE) return process.env.PYTHONUSERBASE;
+  const python = process.env.CODEX_PRIMARY_RUNTIME_PYTHON || 'python3';
+  const probe = spawnSync(python, ['-c', 'import site; print(site.getuserbase())'], {encoding: 'utf8'});
+  return probe.status === 0 ? probe.stdout.trim() || null : null;
+}
+
 function minimalEnv(tempRoot) {
   const env = {
     PATH: process.env.PATH ?? '',
@@ -47,6 +56,8 @@ function minimalEnv(tempRoot) {
   for (const key of ['SYSTEMROOT', 'SystemRoot', 'WINDIR', 'ComSpec', 'PATHEXT']) {
     if (process.env[key]) env[key] = process.env[key];
   }
+  const pythonUserBase = hostPythonUserBase();
+  if (pythonUserBase) env.PYTHONUSERBASE = pythonUserBase;
   return env;
 }
 
