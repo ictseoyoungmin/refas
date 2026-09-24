@@ -10,6 +10,44 @@
 
 Build these before seams, panels, fasteners, engravings, or material polish. A detailed wrong silhouette is still wrong.
 
+## Relational applicability
+
+When the active scope has declared or otherwise material macro/identity `whole-system` relational obligations, pass the current `refas.whole-system-relational-barrier/v1` before lower-scope geometry hardening that depends on those relations. If no such obligation applies to the current construction decision, do not invent a placeholder relation merely to enter shape construction; proceed under the normal spatial-hypothesis, canonical-edit, construction-quality, projection, and visual-review gates.
+
+This construction boundary does not weaken the separate real-source certification floor. Before real-source whole-object certification, a meaningful current relational structure, semantic-authority set, passing barrier, and candidate-bound relational discrepancy are still required by the certification path.
+
+## Construction vocabulary authority
+
+Choose the representation vocabulary **before** identity-bearing high-level geometry is generated. The canonical decision is `refas.construction-vocabulary/v1` and must bind the active scope, primary source digest, source-grounded cues, contrary cues, ambiguities, and evidence references.
+
+The allowed vocabulary is deliberately small:
+
+- `hard-surface` — designed planes, shells, controlled curvature, apertures, panels, frames, and rigid manufactured boundaries;
+- `organic` — continuously varying biological, grown, sculpted, or soft-form sections and curvature flow;
+- `mechanical-articulated` — multiple rigid parts whose identity depends on explicit interfaces, joints, axes, or separable mechanisms;
+- `hybrid` — materially different resolved vocabularies across explicitly declared child scopes;
+- `unresolved` — evidence is not yet strong enough to choose a production vocabulary.
+
+`unresolved` is blockout-only. `hybrid` and `mechanical-articulated` must cover every identity-bearing child scope. Mechanical-articulated whole construction additionally requires explicit part, interface, articulation, and evidence records before the whole can authorize decomposition.
+
+A resolved decision does not directly authorize every geometry API. Request `refas.construction-operation-permit/v1` for the exact scope and high-level operation. Permits bind the source, root/effective vocabulary digests, scope, requested operation, evidence, and mechanical decomposition when applicable. A permit from another source, scope, decision, or operation fails closed.
+
+The public sequence is:
+
+```js
+const decision = createConstructionVocabulary(vocabularyInput);
+const permit = createConstructionOperationPermit({
+  decision,
+  scopeId: 'whole',
+  operation: 'hard-surface-shell',
+});
+const shell = createPermittedHardSurfaceShell({decision, permit, spec});
+```
+
+Use the corresponding permit-aware wrappers for section-profile lofts and surface-network identity construction. Existing lower-level geometry functions remain available for blockout, support implementation, and backward compatibility, but calling them directly does **not** establish identity-bearing construction authority. Permit-consuming wrappers carry `refas.construction-authority/v1` into GLB serialization; serialization emits per-part `refas.construction-execution/v1` records, and `createConstructionExecutionProof` binds those executions to the exact candidate GLB digest. `refas.construction-quality/v1` rejects identity-bearing closure unless the current vocabulary, required permits, and matching candidate-bound execution proof are present.
+
+The compatibility matrix is runtime-owned. Do not copy or override it in project data, templates, or agent prose. If the evidence and the chosen vocabulary disagree, reopen the decision instead of forcing a convenient primitive family.
+
 ## Blockout and identity-bearing geometry
 
 A blockout establishes camera, pose, broad mass, and candidate negative space.
@@ -75,10 +113,7 @@ count as a frame merely because its hero projection looks correct.
 
 Treat structural interpretation with the same evidence discipline as shape.
 A visible sequence from one mounting land, through members and junctions, to
-another land may support a load-path hypothesis. Hidden continuity, internal
-reinforcement, fastener preload, and engineering capacity remain hypotheses
-unless the source or downstream specification attests them. Record ambiguity
-instead of inventing a mechanically authoritative interior.
+another land may support a load-path hypothesis.
 
 Validate an open frame in hero, reverse, side, top, grazing, normal, and
 object-ID views. The apertures must remain open, member thickness must remain
@@ -89,8 +124,8 @@ hole, or a solid slab outside the hero view, route the defect to
 
 ## Compound shells and conforming parts
 
-Use `createHardSurfaceShell` when a shell, cover, bracket, guard, or mount needs
-coherent thickness and true through-openings. Its public input contract is
+For identity-bearing work, use `createPermittedHardSurfaceShell({decision, permit, spec})` when a shell, cover, bracket, guard, or mount needs
+coherent thickness and true through-openings. Direct `createHardSurfaceShell(spec)` remains a blockout/support/backward-compatibility mechanism and cannot establish identity-bearing construction authority. Its public input contract is
 `refas.hard-surface-spec/v1`: one outer profile, zero or more uniquely named
 cutout profiles, thickness, an optional shared surface authority, and explicit
 outer/cutout edge treatments. `sharp`, `chamfer`, `fillet`, and `stepped`
@@ -167,3 +202,7 @@ Add a feature only when it is:
 - required by the user's downstream use.
 
 Do not spend geometry budget on unsupported microdetail while a whole-object blocker remains.
+
+## Worked example
+
+For a concrete single-view case where a convincing frontal reconstruction can still collapse into a billboard, read `references/single-view-volumetric-reasoning-example.md`. It shows how major volumes, genuinely thin parts, layered structures, and articulated/mechanical hypotheses can coexist without turning an inferred side or rear surface into an observed source fact.

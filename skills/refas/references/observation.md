@@ -56,7 +56,7 @@ If an extremal contour point itself matters, record it separately in `contours`.
 
 ### Source-visible segmentation before assembly
 
-Preserve visible decomposition before deciding hidden 3D topology. When the source shows separate shells, connector bodies, articulated joint bodies, cut gaps, seams, overlap boundaries, or necked transitions, record them as `segments` and `interfaces` instead of flattening them into one undifferentiated region.
+Preserve visible decomposition before deciding 3D topology. When the source shows separate shells, connector bodies, articulated joint bodies, cut gaps, seams, overlap boundaries, or necked transitions, record them as `segments` and `interfaces` instead of flattening them into one undifferentiated region.
 
 This applies generically. A manufactured articulated torso may show an upper shell, a narrow intermediate connector, and a lower waist/pelvis shell; a limb may show proximal body, joint body, distal body, and connector regions. Mechanical, furniture, vehicle, animal, or architectural references may expose analogous subdivisions.
 
@@ -66,11 +66,21 @@ Use separation strength conservatively:
 - `suggested` — a meaningful visible subdivision exists, but the source does not yet prove independent physical ownership;
 - `uncertain` — preserve the boundary observation without committing to a physical split.
 
-Do not invent hidden hinges, pins, sockets, or rear topology merely because a visible segment boundary exists. Observation preserves what is visible; spatial reasoning and assembly decide the unseen continuation later.
+Observation preserves what is visible; spatial reasoning and assembly decide the 3D continuation later.
 
 Reference geometry is strictly source-space evidence. It must not contain 3D coordinates, camera-space points, reconstructed depths, or model transforms. Those belong to spatial hypotheses and reconstruction. Realized projection later binds actual GLB nodes and mesh vertices back to this source evidence.
 
 `refas.reference-registration/v1` remains a placement/framing transform between 2D evidence frames. Its residual can establish that crops or review frames are aligned, but it is not shape truth and cannot substitute for source-space geometry agreement.
+
+## Perceptual identity signatures
+
+Before candidate evaluation, record what visually makes the source look like itself as `refas.perceptual-signature-set/v1`. This is a source-observation artifact, not a similarity score and not a construction-family guess.
+
+Use a small domain-neutral vocabulary: silhouette character, mass proportion, curvature character, plane/edge language, negative-space structure, part-segmentation rhythm, junction transition, and surface-pattern structure. Each macro or identity signature states a substantive source observation and cites the raw source or source-derived evidence that supports it. Bind signatures to hierarchy scopes and, where useful, to reference-geometry artifacts or related scopes.
+
+A perceptual signature is not a pixel metric. “Angular stepped plane breaks remain visible around the torso-to-wing junction” is a source identity observation; IoU, edge count, landmark RMSE, and other numeric residuals are not. Numeric evidence may later help inspect a signature, but correspondence does not define identity and cannot replace the source observation.
+
+Keep ambiguity explicit. Do not infer hidden construction, material category, or object class merely to fill a signature. The signature set is candidate-independent and never certifies resemblance by itself.
 
 ## Derived evidence
 
@@ -98,19 +108,11 @@ Before moving to spatial hypotheses, confirm:
 - visible macro geometry that constrains reconstruction is recorded as source-space reference geometry;
 - structural anchors have not been substituted with unrelated contour extrema;
 - material source-visible subdivisions and interfaces are preserved when they affect reconstruction or assembly;
-- source segmentation does not invent hidden 3D mechanics;
 - negative-space evidence describes actual empty regions rather than annotation paint over the subject;
 - reference geometry contains no reconstructed 3D coordinates;
 - interpretations are not written as facts;
-- ambiguities are explicit;
-- missing or hidden parts are marked unknown rather than invented.
+- ambiguities are explicit.
 
-## Visible obligations versus hidden uncertainty
+## Visible obligations
 
-Use ambiguity only where the source does not decide. Hidden rear surfaces,
-internal fasteners, exact depth, and unobserved motion limits may remain
-hypotheses. A visible contour, landmark, cut line, opening, overlap,
-proportion, highlight break, segmentation boundary, or curvature transition is
-an observation obligation and cannot be replaced by a generic primitive under
-the label of uncertainty. Record the visible portion as a fact and only its
-unseen continuation as ambiguous.
+A visible contour, landmark, cut line, opening, overlap, proportion, highlight break, segmentation boundary, or curvature transition is an observation obligation and cannot be replaced by a generic primitive under the label of uncertainty. Record the visible portion as a fact and leave 3D construction decisions to the owning spatial and shape capabilities.

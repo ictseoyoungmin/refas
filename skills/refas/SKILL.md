@@ -38,8 +38,8 @@ Do not blend every reference into one undifferentiated prompt. Keep one capabili
 - The raw reference is primary evidence. Crops, edge maps, contrast views, segmentation, and annotations are observation aids.
 - Observe the whole image before regions or parts. Every part retains an ancestry chain and a context-preserving crop.
 - Store visible facts separately from interpretations, hypotheses, and ambiguities.
-- Never convert hidden geometry, material identity, symmetry, or dimensions into facts without evidence.
 - Compare actual renders, not code, parameter values, manifests, or agent confidence.
+- Single-view IoU is forbidden. IoU may be used only with at least two independently source-backed registered views of the same candidate, and then only as correspondence evidence—not as a fit objective, ranking metric, resemblance signal, or standalone certification gate.
 - Preserve accepted child assets as immutable GLBs when assembling a parent. Reopen them only when parent evidence disproves their closure.
 - A low score alone does not select a repair owner. Localize a typed visual defect first.
 - A blocking defect without an owner fails closed. Do not guess a rollback point.
@@ -222,8 +222,7 @@ For an open-frame mount, bracket, handle, guard, stock, or architectural frame,
 read **Open-frame mounts and structural negative space** in
 `references/construction.md`. Reconstruct it as one coherent frame around true
 apertures with continuous junctions and explicit mounting lands—not as floating
-bars, dark plates posing as holes, or a one-view cage. Keep unseen structural
-continuity and load capacity as hypotheses unless evidence attests them.
+bars, dark plates posing as holes, or a one-view cage.
 
 ## Render and review
 

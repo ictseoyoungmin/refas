@@ -1,0 +1,223 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/actuation-model.schema.json",
+  "title": "RefAs actuation model",
+  "type": "object",
+  "required": ["schema", "scopeId", "sourceSha256", "identityBinding", "articulationBinding", "transmissionBinding", "actuators", "policy", "actuationDigest"],
+  "properties": {
+    "schema": {"const": "refas.actuation-model/v1"},
+    "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "identityBinding": {"$ref": "#/$defs/identityBinding"},
+    "articulationBinding": {
+      "oneOf": [
+        {"type": "null"},
+        {"$ref": "#/$defs/articulationBinding"}
+      ]
+    },
+    "transmissionBinding": {
+      "oneOf": [
+        {"type": "null"},
+        {"$ref": "#/$defs/transmissionBinding"}
+      ]
+    },
+    "actuators": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/actuator"}
+    },
+    "policy": {
+      "type": "object",
+      "required": [
+        "actuatorAndTransmissionRemainDistinct",
+        "actuatorAndControllerRemainDistinct",
+        "actuatorAndRuntimeBindingRemainDistinct",
+        "supportedControlModesAreCapabilityNotTuning",
+        "unresolvedValuesRemainNull",
+        "continuousIsNotUnknown",
+        "fabricatedDefaultsForbidden",
+        "unitsAreCoordinateClassSpecific",
+        "directVirtualJointRequiresLiveArticulation",
+        "directVirtualJointCoordinateClassMustMatch",
+        "selectedTransmissionRequiresLiveUpstreamDependencies",
+        "scopedIdentityBinding",
+        "scopedArticulationBinding",
+        "scopedTransmissionBinding",
+        "semanticAuthorityRemainsExternal",
+        "actuationDoesNotAssertSourceTruth",
+        "modelDoesNotAuthorizeClosure"
+      ],
+      "properties": {
+        "actuatorAndTransmissionRemainDistinct": {"const": true},
+        "actuatorAndControllerRemainDistinct": {"const": true},
+        "actuatorAndRuntimeBindingRemainDistinct": {"const": true},
+        "supportedControlModesAreCapabilityNotTuning": {"const": true},
+        "unresolvedValuesRemainNull": {"const": true},
+        "continuousIsNotUnknown": {"const": true},
+        "fabricatedDefaultsForbidden": {"const": true},
+        "unitsAreCoordinateClassSpecific": {"const": true},
+        "directVirtualJointRequiresLiveArticulation": {"const": true},
+        "directVirtualJointCoordinateClassMustMatch": {"const": true},
+        "selectedTransmissionRequiresLiveUpstreamDependencies": {"const": true},
+        "scopedIdentityBinding": {"const": true},
+        "scopedArticulationBinding": {"const": true},
+        "scopedTransmissionBinding": {"const": true},
+        "semanticAuthorityRemainsExternal": {"const": true},
+        "actuationDoesNotAssertSourceTruth": {"const": true},
+        "modelDoesNotAuthorizeClosure": {"const": true}
+      },
+      "additionalProperties": false
+    },
+    "actuationDigest": {"$ref": "common.schema.json#/$defs/digest"}
+  },
+  "$defs": {
+    "identityBinding": {
+      "type": "object",
+      "required": ["schema", "sourceSchema", "projectionDigest"],
+      "properties": {
+        "schema": {"const": "refas.physical-actuation-identity-binding/v1"},
+        "sourceSchema": {"const": "refas.physical-identity-graph/v1"},
+        "projectionDigest": {"$ref": "common.schema.json#/$defs/digest"}
+      },
+      "additionalProperties": false
+    },
+    "articulationBinding": {
+      "type": "object",
+      "required": ["schema", "sourceSchema", "projectionDigest"],
+      "properties": {
+        "schema": {"const": "refas.actuation-articulation-binding/v1"},
+        "sourceSchema": {"const": "refas.articulation-graph/v1"},
+        "projectionDigest": {"$ref": "common.schema.json#/$defs/digest"}
+      },
+      "additionalProperties": false
+    },
+    "transmissionBinding": {
+      "type": "object",
+      "required": ["schema", "sourceSchema", "projectionDigest"],
+      "properties": {
+        "schema": {"const": "refas.actuation-transmission-binding/v1"},
+        "sourceSchema": {"const": "refas.transmission-model/v1"},
+        "projectionDigest": {"$ref": "common.schema.json#/$defs/digest"}
+      },
+      "additionalProperties": false
+    },
+    "authorityValue": {
+      "type": "object",
+      "required": ["value", "authoritySubjectId"],
+      "properties": {
+        "value": {},
+        "authoritySubjectId": {"$ref": "common.schema.json#/$defs/semanticId"}
+      },
+      "additionalProperties": false
+    },
+    "positionRange": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["kind", "minimum", "maximum", "unit"],
+          "properties": {
+            "kind": {"const": "BOUNDED"},
+            "minimum": {"type": "number"},
+            "maximum": {"type": "number"},
+            "unit": {"enum": ["rad", "m"]}
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["kind", "unit"],
+          "properties": {
+            "kind": {"const": "CONTINUOUS"},
+            "unit": {"const": "rad"}
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "limit": {
+      "type": "object",
+      "required": ["maxAbs", "unit"],
+      "properties": {
+        "maxAbs": {"type": "number", "exclusiveMinimum": 0},
+        "unit": {"enum": ["rad_s", "m_s", "N_m", "N"]}
+      },
+      "additionalProperties": false
+    },
+    "nonnegativeQuantity": {
+      "type": "object",
+      "required": ["value", "unit"],
+      "properties": {
+        "value": {"type": "number", "minimum": 0},
+        "unit": {"enum": ["N_m_per_rad", "N_per_m", "N_m_s_per_rad", "N_s_per_m", "kg_m2", "kg", "s"]}
+      },
+      "additionalProperties": false
+    },
+    "actuator": {
+      "type": "object",
+      "required": [
+        "actuatorId", "drivesRelationId", "drivenTargetId", "drivenTargetKind", "kind", "coordinateClass",
+        "definitionAuthoritySubjectId", "supportedControlModes", "positionRange", "velocityLimit",
+        "effortLimit", "stiffness", "damping", "armature", "responseLatency"
+      ],
+      "properties": {
+        "actuatorId": {"$ref": "common.schema.json#/$defs/semanticId"},
+        "drivesRelationId": {"$ref": "common.schema.json#/$defs/semanticId"},
+        "drivenTargetId": {"$ref": "common.schema.json#/$defs/semanticId"},
+        "drivenTargetKind": {"enum": ["transmission", "mechanism", "virtual-joint"]},
+        "kind": {"enum": ["ROTARY_ELECTRIC", "LINEAR_ELECTRIC", "HYDRAULIC", "PNEUMATIC", "ABSTRACT"]},
+        "coordinateClass": {"enum": ["ROTARY", "LINEAR"]},
+        "definitionAuthoritySubjectId": {"$ref": "common.schema.json#/$defs/semanticId"},
+        "supportedControlModes": {
+          "allOf": [
+            {"$ref": "#/$defs/authorityValue"},
+            {"properties": {"value": {"oneOf": [{"type": "null"}, {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["POSITION", "VELOCITY", "EFFORT", "IMPEDANCE"]}}]}}}
+          ]
+        },
+        "positionRange": {
+          "allOf": [
+            {"$ref": "#/$defs/authorityValue"},
+            {"properties": {"value": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/positionRange"}]}}}
+          ]
+        },
+        "velocityLimit": {
+          "allOf": [
+            {"$ref": "#/$defs/authorityValue"},
+            {"properties": {"value": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/limit"}]}}}
+          ]
+        },
+        "effortLimit": {
+          "allOf": [
+            {"$ref": "#/$defs/authorityValue"},
+            {"properties": {"value": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/limit"}]}}}
+          ]
+        },
+        "stiffness": {
+          "allOf": [
+            {"$ref": "#/$defs/authorityValue"},
+            {"properties": {"value": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/nonnegativeQuantity"}]}}}
+          ]
+        },
+        "damping": {
+          "allOf": [
+            {"$ref": "#/$defs/authorityValue"},
+            {"properties": {"value": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/nonnegativeQuantity"}]}}}
+          ]
+        },
+        "armature": {
+          "allOf": [
+            {"$ref": "#/$defs/authorityValue"},
+            {"properties": {"value": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/nonnegativeQuantity"}]}}}
+          ]
+        },
+        "responseLatency": {
+          "allOf": [
+            {"$ref": "#/$defs/authorityValue"},
+            {"properties": {"value": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/nonnegativeQuantity"}]}}}
+          ]
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

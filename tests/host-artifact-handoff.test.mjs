@@ -23,6 +23,7 @@ import {
   openHostSession,
   validateArtifactHandoff,
 } from '../skills/refas/scripts/lib/index.mjs';
+import {initTrustedContractFixtureProject} from '../skills/refas/scripts/lib/contract-fixture-project.mjs';
 
 async function tempProject(t, projectId = 'handoff-project') {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), 'refas-handoff-'));
@@ -43,9 +44,9 @@ async function tempProject(t, projectId = 'handoff-project') {
     width: 48,
     height: 32,
     authority: 'primary',
-    acquisition: {kind: 'test-fixture'},
+    acquisition: {kind: 'generated-contract-reference'},
   };
-  await initProject(root, {projectId, source});
+  await initTrustedContractFixtureProject(root, {projectId, source, fixtureId:`${projectId}-handoff`});
   return {root, source, artifactPath: path.join(root, 'model', 'candidate.glb')};
 }
 
@@ -58,7 +59,7 @@ async function commitCandidate(root, artifactPath, bytes, capability = 'source-i
     reason: `${capability} artifact handoff fixture is trustworthy`,
     artifactRefs: [artifact],
     claims: [`${capability} candidate exists`],
-    gates: [{id: `${capability}-gate`, status: 'pass', evidenceRefs: [artifact.path]}],
+    gates: [{id: `${capability}-gate`, evidenceRefs: [artifact.path]}],
   });
   return {artifact, checkpoint};
 }
@@ -179,7 +180,6 @@ async function commitCertificationAttempt(root, artifactPath, source) {
 
   const gates = REQUIRED_CLOSURE_GATE_IDS.map((id) => ({
     id,
-    status: 'pass',
     evidenceRefs: [REQUIRED_VISUAL_GATE_IDS.includes(id) ? reviewRef.path : asset.path],
   }));
   const checkpoint = await commitCheckpoint(root, {
@@ -230,7 +230,7 @@ test('artifact handoff fails closed when the current checkpoint has no GLB or ca
   const nonGlb = await contentReference(artifactPath, {kind: 'model-spec', root});
   await commitCheckpoint(root, {
     capability: 'source-intake', scopeId: 'whole', reason: 'Non-GLB fixture remains recoverable.', artifactRefs: [nonGlb],
-    gates: [{id: 'source-intake-gate', status: 'pass', evidenceRefs: [nonGlb.path]}],
+    gates: [{id: 'source-intake-gate', evidenceRefs: [nonGlb.path]}],
   });
   await openFixtureSession(root, 'missing-glb-project');
   await assert.rejects(getArtifactHandoff(root), /requires a content reference|requires one unambiguous current GLB candidate/);

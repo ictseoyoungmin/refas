@@ -2,7 +2,7 @@
 
 This file is the canonical progressive-load router for the installed RefAs skill. `SKILL.md` enters the instruction graph here. The physical installation boundary is the directory that contains this file's parent `references/` directory: normally `skills/refas/` in the repository, but Claude/Codex may install only that directory.
 
-`references/GRAPH.json` is the machine-readable semantic graph for this router. It records every reference leaf's owner, hard and conditional prerequisites, authority, closure effects, finding ownership, deprecated finding compatibility, and real-source certification prerequisites. Prose may explain that graph but must not contradict it.
+`references/GRAPH.json` is the machine-readable semantic graph for this router. It records every reference leaf's routing owners, canonical runtime-capability projection, hard and conditional prerequisites, authority, closure effects, public interface operations, finding ownership, deprecated finding compatibility, and real-source certification prerequisites. `runtimeCapabilities` contains only the canonical checkpoint/repair capabilities; routing tags such as `control` remain in `owners` but never become runtime capabilities. Each node's `interface.interfaces[]` names the existing public CLI and/or `scripts/lib/index.mjs` operation boundary. Prose may explain that graph but must not contradict it.
 
 ## Installation-root invariant
 
@@ -16,6 +16,39 @@ Every executable instruction and runtime dependency must resolve inside the inst
 - `requirements.txt` at the skill root is the canonical Python dependency manifest.
 
 The repository may depend on the skill. The skill must never depend on the repository around it. CI copies `skills/refas/` into an isolated temporary directory and reruns both the installation-boundary verifier and semantic-graph verifier there.
+
+## Public discovery lookup
+
+After `references/GRAPH.json` routes the active work, use the installed CLI when the exact executable surface is needed:
+
+```text
+refas describe node <instruction-node-id>
+refas describe capability <runtime-capability-id>
+```
+
+The node form returns that instruction node's routing identity, prerequisites, runtime-capability projection, closure effects, and full AD01 interface descriptors. The capability form accepts only one of the 11 canonical runtime capability IDs and aggregates owning nodes in graph order. These namespaces are intentionally explicit: `refas describe <id>` does not guess whether an ID is an instruction node or a runtime capability, and routing-only owner tags such as `control` are not runtime capabilities.
+
+### Canonical standalone templates
+
+Most executable operation inputs are exposed through the interface catalog returned by `describe`. The following standalone templates remain public convenience/contracts and are routed explicitly so workers never need to guess filenames:
+
+| Template | Route |
+|---|---|
+| `assets/templates/assembly-contract.json` | `references/assembly.md` |
+| `assets/templates/closure-gates.json` | `references/checkpointing.md`, `references/claim-certification.md` |
+| `assets/templates/evaluation.json` | `references/checkpointing.md` |
+| `assets/templates/parameter-fit-plan.json` | `references/parameter-fitting.md` |
+| `assets/templates/projection-fit.json` | `references/spatial-reasoning.md`, `references/validation.md` |
+| `assets/templates/realized-assembly-input.json` | `references/assembly.md` |
+| `assets/templates/realized-projection-input.json` | `references/spatial-reasoning.md`, `references/validation.md` |
+| `assets/templates/reference-geometry.json` | `references/observation.md` |
+| `assets/templates/relational-structure.json` | `references/relational-structure.md` |
+| `assets/templates/semantic-authority.json` | `references/inference-authority.md` |
+| `assets/templates/spatial-hypotheses.json` | `references/spatial-reasoning.md` |
+| `assets/templates/surface-network.json` | `references/construction.md` |
+
+A standalone template does not override the operation-specific input catalog. When `describe` returns an interface template, that interface metadata is authoritative for the executable minimum input.
+
 
 ## Always-load control path
 
@@ -33,6 +66,7 @@ Load only the references needed by the active capability or conditional closure 
 |---|---|
 | Source provenance, hierarchy, visible facts | `references/observation.md`, `references/provenance.md` |
 | Camera, depth, orientation, competing spatial hypotheses | `references/spatial-reasoning.md` |
+| Single-view subject risks billboard/planar collapse or needs a worked example separating source facts from 3D completion | `references/single-view-volumetric-reasoning-example.md` after `references/spatial-reasoning.md` and `references/construction.md` |
 | Whole-system proportions, alignments, ordering, planes, volumes | `references/relational-structure.md` |
 | Observed vs inferred vs engineered vs unknown vs forbidden authority | `references/inference-authority.md` |
 | Transition from macro relational closure to lower-scope hardening | `references/whole-system-relational-barrier.md` |
@@ -40,6 +74,17 @@ Load only the references needed by the active capability or conditional closure 
 | Evidence-bound parameter search and actual-render trial fitting | `references/parameter-fitting.md` |
 | Organic or articulated manufactured form | `references/organic-articulated-construction.md` after `references/construction.md` |
 | Parent/child placement, attachment, modular assembly | `references/assembly.md` |
+| Explicit q/dq/effort mapping between semantic joint/actuator spaces | `references/contracts/transmission-model.md` after `references/assembly.md` |
+| Explicit actuator physical capability and limits | `references/contracts/actuation-model.md` after `references/assembly.md`; also load `references/contracts/transmission-model.md` when the actuator drives a transmission |
+| Controller mode, command space, feedback tuning, and controller-side delay | `references/contracts/control-profile.md` after `references/contracts/actuation-model.md` |
+| Runtime endpoint/device/bus/index binding and runtime coordinate calibration | `references/contracts/runtime-binding.md` after `references/assembly.md`; also load `references/contracts/actuation-model.md` for actuator targets and articulation contracts for virtual-joint targets |
+| Digest-bound packaging of reusable physical modules and exact physical component refs | `references/contracts/physical-asset-bundle.md` after `references/assembly.md`; load P06–P09 leaves when those component types are included |
+| Backend representation-capacity preflight and explicit support/approximation/loss classification | `references/contracts/representation-capacity.md` after `references/contracts/physical-asset-bundle.md` |
+| One-way canonical physical semantics to backend artifact export | `references/contracts/backend-export.md` after `references/contracts/representation-capacity.md` |
+| Backend artifact parsing into backend-independent normalized semantics | `references/contracts/representation-normalizer.md` after `references/contracts/backend-export.md` |
+| Canonical-versus-normalized backend semantic comparison with typed equivalence/loss/drift/unresolved/invalid findings | `references/contracts/cross-representation-validation.md` after `references/contracts/representation-normalizer.md` |
+| Exact backend-specific divergence authorization over current P14 DRIFT evidence | `references/contracts/divergence-authorization.md` after `references/contracts/cross-representation-validation.md`; also load `references/inference-authority.md` for the required engineered authority |
+| Scoped physical readiness evidence for articulated/simulation/control/runtime claims | `references/contracts/physical-claims.md` after `references/contracts/physical-asset-bundle.md` and `references/contracts/cross-representation-validation.md`; also load `references/contracts/divergence-authorization.md` when a claim relies on declared divergence, and `references/claim-certification.md` for final authorization |
 | Material identity and finish | `references/appearance.md` |
 | Render integrity, registered comparison, visual review, closure evidence | `references/validation.md` |
 | Candidate/checkpoint/evidence provenance sealing | `references/candidate-transactions.md` |
@@ -89,4 +134,4 @@ Physical fusion is optional; if no logical fusion group requires a final weld/bo
 
 Every Markdown leaf under `references/` must remain reachable from `SKILL.md -> references/INDEX.md`. Every such leaf must also appear exactly once as a node path in `references/GRAPH.json`. A new reference file is incomplete until it is registered in both routing layers. Every routed file must exist inside the copied skill tree.
 
-CI fails when an instruction route escapes the skill, a runtime import escapes the skill, a forbidden `docs/...` route appears, a bare sibling Markdown route appears, the typed semantic graph has unknown owners or dependencies, its hard prerequisite graph cycles, its finding ownership disagrees with runtime `FINDING_OWNERS`, its real-source certification floor is incomplete, or the skill-local dependency manifest is missing.
+CI fails when an instruction route escapes the skill, a runtime import escapes the skill, a forbidden `docs/...` route appears, a bare sibling Markdown route appears, the typed semantic graph has unknown owners or dependencies, its hard prerequisite graph cycles, its finding ownership disagrees with runtime `FINDING_OWNERS`, its real-source certification floor is incomplete, or the skill-local dependency manifest is missing. It also fails when a node omits interface metadata, declares runtime capabilities that differ from its canonical runtime owners, points at an implementation module instead of `scripts/lib/index.mjs`, names a public symbol that the installed library does not export, or references a missing skill-local template/instruction/example path.

@@ -67,30 +67,6 @@ function polygonArea(points) {
   for (let index = 0; index < points.length; index += 1) { const a = points[index], b = points[(index + 1) % points.length]; area += a[0]*b[1] - b[0]*a[1]; }
   return Math.abs(area) * 0.5;
 }
-function pointInPolygon([x, y], polygon) {
-  let inside = false;
-  for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-    const [xi, yi] = polygon[i], [xj, yj] = polygon[j];
-    if (((yi > y) !== (yj > y)) && x < ((xj-xi)*(y-yi))/((yj-yi)||Number.EPSILON)+xi) inside = !inside;
-  }
-  return inside;
-}
-function polygonIoU(a, b, resolution = 96) {
-  if (a.length < 3 || b.length < 3 || polygonArea(a) < EPS || polygonArea(b) < EPS) return 0;
-  const xs = [...a, ...b].map((p) => p[0]), ys = [...a, ...b].map((p) => p[1]);
-  const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
-  if (maxX-minX < EPS || maxY-minY < EPS) return 0;
-  let intersection = 0, union = 0;
-  for (let iy = 0; iy < resolution; iy += 1) {
-    const y = minY + ((iy + .5) / resolution) * (maxY-minY);
-    for (let ix = 0; ix < resolution; ix += 1) {
-      const x = minX + ((ix + .5) / resolution) * (maxX-minX), ia = pointInPolygon([x,y], a), ib = pointInPolygon([x,y], b);
-      if (ia || ib) union += 1;
-      if (ia && ib) intersection += 1;
-    }
-  }
-  return union ? intersection / union : 0;
-}
 function pointSegmentDistance(point, a, b) {
   const dx = b[0]-a[0], dy = b[1]-a[1], length2 = dx*dx+dy*dy;
   if (length2 < EPS) return Math.hypot(point[0]-a[0], point[1]-a[1]);
@@ -125,7 +101,7 @@ function deriveSegment({reference, binding, json, binary, matrices, nodeIndexByS
     }
   }
   const projectedHull = convexHull(projected);
-  return deepFreeze({referenceId:reference.id, importance:reference.importance, nodeIds, rootNodeIndices, meshNodeIndices, projectedHull, sourcePolygon:reference.polygon, iou:polygonIoU(reference.polygon, projectedHull), totalVertices, insideFrameVertices, insideFrameFraction:totalVertices ? insideFrameVertices/totalVertices : 0});
+  return deepFreeze({referenceId:reference.id, importance:reference.importance, nodeIds, rootNodeIndices, meshNodeIndices, projectedHull, sourcePolygon:reference.polygon, iou:null, totalVertices, insideFrameVertices, insideFrameFraction:totalVertices ? insideFrameVertices/totalVertices : 0});
 }
 
 export function deriveRealizedSegmentation({referenceGeometry, segmentBindings = [], json, binary, matrices, nodeIndexBySemanticId, transformPoint, projectWorldPoint} = {}) {
@@ -150,12 +126,11 @@ export function deriveRealizedSegmentation({referenceGeometry, segmentBindings =
     const requiresDistinctOwnership = reference.separation === 'explicit' && DISTINCT_INTERFACE_KINDS.has(reference.kind);
     return deepFreeze({referenceId:reference.id, importance:reference.importance, evaluable:true, kind:reference.kind, separation:reference.separation, boundaryMeanErrorNormalized:mean(distances), distinctOwnership, requiresDistinctOwnership, ownershipCorrect:!requiresDistinctOwnership || distinctOwnership});
   });
-  const sourceVisibleIous = derivedSegments.filter((item) => item.importance !== 'detail').map((item) => item.iou);
   const interfaceErrors = derivedInterfaces.filter((item) => item.evaluable && item.importance !== 'detail').map((item) => item.boundaryMeanErrorNormalized);
   return deepFreeze({
     derivedSegments,
     derivedInterfaces,
-    segmentationMetrics:{segmentCount:derivedSegments.length, sourceVisibleSegmentMeanIoU:mean(sourceVisibleIous), interfaceBoundaryMeanErrorNormalized:mean(interfaceErrors), explicitOwnershipViolations:derivedInterfaces.filter((item) => item.requiresDistinctOwnership && item.ownershipCorrect === false).length},
+    segmentationMetrics:{segmentCount:derivedSegments.length, sourceVisibleSegmentMeanIoU:null, interfaceBoundaryMeanErrorNormalized:mean(interfaceErrors), explicitOwnershipViolations:derivedInterfaces.filter((item) => item.requiresDistinctOwnership && item.ownershipCorrect === false).length},
     normalizedSegmentBindings:derivedSegments.map(({referenceId,nodeIds}) => ({referenceId,nodeIds})),
   });
 }

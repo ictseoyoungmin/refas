@@ -21,6 +21,7 @@ import {
   resumeHostOperation,
   cancelHostOperation,
 } from '../skills/refas/scripts/lib/index.mjs';
+import {initTrustedContractFixtureProject} from '../skills/refas/scripts/lib/contract-fixture-project.mjs';
 
 async function tempRoot(t) {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), 'refas-host-operation-'));
@@ -32,9 +33,9 @@ async function sourceProject(root) {
   await fs.mkdir(path.join(root, 'source'), {recursive:true});
   const bytes = Buffer.from('host operation source\n');
   await fs.writeFile(path.join(root, 'source', 'reference.bin'), bytes);
-  await initProject(root, {projectId:'host-project', source:{
+  await initTrustedContractFixtureProject(root, {projectId:'host-project', fixtureId:'host-operation', source:{
     schema:'refas.source-manifest/v1',id:'primary-reference',path:'source/reference.bin',sha256:digestBytes(bytes),sizeBytes:bytes.length,
-    width:32,height:32,authority:'primary',acquisition:{kind:'test-fixture'},
+    width:32,height:32,authority:'primary',acquisition:{kind:'generated-contract-reference'},
   }});
 }
 
@@ -46,7 +47,7 @@ async function checkpointArtifact(root, bytes, kind = 'model-spec') {
 }
 
 function passingGate(reference) {
-  return [{id:'source-intake-gate',status:'pass',evidenceRefs:[reference.path]}];
+  return [{id:'source-intake-gate',evidenceRefs:[reference.path]}];
 }
 
 function abortWait(signal) {

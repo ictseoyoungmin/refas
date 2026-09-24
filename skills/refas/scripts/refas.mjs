@@ -5,6 +5,7 @@ import {fileURLToPath, pathToFileURL} from 'node:url';
 import {spawnSync} from 'node:child_process';
 import {
   REFAS_VERSION,
+  CAPABILITY_ORDER,
   abortEdit,
   auditProject,
   beginEdit,
@@ -29,6 +30,7 @@ import {
   validateVisualHierarchy,
   validateVisualReview,
   validatePbrRenderReport,
+  validateEarlyResemblanceBarrier,
   validateRegisteredComparison,
   validateRealizedAssemblyProof,
   validateConstructionQuality,
@@ -38,8 +40,11 @@ import {
   validateParameterFitReport,
   sha256File,
 } from './lib/index.mjs';
+import * as PUBLIC_API from './lib/index.mjs';
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
+const SKILL_ROOT = path.dirname(SCRIPT_DIR);
+const INSTRUCTION_GRAPH_PATH = path.join(SKILL_ROOT, 'references', 'GRAPH.json');
 
 function parseArgs(argv) {
   const [command = 'help', ...rest] = argv;
@@ -58,6 +63,87 @@ function parseArgs(argv) {
 async function jsonFile(filePath, fallback = null) {
   if (!filePath) return fallback;
   return JSON.parse(await fs.readFile(path.resolve(filePath), 'utf8'));
+}
+
+async function instructionGraph() {
+  return JSON.parse(await fs.readFile(INSTRUCTION_GRAPH_PATH, 'utf8'));
+}
+
+async function interfaceTemplateDescriptor(entry) {
+  if (!entry.template) return null;
+  const [route, rawFragment] = String(entry.template).split('#', 2);
+  const document = JSON.parse(await fs.readFile(path.join(SKILL_ROOT, route), 'utf8'));
+  const fragment = rawFragment == null ? '' : `#${rawFragment}`;
+  const template = PUBLIC_API.resolveCapabilityTemplatePointer(document, fragment);
+  return {
+    path: entry.template,
+    processor: entry.templateProcessor ?? null,
+    requirements: PUBLIC_API.inspectCapabilityInputTemplate(template),
+  };
+}
+
+async function enrichInterface(entry) {
+  const publicConstants = Object.fromEntries((entry.publicConstants ?? []).map((symbol) => {
+    if (!(symbol in PUBLIC_API)) throw new Error(`interface public constant is not exported: ${symbol}`);
+    return [symbol, PUBLIC_API[symbol]];
+  }));
+  return {
+    ...entry,
+    ...(entry.publicConstants?.length ? {publicConstantValues: publicConstants} : {}),
+    ...(entry.template ? {templateContract: await interfaceTemplateDescriptor(entry)} : {}),
+  };
+}
+
+async function describeNode(graph, id) {
+  const node = graph.nodes.find((candidate) => candidate.id === id);
+  if (!node) throw new Error(`unknown instruction node: ${id}`);
+  return {
+    namespace: 'node',
+    id: node.id,
+    path: node.path,
+    authority: node.authority,
+    owners: node.owners,
+    runtimeCapabilities: node.runtimeCapabilities,
+    requires: node.requires,
+    conditionalRequires: node.conditionalRequires,
+    closureEffects: node.closureEffects,
+    interface: node.interface,
+    resolvedInterfaces: await Promise.all(node.interface.interfaces.map(enrichInterface)),
+  };
+}
+
+async function describeCapability(graph, capability) {
+  if (!CAPABILITY_ORDER.includes(capability)) throw new Error(`unknown runtime capability: ${capability}`);
+  const nodes = [];
+  for (const node of graph.nodes.filter((candidate) => candidate.runtimeCapabilities.includes(capability))) {
+    nodes.push({
+      id: node.id,
+      path: node.path,
+      authority: node.authority,
+      owners: node.owners,
+      runtimeCapabilities: node.runtimeCapabilities,
+      interface: node.interface,
+      resolvedInterfaces: await Promise.all(node.interface.interfaces.map(enrichInterface)),
+    });
+  }
+  return {
+    namespace: 'capability',
+    id: capability,
+    nodes,
+  };
+}
+
+async function describe(options) {
+  const [namespace, id, ...extra] = options._positional;
+  if (!namespace || !['node', 'capability'].includes(namespace)) {
+    throw new Error('describe requires namespace "node" or "capability": refas describe node <instruction-node-id> | refas describe capability <runtime-capability-id>');
+  }
+  if (!id || extra.length) {
+    const placeholder = namespace === 'node' ? '<instruction-node-id>' : '<runtime-capability-id>';
+    throw new Error(`describe ${namespace} requires exactly one ID: refas describe ${namespace} ${placeholder}`);
+  }
+  const graph = await instructionGraph();
+  return namespace === 'node' ? await describeNode(graph, id) : await describeCapability(graph, id);
 }
 
 function required(options, key) {
@@ -102,12 +188,13 @@ function help() {
       'report-finding': 'report-finding --root DIR --finding finding.json',
       audit: 'audit --root DIR',
       certify: 'certify --root DIR',
+      describe: 'describe node <instruction-node-id> | describe capability <runtime-capability-id>',
       register: 'register --input registration-input.json --out registration.json',
       'validate-spec': 'validate-spec --file spec.json [--context hierarchy.json]',
       'inspect-glb': 'inspect-glb --glb asset.glb',
       evidence: 'evidence --image reference.png --out DIR --scope ID [--roi x,y,w,h] [--padding 0.08]',
       render: 'render --glb asset.glb --out DIR [--reference image.png] [--frame canonical-frame.json] [--size 640] [--timeout-seconds 300] [--max-working-mb 512] [--tile-size 256] [--max-triangles N]',
-      'render-pbr': 'render-pbr --glb asset.glb --out DIR --frame canonical-frame.json [--reference image.png] [--size 420] [--timeout-seconds 180] [--max-working-mb 512]',
+      'render-pbr': 'render-pbr --glb asset.glb --out DIR --frame canonical-frame.json [--reference image.png] [--size 420] [--timeout-seconds 180] [--max-working-mb 512] [--neutral-clay]',
       compare: 'compare --input registered-comparison-input.json --out DIR [--timeout-seconds 120]',
       'fit-parameters': 'fit-parameters --root DIR --plan parameter-fit-plan.json --worker evaluator.mjs --out parameter-fit-report.json',
     },
@@ -169,6 +256,7 @@ async function main() {
   }
   if (command === 'audit') { print(await auditProject(required(options, 'root'))); return; }
   if (command === 'certify') { print(await certifyProject(required(options, 'root'))); return; }
+  if (command === 'describe') { print(await describe(options)); return; }
   if (command === 'register') {
     const registration = createReferenceRegistration(await jsonFile(required(options, 'input')));
     const output = await writeJson(required(options, 'out'), registration);
@@ -186,6 +274,7 @@ async function main() {
     else if (spec.schema === 'refas.assembly-contract/v1') result = validateAssemblyContract(spec);
     else if (spec.schema === 'refas.visual-review/v1') result = validateVisualReview(spec);
     else if (spec.schema === 'refas.pbr-render-report/v1') result = validatePbrRenderReport(spec);
+    else if (spec.schema === 'refas.early-resemblance-barrier/v1') result = validateEarlyResemblanceBarrier(spec);
     else if (spec.schema === 'refas.registered-comparison/v1') result = validateRegisteredComparison(spec);
     else if (spec.schema === 'refas.realized-assembly-proof/v1') result = validateRealizedAssemblyProof(spec);
     else if (spec.schema === 'refas.construction-quality/v1') result = validateConstructionQuality(spec);
@@ -218,6 +307,7 @@ async function main() {
     const args = ['--glb', required(options, 'glb'), '--out', required(options, 'out'), '--frame', required(options, 'frame')];
     if (options.reference) args.push('--reference', options.reference); if (options.size) args.push('--size', options.size);
     if (options['timeout-seconds']) args.push('--timeout-seconds', options['timeout-seconds']); if (options['max-working-mb']) args.push('--max-working-mb', options['max-working-mb']);
+    if (options['neutral-clay'] === true) args.push('--neutral-clay');
     const timeoutSeconds = Number(options['timeout-seconds'] ?? 180); if (!Number.isFinite(timeoutSeconds) || timeoutSeconds <= 0) throw new Error('--timeout-seconds must be a positive number');
     runPython('render_pbr.py', args, {timeoutMs: Math.ceil(timeoutSeconds * 1000 + 5000)}); return;
   }

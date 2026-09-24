@@ -6,6 +6,14 @@ Run the portable `render` gate first. Then run `render-pbr` or an external Blend
 
 The bundled fallback implements deterministic Cook–Torrance metallic-roughness shading with a fixed three-directional-light rig. It supports `base-color-factor`, `metallic-factor`, and `roughness-factor`. It does not claim texture, normal-map, clearcoat, transmission, or image-based-lighting support.
 
+## Canonical neutral-clay presentation
+
+Use `refas render-pbr --neutral-clay` for R04 early shape resemblance. This mode is implemented by the bundled independent renderer and overrides every primitive's beauty/albedo material with the runtime-owned `refas-neutral-clay-v1` material preset while keeping normal and object-ID outputs.
+
+The report records `presentation.mode: neutral-clay`, the canonical preset ID/digest, bundled renderer profile, fixed neutral-clay lighting digest, canonical frame digest, exact candidate digest, and all standard output digests. The report's `claimScope` is `shape-resemblance-only`, so it cannot substitute for normal visual-fidelity PBR evidence.
+
+Do not reproduce the preset by hand or pass custom material values while claiming canonical clay. The runtime validates the exact preset, renderer identity, lighting rig, color pipeline, and required views.
+
 ## Reproducibility and safety
 
 - The exact GLB and canonical-frame digests bind every run.

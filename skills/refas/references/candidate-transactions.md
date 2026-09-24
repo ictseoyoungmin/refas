@@ -58,6 +58,16 @@ const transaction = createCandidateTransaction({
 
 Use the artifact's real pointer layout; the example pointer is not a universal requirement.
 
+## Candidate continuity from shape to certification
+
+The first authoritative candidate is the exact GLB committed by `shape-reconstruction`. After that point, a byte-identical carry-forward needs no transition artifact. If `surface-topology`, `assembly`, or `appearance` changes the candidate GLB digest, the checkpoint must include exactly one `refas.candidate-transition/v1` artifact.
+
+A candidate transition binds the runtime-resolved input candidate digest/checkpoint, actual parent checkpoint, authorized mutation capability and scope, changed output digest, and evidence refs that include the exact output candidate path. It is provenance for the candidate replacement; it does not claim that a particular editing algorithm was correct.
+
+`resolveAuthoritativeCandidateLineage` replays those transitions from the shape candidate and derives one unique final candidate. Whole-object certification must preserve that runtime-derived state as `refas.candidate-lineage-proof/v1`. The proof is rederived during audit and certification; caller-authored or stale input/output digests, parent IDs, capabilities, scopes, competing GLBs, missing transitions, or substituted proof bytes fail closed.
+
+Final resemblance authority is separate from continuity: the lineage proves *which bytes are the final candidate*, while `refas.final-resemblance-closure/v1` proves that those final bytes still satisfy the source-specific macro and identity signatures.
+
 ## Rules
 
 - Every evidence byte must be the bytes actually reviewed or measured.

@@ -1,9 +1,43 @@
 import {createHash} from 'node:crypto';
+import {digestJson} from './canonical.mjs';
 import {analyzeMesh, computeVertexNormals} from './mesh.mjs';
 
 const align4 = (value) => (value + 3) & ~3;
 const sha = (value) => createHash('sha256').update(value).digest('hex');
 const clone = (value) => structuredClone(value);
+
+function constructionExecutionForPart(part, positionData, normalData, indexData) {
+  const authority = part?.constructionAuthority ?? part?.mesh?.constructionAuthority ?? null;
+  if (!authority) return null;
+  if (authority.schema !== 'refas.construction-authority/v1') throw new Error(`${part.id}: invalid construction authority schema`);
+  if (part.scopeId != null && part.scopeId !== authority.scopeId) throw new Error(`${part.id}: construction authority scope does not match part scope`);
+  const authorityPayload = {
+    schema: authority.schema,
+    rootScopeId: authority.rootScopeId,
+    scopeId: authority.scopeId,
+    sourceSha256: authority.sourceSha256,
+    vocabulary: authority.vocabulary,
+    operation: authority.operation,
+    vocabularyDigest: authority.vocabularyDigest,
+    effectiveVocabularyDigest: authority.effectiveVocabularyDigest,
+    mechanicalDecompositionDigest: authority.mechanicalDecompositionDigest,
+    permitDigest: authority.permitDigest,
+  };
+  if (digestJson(authorityPayload) !== authority.authorityDigest) throw new Error(`${part.id}: construction authority digest mismatch`);
+  const geometrySha256 = sha(Buffer.concat([
+    Buffer.from(positionData.buffer, positionData.byteOffset, positionData.byteLength),
+    Buffer.from(normalData.buffer, normalData.byteOffset, normalData.byteLength),
+    Buffer.from(indexData.buffer, indexData.byteOffset, indexData.byteLength),
+  ]));
+  const payload = {
+    ...authorityPayload,
+    schema: 'refas.construction-execution/v1',
+    partId: String(part.id),
+    authorityDigest: authority.authorityDigest,
+    geometrySha256,
+  };
+  return {...payload, executionDigest: digestJson(payload)};
+}
 
 function buildGlb(json, binary) {
   const jsonBytes = Buffer.from(JSON.stringify(json));
@@ -98,7 +132,7 @@ export function partsToGlb({parts, materials, assetId = 'refas-asset', name = 'R
     extras: {refas: {schema: 'refas.asset/v1', assetId, partIds: parts.map((part) => part.id), ...extras}},
   };
   if (json.materials.some((material) => material.extensions?.KHR_materials_clearcoat)) json.extensionsUsed = ['KHR_materials_clearcoat'];
-  let offset = 0; const chunks = [];
+  let offset = 0; const chunks = [], constructionExecutions = [];
   const push = (typed) => {
     const bytes = Buffer.from(typed.buffer, typed.byteOffset, typed.byteLength), aligned = align4(offset), index = json.bufferViews.length;
     json.bufferViews.push({buffer: 0, byteOffset: aligned, byteLength: bytes.length}); chunks.push({offset: aligned, bytes}); offset = aligned + bytes.length; return index;
@@ -118,7 +152,13 @@ export function partsToGlb({parts, materials, assetId = 'refas-asset', name = 'R
     );
     const meshIndex = json.meshes.length;
     const topology = part.mesh.topology ?? part.mesh.meta?.topology ?? null;
-    json.meshes.push({name: part.id, primitives: [{attributes: {POSITION: accessorStart, NORMAL: accessorStart + 1}, indices: accessorStart + 2, material: materialIds.get(part.materialId), mode: 4}], ...(topology ? {extras: {refasTopology: topology}} : {})});
+    const constructionExecution = constructionExecutionForPart(part, positions, normalData, indexData);
+    if (constructionExecution) constructionExecutions.push(constructionExecution);
+    const meshExtras = {
+      ...(topology ? {refasTopology: topology} : {}),
+      ...(constructionExecution ? {refasConstructionExecution: constructionExecution} : {}),
+    };
+    json.meshes.push({name: part.id, primitives: [{attributes: {POSITION: accessorStart, NORMAL: accessorStart + 1}, indices: accessorStart + 2, material: materialIds.get(part.materialId), mode: 4}], ...(Object.keys(meshExtras).length ? {extras: meshExtras} : {})});
     const nodeIndex = json.nodes.length;
     const node = {name: part.id, mesh: meshIndex, extras: {refasPartId: part.id, role: part.role ?? null, scopeId: part.scopeId ?? null, materialId: part.materialId,
       ...(part.moduleRoot ? {refasModuleRoot: true} : {}), ...(part.contactSurfaces ? {refasContactSurfaces: part.contactSurfaces} : {})}};
@@ -140,6 +180,7 @@ export function partsToGlb({parts, materials, assetId = 'refas-asset', name = 'R
   }
   const binary = Buffer.alloc(align4(offset)); for (const chunk of chunks) chunk.bytes.copy(binary, chunk.offset);
   json.buffers[0].byteLength = binary.length;
+  if (constructionExecutions.length) json.extras.refas.constructionExecutions = constructionExecutions.sort((a, b) => a.scopeId.localeCompare(b.scopeId) || a.partId.localeCompare(b.partId));
   return buildGlb(json, binary);
 }
 

@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/spatial-role-expectation-set.schema.json",
+  "title": "RefAs pre-bound spatial role expectation set",
+  "type": "object",
+  "required": [
+    "schema",
+    "sourceSha256",
+    "hierarchyDigest",
+    "expectations",
+    "policy",
+    "expectationSetDigest"
+  ],
+  "properties": {
+    "schema": {
+      "const": "refas.spatial-role-expectation-set/v1"
+    },
+    "sourceSha256": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "hierarchyDigest": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "expectations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "scopeId",
+          "role",
+          "sourceObservation",
+          "rationale",
+          "evidenceRefs",
+          "ambiguity"
+        ],
+        "properties": {
+          "scopeId": {
+            "$ref": "common.schema.json#/$defs/semanticId"
+          },
+          "role": {
+            "enum": [
+              "volumetric",
+              "layered-volume",
+              "thin-shell",
+              "rod-tubular",
+              "intentionally-planar",
+              "unresolved"
+            ]
+          },
+          "sourceObservation": {
+            "type": "string",
+            "minLength": 1
+          },
+          "rationale": {
+            "type": "string",
+            "minLength": 1
+          },
+          "evidenceRefs": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "ambiguity": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "policy": {
+      "type": "object",
+      "required": [
+        "sourceDerivedOnly",
+        "candidateIndependent",
+        "classifierIndependent",
+        "preClassifierBindingRequired",
+        "unresolvedAllowed",
+        "observationDoesNotClassify",
+        "expectationDoesNotCertify"
+      ],
+      "properties": {
+        "sourceDerivedOnly": {
+          "const": true
+        },
+        "candidateIndependent": {
+          "const": true
+        },
+        "classifierIndependent": {
+          "const": true
+        },
+        "preClassifierBindingRequired": {
+          "const": true
+        },
+        "unresolvedAllowed": {
+          "const": true
+        },
+        "observationDoesNotClassify": {
+          "const": true
+        },
+        "expectationDoesNotCertify": {
+          "const": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "expectationSetDigest": {
+      "$ref": "common.schema.json#/$defs/digest"
+    }
+  },
+  "additionalProperties": false
+}

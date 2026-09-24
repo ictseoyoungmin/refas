@@ -1,0 +1,166 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/volume-barrier.schema.json",
+  "title": "RefAs whole-before-parts volume barrier",
+  "type": "object",
+  "required": [
+    "schema",
+    "sourceSha256",
+    "hierarchyDigest",
+    "assetSha256",
+    "signatureSetDigest",
+    "expectationSetDigest",
+    "protectedScopeIds",
+    "ignoredScopeIds",
+    "entries",
+    "verdict",
+    "policy",
+    "barrierDigest"
+  ],
+  "properties": {
+    "schema": {
+      "const": "refas.volume-barrier/v1"
+    },
+    "sourceSha256": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "hierarchyDigest": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "assetSha256": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "signatureSetDigest": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "expectationSetDigest": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "protectedScopeIds": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "common.schema.json#/$defs/semanticId"
+      }
+    },
+    "ignoredScopeIds": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "common.schema.json#/$defs/semanticId"
+      }
+    },
+    "entries": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "scopeId",
+          "frozenRole",
+          "classification",
+          "classificationDigest",
+          "spatialEvidenceDigest",
+          "roleAuthorityDigest",
+          "status"
+        ],
+        "properties": {
+          "scopeId": {
+            "$ref": "common.schema.json#/$defs/semanticId"
+          },
+          "frozenRole": {
+            "enum": [
+              "volumetric",
+              "layered-volume",
+              "thin-shell",
+              "rod-tubular",
+              "intentionally-planar",
+              "unresolved"
+            ]
+          },
+          "classification": {
+            "enum": [
+              "PLANAR_COLLAPSE",
+              "NO_PLANAR_COLLAPSE",
+              "INDETERMINATE",
+              "NOT_APPLICABLE"
+            ]
+          },
+          "classificationDigest": {
+            "$ref": "common.schema.json#/$defs/digest"
+          },
+          "spatialEvidenceDigest": {
+            "$ref": "common.schema.json#/$defs/digest"
+          },
+          "roleAuthorityDigest": {
+            "$ref": "common.schema.json#/$defs/digest"
+          },
+          "status": {
+            "enum": [
+              "ADMITTED",
+              "REWORK",
+              "HOLD"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "verdict": {
+      "enum": [
+        "PROCEED",
+        "REWORK",
+        "HOLD"
+      ]
+    },
+    "policy": {
+      "type": "object",
+      "required": [
+        "wholeAlwaysProtected",
+        "macroAndIdentityScopesProtected",
+        "detailOnlyScopesCannotCompensate",
+        "noAggregateScore",
+        "roleAwareExceptionsPreserved",
+        "proceedOnlyAuthorizesDownstreamDetail",
+        "proceedDoesNotCertify",
+        "singleViewIouAuthority",
+        "multiViewIouAuthority"
+      ],
+      "properties": {
+        "wholeAlwaysProtected": {
+          "const": true
+        },
+        "macroAndIdentityScopesProtected": {
+          "const": true
+        },
+        "detailOnlyScopesCannotCompensate": {
+          "const": true
+        },
+        "noAggregateScore": {
+          "const": true
+        },
+        "roleAwareExceptionsPreserved": {
+          "const": true
+        },
+        "proceedOnlyAuthorizesDownstreamDetail": {
+          "const": true
+        },
+        "proceedDoesNotCertify": {
+          "const": true
+        },
+        "singleViewIouAuthority": {
+          "const": false
+        },
+        "multiViewIouAuthority": {
+          "const": "diagnostic-only"
+        }
+      },
+      "additionalProperties": false
+    },
+    "barrierDigest": {
+      "$ref": "common.schema.json#/$defs/digest"
+    }
+  },
+  "additionalProperties": false
+}

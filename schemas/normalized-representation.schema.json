@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/normalized-representation.schema.json",
+  "title": "RefAs normalized backend representation",
+  "type": "object",
+  "required": ["schema", "normalizationId", "normalizer", "sourceBinding", "entries", "semanticDigest", "policy", "normalizationDigest"],
+  "properties": {
+    "schema": {"const": "refas.normalized-representation/v1"},
+    "normalizationId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "normalizer": {"$ref": "#/$defs/normalizer"},
+    "sourceBinding": {"$ref": "#/$defs/sourceBinding"},
+    "entries": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/entry"}},
+    "semanticDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "policy": {"$ref": "#/$defs/policy"},
+    "normalizationDigest": {"$ref": "common.schema.json#/$defs/digest"}
+  },
+  "$defs": {
+    "normalizer": {"type":"object","required":["id","backend","version","implementationDigest"],"properties":{"id":{"$ref":"common.schema.json#/$defs/semanticId"},"backend":{"type":"string","minLength":1,"maxLength":256},"version":{"type":"string","minLength":1,"maxLength":128},"implementationDigest":{"$ref":"common.schema.json#/$defs/digest"}},"additionalProperties":false},
+    "sourceBinding": {"type":"object","required":["exportId","exportDigest","backend","canonicalViewDigest","profileId","capacityDigest","artifactSetDigest"],"properties":{"exportId":{"$ref":"common.schema.json#/$defs/semanticId"},"exportDigest":{"$ref":"common.schema.json#/$defs/digest"},"backend":{"type":"string","minLength":1,"maxLength":256},"canonicalViewDigest":{"$ref":"common.schema.json#/$defs/digest"},"profileId":{"$ref":"common.schema.json#/$defs/semanticId"},"capacityDigest":{"$ref":"common.schema.json#/$defs/digest"},"artifactSetDigest":{"$ref":"common.schema.json#/$defs/digest"}},"additionalProperties":false},
+    "source": {"type":"object","required":["artifactId","locator"],"properties":{"artifactId":{"$ref":"common.schema.json#/$defs/semanticId"},"locator":{"type":"string","minLength":1,"maxLength":1024}},"additionalProperties":false},
+    "entry": {"oneOf":[{"type":"object","required":["obligationId","semanticPath","subjectIds","exportDisposition","status","sources","value"],"properties":{"obligationId":{"$ref":"common.schema.json#/$defs/semanticId"},"semanticPath":{"type":"string","minLength":1,"maxLength":160},"subjectIds":{"type":"array","minItems":1,"uniqueItems":true,"items":{"$ref":"common.schema.json#/$defs/semanticId"}},"exportDisposition":{"enum":["EMITTED_EXACT","EMITTED_APPROXIMATION"]},"status":{"const":"NORMALIZED"},"sources":{"type":"array","minItems":1,"items":{"$ref":"#/$defs/source"}},"value":{}},"additionalProperties":false},{"type":"object","required":["obligationId","semanticPath","subjectIds","exportDisposition","status","sources","value","reason"],"properties":{"obligationId":{"$ref":"common.schema.json#/$defs/semanticId"},"semanticPath":{"type":"string","minLength":1,"maxLength":160},"subjectIds":{"type":"array","minItems":1,"uniqueItems":true,"items":{"$ref":"common.schema.json#/$defs/semanticId"}},"exportDisposition":{"const":"OMITTED_UNSUPPORTED"},"status":{"const":"OMITTED_UNSUPPORTED"},"sources":{"type":"array","maxItems":0},"value":{"type":"null"},"reason":{"type":"string","minLength":1}},"additionalProperties":false}]},
+    "policy": {"type":"object","required":["backendDataNeverCanonical","onlyVerifiedArtifactBytesRead","p11ObligationsOwnSemanticIdentity","backendOrderingIsNotSemanticIdentity","unsupportedOmissionsRemainExplicit","canonicalTransformsUseMetersAndQuaternion","quaternionSignIsCanonical","sourceLocatorsRemainProvenanceOnly","persistedReadingsMustReplayFromVerifiedBytes","normalizerImplementationIsDigestBound","crossRepresentationVerdictsRemainDownstream","declaredDivergenceRemainsDownstream","physicalClaimsRemainDownstream"],"properties":{"backendDataNeverCanonical":{"const":true},"onlyVerifiedArtifactBytesRead":{"const":true},"p11ObligationsOwnSemanticIdentity":{"const":true},"backendOrderingIsNotSemanticIdentity":{"const":true},"unsupportedOmissionsRemainExplicit":{"const":true},"canonicalTransformsUseMetersAndQuaternion":{"const":true},"quaternionSignIsCanonical":{"const":true},"sourceLocatorsRemainProvenanceOnly":{"const":true},"persistedReadingsMustReplayFromVerifiedBytes":{"const":true},"normalizerImplementationIsDigestBound":{"const":true},"crossRepresentationVerdictsRemainDownstream":{"const":true},"declaredDivergenceRemainsDownstream":{"const":true},"physicalClaimsRemainDownstream":{"const":true}},"additionalProperties":false}
+  },
+  "additionalProperties": false
+}

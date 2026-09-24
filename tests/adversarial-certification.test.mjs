@@ -7,12 +7,14 @@ import {test} from 'node:test';
 import {
   CAPABILITY_ORDER,
   REQUIRED_CLOSURE_GATE_IDS,
+  REQUIRED_REVIEW_VIEW_IDS,
   REQUIRED_VISUAL_GATE_IDS,
   assessClaimCertification,
   commitCheckpoint,
   contentReference,
   createCandidateTransaction,
   createCertificationPolicy,
+  createVisualReview,
   createDefaultWholeObjectCertificationPolicy,
   digestBytes,
   digestJson,
@@ -23,6 +25,7 @@ import {
   validateClaimCertificationDecision,
   validateWholeObjectPolicyAuthority,
 } from '../skills/refas/scripts/lib/index.mjs';
+import {initTrustedContractFixtureProject} from '../skills/refas/scripts/lib/contract-fixture-project.mjs';
 
 function checkpointFor(candidateBytes, reason = 'adversarial fixture') {
   const artifact = {kind: 'glb', path: 'assets/candidate.glb', sha256: digestBytes(candidateBytes), sizeBytes: candidateBytes.length};
@@ -219,12 +222,13 @@ async function projectWithExplicitPolicy(t, policy) {
   await fs.mkdir(path.join(root, 'source'), {recursive:true});
   const sourceBytes = Buffer.from('fixture source\n');
   await fs.writeFile(path.join(root, 'source', 'reference.bin'), sourceBytes);
-  await initProject(root, {
+  await initTrustedContractFixtureProject(root, {
     projectId:'a13-policy-gate',
+    fixtureId:'a13-policy-gate',
     source:{
       schema:'refas.source-manifest/v1', id:'primary-reference', path:'source/reference.bin',
       sha256:digestBytes(sourceBytes), sizeBytes:sourceBytes.length, width:32, height:24,
-      authority:'primary', acquisition:{kind:'test-fixture'},
+      authority:'primary', acquisition:{kind:'generated-contract-reference'},
     },
   });
   await fs.mkdir(path.join(root, 'model'), {recursive:true});
@@ -235,7 +239,7 @@ async function projectWithExplicitPolicy(t, policy) {
     const artifact = await contentReference(statePath, {kind:'model-spec', root});
     await commitCheckpoint(root, {
       capability, scopeId:'whole', reason:`${capability} adversarial prerequisite`, artifactRefs:[artifact],
-      claims:[`${capability} closed`], gates:[{id:`${capability}-gate`, status:'pass', evidenceRefs:[artifact.path]}],
+      claims:[`${capability} closed`], gates:[{id:`${capability}-gate`, evidenceRefs:[artifact.path]}],
     });
   }
 
@@ -252,11 +256,34 @@ async function projectWithExplicitPolicy(t, policy) {
 
   const reviewPath = path.join(root, 'reviews', 'visual-review.json');
   await fs.mkdir(path.dirname(reviewPath), {recursive:true});
-  const review = {
-    schema:'refas.visual-review/v1', assetSha256:candidate.sha256,
-    renderer:{reportRef:'renders/final/render-report.json', reportSha256:renderRef.sha256},
+  const sourceSha256 = digestBytes(sourceBytes);
+  const observation = (id) => ({
+    sourceObservation: `The fixture source exposes ${id} review evidence.`,
+    renderObservation: `The fixture candidate exposes ${id} review evidence.`,
+    comparisonConclusion: `The ${id} contract fixture was directly checked.`,
+    evidenceRefs: [candidate.path],
+  });
+  const review = createVisualReview({
+    scopeId:'whole',
+    sourceSha256,
+    assetSha256:candidate.sha256,
+    evidenceClass:'self-generated-contract-fixture',
+    verdict:'pass',
+    views:REQUIRED_REVIEW_VIEW_IDS.map((id)=>({
+      id,status:'pass',evidenceRefs:[candidate.path],observation:observation(id),summary:`${id} contract fixture passed.`,
+    })),
+    gateVerdicts:REQUIRED_VISUAL_GATE_IDS.map((id)=>({
+      id,status:'pass',evidenceRefs:[candidate.path],observation:observation(id),summary:`${id} contract gate passed.`,
+    })),
     unresolvedFindings:[],
-  };
+    renderer:{
+      kind:'a13-contract-renderer',family:'threejs-webgl',reportRef:'renders/final/render-report.json',
+      reportSha256:renderRef.sha256,independentProcess:true,claimScope:'visual-fidelity',
+      supportedMaterialFeatures:['base-color-factor','metallic-factor','roughness-factor'],unsupportedMaterialFeatures:[],
+    },
+    requiredMaterialFeatures:['base-color-factor','metallic-factor','roughness-factor'],
+    attestation:{attested:true,evidenceRefs:[candidate.path]},
+  });
   await fs.writeFile(reviewPath, `${JSON.stringify(review)}\n`);
   const reviewRef = await contentReference(reviewPath, {kind:'visual-review', root});
 
@@ -264,7 +291,7 @@ async function projectWithExplicitPolicy(t, policy) {
   await fs.writeFile(policyPath, `${JSON.stringify(policy)}\n`);
   const policyRef = await contentReference(policyPath, {kind:'certification-policy', root});
   const gates = REQUIRED_CLOSURE_GATE_IDS.map((id) => ({
-    id, status:'pass', evidenceRefs:[REQUIRED_VISUAL_GATE_IDS.includes(id) ? reviewRef.path : candidate.path],
+    id, evidenceRefs:[REQUIRED_VISUAL_GATE_IDS.includes(id) ? reviewRef.path : candidate.path],
   }));
   await commitCheckpoint(root, {
     capability:'whole-object-certification', scopeId:'whole', reason:'A13 explicit policy attack target',

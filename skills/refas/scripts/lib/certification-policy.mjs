@@ -91,12 +91,22 @@ export function createCertificationPolicy({id = 'whole-object-claim-policy', cla
   return deepFreeze({...core, policyDigest: digestJson(core)});
 }
 
-export function createDefaultWholeObjectCertificationPolicy({requiresRegisteredComparison = true, requiresRelationalClosure = requiresRegisteredComparison} = {}) {
+export function createDefaultWholeObjectCertificationPolicy({
+  requiresRegisteredComparison = true,
+  requiresRelationalClosure = requiresRegisteredComparison,
+  requiresFinalCandidateAuthority = requiresRegisteredComparison,
+} = {}) {
   const obligations = [
     {id: 'independent-visual-review', role: 'visual-review', schema: 'refas.visual-review/v1', minCount: 1},
     {id: 'independent-render-report', role: 'render-report', schema: 'refas.pbr-render-report/v1', minCount: 1},
   ];
   if (requiresRegisteredComparison) obligations.push({id: 'registered-source-comparison', role: 'registered-comparison', schema: 'refas.registered-comparison/v1', minCount: 1});
+  if (requiresFinalCandidateAuthority) {
+    obligations.push(
+      {id: 'candidate-lineage-proof', role: 'candidate-lineage-proof', schema: 'refas.candidate-lineage-proof/v1', minCount: 1},
+      {id: 'final-resemblance-closure', role: 'final-resemblance-closure', schema: 'refas.final-resemblance-closure/v1', minCount: 1},
+    );
+  }
   const claims = [{
     id: 'visual-source-fidelity',
     description: 'The exact candidate is supported by current independent visual evidence under the existing RefAs visual and projection gates.',
@@ -114,7 +124,9 @@ export function createDefaultWholeObjectCertificationPolicy({requiresRegisteredC
     });
   }
   return createCertificationPolicy({
-    id: requiresRegisteredComparison || requiresRelationalClosure ? 'source-bound-whole-object-policy' : 'fixture-whole-object-policy',
+    id: requiresRegisteredComparison || requiresRelationalClosure || requiresFinalCandidateAuthority
+      ? 'source-bound-whole-object-policy'
+      : 'fixture-whole-object-policy',
     claims,
   });
 }

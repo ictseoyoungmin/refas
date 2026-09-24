@@ -15,6 +15,7 @@ import {
   openHostSession,
   initProject,
 } from '../skills/refas/scripts/lib/index.mjs';
+import {initTrustedContractFixtureProject} from '../skills/refas/scripts/lib/contract-fixture-project.mjs';
 
 async function tempRoot(t) {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), 'refas-host-session-'));
@@ -36,9 +37,9 @@ async function sourceFixture(root, projectId = 'host-project') {
     width: 64,
     height: 64,
     authority: 'primary',
-    acquisition: {kind: 'test-fixture'},
+    acquisition: {kind: 'generated-contract-reference'},
   };
-  await initProject(root, {projectId, source});
+  await initTrustedContractFixtureProject(root, {projectId, source, fixtureId:`${projectId}-session`});
   return source;
 }
 
@@ -53,7 +54,7 @@ async function commitGlbHead(root) {
     reason: 'Host session fixture binds one exact current GLB candidate.',
     artifactRefs: [artifact],
     claims: ['Current host candidate is exact and digest-bound.'],
-    gates: [{id: 'source-intake-gate', status: 'pass', evidenceRefs: [artifact.path]}],
+    gates: [{id: 'source-intake-gate', evidenceRefs: [artifact.path]}],
   });
   return {artifact, checkpoint, candidatePath};
 }

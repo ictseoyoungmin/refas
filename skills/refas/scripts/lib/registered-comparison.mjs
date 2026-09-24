@@ -1,4 +1,4 @@
-import {assertDigest, assertId, deepFreeze} from './canonical.mjs';
+import {assertDigest, assertId, deepFreeze, digestJson} from './canonical.mjs';
 
 export const REGISTERED_COMPARISON_SCHEMA = 'refas.registered-comparison/v1';
 
@@ -48,20 +48,12 @@ export function assertRegisteredComparisonBinding(raw) {
  * These values are deliberately not acceptance thresholds: callers must still
  * obtain a typed finding or a substantive source-grounded resolution.
  */
-export function findComparisonContradictions(report, {silhouetteIoUBelow = 0.5, foregroundAreaRatioOutside = [0.55, 1.8], landmarkResidualAbove = 0.12, dimensionRelativeErrorAbove = 0.35, edgeDisagreementAbove = 0.45} = {}) {
+export function findComparisonContradictions(report, {foregroundAreaRatioOutside = [0.55, 1.8], landmarkResidualAbove = 0.12, dimensionRelativeErrorAbove = 0.35, edgeDisagreementAbove = 0.45} = {}) {
   const whole = (report?.scopes ?? []).find((scope) => scope?.scopeId === 'whole');
   if (!whole) return [];
   const signals = [];
   const metricEvidence = [...new Set((whole.images ?? []).map((image) => image?.path).filter(Boolean))];
   const evidenceRefs = metricEvidence.length ? metricEvidence : [`comparison:${report.comparisonDigest ?? 'unbound'}:whole`];
-  const silhouetteIoU = Number(whole.metrics?.silhouetteIoU);
-  if (Number.isFinite(silhouetteIoU) && silhouetteIoU < silhouetteIoUBelow) {
-    signals.push({
-      id: 'whole-silhouette-screen', category: 'silhouette-mismatch', metric: 'silhouetteIoU', value: silhouetteIoU,
-      summary: `Registered whole-source silhouette agreement is ${silhouetteIoU.toFixed(6)}, below the contradiction-screening band.`,
-      evidenceRefs,
-    });
-  }
   const sourcePixels = Number(whole.metrics?.sourceForegroundPixels);
   const renderPixels = Number(whole.metrics?.renderForegroundPixels);
   if (sourcePixels > 0 && renderPixels >= 0) {
@@ -106,13 +98,19 @@ const CONTRACT_FIXTURE_ACQUISITIONS = new Set([
 
 const finitePoint = (value) => Array.isArray(value) && value.length === 2 && value.every(Number.isFinite);
 
-export function validateRegisteredComparison(report) {
+export function validateRegisteredComparison(report, {trustedContractFixture = false, expectedAcquisitionKind = null} = {}) {
   const errors = [];
   if (report?.schema !== REGISTERED_COMPARISON_SCHEMA) errors.push('invalid schema');
   if (report?.claimScope !== 'critique-evidence-only') errors.push('claimScope must be critique-evidence-only');
   const acquisitionKind = String(report?.source?.acquisitionKind ?? '').toLowerCase();
+  const expectedKind = expectedAcquisitionKind == null ? null : String(expectedAcquisitionKind).toLowerCase();
   const legacyContract = acquisitionKind === '';
-  const realSource = !legacyContract && !CONTRACT_FIXTURE_ACQUISITIONS.has(acquisitionKind);
+  const declaredFixture = CONTRACT_FIXTURE_ACQUISITIONS.has(acquisitionKind);
+  if (declaredFixture && trustedContractFixture !== true) errors.push('declared fixture comparison authority requires trusted contract-fixture project context');
+  if (expectedKind && trustedContractFixture !== true && acquisitionKind !== expectedKind) {
+    errors.push('registered comparison acquisition kind does not match the bound project source');
+  }
+  const realSource = !legacyContract && trustedContractFixture !== true;
   const projectionByScope = new Map();
 
   try {
@@ -142,7 +140,7 @@ export function validateRegisteredComparison(report) {
     for (const scope of report?.scopes ?? []) {
       const scopeId = scope?.scopeId ?? '?';
       if (!scope.scopeId || !Array.isArray(scope.ancestry) || scope.ancestry[0] !== 'whole' || scope.ancestry.at(-1) !== scope.scopeId) errors.push(`scope ${scopeId} does not retain whole-context ancestry`);
-      if (!Number.isFinite(scope?.metrics?.silhouetteIoU) || scope.metrics.silhouetteIoU < 0 || scope.metrics.silhouetteIoU > 1) errors.push(`scope ${scopeId} has invalid silhouette IoU`);
+      if (scope?.metrics?.silhouetteIoU != null && (!Number.isFinite(scope.metrics.silhouetteIoU) || scope.metrics.silhouetteIoU < 0 || scope.metrics.silhouetteIoU > 1)) errors.push(`scope ${scopeId} has invalid legacy silhouette IoU`);
       if (!legacyContract && !['realized-projection', 'declared-test-fixture', 'image-only'].includes(scope?.measurementAuthority)) errors.push(`scope ${scopeId} has invalid measurement authority`);
       if (realSource && scope?.measurementAuthority !== 'realized-projection') errors.push(`real-source scope ${scopeId} must use realized projection measurements`);
 
@@ -188,6 +186,12 @@ export function validateRegisteredComparison(report) {
   if (policy.registrationResidualIsNotShapeTruth !== true) errors.push('registration residual policy is missing');
   if (!legacyContract && (policy.realSourceLandmarksMustUseRealizedProjection !== true || policy.manualRenderCoordinatesCannotClaimRealSourceGeometry !== true)) errors.push('realized projection measurement authority policy is missing');
   if (!legacyContract && policy.projectionMetricsRemainVetoOnly !== true) errors.push('projection metric authority policy is missing');
-  try { assertDigest(report?.comparisonDigest, 'comparisonDigest'); } catch (error) { errors.push(error.message); }
+  if (!legacyContract && policy.singleViewIouDisabled !== true) errors.push('single-view IoU retirement policy is missing');
+  try {
+    assertDigest(report?.comparisonDigest, 'comparisonDigest');
+    const payload = structuredClone(report);
+    delete payload.comparisonDigest;
+    if (digestJson(payload) !== report.comparisonDigest) errors.push('comparison digest mismatch');
+  } catch (error) { errors.push(error.message); }
   return {valid: errors.length === 0, errors};
 }

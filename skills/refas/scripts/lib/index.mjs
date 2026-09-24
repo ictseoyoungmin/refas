@@ -1,6 +1,22 @@
 export * from './canonical.mjs';
 export * from './canonical-edit.mjs';
 export * from './attachment-semantics.mjs';
+export * from './physical-identity-graph.mjs';
+export * from './rigid-body-dynamics.mjs';
+export * from './collision-model.mjs';
+export * from './articulation-graph.mjs';
+export * from './mechanism-graph.mjs';
+export * from './transmission-model.mjs';
+export * from './actuation-model.mjs';
+export * from './control-profile.mjs';
+export * from './runtime-binding.mjs';
+export * from './physical-asset-bundle.mjs';
+export * from './representation-capacity.mjs';
+export * from './backend-export.mjs';
+export * from './representation-normalizer.mjs';
+export * from './cross-representation-validator.mjs';
+export * from './divergence-authorization.mjs';
+export * from './physical-claims.mjs';
 export * from './logical-fusion.mjs';
 export * from './surface-anchor.mjs';
 export * from './attachment-follow.mjs';
@@ -20,11 +36,31 @@ export * from './physical-fusion.mjs';
 export * from './realized-contact.mjs';
 export * from './fit-structural-eligibility.mjs';
 export * from './candidate-transaction.mjs';
+export * from './candidate-authority.mjs';
 export * from './certification-policy.mjs';
 export * from './certification-authority.mjs';
+export {
+  evaluateCertificationPolicy,
+  evaluatePhysicalClaimCertification,
+  validateClaimCertificationDecision,
+  validatePhysicalClaimCertificationDecision,
+} from './physical-claim-certification.mjs';
 export * from './hierarchy.mjs';
 export * from './ownership.mjs';
 export * from './failure-router.mjs';
+export {
+  CHECKPOINT_GATE_EXECUTABLE_POLICY_SCHEMA,
+  CHECKPOINT_GATE_POLICIES,
+  CHECKPOINT_GATE_POLICY_DIGEST,
+  CHECKPOINT_GATE_VERDICT_SCHEMA,
+  checkpointGateExecutablePolicy,
+  checkpointGatePolicy,
+  checkpointGatePolicyDigest,
+  expectedCheckpointGateIds,
+  isLegacyCheckpointGate,
+  normalizeCheckpointGateRequests,
+  validateCheckpointGateVerdict,
+} from './checkpoint-gates.mjs';
 export * from './checkpoint-store.mjs';
 export * from './host-session.mjs';
 export * from './host-event.mjs';
@@ -32,8 +68,21 @@ export * from './host-operation.mjs';
 export * from './host-review-bundle.mjs';
 export * from './host-artifact-handoff.mjs';
 export * from './host-worker.mjs';
-export {assessCertification, auditProject, certifyProject, resumeProject, assessProjectionCertification, assessClaimCertification} from './certification-gate.mjs';
+export {
+  assessCertification,
+  assessClaimCertification,
+  assessProjectionCertification,
+  auditProject,
+  certifyProject,
+  resumeProject,
+} from './physical-claim-certification-gate.mjs';
 export * from './spatial-hypotheses.mjs';
+export * from './spatial-role-expectation.mjs';
+export * from './volume-barrier.mjs';
+export {FINAL_SPATIAL_CONTINUITY_SCHEMA, FINAL_SPATIAL_CONTINUITY_MODES, FINAL_SPATIAL_CONTINUITY_VERDICTS, validateFinalSpatialContinuity} from './final-spatial-continuity.mjs';
+export {TRUSTED_SPATIAL_GATE_AUTHORITY_SCHEMA, validateTrustedSpatialGateAuthority} from './spatial-gate-authority.mjs';
+export * from './spatial-closure-evidence.mjs';
+export {SPATIAL_COLLAPSE_CLASSIFICATION_SCHEMA, SPATIAL_COLLAPSE_STATES, classifySpatialCollapse, validateSpatialCollapseClassification} from './spatial-collapse-classifier.mjs';
 export * from './registration.mjs';
 export * from './reference-geometry.mjs';
 export * from './projection-fit.mjs';
@@ -43,6 +92,9 @@ export * from './camera-fit.mjs';
 export * from './pose-fit.mjs';
 export * from './geometry-backend.mjs';
 export * from './perceptual-discrepancy.mjs';
+export * from './perceptual-signature.mjs';
+export * from './early-resemblance-barrier.mjs';
+export * from './final-resemblance-closure.mjs';
 export * from './appearance-fit.mjs';
 export * from './macro-fit.mjs';
 export * from './benchmark.mjs';
@@ -60,3 +112,5 @@ export * from './visual-review.mjs';
 export * from './registered-comparison.mjs';
 export * from './pbr-render-report.mjs';
 export * from './construction-quality.mjs';
+export * from './construction-vocabulary.mjs';
+export * from './interface-contracts.mjs';

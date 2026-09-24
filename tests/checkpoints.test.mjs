@@ -6,6 +6,8 @@ import {test} from 'node:test';
 
 import {
   CAPABILITY_ORDER,
+  CHECKPOINT_GATE_EXECUTABLE_POLICY_SCHEMA,
+  CHECKPOINT_GATE_POLICY_DIGEST,
   REQUIRED_CLOSURE_GATE_IDS,
   REQUIRED_REVIEW_VIEW_IDS,
   REQUIRED_VISUAL_GATE_IDS,
@@ -14,11 +16,13 @@ import {
   auditProject,
   beginEdit,
   certifyProject,
+  checkpointGatePolicyDigest,
   commitCheckpoint,
   contentReference,
   createVisualReview,
   createPbrRenderReport,
   digestBytes,
+  digestJson,
   finishEdit,
   initProject,
   loadProject,
@@ -26,6 +30,7 @@ import {
   restoreCheckpoint,
   resumeProject,
 } from '../skills/refas/scripts/lib/index.mjs';
+import {initTrustedContractFixtureProject} from '../skills/refas/scripts/lib/contract-fixture-project.mjs';
 
 async function makeProject(t, projectId = 'checkpoint-study') {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), 'refas-test-'));
@@ -42,9 +47,9 @@ async function makeProject(t, projectId = 'checkpoint-study') {
     width: 32,
     height: 24,
     authority: 'primary',
-    acquisition: {kind: 'test-fixture'},
+    acquisition: {kind: 'generated-contract-reference'},
   };
-  await initProject(root, {projectId, source});
+  await initTrustedContractFixtureProject(root, {projectId, source, fixtureId:`${projectId}-contract`});
   await fs.mkdir(path.join(root, 'model'), {recursive: true});
   return {root, source, artifactPath: path.join(root, 'model', 'state.bin')};
 }
@@ -62,7 +67,7 @@ async function checkpoint(root, artifactPath, capability, content, scopeId = 'wh
     reason: `${capability} fixture is trustworthy`,
     artifactRefs: [artifact],
     claims: [`${capability} closed`],
-    gates: gates ?? [{id: `${capability}-gate`, status: 'pass', evidenceRefs: [artifact.path]}],
+    gates: gates ?? [{id: `${capability}-gate`, evidenceRefs: [artifact.path]}],
   });
 }
 
@@ -73,6 +78,41 @@ async function advanceThrough(root, artifactPath, lastCapability) {
     if (capability === lastCapability) break;
   }
   return checkpoints;
+}
+
+async function rewriteCheckpointAsLegacyV1(root, checkpoint, {evidenceRefsByGate = {}, gateIds = {}} = {}) {
+  const currentPath = path.join(root, '.refas', 'checkpoints', `${checkpoint.id}.json`);
+  const legacy = JSON.parse(await fs.readFile(currentPath, 'utf8'));
+  legacy.gates = legacy.gates.map((gate) => ({
+    id: gateIds[gate.id] ?? gate.id,
+    status: gate.status,
+    evidenceRefs: evidenceRefsByGate[gate.id] ?? gate.evidenceRefs,
+  }));
+  const content = {
+    schema: legacy.schema,
+    parentId: legacy.parentId,
+    capability: legacy.capability,
+    scopeId: legacy.scopeId,
+    reason: legacy.reason,
+    artifactRefs: legacy.artifactRefs,
+    claims: legacy.claims,
+    gates: legacy.gates,
+    metadata: legacy.metadata,
+    transactionId: legacy.transactionId,
+  };
+  legacy.contentDigest = digestJson(content);
+  const previousId = legacy.id;
+  legacy.id = `cp_${legacy.contentDigest.slice(0, 20)}`;
+  const legacyPath = path.join(root, '.refas', 'checkpoints', `${legacy.id}.json`);
+  await fs.writeFile(legacyPath, `${JSON.stringify(legacy, null, 2)}\n`);
+  if (legacyPath !== currentPath) await fs.rm(currentPath);
+
+  const projectPath = path.join(root, '.refas', 'project.json');
+  const project = JSON.parse(await fs.readFile(projectPath, 'utf8'));
+  project.checkpointIds = project.checkpointIds.map((id) => id === previousId ? legacy.id : id);
+  if (project.head === previousId) project.head = legacy.id;
+  await fs.writeFile(projectPath, `${JSON.stringify(project, null, 2)}\n`);
+  return legacy;
 }
 
 function reviewInput({sourceSha256, assetSha256, evidenceClass = 'independent-reference', verdict = 'pass', gateStatuses = {}, unresolvedFindings = [], renderer = {}, requiredMaterialFeatures = ['base-color-factor', 'metallic-factor', 'roughness-factor']}) {
@@ -165,7 +205,6 @@ async function commitCertificationAttempt(root, artifactPath, source, {includeRe
   }
   const gates = REQUIRED_CLOSURE_GATE_IDS.map((id) => ({
     id,
-    status: 'pass',
     evidenceRefs: [REQUIRED_VISUAL_GATE_IDS.includes(id) ? reviewPath : asset.path],
   }));
   const checkpoint = await commitCheckpoint(root, {
@@ -174,6 +213,122 @@ async function commitCertificationAttempt(root, artifactPath, source, {includeRe
   });
   return {checkpoint, review, asset};
 }
+
+test('checkpoint gate verdicts bind only to scoped executable policy', () => {
+  const scoped = checkpointGatePolicyDigest('source-intake', 'source-intake-gate');
+  const expected = digestJson({
+    schema: CHECKPOINT_GATE_EXECUTABLE_POLICY_SCHEMA,
+    capability: 'source-intake',
+    id: 'source-intake-gate',
+    evaluator: 'bound-evidence',
+  });
+  assert.equal(scoped, expected);
+  assert.notEqual(scoped, CHECKPOINT_GATE_POLICY_DIGEST);
+  assert.notEqual(scoped, checkpointGatePolicyDigest('visual-hierarchy', 'visual-hierarchy-gate'));
+});
+
+test('legacy refas.checkpoint/v1 gates are re-evaluated on read and remain usable', async (t) => {
+  const {root, artifactPath} = await makeProject(t, 'legacy-gate-read-study');
+  const sourceCheckpoint = await checkpoint(root, artifactPath, 'source-intake', 'trusted:source-intake\n');
+  const legacy = await rewriteCheckpointAsLegacyV1(root, sourceCheckpoint, {
+    gateIds: {'source-intake-gate': 'legacy-source-evidence'},
+  });
+
+  assert.deepEqual(Object.keys(legacy.gates[0]).sort(), ['evidenceRefs', 'id', 'status']);
+  const legacyAudit = await auditProject(root);
+  assert.equal(legacyAudit.valid, true, legacyAudit.errors.join('\n'));
+
+  const hierarchy = await checkpoint(root, artifactPath, 'visual-hierarchy', 'trusted:visual-hierarchy\n');
+  assert.equal(hierarchy.parentId, legacy.id);
+  const finalAudit = await auditProject(root);
+  assert.equal(finalAudit.valid, true, finalAudit.errors.join('\n'));
+});
+
+test('legacy refas.checkpoint/v1 self-PASS is rejected when current evidence re-evaluation fails', async (t) => {
+  const {root, artifactPath} = await makeProject(t, 'legacy-gate-forgery-study');
+  const sourceCheckpoint = await checkpoint(root, artifactPath, 'source-intake', 'trusted:source-intake\n');
+  await rewriteCheckpointAsLegacyV1(root, sourceCheckpoint, {
+    evidenceRefsByGate: {'source-intake-gate': ['reviews/forged-pass.json']},
+  });
+
+  const audit = await auditProject(root);
+  assert.equal(audit.valid, false);
+  assert.match(audit.errors.join('\n'), /cites unbound evidence/);
+
+  await assert.rejects(
+    () => checkpoint(root, artifactPath, 'visual-hierarchy', 'trusted:visual-hierarchy\n'),
+    /visual-hierarchy prerequisite lineage is not trustworthy.*cites unbound evidence/,
+  );
+});
+
+test('checkpoint gates reject caller-authored verdict fields and derive trusted verdicts', async (t) => {
+  const {root, artifactPath} = await makeProject(t, 'gate-authority-study');
+  const artifact = await writeArtifact(root, artifactPath, Buffer.from('trusted source intake\n'));
+
+  await assert.rejects(() => commitCheckpoint(root, {
+    capability: 'source-intake',
+    scopeId: 'whole',
+    reason: 'caller must not author gate status',
+    artifactRefs: [artifact],
+    gates: [{id: 'source-intake-gate', status: 'pass', evidenceRefs: [artifact.path]}],
+  }), /status is runtime-authoritative/);
+
+  await assert.rejects(() => commitCheckpoint(root, {
+    capability: 'source-intake',
+    scopeId: 'whole',
+    reason: 'unbound evidence cannot pass',
+    artifactRefs: [artifact],
+    gates: [{id: 'source-intake-gate', evidenceRefs: ['reviews/not-bound.json']}],
+  }), /runtime gate evaluation rejected checkpoint: source-intake-gate=fail/);
+
+  const checkpoint = await commitCheckpoint(root, {
+    capability: 'source-intake',
+    scopeId: 'whole',
+    reason: 'runtime derives the gate verdict',
+    artifactRefs: [artifact],
+    gates: [{id: 'source-intake-gate', evidenceRefs: [artifact.path]}],
+  });
+  assert.equal(checkpoint.gates.length, 1);
+  assert.equal(checkpoint.gates[0].schema, 'refas.checkpoint-gate-verdict/v1');
+  assert.equal(checkpoint.gates[0].status, 'pass');
+  assert.equal(checkpoint.gates[0].evaluator, 'bound-evidence');
+  assert.match(checkpoint.gates[0].policyDigest, /^[a-f0-9]{64}$/);
+  assert.match(checkpoint.gates[0].decisionDigest, /^[a-f0-9]{64}$/);
+});
+
+test('project audit rejects a re-signed gate verdict whose evidence was not runtime-bound', async (t) => {
+  const {root, artifactPath} = await makeProject(t, 'gate-tamper-study');
+  const sealed = await checkpoint(root, artifactPath, 'source-intake', 'trusted:source-intake\n');
+  const file = path.join(root, '.refas', 'checkpoints', `${sealed.id}.json`);
+  const attacked = JSON.parse(await fs.readFile(file, 'utf8'));
+  attacked.gates[0].evidenceRefs = ['reviews/forged-pass.json'];
+  const gateCore = {
+    schema: attacked.gates[0].schema,
+    id: attacked.gates[0].id,
+    status: attacked.gates[0].status,
+    evidenceRefs: attacked.gates[0].evidenceRefs,
+    evaluator: attacked.gates[0].evaluator,
+    policyDigest: attacked.gates[0].policyDigest,
+  };
+  attacked.gates[0].decisionDigest = digestJson(gateCore);
+  const content = {
+    schema: attacked.schema,
+    parentId: attacked.parentId,
+    capability: attacked.capability,
+    scopeId: attacked.scopeId,
+    reason: attacked.reason,
+    artifactRefs: attacked.artifactRefs,
+    claims: attacked.claims,
+    gates: attacked.gates,
+    metadata: attacked.metadata,
+    transactionId: attacked.transactionId,
+  };
+  attacked.contentDigest = digestJson(content);
+  await fs.writeFile(file, `${JSON.stringify(attacked, null, 2)}\n`);
+  const audit = await auditProject(root);
+  assert.equal(audit.valid, false);
+  assert.match(audit.errors.join('\n'), /cites unbound evidence/);
+});
 
 test('checkpoint restore materializes exact content-addressed artifact bytes', async (t) => {
   const {root, artifactPath} = await makeProject(t);
@@ -252,25 +407,25 @@ test('artifact paths cannot escape the project through traversal or symlinks', a
   const fake = {kind: 'model-spec', path: '../escape.bin', sha256: digestBytes(Buffer.from('safe\n')), sizeBytes: 5};
   await assert.rejects(() => commitCheckpoint(root, {
     capability: 'source-intake', scopeId: 'whole', reason: 'unsafe path should fail', artifactRefs: [fake],
-    gates: [{id: 'source-gate', status: 'pass', evidenceRefs: ['source/reference.bin']}],
+    gates: [{id: 'source-intake-gate', evidenceRefs: ['source/reference.bin']}],
   }), /escapes the project root/);
 
   await assert.rejects(() => commitCheckpoint(root, {
     capability: 'source-intake', scopeId: 'whole', reason: 'internal path should fail',
     artifactRefs: [{...fake, path: '.refas/project.json'}],
-    gates: [{id: 'source-gate', status: 'pass', evidenceRefs: ['source/reference.bin']}],
+    gates: [{id: 'source-intake-gate', evidenceRefs: ['source/reference.bin']}],
   }), /internal state/);
 
   await assert.rejects(() => commitCheckpoint(root, {
     capability: 'source-intake', scopeId: 'whole', reason: 'empty artifact set should fail', artifactRefs: [],
-    gates: [{id: 'source-gate', status: 'pass', evidenceRefs: ['source/reference.bin']}],
+    gates: [{id: 'source-intake-gate', evidenceRefs: ['source/reference.bin']}],
   }), /recoverable artifact/);
 
   const safeRef = await contentReference(artifactPath, {root});
   await assert.rejects(() => commitCheckpoint(root, {
     capability: 'source-intake', scopeId: 'whole', reason: 'evidence-free gate should fail', artifactRefs: [safeRef],
-    gates: [{id: 'source-gate', status: 'pass', evidenceRefs: []}],
-  }), /current evidenceRefs/);
+    gates: [{id: 'source-intake-gate', evidenceRefs: []}],
+  }), /runtime gate evaluation rejected checkpoint: source-intake-gate=fail/);
 
   const outside = await fs.mkdtemp(path.join(os.tmpdir(), 'refas-outside-'));
   t.after(() => fs.rm(outside, {recursive: true, force: true}));
@@ -279,7 +434,7 @@ test('artifact paths cannot escape the project through traversal or symlinks', a
   const linked = {...await contentReference(path.join(outside, 'payload.bin'), {root}), path: 'model/outside-link/payload.bin'};
   await assert.rejects(() => commitCheckpoint(root, {
     capability: 'source-intake', scopeId: 'whole', reason: 'symlink should fail', artifactRefs: [linked],
-    gates: [{id: 'source-gate', status: 'pass', evidenceRefs: ['source/reference.bin']}],
+    gates: [{id: 'source-intake-gate', evidenceRefs: ['source/reference.bin']}],
   }), /outside the project root/);
 });
 
@@ -290,7 +445,7 @@ test('whole-object certification requires an independent digest-bound review and
   const certificate = await certifyProject(root);
   assert.equal(certificate.checkpointId, head.id);
   assert.equal(certificate.sourceSha256, source.sha256);
-  assert.equal(certificate.version, '1.0.4');
+  assert.equal(certificate.version, '1.1.1');
   assert.equal(certificate.visualReview.reviewDigest, review.reviewDigest);
   assert.equal(certificate.visualReview.evidenceClass, 'independent-reference');
   const guidance = await resumeProject(root);
@@ -303,13 +458,15 @@ test('whole-object certification requires an independent digest-bound review and
   await abortEdit(root, {reason: 'no change required'});
 });
 
-test('certification fails closed when the visual-review artifact is missing', async (t) => {
+test('checkpoint admission fails closed when the visual-review artifact is missing', async (t) => {
   const {root, artifactPath, source} = await makeProject(t, 'missing-review-study');
   await advanceThrough(root, artifactPath, 'visual-critique');
-  await commitCertificationAttempt(root, artifactPath, source, {includeReview: false});
-  await assert.rejects(() => certifyProject(root), /exactly one digest-bound visual-review artifact/);
-  assert.equal((await assessCertification(root)).ready, false);
-  assert.equal((await resumeProject(root)).nextAction, 'REQUEST_VISUAL_REVIEW');
+  await assert.rejects(
+    () => commitCertificationAttempt(root, artifactPath, source, {includeReview: false}),
+    /runtime gate evaluation rejected checkpoint: .*silhouette-and-mass=fail/,
+  );
+  const guidance = await resumeProject(root);
+  assert.equal(guidance.activeWork.capability, 'whole-object-certification');
 });
 
 test('self-generated contract fixtures cannot certify visual fidelity', async (t) => {
@@ -319,15 +476,14 @@ test('self-generated contract fixtures cannot certify visual fidelity', async (t
   await assert.rejects(() => certifyProject(root), /self-generated contract fixtures cannot certify visual fidelity/);
 });
 
-test('unresolved major visual findings prevent certification', async (t) => {
+test('runtime visual gate authority rejects unresolved major visual findings before checkpoint admission', async (t) => {
   const {root, artifactPath, source} = await makeProject(t, 'blocking-review-study');
   await advanceThrough(root, artifactPath, 'visual-critique');
-  await commitCertificationAttempt(root, artifactPath, source, {reviewOverrides: {
+  await assert.rejects(() => commitCertificationAttempt(root, artifactPath, source, {reviewOverrides: {
     verdict: 'fail',
     gateStatuses: {'silhouette-and-mass': 'fail'},
     unresolvedFindings: [{category: 'curvature-mismatch', severity: 'major', scopeId: 'whole', summary: 'The side profile is flat instead of folded.', evidenceRefs: ['renders/final/side.png']}],
-  }});
-  await assert.rejects(() => certifyProject(root), /unresolved major, critical, or blocking findings: curvature-mismatch/);
+  }}), /runtime gate evaluation rejected checkpoint: silhouette-and-mass=fail/);
 });
 
 test('render-integrity-only output cannot pass appearance or unsupported material features', () => {

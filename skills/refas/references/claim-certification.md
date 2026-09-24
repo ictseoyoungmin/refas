@@ -5,9 +5,17 @@ Use claim certification only after the candidate bytes, checkpoint, renders, com
 ## Runtime contracts
 
 - `refas.candidate-transaction/v1` proves that evidence belongs to one exact candidate/checkpoint provenance chain.
+- `refas.candidate-lineage-proof/v1` proves that the certification candidate is the unique result of the runtime-authorized shape→surface→assembly→appearance candidate chain.
+- `refas.final-resemblance-closure/v1` reapplies the source-specific macro/identity signatures to the exact final candidate under canonical neutral clay.
 - `refas.certification-policy/v1` declares claims and the evidence roles/schemas each claim requires.
 - `refas.claim-certification-decision/v1` records per-claim obligation checks, blocking vetoes, disclosed non-blocking findings, and the final authorization decision.
 - `refas.whole-object-certificate/v1` remains the release certificate and records the transaction/policy/decision binding.
+
+## Real-source final-candidate authority floor
+
+For a real source, `visual-source-fidelity` requires both candidate continuity and final resemblance closure. The candidate transaction must contain exactly one direct root-candidate `candidate-lineage-proof` node and one direct root-candidate `final-resemblance-closure` node. The runtime reproduces the lineage proof from checkpoint history and revalidates the closure against the current source digest, current visual hierarchy, exact final candidate, exact final perceptual-signature evidence, canonical final neutral-clay report, and all report frame bytes.
+
+This is intentionally separate from R04. R04 authorizes entering downstream detail work; final resemblance closure proves that downstream mutations did not silently replace a good early candidate with a different final object. A legacy certificate that lacks these current real-source authorities no longer remains `DONE`; audit/resume/certify requests new final certification evidence.
 
 ## Real-source relational authority floor
 
@@ -21,7 +29,7 @@ A real-source whole-object certification must include a current `refas.certifica
 
 The relational closure is a mandatory authority floor, not optional supporting evidence. Missing, stale, candidate-mismatched, substituted, replayed, or internally contradictory relational closure refuses real-source certification. It does not promote `inferred` or `engineered` propositions to `observed` source facts.
 
-Synthetic/test fixture compatibility may omit this real-source floor only where the runtime explicitly permits that acquisition class. Such fixtures cannot use the compatibility path to make a real-source fidelity claim.
+Contract-fixture compatibility may omit this real-source floor only when RefAs runtime state contains a current source-digest-bound fixture authority issued by the trusted internal test harness. `source.acquisition` metadata never supplies that privilege, and public source binding rejects reserved fixture labels. Such contract fixtures cannot use the compatibility path to make a real-source fidelity claim.
 
 ## Rules
 
@@ -33,4 +41,4 @@ Synthetic/test fixture compatibility may omit this real-source floor only where 
 - The claim layer never mutates geometry, evidence, checkpoints, or rollback state.
 - Existing relational closure, realized-contact/support, visual-review, registered-comparison, realized-projection, renderer, and closure gates remain authoritative and are not replaced by claim policy.
 
-The runtime accepts checkpoint-bound transaction/policy/decision artifacts when provided. For compatibility, it can deterministically synthesize the default whole-object visual claim transaction and policy from the exact current checkpoint evidence, then records their digests in the final certificate. Explicit artifacts remain preferable when an external dogfood or review bundle already sealed them. Deterministic synthesis never waives the real-source relational authority floor or another mandatory upstream gate.
+The runtime accepts checkpoint-bound transaction/policy/decision artifacts when provided. For compatibility, it can deterministically synthesize the default whole-object visual claim transaction and policy from the exact current checkpoint evidence, then records their digests in the final certificate. Explicit artifacts remain preferable when an external dogfood or review bundle already sealed them. Deterministic synthesis never waives the real-source candidate-lineage/final-resemblance authority floor, the relational authority floor, or another mandatory upstream gate.

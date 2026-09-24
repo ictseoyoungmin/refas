@@ -5,6 +5,8 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 
+import {initTrustedContractFixtureProject} from '../../skills/refas/scripts/lib/contract-fixture-project.mjs';
+
 import {
   CAPABILITY_ORDER,
   REQUIRED_CLOSURE_GATE_IDS,
@@ -268,7 +270,7 @@ async function closeCapability(capability, files, reason, gateId, claims = []) {
     reason,
     artifactRefs: await references(files),
     claims,
-    gates: [{id: gateId, status: 'pass', evidenceRefs: files.map((file) => path.relative(PROJECT, file).split(path.sep).join('/'))}],
+    gates: [{id: `${capability}-gate`, evidenceRefs: files.map((file) => path.relative(PROJECT, file).split(path.sep).join('/'))}],
   });
 }
 
@@ -292,10 +294,10 @@ async function main() {
   const sourceManifestPath = path.join(PROJECT, 'source', 'source-manifest.json');
   runPython(path.join(SKILL_SCRIPTS, 'source_manifest.py'), [
     '--root', PROJECT, '--image', reference, '--id', 'wing-cover-reference', '--out', sourceManifestPath,
-    '--acquisition', JSON.stringify({kind: 'deterministic-project-fixture', license: fixture.license}),
+    '--acquisition', JSON.stringify({kind: 'generated-contract-reference', license: fixture.license}),
   ]);
   const source = await readJson(sourceManifestPath);
-  await initProject(PROJECT, {projectId: 'wing-cover-dogfood', source});
+  await initTrustedContractFixtureProject(PROJECT, {projectId: 'wing-cover-dogfood', source, fixtureId: 'wing-cover-complete-dogfood'});
 
   const sourceCheckpoint = await closeCapability(
     'source-intake', [reference, sourceManifestPath], 'Primary reference bytes and acquisition context are bound.',
@@ -584,7 +586,7 @@ async function main() {
   const candidateCheckpoint = await commitCheckpoint(PROJECT, {
     capability: 'assembly', scopeId: 'whole', reason: 'Alternative root placement is materialized with actual multiview evidence for bounded comparison.',
     artifactRefs: await references([finalAssetPath, path.join(candidateRenderDirectory, 'render-report.json'), path.join(candidateRenderDirectory, 'multiview-review-board.png')]),
-    gates: [{id: 'candidate-observable', status: 'pass', evidenceRefs: ['renders/assembly-candidate/multiview-review-board.png']}],
+    gates: [{id: 'assembly-gate', evidenceRefs: ['renders/assembly-candidate/multiview-review-board.png']}],
   });
   const decision = await finishEdit(PROJECT, {
     candidateCheckpointId: candidateCheckpoint.id,
@@ -630,8 +632,16 @@ async function main() {
     ambiguities: ['The self-generated fixture tests comparison registration behavior, not independent visual fidelity.'],
   });
   const comparisonRegistrationPath = await writeJson(path.join(PROJECT, 'model', 'source-to-render-registration.json'), comparisonRegistration);
+  const diagnosticComparisonSourceManifestPath = await writeJson(
+    path.join(PROJECT, 'reviews', 'diagnostic-comparison-source-manifest.json'),
+    {
+      ...source,
+      path: 'source/reference.png',
+      acquisition: {kind: 'deterministic-project-fixture', purpose: 'diagnostic-comparison-only'},
+    },
+  );
   const comparisonInputPath = await writeJson(path.join(PROJECT, 'registered-comparison-input.json'), {
-    schema: 'refas.registered-comparison-input/v1', sourceManifest: 'source/source-manifest.json', renderReport: 'renders/final/render-report.json',
+    schema: 'refas.registered-comparison-input/v1', sourceManifest: 'reviews/diagnostic-comparison-source-manifest.json', renderReport: 'renders/final/render-report.json',
     renderImage: 'hero.png', frameId: 'hero', registration: 'model/source-to-render-registration.json', hierarchy: 'model/visual-hierarchy.json',
     scopeIds: ['whole', 'upper-cover', 'center-fastener', 'fastener-inlay'], overlayOpacity: 0.5,
     landmarks: [
@@ -663,17 +673,17 @@ async function main() {
     });
     await writeJson(path.join(negativeRoot, name, 'registration.json'), negativeRegistration);
     const candidateInputPath = await writeJson(path.join(negativeRoot, name, 'comparison-input.json'), {
-      ...await readJson(comparisonInputPath), sourceManifest: '../../../source/source-manifest.json', renderReport: 'render-report.json', renderImage: 'hero.png',
+      ...await readJson(comparisonInputPath), sourceManifest: '../../../reviews/diagnostic-comparison-source-manifest.json', renderReport: 'render-report.json', renderImage: 'hero.png',
       registration: 'registration.json', hierarchy: '../../../model/visual-hierarchy.json',
     });
     const candidateComparisonDirectory = path.join(negativeRoot, name, 'comparison');
     runPython(path.join(SKILL_SCRIPTS, 'compare_registered.py'), ['--input', candidateInputPath, '--out', candidateComparisonDirectory]);
     negativeReports[name] = await readJson(path.join(candidateComparisonDirectory, 'comparison-report.json'));
   }
-  const metric = (report, scope) => report.scopes.find((item) => item.scopeId === scope).metrics.silhouetteIoU;
-  assert.ok(metric(negativeReports['shifted-scaled'], 'whole') < metric(comparisonReport, 'whole'));
-  assert.ok(metric(negativeReports['better-global-worse-local'], 'whole') > metric(comparisonReport, 'whole'));
-  assert.ok(metric(negativeReports['better-global-worse-local'], 'fastener-inlay') < metric(comparisonReport, 'fastener-inlay'));
+  const perceptualMetric = (report, scope, key) => report.scopes.find((item) => item.scopeId === scope).metrics.perceptual[key];
+  assert.ok(perceptualMetric(negativeReports['shifted-scaled'], 'whole', 'edgeDisagreement') > perceptualMetric(comparisonReport, 'whole', 'edgeDisagreement'));
+  assert.ok(perceptualMetric(negativeReports['better-global-worse-local'], 'whole', 'edgeDisagreement') < perceptualMetric(comparisonReport, 'whole', 'edgeDisagreement'));
+  assert.ok(perceptualMetric(negativeReports['better-global-worse-local'], 'fastener-inlay', 'coarseColorDifference') > perceptualMetric(comparisonReport, 'fastener-inlay', 'coarseColorDifference'));
 
   const findingsPath = await writeJson(path.join(PROJECT, 'reviews', 'findings.json'), {
     schema: 'refas.finding-ledger/v1', sourceSha256: source.sha256, assetSha256: await sha256File(finalAssetPath),
@@ -721,30 +731,31 @@ async function main() {
   });
   const visualReviewPath = await writeJson(path.join(PROJECT, 'reviews', 'visual-review.json'), visualReview);
   const closureGates = REQUIRED_CLOSURE_GATE_IDS.map((id) => ({
-    id, status: 'pass',
-    evidenceRefs: [REQUIRED_VISUAL_GATE_IDS.includes(id) ? 'reviews/visual-review.json' : id === 'project-audit' ? '.refas/project.json' : 'source/source-manifest.json'],
+    id,
+    evidenceRefs: [REQUIRED_VISUAL_GATE_IDS.includes(id) ? 'reviews/visual-review.json' : 'source/source-manifest.json'],
   }));
   const closurePath = await writeJson(path.join(PROJECT, 'reviews', 'closure-gates.json'), closureGates);
   const certificationArtifacts = await references([finalAssetPath, closurePath, finalReportPath, finalBoardPath, findingsPath, rollbackProofPath]);
   certificationArtifacts.push(await contentReference(visualReviewPath, {kind: 'visual-review', root: PROJECT}));
-  const certificationCheckpoint = await commitCheckpoint(PROJECT, {
-    capability: 'whole-object-certification', scopeId: 'whole', reason: 'Negative contract test: stale passing gate claims must not override the digest-bound visual review.',
-    artifactRefs: certificationArtifacts,
-    claims: ['This self-generated fixture tests runtime contracts only and is not publishable visual evidence.'], gates: closureGates,
-  });
+  let certificationCheckpoint = null;
   let certificationRefusal = null;
   try {
-    await certifyProject(PROJECT);
-    assert.fail('self-generated contract fixture unexpectedly certified');
+    certificationCheckpoint = await commitCheckpoint(PROJECT, {
+      capability: 'whole-object-certification', scopeId: 'whole', reason: 'Negative contract test: caller gate requests cannot override the digest-bound visual review.',
+      artifactRefs: certificationArtifacts,
+      claims: ['This self-generated fixture tests runtime contracts only and is not publishable visual evidence.'], gates: closureGates,
+    });
+    assert.fail('self-generated failing visual review unexpectedly produced a closure checkpoint');
   } catch (error) {
     certificationRefusal = error.message;
-    assert.match(certificationRefusal, /self-generated contract fixtures cannot certify visual fidelity/);
+    assert.match(certificationRefusal, /runtime gate evaluation rejected checkpoint/);
   }
   const readiness = await assessCertification(PROJECT);
   assert.equal(readiness.ready, false);
   const finalAudit = await auditProject(PROJECT);
   assert.equal(finalAudit.valid, true);
-  assert.equal((await resumeProject(PROJECT)).nextAction, 'REQUEST_VISUAL_REVIEW');
+  const guidance = await resumeProject(PROJECT);
+  assert.equal(guidance.activeWork.capability, 'whole-object-certification');
   const inspection = inspectGlb(await fs.readFile(finalAssetPath));
   assert.equal(inspection.valid, true);
 
@@ -766,14 +777,14 @@ async function main() {
     },
     rollback: {decision: decision.action, baselineSha256, candidateSha256, restoredSha256, byteExact: restoredSha256 === baselineSha256},
     rendering: {frames: finalRenderReport.frames.length, status: finalRenderReport.status, claimScope: finalRenderReport.claimScope, board: path.relative(OUTPUT, finalBoardPath), validationWallClockMs: finalRenderReport.validationWallClockMs, validationTimeoutMs: finalRenderReport.validationTimeoutMs},
-    registeredComparison: {digest: comparisonReport.comparisonDigest, scopes: comparisonReport.scopes.map((scope) => ({scopeId: scope.scopeId, level: scope.level, ancestry: scope.ancestry, silhouetteIoU: scope.metrics.silhouetteIoU})), metricsAreGateAuthority: false},
+    registeredComparison: {digest: comparisonReport.comparisonDigest, scopes: comparisonReport.scopes.map((scope) => ({scopeId: scope.scopeId, level: scope.level, ancestry: scope.ancestry, edgeDisagreement: scope.metrics.perceptual.edgeDisagreement})), metricsAreGateAuthority: false},
     registeredComparisonNegativeFixtures: {
-      shiftedScaledWholeIoU: metric(negativeReports['shifted-scaled'], 'whole'),
-      betterGlobalWholeIoU: metric(negativeReports['better-global-worse-local'], 'whole'),
-      worseLocalFeatureIoU: metric(negativeReports['better-global-worse-local'], 'fastener-inlay'),
+      shiftedScaledWholeEdgeDisagreement: perceptualMetric(negativeReports['shifted-scaled'], 'whole', 'edgeDisagreement'),
+      betterGlobalWholeEdgeDisagreement: perceptualMetric(negativeReports['better-global-worse-local'], 'whole', 'edgeDisagreement'),
+      worseLocalFeatureCoarseColorDifference: perceptualMetric(negativeReports['better-global-worse-local'], 'fastener-inlay', 'coarseColorDifference'),
     },
     glb: {nodes: inspection.nodeCount, meshes: inspection.meshCount, triangles: inspection.triangleCount},
-    checkpoints: {count: finalAudit.checkpointCount, source: sourceCheckpoint.id, certification: certificationCheckpoint.id},
+    checkpoints: {count: finalAudit.checkpointCount, source: sourceCheckpoint.id, certification: certificationCheckpoint?.id ?? null},
     candidateCertification: {visualVerdict: visualReview.verdict, certificateIssued: false, expectedResult: 'REFUSED', refusal: certificationRefusal},
     audit: finalAudit,
     capabilityOrder: CAPABILITY_ORDER,

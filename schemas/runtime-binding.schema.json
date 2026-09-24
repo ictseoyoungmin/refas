@@ -1,0 +1,194 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/runtime-binding.schema.json",
+  "title": "RefAs runtime binding",
+  "type": "object",
+  "required": ["schema", "scopeId", "sourceSha256", "identityBinding", "targetBinding", "bindings", "policy", "runtimeBindingDigest"],
+  "properties": {
+    "schema": {"const": "refas.runtime-binding/v1"},
+    "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
+    "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "identityBinding": {"$ref": "#/$defs/identityBinding"},
+    "targetBinding": {"$ref": "#/$defs/targetBinding"},
+    "bindings": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/binding"}},
+    "policy": {
+      "type": "object",
+      "required": [
+        "runtimeEndpointRemainsDistinctFromTarget",
+        "runtimeIndexIsNotSemanticIdentity",
+        "runtimeLocatorsAreConfigurationStrings",
+        "runtimeCalibrationDoesNotRewriteUpstreamSemantics",
+        "canonicalCalibrationEquationDefined",
+        "zeroOffsetUsesGeneralizedCoordinateUnits",
+        "zeroOffsetIsNotEulerOrientation",
+        "signAndScaleRemainSeparate",
+        "controllerDelayAndTransportDelayRemainDistinct",
+        "unknownCalibrationRemainsExplicit",
+        "scopedIdentityBinding",
+        "scopedTargetBinding",
+        "targetBindingTracksCoordinateSemanticsOnly",
+        "semanticAuthorityRemainsExternal",
+        "fabricatedDefaultsForbidden",
+        "runtimeBindingDoesNotAssertSourceTruth",
+        "modelDoesNotAuthorizeClosure"
+      ],
+      "properties": {
+        "runtimeEndpointRemainsDistinctFromTarget": {"const": true},
+        "runtimeIndexIsNotSemanticIdentity": {"const": true},
+        "runtimeLocatorsAreConfigurationStrings": {"const": true},
+        "runtimeCalibrationDoesNotRewriteUpstreamSemantics": {"const": true},
+        "canonicalCalibrationEquationDefined": {"const": true},
+        "zeroOffsetUsesGeneralizedCoordinateUnits": {"const": true},
+        "zeroOffsetIsNotEulerOrientation": {"const": true},
+        "signAndScaleRemainSeparate": {"const": true},
+        "controllerDelayAndTransportDelayRemainDistinct": {"const": true},
+        "unknownCalibrationRemainsExplicit": {"const": true},
+        "scopedIdentityBinding": {"const": true},
+        "scopedTargetBinding": {"const": true},
+        "targetBindingTracksCoordinateSemanticsOnly": {"const": true},
+        "semanticAuthorityRemainsExternal": {"const": true},
+        "fabricatedDefaultsForbidden": {"const": true},
+        "runtimeBindingDoesNotAssertSourceTruth": {"const": true},
+        "modelDoesNotAuthorizeClosure": {"const": true}
+      },
+      "additionalProperties": false
+    },
+    "runtimeBindingDigest": {"$ref": "common.schema.json#/$defs/digest"}
+  },
+  "$defs": {
+    "identityBinding": {
+      "type": "object",
+      "required": ["schema", "sourceSchema", "projectionDigest"],
+      "properties": {
+        "schema": {"const": "refas.physical-runtime-identity-binding/v1"},
+        "sourceSchema": {"const": "refas.physical-identity-graph/v1"},
+        "projectionDigest": {"$ref": "common.schema.json#/$defs/digest"}
+      },
+      "additionalProperties": false
+    },
+    "targetBinding": {
+      "type": "object",
+      "required": ["schema", "sourceSchema", "projectionDigest"],
+      "properties": {
+        "schema": {"const": "refas.runtime-target-binding/v1"},
+        "sourceSchema": {"const": "refas.runtime-target-projection/v1"},
+        "projectionDigest": {"$ref": "common.schema.json#/$defs/digest"}
+      },
+      "additionalProperties": false
+    },
+    "selector": {
+      "type": "object",
+      "required": ["runtimeEndpointId", "bindsRuntimeRelationId", "targetId", "targetKind"],
+      "properties": {
+        "runtimeEndpointId": {"$ref": "common.schema.json#/$defs/semanticId"},
+        "bindsRuntimeRelationId": {"$ref": "common.schema.json#/$defs/semanticId"},
+        "targetId": {"$ref": "common.schema.json#/$defs/semanticId"},
+        "targetKind": {"enum": ["actuator", "controller", "virtual-joint", "rigid-link", "attachment-interface"]}
+      },
+      "additionalProperties": false
+    },
+    "runtimeLocator": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512,
+      "pattern": "^(?!\\s)[^\\u0000-\\u001F\\u007F]*\\S$"
+    },
+    "authorityIdValue": {
+      "type": "object",
+      "required": ["value", "authoritySubjectId"],
+      "properties": {
+        "value": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/runtimeLocator"}]},
+        "authoritySubjectId": {"$ref": "common.schema.json#/$defs/semanticId"}
+      },
+      "additionalProperties": false
+    },
+    "runtimeIndexValue": {
+      "type": "object",
+      "required": ["value", "authoritySubjectId"],
+      "properties": {
+        "value": {"type": ["integer", "null"], "minimum": 0},
+        "authoritySubjectId": {"$ref": "common.schema.json#/$defs/semanticId"}
+      },
+      "additionalProperties": false
+    },
+    "signValue": {
+      "type": "object",
+      "required": ["value", "authoritySubjectId"],
+      "properties": {
+        "value": {"oneOf": [{"type": "null"}, {"enum": [-1, 1]}]},
+        "authoritySubjectId": {"$ref": "common.schema.json#/$defs/semanticId"}
+      },
+      "additionalProperties": false
+    },
+    "zeroOffset": {
+      "type": "object",
+      "required": ["value", "unit"],
+      "properties": {
+        "value": {"type": "number"},
+        "unit": {"enum": ["rad", "m"]}
+      },
+      "additionalProperties": false
+    },
+    "zeroOffsetValue": {
+      "type": "object",
+      "required": ["value", "authoritySubjectId"],
+      "properties": {
+        "value": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/zeroOffset"}]},
+        "authoritySubjectId": {"$ref": "common.schema.json#/$defs/semanticId"}
+      },
+      "additionalProperties": false
+    },
+    "encoderScale": {
+      "type": "object",
+      "required": ["value", "unit"],
+      "properties": {
+        "value": {"type": "number", "exclusiveMinimum": 0},
+        "unit": {"enum": ["rad_per_runtime_unit", "m_per_runtime_unit"]}
+      },
+      "additionalProperties": false
+    },
+    "encoderScaleValue": {
+      "type": "object",
+      "required": ["value", "authoritySubjectId"],
+      "properties": {
+        "value": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/encoderScale"}]},
+        "authoritySubjectId": {"$ref": "common.schema.json#/$defs/semanticId"}
+      },
+      "additionalProperties": false
+    },
+    "delay": {
+      "type": "object",
+      "required": ["value_s"],
+      "properties": {"value_s": {"type": "number", "minimum": 0}},
+      "additionalProperties": false
+    },
+    "delayValue": {
+      "type": "object",
+      "required": ["value", "authoritySubjectId"],
+      "properties": {
+        "value": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/delay"}]},
+        "authoritySubjectId": {"$ref": "common.schema.json#/$defs/semanticId"}
+      },
+      "additionalProperties": false
+    },
+    "binding": {
+      "type": "object",
+      "required": ["bindingId", "selector", "coordinateClass", "device", "bus", "runtimeIndex", "sign", "zeroOffset", "encoderScale", "transportDelay", "definitionAuthoritySubjectId"],
+      "properties": {
+        "bindingId": {"$ref": "common.schema.json#/$defs/semanticId"},
+        "selector": {"$ref": "#/$defs/selector"},
+        "coordinateClass": {"enum": ["NONE", "ROTARY", "LINEAR"]},
+        "device": {"$ref": "#/$defs/authorityIdValue"},
+        "bus": {"$ref": "#/$defs/authorityIdValue"},
+        "runtimeIndex": {"$ref": "#/$defs/runtimeIndexValue"},
+        "sign": {"$ref": "#/$defs/signValue"},
+        "zeroOffset": {"$ref": "#/$defs/zeroOffsetValue"},
+        "encoderScale": {"$ref": "#/$defs/encoderScaleValue"},
+        "transportDelay": {"$ref": "#/$defs/delayValue"},
+        "definitionAuthoritySubjectId": {"$ref": "common.schema.json#/$defs/semanticId"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

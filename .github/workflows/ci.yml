@@ -2,9 +2,9 @@ name: RefAs CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, rc/post-1.1]
   pull_request:
-    branches: [main]
+    branches: [main, rc/post-1.1]
 
 permissions:
   contents: read
@@ -42,6 +42,18 @@ jobs:
       - name: Complete dogfood
         if: matrix.node == 24
         run: npm run dogfood
+      - name: Fresh-worker public-contract dogfood
+        if: matrix.node == 24
+        run: npm run dogfood:fresh-worker
+      - name: Discovery closure verifier
+        if: matrix.node == 24
+        run: npm run check:discovery-closure
+      - name: VC00 volume-closure regression fixtures
+        if: matrix.node == 24
+        run: npm run dogfood:volume-regression
+      - name: VC08 adversarial public-boundary dogfood
+        if: matrix.node == 24
+        run: npm run dogfood:adversarial
       - name: Joint parameter-fit dogfood
         if: matrix.node == 24
         run: npm run dogfood:parameter-fit

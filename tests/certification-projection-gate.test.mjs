@@ -12,22 +12,46 @@ import {
   assessCertification,
   auditProject,
   certifyProject,
+  classifySpatialCollapse,
   commitCheckpoint,
   contentReference,
   createPbrRenderReport,
+  createCandidateTransition,
+  createEarlyResemblanceBarrier,
+  createFinalResemblanceClosure,
+  createPerceptualSignatureEvidence,
+  createPerceptualSignatureSet,
+  createSpatialClosureEvidence,
+  createSpatialRoleExpectationSet,
+  createVisualHierarchy,
+  createVolumeBarrier,
+  validateFinalSpatialContinuity,
+  NEUTRAL_CLAY_LIGHTING_RIG_DIGEST,
+  NEUTRAL_CLAY_PRESENTATION_PRESET,
+  NEUTRAL_CLAY_PRESENTATION_PRESET_DIGEST,
+  NEUTRAL_CLAY_REQUIRED_VIEW_IDS,
   createRealizedProjection,
   createReferenceGeometry,
   createRelationalDiscrepancy,
   createRelationalStructure,
   createSegmentPrism,
+  finalizeMesh,
   createSemanticAuthoritySet,
   createVisualReview,
   createWholeSystemRelationalBarrier,
   digestBytes,
+  digestJson,
   initProject,
+  loadProject,
   partsToGlb,
+  resolveAuthoritativeCandidateLineage,
+  resolveFinalSpatialContinuity,
+  resolveTrustedSpatialGateAuthority,
+  checkpointGatePolicy,
+  normalizeCheckpointGateRequests,
   resumeProject,
 } from '../skills/refas/scripts/lib/index.mjs';
+import {initTrustedContractFixtureProject} from '../skills/refas/scripts/lib/contract-fixture-project.mjs';
 
 const CONTRACT_FIXTURES = new Set(['test-fixture','deterministic-project-fixture','synthetic-test-fixture']);
 
@@ -49,27 +73,209 @@ async function makeProject(t, acquisitionKind='user-provided-reference') {
     sha256:digestBytes(sourceBytes), sizeBytes:sourceBytes.length, width:256, height:256,
     authority:'primary', acquisition:{kind:acquisitionKind},
   };
-  await initProject(root, {projectId:'projection-cert-study', source});
+  if (CONTRACT_FIXTURES.has(acquisitionKind)) {
+    await initTrustedContractFixtureProject(root, {projectId:'projection-cert-study', source, fixtureId:'projection-cert-contract'});
+  } else {
+    await initProject(root, {projectId:'projection-cert-study', source});
+  }
   return {root, source};
 }
 
-async function advanceToReview(root) {
+async function advanceToReview(root, source, {
+  projection='none',
+  spatialRole='volumetric',
+  candidateThickness=0.08,
+  expectedSpatialClassification='NO_PLANAR_COLLAPSE',
+  expectedVolumeVerdict='PROCEED',
+  stopAfterShape=false,
+  mutateAtAppearance=false,
+}={}) {
   const file = path.join(root, 'model', 'state.bin');
   await fs.mkdir(path.dirname(file), {recursive:true});
+  let hierarchy = null;
+
   for (const capability of CAPABILITY_ORDER) {
     if (capability === 'whole-object-certification') break;
+
+    if (capability === 'visual-hierarchy') {
+      hierarchy = createVisualHierarchy({
+        source:{path:source.path,sha256:source.sha256,width:source.width,height:source.height},
+        nodes:[{id:'whole',label:'Whole',level:'whole',parentId:null,roi:[0,0,1,1]}],
+      });
+      const hierarchyPath = await json(path.join(root,'model','visual-hierarchy.json'), hierarchy);
+      const hierarchyRef = await contentReference(hierarchyPath,{kind:'visual-hierarchy',root});
+      await commitCheckpoint(root,{
+        capability,scopeId:'whole',reason:'visual-hierarchy fixture is trustworthy',
+        artifactRefs:[hierarchyRef],claims:['visual-hierarchy closed'],
+        gates:[{id:'visual-hierarchy-gate',evidenceRefs:[hierarchyRef.path]}],
+      });
+      continue;
+    }
+
+    if (capability === 'spatial-hypotheses') {
+      if (!hierarchy) throw new Error('VC02 migration fixture requires visual hierarchy before spatial hypotheses');
+      const spatialPath = path.join(root,'model','spatial-role.json');
+      const roleSet = createSpatialRoleExpectationSet({
+        hierarchy,
+        sourceSha256: source.sha256,
+        expectations: [{
+          scopeId:'whole',
+          role:spatialRole,
+          sourceObservation:`The certification fixture source pre-binds the whole object as ${spatialRole}.`,
+          rationale:'Freeze volumetric role before candidate reconstruction so VC03/VC04 cannot relabel it afterward.',
+          evidenceRefs:[source.path],
+          ambiguity:spatialRole==='unresolved'?'The source does not resolve whole-object depth for this fixture.':null,
+        }],
+      });
+      await json(spatialPath, roleSet);
+      const roleRef = await contentReference(spatialPath,{kind:'spatial-role-expectation',root});
+      const spatialStatePath = path.join(root,'model','spatial.json');
+      await json(spatialStatePath,{spatial:true});
+      const spatialRef = await contentReference(spatialStatePath,{kind:'spatial-hypotheses',root});
+      await commitCheckpoint(root,{
+        capability,scopeId:'whole',reason:'spatial-hypotheses fixture freezes VC02 role authority',
+        artifactRefs:[spatialRef,roleRef],claims:['spatial-hypotheses closed with frozen role'],
+        gates:[{id:'spatial-hypotheses-gate',evidenceRefs:[spatialRef.path,roleRef.path]}],
+      });
+      continue;
+    }
+
+    if (capability === 'shape-reconstruction') {
+      if (!hierarchy) throw new Error('R04 migration fixture requires visual hierarchy before shape');
+      const assetPath = path.join(root,'model','candidate.glb');
+      const glb = mannequinGlb(projection === 'bad' ? 4 : 0, candidateThickness);
+      await fs.writeFile(assetPath,glb);
+      const asset = await contentReference(assetPath,{kind:'glb',root});
+      const clayFrames = [];
+      for (const viewId of NEUTRAL_CLAY_REQUIRED_VIEW_IDS) {
+        const clayPath = path.join(root,'renders','clay',`${viewId}.png`);
+        await fs.mkdir(path.dirname(clayPath),{recursive:true});
+        await fs.writeFile(clayPath,Buffer.from(`neutral clay ${viewId} frame\n`));
+        clayFrames.push(await contentReference(clayPath,{kind:'render-frame',root}));
+      }
+      const clayHero = clayFrames.find((frame)=>frame.path==='renders/clay/hero.png');
+
+      const signatureSet = createPerceptualSignatureSet({
+        hierarchy,scopeId:'whole',sourceSha256:source.sha256,
+        signatures:[{
+          id:'whole-form',scopeId:'whole',family:'silhouette-character',importance:'macro',
+          sourceObservation:'The projection certification fixture establishes its whole-form identity before downstream detail.',
+          evidenceRefs:[source.path],
+        }],
+        evidenceRefs:[source.path],
+      });
+      const signatureEvidence = createPerceptualSignatureEvidence({
+        signatureSet,assetSha256:asset.sha256,
+        observations:[{
+          signatureId:'whole-form',status:'match',
+          candidateObservation:'The candidate is the exact shape checkpoint GLB reviewed for this certification fixture.',
+          comparisonConclusion:'This fixture explicitly authorizes downstream detail so projection certification can test its own authority.',
+          evidenceRefs:[source.path,clayHero.path],
+        }],
+        evidenceRefs:[source.path,clayHero.path],
+      });
+      const clayReport = createPbrRenderReport({
+        assetSha256:asset.sha256,frameDigest:'9'.repeat(64),
+        renderer:{family:'other',name:'RefAs Independent PBR',version:'1.0.0',backend:'numpy-cook-torrance-headless',independentProcess:true},
+        lighting:{rigId:NEUTRAL_CLAY_PRESENTATION_PRESET.lighting.rigId,digest:NEUTRAL_CLAY_LIGHTING_RIG_DIGEST},
+        colorPipeline:{...NEUTRAL_CLAY_PRESENTATION_PRESET.colorPipeline},
+        materialSupport:{supported:['base-color-factor','metallic-factor','roughness-factor'],unsupported:['textures']},
+        outputs:clayFrames.map((frame,index)=>({viewId:NEUTRAL_CLAY_REQUIRED_VIEW_IDS[index],path:frame.path,sha256:frame.sha256})),
+        reproducibility:{mode:'deterministic',tolerance:''},
+        presentation:{mode:'neutral-clay',presetId:NEUTRAL_CLAY_PRESENTATION_PRESET.id,presetDigest:NEUTRAL_CLAY_PRESENTATION_PRESET_DIGEST},
+      });
+      const clayReportPath = await json(path.join(root,'renders','clay','render-report.json'),clayReport);
+      const clayReportRef = await contentReference(clayReportPath,{kind:'render-report',root});
+      const earlyBarrier = createEarlyResemblanceBarrier({
+        sourceSha256:source.sha256,hierarchyDigest:hierarchy.hierarchyDigest,assetSha256:asset.sha256,
+        signatureEvidence,clayRenderReport:clayReport,evidenceRefs:[source.path,clayHero.path],
+      });
+      assert.equal(earlyBarrier.verdict,'PROCEED');
+      const barrierPath = await json(path.join(root,'reviews','early-resemblance-barrier.json'),earlyBarrier);
+      const barrierRef = await contentReference(barrierPath,{kind:'early-resemblance-barrier',root});
+
+      const spatialEvidence = createSpatialClosureEvidence({glb,scopeId:'whole'});
+      const spatialEvidencePath = await json(path.join(root,'reviews','spatial-closure-whole.json'),spatialEvidence);
+      const spatialEvidenceRef = await contentReference(spatialEvidencePath,{kind:'spatial-closure-evidence',root});
+      const classification = await classifySpatialCollapse(root,{glb,spatialEvidence,scopeId:'whole'});
+      assert.equal(classification.classification,expectedSpatialClassification);
+      const classificationPath = await json(path.join(root,'reviews','spatial-collapse-whole.json'),classification);
+      const classificationRef = await contentReference(classificationPath,{kind:'spatial-collapse-classification',root});
+      const volumeBarrier = createVolumeBarrier({
+        sourceSha256:source.sha256,
+        hierarchyDigest:hierarchy.hierarchyDigest,
+        assetSha256:asset.sha256,
+        signatureSet,
+        classifications:[classification],
+      });
+      assert.equal(volumeBarrier.verdict,expectedVolumeVerdict);
+      const volumeBarrierPath = await json(path.join(root,'reviews','volume-barrier.json'),volumeBarrier);
+      const volumeBarrierRef = await contentReference(volumeBarrierPath,{kind:'volume-barrier',root});
+
+      const shapeRefs=[asset,barrierRef,clayReportRef,...clayFrames,spatialEvidenceRef,classificationRef,volumeBarrierRef];
+      await commitCheckpoint(root,{
+        capability,scopeId:'whole',reason:'shape-reconstruction fixture carries R04/VC04 spatial authority',
+        artifactRefs:shapeRefs,claims:['shape-reconstruction closed with resemblance and volume authority'],
+        gates:[{id:'shape-reconstruction-gate',evidenceRefs:shapeRefs.map((ref)=>ref.path)}],
+      });
+      if(stopAfterShape) return;
+      continue;
+    }
+
+    if (capability === 'appearance' && mutateAtAppearance) {
+      const authority=await resolveAuthoritativeCandidateLineage(root);
+      const state=await loadProject(root);
+      const assetPath=path.join(root,'model','candidate.glb');
+      const changed=mannequinGlb(0.21,0.08);
+      await fs.writeFile(assetPath,changed);
+      const output=await contentReference(assetPath,{kind:'glb',root});
+      assert.notEqual(output.sha256,authority.finalCandidate.assetSha256);
+      const transition=createCandidateTransition({
+        inputAssetSha256:authority.finalCandidate.assetSha256,
+        outputAssetSha256:output.sha256,
+        inputCandidateCheckpointId:authority.finalCandidate.checkpointId,
+        parentCheckpointId:state.head,
+        capability:'appearance',
+        scopeId:'whole',
+        evidenceRefs:[output.path],
+      });
+      const transitionPath=await json(path.join(root,'model','appearance-candidate-transition.json'),transition);
+      const transitionRef=await contentReference(transitionPath,{kind:'candidate-transition',root});
+      await commitCheckpoint(root,{
+        capability,scopeId:'whole',reason:'appearance fixture mutates the authoritative candidate for VC06 continuity testing',
+        artifactRefs:[output,transitionRef],claims:['appearance candidate mutation is explicitly lineage-bound'],
+        gates:[{id:'appearance-gate',evidenceRefs:[output.path,transitionRef.path]}],
+      });
+      continue;
+    }
+
     await fs.writeFile(file, Buffer.from(`trusted:${capability}\n`));
     const artifact = await contentReference(file, {kind:'model-spec', root});
     await commitCheckpoint(root, {
       capability, scopeId:'whole', reason:`${capability} fixture is trustworthy`,
       artifactRefs:[artifact], claims:[`${capability} closed`],
-      gates:[{id:`${capability}-gate`, status:'pass', evidenceRefs:[artifact.path]}],
+      gates:[{id:`${capability}-gate`, evidenceRefs:[artifact.path]}],
     });
   }
 }
 
-function mannequinGlb(x=0) {
-  const mesh = createSegmentPrism({start:[-.1,0,0], end:[.1,0,0], width:.08, height:.08, upHint:[0,1,0]});
+function vc05BoxMesh(depth=0.02) {
+  const hx=0.5, hy=0.5, hz=depth/2;
+  const positions=[
+    [-hx,-hy,-hz],[hx,-hy,-hz],[hx,hy,-hz],[-hx,hy,-hz],
+    [-hx,-hy,hz],[hx,-hy,hz],[hx,hy,hz],[-hx,hy,hz],
+  ];
+  const indices=[
+    0,2,1,0,3,2,4,5,6,4,6,7,0,1,5,0,5,4,
+    3,7,6,3,6,2,0,4,7,3,0,7,1,2,6,1,6,5,
+  ];
+  return finalizeMesh(positions,indices,{primitive:'vc05-box'});
+}
+
+function mannequinGlb(x=0, thickness=0.08) {
+  const mesh = thickness <= 0.02
+    ? vc05BoxMesh(thickness)
+    : createSegmentPrism({start:[-.1,0,0], end:[.1,0,0], width:.08, height:thickness, upHint:[0,1,0]});
   return partsToGlb({
     parts:[{id:'model-node', scopeId:'whole', materialId:'wood', mesh, translation:[x,0,0]}],
     materials:{wood:{baseColor:[.7,.55,.35,1], metallic:0, roughness:.7}},
@@ -125,10 +331,89 @@ async function appendRelationalCertificationEvidence(root, source, asset, refs) 
   }
 }
 
-async function commitCertification(root, source, {projection='none'}={}) {
+async function appendFinalCandidateAuthority(root, source, asset, refs, {includeFreshFinalSpatial=false}={}) {
+  const hierarchy = JSON.parse(await fs.readFile(path.join(root,'model','visual-hierarchy.json'),'utf8'));
+  const authority = await resolveAuthoritativeCandidateLineage(root);
+  assert.equal(authority.finalCandidate.assetSha256,asset.sha256);
+
+  const lineagePath = await json(path.join(root,'reviews','candidate-lineage-proof.json'),authority.proof);
+  refs.push(await contentReference(lineagePath,{kind:'candidate-lineage-proof',root}));
+
+  const clayFrames = [];
+  for (const viewId of NEUTRAL_CLAY_REQUIRED_VIEW_IDS) {
+    const framePath = path.join(root,'renders','final-clay',`${viewId}.png`);
+    await fs.mkdir(path.dirname(framePath),{recursive:true});
+    await fs.writeFile(framePath,Buffer.from(`final neutral clay ${viewId} frame\n`));
+    clayFrames.push(await contentReference(framePath,{kind:'render-frame',root}));
+  }
+  const clayHero = clayFrames.find((frame)=>frame.path==='renders/final-clay/hero.png');
+  const signatureSet = createPerceptualSignatureSet({
+    hierarchy,scopeId:'whole',sourceSha256:source.sha256,
+    signatures:[{
+      id:'whole-form',scopeId:'whole',family:'silhouette-character',importance:'macro',
+      sourceObservation:'The projection certification fixture retains its source-specific whole-form identity at final certification.',
+      evidenceRefs:[source.path],
+    }],
+    evidenceRefs:[source.path],
+  });
+  const signatureEvidence = createPerceptualSignatureEvidence({
+    signatureSet,assetSha256:asset.sha256,
+    observations:[{
+      signatureId:'whole-form',status:'match',
+      candidateObservation:'The exact final certification candidate was rechecked in canonical neutral clay.',
+      comparisonConclusion:'The final candidate still matches the source-specific whole-form signature.',
+      evidenceRefs:[source.path,clayHero.path],
+    }],
+    evidenceRefs:[source.path,clayHero.path],
+  });
+  const signaturePath = await json(path.join(root,'reviews','final-perceptual-signature-evidence.json'),signatureEvidence);
+  refs.push(await contentReference(signaturePath,{kind:'perceptual-signature-evidence',root}));
+
+  const clayReport = createPbrRenderReport({
+    assetSha256:asset.sha256,frameDigest:'8'.repeat(64),
+    renderer:{family:'other',name:'RefAs Independent PBR',version:'1.0.0',backend:'numpy-cook-torrance-headless',independentProcess:true},
+    lighting:{rigId:NEUTRAL_CLAY_PRESENTATION_PRESET.lighting.rigId,digest:NEUTRAL_CLAY_LIGHTING_RIG_DIGEST},
+    colorPipeline:{...NEUTRAL_CLAY_PRESENTATION_PRESET.colorPipeline},
+    materialSupport:{supported:['base-color-factor','metallic-factor','roughness-factor'],unsupported:['textures']},
+    outputs:clayFrames.map((frame,index)=>({viewId:NEUTRAL_CLAY_REQUIRED_VIEW_IDS[index],path:frame.path,sha256:frame.sha256})),
+    reproducibility:{mode:'deterministic',tolerance:''},
+    presentation:{mode:'neutral-clay',presetId:NEUTRAL_CLAY_PRESENTATION_PRESET.id,presetDigest:NEUTRAL_CLAY_PRESENTATION_PRESET_DIGEST},
+  });
+  const clayReportPath = await json(path.join(root,'renders','final-clay','render-report.json'),clayReport);
+  refs.push(await contentReference(clayReportPath,{kind:'render-report',root}),...clayFrames);
+
+  const closure = createFinalResemblanceClosure({
+    sourceSha256:source.sha256,
+    hierarchyDigest:hierarchy.hierarchyDigest,
+    assetSha256:asset.sha256,
+    signatureEvidence,
+    clayRenderReport:clayReport,
+    evidenceRefs:[source.path,clayHero.path],
+  });
+  const closurePath = await json(path.join(root,'reviews','final-resemblance-closure.json'),closure);
+  refs.push(await contentReference(closurePath,{kind:'final-resemblance-closure',root}));
+
+  if (includeFreshFinalSpatial) {
+    const glb=await fs.readFile(path.join(root,'model','candidate.glb'));
+    const spatialEvidence=createSpatialClosureEvidence({glb,scopeId:'whole'});
+    assert.equal(spatialEvidence.assetSha256,asset.sha256);
+    const spatialPath=await json(path.join(root,'reviews','final-spatial-closure-whole.json'),spatialEvidence);
+    refs.push(await contentReference(spatialPath,{kind:'spatial-closure-evidence',root}));
+    const classification=await classifySpatialCollapse(root,{glb,spatialEvidence,scopeId:'whole'});
+    const classificationPath=await json(path.join(root,'reviews','final-spatial-collapse-whole.json'),classification);
+    refs.push(await contentReference(classificationPath,{kind:'spatial-collapse-classification',root}));
+  }
+}
+
+async function commitCertification(root, source, {
+  projection='none',
+  includeFinalAuthority=true,
+  attachForgedSpatialAuthority=false,
+  attachForgedFinalContinuity=false,
+  includeFreshFinalSpatial=false,
+}={}) {
   const assetPath = path.join(root, 'model', 'candidate.glb');
-  const glb = mannequinGlb(projection === 'bad' ? 4 : 0);
-  await fs.writeFile(assetPath, glb);
+  const glb = await fs.readFile(assetPath);
   const asset = await contentReference(assetPath, {kind:'glb', root});
 
   const frames = [];
@@ -149,21 +434,63 @@ async function commitCertification(root, source, {projection='none'}={}) {
   });
   const reportPath = await json(path.join(root,'renders','final','render-report.json'), report);
   const reportRef = await contentReference(reportPath, {kind:'render-report', root});
+
+  let projectionBundle = null;
+  if (projection !== 'none') {
+    const geometry = sourceGeometry(source);
+    const geometryPath = await json(path.join(root,'model','reference-geometry.json'), geometry);
+    const geometryRef = await contentReference(geometryPath, {kind:'reference-geometry', root});
+    const proof = createRealizedProjection({
+      referenceGeometry:geometry, glb, cameraHypothesisId:'camera-source',
+      camera:{projection:'perspective',position:[0,0,5],target:[0,0,0],up:[0,1,0],fovY:90,aspect:1},
+      anchorBindings:[{referenceId:'whole-center',nodeId:'model-node',localPoint:[0,0,0]}],
+      evidenceRefs:['model/candidate.glb','source/reference.bin'],
+    });
+    const proofPath = await json(path.join(root,'model','realized-projection.json'), proof);
+    const proofRef = await contentReference(proofPath, {kind:'realized-projection', root});
+    const anchor = proof.projectionFit.anchorProjections[0];
+    projectionBundle = {
+      geometryRef,
+      proofRef,
+      proof,
+      binding:{
+        scopeId:'whole',
+        referenceGeometryFileSha256:geometryRef.sha256,
+        referenceGeometryDigest:geometry.geometryDigest,
+        realizedProjectionFileSha256:proofRef.sha256,
+        realizedProjectionDigest:proof.realizedProjectionDigest,
+        projectionFitDigest:proof.projectionFitDigest,
+        assetSha256:asset.sha256,
+      },
+      landmarks:[{
+        id:'whole-center',
+        evidenceClass:'derived-observation-aid',
+        sourceNormalized:anchor.sourceXY,
+        registeredSourceNormalized:anchor.sourceXY,
+        realizedRenderNormalized:anchor.projectedXY,
+        residualNormalized:anchor.errorNormalized,
+      }],
+      landmarkResidualRmse:proof.projectionFit.metrics.anchorRmseNormalized,
+    };
+  }
+
   const comparison = {
     schema:'refas.registered-comparison/v1', claimScope:'critique-evidence-only',
-    source:{sha256:source.sha256, manifestSha256:'f'.repeat(64)},
+    source:{sha256:source.sha256, manifestSha256:'f'.repeat(64), acquisitionKind:source.acquisition?.kind ?? ''},
     render:{assetSha256:asset.sha256, frameId:'hero', frameSha256:frames[0].sha256, reportSha256:reportRef.sha256},
     registration:{digest:'a'.repeat(64), fileSha256:'b'.repeat(64), model:'test', metrics:{}},
-    hierarchy:{digest:'c'.repeat(64), fileSha256:'d'.repeat(64)}, projectionEvidence:[],
+    hierarchy:{digest:'c'.repeat(64), fileSha256:'d'.repeat(64)}, projectionEvidence:projectionBundle ? [projectionBundle.binding] : [],
     scopes:[{scopeId:'whole', level:'whole', ancestry:['whole'], sourceRoi:[0,0,1,1], registeredRenderRoi:[0,0,1,1],
-      measurementAuthority:'image-only', projectionBinding:null,
-      metrics:{silhouetteIoU:1, sourceForegroundPixels:100, renderForegroundPixels:100, landmarkResidualRmse:null},
-      landmarks:[], dimensions:[], images:[{path:'renders/final/hero.png',sha256:frames[0].sha256,width:1,height:1,evidenceClass:'derived-observation-aid'}]}],
+      measurementAuthority:projectionBundle ? 'realized-projection' : 'image-only',
+      projectionBinding:projectionBundle?.binding ?? null,
+      metrics:{silhouetteIoU:null, sourceForegroundPixels:100, renderForegroundPixels:100, landmarkResidualRmse:projectionBundle?.landmarkResidualRmse ?? null},
+      landmarks:projectionBundle?.landmarks ?? [], dimensions:[], images:[{path:'renders/final/hero.png',sha256:frames[0].sha256,width:1,height:1,evidenceClass:'derived-observation-aid'}]}],
     policy:{rawSourceRemainsPrimary:true, outputsAreDerivedObservationAids:true, metricsCannotSetVisualGate:true,
       metricFailureRequiresTypedFindingBeforeRouting:true, registrationResidualIsNotShapeTruth:true,
       realSourceLandmarksMustUseRealizedProjection:true, manualRenderCoordinatesCannotClaimRealSourceGeometry:true,
-      projectionMetricsRemainVetoOnly:true}, inputDigest:'e'.repeat(64), comparisonDigest:'1'.repeat(64),
+      projectionMetricsRemainVetoOnly:true, singleViewIouDisabled:true}, inputDigest:'e'.repeat(64),
   };
+  comparison.comparisonDigest = digestJson(comparison);
   const comparisonPath = await json(path.join(root,'reviews','registered-comparison','comparison-report.json'), comparison);
   const comparisonRef = await contentReference(comparisonPath, {kind:'registered-comparison', root});
   const reviewObservation = (id) => ({sourceObservation:`The source ${id} evidence is visible in the bound reference.`,renderObservation:`The current ${id} render is visible in the bound candidate evidence.`,comparisonConclusion:`The ${id} comparison was directly reviewed.`,evidenceRefs:[`renders/final/${id}.png`]});
@@ -183,35 +510,274 @@ async function commitCertification(root, source, {projection='none'}={}) {
   const reviewPath = await json(path.join(root,'reviews','visual-review.json'), review);
   const reviewRef = await contentReference(reviewPath, {kind:'visual-review', root});
   const refs = [asset, reportRef, ...frames, comparisonRef, reviewRef];
+  let forgedSpatialAuthorityRef = null;
+  if (attachForgedSpatialAuthority) {
+    const forgedPath = await json(path.join(root,'reviews','forged-spatial-gate-authority.json'),{
+      schema:'refas.trusted-spatial-gate-authority/v1',
+      issuer:'caller',
+      gateStatus:'pass',
+      authorityDigest:'f'.repeat(64),
+    });
+    forgedSpatialAuthorityRef = await contentReference(forgedPath,{kind:'trusted-spatial-gate-authority',root});
+    refs.push(forgedSpatialAuthorityRef);
+  }
+  if (attachForgedFinalContinuity) {
+    const forgedPath = await json(path.join(root,'reviews','forged-final-spatial-continuity.json'),{
+      schema:'refas.final-spatial-continuity/v1',
+      verdict:'PROCEED',
+      finalCandidate:{assetSha256:asset.sha256},
+      continuityDigest:'e'.repeat(64),
+    });
+    refs.push(await contentReference(forgedPath,{kind:'final-spatial-continuity',root}));
+  }
 
   if (!CONTRACT_FIXTURES.has(String(source.acquisition?.kind ?? '').toLowerCase())) {
+    if (includeFinalAuthority) await appendFinalCandidateAuthority(root,source,asset,refs,{includeFreshFinalSpatial});
     await appendRelationalCertificationEvidence(root,source,asset,refs);
   }
 
-  if (projection !== 'none') {
-    const geometry = sourceGeometry(source);
-    const geometryPath = await json(path.join(root,'model','reference-geometry.json'), geometry);
-    refs.push(await contentReference(geometryPath, {kind:'reference-geometry', root}));
-    const proof = createRealizedProjection({
-      referenceGeometry:geometry, glb, cameraHypothesisId:'camera-source',
-      camera:{projection:'perspective',position:[0,0,5],target:[0,0,0],up:[0,1,0],fovY:90,aspect:1},
-      anchorBindings:[{referenceId:'whole-center',nodeId:'model-node',localPoint:[0,0,0]}],
-      evidenceRefs:['model/candidate.glb','source/reference.bin'],
-    });
-    const proofPath = await json(path.join(root,'model','realized-projection.json'), proof);
-    refs.push(await contentReference(proofPath, {kind:'realized-projection', root}));
+  if (projectionBundle) {
+    refs.push(projectionBundle.geometryRef, projectionBundle.proofRef);
   }
 
   return commitCheckpoint(root, {
     capability:'whole-object-certification', scopeId:'whole', reason:'Candidate closure evidence is digest-bound.',
     artifactRefs:refs, claims:['Visual fidelity requires source-bound realized reprojection for real references.'],
-    gates:REQUIRED_CLOSURE_GATE_IDS.map((id)=>({id,status:'pass',evidenceRefs:[REQUIRED_VISUAL_GATE_IDS.includes(id)?reviewRef.path:asset.path]})),
+    gates:REQUIRED_CLOSURE_GATE_IDS.map((id)=>({id,evidenceRefs:[REQUIRED_VISUAL_GATE_IDS.includes(id)?reviewRef.path:asset.path]})),
   });
 }
 
+test('VC06 same-digest final candidate carries forward exact shape spatial authority with fresh multiview', async (t) => {
+  const {root,source}=await makeProject(t);
+  await advanceToReview(root,source);
+  const checkpoint=await commitCertification(root,source,{projection:'good'});
+  const continuity=await resolveFinalSpatialContinuity(root,{checkpointId:checkpoint.id});
+  assert.equal(continuity.mode,'same-digest-carry-forward');
+  assert.equal(continuity.verdict,'PROCEED');
+  assert.equal(continuity.shapeCheckpoint.assetSha256,continuity.finalCandidate.assetSha256);
+  assert.equal(continuity.policy.finalCertificationAuthority,false);
+  assert.ok(continuity.finalMultiview.requiredViewIds.includes('side'));
+  assert.ok(continuity.finalMultiview.requiredViewIds.includes('top'));
+  assert.equal(validateFinalSpatialContinuity(continuity).valid,true);
+});
+
+test('VC06 validator rejects re-signed mode and multiview tampering', async (t) => {
+  const {root,source}=await makeProject(t);
+  await advanceToReview(root,source);
+  const checkpoint=await commitCertification(root,source,{projection:'good'});
+  const continuity=await resolveFinalSpatialContinuity(root,{checkpointId:checkpoint.id});
+
+  const wrongMode=structuredClone(continuity);
+  wrongMode.mode='changed-digest-reverified';
+  delete wrongMode.continuityDigest;
+  wrongMode.continuityDigest=digestJson(wrongMode);
+  assert.equal(validateFinalSpatialContinuity(wrongMode).valid,false);
+
+  const missingView=structuredClone(continuity);
+  missingView.finalMultiview.requiredViewIds=missingView.finalMultiview.requiredViewIds.filter((id)=>id!=='side');
+  missingView.finalMultiview.outputs=missingView.finalMultiview.outputs.filter((output)=>output.viewId!=='side');
+  delete missingView.continuityDigest;
+  missingView.continuityDigest=digestJson(missingView);
+  assert.equal(validateFinalSpatialContinuity(missingView).valid,false);
+
+  const semanticTamper=structuredClone(continuity);
+  semanticTamper.scopeBindings[0].classification='PLANAR_COLLAPSE';
+  semanticTamper.scopeBindings[0].status='ADMITTED';
+  delete semanticTamper.continuityDigest;
+  semanticTamper.continuityDigest=digestJson(semanticTamper);
+  const semanticValidation=validateFinalSpatialContinuity(semanticTamper);
+  assert.equal(semanticValidation.valid,false);
+  assert.match(semanticValidation.errors.join('\n'),/status does not match frozen role\/classification semantics/u);
+});
+
+test('VC06 changed final candidate cannot inherit shape-stage spatial authority without fresh final evidence', async (t) => {
+  const {root,source}=await makeProject(t);
+  await advanceToReview(root,source,{mutateAtAppearance:true});
+  const authority=await resolveAuthoritativeCandidateLineage(root);
+  assert.notEqual(authority.initialCandidate.assetSha256,authority.finalCandidate.assetSha256);
+  await assert.rejects(
+    ()=>resolveFinalSpatialContinuity(root),
+    /changed final candidate requires fresh VC01 evidence for protected scope whole/u,
+  );
+  await assert.rejects(
+    ()=>commitCertification(root,source,{projection:'good'}),
+    /changed final candidate requires fresh VC01 evidence for protected scope whole/u,
+  );
+});
+
+test('VC06 changed final candidate closes only after fresh exact VC01 and VC03 evidence', async (t) => {
+  const {root,source}=await makeProject(t);
+  await advanceToReview(root,source,{mutateAtAppearance:true});
+  const checkpoint=await commitCertification(root,source,{projection:'good',includeFreshFinalSpatial:true});
+  const continuity=await resolveFinalSpatialContinuity(root,{checkpointId:checkpoint.id});
+  assert.equal(continuity.mode,'changed-digest-reverified');
+  assert.equal(continuity.verdict,'PROCEED');
+  assert.notEqual(continuity.shapeCheckpoint.assetSha256,continuity.finalCandidate.assetSha256);
+  assert.equal(continuity.scopeBindings[0].classification,'NO_PLANAR_COLLAPSE');
+  assert.equal(continuity.policy.changedDigestRequiresFreshSpatialEvidence,true);
+});
+
+test('VC07 keeps shape-stage spatial plausibility and final-candidate continuity as independent runtime gates', () => {
+  const shapePolicy=checkpointGatePolicy('whole-object-certification','spatial-plausibility');
+  const finalPolicy=checkpointGatePolicy('whole-object-certification','final-spatial-continuity');
+  assert.equal(shapePolicy.evaluator,'trusted-spatial-gate');
+  assert.equal(finalPolicy.evaluator,'final-spatial-continuity');
+  assert.ok(REQUIRED_CLOSURE_GATE_IDS.includes('spatial-plausibility'));
+  assert.ok(REQUIRED_CLOSURE_GATE_IDS.includes('final-spatial-continuity'));
+});
+
+test('VC07 final continuity gate replays VC06 and ignores a caller-authored continuity artifact', async (t) => {
+  const {root,source}=await makeProject(t);
+  await advanceToReview(root,source);
+  const checkpoint=await commitCertification(root,source,{projection:'good',attachForgedFinalContinuity:true});
+  const gate=checkpoint.gates.find((item)=>item.id==='final-spatial-continuity');
+  assert.equal(gate.evaluator,'final-spatial-continuity');
+  assert.equal(gate.status,'pass');
+  assert.ok(gate.evidenceRefs.includes('model/candidate.glb'));
+  assert.ok(gate.evidenceRefs.includes('reviews/candidate-lineage-proof.json'));
+  assert.ok(gate.evidenceRefs.includes('renders/final-clay/render-report.json'));
+  assert.ok(!gate.evidenceRefs.includes('reviews/forged-final-spatial-continuity.json'));
+});
+
+test('VC07 readiness and certificate bind exact VC06 continuity and final candidate', async (t) => {
+  const {root,source}=await makeProject(t);
+  await advanceToReview(root,source);
+  const checkpoint=await commitCertification(root,source,{projection:'good'});
+  const continuity=await resolveFinalSpatialContinuity(root,{checkpointId:checkpoint.id});
+  const readiness=await assessCertification(root);
+  assert.equal(readiness.ready,true,readiness.errors.join('\n'));
+  assert.equal(readiness.finalSpatialContinuityDigest,continuity.continuityDigest);
+  assert.equal(readiness.finalCandidateSha256,continuity.finalCandidate.assetSha256);
+  assert.equal(readiness.finalSpatialContinuityMode,continuity.mode);
+  const certificate=await certifyProject(root);
+  assert.equal(certificate.finalSpatialContinuity.continuityDigest,continuity.continuityDigest);
+  assert.equal(certificate.finalSpatialContinuity.finalCandidateSha256,continuity.finalCandidate.assetSha256);
+  assert.equal(certificate.finalSpatialContinuity.mode,continuity.mode);
+  assert.equal(certificate.finalSpatialContinuity.finalMultiviewReportDigest,continuity.finalMultiview.reportDigest);
+});
+
+test('VC07 audit rejects a re-signed certificate with stale final continuity binding', async (t) => {
+  const {root,source}=await makeProject(t);
+  await advanceToReview(root,source);
+  await commitCertification(root,source,{projection:'good'});
+  await certifyProject(root);
+  const certificatePath=path.join(root,'.refas','certification.json');
+  const certificate=JSON.parse(await fs.readFile(certificatePath,'utf8'));
+  certificate.finalSpatialContinuity.continuityDigest='f'.repeat(64);
+  const {certificateDigest:ignoredDigest,certifiedAt,...core}=certificate;
+  void ignoredDigest;
+  certificate.certificateDigest=digestJson(core);
+  await fs.writeFile(certificatePath,`${JSON.stringify(certificate, null, 2)}\n`,'utf8');
+  const audit=await auditProject(root);
+  assert.equal(audit.valid,false);
+  assert.match(audit.errors.join('\n'),/certificate final-spatial-continuity binding is invalid/u);
+  const guidance=await resumeProject(root);
+  assert.equal(guidance.nextAction,'REVERIFY_FINAL_SPATIAL_CONTINUITY');
+  assert.match(guidance.reason,/stored certificate final-spatial-continuity binding/u);
+});
+
+test('VC07 certified resume refuses DONE when current VC06 immutable evidence no longer replays', async (t) => {
+  const {root,source}=await makeProject(t);
+  await advanceToReview(root,source);
+  const checkpoint=await commitCertification(root,source,{projection:'good'});
+  await certifyProject(root);
+  const report=checkpoint.artifactRefs.find((artifact)=>artifact.path==='renders/final-clay/render-report.json');
+  assert.ok(report);
+  const objectFile=path.join(root,'.refas','objects',report.sha256.slice(0,2),report.sha256.slice(2));
+  await fs.writeFile(objectFile,'corrupt-final-clay-report\n','utf8');
+  const guidance=await resumeProject(root);
+  assert.equal(guidance.nextAction,'REVERIFY_FINAL_SPATIAL_CONTINUITY');
+  assert.match(guidance.reason,/final-candidate spatial continuity/u);
+});
+
+test('VC05 spatial-plausibility policy is runtime-trusted and caller status fields remain forbidden', () => {
+  const policy=checkpointGatePolicy('whole-object-certification','spatial-plausibility');
+  assert.equal(policy.evaluator,'trusted-spatial-gate');
+  assert.equal(policy.capability,undefined);
+  assert.throws(
+    ()=>normalizeCheckpointGateRequests('whole-object-certification',REQUIRED_CLOSURE_GATE_IDS.map((id)=>(
+      id==='spatial-plausibility'
+        ? {id,status:'pass',evidenceRefs:['model/spatial.json']}
+        : {id,evidenceRefs:['model/state.bin']}
+    ))),
+    /status is runtime-authoritative/u,
+  );
+});
+
+test('VC05 trusted spatial authority derives fail from VC04 REWORK', async (t) => {
+  const {root,source}=await makeProject(t);
+  await advanceToReview(root,source,{
+    candidateThickness:0.002,
+    expectedSpatialClassification:'PLANAR_COLLAPSE',
+    expectedVolumeVerdict:'REWORK',
+    stopAfterShape:true,
+  });
+  const authority=await resolveTrustedSpatialGateAuthority(root);
+  assert.equal(authority.mode,'volume-barrier');
+  assert.equal(authority.gateStatus,'fail');
+  assert.equal(authority.policy.callerStatusAccepted,false);
+  assert.equal(authority.policy.finalCandidateContinuityAuthority,false);
+});
+
+test('VC05 trusted spatial authority derives blocked from VC04 HOLD', async (t) => {
+  const {root,source}=await makeProject(t);
+  await advanceToReview(root,source,{
+    spatialRole:'unresolved',
+    expectedSpatialClassification:'INDETERMINATE',
+    expectedVolumeVerdict:'HOLD',
+    stopAfterShape:true,
+  });
+  const authority=await resolveTrustedSpatialGateAuthority(root);
+  assert.equal(authority.gateStatus,'blocked');
+  assert.equal(authority.mode,'volume-barrier');
+});
+
+test('VC05 ignores a caller-authored trusted-authority artifact and cites runtime VC04 evidence', async (t) => {
+  const {root,source}=await makeProject(t);
+  await advanceToReview(root,source);
+  const checkpoint=await commitCertification(root,source,{projection:'good',attachForgedSpatialAuthority:true});
+  const gate=checkpoint.gates.find((item)=>item.id==='spatial-plausibility');
+  assert.equal(gate.evaluator,'trusted-spatial-gate');
+  assert.equal(gate.status,'pass');
+  assert.deepEqual(gate.evidenceRefs,['reviews/volume-barrier.json']);
+  assert.ok(!gate.evidenceRefs.includes('reviews/forged-spatial-gate-authority.json'));
+  const authority=await resolveTrustedSpatialGateAuthority(root,{checkpointId:checkpoint.id});
+  assert.equal(authority.gateStatus,'pass');
+  assert.equal(authority.evidenceRefs[0],'reviews/volume-barrier.json');
+});
+
+test('real-source whole-object certification cannot be committed without final candidate authority', async (t) => {
+  const {root, source} = await makeProject(t);
+  await advanceToReview(root, source);
+  await assert.rejects(
+    () => commitCertification(root, source, {projection:'good', includeFinalAuthority:false}),
+    /requires exactly one candidate-lineage-proof artifact/,
+  );
+});
+
+test('legacy stored certification without final candidate authority reopens under current runtime', async (t) => {
+  const {root, source} = await makeProject(t, 'test-fixture');
+  await advanceToReview(root, source);
+  await commitCertification(root, source, {projection:'good'});
+  await certifyProject(root);
+
+  const projectPath = path.join(root,'.refas','project.json');
+  const state = JSON.parse(await fs.readFile(projectPath,'utf8'));
+  state.source.acquisition = {kind:'user-provided-reference'};
+  state.contractFixtureAuthority = null;
+  await fs.writeFile(projectPath,`${JSON.stringify(state, null, 2)}\n`);
+
+  const audit = await auditProject(root);
+  assert.equal(audit.valid,false);
+  assert.match(audit.errors.join('\n'),/candidate authority: whole-object-certification requires exactly one candidate-lineage-proof artifact/);
+  const guidance = await resumeProject(root);
+  assert.notEqual(guidance.nextAction,'DONE');
+});
+
+
 test('real source cannot bypass certification by omitting realized reprojection', async (t) => {
   const {root, source} = await makeProject(t);
-  await advanceToReview(root);
+  await advanceToReview(root, source);
   await commitCertification(root, source, {projection:'none'});
   const readiness = await assessCertification(root);
   assert.equal(readiness.ready, false);
@@ -222,7 +788,7 @@ test('real source cannot bypass certification by omitting realized reprojection'
 
 test('good realized reprojection allows real source certification and remains audit-valid', async (t) => {
   const {root, source} = await makeProject(t);
-  await advanceToReview(root);
+  await advanceToReview(root, source);
   await commitCertification(root, source, {projection:'good'});
   const readiness = await assessCertification(root);
   assert.equal(readiness.ready, true, readiness.errors.join('\n'));
@@ -238,7 +804,7 @@ test('good realized reprojection allows real source certification and remains au
 
 test('blocking realized reprojection vetoes certification even when visual review declares pass', async (t) => {
   const {root, source} = await makeProject(t);
-  await advanceToReview(root);
+  await advanceToReview(root, source, {projection:'bad'});
   await commitCertification(root, source, {projection:'bad'});
   const readiness = await assessCertification(root);
   assert.equal(readiness.ready, false);
@@ -248,7 +814,7 @@ test('blocking realized reprojection vetoes certification even when visual revie
 
 test('contract fixtures remain compatible with legacy synthetic certification tests', async (t) => {
   const {root, source} = await makeProject(t, 'test-fixture');
-  await advanceToReview(root);
+  await advanceToReview(root, source);
   await commitCertification(root, source, {projection:'none'});
   const readiness = await assessCertification(root);
   assert.equal(readiness.ready, true, readiness.errors.join('\n'));

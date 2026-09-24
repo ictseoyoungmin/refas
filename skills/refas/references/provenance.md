@@ -44,3 +44,12 @@ Paths locate artifacts; digests identify them. If a path now contains different 
 ## Reproducibility
 
 Store model specifications, camera settings, renderer version, and command arguments alongside render outputs. A review board without a traceable GLB and camera is visual evidence but not reproducible evidence.
+
+
+## Acquisition metadata is not privilege
+
+The `acquisition` object records provenance context only. It may describe a user upload, retrieval path, camera context, or another source origin, but it cannot weaken reconstruction or certification authority.
+
+The labels `test-fixture`, `deterministic-project-fixture`, and `synthetic-test-fixture` are reserved for historical compatibility and are rejected by public source-manifest creation, `initProject`, and `bindSource`. Contract-only test exemptions exist only in trusted internal harness state, are bound to the exact source SHA-256, and are intentionally absent from the public API and discovery graph.
+
+Changing source metadata never converts a production project into a fixture project.

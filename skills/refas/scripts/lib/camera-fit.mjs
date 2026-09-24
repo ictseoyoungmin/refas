@@ -1,5 +1,6 @@
 import {assertDigest, assertId, deepFreeze, digestJson} from './canonical.mjs';
 import {normalizeProjectionCamera} from './realized-projection.mjs';
+import {assertMetricUseAllowed} from './metric-authority.mjs';
 
 /**
  * Bounded camera fitting is deliberately a small owner-local search.  It
@@ -48,6 +49,7 @@ function normalizeObjectives(values = []) {
     const scale = finite(raw?.scale ?? 1, `objectives[${index}].scale`);
     const weight = finite(raw?.weight ?? 1, `objectives[${index}].weight`);
     if (!(scale > 0 && weight > 0)) throw new Error(`objectives[${index}] scale and weight must be positive`);
+    assertMetricUseAllowed(id, 'objective', {declaredAuthority: 'RANKING_ALLOWED'});
     return {id, goal, scale, weight};
   });
 }
@@ -270,7 +272,6 @@ export function cameraFitMeasurementsFromProjection(proof) {
   return {
     'macro-anchor-rmse': Number(metrics.macroAnchorRmseNormalized ?? Infinity),
     'chain-angle-error': Number(metrics.chainAngleRmseDegrees ?? Infinity) / 180,
-    'negative-space-loss': metrics.negativeSpaceMeanIoU == null ? Infinity : 1 - Number(metrics.negativeSpaceMeanIoU),
     'bbox-loss': metrics.dimensionMeanRelativeError == null ? Infinity : Number(metrics.dimensionMeanRelativeError),
     'occlusion-loss': Number(metrics.occlusionOrderViolations ?? 0),
   };

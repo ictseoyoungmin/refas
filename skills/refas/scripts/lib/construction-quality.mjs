@@ -1,4 +1,5 @@
 import {assertDigest, assertId, deepFreeze, digestJson} from './canonical.mjs';
+import {validateConstructionExecutionProof, validateConstructionOperationPermit, validateConstructionVocabulary} from './construction-vocabulary.mjs';
 
 export const CONSTRUCTION_QUALITY_SCHEMA = 'refas.construction-quality/v1';
 export const REQUIRED_VISIBLE_FORM_GATES = Object.freeze([
@@ -13,6 +14,12 @@ export const REQUIRED_VISIBLE_FORM_GATES = Object.freeze([
 const CLAIMS = new Set(['blockout', 'identity-bearing']);
 const STATUSES = new Set(['pass', 'fail', 'insufficient']);
 const GENERIC_ONLY_FAMILIES = new Set(['generic-primitive']);
+const OPERATION_FAMILIES = Object.freeze({
+  'hard-surface-shell': new Set(['hard-surface-shell']),
+  'surface-network-parts': new Set(['surface-network', 'surface-network-parts']),
+  'section-profile-loft-rigid': new Set(['section-profile-loft', 'section-profile-loft-rigid']),
+  'section-profile-loft-organic': new Set(['section-profile-loft', 'section-profile-loft-organic']),
+});
 
 function uniqueStrings(values, label) {
   const output = [...new Set((values ?? []).map(String).filter(Boolean))].sort();
@@ -50,6 +57,9 @@ export function createConstructionQuality({
   identityFeatures = [],
   wholeDependency,
   registeredComparison,
+  constructionVocabulary = null,
+  constructionPermits = [],
+  constructionExecutionProof = null,
   ambiguities = [],
 } = {}) {
   const normalizedClaim = String(claim);
@@ -79,12 +89,64 @@ export function createConstructionQuality({
   if (!normalizedComparison.path) throw new Error('registeredComparison.path is required');
   if (!normalizedComparison.scopeIds.includes('whole')) throw new Error('registered comparison must cover whole');
 
+  let normalizedVocabulary = null;
+  let normalizedExecutionProof = null;
+  const normalizedPermits = [];
+  if (constructionVocabulary != null) {
+    const vocabularyValidation = validateConstructionVocabulary(constructionVocabulary);
+    if (!vocabularyValidation.valid) throw new Error(`constructionVocabulary is invalid: ${vocabularyValidation.errors.join('; ')}`);
+    normalizedVocabulary = constructionVocabulary;
+    if (normalizedVocabulary.sourceSha256 !== sourceSha256) throw new Error('constructionVocabulary does not bind sourceSha256');
+    for (const [index, permit] of constructionPermits.entries()) {
+      const permitValidation = validateConstructionOperationPermit(permit, normalizedVocabulary);
+      if (!permitValidation.valid) throw new Error(`constructionPermits[${index}] is invalid: ${permitValidation.errors.join('; ')}`);
+      normalizedPermits.push(permit);
+    }
+    if (constructionExecutionProof != null) {
+      const proofValidation = validateConstructionExecutionProof(constructionExecutionProof, normalizedVocabulary, normalizedPermits, {assetSha256});
+      if (!proofValidation.valid) throw new Error(`constructionExecutionProof is invalid: ${proofValidation.errors.join('; ')}`);
+      normalizedExecutionProof = constructionExecutionProof;
+    }
+  } else if (constructionPermits.length || constructionExecutionProof != null) {
+    throw new Error('constructionPermits/constructionExecutionProof require constructionVocabulary');
+  }
+
   const closureErrors = [];
   if (normalizedClaim === 'identity-bearing') {
     if (genericPrimitiveOnly) closureErrors.push('generic primitive-only geometry is blockout and cannot close shape reconstruction');
     if (!normalizedFeatures.length) closureErrors.push('identity-bearing geometry requires observed identity features');
     if (normalizedWholeDependency.status !== 'pass') closureErrors.push('whole-shape dependency barrier has not passed');
     for (const gate of gates) if (gate.status !== 'pass') closureErrors.push(`${gate.id} is ${gate.status}`);
+    if (!normalizedVocabulary) {
+      closureErrors.push('identity-bearing construction requires a canonical construction vocabulary');
+    } else if (normalizedVocabulary.vocabulary === 'unresolved') {
+      closureErrors.push('unresolved construction vocabulary is blockout-only');
+    } else {
+      if (!normalizedExecutionProof) closureErrors.push('identity-bearing construction requires a candidate-bound construction execution proof');
+      const identityPermits = normalizedPermits.filter((permit) => permit.operation !== 'assembly-decomposition');
+      const effectiveScopes = normalizedVocabulary.vocabulary === 'hybrid' || normalizedVocabulary.vocabulary === 'mechanical-articulated'
+        ? normalizedVocabulary.identityScopes
+        : [normalizedVocabulary.scopeId];
+      for (const identityScope of effectiveScopes) {
+        if (!identityPermits.some((permit) => permit.scopeId === identityScope)) closureErrors.push(`identity scope ${identityScope} lacks a permitted construction operation`);
+      }
+      if (normalizedExecutionProof) {
+        for (const identityScope of effectiveScopes) {
+          if (!normalizedExecutionProof.executions.some((execution) => execution.scopeId === identityScope)) closureErrors.push(`identity scope ${identityScope} lacks candidate-bound construction execution`);
+        }
+        for (const execution of normalizedExecutionProof.executions) {
+          const allowedFamilies = OPERATION_FAMILIES[execution.operation];
+          if (allowedFamilies && !families.some((family) => allowedFamilies.has(family))) closureErrors.push(`construction family does not match executed operation ${execution.operation}`);
+        }
+      }
+      if (normalizedVocabulary.vocabulary === 'mechanical-articulated') {
+        if (!normalizedPermits.some((permit) => permit.scopeId === normalizedVocabulary.scopeId && permit.operation === 'assembly-decomposition')) {
+          closureErrors.push('mechanical-articulated construction requires an assembly-decomposition permit');
+        }
+      }
+      const coversScope = normalizedVocabulary.scopeId === scopeId || normalizedVocabulary.identityScopes.includes(scopeId);
+      if (!coversScope) closureErrors.push(`construction vocabulary does not cover quality scope ${scopeId}`);
+    }
   }
   if (closureErrors.length) throw new Error(`construction quality cannot claim identity-bearing closure: ${closureErrors.join('; ')}`);
 
@@ -100,6 +162,9 @@ export function createConstructionQuality({
     identityFeatures: normalizedFeatures,
     wholeDependency: normalizedWholeDependency,
     registeredComparison: normalizedComparison,
+    constructionVocabulary: normalizedVocabulary,
+    constructionPermits: normalizedPermits,
+    constructionExecutionProof: normalizedExecutionProof,
     ambiguities: [...new Set(ambiguities.map(String).filter(Boolean))].sort(),
     policy: {
       primitiveOnlyIsBlockout: true,
@@ -107,6 +172,8 @@ export function createConstructionQuality({
       visibleEvidenceCannotBeDeferredAsHiddenUncertainty: true,
       triangleCountIsNotFidelityAuthority: true,
       validationVolumeCannotReplaceConstructionQuality: true,
+      identityBearingRequiresVocabularyPermit: true,
+      identityBearingRequiresCandidateBoundConstructionProof: true,
     },
   };
   return deepFreeze({...payload, constructionQualityDigest: digestJson(payload)});

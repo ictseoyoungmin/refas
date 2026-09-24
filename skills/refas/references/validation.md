@@ -50,13 +50,55 @@ record. A `blockout` claim, generic-primitive-only construction, missing
 registered whole comparison, or non-pass visible-form gate reopens
 `shape-reconstruction` regardless of downstream evidence volume.
 
+## Perceptual signature evidence
+
+Use `refas.perceptual-signature-evidence/v1` to compare the exact current candidate against the source-derived `refas.perceptual-signature-set/v1`. The evidence binds the exact candidate asset SHA-256 and requires one structured observation for every source signature.
+
+Each observation records what the source signature says, what the current candidate/render shows, the comparison conclusion, evidence refs, and one of `match`, `mismatch`, or `insufficient`. A mismatch may emit an existing typed finding when ownership is unambiguous. An insufficient observation does not invent a rollback owner.
+
+This artifact is resemblance evidence, not a visual gate. A `match` cannot set final visual PASS or certify the asset. R03 does not introduce a universal weighted similarity score. A later early-resemblance barrier may consume these source/candidate observations, but it must preserve source identity and typed-finding authority rather than collapse them into one opaque number.
+
+Numeric `RESEMBLANCE_SIGNAL` authority is fail-closed unless current perceptual-signature evidence is explicitly bound to the same current source and candidate. In R03 such a signal is diagnostic-only: it cannot itself be used as resemblance evidence, become an optimization objective, rank candidates, pass a gate, or certify closure. The structured perceptual-signature observations are the resemblance evidence. Single-view IoU remains forbidden; multiview IoU remains correspondence/diagnostic-only.
+
+## Early resemblance / neutral-clay barrier
+
+Before downstream surface-topology, assembly, or appearance detail on a real source, run the early resemblance barrier. Render the exact current candidate with `refas render-pbr --neutral-clay`, then compare that neutral presentation against the R03 source-bound perceptual signatures.
+
+The neutral-clay renderer replaces candidate beauty/albedo material response with the runtime-owned `refas-neutral-clay-v1` preset and records its exact preset digest, renderer profile, fixed lighting-rig digest, canonical frame digest, candidate SHA-256, and all eight standard output digests. A neutral-clay report has `claimScope: shape-resemblance-only`; it is not appearance evidence and cannot support `appearance-plausibility`.
+
+Create `refas.early-resemblance-barrier/v1` from the current perceptual-signature evidence plus that exact neutral-clay report. The verdict is runtime-derived with no aggregate score:
+
+- `PROCEED`: every macro and identity signature is `match`;
+- `REWORK`: at least one macro or identity signature is `mismatch`;
+- `HOLD`: no required mismatch exists, but at least one macro or identity signature is `insufficient`.
+
+Every macro or identity observation must cite at least one exact output path from the bound neutral-clay render report. A generic review board, native beauty render, or unattached file is not sufficient evidence for a required signature. All R03 source/signature/observation evidence refs used by a production barrier must remain bound in the current checkpoint lineage.
+
+Detail signatures are recorded but do not block this early admission. `PROCEED` authorizes only downstream detail work. It does not set a visual-review PASS, certify the object, or imply topology, assembly, or appearance closure. `REWORK` preserves R03 typed findings and their owners. `HOLD` does not invent an owner.
+
+For production sources, `resume` also obeys the barrier instead of blindly recommending the next capability: `HOLD` requests stronger resemblance evidence, `REWORK` asks for the preserved typed findings to be reported through normal ownership routing, and only `PROCEED` recommends `surface-topology`.
+
+For production sources, the checkpoint runtime enforces this admission before `surface-topology` and every later capability: the current shape-reconstruction checkpoint must contain one exact-candidate R04 barrier whose source and visual-hierarchy bindings are current and whose verdict is `PROCEED`. Source acquisition metadata cannot exempt this rule. A contract-only dogfood may intentionally prove `HOLD` without manufacturing resemblance only when a trusted internal harness has attached a current source-digest-bound fixture authority to RefAs runtime state.
+
+Single-view IoU remains forbidden. Multiview IoU remains correspondence/diagnostic-only and is not an input to this barrier.
+
+## Final resemblance closure
+
+R04 is an early admission barrier, not final resemblance authority. Before a real-source whole-object certification checkpoint, rerun the R03 perceptual-signature contract against the **exact final candidate bytes** and render that same final candidate through the canonical neutral-clay presentation.
+
+Create one `refas.final-resemblance-closure/v1` artifact. It must bind the current primary source digest, current visual-hierarchy digest, exact final candidate SHA-256, one exact final `refas.perceptual-signature-evidence/v1`, and one exact canonical neutral-clay `refas.pbr-render-report/v1`. Every macro and identity signature must be `match`; `mismatch` or `insufficient` refuses final form closure. Detail signatures remain disclosed but do not block form identity.
+
+Every required signature must cite at least one exact final neutral-clay frame. The certification checkpoint preserves the closure, the exact final signature-evidence artifact, the neutral-clay report, and every report output byte. Runtime audit/certification revalidates those bytes against the current source, hierarchy, and authoritative candidate lineage. An R04-era early barrier for candidate A cannot authorize a different downstream candidate B.
+
+This closure still does not replace the final independent visual review, registered comparison, relational closure, or appearance evidence. It only closes the source-specific resemblance question for the final candidate.
+
 ## Registered comparison evidence
 
 Use `compare` after source-to-render registration when whole-object inspection cannot localize a near-match defect. The `refas.registered-comparison/v1` report binds the exact source manifest, asset and render frame, registration, visual hierarchy, comparison input, and output image digests. Every scope board retains whole-context ancestry and may include overlays, splits, source/render edges, silhouette differences, landmark residuals, and normalized dimensions.
 
-For a real source, every compared scope that reports geometry measurements must bind its `refas.reference-geometry/v1` and `refas.realized-projection/v1`. Landmark positions and dimensions are derived from the realized projection fit; do not hand-author render coordinates. A realized scope must have a finite `landmarkResidualRmse`, and its projection binding must reference the same rendered asset. Synthetic/test fixtures may retain declared render coordinates only as `declared-test-fixture` evidence; that compatibility path is lower-authority contract evidence and cannot stand in for real-source geometry correspondence.
+For a real source, every compared scope that reports geometry measurements must bind its `refas.reference-geometry/v1` and `refas.realized-projection/v1`. Landmark positions and dimensions are derived from the realized projection fit; do not hand-author render coordinates. A realized scope must have a finite `landmarkResidualRmse`, and its projection binding must reference the same rendered asset. Trusted contract fixtures may retain declared render coordinates only as `declared-test-fixture` evidence; merely declaring a fixture acquisition kind in the comparison report or source manifest does not enable this compatibility path. It remains lower-authority contract evidence and cannot stand in for real-source geometry correspondence.
 
-Registration residual, silhouette IoU, landmark residuals, and dimension ratios are critique aids only. They cannot set a view or closure gate to pass, cannot become source facts, and cannot choose a repair owner. A discrepancy must first be visible in the registered evidence and recorded as a typed finding. Always inspect local feature scopes even when the global silhouette improves; an attachment or relief regression may occupy too few pixels to lower a whole-object score.
+Single-view IoU is forbidden and must not be generated or consumed as ranking, finding, repair, gate, resemblance, or certification evidence. IoU may re-enter only through an explicit multiview source contract with at least two independently source-backed registered views of the same candidate, and even then it is correspondence-only. Registration residuals, boundary/edge disagreement, landmark residuals, and dimension ratios are critique aids only; they cannot set a view or closure gate to pass, become source facts, or choose a repair owner. A discrepancy must first be visible in the registered evidence and recorded as a typed finding. Always inspect local feature scopes even when the global silhouette improves; an attachment or relief regression may occupy too few pixels to lower a whole-object score.
 
 ## Projection-fit evidence and veto
 
@@ -70,7 +112,7 @@ A good fit never grants PASS. A material mismatch may, however, support a blocki
 
 For final review of a scope that has a projection fit, use `createProjectionAwareVisualReview`. It merges supported projection findings into the unresolved finding set before the normal visual-review rules run. Therefore a requested visual PASS is refused while a material source-to-model geometry mismatch remains. Registration cannot override this veto because registration answers frame placement, not shape agreement.
 
-Registered comparisons may also carry deterministic model-free perceptual aids (boundary/edge disagreement, foreground occupancy and dimensions, coarse luminance/color, negative-space masks, and segment IoU). These measurements are useful for ranking trials and surfacing contrary evidence, but remain non-authoritative: they cannot certify fidelity or choose the repair owner. An unsupported pass with strong contrary evidence is insufficient until a typed finding or substantive source-grounded resolution is recorded.
+Registered comparisons may also carry deterministic model-free perceptual aids such as boundary/edge disagreement, foreground occupancy and dimensions, coarse luminance/color, and negative-space masks. Explicitly authority-tagged non-IoU measurements may rank trials inside an owner-local fit when their public contract allows ranking. IoU is different: single-view IoU stays disabled, and digest-valid multiview IoU is correspondence/diagnostic-only and never participates in ranking or optimization. None of these measurements can certify fidelity or choose the repair owner. An unsupported pass with strong contrary evidence is insufficient until a typed finding or substantive source-grounded resolution is recorded.
 
 A `verdict: pass` visual review also requires a substantive structured observation for every required view and visual gate. Each observation states what the source shows, what the current render shows, whether they agree, and which evidence was inspected. Empty summaries, boilerplate evidence-free PASS declarations, or a metrics-only explanation are not closure evidence. Strong screening-only contradiction signals from the registered comparison require either a typed finding path or a substantive source-grounded resolution; the signals never become universal visual-fidelity thresholds.
 
@@ -115,7 +157,7 @@ Whole-object certification requires current, passing evidence for:
 - no unresolved blocking findings;
 - project audit validity.
 
-For a real source, certification additionally requires one digest-bound `refas.reference-geometry/v1` artifact, one `refas.realized-projection/v1` artifact, one current `refas.certification-relational-evidence/v1` artifact, and the exact GLB whose digest is bound by the visual review. The relational closure must bind the exact current relation graph, semantic-authority set, passing whole-system barrier, passing candidate-bound relational discrepancy, and certification candidate SHA-256. Certification reproduces the realized projection and revalidates relational closure from the checkpoint artifacts before authorization. Missing, stale, non-reproducible, substituted, replayed, or asset-mismatched projection/relational evidence refuses certification. Synthetic/test acquisition kinds keep the contract-fixture compatibility path but cannot use it as visual-fidelity evidence.
+For a real source, certification additionally requires one digest-bound `refas.reference-geometry/v1` artifact, one `refas.realized-projection/v1` artifact, one current `refas.candidate-lineage-proof/v1`, one current `refas.final-resemblance-closure/v1`, one current `refas.certification-relational-evidence/v1` artifact, and the exact GLB whose digest is bound by the visual review. The relational closure must bind the exact current relation graph, semantic-authority set, passing whole-system barrier, passing candidate-bound relational discrepancy, and certification candidate SHA-256. Certification reproduces the realized projection and revalidates relational closure from the checkpoint artifacts before authorization. Missing, stale, non-reproducible, substituted, replayed, or asset-mismatched projection/relational evidence refuses certification. Only runtime-authorized contract fixtures keep the compatibility path, and they still cannot use it as visual-fidelity evidence. Caller-declared acquisition kinds do not qualify.
 
 Certification refuses closure when the review is missing or digest-stale, its verdict is not `pass`, a required view or visual gate is not `pass`, a required passing structured observation is missing, an independent pass lacks an exact registered comparison or its current identity tuple, strong contrary comparison evidence is not resolved by source-grounded evidence, a major/critical/blocking finding remains, a projection-aware review contains material geometric disagreement, real-source relational closure is absent or invalid, or appearance relies on an integrity-only renderer or an unsupported material feature. Gate strings and numeric scores cannot override those findings.
 

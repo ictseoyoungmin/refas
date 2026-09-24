@@ -34,7 +34,7 @@
     "chainResiduals": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["id", "importance", "segments", "angleRmseRadians", "lengthRmseNormalized"], "properties": {"id": {"$ref": "common.schema.json#/$defs/semanticId"}, "importance": {"type": "string"}, "segments": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["segment", "angleErrorRadians", "lengthErrorNormalized"], "properties": {"segment": {"type": "string", "minLength": 1}, "angleErrorRadians": {"type": "number", "minimum": 0}, "lengthErrorNormalized": {"type": "number", "minimum": 0}}}}, "angleRmseRadians": {"type": ["number", "null"], "minimum": 0}, "lengthRmseNormalized": {"type": ["number", "null"], "minimum": 0}}}},
     "axisResiduals": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["id", "importance", "evaluable", "angleErrorRadians"], "properties": {"id": {"$ref": "common.schema.json#/$defs/semanticId"}, "importance": {"type": "string"}, "evaluable": {"type": "boolean"}, "angleErrorRadians": {"type": ["number", "null"], "minimum": 0}}}},
     "contactResiduals": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["id", "importance", "evaluable", "projectedDistanceNormalized", "excessNormalized"], "properties": {"id": {"$ref": "common.schema.json#/$defs/semanticId"}, "importance": {"type": "string"}, "evaluable": {"type": "boolean"}, "projectedDistanceNormalized": {"type": ["number", "null"], "minimum": 0}, "toleranceNormalized": {"type": "number", "minimum": 0}, "excessNormalized": {"type": ["number", "null"], "minimum": 0}}}},
-    "negativeSpaceProjections": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["referenceId", "importance", "polygon", "iou"], "properties": {"referenceId": {"$ref": "common.schema.json#/$defs/semanticId"}, "importance": {"type": "string"}, "polygon": {"type": "array", "minItems": 3, "items": {"type": "array", "prefixItems": [{"type": "number"}, {"type": "number"}], "items": false}}, "iou": {"type": "number", "minimum": 0, "maximum": 1}}}},
+    "negativeSpaceProjections": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["referenceId", "importance", "polygon", "iou"], "properties": {"referenceId": {"$ref": "common.schema.json#/$defs/semanticId"}, "importance": {"type": "string"}, "polygon": {"type": "array", "minItems": 3, "items": {"type": "array", "prefixItems": [{"type": "number"}, {"type": "number"}], "items": false}}, "iou": {"type": ["number", "null"], "minimum": 0, "maximum": 1}}}},
     "dimensionResiduals": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["id", "importance", "evaluable", "relativeError"], "properties": {"id": {"$ref": "common.schema.json#/$defs/semanticId"}, "importance": {"type": "string"}, "evaluable": {"type": "boolean"}, "sourceValue": {"type": "number", "minimum": 0}, "projectedValue": {"type": "number", "minimum": 0}, "relativeError": {"type": ["number", "null"], "minimum": 0}}}},
     "occlusionDepths": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["referenceId", "frontDepth", "backDepth", "orderCorrect"], "properties": {"referenceId": {"$ref": "common.schema.json#/$defs/semanticId"}, "frontDepth": {"type": "number"}, "backDepth": {"type": "number"}, "orderCorrect": {"type": "boolean"}}}},
     "metrics": {
@@ -49,12 +49,13 @@
     "evidenceRefs": {"type": "array", "items": {"type": "string"}},
     "policy": {
       "type": "object",
-      "required": ["sourceGeometryRemainsAuthority", "projectionFitDoesNotMutateGeometry", "metricsCannotCertifyVisualFidelity", "materialDisagreementMayBecomeBlockingFinding"],
+      "required": ["sourceGeometryRemainsAuthority", "projectionFitDoesNotMutateGeometry", "metricsCannotCertifyVisualFidelity", "materialDisagreementMayBecomeBlockingFinding", "singleViewIouIsForbidden"],
       "properties": {
         "sourceGeometryRemainsAuthority": {"const": true},
         "projectionFitDoesNotMutateGeometry": {"const": true},
         "metricsCannotCertifyVisualFidelity": {"const": true},
-        "materialDisagreementMayBecomeBlockingFinding": {"const": true}
+        "materialDisagreementMayBecomeBlockingFinding": {"const": true},
+        "singleViewIouIsForbidden": {"const": true}
       },
       "additionalProperties": false
     },

@@ -25,6 +25,34 @@ import {
 } from './visual-review.mjs';
 import {validatePbrRenderReport} from './pbr-render-report.mjs';
 import {findComparisonContradictions, validateRegisteredComparison} from './registered-comparison.mjs';
+import {assertEarlyResemblanceAdmission} from './early-resemblance-barrier.mjs';
+import {validateFinalResemblanceClosure} from './final-resemblance-closure.mjs';
+import {validateSpatialRoleExpectationSet} from './spatial-role-expectation.mjs';
+import {validateSpatialClosureEvidence} from './spatial-closure-evidence.mjs';
+import {_classifySpatialCollapseFromAuthority} from './spatial-collapse-core.mjs';
+import {assertVolumeBarrierAdmission, createVolumeBarrier, validateVolumeBarrier} from './volume-barrier.mjs';
+import {createRuntimeSpatialGateAuthority} from './spatial-gate-authority.mjs';
+import {createFinalSpatialContinuity} from './final-spatial-continuity.mjs';
+import {
+  createCandidateLineageProof,
+  isCandidateMutationCapability,
+  validateCandidateLineageProof,
+  validateCandidateTransition,
+} from './candidate-authority.mjs';
+import {
+  normalizePublicSourceAcquisition,
+  isTrustedContractFixtureProject,
+  validateContractFixtureAuthority,
+} from './contract-fixture-authority.mjs';
+import {
+  checkpointGatePolicy,
+  checkpointGatePolicyDigest,
+  createCheckpointGateVerdict,
+  expectedCheckpointGateIds,
+  isLegacyCheckpointGate,
+  normalizeCheckpointGateRequests,
+  validateCheckpointGateVerdict,
+} from './checkpoint-gates.mjs';
 
 export const PROJECT_STATE_SCHEMA = 'refas.project-state/v1';
 export const CHECKPOINT_SCHEMA = 'refas.checkpoint/v1';
@@ -81,18 +109,6 @@ async function writeBytesAtomic(root, relativePath, bytes) {
   return resolved.relative;
 }
 
-function normalizeGate(raw, index) {
-  const status = String(raw?.status ?? 'pending').toLowerCase();
-  if (!['pass', 'fail', 'pending', 'blocked'].includes(status)) throw new Error(`gates[${index}].status is invalid`);
-  const gate = {
-    id: assertId(raw.id, `gates[${index}].id`),
-    status,
-    evidenceRefs: [...(raw.evidenceRefs ?? [])].map(String).filter(Boolean),
-  };
-  if (gate.status === 'pass' && !gate.evidenceRefs.length) throw new Error(`gates[${index}] requires current evidenceRefs to pass`);
-  return gate;
-}
-
 function normalizeSourceManifest(raw) {
   if (!raw || typeof raw !== 'object') throw new Error('source manifest is required');
   const source = {
@@ -104,7 +120,7 @@ function normalizeSourceManifest(raw) {
     width: Number(raw.width),
     height: Number(raw.height),
     authority: String(raw.authority ?? 'primary'),
-    acquisition: raw.acquisition && typeof raw.acquisition === 'object' ? structuredClone(raw.acquisition) : {},
+    acquisition: normalizePublicSourceAcquisition(raw.acquisition),
   };
   if (!source.path || !Number.isInteger(source.sizeBytes) || source.sizeBytes < 1) throw new Error('source path and positive sizeBytes are required');
   if (!Number.isInteger(source.width) || source.width < 1 || !Number.isInteger(source.height) || source.height < 1) throw new Error('source width and height must be positive integers');
@@ -202,6 +218,299 @@ function checkpointLineage(checkpoints, headId) {
   return reverse.reverse();
 }
 
+function validatePersistedGateSet(checkpoint) {
+  const errors = [];
+  const gates = checkpoint.gates ?? [];
+  const allLegacy = gates.length > 0 && gates.every(isLegacyCheckpointGate);
+  if (allLegacy && checkpoint.capability !== 'whole-object-certification') {
+    const ids = gates.map((gate) => gate.id);
+    const duplicates = ids.filter((value, index) => ids.indexOf(value) !== index);
+    if (duplicates.length) errors.push(`${checkpoint.id ?? checkpoint.capability} legacy gates contain duplicate IDs: ${[...new Set(duplicates)].join(', ')}`);
+  } else {
+    const expected = expectedCheckpointGateIds(checkpoint.capability);
+    errors.push(...exactSetErrors(gates.map((gate) => gate.id), expected, `${checkpoint.id ?? checkpoint.capability} gates`));
+  }
+  if (!gates.length) errors.push(`${checkpoint.id ?? checkpoint.capability} requires at least one persisted gate`);
+  for (const gate of gates) {
+    if (isLegacyCheckpointGate(gate)) {
+      if (checkpoint.capability === 'whole-object-certification' && !checkpointGatePolicy(checkpoint.capability, gate.id)) {
+        errors.push(`legacy closure gate is not canonical: ${gate.id}`);
+      }
+      if (String(gate.status).toLowerCase() !== 'pass') errors.push(`legacy checkpoint contains non-pass gate: ${gate.id}`);
+      if (!(gate.evidenceRefs?.length > 0)) errors.push(`legacy passing gate has no evidenceRefs: ${gate.id}`);
+      continue;
+    }
+    const validation = validateCheckpointGateVerdict(checkpoint.capability, gate);
+    errors.push(...validation.errors);
+    if (gate.status !== 'pass') errors.push(`checkpoint contains non-pass runtime gate: ${gate.id}`);
+  }
+  return errors;
+}
+
+async function precommitProjectIntegrityErrors(root, state, lineage, storedArtifacts) {
+  const errors = [];
+  try {
+    await verifySource(root, normalizeSourceManifest(state.source));
+  } catch (error) {
+    errors.push(`source integrity: ${error.message}`);
+  }
+  for (const checkpoint of lineage) {
+    if (digestJson(checkpointContent(checkpoint)) !== checkpoint.contentDigest) errors.push(`${checkpoint.id} content digest mismatch`);
+    errors.push(...await auditGateAuthority(root, state, checkpoint, lineage));
+    for (const artifact of checkpoint.artifactRefs) {
+      const objectError = await verifyStoredObject(root, artifact);
+      if (objectError) errors.push(`${checkpoint.id}:${artifact.path}: ${objectError}`);
+    }
+  }
+  for (const artifact of storedArtifacts) {
+    const objectError = await verifyStoredObject(root, artifact);
+    if (objectError) errors.push(`candidate:${artifact.path}: ${objectError}`);
+  }
+  return errors;
+}
+
+function boundEvidenceStatus(state, storedArtifacts, request) {
+  const allowed = new Set([state.source?.path, ...storedArtifacts.map((artifact) => artifact.path)].filter(Boolean));
+  const missing = request.evidenceRefs.filter((ref) => !allowed.has(ref));
+  return {
+    status: request.evidenceRefs.length > 0 && missing.length === 0 ? 'pass' : 'fail',
+    evidenceRefs: request.evidenceRefs,
+    missing,
+  };
+}
+
+async function evaluateCheckpointGateRequests(root, {state, capability, scopeId, requests, storedArtifacts, lineage}) {
+  const verdicts = [];
+  const visualReviewArtifacts = storedArtifacts.filter((artifact) => artifact.kind === 'visual-review');
+
+  for (const request of requests) {
+    const policy = checkpointGatePolicy(capability, request.id);
+    if (!policy) throw new Error(`no runtime gate policy for ${capability}/${request.id}`);
+
+    if (policy.evaluator === 'bound-evidence') {
+      const result = boundEvidenceStatus(state, storedArtifacts, request);
+      verdicts.push(createCheckpointGateVerdict({capability, id: request.id, status: result.status, evidenceRefs: result.evidenceRefs}));
+      continue;
+    }
+
+    if (policy.evaluator === 'source-integrity') {
+      let status = 'pass';
+      try {
+        await verifySource(root, normalizeSourceManifest(state.source));
+      } catch {
+        status = 'fail';
+      }
+      verdicts.push(createCheckpointGateVerdict({
+        capability, id: request.id, status, evidenceRefs: state.source?.path ? [state.source.path] : [],
+      }));
+      continue;
+    }
+
+    if (policy.evaluator === 'lineage-capability') {
+      const dependency = [...lineage].reverse().find((checkpoint) =>
+        checkpoint.capability === policy.capability && scopeContains(checkpoint.scopeId, scopeId));
+      const dependencyErrors = dependency ? await auditGateAuthority(root, state, dependency, lineage) : ['dependency missing'];
+      const valid = Boolean(dependency) && dependencyErrors.length === 0;
+      verdicts.push(createCheckpointGateVerdict({
+        capability,
+        id: request.id,
+        status: valid ? 'pass' : 'fail',
+        evidenceRefs: valid ? dependency.artifactRefs.map((artifact) => artifact.path) : [],
+      }));
+      continue;
+    }
+
+    if (policy.evaluator === 'trusted-spatial-gate') {
+      const authority = await deriveTrustedSpatialGateAuthority(root, state, lineage, scopeId);
+      verdicts.push(createCheckpointGateVerdict({
+        capability,
+        id: request.id,
+        status: authority.gateStatus,
+        evidenceRefs: authority.evidenceRefs,
+      }));
+      continue;
+    }
+
+    if (policy.evaluator === 'final-spatial-continuity') {
+      const authority = await deriveFinalSpatialCertificationGateAuthority(root, state, lineage, storedArtifacts, scopeId);
+      verdicts.push(createCheckpointGateVerdict({
+        capability,
+        id: request.id,
+        status: authority.gateStatus,
+        evidenceRefs: authority.evidenceRefs,
+      }));
+      continue;
+    }
+
+    if (policy.evaluator === 'visual-review-gate') {
+      let status = 'fail';
+      let evidenceRefs = [];
+      if (visualReviewArtifacts.length === 1) {
+        const artifact = visualReviewArtifacts[0];
+        try {
+          const review = await readJson(path.join(root, artifact.path));
+          const validation = validateVisualReview(review);
+          const gate = (review.gateVerdicts ?? []).find((item) => item.id === policy.visualGateId);
+          if (validation.valid && review.scopeId === scopeId && gate) {
+            status = gate.status === 'pass' ? 'pass' : 'fail';
+            evidenceRefs = [artifact.path];
+          }
+        } catch {
+          status = 'fail';
+        }
+      }
+      verdicts.push(createCheckpointGateVerdict({capability, id: request.id, status, evidenceRefs}));
+      continue;
+    }
+
+    if (policy.evaluator === 'project-integrity') {
+      const errors = await precommitProjectIntegrityErrors(root, state, lineage, storedArtifacts);
+      verdicts.push(createCheckpointGateVerdict({
+        capability,
+        id: request.id,
+        status: errors.length ? 'fail' : 'pass',
+        evidenceRefs: errors.length ? [] : storedArtifacts.map((artifact) => artifact.path),
+      }));
+      continue;
+    }
+
+    throw new Error(`unsupported checkpoint gate evaluator: ${policy.evaluator}`);
+  }
+
+  return verdicts;
+}
+
+async function auditGateAuthority(root, state, checkpoint, checkpoints) {
+  const errors = validatePersistedGateSet(checkpoint);
+  const byId = new Map(checkpoints.map((item) => [item.id, item]));
+  const lineage = checkpointLineage(checkpoints, checkpoint.parentId);
+
+  for (const gate of checkpoint.gates ?? []) {
+    const legacy = isLegacyCheckpointGate(gate);
+    let policy = checkpointGatePolicy(checkpoint.capability, gate.id);
+    if (!policy && legacy && checkpoint.capability !== 'whole-object-certification') {
+      policy = checkpointGatePolicy(checkpoint.capability, `${checkpoint.capability}-gate`);
+    }
+    if (!policy) {
+      errors.push(`${checkpoint.id} gate has no runtime authority policy: ${gate.id}`);
+      continue;
+    }
+
+    if (policy.evaluator === 'bound-evidence') {
+      const allowed = new Set([state.source?.path, ...checkpoint.artifactRefs.map((artifact) => artifact.path)].filter(Boolean));
+      if (!gate.evidenceRefs.length || gate.evidenceRefs.some((ref) => !allowed.has(ref))) {
+        errors.push(`${checkpoint.id} gate ${gate.id} cites unbound evidence`);
+      }
+    } else if (policy.evaluator === 'source-integrity') {
+      try {
+        await verifySource(root, normalizeSourceManifest(state.source));
+      } catch (error) {
+        errors.push(`${checkpoint.id} source-integrity gate failed re-evaluation: ${error.message}`);
+      }
+      if (!legacy && JSON.stringify(gate.evidenceRefs) !== JSON.stringify(state.source?.path ? [state.source.path] : [])) {
+        errors.push(`${checkpoint.id} source-integrity gate evidence binding mismatch`);
+      }
+    } else if (policy.evaluator === 'lineage-capability') {
+      const dependency = [...lineage].reverse().find((item) =>
+        item.capability === policy.capability && scopeContains(item.scopeId, checkpoint.scopeId));
+      if (!dependency) {
+        errors.push(`${checkpoint.id} gate ${gate.id} lineage authority mismatch`);
+      } else {
+        const dependencyErrors = await auditGateAuthority(root, state, dependency, lineage);
+        if (dependencyErrors.length) errors.push(`${checkpoint.id} gate ${gate.id} dependency is not trustworthy: ${dependencyErrors.join('; ')}`);
+        if (!legacy) {
+          const expectedRefs = dependency.artifactRefs.map((artifact) => artifact.path).sort();
+          if (JSON.stringify([...gate.evidenceRefs].sort()) !== JSON.stringify(expectedRefs)) {
+            errors.push(`${checkpoint.id} gate ${gate.id} lineage authority mismatch`);
+          }
+        }
+      }
+    } else if (policy.evaluator === 'trusted-spatial-gate') {
+      try {
+        const authority = await deriveTrustedSpatialGateAuthority(root, state, lineage, checkpoint.scopeId);
+        if (authority.gateStatus !== gate.status) {
+          errors.push(`${checkpoint.id} gate ${gate.id} does not match trusted spatial runtime authority: ${authority.gateStatus}`);
+        }
+        if (!legacy && JSON.stringify([...gate.evidenceRefs].sort()) !== JSON.stringify([...authority.evidenceRefs].sort())) {
+          errors.push(`${checkpoint.id} gate ${gate.id} trusted spatial evidence binding mismatch`);
+        }
+        if (authority.gateStatus !== 'pass') {
+          errors.push(`${checkpoint.id} gate ${gate.id} trusted spatial authority is not pass: ${authority.gateStatus}`);
+        }
+      } catch (error) {
+        errors.push(`${checkpoint.id} gate ${gate.id} trusted spatial authority unavailable: ${error.message}`);
+      }
+    } else if (policy.evaluator === 'final-spatial-continuity') {
+      try {
+        const authority = await deriveFinalSpatialCertificationGateAuthority(root, state, lineage, checkpoint.artifactRefs, checkpoint.scopeId);
+        if (authority.gateStatus !== gate.status) {
+          errors.push(`${checkpoint.id} gate ${gate.id} does not match final spatial continuity runtime authority: ${authority.gateStatus}`);
+        }
+        if (!legacy && JSON.stringify([...gate.evidenceRefs].sort()) !== JSON.stringify([...authority.evidenceRefs].sort())) {
+          errors.push(`${checkpoint.id} gate ${gate.id} final spatial continuity evidence binding mismatch`);
+        }
+        if (authority.gateStatus !== 'pass') {
+          errors.push(`${checkpoint.id} gate ${gate.id} final spatial continuity is not pass: ${authority.gateStatus}`);
+        }
+      } catch (error) {
+        errors.push(`${checkpoint.id} gate ${gate.id} final spatial continuity authority unavailable: ${error.message}`);
+      }
+    } else if (policy.evaluator === 'visual-review-gate') {
+      const reviewArtifacts = checkpoint.artifactRefs.filter((artifact) => artifact.kind === 'visual-review');
+      if (reviewArtifacts.length !== 1) {
+        errors.push(`${checkpoint.id} gate ${gate.id} visual-review binding mismatch`);
+      } else {
+        if (!legacy && (gate.evidenceRefs.length !== 1 || gate.evidenceRefs[0] !== reviewArtifacts[0].path)) {
+          errors.push(`${checkpoint.id} gate ${gate.id} visual-review binding mismatch`);
+        }
+        try {
+          const bytes = await fs.readFile(objectPath(root, reviewArtifacts[0].sha256), 'utf8');
+          const review = JSON.parse(bytes);
+          const validation = validateVisualReview(review);
+          const reviewGate = (review.gateVerdicts ?? []).find((item) => item.id === policy.visualGateId);
+          if (!validation.valid || reviewGate?.status !== 'pass') {
+            errors.push(`${checkpoint.id} gate ${gate.id} does not pass current stored visual-review re-evaluation`);
+          } else if (!legacy && reviewGate.status !== gate.status) {
+            errors.push(`${checkpoint.id} gate ${gate.id} does not match the stored visual review`);
+          }
+        } catch (error) {
+          errors.push(`${checkpoint.id} gate ${gate.id} visual-review authority unavailable: ${error.message}`);
+        }
+      }
+    } else if (policy.evaluator === 'project-integrity') {
+      try {
+        await verifySource(root, normalizeSourceManifest(state.source));
+      } catch (error) {
+        errors.push(`${checkpoint.id} project-audit source integrity failed: ${error.message}`);
+      }
+      for (const ancestor of lineage) {
+        if (!byId.has(ancestor.id)) {
+          errors.push(`${checkpoint.id} project-audit lineage member missing: ${ancestor.id}`);
+          continue;
+        }
+        if (digestJson(checkpointContent(ancestor)) !== ancestor.contentDigest) errors.push(`${ancestor.id} content digest mismatch`);
+        const ancestorErrors = await auditGateAuthority(root, state, ancestor, lineage);
+        if (ancestorErrors.length) errors.push(`${checkpoint.id} project-audit ancestor is not trustworthy: ${ancestor.id}: ${ancestorErrors.join('; ')}`);
+        for (const artifact of ancestor.artifactRefs) {
+          const objectError = await verifyStoredObject(root, artifact);
+          if (objectError) errors.push(`${ancestor.id}:${artifact.path}: ${objectError}`);
+        }
+      }
+      for (const artifact of checkpoint.artifactRefs) {
+        const objectError = await verifyStoredObject(root, artifact);
+        if (objectError) errors.push(`${checkpoint.id}:${artifact.path}: ${objectError}`);
+      }
+      if (!legacy) {
+        const expectedRefs = checkpoint.artifactRefs.map((artifact) => artifact.path).sort();
+        if (JSON.stringify([...gate.evidenceRefs].sort()) !== JSON.stringify(expectedRefs)) {
+          errors.push(`${checkpoint.id} project-audit gate evidence binding mismatch`);
+        }
+      }
+    }
+  }
+  return errors;
+}
+
 function exactSetErrors(actual, expected, label) {
   const errors = [];
   const duplicates = actual.filter((value, index) => actual.indexOf(value) !== index);
@@ -217,10 +526,27 @@ async function inspectCertificationHead(root, state, head) {
   const errors = [];
   if (head.capability !== 'whole-object-certification' || head.scopeId !== 'whole') {
     errors.push('the head must be a whole-object-certification checkpoint for whole');
-    return {ready: false, errors, visualReview: null, visualReviewArtifact: null};
+    return {ready: false, errors, visualReview: null, visualReviewArtifact: null, finalSpatialContinuity: null};
   }
   errors.push(...exactSetErrors(head.gates.map((gate) => gate.id), REQUIRED_CLOSURE_GATE_IDS, 'closure gates'));
   if (head.gates.some((gate) => gate.status !== 'pass')) errors.push('the certification checkpoint contains a non-pass gate');
+
+  let finalSpatialContinuity=null;
+  if(!isTrustedContractFixtureProject(state)){
+    try{
+      const checkpoints=await listCheckpoints(root);
+      const lineage=checkpointLineage(checkpoints,head.id);
+      finalSpatialContinuity=await resolveFinalSpatialContinuityFromLineage(root,state,lineage);
+      if(finalSpatialContinuity?.verdict!=='PROCEED'){
+        errors.push(`final spatial continuity verdict is ${finalSpatialContinuity?.verdict ?? "missing"}, not PROCEED`);
+      }
+      const exactCandidates=candidateGlbArtifacts(head.artifactRefs)
+        .filter((artifact)=>artifact.sha256===finalSpatialContinuity?.finalCandidate?.assetSha256);
+      if(exactCandidates.length!==1) errors.push('final spatial continuity final candidate is not exact-byte bound in the certification checkpoint');
+    }catch(error){
+      errors.push(`final spatial continuity unavailable: ${error.message}`);
+    }
+  }
 
   const reviewArtifacts = head.artifactRefs.filter((artifact) => artifact.kind === 'visual-review');
   if (reviewArtifacts.length !== 1) errors.push('the certification checkpoint requires exactly one digest-bound visual-review artifact');
@@ -278,13 +604,12 @@ async function inspectCertificationHead(root, state, head) {
       errors.push(`visual review unavailable: ${error.message}`);
     }
   }
-  return {ready: errors.length === 0, errors, visualReview, visualReviewArtifact};
+  return {ready: errors.length === 0, errors, visualReview, visualReviewArtifact, finalSpatialContinuity};
 }
 
 async function inspectRegisteredComparison(root, state, head, visualReview, errors) {
   if (visualReview?.evidenceClass !== 'independent-reference' || visualReview?.verdict !== 'pass') return null;
-  const acquisitionKind = String(state.source?.acquisition?.kind ?? '').toLowerCase();
-  if (['test-fixture', 'deterministic-project-fixture', 'synthetic-test-fixture'].includes(acquisitionKind)) return null;
+  if (isTrustedContractFixtureProject(state)) return null;
   const binding = visualReview.registeredComparison;
   if (!binding) {
     errors.push('independent passing visual review requires an exact registered comparison binding');
@@ -303,7 +628,10 @@ async function inspectRegisteredComparison(root, state, head, visualReview, erro
       errors.push('registered comparison artifact bytes do not match the visual review binding');
     }
     report = await readJson(resolved.realFile);
-    const validation = validateRegisteredComparison(report);
+    const validation = validateRegisteredComparison(report, {
+      trustedContractFixture: isTrustedContractFixtureProject(state),
+      expectedAcquisitionKind: state.source?.acquisition?.kind ?? null,
+    });
     if (!validation.valid) errors.push(`registered comparison is invalid: ${validation.errors.join('; ')}`);
   } catch (error) {
     errors.push(`registered comparison unavailable: ${error.message}`);
@@ -352,17 +680,1008 @@ function certificateCore(certificate) {
     checkpointId: certificate.checkpointId,
     checkpointDigest: certificate.checkpointDigest,
     gateIds: certificate.gateIds,
+    finalSpatialContinuity: certificate.finalSpatialContinuity,
     visualReview: certificate.visualReview,
     registeredComparison: certificate.registeredComparison,
     audit: certificate.audit,
   };
 }
 
-function ensurePrerequisites(capability, scopeId, lineage) {
+async function readCheckpointJsonArtifact(root, checkpoint, kind, label) {
+  const matching = (checkpoint?.artifactRefs ?? []).filter((artifact) => artifact.kind === kind);
+  if (matching.length !== 1) throw new Error(`${label} requires exactly one ${kind} artifact`);
+  const artifact = matching[0];
+  const resolved = await assertExistingFileInside(root, artifact.path, `${label} ${kind} artifact`);
+  if (resolved.stat.size !== artifact.sizeBytes || await sha256File(resolved.realFile) !== artifact.sha256) {
+    throw new Error(`${label} ${kind} artifact bytes are stale or mismatched`);
+  }
+  return {artifact, value: await readJson(resolved.realFile)};
+}
+
+async function verifyEarlyResemblanceEvidenceArtifacts(root, state, shapeCheckpoint, barrier, lineage, label) {
+  const reportArtifacts = (shapeCheckpoint.artifactRefs ?? []).filter((artifact) => artifact.kind === 'render-report');
+  const matchingReports = [];
+  for (const artifact of reportArtifacts) {
+    const resolved = await assertExistingFileInside(root, artifact.path, `${label} render-report artifact`);
+    if (resolved.stat.size !== artifact.sizeBytes || await sha256File(resolved.realFile) !== artifact.sha256) {
+      throw new Error(`${label} render-report artifact bytes are stale or mismatched`);
+    }
+    const report = await readJson(resolved.realFile);
+    if (report?.schema !== 'refas.pbr-render-report/v1' || report?.reportDigest !== barrier.clayRenderReportDigest) continue;
+    matchingReports.push({artifact, report});
+  }
+  if (matchingReports.length !== 1) {
+    throw new Error(`${label} requires exactly one shape-checkpoint neutral-clay render report matching the barrier`);
+  }
+
+  const {report} = matchingReports[0];
+  const validation = validatePbrRenderReport(report);
+  if (!validation.valid) throw new Error(`${label} neutral-clay render report is invalid: ${validation.errors.join('; ')}`);
+  if (digestJson(report) !== digestJson(barrier.clayRenderReport)) {
+    throw new Error(`${label} barrier embeds a different neutral-clay render report`);
+  }
+
+  for (const output of report.outputs ?? []) {
+    const matches = (shapeCheckpoint.artifactRefs ?? []).filter((artifact) =>
+      artifact.kind === 'render-frame' && artifact.path === output.path && artifact.sha256 === output.sha256);
+    if (matches.length !== 1) {
+      throw new Error(`${label} neutral-clay output is not exact-byte bound in the shape checkpoint: ${output.viewId}`);
+    }
+  }
+
+  const lineageArtifactPaths = new Set([
+    state.source.path,
+    ...lineage.flatMap((checkpoint) => (checkpoint.artifactRefs ?? []).map((artifact) => artifact.path)),
+  ].filter(Boolean));
+  const resemblanceEvidenceRefs = new Set([
+    ...(barrier.evidenceRefs ?? []),
+    ...(barrier.signatureEvidence?.evidenceRefs ?? []),
+    ...(barrier.signatureEvidence?.signatureSet?.evidenceRefs ?? []),
+    ...(barrier.signatureEvidence?.observations ?? []).flatMap((observation) => observation.evidenceRefs ?? []),
+    ...(barrier.signatureEvidence?.signatureSet?.signatures ?? []).flatMap((signature) => signature.evidenceRefs ?? []),
+  ].filter(Boolean));
+  for (const evidenceRef of resemblanceEvidenceRefs) {
+    if (!lineageArtifactPaths.has(evidenceRef)) {
+      throw new Error(`${label} resemblance evidence ref is not bound in current checkpoint lineage: ${evidenceRef}`);
+    }
+  }
+}
+
+async function ensureEarlyResemblanceAdmission(root, state, capability, scopeId, lineage) {
+  if (isTrustedContractFixtureProject(state)) return;
+  if (capabilityIndex(capability) < capabilityIndex('surface-topology')) return;
+
+  const shapeCheckpoint = [...lineage].reverse().find((checkpoint) =>
+    checkpoint.capability === 'shape-reconstruction' && scopeContains(checkpoint.scopeId, scopeId));
+  if (!shapeCheckpoint) throw new Error(`${capability} requires a trustworthy shape-reconstruction checkpoint before early resemblance admission`);
+
+  const {value: barrier} = await readCheckpointJsonArtifact(
+    root,
+    shapeCheckpoint,
+    'early-resemblance-barrier',
+    `${capability} early resemblance admission`,
+  );
+
+  const candidateMatches = (shapeCheckpoint.artifactRefs ?? []).filter((artifact) =>
+    artifact.kind === 'glb' && artifact.sha256 === barrier.assetSha256);
+  if (candidateMatches.length !== 1) {
+    throw new Error(`${capability} early resemblance barrier does not bind exactly one shape-reconstruction candidate GLB`);
+  }
+
+  const hierarchyCheckpoint = [...lineage].reverse().find((checkpoint) =>
+    checkpoint.capability === 'visual-hierarchy' && scopeContains(checkpoint.scopeId, scopeId));
+  if (!hierarchyCheckpoint) throw new Error(`${capability} early resemblance admission requires current visual-hierarchy lineage`);
+  const {value: hierarchy} = await readCheckpointJsonArtifact(
+    root,
+    hierarchyCheckpoint,
+    'visual-hierarchy',
+    `${capability} early resemblance admission`,
+  );
+
+  await verifyEarlyResemblanceEvidenceArtifacts(
+    root,
+    state,
+    shapeCheckpoint,
+    barrier,
+    lineage,
+    `${capability} early resemblance admission`,
+  );
+
+  assertEarlyResemblanceAdmission(barrier, {
+    sourceSha256: state.source.sha256,
+    hierarchyDigest: hierarchy.hierarchyDigest,
+    assetSha256: candidateMatches[0].sha256,
+  });
+}
+
+async function parseJsonArtifacts(root, artifacts, kind, label) {
+  const out = [];
+  for (const artifact of artifacts.filter((item) => item.kind === kind)) {
+    out.push({artifact, value: await readStoredJsonArtifact(root, artifact, `${label} ${kind}`)});
+  }
+  return out;
+}
+
+async function verifyVolumeBarrierArtifacts(root, state, {
+  lineage = [],
+  shapeCheckpoint = null,
+  shapeArtifacts = null,
+  parentLineage = null,
+  requireProceed = false,
+  label = 'volume barrier',
+} = {}) {
+  const artifacts = shapeArtifacts ?? shapeCheckpoint?.artifactRefs ?? [];
+  const candidateArtifacts = candidateGlbArtifacts(artifacts);
+  if (candidateArtifacts.length !== 1) throw new Error(`${label} requires exactly one shape candidate GLB`);
+  const candidate = candidateArtifacts[0];
+  const glb = await fs.readFile(objectPath(root, candidate.sha256));
+
+  const earlyArtifacts = artifacts.filter((artifact) => artifact.kind === 'early-resemblance-barrier');
+  if (earlyArtifacts.length !== 1) throw new Error(`${label} requires exactly one early-resemblance-barrier artifact`);
+  const early = await readStoredJsonArtifact(root, earlyArtifacts[0], `${label} early resemblance artifact`);
+  if (early.assetSha256 !== candidate.sha256) throw new Error(`${label} early resemblance candidate binding mismatch`);
+  const signatureSet = early.signatureEvidence?.signatureSet;
+  if (!signatureSet) throw new Error(`${label} requires the exact R03 signature set embedded in early resemblance evidence`);
+
+  const barrierArtifacts = artifacts.filter((artifact) => artifact.kind === 'volume-barrier');
+  if (barrierArtifacts.length !== 1) throw new Error(`${label} requires exactly one volume-barrier artifact`);
+  const barrier = await readStoredJsonArtifact(root, barrierArtifacts[0], `${label} artifact`);
+
+  const evidenceRecords = await parseJsonArtifacts(root, artifacts, 'spatial-closure-evidence', label);
+  const classificationRecords = await parseJsonArtifacts(root, artifacts, 'spatial-collapse-classification', label);
+  const classificationByScope = new Map();
+  for (const record of classificationRecords) {
+    const scopeId = record.value?.scopeId;
+    if (!scopeId) throw new Error(`${label} contains classification without scopeId`);
+    if (classificationByScope.has(scopeId)) throw new Error(`${label} contains competing VC03 classifications for scope ${scopeId}`);
+    classificationByScope.set(scopeId, record);
+  }
+
+  const evidenceByDigest = new Map();
+  for (const record of evidenceRecords) {
+    const digest = record.value?.evidenceDigest;
+    if (!digest) throw new Error(`${label} contains VC01 evidence without evidenceDigest`);
+    if (evidenceByDigest.has(digest)) throw new Error(`${label} contains duplicate VC01 evidence digest ${digest}`);
+    evidenceByDigest.set(digest, record);
+  }
+
+  const authorityLineage = parentLineage ?? lineage;
+  const canonicalClassifications = [];
+  for (const entry of barrier.entries ?? []) {
+    const classificationRecord = classificationByScope.get(entry.scopeId);
+    if (!classificationRecord) throw new Error(`${label} is missing exact VC03 classification artifact for protected scope ${entry.scopeId}`);
+    const classification = classificationRecord.value;
+    if (classification.classificationDigest !== entry.classificationDigest) {
+      throw new Error(`${label} classification digest binding mismatch for scope ${entry.scopeId}`);
+    }
+    const evidenceRecord = evidenceByDigest.get(classification.spatialEvidenceDigest);
+    if (!evidenceRecord) throw new Error(`${label} is missing exact VC01 evidence for protected scope ${entry.scopeId}`);
+    const evidence = evidenceRecord.value;
+    const evidenceValidation = validateSpatialClosureEvidence(evidence, {glb});
+    if (!evidenceValidation.valid) {
+      throw new Error(`${label} VC01 evidence is invalid for scope ${entry.scopeId}: ${evidenceValidation.errors.join('; ')}`);
+    }
+    if (evidence.scopeId !== entry.scopeId) throw new Error(`${label} VC01 scope mismatch for protected scope ${entry.scopeId}`);
+
+    const roleAuthority = await resolveSpatialRoleAuthorityFromLineage(root, state, authorityLineage, {scopeId: entry.scopeId});
+    if (!roleAuthority) throw new Error(`${label} requires frozen VC02 role authority for protected scope ${entry.scopeId}`);
+    const expectedClassification = _classifySpatialCollapseFromAuthority({
+      glb,
+      spatialEvidence: evidence,
+      roleAuthority,
+    });
+    if (digestJson(expectedClassification) !== digestJson(classification)) {
+      throw new Error(`${label} VC03 classification is stale or non-canonical for protected scope ${entry.scopeId}`);
+    }
+    canonicalClassifications.push(classification);
+  }
+
+  for (const record of classificationRecords) {
+    if (!canonicalClassifications.some((item) => item.scopeId === record.value.scopeId)) canonicalClassifications.push(record.value);
+  }
+
+  const hierarchyCheckpoint = [...authorityLineage].reverse().find((checkpoint) => checkpoint.capability === 'visual-hierarchy');
+  if (!hierarchyCheckpoint) throw new Error(`${label} requires current visual-hierarchy lineage`);
+  const {value: hierarchy} = await readCheckpointJsonArtifact(root, hierarchyCheckpoint, 'visual-hierarchy', label);
+
+  const validation = validateVolumeBarrier(barrier, {
+    sourceSha256: state.source.sha256,
+    hierarchyDigest: hierarchy.hierarchyDigest,
+    assetSha256: candidate.sha256,
+    signatureSet,
+    classifications: canonicalClassifications,
+  });
+  if (!validation.valid) throw new Error(`${label} is invalid: ${validation.errors.join('; ')}`);
+
+  if (requireProceed) {
+    assertVolumeBarrierAdmission(barrier, {
+      sourceSha256: state.source.sha256,
+      hierarchyDigest: hierarchy.hierarchyDigest,
+      assetSha256: candidate.sha256,
+      signatureSet,
+      classifications: canonicalClassifications,
+    });
+  }
+  return barrier;
+}
+
+async function deriveTrustedSpatialGateAuthority(root, state, lineage, scopeId='whole') {
+  const resolvedScope=assertId(scopeId,'scopeId');
+  if(resolvedScope!=='whole') throw new Error('trusted spatial gate authority is currently defined for whole-object certification scope only');
+  const policyDigest=checkpointGatePolicyDigest('whole-object-certification','spatial-plausibility');
+
+  if(isTrustedContractFixtureProject(state)){
+    const fixtureValidation=validateContractFixtureAuthority(state.contractFixtureAuthority,{sourceSha256:state.source.sha256});
+    const dependency=[...lineage].reverse().find((checkpoint)=>checkpoint.capability==='spatial-hypotheses'&&scopeContains(checkpoint.scopeId,resolvedScope));
+    if(!dependency) throw new Error('trusted contract fixture spatial gate requires spatial-hypotheses lineage');
+    const dependencyErrors=await auditGateAuthority(root,state,dependency,lineage);
+    const trusted=fixtureValidation.valid&&dependencyErrors.length===0;
+    return createRuntimeSpatialGateAuthority({
+      sourceSha256:state.source.sha256,
+      scopeId:resolvedScope,
+      policyDigest,
+      mode:'trusted-contract-fixture',
+      fixtureAuthorityDigest:state.contractFixtureAuthority.authorityDigest,
+      fixtureDependencyCheckpointId:dependency.id,
+      fixtureDependencyCheckpointDigest:dependency.contentDigest,
+      fixtureTrusted:trusted,
+      evidenceRefs:dependency.artifactRefs.map((artifact)=>artifact.path),
+    });
+  }
+
+  const shapeIndex=[...lineage].map((checkpoint)=>checkpoint.capability).lastIndexOf('shape-reconstruction');
+  if(shapeIndex<0) throw new Error('trusted spatial gate requires shape-reconstruction in current lineage');
+  const shapeCheckpoint=lineage[shapeIndex];
+  const prefix=lineage.slice(0,shapeIndex);
+  const barrier=await verifyVolumeBarrierArtifacts(root,state,{
+    lineage,
+    shapeCheckpoint,
+    parentLineage:prefix,
+    requireProceed:false,
+    label:'trusted spatial gate authority',
+  });
+  const barrierArtifact=(shapeCheckpoint.artifactRefs??[]).find((artifact)=>artifact.kind==='volume-barrier');
+  if(!barrierArtifact) throw new Error('trusted spatial gate requires exact VC04 barrier artifact');
+  return createRuntimeSpatialGateAuthority({
+    sourceSha256:state.source.sha256,
+    scopeId:resolvedScope,
+    policyDigest,
+    mode:'volume-barrier',
+    shapeCheckpointId:shapeCheckpoint.id,
+    shapeCheckpointDigest:shapeCheckpoint.contentDigest,
+    assetSha256:barrier.assetSha256,
+    volumeBarrier:barrier,
+    evidenceRefs:[barrierArtifact.path],
+  });
+}
+
+export async function resolveTrustedSpatialGateAuthority(root,{checkpointId=null,scopeId='whole'}={}){
+  root=projectRoot(root);
+  const state=await loadProject(root);
+  if(!state.source) throw new Error('trusted spatial gate authority requires a bound source');
+  const checkpoints=await listCheckpoints(root);
+  const targetId=checkpointId??state.head;
+  if(!targetId) throw new Error('trusted spatial gate authority requires a checkpoint lineage');
+  const lineage=checkpointLineage(checkpoints,targetId);
+  return deriveTrustedSpatialGateAuthority(root,state,lineage,scopeId);
+}
+
+async function readImmutableJsonArtifact(root, artifact, label) {
+  const error=await verifyStoredObject(root,artifact);
+  if(error) throw new Error(`${label}: ${error}`);
+  try{
+    return JSON.parse((await fs.readFile(objectPath(root,artifact.sha256))).toString('utf8'));
+  }catch{
+    throw new Error(`${label} is not valid JSON`);
+  }
+}
+
+async function findFinalNeutralClayEvidence(root,lineage,startIndex,assetSha256){
+  const matches=[];
+  for(let index=startIndex+1;index<lineage.length;index+=1){
+    const checkpoint=lineage[index];
+    for(const artifact of checkpoint.artifactRefs??[]){
+      if(artifact.kind!=='render-report') continue;
+      const report=await readImmutableJsonArtifact(root,artifact,'final spatial continuity render report');
+      if(report?.schema!=='refas.pbr-render-report/v1'||report?.assetSha256!==assetSha256||report?.presentation?.mode!=='neutral-clay') continue;
+      const validation=validatePbrRenderReport(report);
+      if(!validation.valid) throw new Error(`final spatial continuity neutral-clay report is invalid: ${validation.errors.join('; ')}`);
+      for(const output of report.outputs??[]){
+        const frameMatches=(checkpoint.artifactRefs??[]).filter((item)=>
+          item.kind==='render-frame'&&item.path===output.path&&item.sha256===output.sha256);
+        if(frameMatches.length!==1) throw new Error(`final spatial continuity neutral-clay output is not exact-byte bound: ${output.viewId}`);
+      }
+      matches.push({checkpoint,artifact,report});
+    }
+  }
+  if(matches.length!==1) throw new Error(`final spatial continuity requires exactly one post-candidate neutral-clay report; found ${matches.length}`);
+  return matches[0];
+}
+
+async function resolveFinalSpatialContinuityFromLineage(root,state,lineage){
+  if(isTrustedContractFixtureProject(state)) return null;
+  const authority=await resolveCandidateAuthorityFromLineage(root,state,lineage);
+  if(!authority?.initialCandidate||!authority?.finalCandidate) throw new Error('final spatial continuity requires authoritative candidate lineage');
+
+  const shapeIndex=lineage.findIndex((checkpoint)=>checkpoint.id===authority.initialCandidate.checkpointId);
+  if(shapeIndex<0) throw new Error('final spatial continuity shape checkpoint is missing from selected lineage');
+  const shapeCheckpoint=lineage[shapeIndex];
+  const shapePrefix=lineage.slice(0,shapeIndex);
+  const shapeBarrier=await verifyVolumeBarrierArtifacts(root,state,{
+    lineage,
+    shapeCheckpoint,
+    parentLineage:shapePrefix,
+    requireProceed:false,
+    label:'final spatial continuity shape authority',
+  });
+  const earlyArtifact=(shapeCheckpoint.artifactRefs??[]).find((artifact)=>artifact.kind==='early-resemblance-barrier');
+  if(!earlyArtifact) throw new Error('final spatial continuity requires shape-stage early resemblance authority');
+  const early=await readImmutableJsonArtifact(root,earlyArtifact,'final spatial continuity early resemblance barrier');
+  const signatureSet=early.signatureEvidence?.signatureSet;
+  if(!signatureSet) throw new Error('final spatial continuity requires exact R03 signature set');
+
+  const finalIndex=lineage.findIndex((checkpoint)=>checkpoint.id===authority.finalCandidate.checkpointId);
+  if(finalIndex<0) throw new Error('final spatial continuity final candidate checkpoint is missing from selected lineage');
+  const finalCheckpoint=lineage[finalIndex];
+  const finalArtifact=(finalCheckpoint.artifactRefs??[]).find((artifact)=>
+    candidateGlbArtifacts([artifact]).length===1&&artifact.sha256===authority.finalCandidate.assetSha256);
+  if(!finalArtifact) throw new Error('final spatial continuity cannot locate exact final candidate bytes');
+  const finalGlb=await fs.readFile(objectPath(root,finalArtifact.sha256));
+
+  let finalBarrier=shapeBarrier;
+  if(authority.finalCandidate.assetSha256!==authority.initialCandidate.assetSha256){
+    const evidenceByScope=new Map();
+    const classificationByScope=new Map();
+    for(const checkpoint of lineage.slice(finalIndex)){
+      for(const artifact of checkpoint.artifactRefs??[]){
+        if(artifact.kind==='spatial-closure-evidence'){
+          const value=await readImmutableJsonArtifact(root,artifact,'final spatial continuity VC01 evidence');
+          if(value?.assetSha256!==authority.finalCandidate.assetSha256) continue;
+          if(evidenceByScope.has(value.scopeId)) throw new Error(`final spatial continuity has competing VC01 evidence for scope ${value.scopeId}`);
+          evidenceByScope.set(value.scopeId,value);
+        }
+        if(artifact.kind==='spatial-collapse-classification'){
+          const value=await readImmutableJsonArtifact(root,artifact,'final spatial continuity VC03 classification');
+          if(value?.candidateSha256!==authority.finalCandidate.assetSha256) continue;
+          if(classificationByScope.has(value.scopeId)) throw new Error(`final spatial continuity has competing VC03 classifications for scope ${value.scopeId}`);
+          classificationByScope.set(value.scopeId,value);
+        }
+      }
+    }
+
+    const canonicalClassifications=[];
+    for(const scopeId of shapeBarrier.protectedScopeIds??[]){
+      const evidence=evidenceByScope.get(scopeId);
+      if(!evidence) throw new Error(`changed final candidate requires fresh VC01 evidence for protected scope ${scopeId}`);
+      const evidenceValidation=validateSpatialClosureEvidence(evidence,{glb:finalGlb});
+      if(!evidenceValidation.valid) throw new Error(`final VC01 evidence is invalid for ${scopeId}: ${evidenceValidation.errors.join('; ')}`);
+      const storedClassification=classificationByScope.get(scopeId);
+      if(!storedClassification) throw new Error(`changed final candidate requires fresh VC03 classification for protected scope ${scopeId}`);
+      const roleAuthority=await resolveSpatialRoleAuthorityFromLineage(root,state,lineage.slice(0,finalIndex+1),{scopeId});
+      if(!roleAuthority) throw new Error(`final spatial continuity requires frozen VC02 role authority for ${scopeId}`);
+      const expected=_classifySpatialCollapseFromAuthority({glb:finalGlb,spatialEvidence:evidence,roleAuthority});
+      if(digestJson(expected)!==digestJson(storedClassification)) throw new Error(`final VC03 classification is stale or non-canonical for protected scope ${scopeId}`);
+      canonicalClassifications.push(storedClassification);
+    }
+    finalBarrier=createVolumeBarrier({
+      sourceSha256:state.source.sha256,
+      hierarchyDigest:shapeBarrier.hierarchyDigest,
+      assetSha256:authority.finalCandidate.assetSha256,
+      signatureSet,
+      classifications:canonicalClassifications,
+    });
+  }
+
+  const multiview=await findFinalNeutralClayEvidence(root,lineage,finalIndex,authority.finalCandidate.assetSha256);
+  return createFinalSpatialContinuity({
+    sourceSha256:state.source.sha256,
+    hierarchyDigest:shapeBarrier.hierarchyDigest,
+    candidateLineageProof:authority.proof,
+    shapeCheckpointId:shapeCheckpoint.id,
+    shapeCheckpointDigest:shapeCheckpoint.contentDigest,
+    shapeBarrier,
+    finalBarrier,
+    finalMultiviewReport:multiview.report,
+  });
+}
+
+export async function resolveFinalSpatialContinuity(root,{checkpointId=null}={}){
+  root=projectRoot(root);
+  const state=await loadProject(root);
+  if(!state.source) throw new Error('final spatial continuity requires a bound source');
+  const checkpoints=await listCheckpoints(root);
+  const target=checkpointId??state.head;
+  if(!target) throw new Error('final spatial continuity requires a checkpoint lineage');
+  const lineage=checkpointLineage(checkpoints,target);
+  return deepFreeze(await resolveFinalSpatialContinuityFromLineage(root,state,lineage));
+}
+
+async function finalSpatialContinuityEvidenceRefs(root, continuity, storedArtifacts) {
+  const refs=[];
+  const candidates=candidateGlbArtifacts(storedArtifacts)
+    .filter((artifact)=>artifact.sha256===continuity.finalCandidate.assetSha256);
+  if(candidates.length!==1) throw new Error('final spatial continuity gate requires exactly one exact final candidate artifact');
+  refs.push(candidates[0].path);
+
+  const proofArtifacts=storedArtifacts.filter((artifact)=>artifact.kind==='candidate-lineage-proof');
+  if(proofArtifacts.length!==1) throw new Error('final spatial continuity gate requires exactly one candidate-lineage-proof artifact');
+  const proof=await readImmutableJsonArtifact(root,proofArtifacts[0],'final spatial continuity certification lineage proof');
+  if(proof.lineageDigest!==continuity.candidateLineageDigest) throw new Error('final spatial continuity certification lineage digest mismatch');
+  refs.push(proofArtifacts[0].path);
+
+  const reportMatches=[];
+  for(const artifact of storedArtifacts.filter((item)=>item.kind==='render-report')){
+    const report=await readImmutableJsonArtifact(root,artifact,'final spatial continuity certification render report');
+    if(report?.reportDigest===continuity.finalMultiview.reportDigest) reportMatches.push(artifact);
+  }
+  if(reportMatches.length!==1) throw new Error('final spatial continuity gate requires exactly one canonical final multiview report');
+  refs.push(reportMatches[0].path);
+
+  for(const output of continuity.finalMultiview.outputs){
+    const matches=storedArtifacts.filter((artifact)=>
+      artifact.kind==='render-frame'&&artifact.path===output.path&&artifact.sha256===output.sha256);
+    if(matches.length!==1) throw new Error(`final spatial continuity gate output is not exact-byte bound: ${output.viewId}`);
+    refs.push(matches[0].path);
+  }
+  return [...new Set(refs)].sort();
+}
+
+async function deriveFinalSpatialCertificationGateAuthority(root,state,parentLineage,storedArtifacts,scopeId='whole'){
+  const resolvedScope=assertId(scopeId,'scopeId');
+  if(resolvedScope!=='whole') throw new Error('final spatial continuity certification authority is defined for whole-object certification only');
+  if(isTrustedContractFixtureProject(state)){
+    return {
+      gateStatus:'pass',
+      evidenceRefs:[...new Set(storedArtifacts.map((artifact)=>artifact.path))].sort(),
+      continuity:null,
+    };
+  }
+  const prospective={
+    id:'prospective-vc07-whole-object-certification',
+    parentId:parentLineage.at(-1)?.id??null,
+    capability:'whole-object-certification',
+    scopeId:resolvedScope,
+    artifactRefs:storedArtifacts,
+  };
+  const continuity=await resolveFinalSpatialContinuityFromLineage(root,state,[...parentLineage,prospective]);
+  const gateStatus=continuity.verdict==='PROCEED'?'pass':continuity.verdict==='REWORK'?'fail':'blocked';
+  const evidenceRefs=await finalSpatialContinuityEvidenceRefs(root,continuity,storedArtifacts);
+  return {gateStatus,evidenceRefs,continuity};
+}
+
+export async function resolveVolumeBarrierAdmission(root, {checkpointId = null, scopeId = null} = {}) {
+  root = projectRoot(root);
+  const state = await loadProject(root);
+  if (!state.source) throw new Error('volume barrier authority requires a bound source');
+  if (isTrustedContractFixtureProject(state)) return null;
+  const checkpoints = await listCheckpoints(root);
+  const targetId = checkpointId ?? state.head;
+  if (!targetId) throw new Error('volume barrier authority requires a checkpoint lineage');
+  const lineage = checkpointLineage(checkpoints, targetId);
+  const target = lineage.at(-1);
+  const resolvedScopeId = assertId(scopeId ?? target.scopeId, 'scopeId');
+  const shapeIndex = [...lineage].map((checkpoint) => checkpoint.capability).lastIndexOf('shape-reconstruction');
+  if (shapeIndex < 0) throw new Error('volume barrier authority requires shape-reconstruction in current lineage');
+  const shapeCheckpoint = lineage[shapeIndex];
+  if (!scopeContains(shapeCheckpoint.scopeId, resolvedScopeId)) {
+    throw new Error(`volume barrier shape scope ${shapeCheckpoint.scopeId} does not contain requested scope ${resolvedScopeId}`);
+  }
+  const prefix = lineage.slice(0, shapeIndex);
+  const hierarchyCheckpoint = [...prefix].reverse().find((checkpoint) => checkpoint.capability === 'visual-hierarchy');
+  if (!hierarchyCheckpoint) throw new Error('volume barrier authority requires current visual-hierarchy lineage');
+  const {value: hierarchy} = await readCheckpointJsonArtifact(root, hierarchyCheckpoint, 'visual-hierarchy', 'volume barrier authority');
+  if (!(hierarchy.nodes ?? []).some((node) => node.id === resolvedScopeId)) {
+    throw new Error(`volume barrier requested scope is not present in current visual hierarchy: ${resolvedScopeId}`);
+  }
+  return deepFreeze(await verifyVolumeBarrierArtifacts(root, state, {
+    lineage,
+    shapeCheckpoint,
+    parentLineage: prefix,
+    requireProceed: false,
+    label: 'volume barrier authority',
+  }));
+}
+
+async function ensureVolumeBarrierAdmission(root, state, capability, scopeId, lineage) {
+  if (isTrustedContractFixtureProject(state)) return;
+  if (capabilityIndex(capability) < capabilityIndex('surface-topology')) return;
+  const shapeIndex = [...lineage].map((checkpoint) => checkpoint.capability).lastIndexOf('shape-reconstruction');
+  if (shapeIndex < 0) throw new Error(`${capability} requires a trustworthy shape-reconstruction checkpoint before volume admission`);
+  const shapeCheckpoint = lineage[shapeIndex];
+  if (!scopeContains(shapeCheckpoint.scopeId, scopeId)) {
+    throw new Error(`${capability} volume barrier shape scope does not contain ${scopeId}`);
+  }
+  const prefix = lineage.slice(0, shapeIndex);
+  return verifyVolumeBarrierArtifacts(root, state, {
+    lineage,
+    shapeCheckpoint,
+    parentLineage: prefix,
+    requireProceed: true,
+    label: `${capability} whole-before-parts volume admission`,
+  });
+}
+
+
+
+async function verifyFinalResemblanceClosureArtifacts(root, state, {
+  scopeId,
+  parentLineage,
+  storedArtifacts,
+  finalAssetSha256,
+} = {}) {
+  const label = 'whole-object-certification final resemblance closure';
+  const closureArtifacts = (storedArtifacts ?? []).filter((artifact) => artifact.kind === 'final-resemblance-closure');
+  if (closureArtifacts.length !== 1) throw new Error(`${label} requires exactly one final-resemblance-closure artifact`);
+  const closure = await readStoredJsonArtifact(root, closureArtifacts[0], `${label} artifact`);
+
+  const hierarchyCheckpoint = [...(parentLineage ?? [])].reverse().find((checkpoint) =>
+    checkpoint.capability === 'visual-hierarchy' && scopeContains(checkpoint.scopeId, scopeId));
+  if (!hierarchyCheckpoint) throw new Error(`${label} requires current visual-hierarchy lineage`);
+  const {value: hierarchy} = await readCheckpointJsonArtifact(root, hierarchyCheckpoint, 'visual-hierarchy', label);
+
+  const validation = validateFinalResemblanceClosure(closure, {
+    sourceSha256: state.source.sha256,
+    hierarchyDigest: hierarchy.hierarchyDigest,
+    assetSha256: finalAssetSha256,
+  });
+  if (!validation.valid) throw new Error(`${label} is invalid: ${validation.errors.join('; ')}`);
+
+  const signatureMatches = [];
+  for (const artifact of (storedArtifacts ?? []).filter((item) => item.kind === 'perceptual-signature-evidence')) {
+    const value = await readStoredJsonArtifact(root, artifact, `${label} perceptual-signature-evidence artifact`);
+    if (value?.evidenceDigest === closure.signatureEvidenceDigest) signatureMatches.push({artifact, value});
+  }
+  if (signatureMatches.length !== 1) throw new Error(`${label} requires exactly one exact final perceptual-signature-evidence artifact`);
+  if (digestJson(signatureMatches[0].value) !== digestJson(closure.signatureEvidence)) {
+    throw new Error(`${label} embeds different perceptual-signature evidence bytes`);
+  }
+
+  const reportMatches = [];
+  for (const artifact of (storedArtifacts ?? []).filter((item) => item.kind === 'render-report')) {
+    const value = await readStoredJsonArtifact(root, artifact, `${label} render-report artifact`);
+    if (value?.reportDigest === closure.clayRenderReportDigest) reportMatches.push({artifact, value});
+  }
+  if (reportMatches.length !== 1) throw new Error(`${label} requires exactly one exact final neutral-clay render report artifact`);
+  if (digestJson(reportMatches[0].value) !== digestJson(closure.clayRenderReport)) {
+    throw new Error(`${label} embeds a different final neutral-clay render report`);
+  }
+
+  for (const output of closure.clayRenderReport?.outputs ?? []) {
+    const matches = (storedArtifacts ?? []).filter((artifact) =>
+      artifact.kind === 'render-frame' && artifact.path === output.path && artifact.sha256 === output.sha256);
+    if (matches.length !== 1) {
+      throw new Error(`${label} neutral-clay output is not exact-byte bound in the certification checkpoint: ${output.viewId}`);
+    }
+  }
+
+  const availablePaths = new Set([
+    state.source.path,
+    ...(parentLineage ?? []).flatMap((checkpoint) => (checkpoint.artifactRefs ?? []).map((artifact) => artifact.path)),
+    ...(storedArtifacts ?? []).map((artifact) => artifact.path),
+  ].filter(Boolean));
+  const evidenceRefs = new Set([
+    ...(closure.evidenceRefs ?? []),
+    ...(closure.signatureEvidence?.evidenceRefs ?? []),
+    ...(closure.signatureEvidence?.signatureSet?.evidenceRefs ?? []),
+    ...(closure.signatureEvidence?.observations ?? []).flatMap((observation) => observation.evidenceRefs ?? []),
+    ...(closure.signatureEvidence?.signatureSet?.signatures ?? []).flatMap((signature) => signature.evidenceRefs ?? []),
+    ...(closure.clayRenderReport?.outputs ?? []).map((output) => output.path),
+  ].filter(Boolean));
+  for (const evidenceRef of evidenceRefs) {
+    if (!availablePaths.has(evidenceRef)) throw new Error(`${label} evidence ref is not bound in current checkpoint lineage: ${evidenceRef}`);
+  }
+  return closure;
+}
+
+async function verifyWholeObjectCandidateAuthorityArtifacts(root, state, {
+  scopeId,
+  parentLineage,
+  storedArtifacts,
+  authority = null,
+} = {}) {
+  const resolvedAuthority = authority ?? await resolveCandidateAuthorityFromLineage(root, state, parentLineage);
+  const candidates = candidateGlbArtifacts(storedArtifacts);
+  if (candidates.length !== 1 || candidates[0].sha256 !== resolvedAuthority.finalCandidate.assetSha256) {
+    throw new Error('whole-object-certification must carry exactly the current authoritative candidate GLB');
+  }
+  const proofArtifacts = (storedArtifacts ?? []).filter((artifact) => artifact.kind === 'candidate-lineage-proof');
+  if (proofArtifacts.length !== 1) throw new Error('whole-object-certification requires exactly one candidate-lineage-proof artifact');
+  const proof = await readStoredJsonArtifact(root, proofArtifacts[0], 'candidate-lineage-proof artifact');
+  const validation = validateCandidateLineageProof(proof, {
+    sourceSha256: state.source.sha256,
+    finalAssetSha256: resolvedAuthority.finalCandidate.assetSha256,
+  });
+  if (!validation.valid) throw new Error(`candidate lineage proof is invalid: ${validation.errors.join('; ')}`);
+  if (digestJson(proof) !== digestJson(resolvedAuthority.proof)) throw new Error('candidate lineage proof does not reproduce from current checkpoint lineage');
+
+  await verifyFinalResemblanceClosureArtifacts(root, state, {
+    scopeId,
+    parentLineage,
+    storedArtifacts,
+    finalAssetSha256: resolvedAuthority.finalCandidate.assetSha256,
+  });
+  return resolvedAuthority;
+}
+
+function candidateGlbArtifacts(artifacts = []) {
+  return artifacts.filter((artifact) => artifact.kind === 'glb' || String(artifact.path ?? '').toLowerCase().endsWith('.glb'));
+}
+
+async function readStoredJsonArtifact(root, artifact, label) {
+  const resolved = await assertExistingFileInside(root, artifact.path, label);
+  if (resolved.stat.size !== artifact.sizeBytes || await sha256File(resolved.realFile) !== artifact.sha256) {
+    throw new Error(`${label} bytes are stale or mismatched`);
+  }
+  return readJson(resolved.realFile);
+}
+
+async function resolveCandidateAuthorityFromLineage(root, state, lineage) {
+  let initial = null;
+  let current = null;
+  let transitions = [];
+  const seenPaths = new Set([state.source?.path].filter(Boolean));
+
+  for (const checkpoint of lineage) {
+    for (const artifact of checkpoint.artifactRefs ?? []) seenPaths.add(artifact.path);
+    if (capabilityIndex(checkpoint.capability) < capabilityIndex('shape-reconstruction')) continue;
+
+    const candidates = candidateGlbArtifacts(checkpoint.artifactRefs);
+    const transitionArtifacts = (checkpoint.artifactRefs ?? []).filter((artifact) => artifact.kind === 'candidate-transition');
+
+    if (checkpoint.capability === 'shape-reconstruction') {
+      if (candidates.length !== 1) {
+        throw new Error(`shape-reconstruction must establish exactly one authoritative candidate GLB; found ${candidates.length}`);
+      }
+      if (transitionArtifacts.length) throw new Error('shape-reconstruction starts candidate authority and must not carry a downstream candidate transition');
+      initial = {assetSha256: candidates[0].sha256, checkpointId: checkpoint.id, path: candidates[0].path};
+      current = {...initial};
+      transitions = [];
+      continue;
+    }
+
+    if (!current) {
+      if (candidates.length || transitionArtifacts.length) throw new Error(`${checkpoint.capability} candidate authority appears before shape-reconstruction`);
+      continue;
+    }
+    if (candidates.length > 1) throw new Error(`${checkpoint.capability} contains competing candidate GLBs`);
+    if (!candidates.length) {
+      if (transitionArtifacts.length) throw new Error(`${checkpoint.capability} has a candidate transition without an output candidate GLB`);
+      continue;
+    }
+
+    const output = candidates[0];
+    if (output.sha256 === current.assetSha256) {
+      if (transitionArtifacts.length) throw new Error(`${checkpoint.capability} same-digest carry-forward must not create a candidate transition`);
+      continue;
+    }
+
+    if (!isCandidateMutationCapability(checkpoint.capability)) {
+      throw new Error(`${checkpoint.capability} may not replace the authoritative candidate GLB`);
+    }
+    if (transitionArtifacts.length !== 1) {
+      throw new Error(`${checkpoint.capability} changed the authoritative candidate and requires exactly one candidate-transition artifact`);
+    }
+    const transition = await readStoredJsonArtifact(root, transitionArtifacts[0], `${checkpoint.capability} candidate-transition artifact`);
+    const validation = validateCandidateTransition(transition);
+    if (!validation.valid) throw new Error(`${checkpoint.capability} candidate transition is invalid: ${validation.errors.join('; ')}`);
+    const checks = [
+      [transition.capability, checkpoint.capability, 'capability'],
+      [transition.scopeId, checkpoint.scopeId, 'scope'],
+      [transition.parentCheckpointId, checkpoint.parentId, 'parent checkpoint'],
+      [transition.inputCandidate.assetSha256, current.assetSha256, 'input candidate digest'],
+      [transition.inputCandidate.checkpointId, current.checkpointId, 'input candidate checkpoint'],
+      [transition.outputCandidate.assetSha256, output.sha256, 'output candidate digest'],
+    ];
+    for (const [actual, expected, label] of checks) if (actual !== expected) throw new Error(`${checkpoint.capability} candidate transition ${label} mismatch`);
+    if (!(transition.evidenceRefs ?? []).includes(output.path)) {
+      throw new Error(`${checkpoint.capability} candidate transition must cite the exact output candidate path`);
+    }
+    for (const ref of transition.evidenceRefs ?? []) {
+      if (!seenPaths.has(ref)) throw new Error(`${checkpoint.capability} candidate transition evidence is not bound in current lineage: ${ref}`);
+    }
+    transitions.push({
+      checkpointId: checkpoint.id,
+      transitionDigest: transition.transitionDigest,
+      capability: checkpoint.capability,
+      scopeId: checkpoint.scopeId,
+      inputAssetSha256: current.assetSha256,
+      outputAssetSha256: output.sha256,
+    });
+    current = {assetSha256: output.sha256, checkpointId: checkpoint.id, path: output.path};
+  }
+
+  if (!current || !initial) throw new Error('candidate authority requires a shape-reconstruction candidate');
+  const proof = createCandidateLineageProof({
+    sourceSha256: state.source.sha256,
+    initialCandidate: initial,
+    finalCandidate: current,
+    transitions,
+  });
+  return {initialCandidate: initial, finalCandidate: current, transitions, proof};
+}
+
+
+async function hierarchyForSpatialRoleCheckpoint(root, checkpoint, lineagePrefix, label) {
+  if (checkpoint.capability === 'visual-hierarchy') {
+    return (await readCheckpointJsonArtifact(root, checkpoint, 'visual-hierarchy', label)).value;
+  }
+  const hierarchyCheckpoint = [...lineagePrefix].reverse().find((item) => item.capability === 'visual-hierarchy');
+  if (!hierarchyCheckpoint) throw new Error(`${label} requires a visual-hierarchy checkpoint before spatial role authority`);
+  return (await readCheckpointJsonArtifact(root, hierarchyCheckpoint, 'visual-hierarchy', label)).value;
+}
+
+async function prospectiveSpatialRoleHierarchy(root, capability, parentLineage, storedArtifacts, label) {
+  if (capability === 'visual-hierarchy') {
+    const matching = storedArtifacts.filter((artifact) => artifact.kind === 'visual-hierarchy');
+    if (matching.length !== 1) throw new Error(`${label} on visual-hierarchy requires exactly one visual-hierarchy artifact`);
+    return readStoredJsonArtifact(root, matching[0], `${label} visual-hierarchy artifact`);
+  }
+  const hierarchyCheckpoint = [...parentLineage].reverse().find((item) => item.capability === 'visual-hierarchy');
+  if (!hierarchyCheckpoint) throw new Error(`${label} requires current visual-hierarchy lineage`);
+  return (await readCheckpointJsonArtifact(root, hierarchyCheckpoint, 'visual-hierarchy', label)).value;
+}
+
+function spatialRoleEvidencePaths(state, lineage, currentCapability = null, storedArtifacts = []) {
+  const cutoff = capabilityIndex('spatial-hypotheses');
+  const paths = new Set([state.source?.path].filter(Boolean));
+  for (const checkpoint of lineage) {
+    if (capabilityIndex(checkpoint.capability) > cutoff) continue;
+    for (const artifact of checkpoint.artifactRefs ?? []) paths.add(artifact.path);
+  }
+  if (currentCapability != null && capabilityIndex(currentCapability) <= cutoff) {
+    for (const artifact of storedArtifacts) {
+      if (artifact.kind !== 'spatial-role-expectation') paths.add(artifact.path);
+    }
+  }
+  return paths;
+}
+
+async function validateSpatialRoleArtifact(root, state, artifact, hierarchy, allowedEvidencePaths, label) {
+  const value = await readStoredJsonArtifact(root, artifact, label);
+  const validation = validateSpatialRoleExpectationSet(value, hierarchy);
+  if (!validation.valid) throw new Error(`${label} is invalid: ${validation.errors.join('; ')}`);
+  if (value.sourceSha256 !== state.source.sha256) throw new Error(`${label} source binding mismatch`);
+  if (value.hierarchyDigest !== hierarchy.hierarchyDigest) throw new Error(`${label} hierarchy binding mismatch`);
+  for (const expectation of value.expectations ?? []) {
+    for (const evidenceRef of expectation.evidenceRefs ?? []) {
+      if (!allowedEvidencePaths.has(evidenceRef)) {
+        throw new Error(`${label} evidence is not pre-candidate lineage-bound: ${evidenceRef}`);
+      }
+    }
+  }
+  return value;
+}
+
+async function resolveSpatialRoleAuthorityFromLineage(root, state, lineage, {scopeId = null} = {}) {
+  let authority = null;
+  const carryForwardCheckpointIds = [];
+  const cutoff = capabilityIndex('spatial-hypotheses');
+  for (let index = 0; index < lineage.length; index += 1) {
+    const checkpoint = lineage[index];
+    const artifacts = (checkpoint.artifactRefs ?? []).filter((artifact) => artifact.kind === 'spatial-role-expectation');
+    if (artifacts.length > 1) throw new Error(`${checkpoint.capability} contains competing spatial-role-expectation artifacts`);
+    if (!artifacts.length) continue;
+
+    const label = `${checkpoint.capability} spatial role expectation`;
+    const prefix = lineage.slice(0, index + 1);
+    const hierarchy = await hierarchyForSpatialRoleCheckpoint(root, checkpoint, prefix, label);
+    const allowedEvidencePaths = spatialRoleEvidencePaths(state, prefix);
+    const value = await validateSpatialRoleArtifact(root, state, artifacts[0], hierarchy, allowedEvidencePaths, label);
+
+    if (!authority) {
+      if (capabilityIndex(checkpoint.capability) > cutoff) {
+        throw new Error(`spatial role expectation was introduced too late at ${checkpoint.capability}; authority must be frozen no later than spatial-hypotheses`);
+      }
+      authority = {
+        sourceSha256: value.sourceSha256,
+        hierarchyDigest: value.hierarchyDigest,
+        expectationSetDigest: value.expectationSetDigest,
+        expectations: value.expectations,
+        authorityCheckpointId: checkpoint.id,
+        authorityCapability: checkpoint.capability,
+        artifactPath: artifacts[0].path,
+      };
+      continue;
+    }
+
+    if (value.expectationSetDigest !== authority.expectationSetDigest) {
+      throw new Error(`spatial role expectation mutation is forbidden after authority freeze at ${authority.authorityCheckpointId}`);
+    }
+    carryForwardCheckpointIds.push(checkpoint.id);
+  }
+
+  if (!authority) return null;
+
+  const latestHierarchyCheckpoint = [...lineage].reverse().find((checkpoint) => checkpoint.capability === 'visual-hierarchy');
+  if (!latestHierarchyCheckpoint) throw new Error('spatial role authority lost its visual hierarchy lineage');
+  const latestHierarchy = (await readCheckpointJsonArtifact(root, latestHierarchyCheckpoint, 'visual-hierarchy', 'spatial role authority audit')).value;
+  if (latestHierarchy.hierarchyDigest !== authority.hierarchyDigest) {
+    throw new Error('spatial role authority is stale for the current visual hierarchy');
+  }
+
+  let selectedExpectation = null;
+  if (scopeId != null) {
+    const normalizedScopeId = assertId(scopeId, 'scopeId');
+    selectedExpectation = authority.expectations.find((item) => item.scopeId === normalizedScopeId) ?? null;
+    if (!selectedExpectation) throw new Error(`spatial role authority has no exact expectation for scope ${normalizedScopeId}`);
+  }
+
+  const payload = {
+    schema: 'refas.spatial-role-authority/v1',
+    sourceSha256: authority.sourceSha256,
+    hierarchyDigest: authority.hierarchyDigest,
+    expectationSetDigest: authority.expectationSetDigest,
+    authorityCheckpointId: authority.authorityCheckpointId,
+    authorityCapability: authority.authorityCapability,
+    artifactPath: authority.artifactPath,
+    expectations: authority.expectations,
+    selectedExpectation,
+    carryForwardCheckpointIds,
+    policy: {
+      earliestPreBoundExpectationIsAuthority: true,
+      postShapeRelabelForbidden: true,
+      identicalCarryForwardAllowed: true,
+      candidateIndependent: true,
+      classifierIndependent: true,
+    },
+  };
+  return deepFreeze({...payload, authorityDigest: digestJson(payload)});
+}
+
+async function validateProspectiveSpatialRoleAuthority(root, state, {
+  capability,
+  parentLineage,
+  storedArtifacts,
+} = {}) {
+  const artifacts = storedArtifacts.filter((artifact) => artifact.kind === 'spatial-role-expectation');
+  if (artifacts.length > 1) throw new Error(`${capability} contains competing spatial-role-expectation artifacts`);
+  if (!artifacts.length) return resolveSpatialRoleAuthorityFromLineage(root, state, parentLineage);
+
+  const existing = await resolveSpatialRoleAuthorityFromLineage(root, state, parentLineage);
+  const cutoff = capabilityIndex('spatial-hypotheses');
+  if (!existing && capabilityIndex(capability) > cutoff) {
+    throw new Error(`spatial role expectation was introduced too late at ${capability}; authority must be frozen no later than spatial-hypotheses`);
+  }
+
+  const label = `${capability} spatial role expectation`;
+  const hierarchy = await prospectiveSpatialRoleHierarchy(root, capability, parentLineage, storedArtifacts, label);
+  const allowedEvidencePaths = spatialRoleEvidencePaths(state, parentLineage, capability, storedArtifacts);
+  const value = await validateSpatialRoleArtifact(root, state, artifacts[0], hierarchy, allowedEvidencePaths, label);
+
+  if (existing && value.expectationSetDigest !== existing.expectationSetDigest) {
+    throw new Error(`spatial role expectation mutation is forbidden after authority freeze at ${existing.authorityCheckpointId}`);
+  }
+  return existing ?? {
+    schema: 'refas.spatial-role-authority-preview/v1',
+    sourceSha256: value.sourceSha256,
+    hierarchyDigest: value.hierarchyDigest,
+    expectationSetDigest: value.expectationSetDigest,
+    expectations: value.expectations,
+    authorityCapability: capability,
+  };
+}
+
+export async function resolveSpatialRoleAuthority(root, {checkpointId = null, scopeId = null} = {}) {
+  root = projectRoot(root);
+  const state = await loadProject(root);
+  if (!state.source) throw new Error('spatial role authority requires a bound source');
+  const checkpoints = await listCheckpoints(root);
+  const target = checkpointId ?? state.head;
+  if (!target) throw new Error('spatial role authority requires a checkpoint lineage');
+  const lineage = checkpointLineage(checkpoints, target);
+  return resolveSpatialRoleAuthorityFromLineage(root, state, lineage, {scopeId});
+}
+
+async function validateProspectiveCandidateAuthority(root, state, {
+  capability,
+  scopeId,
+  parentId,
+  parentLineage,
+  storedArtifacts,
+} = {}) {
+  if (isTrustedContractFixtureProject(state)) return null;
+
+  if (capability === 'shape-reconstruction') {
+    const candidates = candidateGlbArtifacts(storedArtifacts);
+    if (candidates.length !== 1) throw new Error(`shape-reconstruction must establish exactly one authoritative candidate GLB; found ${candidates.length}`);
+    if (storedArtifacts.some((artifact) => artifact.kind === 'candidate-transition')) {
+      throw new Error('shape-reconstruction must not carry a candidate-transition artifact');
+    }
+    return {input: null, output: candidates[0], changed: true};
+  }
+
+  if (capabilityIndex(capability) < capabilityIndex('surface-topology')) return null;
+  const authority = await resolveCandidateAuthorityFromLineage(root, state, parentLineage);
+  const candidates = candidateGlbArtifacts(storedArtifacts);
+  const transitionArtifacts = storedArtifacts.filter((artifact) => artifact.kind === 'candidate-transition');
+
+  if (candidates.length > 1) throw new Error(`${capability} contains competing candidate GLBs`);
+  if (!candidates.length) {
+    if (transitionArtifacts.length) throw new Error(`${capability} has a candidate transition without an output candidate GLB`);
+  } else {
+    const output = candidates[0];
+    if (output.sha256 === authority.finalCandidate.assetSha256) {
+      if (transitionArtifacts.length) throw new Error(`${capability} same-digest carry-forward must not create a candidate transition`);
+    } else {
+      if (!isCandidateMutationCapability(capability)) throw new Error(`${capability} may not replace the authoritative candidate GLB`);
+      if (transitionArtifacts.length !== 1) throw new Error(`${capability} changed the authoritative candidate and requires exactly one candidate-transition artifact`);
+      const transition = await readStoredJsonArtifact(root, transitionArtifacts[0], `${capability} candidate-transition artifact`);
+      const validation = validateCandidateTransition(transition);
+      if (!validation.valid) throw new Error(`${capability} candidate transition is invalid: ${validation.errors.join('; ')}`);
+      const checks = [
+        [transition.capability, capability, 'capability'],
+        [transition.scopeId, scopeId, 'scope'],
+        [transition.parentCheckpointId, parentId, 'parent checkpoint'],
+        [transition.inputCandidate.assetSha256, authority.finalCandidate.assetSha256, 'input candidate digest'],
+        [transition.inputCandidate.checkpointId, authority.finalCandidate.checkpointId, 'input candidate checkpoint'],
+        [transition.outputCandidate.assetSha256, output.sha256, 'output candidate digest'],
+      ];
+      for (const [actual, expected, label] of checks) if (actual !== expected) throw new Error(`${capability} candidate transition ${label} mismatch`);
+      const availablePaths = new Set([
+        state.source.path,
+        ...parentLineage.flatMap((checkpoint) => (checkpoint.artifactRefs ?? []).map((artifact) => artifact.path)),
+        ...storedArtifacts.map((artifact) => artifact.path),
+      ]);
+      if (!(transition.evidenceRefs ?? []).includes(output.path)) throw new Error(`${capability} candidate transition must cite the exact output candidate path`);
+      for (const ref of transition.evidenceRefs ?? []) if (!availablePaths.has(ref)) throw new Error(`${capability} candidate transition evidence is not bound in current lineage: ${ref}`);
+    }
+  }
+
+  if (capability === 'whole-object-certification') {
+    await verifyWholeObjectCandidateAuthorityArtifacts(root, state, {
+      scopeId,
+      parentLineage,
+      storedArtifacts,
+      authority,
+    });
+  }
+  return authority;
+}
+
+export async function resolveAuthoritativeCandidateLineage(root, {checkpointId = null} = {}) {
+  root = projectRoot(root);
+  const state = await loadProject(root);
+  if (!state.source) throw new Error('candidate authority requires a bound source');
+  if (isTrustedContractFixtureProject(state)) return null;
+  const checkpoints = await listCheckpoints(root);
+  const target = checkpointId ?? state.head;
+  if (!target) throw new Error('candidate authority requires a checkpoint lineage');
+  const lineage = checkpointLineage(checkpoints, target);
+  return deepFreeze(await resolveCandidateAuthorityFromLineage(root, state, lineage));
+}
+
+async function ensurePrerequisites(root, state, capability, scopeId, lineage) {
+  try {
+    await verifySource(root, normalizeSourceManifest(state.source));
+  } catch (error) {
+    throw new Error(`${capability} prerequisite source is not trustworthy: ${error.message}`);
+  }
+
+  for (const checkpoint of lineage) {
+    if (digestJson(checkpointContent(checkpoint)) !== checkpoint.contentDigest) {
+      throw new Error(`${capability} prerequisite lineage is not trustworthy: ${checkpoint.id} content digest mismatch`);
+    }
+    const authorityErrors = await auditGateAuthority(root, state, checkpoint, lineage);
+    if (authorityErrors.length) {
+      throw new Error(`${capability} prerequisite lineage is not trustworthy at ${checkpoint.capability}/${checkpoint.scopeId}: ${authorityErrors.join('; ')}`);
+    }
+    for (const artifact of checkpoint.artifactRefs) {
+      const objectError = await verifyStoredObject(root, artifact);
+      if (objectError) {
+        throw new Error(`${capability} prerequisite lineage is not trustworthy at ${checkpoint.capability}/${checkpoint.scopeId}: ${artifact.path}: ${objectError}`);
+      }
+    }
+  }
+
   for (const dependency of CAPABILITY_DEPENDENCIES[capability]) {
-    const found = lineage.some((checkpoint) => checkpoint.capability === dependency && scopeContains(checkpoint.scopeId, scopeId));
+    const found = [...lineage].reverse().find((checkpoint) =>
+      checkpoint.capability === dependency && scopeContains(checkpoint.scopeId, scopeId));
     if (!found) throw new Error(`${capability} requires a trustworthy ${dependency} checkpoint for ${scopeId}`);
   }
+
+  await ensureEarlyResemblanceAdmission(root, state, capability, scopeId, lineage);
+  await resolveSpatialRoleAuthorityFromLineage(root, state, lineage);
+  await ensureVolumeBarrierAdmission(root, state, capability, scopeId, lineage);
 }
 
 function nextInvalidated(state) {
@@ -472,11 +1791,10 @@ export async function commitCheckpoint(root, {
   scopeId = assertId(scopeId, 'scopeId');
   if (!state.source) throw new Error('bind and verify a primary source before creating a trustworthy checkpoint');
   if (!Array.isArray(artifactRefs) || !artifactRefs.length) throw new Error('a trustworthy checkpoint requires at least one recoverable artifact');
-  const normalizedGates = gates.map(normalizeGate);
-  if (!normalizedGates.length || normalizedGates.some((gate) => gate.status !== 'pass')) throw new Error('a trustworthy checkpoint requires one or more passing gates and no non-pass gate');
+  const gateRequests = normalizeCheckpointGateRequests(capability, gates);
   const checkpoints = await listCheckpoints(root);
   const lineage = checkpointLineage(checkpoints, state.head);
-  ensurePrerequisites(capability, scopeId, lineage);
+  await ensurePrerequisites(root, state, capability, scopeId, lineage);
 
   const recoveryOwner = nextInvalidated(state);
   if (recoveryOwner && capability !== recoveryOwner) throw new Error(`recovery must close ${recoveryOwner} before ${capability}`);
@@ -500,6 +1818,20 @@ export async function commitCheckpoint(root, {
   if (new Set(declaredPaths).size !== declaredPaths.length) throw new Error('checkpoint artifact paths must be unique');
   const storedArtifacts = [];
   for (let index = 0; index < artifactRefs.length; index += 1) storedArtifacts.push(await storeArtifact(root, artifactRefs[index], index));
+  const parentLineage = checkpointLineage(checkpoints, parent);
+  await validateProspectiveSpatialRoleAuthority(root, state, {
+    capability, parentLineage, storedArtifacts,
+  });
+  await validateProspectiveCandidateAuthority(root, state, {
+    capability, scopeId, parentId: parent, parentLineage, storedArtifacts,
+  });
+  const runtimeGates = await evaluateCheckpointGateRequests(root, {
+    state, capability, scopeId, requests: gateRequests, storedArtifacts, lineage: parentLineage,
+  });
+  const rejectedGates = runtimeGates.filter((gate) => gate.status !== 'pass');
+  if (rejectedGates.length) {
+    throw new Error(`runtime gate evaluation rejected checkpoint: ${rejectedGates.map((gate) => `${gate.id}=${gate.status}`).join(', ')}`);
+  }
   const content = {
     schema: CHECKPOINT_SCHEMA,
     parentId: parent ?? null,
@@ -508,7 +1840,7 @@ export async function commitCheckpoint(root, {
     reason: String(reason ?? ''),
     artifactRefs: storedArtifacts,
     claims: claims.map(String),
-    gates: normalizedGates,
+    gates: runtimeGates,
     metadata: structuredClone(metadata),
     transactionId,
   };
@@ -786,6 +2118,47 @@ export async function resumeProject(root) {
     };
   }
   if (state.status === 'certified') {
+    if (!isTrustedContractFixtureProject(state) && state.head) {
+      const checkpoints = await listCheckpoints(root);
+      const lineage = checkpointLineage(checkpoints, state.head);
+      try {
+        const certifiedHead = await loadCheckpoint(root, state.head);
+        await ensureEarlyResemblanceAdmission(root, state, certifiedHead.capability, certifiedHead.scopeId, lineage);
+        await ensureVolumeBarrierAdmission(root, state, certifiedHead.capability, certifiedHead.scopeId, lineage);
+      } catch (error) {
+        return {
+          schema: 'refas.resume-guidance/v1',
+          status: state.status,
+          safeCheckpointId: state.head,
+          activeWork: {capability: 'visual-critique', scopeId: state.activeScopeId},
+          nextAction: 'REQUEST_RESEMBLANCE_REVIEW',
+          reason: `the stored certification predates or fails current early resemblance admission: ${error.message}`,
+        };
+      }
+      try {
+        const continuity=await resolveFinalSpatialContinuityFromLineage(root,state,lineage);
+        if(continuity?.verdict!=='PROCEED') throw new Error(`current VC06 verdict is ${continuity?.verdict ?? "missing"}`);
+        const certificate=await readJson(certificatePath(root));
+        const binding=certificate.finalSpatialContinuity;
+        if (
+          binding?.continuityDigest!==continuity.continuityDigest
+          || binding?.finalCandidateSha256!==continuity.finalCandidate.assetSha256
+          || binding?.mode!==continuity.mode
+          || binding?.finalMultiviewReportDigest!==continuity.finalMultiview.reportDigest
+        ) {
+          throw new Error('stored certificate final-spatial-continuity binding does not match current VC06 replay');
+        }
+      } catch (error) {
+        return {
+          schema: 'refas.resume-guidance/v1',
+          status: state.status,
+          safeCheckpointId: state.head,
+          activeWork: {capability: 'whole-object-certification', scopeId: 'whole'},
+          nextAction: 'REVERIFY_FINAL_SPATIAL_CONTINUITY',
+          reason: `the stored certification predates or fails current final-candidate spatial continuity: ${error.message}`,
+        };
+      }
+    }
     return {
       schema: 'refas.resume-guidance/v1', status: state.status, safeCheckpointId: state.head,
       activeWork: null, nextAction: 'DONE', reason: 'the current head has a valid whole-object certificate',
@@ -793,6 +2166,97 @@ export async function resumeProject(root) {
   }
   const head = await loadCheckpoint(root, state.head);
   const next = CAPABILITY_ORDER[capabilityIndex(head.capability) + 1] ?? null;
+
+  if (next && !isTrustedContractFixtureProject(state) && capabilityIndex(next) >= capabilityIndex('surface-topology')) {
+    const checkpoints = await listCheckpoints(root);
+    const lineage = checkpointLineage(checkpoints, state.head);
+    try {
+      await ensureEarlyResemblanceAdmission(root, state, next, state.activeScopeId, lineage);
+    } catch (error) {
+      const verdictMatch = String(error.message).match(/downstream detail requires early resemblance PROCEED; current verdict is (HOLD|REWORK)/);
+      if (verdictMatch) {
+        const shapeCheckpoint = [...lineage].reverse().find((checkpoint) =>
+          checkpoint.capability === 'shape-reconstruction' && scopeContains(checkpoint.scopeId, state.activeScopeId));
+        const {value: barrier} = await readCheckpointJsonArtifact(
+          root,
+          shapeCheckpoint,
+          'early-resemblance-barrier',
+          'resume early resemblance guidance',
+        );
+        if (verdictMatch[1] === 'HOLD') {
+          return {
+            schema: 'refas.resume-guidance/v1',
+            status: state.status,
+            safeCheckpointId: state.head,
+            activeWork: {capability: 'visual-critique', scopeId: barrier.scopeId},
+            nextAction: 'GATHER_RESEMBLANCE_EVIDENCE',
+            earlyResemblanceVerdict: barrier.verdict,
+            blockingSignatureIds: [...barrier.blockingSignatureIds],
+            reason: 'required macro or identity resemblance evidence remains insufficient; gather stronger source/candidate clay evidence before downstream detail',
+          };
+        }
+        return {
+          schema: 'refas.resume-guidance/v1',
+          status: state.status,
+          safeCheckpointId: state.head,
+          activeWork: {capability: 'visual-critique', scopeId: barrier.scopeId},
+          nextAction: 'REPORT_RESEMBLANCE_FINDINGS',
+          earlyResemblanceVerdict: barrier.verdict,
+          blockingSignatureIds: [...barrier.blockingSignatureIds],
+          findings: structuredClone(barrier.findings),
+          reason: 'required macro or identity signatures mismatch; report the typed findings so normal ownership routing can reopen the correct capability',
+        };
+      }
+      return {
+        schema: 'refas.resume-guidance/v1',
+        status: state.status,
+        safeCheckpointId: state.head,
+        activeWork: {capability: 'visual-critique', scopeId: state.activeScopeId},
+        nextAction: 'REQUEST_RESEMBLANCE_REVIEW',
+        reason: `early resemblance admission evidence is missing, stale, or invalid: ${error.message}`,
+      };
+    }
+
+    try {
+      await ensureVolumeBarrierAdmission(root, state, next, state.activeScopeId, lineage);
+    } catch (error) {
+      const verdictMatch = String(error.message).match(/downstream detail requires volume barrier PROCEED; current verdict is (HOLD|REWORK)/);
+      if (verdictMatch) {
+        const shapeCheckpoint = [...lineage].reverse().find((checkpoint) =>
+          checkpoint.capability === 'shape-reconstruction' && scopeContains(checkpoint.scopeId, state.activeScopeId));
+        const {value: volumeBarrier} = await readCheckpointJsonArtifact(
+          root,
+          shapeCheckpoint,
+          'volume-barrier',
+          'resume volume barrier guidance',
+        );
+        const blockingScopeIds = (volumeBarrier.entries ?? [])
+          .filter((entry) => entry.status !== 'ADMITTED')
+          .map((entry) => entry.scopeId);
+        return {
+          schema: 'refas.resume-guidance/v1',
+          status: state.status,
+          safeCheckpointId: state.head,
+          activeWork: {capability: 'shape-reconstruction', scopeId: blockingScopeIds[0] ?? state.activeScopeId},
+          nextAction: verdictMatch[1] === 'HOLD' ? 'GATHER_SPATIAL_EVIDENCE' : 'REWORK_SHAPE_VOLUME',
+          volumeBarrierVerdict: volumeBarrier.verdict,
+          blockingScopeIds,
+          reason: verdictMatch[1] === 'HOLD'
+            ? 'protected whole or identity-bearing spatial evidence remains indeterminate; gather candidate-bound volume evidence before downstream detail'
+            : 'protected whole or identity-bearing scope has PLANAR_COLLAPSE; repair shape volume before downstream detail',
+        };
+      }
+      return {
+        schema: 'refas.resume-guidance/v1',
+        status: state.status,
+        safeCheckpointId: state.head,
+        activeWork: {capability: 'shape-reconstruction', scopeId: state.activeScopeId},
+        nextAction: 'REQUEST_REVIEW',
+        reason: `whole-before-parts volume admission evidence is missing, stale, or invalid: ${error.message}`,
+      };
+    }
+  }
+
   if (!next) {
     const readiness = await inspectCertificationHead(projectRoot(root), state, head);
     if (!readiness.ready) {
@@ -823,14 +2287,43 @@ export async function auditProject(root) {
     byId.set(checkpoint.id, checkpoint);
   }
   if (state.head && !byId.has(state.head)) errors.push('head checkpoint is missing');
+  let auditedLineage = [];
   try {
-    checkpointLineage(checkpoints, state.head);
+    auditedLineage = checkpointLineage(checkpoints, state.head);
   } catch (error) {
     errors.push(error.message);
+  }
+  if (state.source && state.head) {
+    try {
+      await resolveSpatialRoleAuthorityFromLineage(root, state, auditedLineage);
+    } catch (error) {
+      errors.push(`spatial role authority: ${error.message}`);
+    }
+  }
+  if (state.source && state.head && !isTrustedContractFixtureProject(state)) {
+    const headCheckpoint = byId.get(state.head);
+    if (headCheckpoint && capabilityIndex(headCheckpoint.capability) >= capabilityIndex('shape-reconstruction')) {
+      try {
+        await resolveCandidateAuthorityFromLineage(root, state, auditedLineage);
+        if (headCheckpoint.capability === 'whole-object-certification' && headCheckpoint.scopeId === 'whole') {
+          const parentLineage = auditedLineage.slice(0, -1);
+          const parentAuthority = await resolveCandidateAuthorityFromLineage(root, state, parentLineage);
+          await verifyWholeObjectCandidateAuthorityArtifacts(root, state, {
+            scopeId: headCheckpoint.scopeId,
+            parentLineage,
+            storedArtifacts: headCheckpoint.artifactRefs,
+            authority: parentAuthority,
+          });
+        }
+      } catch (error) {
+        errors.push(`candidate authority: ${error.message}`);
+      }
+    }
   }
   for (const checkpoint of checkpoints) {
     if (digestJson(checkpointContent(checkpoint)) !== checkpoint.contentDigest) errors.push(`${checkpoint.id} content digest mismatch`);
     if (checkpoint.parentId && !byId.has(checkpoint.parentId)) errors.push(`${checkpoint.id} parent missing`);
+    errors.push(...await auditGateAuthority(root, state, checkpoint, checkpoints));
     for (const artifact of checkpoint.artifactRefs) {
       const objectError = await verifyStoredObject(root, artifact);
       if (objectError) errors.push(`${checkpoint.id}:${artifact.path}: ${objectError}`);
@@ -851,6 +2344,27 @@ export async function auditProject(root) {
       await verifySource(root, normalizeSourceManifest(state.source));
     } catch (error) {
       errors.push(`source integrity: ${error.message}`);
+    }
+    if (state.contractFixtureAuthority != null) {
+      const fixtureAuthority = validateContractFixtureAuthority(state.contractFixtureAuthority, {sourceSha256: state.source.sha256});
+      if (!fixtureAuthority.valid) errors.push(`contract fixture authority: ${fixtureAuthority.errors.join('; ')}`);
+    }
+    if (state.head && byId.has(state.head) && !isTrustedContractFixtureProject(state)) {
+      const headCheckpoint = byId.get(state.head);
+      if (capabilityIndex(headCheckpoint.capability) >= capabilityIndex('surface-topology')) {
+        try {
+          const lineage = checkpointLineage(checkpoints, state.head);
+          await ensureEarlyResemblanceAdmission(root, state, headCheckpoint.capability, headCheckpoint.scopeId, lineage);
+        } catch (error) {
+          errors.push(`early resemblance admission: ${error.message}`);
+        }
+        try {
+          const lineage = checkpointLineage(checkpoints, state.head);
+          await ensureVolumeBarrierAdmission(root, state, headCheckpoint.capability, headCheckpoint.scopeId, lineage);
+        } catch (error) {
+          errors.push(`volume admission: ${error.message}`);
+        }
+      }
     }
   } else {
     warnings.push('primary source is not bound');
@@ -876,6 +2390,19 @@ export async function auditProject(root) {
       if (readiness.visualReview?.reviewDigest !== certificate.visualReview?.reviewDigest || readiness.visualReviewArtifact?.sha256 !== certificate.visualReview?.sha256) {
         errors.push('certificate visual-review binding is invalid');
       }
+      if (readiness.finalSpatialContinuity) {
+        const binding=certificate.finalSpatialContinuity;
+        if (
+          binding?.continuityDigest!==readiness.finalSpatialContinuity.continuityDigest
+          || binding?.finalCandidateSha256!==readiness.finalSpatialContinuity.finalCandidate.assetSha256
+          || binding?.mode!==readiness.finalSpatialContinuity.mode
+          || binding?.finalMultiviewReportDigest!==readiness.finalSpatialContinuity.finalMultiview.reportDigest
+        ) {
+          errors.push('certificate final-spatial-continuity binding is invalid');
+        }
+      } else if (certificate.finalSpatialContinuity != null) {
+        errors.push('trusted contract fixture certificate must not claim final spatial continuity authority');
+      }
     } catch (error) {
       errors.push(`certificate unavailable: ${error.message}`);
     }
@@ -897,12 +2424,32 @@ export async function assessCertification(root) {
   let inspection = {visualReview: null, visualReviewArtifact: null};
   if (state.head) {
     const head = await loadCheckpoint(root, state.head);
+    if (!isTrustedContractFixtureProject(state) && capabilityIndex(head.capability) >= capabilityIndex('surface-topology')) {
+      try {
+        const checkpoints = await listCheckpoints(root);
+        const lineage = checkpointLineage(checkpoints, state.head);
+        await ensureEarlyResemblanceAdmission(root, state, head.capability, head.scopeId, lineage);
+      } catch (error) {
+        errors.push(`early resemblance admission: ${error.message}`);
+      }
+      try {
+        const checkpoints = await listCheckpoints(root);
+        const lineage = checkpointLineage(checkpoints, state.head);
+        await ensureVolumeBarrierAdmission(root, state, head.capability, head.scopeId, lineage);
+      } catch (error) {
+        errors.push(`volume admission: ${error.message}`);
+      }
+    }
     inspection = await inspectCertificationHead(root, state, head);
     errors.push(...inspection.errors);
   }
   return deepFreeze({
     schema: 'refas.certification-readiness/v1', ready: errors.length === 0, errors,
-    checkpointId: state.head, reviewDigest: inspection.visualReview?.reviewDigest ?? null,
+    checkpointId: state.head,
+    reviewDigest: inspection.visualReview?.reviewDigest ?? null,
+    finalSpatialContinuityDigest: inspection.finalSpatialContinuity?.continuityDigest ?? null,
+    finalCandidateSha256: inspection.finalSpatialContinuity?.finalCandidate?.assetSha256 ?? null,
+    finalSpatialContinuityMode: inspection.finalSpatialContinuity?.mode ?? null,
   });
 }
 
@@ -925,6 +2472,12 @@ export async function certifyProject(root) {
     checkpointId: head.id,
     checkpointDigest: head.contentDigest,
     gateIds: head.gates.map((gate) => gate.id),
+    finalSpatialContinuity: readiness.finalSpatialContinuity ? {
+      continuityDigest: readiness.finalSpatialContinuity.continuityDigest,
+      finalCandidateSha256: readiness.finalSpatialContinuity.finalCandidate.assetSha256,
+      mode: readiness.finalSpatialContinuity.mode,
+      finalMultiviewReportDigest: readiness.finalSpatialContinuity.finalMultiview.reportDigest,
+    } : null,
     visualReview: {
       path: readiness.visualReviewArtifact.path,
       sha256: readiness.visualReviewArtifact.sha256,

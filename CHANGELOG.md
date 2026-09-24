@@ -2,6 +2,74 @@
 
 All notable RefAs changes are documented here. RefAs follows semantic versioning.
 
+## 1.1.1 — 2026-09-24
+
+Promotes the post-1.1 hardening line (`rc/post-1.1`) to stable `main`. Public `.../v1` contract namespaces are unchanged and existing 1.0.0–1.1.0 artifacts remain valid.
+
+### Spatial volume closure (VC00–VC08)
+
+- Locked volume-closure regression fixtures (VC00): a planar/billboard surrogate and a degenerate volume must fail, while a genuinely volumetric surrogate and an intentionally thin panel must not.
+- Derived candidate-bound spatial closure evidence directly from exact GLB bytes with bounds-checked accessor/bufferView reads (VC01).
+- Froze spatial role expectations (`volumetric`, `thin-shell`, intentionally planar) before candidate evaluation so a worker cannot relabel a collapsed volume as thin after seeing a failure (VC02).
+- Added a role-aware, multi-signal planar-collapse classifier that rejects role overrides and uses no asset-specific thresholds or single-view IoU (VC03).
+- Enforced a whole-before-parts volume barrier in checkpoint admission, resume audit, and readiness (VC04), and derived the protected spatial gate from trusted runtime authority instead of caller-authored status (VC05).
+- Required exact final-candidate spatial continuity (VC06) and bound it into final certification, including certified-lineage replay on resume (VC07).
+- Added an installed-skill-only adversarial dogfood (`npm run dogfood:adversarial`, VC08) covering billboard shortcuts, post-failure thin-shell relabeling, forged PASS/authority, stale evidence reuse, sibling-lineage leakage, HERO-only fitting with formal multiview, and volumetric/thin positives.
+
+### Metric and resemblance authority (R00–R04)
+
+- Reopened orchestration so correspondence, resemblance, spatial coherence, and physical readiness are independent obligations; a passing correspondence ledger no longer substitutes for resemblance.
+- Retired single-view IoU from decisions: it is forbidden below two independently source-backed registered views and never acts as a fit objective, ranking metric, or resemblance proof; residual injection paths are closed.
+- Gated identity-bearing geometry through a construction vocabulary, added source-bound perceptual signatures for resemblance evidence, and added a neutral-clay early resemblance barrier.
+- Added canonical final-candidate authority: candidate transition and lineage-proof schemas, final resemblance closure, candidate digest continuity across checkpoints, and runtime-authoritative checkpoint gate verdicts bound to the selected parent lineage.
+
+### Public discovery and distribution
+
+- Added installable multi-agent plugin manifests (Claude, Codex, generic) with a distribution verifier.
+- Added namespaced instruction discovery (`refas describe <capability>`), instruction-graph public interface metadata, and aligned public capability templates and contracts.
+- Added a fresh-worker public-contract dogfood that runs the canonical chain from an installed skill copy with guarded filesystem, module, and process surfaces, plus a discovery-closure verifier for copied installed-skill authority.
+- Removed hidden-geometry instruction bias from agent-facing references.
+
+### Repository
+
+- Pinned text checkouts to LF and kept the isolated fresh worker able to import user-site Python renderer dependencies, so local `npm test` matches CI.
+- Advanced package, runtime, plugin, new project state, and new whole-object certificate identity to 1.1.1.
+
+### Known limitations
+
+- The deterministic VC08 adversarial matrix passes, but independent external fresh-model runs gave mixed results depending on image and prompt. That evaluation is deferred to 1.2.0 (#235) and is not claimed by this release.
+
+## 1.1.0 — 2026-09-17
+
+### Native physical semantics
+
+- Added stable semantic identities for assembly modules, attachment interfaces, physical parts, rigid links, virtual joints, mechanisms, transmissions, actuators, controllers, and runtime endpoints without collapsing identity into backend order or indices.
+- Added assembly-owned rigid-body dynamics, collision semantics, articulation graphs, mechanism graphs, explicit q/dq/effort transmission mappings, actuator capabilities, controller profiles, and optional runtime bindings.
+- Preserved RefAs truth separation: physical construction may be `observed`, `inferred`, `engineered`, `unknown`, or `forbidden`; unobserved values are not fabricated and engineered values do not become source facts.
+- Added digest-bound physical asset bundles so reusable child modules and exact physical component closures can be composed without rewriting their semantic identity.
+
+### Representation closure and readiness claims
+
+- Added representation-capacity preflight, one-way export adapters, backend-independent normalization, and cross-representation validation over canonical physical semantics.
+- Added semantic outcomes `EQUIVALENT`, `LOSSY`, `DRIFT`, `UNRESOLVED`, and `INVALID`, with quaternion sign/order, unit conversion, and equivalent frame conventions normalized before comparison.
+- Added exact field-scoped divergence authorization. A backend-specific override may become `DECLARED_DIVERGENCE` only when the current P14 drift and exact engineered authority validate live; canonical construction state remains unchanged.
+- Added scoped `articulated-ready`, `simulation-ready`, `control-ready`, and `runtime-ready` evidence. Physical readiness uses typed live P10–P15 preflight before the generic certification engine and cannot be authorized through the public generic path alone.
+- Kept higher-level control/runtime edits downstream-scoped so they do not retroactively invalidate unrelated lower physical readiness or visual reconstruction truth.
+
+### Integrated closure and hardening
+
+- Added the P17 integrated physical fixture: a coupled parallel 2-DOF assembly composed from reusable modules with fixed interfaces, virtual joints, dynamics, collision proxies, a nonlinear transmission, actuation, control, and runtime binding.
+- Proved independent backend projections normalize without false drift for quaternion sign/component order, translation units, and equivalent Euler convention/order.
+- Proved the end-to-end deliberate-drift path `P14 DRIFT → live P15 DECLARED_DIVERGENCE → P16 runtime-ready → certification`, including stale/substituted authority rejection and deterministic closure evidence.
+- Included the separately hardened runtime calibration/binding path so runtime configuration remains deployment state rather than semantic identity.
+
+### Compatibility and release boundary
+
+- Advanced package, runtime, new project state, and new whole-object certificate identity to 1.1.0 while public `.../v1` contract namespaces remain stable.
+- Public v1 project-state and certificate schemas continue accepting existing 1.0.0–1.0.4 artifacts; no in-place migration is required merely because the package minor version advances.
+- Strengthened repository and release audits so the physical runtime, public schemas, routed physical contract references, and P17 integration regression are required release evidence and required npm-package contents where applicable.
+- RefAs 1.1.0 can express and certify evidence-backed physical readiness; it does not manufacture observed manufacturer truth or calibrated real-world mass, inertia, collision, actuator, controller, or runtime values when supporting evidence is absent.
+
 ## 1.0.4 — 2026-09-15
 
 ### Host integration facade

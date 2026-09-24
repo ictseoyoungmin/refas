@@ -68,7 +68,9 @@ test('realized segmentation is derived from actual GLB mesh ownership and projec
   assert.equal(validateRealizedProjection(proof).valid, true);
   assert.equal(verifyRealizedProjection({proof, referenceGeometry:ref, glb}).valid, true);
   assert.equal(proof.derivedSegments.length, 2);
-  assert.ok(proof.segmentationMetrics.sourceVisibleSegmentMeanIoU > .9);
+  assert.equal(proof.segmentationMetrics.sourceVisibleSegmentMeanIoU, null);
+  assert.ok(proof.derivedSegments.every((segment) => segment.iou === null));
+  assert.equal(proof.policy.singleViewIouIsForbidden, true);
   assert.ok(proof.segmentationMetrics.interfaceBoundaryMeanErrorNormalized < .01);
   assert.equal(proof.segmentationMetrics.explicitOwnershipViolations, 0);
   assert.deepEqual(findingsFromRealizedProjection(proof), []);
@@ -87,10 +89,9 @@ test('collapsing explicit source parts into one realized mesh becomes blocking e
       {referenceId:'lower-body-segment', nodeIds:['upper-shell']},
     ], evidenceRefs:['asset.glb'],
   });
-  assert.ok(proof.segmentationMetrics.sourceVisibleSegmentMeanIoU < .68);
+  assert.equal(proof.segmentationMetrics.sourceVisibleSegmentMeanIoU, null);
   assert.equal(proof.segmentationMetrics.explicitOwnershipViolations, 1);
   const findings = findingsFromRealizedProjection(proof);
-  assert.ok(findings.some((finding) => finding.category === 'silhouette-mismatch' && finding.ownerCapability === 'shape-reconstruction'));
   assert.ok(findings.some((finding) => finding.category === 'attachment-mismatch' && finding.ownerCapability === 'assembly'));
   assert.ok(findings.every((finding) => finding.blocking));
 });

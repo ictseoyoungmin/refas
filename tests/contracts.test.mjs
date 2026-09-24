@@ -2,13 +2,20 @@ import assert from 'node:assert/strict';
 import {test} from 'node:test';
 
 import {
+  createConstructionAuthority,
+  createConstructionExecutionProof,
+  createConstructionOperationPermit,
   createConstructionQuality,
+  createConstructionVocabulary,
+  createHardSurfaceShell,
   createObservation,
   createPbrRenderReport,
   createReferenceRegistration,
   createSpatialHypothesisSet,
   createVisualHierarchy,
+  digestBytes,
   digestJson,
+  partsToGlb,
   mapChildToParent,
   mapParentToChild,
   stableStringify,
@@ -40,7 +47,50 @@ test('construction quality keeps generic primitive candidates at blockout', () =
   assert.throws(() => createConstructionQuality({...base, claim: 'identity-bearing', constructionFamilies: ['generic-primitive']}), /primitive-only geometry is blockout/);
   const blockout = createConstructionQuality({...base, claim: 'blockout', constructionFamilies: ['generic-primitive']});
   assert.deepEqual(validateConstructionQuality(blockout), {valid: true, errors: []});
-  const closed = createConstructionQuality({...base, claim: 'identity-bearing', constructionFamilies: ['landmark-cage', 'section-profile-loft']});
+  const vocabulary = createConstructionVocabulary({
+    scopeId: 'whole',
+    sourceSha256: SOURCE_DIGEST,
+    vocabulary: 'hard-surface',
+    cues: [{
+      id: 'controlled-sections',
+      description: 'The identity-bearing fixture requires controlled rigid section transitions.',
+      evidenceRefs: ['source/reference.png'],
+    }],
+    evidenceRefs: ['source/reference.png'],
+  });
+  const permit = createConstructionOperationPermit({
+    decision: vocabulary,
+    scopeId: 'whole',
+    operation: 'section-profile-loft-rigid',
+  });
+  const authority = createConstructionAuthority({decision: vocabulary, permit});
+  const mesh = createHardSurfaceShell({
+    schema: 'refas.hard-surface-spec/v1',
+    outerProfile: [[0, 0], [1, 0], [1, 1], [0, 1]],
+    cutouts: [],
+    thickness: 0.1,
+    edgeTreatments: {outer: {type: 'sharp'}},
+  });
+  const assetBytes = partsToGlb({
+    assetId: 'construction-quality-contract',
+    parts: [{id: 'whole-part', mesh, materialId: 'fixture', scopeId: 'whole', constructionAuthority: authority}],
+    materials: {fixture: {baseColor: [0.7, 0.7, 0.7, 1], metallic: 0, roughness: 0.5}},
+  });
+  const executionProof = createConstructionExecutionProof({
+    assetBytes,
+    decision: vocabulary,
+    permits: [permit],
+    evidenceRefs: ['source/reference.png'],
+  });
+  const closed = createConstructionQuality({
+    ...base,
+    assetSha256: digestBytes(assetBytes),
+    claim: 'identity-bearing',
+    constructionFamilies: ['section-profile-loft'],
+    constructionVocabulary: vocabulary,
+    constructionPermits: [permit],
+    constructionExecutionProof: executionProof,
+  });
   assert.deepEqual(validateConstructionQuality(closed), {valid: true, errors: []});
   const tampered = structuredClone(closed); tampered.policy.validationVolumeCannotReplaceConstructionQuality = false;
   assert.equal(validateConstructionQuality(tampered).valid, false);

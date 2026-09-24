@@ -1,7 +1,7 @@
 {
   "name": "refas",
-  "version": "1.0.4",
-  "description": "Vision-first, evidence-bound reference image to 3D reconstruction with multiview QA.",
+  "version": "1.1.1",
+  "description": "Vision-first, evidence-bound reference image to 3D reconstruction with multiview QA and explicit physical semantics.",
   "author": {
     "name": "ictseoyoungmin",
     "url": "https://github.com/ictseoyoungmin"
@@ -15,13 +15,14 @@
     "agent-skill",
     "visual-qa",
     "reference-image",
+    "physical-semantics",
     "multiview"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "RefAs",
     "shortDescription": "Reconstruct references into evidence-bound 3D assets",
-    "longDescription": "A vision-first reconstruction skill and runtime that lets an agent observe references, build traceable 3D assets, compare actual multiview renders, and preserve observation/inference provenance.",
+    "longDescription": "A vision-first reconstruction skill and runtime that lets an agent observe references, build traceable 3D assets, compare actual multiview renders, and close evidence-backed physical semantics without fabricating hidden source truth.",
     "developerName": "ictseoyoungmin",
     "category": "Creative Tools",
     "capabilities": [
@@ -32,7 +33,7 @@
     "websiteURL": "https://github.com/ictseoyoungmin/refas",
     "defaultPrompt": [
       "Use RefAs to reconstruct this reference as a traceable 3D asset with multiview QA.",
-      "Use RefAs to rebuild this reference with evidence-bound geometry and explicit observation/inference separation."
+      "Use RefAs to rebuild this reference with evidence-bound geometry and physical semantics where justified."
     ],
     "brandColor": "#10161D",
     "composerIcon": "./skills/refas/assets/icon.svg",
