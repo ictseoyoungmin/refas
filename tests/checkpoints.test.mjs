@@ -445,7 +445,7 @@ test('whole-object certification requires an independent digest-bound review and
   const certificate = await certifyProject(root);
   assert.equal(certificate.checkpointId, head.id);
   assert.equal(certificate.sourceSha256, source.sha256);
-  assert.equal(certificate.version, '1.1.0');
+  assert.equal(certificate.version, '1.1.1');
   assert.equal(certificate.visualReview.reviewDigest, review.reviewDigest);
   assert.equal(certificate.visualReview.evidenceClass, 'independent-reference');
   const guidance = await resumeProject(root);

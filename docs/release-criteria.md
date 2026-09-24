@@ -1,4 +1,6 @@
-# RefAs 1.1.0 release criteria
+# RefAs 1.1 release criteria
+
+These gates were introduced for 1.1.0 and remain mandatory for every 1.1.x release. 1.1.1 adds the spatial volume-closure and metric-authority gates in [`v1.1.1-release-readiness.md`](v1.1.1-release-readiness.md).
 
 RefAs 1.1.0 is releasable only when the current exact head satisfies the gates below without relying on historical CI, stale evidence, or undocumented runtime behavior.
 
