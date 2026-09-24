@@ -2,7 +2,7 @@
   <img src="skills/refas/assets/icon.svg" width="180" alt="RefAs robotic arm icon">
   <h1>RefAs</h1>
   <p>
-    <a href="https://github.com/ictseoyoungmin/refas/releases/tag/v1.1.0"><img src="https://img.shields.io/badge/version-v1.1.0-6f5a46" alt="Version v1.1.0"></a>
+    <a href="https://github.com/ictseoyoungmin/refas/releases/tag/v1.1.1"><img src="https://img.shields.io/badge/version-v1.1.1-6f5a46" alt="Version v1.1.1"></a>
     <a href="https://github.com/ictseoyoungmin/refas/actions/workflows/ci.yml"><img src="https://github.com/ictseoyoungmin/refas/actions/workflows/ci.yml/badge.svg" alt="CI status"></a>
     <img src="https://img.shields.io/badge/node-20%2B-339933" alt="Node.js 20+">
     <img src="https://img.shields.io/badge/Agent%20Skill-Vision--first%203D-b06f47" alt="Agent Skill: Vision-first 3D">
@@ -16,7 +16,7 @@ RefAs is designed for work where a quick image-to-mesh approximation is not enou
 
 ## Demo
 
-Open [`demo/index.html`](demo/index.html) for a dependency-free overview of the current 1.1.0 capability boundary and reproducible repository evidence.
+Open [`demo/index.html`](demo/index.html) for a dependency-free overview of the 1.1 capability boundary and reproducible repository evidence.
 
 The demo does not treat committed screenshots or opaque binary assets as proof. Geometry, render evidence, rollback, fitting, assembly checks, relational authority, physical semantics, backend normalization, readiness claims, and certification are exercised by tests and dogfood commands.
 
@@ -33,6 +33,17 @@ The demo does not treat committed screenshots or opaque binary assets as proof. 
 - **Actual multiview QA.** Hero, oblique, side, top, grazing, normal, object-ID, and albedo evidence drives critique; raster success is never visual similarity.
 - **Sealed provenance and claim-driven certification.** Candidate, checkpoint, evidence DAG, dependencies, policy, and decision are digest-bound and reproduced before authorization.
 - **Content-addressed rollback.** Typed findings route to one owner and trustworthy bytes can be restored when a downstream edit fails.
+
+## Spatial volume closure in 1.1.1
+
+RefAs 1.1.1 makes "looks right from the front" insufficient. A candidate must stay a coherent 3D object outside the hero view before it can be certified:
+
+- spatial roles (`volumetric`, `thin-shell`, intentionally planar) are frozen before evaluation and cannot be relabeled after a failure;
+- closure evidence is derived from the exact candidate GLB bytes, and a role-aware classifier detects planar/billboard collapse without asset-specific thresholds or single-view IoU;
+- a whole-before-parts volume barrier blocks downstream checkpoints, and final certification requires exact final-candidate spatial continuity along the selected lineage;
+- caller-authored PASS, forged gate authority, stale evidence, and sibling-lineage evidence are ignored by trusted runtime replay (`npm run dogfood:adversarial`).
+
+Correspondence, resemblance, spatial coherence, and physical readiness are separate obligations. Single-view IoU is never an objective, ranking signal, or resemblance proof.
 
 ## Physical semantics in 1.1.0
 
@@ -196,10 +207,14 @@ npm run dogfood:pbr
 npm run dogfood:hard-surface
 npm run dogfood:assembly
 node --test tests/integrated-physical-fixture.test.mjs
+npm run dogfood:fresh-worker
+npm run check:discovery-closure
+npm run dogfood:volume-regression
+npm run dogfood:adversarial
 npm run release:audit
 ```
 
-See [Architecture](docs/architecture.md), [Physical semantics plan](docs/physical-semantics-plan.md), [Integrated physical fixture](docs/integrated-physical-fixture.md), [Candidate transactions](docs/candidate-transactions.md), [Claim certification](docs/claim-certification.md), [Known limitations](docs/known-limitations.md), and [Release criteria](docs/release-criteria.md).
+See [Architecture](docs/architecture.md), [Physical semantics plan](docs/physical-semantics-plan.md), [Integrated physical fixture](docs/integrated-physical-fixture.md), [Candidate transactions](docs/candidate-transactions.md), [Claim certification](docs/claim-certification.md), [Known limitations](docs/known-limitations.md), and [Release criteria](docs/release-criteria.md), and [1.1.1 release readiness](docs/v1.1.1-release-readiness.md).
 
 Contributions follow the [Issue and Pull Request governance contract](docs/github-governance.md): one runtime capability and hierarchy scope or one explicit repository boundary, one primary Issue, evidence-bound review, and an explicit recovery point.
 

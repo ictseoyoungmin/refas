@@ -69,7 +69,7 @@ async function main() {
 
   const skillBytes = names.filter((name)=>name.startsWith('skills/refas/')).reduce((total,name)=>total+Number(pack.files.find((item)=>item.path===name)?.size??0),0);
   const packageJson = JSON.parse(await fs.readFile(path.join(ROOT,'package.json'),'utf8'));
-  if (packageJson.version !== '1.1.0') throw new Error(`release audit expected version 1.1.0, found ${packageJson.version}`);
+  if (packageJson.version !== '1.1.1') throw new Error(`release audit expected version 1.1.1, found ${packageJson.version}`);
   process.stdout.write(`${JSON.stringify({status:'PASS',version:packageJson.version,packagedFiles:names.length,unpackedBytes:pack.unpackedSize,skillBytes,instructionReferenceLeaves:instructionGraph.referenceLeaves,semanticInstructionNodes:semanticGraph.nodeCount,routedInstructionTargets:instructionGraph.routedPackagePaths.length},null,2)}\n`);
 }
 

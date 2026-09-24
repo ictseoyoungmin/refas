@@ -38,7 +38,7 @@ async function rewriteJson(root, relative, mutate) {
 test('plugin distribution adapters resolve one canonical RefAs skill tree', async () => {
   const result = await verifyPluginDistribution({root: ROOT});
   assert.equal(result.status, 'PASS');
-  assert.equal(result.version, '1.1.0');
+  assert.equal(result.version, '1.1.1');
   assert.equal(result.skillSource, './skills/');
   assert.deepEqual(result.adapters, ['claude', 'codex', 'agents']);
 });
