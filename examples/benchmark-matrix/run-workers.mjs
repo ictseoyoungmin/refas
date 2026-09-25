@@ -56,6 +56,7 @@ for (const worker of workers) {
 }
 await fs.mkdir(out, {recursive: true});
 const runIds = sources.flatMap((source) => workers.flatMap((worker) => promptRecords.map((prompt) => `${source.id}--${worker.id}--${prompt.id}`)));
+if (options.only && !runIds.includes(options.only)) fail(`unknown matrix cell: ${options.only}`);
 if (options['dry-run'] === 'true') {
   const plan = {schema: 'refas.cross-model-benchmark-plan/v1', refasCommit: commit, manifestSha256: sha256(manifestBytes), commonPromptSha256: commonPrompt.sha256, references: sources.map(({path: _path, ...rest}) => rest), prompts: promptRecords.map(({text: _text, ...rest}) => rest), runIds};
   await fs.writeFile(path.join(out, 'plan.json'), `${JSON.stringify(plan, null, 2)}\n`);
@@ -65,6 +66,7 @@ if (options['dry-run'] === 'true') {
 const results = [];
 for (const source of sources) for (const worker of workers) for (const prompt of promptRecords) {
   const id = `${source.id}--${worker.id}--${prompt.id}`;
+  if (options.only && options.only !== id) continue;
   const runDir = path.join(out, id);
   await fs.mkdir(runDir, {recursive: true});
   const promptText = `${commonPrompt.text}\n\n${prompt.text}\n\nReference: ${source.path}\nOutput directory: ${runDir}\nRefAs checkout: ${refasRoot}\nRefAs commit: ${commit}\n`;

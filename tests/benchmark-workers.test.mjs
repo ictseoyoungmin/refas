@@ -31,6 +31,11 @@ test('worker matrix runs every cell and binds source and evidence bytes', async 
     assert.equal(matrix.complete, true);
     assert.ok(matrix.results.every((item) => item.logs.length === 2));
     assert.ok(matrix.results.every((item) => item.outcome?.evidence[0]?.sha256 && !item.error));
+    const one = spawnSync(process.execPath, [script, '--manifest', path.join(root,'manifest.json'), '--out', path.join(root,'one'), '--only', 'articulated--model-a--plain'], {encoding:'utf8'});
+    assert.equal(one.status, 0, one.stderr);
+    const partial = JSON.parse(await fs.readFile(path.join(root,'one','matrix.json'),'utf8'));
+    assert.equal(partial.results.length, 1);
+    assert.equal(partial.complete, false);
     await fs.writeFile(path.join(root,'mechanical.png'), 'changed');
     const mismatch = spawnSync(process.execPath, [script, '--manifest', path.join(root,'manifest.json'), '--out', path.join(root,'other')], {encoding:'utf8'});
     assert.notEqual(mismatch.status, 0);

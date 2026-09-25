@@ -60,7 +60,9 @@ without a shell. Set a timeout for each worker.
 Point `refasRoot` to the exact checkout being measured; the runner records its
 HEAD commit and passes its path to each worker. Use `--dry-run true` to verify all source digests and write `plan.json` before
 spending model time. Omit it to execute the cells and write `matrix.json` after
-each one. Outputs include the RefAs commit, manifest and prompt digests, worker
+each one. `--only REFERENCE--WORKER--PROMPT` executes a single cell for
+smoke checks; its matrix remains incomplete until every cell is run in one full
+execution. Outputs include the RefAs commit, manifest and prompt digests, worker
 log digests, elapsed time, and evidence file digests. `complete: true` means
 all worker processes returned zero and supplied well-formed, file-backed
 outcomes; it does not pass the visual review or RefAs certification gate. A worker should write
