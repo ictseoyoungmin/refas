@@ -13,10 +13,11 @@ test('worker matrix runs every cell and binds source and evidence bytes', async 
   const root = await fs.mkdtemp(path.join(os.tmpdir(), 'refas-benchmark-'));
   try {
     const references = [];
-    for (const id of ['articulated', 'mechanical', 'irregular']) {
+    const categories = {articulated:'articulated-manufactured-organic',mechanical:'hard-surface-mechanical',irregular:'irregular-nonmechanical'};
+    for (const id of Object.keys(categories)) {
       const bytes = Buffer.from(`independent source: ${id}`);
       await fs.writeFile(path.join(root, `${id}.png`), bytes);
-      references.push({id, category: id, path: `${id}.png`, sha256: digest(bytes)});
+      references.push({id, category: categories[id], path: `${id}.png`, sha256: digest(bytes)});
     }
     await fs.writeFile(path.join(root, 'common.txt'), 'shared task');
     for (const id of ['plain', 'guided']) await fs.writeFile(path.join(root, `${id}.txt`), `${id} prompt`);
@@ -36,6 +37,12 @@ test('worker matrix runs every cell and binds source and evidence bytes', async 
     const partial = JSON.parse(await fs.readFile(path.join(root,'one','matrix.json'),'utf8'));
     assert.equal(partial.results.length, 1);
     assert.equal(partial.complete, false);
+    const invalid = structuredClone(manifest);
+    invalid.references[0].category = 'invented';
+    await fs.writeFile(path.join(root,'invalid.json'), JSON.stringify(invalid));
+    const wrongClass = spawnSync(process.execPath, [script, '--manifest', path.join(root,'invalid.json'), '--out', path.join(root,'invalid'), '--dry-run', 'true'], {encoding:'utf8'});
+    assert.notEqual(wrongClass.status, 0);
+    assert.match(wrongClass.stderr, /invalid reference/);
     await fs.writeFile(path.join(root,'mechanical.png'), 'changed');
     const mismatch = spawnSync(process.execPath, [script, '--manifest', path.join(root,'manifest.json'), '--out', path.join(root,'other')], {encoding:'utf8'});
     assert.notEqual(mismatch.status, 0);

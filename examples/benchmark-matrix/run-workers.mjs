@@ -6,6 +6,7 @@ import fsSync from 'node:fs';
 import {spawn} from 'node:child_process';
 import {createHash} from 'node:crypto';
 import {execFileSync} from 'node:child_process';
+import {BENCHMARK_CATEGORIES} from '../../skills/refas/scripts/lib/benchmark.mjs';
 
 const sha256 = (bytes) => createHash('sha256').update(bytes).digest('hex');
 const fail = (message) => { throw new Error(message); };
@@ -33,7 +34,7 @@ const ids = (items, label) => {
 ids(refs, 'reference'); ids(workers, 'worker'); ids(prompts, 'prompt');
 const sources = [];
 for (const ref of refs) {
-  if (!ref.category || !ref.path || !/^[a-f0-9]{64}$/u.test(ref.sha256)) fail(`invalid reference: ${ref.id}`);
+  if (!BENCHMARK_CATEGORIES.includes(ref.category) || !ref.path || !/^[a-f0-9]{64}$/u.test(ref.sha256)) fail(`invalid reference: ${ref.id}`);
   const absolute = path.resolve(sourceBase, ref.path);
   const bytes = await fs.readFile(absolute);
   if (sha256(bytes) !== ref.sha256) fail(`reference digest mismatch: ${ref.id}`);
