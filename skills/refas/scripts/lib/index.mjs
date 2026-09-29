@@ -91,6 +91,7 @@ export * from './parameter-fit.mjs';
 export * from './camera-fit.mjs';
 export * from './pose-fit.mjs';
 export * from './geometry-backend.mjs';
+export * from './subdivision-cage.mjs';
 export * from './perceptual-discrepancy.mjs';
 export * from './perceptual-signature.mjs';
 export * from './early-resemblance-barrier.mjs';

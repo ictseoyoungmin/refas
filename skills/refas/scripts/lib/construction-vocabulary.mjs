@@ -7,6 +7,7 @@ import {attachConstructionExecution, inspectGlb, parseGlb} from './glb.mjs';
 import {createHardSurfaceShell} from './hard-surface.mjs';
 import {createSectionProfileLoft} from './geometry-backend.mjs';
 import {createSurfaceNetworkParts, validateSurfaceNetwork} from './surface-network.mjs';
+import {createSubdivisionCageOrganic} from './subdivision-cage.mjs';
 
 export const CONSTRUCTION_VOCABULARY_SCHEMA = 'refas.construction-vocabulary/v1';
 export const CONSTRUCTION_OPERATION_PERMIT_SCHEMA = 'refas.construction-operation-permit/v1';
@@ -28,6 +29,7 @@ export const CONSTRUCTION_OPERATIONS = Object.freeze([
   'surface-network-parts',
   'section-profile-loft-rigid',
   'section-profile-loft-organic',
+  'subdivision-cage-organic',
   'assembly-decomposition',
   'external-construction',
 ]);
@@ -40,6 +42,7 @@ const OPERATION_VOCABULARY = Object.freeze({
   'surface-network-parts': 'hard-surface',
   'section-profile-loft-rigid': 'hard-surface',
   'section-profile-loft-organic': 'organic',
+  'subdivision-cage-organic': 'organic',
   'assembly-decomposition': 'mechanical-articulated',
 });
 
@@ -799,6 +802,12 @@ export function createPermittedSectionProfileLoft({decision, permit, spec = {}} 
   }
   requirePermit(decision, permit, permit.operation, permit.scopeId);
   const mesh = createSectionProfileLoft(spec);
+  return deepFreeze({...mesh, constructionAuthority: createConstructionAuthority({decision, permit})});
+}
+
+export function createPermittedSubdivisionCageOrganic({decision, permit, spec = {}} = {}) {
+  requirePermit(decision, permit, 'subdivision-cage-organic', permit?.scopeId);
+  const mesh = createSubdivisionCageOrganic(spec);
   return deepFreeze({...mesh, constructionAuthority: createConstructionAuthority({decision, permit})});
 }
 

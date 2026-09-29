@@ -1,0 +1,201 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/subdivision-cage-organic.schema.json",
+  "title": "RefAs subdivision-cage organic construction metadata",
+  "type": "object",
+  "required": [
+    "schema",
+    "id",
+    "levels",
+    "controlVertices",
+    "controlFaces",
+    "creases",
+    "provenance",
+    "landmarkCageDigest",
+    "realizedMeshDigest",
+    "evidenceRefs",
+    "policy",
+    "cageDigest"
+  ],
+  "properties": {
+    "schema": {
+      "const": "refas.subdivision-cage-organic/v1"
+    },
+    "id": {
+      "$ref": "common.schema.json#/$defs/semanticId"
+    },
+    "levels": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 4
+    },
+    "controlVertices": {
+      "type": "array",
+      "minItems": 4,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "point",
+          "authority",
+          "landmarkId",
+          "evidenceRefs"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "common.schema.json#/$defs/semanticId"
+          },
+          "point": {
+            "type": "array",
+            "minItems": 3,
+            "maxItems": 3,
+            "items": {
+              "type": "number"
+            }
+          },
+          "authority": {
+            "enum": [
+              "observed",
+              "inferred",
+              "engineered"
+            ]
+          },
+          "landmarkId": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "common.schema.json#/$defs/semanticId"
+              }
+            ]
+          },
+          "evidenceRefs": {
+            "$ref": "common.schema.json#/$defs/evidenceRefs"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "controlFaces": {
+      "type": "array",
+      "minItems": 4,
+      "items": {
+        "type": "array",
+        "minItems": 3,
+        "items": {
+          "$ref": "common.schema.json#/$defs/semanticId"
+        }
+      }
+    },
+    "creases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "vertices",
+          "weight"
+        ],
+        "properties": {
+          "vertices": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": {
+              "$ref": "common.schema.json#/$defs/semanticId"
+            }
+          },
+          "weight": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "provenance": {
+      "type": "array",
+      "minItems": 4,
+      "items": {
+        "type": "object",
+        "required": [
+          "vertexId",
+          "authority",
+          "landmarkId",
+          "evidenceRefs"
+        ],
+        "properties": {
+          "vertexId": {
+            "$ref": "common.schema.json#/$defs/semanticId"
+          },
+          "authority": {
+            "enum": [
+              "observed",
+              "inferred",
+              "engineered"
+            ]
+          },
+          "landmarkId": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "common.schema.json#/$defs/semanticId"
+              }
+            ]
+          },
+          "evidenceRefs": {
+            "$ref": "common.schema.json#/$defs/evidenceRefs"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "landmarkCageDigest": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "common.schema.json#/$defs/digest"
+        }
+      ]
+    },
+    "evidenceRefs": {
+      "$ref": "common.schema.json#/$defs/evidenceRefs"
+    },
+    "policy": {
+      "type": "object",
+      "required": [
+        "controlVertexProvenanceRequired",
+        "generatedSurfaceIsEngineeredRealization",
+        "closedManifoldControlCageRequired",
+        "deterministicSubdivision"
+      ],
+      "properties": {
+        "controlVertexProvenanceRequired": {
+          "const": true
+        },
+        "generatedSurfaceIsEngineeredRealization": {
+          "const": true
+        },
+        "closedManifoldControlCageRequired": {
+          "const": true
+        },
+        "deterministicSubdivision": {
+          "const": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "cageDigest": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "realizedMeshDigest": {
+      "$ref": "common.schema.json#/$defs/digest"
+    }
+  },
+  "additionalProperties": false
+}
