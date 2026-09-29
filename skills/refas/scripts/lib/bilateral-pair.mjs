@@ -307,7 +307,7 @@ export function createBilateralPairRealization({
   return deepFreeze({...payload,realizationDigest:digestJson(payload)});
 }
 
-export function validateBilateralPairRealizationRecord(value,{relationalStructure,candidateAssetSha256=null}={}) {
+function validateBilateralPairRealizationRecord(value,{relationalStructure,candidateAssetSha256=null}={}) {
   const errors=[];
   try {
     if (value?.schema!==BILATERAL_PAIR_REALIZATION_SCHEMA) errors.push('invalid bilateral pair realization schema');
