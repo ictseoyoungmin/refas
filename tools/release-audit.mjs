@@ -30,7 +30,7 @@ async function main() {
   const instructionGraph = await verifyInstructionGraph({root: ROOT});
   const semanticGraph = await verifySemanticInstructionGraph({skillRoot: path.join(ROOT, 'skills/refas')});
   run(process.execPath, ['--test',
-    'tests/assembly-and-routing.test.mjs','tests/checkpoints.test.mjs','tests/cli.test.mjs','tests/contracts.test.mjs','tests/geometry.test.mjs','tests/subdivision-cage.test.mjs','tests/bilateral-pair.test.mjs','tests/governance.test.mjs','tests/instruction-graph.test.mjs','tests/semantic-instruction-graph.test.mjs',
+    'tests/assembly-and-routing.test.mjs','tests/checkpoints.test.mjs','tests/cli.test.mjs','tests/contracts.test.mjs','tests/geometry.test.mjs','tests/subdivision-cage.test.mjs','tests/bilateral-pair.test.mjs','tests/bilateral-articulated-regression.test.mjs','tests/governance.test.mjs','tests/instruction-graph.test.mjs','tests/semantic-instruction-graph.test.mjs',
     'tests/orientation-frame.test.mjs','tests/orientation-fitting.test.mjs','tests/orientation-hardening.test.mjs',
     'tests/relational-structure.test.mjs','tests/semantic-authority.test.mjs','tests/whole-system-relational-barrier.test.mjs','tests/relational-discrepancy.test.mjs','tests/relational-fit.test.mjs','tests/certification-relational-evidence.test.mjs',
     'tests/integrated-physical-fixture.test.mjs',
