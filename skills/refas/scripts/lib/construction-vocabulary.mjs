@@ -540,6 +540,8 @@ export function validateConstructionExecutionProof(proof, decision, permits = []
 }
 
 function assertExternalGlbHasNoConstructionAuthority(json, label) {
+  if ((json?.buffers ?? []).some((buffer) => buffer?.uri != null)) throw new Error(`${label} must be self-contained and cannot reference external buffers`);
+  if ((json?.images ?? []).some((image) => image?.uri != null)) throw new Error(`${label} must be self-contained and cannot reference external images`);
   if (json?.extras?.refas?.constructionExecutions != null) throw new Error(`${label} cannot carry pre-authored RefAs construction executions`);
   const visit = (value) => {
     if (!value || typeof value !== 'object') return;
