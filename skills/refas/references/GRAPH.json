@@ -1534,7 +1534,7 @@
               "symbol": "attestExternalConstruction"
             },
             "template": null,
-            "inputContract": "validated external receipt + exact script bytes + exact input bytes + raw output GLB + sandbox reexecution GLB",
+            "inputContract": "validated external-construction permit + external command/version probe + exact script bytes + exact source/guide/prior input bytes + argv template; runtime executes two isolated runs and requires byte-exact GLB replay",
             "outputSchema": null,
             "validator": null,
             "minimumInvocation": "references/construction.md",
@@ -1545,7 +1545,7 @@
               "verification": "structural",
               "reason": "runtime verifies exact script/input digests and byte-exact reexecution, then returns the attested candidate plus refas.construction-execution-proof/v1"
             },
-            "note": "Receipt existence alone has no identity authority. The attestation path verifies exact bytes, embeds refas.construction-execution/v1 into the candidate GLB, and produces candidate-bound execution proof."
+            "note": "Receipt existence alone has no identity authority. The runtime probes the actual tool version, writes exact script/input bytes into fresh run directories, executes the command twice with shell:false, requires byte-identical GLBs, embeds refas.construction-execution/v1, and produces candidate-bound execution proof."
           },
           {
             "id": "surface-network-parts",
