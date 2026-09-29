@@ -47,6 +47,7 @@ function structure({
       sagittalPlaneId:'sagittal-plane',
       mirrorAxis:'x',
       leftHalfSpace:'negative',
+      mirrorPlaneCoordinate:0,
       restGeometryPolicy,
       lateralSpan:{
         halfSpan,
