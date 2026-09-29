@@ -55,19 +55,24 @@ function normalizeControlVertices(vertices, landmarkCage, evidenceRefs) {
     };
   });
   if (new Set(normalized.map((vertex) => vertex.id)).size !== normalized.length) throw new Error('subdivision cage vertex IDs must be unique');
-  return normalized;
+  return normalized.sort((a, b) => a.id.localeCompare(b.id));
 }
 
 function normalizeFaces(faces, vertexIds) {
   if (!Array.isArray(faces) || faces.length < 4) throw new Error('subdivision cage requires at least four faces');
-  return faces.map((raw, index) => {
+  const normalizedFaces = faces.map((raw, index) => {
     const ids = Array.isArray(raw) ? raw : raw?.vertices;
     if (!Array.isArray(ids) || ids.length < 3) throw new Error(`faces[${index}] requires at least three vertices`);
     const normalized = ids.map((id, vertexIndex) => assertId(id, `faces[${index}].vertices[${vertexIndex}]`));
     if (new Set(normalized).size !== normalized.length) throw new Error(`faces[${index}] repeats a vertex`);
     for (const id of normalized) if (!vertexIds.has(id)) throw new Error(`faces[${index}] references unknown vertex ${id}`);
-    return normalized;
+    const rotations = normalized.map((_, offset) => [...normalized.slice(offset), ...normalized.slice(0, offset)]);
+    rotations.sort((a, b) => a.join('\u0000').localeCompare(b.join('\u0000')));
+    return rotations[0];
   });
+  const keys = normalizedFaces.map((face) => face.join('\u0000'));
+  if (new Set(keys).size !== keys.length) throw new Error('subdivision cage faces must be unique');
+  return normalizedFaces.sort((a, b) => a.join('\u0000').localeCompare(b.join('\u0000')));
 }
 
 function validateClosedControlTopology(faces) {
