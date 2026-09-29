@@ -2,7 +2,6 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import {spawnSync} from 'node:child_process';
 import test from 'node:test';
 
 import {
@@ -62,31 +61,8 @@ test('external construction attests a real isolated process reexecution', async 
   const sourceBytes = Buffer.from('independent source image bytes for external process fixture');
   const guideBytes = Buffer.from('source-derived guide bytes');
   const scriptBytes = Buffer.from(TOOL_SOURCE);
-  const sourcePath = path.join(root, 'source.bin');
-  const guidePath = path.join(root, 'guide.bin');
-  const toolPath = path.join(root, 'external-tool.mjs');
-  const firstPath = path.join(root, 'first.glb');
-  const replayPath = path.join(root, 'replay.glb');
-  await Promise.all([
-    fs.writeFile(sourcePath, sourceBytes),
-    fs.writeFile(guidePath, guideBytes),
-    fs.writeFile(toolPath, scriptBytes),
-  ]);
-
-  for (const output of [firstPath, replayPath]) {
-    const run = spawnSync(process.execPath, [toolPath, sourcePath, guidePath, output], {
-      cwd: root,
-      encoding: 'utf8',
-      env: {PATH: process.env.PATH ?? ''},
-      timeout: 10_000,
-    });
-    assert.equal(run.status, 0, run.stderr || run.stdout);
-  }
-  const [first, replay] = await Promise.all([fs.readFile(firstPath), fs.readFile(replayPath)]);
-  assert.equal(digestBytes(first), digestBytes(replay));
-  assert.equal(inspectGlb(first).meshCount, 1);
-
   const sourceSha256 = digestBytes(sourceBytes);
+
   const decision = createConstructionVocabulary({
     scopeId: 'whole',
     sourceSha256,
@@ -103,31 +79,28 @@ test('external construction attests a real isolated process reexecution', async 
     scopeId: 'whole',
     operation: 'external-construction',
   });
-  const receipt = createExternalConstructionReceipt({
-    decision,
-    permit,
-    tool: {id: 'node-headless-fixture', version: process.version},
-    scriptSha256: digestBytes(scriptBytes),
-    inputs: [
-      {id: 'primary-source', kind: 'source', authority: 'observed', sha256: sourceSha256},
-      {id: 'shape-guide', kind: 'guide', authority: 'inferred', sha256: digestBytes(guideBytes)},
-    ],
-    determinism: {mode: 'byte-exact'},
-    outputGlbSha256: digestBytes(first),
-    evidenceRefs: ['reviews/external-process.json'],
-  });
+
   const attested = attestExternalConstruction({
     decision,
     permit,
-    receipt,
+    tool: {id: 'node-headless-fixture', command: process.execPath},
+    versionArgs: ['--version'],
     scriptBytes,
-    inputBytes: {'primary-source': sourceBytes, 'shape-guide': guideBytes},
-    outputBytes: first,
-    reexecutedBytes: replay,
+    scriptFileName: 'external-tool.mjs',
+    inputs: [
+      {id: 'primary-source', kind: 'source', authority: 'observed', bytes: sourceBytes},
+      {id: 'shape-guide', kind: 'guide', authority: 'inferred', bytes: guideBytes},
+    ],
+    args: ['{script}', '{input:primary-source}', '{input:shape-guide}', '{output}'],
     partId: 'external-body',
     evidenceRefs: ['reviews/external-process.json'],
   });
 
+  assert.equal(attested.receipt.tool.id, 'node-headless-fixture');
+  assert.equal(attested.receipt.tool.version, process.version);
+  assert.equal(attested.receipt.scriptSha256, digestBytes(scriptBytes));
+  assert.equal(attested.receipt.outputGlbSha256, attested.execution.geometrySha256);
+  assert.equal(attested.processEvidence.tool.version, process.version);
   const result = validateConstructionExecutionProof(attested.proof, decision, [permit], {
     assetSha256: digestBytes(attested.assetBytes),
   });
@@ -135,5 +108,6 @@ test('external construction attests a real isolated process reexecution', async 
   const inspection = inspectGlb(attested.assetBytes);
   assert.equal(inspection.meshCount, 1);
   assert.equal(inspection.extras.refas.constructionExecutions.length, 1);
-  assert.equal(inspection.extras.refas.constructionExecutions[0].externalReceiptDigest, receipt.receiptDigest);
+  assert.equal(inspection.extras.refas.constructionExecutions[0].externalReceiptDigest, attested.receipt.receiptDigest);
 });
+
