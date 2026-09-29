@@ -126,6 +126,15 @@ test('subdivision cage inherits landmark provenance and rejects missing provenan
     vertices:vertexSpecs.map((vertex,index)=>index===0?{...vertex,point:[-0.5,-1,-1]}:vertex),
   }),/point does not match landmark/);
 
+  assert.throws(()=>createSubdivisionCageOrganic({
+    ...spec(),
+    vertices:vertexSpecs.map((vertex,index)=>index===4?{...vertex,authority:'observed'}:vertex),
+  }),/authority must match bound landmark lm001/);
+
+  const forgedLandmarkCage=structuredClone(cage);
+  forgedLandmarkCage.landmarks[0].point=[-0.25,-1,-1];
+  assert.throws(()=>createSubdivisionCageOrganic({...spec(),landmarkCage:forgedLandmarkCage}),/landmarkCage digest mismatch/);
+
   const forged=structuredClone(mesh.subdivisionCage);
   forged.controlFaces=forged.controlFaces.slice(0,-1);
   const payload=structuredClone(forged);
