@@ -9,6 +9,7 @@ import {
   validateStructuralPlausibility,
 } from '../skills/refas/scripts/lib/index.mjs';
 import {CORVID_ROOT_SUPPORT_EVIDENCE,boxMesh} from './fixtures/root-support-corvid-fixture.mjs';
+import {buildArticulatedFigure} from '../examples/articulated-figure/model.mjs';
 
 const D=(c='a')=>c.repeat(64);
 const E=(id)=>({id,scopeId:id,evidenceRefs:[`model/${id}.json`]});
@@ -148,4 +149,25 @@ test('legacy attachment semantics remain canonical when plausibility declaration
   assert.equal('groundSupport' in legacy,false);
   assert.equal('rootAnchor' in legacy.relations[1],false);
   assert.deepEqual(validateAttachmentSemantics(legacy),{valid:true,errors:[]});
+});
+
+test('existing articulated figure remains non-blocking when structural plausibility is not declared',()=>{
+  const articulated=buildArticulatedFigure('reference');
+  const semantics=createAttachmentSemantics({
+    scopeId:'articulated-regression',
+    sourceSha256:D('d'),
+    entities:[E('pelvis-shell')],
+    relations:[FREE('pelvis-shell')],
+    evidenceRefs:['model/articulated-regression.json'],
+  });
+  const result=analyzeStructuralPlausibility({
+    attachmentSemantics:semantics,
+    glb:articulated.glb,
+    evidenceRefs:['tests/articulated-figure.test.mjs'],
+  });
+  assert.equal(result.status,'NOT_APPLICABLE');
+  assert.deepEqual(result.rootChecks,[]);
+  assert.equal(result.groundSupport,null);
+  assert.deepEqual(result.findings,[]);
+  assert.deepEqual(validateStructuralPlausibility(result,{attachmentSemantics:semantics,glb:articulated.glb}),{valid:true,errors:[]});
 });
