@@ -84,7 +84,7 @@ Each control vertex requires `observed`, `inferred`, or `engineered` authority p
 
 The control cage must be closed manifold with consistent face winding. Every edge must have exactly two owning faces. Subdivision levels are currently limited to 1–4. Crease weights are bounded to [0,1] and are propagated deterministically across levels. The final triangle mesh must pass the normal RefAs watertight/winding checks.
 
-GLB serialization preserves the exact `refas.subdivision-cage-organic/v1` control-cage metadata, including control vertices, landmark bindings, authority provenance, evidence refs, crease weights, subdivision level, and cage digest. The permit-consuming wrapper is required for identity-bearing closure; calling the low-level kernel directly remains non-authoritative geometry construction.
+GLB serialization preserves the exact `refas.subdivision-cage-organic/v1` control-cage metadata, including control vertices, landmark bindings, authority provenance, evidence refs, crease weights, subdivision level, cage digest, and a deterministic `realizedMeshDigest`. Serialization recomputes the realized mesh binding and rejects arbitrary geometry carrying otherwise valid cage metadata. A landmark-bound vertex cannot elevate or rewrite the landmark's authority; stale landmark-cage digests are rejected. The permit-consuming wrapper is required for identity-bearing closure; calling the low-level kernel directly remains non-authoritative geometry construction.
 
 ## Attested external construction
 
