@@ -19,6 +19,7 @@ const OPERATION_FAMILIES = Object.freeze({
   'surface-network-parts': new Set(['surface-network', 'surface-network-parts']),
   'section-profile-loft-rigid': new Set(['section-profile-loft', 'section-profile-loft-rigid']),
   'section-profile-loft-organic': new Set(['section-profile-loft', 'section-profile-loft-organic']),
+  'external-construction': new Set(['external-construction']),
 });
 
 function uniqueStrings(values, label) {
