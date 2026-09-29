@@ -478,6 +478,13 @@ export function validateConstructionExecutionProof(proof, decision, permits = []
     if (JSON.stringify(proof?.permitDigests ?? []) !== JSON.stringify(expectedPermitDigests)) errors.push('construction execution proof permit set mismatch');
     const receiptDigests = externalReceipts.map((receipt) => receipt.receiptDigest);
     if (JSON.stringify(receiptDigests) !== JSON.stringify([...receiptDigests].sort())) errors.push('construction execution proof external receipts are not canonical');
+    for (const field of ['candidateBytesCarryConstructionExecutions', 'detachedPermitsCannotCloseIdentity', 'rawGeometryWithoutAuthorityIsBlockoutOnly']) {
+      if (proof?.policy?.[field] !== true) errors.push(`construction execution proof policy ${field} must be true`);
+    }
+    if (externalReceipts.length) {
+      if (proof?.policy?.externalConstructionRequiresVerifiedReceipt !== true) errors.push('external construction proof must require a verified receipt');
+      if (proof?.policy?.externalConstructionRequiresByteExactReplay !== true) errors.push('external construction proof must require byte-exact replay');
+    }
     const payload = structuredClone(proof); delete payload.proofDigest;
     if (digestJson(payload) !== proof?.proofDigest) errors.push('construction execution proof digest mismatch');
   } catch (error) { errors.push(error.message); }
