@@ -16,6 +16,7 @@
     "permitDigest",
     "tool",
     "scriptSha256",
+    "invocation",
     "inputs",
     "determinism",
     "outputGlbSha256",
@@ -24,53 +25,124 @@
     "receiptDigest"
   ],
   "properties": {
-    "schema": {"const": "refas.external-construction-receipt/v1"},
-    "rootScopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
-    "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
-    "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "schema": {
+      "const": "refas.external-construction-receipt/v1"
+    },
+    "rootScopeId": {
+      "$ref": "common.schema.json#/$defs/semanticId"
+    },
+    "scopeId": {
+      "$ref": "common.schema.json#/$defs/semanticId"
+    },
+    "sourceSha256": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
     "vocabulary": {
-      "enum": ["hard-surface", "organic", "mechanical-articulated", "hybrid", "unresolved"]
+      "enum": [
+        "hard-surface",
+        "organic",
+        "mechanical-articulated",
+        "hybrid",
+        "unresolved"
+      ]
     },
-    "operation": {"const": "external-construction"},
-    "vocabularyDigest": {"$ref": "common.schema.json#/$defs/digest"},
-    "effectiveVocabularyDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "operation": {
+      "const": "external-construction"
+    },
+    "vocabularyDigest": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "effectiveVocabularyDigest": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
     "mechanicalDecompositionDigest": {
-      "oneOf": [{"type": "null"}, {"$ref": "common.schema.json#/$defs/digest"}]
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "common.schema.json#/$defs/digest"
+        }
+      ]
     },
-    "permitDigest": {"$ref": "common.schema.json#/$defs/digest"},
+    "permitDigest": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
     "tool": {
       "type": "object",
-      "required": ["id", "version"],
+      "required": [
+        "id",
+        "version"
+      ],
       "properties": {
-        "id": {"$ref": "common.schema.json#/$defs/semanticId"},
-        "version": {"type": "string", "minLength": 1}
+        "id": {
+          "$ref": "common.schema.json#/$defs/semanticId"
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        }
       },
       "additionalProperties": false
     },
-    "scriptSha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "scriptSha256": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
     "inputs": {
       "type": "array",
       "minItems": 1,
       "items": {
         "type": "object",
-        "required": ["id", "kind", "authority", "sha256"],
+        "required": [
+          "id",
+          "kind",
+          "authority",
+          "sha256"
+        ],
         "properties": {
-          "id": {"$ref": "common.schema.json#/$defs/semanticId"},
-          "kind": {"enum": ["source", "guide", "prior", "other"]},
-          "authority": {"enum": ["observed", "inferred", "engineered"]},
-          "sha256": {"$ref": "common.schema.json#/$defs/digest"}
+          "id": {
+            "$ref": "common.schema.json#/$defs/semanticId"
+          },
+          "kind": {
+            "enum": [
+              "source",
+              "guide",
+              "prior",
+              "other"
+            ]
+          },
+          "authority": {
+            "enum": [
+              "observed",
+              "inferred",
+              "engineered"
+            ]
+          },
+          "sha256": {
+            "$ref": "common.schema.json#/$defs/digest"
+          }
         },
         "additionalProperties": false
       }
     },
     "determinism": {
       "type": "object",
-      "required": ["mode"],
-      "properties": {"mode": {"const": "byte-exact"}},
+      "required": [
+        "mode"
+      ],
+      "properties": {
+        "mode": {
+          "const": "byte-exact"
+        }
+      },
       "additionalProperties": false
     },
-    "outputGlbSha256": {"$ref": "common.schema.json#/$defs/digest"},
-    "evidenceRefs": {"$ref": "common.schema.json#/$defs/evidenceRefs"},
+    "outputGlbSha256": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "evidenceRefs": {
+      "$ref": "common.schema.json#/$defs/evidenceRefs"
+    },
     "policy": {
       "type": "object",
       "required": [
@@ -79,13 +151,61 @@
         "priorCannotBecomeObservedSourceTruth"
       ],
       "properties": {
-        "externalOutputRequiresReexecution": {"const": true},
-        "receiptCannotAuthorizeWithoutProof": {"const": true},
-        "priorCannotBecomeObservedSourceTruth": {"const": true}
+        "externalOutputRequiresReexecution": {
+          "const": true
+        },
+        "receiptCannotAuthorizeWithoutProof": {
+          "const": true
+        },
+        "priorCannotBecomeObservedSourceTruth": {
+          "const": true
+        }
       },
       "additionalProperties": false
     },
-    "receiptDigest": {"$ref": "common.schema.json#/$defs/digest"}
+    "receiptDigest": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "invocation": {
+      "type": "object",
+      "required": [
+        "args",
+        "versionArgs",
+        "scriptFileName",
+        "outputFileName"
+      ],
+      "properties": {
+        "args": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 64,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          }
+        },
+        "versionArgs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 16,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          }
+        },
+        "scriptFileName": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+        },
+        "outputFileName": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}\\\\.glb$"
+        }
+      },
+      "additionalProperties": false
+    }
   },
   "additionalProperties": false
 }
