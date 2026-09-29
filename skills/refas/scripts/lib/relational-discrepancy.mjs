@@ -1,5 +1,6 @@
-import {assertDigest, assertId, deepFreeze, digestJson} from './canonical.mjs';
+import {assertDigest, assertId, deepFreeze, digestBytes, digestJson} from './canonical.mjs';
 import {validateRelationalStructure, wholeSystemRelationalObligations} from './relational-structure.mjs';
+import {validateBilateralPairRealization} from './bilateral-pair.mjs';
 
 export const RELATIONAL_DISCREPANCY_SCHEMA = 'refas.relational-discrepancy/v1';
 export const RELATIONAL_DISCREPANCY_STATUSES = Object.freeze(['pass', 'fail', 'unresolved']);
@@ -36,6 +37,7 @@ function normalizeObservation(raw, index) {
     if (!CONTINUITIES.has(continuity)) throw new Error(`${label}.continuity is invalid`);
     observation.continuity = continuity;
   }
+  if (raw?.bilateralPairRealization != null) observation.bilateralPairRealization = structuredClone(raw.bilateralPairRealization);
   return observation;
 }
 
@@ -45,7 +47,7 @@ function rangeResidual(value, [minimum, maximum]) {
   return delta / Math.max(1, Math.abs(minimum), Math.abs(maximum));
 }
 
-function evaluateRelation(relation, observation) {
+function evaluateRelation(relation, observation, {relationalStructure, candidateAssetSha256, candidateGlb} = {}) {
   const evidenceRefs = observation.evidenceRefs;
   let status = 'unresolved';
   let residual = null;
@@ -82,6 +84,21 @@ function evaluateRelation(relation, observation) {
       status = observedContinuity === expectedContinuity ? 'pass' : 'fail';
       residual = status === 'pass' ? 0 : 1;
     }
+  } else if (relation.kind === 'bilateral-pair') {
+    const realization = observation.bilateralPairRealization ?? null;
+    measurement = {
+      kind:'bilateral-pair-realization',
+      realizationDigest:realization?.realizationDigest ?? null,
+      restGeometryPolicy:relation.restGeometryPolicy,
+    };
+    if (realization != null) {
+      if (candidateGlb == null) throw new Error(`${relation.id} bilateral-pair discrepancy requires exact candidate GLB bytes`);
+      const validation = validateBilateralPairRealization(realization,{glb:candidateGlb,relationalStructure});
+      if (!validation.valid) throw new Error(`${relation.id} bilateral realization is invalid: ${validation.errors.join('; ')}`);
+      if (realization.candidateSha256 !== candidateAssetSha256) throw new Error(`${relation.id} bilateral realization does not bind the discrepancy candidate`);
+      status='pass';
+      residual=0;
+    }
   } else {
     throw new Error(`unsupported relational discrepancy kind: ${relation.kind}`);
   }
@@ -109,14 +126,24 @@ function exactCoverage(observations, requiredIds) {
   }
 }
 
-export function createRelationalDiscrepancy({relationalStructure, candidateAssetSha256, observations = []} = {}) {
+export function createRelationalDiscrepancy({relationalStructure, candidateAssetSha256, candidateGlb = null, observations = []} = {}) {
   const validation = validateRelationalStructure(relationalStructure);
   if (!validation.valid) throw new Error(`relational structure is invalid: ${validation.errors.join('; ')}`);
+  const candidate = assertDigest(candidateAssetSha256, 'candidateAssetSha256');
   const requiredRelationIds = [...wholeSystemRelationalObligations(relationalStructure)].sort();
+  const requiredRelations = relationalStructure.relations.filter((relation)=>requiredRelationIds.includes(relation.id));
+  const hasBilateral = requiredRelations.some((relation)=>relation.kind==='bilateral-pair');
+  const candidateBytes = candidateGlb == null ? null : Buffer.from(candidateGlb);
+  if (hasBilateral) {
+    if (!candidateBytes?.length) throw new Error('bilateral-pair relational discrepancy requires exact candidate GLB bytes');
+    if (digestBytes(candidateBytes)!==candidate) throw new Error('candidateGlb does not match candidateAssetSha256');
+  }
   const normalizedObservations = observations.map(normalizeObservation).sort((a, b) => a.relationId.localeCompare(b.relationId));
   exactCoverage(normalizedObservations, requiredRelationIds);
   const relationById = new Map(relationalStructure.relations.map((relation) => [relation.id, relation]));
-  const checks = normalizedObservations.map((observation) => evaluateRelation(relationById.get(observation.relationId), observation));
+  const checks = normalizedObservations.map((observation) => evaluateRelation(relationById.get(observation.relationId), observation,{
+    relationalStructure,candidateAssetSha256:candidate,candidateGlb:candidateBytes,
+  }));
   const failedRelationIds = checks.filter((check) => check.status === 'fail').map((check) => check.relationId).sort();
   const unresolvedRelationIds = checks.filter((check) => check.status === 'unresolved').map((check) => check.relationId).sort();
   const eligible = failedRelationIds.length === 0 && unresolvedRelationIds.length === 0;
@@ -124,7 +151,7 @@ export function createRelationalDiscrepancy({relationalStructure, candidateAsset
     schema: RELATIONAL_DISCREPANCY_SCHEMA,
     scopeId: assertId(relationalStructure.scopeId, 'scopeId'),
     sourceSha256: assertDigest(relationalStructure.sourceSha256, 'sourceSha256'),
-    candidateAssetSha256: assertDigest(candidateAssetSha256, 'candidateAssetSha256'),
+    candidateAssetSha256: candidate,
     relationalStructure,
     relationalStructureDigest: assertDigest(relationalStructure.structureDigest, 'relationalStructureDigest'),
     requiredRelationIds,
@@ -147,7 +174,7 @@ export function createRelationalDiscrepancy({relationalStructure, candidateAsset
   return deepFreeze({...payload, discrepancyDigest: digestJson(payload)});
 }
 
-export function validateRelationalDiscrepancy(value) {
+export function validateRelationalDiscrepancy(value, {candidateGlb = null} = {}) {
   const errors = [];
   try {
     if (value?.schema !== RELATIONAL_DISCREPANCY_SCHEMA) errors.push('invalid schema');
@@ -157,6 +184,7 @@ export function validateRelationalDiscrepancy(value) {
     const recreated = createRelationalDiscrepancy({
       relationalStructure: value?.relationalStructure,
       candidateAssetSha256: value?.candidateAssetSha256,
+      candidateGlb,
       observations: value?.observations,
     });
     if (recreated.discrepancyDigest !== value?.discrepancyDigest) errors.push('relational discrepancy digest mismatch');
