@@ -71,7 +71,6 @@
         },
         "authority": {
           "enum": [
-            "observed",
             "inferred",
             "engineered"
           ]
