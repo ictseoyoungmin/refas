@@ -304,7 +304,7 @@ function normalizeExternalInvocation(raw) {
   };
   const scriptFileName = safeName(raw.scriptFileName, 'invocation.scriptFileName');
   const outputFileName = safeName(raw.outputFileName, 'invocation.outputFileName');
-  if (!outputFileName.toLowerCase().endsWith('.glb')) throw new Error('invocation.outputFileName must end in .glb');
+  if (!outputFileName.endsWith('.glb')) throw new Error('invocation.outputFileName must end in .glb');
   if (!normalizedArgs.some((value) => value.includes('{script}'))) throw new Error('invocation.args must reference {script}');
   if (!normalizedArgs.some((value) => value.includes('{output}'))) throw new Error('invocation.args must reference {output}');
   return {args: normalizedArgs, versionArgs: normalizedVersionArgs, scriptFileName, outputFileName};
@@ -333,6 +333,18 @@ export function createExternalConstructionReceipt({
   if (sourceInputs.length !== 1 || sourceInputs[0].sha256 !== permit.sourceSha256 || sourceInputs[0].authority !== 'observed') {
     throw new Error('external construction receipt requires exactly one observed source input bound to the permit source');
   }
+  const normalizedInvocation = normalizeExternalInvocation(invocation);
+  const inputIds = new Set(normalizedInputs.map((item) => item.id));
+  for (const arg of normalizedInvocation.args) {
+    for (const match of arg.matchAll(/\{input:([^}]+)\}/gu)) {
+      if (!inputIds.has(match[1])) throw new Error(`invocation references undeclared input ${match[1]}`);
+    }
+  }
+  for (const input of normalizedInputs) {
+    if (!normalizedInvocation.args.some((arg) => arg.includes(`{input:${input.id}}`))) {
+      throw new Error(`invocation does not reference declared input ${input.id}`);
+    }
+  }
   const mode = String(determinism?.mode ?? '').trim();
   if (mode !== 'byte-exact') throw new Error('external construction currently requires byte-exact determinism');
   const payload = {
@@ -348,7 +360,7 @@ export function createExternalConstructionReceipt({
     permitDigest: permit.permitDigest,
     tool: {id: toolId, version: toolVersion},
     scriptSha256: assertDigest(scriptSha256, 'scriptSha256'),
-    invocation: normalizeExternalInvocation(invocation),
+    invocation: normalizedInvocation,
     inputs: normalizedInputs,
     determinism: {mode},
     outputGlbSha256: assertDigest(outputGlbSha256, 'outputGlbSha256'),
