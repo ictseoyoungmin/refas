@@ -46,6 +46,48 @@ const shell = createPermittedHardSurfaceShell({decision, permit, spec});
 
 Use the corresponding permit-aware wrappers for section-profile lofts and surface-network identity construction. Existing lower-level geometry functions remain available for blockout, support implementation, and backward compatibility, but calling them directly does **not** establish identity-bearing construction authority. Permit-consuming wrappers carry `refas.construction-authority/v1` into GLB serialization; serialization emits per-part `refas.construction-execution/v1` records, and `createConstructionExecutionProof` binds those executions to the exact candidate GLB digest. `refas.construction-quality/v1` rejects identity-bearing closure unless the current vocabulary, required permits, and matching candidate-bound execution proof are present.
 
+## Attested external construction
+
+Use `external-construction` when a resolved hard-surface or organic identity scope needs a higher-capability external modeler such as headless Blender, an SDF/implicit tool, or a deterministic retopology program. It is **not** a trusted-GLB escape hatch.
+
+The public path is:
+
+```js
+const permit = createConstructionOperationPermit({
+  decision,
+  scopeId: 'whole',
+  operation: 'external-construction',
+});
+const receipt = createExternalConstructionReceipt({
+  decision,
+  permit,
+  tool: {id: 'blender-headless', version: '...'},
+  scriptSha256,
+  inputs: [
+    {id: 'primary-source', kind: 'source', authority: 'observed', sha256: sourceSha256},
+    {id: 'shape-guide', kind: 'guide', authority: 'inferred', sha256: guideSha256},
+  ],
+  determinism: {mode: 'byte-exact'},
+  outputGlbSha256,
+  evidenceRefs,
+});
+const {assetBytes, proof} = attestExternalConstruction({
+  decision,
+  permit,
+  receipt,
+  scriptBytes,
+  inputBytes,
+  outputBytes,
+  reexecutedBytes,
+});
+```
+
+The receipt binds tool identity/version, exact program digest, every declared input digest and authority, the raw external GLB digest, and the determinism contract. The attestation runtime rechecks the exact script and input bytes, requires the sandbox reexecution GLB to be byte-identical to the recorded output, embeds a permit-bound `refas.construction-execution/v1` into the resulting candidate, and then creates the normal candidate-bound `refas.construction-execution-proof/v1`.
+
+A receipt alone has no construction authority. Missing receipt, changed script bytes, changed guide/prior/source bytes, changed output bytes, non-byte-exact replay, or replay onto a different candidate all fail closed. A prior input may be `inferred` or `engineered`, never `observed`. Mechanical/hybrid whole scopes still require decomposition; external construction may be used only on their resolved child identity scopes.
+
+The first public determinism mode is deliberately `byte-exact`. If a real external tool cannot satisfy that contract, do not weaken the receipt ad hoc; reopen the capability and introduce a separately reviewed bounded-nondeterminism mode tied to independent geometry evidence.
+
 The compatibility matrix is runtime-owned. Do not copy or override it in project data, templates, or agent prose. If the evidence and the chosen vocabulary disagree, reopen the decision instead of forcing a convenient primitive family.
 
 ## Blockout and identity-bearing geometry
