@@ -15,6 +15,7 @@
     "mirrorAxis",
     "leftHalfSpace",
     "mirrorPlacement",
+    "mirrorPlaneCoordinate",
     "restGeometryPolicy",
     "lateralSpan",
     "intrinsicAsymmetry",
@@ -255,7 +256,8 @@
         "intrinsicAsymmetryRequiresObservedSourceEvidence",
         "imagePlaneSeparationCannotAuthorizeLateralSpan",
         "sharedPairMirrorAxisIsExplicit",
-        "declaredLateralSpanIsRealized"
+        "declaredLateralSpanIsRealized",
+        "pairNodesMustBeActiveSceneRoots"
       ],
       "properties": {
         "pairRestGeometryComesFromCandidateBytes": {
@@ -280,6 +282,9 @@
           "const": true
         },
         "declaredLateralSpanIsRealized": {
+          "const": true
+        },
+        "pairNodesMustBeActiveSceneRoots": {
           "const": true
         }
       },
@@ -313,6 +318,7 @@
             "mirrorAxis",
             "leftHalfSpace",
             "halfSpan",
+            "planeCoordinate",
             "tolerance",
             "leftCoordinate",
             "rightCoordinate",
@@ -358,10 +364,16 @@
                 -1,
                 1
               ]
+            },
+            "planeCoordinate": {
+              "type": "number"
             }
           }
         }
       ]
+    },
+    "mirrorPlaneCoordinate": {
+      "type": "number"
     }
   },
   "additionalProperties": false
