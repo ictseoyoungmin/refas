@@ -270,6 +270,9 @@
               "negative",
               "positive"
             ]
+          },
+          "mirrorPlaneCoordinate": {
+            "type": "number"
           }
         },
         "additionalProperties": false
