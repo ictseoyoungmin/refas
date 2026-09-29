@@ -698,17 +698,17 @@ export function attestExternalConstruction({
       partId,
       evidenceRefs,
     });
-    return deepFreeze({
+    return {
       ...finalized,
       receipt,
-      processEvidence: {
+      processEvidence: deepFreeze({
         tool: receipt.tool,
         firstStdoutSha256: digestBytes(Buffer.from(first.stdout)),
         firstStderrSha256: digestBytes(Buffer.from(first.stderr)),
         replayStdoutSha256: digestBytes(Buffer.from(replay.stdout)),
         replayStderrSha256: digestBytes(Buffer.from(replay.stderr)),
-      },
-    });
+      }),
+    };
   } finally {
     fs.rmSync(root, {recursive: true, force: true});
   }
