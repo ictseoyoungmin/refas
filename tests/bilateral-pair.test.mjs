@@ -122,9 +122,16 @@ function realization(glb,relationalStructure){
 test('bilateral relation rejects image-plane separation as lateral-depth authority',()=>{
   assert.throws(()=>structure({
     basisKind:'image-plane-separation',
-    authority:'observed',
+    authority:'inferred',
     halfSpan:CORVID_LEG_OVERFIT.imagePlaneHipHalfSpan,
   }),/cannot use image-plane separation as 3D lateral authority/);
+});
+
+test('bilateral lateral span cannot self-promote to observed authority',()=>{
+  assert.throws(()=>structure({
+    basisKind:'source-depth-evidence',
+    authority:'observed',
+  }),/lateralSpan\.authority is invalid/);
 });
 
 test('corvid independent per-leg rest geometry is rejected under shared-mirrored authority',()=>{
