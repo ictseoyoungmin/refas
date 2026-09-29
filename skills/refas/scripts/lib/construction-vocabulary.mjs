@@ -3,7 +3,7 @@ import os from 'node:os';
 import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {assertDigest, assertId, deepFreeze, digestBytes, digestJson} from './canonical.mjs';
-import {attachConstructionExecution, parseGlb} from './glb.mjs';
+import {attachConstructionExecution, inspectGlb, parseGlb} from './glb.mjs';
 import {createHardSurfaceShell} from './hard-surface.mjs';
 import {createSectionProfileLoft} from './geometry-backend.mjs';
 import {createSurfaceNetworkParts, validateSurfaceNetwork} from './surface-network.mjs';
@@ -495,6 +495,18 @@ export function validateConstructionExecutionProof(proof, decision, permits = []
   return {valid: errors.length === 0, errors};
 }
 
+function assertExternalGlbHasNoConstructionAuthority(json, label) {
+  if (json?.extras?.refas?.constructionExecutions != null) throw new Error(`${label} cannot carry pre-authored RefAs construction executions`);
+  const visit = (value) => {
+    if (!value || typeof value !== 'object') return;
+    if (Object.hasOwn(value, 'constructionAuthority') || Object.hasOwn(value, 'refasConstructionExecution')) {
+      throw new Error(`${label} cannot carry pre-authored RefAs construction authority metadata`);
+    }
+    for (const child of Object.values(value)) visit(child);
+  };
+  visit(json);
+}
+
 function finalizeExternalConstructionReplay({
   decision,
   permit,
@@ -512,8 +524,12 @@ function finalizeExternalConstructionReplay({
   const script = Buffer.from(scriptBytes ?? []);
   if (!script.length) throw new Error('external construction attestation requires exact script bytes');
   if (!output.length || !replay.length) throw new Error('external construction attestation requires output and reexecuted GLB bytes');
-  parseGlb(output);
-  parseGlb(replay);
+  const parsedOutput = parseGlb(output);
+  const parsedReplay = parseGlb(replay);
+  assertExternalGlbHasNoConstructionAuthority(parsedOutput.json, 'external construction output');
+  assertExternalGlbHasNoConstructionAuthority(parsedReplay.json, 'external construction replay');
+  const outputInspection = inspectGlb(output);
+  if (outputInspection.meshCount < 1 || outputInspection.triangleCount < 1) throw new Error('external construction output must contain realized triangle geometry');
   const outputSha256 = digestBytes(output);
   const replaySha256 = digestBytes(replay);
   const receiptValidation = validateExternalConstructionReceipt(receipt, decision, permit, {outputGlbSha256: outputSha256});
@@ -666,9 +682,14 @@ export function attestExternalConstruction({
       const processArgs = externalToolArgs(args, {scriptFile: scriptName, outputFile: outputName, inputFiles});
       const result = runExternalProcess(command, processArgs, {cwd: runRoot, timeoutMs: timeout, label: `external construction ${name}`});
       const outputPath = path.join(runRoot, outputName);
-      if (!fs.existsSync(outputPath) || !fs.statSync(outputPath).isFile()) throw new Error(`external construction ${name} did not produce ${outputName}`);
+      if (!fs.existsSync(outputPath)) throw new Error(`external construction ${name} did not produce ${outputName}`);
+      const stat = fs.lstatSync(outputPath);
+      if (!stat.isFile() || stat.isSymbolicLink()) throw new Error(`external construction ${name} output must be a regular file`);
       const output = fs.readFileSync(outputPath);
-      parseGlb(output);
+      const parsed = parseGlb(output);
+      assertExternalGlbHasNoConstructionAuthority(parsed.json, `external construction ${name}`);
+      const inspection = inspectGlb(output);
+      if (inspection.meshCount < 1 || inspection.triangleCount < 1) throw new Error(`external construction ${name} output contains no realized triangle geometry`);
       return {output, stdout: result.stdout, stderr: result.stderr};
     };
 
