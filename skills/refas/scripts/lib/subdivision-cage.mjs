@@ -1,5 +1,6 @@
 import {assertId, deepFreeze, digestJson} from './canonical.mjs';
 import {finalizeMesh} from './mesh.mjs';
+import {createLandmarkCage} from './geometry-backend.mjs';
 
 export const SUBDIVISION_CAGE_ORGANIC_SCHEMA = 'refas.subdivision-cage-organic/v1';
 
@@ -26,24 +27,13 @@ function normalizeAuthority(value, label) {
 function landmarkMap(landmarkCage) {
   if (landmarkCage == null) return new Map();
   if (landmarkCage?.schema !== 'refas.landmark-cage/v1') throw new Error('landmarkCage must use refas.landmark-cage/v1');
-  const landmarks = Array.isArray(landmarkCage.landmarks) ? landmarkCage.landmarks : [];
-  if (!landmarks.length) throw new Error('landmarkCage requires at least one landmark');
-  const ids = new Set();
-  for (const [index, landmark] of landmarks.entries()) {
-    const id = assertId(landmark?.id, `landmarkCage.landmarks[${index}].id`);
-    if (ids.has(id)) throw new Error('landmarkCage landmark IDs must be unique');
-    ids.add(id);
-    point3(landmark?.point, `landmarkCage.landmarks[${index}].point`);
-    if (landmark?.authority != null) normalizeAuthority(landmark.authority, `landmarkCage.landmarks[${index}].authority`);
-    if (!strings(landmark?.evidenceRefs).length) throw new Error(`landmarkCage.landmarks[${index}].evidenceRefs requires at least one value`);
-  }
-  const payload = {
+  const expected = createLandmarkCage({
     id: landmarkCage.id,
     landmarks: landmarkCage.landmarks,
-    evidenceRefs: landmarkCage.evidenceRefs ?? [],
-  };
-  if (digestJson(payload) !== landmarkCage.cageDigest) throw new Error('landmarkCage digest mismatch');
-  return new Map(landmarks.map((landmark) => [landmark.id, landmark]));
+    evidenceRefs: landmarkCage.evidenceRefs,
+  });
+  if (digestJson(expected) !== digestJson(landmarkCage)) throw new Error('landmarkCage is stale or non-canonical');
+  return new Map(expected.landmarks.map((landmark) => [landmark.id, landmark]));
 }
 
 function normalizeControlVertices(vertices, landmarkCage, evidenceRefs) {
