@@ -140,6 +140,11 @@ test('subdivision cage inherits landmark provenance and rejects missing provenan
   const cage=landmarkCage();
   const stripped=structuredClone(cage);
   delete stripped.landmarks[0].authority;
+  stripped.cageDigest=digestJson({
+    id:stripped.id,
+    landmarks:stripped.landmarks,
+    evidenceRefs:stripped.evidenceRefs,
+  });
   assert.throws(()=>createSubdivisionCageOrganic({...spec(),landmarkCage:stripped}),/authority must be observed, inferred, or engineered/);
 
   assert.throws(()=>createSubdivisionCageOrganic({
