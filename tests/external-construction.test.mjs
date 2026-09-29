@@ -18,6 +18,12 @@ const GUIDE_BYTES = Buffer.from('external construction guide bytes');
 const SOURCE = digestBytes(SOURCE_BYTES);
 const GUIDE = digestBytes(GUIDE_BYTES);
 const SCRIPT = digestBytes(Buffer.from('deterministic external construction program'));
+const INVOCATION = {
+  args: ['{script}', '{input:primary-source}', '{input:shape-guide}', '{output}'],
+  versionArgs: ['--version'],
+  scriptFileName: 'construct.mjs',
+  outputFileName: 'candidate.glb',
+};
 
 function decisionFixture(vocabulary = 'hard-surface') {
   return createConstructionVocabulary({
@@ -55,6 +61,7 @@ function receiptFixture(decision, permit, outputBytes) {
     permit,
     tool: {id: 'headless-modeler', version: '1.0.0'},
     scriptSha256: SCRIPT,
+    invocation: INVOCATION,
     inputs: [
       {id: 'primary-source', kind: 'source', authority: 'observed', sha256: SOURCE},
       {id: 'shape-guide', kind: 'guide', authority: 'inferred', sha256: GUIDE},
@@ -117,6 +124,7 @@ test('external receipt preserves source/prior authority boundaries', () => {
     permit,
     tool: {id: 'headless-modeler', version: '1.0.0'},
     scriptSha256: SCRIPT,
+    invocation: INVOCATION,
     inputs: [
       {id: 'primary-source', kind: 'source', authority: 'observed', sha256: SOURCE},
       {id: 'generated-prior', kind: 'prior', authority: 'observed', sha256: GUIDE},
@@ -130,6 +138,7 @@ test('external receipt preserves source/prior authority boundaries', () => {
     permit,
     tool: {id: 'headless-modeler', version: '1.0.0'},
     scriptSha256: SCRIPT,
+    invocation: INVOCATION,
     inputs: [
       {id: 'wrong-source', kind: 'source', authority: 'observed', sha256: 'f'.repeat(64)},
       {id: 'shape-guide', kind: 'guide', authority: 'inferred', sha256: GUIDE},
