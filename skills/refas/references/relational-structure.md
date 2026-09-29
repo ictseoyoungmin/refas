@@ -28,10 +28,10 @@ The relation explicitly binds:
 - one `sagittalPlaneId` plane entity;
 - explicit `mirrorAxis` (`x|y|z`), `leftHalfSpace` (`negative|positive`), and object-frame `mirrorPlaneCoordinate`;
 - `restGeometryPolicy`: normally `shared-mirrored`;
-- a positive lateral half-span with authority and basis;
+- a positive lateral half-span whose authority is explicitly `inferred` or `engineered`, plus its basis;
 - optional source-observed intrinsic asymmetry.
 
-Do not convert 2D image-plane separation directly into 3D pair depth. `lateralSpan.basisKind: image-plane-separation` is rejected. Body-relative inference, structural priors, external specifications, direct source depth evidence, or an engineered layout remain explicit non-equivalent bases.
+Do not convert 2D image-plane separation directly into 3D pair depth. `lateralSpan.basisKind: image-plane-separation` is rejected, and lateral span cannot self-promote to `observed` authority. Body-relative inference, structural priors, external specifications, direct source depth evidence used as an inference basis, or an engineered layout remain explicit non-equivalent bases.
 
 `observed-intrinsic-asymmetry` is an exception, not a convenience flag. It requires a source observation and evidence refs with `observed` authority. Without that evidence, left/right rest construction must remain shared.
 
