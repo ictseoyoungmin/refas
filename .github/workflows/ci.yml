@@ -48,6 +48,9 @@ jobs:
       - name: External construction fresh-worker dogfood
         if: matrix.node == 24
         run: npm run dogfood:external-construction
+      - name: Subdivision cage organic dogfood
+        if: matrix.node == 24
+        run: npm run dogfood:subdivision-cage
       - name: Discovery closure verifier
         if: matrix.node == 24
         run: npm run check:discovery-closure
