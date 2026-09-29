@@ -27,6 +27,7 @@ function structure({
   authority='inferred',
   intrinsicAsymmetry=null,
   halfSpan=0.09,
+  mirrorPlaneCoordinate=0,
 }={}){
   return createRelationalStructure({
     scopeId:'whole',
@@ -47,7 +48,7 @@ function structure({
       sagittalPlaneId:'sagittal-plane',
       mirrorAxis:'x',
       leftHalfSpace:'negative',
-      mirrorPlaneCoordinate:0,
+      mirrorPlaneCoordinate,
       restGeometryPolicy,
       lateralSpan:{
         halfSpan,
@@ -173,6 +174,24 @@ test('candidate must realize the declared bilateral lateral half-span',()=>{
     right.translation=[.12,0,0];
   });
   assert.throws(()=>realization(drifted,pair),/declared lateral half-span/);
+});
+
+test('bilateral mirror plane coordinate is explicit and pair nodes cannot hide under parent transforms',()=>{
+  const shared=sharedCorvidLegMesh();
+  const glb=candidate(shared,shared);
+  const shiftedPlane=structure({mirrorPlaneCoordinate:.25});
+  assert.throws(()=>realization(glb,shiftedPlane),/declared lateral half-span/);
+
+  const pair=structure();
+  const parentWrapped=rewriteGlbJson(glb,(json)=>{
+    const right=json.nodes.findIndex((node)=>(node.extras?.refasPartId??node.name)==='right-leg');
+    const rootNodes=json.scenes[json.scene??0].nodes;
+    json.scenes[json.scene??0].nodes=rootNodes.filter((index)=>index!==right);
+    const parentIndex=json.nodes.length;
+    json.nodes.push({name:'right-leg-parent',children:[right],translation:[1,0,0]});
+    json.scenes[json.scene??0].nodes.push(parentIndex);
+  });
+  assert.throws(()=>realization(parentWrapped,pair),/must be an active-scene root/);
 });
 
 test('intrinsic asymmetric pair permits distinct rest geometry only with observed source evidence',()=>{
