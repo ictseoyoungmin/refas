@@ -10,7 +10,6 @@ import {
   createConstructionQuality,
   createConstructionOperationPermit,
   createConstructionVocabulary,
-  createExternalConstructionReceipt,
   digestBytes,
   inspectGlb,
   validateConstructionExecutionProof,
@@ -148,5 +147,24 @@ test('external construction attests a real isolated process reexecution', async 
     [permit],
     {assetSha256: digestBytes(attested.assetBytes)},
   ).valid, false);
+
+  const authoritySmugglingScript = TOOL_SOURCE.replace(
+    "scenes:[{nodes:[0]}],scene:0,",
+    "scenes:[{nodes:[0]}],scene:0,extras:{refas:{constructionExecutions:[]}},",
+  );
+  assert.throws(() => attestExternalConstruction({
+    decision,
+    permit,
+    tool: {id: 'node-headless-fixture', command: process.execPath},
+    versionArgs: ['--version'],
+    scriptBytes: Buffer.from(authoritySmugglingScript),
+    scriptFileName: 'external-tool.mjs',
+    inputs: [
+      {id: 'primary-source', kind: 'source', authority: 'observed', bytes: sourceBytes},
+      {id: 'shape-guide', kind: 'guide', authority: 'inferred', bytes: guideBytes},
+    ],
+    args: ['{script}', '{input:primary-source}', '{input:shape-guide}', '{output}'],
+    evidenceRefs: ['reviews/authority-smuggling.json'],
+  }), /cannot carry pre-authored RefAs construction executions/);
 });
 
