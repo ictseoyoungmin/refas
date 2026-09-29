@@ -60,7 +60,7 @@ async function main(){
 
   let imagePlaneBlocked=false;
   try{
-    makeStructure({lateralSpan:{halfSpan:.1106,authority:'observed',basisKind:'image-plane-separation',evidenceRefs:['source:hero-pixels']}});
+    makeStructure({lateralSpan:{halfSpan:.1106,authority:'inferred',basisKind:'image-plane-separation',evidenceRefs:['source:hero-pixels']}});
   }catch(error){imagePlaneBlocked=/image-plane separation/u.test(error.message);}
   if(!imagePlaneBlocked) throw new Error('image-plane pair span was not blocked');
 
