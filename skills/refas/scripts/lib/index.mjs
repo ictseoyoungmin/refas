@@ -105,7 +105,7 @@ export * from './certification-projection-evidence.mjs';
 export * from './mesh.mjs';
 export * from './hard-surface.mjs';
 export * from './realized-assembly.mjs';
-export * from './glb.mjs';
+export {applyParentLocalTransformEdits, parseGlb, partsToGlb, appendPartsToClosedGlb, inspectGlb} from './glb.mjs';
 export * from './surface-network.mjs';
 export * from './assembly.mjs';
 export * from './visual-review.mjs';
