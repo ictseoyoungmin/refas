@@ -294,6 +294,7 @@ export function createBilateralPairRealization({
     evidenceRefs:strings(evidenceRefs,'evidenceRefs',{required:true}),
     policy:{
       pairRestGeometryComesFromCandidateBytes:true,
+      pairNodesMustBeActiveSceneRoots:true,
       sharedPairUsesOneRestGeometry:true,
       sharedPairRequiresMirrorParity:true,
       sharedPairMirrorAxisIsExplicit:true,
@@ -371,6 +372,7 @@ export function validateBilateralPairRealizationRecord(value,{relationalStructur
     const evidenceRefs=strings(value?.evidenceRefs,'evidenceRefs',{required:true});
     const policy={
       pairRestGeometryComesFromCandidateBytes:true,
+      pairNodesMustBeActiveSceneRoots:true,
       sharedPairUsesOneRestGeometry:true,
       sharedPairRequiresMirrorParity:true,
       sharedPairMirrorAxisIsExplicit:true,
