@@ -365,6 +365,8 @@ export function validateSubdivisionCageOrganic(record) {
       levels,
     );
     if (meshDigest(realized) !== record?.realizedMeshDigest) errors.push('subdivision cage realized mesh digest mismatch');
+    const claimsLandmarks = canonicalVertices.some((vertex) => vertex.landmarkId != null);
+    if (claimsLandmarks && record?.landmarkCageDigest == null) errors.push('landmark-bound subdivision vertices require landmarkCageDigest');
     if (record?.landmarkCageDigest != null && !/^[a-f0-9]{64}$/u.test(String(record.landmarkCageDigest))) errors.push('landmarkCageDigest is invalid');
     if (record?.policy?.controlVertexProvenanceRequired !== true
       || record?.policy?.generatedSurfaceIsEngineeredRealization !== true
