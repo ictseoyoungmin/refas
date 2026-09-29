@@ -292,11 +292,21 @@ export function validateSubdivisionCageOrganic(record) {
       if (vertex?.landmarkId != null) assertId(vertex.landmarkId, `controlVertices[${index}].landmarkId`);
       if (!strings(vertex?.evidenceRefs).length) throw new Error(`controlVertices[${index}].evidenceRefs requires at least one value`);
     }
+    const canonicalVertices = controlVertices.map((vertex, index) => ({
+      id: assertId(vertex?.id, `controlVertices[${index}].id`),
+      point: point3(vertex?.point, `controlVertices[${index}].point`),
+      authority: normalizeAuthority(vertex?.authority, `controlVertices[${index}].authority`),
+      landmarkId: vertex?.landmarkId == null ? null : assertId(vertex.landmarkId, `controlVertices[${index}].landmarkId`),
+      evidenceRefs: strings(vertex?.evidenceRefs),
+    })).sort((a, b) => a.id.localeCompare(b.id));
+    if (JSON.stringify(canonicalVertices) !== JSON.stringify(record?.controlVertices ?? [])) errors.push('subdivision cage control vertices are not canonical');
     const faces = normalizeFaces(record?.controlFaces, ids);
+    if (JSON.stringify(faces) !== JSON.stringify(record?.controlFaces ?? [])) errors.push('subdivision cage control faces are not canonical');
     const controlEdges = validateClosedControlTopology(faces);
     const creases = normalizeCreases(record?.creases ?? [], controlEdges, ids);
     if (JSON.stringify(creases) !== JSON.stringify(record?.creases ?? [])) errors.push('subdivision cage creases are not canonical');
-    const expectedProvenance = controlVertices.map((vertex) => ({
+    if (JSON.stringify(strings(record?.evidenceRefs)) !== JSON.stringify(record?.evidenceRefs ?? [])) errors.push('subdivision cage evidence refs are not canonical');
+    const expectedProvenance = canonicalVertices.map((vertex) => ({
       vertexId: vertex.id,
       authority: vertex.authority,
       landmarkId: vertex.landmarkId ?? null,
@@ -304,7 +314,7 @@ export function validateSubdivisionCageOrganic(record) {
     }));
     if (JSON.stringify(expectedProvenance) !== JSON.stringify(record?.provenance ?? [])) errors.push('subdivision cage provenance does not match control vertices');
     const realized = realizeNormalizedCage(
-      controlVertices.map((vertex) => ({id: vertex.id, point: point3(vertex.point, `control vertex ${vertex.id}`)})),
+      canonicalVertices.map((vertex) => ({id: vertex.id, point: vertex.point})),
       faces,
       creases,
       levels,
