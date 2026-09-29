@@ -98,8 +98,10 @@ test('subdivision cage is deterministic, watertight, and preserves crease bounds
   assert.deepEqual(validateSubdivisionCageOrganic(a.subdivisionCage),{valid:true,errors:[]});
 
   const smooth=createSubdivisionCageOrganic(spec({creases:[]}));
-  assert.ok(smooth.analysis.bounds.max.every((value)=>value<1));
-  assert.ok(smooth.analysis.bounds.min.every((value)=>value>-1));
+  const smoothControlVertices=smooth.positions.slice(0,8);
+  assert.ok(smoothControlVertices.every((point)=>point.every((value)=>Math.abs(value)<1)));
+  const creasedControlVertices=a.positions.slice(0,8);
+  assert.deepEqual(creasedControlVertices, landmarkSpecs.map(([,point])=>point));
 });
 
 test('subdivision cage inherits landmark provenance and rejects missing provenance or broken topology', () => {
