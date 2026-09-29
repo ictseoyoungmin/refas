@@ -3,21 +3,52 @@
   "$id": "https://refas.dev/schemas/attachment-semantics.schema.json",
   "title": "RefAs attachment semantics",
   "type": "object",
-  "required": ["schema", "scopeId", "sourceSha256", "entities", "relations", "evidenceRefs", "policy", "semanticsDigest"],
+  "required": [
+    "schema",
+    "scopeId",
+    "sourceSha256",
+    "entities",
+    "relations",
+    "evidenceRefs",
+    "policy",
+    "semanticsDigest"
+  ],
   "properties": {
-    "schema": {"const": "refas.attachment-semantics/v1"},
-    "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
-    "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
+    "schema": {
+      "const": "refas.attachment-semantics/v1"
+    },
+    "scopeId": {
+      "$ref": "common.schema.json#/$defs/semanticId"
+    },
+    "sourceSha256": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
     "entities": {
       "type": "array",
       "minItems": 1,
       "items": {
         "type": "object",
-        "required": ["id", "scopeId", "evidenceRefs"],
+        "required": [
+          "id",
+          "scopeId",
+          "evidenceRefs"
+        ],
         "properties": {
-          "id": {"$ref": "common.schema.json#/$defs/semanticId"},
-          "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
-          "evidenceRefs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+          "id": {
+            "$ref": "common.schema.json#/$defs/semanticId"
+          },
+          "scopeId": {
+            "$ref": "common.schema.json#/$defs/semanticId"
+          },
+          "evidenceRefs": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
         },
         "additionalProperties": false
       }
@@ -26,20 +57,105 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["id", "mode", "subjectId", "ownerIds", "basis", "evidenceRefs", "semantics"],
+        "required": [
+          "id",
+          "mode",
+          "subjectId",
+          "ownerIds",
+          "basis",
+          "evidenceRefs",
+          "semantics"
+        ],
         "properties": {
-          "id": {"$ref": "common.schema.json#/$defs/semanticId"},
-          "mode": {"enum": ["FUSED", "RIGID_FOLLOW", "SURFACE_OFFSET", "MULTI_ANCHOR", "ARTICULATED", "SUPPORTED_CLEARANCE", "FREE"]},
-          "subjectId": {"$ref": "common.schema.json#/$defs/semanticId"},
-          "ownerIds": {"type": "array", "uniqueItems": true, "items": {"$ref": "common.schema.json#/$defs/semanticId"}},
-          "basis": {"enum": ["observed", "interpreted", "construction"]},
-          "evidenceRefs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+          "id": {
+            "$ref": "common.schema.json#/$defs/semanticId"
+          },
+          "mode": {
+            "enum": [
+              "FUSED",
+              "RIGID_FOLLOW",
+              "SURFACE_OFFSET",
+              "MULTI_ANCHOR",
+              "ARTICULATED",
+              "SUPPORTED_CLEARANCE",
+              "FREE"
+            ]
+          },
+          "subjectId": {
+            "$ref": "common.schema.json#/$defs/semanticId"
+          },
+          "ownerIds": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "$ref": "common.schema.json#/$defs/semanticId"
+            }
+          },
+          "basis": {
+            "enum": [
+              "observed",
+              "interpreted",
+              "construction"
+            ]
+          },
+          "evidenceRefs": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
           "semantics": {
             "type": "object",
-            "required": ["propagatesOwnerChange", "requiresSolver"],
+            "required": [
+              "propagatesOwnerChange",
+              "requiresSolver"
+            ],
             "properties": {
-              "propagatesOwnerChange": {"type": "boolean"},
-              "requiresSolver": {"type": "boolean"}
+              "propagatesOwnerChange": {
+                "type": "boolean"
+              },
+              "requiresSolver": {
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": false
+          },
+          "rootAnchor": {
+            "type": "object",
+            "required": [
+              "kind",
+              "subjectLocalPoint",
+              "tolerance",
+              "evidenceRefs"
+            ],
+            "properties": {
+              "kind": {
+                "const": "embedded-root"
+              },
+              "subjectLocalPoint": {
+                "type": "array",
+                "minItems": 3,
+                "maxItems": 3,
+                "items": {
+                  "type": "number"
+                }
+              },
+              "tolerance": {
+                "type": "number",
+                "minimum": 0
+              },
+              "evidenceRefs": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
             },
             "additionalProperties": false
           }
@@ -47,23 +163,117 @@
         "additionalProperties": false
       }
     },
-    "evidenceRefs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "evidenceRefs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
     "policy": {
       "type": "object",
-      "required": ["implicitAttachmentForbidden", "everyEntityRequiresExplicitMode", "exactlyOnePrimaryRelationPerEntity", "ownerDependentRolesAreExplicit", "ownershipCyclesForbidden", "modeSpecificOwnerArityRequired", "semanticsDoNotMutateGeometry", "semanticsDoNotAuthorizeClosure"],
+      "required": [
+        "implicitAttachmentForbidden",
+        "everyEntityRequiresExplicitMode",
+        "exactlyOnePrimaryRelationPerEntity",
+        "ownerDependentRolesAreExplicit",
+        "ownershipCyclesForbidden",
+        "modeSpecificOwnerArityRequired",
+        "semanticsDoNotMutateGeometry",
+        "semanticsDoNotAuthorizeClosure"
+      ],
       "properties": {
-        "implicitAttachmentForbidden": {"const": true},
-        "everyEntityRequiresExplicitMode": {"const": true},
-        "exactlyOnePrimaryRelationPerEntity": {"const": true},
-        "ownerDependentRolesAreExplicit": {"const": true},
-        "ownershipCyclesForbidden": {"const": true},
-        "modeSpecificOwnerArityRequired": {"const": true},
-        "semanticsDoNotMutateGeometry": {"const": true},
-        "semanticsDoNotAuthorizeClosure": {"const": true}
+        "implicitAttachmentForbidden": {
+          "const": true
+        },
+        "everyEntityRequiresExplicitMode": {
+          "const": true
+        },
+        "exactlyOnePrimaryRelationPerEntity": {
+          "const": true
+        },
+        "ownerDependentRolesAreExplicit": {
+          "const": true
+        },
+        "ownershipCyclesForbidden": {
+          "const": true
+        },
+        "modeSpecificOwnerArityRequired": {
+          "const": true
+        },
+        "semanticsDoNotMutateGeometry": {
+          "const": true
+        },
+        "semanticsDoNotAuthorizeClosure": {
+          "const": true
+        }
       },
       "additionalProperties": false
     },
-    "semanticsDigest": {"$ref": "common.schema.json#/$defs/digest"}
+    "semanticsDigest": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "groundSupport": {
+      "type": "object",
+      "required": [
+        "mode",
+        "groundAxis",
+        "groundCoordinate",
+        "contactEntityIds",
+        "contactTolerance",
+        "minimumMargin",
+        "sourceObservation",
+        "evidenceRefs"
+      ],
+      "properties": {
+        "mode": {
+          "enum": [
+            "grounded",
+            "source-supported-exempt"
+          ]
+        },
+        "groundAxis": {
+          "enum": [
+            "x",
+            "y",
+            "z"
+          ]
+        },
+        "groundCoordinate": {
+          "type": "number"
+        },
+        "contactEntityIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "common.schema.json#/$defs/semanticId"
+          }
+        },
+        "contactTolerance": {
+          "type": "number",
+          "minimum": 0
+        },
+        "minimumMargin": {
+          "type": "number",
+          "minimum": 0
+        },
+        "sourceObservation": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidenceRefs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "additionalProperties": false
+    }
   },
   "additionalProperties": false
 }
