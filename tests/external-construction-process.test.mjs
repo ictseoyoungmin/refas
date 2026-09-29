@@ -166,5 +166,24 @@ test('external construction attests a real isolated process reexecution', async 
     args: ['{script}', '{input:primary-source}', '{input:shape-guide}', '{output}'],
     evidenceRefs: ['reviews/authority-smuggling.json'],
   }), /cannot carry pre-authored RefAs construction executions/);
+
+  const externalUriScript = TOOL_SOURCE.replace(
+    "scenes:[{nodes:[0]}],scene:0,",
+    "images:[{uri:'outside.png'}],scenes:[{nodes:[0]}],scene:0,",
+  );
+  assert.throws(() => attestExternalConstruction({
+    decision,
+    permit,
+    tool: {id: 'node-headless-fixture', command: process.execPath},
+    versionArgs: ['--version'],
+    scriptBytes: Buffer.from(externalUriScript),
+    scriptFileName: 'external-tool.mjs',
+    inputs: [
+      {id: 'primary-source', kind: 'source', authority: 'observed', bytes: sourceBytes},
+      {id: 'shape-guide', kind: 'guide', authority: 'inferred', bytes: guideBytes},
+    ],
+    args: ['{script}', '{input:primary-source}', '{input:shape-guide}', '{output}'],
+    evidenceRefs: ['reviews/external-uri.json'],
+  }), /must be self-contained and cannot reference external images/);
 });
 
