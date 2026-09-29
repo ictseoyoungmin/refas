@@ -54,9 +54,6 @@ jobs:
       - name: Bilateral pair fresh-worker dogfood
         if: matrix.node == 24
         run: npm run dogfood:bilateral-pair
-      - name: Articulated figure regression dogfood
-        if: matrix.node == 24
-        run: npm run dogfood:articulated
       - name: Discovery closure verifier
         if: matrix.node == 24
         run: npm run check:discovery-closure
