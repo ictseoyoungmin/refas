@@ -116,6 +116,27 @@ test('subdivision cage inherits landmark provenance and rejects missing provenan
 
   assert.throws(()=>createSubdivisionCageOrganic({...spec(),faces:faces.slice(0,-1)}),/not closed manifold/);
 
+  const bowTieVertices=[
+    {id:'b0',point:[0,0,0],authority:'engineered',evidenceRefs:['source/reference.png']},
+    {id:'b1',point:[1,0,0],authority:'engineered',evidenceRefs:['source/reference.png']},
+    {id:'b2',point:[0,1,0],authority:'engineered',evidenceRefs:['source/reference.png']},
+    {id:'b3',point:[0,0,1],authority:'engineered',evidenceRefs:['source/reference.png']},
+    {id:'b4',point:[-1,0,0],authority:'engineered',evidenceRefs:['source/reference.png']},
+    {id:'b5',point:[0,-1,0],authority:'engineered',evidenceRefs:['source/reference.png']},
+    {id:'b6',point:[0,0,-1],authority:'engineered',evidenceRefs:['source/reference.png']},
+  ];
+  const bowTieFaces=[
+    ['b0','b2','b1'],['b0','b1','b3'],['b0','b3','b2'],['b1','b2','b3'],
+    ['b0','b5','b4'],['b0','b4','b6'],['b0','b6','b5'],['b4','b5','b6'],
+  ];
+  assert.throws(()=>createSubdivisionCageOrganic({
+    id:'bow-tie-cage',
+    vertices:bowTieVertices,
+    faces:bowTieFaces,
+    levels:1,
+    evidenceRefs:['source/reference.png'],
+  }),/disconnected bow-tie face-star/);
+
   const cage=landmarkCage();
   const stripped=structuredClone(cage);
   delete stripped.landmarks[0].authority;
