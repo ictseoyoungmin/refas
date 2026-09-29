@@ -145,6 +145,21 @@ test('organic permit consumes subdivision cage and binds provenance into candida
   assert.equal(mesh.constructionAuthority.operation,'subdivision-cage-organic');
   assert.equal(mesh.analysis.watertight,true);
 
+  const forgedMesh=structuredClone(mesh);
+  forgedMesh.positions[0][0]+=0.125;
+  assert.throws(()=>partsToGlb({
+    assetId:'forged-subdivision-organic-fixture',
+    parts:[{
+      id:'head',
+      mesh:forgedMesh,
+      materialId:'clay',
+      role:'identity-part',
+      scopeId:'whole',
+      constructionAuthority:forgedMesh.constructionAuthority,
+    }],
+    materials:{clay:{baseColor:[0.65,0.65,0.65,1],metallic:0,roughness:0.8}},
+  }),/realized mesh does not match subdivision cage metadata/);
+
   const bytes=partsToGlb({
     assetId:'subdivision-organic-fixture',
     parts:[{
