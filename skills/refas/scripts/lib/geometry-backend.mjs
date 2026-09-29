@@ -33,6 +33,13 @@ export function createLandmarkCage({id = 'landmark-cage', landmarks = [], eviden
       forward: normalize(point3(raw.localFrame.forward, `landmarks[${index}].localFrame.forward`), 'landmark forward'),
     } : null,
     projectionAnchorId: raw?.projectionAnchorId == null ? null : assertId(raw.projectionAnchorId, `landmarks[${index}].projectionAnchorId`),
+    ...(raw?.authority == null ? {} : {
+      authority: (() => {
+        const authority = String(raw.authority).trim().toLowerCase();
+        if (!['observed', 'inferred', 'engineered'].includes(authority)) throw new Error(`landmarks[${index}].authority is invalid`);
+        return authority;
+      })(),
+    }),
     evidenceRefs: [...new Set((raw?.evidenceRefs ?? evidenceRefs).map(String).filter(Boolean))].sort(),
   }));
   if (new Set(normalized.map((item) => item.id)).size !== normalized.length) throw new Error('landmark IDs must be unique');
