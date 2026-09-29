@@ -54,6 +54,9 @@ jobs:
       - name: Bilateral pair fresh-worker dogfood
         if: matrix.node == 24
         run: npm run dogfood:bilateral-pair
+      - name: Structural plausibility fresh-worker dogfood
+        if: matrix.node == 24
+        run: npm run dogfood:structural-plausibility
       - name: Discovery closure verifier
         if: matrix.node == 24
         run: npm run check:discovery-closure
