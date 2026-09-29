@@ -5,13 +5,16 @@ import path from 'node:path';
 import test from 'node:test';
 
 import {
+  REQUIRED_VISIBLE_FORM_GATES,
   attestExternalConstruction,
+  createConstructionQuality,
   createConstructionOperationPermit,
   createConstructionVocabulary,
   createExternalConstructionReceipt,
   digestBytes,
   inspectGlb,
   validateConstructionExecutionProof,
+  validateConstructionQuality,
 } from '../skills/refas/scripts/lib/index.mjs';
 
 const TOOL_SOURCE = String.raw`import fs from 'node:fs';
@@ -109,5 +112,41 @@ test('external construction attests a real isolated process reexecution', async 
   assert.equal(inspection.meshCount, 1);
   assert.equal(inspection.extras.refas.constructionExecutions.length, 1);
   assert.equal(inspection.extras.refas.constructionExecutions[0].externalReceiptDigest, attested.receipt.receiptDigest);
+
+  const quality = createConstructionQuality({
+    scopeId: 'whole',
+    sourceSha256,
+    assetSha256: digestBytes(attested.assetBytes),
+    claim: 'identity-bearing',
+    constructionFamilies: ['external-construction'],
+    visibleFormGates: REQUIRED_VISIBLE_FORM_GATES.map((id) => ({
+      id,
+      status: 'pass',
+      evidenceRefs: ['reviews/external-process.json'],
+      summary: 'external process dogfood evidence',
+    })),
+    identityFeatures: [{
+      id: 'fixture-form',
+      scopeId: 'whole',
+      kind: 'reference-specific-form',
+      evidenceRefs: ['source/reference.bin'],
+    }],
+    wholeDependency: {scopeId: 'whole', status: 'pass', evidenceRefs: ['reviews/whole.png']},
+    registeredComparison: {path: 'reviews/comparison.json', sha256: 'c'.repeat(64), scopeIds: ['whole']},
+    constructionVocabulary: decision,
+    constructionPermits: [permit],
+    constructionExecutionProof: attested.proof,
+    ambiguities: [],
+  });
+  assert.deepEqual(validateConstructionQuality(quality), {valid: true, errors: []});
+
+  const tamperedProof = structuredClone(attested.proof);
+  tamperedProof.policy.externalConstructionRequiresByteExactReplay = false;
+  assert.equal(validateConstructionExecutionProof(
+    tamperedProof,
+    decision,
+    [permit],
+    {assetSha256: digestBytes(attested.assetBytes)},
+  ).valid, false);
 });
 
