@@ -257,6 +257,19 @@
                 "additionalProperties": false
               }
             ]
+          },
+          "mirrorAxis": {
+            "enum": [
+              "x",
+              "y",
+              "z"
+            ]
+          },
+          "leftHalfSpace": {
+            "enum": [
+              "negative",
+              "positive"
+            ]
           }
         },
         "additionalProperties": false
