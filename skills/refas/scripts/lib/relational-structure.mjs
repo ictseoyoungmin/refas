@@ -2,7 +2,7 @@ import {assertDigest, assertId, deepFreeze, digestJson} from './canonical.mjs';
 
 export const RELATIONAL_STRUCTURE_SCHEMA = 'refas.relational-structure/v1';
 export const RELATIONAL_ENTITY_KINDS = Object.freeze(['landmark', 'axis', 'plane', 'volume', 'region', 'interface', 'system']);
-export const RELATIONAL_RELATION_KINDS = Object.freeze(['distance-ratio', 'alignment', 'ordering', 'plane-chain', 'volume-ratio']);
+export const RELATIONAL_RELATION_KINDS = Object.freeze(['distance-ratio', 'alignment', 'ordering', 'plane-chain', 'volume-ratio', 'bilateral-pair']);
 export const RELATIONAL_IMPORTANCE = Object.freeze(['macro', 'identity', 'detail']);
 export const RELATIONAL_SCOPES = Object.freeze(['whole-system', 'local']);
 
@@ -13,6 +13,18 @@ const SCOPES = new Set(RELATIONAL_SCOPES);
 const ALIGNMENT_MODES = new Set(['collinear', 'parallel', 'perpendicular', 'coplanar', 'centered', 'symmetric']);
 const ORDER_AXES = new Set(['reference-right', 'reference-up', 'reference-forward']);
 const PLANE_CONTINUITY = new Set(['smooth', 'broken', 'stepped', 'unknown']);
+const BILATERAL_REST_POLICIES = new Set(['shared-mirrored', 'observed-intrinsic-asymmetry']);
+const BILATERAL_SPAN_AUTHORITIES = new Set(['inferred', 'engineered']);
+const BILATERAL_MIRROR_AXES = new Set(['x', 'y', 'z']);
+const BILATERAL_HALF_SPACES = new Set(['negative', 'positive']);
+const BILATERAL_SPAN_BASIS = new Set([
+  'body-relative-inference',
+  'structural-prior',
+  'external-spec',
+  'source-depth-evidence',
+  'engineered-layout',
+  'image-plane-separation',
+]);
 
 function strings(values, label, {required = false} = {}) {
   const result = [...new Set((values ?? []).map(String).map((value) => value.trim()).filter(Boolean))].sort();
@@ -45,12 +57,13 @@ function normalizeEntity(raw, index) {
   };
 }
 
-function normalizeRelation(raw, index, entityIds) {
+function normalizeRelation(raw, index, entityById) {
   const label = `relations[${index}]`;
   const kind = String(raw?.kind ?? '').toLowerCase();
   const importance = String(raw?.importance ?? 'detail').toLowerCase();
   const scope = String(raw?.scope ?? 'local').toLowerCase();
   if (!RELATION_KINDS.has(kind)) throw new Error(`${label}.kind must be one of: ${RELATIONAL_RELATION_KINDS.join(', ')}`);
+  const entityIds = new Set(entityById.keys());
   if (!IMPORTANCE.has(importance)) throw new Error(`${label}.importance must be one of: ${RELATIONAL_IMPORTANCE.join(', ')}`);
   if (!SCOPES.has(scope)) throw new Error(`${label}.scope must be one of: ${RELATIONAL_SCOPES.join(', ')}`);
   const relationEntityIds = (raw?.entityIds ?? []).map((value, i) => assertId(value, `${label}.entityIds[${i}]`));
@@ -90,6 +103,70 @@ function normalizeRelation(raw, index, entityIds) {
     const continuity = String(raw?.continuity ?? 'unknown').toLowerCase();
     if (!PLANE_CONTINUITY.has(continuity)) throw new Error(`${label}.continuity is invalid`);
     normalized.continuity = continuity;
+  } else if (kind === 'bilateral-pair') {
+    if (relationEntityIds.length !== 2) throw new Error(`${label}.bilateral-pair requires exactly two paired entities`);
+    const leftEntityId = assertId(raw?.leftEntityId, `${label}.leftEntityId`);
+    const rightEntityId = assertId(raw?.rightEntityId, `${label}.rightEntityId`);
+    if (leftEntityId === rightEntityId) throw new Error(`${label}.bilateral-pair left/right entities must differ`);
+    if (relationEntityIds[0] !== leftEntityId || relationEntityIds[1] !== rightEntityId) {
+      throw new Error(`${label}.bilateral-pair entityIds must be [leftEntityId, rightEntityId]`);
+    }
+    const sagittalPlaneId = assertId(raw?.sagittalPlaneId, `${label}.sagittalPlaneId`);
+    const sagittalPlane = entityById.get(sagittalPlaneId);
+    if (!sagittalPlane || sagittalPlane.kind !== 'plane') throw new Error(`${label}.sagittalPlaneId must reference a plane entity`);
+    const mirrorAxis = String(raw?.mirrorAxis ?? '').toLowerCase();
+    if (!BILATERAL_MIRROR_AXES.has(mirrorAxis)) throw new Error(`${label}.mirrorAxis must be x, y, or z`);
+    const leftHalfSpace = String(raw?.leftHalfSpace ?? '').toLowerCase();
+    if (!BILATERAL_HALF_SPACES.has(leftHalfSpace)) throw new Error(`${label}.leftHalfSpace must be negative or positive`);
+    const mirrorPlaneCoordinate = finite(raw?.mirrorPlaneCoordinate, `${label}.mirrorPlaneCoordinate`);
+    const restGeometryPolicy = String(raw?.restGeometryPolicy ?? '').toLowerCase();
+    if (!BILATERAL_REST_POLICIES.has(restGeometryPolicy)) throw new Error(`${label}.restGeometryPolicy is invalid`);
+
+    const span = raw?.lateralSpan;
+    if (!span || typeof span !== 'object' || Array.isArray(span)) throw new Error(`${label}.lateralSpan is required`);
+    const halfSpan = finite(span.halfSpan, `${label}.lateralSpan.halfSpan`);
+    if (!(halfSpan > 0)) throw new Error(`${label}.lateralSpan.halfSpan must be positive`);
+    const spanAuthority = String(span.authority ?? '').toLowerCase();
+    if (!BILATERAL_SPAN_AUTHORITIES.has(spanAuthority)) throw new Error(`${label}.lateralSpan.authority is invalid`);
+    const basisKind = String(span.basisKind ?? '').toLowerCase();
+    if (!BILATERAL_SPAN_BASIS.has(basisKind)) throw new Error(`${label}.lateralSpan.basisKind is invalid`);
+    if (basisKind === 'image-plane-separation') throw new Error(`${label}.lateralSpan cannot use image-plane separation as 3D lateral authority`);
+    const spanEvidenceRefs = strings(span.evidenceRefs, `${label}.lateralSpan.evidenceRefs`, {required: true});
+
+    let intrinsicAsymmetry = null;
+    if (restGeometryPolicy === 'observed-intrinsic-asymmetry') {
+      const rawAsymmetry = raw?.intrinsicAsymmetry;
+      if (!rawAsymmetry || typeof rawAsymmetry !== 'object' || Array.isArray(rawAsymmetry)) {
+        throw new Error(`${label}.observed-intrinsic-asymmetry requires intrinsicAsymmetry evidence`);
+      }
+      if (String(rawAsymmetry.authority ?? '').toLowerCase() !== 'observed') {
+        throw new Error(`${label}.intrinsicAsymmetry must be observed`);
+      }
+      const sourceObservation = String(rawAsymmetry.sourceObservation ?? '').trim();
+      if (!sourceObservation) throw new Error(`${label}.intrinsicAsymmetry.sourceObservation is required`);
+      intrinsicAsymmetry = {
+        authority: 'observed',
+        sourceObservation,
+        evidenceRefs: strings(rawAsymmetry.evidenceRefs, `${label}.intrinsicAsymmetry.evidenceRefs`, {required: true}),
+      };
+    } else if (raw?.intrinsicAsymmetry != null) {
+      throw new Error(`${label}.shared-mirrored pair cannot carry intrinsicAsymmetry override`);
+    }
+
+    normalized.leftEntityId = leftEntityId;
+    normalized.rightEntityId = rightEntityId;
+    normalized.sagittalPlaneId = sagittalPlaneId;
+    normalized.mirrorAxis = mirrorAxis;
+    normalized.leftHalfSpace = leftHalfSpace;
+    normalized.mirrorPlaneCoordinate = mirrorPlaneCoordinate;
+    normalized.restGeometryPolicy = restGeometryPolicy;
+    normalized.lateralSpan = {
+      halfSpan,
+      authority: spanAuthority,
+      basisKind,
+      evidenceRefs: spanEvidenceRefs,
+    };
+    normalized.intrinsicAsymmetry = intrinsicAsymmetry;
   }
   return normalized;
 }
@@ -135,7 +212,8 @@ export function createRelationalStructure({scopeId, sourceSha256, entities = [],
   const normalizedEntities = entities.map(normalizeEntity).sort((a, b) => a.id.localeCompare(b.id));
   const entityIds = new Set(normalizedEntities.map((entity) => entity.id));
   if (entityIds.size !== normalizedEntities.length) throw new Error('relational entity IDs must be unique');
-  const normalizedRelations = relations.map((relation, index) => normalizeRelation(relation, index, entityIds)).sort((a, b) => a.id.localeCompare(b.id));
+  const entityById = new Map(normalizedEntities.map((entity) => [entity.id, entity]));
+  const normalizedRelations = relations.map((relation, index) => normalizeRelation(relation, index, entityById)).sort((a, b) => a.id.localeCompare(b.id));
   ensureUniqueIds(normalizedEntities, normalizedRelations);
   const dependencyOrder = relationOrder(normalizedRelations);
   const wholeSystemRelationIds = normalizedRelations.filter((relation) => relation.scope === 'whole-system').map((relation) => relation.id).sort();

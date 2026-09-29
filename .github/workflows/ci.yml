@@ -51,6 +51,9 @@ jobs:
       - name: Subdivision cage organic dogfood
         if: matrix.node == 24
         run: npm run dogfood:subdivision-cage
+      - name: Bilateral pair fresh-worker dogfood
+        if: matrix.node == 24
+        run: npm run dogfood:bilateral-pair
       - name: Discovery closure verifier
         if: matrix.node == 24
         run: npm run check:discovery-closure

@@ -34,7 +34,7 @@ function canonicalRelationChecks(checks = []) {
   })).sort((a, b) => a.relationId.localeCompare(b.relationId));
 }
 
-function validateInputs({candidateAssetSha256, relationalStructureBytes, semanticAuthorityBytes, relationalBarrierBytes, relationalDiscrepancyBytes}) {
+function validateInputs({candidateAssetSha256, candidateGlbBytes = null, relationalStructureBytes, semanticAuthorityBytes, relationalBarrierBytes, relationalDiscrepancyBytes}) {
   const relationalStructure = parseJsonBytes(relationalStructureBytes, 'relational structure');
   const semanticAuthority = parseJsonBytes(semanticAuthorityBytes, 'semantic authority');
   const relationalBarrier = parseJsonBytes(relationalBarrierBytes, 'relational barrier');
@@ -51,10 +51,16 @@ function validateInputs({candidateAssetSha256, relationalStructureBytes, semanti
     authoritySet: semanticAuthority.value,
   });
   if (!barrierValidation.valid) throw new Error(`whole-system relational barrier is invalid: ${barrierValidation.errors.join('; ')}`);
-  const discrepancyValidation = validateRelationalDiscrepancy(relationalDiscrepancy.value);
-  if (!discrepancyValidation.valid) throw new Error(`relational discrepancy is invalid: ${discrepancyValidation.errors.join('; ')}`);
-
   const candidate = assertDigest(candidateAssetSha256, 'candidateAssetSha256');
+  const bilateralRequired = relationalStructure.value.relations.some((relation) =>
+    relation.kind === 'bilateral-pair' && relation.scope === 'whole-system' && ['macro','identity'].includes(relation.importance));
+  const candidateGlb = candidateGlbBytes == null ? null : Buffer.from(candidateGlbBytes);
+  if (bilateralRequired) {
+    if (!candidateGlb?.length) throw new Error('bilateral relational certification requires exact candidate GLB bytes');
+    if (digestBytes(candidateGlb) !== candidate) throw new Error('candidate GLB bytes do not match certification candidate digest');
+  }
+  const discrepancyValidation = validateRelationalDiscrepancy(relationalDiscrepancy.value, {candidateGlb});
+  if (!discrepancyValidation.valid) throw new Error(`relational discrepancy is invalid: ${discrepancyValidation.errors.join('; ')}`);
   if (relationalStructure.value.scopeId !== 'whole') throw new Error('certification relational evidence requires whole scope');
   if (semanticAuthority.value.scopeId !== 'whole' || relationalBarrier.value.scopeId !== 'whole' || relationalDiscrepancy.value.scopeId !== 'whole') {
     throw new Error('all certification relational artifacts must use whole scope');
@@ -112,6 +118,7 @@ export function validateCertificationRelationalEvidence(value, context = {}) {
     if (value?.schema !== CERTIFICATION_RELATIONAL_EVIDENCE_SCHEMA) errors.push('invalid certification relational evidence schema');
     const recreated = createCertificationRelationalEvidence({
       candidateAssetSha256: context.candidateAssetSha256 ?? value?.candidateAssetSha256,
+      candidateGlbBytes: context.candidateGlbBytes ?? null,
       relationalStructureBytes: context.relationalStructureBytes,
       semanticAuthorityBytes: context.semanticAuthorityBytes,
       relationalBarrierBytes: context.relationalBarrierBytes,

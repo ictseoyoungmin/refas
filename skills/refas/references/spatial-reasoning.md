@@ -42,6 +42,20 @@ A correct projected endpoint does not prove a correct 3D pose. Two candidates ma
 
 Use T-junctions, overlap, cast shadows, contour termination, relative sharpness, and grazing highlights as cues. Store the inferred front-to-back relation and its confidence. A relation with weak evidence remains a hypothesis.
 
+## Bilateral asymmetry: camera and pose before separate geometry
+
+When paired parts appear different in one view, do not fit each side independently by default. Declare a `bilateral-pair` relation first and prefer one shared rest construction mirrored across the sagittal plane.
+
+Visible left/right differences should be explained in this order:
+
+1. camera projection and near/far perspective;
+2. per-instance articulation pose;
+3. only then source-supported intrinsic rest-shape asymmetry.
+
+Use `createBilateralPairRealization()` after candidate construction. It binds the exact GLB candidate, derives local rest geometry from both active-scene pair nodes, and rejects independent rest geometry under `shared-mirrored`. A shared pair also requires an explicit mirror axis and object-frame mirror-plane coordinate, the declared `±halfSpan` root placement around that plane, a scale-sign flip only on that axis, camera evidence, and pose evidence for both instances. Inactive nodes, parent-wrapped nodes, skin/morph deformation, and opaque matrix transforms cannot satisfy the initial shared-mirror contract.
+
+Image-space pair separation is correspondence evidence, not direct lateral-depth authority. Never turn the left/right pixel gap into object-space half-span merely because it improves the hero view. The paired relation records the chosen half-span basis explicitly and permits only `inferred` or `engineered` lateral-span authority.
+
 ## Projection anchoring
 
 Visible boundaries are constraints in image space. When constructing seams, cells, or relief:

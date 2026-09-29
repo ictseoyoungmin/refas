@@ -731,6 +731,32 @@
             }
           },
           {
+            "id": "bilateral-pair-realization",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createBilateralPairRealization"
+            },
+            "template": null,
+            "inputContract": "exact candidate GLB bytes + validated relational structure containing a bilateral-pair relation + camera evidence + per-instance pose explanations",
+            "outputSchema": "refas.bilateral-pair-realization/v1",
+            "validator": {
+              "library": "validateBilateralPairRealization"
+            },
+            "minimumInvocation": "references/spatial-reasoning.md",
+            "example": null,
+            "usageReference": "references/spatial-reasoning.md",
+            "publicConstants": [
+              "BILATERAL_PAIR_REALIZATION_SCHEMA"
+            ],
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "candidate-bound evaluator derives local rest geometry and node transform parity from the exact GLB bytes and enforces the bilateral relation"
+            }
+          },
+          {
             "id": "reference-registration",
             "operation": "create",
             "cli": {
