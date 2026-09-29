@@ -281,11 +281,41 @@ function normalizeExternalConstructionInput(raw, index) {
   };
 }
 
+function normalizeExternalInvocation(raw) {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) throw new Error('invocation is required');
+  const args = raw.args;
+  const versionArgs = raw.versionArgs;
+  if (!Array.isArray(args) || !args.length || args.length > 64) throw new Error('invocation.args must contain 1..64 arguments');
+  if (!Array.isArray(versionArgs) || !versionArgs.length || versionArgs.length > 16) throw new Error('invocation.versionArgs must contain 1..16 arguments');
+  const normalizedArgs = args.map((value, index) => {
+    const arg = String(value);
+    if (!arg || arg.length > 4096) throw new Error(`invocation.args[${index}] must contain 1..4096 characters`);
+    return arg;
+  });
+  const normalizedVersionArgs = versionArgs.map((value, index) => {
+    const arg = String(value);
+    if (!arg || arg.length > 4096) throw new Error(`invocation.versionArgs[${index}] must contain 1..4096 characters`);
+    return arg;
+  });
+  const safeName = (value, label) => {
+    const normalized = String(value ?? '');
+    if (!/^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/u.test(normalized)) throw new Error(`${label} must be a safe basename`);
+    return normalized;
+  };
+  const scriptFileName = safeName(raw.scriptFileName, 'invocation.scriptFileName');
+  const outputFileName = safeName(raw.outputFileName, 'invocation.outputFileName');
+  if (!outputFileName.toLowerCase().endsWith('.glb')) throw new Error('invocation.outputFileName must end in .glb');
+  if (!normalizedArgs.some((value) => value.includes('{script}'))) throw new Error('invocation.args must reference {script}');
+  if (!normalizedArgs.some((value) => value.includes('{output}'))) throw new Error('invocation.args must reference {output}');
+  return {args: normalizedArgs, versionArgs: normalizedVersionArgs, scriptFileName, outputFileName};
+}
+
 export function createExternalConstructionReceipt({
   decision,
   permit,
   tool,
   scriptSha256,
+  invocation,
   inputs = [],
   determinism = {mode: 'byte-exact'},
   outputGlbSha256,
@@ -318,6 +348,7 @@ export function createExternalConstructionReceipt({
     permitDigest: permit.permitDigest,
     tool: {id: toolId, version: toolVersion},
     scriptSha256: assertDigest(scriptSha256, 'scriptSha256'),
+    invocation: normalizeExternalInvocation(invocation),
     inputs: normalizedInputs,
     determinism: {mode},
     outputGlbSha256: assertDigest(outputGlbSha256, 'outputGlbSha256'),
@@ -340,6 +371,7 @@ export function validateExternalConstructionReceipt(receipt, decision, permit, {
       permit,
       tool: receipt?.tool,
       scriptSha256: receipt?.scriptSha256,
+      invocation: receipt?.invocation,
       inputs: receipt?.inputs ?? [],
       determinism: receipt?.determinism,
       outputGlbSha256: receipt?.outputGlbSha256,
@@ -702,6 +734,12 @@ export function attestExternalConstruction({
       permit,
       tool: {id: toolId, version},
       scriptSha256: digestBytes(script),
+      invocation: {
+        args: args.map((value) => String(value)),
+        versionArgs: normalizedVersionArgs,
+        scriptFileName: scriptName,
+        outputFileName: outputName,
+      },
       inputs: normalizedInputs.map(({bytes: _bytes, ...input}) => input),
       determinism: {mode: 'byte-exact'},
       outputGlbSha256: digestBytes(first.output),
