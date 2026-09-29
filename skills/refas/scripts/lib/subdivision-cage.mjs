@@ -101,7 +101,13 @@ function normalizeFaces(faces, vertexIds) {
 
 function validateClosedControlTopology(faces) {
   const edges = new Map();
+  const facesByVertex = new Map();
   for (const [faceIndex, face] of faces.entries()) {
+    for (const id of face) {
+      const list = facesByVertex.get(id) ?? [];
+      list.push(faceIndex);
+      facesByVertex.set(id, list);
+    }
     for (let index = 0; index < face.length; index += 1) {
       const a = face[index], b = face[(index + 1) % face.length];
       const key = edgeKey(a, b);
@@ -114,6 +120,31 @@ function validateClosedControlTopology(faces) {
   for (const edge of edges.values()) {
     if (edge.faces.length !== 2) throw new Error(`subdivision cage edge ${edge.key} is not closed manifold`);
     if (edge.balance !== 0) throw new Error(`subdivision cage edge ${edge.key} has inconsistent face winding`);
+  }
+  for (const [vertexId, incidentFaces] of facesByVertex.entries()) {
+    const adjacency = new Map(incidentFaces.map((faceIndex) => [faceIndex, new Set()]));
+    for (const edge of edges.values()) {
+      if (edge.a !== vertexId && edge.b !== vertexId) continue;
+      const [a, b] = edge.faces;
+      if (adjacency.has(a) && adjacency.has(b)) {
+        adjacency.get(a).add(b);
+        adjacency.get(b).add(a);
+      }
+    }
+    if ([...adjacency.values()].some((neighbors) => neighbors.size !== 2)) {
+      throw new Error(`subdivision cage vertex ${vertexId} does not have one closed manifold face-star`);
+    }
+    const visited = new Set();
+    const stack = [incidentFaces[0]];
+    while (stack.length) {
+      const current = stack.pop();
+      if (visited.has(current)) continue;
+      visited.add(current);
+      for (const neighbor of adjacency.get(current) ?? []) if (!visited.has(neighbor)) stack.push(neighbor);
+    }
+    if (visited.size !== incidentFaces.length) {
+      throw new Error(`subdivision cage vertex ${vertexId} has a disconnected bow-tie face-star`);
+    }
   }
   return edges;
 }
