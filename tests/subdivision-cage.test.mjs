@@ -11,6 +11,7 @@ import {
   createPermittedSubdivisionCageOrganic,
   createSubdivisionCageOrganic,
   digestBytes,
+  digestJson,
   parseGlb,
   partsToGlb,
   validateConstructionExecutionProof,
@@ -124,6 +125,13 @@ test('subdivision cage inherits landmark provenance and rejects missing provenan
     ...spec(),
     vertices:vertexSpecs.map((vertex,index)=>index===0?{...vertex,point:[-0.5,-1,-1]}:vertex),
   }),/point does not match landmark/);
+
+  const forged=structuredClone(mesh.subdivisionCage);
+  forged.controlFaces=forged.controlFaces.slice(0,-1);
+  const payload=structuredClone(forged);
+  delete payload.cageDigest;
+  forged.cageDigest=digestJson(payload);
+  assert.equal(validateSubdivisionCageOrganic(forged).valid,false);
 });
 
 test('organic permit consumes subdivision cage and binds provenance into candidate GLB', () => {
