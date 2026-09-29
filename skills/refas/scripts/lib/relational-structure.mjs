@@ -15,6 +15,8 @@ const ORDER_AXES = new Set(['reference-right', 'reference-up', 'reference-forwar
 const PLANE_CONTINUITY = new Set(['smooth', 'broken', 'stepped', 'unknown']);
 const BILATERAL_REST_POLICIES = new Set(['shared-mirrored', 'observed-intrinsic-asymmetry']);
 const BILATERAL_SPAN_AUTHORITIES = new Set(['observed', 'inferred', 'engineered']);
+const BILATERAL_MIRROR_AXES = new Set(['x', 'y', 'z']);
+const BILATERAL_HALF_SPACES = new Set(['negative', 'positive']);
 const BILATERAL_SPAN_BASIS = new Set([
   'body-relative-inference',
   'structural-prior',
@@ -112,6 +114,10 @@ function normalizeRelation(raw, index, entityById) {
     const sagittalPlaneId = assertId(raw?.sagittalPlaneId, `${label}.sagittalPlaneId`);
     const sagittalPlane = entityById.get(sagittalPlaneId);
     if (!sagittalPlane || sagittalPlane.kind !== 'plane') throw new Error(`${label}.sagittalPlaneId must reference a plane entity`);
+    const mirrorAxis = String(raw?.mirrorAxis ?? '').toLowerCase();
+    if (!BILATERAL_MIRROR_AXES.has(mirrorAxis)) throw new Error(`${label}.mirrorAxis must be x, y, or z`);
+    const leftHalfSpace = String(raw?.leftHalfSpace ?? '').toLowerCase();
+    if (!BILATERAL_HALF_SPACES.has(leftHalfSpace)) throw new Error(`${label}.leftHalfSpace must be negative or positive`);
     const restGeometryPolicy = String(raw?.restGeometryPolicy ?? '').toLowerCase();
     if (!BILATERAL_REST_POLICIES.has(restGeometryPolicy)) throw new Error(`${label}.restGeometryPolicy is invalid`);
 
@@ -152,6 +158,8 @@ function normalizeRelation(raw, index, entityById) {
     normalized.leftEntityId = leftEntityId;
     normalized.rightEntityId = rightEntityId;
     normalized.sagittalPlaneId = sagittalPlaneId;
+    normalized.mirrorAxis = mirrorAxis;
+    normalized.leftHalfSpace = leftHalfSpace;
     normalized.restGeometryPolicy = restGeometryPolicy;
     normalized.lateralSpan = {
       halfSpan,
