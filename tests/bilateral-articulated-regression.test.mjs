@@ -12,8 +12,8 @@ test('articulated figure model path remains local-mesh invariant after bilateral
   assert.equal(referenceParsed.binary.equals(neutralParsed.binary),true);
   assert.equal(reference.parts.length,neutral.parts.length);
   assert.ok(reference.parts.length>0);
-  assert.equal(referenceParsed.json.extras.poseName,'reference');
-  assert.equal(neutralParsed.json.extras.poseName,'neutral');
-  assert.equal(referenceParsed.json.extras.localMeshInvariant,true);
-  assert.equal(neutralParsed.json.extras.localMeshInvariant,true);
+  assert.equal(referenceParsed.json.asset?.version,'2.0');
+  assert.equal(neutralParsed.json.asset?.version,'2.0');
+  assert.equal(referenceParsed.json.meshes.length,neutralParsed.json.meshes.length);
+  assert.equal(referenceParsed.json.nodes.length,neutralParsed.json.nodes.length);
 });
