@@ -45,6 +45,8 @@ function structure({
       leftEntityId:'left-leg',
       rightEntityId:'right-leg',
       sagittalPlaneId:'sagittal-plane',
+      mirrorAxis:'x',
+      leftHalfSpace:'negative',
       restGeometryPolicy,
       lateralSpan:{
         halfSpan,
