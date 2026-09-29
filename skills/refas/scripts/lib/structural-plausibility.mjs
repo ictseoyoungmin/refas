@@ -109,6 +109,20 @@ function accessorValues(json,binary,accessorIndex,label,{type=null,componentType
   return out;
 }
 
+function closedTriangleTopology(indices) {
+  const edges=new Map();
+  for(let offset=0;offset<indices.length;offset+=3){
+    const tri=[indices[offset],indices[offset+1],indices[offset+2]];
+    if(new Set(tri).size!==3) return false;
+    for(let lane=0;lane<3;lane+=1){
+      const a=tri[lane],b=tri[(lane+1)%3],key=a<b?`${a}:${b}`:`${b}:${a}`;
+      const record=edges.get(key)??{count:0,balance:0};
+      record.count+=1;record.balance+=a<b?1:-1;edges.set(key,record);
+    }
+  }
+  return [...edges.values()].every((edge)=>edge.count===2&&edge.balance===0);
+}
+
 function realizedParts(json,binary){
   const {world}=worldMatrices(json),byId=new Map();
   for(const [nodeIndex,matrix] of world.entries()){
@@ -128,7 +142,7 @@ function realizedParts(json,binary){
     if(indices.length%3!==0||!indices.every((index)=>Number.isInteger(index)&&index>=0&&index<local.length)) throw new Error(`${id}: triangle indices are invalid`);
     const positions=local.map((point)=>transformPoint(matrix,point)),triangles=[];
     for(let offset=0;offset<indices.length;offset+=3)triangles.push([positions[indices[offset]],positions[indices[offset+1]],positions[indices[offset+2]]]);
-    byId.set(id,{id,nodeIndex,matrix,localPositions:local,positions,indices,triangles});
+    byId.set(id,{id,nodeIndex,matrix,localPositions:local,positions,indices,triangles,closedManifold:closedTriangleTopology(indices)});
   }
   if(!byId.size) throw new Error('candidate active scene contains no realized meshes');
   return byId;
@@ -157,6 +171,7 @@ function solidAngle(point,[a,b,c]){
 function rootCheck(relation,parts){
   const subject=parts.get(relation.subjectId),owner=parts.get(relation.ownerIds[0]);
   if(!subject||!owner) throw new Error(`${relation.id}: root anchor requires active subject and owner meshes`);
+  if(!owner.closedManifold) throw new Error(`${relation.id}: embedded-root owner must be a closed consistently-wound triangle volume`);
   const point=transformPoint(subject.matrix,relation.rootAnchor.subjectLocalPoint);
   let minimumSurfaceDistance=Infinity,angle=0;
   for(const triangle of owner.triangles){
@@ -174,6 +189,7 @@ function rootCheck(relation,parts){
 }
 
 function meshMassProperties(part){
+  if(!part.closedManifold) throw new Error(`${part.id}: closed consistently-wound triangle volume required for COM plausibility`);
   let signedVolume=0,weighted=[0,0,0];
   for(const [a,b,c] of part.triangles){
     const v=dot(a,cross(b,c))/6;
@@ -215,6 +231,9 @@ function supportCheck(groundSupport,parts){
   for(const entityId of groundSupport.contactEntityIds){
     const part=parts.get(entityId);
     if(!part) throw new Error(`ground support contact entity ${entityId} is not an active mesh`);
+    const coordinates=part.positions.map((point)=>point[axis]),minimum=Math.min(...coordinates);
+    if(minimum<groundSupport.groundCoordinate-groundSupport.contactTolerance-1e-10) throw new Error(`ground support contact entity ${entityId} penetrates below the declared ground plane`);
+    if(minimum>groundSupport.groundCoordinate+groundSupport.contactTolerance+1e-10) throw new Error(`ground support contact entity ${entityId} does not reach the declared ground plane`);
     const touching=part.positions.filter((point)=>Math.abs(point[axis]-groundSupport.groundCoordinate)<=groundSupport.contactTolerance+1e-10);
     if(!touching.length) throw new Error(`ground support contact entity ${entityId} has no vertices within contact tolerance`);
     for(const point of touching) contactPoints.push([point[planeAxes[0]],point[planeAxes[1]]]);
