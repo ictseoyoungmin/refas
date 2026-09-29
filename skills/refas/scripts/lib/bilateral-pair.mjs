@@ -86,6 +86,8 @@ function nodeTransform(node, label) {
     return {
       mode:'matrix',
       matrix,
+      translation:[matrix[12],matrix[13],matrix[14]],
+      scale:null,
       parity: parityDet < 0 ? -1 : 1,
       digest:digestJson({matrix}),
     };
@@ -147,6 +149,48 @@ function partRecord(json, binary, activeNodes, partId) {
   };
 }
 
+const AXIS_INDEX=Object.freeze({x:0,y:1,z:2});
+
+function sharedMirrorPlacement(left,right,relation) {
+  const axisIndex=AXIS_INDEX[relation.mirrorAxis];
+  if(axisIndex==null) throw new Error('bilateral pair mirror axis is invalid');
+  const expectedLeftSign=relation.leftHalfSpace==='negative'?-1:1;
+  const expectedRightSign=-expectedLeftSign;
+  const halfSpan=Number(relation.lateralSpan?.halfSpan);
+  const tolerance=Math.max(1e-8,Math.abs(halfSpan)*1e-6);
+  const leftCoordinate=left.transform.translation?.[axisIndex];
+  const rightCoordinate=right.transform.translation?.[axisIndex];
+  if(!Number.isFinite(leftCoordinate)||!Number.isFinite(rightCoordinate)) throw new Error('bilateral pair placement requires finite node translations');
+  if(Math.abs(leftCoordinate-expectedLeftSign*halfSpan)>tolerance||Math.abs(rightCoordinate-expectedRightSign*halfSpan)>tolerance) {
+    throw new Error('bilateral pair candidate does not realize the declared lateral half-span on the mirror axis');
+  }
+  if(left.transform.mode!=='trs'||right.transform.mode!=='trs') {
+    throw new Error('shared-mirrored bilateral pair requires explicit TRS node transforms so the mirror axis is auditable');
+  }
+  const leftScale=left.transform.scale,rightScale=right.transform.scale;
+  for(let axis=0;axis<3;axis+=1){
+    if(Math.abs(Math.abs(leftScale[axis])-Math.abs(rightScale[axis]))>1e-10) {
+      throw new Error('shared-mirrored bilateral pair requires matching absolute node scale');
+    }
+    const leftSign=Math.sign(leftScale[axis]),rightSign=Math.sign(rightScale[axis]);
+    if(axis===axisIndex){
+      if(leftSign===rightSign) throw new Error('shared-mirrored bilateral pair must flip scale on the declared mirror axis');
+    }else if(leftSign!==rightSign){
+      throw new Error('shared-mirrored bilateral pair may only flip scale on the declared mirror axis');
+    }
+  }
+  return {
+    mirrorAxis:relation.mirrorAxis,
+    leftHalfSpace:relation.leftHalfSpace,
+    halfSpan,
+    tolerance,
+    leftCoordinate,
+    rightCoordinate,
+    leftMirrorScaleSign:Math.sign(leftScale[axisIndex]),
+    rightMirrorScaleSign:Math.sign(rightScale[axisIndex]),
+  };
+}
+
 function bilateralRelation(structure, relationId) {
   const validation = validateRelationalStructure(structure);
   if (!validation.valid) throw new Error(`relational structure is invalid: ${validation.errors.join('; ')}`);
@@ -191,10 +235,19 @@ export function createBilateralPairRealization({
   }
   if (poseByEntity.size !== 2) throw new Error('poseEvidence must cover exactly the paired entities');
 
+  let mirrorPlacement=null;
   if (relation.restGeometryPolicy === 'shared-mirrored') {
     if (left.restGeometryDigest !== right.restGeometryDigest) throw new Error('bilateral pair uses independent rest geometry under shared-mirrored policy');
     if (left.transform.parity === right.transform.parity) throw new Error('shared-mirrored bilateral pair must realize opposite transform parity across the sagittal plane');
+    mirrorPlacement=sharedMirrorPlacement(left,right,relation);
   } else if (relation.restGeometryPolicy === 'observed-intrinsic-asymmetry') {
+    const axisIndex=AXIS_INDEX[relation.mirrorAxis];
+    const expectedLeftSign=relation.leftHalfSpace==='negative'?-1:1;
+    const halfSpan=Number(relation.lateralSpan?.halfSpan),tolerance=Math.max(1e-8,Math.abs(halfSpan)*1e-6);
+    const leftCoordinate=left.transform.translation?.[axisIndex],rightCoordinate=right.transform.translation?.[axisIndex];
+    if(Math.abs(leftCoordinate-expectedLeftSign*halfSpan)>tolerance||Math.abs(rightCoordinate+expectedLeftSign*halfSpan)>tolerance) {
+      throw new Error('intrinsic bilateral pair candidate does not realize the declared lateral half-span on the mirror axis');
+    }
     if (relation.intrinsicAsymmetry?.authority !== 'observed' || !(relation.intrinsicAsymmetry?.evidenceRefs?.length > 0)) {
       throw new Error('intrinsic bilateral rest asymmetry lacks observed source evidence');
     }
@@ -210,6 +263,8 @@ export function createBilateralPairRealization({
     constructionPermitDigest:part.constructionPermitDigest,
     transformDigest:part.transform.digest,
     transformParity:part.transform.parity,
+    mirrorAxisCoordinate:part.transform.translation[AXIS_INDEX[relation.mirrorAxis]],
+    mirrorAxisScaleSign:part.transform.scale==null?null:Math.sign(part.transform.scale[AXIS_INDEX[relation.mirrorAxis]]),
     poseExplanation:poseByEntity.get(part.entityId),
   }));
   const payload = {
@@ -221,9 +276,12 @@ export function createBilateralPairRealization({
     relationId:relation.id,
     relationDigest:digestJson(relation),
     sagittalPlaneId:relation.sagittalPlaneId,
+    mirrorAxis:relation.mirrorAxis,
+    leftHalfSpace:relation.leftHalfSpace,
     restGeometryPolicy:relation.restGeometryPolicy,
     lateralSpan:structuredClone(relation.lateralSpan),
     intrinsicAsymmetry:relation.intrinsicAsymmetry==null?null:structuredClone(relation.intrinsicAsymmetry),
+    mirrorPlacement,
     cameraExplanation:{hypothesisDigest:cameraHypothesisDigest,evidenceRefs:cameraRefs},
     instances,
     evidenceRefs:strings(evidenceRefs,'evidenceRefs',{required:true}),
@@ -231,6 +289,8 @@ export function createBilateralPairRealization({
       pairRestGeometryComesFromCandidateBytes:true,
       sharedPairUsesOneRestGeometry:true,
       sharedPairRequiresMirrorParity:true,
+      sharedPairMirrorAxisIsExplicit:true,
+      declaredLateralSpanIsRealized:true,
       visibleAsymmetryRequiresCameraAndPoseExplanation:true,
       intrinsicAsymmetryRequiresObservedSourceEvidence:true,
       imagePlaneSeparationCannotAuthorizeLateralSpan:true,
@@ -253,6 +313,8 @@ export function validateBilateralPairRealizationRecord(value,{relationalStructur
     const relation=bilateralRelation(relationalStructure,value?.relationId);
     if(value?.relationDigest!==digestJson(relation)) errors.push('bilateral realization relation digest mismatch');
     if(value?.sagittalPlaneId!==relation.sagittalPlaneId) errors.push('bilateral realization sagittal plane mismatch');
+    if(value?.mirrorAxis!==relation.mirrorAxis) errors.push('bilateral realization mirror axis mismatch');
+    if(value?.leftHalfSpace!==relation.leftHalfSpace) errors.push('bilateral realization left half-space mismatch');
     if(value?.restGeometryPolicy!==relation.restGeometryPolicy) errors.push('bilateral realization rest policy mismatch');
     if(digestJson(value?.lateralSpan)!==digestJson(relation.lateralSpan)) errors.push('bilateral realization lateral span mismatch');
     if(digestJson(value?.intrinsicAsymmetry??null)!==digestJson(relation.intrinsicAsymmetry??null)) errors.push('bilateral realization intrinsic asymmetry mismatch');
@@ -272,15 +334,29 @@ export function validateBilateralPairRealizationRecord(value,{relationalStructur
       const constructionPermitDigest=instance?.constructionPermitDigest==null?null:assertDigest(instance.constructionPermitDigest,`instances[${index}].constructionPermitDigest`);
       const transformDigest=assertDigest(instance?.transformDigest,`instances[${index}].transformDigest`);
       if(![-1,1].includes(instance?.transformParity)) throw new Error(`instances[${index}].transformParity is invalid`);
+      const mirrorAxisCoordinate=Number(instance?.mirrorAxisCoordinate);
+      if(!Number.isFinite(mirrorAxisCoordinate)) throw new Error(`instances[${index}].mirrorAxisCoordinate must be finite`);
+      const mirrorAxisScaleSign=instance?.mirrorAxisScaleSign==null?null:Number(instance.mirrorAxisScaleSign);
+      if(mirrorAxisScaleSign!=null&&![-1,1].includes(mirrorAxisScaleSign)) throw new Error(`instances[${index}].mirrorAxisScaleSign is invalid`);
       const explanation=String(instance?.poseExplanation?.explanation??'').trim();
       if(!explanation) throw new Error(`instances[${index}] requires pose explanation`);
       if(instance?.poseExplanation?.entityId!==entityId) throw new Error(`instances[${index}] pose explanation entity mismatch`);
       const evidenceRefs=strings(instance?.poseExplanation?.evidenceRefs,`instances[${index}].poseExplanation.evidenceRefs`,{required:true});
-      return {entityId,side,restGeometryDigest,constructionExecutionDigest,constructionPermitDigest,transformDigest,transformParity:instance.transformParity,poseExplanation:{entityId,explanation,evidenceRefs}};
+      return {entityId,side,restGeometryDigest,constructionExecutionDigest,constructionPermitDigest,transformDigest,transformParity:instance.transformParity,mirrorAxisCoordinate,mirrorAxisScaleSign,poseExplanation:{entityId,explanation,evidenceRefs}};
     });
+    let mirrorPlacement=null;
+    const expectedLeftSign=relation.leftHalfSpace==='negative'?-1:1;
+    const halfSpan=Number(relation.lateralSpan.halfSpan),tolerance=Math.max(1e-8,Math.abs(halfSpan)*1e-6);
+    const leftCoordinate=instances[0].mirrorAxisCoordinate,rightCoordinate=instances[1].mirrorAxisCoordinate;
+    if(Math.abs(leftCoordinate-expectedLeftSign*halfSpan)>tolerance||Math.abs(rightCoordinate+expectedLeftSign*halfSpan)>tolerance) {
+      errors.push('bilateral realization does not reproduce the declared lateral half-span');
+    }
     if(relation.restGeometryPolicy==='shared-mirrored'){
       if(instances[0].restGeometryDigest!==instances[1].restGeometryDigest) errors.push('bilateral pair uses independent rest geometry under shared-mirrored policy');
       if(instances[0].transformParity===instances[1].transformParity) errors.push('shared-mirrored bilateral pair must realize opposite transform parity across the sagittal plane');
+      if(instances.some((instance)=>instance.mirrorAxisScaleSign==null)) errors.push('shared-mirrored bilateral realization requires auditable mirror-axis scale signs');
+      else if(instances[0].mirrorAxisScaleSign===instances[1].mirrorAxisScaleSign) errors.push('shared-mirrored bilateral realization does not flip the declared mirror axis');
+      mirrorPlacement={mirrorAxis:relation.mirrorAxis,leftHalfSpace:relation.leftHalfSpace,halfSpan,tolerance,leftCoordinate,rightCoordinate,leftMirrorScaleSign:instances[0].mirrorAxisScaleSign,rightMirrorScaleSign:instances[1].mirrorAxisScaleSign};
     }else if(relation.restGeometryPolicy==='observed-intrinsic-asymmetry'){
       if(relation.intrinsicAsymmetry?.authority!=='observed'||!(relation.intrinsicAsymmetry?.evidenceRefs?.length>0)) errors.push('intrinsic bilateral rest asymmetry lacks observed source evidence');
     }
@@ -289,6 +365,8 @@ export function validateBilateralPairRealizationRecord(value,{relationalStructur
       pairRestGeometryComesFromCandidateBytes:true,
       sharedPairUsesOneRestGeometry:true,
       sharedPairRequiresMirrorParity:true,
+      sharedPairMirrorAxisIsExplicit:true,
+      declaredLateralSpanIsRealized:true,
       visibleAsymmetryRequiresCameraAndPoseExplanation:true,
       intrinsicAsymmetryRequiresObservedSourceEvidence:true,
       imagePlaneSeparationCannotAuthorizeLateralSpan:true,
@@ -303,9 +381,12 @@ export function validateBilateralPairRealizationRecord(value,{relationalStructur
       relationId:relation.id,
       relationDigest:digestJson(relation),
       sagittalPlaneId:relation.sagittalPlaneId,
+      mirrorAxis:relation.mirrorAxis,
+      leftHalfSpace:relation.leftHalfSpace,
       restGeometryPolicy:relation.restGeometryPolicy,
       lateralSpan:structuredClone(relation.lateralSpan),
       intrinsicAsymmetry:relation.intrinsicAsymmetry==null?null:structuredClone(relation.intrinsicAsymmetry),
+      mirrorPlacement,
       cameraExplanation:{hypothesisDigest:cameraHypothesisDigest,evidenceRefs:cameraRefs},
       instances,
       evidenceRefs,
