@@ -1500,6 +1500,54 @@
             }
           },
           {
+            "id": "external-construction-receipt",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createExternalConstructionReceipt"
+            },
+            "template": null,
+            "inputContract": "validated external-construction permit + exact tool/version + script digest + canonical argv/version invocation template + source/guide/prior input digests + byte-exact output GLB digest",
+            "outputSchema": "refas.external-construction-receipt/v1",
+            "validator": {
+              "library": "validateExternalConstructionReceipt"
+            },
+            "minimumInvocation": "references/construction.md",
+            "example": null,
+            "publicConstants": [
+              "EXTERNAL_CONSTRUCTION_RECEIPT_SCHEMA"
+            ],
+            "usageReference": "references/construction.md",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "receipt creation is chained to a resolved construction decision and permit; external-tool dogfood verifies the complete execution path"
+            }
+          },
+          {
+            "id": "external-construction-attestation",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "attestExternalConstruction"
+            },
+            "template": null,
+            "inputContract": "validated external-construction permit + external command/version probe + exact script bytes + exact source/guide/prior input bytes + argv template; runtime executes two isolated runs and requires byte-exact GLB replay",
+            "outputSchema": null,
+            "validator": null,
+            "minimumInvocation": "references/construction.md",
+            "example": null,
+            "usageReference": "references/construction.md",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "runtime verifies exact script/input digests and byte-exact reexecution, then returns the attested candidate plus refas.construction-execution-proof/v1"
+            },
+            "note": "Receipt existence alone has no identity authority. The runtime probes the actual tool version, writes exact script/input bytes into fresh run directories, executes the command twice with shell:false, requires byte-identical GLBs, embeds refas.construction-execution/v1, and produces candidate-bound execution proof."
+          },
+          {
             "id": "surface-network-parts",
             "operation": "create",
             "cli": null,

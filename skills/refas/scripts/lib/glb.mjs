@@ -107,6 +107,22 @@ export function parseGlb(input) {
   return {json, binary};
 }
 
+export function attachConstructionExecution(sourceGlb, execution) {
+  const {json: sourceJson, binary} = parseGlb(sourceGlb);
+  if (!execution || execution.schema !== 'refas.construction-execution/v1') throw new Error('construction execution schema is invalid');
+  const json = clone(sourceJson);
+  json.extras ??= {};
+  json.extras.refas ??= {};
+  const existing = Array.isArray(json.extras.refas.constructionExecutions)
+    ? json.extras.refas.constructionExecutions.map(clone)
+    : [];
+  if (existing.some((item) => item.executionDigest === execution.executionDigest)) throw new Error('construction execution is already attached');
+  if (existing.some((item) => item.permitDigest === execution.permitDigest && item.partId === execution.partId)) throw new Error('construction execution already exists for permit and part');
+  json.extras.refas.constructionExecutions = [...existing, clone(execution)]
+    .sort((a, b) => String(a.scopeId).localeCompare(String(b.scopeId)) || String(a.partId).localeCompare(String(b.partId)));
+  return buildGlb(json, binary);
+}
+
 function materialJson(id, material) {
   const output = {name: id, pbrMetallicRoughness: {baseColorFactor: material.baseColor ?? [0.7, 0.7, 0.7, 1], metallicFactor: material.metallic ?? 0, roughnessFactor: material.roughness ?? 0.5}};
   if (Number.isFinite(material.clearcoat) && material.clearcoat > 0) output.extensions = {KHR_materials_clearcoat: {clearcoatFactor: material.clearcoat}};
