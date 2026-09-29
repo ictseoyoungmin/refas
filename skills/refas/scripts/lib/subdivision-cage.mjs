@@ -263,14 +263,44 @@ export function validateSubdivisionCageOrganic(record) {
   const errors = [];
   try {
     if (record?.schema !== SUBDIVISION_CAGE_ORGANIC_SCHEMA) errors.push('invalid subdivision cage schema');
+    const levels = Number(record?.levels);
+    if (!Number.isInteger(levels) || levels < 1 || levels > 4) errors.push('subdivision levels are invalid');
+    const controlVertices = Array.isArray(record?.controlVertices) ? record.controlVertices : [];
+    if (controlVertices.length < 4) throw new Error('subdivision cage metadata requires at least four control vertices');
+    const ids = new Set();
+    for (const [index, vertex] of controlVertices.entries()) {
+      const id = assertId(vertex?.id, `controlVertices[${index}].id`);
+      if (ids.has(id)) throw new Error('subdivision cage metadata vertex IDs must be unique');
+      ids.add(id);
+      point3(vertex?.point, `controlVertices[${index}].point`);
+      normalizeAuthority(vertex?.authority, `controlVertices[${index}].authority`);
+      if (vertex?.landmarkId != null) assertId(vertex.landmarkId, `controlVertices[${index}].landmarkId`);
+      if (!strings(vertex?.evidenceRefs).length) throw new Error(`controlVertices[${index}].evidenceRefs requires at least one value`);
+    }
+    const faces = normalizeFaces(record?.controlFaces, ids);
+    const controlEdges = validateClosedControlTopology(faces);
+    const creases = normalizeCreases(record?.creases ?? [], controlEdges, ids);
+    if (JSON.stringify(creases) !== JSON.stringify(record?.creases ?? [])) errors.push('subdivision cage creases are not canonical');
+    const expectedProvenance = controlVertices.map((vertex) => ({
+      vertexId: vertex.id,
+      authority: vertex.authority,
+      landmarkId: vertex.landmarkId ?? null,
+      evidenceRefs: strings(vertex.evidenceRefs),
+    }));
+    if (JSON.stringify(expectedProvenance) !== JSON.stringify(record?.provenance ?? [])) errors.push('subdivision cage provenance does not match control vertices');
+    if (record?.landmarkCageDigest != null && !/^[a-f0-9]{64}$/u.test(String(record.landmarkCageDigest))) errors.push('landmarkCageDigest is invalid');
+    if (record?.policy?.controlVertexProvenanceRequired !== true
+      || record?.policy?.generatedSurfaceIsEngineeredRealization !== true
+      || record?.policy?.closedManifoldControlCageRequired !== true
+      || record?.policy?.deterministicSubdivision !== true) {
+      errors.push('subdivision cage policy is invalid');
+    }
     const payload = structuredClone(record);
     delete payload.cageDigest;
     if (digestJson(payload) !== record?.cageDigest) errors.push('subdivision cage digest mismatch');
-    if (record?.policy?.controlVertexProvenanceRequired !== true || record?.policy?.generatedSurfaceIsEngineeredRealization !== true || record?.policy?.closedManifoldControlCageRequired !== true || record?.policy?.deterministicSubdivision !== true) {
-      errors.push('subdivision cage policy is invalid');
-    }
   } catch (error) {
     errors.push(error.message);
   }
   return {valid: errors.length === 0, errors};
 }
+
