@@ -194,6 +194,30 @@ function triangulateFaces(vertices, faces) {
   return {positions: vertices.map((vertex) => vertex.point), indices};
 }
 
+function realizeNormalizedCage(controlVertices, controlFaces, normalizedCreases, subdivisionLevels, role = 'subdivision-cage-organic') {
+  const creaseWeights = new Map(normalizedCreases.map((crease) => [edgeKey(...crease.vertices), crease.weight]));
+  let state = {
+    vertices: controlVertices.map((vertex) => ({id: vertex.id, point: vertex.point})),
+    faces: controlFaces,
+    creaseWeights,
+  };
+  for (let level = 1; level <= subdivisionLevels; level += 1) state = subdivideOnce(state.vertices, state.faces, state.creaseWeights, level);
+  const triangleMesh = triangulateFaces(state.vertices, state.faces);
+  return finalizeMesh(triangleMesh.positions, triangleMesh.indices, {
+    role,
+    backend: 'catmull-clark',
+    subdivisionLevels,
+    semanticParameterIds: [
+      ...controlVertices.map((vertex) => `cage.vertex.${vertex.id}`),
+      ...normalizedCreases.map((crease) => `cage.crease.${edgeKey(...crease.vertices)}`),
+    ],
+  });
+}
+
+function meshDigest(mesh) {
+  return digestJson({positions: mesh.positions, normals: mesh.normals, indices: mesh.indices});
+}
+
 export function createSubdivisionCageOrganic({
   id = 'subdivision-cage',
   landmarkCage = null,
@@ -212,16 +236,7 @@ export function createSubdivisionCageOrganic({
   const controlFaces = normalizeFaces(faces, vertexIds);
   const controlEdges = validateClosedControlTopology(controlFaces);
   const normalizedCreases = normalizeCreases(creases, controlEdges, vertexIds);
-  const creaseWeights = new Map(normalizedCreases.map((crease) => [edgeKey(...crease.vertices), crease.weight]));
-
-  let state = {
-    vertices: controlVertices.map((vertex) => ({id: vertex.id, point: vertex.point})),
-    faces: controlFaces,
-    creaseWeights,
-  };
-  for (let level = 1; level <= subdivisionLevels; level += 1) state = subdivideOnce(state.vertices, state.faces, state.creaseWeights, level);
-
-  const triangleMesh = triangulateFaces(state.vertices, state.faces);
+  const realizedMesh = realizeNormalizedCage(controlVertices, controlFaces, normalizedCreases, subdivisionLevels, role);
   const provenance = controlVertices.map((vertex) => ({
     vertexId: vertex.id,
     authority: vertex.authority,
@@ -237,6 +252,7 @@ export function createSubdivisionCageOrganic({
     creases: normalizedCreases,
     provenance,
     landmarkCageDigest: landmarkCage?.cageDigest ?? null,
+    realizedMeshDigest: meshDigest(realizedMesh),
     evidenceRefs: normalizedEvidence,
     policy: {
       controlVertexProvenanceRequired: true,
@@ -246,17 +262,11 @@ export function createSubdivisionCageOrganic({
     },
   };
   const subdivisionCage = deepFreeze({...cagePayload, cageDigest: digestJson(cagePayload)});
-  const mesh = finalizeMesh(triangleMesh.positions, triangleMesh.indices, {
-    role,
-    backend: 'catmull-clark',
-    subdivisionLevels,
-    controlCageDigest: subdivisionCage.cageDigest,
-    semanticParameterIds: [
-      ...controlVertices.map((vertex) => `cage.vertex.${vertex.id}`),
-      ...normalizedCreases.map((crease) => `cage.crease.${edgeKey(...crease.vertices)}`),
-    ],
-  });
-  return {...mesh, subdivisionCage};
+  return {
+    ...realizedMesh,
+    meta: {...realizedMesh.meta, controlCageDigest: subdivisionCage.cageDigest},
+    subdivisionCage,
+  };
 }
 
 export function validateSubdivisionCageOrganic(record) {
@@ -288,6 +298,13 @@ export function validateSubdivisionCageOrganic(record) {
       evidenceRefs: strings(vertex.evidenceRefs),
     }));
     if (JSON.stringify(expectedProvenance) !== JSON.stringify(record?.provenance ?? [])) errors.push('subdivision cage provenance does not match control vertices');
+    const realized = realizeNormalizedCage(
+      controlVertices.map((vertex) => ({id: vertex.id, point: point3(vertex.point, `control vertex ${vertex.id}`)})),
+      faces,
+      creases,
+      levels,
+    );
+    if (meshDigest(realized) !== record?.realizedMeshDigest) errors.push('subdivision cage realized mesh digest mismatch');
     if (record?.landmarkCageDigest != null && !/^[a-f0-9]{64}$/u.test(String(record.landmarkCageDigest))) errors.push('landmarkCageDigest is invalid');
     if (record?.policy?.controlVertexProvenanceRequired !== true
       || record?.policy?.generatedSurfaceIsEngineeredRealization !== true
