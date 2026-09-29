@@ -52,6 +52,32 @@ glasses          MULTI_ANCHOR → nose + left-ear + right-ear
 
 Lowering the nose must therefore invalidate the glasses relation in a later propagation stage instead of leaving the glasses at an unrelated world coordinate. This file only declares that semantic obligation. Surface anchor frames and the multi-anchor solver are separate later capabilities.
 
+## Embedded roots and grounded support
+
+Two optional declarations reserve later structural-plausibility checks without changing attachment propagation itself.
+
+An owner-dependent relation may add:
+
+```json
+{
+  "rootAnchor": {
+    "kind": "embedded-root",
+    "subjectLocalPoint": [0, 0, 0],
+    "tolerance": 0.005,
+    "evidenceRefs": ["source/rear.png"]
+  }
+}
+```
+
+`embedded-root` requires exactly one owner. The point is subject-local construction state; after a candidate exists, RefAs transforms it into world space and tests it against the owner's exact realized triangle volume. Surface contact by the appendage mesh does not satisfy this obligation if the declared root point lies on the far side of the parent wall beyond tolerance.
+
+The contract may also add one whole-scope `groundSupport` declaration:
+
+- `mode: grounded` — the source shows a grounded/standing state. Declare the ground axis/coordinate, contact entities, contact tolerance, minimum support margin, source observation, and evidence refs.
+- `mode: source-supported-exempt` — the source explicitly shows an airborne, hanging, or externally supported state. The reason remains visible and the runtime reports the static-ground check as not applicable instead of inventing PASS.
+
+These declarations are pre-candidate semantics. They do not themselves prove root placement, contact, mass, COM, or static balance.
+
 ## Evidence basis
 
 Each relation records a basis:

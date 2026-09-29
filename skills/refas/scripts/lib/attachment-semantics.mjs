@@ -23,7 +23,65 @@ const MODE_RULES = Object.freeze({
 });
 
 const BASIS = new Set(['observed', 'interpreted', 'construction']);
+const GROUND_AXES = new Set(['x', 'y', 'z']);
+const GROUND_MODES = new Set(['grounded', 'source-supported-exempt']);
 const uniqueStrings = (values = []) => [...new Set(values.map(String).filter(Boolean))].sort();
+const finite = (value, label) => {
+  const number = Number(value);
+  if (!Number.isFinite(number)) throw new Error(`${label} must be finite`);
+  return Object.is(number, -0) ? 0 : number;
+};
+const vec3 = (value, label) => {
+  if (!Array.isArray(value) || value.length !== 3) throw new Error(`${label} must contain three finite numbers`);
+  return value.map((item, index) => finite(item, `${label}[${index}]`));
+};
+
+function normalizeRootAnchor(raw, label, ownerIds) {
+  if (raw == null) return null;
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) throw new Error(`${label}.rootAnchor must be an object`);
+  if (String(raw.kind ?? '') !== 'embedded-root') throw new Error(`${label}.rootAnchor.kind must be embedded-root`);
+  if (ownerIds.length !== 1) throw new Error(`${label}.embedded-root requires exactly one owner`);
+  const tolerance = finite(raw.tolerance ?? 0, `${label}.rootAnchor.tolerance`);
+  if (tolerance < 0) throw new Error(`${label}.rootAnchor.tolerance must be non-negative`);
+  const evidenceRefs = uniqueStrings(raw.evidenceRefs ?? []);
+  if (!evidenceRefs.length) throw new Error(`${label}.rootAnchor.evidenceRefs requires at least one reference`);
+  return {
+    kind: 'embedded-root',
+    subjectLocalPoint: vec3(raw.subjectLocalPoint ?? [0,0,0], `${label}.rootAnchor.subjectLocalPoint`),
+    tolerance,
+    evidenceRefs,
+  };
+}
+
+function normalizeGroundSupport(raw, entityIds) {
+  if (raw == null) return null;
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) throw new Error('groundSupport must be an object');
+  const mode = String(raw.mode ?? '').trim();
+  if (!GROUND_MODES.has(mode)) throw new Error('groundSupport.mode must be grounded or source-supported-exempt');
+  const groundAxis = String(raw.groundAxis ?? 'y').trim().toLowerCase();
+  if (!GROUND_AXES.has(groundAxis)) throw new Error('groundSupport.groundAxis must be x, y, or z');
+  const sourceObservation = String(raw.sourceObservation ?? '').trim();
+  if (!sourceObservation) throw new Error('groundSupport.sourceObservation is required');
+  const evidenceRefs = uniqueStrings(raw.evidenceRefs ?? []);
+  if (!evidenceRefs.length) throw new Error('groundSupport.evidenceRefs requires at least one reference');
+  const contactEntityIds = uniqueStrings(raw.contactEntityIds ?? []).map((id) => assertId(id, 'groundSupport.contactEntityIds[]'));
+  for (const id of contactEntityIds) if (!entityIds.has(id)) throw new Error(`groundSupport references unknown contact entity ${id}`);
+  if (mode === 'grounded' && !contactEntityIds.length) throw new Error('grounded support requires at least one contact entity');
+  const contactTolerance = finite(raw.contactTolerance ?? 0.002, 'groundSupport.contactTolerance');
+  const minimumMargin = finite(raw.minimumMargin ?? 0, 'groundSupport.minimumMargin');
+  if (contactTolerance < 0 || minimumMargin < 0) throw new Error('groundSupport tolerances must be non-negative');
+  return {
+    mode,
+    groundAxis,
+    groundCoordinate: finite(raw.groundCoordinate ?? 0, 'groundSupport.groundCoordinate'),
+    contactEntityIds,
+    contactTolerance,
+    minimumMargin,
+    sourceObservation,
+    evidenceRefs,
+  };
+}
+
 
 function normalizeEntity(raw, index) {
   const evidenceRefs = uniqueStrings(raw?.evidenceRefs);
@@ -57,6 +115,8 @@ function normalizeRelation(raw, index, entityIds) {
   if (!BASIS.has(basis)) throw new Error(`${label}.basis must be observed, interpreted, or construction`);
   const evidenceRefs = uniqueStrings(raw?.evidenceRefs);
   if (!evidenceRefs.length) throw new Error(`${label}.evidenceRefs requires at least one reference`);
+  const rootAnchor = normalizeRootAnchor(raw?.rootAnchor, label, ownerIds);
+  if (rootAnchor && mode === 'FREE') throw new Error(`${label}.FREE cannot declare embedded-root`);
   return {
     id,
     mode,
@@ -64,6 +124,7 @@ function normalizeRelation(raw, index, entityIds) {
     ownerIds,
     basis,
     evidenceRefs,
+    ...(rootAnchor ? {rootAnchor} : {}),
     semantics: {
       propagatesOwnerChange: rule.propagatesOwnerChange,
       requiresSolver: rule.requiresSolver,
@@ -96,6 +157,7 @@ export function createAttachmentSemantics({
   sourceSha256,
   entities = [],
   relations = [],
+  groundSupport = null,
   evidenceRefs = [],
 } = {}) {
   if (!entities.length) throw new Error('attachment semantics requires at least one entity');
@@ -122,6 +184,7 @@ export function createAttachmentSemantics({
     sourceSha256: assertDigest(sourceSha256, 'sourceSha256'),
     entities: normalizedEntities,
     relations: normalizedRelations,
+    ...(groundSupport == null ? {} : {groundSupport: normalizeGroundSupport(groundSupport, entityIds)}),
     evidenceRefs: uniqueStrings(evidenceRefs),
     policy: {
       implicitAttachmentForbidden: true,

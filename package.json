@@ -40,6 +40,7 @@
     "check:discovery-closure": "node skills/refas/scripts/verify_discovery_closure.mjs",
     "dogfood:external-construction": "node skills/refas/scripts/verify_external_construction_dogfood.mjs",
     "dogfood:subdivision-cage": "node skills/refas/scripts/verify_subdivision_cage_dogfood.mjs",
-    "dogfood:bilateral-pair": "node skills/refas/scripts/verify_bilateral_pair_dogfood.mjs"
+    "dogfood:bilateral-pair": "node skills/refas/scripts/verify_bilateral_pair_dogfood.mjs",
+    "dogfood:structural-plausibility": "node skills/refas/scripts/verify_structural_plausibility_dogfood.mjs"
   }
 }

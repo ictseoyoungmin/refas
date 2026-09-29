@@ -35,6 +35,7 @@ export * from './articulation-clearance.mjs';
 export * from './attachment-propagation.mjs';
 export * from './physical-fusion.mjs';
 export * from './realized-contact.mjs';
+export * from './structural-plausibility.mjs';
 export * from './fit-structural-eligibility.mjs';
 export * from './candidate-transaction.mjs';
 export * from './candidate-authority.mjs';
