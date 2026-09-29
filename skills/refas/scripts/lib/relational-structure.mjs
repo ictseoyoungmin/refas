@@ -14,7 +14,7 @@ const ALIGNMENT_MODES = new Set(['collinear', 'parallel', 'perpendicular', 'copl
 const ORDER_AXES = new Set(['reference-right', 'reference-up', 'reference-forward']);
 const PLANE_CONTINUITY = new Set(['smooth', 'broken', 'stepped', 'unknown']);
 const BILATERAL_REST_POLICIES = new Set(['shared-mirrored', 'observed-intrinsic-asymmetry']);
-const BILATERAL_SPAN_AUTHORITIES = new Set(['observed', 'inferred', 'engineered']);
+const BILATERAL_SPAN_AUTHORITIES = new Set(['inferred', 'engineered']);
 const BILATERAL_MIRROR_AXES = new Set(['x', 'y', 'z']);
 const BILATERAL_HALF_SPACES = new Set(['negative', 'positive']);
 const BILATERAL_SPAN_BASIS = new Set([
@@ -131,9 +131,6 @@ function normalizeRelation(raw, index, entityById) {
     const basisKind = String(span.basisKind ?? '').toLowerCase();
     if (!BILATERAL_SPAN_BASIS.has(basisKind)) throw new Error(`${label}.lateralSpan.basisKind is invalid`);
     if (basisKind === 'image-plane-separation') throw new Error(`${label}.lateralSpan cannot use image-plane separation as 3D lateral authority`);
-    if (spanAuthority === 'observed' && basisKind !== 'source-depth-evidence') {
-      throw new Error(`${label}.observed lateral span requires source-depth-evidence`);
-    }
     const spanEvidenceRefs = strings(span.evidenceRefs, `${label}.lateralSpan.evidenceRefs`, {required: true});
 
     let intrinsicAsymmetry = null;
