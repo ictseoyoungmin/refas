@@ -105,7 +105,7 @@ test('bilateral relational certification replays exact candidate GLB bytes', () 
     relations:[{
       id:'leg-pair',kind:'bilateral-pair',scope:'whole-system',importance:'identity',
       entityIds:['left-leg','right-leg'],leftEntityId:'left-leg',rightEntityId:'right-leg',
-      sagittalPlaneId:'sagittal-plane',mirrorAxis:'x',leftHalfSpace:'negative',restGeometryPolicy:'shared-mirrored',
+      sagittalPlaneId:'sagittal-plane',mirrorAxis:'x',leftHalfSpace:'negative',mirrorPlaneCoordinate:0,restGeometryPolicy:'shared-mirrored',
       lateralSpan:{halfSpan:.08,authority:'inferred',basisKind:'body-relative-inference',evidenceRefs:['source:body']},
       basisRefs:['source:primary'],
     }],
