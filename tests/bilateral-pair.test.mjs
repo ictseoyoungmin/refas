@@ -152,6 +152,28 @@ test('shared bilateral rest geometry requires actual mirror parity',()=>{
   assert.throws(()=>realization(glb,pair),/must realize opposite transform parity/);
 });
 
+test('declared mirror axis cannot be replaced by another negative-scale axis',()=>{
+  const pair=structure();
+  const shared=sharedCorvidLegMesh();
+  const glb=candidate(shared,shared);
+  const wrongAxis=rewriteGlbJson(glb,(json)=>{
+    const right=json.nodes.find((node)=>(node.extras?.refasPartId??node.name)==='right-leg');
+    right.scale=[1,-1,1];
+  });
+  assert.throws(()=>realization(wrongAxis,pair),/declared mirror axis|may only flip scale/);
+});
+
+test('candidate must realize the declared bilateral lateral half-span',()=>{
+  const pair=structure({halfSpan:.09});
+  const shared=sharedCorvidLegMesh();
+  const glb=candidate(shared,shared);
+  const drifted=rewriteGlbJson(glb,(json)=>{
+    const right=json.nodes.find((node)=>(node.extras?.refasPartId??node.name)==='right-leg');
+    right.translation=[.12,0,0];
+  });
+  assert.throws(()=>realization(drifted,pair),/declared lateral half-span/);
+});
+
 test('intrinsic asymmetric pair permits distinct rest geometry only with observed source evidence',()=>{
   const intrinsic={
     authority:'observed',
