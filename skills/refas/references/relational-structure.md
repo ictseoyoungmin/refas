@@ -26,6 +26,7 @@ The relation explicitly binds:
 
 - `leftEntityId` and `rightEntityId`;
 - one `sagittalPlaneId` plane entity;
+- explicit `mirrorAxis` (`x|y|z`) and `leftHalfSpace` (`negative|positive`);
 - `restGeometryPolicy`: normally `shared-mirrored`;
 - a positive lateral half-span with authority and basis;
 - optional source-observed intrinsic asymmetry.
@@ -34,7 +35,7 @@ Do not convert 2D image-plane separation directly into 3D pair depth. `lateralSp
 
 `observed-intrinsic-asymmetry` is an exception, not a convenience flag. It requires a source observation and evidence refs with `observed` authority. Without that evidence, left/right rest construction must remain shared.
 
-After a candidate exists, run `createBilateralPairRealization()` on the exact GLB bytes. The runtime derives each paired node's local rest-geometry digest from POSITION + index accessors rather than trusting caller-provided geometry hashes. Under `shared-mirrored`, both local rest digests must match and the two node transforms must have opposite parity. Camera evidence and a pose explanation for both instances are also required so visible 2D asymmetry is not silently baked into rest geometry.
+After a candidate exists, run `createBilateralPairRealization()` on the exact GLB bytes. The runtime derives each paired node's local rest-geometry digest from POSITION + index accessors rather than trusting caller-provided geometry hashes. Under `shared-mirrored`, both local rest digests must match, the declared mirror axis must be the only scale-sign flip, and the pair roots must actually sit at the declared `±halfSpan` on that axis. The initial shared-mirror contract therefore requires explicit node TRS rather than an opaque matrix transform. Camera evidence and a pose explanation for both instances are also required so visible 2D asymmetry is not silently baked into rest geometry.
 
 ## Relation graph
 
