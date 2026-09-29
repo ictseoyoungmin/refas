@@ -46,6 +46,46 @@ const shell = createPermittedHardSurfaceShell({decision, permit, spec});
 
 Use the corresponding permit-aware wrappers for section-profile lofts and surface-network identity construction. Existing lower-level geometry functions remain available for blockout, support implementation, and backward compatibility, but calling them directly does **not** establish identity-bearing construction authority. Permit-consuming wrappers carry `refas.construction-authority/v1` into GLB serialization; serialization emits per-part `refas.construction-execution/v1` records, and `createConstructionExecutionProof` binds those executions to the exact candidate GLB digest. `refas.construction-quality/v1` rejects identity-bearing closure unless the current vocabulary, required permits, and matching candidate-bound execution proof are present.
 
+## Subdivision-cage organic construction
+
+Use `subdivision-cage-organic` for continuous organic identity scopes whose visible form cannot be represented faithfully by section-profile lofts alone. The operation starts from a closed semantic control cage and performs deterministic Catmull–Clark subdivision inside the RefAs kernel.
+
+```js
+const landmarkCage = createLandmarkCage({
+  id: 'head-landmarks',
+  landmarks: [
+    {id: 'chin', point: [0, -1, 0.1], authority: 'observed', evidenceRefs: ['source/front.png']},
+    {id: 'occiput', point: [0, 0.2, -0.8], authority: 'inferred', evidenceRefs: ['source/side.png']},
+  ],
+  evidenceRefs: ['source/front.png', 'source/side.png'],
+});
+
+const permit = createConstructionOperationPermit({
+  decision,
+  scopeId: 'whole',
+  operation: 'subdivision-cage-organic',
+});
+
+const mesh = createPermittedSubdivisionCageOrganic({
+  decision,
+  permit,
+  spec: {
+    landmarkCage,
+    vertices,
+    faces,
+    creases,
+    levels: 2,
+    evidenceRefs,
+  },
+});
+```
+
+Each control vertex requires `observed`, `inferred`, or `engineered` authority plus evidence refs. A vertex may bind a `landmarkId`; when it does, its control position must equal that landmark exactly. Generated face points, edge points, and subdivided surface samples are engineered realization and never inherit `observed` authority merely because their control vertices were observed.
+
+The control cage must be closed manifold with consistent face winding. Every edge must have exactly two owning faces. Subdivision levels are currently limited to 1–4. Crease weights are bounded to [0,1] and are propagated deterministically across levels. The final triangle mesh must pass the normal RefAs watertight/winding checks.
+
+GLB serialization preserves the exact `refas.subdivision-cage-organic/v1` control-cage metadata, including control vertices, landmark bindings, authority provenance, evidence refs, crease weights, subdivision level, and cage digest. The permit-consuming wrapper is required for identity-bearing closure; calling the low-level kernel directly remains non-authoritative geometry construction.
+
 ## Attested external construction
 
 Use `external-construction` when a resolved hard-surface or organic identity scope needs a higher-capability external modeler such as headless Blender, an SDF/implicit tool, or a deterministic retopology program. It is **not** a trusted-GLB escape hatch.
