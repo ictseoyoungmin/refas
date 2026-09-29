@@ -18,6 +18,24 @@ Represent semantic entities such as landmarks, axes, planes, volumes, regions, i
 
 Every relation declares whether it is `whole-system` or `local` and whether its importance is `macro`, `identity`, or `detail`. Local feature work never substitutes for unresolved applicable whole-system relations.
 
+## Bilateral paired parts
+
+Use a `bilateral-pair` whole-system relation when two semantic parts are intended to be one shared rest construction mirrored across the object's sagittal plane: legs, wings, arms, eyes, paired covers, or similar structures.
+
+The relation explicitly binds:
+
+- `leftEntityId` and `rightEntityId`;
+- one `sagittalPlaneId` plane entity;
+- `restGeometryPolicy`: normally `shared-mirrored`;
+- a positive lateral half-span with authority and basis;
+- optional source-observed intrinsic asymmetry.
+
+Do not convert 2D image-plane separation directly into 3D pair depth. `lateralSpan.basisKind: image-plane-separation` is rejected. Body-relative inference, structural priors, external specifications, direct source depth evidence, or an engineered layout remain explicit non-equivalent bases.
+
+`observed-intrinsic-asymmetry` is an exception, not a convenience flag. It requires a source observation and evidence refs with `observed` authority. Without that evidence, left/right rest construction must remain shared.
+
+After a candidate exists, run `createBilateralPairRealization()` on the exact GLB bytes. The runtime derives each paired node's local rest-geometry digest from POSITION + index accessors rather than trusting caller-provided geometry hashes. Under `shared-mirrored`, both local rest digests must match and the two node transforms must have opposite parity. Camera evidence and a pose explanation for both instances are also required so visible 2D asymmetry is not silently baked into rest geometry.
+
 ## Relation graph
 
 Relations may depend on other relations. Dependencies must be acyclic and every referenced entity/relation must exist. Use the canonical dependency order produced by the runtime; do not hand-order relations differently in separate agents.
