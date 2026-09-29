@@ -1,6 +1,7 @@
 import {createHash} from 'node:crypto';
 import {digestJson} from './canonical.mjs';
 import {analyzeMesh, computeVertexNormals} from './mesh.mjs';
+import {validateSubdivisionCageOrganic} from './subdivision-cage.mjs';
 
 const align4 = (value) => (value + 3) & ~3;
 const sha = (value) => createHash('sha256').update(value).digest('hex');
@@ -158,6 +159,12 @@ export function partsToGlb({parts, materials, assetId = 'refas-asset', name = 'R
     if (!part?.id || !part.mesh || !materialIds.has(part.materialId)) throw new Error('every part requires id, mesh, and known materialId');
     const analysis = analyzeMesh(part.mesh); if (!analysis.valid) throw new Error(`${part.id}: invalid mesh`);
     const normals = part.mesh.normals?.length === part.mesh.positions.length ? part.mesh.normals : computeVertexNormals(part.mesh.positions, part.mesh.indices);
+    if (part.mesh.subdivisionCage) {
+      const cageValidation = validateSubdivisionCageOrganic(part.mesh.subdivisionCage);
+      if (!cageValidation.valid) throw new Error(`${part.id}: subdivision cage metadata is invalid: ${cageValidation.errors.join('; ')}`);
+      const actualMeshDigest = digestJson({positions: part.mesh.positions, normals, indices: part.mesh.indices});
+      if (actualMeshDigest !== part.mesh.subdivisionCage.realizedMeshDigest) throw new Error(`${part.id}: realized mesh does not match subdivision cage metadata`);
+    }
     const positions = new Float32Array(part.mesh.positions.flat()), normalData = new Float32Array(normals.flat());
     const maximum = Math.max(...part.mesh.indices), IndexArray = maximum <= 65535 ? Uint16Array : Uint32Array, indexData = new IndexArray(part.mesh.indices);
     const positionView = push(positions), normalView = push(normalData), indexView = push(indexData), accessorStart = json.accessors.length, extent = bounds(part.mesh.positions);
