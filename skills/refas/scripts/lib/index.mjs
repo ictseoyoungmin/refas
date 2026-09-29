@@ -25,6 +25,7 @@ export * from './orientation-frame.mjs';
 export * from './orientation-discrepancy.mjs';
 export * from './orientation-pose-fit.mjs';
 export * from './relational-structure.mjs';
+export * from './bilateral-pair.mjs';
 export * from './relational-discrepancy.mjs';
 export * from './semantic-authority.mjs';
 export * from './whole-system-relational-barrier.mjs';
