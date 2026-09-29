@@ -1508,7 +1508,7 @@
               "symbol": "createExternalConstructionReceipt"
             },
             "template": null,
-            "inputContract": "validated external-construction permit + exact tool/version + script digest + source/guide/prior input digests + byte-exact output GLB digest",
+            "inputContract": "validated external-construction permit + exact tool/version + script digest + canonical argv/version invocation template + source/guide/prior input digests + byte-exact output GLB digest",
             "outputSchema": "refas.external-construction-receipt/v1",
             "validator": {
               "library": "validateExternalConstructionReceipt"
