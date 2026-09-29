@@ -83,6 +83,15 @@ test('external receipt is exact-source/output bound but has no authority by itse
     evidenceRefs: ['evidence/external-run.json'],
   }), /carries no permit-bound construction executions/);
 
+  const unrelatedCandidate = rawExternalGlb(0.2);
+  assert.throws(() => createConstructionExecutionProof({
+    assetBytes: unrelatedCandidate,
+    decision,
+    permits: [permit],
+    externalReceipts: [receipt],
+    evidenceRefs: ['evidence/replayed-receipt.json'],
+  }), /carries no permit-bound construction executions/);
+
   assert.throws(() => createConstructionExecutionProof({
     assetBytes: raw,
     decision,
