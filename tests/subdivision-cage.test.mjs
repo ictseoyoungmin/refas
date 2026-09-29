@@ -185,6 +185,13 @@ test('subdivision cage inherits landmark provenance and rejects missing provenan
   delete reorderedFacePayload.cageDigest;
   reorderedFaces.cageDigest=digestJson(reorderedFacePayload);
   assert.equal(validateSubdivisionCageOrganic(reorderedFaces).valid,false);
+
+  const detachedLandmarks=structuredClone(mesh.subdivisionCage);
+  detachedLandmarks.landmarkCageDigest=null;
+  const detachedPayload=structuredClone(detachedLandmarks);
+  delete detachedPayload.cageDigest;
+  detachedLandmarks.cageDigest=digestJson(detachedPayload);
+  assert.equal(validateSubdivisionCageOrganic(detachedLandmarks).valid,false);
 });
 
 test('organic permit consumes subdivision cage and binds provenance into candidate GLB', () => {
