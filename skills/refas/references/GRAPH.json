@@ -4184,6 +4184,33 @@
               },
               "outputSchemaPointer": "/report/schema"
             }
+          },
+          {
+            "id": "structural-plausibility",
+            "operation": "evaluate",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "analyzeStructuralPlausibility"
+            },
+            "template": null,
+            "inputContract": "validated attachment semantics with optional embedded-root/groundSupport declarations + exact candidate GLB bytes",
+            "outputSchema": "refas.structural-plausibility/v1",
+            "validator": {
+              "library": "validateStructuralPlausibility"
+            },
+            "minimumInvocation": "references/realized-contact-support.md",
+            "example": null,
+            "usageReference": "references/realized-contact-support.md",
+            "publicConstants": [
+              "STRUCTURAL_PLAUSIBILITY_SCHEMA"
+            ],
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "candidate-bound evaluator derives root-in-parent-volume and grounded COM/support-polygon evidence from exact active-scene GLB geometry"
+            },
+            "note": "Separate from contact authority: touching a parent surface does not prove an embedded root, and support graph reachability does not prove static balance."
           }
         ]
       }
