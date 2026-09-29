@@ -488,6 +488,8 @@ export function attestExternalConstruction({
   decision,
   permit,
   receipt,
+  scriptBytes,
+  inputBytes = {},
   outputBytes,
   reexecutedBytes,
   partId = null,
@@ -496,6 +498,8 @@ export function attestExternalConstruction({
   requirePermit(decision, permit, 'external-construction', permit?.scopeId);
   const output = Buffer.from(outputBytes ?? []);
   const replay = Buffer.from(reexecutedBytes ?? []);
+  const script = Buffer.from(scriptBytes ?? []);
+  if (!script.length) throw new Error('external construction attestation requires exact script bytes');
   if (!output.length || !replay.length) throw new Error('external construction attestation requires output and reexecuted GLB bytes');
   parseGlb(output);
   parseGlb(replay);
@@ -503,6 +507,14 @@ export function attestExternalConstruction({
   const replaySha256 = digestBytes(replay);
   const receiptValidation = validateExternalConstructionReceipt(receipt, decision, permit, {outputGlbSha256: outputSha256});
   if (!receiptValidation.valid) throw new Error(`external construction receipt is invalid: ${receiptValidation.errors.join('; ')}`);
+  if (digestBytes(script) !== receipt.scriptSha256) throw new Error('external construction script bytes do not match the receipt');
+  const suppliedInputIds = Object.keys(inputBytes).sort();
+  const expectedInputIds = receipt.inputs.map((item) => item.id).sort();
+  if (JSON.stringify(suppliedInputIds) !== JSON.stringify(expectedInputIds)) throw new Error('external construction input byte set does not match the receipt');
+  for (const input of receipt.inputs) {
+    const bytes = Buffer.from(inputBytes[input.id] ?? []);
+    if (digestBytes(bytes) !== input.sha256) throw new Error(`external construction input bytes do not match receipt input ${input.id}`);
+  }
   if (replaySha256 !== outputSha256) throw new Error('external construction reexecution is not byte-exact');
   const authority = createConstructionAuthority({decision, permit});
   const payload = {
