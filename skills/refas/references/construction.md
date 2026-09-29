@@ -75,7 +75,7 @@ const {assetBytes, receipt, proof} = attestExternalConstruction({
 });
 ```
 
-RefAs probes the actual command for its version, writes the exact script and declared inputs into a fresh run directory, executes argv with `shell:false`, and repeats the same construction in a second fresh directory. Both outputs must be valid embedded GLB 2.0 and byte-identical. Only then does RefAs create `refas.external-construction-receipt/v1`, embed a permit-bound `refas.construction-execution/v1` into the candidate, and create the normal candidate-bound `refas.construction-execution-proof/v1`.
+RefAs probes the actual command for its version, writes the exact script and declared inputs into a fresh run directory, executes argv with `shell:false`, and repeats the same construction in a second fresh directory. Both outputs must be valid, self-contained embedded GLB 2.0 and byte-identical. External buffer/image URIs and pre-authored RefAs construction authority metadata are rejected. Only then does RefAs create `refas.external-construction-receipt/v1`, embed a permit-bound `refas.construction-execution/v1` into the candidate, and create the normal candidate-bound `refas.construction-execution-proof/v1`.
 
 The receipt binds tool identity/version observed by the runtime, exact program digest, the canonical argv/version invocation template and filenames, every declared input digest and authority, the raw external GLB digest, and the `byte-exact` determinism contract. Every declared input must be referenced by the invocation; listing a source or guide without actually passing it to the external program is rejected. A receipt alone has no construction authority. An external permit without a verified receipt cannot produce a construction execution proof.
 
