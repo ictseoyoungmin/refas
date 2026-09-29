@@ -1,3 +1,7 @@
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import {spawnSync} from 'node:child_process';
 import {assertDigest, assertId, deepFreeze, digestBytes, digestJson} from './canonical.mjs';
 import {attachConstructionExecution, parseGlb} from './glb.mjs';
 import {createHardSurfaceShell} from './hard-surface.mjs';
@@ -491,7 +495,7 @@ export function validateConstructionExecutionProof(proof, decision, permits = []
   return {valid: errors.length === 0, errors};
 }
 
-export function attestExternalConstruction({
+function finalizeExternalConstructionReplay({
   decision,
   permit,
   receipt,
@@ -550,6 +554,164 @@ export function attestExternalConstruction({
     evidenceRefs: strings([...receipt.evidenceRefs, ...evidenceRefs]),
   });
   return {assetBytes, execution, proof};
+}
+
+function externalToolArgs(rawArgs, {scriptFile, outputFile, inputFiles}) {
+  if (!Array.isArray(rawArgs) || !rawArgs.length || rawArgs.length > 64) throw new Error('external construction tool args must contain 1..64 arguments');
+  const replace = (value) => {
+    let output = String(value);
+    if (output.length > 4096) throw new Error('external construction tool argument exceeds 4096 characters');
+    output = output.replaceAll('{script}', scriptFile).replaceAll('{output}', outputFile);
+    output = output.replace(/\{input:([^}]+)\}/gu, (_match, id) => {
+      if (!inputFiles.has(id)) throw new Error(`external construction tool argument references unknown input ${id}`);
+      return inputFiles.get(id);
+    });
+    if (/\{(?:script|output|input:)/u.test(output)) throw new Error('external construction tool argument contains an unresolved placeholder');
+    return output;
+  };
+  const args = rawArgs.map(replace);
+  if (!rawArgs.some((value) => String(value).includes('{script}'))) throw new Error('external construction tool args must reference {script}');
+  if (!rawArgs.some((value) => String(value).includes('{output}'))) throw new Error('external construction tool args must reference {output}');
+  return args;
+}
+
+function runExternalProcess(command, args, {cwd, timeoutMs, label}) {
+  const result = spawnSync(command, args, {
+    cwd,
+    shell: false,
+    encoding: 'utf8',
+    timeout: timeoutMs,
+    env: {
+      ...process.env,
+      HOME: cwd,
+      TZ: 'UTC',
+      LANG: 'C',
+      LC_ALL: 'C',
+      PYTHONHASHSEED: '0',
+    },
+    maxBuffer: 1024 * 1024,
+  });
+  if (result.error) throw new Error(`${label} failed to launch: ${result.error.message}`);
+  if (result.signal) throw new Error(`${label} terminated by signal ${result.signal}`);
+  if (result.status !== 0) throw new Error(`${label} exited ${result.status}: ${String(result.stderr || result.stdout).trim()}`);
+  return {stdout: String(result.stdout ?? ''), stderr: String(result.stderr ?? '')};
+}
+
+export function attestExternalConstruction({
+  decision,
+  permit,
+  tool = {},
+  scriptBytes,
+  inputs = [],
+  args = [],
+  versionArgs = ['--version'],
+  scriptFileName = 'construction-script',
+  outputFileName = 'candidate.glb',
+  timeoutMs = 60_000,
+  partId = null,
+  evidenceRefs = [],
+} = {}) {
+  requirePermit(decision, permit, 'external-construction', permit?.scopeId);
+  const toolId = assertId(tool?.id, 'tool.id');
+  const command = String(tool?.command ?? '').trim();
+  if (!command || command.length > 4096) throw new Error('tool.command must contain 1..4096 characters');
+  if (!Array.isArray(versionArgs) || !versionArgs.length || versionArgs.length > 16) throw new Error('versionArgs must contain 1..16 arguments');
+  const normalizedVersionArgs = versionArgs.map((value) => String(value));
+  const timeout = Number(timeoutMs);
+  if (!Number.isSafeInteger(timeout) || timeout < 1 || timeout > 86_400_000) throw new Error('timeoutMs must be an integer in 1..86400000');
+  const safeName = (value, label) => {
+    const normalized = String(value ?? '');
+    if (!/^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/u.test(normalized)) throw new Error(`${label} must be a safe basename`);
+    return normalized;
+  };
+  const scriptName = safeName(scriptFileName, 'scriptFileName');
+  const outputName = safeName(outputFileName, 'outputFileName');
+  if (!outputName.toLowerCase().endsWith('.glb')) throw new Error('outputFileName must end in .glb');
+  const script = Buffer.from(scriptBytes ?? []);
+  if (!script.length) throw new Error('external construction requires non-empty script bytes');
+  if (!Array.isArray(inputs) || !inputs.length) throw new Error('external construction requires exact input bytes');
+  const ids = new Set();
+  const normalizedInputs = inputs.map((input, index) => {
+    const id = assertId(input?.id, `inputs[${index}].id`);
+    if (ids.has(id)) throw new Error('external construction input IDs must be unique');
+    ids.add(id);
+    const bytes = Buffer.from(input?.bytes ?? []);
+    if (!bytes.length) throw new Error(`inputs[${index}].bytes must be non-empty`);
+    return {
+      id,
+      kind: String(input?.kind ?? '').trim().toLowerCase(),
+      authority: String(input?.authority ?? '').trim().toLowerCase(),
+      bytes,
+      sha256: digestBytes(bytes),
+    };
+  });
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'refas-external-construction-'));
+  try {
+    const versionRun = runExternalProcess(command, normalizedVersionArgs, {cwd: root, timeoutMs: timeout, label: 'external construction version probe'});
+    const versionLines = `${versionRun.stdout}\n${versionRun.stderr}`.split(/\r?\n/u).map((line) => line.trim()).filter(Boolean);
+    if (!versionLines.length) throw new Error('external construction tool version probe produced no version text');
+    const version = versionLines[0];
+    if (version.length > 512) throw new Error('external construction tool version text is too long');
+
+    const runOnce = (name) => {
+      const runRoot = path.join(root, name);
+      fs.mkdirSync(runRoot, {recursive: true});
+      fs.writeFileSync(path.join(runRoot, scriptName), script);
+      const inputFiles = new Map();
+      for (const [index, input] of normalizedInputs.entries()) {
+        const fileName = `input-${index}.bin`;
+        fs.writeFileSync(path.join(runRoot, fileName), input.bytes);
+        inputFiles.set(input.id, fileName);
+      }
+      const processArgs = externalToolArgs(args, {scriptFile: scriptName, outputFile: outputName, inputFiles});
+      const result = runExternalProcess(command, processArgs, {cwd: runRoot, timeoutMs: timeout, label: `external construction ${name}`});
+      const outputPath = path.join(runRoot, outputName);
+      if (!fs.existsSync(outputPath) || !fs.statSync(outputPath).isFile()) throw new Error(`external construction ${name} did not produce ${outputName}`);
+      const output = fs.readFileSync(outputPath);
+      parseGlb(output);
+      return {output, stdout: result.stdout, stderr: result.stderr};
+    };
+
+    const first = runOnce('run-a');
+    const replay = runOnce('run-b');
+    if (!first.output.equals(replay.output)) throw new Error('external construction reexecution is not byte-exact');
+
+    const receipt = createExternalConstructionReceipt({
+      decision,
+      permit,
+      tool: {id: toolId, version},
+      scriptSha256: digestBytes(script),
+      inputs: normalizedInputs.map(({bytes: _bytes, ...input}) => input),
+      determinism: {mode: 'byte-exact'},
+      outputGlbSha256: digestBytes(first.output),
+      evidenceRefs,
+    });
+    const inputBytes = Object.fromEntries(normalizedInputs.map((input) => [input.id, input.bytes]));
+    const finalized = finalizeExternalConstructionReplay({
+      decision,
+      permit,
+      receipt,
+      scriptBytes: script,
+      inputBytes,
+      outputBytes: first.output,
+      reexecutedBytes: replay.output,
+      partId,
+      evidenceRefs,
+    });
+    return deepFreeze({
+      ...finalized,
+      receipt,
+      processEvidence: {
+        tool: receipt.tool,
+        firstStdoutSha256: digestBytes(Buffer.from(first.stdout)),
+        firstStderrSha256: digestBytes(Buffer.from(first.stderr)),
+        replayStdoutSha256: digestBytes(Buffer.from(replay.stdout)),
+        replayStderrSha256: digestBytes(Buffer.from(replay.stderr)),
+      },
+    });
+  } finally {
+    fs.rmSync(root, {recursive: true, force: true});
+  }
 }
 
 export function createPermittedHardSurfaceShell({decision, permit, spec = {}} = {}) {
