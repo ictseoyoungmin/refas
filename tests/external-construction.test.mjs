@@ -146,6 +146,20 @@ test('external receipt preserves source/prior authority boundaries', () => {
     outputGlbSha256: digestBytes(raw),
     evidenceRefs: ['evidence/external-run.json'],
   }), /observed source input bound to the permit source/);
+
+  assert.throws(() => createExternalConstructionReceipt({
+    decision,
+    permit,
+    tool: {id: 'headless-modeler', version: '1.0.0'},
+    scriptSha256: SCRIPT,
+    invocation: {...INVOCATION, args: ['{script}', '{input:primary-source}', '{output}']},
+    inputs: [
+      {id: 'primary-source', kind: 'source', authority: 'observed', sha256: SOURCE},
+      {id: 'shape-guide', kind: 'guide', authority: 'inferred', sha256: GUIDE},
+    ],
+    outputGlbSha256: digestBytes(raw),
+    evidenceRefs: ['evidence/external-run.json'],
+  }), /does not reference declared input shape-guide/);
 });
 
 test('external construction preserves composite whole decomposition rules', () => {
