@@ -172,6 +172,7 @@ export function partsToGlb({parts, materials, assetId = 'refas-asset', name = 'R
     if (constructionExecution) constructionExecutions.push(constructionExecution);
     const meshExtras = {
       ...(topology ? {refasTopology: topology} : {}),
+      ...(part.mesh?.subdivisionCage ? {refasSubdivisionCage: part.mesh.subdivisionCage} : {}),
       ...(constructionExecution ? {refasConstructionExecution: constructionExecution} : {}),
     };
     json.meshes.push({name: part.id, primitives: [{attributes: {POSITION: accessorStart, NORMAL: accessorStart + 1}, indices: accessorStart + 2, material: materialIds.get(part.materialId), mode: 4}], ...(Object.keys(meshExtras).length ? {extras: meshExtras} : {})});
