@@ -67,7 +67,7 @@ function normalizeControlVertices(vertices, landmarkCage, evidenceRefs) {
     }
     const refs = strings([
       ...(landmark?.evidenceRefs ?? []),
-      ...((raw?.evidenceRefs ?? evidenceRefs) ?? []),
+      ...((raw?.evidenceRefs ?? (landmark ? [] : evidenceRefs)) ?? []),
     ]);
     if (!refs.length) throw new Error(`vertices[${index}].evidenceRefs requires at least one value`);
     return {
