@@ -118,6 +118,7 @@ function normalizeRelation(raw, index, entityById) {
     if (!BILATERAL_MIRROR_AXES.has(mirrorAxis)) throw new Error(`${label}.mirrorAxis must be x, y, or z`);
     const leftHalfSpace = String(raw?.leftHalfSpace ?? '').toLowerCase();
     if (!BILATERAL_HALF_SPACES.has(leftHalfSpace)) throw new Error(`${label}.leftHalfSpace must be negative or positive`);
+    const mirrorPlaneCoordinate = finite(raw?.mirrorPlaneCoordinate, `${label}.mirrorPlaneCoordinate`);
     const restGeometryPolicy = String(raw?.restGeometryPolicy ?? '').toLowerCase();
     if (!BILATERAL_REST_POLICIES.has(restGeometryPolicy)) throw new Error(`${label}.restGeometryPolicy is invalid`);
 
@@ -160,6 +161,7 @@ function normalizeRelation(raw, index, entityById) {
     normalized.sagittalPlaneId = sagittalPlaneId;
     normalized.mirrorAxis = mirrorAxis;
     normalized.leftHalfSpace = leftHalfSpace;
+    normalized.mirrorPlaneCoordinate = mirrorPlaneCoordinate;
     normalized.restGeometryPolicy = restGeometryPolicy;
     normalized.lateralSpan = {
       halfSpan,
