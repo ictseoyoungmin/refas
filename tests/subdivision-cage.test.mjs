@@ -159,7 +159,7 @@ test('subdivision cage inherits landmark provenance and rejects missing provenan
 
   const forgedLandmarkCage=structuredClone(cage);
   forgedLandmarkCage.landmarks[0].point=[-0.25,-1,-1];
-  assert.throws(()=>createSubdivisionCageOrganic({...spec(),landmarkCage:forgedLandmarkCage}),/landmarkCage digest mismatch/);
+  assert.throws(()=>createSubdivisionCageOrganic({...spec(),landmarkCage:forgedLandmarkCage}),/landmarkCage is stale or non-canonical/);
 
   const forged=structuredClone(mesh.subdivisionCage);
   forged.controlFaces=forged.controlFaces.slice(0,-1);
