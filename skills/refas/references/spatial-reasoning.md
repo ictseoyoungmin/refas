@@ -54,7 +54,7 @@ Visible left/right differences should be explained in this order:
 
 Use `createBilateralPairRealization()` after candidate construction. It binds the exact GLB candidate, derives local rest geometry from both active-scene pair nodes, and rejects independent rest geometry under `shared-mirrored`. A shared pair also requires an explicit mirror axis and object-frame mirror-plane coordinate, the declared `±halfSpan` root placement around that plane, a scale-sign flip only on that axis, camera evidence, and pose evidence for both instances. Inactive nodes, parent-wrapped nodes, skin/morph deformation, and opaque matrix transforms cannot satisfy the initial shared-mirror contract.
 
-Image-space pair separation is correspondence evidence, not direct lateral-depth authority. Never turn the left/right pixel gap into object-space half-span merely because it improves the hero view. The paired relation records the chosen half-span basis explicitly.
+Image-space pair separation is correspondence evidence, not direct lateral-depth authority. Never turn the left/right pixel gap into object-space half-span merely because it improves the hero view. The paired relation records the chosen half-span basis explicitly and permits only `inferred` or `engineered` lateral-span authority.
 
 ## Projection anchoring
 
