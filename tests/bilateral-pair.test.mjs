@@ -3,9 +3,13 @@ import test from 'node:test';
 
 import {
   createBilateralPairRealization,
+  createRelationalDiscrepancy,
   createRelationalStructure,
+  digestBytes,
+  parseGlb,
   partsToGlb,
   validateBilateralPairRealization,
+  validateRelationalDiscrepancy,
   validateRelationalStructure,
 } from '../skills/refas/scripts/lib/index.mjs';
 import {
@@ -70,6 +74,28 @@ function candidate(leftMesh,rightMesh,{mirrored=true}={}){
     ],
     materials:MATERIALS,
   });
+}
+
+function rewriteGlbJson(glb, mutate) {
+  const parsed=parseGlb(glb);
+  const json=structuredClone(parsed.json);
+  mutate(json);
+  const jsonBytes=Buffer.from(JSON.stringify(json));
+  const align4=(value)=>(value+3)&~3;
+  const jsonLength=align4(jsonBytes.length), binaryLength=align4(parsed.binary.length);
+  const output=Buffer.alloc(12+8+jsonLength+8+binaryLength);
+  output.writeUInt32LE(0x46546c67,0);
+  output.writeUInt32LE(2,4);
+  output.writeUInt32LE(output.length,8);
+  output.writeUInt32LE(jsonLength,12);
+  output.writeUInt32LE(0x4e4f534a,16);
+  jsonBytes.copy(output,20);
+  output.fill(0x20,20+jsonBytes.length,20+jsonLength);
+  const binaryOffset=20+jsonLength;
+  output.writeUInt32LE(binaryLength,binaryOffset);
+  output.writeUInt32LE(0x004e4942,binaryOffset+4);
+  parsed.binary.copy(output,binaryOffset+8);
+  return output;
 }
 
 function realization(glb,relationalStructure){
@@ -155,4 +181,62 @@ test('bilateral realization is candidate-bound and rejects stale replay',()=>{
   const legacy=legacyIndependentCorvidLegMeshes();
   const changed=candidate(legacy.left,legacy.right);
   assert.equal(validateBilateralPairRealization(proof,{glb:changed,relationalStructure:pair}).valid,false);
+});
+
+test('inactive scene nodes and deformed pair nodes cannot satisfy bilateral authority',()=>{
+  const pair=structure();
+  const shared=sharedCorvidLegMesh();
+  const glb=candidate(shared,shared);
+
+  const inactiveRight=rewriteGlbJson(glb,(json)=>{
+    const right=json.nodes.findIndex((node)=>(node.extras?.refasPartId??node.name)==='right-leg');
+    json.scenes[json.scene??0].nodes=json.scenes[json.scene??0].nodes.filter((index)=>index!==right);
+  });
+  assert.throws(()=>realization(inactiveRight,pair),/active candidate scene must contain exactly one node for bilateral entity right-leg/);
+
+  const morphed=rewriteGlbJson(glb,(json)=>{
+    const right=json.nodes.find((node)=>(node.extras?.refasPartId??node.name)==='right-leg');
+    right.weights=[0];
+  });
+  assert.throws(()=>realization(morphed,pair),/cannot use skin or morph weights/);
+
+  const wrongPositionFormat=rewriteGlbJson(glb,(json)=>{
+    const left=json.nodes.find((node)=>(node.extras?.refasPartId??node.name)==='left-leg');
+    const accessor=json.meshes[left.mesh].primitives[0].attributes.POSITION;
+    json.accessors[accessor].componentType=5123;
+  });
+  assert.throws(()=>realization(wrongPositionFormat,pair),/POSITION component type is invalid/);
+});
+
+test('bilateral whole-system discrepancy derives PASS only from exact candidate replay',()=>{
+  const pair=structure();
+  const shared=sharedCorvidLegMesh();
+  const glb=candidate(shared,shared);
+  const proof=realization(glb,pair);
+  const candidateSha256=digestBytes(glb);
+  const observations=[{
+    relationId:'leg-pair',
+    bilateralPairRealization:proof,
+    evidenceRefs:['proof:bilateral-realization'],
+  }];
+  const discrepancy=createRelationalDiscrepancy({
+    relationalStructure:pair,
+    candidateAssetSha256:candidateSha256,
+    candidateGlb:glb,
+    observations,
+  });
+  assert.equal(discrepancy.status,'PASS');
+  assert.equal(discrepancy.checks[0].relationKind,'bilateral-pair');
+  assert.equal(discrepancy.checks[0].measurement.realizationDigest,proof.realizationDigest);
+  assert.deepEqual(validateRelationalDiscrepancy(discrepancy,{candidateGlb:glb}),{valid:true,errors:[]});
+  assert.throws(()=>createRelationalDiscrepancy({
+    relationalStructure:pair,
+    candidateAssetSha256:candidateSha256,
+    observations,
+  }),/requires exact candidate GLB bytes/);
+  assert.equal(validateRelationalDiscrepancy(discrepancy).valid,false);
+
+  const legacy=legacyIndependentCorvidLegMeshes();
+  const changed=candidate(legacy.left,legacy.right);
+  assert.equal(validateRelationalDiscrepancy(discrepancy,{candidateGlb:changed}).valid,false);
 });
