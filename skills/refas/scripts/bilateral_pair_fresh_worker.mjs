@@ -33,7 +33,7 @@ async function main(){
     relations:[{
       id:'leg-pair',kind:'bilateral-pair',scope:'whole-system',importance:'identity',
       entityIds:['left-leg','right-leg'],leftEntityId:'left-leg',rightEntityId:'right-leg',sagittalPlaneId:'sagittal-plane',
-      restGeometryPolicy:'shared-mirrored',mirrorAxis:'x',leftHalfSpace:'negative',
+      restGeometryPolicy:'shared-mirrored',mirrorAxis:'x',leftHalfSpace:'negative',mirrorPlaneCoordinate:0,
       lateralSpan:{halfSpan:.09,authority:'inferred',basisKind:'body-relative-inference',evidenceRefs:['source:body-envelope']},
       basisRefs:['source:corvid'],
       ...overrides,
