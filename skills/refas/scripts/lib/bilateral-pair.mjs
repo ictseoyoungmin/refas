@@ -126,6 +126,8 @@ function partRecord(json, binary, activeNodes, partId) {
     .filter(({node}) => (node.extras?.refasPartId ?? node.name) === partId);
   if (matches.length !== 1) throw new Error(`active candidate scene must contain exactly one node for bilateral entity ${partId}`);
   const {node,index:nodeIndex} = matches[0];
+  const parentIndices=[...activeNodes].filter((index)=>(json.nodes[index]?.children??[]).includes(nodeIndex));
+  if(parentIndices.length) throw new Error(`bilateral entity ${partId} must be an active-scene root in the initial bilateral contract`);
   if (node.skin != null || node.weights != null) throw new Error(`bilateral entity ${partId} cannot use skin or morph weights in the initial bilateral contract`);
   const mesh = json.meshes?.[node.mesh];
   if (!mesh || (mesh.primitives?.length ?? 0) !== 1) throw new Error(`bilateral entity ${partId} requires exactly one mesh primitive`);
@@ -157,11 +159,14 @@ function sharedMirrorPlacement(left,right,relation) {
   const expectedLeftSign=relation.leftHalfSpace==='negative'?-1:1;
   const expectedRightSign=-expectedLeftSign;
   const halfSpan=Number(relation.lateralSpan?.halfSpan);
+  const planeCoordinate=Number(relation.mirrorPlaneCoordinate);
   const tolerance=Math.max(1e-8,Math.abs(halfSpan)*1e-6);
   const leftCoordinate=left.transform.translation?.[axisIndex];
   const rightCoordinate=right.transform.translation?.[axisIndex];
-  if(!Number.isFinite(leftCoordinate)||!Number.isFinite(rightCoordinate)) throw new Error('bilateral pair placement requires finite node translations');
-  if(Math.abs(leftCoordinate-expectedLeftSign*halfSpan)>tolerance||Math.abs(rightCoordinate-expectedRightSign*halfSpan)>tolerance) {
+  if(!Number.isFinite(leftCoordinate)||!Number.isFinite(rightCoordinate)||!Number.isFinite(planeCoordinate)) throw new Error('bilateral pair placement requires finite node translations and mirror plane coordinate');
+  const expectedLeftCoordinate=planeCoordinate+expectedLeftSign*halfSpan;
+  const expectedRightCoordinate=planeCoordinate+expectedRightSign*halfSpan;
+  if(Math.abs(leftCoordinate-expectedLeftCoordinate)>tolerance||Math.abs(rightCoordinate-expectedRightCoordinate)>tolerance) {
     throw new Error('bilateral pair candidate does not realize the declared lateral half-span on the mirror axis');
   }
   if(left.transform.mode!=='trs'||right.transform.mode!=='trs') {
@@ -183,6 +188,7 @@ function sharedMirrorPlacement(left,right,relation) {
     mirrorAxis:relation.mirrorAxis,
     leftHalfSpace:relation.leftHalfSpace,
     halfSpan,
+    planeCoordinate,
     tolerance,
     leftCoordinate,
     rightCoordinate,
@@ -243,9 +249,9 @@ export function createBilateralPairRealization({
   } else if (relation.restGeometryPolicy === 'observed-intrinsic-asymmetry') {
     const axisIndex=AXIS_INDEX[relation.mirrorAxis];
     const expectedLeftSign=relation.leftHalfSpace==='negative'?-1:1;
-    const halfSpan=Number(relation.lateralSpan?.halfSpan),tolerance=Math.max(1e-8,Math.abs(halfSpan)*1e-6);
+    const halfSpan=Number(relation.lateralSpan?.halfSpan),planeCoordinate=Number(relation.mirrorPlaneCoordinate),tolerance=Math.max(1e-8,Math.abs(halfSpan)*1e-6);
     const leftCoordinate=left.transform.translation?.[axisIndex],rightCoordinate=right.transform.translation?.[axisIndex];
-    if(Math.abs(leftCoordinate-expectedLeftSign*halfSpan)>tolerance||Math.abs(rightCoordinate+expectedLeftSign*halfSpan)>tolerance) {
+    if(Math.abs(leftCoordinate-(planeCoordinate+expectedLeftSign*halfSpan))>tolerance||Math.abs(rightCoordinate-(planeCoordinate-expectedLeftSign*halfSpan))>tolerance) {
       throw new Error('intrinsic bilateral pair candidate does not realize the declared lateral half-span on the mirror axis');
     }
     if (relation.intrinsicAsymmetry?.authority !== 'observed' || !(relation.intrinsicAsymmetry?.evidenceRefs?.length > 0)) {
@@ -278,6 +284,7 @@ export function createBilateralPairRealization({
     sagittalPlaneId:relation.sagittalPlaneId,
     mirrorAxis:relation.mirrorAxis,
     leftHalfSpace:relation.leftHalfSpace,
+    mirrorPlaneCoordinate:relation.mirrorPlaneCoordinate,
     restGeometryPolicy:relation.restGeometryPolicy,
     lateralSpan:structuredClone(relation.lateralSpan),
     intrinsicAsymmetry:relation.intrinsicAsymmetry==null?null:structuredClone(relation.intrinsicAsymmetry),
@@ -315,6 +322,7 @@ export function validateBilateralPairRealizationRecord(value,{relationalStructur
     if(value?.sagittalPlaneId!==relation.sagittalPlaneId) errors.push('bilateral realization sagittal plane mismatch');
     if(value?.mirrorAxis!==relation.mirrorAxis) errors.push('bilateral realization mirror axis mismatch');
     if(value?.leftHalfSpace!==relation.leftHalfSpace) errors.push('bilateral realization left half-space mismatch');
+    if(value?.mirrorPlaneCoordinate!==relation.mirrorPlaneCoordinate) errors.push('bilateral realization mirror plane coordinate mismatch');
     if(value?.restGeometryPolicy!==relation.restGeometryPolicy) errors.push('bilateral realization rest policy mismatch');
     if(digestJson(value?.lateralSpan)!==digestJson(relation.lateralSpan)) errors.push('bilateral realization lateral span mismatch');
     if(digestJson(value?.intrinsicAsymmetry??null)!==digestJson(relation.intrinsicAsymmetry??null)) errors.push('bilateral realization intrinsic asymmetry mismatch');
@@ -346,9 +354,9 @@ export function validateBilateralPairRealizationRecord(value,{relationalStructur
     });
     let mirrorPlacement=null;
     const expectedLeftSign=relation.leftHalfSpace==='negative'?-1:1;
-    const halfSpan=Number(relation.lateralSpan.halfSpan),tolerance=Math.max(1e-8,Math.abs(halfSpan)*1e-6);
+    const halfSpan=Number(relation.lateralSpan.halfSpan),planeCoordinate=Number(relation.mirrorPlaneCoordinate),tolerance=Math.max(1e-8,Math.abs(halfSpan)*1e-6);
     const leftCoordinate=instances[0].mirrorAxisCoordinate,rightCoordinate=instances[1].mirrorAxisCoordinate;
-    if(Math.abs(leftCoordinate-expectedLeftSign*halfSpan)>tolerance||Math.abs(rightCoordinate+expectedLeftSign*halfSpan)>tolerance) {
+    if(Math.abs(leftCoordinate-(planeCoordinate+expectedLeftSign*halfSpan))>tolerance||Math.abs(rightCoordinate-(planeCoordinate-expectedLeftSign*halfSpan))>tolerance) {
       errors.push('bilateral realization does not reproduce the declared lateral half-span');
     }
     if(relation.restGeometryPolicy==='shared-mirrored'){
@@ -356,7 +364,7 @@ export function validateBilateralPairRealizationRecord(value,{relationalStructur
       if(instances[0].transformParity===instances[1].transformParity) errors.push('shared-mirrored bilateral pair must realize opposite transform parity across the sagittal plane');
       if(instances.some((instance)=>instance.mirrorAxisScaleSign==null)) errors.push('shared-mirrored bilateral realization requires auditable mirror-axis scale signs');
       else if(instances[0].mirrorAxisScaleSign===instances[1].mirrorAxisScaleSign) errors.push('shared-mirrored bilateral realization does not flip the declared mirror axis');
-      mirrorPlacement={mirrorAxis:relation.mirrorAxis,leftHalfSpace:relation.leftHalfSpace,halfSpan,tolerance,leftCoordinate,rightCoordinate,leftMirrorScaleSign:instances[0].mirrorAxisScaleSign,rightMirrorScaleSign:instances[1].mirrorAxisScaleSign};
+      mirrorPlacement={mirrorAxis:relation.mirrorAxis,leftHalfSpace:relation.leftHalfSpace,halfSpan,planeCoordinate,tolerance,leftCoordinate,rightCoordinate,leftMirrorScaleSign:instances[0].mirrorAxisScaleSign,rightMirrorScaleSign:instances[1].mirrorAxisScaleSign};
     }else if(relation.restGeometryPolicy==='observed-intrinsic-asymmetry'){
       if(relation.intrinsicAsymmetry?.authority!=='observed'||!(relation.intrinsicAsymmetry?.evidenceRefs?.length>0)) errors.push('intrinsic bilateral rest asymmetry lacks observed source evidence');
     }
@@ -383,6 +391,7 @@ export function validateBilateralPairRealizationRecord(value,{relationalStructur
       sagittalPlaneId:relation.sagittalPlaneId,
       mirrorAxis:relation.mirrorAxis,
       leftHalfSpace:relation.leftHalfSpace,
+      mirrorPlaneCoordinate:relation.mirrorPlaneCoordinate,
       restGeometryPolicy:relation.restGeometryPolicy,
       lateralSpan:structuredClone(relation.lateralSpan),
       intrinsicAsymmetry:relation.intrinsicAsymmetry==null?null:structuredClone(relation.intrinsicAsymmetry),
