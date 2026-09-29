@@ -1591,6 +1591,28 @@
             }
           },
           {
+            "id": "subdivision-cage-organic",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createPermittedSubdivisionCageOrganic"
+            },
+            "template": null,
+            "inputContract": "validated organic construction decision + subdivision-cage-organic permit + closed control cage with per-vertex provenance, optional landmark bindings, crease weights, and 1..4 subdivision levels",
+            "outputSchema": null,
+            "validator": null,
+            "minimumInvocation": "references/construction.md",
+            "example": null,
+            "usageReference": "references/construction.md",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "runtime consumes the organic permit, validates the closed manifold control cage, performs deterministic Catmull-Clark subdivision, and emits watertight candidate geometry with provenance-bound cage metadata"
+            },
+            "note": "Control vertices require observed/inferred/engineered provenance. Generated subdivision surface remains engineered realization; control evidence is preserved in GLB mesh extras."
+          },
+          {
             "id": "construction-execution-proof",
             "operation": "create",
             "cli": null,
