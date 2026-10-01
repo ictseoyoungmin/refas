@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/prior-quarantine-authority.schema.json",
+  "title": "RefAs resolved prior quarantine lineage authority",
+  "type": "object",
+  "required": [
+    "schema",
+    "sourceSha256",
+    "records",
+    "policy",
+    "authorityDigest"
+  ],
+  "properties": {
+    "schema": {
+      "const": "refas.prior-quarantine-authority/v1"
+    },
+    "sourceSha256": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "records": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "kind",
+          "authority",
+          "quarantineDigest",
+          "checkpointId",
+          "artifactPath",
+          "quarantinedPaths"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "common.schema.json#/$defs/semanticId"
+          },
+          "kind": {
+            "enum": [
+              "topology",
+              "generative-mesh",
+              "novel-view"
+            ]
+          },
+          "authority": {
+            "enum": [
+              "inferred",
+              "engineered"
+            ]
+          },
+          "quarantineDigest": {
+            "$ref": "common.schema.json#/$defs/digest"
+          },
+          "checkpointId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifactPath": {
+            "$ref": "common.schema.json#/$defs/relativePath"
+          },
+          "quarantinedPaths": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "$ref": "common.schema.json#/$defs/relativePath"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "policy": {
+      "type": "object",
+      "required": [
+        "priorHypothesisUseAllowed",
+        "priorSourceEvidenceForbidden",
+        "lineageReplayRequired"
+      ],
+      "properties": {
+        "priorHypothesisUseAllowed": {
+          "const": true
+        },
+        "priorSourceEvidenceForbidden": {
+          "const": true
+        },
+        "lineageReplayRequired": {
+          "const": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "authorityDigest": {
+      "$ref": "common.schema.json#/$defs/digest"
+    }
+  },
+  "additionalProperties": false
+}

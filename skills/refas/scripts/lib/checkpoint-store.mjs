@@ -32,6 +32,11 @@ import {
 } from './blockout-competition.mjs';
 import {validateFinalResemblanceClosure} from './final-resemblance-closure.mjs';
 import {validateSpatialRoleExpectationSet} from './spatial-role-expectation.mjs';
+import {
+  assertNoQuarantinedSourceEvidence,
+  priorQuarantinedArtifactBindings,
+  validatePriorQuarantine,
+} from './prior-quarantine.mjs';
 import {validateSpatialClosureEvidence} from './spatial-closure-evidence.mjs';
 import {_classifySpatialCollapseFromAuthority} from './spatial-collapse-core.mjs';
 import {assertVolumeBarrierAdmission, createVolumeBarrier, validateVolumeBarrier} from './volume-barrier.mjs';
@@ -1532,6 +1537,129 @@ async function resolveSpatialRoleAuthorityFromLineage(root, state, lineage, {sco
   return deepFreeze({...payload, authorityDigest: digestJson(payload)});
 }
 
+
+async function resolvePriorQuarantineAuthorityFromLineage(root, state, lineage, {
+  currentCapability = null,
+  storedArtifacts = [],
+} = {}) {
+  const available = new Map();
+  for (const checkpoint of lineage) {
+    for (const artifact of checkpoint.artifactRefs ?? []) available.set(artifact.path, artifact);
+  }
+  for (const artifact of storedArtifacts ?? []) available.set(artifact.path, artifact);
+
+  const records = [];
+  const seen = new Map();
+  const scan = async (capability, artifacts, checkpointId = null) => {
+    for (const artifact of (artifacts ?? []).filter((item) => item.kind === 'prior-quarantine')) {
+      if (capabilityIndex(capability) > capabilityIndex('spatial-hypotheses')) {
+        throw new Error('prior quarantine was introduced too late at ' + capability + '; quarantine must be frozen no later than spatial-hypotheses');
+      }
+      const value = await readStoredJsonArtifact(root, artifact, capability + ' prior quarantine');
+      if (value.sourceSha256 !== state.source.sha256) throw new Error('prior quarantine source binding mismatch');
+      let rawPriorGlb = null;
+      let seedGlb = null;
+      if (value.kind !== 'novel-view') {
+        const rawBinding = value.rawPrior;
+        const rawStored = available.get(rawBinding?.path);
+        if (!rawStored || rawStored.sha256 !== rawBinding?.sha256) throw new Error('prior quarantine raw prior is not exact lineage-bound evidence');
+        rawPriorGlb = await fs.readFile(objectPath(root, rawStored.sha256));
+        const seedBinding = value.sanitizedSeed;
+        const stored = available.get(seedBinding?.path);
+        if (!stored || stored.sha256 !== seedBinding?.sha256) throw new Error('prior quarantine sanitized seed is not exact lineage-bound evidence');
+        seedGlb = await fs.readFile(objectPath(root, stored.sha256));
+      }
+      const validation = validatePriorQuarantine(value, {rawPriorGlb, sanitizedSeedGlb: seedGlb});
+      if (!validation.valid) throw new Error('prior quarantine is invalid: ' + validation.errors.join('; '));
+      for (const binding of priorQuarantinedArtifactBindings(value)) {
+        const stored = available.get(binding.path);
+        if (!stored || stored.sha256 !== binding.sha256) {
+          throw new Error('quarantined prior artifact is not exact lineage-bound evidence: ' + binding.path);
+        }
+      }
+      const previous = seen.get(value.id);
+      if (previous && previous.quarantineDigest !== value.quarantineDigest) {
+        throw new Error('prior quarantine mutation is forbidden after freeze for ' + value.id);
+      }
+      if (!previous) {
+        const record = {value, artifact, checkpointId, capability};
+        seen.set(value.id, value);
+        records.push(record);
+      }
+    }
+  };
+  for (const checkpoint of lineage) await scan(checkpoint.capability, checkpoint.artifactRefs, checkpoint.id);
+  if (currentCapability != null) await scan(currentCapability, storedArtifacts, null);
+  return records;
+}
+
+function priorForbiddenPaths(records) {
+  return new Set(records.flatMap((record) => priorQuarantinedArtifactBindings(record.value).map((binding) => binding.path)));
+}
+
+async function assertPriorSourceAuthorityClean(root, state, lineage, {
+  currentCapability = null,
+  storedArtifacts = [],
+} = {}) {
+  const records = await resolvePriorQuarantineAuthorityFromLineage(root, state, lineage, {currentCapability, storedArtifacts});
+  if (!records.length) return records;
+  const forbidden = priorForbiddenPaths(records);
+  const scanArtifact = async (capability, artifact) => {
+    const sourceAuthorityKinds = new Set([
+      'spatial-role-expectation',
+      'early-resemblance-barrier',
+    ]);
+    const certificationKinds = new Set([
+      'perceptual-signature-evidence',
+      'final-resemblance-closure',
+      'visual-review',
+      'registered-comparison',
+    ]);
+    if (!sourceAuthorityKinds.has(artifact.kind) && !(capability === 'whole-object-certification' && certificationKinds.has(artifact.kind))) return;
+    const value = await readStoredJsonArtifact(root, artifact, capability + ' ' + artifact.kind + ' prior-quarantine audit');
+    let subject = value;
+    if (artifact.kind === 'early-resemblance-barrier') subject = value?.signatureEvidence ?? value;
+    assertNoQuarantinedSourceEvidence(subject, forbidden, {label: capability + ' ' + artifact.kind});
+  };
+  for (const checkpoint of lineage) {
+    for (const artifact of checkpoint.artifactRefs ?? []) await scanArtifact(checkpoint.capability, artifact);
+  }
+  if (currentCapability != null) {
+    for (const artifact of storedArtifacts ?? []) await scanArtifact(currentCapability, artifact);
+  }
+  return records;
+}
+
+export async function resolvePriorQuarantineAuthority(root, {checkpointId = null} = {}) {
+  root = projectRoot(root);
+  const state = await loadProject(root);
+  if (!state.source) throw new Error('prior quarantine authority requires a bound source');
+  const checkpoints = await listCheckpoints(root);
+  const target = checkpointId ?? state.head;
+  if (!target) throw new Error('prior quarantine authority requires a checkpoint lineage');
+  const lineage = checkpointLineage(checkpoints, target);
+  const records = await assertPriorSourceAuthorityClean(root, state, lineage);
+  const payload = {
+    schema: 'refas.prior-quarantine-authority/v1',
+    sourceSha256: state.source.sha256,
+    records: records.map((record) => ({
+      id: record.value.id,
+      kind: record.value.kind,
+      authority: record.value.authority,
+      quarantineDigest: record.value.quarantineDigest,
+      checkpointId: record.checkpointId,
+      artifactPath: record.artifact.path,
+      quarantinedPaths: priorQuarantinedArtifactBindings(record.value).map((binding) => binding.path).sort(),
+    })).sort((a,b)=>a.id.localeCompare(b.id)),
+    policy: {
+      priorHypothesisUseAllowed: true,
+      priorSourceEvidenceForbidden: true,
+      lineageReplayRequired: true,
+    },
+  };
+  return deepFreeze({...payload, authorityDigest: digestJson(payload)});
+}
+
 async function validateProspectiveSpatialRoleAuthority(root, state, {
   capability,
   parentLineage,
@@ -1975,6 +2103,9 @@ export async function commitCheckpoint(root, {
   const storedArtifacts = [];
   for (let index = 0; index < artifactRefs.length; index += 1) storedArtifacts.push(await storeArtifact(root, artifactRefs[index], index));
   const parentLineage = checkpointLineage(checkpoints, parent);
+  await assertPriorSourceAuthorityClean(root, state, parentLineage, {
+    currentCapability: capability, storedArtifacts,
+  });
   await validateProspectiveSpatialRoleAuthority(root, state, {
     capability, parentLineage, storedArtifacts,
   });
@@ -2453,6 +2584,11 @@ export async function auditProject(root) {
     errors.push(error.message);
   }
   if (state.source && state.head) {
+    try {
+      await assertPriorSourceAuthorityClean(root, state, auditedLineage);
+    } catch (error) {
+      errors.push(`prior quarantine authority: ${error.message}`);
+    }
     try {
       await resolveSpatialRoleAuthorityFromLineage(root, state, auditedLineage);
     } catch (error) {
