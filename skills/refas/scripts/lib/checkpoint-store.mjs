@@ -26,6 +26,10 @@ import {
 import {validatePbrRenderReport} from './pbr-render-report.mjs';
 import {findComparisonContradictions, validateRegisteredComparison} from './registered-comparison.mjs';
 import {assertEarlyResemblanceAdmission} from './early-resemblance-barrier.mjs';
+import {
+  validateBlockoutCompetitionDecision,
+  validateBlockoutCompetitionPolicy,
+} from './blockout-competition.mjs';
 import {validateFinalResemblanceClosure} from './final-resemblance-closure.mjs';
 import {validateSpatialRoleExpectationSet} from './spatial-role-expectation.mjs';
 import {validateSpatialClosureEvidence} from './spatial-closure-evidence.mjs';
@@ -1572,6 +1576,157 @@ export async function resolveSpatialRoleAuthority(root, {checkpointId = null, sc
   return resolveSpatialRoleAuthorityFromLineage(root, state, lineage, {scopeId});
 }
 
+async function blockoutCompetitionHierarchy(root, lineage, label) {
+  const checkpoint = [...lineage].reverse().find((item) => item.capability === 'visual-hierarchy');
+  if (!checkpoint) throw new Error(label + ' requires current visual-hierarchy lineage');
+  return (await readCheckpointJsonArtifact(root, checkpoint, 'visual-hierarchy', label)).value;
+}
+
+async function resolveBlockoutCompetitionPolicyFromLineage(root, state, lineage) {
+  let authority = null;
+  for (let index = 0; index < lineage.length; index += 1) {
+    const checkpoint = lineage[index];
+    const artifacts = (checkpoint.artifactRefs ?? []).filter((artifact) => artifact.kind === 'blockout-competition-policy');
+    if (artifacts.length > 1) throw new Error(checkpoint.capability + ' contains competing blockout-competition-policy artifacts');
+    if (!artifacts.length) continue;
+    if (capabilityIndex(checkpoint.capability) > capabilityIndex('spatial-hypotheses')) {
+      throw new Error('blockout competition policy was introduced too late at ' + checkpoint.capability);
+    }
+    const prefix = lineage.slice(0, index + 1);
+    const hierarchy = await blockoutCompetitionHierarchy(root, prefix, 'blockout competition policy');
+    const value = await readStoredJsonArtifact(root, artifacts[0], 'blockout competition policy');
+    const validation = validateBlockoutCompetitionPolicy(value, hierarchy);
+    if (!validation.valid) throw new Error('blockout competition policy is invalid: ' + validation.errors.join('; '));
+    if (value.sourceSha256 !== state.source.sha256) throw new Error('blockout competition policy source binding mismatch');
+    if (!authority) {
+      authority = {value, checkpointId: checkpoint.id, contentDigest: checkpoint.contentDigest};
+    } else if (authority.value.policyDigest !== value.policyDigest) {
+      throw new Error('blockout competition policy mutation is forbidden after authority freeze');
+    }
+  }
+  return authority;
+}
+
+async function validateProspectiveBlockoutCompetitionPolicy(root, state, {
+  capability,
+  parentLineage,
+  storedArtifacts,
+} = {}) {
+  const artifacts = (storedArtifacts ?? []).filter((artifact) => artifact.kind === 'blockout-competition-policy');
+  if (artifacts.length > 1) throw new Error(capability + ' contains competing blockout-competition-policy artifacts');
+  if (!artifacts.length) return resolveBlockoutCompetitionPolicyFromLineage(root, state, parentLineage);
+  if (capabilityIndex(capability) > capabilityIndex('spatial-hypotheses')) {
+    throw new Error('blockout competition policy may be introduced only before candidate construction');
+  }
+  const hierarchy = await blockoutCompetitionHierarchy(root, parentLineage, 'prospective blockout competition policy');
+  const value = await readStoredJsonArtifact(root, artifacts[0], 'prospective blockout competition policy');
+  const validation = validateBlockoutCompetitionPolicy(value, hierarchy);
+  if (!validation.valid) throw new Error('prospective blockout competition policy is invalid: ' + validation.errors.join('; '));
+  if (value.sourceSha256 !== state.source.sha256) throw new Error('prospective blockout competition policy source binding mismatch');
+  const prior = await resolveBlockoutCompetitionPolicyFromLineage(root, state, parentLineage);
+  if (prior && prior.value.policyDigest !== value.policyDigest) {
+    throw new Error('blockout competition policy mutation is forbidden after authority freeze');
+  }
+  return prior ?? {value, checkpointId: null, contentDigest: null};
+}
+
+async function ensureBlockoutCompetitionAdmission(root, state, {
+  scopeId,
+  parentLineage,
+  selectedCandidate,
+} = {}) {
+  if (isTrustedContractFixtureProject(state)) return null;
+  const authority = await resolveBlockoutCompetitionPolicyFromLineage(root, state, parentLineage);
+  if (!authority || authority.value.mode !== 'required' || !authority.value.scopeIds.includes(scopeId)) return null;
+
+  const roleAuthority = await resolveSpatialRoleAuthorityFromLineage(root, state, parentLineage, {scopeId});
+  const role = roleAuthority?.selectedExpectation?.role;
+  if (!['volumetric', 'layered-volume', 'rod-tubular'].includes(role)) return null;
+
+  const decisions = [];
+  for (let index = 0; index < parentLineage.length; index += 1) {
+    const checkpoint = parentLineage[index];
+    for (const artifact of checkpoint.artifactRefs ?? []) {
+      if (artifact.kind !== 'blockout-competition-decision') continue;
+      const value = await readStoredJsonArtifact(root, artifact, 'blockout competition decision');
+      if (value.scopeId === scopeId && value.policyDigest === authority.value.policyDigest) {
+        decisions.push({checkpoint, index, artifact, value});
+      }
+    }
+  }
+  if (decisions.length !== 1) {
+    throw new Error('required blockout competition needs exactly one candidate-bound decision before shape reconstruction; found ' + decisions.length);
+  }
+  const decisionRecord = decisions[0];
+  const prefix = parentLineage.slice(0, decisionRecord.index + 1);
+  const hierarchy = await blockoutCompetitionHierarchy(root, prefix, 'blockout competition admission');
+
+  const hypothesisRecords = [];
+  for (const checkpoint of prefix) {
+    for (const artifact of checkpoint.artifactRefs ?? []) {
+      if (artifact.kind !== 'spatial-hypothesis-set') continue;
+      const value = await readStoredJsonArtifact(root, artifact, 'blockout competition spatial hypothesis set');
+      if (value.hypothesisSetDigest === decisionRecord.value.hypothesisSetDigest) hypothesisRecords.push(value);
+    }
+  }
+  if (hypothesisRecords.length !== 1) {
+    throw new Error('blockout competition decision must bind exactly one spatial-hypothesis-set artifact; found ' + hypothesisRecords.length);
+  }
+
+  const glbByCandidateId = new Map();
+  const artifactByPath = new Map();
+  for (const checkpoint of prefix) {
+    for (const artifact of checkpoint.artifactRefs ?? []) artifactByPath.set(artifact.path, artifact);
+  }
+  for (const candidate of decisionRecord.value.candidates ?? []) {
+    const artifact = artifactByPath.get(candidate.assetPath);
+    if (!artifact || candidateGlbArtifacts([artifact]).length !== 1) {
+      throw new Error('blockout competition candidate GLB is not bound in current lineage: ' + candidate.assetPath);
+    }
+    if (artifact.sha256 !== candidate.assetSha256) {
+      throw new Error('blockout competition candidate artifact digest mismatch: ' + candidate.id);
+    }
+    glbByCandidateId.set(candidate.id, await fs.readFile(objectPath(root, artifact.sha256)));
+  }
+
+  const available = new Map([[state.source.path, state.source.sha256]]);
+  for (const checkpoint of prefix) {
+    for (const artifact of checkpoint.artifactRefs ?? []) available.set(artifact.path, artifact.sha256);
+  }
+  for (const candidate of decisionRecord.value.candidates ?? []) {
+    const clayOutputs = candidate.clayRenderReport?.outputs ?? [];
+    for (const output of clayOutputs) {
+      if (available.get(output.path) !== output.sha256) {
+        throw new Error('blockout competition neutral-clay output is not exact lineage-bound evidence: ' + output.path);
+      }
+    }
+    for (const ref of candidate.signatureEvidence?.evidenceRefs ?? []) {
+      if (!available.has(ref)) throw new Error('blockout competition R03 evidence is not lineage-bound: ' + ref);
+    }
+    for (const observation of candidate.signatureEvidence?.observations ?? []) {
+      for (const ref of observation.evidenceRefs ?? []) {
+        if (!available.has(ref)) throw new Error('blockout competition R03 observation evidence is not lineage-bound: ' + ref);
+      }
+    }
+  }
+  for (const ref of decisionRecord.value.evidenceRefs ?? []) {
+    if (!available.has(ref)) throw new Error('blockout competition decision evidence is not lineage-bound: ' + ref);
+  }
+
+  const validation = validateBlockoutCompetitionDecision(decisionRecord.value, {
+    policy: authority.value,
+    hierarchy,
+    hypothesisSet: hypothesisRecords[0],
+    roleAuthority,
+    glbByCandidateId,
+  });
+  if (!validation.valid) throw new Error('blockout competition decision failed runtime replay: ' + validation.errors.join('; '));
+  if (decisionRecord.value.selectedAssetSha256 !== selectedCandidate.sha256) {
+    throw new Error('shape-reconstruction candidate does not match the selected blockout competition candidate');
+  }
+  return decisionRecord.value;
+}
+
 async function validateProspectiveCandidateAuthority(root, state, {
   capability,
   scopeId,
@@ -1587,6 +1742,7 @@ async function validateProspectiveCandidateAuthority(root, state, {
     if (storedArtifacts.some((artifact) => artifact.kind === 'candidate-transition')) {
       throw new Error('shape-reconstruction must not carry a candidate-transition artifact');
     }
+    await ensureBlockoutCompetitionAdmission(root, state, {scopeId, parentLineage, selectedCandidate: candidates[0]});
     return {input: null, output: candidates[0], changed: true};
   }
 
@@ -1820,6 +1976,9 @@ export async function commitCheckpoint(root, {
   for (let index = 0; index < artifactRefs.length; index += 1) storedArtifacts.push(await storeArtifact(root, artifactRefs[index], index));
   const parentLineage = checkpointLineage(checkpoints, parent);
   await validateProspectiveSpatialRoleAuthority(root, state, {
+    capability, parentLineage, storedArtifacts,
+  });
+  await validateProspectiveBlockoutCompetitionPolicy(root, state, {
     capability, parentLineage, storedArtifacts,
   });
   await validateProspectiveCandidateAuthority(root, state, {
