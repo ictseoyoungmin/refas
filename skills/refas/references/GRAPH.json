@@ -731,6 +731,82 @@
             }
           },
           {
+            "id": "blockout-competition-policy",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createBlockoutCompetitionPolicy"
+            },
+            "template": "assets/templates/capability-interface-inputs.json#/templates/spatial-reasoning~1blockout-competition-policy",
+            "inputContract": "bound visual hierarchy + exact source SHA-256 + advisory/required policy + whole/major-region scope IDs",
+            "outputSchema": "refas.blockout-competition-policy/v1",
+            "validator": {
+              "library": "validateBlockoutCompetitionPolicy"
+            },
+            "minimumInvocation": "references/spatial-reasoning.md",
+            "example": null,
+            "templateProcessor": {
+              "library": "materializeCapabilityInputTemplate"
+            },
+            "publicConstants": [
+              "BLOCKOUT_COMPETITION_POLICY_SCHEMA",
+              "BLOCKOUT_COMPETITION_MODES",
+              "BLOCKOUT_COMPETITION_ELIGIBLE_LEVELS"
+            ],
+            "usageReference": "references/spatial-reasoning.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "execute",
+              "call": {
+                "arguments": [
+                  {
+                    "source": "input"
+                  }
+                ]
+              },
+              "validator": {
+                "arguments": [
+                  {
+                    "source": "output"
+                  },
+                  {
+                    "source": "input",
+                    "pointer": "/hierarchy"
+                  }
+                ]
+              },
+              "outputSchemaPointer": "/schema"
+            }
+          },
+          {
+            "id": "blockout-competition-decision",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createBlockoutCompetitionDecision"
+            },
+            "template": null,
+            "inputContract": "required competition policy + bound hierarchy/scope + unresolved competing spatial hypothesis set + frozen VC02 authority + at least two exact candidate GLBs, canonical neutral-clay reports, R03 signature evidence, and VC01 evidence; VC03 is runtime-derived",
+            "outputSchema": "refas.blockout-competition-decision/v1",
+            "validator": {
+              "library": "validateBlockoutCompetitionDecision"
+            },
+            "minimumInvocation": "references/spatial-reasoning.md",
+            "example": null,
+            "usageReference": "references/spatial-reasoning.md",
+            "publicConstants": [
+              "BLOCKOUT_COMPETITION_DECISION_SCHEMA"
+            ],
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "candidate-bound competition derives exact GLB digests and VC03 classifications, retains rejected candidates, and is replayed by shape-reconstruction admission"
+            }
+          },
+          {
             "id": "bilateral-pair-realization",
             "operation": "create",
             "cli": null,
