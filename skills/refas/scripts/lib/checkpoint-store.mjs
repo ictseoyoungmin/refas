@@ -1557,14 +1557,19 @@ async function resolvePriorQuarantineAuthorityFromLineage(root, state, lineage, 
       }
       const value = await readStoredJsonArtifact(root, artifact, capability + ' prior quarantine');
       if (value.sourceSha256 !== state.source.sha256) throw new Error('prior quarantine source binding mismatch');
+      let rawPriorGlb = null;
       let seedGlb = null;
       if (value.kind !== 'novel-view') {
+        const rawBinding = value.rawPrior;
+        const rawStored = available.get(rawBinding?.path);
+        if (!rawStored || rawStored.sha256 !== rawBinding?.sha256) throw new Error('prior quarantine raw prior is not exact lineage-bound evidence');
+        rawPriorGlb = await fs.readFile(objectPath(root, rawStored.sha256));
         const seedBinding = value.sanitizedSeed;
         const stored = available.get(seedBinding?.path);
         if (!stored || stored.sha256 !== seedBinding?.sha256) throw new Error('prior quarantine sanitized seed is not exact lineage-bound evidence');
         seedGlb = await fs.readFile(objectPath(root, stored.sha256));
       }
-      const validation = validatePriorQuarantine(value, {sanitizedSeedGlb: seedGlb});
+      const validation = validatePriorQuarantine(value, {rawPriorGlb, sanitizedSeedGlb: seedGlb});
       if (!validation.valid) throw new Error('prior quarantine is invalid: ' + validation.errors.join('; '));
       for (const binding of priorQuarantinedArtifactBindings(value)) {
         const stored = available.get(binding.path);
