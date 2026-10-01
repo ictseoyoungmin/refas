@@ -42,6 +42,7 @@
     "dogfood:subdivision-cage": "node skills/refas/scripts/verify_subdivision_cage_dogfood.mjs",
     "dogfood:bilateral-pair": "node skills/refas/scripts/verify_bilateral_pair_dogfood.mjs",
     "dogfood:structural-plausibility": "node skills/refas/scripts/verify_structural_plausibility_dogfood.mjs",
-    "dogfood:blockout-competition": "node skills/refas/scripts/verify_blockout_competition_dogfood.mjs"
+    "dogfood:blockout-competition": "node skills/refas/scripts/verify_blockout_competition_dogfood.mjs",
+    "dogfood:prior-quarantine": "node skills/refas/scripts/verify_prior_quarantine_dogfood.mjs"
   }
 }
