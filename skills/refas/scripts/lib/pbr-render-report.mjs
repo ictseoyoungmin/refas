@@ -56,7 +56,7 @@ function strings(values, label, {required = false, ids = false} = {}) {
   return result;
 }
 
-export function createPbrRenderReport({assetSha256, frameDigest, renderer, lighting, colorPipeline, materialSupport, outputs, reproducibility, presentation = null} = {}) {
+export function createPbrRenderReport({assetSha256, frameDigest, renderer, lighting, colorPipeline, materialSupport, textureBindings = null, outputs, reproducibility, presentation = null} = {}) {
   const family = String(renderer?.family ?? '');
   if (!FAMILY_SET.has(family)) throw new Error(`renderer.family must be one of: ${PBR_RENDERER_FAMILIES.join(', ')}`);
   const normalizedRenderer = {
@@ -72,6 +72,19 @@ export function createPbrRenderReport({assetSha256, frameDigest, renderer, light
   const unsupported = strings(materialSupport?.unsupported, 'materialSupport.unsupported', {ids: true});
   const overlap = supported.filter((feature) => unsupported.includes(feature));
   if (overlap.length) throw new Error(`material support is contradictory: ${overlap.join(', ')}`);
+  let normalizedTextureBindings = null;
+  if (textureBindings != null) {
+    if (!Array.isArray(textureBindings)) throw new Error('textureBindings must be an array when declared');
+    normalizedTextureBindings = textureBindings.map((binding, index) => ({
+      sha256: assertDigest(binding?.sha256, `textureBindings[${index}].sha256`),
+      mimeType: String(binding?.mimeType ?? ''),
+      channel: assertId(binding?.channel, `textureBindings[${index}].channel`),
+    })).sort((a, b) => a.channel.localeCompare(b.channel) || a.sha256.localeCompare(b.sha256));
+    if (normalizedTextureBindings.some((binding) => binding.mimeType !== 'image/png')) throw new Error('portable base-color texture evidence supports embedded image/png only');
+    const keys = normalizedTextureBindings.map((binding) => `${binding.channel}\0${binding.sha256}`);
+    if (new Set(keys).size !== keys.length) throw new Error('textureBindings must be unique');
+    if (normalizedTextureBindings.length && !supported.includes('base-color-texture')) throw new Error('texture bindings require base-color-texture renderer support');
+  }
   const normalizedOutputs = (outputs ?? []).map((output, index) => ({
     viewId: assertId(output?.viewId, `outputs[${index}].viewId`),
     path: String(output?.path ?? ''),
@@ -123,6 +136,7 @@ export function createPbrRenderReport({assetSha256, frameDigest, renderer, light
       outputColorSpace: String(colorPipeline?.outputColorSpace ?? ''),
     },
     materialSupport: {supported, unsupported},
+    ...(normalizedTextureBindings != null ? {textureBindings: normalizedTextureBindings} : {}),
     outputs: normalizedOutputs,
     reproducibility: normalizedReproducibility,
     ...(normalizedPresentation ? {presentation: normalizedPresentation} : {}),
