@@ -57,6 +57,9 @@ jobs:
       - name: Structural plausibility fresh-worker dogfood
         if: matrix.node == 24
         run: npm run dogfood:structural-plausibility
+      - name: Competing blockout fresh-worker dogfood
+        if: matrix.node == 24
+        run: npm run dogfood:blockout-competition
       - name: Discovery closure verifier
         if: matrix.node == 24
         run: npm run check:discovery-closure
