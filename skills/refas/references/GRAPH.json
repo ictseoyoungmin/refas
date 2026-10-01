@@ -758,26 +758,8 @@
             "templateRole": "operation-input",
             "invocation": {
               "schema": "refas.capability-invocation/v1",
-              "verification": "execute",
-              "call": {
-                "arguments": [
-                  {
-                    "source": "input"
-                  }
-                ]
-              },
-              "validator": {
-                "arguments": [
-                  {
-                    "source": "output"
-                  },
-                  {
-                    "source": "input",
-                    "pointer": "/hierarchy"
-                  }
-                ]
-              },
-              "outputSchemaPointer": "/schema"
+              "verification": "structural",
+              "reason": "source/hierarchy-bound policy is validated by runtime and regression fixtures; project-specific hierarchy bytes are not synthesized by the generic interface exerciser"
             }
           },
           {
