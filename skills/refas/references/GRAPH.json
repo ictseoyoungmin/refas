@@ -4368,6 +4368,31 @@
             }
           },
           {
+            "id": "generate-uv-coordinates",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "generateUvCoordinates"
+            },
+            "template": null,
+            "inputContract": "valid triangle mesh + planar/cylindrical/per-section UV mapping policy; per-section requires section-profile loft metadata",
+            "outputSchema": null,
+            "validator": null,
+            "minimumInvocation": "references/appearance.md",
+            "example": null,
+            "usageReference": "references/appearance.md",
+            "publicConstants": [
+              "UV_MAPPING_SCHEMA",
+              "UV_MAPPING_METHODS"
+            ],
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "mesh-bound operation returns the original mesh plus refas.uv-mapping/v1 metadata and TEXCOORD_0-ready uvs; regression and textured-material dogfood execute the runtime path"
+            }
+          },
+          {
             "id": "pbr-render-report",
             "operation": "create",
             "cli": null,
