@@ -60,6 +60,9 @@ jobs:
       - name: Competing blockout fresh-worker dogfood
         if: matrix.node == 24
         run: npm run dogfood:blockout-competition
+      - name: Prior quarantine fresh-worker dogfood
+        if: matrix.node == 24
+        run: npm run dogfood:prior-quarantine
       - name: Discovery closure verifier
         if: matrix.node == 24
         run: npm run check:discovery-closure
