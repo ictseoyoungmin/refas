@@ -2,6 +2,7 @@ import {createHash} from 'node:crypto';
 import {digestJson} from './canonical.mjs';
 import {analyzeMesh, computeVertexNormals} from './mesh.mjs';
 import {validateSubdivisionCageOrganic} from './subdivision-cage.mjs';
+import {validateUvMapping} from './uv.mjs';
 
 const align4 = (value) => (value + 3) & ~3;
 const sha = (value) => createHash('sha256').update(value).digest('hex');
@@ -124,8 +125,21 @@ export function attachConstructionExecution(sourceGlb, execution) {
   return buildGlb(json, binary);
 }
 
-function materialJson(id, material) {
-  const output = {name: id, pbrMetallicRoughness: {baseColorFactor: material.baseColor ?? [0.7, 0.7, 0.7, 1], metallicFactor: material.metallic ?? 0, roughnessFactor: material.roughness ?? 0.5}};
+function baseColorTextureInput(id, material) {
+  const raw = material?.baseColorTexture;
+  if (raw == null) return null;
+  const bytes = Buffer.from(raw.png ?? raw.bytes ?? []);
+  if (bytes.length < 8 || !bytes.subarray(0, 8).equals(Buffer.from([137,80,78,71,13,10,26,10]))) throw new Error(`${id}: baseColorTexture must be embedded PNG bytes`);
+  const sha256 = sha(bytes);
+  if (raw.sha256 != null && String(raw.sha256) !== sha256) throw new Error(`${id}: baseColorTexture sha256 does not match PNG bytes`);
+  return {bytes, sha256, mimeType: 'image/png'};
+}
+
+function materialJson(id, material, texture = null) {
+  const pbrMetallicRoughness = {baseColorFactor: material.baseColor ?? [0.7, 0.7, 0.7, 1], metallicFactor: material.metallic ?? 0, roughnessFactor: material.roughness ?? 0.5};
+  if (texture) pbrMetallicRoughness.baseColorTexture = {index: texture.index, texCoord: 0};
+  const output = {name: id, pbrMetallicRoughness};
+  if (texture) output.extras = {refasBaseColorTexture: {sha256: texture.sha256, mimeType: texture.mimeType}};
   if (Number.isFinite(material.clearcoat) && material.clearcoat > 0) output.extensions = {KHR_materials_clearcoat: {clearcoatFactor: material.clearcoat}};
   return output;
 }
@@ -145,7 +159,7 @@ export function partsToGlb({parts, materials, assetId = 'refas-asset', name = 'R
   const json = {
     asset: {version: '2.0', generator: 'RefAs 1.0.0'},
     scene: 0, scenes: [{name, nodes: []}], nodes: [], meshes: [], accessors: [], bufferViews: [], buffers: [{byteLength: 0}],
-    materials: materialEntries.map(([id, material]) => materialJson(id, material)),
+    materials: [],
     extras: {refas: {schema: 'refas.asset/v1', assetId, partIds: parts.map((part) => part.id), ...extras}},
   };
   if (json.materials.some((material) => material.extensions?.KHR_materials_clearcoat)) json.extensionsUsed = ['KHR_materials_clearcoat'];
@@ -154,6 +168,23 @@ export function partsToGlb({parts, materials, assetId = 'refas-asset', name = 'R
     const bytes = Buffer.from(typed.buffer, typed.byteOffset, typed.byteLength), aligned = align4(offset), index = json.bufferViews.length;
     json.bufferViews.push({buffer: 0, byteOffset: aligned, byteLength: bytes.length}); chunks.push({offset: aligned, bytes}); offset = aligned + bytes.length; return index;
   };
+  const textureByMaterialId = new Map();
+  for (const [id, material] of materialEntries) {
+    const texture = baseColorTextureInput(id, material);
+    let binding = null;
+    if (texture) {
+      json.samplers ??= [{magFilter: 9729, minFilter: 9729, wrapS: 10497, wrapT: 10497}];
+      json.images ??= []; json.textures ??= [];
+      const bufferView = push(texture.bytes);
+      const imageIndex = json.images.length;
+      json.images.push({name: `${id}-base-color`, bufferView, mimeType: texture.mimeType, extras: {refasSha256: texture.sha256}});
+      const textureIndex = json.textures.length;
+      json.textures.push({name: `${id}-base-color`, sampler: 0, source: imageIndex});
+      binding = {index: textureIndex, sha256: texture.sha256, mimeType: texture.mimeType};
+      textureByMaterialId.set(id, binding);
+    }
+    json.materials.push(materialJson(id, material, binding));
+  }
   const nodeByPartId = new Map();
   for (const part of parts) {
     if (!part?.id || !part.mesh || !materialIds.has(part.materialId)) throw new Error('every part requires id, mesh, and known materialId');
@@ -166,13 +197,24 @@ export function partsToGlb({parts, materials, assetId = 'refas-asset', name = 'R
       if (actualMeshDigest !== part.mesh.subdivisionCage.realizedMeshDigest) throw new Error(`${part.id}: realized mesh does not match subdivision cage metadata`);
     }
     const positions = new Float32Array(part.mesh.positions.flat()), normalData = new Float32Array(normals.flat());
+    const textured = textureByMaterialId.has(part.materialId);
+    if (textured && (!Array.isArray(part.mesh.uvs) || part.mesh.uvs.length !== part.mesh.positions.length)) throw new Error(`${part.id}: textured material requires one TEXCOORD_0 UV per vertex`);
+    if (part.mesh.uvMapping) {
+      const uvValidation = validateUvMapping(part.mesh);
+      if (!uvValidation.valid) throw new Error(`${part.id}: invalid UV mapping: ${uvValidation.errors.join('; ')}`);
+    }
+    const uvData = Array.isArray(part.mesh.uvs) ? new Float32Array(part.mesh.uvs.flat()) : null;
+    if (uvData && [...uvData].some((value) => !Number.isFinite(value))) throw new Error(`${part.id}: UV coordinates must be finite`);
     const maximum = Math.max(...part.mesh.indices), IndexArray = maximum <= 65535 ? Uint16Array : Uint32Array, indexData = new IndexArray(part.mesh.indices);
-    const positionView = push(positions), normalView = push(normalData), indexView = push(indexData), accessorStart = json.accessors.length, extent = bounds(part.mesh.positions);
+    const positionView = push(positions), normalView = push(normalData), uvView = uvData ? push(uvData) : null, indexView = push(indexData), accessorStart = json.accessors.length, extent = bounds(part.mesh.positions);
     json.accessors.push(
       {bufferView: positionView, componentType: 5126, count: part.mesh.positions.length, type: 'VEC3', min: extent.min, max: extent.max},
       {bufferView: normalView, componentType: 5126, count: normals.length, type: 'VEC3'},
-      {bufferView: indexView, componentType: IndexArray === Uint16Array ? 5123 : 5125, count: part.mesh.indices.length, type: 'SCALAR'},
     );
+    const uvAccessor = uvData ? json.accessors.length : null;
+    if (uvData) json.accessors.push({bufferView: uvView, componentType: 5126, count: part.mesh.uvs.length, type: 'VEC2'});
+    const indexAccessor = json.accessors.length;
+    json.accessors.push({bufferView: indexView, componentType: IndexArray === Uint16Array ? 5123 : 5125, count: part.mesh.indices.length, type: 'SCALAR'});
     const meshIndex = json.meshes.length;
     const topology = part.mesh.topology ?? part.mesh.meta?.topology ?? null;
     const constructionExecution = constructionExecutionForPart(part, positions, normalData, indexData);
@@ -182,7 +224,7 @@ export function partsToGlb({parts, materials, assetId = 'refas-asset', name = 'R
       ...(part.mesh?.subdivisionCage ? {refasSubdivisionCage: part.mesh.subdivisionCage} : {}),
       ...(constructionExecution ? {refasConstructionExecution: constructionExecution} : {}),
     };
-    json.meshes.push({name: part.id, primitives: [{attributes: {POSITION: accessorStart, NORMAL: accessorStart + 1}, indices: accessorStart + 2, material: materialIds.get(part.materialId), mode: 4}], ...(Object.keys(meshExtras).length ? {extras: meshExtras} : {})});
+    json.meshes.push({name: part.id, primitives: [{attributes: {POSITION: accessorStart, NORMAL: accessorStart + 1, ...(uvAccessor != null ? {TEXCOORD_0: uvAccessor} : {})}, indices: indexAccessor, material: materialIds.get(part.materialId), mode: 4}], ...(Object.keys(meshExtras).length ? {extras: meshExtras} : {})});
     const nodeIndex = json.nodes.length;
     const node = {name: part.id, mesh: meshIndex, extras: {refasPartId: part.id, role: part.role ?? null, scopeId: part.scopeId ?? null, materialId: part.materialId,
       ...(part.moduleRoot ? {refasModuleRoot: true} : {}), ...(part.contactSurfaces ? {refasContactSurfaces: part.contactSurfaces} : {})}};
@@ -205,6 +247,7 @@ export function partsToGlb({parts, materials, assetId = 'refas-asset', name = 'R
   const binary = Buffer.alloc(align4(offset)); for (const chunk of chunks) chunk.bytes.copy(binary, chunk.offset);
   json.buffers[0].byteLength = binary.length;
   if (constructionExecutions.length) json.extras.refas.constructionExecutions = constructionExecutions.sort((a, b) => a.scopeId.localeCompare(b.scopeId) || a.partId.localeCompare(b.partId));
+  if (textureByMaterialId.size) json.extras.refas.baseColorTextures = [...textureByMaterialId.entries()].map(([materialId, texture]) => ({materialId, sha256: texture.sha256, mimeType: texture.mimeType})).sort((a,b)=>a.materialId.localeCompare(b.materialId));
   return buildGlb(json, binary);
 }
 
@@ -267,6 +310,10 @@ export function inspectGlb(input) {
     nodeCount: json.nodes?.length ?? 0,
     meshCount: json.meshes?.length ?? 0,
     materialCount: json.materials?.length ?? 0,
+    textureCount: json.textures?.length ?? 0,
+    imageCount: json.images?.length ?? 0,
+    texturedMaterialCount: (json.materials ?? []).filter((material) => material.pbrMetallicRoughness?.baseColorTexture).length,
+    textureDigests: (json.images ?? []).map((image) => image.extras?.refasSha256).filter(Boolean).sort(),
     triangleCount,
     partIds: (json.nodes ?? []).map((node) => node.extras?.refasPartId).filter(Boolean),
     extras: json.extras ?? null,
