@@ -7,6 +7,7 @@ import {
   digestBytes,
   createSegmentPrism,
   generateUvCoordinates,
+  inspectBaseColorTextures,
   inspectGlb,
   parseGlb,
   partsToGlb,
@@ -69,6 +70,7 @@ test('GLB writer embeds PNG bytes, digest binding and TEXCOORD_0',()=>{
   assert.equal(digestBytes(embedded),digest);
   assert.equal(image.mimeType,'image/png');
   assert.equal(image.extras.refasSha256,digest);
+  assert.deepEqual(inspectBaseColorTextures(glb),[{materialId:'decal',sha256:digest,mimeType:'image/png',texCoord:0}]);
 });
 
 test('textured material requires UV coordinates and exact texture digest',()=>{
