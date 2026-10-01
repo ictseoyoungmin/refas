@@ -35,7 +35,7 @@ function outputDigest(report,viewId){return report.outputs.find(o=>o.viewId===vi
 export async function runTexturedMaterialDogfood({keep=false}={}){
   const root=await fs.mkdtemp(path.join(os.tmpdir(),'refas-textured-material-'));
   try{
-    const mesh=generateUvCoordinates(quad(),{method:'planar',uAxis:'x',vAxis:'y'});
+    const mesh=generateUvCoordinates(quad(),{method:'projection',uAxis:'x',vAxis:'y'});
     const textureSha256=digestBytes(PNG);
     const textured=partsToGlb({
       assetId:'textured-material-dogfood',
