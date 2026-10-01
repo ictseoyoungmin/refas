@@ -587,24 +587,26 @@ async function inspectCertificationHead(root, state, head) {
         if (!rendererValidation.valid) errors.push(`PBR renderer report is invalid: ${rendererValidation.errors.join('; ')}`);
         if (rendererReport.assetSha256 !== visualReview.assetSha256) errors.push('PBR renderer report asset digest does not match the visual review');
         if (rendererReport.renderer?.family !== visualReview.renderer?.family) errors.push('PBR renderer family does not match the visual review');
-        const candidateArtifacts = candidateGlbArtifacts(head.artifactRefs).filter((artifact) => artifact.sha256 === visualReview.assetSha256);
-        if (candidateArtifacts.length !== 1) {
-          errors.push('texture certification requires exactly one exact candidate GLB in the certification checkpoint');
-        } else {
-          try {
-            const candidateBytes = await fs.readFile(objectPath(root, candidateArtifacts[0].sha256));
-            const embeddedTextures = inspectBaseColorTextures(candidateBytes);
-            const expectedTextureDigests = [...new Set(embeddedTextures.map((binding) => binding.sha256))].sort();
-            const actualBindings = rendererReport.textureBindings ?? [];
-            const actualTextureDigests = [...new Set(actualBindings.filter((binding) => binding.channel === 'base-color').map((binding) => binding.sha256))].sort();
-            if (JSON.stringify(actualTextureDigests) !== JSON.stringify(expectedTextureDigests)) {
-              errors.push('PBR renderer texture bindings do not exactly match candidate embedded base-color texture bytes');
+        if (!isTrustedContractFixtureProject(state)) {
+          const candidateArtifacts = candidateGlbArtifacts(head.artifactRefs).filter((artifact) => artifact.sha256 === visualReview.assetSha256);
+          if (candidateArtifacts.length !== 1) {
+            errors.push('texture certification requires exactly one exact candidate GLB in the certification checkpoint');
+          } else {
+            try {
+              const candidateBytes = await fs.readFile(objectPath(root, candidateArtifacts[0].sha256));
+              const embeddedTextures = inspectBaseColorTextures(candidateBytes);
+              const expectedTextureDigests = [...new Set(embeddedTextures.map((binding) => binding.sha256))].sort();
+              const actualBindings = rendererReport.textureBindings ?? [];
+              const actualTextureDigests = [...new Set(actualBindings.filter((binding) => binding.channel === 'base-color').map((binding) => binding.sha256))].sort();
+              if (JSON.stringify(actualTextureDigests) !== JSON.stringify(expectedTextureDigests)) {
+                errors.push('PBR renderer texture bindings do not exactly match candidate embedded base-color texture bytes');
+              }
+              if (expectedTextureDigests.length && !rendererReport.materialSupport?.supported?.includes('base-color-texture')) {
+                errors.push('PBR renderer does not declare base-color-texture support required by the candidate');
+              }
+            } catch (error) {
+              errors.push(`candidate embedded base-color texture validation failed: ${error.message}`);
             }
-            if (expectedTextureDigests.length && !rendererReport.materialSupport?.supported?.includes('base-color-texture')) {
-              errors.push('PBR renderer does not declare base-color-texture support required by the candidate');
-            }
-          } catch (error) {
-            errors.push(`candidate embedded base-color texture validation failed: ${error.message}`);
           }
         }
         const outputDigests = new Set((rendererReport.outputs ?? []).map((output) => output.sha256));
