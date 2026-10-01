@@ -5,7 +5,7 @@ import {
   createLongitudinalGuide,
   createSectionProfileLoft,
   digestBytes,
-  finalizeMesh,
+  createSegmentPrism,
   generateUvCoordinates,
   inspectGlb,
   parseGlb,
@@ -15,15 +15,19 @@ import {
 
 const PNG=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAHUlEQVR42mP4r6DwX8Hh/38YzYDM+a+g8J+BoAoA2NAk4WrV3IEAAAAASUVORK5CYII=','base64');
 
-function quad(){
-  return finalizeMesh([[-1,-1,0],[1,-1,0],[1,1,0],[-1,1,0]],[0,1,2,0,2,3],{role:'uv-quad'});
+function box(){
+  return createSegmentPrism({start:[-1,0,0],end:[1,0,0],width:1.2,height:.12,upHint:[0,0,1],role:'uv-box'});
 }
 
 test('UV generator provides deterministic planar and cylindrical mappings',()=>{
-  const planar=generateUvCoordinates(quad(),{method:'projection',uAxis:'x',vAxis:'y'});
-  assert.deepEqual(planar.uvs,[[0,0],[1,0],[1,1],[0,1]]);
+  const planar=generateUvCoordinates(box(),{method:'projection',uAxis:'x',vAxis:'y'});
+  assert.equal(planar.uvs.length,8);
+  assert.equal(Math.min(...planar.uvs.map(uv=>uv[0])),0);
+  assert.equal(Math.max(...planar.uvs.map(uv=>uv[0])),1);
+  assert.equal(Math.min(...planar.uvs.map(uv=>uv[1])),0);
+  assert.equal(Math.max(...planar.uvs.map(uv=>uv[1])),1);
   assert.deepEqual(validateUvMapping(planar),{valid:true,errors:[]});
-  const cylindrical=generateUvCoordinates(quad(),{method:'cylindrical',axis:'y'});
+  const cylindrical=generateUvCoordinates(box(),{method:'cylindrical',axis:'y'});
   assert.equal(cylindrical.uvs.length,4);
   assert.ok(cylindrical.uvs.every(uv=>uv.every(v=>Number.isFinite(v)&&v>=0&&v<=1)));
   assert.deepEqual(validateUvMapping(cylindrical),{valid:true,errors:[]});
@@ -43,7 +47,7 @@ test('per-section UV mapping follows loft ring/section coordinates',()=>{
 });
 
 test('GLB writer embeds PNG bytes, digest binding and TEXCOORD_0',()=>{
-  const mesh=generateUvCoordinates(quad(),{method:'projection',uAxis:'x',vAxis:'y'});
+  const mesh=generateUvCoordinates(box(),{method:'projection',uAxis:'x',vAxis:'y'});
   const digest=digestBytes(PNG);
   const glb=partsToGlb({
     assetId:'textured-quad',
@@ -70,22 +74,22 @@ test('GLB writer embeds PNG bytes, digest binding and TEXCOORD_0',()=>{
 test('textured material requires UV coordinates and exact texture digest',()=>{
   assert.throws(()=>partsToGlb({
     materials:{decal:{baseColor:[1,1,1,1],baseColorTexture:{png:PNG}}},
-    parts:[{id:'quad',scopeId:'whole',role:'panel',materialId:'decal',mesh:quad()}],
+    parts:[{id:'quad',scopeId:'whole',role:'panel',materialId:'decal',mesh:box()}],
   }),/requires one TEXCOORD_0 UV per vertex/u);
   assert.throws(()=>partsToGlb({
     materials:{decal:{baseColor:[1,1,1,1],baseColorTexture:{png:PNG,sha256:'0'.repeat(64)}}},
-    parts:[{id:'quad',scopeId:'whole',role:'panel',materialId:'decal',mesh:generateUvCoordinates(quad(),{method:'projection'})}],
+    parts:[{id:'quad',scopeId:'whole',role:'panel',materialId:'decal',mesh:generateUvCoordinates(box(),{method:'projection'})}],
   }),/sha256 does not match PNG bytes/u);
 });
 
 test('closed-child append preserves source BIN prefix while adding textured part',()=>{
-  const baseMesh=quad();
+  const baseMesh=box();
   const base=partsToGlb({
     assetId:'base-untextured',
     materials:{base:{baseColor:[.3,.3,.3,1],metallic:0,roughness:.8}},
     parts:[{id:'base',scopeId:'whole.base',role:'base',materialId:'base',mesh:baseMesh}],
   });
-  const texturedMesh=generateUvCoordinates(quad(),{method:'projection',uAxis:'x',vAxis:'y'});
+  const texturedMesh=generateUvCoordinates(box(),{method:'projection',uAxis:'x',vAxis:'y'});
   const appended=appendPartsToClosedGlb(base,{
     materials:{decal:{baseColor:[1,1,1,1],metallic:0,roughness:.7,baseColorTexture:{png:PNG}}},
     parts:[{id:'decal',scopeId:'whole.decal',role:'panel',materialId:'decal',mesh:texturedMesh,translation:[0,0,.1]}],
