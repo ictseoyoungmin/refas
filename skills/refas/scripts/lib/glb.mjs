@@ -351,6 +351,41 @@ export function appendPartsToClosedGlb(sourceGlb, {parts, materials, name = 'Ref
   return {glb, report: {schema: 'refas.closed-child-assembly-report/v1', sourceGlbSha256, sourceBinarySha256, sourceBinaryPrefixPreserved: prefixPreserved, sourceCounts, addedParts: parts.length, outputSha256: sha(glb)}};
 }
 
+export function inspectBaseColorTextures(input) {
+  const {json, binary} = parseGlb(input);
+  const bindings = [];
+  for (const [materialIndex, material] of (json.materials ?? []).entries()) {
+    const info = material.pbrMetallicRoughness?.baseColorTexture;
+    if (info == null) continue;
+    const textureIndex = Number(info.index);
+    if (!Number.isInteger(textureIndex) || textureIndex < 0 || textureIndex >= (json.textures?.length ?? 0)) throw new Error(`material ${materialIndex}: invalid baseColorTexture index`);
+    if (Number(info.texCoord ?? 0) !== 0) throw new Error(`material ${materialIndex}: baseColorTexture must use TEXCOORD_0`);
+    const texture = json.textures[textureIndex];
+    const imageIndex = Number(texture?.source);
+    if (!Number.isInteger(imageIndex) || imageIndex < 0 || imageIndex >= (json.images?.length ?? 0)) throw new Error(`material ${materialIndex}: baseColorTexture has invalid image source`);
+    const image = json.images[imageIndex];
+    if (image?.mimeType !== 'image/png' || !Number.isInteger(image?.bufferView)) throw new Error(`material ${materialIndex}: baseColorTexture must be embedded image/png`);
+    const view = json.bufferViews?.[image.bufferView];
+    if (!view || Number(view.buffer ?? 0) !== 0) throw new Error(`material ${materialIndex}: embedded texture bufferView is invalid`);
+    const start = Number(view.byteOffset ?? 0), length = Number(view.byteLength ?? 0);
+    if (!Number.isInteger(start) || !Number.isInteger(length) || start < 0 || length <= 0 || start + length > binary.length) throw new Error(`material ${materialIndex}: embedded texture byte range is invalid`);
+    const bytes = binary.subarray(start, start + length);
+    if (bytes.length < 8 || !bytes.subarray(0, 8).equals(Buffer.from([137,80,78,71,13,10,26,10]))) throw new Error(`material ${materialIndex}: embedded base-color texture is not PNG`);
+    const sha256 = sha(bytes);
+    const imageDigest = image.extras?.refasSha256;
+    if (imageDigest != null && imageDigest !== sha256) throw new Error(`material ${materialIndex}: embedded image digest metadata mismatch`);
+    const materialDigest = material.extras?.refasBaseColorTexture?.sha256;
+    if (materialDigest != null && materialDigest !== sha256) throw new Error(`material ${materialIndex}: material texture digest metadata mismatch`);
+    bindings.push({
+      materialId: String(material.name ?? `material-${materialIndex}`),
+      sha256,
+      mimeType: 'image/png',
+      texCoord: 0,
+    });
+  }
+  return bindings.sort((a,b)=>a.materialId.localeCompare(b.materialId) || a.sha256.localeCompare(b.sha256));
+}
+
 export function inspectGlb(input) {
   const {json, binary} = parseGlb(input);
   let triangleCount = 0;
