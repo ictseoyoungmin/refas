@@ -46,11 +46,12 @@ export async function runBlockoutCompetitionFreshWorkerDogfood({skillRoot=DEFAUL
   assert.equal(report.requiredPolicy,true);
   assert.equal(report.rejectedCandidateRetained,true);
   assert.equal(report.runtimeShapeAdmission,true);
+  assert.equal(report.actualNeutralClayRenders,true);
   assert.equal(report.tamperedDecisionBlocked,true);
   for(const ref of ['SKILL.md','references/INDEX.md','references/GRAPH.json','references/spatial-reasoning.md']) assert.ok(report.publicReads.includes(ref),ref);
   for(const field of ['selectedAssetSha256','decisionDigest']) assert.match(report[field],/^[a-f0-9]{64}$/u,field);
 
-  const output={schema:'refas.blockout-competition-fresh-worker-verification/v1',status:'PASS',installedSkillOnly:true,repositorySurfacesAbsent,selectedAssetSha256:report.selectedAssetSha256,decisionDigest:report.decisionDigest};
+  const output={schema:'refas.blockout-competition-fresh-worker-verification/v1',status:'PASS',installedSkillOnly:true,repositorySurfacesAbsent,actualNeutralClayRenders:true,selectedAssetSha256:report.selectedAssetSha256,decisionDigest:report.decisionDigest};
   if(!keep) await fs.rm(tempRoot,{recursive:true,force:true}); else output.tempRoot=tempRoot;
   return output;
 }
