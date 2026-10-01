@@ -2911,6 +2911,21 @@
           "ambiguity": null
         }
       ]
+    },
+    "spatial-reasoning/blockout-competition-policy": {
+      "hierarchy": {
+        "$bind": "blockoutCompetitionHierarchy",
+        "description": "Current refas.visual-hierarchy/v1; targeted scopes must be whole or major regions"
+      },
+      "sourceSha256": {
+        "$value": "sourceSha256",
+        "example": "0000000000000000000000000000000000000000000000000000000000000000",
+        "description": "SHA-256 of the bound primary source"
+      },
+      "mode": "required",
+      "scopeIds": [
+        "whole"
+      ]
     }
   }
 }
