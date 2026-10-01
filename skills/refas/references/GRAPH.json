@@ -4354,7 +4354,7 @@
             },
             "library": null,
             "template": "assets/templates/canonical-object-frame.json",
-            "inputContract": "GLB + canonical object frame + optional reference image",
+            "inputContract": "GLB + canonical object frame + optional reference image; supports factor PBR plus embedded PNG baseColorTexture/TEXCOORD_0",
             "outputSchema": "refas.pbr-render-report/v1",
             "validator": null,
             "minimumInvocation": "references/appearance.md",
@@ -4368,6 +4368,31 @@
             }
           },
           {
+            "id": "generate-uv-coordinates",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "generateUvCoordinates"
+            },
+            "template": null,
+            "inputContract": "valid triangle mesh + planar/cylindrical/per-section UV mapping policy; per-section requires section-profile loft metadata",
+            "outputSchema": null,
+            "validator": null,
+            "minimumInvocation": "references/appearance.md",
+            "example": null,
+            "usageReference": "references/appearance.md",
+            "publicConstants": [
+              "UV_MAPPING_SCHEMA",
+              "UV_MAPPING_METHODS"
+            ],
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "mesh-bound operation returns the original mesh plus refas.uv-mapping/v1 metadata and TEXCOORD_0-ready uvs; regression and textured-material dogfood execute the runtime path"
+            }
+          },
+          {
             "id": "pbr-render-report",
             "operation": "create",
             "cli": null,
@@ -4376,7 +4401,7 @@
               "symbol": "createPbrRenderReport"
             },
             "template": "assets/templates/capability-interface-inputs.json#/templates/appearance~1pbr-render-report",
-            "inputContract": "exact asset/frame digests + renderer identity/features + output frame digests",
+            "inputContract": "exact asset/frame digests + renderer identity/features + optional embedded base-color texture digest bindings + output frame digests",
             "outputSchema": "refas.pbr-render-report/v1",
             "validator": {
               "library": "validatePbrRenderReport"

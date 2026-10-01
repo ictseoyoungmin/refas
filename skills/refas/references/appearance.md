@@ -29,6 +29,27 @@ For each semantic material record:
 
 Keep material IDs semantic, such as `enamel`, `brass-light`, or `fastener-inlay`. Development iterations and benchmark codes are not material identities.
 
+## UV and embedded base-color textures
+
+RefAs supports deterministic `TEXCOORD_0` generation through `generateUvCoordinates()`:
+
+- `projection`: normalize two declared object-space axes into UV space;
+- `cylindrical`: wrap one declared longitudinal axis with repeat-aware seam handling;
+- `per-section`: use section-profile loft ring index as U and section position as V.
+
+The result carries `refas.uv-mapping/v1` metadata and a digest over the exact UV coordinates. A textured material cannot be serialized unless every mesh vertex has a finite `TEXCOORD_0`.
+
+For a base-color texture, provide exact PNG bytes as the material's `baseColorTexture`. The GLB writer:
+
+1. verifies the optional caller SHA-256 against the PNG bytes;
+2. embeds those bytes in the GLB BIN chunk as an `image/png` buffer view;
+3. emits glTF `images → textures → pbrMetallicRoughness.baseColorTexture`;
+4. records the PNG digest in image/material RefAs metadata and the asset-level texture manifest.
+
+The portable PBR renderer independently re-hashes the embedded PNG before decoding it. It perspective-correctly interpolates UVs, handles repeat seams, samples the texture, converts sampled sRGB base color to linear space, multiplies it by `baseColorFactor`, and uses that result in both albedo and beauty rendering.
+
+A normal appearance `refas.pbr-render-report/v1` declares `base-color-texture` and `texcoord-0` support and includes `textureBindings[]` with the exact PNG SHA-256. This makes the texture bytes part of the render evidence in addition to their inclusion in the asset SHA-256. Normal maps, metallic/roughness textures, and image-based lighting remain unsupported unless separately implemented and declared.
+
 ## Neutral-clay boundary
 
 R04 neutral-clay rendering is upstream shape evidence, not appearance evidence. `render-pbr --neutral-clay` deliberately replaces the candidate material response with the canonical runtime-owned neutral material and fixed review lighting so shape identity can be judged without finish polish.

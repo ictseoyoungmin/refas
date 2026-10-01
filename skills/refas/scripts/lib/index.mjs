@@ -81,6 +81,7 @@ export {
 export * from './spatial-hypotheses.mjs';
 export * from './blockout-competition.mjs';
 export * from './prior-quarantine.mjs';
+export * from './uv.mjs';
 export * from './spatial-role-expectation.mjs';
 export * from './volume-barrier.mjs';
 export {FINAL_SPATIAL_CONTINUITY_SCHEMA, FINAL_SPATIAL_CONTINUITY_MODES, FINAL_SPATIAL_CONTINUITY_VERDICTS, validateFinalSpatialContinuity} from './final-spatial-continuity.mjs';
@@ -110,7 +111,7 @@ export * from './certification-projection-evidence.mjs';
 export * from './mesh.mjs';
 export * from './hard-surface.mjs';
 export * from './realized-assembly.mjs';
-export {applyParentLocalTransformEdits, parseGlb, partsToGlb, appendPartsToClosedGlb, inspectGlb} from './glb.mjs';
+export {applyParentLocalTransformEdits, parseGlb, partsToGlb, appendPartsToClosedGlb, inspectBaseColorTextures, inspectGlb} from './glb.mjs';
 export * from './surface-network.mjs';
 export * from './assembly.mjs';
 export * from './visual-review.mjs';

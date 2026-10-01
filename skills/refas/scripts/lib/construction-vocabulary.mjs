@@ -8,6 +8,7 @@ import {createHardSurfaceShell} from './hard-surface.mjs';
 import {createSectionProfileLoft} from './geometry-backend.mjs';
 import {createSurfaceNetworkParts, validateSurfaceNetwork} from './surface-network.mjs';
 import {createSubdivisionCageOrganic} from './subdivision-cage.mjs';
+import {generateUvCoordinates} from './uv.mjs';
 
 export const CONSTRUCTION_VOCABULARY_SCHEMA = 'refas.construction-vocabulary/v1';
 export const CONSTRUCTION_OPERATION_PERMIT_SCHEMA = 'refas.construction-operation-permit/v1';
@@ -792,8 +793,10 @@ export function attestExternalConstruction({
 
 export function createPermittedHardSurfaceShell({decision, permit, spec = {}} = {}) {
   requirePermit(decision, permit, 'hard-surface-shell', permit?.scopeId);
-  const mesh = createHardSurfaceShell(spec);
-  return deepFreeze({...mesh, constructionAuthority: createConstructionAuthority({decision, permit})});
+  const {uv = null, ...constructionSpec} = spec ?? {};
+  const mesh = createHardSurfaceShell(constructionSpec);
+  const mapped = uv ? generateUvCoordinates(mesh, uv) : mesh;
+  return deepFreeze({...mapped, constructionAuthority: createConstructionAuthority({decision, permit})});
 }
 
 export function createPermittedSectionProfileLoft({decision, permit, spec = {}} = {}) {
@@ -801,14 +804,18 @@ export function createPermittedSectionProfileLoft({decision, permit, spec = {}} 
     throw new Error('section-profile loft requires a rigid or organic loft permit');
   }
   requirePermit(decision, permit, permit.operation, permit.scopeId);
-  const mesh = createSectionProfileLoft(spec);
-  return deepFreeze({...mesh, constructionAuthority: createConstructionAuthority({decision, permit})});
+  const {uv = null, ...constructionSpec} = spec ?? {};
+  const mesh = createSectionProfileLoft(constructionSpec);
+  const mapped = uv ? generateUvCoordinates(mesh, uv) : mesh;
+  return deepFreeze({...mapped, constructionAuthority: createConstructionAuthority({decision, permit})});
 }
 
 export function createPermittedSubdivisionCageOrganic({decision, permit, spec = {}} = {}) {
   requirePermit(decision, permit, 'subdivision-cage-organic', permit?.scopeId);
-  const mesh = createSubdivisionCageOrganic(spec);
-  return deepFreeze({...mesh, constructionAuthority: createConstructionAuthority({decision, permit})});
+  const {uv = null, ...constructionSpec} = spec ?? {};
+  const mesh = createSubdivisionCageOrganic(constructionSpec);
+  const mapped = uv ? generateUvCoordinates(mesh, uv) : mesh;
+  return deepFreeze({...mapped, constructionAuthority: createConstructionAuthority({decision, permit})});
 }
 
 export function createPermittedSurfaceNetworkParts({decision, permit, network, options = {}} = {}) {
