@@ -78,6 +78,9 @@ jobs:
       - name: Independent PBR material dogfood
         if: matrix.node == 24
         run: npm run dogfood:pbr
+      - name: Textured material dogfood
+        if: matrix.node == 24
+        run: npm run dogfood:textured-material
       - name: Hard-surface topology dogfood
         if: matrix.node == 24
         run: npm run dogfood:hard-surface
