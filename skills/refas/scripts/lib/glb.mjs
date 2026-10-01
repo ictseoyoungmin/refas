@@ -261,18 +261,51 @@ export function appendPartsToClosedGlb(sourceGlb, {parts, materials, name = 'Ref
   const nodeByPartId = new Map(json.nodes.map((node, index) => [node.extras?.refasPartId ?? node.name, index]).filter(([id]) => id));
   if (new Set(parts.map((part) => part?.id)).size !== parts.length || parts.some((part) => existingPartIds.has(part?.id))) throw new Error('appended part IDs must be unique and must not replace a closed child part');
   const materialIds = new Map(json.materials.map((material, index) => [material.name, index]));
-  for (const [id, material] of Object.entries(materials ?? {})) if (!materialIds.has(id)) { materialIds.set(id, json.materials.length); json.materials.push(materialJson(id, material)); }
   let offset = align4(sourceBinary.length); const chunks = [{offset: 0, bytes: sourceBinary}], newNodeIds = [];
   const push = (typed) => { const bytes = Buffer.from(typed.buffer, typed.byteOffset, typed.byteLength), aligned = align4(offset), index = json.bufferViews.length; json.bufferViews.push({buffer: 0, byteOffset: aligned, byteLength: bytes.length}); chunks.push({offset: aligned, bytes}); offset = aligned + bytes.length; return index; };
+  json.images ??= []; json.textures ??= []; json.samplers ??= [];
+  const textureByMaterialId = new Map();
+  for (const [id, index] of materialIds) {
+    const info = json.materials[index]?.pbrMetallicRoughness?.baseColorTexture;
+    if (info?.index != null) textureByMaterialId.set(id, {index: info.index});
+  }
+  for (const [id, material] of Object.entries(materials ?? {})) if (!materialIds.has(id)) {
+    const texture = baseColorTextureInput(id, material);
+    let binding = null;
+    if (texture) {
+      if (!json.samplers.length) json.samplers.push({magFilter: 9729, minFilter: 9729, wrapS: 10497, wrapT: 10497});
+      const bufferView = push(texture.bytes);
+      const imageIndex = json.images.length;
+      json.images.push({name: `${id}-base-color`, bufferView, mimeType: texture.mimeType, extras: {refasSha256: texture.sha256}});
+      const textureIndex = json.textures.length;
+      json.textures.push({name: `${id}-base-color`, sampler: 0, source: imageIndex});
+      binding = {index: textureIndex, sha256: texture.sha256, mimeType: texture.mimeType};
+      textureByMaterialId.set(id, binding);
+    }
+    materialIds.set(id, json.materials.length);
+    json.materials.push(materialJson(id, material, binding));
+  }
   for (const part of parts) {
     if (!part?.id || !part.mesh || !materialIds.has(part.materialId)) throw new Error('every appended part requires id, mesh, and known material');
     const analysis = analyzeMesh(part.mesh); if (!analysis.valid) throw new Error(`${part.id}: invalid mesh`);
     const normals = part.mesh.normals?.length === part.mesh.positions.length ? part.mesh.normals : computeVertexNormals(part.mesh.positions, part.mesh.indices);
-    const positionData = new Float32Array(part.mesh.positions.flat()), normalData = new Float32Array(normals.flat()), maximum = Math.max(...part.mesh.indices), IndexArray = maximum <= 65535 ? Uint16Array : Uint32Array, indexData = new IndexArray(part.mesh.indices);
-    const pv = push(positionData), nv = push(normalData), iv = push(indexData), start = json.accessors.length, extent = bounds(part.mesh.positions);
-    json.accessors.push({bufferView: pv, componentType: 5126, count: part.mesh.positions.length, type: 'VEC3', min: extent.min, max: extent.max}, {bufferView: nv, componentType: 5126, count: normals.length, type: 'VEC3'}, {bufferView: iv, componentType: IndexArray === Uint16Array ? 5123 : 5125, count: part.mesh.indices.length, type: 'SCALAR'});
+    const positionData = new Float32Array(part.mesh.positions.flat()), normalData = new Float32Array(normals.flat());
+    const textured = textureByMaterialId.has(part.materialId);
+    if (textured && (!Array.isArray(part.mesh.uvs) || part.mesh.uvs.length !== part.mesh.positions.length)) throw new Error(`${part.id}: textured appended material requires one TEXCOORD_0 UV per vertex`);
+    if (part.mesh.uvMapping) {
+      const uvValidation = validateUvMapping(part.mesh);
+      if (!uvValidation.valid) throw new Error(`${part.id}: invalid UV mapping: ${uvValidation.errors.join('; ')}`);
+    }
+    const uvData = Array.isArray(part.mesh.uvs) ? new Float32Array(part.mesh.uvs.flat()) : null;
+    const maximum = Math.max(...part.mesh.indices), IndexArray = maximum <= 65535 ? Uint16Array : Uint32Array, indexData = new IndexArray(part.mesh.indices);
+    const pv = push(positionData), nv = push(normalData), uvv = uvData ? push(uvData) : null, iv = push(indexData), start = json.accessors.length, extent = bounds(part.mesh.positions);
+    json.accessors.push({bufferView: pv, componentType: 5126, count: part.mesh.positions.length, type: 'VEC3', min: extent.min, max: extent.max}, {bufferView: nv, componentType: 5126, count: normals.length, type: 'VEC3'});
+    const uvAccessor = uvData ? json.accessors.length : null;
+    if (uvData) json.accessors.push({bufferView: uvv, componentType: 5126, count: part.mesh.uvs.length, type: 'VEC2'});
+    const indexAccessor = json.accessors.length;
+    json.accessors.push({bufferView: iv, componentType: IndexArray === Uint16Array ? 5123 : 5125, count: part.mesh.indices.length, type: 'SCALAR'});
     const topology = part.mesh.topology ?? part.mesh.meta?.topology ?? null;
-    const meshIndex = json.meshes.length; json.meshes.push({name: part.id, primitives: [{attributes: {POSITION: start, NORMAL: start + 1}, indices: start + 2, material: materialIds.get(part.materialId), mode: 4}], ...(topology ? {extras: {refasTopology: topology}} : {})});
+    const meshIndex = json.meshes.length; json.meshes.push({name: part.id, primitives: [{attributes: {POSITION: start, NORMAL: start + 1, ...(uvAccessor != null ? {TEXCOORD_0: uvAccessor} : {})}, indices: indexAccessor, material: materialIds.get(part.materialId), mode: 4}], ...(topology ? {extras: {refasTopology: topology}} : {})});
     const nodeIndex = json.nodes.length;
     const node = {name: part.id, mesh: meshIndex, extras: {refasPartId: part.id, role: part.role ?? null, scopeId: part.scopeId ?? null, materialId: part.materialId,
       ...(part.moduleRoot ? {refasModuleRoot: true} : {}), ...(part.contactSurfaces ? {refasContactSurfaces: part.contactSurfaces} : {})}};
@@ -294,6 +327,15 @@ export function appendPartsToClosedGlb(sourceGlb, {parts, materials, name = 'Ref
   if (json.materials.some((material) => material.extensions?.KHR_materials_clearcoat)) json.extensionsUsed = [...new Set([...(json.extensionsUsed ?? []), 'KHR_materials_clearcoat'])];
   const sourceGlbSha256 = sha(sourceGlbBytes), sourceBinarySha256 = sha(sourceBinary), prefixPreserved = binary.subarray(0, sourceBinary.length).equals(sourceBinary);
   json.extras = {...(json.extras ?? {}), refasAssembly: {schema: 'refas.closed-child-assembly/v1', sourceGlbSha256, sourceBinarySha256, sourceCounts, newNodeIds, sourceBinaryPrefixPreserved: prefixPreserved, ...extras}};
+  json.extras.refas ??= {};
+  const textureManifest = (json.materials ?? []).flatMap((material) => {
+    const info = material.pbrMetallicRoughness?.baseColorTexture;
+    if (info?.index == null) return [];
+    const imageIndex = json.textures?.[info.index]?.source;
+    const image = json.images?.[imageIndex];
+    return image?.extras?.refasSha256 ? [{materialId: material.name, sha256: image.extras.refasSha256, mimeType: image.mimeType}] : [];
+  }).sort((a,b)=>a.materialId.localeCompare(b.materialId));
+  if (textureManifest.length) json.extras.refas.baseColorTextures = textureManifest;
   const glb = buildGlb(json, binary);
   return {glb, report: {schema: 'refas.closed-child-assembly-report/v1', sourceGlbSha256, sourceBinarySha256, sourceBinaryPrefixPreserved: prefixPreserved, sourceCounts, addedParts: parts.length, outputSha256: sha(glb)}};
 }
