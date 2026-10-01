@@ -85,7 +85,7 @@ async function main(){
   if(!vc02LeakBlocked) throw new Error('VC02 accepted quarantined prior-derived source evidence');
 
   const materials={clay:{baseColor:[.5,.5,.5,1],metallic:0,roughness:.8}};
-  const mesh=API.createBox({size:[1,1,1]});
+  const mesh=API.createCylinder({radius:.5,height:1,segments:12,role:'body'});
   const candidate=API.partsToGlb({assetId:'prior-dogfood-candidate',materials,parts:[{id:'body',scopeId:'whole',role:'body',materialId:'clay',mesh}]});
   const candidateRef=await writeRef('model/candidate.glb',candidate,'glb');
   const fakeEarly={schema:'refas.early-resemblance-barrier/v1',assetSha256:candidateRef.sha256,signatureEvidence:{signatureSet:{evidenceRefs:[generatedSideRef.path],signatures:[{id:'bad',evidenceRefs:[generatedSideRef.path]}]}}};
