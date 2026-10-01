@@ -90,6 +90,20 @@ The optional registered hero camera is written in canonical local coordinates an
 When a single frontal view can be matched by a deceptively flat candidate, or when it is unclear how to distinguish source facts from the 3D completion needed for a coherent asset, read `references/single-view-volumetric-reasoning-example.md`. The example demonstrates observation -> spatial hypothesis -> orthogonal self-check -> revision while keeping inferred geometry distinct from observed source truth.
 
 
+## Competing neutral-clay blockouts before shape hardening
+
+When camera-vs-geometry ambiguity can materially change a volumetric whole or major region, use a blockout competition policy instead of hardening the first plausible reconstruction.
+
+`refas.blockout-competition-policy/v1` is source/hierarchy-bound and policy-gated. Absence of the policy remains advisory for compatibility. When `mode: required` targets a whole or major-region scope whose frozen VC02 role is volumetric, layered-volume, or rod-tubular, shape reconstruction cannot establish its authoritative candidate until a candidate-bound competition decision exists.
+
+A valid `refas.blockout-competition-decision/v1` requires at least two distinct realized GLBs, each tied to a distinct unresolved spatial hypothesis. Each candidate carries the same R03 signature-set authority, a canonical neutral-clay multiview report, exact VC01 measurements, and a runtime-derived VC03 classification. The selection must cite typed R03 and VC03 reasons; an aggregate resemblance score, single-view IoU, or convenience-of-modeling rank cannot choose the winner. Rejected candidates remain in the decision as rejected evidence.
+
+The intended camera-induced asymmetry test is explicit: keep alternatives such as near-symmetric object + camera yaw and intrinsically asymmetric object alive through canonical side/top/grazing inspection. If the former explains the source without baking view-dependent imbalance into object space, record that evidence and reject the intrinsic-asymmetry candidate. Genuine source-supported asymmetry remains expressible as a competing hypothesis; the policy does not impose symmetry as a universal rule.
+
+At shape-reconstruction admission, RefAs replays the frozen policy, exact spatial hypothesis set, frozen VC02 authority, every exact candidate GLB byte sequence, canonical neutral-clay outputs, embedded R03 evidence, VC01 evidence, and runtime-derived VC03 classifications. The shape candidate SHA-256 must equal the selected competition candidate SHA-256. A missing competition, one realized candidate, stale candidate bytes, forged/re-signed decision, or selection of a planar-collapsed volumetric candidate fails closed.
+
+This selection is hypothesis authority only. It does not replace R04 early resemblance, VC04 whole-before-parts admission, VC06 final-candidate continuity, visual review, or final certification.
+
 ## VC01 candidate-bound spatial closure evidence
 
 Use `createSpatialClosureEvidence({glb, scopeId, crossSectionFractions, gridResolution})` when the task needs deterministic observation of the actual 3D support present in one exact candidate.
