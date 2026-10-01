@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/uv-mapping.schema.json",
+  "title": "RefAs deterministic UV mapping metadata",
+  "type": "object",
+  "required": [
+    "schema",
+    "method",
+    "parameters",
+    "vertexCount",
+    "uvs",
+    "uvDigest"
+  ],
+  "properties": {
+    "schema": {
+      "const": "refas.uv-mapping/v1"
+    },
+    "method": {
+      "enum": [
+        "planar",
+        "cylindrical",
+        "per-section"
+      ]
+    },
+    "parameters": {
+      "type": "object"
+    },
+    "vertexCount": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "uvs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "array",
+        "prefixItems": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "number"
+          }
+        ],
+        "minItems": 2,
+        "maxItems": 2
+      }
+    },
+    "uvDigest": {
+      "$ref": "common.schema.json#/$defs/digest"
+    }
+  },
+  "additionalProperties": false
+}
