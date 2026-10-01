@@ -22,8 +22,8 @@ const stripped=['vertex-proportions','shape-keys','modifiers','materials'];
 
 test('prior quarantine rejects observed authority and proximity correspondence',()=>{
   const raw=Buffer.from('novel prior'),view=Buffer.from('view');
-  assert.throws(()=>createPriorQuarantine({id:'p',sourceSha256:D('a'),kind:'novel-view',authority:'observed',rawPrior:bind('priors/raw',raw,'raw'),derivedArtifacts:[bind('priors/view.png',view,'view')],transferable:['landmark-correspondence'],stripped,semanticCorrespondences:correspondence,evidenceRefs:['source/reference.bin']}),/observed is forbidden/u);
-  assert.throws(()=>createPriorQuarantine({id:'p',sourceSha256:D('a'),kind:'novel-view',authority:'inferred',rawPrior:bind('priors/raw',raw,'raw'),derivedArtifacts:[bind('priors/view.png',view,'view')],transferable:['landmark-correspondence'],stripped,semanticCorrespondences:[{...correspondence[0],method:'nearest-surface'}],evidenceRefs:['source/reference.bin']}),/proximity is not correspondence/u);
+  assert.throws(()=>createPriorQuarantine({id:'prior-a',sourceSha256:D('a'),kind:'novel-view',authority:'observed',rawPrior:bind('priors/raw',raw,'raw'),derivedArtifacts:[bind('priors/view.png',view,'view')],transferable:['landmark-correspondence'],stripped,semanticCorrespondences:correspondence,evidenceRefs:['source/reference.bin']}),/observed is forbidden/u);
+  assert.throws(()=>createPriorQuarantine({id:'prior-a',sourceSha256:D('a'),kind:'novel-view',authority:'inferred',rawPrior:bind('priors/raw',raw,'raw'),derivedArtifacts:[bind('priors/view.png',view,'view')],transferable:['landmark-correspondence'],stripped,semanticCorrespondences:[{...correspondence[0],method:'nearest-surface'}],evidenceRefs:['source/reference.bin']}),/proximity is not correspondence/u);
 });
 
 test('topology prior rejects unchanged proportions, residual morph targets, and materials',()=>{
