@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
+  appendPartsToClosedGlb,
   createLongitudinalGuide,
   createSectionProfileLoft,
   digestBytes,
@@ -75,4 +76,23 @@ test('textured material requires UV coordinates and exact texture digest',()=>{
     materials:{decal:{baseColor:[1,1,1,1],baseColorTexture:{png:PNG,sha256:'0'.repeat(64)}}},
     parts:[{id:'quad',scopeId:'whole',role:'panel',materialId:'decal',mesh:generateUvCoordinates(quad(),{method:'projection'})}],
   }),/sha256 does not match PNG bytes/u);
+});
+
+test('closed-child append preserves source BIN prefix while adding textured part',()=>{
+  const baseMesh=quad();
+  const base=partsToGlb({
+    assetId:'base-untextured',
+    materials:{base:{baseColor:[.3,.3,.3,1],metallic:0,roughness:.8}},
+    parts:[{id:'base',scopeId:'whole.base',role:'base',materialId:'base',mesh:baseMesh}],
+  });
+  const texturedMesh=generateUvCoordinates(quad(),{method:'projection',uAxis:'x',vAxis:'y'});
+  const appended=appendPartsToClosedGlb(base,{
+    materials:{decal:{baseColor:[1,1,1,1],metallic:0,roughness:.7,baseColorTexture:{png:PNG}}},
+    parts:[{id:'decal',scopeId:'whole.decal',role:'panel',materialId:'decal',mesh:texturedMesh,translation:[0,0,.1]}],
+  });
+  assert.equal(appended.report.sourceBinaryPrefixPreserved,true);
+  const inspection=inspectGlb(appended.glb);
+  assert.equal(inspection.textureCount,1);
+  assert.equal(inspection.texturedMaterialCount,1);
+  assert.deepEqual(inspection.textureDigests,[digestBytes(PNG)]);
 });
