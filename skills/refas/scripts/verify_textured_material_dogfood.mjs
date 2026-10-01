@@ -7,7 +7,7 @@ import {spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import {
   digestBytes,
-  finalizeMesh,
+  createSegmentPrism,
   generateUvCoordinates,
   inspectGlb,
   parseGlb,
@@ -19,8 +19,8 @@ const SCRIPT_DIR=path.dirname(fileURLToPath(import.meta.url));
 const SKILL_ROOT=path.dirname(SCRIPT_DIR);
 const PNG=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAHUlEQVR42mP4r6DwX8Hh/38YzYDM+a+g8J+BoAoA2NAk4WrV3IEAAAAASUVORK5CYII=','base64');
 
-function quad(){
-  return finalizeMesh([[-1,-1,0],[1,-1,0],[1,1,0],[-1,1,0]],[0,1,2,0,2,3],{role:'textured-dogfood-quad'});
+function box(){
+  return createSegmentPrism({start:[-.8,0,0],end:[.8,0,0],width:1.2,height:.12,upHint:[0,0,1],role:'textured-dogfood-box'});
 }
 function render(glbPath,outDir,framePath){
   const renderer=path.join(SKILL_ROOT,'scripts','render_pbr.py');
@@ -35,7 +35,7 @@ function outputDigest(report,viewId){return report.outputs.find(o=>o.viewId===vi
 export async function runTexturedMaterialDogfood({keep=false}={}){
   const root=await fs.mkdtemp(path.join(os.tmpdir(),'refas-textured-material-'));
   try{
-    const mesh=generateUvCoordinates(quad(),{method:'projection',uAxis:'x',vAxis:'y'});
+    const mesh=generateUvCoordinates(box(),{method:'projection',uAxis:'x',vAxis:'y'});
     const textureSha256=digestBytes(PNG);
     const textured=partsToGlb({
       assetId:'textured-material-dogfood',
