@@ -1,0 +1,147 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/prior-quarantine.schema.json",
+  "title": "RefAs prior quarantine",
+  "type": "object",
+  "required": [
+    "schema",
+    "id",
+    "sourceSha256",
+    "kind",
+    "authority",
+    "rawPrior",
+    "sanitizedSeed",
+    "sanitizedSeedInspection",
+    "derivedArtifacts",
+    "transferable",
+    "stripped",
+    "semanticCorrespondences",
+    "evidenceRefs",
+    "policy",
+    "quarantineDigest"
+  ],
+  "properties": {
+    "schema": {
+      "const": "refas.prior-quarantine/v1"
+    },
+    "id": {
+      "$ref": "common.schema.json#/$defs/semanticId"
+    },
+    "sourceSha256": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "kind": {
+      "enum": [
+        "topology",
+        "generative-mesh",
+        "novel-view"
+      ]
+    },
+    "authority": {
+      "enum": [
+        "inferred",
+        "engineered"
+      ]
+    },
+    "rawPrior": {
+      "$ref": "#/$defs/artifact"
+    },
+    "sanitizedSeed": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#/$defs/artifact"
+        }
+      ]
+    },
+    "sanitizedSeedInspection": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "derivedArtifacts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/artifact"
+      }
+    },
+    "transferable": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "connectivity",
+          "landmark-correspondence",
+          "coarse-volume"
+        ]
+      }
+    },
+    "stripped": {
+      "type": "array",
+      "minItems": 4,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "vertex-proportions",
+          "shape-keys",
+          "modifiers",
+          "materials"
+        ]
+      }
+    },
+    "semanticCorrespondences": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object"
+      }
+    },
+    "evidenceRefs": {
+      "$ref": "common.schema.json#/$defs/evidenceRefs"
+    },
+    "policy": {
+      "type": "object"
+    },
+    "quarantineDigest": {
+      "$ref": "common.schema.json#/$defs/digest"
+    }
+  },
+  "$defs": {
+    "artifact": {
+      "type": "object",
+      "required": [
+        "path",
+        "sha256",
+        "role",
+        "authority",
+        "sourceEvidenceEligible"
+      ],
+      "properties": {
+        "path": {
+          "$ref": "common.schema.json#/$defs/relativePath"
+        },
+        "sha256": {
+          "$ref": "common.schema.json#/$defs/digest"
+        },
+        "role": {
+          "type": "string",
+          "minLength": 1
+        },
+        "authority": {
+          "enum": [
+            "inferred",
+            "engineered"
+          ]
+        },
+        "sourceEvidenceEligible": {
+          "const": false
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
