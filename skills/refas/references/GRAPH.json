@@ -731,6 +731,58 @@
             }
           },
           {
+            "id": "prior-quarantine",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createPriorQuarantine"
+            },
+            "template": null,
+            "inputContract": "real source SHA-256 + typed topology/generative-mesh/novel-view prior + inferred/engineered authority + exact raw/sanitized bytes when mesh-based + explicit semantic correspondences + transfer/strip policy",
+            "outputSchema": "refas.prior-quarantine/v1",
+            "validator": {
+              "library": "validatePriorQuarantine"
+            },
+            "minimumInvocation": "references/spatial-reasoning.md",
+            "example": null,
+            "usageReference": "references/spatial-reasoning.md",
+            "publicConstants": [
+              "PRIOR_QUARANTINE_SCHEMA",
+              "PRIOR_QUARANTINE_KINDS",
+              "PRIOR_QUARANTINE_AUTHORITIES",
+              "PRIOR_TRANSFER_KINDS",
+              "PRIOR_STRIP_FEATURES",
+              "PRIOR_CORRESPONDENCE_METHODS"
+            ],
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "byte-bound mesh sanitization requires exact raw/sanitized GLB inputs; installed-skill fresh-worker verifies executable behavior"
+            }
+          },
+          {
+            "id": "resolve-prior-quarantine-authority",
+            "operation": "inspect",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "resolvePriorQuarantineAuthority"
+            },
+            "template": null,
+            "inputContract": "initialized project root + optional checkpoint selector; runtime replays frozen prior quarantines and rejects source-authority leakage",
+            "outputSchema": "refas.prior-quarantine-authority/v1",
+            "validator": null,
+            "minimumInvocation": "references/spatial-reasoning.md",
+            "example": null,
+            "usageReference": "references/spatial-reasoning.md",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "stateful lineage replay binds exact prior artifacts and source-authority consumers"
+            }
+          },
+          {
             "id": "blockout-competition-policy",
             "operation": "create",
             "cli": null,
