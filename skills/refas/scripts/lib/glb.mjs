@@ -162,7 +162,6 @@ export function partsToGlb({parts, materials, assetId = 'refas-asset', name = 'R
     materials: [],
     extras: {refas: {schema: 'refas.asset/v1', assetId, partIds: parts.map((part) => part.id), ...extras}},
   };
-  if (json.materials.some((material) => material.extensions?.KHR_materials_clearcoat)) json.extensionsUsed = ['KHR_materials_clearcoat'];
   let offset = 0; const chunks = [], constructionExecutions = [];
   const push = (typed) => {
     const bytes = Buffer.from(typed.buffer, typed.byteOffset, typed.byteLength), aligned = align4(offset), index = json.bufferViews.length;
@@ -185,6 +184,7 @@ export function partsToGlb({parts, materials, assetId = 'refas-asset', name = 'R
     }
     json.materials.push(materialJson(id, material, binding));
   }
+  if (json.materials.some((material) => material.extensions?.KHR_materials_clearcoat)) json.extensionsUsed = ['KHR_materials_clearcoat'];
   const nodeByPartId = new Map();
   for (const part of parts) {
     if (!part?.id || !part.mesh || !materialIds.has(part.materialId)) throw new Error('every part requires id, mesh, and known materialId');
@@ -263,8 +263,17 @@ export function appendPartsToClosedGlb(sourceGlb, {parts, materials, name = 'Ref
   const materialIds = new Map(json.materials.map((material, index) => [material.name, index]));
   let offset = align4(sourceBinary.length); const chunks = [{offset: 0, bytes: sourceBinary}], newNodeIds = [];
   const push = (typed) => { const bytes = Buffer.from(typed.buffer, typed.byteOffset, typed.byteLength), aligned = align4(offset), index = json.bufferViews.length; json.bufferViews.push({buffer: 0, byteOffset: aligned, byteLength: bytes.length}); chunks.push({offset: aligned, bytes}); offset = aligned + bytes.length; return index; };
-  json.images ??= []; json.textures ??= []; json.samplers ??= [];
   const textureByMaterialId = new Map();
+  let canonicalTextureSamplerIndex = null;
+  const ensureTextureSampler = () => {
+    json.samplers ??= [];
+    canonicalTextureSamplerIndex = json.samplers.findIndex((sampler) => sampler.magFilter === 9729 && sampler.minFilter === 9729 && sampler.wrapS === 10497 && sampler.wrapT === 10497);
+    if (canonicalTextureSamplerIndex < 0) {
+      canonicalTextureSamplerIndex = json.samplers.length;
+      json.samplers.push({magFilter: 9729, minFilter: 9729, wrapS: 10497, wrapT: 10497});
+    }
+    return canonicalTextureSamplerIndex;
+  };
   for (const [id, index] of materialIds) {
     const info = json.materials[index]?.pbrMetallicRoughness?.baseColorTexture;
     if (info?.index != null) textureByMaterialId.set(id, {index: info.index});
@@ -273,12 +282,13 @@ export function appendPartsToClosedGlb(sourceGlb, {parts, materials, name = 'Ref
     const texture = baseColorTextureInput(id, material);
     let binding = null;
     if (texture) {
-      if (!json.samplers.length) json.samplers.push({magFilter: 9729, minFilter: 9729, wrapS: 10497, wrapT: 10497});
+      json.images ??= []; json.textures ??= [];
+      const samplerIndex = ensureTextureSampler();
       const bufferView = push(texture.bytes);
       const imageIndex = json.images.length;
       json.images.push({name: `${id}-base-color`, bufferView, mimeType: texture.mimeType, extras: {refasSha256: texture.sha256}});
       const textureIndex = json.textures.length;
-      json.textures.push({name: `${id}-base-color`, sampler: 0, source: imageIndex});
+      json.textures.push({name: `${id}-base-color`, sampler: samplerIndex, source: imageIndex});
       binding = {index: textureIndex, sha256: texture.sha256, mimeType: texture.mimeType};
       textureByMaterialId.set(id, binding);
     }
@@ -297,6 +307,7 @@ export function appendPartsToClosedGlb(sourceGlb, {parts, materials, name = 'Ref
       if (!uvValidation.valid) throw new Error(`${part.id}: invalid UV mapping: ${uvValidation.errors.join('; ')}`);
     }
     const uvData = Array.isArray(part.mesh.uvs) ? new Float32Array(part.mesh.uvs.flat()) : null;
+    if (uvData && [...uvData].some((value) => !Number.isFinite(value))) throw new Error(`${part.id}: UV coordinates must be finite`);
     const maximum = Math.max(...part.mesh.indices), IndexArray = maximum <= 65535 ? Uint16Array : Uint32Array, indexData = new IndexArray(part.mesh.indices);
     const pv = push(positionData), nv = push(normalData), uvv = uvData ? push(uvData) : null, iv = push(indexData), start = json.accessors.length, extent = bounds(part.mesh.positions);
     json.accessors.push({bufferView: pv, componentType: 5126, count: part.mesh.positions.length, type: 'VEC3', min: extent.min, max: extent.max}, {bufferView: nv, componentType: 5126, count: normals.length, type: 'VEC3'});
