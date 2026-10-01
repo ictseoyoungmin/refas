@@ -772,7 +772,9 @@
             "template": null,
             "inputContract": "initialized project root + optional checkpoint selector; runtime replays frozen prior quarantines and rejects source-authority leakage",
             "outputSchema": "refas.prior-quarantine-authority/v1",
-            "validator": null,
+            "validator": {
+              "library": "validatePriorQuarantineAuthority"
+            },
             "minimumInvocation": "references/spatial-reasoning.md",
             "example": null,
             "usageReference": "references/spatial-reasoning.md",
