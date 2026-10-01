@@ -90,6 +90,34 @@ The optional registered hero camera is written in canonical local coordinates an
 When a single frontal view can be matched by a deceptively flat candidate, or when it is unclear how to distinguish source facts from the 3D completion needed for a coherent asset, read `references/single-view-volumetric-reasoning-example.md`. The example demonstrates observation -> spatial hypothesis -> orthogonal self-check -> revision while keeping inferred geometry distinct from observed source truth.
 
 
+## Prior quarantine for hidden-form aids
+
+RefAs may use topology templates, generated meshes, or generated novel views as **priors**, but only through `refas.prior-quarantine/v1`.
+
+The quarantine separates useful construction guidance from source authority:
+
+- `kind` is `topology`, `generative-mesh`, or `novel-view`;
+- `authority` is only `inferred` or `engineered`; `observed` is invalid;
+- transferable information is limited to `connectivity`, explicit `landmark-correspondence`, and coarse-volume hypotheses;
+- raw vertex proportions, shape keys, modifiers, and materials are stripped/quarantined rather than promoted to source facts;
+- semantic correspondence is explicit; nearest-surface or generic proximity is not correspondence.
+
+For topology/generative-mesh priors, the runtime binds exact raw and sanitized GLB bytes. The sanitized seed must remove morph targets and materials, and its POSITION-buffer digest must differ from the raw prior so original vertex proportions are not silently reused verbatim.
+
+A generated side/back view may appear in a spatial hypothesis as inferred evidence. It cannot satisfy source-facing authority. Checkpoint lineage replay rejects quarantined paths when they appear as source authority in VC02 spatial-role evidence, R03 perceptual-signature evidence, or whole-object certification evidence. Introducing a quarantine later also rechecks earlier lineage so a prior cannot be retroactively laundered into source truth.
+
+Prior quarantine is additive and does not forbid priors. It defines their ceiling:
+
+```text
+prior artifact
+   ↓ inferred / engineered hypothesis or candidate seed
+candidate construction
+   ↓
+real-source R03 / VC02 / certification evidence
+```
+
+The primary source remains the only source-fact authority. Quarantine does not certify a prior, and certification never promotes inferred or engineered prior information to observed.
+
 ## Competing neutral-clay blockouts before shape hardening
 
 When camera-vs-geometry ambiguity can materially change a volumetric whole or major region, use a blockout competition policy instead of hardening the first plausible reconstruction.
