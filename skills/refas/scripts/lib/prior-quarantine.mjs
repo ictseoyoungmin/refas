@@ -41,6 +41,25 @@ function artifactBinding(raw,label,{authority=null}={}){
   if(out.sourceEvidenceEligible) throw new Error(label+' cannot be source-evidence eligible');
   return out;
 }
+function positionBufferDigest(bytes,label){
+  const glb=Buffer.from(bytes??[]);
+  if(!glb.length) throw new Error(label+' requires exact GLB bytes');
+  const {json,binary}=parseGlb(glb);
+  const chunks=[];
+  for(const mesh of json.meshes??[]) for(const primitive of mesh.primitives??[]){
+    const accessorIndex=primitive.attributes?.POSITION;
+    if(!Number.isInteger(accessorIndex)) continue;
+    const accessor=json.accessors?.[accessorIndex];
+    const view=json.bufferViews?.[accessor?.bufferView];
+    if(!accessor||!view) throw new Error(label+' POSITION accessor is not bufferView-bound');
+    const offset=Number(view.byteOffset??0);
+    const length=Number(view.byteLength??0);
+    if(!Number.isInteger(offset)||!Number.isInteger(length)||offset<0||length<=0||offset+length>binary.length) throw new Error(label+' POSITION bufferView is invalid');
+    chunks.push(binary.subarray(offset,offset+length));
+  }
+  if(!chunks.length) throw new Error(label+' requires POSITION geometry');
+  return digestBytes(Buffer.concat(chunks));
+}
 function inspectSeedGlb(bytes,label){
   const glb=Buffer.from(bytes??[]);
   if(!glb.length) throw new Error(label+' requires exact sanitized seed GLB bytes');
@@ -75,6 +94,7 @@ export function createPriorQuarantine({
   id,sourceSha256,kind,authority,
   rawPrior,
   sanitizedSeed=null,
+  rawPriorGlb=null,
   sanitizedSeedGlb=null,
   derivedArtifacts=[],
   transferable=[],
@@ -104,11 +124,17 @@ export function createPriorQuarantine({
   if(priorKind!=='novel-view'){
     if(!sanitizedSeed) throw new Error(priorKind+' prior requires a sanitized seed artifact');
     seed=artifactBinding(sanitizedSeed,'sanitizedSeed',{authority:priorAuthority});
+    const rawGlb=Buffer.from(rawPriorGlb??[]);
+    if(!rawGlb.length) throw new Error(priorKind+' prior requires exact raw prior GLB bytes');
+    if(raw.sha256!==digestBytes(rawGlb)) throw new Error('raw prior binding does not match exact GLB bytes');
     seedInspection=inspectSeedGlb(sanitizedSeedGlb,'sanitizedSeedGlb');
+    seedInspection.rawPositionDigest=positionBufferDigest(rawGlb,'rawPriorGlb');
+    seedInspection.sanitizedPositionDigest=positionBufferDigest(sanitizedSeedGlb,'sanitizedSeedGlb');
     if(seed.sha256!==seedInspection.sha256) throw new Error('sanitized seed binding does not match exact GLB bytes');
     if(seedInspection.morphTargetCount!==0) throw new Error('sanitized seed still contains shape keys / morph targets declared stripped');
     if(seedInspection.materialCount!==0) throw new Error('sanitized seed still contains materials declared stripped');
     if(seedInspection.meshCount<1) throw new Error('sanitized seed requires at least one mesh');
+    if(seedInspection.rawPositionDigest===seedInspection.sanitizedPositionDigest) throw new Error('sanitized seed still carries raw vertex proportions declared stripped');
     if(seed.sha256===raw.sha256) throw new Error('sanitized seed must differ from raw prior bytes so stripped prior state cannot be reused verbatim');
   }else if(sanitizedSeed!=null||sanitizedSeedGlb!=null){
     throw new Error('novel-view prior does not use a sanitized mesh seed');
@@ -150,7 +176,7 @@ export function createPriorQuarantine({
   };
   return deepFreeze({...payload,quarantineDigest:digestJson(payload)});
 }
-export function validatePriorQuarantine(record,{sanitizedSeedGlb=null}={}){
+export function validatePriorQuarantine(record,{rawPriorGlb=null,sanitizedSeedGlb=null}={}){
   const errors=[];
   if(record?.schema!==PRIOR_QUARANTINE_SCHEMA) errors.push('invalid schema');
   try{
@@ -160,6 +186,7 @@ export function validatePriorQuarantine(record,{sanitizedSeedGlb=null}={}){
       kind:record?.kind,
       authority:record?.authority,
       rawPrior:record?.rawPrior,
+      rawPriorGlb:record?.kind==='novel-view'?null:rawPriorGlb,
       sanitizedSeed:record?.sanitizedSeed,
       sanitizedSeedGlb:record?.kind==='novel-view'?null:sanitizedSeedGlb,
       derivedArtifacts:record?.derivedArtifacts,
