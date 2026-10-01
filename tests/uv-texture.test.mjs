@@ -28,7 +28,7 @@ test('UV generator provides deterministic planar and cylindrical mappings',()=>{
   assert.equal(Math.max(...planar.uvs.map(uv=>uv[1])),1);
   assert.deepEqual(validateUvMapping(planar),{valid:true,errors:[]});
   const cylindrical=generateUvCoordinates(box(),{method:'cylindrical',axis:'y'});
-  assert.equal(cylindrical.uvs.length,4);
+  assert.equal(cylindrical.uvs.length,box().positions.length);
   assert.ok(cylindrical.uvs.every(uv=>uv.every(v=>Number.isFinite(v)&&v>=0&&v<=1)));
   assert.deepEqual(validateUvMapping(cylindrical),{valid:true,errors:[]});
 });
