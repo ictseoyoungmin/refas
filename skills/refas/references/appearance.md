@@ -33,7 +33,7 @@ Keep material IDs semantic, such as `enamel`, `brass-light`, or `fastener-inlay`
 
 RefAs supports deterministic `TEXCOORD_0` generation through `generateUvCoordinates()`:
 
-- `planar`: normalize two declared object-space axes into UV space;
+- `projection`: normalize two declared object-space axes into UV space;
 - `cylindrical`: wrap one declared longitudinal axis with repeat-aware seam handling;
 - `per-section`: use section-profile loft ring index as U and section position as V.
 
