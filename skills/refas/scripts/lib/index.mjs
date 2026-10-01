@@ -81,6 +81,7 @@ export {
 export * from './spatial-hypotheses.mjs';
 export * from './blockout-competition.mjs';
 export * from './prior-quarantine.mjs';
+export * from './uv.mjs';
 export * from './spatial-role-expectation.mjs';
 export * from './volume-barrier.mjs';
 export {FINAL_SPATIAL_CONTINUITY_SCHEMA, FINAL_SPATIAL_CONTINUITY_MODES, FINAL_SPATIAL_CONTINUITY_VERDICTS, validateFinalSpatialContinuity} from './final-spatial-continuity.mjs';
