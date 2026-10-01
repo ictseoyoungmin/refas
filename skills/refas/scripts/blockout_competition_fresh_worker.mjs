@@ -2,6 +2,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {pathToFileURL} from 'node:url';
+import {spawnSync} from 'node:child_process';
 
 function args(argv){const out={};for(let i=0;i<argv.length;i+=1){if(!argv[i].startsWith('--'))continue;const k=argv[i].slice(2),v=argv[i+1];if(v&&!v.startsWith('--')){out[k]=v;i+=1;}else out[k]=true;}return out;}
 
@@ -81,30 +82,45 @@ async function main(){
   const rejectedGlb=makeGlb('baked-asymmetry',.62,.08);
   const selectedRef=await writeRef('model/blockout-symmetric-yaw.glb',selectedGlb,'glb');
   const rejectedRef=await writeRef('model/blockout-baked-asymmetry.glb',rejectedGlb,'glb');
+  const frame={schema:'refas.canonical-object-frame/v1',id:'blockout-competition-frame',scopeId:'whole',origin:[0,0,0],axes:{right:[1,0,0],up:[0,1,0],forward:[0,0,1]}};
+  const frameRef=await writeRef('model/canonical-frame.json',Buffer.from(JSON.stringify(frame,null,2)+'\n'),'canonical-object-frame');
 
   let missingCompetitionBlocked=false;
   try{await commitLocal('shape-reconstruction',[selectedRef]);}catch(error){missingCompetitionBlocked=/required blockout competition needs exactly one candidate-bound decision/u.test(error.message);}
   if(!missingCompetitionBlocked) throw new Error('required policy did not block shape reconstruction without competition evidence');
 
-  const makeClay=async(id,assetSha256)=>{
-    const frameRefs=[];
-    for(const viewId of API.NEUTRAL_CLAY_REQUIRED_VIEW_IDS){
-      frameRefs.push(await writeRef('renders/'+id+'/'+viewId+'.png',Buffer.from(id+' '+viewId+' neutral clay\n'),'render-frame'));
-    }
-    const report=API.createPbrRenderReport({
-      assetSha256,frameDigest:'c'.repeat(64),
-      renderer:{...API.NEUTRAL_CLAY_RENDERER_PROFILE},
-      lighting:{rigId:API.NEUTRAL_CLAY_PRESENTATION_PRESET.lighting.rigId,digest:API.NEUTRAL_CLAY_LIGHTING_RIG_DIGEST},
-      colorPipeline:{...API.NEUTRAL_CLAY_PRESENTATION_PRESET.colorPipeline},
-      materialSupport:{supported:['base-color-factor','metallic-factor','roughness-factor'],unsupported:['textures']},
-      outputs:frameRefs.map((ref,index)=>({viewId:API.NEUTRAL_CLAY_REQUIRED_VIEW_IDS[index],path:ref.path,sha256:ref.sha256})),
-      reproducibility:{mode:'deterministic',tolerance:''},
-      presentation:{mode:'neutral-clay',presetId:API.NEUTRAL_CLAY_PRESENTATION_PRESET.id,presetDigest:API.NEUTRAL_CLAY_PRESENTATION_PRESET_DIGEST},
+  const makeClay=async(id,assetSha256,assetRelative)=>{
+    const renderer=path.join(skillRoot,'scripts','render_pbr.py');
+    const renderDir=path.join(projectRoot,'render-work',id);
+    await fs.mkdir(renderDir,{recursive:true});
+    const rendered=spawnSync(process.env.CODEX_PRIMARY_RUNTIME_PYTHON||'python3',[
+      renderer,'--glb',path.join(projectRoot,assetRelative),'--out',renderDir,
+      '--frame',path.join(projectRoot,frameRef.path),'--size','192','--timeout-seconds','120','--neutral-clay',
+    ],{
+      cwd:projectRoot,encoding:'utf8',timeout:130000,
+      env:{...process.env,PYTHONDONTWRITEBYTECODE:'1',PYTHONHASHSEED:'0',TZ:'UTC'},
     });
+    if(rendered.status!==0) throw new Error('neutral-clay renderer failed for '+id+': '+String(rendered.stderr||rendered.stdout).trim());
+    const report=JSON.parse(await fs.readFile(path.join(renderDir,'render-report.json'),'utf8'));
+    if(report.assetSha256!==assetSha256) throw new Error('renderer asset binding mismatch for '+id);
+    const frameRefs=[];
+    for(const output of report.outputs){
+      const sourceImage=path.join(renderDir,path.basename(output.path));
+      const bytes=await fs.readFile(sourceImage);
+      if(API.digestBytes(bytes)!==output.sha256) throw new Error('renderer output digest mismatch for '+id+'/'+output.viewId);
+      const ref=await writeRef('renders/'+id+'/'+output.viewId+'.png',bytes,'render-frame');
+      frameRefs.push(ref);
+      output.path=ref.path;
+      output.sha256=ref.sha256;
+    }
+    delete report.reportDigest;
+    report.reportDigest=API.digestJson(report);
+    const validation=API.validatePbrRenderReport(report);
+    if(!validation.valid) throw new Error('actual neutral-clay report is invalid for '+id+': '+validation.errors.join('; '));
     return {report,frameRefs};
   };
-  const selectedClay=await makeClay('symmetric-yaw',selectedRef.sha256);
-  const rejectedClay=await makeClay('baked-asymmetry',rejectedRef.sha256);
+  const selectedClay=await makeClay('symmetric-yaw',selectedRef.sha256,selectedRef.path);
+  const rejectedClay=await makeClay('baked-asymmetry',rejectedRef.sha256,rejectedRef.path);
 
   const signatureSet=API.createPerceptualSignatureSet({
     hierarchy,scopeId:'whole',sourceSha256:source.sha256,
@@ -139,10 +155,10 @@ async function main(){
       {kind:'vc03-classification',candidateId:'symmetric-yaw',conclusion:'VC03 confirms the selected volumetric blockout retains non-planar spatial support.'},
     ],
     rejections:[{candidateId:'baked-asymmetry',reasons:[{kind:'r03-signature',candidateId:'baked-asymmetry',signatureId:'cranial-balance',conclusion:'The rejected candidate bakes the three-quarter imbalance into object-space rest geometry.'}]}],
-    evidenceRefs:[source.path,selectedRef.path,rejectedRef.path],
+    evidenceRefs:[source.path,selectedRef.path,rejectedRef.path,frameRef.path],
   });
   const decisionRef=await writeRef('reviews/blockout-competition.json',Buffer.from(JSON.stringify(decision,null,2)+'\n'),'blockout-competition-decision');
-  await commitLocal('spatial-hypotheses',[selectedRef,rejectedRef,...selectedClay.frameRefs,...rejectedClay.frameRefs,decisionRef]);
+  await commitLocal('spatial-hypotheses',[selectedRef,rejectedRef,frameRef,...selectedClay.frameRefs,...rejectedClay.frameRefs,decisionRef]);
 
   const glbByCandidateId=new Map([['symmetric-yaw',selectedGlb],['baked-asymmetry',rejectedGlb]]);
   const validation=API.validateBlockoutCompetitionDecision(decision,{policy,hierarchy,hypothesisSet,roleAuthority,glbByCandidateId});
@@ -165,7 +181,7 @@ async function main(){
     symmetricYawSelected:decision.selectedCandidateId==='symmetric-yaw',
     rejectedCandidateRetained:decision.rejectedCandidateIds.includes('baked-asymmetry'),
     runtimeShapeAdmission:true,tamperedDecisionBlocked:true,
-    selectedAssetSha256:decision.selectedAssetSha256,decisionDigest:decision.decisionDigest,
+    actualNeutralClayRenders:true,selectedAssetSha256:decision.selectedAssetSha256,decisionDigest:decision.decisionDigest,
   };
   await fs.mkdir(path.dirname(reportPath),{recursive:true});
   await fs.writeFile(reportPath,JSON.stringify(report,null,2)+'\n');
