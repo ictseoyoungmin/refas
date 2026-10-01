@@ -19,7 +19,7 @@ function quad(){
 }
 
 test('UV generator provides deterministic planar and cylindrical mappings',()=>{
-  const planar=generateUvCoordinates(quad(),{method:'planar',uAxis:'x',vAxis:'y'});
+  const planar=generateUvCoordinates(quad(),{method:'projection',uAxis:'x',vAxis:'y'});
   assert.deepEqual(planar.uvs,[[0,0],[1,0],[1,1],[0,1]]);
   assert.deepEqual(validateUvMapping(planar),{valid:true,errors:[]});
   const cylindrical=generateUvCoordinates(quad(),{method:'cylindrical',axis:'y'});
@@ -42,7 +42,7 @@ test('per-section UV mapping follows loft ring/section coordinates',()=>{
 });
 
 test('GLB writer embeds PNG bytes, digest binding and TEXCOORD_0',()=>{
-  const mesh=generateUvCoordinates(quad(),{method:'planar',uAxis:'x',vAxis:'y'});
+  const mesh=generateUvCoordinates(quad(),{method:'projection',uAxis:'x',vAxis:'y'});
   const digest=digestBytes(PNG);
   const glb=partsToGlb({
     assetId:'textured-quad',
@@ -73,6 +73,6 @@ test('textured material requires UV coordinates and exact texture digest',()=>{
   }),/requires one TEXCOORD_0 UV per vertex/u);
   assert.throws(()=>partsToGlb({
     materials:{decal:{baseColor:[1,1,1,1],baseColorTexture:{png:PNG,sha256:'0'.repeat(64)}}},
-    parts:[{id:'quad',scopeId:'whole',role:'panel',materialId:'decal',mesh:generateUvCoordinates(quad(),{method:'planar'})}],
+    parts:[{id:'quad',scopeId:'whole',role:'panel',materialId:'decal',mesh:generateUvCoordinates(quad(),{method:'projection'})}],
   }),/sha256 does not match PNG bytes/u);
 });
