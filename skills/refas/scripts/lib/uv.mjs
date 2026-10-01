@@ -2,7 +2,7 @@ import {deepFreeze,digestJson} from './canonical.mjs';
 import {analyzeMesh} from './mesh.mjs';
 
 export const UV_MAPPING_SCHEMA='refas.uv-mapping/v1';
-export const UV_MAPPING_METHODS=Object.freeze(['planar','cylindrical','per-section']);
+export const UV_MAPPING_METHODS=Object.freeze(['projection','cylindrical','per-section']);
 const AXIS_INDEX={x:0,y:1,z:2};
 
 function normalizedAxis(axis,label){
@@ -24,14 +24,15 @@ function cyclicUvs(positions,axis){
   });
 }
 
-export function generateUvCoordinates(mesh,{method='planar',uAxis='x',vAxis='y',axis='y'}={}){
+export function generateUvCoordinates(mesh,{method='projection',uAxis='x',vAxis='y',axis='y'}={}){
   const analysis=analyzeMesh(mesh);
   if(!analysis.valid) throw new Error('UV generation requires a valid triangle mesh');
-  const mode=String(method??'').toLowerCase();
+  const requested=String(method??'').toLowerCase();
+  const mode=requested==='planar'?'projection':requested;
   if(!UV_MAPPING_METHODS.includes(mode)) throw new Error('unknown UV mapping method: '+method);
   let uvs;
   const parameters={};
-  if(mode==='planar'){
+  if(mode==='projection'){
     const ua=normalizedAxis(uAxis,'uAxis'),va=normalizedAxis(vAxis,'vAxis');
     if(ua===va) throw new Error('planar UV axes must differ');
     const us=normalize(mesh.positions.map(p=>p[AXIS_INDEX[ua]]));
