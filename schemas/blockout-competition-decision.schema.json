@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/blockout-competition-decision.schema.json",
+  "title": "RefAs candidate-bound competing blockout selection",
+  "type": "object",
+  "required": [
+    "schema",
+    "sourceSha256",
+    "hierarchyDigest",
+    "scopeId",
+    "scopeLevel",
+    "policyDigest",
+    "hypothesisSetDigest",
+    "roleAuthorityDigest",
+    "frozenRole",
+    "minimumCandidates",
+    "candidates",
+    "selectedCandidateId",
+    "selectedAssetSha256",
+    "selectedHypothesisId",
+    "selectionReasons",
+    "rejectedCandidateIds",
+    "rejections",
+    "evidenceRefs",
+    "policy",
+    "decisionDigest"
+  ],
+  "properties": {
+    "schema": {
+      "const": "refas.blockout-competition-decision/v1"
+    },
+    "sourceSha256": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "hierarchyDigest": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "scopeId": {
+      "$ref": "common.schema.json#/$defs/semanticId"
+    },
+    "scopeLevel": {
+      "enum": [
+        "whole",
+        "region"
+      ]
+    },
+    "policyDigest": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "hypothesisSetDigest": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "roleAuthorityDigest": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "frozenRole": {
+      "enum": [
+        "volumetric",
+        "layered-volume",
+        "rod-tubular"
+      ]
+    },
+    "minimumCandidates": {
+      "const": 2
+    },
+    "candidates": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object"
+      }
+    },
+    "selectedCandidateId": {
+      "$ref": "common.schema.json#/$defs/semanticId"
+    },
+    "selectedAssetSha256": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "selectedHypothesisId": {
+      "$ref": "common.schema.json#/$defs/semanticId"
+    },
+    "selectionReasons": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object"
+      }
+    },
+    "rejectedCandidateIds": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "common.schema.json#/$defs/semanticId"
+      }
+    },
+    "rejections": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object"
+      }
+    },
+    "evidenceRefs": {
+      "$ref": "common.schema.json#/$defs/evidenceRefs"
+    },
+    "policy": {
+      "type": "object"
+    },
+    "decisionDigest": {
+      "$ref": "common.schema.json#/$defs/digest"
+    }
+  },
+  "additionalProperties": false
+}
