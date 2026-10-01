@@ -219,3 +219,46 @@ export function assertNoQuarantinedSourceEvidence(value,forbiddenPaths,{label='s
   if(unique.length) throw new Error(label+' cites quarantined prior-derived evidence as source authority: '+unique.join(', '));
   return true;
 }
+
+export function validatePriorQuarantineAuthority(record) {
+  const errors = [];
+  if (record?.schema !== 'refas.prior-quarantine-authority/v1') errors.push('invalid schema');
+  try {
+    const sourceSha256 = assertDigest(record?.sourceSha256, 'sourceSha256');
+    if (!Array.isArray(record?.records)) throw new Error('records must be an array');
+    const normalizedRecords = record.records.map((raw, index) => {
+      const id = assertId(raw?.id, 'records[' + index + '].id');
+      const kind = String(raw?.kind ?? '').trim();
+      const authority = String(raw?.authority ?? '').trim();
+      if (!KIND_SET.has(kind)) throw new Error('records[' + index + '].kind is invalid');
+      if (!AUTHORITY_SET.has(authority)) throw new Error('records[' + index + '].authority is invalid');
+      const quarantineDigest = assertDigest(raw?.quarantineDigest, 'records[' + index + '].quarantineDigest');
+      const checkpointId = String(raw?.checkpointId ?? '').trim();
+      if (!checkpointId) throw new Error('records[' + index + '].checkpointId is required');
+      const artifactPath = pathText(raw?.artifactPath, 'records[' + index + '].artifactPath');
+      const quarantinedPaths = strings(raw?.quarantinedPaths, 'records[' + index + '].quarantinedPaths', {required:true})
+        .map((value, pathIndex) => pathText(value, 'records[' + index + '].quarantinedPaths[' + pathIndex + ']'));
+      return {id,kind,authority,quarantineDigest,checkpointId,artifactPath,quarantinedPaths};
+    }).sort((a,b)=>a.id.localeCompare(b.id));
+    if (new Set(normalizedRecords.map((item)=>item.id)).size !== normalizedRecords.length) throw new Error('prior quarantine authority record IDs must be unique');
+    const policy = record?.policy ?? {};
+    if (policy.priorHypothesisUseAllowed !== true || policy.priorSourceEvidenceForbidden !== true || policy.lineageReplayRequired !== true) {
+      throw new Error('prior quarantine authority policy is invalid');
+    }
+    const payload = {
+      schema:'refas.prior-quarantine-authority/v1',
+      sourceSha256,
+      records:normalizedRecords,
+      policy:{
+        priorHypothesisUseAllowed:true,
+        priorSourceEvidenceForbidden:true,
+        lineageReplayRequired:true,
+      },
+    };
+    const expected = {...payload, authorityDigest:digestJson(payload)};
+    if (digestJson(expected) !== digestJson(record)) errors.push('prior quarantine authority is stale, tampered, or non-canonical');
+  } catch (error) {
+    errors.push(error.message);
+  }
+  return {valid:errors.length===0,errors};
+}
