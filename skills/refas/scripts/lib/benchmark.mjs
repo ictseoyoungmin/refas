@@ -45,13 +45,18 @@ function firstMultiviewObservation(raw, category, label = 'firstMultiviewObserva
     fixtureSemantics: String(raw.measurement?.fixtureSemantics ?? ''),
   };
   if (measurement.clock !== 'monotonic-wall-clock' || !measurement.worker || !measurement.fixtureSemantics) throw new Error(`${label}.measurement metadata is incomplete`);
+  if (
+    raw.policy?.observationOnly !== true
+    || raw.policy?.certificationAuthority !== false
+    || raw.policy?.qualityAuthority !== false
+    || raw.policy?.noPassFailThreshold !== true
+  ) throw new Error(`${label} must remain observation-only and non-authoritative`);
   const policy = {
-    observationOnly: raw.policy?.observationOnly === true,
-    certificationAuthority: raw.policy?.certificationAuthority === false,
-    qualityAuthority: raw.policy?.qualityAuthority === false,
-    noPassFailThreshold: raw.policy?.noPassFailThreshold === true,
+    observationOnly: true,
+    certificationAuthority: false,
+    qualityAuthority: false,
+    noPassFailThreshold: true,
   };
-  if (!Object.values(policy).every(Boolean)) throw new Error(`${label} must remain observation-only and non-authoritative`);
   return {
     schema: 'refas.first-multiview-observation/v1', referenceClass,
     firstNeutralClayMultiviewMs: Math.round(firstNeutralClayMultiviewMs * 1000) / 1000,
