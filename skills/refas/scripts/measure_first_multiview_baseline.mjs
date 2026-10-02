@@ -65,7 +65,7 @@ function publicOperationMap(graph) {
   for (const node of graph.nodes ?? []) {
     for (const entry of node.interface?.interfaces ?? []) {
       const symbol = entry.library?.symbol;
-      if (symbol) map.set(symbol, `${node.id}/${entry.id}`);
+      if (symbol) map.set(symbol, `${node.id}.${entry.id}`);
     }
   }
   return map;
