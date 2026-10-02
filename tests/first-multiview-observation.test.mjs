@@ -9,7 +9,7 @@ function observation(referenceClass, ms = 1200) {
     schema: 'refas.first-multiview-observation/v1', referenceClass,
     firstNeutralClayMultiviewMs: ms,
     uniquePublicOperationsBeforeFirstMultiview: 2,
-    publicOperationIdsBeforeFirstMultiview: ['appearance/pbr-render-report', 'observation/visual-hierarchy'],
+    publicOperationIdsBeforeFirstMultiview: ['appearance.pbr-render-report', 'observation.visual-hierarchy'],
     turns: {available: false, value: null}, tokens: {available: false, value: null},
     multiviewProof: {reportSha256: D('a'), reportDigest: D('b'), viewIds: ['albedo', 'grazing', 'hero', 'oblique', 'side', 'top']},
     measurement: {clock: 'monotonic-wall-clock', worker: 'fresh-worker', fixtureSemantics: 'operational-cost-proxy'},
