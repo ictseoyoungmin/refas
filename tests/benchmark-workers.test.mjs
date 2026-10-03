@@ -5,7 +5,15 @@ import os from 'node:os';
 import path from 'node:path';
 import {spawnSync, execFileSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
-import {digestJson} from '../skills/refas/scripts/lib/index.mjs';
+import {
+  createPbrRenderReport,
+  digestJson,
+  NEUTRAL_CLAY_LIGHTING_RIG_DIGEST,
+  NEUTRAL_CLAY_PRESENTATION_PRESET,
+  NEUTRAL_CLAY_PRESENTATION_PRESET_DIGEST,
+  NEUTRAL_CLAY_RENDERER_PROFILE,
+  NEUTRAL_CLAY_REQUIRED_VIEW_IDS,
+} from '../skills/refas/scripts/lib/index.mjs';
 
 const script = path.resolve('examples/benchmark-matrix/run-workers.mjs');
 const digest = (value) => createHash('sha256').update(value).digest('hex');
@@ -19,9 +27,33 @@ function hostEvent({sessionId, sequence, time}) {
   return {...core, eventId:`event_${digestJson(core).slice(0,20)}`};
 }
 
+function neutralClayFixture({tamperRender = false, forgeReport = false} = {}) {
+  const renders = NEUTRAL_CLAY_REQUIRED_VIEW_IDS.map((viewId) => {
+    const bytes = Buffer.from(`canonical neutral clay render: ${viewId}`);
+    return {viewId, path:`renders/clay/${viewId}.bin`, bytes:bytes.toString('base64'), sha256:digest(bytes)};
+  });
+  const canonical = createPbrRenderReport({
+    assetSha256:'b'.repeat(64), frameDigest:'c'.repeat(64),
+    renderer:NEUTRAL_CLAY_RENDERER_PROFILE,
+    lighting:{rigId:NEUTRAL_CLAY_PRESENTATION_PRESET.lighting.rigId,digest:NEUTRAL_CLAY_LIGHTING_RIG_DIGEST},
+    colorPipeline:NEUTRAL_CLAY_PRESENTATION_PRESET.colorPipeline,
+    materialSupport:{supported:['base-color-factor','metallic-roughness'],unsupported:[]},
+    outputs:renders.map(({viewId,path:outputPath,sha256})=>({viewId,path:outputPath,sha256})),
+    reproducibility:{mode:'deterministic',tolerance:''},
+    presentation:{mode:'neutral-clay',presetId:NEUTRAL_CLAY_PRESENTATION_PRESET.id,presetDigest:NEUTRAL_CLAY_PRESENTATION_PRESET_DIGEST},
+  });
+  const report = forgeReport ? {...canonical,reportDigest:'f'.repeat(64)} : canonical;
+  const writes = renders.map((render, index) => ({
+    ...render,
+    bytes: tamperRender && index === 0 ? Buffer.from(`tampered render: ${render.viewId}`).toString('base64') : render.bytes,
+  }));
+  return {report, writes};
+}
+
 async function fixture(root, {
   scoreField = false, selfReportedMetrics = false, emitMultiview = true,
   emitReopen = true, reopenEvents = 2, routeFallback = false,
+  tamperRender = false, forgeReport = false,
 } = {}) {
   const references = [];
   const categories = {articulated:'articulated-manufactured-organic',mechanical:'hard-surface-mechanical',irregular:'irregular-nonmechanical'};
@@ -53,7 +85,11 @@ async function fixture(root, {
       ? `await fs.writeFile(path.join(out,'reopen.json'),${JSON.stringify(JSON.stringify(route))}); await fs.writeFile(path.join(out,'reopen-copy.json'),${JSON.stringify(JSON.stringify(route))});`
       : `await fs.mkdir(path.join(out,'.refas','host'),{recursive:true}); await fs.writeFile(path.join(out,'.refas','host','session.json'),${JSON.stringify(JSON.stringify(hostState))});`
     : '';
-  await fs.writeFile(workerFile, `import fs from 'node:fs/promises'; import path from 'node:path';\nconst out=process.env.REFAS_BENCHMARK_OUTPUT; await fs.writeFile(path.join(out,'proof.json'),JSON.stringify({source:process.env.REFAS_BENCHMARK_REFERENCE,commit:process.env.REFAS_BENCHMARK_REFAS_COMMIT})); ${emitMultiview ? `await fs.mkdir(path.join(out,'renders','clay'),{recursive:true}); await fs.writeFile(path.join(out,'renders','clay','render-report.json'),JSON.stringify({presentation:{mode:'neutral-clay'},reportDigest:'${'a'.repeat(64)}',outputs:['hero','side','top','oblique','grazing'].map(viewId=>({viewId}))}));` : ''} ${reopenScript} await fs.writeFile(path.join(out,'outcome.json'),JSON.stringify({r04:'HOLD',vc03:'INSUFFICIENT',vc04:'HOLD',certification:'not-attempted',evidence:[{path:'proof.json'}]${extraOutcome}}));`);
+  const multiview = neutralClayFixture({tamperRender, forgeReport});
+  const multiviewScript = emitMultiview
+    ? `const renderSet=${JSON.stringify(multiview.writes)}; for (const render of renderSet) { const target=path.join(out,render.path); await fs.mkdir(path.dirname(target),{recursive:true}); await fs.writeFile(target,Buffer.from(render.bytes,'base64')); } await fs.writeFile(path.join(out,'renders','clay','render-report.json'),${JSON.stringify(JSON.stringify(multiview.report))});`
+    : '';
+  await fs.writeFile(workerFile, `import fs from 'node:fs/promises'; import path from 'node:path';\nconst out=process.env.REFAS_BENCHMARK_OUTPUT; await fs.writeFile(path.join(out,'proof.json'),JSON.stringify({source:process.env.REFAS_BENCHMARK_REFERENCE,commit:process.env.REFAS_BENCHMARK_REFAS_COMMIT})); ${multiviewScript} ${reopenScript} await fs.writeFile(path.join(out,'outcome.json'),JSON.stringify({r04:'HOLD',vc03:'INSUFFICIENT',vc04:'HOLD',certification:'not-attempted',evidence:[{path:'proof.json'}]${extraOutcome}}));`);
   const head = execFileSync('git', ['rev-parse', 'HEAD'], {encoding:'utf8'}).trim();
   return {
     refasRoot: process.cwd(), expectedRefasCommit: head, references,
@@ -95,7 +131,9 @@ test('worker matrix runs every cell and runner derives operational observations'
     assert.ok(matrix.results.every((item) => Number.isFinite(item.outcome.firstMultiviewSeconds) && item.outcome.firstMultiviewSeconds >= 0));
     assert.ok(matrix.results.every((item) => item.outcome.observations.reopen.derivation === 'unique-canonical-refas.host-event/v1-reopen-required-events'));
     assert.ok(matrix.results.every((item) => item.outcome.observations.reopen.evidence[0]?.reopenEventIds.length === 2));
-    assert.ok(matrix.results.every((item) => item.outcome.observations.firstMultiview.evidence?.viewIds.length === 5));
+    assert.ok(matrix.results.every((item) => item.outcome.observations.firstMultiview.evidence?.viewIds.length === 8));
+    assert.ok(matrix.results.every((item) => item.outcome.observations.firstMultiview.evidence?.renders.length === 8));
+    assert.ok(matrix.results.every((item) => item.outcome.observations.firstMultiview.evidence?.renders.every((render) => render.sha256 && render.sizeBytes > 0)));
 
     const one = spawnSync(process.execPath, [script, '--manifest', manifestPath, '--out', path.join(root,'one'), '--only', 'articulated--model-a--plain'], {encoding:'utf8'});
     assert.equal(one.status, 0, one.stderr);
@@ -162,6 +200,26 @@ test('runner records unavailable operational observations as null and zero witho
     assert.equal(matrix.results[0].outcome.firstMultiviewSeconds, null);
     assert.equal(matrix.results[0].outcome.observations.firstMultiview.evidence, null);
   } finally { await fs.rm(root,{recursive:true,force:true}); }
+});
+
+test('first-multiview timing rejects forged reports and render-byte tampering', async () => {
+  for (const [name, options] of [
+    ['forged-report', {forgeReport:true}],
+    ['tampered-render', {tamperRender:true}],
+  ]) {
+    const root = await fs.mkdtemp(path.join(os.tmpdir(), `refas-benchmark-${name}-`));
+    try {
+      const manifest = await fixture(root, options);
+      const manifestPath = path.join(root, 'manifest.json');
+      await fs.writeFile(manifestPath, JSON.stringify(manifest));
+      const result = spawnSync(process.execPath, [script, '--manifest', manifestPath, '--out', path.join(root,'runs'), '--only', 'articulated--model-a--plain'], {encoding:'utf8'});
+      assert.equal(result.status, 0, result.stderr);
+      const matrix = JSON.parse(await fs.readFile(path.join(root,'runs','matrix.json'),'utf8'));
+      assert.equal(matrix.complete, true);
+      assert.equal(matrix.results[0].outcome.firstMultiviewSeconds, null);
+      assert.equal(matrix.results[0].outcome.observations.firstMultiview.evidence, null);
+    } finally { await fs.rm(root,{recursive:true,force:true}); }
+  }
 });
 
 test('worker matrix rejects self-reported operational metrics and aggregate evaluative fields', async () => {
