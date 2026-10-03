@@ -68,8 +68,21 @@ identities, and at least two prompt variants.
 
 The measured RefAs checkout is **commit pinned**. `expectedRefasCommit` is
 required and the runner refuses to start if `git rev-parse HEAD` does not match
-it. This allows the same harness to measure the released v1.1.1 baseline and a
-later v1.2.0 candidate without silently changing the skill implementation.
+it. The benchmark prompt also instructs the worker to use only instructions,
+contracts, and tools contained in that exact checkout; globally installed,
+cached, newer, sibling, or otherwise external RefAs instructions are outside
+the experiment contract. This prevents a v1.1.1 baseline from silently
+receiving later RefAs guidance.
+
+The prompt roles are deliberately separated:
+
+- `common.md` contains experiment invariants and the structured reporting
+  contract only. It does not prescribe reconstruction tactics that the
+  measured RefAs checkout should itself teach.
+- `plain.md` adds no reconstruction tactic and is the checkout-pure baseline.
+- `guided.md` adds the explicit competing-hypothesis/multiview strategy being
+  tested, but is version-neutral and may use checkout-local contracts only
+  when the measured checkout actually provides them.
 
 Example manifest shape:
 
@@ -108,15 +121,40 @@ A full execution writes `plan.json`, a fresh directory for each cell, and
 exists for smoke testing; such a report has `fullMatrix:false` even when that
 single cell completed successfully.
 
-Every worker writes `outcome.json` containing only structured outcomes:
-`r04`, `vc03`, `vc04`, `certification`, `reopenCount`,
-`firstMultiviewSeconds`, and digest-bound evidence paths. Score, rating,
-ranking, winner, or aggregate fields are rejected. The runner also records
-worker logs and wall-clock elapsed time, but it never converts any field into
-an overall score or selected winner.
+### Worker-reported versus runner-observed fields
+
+The worker-authored `outcome.json` contains only:
+
+- `r04`
+- `vc03`
+- `vc04`
+- `certification`
+- `evidence`
+
+The worker must not self-report operational metrics. `reopenCount` and
+`firstMultiviewSeconds` are added to the matrix by the runner:
+
+- `reopenCount` is the number of unique, canonically digest-valid persisted
+  `refas.repair-route/v1` artifacts whose action is `REOPEN_CAPABILITY` inside
+  that cell's fresh output tree. Duplicate copies with the same `routeDigest`
+  count once.
+- `firstMultiviewSeconds` uses the runner's monotonic wall clock and records the
+  first observed persisted JSON render report with
+  `presentation.mode == "neutral-clay"`, a digest-shaped `reportDigest`, and at
+  least five distinct output view IDs. If no such artifact is observed, the
+  value is `null` rather than a worker guess.
+
+The matrix retains digest-bound observation evidence for both derivations.
+This definition is intentionally based on artifacts available to both the
+v1.1.1 baseline and the later candidate; it does not require a v1.2-only API.
+These operational observations never certify visual quality.
+
+Score, rating, ranking, winner, or aggregate fields are rejected recursively.
+The runner also records worker logs and whole-process wall-clock elapsed time,
+but it never converts any field into an overall score or selected winner.
 
 `complete:true` means only that the expected worker processes returned usable
-structured outcomes with readable evidence. It **does not** mean the
-reconstruction passed visual review, RefAs certification, or human inspection.
-Actual render/evidence review remains required before a matrix result is used
-as acceptance evidence.
+structured verdicts with readable evidence and that the runner could record
+its operational observations. It **does not** mean the reconstruction passed
+visual review, RefAs certification, or human inspection. Actual render/evidence
+review remains required before a matrix result is used as acceptance evidence.
