@@ -5,13 +5,14 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {spawn, execFileSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
-import {BENCHMARK_CATEGORIES} from '../../skills/refas/scripts/lib/benchmark.mjs';
+import {BENCHMARK_CATEGORIES, digestJson} from '../../skills/refas/scripts/lib/index.mjs';
 
 const sha256 = (bytes) => createHash('sha256').update(bytes).digest('hex');
 const fail = (message) => { throw new Error(message); };
 const isSha = (value) => /^[a-f0-9]{40}$/u.test(String(value ?? ''));
 const isDigest = (value) => /^[a-f0-9]{64}$/u.test(String(value ?? ''));
 const isId = (value) => /^[a-z][a-z0-9-]*$/u.test(String(value ?? ''));
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 function parseArgs(argv) {
   const result = {};
@@ -44,6 +45,84 @@ function safeRelative(value, label) {
   const text = String(value ?? '');
   if (!text || path.isAbsolute(text) || text.split(/[\\/]/u).includes('..')) fail(`${label} must remain inside the run directory`);
   return text.replaceAll('\\', '/');
+}
+
+async function listJsonFiles(root) {
+  const found = [];
+  const stack = [root];
+  while (stack.length) {
+    const directory = stack.pop();
+    let entries;
+    try { entries = await fs.readdir(directory, {withFileTypes: true}); }
+    catch (error) { if (error.code === 'ENOENT') continue; throw error; }
+    for (const entry of entries) {
+      if (entry.name === '.git' || entry.name === 'node_modules') continue;
+      const absolute = path.join(directory, entry.name);
+      if (entry.isDirectory()) stack.push(absolute);
+      else if (entry.isFile() && entry.name.endsWith('.json')) found.push(absolute);
+    }
+  }
+  return found.sort();
+}
+
+async function readJsonCandidate(file) {
+  try {
+    const stat = await fs.stat(file);
+    if (!stat.isFile() || stat.size < 2 || stat.size > 8 * 1024 * 1024) return null;
+    const bytes = await fs.readFile(file);
+    return {bytes, value: JSON.parse(bytes.toString('utf8'))};
+  } catch (error) {
+    if (error.code === 'ENOENT' || error instanceof SyntaxError) return null;
+    throw error;
+  }
+}
+
+async function findNeutralClayMultiview(runDir) {
+  for (const file of await listJsonFiles(runDir)) {
+    const parsed = await readJsonCandidate(file);
+    const report = parsed?.value;
+    if (!report || report.presentation?.mode !== 'neutral-clay' || !isDigest(report.reportDigest)) continue;
+    const viewIds = [...new Set((report.outputs ?? []).map((output) => output?.viewId).filter(Boolean))].sort();
+    if (viewIds.length < 5) continue;
+    return {
+      path: path.relative(runDir, file).replaceAll('\\', '/'),
+      sha256: sha256(parsed.bytes), sizeBytes: parsed.bytes.length,
+      reportDigest: report.reportDigest, viewIds,
+    };
+  }
+  return null;
+}
+
+async function observeFirstNeutralClayMultiview(runDir, startedNs, child) {
+  while (child.exitCode == null) {
+    const evidence = await findNeutralClayMultiview(runDir);
+    if (evidence) return {firstMultiviewSeconds: Number(process.hrtime.bigint() - startedNs) / 1e9, evidence};
+    await sleep(25);
+  }
+  const evidence = await findNeutralClayMultiview(runDir);
+  return evidence
+    ? {firstMultiviewSeconds: Number(process.hrtime.bigint() - startedNs) / 1e9, evidence}
+    : {firstMultiviewSeconds: null, evidence: null};
+}
+
+async function deriveReopenObservation(runDir) {
+  const unique = new Map();
+  for (const file of await listJsonFiles(runDir)) {
+    const parsed = await readJsonCandidate(file);
+    const route = parsed?.value;
+    if (!route || route.schema !== 'refas.repair-route/v1' || route.action !== 'REOPEN_CAPABILITY') continue;
+    if (!isDigest(route.routeDigest)) fail(`invalid persisted reopen route digest: ${path.relative(runDir, file)}`);
+    const core = structuredClone(route);
+    delete core.routeDigest;
+    if (digestJson(core) !== route.routeDigest) fail(`persisted reopen route failed canonical digest verification: ${path.relative(runDir, file)}`);
+    if (!unique.has(route.routeDigest)) {
+      unique.set(route.routeDigest, {
+        path: path.relative(runDir, file).replaceAll('\\', '/'),
+        sha256: sha256(parsed.bytes), sizeBytes: parsed.bytes.length, routeDigest: route.routeDigest,
+      });
+    }
+  }
+  return {reopenCount: unique.size, evidence: [...unique.values()].sort((a, b) => a.routeDigest.localeCompare(b.routeDigest))};
 }
 
 async function main() {
@@ -102,7 +181,10 @@ async function main() {
     workers: workers.map(({executable: _executable, args: _args, ...worker}) => worker),
     prompts: promptRecords.map(({text: _text, ...rest}) => rest),
     cells: runIds.length, runIds,
-    policy: {structuredOutcomesOnly: true, aggregateScoreForbidden: true, manualRenderInspectionRequired: true, runnerDoesNotCertify: true},
+    policy: {
+      structuredOutcomesOnly: true, aggregateScoreForbidden: true, manualRenderInspectionRequired: true,
+      runnerDoesNotCertify: true, exactCheckoutInstructionsOnly: true, operationalMetricsRunnerDerived: true,
+    },
   };
   await fs.writeFile(path.join(out, 'plan.json'), `${JSON.stringify(plan, null, 2)}\n`);
   if (String(options['dry-run']) === 'true') { process.stdout.write(`${runIds.length} cells planned at ${commit}\n`); return; }
@@ -130,10 +212,13 @@ async function main() {
       env: {...process.env, REFAS_BENCHMARK_OUTPUT: runDir, REFAS_BENCHMARK_REFERENCE: source.path, REFAS_BENCHMARK_REFAS_ROOT: refasRoot, REFAS_BENCHMARK_REFAS_COMMIT: commit, REFAS_BENCHMARK_PROMPT_ID: prompt.id, REFAS_BENCHMARK_WORKER_ID: worker.id},
       stdio: ['ignore', stdout, stderr],
     });
+    const firstMultiviewPromise = observeFirstNeutralClayMultiview(runDir, startedNs, child);
     const deadline = setTimeout(() => { timedOut = true; child.kill('SIGTERM'); }, worker.timeoutSeconds * 1000);
     try { exitCode = await new Promise((resolve, reject) => { child.once('error', reject); child.once('close', resolve); }); }
     catch (cause) { error = cause.message; }
     finally { clearTimeout(deadline); fsSync.closeSync(stdout); fsSync.closeSync(stderr); }
+    const firstMultiview = await firstMultiviewPromise;
+    const reopen = await deriveReopenObservation(runDir);
     const endedAt = new Date(), elapsedSeconds = Number(process.hrtime.bigint() - startedNs) / 1e9;
     if (timedOut) error = 'worker timed out';
     else if (exitCode !== 0) error = [error, `worker exited ${exitCode}`].filter(Boolean).join('; ');
@@ -142,12 +227,13 @@ async function main() {
     try {
       const raw = JSON.parse(await fs.readFile(path.join(runDir, 'outcome.json'), 'utf8'));
       rejectScoreFields(raw);
+      const exactWorkerFields = ['certification', 'evidence', 'r04', 'vc03', 'vc04'];
+      const workerFields = Object.keys(raw).sort();
+      if (JSON.stringify(workerFields) !== JSON.stringify(exactWorkerFields)) fail(`worker outcome fields must be exactly ${exactWorkerFields.join(', ')}`);
       const verdicts = ['PROCEED', 'REWORK', 'HOLD', 'INSUFFICIENT'];
       const certification = ['certified', 'refused', 'not-attempted'];
       if (!verdicts.includes(raw.r04) || !verdicts.includes(raw.vc04) || !certification.includes(raw.certification)
-        || !['PLANAR_COLLAPSE', 'NO_PLANAR_COLLAPSE', 'NOT_APPLICABLE', 'INSUFFICIENT'].includes(raw.vc03)
-        || !Number.isInteger(raw.reopenCount) || raw.reopenCount < 0
-        || !(raw.firstMultiviewSeconds === null || Number.isFinite(raw.firstMultiviewSeconds) && raw.firstMultiviewSeconds >= 0)) fail('invalid outcome fields');
+        || !['PLANAR_COLLAPSE', 'NO_PLANAR_COLLAPSE', 'NOT_APPLICABLE', 'INSUFFICIENT'].includes(raw.vc03)) fail('invalid outcome fields');
       if (!Array.isArray(raw.evidence) || raw.evidence.length === 0) fail('outcome requires evidence');
       const evidence = [];
       for (const item of raw.evidence) {
@@ -155,7 +241,17 @@ async function main() {
         const bytes = await fs.readFile(path.join(runDir, relative));
         evidence.push({path: relative, sha256: sha256(bytes), sizeBytes: bytes.length});
       }
-      outcome = {r04: raw.r04, vc03: raw.vc03, vc04: raw.vc04, certification: raw.certification, reopenCount: raw.reopenCount, firstMultiviewSeconds: raw.firstMultiviewSeconds, evidence};
+      outcome = {
+        r04: raw.r04, vc03: raw.vc03, vc04: raw.vc04, certification: raw.certification,
+        reopenCount: reopen.reopenCount, firstMultiviewSeconds: firstMultiview.firstMultiviewSeconds, evidence,
+        observations: {
+          reopen: {derivation: 'unique-canonical-refas.repair-route/v1-REOPEN_CAPABILITY-digests', evidence: reopen.evidence},
+          firstMultiview: {
+            derivation: 'runner-monotonic-clock-to-first-persisted-neutral-clay-render-report-with-at-least-five-views',
+            clock: 'monotonic-wall-clock', evidence: firstMultiview.evidence,
+          },
+        },
+      };
     } catch (cause) {
       error = [error, `outcome unavailable: ${cause.message}`].filter(Boolean).join('; ');
     }
@@ -173,7 +269,7 @@ async function main() {
     const expectedResults = options.only ? 1 : runIds.length;
     const report = {
       schema: 'refas.cross-model-benchmark/v1',
-      claimScope: 'worker-reported-structured-outcomes-with-digest-bound-evidence',
+      claimScope: 'worker-verdicts-plus-runner-derived-operational-observations-with-digest-bound-evidence',
       complete: results.length === expectedResults && results.every((item) => item.outcome !== null && item.error === null),
       fullMatrix: !options.only && results.length === runIds.length,
       refasCommit: commit, manifestSha256: sha256(manifestBytes), commonPromptSha256: commonPrompt.sha256,
@@ -181,7 +277,11 @@ async function main() {
       workers: workers.map(({executable: _executable, args: _args, ...rest}) => rest),
       prompts: promptRecords.map(({text: _text, ...rest}) => rest),
       results,
-      policy: {structuredOutcomesOnly: true, aggregateScoreForbidden: true, manualRenderInspectionRequired: true, runnerDoesNotCertify: true, completeDoesNotMeanAccepted: true},
+      policy: {
+        structuredOutcomesOnly: true, aggregateScoreForbidden: true, manualRenderInspectionRequired: true,
+        runnerDoesNotCertify: true, completeDoesNotMeanAccepted: true, exactCheckoutInstructionsOnly: true,
+        operationalMetricsRunnerDerived: true,
+      },
     };
     await fs.writeFile(path.join(out, 'matrix.json'), `${JSON.stringify(report, null, 2)}\n`);
     process.stdout.write(`${id}: ${outcome ? 'recorded' : 'incomplete'}\n`);
