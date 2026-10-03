@@ -134,10 +134,14 @@ The worker-authored `outcome.json` contains only:
 The worker must not self-report operational metrics. `reopenCount` and
 `firstMultiviewSeconds` are added to the matrix by the runner:
 
-- `reopenCount` is the number of unique, canonically digest-valid persisted
-  `refas.repair-route/v1` artifacts whose action is `REOPEN_CAPABILITY` inside
-  that cell's fresh output tree. Duplicate copies with the same `routeDigest`
-  count once.
+- `reopenCount` first uses canonical `refas.host-session-state/v1` persistence.
+  The runner validates the sequence and content-derived IDs of its
+  `refas.host-event/v1` history, then counts distinct `reopen-required` event
+  IDs. This preserves repeated reopen occurrences even when two reopen routes
+  have identical semantic content. When no canonical host-session persistence
+  exists in the cell, the runner falls back to unique digest-valid
+  `refas.repair-route/v1` artifacts whose action is `REOPEN_CAPABILITY`; copied
+  route artifacts with the same `routeDigest` count once.
 - `firstMultiviewSeconds` uses the runner's monotonic wall clock and records the
   first observed persisted JSON render report with
   `presentation.mode == "neutral-clay"`, a digest-shaped `reportDigest`, and at
@@ -145,9 +149,11 @@ The worker must not self-report operational metrics. `reopenCount` and
   value is `null` rather than a worker guess.
 
 The matrix retains digest-bound observation evidence for both derivations.
-This definition is intentionally based on artifacts available to both the
-v1.1.1 baseline and the later candidate; it does not require a v1.2-only API.
-These operational observations never certify visual quality.
+Both primary definitions rely on contracts already present in the v1.1.1
+baseline, so the candidate does not gain a measurement advantage from a
+v1.2-only API. The repair-route path is only a compatibility fallback when a
+worker never creates canonical host-session persistence. These operational
+observations never certify visual quality.
 
 Score, rating, ranking, winner, or aggregate fields are rejected recursively.
 The runner also records worker logs and whole-process wall-clock elapsed time,
