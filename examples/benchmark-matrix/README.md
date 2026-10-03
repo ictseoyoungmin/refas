@@ -142,13 +142,19 @@ The worker must not self-report operational metrics. `reopenCount` and
   exists in the cell, the runner falls back to unique digest-valid
   `refas.repair-route/v1` artifacts whose action is `REOPEN_CAPABILITY`; copied
   route artifacts with the same `routeDigest` count once.
-- `firstMultiviewSeconds` uses the runner's monotonic wall clock and records the
-  first observed persisted JSON render report with
-  `presentation.mode == "neutral-clay"`, a digest-shaped `reportDigest`, and at
-  least five distinct output view IDs. If no such artifact is observed, the
+- `firstMultiviewSeconds` uses the runner's monotonic wall clock and accepts
+  only a canonical, validator-passing `refas.pbr-render-report/v1` whose
+  presentation is neutral clay. The report must contain every canonical
+  neutral-clay required view (`hero`, `oblique`, `side`, `top`, `grazing`,
+  `normal`, `object-id`, and `albedo`), and every required output path must stay
+  inside the fresh cell directory. The runner reads each referenced render and
+  verifies its actual byte SHA-256 against the report before recording the
+  observation. A forged report digest, a missing/tampered render, or an
+  out-of-cell output path is ignored; if no valid complete set appears, the
   value is `null` rather than a worker guess.
 
-The matrix retains digest-bound observation evidence for both derivations.
+The matrix retains digest-bound observation evidence for both derivations,
+including the canonical PBR report and byte-verified required render outputs.
 Both primary definitions rely on contracts already present in the v1.1.1
 baseline, so the candidate does not gain a measurement advantage from a
 v1.2-only API. The repair-route path is only a compatibility fallback when a
