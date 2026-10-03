@@ -10,7 +10,19 @@ import {digestJson} from '../skills/refas/scripts/lib/index.mjs';
 const script = path.resolve('examples/benchmark-matrix/run-workers.mjs');
 const digest = (value) => createHash('sha256').update(value).digest('hex');
 
-async function fixture(root, {scoreField = false, selfReportedMetrics = false, emitMultiview = true, emitReopen = true} = {}) {
+function hostEvent({sessionId, sequence, time}) {
+  const core = {
+    schema:'refas.host-event/v1', sessionId, sequence, time, kind:'reopen-required',
+    operationId:null, scopeId:'whole', capability:'shape-reconstruction', message:'fixture reopen',
+    artifactRefs:[], recoverable:true,
+  };
+  return {...core, eventId:`event_${digestJson(core).slice(0,20)}`};
+}
+
+async function fixture(root, {
+  scoreField = false, selfReportedMetrics = false, emitMultiview = true,
+  emitReopen = true, reopenEvents = 2, routeFallback = false,
+} = {}) {
   const references = [];
   const categories = {articulated:'articulated-manufactured-organic',mechanical:'hard-surface-mechanical',irregular:'irregular-nonmechanical'};
   for (const id of Object.keys(categories)) {
@@ -29,9 +41,19 @@ async function fixture(root, {scoreField = false, selfReportedMetrics = false, e
     reason: 'fixture reopen',
   };
   const route = {...routeCore, routeDigest: digestJson(routeCore)};
+  const sessionId = 'session-fixture';
+  const events = Array.from({length:reopenEvents}, (_, index) => hostEvent({
+    sessionId, sequence:index + 1, time:`2026-10-03T09:00:0${index}.000Z`,
+  }));
+  const hostState = {schema:'refas.host-session-state/v1',sessionId,projectId:'project-fixture',sequence:events.length,events,operations:[],currentOperationId:null};
   const workerFile = path.join(root, 'worker.mjs');
   const extraOutcome = `${selfReportedMetrics ? ",reopenCount:99,firstMultiviewSeconds:0.001" : ''}${scoreField ? ",resemblanceScore:0.99" : ''}`;
-  await fs.writeFile(workerFile, `import fs from 'node:fs/promises'; import path from 'node:path';\nconst out=process.env.REFAS_BENCHMARK_OUTPUT; await fs.writeFile(path.join(out,'proof.json'),JSON.stringify({source:process.env.REFAS_BENCHMARK_REFERENCE,commit:process.env.REFAS_BENCHMARK_REFAS_COMMIT})); ${emitMultiview ? `await fs.mkdir(path.join(out,'renders','clay'),{recursive:true}); await fs.writeFile(path.join(out,'renders','clay','render-report.json'),JSON.stringify({presentation:{mode:'neutral-clay'},reportDigest:'${'a'.repeat(64)}',outputs:['hero','side','top','oblique','grazing'].map(viewId=>({viewId}))}));` : ''} ${emitReopen ? `await fs.writeFile(path.join(out,'reopen.json'),${JSON.stringify(JSON.stringify(route))});` : ''} await fs.writeFile(path.join(out,'outcome.json'),JSON.stringify({r04:'HOLD',vc03:'INSUFFICIENT',vc04:'HOLD',certification:'not-attempted',evidence:[{path:'proof.json'}]${extraOutcome}}));`);
+  const reopenScript = emitReopen
+    ? routeFallback
+      ? `await fs.writeFile(path.join(out,'reopen.json'),${JSON.stringify(JSON.stringify(route))}); await fs.writeFile(path.join(out,'reopen-copy.json'),${JSON.stringify(JSON.stringify(route))});`
+      : `await fs.mkdir(path.join(out,'.refas','host'),{recursive:true}); await fs.writeFile(path.join(out,'.refas','host','session.json'),${JSON.stringify(JSON.stringify(hostState))});`
+    : '';
+  await fs.writeFile(workerFile, `import fs from 'node:fs/promises'; import path from 'node:path';\nconst out=process.env.REFAS_BENCHMARK_OUTPUT; await fs.writeFile(path.join(out,'proof.json'),JSON.stringify({source:process.env.REFAS_BENCHMARK_REFERENCE,commit:process.env.REFAS_BENCHMARK_REFAS_COMMIT})); ${emitMultiview ? `await fs.mkdir(path.join(out,'renders','clay'),{recursive:true}); await fs.writeFile(path.join(out,'renders','clay','render-report.json'),JSON.stringify({presentation:{mode:'neutral-clay'},reportDigest:'${'a'.repeat(64)}',outputs:['hero','side','top','oblique','grazing'].map(viewId=>({viewId}))}));` : ''} ${reopenScript} await fs.writeFile(path.join(out,'outcome.json'),JSON.stringify({r04:'HOLD',vc03:'INSUFFICIENT',vc04:'HOLD',certification:'not-attempted',evidence:[{path:'proof.json'}]${extraOutcome}}));`);
   const head = execFileSync('git', ['rev-parse', 'HEAD'], {encoding:'utf8'}).trim();
   return {
     refasRoot: process.cwd(), expectedRefasCommit: head, references,
@@ -69,9 +91,10 @@ test('worker matrix runs every cell and runner derives operational observations'
     assert.equal(matrix.policy.operationalMetricsRunnerDerived, true);
     assert.ok(matrix.results.every((item) => item.logs.length === 2));
     assert.ok(matrix.results.every((item) => item.outcome?.evidence[0]?.sha256 && !item.error));
-    assert.ok(matrix.results.every((item) => item.outcome.reopenCount === 1));
+    assert.ok(matrix.results.every((item) => item.outcome.reopenCount === 2));
     assert.ok(matrix.results.every((item) => Number.isFinite(item.outcome.firstMultiviewSeconds) && item.outcome.firstMultiviewSeconds >= 0));
-    assert.ok(matrix.results.every((item) => item.outcome.observations.reopen.evidence[0]?.routeDigest));
+    assert.ok(matrix.results.every((item) => item.outcome.observations.reopen.derivation === 'unique-canonical-refas.host-event/v1-reopen-required-events'));
+    assert.ok(matrix.results.every((item) => item.outcome.observations.reopen.evidence[0]?.reopenEventIds.length === 2));
     assert.ok(matrix.results.every((item) => item.outcome.observations.firstMultiview.evidence?.viewIds.length === 5));
 
     const one = spawnSync(process.execPath, [script, '--manifest', manifestPath, '--out', path.join(root,'one'), '--only', 'articulated--model-a--plain'], {encoding:'utf8'});
@@ -99,6 +122,29 @@ test('worker matrix runs every cell and runner derives operational observations'
     const mismatch = spawnSync(process.execPath, [script, '--manifest', manifestPath, '--out', path.join(root,'other')], {encoding:'utf8'});
     assert.notEqual(mismatch.status, 0);
     assert.match(mismatch.stderr, /reference digest mismatch/u);
+  } finally { await fs.rm(root,{recursive:true,force:true}); }
+});
+
+test('host reopen events preserve repeated reopen occurrences and route fallback de-duplicates copies', async () => {
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'refas-benchmark-reopen-'));
+  try {
+    const hostManifest = await fixture(root, {reopenEvents:2});
+    const hostManifestPath = path.join(root, 'host-manifest.json');
+    await fs.writeFile(hostManifestPath, JSON.stringify(hostManifest));
+    const hostRun = spawnSync(process.execPath, [script, '--manifest', hostManifestPath, '--out', path.join(root,'host-runs'), '--only', 'articulated--model-a--plain'], {encoding:'utf8'});
+    assert.equal(hostRun.status, 0, hostRun.stderr);
+    const hostMatrix = JSON.parse(await fs.readFile(path.join(root,'host-runs','matrix.json'),'utf8'));
+    assert.equal(hostMatrix.results[0].outcome.reopenCount, 2);
+    assert.equal(hostMatrix.results[0].outcome.observations.reopen.evidence[0].reopenEventIds.length, 2);
+
+    const fallbackManifest = await fixture(root, {routeFallback:true});
+    const fallbackManifestPath = path.join(root, 'fallback-manifest.json');
+    await fs.writeFile(fallbackManifestPath, JSON.stringify(fallbackManifest));
+    const fallbackRun = spawnSync(process.execPath, [script, '--manifest', fallbackManifestPath, '--out', path.join(root,'fallback-runs'), '--only', 'articulated--model-a--plain'], {encoding:'utf8'});
+    assert.equal(fallbackRun.status, 0, fallbackRun.stderr);
+    const fallbackMatrix = JSON.parse(await fs.readFile(path.join(root,'fallback-runs','matrix.json'),'utf8'));
+    assert.equal(fallbackMatrix.results[0].outcome.reopenCount, 1);
+    assert.match(fallbackMatrix.results[0].outcome.observations.reopen.derivation, /^fallback-/u);
   } finally { await fs.rm(root,{recursive:true,force:true}); }
 });
 
