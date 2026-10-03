@@ -105,9 +105,55 @@ async function observeFirstNeutralClayMultiview(runDir, startedNs, child) {
     : {firstMultiviewSeconds: null, evidence: null};
 }
 
+function validateHostEvent(event, state, expectedSequence, file) {
+  if (!event || event.schema !== 'refas.host-event/v1') fail(`invalid persisted host event schema: ${path.relative(state.runDir, file)}`);
+  if (event.sessionId !== state.sessionId) fail(`persisted host event session mismatch: ${path.relative(state.runDir, file)}`);
+  if (event.sequence !== expectedSequence) fail(`persisted host event sequence gap at ${expectedSequence}: ${path.relative(state.runDir, file)}`);
+  const core = structuredClone(event);
+  const eventId = core.eventId;
+  delete core.eventId;
+  const expectedId = `event_${digestJson(core).slice(0, 20)}`;
+  if (eventId !== expectedId) fail(`persisted host event ID/content digest mismatch: ${path.relative(state.runDir, file)}`);
+  return eventId;
+}
+
 async function deriveReopenObservation(runDir) {
-  const unique = new Map();
-  for (const file of await listJsonFiles(runDir)) {
+  const files = await listJsonFiles(runDir);
+  const hostEvents = new Map();
+  const hostEvidence = [];
+  for (const file of files) {
+    const parsed = await readJsonCandidate(file);
+    const host = parsed?.value;
+    if (!host || host.schema !== 'refas.host-session-state/v1') continue;
+    if (!Array.isArray(host.events) || !Number.isSafeInteger(host.sequence) || host.sequence !== host.events.length) {
+      fail(`invalid persisted host event history: ${path.relative(runDir, file)}`);
+    }
+    if (!isId(host.sessionId)) fail(`invalid persisted host session id: ${path.relative(runDir, file)}`);
+    const reopenEventIds = [];
+    for (const [index, event] of host.events.entries()) {
+      const eventId = validateHostEvent(event, {sessionId: host.sessionId, runDir}, index + 1, file);
+      if (event.kind !== 'reopen-required') continue;
+      reopenEventIds.push(eventId);
+      hostEvents.set(eventId, {
+        eventId, sessionId: host.sessionId, sequence: event.sequence, time: event.time,
+        scopeId: event.scopeId ?? null, capability: event.capability ?? null,
+      });
+    }
+    hostEvidence.push({
+      path: path.relative(runDir, file).replaceAll('\\', '/'),
+      sha256: sha256(parsed.bytes), sizeBytes: parsed.bytes.length, sessionId: host.sessionId, reopenEventIds,
+    });
+  }
+  if (hostEvidence.length) {
+    return {
+      reopenCount: hostEvents.size,
+      derivation: 'unique-canonical-refas.host-event/v1-reopen-required-events',
+      evidence: hostEvidence.sort((a, b) => a.path.localeCompare(b.path)),
+    };
+  }
+
+  const routes = new Map();
+  for (const file of files) {
     const parsed = await readJsonCandidate(file);
     const route = parsed?.value;
     if (!route || route.schema !== 'refas.repair-route/v1' || route.action !== 'REOPEN_CAPABILITY') continue;
@@ -115,14 +161,18 @@ async function deriveReopenObservation(runDir) {
     const core = structuredClone(route);
     delete core.routeDigest;
     if (digestJson(core) !== route.routeDigest) fail(`persisted reopen route failed canonical digest verification: ${path.relative(runDir, file)}`);
-    if (!unique.has(route.routeDigest)) {
-      unique.set(route.routeDigest, {
+    if (!routes.has(route.routeDigest)) {
+      routes.set(route.routeDigest, {
         path: path.relative(runDir, file).replaceAll('\\', '/'),
         sha256: sha256(parsed.bytes), sizeBytes: parsed.bytes.length, routeDigest: route.routeDigest,
       });
     }
   }
-  return {reopenCount: unique.size, evidence: [...unique.values()].sort((a, b) => a.routeDigest.localeCompare(b.routeDigest))};
+  return {
+    reopenCount: routes.size,
+    derivation: 'fallback-unique-canonical-refas.repair-route/v1-REOPEN_CAPABILITY-digests',
+    evidence: [...routes.values()].sort((a, b) => a.routeDigest.localeCompare(b.routeDigest)),
+  };
 }
 
 async function main() {
@@ -245,7 +295,7 @@ async function main() {
         r04: raw.r04, vc03: raw.vc03, vc04: raw.vc04, certification: raw.certification,
         reopenCount: reopen.reopenCount, firstMultiviewSeconds: firstMultiview.firstMultiviewSeconds, evidence,
         observations: {
-          reopen: {derivation: 'unique-canonical-refas.repair-route/v1-REOPEN_CAPABILITY-digests', evidence: reopen.evidence},
+          reopen: {derivation: reopen.derivation, evidence: reopen.evidence},
           firstMultiview: {
             derivation: 'runner-monotonic-clock-to-first-persisted-neutral-clay-render-report-with-at-least-five-views',
             clock: 'monotonic-wall-clock', evidence: firstMultiview.evidence,
