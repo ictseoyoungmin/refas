@@ -5,7 +5,12 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {spawn, execFileSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
-import {BENCHMARK_CATEGORIES, digestJson} from '../../skills/refas/scripts/lib/index.mjs';
+import {
+  BENCHMARK_CATEGORIES,
+  digestJson,
+  NEUTRAL_CLAY_REQUIRED_VIEW_IDS,
+  validatePbrRenderReport,
+} from '../../skills/refas/scripts/lib/index.mjs';
 
 const sha256 = (bytes) => createHash('sha256').update(bytes).digest('hex');
 const fail = (message) => { throw new Error(message); };
@@ -47,6 +52,15 @@ function safeRelative(value, label) {
   return text.replaceAll('\\', '/');
 }
 
+function resolveInside(root, value) {
+  const text = String(value ?? '');
+  if (!text) return null;
+  const absolute = path.isAbsolute(text) ? path.resolve(text) : path.resolve(root, text);
+  const relative = path.relative(root, absolute);
+  if (!relative || relative === '..' || relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative)) return null;
+  return {absolute, relative: relative.replaceAll('\\', '/')};
+}
+
 async function listJsonFiles(root) {
   const found = [];
   const stack = [root];
@@ -77,18 +91,43 @@ async function readJsonCandidate(file) {
   }
 }
 
+async function verifyNeutralClayMultiviewCandidate(runDir, file, parsed) {
+  const report = parsed?.value;
+  if (!report || report.schema !== 'refas.pbr-render-report/v1' || report.presentation?.mode !== 'neutral-clay') return null;
+  const validation = validatePbrRenderReport(report);
+  if (!validation.valid) return null;
+
+  const outputs = new Map((report.outputs ?? []).map((output) => [output.viewId, output]));
+  const renderEvidence = [];
+  try {
+    for (const viewId of NEUTRAL_CLAY_REQUIRED_VIEW_IDS) {
+      const output = outputs.get(viewId);
+      if (!output || !isDigest(output.sha256)) return null;
+      const target = resolveInside(runDir, output.path);
+      if (!target) return null;
+      const bytes = await fs.readFile(target.absolute);
+      if (sha256(bytes) !== output.sha256) return null;
+      renderEvidence.push({viewId, path: target.relative, sha256: output.sha256, sizeBytes: bytes.length});
+    }
+  } catch (error) {
+    if (error.code === 'ENOENT' || error.code === 'EISDIR') return null;
+    throw error;
+  }
+
+  return {
+    path: path.relative(runDir, file).replaceAll('\\', '/'),
+    sha256: sha256(parsed.bytes), sizeBytes: parsed.bytes.length,
+    reportDigest: report.reportDigest,
+    viewIds: [...NEUTRAL_CLAY_REQUIRED_VIEW_IDS],
+    renders: renderEvidence,
+  };
+}
+
 async function findNeutralClayMultiview(runDir) {
   for (const file of await listJsonFiles(runDir)) {
     const parsed = await readJsonCandidate(file);
-    const report = parsed?.value;
-    if (!report || report.presentation?.mode !== 'neutral-clay' || !isDigest(report.reportDigest)) continue;
-    const viewIds = [...new Set((report.outputs ?? []).map((output) => output?.viewId).filter(Boolean))].sort();
-    if (viewIds.length < 5) continue;
-    return {
-      path: path.relative(runDir, file).replaceAll('\\', '/'),
-      sha256: sha256(parsed.bytes), sizeBytes: parsed.bytes.length,
-      reportDigest: report.reportDigest, viewIds,
-    };
+    const evidence = await verifyNeutralClayMultiviewCandidate(runDir, file, parsed);
+    if (evidence) return evidence;
   }
   return null;
 }
@@ -297,7 +336,7 @@ async function main() {
         observations: {
           reopen: {derivation: reopen.derivation, evidence: reopen.evidence},
           firstMultiview: {
-            derivation: 'runner-monotonic-clock-to-first-persisted-neutral-clay-render-report-with-at-least-five-views',
+            derivation: 'runner-monotonic-clock-to-first-canonical-neutral-clay-pbr-report-with-byte-verified-required-renders',
             clock: 'monotonic-wall-clock', evidence: firstMultiview.evidence,
           },
         },
