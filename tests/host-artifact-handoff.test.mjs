@@ -3,6 +3,8 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import {test} from 'node:test';
+import {spawnSync} from 'node:child_process';
+import {fileURLToPath} from 'node:url';
 
 import {
   CAPABILITY_ORDER,
@@ -18,6 +20,8 @@ import {
   digestBytes,
   getArtifactHandoff,
   getSourceBoundReleaseHandoff,
+  assertSourceBoundReleaseHandoffCurrent,
+  SOURCE_BOUND_RELEASE_HANDOFF_SCHEMA,
   validateSourceBoundReleaseHandoff,
   getHostEvents,
   initProject,
@@ -351,4 +355,57 @@ test('even an existing certificate cannot bypass incomplete source-bound QA cove
     /source-bound final handoff blocked by trusted QA coverage:/u,
   );
   assert.equal((await getArtifactHandoff(root)).handoffDigest, ordinary.handoffDigest);
+});
+
+test('source-bound final host CLI refuses a draft while keeping ordinary draft handoff compatible', async (t) => {
+  const projectId='source-bound-host-cli-probe';
+  const {root, artifactPath}=await tempProject(t,projectId);
+  await commitCandidate(root,artifactPath,'candidate-for-host-cli\n');
+  await openFixtureSession(root,projectId);
+  const cli=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../skills/refas/scripts/refas-host.mjs');
+  const run=(args)=>spawnSync(process.execPath,[cli,...args],{encoding:'utf8'});
+  const draft=run(['handoff','--root',root]);
+  assert.equal(draft.status,0,draft.stderr);
+  assert.equal(JSON.parse(draft.stdout).certification.status,'uncertified');
+  const final=run(['handoff','--root',root,'--profile','source-bound-object']);
+  assert.equal(final.status,1);
+  assert.match(final.stderr,/requires current certified RefAs whole-object state/u);
+  const unknown=run(['handoff','--root',root,'--profile','untrusted']);
+  assert.equal(unknown.status,1);
+  assert.match(unknown.stderr,/unknown artifact handoff profile/u);
+});
+
+test('re-signed fake certified handoff and fake QA receipt cannot bypass trusted currentness', async (t) => {
+  const projectId='source-bound-forgery-probe';
+  const {root, artifactPath, source}=await tempProject(t,projectId);
+  await commitCandidate(root,artifactPath,'candidate-for-claim-forgery\n');
+  await openFixtureSession(root,projectId);
+  const original=await getArtifactHandoff(root);
+  const handoff=structuredClone(original);
+  handoff.candidateTransactionDigest='a'.repeat(64);
+  handoff.certification={status:'certified',certificateDigest:'b'.repeat(64)};
+  delete handoff.handoffDigest;
+  handoff.handoffDigest=digestJson(handoff);
+  const payload={
+    schema:SOURCE_BOUND_RELEASE_HANDOFF_SCHEMA,
+    profile:'source-bound-object',
+    handoff,
+    qaCoverage:{
+      schema:'refas.qa-coverage-report/v1',
+      reportDigest:'c'.repeat(64),
+      sourceSha256:source.sha256,
+      assetSha256:handoff.artifact.sha256,
+      decision:'ELIGIBLE',
+    },
+    policy:{
+      finalTransferRequiresCertification:true,
+      finalTransferRequiresSourceBoundQa:true,
+      ordinaryHandoffIsNotSourceBoundRelease:true,
+      releaseHandoffCannotCreateCertification:true,
+    },
+  };
+  const forged={...payload,receiptDigest:digestJson(payload)};
+  assert.deepEqual(validateSourceBoundReleaseHandoff(forged),{valid:true,errors:[]});
+  await assert.rejects(assertSourceBoundReleaseHandoffCurrent(root,forged),/requires current certified RefAs whole-object state/u);
+  assert.equal((await getArtifactHandoff(root)).handoffDigest,original.handoffDigest);
 });
