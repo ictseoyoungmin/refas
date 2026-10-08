@@ -18,6 +18,7 @@ import {
   createPbrRenderReport,
   createVisualReview,
   digestBytes,
+  digestJson,
   getArtifactHandoff,
   getSourceBoundReleaseHandoff,
   assertSourceBoundReleaseHandoffCurrent,
