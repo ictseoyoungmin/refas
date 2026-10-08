@@ -59,7 +59,7 @@ async function sourceCheck(root, source) {
   }
 }
 
-async function evidenceCheck(root, head, entry, readiness) {
+async function evidenceCheck(root, head, entry, trustedCertified) {
   if (!head) return check(entry.id, entry.owner, 'NOT_RUN', 'no checkpoint head exists');
   const artifacts = head.artifactRefs ?? [];
   const selected = [];
@@ -77,8 +77,22 @@ async function evidenceCheck(root, head, entry, readiness) {
     if (actual !== artifact.sha256) return check(entry.id, entry.owner, 'FAIL', 'artifact byte digest mismatch for kind ' + kind);
     selected.push(actual);
   }
-  if (!readiness?.ready) return check(entry.id, entry.owner, 'INSUFFICIENT', 'current evidence bytes exist but certification validators have not closed', selected);
-  return check(entry.id, entry.owner, 'PASS', 'current digest-bound artifacts participate in passing certification readiness', selected);
+  // Presence, path containment, and SHA-256 equality establish file integrity, not
+  // independent typed validation. Never upgrade a user-authored result to PASS
+  // using an unrelated readiness boolean.
+  if (!trustedCertified) {
+    return check(entry.id, entry.owner, 'INSUFFICIENT',
+      'artifact bytes exist, but a current trusted certification/claim audit has not closed', selected);
+  }
+  if (entry.id === 'realized-contact-support') {
+    // Contact reports are not automatically included in every visual claim;
+    // a report cannot prove realized support without the current plan, graph,
+    // attachment semantics, and an independent candidate-GLB replay.
+    return check(entry.id, entry.owner, 'INSUFFICIENT',
+      'realized-contact report bytes exist but typed contact/support replay is not yet implemented by QA-01a', selected);
+  }
+  return check(entry.id, entry.owner, 'PASS',
+    'exact current artifacts participate in validated, audited RefAs whole-object certification', selected);
 }
 
 /**
@@ -125,10 +139,9 @@ export async function verifySourceBoundObject(root, assetFile) {
     try { claims=await assessClaimCertification(root); } catch { /* fail closed */ }
     try { audit=await auditProject(root); } catch { /* fail closed */ }
   }
-  for (const item of BINDINGS) checks.push(await evidenceCheck(root, head, item, readiness));
-
   const authoritative = Boolean(head && state?.certification && state.status === 'certified'
     && readiness?.ready && claims?.required && claims.valid && audit?.valid);
+  for (const item of BINDINGS) checks.push(await evidenceCheck(root, head, item, authoritative));
   const candidateIndex=checks.findIndex((item)=>item.id==='candidate-lineage');
   if (authoritative && checks[candidateIndex].status==='INSUFFICIENT') {
     checks[candidateIndex]=check('candidate-lineage','whole-object-certification','PASS',
@@ -149,7 +162,7 @@ export async function verifySourceBoundObject(root, assetFile) {
     checkpointId:state?.head ?? null,
     checks,
     decision:{state:blockingCheckIds.length ? 'BLOCKED' : 'ELIGIBLE',blockingCheckIds},
-    limits:['No independent source semantic detection is performed', 'QA-01a does not enforce final host handoff admission', 'This report is not a certificate'],
+    limits:['No independent source semantic detection is performed', 'QA-01a does not replay typed contact/support reports or enforce final host handoff admission', 'This report is not a certificate'],
   };
   return Object.freeze({...report, reportDigest:digestJson(report)});
 }

@@ -6,6 +6,7 @@ import test from 'node:test';
 
 import {createCylinder, digestBytes, initProject, partsToGlb} from '../skills/refas/scripts/lib/index.mjs';
 import {verifySourceBoundObject, QA_COVERAGE_SCHEMA} from '../skills/refas/scripts/lib/qa-coverage.mjs';
+import {loadProject} from '../skills/refas/scripts/lib/index.mjs';
 
 const materials={panel:{baseColor:[0.4,0.4,0.4,1],metallic:0,roughness:1}};
 
@@ -78,4 +79,20 @@ test('QA coverage cannot read a candidate through a symlink outside project root
  const link=path.join(root,'linked.glb');
  await fs.symlink(foreign,link);
  await assert.rejects(verifySourceBoundObject(root,link),/inside project root/u);
+});
+
+test('verification remains read-only and does not promote an uncheckpointed GLB',async (t)=>{
+ const root=await fs.mkdtemp(path.join(os.tmpdir(),'refas-qa-readonly-'));
+ t.after(()=>fs.rm(root,{recursive:true,force:true}));
+ await initProject(root,{projectId:'qa-no-hidden-certify'});
+ const mesh=createCylinder({center:[0,0,0],radius:0.15,height:0.4,segments:12});
+ const asset=path.join(root,'candidate.glb');
+ await fs.writeFile(asset,partsToGlb({parts:[{id:'qa-part',materialId:'panel',mesh}],materials}));
+ const before=JSON.stringify(await loadProject(root));
+ const first=await verifySourceBoundObject(root,asset);
+ const second=await verifySourceBoundObject(root,asset);
+ assert.equal(first.reportDigest,second.reportDigest);
+ assert.equal(first.decision.state,'BLOCKED');
+ assert.equal(JSON.stringify(await loadProject(root)),before);
+ assert.equal((await loadProject(root)).certification,null);
 });
