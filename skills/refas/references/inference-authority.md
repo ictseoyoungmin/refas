@@ -73,6 +73,16 @@ For relations deliberately placed under that barrier:
 
 When the barrier is blocked, use `routeRelationalBarrier()` rather than manually preserving downstream CLOSED states. See `references/whole-system-relational-barrier.md`.
 
+## Prior quarantine
+
+Reusable topology, generated meshes, and generated novel views are not forbidden, but they must not bypass the authority classes above.
+
+Use `refas.prior-quarantine/v1` for any external or generated prior that can influence hidden geometry. A quarantined prior is always `inferred` or `engineered`, never `observed`. Explicit semantic correspondences are required; nearest-surface proximity cannot create semantic authority.
+
+Mesh priors use exact raw/sanitized byte bindings. Runtime checks that morph targets and materials are absent from the sanitized seed and that its POSITION buffers differ from the raw prior. This keeps connectivity reusable without silently importing prior proportions.
+
+Quarantined paths may support spatial hypotheses or candidate seeding. They are prohibited as source evidence for VC02, R03, and whole-object certification. Project audit replays the quarantine lineage, so changing labels or re-signing downstream JSON cannot promote a prior into source truth.
+
 ## Certification does not promote authority
 
 For real-source whole-object certification, the exact semantic-authority-set bytes are sealed into `refas.certification-relational-evidence/v1` together with the exact relation graph, whole-system barrier, candidate-bound discrepancy, and candidate SHA-256.

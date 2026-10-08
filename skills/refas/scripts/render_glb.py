@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import io
 import json
 import math
 import os
@@ -142,16 +143,54 @@ class Primitive:
     roughness: float
     object_id: int
     name: str
+    texcoords: np.ndarray | None = None
+    base_color_texture: np.ndarray | None = None
+    base_color_texture_sha256: str | None = None
 
 
 def load_primitives(path: Path, parsed=None):
     model, binary = parsed if parsed is not None else parse_glb(path)
+    images = []
+    for image in model.get("images", []):
+        if image.get("mimeType") != "image/png" or "bufferView" not in image:
+            images.append((None, None))
+            continue
+        view = model["bufferViews"][image["bufferView"]]
+        start = int(view.get("byteOffset", 0))
+        end = start + int(view["byteLength"])
+        png = bytes(binary[start:end])
+        declared = image.get("extras", {}).get("refasSha256")
+        actual = hashlib.sha256(png).hexdigest()
+        if declared is not None and declared != actual:
+            raise ValueError("embedded base-color texture digest mismatch")
+        decoded = np.asarray(Image.open(io.BytesIO(png)).convert("RGBA"), dtype=np.float64) / 255.0
+        images.append((decoded, actual))
+    textures = model.get("textures", [])
     materials = []
     for material in model.get("materials", []):
         pbr = material.get("pbrMetallicRoughness", {})
-        materials.append((np.array(pbr.get("baseColorFactor", [0.7, 0.7, 0.7, 1])[:3], dtype=np.float64), float(pbr.get("metallicFactor", 0)), float(pbr.get("roughnessFactor", 0.5))))
+        texture = None
+        texture_sha256 = None
+        texture_info = pbr.get("baseColorTexture")
+        if texture_info is not None:
+            texture_index = int(texture_info.get("index", -1))
+            if texture_index < 0 or texture_index >= len(textures):
+                raise ValueError("baseColorTexture references unknown texture")
+            if int(texture_info.get("texCoord", 0)) != 0:
+                raise ValueError("portable renderer supports baseColorTexture texCoord 0 only")
+            image_index = int(textures[texture_index].get("source", -1))
+            if image_index < 0 or image_index >= len(images) or images[image_index][0] is None:
+                raise ValueError("baseColorTexture requires embedded PNG image")
+            texture, texture_sha256 = images[image_index]
+        materials.append({
+            "color": np.array(pbr.get("baseColorFactor", [0.7, 0.7, 0.7, 1])[:3], dtype=np.float64),
+            "metallic": float(pbr.get("metallicFactor", 0)),
+            "roughness": float(pbr.get("roughnessFactor", 0.5)),
+            "texture": texture,
+            "textureSha256": texture_sha256,
+        })
     if not materials:
-        materials = [(np.array([0.7, 0.7, 0.7]), 0.0, 0.5)]
+        materials = [{"color": np.array([0.7, 0.7, 0.7]), "metallic": 0.0, "roughness": 0.5, "texture": None, "textureSha256": None}]
     primitives = []
     roots = model.get("scenes", [{}])[model.get("scene", 0)].get("nodes", [])
 
@@ -170,8 +209,15 @@ def load_primitives(path: Path, parsed=None):
                 normals = (normal_matrix @ normals.T).T
                 norms = np.linalg.norm(normals, axis=1, keepdims=True)
                 normals = normals / np.where(norms > 1e-12, norms, 1)
-                color, metallic, roughness = materials[primitive.get("material", 0)]
-                primitives.append(Primitive(positions, normals, indices, color, metallic, roughness, len(primitives), node.get("name", mesh.get("name", f"part-{len(primitives)}"))))
+                material = materials[primitive.get("material", 0)]
+                texcoords = accessor(model, binary, primitive["attributes"]["TEXCOORD_0"]).astype(np.float64) if "TEXCOORD_0" in primitive["attributes"] else None
+                if material["texture"] is not None and (texcoords is None or len(texcoords) != len(positions)):
+                    raise ValueError("textured primitive requires TEXCOORD_0 for every vertex")
+                primitives.append(Primitive(
+                    positions, normals, indices, material["color"], material["metallic"], material["roughness"],
+                    len(primitives), node.get("name", mesh.get("name", f"part-{len(primitives)}")),
+                    texcoords=texcoords, base_color_texture=material["texture"], base_color_texture_sha256=material["textureSha256"]
+                ))
         for child in node.get("children", []):
             visit(child, world)
 

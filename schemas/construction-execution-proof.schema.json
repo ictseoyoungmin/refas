@@ -61,9 +61,22 @@
         },
         "rawGeometryWithoutAuthorityIsBlockoutOnly": {
           "const": true
+        },
+        "externalConstructionRequiresVerifiedReceipt": {
+          "const": true
+        },
+        "externalConstructionRequiresByteExactReplay": {
+          "const": true
         }
       },
       "additionalProperties": false
+    },
+    "externalReceipts": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "external-construction-receipt.schema.json"
+      }
     },
     "proofDigest": {
       "$ref": "common.schema.json#/$defs/digest"
@@ -119,7 +132,9 @@
             "surface-network-parts",
             "section-profile-loft-rigid",
             "section-profile-loft-organic",
-            "assembly-decomposition"
+            "assembly-decomposition",
+            "external-construction",
+            "subdivision-cage-organic"
           ]
         },
         "vocabularyDigest": {
@@ -145,6 +160,9 @@
           "$ref": "common.schema.json#/$defs/digest"
         },
         "geometrySha256": {
+          "$ref": "common.schema.json#/$defs/digest"
+        },
+        "externalReceiptDigest": {
           "$ref": "common.schema.json#/$defs/digest"
         },
         "executionDigest": {

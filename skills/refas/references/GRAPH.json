@@ -731,6 +731,144 @@
             }
           },
           {
+            "id": "prior-quarantine",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createPriorQuarantine"
+            },
+            "template": null,
+            "inputContract": "real source SHA-256 + typed topology/generative-mesh/novel-view prior + inferred/engineered authority + exact raw/sanitized bytes when mesh-based + explicit semantic correspondences + transfer/strip policy",
+            "outputSchema": "refas.prior-quarantine/v1",
+            "validator": {
+              "library": "validatePriorQuarantine"
+            },
+            "minimumInvocation": "references/spatial-reasoning.md",
+            "example": null,
+            "usageReference": "references/spatial-reasoning.md",
+            "publicConstants": [
+              "PRIOR_QUARANTINE_SCHEMA",
+              "PRIOR_QUARANTINE_KINDS",
+              "PRIOR_QUARANTINE_AUTHORITIES",
+              "PRIOR_TRANSFER_KINDS",
+              "PRIOR_STRIP_FEATURES",
+              "PRIOR_CORRESPONDENCE_METHODS"
+            ],
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "byte-bound mesh sanitization requires exact raw/sanitized GLB inputs; installed-skill fresh-worker verifies executable behavior"
+            }
+          },
+          {
+            "id": "resolve-prior-quarantine-authority",
+            "operation": "inspect",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "resolvePriorQuarantineAuthority"
+            },
+            "template": null,
+            "inputContract": "initialized project root + optional checkpoint selector; runtime replays frozen prior quarantines and rejects source-authority leakage",
+            "outputSchema": "refas.prior-quarantine-authority/v1",
+            "validator": {
+              "library": "validatePriorQuarantineAuthority"
+            },
+            "minimumInvocation": "references/spatial-reasoning.md",
+            "example": null,
+            "usageReference": "references/spatial-reasoning.md",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "stateful lineage replay binds exact prior artifacts and source-authority consumers"
+            }
+          },
+          {
+            "id": "blockout-competition-policy",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createBlockoutCompetitionPolicy"
+            },
+            "template": "assets/templates/capability-interface-inputs.json#/templates/spatial-reasoning~1blockout-competition-policy",
+            "inputContract": "bound visual hierarchy + exact source SHA-256 + advisory/required policy + whole/major-region scope IDs",
+            "outputSchema": "refas.blockout-competition-policy/v1",
+            "validator": {
+              "library": "validateBlockoutCompetitionPolicy"
+            },
+            "minimumInvocation": "references/spatial-reasoning.md",
+            "example": null,
+            "templateProcessor": {
+              "library": "materializeCapabilityInputTemplate"
+            },
+            "publicConstants": [
+              "BLOCKOUT_COMPETITION_POLICY_SCHEMA",
+              "BLOCKOUT_COMPETITION_MODES",
+              "BLOCKOUT_COMPETITION_ELIGIBLE_LEVELS"
+            ],
+            "usageReference": "references/spatial-reasoning.md",
+            "templateRole": "operation-input",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "source/hierarchy-bound policy is validated by runtime and regression fixtures; project-specific hierarchy bytes are not synthesized by the generic interface exerciser"
+            }
+          },
+          {
+            "id": "blockout-competition-decision",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createBlockoutCompetitionDecision"
+            },
+            "template": null,
+            "inputContract": "required competition policy + bound hierarchy/scope + unresolved competing spatial hypothesis set + frozen VC02 authority + at least two exact candidate GLBs, canonical neutral-clay reports, R03 signature evidence, and VC01 evidence; VC03 is runtime-derived",
+            "outputSchema": "refas.blockout-competition-decision/v1",
+            "validator": {
+              "library": "validateBlockoutCompetitionDecision"
+            },
+            "minimumInvocation": "references/spatial-reasoning.md",
+            "example": null,
+            "usageReference": "references/spatial-reasoning.md",
+            "publicConstants": [
+              "BLOCKOUT_COMPETITION_DECISION_SCHEMA"
+            ],
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "candidate-bound competition derives exact GLB digests and VC03 classifications, retains rejected candidates, and is replayed by shape-reconstruction admission"
+            }
+          },
+          {
+            "id": "bilateral-pair-realization",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createBilateralPairRealization"
+            },
+            "template": null,
+            "inputContract": "exact candidate GLB bytes + validated relational structure containing a bilateral-pair relation + camera evidence + per-instance pose explanations",
+            "outputSchema": "refas.bilateral-pair-realization/v1",
+            "validator": {
+              "library": "validateBilateralPairRealization"
+            },
+            "minimumInvocation": "references/spatial-reasoning.md",
+            "example": null,
+            "usageReference": "references/spatial-reasoning.md",
+            "publicConstants": [
+              "BILATERAL_PAIR_REALIZATION_SCHEMA"
+            ],
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "candidate-bound evaluator derives local rest geometry and node transform parity from the exact GLB bytes and enforces the bilateral relation"
+            }
+          },
+          {
             "id": "reference-registration",
             "operation": "create",
             "cli": {
@@ -1500,6 +1638,54 @@
             }
           },
           {
+            "id": "external-construction-receipt",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createExternalConstructionReceipt"
+            },
+            "template": null,
+            "inputContract": "validated external-construction permit + exact tool/version + script digest + canonical argv/version invocation template + source/guide/prior input digests + byte-exact output GLB digest",
+            "outputSchema": "refas.external-construction-receipt/v1",
+            "validator": {
+              "library": "validateExternalConstructionReceipt"
+            },
+            "minimumInvocation": "references/construction.md",
+            "example": null,
+            "publicConstants": [
+              "EXTERNAL_CONSTRUCTION_RECEIPT_SCHEMA"
+            ],
+            "usageReference": "references/construction.md",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "receipt creation is chained to a resolved construction decision and permit; external-tool dogfood verifies the complete execution path"
+            }
+          },
+          {
+            "id": "external-construction-attestation",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "attestExternalConstruction"
+            },
+            "template": null,
+            "inputContract": "validated external-construction permit + external command/version probe + exact script bytes + exact source/guide/prior input bytes + argv template; runtime executes two isolated runs and requires byte-exact GLB replay",
+            "outputSchema": null,
+            "validator": null,
+            "minimumInvocation": "references/construction.md",
+            "example": null,
+            "usageReference": "references/construction.md",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "runtime verifies exact script/input digests and byte-exact reexecution, then returns the attested candidate plus refas.construction-execution-proof/v1"
+            },
+            "note": "Receipt existence alone has no identity authority. The runtime probes the actual tool version, writes exact script/input bytes into fresh run directories, executes the command twice with shell:false, requires byte-identical GLBs, embeds refas.construction-execution/v1, and produces candidate-bound execution proof."
+          },
+          {
             "id": "surface-network-parts",
             "operation": "create",
             "cli": null,
@@ -1541,6 +1727,28 @@
               "verification": "structural",
               "reason": "permit-consuming high-level geometry wrapper"
             }
+          },
+          {
+            "id": "subdivision-cage-organic",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "createPermittedSubdivisionCageOrganic"
+            },
+            "template": null,
+            "inputContract": "validated organic construction decision + subdivision-cage-organic permit + closed control cage with per-vertex provenance, optional landmark bindings, crease weights, and 1..4 subdivision levels",
+            "outputSchema": null,
+            "validator": null,
+            "minimumInvocation": "references/construction.md",
+            "example": null,
+            "usageReference": "references/construction.md",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "runtime consumes the organic permit, validates the closed manifold control cage, performs deterministic Catmull-Clark subdivision, and emits watertight candidate geometry with provenance-bound cage metadata"
+            },
+            "note": "Control vertices require observed/inferred/engineered provenance. Generated subdivision surface remains engineered realization; control evidence is preserved in GLB mesh extras."
           },
           {
             "id": "construction-execution-proof",
@@ -4088,6 +4296,33 @@
               },
               "outputSchemaPointer": "/report/schema"
             }
+          },
+          {
+            "id": "structural-plausibility",
+            "operation": "evaluate",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "analyzeStructuralPlausibility"
+            },
+            "template": null,
+            "inputContract": "validated attachment semantics with optional embedded-root/groundSupport declarations + exact candidate GLB bytes",
+            "outputSchema": "refas.structural-plausibility/v1",
+            "validator": {
+              "library": "validateStructuralPlausibility"
+            },
+            "minimumInvocation": "references/realized-contact-support.md",
+            "example": null,
+            "usageReference": "references/realized-contact-support.md",
+            "publicConstants": [
+              "STRUCTURAL_PLAUSIBILITY_SCHEMA"
+            ],
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "candidate-bound evaluator derives root-in-parent-volume and grounded COM/support-polygon evidence from exact active-scene GLB geometry"
+            },
+            "note": "Separate from contact authority: touching a parent surface does not prove an embedded root, and support graph reachability does not prove static balance."
           }
         ]
       }
@@ -4119,7 +4354,7 @@
             },
             "library": null,
             "template": "assets/templates/canonical-object-frame.json",
-            "inputContract": "GLB + canonical object frame + optional reference image",
+            "inputContract": "GLB + canonical object frame + optional reference image; supports factor PBR plus embedded PNG baseColorTexture/TEXCOORD_0",
             "outputSchema": "refas.pbr-render-report/v1",
             "validator": null,
             "minimumInvocation": "references/appearance.md",
@@ -4133,6 +4368,31 @@
             }
           },
           {
+            "id": "generate-uv-coordinates",
+            "operation": "create",
+            "cli": null,
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "generateUvCoordinates"
+            },
+            "template": null,
+            "inputContract": "valid triangle mesh + planar/cylindrical/per-section UV mapping policy; per-section requires section-profile loft metadata",
+            "outputSchema": null,
+            "validator": null,
+            "minimumInvocation": "references/appearance.md",
+            "example": null,
+            "usageReference": "references/appearance.md",
+            "publicConstants": [
+              "UV_MAPPING_SCHEMA",
+              "UV_MAPPING_METHODS"
+            ],
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "mesh-bound operation returns the original mesh plus refas.uv-mapping/v1 metadata and TEXCOORD_0-ready uvs; regression and textured-material dogfood execute the runtime path"
+            }
+          },
+          {
             "id": "pbr-render-report",
             "operation": "create",
             "cli": null,
@@ -4141,7 +4401,7 @@
               "symbol": "createPbrRenderReport"
             },
             "template": "assets/templates/capability-interface-inputs.json#/templates/appearance~1pbr-render-report",
-            "inputContract": "exact asset/frame digests + renderer identity/features + output frame digests",
+            "inputContract": "exact asset/frame digests + renderer identity/features + optional embedded base-color texture digest bindings + output frame digests",
             "outputSchema": "refas.pbr-render-report/v1",
             "validator": {
               "library": "validatePbrRenderReport"

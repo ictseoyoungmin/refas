@@ -42,6 +42,20 @@ A correct projected endpoint does not prove a correct 3D pose. Two candidates ma
 
 Use T-junctions, overlap, cast shadows, contour termination, relative sharpness, and grazing highlights as cues. Store the inferred front-to-back relation and its confidence. A relation with weak evidence remains a hypothesis.
 
+## Bilateral asymmetry: camera and pose before separate geometry
+
+When paired parts appear different in one view, do not fit each side independently by default. Declare a `bilateral-pair` relation first and prefer one shared rest construction mirrored across the sagittal plane.
+
+Visible left/right differences should be explained in this order:
+
+1. camera projection and near/far perspective;
+2. per-instance articulation pose;
+3. only then source-supported intrinsic rest-shape asymmetry.
+
+Use `createBilateralPairRealization()` after candidate construction. It binds the exact GLB candidate, derives local rest geometry from both active-scene pair nodes, and rejects independent rest geometry under `shared-mirrored`. A shared pair also requires an explicit mirror axis and object-frame mirror-plane coordinate, the declared `±halfSpan` root placement around that plane, a scale-sign flip only on that axis, camera evidence, and pose evidence for both instances. Inactive nodes, parent-wrapped nodes, skin/morph deformation, and opaque matrix transforms cannot satisfy the initial shared-mirror contract.
+
+Image-space pair separation is correspondence evidence, not direct lateral-depth authority. Never turn the left/right pixel gap into object-space half-span merely because it improves the hero view. The paired relation records the chosen half-span basis explicitly and permits only `inferred` or `engineered` lateral-span authority.
+
 ## Projection anchoring
 
 Visible boundaries are constraints in image space. When constructing seams, cells, or relief:
@@ -75,6 +89,48 @@ The optional registered hero camera is written in canonical local coordinates an
 
 When a single frontal view can be matched by a deceptively flat candidate, or when it is unclear how to distinguish source facts from the 3D completion needed for a coherent asset, read `references/single-view-volumetric-reasoning-example.md`. The example demonstrates observation -> spatial hypothesis -> orthogonal self-check -> revision while keeping inferred geometry distinct from observed source truth.
 
+
+## Prior quarantine for hidden-form aids
+
+RefAs may use topology templates, generated meshes, or generated novel views as **priors**, but only through `refas.prior-quarantine/v1`.
+
+The quarantine separates useful construction guidance from source authority:
+
+- `kind` is `topology`, `generative-mesh`, or `novel-view`;
+- `authority` is only `inferred` or `engineered`; `observed` is invalid;
+- transferable information is limited to `connectivity`, explicit `landmark-correspondence`, and coarse-volume hypotheses;
+- raw vertex proportions, shape keys, modifiers, and materials are stripped/quarantined rather than promoted to source facts;
+- semantic correspondence is explicit; nearest-surface or generic proximity is not correspondence.
+
+For topology/generative-mesh priors, the runtime binds exact raw and sanitized GLB bytes. The sanitized seed must remove morph targets and materials, and its POSITION-buffer digest must differ from the raw prior so original vertex proportions are not silently reused verbatim.
+
+A generated side/back view may appear in a spatial hypothesis as inferred evidence. It cannot satisfy source-facing authority. Checkpoint lineage replay rejects quarantined paths when they appear as source authority in VC02 spatial-role evidence, R03 perceptual-signature evidence, or whole-object certification evidence. Introducing a quarantine later also rechecks earlier lineage so a prior cannot be retroactively laundered into source truth.
+
+Prior quarantine is additive and does not forbid priors. It defines their ceiling:
+
+```text
+prior artifact
+   ↓ inferred / engineered hypothesis or candidate seed
+candidate construction
+   ↓
+real-source R03 / VC02 / certification evidence
+```
+
+The primary source remains the only source-fact authority. Quarantine does not certify a prior, and certification never promotes inferred or engineered prior information to observed.
+
+## Competing neutral-clay blockouts before shape hardening
+
+When camera-vs-geometry ambiguity can materially change a volumetric whole or major region, use a blockout competition policy instead of hardening the first plausible reconstruction.
+
+`refas.blockout-competition-policy/v1` is source/hierarchy-bound and policy-gated. Absence of the policy remains advisory for compatibility. When `mode: required` targets a whole or major-region scope whose frozen VC02 role is volumetric, layered-volume, or rod-tubular, shape reconstruction cannot establish its authoritative candidate until a candidate-bound competition decision exists.
+
+A valid `refas.blockout-competition-decision/v1` requires at least two distinct realized GLBs, each tied to a distinct unresolved spatial hypothesis. Each candidate carries the same R03 signature-set authority, a canonical neutral-clay multiview report, exact VC01 measurements, and a runtime-derived VC03 classification. The selection must cite typed R03 and VC03 reasons; an aggregate resemblance score, single-view IoU, or convenience-of-modeling rank cannot choose the winner. Rejected candidates remain in the decision as rejected evidence.
+
+The intended camera-induced asymmetry test is explicit: keep alternatives such as near-symmetric object + camera yaw and intrinsically asymmetric object alive through canonical side/top/grazing inspection. If the former explains the source without baking view-dependent imbalance into object space, record that evidence and reject the intrinsic-asymmetry candidate. Genuine source-supported asymmetry remains expressible as a competing hypothesis; the policy does not impose symmetry as a universal rule.
+
+At shape-reconstruction admission, RefAs replays the frozen policy, exact spatial hypothesis set, frozen VC02 authority, every exact candidate GLB byte sequence, canonical neutral-clay outputs, embedded R03 evidence, VC01 evidence, and runtime-derived VC03 classifications. The shape candidate SHA-256 must equal the selected competition candidate SHA-256. A missing competition, one realized candidate, stale candidate bytes, forged/re-signed decision, or selection of a planar-collapsed volumetric candidate fails closed.
+
+This selection is hypothesis authority only. It does not replace R04 early resemblance, VC04 whole-before-parts admission, VC06 final-candidate continuity, visual review, or final certification.
 
 ## VC01 candidate-bound spatial closure evidence
 

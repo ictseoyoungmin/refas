@@ -157,6 +157,7 @@ async function synthesizedTransactionContext(root, state, head, reviewArtifact, 
     for (const spec of RELATIONAL_ARTIFACT_SPECS) evidence.push(relationalEvidenceNode(spec, relational[spec.key]));
     const closure = createCertificationRelationalEvidence({
       candidateAssetSha256: review.assetSha256,
+      candidateGlbBytes: candidateBytes,
       relationalStructureBytes: relational.relationalStructure.bytes,
       semanticAuthorityBytes: relational.semanticAuthority.bytes,
       relationalBarrierBytes: relational.relationalBarrier.bytes,
@@ -349,7 +350,7 @@ async function validateTransactionFinalCandidateAuthority(root, state, head, tra
   };
 }
 
-function validateTransactionRelationalClosure(transactionContext, {required = true} = {}) {
+function validateTransactionRelationalClosure(transactionContext, {required = true, candidateBytes = null} = {}) {
   const {transaction} = transactionContext;
   const closureNodes = transaction.evidenceNodes.filter((node) => node.role === 'relational-closure' && node.schema === CERTIFICATION_RELATIONAL_EVIDENCE_SCHEMA);
   if (!closureNodes.length) {
@@ -364,7 +365,7 @@ function validateTransactionRelationalClosure(transactionContext, {required = tr
   const closureBytes = evidenceBytes(transactionContext, closureNode.id);
   if (closureBytes == null) throw new Error('relational closure evidence bytes are missing');
   const closure = jsonBytes(closureBytes, 'relational closure evidence');
-  const context = {candidateAssetSha256:transaction.rootCandidate.sha256};
+  const context = {candidateAssetSha256:transaction.rootCandidate.sha256,candidateGlbBytes:candidateBytes};
   for (const spec of RELATIONAL_ARTIFACT_SPECS) {
     const binding = closure?.artifacts?.[spec.key];
     const matches = matchingEvidenceNodes(transaction, binding, spec);
@@ -444,7 +445,7 @@ export async function assessClaimCertification(root) {
       transactionContext,
       {required:!fixture},
     );
-    const relationalClosure = validateTransactionRelationalClosure(transactionContext, {required:!fixture});
+    const relationalClosure = validateTransactionRelationalClosure(transactionContext, {required:!fixture,candidateBytes});
 
     const {policy, policySource} = await policyForHead(root, state, head);
     const recomputedDecision = evaluateCertificationPolicy({

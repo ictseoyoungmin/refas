@@ -4,70 +4,411 @@
   "title": "RefAs candidate-bound relational discrepancy",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema", "scopeId", "sourceSha256", "candidateAssetSha256", "relationalStructure", "relationalStructureDigest", "requiredRelationIds", "observations", "checks", "failedRelationIds", "unresolvedRelationIds", "status", "eligible", "policy", "discrepancyDigest"],
+  "required": [
+    "schema",
+    "scopeId",
+    "sourceSha256",
+    "candidateAssetSha256",
+    "relationalStructure",
+    "relationalStructureDigest",
+    "requiredRelationIds",
+    "observations",
+    "checks",
+    "failedRelationIds",
+    "unresolvedRelationIds",
+    "status",
+    "eligible",
+    "policy",
+    "discrepancyDigest"
+  ],
   "properties": {
-    "schema": {"const": "refas.relational-discrepancy/v1"},
-    "scopeId": {"$ref": "common.schema.json#/$defs/semanticId"},
-    "sourceSha256": {"$ref": "common.schema.json#/$defs/digest"},
-    "candidateAssetSha256": {"$ref": "common.schema.json#/$defs/digest"},
-    "relationalStructure": {"$ref": "relational-structure.schema.json"},
-    "relationalStructureDigest": {"$ref": "common.schema.json#/$defs/digest"},
-    "requiredRelationIds": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "common.schema.json#/$defs/semanticId"}},
-    "observations": {
-      "type": "array", "minItems": 1,
+    "schema": {
+      "const": "refas.relational-discrepancy/v1"
+    },
+    "scopeId": {
+      "$ref": "common.schema.json#/$defs/semanticId"
+    },
+    "sourceSha256": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "candidateAssetSha256": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "relationalStructure": {
+      "$ref": "relational-structure.schema.json"
+    },
+    "relationalStructureDigest": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "requiredRelationIds": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
       "items": {
-        "type": "object", "additionalProperties": false,
-        "required": ["relationId", "evidenceRefs"],
+        "$ref": "common.schema.json#/$defs/semanticId"
+      }
+    },
+    "observations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "relationId",
+          "evidenceRefs"
+        ],
         "properties": {
-          "relationId": {"$ref": "common.schema.json#/$defs/semanticId"},
-          "evidenceRefs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
-          "value": {"type": "number"},
-          "error": {"type": "number", "minimum": 0},
-          "orderedEntityIds": {"type": "array", "uniqueItems": true, "items": {"$ref": "common.schema.json#/$defs/semanticId"}},
-          "continuity": {"enum": ["smooth", "broken", "stepped", "unknown"]}
+          "relationId": {
+            "$ref": "common.schema.json#/$defs/semanticId"
+          },
+          "evidenceRefs": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "value": {
+            "type": "number"
+          },
+          "error": {
+            "type": "number",
+            "minimum": 0
+          },
+          "orderedEntityIds": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "$ref": "common.schema.json#/$defs/semanticId"
+            }
+          },
+          "continuity": {
+            "enum": [
+              "smooth",
+              "broken",
+              "stepped",
+              "unknown"
+            ]
+          },
+          "bilateralPairRealization": {
+            "$ref": "bilateral-pair-realization.schema.json"
+          }
         }
       }
     },
     "checks": {
-      "type": "array", "minItems": 1,
+      "type": "array",
+      "minItems": 1,
       "items": {
-        "type": "object", "additionalProperties": false,
-        "required": ["relationId", "relationKind", "importance", "status", "residual", "measurement", "evidenceRefs"],
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "relationId",
+          "relationKind",
+          "importance",
+          "status",
+          "residual",
+          "measurement",
+          "evidenceRefs"
+        ],
         "properties": {
-          "relationId": {"$ref": "common.schema.json#/$defs/semanticId"},
-          "relationKind": {"enum": ["distance-ratio", "alignment", "ordering", "plane-chain", "volume-ratio"]},
-          "importance": {"enum": ["macro", "identity", "detail"]},
-          "status": {"enum": ["pass", "fail", "unresolved"]},
-          "residual": {"anyOf": [{"type": "number", "minimum": 0}, {"type": "null"}]},
-          "measurement": {
-            "oneOf": [
-              {"type": "object", "additionalProperties": false, "required": ["kind", "observedValue", "expectedRange"], "properties": {"kind": {"const": "range"}, "observedValue": {"anyOf": [{"type": "number"}, {"type": "null"}]}, "expectedRange": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "number"}}}},
-              {"type": "object", "additionalProperties": false, "required": ["kind", "observedError", "tolerance", "mode"], "properties": {"kind": {"const": "alignment-error"}, "observedError": {"anyOf": [{"type": "number", "minimum": 0}, {"type": "null"}]}, "tolerance": {"anyOf": [{"type": "number", "minimum": 0}, {"type": "null"}]}, "mode": {"enum": ["collinear", "parallel", "perpendicular", "coplanar", "centered", "symmetric"]}}},
-              {"type": "object", "additionalProperties": false, "required": ["kind", "expectedEntityIds", "observedEntityIds"], "properties": {"kind": {"const": "ordering"}, "expectedEntityIds": {"type": "array", "minItems": 2, "items": {"$ref": "common.schema.json#/$defs/semanticId"}}, "observedEntityIds": {"anyOf": [{"type": "array", "minItems": 2, "items": {"$ref": "common.schema.json#/$defs/semanticId"}}, {"type": "null"}]}}},
-              {"type": "object", "additionalProperties": false, "required": ["kind", "expectedContinuity", "observedContinuity"], "properties": {"kind": {"const": "plane-chain"}, "expectedContinuity": {"enum": ["smooth", "broken", "stepped", "unknown"]}, "observedContinuity": {"anyOf": [{"enum": ["smooth", "broken", "stepped", "unknown"]}, {"type": "null"}]}}}
+          "relationId": {
+            "$ref": "common.schema.json#/$defs/semanticId"
+          },
+          "relationKind": {
+            "enum": [
+              "distance-ratio",
+              "alignment",
+              "ordering",
+              "plane-chain",
+              "volume-ratio",
+              "bilateral-pair"
             ]
           },
-          "evidenceRefs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+          "importance": {
+            "enum": [
+              "macro",
+              "identity",
+              "detail"
+            ]
+          },
+          "status": {
+            "enum": [
+              "pass",
+              "fail",
+              "unresolved"
+            ]
+          },
+          "residual": {
+            "anyOf": [
+              {
+                "type": "number",
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "measurement": {
+            "oneOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "kind",
+                  "observedValue",
+                  "expectedRange"
+                ],
+                "properties": {
+                  "kind": {
+                    "const": "range"
+                  },
+                  "observedValue": {
+                    "anyOf": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "expectedRange": {
+                    "type": "array",
+                    "minItems": 2,
+                    "maxItems": 2,
+                    "items": {
+                      "type": "number"
+                    }
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "kind",
+                  "observedError",
+                  "tolerance",
+                  "mode"
+                ],
+                "properties": {
+                  "kind": {
+                    "const": "alignment-error"
+                  },
+                  "observedError": {
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "tolerance": {
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "mode": {
+                    "enum": [
+                      "collinear",
+                      "parallel",
+                      "perpendicular",
+                      "coplanar",
+                      "centered",
+                      "symmetric"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "kind",
+                  "expectedEntityIds",
+                  "observedEntityIds"
+                ],
+                "properties": {
+                  "kind": {
+                    "const": "ordering"
+                  },
+                  "expectedEntityIds": {
+                    "type": "array",
+                    "minItems": 2,
+                    "items": {
+                      "$ref": "common.schema.json#/$defs/semanticId"
+                    }
+                  },
+                  "observedEntityIds": {
+                    "anyOf": [
+                      {
+                        "type": "array",
+                        "minItems": 2,
+                        "items": {
+                          "$ref": "common.schema.json#/$defs/semanticId"
+                        }
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "kind",
+                  "expectedContinuity",
+                  "observedContinuity"
+                ],
+                "properties": {
+                  "kind": {
+                    "const": "plane-chain"
+                  },
+                  "expectedContinuity": {
+                    "enum": [
+                      "smooth",
+                      "broken",
+                      "stepped",
+                      "unknown"
+                    ]
+                  },
+                  "observedContinuity": {
+                    "anyOf": [
+                      {
+                        "enum": [
+                          "smooth",
+                          "broken",
+                          "stepped",
+                          "unknown"
+                        ]
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "kind",
+                  "realizationDigest",
+                  "restGeometryPolicy"
+                ],
+                "properties": {
+                  "kind": {
+                    "const": "bilateral-pair-realization"
+                  },
+                  "realizationDigest": {
+                    "anyOf": [
+                      {
+                        "$ref": "common.schema.json#/$defs/digest"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "restGeometryPolicy": {
+                    "enum": [
+                      "shared-mirrored",
+                      "observed-intrinsic-asymmetry"
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          "evidenceRefs": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
         }
       }
     },
-    "failedRelationIds": {"type": "array", "uniqueItems": true, "items": {"$ref": "common.schema.json#/$defs/semanticId"}},
-    "unresolvedRelationIds": {"type": "array", "uniqueItems": true, "items": {"$ref": "common.schema.json#/$defs/semanticId"}},
-    "status": {"enum": ["PASS", "INELIGIBLE"]},
-    "eligible": {"type": "boolean"},
-    "policy": {
-      "type": "object", "additionalProperties": false,
-      "required": ["exactCandidateAssetIsBound", "exactRelationalStructureIsEmbedded", "wholeSystemMacroIdentityRelationsOnly", "relationalInvalidityIsHardBarrier", "relationalInvalidityIsNeverScorePenalty", "relationalMetricsCannotPassVisualGate", "missingMeasurementRemainsUnresolved"],
-      "properties": {
-        "exactCandidateAssetIsBound": {"const": true},
-        "exactRelationalStructureIsEmbedded": {"const": true},
-        "wholeSystemMacroIdentityRelationsOnly": {"const": true},
-        "relationalInvalidityIsHardBarrier": {"const": true},
-        "relationalInvalidityIsNeverScorePenalty": {"const": true},
-        "relationalMetricsCannotPassVisualGate": {"const": true},
-        "missingMeasurementRemainsUnresolved": {"const": true}
+    "failedRelationIds": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "common.schema.json#/$defs/semanticId"
       }
     },
-    "discrepancyDigest": {"$ref": "common.schema.json#/$defs/digest"}
+    "unresolvedRelationIds": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "common.schema.json#/$defs/semanticId"
+      }
+    },
+    "status": {
+      "enum": [
+        "PASS",
+        "INELIGIBLE"
+      ]
+    },
+    "eligible": {
+      "type": "boolean"
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "exactCandidateAssetIsBound",
+        "exactRelationalStructureIsEmbedded",
+        "wholeSystemMacroIdentityRelationsOnly",
+        "relationalInvalidityIsHardBarrier",
+        "relationalInvalidityIsNeverScorePenalty",
+        "relationalMetricsCannotPassVisualGate",
+        "missingMeasurementRemainsUnresolved"
+      ],
+      "properties": {
+        "exactCandidateAssetIsBound": {
+          "const": true
+        },
+        "exactRelationalStructureIsEmbedded": {
+          "const": true
+        },
+        "wholeSystemMacroIdentityRelationsOnly": {
+          "const": true
+        },
+        "relationalInvalidityIsHardBarrier": {
+          "const": true
+        },
+        "relationalInvalidityIsNeverScorePenalty": {
+          "const": true
+        },
+        "relationalMetricsCannotPassVisualGate": {
+          "const": true
+        },
+        "missingMeasurementRemainsUnresolved": {
+          "const": true
+        }
+      }
+    },
+    "discrepancyDigest": {
+      "$ref": "common.schema.json#/$defs/digest"
+    }
   }
 }

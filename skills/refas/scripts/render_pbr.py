@@ -81,6 +81,37 @@ def pbr_shade(base, normal, view, metallic, roughness, lights=None, exposure=0.0
     return np.clip(result / (1.0 + result), 0.0, 1.0)
 
 
+def srgb_to_linear(rgb):
+    rgb = np.clip(np.asarray(rgb, dtype=np.float64), 0.0, 1.0)
+    return np.where(rgb <= 0.04045, rgb / 12.92, np.power((rgb + 0.055) / 1.055, 2.4))
+
+
+def sample_base_color_texture(texture, uv):
+    if texture is None:
+        return None
+    height, width = texture.shape[:2]
+    wrapped = np.mod(uv, 1.0)
+    x = wrapped[..., 0] * max(1, width - 1)
+    y = wrapped[..., 1] * max(1, height - 1)
+    x0 = np.floor(x).astype(np.int64); y0 = np.floor(y).astype(np.int64)
+    x1 = (x0 + 1) % width; y1 = (y0 + 1) % height
+    tx = (x - x0)[..., None]; ty = (y - y0)[..., None]
+    c00 = texture[y0, x0, :3]; c10 = texture[y0, x1, :3]
+    c01 = texture[y1, x0, :3]; c11 = texture[y1, x1, :3]
+    top = c00 * (1.0 - tx) + c10 * tx
+    bottom = c01 * (1.0 - tx) + c11 * tx
+    return srgb_to_linear(top * (1.0 - ty) + bottom * ty)
+
+
+def triangle_texcoords(primitive, tri):
+    if primitive.texcoords is None:
+        return None
+    uv = primitive.texcoords[tri].astype(np.float64).copy()
+    if np.max(uv[:, 0]) - np.min(uv[:, 0]) > 0.5:
+        uv[uv[:, 0] < 0.5, 0] += 1.0
+    return uv
+
+
 def render(primitives, position, target, output, *, size, mode, up_hint, deadline, lights=None, exposure=0.0, background=(15, 18, 23)):
     right, up, forward = camera_basis(position, target, up_hint); position = np.asarray(position, dtype=np.float64)
     scale = math.tan(math.radians(31) / 2); background = np.asarray(background, dtype=np.uint8)
@@ -100,10 +131,17 @@ def render(primitives, position, target, output, *, size, mode, up_hint, deadlin
             if not np.any(visible): continue
             perspective=np.stack((w0/vertices[0,2],w1/vertices[1,2],w2/vertices[2,2]),axis=-1)/np.maximum(inv[...,None],1e-12)
             normals=np.sum(perspective[...,None]*primitive.normals[tri][None,None,:,:],axis=2); worlds=np.sum(perspective[...,None]*primitive.positions[tri][None,None,:,:],axis=2); views=position-worlds
+            base=np.broadcast_to(primitive.color,normals.shape)
+            tri_uv=triangle_texcoords(primitive,tri)
+            if primitive.base_color_texture is not None:
+                if tri_uv is None: raise ValueError('textured primitive is missing TEXCOORD_0')
+                uv=np.sum(perspective[...,None]*tri_uv[None,None,:,:],axis=2)
+                sampled=sample_base_color_texture(primitive.base_color_texture,uv)
+                base=base*sampled
             if mode=='normal': color=np.clip(normals*.5+.5,0,1)
             elif mode=='object-id': color=np.broadcast_to(object_color(primitive.object_id),normals.shape)
-            elif mode=='albedo': color=np.broadcast_to(primitive.color,normals.shape)
-            else: color=pbr_shade(primitive.color,normals,views,primitive.metallic,primitive.roughness,lights=lights,exposure=exposure)
+            elif mode=='albedo': color=base
+            else: color=pbr_shade(base,normals,views,primitive.metallic,primitive.roughness,lights=lights,exposure=exposure)
             encoded=np.round(np.power(np.clip(color,0,1),1/2.2)*255).astype(np.uint8); region=image[y0:y1+1,x0:x1+1]; region[visible]=encoded[visible]; region_depth[visible]=depth[visible]
     Image.fromarray(image,'RGB').save(output)
     return {"path":output.name,"sha256":sha256(output),"mode":mode}
@@ -122,6 +160,8 @@ def main():
             primitive.color = np.array(clay["baseColor"], dtype=np.float64)
             primitive.metallic = float(clay["metallic"])
             primitive.roughness = float(clay["roughness"])
+            primitive.base_color_texture = None
+            primitive.base_color_texture_sha256 = None
     frame,basis,origin,fd=load_canonical_frame(frame_path); bounds=frame_bounds(primitives,frame,basis,origin); center=bounds['centerWorld']; distance=bounds['radius']*4.25; deadline=time.monotonic()+a.timeout_seconds
     if a.neutral_clay:
         preset_lighting = NEUTRAL_CLAY_PRESET["lighting"]
@@ -158,7 +198,10 @@ def main():
             }
             color=dict(NEUTRAL_CLAY_PRESET["colorPipeline"])
         output_prefix="renders/clay" if a.neutral_clay else "renders/pbr"
-        payload={"schema":"refas.pbr-render-report/v1","claimScope":"shape-resemblance-only" if a.neutral_clay else "visual-fidelity","assetSha256":sha256(glb),"frameDigest":fd,"renderer":{"family":"other","name":"RefAs Independent PBR","version":"1.0.0","backend":"numpy-cook-torrance-headless","independentProcess":True},"lighting":{"rigId":rig_id,"digest":canonical_digest(rig)},"colorPipeline":color,"materialSupport":{"supported":["base-color-factor","metallic-factor","roughness-factor"],"unsupported":["clearcoat","image-based-lighting","normal-maps","textures"]},"outputs":[{"viewId":f['viewId'],"path":f"{output_prefix}/{f['path']}","sha256":f['sha256']} for f in frames],"reproducibility":{"mode":"deterministic","tolerance":""}}
+        texture_bindings=[] if a.neutral_clay else sorted({p.base_color_texture_sha256 for p in primitives if p.base_color_texture_sha256})
+        supported=["base-color-factor","metallic-factor","roughness-factor"] if a.neutral_clay else ["base-color-factor","base-color-texture","metallic-factor","roughness-factor","texcoord-0"]
+        unsupported=["clearcoat","image-based-lighting","normal-maps"] + (["textures"] if a.neutral_clay else [])
+        payload={"schema":"refas.pbr-render-report/v1","claimScope":"shape-resemblance-only" if a.neutral_clay else "visual-fidelity","assetSha256":sha256(glb),"frameDigest":fd,"renderer":{"family":"other","name":"RefAs Independent PBR","version":"1.0.0","backend":"numpy-cook-torrance-headless","independentProcess":True},"lighting":{"rigId":rig_id,"digest":canonical_digest(rig)},"colorPipeline":color,"materialSupport":{"supported":supported,"unsupported":unsupported},"textureBindings":[{"sha256":digest,"mimeType":"image/png","channel":"base-color"} for digest in texture_bindings],"outputs":[{"viewId":f['viewId'],"path":f"{output_prefix}/{f['path']}","sha256":f['sha256']} for f in frames],"reproducibility":{"mode":"deterministic","tolerance":""}}
         if a.neutral_clay:
             payload["presentation"]={"mode":"neutral-clay","presetId":NEUTRAL_CLAY_PRESET["id"],"presetDigest":canonical_digest(NEUTRAL_CLAY_PRESET)}
         payload['reportDigest']=canonical_digest(payload); (staging/'render-report.json').write_text(json.dumps(payload,indent=2)+'\n'); out.mkdir(parents=True,exist_ok=True)

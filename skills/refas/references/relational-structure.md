@@ -18,6 +18,25 @@ Represent semantic entities such as landmarks, axes, planes, volumes, regions, i
 
 Every relation declares whether it is `whole-system` or `local` and whether its importance is `macro`, `identity`, or `detail`. Local feature work never substitutes for unresolved applicable whole-system relations.
 
+## Bilateral paired parts
+
+Use a `bilateral-pair` whole-system relation when two semantic parts are intended to be one shared rest construction mirrored across the object's sagittal plane: legs, wings, arms, eyes, paired covers, or similar structures.
+
+The relation explicitly binds:
+
+- `leftEntityId` and `rightEntityId`;
+- one `sagittalPlaneId` plane entity;
+- explicit `mirrorAxis` (`x|y|z`), `leftHalfSpace` (`negative|positive`), and object-frame `mirrorPlaneCoordinate`;
+- `restGeometryPolicy`: normally `shared-mirrored`;
+- a positive lateral half-span whose authority is explicitly `inferred` or `engineered`, plus its basis;
+- optional source-observed intrinsic asymmetry.
+
+Do not convert 2D image-plane separation directly into 3D pair depth. `lateralSpan.basisKind: image-plane-separation` is rejected, and lateral span cannot self-promote to `observed` authority. Body-relative inference, structural priors, external specifications, direct source depth evidence used as an inference basis, or an engineered layout remain explicit non-equivalent bases.
+
+`observed-intrinsic-asymmetry` is an exception, not a convenience flag. It requires a source observation and evidence refs with `observed` authority. Without that evidence, left/right rest construction must remain shared.
+
+After a candidate exists, run `createBilateralPairRealization()` on the exact GLB bytes. The runtime derives each paired node's local rest-geometry digest from POSITION + index accessors rather than trusting caller-provided geometry hashes. Under `shared-mirrored`, both local rest digests must match, the declared mirror axis must be the only scale-sign flip, and the pair roots must actually sit at the declared `±halfSpan` on that axis. The initial shared-mirror contract therefore requires each paired node to be an active-scene root with explicit node TRS rather than an opaque matrix transform; parent-chain transforms cannot hide a different object-space placement. Camera evidence and a pose explanation for both instances are also required so visible 2D asymmetry is not silently baked into rest geometry.
+
 ## Relation graph
 
 Relations may depend on other relations. Dependencies must be acyclic and every referenced entity/relation must exist. Use the canonical dependency order produced by the runtime; do not hand-order relations differently in separate agents.

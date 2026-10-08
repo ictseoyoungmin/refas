@@ -24,10 +24,20 @@ import {
   validateVisualReview,
 } from './visual-review.mjs';
 import {validatePbrRenderReport} from './pbr-render-report.mjs';
+import {inspectBaseColorTextures} from './glb.mjs';
 import {findComparisonContradictions, validateRegisteredComparison} from './registered-comparison.mjs';
 import {assertEarlyResemblanceAdmission} from './early-resemblance-barrier.mjs';
+import {
+  validateBlockoutCompetitionDecision,
+  validateBlockoutCompetitionPolicy,
+} from './blockout-competition.mjs';
 import {validateFinalResemblanceClosure} from './final-resemblance-closure.mjs';
 import {validateSpatialRoleExpectationSet} from './spatial-role-expectation.mjs';
+import {
+  assertNoQuarantinedSourceEvidence,
+  priorQuarantinedArtifactBindings,
+  validatePriorQuarantine,
+} from './prior-quarantine.mjs';
 import {validateSpatialClosureEvidence} from './spatial-closure-evidence.mjs';
 import {_classifySpatialCollapseFromAuthority} from './spatial-collapse-core.mjs';
 import {assertVolumeBarrierAdmission, createVolumeBarrier, validateVolumeBarrier} from './volume-barrier.mjs';
@@ -577,6 +587,28 @@ async function inspectCertificationHead(root, state, head) {
         if (!rendererValidation.valid) errors.push(`PBR renderer report is invalid: ${rendererValidation.errors.join('; ')}`);
         if (rendererReport.assetSha256 !== visualReview.assetSha256) errors.push('PBR renderer report asset digest does not match the visual review');
         if (rendererReport.renderer?.family !== visualReview.renderer?.family) errors.push('PBR renderer family does not match the visual review');
+        if (!isTrustedContractFixtureProject(state)) {
+          const candidateArtifacts = candidateGlbArtifacts(head.artifactRefs).filter((artifact) => artifact.sha256 === visualReview.assetSha256);
+          if (candidateArtifacts.length !== 1) {
+            errors.push('texture certification requires exactly one exact candidate GLB in the certification checkpoint');
+          } else {
+            try {
+              const candidateBytes = await fs.readFile(objectPath(root, candidateArtifacts[0].sha256));
+              const embeddedTextures = inspectBaseColorTextures(candidateBytes);
+              const expectedTextureDigests = [...new Set(embeddedTextures.map((binding) => binding.sha256))].sort();
+              const actualBindings = rendererReport.textureBindings ?? [];
+              const actualTextureDigests = [...new Set(actualBindings.filter((binding) => binding.channel === 'base-color').map((binding) => binding.sha256))].sort();
+              if (JSON.stringify(actualTextureDigests) !== JSON.stringify(expectedTextureDigests)) {
+                errors.push('PBR renderer texture bindings do not exactly match candidate embedded base-color texture bytes');
+              }
+              if (expectedTextureDigests.length && !rendererReport.materialSupport?.supported?.includes('base-color-texture')) {
+                errors.push('PBR renderer does not declare base-color-texture support required by the candidate');
+              }
+            } catch (error) {
+              errors.push(`candidate embedded base-color texture validation failed: ${error.message}`);
+            }
+          }
+        }
         const outputDigests = new Set((rendererReport.outputs ?? []).map((output) => output.sha256));
         const outputPaths = new Set((rendererReport.outputs ?? []).map((output) => output.path));
         for (const output of (rendererReport.outputs ?? [])) {
@@ -1528,6 +1560,129 @@ async function resolveSpatialRoleAuthorityFromLineage(root, state, lineage, {sco
   return deepFreeze({...payload, authorityDigest: digestJson(payload)});
 }
 
+
+async function resolvePriorQuarantineAuthorityFromLineage(root, state, lineage, {
+  currentCapability = null,
+  storedArtifacts = [],
+} = {}) {
+  const available = new Map();
+  for (const checkpoint of lineage) {
+    for (const artifact of checkpoint.artifactRefs ?? []) available.set(artifact.path, artifact);
+  }
+  for (const artifact of storedArtifacts ?? []) available.set(artifact.path, artifact);
+
+  const records = [];
+  const seen = new Map();
+  const scan = async (capability, artifacts, checkpointId = null) => {
+    for (const artifact of (artifacts ?? []).filter((item) => item.kind === 'prior-quarantine')) {
+      if (capabilityIndex(capability) > capabilityIndex('spatial-hypotheses')) {
+        throw new Error('prior quarantine was introduced too late at ' + capability + '; quarantine must be frozen no later than spatial-hypotheses');
+      }
+      const value = await readStoredJsonArtifact(root, artifact, capability + ' prior quarantine');
+      if (value.sourceSha256 !== state.source.sha256) throw new Error('prior quarantine source binding mismatch');
+      let rawPriorGlb = null;
+      let seedGlb = null;
+      if (value.kind !== 'novel-view') {
+        const rawBinding = value.rawPrior;
+        const rawStored = available.get(rawBinding?.path);
+        if (!rawStored || rawStored.sha256 !== rawBinding?.sha256) throw new Error('prior quarantine raw prior is not exact lineage-bound evidence');
+        rawPriorGlb = await fs.readFile(objectPath(root, rawStored.sha256));
+        const seedBinding = value.sanitizedSeed;
+        const stored = available.get(seedBinding?.path);
+        if (!stored || stored.sha256 !== seedBinding?.sha256) throw new Error('prior quarantine sanitized seed is not exact lineage-bound evidence');
+        seedGlb = await fs.readFile(objectPath(root, stored.sha256));
+      }
+      const validation = validatePriorQuarantine(value, {rawPriorGlb, sanitizedSeedGlb: seedGlb});
+      if (!validation.valid) throw new Error('prior quarantine is invalid: ' + validation.errors.join('; '));
+      for (const binding of priorQuarantinedArtifactBindings(value)) {
+        const stored = available.get(binding.path);
+        if (!stored || stored.sha256 !== binding.sha256) {
+          throw new Error('quarantined prior artifact is not exact lineage-bound evidence: ' + binding.path);
+        }
+      }
+      const previous = seen.get(value.id);
+      if (previous && previous.quarantineDigest !== value.quarantineDigest) {
+        throw new Error('prior quarantine mutation is forbidden after freeze for ' + value.id);
+      }
+      if (!previous) {
+        const record = {value, artifact, checkpointId, capability};
+        seen.set(value.id, value);
+        records.push(record);
+      }
+    }
+  };
+  for (const checkpoint of lineage) await scan(checkpoint.capability, checkpoint.artifactRefs, checkpoint.id);
+  if (currentCapability != null) await scan(currentCapability, storedArtifacts, null);
+  return records;
+}
+
+function priorForbiddenPaths(records) {
+  return new Set(records.flatMap((record) => priorQuarantinedArtifactBindings(record.value).map((binding) => binding.path)));
+}
+
+async function assertPriorSourceAuthorityClean(root, state, lineage, {
+  currentCapability = null,
+  storedArtifacts = [],
+} = {}) {
+  const records = await resolvePriorQuarantineAuthorityFromLineage(root, state, lineage, {currentCapability, storedArtifacts});
+  if (!records.length) return records;
+  const forbidden = priorForbiddenPaths(records);
+  const scanArtifact = async (capability, artifact) => {
+    const sourceAuthorityKinds = new Set([
+      'spatial-role-expectation',
+      'early-resemblance-barrier',
+    ]);
+    const certificationKinds = new Set([
+      'perceptual-signature-evidence',
+      'final-resemblance-closure',
+      'visual-review',
+      'registered-comparison',
+    ]);
+    if (!sourceAuthorityKinds.has(artifact.kind) && !(capability === 'whole-object-certification' && certificationKinds.has(artifact.kind))) return;
+    const value = await readStoredJsonArtifact(root, artifact, capability + ' ' + artifact.kind + ' prior-quarantine audit');
+    let subject = value;
+    if (artifact.kind === 'early-resemblance-barrier') subject = value?.signatureEvidence ?? value;
+    assertNoQuarantinedSourceEvidence(subject, forbidden, {label: capability + ' ' + artifact.kind});
+  };
+  for (const checkpoint of lineage) {
+    for (const artifact of checkpoint.artifactRefs ?? []) await scanArtifact(checkpoint.capability, artifact);
+  }
+  if (currentCapability != null) {
+    for (const artifact of storedArtifacts ?? []) await scanArtifact(currentCapability, artifact);
+  }
+  return records;
+}
+
+export async function resolvePriorQuarantineAuthority(root, {checkpointId = null} = {}) {
+  root = projectRoot(root);
+  const state = await loadProject(root);
+  if (!state.source) throw new Error('prior quarantine authority requires a bound source');
+  const checkpoints = await listCheckpoints(root);
+  const target = checkpointId ?? state.head;
+  if (!target) throw new Error('prior quarantine authority requires a checkpoint lineage');
+  const lineage = checkpointLineage(checkpoints, target);
+  const records = await assertPriorSourceAuthorityClean(root, state, lineage);
+  const payload = {
+    schema: 'refas.prior-quarantine-authority/v1',
+    sourceSha256: state.source.sha256,
+    records: records.map((record) => ({
+      id: record.value.id,
+      kind: record.value.kind,
+      authority: record.value.authority,
+      quarantineDigest: record.value.quarantineDigest,
+      checkpointId: record.checkpointId,
+      artifactPath: record.artifact.path,
+      quarantinedPaths: priorQuarantinedArtifactBindings(record.value).map((binding) => binding.path).sort(),
+    })).sort((a,b)=>a.id.localeCompare(b.id)),
+    policy: {
+      priorHypothesisUseAllowed: true,
+      priorSourceEvidenceForbidden: true,
+      lineageReplayRequired: true,
+    },
+  };
+  return deepFreeze({...payload, authorityDigest: digestJson(payload)});
+}
+
 async function validateProspectiveSpatialRoleAuthority(root, state, {
   capability,
   parentLineage,
@@ -1572,6 +1727,157 @@ export async function resolveSpatialRoleAuthority(root, {checkpointId = null, sc
   return resolveSpatialRoleAuthorityFromLineage(root, state, lineage, {scopeId});
 }
 
+async function blockoutCompetitionHierarchy(root, lineage, label) {
+  const checkpoint = [...lineage].reverse().find((item) => item.capability === 'visual-hierarchy');
+  if (!checkpoint) throw new Error(label + ' requires current visual-hierarchy lineage');
+  return (await readCheckpointJsonArtifact(root, checkpoint, 'visual-hierarchy', label)).value;
+}
+
+async function resolveBlockoutCompetitionPolicyFromLineage(root, state, lineage) {
+  let authority = null;
+  for (let index = 0; index < lineage.length; index += 1) {
+    const checkpoint = lineage[index];
+    const artifacts = (checkpoint.artifactRefs ?? []).filter((artifact) => artifact.kind === 'blockout-competition-policy');
+    if (artifacts.length > 1) throw new Error(checkpoint.capability + ' contains competing blockout-competition-policy artifacts');
+    if (!artifacts.length) continue;
+    if (capabilityIndex(checkpoint.capability) > capabilityIndex('spatial-hypotheses')) {
+      throw new Error('blockout competition policy was introduced too late at ' + checkpoint.capability);
+    }
+    const prefix = lineage.slice(0, index + 1);
+    const hierarchy = await blockoutCompetitionHierarchy(root, prefix, 'blockout competition policy');
+    const value = await readStoredJsonArtifact(root, artifacts[0], 'blockout competition policy');
+    const validation = validateBlockoutCompetitionPolicy(value, hierarchy);
+    if (!validation.valid) throw new Error('blockout competition policy is invalid: ' + validation.errors.join('; '));
+    if (value.sourceSha256 !== state.source.sha256) throw new Error('blockout competition policy source binding mismatch');
+    if (!authority) {
+      authority = {value, checkpointId: checkpoint.id, contentDigest: checkpoint.contentDigest};
+    } else if (authority.value.policyDigest !== value.policyDigest) {
+      throw new Error('blockout competition policy mutation is forbidden after authority freeze');
+    }
+  }
+  return authority;
+}
+
+async function validateProspectiveBlockoutCompetitionPolicy(root, state, {
+  capability,
+  parentLineage,
+  storedArtifacts,
+} = {}) {
+  const artifacts = (storedArtifacts ?? []).filter((artifact) => artifact.kind === 'blockout-competition-policy');
+  if (artifacts.length > 1) throw new Error(capability + ' contains competing blockout-competition-policy artifacts');
+  if (!artifacts.length) return resolveBlockoutCompetitionPolicyFromLineage(root, state, parentLineage);
+  if (capabilityIndex(capability) > capabilityIndex('spatial-hypotheses')) {
+    throw new Error('blockout competition policy may be introduced only before candidate construction');
+  }
+  const hierarchy = await blockoutCompetitionHierarchy(root, parentLineage, 'prospective blockout competition policy');
+  const value = await readStoredJsonArtifact(root, artifacts[0], 'prospective blockout competition policy');
+  const validation = validateBlockoutCompetitionPolicy(value, hierarchy);
+  if (!validation.valid) throw new Error('prospective blockout competition policy is invalid: ' + validation.errors.join('; '));
+  if (value.sourceSha256 !== state.source.sha256) throw new Error('prospective blockout competition policy source binding mismatch');
+  const prior = await resolveBlockoutCompetitionPolicyFromLineage(root, state, parentLineage);
+  if (prior && prior.value.policyDigest !== value.policyDigest) {
+    throw new Error('blockout competition policy mutation is forbidden after authority freeze');
+  }
+  return prior ?? {value, checkpointId: null, contentDigest: null};
+}
+
+async function ensureBlockoutCompetitionAdmission(root, state, {
+  scopeId,
+  parentLineage,
+  selectedCandidate,
+} = {}) {
+  if (isTrustedContractFixtureProject(state)) return null;
+  const authority = await resolveBlockoutCompetitionPolicyFromLineage(root, state, parentLineage);
+  if (!authority || authority.value.mode !== 'required' || !authority.value.scopeIds.includes(scopeId)) return null;
+
+  const roleAuthority = await resolveSpatialRoleAuthorityFromLineage(root, state, parentLineage, {scopeId});
+  const role = roleAuthority?.selectedExpectation?.role;
+  if (!['volumetric', 'layered-volume', 'rod-tubular'].includes(role)) return null;
+
+  const decisions = [];
+  for (let index = 0; index < parentLineage.length; index += 1) {
+    const checkpoint = parentLineage[index];
+    for (const artifact of checkpoint.artifactRefs ?? []) {
+      if (artifact.kind !== 'blockout-competition-decision') continue;
+      const value = await readStoredJsonArtifact(root, artifact, 'blockout competition decision');
+      if (value.scopeId === scopeId && value.policyDigest === authority.value.policyDigest) {
+        decisions.push({checkpoint, index, artifact, value});
+      }
+    }
+  }
+  if (decisions.length !== 1) {
+    throw new Error('required blockout competition needs exactly one candidate-bound decision before shape reconstruction; found ' + decisions.length);
+  }
+  const decisionRecord = decisions[0];
+  const prefix = parentLineage.slice(0, decisionRecord.index + 1);
+  const hierarchy = await blockoutCompetitionHierarchy(root, prefix, 'blockout competition admission');
+
+  const hypothesisRecords = [];
+  for (const checkpoint of prefix) {
+    for (const artifact of checkpoint.artifactRefs ?? []) {
+      if (artifact.kind !== 'spatial-hypothesis-set') continue;
+      const value = await readStoredJsonArtifact(root, artifact, 'blockout competition spatial hypothesis set');
+      if (value.hypothesisSetDigest === decisionRecord.value.hypothesisSetDigest) hypothesisRecords.push(value);
+    }
+  }
+  if (hypothesisRecords.length !== 1) {
+    throw new Error('blockout competition decision must bind exactly one spatial-hypothesis-set artifact; found ' + hypothesisRecords.length);
+  }
+
+  const glbByCandidateId = new Map();
+  const artifactByPath = new Map();
+  for (const checkpoint of prefix) {
+    for (const artifact of checkpoint.artifactRefs ?? []) artifactByPath.set(artifact.path, artifact);
+  }
+  for (const candidate of decisionRecord.value.candidates ?? []) {
+    const artifact = artifactByPath.get(candidate.assetPath);
+    if (!artifact || candidateGlbArtifacts([artifact]).length !== 1) {
+      throw new Error('blockout competition candidate GLB is not bound in current lineage: ' + candidate.assetPath);
+    }
+    if (artifact.sha256 !== candidate.assetSha256) {
+      throw new Error('blockout competition candidate artifact digest mismatch: ' + candidate.id);
+    }
+    glbByCandidateId.set(candidate.id, await fs.readFile(objectPath(root, artifact.sha256)));
+  }
+
+  const available = new Map([[state.source.path, state.source.sha256]]);
+  for (const checkpoint of prefix) {
+    for (const artifact of checkpoint.artifactRefs ?? []) available.set(artifact.path, artifact.sha256);
+  }
+  for (const candidate of decisionRecord.value.candidates ?? []) {
+    const clayOutputs = candidate.clayRenderReport?.outputs ?? [];
+    for (const output of clayOutputs) {
+      if (available.get(output.path) !== output.sha256) {
+        throw new Error('blockout competition neutral-clay output is not exact lineage-bound evidence: ' + output.path);
+      }
+    }
+    for (const ref of candidate.signatureEvidence?.evidenceRefs ?? []) {
+      if (!available.has(ref)) throw new Error('blockout competition R03 evidence is not lineage-bound: ' + ref);
+    }
+    for (const observation of candidate.signatureEvidence?.observations ?? []) {
+      for (const ref of observation.evidenceRefs ?? []) {
+        if (!available.has(ref)) throw new Error('blockout competition R03 observation evidence is not lineage-bound: ' + ref);
+      }
+    }
+  }
+  for (const ref of decisionRecord.value.evidenceRefs ?? []) {
+    if (!available.has(ref)) throw new Error('blockout competition decision evidence is not lineage-bound: ' + ref);
+  }
+
+  const validation = validateBlockoutCompetitionDecision(decisionRecord.value, {
+    policy: authority.value,
+    hierarchy,
+    hypothesisSet: hypothesisRecords[0],
+    roleAuthority,
+    glbByCandidateId,
+  });
+  if (!validation.valid) throw new Error('blockout competition decision failed runtime replay: ' + validation.errors.join('; '));
+  if (decisionRecord.value.selectedAssetSha256 !== selectedCandidate.sha256) {
+    throw new Error('shape-reconstruction candidate does not match the selected blockout competition candidate');
+  }
+  return decisionRecord.value;
+}
+
 async function validateProspectiveCandidateAuthority(root, state, {
   capability,
   scopeId,
@@ -1587,6 +1893,7 @@ async function validateProspectiveCandidateAuthority(root, state, {
     if (storedArtifacts.some((artifact) => artifact.kind === 'candidate-transition')) {
       throw new Error('shape-reconstruction must not carry a candidate-transition artifact');
     }
+    await ensureBlockoutCompetitionAdmission(root, state, {scopeId, parentLineage, selectedCandidate: candidates[0]});
     return {input: null, output: candidates[0], changed: true};
   }
 
@@ -1819,7 +2126,13 @@ export async function commitCheckpoint(root, {
   const storedArtifacts = [];
   for (let index = 0; index < artifactRefs.length; index += 1) storedArtifacts.push(await storeArtifact(root, artifactRefs[index], index));
   const parentLineage = checkpointLineage(checkpoints, parent);
+  await assertPriorSourceAuthorityClean(root, state, parentLineage, {
+    currentCapability: capability, storedArtifacts,
+  });
   await validateProspectiveSpatialRoleAuthority(root, state, {
+    capability, parentLineage, storedArtifacts,
+  });
+  await validateProspectiveBlockoutCompetitionPolicy(root, state, {
     capability, parentLineage, storedArtifacts,
   });
   await validateProspectiveCandidateAuthority(root, state, {
@@ -2294,6 +2607,11 @@ export async function auditProject(root) {
     errors.push(error.message);
   }
   if (state.source && state.head) {
+    try {
+      await assertPriorSourceAuthorityClean(root, state, auditedLineage);
+    } catch (error) {
+      errors.push(`prior quarantine authority: ${error.message}`);
+    }
     try {
       await resolveSpatialRoleAuthorityFromLineage(root, state, auditedLineage);
     } catch (error) {

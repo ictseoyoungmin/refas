@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/blockout-competition-policy.schema.json",
+  "title": "RefAs blockout competition policy",
+  "type": "object",
+  "required": [
+    "schema",
+    "sourceSha256",
+    "hierarchyDigest",
+    "mode",
+    "scopeIds",
+    "minimumCandidates",
+    "policy",
+    "policyDigest"
+  ],
+  "properties": {
+    "schema": {
+      "const": "refas.blockout-competition-policy/v1"
+    },
+    "sourceSha256": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "hierarchyDigest": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "mode": {
+      "enum": [
+        "advisory",
+        "required"
+      ]
+    },
+    "scopeIds": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "common.schema.json#/$defs/semanticId"
+      }
+    },
+    "minimumCandidates": {
+      "const": 2
+    },
+    "policy": {
+      "type": "object"
+    },
+    "policyDigest": {
+      "$ref": "common.schema.json#/$defs/digest"
+    }
+  },
+  "additionalProperties": false
+}

@@ -45,7 +45,9 @@
         "surface-network-parts",
         "section-profile-loft-rigid",
         "section-profile-loft-organic",
-        "assembly-decomposition"
+        "assembly-decomposition",
+        "external-construction",
+        "subdivision-cage-organic"
       ]
     },
     "vocabularyDigest": {

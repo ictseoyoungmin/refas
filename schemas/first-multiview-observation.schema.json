@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/first-multiview-observation.schema.json",
+  "title": "RefAs first neutral-clay multiview observation",
+  "type": "object",
+  "required": [
+    "schema",
+    "referenceClass",
+    "firstNeutralClayMultiviewMs",
+    "uniquePublicOperationsBeforeFirstMultiview",
+    "publicOperationIdsBeforeFirstMultiview",
+    "turns",
+    "tokens",
+    "multiviewProof",
+    "measurement",
+    "policy"
+  ],
+  "properties": {
+    "schema": {"const": "refas.first-multiview-observation/v1"},
+    "referenceClass": {"enum": ["articulated-manufactured-organic", "hard-surface-mechanical", "irregular-nonmechanical"]},
+    "firstNeutralClayMultiviewMs": {"type": "number", "minimum": 0},
+    "uniquePublicOperationsBeforeFirstMultiview": {"type": "integer", "minimum": 0},
+    "publicOperationIdsBeforeFirstMultiview": {"type": "array", "uniqueItems": true, "items": {"$ref": "common.schema.json#/$defs/semanticId"}},
+    "turns": {"$ref": "#/$defs/optionalCounter"},
+    "tokens": {"$ref": "#/$defs/optionalCounter"},
+    "multiviewProof": {
+      "type": "object",
+      "required": ["reportSha256", "reportDigest", "viewIds"],
+      "properties": {
+        "reportSha256": {"$ref": "common.schema.json#/$defs/digest"},
+        "reportDigest": {"$ref": "common.schema.json#/$defs/digest"},
+        "viewIds": {"type": "array", "minItems": 5, "uniqueItems": true, "items": {"$ref": "common.schema.json#/$defs/semanticId"}}
+      },
+      "additionalProperties": false
+    },
+    "measurement": {
+      "type": "object",
+      "required": ["clock", "worker", "fixtureSemantics"],
+      "properties": {
+        "clock": {"const": "monotonic-wall-clock"},
+        "worker": {"type": "string", "minLength": 1},
+        "fixtureSemantics": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "policy": {
+      "type": "object",
+      "required": ["observationOnly", "certificationAuthority", "qualityAuthority", "noPassFailThreshold"],
+      "properties": {
+        "observationOnly": {"const": true},
+        "certificationAuthority": {"const": false},
+        "qualityAuthority": {"const": false},
+        "noPassFailThreshold": {"const": true}
+      },
+      "additionalProperties": false
+    }
+  },
+  "$defs": {
+    "optionalCounter": {
+      "type": "object",
+      "required": ["available", "value"],
+      "properties": {
+        "available": {"type": "boolean"},
+        "value": {"type": ["integer", "null"], "minimum": 0}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

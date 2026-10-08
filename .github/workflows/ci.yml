@@ -2,9 +2,9 @@ name: RefAs CI
 
 on:
   push:
-    branches: [main, rc/post-1.1]
+    branches: [main, rc/post-1.1, develop/v1.2.0]
   pull_request:
-    branches: [main, rc/post-1.1]
+    branches: [main, rc/post-1.1, develop/v1.2.0]
 
 permissions:
   contents: read
@@ -45,6 +45,27 @@ jobs:
       - name: Fresh-worker public-contract dogfood
         if: matrix.node == 24
         run: npm run dogfood:fresh-worker
+      - name: First neutral-clay multiview operational baseline
+        if: matrix.node == 24
+        run: npm run benchmark:first-multiview
+      - name: External construction fresh-worker dogfood
+        if: matrix.node == 24
+        run: npm run dogfood:external-construction
+      - name: Subdivision cage organic dogfood
+        if: matrix.node == 24
+        run: npm run dogfood:subdivision-cage
+      - name: Bilateral pair fresh-worker dogfood
+        if: matrix.node == 24
+        run: npm run dogfood:bilateral-pair
+      - name: Structural plausibility fresh-worker dogfood
+        if: matrix.node == 24
+        run: npm run dogfood:structural-plausibility
+      - name: Competing blockout fresh-worker dogfood
+        if: matrix.node == 24
+        run: npm run dogfood:blockout-competition
+      - name: Prior quarantine fresh-worker dogfood
+        if: matrix.node == 24
+        run: npm run dogfood:prior-quarantine
       - name: Discovery closure verifier
         if: matrix.node == 24
         run: npm run check:discovery-closure
@@ -60,6 +81,9 @@ jobs:
       - name: Independent PBR material dogfood
         if: matrix.node == 24
         run: npm run dogfood:pbr
+      - name: Textured material dogfood
+        if: matrix.node == 24
+        run: npm run dogfood:textured-material
       - name: Hard-surface topology dogfood
         if: matrix.node == 24
         run: npm run dogfood:hard-surface

@@ -1,6 +1,6 @@
 {
   "name": "refas",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "Vision-first, evidence-bound reference image to 3D reconstruction for AI agents",
   "type": "module",
   "license": "MIT",
@@ -32,11 +32,20 @@
     "dogfood:parameter-fit": "node examples/parameter-fit/run.mjs",
     "dogfood:articulated": "node examples/articulated-figure/run.mjs",
     "benchmark:matrix": "node examples/benchmark-matrix/run.mjs",
+    "benchmark:first-multiview": "node skills/refas/scripts/measure_first_multiview_baseline.mjs --out temp/first-multiview-baseline.json",
+    "benchmark:cross-model": "node examples/benchmark-matrix/run-workers.mjs",
     "release:audit": "node tools/verify-plugin-distribution.mjs && node tools/release-audit.mjs",
     "check:interfaces": "node skills/refas/scripts/verify_capability_interfaces.mjs",
     "dogfood:fresh-worker": "node skills/refas/scripts/verify_fresh_worker_dogfood.mjs",
     "dogfood:adversarial": "node skills/refas/scripts/verify_vc08_adversarial_dogfood.mjs",
     "dogfood:volume-regression": "node examples/volume-closure-regression/run.mjs",
-    "check:discovery-closure": "node skills/refas/scripts/verify_discovery_closure.mjs"
+    "check:discovery-closure": "node skills/refas/scripts/verify_discovery_closure.mjs",
+    "dogfood:external-construction": "node skills/refas/scripts/verify_external_construction_dogfood.mjs",
+    "dogfood:subdivision-cage": "node skills/refas/scripts/verify_subdivision_cage_dogfood.mjs",
+    "dogfood:bilateral-pair": "node skills/refas/scripts/verify_bilateral_pair_dogfood.mjs",
+    "dogfood:structural-plausibility": "node skills/refas/scripts/verify_structural_plausibility_dogfood.mjs",
+    "dogfood:blockout-competition": "node skills/refas/scripts/verify_blockout_competition_dogfood.mjs",
+    "dogfood:prior-quarantine": "node skills/refas/scripts/verify_prior_quarantine_dogfood.mjs",
+    "dogfood:textured-material": "node skills/refas/scripts/verify_textured_material_dogfood.mjs"
   }
 }

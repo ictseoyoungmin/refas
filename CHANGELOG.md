@@ -2,6 +2,30 @@
 
 All notable RefAs changes are documented here. RefAs follows semantic versioning.
 
+## 1.2.0 — 2026-10-09
+
+Integrates the reviewed v1.2.0 construction, structural-plausibility, appearance, and benchmark-instrumentation slices from `develop/v1.2.0`. This is a capability release, **not a verified claim that external agent outputs are uniformly faithful to their input photos**.
+
+### Geometry construction and spatial plausibility
+
+- Added attested external construction authority with provenance and replay, including externally modeled assets without promoting unsupported observations (#244).
+- Added deterministic subdivision-cage organic modeling with crease controls, candidate geometry binding, and manifold integrity checks (#245).
+- Added bilateral paired-part constraints and root anchoring/static support checks to reduce mirrored-part asymmetry and unsupported assemblies (#251, #252).
+- Added competing neutral-clay blockout hypotheses and quarantined topology/mesh/generated-view priors with strict observed/inferred/engineered authority (#246, #247).
+
+### Appearance and measurement
+
+- Added deterministic UV mapping, embedded PNG base-color textures and exact digest-bound texture sampling by the portable renderer (#248).
+- Added observation-only time-to-first-neutral-clay-multiview instrumentation (#249).
+- Added exact-checkout cross-model benchmark runner and validity hardening: independent reference digests, 3-class × 2-worker × 2-prompt matrix planning, canonical 8-view/byte integrity, worker-isolated outputs and runner-derived timing/reopen observations (PR #262, #263).
+
+### Known limits and follow-up
+
+- **#250 remains OPEN**: the real v1.1.1 external worker-model matrix and direct manual render/evidence review were not executed. Runner/mock/CI success is not evidence that independent models reconstruct equally well.
+- **#235 remains OPEN**: independent external fresh-worker adversarial QA has not been accepted.
+- A user-provided bicycle reconstruction QA review found valid/renderable GLB output without the mandatory source-bound, contact, relational, and final visual-certification chain. The diagnostic is explicitly `PROTOTYPE_NOT_CERTIFIED`, and its manually labeled semantic-layout test is not an autonomous source-recognition gate. The source photo/GLB are not included in this public release; redistribution permission was not established.
+- v1.2.1 is reserved for fail-closed QA coverage, real geometry support/attachment audit, source-to-asset semantic relations, and adversarial regression before strengthening external-quality claims.
+
 ## 1.1.1 — 2026-09-24
 
 Promotes the post-1.1 hardening line (`rc/post-1.1`) to stable `main`. Public `.../v1` contract namespaces are unchanged and existing 1.0.0–1.1.0 artifacts remain valid.
