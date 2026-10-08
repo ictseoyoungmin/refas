@@ -2,9 +2,9 @@ name: RefAs CI
 
 on:
   push:
-    branches: [main, rc/post-1.1, develop/v1.2.0]
+    branches: [main, rc/post-1.1, develop/v1.2.0, develop/v1.2.1]
   pull_request:
-    branches: [main, rc/post-1.1, develop/v1.2.0]
+    branches: [main, rc/post-1.1, develop/v1.2.0, develop/v1.2.1]
 
 permissions:
   contents: read
