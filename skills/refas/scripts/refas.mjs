@@ -41,6 +41,7 @@ import {
   sha256File,
 } from './lib/index.mjs';
 import * as PUBLIC_API from './lib/index.mjs';
+import {verifySourceBoundObject} from './lib/qa-coverage.mjs';
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const SKILL_ROOT = path.dirname(SCRIPT_DIR);
@@ -188,6 +189,7 @@ function help() {
       'report-finding': 'report-finding --root DIR --finding finding.json',
       audit: 'audit --root DIR',
       certify: 'certify --root DIR',
+      verify: 'verify --root DIR --asset FILE [--profile source-bound-object]',
       describe: 'describe node <instruction-node-id> | describe capability <runtime-capability-id>',
       register: 'register --input registration-input.json --out registration.json',
       'validate-spec': 'validate-spec --file spec.json [--context hierarchy.json]',
@@ -256,6 +258,14 @@ async function main() {
   }
   if (command === 'audit') { print(await auditProject(required(options, 'root'))); return; }
   if (command === 'certify') { print(await certifyProject(required(options, 'root'))); return; }
+  if (command === 'verify') {
+    const profile = String(options.profile ?? 'source-bound-object');
+    if (profile !== 'source-bound-object') throw new Error('unknown verification profile: ' + profile);
+    const result = await verifySourceBoundObject(required(options,'root'),required(options,'asset'));
+    print(result);
+    if (result.decision.state !== 'ELIGIBLE') process.exitCode = 2;
+    return;
+  }
   if (command === 'describe') { print(await describe(options)); return; }
   if (command === 'register') {
     const registration = createReferenceRegistration(await jsonFile(required(options, 'input')));
