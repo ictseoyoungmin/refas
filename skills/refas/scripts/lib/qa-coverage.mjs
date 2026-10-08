@@ -34,10 +34,21 @@ function check(id, owner, status, reason, evidence = []) {
   return {id, owner, required:true, status, reason, evidence};
 }
 
+async function existingContainedFile(root, candidate) {
+  const lexical = contained(root, candidate);
+  if (!lexical) return null;
+  try {
+    const [trustedRoot, trustedFile] = await Promise.all([fs.realpath(root), fs.realpath(lexical)]);
+    const relative = path.relative(trustedRoot, trustedFile);
+    if (!relative || relative === '..' || relative.startsWith('..' + path.sep) || path.isAbsolute(relative)) return null;
+    return trustedFile;
+  } catch { return null; }
+}
+
 async function sourceCheck(root, source) {
   if (!source) return check('source-provenance', 'source-intake', 'NOT_RUN', 'project source was never bound');
   if (!HEX_DIGEST.test(String(source.sha256 ?? ''))) return check('source-provenance', 'source-intake', 'FAIL', 'source manifest digest is malformed');
-  const file = contained(root, source.path);
+  const file = await existingContainedFile(root, source.path);
   if (!file) return check('source-provenance', 'source-intake', 'FAIL', 'source path is missing or outside project root');
   try {
     const bytes = await fs.readFile(file);
@@ -58,7 +69,7 @@ async function evidenceCheck(root, head, entry, readiness) {
       return check(entry.id, entry.owner, matches.length === 0 ? 'NOT_RUN' : 'INSUFFICIENT', 'expected exactly one current artifact of kind ' + kind);
     }
     const artifact = matches[0];
-    const file = contained(root, artifact.path);
+    const file = await existingContainedFile(root, artifact.path);
     if (!file || !HEX_DIGEST.test(String(artifact.sha256 ?? ''))) return check(entry.id, entry.owner, 'FAIL', 'invalid artifact binding for kind ' + kind);
     let actual;
     try { actual = sha256(await fs.readFile(file)); }
@@ -76,8 +87,8 @@ async function evidenceCheck(root, head, entry, readiness) {
  */
 export async function verifySourceBoundObject(root, assetFile) {
   root = path.resolve(root);
-  const asset = path.resolve(assetFile);
-  if (!contained(root, path.relative(root, asset))) throw new Error('QA asset path must stay inside project root');
+  const asset = await existingContainedFile(root, assetFile);
+  if (!asset) throw new Error('QA asset path must stay inside project root');
   const bytes = await fs.readFile(asset);
   const assetSha256 = sha256(bytes);
 
