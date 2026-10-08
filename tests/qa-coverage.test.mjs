@@ -4,6 +4,7 @@ import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
 import {spawnSync} from 'node:child_process';
+import {fileURLToPath} from 'node:url';
 
 import {createCylinder, digestBytes, initProject, partsToGlb} from '../skills/refas/scripts/lib/index.mjs';
 import {verifySourceBoundObject, QA_COVERAGE_SCHEMA} from '../skills/refas/scripts/lib/qa-coverage.mjs';
@@ -105,7 +106,7 @@ test('public verify CLI returns exit 2 and structured BLOCKED instead of announc
  const mesh=createCylinder({center:[0,0,0],radius:0.2,height:0.3,segments:12});
  const asset=path.join(root,'draft.glb');
  await fs.writeFile(asset,partsToGlb({parts:[{id:'qa-part',materialId:'panel',mesh}],materials}));
- const cli=path.resolve(import.meta.dirname ?? path.join(path.dirname(new URL(import.meta.url).pathname)), '../skills/refas/scripts/refas.mjs');
+ const cli=path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../skills/refas/scripts/refas.mjs');
  const completed=spawnSync(process.execPath,[cli,'verify','--root',root,'--asset',asset,'--profile','source-bound-object'],{encoding:'utf8'});
  assert.equal(completed.status,2,completed.stderr);
  assert.equal(JSON.parse(completed.stdout).decision.state,'BLOCKED');
