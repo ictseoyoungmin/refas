@@ -11,6 +11,7 @@ import {
 import {loadCheckpoint, loadProject} from './checkpoint-store.mjs';
 import {assessCertification, assessClaimCertification, auditProject} from './certification-gate.mjs';
 import {getCurrentArtifact, loadHostSession} from './host-session.mjs';
+import {verifySourceBoundObject, QA_COVERAGE_SCHEMA, SOURCE_BOUND_QA_PROFILE} from './qa-coverage.mjs';
 
 export const ARTIFACT_HANDOFF_SCHEMA = 'refas.artifact-handoff/v1';
 export const ARTIFACT_HANDOFF_CERTIFICATION_STATUSES = Object.freeze(['uncertified', 'ready', 'certified']);
@@ -238,6 +239,90 @@ export async function assertArtifactHandoffCurrent(root, handoff) {
   const current = await getArtifactHandoff(root);
   if (current.handoffDigest !== handoff.handoffDigest) {
     throw new Error('artifact handoff is stale for the current session, checkpoint, candidate, transaction, or certification state');
+  }
+  return current;
+}
+
+/**
+ * Strict source-bound final delivery boundary. Ordinary getArtifactHandoff()
+ * remains a read-only draft transfer descriptor and is NOT this release gate.
+ * Authority is recomputed from the current trusted RefAs project each call.
+ */
+export const SOURCE_BOUND_RELEASE_HANDOFF_SCHEMA = 'refas.source-bound-release-handoff/v1';
+
+const SOURCE_BOUND_RELEASE_POLICY = Object.freeze({
+  finalTransferRequiresCertification: true,
+  finalTransferRequiresSourceBoundQa: true,
+  ordinaryHandoffIsNotSourceBoundRelease: true,
+  releaseHandoffCannotCreateCertification: true,
+});
+
+function sourceBoundReleasePayload(handoff, coverage) {
+  return {
+    schema: SOURCE_BOUND_RELEASE_HANDOFF_SCHEMA,
+    profile: SOURCE_BOUND_QA_PROFILE,
+    handoff,
+    qaCoverage: {
+      schema: QA_COVERAGE_SCHEMA,
+      reportDigest: coverage.reportDigest,
+      sourceSha256: coverage.sourceSha256,
+      assetSha256: coverage.assetSha256,
+      decision: coverage.decision.state,
+    },
+    policy: {...SOURCE_BOUND_RELEASE_POLICY},
+  };
+}
+
+export async function getSourceBoundReleaseHandoff(root) {
+  root = projectRoot(root);
+  const handoff = await getArtifactHandoff(root);
+  if (handoff.certification.status !== 'certified') {
+    throw new Error('source-bound final handoff requires current certified RefAs whole-object state; draft/ready handoffs are not release evidence');
+  }
+  const coverage = await verifySourceBoundObject(root, path.join(root, handoff.artifact.path));
+  if (coverage.decision.state !== 'ELIGIBLE') {
+    throw new Error('source-bound final handoff blocked by trusted QA coverage: ' + coverage.decision.blockingCheckIds.join(', '));
+  }
+  // Reject changes to candidate, session, checkpoint, transaction or certificate
+  // that occurred while gathering QA evidence.
+  await assertArtifactHandoffCurrent(root, handoff);
+  const payload = sourceBoundReleasePayload(handoff, coverage);
+  return deepFreeze({...payload, receiptDigest:digestJson(payload)});
+}
+
+export function validateSourceBoundReleaseHandoff(value) {
+  const errors = [];
+  try {
+    exactKeys(value, ['schema','profile','handoff','qaCoverage','policy','receiptDigest'], 'source-bound final handoff');
+    if (value.schema !== SOURCE_BOUND_RELEASE_HANDOFF_SCHEMA) throw new Error('invalid source-bound final handoff schema');
+    if (value.profile !== SOURCE_BOUND_QA_PROFILE) throw new Error('unknown source-bound final handoff profile');
+    const validity = validateArtifactHandoff(value.handoff);
+    if (!validity.valid) throw new Error('embedded handoff invalid: ' + validity.errors.join('; '));
+    if (value.handoff.certification.status !== 'certified') throw new Error('source-bound final handoff must have current certified status');
+    exactKeys(value.qaCoverage, ['schema','reportDigest','sourceSha256','assetSha256','decision'], 'QA coverage receipt');
+    if (value.qaCoverage.schema !== QA_COVERAGE_SCHEMA) throw new Error('QA coverage receipt schema mismatch');
+    assertDigest(value.qaCoverage.reportDigest,'qaCoverage.reportDigest');
+    assertDigest(value.qaCoverage.sourceSha256,'qaCoverage.sourceSha256');
+    assertDigest(value.qaCoverage.assetSha256,'qaCoverage.assetSha256');
+    if (value.qaCoverage.assetSha256 !== value.handoff.artifact.sha256) throw new Error('QA coverage does not bind embedded handoff asset');
+    if (value.qaCoverage.decision !== 'ELIGIBLE') throw new Error('source-bound final handoff requires an eligible trusted QA report');
+    if (stableStringify(value.policy) !== stableStringify(SOURCE_BOUND_RELEASE_POLICY)) throw new Error('source-bound final handoff policy mismatch');
+    assertDigest(value.receiptDigest,'receiptDigest');
+    const payload = structuredClone(value);
+    delete payload.receiptDigest;
+    if (digestJson(payload) !== value.receiptDigest) throw new Error('source-bound final handoff receipt digest mismatch');
+  } catch (error) {
+    errors.push(error.message);
+  }
+  return {valid:errors.length===0, errors};
+}
+
+export async function assertSourceBoundReleaseHandoffCurrent(root, receipt) {
+  const validation = validateSourceBoundReleaseHandoff(receipt);
+  if (!validation.valid) throw new Error('source-bound final handoff is invalid: ' + validation.errors.join('; '));
+  const current = await getSourceBoundReleaseHandoff(root);
+  if (current.receiptDigest !== receipt.receiptDigest) {
+    throw new Error('source-bound final handoff is stale or does not bind the current independently verified asset');
   }
   return current;
 }

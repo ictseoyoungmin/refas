@@ -60,6 +60,12 @@ Certification status is one of `uncertified`, `ready`, or `certified`. The hando
 
 Use `assertArtifactHandoffCurrent()` immediately before transfer or downstream consumption when stale handoffs must be rejected.
 
+### Strict source-bound final handoff (v1.2.1 QA-01b candidate)
+
+The ordinary `getArtifactHandoff()` / `refas-host handoff --root DIR` descriptor is a **draft/transfer surface**, not a source-bound release claim, even when it projects a previously accepted certificate. Final source-bound delivery must use `getSourceBoundReleaseHandoff(root)` or `refas-host handoff --root DIR --profile source-bound-object`. This trusted path requires existing whole-object certification, re-runs `verifySourceBoundObject` against the exact current GLB, rejects `NOT_RUN`/`INSUFFICIENT`/failed mandatory checks, and rechecks the handoff before returning a digest-bound release receipt. Consumers must call `assertSourceBoundReleaseHandoffCurrent` to replay currentness; a JSON digest alone is not an independent signature.
+
+**Known incompleteness:** QA-01a is still conservative about contact/support until QA-02 independently replays the typed plan, contact graph and candidate GLB. The strict final path therefore blocks even certified fixtures without those proofs. This is a fail-closed development gate, not a new certification engine or a claim that 1.2.1 is release-ready. Direct external file copying is outside this API and cannot make a trustworthy RefAs release assertion. Legacy draft handoff remains available for working assets.
+
 ### External worker protocol
 
 `refas.worker-request/v1` and `refas.worker-response/v1` define a narrow child-process protocol. `runExternalWorker()` launches argv with `shell:false` from the project root.

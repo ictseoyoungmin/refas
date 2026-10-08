@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/source-bound-release-handoff.schema.json",
+  "title": "Strict RefAs source-bound release handoff receipt",
+  "type": "object",
+  "required": ["schema","profile","handoff","qaCoverage","policy","receiptDigest"],
+  "properties": {
+    "schema": {"const":"refas.source-bound-release-handoff/v1"},
+    "profile": {"const":"source-bound-object"},
+    "handoff": {"$ref":"artifact-handoff.schema.json"},
+    "qaCoverage": {
+      "type":"object",
+      "required":["schema","reportDigest","sourceSha256","assetSha256","decision"],
+      "properties": {
+        "schema":{"const":"refas.qa-coverage-report/v1"},
+        "reportDigest":{"type":"string","pattern":"^[a-f0-9]{64}$"},
+        "sourceSha256":{"type":"string","pattern":"^[a-f0-9]{64}$"},
+        "assetSha256":{"type":"string","pattern":"^[a-f0-9]{64}$"},
+        "decision":{"const":"ELIGIBLE"}
+      },
+      "additionalProperties":false
+    },
+    "policy": {
+      "type":"object",
+      "required":["finalTransferRequiresCertification","finalTransferRequiresSourceBoundQa","ordinaryHandoffIsNotSourceBoundRelease","releaseHandoffCannotCreateCertification"],
+      "properties": {
+        "finalTransferRequiresCertification":{"const":true},
+        "finalTransferRequiresSourceBoundQa":{"const":true},
+        "ordinaryHandoffIsNotSourceBoundRelease":{"const":true},
+        "releaseHandoffCannotCreateCertification":{"const":true}
+      },
+      "additionalProperties":false
+    },
+    "receiptDigest":{"type":"string","pattern":"^[a-f0-9]{64}$"}
+  },
+  "additionalProperties":false
+}

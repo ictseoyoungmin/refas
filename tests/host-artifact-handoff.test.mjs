@@ -17,6 +17,8 @@ import {
   createVisualReview,
   digestBytes,
   getArtifactHandoff,
+  getSourceBoundReleaseHandoff,
+  validateSourceBoundReleaseHandoff,
   getHostEvents,
   initProject,
   loadProject,
@@ -317,4 +319,36 @@ test('artifact handoff detects current checkpoint identity tampering and hidden 
   document.reason = 'tampered after checkpoint commit';
   await fs.writeFile(checkpointPath, `${JSON.stringify(document, null, 2)}\n`);
   await assert.rejects(getArtifactHandoff(root), /checkpoint content digest mismatch/);
+});
+
+test('final source-bound handoff cannot be substituted with a valid draft transfer descriptor', async (t) => {
+  const {root, artifactPath} = await tempProject(t, 'source-bound-draft-probe');
+  await commitCandidate(root, artifactPath, 'valid draft descriptor but not a certified GLB\n');
+  await openFixtureSession(root, 'source-bound-draft-probe');
+  const draft = await getArtifactHandoff(root);
+  assert.equal(draft.certification.status, 'uncertified');
+  await assert.rejects(
+    getSourceBoundReleaseHandoff(root),
+    /source-bound final handoff requires current certified RefAs whole-object state/u,
+  );
+  assert.equal(validateSourceBoundReleaseHandoff(draft).valid, false);
+  // No new checkpoint or project certification can be caused by a refused final handoff.
+  const state = await loadProject(root);
+  assert.equal(state.certification, null);
+});
+
+test('even an existing certificate cannot bypass incomplete source-bound QA coverage', async (t) => {
+  const projectId = 'source-bound-coverage-probe';
+  const {root, artifactPath, source} = await tempProject(t, projectId);
+  await advanceThrough(root, artifactPath, 'visual-critique');
+  await commitCertificationAttempt(root, artifactPath, source);
+  await openFixtureSession(root, projectId);
+  await certifyProject(root);
+  const ordinary = await getArtifactHandoff(root);
+  assert.equal(ordinary.certification.status, 'certified');
+  await assert.rejects(
+    getSourceBoundReleaseHandoff(root),
+    /source-bound final handoff blocked by trusted QA coverage:/u,
+  );
+  assert.equal((await getArtifactHandoff(root)).handoffDigest, ordinary.handoffDigest);
 });
