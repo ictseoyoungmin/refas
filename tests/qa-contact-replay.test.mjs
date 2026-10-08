@@ -17,6 +17,7 @@ import {
   loadProject,
   verifySourceBoundObject,
   inventoryGlbTriangleComponents,
+  parseGlb,
 } from '../skills/refas/scripts/lib/index.mjs';
 
 const D=(c)=>c.repeat(64);
@@ -164,7 +165,16 @@ test('grafted disconnected islands inside ONE declared physical node remain INSU
 test('intrinsic index-edge inventory rejects malformed index buffers instead of yielding an empty-pass',()=>{
  const f=fixture();
  const bad=Buffer.from(f.glb);
- bad.writeUInt32LE(0xFFFFFFFF,bad.length-4);
- // The input bytes are mutated; any resulting inventory error must not upgrade to PASS.
+ const {json}=parseGlb(bad);
+ const primitive=json.meshes[0].primitives[0];
+ const accessor=json.accessors[primitive.indices];
+ const view=json.bufferViews[accessor.bufferView];
+ const indexOffset=20+bad.readUInt32LE(12)+8+(view.byteOffset??0)+(accessor.byteOffset??0);
+ const invalidVertexIndex=json.accessors[primitive.attributes.POSITION].count+20;
+ if(accessor.componentType===5125)bad.writeUInt32LE(invalidVertexIndex,indexOffset);
+ else if(accessor.componentType===5123)bad.writeUInt16LE(invalidVertexIndex,indexOffset);
+ else if(accessor.componentType===5121)bad.writeUInt8(invalidVertexIndex,indexOffset);
+ else throw new Error('unsupported fixture index type');
+ assert.throws(()=>inventoryGlbTriangleComponents(bad),/triangle index exceeds POSITION count/u);
  assert.notEqual(inventoryGlbTriangleComponents(f.glb).assetSha256,sha(bad));
 });
