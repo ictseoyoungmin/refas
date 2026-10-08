@@ -1,6 +1,7 @@
 import {createHash} from 'node:crypto';
 
 import {validateAttachmentSemantics} from './attachment-semantics.mjs';
+import {inventoryGlbTriangleComponents} from './qa-triangle-components.mjs';
 import {validateRealizedContactPlan, validateRealizedContactResult} from './realized-contact.mjs';
 
 export const QA_CONTACT_REPLAY_SCHEMA = 'refas.qa-realized-contact-replay/v1';
@@ -84,6 +85,23 @@ export function replayRealizedContactEvidence({
   if (report.status !== 'PASS' || report.blockers?.length || report.unsupportedPhysicalEntityIds?.length) {
     return result('FAIL', 'actual realized triangle contacts or support-root reachability failed',
       [...(report.blockers ?? []), ...(report.unsupportedPhysicalEntityIds ?? [])]);
+  }
+  // A connected GLB *node* can hide multiple unconnected triangle islands.
+  // Do not call those islands unsupported automatically: UV seams, spokes,
+  // lattice baskets and deliberate multi-part nodes need typed review.
+  let inventory;
+  try {
+    inventory=inventoryGlbTriangleComponents(glb);
+  } catch(error) {
+    return result('FAIL', 'candidate GLB triangle component inventory failed', [String(error.message)]);
+  }
+  const splits=inventory.nodes.filter(node=>node.componentCount>1);
+  if(splits.length) {
+    return result('INSUFFICIENT',
+      'triangle-disconnected islands within a physical mesh require independent typed component-support evidence',[
+        'inventory-digest:'+inventory.inventoryDigest,
+        ...splits.map(node=>'unreviewed-triangle-islands:'+node.nodeId+':'+node.componentCount),
+      ]);
   }
   return result('PASS', 'recomputed GLB triangle contact and declared support paths match exact source/candidate-bound evidence');
 }
