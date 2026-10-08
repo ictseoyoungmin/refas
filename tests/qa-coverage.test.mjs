@@ -3,6 +3,7 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
+import {spawnSync} from 'node:child_process';
 
 import {createCylinder, digestBytes, initProject, partsToGlb} from '../skills/refas/scripts/lib/index.mjs';
 import {verifySourceBoundObject, QA_COVERAGE_SCHEMA} from '../skills/refas/scripts/lib/qa-coverage.mjs';
@@ -95,4 +96,20 @@ test('verification remains read-only and does not promote an uncheckpointed GLB'
  assert.equal(first.decision.state,'BLOCKED');
  assert.equal(JSON.stringify(await loadProject(root)),before);
  assert.equal((await loadProject(root)).certification,null);
+});
+
+test('public verify CLI returns exit 2 and structured BLOCKED instead of announcing valid GLB as certified',async (t)=>{
+ const root=await fs.mkdtemp(path.join(os.tmpdir(),'refas-qa-cli-'));
+ t.after(()=>fs.rm(root,{recursive:true,force:true}));
+ await initProject(root,{projectId:'qa-cli-probe'});
+ const mesh=createCylinder({center:[0,0,0],radius:0.2,height:0.3,segments:12});
+ const asset=path.join(root,'draft.glb');
+ await fs.writeFile(asset,partsToGlb({parts:[{id:'qa-part',materialId:'panel',mesh}],materials}));
+ const cli=path.resolve(import.meta.dirname ?? path.join(path.dirname(new URL(import.meta.url).pathname)), '../skills/refas/scripts/refas.mjs');
+ const completed=spawnSync(process.execPath,[cli,'verify','--root',root,'--asset',asset,'--profile','source-bound-object'],{encoding:'utf8'});
+ assert.equal(completed.status,2,completed.stderr);
+ assert.equal(JSON.parse(completed.stdout).decision.state,'BLOCKED');
+ const bad=spawnSync(process.execPath,[cli,'verify','--root',root,'--asset',asset,'--profile','unknown-profile'],{encoding:'utf8'});
+ assert.equal(bad.status,1);
+ assert.match(bad.stderr,/unknown verification profile/u);
 });
