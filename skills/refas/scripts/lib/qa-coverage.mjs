@@ -5,6 +5,7 @@ import {createHash} from 'node:crypto';
 import {REFAS_VERSION, digestJson} from './canonical.mjs';
 import {inspectGlb} from './glb.mjs';
 import {loadProject, loadCheckpoint} from './checkpoint-store.mjs';
+import {replayRealizedContactEvidence} from './qa-contact-replay.mjs';
 import {assessCertification, assessClaimCertification, auditProject} from './physical-claim-certification-gate.mjs';
 
 export const QA_COVERAGE_SCHEMA = 'refas.qa-coverage-report/v1';
@@ -14,7 +15,6 @@ export const SOURCE_BOUND_QA_PROFILE = 'source-bound-object';
 const HEX_DIGEST = /^[a-f0-9]{64}$/u;
 const BINDINGS = Object.freeze([
   {id:'relational-evidence', owner:'spatial-hypotheses', kinds:['relational-structure', 'semantic-authority', 'relational-discrepancy']},
-  {id:'realized-contact-support', owner:'assembly', kinds:['realized-contact-report']},
   {id:'registered-multiview', owner:'rendering', kinds:['registered-comparison', 'render-report']},
   {id:'independent-visual-review', owner:'visual-critique', kinds:['visual-review']},
 ]);
@@ -57,6 +57,43 @@ async function sourceCheck(root, source) {
   } catch {
     return check('source-provenance', 'source-intake', 'FAIL', 'registered source bytes are not readable');
   }
+}
+
+async function contactReplayCheck(root, head, assetBytes, sourceSha256) {
+  const kinds = ['attachment-semantics','realized-contact-plan','realized-contact-graph','realized-contact-report'];
+  if (!head) return check('realized-contact-support','assembly','NOT_RUN','no checkpoint head exists');
+  const bound = [];
+  const records = {};
+  for (const kind of kinds) {
+    const refs = (head.artifactRefs ?? []).filter((ref) => ref.kind === kind);
+    if (refs.length !== 1) {
+      return check('realized-contact-support','assembly',
+        refs.length ? 'INSUFFICIENT' : 'NOT_RUN','expected exactly one current artifact of kind ' + kind);
+    }
+    const ref=refs[0],file=await existingContainedFile(root,ref.path);
+    if (!file || !HEX_DIGEST.test(String(ref.sha256 ?? ''))) {
+      return check('realized-contact-support','assembly','FAIL','invalid or uncontained ' + kind + ' artifact reference');
+    }
+    try {
+      const bytes=await fs.readFile(file);
+      if (sha256(bytes)!==ref.sha256 || bytes.length !== ref.sizeBytes) {
+        return check('realized-contact-support','assembly','FAIL','current artifact bytes drifted for ' + kind);
+      }
+      records[kind]=JSON.parse(bytes.toString('utf8'));
+      bound.push(ref.sha256);
+    } catch {
+      return check('realized-contact-support','assembly','FAIL','missing or malformed JSON artifact for ' + kind);
+    }
+  }
+  const replay=replayRealizedContactEvidence({
+    glb:assetBytes,sourceSha256,
+    attachmentSemantics:records['attachment-semantics'],
+    plan:records['realized-contact-plan'],
+    graph:records['realized-contact-graph'],
+    report:records['realized-contact-report'],
+  });
+  return check('realized-contact-support','assembly',replay.status,replay.reason + (
+    replay.details.length ? ': ' + replay.details.join('; ') : ''),bound);
 }
 
 async function evidenceCheck(root, head, entry, trustedCertified) {
@@ -142,6 +179,7 @@ export async function verifySourceBoundObject(root, assetFile) {
   const authoritative = Boolean(head && state?.certification && state.status === 'certified'
     && readiness?.ready && claims?.required && claims.valid && audit?.valid);
   for (const item of BINDINGS) checks.push(await evidenceCheck(root, head, item, authoritative));
+  checks.push(await contactReplayCheck(root, head, bytes, state?.source?.sha256 ?? null));
   const candidateIndex=checks.findIndex((item)=>item.id==='candidate-lineage');
   if (authoritative && checks[candidateIndex].status==='INSUFFICIENT') {
     checks[candidateIndex]=check('candidate-lineage','whole-object-certification','PASS',
@@ -162,7 +200,7 @@ export async function verifySourceBoundObject(root, assetFile) {
     checkpointId:state?.head ?? null,
     checks,
     decision:{state:blockingCheckIds.length ? 'BLOCKED' : 'ELIGIBLE',blockingCheckIds},
-    limits:['No independent source semantic detection is performed', 'QA-01a does not replay typed contact/support reports or enforce final host handoff admission', 'This report is not a certificate'],
+    limits:['No independent source semantic detection is performed', 'Contact replay verifies declared assembly evidence, not independent source semantics; final host admission is separate', 'This report is not a certificate'],
   };
   return Object.freeze({...report, reportDigest:digestJson(report)});
 }
