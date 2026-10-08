@@ -62,10 +62,10 @@ async function main() {
   if (missing.length) throw new Error(`required files missing: ${missing.join(', ')}`);
 
   const packageJson = JSON.parse(await fs.readFile(path.join(ROOT,'package.json'),'utf8'));
-  assert.equal(packageJson.version,'1.1.1','package version must be 1.1.1');
+  assert.equal(packageJson.version,'1.2.0','package version must be 1.2.0');
   assert.equal(packageJson.bin?.['refas-host'],'skills/refas/scripts/refas-host.mjs','package must expose the refas-host companion CLI');
   const canonical = await fs.readFile(path.join(ROOT,'skills/refas/scripts/lib/canonical.mjs'),'utf8');
-  assert.match(canonical,/REFAS_VERSION = '1\.1\.1'/u,'runtime version must match package version');
+  assert.match(canonical,/REFAS_VERSION = '1\.2\.0'/u,'runtime version must match package version');
   const cli = await fs.readFile(path.join(ROOT,'skills/refas/scripts/refas.mjs'),'utf8');
   assert.match(cli,/name: 'refas', version: REFAS_VERSION/u,'CLI must report the canonical runtime version');
   const hostCli = await fs.readFile(path.join(ROOT,'skills/refas/scripts/refas-host.mjs'),'utf8');
