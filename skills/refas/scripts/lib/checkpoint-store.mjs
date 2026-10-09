@@ -28,6 +28,8 @@ import {inspectBaseColorTextures} from './glb.mjs';
 import {findComparisonContradictions, validateRegisteredComparison} from './registered-comparison.mjs';
 import {assertEarlyResemblanceAdmission} from './early-resemblance-barrier.mjs';
 import {validateReferenceGeometry} from './reference-geometry.mjs';
+import {verifyRealizedProjection} from './realized-projection-verification.mjs';
+import {findingsFromRealizedProjection} from './projection-findings.mjs';
 import {
   validateBlockoutCompetitionDecision,
   validateBlockoutCompetitionPolicy,
@@ -858,6 +860,54 @@ async function ensureEarlyResemblanceAdmission(root, state, capability, scopeId,
   if (!macro.length || !macro.some((item) => item.evidenceRefs.includes(state.source.path)) ||
       !geometry.attestation.evidenceRefs.includes(state.source.path)) {
     throw new Error(`${capability} source geometry admission requires an observable macro reference-geometry primitive and raw primary source citation`);
+  }
+
+  // P0b1: optional early registered projection is NEVER trusted at face value.
+  // Re-open the real GLB and recompute it from original-source geometry
+  // independently of the worker's normalized pixel locations or PASS claim.
+  // Missing camera/reprojection is a separate, still-open P0b2 obligation.
+  const registered = (shapeCheckpoint.artifactRefs ?? []).filter((artifact) =>
+    artifact.kind === 'realized-projection');
+  if (registered.length > 1) {
+    throw new Error(`${capability} early registered projection requires at most one shape-stage proof`);
+  }
+  if (registered.length === 1) {
+    const {value: proof} = await readCheckpointJsonArtifact(
+      root, shapeCheckpoint, 'realized-projection',
+      `${capability} early registered projection`,
+    );
+    const candidate = candidateMatches[0];
+    const resolvedGlb = await assertExistingFileInside(
+      root, candidate.path, `${capability} early registered projection candidate GLB`,
+    );
+    if (resolvedGlb.stat.size !== candidate.sizeBytes ||
+        await sha256File(resolvedGlb.realFile) !== candidate.sha256) {
+      throw new Error(`${capability} early registered projection candidate GLB bytes are stale or mismatched`);
+    }
+    const actualGlb = await fs.readFile(resolvedGlb.realFile);
+    if (proof.sourceSha256 !== state.source.sha256 ||
+        proof.scopeId !== geometry.scopeId ||
+        proof.assetSha256 !== candidate.sha256) {
+      throw new Error(`${capability} early registered projection source/scope/candidate mismatch`);
+    }
+    const trustedPaths = new Set([
+      state.source.path,
+      ...lineage.flatMap((checkpoint) => (checkpoint.artifactRefs ?? []).map((artifact) => artifact.path)),
+    ]);
+    if (!proof.evidenceRefs?.includes(state.source.path) ||
+        !proof.evidenceRefs?.includes(candidate.path) ||
+        proof.evidenceRefs.some((ref) => !trustedPaths.has(ref))) {
+      throw new Error(`${capability} early registered projection must cite the raw source and exact current GLB within checkpoint lineage`);
+    }
+    const replay = verifyRealizedProjection({proof, referenceGeometry: geometry, glb: actualGlb});
+    if (!replay.valid) {
+      throw new Error(`${capability} early registered projection cannot replay current GLB: ${replay.errors.join('; ')}`);
+    }
+    const findings = findingsFromRealizedProjection(proof).filter((finding) =>
+      finding.severity === 'blocking');
+    if (findings.length) {
+      throw new Error(`${capability} early registered projection blocks downstream detail: ${findings.map((finding) => finding.category + ' (' + finding.checkId + ')').join('; ')}`);
+    }
   }
 }
 
