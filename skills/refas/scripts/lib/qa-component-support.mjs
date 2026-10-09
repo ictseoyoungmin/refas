@@ -119,11 +119,14 @@ export function createTriangleComponentSupportPlan({
  }).sort((a,b)=>a.nodeId.localeCompare(b.nodeId));
  const refs=unique(evidenceRefs);
  if(!refs.length)throw Error('component plan requires design/assembly evidence references');
+ const hasPartial=normalized.some(node=>node.links.some(link=>
+  link.kind==='OPPOSED_AXIS_ALIGNED_PARTIAL_FACE'));
  const payload={schema:QA_COMPONENT_SUPPORT_PLAN_SCHEMA,assetSha256,inventoryDigest,
   nodes:normalized,evidenceRefs:refs,
   policy:{
    actualGlbFloat32TrianglesRequired:true,
-   oppositeWoundExactlyCoincidentFaceRequired:true,
+   oppositeWoundExactlyCoincidentFaceRequired:!hasPartial,
+   ...(hasPartial?{opposedExactPlanePositiveAreaPartialWitnessRequired:true}:{}),
    everyGeometricIslandRequiresRootedWitness:true,
    geometricTouchDoesNotEstablishWeldOrSourceSemanticTruth:true,
    unspecifiedOrNonCoplanarComponentContactStaysInsufficient:true,
