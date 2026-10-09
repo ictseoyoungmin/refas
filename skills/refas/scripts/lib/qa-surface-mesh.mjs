@@ -1,6 +1,7 @@
 import {createHash} from 'node:crypto';
 
 import {parseGlb} from './glb.mjs';
+import {readQaGeometryAccessor,UnsupportedQaGeometryAccessor} from './qa-glb-geometry-accessors.mjs';
 
 export const QA_REALIZED_SURFACE_SCHEMA = 'refas.qa-realized-surface-descriptors/v1';
 const sha256 = (bytes) => createHash('sha256').update(Buffer.from(bytes)).digest('hex');
@@ -28,44 +29,6 @@ const orientedTriangleKey = (vertices) => {
   return [k.join('|'), [k[1], k[2], k[0]].join('|'), [k[2], k[0], k[1]].join('|')].sort()[0];
 };
 
-function accessorData(json, binary, index, {position, nodeId}) {
-  const a = json.accessors?.[index];
-  if (!a || !finiteInt(a.count) || !a.count || a.sparse) {
-    throw new UnsupportedGeometry(nodeId + ': missing, sparse, or malformed geometry accessor');
-  }
-  if (position ? a.type !== 'VEC3' || a.componentType !== 5126 : a.type !== 'SCALAR' || ![5121,5123,5125].includes(a.componentType)) {
-    throw new UnsupportedGeometry(nodeId + ': unsupported geometry accessor format');
-  }
-  if (a.normalized === true) throw new UnsupportedGeometry(nodeId + ': normalized geometry accessor is unsupported');
-  const bytesPerComponent = position ? 4 : a.componentType === 5125 ? 4 : a.componentType === 5123 ? 2 : 1;
-  const width = position ? 3 * bytesPerComponent : bytesPerComponent;
-  const view = json.bufferViews?.[a.bufferView];
-  if (!view || view.buffer !== 0) throw new UnsupportedGeometry(nodeId + ': geometry bufferView is unavailable');
-  const viewOffset = view.byteOffset ?? 0, localOffset = a.byteOffset ?? 0;
-  const stride = view.byteStride ?? width;
-  if (![viewOffset,view.byteLength,localOffset,stride].every(finiteInt) ||
-      stride < width || stride % bytesPerComponent || localOffset % bytesPerComponent ||
-      viewOffset % bytesPerComponent ||
-      localOffset + (a.count - 1) * stride + width > view.byteLength ||
-      viewOffset + view.byteLength > binary.length) {
-    throw new Error(nodeId + ': invalid geometry buffer bounds or alignment');
-  }
-  const data = new DataView(binary.buffer, binary.byteOffset, binary.byteLength);
-  const out = [];
-  for (let i = 0; i < a.count; i += 1) {
-    const off = viewOffset + localOffset + i * stride;
-    if (position) {
-      const p = [0, 4, 8].map((j) => data.getFloat32(off + j, true));
-      if (!p.every(Number.isFinite)) throw new Error(nodeId + ': non-finite GLB position');
-      out.push(p);
-    } else {
-      out.push(a.componentType === 5125 ? data.getUint32(off, true) :
-        a.componentType === 5123 ? data.getUint16(off, true) : data.getUint8(off));
-    }
-  }
-  return out;
-}
-
 function meshTriangles(json, binary, node, nodeId) {
   const mesh = json.meshes?.[node.mesh];
   if (!mesh || !Array.isArray(mesh.primitives) || !mesh.primitives.length) {
@@ -79,10 +42,10 @@ function meshTriangles(json, binary, node, nodeId) {
     if ((primitive.mode ?? 4) !== 4 || (primitive.targets?.length ?? 0) > 0) {
       throw new UnsupportedGeometry(nodeId + ': non-triangle or morphed geometry requires separate evaluation');
     }
-    const positions = accessorData(json, binary, primitive.attributes?.POSITION, {position:true,nodeId});
-    const indices = primitive.indices == null
-      ? positions.map((_, index) => index)
-      : accessorData(json, binary, primitive.indices, {position:false,nodeId});
+    const positions=readQaGeometryAccessor(json,binary,primitive.attributes?.POSITION,
+      {position:true,label:nodeId+': POSITION'});
+    const indices=primitive.indices==null?positions.map((_,index)=>index):
+      readQaGeometryAccessor(json,binary,primitive.indices,{label:nodeId+': indices'});
     if (indices.length % 3) throw new Error(nodeId + ': triangle index count is not divisible by three');
     for (let i = 0; i < indices.length; i += 3) {
       const triplet = indices.slice(i, i + 3);
@@ -172,7 +135,7 @@ export function verifyRealizedSurfaceDescriptors(glb, surfaces, anchorSet) {
     }
     return verdict('PASS', 'all typed owner-local surface triangles occur in the exact candidate GLB', [...seen], assetSha256);
   } catch (error) {
-    if (error instanceof UnsupportedGeometry) {
+    if (error instanceof UnsupportedGeometry || error instanceof UnsupportedQaGeometryAccessor) {
       return verdict('INSUFFICIENT', error.message, [], assetSha256);
     }
     return verdict('FAIL', 'realized GLB surface replay failed', [String(error.message ?? error)], assetSha256);

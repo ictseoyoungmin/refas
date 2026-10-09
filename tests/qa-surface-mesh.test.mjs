@@ -69,12 +69,12 @@ test('QA-02i accepts a real patch from indexed, nonindexed and multiple GLB prim
  }
 });
 
-test('QA-02i sparse POSITION cannot self-certify realized geometry',()=>{
+test('QA-02l valid sparse POSITION overlay cannot bypass actual geometry comparison',()=>{
  const {json,binary}=parseGlb(candidate());
  json.accessors[0].sparse={count:1,indices:{bufferView:1,componentType:5123},
   values:{bufferView:0}};
  const result=verifyRealizedSurfaceDescriptors(pack(json,binary),surfaces,anchorSet);
- assert.equal(result.status,'INSUFFICIENT');
+ assert.equal(result.status,'PASS',result.reason);
 });
 
 test('QA-02i duplicate physical owner and reversed face winding fail closed',()=>{
