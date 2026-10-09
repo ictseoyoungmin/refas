@@ -198,8 +198,10 @@ export function replayTriangleComponentSupport(glb,plan){
     ?isOpposedFace(tris[child],tris[owner])
     :isOpposedAxisAlignedPartialFace(tris[child],tris[owner]);
    if(!valid){
-    return verdict('FAIL','claimed component support faces lack an actual opposed GLB contact patch',
-      [spec.nodeId+':'+child+':'+owner,witness.kind]);
+    return verdict('FAIL',witness.kind==='OPPOSED_EXACT_FACE'
+     ?'claimed component support faces are not opposite-wound coincident GLB triangles'
+     :'claimed partial component support faces lack an opposed exact-plane positive-area GLB patch',
+     [spec.nodeId+':'+child+':'+owner,witness.kind]);
    }
    parents.set(a,b);
    // A partial overlap cannot waive a separate unresolved nonmanifold
