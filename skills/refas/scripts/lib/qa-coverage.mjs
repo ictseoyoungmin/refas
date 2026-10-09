@@ -110,6 +110,66 @@ async function contactReplayCheck(root, head, assetBytes, sourceSha256) {
       }
     }
   }
+  // A physical fuse requires the independently readable original GLB,
+  // canonical edit inputs and a real pre-fusion checkpoint ancestor.
+  // Never turn digest-only worker provenance into an assembly PASS.
+  const fusionBindings=records['realized-contact-plan']?.fusionBindings??[];
+  const fusionReplayInputs=[];
+  if(fusionBindings.length>1) {
+    return check('realized-contact-support','assembly','INSUFFICIENT',
+      'multi-root fusion requires separate independently bound replay for each original checkpoint');
+  }
+  if(fusionBindings.length===1) {
+    const kinds=['logical-fusion','canonical-edit-intent','physical-fusion-plan',
+      'physical-fusion-report','fusion-provenance','pre-fusion-glb'];
+    for(const kind of kinds) {
+      const refs=(head.artifactRefs??[]).filter(ref=>ref.kind===kind);
+      if(refs.length!==1) {
+        return check('realized-contact-support','assembly',
+          refs.length?'INSUFFICIENT':'NOT_RUN','expected exactly one current fusion evidence artifact: '+kind);
+      }
+      const ref=refs[0],file=await existingContainedFile(root,ref.path);
+      if(!file||!HEX_DIGEST.test(String(ref.sha256??''))){
+        return check('realized-contact-support','assembly','FAIL','invalid fusion artifact reference: '+kind);
+      }
+      try{
+        const bytes=await fs.readFile(file);
+        if(bytes.length!==ref.sizeBytes||sha256(bytes)!==ref.sha256){
+          return check('realized-contact-support','assembly','FAIL','fusion artifact bytes drifted: '+kind);
+        }
+        records[kind]=kind==='pre-fusion-glb'?bytes:JSON.parse(bytes.toString('utf8'));
+        bound.push(ref.sha256);
+      }catch{
+        return check('realized-contact-support','assembly','FAIL','missing or malformed fusion artifact: '+kind);
+      }
+    }
+    const fusedPlan=records['physical-fusion-plan'];
+    if(records['pre-fusion-glb']&&sha256(records['pre-fusion-glb'])!==fusedPlan.inputAssetSha256){
+      return check('realized-contact-support','assembly','FAIL','fusion input GLB differs from physical plan');
+    }
+    let originalState,checkpoint;
+    try {
+      originalState=await loadProject(root);
+      checkpoint=await loadCheckpoint(root,fusedPlan.preFusionCheckpointId);
+    }catch {
+      return check('realized-contact-support','assembly','INSUFFICIENT',
+        'canonical pre-fusion checkpoint is not readable in the current project');
+    }
+    if(!(originalState.checkpointIds??[]).includes(checkpoint.id)||head.parentId!==checkpoint.id){
+      return check('realized-contact-support','assembly','INSUFFICIENT',
+        'exact pre-fusion checkpoint must be a current ancestor of the contact checkpoint');
+    }
+    fusionReplayInputs.push({
+      physicalEntityId:fusionBindings[0].physicalEntityId,
+      preFusionGlb:records['pre-fusion-glb'],
+      preFusionCheckpoint:checkpoint,
+      logicalFusion:records['logical-fusion'],
+      canonicalEditIntent:records['canonical-edit-intent'],
+      plan:fusedPlan,
+      report:records['physical-fusion-report'],
+      provenance:records['fusion-provenance'],
+    });
+  }
   const replay=replayRealizedContactEvidence({
     glb:assetBytes,sourceSha256,
     attachmentSemantics:records['attachment-semantics'],
@@ -118,6 +178,7 @@ async function contactReplayCheck(root, head, assetBytes, sourceSha256) {
     report:records['realized-contact-report'],
     propagationPlan:records['attachment-propagation-plan']??null,
     propagationReport:records['attachment-propagation-report']??null,
+    fusionReplayInputs,
   });
   return check('realized-contact-support','assembly',replay.status,replay.reason + (
     replay.details.length ? ': ' + replay.details.join('; ') : ''),bound);
