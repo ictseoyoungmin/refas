@@ -21,6 +21,7 @@ import {
   createAttachmentPropagationPlan,
   propagateAttachmentGraph,
   rigidFrameDigest,
+  verifyRealizedPropagationWorldFrames,
 } from '../skills/refas/scripts/lib/index.mjs';
 
 const D=(c)=>c.repeat(64);
@@ -419,4 +420,86 @@ test('QA-02d tiny real positive gap is never welded by an epsilon',()=>{
  }}],materials:{solid:{baseColor:[0.5,0.5,0.5,1],metallic:0,roughness:1}}});
  const result=inventoryGlbTriangleComponents(glb);
  assert.equal(result.nodes[0].spatial.componentCount,2);
+});
+
+
+test('QA-02f source-independent GLB world pose replay detects contradictory, re-signed positions',()=>{
+ const f=freePropagationFixture();
+ assert.equal(verifyRealizedPropagationWorldFrames(f.glb,f.propagationReport).status,'PASS');
+ const changedGlb=partsToGlb({parts:[{...box('base',0,1),translation:[3,0,0]}],
+   materials:{solid:{baseColor:[0.5,0.5,0.5,1],metallic:0,roughness:1}}});
+ const changedPlan=createRealizedContactPlan({
+   attachmentSemantics:f.attachmentSemantics,id:'shifted-but-source-claims-origin',
+   assetSha256:sha(changedGlb),propagationReportDigest:f.propagationReport.reportDigest,
+   supportRoots:['base'],evidenceRefs:['review/shifted-contact.json'],
+ });
+ const {graph,report}=analyzeRealizedContact({
+   glb:changedGlb,plan:changedPlan,attachmentSemantics:f.attachmentSemantics,
+   propagationReport:f.propagationReport,
+ });
+ assert.equal(report.status,'PASS');
+ const contradiction=replayRealizedContactEvidence({
+   ...f,glb:changedGlb,plan:changedPlan,graph,report,
+ });
+ assert.equal(contradiction.status,'FAIL');
+ assert.match(contradiction.reason,/world transforms/);
+});
+
+test('QA-02f actual GLB translation and parented rotation agree with a bound world-frame report',()=>{
+ const f=freePropagationFixture(),stateDigest=D('1');
+ const frame={origin:[2,3,4],xAxis:[0,1,0],yAxis:[-1,0,0],zAxis:[0,0,1]};
+ const plan=createAttachmentPropagationPlan({attachmentSemantics:f.attachmentSemantics,
+   id:'qa-propagation-transformed',externalFrameBindings:[{
+     entityId:'base',stateDigest,frameDigest:rigidFrameDigest(frame),
+     ownerFrameDigests:[],evidenceRefs:['review/real-world-frame.json'],
+   }],evidenceRefs:['review/real-world-frame-plan.json'],
+ });
+ const report=propagateAttachmentGraph({plan,attachmentSemantics:f.attachmentSemantics,
+   initialWorldFrames:[{entityId:'base',stateDigest,frame}],
+   evidenceRefs:['review/real-world-frame-report.json'],
+ });
+ const glb=partsToGlb({parts:[{
+   ...box('base',0,1),translation:[2,3,4],
+   rotation:[0,0,Math.SQRT1_2,Math.SQRT1_2],
+ }],materials:{solid:{baseColor:[0.5,0.5,0.5,1],metallic:0,roughness:1}}});
+ assert.equal(verifyRealizedPropagationWorldFrames(glb,report).status,'PASS');
+ const wrongGlb=partsToGlb({parts:[{
+   ...box('base',0,1),translation:[2,3,4],
+   rotation:[0,0,0,1],
+ }],materials:{solid:{baseColor:[0.5,0.5,0.5,1],metallic:0,roughness:1}}});
+ assert.equal(verifyRealizedPropagationWorldFrames(wrongGlb,report).status,'FAIL');
+});
+
+test('QA-02f arbitrary scale cannot be mistaken for a rigid attachment frame',()=>{
+ const f=freePropagationFixture();
+ const scaled=partsToGlb({parts:[{...box('base',0,1),scale:[2,1,1]}],
+   materials:{solid:{baseColor:[0.5,0.5,0.5,1],metallic:0,roughness:1}}});
+ assert.equal(verifyRealizedPropagationWorldFrames(scaled,f.propagationReport).status,'INSUFFICIENT');
+});
+
+
+test('QA-02f inherited parent transform contributes to current physical node world frame',()=>{
+ const f=freePropagationFixture(),stateDigest=D('1');
+ const frame={origin:[2,4,4],xAxis:[1,0,0],yAxis:[0,1,0],zAxis:[0,0,1]};
+ const plan=createAttachmentPropagationPlan({
+   attachmentSemantics:f.attachmentSemantics,id:'parent-world-frame',
+   externalFrameBindings:[{entityId:'base',stateDigest,
+     frameDigest:rigidFrameDigest(frame),ownerFrameDigests:[],
+     evidenceRefs:['review/parent-frame.json']}],
+   evidenceRefs:['review/parent-propagation.json'],
+ });
+ const report=propagateAttachmentGraph({plan,attachmentSemantics:f.attachmentSemantics,
+   initialWorldFrames:[{entityId:'base',stateDigest,frame}],
+   evidenceRefs:['review/parent-report.json'],
+ });
+ const glb=partsToGlb({parts:[
+   {...box('carrier',0,0.1),translation:[2,3,4]},
+   {...box('base',0,1),parentId:'carrier',translation:[0,1,0]},
+ ],materials:{solid:{baseColor:[0.5,0.5,0.5,1],metallic:0,roughness:1}}});
+ assert.equal(verifyRealizedPropagationWorldFrames(glb,report).status,'PASS');
+ const inconsistent=partsToGlb({parts:[
+   {...box('carrier',0,0.1),translation:[2,3,4]},
+   {...box('base',0,1),parentId:'carrier',translation:[0,2,0]},
+ ],materials:{solid:{baseColor:[0.5,0.5,0.5,1],metallic:0,roughness:1}}});
+ assert.equal(verifyRealizedPropagationWorldFrames(inconsistent,report).status,'FAIL');
 });
