@@ -908,7 +908,7 @@ async function ensureEarlyResemblanceAdmission(root, state, capability, scopeId,
     // important macro anchor must be geometrically tested. A raw contour
     // without a falsifiable anchor is not an invented full resemblance PASS.
     const requiredMacroAnchors = (geometry.anchors ?? []).filter((item) =>
-      item.importance === 'macro' && item.visibility !== 'inferred' &&
+      item.importance === 'macro' && item.visibility === 'visible' &&
       item.evidenceRefs.includes(state.source.path));
     if (!requiredMacroAnchors.length) {
       throw new Error(`${capability} early registered projection REVIEW_REQUIRED: source has no independently citable visible macro anchors for projection`);
