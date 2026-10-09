@@ -58,8 +58,10 @@ export function replayRealizedContactEvidence({
       return result('FAIL','propagation plan/report differs from the current primary source or contact plan');
     }
     const propagated=replayTrustedPropagationDependencies({
-      plan:propagationPlan,report:propagationReport,attachmentSemantics,
       ...propagationDependencies,
+      // The QA caller's auxiliary dependency map may never override the
+      // independently source/GLB-bound authoritative plan, report or semantics.
+      plan:propagationPlan,report:propagationReport,attachmentSemantics,
     });
     if(propagated.status!=='PASS') {
       return result(propagated.status,'propagation plan/report need independent complete solver replay',[
