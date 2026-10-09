@@ -1,6 +1,7 @@
 import {createHash} from 'node:crypto';
 
 import {validateAttachmentSemantics} from './attachment-semantics.mjs';
+import {validateAttachmentPropagationReport} from './attachment-propagation.mjs';
 import {inventoryGlbTriangleComponents} from './qa-triangle-components.mjs';
 import {validateRealizedContactPlan, validateRealizedContactResult} from './realized-contact.mjs';
 
@@ -18,7 +19,7 @@ const result = (status, reason, details = []) => Object.freeze({
  */
 export function replayRealizedContactEvidence({
   glb, sourceSha256, attachmentSemantics, plan, graph, report,
-  propagationReport = null, fusionArtifacts = [],
+  propagationReport = null, propagationPlan = null, fusionArtifacts = [],
 } = {}) {
   if (!glb || !attachmentSemantics || !plan || !graph || !report) {
     return result('NOT_RUN', 'source-bound contact replay requires candidate GLB, semantic attachments, plan, graph and report');
@@ -37,6 +38,44 @@ export function replayRealizedContactEvidence({
   }
   if (digestBytes(glb) !== plan.assetSha256 || report.assetSha256 !== plan.assetSha256 || graph.assetSha256 !== plan.assetSha256) {
     return result('FAIL', 'realized contact evidence is not bound to the exact candidate GLB bytes');
+  }
+
+
+  // Report JSON and a matching digest are not enough: for the dependency-free
+  // external-frame modes, replay the actual propagation solver from the stored
+  // plan, semantic contract and exact initial frames in the report.
+  if (plan.propagationReportDigest != null) {
+    if (!propagationPlan || !propagationReport) {
+      return result('NOT_RUN','a digest-bound propagation plan and report are required for realized contact replay');
+    }
+    if (propagationPlan.sourceSha256 !== sourceSha256 ||
+        propagationPlan.attachmentSemanticsDigest !== attachmentSemantics.semanticsDigest ||
+        propagationPlan.planDigest !== propagationReport.planDigest ||
+        propagationReport.reportDigest !== plan.propagationReportDigest) {
+      return result('FAIL','propagation plan/report differs from the current primary source or contact plan');
+    }
+    // Later slices will bind and revalidate surface anchors, follow state,
+    // multi-anchor plans and articulated joints. Without them, do not promote
+    // a self-signed report as though its dependent solver had been replayed.
+    const unresolved = [
+      ...(propagationPlan.surfaceAnchorSetDigest ? ['surface-anchor-set'] : []),
+      ...(propagationPlan.followStateDigest ? ['follow-state'] : []),
+      ...((propagationPlan.multiAnchorBindings ?? []).length ? ['multi-anchor-plans'] : []),
+      ...((propagationPlan.articulatedBindings ?? []).length ? ['articulated-joints'] : []),
+    ];
+    if (unresolved.length) {
+      return result('INSUFFICIENT',
+        'propagation solver dependencies require independent source-bound replay',unresolved);
+    }
+    const propagated=validateAttachmentPropagationReport(propagationReport,{
+      plan:propagationPlan,attachmentSemantics,
+    });
+    if (!propagated.valid) {
+      return result('FAIL','propagation report fails independent deterministic solver replay',propagated.errors);
+    }
+    if (propagationReport.status !== 'READY_FOR_REALIZATION' || !propagationReport.eligibleForRealization) {
+      return result('FAIL','digest-bound propagation is not ready for realization');
+    }
   }
 
   const replay = validateRealizedContactResult({graph, report}, {

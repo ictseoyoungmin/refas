@@ -18,6 +18,9 @@ import {
   verifySourceBoundObject,
   inventoryGlbTriangleComponents,
   parseGlb,
+  createAttachmentPropagationPlan,
+  propagateAttachmentGraph,
+  rigidFrameDigest,
 } from '../skills/refas/scripts/lib/index.mjs';
 
 const D=(c)=>c.repeat(64);
@@ -177,4 +180,114 @@ test('intrinsic index-edge inventory rejects malformed index buffers instead of 
  else throw new Error('unsupported fixture index type');
  assert.throws(()=>inventoryGlbTriangleComponents(bad),/triangle index exceeds POSITION count/u);
  assert.notEqual(inventoryGlbTriangleComponents(f.glb).assetSha256,sha(bad));
+});
+
+function freePropagationFixture(){
+ const sourceSha256=D('a');
+ const attachmentSemantics=createAttachmentSemantics({
+   scopeId:'qa-propagation-root',sourceSha256,
+   entities:[E('base')],relations:[R('base-free','FREE','base')],
+ });
+ const frame={origin:[0,0,0],xAxis:[1,0,0],yAxis:[0,1,0],zAxis:[0,0,1]};
+ const stateDigest=D('1');
+ const propagationPlan=createAttachmentPropagationPlan({
+   attachmentSemantics,id:'qa-propagation-plan',
+   externalFrameBindings:[{entityId:'base',stateDigest,frameDigest:rigidFrameDigest(frame),
+     ownerFrameDigests:[],evidenceRefs:['review/root-frame.json']}],
+   evidenceRefs:['review/propagation-plan.json'],
+ });
+ const propagationReport=propagateAttachmentGraph({
+   plan:propagationPlan,attachmentSemantics,
+   initialWorldFrames:[{entityId:'base',stateDigest,frame}],
+   evidenceRefs:['review/propagation-report.json'],
+ });
+ const glb=partsToGlb({parts:[box('base',0,1)],
+   materials:{solid:{baseColor:[0.5,0.5,0.5,1],metallic:0,roughness:1}}});
+ const plan=createRealizedContactPlan({
+   attachmentSemantics,id:'qa-propagated-root',assetSha256:sha(glb),
+   propagationReportDigest:propagationReport.reportDigest,
+   supportRoots:['base'],evidenceRefs:['review/root-contact.json'],
+ });
+ const {graph,report}=analyzeRealizedContact({
+   plan,attachmentSemantics,glb,propagationReport,
+ });
+ return {sourceSha256,glb,attachmentSemantics,plan,graph,report,propagationPlan,propagationReport};
+}
+
+test('QA-02c recomputes saved FREE-root propagation rather than trusting a signed report',()=>{
+ const f=freePropagationFixture();
+ assert.equal(f.propagationReport.status,'READY_FOR_REALIZATION');
+ assert.equal(f.report.status,'PASS');
+ assert.equal(replayRealizedContactEvidence(f).status,'PASS');
+ assert.equal(replayRealizedContactEvidence({...f,propagationPlan:null}).status,'NOT_RUN');
+ const forged={...f,propagationReport:{...f.propagationReport,eligibleForRealization:false}};
+ assert.equal(replayRealizedContactEvidence(forged).status,'FAIL');
+ const mismatchedPlan={...f,propagationPlan:{...f.propagationPlan,externalFrameBindings:[]}};
+ assert.equal(replayRealizedContactEvidence(mismatchedPlan).status,'FAIL');
+});
+
+test('source-bound QA reads exact persisted propagation plan+report and rejects stale bytes',async t=>{
+ const root=await fs.mkdtemp(path.join(os.tmpdir(),'refas-qa-propagation-bound-'));
+ t.after(()=>fs.rm(root,{recursive:true,force:true}));
+ const source=Buffer.from('source for persisted propagation re-evaluation');
+ const sourceSha256=sha(source);
+ await fs.mkdir(path.join(root,'source'),{recursive:true});
+ await fs.writeFile(path.join(root,'source','reference.bin'),source);
+ await initProject(root,{projectId:'qa-propagation-bound',source:{
+   schema:'refas.source-manifest/v1',id:'primary-reference',path:'source/reference.bin',
+   sha256:sourceSha256,sizeBytes:source.length,width:80,height:60,
+   authority:'primary',acquisition:{kind:'operator-supplied'},
+ }});
+ const f=freePropagationFixture();
+ // Propagation and contact semantics must both be attached to the project's real source.
+ const semantics=createAttachmentSemantics({
+   scopeId:'qa-propagation-root',sourceSha256,
+   entities:[E('base')],relations:[R('base-free','FREE','base')],
+ });
+ const frame=f.propagationReport.initialWorldFrames[0].frame;
+ const stateDigest=D('1');
+ const propagationPlan=createAttachmentPropagationPlan({
+   attachmentSemantics:semantics,id:'qa-propagation-plan',
+   externalFrameBindings:[{entityId:'base',stateDigest,frameDigest:rigidFrameDigest(frame),
+     ownerFrameDigests:[],evidenceRefs:['review/root-frame.json']}],
+   evidenceRefs:['review/propagation-plan.json'],
+ });
+ const propagationReport=propagateAttachmentGraph({
+   plan:propagationPlan,attachmentSemantics:semantics,
+   initialWorldFrames:[{entityId:'base',stateDigest,frame}],
+   evidenceRefs:['review/propagation-report.json'],
+ });
+ const plan=createRealizedContactPlan({
+   attachmentSemantics:semantics,id:'qa-propagated-root',assetSha256:sha(f.glb),
+   propagationReportDigest:propagationReport.reportDigest,
+   supportRoots:['base'],evidenceRefs:['review/root-contact.json'],
+ });
+ const {graph,report}=analyzeRealizedContact({plan,attachmentSemantics:semantics,glb:f.glb,propagationReport});
+ const art=path.join(root,'model');
+ await fs.mkdir(art,{recursive:true});
+ const asset=path.join(art,'candidate.glb');
+ await fs.writeFile(asset,f.glb);
+ const records=[
+   ['attachment-semantics',semantics],
+   ['realized-contact-plan',plan],
+   ['realized-contact-graph',graph],
+   ['realized-contact-report',report],
+   ['attachment-propagation-plan',propagationPlan],
+   ['attachment-propagation-report',propagationReport],
+ ];
+ const refs=[await contentReference(asset,{kind:'glb',root})];
+ for(const [kind,value]of records){
+   const target=path.join(art,kind+'.json');
+   await fs.writeFile(target,JSON.stringify(value));
+   refs.push(await contentReference(target,{kind,root}));
+ }
+ await commitCheckpoint(root,{capability:'source-intake',scopeId:'whole',reason:'independent propagation replay fixture',
+   artifactRefs:refs,claims:['Source attached for propagation replay'],gates:[{id:'intake',evidenceRefs:[refs[0].path]}]});
+ const before=await verifySourceBoundObject(root,asset);
+ assert.equal(before.checks.find(c=>c.id==='realized-contact-support').status,'PASS');
+ assert.equal(before.decision.state,'BLOCKED'); // Never become a source-fidelity certificate.
+ const target=path.join(art,'attachment-propagation-report.json');
+ await fs.writeFile(target,JSON.stringify({...propagationReport,eligibleForRealization:false}));
+ const after=await verifySourceBoundObject(root,asset);
+ assert.equal(after.checks.find(c=>c.id==='realized-contact-support').status,'FAIL');
 });
