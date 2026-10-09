@@ -125,21 +125,26 @@ export function replayRealizedContactEvidence({
     return result('FAIL', 'actual realized triangle contacts or support-root reachability failed',
       [...(report.blockers ?? []), ...(report.unsupportedPhysicalEntityIds ?? [])]);
   }
-  // A connected GLB *node* can hide multiple unconnected triangle islands.
-  // Do not call those islands unsupported automatically: UV seams, spokes,
-  // lattice baskets and deliberate multi-part nodes need typed review.
+  // Node-level triangle contact can hide disconnected physical islands.
+  // Distinguish exact-position geometric seams from mere index splits (UVs,
+  // materials, nonindexed glTF). Neither geometric adjacency nor a name alone
+  // proves physical welding or independently observed source semantics.
   let inventory;
   try {
     inventory=inventoryGlbTriangleComponents(glb);
   } catch(error) {
     return result('FAIL', 'candidate GLB triangle component inventory failed', [String(error.message)]);
   }
-  const splits=inventory.nodes.filter(node=>node.componentCount>1);
+  const splits=inventory.nodes.filter(node=>node.spatial.componentCount>1 ||
+    node.spatial.ambiguousEdges>0);
   if(splits.length) {
     return result('INSUFFICIENT',
-      'triangle-disconnected islands within a physical mesh require independent typed component-support evidence',[
+      'geometrically disconnected or ambiguous triangles within a physical mesh require independent typed component-support evidence',[
         'inventory-digest:'+inventory.inventoryDigest,
-        ...splits.map(node=>'unreviewed-triangle-islands:'+node.nodeId+':'+node.componentCount),
+        ...splits.filter(node=>node.spatial.componentCount>1)
+          .map(node=>'unreviewed-triangle-islands:'+node.nodeId+':'+node.spatial.componentCount),
+        ...splits.filter(node=>node.spatial.ambiguousEdges>0)
+          .map(node=>'ambiguous-geometric-edges:'+node.nodeId+':'+node.spatial.ambiguousEdges),
       ]);
   }
   return result('PASS', 'recomputed GLB triangle contact and declared support paths match exact source/candidate-bound evidence');
