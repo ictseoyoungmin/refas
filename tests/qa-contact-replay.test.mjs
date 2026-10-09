@@ -476,3 +476,30 @@ test('QA-02f arbitrary scale cannot be mistaken for a rigid attachment frame',()
    materials:{solid:{baseColor:[0.5,0.5,0.5,1],metallic:0,roughness:1}}});
  assert.equal(verifyRealizedPropagationWorldFrames(scaled,f.propagationReport).status,'INSUFFICIENT');
 });
+
+
+test('QA-02f inherited parent transform contributes to current physical node world frame',()=>{
+ const f=freePropagationFixture(),stateDigest=D('1');
+ const frame={origin:[2,4,4],xAxis:[1,0,0],yAxis:[0,1,0],zAxis:[0,0,1]};
+ const plan=createAttachmentPropagationPlan({
+   attachmentSemantics:f.attachmentSemantics,id:'parent-world-frame',
+   externalFrameBindings:[{entityId:'base',stateDigest,
+     frameDigest:rigidFrameDigest(frame),ownerFrameDigests:[],
+     evidenceRefs:['review/parent-frame.json']}],
+   evidenceRefs:['review/parent-propagation.json'],
+ });
+ const report=propagateAttachmentGraph({plan,attachmentSemantics:f.attachmentSemantics,
+   initialWorldFrames:[{entityId:'base',stateDigest,frame}],
+   evidenceRefs:['review/parent-report.json'],
+ });
+ const glb=partsToGlb({parts:[
+   {...box('carrier',0,0.1),translation:[2,3,4]},
+   {...box('base',0,1),parentId:'carrier',translation:[0,1,0]},
+ ],materials:{solid:{baseColor:[0.5,0.5,0.5,1],metallic:0,roughness:1}}});
+ assert.equal(verifyRealizedPropagationWorldFrames(glb,report).status,'PASS');
+ const inconsistent=partsToGlb({parts:[
+   {...box('carrier',0,0.1),translation:[2,3,4]},
+   {...box('base',0,1),parentId:'carrier',translation:[0,2,0]},
+ ],materials:{solid:{baseColor:[0.5,0.5,0.5,1],metallic:0,roughness:1}}});
+ assert.equal(verifyRealizedPropagationWorldFrames(inconsistent,report).status,'FAIL');
+});
