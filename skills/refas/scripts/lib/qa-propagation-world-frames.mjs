@@ -7,9 +7,14 @@ export const QA_REALIZED_FRAME_SCHEMA='refas.qa-realized-propagation-frames/v1';
 const verdict=(status,reason,entities=[])=>Object.freeze({
  schema:QA_REALIZED_FRAME_SCHEMA,status,reason,entities:[...entities].sort(),
 });
+const matrixFromFrame=frame=>[
+ ...frame.xAxis,0,...frame.yAxis,0,...frame.zAxis,0,...frame.origin,1,
+];
 /**
  * Binds trusted deterministic attachment world frames to actual GLB world
  * transforms. A per-model macro/semantic source comparison is still separate.
+ * FUSED member offsets are replayed from independently checkpoint-bound
+ * original GLB world frames, never inferred from current root pose alone.
  * Non-rigid node transforms and unresolved semantic fusion mappings fail closed.
  */
 export function verifyRealizedPropagationWorldFrames(glb,report,{
@@ -67,49 +72,53 @@ export function verifyRealizedPropagationWorldFrames(glb,report,{
       return verdict(proof.status,'fused semantic pose has no independently realized physical fusion proof',
         [physicalId,proof.reason]);
     }
+    const provenFrames=new Map((proof.memberWorldFrames??[]).map(entry=>
+      [entry.memberId,entry.worldFrame]));
+    if(provenFrames.size!==claimedMembers.length||
+       claimedMembers.some(id=>!provenFrames.has(id))){
+      return verdict('INSUFFICIENT','native fusion replay lacks a complete independently observed member-frame inventory',[physicalId]);
+    }
     for(const id of claimedMembers){
       declared.add(id);
       if(id!==physicalId&&map.has(id)){
         return verdict('INSUFFICIENT','fused member also appears as a separate GLB mesh',[id]);
       }
-      aliases.set(id,physicalId);
+      aliases.set(id,{physicalId,preFusionWorldFrame:provenFrames.get(id)});
     }
    }
   }
   const mismatched=[],missing=[],nonRigid=[];
   for(const item of report.entityResults??[]){
-   if(!['CURRENT_EXTERNAL','PENDING_REALIZED_VALIDATION','RESOLVED'].includes(item.status)||!item.worldFrame) return verdict('INSUFFICIENT','unresolved propagated semantic entity',[item.entityId]);
-   // A physical fusion group may represent several semantic entities,
-   // but only if an exact native GLB fusion replay authorized that mapping.
-   // Member frames differing from the baked physical root cannot be
-   // represented by one unpartitioned physical node without an additional
-   // typed frame-offset provenance contract.
-   const node=map.get(aliases.get(item.entityId)??item.entityId);
+   if(!['CURRENT_EXTERNAL','PENDING_REALIZED_VALIDATION','RESOLVED'].includes(item.status)||!item.worldFrame){
+    return verdict('INSUFFICIENT','unresolved propagated semantic entity',[item.entityId]);
+   }
+   const alias=aliases.get(item.entityId);
+   const node=map.get(alias?.physicalId??item.entityId);
    if(!node){missing.push(item.entityId);continue;}
    if(!rigidMatrix(node.matrix)){nonRigid.push(item.entityId);continue;}
-   if(!sameFrame(node.matrix,item.worldFrame))mismatched.push(item.entityId);
-  }
-  for(const item of report.entityResults??[]){
-   const physicalId=aliases.get(item.entityId);
-   if(physicalId&&physicalId!==item.entityId){
-    const root=report.entityResults.find(entry=>entry.entityId===physicalId);
-    // Even a correctly welded mesh cannot satisfy two differing rigid
-    // semantic poses. Native fusion evidence currently authorizes identity
-    // local member frames only; mismatched frames stay blocked.
-    if(!root?.worldFrame || !item.worldFrame ||
-       !sameFrame({
-        0:root.worldFrame.xAxis[0],1:root.worldFrame.xAxis[1],2:root.worldFrame.xAxis[2],
-        4:root.worldFrame.yAxis[0],5:root.worldFrame.yAxis[1],6:root.worldFrame.yAxis[2],
-        8:root.worldFrame.zAxis[0],9:root.worldFrame.zAxis[1],10:root.worldFrame.zAxis[2],
-        12:root.worldFrame.origin[0],13:root.worldFrame.origin[1],14:root.worldFrame.origin[2],
-       },item.worldFrame)){
-      return verdict('INSUFFICIENT','fused semantic frame differs from current physical root without per-member realization proof',[item.entityId,physicalId]);
+   if(alias&&item.entityId!==alias.physicalId){
+    // A semantic fused member has no independent post-fusion GLB node.
+    // Its pose is proved by the exact original pre-fusion GLB pose,
+    // which the native bake replay has independently bound to the
+    // original checkpoint, member frameDigest, final GLB, and provenance.
+    // A current physical-root pose alone cannot certify this member pose.
+    if(item.mode!=='FUSED'){
+     return verdict('FAIL','a fused alias is claimed by a non-FUSED semantic relation',[item.entityId]);
     }
+    const frame=alias.preFusionWorldFrame;
+    if(!frame||!sameFrame(matrixFromFrame(frame),item.worldFrame)){
+     mismatched.push(item.entityId);
+    }
+   }else if(!sameFrame(node.matrix,item.worldFrame)){
+    // The physical fusion root has an actual post-fusion node. Even if
+    // its original pre-fusion pose differed, the output's authoritative
+    // root frame must match propagation's current root.
+    mismatched.push(item.entityId);
    }
   }
   if(missing.length)return verdict('INSUFFICIENT','propagated entity lacks one independently identified physical node',missing);
   if(nonRigid.length)return verdict('INSUFFICIENT','non-rigid GLB transforms require explicit realization semantics',nonRigid);
-  if(mismatched.length)return verdict('FAIL','actual GLB world pose disagrees with independently replayed attachment propagation',mismatched);
+  if(mismatched.length)return verdict('FAIL','propagated semantic world pose disagrees with current physical root or original source-bound native fusion member GLB frame',mismatched);
   return verdict('PASS','all propagated frames match actual active-scene GLB physical world transforms');
  }catch(error){return verdict('FAIL',String(error?.message??error));}
 }
