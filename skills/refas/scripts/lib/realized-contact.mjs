@@ -3,6 +3,7 @@ import {createHash} from 'node:crypto';
 import {assertDigest, assertId, deepFreeze, digestJson} from './canonical.mjs';
 import {validateAttachmentSemantics} from './attachment-semantics.mjs';
 import {parseGlb} from './glb.mjs';
+import {readQaGeometryAccessor} from './qa-glb-geometry-accessors.mjs';
 
 export const REALIZED_CONTACT_PLAN_SCHEMA = 'refas.realized-contact-plan/v1';
 export const REALIZED_CONTACT_GRAPH_SCHEMA = 'refas.realized-contact-graph/v1';
@@ -219,32 +220,6 @@ function worldMatrices(json) {
   return world;
 }
 
-const COMPONENT = {
-  5120: {size: 1, read: (v, o) => v.getInt8(o)},
-  5121: {size: 1, read: (v, o) => v.getUint8(o)},
-  5122: {size: 2, read: (v, o) => v.getInt16(o, true)},
-  5123: {size: 2, read: (v, o) => v.getUint16(o, true)},
-  5125: {size: 4, read: (v, o) => v.getUint32(o, true)},
-  5126: {size: 4, read: (v, o) => v.getFloat32(o, true)},
-};
-const TYPE_SIZE = {SCALAR: 1, VEC2: 2, VEC3: 3, VEC4: 4, MAT4: 16};
-function readAccessor(json, binary, accessorIndex) {
-  const accessor = json.accessors?.[accessorIndex], viewSpec = json.bufferViews?.[accessor?.bufferView], component = COMPONENT[accessor?.componentType], width = TYPE_SIZE[accessor?.type];
-  if (!accessor || !viewSpec || !component || !width || accessor.sparse) throw new Error(`unsupported accessor ${accessorIndex}`);
-  if (viewSpec.buffer !== 0) throw new Error('realized contact requires the embedded GLB buffer');
-  const stride = Number(viewSpec.byteStride ?? component.size * width), start = Number(viewSpec.byteOffset ?? 0) + Number(accessor.byteOffset ?? 0);
-  if (stride < component.size * width) throw new Error(`accessor ${accessorIndex} byteStride is too small`);
-  const data = new DataView(binary.buffer, binary.byteOffset, binary.byteLength), output = [];
-  for (let item = 0; item < accessor.count; item += 1) {
-    const base = start + item * stride;
-    if (base + component.size * width > binary.length) throw new Error(`accessor ${accessorIndex} exceeds BIN chunk`);
-    const values = [];
-    for (let lane = 0; lane < width; lane += 1) values.push(component.read(data, base + lane * component.size));
-    output.push(width === 1 ? values[0] : values);
-  }
-  return output;
-}
-
 const sub = (a, b) => a.map((value, index) => value - b[index]);
 const add = (a, b) => a.map((value, index) => value + b[index]);
 const scale = (a, s) => a.map((value) => value * s);
@@ -380,9 +355,10 @@ function extractPhysicalMeshes(glb) {
     const vertices=[], triangles=[];
     for (const primitive of meshSpec.primitives??[]) {
       if ((primitive.mode??4)!==4) throw new Error(`${id}: realized contact supports TRIANGLES primitives only`);
-      const local=readAccessor(json,binary,primitive.attributes?.POSITION);
+      const local=readQaGeometryAccessor(json,binary,primitive.attributes?.POSITION,
+        {position:true,label:id+': POSITION'});
       if(!local.length||!local.every((p)=>Array.isArray(p)&&p.length===3&&p.every(Number.isFinite))) throw new Error(`${id}: invalid POSITION accessor`);
-      const transformed=local.map((p)=>transformPoint(world.get(nodeIndex),p)), indices=primitive.indices==null?transformed.map((_,i)=>i):readAccessor(json,binary,primitive.indices);
+      const transformed=local.map((p)=>transformPoint(world.get(nodeIndex),p)), indices=primitive.indices==null?transformed.map((_,i)=>i):readQaGeometryAccessor(json,binary,primitive.indices,{label:id+': triangle indices'});
       if(indices.length%3!==0||!indices.every(Number.isInteger)) throw new Error(`${id}: triangle index accessor is invalid`);
       const base=vertices.length; vertices.push(...transformed);
       for(let i=0;i<indices.length;i+=3){
