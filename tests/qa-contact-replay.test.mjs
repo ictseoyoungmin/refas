@@ -482,6 +482,11 @@ test('QA-02g persisted RIGID_FOLLOW requires actual typed dependency to PASS',as
   propagationPlan:g.propagationPlan,propagationReport:g.propagationReport,
   propagationDependencies:{followState:g.followState}};
  assert.equal(replayRealizedContactEvidence(args).status,'PASS');
+ assert.equal(replayRealizedContactEvidence({...args,propagationDependencies:{
+   followState:g.followState,
+   plan:{sourceSha256:D('c')},report:{eligibleForRealization:false},
+   attachmentSemantics:{sourceSha256:D('d')},
+ }}).status,'PASS'); // injected auxiliary keys cannot override the trusted plan
  assert.equal(replayRealizedContactEvidence({...args,propagationDependencies:{}}).status,'INSUFFICIENT');
  const art=path.join(root,'model');await fs.mkdir(art,{recursive:true});
  const candidate=path.join(art,'candidate.glb');await fs.writeFile(candidate,f.glb);
