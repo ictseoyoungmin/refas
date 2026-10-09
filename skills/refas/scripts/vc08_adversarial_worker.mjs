@@ -160,10 +160,37 @@ async function initBase({role='volumetric',depth=1}={}){
   const roleRef=await ref('model/spatial-role.json','spatial-role-expectation');
   await writeJson('model/spatial.json',{scenario,role});
   const spatialRef=await ref('model/spatial.json','spatial-hypotheses');
+  const vc08Camera={projection:'perspective',position:[0,0,5],
+    target:[0,0,0],up:[0,1,0],fovY:90,aspect:1};
+  const cameraSet=API.createSpatialHypothesisSet({
+    scopeId:'whole',sourceSha256:source.sha256,
+    hypotheses:[
+      {id:'vc08-camera-source',description:'raw-source frontal candidate',
+        camera:vc08Camera,hiddenForm:'not observed',
+        predictions:{silhouette:'frontal',occlusion:'front overlap',
+          sideView:'unknown',topView:'unknown',grazing:'unknown'},
+        falsifiers:['source silhouette contradicts centered orientation'],
+        evidenceRefs:[source.path],evidenceCoverage:2,assumptionCost:0,status:'plausible'},
+      {id:'vc08-camera-competing',description:'raw-source oblique counterfactual',
+        camera:{projection:'perspective',position:[-2,0,5],
+          target:[-2,0,0],up:[0,1,0],fovY:90,aspect:1},
+        hiddenForm:'not observed',
+        predictions:{silhouette:'oblique',occlusion:'side overlap',
+          sideView:'unknown',topView:'unknown',grazing:'unknown'},
+        falsifiers:['source whole observation contradicts offset projection'],
+        evidenceRefs:[source.path],evidenceCoverage:1,assumptionCost:1,status:'falsified'},
+    ],
+    selectedId:'vc08-camera-source',
+    attestation:{attested:true,evidenceRefs:[source.path]},
+  });
+  await writeJson('model/source-camera-hypotheses.json',cameraSet);
+  const cameraSetRef=await ref('model/source-camera-hypotheses.json','spatial-hypothesis-set');
   const spatialCheckpoint=await API.commitCheckpoint(projectRoot,{
-    capability:'spatial-hypotheses',scopeId:'whole',reason:'VC08 freezes VC02 authority before reconstruction',
-    artifactRefs:[spatialRef,roleRef],claims:['VC02 frozen before candidate'],
-    gates:[{id:'spatial-hypotheses-gate',evidenceRefs:[spatialRef.path,roleRef.path]}],
+    capability:'spatial-hypotheses',scopeId:'whole',
+    reason:'VC08 freezes VC02 role and source camera before reconstruction',
+    artifactRefs:[spatialRef,roleRef,cameraSetRef],
+    claims:['VC02 role and camera choice frozen before candidate'],
+    gates:[{id:'spatial-hypotheses-gate',evidenceRefs:[spatialRef.path,roleRef.path,cameraSetRef.path]}],
   });
 
   const glb=candidateGlb({depth});
@@ -174,7 +201,7 @@ async function initBase({role='volumetric',depth=1}={}){
   const registered=API.createRealizedProjection({
     referenceGeometry:observedGeometry,glb,
     cameraHypothesisId:'vc08-camera-source',
-    camera:{projection:'perspective',position:[0,0,5],target:[0,0,0],up:[0,1,0],fovY:90,aspect:1},
+    camera:vc08Camera,
     anchorBindings:[{referenceId:'observed-whole-center',nodeId:'model-node',localPoint:[0,0,0]}],
     evidenceRefs:[source.path,asset.path],
   });
