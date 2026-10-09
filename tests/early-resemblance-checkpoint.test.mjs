@@ -18,6 +18,7 @@ import {
   createEarlyResemblanceBarrier,
   createReferenceGeometry,
   createRealizedProjection,
+  createSpatialHypothesisSet,
   createPbrRenderReport,
   createPerceptualSignatureEvidence,
   createPerceptualSignatureSet,
@@ -133,6 +134,10 @@ async function makeRealSourceProject(t, verdictStatus, {
   movedMacroBinding = false,
   wrongEarlyCamera = false,
   tamperProjection = false,
+  omitHypothesisSet = false,
+  unresolvedHypotheses = false,
+  selectedCameraMismatch = false,
+  staleHypothesisSource = false,
 } = {}) {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), 'refas-r04-real-'));
   t.after(() => fs.rm(root, {recursive: true, force: true}));
@@ -214,7 +219,39 @@ async function makeRealSourceProject(t, verdictStatus, {
     Buffer.from(`${JSON.stringify(roleSet, null, 2)}\n`),
     'spatial-role-expectation',
   );
-  await commitLocal(root, 'spatial-hypotheses', [spatialRef, roleRef]);
+  const selectedCamera = {
+    projection:'perspective',position:selectedCameraMismatch ? [1,0,5] : wrongEarlyCamera ? [2,0,5] : [0,0,5],
+    target:selectedCameraMismatch ? [1,0,0] : wrongEarlyCamera ? [2,0,0] : [0,0,0],
+    up:[0,1,0],fovY:90,aspect:1,
+  };
+  const rejectedCamera = {
+    projection:'perspective',position:[-2,0,5],
+    target:[-2,0,0],up:[0,1,0],fovY:90,aspect:1,
+  };
+  const hypothesisSet = createSpatialHypothesisSet({
+    scopeId:'whole',sourceSha256:staleHypothesisSource ? D('f') : source.sha256,
+    hypotheses:[
+      {id:'whole-source-camera-a',description:'Observed frontal primary-source framing',
+        camera:selectedCamera,hiddenForm:'not observed',
+        predictions:{silhouette:'front contour',occlusion:'front-to-back shoulder overlap',
+          sideView:'undetermined',topView:'undetermined',grazing:'undetermined'},
+        falsifiers:['source silhouette contradicts camera'], evidenceRefs:[source.path],
+        evidenceCoverage:2,assumptionCost:0,status:'plausible'},
+      {id:'whole-source-camera-b',description:'Competing oblique projection from raw source',
+        camera:rejectedCamera,hiddenForm:'not observed',
+        predictions:{silhouette:'oblique contour',occlusion:'other shoulder overlap',
+          sideView:'undetermined',topView:'undetermined',grazing:'undetermined'},
+        falsifiers:['visible source anchors contradict the oblique camera'],evidenceRefs:[source.path],
+        evidenceCoverage:1,assumptionCost:1,status:unresolvedHypotheses?'plausible':'falsified'},
+    ],
+    selectedId:unresolvedHypotheses?null:'whole-source-camera-a',
+    attestation:{attested:true,evidenceRefs:[source.path]},
+  });
+  const hypothesisRef=await writeRef(root,'model/source-camera-hypotheses.json',
+    Buffer.from(JSON.stringify(hypothesisSet)+'\n'),'spatial-hypothesis-set');
+  await commitLocal(root, 'spatial-hypotheses', [
+    spatialRef, roleRef, ...(!omitHypothesisSet ? [hypothesisRef] : []),
+  ]);
 
   const candidateBytes = partsToGlb({
     assetId: 'vc04-r04-candidate',
@@ -344,6 +381,38 @@ async function makeRealSourceProject(t, verdictStatus, {
   const surfaceRef = await writeRef(root, 'model/surface.json', Buffer.from('{"surface":true}\n'), 'surface-network');
   return {root, source, hierarchy, barrier, volumeBarrier, classification, spatialEvidence, surfaceRef, candidateRef, shapeCheckpoint};
 }
+
+test('P0b2b1 no frozen source-selected camera hypotheses cannot authorize detail', async (t) => {
+  const {root,surfaceRef}=await makeRealSourceProject(t,'match',{omitHypothesisSet:true});
+  await assert.rejects(
+    () => commitLocal(root,'surface-topology',[surfaceRef]),
+    /camera hypothesis admission requires exactly one spatial-hypothesis-set artifact/u,
+  );
+});
+
+test('P0b2b1 unresolved primary camera alternatives require review rather than macro PASS', async (t) => {
+  const {root,surfaceRef}=await makeRealSourceProject(t,'match',{unresolvedHypotheses:true});
+  await assert.rejects(
+    () => commitLocal(root,'surface-topology',[surfaceRef]),
+    /camera hypothesis REVIEW_REQUIRED: high-impact camera alternatives remain unresolved/u,
+  );
+});
+
+test('P0b2b1 selected camera differs from realized candidate camera and blocks detail', async (t) => {
+  const {root,surfaceRef}=await makeRealSourceProject(t,'match',{selectedCameraMismatch:true});
+  await assert.rejects(
+    () => commitLocal(root,'surface-topology',[surfaceRef]),
+    /camera hypothesis REWORK: registered camera does not match the frozen source-selected hypothesis/u,
+  );
+});
+
+test('P0b2b1 changed source digest on otherwise valid prior camera hypotheses fails', async (t) => {
+  const {root,surfaceRef}=await makeRealSourceProject(t,'match',{staleHypothesisSource:true});
+  await assert.rejects(
+    () => commitLocal(root,'surface-topology',[surfaceRef]),
+    /camera hypothesis REVIEW_REQUIRED: original source or scope mismatch/u,
+  );
+});
 
 test('P0b2 missing registered camera/GLB evidence must REVIEW_REQUIRED before detail', async (t) => {
   const {root, surfaceRef, barrier} = await makeRealSourceProject(t,'match',
