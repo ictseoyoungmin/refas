@@ -1,5 +1,5 @@
 import {createHash} from 'node:crypto';
-import {digestJson} from './canonical.mjs';
+import {digestJson,deepFreeze} from './canonical.mjs';
 import {parseGlb} from './glb.mjs';
 import {readQaGeometryAccessor,UnsupportedQaGeometryAccessor} from './qa-glb-geometry-accessors.mjs';
 import {sceneMatrices,realizedGlbRigidFrame,sameFrame} from './qa-glb-rigid-frames.mjs';
@@ -7,7 +7,10 @@ import {bakePhysicalFusion, validatePhysicalFusionResult} from './physical-fusio
 
 export const QA_FUSION_REPLAY_SCHEMA='refas.qa-physical-fusion-replay/v1';
 const hash=b=>createHash('sha256').update(Buffer.from(b)).digest('hex');
-const verdict=(status,reason)=>Object.freeze({schema:QA_FUSION_REPLAY_SCHEMA,status,reason});
+const verdict=(status,reason,memberWorldFrames=null)=>deepFreeze({
+ schema:QA_FUSION_REPLAY_SCHEMA,status,reason,
+ ...(status==='PASS'&&memberWorldFrames?{memberWorldFrames}:{}),
+});
 const unsupported=(reason)=>{throw new Error('UNSUPPORTED_LAYOUT: '+reason);};
 
 function decodeMesh(glb,partId){
@@ -122,7 +125,9 @@ export function replayExactGlbPhysicalFusion({
   if(extras.physicalFusionReportDigest!==report.reportDigest || extras.fusionProvenanceDigest!==provenance.provenanceDigest) {
     return verdict('INSUFFICIENT','fused GLB does not carry the exact reproduced report/provenance binding');
   }
-  return verdict('PASS','pre-fusion checkpoint and both exact GLB meshes match native bake and semantic provenance replay');
+  return verdict('PASS',
+    'pre-fusion checkpoint and both exact GLB meshes match native bake and semantic provenance replay',
+    members.map(member=>({memberId:member.memberId,worldFrame:member.worldFrame})));
  }catch(error){
   const reason=String(error?.message??error);
   return verdict(reason.startsWith('UNSUPPORTED_LAYOUT:')?'INSUFFICIENT':'FAIL',reason);

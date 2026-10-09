@@ -673,7 +673,7 @@ test('QA-02e public verifier loads exact pre-fusion checkpoint and replays curre
  }).status,'FAIL');
  const forgedWorldFrame=structuredClone(propagationReport);
  forgedWorldFrame.entityResults.find(entry=>entry.entityId==='nose').worldFrame.origin=[5,0,0];
- assert.equal(verifyRealizedPropagationWorldFrames(fusedGlb,forgedWorldFrame,aliasArgs).status,'INSUFFICIENT');
+ assert.equal(verifyRealizedPropagationWorldFrames(fusedGlb,forgedWorldFrame,aliasArgs).status,'FAIL');
  const fakeProof=structuredClone(fusionReplayInputs);
  fakeProof[0].provenance.provenanceDigest=D('e');
  assert.equal(verifyRealizedPropagationWorldFrames(fusedGlb,propagationReport,{
@@ -683,4 +683,164 @@ test('QA-02e public verifier loads exact pre-fusion checkpoint and replays curre
  await fs.writeFile(path.join(files,'fusion-provenance.json'),JSON.stringify({...bake.provenance,outputFaces:[]}));
  const mutated=await verifySourceBoundObject(root,assetPath);
  assert.equal(mutated.checks.find(x=>x.id==='realized-contact-support').status,'FAIL');
+});
+
+test('QA-02o independently bound member-local rotation and translation prove distinct FUSED propagation poses',()=>{
+ const f=fixture(D('b'),{includeGlasses:false});
+ const materials={skin:{baseColor:[.55,.6,.64,1],roughness:1,metallic:0}};
+ const frames={
+  'head-shell':I(),
+  face:{origin:[1,0,0],xAxis:[-1,0,0],yAxis:[0,-1,0],zAxis:[0,0,1]},
+  nose:I([2,0,0]),
+ };
+ // Inverse-rigid-transform the same three world-aligned native cuboids
+ // into distinctly moved/rotated member-local meshes.
+ const meshes=new Map(f.realizedMembers.map(({memberId,mesh})=>{
+  const local=structuredClone(mesh);
+  if(memberId==='face'){
+   local.positions=mesh.positions.map(([x,y,z])=>[1-x,-y,z]);
+  }else if(memberId==='nose'){
+   local.positions=mesh.positions.map(([x,y,z])=>[x-2,y,z]);
+  }
+  return [memberId,local];
+ }));
+ const preFusionGlb=partsToGlb({parts:[...meshes.entries()].map(([id,mesh])=>({
+  id,mesh,materialId:'skin',
+  ...(id==='face'?{matrix:[
+   -1,0,0,0,0,-1,0,0,0,0,1,0,1,0,0,1,
+  ]}:id==='nose'?{translation:[2,0,0]}:{}),
+ })),materials});
+ const cpBody={schema:'refas.checkpoint/v1',parentId:null,capability:'assembly',
+  scopeId:'whole',reason:'recorded rotated original parts before physical fusion',
+  claims:[],gates:[],metadata:{},transactionId:null,
+  artifactRefs:[{kind:'glb',sha256:sha(preFusionGlb)}]};
+ const contentDigest=digestJson(cpBody),checkpoint={
+  ...cpBody,id:'cp_'+contentDigest.slice(0,20),contentDigest,
+  createdAt:'2026-10-09T00:00:00.000Z',
+ };
+ const plan=createPhysicalFusionPlan({
+  attachmentSemantics:f.attachmentSemantics,logicalFusion:f.logicalFusion,
+  canonicalEditIntent:f.canonicalEditIntent,
+  id:'real-glb-offset-bake',groupId:f.plan.groupId,
+  inputAssetSha256:sha(preFusionGlb),
+  preFusionCheckpointId:checkpoint.id,preFusionStateDigest:checkpoint.contentDigest,
+  fusionRootFrame:I(),
+  members:f.plan.members.map(member=>({
+   ...member,geometryDigest:physicalFusionGeometryDigest(meshes.get(member.memberId)),
+   frameDigest:physicalFusionFrameDigest(frames[member.memberId]),
+  })),
+  strategy:'WELD_SHARED_BOUNDARY',weldTolerance:f.plan.weldTolerance,
+  topologyObligation:f.plan.topologyObligation,
+  evidenceRefs:['review/recorded-rigid-member-frame-bake.json'],
+ });
+ const baked=bakePhysicalFusion({
+  plan,attachmentSemantics:f.attachmentSemantics,logicalFusion:f.logicalFusion,
+  canonicalEditIntent:f.canonicalEditIntent,
+  currentInputAssetSha256:plan.inputAssetSha256,
+  currentPreFusionStateDigest:plan.preFusionStateDigest,
+  realizedMembers:[...meshes.entries()].map(([memberId,mesh])=>({
+   memberId,mesh,worldFrame:frames[memberId],
+  })),
+  evidenceRefs:['review/differently-posed-members-baked.json'],
+ });
+ assert.equal(baked.report.status,'BAKED');
+ const fusedGlb=partsToGlb({parts:[{
+  id:'head-shell',mesh:baked.mesh,materialId:'skin',
+ }],materials,extras:{
+  physicalFusionReportDigest:baked.report.reportDigest,
+  fusionProvenanceDigest:baked.provenance.provenanceDigest,
+ }});
+ const proofInput={sourceSha256:f.attachmentSemantics.sourceSha256,
+  attachmentSemantics:f.attachmentSemantics,
+  preFusionGlb,fusedGlb,preFusionCheckpoint:checkpoint,
+  physicalEntityId:'head-shell',
+  logicalFusion:f.logicalFusion,canonicalEditIntent:f.canonicalEditIntent,
+  plan,report:baked.report,provenance:baked.provenance};
+ const proof=replayExactGlbPhysicalFusion(proofInput);
+ assert.equal(proof.status,'PASS',proof.reason);
+ assert.deepEqual(proof.memberWorldFrames.find(x=>x.memberId==='face').worldFrame,frames.face);
+ assert.deepEqual(proof.memberWorldFrames.find(x=>x.memberId==='nose').worldFrame,frames.nose);
+ assert.ok(Object.isFrozen(proof.memberWorldFrames[0].worldFrame.origin));
+ const state={ 'head-shell':D('7'),face:D('8'),nose:D('9')};
+ const propagationPlan=createAttachmentPropagationPlan({
+  attachmentSemantics:f.attachmentSemantics,id:'independent-original-fused-offset-frames',
+  externalFrameBindings:['head-shell','face','nose'].map(entityId=>({
+   entityId,stateDigest:state[entityId],
+   frameDigest:rigidFrameDigest(frames[entityId]),
+   ownerFrameDigests:entityId==='head-shell'?[]:[{
+    ownerId:'head-shell',frameDigest:rigidFrameDigest(frames['head-shell']),
+   }],
+   evidenceRefs:['review/original-world-pose-'+entityId+'.json'],
+  })),
+  evidenceRefs:['review/original-member-rigid-poses.json'],
+ });
+ const propagationReport=propagateAttachmentGraph({
+  plan:propagationPlan,attachmentSemantics:f.attachmentSemantics,
+  initialWorldFrames:['head-shell','face','nose'].map(entityId=>({
+   entityId,stateDigest:state[entityId],frame:frames[entityId],
+  })),
+  evidenceRefs:['review/solved-distinct-fused-member-frames.json'],
+ });
+ assert.equal(propagationReport.status,'READY_FOR_REALIZATION');
+ const contactPlan=createRealizedContactPlan({
+  attachmentSemantics:f.attachmentSemantics,id:'native-offset-fused-contact',
+  assetSha256:sha(fusedGlb),supportRoots:['head-shell'],
+  fusionBindings:[{physicalEntityId:'head-shell',
+   semanticMemberIds:['head-shell','face','nose'],
+   fusionReportDigest:baked.report.reportDigest,
+   provenanceDigest:baked.provenance.provenanceDigest,
+   evidenceRefs:['review/exact-pre-fusion-original-member-frames.json'],
+  }],
+  propagationReportDigest:propagationReport.reportDigest,
+  evidenceRefs:['review/actual-offset-contact-plan.json'],
+ });
+ const posed=analyzeRealizedContact({
+  plan:contactPlan,attachmentSemantics:f.attachmentSemantics,
+  glb:fusedGlb,propagationReport,
+  fusionArtifacts:[{report:baked.report,provenance:baked.provenance}],
+ });
+ assert.equal(posed.report.status,'PASS');
+ const aliasOptions={sourceSha256:f.attachmentSemantics.sourceSha256,
+  attachmentSemantics:f.attachmentSemantics,
+  fusionBindings:contactPlan.fusionBindings,
+  fusionReplayInputs:[proofInput],
+ };
+ const pose=replayRealizedContactEvidence({
+  glb:fusedGlb,sourceSha256:f.attachmentSemantics.sourceSha256,
+  attachmentSemantics:f.attachmentSemantics,
+  plan:contactPlan,graph:posed.graph,report:posed.report,
+  propagationPlan,propagationReport,fusionReplayInputs:[proofInput],
+ });
+ assert.equal(pose.status,'PASS',pose.reason+': '+pose.details.join(';'));
+ assert.equal(verifyRealizedPropagationWorldFrames(fusedGlb,propagationReport,aliasOptions).status,'PASS');
+ assert.equal(verifyRealizedPropagationWorldFrames(fusedGlb,propagationReport).status,'INSUFFICIENT');
+
+ // A plausible matching physical root says nothing about a wrongly copied
+ // face/nose pose. Every semantic member must equal its original GLB frame.
+ for(const [entityId,newFrame]of [['face',frames.nose],['nose',frames.face]]){
+  const forged=structuredClone(propagationReport);
+  forged.entityResults.find(x=>x.entityId===entityId).worldFrame=newFrame;
+  const bad=verifyRealizedPropagationWorldFrames(fusedGlb,forged,aliasOptions);
+  assert.equal(bad.status,'FAIL',entityId+': '+bad.reason);
+  assert.ok(bad.entities.includes(entityId));
+ }
+ const wrongRoot=structuredClone(propagationReport);
+ wrongRoot.entityResults.find(x=>x.entityId==='head-shell').worldFrame=frames.nose;
+ assert.equal(verifyRealizedPropagationWorldFrames(fusedGlb,wrongRoot,aliasOptions).status,'FAIL');
+ const missingInput=verifyRealizedPropagationWorldFrames(fusedGlb,propagationReport,{
+  ...aliasOptions,fusionReplayInputs:[],
+ });
+ assert.equal(missingInput.status,'INSUFFICIENT');
+ const staleOriginal=structuredClone(proofInput);
+ staleOriginal.preFusionGlb=mutateGlbJson(preFusionGlb,json=>{
+  json.nodes.find(n=>n.name==='face').matrix[12]=1.5;
+ });
+ assert.equal(verifyRealizedPropagationWorldFrames(fusedGlb,propagationReport,{
+  ...aliasOptions,fusionReplayInputs:[staleOriginal],
+ }).status,'FAIL');
+ const wrongProvenance=structuredClone(proofInput);
+ wrongProvenance.provenance.provenanceDigest=D('e');
+ assert.equal(verifyRealizedPropagationWorldFrames(fusedGlb,propagationReport,{
+  ...aliasOptions,fusionReplayInputs:[wrongProvenance],
+ }).status,'FAIL');
 });
