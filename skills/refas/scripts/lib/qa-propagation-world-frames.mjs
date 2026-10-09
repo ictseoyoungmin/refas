@@ -96,7 +96,7 @@ export function verifyRealizedPropagationWorldFrames(glb,report){
   }
   const mismatched=[],missing=[],nonRigid=[];
   for(const item of report.entityResults??[]){
-   if(item.status!=='RESOLVED'||!item.worldFrame)return verdict('INSUFFICIENT','unresolved propagated semantic entity',[item.entityId]);
+   if(!['CURRENT_EXTERNAL','PENDING_REALIZED_VALIDATION','RESOLVED'].includes(item.status)||!item.worldFrame) return verdict('INSUFFICIENT','unresolved propagated semantic entity',[item.entityId]);
    const node=map.get(item.entityId);
    if(!node){missing.push(item.entityId);continue;}
    if(!rigidMatrix(node.matrix)){nonRigid.push(item.entityId);continue;}
