@@ -5,6 +5,8 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 
+import {readQaGeometryAccessor} from '../skills/refas/scripts/lib/qa-glb-geometry-accessors.mjs';
+
 import {
   bakePhysicalFusion,
   createAttachmentSemantics,
@@ -264,7 +266,14 @@ test('QA-02m native fusion is replayable from sparse-only original and final GLB
  const preFusionGlb=fullySparseGeometry(preDense);
  assert.notEqual(sha(preDense),sha(preFusionGlb));
  const preJson=parseGlb(preFusionGlb).json;
- assert.ok(preJson.accessors.every(acc=>acc.sparse&&acc.bufferView==null));
+ for(const mesh of preJson.meshes){
+  for(const primitive of mesh.primitives){
+   for(const index of [primitive.attributes.POSITION,primitive.indices]){
+    assert.ok(preJson.accessors[index].sparse);
+    assert.equal(preJson.accessors[index].bufferView,undefined);
+   }
+  }
+ }
  const checkpointBody={schema:'refas.checkpoint/v1',parentId:null,capability:'assembly',
   scopeId:'whole',reason:'trusted registered original sparse GLB',claims:[],
   gates:[],metadata:{},transactionId:null,
