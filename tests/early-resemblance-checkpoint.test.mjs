@@ -17,6 +17,7 @@ import {
   createCandidateTransition,
   createEarlyResemblanceBarrier,
   createReferenceGeometry,
+  createRealizedProjection,
   createPbrRenderReport,
   createPerceptualSignatureEvidence,
   createPerceptualSignatureSet,
@@ -125,6 +126,10 @@ async function makeRealSourceProject(t, verdictStatus, {
   omitSourceGeometry = false,
   emptySourceGeometry = false,
   wrongSourceGeometrySha = false,
+  includeEarlyProjection = false,
+  movedMacroBinding = false,
+  wrongEarlyCamera = false,
+  tamperProjection = false,
 } = {}) {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), 'refas-r04-real-'));
   t.after(() => fs.rm(root, {recursive: true, force: true}));
@@ -217,6 +222,34 @@ async function makeRealSourceProject(t, verdictStatus, {
     }],
   });
   const candidateRef = await writeRef(root, 'model/candidate.glb', candidateBytes, 'glb');
+  let projectionRef = null;
+  if (includeEarlyProjection) {
+    const camera = wrongEarlyCamera
+      ? {projection:'perspective',position:[2,0,5],target:[2,0,0],up:[0,1,0],fovY:90,aspect:1}
+      : {projection:'perspective',position:[0,0,5],target:[0,0,0],up:[0,1,0],fovY:90,aspect:1};
+    const proof = createRealizedProjection({
+      referenceGeometry: geometry,
+      glb: candidateBytes,
+      cameraHypothesisId: 'whole-source-camera-a',
+      camera,
+      anchorBindings:[{
+        referenceId:'observed-head',nodeId:'whole-body',
+        localPoint:movedMacroBinding ? [2,0,0] : [0,0,0],
+      }],
+      evidenceRefs:[source.path,candidateRef.path],
+    });
+    if (tamperProjection) {
+      // Keep current file bytes and artifact SHA consistent while spoofing
+      // the derived measurement in the supposedly authoritative JSON record.
+      const forged=structuredClone(proof);
+      forged.derivedAnchors[0].projectedXY=[.5,.5];
+      projectionRef=await writeRef(root, 'model/early-realized-projection.json',
+        Buffer.from(JSON.stringify(forged)+'\n'), 'realized-projection');
+    } else {
+      projectionRef=await writeRef(root, 'model/early-realized-projection.json',
+        Buffer.from(JSON.stringify(proof)+'\n'), 'realized-projection');
+    }
+  }
   const clay = await clayEvidence(root, candidateRef.sha256);
   const clayHeroRef = clay.frameRefs.find((frame) => frame.path === 'renders/clay/hero.png');
 
@@ -297,13 +330,48 @@ async function makeRealSourceProject(t, verdictStatus, {
     Buffer.from(`${JSON.stringify(volumeBarrier, null, 2)}\n`),
     'volume-barrier',
   );
-  const shapeRefs = [candidateRef, barrierRef, clay.reportRef, ...clay.frameRefs];
+  const shapeRefs = [candidateRef, barrierRef, clay.reportRef, ...clay.frameRefs,
+    ...(projectionRef ? [projectionRef] : [])];
   if (!omitVolumeBarrier) shapeRefs.push(spatialEvidenceRef, classificationRef, volumeBarrierRef);
   const shapeCheckpoint = await commitLocal(root, 'shape-reconstruction', shapeRefs);
 
   const surfaceRef = await writeRef(root, 'model/surface.json', Buffer.from('{"surface":true}\n'), 'surface-network');
   return {root, source, hierarchy, barrier, volumeBarrier, classification, spatialEvidence, surfaceRef, candidateRef, shapeCheckpoint};
 }
+
+test('P0b1 positive: actual registered GLB macro anchor and source geometry permit existing downstream detail', async (t) => {
+  const {root, surfaceRef} = await makeRealSourceProject(t, 'match',
+    {includeEarlyProjection:true});
+  const admitted=await commitLocal(root,'surface-topology',[surfaceRef]);
+  assert.equal(admitted.capability,'surface-topology');
+});
+
+test('P0b1 negative: re-signed GLB-derived head location diverges from source macro anchor', async (t) => {
+  const {root, surfaceRef} = await makeRealSourceProject(t, 'match',
+    {includeEarlyProjection:true,movedMacroBinding:true});
+  await assert.rejects(
+    () => commitLocal(root,'surface-topology',[surfaceRef]),
+    /early registered projection blocks downstream detail: mass-proportion-mismatch/u,
+  );
+});
+
+test('P0b1 negative: incorrect camera gives a large macro reprojection error despite R04 PROCEED', async (t) => {
+  const {root, surfaceRef} = await makeRealSourceProject(t, 'match',
+    {includeEarlyProjection:true,wrongEarlyCamera:true});
+  await assert.rejects(
+    () => commitLocal(root,'surface-topology',[surfaceRef]),
+    /early registered projection blocks downstream detail: mass-proportion-mismatch/u,
+  );
+});
+
+test('P0b1 negative: forged projected pixel coordinate fails independent source and actual GLB replay', async (t) => {
+  const {root, surfaceRef} = await makeRealSourceProject(t, 'match',
+    {includeEarlyProjection:true,tamperProjection:true});
+  await assert.rejects(
+    () => commitLocal(root,'surface-topology',[surfaceRef]),
+    /early registered projection cannot replay current GLB/u,
+  );
+});
 
 test('P0a source geometry missing blocks detail even when legacy neutral-clay barrier says PROCEED', async (t) => {
   const {root, surfaceRef, barrier} = await makeRealSourceProject(t, 'match', {omitSourceGeometry: true});
