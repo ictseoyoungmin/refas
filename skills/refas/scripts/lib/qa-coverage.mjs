@@ -85,8 +85,18 @@ async function contactReplayCheck(root, head, assetBytes, sourceSha256) {
       return check('realized-contact-support','assembly','FAIL','missing or malformed JSON artifact for ' + kind);
     }
   }
-  // Propagation is optional only when the exact contact plan does not bind it.
-  // Its presence cannot be inferred from a worker-authored status or the GLB.
+  // A persisted propagation plan/report must never be silently detached by
+  // removing the contact plan's propagation digest. Mandatory applicability
+  // for solver-dependent and transitive relations is also replayed against
+  // the canonical attachment graph below, even when neither file is supplied.
+  const propagationBound=records['realized-contact-plan']?.propagationReportDigest != null;
+  const danglingPropagation=(head.artifactRefs??[]).filter(ref=>
+    ref.kind==='attachment-propagation-plan'||ref.kind==='attachment-propagation-report');
+  if(!propagationBound&&danglingPropagation.length){
+    return check('realized-contact-support','assembly','INSUFFICIENT',
+      'current propagation artifacts are not bound by the contact plan');
+  }
+  // Read both files exactly when the current contact plan binds a report.
   if (records['realized-contact-plan']?.propagationReportDigest != null) {
     for (const kind of ['attachment-propagation-plan','attachment-propagation-report']) {
       const refs=(head.artifactRefs??[]).filter((ref)=>ref.kind===kind);

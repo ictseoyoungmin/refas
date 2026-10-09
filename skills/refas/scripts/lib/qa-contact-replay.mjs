@@ -14,6 +14,21 @@ const result = (status, reason, details = []) => Object.freeze({
   schema: QA_CONTACT_REPLAY_SCHEMA, status, reason, details: [...details].sort(),
 });
 
+// Propagation applicability comes from the canonical semantic relation graph,
+// not from the optional digest on a worker-authored contact plan. Independent
+// source-observed relation correctness remains QA-03's responsibility.
+const SOLVER_BOUND_MODES = new Set([
+  'SURFACE_OFFSET', 'MULTI_ANCHOR', 'ARTICULATED', 'SUPPORTED_CLEARANCE',
+]);
+function requiredPropagationRelations(attachmentSemantics) {
+  const relations = attachmentSemantics.relations;
+  const attached = new Set(relations.filter((rel) => rel.mode !== 'FREE')
+    .map((rel) => rel.subjectId));
+  return relations.filter((rel) => SOLVER_BOUND_MODES.has(rel.mode) ||
+    (rel.mode !== 'FREE' && rel.ownerIds.some((id) => attached.has(id))))
+    .map((rel) => rel.id + ':' + rel.mode).sort();
+}
+
 /**
  * Trusted re-evaluation of a previously reported GLB contact/support outcome.
  * A PASS is restricted to the declared typed assembly semantics and candidate;
@@ -43,6 +58,17 @@ export function replayRealizedContactEvidence({
     return result('FAIL', 'realized contact evidence is not bound to the exact candidate GLB bytes');
   }
 
+
+  // A solver-dependent or transitive attachment cannot waive its pose proof
+  // by dropping propagationReportDigest from an otherwise valid contact plan.
+  // A direct, single-edge RIGID_FOLLOW contact remains eligible for the exact
+  // triangle/support replay below without an external propagation assertion.
+  const requiredRelations = requiredPropagationRelations(attachmentSemantics);
+  if (requiredRelations.length && plan.propagationReportDigest == null) {
+    return result('INSUFFICIENT',
+      'attachment semantics require independent propagation evidence before contact/support closure',
+      requiredRelations.map((id) => 'missing-propagation-for:' + id));
+  }
 
   // Report JSON and a matching digest are not enough: for the dependency-free
   // external-frame modes, replay the actual propagation solver from the stored

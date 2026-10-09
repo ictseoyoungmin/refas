@@ -89,6 +89,98 @@ test('mutated source authority or missing plan cannot pass',()=>{
  assert.equal(replayRealizedContactEvidence({...f,plan:null}).status,'NOT_RUN');
 });
 
+test('QA-02h rejects a valid contact plan that omits solver-owned propagation proof',()=>{
+ const original=fixture();
+ for(const mode of ['SURFACE_OFFSET','ARTICULATED','SUPPORTED_CLEARANCE']){
+  const attachmentSemantics=createAttachmentSemantics({
+   scopeId:'qa-support',sourceSha256:original.sourceSha256,
+   entities:[E('base'),E('leg')],
+   relations:[R('base-free','FREE','base'),R('leg-owned',mode,'leg',['base'])],
+  });
+  const plan=createRealizedContactPlan({
+   attachmentSemantics,id:'contact-qa',assetSha256:sha(original.glb),
+   supportRoots:['base'],supportRequiredEntityIds:['leg'],
+   pairExpectations:[{id:'base-leg-support',kind:'SUPPORT',subjectId:'leg',ownerId:'base',
+    maxGap:1e-6,maxPenetration:1e-7,minContactArea:0.5,evidenceRefs:['review/support.json']}],
+   contactTolerance:0.002,penetrationTolerance:1e-7,evidenceRefs:['review/contact.json'],
+  });
+  const {graph,report}=analyzeRealizedContact({plan,attachmentSemantics,glb:original.glb});
+  const replay=replayRealizedContactEvidence({...original,attachmentSemantics,plan,graph,report});
+  assert.equal(replay.status,'INSUFFICIENT',mode+': '+replay.reason);
+  assert.match(replay.reason,/require independent propagation/);
+  assert.ok(replay.details.some(value=>value.includes('leg-owned:'+mode)));
+ }
+ // An ordinary source-observed, direct RIGID_FOLLOW triangle contact does not
+ // claim a solved frame or nested pose and must remain a supported positive.
+ assert.equal(replayRealizedContactEvidence(original).status,'PASS');
+});
+
+test('QA-02h demands propagation for nested rigid-follow chains but not direct follow',()=>{
+ const sourceSha256=D('a');
+ const attachmentSemantics=createAttachmentSemantics({
+  scopeId:'nested-attachment',sourceSha256,
+  entities:[E('base'),E('leg'),E('tip')],
+  relations:[R('base-free','FREE','base'),R('leg-follow','RIGID_FOLLOW','leg',['base']),
+   R('tip-follow','RIGID_FOLLOW','tip',['leg'])],
+ });
+ const glb=partsToGlb({parts:[box('base',0,0.2),box('leg',0.2,1.2),box('tip',1.2,1.4)],
+  materials:{solid:{baseColor:[0.5,0.5,0.5,1],metallic:0,roughness:1}}});
+ const plan=createRealizedContactPlan({attachmentSemantics,id:'nested-qa',assetSha256:sha(glb),
+  supportRoots:['base'],supportRequiredEntityIds:['leg','tip'],
+  pairExpectations:[
+   {id:'base-leg',kind:'SUPPORT',subjectId:'leg',ownerId:'base',
+    maxGap:1e-6,maxPenetration:1e-7,minContactArea:0.5,evidenceRefs:['review/base-leg.json']},
+   {id:'leg-tip',kind:'SUPPORT',subjectId:'tip',ownerId:'leg',
+    maxGap:1e-6,maxPenetration:1e-7,minContactArea:0.5,evidenceRefs:['review/leg-tip.json']},
+  ],evidenceRefs:['review/contact.json']});
+ const {graph,report}=analyzeRealizedContact({plan,attachmentSemantics,glb});
+ const replay=replayRealizedContactEvidence({glb,sourceSha256,attachmentSemantics,plan,graph,report});
+ assert.equal(replay.status,'INSUFFICIENT',replay.reason);
+ assert.ok(replay.details.includes('missing-propagation-for:tip-follow:RIGID_FOLLOW'));
+});
+
+test('QA-02h requires solver evidence through persisted source-bound checkpoint QA',async t=>{
+ const root=await fs.mkdtemp(path.join(os.tmpdir(),'refas-propagation-applicability-'));
+ t.after(()=>fs.rm(root,{recursive:true,force:true}));
+ const source=Buffer.from('current independent primary source');
+ const sourceSha256=sha(source);
+ await fs.mkdir(path.join(root,'source'),{recursive:true});
+ await fs.writeFile(path.join(root,'source','reference.bin'),source);
+ await initProject(root,{projectId:'qa-applicability',source:{
+  schema:'refas.source-manifest/v1',id:'primary-reference',path:'source/reference.bin',
+  sha256:sourceSha256,sizeBytes:source.length,width:80,height:60,
+  authority:'primary',acquisition:{kind:'operator-supplied'},
+ }});
+ const f=fixture({sourceSha256}),model=path.join(root,'model');
+ const attachmentSemantics=createAttachmentSemantics({scopeId:'qa-support',sourceSha256,
+  entities:[E('base'),E('leg')],relations:[
+   R('base-free','FREE','base'),R('leg-joint','ARTICULATED','leg',['base']),
+  ]});
+ const plan=createRealizedContactPlan({attachmentSemantics,id:'contact-qa',
+  assetSha256:sha(f.glb),supportRoots:['base'],supportRequiredEntityIds:['leg'],
+  pairExpectations:[{id:'base-leg-support',kind:'SUPPORT',subjectId:'leg',ownerId:'base',
+   maxGap:1e-6,maxPenetration:1e-7,minContactArea:0.5,evidenceRefs:['review/support.json']}],
+  evidenceRefs:['review/contact.json']});
+ const {graph,report}=analyzeRealizedContact({glb:f.glb,plan,attachmentSemantics});
+ await fs.mkdir(model,{recursive:true});
+ const asset=path.join(model,'candidate.glb');
+ await fs.writeFile(asset,f.glb);
+ const records=[['attachment-semantics',attachmentSemantics],['realized-contact-plan',plan],
+  ['realized-contact-graph',graph],['realized-contact-report',report]];
+ const refs=[await contentReference(asset,{kind:'glb',root})];
+ for(const [kind,value] of records){
+  const filename=path.join(model,kind+'.json');
+  await fs.writeFile(filename,JSON.stringify(value));
+  refs.push(await contentReference(filename,{kind,root}));
+ }
+ await commitCheckpoint(root,{capability:'source-intake',scopeId:'whole',
+  reason:'applicable propagation must not be omitted',artifactRefs:refs,
+  claims:['Source bound'],gates:[{id:'source-intake-gate',evidenceRefs:[refs[0].path]}]});
+ const check=(await verifySourceBoundObject(root,asset)).checks.find(c=>c.id==='realized-contact-support');
+ assert.equal(check.status,'INSUFFICIENT',check.reason);
+ assert.match(check.reason,/propagation evidence/);
+});
+
 test('source-bound public QA independently loads and replays four exact checkpoint artifacts',async (t)=>{
  const root=await fs.mkdtemp(path.join(os.tmpdir(),'refas-qa-contact-bound-'));
  t.after(()=>fs.rm(root,{recursive:true,force:true}));
