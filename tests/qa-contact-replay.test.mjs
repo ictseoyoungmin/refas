@@ -385,6 +385,21 @@ test('QA-02d a material-primitive seam is not a detached shard',()=>{
  assert.equal(node.spatial.ambiguousEdges,0);
 });
 
+test('QA-02d material-separated shell also passes trusted source-bound GLB contact replay',()=>{
+ const f=fixture(),glb=seamVariant(f,{mode:'two-material-primitives'});
+ const plan=createRealizedContactPlan({
+   attachmentSemantics:f.attachmentSemantics,id:'qa-multi-primitive-contact',
+   assetSha256:sha(glb),supportRoots:['base'],supportRequiredEntityIds:['leg'],
+   pairExpectations:f.plan.pairExpectations,contactTolerance:f.plan.contactTolerance,
+   penetrationTolerance:f.plan.penetrationTolerance,evidenceRefs:['review/contact.json'],
+ });
+ const {graph,report}=analyzeRealizedContact({glb,attachmentSemantics:f.attachmentSemantics,plan});
+ assert.equal(report.status,'PASS');
+ const result=replayRealizedContactEvidence({glb,sourceSha256:f.sourceSha256,
+   attachmentSemantics:f.attachmentSemantics,plan,graph,report});
+ assert.equal(result.status,'PASS',result.reason+': '+result.details.join('; '));
+});
+
 test('QA-02d component inventory rejects coincident overlapping same-oriented faces',()=>{
  const f=fixture(),{json,binary}=parseGlb(f.glb);
  const copy=structuredClone(json),node=copy.nodes.find(n=>n.extras?.refasPartId==='base');
