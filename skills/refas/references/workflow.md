@@ -216,7 +216,20 @@ this camera/GLB proof is `REVIEW_REQUIRED`, not implicit
 `NOT_APPLICABLE`. The installed host reloads its frozen
 content-addressed GLB and replays the camera projection at transition,
 even when a separately authorized later candidate changes the live GLB.
-All source-visible macro anchors must be registered. Large discrepancies
+All source-visible macro anchors must be registered.
+
+**The camera hypothesis must precede shape construction (P0b2b1).**
+The upstream `spatial-hypotheses` checkpoint must persist a canonical
+`refas.spatial-hypothesis-set/v1` with at least two original-source-cited,
+falsifiable camera alternatives. A selected camera may authorize
+downstream detail only after competing interpretations are explicitly
+resolved and the registered GLB projection carries the exact selected
+hypothesis ID **and normalized camera parameters**. Missing or
+unresolved selection is `REVIEW_REQUIRED`; a selected/registered camera
+mismatch is `REWORK`. Agent status labels and raw-source path citations
+are still not independent image-truth verification; trustworthy
+source-visible whole silhouette, negative-space and occlusion comparison
+remains required before Reference Fidelity closure. Large discrepancies
 or source-visible macro anchors outside the selected camera frame
 block accepted downstream detail.
 
