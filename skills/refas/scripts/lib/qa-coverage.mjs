@@ -85,12 +85,39 @@ async function contactReplayCheck(root, head, assetBytes, sourceSha256) {
       return check('realized-contact-support','assembly','FAIL','missing or malformed JSON artifact for ' + kind);
     }
   }
+  // Propagation is optional only when the exact contact plan does not bind it.
+  // Its presence cannot be inferred from a worker-authored status or the GLB.
+  if (records['realized-contact-plan']?.propagationReportDigest != null) {
+    for (const kind of ['attachment-propagation-plan','attachment-propagation-report']) {
+      const refs=(head.artifactRefs??[]).filter((ref)=>ref.kind===kind);
+      if (refs.length!==1) {
+        return check('realized-contact-support','assembly',
+          refs.length?'INSUFFICIENT':'NOT_RUN','expected exactly one current artifact of kind '+kind);
+      }
+      const ref=refs[0],file=await existingContainedFile(root,ref.path);
+      if (!file || !HEX_DIGEST.test(String(ref.sha256??''))) {
+        return check('realized-contact-support','assembly','FAIL','invalid or uncontained '+kind+' artifact reference');
+      }
+      try {
+        const bytes=await fs.readFile(file);
+        if (sha256(bytes)!==ref.sha256 || bytes.length!==ref.sizeBytes) {
+          return check('realized-contact-support','assembly','FAIL','current artifact bytes drifted for '+kind);
+        }
+        records[kind]=JSON.parse(bytes.toString('utf8'));
+        bound.push(ref.sha256);
+      } catch {
+        return check('realized-contact-support','assembly','FAIL','missing or malformed JSON artifact for '+kind);
+      }
+    }
+  }
   const replay=replayRealizedContactEvidence({
     glb:assetBytes,sourceSha256,
     attachmentSemantics:records['attachment-semantics'],
     plan:records['realized-contact-plan'],
     graph:records['realized-contact-graph'],
     report:records['realized-contact-report'],
+    propagationPlan:records['attachment-propagation-plan']??null,
+    propagationReport:records['attachment-propagation-report']??null,
   });
   return check('realized-contact-support','assembly',replay.status,replay.reason + (
     replay.details.length ? ': ' + replay.details.join('; ') : ''),bound);
