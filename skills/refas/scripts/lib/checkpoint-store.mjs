@@ -862,16 +862,16 @@ async function ensureEarlyResemblanceAdmission(root, state, capability, scopeId,
     throw new Error(`${capability} source geometry admission requires an observable macro reference-geometry primitive and raw primary source citation`);
   }
 
-  // P0b1: optional early registered projection is NEVER trusted at face value.
-  // Re-open the real GLB and recompute it from original-source geometry
-  // independently of the worker's normalized pixel locations or PASS claim.
-  // Missing camera/reprojection is a separate, still-open P0b2 obligation.
+  // P0b2a: an omitted camera projection cannot silently turn macro
+  // source-to-GLB correspondence into NOT_APPLICABLE. This is a required
+  // shape-to-detail admission on real-source projects, not a release score.
+  // Unknown camera/correspondence remains REVIEW_REQUIRED instead of PASS.
   const registered = (shapeCheckpoint.artifactRefs ?? []).filter((artifact) =>
     artifact.kind === 'realized-projection');
-  if (registered.length > 1) {
-    throw new Error(`${capability} early registered projection requires at most one shape-stage proof`);
+  if (registered.length !== 1) {
+    throw new Error(`${capability} early registered projection REVIEW_REQUIRED: requires exactly one source- and GLB-bound shape-stage realized-projection; found ${registered.length}`);
   }
-  if (registered.length === 1) {
+  {
     const {value: proof} = await readCheckpointJsonArtifact(
       root, shapeCheckpoint, 'realized-projection',
       `${capability} early registered projection`,
@@ -902,6 +902,25 @@ async function ensureEarlyResemblanceAdmission(root, state, capability, scopeId,
     const replay = verifyRealizedProjection({proof, referenceGeometry: geometry, glb: actualGlb});
     if (!replay.valid) {
       throw new Error(`${capability} early registered projection cannot replay current GLB: ${replay.errors.join('; ')}`);
+    }
+    // Partial source anchors are not sufficient: every source-visible,
+    // important macro anchor must be geometrically tested. A raw contour
+    // without a falsifiable anchor is not an invented full resemblance PASS.
+    const requiredMacroAnchors = (geometry.anchors ?? []).filter((item) =>
+      item.importance === 'macro' && item.visibility !== 'inferred' &&
+      item.evidenceRefs.includes(state.source.path));
+    if (!requiredMacroAnchors.length) {
+      throw new Error(`${capability} early registered projection REVIEW_REQUIRED: source has no independently citable visible macro anchors for projection`);
+    }
+    const measured = new Set((proof.derivedAnchors ?? []).map((item) => item.referenceId));
+    const missingMacro = requiredMacroAnchors.filter((item) => !measured.has(item.id));
+    if (missingMacro.length) {
+      throw new Error(`${capability} early registered projection REVIEW_REQUIRED: missing source-observed macro anchor projections: ${missingMacro.map((item) => item.id).join(', ')}`);
+    }
+    const offFrame = (proof.derivedAnchors ?? []).filter((item) =>
+      requiredMacroAnchors.some((anchor) => anchor.id === item.referenceId) && !item.insideFrame);
+    if (offFrame.length) {
+      throw new Error(`${capability} early registered projection REWORK: source-visible macro anchors project outside camera frame: ${offFrame.map((item) => item.referenceId).join(', ')}`);
     }
     const findings = findingsFromRealizedProjection(proof).filter((finding) =>
       finding.severity === 'blocking');
