@@ -105,6 +105,76 @@ test('QA-02p coincident same-wound shells cannot forge opposed contact at small 
  }
 });
 
+function partialCoplanarFixture({gap=0,edgeOnly=false,reverse=false}={}){
+ const attachmentSemantics=createAttachmentSemantics({
+  scopeId:'partial-contact-root',sourceSha256:digest(),
+  entities:[E('base')],relations:[R('root-free','FREE','base')],
+ });
+ const first=box(0,.2),second=box(.2+gap,.5+gap);
+ const origin=edgeOnly?[1,.27]:[.33,.27];
+ second.positions=second.positions.map(([x,y,z])=>[origin[0]+x*.4,origin[1]+y*.4,z]);
+ if(reverse)second.indices=second.indices.flatMap((_,i,indices)=>
+  i%3===0?[indices[i],indices[i+2],indices[i+1]]:[]); 
+ const positions=[...first.positions,...second.positions],
+  indices=[...first.indices,...second.indices.map(i=>i+first.positions.length)];
+ const glb=partsToGlb({parts:[{id:'base',materialId:'solid',mesh:{positions,indices}}],
+  materials:{solid:{baseColor:[.6,.6,.6,1],roughness:1,metallic:0}}});
+ const inventory=inventoryGlbTriangleComponents(glb);
+ assert.equal(inventory.nodes[0].spatial.componentCount,2);
+ const componentSupportPlan=createTriangleComponentSupportPlan({
+  assetSha256:sha(glb),inventoryDigest:inventory.inventoryDigest,
+  nodes:[{nodeId:'base',rootTriangleIndex:0,links:[{
+   childTriangleIndex:12,ownerTriangleIndex:2,
+   kind:'OPPOSED_AXIS_ALIGNED_PARTIAL_FACE',
+   evidenceRefs:['assembly/partial-contact-face.json'],
+  }]}],evidenceRefs:['review/partial-contact-evidence.json'],
+ });
+ const plan=createRealizedContactPlan({attachmentSemantics,
+  id:'partial-contact',assetSha256:sha(glb),supportRoots:['base'],
+  evidenceRefs:['review/physical-contact.json']});
+ const {graph,report}=analyzeRealizedContact({glb,attachmentSemantics,plan});
+ return {glb,sourceSha256:digest(),attachmentSemantics,plan,graph,report,
+  inventory,componentSupportPlan};
+}
+
+test('QA-02 partial face positive: exact-plane nonmatching Float32 triangle patch reaches root',()=>{
+ const f=partialCoplanarFixture();
+ assert.equal(f.report.status,'PASS');
+ const check=replayTriangleComponentSupport(f.glb,f.componentSupportPlan);
+ assert.equal(check.status,'PASS',check.reason+': '+check.details.join(','));
+ assert.equal(replayRealizedContactEvidence(f).status,'PASS');
+ // The strict existing full-face records remain unchanged on canonical replay.
+ assert.equal(f.componentSupportPlan.policy.opposedExactPlanePositiveAreaPartialWitnessRequired,true);
+ assert.equal(f.componentSupportPlan.policy.oppositeWoundExactlyCoincidentFaceRequired,false);
+});
+
+test('QA-02 partial face negatives: real micrometer gap, edge-only touch and reversed winding',()=>{
+ for(const options of [{gap:1e-6},{edgeOnly:true},{reverse:true}]){
+  const f=partialCoplanarFixture(options);
+  const result=replayTriangleComponentSupport(f.glb,f.componentSupportPlan);
+  assert.equal(result.status,'FAIL',JSON.stringify(options)+': '+result.reason);
+  assert.equal(replayRealizedContactEvidence(f).status,'FAIL');
+ }
+});
+
+test('QA-02 partial face cannot self-authorize a label, changed GLB or exceptional planes',()=>{
+ const f=partialCoplanarFixture();
+ const forged={...f.componentSupportPlan,nodes:f.componentSupportPlan.nodes.map(node=>({
+  ...node,links:node.links.map(link=>({...link,kind:'OPPOSED_EXACT_FACE'})),
+ }))};
+ assert.equal(replayTriangleComponentSupport(f.glb,forged).status,'FAIL');
+ const invalid={...f.componentSupportPlan,nodes:f.componentSupportPlan.nodes.map(node=>({
+  ...node,links:node.links.map(link=>({...link,kind:'NEARBY_IS_ENOUGH'})),
+ }))};
+ assert.equal(replayTriangleComponentSupport(f.glb,invalid).status,'FAIL');
+ const mutated=partialCoplanarFixture({gap:1e-6});
+ assert.equal(replayTriangleComponentSupport(mutated.glb,f.componentSupportPlan).status,'FAIL');
+ // A partial-face claim cannot reuse an old exact-face policy without changing
+ // its digest, while old exact-face plans remain canonical.
+ const legacy=fixture();
+ assert.equal(replayTriangleComponentSupport(legacy.glb,legacy.componentSupportPlan).status,'PASS');
+});
+
 test('QA-02k exact opposed face from two separately indexed shells connects every island',()=>{
  const f=fixture();
  assert.equal(f.node.spatial.componentCount,2);
