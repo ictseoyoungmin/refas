@@ -127,6 +127,8 @@ export * from './qa-contact-replay.mjs';
 
 export * from './qa-triangle-components.mjs';
 
+export * from './qa-component-support.mjs';
+
 export * from './qa-fusion-replay.mjs';
 
 export * from './qa-propagation-world-frames.mjs';
