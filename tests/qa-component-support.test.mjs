@@ -244,7 +244,7 @@ test('QA-02 multi-island spoke and rim pads: 9 actual separate shells retain a r
 });
 
 test('QA-02 floating outer pad fails even when worker re-signs candidate and support evidence',()=>{
- for(const detachedPad of [{id:'east-pad',dx:.125},{id:'north-pad',dz:.125}]){
+ for(const detachedPad of [{id:'east-pad',dx:.125},{id:'north-pad',dz:.25}]){
   const f=spokeLatticeFixture({detachedPad});
   assert.equal(f.inventory.nodes[0].spatial.componentCount,9);
   assert.equal(f.report.status,'PASS','node-level support alone must not attest its floating child');
