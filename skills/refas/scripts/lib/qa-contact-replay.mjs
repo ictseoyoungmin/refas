@@ -3,6 +3,7 @@ import {createHash} from 'node:crypto';
 import {validateAttachmentSemantics} from './attachment-semantics.mjs';
 import {validateAttachmentPropagationReport} from './attachment-propagation.mjs';
 import {inventoryGlbTriangleComponents} from './qa-triangle-components.mjs';
+import {replayTriangleComponentSupport} from './qa-component-support.mjs';
 import {replayExactGlbPhysicalFusion} from './qa-fusion-replay.mjs';
 import {verifyRealizedPropagationWorldFrames} from './qa-propagation-world-frames.mjs';
 import {replayTrustedPropagationDependencies} from './qa-propagation-dependencies.mjs';
@@ -39,6 +40,7 @@ function requiredPropagationRelations(attachmentSemantics) {
 export function replayRealizedContactEvidence({
   glb, sourceSha256, attachmentSemantics, plan, graph, report,
   propagationReport = null, propagationPlan = null, propagationDependencies = {}, fusionArtifacts = [], fusionReplayInputs = [],
+  componentSupportPlan = null,
 } = {}) {
   if (!glb || !attachmentSemantics || !plan || !graph || !report) {
     return result('NOT_RUN', 'source-bound contact replay requires candidate GLB, semantic attachments, plan, graph and report');
@@ -196,27 +198,15 @@ export function replayRealizedContactEvidence({
     return result('FAIL', 'actual realized triangle contacts or support-root reachability failed',
       [...(report.blockers ?? []), ...(report.unsupportedPhysicalEntityIds ?? [])]);
   }
-  // Node-level triangle contact can hide disconnected physical islands.
-  // Distinguish exact-position geometric seams from mere index splits (UVs,
-  // materials, nonindexed glTF). Neither geometric adjacency nor a name alone
-  // proves physical welding or independently observed source semantics.
-  let inventory;
-  try {
-    inventory=inventoryGlbTriangleComponents(glb);
-  } catch(error) {
-    return result('FAIL', 'candidate GLB triangle component inventory failed', [String(error.message)]);
-  }
-  const splits=inventory.nodes.filter(node=>node.spatial.componentCount>1 ||
-    node.spatial.ambiguousEdges>0);
-  if(splits.length) {
-    return result('INSUFFICIENT',
-      'geometrically disconnected or ambiguous triangles within a physical mesh require independent typed component-support evidence',[
-        'inventory-digest:'+inventory.inventoryDigest,
-        ...splits.filter(node=>node.spatial.componentCount>1)
-          .map(node=>'unreviewed-triangle-islands:'+node.nodeId+':'+node.spatial.componentCount),
-        ...splits.filter(node=>node.spatial.ambiguousEdges>0)
-          .map(node=>'ambiguous-geometric-edges:'+node.nodeId+':'+node.spatial.ambiguousEdges),
-      ]);
+  // Physical node-wide contact may conceal an unsupported internal shell.
+  // A declared split does not become supported by names, a proximity bound,
+  // or a self-signed component report. Each witnessed face is independently
+  // reread from the current exact GLB and every island needs a root path.
+  const components=replayTriangleComponentSupport(glb,componentSupportPlan);
+  if(components.status!=='PASS'){
+    return result(components.status,
+      'actual GLB physical component support requires independently replayable rooted face witnesses',
+      [components.reason,...components.details]);
   }
   return result('PASS', 'recomputed GLB triangle contact and declared support paths match exact source/candidate-bound evidence');
 }
