@@ -282,7 +282,7 @@ test('source-bound QA reads exact persisted propagation plan+report and rejects 
    refs.push(await contentReference(target,{kind,root}));
  }
  await commitCheckpoint(root,{capability:'source-intake',scopeId:'whole',reason:'independent propagation replay fixture',
-   artifactRefs:refs,claims:['Source attached for propagation replay'],gates:[{id:'intake',evidenceRefs:[refs[0].path]}]});
+   artifactRefs:refs,claims:['Source attached for propagation replay'],gates:[{id:'source-intake-gate',evidenceRefs:[refs[0].path]}]});
  const before=await verifySourceBoundObject(root,asset);
  assert.equal(before.checks.find(c=>c.id==='realized-contact-support').status,'PASS');
  assert.equal(before.decision.state,'BLOCKED'); // Never become a source-fidelity certificate.
