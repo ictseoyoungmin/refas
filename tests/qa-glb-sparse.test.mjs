@@ -1,11 +1,14 @@
 import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
 import {test} from 'node:test';
+import fs from 'node:fs/promises';
+import os from 'node:os';
+import path from 'node:path';
 
 import {
  analyzeRealizedContact,createAttachmentSemantics,createRealizedContactPlan,
  inventoryGlbTriangleComponents,parseGlb,replayRealizedContactEvidence,
- verifyRealizedSurfaceDescriptors,
+ verifyRealizedSurfaceDescriptors,initProject,commitCheckpoint,contentReference,verifySourceBoundObject,
 } from '../skills/refas/scripts/lib/index.mjs';
 import {readQaGeometryAccessor} from '../skills/refas/scripts/lib/qa-glb-geometry-accessors.mjs';
 
@@ -75,8 +78,7 @@ function pack(json,binary){
  out.writeUInt32LE(0x004e4942,24+j.length);bin.copy(out,28+j.length);
  return out;
 }
-function contact(glb){
- const sourceSha256=D('a');
+function scenario(glb,sourceSha256=D('a')){
  const attachmentSemantics=createAttachmentSemantics({
   scopeId:'sparse-test',sourceSha256,
   entities:[{id:'panel',scopeId:'panel',evidenceRefs:['review/panel.json']}],
@@ -88,9 +90,10 @@ function contact(glb){
   assetSha256:sha(glb),supportRoots:['panel'],evidenceRefs:['review/physical-contact.json'],
  });
  const {graph,report}=analyzeRealizedContact({glb,attachmentSemantics,plan});
- return replayRealizedContactEvidence({
-  glb,sourceSha256,attachmentSemantics,plan,graph,report,
- });
+ return {glb,sourceSha256,attachmentSemantics,plan,graph,report};
+}
+function contact(glb){
+ return replayRealizedContactEvidence(scenario(glb));
 }
 
 test('QA-02l sparse-only accessor POSITION and indices decode same triangles in all trusted QA paths',()=>{
@@ -139,4 +142,44 @@ test('QA-02l sparse geometry is byte-bound even if worker re-signs metadata',()=
  assert.equal(verifyRealizedSurfaceDescriptors(changed,surfaces,anchorSet).status,'FAIL');
  assert.equal(inventoryGlbTriangleComponents(changed).nodes[0].spatial.componentCount,1);
  assert.equal(contact(changed).status,'PASS'); // Geometric validity alone is not source fidelity.
+});
+
+test('QA-02l stored sparse GLB requires current checkpoint bytes, never stale digest declarations',async t=>{
+ const root=await fs.mkdtemp(path.join(os.tmpdir(),'refas-sparse-glb-qa-'));
+ t.after(()=>fs.rm(root,{recursive:true,force:true}));
+ const raw=Buffer.from('registered operator photo bytes for actual sparse GLB QA');
+ const sourceSha256=sha(raw);
+ await fs.mkdir(path.join(root,'source'),{recursive:true});
+ await fs.writeFile(path.join(root,'source','primary.bin'),raw);
+ await initProject(root,{projectId:'actual-sparse-geometry',source:{
+  schema:'refas.source-manifest/v1',id:'primary',path:'source/primary.bin',
+  sha256:sourceSha256,sizeBytes:raw.length,width:48,height:48,
+  authority:'primary',acquisition:{kind:'operator-supplied'},
+ }});
+ const glb=fixture({indexComponent:5125});
+ const f=scenario(glb,sourceSha256);
+ const out=path.join(root,'model');await fs.mkdir(out,{recursive:true});
+ const asset=path.join(out,'candidate.glb');await fs.writeFile(asset,glb);
+ const refs=[await contentReference(asset,{kind:'glb',root})];
+ for(const [kind,value] of [
+  ['attachment-semantics',f.attachmentSemantics],
+  ['realized-contact-plan',f.plan],
+  ['realized-contact-graph',f.graph],
+  ['realized-contact-report',f.report],
+ ]){
+  const dest=path.join(out,kind+'.json');await fs.writeFile(dest,JSON.stringify(value));
+  refs.push(await contentReference(dest,{kind,root}));
+ }
+ await commitCheckpoint(root,{
+  capability:'source-intake',scopeId:'whole',
+  reason:'original sparse candidate bound to primary-source checksum',
+  artifactRefs:refs,claims:['candidate registered for trusted QA'],
+  gates:[{id:'source-intake-gate',evidenceRefs:[refs[0].path]}],
+ });
+ const correct=await verifySourceBoundObject(root,asset);
+ assert.equal(correct.checks.find(x=>x.id==='realized-contact-support').status,'PASS');
+ assert.equal(correct.decision.state,'BLOCKED'); // original photo fidelity not certified
+ await fs.writeFile(asset,fixture({indexComponent:5125,changedPointZ:0.5}));
+ const tampered=await verifySourceBoundObject(root,asset);
+ assert.equal(tampered.checks.find(x=>x.id==='realized-contact-support').status,'FAIL');
 });
