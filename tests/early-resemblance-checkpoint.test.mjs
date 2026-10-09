@@ -128,6 +128,8 @@ async function makeRealSourceProject(t, verdictStatus, {
   wrongSourceGeometrySha = false,
   includeEarlyProjection = true,
   addUnprojectedMacroAnchor = false,
+  onlyInferredMacroAnchor = false,
+  offFrameMacroBinding = false,
   movedMacroBinding = false,
   wrongEarlyCamera = false,
   tamperProjection = false,
@@ -173,7 +175,7 @@ async function makeRealSourceProject(t, verdictStatus, {
     sourceSha256: wrongSourceGeometrySha ? D('f') : source.sha256,
     anchors: emptySourceGeometry ? [] : [{
       id: 'observed-head', importance: 'macro', xy: [.5,.5],
-      visibility: 'visible', confidence: 1, evidenceRefs: [source.path],
+      visibility: onlyInferredMacroAnchor ? 'inferred' : 'visible', confidence: 1, evidenceRefs: [source.path],
     }, ...(addUnprojectedMacroAnchor ? [{
       id: 'observed-shoulder', importance: 'macro', xy: [.6,.5],
       visibility: 'visible', confidence: 1, evidenceRefs: [source.path],
@@ -238,7 +240,7 @@ async function makeRealSourceProject(t, verdictStatus, {
       camera,
       anchorBindings:[{
         referenceId:'observed-head',nodeId:'whole-body',
-        localPoint:movedMacroBinding ? [2,0,0] : [0,0,0],
+        localPoint:offFrameMacroBinding ? [8,0,0] : movedMacroBinding ? [2,0,0] : [0,0,0],
       }],
       evidenceRefs:[source.path,candidateRef.path],
     });
@@ -350,6 +352,22 @@ test('P0b2 missing registered camera/GLB evidence must REVIEW_REQUIRED before de
   await assert.rejects(
     () => commitLocal(root,'surface-topology',[surfaceRef]),
     /early registered projection REVIEW_REQUIRED: requires exactly one source- and GLB-bound shape-stage realized-projection/u,
+  );
+});
+
+test('P0b2 camera clipping of a source-visible macro landmark blocks detail as REWORK', async (t) => {
+  const {root,surfaceRef}=await makeRealSourceProject(t,'match',{offFrameMacroBinding:true});
+  await assert.rejects(
+    () => commitLocal(root,'surface-topology',[surfaceRef]),
+    /early registered projection REWORK: source-visible macro anchors project outside camera frame: observed-head/u,
+  );
+});
+
+test('P0b2 inferred-only 3D anchor is not counted as an observed source-visible macro', async (t) => {
+  const {root,surfaceRef}=await makeRealSourceProject(t,'match',{onlyInferredMacroAnchor:true});
+  await assert.rejects(
+    () => commitLocal(root,'surface-topology',[surfaceRef]),
+    /early registered projection REVIEW_REQUIRED: source has no independently citable visible macro anchors/u,
   );
 });
 
