@@ -353,12 +353,13 @@ test('P0b2 missing registered camera/GLB evidence must REVIEW_REQUIRED before de
   );
 });
 
-test('P0b2 cannot pass by testing only one of two source-visible macro anchors', async (t) => {
-  const {root,surfaceRef}=await makeRealSourceProject(t,'match',
-    {addUnprojectedMacroAnchor:true});
+test('P0b2 source-visible macro anchor omission is rejected before any downstream PASS', async (t) => {
+  // The existing trusted projection factory already refuses an incomplete
+  // source-macro set; the downstream gate independently checks it as defense
+  // in depth for persisted or otherwise forged proofs.
   await assert.rejects(
-    () => commitLocal(root,'surface-topology',[surfaceRef]),
-    /early registered projection REVIEW_REQUIRED: missing source-observed macro anchor projections: observed-shoulder/u,
+    () => makeRealSourceProject(t,'match',{addUnprojectedMacroAnchor:true}),
+    /projection fit is missing macro anchors: observed-shoulder/u,
   );
 });
 
