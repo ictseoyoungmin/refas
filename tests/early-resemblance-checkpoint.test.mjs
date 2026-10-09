@@ -242,7 +242,7 @@ async function makeRealSourceProject(t, verdictStatus, {
       // Keep current file bytes and artifact SHA consistent while spoofing
       // the derived measurement in the supposedly authoritative JSON record.
       const forged=structuredClone(proof);
-      forged.derivedAnchors[0].projectedXY=[.5,.5];
+      forged.derivedAnchors[0].projectedXY=[.95,.95];
       projectionRef=await writeRef(root, 'model/early-realized-projection.json',
         Buffer.from(JSON.stringify(forged)+'\n'), 'realized-projection');
     } else {
