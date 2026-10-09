@@ -66,10 +66,10 @@ test('QA-02k exact opposed face from two separately indexed shells connects ever
  const f=fixture();
  assert.equal(f.node.spatial.componentCount,2);
  assert.equal(f.report.status,'PASS');
- assert.equal(replayRealizedContactEvidence(f).status,'INSUFFICIENT');
+ assert.equal(replayRealizedContactEvidence({...f,componentSupportPlan:null}).status,'INSUFFICIENT');
  const check=replayTriangleComponentSupport(f.glb,f.componentSupportPlan);
  assert.equal(check.status,'PASS',check.reason+':'+check.details.join(','));
- const contact=replayRealizedContactEvidence(f);
+ const contact=replayRealizedContactEvidence({...f,componentSupportPlan:null});
  assert.equal(contact.status,'INSUFFICIENT');
  const proven=replayRealizedContactEvidence({...f,componentSupportPlan:f.componentSupportPlan});
  assert.equal(proven.status,'PASS',proven.reason+': '+proven.details.join(','));
