@@ -126,7 +126,10 @@ async function makeRealSourceProject(t, verdictStatus, {
   omitSourceGeometry = false,
   emptySourceGeometry = false,
   wrongSourceGeometrySha = false,
-  includeEarlyProjection = false,
+  includeEarlyProjection = true,
+  addUnprojectedMacroAnchor = false,
+  onlyInferredMacroAnchor = false,
+  offFrameMacroBinding = false,
   movedMacroBinding = false,
   wrongEarlyCamera = false,
   tamperProjection = false,
@@ -171,9 +174,12 @@ async function makeRealSourceProject(t, verdictStatus, {
     scopeId: 'whole',
     sourceSha256: wrongSourceGeometrySha ? D('f') : source.sha256,
     anchors: emptySourceGeometry ? [] : [{
-      id: 'observed-head', importance: 'macro', xy: includeEarlyProjection ? [.5,.5] : [.5,.25],
+      id: 'observed-head', importance: 'macro', xy: [.5,.5],
+      visibility: onlyInferredMacroAnchor ? 'inferred' : 'visible', confidence: 1, evidenceRefs: [source.path],
+    }, ...(addUnprojectedMacroAnchor ? [{
+      id: 'observed-shoulder', importance: 'macro', xy: [.6,.5],
       visibility: 'visible', confidence: 1, evidenceRefs: [source.path],
-    }],
+    }] : [])],
     contours: emptySourceGeometry ? [] : [{
       id: 'whole-outer-contour', importance: 'macro', closed: true,
       points: [[.15,.15],[.85,.15],[.85,.90],[.15,.90]],
@@ -223,7 +229,7 @@ async function makeRealSourceProject(t, verdictStatus, {
   });
   const candidateRef = await writeRef(root, 'model/candidate.glb', candidateBytes, 'glb');
   let projectionRef = null;
-  if (includeEarlyProjection) {
+  if (includeEarlyProjection && !emptySourceGeometry) {
     const camera = wrongEarlyCamera
       ? {projection:'perspective',position:[2,0,5],target:[2,0,0],up:[0,1,0],fovY:90,aspect:1}
       : {projection:'perspective',position:[0,0,5],target:[0,0,0],up:[0,1,0],fovY:90,aspect:1};
@@ -234,7 +240,7 @@ async function makeRealSourceProject(t, verdictStatus, {
       camera,
       anchorBindings:[{
         referenceId:'observed-head',nodeId:'whole-body',
-        localPoint:movedMacroBinding ? [2,0,0] : [0,0,0],
+        localPoint:offFrameMacroBinding ? [8,0,0] : movedMacroBinding ? [2,0,0] : [0,0,0],
       }],
       evidenceRefs:[source.path,candidateRef.path],
     });
@@ -338,6 +344,42 @@ async function makeRealSourceProject(t, verdictStatus, {
   const surfaceRef = await writeRef(root, 'model/surface.json', Buffer.from('{"surface":true}\n'), 'surface-network');
   return {root, source, hierarchy, barrier, volumeBarrier, classification, spatialEvidence, surfaceRef, candidateRef, shapeCheckpoint};
 }
+
+test('P0b2 missing registered camera/GLB evidence must REVIEW_REQUIRED before detail', async (t) => {
+  const {root, surfaceRef, barrier} = await makeRealSourceProject(t,'match',
+    {includeEarlyProjection:false});
+  assert.equal(barrier.verdict,'PROCEED');
+  await assert.rejects(
+    () => commitLocal(root,'surface-topology',[surfaceRef]),
+    /early registered projection REVIEW_REQUIRED: requires exactly one source- and GLB-bound shape-stage realized-projection/u,
+  );
+});
+
+test('P0b2 camera clipping of a source-visible macro landmark blocks detail as REWORK', async (t) => {
+  const {root,surfaceRef}=await makeRealSourceProject(t,'match',{offFrameMacroBinding:true});
+  await assert.rejects(
+    () => commitLocal(root,'surface-topology',[surfaceRef]),
+    /early registered projection REWORK: source-visible macro anchors project outside camera frame: observed-head/u,
+  );
+});
+
+test('P0b2 inferred-only 3D anchor is not counted as an observed source-visible macro', async (t) => {
+  const {root,surfaceRef}=await makeRealSourceProject(t,'match',{onlyInferredMacroAnchor:true});
+  await assert.rejects(
+    () => commitLocal(root,'surface-topology',[surfaceRef]),
+    /early registered projection REVIEW_REQUIRED: source has no independently citable visible macro anchors/u,
+  );
+});
+
+test('P0b2 source-visible macro anchor omission is rejected before any downstream PASS', async (t) => {
+  // The existing trusted projection factory already refuses an incomplete
+  // source-macro set; the downstream gate independently checks it as defense
+  // in depth for persisted or otherwise forged proofs.
+  await assert.rejects(
+    () => makeRealSourceProject(t,'match',{addUnprojectedMacroAnchor:true}),
+    /projection fit is missing macro anchors: observed-shoulder/u,
+  );
+});
 
 test('P0b1 positive: actual registered GLB macro anchor and source geometry permit existing downstream detail', async (t) => {
   const {root, surfaceRef} = await makeRealSourceProject(t, 'match',

@@ -161,6 +161,23 @@ async function advanceToReview(root, source, {
       const glb = mannequinGlb(projection === 'bad' ? 4 : 0, candidateThickness);
       await fs.writeFile(assetPath,glb);
       const asset = await contentReference(assetPath,{kind:'glb',root});
+      const earlySourceGeometry = sourceGeometry(source);
+      const testCenterX = projection === 'bad' ? 4 : 0;
+      const macroCamera = {
+        projection:'perspective',position:[testCenterX,0,5],
+        target:[testCenterX,0,0],up:[0,1,0],fovY:90,aspect:1,
+      };
+      const registeredBlockout = createRealizedProjection({
+        referenceGeometry:earlySourceGeometry,glb,
+        cameraHypothesisId:'source-blockout-camera',
+        camera:macroCamera,
+        anchorBindings:[{
+          referenceId:'whole-center',nodeId:'model-node',localPoint:[0,0,0],
+        }],
+        evidenceRefs:[source.path,asset.path],
+      });
+      const projectionPath = await json(path.join(root,'model','early-realized-projection.json'),registeredBlockout);
+      const earlyProjectionRef = await contentReference(projectionPath,{kind:'realized-projection',root});
       const clayFrames = [];
       for (const viewId of NEUTRAL_CLAY_REQUIRED_VIEW_IDS) {
         const clayPath = path.join(root,'renders','clay',`${viewId}.png`);
@@ -227,7 +244,7 @@ async function advanceToReview(root, source, {
       const volumeBarrierPath = await json(path.join(root,'reviews','volume-barrier.json'),volumeBarrier);
       const volumeBarrierRef = await contentReference(volumeBarrierPath,{kind:'volume-barrier',root});
 
-      const shapeRefs=[asset,barrierRef,clayReportRef,...clayFrames,spatialEvidenceRef,classificationRef,volumeBarrierRef];
+      const shapeRefs=[asset,barrierRef,clayReportRef,...clayFrames,spatialEvidenceRef,classificationRef,volumeBarrierRef,earlyProjectionRef];
       await commitCheckpoint(root,{
         capability,scopeId:'whole',reason:'shape-reconstruction fixture carries R04/VC04 spatial authority',
         artifactRefs:shapeRefs,claims:['shape-reconstruction closed with resemblance and volume authority'],
