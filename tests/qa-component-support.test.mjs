@@ -175,6 +175,104 @@ test('QA-02 partial face cannot self-authorize a label, changed GLB or exception
  assert.equal(replayTriangleComponentSupport(legacy.glb,legacy.componentSupportPlan).status,'PASS');
 });
 
+/**
+ * A hub + four narrow spokes + four independent rim pads deliberately
+ * packaged in ONE semantic GLB node. All nine cuboids are separate indexed
+ * triangle islands. The patches at each joint are smaller than either owner
+ * face; proximity or the shared node name is not sufficient evidence.
+ */
+function spokeLatticeFixture({detachedPad=null,sourceSha256=digest()}={}){
+ const semantics=createAttachmentSemantics({
+  scopeId:'spoke-lattice',sourceSha256,entities:[E('spoke-lattice')],
+  relations:[R('spoke-lattice-free','FREE','spoke-lattice')],
+ });
+ const specs=[
+  {id:'hub',bounds:[-.5,.5,-.5,.5,0,.25]},
+  {id:'east-spoke',bounds:[.5,1.25,-.125,.125,.0625,.1875],owner:0,childFace:8,ownerFace:10},
+  {id:'west-spoke',bounds:[-1.25,-.5,-.125,.125,.0625,.1875],owner:0,childFace:10,ownerFace:8},
+  {id:'north-spoke',bounds:[-.125,.125,.5,1.25,.0625,.1875],owner:0,childFace:4,ownerFace:6},
+  {id:'south-spoke',bounds:[-.125,.125,-1.25,-.5,.0625,.1875],owner:0,childFace:6,ownerFace:4},
+  {id:'east-pad',bounds:[1.25,1.5,-.375,.375,0,.25],owner:1,childFace:8,ownerFace:10},
+  {id:'west-pad',bounds:[-1.5,-1.25,-.375,.375,0,.25],owner:2,childFace:10,ownerFace:8},
+  {id:'north-pad',bounds:[-.375,.375,1.25,1.5,0,.25],owner:3,childFace:4,ownerFace:6},
+  {id:'south-pad',bounds:[-.375,.375,-1.5,-1.25,0,.25],owner:4,childFace:6,ownerFace:4},
+ ];
+ const positions=[],indices=[];
+ for(const spec of specs){
+  const [x0,x1,y0,y1,z0,z1]=spec.bounds;
+  const offset=positions.length,base=box(0,1);
+  positions.push(...base.positions.map(([x,y,z])=>[
+   x0+(x1-x0)*x,y0+(y1-y0)*y,z0+(z1-z0)*z+
+    (spec.id===detachedPad?.id?detachedPad.dz??0:0),
+  ].map((v,i)=>v+(i===0&&spec.id===detachedPad?.id?(detachedPad.dx??0):0))));
+  indices.push(...base.indices.map(i=>offset+i));
+ }
+ const glb=partsToGlb({parts:[{id:'spoke-lattice',materialId:'solid',
+  mesh:{positions,indices}}],
+  materials:{solid:{baseColor:[.6,.6,.6,1],roughness:1,metallic:0}}});
+ const inventory=inventoryGlbTriangleComponents(glb);
+ const links=specs.slice(1).map((spec,i)=>({
+  childTriangleIndex:(i+1)*12+spec.childFace,
+  ownerTriangleIndex:spec.owner*12+spec.ownerFace,
+  kind:'OPPOSED_AXIS_ALIGNED_PARTIAL_FACE',
+  evidenceRefs:['assembly/'+spec.id+'-face-contact.json'],
+ }));
+ const componentSupportPlan=createTriangleComponentSupportPlan({
+  assetSha256:sha(glb),inventoryDigest:inventory.inventoryDigest,
+  nodes:[{nodeId:'spoke-lattice',rootTriangleIndex:0,links}],
+  evidenceRefs:['review/spoke-lattice-current-glb.json'],
+ });
+ const plan=createRealizedContactPlan({attachmentSemantics:semantics,
+  id:'spoke-lattice-contact',assetSha256:sha(glb),
+  supportRoots:['spoke-lattice'],evidenceRefs:['review/spoke-lattice-contact.json']});
+ const {graph,report}=analyzeRealizedContact({glb,attachmentSemantics:semantics,plan});
+ return {glb,sourceSha256,attachmentSemantics:semantics,plan,graph,report,
+  inventory,componentSupportPlan};
+}
+
+test('QA-02 multi-island spoke and rim pads: 9 actual separate shells retain a rooted contact path',()=>{
+ const f=spokeLatticeFixture();
+ assert.equal(f.inventory.nodes.length,1);
+ assert.equal(f.inventory.nodes[0].spatial.componentCount,9);
+ assert.equal(f.componentSupportPlan.nodes[0].links.length,8);
+ assert.equal(f.report.status,'PASS');
+ assert.equal(replayTriangleComponentSupport(f.glb,null).status,'INSUFFICIENT');
+ const measured=replayTriangleComponentSupport(f.glb,f.componentSupportPlan);
+ assert.equal(measured.status,'PASS',measured.reason+': '+measured.details.join(','));
+ const whole=replayRealizedContactEvidence(f);
+ assert.equal(whole.status,'PASS',whole.reason+': '+whole.details.join(','));
+});
+
+test('QA-02 floating outer pad fails even when worker re-signs candidate and support evidence',()=>{
+ for(const detachedPad of [{id:'east-pad',dx:.125},{id:'north-pad',dz:.125}]){
+  const f=spokeLatticeFixture({detachedPad});
+  assert.equal(f.inventory.nodes[0].spatial.componentCount,9);
+  assert.equal(f.report.status,'PASS','node-level support alone must not attest its floating child');
+  const measured=replayTriangleComponentSupport(f.glb,f.componentSupportPlan);
+  assert.equal(measured.status,'FAIL',JSON.stringify(detachedPad)+': '+measured.reason);
+  const whole=replayRealizedContactEvidence(f);
+  assert.equal(whole.status,'FAIL',JSON.stringify(detachedPad)+': '+whole.reason);
+ }
+});
+
+test('QA-02 multi-island replay rejects omitted rim-pad witnesses and stale exact asset',()=>{
+ const f=spokeLatticeFixture();
+ const omitted=createTriangleComponentSupportPlan({
+  assetSha256:sha(f.glb),inventoryDigest:f.inventory.inventoryDigest,
+  nodes:[{...f.componentSupportPlan.nodes[0],
+   links:f.componentSupportPlan.nodes[0].links.slice(0,-1)}],
+  evidenceRefs:['review/spoke-lattice-incomplete.json'],
+ });
+ assert.equal(replayTriangleComponentSupport(f.glb,omitted).status,'INSUFFICIENT');
+ assert.equal(replayRealizedContactEvidence({...f,componentSupportPlan:omitted}).status,'INSUFFICIENT');
+ const mutated=spokeLatticeFixture({detachedPad:{id:'west-pad',dx:-.125}});
+ assert.notEqual(sha(mutated.glb),sha(f.glb));
+ assert.equal(replayTriangleComponentSupport(mutated.glb,f.componentSupportPlan).status,'FAIL');
+ const forged={...f.componentSupportPlan,
+  nodes:[{...f.componentSupportPlan.nodes[0],rootTriangleIndex:12}]};
+ assert.equal(replayTriangleComponentSupport(f.glb,forged).status,'FAIL');
+});
+
 test('QA-02k exact opposed face from two separately indexed shells connects every island',()=>{
  const f=fixture();
  assert.equal(f.node.spatial.componentCount,2);
