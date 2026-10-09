@@ -221,6 +221,35 @@ async function contactReplayCheck(root, head, assetBytes, sourceSha256) {
       provenance:records['fusion-provenance'],
     });
   }
+  // Persisted component witnesses may not bypass exact current checkpoint
+  // path/size/bytes binding. Absence is handled as INSUFFICIENT by trusted
+  // replay only if this GLB genuinely contains unreviewed physical islands.
+  const componentRefs=(head.artifactRefs??[]).filter(ref=>
+    ref.kind==='triangle-component-support-plan');
+  if(componentRefs.length>1){
+    return check('realized-contact-support','assembly','INSUFFICIENT',
+      'exactly one current component-support plan may authorize split meshes');
+  }
+  let componentSupportPlan=null;
+  if(componentRefs.length===1){
+    const ref=componentRefs[0],file=await existingContainedFile(root,ref.path);
+    if(!file||!HEX_DIGEST.test(String(ref.sha256??''))){
+      return check('realized-contact-support','assembly','FAIL',
+        'invalid or uncontained triangle-component-support-plan artifact');
+    }
+    try{
+      const bytes=await fs.readFile(file);
+      if(bytes.length!==ref.sizeBytes||sha256(bytes)!==ref.sha256){
+        return check('realized-contact-support','assembly','FAIL',
+          'triangle-component-support-plan artifact bytes drifted');
+      }
+      componentSupportPlan=JSON.parse(bytes.toString('utf8'));
+      bound.push(ref.sha256);
+    }catch{
+      return check('realized-contact-support','assembly','FAIL',
+        'triangle-component-support-plan is missing or malformed');
+    }
+  }
   const replay=replayRealizedContactEvidence({
     glb:assetBytes,sourceSha256,
     attachmentSemantics:records['attachment-semantics'],
@@ -231,6 +260,7 @@ async function contactReplayCheck(root, head, assetBytes, sourceSha256) {
     propagationReport:records['attachment-propagation-report']??null,
     propagationDependencies,
     fusionReplayInputs,
+    componentSupportPlan,
   });
   return check('realized-contact-support','assembly',replay.status,replay.reason + (
     replay.details.length ? ': ' + replay.details.join('; ') : ''),bound);
