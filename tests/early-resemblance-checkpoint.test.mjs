@@ -16,6 +16,7 @@ import {
   contentReference,
   createCandidateTransition,
   createEarlyResemblanceBarrier,
+  createReferenceGeometry,
   createPbrRenderReport,
   createPerceptualSignatureEvidence,
   createPerceptualSignatureSet,
@@ -121,6 +122,9 @@ async function makeRealSourceProject(t, verdictStatus, {
   spatialRole = 'volumetric',
   candidateDepth = 1,
   omitVolumeBarrier = false,
+  omitSourceGeometry = false,
+  emptySourceGeometry = false,
+  wrongSourceGeometrySha = false,
 } = {}) {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), 'refas-r04-real-'));
   t.after(() => fs.rm(root, {recursive: true, force: true}));
@@ -158,7 +162,27 @@ async function makeRealSourceProject(t, verdictStatus, {
   await commitLocal(root, 'visual-hierarchy', [hierarchyRef]);
 
   const observationRef = await writeRef(root, 'model/observation.json', Buffer.from('{"observation":true}\n'), 'visual-observation');
-  await commitLocal(root, 'visual-observation', [observationRef]);
+  const geometry = createReferenceGeometry({
+    scopeId: 'whole',
+    sourceSha256: wrongSourceGeometrySha ? D('f') : source.sha256,
+    anchors: emptySourceGeometry ? [] : [{
+      id: 'observed-head', importance: 'macro', xy: [.5,.25],
+      visibility: 'visible', confidence: 1, evidenceRefs: [source.path],
+    }],
+    contours: emptySourceGeometry ? [] : [{
+      id: 'whole-outer-contour', importance: 'macro', closed: true,
+      points: [[.15,.15],[.85,.15],[.85,.90],[.15,.90]],
+      evidenceRefs: [source.path],
+    }],
+    attestation: {attested: true, evidenceRefs: [source.path]},
+  });
+  const geometryRef = await writeRef(
+    root, 'model/reference-geometry.json',
+    Buffer.from(`${JSON.stringify(geometry, null, 2)}\n`), 'reference-geometry',
+  );
+  await commitLocal(root, 'visual-observation', [
+    observationRef, ...(!omitSourceGeometry ? [geometryRef] : []),
+  ]);
 
   const spatialRef = await writeRef(root, 'model/spatial.json', Buffer.from('{"spatial":true}\n'), 'spatial-hypotheses');
   const roleSet = createSpatialRoleExpectationSet({
@@ -280,6 +304,41 @@ async function makeRealSourceProject(t, verdictStatus, {
   const surfaceRef = await writeRef(root, 'model/surface.json', Buffer.from('{"surface":true}\n'), 'surface-network');
   return {root, source, hierarchy, barrier, volumeBarrier, classification, spatialEvidence, surfaceRef, candidateRef, shapeCheckpoint};
 }
+
+test('P0a source geometry missing blocks detail even when legacy neutral-clay barrier says PROCEED', async (t) => {
+  const {root, surfaceRef, barrier} = await makeRealSourceProject(t, 'match', {omitSourceGeometry: true});
+  assert.equal(barrier.verdict, 'PROCEED');
+  await assert.rejects(
+    () => commitLocal(root, 'surface-topology', [surfaceRef]),
+    /source geometry admission requires exactly one reference-geometry artifact/u,
+  );
+});
+
+test('P0a digest-valid but empty source observation cannot self-attest detail admission', async (t) => {
+  const {root, surfaceRef} = await makeRealSourceProject(t, 'match', {emptySourceGeometry: true});
+  await assert.rejects(
+    () => commitLocal(root, 'surface-topology', [surfaceRef]),
+    /source geometry admission requires an observable macro reference-geometry primitive/u,
+  );
+});
+
+test('P0a swapped source SHA in a canonical source-geometry document fails closed', async (t) => {
+  const {root, surfaceRef} = await makeRealSourceProject(t, 'match', {wrongSourceGeometrySha: true});
+  await assert.rejects(
+    () => commitLocal(root, 'surface-topology', [surfaceRef]),
+    /source geometry admission source or scope binding mismatch/u,
+  );
+});
+
+test('P0a changing the observation bytes after checkpoint cannot obtain a downstream PASS', async (t) => {
+  const {root, surfaceRef} = await makeRealSourceProject(t, 'match');
+  await fs.writeFile(path.join(root, 'model/reference-geometry.json'),
+    '{"schema":"refas.reference-geometry/v1","forged":"PASS"}\n');
+  await assert.rejects(
+    () => commitLocal(root, 'surface-topology', [surfaceRef]),
+    /reference-geometry artifact bytes are stale or mismatched/u,
+  );
+});
 
 test('R04 real-source HOLD blocks surface-topology admission', async (t) => {
   const {root, barrier, surfaceRef} = await makeRealSourceProject(t, 'insufficient');
