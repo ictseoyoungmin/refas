@@ -16,6 +16,8 @@ import {
   contentReference,
   loadProject,
   verifySourceBoundObject,
+  inventoryGlbTriangleComponents,
+  parseGlb,
 } from '../skills/refas/scripts/lib/index.mjs';
 
 const D=(c)=>c.repeat(64);
@@ -125,4 +127,54 @@ test('source-bound public QA independently loads and replays four exact checkpoi
  const drift=await verifySourceBoundObject(root,asset);
  assert.equal(drift.checks.find((c)=>c.id==='realized-contact-support').status,'FAIL');
  assert.equal(drift.decision.state,'BLOCKED');
+});
+
+test('index-edge component inventory distinguishes connected and split GLB nodes without a physics verdict',()=>{
+ const f=fixture();
+ const whole=inventoryGlbTriangleComponents(f.glb);
+ assert.equal(whole.metrics.meshNodes,2);
+ assert.equal(whole.metrics.componentCount,2);
+ assert.equal(whole.metrics.splitMeshNodes,0);
+ assert.equal(whole.inventoryDigest,inventoryGlbTriangleComponents(f.glb).inventoryDigest);
+});
+
+test('grafted disconnected islands inside ONE declared physical node remain INSUFFICIENT, not falsely PASS or automatically FAIL',()=>{
+ const sourceSha256=D('a');
+ const attachmentSemantics=createAttachmentSemantics({
+   scopeId:'qa-support',sourceSha256,entities:[E('base')],relations:[R('base-free','FREE','base')],
+ });
+ const first=box('base',0,0.2).mesh, second=box('base',4,4.2).mesh;
+ const mesh={positions:[...first.positions,...second.positions],
+   indices:[...first.indices,...second.indices.map(index=>index+first.positions.length)]};
+ const glb=partsToGlb({parts:[{id:'base',materialId:'solid',mesh}],
+   materials:{solid:{baseColor:[0.5,0.5,0.5,1],metallic:0,roughness:1}}});
+ const inventory=inventoryGlbTriangleComponents(glb);
+ assert.equal(inventory.metrics.meshNodes,1);
+ assert.equal(inventory.nodes[0].componentCount,2);
+ assert.deepEqual(inventory.nodes[0].primitives[0].triangleCounts,[12,12]);
+ const plan=createRealizedContactPlan({attachmentSemantics,id:'split-node-contact',
+   assetSha256:sha(glb),supportRoots:['base'],supportRequiredEntityIds:[],
+   pairExpectations:[],evidenceRefs:['review/assembly.json']});
+ const {graph,report}=analyzeRealizedContact({plan,attachmentSemantics,glb});
+ assert.equal(report.status,'PASS'); // Existing node-level support report cannot see internal disconnection.
+ const replay=replayRealizedContactEvidence({glb,sourceSha256,attachmentSemantics,plan,graph,report});
+ assert.equal(replay.status,'INSUFFICIENT');
+ assert.ok(replay.details.some(line=>line==='unreviewed-triangle-islands:base:2'));
+});
+
+test('intrinsic index-edge inventory rejects malformed index buffers instead of yielding an empty-pass',()=>{
+ const f=fixture();
+ const bad=Buffer.from(f.glb);
+ const {json}=parseGlb(bad);
+ const primitive=json.meshes[0].primitives[0];
+ const accessor=json.accessors[primitive.indices];
+ const view=json.bufferViews[accessor.bufferView];
+ const indexOffset=20+bad.readUInt32LE(12)+8+(view.byteOffset??0)+(accessor.byteOffset??0);
+ const invalidVertexIndex=json.accessors[primitive.attributes.POSITION].count+20;
+ if(accessor.componentType===5125)bad.writeUInt32LE(invalidVertexIndex,indexOffset);
+ else if(accessor.componentType===5123)bad.writeUInt16LE(invalidVertexIndex,indexOffset);
+ else if(accessor.componentType===5121)bad.writeUInt8(invalidVertexIndex,indexOffset);
+ else throw new Error('unsupported fixture index type');
+ assert.throws(()=>inventoryGlbTriangleComponents(bad),/triangle index exceeds POSITION count/u);
+ assert.notEqual(inventoryGlbTriangleComponents(f.glb).assetSha256,sha(bad));
 });

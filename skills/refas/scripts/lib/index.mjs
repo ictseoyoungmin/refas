@@ -124,3 +124,5 @@ export * from './interface-contracts.mjs';
 export * from './qa-coverage.mjs';
 
 export * from './qa-contact-replay.mjs';
+
+export * from './qa-triangle-components.mjs';
