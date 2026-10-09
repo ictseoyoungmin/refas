@@ -49,8 +49,10 @@ function fixture({sourceSha256=digest(),gap=0,extra=false}={}){
   supportRoots:['base'],evidenceRefs:['review/contact.json'],
  });
  const {graph,report}=analyzeRealizedContact({glb,attachmentSemantics,plan});
- const links=[{childTriangleIndex:12,ownerTriangleIndex:2,
-  evidenceRefs:['assembly/exact-opposed-face.json']}];
+ const links=[
+ {childTriangleIndex:12,ownerTriangleIndex:2,evidenceRefs:['assembly/first-contact.json']},
+ {childTriangleIndex:13,ownerTriangleIndex:3,evidenceRefs:['assembly/second-contact.json']},
+ ];
  const componentSupportPlan=createTriangleComponentSupportPlan({
   assetSha256:sha(glb),inventoryDigest:inventory.inventoryDigest,
   nodes:[{nodeId:'base',rootTriangleIndex:0,links}],
@@ -97,7 +99,9 @@ test('QA-02k component graph must be complete, rooted and tied to actual triangl
   assetSha256:sha(f.glb),inventoryDigest:f.inventory.inventoryDigest,
   nodes:[{nodeId:'base',rootTriangleIndex:0,links:[
    {childTriangleIndex:12,ownerTriangleIndex:2,evidenceRefs:['assembly/first-face.json']},
+   {childTriangleIndex:13,ownerTriangleIndex:3,evidenceRefs:['assembly/first-face-b.json']},
    {childTriangleIndex:24,ownerTriangleIndex:14,evidenceRefs:['assembly/second-face.json']},
+   {childTriangleIndex:25,ownerTriangleIndex:15,evidenceRefs:['assembly/second-face-b.json']},
   ]}],evidenceRefs:['review/three-boxes.json'],
  });
  assert.equal(replayTriangleComponentSupport(f.glb,positive).status,'PASS');
@@ -106,7 +110,9 @@ test('QA-02k component graph must be complete, rooted and tied to actual triangl
   assetSha256:sha(f.glb),inventoryDigest:f.inventory.inventoryDigest,
   nodes:[{nodeId:'base',rootTriangleIndex:0,links:[
    {childTriangleIndex:12,ownerTriangleIndex:26,evidenceRefs:['assembly/unsupported.json']},
+   {childTriangleIndex:13,ownerTriangleIndex:27,evidenceRefs:['assembly/unsupported.json']},
    {childTriangleIndex:24,ownerTriangleIndex:14,evidenceRefs:['assembly/unsupported.json']},
+   {childTriangleIndex:25,ownerTriangleIndex:15,evidenceRefs:['assembly/unsupported.json']},
   ]}],evidenceRefs:['review/cyclic.json'],
  });
  assert.notEqual(replayTriangleComponentSupport(f.glb,cyclic).status,'PASS');
