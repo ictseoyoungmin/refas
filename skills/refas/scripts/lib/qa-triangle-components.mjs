@@ -75,7 +75,7 @@ function positionVectors(json, binary, primitive, nodeId) {
   return vectors;
 }
 
-function geometricComponents(triangles) {
+function geometricComponents(triangles, topologicalTriangles = []) {
   const parent=Array.from({length:triangles.length},(_,i)=>i),rank=new Uint8Array(triangles.length);
   const find=(start)=>{let n=start;while(parent[n]!==n){parent[n]=parent[parent[n]];n=parent[n];}return n;};
   function union(a,b) {
@@ -86,6 +86,22 @@ function geometricComponents(triangles) {
   // Exact float32 POSITION coordinates are the equivalence relation.
   // No scale-dependent rounding may join a nearby but detached island.
   const coordinateKey=(point)=>point.map(n=>Object.is(n,-0)?0:n).join(',');
+  // Prefer proven intrinsic indexed topology when coincident neighboring
+  // closed shells cause more than two geometric edges to overlap.
+  const intrinsicEdges=new Map();
+  for(let i=0;i<topologicalTriangles.length;i++){
+    const tri=topologicalTriangles[i];
+    for(let j=0;j<3;j++){
+      const from=tri[j],to=tri[(j+1)%3],edge=from<to?from+'|'+to:to+'|'+from;
+      if(!intrinsicEdges.has(edge))intrinsicEdges.set(edge,[]);
+      intrinsicEdges.get(edge).push({triangle:i,from,to});
+    }
+  }
+  for(const items of intrinsicEdges.values()){
+    if(items.length===2&&items[0].from===items[1].to&&items[0].to===items[1].from){
+      union(items[0].triangle,items[1].triangle);
+    }
+  }
   const edges=new Map();
   for(let i=0;i<triangles.length;i+=1){
     const tri=triangles[i],keys=tri.map(coordinateKey);
@@ -97,22 +113,32 @@ function geometricComponents(triangles) {
     }
   }
   let ambiguousEdges=0;
-  for(const items of edges.values()){
-    if(items.length>2){ambiguousEdges+=1;continue;}
+  const ambiguousRecords=[];
+  for(const [key,items] of edges){
+    if(items.length>2){
+      ambiguousEdges+=1;ambiguousRecords.push({key,items});continue;
+    }
     if(items.length===2){
       if(items[0].from===items[1].to && items[0].to===items[1].from){
         union(items[0].triangle,items[1].triangle);
       }else{
         // Same oriented overlapping faces are not a watertight seam.
-        ambiguousEdges+=1;
+        ambiguousEdges+=1;ambiguousRecords.push({key,items});
       }
     }
   }
-  const counts=new Map();
+  const counts=new Map(),componentForRoot=new Map(),componentIds=[];
   for(let i=0;i<triangles.length;i++){
-    const root=find(i);counts.set(root,(counts.get(root)??0)+1);
+    const root=find(i);
+    if(!componentForRoot.has(root)) componentForRoot.set(root,componentForRoot.size);
+    componentIds.push(componentForRoot.get(root));
+    counts.set(root,(counts.get(root)??0)+1);
   }
-  return {componentCount:counts.size,triangleCounts:[...counts.values()].sort((a,b)=>b-a),ambiguousEdges};
+  const ambiguousWitnessEdges=ambiguousRecords.map(({key,items})=>({
+    key,uses:items.map(({triangle,from,to})=>({componentId:componentIds[triangle],from,to})),
+  }));
+  return {componentCount:counts.size,triangleCounts:[...counts.values()].sort((a,b)=>b-a),
+    ambiguousEdges,componentIds,ambiguousWitnessEdges};
 }
 
 // Index-edge adjacency is an *intrinsic topological observation*, not proof
@@ -155,10 +181,10 @@ function componentSizes(indices) {
  * Distinct glTF primitives are kept separate even if their coordinates touch.
  * UV seams/non-indexed triangles can overcount; results need typed review.
  */
-export function inventoryGlbTriangleComponents(glb) {
+export function inventoryGlbTriangleComponents(glb, {withTriangleDetails = false} = {}) {
   const bytes=Buffer.from(glb);
   const {json,binary}=parseGlb(bytes);
-  const nodes=[];
+  const nodes=[],details=[];
   for(let nodeIndex=0;nodeIndex<(json.nodes?.length??0);nodeIndex+=1) {
     const node=json.nodes[nodeIndex];
     if(node.mesh==null)continue;
@@ -167,7 +193,7 @@ export function inventoryGlbTriangleComponents(glb) {
       throw new Error('GLB mesh node ' + nodeIndex + ' has no mesh primitives');
     }
     const nodeId=String(node.extras?.refasPartId??node.name??'glb-node-'+nodeIndex);
-    const primitives=[],spatialTriangles=[];
+    const primitives=[],spatialTriangles=[],topologicalTriangles=[];
     for (const [primitiveIndex,primitive] of spec.primitives.entries()) {
       if((primitive.mode??4)!==4)throw new Error(nodeId + ': only triangle-mode primitives supported');
       const indices=triangleIndices(json,binary,primitive,nodeId);
@@ -175,15 +201,22 @@ export function inventoryGlbTriangleComponents(glb) {
       const sizes=componentSizes(indices);
       primitives.push({primitiveIndex,componentCount:sizes.length,triangleCounts:sizes});
       for(let offset=0;offset<indices.length;offset+=3){
-        spatialTriangles.push(indices.slice(offset,offset+3).map(i=>positions[i]));
+        const tri=indices.slice(offset,offset+3);
+        spatialTriangles.push(tri.map(i=>positions[i]));
+        topologicalTriangles.push(tri.map(i=>primitive.indices==null
+          ?primitiveIndex+':nonindexed:'+offset+':'+i
+          :primitiveIndex+':'+i));
       }
     }
     // Across a node's primitives, exact shared 3D edges with opposite winding
     // can reconnect a non-indexed/UV-split/material-split surface. This says
     // geometric continuity, not physical weld, attachment or source fidelity.
-    const spatial=geometricComponents(spatialTriangles);
+    const {componentIds,ambiguousWitnessEdges,...spatial}=
+      geometricComponents(spatialTriangles,topologicalTriangles);
     nodes.push({nodeIndex,nodeId,meshIndex:node.mesh,triangleCount:spatialTriangles.length,
       componentCount:primitives.reduce((sum,p)=>sum+p.componentCount,0),primitives,spatial});
+    if(withTriangleDetails) details.push({nodeId,nodeIndex,triangles:spatialTriangles,
+      componentIds,ambiguousWitnessEdges});
   }
   const payload={schema:TRIANGLE_COMPONENT_INVENTORY_SCHEMA,assetSha256:sha256(bytes),
     authority:'index-edge adjacency diagnostic; exact-position oppositely wound geometric-edge connectivity across primitives; neither proves weld or physical support',
@@ -194,5 +227,9 @@ export function inventoryGlbTriangleComponents(glb) {
       geometricSplitMeshNodes:nodes.filter(n=>n.spatial.componentCount>1).length,
       geometricallyAmbiguousMeshNodes:nodes.filter(n=>n.spatial.ambiguousEdges>0).length},
   };
-  return deepFreeze({...payload,inventoryDigest:digestJson(payload)});
+  const inventory=deepFreeze({...payload,inventoryDigest:digestJson(payload)});
+  // The optional geometry view is exclusively for trusted current-byte
+  // narrow-phase witnesses. It is not serialized into inventoryDigest,
+  // keeping preexisting persisted diagnostic contracts byte-for-byte stable.
+  return withTriangleDetails?deepFreeze({inventory,details}):inventory;
 }

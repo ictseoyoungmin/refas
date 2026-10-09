@@ -426,7 +426,7 @@ test('grafted disconnected islands inside ONE declared physical node remain INSU
  assert.equal(report.status,'PASS'); // Existing node-level support report cannot see internal disconnection.
  const replay=replayRealizedContactEvidence({glb,sourceSha256,attachmentSemantics,plan,graph,report});
  assert.equal(replay.status,'INSUFFICIENT');
- assert.ok(replay.details.some(line=>line==='unreviewed-triangle-islands:base:2'));
+ assert.ok(replay.details.some(line=>line==='base:islands:2'));
 });
 
 test('intrinsic index-edge inventory rejects malformed index buffers instead of yielding an empty-pass',()=>{
