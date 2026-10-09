@@ -1,5 +1,9 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
+import {createHash} from 'node:crypto';
+import fs from 'node:fs/promises';
+import os from 'node:os';
+import path from 'node:path';
 
 import {
   bakePhysicalFusion,
@@ -14,9 +18,19 @@ import {
   physicalFusionReopenTarget,
   validatePhysicalFusionPlan,
   validatePhysicalFusionResult,
+  replayExactGlbPhysicalFusion,
+  digestJson,
+  createRealizedContactPlan,
+  analyzeRealizedContact,
+  replayRealizedContactEvidence,
+  initProject,
+  commitCheckpoint,
+  contentReference,
+  verifySourceBoundObject,
 } from '../skills/refas/scripts/lib/index.mjs';
 
 const D = (value = 'a') => value.repeat(64);
+const sha = (bytes) => createHash('sha256').update(Buffer.from(bytes)).digest('hex');
 const E = (id) => ({id, scopeId: id, evidenceRefs: [`model/${id}.json`]});
 const R = (id, mode, subjectId, ownerIds = []) => ({id, mode, subjectId, ownerIds, basis: 'construction', evidenceRefs: [`model/attachments/${id}.json`]});
 const I = (origin = [0, 0, 0]) => ({origin, xAxis: [1, 0, 0], yAxis: [0, 1, 0], zAxis: [0, 0, 1]});
@@ -37,15 +51,15 @@ function cube(x0, x1) {
   return {positions, indices};
 }
 
-function fixture() {
+function fixture(sourceSha256 = D('f'), {includeGlasses = true} = {}) {
   const attachmentSemantics = createAttachmentSemantics({
-    scopeId: 'head-shell', sourceSha256: D('f'),
-    entities: [E('head-shell'), E('face'), E('nose'), E('glasses')],
+    scopeId: 'head-shell', sourceSha256,
+    entities: [E('head-shell'), E('face'), E('nose'), ...(includeGlasses ? [E('glasses')] : [])],
     relations: [
       R('head-free', 'FREE', 'head-shell'),
       R('face-fused', 'FUSED', 'face', ['head-shell']),
       R('nose-fused', 'FUSED', 'nose', ['head-shell']),
-      R('glasses-free', 'FREE', 'glasses'),
+      ...(includeGlasses ? [R('glasses-free', 'FREE', 'glasses')] : []),
     ],
   });
   const logicalFusion = createLogicalFusion({attachmentSemantics, evidenceRefs: ['reviews/head-logical-fusion.json']});
@@ -176,4 +190,153 @@ test('plan and baked result are digest-bound and tamper detectable', () => {
   const result = bakePhysicalFusion({...f, plan: f.plan, currentInputAssetSha256: D('a'), currentPreFusionStateDigest: D('b')});
   const tampered = structuredClone(result); tampered.provenance.outputFaces[0].sourceMemberIds = ['glasses'];
   assert.equal(validatePhysicalFusionResult(tampered, {...f, plan: f.plan, currentInputAssetSha256: D('a'), currentPreFusionStateDigest: D('b')}).valid, false);
+});
+
+
+test('QA-02e native fused mesh replay independently requires exact original and final GLB bytes',()=>{
+ const baseline=fixture();
+ const preFusionGlb=partsToGlb({parts:baseline.realizedMembers.map(member=>({
+   id:member.memberId,mesh:member.mesh,materialId:'skin',
+ })),materials:{skin:{baseColor:[0.6,0.6,0.6,1],roughness:1,metallic:0}}});
+ const sourceSha256=baseline.attachmentSemantics.sourceSha256;
+ const checkpointBody={schema:'refas.checkpoint/v1',parentId:null,capability:'assembly',
+   scopeId:'whole',reason:'persisted original native fusion input',claims:[],gates:[],metadata:{},
+   transactionId:null,artifactRefs:[{kind:'glb',sha256:sha(preFusionGlb)}]};
+ const digest=digestJson(checkpointBody),checkpoint={
+   ...checkpointBody,id:'cp_'+digest.slice(0,20),contentDigest:digest,createdAt:'2026-10-09T00:00:00.000Z',
+ };
+ const plan=createPhysicalFusionPlan({
+   attachmentSemantics:baseline.attachmentSemantics,logicalFusion:baseline.logicalFusion,
+   canonicalEditIntent:baseline.canonicalEditIntent,id:'head-native-fusion-check',
+   groupId:baseline.plan.groupId,inputAssetSha256:sha(preFusionGlb),
+   preFusionCheckpointId:checkpoint.id,preFusionStateDigest:checkpoint.contentDigest,
+   fusionRootFrame:I(),members:baseline.plan.members,
+   strategy:'WELD_SHARED_BOUNDARY',weldTolerance:baseline.plan.weldTolerance,
+   topologyObligation:baseline.plan.topologyObligation,
+   evidenceRefs:['model/native-fusion-check.json'],
+ });
+ const result=bakePhysicalFusion({
+   ...baseline,plan,
+   currentInputAssetSha256:plan.inputAssetSha256,
+   currentPreFusionStateDigest:plan.preFusionStateDigest,
+   evidenceRefs:['reviews/native-result.json'],
+ });
+ assert.equal(result.report.status,'BAKED');
+ const fusedGlb=partsToGlb({parts:[{id:plan.fusionRootId,mesh:result.mesh,materialId:'skin'}],
+   materials:{skin:{baseColor:[0.6,0.6,0.6,1],roughness:1,metallic:0}},
+   extras:{physicalFusionReportDigest:result.report.reportDigest,
+     fusionProvenanceDigest:result.provenance.provenanceDigest}});
+ const args={sourceSha256,attachmentSemantics:baseline.attachmentSemantics,preFusionGlb,
+   fusedGlb,preFusionCheckpoint:checkpoint,physicalEntityId:plan.fusionRootId,
+   logicalFusion:baseline.logicalFusion,canonicalEditIntent:baseline.canonicalEditIntent,
+   plan,report:result.report,provenance:result.provenance};
+ assert.equal(replayExactGlbPhysicalFusion(args).status,'PASS');
+ const wrong=partsToGlb({parts:[{id:plan.fusionRootId,mesh:cube(-1,1),materialId:'skin'}],
+   materials:{skin:{baseColor:[0.6,0.6,0.6,1],roughness:1,metallic:0}},
+   extras:{physicalFusionReportDigest:result.report.reportDigest,
+     fusionProvenanceDigest:result.provenance.provenanceDigest}});
+ assert.equal(replayExactGlbPhysicalFusion({...args,fusedGlb:wrong}).status,'FAIL');
+ assert.equal(replayExactGlbPhysicalFusion({...args,preFusionGlb:fusedGlb}).status,'FAIL');
+ assert.equal(replayExactGlbPhysicalFusion({...args,preFusionCheckpoint:{...checkpoint,contentDigest:D('c')}}).status,'INSUFFICIENT');
+});
+
+
+test('QA-02e public verifier loads exact pre-fusion checkpoint and replays current fused GLB',async t=>{
+ const root=await fs.mkdtemp(path.join(os.tmpdir(),'refas-native-fusion-qa-'));
+ t.after(()=>fs.rm(root,{recursive:true,force:true}));
+ const src=Buffer.from('separately supplied source for physical head fusion');
+ const sourceSha256=sha(src),sourcePath=path.join(root,'source','ref.bin');
+ await fs.mkdir(path.dirname(sourcePath),{recursive:true});
+ await fs.writeFile(sourcePath,src);
+ await initProject(root,{projectId:'native-fusion-source-qa',source:{
+   schema:'refas.source-manifest/v1',id:'primary',path:'source/ref.bin',
+   sha256:sourceSha256,sizeBytes:src.length,width:64,height:64,
+   authority:'primary',acquisition:{kind:'operator-supplied'},
+ }});
+ const f=fixture(sourceSha256,{includeGlasses:false});
+ const material={skin:{baseColor:[0.7,0.7,0.7,1],roughness:1,metallic:0}};
+ const preFusionGlb=partsToGlb({parts:f.realizedMembers.map(m=>({
+   id:m.memberId,mesh:m.mesh,materialId:'skin',
+ })),materials:material});
+ const files=path.join(root,'model');await fs.mkdir(files,{recursive:true});
+ const beforePath=path.join(files,'original.glb');
+ await fs.writeFile(beforePath,preFusionGlb);
+ const beforeRef=await contentReference(beforePath,{kind:'glb',root});
+ const checkpoint=await commitCheckpoint(root,{
+   capability:'source-intake',scopeId:'whole',
+   reason:'trusted primary source and original candidate attached before fusion',
+   artifactRefs:[beforeRef],claims:['source and original candidate recorded'],
+   gates:[{id:'source-intake-gate',evidenceRefs:[beforeRef.path]}],
+ });
+ const plan=createPhysicalFusionPlan({
+   attachmentSemantics:f.attachmentSemantics,logicalFusion:f.logicalFusion,
+   canonicalEditIntent:f.canonicalEditIntent,id:'checkpoint-bound-head-native-fusion',
+   groupId:f.plan.groupId,inputAssetSha256:sha(preFusionGlb),
+   preFusionCheckpointId:checkpoint.id,preFusionStateDigest:checkpoint.contentDigest,
+   fusionRootFrame:I(),members:f.plan.members,
+   strategy:'WELD_SHARED_BOUNDARY',weldTolerance:f.plan.weldTolerance,
+   topologyObligation:f.plan.topologyObligation,
+   evidenceRefs:['model/native-plan.json'],
+ });
+ const bake=bakePhysicalFusion({...f,plan,
+   currentInputAssetSha256:plan.inputAssetSha256,
+   currentPreFusionStateDigest:plan.preFusionStateDigest,
+   evidenceRefs:['model/native-result.json']});
+ assert.equal(bake.report.status,'BAKED');
+ const fusedGlb=partsToGlb({parts:[{id:plan.fusionRootId,mesh:bake.mesh,materialId:'skin'}],
+   materials:material,extras:{physicalFusionReportDigest:bake.report.reportDigest,
+     fusionProvenanceDigest:bake.provenance.provenanceDigest}});
+ const fusionReplayInputs=[{preFusionGlb,preFusionCheckpoint:checkpoint,plan,
+   logicalFusion:f.logicalFusion,canonicalEditIntent:f.canonicalEditIntent,
+   report:bake.report,provenance:bake.provenance,physicalEntityId:plan.fusionRootId}];
+ const contactPlan=createRealizedContactPlan({
+   attachmentSemantics:f.attachmentSemantics,id:'fused-head-contact',
+   assetSha256:sha(fusedGlb),supportRoots:['head-shell'],
+   fusionBindings:[{
+     physicalEntityId:'head-shell',semanticMemberIds:['head-shell','face','nose'],
+     fusionReportDigest:bake.report.reportDigest,provenanceDigest:bake.provenance.provenanceDigest,
+     evidenceRefs:['model/native-plan.json'],
+   }],evidenceRefs:['model/contact-plan.json'],
+ });
+ const {graph,report}=analyzeRealizedContact({
+   plan:contactPlan,attachmentSemantics:f.attachmentSemantics,
+   glb:fusedGlb,fusionArtifacts:[{report:bake.report,provenance:bake.provenance}],
+ });
+ assert.equal(report.status,'PASS');
+ assert.equal(replayRealizedContactEvidence({
+   glb:fusedGlb,sourceSha256,attachmentSemantics:f.attachmentSemantics,
+   plan:contactPlan,graph,report,fusionReplayInputs,
+ }).status,'PASS');
+ assert.equal(replayRealizedContactEvidence({
+   glb:fusedGlb,sourceSha256,attachmentSemantics:f.attachmentSemantics,
+   plan:contactPlan,graph,report,
+   fusionArtifacts:[{report:bake.report,provenance:bake.provenance}],
+ }).status,'INSUFFICIENT'); // self-signed fusion report alone cannot pass
+
+ const assetPath=path.join(files,'fused.glb');await fs.writeFile(assetPath,fusedGlb);
+ const entries=[
+   ['attachment-semantics',f.attachmentSemantics],
+   ['realized-contact-plan',contactPlan],['realized-contact-graph',graph],
+   ['realized-contact-report',report],['logical-fusion',f.logicalFusion],
+   ['canonical-edit-intent',f.canonicalEditIntent],
+   ['physical-fusion-plan',plan],['physical-fusion-report',bake.report],
+   ['fusion-provenance',bake.provenance],
+ ];
+ const refs=[await contentReference(assetPath,{kind:'glb',root}),
+   await contentReference(beforePath,{kind:'pre-fusion-glb',root})];
+ for(const [kind,value]of entries){
+   const file=path.join(files,kind+'.json');await fs.writeFile(file,JSON.stringify(value));
+   refs.push(await contentReference(file,{kind,root}));
+ }
+ await commitCheckpoint(root,{capability:'source-intake',scopeId:'whole',
+   reason:'post-fusion original plus independently bound GLB QA artifacts',
+   artifactRefs:refs,claims:['actual candidate under QA replay'],
+   gates:[{id:'source-intake-gate',evidenceRefs:[refs[0].path]}],
+ });
+ const qa=await verifySourceBoundObject(root,assetPath);
+ assert.equal(qa.checks.find(x=>x.id==='realized-contact-support').status,'PASS');
+ assert.equal(qa.decision.state,'BLOCKED'); // not an independent resemblance certificate
+ await fs.writeFile(path.join(files,'fusion-provenance.json'),JSON.stringify({...bake.provenance,outputFaces:[]}));
+ const mutated=await verifySourceBoundObject(root,assetPath);
+ assert.equal(mutated.checks.find(x=>x.id==='realized-contact-support').status,'FAIL');
 });

@@ -126,3 +126,5 @@ export * from './qa-coverage.mjs';
 export * from './qa-contact-replay.mjs';
 
 export * from './qa-triangle-components.mjs';
+
+export * from './qa-fusion-replay.mjs';
