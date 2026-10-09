@@ -5,6 +5,7 @@ import {
   assertDigest,
   assertId,
   deepFreeze,
+  digestBytes,
   digestJson,
   readJson,
   sha256File,
@@ -877,14 +878,14 @@ async function ensureEarlyResemblanceAdmission(root, state, capability, scopeId,
       `${capability} early registered projection`,
     );
     const candidate = candidateMatches[0];
-    const resolvedGlb = await assertExistingFileInside(
-      root, candidate.path, `${capability} early registered projection candidate GLB`,
-    );
-    if (resolvedGlb.stat.size !== candidate.sizeBytes ||
-        await sha256File(resolvedGlb.realFile) !== candidate.sha256) {
+    // The shape checkpoint is immutable, but a later authorized candidate
+    // transition may change the working path. Replay from trusted CAS bytes
+    // bound to the frozen shape candidate rather than a mutable path.
+    const actualGlb = await fs.readFile(objectPath(root, candidate.sha256));
+    if (actualGlb.length !== candidate.sizeBytes ||
+        digestBytes(actualGlb) !== candidate.sha256) {
       throw new Error(`${capability} early registered projection candidate GLB bytes are stale or mismatched`);
     }
-    const actualGlb = await fs.readFile(resolvedGlb.realFile);
     if (proof.sourceSha256 !== state.source.sha256 ||
         proof.scopeId !== geometry.scopeId ||
         proof.assetSha256 !== candidate.sha256) {
