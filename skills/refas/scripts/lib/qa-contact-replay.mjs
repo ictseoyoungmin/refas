@@ -3,6 +3,7 @@ import {createHash} from 'node:crypto';
 import {validateAttachmentSemantics} from './attachment-semantics.mjs';
 import {validateAttachmentPropagationReport} from './attachment-propagation.mjs';
 import {inventoryGlbTriangleComponents} from './qa-triangle-components.mjs';
+import {replayExactGlbPhysicalFusion} from './qa-fusion-replay.mjs';
 import {validateRealizedContactPlan, validateRealizedContactResult} from './realized-contact.mjs';
 
 export const QA_CONTACT_REPLAY_SCHEMA = 'refas.qa-realized-contact-replay/v1';
@@ -19,7 +20,7 @@ const result = (status, reason, details = []) => Object.freeze({
  */
 export function replayRealizedContactEvidence({
   glb, sourceSha256, attachmentSemantics, plan, graph, report,
-  propagationReport = null, propagationPlan = null, fusionArtifacts = [],
+  propagationReport = null, propagationPlan = null, fusionArtifacts = [], fusionReplayInputs = [],
 } = {}) {
   if (!glb || !attachmentSemantics || !plan || !graph || !report) {
     return result('NOT_RUN', 'source-bound contact replay requires candidate GLB, semantic attachments, plan, graph and report');
@@ -75,6 +76,26 @@ export function replayRealizedContactEvidence({
     }
     if (propagationReport.status !== 'READY_FOR_REALIZATION' || !propagationReport.eligibleForRealization) {
       return result('FAIL','digest-bound propagation is not ready for realization');
+    }
+  }
+
+  if(plan.fusionBindings.length){
+    if(!Array.isArray(fusionReplayInputs)||fusionReplayInputs.length!==plan.fusionBindings.length){
+      return result('INSUFFICIENT','physical fusion requires independently replayable pre-fusion and final GLB evidence');
+    }
+    const inputs=new Map(fusionReplayInputs.map(x=>[x.physicalEntityId,x]));
+    fusionArtifacts=[];
+    for(const binding of plan.fusionBindings){
+      const input=inputs.get(binding.physicalEntityId);
+      if(!input)return result('INSUFFICIENT','missing physical fusion replay input for '+binding.physicalEntityId);
+      if(input.report?.reportDigest!==binding.fusionReportDigest||
+         input.provenance?.provenanceDigest!==binding.provenanceDigest){
+        return result('FAIL','physical fusion plan binds a different report or provenance');
+      }
+      const proof=replayExactGlbPhysicalFusion({...input,physicalEntityId:binding.physicalEntityId,
+        sourceSha256,attachmentSemantics,fusedGlb:glb});
+      if(proof.status!=='PASS')return result(proof.status,'trusted physical fusion replay refused closure',[proof.reason]);
+      fusionArtifacts.push({report:input.report,provenance:input.provenance});
     }
   }
 

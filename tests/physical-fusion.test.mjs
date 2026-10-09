@@ -14,6 +14,9 @@ import {
   physicalFusionReopenTarget,
   validatePhysicalFusionPlan,
   validatePhysicalFusionResult,
+  replayExactGlbPhysicalFusion,
+  digestJson,
+  partsToGlb,
 } from '../skills/refas/scripts/lib/index.mjs';
 
 const D = (value = 'a') => value.repeat(64);
@@ -176,4 +179,52 @@ test('plan and baked result are digest-bound and tamper detectable', () => {
   const result = bakePhysicalFusion({...f, plan: f.plan, currentInputAssetSha256: D('a'), currentPreFusionStateDigest: D('b')});
   const tampered = structuredClone(result); tampered.provenance.outputFaces[0].sourceMemberIds = ['glasses'];
   assert.equal(validatePhysicalFusionResult(tampered, {...f, plan: f.plan, currentInputAssetSha256: D('a'), currentPreFusionStateDigest: D('b')}).valid, false);
+});
+
+
+test('QA-02e native fused mesh replay independently requires exact original and final GLB bytes',()=>{
+ const baseline=fixture();
+ const preFusionGlb=partsToGlb({parts:baseline.realizedMembers.map(member=>({
+   id:member.memberId,mesh:member.mesh,materialId:'skin',
+ })),materials:{skin:{baseColor:[0.6,0.6,0.6,1],roughness:1,metallic:0}}});
+ const sourceSha256=baseline.attachmentSemantics.sourceSha256;
+ const checkpointBody={schema:'refas.checkpoint/v1',parentId:null,capability:'assembly',
+   scopeId:'whole',reason:'persisted original native fusion input',claims:[],gates:[],metadata:{},
+   transactionId:null,artifactRefs:[{kind:'glb',sha256:sha(preFusionGlb)}]};
+ const digest=digestJson(checkpointBody),checkpoint={
+   ...checkpointBody,id:'cp_'+digest.slice(0,20),contentDigest:digest,createdAt:'2026-10-09T00:00:00.000Z',
+ };
+ const plan=createPhysicalFusionPlan({
+   attachmentSemantics:baseline.attachmentSemantics,logicalFusion:baseline.logicalFusion,
+   canonicalEditIntent:baseline.canonicalEditIntent,id:'head-native-fusion-check',
+   groupId:baseline.plan.groupId,inputAssetSha256:sha(preFusionGlb),
+   preFusionCheckpointId:checkpoint.id,preFusionStateDigest:checkpoint.contentDigest,
+   fusionRootFrame:I(),members:baseline.plan.members,
+   strategy:'WELD_SHARED_BOUNDARY',weldTolerance:baseline.plan.weldTolerance,
+   topologyObligation:baseline.plan.topologyObligation,
+   evidenceRefs:['model/native-fusion-check.json'],
+ });
+ const result=bakePhysicalFusion({
+   ...baseline,plan,
+   currentInputAssetSha256:plan.inputAssetSha256,
+   currentPreFusionStateDigest:plan.preFusionStateDigest,
+   evidenceRefs:['reviews/native-result.json'],
+ });
+ assert.equal(result.report.status,'BAKED');
+ const fusedGlb=partsToGlb({parts:[{id:plan.fusionRootId,mesh:result.mesh,materialId:'skin'}],
+   materials:{skin:{baseColor:[0.6,0.6,0.6,1],roughness:1,metallic:0}},
+   extras:{physicalFusionReportDigest:result.report.reportDigest,
+     fusionProvenanceDigest:result.provenance.provenanceDigest}});
+ const args={sourceSha256,attachmentSemantics:baseline.attachmentSemantics,preFusionGlb,
+   fusedGlb,preFusionCheckpoint:checkpoint,physicalEntityId:plan.fusionRootId,
+   logicalFusion:baseline.logicalFusion,canonicalEditIntent:baseline.canonicalEditIntent,
+   plan,report:result.report,provenance:result.provenance};
+ assert.equal(replayExactGlbPhysicalFusion(args).status,'PASS');
+ const wrong=partsToGlb({parts:[{id:plan.fusionRootId,mesh:cube(-1,1),materialId:'skin'}],
+   materials:{skin:{baseColor:[0.6,0.6,0.6,1],roughness:1,metallic:0}},
+   extras:{physicalFusionReportDigest:result.report.reportDigest,
+     fusionProvenanceDigest:result.provenance.provenanceDigest}});
+ assert.equal(replayExactGlbPhysicalFusion({...args,fusedGlb:wrong}).status,'FAIL');
+ assert.equal(replayExactGlbPhysicalFusion({...args,preFusionGlb:fusedGlb}).status,'FAIL');
+ assert.equal(replayExactGlbPhysicalFusion({...args,preFusionCheckpoint:{...checkpoint,contentDigest:D('c')}}).status,'INSUFFICIENT');
 });
