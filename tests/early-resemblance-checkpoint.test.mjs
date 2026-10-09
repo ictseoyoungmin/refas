@@ -171,7 +171,7 @@ async function makeRealSourceProject(t, verdictStatus, {
     scopeId: 'whole',
     sourceSha256: wrongSourceGeometrySha ? D('f') : source.sha256,
     anchors: emptySourceGeometry ? [] : [{
-      id: 'observed-head', importance: 'macro', xy: [.5,.25],
+      id: 'observed-head', importance: 'macro', xy: includeEarlyProjection ? [.5,.5] : [.5,.25],
       visibility: 'visible', confidence: 1, evidenceRefs: [source.path],
     }],
     contours: emptySourceGeometry ? [] : [{
