@@ -2,6 +2,7 @@ import {createHash} from 'node:crypto';
 import {digestJson} from './canonical.mjs';
 import {parseGlb} from './glb.mjs';
 import {readQaGeometryAccessor,UnsupportedQaGeometryAccessor} from './qa-glb-geometry-accessors.mjs';
+import {sceneMatrices,realizedGlbRigidFrame,sameFrame} from './qa-glb-rigid-frames.mjs';
 import {bakePhysicalFusion, validatePhysicalFusionResult} from './physical-fusion.mjs';
 
 export const QA_FUSION_REPLAY_SCHEMA='refas.qa-physical-fusion-replay/v1';
@@ -11,37 +12,72 @@ const unsupported=(reason)=>{throw new Error('UNSUPPORTED_LAYOUT: '+reason);};
 
 function decodeMesh(glb,partId){
  const {json,binary}=parseGlb(glb);
- const named=(json.nodes??[]).filter(n=>(n.extras?.refasPartId??n.name)===partId);
+ const nodes=json.nodes??[];
+ const named=nodes.map((node,index)=>({node,index}))
+   .filter(({node})=>(node.extras?.refasPartId??node.name)===partId&&node.mesh!=null);
  if(named.length!==1)throw new Error('missing or duplicate physical node '+partId);
- const node=named[0],meshes=json.meshes??[],mesh=meshes[node.mesh];
- if(!mesh || !Array.isArray(mesh.primitives) || mesh.primitives.length!==1)unsupported('exact replay currently requires one primitive per fused or input physical node');
- if(node.matrix || node.translation || node.rotation || node.scale || (json.nodes??[]).some(n=>(n.children??[]).includes(json.nodes.indexOf(node)))) {
-   unsupported('non-identity node transforms/parenting require full frame-bound GLB replay');
+ const {node,index}=named[0],mesh=json.meshes?.[node.mesh];
+ const world=sceneMatrices(json).get(index);
+ if(!world)unsupported(partId+': physical node outside active GLB scene');
+ const worldFrame=realizedGlbRigidFrame(world);
+ if(!mesh||!Array.isArray(mesh.primitives)||mesh.primitives.length===0){
+  unsupported('exact native fusion needs indexed TRIANGLES primitives');
  }
- const primitive=mesh.primitives[0];
- if((primitive.mode??4)!==4 || primitive.indices==null)unsupported('exact replay requires indexed TRIANGLES');
- if(node.skin!=null || node.weights!=null || mesh.weights!=null ||
-    (primitive.targets?.length??0)>0)unsupported('skinned or morphed native fusion requires evaluated mesh-frame proof');
- let positions,indices;
- try{
-  positions=readQaGeometryAccessor(json,binary,primitive.attributes?.POSITION,
-    {position:true,label:partId+': fusion source POSITION'});
-  indices=readQaGeometryAccessor(json,binary,primitive.indices,
-    {label:partId+': fusion source indices'});
- }catch(e){
-  if(e instanceof UnsupportedQaGeometryAccessor)unsupported(e.message);
-  throw e;
+ if(node.skin!=null||node.weights!=null||mesh.weights!=null){
+  unsupported('skinned or morphed native fusion requires independently evaluated mesh-frame proof');
  }
- if(indices.length%3 || indices.some(i=>i>=positions.length))throw new Error('invalid fusion triangle indexing');
- return {positions,indices};
+ // Repeated POSITION accessors share one vertex pool. Independent accessors
+ // concatenate in first primitive order, preserving original index streams
+ // without inventing vertex welds across material or UV seams.
+ const positionOffsets=new Map(),positions=[],indices=[];
+ for(const primitive of mesh.primitives){
+  if((primitive.mode??4)!==4||primitive.indices==null){
+   unsupported('exact native fusion needs indexed TRIANGLES primitives');
+  }
+  if((primitive.targets?.length??0)>0){
+   unsupported('morphed native fusion needs separately evaluated mesh-frame proof');
+  }
+  const accessorId=primitive.attributes?.POSITION;
+  if(!Number.isSafeInteger(accessorId)||accessorId<0){
+   unsupported('primitive lacks an authoritative POSITION accessor');
+  }
+  let offset=positionOffsets.get(accessorId);
+  let vertices;
+  try{
+   vertices=readQaGeometryAccessor(json,binary,accessorId,
+     {position:true,label:partId+': native primitive POSITION'});
+  }catch(error){
+   if(error instanceof UnsupportedQaGeometryAccessor)unsupported(error.message);
+   throw error;
+  }
+  if(offset==null){
+   offset=positions.length;positionOffsets.set(accessorId,offset);
+   positions.push(...vertices);
+  }
+  let localIndices;
+  try{
+   localIndices=readQaGeometryAccessor(json,binary,primitive.indices,
+     {label:partId+': native primitive indices'});
+  }catch(error){
+   if(error instanceof UnsupportedQaGeometryAccessor)unsupported(error.message);
+   throw error;
+  }
+  if(localIndices.length%3||localIndices.some(i=>i>=vertices.length)){
+   throw new Error('invalid native fusion triangle indexing');
+  }
+  indices.push(...localIndices.map(i=>i+offset));
+ }
+ if(!indices.length||!positions.length)unsupported('empty native fusion physical geometry');
+ return {mesh:{positions,indices},worldFrame,worldMatrix:world};
 }
 const f32Mesh=mesh=>({positions:mesh.positions.map(v=>v.map(x=>Math.fround(x))),indices:mesh.indices.slice()});
-const ident=()=>({origin:[0,0,0],xAxis:[1,0,0],yAxis:[0,1,0],zAxis:[0,0,1]});
 
 /**
  * Validates a deterministic native physical bake against BOTH original and
  * current GLB bytes. This deliberately does not authorize source resemblance.
- * Non-identity frames/multi-primitive layouts stop as INSUFFICIENT, not PASS.
+ * Supports active-scene rigid parenting and indexed multi-primitive geometry.
+ * Non-rigid transforms, skinned/morphed and unsupported primitive layouts
+ * remain INSUFFICIENT; source photo resemblance remains independently gated.
  */
 export function replayExactGlbPhysicalFusion({
  sourceSha256,attachmentSemantics,preFusionGlb,fusedGlb,preFusionCheckpoint,
@@ -63,7 +99,10 @@ export function replayExactGlbPhysicalFusion({
   }
   if(plan.fusionRootId!==physicalEntityId||report?.planDigest!==plan.planDigest||
      provenance?.planDigest!==plan.planDigest)return verdict('FAIL','fused entity, plan or provenance binding mismatch');
-  const members=plan.members.map(m=>({memberId:m.memberId,mesh:decodeMesh(preFusionGlb,m.memberId),worldFrame:ident()}));
+  const members=plan.members.map(member=>{
+   const realized=decodeMesh(preFusionGlb,member.memberId);
+   return {memberId:member.memberId,mesh:realized.mesh,worldFrame:realized.worldFrame};
+  });
   const args={plan,attachmentSemantics,logicalFusion,canonicalEditIntent,
     currentInputAssetSha256:plan.inputAssetSha256,currentPreFusionStateDigest:plan.preFusionStateDigest,
     realizedMembers:members};
@@ -73,7 +112,10 @@ export function replayExactGlbPhysicalFusion({
   const verified=validatePhysicalFusionResult({report,provenance,mesh:reproduced.mesh},args);
   if(!verified.valid)return verdict('FAIL','saved fusion report/provenance disagree with exact native bake: '+verified.errors.join('; '));
   const actual=decodeMesh(fusedGlb,physicalEntityId);
-  if(digestJson(f32Mesh(actual))!==digestJson(f32Mesh(reproduced.mesh))) {
+  if(!sameFrame(actual.worldMatrix,plan.fusionRootFrame)){
+    return verdict('FAIL','current fused GLB world frame does not match attested native fusion root');
+  }
+  if(digestJson(f32Mesh(actual.mesh))!==digestJson(f32Mesh(reproduced.mesh))) {
     return verdict('FAIL','actual fused GLB mesh differs from independently reproduced native bake');
   }
   const json=parseGlb(fusedGlb).json,extras=json.extras?.refas??{};
