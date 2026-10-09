@@ -2,77 +2,27 @@ import {createHash} from 'node:crypto';
 
 import {deepFreeze, digestJson} from './canonical.mjs';
 import {parseGlb} from './glb.mjs';
+import {readQaGeometryAccessor} from './qa-glb-geometry-accessors.mjs';
 
 export const TRIANGLE_COMPONENT_INVENTORY_SCHEMA = 'refas.triangle-component-inventory/v1';
 const sha256 = (bytes) => createHash('sha256').update(Buffer.from(bytes)).digest('hex');
-const INDEX_COMPONENTS = Object.freeze({
-  5121: {size: 1, read: (view, offset) => view.getUint8(offset)},
-  5123: {size: 2, read: (view, offset) => view.getUint16(offset, true)},
-  5125: {size: 4, read: (view, offset) => view.getUint32(offset, true)},
-});
-
-function triangleIndices(json, binary, primitive, nodeId) {
-  const position = json.accessors?.[primitive.attributes?.POSITION];
-  if (!position || position.type !== 'VEC3' || !Number.isSafeInteger(position.count) || position.count < 3) {
-    throw new Error(nodeId + ': missing or malformed POSITION accessor');
-  }
-  if (primitive.indices == null) {
-    if (position.count % 3 !== 0) throw new Error(nodeId + ': non-indexed triangle count is not divisible by three');
-    return Array.from({length: position.count}, (_, index) => index);
-  }
-  const accessor = json.accessors?.[primitive.indices];
-  const viewSpec = json.bufferViews?.[accessor?.bufferView];
-  const component = INDEX_COMPONENTS[accessor?.componentType];
-  if (!accessor || !viewSpec || !component || accessor.type !== 'SCALAR' || accessor.sparse ||
-      !Number.isSafeInteger(accessor.count) || accessor.count <= 0 || accessor.count % 3 !== 0 ||
-      viewSpec.buffer !== 0) {
-    throw new Error(nodeId + ': invalid triangle index accessor');
-  }
-  const viewOffset = Number(viewSpec.byteOffset ?? 0);
-  const viewLength = Number(viewSpec.byteLength);
-  const accessorOffset = Number(accessor.byteOffset ?? 0);
-  const stride = Number(viewSpec.byteStride ?? component.size);
-  if (![viewOffset,viewLength,accessorOffset,stride].every(Number.isSafeInteger) ||
-      Math.min(viewOffset,viewLength,accessorOffset) < 0 || stride < component.size ||
-      accessorOffset + (accessor.count - 1) * stride + component.size > viewLength ||
-      viewOffset + viewLength > binary.length) {
-    throw new Error(nodeId + ': triangle indices exceed their buffer view');
-  }
-  const dv = new DataView(binary.buffer, binary.byteOffset, binary.byteLength);
-  const indices = [];
-  for (let n = 0; n < accessor.count; n += 1) {
-    const index = component.read(dv, viewOffset + accessorOffset + n * stride);
-    if (index >= position.count) throw new Error(nodeId + ': triangle index exceeds POSITION count');
-    indices.push(index);
-  }
-  return indices;
+function triangleIndices(json,binary,primitive,nodeId){
+ const position=json.accessors?.[primitive.attributes?.POSITION];
+ if(!position||position.type!=='VEC3'||!Number.isSafeInteger(position.count)||position.count<3){
+  throw Error(nodeId+': missing or malformed POSITION accessor');
+ }
+ const indices=primitive.indices==null
+  ?Array.from({length:position.count},(_,index)=>index)
+  :readQaGeometryAccessor(json,binary,primitive.indices,{label:nodeId+': triangle indices'});
+ if(indices.length%3!==0)throw Error(nodeId+': triangle index count is not divisible by three');
+ if(indices.some(index=>index>=position.count))throw Error(nodeId+': triangle index exceeds POSITION count');
+ return indices;
 }
-
-
-function positionVectors(json, binary, primitive, nodeId) {
-  const accessor=json.accessors?.[primitive.attributes?.POSITION];
-  if (!accessor || accessor.type!=='VEC3' || accessor.componentType!==5126 ||
-      !Number.isSafeInteger(accessor.count) || accessor.count<3 || accessor.sparse) {
-    throw new Error(nodeId+': unsupported or malformed POSITION; sparse POSITION requires separate typed review');
-  }
-  const spec=json.bufferViews?.[accessor.bufferView];
-  const viewOffset=Number(spec?.byteOffset??0),viewLength=Number(spec?.byteLength);
-  const localOffset=Number(accessor.byteOffset??0),stride=Number(spec?.byteStride??12);
-  if (!spec || spec.buffer!==0 ||
-      ![viewOffset,viewLength,localOffset,stride].every(Number.isSafeInteger) ||
-      Math.min(viewOffset,viewLength,localOffset)<0 || stride<12 || stride%4!==0 ||
-      localOffset+(accessor.count-1)*stride+12>viewLength || viewOffset+viewLength>binary.length) {
-    throw new Error(nodeId+': POSITION exceeds GLB buffer bounds or has invalid stride');
-  }
-  const view=new DataView(binary.buffer,binary.byteOffset,binary.byteLength);
-  const vectors=[];
-  for(let i=0;i<accessor.count;i+=1){
-    const offset=viewOffset+localOffset+i*stride;
-    const position=[view.getFloat32(offset,true),view.getFloat32(offset+4,true),view.getFloat32(offset+8,true)];
-    if(!position.every(Number.isFinite))throw new Error(nodeId+': POSITION contains nonfinite coordinate');
-    vectors.push(position);
-  }
-  return vectors;
+function positionVectors(json,binary,primitive,nodeId){
+ const positions=readQaGeometryAccessor(json,binary,primitive.attributes?.POSITION,
+  {position:true,label:nodeId+': POSITION'});
+ if(positions.length<3)throw Error(nodeId+': triangle POSITION count must be at least three');
+ return positions;
 }
 
 function geometricComponents(triangles, topologicalTriangles = []) {
