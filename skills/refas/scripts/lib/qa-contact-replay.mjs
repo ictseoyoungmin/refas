@@ -4,6 +4,7 @@ import {validateAttachmentSemantics} from './attachment-semantics.mjs';
 import {validateAttachmentPropagationReport} from './attachment-propagation.mjs';
 import {inventoryGlbTriangleComponents} from './qa-triangle-components.mjs';
 import {replayExactGlbPhysicalFusion} from './qa-fusion-replay.mjs';
+import {verifyRealizedPropagationWorldFrames} from './qa-propagation-world-frames.mjs';
 import {validateRealizedContactPlan, validateRealizedContactResult} from './realized-contact.mjs';
 
 export const QA_CONTACT_REPLAY_SCHEMA = 'refas.qa-realized-contact-replay/v1';
@@ -76,6 +77,12 @@ export function replayRealizedContactEvidence({
     }
     if (propagationReport.status !== 'READY_FOR_REALIZATION' || !propagationReport.eligibleForRealization) {
       return result('FAIL','digest-bound propagation is not ready for realization');
+    }
+    const poseReplay=verifyRealizedPropagationWorldFrames(glb,propagationReport);
+    if(poseReplay.status!=='PASS'){
+      return result(poseReplay.status,'candidate GLB world transforms do not realize the propagation solver pose',[
+        poseReplay.reason,...poseReplay.entities,
+      ]);
     }
   }
 
