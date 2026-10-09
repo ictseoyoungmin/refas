@@ -132,3 +132,5 @@ export * from './qa-fusion-replay.mjs';
 export * from './qa-propagation-world-frames.mjs';
 
 export * from './qa-propagation-dependencies.mjs';
+
+export * from './qa-surface-mesh.mjs';

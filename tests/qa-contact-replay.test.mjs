@@ -23,6 +23,8 @@ import {
   rigidFrameDigest,
   verifyRealizedPropagationWorldFrames,
   createAttachmentFollowState,
+  createSurfaceAnchorSet,
+  verifyRealizedSurfaceDescriptors,
 } from '../skills/refas/scripts/lib/index.mjs';
 
 const D=(c)=>c.repeat(64);
@@ -52,6 +54,174 @@ function fixture({gap=0,includeExtra=false,sourceSha256=D('a')}={}) {
  const {graph,report}=analyzeRealizedContact({plan,attachmentSemantics,glb});
  return {glb,sourceSha256,attachmentSemantics,plan,graph,report};
 }
+
+const frameI = (origin = [0,0,0]) => ({origin,xAxis:[1,0,0],yAxis:[0,1,0],zAxis:[0,0,1]});
+
+function realizedSurfaceFixture(){
+ const sourceSha256=D('a');
+ const attachmentSemantics=createAttachmentSemantics({
+  scopeId:'qa-surface-owner',sourceSha256,
+  entities:[E('base'),E('leg')],
+  relations:[R('base-free','FREE','base'),R('leg-offset','SURFACE_OFFSET','leg',['base'])],
+ });
+ const surfaces=[{ownerId:'base',geometryDigest:D('b'),
+  vertices:[[0,0,0.2],[1,0,0.2],[1,1,0.2]],
+  triangles:[{id:'base-top-triangle',patchId:'base-top',indices:[0,1,2]}]}];
+ const anchorSpec={id:'leg-surface-anchor',relationId:'leg-offset',
+  subjectAnchorId:'leg-attachment',ownerId:'base',patchId:'base-top',
+  triangleId:'base-top-triangle',barycentric:[1,0,0],tangentHint:[1,0,0],
+  offset:0,maxRebindDistance:0.2,maxNormalDeviationRadians:0.5,
+  evidenceRefs:['review/base-top-anchor.json']};
+ const surfaceAnchorSet=createSurfaceAnchorSet({attachmentSemantics,
+  surfaces,anchors:[anchorSpec],evidenceRefs:['review/base-surface.json']});
+ const followState=createAttachmentFollowState({attachmentSemantics,
+  surfaceAnchorSet,surfaces,
+  bindings:[{id:'leg-bind',relationId:'leg-offset',
+   surfaceAnchorId:'leg-surface-anchor',subjectAnchorFrame:frameI(),
+   evidenceRefs:['review/leg-surface-offset.json']}],
+  evidenceRefs:['review/follow-state.json']});
+ const stateDigest=D('1');
+ const propagationPlan=createAttachmentPropagationPlan({attachmentSemantics,
+  id:'qa-owner-surface-propagation',surfaceAnchorSet,surfaces,followState,
+  externalFrameBindings:[{entityId:'base',stateDigest,
+   frameDigest:rigidFrameDigest(frameI()),ownerFrameDigests:[],
+   evidenceRefs:['review/base-state.json']}],
+  evidenceRefs:['review/propagation.json']});
+ const propagationReport=propagateAttachmentGraph({plan:propagationPlan,
+  attachmentSemantics,surfaceAnchorSet,surfaces,followState,
+  initialWorldFrames:[{entityId:'base',stateDigest,frame:frameI()}],
+  evidenceRefs:['review/propagation-report.json']});
+ const glb=partsToGlb({parts:[box('base',0,0.2),
+  {...box('leg',0,1),translation:[0,0,0.2]}],
+  materials:{solid:{baseColor:[0.5,0.5,0.5,1],metallic:0,roughness:1}}});
+ const plan=createRealizedContactPlan({attachmentSemantics,
+  id:'qa-owner-surface-contact',assetSha256:sha(glb),
+  propagationReportDigest:propagationReport.reportDigest,
+  supportRoots:['base'],supportRequiredEntityIds:['leg'],
+  pairExpectations:[{id:'base-leg-contact',kind:'SUPPORT',subjectId:'leg',ownerId:'base',
+   maxGap:1e-6,maxPenetration:1e-7,minContactArea:0.5,
+   evidenceRefs:['review/base-leg-contact.json']}],
+  evidenceRefs:['review/realized-contact.json']});
+ const {graph,report}=analyzeRealizedContact({glb,plan,attachmentSemantics,propagationReport});
+ const propagationDependencies={surfaces,surfaceAnchorSet,followState};
+ return {glb,sourceSha256,attachmentSemantics,plan,graph,report,
+  propagationPlan,propagationReport,propagationDependencies,
+  surfaces,surfaceAnchorSet,followState};
+}
+
+test('QA-02i positive: actual source-bound GLB triangle backs an owner-local surface offset',()=>{
+ const f=realizedSurfaceFixture();
+ assert.equal(f.propagationReport.status,'READY_FOR_REALIZATION');
+ assert.equal(f.report.status,'PASS');
+ assert.equal(verifyRealizedSurfaceDescriptors(f.glb,f.surfaces,f.surfaceAnchorSet).status,'PASS');
+ const replay=replayRealizedContactEvidence(f);
+ assert.equal(replay.status,'PASS',replay.reason+': '+replay.details.join(','));
+});
+
+test('QA-02i rejects self-consistent but nonexistent and reversed surface triangles',()=>{
+ const f=realizedSurfaceFixture();
+ const changed=f.surfaces.map(s=>({...s,vertices:s.vertices.map(p=>[...p])}));
+ changed[0].vertices[0][2]=0.3; // no such triangle in current base's GLB
+ const missing=verifyRealizedSurfaceDescriptors(f.glb,changed,f.surfaceAnchorSet);
+ assert.equal(missing.status,'FAIL',missing.reason);
+ assert.match(missing.reason,/differ/);
+ const reversed=f.surfaces.map(s=>({...s,triangles:s.triangles.map(t=>({...t,indices:[0,2,1]}))}));
+ assert.equal(verifyRealizedSurfaceDescriptors(f.glb,reversed,f.surfaceAnchorSet).status,'FAIL');
+ const unbound=verifyRealizedSurfaceDescriptors(f.glb,[],f.surfaceAnchorSet);
+ assert.equal(unbound.status,'INSUFFICIENT');
+});
+
+test('QA-02i independent surface check rejects geometrically changed GLB even if re-signed',()=>{
+ const f=realizedSurfaceFixture();
+ const mutated=partsToGlb({parts:[box('base',0,0.3),
+  {...box('leg',0,1),translation:[0,0,0.3]}],
+  materials:{solid:{baseColor:[0.5,0.5,0.5,1],metallic:0,roughness:1}}});
+ assert.notEqual(sha(mutated),sha(f.glb));
+ assert.equal(verifyRealizedSurfaceDescriptors(mutated,f.surfaces,f.surfaceAnchorSet).status,'FAIL');
+ const fakeOwner=[{...f.surfaces[0],ownerId:'leg'}];
+ assert.equal(verifyRealizedSurfaceDescriptors(f.glb,fakeOwner,
+  {anchors:[{ownerId:'leg'}]}).status,'FAIL');
+});
+
+test('QA-02i source-bound persisted surface descriptors replay exact GLB bytes',async t=>{
+ const root=await fs.mkdtemp(path.join(os.tmpdir(),'refas-qa-surface-bound-'));
+ t.after(()=>fs.rm(root,{recursive:true,force:true}));
+ const raw=Buffer.from('operator supplied primary photo bytes for surface realization');
+ const sourceSha256=sha(raw);
+ await fs.mkdir(path.join(root,'source'),{recursive:true});
+ await fs.writeFile(path.join(root,'source','reference.bin'),raw);
+ await initProject(root,{projectId:'surface-realization',source:{
+  schema:'refas.source-manifest/v1',id:'primary-reference',path:'source/reference.bin',
+  sha256:sourceSha256,sizeBytes:raw.length,width:80,height:60,
+  authority:'primary',acquisition:{kind:'operator-supplied'},
+ }});
+ // Rebind the source to the actual current project rather than the unit
+ // fixture's independent source. All typed solver data must be regenerated.
+ const original=realizedSurfaceFixture();
+ const attachmentSemantics=createAttachmentSemantics({
+  scopeId:'qa-surface-owner',sourceSha256,entities:[E('base'),E('leg')],
+  relations:[R('base-free','FREE','base'),R('leg-offset','SURFACE_OFFSET','leg',['base'])],
+ });
+ const surfaces=original.surfaces;
+ const surfaceAnchorSet=createSurfaceAnchorSet({attachmentSemantics,surfaces,
+  anchors:[{id:'leg-surface-anchor',relationId:'leg-offset',subjectAnchorId:'leg-attachment',
+   ownerId:'base',patchId:'base-top',triangleId:'base-top-triangle',
+   barycentric:[1,0,0],tangentHint:[1,0,0],offset:0,
+   maxRebindDistance:0.2,maxNormalDeviationRadians:0.5,
+   evidenceRefs:['review/base-top-anchor.json']}],
+  evidenceRefs:['review/base-surface.json']});
+ const followState=createAttachmentFollowState({attachmentSemantics,
+  surfaceAnchorSet,surfaces,
+  bindings:[{id:'leg-bind',relationId:'leg-offset',
+   surfaceAnchorId:'leg-surface-anchor',subjectAnchorFrame:frameI(),
+   evidenceRefs:['review/leg-surface-offset.json']}],
+  evidenceRefs:['review/follow-state.json']});
+ const stateDigest=D('1');
+ const propagationPlan=createAttachmentPropagationPlan({attachmentSemantics,
+  id:'qa-owner-surface-propagation',surfaceAnchorSet,surfaces,followState,
+  externalFrameBindings:[{entityId:'base',stateDigest,
+   frameDigest:rigidFrameDigest(frameI()),ownerFrameDigests:[],
+   evidenceRefs:['review/base-state.json']}],evidenceRefs:['review/propagation.json']});
+ const propagationReport=propagateAttachmentGraph({plan:propagationPlan,
+  attachmentSemantics,surfaceAnchorSet,surfaces,followState,
+  initialWorldFrames:[{entityId:'base',stateDigest,frame:frameI()}],
+  evidenceRefs:['review/propagation-report.json']});
+ const plan=createRealizedContactPlan({attachmentSemantics,
+  id:'qa-owner-surface-contact',assetSha256:sha(original.glb),
+  propagationReportDigest:propagationReport.reportDigest,
+  supportRoots:['base'],supportRequiredEntityIds:['leg'],
+  pairExpectations:[{id:'base-leg-contact',kind:'SUPPORT',subjectId:'leg',ownerId:'base',
+   maxGap:1e-6,maxPenetration:1e-7,minContactArea:0.5,
+   evidenceRefs:['review/base-leg-contact.json']}],
+  evidenceRefs:['review/realized-contact.json']});
+ const {graph,report}=analyzeRealizedContact({
+  glb:original.glb,plan,attachmentSemantics,propagationReport});
+ const model=path.join(root,'model');await fs.mkdir(model,{recursive:true});
+ const candidate=path.join(model,'candidate.glb');await fs.writeFile(candidate,original.glb);
+ const entries=[['attachment-semantics',attachmentSemantics],['realized-contact-plan',plan],
+  ['realized-contact-graph',graph],['realized-contact-report',report],
+  ['attachment-propagation-plan',propagationPlan],['attachment-propagation-report',propagationReport],
+  ['surface-anchor-set',surfaceAnchorSet],['surface-descriptors',surfaces],
+  ['attachment-follow-state',followState]];
+ const refs=[await contentReference(candidate,{kind:'glb',root})];
+ for(const [kind,value] of entries){
+  const dest=path.join(model,kind+'.json');await fs.writeFile(dest,JSON.stringify(value));
+  refs.push(await contentReference(dest,{kind,root}));
+ }
+ await commitCheckpoint(root,{capability:'source-intake',scopeId:'whole',
+  reason:'source-bound actual GLB surface descriptor replay',
+  artifactRefs:refs,claims:['current source retained'],
+  gates:[{id:'source-intake-gate',evidenceRefs:[refs[0].path]}]});
+ const positive=await verifySourceBoundObject(root,candidate);
+ assert.equal(positive.checks.find(c=>c.id==='realized-contact-support').status,'PASS');
+ assert.equal(positive.decision.state,'BLOCKED'); // independent source fidelity not done
+ const descriptorPath=path.join(model,'surface-descriptors.json');
+ const changed=surfaces.map(surface=>({...surface,vertices:surface.vertices.map(p=>[...p])}));
+ changed[0].vertices[0][2]=0.3;
+ await fs.writeFile(descriptorPath,JSON.stringify(changed));
+ const tampered=await verifySourceBoundObject(root,candidate);
+ assert.equal(tampered.checks.find(c=>c.id==='realized-contact-support').status,'FAIL');
+});
 
 test('QA-02 recomputes actual touching triangles and support path before PASS',()=>{
  const f=fixture();

@@ -6,6 +6,7 @@ import {inventoryGlbTriangleComponents} from './qa-triangle-components.mjs';
 import {replayExactGlbPhysicalFusion} from './qa-fusion-replay.mjs';
 import {verifyRealizedPropagationWorldFrames} from './qa-propagation-world-frames.mjs';
 import {replayTrustedPropagationDependencies} from './qa-propagation-dependencies.mjs';
+import {verifyRealizedSurfaceDescriptors} from './qa-surface-mesh.mjs';
 import {validateRealizedContactPlan, validateRealizedContactResult} from './realized-contact.mjs';
 
 export const QA_CONTACT_REPLAY_SCHEMA = 'refas.qa-realized-contact-replay/v1';
@@ -93,6 +94,18 @@ export function replayRealizedContactEvidence({
       return result(propagated.status,'propagation plan/report need independent complete solver replay',[
         propagated.reason,...propagated.details,
       ]);
+    }
+    // A signed surface descriptor may be internally consistent with its anchor
+    // plan while describing triangles that are absent from the real asset.
+    // Bind those owner-local triangles to the current GLB before pose/contact.
+    if (propagationPlan.surfaceAnchorSetDigest != null) {
+      const surfaceReplay=verifyRealizedSurfaceDescriptors(
+        glb,propagationDependencies.surfaces,propagationDependencies.surfaceAnchorSet);
+      if (surfaceReplay.status!=='PASS') {
+        return result(surfaceReplay.status,'source-bound surface anchors lack current realized GLB geometry',[
+          surfaceReplay.reason,...surfaceReplay.details,
+        ]);
+      }
     }
     const poseReplay=verifyRealizedPropagationWorldFrames(glb,propagationReport);
     if(poseReplay.status!=='PASS'){
