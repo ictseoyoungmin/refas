@@ -256,6 +256,144 @@ function fullySparseGeometry(glb,{deform=false,invalidSparseOrder=false}={}){
  return output;
 }
 
+
+function mutateGlbJson(glb,mutation){
+ const {json,binary}=parseGlb(glb);
+ const changed=structuredClone(json);
+ mutation(changed);
+ const raw=Buffer.from(JSON.stringify(changed)),
+  padded=Buffer.concat([raw,Buffer.alloc((4-raw.length%4)%4,0x20)]);
+ const bin=Buffer.concat([binary,Buffer.alloc((4-binary.length%4)%4)]);
+ const out=Buffer.alloc(12+8+padded.length+8+bin.length);
+ out.writeUInt32LE(0x46546c67,0);out.writeUInt32LE(2,4);
+ out.writeUInt32LE(out.length,8);
+ out.writeUInt32LE(padded.length,12);out.writeUInt32LE(0x4e4f534a,16);
+ padded.copy(out,20);
+ out.writeUInt32LE(bin.length,20+padded.length);
+ out.writeUInt32LE(0x004e4942,24+padded.length);
+ bin.copy(out,28+padded.length);
+ return out;
+}
+function splitAllNativeGlbPrimitives(glb){
+ return mutateGlbJson(glb,json=>{
+  for(const mesh of json.meshes){
+   const original=mesh.primitives[0],acc=json.accessors[original.indices];
+   assert.equal(mesh.primitives.length,1);
+   const before=Math.floor(acc.count/6)*3,after=acc.count-before;
+   assert.ok(before>0&&after>0&&before%3===0&&after%3===0);
+   const width=acc.componentType===5125?4:acc.componentType===5123?2:1;
+   const first=json.accessors.push({...acc,count:before})-1;
+   const second=json.accessors.push({...acc,count:after,
+    byteOffset:(acc.byteOffset??0)+before*width})-1;
+   mesh.primitives=[{...original,indices:first},{...original,indices:second}];
+  }
+ });
+}
+
+test('QA-02n native fusion supports repeated-POSITION multi-primitives, rigid parent chains and exact output poses',()=>{
+ const f=fixture(D('c'),{includeGlasses:false}),T=I([3,0,1]);
+ const materials={skin:{baseColor:[0.6,0.6,0.6,1],roughness:1,metallic:0}};
+ // All three physical components move under the root parent's rigid TRS.
+ // Their local mesh geometry remains unchanged; the actual active-scene
+ // world transform must be derived through the GLB node graph.
+ const preDense=partsToGlb({
+  parts:f.realizedMembers.map(member=>({
+   id:member.memberId,mesh:member.mesh,materialId:'skin',
+   ...(member.memberId==='head-shell'?{translation:T.origin}:{parentId:'head-shell'}),
+  })),materials,
+ });
+ const preFusionGlb=splitAllNativeGlbPrimitives(preDense);
+ const checkpointBody={schema:'refas.checkpoint/v1',parentId:null,
+  capability:'assembly',scopeId:'whole',reason:'reviewed rigid multi-primitive input',
+  claims:[],gates:[],metadata:{},transactionId:null,
+  artifactRefs:[{kind:'glb',sha256:sha(preFusionGlb)}]};
+ const checkpointDigest=digestJson(checkpointBody);
+ const checkpoint={...checkpointBody,id:'cp_'+checkpointDigest.slice(0,20),
+  contentDigest:checkpointDigest,createdAt:'2026-10-09T00:00:00.000Z'};
+ const plan=createPhysicalFusionPlan({
+  attachmentSemantics:f.attachmentSemantics,logicalFusion:f.logicalFusion,
+  canonicalEditIntent:f.canonicalEditIntent,id:'native-rigid-multiprim-fusion',
+  groupId:f.plan.groupId,inputAssetSha256:sha(preFusionGlb),
+  preFusionCheckpointId:checkpoint.id,preFusionStateDigest:checkpoint.contentDigest,
+  fusionRootFrame:T,members:f.plan.members.map(member=>({
+   ...member,frameDigest:physicalFusionFrameDigest(T),
+  })),
+  strategy:'WELD_SHARED_BOUNDARY',weldTolerance:f.plan.weldTolerance,
+  topologyObligation:f.plan.topologyObligation,
+  evidenceRefs:['model/native-rigid-multiprim.json'],
+ });
+ const baked=bakePhysicalFusion({
+  ...f,plan,
+  realizedMembers:f.realizedMembers.map(member=>({...member,worldFrame:T})),
+  currentInputAssetSha256:plan.inputAssetSha256,
+  currentPreFusionStateDigest:plan.preFusionStateDigest,
+  evidenceRefs:['reviews/native-rigid-multiprim-result.json'],
+ });
+ assert.equal(baked.report.status,'BAKED');
+ const outputDense=partsToGlb({
+  parts:[{id:plan.fusionRootId,mesh:baked.mesh,materialId:'skin',
+   translation:T.origin}],materials,
+  extras:{physicalFusionReportDigest:baked.report.reportDigest,
+   fusionProvenanceDigest:baked.provenance.provenanceDigest},
+ });
+ const fusedGlb=splitAllNativeGlbPrimitives(outputDense);
+ const args={sourceSha256:f.attachmentSemantics.sourceSha256,
+  attachmentSemantics:f.attachmentSemantics,preFusionGlb,
+  fusedGlb,preFusionCheckpoint:checkpoint,physicalEntityId:plan.fusionRootId,
+  logicalFusion:f.logicalFusion,canonicalEditIntent:f.canonicalEditIntent,
+  plan,report:baked.report,provenance:baked.provenance};
+ const verified=replayExactGlbPhysicalFusion(args);
+ assert.equal(verified.status,'PASS',verified.reason);
+ // Both semantic members and final mesh must be physically present.
+ const faceNode=parseGlb(preFusionGlb).json.nodes.find(n=>n.name==='face');
+ assert.ok(!faceNode.translation&&faceNode.mesh!=null);
+ assert.equal(replayExactGlbPhysicalFusion({
+  ...args,fusedGlb:outputDense}).status,'PASS');
+ const fakeTranslation=mutateGlbJson(fusedGlb,json=>{
+  const n=json.nodes.find(n=>n.name==='head-shell');n.translation=[3.2,0,1];
+ });
+ assert.equal(replayExactGlbPhysicalFusion({...args,fusedGlb:fakeTranslation}).status,'FAIL');
+ const fakeScale=mutateGlbJson(fusedGlb,json=>{
+  const n=json.nodes.find(n=>n.name==='head-shell');n.scale=[2,1,1];
+ });
+ assert.equal(replayExactGlbPhysicalFusion({...args,fusedGlb:fakeScale}).status,'INSUFFICIENT');
+ const fakeIndices=mutateGlbJson(fusedGlb,json=>{
+  const primitive=json.meshes[0].primitives[1];
+  primitive.indices=json.meshes[0].primitives[0].indices;
+ });
+ assert.equal(replayExactGlbPhysicalFusion({...args,fusedGlb:fakeIndices}).status,'FAIL');
+ const invalidPrimitive=mutateGlbJson(fusedGlb,json=>{
+  delete json.meshes[0].primitives[1].indices;
+ });
+ assert.equal(replayExactGlbPhysicalFusion({
+  ...args,fusedGlb:invalidPrimitive}).status,'INSUFFICIENT');
+ const staleInput=mutateGlbJson(preFusionGlb,json=>{
+  json.nodes.find(n=>n.name==='head-shell').translation=[3.5,0,1];
+ });
+ assert.equal(replayExactGlbPhysicalFusion({...args,preFusionGlb:staleInput}).status,'FAIL');
+ const contactPlan=createRealizedContactPlan({
+  attachmentSemantics:f.attachmentSemantics,id:'rigid-multiprim-contact',
+  assetSha256:sha(fusedGlb),supportRoots:[plan.fusionRootId],
+  fusionBindings:[{
+   physicalEntityId:plan.fusionRootId,
+   semanticMemberIds:['head-shell','face','nose'],
+   fusionReportDigest:baked.report.reportDigest,
+   provenanceDigest:baked.provenance.provenanceDigest,
+   evidenceRefs:['review/native-physical-members.json'],
+  }],evidenceRefs:['review/actual-multiprim-contact.json'],
+ });
+ const {graph,report}=analyzeRealizedContact({
+  plan:contactPlan,attachmentSemantics:f.attachmentSemantics,
+  glb:fusedGlb,fusionArtifacts:[{report:baked.report,provenance:baked.provenance}],
+ });
+ assert.equal(report.status,'PASS');
+ const independent=replayRealizedContactEvidence({
+  glb:fusedGlb,sourceSha256:f.attachmentSemantics.sourceSha256,
+  attachmentSemantics:f.attachmentSemantics,plan:contactPlan,
+  graph,report,fusionReplayInputs:[args],
+ });
+ assert.equal(independent.status,'PASS',independent.reason);
+});
 test('QA-02m native fusion is replayable from sparse-only original and final GLB byte geometries',()=>{
  const f=fixture(D('e'),{includeGlasses:false});
  const mat={skin:{baseColor:[.6,.6,.6,1],metallic:0,roughness:1}};
