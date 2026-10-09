@@ -17,6 +17,13 @@ const faceArea=points=>{
 };
 const key=p=>p.map(n=>Object.is(n,-0)?0:n).join(',');
 const faceKeys=points=>points.map(key).sort();
+const faceEdgeKeys=tri=>{
+ const k=tri.map(key);
+ return [0,1,2].map(i=>{
+  const a=k[i],b=k[(i+1)%3];
+  return a<b?a+'|'+b:b+'|'+a;
+ });
+};
 const isOpposedFace=(a,b)=>{
  if(!Array.isArray(a)||!Array.isArray(b)||a.length!==3||b.length!==3)return false;
  const ka=faceKeys(a),kb=faceKeys(b);
@@ -87,11 +94,7 @@ export function replayTriangleComponentSupport(glb,plan){
   if(plan)return verdict('FAIL','unexpected component exception on unsplit GLB');
   return verdict('PASS','candidate GLB has no unresolved geometric component islands');
  }
- if(split.some(n=>n.spatial.ambiguousEdges>0)){
-  return verdict('INSUFFICIENT','ambiguous overlapping or nonmanifold edges require separate independent physical review',
-   split.filter(n=>n.spatial.ambiguousEdges>0).map(n=>n.nodeId+':ambiguous-edges:'+n.spatial.ambiguousEdges));
- }
- if(!plan)return verdict('INSUFFICIENT','split GLB nodes need typed rooted exact-face contact evidence',
+ if(!plan)return verdict('INSUFFICIENT','split or ambiguous GLB nodes need typed rooted exact-face contact evidence',
   split.map(n=>n.nodeId+':islands:'+n.spatial.componentCount));
  let normalized;
  try{
@@ -120,24 +123,44 @@ export function replayTriangleComponentSupport(glb,plan){
   if(!node)return verdict('INSUFFICIENT','physical owner is absent from actual GLB',[spec.nodeId]);
   const ids=node.componentIds,tris=node.triangles;
   if(spec.rootTriangleIndex>=tris.length)return verdict('FAIL','root witness is not an actual GLB triangle',[spec.nodeId]);
-  const root=ids[spec.rootTriangleIndex],edges=new Map(),incoming=new Set();
-  if(spec.links.length!==expected.spatial.componentCount-1){
-   return verdict('INSUFFICIENT','every nonroot geometric island needs exactly one rooted face witness',[spec.nodeId]);
+  const root=ids[spec.rootTriangleIndex],edges=new Map(),parents=new Map(),
+    explainedEdges=new Set();
+  if(spec.links.length<expected.spatial.componentCount-1){
+   return verdict('INSUFFICIENT','every nonroot geometric island needs a rooted face witness',[spec.nodeId]);
   }
   for(const witness of spec.links){
    const {childTriangleIndex:child,ownerTriangleIndex:owner}=witness;
    if(child>=tris.length||owner>=tris.length)return verdict('FAIL','component face witness references a nonexistent GLB triangle',[spec.nodeId]);
    const a=ids[child],b=ids[owner];
-   if(a===b||a===root||incoming.has(a)){
-    return verdict('FAIL','component face witnesses contain invalid self-links, duplicate children or root reparenting',[spec.nodeId]);
+   if(a===b||a===root||(parents.has(a)&&parents.get(a)!==b)){
+    return verdict('FAIL','component face witnesses contain self-links, conflicting parents or root reparenting',[spec.nodeId]);
    }
    if(!isOpposedFace(tris[child],tris[owner])){
     return verdict('FAIL','claimed component support faces are not opposite-wound coincident GLB triangles',
       [spec.nodeId+':'+child+':'+owner]);
    }
-   incoming.add(a);
+   parents.set(a,b);
+   for(const edge of faceEdgeKeys(tris[child]))explainedEdges.add(edge);
    if(!edges.has(b))edges.set(b,[]);
    edges.get(b).push(a);
+  }
+  // Face-to-face contact produces four geometric edge occurrences:
+  // two opposite edges inside each indexed manifold shell. Every ambiguous
+  // overlap must be explained by an explicit real opposed-face witness.
+  for(const record of node.ambiguousWitnessEdges??[]){
+   if(!explainedEdges.has(record.key)){
+    return verdict('INSUFFICIENT','unexplained coincident geometric edge remains unreviewed',[spec.nodeId,record.key]);
+   }
+   const byComponent=new Map();
+   for(const use of record.uses){
+    if(!byComponent.has(use.componentId))byComponent.set(use.componentId,[]);
+    byComponent.get(use.componentId).push(use);
+   }
+   if(record.uses.length!==4||byComponent.size!==2||
+     [...byComponent.values()].some(items=>items.length!==2||
+       items[0].from!==items[1].to||items[0].to!==items[1].from)){
+    return verdict('INSUFFICIENT','coincident face contact also contains nonmanifold or duplicate geometry',[spec.nodeId,record.key]);
+   }
   }
   const reached=new Set([root]),stack=[root];
   while(stack.length){
