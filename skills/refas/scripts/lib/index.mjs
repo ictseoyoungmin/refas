@@ -130,3 +130,5 @@ export * from './qa-triangle-components.mjs';
 export * from './qa-fusion-replay.mjs';
 
 export * from './qa-propagation-world-frames.mjs';
+
+export * from './qa-propagation-dependencies.mjs';

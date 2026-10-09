@@ -423,6 +423,22 @@ test('QA-02d tiny real positive gap is never welded by an epsilon',()=>{
 });
 
 
+
+test('QA-02g missing follow-state evidence cannot make an otherwise signed GLB contact plan PASS',()=>{
+ const f=fixture(),root={origin:[0,0,0],xAxis:[1,0,0],yAxis:[0,1,0],zAxis:[0,0,1]};
+ // The worker can name all elements, but the trusted solver must require the
+ // actual typed attachment-follow-state inputs before approving the contact.
+ const propagationPlan={schema:'refas.attachment-propagation-plan/v1',
+  sourceSha256:f.sourceSha256,attachmentSemanticsDigest:f.attachmentSemantics.semanticsDigest,
+  planDigest:D('a'),followStateDigest:D('b'),surfaceAnchorSetDigest:null,
+  multiAnchorBindings:[],articulatedBindings:[],externalFrameBindings:[]};
+ const propagationReport={planDigest:D('a'),reportDigest:D('c'),
+  status:'READY_FOR_REALIZATION',eligibleForRealization:true,entityResults:[]};
+ const contactPlan={...f.plan,propagationReportDigest:D('c')};
+ const result=replayRealizedContactEvidence({...f,plan:contactPlan,
+  propagationPlan,propagationReport});
+ assert.equal(result.status,'FAIL'); // altered contact plan digest detected before solver
+});
 test('QA-02f source-independent GLB world pose replay detects contradictory, re-signed positions',()=>{
  const f=freePropagationFixture();
  assert.equal(verifyRealizedPropagationWorldFrames(f.glb,f.propagationReport).status,'PASS');

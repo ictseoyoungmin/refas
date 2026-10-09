@@ -110,6 +110,47 @@ async function contactReplayCheck(root, head, assetBytes, sourceSha256) {
       }
     }
   }
+
+  // Independently replay all dependency-rich propagation modes.
+  // Digest-only plan/report snapshots never authorize a solved joint.
+  const propagationDependencies={};
+  const propagationPlan=records['attachment-propagation-plan'];
+  if(propagationPlan){
+    const needed=[
+      ...(propagationPlan.surfaceAnchorSetDigest ? ['surface-anchor-set','surface-descriptors'] : []),
+      ...(propagationPlan.followStateDigest ? ['attachment-follow-state'] : []),
+      ...((propagationPlan.multiAnchorBindings??[]).length?['multi-anchor-plans']:[]),
+      ...((propagationPlan.articulatedBindings??[]).length?['articulated-joints']:[]),
+    ];
+    const names={
+      'surface-anchor-set':'surfaceAnchorSet',
+      'surface-descriptors':'surfaces',
+      'attachment-follow-state':'followState',
+      'multi-anchor-plans':'multiAnchorPlans',
+      'articulated-joints':'articulatedJoints',
+    };
+    for(const kind of needed){
+      const refs=(head.artifactRefs??[]).filter(ref=>ref.kind===kind);
+      if(refs.length!==1){
+        return check('realized-contact-support','assembly',
+          refs.length?'INSUFFICIENT':'NOT_RUN','expected exactly one dependency evidence artifact: '+kind);
+      }
+      const ref=refs[0],file=await existingContainedFile(root,ref.path);
+      if(!file||!HEX_DIGEST.test(String(ref.sha256??''))){
+        return check('realized-contact-support','assembly','FAIL','invalid dependency artifact ref: '+kind);
+      }
+      try{
+        const bytes=await fs.readFile(file);
+        if(bytes.length!==ref.sizeBytes||sha256(bytes)!==ref.sha256){
+          return check('realized-contact-support','assembly','FAIL','dependency artifact bytes drifted: '+kind);
+        }
+        propagationDependencies[names[kind]]=JSON.parse(bytes.toString('utf8'));
+        bound.push(ref.sha256);
+      }catch{
+        return check('realized-contact-support','assembly','FAIL','missing or malformed propagation dependency: '+kind);
+      }
+    }
+  }
   // A physical fuse requires the independently readable original GLB,
   // canonical edit inputs and a real pre-fusion checkpoint ancestor.
   // Never turn digest-only worker provenance into an assembly PASS.
@@ -178,6 +219,7 @@ async function contactReplayCheck(root, head, assetBytes, sourceSha256) {
     report:records['realized-contact-report'],
     propagationPlan:records['attachment-propagation-plan']??null,
     propagationReport:records['attachment-propagation-report']??null,
+    propagationDependencies,
     fusionReplayInputs,
   });
   return check('realized-contact-support','assembly',replay.status,replay.reason + (
