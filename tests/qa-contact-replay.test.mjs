@@ -293,8 +293,6 @@ test('source-bound QA reads exact persisted propagation plan+report and rejects 
 });
 
 function packTestGlb(json,bin){
- const raw=Buffer.from(JSON.stringify(json)),pad=(4-raw.length%4)%4;
- const jsonBytes=Buffer.concat([raw,Buffer.alloc(pad,0x20)]);
  const data=Buffer.from(bin),binPad=(4-data.length%4)%4;
  const binBytes=Buffer.concat([data,Buffer.alloc(binPad)]);
  json.buffers[0].byteLength=data.length;
@@ -335,8 +333,12 @@ function seamVariant(f,{mode='nonindexed'}={}){
    const start=offset();
    chunks.push(Buffer.from(dense.buffer));
    const view=json.bufferViews.push({buffer:0,byteOffset:start,byteLength:dense.byteLength})-1;
-   const accessor=json.accessors.push({bufferView:view,componentType:5126,count:indices.length,type:'VEC3',min:[0,0,0],max:[1,1,1]})-1;
+   const accessor=json.accessors.push({bufferView:view,componentType:5126,count:indices.length,type:'VEC3',min:positions[0].map((_,axis)=>Math.min(...positions.map(p=>p[axis]))),
+     max:positions[0].map((_,axis)=>Math.max(...positions.map(p=>p[axis])))})-1;
    primitive.attributes.POSITION=accessor;
+   // Normal streams have a different vertex count after de-indexing.
+   // glTF permits omitting NORMAL; this remains a valid triangle mesh.
+   delete primitive.attributes.NORMAL;
    delete primitive.indices;
  }else{
    // Split *one* closed shell into two material primitives whose shared
