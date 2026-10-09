@@ -27,6 +27,10 @@ import {
   commitCheckpoint,
   contentReference,
   verifySourceBoundObject,
+  createAttachmentPropagationPlan,
+  propagateAttachmentGraph,
+  rigidFrameDigest,
+  verifyRealizedPropagationWorldFrames,
 } from '../skills/refas/scripts/lib/index.mjs';
 
 const D = (value = 'a') => value.repeat(64);
@@ -336,6 +340,67 @@ test('QA-02e public verifier loads exact pre-fusion checkpoint and replays curre
  const qa=await verifySourceBoundObject(root,assetPath);
  assert.equal(qa.checks.find(x=>x.id==='realized-contact-support').status,'PASS');
  assert.equal(qa.decision.state,'BLOCKED'); // not an independent resemblance certificate
+
+ // QA-02j: the same native physical bake now also needs to realize every
+ // semantic FUSED world frame when a propagation plan/report is supplied.
+ const stateDigest=D('7'),frame=I(),frameDigest=physicalFusionFrameDigest(frame);
+ const propagationPlan=createAttachmentPropagationPlan({
+   attachmentSemantics:f.attachmentSemantics,id:'fused-physical-frame-plan',
+   externalFrameBindings:[
+     {entityId:'head-shell',stateDigest,frameDigest:rigidFrameDigest(frame),
+       ownerFrameDigests:[],evidenceRefs:['review/head-pose.json']},
+     ...['face','nose'].map((entityId,index)=>({
+       entityId,stateDigest:D(String(index+8)),frameDigest:rigidFrameDigest(frame),
+       ownerFrameDigests:[{ownerId:'head-shell',frameDigest:rigidFrameDigest(frame)}],
+       evidenceRefs:['review/'+entityId+'-pose.json'],
+     })),
+   ],evidenceRefs:['review/fused-propagation-plan.json'],
+ });
+ const propagationReport=propagateAttachmentGraph({
+   plan:propagationPlan,attachmentSemantics:f.attachmentSemantics,
+   initialWorldFrames:[
+     {entityId:'head-shell',stateDigest,frame},
+     {entityId:'face',stateDigest:D('8'),frame},
+     {entityId:'nose',stateDigest:D('9'),frame},
+   ],evidenceRefs:['review/fused-propagation-report.json'],
+ });
+ assert.equal(propagationReport.status,'READY_FOR_REALIZATION');
+ const fusedPosePlan=createRealizedContactPlan({
+   attachmentSemantics:f.attachmentSemantics,id:'fused-pose-contact',
+   assetSha256:sha(fusedGlb),supportRoots:['head-shell'],
+   fusionBindings:contactPlan.fusionBindings,
+   propagationReportDigest:propagationReport.reportDigest,
+   evidenceRefs:['review/fused-pose-contact.json'],
+ });
+ const posed=analyzeRealizedContact({plan:fusedPosePlan,
+   attachmentSemantics:f.attachmentSemantics,glb:fusedGlb,propagationReport,
+   fusionArtifacts:[{report:bake.report,provenance:bake.provenance}]});
+ assert.equal(posed.report.status,'PASS');
+ const full={glb:fusedGlb,sourceSha256,attachmentSemantics:f.attachmentSemantics,
+   plan:fusedPosePlan,graph:posed.graph,report:posed.report,
+   propagationPlan,propagationReport,fusionReplayInputs};
+ const proven=replayRealizedContactEvidence(full);
+ assert.equal(proven.status,'PASS',proven.reason+': '+proven.details.join('; '));
+ const aliasArgs={fusionBindings:fusedPosePlan.fusionBindings,fusionReplayInputs,
+   sourceSha256,attachmentSemantics:f.attachmentSemantics};
+ assert.equal(verifyRealizedPropagationWorldFrames(fusedGlb,propagationReport).status,'INSUFFICIENT');
+ assert.equal(verifyRealizedPropagationWorldFrames(fusedGlb,propagationReport,aliasArgs).status,'PASS');
+ assert.equal(verifyRealizedPropagationWorldFrames(fusedGlb,propagationReport,{
+   ...aliasArgs,fusionReplayInputs:[],
+ }).status,'INSUFFICIENT');
+ const incomplete=[{...fusedPosePlan.fusionBindings[0],semanticMemberIds:['head-shell','face']}];
+ assert.equal(verifyRealizedPropagationWorldFrames(fusedGlb,propagationReport,{
+   ...aliasArgs,fusionBindings:incomplete,
+ }).status,'FAIL');
+ const forgedWorldFrame=structuredClone(propagationReport);
+ forgedWorldFrame.entityResults.find(entry=>entry.entityId==='nose').worldFrame.origin=[5,0,0];
+ assert.equal(verifyRealizedPropagationWorldFrames(fusedGlb,forgedWorldFrame,aliasArgs).status,'INSUFFICIENT');
+ const fakeProof=structuredClone(fusionReplayInputs);
+ fakeProof[0].provenance.provenanceDigest=D('e');
+ assert.equal(verifyRealizedPropagationWorldFrames(fusedGlb,propagationReport,{
+   ...aliasArgs,fusionReplayInputs:fakeProof,
+ }).status,'FAIL');
+
  await fs.writeFile(path.join(files,'fusion-provenance.json'),JSON.stringify({...bake.provenance,outputFaces:[]}));
  const mutated=await verifySourceBoundObject(root,assetPath);
  assert.equal(mutated.checks.find(x=>x.id==='realized-contact-support').status,'FAIL');
