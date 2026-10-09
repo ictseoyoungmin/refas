@@ -108,11 +108,14 @@ function geometricComponents(triangles) {
       }
     }
   }
-  const counts=new Map();
+  const counts=new Map(),componentForRoot=new Map(),componentIds=[];
   for(let i=0;i<triangles.length;i++){
-    const root=find(i);counts.set(root,(counts.get(root)??0)+1);
+    const root=find(i);
+    if(!componentForRoot.has(root)) componentForRoot.set(root,componentForRoot.size);
+    componentIds.push(componentForRoot.get(root));
+    counts.set(root,(counts.get(root)??0)+1);
   }
-  return {componentCount:counts.size,triangleCounts:[...counts.values()].sort((a,b)=>b-a),ambiguousEdges};
+  return {componentCount:counts.size,triangleCounts:[...counts.values()].sort((a,b)=>b-a),ambiguousEdges,componentIds};
 }
 
 // Index-edge adjacency is an *intrinsic topological observation*, not proof
@@ -155,10 +158,10 @@ function componentSizes(indices) {
  * Distinct glTF primitives are kept separate even if their coordinates touch.
  * UV seams/non-indexed triangles can overcount; results need typed review.
  */
-export function inventoryGlbTriangleComponents(glb) {
+export function inventoryGlbTriangleComponents(glb, {withTriangleDetails = false} = {}) {
   const bytes=Buffer.from(glb);
   const {json,binary}=parseGlb(bytes);
-  const nodes=[];
+  const nodes=[],details=[];
   for(let nodeIndex=0;nodeIndex<(json.nodes?.length??0);nodeIndex+=1) {
     const node=json.nodes[nodeIndex];
     if(node.mesh==null)continue;
@@ -181,9 +184,10 @@ export function inventoryGlbTriangleComponents(glb) {
     // Across a node's primitives, exact shared 3D edges with opposite winding
     // can reconnect a non-indexed/UV-split/material-split surface. This says
     // geometric continuity, not physical weld, attachment or source fidelity.
-    const spatial=geometricComponents(spatialTriangles);
+    const {componentIds,...spatial}=geometricComponents(spatialTriangles);
     nodes.push({nodeIndex,nodeId,meshIndex:node.mesh,triangleCount:spatialTriangles.length,
       componentCount:primitives.reduce((sum,p)=>sum+p.componentCount,0),primitives,spatial});
+    if(withTriangleDetails) details.push({nodeId,nodeIndex,triangles:spatialTriangles,componentIds});
   }
   const payload={schema:TRIANGLE_COMPONENT_INVENTORY_SCHEMA,assetSha256:sha256(bytes),
     authority:'index-edge adjacency diagnostic; exact-position oppositely wound geometric-edge connectivity across primitives; neither proves weld or physical support',
@@ -194,5 +198,9 @@ export function inventoryGlbTriangleComponents(glb) {
       geometricSplitMeshNodes:nodes.filter(n=>n.spatial.componentCount>1).length,
       geometricallyAmbiguousMeshNodes:nodes.filter(n=>n.spatial.ambiguousEdges>0).length},
   };
-  return deepFreeze({...payload,inventoryDigest:digestJson(payload)});
+  const inventory=deepFreeze({...payload,inventoryDigest:digestJson(payload)});
+  // The optional geometry view is exclusively for trusted current-byte
+  // narrow-phase witnesses. It is not serialized into inventoryDigest,
+  // keeping preexisting persisted diagnostic contracts byte-for-byte stable.
+  return withTriangleDetails?deepFreeze({inventory,details}):inventory;
 }
