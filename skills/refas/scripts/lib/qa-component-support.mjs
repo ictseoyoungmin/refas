@@ -26,12 +26,16 @@ const faceEdgeKeys=tri=>{
 };
 const isOpposedFace=(a,b)=>{
  if(!Array.isArray(a)||!Array.isArray(b)||a.length!==3||b.length!==3)return false;
- const ka=faceKeys(a),kb=faceKeys(b);
- if(ka.some((v,i)=>v!==kb[i])||new Set(ka).size!==3)return false;
- const x=faceArea(a),y=faceArea(b);
- if(!(x.area>1e-12&&y.area>1e-12))return false;
- const dot=x.normal.reduce((v,n,i)=>v+n*y.normal[i],0);
- return Math.abs(dot+4*x.area*y.area)<Math.max(1e-12,1e-10*4*x.area*y.area);
+ const ka=a.map(key),kb=b.map(key);
+ if(ka.length!==3||kb.length!==3||
+    new Set(ka).size!==3||faceKeys(a).some((v,i)=>v!==faceKeys(b)[i]))return false;
+ // Exact GLB Float32 vertex equality is already required. Winding can
+ // therefore be decided by permutation parity, not by a near-zero normal
+ // dot product. An absolute dot tolerance misclassifies tiny same-wound
+ // coincident shells as opposed contact faces.
+ if(!(faceArea(a).area>1e-12&&faceArea(b).area>1e-12))return false;
+ const start=kb.indexOf(ka[0]);
+ return start!==-1&&kb[(start+1)%3]===ka[2]&&kb[(start+2)%3]===ka[1];
 };
 
 /** A typed intent record, not a worker-authorized geometry certificate. */

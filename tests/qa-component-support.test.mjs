@@ -62,6 +62,49 @@ function fixture({sourceSha256=digest(),gap=0,extra=false}={}){
   inventory,node,componentSupportPlan};
 }
 
+
+function scaledShellWitness({coincident=false,scale=1e-4}={}){
+ // Two watertight shells inside one physical GLB mesh. When coincident,
+ // their triangle winding is identical, so overlap is NOT opposed contact.
+ const shells=coincident?[box(0,1),box(0,1)]:[box(0,1),box(1,2)];
+ const positions=[],indices=[];
+ for(const shell of shells){
+  const offset=positions.length;
+  positions.push(...shell.positions.map(point=>point.map(value=>value*scale)));
+  indices.push(...shell.indices.map(index=>offset+index));
+ }
+ const glb=partsToGlb({parts:[{id:'base',materialId:'solid',mesh:{positions,indices}}],
+  materials:{solid:{baseColor:[.6,.6,.6,1],roughness:1,metallic:0}}});
+ const inventory=inventoryGlbTriangleComponents(glb);
+ assert.equal(inventory.nodes[0].spatial.componentCount,2);
+ const links=coincident
+  ?Array.from({length:12},(_,i)=>({
+    childTriangleIndex:12+i,ownerTriangleIndex:i,evidenceRefs:['assembly/face-'+i+'.json'],
+   }))
+  :[2,3].map((i)=>({
+    childTriangleIndex:i+10,ownerTriangleIndex:i,evidenceRefs:['assembly/contact-'+i+'.json'],
+   }));
+ const plan=createTriangleComponentSupportPlan({
+  assetSha256:sha(glb),inventoryDigest:inventory.inventoryDigest,
+  nodes:[{nodeId:'base',rootTriangleIndex:0,links}],
+  evidenceRefs:['assembly/independent-face-proof.json'],
+ });
+ return replayTriangleComponentSupport(glb,plan);
+}
+
+test('QA-02p tiny but genuinely opposed Float32 faces remain accepted',()=>{
+ const result=scaledShellWitness({coincident:false});
+ assert.equal(result.status,'PASS',result.reason+': '+result.details.join(','));
+});
+
+test('QA-02p coincident same-wound shells cannot forge opposed contact at small scale',()=>{
+ for(const scale of [1,1e-4]){
+  const result=scaledShellWitness({coincident:true,scale});
+  assert.equal(result.status,'FAIL',scale+': '+result.reason+': '+result.details.join(','));
+  assert.match(result.reason,/not opposite-wound/i);
+ }
+});
+
 test('QA-02k exact opposed face from two separately indexed shells connects every island',()=>{
  const f=fixture();
  assert.equal(f.node.spatial.componentCount,2);
