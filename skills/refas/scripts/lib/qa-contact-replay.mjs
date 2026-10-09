@@ -107,7 +107,9 @@ export function replayRealizedContactEvidence({
         ]);
       }
     }
-    const poseReplay=verifyRealizedPropagationWorldFrames(glb,propagationReport);
+    const poseReplay=verifyRealizedPropagationWorldFrames(glb,propagationReport,{
+      fusionBindings:plan.fusionBindings,fusionReplayInputs,sourceSha256,attachmentSemantics,
+    });
     if(poseReplay.status!=='PASS'){
       return result(poseReplay.status,'candidate GLB world transforms do not realize the propagation solver pose',[
         poseReplay.reason,...poseReplay.entities,
@@ -120,10 +122,22 @@ export function replayRealizedContactEvidence({
       return result('INSUFFICIENT','physical fusion requires independently replayable pre-fusion and final GLB evidence');
     }
     const inputs=new Map(fusionReplayInputs.map(x=>[x.physicalEntityId,x]));
+    if(inputs.size!==fusionReplayInputs.length){
+      return result('INSUFFICIENT','physical fusion replay inputs have duplicate physical roots');
+    }
     fusionArtifacts=[];
     for(const binding of plan.fusionBindings){
       const input=inputs.get(binding.physicalEntityId);
       if(!input)return result('INSUFFICIENT','missing physical fusion replay input for '+binding.physicalEntityId);
+      // Each semantic alias must be backed by an exact canonical native bake.
+      // A digest-valid contact plan cannot omit or add fused members merely
+      // to disguise missing source-observed geometry.
+      const expected=(input.plan?.members??[]).map(member=>member.memberId).sort();
+      const mapped=[...binding.semanticMemberIds].sort();
+      if(!expected.length||mapped.length!==expected.length||
+         mapped.some((id,i)=>id!==expected[i])){
+        return result('FAIL','fusion semantic aliases do not cover exact native bake members',[binding.physicalEntityId]);
+      }
       if(input.report?.reportDigest!==binding.fusionReportDigest||
          input.provenance?.provenanceDigest!==binding.provenanceDigest){
         return result('FAIL','physical fusion plan binds a different report or provenance');
