@@ -38,6 +38,54 @@ const isOpposedFace=(a,b)=>{
  return start!==-1&&kb[(start+1)%3]===ka[2]&&kb[(start+2)%3]===ka[1];
 };
 
+
+/**
+ * Narrow, geometry-only exception for two opposed coplanar triangles whose
+ * overlap is a proper area but whose three vertices are not identical.
+ * Float32 coordinate planes must coincide EXACTLY. Axis-aligned faces alone
+ * are admitted here: slanted/uncertain planes require future independently
+ * validated predicates and must not become tolerance-based support.
+ */
+const isOpposedAxisAlignedPartialFace=(a,b)=>{
+ if(!Array.isArray(a)||!Array.isArray(b)||a.length!==3||b.length!==3)return false;
+ const na=faceArea(a),nb=faceArea(b);
+ if(!(na.area>1e-12&&nb.area>1e-12))return false;
+ const axes=[0,1,2].filter(axis=>na.normal[axis]!==0&&nb.normal[axis]!==0&&
+  [0,1,2].filter(i=>i!==axis).every(i=>na.normal[i]===0&&nb.normal[i]===0));
+ if(axes.length!==1)return false;
+ const axis=axes[0];
+ if(!(na.normal[axis]*nb.normal[axis]<0))return false;
+ const plane=a[0][axis];
+ if(![...a,...b].every(p=>p[axis]===plane))return false;
+ const projectedAxes=[0,1,2].filter(i=>i!==axis);
+ const project=face=>face.map(p=>projectedAxes.map(i=>p[i]));
+ const subject=project(a),clip=project(b);
+ const edge=(p,q,r)=>(q[0]-p[0])*(r[1]-p[1])-(q[1]-p[1])*(r[0]-p[0]);
+ const twiceArea=poly=>poly.reduce((sum,p,i)=>sum+
+  p[0]*poly[(i+1)%poly.length][1]-poly[(i+1)%poly.length][0]*p[1],0);
+ const sense=Math.sign(twiceArea(clip));
+ if(!sense)return false;
+ let overlap=subject;
+ for(let i=0;i<3;i++){
+  const start=clip[i],end=clip[(i+1)%3],original=overlap;
+  overlap=[];
+  if(!original.length)break;
+  for(let j=0;j<original.length;j++){
+   const before=original[(j+original.length-1)%original.length],after=original[j];
+   const db=sense*edge(start,end,before),da=sense*edge(start,end,after);
+   const insideB=db>=0,insideA=da>=0;
+   if(insideA!==insideB){
+    const fraction=db/(db-da);
+    overlap.push(before.map((value,k)=>value+fraction*(after[k]-value)));
+   }
+   if(insideA)overlap.push(after);
+  }
+ }
+ // Edge-only, vertex-only, nearby but separated and reversed-volume
+ // hypotheses never count as an independently realized contact patch.
+ return overlap.length>=3&&Math.abs(twiceArea(overlap))*0.5>1e-12;
+};
+
 /** A typed intent record, not a worker-authorized geometry certificate. */
 export function createTriangleComponentSupportPlan({
  assetSha256,inventoryDigest,nodes=[],evidenceRefs=[],
@@ -60,18 +108,25 @@ export function createTriangleComponentSupportPlan({
    const identifier=r.childTriangleIndex+':'+r.ownerTriangleIndex;
    if(linkIds.has(identifier))throw Error(nodeId+': duplicate face witness');
    linkIds.add(identifier);
+   const kind=r.kind??'OPPOSED_EXACT_FACE';
+   if(!['OPPOSED_EXACT_FACE','OPPOSED_AXIS_ALIGNED_PARTIAL_FACE'].includes(kind)){
+    throw Error(nodeId+': unsupported contact-witness geometry kind '+kind);
+   }
    return {childTriangleIndex:r.childTriangleIndex,ownerTriangleIndex:r.ownerTriangleIndex,
-    kind:'OPPOSED_EXACT_FACE',evidenceRefs:refs};
+    kind,evidenceRefs:refs};
   }).sort((a,b)=>a.childTriangleIndex-b.childTriangleIndex||a.ownerTriangleIndex-b.ownerTriangleIndex);
   return {nodeId,rootTriangleIndex:raw.rootTriangleIndex,links};
  }).sort((a,b)=>a.nodeId.localeCompare(b.nodeId));
  const refs=unique(evidenceRefs);
  if(!refs.length)throw Error('component plan requires design/assembly evidence references');
+ const hasPartial=normalized.some(node=>node.links.some(link=>
+  link.kind==='OPPOSED_AXIS_ALIGNED_PARTIAL_FACE'));
  const payload={schema:QA_COMPONENT_SUPPORT_PLAN_SCHEMA,assetSha256,inventoryDigest,
   nodes:normalized,evidenceRefs:refs,
   policy:{
    actualGlbFloat32TrianglesRequired:true,
-   oppositeWoundExactlyCoincidentFaceRequired:true,
+   oppositeWoundExactlyCoincidentFaceRequired:!hasPartial,
+   ...(hasPartial?{opposedExactPlanePositiveAreaPartialWitnessRequired:true}:{}),
    everyGeometricIslandRequiresRootedWitness:true,
    geometricTouchDoesNotEstablishWeldOrSourceSemanticTruth:true,
    unspecifiedOrNonCoplanarComponentContactStaysInsufficient:true,
@@ -139,12 +194,21 @@ export function replayTriangleComponentSupport(glb,plan){
    if(a===b||a===root||(parents.has(a)&&parents.get(a)!==b)){
     return verdict('FAIL','component face witnesses contain self-links, conflicting parents or root reparenting',[spec.nodeId]);
    }
-   if(!isOpposedFace(tris[child],tris[owner])){
-    return verdict('FAIL','claimed component support faces are not opposite-wound coincident GLB triangles',
-      [spec.nodeId+':'+child+':'+owner]);
+   const valid=witness.kind==='OPPOSED_EXACT_FACE'
+    ?isOpposedFace(tris[child],tris[owner])
+    :isOpposedAxisAlignedPartialFace(tris[child],tris[owner]);
+   if(!valid){
+    return verdict('FAIL',witness.kind==='OPPOSED_EXACT_FACE'
+     ?'claimed component support faces are not opposite-wound coincident GLB triangles'
+     :'claimed partial component support faces lack an opposed exact-plane positive-area GLB patch',
+     [spec.nodeId+':'+child+':'+owner,witness.kind]);
    }
    parents.set(a,b);
-   for(const edge of faceEdgeKeys(tris[child]))explainedEdges.add(edge);
+   // A partial overlap cannot waive a separate unresolved nonmanifold
+   // coincident-edge ambiguity: only an exact full-face witness can.
+   if(witness.kind==='OPPOSED_EXACT_FACE'){
+    for(const edge of faceEdgeKeys(tris[child]))explainedEdges.add(edge);
+   }
    if(!edges.has(b))edges.set(b,[]);
    edges.get(b).push(a);
   }
