@@ -1,6 +1,7 @@
 import {createHash} from 'node:crypto';
 import {digestJson} from './canonical.mjs';
 import {parseGlb} from './glb.mjs';
+import {readQaGeometryAccessor,UnsupportedQaGeometryAccessor} from './qa-glb-geometry-accessors.mjs';
 import {bakePhysicalFusion, validatePhysicalFusionResult} from './physical-fusion.mjs';
 
 export const QA_FUSION_REPLAY_SCHEMA='refas.qa-physical-fusion-replay/v1';
@@ -19,31 +20,18 @@ function decodeMesh(glb,partId){
  }
  const primitive=mesh.primitives[0];
  if((primitive.mode??4)!==4 || primitive.indices==null)unsupported('exact replay requires indexed TRIANGLES');
- function array(accessorId,type,componentType){
-  const accessor=json.accessors?.[accessorId],view=json.bufferViews?.[accessor?.bufferView];
-  if(!accessor || !view || accessor.sparse || accessor.type!==type || accessor.componentType!==componentType || view.buffer!==0 ||
-      !Number.isSafeInteger(accessor.count)||accessor.count<1)unsupported('unsupported GLB geometry accessor');
-  const width=type==='VEC3'?3:1,size=componentType===5126||componentType===5125?4:componentType===5123?2:1;
-  const offset=Number(view.byteOffset??0)+Number(accessor.byteOffset??0);
-  const length=Number(view.byteLength),stride=Number(view.byteStride??width*size);
-  if (![offset,length,stride].every(Number.isSafeInteger)||offset<0||stride<width*size||
-      offset+(accessor.count-1)*stride+width*size>Number(view.byteOffset??0)+length||
-      offset+(accessor.count-1)*stride+width*size>binary.length)throw new Error('GLB geometry accessor out of bounds');
-  const dv=new DataView(binary.buffer,binary.byteOffset,binary.byteLength);
-  return Array.from({length:accessor.count},(_,i)=>{
-    const base=offset+i*stride,vs=Array.from({length:width},(_,k)=>{
-      const at=base+k*size;
-      return componentType===5126?dv.getFloat32(at,true):componentType===5125?dv.getUint32(at,true):
-        componentType===5123?dv.getUint16(at,true):dv.getUint8(at);
-    });
-    if(!vs.every(Number.isFinite))throw new Error('non-finite physical fusion geometry');
-    return width===1?vs[0]:vs;
-  });
+ if(node.skin!=null || node.weights!=null || mesh.weights!=null ||
+    (primitive.targets?.length??0)>0)unsupported('skinned or morphed native fusion requires evaluated mesh-frame proof');
+ let positions,indices;
+ try{
+  positions=readQaGeometryAccessor(json,binary,primitive.attributes?.POSITION,
+    {position:true,label:partId+': fusion source POSITION'});
+  indices=readQaGeometryAccessor(json,binary,primitive.indices,
+    {label:partId+': fusion source indices'});
+ }catch(e){
+  if(e instanceof UnsupportedQaGeometryAccessor)unsupported(e.message);
+  throw e;
  }
- const positions=array(primitive.attributes?.POSITION,'VEC3',5126);
- const indexAccessor=json.accessors?.[primitive.indices],component=indexAccessor?.componentType;
- if(![5121,5123,5125].includes(component))unsupported('unsupported index component');
- const indices=array(primitive.indices,'SCALAR',component);
  if(indices.length%3 || indices.some(i=>i>=positions.length))throw new Error('invalid fusion triangle indexing');
  return {positions,indices};
 }

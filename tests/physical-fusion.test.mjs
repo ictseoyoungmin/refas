@@ -5,6 +5,8 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 
+import {readQaGeometryAccessor} from '../skills/refas/scripts/lib/qa-glb-geometry-accessors.mjs';
+
 import {
   bakePhysicalFusion,
   createAttachmentSemantics,
@@ -196,6 +198,145 @@ test('plan and baked result are digest-bound and tamper detectable', () => {
   assert.equal(validatePhysicalFusionResult(tampered, {...f, plan: f.plan, currentInputAssetSha256: D('a'), currentPreFusionStateDigest: D('b')}).valid, false);
 });
 
+
+
+/** Re-encode every actual indexed triangle geometry accessor with an entirely
+ * sparse, implicit-zero base, without changing the decoded physical mesh.
+ * The native fusion gate must independently replay these actual GLB BIN bytes.
+ */
+function fullySparseGeometry(glb,{deform=false,invalidSparseOrder=false}={}){
+ const original=parseGlb(glb),json=structuredClone(original.json);
+ const parts=[Buffer.from(original.binary)],view=json.bufferViews;
+ let length=original.binary.length;
+ const align=(n)=>{const padding=(n-length%4)%4;if(padding){parts.push(Buffer.alloc(padding));length+=padding;}};
+ const push=(value)=>{align();const bytes=Buffer.from(value);const index=view.length;view.push({
+  buffer:0,byteOffset:length,byteLength:bytes.length,
+ });parts.push(bytes);length+=bytes.length;return index;};
+ let changed=false,spoiled=false;
+ for(const mesh of json.meshes??[]){
+  for(const primitive of mesh.primitives??[]){
+   for(const [index,position] of [[primitive.attributes?.POSITION,true],[primitive.indices,false]]){
+    if(index==null)throw Error('fixture requires indexed triangles');
+    const acc=json.accessors[index];
+    const {json:sourceJson,binary:sourceBinary}=original;
+    const decoded=readQaGeometryAccessor(sourceJson,sourceBinary,index,{position});
+    if(acc.count>255)throw Error('fixture exceeds byte sparse-index range');
+    const indices=Uint8Array.from(Array.from({length:acc.count},(_,i)=>i));
+    if(invalidSparseOrder&&!spoiled){indices[0]=1;spoiled=true;}
+    let values;
+    if(position){
+     if(deform&&!changed){decoded[0][0]+=0.25;changed=true;}
+     values=Buffer.from(new Float32Array(decoded.flat()).buffer);
+    }else{
+     const type=acc.componentType;
+     const typed=type===5125?new Uint32Array(decoded):
+      type===5123?new Uint16Array(decoded):new Uint8Array(decoded);
+     values=Buffer.from(typed.buffer);
+    }
+    const indexView=push(indices),valueView=push(values);
+    delete acc.bufferView;delete acc.byteOffset;
+    acc.sparse={count:acc.count,
+      indices:{bufferView:indexView,componentType:5121},
+      values:{bufferView:valueView}};
+   }
+  }
+ }
+ json.buffers[0].byteLength=length;
+ const raw=Buffer.from(JSON.stringify(json));
+ const paddedJson=Buffer.concat([raw,Buffer.alloc((4-raw.length%4)%4,0x20)]);
+ const all=Buffer.concat(parts),bin=Buffer.concat([all,Buffer.alloc((4-all.length%4)%4)]);
+ const output=Buffer.alloc(12+8+paddedJson.length+8+bin.length);
+ output.writeUInt32LE(0x46546c67,0);output.writeUInt32LE(2,4);
+ output.writeUInt32LE(output.length,8);
+ output.writeUInt32LE(paddedJson.length,12);output.writeUInt32LE(0x4e4f534a,16);
+ paddedJson.copy(output,20);
+ output.writeUInt32LE(bin.length,20+paddedJson.length);
+ output.writeUInt32LE(0x004e4942,24+paddedJson.length);
+ bin.copy(output,28+paddedJson.length);
+ return output;
+}
+
+test('QA-02m native fusion is replayable from sparse-only original and final GLB byte geometries',()=>{
+ const f=fixture(D('e'),{includeGlasses:false});
+ const mat={skin:{baseColor:[.6,.6,.6,1],metallic:0,roughness:1}};
+ const preDense=partsToGlb({
+  parts:f.realizedMembers.map(member=>({id:member.memberId,
+   mesh:member.mesh,materialId:'skin'})),materials:mat,
+ });
+ const preFusionGlb=fullySparseGeometry(preDense);
+ assert.notEqual(sha(preDense),sha(preFusionGlb));
+ const preJson=parseGlb(preFusionGlb).json;
+ for(const mesh of preJson.meshes){
+  for(const primitive of mesh.primitives){
+   for(const index of [primitive.attributes.POSITION,primitive.indices]){
+    assert.ok(preJson.accessors[index].sparse);
+    assert.equal(preJson.accessors[index].bufferView,undefined);
+   }
+  }
+ }
+ const checkpointBody={schema:'refas.checkpoint/v1',parentId:null,capability:'assembly',
+  scopeId:'whole',reason:'trusted registered original sparse GLB',claims:[],
+  gates:[],metadata:{},transactionId:null,
+  artifactRefs:[{kind:'glb',sha256:sha(preFusionGlb)}]};
+ const checkpointDigest=digestJson(checkpointBody),checkpoint={
+  ...checkpointBody,id:'cp_'+checkpointDigest.slice(0,20),
+  contentDigest:checkpointDigest,createdAt:'2026-10-09T00:00:00.000Z',
+ };
+ const plan=createPhysicalFusionPlan({
+  attachmentSemantics:f.attachmentSemantics,logicalFusion:f.logicalFusion,
+  canonicalEditIntent:f.canonicalEditIntent,id:'sparse-native-head-bake',
+  groupId:f.plan.groupId,inputAssetSha256:sha(preFusionGlb),
+  preFusionCheckpointId:checkpoint.id,preFusionStateDigest:checkpoint.contentDigest,
+  fusionRootFrame:I(),members:f.plan.members,
+  strategy:'WELD_SHARED_BOUNDARY',weldTolerance:f.plan.weldTolerance,
+  topologyObligation:f.plan.topologyObligation,
+  evidenceRefs:['model/sparse-native-fusion.json'],
+ });
+ const result=bakePhysicalFusion({...f,plan,
+  currentInputAssetSha256:plan.inputAssetSha256,
+  currentPreFusionStateDigest:plan.preFusionStateDigest,
+  evidenceRefs:['review/sparse-fusion-result.json']});
+ assert.equal(result.report.status,'BAKED');
+ const fusedDense=partsToGlb({parts:[{id:plan.fusionRootId,mesh:result.mesh,materialId:'skin'}],
+  materials:mat,extras:{physicalFusionReportDigest:result.report.reportDigest,
+   fusionProvenanceDigest:result.provenance.provenanceDigest}});
+ const fusedGlb=fullySparseGeometry(fusedDense);
+ assert.notEqual(sha(fusedDense),sha(fusedGlb));
+ const args={sourceSha256:f.attachmentSemantics.sourceSha256,
+  attachmentSemantics:f.attachmentSemantics,preFusionGlb,fusedGlb,
+  preFusionCheckpoint:checkpoint,physicalEntityId:plan.fusionRootId,
+  logicalFusion:f.logicalFusion,canonicalEditIntent:f.canonicalEditIntent,
+  plan,report:result.report,provenance:result.provenance};
+ const proof=replayExactGlbPhysicalFusion(args);
+ assert.equal(proof.status,'PASS',proof.reason);
+ assert.equal(replayExactGlbPhysicalFusion({...args,fusedGlb:fusedDense}).status,'PASS');
+ assert.equal(replayExactGlbPhysicalFusion({...args,
+  fusedGlb:fullySparseGeometry(fusedDense,{deform:true})}).status,'FAIL');
+ assert.equal(replayExactGlbPhysicalFusion({...args,
+  fusedGlb:fullySparseGeometry(fusedDense,{invalidSparseOrder:true})}).status,'FAIL');
+ assert.equal(replayExactGlbPhysicalFusion({...args,preFusionGlb:preDense}).status,'FAIL');
+ const contactPlan=createRealizedContactPlan({
+  attachmentSemantics:f.attachmentSemantics,id:'sparse-baked-head-contact',
+  assetSha256:sha(fusedGlb),supportRoots:[plan.fusionRootId],
+  fusionBindings:[{physicalEntityId:plan.fusionRootId,
+   semanticMemberIds:['head-shell','face','nose'],
+   fusionReportDigest:result.report.reportDigest,
+   provenanceDigest:result.provenance.provenanceDigest,
+   evidenceRefs:['review/sparse-fused-members.json']}],
+  evidenceRefs:['review/sparse-fusion-contact.json'],
+ });
+ const {graph,report}=analyzeRealizedContact({plan:contactPlan,
+  attachmentSemantics:f.attachmentSemantics,glb:fusedGlb,
+  fusionArtifacts:[{report:result.report,provenance:result.provenance}]});
+ assert.equal(report.status,'PASS');
+ const replay=replayRealizedContactEvidence({
+  glb:fusedGlb,sourceSha256:f.attachmentSemantics.sourceSha256,
+  attachmentSemantics:f.attachmentSemantics,
+  plan:contactPlan,graph,report,
+  fusionReplayInputs:[{...args}],
+ });
+ assert.equal(replay.status,'PASS',replay.reason);
+});
 
 test('QA-02e native fused mesh replay independently requires exact original and final GLB bytes',()=>{
  const baseline=fixture();
