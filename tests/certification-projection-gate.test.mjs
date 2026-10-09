@@ -112,6 +112,21 @@ async function advanceToReview(root, source, {
       continue;
     }
 
+    if (capability === 'visual-observation') {
+      // Source observations must predate model construction. Previously the
+      // fixture only created these during final certification, bypassing the
+      // P0 whole-to-detail source-space admission contract.
+      const geometry = sourceGeometry(source);
+      const geometryPath = await json(path.join(root, 'model', 'reference-geometry.json'), geometry);
+      const geometryRef = await contentReference(geometryPath, {kind:'reference-geometry', root});
+      await commitCheckpoint(root, {
+        capability, scopeId:'whole', reason:'primary-source macro geometry observed before detail',
+        artifactRefs:[geometryRef], claims:['source-space macro observation recorded'],
+        gates:[{id:'visual-observation-gate', evidenceRefs:[geometryRef.path]}],
+      });
+      continue;
+    }
+
     if (capability === 'spatial-hypotheses') {
       if (!hierarchy) throw new Error('VC02 migration fixture requires visual hierarchy before spatial hypotheses');
       const spatialPath = path.join(root,'model','spatial-role.json');
