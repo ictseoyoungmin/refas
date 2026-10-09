@@ -123,7 +123,28 @@ async function initBase({role='volumetric',depth=1}={}){
     artifactRefs:[hierarchyRef],claims:['whole hierarchy frozen'],
     gates:[{id:'visual-hierarchy-gate',evidenceRefs:[hierarchyRef.path]}],
   });
-  await genericCheckpoint('visual-observation','visual-observation');
+  // Retain the baseline source-observed macro geometry even in adversarial
+  // scenarios. VC08 attacks spatial authority and forged verdicts, not the
+  // absence of raw source observations (now independently exercised by P0a).
+  const observedGeometry=API.createReferenceGeometry({
+    scopeId:'whole',sourceSha256:source.sha256,
+    anchors:[{
+      id:'observed-whole-center',importance:'macro',
+      xy:[.5,.5],visibility:'visible',confidence:1,
+      evidenceRefs:[source.path],
+    }],
+    contours:[{
+      id:'observed-whole-outline',importance:'macro',closed:true,
+      points:[[.1,.1],[.9,.1],[.9,.9],[.1,.9]],
+      evidenceRefs:[source.path],
+    }],
+    attestation:{attested:true,evidenceRefs:[source.path]},
+  });
+  await writeJson('model/reference-geometry.json',observedGeometry);
+  const observationGeometryRef=await ref('model/reference-geometry.json','reference-geometry');
+  await genericCheckpoint('visual-observation','visual-observation',{
+    extraRefs:[observationGeometryRef],
+  });
 
   const roleSet=API.createSpatialRoleExpectationSet({
     hierarchy,sourceSha256:source.sha256,

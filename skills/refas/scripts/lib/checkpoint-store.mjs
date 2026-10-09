@@ -27,6 +27,7 @@ import {validatePbrRenderReport} from './pbr-render-report.mjs';
 import {inspectBaseColorTextures} from './glb.mjs';
 import {findComparisonContradictions, validateRegisteredComparison} from './registered-comparison.mjs';
 import {assertEarlyResemblanceAdmission} from './early-resemblance-barrier.mjs';
+import {validateReferenceGeometry} from './reference-geometry.mjs';
 import {
   validateBlockoutCompetitionDecision,
   validateBlockoutCompetitionPolicy,
@@ -824,6 +825,40 @@ async function ensureEarlyResemblanceAdmission(root, state, capability, scopeId,
     hierarchyDigest: hierarchy.hierarchyDigest,
     assetSha256: candidateMatches[0].sha256,
   });
+
+  // P0: a worker's neutral-clay R04 PROCEED cannot make omitted source-space
+  // observation "not applicable." Freeze 2D reference geometry upstream of
+  // candidate construction; source-photo interpretation is separately reviewed.
+  const observationCheckpoint = [...lineage].reverse().find((checkpoint) =>
+    checkpoint.capability === 'visual-observation' && scopeContains(checkpoint.scopeId, scopeId));
+  if (!observationCheckpoint) {
+    throw new Error(`${capability} source geometry admission requires current visual-observation lineage`);
+  }
+  const {value: geometry} = await readCheckpointJsonArtifact(
+    root, observationCheckpoint, 'reference-geometry',
+    `${capability} source geometry admission`,
+  );
+  const validation = validateReferenceGeometry(geometry);
+  if (!validation.valid) {
+    throw new Error(`${capability} source geometry admission reference-geometry is invalid: ${validation.errors.join('; ')}`);
+  }
+  if (geometry.sourceSha256 !== state.source.sha256 ||
+      !scopeContains(geometry.scopeId, scopeId)) {
+    throw new Error(`${capability} source geometry admission source or scope binding mismatch`);
+  }
+  // A valid yet empty typed artifact is no independent observation. Require
+  // source-visible whole/macro evidence and the raw source itself as citation;
+  // do NOT let worker names, camera fitting or 3D-derived observations substitute.
+  const sourcePrimitives = [
+    ...geometry.anchors, ...geometry.contours, ...geometry.negativeSpaces,
+    ...(geometry.segments ?? []),
+  ];
+  const macro = sourcePrimitives.filter((item) =>
+    item.importance === 'macro' && (item.visibility === undefined || item.visibility !== 'inferred'));
+  if (!macro.length || !macro.some((item) => item.evidenceRefs.includes(state.source.path)) ||
+      !geometry.attestation.evidenceRefs.includes(state.source.path)) {
+    throw new Error(`${capability} source geometry admission requires an observable macro reference-geometry primitive and raw primary source citation`);
+  }
 }
 
 async function parseJsonArtifacts(root, artifacts, kind, label) {
