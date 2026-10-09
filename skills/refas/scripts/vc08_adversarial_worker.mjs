@@ -169,6 +169,17 @@ async function initBase({role='volumetric',depth=1}={}){
   const glb=candidateGlb({depth});
   await write('model/candidate.glb',glb);
   const asset=await ref('model/candidate.glb','glb');
+  // The public adversarial worker must provide real camera-to-GLB evidence;
+  // a forged spatial gate can be tested only after valid macro registration.
+  const registered=API.createRealizedProjection({
+    referenceGeometry:observedGeometry,glb,
+    cameraHypothesisId:'vc08-camera-source',
+    camera:{projection:'perspective',position:[0,0,5],target:[0,0,0],up:[0,1,0],fovY:90,aspect:1},
+    anchorBindings:[{referenceId:'observed-whole-center',nodeId:'model-node',localPoint:[0,0,0]}],
+    evidenceRefs:[source.path,asset.path],
+  });
+  await writeJson('model/early-realized-projection.json',registered);
+  const registeredRef=await ref('model/early-realized-projection.json','realized-projection');
 
   const clayFrames=[];
   for(const viewId of API.NEUTRAL_CLAY_REQUIRED_VIEW_IDS){
@@ -229,7 +240,7 @@ async function initBase({role='volumetric',depth=1}={}){
   });
   await writeJson('reviews/volume-barrier.json',barrier);
   const barrierRef=await ref('reviews/volume-barrier.json','volume-barrier');
-  const shapeRefs=[asset,earlyRef,reportRef,...clayFrames,evidenceRef,classRef,barrierRef];
+  const shapeRefs=[asset,earlyRef,reportRef,...clayFrames,evidenceRef,classRef,barrierRef,registeredRef];
   const shapeCheckpoint=await API.commitCheckpoint(projectRoot,{
     capability:'shape-reconstruction',scopeId:'whole',reason:'VC08 adversarial shape-stage authority',
     artifactRefs:shapeRefs,claims:['hero resemblance and spatial authority remain independent'],
