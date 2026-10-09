@@ -22,6 +22,7 @@ import {
   propagateAttachmentGraph,
   rigidFrameDigest,
   verifyRealizedPropagationWorldFrames,
+  createAttachmentFollowState,
 } from '../skills/refas/scripts/lib/index.mjs';
 
 const D=(c)=>c.repeat(64);
@@ -422,6 +423,99 @@ test('QA-02d tiny real positive gap is never welded by an epsilon',()=>{
  assert.equal(result.nodes[0].spatial.componentCount,2);
 });
 
+
+
+
+function rigidFollowEvidence(f){
+ const frame={origin:[0,0,0],xAxis:[1,0,0],yAxis:[0,1,0],zAxis:[0,0,1]};
+ const followState=createAttachmentFollowState({
+  attachmentSemantics:f.attachmentSemantics,
+  bindings:[{id:'leg-follows-base',relationId:'leg-follow',
+   baselineOwnerFrame:frame,baselineSubjectFrame:frame,
+   evidenceRefs:['review/follow-leg.json']}],
+  evidenceRefs:['review/follow-state.json'],
+ });
+ const stateDigest=D('1');
+ const propagationPlan=createAttachmentPropagationPlan({
+  attachmentSemantics:f.attachmentSemantics,id:'follow-qa-plan',
+  followState,externalFrameBindings:[{
+   entityId:'base',stateDigest,frameDigest:rigidFrameDigest(frame),
+   ownerFrameDigests:[],evidenceRefs:['review/base-state.json'],
+  }],evidenceRefs:['review/follow-propagation-plan.json'],
+ });
+ const propagationReport=propagateAttachmentGraph({
+  plan:propagationPlan,attachmentSemantics:f.attachmentSemantics,followState,
+  initialWorldFrames:[{entityId:'base',stateDigest,frame}],
+  evidenceRefs:['review/follow-report.json'],
+ });
+ const plan=createRealizedContactPlan({
+  attachmentSemantics:f.attachmentSemantics,id:'qa-follow-contact',
+  assetSha256:sha(f.glb),supportRoots:['base'],supportRequiredEntityIds:['leg'],
+  pairExpectations:f.plan.pairExpectations,
+  contactTolerance:f.plan.contactTolerance,
+  penetrationTolerance:f.plan.penetrationTolerance,
+  propagationReportDigest:propagationReport.reportDigest,
+  evidenceRefs:['review/qa-follow-contact.json'],
+ });
+ const {graph,report}=analyzeRealizedContact({
+  glb:f.glb,plan,attachmentSemantics:f.attachmentSemantics,propagationReport,
+ });
+ return {followState,propagationPlan,propagationReport,plan,graph,report};
+}
+
+test('QA-02g persisted RIGID_FOLLOW requires actual typed dependency to PASS',async t=>{
+ const root=await fs.mkdtemp(path.join(os.tmpdir(),'refas-qa-follow-persisted-'));
+ t.after(()=>fs.rm(root,{recursive:true,force:true}));
+ const source=Buffer.from('independent source for rich rigid follow QA');
+ const sourceSha256=sha(source);
+ await fs.mkdir(path.join(root,'source'),{recursive:true});
+ await fs.writeFile(path.join(root,'source','reference.bin'),source);
+ await initProject(root,{projectId:'qa-rich-follow',source:{
+  schema:'refas.source-manifest/v1',id:'primary-reference',
+  path:'source/reference.bin',sha256:sourceSha256,sizeBytes:source.length,
+  width:80,height:60,authority:'primary',acquisition:{kind:'operator-supplied'},
+ }});
+ const f=fixture({sourceSha256}),g=rigidFollowEvidence(f);
+ assert.equal(g.propagationReport.status,'READY_FOR_REALIZATION');
+ assert.equal(g.report.status,'PASS');
+ const args={...f,plan:g.plan,graph:g.graph,report:g.report,
+  propagationPlan:g.propagationPlan,propagationReport:g.propagationReport,
+  propagationDependencies:{followState:g.followState}};
+ assert.equal(replayRealizedContactEvidence(args).status,'PASS');
+ assert.equal(replayRealizedContactEvidence({...args,propagationDependencies:{
+   followState:g.followState,
+   plan:{sourceSha256:D('c')},report:{eligibleForRealization:false},
+   attachmentSemantics:{sourceSha256:D('d')},
+ }}).status,'PASS'); // injected auxiliary keys cannot override the trusted plan
+ assert.equal(replayRealizedContactEvidence({...args,propagationDependencies:{}}).status,'INSUFFICIENT');
+ const art=path.join(root,'model');await fs.mkdir(art,{recursive:true});
+ const candidate=path.join(art,'candidate.glb');await fs.writeFile(candidate,f.glb);
+ const entries=[
+  ['attachment-semantics',f.attachmentSemantics],
+  ['realized-contact-plan',g.plan],['realized-contact-graph',g.graph],
+  ['realized-contact-report',g.report],
+  ['attachment-propagation-plan',g.propagationPlan],
+  ['attachment-propagation-report',g.propagationReport],
+  ['attachment-follow-state',g.followState],
+ ];
+ const refs=[await contentReference(candidate,{kind:'glb',root})];
+ for(const [kind,value]of entries){
+  const dest=path.join(art,kind+'.json');await fs.writeFile(dest,JSON.stringify(value));
+  refs.push(await contentReference(dest,{kind,root}));
+ }
+ await commitCheckpoint(root,{capability:'source-intake',scopeId:'whole',
+  reason:'Independent source with rich follow graph verified',
+  artifactRefs:refs,claims:['candidate stored for QA'],
+  gates:[{id:'source-intake-gate',evidenceRefs:[refs[0].path]}],
+ });
+ const valid=await verifySourceBoundObject(root,candidate);
+ assert.equal(valid.checks.find(c=>c.id==='realized-contact-support').status,'PASS');
+ assert.equal(valid.decision.state,'BLOCKED');
+ const followFile=path.join(art,'attachment-follow-state.json');
+ await fs.writeFile(followFile,JSON.stringify({...g.followState,followStateDigest:D('a')}));
+ const forged=await verifySourceBoundObject(root,candidate);
+ assert.equal(forged.checks.find(c=>c.id==='realized-contact-support').status,'FAIL');
+});
 
 test('QA-02f source-independent GLB world pose replay detects contradictory, re-signed positions',()=>{
  const f=freePropagationFixture();
