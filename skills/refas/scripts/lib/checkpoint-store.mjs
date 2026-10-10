@@ -949,6 +949,34 @@ async function ensureEarlyResemblanceAdmission(root, state, capability, scopeId,
         proof.cameraDigest !== selectedCameraDigest) {
       throw new Error(`${capability} camera hypothesis REWORK: registered camera does not match the frozen source-selected hypothesis`);
     }
+    const replay = verifyRealizedProjection({proof, referenceGeometry: geometry, glb: actualGlb});
+    if (!replay.valid) {
+      throw new Error(`${capability} early registered projection cannot replay current GLB: ${replay.errors.join('; ')}`);
+    }
+    // Partial source anchors are not sufficient: every source-visible,
+    // important macro anchor must be geometrically tested. A raw contour
+    // without a falsifiable anchor is not an invented full resemblance PASS.
+    const requiredMacroAnchors = (geometry.anchors ?? []).filter((item) =>
+      item.importance === 'macro' && item.visibility === 'visible' &&
+      item.evidenceRefs.includes(state.source.path));
+    if (!requiredMacroAnchors.length) {
+      throw new Error(`${capability} early registered projection REVIEW_REQUIRED: source has no independently citable visible macro anchors for projection`);
+    }
+    const measured = new Set((proof.derivedAnchors ?? []).map((item) => item.referenceId));
+    const missingMacro = requiredMacroAnchors.filter((item) => !measured.has(item.id));
+    if (missingMacro.length) {
+      throw new Error(`${capability} early registered projection REVIEW_REQUIRED: missing source-observed macro anchor projections: ${missingMacro.map((item) => item.id).join(', ')}`);
+    }
+    const offFrame = (proof.derivedAnchors ?? []).filter((item) =>
+      requiredMacroAnchors.some((anchor) => anchor.id === item.referenceId) && !item.insideFrame);
+    if (offFrame.length) {
+      throw new Error(`${capability} early registered projection REWORK: source-visible macro anchors project outside camera frame: ${offFrame.map((item) => item.referenceId).join(', ')}`);
+    }
+    const findings = findingsFromRealizedProjection(proof).filter((finding) =>
+      finding.severity === 'blocking');
+    if (findings.length) {
+      throw new Error(`${capability} early registered projection blocks downstream detail: ${findings.map((finding) => finding.category + ' (' + finding.checkId + ')').join('; ')}`);
+    }
     // P0b2b2a: an anchor that projects correctly says nothing about whole
     // head/torso mass. Screen actual GLB mesh extents against the primary
     // source-observed outer macro contour. Screening can VETO gross wrong
@@ -984,34 +1012,6 @@ async function ensureEarlyResemblanceAdmission(root, state, capability, scopeId,
     if (ratios.some((ratio) => ratio < 0.45 || ratio > 2.2) ||
         centerDelta.some((delta) => delta > 0.16)) {
       throw new Error(`${capability} whole silhouette REWORK: source outer contour disagrees with actual GLB projected mass (width=${ratios[0].toFixed(3)}, height=${ratios[1].toFixed(3)}, center=${centerDelta.map(x=>x.toFixed(3)).join(',')})`);
-    }
-    const replay = verifyRealizedProjection({proof, referenceGeometry: geometry, glb: actualGlb});
-    if (!replay.valid) {
-      throw new Error(`${capability} early registered projection cannot replay current GLB: ${replay.errors.join('; ')}`);
-    }
-    // Partial source anchors are not sufficient: every source-visible,
-    // important macro anchor must be geometrically tested. A raw contour
-    // without a falsifiable anchor is not an invented full resemblance PASS.
-    const requiredMacroAnchors = (geometry.anchors ?? []).filter((item) =>
-      item.importance === 'macro' && item.visibility === 'visible' &&
-      item.evidenceRefs.includes(state.source.path));
-    if (!requiredMacroAnchors.length) {
-      throw new Error(`${capability} early registered projection REVIEW_REQUIRED: source has no independently citable visible macro anchors for projection`);
-    }
-    const measured = new Set((proof.derivedAnchors ?? []).map((item) => item.referenceId));
-    const missingMacro = requiredMacroAnchors.filter((item) => !measured.has(item.id));
-    if (missingMacro.length) {
-      throw new Error(`${capability} early registered projection REVIEW_REQUIRED: missing source-observed macro anchor projections: ${missingMacro.map((item) => item.id).join(', ')}`);
-    }
-    const offFrame = (proof.derivedAnchors ?? []).filter((item) =>
-      requiredMacroAnchors.some((anchor) => anchor.id === item.referenceId) && !item.insideFrame);
-    if (offFrame.length) {
-      throw new Error(`${capability} early registered projection REWORK: source-visible macro anchors project outside camera frame: ${offFrame.map((item) => item.referenceId).join(', ')}`);
-    }
-    const findings = findingsFromRealizedProjection(proof).filter((finding) =>
-      finding.severity === 'blocking');
-    if (findings.length) {
-      throw new Error(`${capability} early registered projection blocks downstream detail: ${findings.map((finding) => finding.category + ' (' + finding.checkId + ')').join('; ')}`);
     }
   }
 }
