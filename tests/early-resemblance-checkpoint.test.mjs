@@ -138,6 +138,9 @@ async function makeRealSourceProject(t, verdictStatus, {
   unresolvedHypotheses = false,
   selectedCameraMismatch = false,
   staleHypothesisSource = false,
+  omitOuterContour = false,
+  grosslyWrongOuterContour = false,
+  offsetOuterContour = false,
 } = {}) {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), 'refas-r04-real-'));
   t.after(() => fs.rm(root, {recursive: true, force: true}));
@@ -185,9 +188,11 @@ async function makeRealSourceProject(t, verdictStatus, {
       id: 'observed-shoulder', importance: 'macro', xy: [.6,.5],
       visibility: 'visible', confidence: 1, evidenceRefs: [source.path],
     }] : [])],
-    contours: emptySourceGeometry ? [] : [{
+    contours: emptySourceGeometry || omitOuterContour ? [] : [{
       id: 'whole-outer-contour', importance: 'macro', closed: true,
-      points: [[.15,.15],[.85,.15],[.85,.90],[.15,.90]],
+      points: grosslyWrongOuterContour ? [[.15,.15],[.85,.15],[.85,.90],[.15,.90]] :
+        offsetOuterContour ? [[.70,.44],[.82,.44],[.82,.56],[.70,.56]] :
+        [[.44,.44],[.56,.44],[.56,.56],[.44,.56]],
       evidenceRefs: [source.path],
     }],
     attestation: {attested: true, evidenceRefs: [source.path]},
