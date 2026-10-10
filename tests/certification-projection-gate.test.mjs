@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
+import {spawnSync} from 'node:child_process';
 import {test} from 'node:test';
 
 import {
@@ -66,11 +67,18 @@ async function makeProject(t, acquisitionKind='user-provided-reference') {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), 'refas-projection-cert-'));
   t.after(() => fs.rm(root, {recursive:true, force:true}));
   await fs.mkdir(path.join(root, 'source'), {recursive:true});
-  const sourceBytes = Buffer.from('real reference bytes\n');
-  const sourcePath = path.join(root, 'source', 'reference.bin');
-  await fs.writeFile(sourcePath, sourceBytes);
+  const sourcePath = path.join(root, 'source', 'reference.png');
+  // A nonfixture photo-source contract cannot use arbitrary text as a fake
+  // raster. Generate a real 256×256 PNG with an actual Pillow encoder.
+  const png = spawnSync(process.env.CODEX_PRIMARY_RUNTIME_PYTHON || 'python3', [
+    '-c',
+    'from PIL import Image; import sys; Image.new("RGB", (256, 256), (95, 132, 179)).save(sys.argv[1])',
+    sourcePath,
+  ], {encoding:'utf8',timeout:15_000});
+  assert.equal(png.status,0,png.stderr || png.error?.message);
+  const sourceBytes = await fs.readFile(sourcePath);
   const source = {
-    schema:'refas.source-manifest/v1', id:'primary-reference', path:'source/reference.bin',
+    schema:'refas.source-manifest/v1', id:'primary-reference', path:'source/reference.png',
     sha256:digestBytes(sourceBytes), sizeBytes:sourceBytes.length, width:256, height:256,
     authority:'primary', acquisition:{kind:acquisitionKind},
   };
@@ -345,17 +353,17 @@ function mannequinGlb(x=0, thickness=0.08) {
 function sourceGeometry(source) {
   return createReferenceGeometry({
     scopeId:'whole', sourceSha256:source.sha256,
-    anchors:[{id:'whole-center', xy:[.5,.5], importance:'macro', visibility:'visible', confidence:1, evidenceRefs:['source/reference.bin']}],
+    anchors:[{id:'whole-center', xy:[.5,.5], importance:'macro', visibility:'visible', confidence:1, evidenceRefs:['source/reference.png']}],
     contours:[{id:'whole-outer-contour',importance:'macro',closed:true,
       points:[[.488,.495],[.512,.495],[.512,.505],[.488,.505]],
-      evidenceRefs:['source/reference.bin']}],
-    attestation:{attested:true, evidenceRefs:['source/reference.bin']},
+      evidenceRefs:['source/reference.png']}],
+    attestation:{attested:true, evidenceRefs:['source/reference.png']},
   });
 }
 
 async function appendRelationalCertificationEvidence(root, source, asset, refs) {
   const structure = createRelationalStructure({
-    scopeId:'whole', sourceSha256:source.sha256, basisRefs:['source/reference.bin'],
+    scopeId:'whole', sourceSha256:source.sha256, basisRefs:['source/reference.png'],
     entities:[
       {id:'span-left-a',kind:'landmark'}, {id:'span-right-a',kind:'landmark'},
       {id:'span-left-b',kind:'landmark'}, {id:'span-right-b',kind:'landmark'},
@@ -363,7 +371,7 @@ async function appendRelationalCertificationEvidence(root, source, asset, refs) 
     relations:[{
       id:'whole-span-ratio', kind:'distance-ratio', scope:'whole-system', importance:'identity',
       entityIds:['span-left-a','span-right-a','span-left-b','span-right-b'], range:[0.9,1.1],
-      basisRefs:['source/reference.bin'],
+      basisRefs:['source/reference.png'],
     }],
   });
   const authority = createSemanticAuthoritySet({
@@ -371,7 +379,7 @@ async function appendRelationalCertificationEvidence(root, source, asset, refs) 
     entries:[{
       id:'whole-span-authority', subjectId:'whole-span-ratio', authority:'observed',
       proposition:'The two visible whole-object spans are approximately equal.',
-      basis:[{kind:'source-evidence',ref:'source/reference.bin'}],
+      basis:[{kind:'source-evidence',ref:'source/reference.png'}],
     }],
   });
   const discrepancy = createRelationalDiscrepancy({
@@ -507,7 +515,7 @@ async function commitCertification(root, source, {
       referenceGeometry:geometry, glb, cameraHypothesisId:'camera-source',
       camera:{projection:'perspective',position:[0,0,5],target:[0,0,0],up:[0,1,0],fovY:90,aspect:1},
       anchorBindings:[{referenceId:'whole-center',nodeId:'model-node',localPoint:[0,0,0]}],
-      evidenceRefs:['model/candidate.glb','source/reference.bin'],
+      evidenceRefs:['model/candidate.glb','source/reference.png'],
     });
     const proofPath = await json(path.join(root,'model','realized-projection.json'), proof);
     const proofRef = await contentReference(proofPath, {kind:'realized-projection', root});
@@ -565,10 +573,10 @@ async function commitCertification(root, source, {
     gateVerdicts:REQUIRED_VISUAL_GATE_IDS.map((id)=>({id,status:'pass',evidenceRefs:['renders/final/multiview-review-board.png'],observation:reviewObservation(id),summary:`${id} directly inspected against current source-bound evidence.`})),
     unresolvedFindings:[],
     registeredComparison:{path:'reviews/registered-comparison/comparison-report.json',sha256:comparisonRef.sha256,comparisonDigest:comparison.comparisonDigest,sourceSha256:source.sha256,sourceManifestSha256:comparison.source.manifestSha256,assetSha256:asset.sha256,renderReportPath:'renders/final/render-report.json',renderReportSha256:reportRef.sha256,framePath:'renders/final/hero.png',frameSha256:frames[0].sha256,registrationDigest:comparison.registration.digest,hierarchyDigest:comparison.hierarchy.digest,inputDigest:comparison.inputDigest,scopeIds:['whole']},
-    comparisonAssessment:{sourceObservation:'The source whole object and visible macro boundaries were inspected.',renderObservation:'The current whole render and registered comparison board were inspected.',comparisonConclusion:'The registered comparison is sufficient for this synthetic real-source gate.',evidenceRefs:['source/reference.bin','reviews/registered-comparison/comparison-report.json'],contradictionResolution:{status:'not-present',explanation:'',evidenceRefs:[],findingRefs:[]}},
+    comparisonAssessment:{sourceObservation:'The source whole object and visible macro boundaries were inspected.',renderObservation:'The current whole render and registered comparison board were inspected.',comparisonConclusion:'The registered comparison is sufficient for this synthetic real-source gate.',evidenceRefs:['source/reference.png','reviews/registered-comparison/comparison-report.json'],contradictionResolution:{status:'not-present',explanation:'',evidenceRefs:[],findingRefs:[]}},
     renderer:{kind:'test-renderer',family:'threejs-webgl',reportRef:'renders/final/render-report.json',reportSha256:reportRef.sha256,independentProcess:true,claimScope:'visual-fidelity',supportedMaterialFeatures:['base-color-factor','metallic-factor','roughness-factor'],unsupportedMaterialFeatures:[]},
     requiredMaterialFeatures:['base-color-factor','metallic-factor','roughness-factor'],
-    attestation:{attested:true,evidenceRefs:['source/reference.bin','renders/final/hero.png']},
+    attestation:{attested:true,evidenceRefs:['source/reference.png','renders/final/hero.png']},
   });
   const reviewPath = await json(path.join(root,'reviews','visual-review.json'), review);
   const reviewRef = await contentReference(reviewPath, {kind:'visual-review', root});
