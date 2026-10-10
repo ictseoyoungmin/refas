@@ -4,6 +4,7 @@ import {createHash} from 'node:crypto';
 
 import {REFAS_VERSION, digestJson} from './canonical.mjs';
 import {inspectGlb} from './glb.mjs';
+import {inspectSourcePixelFrameBytes} from './source-pixel-frame.mjs';
 import {loadProject, loadCheckpoint} from './checkpoint-store.mjs';
 import {replayRealizedContactEvidence} from './qa-contact-replay.mjs';
 import {assessCertification, assessClaimCertification, auditProject} from './physical-claim-certification-gate.mjs';
@@ -56,6 +57,29 @@ async function sourceCheck(root, source) {
     return check('source-provenance', 'source-intake', 'PASS', 'current raw source bytes match the manifest digest', [source.sha256]);
   } catch {
     return check('source-provenance', 'source-intake', 'FAIL', 'registered source bytes are not readable');
+  }
+}
+
+async function sourcePixelFrameCheck(root, source) {
+  if (!source) return check('primary-source-pixel-frame', 'source-intake', 'NOT_RUN',
+    'no current primary source exists for trusted raster replay');
+  const file=await existingContainedFile(root,source.path);
+  if (!file) return check('primary-source-pixel-frame','source-intake','FAIL',
+    'current raw source pixel file is missing or outside the project');
+  try {
+    const raw=await fs.readFile(file);
+    const verified=inspectSourcePixelFrameBytes(raw,{
+      sourceSha256:source.sha256,
+      sizeBytes:source.sizeBytes,
+      width:source.width,
+      height:source.height,
+    });
+    return check('primary-source-pixel-frame','source-intake','PASS',
+      'trusted installed decoder replayed current original still image bytes, dimensions and encoded orientation; this does not verify observed contours',
+      [verified.sourceSha256]);
+  } catch (error) {
+    return check('primary-source-pixel-frame','source-intake','FAIL',
+      'primary image cannot establish a verified current decoded pixel frame: ' + String(error.message ?? error));
   }
 }
 
@@ -322,6 +346,7 @@ export async function verifySourceBoundObject(root, assetFile) {
   catch { /* absent project remains explicit NOT_RUN */ }
   const checks = [];
   checks.push(await sourceCheck(root, state?.source ?? null));
+  checks.push(await sourcePixelFrameCheck(root, state?.source ?? null));
   checks.push(check('glb-integrity', 'shape-reconstruction', intrinsic.valid ? 'PASS' : 'FAIL',
     intrinsic.valid ? 'GLB intrinsic structure is valid; this is not a source resemblance finding' : 'GLB intrinsic inspection failed',
     intrinsic.valid ? [assetSha256] : []));
