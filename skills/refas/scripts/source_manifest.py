@@ -76,6 +76,8 @@ def main() -> None:
     root.mkdir(parents=True, exist_ok=True)
     image_path = contained_path(root, Path(args.image), "image")
     output_path = contained_path(root, Path(args.out), "output")
+    if image_path == output_path:
+        raise ValueError("manifest output must not overwrite the primary source image")
     if not image_path.is_file():
         raise ValueError("image must be a file")
     width, height = inspect_primary_image(image_path)
