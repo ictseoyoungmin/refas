@@ -145,8 +145,13 @@ async function makeRealSourceProject(t, verdictStatus, {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), 'refas-r04-real-'));
   t.after(() => fs.rm(root, {recursive: true, force: true}));
 
-  const sourceBytes = Buffer.from('real source bytes\n');
-  const sourceRef = await writeRef(root, 'source/reference.bin', sourceBytes, 'source-image');
+  // Genuine decodable PNG bytes, rather than a "photo-reference" source
+  // manifest wrapped around arbitrary text. S01b2 replays raw pixels.
+  const sourceBytes = Buffer.from(
+    'iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAIAAAAlC+aJAAAAY0lEQVR4nO3PQQ3AIADAQMAoZnCEwYngcVnSU9DOfe74s6UDXjWgNaA1oDWgNaA1oDWgNaA1oDWgNaA1oDWgNaA1oDWgNaA1oDWgNaA1oDWgNaA1oDWgNaA1oDWgfcdoAhbbtEQ/AAAAAElFTkSuQmCC',
+    'base64',
+  );
+  const sourceRef = await writeRef(root, 'source/reference.png', sourceBytes, 'source-image');
   const source = {
     schema: 'refas.source-manifest/v1',
     id: 'primary-reference',
