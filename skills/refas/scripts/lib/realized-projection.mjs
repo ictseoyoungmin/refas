@@ -265,7 +265,7 @@ export function validateRealizedProjection(proof) {
 export function deriveRealizedWholeSilhouetteBounds({glb, camera} = {}) {
   const {json, binary} = parseGlb(Buffer.from(glb ?? []));
   const matrices = worldMatrices(json);
-  const projected = [];
+  const min = [Infinity, Infinity], max = [-Infinity, -Infinity];
   let count = 0;
   for (const [nodeIndex, node] of (json.nodes ?? []).entries()) {
     if (!Number.isInteger(node.mesh)) continue;
@@ -298,14 +298,15 @@ export function deriveRealizedWholeSilhouetteBounds({glb, camera} = {}) {
         if (!point.every(Number.isFinite)) throw new Error('whole silhouette has non-finite POSITION');
         const result = projectWorldPoint(camera, transformPoint(matrices[nodeIndex], point));
         if (!result.insideFrame) throw new Error('whole silhouette candidate extends outside source camera frame');
-        projected.push(result.xy);
+        for (let axis = 0; axis < 2; axis += 1) {
+          min[axis] = Math.min(min[axis], result.xy[axis]);
+          max[axis] = Math.max(max[axis], result.xy[axis]);
+        }
       }
       count += accessor.count;
     }
   }
   if (count < 3) throw new Error('whole silhouette requires actual mesh vertices');
-  const min = [Math.min(...projected.map(p=>p[0])), Math.min(...projected.map(p=>p[1]))];
-  const max = [Math.max(...projected.map(p=>p[0])), Math.max(...projected.map(p=>p[1]))];
   const span = [max[0] - min[0], max[1] - min[1]];
   if (!(span[0] > 1e-7 && span[1] > 1e-7)) {
     throw new Error('whole silhouette projection is degenerate');
