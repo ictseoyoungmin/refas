@@ -29,7 +29,7 @@ import {inspectBaseColorTextures} from './glb.mjs';
 import {findComparisonContradictions, validateRegisteredComparison} from './registered-comparison.mjs';
 import {assertEarlyResemblanceAdmission} from './early-resemblance-barrier.mjs';
 import {validateReferenceGeometry} from './reference-geometry.mjs';
-import {inspectSourcePixelFrameBytes} from './source-pixel-frame.mjs';
+import {inspectSourcePixelFrameBytes, MAX_SOURCE_FRAME_BYTES} from './source-pixel-frame.mjs';
 import {validateSpatialHypothesisSet} from './spatial-hypotheses.mjs';
 import {normalizeProjectionCamera, deriveRealizedWholeSilhouetteBounds} from './realized-projection.mjs';
 import {verifyRealizedProjection} from './realized-projection-verification.mjs';
@@ -797,6 +797,7 @@ async function ensureEarlyResemblanceAdmission(root, state, capability, scopeId,
   // existing gate; no self-authored source "PASS" report is accepted.
   try {
     const sourceFile = await assertExistingFileInside(root, state.source.path, 'source pixel-frame');
+    if (sourceFile.stat.size > MAX_SOURCE_FRAME_BYTES) throw new Error('source pixel-frame encoded-byte budget exceeded');
     const rawSource = await fs.readFile(sourceFile.realFile);
     inspectSourcePixelFrameBytes(rawSource, {
       sourceSha256: state.source.sha256,
