@@ -99,3 +99,15 @@ test('source-manifest cannot overwrite its own original source',t=>{
   assert.match(result.stderr,/must not overwrite the primary source image/u);
   assert.deepEqual(fs.readFileSync(file),original);
 });
+
+test('plain PNG without EXIF is structurally verified before any metadata read',t=>{
+  const root=fs.mkdtempSync(path.join(os.tmpdir(),'refas-image-intake-'));
+  t.after(()=>fs.rmSync(root,{recursive:true,force:true}));
+  const file=path.join(root,'plain.png');
+  const result=python(['-c',
+    'from PIL import Image\nimport sys\nImage.new("RGBA",(3,2),(10,20,30,255)).save(sys.argv[1])', file]);
+  assert.equal(result.status,0,result.stderr);
+  const intakeResult=intake(root,file);
+  assert.equal(intakeResult.status,0,intakeResult.stderr);
+  assert.equal(JSON.parse(fs.readFileSync(path.join(root,'source.json'),'utf8')).width,3);
+});
