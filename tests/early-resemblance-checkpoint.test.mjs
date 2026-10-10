@@ -410,7 +410,7 @@ test('S01b2 current nonimage primary source fails HOST shape-to-detail admission
   assert.equal((await loadProject(root)).head,shapeCheckpoint.id,'failed admission must not accept a later checkpoint');
   assert.deepEqual((await loadProject(root)).checkpointIds,before.checkpointIds);
   const guidance=await resumeProject(root);
-  assert.equal(guidance.nextAction,'REQUEST_REVIEW');
+  assert.equal(guidance.nextAction,'REQUEST_RESEMBLANCE_REVIEW');
   assert.match(guidance.reason,/primary source pixel-frame REVIEW_REQUIRED/u);
 });
 
