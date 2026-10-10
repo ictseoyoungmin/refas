@@ -30,7 +30,7 @@ import {findComparisonContradictions, validateRegisteredComparison} from './regi
 import {assertEarlyResemblanceAdmission} from './early-resemblance-barrier.mjs';
 import {validateReferenceGeometry} from './reference-geometry.mjs';
 import {validateSpatialHypothesisSet} from './spatial-hypotheses.mjs';
-import {normalizeProjectionCamera} from './realized-projection.mjs';
+import {normalizeProjectionCamera, deriveRealizedWholeSilhouetteBounds} from './realized-projection.mjs';
 import {verifyRealizedProjection} from './realized-projection-verification.mjs';
 import {findingsFromRealizedProjection} from './projection-findings.mjs';
 import {
@@ -976,6 +976,42 @@ async function ensureEarlyResemblanceAdmission(root, state, capability, scopeId,
       finding.severity === 'blocking');
     if (findings.length) {
       throw new Error(`${capability} early registered projection blocks downstream detail: ${findings.map((finding) => finding.category + ' (' + finding.checkId + ')').join('; ')}`);
+    }
+    // P0b2b2a: an anchor that projects correctly says nothing about whole
+    // head/torso mass. Screen actual GLB mesh extents against the primary
+    // source-observed outer macro contour. Screening can VETO gross wrong
+    // shape, never certify a photo likeness or replace image-space review.
+    const macroContours = (geometry.contours ?? []).filter((contour) =>
+      contour.importance === 'macro' && contour.closed === true &&
+      contour.evidenceRefs.includes(state.source.path));
+    if (!macroContours.length) {
+      throw new Error(`${capability} whole silhouette REVIEW_REQUIRED: primary source has no closed macro outer contour`);
+    }
+    const contourBounds = macroContours.map((contour) => {
+      const sourceMin = [Math.min(...contour.points.map((point) => point[0])),
+        Math.min(...contour.points.map((point) => point[1]))];
+      const sourceMax = [Math.max(...contour.points.map((point) => point[0])),
+        Math.max(...contour.points.map((point) => point[1]))];
+      return {contour, min:sourceMin, max:sourceMax,
+        span:[sourceMax[0]-sourceMin[0],sourceMax[1]-sourceMin[1]]};
+    }).sort((left,right) =>
+      (right.span[0]*right.span[1]) - (left.span[0]*left.span[1]));
+    const sourceOuter = contourBounds[0];
+    if (!(sourceOuter.span[0] > 1e-6 && sourceOuter.span[1] > 1e-6)) {
+      throw new Error(`${capability} whole silhouette REVIEW_REQUIRED: observed outer contour is degenerate`);
+    }
+    let screen;
+    try {
+      screen = deriveRealizedWholeSilhouetteBounds({glb:actualGlb,camera:proof.camera});
+    } catch (error) {
+      throw new Error(`${capability} whole silhouette REVIEW_REQUIRED: cannot screen actual GLB: ${error.message}`);
+    }
+    const ratios = screen.span.map((value,index) => value / sourceOuter.span[index]);
+    const centerDelta = screen.center.map((value,index) =>
+      Math.abs(value-(sourceOuter.min[index]+sourceOuter.max[index])/2));
+    if (ratios.some((ratio) => ratio < 0.45 || ratio > 2.2) ||
+        centerDelta.some((delta) => delta > 0.16)) {
+      throw new Error(`${capability} whole silhouette REWORK: source outer contour disagrees with actual GLB projected mass (width=${ratios[0].toFixed(3)}, height=${ratios[1].toFixed(3)}, center=${centerDelta.map(x=>x.toFixed(3)).join(',')})`);
     }
   }
 }

@@ -346,6 +346,9 @@ function sourceGeometry(source) {
   return createReferenceGeometry({
     scopeId:'whole', sourceSha256:source.sha256,
     anchors:[{id:'whole-center', xy:[.5,.5], importance:'macro', visibility:'visible', confidence:1, evidenceRefs:['source/reference.bin']}],
+    contours:[{id:'whole-outer-contour',importance:'macro',closed:true,
+      points:[[.488,.495],[.512,.495],[.512,.505],[.488,.505]],
+      evidenceRefs:['source/reference.bin']}],
     attestation:{attested:true, evidenceRefs:['source/reference.bin']},
   });
 }
