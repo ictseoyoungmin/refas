@@ -135,7 +135,7 @@ async function initBase({role='volumetric',depth=1}={}){
     }],
     contours:[{
       id:'observed-whole-outline',importance:'macro',closed:true,
-      points:[[.1,.1],[.9,.1],[.9,.9],[.1,.9]],
+      points:[[.44,.43],[.56,.43],[.56,.57],[.44,.57]],
       evidenceRefs:[source.path],
     }],
     attestation:{attested:true,evidenceRefs:[source.path]},
