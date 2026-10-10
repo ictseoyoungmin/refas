@@ -38,6 +38,9 @@ import {
 import {initTrustedContractFixtureProject} from '../skills/refas/scripts/lib/contract-fixture-project.mjs';
 
 const D = (ch) => ch.repeat(64);
+// Verified real 64x64 raster in the source-bound nonfixture contract tests.
+const SOURCE_PNG = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAIAAAAlC+aJAAAAY0lEQVR4nO3PQQ3AIADAQMAoZnCEwYngcVnSU9DOfe74s6UDXjWgNaA1oDWgNaA1oDWgNaA1oDWgNaA1oDWgNaA1oDWgNaA1oDWgNaA1oDWgNaA1oDWgNaA1oDWgNaA1oDWgfcdoAhbbtEQ/AAAAAElFTkSuQmCC', 'base64');
+assert.equal(SOURCE_PNG.length, 156, 'real source fixture byte count');
 
 async function writeRef(root, relative, bytes, kind) {
   const absolute = path.join(root, relative);
@@ -152,10 +155,7 @@ async function makeRealSourceProject(t, verdictStatus, {
   // manifest wrapped around arbitrary text. S01b2 replays raw pixels.
   const sourceBytes = nonImagePrimarySource
     ? Buffer.from('SHA-consistent source bytes but not a raster image')
-    : Buffer.from(
-      'iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAIAAAAlC+aJAAAAY0lEQVR4nO3PQQ3AIADAQMAoZnCEwYngcVnSU9DOfe74s6UDXjWgNaA1oDWgNaA1oDWgNaA1oDWgNaA1oDWgNaA1oDWgNaA1oDWgfcdoAhbbtEQ/AAAAAElFTkSuQmCC',
-      'base64',
-    );
+    : Buffer.from(SOURCE_PNG);
   const sourceRef = await writeRef(root, 'source/reference.png', sourceBytes, 'source-image');
   const source = {
     schema: 'refas.source-manifest/v1',
@@ -858,8 +858,8 @@ test('R04 upgrade rejects legacy real-source downstream lineage without R04 admi
   const root = await fs.mkdtemp(path.join(os.tmpdir(), 'refas-r04-legacy-'));
   t.after(() => fs.rm(root, {recursive: true, force: true}));
 
-  const sourceBytes = Buffer.from('legacy source bytes\n');
-  const sourceRef = await writeRef(root, 'source/reference.bin', sourceBytes, 'source-image');
+  const sourceBytes = Buffer.from(SOURCE_PNG);
+  const sourceRef = await writeRef(root, 'source/reference.png', sourceBytes, 'source-image');
   const source = {
     schema: 'refas.source-manifest/v1',
     id: 'primary-reference',
