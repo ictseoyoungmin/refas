@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+from io import BytesIO
 from pathlib import Path
 
 from PIL import Image, UnidentifiedImageError
@@ -17,10 +18,11 @@ from PIL import Image, UnidentifiedImageError
 # Bound the actual decode, not merely the metadata dimensions. This is a
 # conservative intake limit rather than an asset-resolution quality claim.
 MAX_PRIMARY_IMAGE_PIXELS = 40_000_000
+MAX_PRIMARY_IMAGE_BYTES = 256 * 1024 * 1024
 
 
-def sha256(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+def sha256(source_bytes: bytes) -> str:
+    return hashlib.sha256(source_bytes).hexdigest()
 
 
 def contained_path(root: Path, candidate: Path, label: str) -> Path:
@@ -33,7 +35,7 @@ def contained_path(root: Path, candidate: Path, label: str) -> Path:
     return candidate
 
 
-def inspect_primary_image(path: Path) -> tuple[int, int]:
+def inspect_primary_image(source_bytes: bytes) -> tuple[int, int]:
     """Read and decode one original still frame in canonical encoded orientation.
 
     RefAs v1 source coordinates are relative to the encoded width/height.
@@ -42,8 +44,10 @@ def inspect_primary_image(path: Path) -> tuple[int, int]:
     Until an explicit orientation-aware source-coordinate contract exists, a
     rotated/mirrored EXIF input must fail closed rather than silently pass.
     """
+    if not source_bytes or len(source_bytes) > MAX_PRIMARY_IMAGE_BYTES:
+        raise ValueError("primary image exceeds the supported encoded-byte budget")
     try:
-        with Image.open(path) as image:
+        with Image.open(BytesIO(source_bytes)) as image:
             width, height = image.size
             if width < 1 or height < 1 or width * height > MAX_PRIMARY_IMAGE_PIXELS:
                 raise ValueError("primary image exceeds the supported pixel budget")
@@ -55,10 +59,13 @@ def inspect_primary_image(path: Path) -> tuple[int, int]:
                     f"primary image EXIF orientation {orientation} is not canonical; "
                     "preserve the original and explicitly normalize a source copy before intake"
                 )
-            # verify() alone can accept a valid header with truncated pixel data.
-            # load() exercises the actual decoder before we authorize the manifest.
+            # verify() checks file structure but is not a full pixel decoder.
+            image.verify()
+        # Verify and decode the same immutable bytes: do not use independently
+        # mutable disk reads between structural proof and SHA calculation.
+        with Image.open(BytesIO(source_bytes)) as image:
             image.load()
-            return width, height
+        return width, height
     except (UnidentifiedImageError, OSError) as error:
         raise ValueError("primary image cannot be decoded completely") from error
 
@@ -80,7 +87,8 @@ def main() -> None:
         raise ValueError("manifest output must not overwrite the primary source image")
     if not image_path.is_file():
         raise ValueError("image must be a file")
-    width, height = inspect_primary_image(image_path)
+    source_bytes = image_path.read_bytes()
+    width, height = inspect_primary_image(source_bytes)
     acquisition = json.loads(args.acquisition) if args.acquisition else {}
     if not isinstance(acquisition, dict):
         raise ValueError("acquisition must be a JSON object")
@@ -88,8 +96,8 @@ def main() -> None:
         "schema": "refas.source-manifest/v1",
         "id": args.id,
         "path": image_path.relative_to(root).as_posix(),
-        "sha256": sha256(image_path),
-        "sizeBytes": image_path.stat().st_size,
+        "sha256": sha256(source_bytes),
+        "sizeBytes": len(source_bytes),
         "width": width,
         "height": height,
         "authority": "primary",
