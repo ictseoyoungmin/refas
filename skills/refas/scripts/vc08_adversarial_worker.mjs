@@ -98,12 +98,22 @@ async function genericCheckpoint(capability,label=capability,{extraRefs=[]}={}){
 async function initBase({role='volumetric',depth=1}={}){
   await fs.rm(projectRoot,{recursive:true,force:true});
   await fs.mkdir(projectRoot,{recursive:true});
-  const sourceBytes=Buffer.from('VC08 adversarial reference bytes\n');
-  await write('source/reference.bin',sourceBytes);
+  // VC08 must adversarially probe the actual trusted gates, not fail early
+  // because the positive baseline falsely labels text bytes as a photo.
+  const sourceRelative='source/reference.png';
+  const sourceAbsolute=path.join(projectRoot,sourceRelative);
+  await fs.mkdir(path.dirname(sourceAbsolute),{recursive:true});
+  const generated=spawnSync(process.env.CODEX_PRIMARY_RUNTIME_PYTHON || 'python3',[
+    '-c',
+    'from PIL import Image; import sys; Image.new("RGB",(256,256),(95,132,179)).save(sys.argv[1])',
+    sourceAbsolute,
+  ],{encoding:'utf8',timeout:15000});
+  if(generated.status!==0) throw new Error('VC08 requires actual decodable source PNG: '+(generated.stderr||generated.error?.message||generated.status));
+  const sourceBytes=await fs.readFile(sourceAbsolute);
   const source={
     schema:'refas.source-manifest/v1',
     id:'primary-reference',
-    path:'source/reference.bin',
+    path:sourceRelative,
     sha256:API.digestBytes(sourceBytes),
     sizeBytes:sourceBytes.length,
     width:256,height:256,authority:'primary',

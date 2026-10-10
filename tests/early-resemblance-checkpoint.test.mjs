@@ -29,6 +29,7 @@ import {
   digestBytes,
   finalizeMesh,
   initProject,
+  loadProject,
   partsToGlb,
   resolveAuthoritativeCandidateLineage,
   resolveVolumeBarrierAdmission,
@@ -37,6 +38,9 @@ import {
 import {initTrustedContractFixtureProject} from '../skills/refas/scripts/lib/contract-fixture-project.mjs';
 
 const D = (ch) => ch.repeat(64);
+// Verified real 64x64 raster in the source-bound nonfixture contract tests.
+const SOURCE_PNG = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAIAAAAlC+aJAAAAY0lEQVR4nO3PQQ3AIADAQMAoZnCEwYngcVnSU9DOfe74s6UDXjWgNaA1oDWgNaA1oDWgNaA1oDWgNaA1oDWgNaA1oDWgNaA1oDWgNaA1oDWgNaA1oDWgNaA1oDWgNaA1oDWgfcdoAhbbtEQ/AAAAAElFTkSuQmCC', 'base64');
+assert.equal(SOURCE_PNG.length, 156, 'real source fixture byte count');
 
 async function writeRef(root, relative, bytes, kind) {
   const absolute = path.join(root, relative);
@@ -141,19 +145,25 @@ async function makeRealSourceProject(t, verdictStatus, {
   omitOuterContour = false,
   grosslyWrongOuterContour = false,
   offsetOuterContour = false,
+  nonImagePrimarySource = false,
+  wrongPrimaryImageDimensions = false,
 } = {}) {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), 'refas-r04-real-'));
   t.after(() => fs.rm(root, {recursive: true, force: true}));
 
-  const sourceBytes = Buffer.from('real source bytes\n');
-  const sourceRef = await writeRef(root, 'source/reference.bin', sourceBytes, 'source-image');
+  // Genuine decodable PNG bytes, rather than a "photo-reference" source
+  // manifest wrapped around arbitrary text. S01b2 replays raw pixels.
+  const sourceBytes = nonImagePrimarySource
+    ? Buffer.from('SHA-consistent source bytes but not a raster image')
+    : Buffer.from(SOURCE_PNG);
+  const sourceRef = await writeRef(root, 'source/reference.png', sourceBytes, 'source-image');
   const source = {
     schema: 'refas.source-manifest/v1',
     id: 'primary-reference',
     path: sourceRef.path,
     sha256: sourceRef.sha256,
     sizeBytes: sourceRef.sizeBytes,
-    width: 64,
+    width: wrongPrimaryImageDimensions ? 65 : 64,
     height: 64,
     authority: 'primary',
     acquisition: {kind: 'photo-reference'},
@@ -386,6 +396,33 @@ async function makeRealSourceProject(t, verdictStatus, {
   const surfaceRef = await writeRef(root, 'model/surface.json', Buffer.from('{"surface":true}\n'), 'surface-network');
   return {root, source, hierarchy, barrier, volumeBarrier, classification, spatialEvidence, surfaceRef, candidateRef, shapeCheckpoint};
 }
+
+test('S01b2 current nonimage primary source fails HOST shape-to-detail admission despite consistent SHA and PROCEED', async t => {
+  const {root,source,barrier,surfaceRef,shapeCheckpoint}=await makeRealSourceProject(t,'match',{nonImagePrimarySource:true});
+  assert.equal(barrier.verdict,'PROCEED');
+  const raw=await fs.readFile(path.join(root,source.path));
+  assert.equal(digestBytes(raw),source.sha256,'attack source is SHA-consistent; digest-only gate would miss it');
+  const before=await loadProject(root);
+  await assert.rejects(
+    () => commitLocal(root,'surface-topology',[surfaceRef]),
+    /primary source pixel-frame REVIEW_REQUIRED: source pixel-frame could not be independently decoded/u,
+  );
+  assert.equal((await loadProject(root)).head,shapeCheckpoint.id,'failed admission must not accept a later checkpoint');
+  assert.deepEqual((await loadProject(root)).checkpointIds,before.checkpointIds);
+  const guidance=await resumeProject(root);
+  assert.equal(guidance.nextAction,'REQUEST_RESEMBLANCE_REVIEW');
+  assert.match(guidance.reason,/primary source pixel-frame REVIEW_REQUIRED/u);
+});
+
+test('S01b2 mismatched manifest dimensions fail the installed checkpoint pixel replay even with genuine PNG', async t => {
+  const {root,source,surfaceRef,shapeCheckpoint}=await makeRealSourceProject(t,'match',{wrongPrimaryImageDimensions:true});
+  assert.equal(digestBytes(await fs.readFile(path.join(root,source.path))),source.sha256);
+  await assert.rejects(
+    () => commitLocal(root,'surface-topology',[surfaceRef]),
+    /primary source pixel-frame REVIEW_REQUIRED: source pixel-frame decoded dimensions disagree with manifest/u,
+  );
+  assert.equal((await loadProject(root)).head,shapeCheckpoint.id);
+});
 
 test('P0b2b2a missing source macro outer contour does not become image-space NOT_APPLICABLE', async (t) => {
   const {root, surfaceRef, barrier} = await makeRealSourceProject(t, 'match', {omitOuterContour:true});
@@ -821,8 +858,8 @@ test('R04 upgrade rejects legacy real-source downstream lineage without R04 admi
   const root = await fs.mkdtemp(path.join(os.tmpdir(), 'refas-r04-legacy-'));
   t.after(() => fs.rm(root, {recursive: true, force: true}));
 
-  const sourceBytes = Buffer.from('legacy source bytes\n');
-  const sourceRef = await writeRef(root, 'source/reference.bin', sourceBytes, 'source-image');
+  const sourceBytes = Buffer.from(SOURCE_PNG);
+  const sourceRef = await writeRef(root, 'source/reference.png', sourceBytes, 'source-image');
   const source = {
     schema: 'refas.source-manifest/v1',
     id: 'primary-reference',
