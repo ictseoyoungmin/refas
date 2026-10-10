@@ -31,6 +31,7 @@ import {
   NEUTRAL_CLAY_PRESENTATION_PRESET_DIGEST,
   NEUTRAL_CLAY_REQUIRED_VIEW_IDS,
   createRealizedProjection,
+  createSpatialHypothesisSet,
   createReferenceGeometry,
   createRelationalDiscrepancy,
   createRelationalStructure,
@@ -147,10 +148,37 @@ async function advanceToReview(root, source, {
       const spatialStatePath = path.join(root,'model','spatial.json');
       await json(spatialStatePath,{spatial:true});
       const spatialRef = await contentReference(spatialStatePath,{kind:'spatial-hypotheses',root});
+      const centerX=projection === 'bad' ? 4 : 0;
+      const selectedCamera={projection:'perspective',position:[centerX,0,5],
+        target:[centerX,0,0],up:[0,1,0],fovY:90,aspect:1};
+      const alternativeCamera={projection:'perspective',position:[centerX-2,0,5],
+        target:[centerX-2,0,0],up:[0,1,0],fovY:90,aspect:1};
+      const hypothesisSet=createSpatialHypothesisSet({
+        scopeId:'whole',sourceSha256:source.sha256,
+        hypotheses:[
+          {id:'source-blockout-camera',description:'primary source macro candidate',
+            camera:selectedCamera,hiddenForm:'unobserved depth',
+            predictions:{silhouette:'frontal',occlusion:'front overlap',
+              sideView:'unknown',topView:'unknown',grazing:'unknown'},
+            falsifiers:['source head/whole anchors diverge'],evidenceRefs:[source.path],
+            evidenceCoverage:2,assumptionCost:0,status:'plausible'},
+          {id:'source-blockout-oblique',description:'alternative source projection',
+            camera:alternativeCamera,hiddenForm:'unobserved depth',
+            predictions:{silhouette:'oblique',occlusion:'offset overlap',
+              sideView:'unknown',topView:'unknown',grazing:'unknown'},
+            falsifiers:['source whole position rules out this camera'],evidenceRefs:[source.path],
+            evidenceCoverage:1,assumptionCost:1,status:'falsified'},
+        ],
+        selectedId:'source-blockout-camera',
+        attestation:{attested:true,evidenceRefs:[source.path]},
+      });
+      const hypothesisPath=await json(path.join(root,'model','source-camera-hypotheses.json'),hypothesisSet);
+      const hypothesisRef=await contentReference(hypothesisPath,{kind:'spatial-hypothesis-set',root});
       await commitCheckpoint(root,{
-        capability,scopeId:'whole',reason:'spatial-hypotheses fixture freezes VC02 role authority',
-        artifactRefs:[spatialRef,roleRef],claims:['spatial-hypotheses closed with frozen role'],
-        gates:[{id:'spatial-hypotheses-gate',evidenceRefs:[spatialRef.path,roleRef.path]}],
+        capability,scopeId:'whole',reason:'spatial-hypotheses fixture freezes VC02 role authority and camera choice',
+        artifactRefs:[spatialRef,roleRef,hypothesisRef],
+        claims:['spatial role and source-bound competing camera hypotheses frozen before candidate'],
+        gates:[{id:'spatial-hypotheses-gate',evidenceRefs:[spatialRef.path,roleRef.path,hypothesisRef.path]}],
       });
       continue;
     }

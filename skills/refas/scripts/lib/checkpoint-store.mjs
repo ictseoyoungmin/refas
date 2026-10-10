@@ -29,6 +29,8 @@ import {inspectBaseColorTextures} from './glb.mjs';
 import {findComparisonContradictions, validateRegisteredComparison} from './registered-comparison.mjs';
 import {assertEarlyResemblanceAdmission} from './early-resemblance-barrier.mjs';
 import {validateReferenceGeometry} from './reference-geometry.mjs';
+import {validateSpatialHypothesisSet} from './spatial-hypotheses.mjs';
+import {normalizeProjectionCamera} from './realized-projection.mjs';
 import {verifyRealizedProjection} from './realized-projection-verification.mjs';
 import {findingsFromRealizedProjection} from './projection-findings.mjs';
 import {
@@ -899,6 +901,53 @@ async function ensureEarlyResemblanceAdmission(root, state, capability, scopeId,
         !proof.evidenceRefs?.includes(candidate.path) ||
         proof.evidenceRefs.some((ref) => !trustedPaths.has(ref))) {
       throw new Error(`${capability} early registered projection must cite the raw source and exact current GLB within checkpoint lineage`);
+    }
+    // P0b2b1: the chosen camera must have been committed as source-cited
+    // alternatives BEFORE shape reconstruction. A candidate-side camera
+    // label and even numerically correct GLB reprojection cannot decide
+    // which high-impact source orientation is actually selected.
+    const spatialCheckpoint = [...lineage].reverse().find((checkpoint) =>
+      checkpoint.capability === 'spatial-hypotheses' &&
+      scopeContains(checkpoint.scopeId, scopeId));
+    if (!spatialCheckpoint) {
+      throw new Error(`${capability} camera hypothesis REVIEW_REQUIRED: missing upstream spatial-hypotheses checkpoint`);
+    }
+    const {value: hypothesisSet} = await readCheckpointJsonArtifact(
+      root, spatialCheckpoint, 'spatial-hypothesis-set',
+      `${capability} camera hypothesis admission`,
+    );
+    const hypothesisCheck = validateSpatialHypothesisSet(hypothesisSet);
+    if (!hypothesisCheck.valid) {
+      throw new Error(`${capability} camera hypothesis REVIEW_REQUIRED: invalid frozen source hypotheses: ${hypothesisCheck.errors.join('; ')}`);
+    }
+    if (hypothesisSet.sourceSha256 !== state.source.sha256 ||
+        !scopeContains(hypothesisSet.scopeId, scopeId)) {
+      throw new Error(`${capability} camera hypothesis REVIEW_REQUIRED: original source or scope mismatch`);
+    }
+    if (!hypothesisSet.attestation?.evidenceRefs?.includes(state.source.path) ||
+        hypothesisSet.hypotheses.some((hypothesis) =>
+          !hypothesis.evidenceRefs?.includes(state.source.path))) {
+      throw new Error(`${capability} camera hypothesis REVIEW_REQUIRED: all candidate cameras and attestation require primary-source citation`);
+    }
+    if (hypothesisSet.selectedId == null) {
+      throw new Error(`${capability} camera hypothesis REVIEW_REQUIRED: high-impact camera alternatives remain unresolved`);
+    }
+    const selectedCamera = hypothesisSet.hypotheses.find((hypothesis) =>
+      hypothesis.id === hypothesisSet.selectedId);
+    if (!selectedCamera || ['falsified', 'superseded'].includes(selectedCamera.status) ||
+        hypothesisSet.hypotheses.some((hypothesis) =>
+          hypothesis.id !== hypothesisSet.selectedId && hypothesis.status !== 'falsified')) {
+      throw new Error(`${capability} camera hypothesis REVIEW_REQUIRED: selected camera lacks resolved source-falsified competitors`);
+    }
+    let selectedCameraDigest;
+    try {
+      selectedCameraDigest = digestJson(normalizeProjectionCamera(selectedCamera.camera));
+    } catch (error) {
+      throw new Error(`${capability} camera hypothesis REVIEW_REQUIRED: selected camera is not geometrically valid: ${error.message}`);
+    }
+    if (proof.cameraHypothesisId !== selectedCamera.id ||
+        proof.cameraDigest !== selectedCameraDigest) {
+      throw new Error(`${capability} camera hypothesis REWORK: registered camera does not match the frozen source-selected hypothesis`);
     }
     const replay = verifyRealizedProjection({proof, referenceGeometry: geometry, glb: actualGlb});
     if (!replay.valid) {
