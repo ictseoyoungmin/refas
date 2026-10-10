@@ -47,6 +47,12 @@ def inspect_primary_image(source_bytes: bytes) -> tuple[int, int]:
     if not source_bytes or len(source_bytes) > MAX_PRIMARY_IMAGE_BYTES:
         raise ValueError("primary image exceeds the supported encoded-byte budget")
     try:
+        # Pillow PNG verify() must be the first operation after open; even
+        # reading EXIF can consume internal PNG chunks before verify().
+        with Image.open(BytesIO(source_bytes)) as image:
+            image.verify()
+        # Decode and inspect the same immutable SHA-bound source bytes using
+        # a fresh decoder; do not reuse a consumed verify() handle.
         with Image.open(BytesIO(source_bytes)) as image:
             width, height = image.size
             if width < 1 or height < 1 or width * height > MAX_PRIMARY_IMAGE_PIXELS:
@@ -59,11 +65,6 @@ def inspect_primary_image(source_bytes: bytes) -> tuple[int, int]:
                     f"primary image EXIF orientation {orientation} is not canonical; "
                     "preserve the original and explicitly normalize a source copy before intake"
                 )
-            # verify() checks file structure but is not a full pixel decoder.
-            image.verify()
-        # Verify and decode the same immutable bytes: do not use independently
-        # mutable disk reads between structural proof and SHA calculation.
-        with Image.open(BytesIO(source_bytes)) as image:
             image.load()
         return width, height
     except (UnidentifiedImageError, OSError) as error:
