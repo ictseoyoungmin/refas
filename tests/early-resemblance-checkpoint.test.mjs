@@ -387,6 +387,32 @@ async function makeRealSourceProject(t, verdictStatus, {
   return {root, source, hierarchy, barrier, volumeBarrier, classification, spatialEvidence, surfaceRef, candidateRef, shapeCheckpoint};
 }
 
+test('P0b2b2a missing source macro outer contour does not become image-space NOT_APPLICABLE', async (t) => {
+  const {root, surfaceRef, barrier} = await makeRealSourceProject(t, 'match', {omitOuterContour:true});
+  assert.equal(barrier.verdict, 'PROCEED');
+  await assert.rejects(
+    () => commitLocal(root, 'surface-topology', [surfaceRef]),
+    /whole silhouette REVIEW_REQUIRED: primary source has no closed macro outer contour/u,
+  );
+});
+
+test('P0b2b2a actual GLB mass vetoes gross source contour scale mismatch despite matched central anchor', async (t) => {
+  const {root, surfaceRef, barrier} = await makeRealSourceProject(t, 'match', {grosslyWrongOuterContour:true});
+  assert.equal(barrier.verdict, 'PROCEED');
+  await assert.rejects(
+    () => commitLocal(root, 'surface-topology', [surfaceRef]),
+    /whole silhouette REWORK: source outer contour disagrees with actual GLB projected mass/u,
+  );
+});
+
+test('P0b2b2a registered camera center cannot disguise wrong whole silhouette location', async (t) => {
+  const {root, surfaceRef} = await makeRealSourceProject(t, 'match', {offsetOuterContour:true});
+  await assert.rejects(
+    () => commitLocal(root, 'surface-topology', [surfaceRef]),
+    /whole silhouette REWORK: source outer contour disagrees with actual GLB projected mass/u,
+  );
+});
+
 test('P0b2b1 no frozen source-selected camera hypotheses cannot authorize detail', async (t) => {
   const {root,surfaceRef}=await makeRealSourceProject(t,'match',{omitHypothesisSet:true});
   await assert.rejects(
