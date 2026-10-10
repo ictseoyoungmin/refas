@@ -87,3 +87,15 @@ test('source-manifest refuses animated multi-frame source',t=>{
   assert.notEqual(result.status,0);
   assert.match(result.stderr,/single still image/u);
 });
+
+test('source-manifest cannot overwrite its own original source',t=>{
+  const root=fs.mkdtempSync(path.join(os.tmpdir(),'refas-image-intake-'));
+  t.after(()=>fs.rmSync(root,{recursive:true,force:true}));
+  const file=path.join(root,'source.png');
+  createImage(file,'PNG');
+  const original=fs.readFileSync(file);
+  const result=python([INTAKE,'--root',root,'--image',file,'--id','primary-reference','--out',file]);
+  assert.notEqual(result.status,0);
+  assert.match(result.stderr,/must not overwrite the primary source image/u);
+  assert.deepEqual(fs.readFileSync(file),original);
+});
