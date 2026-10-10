@@ -29,6 +29,7 @@ import {inspectBaseColorTextures} from './glb.mjs';
 import {findComparisonContradictions, validateRegisteredComparison} from './registered-comparison.mjs';
 import {assertEarlyResemblanceAdmission} from './early-resemblance-barrier.mjs';
 import {validateReferenceGeometry} from './reference-geometry.mjs';
+import {inspectSourcePixelFrameBytes} from './source-pixel-frame.mjs';
 import {validateSpatialHypothesisSet} from './spatial-hypotheses.mjs';
 import {normalizeProjectionCamera, deriveRealizedWholeSilhouetteBounds} from './realized-projection.mjs';
 import {verifyRealizedProjection} from './realized-projection-verification.mjs';
@@ -788,6 +789,24 @@ async function verifyEarlyResemblanceEvidenceArtifacts(root, state, shapeCheckpo
 async function ensureEarlyResemblanceAdmission(root, state, capability, scopeId, lineage) {
   if (isTrustedContractFixtureProject(state)) return;
   if (capabilityIndex(capability) < capabilityIndex('surface-topology')) return;
+
+  // S01b2: a worker can author a checksum-consistent source manifest using
+  // non-image bytes. At the REAL non-fixture shape->detail admission, independently
+  // decode the current raw source pixels through the installed S01b1 evaluator.
+  // All host checkpoint entrypoints, audit/certification and resume call this
+  // existing gate; no self-authored source "PASS" report is accepted.
+  try {
+    const sourceFile = await assertExistingFileInside(root, state.source.path, 'source pixel-frame');
+    const rawSource = await fs.readFile(sourceFile.realFile);
+    inspectSourcePixelFrameBytes(rawSource, {
+      sourceSha256: state.source.sha256,
+      sizeBytes: state.source.sizeBytes,
+      width: state.source.width,
+      height: state.source.height,
+    });
+  } catch (error) {
+    throw new Error(`${capability} primary source pixel-frame REVIEW_REQUIRED: ${error.message}`);
+  }
 
   const shapeCheckpoint = [...lineage].reverse().find((checkpoint) =>
     checkpoint.capability === 'shape-reconstruction' && scopeContains(checkpoint.scopeId, scopeId));
