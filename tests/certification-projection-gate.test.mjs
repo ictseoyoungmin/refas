@@ -490,6 +490,8 @@ async function commitCertification(root, source, {
   omitSourceSelectedCamera=false,
   sourceSelectedCameraAttack=false,
   omitCanonicalRegistration=false,
+  authoredPixelAttack=false,
+  registrationAmbiguous=false,
 }={}) {
   const assetPath = path.join(root, 'model', 'candidate.glb');
   const glb = await fs.readFile(assetPath);
@@ -549,7 +551,8 @@ async function commitCertification(root, source, {
       {id:'lower-right',parent:[1,1],child:[1,1],evidenceRefs:[source.path,portableHero.path]},
       {id:'lower-left',parent:[0,1],child:[0,1],evidenceRefs:[source.path,portableHero.path]},
     ],
-    attestation:{attested:true,evidenceRefs:[source.path,portableHero.path]},ambiguities:[],
+    attestation:{attested:true,evidenceRefs:[source.path,portableHero.path]},
+    ambiguities:registrationAmbiguous?['unresolved camera-to-source source-to-hero mapping']:[],
   });
   const registrationPath=await json(path.join(root,'model','source-registered-placement.json'),registration);
   const registrationRef=await contentReference(registrationPath,{kind:'reference-registration',root});
@@ -654,6 +657,13 @@ async function commitCertification(root, source, {
       realSourceLandmarksMustUseRealizedProjection:true, manualRenderCoordinatesCannotClaimRealSourceGeometry:true,
       projectionMetricsRemainVetoOnly:true, singleViewIouDisabled:true}, inputDigest:'e'.repeat(64),
   };
+  // Re-sign an invented apparent pixel agreement as an adversarial worker.
+  // Valid report digests cannot replace independent raw-photo remeasurement.
+  if(authoredPixelAttack) {
+    comparison.scopes[0].metrics.perceptual.pixelShape.sourceOnlyFraction=0;
+    comparison.scopes[0].metrics.perceptual.pixelShape.renderOnlyFraction=0;
+    comparison.scopes[0].metrics.perceptual.edgeDisagreement=0;
+  }
   comparison.comparisonDigest = digestJson(comparison);
   const comparisonPath = await json(path.join(root,'reviews','registered-comparison','comparison-report.json'), comparison);
   const comparisonRef = await contentReference(comparisonPath, {kind:'registered-comparison', root});
@@ -961,6 +971,30 @@ test('S02b2c2 valid GLB with forged real-source registration is denied before ch
   const after = await loadProject(root);
   assert.equal(after.head, before.head);
   assert.equal(after.checkpointIds.length, before.checkpointIds.length);
+});
+
+test('S02b2c2 rejects re-signed worker-authored invented pixelShape and edge metrics before final checkpoint', async t=>{
+  const {root,source}=await makeProject(t);
+  await advanceToReview(root,source);
+  const before=await loadProject(root);
+  await assert.rejects(
+    ()=>commitCertification(root,source,{projection:'good',authoredPixelAttack:true}),
+    /prospective source-bound certification REVIEW_REQUIRED:.*worker-authored registered comparison/u);
+  const after=await loadProject(root);
+  assert.equal(after.head,before.head);
+  assert.equal(after.checkpointIds.length,before.checkpointIds.length);
+});
+
+test('S02b2c2 refuses unresolved source-to-hero placement rather than claiming source fidelity',async t=>{
+  const {root,source}=await makeProject(t);
+  await advanceToReview(root,source);
+  const before=await loadProject(root);
+  await assert.rejects(
+    ()=>commitCertification(root,source,{projection:'good',registrationAmbiguous:true}),
+    /prospective source-bound certification REVIEW_REQUIRED:.*INSUFFICIENT/u);
+  const after=await loadProject(root);
+  assert.equal(after.head,before.head);
+  assert.equal(after.checkpointIds.length,before.checkpointIds.length);
 });
 
 test('blocking realized reprojection cannot commit a mismatched source-selected hero', async (t) => {
