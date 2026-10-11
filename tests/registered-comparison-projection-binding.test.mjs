@@ -15,6 +15,7 @@ import {
   digestBytes,
   digestJson,
   findComparisonContradictions,
+  evaluateIndependentSourceRenderPixels,
   partsToGlb,
   sha256File,
   validateRegisteredComparison,
@@ -65,7 +66,7 @@ async function makeFixture(t, {shapeVariant = 'equal'} = {}) {
     'd.rectangle((0,0,7,7),fill=(60,65,70)) if sys.argv[2]=="cluttered" else None',
     'im.save(sys.argv[1])',
   ].join(';');
-  const sourceMode = shapeVariant === 'opposed-voids' ? 'left-void' : 'solid';
+  const sourceMode = shapeVariant === 'opposed-voids' ? 'left-void' : shapeVariant === 'cluttered' ? 'cluttered' : 'solid';
   const renderMode = shapeVariant === 'opposed-voids' ? 'right-void' : 'solid';
   for (const [file, mode] of [
     [path.join(root, 'source/reference.png'), sourceMode],
@@ -264,4 +265,65 @@ test('S02 matching registered pixels cannot elevate the single view into a fidel
   assert.equal(pixel.renderOnlyPixels,0);
   assert.equal(pixel.cannotAuthorizePass,true);
   assert.ok(!findComparisonContradictions(report).some(x=>x.id==='whole-pixel-shape-screen'));
+});
+
+async function recomputePixels(root, overrides={}) {
+  const source='source/reference.png', hero='renders/final/hero.png';
+  const registration='model/source-to-render-registration.json';
+  return evaluateIndependentSourceRenderPixels({
+    root,sourcePath:source,sourceSha256:await sha256File(path.join(root,source)),
+    heroPath:hero,heroSha256:await sha256File(path.join(root,hero)),
+    registrationPath:registration,registrationSha256:await sha256File(path.join(root,registration)),
+    ...overrides,
+  });
+}
+
+test('S02b2c1 independent original-source/current-hero pixels recompute matching geometry but cannot certify likeness',async t=>{
+  const {root}=await makeFixture(t);
+  const measured=await recomputePixels(root);
+  assert.equal(measured.authority,'independently-recomputed-original-and-render-pixels');
+  assert.equal(measured.status,'USABLE');
+  assert.equal(measured.perceptual.pixelShape.sourceOnlyPixels,0);
+  assert.equal(measured.perceptual.pixelShape.renderOnlyPixels,0);
+  assert.equal(measured.cannotAuthorizeReferenceFidelity,true);
+});
+
+test('S02b2c1 valid signed source and hero same area/outer bounds but opposing interior voids yield contrary raw pixels',async t=>{
+  const {root}=await makeFixture(t,{shapeVariant:'opposed-voids'});
+  const measured=await recomputePixels(root);
+  assert.equal(measured.status,'USABLE');
+  assert.equal(measured.sourceForegroundPixels,measured.renderForegroundPixels);
+  assert.deepEqual(measured.perceptual.sourceBoundingBox,measured.perceptual.renderBoundingBox);
+  assert.ok(measured.perceptual.pixelShape.sourceOnlyFraction>.28);
+  assert.ok(measured.perceptual.pixelShape.renderOnlyFraction>.28);
+  // An author-provided report claiming perfect alignment cannot be an input
+  // to this independent recomputation.
+  const fake={sourceForegroundPixels:measured.sourceForegroundPixels,
+    renderForegroundPixels:measured.renderForegroundPixels,
+    perceptual:{pixelShape:{status:'USABLE',sourceOnlyFraction:0,renderOnlyFraction:0}}};
+  assert.equal(fake.perceptual.pixelShape.sourceOnlyFraction,0);
+  assert.ok(measured.perceptual.pixelShape.sourceOnlyFraction>.28);
+});
+
+test('S02b2c1 genuine photo with noisy image corners remains INSUFFICIENT, not resemblance PASS',async t=>{
+  const {root}=await makeFixture(t,{shapeVariant:'cluttered'});
+  const measured=await recomputePixels(root);
+  assert.equal(measured.status,'INSUFFICIENT');
+  assert.equal(measured.perceptual.pixelShape.status,'INSUFFICIENT');
+  assert.equal(measured.cannotAuthorizeReferenceFidelity,true);
+});
+
+test('S02b2c1 refuses misbound registration, stale image SHA and project-relative traversal',async t=>{
+  const {root}=await makeFixture(t);
+  await assert.rejects(()=>recomputePixels(root,{sourcePath:'../reference.png'}),
+    /project-contained relative path/u);
+  await assert.rejects(()=>recomputePixels(root,{heroSha256:'a'.repeat(64)}),
+    /current bytes differ from authoritative SHA/u);
+  const registration='model/source-to-render-registration.json';
+  const regPath=path.join(root,registration);
+  const record=JSON.parse(await fs.readFile(regPath,'utf8'));
+  record.parentSourceSha256='b'.repeat(64);
+  await writeJson(regPath,record);
+  await assert.rejects(()=>recomputePixels(root),
+    /registered placement cannot replay/u);
 });
