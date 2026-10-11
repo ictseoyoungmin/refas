@@ -474,7 +474,7 @@ test('S04a trusted replay reopens shape from physically false source macro axis 
 });
 
 test('S04a wrong frozen-camera projection reopens spatial hypotheses, invalidating shape, render and certification',async t=>{
-  const {root,shapeCheckpoint}=await makeRealSourceProject(t,'match',{wrongEarlyCamera:true});
+  const {root,shapeCheckpoint}=await makeRealSourceProject(t,'match',{selectedCameraMismatch:true});
   const result=await reopenFromTrustedSourceAdmission(root,{expectedHeadId:shapeCheckpoint.id});
   assert.equal(result.status,'REOPENED');
   assert.equal(result.ownerCapability,'spatial-hypotheses');
