@@ -65,6 +65,7 @@ export {
 } from './checkpoint-gates.mjs';
 export * from './checkpoint-store.mjs';
 export * from './source-pixel-frame.mjs';
+export * from './registered-render-replay.mjs';
 export * from './host-session.mjs';
 export * from './host-event.mjs';
 export * from './host-operation.mjs';
