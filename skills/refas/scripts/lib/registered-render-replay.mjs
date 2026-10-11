@@ -114,7 +114,7 @@ export async function verifyRegisteredRenderReplay({
     const out=path.join(tmp,'independent');
     const python=spawnSync(PYTHON,[RENDERER,'--glb',frozenAsset,'--frame',frozenFrame,
       '--out',out,'--size',String(renderSize),
-      '--max-working-mb','256','--timeout-seconds','45'],{
+      '--max-working-mb','256','--timeout-seconds','45','--hero-only'],{
       encoding:'utf8',timeout:60_000,maxBuffer:128*1024,
       env:{...process.env,PYTHONDONTWRITEBYTECODE:'1'},
     });
