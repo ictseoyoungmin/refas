@@ -32,6 +32,7 @@ import {validateReferenceGeometry} from './reference-geometry.mjs';
 import {screenSourceMacroSectionEnvelopes} from './source-macro-section-screen.mjs';
 import {screenSourceMacroPartOrientation} from './source-macro-orientation-screen.mjs';
 import {screenSourceProfileVector} from './source-profile-vector-screen.mjs';
+import {screenSourceRealizedOcclusion} from './source-occlusion-screen.mjs';
 import {inspectSourcePixelFrameBytes, MAX_SOURCE_FRAME_BYTES} from './source-pixel-frame.mjs';
 import {verifyRegisteredRenderReplay} from './registered-render-replay.mjs';
 import {evaluateIndependentSourceRenderPixels} from './independent-source-render-pixels.mjs';
@@ -1212,6 +1213,20 @@ async function ensureEarlyResemblanceAdmission(root, state, capability, scopeId,
       if (profile.status !== 'NO_DETECTED_CONTRADICTION') {
         throw new Error(`${capability} signed source profile ${profile.status}: ` +
           profile.findings.map(x => `${x.role}: ${x.reason}`).join('; '));
+      }
+    }
+    // S03c: source-cited visible occlusion order must be physically replayed
+    // from GLB POSITION vertices and the selected source camera. Depths in
+    // worker-authored projectionFit.occlusionDepths cannot authorize order.
+    // Unclear/intersecting 3D ranges remain review-required, never invented.
+    if ((geometry.occlusions ?? []).some(item => item.importance !== 'detail')) {
+      const occlusion = screenSourceRealizedOcclusion({
+        referenceGeometry: geometry, realizedProjection: proof,
+        sourcePath: state.source.path,
+      });
+      if (occlusion.status !== 'NO_DETECTED_CONTRADICTION') {
+        throw new Error(`${capability} source realized occlusion ${occlusion.status}: ` +
+          occlusion.findings.map(item => item.id + ': ' + item.reason).join('; '));
       }
     }
     // P0b2b2a: an anchor that projects correctly says nothing about whole
