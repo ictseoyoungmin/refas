@@ -732,9 +732,15 @@ async function inspectIndependentSourcePixelEvidence(root, state, artifactRefs, 
       observed.authority!=='independently-recomputed-original-and-render-pixels') {
     throw new Error('original-photo observation did not return trusted contradiction-only evidence');
   }
-  const matches=(actual,expected)=>typeof expected==='number'
-    ? Number.isFinite(actual) && Math.abs(actual-expected)<=1e-8
-    : JSON.stringify(actual)===JSON.stringify(expected);
+  const matches=(actual,expected)=>{
+    if(typeof expected==='number') return Number.isFinite(actual) && Math.abs(actual-expected)<=1e-8;
+    if(Array.isArray(expected)) return Array.isArray(actual) && actual.length===expected.length &&
+      expected.every((item,i)=>matches(actual[i],item));
+    if(expected && typeof expected==='object') return actual && typeof actual==='object' &&
+      !Array.isArray(actual) && Object.keys(actual).length===Object.keys(expected).length &&
+      Object.entries(expected).every(([key,value])=>Object.hasOwn(actual,key)&&matches(actual[key],value));
+    return actual===expected;
+  };
   for(const key of ['sourceForegroundPixels','renderForegroundPixels']) {
     if(!matches(whole.metrics?.[key],observed[key])) {
       throw new Error('worker-authored registered comparison '+key+' differs from independent original pixels');
