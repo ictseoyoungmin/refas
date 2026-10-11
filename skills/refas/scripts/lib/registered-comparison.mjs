@@ -87,6 +87,27 @@ export function findComparisonContradictions(report, {foregroundAreaRatioOutside
       summary: `Registered edge disagreement is ${edgeDisagreement.toFixed(6)}, above the contradiction-screening band.`, evidenceRefs,
     });
   }
+  // S02: area or bounding-box agreement can conceal wrong interior parts,
+  // silhouette placement and negative-space cutouts. Screen direct registered
+  // pixel occupancy, not worker-declared contours, and never grant PASS from
+  // this single-source-view metric.
+  const pixelShape = whole.metrics?.perceptual?.pixelShape;
+  if (pixelShape?.status === 'USABLE' &&
+      pixelShape.evidenceAuthority === 'registered-source-and-render-pixels' &&
+      pixelShape.cannotAuthorizePass === true &&
+      Number.isFinite(pixelShape.sourceOnlyFraction) &&
+      Number.isFinite(pixelShape.renderOnlyFraction) &&
+      pixelShape.sourceOnlyFraction > 0.28 &&
+      pixelShape.renderOnlyFraction > 0.28) {
+    signals.push({
+      id: 'whole-pixel-shape-screen',
+      category: 'silhouette-mismatch',
+      metric: 'perceptual.pixelShape.sourceOnlyFraction',
+      value: pixelShape.sourceOnlyFraction,
+      summary: 'Registered original pixels and render pixels disagree in spatial foreground placement despite potentially matching areas and bounding boxes; inspect interior voids and silhouette before certification.',
+      evidenceRefs,
+    });
+  }
   return signals;
 }
 
@@ -144,6 +165,28 @@ export function validateRegisteredComparison(report, {trustedContractFixture = f
       if (!legacyContract && !['realized-projection', 'declared-test-fixture', 'image-only'].includes(scope?.measurementAuthority)) errors.push(`scope ${scopeId} has invalid measurement authority`);
       if (realSource && scope?.measurementAuthority !== 'realized-projection') errors.push(`real-source scope ${scopeId} must use realized projection measurements`);
 
+      // Pixel-only evidence is useful as a conservative contradiction veto;
+      // a worker-authored boolean cannot upgrade visual review or source truth.
+      const pixelShape = scope?.metrics?.perceptual?.pixelShape;
+      if (pixelShape != null) {
+        if (!['USABLE', 'INSUFFICIENT'].includes(pixelShape.status) ||
+            pixelShape.evidenceAuthority !== 'registered-source-and-render-pixels' ||
+            pixelShape.cannotAuthorizePass !== true) {
+          errors.push(`scope ${scopeId} has invalid source/render pixel-shape authority`);
+        }
+        if (pixelShape.status === 'USABLE') {
+          for (const key of ['sourceOnlyFraction', 'renderOnlyFraction']) {
+            if (!Number.isFinite(pixelShape[key]) || pixelShape[key] < 0 || pixelShape[key] > 1) {
+              errors.push(`scope ${scopeId} pixel-shape ${key} must be a fraction`);
+            }
+          }
+          for (const key of ['sourceOnlyPixels', 'renderOnlyPixels']) {
+            if (!Number.isSafeInteger(pixelShape[key]) || pixelShape[key] < 0) {
+              errors.push(`scope ${scopeId} pixel-shape ${key} must count pixels`);
+            }
+          }
+        }
+      }
       for (const image of scope?.images ?? []) assertDigest(image.sha256, `${scopeId} image sha256`);
       for (const landmark of scope?.landmarks ?? []) {
         if (landmark.evidenceClass !== 'derived-observation-aid') errors.push(`landmark ${landmark.id} has invalid evidence class`);
