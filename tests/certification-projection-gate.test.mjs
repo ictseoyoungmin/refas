@@ -298,7 +298,9 @@ async function advanceToReview(root, source, {
       const authority=await resolveAuthoritativeCandidateLineage(root);
       const state=await loadProject(root);
       const assetPath=path.join(root,'model','candidate.glb');
-      const changed=mannequinGlb(0.21,0.08);
+      // Changed final GLB digest under appearance owner, with the same source-visible geometry.
+      // Moving the whole mesh instead would rightly fail new source pixel geometry verification.
+      const changed=mannequinGlb(0,0.08,[.52,.50,.35,1]);
       await fs.writeFile(assetPath,changed);
       const output=await contentReference(assetPath,{kind:'glb',root});
       assert.notEqual(output.sha256,authority.finalCandidate.assetSha256);
@@ -344,13 +346,13 @@ function vc05BoxMesh(depth=0.02) {
   return finalizeMesh(positions,indices,{primitive:'vc05-box'});
 }
 
-function mannequinGlb(x=0, thickness=0.08) {
+function mannequinGlb(x=0, thickness=0.08, color=[.7,.55,.35,1]) {
   const mesh = thickness <= 0.02
     ? vc05BoxMesh(thickness)
     : createSegmentPrism({start:[-.1,0,0], end:[.1,0,0], width:.08, height:thickness, upHint:[0,1,0]});
   return partsToGlb({
     parts:[{id:'model-node', scopeId:'whole', materialId:'wood', mesh, translation:[x,0,0]}],
-    materials:{wood:{baseColor:[.7,.55,.35,1], metallic:0, roughness:.7}},
+    materials:{wood:{baseColor:color, metallic:0, roughness:.7}},
   });
 }
 
