@@ -2822,9 +2822,12 @@ export async function finishEdit(root, {candidateCheckpointId, before, after, fi
   return deepFreeze({...decision, restoredArtifacts});
 }
 
-export async function reportFinding(root, {finding} = {}) {
+export async function reportFinding(root, {finding, expectedHeadId} = {}) {
   root = projectRoot(root);
   const state = await loadProject(root);
+  if (expectedHeadId !== undefined && expectedHeadId !== state.head) {
+    throw new Error('finding report checkpoint head changed since trusted evaluation');
+  }
   if (state.activeTransaction) throw new Error('finish or abandon the active edit before reporting an independent finding');
   const checkpoints = await listCheckpoints(root);
   const route = routeFinding({finding, checkpoints, headId: state.head});
@@ -2851,6 +2854,91 @@ export async function reportFinding(root, {finding} = {}) {
   state.journal.push({event: 'FINDING_REPORTED', id: decision.id, action: route.action, head: state.head, restoredArtifacts, at: nowIso()});
   await writeJsonAtomic(statePath(root), state);
   return deepFreeze({...decision, restoredArtifacts});
+}
+
+// S04a: promote *replayed installed-host* early-source contradictions through
+// the existing typed finding / rollback state machine. No caller-provided
+// finding, precomputed PASS, category, asset digest or checker outcome enters
+// this trusted path. This is a recovery entrypoint, NOT source-fidelity PASS.
+function typedEarlySourceAdmissionFailure(message) {
+  const text = String(message);
+  if (/camera hypothesis REWORK:/.test(text)) {
+    return {category:'camera-hypothesis-mismatch',checkId:'early-source.camera',
+      summary:'Frozen source-selected reconstruction camera contradicts current shape-stage GLB projection'};
+  }
+  if (/early registered projection blocks downstream detail:.*orientation-mismatch/.test(text)) {
+    return {category:'orientation-mismatch',checkId:'early-source.orientation',
+      summary:'Current source-bound GLB macro orientation contradicts the frozen source camera'};
+  }
+  if (/source macro orientation REWORK:/.test(text) ||
+      /signed source profile REWORK:/.test(text)) {
+    return {category:'silhouette-mismatch',checkId:'early-source.macro-orientation',
+      summary:'Actual current GLB head/face part direction disagrees with source-visible geometry'};
+  }
+  if (/source macro section REWORK:/.test(text) ||
+      /whole silhouette REWORK:/.test(text) ||
+      /source realized occlusion REWORK:/.test(text) ||
+      /early registered projection blocks downstream detail:.*mass-proportion-mismatch/.test(text)) {
+    return {category:'mass-proportion-mismatch',checkId:'early-source.macro-geometry',
+      summary:'Actual current GLB macro mass or source-observed part order disagrees with primary source'};
+  }
+  // Missing evidence, other invariant/camera validation errors or ambiguous
+  // depth never choose a destructive rollback owner. User-reported strings
+  // cannot reach this mapping without failing replayed installed admission.
+  return {category:'evidence-insufficient',checkId:'early-source.review',
+    summary:'Current source-to-GLB admission lacks trusted conclusive evidence and needs review'};
+}
+
+export async function reopenFromTrustedSourceAdmission(root, {scopeId='whole', expectedHeadId} = {}) {
+  root = projectRoot(root);
+  const state = await loadProject(root);
+  if (isTrustedContractFixtureProject(state)) {
+    throw new Error('trusted source replay is unavailable for contract fixture projects');
+  }
+  if (!state.source || !state.head) throw new Error('source-bound project head required for trusted reopen');
+  if (state.activeTransaction) throw new Error('finish or abandon the active edit before trusted source replay');
+  if (expectedHeadId !== undefined && state.head !== expectedHeadId) {
+    throw new Error('trusted source replay checkpoint head changed before evaluation');
+  }
+  scopeId = assertId(scopeId,'scopeId');
+  const checkpoints = await listCheckpoints(root);
+  const lineage = checkpointLineage(checkpoints, state.head);
+  const shape = [...lineage].reverse().find(cp =>
+    cp.capability==='shape-reconstruction' && scopeContains(cp.scopeId,scopeId));
+  if (!shape) {
+    throw new Error('trusted source replay requires an accepted shape-reconstruction checkpoint');
+  }
+  const model = shape.artifactRefs.find(a => a.kind==='glb');
+  const proof = shape.artifactRefs.find(a => a.kind==='realized-projection');
+  const source = state.source.path;
+  // Evidence in this report is taken exclusively from immutable checkpoint
+  // refs and the bound primary source, never from caller-authored strings.
+  const evidenceRefs = [...new Set([source,model?.path,proof?.path].filter(Boolean))];
+  try {
+    await ensurePrerequisites(root,state,'surface-topology',scopeId,lineage);
+  } catch(error) {
+    const classified = typedEarlySourceAdmissionFailure(error.message);
+    const finding = {
+      category:classified.category,severity:'blocking',scopeId,
+      summary:classified.summary,checkId:classified.checkId,
+      evidenceRefs,
+    };
+    const decision = await reportFinding(root,{finding,expectedHeadId:state.head});
+    return deepFreeze({
+      schema:'refas.trusted-source-reopen/v1',
+      status:decision.route.action==='REOPEN_CAPABILITY'?'REOPENED':'REVIEW_REQUIRED',
+      evaluation:'installed-early-source-admission',
+      ownerCapability:decision.route.ownerCapability,
+      evaluatedHeadId:state.head,
+      decision,
+      cannotAuthorizeReferenceFidelity:true,
+    });
+  }
+  return deepFreeze({
+    schema:'refas.trusted-source-reopen/v1',status:'NO_DETECTED_CONTRADICTION',
+    evaluation:'installed-early-source-admission',evaluatedHeadId:state.head,
+    ownerCapability:null,decision:null,cannotAuthorizeReferenceFidelity:true,
+  });
 }
 
 export async function resumeProject(root) {
