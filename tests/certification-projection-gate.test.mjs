@@ -102,6 +102,7 @@ async function advanceToReview(root, source, {
   expectedVolumeVerdict='PROCEED',
   stopAfterShape=false,
   mutateAtAppearance=false,
+  mutateVisibleGeometryAtAppearance=false,
 }={}) {
   const file = path.join(root, 'model', 'state.bin');
   await fs.mkdir(path.dirname(file), {recursive:true});
@@ -300,7 +301,9 @@ async function advanceToReview(root, source, {
       const assetPath=path.join(root,'model','candidate.glb');
       // Changed final GLB digest under appearance owner, with the same source-visible geometry.
       // Moving the whole mesh instead would rightly fail new source pixel geometry verification.
-      const changed=mannequinGlb(0,0.08,[.52,.50,.35,1]);
+      const changed=mutateVisibleGeometryAtAppearance
+        ? mannequinGlb(.21,.08,[.52,.50,.35,1])
+        : mannequinGlb(0,0.08,[.52,.50,.35,1]);
       await fs.writeFile(assetPath,changed);
       const output=await contentReference(assetPath,{kind:'glb',root});
       assert.notEqual(output.sha256,authority.finalCandidate.assetSha256);
@@ -795,6 +798,18 @@ test('VC06 changed final candidate closes only after fresh exact VC01 and VC03 e
   assert.notEqual(continuity.shapeCheckpoint.assetSha256,continuity.finalCandidate.assetSha256);
   assert.equal(continuity.scopeBindings[0].classification,'NO_PLANAR_COLLAPSE');
   assert.equal(continuity.policy.changedDigestRequiresFreshSpatialEvidence,true);
+});
+
+test('S02b2c2 current GLB with genuine re-rendered displaced whole shape cannot self-certify altered source geometry',async t=>{
+  const {root,source}=await makeProject(t);
+  await advanceToReview(root,source,{mutateAtAppearance:true,mutateVisibleGeometryAtAppearance:true});
+  const before=await loadProject(root);
+  await assert.rejects(()=>commitCertification(root,source,{
+    projection:'good',includeFreshFinalSpatial:true,
+  }),/original-photo\/current-GLB negative-space contradiction requires source-bound REWORK/u);
+  const after=await loadProject(root);
+  assert.equal(after.head,before.head);
+  assert.equal(after.checkpointIds.length,before.checkpointIds.length);
 });
 
 test('VC07 keeps shape-stage spatial plausibility and final-candidate continuity as independent runtime gates', () => {
