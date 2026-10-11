@@ -110,6 +110,7 @@ export * from './benchmark.mjs';
 export * from './shape-repair.mjs';
 export * from './realized-projection.mjs';
 export * from './source-macro-section-screen.mjs';
+export * from './source-macro-orientation-screen.mjs';
 export * from './realized-projection-verification.mjs';
 export * from './certification-projection-evidence.mjs';
 export * from './mesh.mjs';

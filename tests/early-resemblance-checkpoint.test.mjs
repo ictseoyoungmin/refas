@@ -148,6 +148,7 @@ async function makeRealSourceProject(t, verdictStatus, {
   nonImagePrimarySource = false,
   wrongPrimaryImageDimensions = false,
   withSourceMacroSection = false,
+  diagonalMacroSection = false,
   tooNarrowMacroSection = false,
   hiddenMacroSection = false,
 } = {}) {
@@ -213,7 +214,9 @@ async function makeRealSourceProject(t, verdictStatus, {
       evidenceRefs:[source.path],
       polygon:tooNarrowMacroSection
         ? [[.48,.445],[.52,.445],[.52,.555],[.48,.555]]
-        : [[.445,.445],[.555,.445],[.555,.555],[.445,.555]],
+        : diagonalMacroSection
+          ? [[.445,.455],[.455,.445],[.555,.545],[.545,.555]]
+          : [[.445,.445],[.555,.445],[.555,.555],[.445,.555]],
       anchorIds:['observed-head'],visibility:hiddenMacroSection?'inferred':'visible',separation:'uncertain',
     }]} : {}),
     attestation: {attested: true, evidenceRefs: [source.path]},
@@ -434,6 +437,20 @@ test('S01b2 mismatched manifest dimensions fail the installed checkpoint pixel r
     /primary source pixel-frame REVIEW_REQUIRED: source pixel-frame decoded dimensions disagree with manifest/u,
   );
   assert.equal((await loadProject(root)).head,shapeCheckpoint.id);
+});
+
+test('S03b1 Host rejects square current GLB for source-observed diagonal long-axis even when bbox and center pass',async t=>{
+  const {root,surfaceRef,shapeCheckpoint}=await makeRealSourceProject(t,'match',{
+    withSourceMacroSection:true,diagonalMacroSection:true,
+  });
+  const before=await loadProject(root);
+  await assert.rejects(
+    ()=>commitLocal(root,'surface-topology',[surfaceRef]),
+    /source macro orientation REWORK: source-visible-head-region: source-observed macro long axis contradicts current GLB projected mesh orientation/u,
+  );
+  const after=await loadProject(root);
+  assert.equal(after.head,shapeCheckpoint.id);
+  assert.deepEqual(after.checkpointIds,before.checkpointIds);
 });
 
 test('S03a Host positive admits source-cited macro section with actual GLB projected envelope',async t=>{

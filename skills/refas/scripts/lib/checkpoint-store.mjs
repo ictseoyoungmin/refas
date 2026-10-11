@@ -30,6 +30,7 @@ import {findComparisonContradictions, validateRegisteredComparison} from './regi
 import {assertEarlyResemblanceAdmission} from './early-resemblance-barrier.mjs';
 import {validateReferenceGeometry} from './reference-geometry.mjs';
 import {screenSourceMacroSectionEnvelopes} from './source-macro-section-screen.mjs';
+import {screenSourceMacroPartOrientation} from './source-macro-orientation-screen.mjs';
 import {inspectSourcePixelFrameBytes, MAX_SOURCE_FRAME_BYTES} from './source-pixel-frame.mjs';
 import {verifyRegisteredRenderReplay} from './registered-render-replay.mjs';
 import {evaluateIndependentSourceRenderPixels} from './independent-source-render-pixels.mjs';
@@ -1184,6 +1185,17 @@ async function ensureEarlyResemblanceAdmission(root, state, capability, scopeId,
       if(macroSectionScreen.status!=='NO_DETECTED_CONTRADICTION'){
         const detail=macroSectionScreen.findings.map(item=>item.id+': '+item.reason).join('; ');
         throw new Error(`${capability} source macro section ${macroSectionScreen.status}: ${detail}`);
+      }
+      // S03b1: A correctly bounded and centered elongated head/torso part
+      // can be turned 90° in the image plane with the same bbox and anchor.
+      // Screen the real GLB's projected mesh *principal long axis* against
+      // source-cited 2D silhouette geometry; symmetric regions offer no axis.
+      const orientation=screenSourceMacroPartOrientation({
+        referenceGeometry:geometry,realizedProjection:proof,sourcePath:state.source.path,
+      });
+      if(orientation.status!=='NO_DETECTED_CONTRADICTION') {
+        throw new Error(`${capability} source macro orientation ${orientation.status}: `+
+          orientation.findings.map(item=>item.id+': '+item.reason).join('; '));
       }
     }
     // P0b2b2a: an anchor that projects correctly says nothing about whole
