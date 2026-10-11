@@ -647,7 +647,54 @@ async function inspectCertificationHead(root, state, head) {
   return {ready: errors.length === 0, errors, visualReview, visualReviewArtifact, finalSpatialContinuity};
 }
 
-async function inspectRegisteredComparison(root, state, head, visualReview, errors, finalSpatialContinuity) {
+async function assertFrozenSourceCameraForRegisteredHero(root, state, artifactRefs, lineage, registrationDigest) {
+  // S02b2b: the certification checkpoint may not choose its own camera.
+  // Resolve the selected pose from immutable source-cited spatial hypotheses
+  // committed before shape reconstruction. A worker-written frame with a
+  // matching registrationDigest is NOT camera-source provenance.
+  const spatial = [...lineage].reverse().find((checkpoint) =>
+    checkpoint.capability === 'spatial-hypotheses' && scopeContains(checkpoint.scopeId, 'whole'));
+  if (!spatial) throw new Error('source-selected registered camera REVIEW_REQUIRED: upstream spatial-hypotheses checkpoint missing');
+  const {value: hypotheses} = await readCheckpointJsonArtifact(
+    root, spatial, 'spatial-hypothesis-set', 'source-selected registered hero');
+  const valid=validateSpatialHypothesisSet(hypotheses);
+  if (!valid.valid || hypotheses.sourceSha256 !== state.source.sha256 ||
+      !scopeContains(hypotheses.scopeId,'whole') ||
+      !hypotheses.attestation?.evidenceRefs?.includes(state.source.path) ||
+      hypotheses.hypotheses.some((item)=>!item.evidenceRefs?.includes(state.source.path))) {
+    throw new Error('source-selected registered camera REVIEW_REQUIRED: upstream source-camera hypothesis authority is invalid');
+  }
+  const selected=hypotheses.hypotheses.find((item)=>item.id===hypotheses.selectedId);
+  if (!selected || ['falsified','superseded'].includes(selected.status) ||
+      hypotheses.hypotheses.some((item)=>item.id!==hypotheses.selectedId && item.status!=='falsified')) {
+    throw new Error('source-selected registered camera REVIEW_REQUIRED: unresolved or contradictory frozen camera hypotheses');
+  }
+  const frames=artifactRefs.filter((artifact)=>artifact.kind==='canonical-object-frame');
+  if (frames.length!==1) throw new Error('source-selected registered camera REVIEW_REQUIRED: exactly one canonical-object-frame is required');
+  const frame=await readStoredJsonArtifact(root,frames[0],'source-selected registered hero frame');
+  if (frame.schema!=='refas.canonical-object-frame/v1' ||
+      frame.hero?.registrationDigest!==registrationDigest) {
+    throw new Error('source-selected registered camera REVIEW_REQUIRED: stored camera registration differs from current comparison');
+  }
+  let normalized;
+  try {normalized=normalizeProjectionCamera(selected.camera);}
+  catch (error){throw new Error(`source-selected registered camera REVIEW_REQUIRED: ${error.message}`);}
+  // Only compatible single-view perspective is admissible to this installed
+  // portable hero rasterizer. Unknown projection remains REVIEW_REQUIRED.
+  if (normalized.projection!=='perspective' || normalized.aspect!==1 ||
+      digestJson({
+        position:frame.hero?.position,target:frame.hero?.target,
+        up:frame.hero?.up,fovY:frame.hero?.fovY,
+      })!==digestJson({
+        position:normalized.position,target:normalized.target,
+        up:normalized.up,fovY:normalized.fovY,
+      })) {
+    throw new Error('source-selected registered camera REWORK: hero camera differs from frozen upstream source-selected hypothesis');
+  }
+  return frame;
+}
+
+async function inspectRegisteredComparison(root, state, head, visualReview, errors, finalSpatialContinuity, trustedLineage = null) {
   if (visualReview?.evidenceClass !== 'independent-reference' || visualReview?.verdict !== 'pass') return null;
   if (isTrustedContractFixtureProject(state)) return null;
   const binding = visualReview.registeredComparison;
@@ -714,10 +761,9 @@ async function inspectRegisteredComparison(root, state, head, visualReview, erro
   } else if (renderReportArtifact && frameArtifact) {
     try {
       const cameraArtifact=sourceFrameRefs[0];
-      const stored=await readStoredJsonArtifact(root,cameraArtifact,'trusted registered hero camera');
-      if (stored?.hero?.registrationDigest!==report.registration?.digest) {
-        throw new Error('source-selected hero camera registration does not match current registered comparison');
-      }
+      const lineage=trustedLineage??checkpointLineage(await listCheckpoints(root),head.id);
+      await assertFrozenSourceCameraForRegisteredHero(
+        root,state,head.artifactRefs,lineage,report.registration?.digest);
       const independent=await verifyRegisteredRenderReplay({
         root,glbPath:currentCandidates[0].path,framePath:cameraArtifact.path,
         renderReportPath:renderReportArtifact.path,heroImagePath:frameArtifact.path,
@@ -2381,6 +2427,22 @@ export async function commitCheckpoint(root, {
   await validateProspectiveCandidateAuthority(root, state, {
     capability, scopeId, parentId: parent, parentLineage, storedArtifacts,
   });
+  // Stop counterfeit final certification evidence at Host checkpoint admission,
+  // before a persisted head/checkpoint or PASS gate is ever issued.
+  if (capability==='whole-object-certification' && !isTrustedContractFixtureProject(state)) {
+    const reviews=storedArtifacts.filter((item)=>item.kind==='visual-review');
+    if (reviews.length!==1) throw new Error('prospective source-bound certification REVIEW_REQUIRED: exactly one independent visual-review is required');
+    const review=await readStoredJsonArtifact(root,reviews[0],'prospective final visual-review');
+    const validation=validateVisualReview(review);
+    if (!validation.valid || review.evidenceClass!=='independent-reference' || review.verdict!=='pass') {
+      throw new Error('prospective source-bound certification REVIEW_REQUIRED: passing independent visual-review evidence is required');
+    }
+    const authority=await resolveCandidateAuthorityFromLineage(root,state,parentLineage);
+    const blockers=[];
+    await inspectRegisteredComparison(root,state,{artifactRefs:storedArtifacts},
+      review,blockers,{finalCandidate:authority.finalCandidate},parentLineage);
+    if (blockers.length) throw new Error(`prospective source-bound certification REVIEW_REQUIRED: ${blockers.join('; ')}`);
+  }
   const runtimeGates = await evaluateCheckpointGateRequests(root, {
     state, capability, scopeId, requests: gateRequests, storedArtifacts, lineage: parentLineage,
   });
