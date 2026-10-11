@@ -521,9 +521,14 @@ async function commitCertification(root, source, {
   const cli=path.resolve('skills/refas/scripts/refas.mjs');
   const replayDir=path.join(root,'renders','registered');
   const portable=spawnSync(process.execPath,[cli,'render','--glb',assetPath,'--frame',registeredCameraPath,
-    '--out',replayDir,'--size','96','--timeout-seconds','30','--max-working-mb','256','--hero-only'],
+    '--out',replayDir,'--size','384','--timeout-seconds','30','--max-working-mb','256','--hero-only'],
     {encoding:'utf8',timeout:45_000});
-  assert.equal(portable.status,0,portable.stderr||portable.stdout);
+  // The negative test suite deliberately also constructs nearly-planar and
+  // off-camera GLBs. Their report can be FAIL (and must be rejected at
+  // readiness), but the fixture must still record the truthful render result.
+  const generatedReport=JSON.parse(await fs.readFile(path.join(replayDir,'render-report.json'),'utf8'));
+  assert.ok(portable.status===0 || (portable.status===1 && generatedReport.status==='FAIL'),
+    portable.stderr||portable.stdout);
   if (registeredFrameAttack==='forged-pixels') {
     const fake=spawnSync(process.env.CODEX_PRIMARY_RUNTIME_PYTHON||'python3',[
       '-c','from PIL import Image,ImageDraw; import sys; im=Image.open(sys.argv[1]).convert("RGB"); ImageDraw.Draw(im).rectangle((31,31,65,65),fill=(241,7,33)); im.save(sys.argv[1])',
@@ -588,7 +593,7 @@ async function commitCertification(root, source, {
       measurementAuthority:projectionBundle ? 'realized-projection' : 'image-only',
       projectionBinding:projectionBundle?.binding ?? null,
       metrics:{silhouetteIoU:null, sourceForegroundPixels:100, renderForegroundPixels:100, landmarkResidualRmse:projectionBundle?.landmarkResidualRmse ?? null},
-      landmarks:projectionBundle?.landmarks ?? [], dimensions:[], images:[{path:portableHero.path,sha256:portableHero.sha256,width:96,height:96,evidenceClass:'derived-observation-aid'}]}],
+      landmarks:projectionBundle?.landmarks ?? [], dimensions:[], images:[{path:portableHero.path,sha256:portableHero.sha256,width:384,height:384,evidenceClass:'derived-observation-aid'}]}],
     policy:{rawSourceRemainsPrimary:true, outputsAreDerivedObservationAids:true, metricsCannotSetVisualGate:true,
       metricFailureRequiresTypedFindingBeforeRouting:true, registrationResidualIsNotShapeTruth:true,
       realSourceLandmarksMustUseRealizedProjection:true, manualRenderCoordinatesCannotClaimRealSourceGeometry:true,
