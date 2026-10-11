@@ -149,6 +149,7 @@ async function makeRealSourceProject(t, verdictStatus, {
   wrongPrimaryImageDimensions = false,
   withSourceMacroSection = false,
   withSourceProfile = false,
+  withSourceOcclusion = false,
   diagonalMacroSection = false,
   tooNarrowMacroSection = false,
   hiddenMacroSection = false,
@@ -214,6 +215,18 @@ async function makeRealSourceProject(t, verdictStatus, {
         [[.44,.44],[.56,.44],[.56,.56],[.44,.56]],
       evidenceRefs: [source.path],
     }],
+    ...(withSourceOcclusion ? {segments:[
+      {id:'observed-front-part',label:'source foreground',importance:'macro',
+        polygon:[[.445,.445],[.555,.445],[.555,.555],[.445,.555]],
+        anchorIds:['observed-head'],visibility:'visible',separation:'uncertain',evidenceRefs:[source.path]},
+      {id:'observed-back-part',label:'source background',importance:'macro',
+        polygon:[[.445,.445],[.555,.445],[.555,.555],[.445,.555]],
+        anchorIds:['observed-head'],visibility:'visible',separation:'uncertain',evidenceRefs:[source.path]},
+    ],interfaces:[]} : {}),
+    ...(withSourceOcclusion ? {occlusions:[{
+      id:'observed-shoulder-overlap',importance:'macro',
+      frontId:'observed-front-part',backId:'observed-back-part',evidenceRefs:[source.path],
+    }]} : {}),
     ...(withSourceProfile ? {segments:[
       {id:'observed-face-region',label:'face',importance:'identity',
         polygon:[[.44,.44],[.56,.44],[.56,.56],[.44,.56]],
@@ -323,7 +336,10 @@ async function makeRealSourceProject(t, verdictStatus, {
         referenceId:'observed-head',nodeId:'whole-body',
         localPoint:offFrameMacroBinding ? [8,0,0] : movedMacroBinding ? [2,0,0] : [0,0,0],
       },...(withSourceProfile?[{referenceId:'observed-nose',nodeId:'whole-body',localPoint:[.5,0,0]}]:[])],
-      segmentBindings:withSourceProfile
+      segmentBindings:withSourceOcclusion
+        ? [{referenceId:'observed-front-part',nodeIds:['whole-body']},
+           {referenceId:'observed-back-part',nodeIds:['whole-body']}]
+        : withSourceProfile
         ? [{referenceId:'observed-face-region',nodeIds:['whole-body']},
            {referenceId:'observed-nose-region',nodeIds:['whole-body']}]
         : withSourceMacroSection?[{referenceId:'source-visible-head-region',nodeIds:['whole-body']}]:[],
@@ -455,6 +471,18 @@ test('S01b2 mismatched manifest dimensions fail the installed checkpoint pixel r
     /primary source pixel-frame REVIEW_REQUIRED: source pixel-frame decoded dimensions disagree with manifest/u,
   );
   assert.equal((await loadProject(root)).head,shapeCheckpoint.id);
+});
+
+test('S03c Host blocks an occlusion observation forged by mapping both parts to one GLB mesh',async t=>{
+  const {root,surfaceRef,shapeCheckpoint}=await makeRealSourceProject(t,'match',{withSourceOcclusion:true});
+  const before=await loadProject(root);
+  await assert.rejects(
+    ()=>commitLocal(root,'surface-topology',[surfaceRef]),
+    /source realized occlusion INSUFFICIENT: observed-shoulder-overlap: source occluding parts are mapped to overlapping GLB mesh ownership/u,
+  );
+  const after=await loadProject(root);
+  assert.equal(after.head,shapeCheckpoint.id);
+  assert.deepEqual(after.checkpointIds,before.checkpointIds);
 });
 
 test('S03b2 Host refuses one current GLB mesh posing as both source-visible face and nose',async t=>{
