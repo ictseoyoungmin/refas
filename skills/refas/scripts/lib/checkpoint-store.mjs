@@ -2937,6 +2937,22 @@ export async function auditProject(root) {
       if (!candidate || candidate.parentId !== state.activeTransaction.baselineCheckpointId || candidate.transactionId !== state.activeTransaction.id) errors.push('active transaction candidate is invalid');
     }
   }
+  // Audit the actual final certification checkpoint even before the
+  // certificate is minted. Previously an uncertified head with forged,
+  // re-signed GLB render pixels passed the *general* audit while readiness
+  // and certificate issuance correctly refused. A stored final head must not
+  // receive a falsely clean project audit from that split authority path.
+  if (!state.certification && state.head && byId.has(state.head)) {
+    const finalHead=byId.get(state.head);
+    if (finalHead.capability==='whole-object-certification' && finalHead.scopeId==='whole') {
+      try {
+        const readiness=await inspectCertificationHead(root,state,finalHead);
+        for (const error of readiness.errors) errors.push(`final certification readiness: ${error}`);
+      } catch (error) {
+        errors.push(`final certification readiness unavailable: ${error.message}`);
+      }
+    }
+  }
   if (state.certification && state.certification.checkpointId !== state.head) errors.push('certification does not bind to the active head');
   if (state.certification && state.head && byId.has(state.head)) {
     try {
