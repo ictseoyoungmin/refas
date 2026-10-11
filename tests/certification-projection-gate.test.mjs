@@ -32,6 +32,8 @@ import {
   NEUTRAL_CLAY_PRESENTATION_PRESET_DIGEST,
   NEUTRAL_CLAY_REQUIRED_VIEW_IDS,
   createRealizedProjection,
+  createReferenceRegistration,
+  evaluateIndependentSourceRenderPixels,
   createSpatialHypothesisSet,
   createReferenceGeometry,
   createRelationalDiscrepancy,
@@ -68,11 +70,13 @@ async function makeProject(t, acquisitionKind='user-provided-reference') {
   t.after(() => fs.rm(root, {recursive:true, force:true}));
   await fs.mkdir(path.join(root, 'source'), {recursive:true});
   const sourcePath = path.join(root, 'source', 'reference.png');
-  // A nonfixture photo-source contract cannot use arbitrary text as a fake
-  // raster. Generate a real 256×256 PNG with an actual Pillow encoder.
+  // Independently authored original-image *test drawing*, frozen before
+  // GLB creation. It is a deterministic non-photographic source contract,
+  // NOT evidence from an external real photo/agent. Use a visible macro
+  // silhouette, not a uniform image falsely claiming image correspondence.
   const png = spawnSync(process.env.CODEX_PRIMARY_RUNTIME_PYTHON || 'python3', [
     '-c',
-    'from PIL import Image; import sys; Image.new("RGB", (256, 256), (95, 132, 179)).save(sys.argv[1])',
+    'from PIL import Image,ImageDraw; import sys; im=Image.new("RGB",(256,256),(12,15,19)); ImageDraw.Draw(im).rectangle((77,106,179,150),fill=(176,145,100)); im.save(sys.argv[1])',
     sourcePath,
   ], {encoding:'utf8',timeout:15_000});
   assert.equal(png.status,0,png.stderr || png.error?.message);
@@ -98,6 +102,7 @@ async function advanceToReview(root, source, {
   expectedVolumeVerdict='PROCEED',
   stopAfterShape=false,
   mutateAtAppearance=false,
+  mutateVisibleGeometryAtAppearance=false,
 }={}) {
   const file = path.join(root, 'model', 'state.bin');
   await fs.mkdir(path.dirname(file), {recursive:true});
@@ -157,9 +162,9 @@ async function advanceToReview(root, source, {
       await json(spatialStatePath,{spatial:true});
       const spatialRef = await contentReference(spatialStatePath,{kind:'spatial-hypotheses',root});
       const centerX=projection === 'bad' ? 4 : 0;
-      const selectedCamera={projection:'perspective',position:[centerX,0,5],
+      const selectedCamera={projection:'perspective',position:[centerX,0,.25],
         target:[centerX,0,0],up:[0,1,0],fovY:90,aspect:1};
-      const alternativeCamera={projection:'perspective',position:[centerX-2,0,5],
+      const alternativeCamera={projection:'perspective',position:[centerX-2,0,.25],
         target:[centerX-2,0,0],up:[0,1,0],fovY:90,aspect:1};
       const hypothesisSet=createSpatialHypothesisSet({
         scopeId:'whole',sourceSha256:source.sha256,
@@ -200,7 +205,7 @@ async function advanceToReview(root, source, {
       const earlySourceGeometry = sourceGeometry(source);
       const testCenterX = projection === 'bad' ? 4 : 0;
       const macroCamera = {
-        projection:'perspective',position:[testCenterX,0,5],
+        projection:'perspective',position:[testCenterX,0,.25],
         target:[testCenterX,0,0],up:[0,1,0],fovY:90,aspect:1,
       };
       const registeredBlockout = createRealizedProjection({
@@ -294,7 +299,11 @@ async function advanceToReview(root, source, {
       const authority=await resolveAuthoritativeCandidateLineage(root);
       const state=await loadProject(root);
       const assetPath=path.join(root,'model','candidate.glb');
-      const changed=mannequinGlb(0.21,0.08);
+      // Changed final GLB digest under appearance owner, with the same source-visible geometry.
+      // Moving the whole mesh instead would rightly fail new source pixel geometry verification.
+      const changed=mutateVisibleGeometryAtAppearance
+        ? mannequinGlb(.21,.08,[.52,.50,.35,1])
+        : mannequinGlb(0,0.08,[.52,.50,.35,1]);
       await fs.writeFile(assetPath,changed);
       const output=await contentReference(assetPath,{kind:'glb',root});
       assert.notEqual(output.sha256,authority.finalCandidate.assetSha256);
@@ -340,13 +349,13 @@ function vc05BoxMesh(depth=0.02) {
   return finalizeMesh(positions,indices,{primitive:'vc05-box'});
 }
 
-function mannequinGlb(x=0, thickness=0.08) {
+function mannequinGlb(x=0, thickness=0.08, color=[.7,.55,.35,1]) {
   const mesh = thickness <= 0.02
     ? vc05BoxMesh(thickness)
     : createSegmentPrism({start:[-.1,0,0], end:[.1,0,0], width:.08, height:thickness, upHint:[0,1,0]});
   return partsToGlb({
     parts:[{id:'model-node', scopeId:'whole', materialId:'wood', mesh, translation:[x,0,0]}],
-    materials:{wood:{baseColor:[.7,.55,.35,1], metallic:0, roughness:.7}},
+    materials:{wood:{baseColor:color, metallic:0, roughness:.7}},
   });
 }
 
@@ -355,7 +364,7 @@ function sourceGeometry(source) {
     scopeId:'whole', sourceSha256:source.sha256,
     anchors:[{id:'whole-center', xy:[.5,.5], importance:'macro', visibility:'visible', confidence:1, evidenceRefs:['source/reference.png']}],
     contours:[{id:'whole-outer-contour',importance:'macro',closed:true,
-      points:[[.488,.495],[.512,.495],[.512,.505],[.488,.505]],
+      points:[[.30,.414],[.70,.414],[.70,.586],[.30,.586]],
       evidenceRefs:['source/reference.png']}],
     attestation:{attested:true, evidenceRefs:['source/reference.png']},
   });
@@ -485,6 +494,10 @@ async function commitCertification(root, source, {
   registeredFrameAttack=null,
   omitSourceSelectedCamera=false,
   sourceSelectedCameraAttack=false,
+  omitCanonicalRegistration=false,
+  authoredPixelAttack=false,
+  authoredWholeRoiAttack=false,
+  registrationAmbiguous=false,
 }={}) {
   const assetPath = path.join(root, 'model', 'candidate.glb');
   const glb = await fs.readFile(assetPath);
@@ -515,7 +528,7 @@ async function commitCertification(root, source, {
   const registeredCamera={
     schema:'refas.canonical-object-frame/v1',id:'source-registered-whole',scopeId:'whole',
     origin:[0,0,0],axes:{right:[1,0,0],up:[0,1,0],forward:[0,0,1]},scopeParts:[],
-    hero:{position:sourceSelectedCameraAttack?[.2,0,5]:[0,0,5],target:sourceSelectedCameraAttack?[.2,0,0]:[0,0,0],up:[0,1,0],fovY:90,registrationDigest:'a'.repeat(64)},
+    hero:{position:sourceSelectedCameraAttack?[.2,0,.25]:[0,0,.25],target:sourceSelectedCameraAttack?[.2,0,0]:[0,0,0],up:[0,1,0],fovY:90,registrationDigest:'a'.repeat(64)},
   };
   const registeredCameraPath=await json(path.join(root,'model','source-registered-frame.json'),registeredCamera);
   const registeredCameraRef=await contentReference(registeredCameraPath,{kind:'canonical-object-frame',root});
@@ -530,6 +543,50 @@ async function commitCertification(root, source, {
   const generatedReport=JSON.parse(await fs.readFile(path.join(replayDir,'render-report.json'),'utf8'));
   assert.ok(portable.status===0 || (portable.status===1 && generatedReport.status==='FAIL'),
     portable.stderr||portable.stdout);
+  let portableHero=await contentReference(path.join(replayDir,'hero.png'),{kind:'render-frame',root});
+  // Four independently source/hero cited landmarks define a reproducible
+  // identity placement for this synthetic 2D source test. The image was
+  // authored before the GLB; it is not copied from the current hero.
+  const registration=createReferenceRegistration({
+    parentFrameId:'source-image',childFrameId:'registered-hero',
+    parentSourceSha256:source.sha256,childSourceSha256:portableHero.sha256,
+    model:'projective-homography',
+    correspondences:[
+      {id:'upper-left',parent:[0,0],child:[0,0],evidenceRefs:[source.path,portableHero.path]},
+      {id:'upper-right',parent:[1,0],child:[1,0],evidenceRefs:[source.path,portableHero.path]},
+      {id:'lower-right',parent:[1,1],child:[1,1],evidenceRefs:[source.path,portableHero.path]},
+      {id:'lower-left',parent:[0,1],child:[0,1],evidenceRefs:[source.path,portableHero.path]},
+    ],
+    attestation:{attested:true,evidenceRefs:[source.path,portableHero.path]},
+    ambiguities:registrationAmbiguous?['unresolved camera-to-source source-to-hero mapping']:[],
+  });
+  const registrationPath=await json(path.join(root,'model','source-registered-placement.json'),registration);
+  const registrationRef=await contentReference(registrationPath,{kind:'reference-registration',root});
+  // Registration digest depends on the hero's verified SHA but rendering
+  // depends on camera pose, not registration metadata. Re-render the same
+  // current GLB with the final source-selected camera digest; SHA must stay
+  // unchanged, while the report's canonical frame provenance updates.
+  registeredCamera.hero.registrationDigest=registration.registrationDigest;
+  await json(registeredCameraPath,registeredCamera);
+  const refreshed=spawnSync(process.execPath,[cli,'render','--glb',assetPath,'--frame',registeredCameraPath,
+    '--out',replayDir,'--size','384','--timeout-seconds','30','--max-working-mb','256','--hero-only'],
+    {encoding:'utf8',timeout:45_000});
+  const finalReport=JSON.parse(await fs.readFile(path.join(replayDir,'render-report.json'),'utf8'));
+  assert.ok(refreshed.status===0 || (refreshed.status===1 && finalReport.status==='FAIL'),
+    refreshed.stderr||refreshed.stdout);
+  const finalHero=await contentReference(path.join(replayDir,'hero.png'),{kind:'render-frame',root});
+  assert.equal(finalHero.sha256,portableHero.sha256,'registration must not alter actual projected GLB pixels');
+  let portableReportRef=await contentReference(path.join(replayDir,'render-report.json'),{kind:'render-report',root});
+  const finalCameraRef=await contentReference(registeredCameraPath,{kind:'canonical-object-frame',root});
+  const independentPixels=await evaluateIndependentSourceRenderPixels({
+    root,sourcePath:source.path,sourceSha256:source.sha256,
+    heroPath:portableHero.path,heroSha256:portableHero.sha256,
+    registrationPath:registrationRef.path,registrationSha256:registrationRef.sha256,
+    roi:[0,0,1,1],
+  });
+  // Tamper AFTER authentic two-pass replay and observation. Re-sign only
+  // the worker-controlled hero/render report, not the frozen source or GLB.
+  // Trusted raster must independently catch the forged presentation.
   if (registeredFrameAttack==='forged-pixels') {
     const fake=spawnSync(process.env.CODEX_PRIMARY_RUNTIME_PYTHON||'python3',[
       '-c','from PIL import Image,ImageDraw; import sys; im=Image.open(sys.argv[1]).convert("RGB"); ImageDraw.Draw(im).rectangle((31,31,65,65),fill=(241,7,33)); im.save(sys.argv[1])',
@@ -542,8 +599,10 @@ async function commitCertification(root, source, {
     staleReport.frames.find(f=>f.path==='hero.png').sha256=fakeFrame.sha256;
     await json(path.join(replayDir,'render-report.json'),staleReport);
   }
-  const portableHero=await contentReference(path.join(replayDir,'hero.png'),{kind:'render-frame',root});
-  const portableReportRef=await contentReference(path.join(replayDir,'render-report.json'),{kind:'render-report',root});
+  if(registeredFrameAttack==='forged-pixels'){
+    portableHero=await contentReference(path.join(replayDir,'hero.png'),{kind:'render-frame',root});
+    portableReportRef=await contentReference(path.join(replayDir,'render-report.json'),{kind:'render-report',root});
+  }
 
   let projectionBundle = null;
   if (projection !== 'none') {
@@ -552,7 +611,7 @@ async function commitCertification(root, source, {
     const geometryRef = await contentReference(geometryPath, {kind:'reference-geometry', root});
     const proof = createRealizedProjection({
       referenceGeometry:geometry, glb, cameraHypothesisId:'camera-source',
-      camera:{projection:'perspective',position:[0,0,5],target:[0,0,0],up:[0,1,0],fovY:90,aspect:1},
+      camera:{projection:'perspective',position:[0,0,.25],target:[0,0,0],up:[0,1,0],fovY:90,aspect:1},
       anchorBindings:[{referenceId:'whole-center',nodeId:'model-node',localPoint:[0,0,0]}],
       evidenceRefs:['model/candidate.glb','source/reference.png'],
     });
@@ -588,18 +647,32 @@ async function commitCertification(root, source, {
     schema:'refas.registered-comparison/v1', claimScope:'critique-evidence-only',
     source:{sha256:source.sha256, manifestSha256:'f'.repeat(64), acquisitionKind:source.acquisition?.kind ?? ''},
     render:{assetSha256:asset.sha256, frameId:'hero', frameSha256:portableHero.sha256, reportSha256:portableReportRef.sha256},
-    registration:{digest:'a'.repeat(64), fileSha256:'b'.repeat(64), model:'test', metrics:{}},
+    registration:{path:registrationRef.path,digest:registration.registrationDigest,fileSha256:registrationRef.sha256,model:registration.model,metrics:registration.metrics},
     hierarchy:{digest:'c'.repeat(64), fileSha256:'d'.repeat(64)}, projectionEvidence:projectionBundle ? [projectionBundle.binding] : [],
     scopes:[{scopeId:'whole', level:'whole', ancestry:['whole'], sourceRoi:[0,0,1,1], registeredRenderRoi:[0,0,1,1],
       measurementAuthority:projectionBundle ? 'realized-projection' : 'image-only',
       projectionBinding:projectionBundle?.binding ?? null,
-      metrics:{silhouetteIoU:null, sourceForegroundPixels:100, renderForegroundPixels:100, landmarkResidualRmse:projectionBundle?.landmarkResidualRmse ?? null},
+      metrics:{silhouetteIoU:null,
+         sourceForegroundPixels:independentPixels.sourceForegroundPixels,
+         renderForegroundPixels:independentPixels.renderForegroundPixels,
+         perceptual:independentPixels.perceptual,
+         landmarkResidualRmse:projectionBundle?.landmarkResidualRmse ?? null},
       landmarks:projectionBundle?.landmarks ?? [], dimensions:[], images:[{path:portableHero.path,sha256:portableHero.sha256,width:384,height:384,evidenceClass:'derived-observation-aid'}]}],
     policy:{rawSourceRemainsPrimary:true, outputsAreDerivedObservationAids:true, metricsCannotSetVisualGate:true,
       metricFailureRequiresTypedFindingBeforeRouting:true, registrationResidualIsNotShapeTruth:true,
       realSourceLandmarksMustUseRealizedProjection:true, manualRenderCoordinatesCannotClaimRealSourceGeometry:true,
       projectionMetricsRemainVetoOnly:true, singleViewIouDisabled:true}, inputDigest:'e'.repeat(64),
   };
+  // Re-sign an invented apparent pixel agreement as an adversarial worker.
+  // Valid report digests cannot replace independent raw-photo remeasurement.
+  if(authoredPixelAttack) {
+    comparison.scopes[0].metrics.perceptual.pixelShape.sourceOnlyFraction=0;
+    comparison.scopes[0].metrics.perceptual.pixelShape.renderOnlyFraction=0;
+    comparison.scopes[0].metrics.perceptual.edgeDisagreement=0;
+  }
+  if(authoredWholeRoiAttack) {
+    comparison.scopes[0].registeredRenderRoi=[.4,.4,.2,.2];
+  }
   comparison.comparisonDigest = digestJson(comparison);
   const comparisonPath = await json(path.join(root,'reviews','registered-comparison','comparison-report.json'), comparison);
   const comparisonRef = await contentReference(comparisonPath, {kind:'registered-comparison', root});
@@ -619,7 +692,7 @@ async function commitCertification(root, source, {
   });
   const reviewPath = await json(path.join(root,'reviews','visual-review.json'), review);
   const reviewRef = await contentReference(reviewPath, {kind:'visual-review', root});
-  const refs = [asset, reportRef, ...frames, ...(omitSourceSelectedCamera?[]:[registeredCameraRef]), portableReportRef, portableHero, comparisonRef, reviewRef];
+  const refs = [asset, reportRef, ...frames, ...(omitSourceSelectedCamera?[]:[finalCameraRef]), portableReportRef, portableHero, ...(omitCanonicalRegistration?[]:[registrationRef]), comparisonRef, reviewRef];
   let forgedSpatialAuthorityRef = null;
   if (attachForgedSpatialAuthority) {
     const forgedPath = await json(path.join(root,'reviews','forged-spatial-gate-authority.json'),{
@@ -725,6 +798,18 @@ test('VC06 changed final candidate closes only after fresh exact VC01 and VC03 e
   assert.notEqual(continuity.shapeCheckpoint.assetSha256,continuity.finalCandidate.assetSha256);
   assert.equal(continuity.scopeBindings[0].classification,'NO_PLANAR_COLLAPSE');
   assert.equal(continuity.policy.changedDigestRequiresFreshSpatialEvidence,true);
+});
+
+test('S02b2c2 current GLB with genuine re-rendered displaced whole shape cannot self-certify altered source geometry',async t=>{
+  const {root,source}=await makeProject(t);
+  await advanceToReview(root,source,{mutateAtAppearance:true,mutateVisibleGeometryAtAppearance:true});
+  const before=await loadProject(root);
+  await assert.rejects(()=>commitCertification(root,source,{
+    projection:'good',includeFreshFinalSpatial:true,
+  }),/original-photo\/current-GLB negative-space contradiction requires source-bound REWORK/u);
+  const after=await loadProject(root);
+  assert.equal(after.head,before.head);
+  assert.equal(after.checkpointIds.length,before.checkpointIds.length);
 });
 
 test('VC07 keeps shape-stage spatial plausibility and final-candidate continuity as independent runtime gates', () => {
@@ -896,20 +981,53 @@ test('real source cannot commit final certification without realized reprojectio
   assert.equal(after.checkpointIds.length,before.checkpointIds.length);
 });
 
-test('good realized reprojection allows real source certification and remains audit-valid', async (t) => {
+test('S02b2c2 valid GLB with forged real-source registration is denied before checkpoint mutation', async (t) => {
   const {root, source} = await makeProject(t);
   await advanceToReview(root, source);
-  await commitCertification(root, source, {projection:'good'});
-  const readiness = await assessCertification(root);
-  assert.equal(readiness.ready, true, readiness.errors.join('\n'));
-  assert.ok(readiness.realizedProjectionDigest);
-  assert.ok(readiness.relationalCertificationDigest);
-  assert.ok(readiness.authorizedClaimIds.includes('whole-system-relational-fidelity'));
-  const certificate = await certifyProject(root);
-  assert.equal(certificate.sourceSha256, source.sha256);
-  assert.equal(certificate.claimCertification.relationalClosure.relationalCertificationDigest, readiness.relationalCertificationDigest);
-  const audit = await auditProject(root);
-  assert.equal(audit.valid, true, audit.errors.join('\n'));
+  const before = await loadProject(root);
+  await assert.rejects(
+    () => commitCertification(root, source, {projection:'good',omitCanonicalRegistration:true}),
+    /current checkpoint-bound canonical reference-registration path\/SHA is required/u,
+  );
+  const after = await loadProject(root);
+  assert.equal(after.head, before.head);
+  assert.equal(after.checkpointIds.length, before.checkpointIds.length);
+});
+
+test('S02b2c2 rejects re-signed worker-authored invented pixelShape and edge metrics before final checkpoint', async t=>{
+  const {root,source}=await makeProject(t);
+  await advanceToReview(root,source);
+  const before=await loadProject(root);
+  await assert.rejects(
+    ()=>commitCertification(root,source,{projection:'good',authoredPixelAttack:true}),
+    /prospective source-bound certification REVIEW_REQUIRED:.*worker-authored registered comparison/u);
+  const after=await loadProject(root);
+  assert.equal(after.head,before.head);
+  assert.equal(after.checkpointIds.length,before.checkpointIds.length);
+});
+
+test('S02b2c2 refuses re-signed worker-cropped ROI that hides source/render differences', async t=>{
+  const {root,source}=await makeProject(t);
+  await advanceToReview(root,source);
+  const before=await loadProject(root);
+  await assert.rejects(
+    ()=>commitCertification(root,source,{projection:'good',authoredWholeRoiAttack:true}),
+    /prospective source-bound certification REVIEW_REQUIRED:.*worker-authored registered whole ROI differs/u);
+  const after=await loadProject(root);
+  assert.equal(after.head,before.head);
+  assert.equal(after.checkpointIds.length,before.checkpointIds.length);
+});
+
+test('S02b2c2 refuses unresolved source-to-hero placement rather than claiming source fidelity',async t=>{
+  const {root,source}=await makeProject(t);
+  await advanceToReview(root,source);
+  const before=await loadProject(root);
+  await assert.rejects(
+    ()=>commitCertification(root,source,{projection:'good',registrationAmbiguous:true}),
+    /prospective source-bound certification REVIEW_REQUIRED:.*INSUFFICIENT/u);
+  const after=await loadProject(root);
+  assert.equal(after.head,before.head);
+  assert.equal(after.checkpointIds.length,before.checkpointIds.length);
 });
 
 test('blocking realized reprojection cannot commit a mismatched source-selected hero', async (t) => {

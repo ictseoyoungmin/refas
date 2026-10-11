@@ -435,6 +435,12 @@ def main():
     source_manifest_path = checked_path(root, spec["sourceManifest"], "source manifest")
     render_report_path = checked_path(root, spec["renderReport"], "render report")
     registration_path = checked_path(root, spec["registration"], "registration")
+    # The final checkpoint must cite the exact project-contained registration
+    # artifact; an absolute local path is not a portable source-lineage binding.
+    try:
+        registration_relative = registration_path.relative_to(root).as_posix()
+    except ValueError as error:
+        raise ValueError("registered source/render placement must remain inside project root") from error
     hierarchy_path = checked_path(root, spec["hierarchy"], "hierarchy")
     source_manifest, render_report = load_json(source_manifest_path), load_json(render_report_path)
     registration, hierarchy = load_json(registration_path), load_json(hierarchy_path)
@@ -571,7 +577,7 @@ def main():
             "frameSha256": frame["sha256"],
         },
         "registration": {
-            "path": str(registration_path),
+            "path": registration_relative,
             "fileSha256": sha256(registration_path),
             "digest": registration["registrationDigest"],
             "model": registration["model"],

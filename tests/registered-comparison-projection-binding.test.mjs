@@ -259,6 +259,8 @@ test('S02 matching registered pixels cannot elevate the single view into a fidel
   });
   assert.equal(comparison.status,0,comparison.stderr);
   const report=JSON.parse(await fs.readFile(path.join(root,'comparison/comparison-report.json'),'utf8'));
+  assert.equal(report.registration.path,'model/source-to-render-registration.json',
+    'the comparison must name the exact contained checkpoint registration, not an absolute worker path');
   const pixel=report.scopes[0].metrics.perceptual.pixelShape;
   assert.equal(pixel.status,'USABLE');
   assert.equal(pixel.sourceOnlyPixels,0);
