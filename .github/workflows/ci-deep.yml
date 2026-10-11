@@ -1,0 +1,88 @@
+name: RefAs Deep QA (manual/weekly)
+
+# Scheduled/manual full suites do not burden every develop PR/push.
+# Schedules activate after this workflow exists on the repository default branch;
+# until then use a develop merge commit containing [full-qa] to run the same deep
+# steps through RefAs CI on develop/v1.2.1.
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Exact branch, tag, or commit to verify'
+        required: true
+        type: string
+        default: develop/v1.2.1
+  schedule:
+    - cron: '17 19 * * 1'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: refas-deep-${{ github.event.inputs.ref || 'develop/v1.2.1' }}
+  cancel-in-progress: true
+
+jobs:
+  deep:
+    name: Deep QA Node 24
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.inputs.ref || 'develop/v1.2.1' }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          package-manager-cache: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install portable renderer dependencies
+        run: python -m pip install --requirement requirements.txt
+      - name: JavaScript regression tests
+        run: npm test
+      - name: Python syntax gate
+        run: npm run test:python
+      - name: Instruction graph audit
+        run: npm run check:instructions
+      - name: Product-boundary audit
+        run: npm run check
+      - name: Complete dogfood
+        run: npm run dogfood
+      - name: Fresh-worker public-contract dogfood
+        run: npm run dogfood:fresh-worker
+      - name: First neutral-clay multiview operational baseline
+        run: npm run benchmark:first-multiview
+      - name: External construction fresh-worker dogfood
+        run: npm run dogfood:external-construction
+      - name: Subdivision cage organic dogfood
+        run: npm run dogfood:subdivision-cage
+      - name: Bilateral pair fresh-worker dogfood
+        run: npm run dogfood:bilateral-pair
+      - name: Structural plausibility fresh-worker dogfood
+        run: npm run dogfood:structural-plausibility
+      - name: Competing blockout fresh-worker dogfood
+        run: npm run dogfood:blockout-competition
+      - name: Prior quarantine fresh-worker dogfood
+        run: npm run dogfood:prior-quarantine
+      - name: Discovery closure verifier
+        run: npm run check:discovery-closure
+      - name: VC00 volume-closure regression fixtures
+        run: npm run dogfood:volume-regression
+      - name: VC08 adversarial public-boundary dogfood
+        run: npm run dogfood:adversarial
+      - name: Joint parameter-fit dogfood
+        run: npm run dogfood:parameter-fit
+      - name: Independent PBR material dogfood
+        run: npm run dogfood:pbr
+      - name: Textured material dogfood
+        run: npm run dogfood:textured-material
+      - name: Hard-surface topology dogfood
+        run: npm run dogfood:hard-surface
+      - name: Modular assembly contact dogfood
+        run: npm run dogfood:assembly
+      - name: Release audit
+        run: npm run release:audit
