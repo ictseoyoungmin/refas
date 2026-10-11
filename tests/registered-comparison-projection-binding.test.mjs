@@ -14,6 +14,7 @@ import {
   createVisualHierarchy,
   digestBytes,
   digestJson,
+  findComparisonContradictions,
   partsToGlb,
   sha256File,
   validateRegisteredComparison,
@@ -45,7 +46,7 @@ async function writeJson(file, value) {
   await fs.writeFile(file, `${JSON.stringify(value, null, 2)}\n`);
 }
 
-async function makeFixture(t) {
+async function makeFixture(t, {shapeVariant = 'equal'} = {}) {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), 'refas-registered-projection-'));
   t.after(() => fs.rm(root, {recursive: true, force: true}));
   await fs.mkdir(path.join(root, 'source'), {recursive: true});
@@ -57,11 +58,20 @@ async function makeFixture(t) {
     'from PIL import Image, ImageDraw',
     'import sys',
     'im=Image.new("RGB",(64,64),(250,250,250))',
-    'd=ImageDraw.Draw(im); d.rectangle((18,18,46,46),fill=(80,90,100))',
+    'd=ImageDraw.Draw(im)',
+    'd.rectangle((10,10,53,53),fill=(80,90,100))',
+    'd.rectangle((14,15,28,48),fill=(250,250,250)) if sys.argv[2]=="left-void" else None',
+    'd.rectangle((35,15,49,48),fill=(250,250,250)) if sys.argv[2]=="right-void" else None',
+    'd.rectangle((0,0,7,7),fill=(60,65,70)) if sys.argv[2]=="cluttered" else None',
     'im.save(sys.argv[1])',
   ].join(';');
-  for (const file of [path.join(root, 'source/reference.png'), path.join(root, 'renders/final/hero.png')]) {
-    const result = spawnSync(PYTHON, ['-c', imageScript, file], {encoding:'utf8'});
+  const sourceMode = shapeVariant === 'opposed-voids' ? 'left-void' : 'solid';
+  const renderMode = shapeVariant === 'opposed-voids' ? 'right-void' : 'solid';
+  for (const [file, mode] of [
+    [path.join(root, 'source/reference.png'), sourceMode],
+    [path.join(root, 'renders/final/hero.png'), renderMode],
+  ]) {
+    const result = spawnSync(PYTHON, ['-c', imageScript, file, mode], {encoding:'utf8'});
     assert.equal(result.status, 0, result.stderr);
   }
   const sourcePath = path.join(root, 'source/reference.png');
@@ -211,4 +221,47 @@ test('real-source comparison derives non-null landmarks and dimensions from real
   const injected = structuredClone(report);
   injected.scopes[0].landmarks[0].declaredRenderNormalized = [.99,.99];
   assert.equal(validateRegisteredComparison(injected).valid, false);
+});
+
+
+test('S02 actual registered original pixels expose opposing internal voids with identical area and bbox', async t => {
+  const {root, input} = await makeFixture(t, {shapeVariant:'opposed-voids'});
+  const comparison = await runCompare(root, {...input,
+    projectionEvidence:[{scopeId:'whole', referenceGeometry:'model/reference-geometry.json', realizedProjection:'model/realized-projection.json'}],
+  });
+  assert.equal(comparison.status, 0, comparison.stderr);
+  const report = JSON.parse(await fs.readFile(path.join(root,'comparison/comparison-report.json'), 'utf8'));
+  assert.deepEqual(validateRegisteredComparison(report), {valid:true,errors:[]});
+  const whole = report.scopes.find(scope => scope.scopeId === 'whole');
+  assert.equal(whole.metrics.sourceForegroundPixels, whole.metrics.renderForegroundPixels,
+    'the image mismatch must survive equal foreground area');
+  assert.deepEqual(whole.metrics.perceptual.sourceBoundingBox, whole.metrics.perceptual.renderBoundingBox,
+    'the image mismatch must survive equal outer bounds');
+  assert.equal(whole.metrics.perceptual.pixelShape.status,'USABLE');
+  assert.ok(whole.metrics.perceptual.pixelShape.sourceOnlyFraction > .28);
+  assert.ok(whole.metrics.perceptual.pixelShape.renderOnlyFraction > .28);
+  const contradiction = findComparisonContradictions(report);
+  assert.ok(contradiction.some(f => f.id === 'whole-pixel-shape-screen' && f.category === 'silhouette-mismatch'),
+    'the independent pixels must contradict even if the registered GLB anchor RMSE is zero');
+  assert.ok(whole.metrics.landmarkResidualRmse < 1e-9);
+  assert.equal(whole.metrics.silhouetteIoU, null, 'single-view IoU cannot be a fidelity PASS');
+
+  const tamper = structuredClone(report);
+  tamper.scopes[0].metrics.perceptual.pixelShape.sourceOnlyFraction=NaN;
+  assert.equal(validateRegisteredComparison(tamper).valid,false,'invalid pixel evidence must not be accepted');
+});
+
+test('S02 matching registered pixels cannot elevate the single view into a fidelity certificate', async t => {
+  const {root,input} = await makeFixture(t);
+  const comparison=await runCompare(root,{...input,
+    projectionEvidence:[{scopeId:'whole',referenceGeometry:'model/reference-geometry.json',realizedProjection:'model/realized-projection.json'}],
+  });
+  assert.equal(comparison.status,0,comparison.stderr);
+  const report=JSON.parse(await fs.readFile(path.join(root,'comparison/comparison-report.json'),'utf8'));
+  const pixel=report.scopes[0].metrics.perceptual.pixelShape;
+  assert.equal(pixel.status,'USABLE');
+  assert.equal(pixel.sourceOnlyPixels,0);
+  assert.equal(pixel.renderOnlyPixels,0);
+  assert.equal(pixel.cannotAuthorizePass,true);
+  assert.ok(!findComparisonContradictions(report).some(x=>x.id==='whole-pixel-shape-screen'));
 });
