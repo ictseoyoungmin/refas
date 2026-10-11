@@ -31,6 +31,7 @@ import {assertEarlyResemblanceAdmission} from './early-resemblance-barrier.mjs';
 import {validateReferenceGeometry} from './reference-geometry.mjs';
 import {inspectSourcePixelFrameBytes, MAX_SOURCE_FRAME_BYTES} from './source-pixel-frame.mjs';
 import {verifyRegisteredRenderReplay} from './registered-render-replay.mjs';
+import {evaluateIndependentSourceRenderPixels} from './independent-source-render-pixels.mjs';
 import {validateSpatialHypothesisSet} from './spatial-hypotheses.mjs';
 import {normalizeProjectionCamera, deriveRealizedWholeSilhouetteBounds} from './realized-projection.mjs';
 import {verifyRealizedProjection} from './realized-projection-verification.mjs';
@@ -694,6 +695,72 @@ async function assertFrozenSourceCameraForRegisteredHero(root, state, artifactRe
   return frame;
 }
 
+/**
+ * S02b2c2: exact, primary-source-bound pixel remeasurement. This is a
+ * contradiction veto, NEVER positive resemblance authority. Only call
+ * after the installed renderer has replayed the current GLB/camera/hero.
+ * All claimed perceptual metrics are untrusted until recomputed.
+ */
+async function inspectIndependentSourcePixelEvidence(root, state, artifactRefs, report, heroArtifact) {
+  const whole=(report.scopes??[]).find((scope)=>scope?.scopeId==='whole');
+  if(!whole || (report.scopes??[]).filter((scope)=>scope?.scopeId==='whole').length!==1) {
+    throw new Error('exactly one registered whole-image comparison is required');
+  }
+  const registrationRefs=artifactRefs.filter((artifact)=>
+    artifact.kind==='reference-registration' &&
+    artifact.path===report.registration?.path &&
+    artifact.sha256===report.registration?.fileSha256);
+  if(registrationRefs.length!==1) {
+    throw new Error('exactly one current checkpoint-bound canonical reference-registration path/SHA is required');
+  }
+  const registration=await readStoredJsonArtifact(root,registrationRefs[0],'canonical source/render registration');
+  if(registration.registrationDigest!==report.registration.digest ||
+      !registration.attestation?.evidenceRefs?.includes(state.source.path) ||
+      !registration.attestation?.evidenceRefs?.includes(heroArtifact.path)) {
+    throw new Error('source/render registration is not independently cited to original source and current GLB hero');
+  }
+  const observed=await evaluateIndependentSourceRenderPixels({
+    root,sourcePath:state.source.path,sourceSha256:state.source.sha256,
+    heroPath:heroArtifact.path,heroSha256:heroArtifact.sha256,
+    registrationPath:registrationRefs[0].path,registrationSha256:registrationRefs[0].sha256,
+    roi:whole.registeredRenderRoi,
+  });
+  if(observed.status!=='USABLE' || observed.perceptual?.pixelShape?.status!=='USABLE') {
+    throw new Error('original photo/current GLB registered pixel observation is INSUFFICIENT; review source segmentation and registration');
+  }
+  if(observed.cannotAuthorizeReferenceFidelity!==true ||
+      observed.authority!=='independently-recomputed-original-and-render-pixels') {
+    throw new Error('original-photo observation did not return trusted contradiction-only evidence');
+  }
+  const matches=(actual,expected)=>typeof expected==='number'
+    ? Number.isFinite(actual) && Math.abs(actual-expected)<=1e-8
+    : JSON.stringify(actual)===JSON.stringify(expected);
+  for(const key of ['sourceForegroundPixels','renderForegroundPixels']) {
+    if(!matches(whole.metrics?.[key],observed[key])) {
+      throw new Error('worker-authored registered comparison '+key+' differs from independent original pixels');
+    }
+  }
+  const perceptual=whole.metrics?.perceptual;
+  for(const [key,expected] of Object.entries(observed.perceptual)) {
+    if(key==='pixelShape'){
+      for(const [field,value] of Object.entries(expected)){
+        if(!matches(perceptual?.pixelShape?.[field],value)) {
+          throw new Error('worker-authored registered comparison pixelShape.'+field+' differs from independent original pixels');
+        }
+      }
+    } else if(!matches(perceptual?.[key],expected)) {
+      throw new Error('worker-authored registered comparison perceptual.'+key+' differs from independent original pixels');
+    }
+  }
+  // Detect opposing negative-space placement even when area/outer bounds and
+  // the worker's landmarks happen to match. The comparison has no PASS power.
+  const pixel=observed.perceptual.pixelShape;
+  if(pixel.sourceOnlyFraction>0.28 && pixel.renderOnlyFraction>0.28) {
+    throw new Error('original-photo/current-GLB negative-space contradiction requires source-bound REWORK');
+  }
+  return observed;
+}
+
 async function inspectRegisteredComparison(root, state, head, visualReview, errors, finalSpatialContinuity, trustedLineage = null) {
   if (visualReview?.evidenceClass !== 'independent-reference' || visualReview?.verdict !== 'pass') return null;
   if (isTrustedContractFixtureProject(state)) return null;
@@ -773,6 +840,11 @@ async function inspectRegisteredComparison(root, state, head, visualReview, erro
           independent.heroSha256!==binding.frameSha256) {
         throw new Error('trusted renderer did not reproduce the exact current registered hero frame');
       }
+      // This call is mandatory for prospective checkpoint writes and for
+      // later cert/readiness/resume/audit through the same inspection path.
+      // It cannot be skipped by omitting registration or authored metrics.
+      await inspectIndependentSourcePixelEvidence(
+        root,state,head.artifactRefs,report,frameArtifact);
     } catch (error) {
       errors.push(`trusted source-bound GLB/render replay REVIEW_REQUIRED: ${error.message}`);
     }
