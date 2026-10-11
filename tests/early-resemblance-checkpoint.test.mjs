@@ -147,6 +147,9 @@ async function makeRealSourceProject(t, verdictStatus, {
   offsetOuterContour = false,
   nonImagePrimarySource = false,
   wrongPrimaryImageDimensions = false,
+  withSourceMacroSection = false,
+  tooNarrowMacroSection = false,
+  hiddenMacroSection = false,
 } = {}) {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), 'refas-r04-real-'));
   t.after(() => fs.rm(root, {recursive: true, force: true}));
@@ -205,6 +208,14 @@ async function makeRealSourceProject(t, verdictStatus, {
         [[.44,.44],[.56,.44],[.56,.56],[.44,.56]],
       evidenceRefs: [source.path],
     }],
+    ...(withSourceMacroSection ? {segments:[{
+      id:'source-visible-head-region',label:'head/upper section',importance:'macro',
+      evidenceRefs:[source.path],
+      polygon:tooNarrowMacroSection
+        ? [[.48,.445],[.52,.445],[.52,.555],[.48,.555]]
+        : [[.445,.445],[.555,.445],[.555,.555],[.445,.555]],
+      anchorIds:['observed-head'],visibility:hiddenMacroSection?'inferred':'visible',separation:'uncertain',
+    }]} : {}),
     attestation: {attested: true, evidenceRefs: [source.path]},
   });
   const geometryRef = await writeRef(
@@ -294,6 +305,7 @@ async function makeRealSourceProject(t, verdictStatus, {
         referenceId:'observed-head',nodeId:'whole-body',
         localPoint:offFrameMacroBinding ? [8,0,0] : movedMacroBinding ? [2,0,0] : [0,0,0],
       }],
+      segmentBindings:withSourceMacroSection?[{referenceId:'source-visible-head-region',nodeIds:['whole-body']}]:[],
       evidenceRefs:[source.path,candidateRef.path],
     });
     if (tamperProjection) {
@@ -420,6 +432,33 @@ test('S01b2 mismatched manifest dimensions fail the installed checkpoint pixel r
   await assert.rejects(
     () => commitLocal(root,'surface-topology',[surfaceRef]),
     /primary source pixel-frame REVIEW_REQUIRED: source pixel-frame decoded dimensions disagree with manifest/u,
+  );
+  assert.equal((await loadProject(root)).head,shapeCheckpoint.id);
+});
+
+test('S03a Host positive admits source-cited macro section with actual GLB projected envelope',async t=>{
+  const {root,surfaceRef}=await makeRealSourceProject(t,'match',{withSourceMacroSection:true});
+  const admitted=await commitLocal(root,'surface-topology',[surfaceRef]);
+  assert.equal(admitted.capability,'surface-topology');
+});
+
+test('S03a Host vetoes falsely narrow head region despite centered source/GLB macro anchor',async t=>{
+  const {root,surfaceRef,shapeCheckpoint}=await makeRealSourceProject(t,'match',{withSourceMacroSection:true,tooNarrowMacroSection:true});
+  const before=await loadProject(root);
+  await assert.rejects(
+    ()=>commitLocal(root,'surface-topology',[surfaceRef]),
+    /source macro section REWORK: source-visible-head-region: source-observed macro section envelope differs from actual projected GLB mesh/u,
+  );
+  const after=await loadProject(root);
+  assert.equal(after.head,shapeCheckpoint.id);
+  assert.deepEqual(after.checkpointIds,before.checkpointIds);
+});
+
+test('S03a Host keeps inferred head section as INSUFFICIENT, not inferred fidelity PASS',async t=>{
+  const {root,surfaceRef,shapeCheckpoint}=await makeRealSourceProject(t,'match',{withSourceMacroSection:true,hiddenMacroSection:true});
+  await assert.rejects(
+    ()=>commitLocal(root,'surface-topology',[surfaceRef]),
+    /source macro section INSUFFICIENT: source-visible-head-region: partially occluded, inferred, or hidden/u,
   );
   assert.equal((await loadProject(root)).head,shapeCheckpoint.id);
 });

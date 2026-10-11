@@ -29,6 +29,7 @@ import {inspectBaseColorTextures} from './glb.mjs';
 import {findComparisonContradictions, validateRegisteredComparison} from './registered-comparison.mjs';
 import {assertEarlyResemblanceAdmission} from './early-resemblance-barrier.mjs';
 import {validateReferenceGeometry} from './reference-geometry.mjs';
+import {screenSourceMacroSectionEnvelopes} from './source-macro-section-screen.mjs';
 import {inspectSourcePixelFrameBytes, MAX_SOURCE_FRAME_BYTES} from './source-pixel-frame.mjs';
 import {verifyRegisteredRenderReplay} from './registered-render-replay.mjs';
 import {evaluateIndependentSourceRenderPixels} from './independent-source-render-pixels.mjs';
@@ -1171,6 +1172,19 @@ async function ensureEarlyResemblanceAdmission(root, state, capability, scopeId,
       finding.severity === 'blocking');
     if (findings.length) {
       throw new Error(`${capability} early registered projection blocks downstream detail: ${findings.map((finding) => finding.category + ' (' + finding.checkId + ')').join('; ')}`);
+    }
+    // S03a: source-visible, typed macro part envelopes must remain consistent
+    // with the actual mesh projected by the frozen GLB/camera. This is a VETO
+    // only: source 2D segment annotations are not independent photo-semantic
+    // proof. Unknown/occluded macro segments cannot silently earn a PASS.
+    if ((geometry.segments ?? []).some((segment) => segment.importance === 'macro')) {
+      const macroSectionScreen=screenSourceMacroSectionEnvelopes({
+        referenceGeometry:geometry,realizedProjection:proof,sourcePath:state.source.path,
+      });
+      if(macroSectionScreen.status!=='NO_DETECTED_CONTRADICTION'){
+        const detail=macroSectionScreen.findings.map(item=>item.id+': '+item.reason).join('; ');
+        throw new Error(`${capability} source macro section ${macroSectionScreen.status}: ${detail}`);
+      }
     }
     // P0b2b2a: an anchor that projects correctly says nothing about whole
     // head/torso mass. Screen actual GLB mesh extents against the primary
