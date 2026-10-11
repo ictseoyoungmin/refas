@@ -33,6 +33,7 @@ import {
   NEUTRAL_CLAY_REQUIRED_VIEW_IDS,
   createRealizedProjection,
   createReferenceRegistration,
+  evaluateIndependentSourceRenderPixels,
   createSpatialHypothesisSet,
   createReferenceGeometry,
   createRelationalDiscrepancy,
@@ -488,6 +489,7 @@ async function commitCertification(root, source, {
   registeredFrameAttack=null,
   omitSourceSelectedCamera=false,
   sourceSelectedCameraAttack=false,
+  omitCanonicalRegistration=false,
 }={}) {
   const assetPath = path.join(root, 'model', 'candidate.glb');
   const glb = await fs.readFile(assetPath);
@@ -579,6 +581,12 @@ async function commitCertification(root, source, {
   assert.equal(finalHero.sha256,portableHero.sha256,'registration must not alter actual projected GLB pixels');
   const portableReportRef=await contentReference(path.join(replayDir,'render-report.json'),{kind:'render-report',root});
   const finalCameraRef=await contentReference(registeredCameraPath,{kind:'canonical-object-frame',root});
+  const independentPixels=await evaluateIndependentSourceRenderPixels({
+    root,sourcePath:source.path,sourceSha256:source.sha256,
+    heroPath:portableHero.path,heroSha256:portableHero.sha256,
+    registrationPath:registrationRef.path,registrationSha256:registrationRef.sha256,
+    roi:[0,0,1,1],
+  });
 
   let projectionBundle = null;
   if (projection !== 'none') {
@@ -628,7 +636,11 @@ async function commitCertification(root, source, {
     scopes:[{scopeId:'whole', level:'whole', ancestry:['whole'], sourceRoi:[0,0,1,1], registeredRenderRoi:[0,0,1,1],
       measurementAuthority:projectionBundle ? 'realized-projection' : 'image-only',
       projectionBinding:projectionBundle?.binding ?? null,
-      metrics:{silhouetteIoU:null, sourceForegroundPixels:100, renderForegroundPixels:100, landmarkResidualRmse:projectionBundle?.landmarkResidualRmse ?? null},
+      metrics:{silhouetteIoU:null,
+         sourceForegroundPixels:independentPixels.sourceForegroundPixels,
+         renderForegroundPixels:independentPixels.renderForegroundPixels,
+         perceptual:independentPixels.perceptual,
+         landmarkResidualRmse:projectionBundle?.landmarkResidualRmse ?? null},
       landmarks:projectionBundle?.landmarks ?? [], dimensions:[], images:[{path:portableHero.path,sha256:portableHero.sha256,width:384,height:384,evidenceClass:'derived-observation-aid'}]}],
     policy:{rawSourceRemainsPrimary:true, outputsAreDerivedObservationAids:true, metricsCannotSetVisualGate:true,
       metricFailureRequiresTypedFindingBeforeRouting:true, registrationResidualIsNotShapeTruth:true,
@@ -654,7 +666,7 @@ async function commitCertification(root, source, {
   });
   const reviewPath = await json(path.join(root,'reviews','visual-review.json'), review);
   const reviewRef = await contentReference(reviewPath, {kind:'visual-review', root});
-  const refs = [asset, reportRef, ...frames, ...(omitSourceSelectedCamera?[]:[finalCameraRef]), portableReportRef, portableHero, registrationRef, comparisonRef, reviewRef];
+  const refs = [asset, reportRef, ...frames, ...(omitSourceSelectedCamera?[]:[finalCameraRef]), portableReportRef, portableHero, ...(omitCanonicalRegistration?[]:[registrationRef]), comparisonRef, reviewRef];
   let forgedSpatialAuthorityRef = null;
   if (attachForgedSpatialAuthority) {
     const forgedPath = await json(path.join(root,'reviews','forged-spatial-gate-authority.json'),{
@@ -936,7 +948,7 @@ test('S02b2c2 valid GLB with forged real-source registration is denied before ch
   await advanceToReview(root, source);
   const before = await loadProject(root);
   await assert.rejects(
-    () => commitCertification(root, source, {projection:'good'}),
+    () => commitCertification(root, source, {projection:'good',omitCanonicalRegistration:true}),
     /current checkpoint-bound canonical reference-registration path\/SHA is required/u,
   );
   const after = await loadProject(root);
