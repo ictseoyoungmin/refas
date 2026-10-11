@@ -146,6 +146,58 @@ def foreground_mask(image: Image.Image):
     return delta > max(18.0, float(np.percentile(delta, 55)) * 0.35)
 
 
+def pixel_shape_reliability(image: Image.Image, mask):
+    """Is a corner-color segmentation credible for a conservative mismatch veto?
+
+    A cluttered background, clipped subject, large unknown foreground, or
+    tiny/flat mask is INSUFFICIENT, never a claimed silhouette PASS.
+    """
+    rgb = np.asarray(image.convert("RGB"), dtype=np.int16)
+    height, width = rgb.shape[:2]
+    if height < 32 or width < 32:
+        return False
+    span = max(2, min(8, min(height, width) // 8))
+    corners = np.concatenate((
+        rgb[:span, :span].reshape(-1, 3),
+        rgb[:span, -span:].reshape(-1, 3),
+        rgb[-span:, :span].reshape(-1, 3),
+        rgb[-span:, -span:].reshape(-1, 3),
+    ))
+    bg = np.median(corners, axis=0)
+    # Stable border color is a prerequisite for this simple source mask, not
+    # proof that the object was correctly segmented.
+    spread = float(np.percentile(np.sqrt(np.sum((corners - bg) ** 2, axis=1)), 95))
+    occupancy = float(np.mean(mask))
+    return spread <= 16.0 and 0.035 <= occupancy <= 0.85
+
+
+def pixel_shape_screen(source: Image.Image, render: Image.Image, source_mask, render_mask):
+    """Read-only original-pixel vs render-pixel contradiction aid.
+
+    Do not turn same-looking masks into Reference Fidelity PASS: the render
+    still requires GLB/camera provenance replay and human source semantics.
+    This compares spatial placements even when areas and bounding boxes match.
+    """
+    reliable = pixel_shape_reliability(source, source_mask) and pixel_shape_reliability(render, render_mask)
+    if not reliable:
+        return {"status": "INSUFFICIENT", "reason": "background-or-foreground-segmentation-ambiguous",
+                "evidenceAuthority": "registered-source-and-render-pixels", "cannotAuthorizePass": True}
+    source_only = int(np.count_nonzero(source_mask & ~render_mask))
+    render_only = int(np.count_nonzero(render_mask & ~source_mask))
+    source_count = max(1, int(np.count_nonzero(source_mask)))
+    render_count = max(1, int(np.count_nonzero(render_mask)))
+    return {
+        "status": "USABLE",
+        "reason": "stable-corner-background-and-nontrivial-foreground",
+        "evidenceAuthority": "registered-source-and-render-pixels",
+        "cannotAuthorizePass": True,
+        "sourceOnlyPixels": source_only,
+        "renderOnlyPixels": render_only,
+        "sourceOnlyFraction": float(source_only / source_count),
+        "renderOnlyFraction": float(render_only / render_count),
+    }
+
+
 def edge_mask(image: Image.Image):
     gray = np.asarray(ImageOps.grayscale(image), dtype=np.float32)
     gy, gx = np.gradient(gray)
@@ -179,6 +231,7 @@ def perceptual_metrics(source: Image.Image, render: Image.Image, source_mask, re
         "renderBoundingBox": render_box,
         "sourceForegroundPixels": source_pixels,
         "renderForegroundPixels": render_pixels,
+        "pixelShape": pixel_shape_screen(source, render, source_mask, render_mask),
     }
 
 
