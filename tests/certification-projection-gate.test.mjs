@@ -484,6 +484,7 @@ async function commitCertification(root, source, {
   includeFreshFinalSpatial=false,
   registeredFrameAttack=null,
   omitSourceSelectedCamera=false,
+  sourceSelectedCameraAttack=false,
 }={}) {
   const assetPath = path.join(root, 'model', 'candidate.glb');
   const glb = await fs.readFile(assetPath);
@@ -514,7 +515,7 @@ async function commitCertification(root, source, {
   const registeredCamera={
     schema:'refas.canonical-object-frame/v1',id:'source-registered-whole',scopeId:'whole',
     origin:[0,0,0],axes:{right:[1,0,0],up:[0,1,0],forward:[0,0,1]},scopeParts:[],
-    hero:{position:[0,0,5],target:[0,0,0],up:[0,1,0],fovY:90,registrationDigest:'a'.repeat(64)},
+    hero:{position:sourceSelectedCameraAttack?[.2,0,5]:[0,0,5],target:sourceSelectedCameraAttack?[.2,0,0]:[0,0,0],up:[0,1,0],fovY:90,registrationDigest:'a'.repeat(64)},
   };
   const registeredCameraPath=await json(path.join(root,'model','source-registered-frame.json'),registeredCamera);
   const registeredCameraRef=await contentReference(registeredCameraPath,{kind:'canonical-object-frame',root});
@@ -911,14 +912,11 @@ test('good realized reprojection allows real source certification and remains au
   assert.equal(audit.valid, true, audit.errors.join('\n'));
 });
 
-test('blocking realized reprojection vetoes certification even when visual review declares pass', async (t) => {
+test('blocking realized reprojection cannot commit a mismatched source-selected hero', async (t) => {
   const {root, source} = await makeProject(t);
   await advanceToReview(root, source, {projection:'bad'});
-  await commitCertification(root, source, {projection:'bad'});
-  const readiness = await assessCertification(root);
-  assert.equal(readiness.ready, false);
-  assert.match(readiness.errors.join('\n'), /blocking source-geometry disagreement/);
-  await assert.rejects(()=>certifyProject(root), /blocking source-geometry disagreement/);
+  await assert.rejects(()=>commitCertification(root, source, {projection:'bad'}),
+    /source-selected registered camera REWORK: hero camera differs from frozen upstream source-selected hypothesis/u);
 });
 
 test('contract fixtures remain compatible with legacy synthetic certification tests', async (t) => {
@@ -933,27 +931,36 @@ test('contract fixtures remain compatible with legacy synthetic certification te
   assert.equal(audit.valid, true, audit.errors.join('\n'));
 });
 
-test('S02b2a source-bound readiness refuses missing canonical registered hero even when visual review is PASS',async t=>{
+test('S02b2b Host refuses missing canonical registered hero before final checkpoint commit',async t=>{
   const {root,source}=await makeProject(t);
   await advanceToReview(root,source);
-  await commitCertification(root,source,{projection:'good',omitSourceSelectedCamera:true});
-  const readiness=await assessCertification(root);
-  assert.equal(readiness.ready,false);
-  assert.match(readiness.errors.join('\n'),/requires exactly one canonical-object-frame artifact/);
-  await assert.rejects(()=>certifyProject(root),/canonical-object-frame artifact/);
+  const before=await loadProject(root);
+  await assert.rejects(()=>commitCertification(root,source,{projection:'good',omitSourceSelectedCamera:true}),
+    /prospective source-bound certification REVIEW_REQUIRED:.*canonical-object-frame/u);
+  const after=await loadProject(root);
+  assert.equal(after.head,before.head,'denied final certification must not become current checkpoint');
+  assert.equal(after.checkpointIds.length,before.checkpointIds.length);
 });
 
-test('S02b2a reported image re-signed after actual GLB rendering cannot obtain source-bound certification',async t=>{
+test('S02b2b Host rejects re-signed counterfeit registered hero before final checkpoint mutation',async t=>{
   const {root,source}=await makeProject(t);
   await advanceToReview(root,source);
-  await commitCertification(root,source,{projection:'good',registeredFrameAttack:'forged-pixels'});
-  const readiness=await assessCertification(root);
-  assert.equal(readiness.ready,false);
-  assert.match(readiness.errors.join('\n'),/trusted source-bound GLB\/render replay REVIEW_REQUIRED: registered hero pixels differs/);
-  await assert.rejects(()=>certifyProject(root),/registered hero pixels differs/);
-  const guidance=await resumeProject(root);
-  assert.equal(guidance.nextAction,'REQUEST_VISUAL_REVIEW');
-  const audit=await auditProject(root);
-  assert.equal(audit.valid,false);
+  const before=await loadProject(root);
+  await assert.rejects(()=>commitCertification(root,source,{projection:'good',registeredFrameAttack:'forged-pixels'}),
+    /prospective source-bound certification REVIEW_REQUIRED:.*registered hero pixels differs/u);
+  const after=await loadProject(root);
+  assert.equal(after.head,before.head);
+  assert.equal(after.checkpointIds.length,before.checkpointIds.length);
+});
+
+test('S02b2b a perfectly replayable hero from wrong but re-signed camera fails frozen source selection',async t=>{
+  const {root,source}=await makeProject(t);
+  await advanceToReview(root,source);
+  const before=await loadProject(root);
+  await assert.rejects(()=>commitCertification(root,source,{projection:'good',sourceSelectedCameraAttack:true}),
+    /prospective source-bound certification REVIEW_REQUIRED:.*source-selected registered camera REWORK: hero camera differs from frozen upstream source-selected hypothesis/u);
+  const after=await loadProject(root);
+  assert.equal(after.head,before.head);
+  assert.equal(after.checkpointIds.length,before.checkpointIds.length);
 });
 
