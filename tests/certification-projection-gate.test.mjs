@@ -535,19 +535,7 @@ async function commitCertification(root, source, {
   const generatedReport=JSON.parse(await fs.readFile(path.join(replayDir,'render-report.json'),'utf8'));
   assert.ok(portable.status===0 || (portable.status===1 && generatedReport.status==='FAIL'),
     portable.stderr||portable.stdout);
-  if (registeredFrameAttack==='forged-pixels') {
-    const fake=spawnSync(process.env.CODEX_PRIMARY_RUNTIME_PYTHON||'python3',[
-      '-c','from PIL import Image,ImageDraw; import sys; im=Image.open(sys.argv[1]).convert("RGB"); ImageDraw.Draw(im).rectangle((31,31,65,65),fill=(241,7,33)); im.save(sys.argv[1])',
-      path.join(replayDir,'hero.png'),
-    ],{encoding:'utf8',timeout:15000});
-    assert.equal(fake.status,0,fake.stderr);
-    const staleReport=JSON.parse(await fs.readFile(path.join(replayDir,'render-report.json'),'utf8'));
-    const fakeFrame=await contentReference(path.join(replayDir,'hero.png'),{kind:'render-frame',root});
-    staleReport.heroImageSha256=fakeFrame.sha256;
-    staleReport.frames.find(f=>f.path==='hero.png').sha256=fakeFrame.sha256;
-    await json(path.join(replayDir,'render-report.json'),staleReport);
-  }
-  const portableHero=await contentReference(path.join(replayDir,'hero.png'),{kind:'render-frame',root});
+  let portableHero=await contentReference(path.join(replayDir,'hero.png'),{kind:'render-frame',root});
   // Four independently source/hero cited landmarks define a reproducible
   // identity placement for this synthetic 2D source test. The image was
   // authored before the GLB; it is not copied from the current hero.
@@ -579,7 +567,7 @@ async function commitCertification(root, source, {
     refreshed.stderr||refreshed.stdout);
   const finalHero=await contentReference(path.join(replayDir,'hero.png'),{kind:'render-frame',root});
   assert.equal(finalHero.sha256,portableHero.sha256,'registration must not alter actual projected GLB pixels');
-  const portableReportRef=await contentReference(path.join(replayDir,'render-report.json'),{kind:'render-report',root});
+  let portableReportRef=await contentReference(path.join(replayDir,'render-report.json'),{kind:'render-report',root});
   const finalCameraRef=await contentReference(registeredCameraPath,{kind:'canonical-object-frame',root});
   const independentPixels=await evaluateIndependentSourceRenderPixels({
     root,sourcePath:source.path,sourceSha256:source.sha256,
@@ -587,6 +575,25 @@ async function commitCertification(root, source, {
     registrationPath:registrationRef.path,registrationSha256:registrationRef.sha256,
     roi:[0,0,1,1],
   });
+  // Tamper AFTER authentic two-pass replay and observation. Re-sign only
+  // the worker-controlled hero/render report, not the frozen source or GLB.
+  // Trusted raster must independently catch the forged presentation.
+  if (registeredFrameAttack==='forged-pixels') {
+    const fake=spawnSync(process.env.CODEX_PRIMARY_RUNTIME_PYTHON||'python3',[
+      '-c','from PIL import Image,ImageDraw; import sys; im=Image.open(sys.argv[1]).convert("RGB"); ImageDraw.Draw(im).rectangle((31,31,65,65),fill=(241,7,33)); im.save(sys.argv[1])',
+      path.join(replayDir,'hero.png'),
+    ],{encoding:'utf8',timeout:15000});
+    assert.equal(fake.status,0,fake.stderr);
+    const staleReport=JSON.parse(await fs.readFile(path.join(replayDir,'render-report.json'),'utf8'));
+    const fakeFrame=await contentReference(path.join(replayDir,'hero.png'),{kind:'render-frame',root});
+    staleReport.heroImageSha256=fakeFrame.sha256;
+    staleReport.frames.find(f=>f.path==='hero.png').sha256=fakeFrame.sha256;
+    await json(path.join(replayDir,'render-report.json'),staleReport);
+  }
+  if(registeredFrameAttack==='forged-pixels'){
+    portableHero=await contentReference(path.join(replayDir,'hero.png'),{kind:'render-frame',root});
+    portableReportRef=await contentReference(path.join(replayDir,'render-report.json'),{kind:'render-report',root});
+  }
 
   let projectionBundle = null;
   if (projection !== 'none') {
