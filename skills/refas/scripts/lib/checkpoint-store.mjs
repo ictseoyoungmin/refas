@@ -32,6 +32,7 @@ import {validateReferenceGeometry} from './reference-geometry.mjs';
 import {inspectSourcePixelFrameBytes, MAX_SOURCE_FRAME_BYTES} from './source-pixel-frame.mjs';
 import {verifyRegisteredRenderReplay} from './registered-render-replay.mjs';
 import {evaluateIndependentSourceRenderPixels} from './independent-source-render-pixels.mjs';
+import {mapParentToChild} from './registration.mjs';
 import {validateSpatialHypothesisSet} from './spatial-hypotheses.mjs';
 import {normalizeProjectionCamera, deriveRealizedWholeSilhouetteBounds} from './realized-projection.mjs';
 import {verifyRealizedProjection} from './realized-projection-verification.mjs';
@@ -719,11 +720,28 @@ async function inspectIndependentSourcePixelEvidence(root, state, artifactRefs, 
       !registration.attestation?.evidenceRefs?.includes(heroArtifact.path)) {
     throw new Error('source/render registration is not independently cited to original source and current GLB hero');
   }
+  // A worker cannot hide a contradictory limb/void by forging a small
+  // whole-object comparison ROI and re-signing the report. Recompute the
+  // whole source image's registered rectangular footprint from canonical H.
+  const fullSource=[0,0,1,1];
+  if(JSON.stringify(whole.sourceRoi)!==JSON.stringify(fullSource)) {
+    throw new Error('whole source ROI must retain the entire original photo');
+  }
+  const mapped=[[0,0],[1,0],[1,1],[0,1]].map((point)=>mapParentToChild(registration,point));
+  const xs=mapped.map((point)=>point[0]), ys=mapped.map((point)=>point[1]);
+  const derivedRoi=[
+    Math.min(...xs), Math.min(...ys),
+    Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys),
+  ];
+  if(derivedRoi.some((value,index)=>!Number.isFinite(value) ||
+      Math.abs(value-(whole.registeredRenderRoi?.[index]??NaN))>1e-8)) {
+    throw new Error('worker-authored registered whole ROI differs from original source homography');
+  }
   const observed=await evaluateIndependentSourceRenderPixels({
     root,sourcePath:state.source.path,sourceSha256:state.source.sha256,
     heroPath:heroArtifact.path,heroSha256:heroArtifact.sha256,
     registrationPath:registrationRefs[0].path,registrationSha256:registrationRefs[0].sha256,
-    roi:whole.registeredRenderRoi,
+    roi:derivedRoi,
   });
   if(observed.status!=='USABLE' || observed.perceptual?.pixelShape?.status!=='USABLE') {
     throw new Error('original photo/current GLB registered pixel observation is INSUFFICIENT; review source segmentation and registration');
