@@ -521,7 +521,7 @@ async function commitCertification(root, source, {
   const cli=path.resolve('skills/refas/scripts/refas.mjs');
   const replayDir=path.join(root,'renders','registered');
   const portable=spawnSync(process.execPath,[cli,'render','--glb',assetPath,'--frame',registeredCameraPath,
-    '--out',replayDir,'--size','96','--timeout-seconds','30','--max-working-mb','256'],
+    '--out',replayDir,'--size','96','--timeout-seconds','30','--max-working-mb','256','--hero-only'],
     {encoding:'utf8',timeout:45_000});
   assert.equal(portable.status,0,portable.stderr||portable.stdout);
   if (registeredFrameAttack==='forged-pixels') {
