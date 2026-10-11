@@ -482,6 +482,8 @@ async function commitCertification(root, source, {
   attachForgedSpatialAuthority=false,
   attachForgedFinalContinuity=false,
   includeFreshFinalSpatial=false,
+  registeredFrameAttack=null,
+  omitSourceSelectedCamera=false,
 }={}) {
   const assetPath = path.join(root, 'model', 'candidate.glb');
   const glb = await fs.readFile(assetPath);
@@ -522,6 +524,18 @@ async function commitCertification(root, source, {
     '--out',replayDir,'--size','96','--timeout-seconds','30','--max-working-mb','256'],
     {encoding:'utf8',timeout:45_000});
   assert.equal(portable.status,0,portable.stderr||portable.stdout);
+  if (registeredFrameAttack==='forged-pixels') {
+    const fake=spawnSync(process.env.CODEX_PRIMARY_RUNTIME_PYTHON||'python3',[
+      '-c','from PIL import Image,ImageDraw; import sys; im=Image.open(sys.argv[1]).convert("RGB"); ImageDraw.Draw(im).rectangle((31,31,65,65),fill=(241,7,33)); im.save(sys.argv[1])',
+      path.join(replayDir,'hero.png'),
+    ],{encoding:'utf8',timeout:15000});
+    assert.equal(fake.status,0,fake.stderr);
+    const staleReport=JSON.parse(await fs.readFile(path.join(replayDir,'render-report.json'),'utf8'));
+    const fakeFrame=await contentReference(path.join(replayDir,'hero.png'),{kind:'render-frame',root});
+    staleReport.heroImageSha256=fakeFrame.sha256;
+    staleReport.frames.find(f=>f.path==='hero.png').sha256=fakeFrame.sha256;
+    await json(path.join(replayDir,'render-report.json'),staleReport);
+  }
   const portableHero=await contentReference(path.join(replayDir,'hero.png'),{kind:'render-frame',root});
   const portableReportRef=await contentReference(path.join(replayDir,'render-report.json'),{kind:'render-report',root});
 
@@ -599,7 +613,7 @@ async function commitCertification(root, source, {
   });
   const reviewPath = await json(path.join(root,'reviews','visual-review.json'), review);
   const reviewRef = await contentReference(reviewPath, {kind:'visual-review', root});
-  const refs = [asset, reportRef, ...frames, registeredCameraRef, portableReportRef, portableHero, comparisonRef, reviewRef];
+  const refs = [asset, reportRef, ...frames, ...(omitSourceSelectedCamera?[]:[registeredCameraRef]), portableReportRef, portableHero, comparisonRef, reviewRef];
   let forgedSpatialAuthorityRef = null;
   if (attachForgedSpatialAuthority) {
     const forgedPath = await json(path.join(root,'reviews','forged-spatial-gate-authority.json'),{
@@ -913,3 +927,28 @@ test('contract fixtures remain compatible with legacy synthetic certification te
   const audit = await auditProject(root);
   assert.equal(audit.valid, true, audit.errors.join('\n'));
 });
+
+test('S02b2a source-bound readiness refuses missing canonical registered hero even when visual review is PASS',async t=>{
+  const {root,source}=await makeProject(t);
+  await advanceToReview(root,source);
+  await commitCertification(root,source,{projection:'good',omitSourceSelectedCamera:true});
+  const readiness=await assessCertification(root);
+  assert.equal(readiness.ready,false);
+  assert.match(readiness.errors.join('\n'),/requires exactly one canonical-object-frame artifact/);
+  await assert.rejects(()=>certifyProject(root),/canonical-object-frame artifact/);
+});
+
+test('S02b2a reported image re-signed after actual GLB rendering cannot obtain source-bound certification',async t=>{
+  const {root,source}=await makeProject(t);
+  await advanceToReview(root,source);
+  await commitCertification(root,source,{projection:'good',registeredFrameAttack:'forged-pixels'});
+  const readiness=await assessCertification(root);
+  assert.equal(readiness.ready,false);
+  assert.match(readiness.errors.join('\n'),/trusted source-bound GLB\/render replay REVIEW_REQUIRED: registered hero pixels differs/);
+  await assert.rejects(()=>certifyProject(root),/registered hero pixels differs/);
+  const guidance=await resumeProject(root);
+  assert.equal(guidance.nextAction,'REQUEST_VISUAL_REVIEW');
+  const audit=await auditProject(root);
+  assert.equal(audit.valid,false);
+});
+
