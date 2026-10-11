@@ -33,6 +33,7 @@ import {
   partsToGlb,
   resolveAuthoritativeCandidateLineage,
   resolveVolumeBarrierAdmission,
+  reopenFromTrustedSourceAdmission,
   resumeProject,
 } from '../skills/refas/scripts/lib/index.mjs';
 import {initTrustedContractFixtureProject} from '../skills/refas/scripts/lib/contract-fixture-project.mjs';
@@ -445,6 +446,93 @@ async function makeRealSourceProject(t, verdictStatus, {
   const surfaceRef = await writeRef(root, 'model/surface.json', Buffer.from('{"surface":true}\n'), 'surface-network');
   return {root, source, hierarchy, barrier, volumeBarrier, classification, spatialEvidence, surfaceRef, candidateRef, shapeCheckpoint};
 }
+
+test('S04a trusted replay reopens shape from physically false source macro axis rather than accept detail',async t=>{
+  const {root,shapeCheckpoint}=await makeRealSourceProject(t,'match',{
+    withSourceMacroSection:true,diagonalMacroSection:true,
+  });
+  const original=await loadProject(root);
+  const result=await reopenFromTrustedSourceAdmission(root,{
+    expectedHeadId:shapeCheckpoint.id,
+  });
+  assert.equal(result.status,'REOPENED');
+  assert.equal(result.ownerCapability,'shape-reconstruction');
+  assert.equal(result.decision.route.action,'REOPEN_CAPABILITY');
+  assert.equal(result.decision.route.finding.category,'silhouette-mismatch');
+  const after=await loadProject(root);
+  assert.notEqual(after.head,shapeCheckpoint.id);
+  assert.equal(after.status,'reopened');
+  assert.equal(after.reopenedCapability,'shape-reconstruction');
+  assert.equal(after.certification,null);
+  assert.ok(after.invalidatedCapabilities.includes('surface-topology'));
+  assert.ok(after.invalidatedCapabilities.includes('appearance'));
+  assert.ok(after.invalidatedCapabilities.includes('whole-object-certification'));
+  assert.deepEqual(after.checkpointIds,original.checkpointIds,'historical checkpoints are preserved, not falsely accepted');
+  const next=await resumeProject(root);
+  assert.equal(next.activeWork.capability,'shape-reconstruction');
+  assert.equal((await auditProject(root)).valid,true);
+});
+
+test('S04a wrong frozen-camera projection reopens spatial hypotheses, invalidating shape, render and certification',async t=>{
+  const {root,shapeCheckpoint}=await makeRealSourceProject(t,'match',{wrongEarlyCamera:true});
+  const result=await reopenFromTrustedSourceAdmission(root,{expectedHeadId:shapeCheckpoint.id});
+  assert.equal(result.status,'REOPENED');
+  assert.equal(result.ownerCapability,'spatial-hypotheses');
+  assert.equal(result.decision.route.finding.category,'camera-hypothesis-mismatch');
+  const after=await loadProject(root);
+  assert.equal(after.reopenedCapability,'spatial-hypotheses');
+  assert.ok(after.invalidatedCapabilities.includes('shape-reconstruction'));
+  assert.ok(after.invalidatedCapabilities.includes('visual-critique'));
+  assert.ok(after.invalidatedCapabilities.includes('whole-object-certification'));
+  assert.equal((await resumeProject(root)).activeWork.capability,'spatial-hypotheses');
+  assert.equal((await auditProject(root)).valid,true);
+});
+
+test('S04a insufficient source visibility enters review without inventing an upstream rollback owner',async t=>{
+  const {root,shapeCheckpoint}=await makeRealSourceProject(t,'match',{
+    withSourceMacroSection:true,hiddenMacroSection:true,
+  });
+  const before=await loadProject(root);
+  const result=await reopenFromTrustedSourceAdmission(root,{
+    expectedHeadId:shapeCheckpoint.id,
+  });
+  assert.equal(result.status,'REVIEW_REQUIRED');
+  assert.equal(result.decision.route.action,'REQUEST_REVIEW');
+  assert.equal(result.decision.route.finding.category,'evidence-insufficient');
+  const after=await loadProject(root);
+  assert.equal(after.head,before.head);
+  assert.deepEqual(after.invalidatedCapabilities,before.invalidatedCapabilities);
+  assert.equal(after.status,'review-required');
+});
+
+test('S04a positive matching real-GLB source admission is NOT a source fidelity certificate',async t=>{
+  const {root,shapeCheckpoint}=await makeRealSourceProject(t,'match',{
+    withSourceMacroSection:true,
+  });
+  const before=await loadProject(root);
+  const result=await reopenFromTrustedSourceAdmission(root,{expectedHeadId:shapeCheckpoint.id});
+  assert.equal(result.status,'NO_DETECTED_CONTRADICTION');
+  assert.equal(result.decision,null);
+  assert.equal(result.cannotAuthorizeReferenceFidelity,true);
+  assert.deepEqual(await loadProject(root),before);
+});
+
+test('S04a cannot apply stale result or self-author a route to trusted source admission',async t=>{
+  const {root,shapeCheckpoint}=await makeRealSourceProject(t,'match',{
+    withSourceMacroSection:true,diagonalMacroSection:true,
+  });
+  const before=await loadProject(root);
+  await assert.rejects(
+    ()=>reopenFromTrustedSourceAdmission(root,{
+      expectedHeadId:'cp_stale','finding':{category:'camera-hypothesis-mismatch',severity:'major',
+        evidenceRefs:['reviews/self-pass.json']},
+    }),
+    /checkpoint head changed before evaluation/u,
+  );
+  assert.deepEqual(await loadProject(root),before);
+  const actual=await reopenFromTrustedSourceAdmission(root,{expectedHeadId:shapeCheckpoint.id});
+  assert.equal(actual.ownerCapability,'shape-reconstruction','foreign authored finding cannot rewrite trusted classifier');
+});
 
 test('S01b2 current nonimage primary source fails HOST shape-to-detail admission despite consistent SHA and PROCEED', async t => {
   const {root,source,barrier,surfaceRef,shapeCheckpoint}=await makeRealSourceProject(t,'match',{nonImagePrimarySource:true});
