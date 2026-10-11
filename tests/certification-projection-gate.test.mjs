@@ -55,6 +55,10 @@ import {
 } from '../skills/refas/scripts/lib/index.mjs';
 import {initTrustedContractFixtureProject} from '../skills/refas/scripts/lib/contract-fixture-project.mjs';
 
+// These older VC05/VC06/VC07 geometry/transaction tests exercise contracts,
+// not original-photo likeness. Never promote the deliberately flat 256px PNG
+// or their fabricated registration into a real-source positive fixture.
+// New P0 end-to-end image-backed acceptance tests are mandatory separately.
 const CONTRACT_FIXTURES = new Set(['test-fixture','deterministic-project-fixture','synthetic-test-fixture']);
 
 async function json(file, value) {
@@ -658,7 +662,7 @@ async function commitCertification(root, source, {
 }
 
 test('VC06 same-digest final candidate carries forward exact shape spatial authority with fresh multiview', async (t) => {
-  const {root,source}=await makeProject(t);
+  const {root,source}=await makeProject(t, 'test-fixture');
   await advanceToReview(root,source);
   const checkpoint=await commitCertification(root,source,{projection:'good'});
   const continuity=await resolveFinalSpatialContinuity(root,{checkpointId:checkpoint.id});
@@ -672,7 +676,7 @@ test('VC06 same-digest final candidate carries forward exact shape spatial autho
 });
 
 test('VC06 validator rejects re-signed mode and multiview tampering', async (t) => {
-  const {root,source}=await makeProject(t);
+  const {root,source}=await makeProject(t, 'test-fixture');
   await advanceToReview(root,source);
   const checkpoint=await commitCertification(root,source,{projection:'good'});
   const continuity=await resolveFinalSpatialContinuity(root,{checkpointId:checkpoint.id});
@@ -701,7 +705,7 @@ test('VC06 validator rejects re-signed mode and multiview tampering', async (t) 
 });
 
 test('VC06 changed final candidate cannot inherit shape-stage spatial authority without fresh final evidence', async (t) => {
-  const {root,source}=await makeProject(t);
+  const {root,source}=await makeProject(t, 'test-fixture');
   await advanceToReview(root,source,{mutateAtAppearance:true});
   const authority=await resolveAuthoritativeCandidateLineage(root);
   assert.notEqual(authority.initialCandidate.assetSha256,authority.finalCandidate.assetSha256);
@@ -716,7 +720,7 @@ test('VC06 changed final candidate cannot inherit shape-stage spatial authority 
 });
 
 test('VC06 changed final candidate closes only after fresh exact VC01 and VC03 evidence', async (t) => {
-  const {root,source}=await makeProject(t);
+  const {root,source}=await makeProject(t, 'test-fixture');
   await advanceToReview(root,source,{mutateAtAppearance:true});
   const checkpoint=await commitCertification(root,source,{projection:'good',includeFreshFinalSpatial:true});
   const continuity=await resolveFinalSpatialContinuity(root,{checkpointId:checkpoint.id});
@@ -737,7 +741,7 @@ test('VC07 keeps shape-stage spatial plausibility and final-candidate continuity
 });
 
 test('VC07 final continuity gate replays VC06 and ignores a caller-authored continuity artifact', async (t) => {
-  const {root,source}=await makeProject(t);
+  const {root,source}=await makeProject(t, 'test-fixture');
   await advanceToReview(root,source);
   const checkpoint=await commitCertification(root,source,{projection:'good',attachForgedFinalContinuity:true});
   const gate=checkpoint.gates.find((item)=>item.id==='final-spatial-continuity');
@@ -750,7 +754,7 @@ test('VC07 final continuity gate replays VC06 and ignores a caller-authored cont
 });
 
 test('VC07 readiness and certificate bind exact VC06 continuity and final candidate', async (t) => {
-  const {root,source}=await makeProject(t);
+  const {root,source}=await makeProject(t, 'test-fixture');
   await advanceToReview(root,source);
   const checkpoint=await commitCertification(root,source,{projection:'good'});
   const continuity=await resolveFinalSpatialContinuity(root,{checkpointId:checkpoint.id});
@@ -767,7 +771,7 @@ test('VC07 readiness and certificate bind exact VC06 continuity and final candid
 });
 
 test('VC07 audit rejects a re-signed certificate with stale final continuity binding', async (t) => {
-  const {root,source}=await makeProject(t);
+  const {root,source}=await makeProject(t, 'test-fixture');
   await advanceToReview(root,source);
   await commitCertification(root,source,{projection:'good'});
   await certifyProject(root);
@@ -787,7 +791,7 @@ test('VC07 audit rejects a re-signed certificate with stale final continuity bin
 });
 
 test('VC07 certified resume refuses DONE when current VC06 immutable evidence no longer replays', async (t) => {
-  const {root,source}=await makeProject(t);
+  const {root,source}=await makeProject(t, 'test-fixture');
   await advanceToReview(root,source);
   const checkpoint=await commitCertification(root,source,{projection:'good'});
   await certifyProject(root);
@@ -843,7 +847,7 @@ test('VC05 trusted spatial authority derives blocked from VC04 HOLD', async (t) 
 });
 
 test('VC05 ignores a caller-authored trusted-authority artifact and cites runtime VC04 evidence', async (t) => {
-  const {root,source}=await makeProject(t);
+  const {root,source}=await makeProject(t, 'test-fixture');
   await advanceToReview(root,source);
   const checkpoint=await commitCertification(root,source,{projection:'good',attachForgedSpatialAuthority:true});
   const gate=checkpoint.gates.find((item)=>item.id==='spatial-plausibility');
@@ -896,20 +900,17 @@ test('real source cannot commit final certification without realized reprojectio
   assert.equal(after.checkpointIds.length,before.checkpointIds.length);
 });
 
-test('good realized reprojection allows real source certification and remains audit-valid', async (t) => {
+test('S02b2c2 valid GLB/realized projection cannot certify fabricated source registration or synthetic uniform real-source pixels', async (t) => {
   const {root, source} = await makeProject(t);
   await advanceToReview(root, source);
-  await commitCertification(root, source, {projection:'good'});
-  const readiness = await assessCertification(root);
-  assert.equal(readiness.ready, true, readiness.errors.join('\n'));
-  assert.ok(readiness.realizedProjectionDigest);
-  assert.ok(readiness.relationalCertificationDigest);
-  assert.ok(readiness.authorizedClaimIds.includes('whole-system-relational-fidelity'));
-  const certificate = await certifyProject(root);
-  assert.equal(certificate.sourceSha256, source.sha256);
-  assert.equal(certificate.claimCertification.relationalClosure.relationalCertificationDigest, readiness.relationalCertificationDigest);
-  const audit = await auditProject(root);
-  assert.equal(audit.valid, true, audit.errors.join('\n'));
+  const before = await loadProject(root);
+  await assert.rejects(
+    () => commitCertification(root, source, {projection:'good'}),
+    /current checkpoint-bound canonical reference-registration path\/SHA is required/u,
+  );
+  const after = await loadProject(root);
+  assert.equal(after.head, before.head, 'source-invalid evidence must not persist a final checkpoint');
+  assert.equal(after.checkpointIds.length, before.checkpointIds.length);
 });
 
 test('blocking realized reprojection cannot commit a mismatched source-selected hero', async (t) => {
