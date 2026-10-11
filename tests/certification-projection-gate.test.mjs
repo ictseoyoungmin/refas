@@ -506,6 +506,25 @@ async function commitCertification(root, source, {
   const reportPath = await json(path.join(root,'renders','final','render-report.json'), report);
   const reportRef = await contentReference(reportPath, {kind:'render-report', root});
 
+  // The visual-review presentation renderer remains independently tested
+  // above. Registered GLB comparison has a second exact, reproducible portable
+  // hero: text-based fake frame bytes must never establish render provenance.
+  const registeredCamera={
+    schema:'refas.canonical-object-frame/v1',id:'source-registered-whole',scopeId:'whole',
+    origin:[0,0,0],axes:{right:[1,0,0],up:[0,1,0],forward:[0,0,1]},scopeParts:[],
+    hero:{position:[0,0,5],target:[0,0,0],up:[0,1,0],fovY:90,registrationDigest:'a'.repeat(64)},
+  };
+  const registeredCameraPath=await json(path.join(root,'model','source-registered-frame.json'),registeredCamera);
+  const registeredCameraRef=await contentReference(registeredCameraPath,{kind:'canonical-object-frame',root});
+  const cli=path.resolve('skills/refas/scripts/refas.mjs');
+  const replayDir=path.join(root,'renders','registered');
+  const portable=spawnSync(process.execPath,[cli,'render','--glb',assetPath,'--frame',registeredCameraPath,
+    '--out',replayDir,'--size','96','--timeout-seconds','30','--max-working-mb','256'],
+    {encoding:'utf8',timeout:45_000});
+  assert.equal(portable.status,0,portable.stderr||portable.stdout);
+  const portableHero=await contentReference(path.join(replayDir,'hero.png'),{kind:'render-frame',root});
+  const portableReportRef=await contentReference(path.join(replayDir,'render-report.json'),{kind:'render-report',root});
+
   let projectionBundle = null;
   if (projection !== 'none') {
     const geometry = sourceGeometry(source);
@@ -548,14 +567,14 @@ async function commitCertification(root, source, {
   const comparison = {
     schema:'refas.registered-comparison/v1', claimScope:'critique-evidence-only',
     source:{sha256:source.sha256, manifestSha256:'f'.repeat(64), acquisitionKind:source.acquisition?.kind ?? ''},
-    render:{assetSha256:asset.sha256, frameId:'hero', frameSha256:frames[0].sha256, reportSha256:reportRef.sha256},
+    render:{assetSha256:asset.sha256, frameId:'hero', frameSha256:portableHero.sha256, reportSha256:portableReportRef.sha256},
     registration:{digest:'a'.repeat(64), fileSha256:'b'.repeat(64), model:'test', metrics:{}},
     hierarchy:{digest:'c'.repeat(64), fileSha256:'d'.repeat(64)}, projectionEvidence:projectionBundle ? [projectionBundle.binding] : [],
     scopes:[{scopeId:'whole', level:'whole', ancestry:['whole'], sourceRoi:[0,0,1,1], registeredRenderRoi:[0,0,1,1],
       measurementAuthority:projectionBundle ? 'realized-projection' : 'image-only',
       projectionBinding:projectionBundle?.binding ?? null,
       metrics:{silhouetteIoU:null, sourceForegroundPixels:100, renderForegroundPixels:100, landmarkResidualRmse:projectionBundle?.landmarkResidualRmse ?? null},
-      landmarks:projectionBundle?.landmarks ?? [], dimensions:[], images:[{path:'renders/final/hero.png',sha256:frames[0].sha256,width:1,height:1,evidenceClass:'derived-observation-aid'}]}],
+      landmarks:projectionBundle?.landmarks ?? [], dimensions:[], images:[{path:portableHero.path,sha256:portableHero.sha256,width:96,height:96,evidenceClass:'derived-observation-aid'}]}],
     policy:{rawSourceRemainsPrimary:true, outputsAreDerivedObservationAids:true, metricsCannotSetVisualGate:true,
       metricFailureRequiresTypedFindingBeforeRouting:true, registrationResidualIsNotShapeTruth:true,
       realSourceLandmarksMustUseRealizedProjection:true, manualRenderCoordinatesCannotClaimRealSourceGeometry:true,
@@ -572,7 +591,7 @@ async function commitCertification(root, source, {
     views:REQUIRED_REVIEW_VIEW_IDS.map((id)=>({id,status:'pass',evidenceRefs:[`renders/final/${id}.png`],observation:reviewObservation(id),summary:`${id} directly inspected against the source.`})),
     gateVerdicts:REQUIRED_VISUAL_GATE_IDS.map((id)=>({id,status:'pass',evidenceRefs:['renders/final/multiview-review-board.png'],observation:reviewObservation(id),summary:`${id} directly inspected against current source-bound evidence.`})),
     unresolvedFindings:[],
-    registeredComparison:{path:'reviews/registered-comparison/comparison-report.json',sha256:comparisonRef.sha256,comparisonDigest:comparison.comparisonDigest,sourceSha256:source.sha256,sourceManifestSha256:comparison.source.manifestSha256,assetSha256:asset.sha256,renderReportPath:'renders/final/render-report.json',renderReportSha256:reportRef.sha256,framePath:'renders/final/hero.png',frameSha256:frames[0].sha256,registrationDigest:comparison.registration.digest,hierarchyDigest:comparison.hierarchy.digest,inputDigest:comparison.inputDigest,scopeIds:['whole']},
+    registeredComparison:{path:'reviews/registered-comparison/comparison-report.json',sha256:comparisonRef.sha256,comparisonDigest:comparison.comparisonDigest,sourceSha256:source.sha256,sourceManifestSha256:comparison.source.manifestSha256,assetSha256:asset.sha256,renderReportPath:portableReportRef.path,renderReportSha256:portableReportRef.sha256,framePath:portableHero.path,frameSha256:portableHero.sha256,registrationDigest:comparison.registration.digest,hierarchyDigest:comparison.hierarchy.digest,inputDigest:comparison.inputDigest,scopeIds:['whole']},
     comparisonAssessment:{sourceObservation:'The source whole object and visible macro boundaries were inspected.',renderObservation:'The current whole render and registered comparison board were inspected.',comparisonConclusion:'The registered comparison is sufficient for this synthetic real-source gate.',evidenceRefs:['source/reference.png','reviews/registered-comparison/comparison-report.json'],contradictionResolution:{status:'not-present',explanation:'',evidenceRefs:[],findingRefs:[]}},
     renderer:{kind:'test-renderer',family:'threejs-webgl',reportRef:'renders/final/render-report.json',reportSha256:reportRef.sha256,independentProcess:true,claimScope:'visual-fidelity',supportedMaterialFeatures:['base-color-factor','metallic-factor','roughness-factor'],unsupportedMaterialFeatures:[]},
     requiredMaterialFeatures:['base-color-factor','metallic-factor','roughness-factor'],
@@ -580,7 +599,7 @@ async function commitCertification(root, source, {
   });
   const reviewPath = await json(path.join(root,'reviews','visual-review.json'), review);
   const reviewRef = await contentReference(reviewPath, {kind:'visual-review', root});
-  const refs = [asset, reportRef, ...frames, comparisonRef, reviewRef];
+  const refs = [asset, reportRef, ...frames, registeredCameraRef, portableReportRef, portableHero, comparisonRef, reviewRef];
   let forgedSpatialAuthorityRef = null;
   if (attachForgedSpatialAuthority) {
     const forgedPath = await json(path.join(root,'reviews','forged-spatial-gate-authority.json'),{
