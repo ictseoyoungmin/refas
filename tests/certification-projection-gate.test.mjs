@@ -885,15 +885,15 @@ test('legacy stored certification without final candidate authority reopens unde
 });
 
 
-test('real source cannot bypass certification by omitting realized reprojection', async (t) => {
+test('real source cannot commit final certification without realized reprojection', async (t) => {
   const {root, source} = await makeProject(t);
   await advanceToReview(root, source);
-  await commitCertification(root, source, {projection:'none'});
-  const readiness = await assessCertification(root);
-  assert.equal(readiness.ready, false);
-  assert.match(readiness.errors.join('\n'), /requires exactly one digest-bound reference-geometry artifact/);
-  await assert.rejects(()=>certifyProject(root), /reference-geometry artifact/);
-  assert.equal((await resumeProject(root)).nextAction, 'REQUEST_VISUAL_REVIEW');
+  const before=await loadProject(root);
+  await assert.rejects(()=>commitCertification(root, source, {projection:'none'}),
+    /prospective source-bound certification REVIEW_REQUIRED: registered comparison is invalid: real-source scope whole must use realized projection measurements/u);
+  const after=await loadProject(root);
+  assert.equal(after.head,before.head);
+  assert.equal(after.checkpointIds.length,before.checkpointIds.length);
 });
 
 test('good realized reprojection allows real source certification and remains audit-valid', async (t) => {
