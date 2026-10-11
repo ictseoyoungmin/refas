@@ -493,6 +493,7 @@ async function commitCertification(root, source, {
   sourceSelectedCameraAttack=false,
   omitCanonicalRegistration=false,
   authoredPixelAttack=false,
+  authoredWholeRoiAttack=false,
   registrationAmbiguous=false,
 }={}) {
   const assetPath = path.join(root, 'model', 'candidate.glb');
@@ -665,6 +666,9 @@ async function commitCertification(root, source, {
     comparison.scopes[0].metrics.perceptual.pixelShape.sourceOnlyFraction=0;
     comparison.scopes[0].metrics.perceptual.pixelShape.renderOnlyFraction=0;
     comparison.scopes[0].metrics.perceptual.edgeDisagreement=0;
+  }
+  if(authoredWholeRoiAttack) {
+    comparison.scopes[0].registeredRenderRoi=[.4,.4,.2,.2];
   }
   comparison.comparisonDigest = digestJson(comparison);
   const comparisonPath = await json(path.join(root,'reviews','registered-comparison','comparison-report.json'), comparison);
@@ -982,6 +986,18 @@ test('S02b2c2 rejects re-signed worker-authored invented pixelShape and edge met
   await assert.rejects(
     ()=>commitCertification(root,source,{projection:'good',authoredPixelAttack:true}),
     /prospective source-bound certification REVIEW_REQUIRED:.*worker-authored registered comparison/u);
+  const after=await loadProject(root);
+  assert.equal(after.head,before.head);
+  assert.equal(after.checkpointIds.length,before.checkpointIds.length);
+});
+
+test('S02b2c2 refuses re-signed worker-cropped ROI that hides source/render differences', async t=>{
+  const {root,source}=await makeProject(t);
+  await advanceToReview(root,source);
+  const before=await loadProject(root);
+  await assert.rejects(
+    ()=>commitCertification(root,source,{projection:'good',authoredWholeRoiAttack:true}),
+    /prospective source-bound certification REVIEW_REQUIRED:.*worker-authored registered whole ROI differs/u);
   const after=await loadProject(root);
   assert.equal(after.head,before.head);
   assert.equal(after.checkpointIds.length,before.checkpointIds.length);
