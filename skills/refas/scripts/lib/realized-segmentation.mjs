@@ -86,6 +86,7 @@ function deriveSegment({reference, binding, json, binary, matrices, nodeIndexByS
   if (!meshNodeIndices.length) throw new Error(`realized segment ${reference.id} does not resolve to mesh nodes`);
   const projected = [];
   let totalVertices = 0, insideFrameVertices = 0;
+  let minCameraDepth = Infinity, maxCameraDepth = -Infinity;
   for (const nodeIndex of meshNodeIndices) {
     const node = json.nodes[nodeIndex], mesh = json.meshes?.[node.mesh];
     if (!mesh) continue;
@@ -95,13 +96,13 @@ function deriveSegment({reference, binding, json, binary, matrices, nodeIndexByS
       for (const localPoint of accessorVec3(json, binary, positionAccessor)) {
         totalVertices += 1;
         const worldPoint = transformPoint(matrices[nodeIndex], localPoint);
-        try { const projection = projectWorldPoint(worldPoint); projected.push(projection.xy); if (projection.insideFrame) insideFrameVertices += 1; }
+        try { const projection = projectWorldPoint(worldPoint); projected.push(projection.xy); minCameraDepth = Math.min(minCameraDepth, projection.depth); maxCameraDepth = Math.max(maxCameraDepth, projection.depth); if (projection.insideFrame) insideFrameVertices += 1; }
         catch (error) { if (!/behind the camera plane/.test(error.message)) throw error; }
       }
     }
   }
   const projectedHull = convexHull(projected);
-  return deepFreeze({referenceId:reference.id, importance:reference.importance, nodeIds, rootNodeIndices, meshNodeIndices, projectedHull, sourcePolygon:reference.polygon, iou:null, totalVertices, insideFrameVertices, insideFrameFraction:totalVertices ? insideFrameVertices/totalVertices : 0});
+  return deepFreeze({referenceId:reference.id, importance:reference.importance, nodeIds, rootNodeIndices, meshNodeIndices, projectedHull, cameraDepthRange:[minCameraDepth,maxCameraDepth], sourcePolygon:reference.polygon, iou:null, totalVertices, insideFrameVertices, insideFrameFraction:totalVertices ? insideFrameVertices/totalVertices : 0});
 }
 
 export function deriveRealizedSegmentation({referenceGeometry, segmentBindings = [], json, binary, matrices, nodeIndexBySemanticId, transformPoint, projectWorldPoint} = {}) {
