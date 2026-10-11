@@ -148,6 +148,7 @@ async function makeRealSourceProject(t, verdictStatus, {
   nonImagePrimarySource = false,
   wrongPrimaryImageDimensions = false,
   withSourceMacroSection = false,
+  withSourceProfile = false,
   diagonalMacroSection = false,
   tooNarrowMacroSection = false,
   hiddenMacroSection = false,
@@ -197,8 +198,12 @@ async function makeRealSourceProject(t, verdictStatus, {
     sourceSha256: wrongSourceGeometrySha ? D('f') : source.sha256,
     anchors: emptySourceGeometry ? [] : [{
       id: 'observed-head', importance: 'macro', xy: [.5,.5],
+      semanticRole:withSourceProfile?'face-center':'',
       visibility: onlyInferredMacroAnchor ? 'inferred' : 'visible', confidence: 1, evidenceRefs: [source.path],
-    }, ...(addUnprojectedMacroAnchor ? [{
+    }, ...(withSourceProfile ? [{
+      id:'observed-nose',importance:'macro',semanticRole:'nose-tip',xy:[.55,.5],
+      visibility:'visible',confidence:1,evidenceRefs:[source.path],
+    }] : []), ...(addUnprojectedMacroAnchor ? [{
       id: 'observed-shoulder', importance: 'macro', xy: [.6,.5],
       visibility: 'visible', confidence: 1, evidenceRefs: [source.path],
     }] : [])],
@@ -209,6 +214,16 @@ async function makeRealSourceProject(t, verdictStatus, {
         [[.44,.44],[.56,.44],[.56,.56],[.44,.56]],
       evidenceRefs: [source.path],
     }],
+    ...(withSourceProfile ? {segments:[
+      {id:'observed-face-region',label:'face',importance:'identity',
+        polygon:[[.44,.44],[.56,.44],[.56,.56],[.44,.56]],
+        anchorIds:['observed-head'],visibility:'visible',
+        separation:'uncertain',evidenceRefs:[source.path]},
+      {id:'observed-nose-region',label:'nose',importance:'identity',
+        polygon:[[.54,.49],[.56,.49],[.56,.51],[.54,.51]],
+        anchorIds:['observed-nose'],visibility:'visible',
+        separation:'uncertain',evidenceRefs:[source.path]},
+    ]} : {}),
     ...(withSourceMacroSection ? {segments:[{
       id:'source-visible-head-region',label:'head/upper section',importance:'macro',
       evidenceRefs:[source.path],
@@ -307,8 +322,11 @@ async function makeRealSourceProject(t, verdictStatus, {
       anchorBindings:[{
         referenceId:'observed-head',nodeId:'whole-body',
         localPoint:offFrameMacroBinding ? [8,0,0] : movedMacroBinding ? [2,0,0] : [0,0,0],
-      }],
-      segmentBindings:withSourceMacroSection?[{referenceId:'source-visible-head-region',nodeIds:['whole-body']}]:[],
+      },...(withSourceProfile?[{referenceId:'observed-nose',nodeId:'whole-body',localPoint:[.5,0,0]}]:[])],
+      segmentBindings:withSourceProfile
+        ? [{referenceId:'observed-face-region',nodeIds:['whole-body']},
+           {referenceId:'observed-nose-region',nodeIds:['whole-body']}]
+        : withSourceMacroSection?[{referenceId:'source-visible-head-region',nodeIds:['whole-body']}]:[],
       evidenceRefs:[source.path,candidateRef.path],
     });
     if (tamperProjection) {
@@ -437,6 +455,18 @@ test('S01b2 mismatched manifest dimensions fail the installed checkpoint pixel r
     /primary source pixel-frame REVIEW_REQUIRED: source pixel-frame decoded dimensions disagree with manifest/u,
   );
   assert.equal((await loadProject(root)).head,shapeCheckpoint.id);
+});
+
+test('S03b2 Host refuses one current GLB mesh posing as both source-visible face and nose',async t=>{
+  const {root,surfaceRef,shapeCheckpoint}=await makeRealSourceProject(t,'match',{withSourceProfile:true});
+  const before=await loadProject(root);
+  await assert.rejects(
+    ()=>commitLocal(root,'surface-topology',[surfaceRef]),
+    /signed source profile INSUFFICIENT: profile: face and tip require distinct current GLB mesh geometry/u,
+  );
+  const after=await loadProject(root);
+  assert.equal(after.head,shapeCheckpoint.id);
+  assert.deepEqual(after.checkpointIds,before.checkpointIds);
 });
 
 test('S03b1 Host rejects square current GLB for source-observed diagonal long-axis even when bbox and center pass',async t=>{

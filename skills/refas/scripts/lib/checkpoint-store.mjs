@@ -31,6 +31,7 @@ import {assertEarlyResemblanceAdmission} from './early-resemblance-barrier.mjs';
 import {validateReferenceGeometry} from './reference-geometry.mjs';
 import {screenSourceMacroSectionEnvelopes} from './source-macro-section-screen.mjs';
 import {screenSourceMacroPartOrientation} from './source-macro-orientation-screen.mjs';
+import {screenSourceProfileVector} from './source-profile-vector-screen.mjs';
 import {inspectSourcePixelFrameBytes, MAX_SOURCE_FRAME_BYTES} from './source-pixel-frame.mjs';
 import {verifyRegisteredRenderReplay} from './registered-render-replay.mjs';
 import {evaluateIndependentSourceRenderPixels} from './independent-source-render-pixels.mjs';
@@ -1196,6 +1197,21 @@ async function ensureEarlyResemblanceAdmission(root, state, capability, scopeId,
       if(orientation.status!=='NO_DETECTED_CONTRADICTION') {
         throw new Error(`${capability} source macro orientation ${orientation.status}: `+
           orientation.findings.map(item=>item.id+': '+item.reason).join('; '));
+      }
+    }
+    // S03b2: source-visible signed face-center → nose-tip cue must also
+    // be realized by *separate current GLB mesh geometry*. Caller-authored
+    // localPoint landmark coordinates cannot establish physical direction.
+    // This is a negative gate only, never a face/gaze fidelity certificate.
+    if ((geometry.anchors ?? []).some(anchor =>
+      anchor.semanticRole === 'face-center' || anchor.semanticRole === 'nose-tip')) {
+      const profile = screenSourceProfileVector({
+        referenceGeometry: geometry, realizedProjection: proof,
+        sourcePath: state.source.path,
+      });
+      if (profile.status !== 'NO_DETECTED_CONTRADICTION') {
+        throw new Error(`${capability} signed source profile ${profile.status}: ` +
+          profile.findings.map(x => `${x.role}: ${x.reason}`).join('; '));
       }
     }
     // P0b2b2a: an anchor that projects correctly says nothing about whole
