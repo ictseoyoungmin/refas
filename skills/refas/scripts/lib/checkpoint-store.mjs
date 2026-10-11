@@ -30,6 +30,7 @@ import {findComparisonContradictions, validateRegisteredComparison} from './regi
 import {assertEarlyResemblanceAdmission} from './early-resemblance-barrier.mjs';
 import {validateReferenceGeometry} from './reference-geometry.mjs';
 import {inspectSourcePixelFrameBytes, MAX_SOURCE_FRAME_BYTES} from './source-pixel-frame.mjs';
+import {verifyRegisteredRenderReplay} from './registered-render-replay.mjs';
 import {validateSpatialHypothesisSet} from './spatial-hypotheses.mjs';
 import {normalizeProjectionCamera, deriveRealizedWholeSilhouetteBounds} from './realized-projection.mjs';
 import {verifyRealizedProjection} from './realized-projection-verification.mjs';
@@ -628,7 +629,7 @@ async function inspectCertificationHead(root, state, head) {
       }
       if (visualReview.evidenceClass !== 'independent-reference') errors.push('self-generated contract fixtures cannot certify visual fidelity');
       if (visualReview.verdict !== 'pass') errors.push(`visual review verdict is ${visualReview.verdict ?? 'missing'}, not pass`);
-      await inspectRegisteredComparison(root, state, head, visualReview, errors);
+      await inspectRegisteredComparison(root, state, head, visualReview, errors, finalSpatialContinuity);
       const blocking = (visualReview.unresolvedFindings ?? []).filter((finding) => finding.blocking === true);
       if (blocking.length) errors.push(`visual review has unresolved major, critical, or blocking findings: ${blocking.map((finding) => finding.category).join(', ')}`);
       const reviewGates = new Map((visualReview.gateVerdicts ?? []).map((gate) => [gate.id, gate]));
@@ -646,7 +647,7 @@ async function inspectCertificationHead(root, state, head) {
   return {ready: errors.length === 0, errors, visualReview, visualReviewArtifact, finalSpatialContinuity};
 }
 
-async function inspectRegisteredComparison(root, state, head, visualReview, errors) {
+async function inspectRegisteredComparison(root, state, head, visualReview, errors, finalSpatialContinuity) {
   if (visualReview?.evidenceClass !== 'independent-reference' || visualReview?.verdict !== 'pass') return null;
   if (isTrustedContractFixtureProject(state)) return null;
   const binding = visualReview.registeredComparison;
@@ -698,6 +699,38 @@ async function inspectRegisteredComparison(root, state, head, visualReview, erro
   if (!renderReportArtifact) errors.push('registered comparison render report is not digest-bound in the certification checkpoint');
   const frameArtifact = head.artifactRefs.find((artifact) => artifact.path === binding.framePath && artifact.sha256 === binding.frameSha256 && ['render-frame', 'render-image', 'artifact'].includes(artifact.kind));
   if (!frameArtifact) errors.push('registered comparison hero frame is not digest-bound in the certification checkpoint');
+
+  // S02b2a: replay actual current candidate and source-selected frozen hero
+  // camera in an installed independent renderer BEFORE permitting a positive
+  // nonfixture whole-object certification. Resume/audit call this same gate.
+  const sourceFrameRefs=head.artifactRefs.filter((artifact)=>artifact.kind==='canonical-object-frame');
+  const finalSha=finalSpatialContinuity?.finalCandidate?.assetSha256;
+  const currentCandidates=candidateGlbArtifacts(head.artifactRefs)
+    .filter((artifact)=>artifact.sha256===finalSha && artifact.sha256===visualReview.assetSha256);
+  if (sourceFrameRefs.length!==1) {
+    errors.push('source-bound certification requires exactly one canonical-object-frame artifact for trusted registered hero replay');
+  } else if (currentCandidates.length!==1) {
+    errors.push('trusted registered hero replay requires exactly the current lineage-bound candidate GLB');
+  } else if (renderReportArtifact && frameArtifact) {
+    try {
+      const cameraArtifact=sourceFrameRefs[0];
+      const stored=await readStoredJsonArtifact(root,cameraArtifact,'trusted registered hero camera');
+      if (stored?.hero?.registrationDigest!==report.registration?.digest) {
+        throw new Error('source-selected hero camera registration does not match current registered comparison');
+      }
+      const independent=await verifyRegisteredRenderReplay({
+        root,glbPath:currentCandidates[0].path,framePath:cameraArtifact.path,
+        renderReportPath:renderReportArtifact.path,heroImagePath:frameArtifact.path,
+        assetSha256:finalSha,frameSha256:binding.frameSha256,
+      });
+      if (independent.status!=='PASS' || independent.cannotAuthorizeReferenceFidelity!==true ||
+          independent.heroSha256!==binding.frameSha256) {
+        throw new Error('trusted renderer did not reproduce the exact current registered hero frame');
+      }
+    } catch (error) {
+      errors.push(`trusted source-bound GLB/render replay REVIEW_REQUIRED: ${error.message}`);
+    }
+  }
 
   const contradictions = findComparisonContradictions(report);
   if (contradictions.length) {
@@ -2902,6 +2935,22 @@ export async function auditProject(root) {
     if (state.activeTransaction.candidateCheckpointId) {
       const candidate = byId.get(state.activeTransaction.candidateCheckpointId);
       if (!candidate || candidate.parentId !== state.activeTransaction.baselineCheckpointId || candidate.transactionId !== state.activeTransaction.id) errors.push('active transaction candidate is invalid');
+    }
+  }
+  // Audit the actual final certification checkpoint even before the
+  // certificate is minted. Previously an uncertified head with forged,
+  // re-signed GLB render pixels passed the *general* audit while readiness
+  // and certificate issuance correctly refused. A stored final head must not
+  // receive a falsely clean project audit from that split authority path.
+  if (!state.certification && state.head && byId.has(state.head)) {
+    const finalHead=byId.get(state.head);
+    if (finalHead.capability==='whole-object-certification' && finalHead.scopeId==='whole') {
+      try {
+        const readiness=await inspectCertificationHead(root,state,finalHead);
+        for (const error of readiness.errors) errors.push(`final certification readiness: ${error}`);
+      } catch (error) {
+        errors.push(`final certification readiness unavailable: ${error.message}`);
+      }
     }
   }
   if (state.certification && state.certification.checkpointId !== state.head) errors.push('certification does not bind to the active head');

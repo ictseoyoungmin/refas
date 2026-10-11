@@ -53,9 +53,9 @@ function assertSame(a,b,label) {if(a!==b) throw new Error(label+' differs from i
  */
 export async function verifyRegisteredRenderReplay({
   root, glbPath, framePath, renderReportPath, heroImagePath,
-  assetSha256, frameSha256, renderSize=128,
+  assetSha256, frameSha256, renderSize=null,
 }={}) {
-  if (!Number.isSafeInteger(renderSize) || renderSize<32 || renderSize>1024) {
+  if (renderSize!=null && (!Number.isSafeInteger(renderSize) || renderSize<32 || renderSize>1024)) {
     throw new Error('trusted render replay requires a bounded square image size (32..1024)');
   }
   const asset=await bytesAt(root,glbPath,'current candidate GLB',128*1024*1024);
@@ -63,6 +63,21 @@ export async function verifyRegisteredRenderReplay({
   const frame=await bytesAt(root,framePath,'frozen canonical camera frame',256*1024);
   const declared=await bytesAt(root,renderReportPath,'registered render report',4*1024*1024);
   const hero=await bytesAt(root,heroImagePath,'claimed registered hero frame',32*1024*1024);
+  // When certification calls this verifier, infer raster size from the
+  // *current encoded PNG* rather than a caller-supplied guess. The repeated
+  // independent pixel SHA still determines validity, not these header bytes.
+  if (renderSize==null) {
+    const png=hero.bytes;
+    if (png.length<33 || png.subarray(0,8).toString('hex')!=='89504e470d0a1a0a' ||
+        png.toString('ascii',12,16)!=='IHDR') {
+      throw new Error('trusted render replay requires encoded PNG hero pixels');
+    }
+    const width=png.readUInt32BE(16),height=png.readUInt32BE(20);
+    if (width!==height || width<32 || width>1024) {
+      throw new Error('trusted render replay requires a bounded square hero image');
+    }
+    renderSize=width;
+  }
   assertSame(hero.sha256,validSha(frameSha256,'claimed hero digest'),'claimed registered hero SHA');
   let frameSpec, report;
   try {
@@ -89,11 +104,17 @@ export async function verifyRegisteredRenderReplay({
   assertSame(report.heroImageSha256,hero.sha256,'render report hero image digest');
   assertSame(claimed.frameBinding?.registrationDigest,frameSpec.hero.registrationDigest,'frozen source registration');
   const tmp=await fs.mkdtemp(path.join(os.tmpdir(),'refas-trusted-render-'));
+  // Freeze the individually checked current GLB and camera bytes before
+  // invoking Python; mutable working paths must not win a read/rerender race.
+  const frozenAsset=path.join(tmp,'candidate.glb');
+  const frozenFrame=path.join(tmp,'registered-frame.json');
+  await fs.writeFile(frozenAsset,asset.bytes);
+  await fs.writeFile(frozenFrame,frame.bytes);
   try {
     const out=path.join(tmp,'independent');
-    const python=spawnSync(PYTHON,[RENDERER,'--glb',asset.file,'--frame',frame.file,
+    const python=spawnSync(PYTHON,[RENDERER,'--glb',frozenAsset,'--frame',frozenFrame,
       '--out',out,'--size',String(renderSize),
-      '--max-working-mb','256','--timeout-seconds','45'],{
+      '--max-working-mb','256','--timeout-seconds','45','--hero-only'],{
       encoding:'utf8',timeout:60_000,maxBuffer:128*1024,
       env:{...process.env,PYTHONDONTWRITEBYTECODE:'1'},
     });
