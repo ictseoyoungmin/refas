@@ -4,7 +4,7 @@ Load this contract when a closed `refas.physical-asset-bundle/v1` must be evalua
 
 ## Ownership boundary
 
-P11 reuses and strengthens `refas.representation-capacity/v1`.
+Use the current `refas.representation-capacity/v1` profile as backend preflight against a closed physical asset bundle.
 
 The profile is **backend preflight**, not another physical truth object. Canonical physical meaning remains in P01–P10. P11 does not export files, normalize backend outputs, authorize divergence, or certify readiness.
 
