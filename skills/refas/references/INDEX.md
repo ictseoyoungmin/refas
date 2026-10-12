@@ -73,13 +73,37 @@ Most executable operation inputs are exposed through the interface catalog retur
 A standalone template does not override the operation-specific input catalog. When `describe` returns an interface template, that interface metadata is authoritative for the executable minimum input.
 
 
-## Always-load control path
+## Minimal entry and conditional control reading
 
-Read these before reconstruction work:
+After this router, read `references/workflow.md` for current capability
+ownership and construction order. The remaining control guides are loaded
+**at the moment their operations are needed**:
 
-1. `references/workflow.md` — capability ownership, dependency barriers, finalization routing, and handoff behavior.
-2. `references/checkpointing.md` — recoverable state, bounded edits, rollback, resume, and checkpoint authority.
-3. `references/failure-routing.md` — typed findings, repair ownership, invalidation, and fail-closed routing.
+- Before checkpoint creation, bounded edits, restore or abort:
+  `references/checkpointing.md`
+- Before persisting a typed finding, reopening an owner or recovering a
+  blocked project: `references/failure-routing.md` and
+  `references/checkpointing.md`
+
+Never skip these guides merely because they were not required at first load.
+Actual mutation/recovery authority is still enforced by the installed
+runtime; progressive reading cannot waive a gate.
+
+### Route by intended asset work
+
+| Work profile | Start with | Additional guide only when required |
+|---|---|---|
+| Static reference object | `references/observation.md`, `references/spatial-reasoning.md`, `references/construction.md` | `references/assembly.md` for multiple parts, `references/validation.md` for early clay comparison |
+| Organic or character form | Static form route plus `references/organic-articulated-construction.md` | Owner-local fit, cage, rig/attachment contract only where realized |
+| Mechanically articulated object | Static form route plus `references/assembly.md` and `references/contracts/articulation-clearance.md` | Link/joint, actuation or transmission contracts only when the actual mechanism uses them |
+| Physical/control/runtime target | Mechanical route plus relevant physical identity, dynamics, control, representation and binding leaves | `references/contracts/physical-claims.md` only for requested claims; no invented internal property evidence |
+| Defect, reopen, or failed inspection | `references/failure-routing.md` + `references/checkpointing.md` | Responsible owner leaf, current source and GLB evidence |
+| Finalization/handoff | `references/validation.md`, `references/candidate-transactions.md`, `references/claim-certification.md` | `references/realized-contact-support.md` when required; `references/host-integration.md` for actual host handoff |
+
+Rendering shape early is independent of finishing materials.
+For a small callable control-cage modeling example, see
+`assets/examples/subdivision-cage-demo.mjs`; it demonstrates geometry
+generation, **not** source-fidelity closure or an identity-bearing permit.
 
 ## Progressive-load routes
 
