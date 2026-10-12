@@ -487,6 +487,7 @@ def main():
     parser.add_argument("--out", required=True)
     parser.add_argument("--reference")
     parser.add_argument("--frame")
+    parser.add_argument("--hero-only", action="store_true", help="Replay only registered hero projection, not unrelated diagnostic views")
     parser.add_argument("--size", type=int, default=640)
     parser.add_argument("--timeout-seconds", type=float, default=300.0)
     parser.add_argument("--max-working-mb", type=float, default=512.0)
@@ -525,6 +526,8 @@ def main():
         ("object-id", [0.0, 0.0, 1.0], [0, 1, 0], "object-id", "OBJECT ID"),
         ("albedo", [0.0, 0.0, 1.0], [0, 1, 0], "albedo", "ALBEDO"),
     ]
+    if args.hero_only:
+        view_specs = view_specs[:1]
     staging = Path(tempfile.mkdtemp(prefix=".refas-render-", dir=output.parent))
     try:
         frames = []

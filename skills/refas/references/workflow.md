@@ -204,7 +204,36 @@ raw source
 
 `refas.projection-fit/v1` belongs to the model-to-source comparison boundary. It binds explicit 3D/model points projected by a declared camera hypothesis back to the source geometry and records residuals. It does not mutate geometry and cannot certify visual fidelity.
 
-Before `shape-reconstruction × whole` may close when a reference-geometry artifact exists:
+**Non-fixture source-bound admission is fail-closed (P0b2a).** Before
+`shape-reconstruction × whole` can authorize any accepted
+`surface-topology` or later detail checkpoint, the upstream
+`visual-observation` must have canonical raw-source-bound
+`refas.reference-geometry/v1` with visible macro evidence, and the
+frozen shape checkpoint must contain **exactly one**
+`refas.realized-projection/v1` built from a declared camera,
+the current original source and the actual shape GLB. Omitting
+this camera/GLB proof is `REVIEW_REQUIRED`, not implicit
+`NOT_APPLICABLE`. The installed host reloads its frozen
+content-addressed GLB and replays the camera projection at transition,
+even when a separately authorized later candidate changes the live GLB.
+All source-visible macro anchors must be registered.
+
+**The camera hypothesis must precede shape construction (P0b2b1).**
+The upstream `spatial-hypotheses` checkpoint must persist a canonical
+`refas.spatial-hypothesis-set/v1` with at least two original-source-cited,
+falsifiable camera alternatives. A selected camera may authorize
+downstream detail only after competing interpretations are explicitly
+resolved and the registered GLB projection carries the exact selected
+hypothesis ID **and normalized camera parameters**. Missing or
+unresolved selection is `REVIEW_REQUIRED`; a selected/registered camera
+mismatch is `REWORK`. Agent status labels and raw-source path citations
+are still not independent image-truth verification; trustworthy
+source-visible whole silhouette, negative-space and occlusion comparison
+remains required before Reference Fidelity closure. Large discrepancies
+or source-visible macro anchors outside the selected camera frame
+block accepted downstream detail.
+
+Before `shape-reconstruction × whole` may admit accepted detail:
 
 1. every `macro` anchor required by the source geometry has a semantic model binding;
 2. the projection fit is valid and digest-bound to the current source, camera hypothesis, and model binding;

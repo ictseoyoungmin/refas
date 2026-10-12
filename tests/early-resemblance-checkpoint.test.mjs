@@ -16,6 +16,9 @@ import {
   contentReference,
   createCandidateTransition,
   createEarlyResemblanceBarrier,
+  createReferenceGeometry,
+  createRealizedProjection,
+  createSpatialHypothesisSet,
   createPbrRenderReport,
   createPerceptualSignatureEvidence,
   createPerceptualSignatureSet,
@@ -26,14 +29,19 @@ import {
   digestBytes,
   finalizeMesh,
   initProject,
+  loadProject,
   partsToGlb,
   resolveAuthoritativeCandidateLineage,
   resolveVolumeBarrierAdmission,
+  reopenFromTrustedSourceAdmission,
   resumeProject,
 } from '../skills/refas/scripts/lib/index.mjs';
 import {initTrustedContractFixtureProject} from '../skills/refas/scripts/lib/contract-fixture-project.mjs';
 
 const D = (ch) => ch.repeat(64);
+// Verified real 64x64 raster in the source-bound nonfixture contract tests.
+const SOURCE_PNG = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAIAAAAlC+aJAAAAY0lEQVR4nO3PQQ3AIADAQMAoZnCEwYngcVnSU9DOfe74s6UDXjWgNaA1oDWgNaA1oDWgNaA1oDWgNaA1oDWgNaA1oDWgNaA1oDWgNaA1oDWgNaA1oDWgNaA1oDWgNaA1oDWgfcdoAhbbtEQ/AAAAAElFTkSuQmCC', 'base64');
+assert.equal(SOURCE_PNG.length, 156, 'real source fixture byte count');
 
 async function writeRef(root, relative, bytes, kind) {
   const absolute = path.join(root, relative);
@@ -121,19 +129,51 @@ async function makeRealSourceProject(t, verdictStatus, {
   spatialRole = 'volumetric',
   candidateDepth = 1,
   omitVolumeBarrier = false,
+  omitSourceGeometry = false,
+  emptySourceGeometry = false,
+  wrongSourceGeometrySha = false,
+  includeEarlyProjection = true,
+  addUnprojectedMacroAnchor = false,
+  onlyInferredMacroAnchor = false,
+  offFrameMacroBinding = false,
+  movedMacroBinding = false,
+  wrongEarlyCamera = false,
+  tamperProjection = false,
+  omitHypothesisSet = false,
+  unresolvedHypotheses = false,
+  selectedCameraMismatch = false,
+  staleHypothesisSource = false,
+  omitOuterContour = false,
+  grosslyWrongOuterContour = false,
+  offsetOuterContour = false,
+  nonImagePrimarySource = false,
+  wrongPrimaryImageDimensions = false,
+  withSourceMacroSection = false,
+  withSourceProfile = false,
+  withSourceRoleRelations = false,
+  withSourceStructuralContact = false,
+  withSourceOcclusion = false,
+  withSourceNegativeSpace = false,
+  diagonalMacroSection = false,
+  tooNarrowMacroSection = false,
+  hiddenMacroSection = false,
 } = {}) {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), 'refas-r04-real-'));
   t.after(() => fs.rm(root, {recursive: true, force: true}));
 
-  const sourceBytes = Buffer.from('real source bytes\n');
-  const sourceRef = await writeRef(root, 'source/reference.bin', sourceBytes, 'source-image');
+  // Genuine decodable PNG bytes, rather than a "photo-reference" source
+  // manifest wrapped around arbitrary text. S01b2 replays raw pixels.
+  const sourceBytes = nonImagePrimarySource
+    ? Buffer.from('SHA-consistent source bytes but not a raster image')
+    : Buffer.from(SOURCE_PNG);
+  const sourceRef = await writeRef(root, 'source/reference.png', sourceBytes, 'source-image');
   const source = {
     schema: 'refas.source-manifest/v1',
     id: 'primary-reference',
     path: sourceRef.path,
     sha256: sourceRef.sha256,
     sizeBytes: sourceRef.sizeBytes,
-    width: 64,
+    width: wrongPrimaryImageDimensions ? 65 : 64,
     height: 64,
     authority: 'primary',
     acquisition: {kind: 'photo-reference'},
@@ -158,7 +198,101 @@ async function makeRealSourceProject(t, verdictStatus, {
   await commitLocal(root, 'visual-hierarchy', [hierarchyRef]);
 
   const observationRef = await writeRef(root, 'model/observation.json', Buffer.from('{"observation":true}\n'), 'visual-observation');
-  await commitLocal(root, 'visual-observation', [observationRef]);
+  const geometry = createReferenceGeometry({
+    scopeId: 'whole',
+    sourceSha256: wrongSourceGeometrySha ? D('f') : source.sha256,
+    anchors: emptySourceGeometry ? [] : [{
+      id: 'observed-head', importance: 'macro', xy: [.5,.5],
+      semanticRole:withSourceProfile?'face-center':withSourceRoleRelations?'source-front-basket':'',
+      visibility: onlyInferredMacroAnchor ? 'inferred' : 'visible', confidence: 1, evidenceRefs: [source.path],
+    }, ...(withSourceProfile ? [{
+      id:'observed-nose',importance:'macro',semanticRole:'nose-tip',xy:[.55,.5],
+      visibility:'visible',confidence:1,evidenceRefs:[source.path],
+    }] : []), ...(withSourceRoleRelations ? [{
+      id:'source-rear-role-center',semanticRole:'source-rear-basket',
+      importance:'identity',xy:[.67,.5],visibility:'visible',
+      confidence:1,evidenceRefs:[source.path],
+    }] : []), ...(addUnprojectedMacroAnchor ? [{
+      id: 'observed-shoulder', importance: 'macro', xy: [.6,.5],
+      visibility: 'visible', confidence: 1, evidenceRefs: [source.path],
+    }] : [])],
+    contours: emptySourceGeometry || omitOuterContour ? [] : [{
+      id: 'whole-outer-contour', importance: 'macro', closed: true,
+      points: grosslyWrongOuterContour ? [[.15,.15],[.85,.15],[.85,.90],[.15,.90]] :
+        offsetOuterContour ? [[.70,.44],[.82,.44],[.82,.56],[.70,.56]] :
+        [[.44,.44],[.56,.44],[.56,.56],[.44,.56]],
+      evidenceRefs: [source.path],
+    }],
+    ...(withSourceStructuralContact ? {segments:[
+      {id:'observed-strut',label:'primary source strut',importance:'detail',
+        polygon:[[.445,.445],[.555,.445],[.555,.555],[.445,.555]],
+        anchorIds:['observed-head'],visibility:'visible',separation:'explicit',
+        evidenceRefs:[source.path]},
+      {id:'observed-mount',label:'primary source support mount',importance:'detail',
+        polygon:[[.445,.445],[.555,.445],[.555,.555],[.445,.555]],
+        anchorIds:['observed-head'],visibility:'visible',separation:'explicit',
+        evidenceRefs:[source.path]},
+    ],interfaces:[{id:'visible-contact-boundary',importance:'macro',
+      subjectSegmentId:'observed-strut',objectSegmentId:'observed-mount',
+      kind:'contact-boundary',separation:'explicit',
+      boundary:[[.445,.47],[.445,.53]],visibility:'visible',
+      evidenceRefs:[source.path]}]} : {}),
+    ...(withSourceOcclusion ? {segments:[
+      {id:'observed-front-part',label:'source foreground',importance:'macro',
+        polygon:[[.445,.445],[.555,.445],[.555,.555],[.445,.555]],
+        anchorIds:['observed-head'],visibility:'visible',separation:'uncertain',evidenceRefs:[source.path]},
+      {id:'observed-back-part',label:'source background',importance:'macro',
+        polygon:[[.445,.445],[.555,.445],[.555,.555],[.445,.555]],
+        anchorIds:['observed-head'],visibility:'visible',separation:'uncertain',evidenceRefs:[source.path]},
+    ],interfaces:[]} : {}),
+    ...(withSourceNegativeSpace ? {negativeSpaces:[{
+      id:'original-visible-gap',importance:'macro',
+      polygon:[[.445,.445],[.555,.445],[.555,.555],[.445,.555]],
+      evidenceRefs:[source.path],
+    }]} : {}),
+    ...(withSourceOcclusion ? {occlusions:[{
+      id:'observed-shoulder-overlap',importance:'macro',
+      frontId:'observed-front-part',backId:'observed-back-part',evidenceRefs:[source.path],
+    }]} : {}),
+    ...(withSourceRoleRelations ? {segments:[
+      {id:'source-front-basket',label:'independently source-cited front basket',
+        importance:'identity',polygon:[[.44,.45],[.56,.45],[.56,.55],[.44,.55]],
+        anchorIds:['observed-head'],visibility:'visible',separation:'explicit',
+        evidenceRefs:[source.path]},
+      {id:'source-rear-basket',label:'independently source-cited rear basket',
+        importance:'identity',polygon:[[.64,.48],[.70,.48],[.70,.52],[.64,.52]],
+        anchorIds:['source-rear-role-center'],visibility:'visible',
+        separation:'explicit',evidenceRefs:[source.path]},
+    ]} : {}),
+    ...(withSourceProfile ? {segments:[
+      {id:'observed-face-region',label:'face',importance:'identity',
+        polygon:[[.44,.44],[.56,.44],[.56,.56],[.44,.56]],
+        anchorIds:['observed-head'],visibility:'visible',
+        separation:'uncertain',evidenceRefs:[source.path]},
+      {id:'observed-nose-region',label:'nose',importance:'identity',
+        polygon:[[.54,.49],[.56,.49],[.56,.51],[.54,.51]],
+        anchorIds:['observed-nose'],visibility:'visible',
+        separation:'uncertain',evidenceRefs:[source.path]},
+    ]} : {}),
+    ...(withSourceMacroSection ? {segments:[{
+      id:'source-visible-head-region',label:'head/upper section',importance:'macro',
+      evidenceRefs:[source.path],
+      polygon:tooNarrowMacroSection
+        ? [[.48,.445],[.52,.445],[.52,.555],[.48,.555]]
+        : diagonalMacroSection
+          ? [[.445,.455],[.455,.445],[.555,.545],[.545,.555]]
+          : [[.445,.445],[.555,.445],[.555,.555],[.445,.555]],
+      anchorIds:['observed-head'],visibility:hiddenMacroSection?'inferred':'visible',separation:'uncertain',
+    }]} : {}),
+    attestation: {attested: true, evidenceRefs: [source.path]},
+  });
+  const geometryRef = await writeRef(
+    root, 'model/reference-geometry.json',
+    Buffer.from(`${JSON.stringify(geometry, null, 2)}\n`), 'reference-geometry',
+  );
+  await commitLocal(root, 'visual-observation', [
+    observationRef, ...(!omitSourceGeometry ? [geometryRef] : []),
+  ]);
 
   const spatialRef = await writeRef(root, 'model/spatial.json', Buffer.from('{"spatial":true}\n'), 'spatial-hypotheses');
   const roleSet = createSpatialRoleExpectationSet({
@@ -179,7 +313,39 @@ async function makeRealSourceProject(t, verdictStatus, {
     Buffer.from(`${JSON.stringify(roleSet, null, 2)}\n`),
     'spatial-role-expectation',
   );
-  await commitLocal(root, 'spatial-hypotheses', [spatialRef, roleRef]);
+  const selectedCamera = {
+    projection:'perspective',position:selectedCameraMismatch ? [1,0,5] : wrongEarlyCamera ? [2,0,5] : [0,0,5],
+    target:selectedCameraMismatch ? [1,0,0] : wrongEarlyCamera ? [2,0,0] : [0,0,0],
+    up:[0,1,0],fovY:90,aspect:1,
+  };
+  const rejectedCamera = {
+    projection:'perspective',position:[-2,0,5],
+    target:[-2,0,0],up:[0,1,0],fovY:90,aspect:1,
+  };
+  const hypothesisSet = createSpatialHypothesisSet({
+    scopeId:'whole',sourceSha256:staleHypothesisSource ? D('f') : source.sha256,
+    hypotheses:[
+      {id:'whole-source-camera-a',description:'Observed frontal primary-source framing',
+        camera:selectedCamera,hiddenForm:'not observed',
+        predictions:{silhouette:'front contour',occlusion:'front-to-back shoulder overlap',
+          sideView:'undetermined',topView:'undetermined',grazing:'undetermined'},
+        falsifiers:['source silhouette contradicts camera'], evidenceRefs:[source.path],
+        evidenceCoverage:2,assumptionCost:0,status:'plausible'},
+      {id:'whole-source-camera-b',description:'Competing oblique projection from raw source',
+        camera:rejectedCamera,hiddenForm:'not observed',
+        predictions:{silhouette:'oblique contour',occlusion:'other shoulder overlap',
+          sideView:'undetermined',topView:'undetermined',grazing:'undetermined'},
+        falsifiers:['visible source anchors contradict the oblique camera'],evidenceRefs:[source.path],
+        evidenceCoverage:1,assumptionCost:1,status:unresolvedHypotheses?'plausible':'falsified'},
+    ],
+    selectedId:unresolvedHypotheses?null:'whole-source-camera-a',
+    attestation:{attested:true,evidenceRefs:[source.path]},
+  });
+  const hypothesisRef=await writeRef(root,'model/source-camera-hypotheses.json',
+    Buffer.from(JSON.stringify(hypothesisSet)+'\n'),'spatial-hypothesis-set');
+  await commitLocal(root, 'spatial-hypotheses', [
+    spatialRef, roleRef, ...(!omitHypothesisSet ? [hypothesisRef] : []),
+  ]);
 
   const candidateBytes = partsToGlb({
     assetId: 'vc04-r04-candidate',
@@ -193,6 +359,49 @@ async function makeRealSourceProject(t, verdictStatus, {
     }],
   });
   const candidateRef = await writeRef(root, 'model/candidate.glb', candidateBytes, 'glb');
+  let projectionRef = null;
+  if (includeEarlyProjection && !emptySourceGeometry) {
+    const camera = wrongEarlyCamera
+      ? {projection:'perspective',position:[2,0,5],target:[2,0,0],up:[0,1,0],fovY:90,aspect:1}
+      : {projection:'perspective',position:[0,0,5],target:[0,0,0],up:[0,1,0],fovY:90,aspect:1};
+    const proof = createRealizedProjection({
+      referenceGeometry: geometry,
+      glb: candidateBytes,
+      cameraHypothesisId: 'whole-source-camera-a',
+      camera,
+      anchorBindings:[{
+        referenceId:'observed-head',nodeId:'whole-body',
+        localPoint:offFrameMacroBinding ? [8,0,0] : movedMacroBinding ? [2,0,0] : [0,0,0],
+      },...(withSourceRoleRelations?[{referenceId:'source-rear-role-center',
+        nodeId:'whole-body',localPoint:[.68,0,0]}]:[]),
+        ...(withSourceProfile?[{referenceId:'observed-nose',nodeId:'whole-body',localPoint:[.5,0,0]}]:[])],
+      segmentBindings:withSourceStructuralContact
+        ? [{referenceId:'observed-strut',nodeIds:['whole-body']},
+           {referenceId:'observed-mount',nodeIds:['whole-body']}]
+        : withSourceRoleRelations
+        ? [{referenceId:'source-front-basket',nodeIds:['whole-body']},
+           {referenceId:'source-rear-basket',nodeIds:['whole-body']}]
+        : withSourceOcclusion
+        ? [{referenceId:'observed-front-part',nodeIds:['whole-body']},
+           {referenceId:'observed-back-part',nodeIds:['whole-body']}]
+        : withSourceProfile
+        ? [{referenceId:'observed-face-region',nodeIds:['whole-body']},
+           {referenceId:'observed-nose-region',nodeIds:['whole-body']}]
+        : withSourceMacroSection?[{referenceId:'source-visible-head-region',nodeIds:['whole-body']}]:[],
+      evidenceRefs:[source.path,candidateRef.path],
+    });
+    if (tamperProjection) {
+      // Keep current file bytes and artifact SHA consistent while spoofing
+      // the derived measurement in the supposedly authoritative JSON record.
+      const forged=structuredClone(proof);
+      forged.derivedAnchors[0].projectedXY=[.95,.95];
+      projectionRef=await writeRef(root, 'model/early-realized-projection.json',
+        Buffer.from(JSON.stringify(forged)+'\n'), 'realized-projection');
+    } else {
+      projectionRef=await writeRef(root, 'model/early-realized-projection.json',
+        Buffer.from(JSON.stringify(proof)+'\n'), 'realized-projection');
+    }
+  }
   const clay = await clayEvidence(root, candidateRef.sha256);
   const clayHeroRef = clay.frameRefs.find((frame) => frame.path === 'renders/clay/hero.png');
 
@@ -273,13 +482,500 @@ async function makeRealSourceProject(t, verdictStatus, {
     Buffer.from(`${JSON.stringify(volumeBarrier, null, 2)}\n`),
     'volume-barrier',
   );
-  const shapeRefs = [candidateRef, barrierRef, clay.reportRef, ...clay.frameRefs];
+  const shapeRefs = [candidateRef, barrierRef, clay.reportRef, ...clay.frameRefs,
+    ...(projectionRef ? [projectionRef] : [])];
   if (!omitVolumeBarrier) shapeRefs.push(spatialEvidenceRef, classificationRef, volumeBarrierRef);
   const shapeCheckpoint = await commitLocal(root, 'shape-reconstruction', shapeRefs);
 
   const surfaceRef = await writeRef(root, 'model/surface.json', Buffer.from('{"surface":true}\n'), 'surface-network');
   return {root, source, hierarchy, barrier, volumeBarrier, classification, spatialEvidence, surfaceRef, candidateRef, shapeCheckpoint};
 }
+
+// S04b: a shape-stage replay may remain valid while the accepted later
+// candidate is physically wrong. Use a current *GLB bytes* mutation rather
+// than node-name-only and preserve immutable source/photo/camera annotations.
+async function commitDownstreamGlb(root, initial, surfaceRef, shift, suffix){
+  const bytes=partsToGlb({
+    assetId:'late-replay-'+suffix,
+    materials:{fixture:{baseColor:[.5,.5,.5,1],metallic:0,roughness:.5}},
+    parts:[{id:'whole-body',scopeId:'whole',role:'whole-body',
+      materialId:'fixture',mesh:vc04BoxMesh(1),translation:[shift,0,0]}],
+  });
+  const candidate=await writeRef(root,'model/late-'+suffix+'.glb',bytes,'glb');
+  const transition=createCandidateTransition({
+    inputAssetSha256:initial.assetSha256,outputAssetSha256:candidate.sha256,
+    inputCandidateCheckpointId:initial.checkpointId,
+    parentCheckpointId:initial.checkpointId,capability:'surface-topology',
+    scopeId:'whole',evidenceRefs:[candidate.path],
+  });
+  const tr=await writeRef(root,'model/late-'+suffix+'-transition.json',
+    Buffer.from(JSON.stringify(transition)+'\n'),'candidate-transition');
+  const surface=await commitLocal(root,'surface-topology',[surfaceRef,candidate,tr]);
+  return {surface,candidate};
+}
+
+test('S04b real nonfixture later GLB moved away from source reopens shape and revokes accepted detail',async t=>{
+  const {root,surfaceRef,shapeCheckpoint,candidateRef}=await makeRealSourceProject(t,'match',{
+    withSourceMacroSection:true,
+  });
+  const initial=await resolveAuthoritativeCandidateLineage(root);
+  assert.equal(initial.finalCandidate.assetSha256,candidateRef.sha256);
+  const {surface,candidate}=await commitDownstreamGlb(root,initial.finalCandidate,surfaceRef,2,'wrong-mass');
+  assert.notEqual(candidate.sha256,candidateRef.sha256);
+  assert.equal((await loadProject(root)).head,surface.id,'late physically wrong GLB was accepted by prior transition');
+  const before=await loadProject(root);
+  const recovered=await reopenFromTrustedSourceAdmission(root,{expectedHeadId:surface.id});
+  assert.equal(recovered.status,'REOPENED');
+  assert.equal(recovered.ownerCapability,'shape-reconstruction');
+  assert.equal(recovered.decision.route.finding.category,'mass-proportion-mismatch');
+  assert.equal(recovered.decision.route.rollbackCheckpointId,shapeCheckpoint.parentId);
+  const state=await loadProject(root);
+  assert.equal(state.head,shapeCheckpoint.parentId);
+  assert.equal(state.reopenedCapability,'shape-reconstruction');
+  assert.ok(state.invalidatedCapabilities.includes('surface-topology'));
+  assert.ok(state.invalidatedCapabilities.includes('assembly'));
+  assert.ok(state.invalidatedCapabilities.includes('appearance'));
+  assert.ok(state.invalidatedCapabilities.includes('whole-object-certification'));
+  assert.equal(state.certification,null);
+  assert.deepEqual(state.checkpointIds,before.checkpointIds,'historical broken output remains audit history only');
+  assert.equal((await resumeProject(root)).activeWork.capability,'shape-reconstruction');
+  assert.equal((await auditProject(root)).valid,true);
+
+  // Recovery is not perpetual veto: replay a valid original source-bound
+  // shape under the current post-rollback parent, then issue a *new* corrected
+  // candidate with actual GLB bytes and one typed source-bound transition.
+  const correctedShape=await commitLocal(root,'shape-reconstruction',shapeCheckpoint.artifactRefs);
+  assert.equal(correctedShape.capability,'shape-reconstruction');
+  const reopenedAuthority=await resolveAuthoritativeCandidateLineage(root);
+  assert.equal(reopenedAuthority.finalCandidate.assetSha256,candidateRef.sha256);
+  const corrected=await commitDownstreamGlb(root,reopenedAuthority.finalCandidate,surfaceRef,.01,'corrected-mass');
+  assert.equal((await loadProject(root)).head,corrected.surface.id);
+  const reread=await reopenFromTrustedSourceAdmission(root,{expectedHeadId:corrected.surface.id});
+  assert.equal(reread.status,'NO_DETECTED_CONTRADICTION');
+  assert.equal(reread.cannotAuthorizeReferenceFidelity,true);
+  assert.equal((await auditProject(root)).valid,true);
+  assert.equal((await resolveAuthoritativeCandidateLineage(root)).finalCandidate.assetSha256,corrected.candidate.sha256);
+});
+
+test('S04b after accepted surface, absent current GLB geometry is review-only and cannot invent mismatch',async t=>{
+  const {root,surfaceRef}=await makeRealSourceProject(t,'match',{
+    withSourceMacroSection:true,
+  });
+  const initial=await resolveAuthoritativeCandidateLineage(root);
+  const bytes=Buffer.from('not a GLB (late candidate bypass)');
+  const invalid=await writeRef(root,'model/late-non-glb.glb',bytes,'glb');
+  const transition=createCandidateTransition({
+    inputAssetSha256:initial.finalCandidate.assetSha256,
+    outputAssetSha256:invalid.sha256,
+    inputCandidateCheckpointId:initial.finalCandidate.checkpointId,
+    parentCheckpointId:initial.finalCandidate.checkpointId,
+    capability:'surface-topology',scopeId:'whole',
+    evidenceRefs:[invalid.path],
+  });
+  const tr=await writeRef(root,'model/late-non-glb-transition.json',
+    Buffer.from(JSON.stringify(transition)+'\n'),'candidate-transition');
+  const accepted=await commitLocal(root,'surface-topology',[surfaceRef,invalid,tr]);
+  const decision=await reopenFromTrustedSourceAdmission(root,{expectedHeadId:accepted.id});
+  assert.equal(decision.status,'REVIEW_REQUIRED');
+  assert.equal(decision.decision.route.action,'REQUEST_REVIEW');
+  assert.equal((await loadProject(root)).head,accepted.id);
+  assert.equal((await loadProject(root)).status,'review-required');
+});
+
+test('S04b a valid accepted later source-bound GLB does not force rollback solely for digest difference',async t=>{
+  const {root,surfaceRef}=await makeRealSourceProject(t,'match',{withSourceMacroSection:true});
+  const initial=await resolveAuthoritativeCandidateLineage(root);
+  const correct=await commitDownstreamGlb(root,initial.finalCandidate,surfaceRef,.01,'valid-normal');
+  const original=await loadProject(root);
+  const reply=await reopenFromTrustedSourceAdmission(root,{expectedHeadId:correct.surface.id});
+  assert.equal(reply.status,'NO_DETECTED_CONTRADICTION');
+  assert.deepEqual(await loadProject(root),original);
+});
+
+test('QA-03b1 Host cannot admit structurally distinct source interface when two roles use one physical GLB mesh',async t=>{
+  const {root,surfaceRef,shapeCheckpoint}=await makeRealSourceProject(t,'match',{
+    withSourceStructuralContact:true,
+  });
+  const before=await loadProject(root);
+  await assert.rejects(
+    ()=>commitLocal(root,'surface-topology',[surfaceRef]),
+    /source structural interface INSUFFICIENT: visible-contact-boundary: structural source parts share GLB mesh ownership/u,
+  );
+  const after=await loadProject(root);
+  assert.equal(after.head,shapeCheckpoint.id);
+  assert.deepEqual(after.checkpointIds,before.checkpointIds);
+  assert.equal((await auditProject(root)).valid,true);
+});
+
+test('QA-03a nonfixture Host cannot accept two source-observed basket roles on one actual mesh node',async t=>{
+  const {root,surfaceRef,shapeCheckpoint}=await makeRealSourceProject(t,'match',
+    {withSourceRoleRelations:true});
+  const before=await loadProject(root);
+  await assert.rejects(
+    ()=>commitLocal(root,'surface-topology',[surfaceRef]),
+    /source semantic part relations INSUFFICIENT: source-front-basket__source-rear-basket: two observed semantic roles share one actual GLB mesh node/u,
+  );
+  const after=await loadProject(root);
+  assert.equal(after.head,shapeCheckpoint.id);
+  assert.deepEqual(after.checkpointIds,before.checkpointIds);
+  assert.equal((await auditProject(root)).valid,true);
+});
+
+test('S04a trusted replay reopens shape from physically false source macro axis rather than accept detail',async t=>{
+  const {root,shapeCheckpoint}=await makeRealSourceProject(t,'match',{
+    withSourceMacroSection:true,diagonalMacroSection:true,
+  });
+  const original=await loadProject(root);
+  const result=await reopenFromTrustedSourceAdmission(root,{
+    expectedHeadId:shapeCheckpoint.id,
+  });
+  assert.equal(result.status,'REOPENED');
+  assert.equal(result.ownerCapability,'shape-reconstruction');
+  assert.equal(result.decision.route.action,'REOPEN_CAPABILITY');
+  assert.equal(result.decision.route.finding.category,'silhouette-mismatch');
+  const after=await loadProject(root);
+  assert.notEqual(after.head,shapeCheckpoint.id);
+  assert.equal(after.status,'reopened');
+  assert.equal(after.reopenedCapability,'shape-reconstruction');
+  assert.equal(after.certification,null);
+  assert.ok(after.invalidatedCapabilities.includes('surface-topology'));
+  assert.ok(after.invalidatedCapabilities.includes('appearance'));
+  assert.ok(after.invalidatedCapabilities.includes('whole-object-certification'));
+  assert.deepEqual(after.checkpointIds,original.checkpointIds,'historical checkpoints are preserved, not falsely accepted');
+  const next=await resumeProject(root);
+  assert.equal(next.activeWork.capability,'shape-reconstruction');
+  assert.equal((await auditProject(root)).valid,true);
+});
+
+test('S04a wrong frozen-camera projection reopens spatial hypotheses, invalidating shape, render and certification',async t=>{
+  const {root,shapeCheckpoint}=await makeRealSourceProject(t,'match',{selectedCameraMismatch:true});
+  const result=await reopenFromTrustedSourceAdmission(root,{expectedHeadId:shapeCheckpoint.id});
+  assert.equal(result.status,'REOPENED');
+  assert.equal(result.ownerCapability,'spatial-hypotheses');
+  assert.equal(result.decision.route.finding.category,'camera-hypothesis-mismatch');
+  const after=await loadProject(root);
+  assert.equal(after.reopenedCapability,'spatial-hypotheses');
+  assert.ok(after.invalidatedCapabilities.includes('shape-reconstruction'));
+  assert.ok(after.invalidatedCapabilities.includes('visual-critique'));
+  assert.ok(after.invalidatedCapabilities.includes('whole-object-certification'));
+  assert.equal((await resumeProject(root)).activeWork.capability,'spatial-hypotheses');
+  assert.equal((await auditProject(root)).valid,true);
+});
+
+test('S04a insufficient source visibility enters review without inventing an upstream rollback owner',async t=>{
+  const {root,shapeCheckpoint}=await makeRealSourceProject(t,'match',{
+    withSourceMacroSection:true,hiddenMacroSection:true,
+  });
+  const before=await loadProject(root);
+  const result=await reopenFromTrustedSourceAdmission(root,{
+    expectedHeadId:shapeCheckpoint.id,
+  });
+  assert.equal(result.status,'REVIEW_REQUIRED');
+  assert.equal(result.decision.route.action,'REQUEST_REVIEW');
+  assert.equal(result.decision.route.finding.category,'evidence-insufficient');
+  const after=await loadProject(root);
+  assert.equal(after.head,before.head);
+  assert.deepEqual(after.invalidatedCapabilities,before.invalidatedCapabilities);
+  assert.equal(after.status,'review-required');
+});
+
+test('S04a positive matching real-GLB source admission is NOT a source fidelity certificate',async t=>{
+  const {root,shapeCheckpoint}=await makeRealSourceProject(t,'match',{
+    withSourceMacroSection:true,
+  });
+  const before=await loadProject(root);
+  const result=await reopenFromTrustedSourceAdmission(root,{expectedHeadId:shapeCheckpoint.id});
+  assert.equal(result.status,'NO_DETECTED_CONTRADICTION');
+  assert.equal(result.decision,null);
+  assert.equal(result.cannotAuthorizeReferenceFidelity,true);
+  assert.deepEqual(await loadProject(root),before);
+});
+
+test('S04a cannot apply stale result or self-author a route to trusted source admission',async t=>{
+  const {root,shapeCheckpoint}=await makeRealSourceProject(t,'match',{
+    withSourceMacroSection:true,diagonalMacroSection:true,
+  });
+  const before=await loadProject(root);
+  await assert.rejects(
+    ()=>reopenFromTrustedSourceAdmission(root,{
+      expectedHeadId:'cp_stale','finding':{category:'camera-hypothesis-mismatch',severity:'major',
+        evidenceRefs:['reviews/self-pass.json']},
+    }),
+    /checkpoint head changed before evaluation/u,
+  );
+  assert.deepEqual(await loadProject(root),before);
+  const actual=await reopenFromTrustedSourceAdmission(root,{expectedHeadId:shapeCheckpoint.id});
+  assert.equal(actual.ownerCapability,'shape-reconstruction','foreign authored finding cannot rewrite trusted classifier');
+});
+
+test('S01b2 current nonimage primary source fails HOST shape-to-detail admission despite consistent SHA and PROCEED', async t => {
+  const {root,source,barrier,surfaceRef,shapeCheckpoint}=await makeRealSourceProject(t,'match',{nonImagePrimarySource:true});
+  assert.equal(barrier.verdict,'PROCEED');
+  const raw=await fs.readFile(path.join(root,source.path));
+  assert.equal(digestBytes(raw),source.sha256,'attack source is SHA-consistent; digest-only gate would miss it');
+  const before=await loadProject(root);
+  await assert.rejects(
+    () => commitLocal(root,'surface-topology',[surfaceRef]),
+    /primary source pixel-frame REVIEW_REQUIRED: source pixel-frame could not be independently decoded/u,
+  );
+  assert.equal((await loadProject(root)).head,shapeCheckpoint.id,'failed admission must not accept a later checkpoint');
+  assert.deepEqual((await loadProject(root)).checkpointIds,before.checkpointIds);
+  const guidance=await resumeProject(root);
+  assert.equal(guidance.nextAction,'REQUEST_RESEMBLANCE_REVIEW');
+  assert.match(guidance.reason,/primary source pixel-frame REVIEW_REQUIRED/u);
+});
+
+test('S01b2 mismatched manifest dimensions fail the installed checkpoint pixel replay even with genuine PNG', async t => {
+  const {root,source,surfaceRef,shapeCheckpoint}=await makeRealSourceProject(t,'match',{wrongPrimaryImageDimensions:true});
+  assert.equal(digestBytes(await fs.readFile(path.join(root,source.path))),source.sha256);
+  await assert.rejects(
+    () => commitLocal(root,'surface-topology',[surfaceRef]),
+    /primary source pixel-frame REVIEW_REQUIRED: source pixel-frame decoded dimensions disagree with manifest/u,
+  );
+  assert.equal((await loadProject(root)).head,shapeCheckpoint.id);
+});
+
+test('S03d nonfixture Host blocks a physically filled source-visible open void before detail commit',async t=>{
+  const {root,surfaceRef,shapeCheckpoint}=await makeRealSourceProject(t,'match',{
+    withSourceNegativeSpace:true,
+  });
+  const before=await loadProject(root);
+  await assert.rejects(
+    ()=>commitLocal(root,'surface-topology',[surfaceRef]),
+    /source negative space REWORK: original-visible-gap: source-observed open void is almost entirely filled by actual opaque GLB triangles/u,
+  );
+  const after=await loadProject(root);
+  assert.equal(after.head,shapeCheckpoint.id);
+  assert.deepEqual(after.checkpointIds,before.checkpointIds);
+});
+
+test('S03c Host blocks an occlusion observation forged by mapping both parts to one GLB mesh',async t=>{
+  const {root,surfaceRef,shapeCheckpoint}=await makeRealSourceProject(t,'match',{withSourceOcclusion:true});
+  const before=await loadProject(root);
+  await assert.rejects(
+    ()=>commitLocal(root,'surface-topology',[surfaceRef]),
+    /source realized occlusion INSUFFICIENT: observed-shoulder-overlap: source occluding parts are mapped to overlapping GLB mesh ownership/u,
+  );
+  const after=await loadProject(root);
+  assert.equal(after.head,shapeCheckpoint.id);
+  assert.deepEqual(after.checkpointIds,before.checkpointIds);
+});
+
+test('S03b2 Host refuses one current GLB mesh posing as both source-visible face and nose',async t=>{
+  const {root,surfaceRef,shapeCheckpoint}=await makeRealSourceProject(t,'match',{withSourceProfile:true});
+  const before=await loadProject(root);
+  await assert.rejects(
+    ()=>commitLocal(root,'surface-topology',[surfaceRef]),
+    /signed source profile INSUFFICIENT: profile: face and tip require distinct current GLB mesh geometry/u,
+  );
+  const after=await loadProject(root);
+  assert.equal(after.head,shapeCheckpoint.id);
+  assert.deepEqual(after.checkpointIds,before.checkpointIds);
+});
+
+test('S03b1 Host rejects square current GLB for source-observed diagonal long-axis even when bbox and center pass',async t=>{
+  const {root,surfaceRef,shapeCheckpoint}=await makeRealSourceProject(t,'match',{
+    withSourceMacroSection:true,diagonalMacroSection:true,
+  });
+  const before=await loadProject(root);
+  await assert.rejects(
+    ()=>commitLocal(root,'surface-topology',[surfaceRef]),
+    /source macro orientation REWORK: source-visible-head-region: source-observed macro long axis contradicts current GLB projected mesh orientation/u,
+  );
+  const after=await loadProject(root);
+  assert.equal(after.head,shapeCheckpoint.id);
+  assert.deepEqual(after.checkpointIds,before.checkpointIds);
+});
+
+test('S03a Host positive admits source-cited macro section with actual GLB projected envelope',async t=>{
+  const {root,surfaceRef}=await makeRealSourceProject(t,'match',{withSourceMacroSection:true});
+  const admitted=await commitLocal(root,'surface-topology',[surfaceRef]);
+  assert.equal(admitted.capability,'surface-topology');
+});
+
+test('S03a Host vetoes falsely narrow head region despite centered source/GLB macro anchor',async t=>{
+  const {root,surfaceRef,shapeCheckpoint}=await makeRealSourceProject(t,'match',{withSourceMacroSection:true,tooNarrowMacroSection:true});
+  const before=await loadProject(root);
+  await assert.rejects(
+    ()=>commitLocal(root,'surface-topology',[surfaceRef]),
+    /source macro section REWORK: source-visible-head-region: source-observed macro section envelope differs from actual projected GLB mesh/u,
+  );
+  const after=await loadProject(root);
+  assert.equal(after.head,shapeCheckpoint.id);
+  assert.deepEqual(after.checkpointIds,before.checkpointIds);
+});
+
+test('S03a Host keeps inferred head section as INSUFFICIENT, not inferred fidelity PASS',async t=>{
+  const {root,surfaceRef,shapeCheckpoint}=await makeRealSourceProject(t,'match',{withSourceMacroSection:true,hiddenMacroSection:true});
+  await assert.rejects(
+    ()=>commitLocal(root,'surface-topology',[surfaceRef]),
+    /source macro section INSUFFICIENT: source-visible-head-region: partially occluded, inferred, or hidden/u,
+  );
+  assert.equal((await loadProject(root)).head,shapeCheckpoint.id);
+});
+
+test('P0b2b2a missing source macro outer contour does not become image-space NOT_APPLICABLE', async (t) => {
+  const {root, surfaceRef, barrier} = await makeRealSourceProject(t, 'match', {omitOuterContour:true});
+  assert.equal(barrier.verdict, 'PROCEED');
+  await assert.rejects(
+    () => commitLocal(root, 'surface-topology', [surfaceRef]),
+    /whole silhouette REVIEW_REQUIRED: primary source has no closed macro outer contour/u,
+  );
+});
+
+test('P0b2b2a actual GLB mass vetoes gross source contour scale mismatch despite matched central anchor', async (t) => {
+  const {root, surfaceRef, barrier} = await makeRealSourceProject(t, 'match', {grosslyWrongOuterContour:true});
+  assert.equal(barrier.verdict, 'PROCEED');
+  await assert.rejects(
+    () => commitLocal(root, 'surface-topology', [surfaceRef]),
+    /whole silhouette REWORK: source outer contour disagrees with actual GLB projected mass/u,
+  );
+});
+
+test('P0b2b2a registered camera center cannot disguise wrong whole silhouette location', async (t) => {
+  const {root, surfaceRef} = await makeRealSourceProject(t, 'match', {offsetOuterContour:true});
+  await assert.rejects(
+    () => commitLocal(root, 'surface-topology', [surfaceRef]),
+    /whole silhouette REWORK: source outer contour disagrees with actual GLB projected mass/u,
+  );
+});
+
+test('P0b2b1 no frozen source-selected camera hypotheses cannot authorize detail', async (t) => {
+  const {root,surfaceRef}=await makeRealSourceProject(t,'match',{omitHypothesisSet:true});
+  await assert.rejects(
+    () => commitLocal(root,'surface-topology',[surfaceRef]),
+    /camera hypothesis admission requires exactly one spatial-hypothesis-set artifact/u,
+  );
+});
+
+test('P0b2b1 unresolved primary camera alternatives require review rather than macro PASS', async (t) => {
+  const {root,surfaceRef}=await makeRealSourceProject(t,'match',{unresolvedHypotheses:true});
+  await assert.rejects(
+    () => commitLocal(root,'surface-topology',[surfaceRef]),
+    /camera hypothesis REVIEW_REQUIRED: high-impact camera alternatives remain unresolved/u,
+  );
+});
+
+test('P0b2b1 selected camera differs from realized candidate camera and blocks detail', async (t) => {
+  const {root,surfaceRef}=await makeRealSourceProject(t,'match',{selectedCameraMismatch:true});
+  await assert.rejects(
+    () => commitLocal(root,'surface-topology',[surfaceRef]),
+    /camera hypothesis REWORK: registered camera does not match the frozen source-selected hypothesis/u,
+  );
+});
+
+test('P0b2b1 changed source digest on otherwise valid prior camera hypotheses fails', async (t) => {
+  const {root,surfaceRef}=await makeRealSourceProject(t,'match',{staleHypothesisSource:true});
+  await assert.rejects(
+    () => commitLocal(root,'surface-topology',[surfaceRef]),
+    /camera hypothesis REVIEW_REQUIRED: original source or scope mismatch/u,
+  );
+});
+
+test('P0b2 missing registered camera/GLB evidence must REVIEW_REQUIRED before detail', async (t) => {
+  const {root, surfaceRef, barrier} = await makeRealSourceProject(t,'match',
+    {includeEarlyProjection:false});
+  assert.equal(barrier.verdict,'PROCEED');
+  await assert.rejects(
+    () => commitLocal(root,'surface-topology',[surfaceRef]),
+    /early registered projection REVIEW_REQUIRED: requires exactly one source- and GLB-bound shape-stage realized-projection/u,
+  );
+});
+
+test('P0b2 camera clipping of a source-visible macro landmark blocks detail as REWORK', async (t) => {
+  const {root,surfaceRef}=await makeRealSourceProject(t,'match',{offFrameMacroBinding:true});
+  await assert.rejects(
+    () => commitLocal(root,'surface-topology',[surfaceRef]),
+    /early registered projection REWORK: source-visible macro anchors project outside camera frame: observed-head/u,
+  );
+});
+
+test('P0b2 inferred-only 3D anchor is not counted as an observed source-visible macro', async (t) => {
+  const {root,surfaceRef}=await makeRealSourceProject(t,'match',{onlyInferredMacroAnchor:true});
+  await assert.rejects(
+    () => commitLocal(root,'surface-topology',[surfaceRef]),
+    /early registered projection REVIEW_REQUIRED: source has no independently citable visible macro anchors/u,
+  );
+});
+
+test('P0b2 source-visible macro anchor omission is rejected before any downstream PASS', async (t) => {
+  // The existing trusted projection factory already refuses an incomplete
+  // source-macro set; the downstream gate independently checks it as defense
+  // in depth for persisted or otherwise forged proofs.
+  await assert.rejects(
+    () => makeRealSourceProject(t,'match',{addUnprojectedMacroAnchor:true}),
+    /projection fit is missing macro anchors: observed-shoulder/u,
+  );
+});
+
+test('P0b1 positive: actual registered GLB macro anchor and source geometry permit existing downstream detail', async (t) => {
+  const {root, surfaceRef} = await makeRealSourceProject(t, 'match',
+    {includeEarlyProjection:true});
+  const admitted=await commitLocal(root,'surface-topology',[surfaceRef]);
+  assert.equal(admitted.capability,'surface-topology');
+});
+
+test('P0b1 negative: re-signed GLB-derived head location diverges from source macro anchor', async (t) => {
+  const {root, surfaceRef} = await makeRealSourceProject(t, 'match',
+    {includeEarlyProjection:true,movedMacroBinding:true});
+  await assert.rejects(
+    () => commitLocal(root,'surface-topology',[surfaceRef]),
+    /early registered projection blocks downstream detail: mass-proportion-mismatch/u,
+  );
+});
+
+test('P0b1 negative: incorrect camera gives a large macro reprojection error despite R04 PROCEED', async (t) => {
+  const {root, surfaceRef} = await makeRealSourceProject(t, 'match',
+    {includeEarlyProjection:true,wrongEarlyCamera:true});
+  await assert.rejects(
+    () => commitLocal(root,'surface-topology',[surfaceRef]),
+    /early registered projection blocks downstream detail: mass-proportion-mismatch/u,
+  );
+});
+
+test('P0b1 negative: forged projected pixel coordinate fails independent source and actual GLB replay', async (t) => {
+  const {root, surfaceRef} = await makeRealSourceProject(t, 'match',
+    {includeEarlyProjection:true,tamperProjection:true});
+  await assert.rejects(
+    () => commitLocal(root,'surface-topology',[surfaceRef]),
+    /early registered projection cannot replay current GLB/u,
+  );
+});
+
+test('P0a source geometry missing blocks detail even when legacy neutral-clay barrier says PROCEED', async (t) => {
+  const {root, surfaceRef, barrier} = await makeRealSourceProject(t, 'match', {omitSourceGeometry: true});
+  assert.equal(barrier.verdict, 'PROCEED');
+  await assert.rejects(
+    () => commitLocal(root, 'surface-topology', [surfaceRef]),
+    /source geometry admission requires exactly one reference-geometry artifact/u,
+  );
+});
+
+test('P0a digest-valid but empty source observation cannot self-attest detail admission', async (t) => {
+  const {root, surfaceRef} = await makeRealSourceProject(t, 'match', {emptySourceGeometry: true});
+  await assert.rejects(
+    () => commitLocal(root, 'surface-topology', [surfaceRef]),
+    /source geometry admission requires an observable macro reference-geometry primitive/u,
+  );
+});
+
+test('P0a swapped source SHA in a canonical source-geometry document fails closed', async (t) => {
+  const {root, surfaceRef} = await makeRealSourceProject(t, 'match', {wrongSourceGeometrySha: true});
+  await assert.rejects(
+    () => commitLocal(root, 'surface-topology', [surfaceRef]),
+    /source geometry admission source or scope binding mismatch/u,
+  );
+});
+
+test('P0a changing the observation bytes after checkpoint cannot obtain a downstream PASS', async (t) => {
+  const {root, surfaceRef} = await makeRealSourceProject(t, 'match');
+  await fs.writeFile(path.join(root, 'model/reference-geometry.json'),
+    '{"schema":"refas.reference-geometry/v1","forged":"PASS"}\n');
+  await assert.rejects(
+    () => commitLocal(root, 'surface-topology', [surfaceRef]),
+    /reference-geometry artifact bytes are stale or mismatched/u,
+  );
+});
 
 test('R04 real-source HOLD blocks surface-topology admission', async (t) => {
   const {root, barrier, surfaceRef} = await makeRealSourceProject(t, 'insufficient');
@@ -552,8 +1248,8 @@ test('R04 upgrade rejects legacy real-source downstream lineage without R04 admi
   const root = await fs.mkdtemp(path.join(os.tmpdir(), 'refas-r04-legacy-'));
   t.after(() => fs.rm(root, {recursive: true, force: true}));
 
-  const sourceBytes = Buffer.from('legacy source bytes\n');
-  const sourceRef = await writeRef(root, 'source/reference.bin', sourceBytes, 'source-image');
+  const sourceBytes = Buffer.from(SOURCE_PNG);
+  const sourceRef = await writeRef(root, 'source/reference.png', sourceBytes, 'source-image');
   const source = {
     schema: 'refas.source-manifest/v1',
     id: 'primary-reference',

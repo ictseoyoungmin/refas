@@ -5,6 +5,7 @@ import {
   assertDigest,
   assertId,
   deepFreeze,
+  digestBytes,
   digestJson,
   readJson,
   sha256File,
@@ -27,6 +28,23 @@ import {validatePbrRenderReport} from './pbr-render-report.mjs';
 import {inspectBaseColorTextures} from './glb.mjs';
 import {findComparisonContradictions, validateRegisteredComparison} from './registered-comparison.mjs';
 import {assertEarlyResemblanceAdmission} from './early-resemblance-barrier.mjs';
+import {validateReferenceGeometry} from './reference-geometry.mjs';
+import {screenSourceMacroSectionEnvelopes} from './source-macro-section-screen.mjs';
+import {screenSourceMacroPartOrientation} from './source-macro-orientation-screen.mjs';
+import {screenSourceProfileVector} from './source-profile-vector-screen.mjs';
+import {screenSourceRealizedOcclusion} from './source-occlusion-screen.mjs';
+import {screenSourceNegativeSpaces} from './source-negative-space-screen.mjs';
+import {screenLostSourceVisibleParts} from './source-visible-part-loss-screen.mjs';
+import {screenSourcePartRoleRelations} from './source-role-relations-screen.mjs';
+import {screenSourcePhysicalInterfaceGaps} from './source-interface-gap-screen.mjs';
+import {inspectSourcePixelFrameBytes, MAX_SOURCE_FRAME_BYTES} from './source-pixel-frame.mjs';
+import {verifyRegisteredRenderReplay} from './registered-render-replay.mjs';
+import {evaluateIndependentSourceRenderPixels} from './independent-source-render-pixels.mjs';
+import {mapParentToChild} from './registration.mjs';
+import {validateSpatialHypothesisSet} from './spatial-hypotheses.mjs';
+import {createRealizedProjection, normalizeProjectionCamera, deriveRealizedWholeSilhouetteBounds} from './realized-projection.mjs';
+import {verifyRealizedProjection} from './realized-projection-verification.mjs';
+import {findingsFromRealizedProjection} from './projection-findings.mjs';
 import {
   validateBlockoutCompetitionDecision,
   validateBlockoutCompetitionPolicy,
@@ -621,7 +639,7 @@ async function inspectCertificationHead(root, state, head) {
       }
       if (visualReview.evidenceClass !== 'independent-reference') errors.push('self-generated contract fixtures cannot certify visual fidelity');
       if (visualReview.verdict !== 'pass') errors.push(`visual review verdict is ${visualReview.verdict ?? 'missing'}, not pass`);
-      await inspectRegisteredComparison(root, state, head, visualReview, errors);
+      await inspectRegisteredComparison(root, state, head, visualReview, errors, finalSpatialContinuity);
       const blocking = (visualReview.unresolvedFindings ?? []).filter((finding) => finding.blocking === true);
       if (blocking.length) errors.push(`visual review has unresolved major, critical, or blocking findings: ${blocking.map((finding) => finding.category).join(', ')}`);
       const reviewGates = new Map((visualReview.gateVerdicts ?? []).map((gate) => [gate.id, gate]));
@@ -639,7 +657,143 @@ async function inspectCertificationHead(root, state, head) {
   return {ready: errors.length === 0, errors, visualReview, visualReviewArtifact, finalSpatialContinuity};
 }
 
-async function inspectRegisteredComparison(root, state, head, visualReview, errors) {
+async function assertFrozenSourceCameraForRegisteredHero(root, state, artifactRefs, lineage, registrationDigest) {
+  // S02b2b: the certification checkpoint may not choose its own camera.
+  // Resolve the selected pose from immutable source-cited spatial hypotheses
+  // committed before shape reconstruction. A worker-written frame with a
+  // matching registrationDigest is NOT camera-source provenance.
+  const spatial = [...lineage].reverse().find((checkpoint) =>
+    checkpoint.capability === 'spatial-hypotheses' && scopeContains(checkpoint.scopeId, 'whole'));
+  if (!spatial) throw new Error('source-selected registered camera REVIEW_REQUIRED: upstream spatial-hypotheses checkpoint missing');
+  const {value: hypotheses} = await readCheckpointJsonArtifact(
+    root, spatial, 'spatial-hypothesis-set', 'source-selected registered hero');
+  const valid=validateSpatialHypothesisSet(hypotheses);
+  if (!valid.valid || hypotheses.sourceSha256 !== state.source.sha256 ||
+      !scopeContains(hypotheses.scopeId,'whole') ||
+      !hypotheses.attestation?.evidenceRefs?.includes(state.source.path) ||
+      hypotheses.hypotheses.some((item)=>!item.evidenceRefs?.includes(state.source.path))) {
+    throw new Error('source-selected registered camera REVIEW_REQUIRED: upstream source-camera hypothesis authority is invalid');
+  }
+  const selected=hypotheses.hypotheses.find((item)=>item.id===hypotheses.selectedId);
+  if (!selected || ['falsified','superseded'].includes(selected.status) ||
+      hypotheses.hypotheses.some((item)=>item.id!==hypotheses.selectedId && item.status!=='falsified')) {
+    throw new Error('source-selected registered camera REVIEW_REQUIRED: unresolved or contradictory frozen camera hypotheses');
+  }
+  const frames=artifactRefs.filter((artifact)=>artifact.kind==='canonical-object-frame');
+  if (frames.length!==1) throw new Error('source-selected registered camera REVIEW_REQUIRED: exactly one canonical-object-frame is required');
+  const frame=await readStoredJsonArtifact(root,frames[0],'source-selected registered hero frame');
+  if (frame.schema!=='refas.canonical-object-frame/v1' ||
+      frame.hero?.registrationDigest!==registrationDigest) {
+    throw new Error('source-selected registered camera REVIEW_REQUIRED: stored camera registration differs from current comparison');
+  }
+  let normalized;
+  try {normalized=normalizeProjectionCamera(selected.camera);}
+  catch (error){throw new Error(`source-selected registered camera REVIEW_REQUIRED: ${error.message}`);}
+  // Only compatible single-view perspective is admissible to this installed
+  // portable hero rasterizer. Unknown projection remains REVIEW_REQUIRED.
+  if (normalized.projection!=='perspective' || normalized.aspect!==1 ||
+      digestJson({
+        position:frame.hero?.position,target:frame.hero?.target,
+        up:frame.hero?.up,fovY:frame.hero?.fovY,
+      })!==digestJson({
+        position:normalized.position,target:normalized.target,
+        up:normalized.up,fovY:normalized.fovY,
+      })) {
+    throw new Error('source-selected registered camera REWORK: hero camera differs from frozen upstream source-selected hypothesis');
+  }
+  return frame;
+}
+
+/**
+ * S02b2c2: exact, primary-source-bound pixel remeasurement. This is a
+ * contradiction veto, NEVER positive resemblance authority. Only call
+ * after the installed renderer has replayed the current GLB/camera/hero.
+ * All claimed perceptual metrics are untrusted until recomputed.
+ */
+async function inspectIndependentSourcePixelEvidence(root, state, artifactRefs, report, heroArtifact) {
+  const whole=(report.scopes??[]).find((scope)=>scope?.scopeId==='whole');
+  if(!whole || (report.scopes??[]).filter((scope)=>scope?.scopeId==='whole').length!==1) {
+    throw new Error('exactly one registered whole-image comparison is required');
+  }
+  const registrationRefs=artifactRefs.filter((artifact)=>
+    artifact.kind==='reference-registration' &&
+    artifact.path===report.registration?.path &&
+    artifact.sha256===report.registration?.fileSha256);
+  if(registrationRefs.length!==1) {
+    throw new Error('exactly one current checkpoint-bound canonical reference-registration path/SHA is required');
+  }
+  const registration=await readStoredJsonArtifact(root,registrationRefs[0],'canonical source/render registration');
+  if(registration.registrationDigest!==report.registration.digest ||
+      !registration.attestation?.evidenceRefs?.includes(state.source.path) ||
+      !registration.attestation?.evidenceRefs?.includes(heroArtifact.path)) {
+    throw new Error('source/render registration is not independently cited to original source and current GLB hero');
+  }
+  // A worker cannot hide a contradictory limb/void by forging a small
+  // whole-object comparison ROI and re-signing the report. Recompute the
+  // whole source image's registered rectangular footprint from canonical H.
+  const fullSource=[0,0,1,1];
+  if(JSON.stringify(whole.sourceRoi)!==JSON.stringify(fullSource)) {
+    throw new Error('whole source ROI must retain the entire original photo');
+  }
+  const mapped=[[0,0],[1,0],[1,1],[0,1]].map((point)=>mapParentToChild(registration,point));
+  const xs=mapped.map((point)=>point[0]), ys=mapped.map((point)=>point[1]);
+  const derivedRoi=[
+    Math.min(...xs), Math.min(...ys),
+    Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys),
+  ];
+  if(derivedRoi.some((value,index)=>!Number.isFinite(value) ||
+      Math.abs(value-(whole.registeredRenderRoi?.[index]??NaN))>1e-8)) {
+    throw new Error('worker-authored registered whole ROI differs from original source homography');
+  }
+  const observed=await evaluateIndependentSourceRenderPixels({
+    root,sourcePath:state.source.path,sourceSha256:state.source.sha256,
+    heroPath:heroArtifact.path,heroSha256:heroArtifact.sha256,
+    registrationPath:registrationRefs[0].path,registrationSha256:registrationRefs[0].sha256,
+    roi:derivedRoi,
+  });
+  if(observed.status!=='USABLE' || observed.perceptual?.pixelShape?.status!=='USABLE') {
+    throw new Error('original photo/current GLB registered pixel observation is INSUFFICIENT; review source segmentation and registration');
+  }
+  if(observed.cannotAuthorizeReferenceFidelity!==true ||
+      observed.authority!=='independently-recomputed-original-and-render-pixels') {
+    throw new Error('original-photo observation did not return trusted contradiction-only evidence');
+  }
+  const matches=(actual,expected)=>{
+    if(typeof expected==='number') return Number.isFinite(actual) && Math.abs(actual-expected)<=1e-8;
+    if(Array.isArray(expected)) return Array.isArray(actual) && actual.length===expected.length &&
+      expected.every((item,i)=>matches(actual[i],item));
+    if(expected && typeof expected==='object') return actual && typeof actual==='object' &&
+      !Array.isArray(actual) && Object.keys(actual).length===Object.keys(expected).length &&
+      Object.entries(expected).every(([key,value])=>Object.hasOwn(actual,key)&&matches(actual[key],value));
+    return actual===expected;
+  };
+  for(const key of ['sourceForegroundPixels','renderForegroundPixels']) {
+    if(!matches(whole.metrics?.[key],observed[key])) {
+      throw new Error('worker-authored registered comparison '+key+' differs from independent original pixels');
+    }
+  }
+  const perceptual=whole.metrics?.perceptual;
+  for(const [key,expected] of Object.entries(observed.perceptual)) {
+    if(key==='pixelShape'){
+      for(const [field,value] of Object.entries(expected)){
+        if(!matches(perceptual?.pixelShape?.[field],value)) {
+          throw new Error('worker-authored registered comparison pixelShape.'+field+' differs from independent original pixels');
+        }
+      }
+    } else if(!matches(perceptual?.[key],expected)) {
+      throw new Error('worker-authored registered comparison perceptual.'+key+' differs from independent original pixels');
+    }
+  }
+  // Detect opposing negative-space placement even when area/outer bounds and
+  // the worker's landmarks happen to match. The comparison has no PASS power.
+  const pixel=observed.perceptual.pixelShape;
+  if(pixel.sourceOnlyFraction>0.28 && pixel.renderOnlyFraction>0.28) {
+    throw new Error('original-photo/current-GLB negative-space contradiction requires source-bound REWORK');
+  }
+  return observed;
+}
+
+async function inspectRegisteredComparison(root, state, head, visualReview, errors, finalSpatialContinuity, trustedLineage = null) {
   if (visualReview?.evidenceClass !== 'independent-reference' || visualReview?.verdict !== 'pass') return null;
   if (isTrustedContractFixtureProject(state)) return null;
   const binding = visualReview.registeredComparison;
@@ -691,6 +845,42 @@ async function inspectRegisteredComparison(root, state, head, visualReview, erro
   if (!renderReportArtifact) errors.push('registered comparison render report is not digest-bound in the certification checkpoint');
   const frameArtifact = head.artifactRefs.find((artifact) => artifact.path === binding.framePath && artifact.sha256 === binding.frameSha256 && ['render-frame', 'render-image', 'artifact'].includes(artifact.kind));
   if (!frameArtifact) errors.push('registered comparison hero frame is not digest-bound in the certification checkpoint');
+
+  // S02b2a: replay actual current candidate and source-selected frozen hero
+  // camera in an installed independent renderer BEFORE permitting a positive
+  // nonfixture whole-object certification. Resume/audit call this same gate.
+  const sourceFrameRefs=head.artifactRefs.filter((artifact)=>artifact.kind==='canonical-object-frame');
+  const finalSha=finalSpatialContinuity?.finalCandidate?.assetSha256;
+  const currentCandidates=candidateGlbArtifacts(head.artifactRefs)
+    .filter((artifact)=>artifact.sha256===finalSha && artifact.sha256===visualReview.assetSha256);
+  if (sourceFrameRefs.length!==1) {
+    errors.push('source-bound certification requires exactly one canonical-object-frame artifact for trusted registered hero replay');
+  } else if (currentCandidates.length!==1) {
+    errors.push('trusted registered hero replay requires exactly the current lineage-bound candidate GLB');
+  } else if (renderReportArtifact && frameArtifact) {
+    try {
+      const cameraArtifact=sourceFrameRefs[0];
+      const lineage=trustedLineage??checkpointLineage(await listCheckpoints(root),head.id);
+      await assertFrozenSourceCameraForRegisteredHero(
+        root,state,head.artifactRefs,lineage,report.registration?.digest);
+      const independent=await verifyRegisteredRenderReplay({
+        root,glbPath:currentCandidates[0].path,framePath:cameraArtifact.path,
+        renderReportPath:renderReportArtifact.path,heroImagePath:frameArtifact.path,
+        assetSha256:finalSha,frameSha256:binding.frameSha256,
+      });
+      if (independent.status!=='PASS' || independent.cannotAuthorizeReferenceFidelity!==true ||
+          independent.heroSha256!==binding.frameSha256) {
+        throw new Error('trusted renderer did not reproduce the exact current registered hero frame');
+      }
+      // This call is mandatory for prospective checkpoint writes and for
+      // later cert/readiness/resume/audit through the same inspection path.
+      // It cannot be skipped by omitting registration or authored metrics.
+      await inspectIndependentSourcePixelEvidence(
+        root,state,head.artifactRefs,report,frameArtifact);
+    } catch (error) {
+      errors.push(`trusted source-bound GLB/render replay REVIEW_REQUIRED: ${error.message}`);
+    }
+  }
 
   const contradictions = findComparisonContradictions(report);
   if (contradictions.length) {
@@ -783,6 +973,25 @@ async function ensureEarlyResemblanceAdmission(root, state, capability, scopeId,
   if (isTrustedContractFixtureProject(state)) return;
   if (capabilityIndex(capability) < capabilityIndex('surface-topology')) return;
 
+  // S01b2: a worker can author a checksum-consistent source manifest using
+  // non-image bytes. At the REAL non-fixture shape->detail admission, independently
+  // decode the current raw source pixels through the installed S01b1 evaluator.
+  // All host checkpoint entrypoints, audit/certification and resume call this
+  // existing gate; no self-authored source "PASS" report is accepted.
+  try {
+    const sourceFile = await assertExistingFileInside(root, state.source.path, 'source pixel-frame');
+    if (sourceFile.stat.size > MAX_SOURCE_FRAME_BYTES) throw new Error('source pixel-frame encoded-byte budget exceeded');
+    const rawSource = await fs.readFile(sourceFile.realFile);
+    inspectSourcePixelFrameBytes(rawSource, {
+      sourceSha256: state.source.sha256,
+      sizeBytes: state.source.sizeBytes,
+      width: state.source.width,
+      height: state.source.height,
+    });
+  } catch (error) {
+    throw new Error(`${capability} primary source pixel-frame REVIEW_REQUIRED: ${error.message}`);
+  }
+
   const shapeCheckpoint = [...lineage].reverse().find((checkpoint) =>
     checkpoint.capability === 'shape-reconstruction' && scopeContains(checkpoint.scopeId, scopeId));
   if (!shapeCheckpoint) throw new Error(`${capability} requires a trustworthy shape-reconstruction checkpoint before early resemblance admission`);
@@ -824,6 +1033,284 @@ async function ensureEarlyResemblanceAdmission(root, state, capability, scopeId,
     hierarchyDigest: hierarchy.hierarchyDigest,
     assetSha256: candidateMatches[0].sha256,
   });
+
+  // P0: a worker's neutral-clay R04 PROCEED cannot make omitted source-space
+  // observation "not applicable." Freeze 2D reference geometry upstream of
+  // candidate construction; source-photo interpretation is separately reviewed.
+  const observationCheckpoint = [...lineage].reverse().find((checkpoint) =>
+    checkpoint.capability === 'visual-observation' && scopeContains(checkpoint.scopeId, scopeId));
+  if (!observationCheckpoint) {
+    throw new Error(`${capability} source geometry admission requires current visual-observation lineage`);
+  }
+  const {value: geometry} = await readCheckpointJsonArtifact(
+    root, observationCheckpoint, 'reference-geometry',
+    `${capability} source geometry admission`,
+  );
+  const validation = validateReferenceGeometry(geometry);
+  if (!validation.valid) {
+    throw new Error(`${capability} source geometry admission reference-geometry is invalid: ${validation.errors.join('; ')}`);
+  }
+  if (geometry.sourceSha256 !== state.source.sha256 ||
+      !scopeContains(geometry.scopeId, scopeId)) {
+    throw new Error(`${capability} source geometry admission source or scope binding mismatch`);
+  }
+  // A valid yet empty typed artifact is no independent observation. Require
+  // source-visible whole/macro evidence and the raw source itself as citation;
+  // do NOT let worker names, camera fitting or 3D-derived observations substitute.
+  const sourcePrimitives = [
+    ...geometry.anchors, ...geometry.contours, ...geometry.negativeSpaces,
+    ...(geometry.segments ?? []),
+  ];
+  const macro = sourcePrimitives.filter((item) =>
+    item.importance === 'macro' && (item.visibility === undefined || item.visibility !== 'inferred'));
+  if (!macro.length || !macro.some((item) => item.evidenceRefs.includes(state.source.path)) ||
+      !geometry.attestation.evidenceRefs.includes(state.source.path)) {
+    throw new Error(`${capability} source geometry admission requires an observable macro reference-geometry primitive and raw primary source citation`);
+  }
+
+  // P0b2a: an omitted camera projection cannot silently turn macro
+  // source-to-GLB correspondence into NOT_APPLICABLE. This is a required
+  // shape-to-detail admission on real-source projects, not a release score.
+  // Unknown camera/correspondence remains REVIEW_REQUIRED instead of PASS.
+  const registered = (shapeCheckpoint.artifactRefs ?? []).filter((artifact) =>
+    artifact.kind === 'realized-projection');
+  if (registered.length !== 1) {
+    throw new Error(`${capability} early registered projection REVIEW_REQUIRED: requires exactly one source- and GLB-bound shape-stage realized-projection; found ${registered.length}`);
+  }
+  {
+    const {value: proof} = await readCheckpointJsonArtifact(
+      root, shapeCheckpoint, 'realized-projection',
+      `${capability} early registered projection`,
+    );
+    const candidate = candidateMatches[0];
+    // The shape checkpoint is immutable, but a later authorized candidate
+    // transition may change the working path. Replay from trusted CAS bytes
+    // bound to the frozen shape candidate rather than a mutable path.
+    const actualGlb = await fs.readFile(objectPath(root, candidate.sha256));
+    if (actualGlb.length !== candidate.sizeBytes ||
+        digestBytes(actualGlb) !== candidate.sha256) {
+      throw new Error(`${capability} early registered projection candidate GLB bytes are stale or mismatched`);
+    }
+    if (proof.sourceSha256 !== state.source.sha256 ||
+        proof.scopeId !== geometry.scopeId ||
+        proof.assetSha256 !== candidate.sha256) {
+      throw new Error(`${capability} early registered projection source/scope/candidate mismatch`);
+    }
+    const trustedPaths = new Set([
+      state.source.path,
+      ...lineage.flatMap((checkpoint) => (checkpoint.artifactRefs ?? []).map((artifact) => artifact.path)),
+    ]);
+    if (!proof.evidenceRefs?.includes(state.source.path) ||
+        !proof.evidenceRefs?.includes(candidate.path) ||
+        proof.evidenceRefs.some((ref) => !trustedPaths.has(ref))) {
+      throw new Error(`${capability} early registered projection must cite the raw source and exact current GLB within checkpoint lineage`);
+    }
+    // P0b2b1: the chosen camera must have been committed as source-cited
+    // alternatives BEFORE shape reconstruction. A candidate-side camera
+    // label and even numerically correct GLB reprojection cannot decide
+    // which high-impact source orientation is actually selected.
+    const spatialCheckpoint = [...lineage].reverse().find((checkpoint) =>
+      checkpoint.capability === 'spatial-hypotheses' &&
+      scopeContains(checkpoint.scopeId, scopeId));
+    if (!spatialCheckpoint) {
+      throw new Error(`${capability} camera hypothesis REVIEW_REQUIRED: missing upstream spatial-hypotheses checkpoint`);
+    }
+    const {value: hypothesisSet} = await readCheckpointJsonArtifact(
+      root, spatialCheckpoint, 'spatial-hypothesis-set',
+      `${capability} camera hypothesis admission`,
+    );
+    const hypothesisCheck = validateSpatialHypothesisSet(hypothesisSet);
+    if (!hypothesisCheck.valid) {
+      throw new Error(`${capability} camera hypothesis REVIEW_REQUIRED: invalid frozen source hypotheses: ${hypothesisCheck.errors.join('; ')}`);
+    }
+    if (hypothesisSet.sourceSha256 !== state.source.sha256 ||
+        !scopeContains(hypothesisSet.scopeId, scopeId)) {
+      throw new Error(`${capability} camera hypothesis REVIEW_REQUIRED: original source or scope mismatch`);
+    }
+    if (!hypothesisSet.attestation?.evidenceRefs?.includes(state.source.path) ||
+        hypothesisSet.hypotheses.some((hypothesis) =>
+          !hypothesis.evidenceRefs?.includes(state.source.path))) {
+      throw new Error(`${capability} camera hypothesis REVIEW_REQUIRED: all candidate cameras and attestation require primary-source citation`);
+    }
+    if (hypothesisSet.selectedId == null) {
+      throw new Error(`${capability} camera hypothesis REVIEW_REQUIRED: high-impact camera alternatives remain unresolved`);
+    }
+    const selectedCamera = hypothesisSet.hypotheses.find((hypothesis) =>
+      hypothesis.id === hypothesisSet.selectedId);
+    if (!selectedCamera || ['falsified', 'superseded'].includes(selectedCamera.status) ||
+        hypothesisSet.hypotheses.some((hypothesis) =>
+          hypothesis.id !== hypothesisSet.selectedId && hypothesis.status !== 'falsified')) {
+      throw new Error(`${capability} camera hypothesis REVIEW_REQUIRED: selected camera lacks resolved source-falsified competitors`);
+    }
+    let selectedCameraDigest;
+    try {
+      selectedCameraDigest = digestJson(normalizeProjectionCamera(selectedCamera.camera));
+    } catch (error) {
+      throw new Error(`${capability} camera hypothesis REVIEW_REQUIRED: selected camera is not geometrically valid: ${error.message}`);
+    }
+    if (proof.cameraHypothesisId !== selectedCamera.id ||
+        proof.cameraDigest !== selectedCameraDigest) {
+      throw new Error(`${capability} camera hypothesis REWORK: registered camera does not match the frozen source-selected hypothesis`);
+    }
+    const replay = verifyRealizedProjection({proof, referenceGeometry: geometry, glb: actualGlb});
+    if (!replay.valid) {
+      throw new Error(`${capability} early registered projection cannot replay current GLB: ${replay.errors.join('; ')}`);
+    }
+    // Partial source anchors are not sufficient: every source-visible,
+    // important macro anchor must be geometrically tested. A raw contour
+    // without a falsifiable anchor is not an invented full resemblance PASS.
+    const requiredMacroAnchors = (geometry.anchors ?? []).filter((item) =>
+      item.importance === 'macro' && item.visibility === 'visible' &&
+      item.evidenceRefs.includes(state.source.path));
+    if (!requiredMacroAnchors.length) {
+      throw new Error(`${capability} early registered projection REVIEW_REQUIRED: source has no independently citable visible macro anchors for projection`);
+    }
+    const measured = new Set((proof.derivedAnchors ?? []).map((item) => item.referenceId));
+    const missingMacro = requiredMacroAnchors.filter((item) => !measured.has(item.id));
+    if (missingMacro.length) {
+      throw new Error(`${capability} early registered projection REVIEW_REQUIRED: missing source-observed macro anchor projections: ${missingMacro.map((item) => item.id).join(', ')}`);
+    }
+    const offFrame = (proof.derivedAnchors ?? []).filter((item) =>
+      requiredMacroAnchors.some((anchor) => anchor.id === item.referenceId) && !item.insideFrame);
+    if (offFrame.length) {
+      throw new Error(`${capability} early registered projection REWORK: source-visible macro anchors project outside camera frame: ${offFrame.map((item) => item.referenceId).join(', ')}`);
+    }
+    const findings = findingsFromRealizedProjection(proof).filter((finding) =>
+      finding.severity === 'blocking');
+    if (findings.length) {
+      throw new Error(`${capability} early registered projection blocks downstream detail: ${findings.map((finding) => finding.category + ' (' + finding.checkId + ')').join('; ')}`);
+    }
+    // S03a: source-visible, typed macro part envelopes must remain consistent
+    // with the actual mesh projected by the frozen GLB/camera. This is a VETO
+    // only: source 2D segment annotations are not independent photo-semantic
+    // proof. Unknown/occluded macro segments cannot silently earn a PASS.
+    if ((geometry.segments ?? []).some((segment) => segment.importance === 'macro')) {
+      const macroSectionScreen=screenSourceMacroSectionEnvelopes({
+        referenceGeometry:geometry,realizedProjection:proof,sourcePath:state.source.path,
+      });
+      if(macroSectionScreen.status!=='NO_DETECTED_CONTRADICTION'){
+        const detail=macroSectionScreen.findings.map(item=>item.id+': '+item.reason).join('; ');
+        throw new Error(`${capability} source macro section ${macroSectionScreen.status}: ${detail}`);
+      }
+      // S03b1: A correctly bounded and centered elongated head/torso part
+      // can be turned 90° in the image plane with the same bbox and anchor.
+      // Screen the real GLB's projected mesh *principal long axis* against
+      // source-cited 2D silhouette geometry; symmetric regions offer no axis.
+      const orientation=screenSourceMacroPartOrientation({
+        referenceGeometry:geometry,realizedProjection:proof,sourcePath:state.source.path,
+      });
+      if(orientation.status!=='NO_DETECTED_CONTRADICTION') {
+        throw new Error(`${capability} source macro orientation ${orientation.status}: `+
+          orientation.findings.map(item=>item.id+': '+item.reason).join('; '));
+      }
+    }
+    // S03b2: source-visible signed face-center → nose-tip cue must also
+    // be realized by *separate current GLB mesh geometry*. Caller-authored
+    // localPoint landmark coordinates cannot establish physical direction.
+    // This is a negative gate only, never a face/gaze fidelity certificate.
+    if ((geometry.anchors ?? []).some(anchor =>
+      anchor.semanticRole === 'face-center' || anchor.semanticRole === 'nose-tip')) {
+      const profile = screenSourceProfileVector({
+        referenceGeometry: geometry, realizedProjection: proof,
+        sourcePath: state.source.path,
+      });
+      if (profile.status !== 'NO_DETECTED_CONTRADICTION') {
+        throw new Error(`${capability} signed source profile ${profile.status}: ` +
+          profile.findings.map(x => `${x.role}: ${x.reason}`).join('; '));
+      }
+    }
+    // QA-03a: visible identity-role ordering and relative area must be
+    // supported by distinct physical GLB mesh regions. Semantic observations
+    // predate construction, but this screen does not independently recognize
+    // objects in the raw photo, nor certify source resemblance.
+    if ((geometry.segments ?? []).some(item => item.importance === 'identity')) {
+      const semantic = screenSourcePartRoleRelations({
+        referenceGeometry:geometry,realizedProjection:proof,
+        sourcePath:state.source.path,
+      });
+      if (semantic.status !== 'NO_DETECTED_CONTRADICTION') {
+        throw new Error(`${capability} source semantic part relations ${semantic.status}: `+
+          semantic.findings.map(item=>item.id+': '+item.reason).join('; '));
+      }
+    }
+    // QA-03b1 source-visible explicit structural contacts are checked from
+    // actual separate current GLB projected mesh hulls (not named joints).
+    // A projected touch is NOT evidence of real 3D welding or load retention.
+    if ((geometry.interfaces ?? []).some(item => item.importance !== 'detail' &&
+      item.separation === 'explicit' &&
+      ['joint-boundary','contact-boundary','necked-transition'].includes(item.kind))) {
+      const joints = screenSourcePhysicalInterfaceGaps({
+        referenceGeometry:geometry,realizedProjection:proof,sourcePath:state.source.path,
+      });
+      if(joints.status!=='NO_DETECTED_CONTRADICTION'){
+        throw new Error(`${capability} source structural interface ${joints.status}: `+
+          joints.findings.map(x=>x.id+': '+x.reason).join('; '));
+      }
+    }
+    // S03c: source-cited visible occlusion order must be physically replayed
+    // from GLB POSITION vertices and the selected source camera. Depths in
+    // worker-authored projectionFit.occlusionDepths cannot authorize order.
+    // Unclear/intersecting 3D ranges remain review-required, never invented.
+    if ((geometry.occlusions ?? []).some(item => item.importance !== 'detail')) {
+      const occlusion = screenSourceRealizedOcclusion({
+        referenceGeometry: geometry, realizedProjection: proof,
+        sourcePath: state.source.path,
+      });
+      if (occlusion.status !== 'NO_DETECTED_CONTRADICTION') {
+        throw new Error(`${capability} source realized occlusion ${occlusion.status}: ` +
+          occlusion.findings.map(item => item.id + ': ' + item.reason).join('; '));
+      }
+    }
+    // P0 S03d: source-observed open voids must not be physically filled by
+    // current GLB triangles even when outer bounds and anchors still match.
+    // The source annotation alone does not grant photo resemblance.
+    if ((geometry.negativeSpaces ?? []).some(x => x.importance !== 'detail')) {
+      const voids=screenSourceNegativeSpaces({
+        referenceGeometry:geometry,realizedProjection:proof,glb:actualGlb,
+        sourcePath:state.source.path,
+      });
+      if(voids.status!=='NO_DETECTED_CONTRADICTION'){
+        throw new Error(`${capability} source negative space ${voids.status}: `+
+          voids.findings.map(x=>x.id+': '+x.reason).join('; '));
+      }
+    }
+    // P0b2b2a: an anchor that projects correctly says nothing about whole
+    // head/torso mass. Screen actual GLB mesh extents against the primary
+    // source-observed outer macro contour. Screening can VETO gross wrong
+    // shape, never certify a photo likeness or replace image-space review.
+    const macroContours = (geometry.contours ?? []).filter((contour) =>
+      contour.importance === 'macro' && contour.closed === true &&
+      contour.evidenceRefs.includes(state.source.path));
+    if (!macroContours.length) {
+      throw new Error(`${capability} whole silhouette REVIEW_REQUIRED: primary source has no closed macro outer contour`);
+    }
+    const contourBounds = macroContours.map((contour) => {
+      const sourceMin = [Math.min(...contour.points.map((point) => point[0])),
+        Math.min(...contour.points.map((point) => point[1]))];
+      const sourceMax = [Math.max(...contour.points.map((point) => point[0])),
+        Math.max(...contour.points.map((point) => point[1]))];
+      return {contour, min:sourceMin, max:sourceMax,
+        span:[sourceMax[0]-sourceMin[0],sourceMax[1]-sourceMin[1]]};
+    }).sort((left,right) =>
+      (right.span[0]*right.span[1]) - (left.span[0]*left.span[1]));
+    const sourceOuter = contourBounds[0];
+    if (!(sourceOuter.span[0] > 1e-6 && sourceOuter.span[1] > 1e-6)) {
+      throw new Error(`${capability} whole silhouette REVIEW_REQUIRED: observed outer contour is degenerate`);
+    }
+    let screen;
+    try {
+      screen = deriveRealizedWholeSilhouetteBounds({glb:actualGlb,camera:proof.camera});
+    } catch (error) {
+      throw new Error(`${capability} whole silhouette REVIEW_REQUIRED: cannot screen actual GLB: ${error.message}`);
+    }
+    const ratios = screen.span.map((value,index) => value / sourceOuter.span[index]);
+    const centerDelta = screen.center.map((value,index) =>
+      Math.abs(value-(sourceOuter.min[index]+sourceOuter.max[index])/2));
+    if (ratios.some((ratio) => ratio < 0.45 || ratio > 2.2) ||
+        centerDelta.some((delta) => delta > 0.16)) {
+      throw new Error(`${capability} whole silhouette REWORK: source outer contour disagrees with actual GLB projected mass (width=${ratios[0].toFixed(3)}, height=${ratios[1].toFixed(3)}, center=${centerDelta.map(x=>x.toFixed(3)).join(',')})`);
+    }
+  }
 }
 
 async function parseJsonArtifacts(root, artifacts, kind, label) {
@@ -2138,6 +2625,22 @@ export async function commitCheckpoint(root, {
   await validateProspectiveCandidateAuthority(root, state, {
     capability, scopeId, parentId: parent, parentLineage, storedArtifacts,
   });
+  // Stop counterfeit final certification evidence at Host checkpoint admission,
+  // before a persisted head/checkpoint or PASS gate is ever issued.
+  if (capability==='whole-object-certification' && !isTrustedContractFixtureProject(state)) {
+    const reviews=storedArtifacts.filter((item)=>item.kind==='visual-review');
+    if (reviews.length!==1) throw new Error('prospective source-bound certification REVIEW_REQUIRED: exactly one independent visual-review is required');
+    const review=await readStoredJsonArtifact(root,reviews[0],'prospective final visual-review');
+    const validation=validateVisualReview(review);
+    if (!validation.valid || review.evidenceClass!=='independent-reference' || review.verdict!=='pass') {
+      throw new Error('prospective source-bound certification REVIEW_REQUIRED: passing independent visual-review evidence is required');
+    }
+    const authority=await resolveCandidateAuthorityFromLineage(root,state,parentLineage);
+    const blockers=[];
+    await inspectRegisteredComparison(root,state,{artifactRefs:storedArtifacts},
+      review,blockers,{finalCandidate:authority.finalCandidate},parentLineage);
+    if (blockers.length) throw new Error(`prospective source-bound certification REVIEW_REQUIRED: ${blockers.join('; ')}`);
+  }
   const runtimeGates = await evaluateCheckpointGateRequests(root, {
     state, capability, scopeId, requests: gateRequests, storedArtifacts, lineage: parentLineage,
   });
@@ -2364,9 +2867,12 @@ export async function finishEdit(root, {candidateCheckpointId, before, after, fi
   return deepFreeze({...decision, restoredArtifacts});
 }
 
-export async function reportFinding(root, {finding} = {}) {
+export async function reportFinding(root, {finding, expectedHeadId} = {}) {
   root = projectRoot(root);
   const state = await loadProject(root);
+  if (expectedHeadId !== undefined && expectedHeadId !== state.head) {
+    throw new Error('finding report checkpoint head changed since trusted evaluation');
+  }
   if (state.activeTransaction) throw new Error('finish or abandon the active edit before reporting an independent finding');
   const checkpoints = await listCheckpoints(root);
   const route = routeFinding({finding, checkpoints, headId: state.head});
@@ -2393,6 +2899,249 @@ export async function reportFinding(root, {finding} = {}) {
   state.journal.push({event: 'FINDING_REPORTED', id: decision.id, action: route.action, head: state.head, restoredArtifacts, at: nowIso()});
   await writeJsonAtomic(statePath(root), state);
   return deepFreeze({...decision, restoredArtifacts});
+}
+
+// S04b: a valid early shape-stage GLB may be silently replaced by an
+// authorized later surface/assembly candidate transition. Re-evaluate the
+// *current selected GLB bytes* using bindings from the independently replayed
+// shape-stage proof, and original immutable reference annotations. Do not
+// inherit old candidate-camera measurements or caller-written PASS scores.
+async function ensureCurrentCandidateMatchesSource(root, state, lineage, shapeCheckpoint, scopeId) {
+  const authority=await resolveCandidateAuthorityFromLineage(root,state,lineage);
+  const current=authority?.finalCandidate;
+  const original=authority?.initialCandidate;
+  if (!current || !original) throw new Error('late source candidate REVIEW_REQUIRED: authoritative candidate lineage missing');
+  if (current.assetSha256===original.assetSha256) return;
+  const observation=[...lineage].reverse().find(cp=>
+    cp.capability==='visual-observation'&&scopeContains(cp.scopeId,scopeId));
+  if(!observation) throw new Error('late source candidate REVIEW_REQUIRED: source observation missing');
+  const {value:geometry}=await readCheckpointJsonArtifact(root,observation,'reference-geometry',
+    'late source candidate source geometry');
+  const {value:frozen}=await readCheckpointJsonArtifact(root,shapeCheckpoint,'realized-projection',
+    'late source candidate frozen projection');
+  if(geometry.sourceSha256!==state.source.sha256||frozen.sourceSha256!==state.source.sha256 ||
+    frozen.assetSha256!==original.assetSha256) {
+    throw new Error('late source candidate REVIEW_REQUIRED: stale source/shape proof authority');
+  }
+  const currentBytes=await fs.readFile(objectPath(root,current.assetSha256));
+  if(digestBytes(currentBytes)!==current.assetSha256){
+    throw new Error('late source candidate REVIEW_REQUIRED: current candidate CAS bytes mismatch');
+  }
+  let fresh;
+  try{
+    fresh=createRealizedProjection({
+      referenceGeometry:geometry,glb:currentBytes,
+      cameraHypothesisId:frozen.cameraHypothesisId,camera:frozen.camera,
+      anchorBindings:(frozen.derivedAnchors??[]).map(a=>({
+        referenceId:a.referenceId,nodeId:a.nodeId,localPoint:a.localPoint,
+      })),
+      segmentBindings:(frozen.derivedSegments??[]).map(a=>({
+        referenceId:a.referenceId,nodeIds:a.nodeIds,
+      })),
+      evidenceRefs:[state.source.path,current.path],
+    });
+  }catch(error){
+    const loss=screenLostSourceVisibleParts({
+      referenceGeometry:geometry,shapeProjection:frozen,
+      shapeGlb:await fs.readFile(objectPath(root,original.assetSha256)),
+      currentGlb:currentBytes,sourcePath:state.source.path,
+    });
+    if(loss.status==='REWORK'){
+      throw new Error('late source candidate REWORK: original-source visible identity part lost physical current GLB occupancy: '+
+        loss.findings.filter(x=>x.status==='REWORK').map(x=>x.id).join(', '));
+    }
+    throw new Error('late source candidate REVIEW_REQUIRED: cannot independently project current GLB with original observations: '+error.message);
+  }
+  // QA-03d: repeated source->current GLB gate must detect *real* missing
+  // struts even when the original mesh node is still present and a signed
+  // projection can be reconstructed from its renamed/moved geometry.
+  // A physically ambiguous ROI never invents a source-fidelity FAIL.
+  const loss=screenLostSourceVisibleParts({
+    referenceGeometry:geometry,shapeProjection:frozen,
+    shapeGlb:await fs.readFile(objectPath(root,original.assetSha256)),
+    currentGlb:currentBytes,sourcePath:state.source.path,
+  });
+  if(loss.status==='REWORK'){
+    throw new Error('late source candidate REWORK: original-source visible macro/identity part lost actual GLB occupancy: '+
+      loss.findings.filter(x=>x.status==='REWORK').map(x=>x.id).join(', '));
+  }
+  const blockers=findingsFromRealizedProjection(fresh).filter(x=>x.severity==='blocking');
+  if(blockers.length){
+    throw new Error('late source candidate REWORK: actual downstream GLB projection contradicts primary-source observations ('+
+      blockers.map(x=>x.category).join(', ')+')');
+  }
+  if((geometry.segments??[]).some(x=>x.importance==='macro')){
+    const section=screenSourceMacroSectionEnvelopes({
+      referenceGeometry:geometry,realizedProjection:fresh,sourcePath:state.source.path,
+    });
+    if(section.status!=='NO_DETECTED_CONTRADICTION'){
+      throw new Error('late source candidate '+(section.status==='REWORK'?'REWORK':'REVIEW_REQUIRED')+
+        ': '+section.findings.map(x=>x.reason).join('; '));
+    }
+    const orientation=screenSourceMacroPartOrientation({
+      referenceGeometry:geometry,realizedProjection:fresh,sourcePath:state.source.path,
+    });
+    if(orientation.status!=='NO_DETECTED_CONTRADICTION'){
+      throw new Error('late source candidate '+(orientation.status==='REWORK'?'REWORK':'REVIEW_REQUIRED')+
+        ': '+orientation.findings.map(x=>x.reason).join('; '));
+    }
+  }
+  if((geometry.anchors??[]).some(x=>['face-center','nose-tip'].includes(x.semanticRole))){
+    const face=screenSourceProfileVector({
+      referenceGeometry:geometry,realizedProjection:fresh,sourcePath:state.source.path,
+    });
+    if(face.status!=='NO_DETECTED_CONTRADICTION'){
+      throw new Error('late source candidate '+(face.status==='REWORK'?'REWORK':'REVIEW_REQUIRED')+
+        ': '+face.findings.map(x=>x.reason).join('; '));
+    }
+  }
+  // Re-evaluate changed downstream candidate against the same upstream
+  // source-visible identity roles, never a prior projection's claimed PASS.
+  if((geometry.segments??[]).some(x=>x.importance==='identity')){
+    const semantic=screenSourcePartRoleRelations({
+      referenceGeometry:geometry,realizedProjection:fresh,sourcePath:state.source.path,
+    });
+    if(semantic.status!=='NO_DETECTED_CONTRADICTION'){
+      throw new Error('late source candidate '+(semantic.status==='REWORK'?'REWORK':'REVIEW_REQUIRED')+
+        ': '+semantic.findings.map(x=>x.reason).join('; '));
+    }
+  }
+  if((geometry.interfaces??[]).some(x=>x.importance!=='detail'&&x.separation==='explicit'&&
+     ['joint-boundary','contact-boundary','necked-transition'].includes(x.kind))){
+    const joints=screenSourcePhysicalInterfaceGaps({
+      referenceGeometry:geometry,realizedProjection:fresh,sourcePath:state.source.path,
+    });
+    if(joints.status!=='NO_DETECTED_CONTRADICTION'){
+      throw new Error('late source candidate '+(joints.status==='REWORK'?'REWORK':'REVIEW_REQUIRED')+
+        ': '+joints.findings.map(x=>x.reason).join('; '));
+    }
+  }
+  if((geometry.occlusions??[]).some(x=>x.importance!=='detail')){
+    const depth=screenSourceRealizedOcclusion({
+      referenceGeometry:geometry,realizedProjection:fresh,sourcePath:state.source.path,
+    });
+    if(depth.status!=='NO_DETECTED_CONTRADICTION'){
+      throw new Error('late source candidate '+(depth.status==='REWORK'?'REWORK':'REVIEW_REQUIRED')+
+        ': '+depth.findings.map(x=>x.reason).join('; '));
+    }
+  }
+  // Re-evaluate original-source open voids against the CURRENT downstream
+  // GLB, not the accepted shape-stage GLB that may now be obsolete.
+  if((geometry.negativeSpaces??[]).some(x=>x.importance!=='detail')){
+    const voids=screenSourceNegativeSpaces({
+      referenceGeometry:geometry,realizedProjection:fresh,glb:currentBytes,
+      sourcePath:state.source.path,
+    });
+    if(voids.status!=='NO_DETECTED_CONTRADICTION'){
+      throw new Error('late source candidate '+(voids.status==='REWORK'?'REWORK':'REVIEW_REQUIRED')+
+        ': source negative space '+voids.findings.map(x=>x.reason).join('; '));
+    }
+  }
+  const contours=(geometry.contours??[]).filter(x=>x.importance==='macro'&&x.closed&&
+    x.evidenceRefs.includes(state.source.path));
+  if(!contours.length)throw new Error('late source candidate REVIEW_REQUIRED: source-visible macro contour missing');
+  const outer=[...contours].sort((a,b)=>{
+    const area=x=>(Math.max(...x.points.map(p=>p[0]))-Math.min(...x.points.map(p=>p[0])))*
+      (Math.max(...x.points.map(p=>p[1]))-Math.min(...x.points.map(p=>p[1])));
+    return area(b)-area(a);
+  })[0];
+  const lo=[0,1].map(i=>Math.min(...outer.points.map(p=>p[i])));
+  const hi=[0,1].map(i=>Math.max(...outer.points.map(p=>p[i])));
+  let screen;
+  try{screen=deriveRealizedWholeSilhouetteBounds({glb:currentBytes,camera:fresh.camera});}
+  catch(error){throw new Error('late source candidate REVIEW_REQUIRED: current whole silhouette not measurable: '+error.message);}
+  const span=hi.map((v,i)=>v-lo[i]),center=hi.map((v,i)=>(v+lo[i])/2);
+  if(span.some((v,i)=>!(v>1e-6)||screen.span[i]/v<0.45||screen.span[i]/v>2.2)||
+    screen.center.some((v,i)=>Math.abs(v-center[i])>0.16)) {
+    throw new Error('late source candidate REWORK: actual current GLB outer silhouette contradicts source-observed macro mass');
+  }
+}
+
+// S04a: promote *replayed installed-host* early-source contradictions through
+// the existing typed finding / rollback state machine. No caller-provided
+// finding, precomputed PASS, category, asset digest or checker outcome enters
+// this trusted path. This is a recovery entrypoint, NOT source-fidelity PASS.
+function typedEarlySourceAdmissionFailure(message) {
+  const text = String(message);
+  if (/camera hypothesis REWORK:/.test(text)) {
+    return {category:'camera-hypothesis-mismatch',checkId:'early-source.camera',
+      summary:'Frozen source-selected reconstruction camera contradicts current shape-stage GLB projection'};
+  }
+  if (/early registered projection blocks downstream detail:.*orientation-mismatch/.test(text)) {
+    return {category:'orientation-mismatch',checkId:'early-source.orientation',
+      summary:'Current source-bound GLB macro orientation contradicts the frozen source camera'};
+  }
+  if (/source macro orientation REWORK:/.test(text) ||
+      /signed source profile REWORK:/.test(text)) {
+    return {category:'silhouette-mismatch',checkId:'early-source.macro-orientation',
+      summary:'Actual current GLB head/face part direction disagrees with source-visible geometry'};
+  }
+  if (/late source candidate REWORK:/.test(text) ||
+      /source macro section REWORK:/.test(text) ||
+      /whole silhouette REWORK:/.test(text) ||
+      /source realized occlusion REWORK:/.test(text) ||
+      /early registered projection blocks downstream detail:.*mass-proportion-mismatch/.test(text)) {
+    return {category:'mass-proportion-mismatch',checkId:'early-source.macro-geometry',
+      summary:'Actual current GLB macro mass or source-observed part order disagrees with primary source'};
+  }
+  // Missing evidence, other invariant/camera validation errors or ambiguous
+  // depth never choose a destructive rollback owner. User-reported strings
+  // cannot reach this mapping without failing replayed installed admission.
+  return {category:'evidence-insufficient',checkId:'early-source.review',
+    summary:'Current source-to-GLB admission lacks trusted conclusive evidence and needs review'};
+}
+
+export async function reopenFromTrustedSourceAdmission(root, {scopeId='whole', expectedHeadId} = {}) {
+  root = projectRoot(root);
+  const state = await loadProject(root);
+  if (isTrustedContractFixtureProject(state)) {
+    throw new Error('trusted source replay is unavailable for contract fixture projects');
+  }
+  if (!state.source || !state.head) throw new Error('source-bound project head required for trusted reopen');
+  if (state.activeTransaction) throw new Error('finish or abandon the active edit before trusted source replay');
+  if (expectedHeadId !== undefined && state.head !== expectedHeadId) {
+    throw new Error('trusted source replay checkpoint head changed before evaluation');
+  }
+  scopeId = assertId(scopeId,'scopeId');
+  const checkpoints = await listCheckpoints(root);
+  const lineage = checkpointLineage(checkpoints, state.head);
+  const shape = [...lineage].reverse().find(cp =>
+    cp.capability==='shape-reconstruction' && scopeContains(cp.scopeId,scopeId));
+  if (!shape) {
+    throw new Error('trusted source replay requires an accepted shape-reconstruction checkpoint');
+  }
+  const model = shape.artifactRefs.find(a => a.kind==='glb');
+  const proof = shape.artifactRefs.find(a => a.kind==='realized-projection');
+  const source = state.source.path;
+  // Evidence in this report is taken exclusively from immutable checkpoint
+  // refs and the bound primary source, never from caller-authored strings.
+  const evidenceRefs = [...new Set([source,model?.path,proof?.path].filter(Boolean))];
+  try {
+    await ensurePrerequisites(root,state,'surface-topology',scopeId,lineage);
+    await ensureCurrentCandidateMatchesSource(root,state,lineage,shape,scopeId);
+  } catch(error) {
+    const classified = typedEarlySourceAdmissionFailure(error.message);
+    const finding = {
+      category:classified.category,severity:'blocking',scopeId,
+      summary:classified.summary,checkId:classified.checkId,
+      evidenceRefs,
+    };
+    const decision = await reportFinding(root,{finding,expectedHeadId:state.head});
+    return deepFreeze({
+      schema:'refas.trusted-source-reopen/v1',
+      status:decision.route.action==='REOPEN_CAPABILITY'?'REOPENED':'REVIEW_REQUIRED',
+      evaluation:'installed-early-source-admission',
+      ownerCapability:decision.route.ownerCapability,
+      evaluatedHeadId:state.head,
+      decision,
+      cannotAuthorizeReferenceFidelity:true,
+    });
+  }
+  return deepFreeze({
+    schema:'refas.trusted-source-reopen/v1',status:'NO_DETECTED_CONTRADICTION',
+    evaluation:'installed-early-source-admission',evaluatedHeadId:state.head,
+    ownerCapability:null,decision:null,cannotAuthorizeReferenceFidelity:true,
+  });
 }
 
 export async function resumeProject(root) {
@@ -2692,6 +3441,22 @@ export async function auditProject(root) {
     if (state.activeTransaction.candidateCheckpointId) {
       const candidate = byId.get(state.activeTransaction.candidateCheckpointId);
       if (!candidate || candidate.parentId !== state.activeTransaction.baselineCheckpointId || candidate.transactionId !== state.activeTransaction.id) errors.push('active transaction candidate is invalid');
+    }
+  }
+  // Audit the actual final certification checkpoint even before the
+  // certificate is minted. Previously an uncertified head with forged,
+  // re-signed GLB render pixels passed the *general* audit while readiness
+  // and certificate issuance correctly refused. A stored final head must not
+  // receive a falsely clean project audit from that split authority path.
+  if (!state.certification && state.head && byId.has(state.head)) {
+    const finalHead=byId.get(state.head);
+    if (finalHead.capability==='whole-object-certification' && finalHead.scopeId==='whole') {
+      try {
+        const readiness=await inspectCertificationHead(root,state,finalHead);
+        for (const error of readiness.errors) errors.push(`final certification readiness: ${error}`);
+      } catch (error) {
+        errors.push(`final certification readiness unavailable: ${error.message}`);
+      }
     }
   }
   if (state.certification && state.certification.checkpointId !== state.head) errors.push('certification does not bind to the active head');

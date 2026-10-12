@@ -12,6 +12,7 @@ import {
   rigidFrameDigest,
   validateAttachmentPropagationPlan,
   validateAttachmentPropagationReport,
+  replayTrustedPropagationDependencies,
 } from '../skills/refas/scripts/lib/index.mjs';
 
 const D = (value = 'a') => value.repeat(64);
@@ -185,6 +186,32 @@ test('attachment propagation resolves multi-anchor, rigid follow, articulation, 
     multiAnchorPlans: [fixture.glassesPlan],
     articulatedJoints: [fixture.hingeJoint],
   }).valid, true);
+});
+
+
+test('QA-02g independently replays every required surface, follow, multi-anchor and articulated dependency',()=>{
+ const f=build(),report=run(f);
+ const args={plan:f.plan,report,attachmentSemantics:f.attachmentSemantics,
+  surfaceAnchorSet:f.surfaceAnchorSet,surfaces:f.surfaceDescriptors,
+  followState:f.followState,multiAnchorPlans:[f.glassesPlan],articulatedJoints:[f.hingeJoint]};
+ const verified=replayTrustedPropagationDependencies(args);
+ assert.equal(verified.status,'PASS',verified.reason+' '+verified.details.join('; '));
+ assert.equal(replayTrustedPropagationDependencies({...args,multiAnchorPlans:null}).status,'INSUFFICIENT');
+ assert.equal(replayTrustedPropagationDependencies({...args,articulatedJoints:null}).status,'INSUFFICIENT');
+ assert.equal(replayTrustedPropagationDependencies({...args,surfaces:null}).status,'INSUFFICIENT');
+ assert.equal(replayTrustedPropagationDependencies({...args,followState:null}).status,'INSUFFICIENT');
+ const mutatedSurface=structuredClone(f.surfaceAnchorSet);
+ mutatedSurface.anchors[0].frame.offsetPosition[0]+=0.1;
+ assert.equal(replayTrustedPropagationDependencies({...args,surfaceAnchorSet:mutatedSurface}).status,'FAIL');
+ const wrongJoint=structuredClone(f.hingeJoint);
+ wrongJoint.minimumAngle=-0.01;
+ assert.equal(replayTrustedPropagationDependencies({...args,articulatedJoints:[wrongJoint]}).status,'FAIL');
+ const mutatedPlan=structuredClone(f.plan);
+ mutatedPlan.articulatedBindings[0].angle=1.2;
+ assert.equal(replayTrustedPropagationDependencies({...args,plan:mutatedPlan}).status,'FAIL');
+ const mutatedReport=structuredClone(report);
+ mutatedReport.entityResults[0].status='RESOLVED';
+ assert.equal(replayTrustedPropagationDependencies({...args,report:mutatedReport}).status,'FAIL');
 });
 
 test('stale FUSED external state is rejected when its owner frame changed', () => {

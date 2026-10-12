@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/qa-coverage-report.schema.json",
+  "title": "Source-to-asset QA coverage observation (not a certificate)",
+  "type": "object",
+  "required": ["schema", "profile", "evaluatorVersion", "sourceSha256", "assetSha256", "checkpointId", "checks", "decision", "limits", "reportDigest"],
+  "properties": {
+    "schema": {"const": "refas.qa-coverage-report/v1"},
+    "profile": {"const": "source-bound-object"},
+    "evaluatorVersion": {"type": "string"},
+    "sourceSha256": {"anyOf": [{"type": "string", "pattern": "^[a-f0-9]{64}$"}, {"type": "null"}]},
+    "assetSha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "checkpointId": {"anyOf": [{"type": "string"}, {"type": "null"}]},
+    "checks": {"type": "array", "minItems": 8, "items": {
+      "type": "object",
+      "required": ["id", "owner", "required", "status", "reason", "evidence"],
+      "properties": {
+        "id": {"type": "string"},
+        "owner": {"type": "string"},
+        "required": {"const": true},
+        "status": {"enum": ["PASS", "FAIL", "NOT_RUN", "INSUFFICIENT", "NOT_APPLICABLE"]},
+        "reason": {"type": "string"},
+        "evidence": {"type": "array", "items": {"type": "string"}}
+      },
+      "additionalProperties": false
+    }},
+    "decision": {"type": "object", "required": ["state", "blockingCheckIds"], "properties": {
+      "state": {"enum": ["BLOCKED", "ELIGIBLE"]},
+      "blockingCheckIds": {"type": "array", "items": {"type": "string"}}
+    }, "additionalProperties": false},
+    "limits": {"type": "array", "items": {"type": "string"}},
+    "reportDigest": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  },
+  "additionalProperties": false
+}

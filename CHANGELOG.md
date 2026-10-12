@@ -2,6 +2,24 @@
 
 All notable RefAs changes are documented here. RefAs follows semantic versioning.
 
+## 1.2.1 — 2026-10-12
+
+An agent workflow interface release for the existing reference-driven 3D construction runtime. It **does not** introduce new verification algorithms or claim independently validated original-photo resemblance. All existing fail-closed source-bound admission rules remain intact.
+
+### Agent-facing workflow and diagnosis
+
+- Added `refas next --root DIR`: read-only JSON guidance backed by the existing trusted `resumeProject` state machine, with the relevant capability, scope, next action and discoverable CLI contract.
+- Added `refas diagnose --root DIR [--asset FILE | --finding FILE]`: read-only assembly of existing source-bound QA results or an existing typed finding route; each blocking check retains its owner, status, reason, SHA-bound evidence and suggested follow-up. No synthetic owner or auto-rollback.
+- Added `refas validate --root DIR --asset FILE`: canonical source-bound QA coverage with a unified agent diagnosis. Returns exit code 2 while coverage is `BLOCKED`; an invalid input still exits 1.
+- Retained `refas resume`, `verify`, `certify`, `report-finding`, Host events and handoff commands and their original authority. Added actual CLI regression for read-only state, failure preservation, exact report digest and profile/argument errors.
+
+### Construction and release boundary
+
+- Existing construction, camera, registered render, GLB and source-region contradiction validators remain unchanged.
+- Strict source-bound release handoff still refuses to authorize likeness when independent original-photo semantic provenance is absent. A general checkpoint/certificate or a `draft-transfer` receipt is **not** a positive source-fidelity authorization.
+- #271, #272 and #265 remain open as deferred source-fidelity work. Their absence is disclosed, not silently marked as PASS; full real-photo success/negative benchmark remains future work.
+- Production-oriented follow-up (flagship geometry construction, editable agent geometry kit, character/mechanical/material tracks) is recorded in `docs/development/foundry-production-roadmap.md`.
+
 ## 1.2.0 — 2026-10-09
 
 Integrates the reviewed v1.2.0 construction, structural-plausibility, appearance, and benchmark-instrumentation slices from `develop/v1.2.0`. This is a capability release, **not a verified claim that external agent outputs are uniformly faithful to their input photos**.

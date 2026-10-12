@@ -7,6 +7,7 @@ import {
   createSegmentPrism,
   findingsFromRealizedProjection,
   partsToGlb,
+  screenSourceMacroSectionEnvelopes,
   validateRealizedProjection,
   validateReferenceGeometry,
   verifyRealizedProjection,
@@ -17,13 +18,14 @@ const materials = {wood: {baseColor:[0.75,0.6,0.4,1], metallic:0, roughness:0.7}
 const partMesh = () => createSegmentPrism({start:[-.4,0,0], end:[.4,0,0], width:.8, height:.8, upHint:[0,1,0]});
 const camera = {projection:'orthographic', position:[0,0,5], target:[0,0,0], up:[0,1,0], orthoHeight:4, aspect:1};
 
-function asset() {
+function asset({expandUpper=false}={}) {
+  const upper=expandUpper ? createSegmentPrism({start:[-.8,0,0],end:[.8,0,0],width:.8,height:.8,upHint:[0,1,0]}) : partMesh();
   return partsToGlb({parts:[
-    {id:'upper-shell', scopeId:'whole.upper', materialId:'wood', mesh:partMesh(), translation:[-.4,0,0]},
+    {id:'upper-shell', scopeId:'whole.upper', materialId:'wood', mesh:upper, translation:[-.4,0,0]},
     {id:'lower-shell', scopeId:'whole.lower', materialId:'wood', mesh:partMesh(), translation:[.4,0,0]},
   ], materials});
 }
-function geometry() {
+function geometry({upperVisibility='visible'}={}) {
   return createReferenceGeometry({
     scopeId:'whole', sourceSha256:D('a'),
     anchors:[
@@ -31,7 +33,7 @@ function geometry() {
       {id:'lower-center', importance:'macro', evidenceRefs:['source.png'], xy:[.6,.5], visibility:'visible', confidence:1, semanticRole:'lower shell center'},
     ],
     segments:[
-      {id:'upper-body-segment', label:'upper shell', importance:'macro', evidenceRefs:['source.png'], polygon:[[.3,.4],[.5,.4],[.5,.6],[.3,.6]], anchorIds:['upper-center'], visibility:'visible', separation:'explicit'},
+      {id:'upper-body-segment', label:'upper shell', importance:'macro', evidenceRefs:['source.png'], polygon:[[.3,.4],[.5,.4],[.5,.6],[.3,.6]], anchorIds:['upper-center'], visibility:upperVisibility, separation:'explicit'},
       {id:'lower-body-segment', label:'lower shell', importance:'macro', evidenceRefs:['source.png'], polygon:[[.5,.4],[.7,.4],[.7,.6],[.5,.6]], anchorIds:['lower-center'], visibility:'visible', separation:'explicit'},
     ],
     interfaces:[
@@ -98,4 +100,62 @@ test('collapsing explicit source parts into one realized mesh becomes blocking e
 
 test('source-visible segments cannot disappear from realized projection bindings', () => {
   assert.throws(() => createRealizedProjection({referenceGeometry:geometry(), glb:asset(), cameraHypothesisId:'camera-a', camera, anchorBindings, segmentBindings:[{referenceId:'upper-body-segment', nodeIds:['upper-shell']}]}), /missing source-visible segments/);
+});
+
+test('S03a positive: source-visible macro sections match independently projected current GLB envelopes without issuing fidelity PASS',()=>{
+  const ref=geometry(), glb=asset();
+  const proof=createRealizedProjection({
+    referenceGeometry:ref,glb,cameraHypothesisId:'camera-a',camera,anchorBindings,
+    segmentBindings:[
+      {referenceId:'upper-body-segment',nodeIds:['upper-shell']},
+      {referenceId:'lower-body-segment',nodeIds:['lower-shell']},
+    ],evidenceRefs:['source.png','asset.glb'],
+  });
+  assert.equal(verifyRealizedProjection({proof,referenceGeometry:ref,glb}).valid,true);
+  const check=screenSourceMacroSectionEnvelopes({referenceGeometry:ref,realizedProjection:proof,sourcePath:'source.png'});
+  assert.equal(check.status,'NO_DETECTED_CONTRADICTION',JSON.stringify(check.findings));
+  assert.equal(check.checked.length,2);
+  assert.equal(check.cannotAuthorizeReferenceFidelity,true);
+  assert.equal(check.singleViewSimilarityNeverPasses,true);
+});
+
+test('S03a negative: actual GLB head/body section expansion is caught with identical macro-center anchors',()=>{
+  const ref=geometry(),glb=asset({expandUpper:true});
+  const proof=createRealizedProjection({
+    referenceGeometry:ref,glb,cameraHypothesisId:'camera-a',camera,anchorBindings,
+    segmentBindings:[
+      {referenceId:'upper-body-segment',nodeIds:['upper-shell']},
+      {referenceId:'lower-body-segment',nodeIds:['lower-shell']},
+    ],evidenceRefs:['source.png','asset.glb'],
+  });
+  assert.equal(verifyRealizedProjection({proof,referenceGeometry:ref,glb}).valid,true);
+  assert.ok(proof.projectionFit.metrics.macroAnchorRmseNormalized<1e-10,
+    'a perfectly centered anchor is NOT sufficient to prove head/section scale');
+  const check=screenSourceMacroSectionEnvelopes({referenceGeometry:ref,realizedProjection:proof,sourcePath:'source.png'});
+  assert.equal(check.status,'REWORK');
+  assert.ok(check.findings.some(x=>x.id==='upper-body-segment'&&x.status==='REWORK'));
+  assert.ok(check.checked.find(x=>x.id==='upper-body-segment').widthRatio>1.65);
+  const good=createRealizedProjection({
+    referenceGeometry:ref,glb:asset(),cameraHypothesisId:'camera-a',camera,anchorBindings,
+    segmentBindings:[
+      {referenceId:'upper-body-segment',nodeIds:['upper-shell']},
+      {referenceId:'lower-body-segment',nodeIds:['lower-shell']},
+    ],evidenceRefs:['source.png','asset.glb'],
+  });
+  assert.equal(verifyRealizedProjection({proof:good,referenceGeometry:ref,glb}).valid,false,
+    'a re-signed earlier good projection cannot authorize the mutated GLB');
+});
+
+test('S03a unknown macro visibility stays INSUFFICIENT rather than inventing observed geometry',()=>{
+  const ref=geometry({upperVisibility:'inferred'}),glb=asset();
+  const proof=createRealizedProjection({
+    referenceGeometry:ref,glb,cameraHypothesisId:'camera-a',camera,anchorBindings,
+    segmentBindings:[
+      {referenceId:'upper-body-segment',nodeIds:['upper-shell']},
+      {referenceId:'lower-body-segment',nodeIds:['lower-shell']},
+    ],evidenceRefs:['source.png','asset.glb'],
+  });
+  const check=screenSourceMacroSectionEnvelopes({referenceGeometry:ref,realizedProjection:proof,sourcePath:'source.png'});
+  assert.equal(check.status,'INSUFFICIENT');
+  assert.ok(check.findings.some(x=>x.id==='upper-body-segment'&&x.status==='REVIEW_REQUIRED'));
 });

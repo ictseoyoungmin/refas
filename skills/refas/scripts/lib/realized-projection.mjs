@@ -253,3 +253,67 @@ export function validateRealizedProjection(proof) {
   } catch (error) { errors.push(error.message); }
   return {valid: errors.length === 0, errors};
 }
+
+
+/**
+ * Conservative early macro silhouette *contradiction screen*, not fidelity QA.
+ * Derive screen extents from real GLB POSITION vertices and frozen camera,
+ * never from caller-provided pixel coordinates or source-view registration.
+ * Exact mesh silhouette including concavities/occlusion requires independent
+ * image and triangle raster comparison in the later P0b2b2 slice.
+ */
+export function deriveRealizedWholeSilhouetteBounds({glb, camera} = {}) {
+  const {json, binary} = parseGlb(Buffer.from(glb ?? []));
+  const matrices = worldMatrices(json);
+  const min = [Infinity, Infinity], max = [-Infinity, -Infinity];
+  let count = 0;
+  for (const [nodeIndex, node] of (json.nodes ?? []).entries()) {
+    if (!Number.isInteger(node.mesh)) continue;
+    const mesh = json.meshes?.[node.mesh];
+    if (!mesh) throw new Error('whole silhouette references missing mesh');
+    for (const primitive of mesh.primitives ?? []) {
+      const accessorIndex = primitive.attributes?.POSITION;
+      if (!Number.isInteger(accessorIndex)) throw new Error('whole silhouette requires mesh POSITION');
+      const accessor = json.accessors?.[accessorIndex];
+      if (!accessor || accessor.type !== 'VEC3' || accessor.componentType !== 5126 ||
+          accessor.sparse || !Number.isInteger(accessor.count) || accessor.count < 3) {
+        throw new Error('whole silhouette requires non-sparse Float32 VEC3 mesh POSITION');
+      }
+      const view = json.bufferViews?.[accessor.bufferView];
+      if (!view) throw new Error('whole silhouette POSITION bufferView missing');
+      const stride = view.byteStride ?? 12;
+      const base = (view.byteOffset ?? 0) + (accessor.byteOffset ?? 0);
+      if (stride < 12 || stride % 4 !== 0 || base < 0 ||
+          base + (accessor.count - 1) * stride + 12 > binary.length) {
+        throw new Error('whole silhouette POSITION bytes exceed GLB');
+      }
+      if (count + accessor.count > 2000000) {
+        throw new Error('whole silhouette vertex budget exceeded');
+      }
+      const data = new DataView(binary.buffer, binary.byteOffset, binary.byteLength);
+      for (let index = 0; index < accessor.count; index += 1) {
+        const offset = base + index * stride;
+        const point = [data.getFloat32(offset, true),
+          data.getFloat32(offset + 4, true), data.getFloat32(offset + 8, true)];
+        if (!point.every(Number.isFinite)) throw new Error('whole silhouette has non-finite POSITION');
+        const result = projectWorldPoint(camera, transformPoint(matrices[nodeIndex], point));
+        if (!result.insideFrame) throw new Error('whole silhouette candidate extends outside source camera frame');
+        for (let axis = 0; axis < 2; axis += 1) {
+          min[axis] = Math.min(min[axis], result.xy[axis]);
+          max[axis] = Math.max(max[axis], result.xy[axis]);
+        }
+      }
+      count += accessor.count;
+    }
+  }
+  if (count < 3) throw new Error('whole silhouette requires actual mesh vertices');
+  const span = [max[0] - min[0], max[1] - min[1]];
+  if (!(span[0] > 1e-7 && span[1] > 1e-7)) {
+    throw new Error('whole silhouette projection is degenerate');
+  }
+  return deepFreeze({min, max, span,
+    center: [(min[0]+max[0])/2,(min[1]+max[1])/2],
+    projectedVertexCount:count,
+    assetSha256:digestBytes(Buffer.from(glb)),
+    cameraDigest:digestJson(normalizeProjectionCamera(camera))});
+}

@@ -98,12 +98,22 @@ async function genericCheckpoint(capability,label=capability,{extraRefs=[]}={}){
 async function initBase({role='volumetric',depth=1}={}){
   await fs.rm(projectRoot,{recursive:true,force:true});
   await fs.mkdir(projectRoot,{recursive:true});
-  const sourceBytes=Buffer.from('VC08 adversarial reference bytes\n');
-  await write('source/reference.bin',sourceBytes);
+  // VC08 must adversarially probe the actual trusted gates, not fail early
+  // because the positive baseline falsely labels text bytes as a photo.
+  const sourceRelative='source/reference.png';
+  const sourceAbsolute=path.join(projectRoot,sourceRelative);
+  await fs.mkdir(path.dirname(sourceAbsolute),{recursive:true});
+  const generated=spawnSync(process.env.CODEX_PRIMARY_RUNTIME_PYTHON || 'python3',[
+    '-c',
+    'from PIL import Image; import sys; Image.new("RGB",(256,256),(95,132,179)).save(sys.argv[1])',
+    sourceAbsolute,
+  ],{encoding:'utf8',timeout:15000});
+  if(generated.status!==0) throw new Error('VC08 requires actual decodable source PNG: '+(generated.stderr||generated.error?.message||generated.status));
+  const sourceBytes=await fs.readFile(sourceAbsolute);
   const source={
     schema:'refas.source-manifest/v1',
     id:'primary-reference',
-    path:'source/reference.bin',
+    path:sourceRelative,
     sha256:API.digestBytes(sourceBytes),
     sizeBytes:sourceBytes.length,
     width:256,height:256,authority:'primary',
@@ -123,7 +133,28 @@ async function initBase({role='volumetric',depth=1}={}){
     artifactRefs:[hierarchyRef],claims:['whole hierarchy frozen'],
     gates:[{id:'visual-hierarchy-gate',evidenceRefs:[hierarchyRef.path]}],
   });
-  await genericCheckpoint('visual-observation','visual-observation');
+  // Retain the baseline source-observed macro geometry even in adversarial
+  // scenarios. VC08 attacks spatial authority and forged verdicts, not the
+  // absence of raw source observations (now independently exercised by P0a).
+  const observedGeometry=API.createReferenceGeometry({
+    scopeId:'whole',sourceSha256:source.sha256,
+    anchors:[{
+      id:'observed-whole-center',importance:'macro',
+      xy:[.5,.5],visibility:'visible',confidence:1,
+      evidenceRefs:[source.path],
+    }],
+    contours:[{
+      id:'observed-whole-outline',importance:'macro',closed:true,
+      points:[[.44,.43],[.56,.43],[.56,.57],[.44,.57]],
+      evidenceRefs:[source.path],
+    }],
+    attestation:{attested:true,evidenceRefs:[source.path]},
+  });
+  await writeJson('model/reference-geometry.json',observedGeometry);
+  const observationGeometryRef=await ref('model/reference-geometry.json','reference-geometry');
+  await genericCheckpoint('visual-observation','visual-observation',{
+    extraRefs:[observationGeometryRef],
+  });
 
   const roleSet=API.createSpatialRoleExpectationSet({
     hierarchy,sourceSha256:source.sha256,
@@ -139,15 +170,53 @@ async function initBase({role='volumetric',depth=1}={}){
   const roleRef=await ref('model/spatial-role.json','spatial-role-expectation');
   await writeJson('model/spatial.json',{scenario,role});
   const spatialRef=await ref('model/spatial.json','spatial-hypotheses');
+  const vc08Camera={projection:'perspective',position:[0,0,5],
+    target:[0,0,0],up:[0,1,0],fovY:90,aspect:1};
+  const cameraSet=API.createSpatialHypothesisSet({
+    scopeId:'whole',sourceSha256:source.sha256,
+    hypotheses:[
+      {id:'vc08-camera-source',description:'raw-source frontal candidate',
+        camera:vc08Camera,hiddenForm:'not observed',
+        predictions:{silhouette:'frontal',occlusion:'front overlap',
+          sideView:'unknown',topView:'unknown',grazing:'unknown'},
+        falsifiers:['source silhouette contradicts centered orientation'],
+        evidenceRefs:[source.path],evidenceCoverage:2,assumptionCost:0,status:'plausible'},
+      {id:'vc08-camera-competing',description:'raw-source oblique counterfactual',
+        camera:{projection:'perspective',position:[-2,0,5],
+          target:[-2,0,0],up:[0,1,0],fovY:90,aspect:1},
+        hiddenForm:'not observed',
+        predictions:{silhouette:'oblique',occlusion:'side overlap',
+          sideView:'unknown',topView:'unknown',grazing:'unknown'},
+        falsifiers:['source whole observation contradicts offset projection'],
+        evidenceRefs:[source.path],evidenceCoverage:1,assumptionCost:1,status:'falsified'},
+    ],
+    selectedId:'vc08-camera-source',
+    attestation:{attested:true,evidenceRefs:[source.path]},
+  });
+  await writeJson('model/source-camera-hypotheses.json',cameraSet);
+  const cameraSetRef=await ref('model/source-camera-hypotheses.json','spatial-hypothesis-set');
   const spatialCheckpoint=await API.commitCheckpoint(projectRoot,{
-    capability:'spatial-hypotheses',scopeId:'whole',reason:'VC08 freezes VC02 authority before reconstruction',
-    artifactRefs:[spatialRef,roleRef],claims:['VC02 frozen before candidate'],
-    gates:[{id:'spatial-hypotheses-gate',evidenceRefs:[spatialRef.path,roleRef.path]}],
+    capability:'spatial-hypotheses',scopeId:'whole',
+    reason:'VC08 freezes VC02 role and source camera before reconstruction',
+    artifactRefs:[spatialRef,roleRef,cameraSetRef],
+    claims:['VC02 role and camera choice frozen before candidate'],
+    gates:[{id:'spatial-hypotheses-gate',evidenceRefs:[spatialRef.path,roleRef.path,cameraSetRef.path]}],
   });
 
   const glb=candidateGlb({depth});
   await write('model/candidate.glb',glb);
   const asset=await ref('model/candidate.glb','glb');
+  // The public adversarial worker must provide real camera-to-GLB evidence;
+  // a forged spatial gate can be tested only after valid macro registration.
+  const registered=API.createRealizedProjection({
+    referenceGeometry:observedGeometry,glb,
+    cameraHypothesisId:'vc08-camera-source',
+    camera:vc08Camera,
+    anchorBindings:[{referenceId:'observed-whole-center',nodeId:'model-node',localPoint:[0,0,0]}],
+    evidenceRefs:[source.path,asset.path],
+  });
+  await writeJson('model/early-realized-projection.json',registered);
+  const registeredRef=await ref('model/early-realized-projection.json','realized-projection');
 
   const clayFrames=[];
   for(const viewId of API.NEUTRAL_CLAY_REQUIRED_VIEW_IDS){
@@ -208,7 +277,7 @@ async function initBase({role='volumetric',depth=1}={}){
   });
   await writeJson('reviews/volume-barrier.json',barrier);
   const barrierRef=await ref('reviews/volume-barrier.json','volume-barrier');
-  const shapeRefs=[asset,earlyRef,reportRef,...clayFrames,evidenceRef,classRef,barrierRef];
+  const shapeRefs=[asset,earlyRef,reportRef,...clayFrames,evidenceRef,classRef,barrierRef,registeredRef];
   const shapeCheckpoint=await API.commitCheckpoint(projectRoot,{
     capability:'shape-reconstruction',scopeId:'whole',reason:'VC08 adversarial shape-stage authority',
     artifactRefs:shapeRefs,claims:['hero resemblance and spatial authority remain independent'],

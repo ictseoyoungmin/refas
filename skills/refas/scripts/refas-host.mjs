@@ -6,6 +6,8 @@ import {
   REFAS_VERSION,
   assertArtifactHandoffCurrent,
   getArtifactHandoff,
+  getSourceBoundReleaseHandoff,
+  assertSourceBoundReleaseHandoffCurrent,
   getHostEvents,
   getHostReviewBundle,
   loadHostSession,
@@ -67,7 +69,7 @@ function help() {
       status:'status --root DIR [--session ID] [--project ID]',
       events:'events --root DIR [--after N] [--jsonl] [--follow] [--poll-ms 250]',
       'review-bundle':'review-bundle --root DIR [--publish]',
-      handoff:'handoff --root DIR [--assert handoff.json]',
+      handoff:'handoff --root DIR [--profile source-bound-object] [--assert handoff.json]',
       'validate-worker':'validate-worker --request request.json [--response response.json]',
     },
   };
@@ -134,10 +136,21 @@ async function main() {
 
   if (command === 'handoff') {
     const root = required(options, 'root');
-    if (options.assert && options.assert !== true) {
-      print(await assertArtifactHandoffCurrent(root, await jsonFile(options.assert)));
+    const profile = options.profile == null ? 'draft-transfer' : String(options.profile);
+    if (profile === 'source-bound-object') {
+      if (options.assert && options.assert !== true) {
+        print(await assertSourceBoundReleaseHandoffCurrent(root, await jsonFile(options.assert)));
+      } else {
+        print(await getSourceBoundReleaseHandoff(root));
+      }
+    } else if (profile === 'draft-transfer') {
+      if (options.assert && options.assert !== true) {
+        print(await assertArtifactHandoffCurrent(root, await jsonFile(options.assert)));
+      } else {
+        print(await getArtifactHandoff(root));
+      }
     } else {
-      print(await getArtifactHandoff(root));
+      throw new Error('unknown artifact handoff profile: ' + profile);
     }
     return;
   }

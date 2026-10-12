@@ -6,6 +6,8 @@ import {spawnSync} from 'node:child_process';
 import {
   REFAS_VERSION,
   CAPABILITY_ORDER,
+  nextAgentWork,
+  diagnoseAgentWork,
   abortEdit,
   auditProject,
   beginEdit,
@@ -41,6 +43,7 @@ import {
   sha256File,
 } from './lib/index.mjs';
 import * as PUBLIC_API from './lib/index.mjs';
+import {verifySourceBoundObject} from './lib/qa-coverage.mjs';
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const SKILL_ROOT = path.dirname(SCRIPT_DIR);
@@ -188,12 +191,13 @@ function help() {
       'report-finding': 'report-finding --root DIR --finding finding.json',
       audit: 'audit --root DIR',
       certify: 'certify --root DIR',
+      verify: 'verify --root DIR --asset FILE [--profile source-bound-object]',
       describe: 'describe node <instruction-node-id> | describe capability <runtime-capability-id>',
       register: 'register --input registration-input.json --out registration.json',
       'validate-spec': 'validate-spec --file spec.json [--context hierarchy.json]',
       'inspect-glb': 'inspect-glb --glb asset.glb',
       evidence: 'evidence --image reference.png --out DIR --scope ID [--roi x,y,w,h] [--padding 0.08]',
-      render: 'render --glb asset.glb --out DIR [--reference image.png] [--frame canonical-frame.json] [--size 640] [--timeout-seconds 300] [--max-working-mb 512] [--tile-size 256] [--max-triangles N]',
+      render: 'render --glb asset.glb --out DIR [--reference image.png] [--frame canonical-frame.json] [--size 640] [--timeout-seconds 300] [--max-working-mb 512] [--tile-size 256] [--max-triangles N] [--hero-only]',
       'render-pbr': 'render-pbr --glb asset.glb --out DIR --frame canonical-frame.json [--reference image.png] [--size 420] [--timeout-seconds 180] [--max-working-mb 512] [--neutral-clay]',
       compare: 'compare --input registered-comparison-input.json --out DIR [--timeout-seconds 120]',
       'fit-parameters': 'fit-parameters --root DIR --plan parameter-fit-plan.json --worker evaluator.mjs --out parameter-fit-report.json',
@@ -224,6 +228,24 @@ async function main() {
     return;
   }
   if (command === 'resume') { print(await resumeProject(required(options, 'root'))); return; }
+  if (command === 'next') { print(await nextAgentWork(required(options, 'root'))); return; }
+  if (command === 'diagnose') {
+    if (options.asset && options.finding) throw new Error('diagnose accepts either --asset or --finding, not both');
+    const result=await diagnoseAgentWork(required(options,'root'),{
+      assetFile:options.asset?required(options,'asset'):null,
+      finding:options.finding?await jsonFile(required(options,'finding')):null,
+    });
+    print(result);
+    return;
+  }
+  if (command === 'validate') {
+    const profile=String(options.profile??'source-bound-object');
+    if(profile!=='source-bound-object')throw new Error('unknown validation profile: '+profile);
+    const result=await diagnoseAgentWork(required(options,'root'),{assetFile:required(options,'asset')});
+    print(result);
+    if(result.sourceBoundDecision!=='ELIGIBLE')process.exitCode=2;
+    return;
+  }
   if (command === 'checkpoint') {
     print(await commitCheckpoint(required(options, 'root'), {
       capability: required(options, 'capability'), scopeId: required(options, 'scope'), reason: required(options, 'reason'),
@@ -256,6 +278,14 @@ async function main() {
   }
   if (command === 'audit') { print(await auditProject(required(options, 'root'))); return; }
   if (command === 'certify') { print(await certifyProject(required(options, 'root'))); return; }
+  if (command === 'verify') {
+    const profile = String(options.profile ?? 'source-bound-object');
+    if (profile !== 'source-bound-object') throw new Error('unknown verification profile: ' + profile);
+    const result = await verifySourceBoundObject(required(options,'root'),required(options,'asset'));
+    print(result);
+    if (result.decision.state !== 'ELIGIBLE') process.exitCode = 2;
+    return;
+  }
   if (command === 'describe') { print(await describe(options)); return; }
   if (command === 'register') {
     const registration = createReferenceRegistration(await jsonFile(required(options, 'input')));
@@ -299,6 +329,7 @@ async function main() {
     if (options['max-working-mb']) args.push('--max-working-mb', options['max-working-mb']);
     if (options['tile-size']) args.push('--tile-size', options['tile-size']);
     if (options['max-triangles']) args.push('--max-triangles', options['max-triangles']);
+    if (options['hero-only']) args.push('--hero-only');
     const timeoutSeconds = Number(options['timeout-seconds'] ?? 300);
     if (!Number.isFinite(timeoutSeconds) || timeoutSeconds <= 0) throw new Error('--timeout-seconds must be a positive number');
     runPython('render_glb.py', args, {timeoutMs: Math.ceil(timeoutSeconds * 1000 + 5000)}); return;

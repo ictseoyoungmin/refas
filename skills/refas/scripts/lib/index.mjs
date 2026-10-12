@@ -64,6 +64,9 @@ export {
   validateCheckpointGateVerdict,
 } from './checkpoint-gates.mjs';
 export * from './checkpoint-store.mjs';
+export * from './source-pixel-frame.mjs';
+export * from './registered-render-replay.mjs';
+export * from './independent-source-render-pixels.mjs';
 export * from './host-session.mjs';
 export * from './host-event.mjs';
 export * from './host-operation.mjs';
@@ -106,6 +109,15 @@ export * from './macro-fit.mjs';
 export * from './benchmark.mjs';
 export * from './shape-repair.mjs';
 export * from './realized-projection.mjs';
+export * from './source-macro-section-screen.mjs';
+export * from './source-macro-orientation-screen.mjs';
+export * from './source-profile-vector-screen.mjs';
+export * from './source-occlusion-screen.mjs';
+export * from './source-negative-space-screen.mjs';
+export * from './source-visible-part-loss-screen.mjs';
+export * from './source-role-relations-screen.mjs';
+export * from './source-interface-gap-screen.mjs';
+export * from './qa-source-semantic-replay.mjs';
 export * from './realized-projection-verification.mjs';
 export * from './certification-projection-evidence.mjs';
 export * from './mesh.mjs';
@@ -120,3 +132,20 @@ export * from './pbr-render-report.mjs';
 export * from './construction-quality.mjs';
 export * from './construction-vocabulary.mjs';
 export * from './interface-contracts.mjs';
+
+export * from './qa-coverage.mjs';
+export * from './agent-workflow.mjs';
+
+export * from './qa-contact-replay.mjs';
+
+export * from './qa-triangle-components.mjs';
+
+export * from './qa-component-support.mjs';
+
+export * from './qa-fusion-replay.mjs';
+
+export * from './qa-propagation-world-frames.mjs';
+
+export * from './qa-propagation-dependencies.mjs';
+
+export * from './qa-surface-mesh.mjs';

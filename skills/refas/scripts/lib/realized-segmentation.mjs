@@ -1,4 +1,5 @@
 import {assertId, deepFreeze} from './canonical.mjs';
+import {readQaGeometryAccessor} from './qa-glb-geometry-accessors.mjs';
 
 const EPS = 1e-9;
 const DISTINCT_INTERFACE_KINDS = new Set(['joint-gap', 'joint-boundary', 'necked-transition']);
@@ -17,6 +18,14 @@ function normalizedComponent(value, componentType, normalized) {
 function accessorVec3(json, binary, accessorIndex) {
   const accessor = json.accessors?.[accessorIndex];
   if (!accessor || accessor.type !== 'VEC3') throw new Error('realized segment POSITION accessor must be VEC3');
+  // A source-bound screen must decode the same physical FLOAT32/sparse
+  // POSITION bytes as the authoritative QA geometry and contact gates.
+  // Accessor min/max and BIN padding are never spatial evidence.
+  // Preserve non-FLOAT32 dense glTF decoding for existing representations.
+  if (accessor.componentType === 5126) return readQaGeometryAccessor(
+    json, binary, accessorIndex,
+    {position: true, label: 'source-bound realized segment POSITION'},
+  );
   const info = COMPONENT_INFO.get(accessor.componentType);
   if (!info) throw new Error(`unsupported POSITION component type: ${accessor.componentType}`);
   const view = json.bufferViews?.[accessor.bufferView];
@@ -86,6 +95,7 @@ function deriveSegment({reference, binding, json, binary, matrices, nodeIndexByS
   if (!meshNodeIndices.length) throw new Error(`realized segment ${reference.id} does not resolve to mesh nodes`);
   const projected = [];
   let totalVertices = 0, insideFrameVertices = 0;
+  let minCameraDepth = Infinity, maxCameraDepth = -Infinity;
   for (const nodeIndex of meshNodeIndices) {
     const node = json.nodes[nodeIndex], mesh = json.meshes?.[node.mesh];
     if (!mesh) continue;
@@ -95,13 +105,13 @@ function deriveSegment({reference, binding, json, binary, matrices, nodeIndexByS
       for (const localPoint of accessorVec3(json, binary, positionAccessor)) {
         totalVertices += 1;
         const worldPoint = transformPoint(matrices[nodeIndex], localPoint);
-        try { const projection = projectWorldPoint(worldPoint); projected.push(projection.xy); if (projection.insideFrame) insideFrameVertices += 1; }
+        try { const projection = projectWorldPoint(worldPoint); projected.push(projection.xy); minCameraDepth = Math.min(minCameraDepth, projection.depth); maxCameraDepth = Math.max(maxCameraDepth, projection.depth); if (projection.insideFrame) insideFrameVertices += 1; }
         catch (error) { if (!/behind the camera plane/.test(error.message)) throw error; }
       }
     }
   }
   const projectedHull = convexHull(projected);
-  return deepFreeze({referenceId:reference.id, importance:reference.importance, nodeIds, rootNodeIndices, meshNodeIndices, projectedHull, sourcePolygon:reference.polygon, iou:null, totalVertices, insideFrameVertices, insideFrameFraction:totalVertices ? insideFrameVertices/totalVertices : 0});
+  return deepFreeze({referenceId:reference.id, importance:reference.importance, nodeIds, rootNodeIndices, meshNodeIndices, projectedHull, cameraDepthRange:[minCameraDepth,maxCameraDepth], sourcePolygon:reference.polygon, iou:null, totalVertices, insideFrameVertices, insideFrameFraction:totalVertices ? insideFrameVertices/totalVertices : 0});
 }
 
 export function deriveRealizedSegmentation({referenceGeometry, segmentBindings = [], json, binary, matrices, nodeIndexBySemanticId, transformPoint, projectWorldPoint} = {}) {
