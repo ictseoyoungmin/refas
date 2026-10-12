@@ -2,7 +2,8 @@
 // the immutable original-source observations. This is deliberately a negative
 // evidence gate: photo semantic labels are still source-attested, not certified
 // by an independent reviewer or vision classifier.
-import {createRealizedProjection,verifyRealizedProjection} from './realized-projection.mjs';
+import {createRealizedProjection} from './realized-projection.mjs';
+import {verifyRealizedProjection} from './realized-projection-verification.mjs';
 import {screenSourcePartRoleRelations} from './source-role-relations-screen.mjs';
 import {screenSourcePhysicalInterfaceGaps} from './source-interface-gap-screen.mjs';
 
