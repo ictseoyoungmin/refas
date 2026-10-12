@@ -38,7 +38,7 @@ import {verifyRegisteredRenderReplay} from './registered-render-replay.mjs';
 import {evaluateIndependentSourceRenderPixels} from './independent-source-render-pixels.mjs';
 import {mapParentToChild} from './registration.mjs';
 import {validateSpatialHypothesisSet} from './spatial-hypotheses.mjs';
-import {normalizeProjectionCamera, deriveRealizedWholeSilhouetteBounds} from './realized-projection.mjs';
+import {createRealizedProjection, normalizeProjectionCamera, deriveRealizedWholeSilhouetteBounds} from './realized-projection.mjs';
 import {verifyRealizedProjection} from './realized-projection-verification.mjs';
 import {findingsFromRealizedProjection} from './projection-findings.mjs';
 import {
@@ -2856,6 +2856,107 @@ export async function reportFinding(root, {finding, expectedHeadId} = {}) {
   return deepFreeze({...decision, restoredArtifacts});
 }
 
+// S04b: a valid early shape-stage GLB may be silently replaced by an
+// authorized later surface/assembly candidate transition. Re-evaluate the
+// *current selected GLB bytes* using bindings from the independently replayed
+// shape-stage proof, and original immutable reference annotations. Do not
+// inherit old candidate-camera measurements or caller-written PASS scores.
+async function ensureCurrentCandidateMatchesSource(root, state, lineage, shapeCheckpoint, scopeId) {
+  const authority=await resolveCandidateAuthorityFromLineage(root,state,lineage);
+  const current=authority?.finalCandidate;
+  const original=authority?.initialCandidate;
+  if (!current || !original) throw new Error('late source candidate REVIEW_REQUIRED: authoritative candidate lineage missing');
+  if (current.assetSha256===original.assetSha256) return;
+  const observation=[...lineage].reverse().find(cp=>
+    cp.capability==='visual-observation'&&scopeContains(cp.scopeId,scopeId));
+  if(!observation) throw new Error('late source candidate REVIEW_REQUIRED: source observation missing');
+  const {value:geometry}=await readCheckpointJsonArtifact(root,observation,'reference-geometry',
+    'late source candidate source geometry');
+  const {value:frozen}=await readCheckpointJsonArtifact(root,shapeCheckpoint,'realized-projection',
+    'late source candidate frozen projection');
+  if(geometry.sourceSha256!==state.source.sha256||frozen.sourceSha256!==state.source.sha256 ||
+    frozen.assetSha256!==original.assetSha256) {
+    throw new Error('late source candidate REVIEW_REQUIRED: stale source/shape proof authority');
+  }
+  const currentBytes=await fs.readFile(objectPath(root,current.assetSha256));
+  if(digestBytes(currentBytes)!==current.assetSha256){
+    throw new Error('late source candidate REVIEW_REQUIRED: current candidate CAS bytes mismatch');
+  }
+  let fresh;
+  try{
+    fresh=createRealizedProjection({
+      referenceGeometry:geometry,glb:currentBytes,
+      cameraHypothesisId:frozen.cameraHypothesisId,camera:frozen.camera,
+      anchorBindings:(frozen.derivedAnchors??[]).map(a=>({
+        referenceId:a.referenceId,nodeId:a.nodeId,localPoint:a.localPoint,
+      })),
+      segmentBindings:(frozen.derivedSegments??[]).map(a=>({
+        referenceId:a.referenceId,nodeIds:a.nodeIds,
+      })),
+      evidenceRefs:[state.source.path,current.path],
+    });
+  }catch(error){
+    throw new Error('late source candidate REVIEW_REQUIRED: cannot independently project current GLB with original observations: '+error.message);
+  }
+  const blockers=findingsFromRealizedProjection(fresh).filter(x=>x.severity==='blocking');
+  if(blockers.length){
+    throw new Error('late source candidate REWORK: actual downstream GLB projection contradicts primary-source observations ('+
+      blockers.map(x=>x.category).join(', ')+')');
+  }
+  if((geometry.segments??[]).some(x=>x.importance==='macro')){
+    const section=screenSourceMacroSectionEnvelopes({
+      referenceGeometry:geometry,realizedProjection:fresh,sourcePath:state.source.path,
+    });
+    if(section.status!=='NO_DETECTED_CONTRADICTION'){
+      throw new Error('late source candidate '+(section.status==='REWORK'?'REWORK':'REVIEW_REQUIRED')+
+        ': '+section.findings.map(x=>x.reason).join('; '));
+    }
+    const orientation=screenSourceMacroPartOrientation({
+      referenceGeometry:geometry,realizedProjection:fresh,sourcePath:state.source.path,
+    });
+    if(orientation.status!=='NO_DETECTED_CONTRADICTION'){
+      throw new Error('late source candidate '+(orientation.status==='REWORK'?'REWORK':'REVIEW_REQUIRED')+
+        ': '+orientation.findings.map(x=>x.reason).join('; '));
+    }
+  }
+  if((geometry.anchors??[]).some(x=>['face-center','nose-tip'].includes(x.semanticRole))){
+    const face=screenSourceProfileVector({
+      referenceGeometry:geometry,realizedProjection:fresh,sourcePath:state.source.path,
+    });
+    if(face.status!=='NO_DETECTED_CONTRADICTION'){
+      throw new Error('late source candidate '+(face.status==='REWORK'?'REWORK':'REVIEW_REQUIRED')+
+        ': '+face.findings.map(x=>x.reason).join('; '));
+    }
+  }
+  if((geometry.occlusions??[]).some(x=>x.importance!=='detail')){
+    const depth=screenSourceRealizedOcclusion({
+      referenceGeometry:geometry,realizedProjection:fresh,sourcePath:state.source.path,
+    });
+    if(depth.status!=='NO_DETECTED_CONTRADICTION'){
+      throw new Error('late source candidate '+(depth.status==='REWORK'?'REWORK':'REVIEW_REQUIRED')+
+        ': '+depth.findings.map(x=>x.reason).join('; '));
+    }
+  }
+  const contours=(geometry.contours??[]).filter(x=>x.importance==='macro'&&x.closed&&
+    x.evidenceRefs.includes(state.source.path));
+  if(!contours.length)throw new Error('late source candidate REVIEW_REQUIRED: source-visible macro contour missing');
+  const outer=[...contours].sort((a,b)=>{
+    const area=x=>(Math.max(...x.points.map(p=>p[0]))-Math.min(...x.points.map(p=>p[0])))*
+      (Math.max(...x.points.map(p=>p[1]))-Math.min(...x.points.map(p=>p[1])));
+    return area(b)-area(a);
+  })[0];
+  const lo=[0,1].map(i=>Math.min(...outer.points.map(p=>p[i])));
+  const hi=[0,1].map(i=>Math.max(...outer.points.map(p=>p[i])));
+  let screen;
+  try{screen=deriveRealizedWholeSilhouetteBounds({glb:currentBytes,camera:fresh.camera});}
+  catch(error){throw new Error('late source candidate REVIEW_REQUIRED: current whole silhouette not measurable: '+error.message);}
+  const span=hi.map((v,i)=>v-lo[i]),center=hi.map((v,i)=>(v+lo[i])/2);
+  if(span.some((v,i)=>!(v>1e-6)||screen.span[i]/v<0.45||screen.span[i]/v>2.2)||
+    screen.center.some((v,i)=>Math.abs(v-center[i])>0.16)) {
+    throw new Error('late source candidate REWORK: actual current GLB outer silhouette contradicts source-observed macro mass');
+  }
+}
+
 // S04a: promote *replayed installed-host* early-source contradictions through
 // the existing typed finding / rollback state machine. No caller-provided
 // finding, precomputed PASS, category, asset digest or checker outcome enters
@@ -2875,7 +2976,8 @@ function typedEarlySourceAdmissionFailure(message) {
     return {category:'silhouette-mismatch',checkId:'early-source.macro-orientation',
       summary:'Actual current GLB head/face part direction disagrees with source-visible geometry'};
   }
-  if (/source macro section REWORK:/.test(text) ||
+  if (/late source candidate REWORK:/.test(text) ||
+      /source macro section REWORK:/.test(text) ||
       /whole silhouette REWORK:/.test(text) ||
       /source realized occlusion REWORK:/.test(text) ||
       /early registered projection blocks downstream detail:.*mass-proportion-mismatch/.test(text)) {
@@ -2916,6 +3018,7 @@ export async function reopenFromTrustedSourceAdmission(root, {scopeId='whole', e
   const evidenceRefs = [...new Set([source,model?.path,proof?.path].filter(Boolean))];
   try {
     await ensurePrerequisites(root,state,'surface-topology',scopeId,lineage);
+    await ensureCurrentCandidateMatchesSource(root,state,lineage,shape,scopeId);
   } catch(error) {
     const classified = typedEarlySourceAdmissionFailure(error.message);
     const finding = {
