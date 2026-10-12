@@ -1,4 +1,5 @@
 import {assertId, deepFreeze} from './canonical.mjs';
+import {readQaGeometryAccessor} from './qa-glb-geometry-accessors.mjs';
 
 const EPS = 1e-9;
 const DISTINCT_INTERFACE_KINDS = new Set(['joint-gap', 'joint-boundary', 'necked-transition']);
@@ -17,6 +18,14 @@ function normalizedComponent(value, componentType, normalized) {
 function accessorVec3(json, binary, accessorIndex) {
   const accessor = json.accessors?.[accessorIndex];
   if (!accessor || accessor.type !== 'VEC3') throw new Error('realized segment POSITION accessor must be VEC3');
+  // A source-bound screen must decode the same physical FLOAT32/sparse
+  // POSITION bytes as the authoritative QA geometry and contact gates.
+  // Accessor min/max and BIN padding are never spatial evidence.
+  // Preserve non-FLOAT32 dense glTF decoding for existing representations.
+  if (accessor.componentType === 5126) return readQaGeometryAccessor(
+    json, binary, accessorIndex,
+    {position: true, label: 'source-bound realized segment POSITION'},
+  );
   const info = COMPONENT_INFO.get(accessor.componentType);
   if (!info) throw new Error(`unsupported POSITION component type: ${accessor.componentType}`);
   const view = json.bufferViews?.[accessor.bufferView];
