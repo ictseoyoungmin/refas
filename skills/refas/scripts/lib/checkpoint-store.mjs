@@ -2952,6 +2952,19 @@ async function ensureCurrentCandidateMatchesSource(root, state, lineage, shapeCh
     }
     throw new Error('late source candidate REVIEW_REQUIRED: cannot independently project current GLB with original observations: '+error.message);
   }
+  // QA-03d: repeated source->current GLB gate must detect *real* missing
+  // struts even when the original mesh node is still present and a signed
+  // projection can be reconstructed from its renamed/moved geometry.
+  // A physically ambiguous ROI never invents a source-fidelity FAIL.
+  const loss=screenLostSourceVisibleParts({
+    referenceGeometry:geometry,shapeProjection:frozen,
+    shapeGlb:await fs.readFile(objectPath(root,original.assetSha256)),
+    currentGlb:currentBytes,sourcePath:state.source.path,
+  });
+  if(loss.status==='REWORK'){
+    throw new Error('late source candidate REWORK: original-source visible macro/identity part lost actual GLB occupancy: '+
+      loss.findings.filter(x=>x.status==='REWORK').map(x=>x.id).join(', '));
+  }
   const blockers=findingsFromRealizedProjection(fresh).filter(x=>x.severity==='blocking');
   if(blockers.length){
     throw new Error('late source candidate REWORK: actual downstream GLB projection contradicts primary-source observations ('+
