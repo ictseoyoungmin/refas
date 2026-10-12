@@ -26,7 +26,7 @@ refas describe node <instruction-node-id>
 refas describe capability <runtime-capability-id>
 ```
 
-The node form returns that instruction node's routing identity, prerequisites, runtime-capability projection, closure effects, and full AD01 interface descriptors. The capability form accepts only one of the 11 canonical runtime capability IDs and aggregates owning nodes in graph order. These namespaces are intentionally explicit: `refas describe <id>` does not guess whether an ID is an instruction node or a runtime capability, and routing-only owner tags such as `control` are not runtime capabilities.
+The node form returns that instruction node's routing identity, prerequisites, runtime-capability projection, closure effects, and full current public interface descriptors. The capability form accepts only one of the 11 canonical runtime capability IDs and aggregates owning nodes in graph order. These namespaces are intentionally explicit: `refas describe <id>` does not guess whether an ID is an instruction node or a runtime capability, and routing-only owner tags such as `control` are not runtime capabilities.
 
 ### Agent-facing workflow lookup (existing operations)
 
