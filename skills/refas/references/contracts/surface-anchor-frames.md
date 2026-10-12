@@ -47,4 +47,4 @@ The tangent hint is projected onto the current surface plane. Together with the 
 - `refas.surface-anchor-set/v1` stores evaluated owner-local anchor frames bound to exact attachment semantics and owner surface descriptors.
 - `refas.surface-anchor-rebind/v1` records unchanged/rebound anchors and binds the previous and next anchor-set digests.
 
-Neither artifact moves dependent geometry or authorizes closure. Surface offset propagation and multi-anchor fitting are later stages.
+Neither artifact moves dependent geometry or authorizes closure. Surface offset propagation and multi-anchor fitting are separate assembly operations that consume these artifacts.
