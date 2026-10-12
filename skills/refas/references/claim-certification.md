@@ -15,7 +15,7 @@ Use claim certification only after the candidate bytes, checkpoint, renders, com
 
 For a real source, `visual-source-fidelity` requires both candidate continuity and final resemblance closure. The candidate transaction must contain exactly one direct root-candidate `candidate-lineage-proof` node and one direct root-candidate `final-resemblance-closure` node. The runtime reproduces the lineage proof from checkpoint history and revalidates the closure against the current source digest, current visual hierarchy, exact final candidate, exact final perceptual-signature evidence, canonical final neutral-clay report, and all report frame bytes.
 
-This is intentionally separate from R04. R04 authorizes entering downstream detail work; final resemblance closure proves that downstream mutations did not silently replace a good early candidate with a different final object. A legacy certificate that lacks these current real-source authorities no longer remains `DONE`; audit/resume/certify requests new final certification evidence.
+Final resemblance closure is separate from the early neutral-clay admission barrier. Early admission authorizes downstream detail work; final closure proves that later edits did not silently replace the accepted form with a different final object. A legacy certificate that lacks these current real-source authorities no longer remains `DONE`; audit/resume/certify requests new final certification evidence.
 
 ## Real-source relational authority floor
 
