@@ -81,7 +81,7 @@ actually needed. Choose static, organic, mechanically articulated or physical
 runtime guides according to the work, rather than loading the entire
 assembly/physical stack for a simple object.
 For a runnable, explicitly non-authoritative geometry example use
-`node skills/refas/assets/examples/subdivision-cage-demo.mjs`.
+`node skills/refas/scripts/subdivision-cage-demo.mjs`.
 
 Strict source-bound verification and artifact transfer remain separate:
 `refas-host handoff` defaults to `draft-transfer`, whereas
