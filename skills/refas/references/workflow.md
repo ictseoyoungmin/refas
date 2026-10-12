@@ -47,6 +47,24 @@ use `diagnose --asset` or the strict `validate --asset` from
 `references/validation.md`. The canonical `report-finding` path, not the
 diagnosis preview, performs any state-changing reopen.
 
+## Interpreting agent next actions
+
+`refas next` returns `workPlan.kind` and `workPlan.nextStep` for every
+known `resumeProject` action. Only `kind: command` may offer an executable
+`invocation`; the `construction` and `review` kinds point to the existing
+instruction node and evidence to produce, not to a made-up command.
+`terminal` (`DONE`) offers **no new command**: a current generic certificate
+is not independently verified source-bound handoff. `CERTIFY` invokes the
+existing generic `certify` operation, still subject to its real obligations.
+If the action descriptor is unknown, the wrapper refuses to fabricate a step.
+
+For `REWORK_SHAPE_VOLUME`, perform a real owner-local edit and rerender; for
+`GATHER_SPATIAL_EVIDENCE`, observe or capture the missing side/top evidence.
+`REPORT_RESEMBLANCE_FINDINGS` requires real typed findings from the current
+barrier; `REQUEST_VISUAL_REVIEW` requires substantive source/render
+observations. Query `describe node <instructionNode>` as needed.
+No advisory step is a new source-fidelity gate or repair authorization.
+
 ## Work-unit rule
 
 Keep exactly one pair active:
