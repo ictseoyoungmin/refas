@@ -27,6 +27,21 @@ Current source meaning evidence may remain `INSUFFICIENT` and block final
 source-bound Handoff. Use the canonical `visual-critique` finding and
 rework path rather than manufacturing a positive verdict.
 
+## Execution stages
+
+**Early shape gate:** a coherent constructed candidate can enter this node to
+render neutral clay, inspect source-bound shape identity, and return a typed
+finding to `shape-reconstruction` **before** the `assembly` and
+`appearance` stages close. `appearance` owns the current PBR renderer,
+not a requirement to finish materials before neutral-clay diagnostics.
+
+**Final approval:** after geometry and required assembly/appearance work are
+complete, run full registered comparisons and current final validation. The
+`claim-certification` instruction node explicitly requires `assembly`,
+`appearance` and this `validation` node as well as a sealed candidate.
+The existing runtime, not the instruction edge itself, decides whether any
+source-bound claim has enough independent evidence.
+
 ## Standard render set
 
 Every closure review includes actual images for:
