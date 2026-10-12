@@ -7,6 +7,7 @@ import {verifyRealizedProjection} from './realized-projection-verification.mjs';
 import {screenSourcePartRoleRelations} from './source-role-relations-screen.mjs';
 import {screenSourcePhysicalInterfaceGaps} from './source-interface-gap-screen.mjs';
 import {screenSourceNegativeSpaces} from './source-negative-space-screen.mjs';
+import {screenLostSourceVisibleParts} from './source-visible-part-loss-screen.mjs';
 
 export const SOURCE_SEMANTIC_REPLAY_SCHEMA='refas.qa-source-semantic-replay/v1';
 export function replaySourceSemanticPhysicalEvidence({
@@ -43,10 +44,22 @@ export function replaySourceSemanticPhysicalEvidence({
       evidenceRefs:[sourcePath],
     });
   }catch(error){
+    // A missing source-bound GLB mesh mapping is not automatically proof of
+    // missing geometry (a rename may be harmless). Replay the original
+    // source ROI against BOTH accepted shape and physical current GLB first.
+    const loss=screenLostSourceVisibleParts({
+      referenceGeometry,shapeProjection,shapeGlb,currentGlb,sourcePath,
+    });
+    const contradicted=loss.status==='REWORK';
     return Object.freeze({
-      schema:SOURCE_SEMANTIC_REPLAY_SCHEMA,status:'INSUFFICIENT',
-      sourceSha256,assetSha256:null,results:[],
-      reason:'current GLB cannot be projected against immutable source-bound mesh bindings: '+error.message,
+      schema:SOURCE_SEMANTIC_REPLAY_SCHEMA,status:contradicted?'FAIL':'INSUFFICIENT',
+      sourceSha256,assetSha256:loss.currentAssetSha256,
+      results:Object.freeze([{id:'required-part-presence',...loss}]),
+      reason:(contradicted
+        ? 'actual current GLB physically lost original-source visible identity region: '+
+            loss.findings.filter(x=>x.status==='REWORK').map(x=>x.id).join(', ')
+        : 'current GLB cannot be projected against immutable source-bound mesh bindings: '+
+            error.message+'; physical loss unproven'),
       cannotAuthorizeReferenceFidelity:true,
       sourceSemanticsIndependentlyVerified:false,
     });
