@@ -4388,7 +4388,7 @@
         "appearance"
       ],
       "requires": [
-        "assembly"
+        "construction"
       ],
       "conditionalRequires": [],
       "authority": "appearance",
@@ -4507,7 +4507,7 @@
         "whole-object-certification"
       ],
       "requires": [
-        "appearance"
+        "construction"
       ],
       "conditionalRequires": [
         {
@@ -5003,7 +5003,9 @@
       ],
       "requires": [
         "candidate-transactions",
-        "validation"
+        "validation",
+        "assembly",
+        "appearance"
       ],
       "conditionalRequires": [
         {

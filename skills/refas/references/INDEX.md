@@ -126,6 +126,22 @@ Load only the references needed by the active capability or conditional closure 
 
 Host integration is conditional infrastructure. It is never a prerequisite for reconstruction, visual closure, or certification. Load `references/host-integration.md` only when an external host or worker boundary is actually being used.
 
+## Early form assessment versus final authorization
+
+After `construction`, the agent may render the **current real GLB** with
+`render-pbr --neutral-clay`, form the `early-resemblance-barrier` and
+return to `shape-reconstruction` on a supported defect. This diagnostic
+route does **not** require a closed `assembly` or `appearance` stage.
+The early barrier belongs to the existing `validation` node for evidence
+ownership only; the node's `requires` is the **earliest safe entry point**,
+not permission to finalize.
+
+Final whole-object `claim-certification` still requires closed
+`assembly`, `appearance`, `validation` and a current candidate
+transaction. The runtime's existing per-claim and source-bound checks remain
+authoritative and fail closed when independent original-photo evidence is
+missing. An early neutral-clay `PROCEED` is never final release approval.
+
 ## Conditional finalization and closure chain
 
 Do not create new runtime capabilities for this chain. It is a conditional instruction path inside the existing assembly, validation, and whole-object-certification owners. The exact hard/conditional prerequisite structure is authoritative in `references/GRAPH.json`.

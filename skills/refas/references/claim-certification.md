@@ -1,4 +1,11 @@
-# Claim certification reference
+# Claim certification
+
+This is **final authorization**, not the early source-resemblance admission.
+The instruction graph requires current `assembly`, `appearance`,
+`validation` and candidate-transaction stages before invoking this node.
+Construction-time neutral-clay evidence may run earlier, but cannot remove
+any final runtime claim obligation or turn an `INSUFFICIENT` source semantic
+assessment into a positive authorization. reference
 
 Use claim certification only after the candidate bytes, checkpoint, renders, comparisons, structural evidence, review artifacts, and every applicable semantic prerequisite in `references/GRAPH.json` are stable.
 

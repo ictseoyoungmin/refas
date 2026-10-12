@@ -1,4 +1,10 @@
-# Appearance ownership
+# Appearance
+
+The renderer can be invoked on a constructed candidate for early neutral-clay
+shape inspection before assembly or material closure. This is a tool-access
+dependency, **not** a permission to claim that final appearance is complete.
+Finish evidence-supported material/finish work after the asset's required
+assembly is stable; the final certification node separately requires both. ownership
 
 Appearance owns material identity, semantic material assignment, base color, metallic and roughness response, coatings, texture inputs, and the visible finish hierarchy. It does not own silhouette, curvature, relief geometry, attachment, camera, lighting, or final whole-object certification.
 
