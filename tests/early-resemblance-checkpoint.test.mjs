@@ -150,6 +150,7 @@ async function makeRealSourceProject(t, verdictStatus, {
   wrongPrimaryImageDimensions = false,
   withSourceMacroSection = false,
   withSourceProfile = false,
+  withSourceRoleRelations = false,
   withSourceOcclusion = false,
   diagonalMacroSection = false,
   tooNarrowMacroSection = false,
@@ -200,11 +201,15 @@ async function makeRealSourceProject(t, verdictStatus, {
     sourceSha256: wrongSourceGeometrySha ? D('f') : source.sha256,
     anchors: emptySourceGeometry ? [] : [{
       id: 'observed-head', importance: 'macro', xy: [.5,.5],
-      semanticRole:withSourceProfile?'face-center':'',
+      semanticRole:withSourceProfile?'face-center':withSourceRoleRelations?'source-front-basket':'',
       visibility: onlyInferredMacroAnchor ? 'inferred' : 'visible', confidence: 1, evidenceRefs: [source.path],
     }, ...(withSourceProfile ? [{
       id:'observed-nose',importance:'macro',semanticRole:'nose-tip',xy:[.55,.5],
       visibility:'visible',confidence:1,evidenceRefs:[source.path],
+    }] : []), ...(withSourceRoleRelations ? [{
+      id:'source-rear-role-center',semanticRole:'source-rear-basket',
+      importance:'identity',xy:[.67,.5],visibility:'visible',
+      confidence:1,evidenceRefs:[source.path],
     }] : []), ...(addUnprojectedMacroAnchor ? [{
       id: 'observed-shoulder', importance: 'macro', xy: [.6,.5],
       visibility: 'visible', confidence: 1, evidenceRefs: [source.path],
@@ -228,6 +233,16 @@ async function makeRealSourceProject(t, verdictStatus, {
       id:'observed-shoulder-overlap',importance:'macro',
       frontId:'observed-front-part',backId:'observed-back-part',evidenceRefs:[source.path],
     }]} : {}),
+    ...(withSourceRoleRelations ? {segments:[
+      {id:'source-front-basket',label:'independently source-cited front basket',
+        importance:'identity',polygon:[[.44,.45],[.56,.45],[.56,.55],[.44,.55]],
+        anchorIds:['observed-head'],visibility:'visible',separation:'explicit',
+        evidenceRefs:[source.path]},
+      {id:'source-rear-basket',label:'independently source-cited rear basket',
+        importance:'identity',polygon:[[.64,.48],[.70,.48],[.70,.52],[.64,.52]],
+        anchorIds:['source-rear-role-center'],visibility:'visible',
+        separation:'explicit',evidenceRefs:[source.path]},
+    ]} : {}),
     ...(withSourceProfile ? {segments:[
       {id:'observed-face-region',label:'face',importance:'identity',
         polygon:[[.44,.44],[.56,.44],[.56,.56],[.44,.56]],
@@ -336,8 +351,13 @@ async function makeRealSourceProject(t, verdictStatus, {
       anchorBindings:[{
         referenceId:'observed-head',nodeId:'whole-body',
         localPoint:offFrameMacroBinding ? [8,0,0] : movedMacroBinding ? [2,0,0] : [0,0,0],
-      },...(withSourceProfile?[{referenceId:'observed-nose',nodeId:'whole-body',localPoint:[.5,0,0]}]:[])],
-      segmentBindings:withSourceOcclusion
+      },...(withSourceRoleRelations?[{referenceId:'source-rear-role-center',
+        nodeId:'whole-body',localPoint:[.68,0,0]}]:[]),
+        ...(withSourceProfile?[{referenceId:'observed-nose',nodeId:'whole-body',localPoint:[.5,0,0]}]:[])],
+      segmentBindings:withSourceRoleRelations
+        ? [{referenceId:'source-front-basket',nodeIds:['whole-body']},
+           {referenceId:'source-rear-basket',nodeIds:['whole-body']}]
+        : withSourceOcclusion
         ? [{referenceId:'observed-front-part',nodeIds:['whole-body']},
            {referenceId:'observed-back-part',nodeIds:['whole-body']}]
         : withSourceProfile
@@ -546,6 +566,20 @@ test('S04b a valid accepted later source-bound GLB does not force rollback solel
   const reply=await reopenFromTrustedSourceAdmission(root,{expectedHeadId:correct.surface.id});
   assert.equal(reply.status,'NO_DETECTED_CONTRADICTION');
   assert.deepEqual(await loadProject(root),original);
+});
+
+test('QA-03a nonfixture Host cannot accept two source-observed basket roles on one actual mesh node',async t=>{
+  const {root,surfaceRef,shapeCheckpoint}=await makeRealSourceProject(t,'match',
+    {withSourceRoleRelations:true});
+  const before=await loadProject(root);
+  await assert.rejects(
+    ()=>commitLocal(root,'surface-topology',[surfaceRef]),
+    /source semantic part relations INSUFFICIENT: source-front-basket__source-rear-basket: two observed semantic roles share one actual GLB mesh node/u,
+  );
+  const after=await loadProject(root);
+  assert.equal(after.head,shapeCheckpoint.id);
+  assert.deepEqual(after.checkpointIds,before.checkpointIds);
+  assert.equal((await auditProject(root)).valid,true);
 });
 
 test('S04a trusted replay reopens shape from physically false source macro axis rather than accept detail',async t=>{
