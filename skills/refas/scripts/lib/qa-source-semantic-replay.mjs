@@ -81,6 +81,18 @@ export function replaySourceSemanticPhysicalEvidence({
       referenceGeometry,realizedProjection:current,glb:currentGlb,sourcePath,
     })});
   }
+  // QA-03d: a named node can survive while its actual macro support strut
+  // is moved or collapsed. A successful geometry *binding* does not show
+  // that source-visible required structure is still physically present.
+  // Run the original-vs-current opaque triangle loss check on changed GLB
+  // even if all old node names and source projections remain loadable.
+  if(current.assetSha256!==shapeProjection.assetSha256){
+    const loss=screenLostSourceVisibleParts({
+      referenceGeometry,shapeProjection,shapeGlb,currentGlb,sourcePath,
+    });
+    if(loss.status!=='NOT_APPLICABLE')
+      results.push({id:'required-part-presence',...loss});
+  }
   const contradiction=results.filter(r=>r.status==='REWORK');
   const unresolved=results.filter(r=>r.status!=='NO_DETECTED_CONTRADICTION');
   return Object.freeze({
