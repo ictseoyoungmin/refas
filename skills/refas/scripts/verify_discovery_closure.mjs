@@ -10,8 +10,6 @@ const PUBLIC_LIBRARY_ENTRYPOINT = 'scripts/lib/index.mjs';
 const ALWAYS_LOAD = Object.freeze([
   'references/INDEX.md',
   'references/workflow.md',
-  'references/checkpointing.md',
-  'references/failure-routing.md',
 ]);
 const PARENT_PREFIX = ['..', ''].join('/');
 const REPOSITORY_SKILL_PREFIX = ['skills', 'refas', ''].join('/');
