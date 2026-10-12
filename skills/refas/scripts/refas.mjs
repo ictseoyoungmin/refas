@@ -6,6 +6,8 @@ import {spawnSync} from 'node:child_process';
 import {
   REFAS_VERSION,
   CAPABILITY_ORDER,
+  nextAgentWork,
+  diagnoseAgentWork,
   abortEdit,
   auditProject,
   beginEdit,
@@ -226,6 +228,24 @@ async function main() {
     return;
   }
   if (command === 'resume') { print(await resumeProject(required(options, 'root'))); return; }
+  if (command === 'next') { print(await nextAgentWork(required(options, 'root'))); return; }
+  if (command === 'diagnose') {
+    if (options.asset && options.finding) throw new Error('diagnose accepts either --asset or --finding, not both');
+    const result=await diagnoseAgentWork(required(options,'root'),{
+      assetFile:options.asset?required(options,'asset'):null,
+      finding:options.finding?await jsonFile(required(options,'finding')):null,
+    });
+    print(result);
+    return;
+  }
+  if (command === 'validate') {
+    const profile=String(options.profile??'source-bound-object');
+    if(profile!=='source-bound-object')throw new Error('unknown validation profile: '+profile);
+    const result=await diagnoseAgentWork(required(options,'root'),{assetFile:required(options,'asset')});
+    print(result);
+    if(result.sourceBoundDecision!=='ELIGIBLE')process.exitCode=2;
+    return;
+  }
   if (command === 'checkpoint') {
     print(await commitCheckpoint(required(options, 'root'), {
       capability: required(options, 'capability'), scopeId: required(options, 'scope'), reason: required(options, 'reason'),
