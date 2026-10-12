@@ -9,6 +9,7 @@ import {
  analyzeRealizedContact,createAttachmentSemantics,createRealizedContactPlan,
  inventoryGlbTriangleComponents,parseGlb,replayRealizedContactEvidence,
  verifyRealizedSurfaceDescriptors,initProject,commitCheckpoint,contentReference,verifySourceBoundObject,
+ createReferenceGeometry,createRealizedProjection,verifyRealizedProjection,
 } from '../skills/refas/scripts/lib/index.mjs';
 import {readQaGeometryAccessor} from '../skills/refas/scripts/lib/qa-glb-geometry-accessors.mjs';
 
@@ -182,4 +183,52 @@ test('QA-02l stored sparse GLB requires current checkpoint bytes, never stale di
  await fs.writeFile(asset,fixture({indexComponent:5125,changedPointZ:0.5}));
  const tampered=await verifySourceBoundObject(root,asset);
  assert.equal(tampered.checks.find(x=>x.id==='realized-contact-support').status,'FAIL');
+});
+
+
+// #272: source camera/part projection must replay exactly the same sparse
+// Float32 POSITION bytes used by the QA-02 physical component evidence.
+function actualSparseSourceProjection(glb){
+ const sourcePath='source/reference.png';
+ const geometry=createReferenceGeometry({
+  scopeId:'whole',sourceSha256:D('a'),
+  anchors:[{id:'panel-origin',importance:'macro',xy:[.5,.5],
+    visibility:'visible',evidenceRefs:[sourcePath]}],
+  segments:[{id:'panel-observed',importance:'macro',
+    label:'visible panel',visibility:'visible',separation:'explicit',
+    polygon:[[.5,.25],[.75,.5],[.5,.5]],
+    anchorIds:['panel-origin'],evidenceRefs:[sourcePath]}],
+  attestation:{attested:true,evidenceRefs:[sourcePath]},
+ });
+ const proof=createRealizedProjection({
+  referenceGeometry:geometry,glb,cameraHypothesisId:'source-camera',
+  camera:{projection:'orthographic',position:[0,0,5],target:[0,0,0],
+    up:[0,1,0],aspect:1,orthoHeight:4},
+  anchorBindings:[{referenceId:'panel-origin',nodeId:'panel',localPoint:[0,0,0]}],
+  segmentBindings:[{referenceId:'panel-observed',nodeIds:['panel']}],
+  evidenceRefs:[sourcePath,'model/panel.glb'],
+ });
+ return {geometry,proof};
+}
+test('#272 source-bound projection replays sparse Float32 POSITION from actual GLB',()=>{
+ for(const indexComponent of [5121,5123,5125]){
+  const glb=fixture({indexComponent});
+  const {geometry,proof}=actualSparseSourceProjection(glb);
+  assert.equal(proof.derivedSegments.length,1);
+  assert.deepEqual(proof.derivedSegments[0].cameraDepthRange,[5,5]);
+  assert.deepEqual(proof.derivedSegments[0].projectedHull,
+    [[.5,.25],[.75,.5],[.5,.5]]);
+  assert.equal(verifyRealizedProjection({proof,referenceGeometry:geometry,glb}).valid,true);
+  const changed=fixture({indexComponent,changedPointZ:.4});
+  assert.equal(verifyRealizedProjection({
+    proof,referenceGeometry:geometry,glb:changed,
+  }).valid,false,'stale source geometry proof cannot replay new GLB bytes');
+ }
+});
+test('#272 source projection rejects sparse GLB out-of-bounds under declared view',()=>{
+ assert.throws(()=>actualSparseSourceProjection(fixture({truncateValues:true})),
+   /invalid or out-of-range/);
+ assert.deepEqual(actualSparseSourceProjection(fixture({
+   implicitBase:false,sparseIndices:false,
+ })).proof.derivedSegments[0].cameraDepthRange,[5,5]);
 });
