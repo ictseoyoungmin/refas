@@ -20,9 +20,12 @@ export function screenLostSourceVisibleParts({
   if(!prior.length||digestBytes(prior)!==shapeProjection.assetSha256)
     throw Error('part-loss replay requires exact accepted shape-stage GLB bytes');
   const sourceAnchors=new Map((referenceGeometry.anchors??[]).map(a=>[a.id,a]));
+  // Source-visible *macro* struts and frame members are structural obligations
+  // just like identity roles. An authored model label alone is not enough:
+  // require an independently source-cited visible semantic anchor.
   const candidates=(referenceGeometry.segments??[]).filter(s=>
-    s.importance==='identity'&&s.visibility==='visible'&&
-    s.evidenceRefs?.includes(sourcePath));
+    (s.importance==='identity'||s.importance==='macro')&&
+    s.visibility==='visible'&&s.evidenceRefs?.includes(sourcePath));
   const eligible=[],findings=[],checks=[],roles=new Set();
   for(const segment of candidates){
     const anchors=(segment.anchorIds??[]).map(id=>sourceAnchors.get(id)).filter(a=>
@@ -86,7 +89,7 @@ export function screenLostSourceVisibleParts({
     // authored ROIs or visible but thin/ambiguous parts cannot yield FAIL.
     if(baseline.coveredFraction>=0.3&&actual.coveredFraction<=0.01){
       findings.push({id:segment.id,status:'REWORK',
-        reason:'source-visible required part region lost all actual current GLB surface occupancy'});
+        reason:'source-visible required structural/identity part region lost all actual current GLB surface occupancy'});
     }else if(baseline.coveredFraction<0.3){
       findings.push({id:segment.id,status:'REVIEW_REQUIRED',
         reason:'accepted shape-stage mesh did not clearly occupy original source part ROI'});
