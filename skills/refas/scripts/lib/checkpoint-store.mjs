@@ -33,6 +33,7 @@ import {screenSourceMacroSectionEnvelopes} from './source-macro-section-screen.m
 import {screenSourceMacroPartOrientation} from './source-macro-orientation-screen.mjs';
 import {screenSourceProfileVector} from './source-profile-vector-screen.mjs';
 import {screenSourceRealizedOcclusion} from './source-occlusion-screen.mjs';
+import {screenSourcePartRoleRelations} from './source-role-relations-screen.mjs';
 import {inspectSourcePixelFrameBytes, MAX_SOURCE_FRAME_BYTES} from './source-pixel-frame.mjs';
 import {verifyRegisteredRenderReplay} from './registered-render-replay.mjs';
 import {evaluateIndependentSourceRenderPixels} from './independent-source-render-pixels.mjs';
@@ -1213,6 +1214,20 @@ async function ensureEarlyResemblanceAdmission(root, state, capability, scopeId,
       if (profile.status !== 'NO_DETECTED_CONTRADICTION') {
         throw new Error(`${capability} signed source profile ${profile.status}: ` +
           profile.findings.map(x => `${x.role}: ${x.reason}`).join('; '));
+      }
+    }
+    // QA-03a: visible identity-role ordering and relative area must be
+    // supported by distinct physical GLB mesh regions. Semantic observations
+    // predate construction, but this screen does not independently recognize
+    // objects in the raw photo, nor certify source resemblance.
+    if ((geometry.segments ?? []).some(item => item.importance === 'identity')) {
+      const semantic = screenSourcePartRoleRelations({
+        referenceGeometry:geometry,realizedProjection:proof,
+        sourcePath:state.source.path,
+      });
+      if (semantic.status !== 'NO_DETECTED_CONTRADICTION') {
+        throw new Error(`${capability} source semantic part relations ${semantic.status}: `+
+          semantic.findings.map(item=>item.id+': '+item.reason).join('; '));
       }
     }
     // S03c: source-cited visible occlusion order must be physically replayed
@@ -2926,6 +2941,17 @@ async function ensureCurrentCandidateMatchesSource(root, state, lineage, shapeCh
     if(face.status!=='NO_DETECTED_CONTRADICTION'){
       throw new Error('late source candidate '+(face.status==='REWORK'?'REWORK':'REVIEW_REQUIRED')+
         ': '+face.findings.map(x=>x.reason).join('; '));
+    }
+  }
+  // Re-evaluate changed downstream candidate against the same upstream
+  // source-visible identity roles, never a prior projection's claimed PASS.
+  if((geometry.segments??[]).some(x=>x.importance==='identity')){
+    const semantic=screenSourcePartRoleRelations({
+      referenceGeometry:geometry,realizedProjection:fresh,sourcePath:state.source.path,
+    });
+    if(semantic.status!=='NO_DETECTED_CONTRADICTION'){
+      throw new Error('late source candidate '+(semantic.status==='REWORK'?'REWORK':'REVIEW_REQUIRED')+
+        ': '+semantic.findings.map(x=>x.reason).join('; '));
     }
   }
   if((geometry.occlusions??[]).some(x=>x.importance!=='detail')){
