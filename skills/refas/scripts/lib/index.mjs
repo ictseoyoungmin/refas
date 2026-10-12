@@ -114,6 +114,7 @@ export * from './source-macro-orientation-screen.mjs';
 export * from './source-profile-vector-screen.mjs';
 export * from './source-occlusion-screen.mjs';
 export * from './source-negative-space-screen.mjs';
+export * from './source-visible-part-loss-screen.mjs';
 export * from './source-role-relations-screen.mjs';
 export * from './source-interface-gap-screen.mjs';
 export * from './qa-source-semantic-replay.mjs';
