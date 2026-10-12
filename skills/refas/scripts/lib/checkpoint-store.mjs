@@ -34,6 +34,7 @@ import {screenSourceMacroPartOrientation} from './source-macro-orientation-scree
 import {screenSourceProfileVector} from './source-profile-vector-screen.mjs';
 import {screenSourceRealizedOcclusion} from './source-occlusion-screen.mjs';
 import {screenSourcePartRoleRelations} from './source-role-relations-screen.mjs';
+import {screenSourcePhysicalInterfaceGaps} from './source-interface-gap-screen.mjs';
 import {inspectSourcePixelFrameBytes, MAX_SOURCE_FRAME_BYTES} from './source-pixel-frame.mjs';
 import {verifyRegisteredRenderReplay} from './registered-render-replay.mjs';
 import {evaluateIndependentSourceRenderPixels} from './independent-source-render-pixels.mjs';
@@ -1228,6 +1229,20 @@ async function ensureEarlyResemblanceAdmission(root, state, capability, scopeId,
       if (semantic.status !== 'NO_DETECTED_CONTRADICTION') {
         throw new Error(`${capability} source semantic part relations ${semantic.status}: `+
           semantic.findings.map(item=>item.id+': '+item.reason).join('; '));
+      }
+    }
+    // QA-03b1 source-visible explicit structural contacts are checked from
+    // actual separate current GLB projected mesh hulls (not named joints).
+    // A projected touch is NOT evidence of real 3D welding or load retention.
+    if ((geometry.interfaces ?? []).some(item => item.importance !== 'detail' &&
+      item.separation === 'explicit' &&
+      ['joint-boundary','contact-boundary','necked-transition'].includes(item.kind))) {
+      const joints = screenSourcePhysicalInterfaceGaps({
+        referenceGeometry:geometry,realizedProjection:proof,sourcePath:state.source.path,
+      });
+      if(joints.status!=='NO_DETECTED_CONTRADICTION'){
+        throw new Error(`${capability} source structural interface ${joints.status}: `+
+          joints.findings.map(x=>x.id+': '+x.reason).join('; '));
       }
     }
     // S03c: source-cited visible occlusion order must be physically replayed
@@ -2952,6 +2967,16 @@ async function ensureCurrentCandidateMatchesSource(root, state, lineage, shapeCh
     if(semantic.status!=='NO_DETECTED_CONTRADICTION'){
       throw new Error('late source candidate '+(semantic.status==='REWORK'?'REWORK':'REVIEW_REQUIRED')+
         ': '+semantic.findings.map(x=>x.reason).join('; '));
+    }
+  }
+  if((geometry.interfaces??[]).some(x=>x.importance!=='detail'&&x.separation==='explicit'&&
+     ['joint-boundary','contact-boundary','necked-transition'].includes(x.kind))){
+    const joints=screenSourcePhysicalInterfaceGaps({
+      referenceGeometry:geometry,realizedProjection:fresh,sourcePath:state.source.path,
+    });
+    if(joints.status!=='NO_DETECTED_CONTRADICTION'){
+      throw new Error('late source candidate '+(joints.status==='REWORK'?'REWORK':'REVIEW_REQUIRED')+
+        ': '+joints.findings.map(x=>x.reason).join('; '));
     }
   }
   if((geometry.occlusions??[]).some(x=>x.importance!=='detail')){
