@@ -6,6 +6,7 @@ import {createRealizedProjection} from './realized-projection.mjs';
 import {verifyRealizedProjection} from './realized-projection-verification.mjs';
 import {screenSourcePartRoleRelations} from './source-role-relations-screen.mjs';
 import {screenSourcePhysicalInterfaceGaps} from './source-interface-gap-screen.mjs';
+import {screenSourceNegativeSpaces} from './source-negative-space-screen.mjs';
 
 export const SOURCE_SEMANTIC_REPLAY_SCHEMA='refas.qa-source-semantic-replay/v1';
 export function replaySourceSemanticPhysicalEvidence({
@@ -60,6 +61,11 @@ export function replaySourceSemanticPhysicalEvidence({
     i.separation==='explicit'&&['joint-boundary','contact-boundary','necked-transition'].includes(i.kind))){
     results.push({id:'structural-interfaces',...screenSourcePhysicalInterfaceGaps({
       referenceGeometry,realizedProjection:current,sourcePath,
+    })});
+  }
+  if((referenceGeometry.negativeSpaces??[]).some(n=>n.importance!=='detail')){
+    results.push({id:'whole-negative-spaces',...screenSourceNegativeSpaces({
+      referenceGeometry,realizedProjection:current,glb:currentGlb,sourcePath,
     })});
   }
   const contradiction=results.filter(r=>r.status==='REWORK');

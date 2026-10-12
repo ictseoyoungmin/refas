@@ -33,6 +33,7 @@ import {screenSourceMacroSectionEnvelopes} from './source-macro-section-screen.m
 import {screenSourceMacroPartOrientation} from './source-macro-orientation-screen.mjs';
 import {screenSourceProfileVector} from './source-profile-vector-screen.mjs';
 import {screenSourceRealizedOcclusion} from './source-occlusion-screen.mjs';
+import {screenSourceNegativeSpaces} from './source-negative-space-screen.mjs';
 import {screenSourcePartRoleRelations} from './source-role-relations-screen.mjs';
 import {screenSourcePhysicalInterfaceGaps} from './source-interface-gap-screen.mjs';
 import {inspectSourcePixelFrameBytes, MAX_SOURCE_FRAME_BYTES} from './source-pixel-frame.mjs';
@@ -1257,6 +1258,19 @@ async function ensureEarlyResemblanceAdmission(root, state, capability, scopeId,
       if (occlusion.status !== 'NO_DETECTED_CONTRADICTION') {
         throw new Error(`${capability} source realized occlusion ${occlusion.status}: ` +
           occlusion.findings.map(item => item.id + ': ' + item.reason).join('; '));
+      }
+    }
+    // P0 S03d: source-observed open voids must not be physically filled by
+    // current GLB triangles even when outer bounds and anchors still match.
+    // The source annotation alone does not grant photo resemblance.
+    if ((geometry.negativeSpaces ?? []).some(x => x.importance !== 'detail')) {
+      const voids=screenSourceNegativeSpaces({
+        referenceGeometry:geometry,realizedProjection:proof,glb:actualGlb,
+        sourcePath:state.source.path,
+      });
+      if(voids.status!=='NO_DETECTED_CONTRADICTION'){
+        throw new Error(`${capability} source negative space ${voids.status}: `+
+          voids.findings.map(x=>x.id+': '+x.reason).join('; '));
       }
     }
     // P0b2b2a: an anchor that projects correctly says nothing about whole
@@ -2986,6 +3000,18 @@ async function ensureCurrentCandidateMatchesSource(root, state, lineage, shapeCh
     if(depth.status!=='NO_DETECTED_CONTRADICTION'){
       throw new Error('late source candidate '+(depth.status==='REWORK'?'REWORK':'REVIEW_REQUIRED')+
         ': '+depth.findings.map(x=>x.reason).join('; '));
+    }
+  }
+  // Re-evaluate original-source open voids against the CURRENT downstream
+  // GLB, not the accepted shape-stage GLB that may now be obsolete.
+  if((geometry.negativeSpaces??[]).some(x=>x.importance!=='detail')){
+    const voids=screenSourceNegativeSpaces({
+      referenceGeometry:geometry,realizedProjection:fresh,glb:currentBytes,
+      sourcePath:state.source.path,
+    });
+    if(voids.status!=='NO_DETECTED_CONTRADICTION'){
+      throw new Error('late source candidate '+(voids.status==='REWORK'?'REWORK':'REVIEW_REQUIRED')+
+        ': source negative space '+voids.findings.map(x=>x.reason).join('; '));
     }
   }
   const contours=(geometry.contours??[]).filter(x=>x.importance==='macro'&&x.closed&&

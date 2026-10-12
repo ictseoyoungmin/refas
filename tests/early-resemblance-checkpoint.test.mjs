@@ -153,6 +153,7 @@ async function makeRealSourceProject(t, verdictStatus, {
   withSourceRoleRelations = false,
   withSourceStructuralContact = false,
   withSourceOcclusion = false,
+  withSourceNegativeSpace = false,
   diagonalMacroSection = false,
   tooNarrowMacroSection = false,
   hiddenMacroSection = false,
@@ -244,6 +245,11 @@ async function makeRealSourceProject(t, verdictStatus, {
         polygon:[[.445,.445],[.555,.445],[.555,.555],[.445,.555]],
         anchorIds:['observed-head'],visibility:'visible',separation:'uncertain',evidenceRefs:[source.path]},
     ],interfaces:[]} : {}),
+    ...(withSourceNegativeSpace ? {negativeSpaces:[{
+      id:'original-visible-gap',importance:'macro',
+      polygon:[[.445,.445],[.555,.445],[.555,.555],[.445,.555]],
+      evidenceRefs:[source.path],
+    }]} : {}),
     ...(withSourceOcclusion ? {occlusions:[{
       id:'observed-shoulder-overlap',importance:'macro',
       frontId:'observed-front-part',backId:'observed-back-part',evidenceRefs:[source.path],
@@ -727,6 +733,20 @@ test('S01b2 mismatched manifest dimensions fail the installed checkpoint pixel r
     /primary source pixel-frame REVIEW_REQUIRED: source pixel-frame decoded dimensions disagree with manifest/u,
   );
   assert.equal((await loadProject(root)).head,shapeCheckpoint.id);
+});
+
+test('S03d nonfixture Host blocks a physically filled source-visible open void before detail commit',async t=>{
+  const {root,surfaceRef,shapeCheckpoint}=await makeRealSourceProject(t,'match',{
+    withSourceNegativeSpace:true,
+  });
+  const before=await loadProject(root);
+  await assert.rejects(
+    ()=>commitLocal(root,'surface-topology',[surfaceRef]),
+    /source negative space REWORK: original-visible-gap: source-observed open void is almost entirely filled by actual opaque GLB triangles/u,
+  );
+  const after=await loadProject(root);
+  assert.equal(after.head,shapeCheckpoint.id);
+  assert.deepEqual(after.checkpointIds,before.checkpointIds);
 });
 
 test('S03c Host blocks an occlusion observation forged by mapping both parts to one GLB mesh',async t=>{
