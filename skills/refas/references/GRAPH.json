@@ -62,6 +62,33 @@
               "verification": "structural",
               "reason": "stateful, filesystem-bound, renderer-bound, or CLI-only operation; command discovery is verified separately"
             }
+          },
+          {
+            "id": "agent-next",
+            "operation": "inspect",
+            "cli": {
+              "bin": "refas",
+              "command": "next"
+            },
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "nextAgentWork"
+            },
+            "template": null,
+            "inputContract": "initialized project root; read-only guidance with owner/scope/action and invocation; refas.agent-next/v1",
+            "outputSchema": null,
+            "validator": null,
+            "minimumInvocation": "references/workflow.md",
+            "example": null,
+            "usageReference": "references/workflow.md",
+            "publicConstants": [
+              "AGENT_NEXT_SCHEMA"
+            ],
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "stateful read-only project inspection; CLI contract and exported library symbol structurally verified"
+            }
           }
         ]
       }
@@ -369,6 +396,33 @@
               "schema": "refas.capability-invocation/v1",
               "verification": "structural",
               "reason": "stateful, filesystem-bound, renderer-bound, or CLI-only operation; command discovery is verified separately"
+            }
+          },
+          {
+            "id": "agent-diagnose",
+            "operation": "inspect",
+            "cli": {
+              "bin": "refas",
+              "command": "diagnose"
+            },
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "diagnoseAgentWork"
+            },
+            "template": null,
+            "inputContract": "initialized project root; optional --asset current GLB OR --finding typed finding JSON; no mutation; refas.agent-diagnosis/v1",
+            "outputSchema": null,
+            "validator": null,
+            "minimumInvocation": "references/failure-routing.md",
+            "example": null,
+            "usageReference": "references/failure-routing.md",
+            "publicConstants": [
+              "AGENT_DIAGNOSIS_SCHEMA"
+            ],
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "read-only preview of canonical QA blockers OR typed recovery route; never persists rollback"
             }
           }
         ]
@@ -4740,6 +4794,30 @@
                 ]
               },
               "outputSchemaPointer": "/schema"
+            }
+          },
+          {
+            "id": "agent-validate-source-bound",
+            "operation": "evaluate",
+            "cli": {
+              "bin": "refas",
+              "command": "validate"
+            },
+            "library": null,
+            "template": null,
+            "inputContract": "initialized project root + project-contained exact GLB via --asset; strict source-bound-object profile; exit 2 on BLOCKED; refas.agent-diagnosis/v1",
+            "outputSchema": null,
+            "validator": null,
+            "minimumInvocation": "references/validation.md",
+            "example": null,
+            "usageReference": "references/validation.md",
+            "publicConstants": [
+              "AGENT_DIAGNOSIS_SCHEMA"
+            ],
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "CLI-only read-only adapter over existing source-bound QA; does not create an alternate validator or PASS authority"
             }
           }
         ]
