@@ -1,5 +1,32 @@
 # Rendering, critique, and certification
 
+## Agent-facing source-bound QA interface
+
+After constructing and capturing a **real current** candidate GLB, inspect
+existing QA evidence with the released `validation/agent-validate-source-bound`
+CLI operation:
+
+```bash
+node scripts/refas.mjs validate --root PROJECT --asset PROJECT/candidate.glb
+```
+
+The command is a read-only facade over the same
+`verifySourceBoundObject` evaluator used by `refas verify`. It returns
+an `refas.agent-diagnosis/v1` JSON result including the canonical
+`refas.qa-coverage-report/v1`, its digest, every required check's status,
+owner, reason and evidence, and the unchanged `ELIGIBLE`/`BLOCKED`
+decision. Exit code 2 means `BLOCKED`; exit 1 means an invalid invocation
+or runtime error. `diagnose --asset` gives the same report but does not
+enforce the blocking exit code.
+
+This is a strict **source-bound-object** assessment, not an additional
+validator or a shortcut from valid GLB to source resemblance. A generic
+whole-object certificate, a `draft-transfer` Host handoff, or a
+noncontradictory render does not independently prove photo semantics.
+Current source meaning evidence may remain `INSUFFICIENT` and block final
+source-bound Handoff. Use the canonical `visual-critique` finding and
+rework path rather than manufacturing a positive verdict.
+
 ## Standard render set
 
 Every closure review includes actual images for:

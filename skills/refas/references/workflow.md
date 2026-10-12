@@ -22,6 +22,31 @@ Canonical capability dependencies are exposed through the public `CAPABILITY_DEP
 
 Relational structure and inference authority are cross-cutting Core contracts, not extra capability owners. They are created and revised inside the existing observation/spatial/shape owners so the capability graph does not become a parallel runtime architecture.
 
+## Agent-facing work navigation (read-only)
+
+Before starting a new work unit, query the existing project state through:
+
+```bash
+node scripts/refas.mjs next --root PROJECT
+```
+
+This is the registered `workflow/agent-next` interface. It wraps
+`resumeProject`, returning the safe checkpoint, responsible capability,
+scope, `nextAction`, and a discoverable existing CLI invocation. Inspect
+the current capability's executable contract with
+`node scripts/refas.mjs describe capability <runtime-capability-id>`.
+`next` is advice about state, **not** a new capability, construction
+executor, gate verdict, or source-fidelity certificate.
+
+Construct or edit actual geometry in the active capability and scope, then
+capture real renders and compare them to source observations. Do not replace
+modeling with metadata, checkpoint counts, or a verification-only loop. For a
+real detected error, use the read-only `diagnose --finding` route described
+in `references/failure-routing.md`; for a current actual GLB's QA coverage,
+use `diagnose --asset` or the strict `validate --asset` from
+`references/validation.md`. The canonical `report-finding` path, not the
+diagnosis preview, performs any state-changing reopen.
+
 ## Work-unit rule
 
 Keep exactly one pair active:

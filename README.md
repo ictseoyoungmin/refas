@@ -169,6 +169,13 @@ node skills/refas/scripts/refas.mjs diagnose --root project --finding project/fi
 node skills/refas/scripts/refas.mjs validate --root project --asset project/candidate.glb
 ```
 
+The installed canonical instruction graph registers these as
+`workflow/agent-next`, `failure-routing/agent-diagnose`, and
+`validation/agent-validate-source-bound` (use `refas describe node workflow`,
+`refas describe node failure-routing`, or `refas describe node validation`
+to discover public contracts). For the detailed agent execution order see
+`skills/refas/references/INDEX.md` and `skills/refas/references/workflow.md`.
+
 `next` is derived from trusted checkpoint/recovery guidance; `diagnose` shows exact existing blocker statuses, responsible capability, provenance and an advisory next action; `validate` reuses the same strict `source-bound-object` coverage as `refas verify` (exit code **2** if blocked). No wrapper creates new visual judgments, changes project state, certifies models or grants draft output positive source-fidelity authority. `refas-host handoff` defaults to `draft-transfer`; explicit `--profile source-bound-object` remains separately fail-closed and must not be confused with generic certification.
 
 **Known limitation:** independent original-photo part/role recognition is not yet a trusted positive evaluator. Even a structurally valid GLB may therefore remain `INSUFFICIENT` and source-bound final Handoff remains `BLOCKED`. The interface release does **not** promise automatic image-to-3D accuracy or game-ready assets. [Foundry production roadmap](docs/development/foundry-production-roadmap.md).

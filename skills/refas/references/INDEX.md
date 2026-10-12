@@ -28,6 +28,29 @@ refas describe capability <runtime-capability-id>
 
 The node form returns that instruction node's routing identity, prerequisites, runtime-capability projection, closure effects, and full AD01 interface descriptors. The capability form accepts only one of the 11 canonical runtime capability IDs and aggregates owning nodes in graph order. These namespaces are intentionally explicit: `refas describe <id>` does not guess whether an ID is an instruction node or a runtime capability, and routing-only owner tags such as `control` are not runtime capabilities.
 
+### Agent-facing workflow lookup (existing operations)
+
+The released CLI provides read-only navigation and diagnostics. Use the canonical
+graph's `workflow/agent-next`, `failure-routing/agent-diagnose`, and
+`validation/agent-validate-source-bound` interfaces; the registered command
+descriptors and public-library exports are discoverable through `describe node`.
+
+| Situation | Installed-skill command | Canonical node |
+|---|---|---|
+| Start or resume a project, select the next owner/scope | `node scripts/refas.mjs next --root PROJECT` | `workflow` |
+| Inspect an existing typed finding without mutating the project | `node scripts/refas.mjs diagnose --root PROJECT --finding FINDING.json` | `failure-routing` |
+| Inspect current asset's existing QA blockers and owner/evidence | `node scripts/refas.mjs diagnose --root PROJECT --asset PROJECT/candidate.glb` | `failure-routing` |
+| Evaluate strict source-bound QA of exact current GLB | `node scripts/refas.mjs validate --root PROJECT --asset PROJECT/candidate.glb` | `validation` |
+
+`next` follows `resumeProject`, `diagnose` previews an existing finding
+route or existing `verifySourceBoundObject` report, and `validate` uses that
+same canonical source-bound QA with exit code 2 when `BLOCKED`. `diagnose`
+is informational and can return a blocked report with exit 0; never treat its
+exit status as fidelity approval. Neither command issues certificates, repairs,
+mutates geometry, or weakens final Host handoff. Run expensive source-bound
+verification at genuine candidate/closure transitions, not after every minor
+construction operation.
+
 ### Canonical standalone templates
 
 Most executable operation inputs are exposed through the interface catalog returned by `describe`. The following standalone templates remain public convenience/contracts and are routed explicitly so workers never need to guess filenames:

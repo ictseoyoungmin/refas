@@ -87,6 +87,12 @@ node scripts/refas.mjs diagnose --root <project-dir> --finding <project-dir>/fin
 node scripts/refas.mjs validate --root <project-dir> --asset <project-dir>/candidate.glb
 ```
 
+The canonical instruction graph registers these under `workflow/agent-next`,
+`failure-routing/agent-diagnose`, and `validation/agent-validate-source-bound`.
+Use `node scripts/refas.mjs describe node workflow`, `describe node
+failure-routing`, or `describe node validation` to inspect the public
+command contract without guessing the owning module.
+
 The `next` result gives the responsible capability and `refas describe capability <capability>` discovery pointer. `diagnose` reports existing checks, owners, supporting evidence and follow-up without mutating the project or inventing a repair category. `validate` is canonical source-bound QA, with exit 2 for a blocked result and exit 1 on invalid invocation. A valid GLB or an ordinary certificate is never proof of reference fidelity. Keep material creation, geometry edits and headless view inspection as the core workflow; do not turn the Foundry into a validator-only task.
 
 ## Reconstruction loop
