@@ -83,9 +83,9 @@ Use `refas.perceptual-signature-evidence/v1` to compare the exact current candid
 
 Each observation records what the source signature says, what the current candidate/render shows, the comparison conclusion, evidence refs, and one of `match`, `mismatch`, or `insufficient`. A mismatch may emit an existing typed finding when ownership is unambiguous. An insufficient observation does not invent a rollback owner.
 
-This artifact is resemblance evidence, not a visual gate. A `match` cannot set final visual PASS or certify the asset. R03 does not introduce a universal weighted similarity score. A later early-resemblance barrier may consume these source/candidate observations, but it must preserve source identity and typed-finding authority rather than collapse them into one opaque number.
+This artifact is resemblance evidence, not a visual gate. A `match` cannot set final visual PASS or certify the asset. The current early-resemblance barrier consumes source/candidate observations bound to the exact registered neutral-clay render. It preserves source identity and typed-finding authority instead of collapsing them into a universal weighted similarity score.
 
-Numeric `RESEMBLANCE_SIGNAL` authority is fail-closed unless current perceptual-signature evidence is explicitly bound to the same current source and candidate. In R03 such a signal is diagnostic-only: it cannot itself be used as resemblance evidence, become an optimization objective, rank candidates, pass a gate, or certify closure. The structured perceptual-signature observations are the resemblance evidence. Single-view IoU remains forbidden; multiview IoU remains correspondence/diagnostic-only.
+Numeric `RESEMBLANCE_SIGNAL` authority is fail-closed unless current perceptual-signature evidence is explicitly bound to the same current source and candidate. Such a signal is diagnostic-only: it cannot itself be used as resemblance evidence, become an optimization objective, rank candidates, pass a gate, or certify closure. The structured perceptual-signature observations are the resemblance evidence. Single-view IoU remains forbidden; multiview IoU remains correspondence/diagnostic-only.
 
 ## Early resemblance / neutral-clay barrier
 
