@@ -15,15 +15,15 @@ function ref({hidden=false,wrongCitation=false,ambiguous=false}={}){
   return createReferenceGeometry({
     scopeId:'whole',sourceSha256:SHA,
     anchors:[
-      {id:'a',xy:[.4,.5],importance:'macro',visibility:'visible',evidenceRefs:[SRC]},
-      {id:'b',xy:[.6,.5],importance:'macro',visibility:'visible',evidenceRefs:[SRC]},
+      {id:'support-anchor',xy:[.4,.5],importance:'macro',visibility:'visible',evidenceRefs:[SRC]},
+      {id:'mount-anchor',xy:[.6,.5],importance:'macro',visibility:'visible',evidenceRefs:[SRC]},
     ],
     segments:[
       {id:'observed-support',label:'visible support strut',importance:'macro',
-        visibility:'visible',polygon:rect(.3,.5),anchorIds:['a'],
+        visibility:'visible',polygon:rect(.3,.5),anchorIds:['support-anchor'],
         separation:'explicit',evidenceRefs:[SRC]},
       {id:'observed-mount',label:'mount in source photo',importance:'macro',
-        visibility:hidden?'inferred':'visible',polygon:rect(.5,.7),anchorIds:['b'],
+        visibility:hidden?'inferred':'visible',polygon:rect(.5,.7),anchorIds:['mount-anchor'],
         separation:'explicit',evidenceRefs:[SRC]},
     ],
     interfaces:[{id:'observed-structural-contact',importance:'macro',
@@ -49,8 +49,8 @@ function projection(geometry,glb,{sameMesh=false,omitMount=false}={}){
   return createRealizedProjection({
     referenceGeometry:geometry,glb,cameraHypothesisId:'selected',camera,
     anchorBindings:[
-      {referenceId:'a',nodeId:'real-support',localPoint:[0,0,0]},
-      {referenceId:'b',nodeId:'real-support',localPoint:[.8,0,0]},
+      {referenceId:'support-anchor',nodeId:'real-support',localPoint:[0,0,0]},
+      {referenceId:'mount-anchor',nodeId:'real-support',localPoint:[.8,0,0]},
     ],
     segmentBindings:[
       {referenceId:'observed-support',nodeIds:['real-support']},
