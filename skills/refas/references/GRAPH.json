@@ -4151,12 +4151,7 @@
         "logical-fusion",
         "attachment-propagation"
       ],
-      "conditionalRequires": [
-        {
-          "when": "physical fusion is justified",
-          "nodes": []
-        }
-      ],
+      "conditionalRequires": [],
       "authority": "finalization-only",
       "closureEffects": [
         "requires-revalidation-after-bake"
