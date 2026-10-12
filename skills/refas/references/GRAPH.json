@@ -315,7 +315,7 @@
               "symbol": "getArtifactHandoff"
             },
             "template": null,
-            "inputContract": "current host session/project context",
+            "inputContract": "Existing host session/project root; default --profile draft-transfer only, not positive original-photo fidelity approval.",
             "outputSchema": null,
             "validator": {
               "library": "validateArtifactHandoff"
@@ -327,6 +327,30 @@
               "schema": "refas.capability-invocation/v1",
               "verification": "structural",
               "reason": "stateful, filesystem-bound, renderer-bound, or CLI-only operation; command discovery is verified separately"
+            }
+          },
+          {
+            "id": "source-bound-final-handoff",
+            "operation": "inspect",
+            "cli": {
+              "bin": "refas-host",
+              "command": "handoff"
+            },
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "getSourceBoundReleaseHandoff"
+            },
+            "template": null,
+            "inputContract": "--root PROJECT --profile source-bound-object; independent strict source-bound release receipt, blocked on insufficient evidence; never confuse with draft-transfer.",
+            "outputSchema": null,
+            "validator": null,
+            "minimumInvocation": "references/host-integration.md",
+            "example": null,
+            "usageReference": "references/host-integration.md",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "discover an existing command; actual runtime admission is unmodified"
             }
           }
         ]
@@ -1795,7 +1819,7 @@
             "outputSchema": null,
             "validator": null,
             "minimumInvocation": "references/construction.md",
-            "example": null,
+            "example": "assets/examples/subdivision-cage-demo.mjs",
             "usageReference": "references/construction.md",
             "invocation": {
               "schema": "refas.capability-invocation/v1",
@@ -4818,6 +4842,54 @@
               "schema": "refas.capability-invocation/v1",
               "verification": "structural",
               "reason": "CLI-only read-only adapter over existing source-bound QA; does not create an alternate validator or PASS authority"
+            }
+          },
+          {
+            "id": "strict-source-bound-verify",
+            "operation": "evaluate",
+            "cli": {
+              "bin": "refas",
+              "command": "verify"
+            },
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "verifySourceBoundObject"
+            },
+            "template": null,
+            "inputContract": "Exact current asset GLB, --root PROJECT --asset GLB; source-bound-object refuses on insufficient current original-photo evidence.",
+            "outputSchema": null,
+            "validator": null,
+            "minimumInvocation": "references/validation.md",
+            "example": null,
+            "usageReference": "references/validation.md",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "discover an existing command; actual runtime admission is unmodified"
+            }
+          },
+          {
+            "id": "project-audit",
+            "operation": "evaluate",
+            "cli": {
+              "bin": "refas",
+              "command": "audit"
+            },
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "auditProject"
+            },
+            "template": null,
+            "inputContract": "Existing project audit; no source-resemblance PASS authority.",
+            "outputSchema": null,
+            "validator": null,
+            "minimumInvocation": "references/validation.md",
+            "example": null,
+            "usageReference": "references/validation.md",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "discover an existing command; actual runtime admission is unmodified"
             }
           }
         ]
