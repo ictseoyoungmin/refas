@@ -39,7 +39,7 @@ This matches the existing parameter-fitting contract: a project worker rebuilds 
 
 ## Pose edits
 
-Pose is the narrow direct-GLB exception. Parent-local node/joint transforms may change while mesh/accessor bytes remain identical. This preserves the same geometry representation while changing assembly transforms. Future attachment propagation may update dependent transforms before validation, but it must not silently mutate mesh bytes under a pose edit.
+Pose is the narrow direct-GLB exception. Parent-local node/joint transforms may change while mesh/accessor bytes remain identical. This preserves the same geometry representation while changing assembly transforms. Attachment propagation may update dependent transforms in its separate authorized step before validation, but it must not silently mutate mesh bytes under a pose edit.
 
 ## Appearance edits
 

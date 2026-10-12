@@ -214,7 +214,7 @@ This sequence is an example of reasoning, not a mandatory asset-specific script.
 
 ## 10. Failure interpretation
 
-If a future dogfood still produces a convincing frontal image but a paper-thin side/top model after following this reasoning pattern, do not respond by adding another instruction that says “make it thicker.” First localize the failure.
+If an actual reconstruction produces a convincing frontal image but a paper-thin side/top model after following this reasoning pattern, do not respond by adding another instruction that says “make it thicker.” First localize the failure.
 
 Possible causes include:
 
@@ -224,4 +224,4 @@ Possible causes include:
 - the review layer lacks a sufficient non-degeneracy or planar-collapse check;
 - downstream detail/PBR masked an unresolved whole-shape defect.
 
-The repair owner should come from the localized defect. This example teaches the intended reasoning pattern; it does not replace typed findings, construction-quality closure, projection review, or future geometry-level safeguards.
+The repair owner should come from the localized defect. This example teaches the intended reasoning pattern; it does not replace typed findings, construction-quality closure, projection review, or current geometry-level safeguards.

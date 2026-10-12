@@ -137,15 +137,15 @@ Use `createCanonicalEditIntent` to make the owner, scope, canonical bindings, an
 
 Before an assembly depends on proximity or world coordinates, declare the relationship that should survive future edits. Every semantic entity participating in an attachment graph must have an explicit mode, including intentionally independent `FREE` entities.
 
-- `FUSED`: same logical body as one owner; physical mesh fusion happens only in a later finalization step.
+- `FUSED`: same logical body as one owner; physical mesh fusion happens only as a separately authorized finalization step.
 - `RIGID_FOLLOW`: fixed owner-local transform.
-- `SURFACE_OFFSET`: preserve a future surface-relative offset from one owner.
+- `SURFACE_OFFSET`: preserve a surface-relative offset from one owner.
 - `MULTI_ANCHOR`: satisfy two or more owners, such as glasses supported by nose and ears.
 - `ARTICULATED`: attached through a joint frame.
-- `SUPPORTED_CLEARANCE`: may remain separated from owners while a later support path proves validity.
+- `SUPPORTED_CLEARANCE`: may remain separated from owners while a separately checked support path proves validity.
 - `FREE`: intentionally no owner.
 
-Use `createAttachmentSemantics` to record owner/dependent direction, evidence basis, and mode. Missing modes, unknown owners, self attachment, invalid owner counts, and ownership cycles are blockers before geometry propagation. This contract declares intent only; surface frames, solvers, fusion bake, and realized contact validation are later stages. See `references/contracts/attachment-semantics.md`.
+Use `createAttachmentSemantics` to record owner/dependent direction, evidence basis, and mode. Missing modes, unknown owners, self attachment, invalid owner counts, and ownership cycles are blockers before geometry propagation. This contract declares intent only; the existing surface-frame, solver, fusion-bake, and realized-contact operations remain separate explicit steps. See `references/contracts/attachment-semantics.md`.
 
 ## Logical fusion
 
@@ -167,7 +167,7 @@ Surface-anchor rebind updates owner-side frames only. It does not move glasses, 
 
 For a one-owner `RIGID_FOLLOW`, preserve the trusted baseline owner-to-subject rigid frame and recompute the subject target from the current owner world frame. For a one-owner `SURFACE_OFFSET`, consume the current surface-anchor frame and the subject-local contact frame so the contact, orientation, and signed offset align with the owner surface.
 
-Use `createAttachmentFollowState` to bind the canonical relation state and `propagateAttachmentFollow` to emit deterministic target frames. Every required owner world frame must be explicit. This layer is intentionally one-step: do not recursively propagate an owner produced by the same report, and do not approximate `MULTI_ANCHOR` through a single owner. Graph ordering and simultaneous constraints are separate later stages.
+Use `createAttachmentFollowState` to bind the canonical relation state and `propagateAttachmentFollow` to emit deterministic target frames. Every required owner world frame must be explicit. This layer is intentionally one-step: do not recursively propagate an owner produced by the same report, and do not approximate `MULTI_ANCHOR` through a single owner. Graph ordering and simultaneous constraints are separate assembly operations.
 
 The report is a target calculation, not permission to mutate a mesh or close assembly. Realization must still pass through the canonical pose/assembly boundary and later structural validation. See `references/contracts/attachment-follow.md`.
 

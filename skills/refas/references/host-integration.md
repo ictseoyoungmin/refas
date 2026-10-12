@@ -60,11 +60,11 @@ Certification status is one of `uncertified`, `ready`, or `certified`. The hando
 
 Use `assertArtifactHandoffCurrent()` immediately before transfer or downstream consumption when stale handoffs must be rejected.
 
-### Strict source-bound final handoff (v1.2.1 QA-01b candidate)
+### Strict source-bound final handoff
 
 The ordinary `getArtifactHandoff()` / `refas-host handoff --root DIR` descriptor is a **draft/transfer surface**, not a source-bound release claim, even when it projects a previously accepted certificate. Final source-bound delivery must use `getSourceBoundReleaseHandoff(root)` or `refas-host handoff --root DIR --profile source-bound-object`. This trusted path requires existing whole-object certification, re-runs `verifySourceBoundObject` against the exact current GLB, rejects `NOT_RUN`/`INSUFFICIENT`/failed mandatory checks, and rechecks the handoff before returning a digest-bound release receipt. Consumers must call `assertSourceBoundReleaseHandoffCurrent` to replay currentness; a JSON digest alone is not an independent signature.
 
-**Known incompleteness:** QA-01a is still conservative about contact/support until QA-02 independently replays the typed plan, contact graph and candidate GLB. The strict final path therefore blocks even certified fixtures without those proofs. This is a fail-closed development gate, not a new certification engine or a claim that 1.2.1 is release-ready. Direct external file copying is outside this API and cannot make a trustworthy RefAs release assertion. Legacy draft handoff remains available for working assets.
+**Current evidence boundary:** The contact/support component of trusted QA replays the current typed plan, contact graph and actual candidate GLB geometry. It returns `PASS` only when those particular obligations are satisfied, and otherwise returns the applicable `NOT_RUN`, `INSUFFICIENT`, or `FAIL`. This does **not** establish independent original-photo part/role meaning. The source-semantic replay is independently fail-closed, so a geometrically valid or generically certified asset may still be `BLOCKED` for final source-bound delivery. The software's release version does not imply that an arbitrary reconstructed asset has passed this gate. Direct external file copying cannot create a trustworthy RefAs release assertion; ordinary draft handoff remains available for working assets.
 
 ### External worker protocol
 

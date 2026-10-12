@@ -1,11 +1,11 @@
 ---
 name: refas
-description: Reconstruct a reference image as a traceable, editable, and visually certified 3D asset. Use for image-to-3D work that requires whole-to-part observation, explicit uncertainty, projection-aware modeling, immutable child assembly, multiview rendering, objective visual critique, or safe checkpoint and rollback routing; especially when a quick approximation is not sufficient.
+description: Build and revise traceable, editable 3D assets from visual references using evidence-bound observation, whole-to-part modeling, real multiview renders, and local repair. Use for reference-driven 3D construction and assembly when shape fidelity matters; distinguish rendered/model validity from independently proven source resemblance.
 ---
 
 # RefAs — Reference Asset Foundry
 
-RefAs turns visual evidence into a 3D asset without pretending that a single image contains facts it cannot reveal. It binds every claim to source evidence, separates observation from inference, reconstructs from whole object to surface feature, and keeps every risky edit recoverable.
+RefAs helps an agent observe reference images, construct **actual editable 3D geometry**, inspect real renders, and revise local parts while retaining trustworthy checkpoints. It does not pretend that a single image contains facts it cannot reveal: keep observations separate from inference and engineering, and never elevate successful mesh/CI checks into unearned source resemblance approval.
 
 ## Required reading
 
@@ -341,4 +341,4 @@ node scripts/refas.mjs certify --root <project-dir>
 
 The certification checkpoint must contain exactly the canonical closure gates and cite the visual-review artifact for every visual gate. A self-generated fixture may exercise runtime contracts, but it cannot receive a visual-fidelity certificate. A `fail` or `insufficient` verdict, any unresolved major/critical/blocking finding, or an integrity-only renderer claiming appearance causes certification to refuse closure. Run `resume` to receive `REQUEST_VISUAL_REVIEW` and the exact refusal reasons.
 
-Closure is permission to publish the current evidence-bound state, not proof of unseen geometry.
+A generic whole-object certificate records only the claims supported by its exact current evidence. It is not a substitute for strict source-bound final handoff, which remains blocked when independent original-photo semantics or other mandatory evidence is insufficient. Neither approval proves unseen geometry.

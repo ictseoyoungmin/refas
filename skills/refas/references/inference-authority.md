@@ -81,7 +81,7 @@ Use `refas.prior-quarantine/v1` for any external or generated prior that can inf
 
 Mesh priors use exact raw/sanitized byte bindings. Runtime checks that morph targets and materials are absent from the sanitized seed and that its POSITION buffers differ from the raw prior. This keeps connectivity reusable without silently importing prior proportions.
 
-Quarantined paths may support spatial hypotheses or candidate seeding. They are prohibited as source evidence for VC02, R03, and whole-object certification. Project audit replays the quarantine lineage, so changing labels or re-signing downstream JSON cannot promote a prior into source truth.
+Quarantined paths may support spatial hypotheses or candidate seeding. They are prohibited as source evidence for source-bound spatial-role expectations, perceptual signatures, or whole-object certification. Project audit replays the quarantine lineage, so changing labels or re-signing downstream JSON cannot promote a prior into source truth.
 
 ## Certification does not promote authority
 

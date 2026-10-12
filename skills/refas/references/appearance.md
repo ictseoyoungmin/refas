@@ -52,7 +52,7 @@ A normal appearance `refas.pbr-render-report/v1` declares `base-color-texture` a
 
 ## Neutral-clay boundary
 
-R04 neutral-clay rendering is upstream shape evidence, not appearance evidence. `render-pbr --neutral-clay` deliberately replaces the candidate material response with the canonical runtime-owned neutral material and fixed review lighting so shape identity can be judged without finish polish.
+Neutral-clay early-resemblance rendering is upstream shape evidence, not appearance evidence. `render-pbr --neutral-clay` deliberately replaces the candidate material response with the canonical runtime-owned neutral material and fixed review lighting so shape identity can be judged without finish polish.
 
 A neutral-clay `refas.pbr-render-report/v1` therefore declares `claimScope: shape-resemblance-only`. Never use it to satisfy `appearance-plausibility`, material feature coverage, or final visual fidelity. Appearance still requires a normal `claimScope: visual-fidelity` PBR report that preserves the candidate's actual materials.
 

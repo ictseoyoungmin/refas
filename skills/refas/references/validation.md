@@ -83,13 +83,13 @@ Use `refas.perceptual-signature-evidence/v1` to compare the exact current candid
 
 Each observation records what the source signature says, what the current candidate/render shows, the comparison conclusion, evidence refs, and one of `match`, `mismatch`, or `insufficient`. A mismatch may emit an existing typed finding when ownership is unambiguous. An insufficient observation does not invent a rollback owner.
 
-This artifact is resemblance evidence, not a visual gate. A `match` cannot set final visual PASS or certify the asset. R03 does not introduce a universal weighted similarity score. A later early-resemblance barrier may consume these source/candidate observations, but it must preserve source identity and typed-finding authority rather than collapse them into one opaque number.
+This artifact is resemblance evidence, not a visual gate. A `match` cannot set final visual PASS or certify the asset. The current early-resemblance barrier consumes source/candidate observations bound to the exact registered neutral-clay render. It preserves source identity and typed-finding authority instead of collapsing them into a universal weighted similarity score.
 
-Numeric `RESEMBLANCE_SIGNAL` authority is fail-closed unless current perceptual-signature evidence is explicitly bound to the same current source and candidate. In R03 such a signal is diagnostic-only: it cannot itself be used as resemblance evidence, become an optimization objective, rank candidates, pass a gate, or certify closure. The structured perceptual-signature observations are the resemblance evidence. Single-view IoU remains forbidden; multiview IoU remains correspondence/diagnostic-only.
+Numeric `RESEMBLANCE_SIGNAL` authority is fail-closed unless current perceptual-signature evidence is explicitly bound to the same current source and candidate. Such a signal is diagnostic-only: it cannot itself be used as resemblance evidence, become an optimization objective, rank candidates, pass a gate, or certify closure. The structured perceptual-signature observations are the resemblance evidence. Single-view IoU remains forbidden; multiview IoU remains correspondence/diagnostic-only.
 
 ## Early resemblance / neutral-clay barrier
 
-Before downstream surface-topology, assembly, or appearance detail on a real source, run the early resemblance barrier. Render the exact current candidate with `refas render-pbr --neutral-clay`, then compare that neutral presentation against the R03 source-bound perceptual signatures.
+Before downstream surface-topology, assembly, or appearance detail on a real source, run the early resemblance barrier. Render the exact current candidate with `refas render-pbr --neutral-clay`, then compare that neutral presentation against the source-bound perceptual signatures.
 
 The neutral-clay renderer replaces candidate beauty/albedo material response with the runtime-owned `refas-neutral-clay-v1` preset and records its exact preset digest, renderer profile, fixed lighting-rig digest, canonical frame digest, candidate SHA-256, and all eight standard output digests. A neutral-clay report has `claimScope: shape-resemblance-only`; it is not appearance evidence and cannot support `appearance-plausibility`.
 
@@ -99,7 +99,7 @@ Create `refas.early-resemblance-barrier/v1` from the current perceptual-signatur
 - `REWORK`: at least one macro or identity signature is `mismatch`;
 - `HOLD`: no required mismatch exists, but at least one macro or identity signature is `insufficient`.
 
-Every macro or identity observation must cite at least one exact output path from the bound neutral-clay render report. A generic review board, native beauty render, or unattached file is not sufficient evidence for a required signature. All R03 source/signature/observation evidence refs used by a production barrier must remain bound in the current checkpoint lineage.
+Every macro or identity observation must cite at least one exact output path from the bound neutral-clay render report. A generic review board, native beauty render, or unattached file is not sufficient evidence for a required signature. All source/signature/observation evidence refs used by a production barrier must remain bound in the current checkpoint lineage.
 
 Detail signatures are recorded but do not block this early admission. `PROCEED` authorizes only downstream detail work. It does not set a visual-review PASS, certify the object, or imply topology, assembly, or appearance closure. `REWORK` preserves R03 typed findings and their owners. `HOLD` does not invent an owner.
 
@@ -111,11 +111,11 @@ Single-view IoU remains forbidden. Multiview IoU remains correspondence/diagnost
 
 ## Final resemblance closure
 
-R04 is an early admission barrier, not final resemblance authority. Before a real-source whole-object certification checkpoint, rerun the R03 perceptual-signature contract against the **exact final candidate bytes** and render that same final candidate through the canonical neutral-clay presentation.
+R04 is an early admission barrier, not final resemblance authority. Before a real-source whole-object certification checkpoint, rerun the source-bound perceptual-signature contract against the **exact final candidate bytes** and render that same final candidate through the canonical neutral-clay presentation.
 
 Create one `refas.final-resemblance-closure/v1` artifact. It must bind the current primary source digest, current visual-hierarchy digest, exact final candidate SHA-256, one exact final `refas.perceptual-signature-evidence/v1`, and one exact canonical neutral-clay `refas.pbr-render-report/v1`. Every macro and identity signature must be `match`; `mismatch` or `insufficient` refuses final form closure. Detail signatures remain disclosed but do not block form identity.
 
-Every required signature must cite at least one exact final neutral-clay frame. The certification checkpoint preserves the closure, the exact final signature-evidence artifact, the neutral-clay report, and every report output byte. Runtime audit/certification revalidates those bytes against the current source, hierarchy, and authoritative candidate lineage. An R04-era early barrier for candidate A cannot authorize a different downstream candidate B.
+Every required signature must cite at least one exact final neutral-clay frame. The certification checkpoint preserves the closure, the exact final signature-evidence artifact, the neutral-clay report, and every report output byte. Runtime audit/certification revalidates those bytes against the current source, hierarchy, and authoritative candidate lineage. An earlier neutral-clay admission barrier for candidate A cannot authorize a different downstream candidate B.
 
 This closure still does not replace the final independent visual review, registered comparison, relational closure, or appearance evidence. It only closes the source-specific resemblance question for the final candidate.
 

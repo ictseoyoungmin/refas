@@ -12,7 +12,7 @@ Logical fusion provides the middle state:
 semantic parts
    ↓ FUSED relations
 logical fusion group
-   ↓ later finalization only
+   ↓ separately authorized finalization only
 physical mesh fusion / weld / cleanup
 ```
 
@@ -49,7 +49,7 @@ invalidated logical group = head-shell + face + nose + mouth + ears
 rebuild logical body realization
 ```
 
-This invalidation does not yet move `glasses`. Non-fused dependents are handled by the later attachment-propagation layer, which can recompute surface or multi-anchor constraints after the changed fused body is rebuilt.
+This logical invalidation alone does not move `glasses`. The separate attachment-propagation operation recomputes surface or multi-anchor constraints after the changed fused body is rebuilt.
 
 The invalidation record explicitly states that reopening requires semantic pre-fusion state. A physically fused mesh must not become the default reconstruction source after a semantic member reopens.
 
@@ -57,7 +57,7 @@ The invalidation record explicitly states that reopening requires semantic pre-f
 
 Logical fusion cannot perform boolean union, vertex welding, internal-face removal, or optimization. Those are controlled finalization operations under the canonical edit boundary and occur only after the semantic group is trustworthy enough to close.
 
-The later physical-fusion stage must preserve a mapping from semantic members to the final fused realization and must retain an exact pre-fusion checkpoint for reopen.
+When used, the physical-fusion operation must preserve a mapping from semantic members to the final fused realization and must retain an exact pre-fusion checkpoint for reopen.
 
 ## Public artifacts
 
