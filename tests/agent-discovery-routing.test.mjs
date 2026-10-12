@@ -59,7 +59,7 @@ test('installed instruction router links actual source-bound agent commands with
 });
 
 test('early modeling demo executes from installed skill without any source-fidelity claim',()=>{
- const r=spawnSync(process.execPath,[path.join(root,'assets/examples/subdivision-cage-demo.mjs')],{encoding:'utf8'});
+ const r=spawnSync(process.execPath,[path.join(root,'scripts/subdivision-cage-demo.mjs')],{encoding:'utf8'});
  assert.equal(r.status,0,r.stderr||r.stdout);
  const result=JSON.parse(r.stdout);
  assert.equal(result.demo,'non-authoritative-geometry');
