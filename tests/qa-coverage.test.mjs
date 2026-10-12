@@ -27,6 +27,9 @@ test('valid GLB with a fresh uncheckpointed project fails source-bound QA covera
  assert.equal(result.checks.find(x=>x.id==='source-provenance').status,'NOT_RUN');
  assert.equal(result.checks.find(x=>x.id==='candidate-lineage').status,'NOT_RUN');
  assert.equal(result.checks.find(x=>x.id==='realized-contact-support').status,'NOT_RUN');
+ assert.equal(result.checks.find(x=>x.id==='source-semantic-current-glb').status,'NOT_RUN');
+ assert.ok(result.decision.blockingCheckIds.includes('source-semantic-current-glb'));
+ assert.equal(result.checks.find(x=>x.id==='relational-evidence').status,'NOT_RUN');
  assert.equal(result.checks.find(x=>x.id==='independent-visual-review').status,'NOT_RUN');
  assert.ok(result.decision.blockingCheckIds.includes('whole-object-certification'));
 });
