@@ -151,6 +151,7 @@ async function makeRealSourceProject(t, verdictStatus, {
   withSourceMacroSection = false,
   withSourceProfile = false,
   withSourceRoleRelations = false,
+  withSourceStructuralContact = false,
   withSourceOcclusion = false,
   diagonalMacroSection = false,
   tooNarrowMacroSection = false,
@@ -221,6 +222,20 @@ async function makeRealSourceProject(t, verdictStatus, {
         [[.44,.44],[.56,.44],[.56,.56],[.44,.56]],
       evidenceRefs: [source.path],
     }],
+    ...(withSourceStructuralContact ? {segments:[
+      {id:'observed-strut',label:'primary source strut',importance:'detail',
+        polygon:[[.445,.445],[.555,.445],[.555,.555],[.445,.555]],
+        anchorIds:['observed-head'],visibility:'visible',separation:'explicit',
+        evidenceRefs:[source.path]},
+      {id:'observed-mount',label:'primary source support mount',importance:'detail',
+        polygon:[[.445,.445],[.555,.445],[.555,.555],[.445,.555]],
+        anchorIds:['observed-head'],visibility:'visible',separation:'explicit',
+        evidenceRefs:[source.path]},
+    ],interfaces:[{id:'visible-contact-boundary',importance:'macro',
+      subjectSegmentId:'observed-strut',objectSegmentId:'observed-mount',
+      kind:'contact-boundary',separation:'explicit',
+      boundary:[[.445,.47],[.445,.53]],visibility:'visible',
+      evidenceRefs:[source.path]}]} : {}),
     ...(withSourceOcclusion ? {segments:[
       {id:'observed-front-part',label:'source foreground',importance:'macro',
         polygon:[[.445,.445],[.555,.445],[.555,.555],[.445,.555]],
@@ -354,7 +369,10 @@ async function makeRealSourceProject(t, verdictStatus, {
       },...(withSourceRoleRelations?[{referenceId:'source-rear-role-center',
         nodeId:'whole-body',localPoint:[.68,0,0]}]:[]),
         ...(withSourceProfile?[{referenceId:'observed-nose',nodeId:'whole-body',localPoint:[.5,0,0]}]:[])],
-      segmentBindings:withSourceRoleRelations
+      segmentBindings:withSourceStructuralContact
+        ? [{referenceId:'observed-strut',nodeIds:['whole-body']},
+           {referenceId:'observed-mount',nodeIds:['whole-body']}]
+        : withSourceRoleRelations
         ? [{referenceId:'source-front-basket',nodeIds:['whole-body']},
            {referenceId:'source-rear-basket',nodeIds:['whole-body']}]
         : withSourceOcclusion
@@ -566,6 +584,21 @@ test('S04b a valid accepted later source-bound GLB does not force rollback solel
   const reply=await reopenFromTrustedSourceAdmission(root,{expectedHeadId:correct.surface.id});
   assert.equal(reply.status,'NO_DETECTED_CONTRADICTION');
   assert.deepEqual(await loadProject(root),original);
+});
+
+test('QA-03b1 Host cannot admit structurally distinct source interface when two roles use one physical GLB mesh',async t=>{
+  const {root,surfaceRef,shapeCheckpoint}=await makeRealSourceProject(t,'match',{
+    withSourceStructuralContact:true,
+  });
+  const before=await loadProject(root);
+  await assert.rejects(
+    ()=>commitLocal(root,'surface-topology',[surfaceRef]),
+    /source structural interface INSUFFICIENT: visible-contact-boundary: structural source parts share GLB mesh ownership/u,
+  );
+  const after=await loadProject(root);
+  assert.equal(after.head,shapeCheckpoint.id);
+  assert.deepEqual(after.checkpointIds,before.checkpointIds);
+  assert.equal((await auditProject(root)).valid,true);
 });
 
 test('QA-03a nonfixture Host cannot accept two source-observed basket roles on one actual mesh node',async t=>{
