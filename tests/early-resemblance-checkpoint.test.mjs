@@ -447,6 +447,107 @@ async function makeRealSourceProject(t, verdictStatus, {
   return {root, source, hierarchy, barrier, volumeBarrier, classification, spatialEvidence, surfaceRef, candidateRef, shapeCheckpoint};
 }
 
+// S04b: a shape-stage replay may remain valid while the accepted later
+// candidate is physically wrong. Use a current *GLB bytes* mutation rather
+// than node-name-only and preserve immutable source/photo/camera annotations.
+async function commitDownstreamGlb(root, initial, surfaceRef, shift, suffix){
+  const bytes=partsToGlb({
+    assetId:'late-replay-'+suffix,
+    materials:{fixture:{baseColor:[.5,.5,.5,1],metallic:0,roughness:.5}},
+    parts:[{id:'whole-body',scopeId:'whole',role:'whole-body',
+      materialId:'fixture',mesh:vc04BoxMesh(1),translation:[shift,0,0]}],
+  });
+  const candidate=await writeRef(root,'model/late-'+suffix+'.glb',bytes,'glb');
+  const transition=createCandidateTransition({
+    inputAssetSha256:initial.assetSha256,outputAssetSha256:candidate.sha256,
+    inputCandidateCheckpointId:initial.checkpointId,
+    parentCheckpointId:initial.checkpointId,capability:'surface-topology',
+    scopeId:'whole',evidenceRefs:[candidate.path],
+  });
+  const tr=await writeRef(root,'model/late-'+suffix+'-transition.json',
+    Buffer.from(JSON.stringify(transition)+'\n'),'candidate-transition');
+  const surface=await commitLocal(root,'surface-topology',[surfaceRef,candidate,tr]);
+  return {surface,candidate};
+}
+
+test('S04b real nonfixture later GLB moved away from source reopens shape and revokes accepted detail',async t=>{
+  const {root,surfaceRef,shapeCheckpoint,candidateRef}=await makeRealSourceProject(t,'match',{
+    withSourceMacroSection:true,
+  });
+  const initial=await resolveAuthoritativeCandidateLineage(root);
+  assert.equal(initial.finalCandidate.assetSha256,candidateRef.sha256);
+  const {surface,candidate}=await commitDownstreamGlb(root,initial.finalCandidate,surfaceRef,2,'wrong-mass');
+  assert.notEqual(candidate.sha256,candidateRef.sha256);
+  assert.equal((await loadProject(root)).head,surface.id,'late physically wrong GLB was accepted by prior transition');
+  const before=await loadProject(root);
+  const recovered=await reopenFromTrustedSourceAdmission(root,{expectedHeadId:surface.id});
+  assert.equal(recovered.status,'REOPENED');
+  assert.equal(recovered.ownerCapability,'shape-reconstruction');
+  assert.equal(recovered.decision.route.finding.category,'mass-proportion-mismatch');
+  assert.equal(recovered.decision.route.rollbackCheckpointId,shapeCheckpoint.parentId);
+  const state=await loadProject(root);
+  assert.equal(state.head,shapeCheckpoint.parentId);
+  assert.equal(state.reopenedCapability,'shape-reconstruction');
+  assert.ok(state.invalidatedCapabilities.includes('surface-topology'));
+  assert.ok(state.invalidatedCapabilities.includes('assembly'));
+  assert.ok(state.invalidatedCapabilities.includes('appearance'));
+  assert.ok(state.invalidatedCapabilities.includes('whole-object-certification'));
+  assert.equal(state.certification,null);
+  assert.deepEqual(state.checkpointIds,before.checkpointIds,'historical broken output remains audit history only');
+  assert.equal((await resumeProject(root)).activeWork.capability,'shape-reconstruction');
+  assert.equal((await auditProject(root)).valid,true);
+
+  // Recovery is not perpetual veto: replay a valid original source-bound
+  // shape under the current post-rollback parent, then issue a *new* corrected
+  // candidate with actual GLB bytes and one typed source-bound transition.
+  const correctedShape=await commitLocal(root,'shape-reconstruction',shapeCheckpoint.artifactRefs);
+  assert.equal(correctedShape.capability,'shape-reconstruction');
+  const reopenedAuthority=await resolveAuthoritativeCandidateLineage(root);
+  assert.equal(reopenedAuthority.finalCandidate.assetSha256,candidateRef.sha256);
+  const corrected=await commitDownstreamGlb(root,reopenedAuthority.finalCandidate,surfaceRef,.01,'corrected-mass');
+  assert.equal((await loadProject(root)).head,corrected.surface.id);
+  const reread=await reopenFromTrustedSourceAdmission(root,{expectedHeadId:corrected.surface.id});
+  assert.equal(reread.status,'NO_DETECTED_CONTRADICTION');
+  assert.equal(reread.cannotAuthorizeReferenceFidelity,true);
+  assert.equal((await auditProject(root)).valid,true);
+  assert.equal((await resolveAuthoritativeCandidateLineage(root)).finalCandidate.assetSha256,corrected.candidate.sha256);
+});
+
+test('S04b after accepted surface, absent current GLB geometry is review-only and cannot invent mismatch',async t=>{
+  const {root,surfaceRef}=await makeRealSourceProject(t,'match',{
+    withSourceMacroSection:true,
+  });
+  const initial=await resolveAuthoritativeCandidateLineage(root);
+  const bytes=Buffer.from('not a GLB (late candidate bypass)');
+  const invalid=await writeRef(root,'model/late-non-glb.glb',bytes,'glb');
+  const transition=createCandidateTransition({
+    inputAssetSha256:initial.finalCandidate.assetSha256,
+    outputAssetSha256:invalid.sha256,
+    inputCandidateCheckpointId:initial.finalCandidate.checkpointId,
+    parentCheckpointId:initial.finalCandidate.checkpointId,
+    capability:'surface-topology',scopeId:'whole',
+    evidenceRefs:[invalid.path],
+  });
+  const tr=await writeRef(root,'model/late-non-glb-transition.json',
+    Buffer.from(JSON.stringify(transition)+'\n'),'candidate-transition');
+  const accepted=await commitLocal(root,'surface-topology',[surfaceRef,invalid,tr]);
+  const decision=await reopenFromTrustedSourceAdmission(root,{expectedHeadId:accepted.id});
+  assert.equal(decision.status,'REVIEW_REQUIRED');
+  assert.equal(decision.decision.route.action,'REQUEST_REVIEW');
+  assert.equal((await loadProject(root)).head,accepted.id);
+  assert.equal((await loadProject(root)).status,'review-required');
+});
+
+test('S04b a valid accepted later source-bound GLB does not force rollback solely for digest difference',async t=>{
+  const {root,surfaceRef}=await makeRealSourceProject(t,'match',{withSourceMacroSection:true});
+  const initial=await resolveAuthoritativeCandidateLineage(root);
+  const correct=await commitDownstreamGlb(root,initial.finalCandidate,surfaceRef,.01,'valid-normal');
+  const original=await loadProject(root);
+  const reply=await reopenFromTrustedSourceAdmission(root,{expectedHeadId:correct.surface.id});
+  assert.equal(reply.status,'NO_DETECTED_CONTRADICTION');
+  assert.deepEqual(await loadProject(root),original);
+});
+
 test('S04a trusted replay reopens shape from physically false source macro axis rather than accept detail',async t=>{
   const {root,shapeCheckpoint}=await makeRealSourceProject(t,'match',{
     withSourceMacroSection:true,diagonalMacroSection:true,
