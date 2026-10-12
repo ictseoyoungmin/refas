@@ -52,7 +52,7 @@ For an **actual executable geometry kernel example** from the installed
 skill root, run:
 
 ```bash
-node assets/examples/subdivision-cage-demo.mjs
+node scripts/subdivision-cage-demo.mjs
 ```
 
 This self-contained closed-cage prototype executes the real public
