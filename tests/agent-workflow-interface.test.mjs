@@ -7,7 +7,7 @@ import {test} from 'node:test';
 import {
   initProject,loadProject,createCylinder,partsToGlb,
   AGENT_NEXT_SCHEMA,AGENT_DIAGNOSIS_SCHEMA,
-  nextAgentWork,diagnoseAgentWork,summarizeCoverage,
+  nextAgentWork,diagnoseAgentWork,summarizeCoverage,AGENT_NEXT_ACTION_PLANS,
 } from '../skills/refas/scripts/lib/index.mjs';
 
 const CLI=path.resolve('skills/refas/scripts/refas.mjs');
@@ -87,4 +87,35 @@ test('agent facade rejects forged coverage and invalid combinations',async t=>{
  const other=run('validate','--root',root,'--asset','other','--profile','generic');
  assert.equal(other.status,1);
  assert.match(other.stderr,/unknown validation profile/);
+});
+
+test('every canonical resume action has an honest agent work descriptor',()=>{
+ const expected=[
+  'BIND_PRIMARY_SOURCE','CHECKPOINT_SOURCE_INTAKE','CREATE_CANDIDATE_CHECKPOINT',
+  'FINISH_EDIT','BEGIN_REPAIR_EDIT','REQUEST_REVIEW','GATHER_RESEMBLANCE_EVIDENCE',
+  'REQUEST_RESEMBLANCE_REVIEW','REPORT_RESEMBLANCE_FINDINGS','GATHER_SPATIAL_EVIDENCE',
+  'REWORK_SHAPE_VOLUME','REQUEST_VISUAL_REVIEW',
+  'REVERIFY_FINAL_SPATIAL_CONTINUITY','ADVANCE_CAPABILITY','CERTIFY','DONE',
+ ];
+ assert.deepEqual(Object.keys(AGENT_NEXT_ACTION_PLANS).sort(),expected.sort());
+ for(const action of expected){
+  const p=AGENT_NEXT_ACTION_PLANS[action];
+  assert.ok(['command','construction','review','terminal'].includes(p.kind),action);
+  assert.ok(p.instructionNode && p.nextStep,action);
+  assert.ok(Array.isArray(p.requiredEvidence),action);
+ }
+ assert.equal(AGENT_NEXT_ACTION_PLANS.DONE.kind,'terminal');
+ assert.equal(AGENT_NEXT_ACTION_PLANS.CERTIFY.nextStep,'EVALUATE_GENERIC_CERTIFICATE');
+ assert.equal(AGENT_NEXT_ACTION_PLANS.REWORK_SHAPE_VOLUME.kind,'construction');
+ assert.equal(AGENT_NEXT_ACTION_PLANS.REQUEST_VISUAL_REVIEW.kind,'review');
+});
+
+test('agent next identifies genuinely actionable commands without fabricating terminal/review commands',async t=>{
+ const root=await project(t),before=await loadProject(root);
+ const result=await nextAgentWork(root);
+ assert.equal(result.workPlan.kind,'command');
+ assert.equal(result.workPlan.nextStep,'BIND_SOURCE');
+ assert.equal(result.invocation.command,'source-manifest');
+ assert.equal(result.finalSourceBoundAuthorization,'NOT_EVALUATED');
+ assert.deepEqual(await loadProject(root),before);
 });
