@@ -33,7 +33,7 @@ Newly persisted checkpoint gates are `refas.checkpoint-gate-verdict/v1` records.
 
 ### Legacy `refas.checkpoint/v1` read compatibility
 
-Pre-AD04 checkpoints may contain legacy gate records shaped only as `{id,status,evidenceRefs}`. They remain readable under the same checkpoint v1 container. RefAs does **not** trust the stored legacy `status` as authority: on audit, prerequisite admission, or downstream gate evaluation, the current runtime re-evaluates the legacy gate against the bound source, stored artifacts, trustworthy lineage, visual review, or project-integrity policy as applicable. A legacy self-PASS whose evidence no longer satisfies the runtime policy fails closed. New checkpoint writes never emit the legacy gate shape.
+Older checkpoints may contain legacy gate records shaped only as `{id,status,evidenceRefs}`. They remain readable under the same checkpoint v1 container. RefAs does **not** trust the stored legacy `status` as authority: on audit, prerequisite admission, or downstream gate evaluation, the current runtime re-evaluates the legacy gate against the bound source, stored artifacts, trustworthy lineage, visual review, or project-integrity policy as applicable. A legacy self-PASS whose evidence no longer satisfies the runtime policy fails closed. New checkpoint writes never emit the legacy gate shape.
 
 ## When to checkpoint
 
