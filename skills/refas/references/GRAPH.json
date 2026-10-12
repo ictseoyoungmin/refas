@@ -1819,7 +1819,7 @@
             "outputSchema": null,
             "validator": null,
             "minimumInvocation": "references/construction.md",
-            "example": "assets/examples/subdivision-cage-demo.mjs",
+            "example": "assets/examples/subdivision-cage-demo.md",
             "usageReference": "references/construction.md",
             "invocation": {
               "schema": "refas.capability-invocation/v1",
