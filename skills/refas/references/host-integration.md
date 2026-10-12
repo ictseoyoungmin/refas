@@ -62,6 +62,14 @@ Use `assertArtifactHandoffCurrent()` immediately before transfer or downstream c
 
 ### Strict source-bound final handoff
 
+The instruction graph exposes **two discovery entries** for the same
+`refas-host handoff` CLI: `artifact-handoff` (default
+`--profile draft-transfer`) and `source-bound-final-handoff` (explicit
+`--profile source-bound-object`). This distinction is an existing
+runtime security boundary, **not** two newly created approvers.
+Never interpret a draft/transfer receipt as photo-fidelity authorization.
+
+
 The ordinary `getArtifactHandoff()` / `refas-host handoff --root DIR` descriptor is a **draft/transfer surface**, not a source-bound release claim, even when it projects a previously accepted certificate. Final source-bound delivery must use `getSourceBoundReleaseHandoff(root)` or `refas-host handoff --root DIR --profile source-bound-object`. This trusted path requires existing whole-object certification, re-runs `verifySourceBoundObject` against the exact current GLB, rejects `NOT_RUN`/`INSUFFICIENT`/failed mandatory checks, and rechecks the handoff before returning a digest-bound release receipt. Consumers must call `assertSourceBoundReleaseHandoffCurrent` to replay currentness; a JSON digest alone is not an independent signature.
 
 **Current evidence boundary:** The contact/support component of trusted QA replays the current typed plan, contact graph and actual candidate GLB geometry. It returns `PASS` only when those particular obligations are satisfied, and otherwise returns the applicable `NOT_RUN`, `INSUFFICIENT`, or `FAIL`. This does **not** establish independent original-photo part/role meaning. The source-semantic replay is independently fail-closed, so a geometrically valid or generically certified asset may still be `BLOCKED` for final source-bound delivery. The software's release version does not imply that an arbitrary reconstructed asset has passed this gate. Direct external file copying cannot create a trustworthy RefAs release assertion; ordinary draft handoff remains available for working assets.
