@@ -118,3 +118,78 @@ test('QA-01b source SHA drift and scope substitutions fail closed',()=>{
     shapeGlb,currentGlb:shapeGlb,sourceSha256,sourcePath,
   }),/original source SHA and scope/);
 });
+
+
+// QA-03c: all photo ROIs deliberately align with the physical original GLB.
+// Existing conservative source annotations alone remain non-authoritative.
+function alignedSource({rearVisibility='visible',rearCite=sourcePath}={}){
+ return createReferenceGeometry({scopeId:'whole',sourceSha256,
+  anchors:[
+   {id:'front-observed',semanticRole:'front-basket',importance:'identity',
+    xy:[.3,.5],visibility:'visible',evidenceRefs:[sourcePath]},
+   {id:'rear-observed',semanticRole:'rear-basket',importance:'identity',
+    xy:[.7,.5],visibility:rearVisibility,evidenceRefs:[rearCite]},
+  ],
+  segments:[
+   {id:'front-basket-source',label:'front-basket',importance:'identity',
+    polygon:rect(.3,.12,.08),anchorIds:['front-observed'],
+    visibility:'visible',separation:'explicit',evidenceRefs:[sourcePath]},
+   {id:'rear-basket-source',label:'rear-basket',importance:'identity',
+    polygon:rect(.7,.07,.04),anchorIds:['rear-observed'],
+    visibility:rearVisibility,separation:'explicit',evidenceRefs:[rearCite]},
+  ],
+  attestation:{attested:true,evidenceRefs:[sourcePath]},
+ });
+}
+function currentWithRear({present=true,renamed=false,substitute=false}={}){
+ const large=createSegmentPrism({start:[-.3,0,0],end:[.3,0,0],
+  width:.4,height:.4,upHint:[0,0,1]});
+ const small=createSegmentPrism({start:[-.15,0,0],end:[.15,0,0],
+  width:.2,height:.2,upHint:[0,0,1]});
+ return partsToGlb({
+  materials:{clay:{baseColor:[.8,.8,.8,1],metallic:0,roughness:1}},
+  parts:[
+   {id:'front-mesh',scopeId:'whole.front',materialId:'clay',
+    mesh:large,translation:[-.8,0,0]},
+   ...(present?[{id:renamed?'renamed-rear-physical':'rear-mesh',
+    scopeId:'whole.rear',materialId:'clay',mesh:small,translation:[.8,0,0]}]:[]),
+   ...(substitute?[{id:'unrelated-center',scopeId:'whole.inferred',
+    materialId:'clay',mesh:small,translation:[0,0,0]}]:[]),
+  ],
+ });
+}
+test('QA-03c actually deleted visible rear basket on current GLB fails negative final source evidence',()=>{
+ const ref=alignedSource(),original=currentWithRear(),deleted=currentWithRear({present:false});
+ const r=replay({ref,old:original,current:deleted});
+ assert.equal(r.status,'FAIL',JSON.stringify(r));
+ assert.equal(r.results[0].id,'required-part-presence');
+ assert.equal(r.results[0].status,'REWORK');
+ assert.equal(r.results[0].sourceSemanticsIndependentlyVerified,false);
+ assert.equal(r.results[0].cannotAuthorizeReferenceFidelity,true);
+ assert.match(r.reason,/physically lost original-source visible identity region/);
+ const worker={id:'relational-evidence',owner:'spatial-hypotheses',
+   required:true,status:'PASS',reason:'signed worker passed',evidence:[]};
+ assert.equal(constrainSourceRelationalCoverage(worker,r).status,'FAIL');
+});
+test('QA-03c metadata-only physical node renaming without loss does not become definite FAIL',()=>{
+ const ref=alignedSource(),old=currentWithRear(),current=currentWithRear({renamed:true});
+ const result=replay({ref,old,current});
+ assert.equal(result.status,'INSUFFICIENT',JSON.stringify(result));
+ assert.equal(result.results[0].status,'NO_DETECTED_CONTRADICTION');
+ assert.equal(result.sourceSemanticsIndependentlyVerified,false);
+});
+test('QA-03c hidden or non-source-cited rear basket cannot be asserted absent',()=>{
+ const original=currentWithRear(),deleted=currentWithRear({present:false});
+ for(const ref of [alignedSource({rearVisibility:'inferred'}),
+                   alignedSource({rearCite:'renders/generated-hero.png'})]){
+  const result=replay({ref,old:original,current:deleted});
+  assert.equal(result.status,'INSUFFICIENT',JSON.stringify(result));
+  assert.equal(result.results[0].status,'NO_DETECTED_CONTRADICTION');
+ }
+});
+test('QA-03c unrelated physical subpart does not replace required rear basket ROI',()=>{
+ const ref=alignedSource(),original=currentWithRear();
+ const result=replay({ref,old:original,current:currentWithRear({present:false,substitute:true})});
+ assert.equal(result.status,'FAIL');
+ assert.equal(result.results[0].status,'REWORK');
+});

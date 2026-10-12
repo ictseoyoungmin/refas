@@ -34,6 +34,7 @@ import {screenSourceMacroPartOrientation} from './source-macro-orientation-scree
 import {screenSourceProfileVector} from './source-profile-vector-screen.mjs';
 import {screenSourceRealizedOcclusion} from './source-occlusion-screen.mjs';
 import {screenSourceNegativeSpaces} from './source-negative-space-screen.mjs';
+import {screenLostSourceVisibleParts} from './source-visible-part-loss-screen.mjs';
 import {screenSourcePartRoleRelations} from './source-role-relations-screen.mjs';
 import {screenSourcePhysicalInterfaceGaps} from './source-interface-gap-screen.mjs';
 import {inspectSourcePixelFrameBytes, MAX_SOURCE_FRAME_BYTES} from './source-pixel-frame.mjs';
@@ -2940,6 +2941,15 @@ async function ensureCurrentCandidateMatchesSource(root, state, lineage, shapeCh
       evidenceRefs:[state.source.path,current.path],
     });
   }catch(error){
+    const loss=screenLostSourceVisibleParts({
+      referenceGeometry:geometry,shapeProjection:frozen,
+      shapeGlb:await fs.readFile(objectPath(root,original.assetSha256)),
+      currentGlb:currentBytes,sourcePath:state.source.path,
+    });
+    if(loss.status==='REWORK'){
+      throw new Error('late source candidate REWORK: original-source visible identity part lost physical current GLB occupancy: '+
+        loss.findings.filter(x=>x.status==='REWORK').map(x=>x.id).join(', '));
+    }
     throw new Error('late source candidate REVIEW_REQUIRED: cannot independently project current GLB with original observations: '+error.message);
   }
   const blockers=findingsFromRealizedProjection(fresh).filter(x=>x.severity==='blocking');
