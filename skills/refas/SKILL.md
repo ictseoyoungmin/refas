@@ -93,6 +93,12 @@ Use `node scripts/refas.mjs describe node workflow`, `describe node
 failure-routing`, or `describe node validation` to inspect the public
 command contract without guessing the owning module.
 
+A returned `workPlan` can be `command`, `construction`, `review`, or
+`terminal`. Execute an `invocation` only when supplied; other actions
+require evidence-guided modeling/review through their `instructionNode`.
+`DONE` means the existing generic work is closed, **not** that a new
+strict source-bound handoff was approved.
+
 The `next` result gives the responsible capability and `refas describe capability <capability>` discovery pointer. `diagnose` reports existing checks, owners, supporting evidence and follow-up without mutating the project or inventing a repair category. `validate` is canonical source-bound QA, with exit 2 for a blocked result and exit 1 on invalid invocation. A valid GLB or an ordinary certificate is never proof of reference fidelity. Keep material creation, geometry edits and headless view inspection as the core workflow; do not turn the Foundry into a validator-only task.
 
 ## Reconstruction loop
