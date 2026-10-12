@@ -2,13 +2,13 @@
 
 RefAs records why one semantic part should follow, fuse with, remain offset from, articulate relative to, or stay independent of another part before it attempts geometric propagation or contact validation.
 
-Attachment semantics are canonical construction state. They do not move geometry by themselves and they do not authorize closure. Later propagation and realized-contact stages consume these relations.
+Attachment semantics are canonical construction state. They do not move geometry by themselves and they do not authorize closure. Separate propagation and realized-contact operations consume these relations.
 
 ## Modes
 
-| Mode | Meaning | Owner count | Solver later? |
+| Mode | Meaning | Owner count | Separate solve needed? |
 |---|---|---:|---:|
-| `FUSED` | subject belongs to the same logical body as its owner and will participate in a later fusion bake | 1 | no for declaration; fusion logic follows |
+| `FUSED` | subject belongs to the same logical body as its owner and may participate in a separately authorized fusion bake | 1 | no for declaration; fusion logic follows |
 | `RIGID_FOLLOW` | subject keeps a fixed owner-local transform | 1 | no |
 | `SURFACE_OFFSET` | subject follows an owner surface frame while preserving an offset | 1 | yes |
 | `MULTI_ANCHOR` | subject satisfies anchors on two or more owners | 2+ | yes |
@@ -20,7 +20,7 @@ Every declared entity must have exactly one primary semantic relation, including
 
 ## Owner and dependent direction
 
-Relations are directed from owner to subject. Changing an owner may invalidate its dependents; the relation itself does not yet prescribe the propagation algorithm.
+Relations are directed from owner to subject. Changing an owner may invalidate its dependents; the relation does not prescribe the propagation algorithm.
 
 ```text
 owner head-shell
@@ -50,11 +50,11 @@ right-ear        FUSED → head-shell
 glasses          MULTI_ANCHOR → nose + left-ear + right-ear
 ```
 
-Lowering the nose must therefore invalidate the glasses relation in a later propagation stage instead of leaving the glasses at an unrelated world coordinate. This file only declares that semantic obligation. Surface anchor frames and the multi-anchor solver are separate later capabilities.
+Lowering the nose must therefore invalidate the glasses relation when the attachment propagation operation runs instead of leaving the glasses at an unrelated world coordinate. This file only declares that semantic obligation. Surface anchor frames and the multi-anchor solver are separate operations within assembly.
 
 ## Embedded roots and grounded support
 
-Two optional declarations reserve later structural-plausibility checks without changing attachment propagation itself.
+Two optional declarations support structural-plausibility checks without changing attachment propagation itself.
 
 An owner-dependent relation may add:
 
@@ -103,4 +103,4 @@ Every relation and entity carries evidence references so later repair can distin
 - ownership cycles;
 - missing evidence references.
 
-The contract intentionally does not yet solve transforms, fuse meshes, compute surface anchors, or validate mesh-to-mesh contact. Those operations depend on this semantic graph rather than replacing it.
+This semantic declaration does not solve transforms, fuse meshes, compute surface anchors, or validate mesh-to-mesh contact. Existing propagation, fusion, surface-anchor, and realized-contact operations consume this graph separately.
