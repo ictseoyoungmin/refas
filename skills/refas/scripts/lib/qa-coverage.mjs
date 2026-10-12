@@ -8,6 +8,7 @@ import {inspectSourcePixelFrameBytes} from './source-pixel-frame.mjs';
 import {loadProject, loadCheckpoint} from './checkpoint-store.mjs';
 import {replayRealizedContactEvidence} from './qa-contact-replay.mjs';
 import {assessCertification, assessClaimCertification, auditProject} from './physical-claim-certification-gate.mjs';
+import {replaySourceSemanticPhysicalEvidence} from './qa-source-semantic-replay.mjs';
 
 export const QA_COVERAGE_SCHEMA = 'refas.qa-coverage-report/v1';
 export const QA_COVERAGE_STATUSES = Object.freeze(['PASS', 'FAIL', 'NOT_RUN', 'INSUFFICIENT', 'NOT_APPLICABLE']);
@@ -290,6 +291,76 @@ async function contactReplayCheck(root, head, assetBytes, sourceSha256) {
     replay.details.length ? ': ' + replay.details.join('; ') : ''),bound);
 }
 
+// The checkpoint lineage and refs are reconstructed by the installed verifier,
+// not supplied from worker-authored QA report objects or final paper receipts.
+async function sourceSemanticReplayCheck(root, state, head, candidateBytes) {
+  if(!state?.source || !head) return check('source-semantic-current-glb','visual-observation',
+    'NOT_RUN','original source and current checkpoint lineage are required');
+  const accepted=new Set(state.checkpointIds??[]);
+  const visited=new Set();
+  const lineage=[];
+  let current=head;
+  try{
+    while(current){
+      if(visited.has(current.id)||!accepted.has(current.id) || lineage.length>128){
+        throw new Error('current source checkpoint ancestry is cyclic, incomplete or outside accepted project history');
+      }
+      visited.add(current.id);
+      lineage.push(current);
+      current=current.parentId?await loadCheckpoint(root,current.parentId):null;
+    }
+  }catch(error){
+    return check('source-semantic-current-glb','visual-observation','FAIL',
+      'cannot independently establish accepted current checkpoint ancestry: '+error.message);
+  }
+  const observed=lineage.find(cp=>cp.capability==='visual-observation'&&cp.scopeId==='whole');
+  const shaped=lineage.find(cp=>cp.capability==='shape-reconstruction'&&cp.scopeId==='whole');
+  if(!observed || !shaped) return check('source-semantic-current-glb','visual-observation',
+    'NOT_RUN','original source observation and actual shape-stage GLB must be accepted ancestors');
+  const read=async (checkpoint,kind)=>{
+    const refs=(checkpoint.artifactRefs??[]).filter(x=>x.kind===kind);
+    if(refs.length!==1)throw new Error('expected one accepted '+kind+' artifact');
+    const ref=refs[0],location=await existingContainedFile(root,ref.path);
+    if(!location||!HEX_DIGEST.test(String(ref.sha256??'')))throw new Error(kind+' path/digest not trusted');
+    const bytes=await fs.readFile(location);
+    if(bytes.length!==ref.sizeBytes||sha256(bytes)!==ref.sha256)
+      throw new Error(kind+' bytes differ from current source checkpoint reference');
+    return {bytes,ref};
+  };
+  try{
+    const [obs,proof,shape]=await Promise.all([
+      read(observed,'reference-geometry'),
+      read(shaped,'realized-projection'),
+      read(shaped,'glb'),
+    ]);
+    const referenceGeometry=JSON.parse(obs.bytes.toString('utf8'));
+    const shapeProjection=JSON.parse(proof.bytes.toString('utf8'));
+    const result=replaySourceSemanticPhysicalEvidence({
+      referenceGeometry,shapeProjection,shapeGlb:shape.bytes,
+      currentGlb:candidateBytes,sourceSha256:state.source.sha256,
+      sourcePath:state.source.path,
+    });
+    return check('source-semantic-current-glb','visual-observation',
+      result.status, result.reason,
+      [state.source.sha256,obs.ref.sha256,proof.ref.sha256,shape.ref.sha256,
+        ...(result.assetSha256?[result.assetSha256]:[])]);
+  }catch(error){
+    return check('source-semantic-current-glb','visual-observation',
+      'INSUFFICIENT','source semantics cannot independently replay current GLB: '+error.message);
+  }
+}
+
+// A digest-matched relational report and an accepted project certificate
+// still do not prove original photo semantics. Keep this decision auditable.
+export function constrainSourceRelationalCoverage(base,semanticReplay){
+  if(base.id!=='relational-evidence')throw new Error('only relational-evidence can be constrained');
+  if(base.status!=='PASS')return base;
+  return check(base.id,base.owner,semanticReplay?.status==='FAIL'?'FAIL':'INSUFFICIENT',
+    'relational artifacts are checksum/audit bound but current GLB source relation replay and independent original-photo role attestation are not both certified; '+
+      (semanticReplay?.reason??'current candidate source semantic replay absent'),
+    [...new Set([...(base.evidence??[]),...(semanticReplay?.evidence??[])])]);
+}
+
 async function evidenceCheck(root, head, entry, trustedCertified) {
   if (!head) return check(entry.id, entry.owner, 'NOT_RUN', 'no checkpoint head exists');
   const artifacts = head.artifactRefs ?? [];
@@ -373,7 +444,14 @@ export async function verifySourceBoundObject(root, assetFile) {
   }
   const authoritative = Boolean(head && state?.certification && state.status === 'certified'
     && readiness?.ready && claims?.required && claims.valid && audit?.valid);
-  for (const item of BINDINGS) checks.push(await evidenceCheck(root, head, item, authoritative));
+  const semanticReplay=await sourceSemanticReplayCheck(root,state,head,bytes);
+  checks.push(semanticReplay);
+  for(const item of BINDINGS){
+    const evidence=await evidenceCheck(root,head,item,authoritative);
+    checks.push(item.id==='relational-evidence'
+      ? constrainSourceRelationalCoverage(evidence,semanticReplay)
+      : evidence);
+  }
   checks.push(await contactReplayCheck(root, head, bytes, state?.source?.sha256 ?? null));
   const candidateIndex=checks.findIndex((item)=>item.id==='candidate-lineage');
   if (authoritative && checks[candidateIndex].status==='INSUFFICIENT') {
@@ -395,7 +473,7 @@ export async function verifySourceBoundObject(root, assetFile) {
     checkpointId:state?.head ?? null,
     checks,
     decision:{state:blockingCheckIds.length ? 'BLOCKED' : 'ELIGIBLE',blockingCheckIds},
-    limits:['No independent source semantic detection is performed', 'Contact replay verifies declared assembly evidence, not independent source semantics; final host admission is separate', 'This report is not a certificate'],
+    limits:['No independent source semantic detection/reviewer provenance is established; physical contradictions alone cannot pass relational evidence', 'Contact replay verifies declared assembly evidence, not independent source semantics; final host admission is separate', 'This report is not a certificate'],
   };
   return Object.freeze({...report, reportDigest:digestJson(report)});
 }
