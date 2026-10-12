@@ -113,6 +113,7 @@ export * from './source-macro-section-screen.mjs';
 export * from './source-macro-orientation-screen.mjs';
 export * from './source-profile-vector-screen.mjs';
 export * from './source-occlusion-screen.mjs';
+export * from './source-role-relations-screen.mjs';
 export * from './realized-projection-verification.mjs';
 export * from './certification-projection-evidence.mjs';
 export * from './mesh.mjs';
