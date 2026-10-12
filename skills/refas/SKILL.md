@@ -76,6 +76,19 @@ python3 scripts/evidence.py --image <reference.png> --out <evidence-dir> --scope
 
 Normalized ROI values are in `[0,1]`. Evidence manifests include source and recipe digests.
 
+## Agent workflow and diagnostics
+
+On an existing project, prefer querying the next trustworthy action before constructing more geometry. These commands are read-only facades over installed checkpoint/recovery and verification evaluators; they cannot create PASS verdicts or override source evidence.
+
+```bash
+node scripts/refas.mjs next --root <project-dir>
+node scripts/refas.mjs diagnose --root <project-dir> --asset <project-dir>/candidate.glb
+node scripts/refas.mjs diagnose --root <project-dir> --finding <project-dir>/finding.json
+node scripts/refas.mjs validate --root <project-dir> --asset <project-dir>/candidate.glb
+```
+
+The `next` result gives the responsible capability and `refas describe capability <capability>` discovery pointer. `diagnose` reports existing checks, owners, supporting evidence and follow-up without mutating the project or inventing a repair category. `validate` is canonical source-bound QA, with exit 2 for a blocked result and exit 1 on invalid invocation. A valid GLB or an ordinary certificate is never proof of reference fidelity. Keep material creation, geometry edits and headless view inspection as the core workflow; do not turn the Foundry into a validator-only task.
+
 ## Reconstruction loop
 
 Follow the semantic capability order in `references/workflow.md`.

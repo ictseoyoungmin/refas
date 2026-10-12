@@ -2,7 +2,7 @@
   <img src="skills/refas/assets/icon.svg" width="180" alt="RefAs robotic arm icon">
   <h1>RefAs</h1>
   <p>
-    <a href="https://github.com/ictseoyoungmin/refas/releases/tag/v1.2.0"><img src="https://img.shields.io/badge/version-v1.2.0-6f5a46" alt="Version v1.1.1"></a>
+    <a href="https://github.com/ictseoyoungmin/refas/releases/tag/v1.2.1"><img src="https://img.shields.io/badge/version-v1.2.1-6f5a46" alt="Version v1.2.1"></a>
     <a href="https://github.com/ictseoyoungmin/refas/actions/workflows/ci.yml"><img src="https://github.com/ictseoyoungmin/refas/actions/workflows/ci.yml/badge.svg" alt="CI status"></a>
     <img src="https://img.shields.io/badge/node-20%2B-339933" alt="Node.js 20+">
     <img src="https://img.shields.io/badge/Agent%20Skill-Vision--first%203D-b06f47" alt="Agent Skill: Vision-first 3D">
@@ -157,6 +157,21 @@ node skills/refas/scripts/refas-host.mjs --help
 ```
 
 The executable runtime lives inside the distributable skill. Tests and examples import that same code; there is no second runtime implementation to drift.
+
+## Agent workflow interface (v1.2.1)
+
+RefAs is a **construction and editing foundry**. The CLI below helps an agent discover its next modeling step, inspect failures and reuse the already-installed validators. All three operations are read-only and return typed JSON:
+
+```bash
+node skills/refas/scripts/refas.mjs next --root project
+node skills/refas/scripts/refas.mjs diagnose --root project --asset project/candidate.glb
+node skills/refas/scripts/refas.mjs diagnose --root project --finding project/finding.json
+node skills/refas/scripts/refas.mjs validate --root project --asset project/candidate.glb
+```
+
+`next` is derived from trusted checkpoint/recovery guidance; `diagnose` shows exact existing blocker statuses, responsible capability, provenance and an advisory next action; `validate` reuses the same strict `source-bound-object` coverage as `refas verify` (exit code **2** if blocked). No wrapper creates new visual judgments, changes project state, certifies models or grants draft output positive source-fidelity authority. `refas-host handoff` defaults to `draft-transfer`; explicit `--profile source-bound-object` remains separately fail-closed and must not be confused with generic certification.
+
+**Known limitation:** independent original-photo part/role recognition is not yet a trusted positive evaluator. Even a structurally valid GLB may therefore remain `INSUFFICIENT` and source-bound final Handoff remains `BLOCKED`. The interface release does **not** promise automatic image-to-3D accuracy or game-ready assets. [Foundry production roadmap](docs/development/foundry-production-roadmap.md).
 
 ## Reconstruction, physical closure, and certification flow
 
