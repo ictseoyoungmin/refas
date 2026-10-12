@@ -9,12 +9,16 @@ RefAs helps an agent observe reference images, construct **actual editable 3D ge
 
 ## Required reading
 
-Before doing any reconstruction, read:
+For a new reconstruction, read the small routing entry first:
 
 1. `references/INDEX.md`
 2. `references/workflow.md`
-3. `references/checkpointing.md`
-4. `references/failure-routing.md`
+
+Load `references/checkpointing.md` **before** checkpoint/edit/restore operations,
+and `references/failure-routing.md` **before** reporting, persisting or
+repairing a typed finding. If `next` returns an invalidated or blocked state,
+load both before making a state-changing edit. The runtime continues to
+enforce those same contracts even if they are not preloaded.
 
 `references/INDEX.md` is the canonical instruction router and defines the installed skill-root convention and semantic routing boundary. Do not bypass it when adding or loading a reference leaf.
 
