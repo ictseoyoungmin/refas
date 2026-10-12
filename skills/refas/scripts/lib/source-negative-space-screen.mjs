@@ -82,6 +82,40 @@ function actualTriangles(glb,camera){
   if(!triangles.length)throw Error('current GLB has no projectable opaque triangles');
   return triangles;
 }
+/** Physical per-region screen coverage, recomputed only from actual GLB bytes.
+ * Shared by negative-space detection and QA-03 missing-source-part defense.
+ * This is a coarse contradiction measurement, never positive photo semantics.
+ */
+export function measureSourcePolygonGlbOccupancy({glb,camera,regions=[]}={}){
+  if(!Array.isArray(regions)||regions.length>64)throw Error('source region budget exceeded');
+  const bytes=Buffer.from(glb??[]);
+  const triangles=actualTriangles(bytes,camera);
+  return Object.freeze(regions.map((region)=>{
+    const poly=region?.polygon;
+    if(!Array.isArray(poly)||poly.length<3||poly.length>256||
+       poly.some(p=>!Array.isArray(p)||p.length!==2||!p.every(Number.isFinite)))
+      throw Error('source region must be a finite image polygon');
+    const [x0,y0,x1,y1]=bounds(poly);
+    if(!(x1-x0>0.015&&y1-y0>0.015))
+      return Object.freeze({id:region.id,status:'INSUFFICIENT',reason:'source region is too small'});
+    const candidates=triangles.filter(t=>t.box[0]<=x1&&t.box[2]>=x0&&
+      t.box[1]<=y1&&t.box[3]>=y0);
+    let total=0,covered=0;
+    for(let y=0;y<GRID;y++)for(let x=0;x<GRID;x++){
+      const point=[x0+(x+.5)/GRID*(x1-x0),y0+(y+.5)/GRID*(y1-y0)];
+      if(!insidePolygon(point,poly))continue;
+      total++;
+      if(candidates.some(t=>point[0]>=t.box[0]-EPS&&point[0]<=t.box[2]+EPS&&
+        point[1]>=t.box[1]-EPS&&point[1]<=t.box[3]+EPS&&
+        insideTriangle(point,t.points)))covered++;
+    }
+    if(total<24)return Object.freeze({id:region.id,status:'INSUFFICIENT',
+      reason:'source region lacks enough interior samples'});
+    return Object.freeze({id:region.id,status:'MEASURED',
+      sampledInterior:total,filledSamples:covered,coveredFraction:covered/total});
+  }));
+}
+
 export function screenSourceNegativeSpaces({referenceGeometry,realizedProjection,
   glb,sourcePath}={}){
   if(typeof sourcePath!=='string'||!sourcePath.trim())throw Error('original source path required');
