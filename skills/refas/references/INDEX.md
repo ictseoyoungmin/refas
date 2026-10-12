@@ -73,6 +73,25 @@ Most executable operation inputs are exposed through the interface catalog retur
 A standalone template does not override the operation-specific input catalog. When `describe` returns an interface template, that interface metadata is authoritative for the executable minimum input.
 
 
+### Final transfer contract discovery
+
+`node scripts/refas.mjs audit --root PROJECT` evaluates the existing
+project audit. `node scripts/refas.mjs verify --root PROJECT --asset
+PROJECT/candidate.glb` checks exact source-bound QA and may return
+`BLOCKED`.
+
+The optional Host interface has two **existing** modes:
+
+- `node scripts/refas-host.mjs handoff --root PROJECT`: default
+  `draft-transfer`, for working-asset transfer only
+- `node scripts/refas-host.mjs handoff --root PROJECT --profile
+  source-bound-object`: independently replays strict final authorization,
+  and refuses when current source-photo semantics are `INSUFFICIENT`
+
+Neither `audit` nor draft transfer grants source fidelity. Discover the
+public modes via `describe node validation` and
+`describe node host-integration`.
+
 ## Minimal entry and conditional control reading
 
 After this router, read `references/workflow.md` for current capability
@@ -102,7 +121,7 @@ runtime; progressive reading cannot waive a gate.
 
 Rendering shape early is independent of finishing materials.
 For a small callable control-cage modeling example, see
-`assets/examples/subdivision-cage-demo.mjs`; it demonstrates geometry
+`scripts/subdivision-cage-demo.mjs`; it demonstrates geometry
 generation, **not** source-fidelity closure or an identity-bearing permit.
 
 ## Progressive-load routes
