@@ -74,6 +74,21 @@ The executable runtime lives inside the distributable skill. Tests and examples 
 
 ## Agent workflow interface
 
+The installed skill defaults to a short routing path
+(`SKILL.md` → `references/INDEX.md` → `references/workflow.md`);
+checkpoint/recovery guides are loaded when a corresponding operation is
+actually needed. Choose static, organic, mechanically articulated or physical
+runtime guides according to the work, rather than loading the entire
+assembly/physical stack for a simple object.
+For a runnable, explicitly non-authoritative geometry example use
+`node skills/refas/scripts/subdivision-cage-demo.mjs`.
+
+Strict source-bound verification and artifact transfer remain separate:
+`refas-host handoff` defaults to `draft-transfer`, whereas
+`refas-host handoff --profile source-bound-object` demands independent
+source-bound evidence and may refuse even a valid generically certified GLB.
+
+
 The CLI helps an agent discover its next modeling step, inspect failures and reuse installed validators. These three commands are read-only and return JSON:
 
 ```bash

@@ -57,3 +57,31 @@ test('installed instruction router links actual source-bound agent commands with
  const index=await fs.readFile(path.join(root,'references/INDEX.md'),'utf8');
  assert.match(index,/diagnose.{0,180}exit 0|exit 0/);
 });
+
+test('early modeling demo executes from installed skill without any source-fidelity claim',()=>{
+ const r=spawnSync(process.execPath,[path.join(root,'scripts/subdivision-cage-demo.mjs')],{encoding:'utf8'});
+ assert.equal(r.status,0,r.stderr||r.stdout);
+ const result=JSON.parse(r.stdout);
+ assert.equal(result.demo,'non-authoritative-geometry');
+ assert.equal(result.watertight,true);
+ assert.ok(result.triangles>0);
+ assert.match(result.claim,/No source fidelity/);
+});
+test('existing audit, strict verification and Handoff modes are graph discoverable',async()=>{
+ const g=JSON.parse(await fs.readFile(path.join(root,'references/GRAPH.json'),'utf8'));
+ const get=(node,id)=>g.nodes.find(n=>n.id===node).interface.interfaces.find(x=>x.id===id);
+ assert.equal(get('validation','strict-source-bound-verify').cli.command,'verify');
+ assert.equal(get('validation','project-audit').cli.command,'audit');
+ assert.equal(get('host-integration','artifact-handoff').cli.command,'handoff');
+ assert.equal(get('host-integration','source-bound-final-handoff').cli.command,'handoff');
+ assert.equal(get('host-integration','source-bound-final-handoff').library.symbol,'getSourceBoundReleaseHandoff');
+ const host=spawnSync(process.execPath,[path.join(root,'scripts/refas-host.mjs'),'--help'],{encoding:'utf8'});
+ assert.equal(host.status,0,host.stderr||host.stdout);
+ assert.ok(JSON.parse(host.stdout).commands.handoff);
+ const index=await fs.readFile(path.join(root,'references/INDEX.md'),'utf8');
+ assert.match(index,/source-bound-object/);
+ assert.match(index,/draft-transfer/);
+ const installedSkill=await fs.readFile(path.join(root,'SKILL.md'),'utf8');
+ assert.match(installedSkill,/Load `references\/checkpointing\.md`/);
+ assert.match(installedSkill,/references\/failure-routing\.md/);
+});

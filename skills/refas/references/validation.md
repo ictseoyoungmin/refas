@@ -2,6 +2,14 @@
 
 ## Agent-facing source-bound QA interface
 
+Public discovery includes three distinct, already implemented operations:
+`refas audit --root PROJECT` inspects project state;
+`refas verify --root PROJECT --asset GLB` evaluates canonical strict
+source-bound coverage; and `refas validate --root PROJECT --asset GLB`
+presents that same coverage with agent-oriented diagnostic guidance.
+Audit and general certification never replace strict source-bound verification.
+
+
 After constructing and capturing a **real current** candidate GLB, inspect
 existing QA evidence with the released `validation/agent-validate-source-bound`
 CLI operation:

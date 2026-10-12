@@ -48,6 +48,22 @@ Use the corresponding permit-aware wrappers for section-profile lofts and surfac
 
 ## Subdivision-cage organic construction
 
+For an **actual executable geometry kernel example** from the installed
+skill root, run:
+
+```bash
+node scripts/subdivision-cage-demo.mjs
+```
+
+This self-contained closed-cage prototype executes the real public
+`createSubdivisionCageOrganic` API and verifies watertight geometry.
+Its coordinates and source evidence labels are illustrative only. It
+does not have an identity-bearing construction permit, actual source
+photograph, checkpoint or source-fidelity acceptance. Replace the
+prototype's input with legitimate observations and follow the permit-aware
+production path below for a real source-bound asset.
+
+
 Use `subdivision-cage-organic` for continuous organic identity scopes whose visible form cannot be represented faithfully by section-profile lofts alone. The operation starts from a closed semantic control cage and performs deterministic Catmull–Clark subdivision inside the RefAs kernel.
 
 ```js
