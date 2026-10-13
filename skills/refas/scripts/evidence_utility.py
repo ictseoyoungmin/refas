@@ -95,6 +95,7 @@ def review(manifest_path,decisions_path,prune=False):
         raise ValueError('observation manifest must stay inside the assessment project')
     if decisions_path.is_relative_to(out):
         raise ValueError('decisions file must be outside the observation output')
+    original_manifest_sha=sha256(manifest_path)
     manifest=json.loads(manifest_path.read_text(encoding='utf-8'))
     digest_before=verify_report(manifest)
     input_spec=json.loads(decisions_path.read_text(encoding='utf-8'))
@@ -185,13 +186,11 @@ def review(manifest_path,decisions_path,prune=False):
             original=contained(out,relative,'derived output')
             if sha256(original)!=entry['sha256']:
                 raise ValueError('derived evidence SHA-256 changed before retention')
-            suffix=Path(relative).relative_to(Path(relative).parts[0])
-            if suffix.parts[0]=='snapshots':
-                # Old relative path is snapshots/<token>/<source>/<view>/<analysis.png>.
-                suffix=Path(*suffix.parts[2:])
-            else:
-                # Defensive fallback when given an unexpected manifest location.
+            parts=Path(relative).parts
+            if len(parts)<5 or parts[0]!='snapshots':
                 raise ValueError('noncanonical observation snapshot layout')
+            # Relative path: snapshots/<revision>/<source>/<view>/<image>.
+            suffix=Path(*parts[2:])
             target=stage/suffix
             target.parent.mkdir(parents=True,exist_ok=True)
             shutil.copyfile(original,target)
@@ -226,7 +225,7 @@ def review(manifest_path,decisions_path,prune=False):
                 handle.write('\n')
                 temp=Path(handle.name)
             # Recheck the exact old current pointer before replacing it.
-            if sha256(manifest_path)!=sha256(manifest_path):
+            if sha256(manifest_path)!=original_manifest_sha:
                 raise ValueError('manifest changed during review')
             os.replace(temp,manifest_path)
             published=True
