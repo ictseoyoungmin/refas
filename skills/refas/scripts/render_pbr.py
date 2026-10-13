@@ -278,6 +278,11 @@ def main():
             payload["presentation"]={"mode":"neutral-clay","presetId":NEUTRAL_CLAY_PRESET["id"],"presetDigest":canonical_digest(NEUTRAL_CLAY_PRESET)}
         payload['reportDigest']=canonical_digest(payload); (staging/'render-report.json').write_text(json.dumps(payload,indent=2)+'\n'); out.mkdir(parents=True,exist_ok=True)
         for item in staging.iterdir(): os.replace(item,out/item.name)
+        # A reused output directory must not expose a stale board as the new render.
+        if a.no_board:
+            prior_board=out/'pbr-review-board.png'
+            if prior_board.is_file():
+                prior_board.unlink()
     finally: shutil.rmtree(staging,ignore_errors=True)
     print(json.dumps({"status":"PASS","report":str(out/'render-report.json'),"board":None if a.no_board else str(out/'pbr-review-board.png'),"frames":len(frames)},indent=2))
 
