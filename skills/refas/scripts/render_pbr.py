@@ -112,9 +112,9 @@ def triangle_texcoords(primitive, tri):
     return uv
 
 
-def render(primitives, position, target, output, *, size, mode, up_hint, deadline, lights=None, exposure=0.0, background=(15, 18, 23)):
+def render(primitives, position, target, output, *, size, mode, up_hint, deadline, fov=31, lights=None, exposure=0.0, background=(15, 18, 23)):
     right, up, forward = camera_basis(position, target, up_hint); position = np.asarray(position, dtype=np.float64)
-    scale = math.tan(math.radians(31) / 2); background = np.asarray(background, dtype=np.uint8)
+    scale = math.tan(math.radians(fov) / 2); background = np.asarray(background, dtype=np.uint8)
     image = np.broadcast_to(background, (size, size, 3)).copy(); depth_buffer = np.full((size, size), np.inf)
     for primitive in primitives:
         camera = np.column_stack(((primitive.positions-position)@right, (primitive.positions-position)@up, (primitive.positions-position)@forward))
@@ -162,7 +162,7 @@ def main():
             primitive.roughness = float(clay["roughness"])
             primitive.base_color_texture = None
             primitive.base_color_texture_sha256 = None
-    frame,basis,origin,fd=load_canonical_frame(frame_path); bounds=frame_bounds(primitives,frame,basis,origin); center=bounds['centerWorld']; distance=bounds['radius']*4.25; deadline=time.monotonic()+a.timeout_seconds
+    frame,basis,origin,fd=load_canonical_frame(frame_path); bounds=frame_bounds(primitives,frame,basis,origin); center=bounds['centerWorld']; distance=bounds['radius']*3.1; deadline=time.monotonic()+a.timeout_seconds
     if a.neutral_clay:
         preset_lighting = NEUTRAL_CLAY_PRESET["lighting"]
         background = tuple(preset_lighting["background"])
@@ -182,7 +182,22 @@ def main():
     staging=Path(tempfile.mkdtemp(prefix='.refas-pbr-',dir=out.parent)); frames=[]
     try:
         for name,direction,up,mode,label in specs:
-            pos=center+normalize(local_to_world(direction,basis))*distance; target=center; path=staging/f'{name}.png'; rec=render(primitives,pos,target,path,size=a.size,mode=mode,up_hint=local_to_world(up,basis),deadline=deadline,lights=lights,exposure=exposure,background=background); frames.append({**rec,'viewId':name,'label':label,'absolutePath':str(path)})
+            hero = frame.get('hero') if name == 'hero' else None
+            if hero:
+                pos = local_to_world(hero['position'], basis, origin)
+                target = local_to_world(hero['target'], basis, origin)
+                up_hint = local_to_world(hero.get('up', [0, 1, 0]), basis)
+                fov = float(hero.get('fovY', 31))
+            else:
+                pos = center + normalize(local_to_world(direction, basis)) * distance
+                target = center
+                up_hint = local_to_world(up, basis)
+                fov = 31
+            path = staging / f'{name}.png'
+            rec = render(primitives, pos, target, path, size=a.size, mode=mode,
+                         up_hint=up_hint, deadline=deadline, fov=fov, lights=lights,
+                         exposure=exposure, background=background)
+            frames.append({**rec, 'viewId':name,'label':label,'absolutePath':str(path)})
         board=staging/'pbr-review-board.png'; make_board(Path(a.reference).resolve() if a.reference else None,frames,board)
         rig={"lights":"three-directional-calibrated-v1","keyIntensity":key_intensity,"fillIntensity":fill_intensity,"rimIntensity":rim_intensity,"background":list(background),"cameraFovY":31}; color={"exposure":exposure,"toneMapping":"Reinhard","outputColorSpace":"sRGB"}
         rig_id="fixed-three-light-review-rig"
