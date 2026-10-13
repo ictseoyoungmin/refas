@@ -55,7 +55,7 @@ test('adaptive source sheet has explicit views, on-demand analyses and no redund
     sources:[{id:'character-sheet',path:'sheet.png',sha256:await sha('sheet.png'),
       views:[
         {id:'whole',role:'sheet',roi:[0,0,1,1]},
-        {id:'front',role:'front',roi:[0,0,0.5,1],analyses:['edges','context']},
+        {id:'front',role:'front',roi:[0,0,0.5,1],padding:0.5,analyses:['edges','context']},
         {id:'side',role:'left',roi:[0.5,0,0.5,1],analyses:['gradient','contrast']},
       ]}],
     defaultAnalyses:[],board:false,
