@@ -23,7 +23,9 @@
           "analyses": [
             "edges",
             "context"
-          ]
+          ],
+          "question": "Is the silhouette junction a distinct plate or a lighting boundary?",
+          "decisionTarget": "front view macro shell split"
         },
         {
           "id": "side",
@@ -50,7 +52,9 @@
           "analyses": [
             "gradient",
             "highlights"
-          ]
+          ],
+          "question": "Do highlighted head seams indicate separate layered shells?",
+          "decisionTarget": "head shell curvature and layer hierarchy"
         }
       ]
     }
