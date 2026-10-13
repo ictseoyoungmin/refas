@@ -100,7 +100,7 @@ hashes and will rerender when a prior assessment pruned necessary outputs.
 
 On extraction failure, no new manifest is published. The sole current
 manifest points to the latest complete immutable snapshot. The former
-fixed-all-filters `evidence --image` and `scripts/evidence.py` are
+fixed-all-filters `evidence --image` and the fixed-all-filter worker are
 removed, not preserved as a stale parallel observation system.
 
 ## Claim classes
