@@ -112,7 +112,7 @@ Record four distinct lists:
 | Fact | directly visible and source-cited | “A bright rim encloses the upper edge.” |
 | Interpretation | likely visual reading | “The rim may be a raised metal band.” |
 | Hypothesis | testable 3D explanation | “The shell crowns toward the camera by about one rim width.” |
-| Ambiguity | evidence does not decide | “The hidden back may be flat or continue the crown.” |
+| Ambiguity | evidence does not decide | “The transition radius is unresolved.” |
 
 Facts must cite at least one primary evidence item bound to the raw source SHA-256. Geometry parameters never belong in facts.
 
@@ -163,7 +163,7 @@ Use a small domain-neutral vocabulary: silhouette character, mass proportion, cu
 
 A perceptual signature is not a pixel metric. “Angular stepped plane breaks remain visible around the torso-to-wing junction” is a source identity observation; IoU, edge count, landmark RMSE, and other numeric residuals are not. Numeric evidence may later help inspect a signature, but correspondence does not define identity and cannot replace the source observation.
 
-Keep ambiguity explicit. Do not infer hidden construction, material category, or object class merely to fill a signature. The signature set is candidate-independent and never certifies resemblance by itself.
+Describe source-visible identity and consequential ambiguity in the signature. The spatial and construction records carry the selected 3D shape, and the source signature remains independent evidence for reviewing it.
 
 ## Derived evidence
 

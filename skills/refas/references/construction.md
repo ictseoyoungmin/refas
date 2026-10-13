@@ -8,7 +8,7 @@
 - coarse negative spaces;
 - watertight, finite, non-degenerate geometry.
 
-Build these before seams, panels, fasteners, engravings, or material polish. A detailed wrong silhouette is still wrong.
+Construct the major closed volumes, structural supports, continuous surfaces, and attachment interfaces first. Fit coherent depth, real shell thickness, joined and intentionally separate elements, and matching profiles for repeated or mirrored structures. Then add seams, hardware, engravings, and materials.
 
 ## Relational applicability
 
@@ -298,4 +298,4 @@ Do not spend geometry budget on unsupported microdetail while a whole-object blo
 
 ## Worked example
 
-For a concrete single-view case where a convincing frontal reconstruction can still collapse into a billboard, read `references/single-view-volumetric-reasoning-example.md`. It shows how major volumes, genuinely thin parts, layered structures, and articulated/mechanical hypotheses can coexist without turning an inferred side or rear surface into an observed source fact.
+For a practical whole-volume construction walkthrough, read `references/single-view-volumetric-reasoning-example.md`. It covers major volumes, appropriate plate thickness, repeated profiles, assembly interfaces, and multiview refinement.
