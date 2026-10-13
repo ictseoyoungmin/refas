@@ -38,14 +38,7 @@ the current capability's executable contract with
 `next` is advice about state, **not** a new capability, construction
 executor, gate verdict, or source-fidelity certificate.
 
-Construct or edit actual geometry in the active capability and scope, then
-capture real renders and compare them to source observations. Do not replace
-modeling with metadata, checkpoint counts, or a verification-only loop. For a
-real detected error, use the read-only `diagnose --finding` route described
-in `references/failure-routing.md`; for a current actual GLB's QA coverage,
-use `diagnose --asset` or the strict `validate --asset` from
-`references/validation.md`. The canonical `report-finding` path, not the
-diagnosis preview, performs any state-changing reopen.
+Construct or edit actual geometry in the active scope, capture real renders and compare them to the source. For a detected defect, use `diagnose --finding` from `references/failure-routing.md`; inspect candidate QA through `diagnose --asset` or strict `validate --asset` in `references/validation.md`. Use the canonical `report-finding` operation to reopen state.
 
 ## Interpreting agent next actions
 
@@ -85,7 +78,7 @@ The work-unit rule never means that a local scope may close independently of unr
 
 ## Relational structure, authority, and whole-system barrier
 
-Visible evidence constrains the model; it does not define the entire model. Position and a primary axis do not fully specify a spatial part, and a collection of locally plausible features does not prove globally coherent proportions, planes, volumes, ordering, or twist.
+Construct complete spatial objects from the visible silhouette, repeated structure, major volume, continuity of curvature, and physical connections. Use shared profiles and symmetry for appropriate corresponding parts, and resolve camera projection before changing their rest geometry.
 
 When macro/identity `whole-system` relational obligations are declared or otherwise material to the active construction scope, read:
 
@@ -116,16 +109,7 @@ UNKNOWN    = unresolved, not absence
 FORBIDDEN  = explicit contradiction or hard constraint
 ```
 
-Core invariants:
-
-```text
-UNKNOWN != FORBIDDEN
-UNOBSERVED != FORBIDDEN
-ENGINEERED != OBSERVED
-INFERRED != OBSERVED
-```
-
-An inferred or engineered unobserved continuation may be instantiated when its typed basis is valid; it must not be promoted to source truth. Unknown authority cannot authorize positive construction for the proposition it governs yet, but it does not claim the structure is prohibited. Only forbidden authority positively blocks construction.
+Authority labels classify artifact claims: `observed` for direct source facts, `inferred` for supported spatial hypotheses, and `engineered` for deliberate functional choices. Explicitly governed `unknown` propositions await a supporting basis, while `forbidden` denotes a contradiction or hard constraint. Routine surface completion follows the shape hypothesis and construction requirements without separate authority entries for each vertex or surface.
 
 Create `refas.whole-system-relational-barrier/v1` from the exact relation graph, exact authority set, and current checks for every applicable macro/identity whole-system obligation. The barrier passes only when all required relation checks pass with evidence and every required relation has `observed`, `inferred`, or `engineered` authority. A passing local-detail relation cannot satisfy a whole-system obligation, and a good visual score cannot override an applicable barrier.
 
