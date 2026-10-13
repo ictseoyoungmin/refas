@@ -78,6 +78,12 @@ def main():
     source_path = Path(args.image).resolve()
     output = Path(args.out).resolve()
     output.mkdir(parents=True, exist_ok=True)
+    # Legacy all-filter mode remains compatible, but may never use the
+    # primary image folder as output: crop.png/context.png are predictable names.
+    if source_path.is_relative_to(output) or source_path == output:
+        raise ValueError('evidence output cannot contain or overwrite the original source')
+    if output.is_symlink():
+        raise ValueError('evidence output cannot be a symlink')
     source = Image.open(source_path).convert("RGB")
     roi = [float(value) for value in args.roi.split(",")]
     box = roi_pixels(roi, source.width, source.height)
