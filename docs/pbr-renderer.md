@@ -38,6 +38,63 @@ node skills/refas/scripts/refas.mjs render-pbr --glb candidate.glb --out pbr --f
 
 For large real assets, record elapsed time, peak RSS, actual triangle count, frame size, render backend and any timeout/memory failure. Select an external independent PBR-capable backend for final material features unsupported by the bundled baseline. Never relabel evidence produced by a different renderer as the canonical bundled neutral-clay preset.
 
+## Iterative previews vs authoritative closure
+
+Do not pay for an eight-view full PBR report after each small geometry edit.
+The explicit `preview-pbr` CLI renders only selected views (default `hero,side`)
+in a dedicated output directory. `--reuse` verifies the exact candidate GLB,
+canonical frame digest, output pixel hashes, lighting/exposure and view set
+before reusing an existing preview. Changed source bytes, camera, settings or
+tampered/missing PNGs trigger an actual rerender. A preview never produces
+`render-report.json` and cannot be used as `refas.pbr-render-report/v1`
+or satisfy a neutral-clay barrier, appearance, source resemblance or final
+certification; its manifest is `refas.render-preview/v1`,
+`claimScope: preview-only`. Do not reuse a canonical evidence directory for preview.
+
+```bash
+node skills/refas/scripts/refas.mjs preview-pbr --glb candidate.glb --frame frame.json --out previews/current --views hero,side --reuse --size 160
+# When a candidate is visually ready, perform the real full evidence runs:
+node skills/refas/scripts/refas.mjs render --glb candidate.glb --frame frame.json --out renders/portable
+node skills/refas/scripts/refas.mjs render-pbr --glb candidate.glb --frame frame.json --out renders/clay --neutral-clay --no-board
+node skills/refas/scripts/refas.mjs render-pbr --glb candidate.glb --frame frame.json --out renders/pbr --no-board
+```
+
+## One combined review board
+
+After canonical evidence has rendered, compose one presentation-only board with
+SHA-256 verification of **every included PNG** against its original report.
+The portable, ordinary PBR and optional clay reports must bind exactly the same
+asset SHA-256 and canonical frame digest. Preview manifests cannot enter.
+
+```bash
+node skills/refas/scripts/refas.mjs review-board --portable renders/portable --pbr renders/pbr --clay renders/clay --reference source.png --out reviews/combined.png
+```
+
+The companion `combined.json` has `claimScope: presentation-only` and the
+included cells and image hashes; it is a viewer aid, not a certificate or a
+replacement for any of the original eight-view reports or source-bound
+comparisons. Source photo inclusion is visual only, never independent
+source-identity attestation. Keep individual canonical frame/report outputs.
+Do not use `preview-pbr` assets as `--pbr` or `--clay` inputs.
+
+## Measured rendering cost and failure reasons
+
+`npm run benchmark:render-pbr` builds a nondegenerate detailed GLB fixture
+and captures full eight-view, iterative two-view and identical-input reuse
+runs with process wall time and Linux `/proc` peak RSS when available.
+For an **actual production asset**, use:
+
+```bash
+node skills/refas/scripts/measure_render_pbr.mjs --glb work/model.glb --frame work/canonical-frame.json --size 160 --timeout-seconds 180 --max-working-mb 512 --out work/reports/renderer-workload.json
+```
+
+Report schema `refas.renderer-workload-measurement/v1` records exact input GLB
+SHA-256, measured wall milliseconds, RSS KiB (or null when unavailable),
+backend, frame size, and typed failure category. The generated fixture is not
+a real reference reconstruction: its results must not be promoted to
+production-asset speedup or reliability claims. Render time and physical
+quality are separate; `measurement-only` is never closure evidence.
+
 ## License boundary
 
 RefAs does not bundle, link, or redistribute Blender, Three.js, Filament, glTF Sample Viewer, or VTK. Install or operate those renderers separately and communicate through CLI/files or a job API. If a renderer binary or container is redistributed, its own license and notice obligations belong to that distribution.
