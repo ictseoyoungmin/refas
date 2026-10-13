@@ -45,7 +45,12 @@ async function main() {
   const pack = JSON.parse(output)[0];
   if (!pack?.files?.length) throw new Error('npm dry-run did not report a package file list');
   const names = pack.files.map((item)=>item.path);
-  const forbidden = names.filter((name)=>/(?:^|\/)(?:__pycache__|\.refas|tests|examples|legacy)(?:\/|$)|\.pyc$|\.zip$/u.test(name));
+  // Package-local examples are installed skill resources. The repository-root
+  // examples/ directory remains excluded from the published npm package.
+  const forbidden = names.filter((name)=>
+    /^(?:examples)\//u.test(name) ||
+    /(?:^|\/)(?:__pycache__|\.refas|tests|legacy)(?:\/|$)|\.pyc$|\.zip$/u.test(name)
+  );
   if (forbidden.length) throw new Error(`release package contains forbidden files: ${forbidden.join(', ')}`);
 
   for (const required of [
