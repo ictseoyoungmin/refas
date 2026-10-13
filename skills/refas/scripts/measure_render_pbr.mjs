@@ -110,7 +110,7 @@ export async function runMeasurement(options={}){
     const generated=!options.glb;
     const inputs=generated?await generatedAsset(temporary,{segments,rings,objects}):{
       glb:path.resolve(options.glb),frame:path.resolve(options.frame),
-      workloadKind:'external-actual-glb',estimatedTriangles:null,
+      workloadKind:'supplied-glb',estimatedTriangles:null,
     };
     const digest=await fs.readFile(inputs.glb);
     const hash=(await import('node:crypto')).createHash('sha256').update(digest).digest('hex');
