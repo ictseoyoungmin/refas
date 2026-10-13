@@ -201,7 +201,7 @@ function help() {
       'inspect-glb': 'inspect-glb --glb asset.glb',
       evidence: 'evidence --image reference.png --out DIR --scope ID [--roi x,y,w,h] [--padding 0.08]',
       render: 'render --glb asset.glb --out DIR [--reference image.png] [--frame canonical-frame.json] [--size 640] [--timeout-seconds 300] [--max-working-mb 512] [--tile-size 256] [--max-triangles N] [--hero-only]',
-      'render-pbr': 'render-pbr --glb asset.glb --out DIR --frame canonical-frame.json [--reference image.png] [--size 420] [--timeout-seconds 180] [--max-working-mb 512] [--neutral-clay]',
+      'render-pbr': 'render-pbr --glb asset.glb --out DIR --frame canonical-frame.json [--reference image.png] [--size 420] [--timeout-seconds 180] [--max-working-mb 512] [--tile-size 128] [--neutral-clay] [--no-board]',
       compare: 'compare --input registered-comparison-input.json --out DIR [--timeout-seconds 120]',
       'fit-parameters': 'fit-parameters --root DIR --plan parameter-fit-plan.json --worker evaluator.mjs --out parameter-fit-report.json',
     },
@@ -342,6 +342,8 @@ async function main() {
     if (options.reference) args.push('--reference', options.reference); if (options.size) args.push('--size', options.size);
     if (options['timeout-seconds']) args.push('--timeout-seconds', options['timeout-seconds']); if (options['max-working-mb']) args.push('--max-working-mb', options['max-working-mb']);
     if (options['neutral-clay'] === true) args.push('--neutral-clay');
+    if (options['tile-size']) args.push('--tile-size', options['tile-size']);
+    if (options['no-board'] === true) args.push('--no-board');
     const timeoutSeconds = Number(options['timeout-seconds'] ?? 180); if (!Number.isFinite(timeoutSeconds) || timeoutSeconds <= 0) throw new Error('--timeout-seconds must be a positive number');
     runPython('render_pbr.py', args, {timeoutMs: Math.ceil(timeoutSeconds * 1000 + 5000)}); return;
   }

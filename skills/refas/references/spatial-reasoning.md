@@ -28,6 +28,16 @@ When a shape mismatch appears, test in this order:
 
 This prevents baking a camera error into geometry.
 
+**Camera-dependent depth is not source fact.** A different field of view, azimuth,
+elevation, target, or projection can change the apparent depth, proportions,
+occlusion, and left/right asymmetry without any change to the physical object.
+Keep those conclusions tied to their specific source-cited camera hypothesis.
+Do not freeze or harden downstream inferred depth until its registered camera
+hypothesis has been checked against the raw source and credible alternatives.
+When a camera hypothesis is rejected or changed, re-evaluate camera-dependent
+depth/order/shape decisions and reopen their owning upstream scopes instead of
+preserving the old shape as if it were observed ground truth.
+
 ## Orientation is a frame, not an axis
 
 A part is not spatially specified by its position and primary direction alone. When orientation affects visible form, contact, articulation, or function, preserve a second independent cue for roll/twist: a visible-plane or facing normal, a lateral/handedness cue, or an explicitly inherited parent-frame direction.
