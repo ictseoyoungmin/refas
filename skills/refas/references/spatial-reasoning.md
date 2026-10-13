@@ -2,11 +2,11 @@
 
 ## Purpose
 
-Single-image reconstruction is underdetermined. This capability owns competing explanations of camera, orientation, depth, and hidden form; it does not own final mesh detail.
+Fit a consistent 3D camera and shape hypothesis from the source projection, repeated components, geometric continuity, and structural cues. Build the complete volumetric candidate and inspect it in registered and orthogonal views.
 
 ## Required hypotheses
 
-For every high-impact ambiguity, maintain at least two plausible alternatives until evidence eliminates one. Describe each with:
+For each high-impact camera or shape ambiguity, compare at least two plausible interpretations and choose using actual registered and orthogonal renders. Describe each with:
 
 - predicted silhouette;
 - predicted occlusion order;
@@ -52,9 +52,9 @@ A correct projected endpoint does not prove a correct 3D pose. Two candidates ma
 
 Use T-junctions, overlap, cast shadows, contour termination, relative sharpness, and grazing highlights as cues. Store the inferred front-to-back relation and its confidence. A relation with weak evidence remains a hypothesis.
 
-## Bilateral asymmetry: camera and pose before separate geometry
+## Repeated and bilateral construction
 
-When paired parts appear different in one view, do not fit each side independently by default. Declare a `bilateral-pair` relation first and prefer one shared rest construction mirrored across the sagittal plane.
+Identify repeated bands, panels, corner supports, handles, fasteners, and paired parts as geometric patterns. Use shared profiles and mirrored rest geometry where appropriate, then reproduce image-space differences through the camera and articulation. Declare a `bilateral-pair` relation for paired semantic parts, using shared-mirrored construction when supported.
 
 Visible left/right differences should be explained in this order:
 
@@ -97,7 +97,7 @@ The optional registered hero camera is written in canonical local coordinates an
 
 ## Worked example
 
-When a single frontal view can be matched by a deceptively flat candidate, or when it is unclear how to distinguish source facts from the 3D completion needed for a coherent asset, read `references/single-view-volumetric-reasoning-example.md`. The example demonstrates observation -> spatial hypothesis -> orthogonal self-check -> revision while keeping inferred geometry distinct from observed source truth.
+For a practical whole-volume construction walkthrough, read `references/single-view-volumetric-reasoning-example.md`. It connects source measurements, shared geometry, complete volumes, and orthogonal review.
 
 
 ## Prior quarantine for hidden-form aids
