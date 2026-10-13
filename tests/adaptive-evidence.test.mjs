@@ -55,8 +55,8 @@ test('adaptive source sheet has explicit views, on-demand analyses and no redund
     sources:[{id:'character-sheet',path:'sheet.png',sha256:await sha('sheet.png'),
       views:[
         {id:'whole',role:'sheet',roi:[0,0,1,1]},
-        {id:'front',role:'front',roi:[0,0,0.5,1],padding:0.5,analyses:['edges','context']},
-        {id:'side',role:'left',roi:[0.5,0,0.5,1],analyses:['gradient','contrast']},
+        {id:'front',role:'front',roi:[0,0,0.5,1],padding:0.5,question:'Where is the limb boundary?',decisionTarget:'outline of front mechanical limb',analyses:['edges','context']},
+        {id:'side',role:'left',roi:[0.5,0,0.5,1],question:'Does the side contain a separate shell?',decisionTarget:'shell segmentation',analyses:['gradient','contrast']},
       ]}],
     defaultAnalyses:[],board:false,
   });
@@ -89,7 +89,7 @@ test('adaptive separated RGBA image and ZIP member preserve exact member SHA and
     schema:'refas.evidence-request/v1',subjectId:'mechanical-components',board:true,
     sources:[
       {id:'separate',path:'solo.png',sha256:await sha('solo.png'),
-       views:[{id:'whole',role:'part',materialize:true,analyses:['alpha-mask','edges']}]},
+       views:[{id:'whole',role:'part',materialize:true,question:'Where does the part alpha support end?',decisionTarget:'part transparency boundary',analyses:['alpha-mask','edges']}]},
       {id:'archive',archive:'pieces.zip',archiveSha256:await sha('pieces.zip'),
        member:'joint/joint-1.png',sha256:memberSha,
        views:[{id:'joint',role:'detail',materialize:true,analyses:[]}]},
@@ -110,7 +110,7 @@ test('previous complete adaptive observation survives bad SHA, unsafe archive me
   const {root,sha,memberSha}=await fixture(t);
   const original={schema:'refas.evidence-request/v1',subjectId:'tested-source',
     sources:[{id:'flat',path:'flat.png',sha256:await sha('flat.png'),
-      views:[{id:'whole',role:'front',analyses:['edges']}]}]};
+      views:[{id:'whole',role:'front',question:'Where is the actual source outline?',decisionTarget:'base footprint',analyses:['edges']}]}]};
   await writeRequest(root,original);
   assert.equal(run(root).status,0);
   const previous=await fs.readFile(path.join(root,'evidence/manifest.json'),'utf8');
@@ -119,7 +119,7 @@ test('previous complete adaptive observation survives bad SHA, unsafe archive me
   await fs.access(oldFile);
   await writeRequest(root,{...original,sources:[{...original.sources[0],sha256:'a'.repeat(64)}]});
   let rejected=run(root);assert.notEqual(rejected.status,0);assert.match(rejected.stderr,/SHA-256 mismatch/);
-  await writeRequest(root,{...original,sources:[{...original.sources[0],views:[{id:'whole',analyses:['alpha-mask']}]}]});
+  await writeRequest(root,{...original,sources:[{...original.sources[0],views:[{id:'whole',question:'Is there an alpha boundary?',decisionTarget:'part visibility',analyses:['alpha-mask']}]}]});
   rejected=run(root);assert.notEqual(rejected.status,0);assert.match(rejected.stderr,/alpha-mask requires/);
   await writeRequest(root,{...original,sources:[{id:'zip',archive:'pieces.zip',archiveSha256:await sha('pieces.zip'),
     member:'../joint/joint-1.png',sha256:memberSha,views:[{id:'whole'}]}]});
@@ -138,7 +138,7 @@ test('adaptive successful rerender prunes old snapshot; clobber and invalid empt
   let result=run(root);assert.equal(result.status,0,result.stderr);
   const before=JSON.parse(await fs.readFile(path.join(root,'evidence/manifest.json'),'utf8'));
   await writeRequest(root,{...original,sources:[{...original.sources[0],
-    views:[{id:'closeup',role:'detail',roi:[.1,.1,.6,.6],analyses:['edges']}]}]});
+    views:[{id:'closeup',role:'detail',roi:[.1,.1,.6,.6],question:'Where is the joint interface?',decisionTarget:'joint perimeter',analyses:['edges']}]}]});
   result=run(root);assert.equal(result.status,0,result.stderr);
   const after=JSON.parse(await fs.readFile(path.join(root,'evidence/manifest.json'),'utf8'));
   assert.notEqual(after.manifestDigest,before.manifestDigest);
@@ -153,6 +153,6 @@ test('adaptive successful rerender prunes old snapshot; clobber and invalid empt
   const legacy=spawnSync(process.execPath,[CLI,'evidence','--image',legacyImage,'--scope','whole','--out',root],
     {encoding:'utf8',timeout:15000});
   assert.notEqual(legacy.status,0);
-  assert.match(legacy.stderr,/cannot contain or overwrite the original source/);
+  assert.match(legacy.stderr,/old --image fixed-filter extraction was removed/);
   assert.deepEqual(await fs.readFile(legacyImage),bytes);
 });
