@@ -199,7 +199,7 @@ function help() {
       register: 'register --input registration-input.json --out registration.json',
       'validate-spec': 'validate-spec --file spec.json [--context hierarchy.json]',
       'inspect-glb': 'inspect-glb --glb asset.glb',
-      evidence: 'evidence --spec observation-request.json --out DIR (multi-image/sheet/ZIP, on-demand analyses) | evidence --image reference.png --out DIR --scope ID [--roi x,y,w,h] [--padding 0.08] (legacy)',
+      evidence: 'evidence --spec observation-request.json --out DIR [--reuse] | evidence --assess utility-decisions.json --out DIR [--prune] (question, insight, model edit and retention)',
       render: 'render --glb asset.glb --out DIR [--reference image.png] [--frame canonical-frame.json] [--size 640] [--timeout-seconds 300] [--max-working-mb 512] [--tile-size 256] [--max-triangles N] [--hero-only]',
       'render-pbr': 'render-pbr --glb asset.glb --out DIR --frame canonical-frame.json [--reference image.png] [--size 420] [--timeout-seconds 180] [--max-working-mb 512] [--tile-size 128] [--neutral-clay] [--no-board]',
       'preview-pbr': 'preview-pbr --glb asset.glb --out PREVIEW_DIR --frame canonical-frame.json [--views hero,side] [--reuse] [--size 420] [--timeout-seconds 180] [--max-working-mb 512] [--tile-size 128]',
@@ -322,15 +322,25 @@ async function main() {
   }
   if (command === 'inspect-glb') { print(inspectGlb(await fs.readFile(path.resolve(required(options, 'glb'))))); return; }
   if (command === 'evidence') {
-    if (options.spec !== undefined) {
-      if (options.image !== undefined || options.scope !== undefined || options.roi !== undefined || options.padding !== undefined) {
-        throw new Error('--spec adaptive evidence cannot mix with legacy --image/--scope/--roi/--padding');
+    if (options.spec && !options.assess) {
+      if (options.image !== undefined || options.scope !== undefined || options.roi !== undefined ||
+          options.padding !== undefined || options.prune !== undefined) {
+        throw new Error('evidence --spec accepts only --out and optional --reuse');
       }
-      runPython('evidence_request.py', ['--spec', required(options, 'spec'), '--out', required(options, 'out')]); return;
+      const args = ['--spec', required(options, 'spec'), '--out', required(options, 'out')];
+      if (options.reuse === true) args.push('--reuse');
+      runPython('evidence_request.py', args); return;
     }
-    const args = ['--image', required(options, 'image'), '--out', required(options, 'out'), '--scope', required(options, 'scope')];
-    if (options.roi) args.push('--roi', options.roi); if (options.padding) args.push('--padding', options.padding);
-    runPython('evidence.py', args); return;
+    if (options.assess && !options.spec) {
+      if (options.image !== undefined || options.scope !== undefined || options.roi !== undefined ||
+          options.padding !== undefined || options.reuse !== undefined) {
+        throw new Error('evidence --assess accepts only --out and optional --prune');
+      }
+      const args = ['--decisions', required(options, 'assess'), '--manifest', path.join(path.resolve(required(options, 'out')), 'manifest.json')];
+      if (options.prune === true) args.push('--prune');
+      runPython('evidence_utility.py', args); return;
+    }
+    throw new Error('evidence requires exactly one of --spec (derive) or --assess (evaluate utility); old --image fixed-filter extraction was removed');
   }
   if (command === 'render') {
     const args = ['--glb', required(options, 'glb'), '--out', required(options, 'out')];

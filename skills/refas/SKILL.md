@@ -71,17 +71,24 @@ node scripts/refas.mjs resume --root <project-dir>
 
 Copy `assets/templates/visual-hierarchy.json` and customize it with semantic IDs such as `whole`, `upper-shell`, or `fastener-center`; never use iteration codes as architecture. Use `assets/templates/visual-observation.json` as input to `createObservation`; the output becomes a digest-bound record.
 
-Create evidence views without replacing the source:
+Use source images directly first; create derived observation aids only for a
+specific ambiguity in an exact ROI. Every requested non-crop analysis must name
+`question` and `decisionTarget` before generation. A transform is not proof
+that a new fact exists.
 
 ```bash
-# Prefer one or more exact-SHA sources with explicitly labeled sheet panels / image views:
-node scripts/refas.mjs evidence --spec <project-dir>/evidence-request.json --out <project-dir>/reviews/observations
-# Legacy single-image all-filter output (compatibility only):
-python3 scripts/evidence.py --image <reference.png> --out <evidence-dir> --scope whole
-python3 scripts/evidence.py --image <reference.png> --out <evidence-dir> --scope <part-id> --roi x,y,width,height
+node scripts/refas.mjs evidence --spec <project-dir>/evidence-request.json --out <project-dir>/reviews/observations --reuse
+node scripts/refas.mjs evidence --assess <project-dir>/evidence-utility-decisions.json --out <project-dir>/reviews/observations --prune
 ```
 
-Normalized ROI values are in `[0,1]`. Evidence manifests include source and recipe digests.
+After inspecting the raw/derived views, disposition **every requested
+analysis** as clarified, contradicted, insufficient or no-benefit and cite a
+substantive observation. For applied model edits, attribute the exact before
+and after GLB SHA-256 and localized finding; changed bytes establish only an
+edit, not improved resemblance or causality. An explicit non-use outcome is
+valid. Only unused/unhelpful derivatives may be pruned, with their SHA tombstone
+kept; raw originals are never pruned. The legacy all-filter `evidence.py`
+path is retired. See `references/observation.md`.
 
 ## Agent workflow and diagnostics
 

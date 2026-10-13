@@ -21,7 +21,7 @@ import numpy as np
 from PIL import Image, ImageChops, ImageDraw, ImageEnhance, ImageFilter, ImageOps
 
 from source_manifest import inspect_primary_image, MAX_PRIMARY_IMAGE_BYTES
-from evidence import digest_json, make_board, normalize_uint8, roi_pixels, sha256
+from observation_image import digest_json, make_board, normalize_uint8, roi_pixels, sha256
 
 REQUEST_SCHEMA = 'refas.evidence-request/v1'
 OUTPUT_SCHEMA = 'refas.observation-aid-set/v1'
@@ -184,6 +184,7 @@ def images_for_source(root, source):
         'archiveSha256':source.get('archiveSha256') if archive_path else None,
         'member':source.get('member') if archive_path else None,
         'sourceManifest':source.get('sourceManifest'),
+        'sourceManifestSha256':sha256(manifest_file) if source.get('sourceManifest') is not None else None,
         'viewCount':len(source.get('views',[])),
     }
     return image, descriptor, raw_path
@@ -237,7 +238,15 @@ def request_plan(spec):
                 name(view.get('role'),'view.role')
             if not isinstance(view.get('materialize',False),bool):
                 raise ValueError('materialize must be boolean')
-            select_analyses(view.get('analyses',default),'view.analyses')
+            analyses = select_analyses(view.get('analyses',default),'view.analyses')
+            needs_reason = any(item != 'crop' for item in analyses)
+            if needs_reason:
+                for field in ('question', 'decisionTarget'):
+                    detail = view.get(field)
+                    if not isinstance(detail,str) or not detail.strip():
+                        raise ValueError(f'{identity}/{vid} derived analysis requires substantive {field}')
+                    if len(detail)>1024:
+                        raise ValueError(f'{identity}/{vid}.{field} exceeds the supported length')
             count+=1
     if count>MAX_VIEWS:
         raise ValueError('observation request exceeds 160 views')
@@ -246,7 +255,7 @@ def request_plan(spec):
     return subject,sources,default,board,count
 
 
-def run_request(spec_path: str, out_path: str):
+def run_request(spec_path: str, out_path: str, reuse=False):
     request=Path(spec_path).resolve()
     root=request.parent
     out=Path(out_path).resolve()
@@ -275,6 +284,35 @@ def run_request(spec_path: str, out_path: str):
             raise ValueError('combined original image pixels exceed observation resource budget')
         decoded.append((source,image,descriptor))
         raw_paths.append((raw_path,descriptor['archiveSha256'] if descriptor['kind']=='archive-member' else descriptor['sha256']))
+    current=out/'manifest.json'
+    if reuse and current.is_file() and not current.is_symlink():
+        try:
+            previous=json.loads(current.read_text(encoding='utf-8'))
+            envelope=dict(previous)
+            previous_digest=envelope.pop('manifestDigest',None)
+            exact=previous.get('schema')==OUTPUT_SCHEMA and previous.get('inputDigest')==digest_json(spec)
+            exact=exact and previous_digest==digest_json(envelope)
+            exact=exact and [(x['id'],x['sha256']) for x in previous.get('sources',[])]==[(x['id'],x['sha256']) for x in [d for _,__,d in decoded]]
+            for view in previous.get('views',[]):
+                for item in view.get('analysisOutputs',[]):
+                    if item.get('discardedSha256'):
+                        exact=False
+                        break
+                    if 'path' in item:
+                        location=out/item['path']
+                        if not location.is_file() or location.is_symlink() or not location.resolve().is_relative_to(out) or sha256(location)!=item.get('sha256'):
+                            exact=False
+                            break
+            board_item=previous.get('board')
+            if board_item:
+                board_file=out/board_item['path']
+                if not board_file.is_file() or sha256(board_file)!=board_item['sha256']:
+                    exact=False
+            if exact:
+                print(json.dumps({'status':'REUSED','claimScope':'derived-observation-aid-only','manifest':str(current),'sources':len(decoded),'views':len(previous['views'])},indent=2))
+                return
+        except (ValueError,KeyError,TypeError,OSError,json.JSONDecodeError):
+            pass
     token=hashlib.sha256((digest_json(spec)+str(time.time_ns())).encode('utf-8')).hexdigest()[:24]
     snapshot_rel=Path('snapshots')/token
     out.parent.mkdir(parents=True,exist_ok=True)
@@ -332,6 +370,9 @@ def run_request(spec_path: str, out_path: str):
                 entry={'id':view_id,'sourceId':source_id,'role':view.get('role','unknown'),
                        'scopeId':view.get('scopeId','whole'),'roi':roi,
                        'rawSourceSha256':descriptor['sha256'],'wholeSource':whole,
+                       'analysisQuestion':view.get('question') if any(a!='crop' for a in analyses) else None,
+                       'decisionTarget':view.get('decisionTarget') if any(a!='crop' for a in analyses) else None,
+                       'requestedAnalyses':analyses,
                        'analysisOutputs':outputs}
                 views_out.append(entry)
                 if board:
@@ -389,8 +430,9 @@ def main():
     parser=argparse.ArgumentParser()
     parser.add_argument('--spec',required=True)
     parser.add_argument('--out',required=True)
+    parser.add_argument('--reuse',action='store_true')
     args=parser.parse_args()
-    run_request(args.spec,args.out)
+    run_request(args.spec,args.out,args.reuse)
 
 
 if __name__=='__main__':main()

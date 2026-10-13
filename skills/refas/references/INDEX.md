@@ -32,9 +32,10 @@ The node form returns that instruction node's routing identity, prerequisites, r
 
 | Input situation | Agent command / contract |
 |---|---|
-| Single image, multi-panel sheet, separate photos or ZIP member collection | `refas evidence --spec evidence-request.json --out reviews/observations` |
-| Choose only useful crop/edge/gradient/highlight outputs | Per-view `analyses` in `assets/templates/evidence-request.json`; no default filters or board |
-| Old single-image fixed image collection | `refas evidence --image FILE --scope ID --out DIR` (legacy compatibility; never write to original's directory) |
+| Single image, sheet, separate photos, ZIP | `refas evidence --spec evidence-request.json --out reviews/observations --reuse` |
+| Only question-driven edge/gradient/contrast aids | Per-view `question`, `decisionTarget` and selected `analyses` in `assets/templates/evidence-request.json` |
+| Inspect findings / link changed GLB bytes / prune no-benefit files | `refas evidence --assess evidence-utility-decisions.json --out reviews/observations --prune` |
+| Retired fixed all-filter command | `evidence --image` / the fixed-all-filter worker removed; use the source directly or `--spec` |
 
 The new mode retains every source/ZIP member hash and view ROI in a
 `derived-observation-aid-only` manifest. **It cannot assert registration
