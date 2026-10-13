@@ -1,0 +1,54 @@
+{
+  "schema": "refas.evidence-utility-decisions/v1",
+  "manifestDigest": "0000000000000000000000000000000000000000000000000000000000000000",
+  "assessments": [
+    {
+      "sourceId": "reference-sheet",
+      "viewId": "front",
+      "analysis": "edges",
+      "outcome": "insufficient",
+      "observation": "State precisely what was still ambiguous after inspecting both the original and edges.",
+      "modelImpact": {
+        "status": "none"
+      },
+      "retention": "discard",
+      "retentionReason": "No new usable geometry interpretation; source pixels preserved"
+    },
+    {
+      "sourceId": "reference-sheet",
+      "viewId": "front",
+      "analysis": "context",
+      "outcome": "clarified",
+      "observation": "State which boundary relation became clearer, without asserting unseen depth.",
+      "modelImpact": {
+        "status": "planned"
+      },
+      "retention": "retain",
+      "retentionReason": "Needed to decide the next source-grounded model edit"
+    },
+    {
+      "sourceId": "reference-sheet",
+      "viewId": "detail",
+      "analysis": "gradient",
+      "outcome": "no-benefit",
+      "observation": "This transformation did not alter the original-source interpretation.",
+      "modelImpact": {
+        "status": "none"
+      },
+      "retention": "discard",
+      "retentionReason": "Unnecessary derived image"
+    },
+    {
+      "sourceId": "reference-sheet",
+      "viewId": "detail",
+      "analysis": "highlights",
+      "outcome": "insufficient",
+      "observation": "Highlight cues did not disambiguate geometry from illumination.",
+      "modelImpact": {
+        "status": "none"
+      },
+      "retention": "discard",
+      "retentionReason": "No decision affected"
+    }
+  ]
+}
