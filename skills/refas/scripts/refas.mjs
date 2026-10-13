@@ -199,7 +199,7 @@ function help() {
       register: 'register --input registration-input.json --out registration.json',
       'validate-spec': 'validate-spec --file spec.json [--context hierarchy.json]',
       'inspect-glb': 'inspect-glb --glb asset.glb',
-      evidence: 'evidence --image reference.png --out DIR --scope ID [--roi x,y,w,h] [--padding 0.08]',
+      evidence: 'evidence --spec observation-request.json --out DIR (multi-image/sheet/ZIP, on-demand analyses) | evidence --image reference.png --out DIR --scope ID [--roi x,y,w,h] [--padding 0.08] (legacy)',
       render: 'render --glb asset.glb --out DIR [--reference image.png] [--frame canonical-frame.json] [--size 640] [--timeout-seconds 300] [--max-working-mb 512] [--tile-size 256] [--max-triangles N] [--hero-only]',
       'render-pbr': 'render-pbr --glb asset.glb --out DIR --frame canonical-frame.json [--reference image.png] [--size 420] [--timeout-seconds 180] [--max-working-mb 512] [--tile-size 128] [--neutral-clay] [--no-board]',
       'preview-pbr': 'preview-pbr --glb asset.glb --out PREVIEW_DIR --frame canonical-frame.json [--views hero,side] [--reuse] [--size 420] [--timeout-seconds 180] [--max-working-mb 512] [--tile-size 128]',
@@ -322,6 +322,12 @@ async function main() {
   }
   if (command === 'inspect-glb') { print(inspectGlb(await fs.readFile(path.resolve(required(options, 'glb'))))); return; }
   if (command === 'evidence') {
+    if (options.spec !== undefined) {
+      if (options.image !== undefined || options.scope !== undefined || options.roi !== undefined || options.padding !== undefined) {
+        throw new Error('--spec adaptive evidence cannot mix with legacy --image/--scope/--roi/--padding');
+      }
+      runPython('evidence_request.py', ['--spec', required(options, 'spec'), '--out', required(options, 'out')]); return;
+    }
     const args = ['--image', required(options, 'image'), '--out', required(options, 'out'), '--scope', required(options, 'scope')];
     if (options.roi) args.push('--roi', options.roi); if (options.padding) args.push('--padding', options.padding);
     runPython('evidence.py', args); return;
