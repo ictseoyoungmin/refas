@@ -89,6 +89,11 @@ def main():
     if reference and (reference.is_symlink() or not reference.is_file()):
         raise ValueError('reference must be an existing regular image file')
     out = Path(a.out).resolve()
+    if out.suffix.lower() != '.png':
+        raise ValueError('combined board output must be a .png')
+    for source_dir in (portable, pbr, clay):
+        if source_dir and (out == source_dir or source_dir in out.parents):
+            raise ValueError('review board must not overwrite or reside inside immutable source render evidence')
     out.parent.mkdir(parents=True, exist_ok=True)
     stage = Path(tempfile.mkdtemp(prefix='.refas-review-', dir=out.parent))
     try:
