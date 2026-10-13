@@ -339,6 +339,9 @@ async function main() {
     if (!Number.isFinite(timeoutSeconds) || timeoutSeconds <= 0) throw new Error('--timeout-seconds must be a positive number');
     runPython('render_glb.py', args, {timeoutMs: Math.ceil(timeoutSeconds * 1000 + 5000)}); return;
   }
+  if (command === 'render-pbr' && (options.views !== undefined || options.reuse !== undefined || options.preview !== undefined)) {
+    throw new Error('view selection and cache reuse are preview-only; canonical render-pbr always renders all eight evidence views');
+  }
   if (command === 'render-pbr' || command === 'preview-pbr') {
     const args = ['--glb', required(options, 'glb'), '--out', required(options, 'out'), '--frame', required(options, 'frame')];
     if (options.reference) args.push('--reference', options.reference); if (options.size) args.push('--size', options.size);
