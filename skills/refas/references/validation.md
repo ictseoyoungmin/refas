@@ -81,6 +81,29 @@ Do not infer support from the renderer family. The configured version and backen
 
 The portable and PBR reports each retain **individual digest-bound frames**. A second human-facing eight-cell board is optional: when the portable board already exists, call `render-pbr --no-board` to skip only `pbr-review-board.png`, not the PBR render or its evidence. For a final presentation favor one suitable board, but preserve all actual per-view evidence and source-linked comparison artifacts. Neutral-clay continues to require all eight canonical frames for R04/final source-resemblance closure; never reduce these requirements to optimize layout.
 
+## Unified human review presentation
+
+To avoid looking at two independent eight-cell montages, use
+`validation/combined-review-presentation`:
+
+```bash
+node scripts/refas.mjs review-board --portable PROJECT/renders/portable --pbr PROJECT/renders/pbr --clay PROJECT/renders/clay --reference PROJECT/source/reference.png --out PROJECT/reviews/combined.png
+```
+
+All included source render PNGs are rehashed, and all three reports must bind
+the exact same candidate GLB SHA-256 and canonical camera-frame digest.
+`--clay` and `--reference` are optional. The generated board and companion
+JSON are strictly `presentation-only`; they do not establish source truth,
+source likeness, material support or any certified claim. The portable,
+canonical clay and final PBR **individual output images and reports** remain
+necessary for their respective gates. A `preview-pbr` directory cannot serve
+as a canonical report input.
+
+For fast intermediate iteration call `preview-pbr --views hero,side --reuse`
+after real edits; the resulting `preview-only` manifest is never accepted
+as `refas.pbr-render-report/v1`. When the current candidate reaches a
+closure gate, rerun the full canonical eight-view set under existing policies.
+
 ## Critique order
 
 Review in this order:

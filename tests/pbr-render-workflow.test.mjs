@@ -69,3 +69,74 @@ test('PBR tiny memory and timeout refuse partial publication',async(t)=>{
   assert.match(late.stderr,/timeout|deadline/i);
   await assert.rejects(fs.access(path.join(timedOut,'render-report.json')));
 });
+
+test('preview-only selective renderer reuses exact inputs without providing canonical gate evidence',async(t)=>{
+  const {root,glb,frame}=await fixture(t);
+  const out=path.join(root,'preview');
+  const args=[CLI,'preview-pbr','--glb',glb,'--frame',frame,'--out',out,
+    '--size','80','--views','hero,side','--reuse','--timeout-seconds','60','--max-working-mb','24'];
+  const runPreview=()=>spawnSync(process.execPath,args,{encoding:'utf8',timeout:70_000});
+  const first=runPreview();
+  assert.equal(first.status,0,first.stderr);
+  assert.match(first.stdout,/"status": "PASS"/);
+  const manifest=JSON.parse(await fs.readFile(path.join(out,'preview-manifest.json'),'utf8'));
+  assert.equal(manifest.claimScope,'preview-only');
+  assert.equal(manifest.eligibleForCertification,false);
+  assert.deepEqual(manifest.outputs.map(x=>x.viewId),['hero','side']);
+  await assert.rejects(fs.access(path.join(out,'render-report.json')));
+  await assert.rejects(fs.access(path.join(out,'pbr-review-board.png')));
+  const cached=runPreview();
+  assert.equal(cached.status,0,cached.stderr);
+  assert.match(cached.stdout,/"status": "REUSED"/);
+  await fs.writeFile(path.join(out,'side.png'),Buffer.from('tampered'));
+  const repaired=runPreview();
+  assert.equal(repaired.status,0,repaired.stderr);
+  assert.match(repaired.stdout,/"status": "PASS"/);
+  const nextFrame={...FRAME,hero:{...FRAME.hero,fovY:44}};
+  await fs.writeFile(frame,JSON.stringify(nextFrame));
+  const changed=runPreview();
+  assert.equal(changed.status,0,changed.stderr);
+  assert.match(changed.stdout,/"status": "PASS"/);
+  const refreshed=JSON.parse(await fs.readFile(path.join(out,'preview-manifest.json'),'utf8'));
+  assert.notEqual(manifest.inputDigest,refreshed.inputDigest);
+  const invalid=spawnSync(process.execPath,[CLI,'render-pbr','--glb',glb,'--frame',frame,'--out',path.join(root,'invalid'),
+      '--views','hero','--size','80'],{encoding:'utf8',timeout:15000});
+  assert.equal(invalid.status,1);
+  assert.match(invalid.stderr,/preview-only/);
+  const badClay=spawnSync(process.execPath,[CLI,'preview-pbr','--glb',glb,'--frame',frame,'--out',path.join(root,'bad-clay'),
+      '--neutral-clay','--size','80'],{encoding:'utf8',timeout:15000});
+  assert.equal(badClay.status,1);
+  assert.match(badClay.stderr,/cannot produce canonical neutral-clay/);
+});
+
+test('unified review board binds exact portable, PBR and neutral-clay images and rejects tampering',async(t)=>{
+  const {root,glb,frame}=await fixture(t);
+  const portable=path.join(root,'portable'),pbr=path.join(root,'pbr'),clay=path.join(root,'clay');
+  const portableRun=spawnSync(process.execPath,[CLI,'render','--glb',glb,'--frame',frame,'--out',portable,
+      '--size','80','--max-working-mb','24'],{encoding:'utf8',timeout:70_000});
+  assert.equal(portableRun.status,0,portableRun.stderr);
+  const pbrRun=run(glb,frame,pbr,['--no-board']);
+  const clayRun=run(glb,frame,clay,['--neutral-clay','--no-board']);
+  assert.equal(pbrRun.status,0,pbrRun.stderr);
+  assert.equal(clayRun.status,0,clayRun.stderr);
+  const board=path.join(root,'unified.png');
+  const combine=()=>spawnSync(process.execPath,[CLI,'review-board','--portable',portable,'--pbr',pbr,'--clay',clay,'--out',board],
+      {encoding:'utf8',timeout:30000});
+  const pass=combine();assert.equal(pass.status,0,pass.stderr);
+  const summary=JSON.parse(await fs.readFile(path.join(root,'unified.json'),'utf8'));
+  assert.equal(summary.claimScope,'presentation-only');
+  assert.equal(summary.eligibleForCertification,false);
+  assert.equal(summary.cells.length,12);
+  await fs.access(board);
+  await fs.writeFile(path.join(clay,'side.png'),Buffer.from('stale-image'));
+  const rejected=combine();
+  assert.equal(rejected.status,1);
+  assert.match(rejected.stderr,/digest mismatch/);
+  const preview=path.join(root,'preview');
+  const previewRun=spawnSync(process.execPath,[CLI,'preview-pbr','--glb',glb,'--frame',frame,'--out',preview,'--size','80'],
+    {encoding:'utf8',timeout:30000});
+  assert.equal(previewRun.status,0,previewRun.stderr);
+  const invalid=spawnSync(process.execPath,[CLI,'review-board','--portable',portable,'--pbr',preview,'--out',path.join(root,'invalid.png')],
+    {encoding:'utf8',timeout:15000});
+  assert.equal(invalid.status,1,'a preview manifest must not authorize an official review board');
+});

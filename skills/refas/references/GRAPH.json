@@ -4441,6 +4441,27 @@
             }
           },
           {
+            "id": "iterative-pbr-preview",
+            "operation": "render",
+            "cli": {
+              "bin": "refas",
+              "command": "preview-pbr"
+            },
+            "library": null,
+            "template": null,
+            "inputContract": "exact GLB/canonical frame; --views hero,side and optional digest-verified --reuse; emits preview-only manifest and NEVER refas.pbr-render-report/v1; not usable for any R04 or material PASS",
+            "outputSchema": null,
+            "validator": null,
+            "minimumInvocation": "references/appearance.md",
+            "example": null,
+            "usageReference": "references/appearance.md",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "independent CLI-only presentation/iteration operation; no checkpoint, source-bound, or certification authority"
+            }
+          },
+          {
             "id": "generate-uv-coordinates",
             "operation": "create",
             "cli": null,
@@ -4568,6 +4589,27 @@
               "schema": "refas.capability-invocation/v1",
               "verification": "structural",
               "reason": "stateful, filesystem-bound, renderer-bound, or CLI-only operation; command discovery is verified separately"
+            }
+          },
+          {
+            "id": "combined-review-presentation",
+            "operation": "render",
+            "cli": {
+              "bin": "refas",
+              "command": "review-board"
+            },
+            "library": null,
+            "template": null,
+            "inputContract": "exact portable and PBR report folders, optional canonical clay folder; SHA-verified all included frames, identical GLB/frame digests; presentation-only PNG/JSON no source-review PASS",
+            "outputSchema": null,
+            "validator": null,
+            "minimumInvocation": "references/validation.md",
+            "example": null,
+            "usageReference": "references/validation.md",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "independent CLI-only presentation/iteration operation; no checkpoint, source-bound, or certification authority"
             }
           },
           {

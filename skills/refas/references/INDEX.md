@@ -28,6 +28,18 @@ refas describe capability <runtime-capability-id>
 
 The node form returns that instruction node's routing identity, prerequisites, runtime-capability projection, closure effects, and full current public interface descriptors. The capability form accepts only one of the 11 canonical runtime capability IDs and aggregates owning nodes in graph order. These namespaces are intentionally explicit: `refas describe <id>` does not guess whether an ID is an instruction node or a runtime capability, and routing-only owner tags such as `control` are not runtime capabilities.
 
+### Rendering workflow lookup
+
+| Situation | Installed command | Node / interface |
+|---|---|---|
+| Fast edited-GLB shape/material view without full PBR | `node scripts/refas.mjs preview-pbr --glb candidate.glb --frame frame.json --out renders/preview --views hero,side --reuse` | `appearance/iterative-pbr-preview` |
+| One combined human-facing board from real render evidence | `node scripts/refas.mjs review-board --portable renders/portable --pbr renders/pbr --clay renders/clay --out reviews/combined.png` | `validation/combined-review-presentation` |
+
+These commands provide **no visual PASS authority**: preview writes only a
+`preview-only` manifest, and the combined board is `presentation-only`.
+Final neutral-clay and appearance reports still require all eight current views.
+See `references/appearance.md` and `references/validation.md` for gate use.
+
 ### Agent-facing workflow lookup (existing operations)
 
 The released CLI provides read-only navigation and diagnostics. Use the canonical

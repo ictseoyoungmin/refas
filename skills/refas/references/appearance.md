@@ -62,6 +62,25 @@ Neutral-clay early-resemblance rendering is upstream shape evidence, not appeara
 
 A neutral-clay `refas.pbr-render-report/v1` therefore declares `claimScope: shape-resemblance-only`. Never use it to satisfy `appearance-plausibility`, material feature coverage, or final visual fidelity. Appearance still requires a normal `claimScope: visual-fidelity` PBR report that preserves the candidate's actual materials.
 
+## Low-cost iteration before final appearance
+
+For a quick editable candidate inspection call the registered
+`appearance/iterative-pbr-preview` interface:
+
+```bash
+node scripts/refas.mjs preview-pbr --glb PROJECT/candidate.glb --frame PROJECT/canonical-frame.json --out PROJECT/renders/preview --views hero,side --reuse --size 160
+```
+
+This only renders the selected real geometry views and reuses them when exact
+GLB, frame, exposure/lighting and PNG digests still match. The output is
+`refas.render-preview/v1` with `claimScope: preview-only`, not canonical
+appearance or neutral-clay evidence. Never attach preview results to
+`createPbrRenderReport`, early resemblance, final visual-review PASS, or
+source-bound release. Rerender the full canonical eight-view evidence after
+meaningful shape/material edits are accepted and before final admission.
+View selection is deliberately forbidden on `render-pbr`, which continues
+to output the eight standard views.
+
 ## Verification sequence
 
 1. Freeze the accepted geometry, camera, exposure, tone mapping, and environment.

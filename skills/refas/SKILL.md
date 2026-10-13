@@ -255,6 +255,20 @@ bars, dark plates posing as holes, or a one-view cage.
 
 ## Render and review
 
+During geometry iteration, use the `appearance/iterative-pbr-preview` CLI
+(`node scripts/refas.mjs preview-pbr --glb candidate.glb --frame frame.json
+--out renders/preview --views hero,side --reuse`) instead of repeatedly running
+all eight PBR views. This is actual geometry rendering, but preview results
+are expressly non-authoritative: no `render-report.json` or source, appearance
+or neutral-clay gate can be satisfied by them. For final review compose one
+`validation/combined-review-presentation` board with
+`refas review-board --portable DIR --pbr DIR [--clay DIR] --out FILE`;
+it verifies original frame SHA-256 bytes but is not certification.
+Full canonical eight-view evidence remains mandatory at the existing
+source-bound closure stages. See `references/validation.md`.
+
+## Render and review
+
 Generate actual multiview evidence with the bundled offline renderer:
 
 ```bash
@@ -296,7 +310,7 @@ node scripts/refas.mjs render-pbr \
   --max-working-mb 512
 ```
 
-It supports base-color, metallic, and roughness factors. It explicitly reports clearcoat, image-based lighting, normal maps, and textures as unsupported. Prefer Blender, Three.js, Filament, glTF Sample Viewer, or VTK when the appearance claim needs those features; keep those renderers outside the RefAs distribution and adapt their outputs through the same report contract.
+It supports base-color, metallic, and roughness factors plus embedded PNG base-color textures with TEXCOORD_0. It reports clearcoat, image-based lighting, and normal maps as unsupported; canonical neutral-clay intentionally discards beauty textures and cannot pass appearance. Prefer Blender, Three.js, Filament, glTF Sample Viewer, or VTK when the appearance claim needs those features; keep those renderers outside the RefAs distribution and adapt their outputs through the same report contract.
 
 Copy `assets/templates/pbr-render-report.json` for the independent pass. Bind the exact asset and canonical-frame digests, renderer family/name/version/backend, fixed lighting rig, exposure/tone mapping/output color space, supported and unsupported material features, output frame digests, and reproducibility mode. A renderer's brand name never implies feature support. If the declared backend does not cover every required material feature, keep appearance insufficient and reopen the owning capability from the PBR evidence.
 

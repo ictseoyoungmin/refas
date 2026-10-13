@@ -196,8 +196,54 @@ def render(primitives, position, target, output, *, size, mode, up_hint, deadlin
     return {"path": output.name, "sha256": sha256(output), "mode": mode}
 
 
+VIEW_IDS = ('hero', 'oblique', 'side', 'top', 'grazing', 'normal', 'object-id', 'albedo')
+
+
+def _preview_selection(value):
+    requested = [part.strip() for part in value.split(',')]
+    if not requested or any(view not in VIEW_IDS for view in requested):
+        raise ValueError('--views must contain known canonical view IDs')
+    if len(set(requested)) != len(requested):
+        raise ValueError('--views cannot repeat view IDs')
+    return requested
+
+
+def _preview_cache_valid(out, expected_digest, views):
+    manifest_path = out / 'preview-manifest.json'
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding='utf-8'))
+        envelope = dict(manifest)
+        saved_digest = envelope.pop('manifestDigest', None)
+        if saved_digest != canonical_digest(envelope):
+            return False
+        if (manifest.get('schema') != 'refas.render-preview/v1' or
+            manifest.get('claimScope') != 'preview-only' or
+            manifest.get('eligibleForCertification') is not False or
+            manifest.get('inputDigest') != expected_digest or
+            [item['viewId'] for item in manifest.get('outputs', [])] != views):
+            return False
+        for item in manifest['outputs']:
+            if item.get('path') != item['viewId'] + '.png':
+                return False
+            image = out / item['path']
+            if not image.is_file() or sha256(image) != item['sha256']:
+                return False
+        return True
+    except (OSError, KeyError, ValueError, TypeError, json.JSONDecodeError):
+        return False
+
+
 def main():
-    p=argparse.ArgumentParser(); p.add_argument('--glb',required=True); p.add_argument('--out',required=True); p.add_argument('--frame',required=True); p.add_argument('--reference'); p.add_argument('--size',type=int,default=420); p.add_argument('--timeout-seconds',type=float,default=180); p.add_argument('--max-working-mb',type=float,default=512); p.add_argument('--exposure',type=float,default=0.0); p.add_argument('--background',default='15,18,23'); p.add_argument('--key-intensity',type=float,default=3.4); p.add_argument('--fill-intensity',type=float,default=1.5); p.add_argument('--rim-intensity',type=float,default=0.65); p.add_argument('--neutral-clay',action='store_true'); p.add_argument('--tile-size',type=int,default=128); p.add_argument('--no-board',action='store_true'); a=p.parse_args()
+    p=argparse.ArgumentParser(); p.add_argument('--glb',required=True); p.add_argument('--out',required=True); p.add_argument('--frame',required=True); p.add_argument('--reference'); p.add_argument('--size',type=int,default=420); p.add_argument('--timeout-seconds',type=float,default=180); p.add_argument('--max-working-mb',type=float,default=512); p.add_argument('--exposure',type=float,default=0.0); p.add_argument('--background',default='15,18,23'); p.add_argument('--key-intensity',type=float,default=3.4); p.add_argument('--fill-intensity',type=float,default=1.5); p.add_argument('--rim-intensity',type=float,default=0.65); p.add_argument('--neutral-clay',action='store_true'); p.add_argument('--tile-size',type=int,default=128); p.add_argument('--no-board',action='store_true'); p.add_argument('--preview',action='store_true'); p.add_argument('--views',default='hero,side'); p.add_argument('--reuse',action='store_true'); a=p.parse_args()
+    if not a.preview and a.reuse:
+        raise ValueError('--reuse is preview-only; canonical final evidence must rerender')
+    if not a.preview and a.views != 'hero,side':
+        raise ValueError('--views is preview-only; canonical PBR always renders all eight views')
+    if a.preview and a.neutral_clay:
+        raise ValueError('preview cannot produce canonical neutral-clay evidence')
+    if a.preview and a.reference:
+        raise ValueError('preview never authenticates a source reference; use canonical render for evidence')
+    selection = _preview_selection(a.views) if a.preview else list(VIEW_IDS)
     glb=Path(a.glb).resolve(); out=Path(a.out).resolve(); out.parent.mkdir(parents=True,exist_ok=True); frame_path=Path(a.frame).resolve(); model,binary=parse_glb(glb); decoded=estimate_decoded_geometry_bytes(model)
     policy=resource_policy(a.size,a.size,max_working_mb=a.max_working_mb,
                            requested_tile_size=a.tile_size,source_glb_bytes=glb.stat().st_size,
@@ -234,6 +280,22 @@ def main():
         exposure = a.exposure
     lights=[([-0.55, 0.75, 0.65], key_intensity, [1.0, 0.96, 0.90]), ([0.72, 0.18, 0.54], fill_intensity, [0.70, 0.82, 1.0]), ([-0.15, -0.62, 0.77], rim_intensity, [1.0, 0.76, 0.58])]
     specs=[('hero',[0,0,1],[0,1,0],'beauty','PBR HERO'),('oblique',[.72,.2,1],[0,1,0],'beauty','PBR OBLIQUE'),('side',[1,.05,.15],[0,1,0],'beauty','PBR SIDE'),('top',[.18,1,.35],[0,0,1],'beauty','PBR TOP'),('grazing',[-1,.05,.18],[0,1,0],'beauty','PBR GRAZING'),('normal',[0,0,1],[0,1,0],'normal','NORMAL'),('object-id',[0,0,1],[0,1,0],'object-id','OBJECT ID'),('albedo',[0,0,1],[0,1,0],'albedo','ALBEDO')]
+    if a.preview:
+        if (out/'render-report.json').exists():
+            raise ValueError('preview output must not reuse a canonical evidence directory')
+        specs=[spec for spec in specs if spec[0] in selection]
+        specs.sort(key=lambda spec: selection.index(spec[0]))
+        preview_input={
+            'schema':'refas.render-preview-input/v1',
+            'assetSha256':sha256(glb),'frameDigest':fd,'viewIds':selection,
+            'size':a.size,'background':list(background),'exposure':exposure,
+            'lights':[key_intensity,fill_intensity,rim_intensity],
+            'renderer':'numpy-cook-torrance-headless/1.0.0'
+        }
+        preview_digest=canonical_digest(preview_input)
+        if a.reuse and _preview_cache_valid(out,preview_digest,selection):
+            print(json.dumps({'status':'REUSED','claimScope':'preview-only','manifest':str(out/'preview-manifest.json'),'frames':len(selection)},indent=2))
+            return
     staging=Path(tempfile.mkdtemp(prefix='.refas-pbr-',dir=out.parent)); frames=[]
     try:
         for name,direction,up,mode,label in specs:
@@ -253,9 +315,28 @@ def main():
                          up_hint=up_hint, deadline=deadline, fov=fov, tile_size=tile_size, lights=lights,
                          exposure=exposure, background=background)
             frames.append({**rec, 'viewId':name,'label':label,'absolutePath':str(path)})
-        if not a.no_board:
+        if not a.no_board and not a.preview:
             board=staging/'pbr-review-board.png'
             make_board(Path(a.reference).resolve() if a.reference else None,frames,board)
+        if a.preview:
+            manifest={
+                'schema':'refas.render-preview/v1','claimScope':'preview-only',
+                'eligibleForCertification':False,'inputDigest':preview_digest,
+                'assetSha256':preview_input['assetSha256'],'frameDigest':fd,
+                'outputs':[{'viewId':frame['viewId'],'path':frame['path'],'sha256':frame['sha256']} for frame in frames]
+            }
+            manifest['manifestDigest']=canonical_digest(manifest)
+            (staging/'preview-manifest.json').write_text(json.dumps(manifest,indent=2)+'\n',encoding='utf-8')
+            out.mkdir(parents=True,exist_ok=True)
+            for frame in frames:
+                os.replace(staging/frame['path'],out/frame['path'])
+            # Avoid an old preview cell being mistaken for current coverage.
+            for old_view in VIEW_IDS:
+                if old_view not in selection:
+                    (out/(old_view+'.png')).unlink(missing_ok=True)
+            os.replace(staging/'preview-manifest.json',out/'preview-manifest.json')
+            print(json.dumps({'status':'PASS','claimScope':'preview-only','manifest':str(out/'preview-manifest.json'),'frames':len(frames)},indent=2))
+            return
         rig={"lights":"three-directional-calibrated-v1","keyIntensity":key_intensity,"fillIntensity":fill_intensity,"rimIntensity":rim_intensity,"background":list(background),"cameraFovY":31}; color={"exposure":exposure,"toneMapping":"Reinhard","outputColorSpace":"sRGB"}
         rig_id="fixed-three-light-review-rig"
         if a.neutral_clay:
