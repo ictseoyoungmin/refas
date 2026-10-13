@@ -186,7 +186,7 @@ def images_for_source(root, source):
         'sourceManifest':source.get('sourceManifest'),
         'viewCount':len(source.get('views',[])),
     }
-    return image, descriptor, (raw_path,archive_content)
+    return image, descriptor, raw_path
 
 
 def select_analyses(value, label):
@@ -260,20 +260,21 @@ def run_request(spec_path: str, out_path: str):
     # Validate every selected original *before* writing anything.
     decoded=[]
     for source in sources:
-        image, descriptor,(raw_path, archive_content)=images_for_source(root,source)
+        image, descriptor,raw_path=images_for_source(root,source)
         if raw_path.is_relative_to(out):
             raise ValueError('observation output cannot overwrite or contain any original source/archive')
         if source.get('sourceManifest') is not None:
             source_manifest = path_inside(root,source['sourceManifest'],'sourceManifest')
             if source_manifest.is_relative_to(out):
                 raise ValueError('observation output cannot overwrite or contain a bound source manifest')
+            raw_paths.append((source_manifest,sha256(source_manifest)))
         if raw_path.is_symlink():
             raise ValueError('source symlink cannot be accepted')
         total_pixels+=image.width*image.height
         if total_pixels>MAX_TOTAL_PIXELS:
             raise ValueError('combined original image pixels exceed observation resource budget')
         decoded.append((source,image,descriptor))
-        raw_paths.append((raw_path,archive_content,descriptor))
+        raw_paths.append((raw_path,descriptor['archiveSha256'] if descriptor['kind']=='archive-member' else descriptor['sha256']))
     token=hashlib.sha256((digest_json(spec)+str(time.time_ns())).encode('utf-8')).hexdigest()[:24]
     snapshot_rel=Path('snapshots')/token
     out.parent.mkdir(parents=True,exist_ok=True)
@@ -349,13 +350,9 @@ def run_request(spec_path: str, out_path: str):
                   'derivedImagesCannotAuthorizePass':True}}
         manifest['manifestDigest']=digest_json(manifest)
         # Detect mutable originals changed during extraction.
-        for raw_path, archive_content, descriptor in raw_paths:
-            if descriptor['kind']=='image':
-                if sha256(raw_path)!=descriptor['sha256']:
-                    raise ValueError('original changed during observation extraction')
-            else:
-                if sha256(raw_path)!=descriptor['archiveSha256']:
-                    raise ValueError('archive changed during observation extraction')
+        for raw_path, expected_sha in raw_paths:
+            if sha256(raw_path)!=expected_sha:
+                raise ValueError('original image, ZIP or source manifest changed during observation extraction')
         out.mkdir(parents=True,exist_ok=True)
         snapshots=out/'snapshots'; snapshots.mkdir(parents=True,exist_ok=True)
         actual=snapshots/token
