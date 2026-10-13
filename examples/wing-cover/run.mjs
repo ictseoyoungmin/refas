@@ -88,6 +88,55 @@ async function readJson(file) {
   return JSON.parse(await fs.readFile(file, 'utf8'));
 }
 
+async function generateFixtureObservation(scope, roi, reference, source) {
+  const directory = path.join(PROJECT, 'evidence', scope);
+  const canonical = path.join(directory, 'derived');
+  const specPath = path.join(PROJECT, `evidence-request-${scope}.json`);
+  await writeJson(specPath, {
+    schema: 'refas.evidence-request/v1',
+    subjectId: 'wing-cover-dogfood',
+    board: true,
+    sources: [{
+      id: 'primary', path: 'source/reference.png', sha256: source.sha256,
+      sourceManifest: 'source/source-manifest.json',
+      views: [{
+        id: scope, scopeId: scope, roi: roi.split(',').map(Number), padding: 0.08,
+        materialize: true, analyses: ['crop', 'context'],
+        question: 'Identify the source-visible outline and nearby structural context.',
+        decisionTarget: 'Fit the whole/part spatial construction and local assembly.',
+      }],
+    }],
+  });
+  runPython(path.join(SKILL_SCRIPTS, 'evidence_request.py'), ['--spec', specPath, '--out', canonical]);
+  const generated = await readJson(path.join(canonical, 'manifest.json'));
+  const outputs = generated.views[0].analysisOutputs;
+  const items = [];
+  await fs.mkdir(directory, {recursive: true});
+  for (const analysis of ['crop', 'context']) {
+    const output = outputs.find((entry) => entry.analysis === analysis);
+    assert.ok(output, `missing ${scope}/${analysis} observation`);
+    const target = path.join(directory, `${analysis}.png`);
+    const sourceFile = output.path ? path.join(canonical, output.path)
+      : output.alias === 'raw-source' ? reference
+      : output.alias === 'crop' ? path.join(directory, 'crop.png')
+      : null;
+    assert.ok(sourceFile, `unsupported observation alias for ${scope}/${analysis}`);
+    await fs.copyFile(sourceFile, target);
+    items.push({
+      id: `${scope}.${analysis}`, path: `${analysis}.png`,
+      sha256: await sha256File(target), sourceSha256: source.sha256,
+      recipeDigest: generated.inputDigest,
+    });
+  }
+  assert.ok(generated.board?.path, `missing ${scope} observation board`);
+  await fs.copyFile(path.join(canonical, generated.board.path), path.join(directory, 'evidence-board.png'));
+  // The compact fixture index preserves the established dogfood observations.
+  // Current observation authority remains in derived/manifest.json.
+  const fixtureIndex = {source: {sha256: source.sha256}, items};
+  await writeJson(path.join(directory, 'manifest.json'), fixtureIndex);
+  return fixtureIndex;
+}
+
 function closestPoint(point, a, b) {
   const edge = sub(b, a);
   const denominator = dot(edge, edge);
@@ -312,9 +361,7 @@ async function main() {
   ];
   const manifests = {};
   for (const [scope, roi] of evidenceScopes) {
-    const directory = path.join(PROJECT, 'evidence', scope);
-    runPython(path.join(SKILL_SCRIPTS, 'evidence.py'), ['--image', reference, '--out', directory, '--scope', scope, '--roi', roi, '--padding', '0.08']);
-    manifests[scope] = await readJson(path.join(directory, 'manifest.json'));
+    manifests[scope] = await generateFixtureObservation(scope, roi, reference, source);
   }
 
   const hierarchy = createVisualHierarchy({
