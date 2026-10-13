@@ -28,6 +28,19 @@ refas describe capability <runtime-capability-id>
 
 The node form returns that instruction node's routing identity, prerequisites, runtime-capability projection, closure effects, and full current public interface descriptors. The capability form accepts only one of the 11 canonical runtime capability IDs and aggregates owning nodes in graph order. These namespaces are intentionally explicit: `refas describe <id>` does not guess whether an ID is an instruction node or a runtime capability, and routing-only owner tags such as `control` are not runtime capabilities.
 
+### Observation evidence lookup
+
+| Input situation | Agent command / contract |
+|---|---|
+| Single image, multi-panel sheet, separate photos or ZIP member collection | `refas evidence --spec evidence-request.json --out reviews/observations` |
+| Choose only useful crop/edge/gradient/highlight outputs | Per-view `analyses` in `assets/templates/evidence-request.json`; no default filters or board |
+| Old single-image fixed image collection | `refas evidence --image FILE --scope ID --out DIR` (legacy compatibility; never write to original's directory) |
+
+The new mode retains every source/ZIP member hash and view ROI in a
+`derived-observation-aid-only` manifest. **It cannot assert registration
+or grant source-fidelity PASS** across images that happen to share a view name.
+Load `references/observation.md` for the precise format and safety contract.
+
 ### Rendering workflow lookup
 
 | Situation | Installed command | Node / interface |
