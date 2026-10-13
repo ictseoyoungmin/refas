@@ -14,6 +14,7 @@ import time
 import hashlib
 from pathlib import Path
 from observation_image import digest_json, sha256
+from render_glb import parse_glb
 
 SCHEMA = 'refas.evidence-utility-decisions/v1'
 MANIFEST = 'refas.observation-aid-set/v1'
@@ -72,6 +73,12 @@ def verify_edit(edit, root, evidence_key):
             expected=digest(asset.get('sha256'),f'{evidence_key}.{role}.sha256')
             if sha256(file)!=expected:
                 raise ValueError(f'{evidence_key}.{role} candidate SHA-256 mismatch')
+            try:
+                model, _ = parse_glb(file)
+                if not model.get('meshes'):
+                    raise ValueError('no drawable meshes')
+            except (ValueError, KeyError, IndexError, OSError) as error:
+                raise ValueError(f'{evidence_key}.{role} is not a usable GLB mesh candidate') from error
             observed.append({'path':asset['path'],'sha256':expected})
         if observed[0]['sha256']==observed[1]['sha256']:
             raise ValueError(f'{evidence_key} cannot claim a model edit with identical candidate bytes')
@@ -154,6 +161,10 @@ def review(manifest_path,decisions_path,prune=False):
         raise ValueError('every explicitly requested analysis must receive a disposition: '+', '.join(sorted(set(eligible)-set(seen))))
     # Recheck source provenance; no decision may upgrade a changed original.
     for source in manifest['sources']:
+        if source.get('sourceManifest'):
+            source_manifest=contained(root,source['sourceManifest'],'sourceManifest.path')
+            if sha256(source_manifest)!=digest(source.get('sourceManifestSha256'),'sourceManifest.sha256'):
+                raise ValueError('bound source manifest SHA-256 drift')
         if source['kind']=='image':
             original=contained(root,source['path'],'source.path')
             if sha256(original)!=source['sha256']:
