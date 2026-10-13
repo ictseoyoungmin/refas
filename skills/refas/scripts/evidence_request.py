@@ -18,10 +18,10 @@ from pathlib import Path, PurePosixPath
 from zipfile import ZipFile, BadZipFile
 
 import numpy as np
-from PIL import Image, ImageChops, ImageEnhance, ImageFilter, ImageOps
+from PIL import Image, ImageChops, ImageDraw, ImageEnhance, ImageFilter, ImageOps
 
 from source_manifest import inspect_primary_image, MAX_PRIMARY_IMAGE_BYTES
-from evidence import digest_json, font, make_board, normalize_uint8, roi_pixels, sha256
+from evidence import digest_json, make_board, normalize_uint8, roi_pixels, sha256
 
 REQUEST_SCHEMA = 'refas.evidence-request/v1'
 OUTPUT_SCHEMA = 'refas.observation-aid-set/v1'
@@ -29,7 +29,7 @@ ANALYSES = frozenset(('crop', 'context', 'edges', 'gradient', 'contrast', 'low-f
                      'high-frequency', 'highlights', 'alpha-mask'))
 MAX_SOURCES = 64
 MAX_VIEWS = 160
-MAX_TOTAL_PIXELS = 120_000_000
+MAX_TOTAL_PIXELS = 40_000_000
 MAX_ARCHIVE_BYTES = 256 * 1024 * 1024
 MAX_BOARD_CELLS = 24
 NAME = re.compile(r'^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$')
@@ -77,7 +77,7 @@ def read_image(content, label):
         return image.copy(), width, height
 
 
-def zip_bytes(archive, source, root):
+def zip_bytes(source, root):
     file = path_inside(root, source['archive'], 'archive')
     archive_sha = digest(source.get('archiveSha256'), 'archiveSha256')
     raw = checked_bytes(file, archive_sha, 'archive', MAX_ARCHIVE_BYTES)
@@ -156,7 +156,7 @@ def images_for_source(root, source):
         content = checked_bytes(raw_path, expected, f'{source_id} original')
         archive_path, archive_content = None, None
     else:
-        raw_path, archive_content, content = zip_bytes(source.get('archive'),source,root)
+        raw_path, archive_content, content = zip_bytes(source,root)
         archive_path = raw_path
         if hashlib.sha256(content).hexdigest() != expected:
             raise ValueError(f'{source_id} ZIP member SHA-256 mismatch')
@@ -232,6 +232,7 @@ def request_plan(spec):
                 raise ValueError('view.roi must be four finite numeric values')
             if not isinstance(view.get('padding',0.08),(int,float)) or not math.isfinite(view.get('padding',0.08)) or not 0<=view.get('padding',0.08)<=.5:
                 raise ValueError('view.padding must be in [0,0.5]')
+            name(view.get('scopeId','whole'),'view.scopeId')
             if view.get('role') is not None:
                 name(view.get('role'),'view.role')
             if not isinstance(view.get('materialize',False),bool):
@@ -262,6 +263,10 @@ def run_request(spec_path: str, out_path: str):
         image, descriptor,(raw_path, archive_content)=images_for_source(root,source)
         if raw_path.is_relative_to(out):
             raise ValueError('observation output cannot overwrite or contain any original source/archive')
+        if source.get('sourceManifest') is not None:
+            source_manifest = path_inside(root,source['sourceManifest'],'sourceManifest')
+            if source_manifest.is_relative_to(out):
+                raise ValueError('observation output cannot overwrite or contain a bound source manifest')
         if raw_path.is_symlink():
             raise ValueError('source symlink cannot be accepted')
         total_pixels+=image.width*image.height
@@ -317,7 +322,7 @@ def run_request(spec_path: str, out_path: str):
                         else:
                             canvas=image.crop(context)
                             overlay=canvas.copy()
-                            ink=__import__('PIL.ImageDraw',fromlist=['ImageDraw']).Draw(overlay)
+                            ink=ImageDraw.Draw(overlay)
                             ink.rectangle((b[0]-context[0],b[1]-context[1],b[2]-context[0]-1,b[3]-context[1]-1),
                                           outline=(255,91,52),width=max(1,round(min(image.size)/350)))
                             emit('context',overlay)
