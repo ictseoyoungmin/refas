@@ -49,6 +49,11 @@ test('PBR nondegenerate geometry is tile-size invariant, with optional single pr
   assert.ok(first.outputs.every((v)=>second.outputs.some((w)=>w.viewId===v.viewId&&w.sha256===v.sha256)));
   await fs.access(path.join(normal,'pbr-review-board.png'));
   await assert.rejects(fs.access(path.join(boardless,'pbr-review-board.png')));
+  const repeat=run(glb,frame,normal,['--tile-size','32','--no-board']);
+  assert.equal(repeat.status,0,repeat.stderr);
+  const rerendered=JSON.parse(await fs.readFile(path.join(normal,'render-report.json'),'utf8'));
+  assert.equal(rerendered.reportDigest,first.reportDigest);
+  await assert.rejects(fs.access(path.join(normal,'pbr-review-board.png')),'successful boardless rerender must remove a stale previous montage');
 });
 
 test('PBR tiny memory and timeout refuse partial publication',async(t)=>{
