@@ -734,7 +734,7 @@
             },
             "library": null,
             "template": null,
-            "inputContract": "source image + semantic scope + optional normalized ROI",
+            "inputContract": "optional --spec project-contained exact-SHA original image/sheet ROIs/separate images/ZIP members with selected analyses; derived observation aids only, never cross-camera registration or source-fidelity PASS; legacy --image/--scope remains compatible",
             "outputSchema": null,
             "validator": null,
             "minimumInvocation": "references/observation.md",
