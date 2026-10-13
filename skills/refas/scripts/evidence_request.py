@@ -21,7 +21,7 @@ import numpy as np
 from PIL import Image, ImageChops, ImageDraw, ImageEnhance, ImageFilter, ImageOps
 
 from source_manifest import inspect_primary_image, MAX_PRIMARY_IMAGE_BYTES
-from evidence import digest_json, make_board, normalize_uint8, roi_pixels, sha256
+from observation_image import digest_json, make_board, normalize_uint8, roi_pixels, sha256
 
 REQUEST_SCHEMA = 'refas.evidence-request/v1'
 OUTPUT_SCHEMA = 'refas.observation-aid-set/v1'
@@ -237,7 +237,15 @@ def request_plan(spec):
                 name(view.get('role'),'view.role')
             if not isinstance(view.get('materialize',False),bool):
                 raise ValueError('materialize must be boolean')
-            select_analyses(view.get('analyses',default),'view.analyses')
+            analyses = select_analyses(view.get('analyses',default),'view.analyses')
+            needs_reason = any(item != 'crop' for item in analyses)
+            if needs_reason:
+                for field in ('question', 'decisionTarget'):
+                    detail = view.get(field)
+                    if not isinstance(detail,str) or not detail.strip():
+                        raise ValueError(f'{identity}/{vid} derived analysis requires substantive {field}')
+                    if len(detail)>1024:
+                        raise ValueError(f'{identity}/{vid}.{field} exceeds the supported length')
             count+=1
     if count>MAX_VIEWS:
         raise ValueError('observation request exceeds 160 views')
@@ -332,6 +340,9 @@ def run_request(spec_path: str, out_path: str):
                 entry={'id':view_id,'sourceId':source_id,'role':view.get('role','unknown'),
                        'scopeId':view.get('scopeId','whole'),'roi':roi,
                        'rawSourceSha256':descriptor['sha256'],'wholeSource':whole,
+                       'analysisQuestion':view.get('question') if any(a!='crop' for a in analyses) else None,
+                       'decisionTarget':view.get('decisionTarget') if any(a!='crop' for a in analyses) else None,
+                       'requestedAnalyses':analyses,
                        'analysisOutputs':outputs}
                 views_out.append(entry)
                 if board:
