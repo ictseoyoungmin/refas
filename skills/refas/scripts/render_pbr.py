@@ -207,7 +207,7 @@ def main():
     free_scratch=int(a.max_working_mb*MIB)-(a.size*a.size*11+glb.stat().st_size+decoded)
     if free_scratch < 512:
         raise MemoryError('PBR working memory budget cannot hold a one-pixel shading tile')
-    tile_size=min(policy['tileSize'],max(1,int(math.sqrt(free_scratch/512)))
+    tile_size=min(policy['tileSize'], max(1, int(math.sqrt(free_scratch / 512))))
     model,primitives=load_primitives(glb,parsed=(model,binary));
     if a.neutral_clay:
         clay = NEUTRAL_CLAY_PRESET["material"]
