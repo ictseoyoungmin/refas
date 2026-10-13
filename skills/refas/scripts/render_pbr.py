@@ -212,6 +212,10 @@ def _preview_cache_valid(out, expected_digest, views):
     manifest_path = out / 'preview-manifest.json'
     try:
         manifest = json.loads(manifest_path.read_text(encoding='utf-8'))
+        envelope = dict(manifest)
+        saved_digest = envelope.pop('manifestDigest', None)
+        if saved_digest != canonical_digest(envelope):
+            return False
         if (manifest.get('schema') != 'refas.render-preview/v1' or
             manifest.get('claimScope') != 'preview-only' or
             manifest.get('eligibleForCertification') is not False or
