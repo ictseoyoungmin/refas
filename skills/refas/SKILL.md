@@ -5,7 +5,7 @@ description: Build and revise traceable, editable 3D assets from visual referenc
 
 # RefAs — Reference Asset Foundry
 
-RefAs helps an agent observe reference images, construct **actual editable 3D geometry**, inspect real renders, and revise local parts while retaining trustworthy checkpoints. It does not pretend that a single image contains facts it cannot reveal: keep observations separate from inference and engineering, and never elevate successful mesh/CI checks into unearned source resemblance approval.
+Construct a complete, coherent, editable 3D object from the visual reference. Establish whole volumes, repeated and paired structures, continuous curvature, thickness, and physical connections. Refine them through registered and orthogonal renders, then record source observations and construction choices with their respective provenance.
 
 ## Required reading
 
@@ -37,17 +37,16 @@ Then load only the references owned by the active capability:
 
 Do not blend every reference into one undifferentiated prompt. Keep one capability and one visual scope active at a time.
 
-## Non-negotiable truth policy
+## Modeling priorities
 
-- The raw reference is primary evidence. Crops, edge maps, contrast views, segmentation, and annotations are observation aids.
-- Observe the whole image before regions or parts. Every part retains an ancestry chain and a context-preserving crop.
-- Store visible facts separately from interpretations, hypotheses, and ambiguities.
-- Compare actual renders, not code, parameter values, manifests, or agent confidence.
-- Single-view IoU is forbidden. IoU may be used only with at least two independently source-backed registered views of the same candidate, and then only as correspondence evidence—not as a fit objective, ranking metric, resemblance signal, or standalone certification gate.
-- Preserve accepted child assets as immutable GLBs when assembling a parent. Reopen them only when parent evidence disproves their closure.
-- A low score alone does not select a repair owner. Localize a typed visual defect first.
-- A blocking defect without an owner fails closed. Do not guess a rollback point.
-- A completed render, watertight mesh, high triangle count, or large evidence bundle cannot promote a generic blockout into identity-bearing geometry.
+- Inspect the entire source and identify major masses, silhouette, repeated patterns, principal sections, and part relationships.
+- Build a coherent whole with continuous side/back geometry, plausible thickness, support paths, and aligned attachments before adding detail.
+- Reuse shared profiles and mirrored/repeated geometry when the structure supports them; fit deviations to the source.
+- Compare the actual GLB in its registered reference camera and side, top, rear, and grazing views. Repair the largest geometric discrepancy first.
+- Preserve the distinction between source observations, spatial hypotheses, and engineered construction choices in their respective artifacts.
+- Preserve reusable children and trustworthy checkpoints for localized rework.
+
+Source-bound approval uses independently bound original-source evidence and the existing contracts in `references/validation.md` and `references/claim-certification.md`. Geometry validity and resemblance are separate reported outcomes.
 
 ## Start a project
 
@@ -71,24 +70,14 @@ node scripts/refas.mjs resume --root <project-dir>
 
 Copy `assets/templates/visual-hierarchy.json` and customize it with semantic IDs such as `whole`, `upper-shell`, or `fastener-center`; never use iteration codes as architecture. Use `assets/templates/visual-observation.json` as input to `createObservation`; the output becomes a digest-bound record.
 
-Use source images directly first; create derived observation aids only for a
-specific ambiguity in an exact ROI. Every requested non-crop analysis must name
-`question` and `decisionTarget` before generation. A transform is not proof
-that a new fact exists.
+Inspect the original images directly. Request a derived observation aid for a specific visual question in a selected ROI; provide `question` and `decisionTarget` before generation.
 
 ```bash
 node scripts/refas.mjs evidence --spec <project-dir>/evidence-request.json --out <project-dir>/reviews/observations --reuse
 node scripts/refas.mjs evidence --assess <project-dir>/evidence-utility-decisions.json --out <project-dir>/reviews/observations --prune
 ```
 
-After inspecting the raw/derived views, disposition **every requested
-analysis** as clarified, contradicted, insufficient or no-benefit and cite a
-substantive observation. For applied model edits, attribute the exact before
-and after GLB SHA-256 and localized finding; changed bytes establish only an
-edit, not improved resemblance or causality. An explicit non-use outcome is
-valid. Only unused/unhelpful derivatives may be pruned, with their SHA tombstone
-kept; raw originals are never pruned. The legacy all-filter `evidence.py`
-path is retired. See `references/observation.md`.
+Assess each requested analysis as `clarified`, `contradicted`, `insufficient`, or `no-benefit` and record its observed contribution and retention decision. Attribute model edits with exact before/after GLB SHA-256 and a localized finding. Preserve raw originals and SHA tombstones for eligible pruned derivatives. See `references/observation.md` for the data contract.
 
 ## Agent workflow and diagnostics
 
@@ -122,8 +111,8 @@ Follow the semantic capability order in `references/workflow.md`.
 1. Inspect the full frame and record source provenance.
 2. Define the visual hierarchy from whole to feature.
 3. Record observations for the active node; keep uncertainty explicit.
-4. Propose multiple spatial hypotheses when depth or camera is ambiguous.
-5. Reconstruct the dominant silhouette and mass before decoration.
+4. Select and compare spatial/camera hypotheses for the whole form.
+5. Build complete dominant volumes, mirrored and repeated parts, major surface transitions, and physical attachments before decoration.
 6. Pass the whole-shape dependency barrier: registered silhouette, major landmarks, principal sections, curvature transitions, and coarse negative spaces.
 7. Anchor visible boundaries and relief to the reference projection.
 8. When a parameterized shape backend exists, fit multiple owner-local geometry parameters through verified actual-render trials; inspect the selected trial before making it the edit's single checkpoint candidate. High-impact camera, pose, appearance, and lighting fitters remain owner-local and are sequenced by a non-authoritative camera → pose → shape coordinator.
@@ -180,14 +169,9 @@ If work must stop before a decision, use `abort-edit`; it restores the baseline 
 
 ## Build geometry
 
-### Close visible form before choosing convenient primitives
+### Build and review a coherent whole
 
-Primitive helpers are blockout tools. Do not begin lower-scope hardening merely
-because `one capability × one scope` is active: that work-unit rule operates
-inside the dependency graph and never overrides the whole-shape barrier. A
-region, part, joint, or feature cannot close while the whole silhouette, pose,
-major landmarks, principal sections, curvature transitions, or coarse negative
-spaces remain unresolved.
+Start from a closed volumetric blockout. Develop identity-bearing sections, curvature, junctions, openings, and attachment paths with the same construction logic around the whole body. Preserve meaningful paired and repeated geometry. Inspect registered, side, top, grazing, and neutral-clay renders; close the whole-shape barrier before accepting dependent detail.
 
 Create `refas.construction-quality/v1` from
 `assets/templates/construction-quality.json` before closing
