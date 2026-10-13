@@ -35,7 +35,7 @@ The node form returns that instruction node's routing identity, prerequisites, r
 | Single image, sheet, separate photos, ZIP | `refas evidence --spec evidence-request.json --out reviews/observations --reuse` |
 | Only question-driven edge/gradient/contrast aids | Per-view `question`, `decisionTarget` and selected `analyses` in `assets/templates/evidence-request.json` |
 | Inspect findings / link changed GLB bytes / prune no-benefit files | `refas evidence --assess evidence-utility-decisions.json --out reviews/observations --prune` |
-| Retired fixed all-filter command | `evidence --image` / `scripts/evidence.py` removed; use the source directly or `--spec` |
+| Retired fixed all-filter command | `evidence --image` / the fixed-all-filter worker removed; use the source directly or `--spec` |
 
 The new mode retains every source/ZIP member hash and view ROI in a
 `derived-observation-aid-only` manifest. **It cannot assert registration
