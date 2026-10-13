@@ -112,47 +112,102 @@ def triangle_texcoords(primitive, tri):
     return uv
 
 
-def render(primitives, position, target, output, *, size, mode, up_hint, deadline, fov=31, lights=None, exposure=0.0, background=(15, 18, 23)):
-    right, up, forward = camera_basis(position, target, up_hint); position = np.asarray(position, dtype=np.float64)
-    scale = math.tan(math.radians(fov) / 2); background = np.asarray(background, dtype=np.uint8)
-    image = np.broadcast_to(background, (size, size, 3)).copy(); depth_buffer = np.full((size, size), np.inf)
+def render(primitives, position, target, output, *, size, mode, up_hint, deadline, fov=31, tile_size=128,
+           lights=None, exposure=0.0, background=(15, 18, 23)):
+    """Rasterize only bounded screen tiles and shade only depth-visible samples.
+
+    The framebuffer is persistent; temporary barycentric/shading arrays must never
+    scale with a large triangle's whole screen rectangle.
+    """
+    right, up, forward = camera_basis(position, target, up_hint)
+    position = np.asarray(position, dtype=np.float64)
+    scale = math.tan(math.radians(fov) / 2)
+    background = np.asarray(background, dtype=np.uint8)
+    image = np.broadcast_to(background, (size, size, 3)).copy()
+    depth_buffer = np.full((size, size), np.inf)
     for primitive in primitives:
-        camera = np.column_stack(((primitive.positions-position)@right, (primitive.positions-position)@up, (primitive.positions-position)@forward))
+        check_deadline(deadline)
+        camera = np.column_stack(((primitive.positions - position) @ right,
+                                  (primitive.positions - position) @ up,
+                                  (primitive.positions - position) @ forward))
         for tri in primitive.indices:
-            check_deadline(deadline); vertices=camera[tri]
-            if np.any(vertices[:,2] <= .01): continue
-            screen=np.column_stack(((vertices[:,0]/(vertices[:,2]*scale)*.5+.5)*(size-1),(.5-vertices[:,1]/(vertices[:,2]*scale)*.5)*(size-1)))
-            x0=max(0,int(np.floor(screen[:,0].min()))); x1=min(size-1,int(np.ceil(screen[:,0].max()))); y0=max(0,int(np.floor(screen[:,1].min()))); y1=min(size-1,int(np.ceil(screen[:,1].max())))
-            if x0>x1 or y0>y1: continue
-            a,b,c=screen; den=(b[1]-c[1])*(a[0]-c[0])+(c[0]-b[0])*(a[1]-c[1])
-            if abs(den)<1e-10: continue
-            yy,xx=np.mgrid[y0:y1+1,x0:x1+1]; w0=((b[1]-c[1])*(xx-c[0])+(c[0]-b[0])*(yy-c[1]))/den; w1=((c[1]-a[1])*(xx-c[0])+(a[0]-c[0])*(yy-c[1]))/den; w2=1-w0-w1
-            inside=(w0>=-1e-7)&(w1>=-1e-7)&(w2>=-1e-7); inv=w0/vertices[0,2]+w1/vertices[1,2]+w2/vertices[2,2]; depth=np.where(inv>1e-12,1/inv,np.inf); region_depth=depth_buffer[y0:y1+1,x0:x1+1]; visible=inside&(depth<region_depth)
-            if not np.any(visible): continue
-            perspective=np.stack((w0/vertices[0,2],w1/vertices[1,2],w2/vertices[2,2]),axis=-1)/np.maximum(inv[...,None],1e-12)
-            normals=np.sum(perspective[...,None]*primitive.normals[tri][None,None,:,:],axis=2); worlds=np.sum(perspective[...,None]*primitive.positions[tri][None,None,:,:],axis=2); views=position-worlds
-            base=np.broadcast_to(primitive.color,normals.shape)
-            tri_uv=triangle_texcoords(primitive,tri)
-            if primitive.base_color_texture is not None:
-                if tri_uv is None: raise ValueError('textured primitive is missing TEXCOORD_0')
-                uv=np.sum(perspective[...,None]*tri_uv[None,None,:,:],axis=2)
-                sampled=sample_base_color_texture(primitive.base_color_texture,uv)
-                base=base*sampled
-            if mode=='normal': color=np.clip(normals*.5+.5,0,1)
-            elif mode=='object-id': color=np.broadcast_to(object_color(primitive.object_id),normals.shape)
-            elif mode=='albedo': color=base
-            else: color=pbr_shade(base,normals,views,primitive.metallic,primitive.roughness,lights=lights,exposure=exposure)
-            encoded=np.round(np.power(np.clip(color,0,1),1/2.2)*255).astype(np.uint8); region=image[y0:y1+1,x0:x1+1]; region[visible]=encoded[visible]; region_depth[visible]=depth[visible]
-    Image.fromarray(image,'RGB').save(output)
-    return {"path":output.name,"sha256":sha256(output),"mode":mode}
+            check_deadline(deadline)
+            vertices = camera[tri]
+            if np.any(vertices[:, 2] <= 0.01):
+                continue
+            screen = np.column_stack(((vertices[:, 0] / (vertices[:, 2] * scale) * .5 + .5) * (size - 1),
+                                      (.5 - vertices[:, 1] / (vertices[:, 2] * scale) * .5) * (size - 1)))
+            x0 = max(0, int(np.floor(screen[:, 0].min())))
+            x1 = min(size - 1, int(np.ceil(screen[:, 0].max())))
+            y0 = max(0, int(np.floor(screen[:, 1].min())))
+            y1 = min(size - 1, int(np.ceil(screen[:, 1].max())))
+            if x0 > x1 or y0 > y1:
+                continue
+            a, b, c = screen
+            den = (b[1] - c[1]) * (a[0] - c[0]) + (c[0] - b[0]) * (a[1] - c[1])
+            if abs(den) < 1e-10:
+                continue
+            tri_uv = triangle_texcoords(primitive, tri) if primitive.base_color_texture is not None else None
+            if primitive.base_color_texture is not None and tri_uv is None:
+                raise ValueError('textured primitive is missing TEXCOORD_0')
+            for ty in range(y0, y1 + 1, tile_size):
+                for tx in range(x0, x1 + 1, tile_size):
+                    check_deadline(deadline)
+                    yy, xx = np.mgrid[ty:min(y1 + 1, ty + tile_size), tx:min(x1 + 1, tx + tile_size)]
+                    w0 = ((b[1] - c[1]) * (xx - c[0]) + (c[0] - b[0]) * (yy - c[1])) / den
+                    w1 = ((c[1] - a[1]) * (xx - c[0]) + (a[0] - c[0]) * (yy - c[1])) / den
+                    w2 = 1.0 - w0 - w1
+                    inside = (w0 >= -1e-7) & (w1 >= -1e-7) & (w2 >= -1e-7)
+                    if not np.any(inside):
+                        continue
+                    inv = w0 / vertices[0, 2] + w1 / vertices[1, 2] + w2 / vertices[2, 2]
+                    depth = np.where(inv > 1e-12, 1.0 / inv, np.inf)
+                    region_depth = depth_buffer[ty:ty + yy.shape[0], tx:tx + xx.shape[1]]
+                    visible = inside & (depth < region_depth)
+                    if not np.any(visible):
+                        continue
+                    weights = np.stack((w0[visible] / vertices[0, 2],
+                                        w1[visible] / vertices[1, 2],
+                                        w2[visible] / vertices[2, 2]), axis=-1) / np.maximum(inv[visible, None], 1e-12)
+                    count = weights.shape[0]
+                    if mode == 'object-id':
+                        color = np.broadcast_to(object_color(primitive.object_id), (count, 3))
+                    else:
+                        base = np.broadcast_to(primitive.color, (count, 3))
+                        if tri_uv is not None:
+                            uv = weights @ tri_uv
+                            base = base * sample_base_color_texture(primitive.base_color_texture, uv)
+                        if mode == 'albedo':
+                            color = base
+                        else:
+                            normals = weights @ primitive.normals[tri]
+                            if mode == 'normal':
+                                color = np.clip(normals * .5 + .5, 0, 1)
+                            else:
+                                worlds = weights @ primitive.positions[tri]
+                                views = position - worlds
+                                color = pbr_shade(base, normals, views, primitive.metallic,
+                                                  primitive.roughness, lights=lights, exposure=exposure)
+                    encoded = np.round(np.power(np.clip(color, 0, 1), 1 / 2.2) * 255).astype(np.uint8)
+                    region = image[ty:ty + yy.shape[0], tx:tx + xx.shape[1]]
+                    region[visible] = encoded
+                    region_depth[visible] = depth[visible]
+    Image.fromarray(image, 'RGB').save(output)
+    return {"path": output.name, "sha256": sha256(output), "mode": mode}
 
 
 def main():
-    p=argparse.ArgumentParser(); p.add_argument('--glb',required=True); p.add_argument('--out',required=True); p.add_argument('--frame',required=True); p.add_argument('--reference'); p.add_argument('--size',type=int,default=420); p.add_argument('--timeout-seconds',type=float,default=180); p.add_argument('--max-working-mb',type=float,default=512); p.add_argument('--exposure',type=float,default=0.0); p.add_argument('--background',default='15,18,23'); p.add_argument('--key-intensity',type=float,default=3.4); p.add_argument('--fill-intensity',type=float,default=1.5); p.add_argument('--rim-intensity',type=float,default=0.65); p.add_argument('--neutral-clay',action='store_true'); a=p.parse_args()
+    p=argparse.ArgumentParser(); p.add_argument('--glb',required=True); p.add_argument('--out',required=True); p.add_argument('--frame',required=True); p.add_argument('--reference'); p.add_argument('--size',type=int,default=420); p.add_argument('--timeout-seconds',type=float,default=180); p.add_argument('--max-working-mb',type=float,default=512); p.add_argument('--exposure',type=float,default=0.0); p.add_argument('--background',default='15,18,23'); p.add_argument('--key-intensity',type=float,default=3.4); p.add_argument('--fill-intensity',type=float,default=1.5); p.add_argument('--rim-intensity',type=float,default=0.65); p.add_argument('--neutral-clay',action='store_true'); p.add_argument('--tile-size',type=int,default=128); a=p.parse_args()
     glb=Path(a.glb).resolve(); out=Path(a.out).resolve(); out.parent.mkdir(parents=True,exist_ok=True); frame_path=Path(a.frame).resolve(); model,binary=parse_glb(glb); decoded=estimate_decoded_geometry_bytes(model)
-    policy=resource_policy(a.size,a.size,max_working_mb=a.max_working_mb,requested_tile_size=a.size,source_glb_bytes=glb.stat().st_size,decoded_geometry_bytes=decoded)
-    if policy['tileSize'] < a.size:
-        raise MemoryError(f"PBR render full-frame scratch exceeds the {a.max_working_mb:.2f} MiB working-memory budget; reduce --size or increase --max-working-mb")
+    policy=resource_policy(a.size,a.size,max_working_mb=a.max_working_mb,
+                           requested_tile_size=a.tile_size,source_glb_bytes=glb.stat().st_size,
+                           decoded_geometry_bytes=decoded)
+    # The PBR integrator uses more intermediates than the portable rasterizer.
+    # Derive a stricter tile bound, not an unbounded full-frame allocation.
+    free_scratch=int(a.max_working_mb*MIB)-int(policy['persistentMiB']*MIB)
+    if free_scratch < 512:
+        raise MemoryError('PBR working memory budget cannot hold a one-pixel shading tile')
+    tile_size=min(policy['tileSize'],max(1,int(math.sqrt(free_scratch/512)))
     model,primitives=load_primitives(glb,parsed=(model,binary));
     if a.neutral_clay:
         clay = NEUTRAL_CLAY_PRESET["material"]
@@ -195,7 +250,7 @@ def main():
                 fov = 31
             path = staging / f'{name}.png'
             rec = render(primitives, pos, target, path, size=a.size, mode=mode,
-                         up_hint=up_hint, deadline=deadline, fov=fov, lights=lights,
+                         up_hint=up_hint, deadline=deadline, fov=fov, tile_size=tile_size, lights=lights,
                          exposure=exposure, background=background)
             frames.append({**rec, 'viewId':name,'label':label,'absolutePath':str(path)})
         board=staging/'pbr-review-board.png'; make_board(Path(a.reference).resolve() if a.reference else None,frames,board)
