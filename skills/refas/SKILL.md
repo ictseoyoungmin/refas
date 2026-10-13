@@ -74,6 +74,9 @@ Copy `assets/templates/visual-hierarchy.json` and customize it with semantic IDs
 Create evidence views without replacing the source:
 
 ```bash
+# Prefer one or more exact-SHA sources with explicitly labeled sheet panels / image views:
+node scripts/refas.mjs evidence --spec <project-dir>/evidence-request.json --out <project-dir>/reviews/observations
+# Legacy single-image all-filter output (compatibility only):
 python3 scripts/evidence.py --image <reference.png> --out <evidence-dir> --scope whole
 python3 scripts/evidence.py --image <reference.png> --out <evidence-dir> --scope <part-id> --roi x,y,width,height
 ```
