@@ -2,13 +2,7 @@
 
 Use this recipe for drawing mannequins, dolls, robots, prosthetic forms,
 segmented creatures, and manufactured products whose identity depends on
-organic section changes and movable joints. It supplements the general shape,
-surface, and assembly contracts. Source evidence constrains what may be
-reported as observed, but lack of observation is not a default prohibition on
-constructing the rest of the 3D form. Where the source does not determine a
-shape, continuation, or mechanism, use an explicit hypothesis, structural
-prior, or downstream requirement and keep that choice distinct from source
-fact.
+organic section changes and movable joints. It supplements the general shape, surface, and assembly contracts. Develop a coherent whole from the source, repeated anatomy or hardware, continuous surfaces, and functional joints. Fit the whole through registered and orthogonal views, retaining the provenance of observation and construction decisions.
 
 ## Whole-shape authority
 
@@ -65,21 +59,11 @@ Use rigid node hierarchy for a segmented physical mannequin. Use skinning only
 when the source or selected construction hypothesis requires deformable material
 spanning a joint.
 
-## Observed obligations and completion hypotheses
+## Whole-form completion
 
-A visible contour, cut line, opening, overlap, proportion, highlight break, or
-curvature transition is a source-backed obligation when the evidence supports
-it. Geometry not determined by the current views—such as depth continuation,
-rear surfaces, internal joint structure, or manufacturer-specific limits—may be
-completed by a bounded inferred or engineered hypothesis when needed for a
-coherent 3D asset or downstream function. Do not report that completion as
-observed merely because it was instantiated.
+Build each major mass with continuous section profiles, appropriate shell thickness, joint housing, and support paths. Preserve visible contours, openings, plane changes, overlaps, and curvature. Complete the remaining 3D geometry through the selected spatial and construction hypothesis and review the assembled asset from multiple directions.
 
-Do not create authority entries for every geometric degree of freedom. Use the
-semantic-authority contract when a proposition is explicitly tracked or later
-claims depend on its provenance. If new evidence contradicts a completion
-hypothesis, reopen its owner and revise it rather than preserving the old
-construction as source truth.
+Use semantic-authority records for named relations and claims required by applicable gates. Revisit a geometry choice when new source or functional evidence contradicts it.
 
 ## Closure evidence
 
