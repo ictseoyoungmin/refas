@@ -197,14 +197,14 @@ def render(primitives, position, target, output, *, size, mode, up_hint, deadlin
 
 
 def main():
-    p=argparse.ArgumentParser(); p.add_argument('--glb',required=True); p.add_argument('--out',required=True); p.add_argument('--frame',required=True); p.add_argument('--reference'); p.add_argument('--size',type=int,default=420); p.add_argument('--timeout-seconds',type=float,default=180); p.add_argument('--max-working-mb',type=float,default=512); p.add_argument('--exposure',type=float,default=0.0); p.add_argument('--background',default='15,18,23'); p.add_argument('--key-intensity',type=float,default=3.4); p.add_argument('--fill-intensity',type=float,default=1.5); p.add_argument('--rim-intensity',type=float,default=0.65); p.add_argument('--neutral-clay',action='store_true'); p.add_argument('--tile-size',type=int,default=128); a=p.parse_args()
+    p=argparse.ArgumentParser(); p.add_argument('--glb',required=True); p.add_argument('--out',required=True); p.add_argument('--frame',required=True); p.add_argument('--reference'); p.add_argument('--size',type=int,default=420); p.add_argument('--timeout-seconds',type=float,default=180); p.add_argument('--max-working-mb',type=float,default=512); p.add_argument('--exposure',type=float,default=0.0); p.add_argument('--background',default='15,18,23'); p.add_argument('--key-intensity',type=float,default=3.4); p.add_argument('--fill-intensity',type=float,default=1.5); p.add_argument('--rim-intensity',type=float,default=0.65); p.add_argument('--neutral-clay',action='store_true'); p.add_argument('--tile-size',type=int,default=128); p.add_argument('--no-board',action='store_true'); a=p.parse_args()
     glb=Path(a.glb).resolve(); out=Path(a.out).resolve(); out.parent.mkdir(parents=True,exist_ok=True); frame_path=Path(a.frame).resolve(); model,binary=parse_glb(glb); decoded=estimate_decoded_geometry_bytes(model)
     policy=resource_policy(a.size,a.size,max_working_mb=a.max_working_mb,
                            requested_tile_size=a.tile_size,source_glb_bytes=glb.stat().st_size,
                            decoded_geometry_bytes=decoded)
     # The PBR integrator uses more intermediates than the portable rasterizer.
     # Derive a stricter tile bound, not an unbounded full-frame allocation.
-    free_scratch=int(a.max_working_mb*MIB)-int(policy['persistentMiB']*MIB)
+    free_scratch=int(a.max_working_mb*MIB)-(a.size*a.size*11+glb.stat().st_size+decoded)
     if free_scratch < 512:
         raise MemoryError('PBR working memory budget cannot hold a one-pixel shading tile')
     tile_size=min(policy['tileSize'],max(1,int(math.sqrt(free_scratch/512)))
@@ -253,7 +253,9 @@ def main():
                          up_hint=up_hint, deadline=deadline, fov=fov, tile_size=tile_size, lights=lights,
                          exposure=exposure, background=background)
             frames.append({**rec, 'viewId':name,'label':label,'absolutePath':str(path)})
-        board=staging/'pbr-review-board.png'; make_board(Path(a.reference).resolve() if a.reference else None,frames,board)
+        if not a.no_board:
+            board=staging/'pbr-review-board.png'
+            make_board(Path(a.reference).resolve() if a.reference else None,frames,board)
         rig={"lights":"three-directional-calibrated-v1","keyIntensity":key_intensity,"fillIntensity":fill_intensity,"rimIntensity":rim_intensity,"background":list(background),"cameraFovY":31}; color={"exposure":exposure,"toneMapping":"Reinhard","outputColorSpace":"sRGB"}
         rig_id="fixed-three-light-review-rig"
         if a.neutral_clay:
@@ -277,6 +279,6 @@ def main():
         payload['reportDigest']=canonical_digest(payload); (staging/'render-report.json').write_text(json.dumps(payload,indent=2)+'\n'); out.mkdir(parents=True,exist_ok=True)
         for item in staging.iterdir(): os.replace(item,out/item.name)
     finally: shutil.rmtree(staging,ignore_errors=True)
-    print(json.dumps({"status":"PASS","report":str(out/'render-report.json'),"board":str(out/'pbr-review-board.png'),"frames":len(frames)},indent=2))
+    print(json.dumps({"status":"PASS","report":str(out/'render-report.json'),"board":None if a.no_board else str(out/'pbr-review-board.png'),"frames":len(frames)},indent=2))
 
 if __name__=='__main__': main()
