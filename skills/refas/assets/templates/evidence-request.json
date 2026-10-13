@@ -1,0 +1,58 @@
+{
+  "schema": "refas.evidence-request/v1",
+  "subjectId": "example-subject",
+  "board": false,
+  "defaultAnalyses": [],
+  "sources": [
+    {
+      "id": "reference-sheet",
+      "path": "source/reference.png",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "sourceManifest": "source/source-manifest.json",
+      "views": [
+        {
+          "id": "front",
+          "role": "front",
+          "scopeId": "whole",
+          "roi": [
+            0,
+            0,
+            0.5,
+            0.5
+          ],
+          "analyses": [
+            "edges",
+            "context"
+          ]
+        },
+        {
+          "id": "side",
+          "role": "left",
+          "scopeId": "whole",
+          "roi": [
+            0.5,
+            0,
+            0.5,
+            0.5
+          ],
+          "analyses": []
+        },
+        {
+          "id": "detail",
+          "role": "detail",
+          "scopeId": "head",
+          "roi": [
+            0,
+            0.5,
+            1,
+            0.5
+          ],
+          "analyses": [
+            "gradient",
+            "highlights"
+          ]
+        }
+      ]
+    }
+  ]
+}
