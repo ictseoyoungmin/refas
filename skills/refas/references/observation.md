@@ -20,6 +20,57 @@ Do not start from a detail crop. First inspect the full frame, then create a pad
 - A crop never replaces the full reference in review boards.
 - If a feature crosses a boundary, place it under the lowest common ancestor or record a relation between scopes.
 
+## Adaptive evidence intake (single, sheet, image collection, archive)
+
+Prefer the installed `evidence --spec` path instead of generating all legacy
+filters for every source. Start from
+`assets/templates/evidence-request.json` and replace its **placeholder**
+SHA-256 with the digest of the *actual immutable bytes*. The spec file and
+all sources must be inside the same project; put derived output in its own
+separate subdirectory. Every source carries an exact `sha256`; ordinary
+source files may also cite an existing `sourceManifest`.
+
+```bash
+node scripts/refas.mjs evidence --spec PROJECT/evidence-request.json --out PROJECT/reviews/observations
+```
+
+- **One still:** one source and one `whole` view `roi:[0,0,1,1]`.
+  Default `defaultAnalyses: []` creates only an observation manifest, without
+  copying the original pixels or making a board. If a PNG is needed outside
+  its original location, request `materialize: true`.
+- **Composite sheet:** one exact original image with multiple explicitly
+  labeled `views`, each with normalized ROI, role and optional `scopeId`.
+  Small panel crops are retained with direct original-image SHA + ROI; do
+  not infer that panels share a camera or are metric orthographic views.
+- **Separate photographs:** multiple `sources`, each with own SHA, each
+  containing as many labeled ROIs as useful. Even when labels say front/side,
+  no registration, scale or subject-identity equivalence is automatically proven.
+- **ZIP collection:** source entries use `archive`, `archiveSha256`,
+  `member` (exact safe archive path) and the independent member image
+  `sha256` in place of `path`. This is a **read-only** member intake, not a
+  trusted multi-camera reconstruction or extraction of arbitrary ZIP paths.
+- **Request specific aids only:** set `analyses` per view, overriding
+  `defaultAnalyses`. Supported: `crop`, `context`, `contrast`,
+  `low-frequency`, `high-frequency`, `gradient`, `edges`,
+  `highlights`, `alpha-mask` (when the original has alpha).
+  `board:true` is optional and presentation-only; its default is false.
+  A full-frame crop and unchanged context are aliases to the original, not
+  duplicate PNGs.
+
+The resulting `refas.observation-aid-set/v1` manifest contains source/member
+SHA, original ROI, explicit roles, actual derived PNG digests and
+`claimScope: derived-observation-aid-only`. It is **not** a replacement for
+the canonical single-primary-source `source-manifest`, registration,
+multi-view source verification, source-grounded geometry or final visual PASS.
+Separate groups of parts/subjects require separate `subjectId` and
+reasoned hierarchy owners, not a fabricated common camera.
+
+On error, no new manifest is published. Successful output snapshots are
+retired only after replacement manifest publication. Use the current manifest
+for inspection, not orphaned image files. The former
+`evidence --image --scope ...` command remains a compatibility route; its
+always-on image/board outputs are not the recommended iterative workflow.
+
 ## Claim classes
 
 Record four distinct lists:
