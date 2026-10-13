@@ -22,8 +22,9 @@ Do not start from a detail crop. First inspect the full frame, then create a pad
 
 ## Adaptive evidence intake (single, sheet, image collection, archive)
 
-Prefer the installed `evidence --spec` path instead of generating all legacy
-filters for every source. Start from
+Prefer raw-source observation, and invoke `evidence --spec` only to answer a
+specific unresolved visual question. Do not generate analysis images solely
+to increase a validation or citation count. Start from
 `assets/templates/evidence-request.json` and replace its **placeholder**
 SHA-256 with the digest of the *actual immutable bytes*. The spec file and
 all sources must be inside the same project; put derived output in its own
@@ -31,7 +32,7 @@ separate subdirectory. Every source carries an exact `sha256`; ordinary
 source files may also cite an existing `sourceManifest`.
 
 ```bash
-node scripts/refas.mjs evidence --spec PROJECT/evidence-request.json --out PROJECT/reviews/observations
+node scripts/refas.mjs evidence --spec PROJECT/evidence-request.json --out PROJECT/reviews/observations --reuse
 ```
 
 - **One still:** one source and one `whole` view `roi:[0,0,1,1]`.
@@ -50,7 +51,9 @@ node scripts/refas.mjs evidence --spec PROJECT/evidence-request.json --out PROJE
   `sha256` in place of `path`. This is a **read-only** member intake, not a
   trusted multi-camera reconstruction or extraction of arbitrary ZIP paths.
 - **Request specific aids only:** set `analyses` per view, overriding
-  `defaultAnalyses`. Supported: `crop`, `context`, `contrast`,
+  `defaultAnalyses`. Each view requesting non-crop analyses **must** specify
+  `question` (the observed ambiguity) and `decisionTarget` (what the answer
+  could affect). Supported: `crop`, `context`, `contrast`,
   `low-frequency`, `high-frequency`, `gradient`, `edges`,
   `highlights`, `alpha-mask` (when the original has alpha).
   `board:true` is optional and presentation-only; its default is false.
@@ -65,11 +68,40 @@ multi-view source verification, source-grounded geometry or final visual PASS.
 Separate groups of parts/subjects require separate `subjectId` and
 reasoned hierarchy owners, not a fabricated common camera.
 
-On error, no new manifest is published. Successful output snapshots are
-retired only after replacement manifest publication. Use the current manifest
-for inspection, not orphaned image files. The former
-`evidence --image --scope ...` command remains a compatibility route; its
-always-on image/board outputs are not the recommended iterative workflow.
+### Evidence utility and retention
+
+After actually inspecting the requested images, fill in
+`assets/templates/evidence-utility-decisions.json` (replace its placeholder
+manifest digest with the exact current `manifestDigest`).
+
+```bash
+node scripts/refas.mjs evidence --assess PROJECT/evidence-utility-decisions.json --out PROJECT/reviews/observations --prune
+```
+
+Every requested derived analysis requires one explicit `outcome`
+(`clarified`, `contradicted`, `insufficient`, `no-benefit`),
+`observation` (what did or did not become more legible), `modelImpact`
+(`none`, `planned`, `applied`) and `retention`
+(`retain`, `discard`) with `retentionReason`. Do **not** invent a
+useful observation just to satisfy a report field. Applied model impact names
+the actual `findingId`, `scopeId`, explanation and exact before/after
+GLB paths and SHA-256 bytes. Those bytes prove that a candidate changed,
+**not** that the transform caused the change or improved source likeness.
+
+Only outcomes `insufficient` or `no-benefit` with `modelImpact:none`
+may discard a materialized derivative. `--prune` atomically publishes a
+fresh manifest and retained-image snapshot and writes SHA tombstones for
+discarded derivative images; it does not delete original images, source
+manifests or source ZIP archives. Without `--prune` it records the
+disposition but leaves all image files intact. Never treat an uninspected
+transform as helpful or automatically promote the assessment to a visual
+gate. `--reuse` requires exact input, source, render-image and manifest
+hashes and will rerender when a prior assessment pruned necessary outputs.
+
+On extraction failure, no new manifest is published. The sole current
+manifest points to the latest complete immutable snapshot. The former
+fixed-all-filters `evidence --image` and `scripts/evidence.py` are
+removed, not preserved as a stale parallel observation system.
 
 ## Claim classes
 
