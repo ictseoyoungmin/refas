@@ -153,7 +153,7 @@ test('adaptive rerender preserves old snapshots for external citations while upd
   const legacy=spawnSync(process.execPath,[CLI,'evidence','--image',legacyImage,'--scope','whole','--out',root],
     {encoding:'utf8',timeout:15000});
   assert.notEqual(legacy.status,0);
-  assert.match(legacy.stderr,/old --image fixed-filter extraction was removed/);
+  assert.match(legacy.stderr,/output overlaps the original source/);
   assert.deepEqual(await fs.readFile(legacyImage),bytes);
 });
 
