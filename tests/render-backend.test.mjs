@@ -3,6 +3,7 @@ import {createHash} from 'node:crypto';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
+import {spawnSync} from 'node:child_process';
 import {test} from 'node:test';
 import {createSegmentPrism,partsToGlb} from '../skills/refas/scripts/lib/index.mjs';
 import {
@@ -36,7 +37,8 @@ async function fixture(t) {
 
 test('trusted registry has pinned legacy and unavailable, non-certifying optimized worker',()=>{
   assert.equal(getTrustedRenderBackend('legacy-portable').identity,'RefAs Portable Rasterizer/1.0.0');
-  assert.equal(getTrustedRenderBackend('optimized-cpu').installed,false);
+  assert.equal(getTrustedRenderBackend('optimized-cpu').installed,true);
+  assert.equal(getTrustedRenderBackend('optimized-cpu').replay,null);
   assert.equal(CPU_RENDER_BACKENDS['optimized-cpu'].admissibleCertification,'none');
   assert.throws(()=>getTrustedRenderBackend('attacker-blender'),/trusted registry/);
 });
@@ -69,14 +71,34 @@ test('R14-01 refuses stale GLB/frame digests and path traversal',async t=>{
   assert.throws(()=>normalizeCpuRenderJob({...job,intent:'certify'}),/diagnostic-only/);
   assert.throws(()=>normalizeCpuRenderJob({...job,backend:{id:'legacy-portable',algorithmVersion:'2.0.0'}}),/algorithmVersion/);
 });
-test('optimized CPU cannot impersonate the legacy profile or silently fallback',async t=>{
+test('optimized CPU requires explicit pass and never aliases beauty or certification',async t=>{
   const {root,job}=await fixture(t);
-  const result=await renderDiagnosticHero({root,job:{...job,backend:{id:'optimized-cpu',algorithmVersion:'1'}},
-    outDir:'diagnostics/optimized'});
-  assert.equal(result.status,'BLOCKED_UNSUPPORTED');
-  assert.equal(result.outputs.length,0);
-  assert.equal(result.claimScope,'diagnostic-only');
-  await assert.rejects(fs.access(path.join(root,'diagnostics/optimized')));
+  assert.throws(()=>normalizeCpuRenderJob({...job,backend:{id:'optimized-cpu',algorithmVersion:'1'}}),
+    /requires normal or object-id pass/);
+  const python=process.env.CODEX_PRIMARY_RUNTIME_PYTHON||'python3';
+  const compiled=spawnSync(python,['-c','import numba'],{encoding:'utf8',timeout:12000}).status===0;
+  for(const requestedPass of ['normal','object-id']) {
+    const output=await renderDiagnosticHero({root,job:{...job,pass:requestedPass,
+      resources:{timeoutSeconds:90,maxWorkingMiB:512},
+      backend:{id:'optimized-cpu',algorithmVersion:'1'}},
+      outDir:'diagnostics/opt-'+requestedPass});
+    assert.equal(output.schema,RENDER_EXECUTION_SCHEMA);
+    assert.equal(output.claimScope,'diagnostic-only');
+    if (!compiled) {
+      assert.equal(output.status,'BLOCKED_UNSUPPORTED',output.reason);
+      assert.equal(output.outputs.length,0);
+      await assert.rejects(fs.access(path.join(root,'diagnostics/opt-'+requestedPass)));
+    } else {
+      assert.equal(output.status,'COMPLETE',output.reason);
+      assert.equal(output.certificationEligible,false);
+      assert.equal(output.pass,requestedPass);
+      assert.match(output.backend.executableSha256,/^[a-f0-9]{64}$/u);
+      assert.equal(output.backend.identity,'RefAs Optimized CPU/1.0.0-jit-prototype');
+      assert.equal(output.sourceSha256,job.asset.sha256);
+      const bytes=await fs.readFile(path.join(root,'diagnostics/opt-'+requestedPass+'/hero.png'));
+      assert.equal(digest(bytes),output.outputs[0].sha256);
+    }
+  }
 });
 test('resource blocked is not reported as a defective asset or a valid render',async t=>{
   const {root,job}=await fixture(t);
