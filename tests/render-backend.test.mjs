@@ -79,6 +79,7 @@ test('optimized CPU requires explicit pass and never aliases beauty or certifica
   const compiled=spawnSync(python,['-c','import numba'],{encoding:'utf8',timeout:12000}).status===0;
   for(const requestedPass of ['normal','object-id']) {
     const output=await renderDiagnosticHero({root,job:{...job,pass:requestedPass,
+      resources:{timeoutSeconds:90,maxWorkingMiB:512},
       backend:{id:'optimized-cpu',algorithmVersion:'1'}},
       outDir:'diagnostics/opt-'+requestedPass});
     assert.equal(output.schema,RENDER_EXECUTION_SCHEMA);
