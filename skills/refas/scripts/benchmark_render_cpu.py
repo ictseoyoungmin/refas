@@ -78,8 +78,8 @@ def grid_geometry(count, organic):
     a = (np.arange(rows)[:, None] * (cols + 1) + np.arange(cols)[None, :]).reshape(-1)
     b = a + cols + 1
     triangles = np.stack((
-        np.stack((a, a + 1, b)),
-        np.stack((a + 1, b + 1, b)),
+        np.stack((a, a + 1, b), axis=-1),
+        np.stack((a + 1, b + 1, b), axis=-1),
     ), axis=1).reshape(-1, 3).astype("<u4")
     return vertices, normals, triangles[:count]
 
@@ -105,7 +105,6 @@ def strand_geometry(count, seed):
     y_center = origin_y[:, None] + height[:, None] * t
     z_center = origin_z[:, None] + np.sin(t * math.pi)[None, :] * 0.014
     positions = np.empty((strand_count, segments + 1, 2, 3), dtype="<f4")
-    positions[..., 0] = x_center[:, :, None] + (np.array([-0.5, 0.5]) * width[:, None])[:, None, :] if False else 0
     # Explicit shape broadcasting keeps this path efficient for 1M triangles.
     positions[:, :, 0, 0] = x_center - width[:, None] * 0.5
     positions[:, :, 1, 0] = x_center + width[:, None] * 0.5
