@@ -156,7 +156,8 @@ export async function renderDiagnosticHero({root,job,outDir}={}) {
     await fs.writeFile(path.join(staging,'hero.png'),png);
     const execution={schema:RENDER_EXECUTION_SCHEMA,status:'COMPLETE',
       claimScope:'diagnostic-only',sourceSha256:asset.sha256,frameSha256:frame.sha256,
-      backend:spec.backend,view:'hero',size:spec.size,
+      backend:{...spec.backend,executableSha256:sha(await fs.readFile(SCRIPT))},
+      view:'hero',size:spec.size,
       outputs:[{path:'hero.png',sha256:sha(png)}],certificationEligible:false,
       legacyReportFrameDigest:nativeReport.frameDigest};
     await fs.writeFile(path.join(staging,'execution.json'),JSON.stringify(execution,null,2)+'\n');
