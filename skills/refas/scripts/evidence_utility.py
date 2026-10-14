@@ -149,6 +149,12 @@ def review(manifest_path,decisions_path,prune=False):
             original=contained(out,output['path'],f'{key}.path')
             if sha256(original)!=output['sha256']:
                 raise ValueError(f'{key} referenced derived image SHA-256 mismatch')
+        elif 'discardedSha256' in output:
+            digest(output['discardedSha256'],f'{key}.discardedSha256')
+            if output.get('retention')!='discarded-derivative' or 'sha256' in output or 'alias' in output:
+                raise ValueError(f'{key} invalid discarded evidence tombstone')
+            if retention!='discard' or impact['status']!='none':
+                raise ValueError(f'{key} requires rerender before retained/model-connected use')
         elif output.get('alias') not in ('raw-source','crop'):
             raise ValueError(f'{key} missing valid source alias or materialized PNG')
         assessments.append({
@@ -181,7 +187,8 @@ def review(manifest_path,decisions_path,prune=False):
         'assessments':assessments,'pruned':actual_prune,
         'policy':{'absenceOfCitationIsNotProofOfNonUse':True,
                   'actualBytesProveChangeNotCausation':True,
-                  'noSourceFidelityOrVisualPass':True}}
+                  'noSourceFidelityOrVisualPass':True,
+                  'physicalHistoryPreservedForExternalReferences':True}}
     assessment['reportDigest']=digest_json(assessment)
     replacement=json.loads(json.dumps(manifest))
     replacement['utility']=assessment
@@ -245,13 +252,12 @@ def review(manifest_path,decisions_path,prune=False):
     finally:
         if stage:shutil.rmtree(stage,ignore_errors=True)
         if installed is not None and not published:shutil.rmtree(installed,ignore_errors=True)
-    if actual_prune:
-        for old in (out/'snapshots').iterdir():
-            if old!=installed and old.is_dir() and not old.is_symlink():
-                shutil.rmtree(old)
+    # Prune revokes active manifest references and persists SHA tombstones.
+    # Old snapshot directories are retained as immutable bytes for other
+    # project artifacts and external consumers; no unindexed physical GC.
     print(json.dumps({'status':'PASS','claimScope':'worker-attributed-utility-only',
         'manifest':str(manifest_path),'assessments':len(assessments),
-        'discardedAnalyses':len(will_discard) if prune else 0,'candidateEditsAttributed':sum(a['modelImpact']['status']=='applied' for a in assessments)},indent=2))
+        'discardedAnalyses':len(will_discard) if prune else 0,'physicallyDeletedFiles':0,'candidateEditsAttributed':sum(a['modelImpact']['status']=='applied' for a in assessments)},indent=2))
 
 
 def main():
