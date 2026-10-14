@@ -199,7 +199,7 @@ function help() {
       register: 'register --input registration-input.json --out registration.json',
       'validate-spec': 'validate-spec --file spec.json [--context hierarchy.json]',
       'inspect-glb': 'inspect-glb --glb asset.glb',
-      evidence: 'evidence --spec observation-request.json --out DIR [--reuse] | evidence --assess utility-decisions.json --out DIR [--prune] (question, insight, model edit and retention)',
+      evidence: 'evidence --spec REQUEST --out DIR [--reuse] | evidence --assess DECISIONS --out DIR [--prune] | evidence --image FILE --out DIR [--scope ID] [--roi x,y,w,h] (legacy compatibility)',
       render: 'render --glb asset.glb --out DIR [--reference image.png] [--frame canonical-frame.json] [--size 640] [--timeout-seconds 300] [--max-working-mb 512] [--tile-size 256] [--max-triangles N] [--hero-only]',
       'render-pbr': 'render-pbr --glb asset.glb --out DIR --frame canonical-frame.json [--reference image.png] [--size 420] [--timeout-seconds 180] [--max-working-mb 512] [--tile-size 128] [--neutral-clay] [--no-board]',
       'preview-pbr': 'preview-pbr --glb asset.glb --out PREVIEW_DIR --frame canonical-frame.json [--views hero,side] [--reuse] [--size 420] [--timeout-seconds 180] [--max-working-mb 512] [--tile-size 128]',
@@ -322,6 +322,16 @@ async function main() {
   }
   if (command === 'inspect-glb') { print(inspectGlb(await fs.readFile(path.resolve(required(options, 'glb'))))); return; }
   if (command === 'evidence') {
+    if (options.image && !options.spec && !options.assess) {
+      if (options.reuse !== undefined || options.prune !== undefined) {
+        throw new Error('legacy evidence --image is incompatible with --reuse and --prune');
+      }
+      const args = ['--image', required(options,'image'), '--out', required(options,'out')];
+      if (options.scope) args.push('--scope', options.scope);
+      if (options.roi) args.push('--roi', options.roi);
+      if (options.padding) args.push('--padding', options.padding);
+      runPython('evidence_compat.py', args); return;
+    }
     if (options.spec && !options.assess) {
       if (options.image !== undefined || options.scope !== undefined || options.roi !== undefined ||
           options.padding !== undefined || options.prune !== undefined) {
@@ -340,7 +350,7 @@ async function main() {
       if (options.prune === true) args.push('--prune');
       runPython('evidence_utility.py', args); return;
     }
-    throw new Error('evidence requires exactly one of --spec (derive) or --assess (evaluate utility); old --image fixed-filter extraction was removed');
+    throw new Error('evidence requires --spec, --assess, or the published --image compatibility form');
   }
   if (command === 'render') {
     const args = ['--glb', required(options, 'glb'), '--out', required(options, 'out')];
