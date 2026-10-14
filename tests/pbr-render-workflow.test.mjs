@@ -140,3 +140,47 @@ test('unified review board binds exact portable, PBR and neutral-clay images and
     {encoding:'utf8',timeout:15000});
   assert.equal(invalid.status,1,'a preview manifest must not authorize an official review board');
 });
+
+test('PBR publication fault restores the prior complete report, frames and board',async(t)=>{
+  const {root,glb,frame}=await fixture(t);
+  const out=path.join(root,'transaction');
+  const first=run(glb,frame,out);
+  assert.equal(first.status,0,first.stderr);
+  const files=(await fs.readdir(out)).sort();
+  const before=Object.fromEntries(await Promise.all(files.map(async file=>[file,await fs.readFile(path.join(out,file),'base64')])));
+  await fs.writeFile(frame,JSON.stringify({...FRAME,hero:{...FRAME.hero,fovY:42}}));
+  const bad=spawnSync(process.execPath,[CLI,'render-pbr','--glb',glb,'--frame',frame,'--out',out,
+    '--size','80','--max-working-mb','24','--timeout-seconds','60'],
+    {encoding:'utf8',timeout:70_000,
+     env:{...process.env,REFAS_TEST_PBR_PUBLISH_FAIL_AFTER:'2'}});
+  assert.notEqual(bad.status,0);
+  assert.match(bad.stderr,/injected PBR publication failure/);
+  assert.deepEqual((await fs.readdir(out)).sort(),files);
+  for(const file of files){
+    assert.equal(await fs.readFile(path.join(out,file),'base64'),before[file],file+' must roll back');
+  }
+  const recovered=run(glb,frame,out,['--no-board']);
+  assert.equal(recovered.status,0,recovered.stderr);
+  await assert.rejects(fs.access(path.join(out,'pbr-review-board.png')));
+  const report=JSON.parse(await fs.readFile(path.join(out,'render-report.json'),'utf8'));
+  assert.equal(report.outputs.length,8);
+  assert.notEqual(await fs.readFile(path.join(out,'render-report.json'),'base64'),before['render-report.json']);
+});
+
+test('preview publish rollback also retains an exact reusable prior manifest',async(t)=>{
+  const {root,glb,frame}=await fixture(t);
+  const out=path.join(root,'preview-transaction');
+  const args=[CLI,'preview-pbr','--glb',glb,'--frame',frame,'--out',out,'--size','80',
+    '--views','hero,side','--timeout-seconds','60','--max-working-mb','24'];
+  const first=spawnSync(process.execPath,args,{encoding:'utf8',timeout:70_000});
+  assert.equal(first.status,0,first.stderr);
+  const names=(await fs.readdir(out)).sort();
+  const contents=Object.fromEntries(await Promise.all(names.map(async n=>[n,await fs.readFile(path.join(out,n),'base64')])));
+  await fs.writeFile(frame,JSON.stringify({...FRAME,hero:{...FRAME.hero,fovY:42}}));
+  const fail=spawnSync(process.execPath,args,{encoding:'utf8',timeout:70_000,
+    env:{...process.env,REFAS_TEST_PBR_PUBLISH_FAIL_AFTER:'1'}});
+  assert.notEqual(fail.status,0);
+  assert.match(fail.stderr,/injected PBR publication failure/);
+  assert.deepEqual((await fs.readdir(out)).sort(),names);
+  for(const name of names)assert.equal(await fs.readFile(path.join(out,name),'base64'),contents[name]);
+});
