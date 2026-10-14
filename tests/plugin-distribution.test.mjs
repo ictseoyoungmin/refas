@@ -6,6 +6,7 @@ import test from 'node:test';
 import {fileURLToPath} from 'node:url';
 
 import {verifyPluginDistribution} from '../tools/verify-plugin-distribution.mjs';
+import {REFAS_VERSION} from '../skills/refas/scripts/lib/canonical.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const FILES = [
@@ -38,7 +39,7 @@ async function rewriteJson(root, relative, mutate) {
 test('plugin distribution adapters resolve one canonical RefAs skill tree', async () => {
   const result = await verifyPluginDistribution({root: ROOT});
   assert.equal(result.status, 'PASS');
-  assert.equal(result.version, '1.2.1');
+  assert.equal(result.version, REFAS_VERSION);
   assert.equal(result.skillSource, './skills/');
   assert.deepEqual(result.adapters, ['claude', 'codex', 'agents']);
 });
