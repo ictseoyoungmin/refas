@@ -1,25 +1,76 @@
 name: Publish verified release
 
+# An exact, approved release commit is published only on manual dispatch.
 on:
-  workflow_run:
-    workflows: ["RefAs CI"]
-    types: [completed]
+  workflow_dispatch:
+    inputs:
+      release_sha:
+        description: 'Exact 40-character current main SHA'
+        required: true
+        type: string
+      confirmation:
+        description: 'Type PUBLISH to approve public release'
+        required: true
+        type: string
 
 permissions:
   contents: write
+  actions: read
+
+concurrency:
+  group: refas-publish-release
+  cancel-in-progress: false
 
 jobs:
   publish:
-    if: >-
-      github.event.workflow_run.event == 'push' &&
-      github.event.workflow_run.head_branch == 'main' &&
-      github.event.workflow_run.conclusion == 'success'
+    if: github.ref == 'refs/heads/main' && inputs.confirmation == 'PUBLISH'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: ${{ github.event.workflow_run.head_sha }}
+          ref: ${{ inputs.release_sha }}
           persist-credentials: false
+
+      - name: Verify exact main SHA and post-merge full CI
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_SHA: ${{ inputs.release_sha }}
+        run: |
+          node <<'NODE'
+          const sha=process.env.RELEASE_SHA;
+          const repo=process.env.GITHUB_REPOSITORY;
+          const base=process.env.GITHUB_API_URL||'https://api.github.com';
+          const token=process.env.GITHUB_TOKEN;
+          if(!/^[0-9a-f]{40}$/.test(sha||''))throw new Error('invalid exact release_sha');
+          async function get(url) {
+            const response=await fetch(`${base}/repos/${repo}${url}`,{
+              headers:{Authorization:`Bearer ${token}`,Accept:'application/vnd.github+json',
+                'X-GitHub-Api-Version':'2022-11-28'},
+            });
+            if(!response.ok)throw new Error(`preflight ${url}: HTTP ${response.status}`);
+            return response.json();
+          }
+          const main=await get('/git/ref/heads/main');
+          if(main.object?.type!=='commit'||main.object?.sha!==sha)
+            throw new Error('release_sha is not the current main HEAD');
+          const result=await get('/actions/workflows/ci.yml/runs?branch=main&event=push&per_page=100');
+          const matching=(result.workflow_runs||[]).filter(run=>run.head_sha===sha&&
+            run.head_branch==='main'&&run.event==='push'&&run.status==='completed'&&run.conclusion==='success');
+          if(!matching.length)throw new Error('successful exact main push CI is missing');
+          let certified=false;
+          for(const run of matching){
+            const batch=await get(`/actions/runs/${run.id}/jobs?per_page=100`);
+            const jobs=batch.jobs||[];
+            if(!['Node 20','Node 22','Node 24'].every(name=>
+              jobs.some(job=>job.name===name&&job.conclusion==='success')))continue;
+            const node24=jobs.find(job=>job.name==='Node 24'&&job.conclusion==='success');
+            if(['Complete dogfood','Release audit'].every(name=>
+              node24.steps?.some(step=>step.name===name&&step.conclusion==='success'))){
+              certified=true; console.log(`verified ${sha} by main CI run ${run.id}`);break;
+            }
+          }
+          if(!certified)throw new Error('exact main CI lacks complete dogfood/release audit');
+          NODE
 
       - name: Resolve release metadata
         id: metadata
@@ -38,7 +89,7 @@ jobs:
       - name: Publish or verify GitHub Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RELEASE_SHA: ${{ github.event.workflow_run.head_sha }}
+          RELEASE_SHA: ${{ inputs.release_sha }}
           RELEASE_TAG: ${{ steps.metadata.outputs.tag }}
           RELEASE_VERSION: ${{ steps.metadata.outputs.version }}
         run: |
@@ -146,18 +197,11 @@ jobs:
               throw new Error(`${tag} release target ${release.target_commitish} does not match tag commit ${releaseSha}`);
             }
 
-            const patch = {};
+            // Tagged release records stay immutable; manual intervention is
+            // required to reconcile a partial or conflicting publication.
             for (const [key, expected] of Object.entries(desired)) {
-              if (release[key] !== expected) patch[key] = expected;
-            }
-            if (Object.keys(patch).length > 0) {
-              const {response: patchResponse, body: patchBody} = await request(`/releases/${release.id}`, {
-                method: 'PATCH',
-                body: JSON.stringify(patch),
-              });
-              if (!patchResponse.ok) {
-                throw new Error(`unable to repair ${tag} release metadata: ${patchResponse.status} ${JSON.stringify(patchBody)}`);
-              }
+              if (release[key] !== expected)
+                throw new Error(`${tag} metadata conflict in ${key}; manual reconciliation required`);
             }
 
             const {response: verifyResponse, body: verifiedRelease} = await request(`/releases/tags/${encodeURIComponent(tag)}`);

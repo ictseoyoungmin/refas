@@ -32,8 +32,8 @@
     ],
     "websiteURL": "https://github.com/ictseoyoungmin/refas",
     "defaultPrompt": [
-      "Use RefAs to reconstruct this reference as a traceable 3D asset with multiview QA.",
-      "Use RefAs to rebuild this reference with evidence-bound geometry and physical semantics where justified."
+      "Use RefAs to construct a complete editable 3D object from this reference, then review it from multiple angles.",
+      "Use RefAs to build a coherent whole with repeated parts and physical connections, inspect the actual renders, and refine the asset."
     ],
     "brandColor": "#10161D",
     "composerIcon": "./skills/refas/assets/icon.svg",

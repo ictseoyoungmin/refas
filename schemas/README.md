@@ -2,6 +2,14 @@
 
 These Draft 2020-12 schemas describe the immutable artifacts emitted by the canonical runtime in `skills/refas/scripts/lib/`. Constructor input templates live in `skills/refas/assets/templates/`; constructors normalize those inputs and add digests, policies, metrics, and derived fields before an artifact conforms to its public schema.
 
+The adaptive observation input forms are documented by
+[`evidence-request.schema.json`](evidence-request.schema.json) and
+[`evidence-utility-decisions.schema.json`](evidence-utility-decisions.schema.json).
+These describe request and decision *inputs*, rather than new certification
+authorities. Runtime extraction and utility evaluation additionally verify
+source manifests, ZIP member identities, image bytes, GLB before/after digests,
+assessment coverage, and retention eligibility.
+
 Runtime validators remain authoritative for semantic invariants that JSON Schema cannot express compactly, including hierarchy ancestry, digest recomputation, registration invertibility, unique shared adjacency, acyclic occlusion, capability lineage, exact artifact-byte recovery, independent-reference certification, complete view and gate sets, blocking-finding refusal, independent PBR report binding, and renderer material support.
 
 `bilateral-pair-realization.schema.json` binds an exact candidate GLB to a declared `bilateral-pair` relation. It records runtime-derived left/right local rest-geometry digests, explicit mirror axis/half-space/object-frame plane coordinate, realized `±halfSpan` placement, node mirror-axis scale signs, camera evidence, per-instance pose explanations, and the observed-intrinsic-asymmetry exception. Shared pairs reject independent rest meshes, wrong-axis reflection, same-parity copies, inactive or parent-wrapped/deformed pair nodes, observed lateral-span self-promotion, and image-plane separation as 3D lateral authority.

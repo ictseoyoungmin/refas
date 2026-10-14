@@ -1,6 +1,6 @@
-# Known limitations in RefAs 1.1.0
+# Known limitations in RefAs
 
-RefAs 1.1.0 can represent and validate explicit physical construction semantics, but it remains conservative about what those semantics are entitled to claim. The limits below are product boundaries, not hidden guarantees.
+RefAs can represent and validate explicit physical construction semantics, but it remains conservative about what those semantics are entitled to claim. The limits below are product boundaries, not hidden guarantees.
 
 ## Single-view observation remains incomplete
 
@@ -10,7 +10,7 @@ RefAs preserves that ambiguity. A correct projected endpoint or primary axis doe
 
 ## Physical semantics do not create manufacturer truth
 
-RefAs 1.1.0 adds typed identities and contracts for modules, interfaces, rigid links, joints, dynamics, collision, mechanisms, transmissions, actuators, controllers, and runtime endpoints. Those contracts say **what a current construction means**; they do not prove that an unseen real product was manufactured the same way.
+RefAs includes typed identities and contracts for modules, interfaces, rigid links, joints, dynamics, collision, mechanisms, transmissions, actuators, controllers, and runtime endpoints. Those contracts say **what a current construction means**; they do not prove that an unseen real product was manufactured the same way.
 
 `refas.semantic-authority-set/v1` remains decisive:
 
@@ -78,4 +78,4 @@ That fixture proves the contracts work together deterministically. It is not evi
 
 ## Release boundary
 
-RefAs 1.1.0 ships typed physical construction and scoped readiness semantics as Core contracts while keeping the existing vision-first evidence policy. The release does not claim observed manufacturer internals or calibrated real-world physics where evidence is absent, and it does not rename public `.../v1` namespaces merely because the package version advanced.
+RefAs ships typed physical construction and scoped readiness semantics as Core contracts while keeping the existing vision-first evidence policy. The system does not claim observed manufacturer internals or calibrated real-world physics where evidence is absent, and it does not rename public `.../v1` namespaces merely because the package version advanced.
