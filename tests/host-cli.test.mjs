@@ -6,7 +6,7 @@ import {spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import {test} from 'node:test';
 
-import {digestJson} from '../skills/refas/scripts/lib/index.mjs';
+import {digestJson, REFAS_VERSION} from '../skills/refas/scripts/lib/index.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const CLI = path.join(ROOT, 'skills', 'refas', 'scripts', 'refas-host.mjs');
@@ -17,13 +17,13 @@ function run(args, {expect = 0} = {}) {
   return result;
 }
 
-test('refas-host exposes v1.2.1 host commands and durable JSONL replay', async (t) => {
+test('refas-host exposes versioned commands and durable JSONL replay', async (t) => {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), 'refas-host-cli-'));
   t.after(() => fs.rm(root, {recursive:true, force:true}));
 
   const help = JSON.parse(run(['help']).stdout);
   assert.equal(help.name, 'refas-host');
-  assert.equal(help.version, '1.2.1');
+  assert.equal(help.version, REFAS_VERSION);
   for (const command of ['open','status','events','review-bundle','handoff','validate-worker']) {
     assert.equal(typeof help.commands[command], 'string');
   }
