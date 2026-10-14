@@ -1,0 +1,178 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/evidence-request.schema.json",
+  "title": "RefAs adaptive evidence request",
+  "type": "object",
+  "required": [
+    "schema",
+    "subjectId",
+    "sources"
+  ],
+  "properties": {
+    "schema": {
+      "const": "refas.evidence-request/v1"
+    },
+    "subjectId": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+    },
+    "board": {
+      "type": "boolean"
+    },
+    "defaultAnalyses": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": [
+          "crop",
+          "context",
+          "edges",
+          "gradient",
+          "contrast",
+          "low-frequency",
+          "high-frequency",
+          "highlights",
+          "alpha-mask"
+        ]
+      }
+    },
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 64,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "sha256",
+          "views"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+          },
+          "sha256": {
+            "$ref": "common.schema.json#/$defs/digest"
+          },
+          "path": {
+            "$ref": "common.schema.json#/$defs/relativePath"
+          },
+          "archive": {
+            "$ref": "common.schema.json#/$defs/relativePath"
+          },
+          "archiveSha256": {
+            "$ref": "common.schema.json#/$defs/digest"
+          },
+          "member": {
+            "$ref": "common.schema.json#/$defs/relativePath"
+          },
+          "sourceManifest": {
+            "$ref": "common.schema.json#/$defs/relativePath"
+          },
+          "views": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": [
+                "id"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+                },
+                "role": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+                },
+                "scopeId": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+                },
+                "roi": {
+                  "$ref": "common.schema.json#/$defs/roi"
+                },
+                "padding": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 0.5
+                },
+                "materialize": {
+                  "type": "boolean"
+                },
+                "analyses": {
+                  "type": "array",
+                  "uniqueItems": true,
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "crop",
+                      "context",
+                      "edges",
+                      "gradient",
+                      "contrast",
+                      "low-frequency",
+                      "high-frequency",
+                      "highlights",
+                      "alpha-mask"
+                    ]
+                  }
+                },
+                "question": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 1024
+                },
+                "decisionTarget": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 1024
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "oneOf": [
+          {
+            "required": [
+              "path"
+            ],
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "archive"
+                  ]
+                },
+                {
+                  "required": [
+                    "member"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "required": [
+              "archive",
+              "archiveSha256",
+              "member"
+            ],
+            "not": {
+              "required": [
+                "path"
+              ]
+            }
+          }
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false,
+  "description": "Structural input schema; runtime additionally enforces cumulative view/pixel budgets, cross-file SHA-256, identity uniqueness and substantive analysis decisions."
+}
