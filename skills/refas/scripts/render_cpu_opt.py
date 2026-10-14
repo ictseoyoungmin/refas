@@ -200,6 +200,9 @@ def render_hero(primitives, position, target, up, fov, size, mode):
             relative @ right, relative @ real_up, relative @ forward)),dtype=np.float64)
         world = np.ascontiguousarray(primitive.positions,dtype=np.float64)
         indices = np.ascontiguousarray(primitive.indices,dtype=np.int64)
+        if (not np.isfinite(world).all() or not np.isfinite(camera).all() or
+                np.any(indices < 0) or np.any(indices >= len(world))):
+            raise ValueError("invalid or nonfinite mesh coordinates or triangle indices")
         start=time.perf_counter()
         ntri += _raster(camera,world,indices,framebuffer,depth,winner,pid,offset,
                         scale_y,scale_y,0 if mode=="normal" else 1)
@@ -231,6 +234,10 @@ def main():
     frame_bytes=framepath.read_bytes()
     if len(source_bytes)*2>=args.max_working_mb*MIB:
         raise MemoryError("OPTIMIZED_CPU_RESOURCE: source GLB too large for declared budget")
+    # Optional LLVM/Numba initialization has significant memory outside the
+    # legacy framebuffer estimate; reject tiny budgets rather than misreport.
+    if args.max_working_mb < 256:
+        raise MemoryError("OPTIMIZED_CPU_RESOURCE: JIT prototype requires at least 256 MiB")
     model,binary=parse_glb(glb)
     require_supported(model)
     policy=resource_policy(args.size,args.size,max_working_mb=args.max_working_mb,
