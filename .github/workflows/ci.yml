@@ -116,3 +116,18 @@ jobs:
         # Release/promotion deep validation only; avoid the 215s full scene dogfood on each PR.
         if: matrix.node == 24 && github.event_name == 'push' && (github.ref == 'refs/heads/main' || ((github.ref == 'refs/heads/develop/v1.2.1' || github.ref == 'refs/heads/develop/v1.3.0') && contains(github.event.head_commit.message, '[full-qa]')))
         run: npm run release:audit
+      - name: Checkout published v1.2.1 for compatibility smoke
+        if: matrix.node == 24 && github.event_name == 'push' && (github.ref == 'refs/heads/main' || ((github.ref == 'refs/heads/develop/v1.2.1' || github.ref == 'refs/heads/develop/v1.3.0') && contains(github.event.head_commit.message, '[full-qa]')))
+        uses: actions/checkout@v7
+        with:
+          ref: v1.2.1
+          path: .refas-v121-baseline
+          persist-credentials: false
+      - name: Verify actual npm package installation
+        if: matrix.node == 24 && github.event_name == 'push' && (github.ref == 'refs/heads/main' || ((github.ref == 'refs/heads/develop/v1.2.1' || github.ref == 'refs/heads/develop/v1.3.0') && contains(github.event.head_commit.message, '[full-qa]')))
+        run: node tools/verify-packed-install.mjs
+      - name: Verify saved v1.2.1 project upgrade
+        if: matrix.node == 24 && github.event_name == 'push' && (github.ref == 'refs/heads/main' || ((github.ref == 'refs/heads/develop/v1.2.1' || github.ref == 'refs/heads/develop/v1.3.0') && contains(github.event.head_commit.message, '[full-qa]')))
+        env:
+          REFAS_V121_ROOT: ${{ github.workspace }}/.refas-v121-baseline
+        run: node tools/verify-v121-upgrade.mjs
