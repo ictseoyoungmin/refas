@@ -233,6 +233,50 @@ def _preview_cache_valid(out, expected_digest, views):
         return False
 
 
+
+def publish_outputs_rollback_safe(staging: Path, out: Path, committed_name: str, remove=()):
+    """Stage, publish the digest-bearing manifest last, and restore on failure.
+
+    Readers must verify the manifest hashes, since individual file renames
+    are not a multi-file atomic transaction for concurrent readers.
+    """
+    out.mkdir(parents=True,exist_ok=True)
+    if out.is_symlink():
+        raise ValueError('PBR output root cannot be a symlink')
+    sources=sorted(item.name for item in staging.iterdir() if item.is_file())
+    if committed_name not in sources:
+        raise ValueError('missing PBR commit manifest')
+    names=[name for name in sources if name!=committed_name]
+    removed=sorted(set(remove)-set(sources)-{committed_name})
+    names.extend(removed)
+    names.append(committed_name)
+    backup=Path(tempfile.mkdtemp(prefix='.refas-pbr-rollback-',dir=out.parent))
+    original=[]; written=[]
+    fail_after=os.environ.get('REFAS_TEST_PBR_PUBLISH_FAIL_AFTER')
+    fail_after=int(fail_after) if fail_after and fail_after.isdigit() else 0
+    try:
+        for name in names:
+            current=out/name
+            if current.is_symlink() or (current.exists() and not current.is_file()):
+                raise ValueError(f'non-file PBR publication target: {name}')
+            if current.exists():
+                os.replace(current,backup/name)
+                original.append(name)
+            if name in sources:
+                os.replace(staging/name,current)
+                written.append(name)
+            if fail_after and len(written)==fail_after:
+                raise RuntimeError('injected PBR publication failure')
+    except BaseException:
+        for name in reversed(written):
+            (out/name).unlink(missing_ok=True)
+        for name in reversed(original):
+            os.replace(backup/name,out/name)
+        raise
+    finally:
+        shutil.rmtree(backup,ignore_errors=True)
+
+
 def main():
     p=argparse.ArgumentParser(); p.add_argument('--glb',required=True); p.add_argument('--out',required=True); p.add_argument('--frame',required=True); p.add_argument('--reference'); p.add_argument('--size',type=int,default=420); p.add_argument('--timeout-seconds',type=float,default=180); p.add_argument('--max-working-mb',type=float,default=512); p.add_argument('--exposure',type=float,default=0.0); p.add_argument('--background',default='15,18,23'); p.add_argument('--key-intensity',type=float,default=3.4); p.add_argument('--fill-intensity',type=float,default=1.5); p.add_argument('--rim-intensity',type=float,default=0.65); p.add_argument('--neutral-clay',action='store_true'); p.add_argument('--tile-size',type=int,default=128); p.add_argument('--no-board',action='store_true'); p.add_argument('--preview',action='store_true'); p.add_argument('--views',default='hero,side'); p.add_argument('--reuse',action='store_true'); a=p.parse_args()
     if not a.preview and a.reuse:
@@ -327,14 +371,8 @@ def main():
             }
             manifest['manifestDigest']=canonical_digest(manifest)
             (staging/'preview-manifest.json').write_text(json.dumps(manifest,indent=2)+'\n',encoding='utf-8')
-            out.mkdir(parents=True,exist_ok=True)
-            for frame in frames:
-                os.replace(staging/frame['path'],out/frame['path'])
-            # Avoid an old preview cell being mistaken for current coverage.
-            for old_view in VIEW_IDS:
-                if old_view not in selection:
-                    (out/(old_view+'.png')).unlink(missing_ok=True)
-            os.replace(staging/'preview-manifest.json',out/'preview-manifest.json')
+            stale=[view+'.png' for view in VIEW_IDS if view not in selection]
+            publish_outputs_rollback_safe(staging,out,'preview-manifest.json',remove=stale)
             print(json.dumps({'status':'PASS','claimScope':'preview-only','manifest':str(out/'preview-manifest.json'),'frames':len(frames)},indent=2))
             return
         rig={"lights":"three-directional-calibrated-v1","keyIntensity":key_intensity,"fillIntensity":fill_intensity,"rimIntensity":rim_intensity,"background":list(background),"cameraFovY":31}; color={"exposure":exposure,"toneMapping":"Reinhard","outputColorSpace":"sRGB"}
@@ -357,13 +395,10 @@ def main():
         payload={"schema":"refas.pbr-render-report/v1","claimScope":"shape-resemblance-only" if a.neutral_clay else "visual-fidelity","assetSha256":sha256(glb),"frameDigest":fd,"renderer":{"family":"other","name":"RefAs Independent PBR","version":"1.0.0","backend":"numpy-cook-torrance-headless","independentProcess":True},"lighting":{"rigId":rig_id,"digest":canonical_digest(rig)},"colorPipeline":color,"materialSupport":{"supported":supported,"unsupported":unsupported},"textureBindings":[{"sha256":digest,"mimeType":"image/png","channel":"base-color"} for digest in texture_bindings],"outputs":[{"viewId":f['viewId'],"path":f"{output_prefix}/{f['path']}","sha256":f['sha256']} for f in frames],"reproducibility":{"mode":"deterministic","tolerance":""}}
         if a.neutral_clay:
             payload["presentation"]={"mode":"neutral-clay","presetId":NEUTRAL_CLAY_PRESET["id"],"presetDigest":canonical_digest(NEUTRAL_CLAY_PRESET)}
-        payload['reportDigest']=canonical_digest(payload); (staging/'render-report.json').write_text(json.dumps(payload,indent=2)+'\n'); out.mkdir(parents=True,exist_ok=True)
-        for item in staging.iterdir(): os.replace(item,out/item.name)
-        # A reused output directory must not expose a stale board as the new render.
-        if a.no_board:
-            prior_board=out/'pbr-review-board.png'
-            if prior_board.is_file():
-                prior_board.unlink()
+        payload['reportDigest']=canonical_digest(payload)
+        (staging/'render-report.json').write_text(json.dumps(payload,indent=2)+'\n')
+        publish_outputs_rollback_safe(staging,out,'render-report.json',
+                                      remove=['pbr-review-board.png'] if a.no_board else [])
     finally: shutil.rmtree(staging,ignore_errors=True)
     print(json.dumps({"status":"PASS","report":str(out/'render-report.json'),"board":None if a.no_board else str(out/'pbr-review-board.png'),"frames":len(frames)},indent=2))
 
