@@ -20,6 +20,8 @@ export const CPU_RENDER_BACKENDS=Object.freeze({
   }),
   'optimized-cpu':Object.freeze({
     id:'optimized-cpu',identity:'RefAs Optimized CPU/1.0.0-jit-prototype',
+    renderer:{family:'other',name:'RefAs Optimized CPU',
+      version:'1.0.0-jit-prototype',backend:'numba-serial-raster'},
     worker:'render_cpu_opt.py',installed:true,diagnostic:true,
     replay:null,admissibleCertification:'none',
   }),
