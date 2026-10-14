@@ -1,4 +1,10 @@
-# Appearance ownership
+# Appearance
+
+The renderer can be invoked on a constructed candidate for early neutral-clay
+shape inspection before assembly or material closure. This is a tool-access
+dependency, **not** a permission to claim that final appearance is complete.
+Finish evidence-supported material/finish work after the asset's required
+assembly is stable; the final certification node separately requires both. ownership
 
 Appearance owns material identity, semantic material assignment, base color, metallic and roughness response, coatings, texture inputs, and the visible finish hierarchy. It does not own silhouette, curvature, relief geometry, attachment, camera, lighting, or final whole-object certification.
 
@@ -52,9 +58,28 @@ A normal appearance `refas.pbr-render-report/v1` declares `base-color-texture` a
 
 ## Neutral-clay boundary
 
-R04 neutral-clay rendering is upstream shape evidence, not appearance evidence. `render-pbr --neutral-clay` deliberately replaces the candidate material response with the canonical runtime-owned neutral material and fixed review lighting so shape identity can be judged without finish polish.
+Neutral-clay early-resemblance rendering is upstream shape evidence, not appearance evidence. `render-pbr --neutral-clay` deliberately replaces the candidate material response with the canonical runtime-owned neutral material and fixed review lighting so shape identity can be judged without finish polish.
 
 A neutral-clay `refas.pbr-render-report/v1` therefore declares `claimScope: shape-resemblance-only`. Never use it to satisfy `appearance-plausibility`, material feature coverage, or final visual fidelity. Appearance still requires a normal `claimScope: visual-fidelity` PBR report that preserves the candidate's actual materials.
+
+## Low-cost iteration before final appearance
+
+For a quick editable candidate inspection call the registered
+`appearance/iterative-pbr-preview` interface:
+
+```bash
+node scripts/refas.mjs preview-pbr --glb PROJECT/candidate.glb --frame PROJECT/canonical-frame.json --out PROJECT/renders/preview --views hero,side --reuse --size 160
+```
+
+This only renders the selected real geometry views and reuses them when exact
+GLB, frame, exposure/lighting and PNG digests still match. The output is
+`refas.render-preview/v1` with `claimScope: preview-only`, not canonical
+appearance or neutral-clay evidence. Never attach preview results to
+`createPbrRenderReport`, early resemblance, final visual-review PASS, or
+source-bound release. Rerender the full canonical eight-view evidence after
+meaningful shape/material edits are accepted and before final admission.
+View selection is deliberately forbidden on `render-pbr`, which continues
+to output the eight standard views.
 
 ## Verification sequence
 

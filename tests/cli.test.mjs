@@ -5,6 +5,7 @@ import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
 import {test} from 'node:test';
+import {REFAS_VERSION} from '../skills/refas/scripts/lib/canonical.mjs';
 
 const CLI = path.resolve('skills/refas/scripts/refas.mjs');
 
@@ -16,8 +17,8 @@ test('CLI help exposes recovery, validation, and certification commands', () => 
   const result = run(['--help']);
   assert.equal(result.status, 0);
   const help = JSON.parse(result.stdout);
-  assert.equal(help.version, '1.2.1');
-  for (const command of ['source-manifest', 'resume', 'abort-edit', 'report-finding', 'validate-spec', 'certify', 'describe']) assert.ok(help.commands[command]);
+  assert.equal(help.version, REFAS_VERSION);
+  for (const command of ['source-manifest', 'resume', 'next', 'diagnose', 'validate', 'abort-edit', 'report-finding', 'validate-spec', 'certify', 'describe']) assert.ok(help.commands[command]);
   assert.match(help.commands.describe, /describe node <instruction-node-id>/);
   assert.match(help.commands.describe, /describe capability <runtime-capability-id>/);
   assert.match(help.commands.render, /--timeout-seconds 300/);

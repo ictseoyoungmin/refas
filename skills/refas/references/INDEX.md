@@ -26,7 +26,56 @@ refas describe node <instruction-node-id>
 refas describe capability <runtime-capability-id>
 ```
 
-The node form returns that instruction node's routing identity, prerequisites, runtime-capability projection, closure effects, and full AD01 interface descriptors. The capability form accepts only one of the 11 canonical runtime capability IDs and aggregates owning nodes in graph order. These namespaces are intentionally explicit: `refas describe <id>` does not guess whether an ID is an instruction node or a runtime capability, and routing-only owner tags such as `control` are not runtime capabilities.
+The node form returns that instruction node's routing identity, prerequisites, runtime-capability projection, closure effects, and full current public interface descriptors. The capability form accepts only one of the 11 canonical runtime capability IDs and aggregates owning nodes in graph order. These namespaces are intentionally explicit: `refas describe <id>` does not guess whether an ID is an instruction node or a runtime capability, and routing-only owner tags such as `control` are not runtime capabilities.
+
+### Observation evidence lookup
+
+| Input situation | Agent command / contract |
+|---|---|
+| Single image, sheet, separate photos, ZIP | `refas evidence --spec evidence-request.json --out reviews/observations --reuse` |
+| Only question-driven edge/gradient/contrast aids | Per-view `question`, `decisionTarget` and selected `analyses` in `assets/templates/evidence-request.json` |
+| Inspect findings / link changed GLB bytes / prune no-benefit files | `refas evidence --assess evidence-utility-decisions.json --out reviews/observations --prune` |
+| Previously published CLI compatibility | `refas evidence --image reference.png --out DIR --scope ID [--roi x,y,w,h]` preserves legacy image files and `refas.evidence-manifest/v1`; new tasks use `--spec` |
+
+The explicit `--image` compatibility mode produces the historical eight output images and manifest for existing integrations. New agent work uses the selection-based `--spec` mode.\n\nThe new mode retains every source/ZIP member hash and view ROI in a
+`derived-observation-aid-only` manifest. **It cannot assert registration
+or grant source-fidelity PASS** across images that happen to share a view name.
+Load `references/observation.md` for the precise format and safety contract.
+
+### Rendering workflow lookup
+
+| Situation | Installed command | Node / interface |
+|---|---|---|
+| Fast edited-GLB shape/material view without full PBR | `node scripts/refas.mjs preview-pbr --glb candidate.glb --frame frame.json --out renders/preview --views hero,side --reuse` | `appearance/iterative-pbr-preview` |
+| One combined human-facing board from real render evidence | `node scripts/refas.mjs review-board --portable renders/portable --pbr renders/pbr --clay renders/clay --out reviews/combined.png` | `validation/combined-review-presentation` |
+
+These commands provide **no visual PASS authority**: preview writes only a
+`preview-only` manifest, and the combined board is `presentation-only`.
+Final neutral-clay and appearance reports still require all eight current views.
+See `references/appearance.md` and `references/validation.md` for gate use.
+
+### Agent-facing workflow lookup (existing operations)
+
+The released CLI provides read-only navigation and diagnostics. Use the canonical
+graph's `workflow/agent-next`, `failure-routing/agent-diagnose`, and
+`validation/agent-validate-source-bound` interfaces; the registered command
+descriptors and public-library exports are discoverable through `describe node`.
+
+| Situation | Installed-skill command | Canonical node |
+|---|---|---|
+| Start or resume a project, select the next owner/scope | `node scripts/refas.mjs next --root PROJECT` | `workflow` |
+| Inspect an existing typed finding without mutating the project | `node scripts/refas.mjs diagnose --root PROJECT --finding FINDING.json` | `failure-routing` |
+| Inspect current asset's existing QA blockers and owner/evidence | `node scripts/refas.mjs diagnose --root PROJECT --asset PROJECT/candidate.glb` | `failure-routing` |
+| Evaluate strict source-bound QA of exact current GLB | `node scripts/refas.mjs validate --root PROJECT --asset PROJECT/candidate.glb` | `validation` |
+
+`next` follows `resumeProject`, `diagnose` previews an existing finding
+route or existing `verifySourceBoundObject` report, and `validate` uses that
+same canonical source-bound QA with exit code 2 when `BLOCKED`. `diagnose`
+is informational and can return a blocked report with exit 0; never treat its
+exit status as fidelity approval. Neither command issues certificates, repairs,
+mutates geometry, or weakens final Host handoff. Run expensive source-bound
+verification at genuine candidate/closure transitions, not after every minor
+construction operation.
 
 ### Canonical standalone templates
 
@@ -50,13 +99,56 @@ Most executable operation inputs are exposed through the interface catalog retur
 A standalone template does not override the operation-specific input catalog. When `describe` returns an interface template, that interface metadata is authoritative for the executable minimum input.
 
 
-## Always-load control path
+### Final transfer contract discovery
 
-Read these before reconstruction work:
+`node scripts/refas.mjs audit --root PROJECT` evaluates the existing
+project audit. `node scripts/refas.mjs verify --root PROJECT --asset
+PROJECT/candidate.glb` checks exact source-bound QA and may return
+`BLOCKED`.
 
-1. `references/workflow.md` — capability ownership, dependency barriers, finalization routing, and handoff behavior.
-2. `references/checkpointing.md` — recoverable state, bounded edits, rollback, resume, and checkpoint authority.
-3. `references/failure-routing.md` — typed findings, repair ownership, invalidation, and fail-closed routing.
+The optional Host interface has two **existing** modes:
+
+- `node scripts/refas-host.mjs handoff --root PROJECT`: default
+  `draft-transfer`, for working-asset transfer only
+- `node scripts/refas-host.mjs handoff --root PROJECT --profile
+  source-bound-object`: independently replays strict final authorization,
+  and refuses when current source-photo semantics are `INSUFFICIENT`
+
+Neither `audit` nor draft transfer grants source fidelity. Discover the
+public modes via `describe node validation` and
+`describe node host-integration`.
+
+## Minimal entry and conditional control reading
+
+After this router, read `references/workflow.md` for current capability
+ownership and construction order. The remaining control guides are loaded
+**at the moment their operations are needed**:
+
+- Before checkpoint creation, bounded edits, restore or abort:
+  `references/checkpointing.md`
+- Before persisting a typed finding, reopening an owner or recovering a
+  blocked project: `references/failure-routing.md` and
+  `references/checkpointing.md`
+
+Never skip these guides merely because they were not required at first load.
+Actual mutation/recovery authority is still enforced by the installed
+runtime; progressive reading cannot waive a gate.
+
+### Route by intended asset work
+
+| Work profile | Start with | Additional guide only when required |
+|---|---|---|
+| Static reference object | `references/observation.md`, `references/spatial-reasoning.md`, `references/construction.md` | `references/assembly.md` for multiple parts, `references/validation.md` for early clay comparison |
+| Organic or character form | Static form route plus `references/organic-articulated-construction.md` | Owner-local fit, cage, rig/attachment contract only where realized |
+| Mechanically articulated object | Static form route plus `references/assembly.md` and `references/contracts/articulation-clearance.md` | Link/joint, actuation or transmission contracts only when the actual mechanism uses them |
+| Physical/control/runtime target | Mechanical route plus relevant physical identity, dynamics, control, representation and binding leaves | `references/contracts/physical-claims.md` only for requested claims; no invented internal property evidence |
+| Defect, reopen, or failed inspection | `references/failure-routing.md` + `references/checkpointing.md` | Responsible owner leaf, current source and GLB evidence |
+| Finalization/handoff | `references/validation.md`, `references/candidate-transactions.md`, `references/claim-certification.md` | `references/realized-contact-support.md` when required; `references/host-integration.md` for actual host handoff |
+
+Rendering shape early is independent of finishing materials.
+For a small callable control-cage modeling example, see
+`scripts/subdivision-cage-demo.mjs`; it demonstrates geometry
+generation, **not** source-fidelity closure or an identity-bearing permit.
 
 ## Progressive-load routes
 
@@ -103,6 +195,22 @@ Load only the references needed by the active capability or conditional closure 
 
 Host integration is conditional infrastructure. It is never a prerequisite for reconstruction, visual closure, or certification. Load `references/host-integration.md` only when an external host or worker boundary is actually being used.
 
+## Early form assessment versus final authorization
+
+After `construction`, the agent may render the **current real GLB** with
+`render-pbr --neutral-clay`, form the `early-resemblance-barrier` and
+return to `shape-reconstruction` on a supported defect. This diagnostic
+route does **not** require a closed `assembly` or `appearance` stage.
+The early barrier belongs to the existing `validation` node for evidence
+ownership only; the node's `requires` is the **earliest safe entry point**,
+not permission to finalize.
+
+Final whole-object `claim-certification` still requires closed
+`assembly`, `appearance`, `validation` and a current candidate
+transaction. The runtime's existing per-claim and source-bound checks remain
+authoritative and fail closed when independent original-photo evidence is
+missing. An early neutral-clay `PROCEED` is never final release approval.
+
 ## Conditional finalization and closure chain
 
 Do not create new runtime capabilities for this chain. It is a conditional instruction path inside the existing assembly, validation, and whole-object-certification owners. The exact hard/conditional prerequisite structure is authoritative in `references/GRAPH.json`.
@@ -134,4 +242,4 @@ Physical fusion is optional; if no logical fusion group requires a final weld/bo
 
 Every Markdown leaf under `references/` must remain reachable from `SKILL.md -> references/INDEX.md`. Every such leaf must also appear exactly once as a node path in `references/GRAPH.json`. A new reference file is incomplete until it is registered in both routing layers. Every routed file must exist inside the copied skill tree.
 
-CI fails when an instruction route escapes the skill, a runtime import escapes the skill, a forbidden `docs/...` route appears, a bare sibling Markdown route appears, the typed semantic graph has unknown owners or dependencies, its hard prerequisite graph cycles, its finding ownership disagrees with runtime `FINDING_OWNERS`, its real-source certification floor is incomplete, or the skill-local dependency manifest is missing. It also fails when a node omits interface metadata, declares runtime capabilities that differ from its canonical runtime owners, points at an implementation module instead of `scripts/lib/index.mjs`, names a public symbol that the installed library does not export, or references a missing skill-local template/instruction/example path.
+The installed instruction graph must be self-contained: do not route agents to repository-only development files, unknown owners, missing capabilities, private implementation modules, missing schemas, or invalid CLI/library symbols. Keep all declared reference leaves, dependencies, and public interfaces consistent with `references/GRAPH.json` and the installed runtime. When a current callable operation changes, update its corresponding graph interface and usage reference together. Release chronology and implementation plans are **not** agent execution prerequisites.

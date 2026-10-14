@@ -78,7 +78,7 @@ P08 gains are controller tuning. They do not rewrite P07 actuator stiffness/damp
 `controllerDelay.value_s` is controller-side computation/command delay in seconds. It is distinct from:
 
 - P07 intrinsic actuator `responseLatency`;
-- future P09 bus/transport/runtime latency;
+- P09 bus/transport/runtime latency;
 - timestep or simulation scheduling conventions.
 
 Never combine these delays into one canonical number merely because a backend exposes a single latency field.

@@ -2,7 +2,7 @@
   <img src="skills/refas/assets/icon.svg" width="180" alt="RefAs robotic arm icon">
   <h1>RefAs</h1>
   <p>
-    <a href="https://github.com/ictseoyoungmin/refas/releases/tag/v1.2.1"><img src="https://img.shields.io/badge/version-v1.2.1-6f5a46" alt="Version v1.2.1"></a>
+    <a href="https://github.com/ictseoyoungmin/refas/releases/tag/v1.3.0"><img src="https://img.shields.io/badge/version-v1.3.0-6f5a46" alt="Version v1.3.0"></a>
     <a href="https://github.com/ictseoyoungmin/refas/actions/workflows/ci.yml"><img src="https://github.com/ictseoyoungmin/refas/actions/workflows/ci.yml/badge.svg" alt="CI status"></a>
     <img src="https://img.shields.io/badge/node-20%2B-339933" alt="Node.js 20+">
     <img src="https://img.shields.io/badge/Agent%20Skill-Vision--first%203D-b06f47" alt="Agent Skill: Vision-first 3D">
@@ -14,115 +14,36 @@
 
 RefAs is designed for work where a quick image-to-mesh approximation is not enough. The raw reference remains authoritative, whole-object context survives part inspection, observation stays distinct from inference and engineering choice, actual renders are compared, risky edits remain recoverable, and certification fails when the exact evidence chain cannot be reproduced.
 
-## Demo
+## What RefAs does
 
-Open [`demo/index.html`](demo/index.html) for a dependency-free overview of the 1.1 capability boundary and reproducible repository evidence.
+RefAs helps an AI agent **build, edit, inspect and export** reference-driven 3D assets. It records what is visible in the original image, proposes plausible 3D form where a view is ambiguous, constructs actual geometry, captures multiple views, and routes concrete problems back to the part that needs repair. Work products include editable construction state, GLB assets, rendered evidence and recoverable checkpoints. An external 3D authoring tool or worker may be used; installing the skill does not make every photograph an automatically generated model.
 
-The demo does not treat committed screenshots or opaque binary assets as proof. Geometry, render evidence, rollback, fitting, assembly checks, relational authority, physical semantics, backend normalization, readiness claims, and certification are exercised by tests and dogfood commands.
+The main workflow is **observe → construct → render → compare → locally revise**. Validation exists to support asset quality rather than replace modeling.
 
-## What RefAs guarantees
+The bundled [demo](demo/index.html) illustrates the tooling. For reproducible examples see [examples](examples/) and [the construction guide](skills/refas/references/construction.md).
 
-- **Whole → region → part → subpart → feature observation.** A detail crop never erases its ancestry or the full reference.
-- **Evidence-bound claims.** Facts, interpretations, hypotheses, ambiguities, inferred propositions, and engineered choices remain distinguishable.
-- **Projection-aware reconstruction.** Camera and reference-frame alternatives are tested before geometry is distorted to fit one view.
-- **Full-frame orientation evidence.** Position or one primary axis alone never proves roll, terminal facing, or parent-child twist.
-- **Relational structure before local hardening.** Domain-neutral proportions, alignments, ordering, plane chains, volume ratios, and dependencies must close before local detail can substitute for the whole.
-- **Explicit semantic authority.** `observed`, `inferred`, `engineered`, `unknown`, and `forbidden` remain distinct. Unknown is unresolved, not absence; engineered construction is not source truth.
-- **Hard candidate eligibility.** Structural and relational failures cannot be traded away by a lower visual or numeric loss.
-- **Immutable child assembly.** Closed child assets remain reusable by exact identity and bytes rather than silently rebuilt.
-- **Actual multiview QA.** Hero, oblique, side, top, grazing, normal, object-ID, and albedo evidence drives critique; raster success is never visual similarity.
-- **Sealed provenance and claim-driven certification.** Candidate, checkpoint, evidence DAG, dependencies, policy, and decision are digest-bound and reproduced before authorization.
-- **Content-addressed rollback.** Typed findings route to one owner and trustworthy bytes can be restored when a downstream edit fails.
+### Production-oriented updates in 1.3.0
 
-## Spatial volume closure in 1.1.1
+- Build the complete major volume, paired/repeated parts and connected surfaces before fine detailing; review real registered and orthogonal renders.
+- Request only useful source-derived image analyses using `refas evidence --spec` and record their contribution with `--assess`. Old `--image` calls retain the published v1.2.1 compatibility output format.
+- Use selective PBR previews and a digest-verified visual review board while retaining full canonical evidence requirements.
+- Preserve old observation snapshot files when a derivative is retired, so prior references remain resolvable; physical garbage collection requires a separate reference-aware procedure.
 
-RefAs 1.1.1 makes "looks right from the front" insufficient. A candidate must stay a coherent 3D object outside the hero view before it can be certified:
+The workflow improvements are agent guidance and utilities, not an independent guarantee of reference resemblance, geometric manifoldness for every output, or game-engine readiness.
 
-- spatial roles (`volumetric`, `thin-shell`, intentionally planar) are frozen before evaluation and cannot be relabeled after a failure;
-- closure evidence is derived from the exact candidate GLB bytes, and a role-aware classifier detects planar/billboard collapse without asset-specific thresholds or single-view IoU;
-- a whole-before-parts volume barrier blocks downstream checkpoints, and final certification requires exact final-candidate spatial continuity along the selected lineage;
-- caller-authored PASS, forged gate authority, stale evidence, and sibling-lineage evidence are ignored by trusted runtime replay (`npm run dogfood:adversarial`).
+### Core capabilities
 
-Correspondence, resemblance, spatial coherence, and physical readiness are separate obligations. Single-view IoU is never an objective, ranking signal, or resemblance proof.
+- **Observation grounded in real images:** preserve whole-image context, semantic regions, visible facts, depth uncertainty and the difference between observation, inference and engineering.
+- **Geometry construction and local editing:** build major masses and structural relationships first, then surfaces, parts, material appearance and reusable assemblies; parameter-fit only within the responsible editing scope.
+- **Real 3D feedback:** record canonical cameras, render hero/oblique/side/top/grazing and diagnostic views, and compare source evidence to exact current GLB bytes.
+- **Recoverable agent workflow:** use typed findings, checkpoint lineage, `next`, `diagnose` and `validate` to inspect what changed and reopen only the responsible work.
+- **Optional physical and export semantics:** express attachment, articulation, contact/support, dynamics and backend mapping when the asset requires them, without treating an unobserved mechanism as source truth.
 
-## Physical semantics in 1.1.0
+### Known quality boundary
 
-Physical semantics are native **assembly-owned construction contracts**, not a parallel robotics state machine and not a second source of truth. The following identities remain semantically distinct even when a simple asset maps them one-to-one:
+A valid GLB, a completed rendering, a generic RefAs certificate or a draft transfer **does not prove that the 3D object resembles the supplied photo**. RefAs can detect supported physical/source contradictions, but independent positive recognition of original-photo part identities and roles is not a completed universal fidelity evaluator. Strict source-bound final handoff remains `BLOCKED` when required independent evidence is `INSUFFICIENT`. Single-view IoU is never positive resemblance authority; multiview IoU is correspondence-only.
 
-```text
-assembly module
-  != attachment interface
-  != physical part
-  != rigid link
-  != virtual joint
-  != mechanism
-  != transmission
-  != actuator
-  != controller
-  != runtime endpoint
-```
-
-Canonical physical frames use meters plus normalized canonical quaternion `[x,y,z,w]`. Backend order, array position, motor index, device index, Euler convention, and serialization order never become semantic identity.
-
-The physical stack covers:
-
-- rigid-body mass, center of mass, inertia, and frame binding;
-- visual-independent collision semantics and filtering;
-- typed articulation and link/joint topology;
-- mechanism topology and explicit transmission mappings for coordinate, velocity, and effort spaces;
-- actuator capability distinct from joint limits;
-- controller profiles distinct from actuator source truth;
-- optional runtime endpoint/device/bus/index calibration distinct from canonical identity;
-- digest-bound reusable physical asset bundles;
-- representation-capacity preflight, one-way export, normalization, and canonical-versus-backend validation;
-- exact field-scoped declared divergence that never mutates canonical construction state.
-
-The representation flow is intentionally one-way from canonical construction semantics:
-
-```text
-canonical physical construction
-        ├──> backend representation A ──> normalized semantic view A
-        └──> backend representation B ──> normalized semantic view B
-                         │
-                         └── canonical-versus-normalized validation
-```
-
-Backend A is never promoted into truth for backend B. Equivalent quaternion sign/component order, translation units, or equivalent Euler conventions normalize before comparison. Representable undeclared differences remain `DRIFT`; unsupported semantics remain explicit `LOSSY`; insufficient authority remains `UNRESOLVED`; broken invariants remain `INVALID`.
-
-## Scoped physical readiness
-
-RefAs 1.1.0 adds opt-in readiness claims without weakening visual/source-fidelity authority:
-
-- `articulated-ready` — applicable link/joint articulation obligations are closed;
-- `simulation-ready` — required dynamics/collision and applicable physical semantics are closed;
-- `control-ready` — simulation obligations plus applicable actuator/controller evidence are closed;
-- `runtime-ready` — control obligations plus current runtime binding/calibration are closed.
-
-Physical readiness is not inferred from a valid candidate transaction alone. `refas.physical-claim-evidence/v1` must validate against the **current live P10–P15 chain**. If a claim relies on a declared backend divergence, the exact current P15 authority and P14 drift binding are revalidated before P16 evidence may pass. Public generic certification cannot bypass that typed preflight.
-
-Higher-level edits remain scoped: changing controller tuning or runtime indices does not retroactively invalidate an unchanged lower simulation claim or unrelated visual reconstruction evidence.
-
-## What 1.1.0 does not claim
-
-Typed physical semantics do not manufacture physical truth. RefAs can preserve evidence-backed `observed` values and can construct explicit `inferred` or `engineered` values when their basis permits it, but it does not identify unseen manufacturer internals or guarantee calibrated real-world mass, inertia, friction, collision, actuator, controller, runtime, scale, or material composition without supporting evidence.
-
-A `simulation-ready` or `runtime-ready` result means the selected claim obligations close against the current typed evidence and representation chain. It does **not** mean every parameter was measured from the real object. See [Known limitations](docs/known-limitations.md).
-
-## Integrated physical fixture
-
-The P17 integration fixture closes the 1.1.0 physical-semantics implementation plan with a domain-neutral coupled parallel 2-DOF assembly composed from reusable modules. It exercises fixed attachment interfaces, virtual joints, rigid dynamics, collision proxies, a nonlinear transmission, actuation, control, runtime binding, two independent backend projections, normalization, deliberate semantic drift, live divergence authorization, and `runtime-ready` certification.
-
-The final positive path is intentionally not an all-equivalent shortcut:
-
-```text
-P14 DRIFT
-  → exact live P15 DECLARED_DIVERGENCE
-  → P16 runtime-ready evidence
-  → typed live preflight
-  → generic certification decision
-```
-
-Substituted or stale authority fails closed. Repeated runs reproduce the same P15-bound integration evidence digest. See [Integrated physical fixture](docs/integrated-physical-fixture.md).
+Typed physical readiness (`articulated-ready`, `simulation-ready`, `control-ready`, `runtime-ready`) describes validated obligations for *declared* semantics, not independently measured real-world properties. For the optional physical construction details see [architecture](docs/architecture.md), [known limitations](docs/known-limitations.md) and [an integrated physical example](docs/integrated-physical-fixture.md).
 
 ## Install
 
@@ -150,17 +71,34 @@ Requirements:
 
 ```bash
 python -m pip install --requirement requirements.txt
-npm test
-npm run check
 node skills/refas/scripts/refas.mjs --help
-node skills/refas/scripts/refas-host.mjs --help
+node skills/refas/scripts/refas.mjs source-manifest --root project --image project/source/reference.png --id primary --out project/source/source-manifest.json
+node skills/refas/scripts/refas.mjs init --root project --project my-reference-model --source project/source/source-manifest.json
+node skills/refas/scripts/refas.mjs next --root project
 ```
+
+Place the original image at `project/source/reference.png` first. The commands initialize a source-bound project and report the next work; they do not by themselves generate a finished GLB. Follow the agent's current construction capability and use your modeling backend to create actual geometry.
 
 The executable runtime lives inside the distributable skill. Tests and examples import that same code; there is no second runtime implementation to drift.
 
-## Agent workflow interface (v1.2.1)
+## Agent workflow interface
 
-RefAs is a **construction and editing foundry**. The CLI below helps an agent discover its next modeling step, inspect failures and reuse the already-installed validators. All three operations are read-only and return typed JSON:
+The installed skill defaults to a short routing path
+(`SKILL.md` → `references/INDEX.md` → `references/workflow.md`);
+checkpoint/recovery guides are loaded when a corresponding operation is
+actually needed. Choose static, organic, mechanically articulated or physical
+runtime guides according to the work, rather than loading the entire
+assembly/physical stack for a simple object.
+For a runnable, explicitly non-authoritative geometry example use
+`node skills/refas/scripts/subdivision-cage-demo.mjs`.
+
+Strict source-bound verification and artifact transfer remain separate:
+`refas-host handoff` defaults to `draft-transfer`, whereas
+`refas-host handoff --profile source-bound-object` demands independent
+source-bound evidence and may refuse even a valid generically certified GLB.
+
+
+The CLI helps an agent discover its next modeling step, inspect failures and reuse installed validators. These three commands are read-only and return JSON:
 
 ```bash
 node skills/refas/scripts/refas.mjs next --root project
@@ -168,6 +106,13 @@ node skills/refas/scripts/refas.mjs diagnose --root project --asset project/cand
 node skills/refas/scripts/refas.mjs diagnose --root project --finding project/finding.json
 node skills/refas/scripts/refas.mjs validate --root project --asset project/candidate.glb
 ```
+
+The installed canonical instruction graph registers these as
+`workflow/agent-next`, `failure-routing/agent-diagnose`, and
+`validation/agent-validate-source-bound` (use `refas describe node workflow`,
+`refas describe node failure-routing`, or `refas describe node validation`
+to discover public contracts). For the detailed agent execution order see
+`skills/refas/references/INDEX.md` and `skills/refas/references/workflow.md`.
 
 `next` is derived from trusted checkpoint/recovery guidance; `diagnose` shows exact existing blocker statuses, responsible capability, provenance and an advisory next action; `validate` reuses the same strict `source-bound-object` coverage as `refas verify` (exit code **2** if blocked). No wrapper creates new visual judgments, changes project state, certifies models or grants draft output positive source-fidelity authority. `refas-host handoff` defaults to `draft-transfer`; explicit `--profile source-bound-object` remains separately fail-closed and must not be confused with generic certification.
 
@@ -209,29 +154,19 @@ refas/
 └── docs/                        architecture, physical closure, quality, recovery, and claim contracts
 ```
 
-## Verification commands
+## Development and verification
+
+Contributors can run the repository's existing regression, installed-skill and release audits:
 
 ```bash
 npm test
 npm run test:python
 npm run check
-npm run check:plugins
-npm run dogfood
-npm run dogfood:parameter-fit
-npm run dogfood:pbr
-npm run dogfood:hard-surface
-npm run dogfood:assembly
-node --test tests/integrated-physical-fixture.test.mjs
 npm run dogfood:fresh-worker
-npm run check:discovery-closure
-npm run dogfood:volume-regression
-npm run dogfood:adversarial
 npm run release:audit
 ```
 
-See [Architecture](docs/architecture.md), [Physical semantics plan](docs/physical-semantics-plan.md), [Integrated physical fixture](docs/integrated-physical-fixture.md), [Candidate transactions](docs/candidate-transactions.md), [Claim certification](docs/claim-certification.md), [Known limitations](docs/known-limitations.md), and [Release criteria](docs/release-criteria.md), and [1.1.1 release readiness](docs/v1.1.1-release-readiness.md).
-
-Contributions follow the [Issue and Pull Request governance contract](docs/github-governance.md): one runtime capability and hierarchy scope or one explicit repository boundary, one primary Issue, evidence-bound review, and an explicit recovery point.
+See [architecture](docs/architecture.md), [known limitations](docs/known-limitations.md), [release criteria](docs/release-criteria.md) and [contributing governance](docs/github-governance.md). Historical implementation notes, slice plans and future production work live under `docs/development/` and are not instructions for an installed modeling agent.
 
 ## License
 

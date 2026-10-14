@@ -20,6 +20,89 @@ Do not start from a detail crop. First inspect the full frame, then create a pad
 - A crop never replaces the full reference in review boards.
 - If a feature crosses a boundary, place it under the lowest common ancestor or record a relation between scopes.
 
+## Adaptive evidence intake (single, sheet, image collection, archive)
+
+Prefer raw-source observation, and invoke `evidence --spec` only to answer a
+specific unresolved visual question. Do not generate analysis images solely
+to increase a validation or citation count. Start from
+`assets/templates/evidence-request.json` and replace its **placeholder**
+SHA-256 with the digest of the *actual immutable bytes*. The spec file and
+all sources must be inside the same project; put derived output in its own
+separate subdirectory. Every source carries an exact `sha256`; ordinary
+source files may also cite an existing `sourceManifest`.
+
+```bash
+node scripts/refas.mjs evidence --spec PROJECT/evidence-request.json --out PROJECT/reviews/observations --reuse
+```
+
+- **One still:** one source and one `whole` view `roi:[0,0,1,1]`.
+  Default `defaultAnalyses: []` creates only an observation manifest, without
+  copying the original pixels or making a board. If a PNG is needed outside
+  its original location, request `materialize: true`.
+- **Composite sheet:** one exact original image with multiple explicitly
+  labeled `views`, each with normalized ROI, role and optional `scopeId`.
+  Small panel crops are retained with direct original-image SHA + ROI; do
+  not infer that panels share a camera or are metric orthographic views.
+- **Separate photographs:** multiple `sources`, each with own SHA, each
+  containing as many labeled ROIs as useful. Even when labels say front/side,
+  no registration, scale or subject-identity equivalence is automatically proven.
+- **ZIP collection:** source entries use `archive`, `archiveSha256`,
+  `member` (exact safe archive path) and the independent member image
+  `sha256` in place of `path`. This is a **read-only** member intake, not a
+  trusted multi-camera reconstruction or extraction of arbitrary ZIP paths.
+- **Request specific aids only:** set `analyses` per view, overriding
+  `defaultAnalyses`. Each view requesting non-crop analyses **must** specify
+  `question` (the observed ambiguity) and `decisionTarget` (what the answer
+  could affect). Supported: `crop`, `context`, `contrast`,
+  `low-frequency`, `high-frequency`, `gradient`, `edges`,
+  `highlights`, `alpha-mask` (when the original has alpha).
+  `board:true` is optional and presentation-only; its default is false.
+  A full-frame crop and unchanged context are aliases to the original, not
+  duplicate PNGs.
+
+The resulting `refas.observation-aid-set/v1` manifest contains source/member
+SHA, original ROI, explicit roles, actual derived PNG digests and
+`claimScope: derived-observation-aid-only`. It is **not** a replacement for
+the canonical single-primary-source `source-manifest`, registration,
+multi-view source verification, source-grounded geometry or final visual PASS.
+Separate groups of parts/subjects require separate `subjectId` and
+reasoned hierarchy owners, not a fabricated common camera.
+
+### Evidence utility and retention
+
+After actually inspecting the requested images, fill in
+`assets/templates/evidence-utility-decisions.json` (replace its placeholder
+manifest digest with the exact current `manifestDigest`).
+
+```bash
+node scripts/refas.mjs evidence --assess PROJECT/evidence-utility-decisions.json --out PROJECT/reviews/observations --prune
+```
+
+Every requested derived analysis requires one explicit `outcome`
+(`clarified`, `contradicted`, `insufficient`, `no-benefit`),
+`observation` (what did or did not become more legible), `modelImpact`
+(`none`, `planned`, `applied`) and `retention`
+(`retain`, `discard`) with `retentionReason`. Do **not** invent a
+useful observation just to satisfy a report field. Applied model impact names
+the actual `findingId`, `scopeId`, explanation and exact before/after
+GLB paths and SHA-256 bytes. Those bytes prove that a candidate changed,
+**not** that the transform caused the change or improved source likeness.
+
+Only outcomes `insufficient` or `no-benefit` with `modelImpact:none`
+may discard a materialized derivative. `--prune` atomically publishes a
+fresh manifest and retained-image snapshot and writes SHA tombstones for
+discarded derivative images; it does not delete original images, source
+manifests or source ZIP archives. Without `--prune` it records the
+disposition but leaves all image files intact. Never treat an uninspected
+transform as helpful or automatically promote the assessment to a visual
+gate. `--reuse` requires exact input, source, render-image and manifest
+hashes and will rerender when a prior assessment pruned necessary outputs.
+
+On extraction failure, no new manifest is published. The sole current
+manifest points to the latest complete immutable snapshot. The former
+fixed-all-filters `evidence --image` and the fixed-all-filter worker are
+removed, not preserved as a stale parallel observation system.
+
 ## Claim classes
 
 Record four distinct lists:
@@ -29,7 +112,7 @@ Record four distinct lists:
 | Fact | directly visible and source-cited | “A bright rim encloses the upper edge.” |
 | Interpretation | likely visual reading | “The rim may be a raised metal band.” |
 | Hypothesis | testable 3D explanation | “The shell crowns toward the camera by about one rim width.” |
-| Ambiguity | evidence does not decide | “The hidden back may be flat or continue the crown.” |
+| Ambiguity | evidence does not decide | “The transition radius is unresolved.” |
 
 Facts must cite at least one primary evidence item bound to the raw source SHA-256. Geometry parameters never belong in facts.
 
@@ -80,7 +163,7 @@ Use a small domain-neutral vocabulary: silhouette character, mass proportion, cu
 
 A perceptual signature is not a pixel metric. “Angular stepped plane breaks remain visible around the torso-to-wing junction” is a source identity observation; IoU, edge count, landmark RMSE, and other numeric residuals are not. Numeric evidence may later help inspect a signature, but correspondence does not define identity and cannot replace the source observation.
 
-Keep ambiguity explicit. Do not infer hidden construction, material category, or object class merely to fill a signature. The signature set is candidate-independent and never certifies resemblance by itself.
+Describe source-visible identity and consequential ambiguity in the signature. The spatial and construction records carry the selected 3D shape, and the source signature remains independent evidence for reviewing it.
 
 ## Derived evidence
 

@@ -62,6 +62,33 @@
               "verification": "structural",
               "reason": "stateful, filesystem-bound, renderer-bound, or CLI-only operation; command discovery is verified separately"
             }
+          },
+          {
+            "id": "agent-next",
+            "operation": "inspect",
+            "cli": {
+              "bin": "refas",
+              "command": "next"
+            },
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "nextAgentWork"
+            },
+            "template": null,
+            "inputContract": "initialized project root; read-only guidance with owner/scope/action and invocation; refas.agent-next/v1",
+            "outputSchema": null,
+            "validator": null,
+            "minimumInvocation": "references/workflow.md",
+            "example": null,
+            "usageReference": "references/workflow.md",
+            "publicConstants": [
+              "AGENT_NEXT_SCHEMA"
+            ],
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "stateful read-only project inspection; CLI contract and exported library symbol structurally verified"
+            }
           }
         ]
       }
@@ -288,7 +315,7 @@
               "symbol": "getArtifactHandoff"
             },
             "template": null,
-            "inputContract": "current host session/project context",
+            "inputContract": "Existing host session/project root; default --profile draft-transfer only, not positive original-photo fidelity approval.",
             "outputSchema": null,
             "validator": {
               "library": "validateArtifactHandoff"
@@ -300,6 +327,30 @@
               "schema": "refas.capability-invocation/v1",
               "verification": "structural",
               "reason": "stateful, filesystem-bound, renderer-bound, or CLI-only operation; command discovery is verified separately"
+            }
+          },
+          {
+            "id": "source-bound-final-handoff",
+            "operation": "inspect",
+            "cli": {
+              "bin": "refas-host",
+              "command": "handoff"
+            },
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "getSourceBoundReleaseHandoff"
+            },
+            "template": null,
+            "inputContract": "--root PROJECT --profile source-bound-object; independent strict source-bound release receipt, blocked on insufficient evidence; never confuse with draft-transfer.",
+            "outputSchema": null,
+            "validator": null,
+            "minimumInvocation": "references/host-integration.md",
+            "example": null,
+            "usageReference": "references/host-integration.md",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "discover an existing command; actual runtime admission is unmodified"
             }
           }
         ]
@@ -369,6 +420,33 @@
               "schema": "refas.capability-invocation/v1",
               "verification": "structural",
               "reason": "stateful, filesystem-bound, renderer-bound, or CLI-only operation; command discovery is verified separately"
+            }
+          },
+          {
+            "id": "agent-diagnose",
+            "operation": "inspect",
+            "cli": {
+              "bin": "refas",
+              "command": "diagnose"
+            },
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "diagnoseAgentWork"
+            },
+            "template": null,
+            "inputContract": "initialized project root; optional --asset current GLB OR --finding typed finding JSON; no mutation; refas.agent-diagnosis/v1",
+            "outputSchema": null,
+            "validator": null,
+            "minimumInvocation": "references/failure-routing.md",
+            "example": null,
+            "usageReference": "references/failure-routing.md",
+            "publicConstants": [
+              "AGENT_DIAGNOSIS_SCHEMA"
+            ],
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "read-only preview of canonical QA blockers OR typed recovery route; never persists rollback"
             }
           }
         ]
@@ -656,7 +734,7 @@
             },
             "library": null,
             "template": null,
-            "inputContract": "source image + semantic scope + optional normalized ROI",
+            "inputContract": "evidence --spec requires exact-SHA still/sheet/ZIP sources; every selected non-crop transform needs question and decisionTarget; evidence --assess binds outcomes and actual before/after GLB hashes with conservative prune; no derived pass or multi-camera certification",
             "outputSchema": null,
             "validator": null,
             "minimumInvocation": "references/observation.md",
@@ -1741,7 +1819,7 @@
             "outputSchema": null,
             "validator": null,
             "minimumInvocation": "references/construction.md",
-            "example": null,
+            "example": "assets/examples/subdivision-cage-demo.md",
             "usageReference": "references/construction.md",
             "invocation": {
               "schema": "refas.capability-invocation/v1",
@@ -4073,12 +4151,7 @@
         "logical-fusion",
         "attachment-propagation"
       ],
-      "conditionalRequires": [
-        {
-          "when": "physical fusion is justified",
-          "nodes": []
-        }
-      ],
+      "conditionalRequires": [],
       "authority": "finalization-only",
       "closureEffects": [
         "requires-revalidation-after-bake"
@@ -4334,7 +4407,7 @@
         "appearance"
       ],
       "requires": [
-        "assembly"
+        "construction"
       ],
       "conditionalRequires": [],
       "authority": "appearance",
@@ -4365,6 +4438,27 @@
               "schema": "refas.capability-invocation/v1",
               "verification": "structural",
               "reason": "stateful, filesystem-bound, renderer-bound, or CLI-only operation; command discovery is verified separately"
+            }
+          },
+          {
+            "id": "iterative-pbr-preview",
+            "operation": "render",
+            "cli": {
+              "bin": "refas",
+              "command": "preview-pbr"
+            },
+            "library": null,
+            "template": null,
+            "inputContract": "exact GLB/canonical frame; --views hero,side and optional digest-verified --reuse; emits preview-only manifest and NEVER refas.pbr-render-report/v1; not usable for any R04 or material PASS",
+            "outputSchema": null,
+            "validator": null,
+            "minimumInvocation": "references/appearance.md",
+            "example": null,
+            "usageReference": "references/appearance.md",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "independent CLI-only presentation/iteration operation; no checkpoint, source-bound, or certification authority"
             }
           },
           {
@@ -4453,7 +4547,7 @@
         "whole-object-certification"
       ],
       "requires": [
-        "appearance"
+        "construction"
       ],
       "conditionalRequires": [
         {
@@ -4495,6 +4589,27 @@
               "schema": "refas.capability-invocation/v1",
               "verification": "structural",
               "reason": "stateful, filesystem-bound, renderer-bound, or CLI-only operation; command discovery is verified separately"
+            }
+          },
+          {
+            "id": "combined-review-presentation",
+            "operation": "render",
+            "cli": {
+              "bin": "refas",
+              "command": "review-board"
+            },
+            "library": null,
+            "template": null,
+            "inputContract": "exact portable and PBR report folders, optional canonical clay folder; SHA-verified all included frames, identical GLB/frame digests; presentation-only PNG/JSON no source-review PASS",
+            "outputSchema": null,
+            "validator": null,
+            "minimumInvocation": "references/validation.md",
+            "example": null,
+            "usageReference": "references/validation.md",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "independent CLI-only presentation/iteration operation; no checkpoint, source-bound, or certification authority"
             }
           },
           {
@@ -4741,6 +4856,78 @@
               },
               "outputSchemaPointer": "/schema"
             }
+          },
+          {
+            "id": "agent-validate-source-bound",
+            "operation": "evaluate",
+            "cli": {
+              "bin": "refas",
+              "command": "validate"
+            },
+            "library": null,
+            "template": null,
+            "inputContract": "initialized project root + project-contained exact GLB via --asset; strict source-bound-object profile; exit 2 on BLOCKED; refas.agent-diagnosis/v1",
+            "outputSchema": null,
+            "validator": null,
+            "minimumInvocation": "references/validation.md",
+            "example": null,
+            "usageReference": "references/validation.md",
+            "publicConstants": [
+              "AGENT_DIAGNOSIS_SCHEMA"
+            ],
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "CLI-only read-only adapter over existing source-bound QA; does not create an alternate validator or PASS authority"
+            }
+          },
+          {
+            "id": "strict-source-bound-verify",
+            "operation": "evaluate",
+            "cli": {
+              "bin": "refas",
+              "command": "verify"
+            },
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "verifySourceBoundObject"
+            },
+            "template": null,
+            "inputContract": "Exact current asset GLB, --root PROJECT --asset GLB; source-bound-object refuses on insufficient current original-photo evidence.",
+            "outputSchema": null,
+            "validator": null,
+            "minimumInvocation": "references/validation.md",
+            "example": null,
+            "usageReference": "references/validation.md",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "discover an existing command; actual runtime admission is unmodified"
+            }
+          },
+          {
+            "id": "project-audit",
+            "operation": "evaluate",
+            "cli": {
+              "bin": "refas",
+              "command": "audit"
+            },
+            "library": {
+              "entrypoint": "scripts/lib/index.mjs",
+              "symbol": "auditProject"
+            },
+            "template": null,
+            "inputContract": "Existing project audit; no source-resemblance PASS authority.",
+            "outputSchema": null,
+            "validator": null,
+            "minimumInvocation": "references/validation.md",
+            "example": null,
+            "usageReference": "references/validation.md",
+            "invocation": {
+              "schema": "refas.capability-invocation/v1",
+              "verification": "structural",
+              "reason": "discover an existing command; actual runtime admission is unmodified"
+            }
           }
         ]
       }
@@ -4925,7 +5112,9 @@
       ],
       "requires": [
         "candidate-transactions",
-        "validation"
+        "validation",
+        "assembly",
+        "appearance"
       ],
       "conditionalRequires": [
         {

@@ -1,6 +1,6 @@
 {
   "name": "refas",
-  "version": "1.2.1",
+  "version": "1.3.0",
   "description": "Vision-first, evidence-bound reference image to 3D reconstruction for AI agents",
   "type": "module",
   "license": "MIT",
@@ -21,7 +21,7 @@
   ],
   "scripts": {
     "test": "node --test tests/*.test.mjs",
-    "test:python": "python3 -c \"import pathlib; [compile(pathlib.Path(p).read_text(encoding='utf-8'), p, 'exec') for p in ['examples/articulated-figure/create_comparison.py','examples/parameter-fit/create_comparison.py','examples/wing-cover/generate_comparison_candidates.py','skills/refas/scripts/compare_registered.py','skills/refas/scripts/evidence.py','skills/refas/scripts/render_glb.py','skills/refas/scripts/render_pbr.py','skills/refas/scripts/source_manifest.py']]\"",
+    "test:python": "python3 -c \"import pathlib; [compile(pathlib.Path(p).read_text(encoding='utf-8'), p, 'exec') for p in ['examples/articulated-figure/create_comparison.py','examples/parameter-fit/create_comparison.py','examples/wing-cover/generate_comparison_candidates.py','skills/refas/scripts/compare_registered.py','skills/refas/scripts/observation_image.py','skills/refas/scripts/evidence_request.py','skills/refas/scripts/evidence_compat.py','skills/refas/scripts/evidence_utility.py','skills/refas/scripts/render_glb.py','skills/refas/scripts/render_pbr.py','skills/refas/scripts/compose_review_board.py','skills/refas/scripts/source_manifest.py']]\"",
     "check": "node tools/check-repository.mjs && npm run check:plugins && node skills/refas/scripts/verify_installation_boundary.mjs && node skills/refas/scripts/verify_semantic_instruction_graph.mjs && node skills/refas/scripts/verify_capability_interfaces.mjs && node skills/refas/scripts/verify_discovery_closure.mjs --no-fresh-worker",
     "check:plugins": "node tools/verify-plugin-distribution.mjs",
     "check:instructions": "node skills/refas/scripts/verify_installation_boundary.mjs && node skills/refas/scripts/verify_semantic_instruction_graph.mjs && node skills/refas/scripts/verify_capability_interfaces.mjs",
@@ -31,6 +31,7 @@
     "dogfood:assembly": "node examples/modular-assembly/run.mjs",
     "dogfood:parameter-fit": "node examples/parameter-fit/run.mjs",
     "dogfood:articulated": "node examples/articulated-figure/run.mjs",
+    "benchmark:render-pbr": "node skills/refas/scripts/measure_render_pbr.mjs --out temp/render-pbr-measurement.json",
     "benchmark:matrix": "node examples/benchmark-matrix/run.mjs",
     "benchmark:first-multiview": "node skills/refas/scripts/measure_first_multiview_baseline.mjs --out temp/first-multiview-baseline.json",
     "benchmark:cross-model": "node examples/benchmark-matrix/run-workers.mjs",

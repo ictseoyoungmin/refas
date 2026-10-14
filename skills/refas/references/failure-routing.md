@@ -49,6 +49,29 @@ Relational routing is deliberately split by premise ownership. Missing, unknown,
 
 Use `routeRelationalBarrier()` for `refas.whole-system-relational-barrier/v1`. It converts exact barrier blocker codes into the typed relational findings above before using the same checkpoint and invalidation machinery.
 
+## Agent diagnosis before mutation
+
+```bash
+node scripts/refas.mjs diagnose --root PROJECT --finding FINDING.json
+```
+
+The registered `failure-routing/agent-diagnose` operation consumes an
+existing typed finding. Its JSON includes the canonical `routeFinding`
+decision, owner, rollback candidate and invalidated capability set when
+those values are justified. This is **read-only**; it neither records the
+finding nor restores a checkpoint. If the result is `REQUEST_REVIEW` or
+`BLOCKED_UNROUTABLE_FINDING`, gather evidence or resolve ownership rather
+than inventing a repair target. Once the evidence is sufficient and the
+route is justified, `report-finding` persists the existing recovery path;
+query `next` again after the mutation.
+
+For an actual candidate GLB, `diagnose --root PROJECT --asset
+PROJECT/candidate.glb` instead summarizes the unchanged strict source-bound
+QA report and blocker owners. It does not translate every QA check into a
+fabricated typed finding, and a command exit code of 0 does not mean the
+candidate passes source-bound validation. Use `validate --asset` for the
+blocking exit code as documented in `references/validation.md`.
+
 ## Common routing mistakes
 
 - Do not route `silhouette-mismatch` to rendering because it was first seen in a render.

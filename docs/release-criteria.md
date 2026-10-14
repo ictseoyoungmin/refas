@@ -1,4 +1,4 @@
-# RefAs 1.1 release criteria
+# RefAs release criteria
 
 These gates were introduced for 1.1.0 and remain mandatory for every 1.1.x release. 1.1.1 adds the spatial volume-closure and metric-authority gates in [`v1.1.1-release-readiness.md`](v1.1.1-release-readiness.md).
 
@@ -131,7 +131,7 @@ CI must pass on Node 20, 22, and 24. The protected Node 24 path runs the complet
 
 The `v1.1.0` tag and GitHub Release must point to the exact `main` commit that passed post-merge RefAs CI. Existing release tags remain immutable. Any source change after verified CI requires fresh validation before release.
 
-The release workflow is the publication authority for the Git tag/GitHub Release boundary: it runs only from a successful `main` push CI conclusion, reads the package version from that exact commit, and creates or verifies the immutable matching release identity. The release-prep PR itself must not fabricate a release result before that post-merge workflow succeeds.
+The release workflow is the publication authority for the Git tag/GitHub Release boundary: publication requires an explicit manual dispatch with exact current `main` SHA and `PUBLISH` confirmation. It verifies a completed full Node20/22/24 `main` push CI at that SHA, including Complete dogfood and Release audit, then creates or verifies the matching immutable tag/release. A passing main CI alone does not publish. The release-prep PR itself must not fabricate a release result before that post-merge workflow succeeds.
 
 Automated or bot-authored mutations are not release evidence by themselves; the resulting exact head must receive the normal PR CI and post-merge main CI required above.
 

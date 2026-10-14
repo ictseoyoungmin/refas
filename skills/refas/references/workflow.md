@@ -22,6 +22,42 @@ Canonical capability dependencies are exposed through the public `CAPABILITY_DEP
 
 Relational structure and inference authority are cross-cutting Core contracts, not extra capability owners. They are created and revised inside the existing observation/spatial/shape owners so the capability graph does not become a parallel runtime architecture.
 
+## Agent-facing work navigation (read-only)
+
+Before starting a new work unit, query the existing project state through:
+
+```bash
+node scripts/refas.mjs next --root PROJECT
+```
+
+This is the registered `workflow/agent-next` interface. It wraps
+`resumeProject`, returning the safe checkpoint, responsible capability,
+scope, `nextAction`, and a discoverable existing CLI invocation. Inspect
+the current capability's executable contract with
+`node scripts/refas.mjs describe capability <runtime-capability-id>`.
+`next` is advice about state, **not** a new capability, construction
+executor, gate verdict, or source-fidelity certificate.
+
+Construct or edit actual geometry in the active scope, capture real renders and compare them to the source. For a detected defect, use `diagnose --finding` from `references/failure-routing.md`; inspect candidate QA through `diagnose --asset` or strict `validate --asset` in `references/validation.md`. Use the canonical `report-finding` operation to reopen state.
+
+## Interpreting agent next actions
+
+`refas next` returns `workPlan.kind` and `workPlan.nextStep` for every
+known `resumeProject` action. Only `kind: command` may offer an executable
+`invocation`; the `construction` and `review` kinds point to the existing
+instruction node and evidence to produce, not to a made-up command.
+`terminal` (`DONE`) offers **no new command**: a current generic certificate
+is not independently verified source-bound handoff. `CERTIFY` invokes the
+existing generic `certify` operation, still subject to its real obligations.
+If the action descriptor is unknown, the wrapper refuses to fabricate a step.
+
+For `REWORK_SHAPE_VOLUME`, perform a real owner-local edit and rerender; for
+`GATHER_SPATIAL_EVIDENCE`, observe or capture the missing side/top evidence.
+`REPORT_RESEMBLANCE_FINDINGS` requires real typed findings from the current
+barrier; `REQUEST_VISUAL_REVIEW` requires substantive source/render
+observations. Query `describe node <instructionNode>` as needed.
+No advisory step is a new source-fidelity gate or repair authorization.
+
 ## Work-unit rule
 
 Keep exactly one pair active:
@@ -42,7 +78,7 @@ The work-unit rule never means that a local scope may close independently of unr
 
 ## Relational structure, authority, and whole-system barrier
 
-Visible evidence constrains the model; it does not define the entire model. Position and a primary axis do not fully specify a spatial part, and a collection of locally plausible features does not prove globally coherent proportions, planes, volumes, ordering, or twist.
+Construct complete spatial objects from the visible silhouette, repeated structure, major volume, continuity of curvature, and physical connections. Use shared profiles and symmetry for appropriate corresponding parts, and resolve camera projection before changing their rest geometry.
 
 When macro/identity `whole-system` relational obligations are declared or otherwise material to the active construction scope, read:
 
@@ -73,16 +109,7 @@ UNKNOWN    = unresolved, not absence
 FORBIDDEN  = explicit contradiction or hard constraint
 ```
 
-Core invariants:
-
-```text
-UNKNOWN != FORBIDDEN
-UNOBSERVED != FORBIDDEN
-ENGINEERED != OBSERVED
-INFERRED != OBSERVED
-```
-
-An inferred or engineered unobserved continuation may be instantiated when its typed basis is valid; it must not be promoted to source truth. Unknown authority cannot authorize positive construction for the proposition it governs yet, but it does not claim the structure is prohibited. Only forbidden authority positively blocks construction.
+Authority labels classify artifact claims: `observed` for direct source facts, `inferred` for supported spatial hypotheses, and `engineered` for deliberate functional choices. Explicitly governed `unknown` propositions await a supporting basis, while `forbidden` denotes a contradiction or hard constraint. Routine surface completion follows the shape hypothesis and construction requirements without separate authority entries for each vertex or surface.
 
 Create `refas.whole-system-relational-barrier/v1` from the exact relation graph, exact authority set, and current checks for every applicable macro/identity whole-system obligation. The barrier passes only when all required relation checks pass with evidence and every required relation has `observed`, `inferred`, or `engineered` authority. A passing local-detail relation cannot satisfy a whole-system obligation, and a good visual score cannot override an applicable barrier.
 
@@ -112,15 +139,15 @@ Use `createCanonicalEditIntent` to make the owner, scope, canonical bindings, an
 
 Before an assembly depends on proximity or world coordinates, declare the relationship that should survive future edits. Every semantic entity participating in an attachment graph must have an explicit mode, including intentionally independent `FREE` entities.
 
-- `FUSED`: same logical body as one owner; physical mesh fusion happens only in a later finalization step.
+- `FUSED`: same logical body as one owner; physical mesh fusion happens only as a separately authorized finalization step.
 - `RIGID_FOLLOW`: fixed owner-local transform.
-- `SURFACE_OFFSET`: preserve a future surface-relative offset from one owner.
+- `SURFACE_OFFSET`: preserve a surface-relative offset from one owner.
 - `MULTI_ANCHOR`: satisfy two or more owners, such as glasses supported by nose and ears.
 - `ARTICULATED`: attached through a joint frame.
-- `SUPPORTED_CLEARANCE`: may remain separated from owners while a later support path proves validity.
+- `SUPPORTED_CLEARANCE`: may remain separated from owners while a separately checked support path proves validity.
 - `FREE`: intentionally no owner.
 
-Use `createAttachmentSemantics` to record owner/dependent direction, evidence basis, and mode. Missing modes, unknown owners, self attachment, invalid owner counts, and ownership cycles are blockers before geometry propagation. This contract declares intent only; surface frames, solvers, fusion bake, and realized contact validation are later stages. See `references/contracts/attachment-semantics.md`.
+Use `createAttachmentSemantics` to record owner/dependent direction, evidence basis, and mode. Missing modes, unknown owners, self attachment, invalid owner counts, and ownership cycles are blockers before geometry propagation. This contract declares intent only; the existing surface-frame, solver, fusion-bake, and realized-contact operations remain separate explicit steps. See `references/contracts/attachment-semantics.md`.
 
 ## Logical fusion
 
@@ -142,7 +169,7 @@ Surface-anchor rebind updates owner-side frames only. It does not move glasses, 
 
 For a one-owner `RIGID_FOLLOW`, preserve the trusted baseline owner-to-subject rigid frame and recompute the subject target from the current owner world frame. For a one-owner `SURFACE_OFFSET`, consume the current surface-anchor frame and the subject-local contact frame so the contact, orientation, and signed offset align with the owner surface.
 
-Use `createAttachmentFollowState` to bind the canonical relation state and `propagateAttachmentFollow` to emit deterministic target frames. Every required owner world frame must be explicit. This layer is intentionally one-step: do not recursively propagate an owner produced by the same report, and do not approximate `MULTI_ANCHOR` through a single owner. Graph ordering and simultaneous constraints are separate later stages.
+Use `createAttachmentFollowState` to bind the canonical relation state and `propagateAttachmentFollow` to emit deterministic target frames. Every required owner world frame must be explicit. This layer is intentionally one-step: do not recursively propagate an owner produced by the same report, and do not approximate `MULTI_ANCHOR` through a single owner. Graph ordering and simultaneous constraints are separate assembly operations.
 
 The report is a target calculation, not permission to mutate a mesh or close assembly. Realization must still pass through the canonical pose/assembly boundary and later structural validation. See `references/contracts/attachment-follow.md`.
 

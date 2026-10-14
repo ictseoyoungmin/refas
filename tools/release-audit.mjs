@@ -7,6 +7,7 @@ import {fileURLToPath} from 'node:url';
 
 import {verifyInstructionGraph} from './verify-instruction-graph.mjs';
 import {verifySemanticInstructionGraph} from '../skills/refas/scripts/verify_semantic_instruction_graph.mjs';
+import {REFAS_VERSION} from '../skills/refas/scripts/lib/canonical.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -37,7 +38,7 @@ async function main() {
     'tests/host-session.test.mjs','tests/host-session-recovery.test.mjs','tests/host-events.test.mjs','tests/host-operation.test.mjs','tests/host-review-bundle.test.mjs','tests/host-artifact-handoff.test.mjs','tests/host-worker.test.mjs','tests/host-cli.test.mjs',
   ]);
   const python = process.env.CODEX_PRIMARY_RUNTIME_PYTHON || 'python3';
-  const sources = ['examples/parameter-fit/create_comparison.py','skills/refas/scripts/compare_registered.py','skills/refas/scripts/evidence.py','skills/refas/scripts/render_glb.py','skills/refas/scripts/render_pbr.py','skills/refas/scripts/source_manifest.py'];
+  const sources = ['examples/parameter-fit/create_comparison.py','skills/refas/scripts/compare_registered.py','skills/refas/scripts/observation_image.py','skills/refas/scripts/evidence_request.py','skills/refas/scripts/evidence_compat.py','skills/refas/scripts/evidence_utility.py','skills/refas/scripts/render_glb.py','skills/refas/scripts/render_pbr.py','skills/refas/scripts/source_manifest.py'];
   const compileProgram = 'import pathlib,sys; [compile(pathlib.Path(p).read_text(encoding="utf-8"), p, "exec") for p in sys.argv[1:]]';
   run(python, ['-c', compileProgram, ...sources]);
 
@@ -45,7 +46,12 @@ async function main() {
   const pack = JSON.parse(output)[0];
   if (!pack?.files?.length) throw new Error('npm dry-run did not report a package file list');
   const names = pack.files.map((item)=>item.path);
-  const forbidden = names.filter((name)=>/(?:^|\/)(?:__pycache__|\.refas|tests|examples|legacy)(?:\/|$)|\.pyc$|\.zip$/u.test(name));
+  // Package-local examples are installed skill resources. The repository-root
+  // examples/ directory remains excluded from the published npm package.
+  const forbidden = names.filter((name)=>
+    /^(?:examples)\//u.test(name) ||
+    /(?:^|\/)(?:__pycache__|\.refas|tests|legacy)(?:\/|$)|\.pyc$|\.zip$/u.test(name)
+  );
   if (forbidden.length) throw new Error(`release package contains forbidden files: ${forbidden.join(', ')}`);
 
   for (const required of [
@@ -69,7 +75,11 @@ async function main() {
 
   const skillBytes = names.filter((name)=>name.startsWith('skills/refas/')).reduce((total,name)=>total+Number(pack.files.find((item)=>item.path===name)?.size??0),0);
   const packageJson = JSON.parse(await fs.readFile(path.join(ROOT,'package.json'),'utf8'));
-  if (packageJson.version !== '1.2.1') throw new Error(`release audit expected version 1.2.1, found ${packageJson.version}`);
+  if (packageJson.version !== REFAS_VERSION) throw new Error(`release audit version mismatch: npm ${packageJson.version} vs runtime ${REFAS_VERSION}`);
+  const changelog=await fs.readFile(path.join(ROOT,'CHANGELOG.md'),'utf8');
+  if (!changelog.includes(`## ${REFAS_VERSION} —`)) throw new Error(`CHANGELOG.md omits current version ${REFAS_VERSION}`);
+  const readme=await fs.readFile(path.join(ROOT,'README.md'),'utf8');
+  if (!readme.includes(`releases/tag/v${REFAS_VERSION}`)) throw new Error(`README.md badge omits ${REFAS_VERSION}`);
   process.stdout.write(`${JSON.stringify({status:'PASS',version:packageJson.version,packagedFiles:names.length,unpackedBytes:pack.unpackedSize,skillBytes,instructionReferenceLeaves:instructionGraph.referenceLeaves,semanticInstructionNodes:semanticGraph.nodeCount,routedInstructionTargets:instructionGraph.routedPackagePaths.length},null,2)}\n`);
 }
 

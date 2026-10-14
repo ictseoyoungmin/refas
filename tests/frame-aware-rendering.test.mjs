@@ -72,3 +72,36 @@ test('malformed frames fail before publishing partial renders',async(t)=>{
   const frame=await write(root,'invalid.json',invalid),out=path.join(root,'out'),result=render(glb,out,frame);
   assert.equal(result.status,1);assert.match(result.stderr,/orthonormal and right-handed/);await assert.rejects(fs.access(path.join(out,'render-report.json')));
 });
+
+test('registered hero camera parity between portable and PBR and stable diagnostic views',async(t)=>{
+  const root=await setup(t),glb=await write(root,'asset.glb',asset());
+  const original=canonical();
+  original.hero={...original.hero,position:[1.1,0.45,5.2],target:[0.1,0,0],fovY:40};
+  const alternate={...original,hero:{...original.hero,position:[-1.3,0.45,5.2],fovY:27}};
+  const frameA=await write(root,'registered-a.json',original);
+  const frameB=await write(root,'registered-b.json',alternate);
+  const portable=path.join(root,'portable'),pbrA=path.join(root,'pbr-a'),pbrB=path.join(root,'pbr-b');
+  const portableRun=render(glb,portable,frameA);
+  assert.equal(portableRun.status,0,portableRun.stderr);
+  const runPbr=(frame,out)=>spawnSync(process.execPath,[CLI,'render-pbr','--glb',glb,'--out',out,'--frame',frame,'--size','96','--timeout-seconds','60','--max-working-mb','64'],{encoding:'utf8',timeout:70_000});
+  const a=runPbr(frameA,pbrA),b=runPbr(frameB,pbrB);
+  assert.equal(a.status,0,a.stderr);
+  assert.equal(b.status,0,b.stderr);
+  const pa=await report(pbrA),pb=await report(pbrB);
+  const view=(data,id)=>data.outputs.find((item)=>item.viewId===id);
+  assert.notEqual(view(pa,'hero').sha256,view(pb,'hero').sha256,'registered hero changes must change PBR hero pixels');
+  assert.equal(view(pa,'side').sha256,view(pb,'side').sha256,'changing registered hero must not alter canonical side diagnostic');
+  const python=process.env.CODEX_PRIMARY_RUNTIME_PYTHON||'python3';
+  const pixelCompare=spawnSync(python,['-c',[
+    'import sys,numpy as np',
+    'from PIL import Image',
+    'a=np.asarray(Image.open(sys.argv[1]).convert("RGB"))',
+    'b=np.asarray(Image.open(sys.argv[2]).convert("RGB"))',
+    'assert a.shape==b.shape',
+    'mask_a=np.any(a!=np.array([12,15,19]),axis=2)',
+    'mask_b=np.any(b!=np.array([15,18,23]),axis=2)',
+    'print(int(np.count_nonzero(mask_a^mask_b)))',
+  ].join(';'),path.join(portable,'hero.png'),path.join(pbrA,'hero.png')],{encoding:'utf8',timeout:15_000});
+  assert.equal(pixelCompare.status,0,pixelCompare.stderr);
+  assert.equal(pixelCompare.stdout.trim(),'0','registered portable/PBR silhouettes must have identical projected coverage');
+});

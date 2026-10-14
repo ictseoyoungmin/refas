@@ -182,6 +182,9 @@ function help() {
       'bind-source': 'bind-source --root DIR --source source.json',
       status: 'status --root DIR',
       resume: 'resume --root DIR',
+      next: 'next --root DIR',
+      diagnose: 'diagnose --root DIR [--asset FILE | --finding finding.json]',
+      validate: 'validate --root DIR --asset FILE [--profile source-bound-object]',
       checkpoint: 'checkpoint --root DIR --capability NAME --scope ID --reason TEXT [--artifacts refs.json] [--gates gates.json]',
       restore: 'restore --root DIR --checkpoint ID --reason TEXT',
       'begin-edit': 'begin-edit --root DIR --owner CAPABILITY --scope ID --intent TEXT [--protected metric-a,metric-b]',
@@ -196,9 +199,11 @@ function help() {
       register: 'register --input registration-input.json --out registration.json',
       'validate-spec': 'validate-spec --file spec.json [--context hierarchy.json]',
       'inspect-glb': 'inspect-glb --glb asset.glb',
-      evidence: 'evidence --image reference.png --out DIR --scope ID [--roi x,y,w,h] [--padding 0.08]',
+      evidence: 'evidence --spec REQUEST --out DIR [--reuse] | evidence --assess DECISIONS --out DIR [--prune] | evidence --image FILE --out DIR [--scope ID] [--roi x,y,w,h] (legacy compatibility)',
       render: 'render --glb asset.glb --out DIR [--reference image.png] [--frame canonical-frame.json] [--size 640] [--timeout-seconds 300] [--max-working-mb 512] [--tile-size 256] [--max-triangles N] [--hero-only]',
-      'render-pbr': 'render-pbr --glb asset.glb --out DIR --frame canonical-frame.json [--reference image.png] [--size 420] [--timeout-seconds 180] [--max-working-mb 512] [--neutral-clay]',
+      'render-pbr': 'render-pbr --glb asset.glb --out DIR --frame canonical-frame.json [--reference image.png] [--size 420] [--timeout-seconds 180] [--max-working-mb 512] [--tile-size 128] [--neutral-clay] [--no-board]',
+      'preview-pbr': 'preview-pbr --glb asset.glb --out PREVIEW_DIR --frame canonical-frame.json [--views hero,side] [--reuse] [--size 420] [--timeout-seconds 180] [--max-working-mb 512] [--tile-size 128]',
+      'review-board': 'review-board --portable PORTABLE_DIR --pbr PBR_DIR [--clay CLAY_DIR] [--reference source.png] --out board.png',
       compare: 'compare --input registered-comparison-input.json --out DIR [--timeout-seconds 120]',
       'fit-parameters': 'fit-parameters --root DIR --plan parameter-fit-plan.json --worker evaluator.mjs --out parameter-fit-report.json',
     },
@@ -317,9 +322,35 @@ async function main() {
   }
   if (command === 'inspect-glb') { print(inspectGlb(await fs.readFile(path.resolve(required(options, 'glb'))))); return; }
   if (command === 'evidence') {
-    const args = ['--image', required(options, 'image'), '--out', required(options, 'out'), '--scope', required(options, 'scope')];
-    if (options.roi) args.push('--roi', options.roi); if (options.padding) args.push('--padding', options.padding);
-    runPython('evidence.py', args); return;
+    if (options.image && !options.spec && !options.assess) {
+      if (options.reuse !== undefined || options.prune !== undefined) {
+        throw new Error('legacy evidence --image is incompatible with --reuse and --prune');
+      }
+      const args = ['--image', required(options,'image'), '--out', required(options,'out')];
+      if (options.scope) args.push('--scope', options.scope);
+      if (options.roi) args.push('--roi', options.roi);
+      if (options.padding) args.push('--padding', options.padding);
+      runPython('evidence_compat.py', args); return;
+    }
+    if (options.spec && !options.assess) {
+      if (options.image !== undefined || options.scope !== undefined || options.roi !== undefined ||
+          options.padding !== undefined || options.prune !== undefined) {
+        throw new Error('evidence --spec accepts only --out and optional --reuse');
+      }
+      const args = ['--spec', required(options, 'spec'), '--out', required(options, 'out')];
+      if (options.reuse === true) args.push('--reuse');
+      runPython('evidence_request.py', args); return;
+    }
+    if (options.assess && !options.spec) {
+      if (options.image !== undefined || options.scope !== undefined || options.roi !== undefined ||
+          options.padding !== undefined || options.reuse !== undefined) {
+        throw new Error('evidence --assess accepts only --out and optional --prune');
+      }
+      const args = ['--decisions', required(options, 'assess'), '--manifest', path.join(path.resolve(required(options, 'out')), 'manifest.json')];
+      if (options.prune === true) args.push('--prune');
+      runPython('evidence_utility.py', args); return;
+    }
+    throw new Error('evidence requires --spec, --assess, or the published --image compatibility form');
   }
   if (command === 'render') {
     const args = ['--glb', required(options, 'glb'), '--out', required(options, 'out')];
@@ -334,13 +365,30 @@ async function main() {
     if (!Number.isFinite(timeoutSeconds) || timeoutSeconds <= 0) throw new Error('--timeout-seconds must be a positive number');
     runPython('render_glb.py', args, {timeoutMs: Math.ceil(timeoutSeconds * 1000 + 5000)}); return;
   }
-  if (command === 'render-pbr') {
+  if (command === 'render-pbr' && (options.views !== undefined || options.reuse !== undefined || options.preview !== undefined)) {
+    throw new Error('view selection and cache reuse are preview-only; canonical render-pbr always renders all eight evidence views');
+  }
+  if (command === 'render-pbr' || command === 'preview-pbr') {
     const args = ['--glb', required(options, 'glb'), '--out', required(options, 'out'), '--frame', required(options, 'frame')];
     if (options.reference) args.push('--reference', options.reference); if (options.size) args.push('--size', options.size);
     if (options['timeout-seconds']) args.push('--timeout-seconds', options['timeout-seconds']); if (options['max-working-mb']) args.push('--max-working-mb', options['max-working-mb']);
     if (options['neutral-clay'] === true) args.push('--neutral-clay');
+    if (options['tile-size']) args.push('--tile-size', options['tile-size']);
+    if (options['no-board'] === true) args.push('--no-board');
+    if (command === 'preview-pbr') {
+      args.push('--preview');
+      if (options.views) args.push('--views', options.views);
+      if (options.reuse === true) args.push('--reuse');
+    }
     const timeoutSeconds = Number(options['timeout-seconds'] ?? 180); if (!Number.isFinite(timeoutSeconds) || timeoutSeconds <= 0) throw new Error('--timeout-seconds must be a positive number');
     runPython('render_pbr.py', args, {timeoutMs: Math.ceil(timeoutSeconds * 1000 + 5000)}); return;
+  }
+  if (command === 'review-board') {
+    const args = ['--portable', required(options, 'portable'), '--pbr', required(options, 'pbr'), '--out', required(options, 'out')];
+    if (options.clay) args.push('--clay', options.clay);
+    if (options.reference) args.push('--reference', options.reference);
+    runPython('compose_review_board.py', args, {timeoutMs: 120000});
+    return;
   }
   if (command === 'compare') {
     const args = ['--input', required(options, 'input'), '--out', required(options, 'out')];

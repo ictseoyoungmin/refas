@@ -1,17 +1,6 @@
 # Inference and engineering authority
 
-RefAs distinguishes lack of observation from prohibition. The authority contract records what an explicitly tracked semantic proposition is allowed to claim; it does not prescribe how much geometry a reconstruction should contain.
-
-The Core rule is:
-
-```text
-UNKNOWN != FORBIDDEN
-UNOBSERVED != FORBIDDEN
-ENGINEERED != OBSERVED
-INFERRED != OBSERVED
-```
-
-Use `refas.semantic-authority-set/v1` when a semantic relation, entity, property, or construction proposition needs explicit provenance or downstream authority. It is not a requirement to create an authority entry for every unobserved surface, depth, thickness, continuation, or other geometric degree of freedom.
+Construct complete, editable 3D geometry using source observations, structural regularities, continuity, and functional requirements. Record the provenance of semantic claims in `refas.semantic-authority-set/v1` when a relation or certification obligation depends on it. Geometric design remains the responsibility of the spatial and shape workflows.
 
 ## Authority classes
 
@@ -46,7 +35,7 @@ The runtime derives capability flags rather than trusting caller declarations:
 - `requiresResolutionBeforePositiveClaim`
 - `prohibitsConstruction`
 
-For a proposition that has been explicitly placed under this authority contract, both `unknown` and `forbidden` currently block positive construction, but only `forbidden` asserts that construction is prohibited. This runtime rule applies to the declared proposition; it is not a blanket instruction to classify or suppress unobserved geometry.
+For an explicitly governed semantic proposition, `unknown` requires a supporting basis and `forbidden` records contradiction or a hard constraint. The contract governs claims; the selected construction hypothesis governs the unobserved geometry required to complete the asset.
 
 ## Transitions
 
@@ -81,7 +70,7 @@ Use `refas.prior-quarantine/v1` for any external or generated prior that can inf
 
 Mesh priors use exact raw/sanitized byte bindings. Runtime checks that morph targets and materials are absent from the sanitized seed and that its POSITION buffers differ from the raw prior. This keeps connectivity reusable without silently importing prior proportions.
 
-Quarantined paths may support spatial hypotheses or candidate seeding. They are prohibited as source evidence for VC02, R03, and whole-object certification. Project audit replays the quarantine lineage, so changing labels or re-signing downstream JSON cannot promote a prior into source truth.
+Quarantined paths may support spatial hypotheses or candidate seeding. They are prohibited as source evidence for source-bound spatial-role expectations, perceptual signatures, or whole-object certification. Project audit replays the quarantine lineage, so changing labels or re-signing downstream JSON cannot promote a prior into source truth.
 
 ## Certification does not promote authority
 

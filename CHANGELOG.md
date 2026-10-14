@@ -2,6 +2,15 @@
 
 All notable RefAs changes are documented here. RefAs follows semantic versioning.
 
+## 1.3.0 — 2026-10-14
+
+### Changed
+- Reorganized installed modeling guidance around whole-object construction, repeated geometry, and multiview iteration.
+- Added requested ROI/source/ZIP image analyses, evidence-utility records, and historical observation snapshot retention.
+- Added selective PBR previews, reusable render caches, review boards, and rollback on ordinary publication errors.
+- Preserved the v1.2.1 `evidence --image` command through a compatibility adapter; new workflows use `--spec` and `--assess`.
+- Updated CLI, skill and plugin metadata to 1.3.0; revised release checks and manual publication controls.
+
 ## 1.2.1 — 2026-10-12
 
 An agent workflow interface release for the existing reference-driven 3D construction runtime. It **does not** introduce new verification algorithms or claim independently validated original-photo resemblance. All existing fail-closed source-bound admission rules remain intact.

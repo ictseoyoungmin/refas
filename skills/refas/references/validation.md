@@ -1,5 +1,55 @@
 # Rendering, critique, and certification
 
+## Agent-facing source-bound QA interface
+
+Public discovery includes three distinct, already implemented operations:
+`refas audit --root PROJECT` inspects project state;
+`refas verify --root PROJECT --asset GLB` evaluates canonical strict
+source-bound coverage; and `refas validate --root PROJECT --asset GLB`
+presents that same coverage with agent-oriented diagnostic guidance.
+Audit and general certification never replace strict source-bound verification.
+
+
+After constructing and capturing a **real current** candidate GLB, inspect
+existing QA evidence with the released `validation/agent-validate-source-bound`
+CLI operation:
+
+```bash
+node scripts/refas.mjs validate --root PROJECT --asset PROJECT/candidate.glb
+```
+
+The command is a read-only facade over the same
+`verifySourceBoundObject` evaluator used by `refas verify`. It returns
+an `refas.agent-diagnosis/v1` JSON result including the canonical
+`refas.qa-coverage-report/v1`, its digest, every required check's status,
+owner, reason and evidence, and the unchanged `ELIGIBLE`/`BLOCKED`
+decision. Exit code 2 means `BLOCKED`; exit 1 means an invalid invocation
+or runtime error. `diagnose --asset` gives the same report but does not
+enforce the blocking exit code.
+
+This is a strict **source-bound-object** assessment, not an additional
+validator or a shortcut from valid GLB to source resemblance. A generic
+whole-object certificate, a `draft-transfer` Host handoff, or a
+noncontradictory render does not independently prove photo semantics.
+Current source meaning evidence may remain `INSUFFICIENT` and block final
+source-bound Handoff. Use the canonical `visual-critique` finding and
+rework path rather than manufacturing a positive verdict.
+
+## Execution stages
+
+**Early shape gate:** a coherent constructed candidate can enter this node to
+render neutral clay, inspect source-bound shape identity, and return a typed
+finding to `shape-reconstruction` **before** the `assembly` and
+`appearance` stages close. `appearance` owns the current PBR renderer,
+not a requirement to finish materials before neutral-clay diagnostics.
+
+**Final approval:** after geometry and required assembly/appearance work are
+complete, run full registered comparisons and current final validation. The
+`claim-certification` instruction node explicitly requires `assembly`,
+`appearance` and this `validation` node as well as a sealed candidate.
+The existing runtime, not the instruction edge itself, decides whether any
+source-bound claim has enough independent evidence.
+
 ## Standard render set
 
 Every closure review includes actual images for:
@@ -25,9 +75,34 @@ The bundled report has `claimScope: render-integrity-only`. Its status answers w
 
 Use an independently executed Blender Cycles/Eevee headless, Three.js/WebGL, Filament, glTF Sample Viewer, VTK, or equivalent renderer after the portable gate. Normalize its evidence as `refas.pbr-render-report/v1`. The report binds the exact GLB and canonical frame digests, renderer/version/backend, lighting rig, exposure, tone mapping, output color space, material feature coverage, output frame digests, and determinism or bounded-nondeterminism contract.
 
-The bundled `render-pbr` command is the canonical baseline implementation of this independent process contract. It uses a fixed three-light rig and deterministic Cook–Torrance metallic-roughness shading and emits all eight standard views. Its limited feature disclosure is authoritative; select an external adapter when the asset requires a feature it does not cover.
+The bundled `render-pbr` command is the canonical baseline implementation of this independent process contract. It uses a fixed three-light rig and deterministic Cook–Torrance metallic-roughness shading and emits all eight standard views. The registered canonical-frame `hero` camera MUST match the upstream source camera; orthogonal diagnostics continue to use the canonical object frame. A PBR pass with a generic front camera that differs from the source-selected camera is not registered resemblance evidence. The bundled renderer uses bounded tiles (`--tile-size 128` default) rather than full-screen triangle scratch. Its limited feature disclosure is authoritative; select an external adapter when the asset requires a feature it does not cover.
 
 Do not infer support from the renderer family. The configured version and backend must explicitly cover every `requiredMaterialFeature`; otherwise `appearance-plausibility` remains `insufficient` and final certification refuses closure. Portable evidence may reopen geometry, topology, assembly, camera, or render-integrity owners early. Only the independent PBR evidence may decide material/finish PASS or REOPEN and support the final appearance verdict.
+
+The portable and PBR reports each retain **individual digest-bound frames**. A second human-facing eight-cell board is optional: when the portable board already exists, call `render-pbr --no-board` to skip only `pbr-review-board.png`, not the PBR render or its evidence. For a final presentation favor one suitable board, but preserve all actual per-view evidence and source-linked comparison artifacts. Neutral-clay continues to require all eight canonical frames for R04/final source-resemblance closure; never reduce these requirements to optimize layout.
+
+## Unified human review presentation
+
+To avoid looking at two independent eight-cell montages, use
+`validation/combined-review-presentation`:
+
+```bash
+node scripts/refas.mjs review-board --portable PROJECT/renders/portable --pbr PROJECT/renders/pbr --clay PROJECT/renders/clay --reference PROJECT/source/reference.png --out PROJECT/reviews/combined.png
+```
+
+All included source render PNGs are rehashed, and all three reports must bind
+the exact same candidate GLB SHA-256 and canonical camera-frame digest.
+`--clay` and `--reference` are optional. The generated board and companion
+JSON are strictly `presentation-only`; they do not establish source truth,
+source likeness, material support or any certified claim. The portable,
+canonical clay and final PBR **individual output images and reports** remain
+necessary for their respective gates. A `preview-pbr` directory cannot serve
+as a canonical report input.
+
+For fast intermediate iteration call `preview-pbr --views hero,side --reuse`
+after real edits; the resulting `preview-only` manifest is never accepted
+as `refas.pbr-render-report/v1`. When the current candidate reaches a
+closure gate, rerun the full canonical eight-view set under existing policies.
 
 ## Critique order
 
@@ -56,13 +131,13 @@ Use `refas.perceptual-signature-evidence/v1` to compare the exact current candid
 
 Each observation records what the source signature says, what the current candidate/render shows, the comparison conclusion, evidence refs, and one of `match`, `mismatch`, or `insufficient`. A mismatch may emit an existing typed finding when ownership is unambiguous. An insufficient observation does not invent a rollback owner.
 
-This artifact is resemblance evidence, not a visual gate. A `match` cannot set final visual PASS or certify the asset. R03 does not introduce a universal weighted similarity score. A later early-resemblance barrier may consume these source/candidate observations, but it must preserve source identity and typed-finding authority rather than collapse them into one opaque number.
+This artifact is resemblance evidence, not a visual gate. A `match` cannot set final visual PASS or certify the asset. The current early-resemblance barrier consumes source/candidate observations bound to the exact registered neutral-clay render. It preserves source identity and typed-finding authority instead of collapsing them into a universal weighted similarity score.
 
-Numeric `RESEMBLANCE_SIGNAL` authority is fail-closed unless current perceptual-signature evidence is explicitly bound to the same current source and candidate. In R03 such a signal is diagnostic-only: it cannot itself be used as resemblance evidence, become an optimization objective, rank candidates, pass a gate, or certify closure. The structured perceptual-signature observations are the resemblance evidence. Single-view IoU remains forbidden; multiview IoU remains correspondence/diagnostic-only.
+Numeric `RESEMBLANCE_SIGNAL` authority is fail-closed unless current perceptual-signature evidence is explicitly bound to the same current source and candidate. Such a signal is diagnostic-only: it cannot itself be used as resemblance evidence, become an optimization objective, rank candidates, pass a gate, or certify closure. The structured perceptual-signature observations are the resemblance evidence. Single-view IoU remains forbidden; multiview IoU remains correspondence/diagnostic-only.
 
 ## Early resemblance / neutral-clay barrier
 
-Before downstream surface-topology, assembly, or appearance detail on a real source, run the early resemblance barrier. Render the exact current candidate with `refas render-pbr --neutral-clay`, then compare that neutral presentation against the R03 source-bound perceptual signatures.
+Before downstream surface-topology, assembly, or appearance detail on a real source, run the early resemblance barrier. Render the exact current candidate with `refas render-pbr --neutral-clay`, then compare that neutral presentation against the source-bound perceptual signatures.
 
 The neutral-clay renderer replaces candidate beauty/albedo material response with the runtime-owned `refas-neutral-clay-v1` preset and records its exact preset digest, renderer profile, fixed lighting-rig digest, canonical frame digest, candidate SHA-256, and all eight standard output digests. A neutral-clay report has `claimScope: shape-resemblance-only`; it is not appearance evidence and cannot support `appearance-plausibility`.
 
@@ -72,7 +147,7 @@ Create `refas.early-resemblance-barrier/v1` from the current perceptual-signatur
 - `REWORK`: at least one macro or identity signature is `mismatch`;
 - `HOLD`: no required mismatch exists, but at least one macro or identity signature is `insufficient`.
 
-Every macro or identity observation must cite at least one exact output path from the bound neutral-clay render report. A generic review board, native beauty render, or unattached file is not sufficient evidence for a required signature. All R03 source/signature/observation evidence refs used by a production barrier must remain bound in the current checkpoint lineage.
+Every macro or identity observation must cite at least one exact output path from the bound neutral-clay render report. A generic review board, native beauty render, or unattached file is not sufficient evidence for a required signature. All source/signature/observation evidence refs used by a production barrier must remain bound in the current checkpoint lineage.
 
 Detail signatures are recorded but do not block this early admission. `PROCEED` authorizes only downstream detail work. It does not set a visual-review PASS, certify the object, or imply topology, assembly, or appearance closure. `REWORK` preserves R03 typed findings and their owners. `HOLD` does not invent an owner.
 
@@ -84,11 +159,11 @@ Single-view IoU remains forbidden. Multiview IoU remains correspondence/diagnost
 
 ## Final resemblance closure
 
-R04 is an early admission barrier, not final resemblance authority. Before a real-source whole-object certification checkpoint, rerun the R03 perceptual-signature contract against the **exact final candidate bytes** and render that same final candidate through the canonical neutral-clay presentation.
+R04 is an early admission barrier, not final resemblance authority. Before a real-source whole-object certification checkpoint, rerun the source-bound perceptual-signature contract against the **exact final candidate bytes** and render that same final candidate through the canonical neutral-clay presentation.
 
 Create one `refas.final-resemblance-closure/v1` artifact. It must bind the current primary source digest, current visual-hierarchy digest, exact final candidate SHA-256, one exact final `refas.perceptual-signature-evidence/v1`, and one exact canonical neutral-clay `refas.pbr-render-report/v1`. Every macro and identity signature must be `match`; `mismatch` or `insufficient` refuses final form closure. Detail signatures remain disclosed but do not block form identity.
 
-Every required signature must cite at least one exact final neutral-clay frame. The certification checkpoint preserves the closure, the exact final signature-evidence artifact, the neutral-clay report, and every report output byte. Runtime audit/certification revalidates those bytes against the current source, hierarchy, and authoritative candidate lineage. An R04-era early barrier for candidate A cannot authorize a different downstream candidate B.
+Every required signature must cite at least one exact final neutral-clay frame. The certification checkpoint preserves the closure, the exact final signature-evidence artifact, the neutral-clay report, and every report output byte. Runtime audit/certification revalidates those bytes against the current source, hierarchy, and authoritative candidate lineage. An earlier neutral-clay admission barrier for candidate A cannot authorize a different downstream candidate B.
 
 This closure still does not replace the final independent visual review, registered comparison, relational closure, or appearance evidence. It only closes the source-specific resemblance question for the final candidate.
 

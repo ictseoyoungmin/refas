@@ -8,7 +8,7 @@
 - coarse negative spaces;
 - watertight, finite, non-degenerate geometry.
 
-Build these before seams, panels, fasteners, engravings, or material polish. A detailed wrong silhouette is still wrong.
+Construct the major closed volumes, structural supports, continuous surfaces, and attachment interfaces first. Fit coherent depth, real shell thickness, joined and intentionally separate elements, and matching profiles for repeated or mirrored structures. Then add seams, hardware, engravings, and materials.
 
 ## Relational applicability
 
@@ -47,6 +47,22 @@ const shell = createPermittedHardSurfaceShell({decision, permit, spec});
 Use the corresponding permit-aware wrappers for section-profile lofts and surface-network identity construction. Existing lower-level geometry functions remain available for blockout, support implementation, and backward compatibility, but calling them directly does **not** establish identity-bearing construction authority. Permit-consuming wrappers carry `refas.construction-authority/v1` into GLB serialization; serialization emits per-part `refas.construction-execution/v1` records, and `createConstructionExecutionProof` binds those executions to the exact candidate GLB digest. `refas.construction-quality/v1` rejects identity-bearing closure unless the current vocabulary, required permits, and matching candidate-bound execution proof are present.
 
 ## Subdivision-cage organic construction
+
+For an **actual executable geometry kernel example** from the installed
+skill root, run:
+
+```bash
+node scripts/subdivision-cage-demo.mjs
+```
+
+This self-contained closed-cage prototype executes the real public
+`createSubdivisionCageOrganic` API and verifies watertight geometry.
+Its coordinates and source evidence labels are illustrative only. It
+does not have an identity-bearing construction permit, actual source
+photograph, checkpoint or source-fidelity acceptance. Replace the
+prototype's input with legitimate observations and follow the permit-aware
+production path below for a real source-bound asset.
+
 
 Use `subdivision-cage-organic` for continuous organic identity scopes whose visible form cannot be represented faithfully by section-profile lofts alone. The operation starts from a closed semantic control cage and performs deterministic Catmull–Clark subdivision inside the RefAs kernel.
 
@@ -282,4 +298,4 @@ Do not spend geometry budget on unsupported microdetail while a whole-object blo
 
 ## Worked example
 
-For a concrete single-view case where a convincing frontal reconstruction can still collapse into a billboard, read `references/single-view-volumetric-reasoning-example.md`. It shows how major volumes, genuinely thin parts, layered structures, and articulated/mechanical hypotheses can coexist without turning an inferred side or rear surface into an observed source fact.
+For a practical whole-volume construction walkthrough, read `references/single-view-volumetric-reasoning-example.md`. It covers major volumes, appropriate plate thickness, repeated profiles, assembly interfaces, and multiview refinement.

@@ -1,0 +1,199 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://refas.dev/schemas/evidence-utility-decisions.schema.json",
+  "title": "RefAs observation utility decisions",
+  "type": "object",
+  "required": [
+    "schema",
+    "manifestDigest",
+    "assessments"
+  ],
+  "properties": {
+    "schema": {
+      "const": "refas.evidence-utility-decisions/v1"
+    },
+    "manifestDigest": {
+      "$ref": "common.schema.json#/$defs/digest"
+    },
+    "assessments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "sourceId",
+          "viewId",
+          "analysis",
+          "outcome",
+          "observation",
+          "retention",
+          "retentionReason"
+        ],
+        "properties": {
+          "sourceId": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+          },
+          "viewId": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+          },
+          "analysis": {
+            "type": "string",
+            "enum": [
+              "context",
+              "edges",
+              "gradient",
+              "contrast",
+              "low-frequency",
+              "high-frequency",
+              "highlights",
+              "alpha-mask"
+            ]
+          },
+          "outcome": {
+            "enum": [
+              "clarified",
+              "contradicted",
+              "insufficient",
+              "no-benefit"
+            ]
+          },
+          "observation": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024
+          },
+          "modelImpact": {
+            "oneOf": [
+              {
+                "type": "object",
+                "required": [
+                  "status"
+                ],
+                "properties": {
+                  "status": {
+                    "enum": [
+                      "none",
+                      "planned"
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "required": [
+                  "status",
+                  "change",
+                  "findingId",
+                  "scopeId",
+                  "before",
+                  "after"
+                ],
+                "properties": {
+                  "status": {
+                    "const": "applied"
+                  },
+                  "change": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 1024
+                  },
+                  "findingId": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 1024
+                  },
+                  "scopeId": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 1024
+                  },
+                  "before": {
+                    "type": "object",
+                    "required": [
+                      "path",
+                      "sha256"
+                    ],
+                    "properties": {
+                      "path": {
+                        "$ref": "common.schema.json#/$defs/relativePath"
+                      },
+                      "sha256": {
+                        "$ref": "common.schema.json#/$defs/digest"
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "after": {
+                    "type": "object",
+                    "required": [
+                      "path",
+                      "sha256"
+                    ],
+                    "properties": {
+                      "path": {
+                        "$ref": "common.schema.json#/$defs/relativePath"
+                      },
+                      "sha256": {
+                        "$ref": "common.schema.json#/$defs/digest"
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "additionalProperties": false
+              }
+            ]
+          },
+          "retention": {
+            "enum": [
+              "retain",
+              "discard"
+            ]
+          },
+          "retentionReason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "retention": {
+                  "const": "discard"
+                }
+              },
+              "required": [
+                "retention"
+              ]
+            },
+            "then": {
+              "properties": {
+                "outcome": {
+                  "enum": [
+                    "insufficient",
+                    "no-benefit"
+                  ]
+                },
+                "modelImpact": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "const": "none"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false,
+  "description": "Declared per-analysis utility only; runtime revalidates exact source and candidate GLB bytes and enforces one disposition per requested analysis."
+}
