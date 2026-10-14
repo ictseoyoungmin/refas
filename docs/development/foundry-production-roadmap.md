@@ -47,6 +47,7 @@ CPU rendering throughput and backend interoperability support the production-fir
 
 - [CPU render execution architecture](v1.4.0-render-architecture.md)
 - [Backend and trusted replay contracts](v1.4.0-render-contracts.md)
+- [Compiled CPU raster kernel specification](v1.4.0-cpu-kernel-spec.md)
 - [R14 implementation slices and acceptance gates](v1.4.0-render-work-plan.md)
 
 The public v1.3.0 renderer, source truth, and certified evidence remain unchanged while this work is in design. Begin with real nondegenerate scene benchmarks, then select the compiled CPU kernel and only afterward widen optimized backend authority.
