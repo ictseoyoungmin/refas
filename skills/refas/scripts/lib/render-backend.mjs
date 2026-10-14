@@ -19,13 +19,13 @@ export const CPU_RENDER_BACKENDS=Object.freeze({
     replay:'verifyRegisteredRenderReplay',admissibleCertification:'legacy-replay-only',
   }),
   'optimized-cpu':Object.freeze({
-    id:'optimized-cpu',identity:'RefAs Optimized CPU/not-yet-implemented',
-    worker:null,installed:false,diagnostic:false,
+    id:'optimized-cpu',identity:'RefAs Optimized CPU/1.0.0-jit-prototype',
+    worker:'render_cpu_opt.py',installed:true,diagnostic:true,
     replay:null,admissibleCertification:'none',
   }),
 });
 const SHA=/^[a-f0-9]{64}$/u;
-const SCRIPT=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..','render_glb.py');
+const SCRIPTS_ROOT=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
 
 function bounded(value,min,max,name) {
@@ -60,13 +60,18 @@ export function getTrustedRenderBackend(id) {
 }
 export function normalizeCpuRenderJob(job) {
   if(job?.schema!==RENDER_JOB_SCHEMA)throw Error('render job schema mismatch');
-  const allowed=new Set(['schema','asset','frame','backend','view','size','resources','intent']);
+  const allowed=new Set(['schema','asset','frame','backend','view','pass','size','resources','intent']);
   if(!job||Object.keys(job).some(key=>!allowed.has(key)))throw Error('render job includes unknown fields');
   const id=job.backend?.id;
   const profile=getTrustedRenderBackend(id);
   if(job.backend?.algorithmVersion!==(id==='legacy-portable'?'1.0.0':'1'))
     throw Error('backend algorithmVersion differs from trusted registry');
-  if(job.view!=='hero')throw Error('R14-01 only supports the registered hero view');
+  if(job.view!=='hero')throw Error('R14-02 only supports the registered hero view');
+  const renderPass=job.pass??'beauty';
+  if(id==='legacy-portable' && renderPass!=='beauty')
+    throw Error('legacy diagnostic supports beauty only');
+  if(id==='optimized-cpu' && !['normal','object-id'].includes(renderPass))
+    throw Error('optimized CPU diagnostic requires normal or object-id pass');
   if(job.intent!=='diagnostic')throw Error('R14-01 output is diagnostic-only');
   const asset={path:relativeName(job.asset?.path,'asset'),sha256:assertedSha(job.asset?.sha256,'asset')};
   const frame={path:relativeName(job.frame?.path,'frame'),sha256:assertedSha(job.frame?.sha256,'frame')};
@@ -83,7 +88,7 @@ export function normalizeCpuRenderJob(job) {
   }
   return Object.freeze({schema:RENDER_JOB_SCHEMA,asset,frame,
     backend:{id:profile.id,identity:profile.identity},
-    view:'hero',size,resources,intent:'diagnostic'});
+    view:'hero',pass:renderPass,size,resources,intent:'diagnostic'});
 }
 function classifyRun(run) {
   const combined=String(run.stderr||'')+' '+String(run.error?.message||'');
@@ -91,7 +96,7 @@ function classifyRun(run) {
     return 'BLOCKED_TIMEOUT';
   if(/MemoryError|working.memory budget|source GLB parsing may peak|requires at least/iu.test(combined))
     return 'BLOCKED_RESOURCE';
-  if(/unsupported|not supported/iu.test(combined))return 'BLOCKED_UNSUPPORTED';
+  if(/OPTIMIZED_CPU_UNAVAILABLE|OPTIMIZED_CPU_UNSUPPORTED|unsupported|not supported/iu.test(combined))return 'BLOCKED_UNSUPPORTED';
   if(/ValueError|embedded GLB|accessor|invalid camera/iu.test(combined))return 'FAILED_ASSET';
   return 'FAILED_BACKEND';
 }
@@ -104,7 +109,8 @@ function blocked(job,status,detail) {
 export async function renderDiagnosticHero({root,job,outDir}={}) {
   const spec=normalizeCpuRenderJob(job);
   const backend=getTrustedRenderBackend(spec.backend.id);
-  if(!backend.installed)return blocked(spec,'BLOCKED_UNSUPPORTED','optimized CPU worker not installed');
+  if(!backend.installed||!backend.worker)return blocked(spec,'BLOCKED_UNSUPPORTED','renderer backend not installed');
+  const script=path.join(SCRIPTS_ROOT,backend.worker);
   const rootReal=await fs.realpath(root);
   const outputName=relativeName(outDir,'output directory');
   const target=path.join(rootReal,outputName);
@@ -130,10 +136,15 @@ export async function renderDiagnosticHero({root,job,outDir}={}) {
     await fs.writeFile(frozenFrame,frame.bytes);
     const workerOut=path.join(temp,'rendered');
     const python=process.env.CODEX_PRIMARY_RUNTIME_PYTHON||'python3';
-    const run=spawnSync(python,[SCRIPT,'--glb',frozenAsset,'--frame',frozenFrame,
-      '--out',workerOut,'--hero-only','--size',String(spec.size),
+    const cmd=[script,'--glb',frozenAsset,'--frame',frozenFrame,
+      '--out',workerOut,'--size',String(spec.size)];
+    if(spec.backend.id==='legacy-portable')cmd.push('--hero-only');
+    else cmd.push('--pass',spec.pass);
+    cmd.push(
+
       '--timeout-seconds',String(spec.resources.timeoutSeconds),
-      '--max-working-mb',String(spec.resources.maxWorkingMiB)],{
+      '--max-working-mb',String(spec.resources.maxWorkingMiB));
+    const run=spawnSync(python,cmd,{
         encoding:'utf8',timeout:(spec.resources.timeoutSeconds+10)*1000,
         maxBuffer:256*1024,env:{...process.env,PYTHONDONTWRITEBYTECODE:'1'},
       });
@@ -142,24 +153,31 @@ export async function renderDiagnosticHero({root,job,outDir}={}) {
     let nativeReport;
     try{nativeReport=JSON.parse(await fs.readFile(path.join(workerOut,'render-report.json'),'utf8'));}
     catch{return blocked(spec,'FAILED_BACKEND','missing or invalid legacy worker report');}
+    const legacy=spec.backend.id==='legacy-portable';
     if(nativeReport.status!=='PASS'||nativeReport.assetSha256!==asset.sha256||
       nativeReport.renderer?.name!==backend.renderer.name||
       nativeReport.renderer?.version!==backend.renderer.version||
       nativeReport.renderer?.backend!==backend.renderer.backend||
-      nativeReport.frames?.length!==1||nativeReport.frames[0]?.path!=='hero.png'||
-      nativeReport.claimScope!=='render-integrity-only')
-      return blocked(spec,'FAILED_BACKEND','legacy worker report fails trusted profile');
+      (legacy && (nativeReport.frames?.length!==1||
+        nativeReport.frames[0]?.path!=='hero.png'||
+        nativeReport.claimScope!=='render-integrity-only'))||
+      (!legacy && (nativeReport.claimScope!=='diagnostic-only'||
+        nativeReport.pass!==spec.pass||nativeReport.frameFileSha256!==frame.sha256||
+        nativeReport.outputs?.length!==1||nativeReport.outputs[0]?.path!=='hero.png')))
+      return blocked(spec,'FAILED_BACKEND','worker report fails trusted backend identity or input contract');
     const png=await fs.readFile(path.join(workerOut,'hero.png'));
-    if(sha(png)!==nativeReport.heroImageSha256||sha(png)!==nativeReport.frames[0].sha256)
+    if(sha(png)!==(legacy?nativeReport.heroImageSha256:nativeReport.outputs[0].sha256)||
+      (legacy&&sha(png)!==nativeReport.frames[0].sha256))
       return blocked(spec,'FAILED_BACKEND','legacy worker pixels fail digest binding');
     staging=await fs.mkdtemp(path.join(parent,'.refas-r14-01-stage-'));
     await fs.writeFile(path.join(staging,'hero.png'),png);
     const execution={schema:RENDER_EXECUTION_SCHEMA,status:'COMPLETE',
       claimScope:'diagnostic-only',sourceSha256:asset.sha256,frameSha256:frame.sha256,
-      backend:{...spec.backend,executableSha256:sha(await fs.readFile(SCRIPT))},
-      view:'hero',size:spec.size,
+      backend:{...spec.backend,executableSha256:sha(await fs.readFile(script))},
+      view:'hero',pass:spec.pass,size:spec.size,
       outputs:[{path:'hero.png',sha256:sha(png)}],certificationEligible:false,
-      legacyReportFrameDigest:nativeReport.frameDigest};
+      ...(legacy?{legacyReportFrameDigest:nativeReport.frameDigest}:{}
+      ),...(legacy?{}:{kernelTimings:nativeReport.durationsMs,geometry:nativeReport.stats})};
     await fs.writeFile(path.join(staging,'execution.json'),JSON.stringify(execution,null,2)+'\n');
     // Fresh output directory only. Never overwrite prior evidence/observations.
     try{await fs.lstat(target);throw Error('render output directory already exists');}
