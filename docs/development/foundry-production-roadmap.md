@@ -40,3 +40,13 @@ v1.2.1 adds read-only agent navigation and diagnosis over the current runtime. I
 ## Recommended next vertical slice
 
 First prove F01 on a single hard reference where the prior system produced a formally valid but visibly wrong model. Preserve original photo bytes, freeze accepted cameras, iterate on whole-object silhouette/part identities and demonstrate an unmistakable visible improvement through headless captures. Publish construction recipes and editable source assets alongside the actual GLB. Only after the vertical slice is credible, standardize the kit for reuse.
+
+## Rendering infrastructure track (v1.4.0)
+
+CPU rendering throughput and backend interoperability support the production-first roadmap; they do not replace the flagship modeling work or supply photo fidelity on their own. The current, implementation-facing design is organized separately:
+
+- [CPU render execution architecture](v1.4.0-render-architecture.md)
+- [Backend and trusted replay contracts](v1.4.0-render-contracts.md)
+- [R14 implementation slices and acceptance gates](v1.4.0-render-work-plan.md)
+
+The public v1.3.0 renderer, source truth, and certified evidence remain unchanged while this work is in design. Begin with real nondegenerate scene benchmarks, then select the compiled CPU kernel and only afterward widen optimized backend authority.
