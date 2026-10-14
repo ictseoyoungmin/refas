@@ -129,7 +129,7 @@ test('previous complete adaptive observation survives bad SHA, unsafe archive me
   const dirs=await fs.readdir(path.join(root,'evidence/snapshots'));assert.equal(dirs.length,1);
 });
 
-test('adaptive successful rerender prunes old snapshot; clobber and invalid empty ROI refuse before publication',async t=>{
+test('adaptive rerender preserves old snapshots for external citations while updating current manifest',async t=>{
   const {root,sha}=await fixture(t);
   const original={schema:'refas.evidence-request/v1',subjectId:'remodel',
     sources:[{id:'single',path:'flat.png',sha256:await sha('flat.png'),
@@ -142,7 +142,7 @@ test('adaptive successful rerender prunes old snapshot; clobber and invalid empt
   result=run(root);assert.equal(result.status,0,result.stderr);
   const after=JSON.parse(await fs.readFile(path.join(root,'evidence/manifest.json'),'utf8'));
   assert.notEqual(after.manifestDigest,before.manifestDigest);
-  assert.equal((await fs.readdir(path.join(root,'evidence/snapshots'))).length,1);
+  assert.equal((await fs.readdir(path.join(root,'evidence/snapshots'))).length,2);
   await writeRequest(root,{...original,sources:[{...original.sources[0],
     views:[{id:'invalid',roi:[0,0,.00001,.00001]}]}]});
   result=run(root);assert.notEqual(result.status,0);assert.match(result.stderr,/subpixel or empty/);
@@ -155,4 +155,40 @@ test('adaptive successful rerender prunes old snapshot; clobber and invalid empt
   assert.notEqual(legacy.status,0);
   assert.match(legacy.stderr,/old --image fixed-filter extraction was removed/);
   assert.deepEqual(await fs.readFile(legacyImage),bytes);
+});
+
+test('cache reuse re-extracts when only the bound source manifest bytes change',async t=>{
+  const {root,sha}=await fixture(t);
+  const source=path.join(root,'flat.png');
+  const manifestPath=path.join(root,'source-manifest.json');
+  const create=spawnSync(PY,[path.resolve('skills/refas/scripts/source_manifest.py'),
+    '--root',root,'--image',source,'--id','flat','--out',manifestPath],
+    {encoding:'utf8'});
+  assert.equal(create.status,0,create.stderr);
+  const spec={schema:'refas.evidence-request/v1',subjectId:'bound-source',
+    sources:[{id:'flat',path:'flat.png',sha256:await sha('flat.png'),
+      sourceManifest:'source-manifest.json',
+      views:[{id:'whole',role:'front',analyses:['edges'],
+        question:'Identify the silhouette.',decisionTarget:'whole enclosure profile'}]}]};
+  await writeRequest(root,spec);
+  let result=run(root);
+  assert.equal(result.status,0,result.stderr);
+  const previous=JSON.parse(await fs.readFile(path.join(root,'evidence/manifest.json'),'utf8'));
+  result=run(root,['--reuse']);
+  assert.equal(result.status,0,result.stderr);
+  assert.match(result.stdout,/"status": "REUSED"/);
+  const sourceManifest=JSON.parse(await fs.readFile(manifestPath,'utf8'));
+  sourceManifest.reviewNote='Reinterpreted structural relationships with unchanged original pixels';
+  await fs.writeFile(manifestPath,JSON.stringify(sourceManifest,null,2)+'\n');
+  result=run(root,['--reuse']);
+  assert.equal(result.status,0,result.stderr);
+  assert.match(result.stdout,/"status": "PASS"/);
+  const current=JSON.parse(await fs.readFile(path.join(root,'evidence/manifest.json'),'utf8'));
+  assert.notEqual(current.sources[0].sourceManifestSha256,previous.sources[0].sourceManifestSha256);
+  assert.notEqual(current.manifestDigest,previous.manifestDigest);
+  const oldFile=previous.views[0].analysisOutputs.find(x=>x.analysis==='edges').path;
+  await fs.access(path.join(root,'evidence',oldFile));
+  result=run(root,['--reuse']);
+  assert.equal(result.status,0,result.stderr);
+  assert.match(result.stdout,/"status": "REUSED"/);
 });

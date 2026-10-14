@@ -292,7 +292,7 @@ def run_request(spec_path: str, out_path: str, reuse=False):
             previous_digest=envelope.pop('manifestDigest',None)
             exact=previous.get('schema')==OUTPUT_SCHEMA and previous.get('inputDigest')==digest_json(spec)
             exact=exact and previous_digest==digest_json(envelope)
-            exact=exact and [(x['id'],x['sha256']) for x in previous.get('sources',[])]==[(x['id'],x['sha256']) for x in [d for _,__,d in decoded]]
+            exact=exact and [(x['id'],x['sha256'],x.get('sourceManifestSha256'),x.get('archiveSha256')) for x in previous.get('sources',[])]==[(x['id'],x['sha256'],x.get('sourceManifestSha256'),x.get('archiveSha256')) for x in [d for _,__,d in decoded]]
             for view in previous.get('views',[]):
                 for item in view.get('analysisOutputs',[]):
                     if item.get('discardedSha256'):
@@ -414,10 +414,10 @@ def run_request(spec_path: str, out_path: str, reuse=False):
                 pointer_tmp.unlink(missing_ok=True)
             if not published:
                 shutil.rmtree(actual,ignore_errors=True)
-        # Old snapshots have no authority once the current pointer moves.
-        for old in snapshots.iterdir():
-            if old!=actual and old.is_dir() and not old.is_symlink():
-                shutil.rmtree(old)
+        # Old versions remain immutable: checkpoints, observation records, and
+        # candidate transactions may retain paths or hashes into past snapshots.
+        # Reclaiming physical bytes requires a separate verified reference index.
+        # Only manifest.json determines the active observation revision.
         print(json.dumps({'status':'PASS','claimScope':manifest['claimScope'],
                           'manifest':str(out/'manifest.json'),'sources':len(observed),
                           'views':len(views_out),'derivedFiles':len(staged_files),

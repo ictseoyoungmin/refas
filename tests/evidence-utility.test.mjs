@@ -123,8 +123,9 @@ test('utility assessment binds actual candidate edits, supports useful retention
   assert.equal(cc.sha256,contrast.sha256);
   const retained=await fs.readFile(path.join(x.root,'observations',cc.path));
   assert.equal(sha(retained),contrast.sha256);
-  assert.equal((await fs.readdir(path.join(x.root,'observations/snapshots'))).length,1);
-  await assert.rejects(fs.access(oldEdge));
+  assert.equal((await fs.readdir(path.join(x.root,'observations/snapshots'))).length,2);
+  await fs.access(oldEdge); // Historical bytes remain available to preexisting references.
+  assert.equal(response.physicallyDeletedFiles,0);
   const source=await fs.readFile(path.join(x.root,'source.png'));
   assert.equal(sha(source),x.srcDigest);
   // A pruned snapshot cannot be a full cache hit.
@@ -173,4 +174,34 @@ test('no-benefit after inspection is a legitimate output even when no model is e
   const result=await x.read();
   assert.equal(result.utility.assessments.every(a=>a.modelImpact.status==='none'),true);
   assert.equal(result.views[0].analysisOutputs.filter(a=>a.path).length,0);
+});
+
+test('discarded evidence can be reassessed and historical citations remain intact',async t=>{
+  const x=await setup(t);
+  const before=x.manifest;
+  const edge=before.views[0].analysisOutputs.find(a=>a.analysis==='edges');
+  const pathBefore=path.join(x.root,'observations',edge.path);
+  // Simulate an already accepted project artifact citing this exact historical image.
+  await x.write('model-observation.json',{evidenceRefs:[edge.path],evidenceSha256:edge.sha256});
+  let result=await x.assess(x.makeDec(),['--prune']);
+  assert.equal(result.status,0,result.stderr);
+  const retired=await x.read();
+  const tombstone=retired.views[0].analysisOutputs.find(a=>a.analysis==='edges');
+  assert.equal(tombstone.discardedSha256,edge.sha256);
+  await fs.access(pathBefore);
+  const d=x.makeDec();
+  d.manifestDigest=retired.manifestDigest;
+  result=await x.assess(d,['--prune']);
+  assert.equal(result.status,0,result.stderr);
+  const twice=await x.read();
+  assert.equal(twice.views[0].analysisOutputs.find(a=>a.analysis==='edges').discardedSha256,edge.sha256);
+  await fs.access(pathBefore);
+  // Tombstones cannot be promoted to useful, retained evidence without rerender.
+  const invalid=x.makeDec();
+  invalid.manifestDigest=twice.manifestDigest;
+  invalid.assessments[1].retention='retain';
+  result=await x.assess(invalid,['--prune']);
+  assert.notEqual(result.status,0);
+  assert.match(result.stderr,/requires rerender/);
+  assert.equal((await x.read()).manifestDigest,twice.manifestDigest);
 });
