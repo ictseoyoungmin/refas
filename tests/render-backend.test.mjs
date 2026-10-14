@@ -49,6 +49,8 @@ test('R14-01 renders a digest-bound diagnostic hero without claiming certified r
   assert.equal(output.certificationEligible,false);
   assert.equal(output.sourceSha256,job.asset.sha256);
   assert.equal(output.frameSha256,job.frame.sha256);
+  assert.match(output.backend.executableSha256,/^[a-f0-9]{64}$/u);
+  assert.equal(output.backend.identity,'RefAs Portable Rasterizer/1.0.0');
   assert.equal(output.outputs.length,1);
   const bytes=await fs.readFile(path.join(root,'diagnostics/hero-run/hero.png'));
   assert.equal(digest(bytes),output.outputs[0].sha256);
