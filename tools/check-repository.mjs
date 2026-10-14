@@ -6,6 +6,7 @@ import {fileURLToPath} from 'node:url';
 
 import {readLabelCatalog, validateLabelCatalog} from '../.github/scripts/sync-labels.mjs';
 import {CAPABILITY_ORDER, FINDING_OWNERS} from '../skills/refas/scripts/lib/ownership.mjs';
+import {REFAS_VERSION} from '../skills/refas/scripts/lib/canonical.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const PRODUCT_ROOTS = ['AGENTS.md', 'README.md', 'CONTRIBUTING.md', 'SECURITY.md', '.github', 'docs', 'schemas', 'skills/refas'];
@@ -62,10 +63,10 @@ async function main() {
   if (missing.length) throw new Error(`required files missing: ${missing.join(', ')}`);
 
   const packageJson = JSON.parse(await fs.readFile(path.join(ROOT,'package.json'),'utf8'));
-  assert.equal(packageJson.version,'1.2.1','package version must be 1.2.1');
+  assert.equal(packageJson.version,REFAS_VERSION,'package version must equal the runtime version');
   assert.equal(packageJson.bin?.['refas-host'],'skills/refas/scripts/refas-host.mjs','package must expose the refas-host companion CLI');
   const canonical = await fs.readFile(path.join(ROOT,'skills/refas/scripts/lib/canonical.mjs'),'utf8');
-  assert.match(canonical,/REFAS_VERSION = '1\.2\.1'/u,'runtime version must match package version');
+  assert.ok(canonical.includes(`export const REFAS_VERSION = '${REFAS_VERSION}'`),'runtime version export must be canonical');
   const cli = await fs.readFile(path.join(ROOT,'skills/refas/scripts/refas.mjs'),'utf8');
   assert.match(cli,/name: 'refas', version: REFAS_VERSION/u,'CLI must report the canonical runtime version');
   const hostCli = await fs.readFile(path.join(ROOT,'skills/refas/scripts/refas-host.mjs'),'utf8');

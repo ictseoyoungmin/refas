@@ -1,4 +1,4 @@
-// v1.2.1 Agent Workflow Interface: read-only presentation of existing RefAs
+// Agent Workflow Interface: read-only presentation of current RefAs
 // state, QA coverage and typed recovery authority. Not a verifier or certificate.
 import {deepFreeze, REFAS_VERSION} from './canonical.mjs';
 import {loadProject, listCheckpoints, resumeProject} from './checkpoint-store.mjs';

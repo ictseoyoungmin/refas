@@ -2,7 +2,7 @@
   <img src="skills/refas/assets/icon.svg" width="180" alt="RefAs robotic arm icon">
   <h1>RefAs</h1>
   <p>
-    <a href="https://github.com/ictseoyoungmin/refas/releases/tag/v1.2.1"><img src="https://img.shields.io/badge/version-v1.2.1-6f5a46" alt="Version v1.2.1"></a>
+    <a href="https://github.com/ictseoyoungmin/refas/releases/tag/v1.3.0"><img src="https://img.shields.io/badge/version-v1.3.0-6f5a46" alt="Version v1.3.0"></a>
     <a href="https://github.com/ictseoyoungmin/refas/actions/workflows/ci.yml"><img src="https://github.com/ictseoyoungmin/refas/actions/workflows/ci.yml/badge.svg" alt="CI status"></a>
     <img src="https://img.shields.io/badge/node-20%2B-339933" alt="Node.js 20+">
     <img src="https://img.shields.io/badge/Agent%20Skill-Vision--first%203D-b06f47" alt="Agent Skill: Vision-first 3D">
@@ -21,6 +21,15 @@ RefAs helps an AI agent **build, edit, inspect and export** reference-driven 3D 
 The main workflow is **observe → construct → render → compare → locally revise**. Validation exists to support asset quality rather than replace modeling.
 
 The bundled [demo](demo/index.html) illustrates the tooling. For reproducible examples see [examples](examples/) and [the construction guide](skills/refas/references/construction.md).
+
+### Production-oriented updates in 1.3.0
+
+- Build the complete major volume, paired/repeated parts and connected surfaces before fine detailing; review real registered and orthogonal renders.
+- Request only useful source-derived image analyses using `refas evidence --spec` and record their contribution with `--assess`. Old `--image` calls retain the published v1.2.1 compatibility output format.
+- Use selective PBR previews and a digest-verified visual review board while retaining full canonical evidence requirements.
+- Preserve old observation snapshot files when a derivative is retired, so prior references remain resolvable; physical garbage collection requires a separate reference-aware procedure.
+
+The workflow improvements are agent guidance and utilities, not an independent guarantee of reference resemblance, geometric manifoldness for every output, or game-engine readiness.
 
 ### Core capabilities
 

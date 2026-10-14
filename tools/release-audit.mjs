@@ -7,6 +7,7 @@ import {fileURLToPath} from 'node:url';
 
 import {verifyInstructionGraph} from './verify-instruction-graph.mjs';
 import {verifySemanticInstructionGraph} from '../skills/refas/scripts/verify_semantic_instruction_graph.mjs';
+import {REFAS_VERSION} from '../skills/refas/scripts/lib/canonical.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -74,7 +75,11 @@ async function main() {
 
   const skillBytes = names.filter((name)=>name.startsWith('skills/refas/')).reduce((total,name)=>total+Number(pack.files.find((item)=>item.path===name)?.size??0),0);
   const packageJson = JSON.parse(await fs.readFile(path.join(ROOT,'package.json'),'utf8'));
-  if (packageJson.version !== '1.2.1') throw new Error(`release audit expected version 1.2.1, found ${packageJson.version}`);
+  if (packageJson.version !== REFAS_VERSION) throw new Error(`release audit version mismatch: npm ${packageJson.version} vs runtime ${REFAS_VERSION}`);
+  const changelog=await fs.readFile(path.join(ROOT,'CHANGELOG.md'),'utf8');
+  if (!changelog.includes(`## ${REFAS_VERSION} —`)) throw new Error(`CHANGELOG.md omits current version ${REFAS_VERSION}`);
+  const readme=await fs.readFile(path.join(ROOT,'README.md'),'utf8');
+  if (!readme.includes(`releases/tag/v${REFAS_VERSION}`)) throw new Error(`README.md badge omits ${REFAS_VERSION}`);
   process.stdout.write(`${JSON.stringify({status:'PASS',version:packageJson.version,packagedFiles:names.length,unpackedBytes:pack.unpackedSize,skillBytes,instructionReferenceLeaves:instructionGraph.referenceLeaves,semanticInstructionNodes:semanticGraph.nodeCount,routedInstructionTargets:instructionGraph.routedPackagePaths.length},null,2)}\n`);
 }
 
