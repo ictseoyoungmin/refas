@@ -192,3 +192,37 @@ test('cache reuse re-extracts when only the bound source manifest bytes change',
   assert.equal(result.status,0,result.stderr);
   assert.match(result.stdout,/"status": "REUSED"/);
 });
+
+test('v1.2.1 evidence --image public contract remains supported and source-bound',async t=>{
+  const {root,sha}=await fixture(t);
+  const source=path.join(root,'flat.png');
+  const out=path.join(root,'legacy-output');
+  const proc=spawnSync(process.execPath,[CLI,'evidence','--image',source,'--out',out,
+    '--scope','whole','--roi','0.1,0.1,0.75,0.75','--padding','0.08'],
+    {encoding:'utf8',timeout:30000});
+  assert.equal(proc.status,0,proc.stderr);
+  assert.equal(JSON.parse(proc.stdout).status,'PASS');
+  const manifest=JSON.parse(await fs.readFile(path.join(out,'manifest.json'),'utf8'));
+  assert.equal(manifest.schema,'refas.evidence-manifest/v1');
+  assert.equal(manifest.scopeId,'whole');
+  assert.equal(manifest.source.sha256,await sha('flat.png'));
+  assert.equal(manifest.authority.rawReferenceIsPrimary,true);
+  assert.equal(manifest.authority.derivedViewsAreObservationAidsOnly,true);
+  assert.equal(manifest.items.length,9);
+  for(const name of ['crop','context','contrast','low-frequency','high-frequency',
+    'gradient','edges','highlights']){
+    const row=manifest.items.find(a=>a.id==='whole.'+name);
+    assert.ok(row);
+    assert.equal(row.kind,'derived-observation-aid');
+    const bytes=await fs.readFile(path.join(out,row.path));
+    assert.equal(createHash('sha256').update(bytes).digest('hex'),row.sha256);
+  }
+  const board=await fs.readFile(path.join(out,manifest.board.path));
+  assert.equal(createHash('sha256').update(board).digest('hex'),manifest.board.sha256);
+  const second=spawnSync(process.execPath,[CLI,'evidence','--image',source,'--out',out,
+    '--scope','whole','--roi','0.1,0.1,0.75,0.75','--padding','0.08'],
+    {encoding:'utf8',timeout:30000});
+  assert.equal(second.status,0,second.stderr);
+  assert.equal(JSON.parse((await fs.readFile(path.join(out,'manifest.json'),'utf8'))).recipeDigest,
+    manifest.recipeDigest);
+});
