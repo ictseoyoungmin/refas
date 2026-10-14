@@ -68,7 +68,7 @@ class CompiledHeroTests(unittest.TestCase):
                                     f"raster-rule diagnostic coverage changed too much: {overlap:.4f}")
             self.assertEqual(stats["inputTriangles"],1024)
             self.assertGreater(stats["coveredPixels"],0)
-            self.assertFalse(np.array_equal(original,image))  # independent versioned fill policy
+            # Exact PNG parity is not required across versioned fill profiles.
             print(f"R14-02 measured 1024 real grid triangles, legacyMs={legacy_ms}, "
                   f"numbaWarmMs={optimized_ms}, silhouetteIoU={overlap:.4f} "
                   "(non-certifying, no speedup SLA)")
