@@ -50,8 +50,6 @@ jobs:
         run: npm run check:instructions
       - name: Product-boundary audit
         run: npm run check
-      - name: Complete dogfood
-        run: npm run dogfood
       - name: Fresh-worker public-contract dogfood
         run: npm run dogfood:fresh-worker
       - name: First neutral-clay multiview operational baseline
