@@ -37,7 +37,7 @@ async function main() {
     'tests/host-session.test.mjs','tests/host-session-recovery.test.mjs','tests/host-events.test.mjs','tests/host-operation.test.mjs','tests/host-review-bundle.test.mjs','tests/host-artifact-handoff.test.mjs','tests/host-worker.test.mjs','tests/host-cli.test.mjs',
   ]);
   const python = process.env.CODEX_PRIMARY_RUNTIME_PYTHON || 'python3';
-  const sources = ['examples/parameter-fit/create_comparison.py','skills/refas/scripts/compare_registered.py','skills/refas/scripts/observation_image.py','skills/refas/scripts/evidence_request.py','skills/refas/scripts/evidence_utility.py','skills/refas/scripts/render_glb.py','skills/refas/scripts/render_pbr.py','skills/refas/scripts/source_manifest.py'];
+  const sources = ['examples/parameter-fit/create_comparison.py','skills/refas/scripts/compare_registered.py','skills/refas/scripts/observation_image.py','skills/refas/scripts/evidence_request.py','skills/refas/scripts/evidence_compat.py','skills/refas/scripts/evidence_utility.py','skills/refas/scripts/render_glb.py','skills/refas/scripts/render_pbr.py','skills/refas/scripts/source_manifest.py'];
   const compileProgram = 'import pathlib,sys; [compile(pathlib.Path(p).read_text(encoding="utf-8"), p, "exec") for p in sys.argv[1:]]';
   run(python, ['-c', compileProgram, ...sources]);
 
