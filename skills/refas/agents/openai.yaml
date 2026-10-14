@@ -1,8 +1,8 @@
 interface:
   display_name: RefAs
   short_description: Vision-first reference-to-3D reconstruction
-  default_prompt: Use $refas to reconstruct a reference image as a validated 3D asset
-    with hierarchical observation and multiview QA.
+  default_prompt: Use $refas to construct a complete, editable 3D asset from this reference.
+    Build coherent volume and repeated structures, then review and refine multiview renders.
   icon_small: assets/icon.svg
   icon_large: assets/icon.svg
 policy:
