@@ -2,6 +2,28 @@
 
 All notable RefAs changes are documented here. RefAs follows semantic versioning.
 
+## 1.3.0 — 2026-10-14
+
+A production-oriented reconstruction workflow update that prioritizes complete 3D volume construction, repeated geometry and measurable iteration. The runtime's source-bound certification contract is unchanged; improved end-user likeness is still assessed from actual assets and independent source evidence.
+
+### Agent modeling and observation
+
+- Reworked installed modeling instructions toward whole-object, mirrored/repeated and physically continuous geometry. Replaced a long single-view failure case with a compact construction walkthrough; retained explicit observed/inferred/engineered provenance for certification.
+- Added adaptive source/ROI/ZIP analysis selection with exact source and source-manifest hashes. Derived-image utility assessments connect questions, observed consequences, candidate edit SHA attribution and retention decisions. Worker attribution does not certify causal resemblance improvement.
+- Protected historical evidence paths from implicit deletion, strengthened `--reuse` source-manifest identity, and supported reassessment of SHA tombstones without treating them as active evidence.
+- Preserved the published v1.2.1 `evidence --image` API through an isolated compatibility adapter, while new work uses `--spec` and `--assess`.
+
+### Rendering and release workflow
+
+- Added selective PBR previews, cache validation, combined review boards and render performance measurement.
+- Added failure-recoverable PBR publication, with digest-bearing report installed last, exact rollback on an ordinary publishing exception and failure-injection tests. Concurrent readers still rely on manifest SHA verification.
+- Repaired deleted observation-worker references in dogfood and release audit, and aligned the installed plugin descriptions, package metadata and CI with the v1.3.0 branch.
+
+### Known boundaries
+
+- Existing claims about original-photo positive semantics and game-ready suitability remain independently gated. Full flagship Arcane Chest native/GLB before-after A/B results are not yet part of this release claim.
+- Historical derivative snapshots are retained to preserve external references; disk reclamation requires an explicitly verified reference index and is not automatic.
+
 ## 1.2.1 — 2026-10-12
 
 An agent workflow interface release for the existing reference-driven 3D construction runtime. It **does not** introduce new verification algorithms or claim independently validated original-photo resemblance. All existing fail-closed source-bound admission rules remain intact.
