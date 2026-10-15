@@ -7,6 +7,7 @@ extension handling. Original glTF (0,0) is image top-left.
 from __future__ import annotations
 
 import numpy as np
+from render_pbr_v2_mip import mip_linear_pyramid
 
 NEAREST=9728
 LINEAR=9729
@@ -56,16 +57,13 @@ def resolve_base_sampler(model,info,primitive):
         raise ValueError("PBR_V2_UNSUPPORTED_MATERIAL: sampler extensions")
     min_filter=sampler.get("minFilter")
     mag_filter=sampler.get("magFilter")
-    if min_filter in MIP_FILTERS:
-        raise ValueError("PBR_V2_UNSUPPORTED_MATERIAL: mipmap LOD unavailable")
-    if min_filter is not None and min_filter not in FILTERS:
+    if min_filter is not None and min_filter not in FILTERS + MIP_FILTERS:
         raise ValueError("PBR_V2_UNSUPPORTED_MATERIAL: unknown minFilter")
     if mag_filter is not None and mag_filter not in FILTERS:
         raise ValueError("PBR_V2_UNSUPPORTED_MATERIAL: unknown magFilter")
-    if min_filter is not None and mag_filter is not None and min_filter!=mag_filter:
-        raise ValueError("PBR_V2_UNSUPPORTED_MATERIAL: LOD-dependent filter selection")
     filtering=min_filter if min_filter is not None else (
         mag_filter if mag_filter is not None else LINEAR)
+    magnification=mag_filter if mag_filter is not None else LINEAR
     wrap_s=sampler.get("wrapS",REPEAT)
     wrap_t=sampler.get("wrapT",REPEAT)
     if wrap_s not in WRAPS or wrap_t not in WRAPS:
@@ -81,8 +79,12 @@ def resolve_base_sampler(model,info,primitive):
         raise MemoryError("PBR_V2_RESOURCE: texture exceeds preview sampling budget")
     if not np.isfinite(texels).all() or np.any(texels<0) or np.any(texels>1):
         raise ValueError("PBR_V2_INVALID_ASSET: texture channels")
+    base=srgb_to_linear(texels[:,:,:3])
+    levels=(mip_linear_pyramid(base)
+            if filtering in MIP_FILTERS else [base])
     return {"wrapS":wrap_s,"wrapT":wrap_t,"filter":filtering,
-            "linearRGB":srgb_to_linear(texels[:,:,:3]),
+            "minFilter":filtering,"magFilter":magnification,
+            "linearRGB":base,"levels":levels,
             "alphaMode":"opaque-ignored"}
 
 
@@ -98,30 +100,86 @@ def _address(indices,length,wrap):
     raise ValueError("PBR_V2_UNSUPPORTED_MATERIAL: sampler wrap")
 
 
-def sample_linear_texture(descriptor,uv):
-    """Return linear RGB at fragment UV, using texel-center glTF addressing."""
-    texels=descriptor["linearRGB"]
+def _sample_level(texels, uv, filtering, wrap_s, wrap_t):
     height,width=texels.shape[:2]
-    coords=np.asarray(uv,dtype=np.float64)
-    if coords.ndim!=2 or coords.shape[1]!=2 or not np.isfinite(coords).all():
-        raise ValueError("PBR_V2_INVALID_ASSET: fragment UV")
-    if descriptor["filter"]==NEAREST:
-        ix=_address(np.floor(coords[:,0]*width).astype(np.int64),width,descriptor["wrapS"])
-        iy=_address(np.floor(coords[:,1]*height).astype(np.int64),height,descriptor["wrapT"])
+    coords=uv
+    if filtering==NEAREST:
+        ix=_address(np.floor(coords[:,0]*width).astype(np.int64),width,wrap_s)
+        iy=_address(np.floor(coords[:,1]*height).astype(np.int64),height,wrap_t)
         return texels[iy,ix]
-    if descriptor["filter"]!=LINEAR:
-        raise ValueError("PBR_V2_UNSUPPORTED_MATERIAL: sampler filter")
+    if filtering!=LINEAR:
+        raise ValueError("PBR_V2_UNSUPPORTED_MATERIAL: invalid mip-level filter")
     x=coords[:,0]*width-.5
     y=coords[:,1]*height-.5
-    xi=np.floor(x).astype(np.int64)
-    yi=np.floor(y).astype(np.int64)
+    xi=np.floor(x).astype(np.int64);yi=np.floor(y).astype(np.int64)
     tx=(x-xi)[:,None];ty=(y-yi)[:,None]
-    x0=_address(xi,width,descriptor["wrapS"])
-    x1=_address(xi+1,width,descriptor["wrapS"])
-    y0=_address(yi,height,descriptor["wrapT"])
-    y1=_address(yi+1,height,descriptor["wrapT"])
-    # Sampling in LINEAR color after decoding each source texel
+    x0=_address(xi,width,wrap_s);x1=_address(xi+1,width,wrap_s)
+    y0=_address(yi,height,wrap_t);y1=_address(yi+1,height,wrap_t)
     return ((1-tx)*(1-ty)*texels[y0,x0]+
             tx*(1-ty)*texels[y0,x1]+
             (1-tx)*ty*texels[y1,x0]+
             tx*ty*texels[y1,x1])
+
+
+def sample_linear_texture(descriptor,uv,duv_dx=None,duv_dy=None):
+    """Linear RGB with per-fragment analytic LOD; never infer LOD from neighbors."""
+    coords=np.asarray(uv,dtype=np.float64)
+    if coords.ndim!=2 or coords.shape[1]!=2 or not np.isfinite(coords).all():
+        raise ValueError("PBR_V2_INVALID_ASSET: fragment UV")
+    min_filter=descriptor["minFilter"]
+    mag_filter=descriptor["magFilter"]
+    requires_grad=min_filter in MIP_FILTERS or min_filter!=mag_filter
+    if duv_dx is None or duv_dy is None:
+        if requires_grad:
+            raise ValueError("PBR_V2_UNSUPPORTED_MATERIAL: screen-space UV derivatives required")
+        return _sample_level(descriptor["linearRGB"],coords,min_filter,
+                             descriptor["wrapS"],descriptor["wrapT"])
+    dx=np.asarray(duv_dx,dtype=np.float64)
+    dy=np.asarray(duv_dy,dtype=np.float64)
+    if dx.shape!=coords.shape or dy.shape!=coords.shape or (
+            not np.isfinite(dx).all() or not np.isfinite(dy).all()):
+        raise ValueError("PBR_V2_INVALID_VISIBILITY: invalid UV gradient arrays")
+    height,width=descriptor["linearRGB"].shape[:2]
+    rho=np.maximum(np.linalg.norm(dx*np.array([width,height]),axis=1),
+                   np.linalg.norm(dy*np.array([width,height]),axis=1))
+    if not np.isfinite(rho).all():
+        raise ValueError("PBR_V2_INVALID_VISIBILITY: nonfinite projected texture footprint")
+    result=np.empty((len(coords),3),dtype=np.float64)
+    magnifying=rho<=1
+    if np.any(magnifying):
+        result[magnifying]=_sample_level(
+            descriptor["linearRGB"],coords[magnifying],mag_filter,
+            descriptor["wrapS"],descriptor["wrapT"])
+    minifying=np.nonzero(~magnifying)[0]
+    if not len(minifying):
+        return result
+    if min_filter in FILTERS:
+        result[minifying]=_sample_level(
+            descriptor["linearRGB"],coords[minifying],min_filter,
+            descriptor["wrapS"],descriptor["wrapT"])
+        return result
+    # rho>1.0, so select mip chain explicitly from ray-derived LOD.
+    levels=descriptor["levels"]
+    lod=np.clip(np.log2(rho[minifying]),0,len(levels)-1)
+    base_filter=(NEAREST if min_filter in (9984,9986) else LINEAR)
+    blend=min_filter in (9986,9987)
+    lowest=(np.floor(lod).astype(np.int64) if blend else
+            np.floor(lod+.5).astype(np.int64))
+    highest=np.minimum(lowest+1,len(levels)-1)
+    result_min=np.empty((len(minifying),3),dtype=np.float64)
+    for level in np.unique(lowest):
+        mask=lowest==level
+        result_min[mask]=_sample_level(
+            levels[level],coords[minifying[mask]],base_filter,
+            descriptor["wrapS"],descriptor["wrapT"])
+    if blend:
+        result_upper=np.empty_like(result_min)
+        for level in np.unique(highest):
+            mask=highest==level
+            result_upper[mask]=_sample_level(
+                levels[level],coords[minifying[mask]],base_filter,
+                descriptor["wrapS"],descriptor["wrapT"])
+        frac=(lod-np.floor(lod))[:,None]
+        result_min=result_min*(1-frac)+result_upper*frac
+    result[minifying]=result_min
+    return result
