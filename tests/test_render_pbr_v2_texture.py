@@ -205,7 +205,7 @@ class EndToEndEmbeddedTexture(unittest.TestCase):
             for row in record["outputs"]:
                 self.assertEqual(hashlib.sha256((out/row["path"]).read_bytes()).hexdigest(),
                                  row["sha256"])
-            self.assertIn("base-color-texture-png-lod0-nearest-linear-wrap",
+            self.assertIn("base-color-texture-png-analytic-mipmap-nearest-linear-trilinear",
                           record["materialContract"]["supported"])
 
 
