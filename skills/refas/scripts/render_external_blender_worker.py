@@ -68,6 +68,7 @@ def render(config):
     if config["sourceUsesColor0"] and not colors:
         raise ValueError("R14E_MATERIAL_UNSUPPORTED: Blender lost COLOR_0")
     bound_color_nodes=[]
+    material_color_node_debug=[]
     if config["sourceUsesColor0"]:
         source_names={record["name"] for record in colors}
         for mat in bpy.data.materials:
@@ -75,10 +76,16 @@ def render(config):
             for node in mat.node_tree.nodes:
                 if node.type not in ("ATTRIBUTE","VERTEX_COLOR"): continue
                 name=(getattr(node,"attribute_name","") or getattr(node,"layer_name",""))
-                if name in source_names and any(output.is_linked for output in node.outputs):
+                linked=any(output.is_linked for output in node.outputs)
+                material_color_node_debug.append({
+                    "material":mat.name,"nodeType":node.type,
+                    "attribute":name,"linked":linked})
+                if name in source_names and linked:
                     bound_color_nodes.append({"material":mat.name,"attribute":name})
         if not bound_color_nodes:
-            raise ValueError("R14E_MATERIAL_UNSUPPORTED: COLOR_0 exists but is not linked to any material shader")
+            raise ValueError("R14E_MATERIAL_UNSUPPORTED: COLOR_0 not linked; "+
+                             json.dumps({"colors":colors[:3],
+                                         "nodes":material_color_node_debug[:12]}))
     scene=bpy.context.scene
     camera_data=bpy.data.cameras.new("RefAs external PBR camera")
     camera=bpy.data.objects.new("RefAs external PBR camera",camera_data)
