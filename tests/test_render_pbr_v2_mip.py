@@ -127,5 +127,55 @@ class OriginalSourceRayOracle(unittest.TestCase):
         np.testing.assert_array_equal(a[1],b[1])
 
 
+@unittest.skipUnless(True, "glTF PIL PNG runtime required")
+class EndToEndMipmapGLB(unittest.TestCase):
+    def test_full_indexed_glb_four_pass_preview_and_predecode_budget(self):
+        import json
+        import struct
+        import subprocess
+        import tempfile
+        from test_render_pbr_v2_texture import fixture_embedded_texture
+        from render_glb import parse_glb,load_primitives
+        with tempfile.TemporaryDirectory(prefix="r14-06c3-mip-glb-") as temp:
+            root=Path(temp)
+            glb=root/"texture.glb";frame=root/"frame.json"
+            fixture_embedded_texture(glb,frame)
+            model,binary=parse_glb(glb)
+            model["samplers"][0]["minFilter"]=9987
+            model["samplers"][0]["magFilter"]=9729
+            js=json.dumps(model,separators=(",",":")).encode()
+            js+=b" "*(-len(js)%4)
+            with glb.open("wb") as stream:
+                stream.write(struct.pack("<III",0x46546c67,2,
+                                         12+8+len(js)+8+len(binary)))
+                stream.write(struct.pack("<II",len(js),0x4e4f534a))
+                stream.write(js)
+                stream.write(struct.pack("<II",len(binary),0x004e4942))
+                stream.write(binary)
+            # Original pixel dimensions are bounded before PIL converts RGBA.
+            with self.assertRaisesRegex(MemoryError,"PBR_V2_RESOURCE.*before decode"):
+                load_primitives(glb,max_texture_pixels=3)
+            worker=root/"out"
+            script=Path(__file__).resolve().parents[1]/(
+                "skills/refas/scripts/render_pbr_v2_material.py")
+            result=subprocess.run([sys.executable,str(script),"--glb",str(glb),
+                "--frame",str(frame),"--out",str(worker),"--size","48",
+                "--threads","1","--max-working-mb","512"],
+                capture_output=True,text=True,timeout=120)
+            self.assertEqual(result.returncode,0,result.stderr[-3500:])
+            report=json.loads((worker/"preview-report.json").read_text())
+            self.assertEqual(report["stats"]["visibility"]["inputTriangles"],120)
+            self.assertGreater(report["stats"]["textureSampledPixels"],0)
+            self.assertEqual(report["claimScope"],"material-preview-only")
+            self.assertFalse(report["certificationEligible"])
+            self.assertEqual(len(report["outputs"]),4)
+            import hashlib
+            self.assertEqual(report["sourceGlbSha256"],
+                             hashlib.sha256(glb.read_bytes()).hexdigest())
+            for item in report["outputs"]:
+                self.assertEqual(item["sha256"],hashlib.sha256(
+                    (worker/item["path"]).read_bytes()).hexdigest())
+
+
 if __name__=="__main__":
     unittest.main()
