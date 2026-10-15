@@ -283,13 +283,13 @@ def render_hero_tiled(primitives, position, target, up, fov, size, mode,
     set_num_threads(threads)
     begun=time.perf_counter()
     updates,candidate_tests=_tiles(screen,bounds,colors,offsets,entries,pixels,depth,winner,tile_size,tiles_x)
+    raster_ms=(time.perf_counter()-begun)*1000
     # Reference count for the old full-tile loop, including partial edge tiles.
     widths=np.minimum(tile_size,size-np.arange(tiles_x)*tile_size)
     heights=np.minimum(tile_size,size-np.arange(tiles_y)*tile_size)
     tile_wide_tests=int(np.sum(counts.reshape(tiles_y,tiles_x)*
         heights[:,None]*widths[None,:],dtype=np.int64))
     candidate_total=int(candidate_tests.sum(dtype=np.int64))
-    raster_ms=(time.perf_counter()-begun)*1000
     covered=int(np.count_nonzero(winner>=0))
     if return_visibility:
         # This exact payload belongs only to the R14-04 diagnostic backend.
