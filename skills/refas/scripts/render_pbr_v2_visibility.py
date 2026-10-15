@@ -216,10 +216,14 @@ def _check_source(primitives):
     if not primitives:
         raise ValueError("PBR_V2_INVALID_ASSET: no primitives")
     for primitive in primitives:
-        if np.any(np.asarray(primitive.indices)<0) or np.any(
-                np.asarray(primitive.indices)>=len(primitive.positions)):
+        indices = np.asarray(primitive.indices)
+        points = np.asarray(primitive.positions)
+        if indices.ndim != 2 or indices.shape[1] != 3 or (
+                points.ndim != 2 or points.shape[1] != 3):
+            raise ValueError("PBR_V2_INVALID_ASSET: triangles and positions require XYZ triplets")
+        if np.any(indices<0) or np.any(indices>=len(points)):
             raise ValueError("PBR_V2_INVALID_ASSET: index bounds")
-        if not np.isfinite(primitive.positions).all():
+        if not np.isfinite(points).all():
             raise ValueError("PBR_V2_INVALID_ASSET: nonfinite positions")
 
 
@@ -241,7 +245,10 @@ def render_visibility(primitives,position,target,up,fov,size,*,tile_size=32,
         raise ValueError("PBR_V2_INVALID_ASSET: empty indexed geometry")
     # Two raster slots per triangle: camera screen + clip-to-source barycentric
     # + bounds, plus vertex camera data and frame buffers, with JIT headroom.
-    static_bytes=(192*MIB+2*nfaces*(9*8+9*8+4*4)+nverts*(3*8*2)
+    # Conservative native/JIT/GLB-decode headroom grounded in original
+    # 901,664-triangle Monster Bed local VmHWM (~703 MiB). Per-run caps
+    # remain advisory and MUST still be enforced by process memory limits.
+    static_bytes=(384*MIB+2*nfaces*(9*8+9*8+4*4)+nverts*(3*8*2)
                   +nfaces*3*8+size*size*(8+8+3*8))
     if static_bytes>max_working_mib*MIB:
         raise MemoryError("PBR_V2_RESOURCE: source-provenance visibility exceeds budget")
@@ -333,6 +340,8 @@ def main():
     if len(source_bytes)*2 >= args.max_working_mb*MIB:
         raise MemoryError("PBR_V2_RESOURCE: GLB source exceeds memory budget")
     model,binary=parse_glb(source)
+    if hashlib.sha256(source.read_bytes()).digest() != hashlib.sha256(source_bytes).digest():
+        raise ValueError("PBR_V2_INVALID_ASSET: GLB changed between hash and parse")
     if model.get("extensionsRequired") or model.get("skins") or model.get("animations"):
         raise ValueError("PBR_V2_UNSUPPORTED: animated or required extension geometry")
     for mesh in model.get("meshes",[]):
@@ -344,6 +353,8 @@ def main():
             raise ValueError("PBR_V2_UNSUPPORTED: alpha requires a separate visibility path")
     _,primitives=load_primitives(source,parsed=(model,binary))
     frame,basis,origin,fd=load_canonical_frame(framepath)
+    if hashlib.sha256(framepath.read_bytes()).digest() != hashlib.sha256(frame_bytes).digest():
+        raise ValueError("PBR_V2_INVALID_CAMERA: frame changed between hash and parse")
     hero=frame.get("hero")
     if not hero:
         raise ValueError("PBR_V2_INVALID_CAMERA: frame hero required")
