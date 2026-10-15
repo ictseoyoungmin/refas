@@ -86,6 +86,13 @@ def srgb_to_linear(rgb):
     return np.where(rgb <= 0.04045, rgb / 12.92, np.power((rgb + 0.055) / 1.055, 2.4))
 
 
+def linear_to_srgb(rgb):
+    """IEC 61966-2-1 output transfer, only for COLOR_0-aware appearance."""
+    linear = np.clip(rgb, 0.0, 1.0)
+    return np.where(linear <= 0.0031308, linear * 12.92,
+                    1.055 * np.power(linear, 1.0 / 2.4) - 0.055)
+
+
 def sample_base_color_texture(texture, uv):
     if texture is None:
         return None
@@ -119,6 +126,12 @@ def render(primitives, position, target, output, *, size, mode, up_hint, deadlin
     The framebuffer is persistent; temporary barycentric/shading arrays must never
     scale with a large triangle's whole screen rectangle.
     """
+    # Nonopaque vertex alpha requires a separately specified blend/mask path.
+    if mode in ("albedo", "beauty"):
+        for primitive in primitives:
+            if (primitive.vertex_alpha is not None and
+                    np.any(primitive.vertex_alpha != 1.0)):
+                raise ValueError("VERTEX_COLOR_UNSUPPORTED: COLOR_0 vertex alpha")
     right, up, forward = camera_basis(position, target, up_hint)
     position = np.asarray(position, dtype=np.float64)
     scale = math.tan(math.radians(fov) / 2)
@@ -174,6 +187,10 @@ def render(primitives, position, target, output, *, size, mode, up_hint, deadlin
                         color = np.broadcast_to(object_color(primitive.object_id), (count, 3))
                     else:
                         base = np.broadcast_to(primitive.color, (count, 3))
+                        if mode in ('albedo', 'beauty') and primitive.vertex_colors is not None:
+                            # Pixel weights were already perspective-corrected
+                            # by depth; glTF COLOR_0 RGB is stored in linear.
+                            base = base * (weights @ primitive.vertex_colors[tri])
                         if tri_uv is not None:
                             uv = weights @ tri_uv
                             base = base * sample_base_color_texture(primitive.base_color_texture, uv)
@@ -188,7 +205,10 @@ def render(primitives, position, target, output, *, size, mode, up_hint, deadlin
                                 views = position - worlds
                                 color = pbr_shade(base, normals, views, primitive.metallic,
                                                   primitive.roughness, lights=lights, exposure=exposure)
-                    encoded = np.round(np.power(np.clip(color, 0, 1), 1 / 2.2) * 255).astype(np.uint8)
+                    if mode in ('albedo', 'beauty') and primitive.vertex_colors is not None:
+                        encoded = np.round(linear_to_srgb(color) * 255).astype(np.uint8)
+                    else:
+                        encoded = np.round(np.power(np.clip(color, 0, 1), 1 / 2.2) * 255).astype(np.uint8)
                     region = image[ty:ty + yy.shape[0], tx:tx + xx.shape[1]]
                     region[visible] = encoded
                     region_depth[visible] = depth[visible]
@@ -307,6 +327,9 @@ def main():
             primitive.roughness = float(clay["roughness"])
             primitive.base_color_texture = None
             primitive.base_color_texture_sha256 = None
+            # Neutral-clay intentionally substitutes the entire source material.
+            primitive.vertex_colors = None
+            primitive.vertex_alpha = None
     frame,basis,origin,fd=load_canonical_frame(frame_path); bounds=frame_bounds(primitives,frame,basis,origin); center=bounds['centerWorld']; distance=bounds['radius']*3.1; deadline=time.monotonic()+a.timeout_seconds
     if a.neutral_clay:
         preset_lighting = NEUTRAL_CLAY_PRESET["lighting"]
@@ -391,6 +414,8 @@ def main():
         output_prefix="renders/clay" if a.neutral_clay else "renders/pbr"
         texture_bindings=[] if a.neutral_clay else sorted({p.base_color_texture_sha256 for p in primitives if p.base_color_texture_sha256})
         supported=["base-color-factor","metallic-factor","roughness-factor"] if a.neutral_clay else ["base-color-factor","base-color-texture","metallic-factor","roughness-factor","texcoord-0"]
+        if not a.neutral_clay and any(p.vertex_colors is not None for p in primitives):
+            supported.append("vertex-color-0")
         unsupported=["clearcoat","image-based-lighting","normal-maps"] + (["textures"] if a.neutral_clay else [])
         payload={"schema":"refas.pbr-render-report/v1","claimScope":"shape-resemblance-only" if a.neutral_clay else "visual-fidelity","assetSha256":sha256(glb),"frameDigest":fd,"renderer":{"family":"other","name":"RefAs Independent PBR","version":"1.0.0","backend":"numpy-cook-torrance-headless","independentProcess":True},"lighting":{"rigId":rig_id,"digest":canonical_digest(rig)},"colorPipeline":color,"materialSupport":{"supported":supported,"unsupported":unsupported},"textureBindings":[{"sha256":digest,"mimeType":"image/png","channel":"base-color"} for digest in texture_bindings],"outputs":[{"viewId":f['viewId'],"path":f"{output_prefix}/{f['path']}","sha256":f['sha256']} for f in frames],"reproducibility":{"mode":"deterministic","tolerance":""}}
         if a.neutral_clay:
