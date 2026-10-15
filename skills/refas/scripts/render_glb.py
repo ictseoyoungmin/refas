@@ -185,10 +185,15 @@ def reject_unhandled_vertex_color(primitives, mode, *, supported=False):
 
 
 def load_primitives(path: Path, parsed=None, *, max_texture_pixels=None,
-                    max_total_texture_pixels=None, max_image_encoded_bytes=None):
+                    max_total_texture_pixels=None, max_image_encoded_bytes=None,
+                    max_total_image_encoded_bytes=None):
     model, binary = parsed if parsed is not None else parse_glb(path)
     images = []
     texture_pixels_total = 0
+    encoded_bytes_total = 0
+    if (max_total_image_encoded_bytes is not None
+            and len(model.get("images", []))>64):
+        raise MemoryError("PBR_V2_RESOURCE: image count exceeds bounded preview contract")
     for image in model.get("images", []):
         if image.get("mimeType") != "image/png" or "bufferView" not in image:
             images.append((None, None))
@@ -199,6 +204,10 @@ def load_primitives(path: Path, parsed=None, *, max_texture_pixels=None,
         png = bytes(binary[start:end])
         if max_image_encoded_bytes is not None and len(png)>max_image_encoded_bytes:
             raise MemoryError("PBR_V2_RESOURCE: embedded image encoded byte budget")
+        encoded_bytes_total+=len(png)
+        if (max_total_image_encoded_bytes is not None
+                and encoded_bytes_total>max_total_image_encoded_bytes):
+            raise MemoryError("PBR_V2_RESOURCE: total embedded image byte budget")
         declared = image.get("extras", {}).get("refasSha256")
         actual = hashlib.sha256(png).hexdigest()
         if declared is not None and declared != actual:
