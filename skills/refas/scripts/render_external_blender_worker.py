@@ -68,34 +68,55 @@ def render(config):
     if config["sourceUsesColor0"] and not colors:
         raise ValueError("R14E_MATERIAL_UNSUPPORTED: Blender lost COLOR_0")
     bound_color_nodes=[]
-    material_color_node_debug=[]
-    if config["sourceUsesColor0"]:
-        source_names={record["name"] for record in colors}
-        for mat in bpy.data.materials:
-            if not mat.use_nodes: continue
+    color_used_triangles=0
+    # Verify every actual imported mesh with COLOR_0 has its USED
+    # material slots connected to its own color layer, rather than
+    # relying on one unrelated global node in bpy.data.materials.
+    for obj in objects:
+        source_names={x.name for x in obj.data.color_attributes
+                      if x.domain in ("POINT","CORNER")}
+        if not source_names: continue
+        used_slots={polygon.material_index for polygon in obj.data.polygons}
+        color_used_triangles+=len(obj.data.polygons)
+        for slot_index in sorted(used_slots):
+            if slot_index>=len(obj.material_slots):
+                raise ValueError("R14E_MATERIAL_UNSUPPORTED: used material slot out of bounds")
+            mat=obj.material_slots[slot_index].material
+            if mat is None or not mat.use_nodes:
+                raise ValueError("R14E_MATERIAL_UNSUPPORTED: colored mesh has no node material")
+            matched=False
             for node in mat.node_tree.nodes:
                 if node.type not in ("ATTRIBUTE","VERTEX_COLOR"): continue
                 name=(getattr(node,"attribute_name","") or getattr(node,"layer_name",""))
                 linked=any(output.is_linked for output in node.outputs)
-                material_color_node_debug.append({
-                    "material":mat.name,"nodeType":node.type,
-                    "attribute":name,"linked":linked})
-                # Blender 4.0 glTF import can emit a linked
-                # ShaderNodeVertexColor with an empty layer_name; that
-                # explicitly denotes the mesh's active color layer.
-                # The separate no-COLOR_0 comparison then proves the
-                # imported attribute actually affects rendered pixels.
-                active_layer=(node.type=="VERTEX_COLOR" and not name
-                              and len(source_names)==1)
-                if linked and (name in source_names or active_layer):
+                # Native Blender glTF 4.0 importer binds the unique
+                # active mesh color layer via empty Vertex Color name.
+                active=(node.type=="VERTEX_COLOR" and not name
+                        and len(source_names)==1)
+                if linked and (name in source_names or active):
+                    matched=True
                     bound_color_nodes.append({
-                        "material":mat.name,
+                        "object":obj.name,"material":mat.name,
+                        "materialSlot":slot_index,
                         "attribute":name or "<active color layer>",
                         "nodeType":node.type})
-        if not bound_color_nodes:
-            raise ValueError("R14E_MATERIAL_UNSUPPORTED: COLOR_0 not linked; "+
-                             json.dumps({"colors":colors[:3],
-                                         "nodes":material_color_node_debug[:12]}))
+            if not matched and config["sourceUsesColor0"]:
+                raise ValueError("R14E_MATERIAL_UNSUPPORTED: colored source mesh has unbound material "+
+                                 str(obj.name)+" slot "+str(slot_index))
+    if config["sourceUsesColor0"] and not bound_color_nodes:
+        raise ValueError("R14E_MATERIAL_UNSUPPORTED: no linked source color material")
+
+    def peak_rss_kib():
+        # VmHWM reports the entire Cycles/Blender process, not a
+        # proxy for Python-only allocations. Non-Linux: explicit null.
+        try:
+            for line in Path("/proc/self/status").read_text().splitlines():
+                if line.startswith("VmHWM:"):
+                    return int(line.split()[1])
+        except OSError:
+            pass
+        return None
+
     scene=bpy.context.scene
     camera_data=bpy.data.cameras.new("RefAs external PBR camera")
     camera=bpy.data.objects.new("RefAs external PBR camera",camera_data)
@@ -158,6 +179,8 @@ def render(config):
         "sourceGlbSha256":config["sourceGlbSha256"],
         "meshObjects":len(objects),"triangleCount":polygons,
         "colorAttributes":colors,"boundColorMaterialNodes":bound_color_nodes,
+        "colorBearingImportedTriangles":color_used_triangles,
+        "peakProcessRssKiB":peak_rss_kib(),
         "worldProfile":"sun-direct3-worldAmbient-0.7-standard-sRGB",
         "importMs":imported_ms,"renderMs":render_ms,
         "imageSha256":digest_file(out),

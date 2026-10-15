@@ -1,0 +1,94 @@
+name: R14-06E2 Private QA Contract Native Blender Smoke (opt-in)
+
+# Source original never fetched/uploaded. This workflow only generates
+# a synthetic indexed glTF with COLOR_0+embedded PNG in the runner.
+on:
+  push:
+    branches:
+      - 'bench/r14-06e2-smoke-*'
+permissions:
+  contents: read
+jobs:
+  real-blender-two-views:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      OMP_NUM_THREADS: '2'
+      OPENBLAS_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - name: Install actual independent Blender binary
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends blender
+          blender --background --version
+          python -m pip install -r requirements.txt
+      - name: Make indexed source (synthetic only)
+        run: |
+          mkdir -p temp/r14-06e2
+          python skills/refas/scripts/create_blender_color0_texture_fixture.py \
+            --glb temp/r14-06e2/synthetic.glb \
+            --frame temp/r14-06e2/camera.json \
+            --side 256 --triangles 120 \
+            > temp/r14-06e2/source.json
+      - name: Exercise E2 two-view private gate on real Blender Cycles
+        run: |
+          python - <<'PY'
+          import json,sys
+          from pathlib import Path
+          sys.path.insert(0, 'skills/refas/scripts')
+          from verify_blender_private_source_e2 import run_private_session
+          root=Path('temp/r14-06e2')
+          fixture=json.loads((root/'source.json').read_text())
+          report=run_private_session(
+              glb=root/'synthetic.glb',frame=root/'camera.json',
+              output=root/'evidence',blender='blender',
+              expected_glb_sha=fixture['glbSha256'],
+              expected_frame_sha=fixture['frameFileSha256'],
+              expected_triangles=120,expected_primitives=1,
+              minimum_color0_triangles=120,
+              sizes=(96,160),samples=4,threads=2,
+              timeout=600,max_working_mib=1024)
+          assert report['status']=='COMPLETE'
+          assert not report['certificationEligible']
+          assert report['cameraAuthority']=='UNREGISTERED-DIAGNOSTIC'
+          assert [x['size'] for x in report['views']]==[96,160]
+          assert all(x['importedTriangles']==120 for x in report['views'])
+          assert all(x['sourceColor0Triangles']==120 for x in report['views'])
+          assert all(x['colorBearingImportedTriangles']==120 for x in report['views'])
+          assert all(x['linkedColorMaterialNodes'] for x in report['views'])
+          assert all(x['peakProcessRssKiB'] is not None for x in report['views'])
+          print('E2_REAL_BLENDER_TWO_VIEW_SYNTHETIC_CONTRACT_PASS')
+          print([(v['size'],v['timingsMs'],v['peakProcessRssKiB']) for v in report['views']])
+          PY
+      - name: Check real session artifact byte digests and no private GLB
+        run: |
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          root=Path('temp/r14-06e2/evidence')
+          report=json.loads((root/'session-report.json').read_text())
+          for item in report['views']:
+              p=root/f"view-{item['size']}"/'render.png'
+              assert hashlib.sha256(p.read_bytes()).hexdigest()==item['pngSha256']
+          assert hashlib.sha256((root/'qa-board.png').read_bytes()).hexdigest()==report['board']['sha256']
+          assert not list(root.rglob('*.glb'))
+          assert not list(root.rglob('camera.json'))
+          print('E2_NO_SOURCE_IN_ARTIFACT_AND_EXACT_HASHES_PASS')
+          PY
+      - name: Save bounded external synthetic evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: r14-06e2-two-view-synthetic-${{ github.sha }}
+          path: |
+            temp/r14-06e2/source.json
+            temp/r14-06e2/evidence/
+          retention-days: 14
+          if-no-files-found: warn
