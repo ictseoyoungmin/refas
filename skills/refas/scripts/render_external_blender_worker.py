@@ -80,8 +80,18 @@ def render(config):
                 material_color_node_debug.append({
                     "material":mat.name,"nodeType":node.type,
                     "attribute":name,"linked":linked})
-                if name in source_names and linked:
-                    bound_color_nodes.append({"material":mat.name,"attribute":name})
+                # Blender 4.0 glTF import can emit a linked
+                # ShaderNodeVertexColor with an empty layer_name; that
+                # explicitly denotes the mesh's active color layer.
+                # The separate no-COLOR_0 comparison then proves the
+                # imported attribute actually affects rendered pixels.
+                active_layer=(node.type=="VERTEX_COLOR" and not name
+                              and len(source_names)==1)
+                if linked and (name in source_names or active_layer):
+                    bound_color_nodes.append({
+                        "material":mat.name,
+                        "attribute":name or "<active color layer>",
+                        "nodeType":node.type})
         if not bound_color_nodes:
             raise ValueError("R14E_MATERIAL_UNSUPPORTED: COLOR_0 not linked; "+
                              json.dumps({"colors":colors[:3],
