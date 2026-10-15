@@ -76,15 +76,3 @@ def mip_linear_pyramid(base,max_pixels=2_097_152):
         levels.append(nxt)
     return levels
 
-
-def estimate_texture_budget(model, max_texture_pixels=2_097_152,
-                            max_total_pixels=4_194_304):
-    """Check image count/source bounds before PIL decodes any RGBA frames."""
-    import io
-    from PIL import Image,UnidentifiedImageError
-    # This function only inventories decoded dimensions, source offset checks
-    # are performed in the existing GLB buffer-view parser/loader.
-    images=model.get("images",[])
-    if len(images)>64:
-        raise MemoryError("PBR_V2_RESOURCE: too many texture images")
-    return (max_texture_pixels,max_total_pixels)
