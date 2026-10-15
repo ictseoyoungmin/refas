@@ -304,7 +304,8 @@ def main():
         raise ValueError("PBR_V2_INVALID_ASSET: source modified during read")
     _,primitives=load_primitives(glb,parsed=(model,binary),
         max_texture_pixels=2_097_152,max_total_texture_pixels=4_194_304,
-        max_image_encoded_bytes=16*1024*1024)
+        max_image_encoded_bytes=16*1024*1024,
+        max_total_image_encoded_bytes=32*1024*1024)
     frame,basis,origin,frame_digest=load_canonical_frame(frame_path)
     if _sha(frame_path.read_bytes())!=_sha(frame_raw):
         raise ValueError("PBR_V2_INVALID_CAMERA: frame modified during read")
