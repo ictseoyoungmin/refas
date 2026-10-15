@@ -26,9 +26,9 @@ export const CPU_RENDER_BACKENDS=Object.freeze({
     replay:null,admissibleCertification:'none',
   }),
   'tiled-cpu':Object.freeze({
-    id:'tiled-cpu',identity:'RefAs Tiled CPU/0.1.0-prototype',
+    id:'tiled-cpu',identity:'RefAs Tiled CPU/0.2.0-microtriangle',
     renderer:{family:'other',name:'RefAs Tiled CPU',
-      version:'0.1.0-prototype',backend:'numba-tiled-parallel'},
+      version:'0.2.0-microtriangle',backend:'numba-tiled-parallel'},
     worker:'render_cpu_tiled.py',installed:true,diagnostic:true,
     replay:null,admissibleCertification:'none',
   }),
@@ -73,7 +73,7 @@ export function normalizeCpuRenderJob(job) {
   if(!job||Object.keys(job).some(key=>!allowed.has(key)))throw Error('render job includes unknown fields');
   const id=job.backend?.id;
   const profile=getTrustedRenderBackend(id);
-  if(job.backend?.algorithmVersion!==(id==='legacy-portable'?'1.0.0':'1'))
+  if(job.backend?.algorithmVersion!==(id==='legacy-portable'?'1.0.0':id==='tiled-cpu'?'2':'1'))
     throw Error('backend algorithmVersion differs from trusted registry');
   if(job.view!=='hero')throw Error('R14-02 only supports the registered hero view');
   const renderPass=job.pass??'beauty';

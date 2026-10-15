@@ -24,7 +24,7 @@ from render_cpu_opt import require_supported
 from render_cpu_tiled import render_hero_tiled, njit
 from render_glb import MIB, load_canonical_frame, load_primitives, local_to_world, parse_glb
 
-PROFILE="RefAs Visibility CPU/0.1.0-prototype"
+PROFILE="RefAs Visibility CPU/0.2.0-microtriangle"
 SCHEMA="refas.visibility-cpu-diagnostic/v1"
 CACHE_SCHEMA="refas.visibility-cache/v1"
 PASSES=("normal","object-id","albedo")
@@ -289,7 +289,7 @@ def main():
         report={
           "schema":SCHEMA,"status":"PASS","claimScope":"diagnostic-only",
           "certificationEligible":False,"renderer":{"name":"RefAs Visibility CPU",
-              "version":"0.1.0-prototype","backend":"numba-tiled-shared-visibility"},
+              "version":"0.2.0-microtriangle","backend":"numba-tiled-shared-visibility"},
           "sourceGlbSha256":sha_bytes(glb_bytes),"frameFileSha256":sha_bytes(frame_bytes),
           "canonicalFrameDigest":frame_digest,"passes":passes,"size":args.size,
           "tileSize":args.tile_size,"threads":args.threads,"stats":metrics,

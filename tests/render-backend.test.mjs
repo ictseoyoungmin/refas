@@ -113,8 +113,9 @@ test('tiled CPU diagnostic is an explicit, immutable and non-certifying backend'
   const {root,job}=await fixture(t);
   assert.equal(getTrustedRenderBackend('tiled-cpu').admissibleCertification,'none');
   assert.equal(getTrustedRenderBackend('tiled-cpu').replay,null);
-  const base={...job,backend:{id:'tiled-cpu',algorithmVersion:'1'},
+  const base={...job,backend:{id:'tiled-cpu',algorithmVersion:'2'},
     pass:'object-id',resources:{timeoutSeconds:90,maxWorkingMiB:512,tileSize:16,threads:1}};
+  assert.throws(()=>normalizeCpuRenderJob({...base,backend:{id:'tiled-cpu',algorithmVersion:'1'}}),/algorithmVersion/);
   assert.throws(()=>normalizeCpuRenderJob({...base,resources:{...base.resources,tileSize:7}}),/tileSize/);
   assert.throws(()=>normalizeCpuRenderJob({...base,resources:{...base.resources,threads:16}}),/threads/);
   const python=process.env.CODEX_PRIMARY_RUNTIME_PYTHON||'python3';
@@ -133,7 +134,7 @@ test('tiled CPU diagnostic is an explicit, immutable and non-certifying backend'
   assert.equal(result.tileSize,16);
   assert.equal(result.threads,1);
   assert.equal(result.pass,'object-id');
-  assert.equal(result.backend.identity,'RefAs Tiled CPU/0.1.0-prototype');
+  assert.equal(result.backend.identity,'RefAs Tiled CPU/0.2.0-microtriangle');
   assert.match(result.backend.executableSha256,/^[a-f0-9]{64}$/u);
   assert.equal(result.sourceSha256,base.asset.sha256);
   const bytes=await fs.readFile(path.join(root,'diagnostics/tiled-hero/hero.png'));
