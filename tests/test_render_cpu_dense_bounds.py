@@ -134,6 +134,9 @@ class DenseBoundsTests(unittest.TestCase):
             self.assertEqual(process.returncode, 0, process.stderr)
             report = json.loads(output.read_text(encoding="utf8"))
             self.assertEqual(report["claimScope"], "measurement-only")
+            self.assertEqual(report["backend"], "RefAs Visibility CPU/0.2.0-microtriangle")
+            self.assertTrue(report["environment"]["numba"])
+            self.assertEqual(len(report["runs"][0]["pngDigests"]), 3)
             self.assertTrue(report["summary"]["allComplete"])
             self.assertEqual(report["fixture"]["triangles"], 120)
             metrics = report["runs"][0]["kernelStats"]

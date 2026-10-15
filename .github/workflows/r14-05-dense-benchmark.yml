@@ -1,0 +1,83 @@
+name: R14-05 Dense CPU Stress (isolated)
+
+# Heavy real-geometry benchmarks never run on normal PR/develop/main CI.
+# Create a short-lived bench/r14-05-* branch to explicitly launch this job.
+on:
+  push:
+    branches:
+      - 'bench/r14-05-*'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: refas-r14-05-bench-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  dense-hero:
+    # workflow_dispatch works after default-branch publication. Until then,
+    # a dedicated bench/* push explicitly triggers the entire matrix.
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        triangles: [100000, 500000, 1000000]
+    env:
+      NUMBA_NUM_THREADS: '4'
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '4'
+      PYTHONUNBUFFERED: '1'
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+          cache: pip
+      - name: Install optional benchmark runtime
+        run: |
+          python -m pip install --requirement requirements.txt
+          python -m pip install --no-cache-dir numba==0.65.1
+      - name: Render positive-area dense Hero fixture
+        run: |
+          mkdir -p temp/r14-05-bench
+          case "${{ matrix.triangles }}" in
+            100000) repeats=3 ;;
+            500000) repeats=2 ;;
+            1000000) repeats=1 ;;
+          esac
+          python skills/refas/scripts/benchmark_render_cpu_dense.py \
+            --case strands --triangles "${{ matrix.triangles }}" \
+            --seed 12345 --size 160 --tile-size 32 --threads 4 \
+            --max-working-mb 1024 --timeout-seconds 540 \
+            --repeats "$repeats" \
+            --out "temp/r14-05-bench/${{ matrix.triangles }}.json"
+      - name: Assess measured renderer outcome (not model fidelity)
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          path=Path("temp/r14-05-bench/${{ matrix.triangles }}.json")
+          report=json.loads(path.read_text(encoding="utf-8"))
+          print("Profile:", report["backend"])
+          print("Fixture SHA:", report["asset"]["sha256"])
+          print("Environment:", report["environment"])
+          print("Wall / RSS / raster stats:")
+          for row in report["runs"]:
+              print(row["status"],row["wallMs"],row["peakRssKiB"],row.get("kernelStats",{}).get("stagesMs"))
+          if not report["summary"]["allComplete"]:
+              print("BLOCKED or FAILED: benchmark does not certify any source/model defect")
+              raise SystemExit(1)
+          PY
+      - name: Save immutable benchmark evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: r14-05-dense-${{ matrix.triangles }}-${{ github.sha }}
+          path: temp/r14-05-bench/${{ matrix.triangles }}.json
+          if-no-files-found: warn
+          retention-days: 30
