@@ -256,7 +256,8 @@ def load_primitives(path: Path, parsed=None):
                 # Preserve legacy no-COLOR_0 fallback for byte-replay stability.
                 primitive_color = material["color"]
                 if vc_index is not None:
-                    pbr = model.get("materials", [{}])[primitive.get("material", 0)].get("pbrMetallicRoughness", {})
+                    raw_materials = model.get("materials") or [{}]
+                    pbr = raw_materials[primitive.get("material", 0)].get("pbrMetallicRoughness", {})
                     if "baseColorFactor" not in pbr:
                         primitive_color = np.ones(3, dtype=np.float64)
                 if material["texture"] is not None and (texcoords is None or len(texcoords) != len(positions)):
@@ -294,6 +295,12 @@ def estimate_decoded_geometry_bytes(model):
                 total += int(normal.get("count", 0)) * 24
             if indices:
                 total += int(indices.get("count", 0)) * 8
+            # COLOR_0 is decoded into float64 RGB and optional per-vertex alpha
+            # for source-faithful PBR; include its memory in preflight budgets.
+            color_attr = attributes.get("COLOR_0")
+            if color_attr is not None:
+                ca = model.get("accessors", [])[color_attr]
+                total += int(ca.get("count", 0)) * (32 if ca.get("type") == "VEC4" else 24)
     return total
 
 
@@ -624,7 +631,7 @@ def main():
             "runtime": {"kind": "offline-numpy-rasterizer", "networkRequests": 0, "deterministicInputs": True},
             "materialSupport": {
                 "supported": ["base-color-factor", "metallic-factor", "roughness-factor"],
-                "unsupported": ["clearcoat", "image-based-lighting", "normal-maps", "textures"],
+                "unsupported": ["clearcoat", "image-based-lighting", "normal-maps", "textures", "vertex-color-0"],
             },
             "geometry": {"parts": len(primitives), "triangles": triangle_count, "bounds": {"min": minimum.tolist(), "max": maximum.tolist()}},
             "canonicalFrame": {"id": frame["id"], "scopeId": frame["scopeId"], "digest": canonical_frame_digest, "source": str(canonical_frame_path) if canonical_frame_path else None, "origin": origin.tolist(), "axes": {"right": basis[:, 0].tolist(), "up": basis[:, 1].tolist(), "forward": basis[:, 2].tolist()}, "scopeParts": scoped_bounds["parts"], "scopeBoundsLocal": {"min": scoped_bounds["min"].tolist(), "max": scoped_bounds["max"].tolist()}},
