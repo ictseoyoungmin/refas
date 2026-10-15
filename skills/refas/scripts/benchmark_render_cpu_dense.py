@@ -9,6 +9,7 @@ the backends currently produce different passes and are not certified peers.
 from __future__ import annotations
 
 import argparse
+import importlib.metadata
 import json
 import os
 from pathlib import Path
@@ -21,6 +22,25 @@ import tempfile
 import numpy as np
 
 from benchmark_render_cpu import bounded, create_fixture, measured_child, sha256
+from render_cpu_visibility import PROFILE as VISIBILITY_PROFILE
+
+
+def cpu_hardware_model():
+    """OS-reported host model, or None when /proc/cpuinfo is not available."""
+    try:
+        for line in Path("/proc/cpuinfo").read_text(encoding="utf8").splitlines():
+            if line.startswith("model name") and ":" in line:
+                return line.split(":", 1)[1].strip()
+    except OSError:
+        pass
+    return None
+
+
+def numba_version():
+    try:
+        return importlib.metadata.version("numba")
+    except importlib.metadata.PackageNotFoundError:
+        return None
 
 
 def main():
@@ -61,6 +81,8 @@ def main():
             if glb.exists() or frame.exists():
                 p.error("--save-fixture directory already contains the benchmark output")
             generated = create_fixture(glb, frame, a.case, a.triangles, a.seed)
+        expected_glb_sha = sha256(glb)
+        expected_frame_sha = sha256(frame)
         runs = []
         worker = Path(__file__).with_name("render_cpu_visibility.py")
         for idx in range(a.repeats):
@@ -77,18 +99,48 @@ def main():
                 report_path = run_dir / "render-report.json"
                 if report_path.is_file():
                     report = json.loads(report_path.read_text(encoding="utf8"))
-                    if (report.get("claimScope") == "diagnostic-only" and
-                            report.get("certificationEligible") is False and
-                            report.get("sourceGlbSha256") == sha256(glb) and
-                            report.get("frameFileSha256") == sha256(frame)):
+                    renderer = report.get("renderer", {})
+                    stats = report.get("stats", {})
+                    outputs = report.get("outputs", [])
+                    png_digests = {}
+                    verified = (report.get("schema") == "refas.visibility-cpu-diagnostic/v1"
+                        and report.get("claimScope") == "diagnostic-only"
+                        and report.get("certificationEligible") is False
+                        and report.get("sourceGlbSha256") == expected_glb_sha
+                        and report.get("frameFileSha256") == expected_frame_sha
+                        and renderer.get("name") == "RefAs Visibility CPU"
+                        and renderer.get("version") == VISIBILITY_PROFILE.split("/", 1)[1]
+                        and renderer.get("backend") == "numba-tiled-shared-visibility"
+                        and stats.get("visibilityEvaluations") == 1
+                        and stats.get("cacheHit") is False
+                        and stats.get("inputTriangles", 0) > 0
+                        and isinstance(outputs, list)
+                        and len(outputs) == 3
+                        and {x.get("pass") for x in outputs} == {"normal", "object-id", "albedo"})
+                    if verified and generated:
+                        verified = stats["inputTriangles"] == generated["triangles"]
+                    if verified:
+                        for item in outputs:
+                            name = item.get("path")
+                            expected = item.get("sha256")
+                            if (name != item.get("pass") + ".png"
+                                    or not isinstance(expected, str)
+                                    or len(expected) != 64):
+                                verified = False
+                                break
+                            png_file = run_dir / name
+                            if not png_file.is_file() or sha256(png_file) != expected:
+                                verified = False
+                                break
+                            png_digests[item["pass"]] = expected
+                    if verified:
                         measured["status"] = "COMPLETE"
                         measured["stderrExcerpt"] = ""
-                        measured["kernelStats"] = report.get("stats")
-                        measured["pngDigests"] = {x["pass"]: x["sha256"]
-                                                  for x in report["outputs"]}
+                        measured["kernelStats"] = stats
+                        measured["pngDigests"] = png_digests
                     else:
                         measured["status"] = "FAILED_BACKEND"
-                        measured["stderrExcerpt"] = "diagnostic report identity mismatch"
+                        measured["stderrExcerpt"] = "source, renderer profile or PNG digest mismatch"
             measured.pop("output", None)
             runs.append(measured)
         good = [r for r in runs if r["status"] == "COMPLETE"]
@@ -96,18 +148,19 @@ def main():
         report = {
             "schema": "refas.cpu-dense-benchmark/v1",
             "claimScope": "measurement-only",
-            "backend": "RefAs Visibility CPU/0.1.0-prototype",
+            "backend": VISIBILITY_PROFILE,
             "fixture": generated,
-            "asset": {"sha256": sha256(glb), "bytes": glb.stat().st_size},
-            "frame": {"sha256": sha256(frame)},
+            "asset": {"sha256": expected_glb_sha, "bytes": glb.stat().st_size},
+            "frame": {"sha256": expected_frame_sha},
             "configuration": {"case": a.case if generated else "provided-GLB",
                               "size": a.size, "tileSize": a.tile_size,
                               "threads": a.threads, "maxWorkingMiB": a.max_working_mb,
                               "timeoutSeconds": a.timeout_seconds, "repeats": a.repeats,
                               "cacheEnabled": False, "view": "hero"},
             "environment": {"python": platform.python_version(), "numpy": np.__version__,
+                            "numba": numba_version(),
                             "platform": platform.platform(), "machine": platform.machine(),
-                            "logicalCpus": os.cpu_count()},
+                            "cpuModel": cpu_hardware_model(), "logicalCpus": os.cpu_count()},
             "runs": runs,
             "summary": {"allComplete": len(good) == a.repeats,
                         "completed": len(good),
