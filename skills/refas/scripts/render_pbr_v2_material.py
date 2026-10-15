@@ -21,9 +21,10 @@ from PIL import Image
 from render_glb import load_primitives, load_canonical_frame, local_to_world, parse_glb
 from render_pbr_v2_visibility import render_visibility, PROFILE as VISIBILITY_PROFILE
 from render_pbr_v2_texture import resolve_base_sampler, sample_linear_texture
+from render_pbr_v2_mip import compute_uv_derivatives
 
 SCHEMA="refas.pbr-v2-material-preview/v1"
-PROFILE="RefAs PBR v2 Opaque Preview/0.2.0-texture-lod0"
+PROFILE="RefAs PBR v2 Opaque Preview/0.3.0-analytic-mips"
 PASSES=("albedo","normal","object-id","beauty")
 BACKGROUND=np.array([12,15,19],dtype=np.uint8)
 
@@ -159,7 +160,7 @@ def _pbr_preview(base,normal,eye,metallic,roughness):
 
 
 def shade_visible(primitives,visibility,material_specs,position,
-                  passes=PASSES,*,background=BACKGROUND):
+                  passes=PASSES,*,background=BACKGROUND,camera_fov=None):
     """PBR material attributes interpolated only at pixels that win depth."""
     if not passes or len(set(passes)) != len(passes) or any(x not in PASSES for x in passes):
         raise ValueError("PBR_V2_UNSUPPORTED: requested material passes")
@@ -195,7 +196,22 @@ def shade_visible(primitives,visibility,material_specs,position,
             color*=np.einsum("ni,nij->nj",w,primitive.vertex_colors[tris])
         if sampler is not None:
             uv=np.einsum("ni,nij->nj",w,primitive.texcoords[tris])
-            color*=sample_linear_texture(sampler,uv)
+            needs_gradient=(sampler["minFilter"]!=sampler["magFilter"] or
+                            sampler["minFilter"] in (9984,9985,9986,9987))
+            if needs_gradient:
+                if camera_fov is None:
+                    raise ValueError("PBR_V2_INVALID_VISIBILITY: camera projection required for mip LOD")
+                dy,dx=None,None
+                dx,dy=compute_uv_derivatives(
+                    {"sourceWeights":w,"depth":visibility["depth"][ty,tx],
+                     "cameraVertices":visibility["cameraVertices"],
+                     "sourceFaces":visibility["sourceFaces"]},
+                    tri_ids[choose],primitive.texcoords, size,camera_fov)
+                # The sourceFaces indices refer to global scene vertices;
+                # create global TEXCOORD_0 layout matching sourceFaces.
+                color*=sample_linear_texture(sampler,uv,dx,dy)
+            else:
+                color*=sample_linear_texture(sampler,uv)
             texture_pixel_count+=len(choose)
         color=np.clip(color,0,1)
         if "albedo" in outputs:
@@ -231,7 +247,7 @@ def render_material_preview(primitives,model,position,target,up,fov,size,passes=
     visibility=render_visibility(primitives,position,target,up,fov,size,
                     tile_size=tile_size,threads=threads,max_working_mib=max_working_mib)
     seen=time.perf_counter()
-    outputs,stats=shade_visible(primitives,visibility,specs,position,passes)
+    outputs,stats=shade_visible(primitives,visibility,specs,position,passes,camera_fov=fov)
     shaded=time.perf_counter()
     return outputs,visibility,{
         **stats,"visibility":visibility["stats"],
@@ -264,7 +280,9 @@ def main():
     model,binary=parse_glb(glb)
     if _sha(glb.read_bytes())!=_sha(source):
         raise ValueError("PBR_V2_INVALID_ASSET: source modified during read")
-    _,primitives=load_primitives(glb,parsed=(model,binary))
+    _,primitives=load_primitives(glb,parsed=(model,binary),
+        max_texture_pixels=2_097_152,max_total_texture_pixels=4_194_304,
+        max_image_encoded_bytes=16*1024*1024)
     frame,basis,origin,frame_digest=load_canonical_frame(frame_path)
     if _sha(frame_path.read_bytes())!=_sha(frame_raw):
         raise ValueError("PBR_V2_INVALID_CAMERA: frame modified during read")
@@ -294,12 +312,14 @@ def main():
             "frameDigest":frame_digest,"size":args.size,
             "passes":list(images),"materialContract":{
                 "supported":["opaque","base-color-factor","vertex-color-0","metallic-factor","roughness-factor",
-                             "base-color-texture-png-lod0-nearest-linear-wrap"],
-                "unsupported":["texture-mipmaps","texture-lod-filter-selection","texture-extensions",
+                             "base-color-texture-png-analytic-mipmap-nearest-linear-trilinear"],
+                "unsupported":["texture-extensions","texture-derivative-singular",
                                "normal-map","alpha-mask","alpha-blend","ibl","emissive","extensions"],
                 "lighting":"fixed-direct-three-light-preview-no-ibl",
                 "transfer":"srgb-decode-before-texel-filter-piecewise-v1",
-                "textureSampling":"source-uv-perspective-lod0", "appearanceCertified":False},
+                "textureSampling":"analytic-original-triangle-ray-derivatives-min-mag-mips",
+                "mipmapGeneration":"linear-rgb-box-2x2-edge-replicated-v1",
+                "appearanceCertified":False},
             "stats":stats,"outputs":entries,
             "geometryDigests":{
                 "depth":_sha(np.ascontiguousarray(visibility["depth"]).tobytes()),
