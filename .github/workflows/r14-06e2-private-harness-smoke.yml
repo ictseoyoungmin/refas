@@ -1,0 +1,82 @@
+name: R14-06E2 Private Host Harness Smoke (synthetic only)
+on:
+  push:
+    branches:
+      - 'bench/r14-06e2-harness-*'
+permissions:
+  contents: read
+jobs:
+  real-blender-two-view:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '2'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install actual Blender runtime
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends blender
+          blender --background --version
+          python -m pip install -r requirements.txt
+      - name: Generate synthetic glTF 120 face, COLOR_0 plus texture
+        run: |
+          mkdir -p temp/e2
+          python skills/refas/scripts/create_blender_color0_texture_fixture.py \
+            --glb temp/e2/source.glb \
+            --frame temp/e2/frame.json \
+            --triangles 120 --side 256 > temp/e2/fixture.json
+      - name: Execute private-harness path using REAL Blender at 160 and 384
+        run: |
+          glb_sha=$(python -c 'import json;print(json.load(open("temp/e2/fixture.json"))["glbSha256"])')
+          frame_sha=$(python -c 'import json;print(json.load(open("temp/e2/fixture.json"))["frameFileSha256"])')
+          python skills/refas/scripts/qa_external_blender_private.py \
+            --glb temp/e2/source.glb --frame temp/e2/frame.json \
+            --out temp/e2/two-view --blender blender \
+            --source-kind SYNTHETIC_TEST \
+            --expected-glb-sha "$glb_sha" \
+            --expected-frame-sha "$frame_sha" \
+            --expected-triangles 120 \
+            --sizes 160,384 --samples 4 --threads 2 \
+            --rss-cap-mib 2048 --timeout 300
+      - name: Independently check result identity and source/renderer constraints
+        run: |
+          python - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          from PIL import Image
+          root=Path('temp/e2')
+          doc=json.loads((root/'two-view/private-render-report.json').read_text())
+          src=json.loads((root/'fixture.json').read_text())
+          assert doc['schema']=='refas.external-blender-private-fullsource/v1'
+          assert doc['sourceKind']=='SYNTHETIC_TEST'
+          assert doc['sourceGlbSha256']==src['glbSha256']
+          assert doc['certificationEligible'] is False
+          assert doc['photoResemblance']=='NOT_EVALUATED'
+          assert [v['resolution'] for v in doc['views']]==[[160,160],[384,384]]
+          for r in doc['views']:
+              assert r['importedSourceTriangles']==120
+              assert r['boundColorMaterialNodes']
+              assert r['monitor']['sampledPeakProcessTreeRssKiB']>0
+              size=r['resolution'][0]
+              path=root/'two-view'/str(size)/'render.png'
+              assert hashlib.sha256(path.read_bytes()).hexdigest()==r['imageSha256']
+              with Image.open(path) as im:
+                  assert im.size==(size,size)
+          print('EXTERNAL_E2_TWO_VIEW_UNMODIFIED_SOURCE_COMPLETE')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: r14e2-synthetic-two-view-${{ github.sha }}
+          path: |
+            temp/e2/fixture.json
+            temp/e2/two-view/
+          retention-days: 30
+          if-no-files-found: warn
