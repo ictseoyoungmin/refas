@@ -1,0 +1,83 @@
+name: R14-06E Blender Cycles Headless Cross-Renderer (opt-in)
+on:
+  push:
+    branches:
+      - 'bench/r14-06e-*'
+
+permissions:
+  contents: read
+
+jobs:
+  blender-gltf-source:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    env:
+      OMP_NUM_THREADS: '2'
+      OPENBLAS_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - name: Install independent Blender binary and host Python
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends blender
+          blender --background --version
+          python -m pip install -r requirements.txt
+      - name: Generate SHA-pinned synthetic indexed GLB (COLOR_0 plus baseColorTexture)
+        run: |
+          mkdir -p temp/r14-06e
+          python skills/refas/scripts/create_blender_color0_texture_fixture.py \
+            --glb temp/r14-06e/color0-texture.glb \
+            --frame temp/r14-06e/camera.frame.json \
+            --side 256 --triangles 120 \
+            > temp/r14-06e/fixture.json
+      - name: Run Blender imported source / real Cycles renderer
+        run: |
+          python skills/refas/scripts/render_external_blender.py \
+            --glb temp/r14-06e/color0-texture.glb \
+            --frame temp/r14-06e/camera.frame.json \
+            --out temp/r14-06e/external \
+            --blender blender --size 160 \
+            --samples 8 --threads 2 --timeout 900 \
+            --max-working-mb 2048
+      - name: Independently inspect source importer contract and PNG bytes
+        run: |
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          from PIL import Image
+          p=Path('temp/r14-06e')
+          info=json.loads((p/'fixture.json').read_text())
+          report=json.loads((p/'external/report.json').read_text())
+          assert report['schema']=='refas.external-pbr-preview/v1'
+          assert report['claimScope']=='external-pbr-preview-only'
+          assert report['certificationEligible'] is False
+          assert report['cameraAuthority']=='UNREGISTERED-DIAGNOSTIC'
+          assert report['crossRendererEquivalence']=='NOT_ESTABLISHED'
+          assert report['source']['sourceTriangles']==120
+          assert report['source']['sourceGlbSha256']==info['glbSha256']
+          assert report['source']['sourceUsesColor0'] is True
+          assert len(report['materialEvidence']['importedColorAttributes'])>0
+          assert report['backend']['engine']=='Blender Cycles CPU'
+          output=p/'external/render.png'
+          assert hashlib.sha256(output.read_bytes()).hexdigest()==report['output']['sha256']
+          with Image.open(output) as img:
+            assert img.size==(160,160)
+          print('EXTERNAL_CYCLES_IMPORTED_COLOR0_AND_PNG',report['backend']['version'],
+                report['timingsMs'])
+          PY
+      - name: Publish only independently rendered synthetic evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: r14-06e-blender-synthetic-${{ github.sha }}
+          path: |
+            temp/r14-06e/fixture.json
+            temp/r14-06e/external/
+          if-no-files-found: warn
+          retention-days: 30
