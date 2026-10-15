@@ -1,0 +1,81 @@
+name: R14-06D Synthetic 1024px PBR v2 Stress (isolated)
+
+# Never run full source stress as part of normal PR/main/develop CI.
+# Private Monster Bed GLB is NOT available to nor fetched by this job.
+on:
+  push:
+    branches:
+      - 'bench/r14-06d-*'
+
+permissions:
+  contents: read
+
+jobs:
+  same-host-texture-stress:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      NUMBA_NUM_THREADS: '4'
+      OPENBLAS_NUM_THREADS: '1'
+      PYTHONUNBUFFERED: '1'
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+          cache: pip
+      - name: Install optional benchmark environment
+        run: |
+          python -m pip install --requirement requirements.txt
+          python -m pip install --no-cache-dir numba==0.65.1
+      - name: Generate ACTUAL 1024px PNG-containing indexed synthetic GLB
+        run: |
+          mkdir -p temp/r14-06d
+          python skills/refas/scripts/create_pbr_v2_texture_benchmark_fixture.py \
+            --out-glb temp/r14-06d/textured-stress.glb \
+            --out-frame temp/r14-06d/camera.frame.json \
+            --size 1024 --triangles 120 --seed 137 --filter 9987 \
+            > temp/r14-06d/fixture.json
+      - name: Same CPU/process cold and warm full-pass SHA verification
+        run: |
+          python skills/refas/scripts/benchmark_pbr_v2_full.py \
+            --glb temp/r14-06d/textured-stress.glb \
+            --frame temp/r14-06d/camera.frame.json \
+            --out temp/r14-06d/render \
+            --sizes 160,384 --tile 32 --threads 4 --repeats 3 \
+            --alt 1:16,4:64 --max-working-mb 1024
+      - name: Validate report is explicit, complete and noncertifying
+        run: |
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          folder=Path('temp/r14-06d')
+          f=json.loads((folder/'fixture.json').read_text())
+          r=json.loads((folder/'render/report.json').read_text())
+          assert r['schema']=='refas.pbr-v2-full-source-benchmark/v1'
+          assert r['claimScope']=='material-preview-only' and not r['certificationEligible']
+          assert r['asset']['sourceTriangles']==120
+          assert r['asset']['glbSha256']==f['glbSha256']
+          assert [v['resolution'][0] for v in r['views']]==[160,384]
+          for v in r['views']:
+              assert len(v['warm'])==3 and len(v['tileThreadAlternates'])==2
+              assert v['parity']=='EXACT_PIXEL_AND_VISIBILITY_SHA'
+              assert v['coldFirst']['textureSampledPixels']>0
+              for label,meta in v['coldFirst']['passes'].items():
+                  path=folder/'render'/f"{v['resolution'][0]}-{label}.png"
+                  assert hashlib.sha256(path.read_bytes()).hexdigest()==meta['pngSha256']
+          print('COMPLETE',r['environment']['cpu'],
+                [(v['resolution'][0],v['warmMedianMs']) for v in r['views']])
+          PY
+      - name: Publish bounded noncertifying measurement artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: r14-06d-synthetic-textured-${{ github.sha }}
+          path: |
+            temp/r14-06d/fixture.json
+            temp/r14-06d/render/
+          if-no-files-found: warn
+          retention-days: 30
