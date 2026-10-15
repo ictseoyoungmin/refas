@@ -181,6 +181,13 @@ def shade_visible(primitives,visibility,material_specs,position,
         outputs["normal"][:]=BACKGROUND
     shaded=0
     camera_position=np.asarray(position,dtype=np.float64)
+    gradient_required=any(spec[4] is not None and (
+        spec[4]["minFilter"]!=spec[4]["magFilter"] or
+        spec[4]["minFilter"] in (9984,9985,9986,9987)) for spec in material_specs)
+    source_uv_scene=(np.ascontiguousarray(np.concatenate([
+        p.texcoords if p.texcoords is not None
+        else np.zeros((len(p.positions),2),dtype=np.float64) for p in primitives]))
+        if gradient_required else None)
     texture_pixel_count=0
     for pid,(primitive,(factor,metallic,roughness,double_sided,sampler)) in enumerate(zip(primitives,material_specs)):
         choose=np.nonzero(parts==pid)[0]
@@ -201,14 +208,11 @@ def shade_visible(primitives,visibility,material_specs,position,
             if needs_gradient:
                 if camera_fov is None:
                     raise ValueError("PBR_V2_INVALID_VISIBILITY: camera projection required for mip LOD")
-                dy,dx=None,None
                 dx,dy=compute_uv_derivatives(
                     {"sourceWeights":w,"depth":visibility["depth"][ty,tx],
                      "cameraVertices":visibility["cameraVertices"],
                      "sourceFaces":visibility["sourceFaces"]},
-                    tri_ids[choose],primitive.texcoords, size,camera_fov)
-                # The sourceFaces indices refer to global scene vertices;
-                # create global TEXCOORD_0 layout matching sourceFaces.
+                    tri_ids[choose],source_uv_scene,size,camera_fov)
                 color*=sample_linear_texture(sampler,uv,dx,dy)
             else:
                 color*=sample_linear_texture(sampler,uv)
