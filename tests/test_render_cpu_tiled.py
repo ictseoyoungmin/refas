@@ -38,7 +38,10 @@ class TiledCpuTests(unittest.TestCase):
     def test_real_grid_threads_and_tiles_are_bit_identical(self):
         coords,_,faces=grid_geometry(1024,organic=True)
         models=[part(coords,faces)]
-        reference=self.render(models,mode="normal",size=96,tiles=32,threads=1)
+        camera=np.array([0.,0.,-5.])
+        look=np.array([0.,0.,0.])
+        reference=self.render(models,mode="normal",size=96,tiles=32,threads=1,
+                              position=camera,target=look)
         self.assertGreater(reference[3]["coveredPixels"],0)
         self.assertEqual(reference[3]["inputTriangles"],1024)
         self.assertGreater(reference[3]["binEntries"],0)
@@ -46,7 +49,8 @@ class TiledCpuTests(unittest.TestCase):
         supported=[n for n in supported if n<=numba_config.NUMBA_NUM_THREADS]
         for tile in (16,32,64):
             for threads in supported:
-                candidate=self.render(models,mode="normal",size=96,tiles=tile,threads=threads)
+                candidate=self.render(models,mode="normal",size=96,tiles=tile,threads=threads,
+                    position=camera,target=look)
                 with self.subTest(tile=tile,threads=threads):
                     self.assertTrue(np.array_equal(reference[0],candidate[0]))
                     self.assertTrue(np.array_equal(reference[1],candidate[1]))
