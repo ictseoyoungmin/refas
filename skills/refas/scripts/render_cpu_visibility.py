@@ -22,7 +22,7 @@ from PIL import Image
 
 from render_cpu_opt import require_supported
 from render_cpu_tiled import render_hero_tiled, njit
-from render_glb import MIB, load_canonical_frame, load_primitives, local_to_world, parse_glb
+from render_glb import MIB, load_canonical_frame, load_primitives, local_to_world, parse_glb, reject_unhandled_vertex_color
 
 PROFILE="RefAs Visibility CPU/0.2.0-microtriangle"
 SCHEMA="refas.visibility-cpu-diagnostic/v1"
@@ -200,6 +200,11 @@ def render_bundle(primitives,position,target,up,fov,size,passes,
         raise RuntimeError("VISIBILITY_CPU_UNAVAILABLE: optional Numba required")
     if not passes or len(passes)!=len(set(passes)) or any(p not in PASSES for p in passes):
         raise ValueError("VISIBILITY_CPU_UNSUPPORTED: pass list")
+    # The shared winner/depth cache has no per-pixel perspective weights.
+    # Reject material appearance BEFORE cache writes/reads or PNG publication.
+    # Normal and Object-ID diagnostics remain available on unchanged geometry.
+    if "albedo" in passes:
+        reject_unhandled_vertex_color(primitives, "albedo")
     source_triangles=sum(len(p.indices) for p in primitives)
     if source_triangles<=0:
         raise ValueError("VISIBILITY_CPU_INVALID_ASSET: missing triangle faces")

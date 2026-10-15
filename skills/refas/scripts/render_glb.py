@@ -146,6 +146,42 @@ class Primitive:
     texcoords: np.ndarray | None = None
     base_color_texture: np.ndarray | None = None
     base_color_texture_sha256: str | None = None
+    # glTF COLOR_0 linear vertex colors. Geometry-only passes ignore them.
+    vertex_colors: np.ndarray | None = None
+    vertex_alpha: np.ndarray | None = None
+
+
+def decode_vertex_color(model, binary, accessor_index, count):
+    """Decode glTF COLOR_0 VEC3/VEC4 in its declared linear color space.
+
+    Only standard float or normalized u8/u16 component encodings are
+    supported; unsupported encodings must never silently become flat gray.
+    """
+    entry = model["accessors"][accessor_index]
+    component = entry.get("componentType")
+    if entry.get("type") not in ("VEC3", "VEC4") or component not in (5126, 5121, 5123):
+        raise ValueError("VERTEX_COLOR_UNSUPPORTED: COLOR_0 component type")
+    if component != 5126 and entry.get("normalized") is not True:
+        raise ValueError("VERTEX_COLOR_UNSUPPORTED: integer COLOR_0 must be normalized")
+    values = accessor(model, binary, accessor_index).astype(np.float64)
+    if values.ndim != 2 or len(values) != count or values.shape[1] not in (3, 4):
+        raise ValueError("VERTEX_COLOR_INVALID_ASSET: COLOR_0 vertex count")
+    if component == 5121:
+        values /= 255.0
+    elif component == 5123:
+        values /= 65535.0
+    if not np.isfinite(values).all() or np.any(values < 0) or np.any(values > 1):
+        raise ValueError("VERTEX_COLOR_INVALID_ASSET: nonfinite/out-of-gamut COLOR_0")
+    return values[:, :3], values[:, 3] if values.shape[1] == 4 else None
+
+
+def reject_unhandled_vertex_color(primitives, mode, *, supported=False):
+    """Before any framebuffer writes, refuse appearance-only gray fallbacks."""
+    if mode in ("albedo", "beauty") and not supported:
+        offenders = [p.name for p in primitives if p.vertex_colors is not None]
+        if offenders:
+            raise ValueError("VERTEX_COLOR_UNSUPPORTED: COLOR_0 appearance requires "
+                             "a perspective-correct backend: "+", ".join(offenders[:3]))
 
 
 def load_primitives(path: Path, parsed=None):
@@ -211,12 +247,26 @@ def load_primitives(path: Path, parsed=None):
                 normals = normals / np.where(norms > 1e-12, norms, 1)
                 material = materials[primitive.get("material", 0)]
                 texcoords = accessor(model, binary, primitive["attributes"]["TEXCOORD_0"]).astype(np.float64) if "TEXCOORD_0" in primitive["attributes"] else None
+                vc_index = primitive["attributes"].get("COLOR_0")
+                vertex_colors, vertex_alpha = (
+                    decode_vertex_color(model, binary, vc_index, len(positions))
+                    if vc_index is not None else (None, None))
+                # glTF's COLOR_0 is linear and multiplied by the material
+                # baseColorFactor (white by spec when the factor is absent).
+                # Preserve legacy no-COLOR_0 fallback for byte-replay stability.
+                primitive_color = material["color"]
+                if vc_index is not None:
+                    raw_materials = model.get("materials") or [{}]
+                    pbr = raw_materials[primitive.get("material", 0)].get("pbrMetallicRoughness", {})
+                    if "baseColorFactor" not in pbr:
+                        primitive_color = np.ones(3, dtype=np.float64)
                 if material["texture"] is not None and (texcoords is None or len(texcoords) != len(positions)):
                     raise ValueError("textured primitive requires TEXCOORD_0 for every vertex")
                 primitives.append(Primitive(
-                    positions, normals, indices, material["color"], material["metallic"], material["roughness"],
+                    positions, normals, indices, primitive_color, material["metallic"], material["roughness"],
                     len(primitives), node.get("name", mesh.get("name", f"part-{len(primitives)}")),
-                    texcoords=texcoords, base_color_texture=material["texture"], base_color_texture_sha256=material["textureSha256"]
+                    texcoords=texcoords, base_color_texture=material["texture"], base_color_texture_sha256=material["textureSha256"],
+                    vertex_colors=vertex_colors, vertex_alpha=vertex_alpha
                 ))
         for child in node.get("children", []):
             visit(child, world)
@@ -245,6 +295,12 @@ def estimate_decoded_geometry_bytes(model):
                 total += int(normal.get("count", 0)) * 24
             if indices:
                 total += int(indices.get("count", 0)) * 8
+            # COLOR_0 is decoded into float64 RGB and optional per-vertex alpha
+            # for source-faithful PBR; include its memory in preflight budgets.
+            color_attr = attributes.get("COLOR_0")
+            if color_attr is not None:
+                ca = model.get("accessors", [])[color_attr]
+                total += int(ca.get("count", 0)) * (32 if ca.get("type") == "VEC4" else 24)
     return total
 
 
@@ -282,6 +338,7 @@ def shade(base, normal, view, metallic, roughness):
 
 
 def render(primitives, position, target, output: Path, *, width=640, height=640, fov=31, mode="beauty", up_hint=None, tile_size=256, deadline=None):
+    reject_unhandled_vertex_color(primitives, mode)
     started = time.perf_counter()
     position = np.asarray(position, dtype=np.float64)
     target = np.asarray(target, dtype=np.float64)
@@ -574,7 +631,7 @@ def main():
             "runtime": {"kind": "offline-numpy-rasterizer", "networkRequests": 0, "deterministicInputs": True},
             "materialSupport": {
                 "supported": ["base-color-factor", "metallic-factor", "roughness-factor"],
-                "unsupported": ["clearcoat", "image-based-lighting", "normal-maps", "textures"],
+                "unsupported": ["clearcoat", "image-based-lighting", "normal-maps", "textures", "vertex-color-0"],
             },
             "geometry": {"parts": len(primitives), "triangles": triangle_count, "bounds": {"min": minimum.tolist(), "max": maximum.tolist()}},
             "canonicalFrame": {"id": frame["id"], "scopeId": frame["scopeId"], "digest": canonical_frame_digest, "source": str(canonical_frame_path) if canonical_frame_path else None, "origin": origin.tolist(), "axes": {"right": basis[:, 0].tolist(), "up": basis[:, 1].tolist(), "forward": basis[:, 2].tolist()}, "scopeParts": scoped_bounds["parts"], "scopeBoundsLocal": {"min": scoped_bounds["min"].tolist(), "max": scoped_bounds["max"].tolist()}},
