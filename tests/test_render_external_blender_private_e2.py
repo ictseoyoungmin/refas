@@ -54,7 +54,9 @@ class PrivateExternalGateTests(unittest.TestCase):
         self.glb=root/"synthetic.glb";self.frame=root/"frame.json"
         generate(self.glb,self.frame,side=256,triangles=120)
         self.image=root/"render.png"
-        Image.new("RGB",(96,96),(12,24,37)).save(self.image)
+        pic=Image.new("RGB",(96,96),(12,24,37))
+        pic.putpixel((48,48),(180,140,90))
+        pic.save(self.image)
         self.report=synthetic_report(self.glb,self.frame,self.image)
 
     def check(self,report=None):
