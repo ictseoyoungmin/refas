@@ -25,6 +25,13 @@ export const CPU_RENDER_BACKENDS=Object.freeze({
     worker:'render_cpu_opt.py',installed:true,diagnostic:true,
     replay:null,admissibleCertification:'none',
   }),
+  'tiled-cpu':Object.freeze({
+    id:'tiled-cpu',identity:'RefAs Tiled CPU/0.1.0-prototype',
+    renderer:{family:'other',name:'RefAs Tiled CPU',
+      version:'0.1.0-prototype',backend:'numba-tiled-parallel'},
+    worker:'render_cpu_tiled.py',installed:true,diagnostic:true,
+    replay:null,admissibleCertification:'none',
+  }),
 });
 const SHA=/^[a-f0-9]{64}$/u;
 const SCRIPTS_ROOT=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
@@ -72,7 +79,7 @@ export function normalizeCpuRenderJob(job) {
   const renderPass=job.pass??'beauty';
   if(id==='legacy-portable' && renderPass!=='beauty')
     throw Error('legacy diagnostic supports beauty only');
-  if(id==='optimized-cpu' && !['normal','object-id'].includes(renderPass))
+  if((id==='optimized-cpu'||id==='tiled-cpu') && !['normal','object-id'].includes(renderPass))
     throw Error('optimized CPU diagnostic requires normal or object-id pass');
   if(job.intent!=='diagnostic')throw Error('R14-01 output is diagnostic-only');
   const asset={path:relativeName(job.asset?.path,'asset'),sha256:assertedSha(job.asset?.sha256,'asset')};
@@ -82,10 +89,20 @@ export function normalizeCpuRenderJob(job) {
     timeoutSeconds:bounded(job.resources?.timeoutSeconds,1,300,'timeoutSeconds'),
     maxWorkingMiB:bounded(job.resources?.maxWorkingMiB,8,2048,'maxWorkingMiB'),
   };
+  if(id==='tiled-cpu'){
+    const tileSize=job.resources?.tileSize??32;
+    const threads=job.resources?.threads??1;
+    if(![16,32,64].includes(tileSize))throw Error('tiled-cpu tileSize requires 16, 32 or 64');
+    if(![1,2,4,8].includes(threads))throw Error('tiled-cpu threads requires 1, 2, 4 or 8');
+    resources.tileSize=tileSize;
+    resources.threads=threads;
+  }
   for(const [obj,keys,label] of [[job.asset,['path','sha256'],'asset'],
     [job.frame,['path','sha256'],'frame'],
     [job.backend,['id','algorithmVersion'],'backend'],
-    [job.resources,['timeoutSeconds','maxWorkingMiB'],'resources']]) {
+    [job.resources,id==='tiled-cpu'
+      ?['timeoutSeconds','maxWorkingMiB','tileSize','threads']
+      :['timeoutSeconds','maxWorkingMiB'],'resources']]) {
     if(!obj||Object.keys(obj).some(x=>!keys.includes(x)))throw Error(label+' includes unsupported keys');
   }
   return Object.freeze({schema:RENDER_JOB_SCHEMA,asset,frame,
@@ -96,10 +113,10 @@ function classifyRun(run) {
   const combined=String(run.stderr||'')+' '+String(run.error?.message||'');
   if(run.error?.code==='ETIMEDOUT'||/RenderTimeoutError|wall.clock timeout|timed out/iu.test(combined))
     return 'BLOCKED_TIMEOUT';
-  if(/MemoryError|working.memory budget|source GLB parsing may peak|requires at least/iu.test(combined))
+  if(/TILED_CPU_RESOURCE|MemoryError|working.memory budget|source GLB parsing may peak|requires at least/iu.test(combined))
     return 'BLOCKED_RESOURCE';
-  if(/OPTIMIZED_CPU_UNAVAILABLE|OPTIMIZED_CPU_UNSUPPORTED|unsupported|not supported/iu.test(combined))return 'BLOCKED_UNSUPPORTED';
-  if(/ValueError|embedded GLB|accessor|invalid camera/iu.test(combined))return 'FAILED_ASSET';
+  if(/TILED_CPU_UNAVAILABLE|TILED_CPU_UNSUPPORTED|OPTIMIZED_CPU_UNAVAILABLE|OPTIMIZED_CPU_UNSUPPORTED|unsupported|not supported/iu.test(combined))return 'BLOCKED_UNSUPPORTED';
+  if(/TILED_CPU_INVALID_ASSET|ValueError|embedded GLB|accessor|invalid camera/iu.test(combined))return 'FAILED_ASSET';
   return 'FAILED_BACKEND';
 }
 function blocked(job,status,detail) {
@@ -142,6 +159,8 @@ export async function renderDiagnosticHero({root,job,outDir}={}) {
       '--out',workerOut,'--size',String(spec.size)];
     if(spec.backend.id==='legacy-portable')cmd.push('--hero-only');
     else cmd.push('--pass',spec.pass);
+    if(spec.backend.id==='tiled-cpu')cmd.push('--tile-size',String(spec.resources.tileSize),
+      '--threads',String(spec.resources.threads));
     cmd.push(
 
       '--timeout-seconds',String(spec.resources.timeoutSeconds),
@@ -165,6 +184,8 @@ export async function renderDiagnosticHero({root,job,outDir}={}) {
         nativeReport.claimScope!=='render-integrity-only'))||
       (!legacy && (nativeReport.claimScope!=='diagnostic-only'||
         nativeReport.pass!==spec.pass||nativeReport.frameFileSha256!==frame.sha256||
+        (spec.backend.id==='tiled-cpu'&&(nativeReport.tileSize!==spec.resources.tileSize||
+          nativeReport.threads!==spec.resources.threads))||
         nativeReport.outputs?.length!==1||nativeReport.outputs[0]?.path!=='hero.png')))
       return blocked(spec,'FAILED_BACKEND','worker report fails trusted backend identity or input contract');
     const png=await fs.readFile(path.join(workerOut,'hero.png'));
@@ -177,6 +198,8 @@ export async function renderDiagnosticHero({root,job,outDir}={}) {
       claimScope:'diagnostic-only',sourceSha256:asset.sha256,frameSha256:frame.sha256,
       backend:{...spec.backend,executableSha256:sha(await fs.readFile(script))},
       view:'hero',pass:spec.pass,size:spec.size,
+      ...(spec.backend.id==='tiled-cpu'?{tileSize:spec.resources.tileSize,
+        threads:spec.resources.threads}:{}),
       outputs:[{path:'hero.png',sha256:sha(png)}],certificationEligible:false,
       ...(legacy?{legacyReportFrameDigest:nativeReport.frameDigest}:{}
       ),...(legacy?{}:{kernelTimings:nativeReport.durationsMs,geometry:nativeReport.stats})};

@@ -108,3 +108,38 @@ test('resource blocked is not reported as a defective asset or a valid render',a
   assert.equal(output.outputs.length,0);
   await assert.rejects(fs.access(path.join(root,'diagnostics/resource-refused')));
 });
+
+test('tiled CPU diagnostic is an explicit, immutable and non-certifying backend',async t=>{
+  const {root,job}=await fixture(t);
+  assert.equal(getTrustedRenderBackend('tiled-cpu').admissibleCertification,'none');
+  assert.equal(getTrustedRenderBackend('tiled-cpu').replay,null);
+  const base={...job,backend:{id:'tiled-cpu',algorithmVersion:'1'},
+    pass:'object-id',resources:{timeoutSeconds:90,maxWorkingMiB:512,tileSize:16,threads:1}};
+  assert.throws(()=>normalizeCpuRenderJob({...base,resources:{...base.resources,tileSize:7}}),/tileSize/);
+  assert.throws(()=>normalizeCpuRenderJob({...base,resources:{...base.resources,threads:16}}),/threads/);
+  const python=process.env.CODEX_PRIMARY_RUNTIME_PYTHON||'python3';
+  const installed=spawnSync(python,['-c','import numba'],{encoding:'utf8',timeout:12000}).status===0;
+  const result=await renderDiagnosticHero({root,job:base,outDir:'diagnostics/tiled-hero'});
+  assert.equal(result.schema,RENDER_EXECUTION_SCHEMA);
+  assert.equal(result.claimScope,'diagnostic-only');
+  if(!installed){
+    assert.equal(result.status,'BLOCKED_UNSUPPORTED',result.reason);
+    assert.equal(result.outputs.length,0);
+    await assert.rejects(fs.access(path.join(root,'diagnostics/tiled-hero')));
+    return;
+  }
+  assert.equal(result.status,'COMPLETE',result.reason);
+  assert.equal(result.certificationEligible,false);
+  assert.equal(result.tileSize,16);
+  assert.equal(result.threads,1);
+  assert.equal(result.pass,'object-id');
+  assert.equal(result.backend.identity,'RefAs Tiled CPU/0.1.0-prototype');
+  assert.match(result.backend.executableSha256,/^[a-f0-9]{64}$/u);
+  assert.equal(result.sourceSha256,base.asset.sha256);
+  const bytes=await fs.readFile(path.join(root,'diagnostics/tiled-hero/hero.png'));
+  assert.equal(digest(bytes),result.outputs[0].sha256);
+  const report=JSON.parse(await fs.readFile(path.join(root,'diagnostics/tiled-hero/execution.json'),'utf8'));
+  assert.equal(report.geometry.workerThreads,1);
+  assert.equal(report.geometry.tileSize,16);
+  await assert.rejects(()=>renderDiagnosticHero({root,job:base,outDir:'diagnostics/tiled-hero'}),/already exists/);
+});

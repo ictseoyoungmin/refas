@@ -21,7 +21,7 @@
   ],
   "scripts": {
     "test": "node --test tests/*.test.mjs",
-    "test:python": "python3 -c \"import pathlib; [compile(pathlib.Path(p).read_text(encoding='utf-8'), p, 'exec') for p in ['examples/articulated-figure/create_comparison.py','examples/parameter-fit/create_comparison.py','examples/wing-cover/generate_comparison_candidates.py','skills/refas/scripts/compare_registered.py','skills/refas/scripts/observation_image.py','skills/refas/scripts/evidence_request.py','skills/refas/scripts/evidence_compat.py','skills/refas/scripts/evidence_utility.py','skills/refas/scripts/render_glb.py','skills/refas/scripts/render_pbr.py','skills/refas/scripts/benchmark_render_cpu.py','skills/refas/scripts/render_cpu_opt.py','tests/test_render_cpu_opt.py','skills/refas/scripts/compose_review_board.py','skills/refas/scripts/source_manifest.py']]\"",
+    "test:python": "python3 -c \"import pathlib; [compile(pathlib.Path(p).read_text(encoding='utf-8'), p, 'exec') for p in ['examples/articulated-figure/create_comparison.py','examples/parameter-fit/create_comparison.py','examples/wing-cover/generate_comparison_candidates.py','skills/refas/scripts/compare_registered.py','skills/refas/scripts/observation_image.py','skills/refas/scripts/evidence_request.py','skills/refas/scripts/evidence_compat.py','skills/refas/scripts/evidence_utility.py','skills/refas/scripts/render_glb.py','skills/refas/scripts/render_pbr.py','skills/refas/scripts/benchmark_render_cpu.py','skills/refas/scripts/render_cpu_opt.py','skills/refas/scripts/render_cpu_tiled.py','tests/test_render_cpu_opt.py','tests/test_render_cpu_tiled.py','skills/refas/scripts/compose_review_board.py','skills/refas/scripts/source_manifest.py']]\"",
     "check": "node tools/check-repository.mjs && npm run check:plugins && node skills/refas/scripts/verify_installation_boundary.mjs && node skills/refas/scripts/verify_semantic_instruction_graph.mjs && node skills/refas/scripts/verify_capability_interfaces.mjs && node skills/refas/scripts/verify_discovery_closure.mjs --no-fresh-worker",
     "check:plugins": "node tools/verify-plugin-distribution.mjs",
     "check:instructions": "node skills/refas/scripts/verify_installation_boundary.mjs && node skills/refas/scripts/verify_semantic_instruction_graph.mjs && node skills/refas/scripts/verify_capability_interfaces.mjs",
@@ -33,7 +33,7 @@
     "dogfood:articulated": "node examples/articulated-figure/run.mjs",
     "benchmark:render-pbr": "node skills/refas/scripts/measure_render_pbr.mjs --out temp/render-pbr-measurement.json",
     "benchmark:render-cpu": "python3 skills/refas/scripts/benchmark_render_cpu.py --case strands --triangles 10000 --size 96 --views hero --repeats 3 --out temp/render-cpu-baseline.json",
-    "test:cpu-jit": "python3 -m unittest discover -s tests -p test_render_cpu_opt.py",
+    "test:cpu-jit": "python3 -m unittest discover -s tests -p 'test_render_cpu*.py'",
     "benchmark:matrix": "node examples/benchmark-matrix/run.mjs",
     "benchmark:first-multiview": "node skills/refas/scripts/measure_first_multiview_baseline.mjs --out temp/first-multiview-baseline.json",
     "benchmark:cross-model": "node examples/benchmark-matrix/run-workers.mjs",
