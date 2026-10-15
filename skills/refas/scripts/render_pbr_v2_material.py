@@ -21,9 +21,10 @@ from PIL import Image
 from render_glb import load_primitives, load_canonical_frame, local_to_world, parse_glb
 from render_pbr_v2_visibility import render_visibility, PROFILE as VISIBILITY_PROFILE
 from render_pbr_v2_texture import resolve_base_sampler, sample_linear_texture
+from render_pbr_v2_mip import compute_uv_derivatives
 
 SCHEMA="refas.pbr-v2-material-preview/v1"
-PROFILE="RefAs PBR v2 Opaque Preview/0.2.0-texture-lod0"
+PROFILE="RefAs PBR v2 Opaque Preview/0.3.0-analytic-mips"
 PASSES=("albedo","normal","object-id","beauty")
 BACKGROUND=np.array([12,15,19],dtype=np.uint8)
 
@@ -81,6 +82,7 @@ def validate_opaque_materials(model,primitives):
     if model.get("skins") or model.get("animations"):
         raise ValueError("PBR_V2_UNSUPPORTED_MATERIAL: deformation")
     result=[]
+    image_cache={}
     allowed_attrs={"POSITION","NORMAL","COLOR_0","TEXCOORD_0"}
     for (piece,mat),primitive in zip(_asset_material_specs(model,primitives),primitives):
         if piece.get("mode",4)!=4 or piece.get("targets"):
@@ -115,7 +117,8 @@ def validate_opaque_materials(model,primitives):
         if not np.isfinite(metal+rough) or not 0<=metal<=1 or not 0<=rough<=1:
             raise ValueError("PBR_V2_INVALID_ASSET: metallic/roughness factors")
         base_texture=pbr.get("baseColorTexture")
-        sampler=(resolve_base_sampler(model,base_texture,primitive)
+        sampler=(resolve_base_sampler(model,base_texture,primitive,
+                                      image_cache=image_cache)
                  if base_texture is not None else None)
         result.append((np.asarray(rgba[:3],dtype=np.float64),metal,rough,
                        bool(mat.get("doubleSided",False)),sampler))
@@ -159,7 +162,7 @@ def _pbr_preview(base,normal,eye,metallic,roughness):
 
 
 def shade_visible(primitives,visibility,material_specs,position,
-                  passes=PASSES,*,background=BACKGROUND):
+                  passes=PASSES,*,background=BACKGROUND,camera_fov=None):
     """PBR material attributes interpolated only at pixels that win depth."""
     if not passes or len(set(passes)) != len(passes) or any(x not in PASSES for x in passes):
         raise ValueError("PBR_V2_UNSUPPORTED: requested material passes")
@@ -180,6 +183,13 @@ def shade_visible(primitives,visibility,material_specs,position,
         outputs["normal"][:]=BACKGROUND
     shaded=0
     camera_position=np.asarray(position,dtype=np.float64)
+    gradient_required=any(spec[4] is not None and (
+        spec[4]["minFilter"]!=spec[4]["magFilter"] or
+        spec[4]["minFilter"] in (9984,9985,9986,9987)) for spec in material_specs)
+    source_uv_scene=(np.ascontiguousarray(np.concatenate([
+        p.texcoords if p.texcoords is not None
+        else np.zeros((len(p.positions),2),dtype=np.float64) for p in primitives]))
+        if gradient_required else None)
     texture_pixel_count=0
     for pid,(primitive,(factor,metallic,roughness,double_sided,sampler)) in enumerate(zip(primitives,material_specs)):
         choose=np.nonzero(parts==pid)[0]
@@ -195,7 +205,19 @@ def shade_visible(primitives,visibility,material_specs,position,
             color*=np.einsum("ni,nij->nj",w,primitive.vertex_colors[tris])
         if sampler is not None:
             uv=np.einsum("ni,nij->nj",w,primitive.texcoords[tris])
-            color*=sample_linear_texture(sampler,uv)
+            needs_gradient=(sampler["minFilter"]!=sampler["magFilter"] or
+                            sampler["minFilter"] in (9984,9985,9986,9987))
+            if needs_gradient:
+                if camera_fov is None:
+                    raise ValueError("PBR_V2_INVALID_VISIBILITY: camera projection required for mip LOD")
+                dx,dy=compute_uv_derivatives(
+                    {"sourceWeights":w,"depth":visibility["depth"][ty,tx],
+                     "cameraVertices":visibility["cameraVertices"],
+                     "sourceFaces":visibility["sourceFaces"]},
+                    tri_ids[choose],source_uv_scene,size,camera_fov)
+                color*=sample_linear_texture(sampler,uv,dx,dy)
+            else:
+                color*=sample_linear_texture(sampler,uv)
             texture_pixel_count+=len(choose)
         color=np.clip(color,0,1)
         if "albedo" in outputs:
@@ -226,12 +248,28 @@ def shade_visible(primitives,visibility,material_specs,position,
 
 def render_material_preview(primitives,model,position,target,up,fov,size,passes=PASSES,
                             *,tile_size=32,threads=1,max_working_mib=1024):
+    # Conservative pre-raster memory estimate: Numba/native baseline,
+    # 2 clipped raster slots per face, source vertex arrays, decoded
+    # RGBA, mip hierarchy and temporary filter arrays (96 B/texel).
+    # This is a preflight refusal, NOT a hard process RSS cap.
+    count=sum(len(p.indices) for p in primitives)
+    vertices=sum(len(p.positions) for p in primitives)
+    unique_images={id(p.base_color_texture):p.base_color_texture
+                   for p in primitives if p.base_color_texture is not None}
+    pixels=sum(x.shape[0]*x.shape[1] for x in unique_images.values())
+    if pixels>4_194_304 or any(x.shape[0]*x.shape[1]>2_097_152
+                                for x in unique_images.values()):
+        raise MemoryError("PBR_V2_RESOURCE: decoded scene texture pixel budget")
+    estimated=(384*1024*1024+2*count*(9*8+9*8+4*4)
+               +vertices*48+count*24+size*size*64+pixels*96)
+    if estimated>max_working_mib*1024*1024:
+        raise MemoryError("PBR_V2_RESOURCE: visibility plus mip source footprint")
     specs=validate_opaque_materials(model,primitives)
     started=time.perf_counter()
     visibility=render_visibility(primitives,position,target,up,fov,size,
                     tile_size=tile_size,threads=threads,max_working_mib=max_working_mib)
     seen=time.perf_counter()
-    outputs,stats=shade_visible(primitives,visibility,specs,position,passes)
+    outputs,stats=shade_visible(primitives,visibility,specs,position,passes,camera_fov=fov)
     shaded=time.perf_counter()
     return outputs,visibility,{
         **stats,"visibility":visibility["stats"],
@@ -264,7 +302,10 @@ def main():
     model,binary=parse_glb(glb)
     if _sha(glb.read_bytes())!=_sha(source):
         raise ValueError("PBR_V2_INVALID_ASSET: source modified during read")
-    _,primitives=load_primitives(glb,parsed=(model,binary))
+    _,primitives=load_primitives(glb,parsed=(model,binary),
+        max_texture_pixels=2_097_152,max_total_texture_pixels=4_194_304,
+        max_image_encoded_bytes=16*1024*1024,
+        max_total_image_encoded_bytes=32*1024*1024)
     frame,basis,origin,frame_digest=load_canonical_frame(frame_path)
     if _sha(frame_path.read_bytes())!=_sha(frame_raw):
         raise ValueError("PBR_V2_INVALID_CAMERA: frame modified during read")
@@ -294,12 +335,14 @@ def main():
             "frameDigest":frame_digest,"size":args.size,
             "passes":list(images),"materialContract":{
                 "supported":["opaque","base-color-factor","vertex-color-0","metallic-factor","roughness-factor",
-                             "base-color-texture-png-lod0-nearest-linear-wrap"],
-                "unsupported":["texture-mipmaps","texture-lod-filter-selection","texture-extensions",
+                             "base-color-texture-png-analytic-mipmap-nearest-linear-trilinear"],
+                "unsupported":["texture-extensions","texture-derivative-singular",
                                "normal-map","alpha-mask","alpha-blend","ibl","emissive","extensions"],
                 "lighting":"fixed-direct-three-light-preview-no-ibl",
                 "transfer":"srgb-decode-before-texel-filter-piecewise-v1",
-                "textureSampling":"source-uv-perspective-lod0", "appearanceCertified":False},
+                "textureSampling":"analytic-original-triangle-ray-derivatives-min-mag-mips",
+                "mipmapGeneration":"linear-rgb-box-2x2-edge-replicated-v1",
+                "appearanceCertified":False},
             "stats":stats,"outputs":entries,
             "geometryDigests":{
                 "depth":_sha(np.ascontiguousarray(visibility["depth"]).tobytes()),
