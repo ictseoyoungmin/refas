@@ -12,6 +12,7 @@ import unittest
 
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"skills/refas/scripts"))
 from create_blender_color0_texture_fixture import generate
+from create_blender_no_color_control import make_control
 from render_external_blender import preflight,run
 
 
@@ -28,6 +29,21 @@ class BlenderAdapterPreflightTests(unittest.TestCase):
             self.assertEqual(observed["sourcePrimitiveCount"],1)
             self.assertEqual(observed["camera"]["registration"],
                              "UNREGISTERED-NONAUTHORITATIVE")
+
+    def test_color0_counterfactual_preserves_geometry_and_texture(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);glb=root/"with_color.glb"
+            frame=root/"frame.json"; control=root/"control.glb"
+            generate(glb,frame,side=256,triangles=120)
+            record=make_control(glb,control)
+            a=preflight(glb,frame,160)
+            b=preflight(control,frame,160)
+            self.assertEqual(a["sourceTriangles"],b["sourceTriangles"])
+            self.assertEqual(a["sourcePrimitiveCount"],b["sourcePrimitiveCount"])
+            self.assertTrue(a["sourceUsesColor0"])
+            self.assertFalse(b["sourceUsesColor0"])
+            self.assertEqual(record["removedColorAttributes"],1)
+            self.assertNotEqual(a["sourceGlbSha256"],b["sourceGlbSha256"])
 
     def test_missing_backend_has_typed_error_no_false_output(self):
         with tempfile.TemporaryDirectory() as tmp:
