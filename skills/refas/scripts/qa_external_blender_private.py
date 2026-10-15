@@ -110,12 +110,15 @@ def checked_run(cmd,*,timeout_seconds,rss_cap_mib):
 def run(glb,frame,out,*,expected_sha,expected_frame_sha,
         expected_triangles,sizes=(160,384),samples=4,
         threads=2,blender="blender",rss_cap_mib=4800,
-        per_resolution_timeout=900):
+        per_resolution_timeout=900,source_kind="PRIVATE_ORIGINAL"):
     glb=Path(glb).resolve()
     frame=Path(frame).resolve()
     out=Path(out)
     if out.exists():
         raise ValueError("R14E2_INVALID_OUTPUT: refusing existing output")
+    if source_kind not in ("PRIVATE_ORIGINAL","SYNTHETIC_TEST"):
+        raise ValueError("R14E2_INVALID_CONFIG: source classification")
+    out.parent.mkdir(parents=True,exist_ok=True)
     if len(sizes)!=len(set(sizes)) or not sizes or any(x not in (96,160,384,512) for x in sizes):
         raise ValueError("R14E2_INVALID_CONFIG: resolutions")
     if not 2<=samples<=16 or not 1<=threads<=8 or not 512<=rss_cap_mib<=8192:
@@ -182,7 +185,7 @@ def run(glb,frame,out,*,expected_sha,expected_frame_sha,
             raise ValueError("R14E2_SOURCE_MUTATED: original input changed during execution")
         report={
             "schema":SCHEMA,"status":"COMPLETE",
-            "sourceKind":"ORIGINAL_PRIVATE_GLTF",
+            "sourceKind":source_kind,
             "sourceGlbSha256":expected_sha,
             "frameSha256":expected_frame_sha,
             "expectedSourceTriangles":expected_triangles,
@@ -210,6 +213,7 @@ def main():
     p.add_argument("--frame",type=Path,required=True)
     p.add_argument("--out",type=Path,required=True)
     p.add_argument("--blender",default="blender")
+    p.add_argument("--source-kind",required=True,choices=("PRIVATE_ORIGINAL","SYNTHETIC_TEST"))
     p.add_argument("--expected-glb-sha",default=ORIGINAL_MONSTER_SHA)
     p.add_argument("--expected-frame-sha",default=ORIGINAL_FRAME_SHA)
     p.add_argument("--expected-triangles",type=int,default=ORIGINAL_MONSTER_TRIANGLES)
@@ -226,7 +230,8 @@ def main():
                sizes=tuple(int(x) for x in args.sizes.split(",")),
                samples=args.samples,threads=args.threads,
                rss_cap_mib=args.rss_cap_mib,
-               per_resolution_timeout=args.timeout)
+               per_resolution_timeout=args.timeout,
+               source_kind=args.source_kind)
     print(json.dumps({"status":report["status"],"scope":report["claimScope"],
                       "views":[(v["resolution"],v["imageSha256"])
                                for v in report["views"]]}))
