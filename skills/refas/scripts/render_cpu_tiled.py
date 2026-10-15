@@ -31,7 +31,7 @@ except ImportError:
     numba_config = None
 
 SCHEMA = "refas.tiled-cpu-diagnostic/v1"
-PROFILE = "RefAs Tiled CPU/0.1.0-prototype"
+PROFILE = "RefAs Tiled CPU/0.2.0-microtriangle"
 NEAR = 0.01
 BACKGROUND = (12, 15, 19)
 
@@ -85,7 +85,10 @@ if njit is not None:
                 v0,v1,v2 = pc[0]-pa[0],pc[1]-pa[1],pc[2]-pa[2]
                 nx,ny,nz = u1*v2-u2*v1,u2*v0-u0*v2,u0*v1-u1*v0
                 n = math.sqrt(nx*nx+ny*ny+nz*nz)
-                if n <= 1e-20: continue
+                # An absolute world-space normal-length epsilon loses genuine
+                # triangles near the camera.  Float64 zero/nonfinite is the
+                # only safe degenerate test for this diagnostic raster profile.
+                if not math.isfinite(n) or n == 0.0: continue
                 r,g,bl = nx/n*.5+.5,ny/n*.5+.5,nz/n*.5+.5
             else:
                 val = ((primitive_ids[i]+1)*2654435761) & 0xffffffff
@@ -108,7 +111,10 @@ if njit is not None:
                 x1,y1=vertices[1,0],vertices[1,1]
                 x2,y2=vertices[2,0],vertices[2,1]
                 area = (x1-x0)*(y2-y0)-(y1-y0)*(x2-x0)
-                if abs(area)<1e-12: continue
+                # Pixel centers can lie inside arbitrarily small, positive
+                # projected triangles.  An absolute screen-area cutoff drops
+                # real coverage; only exactly zero/nonfinite areas are invalid.
+                if not math.isfinite(area) or area == 0.0: continue
                 if area<0:
                     tmp = vertices[1].copy()
                     vertices[1] = vertices[2]
@@ -366,7 +372,7 @@ def main():
     report={
         "schema":SCHEMA,"status":"PASS","claimScope":"diagnostic-only",
         "renderer":{"family":"other","name":"RefAs Tiled CPU",
-                    "version":"0.1.0-prototype","backend":"numba-tiled-parallel"},
+                    "version":"0.2.0-microtriangle","backend":"numba-tiled-parallel"},
         "assetSha256":sha(glb_bytes),"frameFileSha256":sha(frame_bytes),
         "canonicalFrameDigest":frame_digest,"pass":args.render_pass,
         "size":args.size,"tileSize":args.tile_size,"threads":args.threads,
