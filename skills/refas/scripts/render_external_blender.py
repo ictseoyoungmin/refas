@@ -81,10 +81,18 @@ def preflight(path, frame, size, *, max_mib=2048):
         raise ValueError("R14E_INVALID_ASSET: no renderable mesh nodes")
     # This does not require flattening/dropping GLB source triangles.
     total=0
+    color_triangles=0
     for node in model.get("nodes",[]):
         if "mesh" in node:
             for piece in source_meshes[node["mesh"]]["primitives"]:
-                total+=int(model["accessors"][piece["indices"]]["count"])//3
+                if "indices" not in piece:
+                    raise ValueError("R14E_UNSUPPORTED: unindexed source primitives")
+                count=int(model["accessors"][piece["indices"]]["count"])
+                if count<=0 or count%3:
+                    raise ValueError("R14E_INVALID_ASSET: triangle index count")
+                total+=count//3
+                if "COLOR_0" in piece["attributes"]:
+                    color_triangles+=count//3
     if not 1<=total<=2_000_000:
         raise MemoryError("R14E_RESOURCE: source triangle budget")
     canonical,basis,origin,frame_digest=load_canonical_frame(frame)
@@ -104,6 +112,7 @@ def preflight(path, frame, size, *, max_mib=2048):
         "frameFileSha256":sha(frame),
         "frameDigest":frame_digest,
         "sourceTriangles":total,"sourceUsesColor0":has_colors,
+        "sourceColor0Triangles":color_triangles,
         "sourcePrimitiveCount":sum(len(source_meshes[n["mesh"]]["primitives"])
                                     for n in model.get("nodes",[]) if "mesh" in n),
         "camera":{
@@ -191,6 +200,12 @@ def run(glb,frame,out,*,blender="blender",size=160,samples=12,
                    "baseColorTexture-PNG","metallicFactor","roughnessFactor"],
                 "unsupported":["alpha-blend","alpha-mask","normal-map",
                    "metallic-roughness-texture","unsupported-extensions"]},
+            "importerEvidence":{
+                "importedTriangles":result["triangleCount"],
+                "importedMeshObjects":result["meshObjects"],
+                "colorBearingImportedTriangles":result.get("colorBearingImportedTriangles"),
+                "peakProcessRssKiB":result.get("peakProcessRssKiB")
+            },
             "output":{"path":"render.png","sha256":image_sha,
                       "size":[size,size]},
             "timingsMs":{"blenderProcess":wall_ms,
