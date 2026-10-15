@@ -20,9 +20,10 @@ from PIL import Image
 
 from render_glb import load_primitives, load_canonical_frame, local_to_world, parse_glb
 from render_pbr_v2_visibility import render_visibility, PROFILE as VISIBILITY_PROFILE
+from render_pbr_v2_texture import resolve_base_sampler, sample_linear_texture
 
 SCHEMA="refas.pbr-v2-material-preview/v1"
-PROFILE="RefAs PBR v2 Opaque Preview/0.1.0-prototype"
+PROFILE="RefAs PBR v2 Opaque Preview/0.2.0-texture-lod0"
 PASSES=("albedo","normal","object-id","beauty")
 BACKGROUND=np.array([12,15,19],dtype=np.uint8)
 
@@ -79,9 +80,6 @@ def validate_opaque_materials(model,primitives):
         raise ValueError("PBR_V2_UNSUPPORTED_MATERIAL: glTF extensions")
     if model.get("skins") or model.get("animations"):
         raise ValueError("PBR_V2_UNSUPPORTED_MATERIAL: deformation")
-    if model.get("textures"):
-        # R14-06C1 intentionally does not invent texture filtering or mips.
-        raise ValueError("PBR_V2_UNSUPPORTED_MATERIAL: sampler/textures pending v2 texture contract")
     result=[]
     allowed_attrs={"POSITION","NORMAL","COLOR_0","TEXCOORD_0"}
     for (piece,mat),primitive in zip(_asset_material_specs(model,primitives),primitives):
@@ -98,8 +96,8 @@ def validate_opaque_materials(model,primitives):
         if mat.get("emissiveFactor") and any(abs(float(c))>1e-15 for c in mat["emissiveFactor"]):
             raise ValueError("PBR_V2_UNSUPPORTED_MATERIAL: emissive")
         pbr=mat.get("pbrMetallicRoughness",{})
-        if set(pbr)-{"baseColorFactor","metallicFactor","roughnessFactor"}:
-            raise ValueError("PBR_V2_UNSUPPORTED_MATERIAL: metallic/roughness or base-color texture")
+        if set(pbr)-{"baseColorFactor","metallicFactor","roughnessFactor","baseColorTexture"}:
+            raise ValueError("PBR_V2_UNSUPPORTED_MATERIAL: metallic/roughness texture")
         if primitive.vertex_alpha is not None and np.any(primitive.vertex_alpha != 1):
             raise ValueError("PBR_V2_UNSUPPORTED_MATERIAL: COLOR_0 alpha")
         if mat.get("alphaCutoff") is not None and mat.get("alphaMode","OPAQUE")=="OPAQUE":
@@ -116,8 +114,11 @@ def validate_opaque_materials(model,primitives):
         rough=float(pbr.get("roughnessFactor",1.0))
         if not np.isfinite(metal+rough) or not 0<=metal<=1 or not 0<=rough<=1:
             raise ValueError("PBR_V2_INVALID_ASSET: metallic/roughness factors")
+        base_texture=pbr.get("baseColorTexture")
+        sampler=(resolve_base_sampler(model,base_texture,primitive)
+                 if base_texture is not None else None)
         result.append((np.asarray(rgba[:3],dtype=np.float64),metal,rough,
-                       bool(mat.get("doubleSided",False))))
+                       bool(mat.get("doubleSided",False)),sampler))
     return result
 
 
@@ -179,7 +180,8 @@ def shade_visible(primitives,visibility,material_specs,position,
         outputs["normal"][:]=BACKGROUND
     shaded=0
     camera_position=np.asarray(position,dtype=np.float64)
-    for pid,(primitive,(factor,metallic,roughness,double_sided)) in enumerate(zip(primitives,material_specs)):
+    texture_pixel_count=0
+    for pid,(primitive,(factor,metallic,roughness,double_sided,sampler)) in enumerate(zip(primitives,material_specs)):
         choose=np.nonzero(parts==pid)[0]
         if not len(choose): continue
         ty,tx=yy[choose],xx[choose]
@@ -191,6 +193,10 @@ def shade_visible(primitives,visibility,material_specs,position,
         color=np.broadcast_to(factor,(len(choose),3)).copy()
         if primitive.vertex_colors is not None:
             color*=np.einsum("ni,nij->nj",w,primitive.vertex_colors[tris])
+        if sampler is not None:
+            uv=np.einsum("ni,nij->nj",w,primitive.texcoords[tris])
+            color*=sample_linear_texture(sampler,uv)
+            texture_pixel_count+=len(choose)
         color=np.clip(color,0,1)
         if "albedo" in outputs:
             outputs["albedo"][ty,tx]=np.rint(linear_to_srgb(color)*255).astype(np.uint8)
@@ -214,6 +220,7 @@ def shade_visible(primitives,visibility,material_specs,position,
                 outputs["beauty"][ty,tx]=np.rint(linear_to_srgb(lit)*255).astype(np.uint8)
         shaded+=len(choose)
     return outputs,{"shadedPixels":int(shaded),"coveredPixels":int(len(xx)),
+                    "textureSampledPixels":int(texture_pixel_count),
                     "claimScope":"material-preview-only","certificationEligible":False}
 
 
@@ -286,10 +293,13 @@ def main():
             "sourceGlbSha256":_sha(source),"frameFileSha256":_sha(frame_raw),
             "frameDigest":frame_digest,"size":args.size,
             "passes":list(images),"materialContract":{
-                "supported":["opaque","base-color-factor","vertex-color-0","metallic-factor","roughness-factor"],
-                "unsupported":["base-color-texture","normal-map","alpha-mask","alpha-blend","ibl","emissive","extensions"],
+                "supported":["opaque","base-color-factor","vertex-color-0","metallic-factor","roughness-factor",
+                             "base-color-texture-png-lod0-nearest-linear-wrap"],
+                "unsupported":["texture-mipmaps","texture-lod-filter-selection","texture-extensions",
+                               "normal-map","alpha-mask","alpha-blend","ibl","emissive","extensions"],
                 "lighting":"fixed-direct-three-light-preview-no-ibl",
-                "transfer":"srgb-piecewise-v1","appearanceCertified":False},
+                "transfer":"srgb-decode-before-texel-filter-piecewise-v1",
+                "textureSampling":"source-uv-perspective-lod0", "appearanceCertified":False},
             "stats":stats,"outputs":entries,
             "geometryDigests":{
                 "depth":_sha(np.ascontiguousarray(visibility["depth"]).tobytes()),
