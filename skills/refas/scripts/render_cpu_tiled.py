@@ -201,7 +201,8 @@ if njit is not None:
 
 
 def render_hero_tiled(primitives, position, target, up, fov, size, mode,
-                      *, tile_size=32, threads=1, max_working_mib=512):
+                      *, tile_size=32, threads=1, max_working_mib=512,
+                      return_visibility=False):
     if njit is None:
         raise RuntimeError("TILED_CPU_UNAVAILABLE: install optional numba")
     if mode not in ("normal","object-id"):
@@ -272,6 +273,22 @@ def render_hero_tiled(primitives, position, target, up, fov, size, mode,
     updates=_tiles(screen,colors,offsets,entries,pixels,depth,winner,tile_size,tiles_x)
     raster_ms=(time.perf_counter()-begun)*1000
     covered=int(np.count_nonzero(winner>=0))
+    if return_visibility:
+        # This exact payload belongs only to the R14-04 diagnostic backend.
+        # It is not a serialized certification, replay or source-fidelity proof.
+        result=(pixels,depth,winner,{
+            "inputTriangles":tri_total,"preparedTriangles":int(nvalid),
+            "nearClippedTriangles":int(nclip),"frustumRejected":int(nfrustum),
+            "tileSize":tile_size,"workerThreads":threads,"tiles":ntiles,
+            "binEntries":bins,"largestTileQueue":int(counts.max()) if len(counts) else 0,
+            "depthUpdates":int(updates.sum()),"coveredPixels":covered,
+            "winnerRasterTriangles":int(len(np.unique(winner[winner>=0]))),
+            "stagesMs":{"setupIncludingJit":round(setup_ms,3),
+                        "binningIncludingJit":round(bin_ms,3),
+                        "rasterIncludingJit":round(raster_ms,3)},
+            "memoryEstimateMiB":round((estimated+bins*16)/MIB,2),
+        })
+        return result,{"normalColorByRaster":colors,"primitiveIdBySourceTriangle":primitive_ids}
     return pixels,depth,winner,{
         "inputTriangles":tri_total,"preparedTriangles":int(nvalid),
         "nearClippedTriangles":int(nclip),"frustumRejected":int(nfrustum),
