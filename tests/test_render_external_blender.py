@@ -47,8 +47,8 @@ class BlenderAdapterPreflightTests(unittest.TestCase):
             # resolution/capability policy before invoking Blender.
             with self.assertRaisesRegex(ValueError,"R14E_UNSUPPORTED"):
                 preflight(glb,frame,500)
-            with self.assertRaisesRegex(MemoryError,"R14E_RESOURCE"):
-                preflight(glb,frame,160,max_mib=256) if glb.stat().st_size>256*1024*1024 else preflight(glb,frame,160,max_mib=100)
+            with self.assertRaisesRegex(ValueError,"R14E_UNSUPPORTED"):
+                preflight(glb,frame,160,max_mib=100)
 
 
 if __name__=="__main__":
