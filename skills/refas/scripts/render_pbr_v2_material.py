@@ -82,6 +82,7 @@ def validate_opaque_materials(model,primitives):
     if model.get("skins") or model.get("animations"):
         raise ValueError("PBR_V2_UNSUPPORTED_MATERIAL: deformation")
     result=[]
+    image_cache={}
     allowed_attrs={"POSITION","NORMAL","COLOR_0","TEXCOORD_0"}
     for (piece,mat),primitive in zip(_asset_material_specs(model,primitives),primitives):
         if piece.get("mode",4)!=4 or piece.get("targets"):
@@ -116,7 +117,8 @@ def validate_opaque_materials(model,primitives):
         if not np.isfinite(metal+rough) or not 0<=metal<=1 or not 0<=rough<=1:
             raise ValueError("PBR_V2_INVALID_ASSET: metallic/roughness factors")
         base_texture=pbr.get("baseColorTexture")
-        sampler=(resolve_base_sampler(model,base_texture,primitive)
+        sampler=(resolve_base_sampler(model,base_texture,primitive,
+                                      image_cache=image_cache)
                  if base_texture is not None else None)
         result.append((np.asarray(rgba[:3],dtype=np.float64),metal,rough,
                        bool(mat.get("doubleSided",False)),sampler))
@@ -246,6 +248,22 @@ def shade_visible(primitives,visibility,material_specs,position,
 
 def render_material_preview(primitives,model,position,target,up,fov,size,passes=PASSES,
                             *,tile_size=32,threads=1,max_working_mib=1024):
+    # Conservative pre-raster memory estimate: Numba/native baseline,
+    # 2 clipped raster slots per face, source vertex arrays, decoded
+    # RGBA, mip hierarchy and temporary filter arrays (96 B/texel).
+    # This is a preflight refusal, NOT a hard process RSS cap.
+    count=sum(len(p.indices) for p in primitives)
+    vertices=sum(len(p.positions) for p in primitives)
+    unique_images={id(p.base_color_texture):p.base_color_texture
+                   for p in primitives if p.base_color_texture is not None}
+    pixels=sum(x.shape[0]*x.shape[1] for x in unique_images.values())
+    if pixels>4_194_304 or any(x.shape[0]*x.shape[1]>2_097_152
+                                for x in unique_images.values()):
+        raise MemoryError("PBR_V2_RESOURCE: decoded scene texture pixel budget")
+    estimated=(384*1024*1024+2*count*(9*8+9*8+4*4)
+               +vertices*48+count*24+size*size*64+pixels*96)
+    if estimated>max_working_mib*1024*1024:
+        raise MemoryError("PBR_V2_RESOURCE: visibility plus mip source footprint")
     specs=validate_opaque_materials(model,primitives)
     started=time.perf_counter()
     visibility=render_visibility(primitives,position,target,up,fov,size,
