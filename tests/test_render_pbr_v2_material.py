@@ -47,9 +47,13 @@ class PureMaterialChecks(unittest.TestCase):
         specs=validate_opaque_materials(model,[p])
         np.testing.assert_array_equal(specs[0][0],[1,1,1])
         model["textures"]=[{"source":0}]
+        model["images"]=[{"uri":"unsupported.png"}]
+        model["materials"][0]["pbrMetallicRoughness"]["baseColorTexture"]={"index":0}
         with self.assertRaisesRegex(ValueError,"PBR_V2_UNSUPPORTED_MATERIAL.*texture"):
             validate_opaque_materials(model,[p])
         del model["textures"]
+        del model["images"]
+        del model["materials"][0]["pbrMetallicRoughness"]["baseColorTexture"]
         model["materials"][0]["normalTexture"]={"index":0}
         with self.assertRaisesRegex(ValueError,"PBR_V2_UNSUPPORTED_MATERIAL"):
             validate_opaque_materials(model,[p])
