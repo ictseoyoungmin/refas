@@ -49,13 +49,18 @@ if njit is not None:
         bounds = np.full((2*count, 4), -1, dtype=np.int32)
         colors = np.zeros((2*count, 3), dtype=np.uint8)
         n_valid, n_clipped, n_frustum = 0, 0, 0
+        # Reuse strictly per-call, sequential scratch buffers. The old kernel
+        # allocated these arrays once for *every* triangle/fan, a major cost
+        # for real 500k+ strand meshes. Never share scratch across threads.
+        polygon = np.empty((4,3), dtype=np.float64)
+        clipped = np.empty((4,3), dtype=np.float64)
+        vertices = np.empty((3,3), dtype=np.float64)
+        rgb = np.empty(3, dtype=np.uint8)
         for i in range(count):
             a,b,c = indices[i,0],indices[i,1],indices[i,2]
-            polygon = np.empty((4,3), dtype=np.float64)
             polygon[0] = camera[a]
             polygon[1] = camera[b]
             polygon[2] = camera[c]
-            clipped = np.empty((4,3), dtype=np.float64)
             length = 0
             previous = polygon[2]
             previous_inside = previous[2] >= NEAR
@@ -93,14 +98,12 @@ if njit is not None:
             else:
                 val = ((primitive_ids[i]+1)*2654435761) & 0xffffffff
                 r,g,bl = (val & 255)/255.,((val>>8)&255)/255.,((val>>16)&255)/255.
-            rgb = np.empty(3,dtype=np.uint8)
             rgb[0] = int(round(max(0.,min(1.,r))**(1./2.2)*255.))
             rgb[1] = int(round(max(0.,min(1.,g))**(1./2.2)*255.))
             rgb[2] = int(round(max(0.,min(1.,bl))**(1./2.2)*255.))
 
             for fan in range(1,length-1):
                 raster_id = 2*i+(fan-1)
-                vertices = np.empty((3,3),dtype=np.float64)
                 for k in range(3):
                     src = 0 if k == 0 else fan if k == 1 else fan+1
                     z = clipped[src,2]
@@ -116,9 +119,11 @@ if njit is not None:
                 # real coverage; only exactly zero/nonfinite areas are invalid.
                 if not math.isfinite(area) or area == 0.0: continue
                 if area<0:
-                    tmp = vertices[1].copy()
-                    vertices[1] = vertices[2]
-                    vertices[2] = tmp
+                    # Swap scalars without a per-triangle temporary ndarray.
+                    for k in range(3):
+                        tmp = vertices[1,k]
+                        vertices[1,k] = vertices[2,k]
+                        vertices[2,k] = tmp
                 minx=max(0,int(math.floor(min(vertices[0,0],vertices[1,0],vertices[2,0]))))
                 maxx=min(size-1,int(math.ceil(max(vertices[0,0],vertices[1,0],vertices[2,0]))))
                 miny=max(0,int(math.floor(min(vertices[0,1],vertices[1,1],vertices[2,1]))))
