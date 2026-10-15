@@ -92,8 +92,9 @@ class PureMaterialChecks(unittest.TestCase):
         b=Primitive(a.positions.copy()+[0,0,.2],a.normals.copy(),a.indices.copy(),
              np.ones(3),0.,.65,1,"hidden",vertex_colors=np.ones((3,3)))
         model["meshes"][0]["primitives"].append({"attributes":{"POSITION":0,"NORMAL":1,"COLOR_0":2},"material":0})
-        vis={"winnerSourceTriangle":np.array([[0,-1]],dtype=np.int64).reshape(1,2),
-             "sourceWeights":np.array([[[.2,.2,.6],[0,0,0]]],dtype=float),
+        vis={"winnerSourceTriangle":np.array([[0,-1],[-1,-1]],dtype=np.int64),
+             "sourceWeights":np.array([[[.2,.2,.6],[0,0,0]],
+                                       [[0,0,0],[0,0,0]]],dtype=float),
              "primitiveBySourceTriangle":np.array([0,1],dtype=np.int32)}
         images,metrics=shade_visible([a,b],vis,validate_opaque_materials(model,[a,b]),
             np.zeros(3),("albedo",))
