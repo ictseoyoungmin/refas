@@ -24,7 +24,7 @@ def srgb_to_linear(rgb):
     return np.where(c<=0.04045,c/12.92,((c+0.055)/1.055)**2.4)
 
 
-def resolve_base_sampler(model,info,primitive):
+def resolve_base_sampler(model,info,primitive, *, image_cache=None):
     """Strict base-level glTF sampler; no silent mip/UV extension fallback."""
     if not isinstance(info,dict) or info.get("extensions"):
         raise ValueError("PBR_V2_UNSUPPORTED_MATERIAL: baseColorTexture extensions")
@@ -79,9 +79,17 @@ def resolve_base_sampler(model,info,primitive):
         raise MemoryError("PBR_V2_RESOURCE: texture exceeds preview sampling budget")
     if not np.isfinite(texels).all() or np.any(texels<0) or np.any(texels>1):
         raise ValueError("PBR_V2_INVALID_ASSET: texture channels")
-    base=srgb_to_linear(texels[:,:,:3])
-    levels=(mip_linear_pyramid(base)
-            if filtering in MIP_FILTERS else [base])
+    # Many primitives may share one image and sampler. Preparing a full
+    # linear mip hierarchy per primitive would multiply memory unnecessarily.
+    key=(id(texels),filtering)
+    if image_cache is not None and key in image_cache:
+        base,levels=image_cache[key]
+    else:
+        base=srgb_to_linear(texels[:,:,:3])
+        levels=(mip_linear_pyramid(base)
+                if filtering in MIP_FILTERS else [base])
+        if image_cache is not None:
+            image_cache[key]=(base,levels)
     return {"wrapS":wrap_s,"wrapT":wrap_t,"filter":filtering,
             "minFilter":filtering,"magFilter":magnification,
             "linearRGB":base,"levels":levels,
