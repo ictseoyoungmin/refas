@@ -45,10 +45,24 @@ jobs:
             --blender blender --size 160 \
             --samples 8 --threads 2 --timeout 900 \
             --max-working-mb 2048
+      - name: Render geometry/texture-identical no-COLOR_0 control
+        run: |
+          python skills/refas/scripts/create_blender_no_color_control.py \
+            --source temp/r14-06e/color0-texture.glb \
+            --out temp/r14-06e/no-color-control.glb \
+            > temp/r14-06e/control-fixture.json
+          python skills/refas/scripts/render_external_blender.py \
+            --glb temp/r14-06e/no-color-control.glb \
+            --frame temp/r14-06e/camera.frame.json \
+            --out temp/r14-06e/control \
+            --blender blender --size 160 \
+            --samples 8 --threads 2 --timeout 900 \
+            --max-working-mb 2048
       - name: Independently inspect source importer contract and PNG bytes
         run: |
           python - <<'PY'
           import hashlib,json
+          import numpy as np
           from pathlib import Path
           from PIL import Image
           p=Path('temp/r14-06e')
@@ -63,11 +77,29 @@ jobs:
           assert report['source']['sourceGlbSha256']==info['glbSha256']
           assert report['source']['sourceUsesColor0'] is True
           assert len(report['materialEvidence']['importedColorAttributes'])>0
+          assert len(report['materialEvidence']['boundColorMaterialNodes'])>0
           assert report['backend']['engine']=='Blender Cycles CPU'
           output=p/'external/render.png'
           assert hashlib.sha256(output.read_bytes()).hexdigest()==report['output']['sha256']
           with Image.open(output) as img:
             assert img.size==(160,160)
+            colored=np.asarray(img.convert('RGB'),dtype=np.int16)
+          control=json.loads((p/'control/report.json').read_text())
+          assert control['source']['sourceTriangles']==report['source']['sourceTriangles']
+          assert control['source']['sourceUsesColor0'] is False
+          with Image.open(p/'control/render.png') as img:
+            uncolored=np.asarray(img.convert('RGB'),dtype=np.int16)
+          diff=np.abs(colored-uncolored)
+          changed=int(np.count_nonzero(np.max(diff,axis=2)>2))
+          assert changed>100, 'COLOR_0 must visibly affect independent Cycles pixels'
+          delta=float(diff.mean())
+          print('EXTERNAL_CYCLES_COLOR0_CAUSAL_DIFFERENCE',changed,'pixels, global mean abs',delta)
+          assert delta>0.5
+          (p/'material-difference.json').write_text(json.dumps({
+            'sourceSha256':report['source']['sourceGlbSha256'],
+            'controlSha256':control['source']['sourceGlbSha256'],
+            'changedPixels':changed,'globalMeanAbsoluteRgb':delta,
+            'geometryIdentical':True,'certificationEligible':False},indent=2))
           print('EXTERNAL_CYCLES_IMPORTED_COLOR0_AND_PNG',report['backend']['version'],
                 report['timingsMs'])
           PY
@@ -79,5 +111,8 @@ jobs:
           path: |
             temp/r14-06e/fixture.json
             temp/r14-06e/external/
+            temp/r14-06e/control-fixture.json
+            temp/r14-06e/control/
+            temp/r14-06e/material-difference.json
           if-no-files-found: warn
           retention-days: 30
