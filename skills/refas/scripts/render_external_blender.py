@@ -167,8 +167,9 @@ def run(glb,frame,out,*,blender="blender",size=160,samples=12,
                 raise ValueError("R14E_OUTPUT_INVALID: constant image")
         if result["triangleCount"]!=bound["sourceTriangles"] or result["sourceGlbSha256"]!=bound["sourceGlbSha256"]:
             raise ValueError("R14E_SOURCE_MISMATCH: importer mutated source triangle inventory")
-        if bound["sourceUsesColor0"] and not result["colorAttributes"]:
-            raise ValueError("R14E_MATERIAL_MISMATCH: original vertex colors missing")
+        if bound["sourceUsesColor0"] and (
+                not result["colorAttributes"] or not result.get("boundColorMaterialNodes")):
+            raise ValueError("R14E_MATERIAL_MISMATCH: original COLOR_0 not connected to shading")
         if sha(glb)!=bound["sourceGlbSha256"] or sha(frame)!=bound["frameFileSha256"]:
             raise ValueError("R14E_SOURCE_MUTATED: source or camera changed during job")
         image_sha=sha(tmp/"render.png")
@@ -185,6 +186,7 @@ def run(glb,frame,out,*,blender="blender",size=160,samples=12,
             "source":bound,
             "materialEvidence":{"sourceUsesColor0":bound["sourceUsesColor0"],
                 "importedColorAttributes":result["colorAttributes"],
+                "boundColorMaterialNodes":result.get("boundColorMaterialNodes",[]),
                 "supportedForThisSlice":["opaque","COLOR_0","baseColorFactor",
                    "baseColorTexture-PNG","metallicFactor","roughnessFactor"],
                 "unsupported":["alpha-blend","alpha-mask","normal-map",
