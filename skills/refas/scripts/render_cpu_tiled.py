@@ -98,7 +98,7 @@ if njit is not None:
             else:
                 val = ((primitive_ids[i]+1)*2654435761) & 0xffffffff
                 r,g,bl = (val & 255)/255.,((val>>8)&255)/255.,((val>>16)&255)/255.
-             rgb[0] = int(round(max(0.,min(1.,r))**(1./2.2)*255.))
+            rgb[0] = int(round(max(0.,min(1.,r))**(1./2.2)*255.))
             rgb[1] = int(round(max(0.,min(1.,g))**(1./2.2)*255.))
             rgb[2] = int(round(max(0.,min(1.,bl))**(1./2.2)*255.))
 
