@@ -90,14 +90,22 @@ class SamplerOracleTests(unittest.TestCase):
 
     def test_no_mipmap_guessing_or_unrepresented_source_texcoords(self):
         p=sample_primitive(); info={"index":0}
-        for bad in (9984,9985,9986,9987):
-            with self.subTest(filter=bad):
-                m=tex_model({"magFilter":LINEAR,"minFilter":bad})
-                with self.assertRaisesRegex(ValueError,"PBR_V2_UNSUPPORTED_MATERIAL.*mipmap"):
-                    resolve_base_sampler(m,info,p)
+        for mip_filter in (9984,9985,9986,9987):
+            with self.subTest(filter=mip_filter):
+                m=tex_model({"magFilter":LINEAR,"minFilter":mip_filter})
+                descriptor=resolve_base_sampler(m,info,p)
+                self.assertEqual(descriptor["minFilter"],mip_filter)
+                with self.assertRaisesRegex(ValueError,"UV derivatives required"):
+                    sample_linear_texture(descriptor,np.array([[.5,.5]]))
+                sample=sample_linear_texture(descriptor,np.array([[.5,.5]]),
+                                             np.array([[1.,0.]]),np.array([[0.,1.]]))
+                self.assertEqual(sample.shape,(1,3))
         m=tex_model({"minFilter":NEAREST,"magFilter":LINEAR})
-        with self.assertRaisesRegex(ValueError,"LOD-dependent"):
-            resolve_base_sampler(m,info,p)
+        mismatched=resolve_base_sampler(m,info,p)
+        with self.assertRaisesRegex(ValueError,"UV derivatives required"):
+            sample_linear_texture(mismatched,np.array([[.5,.5]]))
+        self.assertEqual(sample_linear_texture(mismatched,np.array([[.5,.5]]),
+            np.array([[1.,0.]]),np.array([[0.,1.]])).shape,(1,3))
         with self.assertRaisesRegex(ValueError,"TEXCOORD_0"):
             resolve_base_sampler(tex_model(),{"index":0,"texCoord":1},p)
         with self.assertRaisesRegex(ValueError,"embedded PNG"):
