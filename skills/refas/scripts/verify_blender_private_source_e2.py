@@ -28,7 +28,7 @@ ORIGINAL_MONSTER_PRIMITIVES = 40
 
 
 def validate_capture(report, image, *, source_sha, frame_sha, triangles,
-                     primitives, size, blender_binary_sha=None):
+                     primitives, size, minimum_color0_triangles=1):
     """Validate a *completed* actual Blender result against independent input.
 
     This is only a report consistency check, NOT a trust certification.
@@ -49,8 +49,9 @@ def validate_capture(report, image, *, source_sha, frame_sha, triangles,
             source.get("sourceTriangles")!=triangles or
             source.get("sourcePrimitiveCount")!=primitives):
         raise ValueError("R14E2_INVALID_EVIDENCE: original source inventory")
-    if source.get("sourceUsesColor0") is not True:
-        raise ValueError("R14E2_INVALID_EVIDENCE: original COLOR_0 missing")
+    if source.get("sourceUsesColor0") is not True or (
+            source.get("sourceColor0Triangles",0)<minimum_color0_triangles):
+        raise ValueError("R14E2_INVALID_EVIDENCE: required original COLOR_0 faces missing")
     material=report.get("materialEvidence",{})
     if (material.get("sourceUsesColor0") is not True or
             not material.get("importedColorAttributes") or
@@ -71,8 +72,14 @@ def validate_capture(report, image, *, source_sha, frame_sha, triangles,
     # Native Blender worker reports imported total separately from source
     # inventory in newer versions. Do not invent it for old workers.
     import_result=report.get("importerEvidence",{})
-    if import_result and import_result.get("importedTriangles")!=triangles:
+    if import_result.get("importedTriangles")!=triangles:
         raise ValueError("R14E2_INVALID_EVIDENCE: imported triangles")
+    if not isinstance(import_result.get("importedMeshObjects"),int) or (
+            import_result["importedMeshObjects"]<1):
+        raise ValueError("R14E2_INVALID_EVIDENCE: imported Blender meshes")
+    if not isinstance(import_result.get("colorBearingImportedTriangles"),int) or (
+            import_result["colorBearingImportedTriangles"]<minimum_color0_triangles):
+        raise ValueError("R14E2_INVALID_EVIDENCE: colored imported geometry missing")
     return {
         "size": size, "pngSha256":report["output"]["sha256"],
         "backendVersion": backend["version"],
@@ -80,6 +87,8 @@ def validate_capture(report, image, *, source_sha, frame_sha, triangles,
         "importedTriangles": import_result.get("importedTriangles"),
         "sourceTriangles": source["sourceTriangles"],
         "sourcePrimitiveCount": source["sourcePrimitiveCount"],
+        "sourceColor0Triangles": source["sourceColor0Triangles"],
+        "colorBearingImportedTriangles": import_result["colorBearingImportedTriangles"],
         "importedColorAttributes": len(material["importedColorAttributes"]),
         "linkedColorMaterialNodes": len(material["boundColorMaterialNodes"]),
         "timingsMs": report.get("timingsMs"),
@@ -109,7 +118,8 @@ def make_board(frames, out):
 
 def run_private_session(*, glb, frame, output, blender, expected_glb_sha,
                         expected_frame_sha, expected_triangles,
-                        expected_primitives, sizes=(160,384), samples=12,
+                        expected_primitives, minimum_color0_triangles=1,
+                        sizes=(160,384), samples=12,
                         threads=4, timeout=900, max_working_mib=2048):
     glb=Path(glb).resolve();frame=Path(frame).resolve();output=Path(output)
     if output.exists():
@@ -137,7 +147,7 @@ def run_private_session(*, glb, frame, output, blender, expected_glb_sha,
             result=validate_capture(report,image,
                 source_sha=expected_glb_sha,frame_sha=expected_frame_sha,
                 triangles=expected_triangles,primitives=expected_primitives,
-                size=size)
+                size=size,minimum_color0_triangles=minimum_color0_triangles)
             reports.append(result)
             frames[size]=image
         if len({v["backendVersion"] for v in reports})!=1 or len(
@@ -155,7 +165,8 @@ def run_private_session(*, glb, frame, output, blender, expected_glb_sha,
             "input":{"originalGlbSha256":expected_glb_sha,
                      "frameFileSha256":expected_frame_sha,
                      "expectedSourceTriangles":expected_triangles,
-                     "expectedPrimitiveCount":expected_primitives},
+                     "expectedPrimitiveCount":expected_primitives,
+                     "minimumColor0Triangles":minimum_color0_triangles},
             "runtime":{"blenderVersion":reports[0]["backendVersion"],
                        "workerSha256":reports[0]["workerSha256"],
                        "threads":threads,"samples":samples,
@@ -185,6 +196,7 @@ def main():
     p.add_argument("--expected-frame-sha",default=ORIGINAL_FRAME_SHA)
     p.add_argument("--expected-triangles",type=int,default=ORIGINAL_MONSTER_TRIANGLES)
     p.add_argument("--expected-primitives",type=int,default=ORIGINAL_MONSTER_PRIMITIVES)
+    p.add_argument("--minimum-color0-triangles",type=int,default=512000)
     p.add_argument("--sizes",default="160,384")
     p.add_argument("--samples",type=int,default=12)
     p.add_argument("--threads",type=int,default=4)
@@ -197,6 +209,7 @@ def main():
         expected_frame_sha=a.expected_frame_sha,
         expected_triangles=a.expected_triangles,
         expected_primitives=a.expected_primitives,
+        minimum_color0_triangles=a.minimum_color0_triangles,
         sizes=tuple(map(int,a.sizes.split(","))),
         samples=a.samples,threads=a.threads,timeout=a.timeout,
         max_working_mib=a.max_working_mb)
