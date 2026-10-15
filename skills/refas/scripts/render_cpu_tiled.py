@@ -153,11 +153,12 @@ if njit is not None:
         return entries
 
     @njit(cache=False,nogil=True,parallel=True)
-    def _tiles(screen, colors, offsets, entries, pixels, depth, winner,
+    def _tiles(screen, bounds, colors, offsets, entries, pixels, depth, winner,
                tile_size, tiles_x):
         """Each prange iteration owns a disjoint tile: no shared pixel writers."""
         size=depth.shape[0]
         updates=np.zeros(offsets.shape[0]-1,dtype=np.int64)
+        candidate_tests=np.zeros(offsets.shape[0]-1,dtype=np.int64)
         for tile in prange(offsets.shape[0]-1):
             ty=tile//tiles_x
             tx=tile%tiles_x
@@ -166,6 +167,7 @@ if njit is not None:
             maxx=min(size-1,minx+tile_size-1)
             maxy=min(size-1,miny+tile_size-1)
             local_updates=0
+            local_tests=0
             for e in range(offsets[tile],offsets[tile+1]):
                 tri=entries[e]
                 x0,y0,z0=screen[tri,0,0],screen[tri,0,1],screen[tri,0,2]
@@ -176,8 +178,17 @@ if njit is not None:
                 edge0=(y2<y1) or (y2==y1 and x2>x1)
                 edge1=(y0<y2) or (y0==y2 and x0>x2)
                 edge2=(y1<y0) or (y1==y0 and x1>x0)
-                for py in range(miny,maxy+1):
-                    for px in range(minx,maxx+1):
+                # Tile lists are conservative; subpixel strands normally
+                # intersect only a tiny fraction of the tile's pixels.
+                # Preserve exact original edge/depth/tie evaluation rules.
+                first_x=max(minx,bounds[tri,0])
+                last_x=min(maxx,bounds[tri,1])
+                first_y=max(miny,bounds[tri,2])
+                last_y=min(maxy,bounds[tri,3])
+                if first_x>last_x or first_y>last_y: continue
+                local_tests+=(last_x-first_x+1)*(last_y-first_y+1)
+                for py in range(first_y,last_y+1):
+                    for px in range(first_x,last_x+1):
                         e0=(x2-x1)*(py-y1)-(y2-y1)*(px-x1)
                         if e0<0 or (e0==0 and not edge0): continue
                         e1=(x0-x2)*(py-y2)-(y0-y2)*(px-x2)
@@ -197,7 +208,8 @@ if njit is not None:
                             pixels[py,px,2]=colors[tri,2]
                             local_updates+=1
             updates[tile]=local_updates
-        return updates
+            candidate_tests[tile]=local_tests
+        return updates,candidate_tests
 
 
 def render_hero_tiled(primitives, position, target, up, fov, size, mode,
@@ -270,7 +282,13 @@ def render_hero_tiled(primitives, position, target, up, fov, size, mode,
     winner=np.full((size,size),-1,dtype=np.int64)
     set_num_threads(threads)
     begun=time.perf_counter()
-    updates=_tiles(screen,colors,offsets,entries,pixels,depth,winner,tile_size,tiles_x)
+    updates,candidate_tests=_tiles(screen,bounds,colors,offsets,entries,pixels,depth,winner,tile_size,tiles_x)
+    # Reference count for the old full-tile loop, including partial edge tiles.
+    widths=np.minimum(tile_size,size-np.arange(tiles_x)*tile_size)
+    heights=np.minimum(tile_size,size-np.arange(tiles_y)*tile_size)
+    tile_wide_tests=int(np.sum(counts.reshape(tiles_y,tiles_x)*
+        heights[:,None]*widths[None,:],dtype=np.int64))
+    candidate_total=int(candidate_tests.sum(dtype=np.int64))
     raster_ms=(time.perf_counter()-begun)*1000
     covered=int(np.count_nonzero(winner>=0))
     if return_visibility:
@@ -281,6 +299,7 @@ def render_hero_tiled(primitives, position, target, up, fov, size, mode,
             "nearClippedTriangles":int(nclip),"frustumRejected":int(nfrustum),
             "tileSize":tile_size,"workerThreads":threads,"tiles":ntiles,
             "binEntries":bins,"largestTileQueue":int(counts.max()) if len(counts) else 0,
+            "tileWidePixelTests":tile_wide_tests,"candidatePixelTests":candidate_total,
             "depthUpdates":int(updates.sum()),"coveredPixels":covered,
             "winnerRasterTriangles":int(len(np.unique(winner[winner>=0]))),
             "stagesMs":{"setupIncludingJit":round(setup_ms,3),
@@ -294,6 +313,7 @@ def render_hero_tiled(primitives, position, target, up, fov, size, mode,
         "nearClippedTriangles":int(nclip),"frustumRejected":int(nfrustum),
         "tileSize":tile_size,"workerThreads":threads,"tiles":ntiles,
         "binEntries":bins,"largestTileQueue":int(counts.max()) if len(counts) else 0,
+        "tileWidePixelTests":tile_wide_tests,"candidatePixelTests":candidate_total,
         "depthUpdates":int(updates.sum()),"coveredPixels":covered,
         "winnerRasterTriangles":int(len(np.unique(winner[winner>=0]))),
         "stagesMs":{"setupIncludingJit":round(setup_ms,3),
