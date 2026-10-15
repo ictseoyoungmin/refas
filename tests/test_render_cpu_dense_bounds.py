@@ -5,7 +5,10 @@ The legacy v1.3.0 registered replay is not modified by this optimization.
 """
 from __future__ import annotations
 
+import json
 import math
+import subprocess
+import tempfile
 import sys
 import unittest
 from pathlib import Path
@@ -117,6 +120,26 @@ class DenseBoundsTests(unittest.TestCase):
         self.assertGreater(stats["candidatePixelTests"], 0)
         self.assertLess(stats["candidatePixelTests"], stats["tileWidePixelTests"])
         self.assertLess(stats["candidatePixelTests"] * 2, stats["tileWidePixelTests"])
+
+    def test_opt_in_runner_reports_real_hero_and_digest(self):
+        runner = Path(__file__).resolve().parents[1] / "skills/refas/scripts/benchmark_render_cpu_dense.py"
+        with tempfile.TemporaryDirectory(prefix="refas-r14-05-measured-") as folder:
+            output = Path(folder) / "measurement.json"
+            cmd = [sys.executable, str(runner), "--case", "strands",
+                   "--triangles", "120", "--size", "48", "--tile-size", "16",
+                   "--threads", "1", "--max-working-mb", "512",
+                   "--timeout-seconds", "120", "--repeats", "1",
+                   "--out", str(output)]
+            process = subprocess.run(cmd, text=True, capture_output=True, timeout=150)
+            self.assertEqual(process.returncode, 0, process.stderr)
+            report = json.loads(output.read_text(encoding="utf8"))
+            self.assertEqual(report["claimScope"], "measurement-only")
+            self.assertTrue(report["summary"]["allComplete"])
+            self.assertEqual(report["fixture"]["triangles"], 120)
+            metrics = report["runs"][0]["kernelStats"]
+            self.assertEqual(metrics["visibilityEvaluations"], 1)
+            self.assertLessEqual(metrics["candidatePixelTests"], metrics["tileWidePixelTests"])
+            self.assertEqual(len(report["runs"][0]["pngDigests"]), 3)
 
 
 if __name__ == "__main__":
