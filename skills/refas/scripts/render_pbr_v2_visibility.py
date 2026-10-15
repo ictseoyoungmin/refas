@@ -82,7 +82,9 @@ if njit is not None:
             if length < 3:
                 rejected += 1
                 continue
-            if length != 3:
+            # Crossing is source-triangle classification, not fan count:
+            # two vertices behind the near plane leave one clipped fan.
+            if (poly[0,2] < NEAR or poly[1,2] < NEAR or poly[2,2] < NEAR):
                 crossed += 1
             for fan in range(1, length - 1):
                 slot = 2*i + fan - 1
