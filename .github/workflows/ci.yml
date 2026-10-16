@@ -2,9 +2,9 @@ name: RefAs CI
 
 on:
   push:
-    branches: [main, rc/post-1.1, develop/v1.2.0, develop/v1.2.1, develop/v1.3.0, develop/v1.4.0, develop/v1.4.1]
+    branches: [main, rc/post-1.1, develop/v1.2.0, develop/v1.2.1, develop/v1.3.0, develop/v1.4.0, develop/v1.4.1, develop/v1.4.2]
   pull_request:
-    branches: [main, rc/post-1.1, develop/v1.2.0, develop/v1.2.1, develop/v1.3.0, develop/v1.4.0, develop/v1.4.1]
+    branches: [main, rc/post-1.1, develop/v1.2.0, develop/v1.2.1, develop/v1.3.0, develop/v1.4.0, develop/v1.4.1, develop/v1.4.2]
 
 # Tier 1: full regression and critical source-bound defenses on every PR/develop push.
 # Tier 2: expensive complete dogfood on main push or an explicit [full-qa] develop push.
