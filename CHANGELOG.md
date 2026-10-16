@@ -2,6 +2,19 @@
 
 All notable RefAs changes are documented here. RefAs follows semantic versioning.
 
+## 1.4.0 — 2026-10-16
+
+### Renderer architecture and execution
+- Reworked the opt-in CPU rendering path for shared visibility buffers, tile/compiled-kernel acceleration, reusable passes, bounded budgets and exact-source provenance. Dense, microtriangle and warm-repeat diagnostics distinguish correctness from measured throughput.
+- Added separately scoped PBR v2 material/texture/mip previews, including perspective-correct glTF `COLOR_0` where supported and typed refusal for unsupported appearance features. The historical v1 rendering contracts remain intact.
+- Introduced an independent Blender Cycles adapter and explicit private original-source review. Actual unchanged Monster Bed (901,664 source triangles; 512,000 fur COLOR_0 triangles) completed 160/384px Cycles and CPU-v2 diagnostic renders.
+- Versioned the E2 acceptance camera to a new **unregistered diagnostic frame** because the historical provisional-frame bytes were unavailable. This is not a replay of the old camera SHA.
+
+### Release verification and boundaries
+- Wire E2/v2 fail-closed reviewer syntax and adversarial contract checks into normal CI; preserve private original asset bytes outside the repository and public workflow artifacts.
+- Keep installed-skill, CLI and project compatibility, pinned source evidence, and independently scoped claims unchanged.
+- No source-photo-registered resemblance certificate, generalized engine-to-engine material equivalence, calibrated physics or complete glTF PBR coverage is claimed. The R14-06F photo-registered multiview and broader source-fidelity work remain deferred.
+
 ## 1.3.0 — 2026-10-14
 
 ### Changed

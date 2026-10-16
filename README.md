@@ -2,7 +2,7 @@
   <img src="skills/refas/assets/icon.svg" width="180" alt="RefAs robotic arm icon">
   <h1>RefAs</h1>
   <p>
-    <a href="https://github.com/ictseoyoungmin/refas/releases/tag/v1.3.0"><img src="https://img.shields.io/badge/version-v1.3.0-6f5a46" alt="Version v1.3.0"></a>
+    <a href="https://github.com/ictseoyoungmin/refas/releases/tag/v1.4.0"><img src="https://img.shields.io/badge/version-v1.4.0-6f5a46" alt="Version v1.4.0"></a>
     <a href="https://github.com/ictseoyoungmin/refas/actions/workflows/ci.yml"><img src="https://github.com/ictseoyoungmin/refas/actions/workflows/ci.yml/badge.svg" alt="CI status"></a>
     <img src="https://img.shields.io/badge/node-20%2B-339933" alt="Node.js 20+">
     <img src="https://img.shields.io/badge/Agent%20Skill-Vision--first%203D-b06f47" alt="Agent Skill: Vision-first 3D">
@@ -21,6 +21,13 @@ RefAs helps an AI agent **build, edit, inspect and export** reference-driven 3D 
 The main workflow is **observe → construct → render → compare → locally revise**. Validation exists to support asset quality rather than replace modeling.
 
 The bundled [demo](demo/index.html) illustrates the tooling. For reproducible examples see [examples](examples/) and [the construction guide](skills/refas/references/construction.md).
+
+### Renderer architecture and diagnostic previews in 1.4.0
+
+- Shared visibility-buffer and bounded CPU rasterization paths reduce repeated geometry work across normal, object-ID, albedo and appearance previews; deterministic original-source provenance remains part of the render report.
+- The opt-in PBR v2 material preview supports scoped glTF `COLOR_0` and supported texture/sampler/mip behavior. It is not a complete physically based renderer or a photo-fidelity certificate. Unsupported appearance attributes must fail closed or remain explicitly excluded.
+- The optional external Blender Cycles adapter provides independent, SHA-bound offline renders. The original Monster Bed was independently rendered at 160/384px and accepted under an **unregistered diagnostic camera**, not a source-photo camera or trusted resemblance gate. Blender is **not** a mandatory bundled runtime dependency.
+- Source-photo-registered canonical views, generalized cross-engine PBR equivalence, and source-to-asset identity certification remain separate future acceptance gates.
 
 ### Production-oriented updates in 1.3.0
 
