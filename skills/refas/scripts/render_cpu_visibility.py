@@ -62,6 +62,10 @@ def _cache_key(*,glb_sha,frame_sha,frame_digest,position,target,up,fov,size,tile
         "size":size,"tileSize":tile_size,"threads":threads,
         "rasterWorkerSha256":sha_file(Path(__file__).with_name("render_cpu_tiled.py")),
         "visibilityWorkerSha256":sha_file(Path(__file__)),
+        # Transitive geometry decode, transform and supported-feature policy changes
+        # alter what the same GLB bytes mean even if render workers are unchanged.
+        "glbDecoderSha256":sha_file(Path(__file__).with_name("render_glb.py")),
+        "cpuFeaturePolicySha256":sha_file(Path(__file__).with_name("render_cpu_opt.py")),
         "numpyVersion":np.__version__,"numbaVersion":numba.__version__,
         "machine":platform.machine(),"python":platform.python_version(),
     }))
