@@ -1,9 +1,9 @@
 name: Publish verified release
 
-# Manual exact-SHA + PUBLISH remains available. One time only, RefAs v1.4.1
-# may be released on a verified main push commit explicitly approved with
-# [publish:v1.4.1]. Exact main SHA + all 17 full QA gates remain mandatory.
-# The marker is version-limited and never approves subsequent versions.
+# Exact-SHA manual PUBLISH is the sole release authorization.
+# Keep workflow_run event for trigger compatibility but SKIP publication jobs
+# on every automated run. The consumed v1.4.1 marker grants no authority.
+# Exact current main SHA and all 17 full QA gates remain mandatory.
 on:
   workflow_run:
     workflows: ["RefAs CI"]
@@ -30,13 +30,8 @@ concurrency:
 jobs:
   publish:
     if: >-
-      (github.event_name == 'workflow_dispatch' &&
-        github.ref == 'refs/heads/main' && inputs.confirmation == 'PUBLISH') ||
-      (github.event_name == 'workflow_run' &&
-        github.event.workflow_run.event == 'push' &&
-        github.event.workflow_run.head_branch == 'main' &&
-        github.event.workflow_run.conclusion == 'success' &&
-        contains(github.event.workflow_run.head_commit.message, '[publish:v1.4.1]'))
+      github.event_name == 'workflow_dispatch' &&
+      github.ref == 'refs/heads/main' && inputs.confirmation == 'PUBLISH'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
