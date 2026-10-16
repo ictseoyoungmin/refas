@@ -20,6 +20,8 @@ jobs:
   validate:
     name: Node ${{ matrix.node }}
     runs-on: ubuntu-latest
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
     strategy:
       fail-fast: false
       matrix:
@@ -54,6 +56,14 @@ jobs:
         run: |
           npm run test:cpu-jit
           node --test tests/render-backend.test.mjs
+      - name: Package bytecode exclusion smoke
+        if: matrix.node == 24
+        run: |
+          mkdir -p skills/refas/scripts/__pycache__
+          printf 'must-not-ship' > skills/refas/scripts/__pycache__/refas_pack_probe.cpython-312.pyc
+          npm pack --dry-run --json --ignore-scripts > "$RUNNER_TEMP/refas-packlist.json"
+          node -e "const p=require(process.env.RUNNER_TEMP+'/refas-packlist.json'); const f=p[0].files.map(x=>x.path); if(f.some(x=>x.includes('__pycache__')||x.endsWith('.pyc'))) process.exit(2)"
+          rm skills/refas/scripts/__pycache__/refas_pack_probe.cpython-312.pyc
       - name: Fresh-worker public-contract dogfood
         if: matrix.node == 24
         run: npm run dogfood:fresh-worker

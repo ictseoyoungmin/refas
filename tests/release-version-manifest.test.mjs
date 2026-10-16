@@ -24,3 +24,15 @@ test('installed agent default describes a complete editable object and practical
   assert.match(a,/complete, editable 3D asset/);
   assert.match(a,/multiview renders/);
 });
+
+test('release CI and npm nested packaging exclude generated Python bytecode',async()=>{
+  for (const workflowPath of ['.github/workflows/ci.yml','.github/workflows/ci-deep.yml']) {
+    const workflow=await fs.readFile(new URL('../'+workflowPath,import.meta.url),'utf8');
+    assert.match(workflow,/PYTHONDONTWRITEBYTECODE: '1'/u,workflowPath);
+  }
+  for (const ignorePath of ['skills/refas/.npmignore','skills/refas/scripts/.npmignore']) {
+    const ignore=await fs.readFile(new URL('../'+ignorePath,import.meta.url),'utf8');
+    assert.ok(ignore.includes('__pycache__/'),ignorePath);
+    assert.ok(ignore.includes('**/*.pyc'),ignorePath);
+  }
+});

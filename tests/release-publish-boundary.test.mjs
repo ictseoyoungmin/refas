@@ -17,7 +17,18 @@ test('public publication requires intentional SHA approval and post-merge full Q
   assert.match(workflow,/release_sha is not the current main HEAD/u);
   assert.match(workflow,/head_sha===sha/u);
   assert.match(workflow,/Node 20','Node 22','Node 24/u);
-  assert.match(workflow,/Complete dogfood','Release audit/u);
+  assert.match(workflow,/fullQaSteps\.every/u);
+  const ci=await fs.readFile(new URL('../.github/workflows/ci.yml',import.meta.url),'utf8');
+  const declaredSteps=new Set([...ci.matchAll(/^\s+- name: (.+)$/gmu)].map(match=>match[1]));
+  const stepBlock=workflow.match(/const fullQaSteps=\[([\s\S]*?)\];/u);
+  assert.ok(stepBlock,'release gate must declare explicit full QA steps');
+  const required=[...stepBlock[1].matchAll(/'([^']+)'/gu)].map(match=>match[1]);
+  assert.ok(required.length >= 15,'release gate must cover complete runtime/packaging checks');
+  for (const step of required) assert.ok(declaredSteps.has(step),`release gate references missing CI step ${step}`);
+  for (const step of ['Release audit','Independent PBR material dogfood',
+    'Verify actual npm package installation','Verify saved v1.2.1 project upgrade']) {
+    assert.ok(required.includes(step),`critical release check omitted: ${step}`);
+  }
   assert.match(workflow,/group: refas-publish-release/u);
   assert.match(workflow,/cancel-in-progress: false/u);
   assert.doesNotMatch(workflow,/method: 'PATCH'/u);
