@@ -81,7 +81,8 @@ def main():
         clay, clay_entries = None, None
 
     # Digest-check every included image before publishing a composite.
-    frames = [_frame(portable, port_entries, 'hero', 'registered hero')]
+    # A camera/frame digest match only proves shared renderer input, not photo registration.
+    frames = [_frame(portable, port_entries, 'hero', 'portable hero (registration unverified)')]
     if clay:
         frames += [_frame(clay, clay_entries, view, 'neutral-clay ' + view) for view in ('hero', 'side', 'top')]
     frames += [_frame(pbr, pbr_entries, view, 'PBR ' + view) for view in VIEWS]
