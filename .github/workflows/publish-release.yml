@@ -68,7 +68,27 @@ jobs:
             if(!['Node 20','Node 22','Node 24'].every(name=>
               jobs.some(job=>job.name===name&&job.conclusion==='success')))continue;
             const node24=jobs.find(job=>job.name==='Node 24'&&job.conclusion==='success');
-            if(['Complete dogfood','Release audit'].every(name=>
+            // These are exact named steps in ci.yml; a removed/renamed gate fails closed.
+            const fullQaSteps=[
+              'First neutral-clay multiview operational baseline',
+              'External construction fresh-worker dogfood',
+              'Subdivision cage organic dogfood',
+              'Bilateral pair fresh-worker dogfood',
+              'Structural plausibility fresh-worker dogfood',
+              'Competing blockout fresh-worker dogfood',
+              'Prior quarantine fresh-worker dogfood',
+              'Discovery closure verifier',
+              'VC00 volume-closure regression fixtures',
+              'Joint parameter-fit dogfood',
+              'Independent PBR material dogfood',
+              'Textured material dogfood',
+              'Hard-surface topology dogfood',
+              'Modular assembly contact dogfood',
+              'Release audit',
+              'Verify actual npm package installation',
+              'Verify saved v1.2.1 project upgrade',
+            ];
+            if(fullQaSteps.every(name=>
               node24.steps?.some(step=>step.name===name&&step.conclusion==='success'))){
               certified=true; console.log(`verified ${sha} by main CI run ${run.id}`);break;
             }
