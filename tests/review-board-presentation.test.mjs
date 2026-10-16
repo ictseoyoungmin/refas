@@ -8,7 +8,7 @@ from pathlib import Path
 import sys
 import tempfile
 sys.path.insert(0, str(Path('skills/refas/scripts').resolve()))
-from compose_review_board import _presentation_warning
+from compose_review_board import _presentation_warning, _framing_warning
 from PIL import Image
 
 with tempfile.TemporaryDirectory() as d:
@@ -38,6 +38,19 @@ with tempfile.TemporaryDirectory() as d:
     assert assess('PBR ALBEDO', flat) is None
     assert assess('NEUTRAL-CLAY HERO', shaded) is None
     assert assess('PBR NORMAL', shaded) is None
+    # A hero that touches a known uniform border is a framing question, not an automatic fail.
+    edge = Path(d) / 'edge.png'
+    im = Image.new('RGB', (16, 16), (255, 255, 255))
+    for y in range(4, 12):
+        for x in range(0, 7):
+            im.putpixel((x, y), (20, 20, 20))
+    im.save(edge)
+    framing = _framing_warning({'label':'PORTABLE HERO (REGISTRATION UNVERIFIED)', 'absolutePath':str(edge)})
+    assert framing['code'] == 'POSSIBLE_FRAME_CLIPPING'
+    assert framing['touchingImageEdges'] == ['left']
+    assert framing['certificationAuthority'] == 'NONE'
+    assert _framing_warning({'label':'PBR SIDE', 'absolutePath':str(edge)}) is None
+    assert _framing_warning({'label':'PBR HERO', 'absolutePath':str(flat)}) is None
 `;
   const run = spawnSync('python3', ['-c', program], {encoding: 'utf8', timeout: 15000});
   assert.equal(run.status, 0, run.stderr || run.stdout);
