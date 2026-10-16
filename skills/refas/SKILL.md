@@ -249,86 +249,21 @@ bars, dark plates posing as holes, or a one-view cage.
 
 ## Render and review
 
-During geometry iteration, use the `appearance/iterative-pbr-preview` CLI
-(`node scripts/refas.mjs preview-pbr --glb candidate.glb --frame frame.json
---out renders/preview --views hero,side --reuse`) instead of repeatedly running
-all eight PBR views. This is actual geometry rendering, but preview results
-are expressly non-authoritative: no `render-report.json` or source, appearance
-or neutral-clay gate can be satisfied by them. For final review compose one
-`validation/combined-review-presentation` board with
-`refas review-board --portable DIR --pbr DIR [--clay DIR] --out FILE`;
-it verifies original frame SHA-256 bytes but is not certification.
-Full canonical eight-view evidence remains mandatory at the existing
-source-bound closure stages. See `references/validation.md`.
-
-## Render and review
-
-Generate actual multiview evidence with the bundled offline renderer:
+Render the **actual current GLB**, not a static image stand-in. For each short geometry iteration, use the installed `appearance/iterative-pbr-preview` interface to inspect changed hero/side views; preview is non-certifying and cannot close appearance, source-fidelity or neutral-clay gates:
 
 ```bash
-python3 scripts/render_glb.py \
-  --glb <asset.glb> \
-  --out <render-dir> \
-  --reference <reference.png> \
-  --frame <canonical-object-frame.json> \
-  --timeout-seconds 300 \
-  --max-working-mb 512
+node scripts/refas.mjs preview-pbr --glb candidate.glb --frame frame.json --out renders/preview --views hero,side --reuse
 ```
 
-Copy `assets/templates/canonical-object-frame.json` when the GLB's semantic axes are known. Its right, up, and forward axes are world-space unit vectors; its origin is the canonical local origin. `hero.position`, `hero.target`, and `hero.up` are expressed in that local frame and bind the source camera with `registrationDigest`. `scopeParts` may name exact GLB parts whose current bounds control framing while the renderer retains all parts as whole-object context. Without `--frame`, the renderer deliberately reports and uses the legacy world-axis fallback.
+For full canonical portable baseline, use `python3 scripts/render_glb.py --glb <asset.glb> --out <render-dir> --reference <reference.png> --frame <canonical-object-frame.json>` with explicit time and memory budgets. Review the real hero, oblique, side, top, grazing, normal, object-ID and albedo outputs. The frame axes must reflect the object; the hero camera must be registered to the real source by independent evidence. Missing `--frame` is a **legacy world-frame fallback**, not registration. A render-integrity `PASS` means geometry was rasterized, not that the source resembles it. COLOR_0/texture and other unsupported material appearances must be refused or explicitly excluded, never passed by flat-color substitution.
 
-The renderer has no default triangle-count ceiling. A well-justified asset may exceed 30,000 triangles; remove redundant geometry because it is redundant, not merely to satisfy an arbitrary count. Resource safety is enforced independently: geometry decode, framebuffer, and bounded tile scratch memory are estimated before rasterization; triangles are processed without a full-frame per-triangle allocation; and both an internal wall-clock deadline and a parent-process timeout stop stalled work. Use `--max-triangles N` only when a project or CI job intentionally declares a hard policy cap. `--tile-size` controls locality, while `--max-working-mb` is a safety budget rather than a quality setting. Failed preflight or timeout attempts do not publish a partial render set.
+After the portable baseline, use a renderer independently covering every *required* material feature (Blender Cycles/Eevee, Filament, Three.js/WebGL, or the installed supported `node scripts/refas.mjs render-pbr` fallback) and record exact GLB/frame/renderer/lighting/output digests. Complete all current eight views at final scope. The iterative preview cannot replace this final evidence. For exact feature support, report requirements and user-visible limitations, load `references/appearance.md` and `references/validation.md` rather than guessing from an engine name.
 
-Review hero, oblique, side, top, grazing, normal, object-ID, and albedo views. The software renderer is the mandatory portable validation baseline, not a visual-fidelity renderer. After this basic gate passes, run an independent PBR-capable renderer—Blender Cycles/Eevee headless, Three.js/WebGL, Filament, glTF Sample Viewer, VTK, or an equivalent backend—and normalize its evidence as `refas.pbr-render-report/v1`.
-Its `PASS` status and `claimScope: render-integrity-only` mean only that actual GLB geometry rasterized in every requested view. Read `materialSupport`; do not use this report alone to pass appearance or visual fidelity.
+For a feature-supported independent appearance pass, use `assets/templates/pbr-render-report.json` as the digest-bound report contract; load `references/appearance.md` and `references/validation.md` to populate lighting, transfer, frame SHA and supported/unsupported material features before using it at a closure gate.
 
-After the exact hero frame is registered to the source, create scope-local critique evidence from `assets/templates/registered-comparison-input.json`:
+For source-to-asset critique after registered camera admission, run `node scripts/refas.mjs compare --input <project-dir>/registered-comparison-input.json --out <project-dir>/reviews/registered-comparison`; these ROI, edge, landmark and silhouette overlays are **decision aids**, never automatic visual PASS or single-view IoU authority. For visual review, bind original source SHA, current GLB, all required actual render frame hashes, independent reviewer provenance, required material coverage and unresolved typed findings before invoking canonical checkpoint/claim validation. Never self-certify from a generated image.
 
-```bash
-node scripts/refas.mjs compare \
-  --input <project-dir>/registered-comparison-input.json \
-  --out <project-dir>/reviews/registered-comparison \
-  --timeout-seconds 120
-```
-
-The output retains each scope's ancestry and binds the source, asset, render frame, registration, hierarchy, input, and every generated image by digest. Inspect its whole context, registered crop, overlay, split, edge overlay, silhouette difference, landmark residuals, and normalized dimensions. These are `derived-observation-aid` artifacts: a better IoU or smaller residual cannot pass a visual gate, and a bad number cannot select rollback until the visible defect is localized as a typed finding.
-
-RefAs ships one deterministic, dependency-light Cook–Torrance implementation as an independently executed fallback:
-
-```bash
-node scripts/refas.mjs render-pbr \
-  --glb <asset.glb> \
-  --out <project-dir>/renders/pbr \
-  --frame <canonical-object-frame.json> \
-  --timeout-seconds 180 \
-  --max-working-mb 512
-```
-
-It supports base-color, metallic, and roughness factors plus embedded PNG base-color textures with TEXCOORD_0. It reports clearcoat, image-based lighting, and normal maps as unsupported; canonical neutral-clay intentionally discards beauty textures and cannot pass appearance. Prefer Blender, Three.js, Filament, glTF Sample Viewer, or VTK when the appearance claim needs those features; keep those renderers outside the RefAs distribution and adapt their outputs through the same report contract.
-
-Copy `assets/templates/pbr-render-report.json` for the independent pass. Bind the exact asset and canonical-frame digests, renderer family/name/version/backend, fixed lighting rig, exposure/tone mapping/output color space, supported and unsupported material features, output frame digests, and reproducibility mode. A renderer's brand name never implies feature support. If the declared backend does not cover every required material feature, keep appearance insufficient and reopen the owning capability from the PBR evidence.
-
-Create `reviews/visual-review.json` from `assets/templates/visual-review.json` with `createVisualReview`. Bind it to the exact source and asset SHA-256, identify whether the reference is independent or generated from the same fixture, record every standard view and visual gate verdict, cite the exact independent PBR report SHA-256 and renderer feature support, and retain every unresolved typed finding. Validate both reports before checkpointing:
-
-```bash
-node scripts/refas.mjs validate-spec --file <project-dir>/reviews/visual-review.json
-node scripts/refas.mjs validate-spec --file <project-dir>/renders/pbr/render-report.json
-```
-
-Preview a visual finding route without mutating state:
-
-```bash
-node scripts/refas.mjs route --root <project-dir> --finding <finding.json>
-```
-
-After verifying the finding and evidence, apply its owner, rollback checkpoint, artifact restore, and invalidation set atomically:
-
-```bash
-node scripts/refas.mjs report-finding --root <project-dir> --finding <finding.json>
-node scripts/refas.mjs resume --root <project-dir>
-```
-
-Do not restart unrelated upstream work. A blocker with insufficient evidence or unknown ownership does not mutate trustworthy state.
+Compose one noncertifying presentation board via `node scripts/refas.mjs review-board --portable <dir> --pbr <dir> --out <file.png>` (optional `--clay`). Route an existing finding read-only with `node scripts/refas.mjs route --root <project-dir> --finding <finding.json>`; only after independently verifying its owner and rollback lineage, use `node scripts/refas.mjs report-finding` then `resume`. Load `references/failure-routing.md` and `references/checkpointing.md` before edits. Unsupported evidence is `INSUFFICIENT`/`BLOCKED`, not success.
 
 ## Closure
 
