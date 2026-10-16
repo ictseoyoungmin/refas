@@ -6,7 +6,7 @@ import {REFAS_VERSION} from '../skills/refas/scripts/lib/canonical.mjs';
 test('npm, runtime, plugin manifests and release-facing docs share one version',async()=>{
   const read=async p=>fs.readFile(new URL('../'+p,import.meta.url),'utf8');
   const packageJson=JSON.parse(await read('package.json'));
-  assert.equal(packageJson.version,'1.3.0');
+  assert.equal(packageJson.version,'1.4.0');
   assert.equal(packageJson.version,REFAS_VERSION);
   for(const file of ['.claude-plugin/plugin.json','.codex-plugin/plugin.json']){
     const plugin=JSON.parse(await read(file));
