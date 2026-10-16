@@ -2,6 +2,21 @@
 
 All notable RefAs changes are documented here. RefAs follows semantic versioning.
 
+## 1.4.2 — 2026-10-16
+
+### Agent-guidance economy
+- Shorten the routinely read SKILL / INDEX / workflow guidance by about 42% compared with 1.4.1. Keep all existing installed-skill leaves, discoverable public templates, eleven runtime capability owners and exact gate authority; selectively load detailed physical contracts when relevant.
+- Retain production-first whole-object construction and an explicit distinction between GLB integrity, generic audit, registered original-source comparison and strict final handoff.
+
+### Diagnostic presentation and safe publication
+- Label portable hero as registration-unverified until real source-to-camera evidence exists; a shared camera/frame digest is not proof of registration.
+- Provide presentation-only low-surface-information warnings for near-flat neutral-clay or normal frames, and possible hero border clipping warnings. These are prompts to inspect better evidence, never new PASS/FAIL gates or shape errors.
+- Disable the consumed v1.4.1 automatic release authorization path. Only explicit main-branch manual `PUBLISH` with an exact SHA and all seventeen full QA steps can issue a new release; preserve the trigger shape for compatibility.
+
+### Limits
+- This patch does not prove improvement in source-photo resemblance, repair automation, 3D authoring quality or agent task completion. F01/F02 editable Blender construction and owner-local finding-to-repair execution remain the 1.5.0 workstream.
+- Renderer algorithms, standard final evidence, SHA/checkpoint recovery and source-bound certifying authority remain unchanged.
+
 ## 1.4.1 — 2026-10-16
 
 ### Stability and correctness
