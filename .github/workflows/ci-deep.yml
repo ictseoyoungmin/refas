@@ -26,6 +26,8 @@ jobs:
   deep:
     name: Deep QA Node 24
     runs-on: ubuntu-latest
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
     timeout-minutes: 40
     steps:
       - uses: actions/checkout@v7
