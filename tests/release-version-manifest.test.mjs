@@ -15,8 +15,12 @@ test('npm, runtime, plugin manifests and release-facing docs share one version',
   }
   const readme=await read('README.md');
   const changelog=await read('CHANGELOG.md');
-  assert.match(readme,new RegExp('releases/tag/v'+REFAS_VERSION.replaceAll('.','\\.')));
-  assert.ok(changelog.includes('## '+REFAS_VERSION+' —'));
+  // While 1.4.2 is under development it must not link to a nonexistent public release.
+  // When publishing v1.4.2, update README, CHANGELOG and this check together.
+  assert.match(readme,new RegExp('development-v'+REFAS_VERSION.replaceAll('.','\\.')));
+  assert.match(readme,/releases\/tag\/v1\.4\.1/);
+  assert.doesNotMatch(readme,new RegExp('releases/tag/v'+REFAS_VERSION.replaceAll('.','\\.')));
+  assert.ok(changelog.includes('## '+REFAS_VERSION+' — Unreleased'));
 });
 
 test('installed agent default describes a complete editable object and practical review',async()=>{
