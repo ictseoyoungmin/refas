@@ -20,6 +20,8 @@ jobs:
   validate:
     name: Node ${{ matrix.node }}
     runs-on: ubuntu-latest
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
     strategy:
       fail-fast: false
       matrix:
