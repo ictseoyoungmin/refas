@@ -1,0 +1,3 @@
+# Defensive packaging boundary for generated Python caches within installed skill.
+**/__pycache__/
+**/*.pyc

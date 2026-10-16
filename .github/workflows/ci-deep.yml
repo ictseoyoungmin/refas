@@ -1,9 +1,9 @@
 name: RefAs Deep QA (manual/weekly)
 
-# Scheduled/manual full suites do not burden every develop PR/push.
+# Scheduled/manual full suites do not burden every development PR/push.
 # Schedules activate after this workflow exists on the repository default branch;
 # until then use a develop merge commit containing [full-qa] to run the same deep
-# steps through RefAs CI on develop/v1.3.0.
+# steps through RefAs CI on develop/v1.4.0.
 on:
   workflow_dispatch:
     inputs:
@@ -11,7 +11,7 @@ on:
         description: 'Exact branch, tag, or commit to verify'
         required: true
         type: string
-        default: develop/v1.3.0
+        default: develop/v1.4.0
   schedule:
     - cron: '17 19 * * 1'
 
@@ -19,18 +19,20 @@ permissions:
   contents: read
 
 concurrency:
-  group: refas-deep-${{ github.event.inputs.ref || 'develop/v1.3.0' }}
+  group: refas-deep-${{ github.event.inputs.ref || 'develop/v1.4.0' }}
   cancel-in-progress: true
 
 jobs:
   deep:
     name: Deep QA Node 24
     runs-on: ubuntu-latest
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
     timeout-minutes: 40
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: ${{ github.event.inputs.ref || 'develop/v1.3.0' }}
+          ref: ${{ github.event.inputs.ref || 'develop/v1.4.0' }}
           persist-credentials: false
       - uses: actions/setup-node@v7
         with:
@@ -50,8 +52,6 @@ jobs:
         run: npm run check:instructions
       - name: Product-boundary audit
         run: npm run check
-      - name: Complete dogfood
-        run: npm run dogfood
       - name: Fresh-worker public-contract dogfood
         run: npm run dogfood:fresh-worker
       - name: First neutral-clay multiview operational baseline

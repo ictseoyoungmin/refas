@@ -1,0 +1,78 @@
+name: R14-05D Same-host Warm CPU Matrix (isolated)
+
+# Full 100k/500k/1m + worker/tile matrix must never burden normal PR CI.
+# Explicit marker push on bench/r14-05d-* is the authorized trigger.
+on:
+  push:
+    branches:
+      - 'bench/r14-05d-*'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: refas-r14-05d-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  warm-matrix:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      NUMBA_NUM_THREADS: '8'
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '8'
+      PYTHONUNBUFFERED: '1'
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+          cache: pip
+      - name: Install optional CPU benchmark runtime
+        run: |
+          python -m pip install --requirement requirements.txt
+          python -m pip install --no-cache-dir numba==0.65.1
+      - name: Measure same-process warm-JIT and exact image/depth parity
+        run: |
+          mkdir -p temp/r14-05d
+          python skills/refas/scripts/benchmark_render_cpu_warm.py \
+            --triangles 100000,500000,1000000 \
+            --matrix-count 500000 --case strands --seed 12345 \
+            --size 160 --baseline-tile 32 --baseline-threads 4 \
+            --thread-matrix 1,2,4,8 --tile-matrix 16,32,64 \
+            --repeats 3 --max-working-mb 1024 \
+            --out temp/r14-05d/same-host-warm.json
+      - name: Verify measurement completeness and parity
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          report=json.loads(Path('temp/r14-05d/same-host-warm.json').read_text())
+          assert report['claimScope']=='measurement-only'
+          assert report['certificationEligible'] is False
+          assert report['status']=='COMPLETE',report.get('error')
+          assert [x['sourceTriangles'] for x in report['tiers']]==[100000,500000,1000000]
+          for tier in report['tiers']:
+              assert tier['parity']=='EXACT'
+              assert len(tier['baseline']['samples'])==3
+              assert len(tier['referenceDigests'])==5
+              print('TRIANGLES',tier['sourceTriangles'],
+                    'WARM MEDIAN MS',tier['baseline']['medianTotalPassMs'],
+                    'MATRIX ROWS',len(tier['matrix']),
+                    'PARITY',tier['parity'],
+                    'RSS PROCESS',tier['rssAfterTier'])
+          assert len(report['tiers'][1]['matrix'])==11
+          print('HOST',report['environment'])
+          PY
+      - name: Publish bounded measurement artifact (even on fail)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: r14-05d-same-host-warm-${{ github.sha }}
+          path: temp/r14-05d/same-host-warm.json
+          if-no-files-found: warn
+          retention-days: 30

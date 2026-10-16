@@ -62,6 +62,12 @@ Conversely, an upstream joint frame, mechanism, dynamics, or module-interface ch
 
 Single-view imagery does not establish physical dimensions by itself. Real-world scale, camera intrinsics, and lens distortion require calibration evidence when they matter to a claim.
 
+## 1.4.0 rendering previews are not source-photo certification
+
+The optimized CPU renderer and material-preview PBR v2 operate on supported, explicitly declared glTF features. Unsupported appearance features are a typed limitation, not permission to substitute a gray fallback and silently report visual fidelity. A valid visibility buffer and exact material or image SHA prove reproducible processing, not a full light-transport or material-quality oracle.
+
+The optional independent Blender Cycles route can import and render a private original asset and compare observed outputs at a SHA-bound, **unregistered diagnostic camera**. Matching triangle counts, vertex-color shader bindings and silhouette coverage do not establish photo alignment, a pixelwise CPU/Cycles BRDF equivalence, or likeness to the reference. The older camera bytes not being available does not become an inferred registration claim under the versioned E2 diagnostic gate. Source-photo canonical Hero and independently registered multiview remain deferred.
+
 ## Material identity remains epistemically limited
 
 PBR rendering can prove that a declared appearance was rendered reproducibly under an exact configuration. Appearance similarity does not identify unknown real material composition, internal layers, coatings, or manufacturing process without supporting evidence.
