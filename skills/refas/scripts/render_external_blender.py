@@ -20,6 +20,7 @@ import sys
 import tempfile
 import time
 
+from render_external_blender_guard import run_guarded
 from PIL import Image
 import numpy as np
 
@@ -156,11 +157,8 @@ def run(glb,frame,out,*,blender="blender",size=160,samples=12,
         cmd=[str(executable),"--background","--factory-startup",
              "--python",str(worker),"--","--config",str(tmp/"config.json")]
         start=time.perf_counter()
-        try:
-            proc=subprocess.run(cmd,capture_output=True,text=True,timeout=timeout,check=False,
-                                env={**os.environ,"OMP_NUM_THREADS":str(threads)})
-        except subprocess.TimeoutExpired as error:
-            raise RuntimeError("R14E_BACKEND_TIMEOUT: Blender exceeded budget") from error
+        proc=run_guarded(cmd,timeout_seconds=timeout,max_working_mib=max_working_mib,
+                         env={**os.environ,"OMP_NUM_THREADS":str(threads)})
         wall_ms=round((time.perf_counter()-start)*1000,3)
         if proc.returncode!=0 or not (tmp/"worker.json").is_file():
             raise RuntimeError("R14E_RENDER_FAILED: Blender exit="+str(proc.returncode)+
@@ -204,7 +202,11 @@ def run(glb,frame,out,*,blender="blender",size=160,samples=12,
                 "importedTriangles":result["triangleCount"],
                 "importedMeshObjects":result["meshObjects"],
                 "colorBearingImportedTriangles":result.get("colorBearingImportedTriangles"),
-                "peakProcessRssKiB":result.get("peakProcessRssKiB")
+                "peakProcessRssKiB":result.get("peakProcessRssKiB"),
+                "monitoredProcessTreePeakRssKiB":proc.peak_tree_rss_kib,
+                "resourceWatchdog":proc.watchdog,
+                "hardMemoryLimitEnforced":proc.hard_memory_limit,
+                "resourceBudgetMiB":max_working_mib
             },
             "output":{"path":"render.png","sha256":image_sha,
                       "size":[size,size]},
