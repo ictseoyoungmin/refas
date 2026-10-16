@@ -6,7 +6,7 @@ import {REFAS_VERSION} from '../skills/refas/scripts/lib/canonical.mjs';
 test('npm, runtime, plugin manifests and release-facing docs share one version',async()=>{
   const read=async p=>fs.readFile(new URL('../'+p,import.meta.url),'utf8');
   const packageJson=JSON.parse(await read('package.json'));
-  assert.equal(packageJson.version,'1.4.0');
+  assert.equal(packageJson.version,'1.4.1');
   assert.equal(packageJson.version,REFAS_VERSION);
   for(const file of ['.claude-plugin/plugin.json','.codex-plugin/plugin.json']){
     const plugin=JSON.parse(await read(file));
@@ -47,4 +47,15 @@ test('installed npm package and legacy upgrade checks use the canonical runtime 
   const upgrade=await fs.readFile(new URL('../tools/verify-v121-upgrade.mjs',import.meta.url),'utf8');
   assert.ok(upgrade.includes("BASELINE_VERSION='1.2.1'"));
   assert.ok(upgrade.includes('target:REFAS_VERSION'));
+});
+
+test('historical v1 near-plane triangle omission stays explicit until a versioned replacement',async()=>{
+  const legacy=await fs.readFile(new URL('../skills/refas/scripts/render_pbr.py',import.meta.url),'utf8');
+  const limitations=await fs.readFile(new URL('../docs/known-limitations.md',import.meta.url),'utf8');
+  // Characterization canary only: changing this algorithm requires new raster
+  // goldens and evidence namespace, not an in-place v1 behavior change.
+  assert.ok(legacy.includes('if np.any(vertices[:, 2] <= 0.01):'));
+  assert.ok(legacy.includes('                continue\n            screen ='));
+  assert.ok(limitations.includes('near-plane'));
+  assert.ok(limitations.includes('do not clip') || limitations.includes('do not clip crossing'));
 });
