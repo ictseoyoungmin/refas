@@ -7,6 +7,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest import mock
 from pathlib import Path
 
 import numpy as np
@@ -84,6 +85,41 @@ class VisibilityBundleTests(unittest.TestCase):
             self.assertFalse(two["cacheHit"])
             self.assertNotEqual(one["cacheKey"],two["cacheKey"])
             self.assertEqual(len(list(Path(folder).glob("*/manifest.json"))),2)
+
+    def test_decoder_semantic_change_invalidates_unchanged_glb_frame_cache(self):
+        # Same input source, frame, renderer and Python runtime: a change in
+        # the separate GLB parser must invalidate a prior winner/depth cache.
+        pos,_,faces=grid_geometry(256,organic=False)
+        models=[part(pos,faces)]
+        import render_cpu_visibility as worker
+        genuine=worker.sha_file
+        def changed_decoder(path):
+            if Path(path).name == "render_glb.py":
+                return "f"*64
+            return genuine(path)
+        with tempfile.TemporaryDirectory(prefix="refas-vis-parser-key-") as folder:
+            _,first=self.run_bundle(models,root=folder)
+            with mock.patch.object(worker,"sha_file",side_effect=changed_decoder):
+                _,second=self.run_bundle(models,root=folder)
+            self.assertFalse(first["cacheHit"])
+            self.assertFalse(second["cacheHit"])
+            self.assertNotEqual(first["cacheKey"],second["cacheKey"])
+            self.assertEqual(len(list(Path(folder).glob("*/manifest.json"))),2)
+
+    def test_cpu_feature_policy_change_changes_cache_key(self):
+        import render_cpu_visibility as worker
+        genuine=worker.sha_file
+        params=dict(glb_sha=self.source_sha,frame_sha=self.frame_sha,
+                    frame_digest=self.frame_digest,position=self.origin,
+                    target=self.target,up=self.up,fov=65,size=64,tile_size=32,threads=1)
+        first=_cache_key(**params)
+        def change_policy(path):
+            if Path(path).name == "render_cpu_opt.py":
+                return "e"*64
+            return genuine(path)
+        with mock.patch.object(worker,"sha_file",side_effect=change_policy):
+            changed=_cache_key(**params)
+        self.assertNotEqual(first,changed)
 
     def test_corrupt_cache_bytes_fail_closed_and_do_not_use_preview(self):
         pos,_,faces=grid_geometry(256,organic=False)

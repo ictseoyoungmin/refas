@@ -68,6 +68,14 @@ The optimized CPU renderer and material-preview PBR v2 operate on supported, exp
 
 The optional independent Blender Cycles route can import and render a private original asset and compare observed outputs at a SHA-bound, **unregistered diagnostic camera**. Matching triangle counts, vertex-color shader bindings and silhouette coverage do not establish photo alignment, a pixelwise CPU/Cycles BRDF equivalence, or likeness to the reference. The older camera bytes not being available does not become an inferred registration claim under the versioned E2 diagnostic gate. Source-photo canonical Hero and independently registered multiview remain deferred.
 
+## Renderer version-compatibility and resource-monitor limits
+
+The published portable v1 and portable PBR v1 raster paths discard any triangle with a camera-space vertex at or behind the near-plane threshold; they do not clip crossing polygons. **This can produce missing visible fragments.** Changing v1 raster outputs in place would break digest-stable historical replay, so this remains a disclosed legacy behavior. A corrected clipped raster must have a new explicit backend/version and new controlled goldens; it cannot silently replace existing source-bound reports.
+
+The optional Blender Cycles diagnostic worker now has a Linux /proc-based sampled child-tree resident-memory watchdog and wall-clock process-tree termination. If the process exceeds the declared memory budget at a sample, it is killed and the render is rejected. **This is not a kernel-enforced hard RSS allocation cap**: allocations between samples can briefly exceed budget. The report distinguishes `monitoredProcessTreePeakRssKiB`, `resourceWatchdog` and `hardMemoryLimitEnforced=false`. On non-Linux platforms, actual RSS enforcement is unavailable (still diagnostic-only); use a container/cgroup hard limit where the operator requires strict isolation. Python memory preflight alone never guarantees a process RSS ceiling.
+
+Visibility Cache reuse now depends on exact GLB decoding and CPU feature-policy code digests, in addition to the existing GLB/frame/renderer/runtime digests. A changed decoder invalidates cached visibility without mutating previous source/certification evidence.
+
 ## Material identity remains epistemically limited
 
 PBR rendering can prove that a declared appearance was rendered reproducibly under an exact configuration. Appearance similarity does not identify unknown real material composition, internal layers, coatings, or manufacturing process without supporting evidence.
