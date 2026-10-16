@@ -88,6 +88,43 @@ def _presentation_warning(frame: dict):
     }
 
 
+def _framing_warning(frame: dict):
+    """Heuristic border-contact warning, not proof that a camera was misregistered."""
+    label = frame['label']
+    if not (label.endswith(' HERO') or label.startswith('PORTABLE HERO')):
+        return None
+    with Image.open(frame['absolutePath']) as source:
+        rgb = source.convert('RGB')
+        width, height = rgb.size
+        if width < 8 or height < 8:
+            return None
+        corners = [rgb.getpixel((x, y)) for x, y in
+                   [(0, 0), (width - 1, 0), (0, height - 1), (width - 1, height - 1)]]
+        if corners.count(corners[0]) < 3:
+            return None  # Cannot identify a background robustly enough for a warning.
+        background = corners[0]
+        edges = {
+            'left': [(0, y) for y in range(height)],
+            'right': [(width - 1, y) for y in range(height)],
+            'top': [(x, 0) for x in range(width)],
+            'bottom': [(x, height - 1) for x in range(width)],
+        }
+        touched = [side for side, pixels in edges.items()
+                   if sum(rgb.getpixel(pixel) != background for pixel in pixels) / len(pixels) > 0.03]
+        if not touched:
+            return None
+    return {
+        'code': 'POSSIBLE_FRAME_CLIPPING',
+        'view': label,
+        'severity': 'REVIEW',
+        'touchingImageEdges': touched,
+        'meaning': 'Foreground appears on the frame border; this can be an intentional crop or a clipped model.',
+        'nextAction': 'Check original-camera mapping and render framing before using border silhouette measurements.',
+        'sourceFrameSha256': sha256(Path(frame['absolutePath'])),
+        'certificationAuthority': 'NONE',
+    }
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument('--portable', required=True)
@@ -129,7 +166,9 @@ def main():
     try:
         image = stage / 'board.png'
         make_board(reference, frames, image)
-        warnings = [warning for f in frames if (warning := _presentation_warning(f)) is not None]
+        warnings = []
+        for f in frames:
+            warnings.extend(w for w in (_presentation_warning(f), _framing_warning(f)) if w is not None)
         manifest = {
             'schema':'refas.combined-review-board/v1',
             'claimScope':'presentation-only',
