@@ -79,7 +79,15 @@ async function main() {
   const changelog=await fs.readFile(path.join(ROOT,'CHANGELOG.md'),'utf8');
   if (!changelog.includes(`## ${REFAS_VERSION} —`)) throw new Error(`CHANGELOG.md omits current version ${REFAS_VERSION}`);
   const readme=await fs.readFile(path.join(ROOT,'README.md'),'utf8');
-  if (!readme.includes(`releases/tag/v${REFAS_VERSION}`)) throw new Error(`README.md badge omits ${REFAS_VERSION}`);
+  // Development candidates have a package version but no public GitHub Release.
+  // A release audit must validate that distinction rather than demand a fake tag.
+  if (changelog.includes(`## ${REFAS_VERSION} — Unreleased`)) {
+    if (!readme.includes(`development-v${REFAS_VERSION}-`)) throw new Error(`README.md development badge omits ${REFAS_VERSION}`);
+    if (readme.includes(`releases/tag/v${REFAS_VERSION}`)) throw new Error(`README.md falsely links unpublished v${REFAS_VERSION}`);
+  } else {
+    if (!readme.includes(`releases/tag/v${REFAS_VERSION}`)) throw new Error(`README.md published release link omits ${REFAS_VERSION}`);
+    if (readme.includes(`development-v${REFAS_VERSION}-`)) throw new Error(`README.md still labels released v${REFAS_VERSION} as development`);
+  }
   process.stdout.write(`${JSON.stringify({status:'PASS',version:packageJson.version,packagedFiles:names.length,unpackedBytes:pack.unpackedSize,skillBytes,instructionReferenceLeaves:instructionGraph.referenceLeaves,semanticInstructionNodes:semanticGraph.nodeCount,routedInstructionTargets:instructionGraph.routedPackagePaths.length},null,2)}\n`);
 }
 

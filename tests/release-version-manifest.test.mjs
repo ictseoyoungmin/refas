@@ -23,6 +23,21 @@ test('npm, runtime, plugin manifests and release-facing docs share one version',
   assert.ok(changelog.includes('## '+REFAS_VERSION+' — Unreleased'));
 });
 
+test('release audit keeps public and unreleased candidate contracts separate',async()=>{
+  const source=await fs.readFile(new URL('../tools/release-audit.mjs',import.meta.url),'utf8');
+  assert.match(source,/changelog\.includes\(`## \$\{REFAS_VERSION\} — Unreleased`\)/u);
+  assert.match(source,/readme\.includes\(`development-v\$\{REFAS_VERSION\}-`\)/u);
+  assert.match(source,/README\.md falsely links unpublished/u);
+  assert.match(source,/README\.md published release link omits/u);
+});
+
+test('scheduled deep QA targets existing main instead of a deleted 1.4.1 branch',async()=>{
+  const deep=await fs.readFile(new URL('../.github/workflows/ci-deep.yml',import.meta.url),'utf8');
+  assert.match(deep,/default: main/u);
+  assert.match(deep,/github\.event\.inputs\.ref \|\| 'main'/u);
+  assert.doesNotMatch(deep,/develop\/v1\.4\.1/u);
+});
+
 test('installed agent default describes a complete editable object and practical review',async()=>{
   const a=await fs.readFile(new URL('../skills/refas/agents/openai.yaml',import.meta.url),'utf8');
   assert.match(a,/complete, editable 3D asset/);
