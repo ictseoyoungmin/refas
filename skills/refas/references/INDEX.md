@@ -1,155 +1,37 @@
 # RefAs instruction router
 
-This file is the canonical progressive-load router for the installed RefAs skill. `SKILL.md` enters the instruction graph here. The physical installation boundary is the directory that contains this file's parent `references/` directory: normally `skills/refas/` in the repository, but Claude/Codex may install only that directory.
+This file is the canonical installed-skill route from `SKILL.md`. The machine-readable `references/GRAPH.json` defines capability ownership, prerequisites, interface descriptors and trust boundaries; prose only routes the active work. Read `references/workflow.md` for the eleven-capability loop and only the relevant reference leaf below.
 
-`references/GRAPH.json` is the machine-readable semantic graph for this router. It records every reference leaf's routing owners, canonical runtime-capability projection, hard and conditional prerequisites, authority, closure effects, public interface operations, finding ownership, deprecated finding compatibility, and real-source certification prerequisites. `runtimeCapabilities` contains only the canonical checkpoint/repair capabilities; routing tags such as `control` remain in `owners` but never become runtime capabilities. Each node's `interface.interfaces[]` names the existing public CLI and/or `scripts/lib/index.mjs` operation boundary. Prose may explain that graph but must not contradict it.
+## Installation boundary and discovery
 
-## Installation-root invariant
+- Paths resolve inside the installed skill root: `references/...`, `assets/...`, `scripts/...`. Do not use repository-root `docs/`, `schemas/`, `tests/`, `examples/`, `tools/` or `skills/refas/` self-prefixes as installed skill dependencies. No `../` or bare sibling Markdown routes.
+- `requirements.txt` at skill root supplies Python dependencies; an installed skill must work without a repository checkout.
+- Discover current operations with `node scripts/refas.mjs describe node <instruction-node-id>` or `node scripts/refas.mjs describe capability <runtime-capability-id>`. These lookups expose existing public contracts, not new permissions.
 
-Every executable instruction and runtime dependency must resolve inside the installed skill root.
+## Minimal work path
 
-- `references/...`, `assets/...`, and `scripts/...` resolve from the **installed skill root**.
-- `references/contracts/...` is the authoritative home for detailed agent-facing contracts.
-- Repository-root `docs/`, `schemas/`, `tests/`, `examples/`, `tools/`, `.github/`, and `package.json` are support-layer resources, never skill execution dependencies.
-- `docs/...`, `../` traversal, absolute repository paths, and `skills/refas/...` self-prefixing are forbidden in skill instruction routes.
-- Bare sibling Markdown routes such as `parameter-fitting.md` are forbidden; use the canonical `references/...` path.
-- `requirements.txt` at the skill root is the canonical Python dependency manifest.
-
-The repository may depend on the skill. The skill must never depend on the repository around it. CI copies `skills/refas/` into an isolated temporary directory and reruns both the installation-boundary verifier and semantic-graph verifier there.
-
-## Public discovery lookup
-
-After `references/GRAPH.json` routes the active work, use the installed CLI when the exact executable surface is needed:
-
-```text
-refas describe node <instruction-node-id>
-refas describe capability <runtime-capability-id>
-```
-
-The node form returns that instruction node's routing identity, prerequisites, runtime-capability projection, closure effects, and full current public interface descriptors. The capability form accepts only one of the 11 canonical runtime capability IDs and aggregates owning nodes in graph order. These namespaces are intentionally explicit: `refas describe <id>` does not guess whether an ID is an instruction node or a runtime capability, and routing-only owner tags such as `control` are not runtime capabilities.
-
-### Observation evidence lookup
-
-| Input situation | Agent command / contract |
-|---|---|
-| Single image, sheet, separate photos, ZIP | `refas evidence --spec evidence-request.json --out reviews/observations --reuse` |
-| Only question-driven edge/gradient/contrast aids | Per-view `question`, `decisionTarget` and selected `analyses` in `assets/templates/evidence-request.json` |
-| Inspect findings / link changed GLB bytes / prune no-benefit files | `refas evidence --assess evidence-utility-decisions.json --out reviews/observations --prune` |
-| Previously published CLI compatibility | `refas evidence --image reference.png --out DIR --scope ID [--roi x,y,w,h]` preserves legacy image files and `refas.evidence-manifest/v1`; new tasks use `--spec` |
-
-The explicit `--image` compatibility mode produces the historical eight output images and manifest for existing integrations. New agent work uses the selection-based `--spec` mode.\n\nThe new mode retains every source/ZIP member hash and view ROI in a
-`derived-observation-aid-only` manifest. **It cannot assert registration
-or grant source-fidelity PASS** across images that happen to share a view name.
-Load `references/observation.md` for the precise format and safety contract.
-
-### Rendering workflow lookup
-
-| Situation | Installed command | Node / interface |
+| Intent | Call | Result / owner |
 |---|---|---|
-| Fast edited-GLB shape/material view without full PBR | `node scripts/refas.mjs preview-pbr --glb candidate.glb --frame frame.json --out renders/preview --views hero,side --reuse` | `appearance/iterative-pbr-preview` |
-| One combined human-facing board from real render evidence | `node scripts/refas.mjs review-board --portable renders/portable --pbr renders/pbr --clay renders/clay --out reviews/combined.png` | `validation/combined-review-presentation` |
+| Start/resume and choose one owner × scope | `node scripts/refas.mjs next --root PROJECT` | Read-only checkpoint/work routing, see `references/workflow.md` |
+| Inspect existing blocked evidence | `node scripts/refas.mjs diagnose --root PROJECT --asset PROJECT/candidate.glb` | Read-only blockers and responsibility, see `references/failure-routing.md` |
+| Check recorded project state | `node scripts/refas.mjs audit --root PROJECT` | State consistency, **not** resemblance or readiness |
+| Inspect strict source-bound claim coverage | `node scripts/refas.mjs validate --root PROJECT --asset PROJECT/candidate.glb` | Read-only strict coverage; exits 2 if blocked, see `references/validation.md` |
+| Render changed material/shape views quickly | `node scripts/refas.mjs preview-pbr --glb candidate.glb --frame frame.json --out renders/preview --views hero,side --reuse` | Non-certifying preview, see `references/appearance.md` |
+| Combine existing real render evidence | `node scripts/refas.mjs review-board --portable renders/portable --pbr renders/pbr --out reviews/board.png` | Presentation only, optional `--clay` |
+| Handoff a working asset | `node scripts/refas-host.mjs handoff --root PROJECT` | Draft transfer, **not** source proof |
+| Request source-bound final handoff | `node scripts/refas-host.mjs handoff --root PROJECT --profile source-bound-object` | Requires independently replayed original-source authority |
 
-These commands provide **no visual PASS authority**: preview writes only a
-`preview-only` manifest, and the combined board is `presentation-only`.
-Final neutral-clay and appearance reports still require all eight current views.
-See `references/appearance.md` and `references/validation.md` for gate use.
+Do not treat an `audit PASS`, `DONE`, preview, mesh integrity, or single-view IoU as positive original-photo fidelity. Reuse candidate and frame digests; do not silently promote unobserved geometry.
 
-### Agent-facing workflow lookup (existing operations)
+## Observation aids and input templates
 
-The released CLI provides read-only navigation and diagnostics. Use the canonical
-graph's `workflow/agent-next`, `failure-routing/agent-diagnose`, and
-`validation/agent-validate-source-bound` interfaces; the registered command
-descriptors and public-library exports are discoverable through `describe node`.
+For a specific visual question use `refas evidence --spec evidence-request.json --out reviews/observations --reuse`. Record actual model-decision benefit with `refas evidence --assess evidence-utility-decisions.json --out reviews/observations --prune`; both route through `references/observation.md`. Old `--image` mode is retained for compatibility, not a recommended default. Derived images are observation aids only, never camera registration or approval.
 
-| Situation | Installed-skill command | Canonical node |
-|---|---|---|
-| Start or resume a project, select the next owner/scope | `node scripts/refas.mjs next --root PROJECT` | `workflow` |
-| Inspect an existing typed finding without mutating the project | `node scripts/refas.mjs diagnose --root PROJECT --finding FINDING.json` | `failure-routing` |
-| Inspect current asset's existing QA blockers and owner/evidence | `node scripts/refas.mjs diagnose --root PROJECT --asset PROJECT/candidate.glb` | `failure-routing` |
-| Evaluate strict source-bound QA of exact current GLB | `node scripts/refas.mjs validate --root PROJECT --asset PROJECT/candidate.glb` | `validation` |
+Use only the applicable template under `assets/templates/` and the owning reference leaf; examples include `assets/templates/visual-hierarchy.json`, `assets/templates/visual-observation.json`, `assets/templates/construction-quality.json`, `assets/templates/parameter-fit-plan.json`, `assets/templates/pbr-render-report.json` and `assets/templates/visual-review.json`. Checkpoint / failure routing must be read before state changes. For other exact inputs query `describe` instead of preloading a 100-operation catalog.
 
-`next` follows `resumeProject`, `diagnose` previews an existing finding
-route or existing `verifySourceBoundObject` report, and `validate` uses that
-same canonical source-bound QA with exit code 2 when `BLOCKED`. `diagnose`
-is informational and can return a blocked report with exit 0; never treat its
-exit status as fidelity approval. Neither command issues certificates, repairs,
-mutates geometry, or weakens final Host handoff. Run expensive source-bound
-verification at genuine candidate/closure transitions, not after every minor
-construction operation.
+## Minimal entry and conditional finalization
 
-### Canonical standalone templates
-
-Most executable operation inputs are exposed through the interface catalog returned by `describe`. The following standalone templates remain public convenience/contracts and are routed explicitly so workers never need to guess filenames:
-
-| Template | Route |
-|---|---|
-| `assets/templates/assembly-contract.json` | `references/assembly.md` |
-| `assets/templates/closure-gates.json` | `references/checkpointing.md`, `references/claim-certification.md` |
-| `assets/templates/evaluation.json` | `references/checkpointing.md` |
-| `assets/templates/parameter-fit-plan.json` | `references/parameter-fitting.md` |
-| `assets/templates/projection-fit.json` | `references/spatial-reasoning.md`, `references/validation.md` |
-| `assets/templates/realized-assembly-input.json` | `references/assembly.md` |
-| `assets/templates/realized-projection-input.json` | `references/spatial-reasoning.md`, `references/validation.md` |
-| `assets/templates/reference-geometry.json` | `references/observation.md` |
-| `assets/templates/relational-structure.json` | `references/relational-structure.md` |
-| `assets/templates/semantic-authority.json` | `references/inference-authority.md` |
-| `assets/templates/spatial-hypotheses.json` | `references/spatial-reasoning.md` |
-| `assets/templates/surface-network.json` | `references/construction.md` |
-
-A standalone template does not override the operation-specific input catalog. When `describe` returns an interface template, that interface metadata is authoritative for the executable minimum input.
-
-
-### Final transfer contract discovery
-
-`node scripts/refas.mjs audit --root PROJECT` evaluates the existing
-project audit. `node scripts/refas.mjs verify --root PROJECT --asset
-PROJECT/candidate.glb` checks exact source-bound QA and may return
-`BLOCKED`.
-
-The optional Host interface has two **existing** modes:
-
-- `node scripts/refas-host.mjs handoff --root PROJECT`: default
-  `draft-transfer`, for working-asset transfer only
-- `node scripts/refas-host.mjs handoff --root PROJECT --profile
-  source-bound-object`: independently replays strict final authorization,
-  and refuses when current source-photo semantics are `INSUFFICIENT`
-
-Neither `audit` nor draft transfer grants source fidelity. Discover the
-public modes via `describe node validation` and
-`describe node host-integration`.
-
-## Minimal entry and conditional control reading
-
-After this router, read `references/workflow.md` for current capability
-ownership and construction order. The remaining control guides are loaded
-**at the moment their operations are needed**:
-
-- Before checkpoint creation, bounded edits, restore or abort:
-  `references/checkpointing.md`
-- Before persisting a typed finding, reopening an owner or recovering a
-  blocked project: `references/failure-routing.md` and
-  `references/checkpointing.md`
-
-Never skip these guides merely because they were not required at first load.
-Actual mutation/recovery authority is still enforced by the installed
-runtime; progressive reading cannot waive a gate.
-
-### Route by intended asset work
-
-| Work profile | Start with | Additional guide only when required |
-|---|---|---|
-| Static reference object | `references/observation.md`, `references/spatial-reasoning.md`, `references/construction.md` | `references/assembly.md` for multiple parts, `references/validation.md` for early clay comparison |
-| Organic or character form | Static form route plus `references/organic-articulated-construction.md` | Owner-local fit, cage, rig/attachment contract only where realized |
-| Mechanically articulated object | Static form route plus `references/assembly.md` and `references/contracts/articulation-clearance.md` | Link/joint, actuation or transmission contracts only when the actual mechanism uses them |
-| Physical/control/runtime target | Mechanical route plus relevant physical identity, dynamics, control, representation and binding leaves | `references/contracts/physical-claims.md` only for requested claims; no invented internal property evidence |
-| Defect, reopen, or failed inspection | `references/failure-routing.md` + `references/checkpointing.md` | Responsible owner leaf, current source and GLB evidence |
-| Finalization/handoff | `references/validation.md`, `references/candidate-transactions.md`, `references/claim-certification.md` | `references/realized-contact-support.md` when required; `references/host-integration.md` for actual host handoff |
-
-Rendering shape early is independent of finishing materials.
-For a small callable control-cage modeling example, see
-`scripts/subdivision-cage-demo.mjs`; it demonstrates geometry
-generation, **not** source-fidelity closure or an identity-bearing permit.
-
+After this router, load `references/workflow.md`, then one task-specific leaf from the progressive routes below. For a blocked or invalidated state, read both `references/checkpointing.md` and `references/failure-routing.md` before edits. Final `references/claim-certification.md` and `references/candidate-transactions.md` belong to applicable claim closure; an early modeling loop does not require them. Gate requirements remain enforced by the runtime regardless of progressive reading.
 ## Progressive-load routes
 
 Load only the references needed by the active capability or conditional closure path.
