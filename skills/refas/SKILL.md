@@ -7,12 +7,20 @@ description: Build and revise traceable, editable 3D assets from visual referenc
 
 **Deliver an actual, recognizable, editable 3D asset, not a collection of passing checklists.** Preserve exact source evidence and recoverable construction state. RefAs helps an agent observe → construct → render → compare → repair; it does not generate a 3D model by itself.
 
+## Modeling priorities
+
+- Build a coherent whole with continuous side/back geometry, evidence-fitted profiles, and real thickness before decorative detail.
+- Reuse shared profiles and mirrored/repeated geometry where the source supports them; preserve measured asymmetries.
+- Prioritize actual visual improvement over the number of passing checklists.
+
+Source-bound approval requires independent original-source evidence; modeling previews, GLB integrity and generic project audit cannot authorize it.
+
 ## Read only the active instructions
 
 1. For a new project read `references/INDEX.md`, then `references/workflow.md`. The index is the canonical installed-skill router; load just the leaf for the current capability.
 2. For an observation question read `references/observation.md` and `references/provenance.md`; for camera/depth choices read `references/spatial-reasoning.md`.
 3. For actual shape construction read `references/construction.md`; add `references/organic-articulated-construction.md` only for relevant organic or articulated work, and `references/parameter-fitting.md` only when fitting parameters.
-4. Before checkpoint/edit/restore read `references/checkpointing.md`. Before persisting or repairing a typed finding read `references/failure-routing.md`. If `next` returns a blocked or invalidated state, read both before changing project state.
+4. Load `references/checkpointing.md` before checkpoint/edit/restore operations. Before persisting or repairing a typed finding read `references/failure-routing.md`. If `next` returns a blocked or invalidated state, read both before changing project state.
 5. For source comparison and final review read `references/validation.md`. For appearance use `references/appearance.md`; for assembly use `references/assembly.md`. Follow the conditional finalization chain in `references/INDEX.md` only when the requested claim requires it.
 
 Do not preload every contract, physical subsystem or template for a static prop. Paths are relative to the installed skill root; never assume repository-root files are installed.
