@@ -6,9 +6,11 @@ import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
 import {fileURLToPath} from 'node:url';
+import {REFAS_VERSION} from '../skills/refas/scripts/lib/canonical.mjs';
 
 const ROOT=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const OLD=process.env.REFAS_V121_ROOT;
+const BASELINE_VERSION='1.2.1';
 if(!OLD)throw new Error('REFAS_V121_ROOT is required: use the published v1.2.1 checkout');
 const PY=process.env.CODEX_PRIMARY_RUNTIME_PYTHON||'python3';
 const digest=(bytes)=>createHash('sha256').update(bytes).digest('hex');
@@ -30,12 +32,12 @@ async function snapshot(root){
   return result;
 }
 async function main(){
-  const tmp=await fs.mkdtemp(path.join(os.tmpdir(),'refas-121-to-130-'));
+  const tmp=await fs.mkdtemp(path.join(os.tmpdir(),`refas-121-to-${REFAS_VERSION.replaceAll('.','')}-`));
   try{
     const original=path.join(OLD,'skills/refas/scripts/refas.mjs');
     const next=path.join(ROOT,'skills/refas/scripts/refas.mjs');
-    assert.equal(run(process.execPath,[original,'--version'],tmp),'1.2.1');
-    assert.equal(run(process.execPath,[next,'--version'],tmp),'1.3.0');
+    assert.equal(run(process.execPath,[original,'--version'],tmp),BASELINE_VERSION);
+    assert.equal(run(process.execPath,[next,'--version'],tmp),REFAS_VERSION);
     const project=path.join(tmp,'saved-v121');
     await fs.mkdir(path.join(project,'source'),{recursive:true});
     const image=path.join(project,'source','reference.png');
@@ -53,8 +55,8 @@ async function main(){
     const guided=JSON.parse(run(process.execPath,[next,'next','--root',project],tmp));
     assert.ok(guided);
     assert.deepEqual(await snapshot(project),before,
-      'v1.3.0 read-only audit/resume/next must preserve all published v1.2.1 project bytes');
-    console.log(JSON.stringify({status:'PASS',baseline:'1.2.1',target:'1.3.0',
+      `v${REFAS_VERSION} read-only audit/resume/next must preserve all published v${BASELINE_VERSION} project bytes`);
+    console.log(JSON.stringify({status:'PASS',baseline:BASELINE_VERSION,target:REFAS_VERSION,
       audited:true,resumable:true,sourceBytesPreserved:true,projectFileCount:Object.keys(before).length},null,2));
   }finally{await fs.rm(tmp,{recursive:true,force:true});}
 }
