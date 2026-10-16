@@ -88,6 +88,15 @@ class BlenderResourceGuardTests(unittest.TestCase):
             run_guarded([sys.executable,"-c",script],env=os.environ.copy(),
                         timeout_seconds=8,max_working_mib=24,poll_seconds=.02)
 
+    def test_descendant_allocation_counts_in_process_tree_budget(self):
+        parent=("import subprocess,sys; "
+                "subprocess.run([sys.executable,'-c',"
+                "'import time; x=bytearray(64*1024*1024); time.sleep(5)'])")
+        with self.assertRaisesRegex(RuntimeError,"R14E_BACKEND_RESOURCE"):
+            run_guarded([sys.executable,"-c",parent],
+                        env=os.environ.copy(),timeout_seconds=8,
+                        max_working_mib=24,poll_seconds=.02)
+
     def test_timed_out_worker_is_killed(self):
         with self.assertRaisesRegex(RuntimeError,"R14E_BACKEND_TIMEOUT"):
             run_guarded([sys.executable,"-c","import time; time.sleep(5)"],
