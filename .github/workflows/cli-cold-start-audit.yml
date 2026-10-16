@@ -1,0 +1,54 @@
+name: RefAs paired CLI cold-start audit
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'skills/refas/scripts/refas.mjs'
+      - 'skills/refas/scripts/refas-host.mjs'
+      - 'tools/benchmark-cli-cold.mjs'
+      - '.github/workflows/cli-cold-start-audit.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  paired:
+    name: Baseline vs candidate on one Node runner
+    if: github.event_name == 'pull_request' && github.event.pull_request.number == 397
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - name: Checkout exact baseline
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: baseline
+          persist-credentials: false
+      - name: Checkout exact candidate
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          path: candidate
+          persist-credentials: false
+      - name: Node 22
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          package-manager-cache: false
+      - name: Measure real CLI startup and byte parity
+        env:
+          BASELINE_SHA: ${{ github.event.pull_request.base.sha }}
+          CANDIDATE_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          node candidate/tools/benchmark-cli-cold.mjs \
+            --baseline baseline --candidate candidate --pairs 12 \
+            --out "$RUNNER_TEMP/refas-cli-cold-report.json"
+      - name: Save the measurement
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cli-cold-start-${{ github.event.pull_request.head.sha }}
+          path: ${{ runner.temp }}/refas-cli-cold-report.json
+          if-no-files-found: warn
+          retention-days: 14
