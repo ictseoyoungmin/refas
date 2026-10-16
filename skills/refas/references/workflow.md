@@ -78,6 +78,9 @@ The work-unit rule never means that a local scope may close independently of unr
 
 ## Conditional structure and edit rules
 
+Routine surface completion follows the shape hypothesis and applicable whole-system premises; it cannot close while a material macro/identity relation is unresolved. Observation sketches and diagnostic edits remain possible without falsely closing a downstream capability.
+
+
 **Core:** build actual shape before specialized structure. The eleven capability owners and one-capability × one-scope work rule above remain unchanged. Read only the following contract(s) when the observed subject or selected claim needs them; detailed equations, schemas and invalidation rules live in those canonical leaves, not in this always-read workflow.
 
 | Trigger | Required rule and authoritative route |
