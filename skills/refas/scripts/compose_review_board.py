@@ -191,7 +191,8 @@ def main():
             candidate.unlink(missing_ok=True)
         stage.rmdir()
     print(json.dumps({'status':'PASS','claimScope':'presentation-only','board':str(out),
-                      'manifest':str(output_manifest),'cells':len(manifest['cells'])},indent=2))
+                      'manifest':str(output_manifest),'cells':len(manifest['cells']),
+                      'presentationWarningCount':len(warnings)},indent=2))
 
 
 if __name__ == '__main__':
