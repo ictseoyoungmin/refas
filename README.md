@@ -2,7 +2,7 @@
   <img src="skills/refas/assets/icon.svg" width="180" alt="RefAs robotic arm icon">
   <h1>RefAs</h1>
   <p>
-    <a href="https://github.com/ictseoyoungmin/refas/releases/tag/v1.4.0"><img src="https://img.shields.io/badge/version-v1.4.0-6f5a46" alt="Version v1.4.0"></a>
+    <a href="https://github.com/ictseoyoungmin/refas/releases/tag/v1.4.1"><img src="https://img.shields.io/badge/version-v1.4.1-6f5a46" alt="Version v1.4.0"></a>
     <a href="https://github.com/ictseoyoungmin/refas/actions/workflows/ci.yml"><img src="https://github.com/ictseoyoungmin/refas/actions/workflows/ci.yml/badge.svg" alt="CI status"></a>
     <img src="https://img.shields.io/badge/node-20%2B-339933" alt="Node.js 20+">
     <img src="https://img.shields.io/badge/Agent%20Skill-Vision--first%203D-b06f47" alt="Agent Skill: Vision-first 3D">
@@ -21,6 +21,10 @@ RefAs helps an AI agent **build, edit, inspect and export** reference-driven 3D 
 The main workflow is **observe → construct → render → compare → locally revise**. Validation exists to support asset quality rather than replace modeling.
 
 The bundled [demo](demo/index.html) illustrates the tooling. For reproducible examples see [examples](examples/) and [the construction guide](skills/refas/references/construction.md).
+
+### Release stabilization in 1.4.1
+
+The 1.4.1 patch improves Visibility Buffer cache invalidation when the GLB parser or material feature-policy code changes, adds sampled Linux Blender subprocess-tree RSS and timeout supervision, and corrects historical release and installed-skill documentation. The portable v1 renderer's near-plane clipping behavior remains unchanged for digest compatibility. These changes do not confer independent reference-photo likeness or generalized PBR equivalence; see [known limitations](docs/known-limitations.md). Full 1.4.0/1.4.1 same-host CPU comparison and exact pixel/depth parity are recorded in [paired benchmark evidence](docs/development/v1.4.1-r14-p03-paired-measured-2026-10-16.md).
 
 ### Renderer architecture and diagnostic previews in 1.4.0
 
