@@ -2,6 +2,20 @@
 
 All notable RefAs changes are documented here. RefAs follows semantic versioning.
 
+## 1.4.1 — 2026-10-16
+
+### Stability and correctness
+- Include transitive GLB decoder and CPU feature-policy SHA-256 fingerprints in the shared Visibility Buffer cache key. After decoder/policy changes the same input GLB and frame cannot reuse stale winner/depth cache arrays; adversarial key and tamper regressions run in the regular CPU CI suite.
+- Add process-tree sampled RSS and process-group deadline termination to the opt-in external Blender Cycles worker on Linux, with bounded diagnostic logs and explicit guard/observed RSS fields. Sampled `/proc` monitoring is **not** a kernel hard memory cap and can overshoot between polls; require a cgroup/container hard limit for strict memory isolation.
+- Document the historical v1 near-plane crossing-triangle omission without changing its raster bytes, evidence digests, report schemas, or source-bound certification authority.
+
+### Agent workflow and publication maintenance
+- Reduce duplicate rendering instructions in the installed skill while retaining canonical instruction/template graph reachability and the eight-view source-grounded evidence requirements.
+- Archive the actual v1.4.0 release/full-QA record; distinguish obsolete design-only proposals from shipped scoped capabilities and remove consumed one-time v1.4.0 automatic publication path from new development. Keep exact-main-SHA/manual `PUBLISH` and all 17 gated full-QA steps.
+- Connect `develop/v1.4.1` to Node 20/22/24 and explicit `[full-qa]` CI plus the manual/weekly deep QA routing. Add isolated one-runner before/after performance comparison to `v1.4.0` with matching GLB/frame SHA, 3 repeats and exact output parity. This is measurement evidence, **not** a generic speedup claim.
+- Preserve the public CLI, compatible v1.2.1 saved projects, and scoped preview-only PBR v2. The independent original-photo resemblance and F01 editable-model flagship remain future work.
+
+
 ## 1.4.0 — 2026-10-16
 
 ### Renderer architecture and execution
