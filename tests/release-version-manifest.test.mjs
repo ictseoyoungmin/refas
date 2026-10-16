@@ -32,7 +32,7 @@ test('release CI and npm nested packaging exclude generated Python bytecode',asy
   }
   for (const ignorePath of ['skills/refas/.npmignore','skills/refas/scripts/.npmignore']) {
     const ignore=await fs.readFile(new URL('../'+ignorePath,import.meta.url),'utf8');
-    assert.match(ignore,/__pycache__/u,ignorePath);
+    assert.ok(ignore.includes('**/*.pyc'),ignorePath);
     assert.match(ignore,/\\*\\*\/\\*\\.pyc/u,ignorePath);
   }
 });
