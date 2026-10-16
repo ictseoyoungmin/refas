@@ -6,6 +6,7 @@ import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
 import {fileURLToPath} from 'node:url';
+import {REFAS_VERSION} from '../skills/refas/scripts/lib/canonical.mjs';
 
 const ROOT=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const PYTHON=process.env.CODEX_PRIMARY_RUNTIME_PYTHON||'python3';
@@ -26,22 +27,22 @@ async function main(){
   try{
     const packed=JSON.parse(run('npm',['pack','--json','--ignore-scripts','--pack-destination',tmp]))[0];
     assert.equal(packed.name,'refas');
-    assert.equal(packed.version,'1.3.0');
+    assert.equal(packed.version,REFAS_VERSION);
     const tarball=path.join(tmp,packed.filename);
     assert.ok((await fs.stat(tarball)).size>0);
     const prefix=path.join(tmp,'installed');
     run('npm',['install','--prefix',prefix,'--ignore-scripts','--no-audit','--no-fund','--offline',tarball]);
     const mod=path.join(prefix,'node_modules','refas');
     const pkg=await readJson(path.join(mod,'package.json'));
-    assert.equal(pkg.version,'1.3.0');
+    assert.equal(pkg.version,REFAS_VERSION);
     for(const bin of ['refas','refas-host']){
       assert.ok((await fs.lstat(path.join(prefix,'node_modules','.bin',bin))).isSymbolicLink(),
         `npm binary ${bin} not installed`);
     }
     const cli=path.join(mod,'skills','refas','scripts','refas.mjs');
     const host=path.join(mod,'skills','refas','scripts','refas-host.mjs');
-    assert.equal(JSON.parse(run(process.execPath,[cli,'--help'],{cwd:tmp})).version,'1.3.0');
-    assert.equal(JSON.parse(run(process.execPath,[host,'help'],{cwd:tmp})).version,'1.3.0');
+    assert.equal(JSON.parse(run(process.execPath,[cli,'--help'],{cwd:tmp})).version,REFAS_VERSION);
+    assert.equal(JSON.parse(run(process.execPath,[host,'help'],{cwd:tmp})).version,REFAS_VERSION);
     const installedSkill=path.join(mod,'skills','refas');
     const instruction=JSON.parse(run(process.execPath,[
       path.join(installedSkill,'scripts','verify_installation_boundary.mjs'),
