@@ -2,20 +2,15 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
+import {REFAS_VERSION} from './lib/canonical.mjs';
 import {
-  REFAS_VERSION,
-  assertArtifactHandoffCurrent,
-  getArtifactHandoff,
-  getSourceBoundReleaseHandoff,
-  assertSourceBoundReleaseHandoffCurrent,
-  getHostEvents,
-  getHostReviewBundle,
-  loadHostSession,
-  openHostSession,
-  publishHostReviewBundle,
-  validateWorkerRequest,
-  validateWorkerResponse,
-} from './lib/index.mjs';
+  assertArtifactHandoffCurrent, getArtifactHandoff,
+  getSourceBoundReleaseHandoff, assertSourceBoundReleaseHandoffCurrent,
+} from './lib/host-artifact-handoff.mjs';
+import {getHostEvents} from './lib/host-event.mjs';
+import {getHostReviewBundle, publishHostReviewBundle} from './lib/host-review-bundle.mjs';
+import {loadHostSession, openHostSession} from './lib/host-session.mjs';
+import {validateWorkerRequest, validateWorkerResponse} from './lib/host-worker.mjs';
 
 function parseArgs(argv) {
   const [command = 'help', ...rest] = argv;
