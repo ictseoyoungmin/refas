@@ -25,9 +25,16 @@ concurrency:
 
 jobs:
   publish:
-    if: ${{ github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.confirmation == 'PUBLISH' }}
+    # Dispatch only; the first step refuses a non-main ref or wrong confirmation.
+    # The SHA-bound preflight below is authoritative for publication.
     runs-on: ubuntu-latest
     steps:
+      - name: Enforce manual main dispatch authorization
+        env:
+          CONFIRMATION: ${{ inputs.confirmation }}
+        run: |
+          test "$GITHUB_REF" = "refs/heads/main"
+          test "$CONFIRMATION" = "PUBLISH"
       - uses: actions/checkout@v7
         with:
           ref: ${{ inputs.release_sha }}
