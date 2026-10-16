@@ -1,0 +1,5 @@
+# Generated Python interpreter bytecode is never distributable RefAs skill source.
+__pycache__/
+**/__pycache__/
+*.pyc
+**/*.pyc
