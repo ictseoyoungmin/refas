@@ -21,6 +21,10 @@ This file is the canonical installed-skill route from `SKILL.md`. The machine-re
 | Handoff a working asset | `node scripts/refas-host.mjs handoff --root PROJECT` | Draft transfer, **not** source proof |
 | Request source-bound final handoff | `node scripts/refas-host.mjs handoff --root PROJECT --profile source-bound-object` | Requires independently replayed original-source authority |
 
+The read-only `next`, `diagnose` and `validate` operations return exit 0 on successful inspection (even if a current-state blocker is reported by diagnose); strict validate exits 2 when the original-source claim is blocked. Never mistake an inspection exit 0 for an approval.
+
+The default Handoff profile is `draft-transfer` and does not claim original-source fidelity; `source-bound-object` is a separate strict replay.
+
 Do not treat an `audit PASS`, `DONE`, preview, mesh integrity, or single-view IoU as positive original-photo fidelity. Reuse candidate and frame digests; do not silently promote unobserved geometry.
 
 ## Observation aids and input templates
@@ -28,6 +32,14 @@ Do not treat an `audit PASS`, `DONE`, preview, mesh integrity, or single-view Io
 For a specific visual question use `refas evidence --spec evidence-request.json --out reviews/observations --reuse`. Record actual model-decision benefit with `refas evidence --assess evidence-utility-decisions.json --out reviews/observations --prune`; both route through `references/observation.md`. Old `--image` mode is retained for compatibility, not a recommended default. Derived images are observation aids only, never camera registration or approval.
 
 Use only the applicable template under `assets/templates/` and the owning reference leaf; examples include `assets/templates/visual-hierarchy.json`, `assets/templates/visual-observation.json`, `assets/templates/construction-quality.json`, `assets/templates/parameter-fit-plan.json`, `assets/templates/pbr-render-report.json` and `assets/templates/visual-review.json`. Checkpoint / failure routing must be read before state changes. For other exact inputs query `describe` instead of preloading a 100-operation catalog.
+
+The installed template catalog must remain discoverable even when not preloaded. Additional conditional templates:
+- `assets/templates/assembly-contract.json`, `assets/templates/closure-gates.json`, `assets/templates/evaluation.json`
+- `assets/templates/projection-fit.json`, `assets/templates/realized-assembly-input.json`, `assets/templates/realized-projection-input.json`
+- `assets/templates/reference-geometry.json`, `assets/templates/relational-structure.json`, `assets/templates/semantic-authority.json`
+- `assets/templates/spatial-hypotheses.json`, `assets/templates/surface-network.json`
+
+These templates are routed by their owning capability; names here ensure installed-skill discovery, not mandatory reading.
 
 ## Minimal entry and conditional finalization
 
