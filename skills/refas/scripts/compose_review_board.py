@@ -8,6 +8,8 @@ import os
 import tempfile
 from pathlib import Path
 
+from PIL import Image
+
 from render_glb import make_board, sha256
 
 
@@ -59,6 +61,33 @@ def _frame(directory: Path, entries: dict, view: str, label: str):
     return {'label':label.upper(), 'absolutePath':str(actual)}
 
 
+def _presentation_warning(frame: dict):
+    """Non-authoritative image readability hint, never a fidelity verdict.
+
+    Inspect only already digest-verified canonical frames. A near-flat clay or
+    normal picture may support a silhouette but cannot show local surface
+    curvature/normals. A valid flat object may legitimately trigger this hint.
+    """
+    label = frame['label']
+    if not (label.startswith('NEUTRAL-CLAY ') or label == 'PBR NORMAL'):
+        return None
+    with Image.open(frame['absolutePath']) as source:
+        rgb = source.convert('RGB')
+        count = rgb.getcolors(maxcolors=3)
+        if count is None or len(count) > 2:
+            return None
+    return {
+        'code': 'LOW_SURFACE_INFORMATION',
+        'view': label,
+        'severity': 'REVIEW',
+        'observedRgbColorsAtMost': len(count),
+        'meaning': 'This pass offers little visible interior shading; it may still support silhouette inspection.',
+        'nextAction': 'Inspect a diagnostic image with real surface normals or lighting before inferring local relief.',
+        'sourceFrameSha256': sha256(Path(frame['absolutePath'])),
+        'certificationAuthority': 'NONE',
+    }
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument('--portable', required=True)
@@ -100,10 +129,12 @@ def main():
     try:
         image = stage / 'board.png'
         make_board(reference, frames, image)
+        warnings = [warning for f in frames if (warning := _presentation_warning(f)) is not None]
         manifest = {
             'schema':'refas.combined-review-board/v1',
             'claimScope':'presentation-only',
             'eligibleForCertification':False,
+            'presentationWarnings':warnings,
             'assetSha256':port_asset,
             'frameDigest':port_frame,
             'sourceImageSha256':sha256(reference) if reference else None,
