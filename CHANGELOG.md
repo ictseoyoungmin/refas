@@ -2,6 +2,21 @@
 
 All notable RefAs changes are documented here. RefAs follows semantic versioning.
 
+## 1.4.1 — 2026-10-16
+
+### Reliability and documentation
+- Extended diagnostic shared Visibility Buffer cache identity to bind exact GLB decoder and CPU feature-policy source code digests. A changed parser or eligibility policy now invalidates old cached depth/winner inputs even when the GLB, camera and raster worker bytes are unchanged.
+- Added an optional Blender process-tree sampled RSS/deadline watchdog on Linux, with explicit process termination on detected overbudget and reported monitoring availability. This is *not* a kernel-enforced hard memory cap; non-Linux enforcement remains unavailable and must not be implied by input preflight.
+- Clarified that legacy v1 near-plane-crossing triangles are rejected as originally shipped; stable legacy report bytes remain unchanged. A corrected clipping raster requires a separately versioned backend.
+- Archived v1.4.0's exact published release evidence and retired the consumed automatic approval marker. Future releases retain manual exact-main-SHA `PUBLISH` and 17 named successful QA gates unless explicitly version-scoped.
+- Reduced duplicate skill rendering directions without weakening provenance, original-photo authority, eight-view final review or claim certification; full installed-skill graph/discovery closure remains validated.
+- Added isolated paired *same-runner* v1.4.0-to-candidate CPU benchmark tooling. Two genuine hardware runs at 100k/500k/1M generated indexed source triangles showed exact output/depth/winner hashes. The warm-time differences are descriptive and do not establish stable speedup, photo resemblance, or external Blender/CPU photometric equivalence.
+- Node20/22/24 compatibility, package installation and saved v1.2.1 read-only upgrade remain release gates.
+
+### Compatibility and exclusions
+- No source-bound certificate or stable v1 raster/report namespace was changed.
+- Not included: independently photo-registered Monster Bed/other source-to-asset likeness approval, complete glTF PBR feature parity, kernel-hard external-renderer memory isolation, or new flagship-grade 3D construction capability. These remain separately tracked future work.
+
 ## 1.4.0 — 2026-10-16
 
 ### Renderer architecture and execution
