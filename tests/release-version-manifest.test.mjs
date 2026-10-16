@@ -48,3 +48,14 @@ test('installed npm package and legacy upgrade checks use the canonical runtime 
   assert.ok(upgrade.includes("BASELINE_VERSION='1.2.1'"));
   assert.ok(upgrade.includes('target:REFAS_VERSION'));
 });
+
+test('historical v1 near-plane triangle omission stays explicit until a versioned replacement',async()=>{
+  const legacy=await fs.readFile(new URL('../skills/refas/scripts/render_pbr.py',import.meta.url),'utf8');
+  const limitations=await fs.readFile(new URL('../docs/known-limitations.md',import.meta.url),'utf8');
+  // Characterization canary only: changing this algorithm requires new raster
+  // goldens and evidence namespace, not an in-place v1 behavior change.
+  assert.ok(legacy.includes('if np.any(vertices[:, 2] <= 0.01):'));
+  assert.ok(legacy.includes('                continue\n            screen ='));
+  assert.ok(limitations.includes('near-plane'));
+  assert.ok(limitations.includes('do not clip') || limitations.includes('do not clip crossing'));
+});
