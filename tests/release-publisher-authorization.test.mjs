@@ -10,6 +10,7 @@ test('published v1.4.1 one-time approval no longer authorizes later releases', a
   assert.doesNotMatch(yaml, /\[publish:v1\.4\.1\]|RELEASE_TRIGGER|contains\(github\.event\.workflow_run\.head_commit/);
   assert.match(yaml, /RELEASE_SHA: \$\{\{ inputs\.release_sha \}\}/);
   assert.match(yaml, /sha!==sha/);
+  assert.doesNotMatch(yaml, /\benv:\s*\n\s*run:/);
   assert.match(yaml, /conclusion==='success'/);
   const namedSteps = yaml.match(/const fullQaSteps=\[([\s\S]*?)\];/);
   assert.ok(namedSteps, 'exact main CI full-gate step allowlist must remain');
