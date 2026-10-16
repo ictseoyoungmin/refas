@@ -1,4 +1,6 @@
-# Foundry production roadmap (post-v1.2.1)
+# Historical Foundry production proposal (post-v1.2.1)
+
+> **Status: ARCHIVED / NOT ACTIVE (2026-10-17).** F01–F04 below are preserved as historical design discussion. The 1.5.0 development plan and F01 issue #320 were explicitly canceled (CLOSED / not planned); this document is **not** a current implementation or release schedule. Current active work is the **unreleased 1.4.2 quality, complexity and practical-utility review** in [Notion](https://www.notion.so/3fbc6a3b5bf1810a9c37cd60daa23ad9). Any future minor-version plan requires a separate decision after that review.
 
 RefAs is a reference-driven **3D asset production system**. Verification is an internal quality control, not the product's principal output. The primary result is a recognizable, editable, assembly-aware GLB and a source project suitable for iteration.
 

@@ -2,13 +2,16 @@
   <img src="skills/refas/assets/icon.svg" width="180" alt="RefAs robotic arm icon">
   <h1>RefAs</h1>
   <p>
-    <a href="https://github.com/ictseoyoungmin/refas/releases/tag/v1.4.2"><img src="https://img.shields.io/badge/version-v1.4.2-6f5a46" alt="Version v1.4.2"></a>
+    <img src="https://img.shields.io/badge/development-v1.4.2-E39B35" alt="Development version v1.4.2 (unreleased)">
+    <a href="https://github.com/ictseoyoungmin/refas/releases/tag/v1.4.1"><img src="https://img.shields.io/badge/latest%20release-v1.4.1-6f5a46" alt="Latest published release v1.4.1"></a>
     <a href="https://github.com/ictseoyoungmin/refas/actions/workflows/ci.yml"><img src="https://github.com/ictseoyoungmin/refas/actions/workflows/ci.yml/badge.svg" alt="CI status"></a>
     <img src="https://img.shields.io/badge/node-20%2B-339933" alt="Node.js 20+">
     <img src="https://img.shields.io/badge/Agent%20Skill-Vision--first%203D-b06f47" alt="Agent Skill: Vision-first 3D">
     <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-59636e" alt="MIT License"></a>
   </p>
 </div>
+
+**Release status:** `v1.4.1` is the latest published GitHub Release. The repository package version `1.4.2` is an **unreleased development candidate**; pending review and changes belong on `develop/v1.4.2` until promoted to `main` and explicitly published. The 1.5.0 development proposal was canceled, not released.
 
 **Reference Asset Foundry** is a vision-first reconstruction system for AI agents that turn reference images into traceable, editable, evidence-bound 3D assets and, when justified, explicit physical construction semantics.
 

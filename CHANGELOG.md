@@ -2,7 +2,7 @@
 
 All notable RefAs changes are documented here. RefAs follows semantic versioning.
 
-## 1.4.2 — 2026-10-16
+## 1.4.2 — Unreleased (development candidate)
 
 ### Agent-guidance economy
 - Shorten the routinely read SKILL / INDEX / workflow guidance by about 42% compared with 1.4.1. Keep all existing installed-skill leaves, discoverable public templates, eleven runtime capability owners and exact gate authority; selectively load detailed physical contracts when relevant.
@@ -13,8 +13,12 @@ All notable RefAs changes are documented here. RefAs follows semantic versioning
 - Provide presentation-only low-surface-information warnings for near-flat neutral-clay or normal frames, and possible hero border clipping warnings. These are prompts to inspect better evidence, never new PASS/FAIL gates or shape errors.
 - Disable the consumed v1.4.1 automatic release authorization path. Only explicit main-branch manual `PUBLISH` with an exact SHA and all seventeen full QA steps can issue a new release; preserve the trigger shape for compatibility.
 
+### CLI loading efficiency
+- Load routine `refas` and `refas-host` CLI operations from their existing owning modules instead of eagerly loading the full public library barrel. Preserve public exports and defer the full library lookup to `describe`.
+- In paired same-runner Node 22 CLI trials, routine help/version/next commands started about 12–13% faster with exact output and exit-code parity; `describe` stayed approximately flat/slightly slower. This is a CLI latency improvement, not proof of asset resemblance.
+
 ### Limits
-- This patch does not prove improvement in source-photo resemblance, repair automation, 3D authoring quality or agent task completion. F01/F02 editable Blender construction and owner-local finding-to-repair execution remain the 1.5.0 workstream.
+- This patch does not prove improvement in source-photo resemblance, repair automation, 3D authoring quality or agent task completion. The previously proposed 1.5.0/F01–F04 workstream was withdrawn pending completion of the 1.4.2 quality and complexity review; it is not an approved future release.
 - Renderer algorithms, standard final evidence, SHA/checkpoint recovery and source-bound certifying authority remain unchanged.
 
 ## 1.4.1 — 2026-10-16
