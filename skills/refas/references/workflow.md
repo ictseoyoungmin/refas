@@ -76,144 +76,26 @@ High-impact fitting remains owner-local: camera candidates belong to `spatial-hy
 
 The work-unit rule never means that a local scope may close independently of unresolved whole-system premises that are material to that scope. A local eye, fastener, branch, joint, panel, or handle can be observed or sketched while an applicable macro structure remains open, but trustworthy lower-scope geometry closure is downstream of the relational barrier when such macro/identity whole-system obligations are active.
 
-## Relational structure, authority, and whole-system barrier
+## Conditional structure and edit rules
 
-Construct complete spatial objects from the visible silhouette, repeated structure, major volume, continuity of curvature, and physical connections. Use shared profiles and symmetry for appropriate corresponding parts, and resolve camera projection before changing their rest geometry.
+Routine surface completion follows the shape hypothesis and applicable whole-system premises; it cannot close while a material macro/identity relation is unresolved. Observation sketches and diagnostic edits remain possible without falsely closing a downstream capability.
 
-When macro/identity `whole-system` relational obligations are declared or otherwise material to the active construction scope, read:
 
-1. `references/relational-structure.md`
-2. `references/inference-authority.md`
-3. `references/whole-system-relational-barrier.md`
+**Core:** build actual shape before specialized structure. The eleven capability owners and one-capability × one-scope work rule above remain unchanged. Read only the following contract(s) when the observed subject or selected claim needs them; detailed equations, schemas and invalidation rules live in those canonical leaves, not in this always-read workflow.
 
-Do not invent a placeholder relation merely because shape construction is active. For an applicable relational dependency, the required order is:
+| Trigger | Required rule and authoritative route |
+|---|---|
+| Macro/identity whole-system relations materially affect a construction decision | Record observed relationships and alternative hypotheses using `references/relational-structure.md`, `references/inference-authority.md`, and **conditionally** `references/whole-system-relational-barrier.md`. Do not invent a relation just to satisfy a gate; source-bound final claims retain their own independent obligations. |
+| Modify semantic shape, pose or appearance | Apply `references/contracts/canonical-edit-boundary.md`. GLB normally records a realization, not editable shape authority; shape edits rebuild from construction state. Allow only bounded transform-specific direct edits where explicitly permitted. |
+| Child mounting, articulation or reuse is part of the subject | Use `references/contracts/attachment-semantics.md` first. Explicit modes (`FREE`, `FUSED`, `RIGID_FOLLOW`, `SURFACE_OFFSET`, `MULTI_ANCHOR`, `ARTICULATED`, `SUPPORTED_CLEARANCE`) preserve relation meaning rather than inferring it from proximity. |
+| Intentional same-body fusion | Apply `references/contracts/logical-fusion.md` before physical mesh fusion; retain original semantic member identities. |
+| Rebuild a surface-anchored attachment | Use `references/contracts/surface-anchor-frames.md`. Rebind semantic patch/triangle/barycentric anchors within declared bounds; never reuse stale triangle indices silently. |
+| One-owner dependent transform | Use `references/contracts/attachment-follow.md` to reevaluate current owner frame and required contact/offset. |
+| Multi-owner contact | Fit all declared anchors and preserve tolerances using `references/contracts/multi-anchor-solver.md`. |
+| Moving joint or supported clearance is required | Apply `references/contracts/articulation-clearance.md` for explicit frames/axes, range and actual clearance. Do not claim observed mechanics from a hidden view. |
+| Multiple dependent attached entities must move together | Use `references/contracts/attachment-propagation.md` and required realized-contact evidence. Fail closed on cycles, missing external frames, incompatible relations and stale bindings. |
 
-```text
-raw source / observation
-  -> refas.relational-structure/v1
-  -> refas.semantic-authority-set/v1
-  -> current macro + identity relation checks
-  -> refas.whole-system-relational-barrier/v1
-  -> dependent lower-scope geometry hardening
-```
-
-`refas.relational-structure/v1` records domain-neutral relationships such as distance ratios, alignment, ordering, plane chains, and volume ratios. Mark relations as `whole-system` or `local` and as `macro`, `identity`, or `detail`. Relation dependencies must be explicit and acyclic.
-
-`refas.semantic-authority-set/v1` says what each relation/property is allowed to claim:
-
-```text
-OBSERVED   = direct source fact
-INFERRED   = evidence/prior-supported hypothesis
-ENGINEERED = deliberate downstream construction choice
-UNKNOWN    = unresolved, not absence
-FORBIDDEN  = explicit contradiction or hard constraint
-```
-
-Authority labels classify artifact claims: `observed` for direct source facts, `inferred` for supported spatial hypotheses, and `engineered` for deliberate functional choices. Explicitly governed `unknown` propositions await a supporting basis, while `forbidden` denotes a contradiction or hard constraint. Routine surface completion follows the shape hypothesis and construction requirements without separate authority entries for each vertex or surface.
-
-Create `refas.whole-system-relational-barrier/v1` from the exact relation graph, exact authority set, and current checks for every applicable macro/identity whole-system obligation. The barrier passes only when all required relation checks pass with evidence and every required relation has `observed`, `inferred`, or `engineered` authority. A passing local-detail relation cannot satisfy a whole-system obligation, and a good visual score cannot override an applicable barrier.
-
-When blocked, call `routeRelationalBarrier()`:
-
-- missing/unknown/invalid relation authority -> reopen `spatial-hypotheses`;
-- explicit forbidden/constraint conflict -> reopen `spatial-hypotheses`;
-- failed whole-system relation -> reopen `shape-reconstruction` and invalidate downstream dependents;
-- unresolved relation evidence -> `REQUEST_REVIEW` rather than guessing a repair owner.
-
-This barrier authorizes only the transition from applicable macro relational closure to dependent lower-scope hardening. It does not certify visual fidelity, topology, assembly, appearance, rendering, or whole-object release.
-
-Real-source whole-object certification keeps a separate mandatory relational authority floor. Before certification, a meaningful current relation graph, authority set, passing barrier, and candidate-bound discrepancy must exist even if an earlier rough construction edit did not require the barrier.
-
-## Canonical edit boundary
-
-GLB is normally a realized artifact, not the editable source of semantic shape truth. Durable edits must originate in the state owned by the capability and then realize a new asset.
-
-- **Shape:** edit `model.shape.*`, `model.geometry.*`, construction, surface-network, or attachment state and rebuild the exact GLB. Arbitrary vertex or mesh-binary patches are diagnostic shortcuts, not canonical shape edits.
-- **Pose:** parent-local node/joint transforms may be applied directly to a GLB only while mesh/accessor bytes remain immutable.
-- **Appearance:** edit material, texture, or vertex-color source state first; rebaking or rebuilding the GLB is a realization step rather than the sole record of the change.
-- **Finalization:** after semantic construction is closed, controlled fuse/weld/internal-face cleanup/optimization may operate on the realized asset. Reopening restores semantic pre-fusion state rather than sculpting the fused result by default.
-
-Use `createCanonicalEditIntent` to make the owner, scope, canonical bindings, and allowed realization operation explicit. A candidate that violates this boundary is invalid before visual ranking. See `references/contracts/canonical-edit-boundary.md` for the canonical skill contract.
-
-## Attachment semantics
-
-Before an assembly depends on proximity or world coordinates, declare the relationship that should survive future edits. Every semantic entity participating in an attachment graph must have an explicit mode, including intentionally independent `FREE` entities.
-
-- `FUSED`: same logical body as one owner; physical mesh fusion happens only as a separately authorized finalization step.
-- `RIGID_FOLLOW`: fixed owner-local transform.
-- `SURFACE_OFFSET`: preserve a surface-relative offset from one owner.
-- `MULTI_ANCHOR`: satisfy two or more owners, such as glasses supported by nose and ears.
-- `ARTICULATED`: attached through a joint frame.
-- `SUPPORTED_CLEARANCE`: may remain separated from owners while a separately checked support path proves validity.
-- `FREE`: intentionally no owner.
-
-Use `createAttachmentSemantics` to record owner/dependent direction, evidence basis, and mode. Missing modes, unknown owners, self attachment, invalid owner counts, and ownership cycles are blockers before geometry propagation. This contract declares intent only; the existing surface-frame, solver, fusion-bake, and realized-contact operations remain separate explicit steps. See `references/contracts/attachment-semantics.md`.
-
-## Logical fusion
-
-After attachment semantics are valid, derive logical fusion before any physical mesh fusion. `createLogicalFusion` follows only `FUSED` relations, collapses nested fused chains to one logical root, and leaves all semantic members addressable.
-
-If a fused member changes, create `refas.logical-fusion-invalidation/v1`. The entire logical group is invalidated and must be rebuilt from semantic state. The invalidation artifact itself is digest-bound and cannot move geometry or authorize closure. Non-fused dependents are deliberately left for the later attachment-propagation stage.
-
-Do not weld, boolean-union, remove internal faces, or optimize a logical fusion group during reconstruction. Those operations belong to controlled finalization. If a physically fused artifact is later reopened, restore semantic pre-fusion state rather than treating the fused GLB as the canonical sculpting source. See `references/contracts/logical-fusion.md`.
-
-## Surface anchor frames
-
-For `SURFACE_OFFSET`, `MULTI_ANCHOR`, and `SUPPORTED_CLEARANCE`, do not store a world-space XYZ as the durable attachment point. Create a `refas.surface-anchor-set/v1` whose owner locator is a semantic patch plus triangle and barycentric coordinates, with an owner-local tangent hint, normal offset, and explicit local rebind bounds.
-
-After an owner shape rebuild, run `rebindSurfaceAnchorSet` before solving dependent transforms. Rebind may move to a different triangle only inside the same semantic patch, within the anchor's distance bound, and within its normal-deviation bound. If the patch disappears or the anchor would need to jump too far, stop and reopen/review rather than snapping to unrelated geometry.
-
-Surface-anchor rebind updates owner-side frames only. It does not move glasses, badges, or other dependents by itself and cannot authorize closure. The next propagation/solver stage consumes the rebound frames. See `references/contracts/surface-anchor-frames.md`.
-
-## Rigid follow and surface offset
-
-For a one-owner `RIGID_FOLLOW`, preserve the trusted baseline owner-to-subject rigid frame and recompute the subject target from the current owner world frame. For a one-owner `SURFACE_OFFSET`, consume the current surface-anchor frame and the subject-local contact frame so the contact, orientation, and signed offset align with the owner surface.
-
-Use `createAttachmentFollowState` to bind the canonical relation state and `propagateAttachmentFollow` to emit deterministic target frames. Every required owner world frame must be explicit. This layer is intentionally one-step: do not recursively propagate an owner produced by the same report, and do not approximate `MULTI_ANCHOR` through a single owner. Graph ordering and simultaneous constraints are separate assembly operations.
-
-The report is a target calculation, not permission to mutate a mesh or close assembly. Realization must still pass through the canonical pose/assembly boundary and later structural validation. See `references/contracts/attachment-follow.md`.
-
-## Multi-anchor rigid fitting
-
-For `MULTI_ANCHOR`, solve all declared owners simultaneously. Create a `refas.multi-anchor-plan/v1` with one or more subject-local anchor constraints for every owner named by the semantic relation. Each constraint points at a current surface anchor and declares position/orientation weights plus local pass tolerances.
-
-Before solving, rebind any owner surface that changed. Then call `solveMultiAnchor` with the exact current anchor set and explicit owner world frames. The solver may change only the dependent's translation and rotation; it must not scale or deform the subject to force a pass.
-
-Treat `SOLVED` and `INFEASIBLE` as semantically different states. A `SOLVED` report is eligible for later realization only because every local tolerance and the plan RMS tolerance pass. An `INFEASIBLE` report retains the best rigid pose as diagnostic evidence but must not be applied to the asset. Reopen the relevant owner geometry, subject geometry, or attachment assumption instead of hiding the contradiction. See `references/contracts/multi-anchor-solver.md`.
-
-## Articulation and supported clearance
-
-For `ARTICULATED`, use `createArticulatedJoint` to bind the semantic relation to explicit owner-local and subject-local pivot frames. The first supported joint is bounded `REVOLUTE`: owner-joint local Z is the axis and the zero pose is where both joint frames coincide. Call `evaluateArticulatedJoint` with an explicit owner world frame and an in-range angle. It emits the subject target frame only; do not rotate about the subject origin when the joint pivot is offset, and do not clamp an out-of-range angle silently.
-
-For `SUPPORTED_CLEARANCE`, use `createSupportedClearance` to declare an acyclic support path beginning at the subject. Every edge in that path must already exist in attachment semantics and must bind a realized-assembly proof attachment ID. Declare local non-negative signed-clearance bounds separately for each relevant counterpart.
-
-Evaluate clearance only with `evaluateSupportedClearance` and a valid digest-bound `refas.realized-assembly-proof/v1`. `SATISFIED` requires every support edge plus every gap bound to pass with no penetration. `BLOCKED` means stop realization/closure and repair the support path, geometry, pose, or semantic assumption; never invent hidden bracing or force a positive intentional gap into contact. See `references/contracts/articulation-clearance.md`.
-
-## Attachment propagation graph
-
-After relation-specific state is valid, use `createAttachmentPropagationPlan` to bind one exact attachment DAG, current surface anchors, one-owner follow state, multi-anchor plans, articulated joint state, and every canonical external frame required by `FREE`, `FUSED`, or `SUPPORTED_CLEARANCE` entities. External frame bindings must include the entity state digest, exact rigid-frame digest, and the current rigid-frame digest of every semantic owner.
-
-Call `propagateAttachmentGraph` instead of manually running relation solvers in arbitrary order. The graph uses deterministic topological ordering and reuses the existing authoritative runtimes. A frame resolved by one relation immediately becomes the owner frame for later dependents. Do not provide external world frames for `RIGID_FOLLOW`, `SURFACE_OFFSET`, `MULTI_ANCHOR`, or `ARTICULATED`; that is an invalid attempt to bypass the relation's solver.
-
-Treat `BLOCKED` as a hard stop for that entity and its downstream dependents. Stale external state/frame, stale owner-frame bindings, `INFEASIBLE` multi-anchor results, missing owner frames, or articulated solver failures are not best-effort poses. They remain unresolved until the responsible upstream state is rebuilt or corrected.
-
-A `READY_FOR_REALIZATION` propagation report is still not assembly closure. Any `SUPPORTED_CLEARANCE` result remains `PENDING_REALIZED_VALIDATION`; after GLB realization, evaluate its support chain, module-pair binding, penetration, and signed gap through the realized-assembly proof. See `references/contracts/attachment-propagation.md`.
-
-This rule limits simultaneous work; it does not authorize skipping dependencies.
-During shape reconstruction, `shape-reconstruction × whole` remains the only
-closable shape scope while the visible whole-shape dependency barrier is open.
-When macro/identity whole-system relational obligations are applicable, their
-relational barrier must also pass before dependent lower-scope closure. The
-visible barrier requires current registered evidence for whole silhouette,
-major landmarks, principal sections, curvature transitions, and coarse negative
-spaces. The applicable relational barrier requires current macro/identity
-proportion, alignment, ordering, plane, and volume obligations plus valid
-semantic authority. Lower region, part, subpart, joint, and feature scopes may
-be observed or sketched beforehand, but they cannot receive trustworthy
-geometry closure while an applicable upstream barrier is blocked.
-
-At the start of every new turn or handoff, run `resume --root <project>`. If it reports an active transaction, finish or abort that transaction before doing anything else. If it reports invalidated capabilities, repair the first named capability only. If it reports review-required or blocked, stop mutation and resolve evidence or ownership.
-
+An ordinary static decorative prop does not need the entire attachment, transmission, actuator or runtime chain. Physical-readiness/certification claims remain opt-in and enforce their own conditional finalization route through `references/INDEX.md`. Never treat a successful GLB mesh or generic project audit as independently proven resemblance.
 ## Reference-geometry and projection-fit barrier
 
 When visible geometry materially constrains reconstruction, the whole-object path is:

@@ -8,14 +8,10 @@ test('public publication requires intentional SHA approval and post-merge full Q
   assert.match(workflow,/^  workflow_run:/mu);
   assert.ok(workflow.includes('workflows: ["RefAs CI"]'));
   assert.ok(workflow.includes("github.ref == 'refs/heads/main'"));
-  assert.ok(workflow.includes("github.event.workflow_run.event == 'push'"));
-  assert.ok(workflow.includes("github.event.workflow_run.head_branch == 'main'"));
-  assert.ok(workflow.includes("github.event.workflow_run.conclusion == 'success'"));
-  assert.ok(workflow.includes("contains(github.event.workflow_run.head_commit.message, '[publish:v1.4.1]')"));
-  assert.ok(workflow.includes("subject.includes('[publish:v1.4.1]')"));
-  assert.ok(workflow.includes("pkg.version !== '1.4.1'"));
-  assert.ok(workflow.includes('ref: ${{ github.event_name == \'workflow_run\' && github.event.workflow_run.head_sha || inputs.release_sha }}'));
-  assert.ok(workflow.includes('RELEASE_SHA: ${{ github.event_name == \'workflow_run\' && github.event.workflow_run.head_sha || inputs.release_sha }}'));
+  // The workflow_run event is compatibility-only. It cannot authorize a job.
+  assert.doesNotMatch(workflow,/\[publish:v1\.4\.1\]|RELEASE_TRIGGER|github\.event\.workflow_run\./u);
+  assert.ok(workflow.includes('ref: ${{ inputs.release_sha }}'));
+  assert.ok(workflow.includes('RELEASE_SHA: ${{ inputs.release_sha }}'));
   assert.ok(!workflow.includes('[publish:v1.4.0]'));
   assert.match(workflow,/inputs\.confirmation == 'PUBLISH'/u);
   assert.match(workflow,/input[s]?\.release_sha/u);
@@ -27,6 +23,7 @@ test('public publication requires intentional SHA approval and post-merge full Q
   const ci=await fs.readFile(new URL('../.github/workflows/ci.yml',import.meta.url),'utf8');
   assert.ok(ci.includes('develop/v1.4.1'), 'next patch development branch must run PR and push CI');
   assert.ok(ci.includes("github.ref == 'refs/heads/develop/v1.4.1'"), 'full QA marker must work on v1.4.1');
+  assert.ok(ci.includes("github.ref == 'refs/heads/develop/v1.4.2'"), 'full QA marker must work on v1.4.2');
   const declaredSteps=new Set([...ci.matchAll(/^\s+- name: (.+)$/gmu)].map(match=>match[1]));
   const stepBlock=workflow.match(/const fullQaSteps=\[([\s\S]*?)\];/u);
   assert.ok(stepBlock,'release gate must declare explicit full QA steps');

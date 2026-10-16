@@ -8,6 +8,8 @@ import os
 import tempfile
 from pathlib import Path
 
+from PIL import Image
+
 from render_glb import make_board, sha256
 
 
@@ -59,6 +61,70 @@ def _frame(directory: Path, entries: dict, view: str, label: str):
     return {'label':label.upper(), 'absolutePath':str(actual)}
 
 
+def _presentation_warning(frame: dict):
+    """Non-authoritative image readability hint, never a fidelity verdict.
+
+    Inspect only already digest-verified canonical frames. A near-flat clay or
+    normal picture may support a silhouette but cannot show local surface
+    curvature/normals. A valid flat object may legitimately trigger this hint.
+    """
+    label = frame['label']
+    if not (label.startswith('NEUTRAL-CLAY ') or label == 'PBR NORMAL'):
+        return None
+    with Image.open(frame['absolutePath']) as source:
+        rgb = source.convert('RGB')
+        count = rgb.getcolors(maxcolors=3)
+        if count is None or len(count) > 2:
+            return None
+    return {
+        'code': 'LOW_SURFACE_INFORMATION',
+        'view': label,
+        'severity': 'REVIEW',
+        'observedRgbColorsAtMost': len(count),
+        'meaning': 'This pass offers little visible interior shading; it may still support silhouette inspection.',
+        'nextAction': 'Inspect a diagnostic image with real surface normals or lighting before inferring local relief.',
+        'sourceFrameSha256': sha256(Path(frame['absolutePath'])),
+        'certificationAuthority': 'NONE',
+    }
+
+
+def _framing_warning(frame: dict):
+    """Heuristic border-contact warning, not proof that a camera was misregistered."""
+    label = frame['label']
+    if not (label.endswith(' HERO') or label.startswith('PORTABLE HERO')):
+        return None
+    with Image.open(frame['absolutePath']) as source:
+        rgb = source.convert('RGB')
+        width, height = rgb.size
+        if width < 8 or height < 8:
+            return None
+        corners = [rgb.getpixel((x, y)) for x, y in
+                   [(0, 0), (width - 1, 0), (0, height - 1), (width - 1, height - 1)]]
+        if corners.count(corners[0]) < 3:
+            return None  # Cannot identify a background robustly enough for a warning.
+        background = corners[0]
+        edges = {
+            'left': [(0, y) for y in range(height)],
+            'right': [(width - 1, y) for y in range(height)],
+            'top': [(x, 0) for x in range(width)],
+            'bottom': [(x, height - 1) for x in range(width)],
+        }
+        touched = [side for side, pixels in edges.items()
+                   if sum(rgb.getpixel(pixel) != background for pixel in pixels) / len(pixels) > 0.03]
+        if not touched:
+            return None
+    return {
+        'code': 'POSSIBLE_FRAME_CLIPPING',
+        'view': label,
+        'severity': 'REVIEW',
+        'touchingImageEdges': touched,
+        'meaning': 'Foreground appears on the frame border; this can be an intentional crop or a clipped model.',
+        'nextAction': 'Check original-camera mapping and render framing before using border silhouette measurements.',
+        'sourceFrameSha256': sha256(Path(frame['absolutePath'])),
+        'certificationAuthority': 'NONE',
+    }
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument('--portable', required=True)
@@ -81,7 +147,8 @@ def main():
         clay, clay_entries = None, None
 
     # Digest-check every included image before publishing a composite.
-    frames = [_frame(portable, port_entries, 'hero', 'registered hero')]
+    # A camera/frame digest match only proves shared renderer input, not photo registration.
+    frames = [_frame(portable, port_entries, 'hero', 'portable hero (registration unverified)')]
     if clay:
         frames += [_frame(clay, clay_entries, view, 'neutral-clay ' + view) for view in ('hero', 'side', 'top')]
     frames += [_frame(pbr, pbr_entries, view, 'PBR ' + view) for view in VIEWS]
@@ -99,10 +166,14 @@ def main():
     try:
         image = stage / 'board.png'
         make_board(reference, frames, image)
+        warnings = []
+        for f in frames:
+            warnings.extend(w for w in (_presentation_warning(f), _framing_warning(f)) if w is not None)
         manifest = {
             'schema':'refas.combined-review-board/v1',
             'claimScope':'presentation-only',
             'eligibleForCertification':False,
+            'presentationWarnings':warnings,
             'assetSha256':port_asset,
             'frameDigest':port_frame,
             'sourceImageSha256':sha256(reference) if reference else None,
@@ -120,7 +191,8 @@ def main():
             candidate.unlink(missing_ok=True)
         stage.rmdir()
     print(json.dumps({'status':'PASS','claimScope':'presentation-only','board':str(out),
-                      'manifest':str(output_manifest),'cells':len(manifest['cells'])},indent=2))
+                      'manifest':str(output_manifest),'cells':len(manifest['cells']),
+                      'presentationWarningCount':len(warnings)},indent=2))
 
 
 if __name__ == '__main__':
