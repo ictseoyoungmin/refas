@@ -4,6 +4,7 @@ Real blender execution is opt-in and not part of ordinary PR CI.
 """
 from __future__ import annotations
 import hashlib
+import os
 import json
 from pathlib import Path
 import sys
@@ -14,6 +15,7 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"skills/refas/scripts"
 from create_blender_color0_texture_fixture import generate
 from create_blender_no_color_control import make_control
 from render_external_blender import preflight,run
+from render_external_blender_guard import run_guarded
 
 
 class BlenderAdapterPreflightTests(unittest.TestCase):
@@ -65,6 +67,32 @@ class BlenderAdapterPreflightTests(unittest.TestCase):
                 preflight(glb,frame,500)
             with self.assertRaisesRegex(ValueError,"R14E_UNSUPPORTED"):
                 preflight(glb,frame,160,max_mib=100)
+
+
+@unittest.skipUnless(sys.platform.startswith("linux") and
+                     Path("/proc/self/status").exists(),"Linux procfs RSS guard")
+class BlenderResourceGuardTests(unittest.TestCase):
+    def test_small_worker_completes_with_explicit_monitored_peak(self):
+        proc=run_guarded([sys.executable,"-c","print('ok')"],
+                         env=os.environ.copy(),timeout_seconds=5,max_working_mib=128,
+                         poll_seconds=.02)
+        self.assertEqual(proc.returncode,0)
+        self.assertIn("ok",proc.stdout)
+        self.assertEqual(proc.watchdog,"linux-procfs-tree-sampled")
+        self.assertFalse(proc.hard_memory_limit)
+        self.assertIsInstance(proc.peak_tree_rss_kib,int)
+
+    def test_synthetic_rss_overbudget_terminates_child(self):
+        script="import time; allocation=bytearray(64*1024*1024); time.sleep(5)"
+        with self.assertRaisesRegex(RuntimeError,"R14E_BACKEND_RESOURCE"):
+            run_guarded([sys.executable,"-c",script],env=os.environ.copy(),
+                        timeout_seconds=8,max_working_mib=24,poll_seconds=.02)
+
+    def test_timed_out_worker_is_killed(self):
+        with self.assertRaisesRegex(RuntimeError,"R14E_BACKEND_TIMEOUT"):
+            run_guarded([sys.executable,"-c","import time; time.sleep(5)"],
+                        env=os.environ.copy(),timeout_seconds=.3,
+                        max_working_mib=128,poll_seconds=.02)
 
 
 if __name__=="__main__":
