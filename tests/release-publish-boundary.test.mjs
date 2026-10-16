@@ -9,10 +9,10 @@ test('public publication requires intentional SHA approval and post-merge full Q
   assert.doesNotMatch(workflow,/github\.event\.workflow_run/u);
   assert.doesNotMatch(workflow,/contains\(github\.event\.workflow_run/u);
   assert.doesNotMatch(workflow,/RELEASE_TRIGGER/u);
-  assert.match(workflow,/github.ref == 'refs\\/heads\\/main'/u);
+  assert.ok(workflow.includes("github.ref == 'refs/heads/main'"));
   assert.ok(workflow.includes('ref: ${{ inputs.release_sha }}'));
   assert.ok(workflow.includes('RELEASE_SHA: ${{ inputs.release_sha }}'));
-  assert.doesNotMatch(workflow,/\[publish:v1\\.4\\.0\]/u);
+  assert.ok(!workflow.includes('[publish:v1.4.0]'));
   assert.match(workflow,/inputs\.confirmation == 'PUBLISH'/u);
   assert.match(workflow,/input[s]?\.release_sha/u);
   assert.match(workflow,/git\/ref\/heads\/main/u);
