@@ -21,6 +21,8 @@ test('public publication requires intentional SHA approval and post-merge full Q
   assert.match(workflow,/Node 20','Node 22','Node 24/u);
   assert.match(workflow,/fullQaSteps\.every/u);
   const ci=await fs.readFile(new URL('../.github/workflows/ci.yml',import.meta.url),'utf8');
+  assert.ok(ci.includes('develop/v1.4.1'), 'next patch development branch must run PR and push CI');
+  assert.ok(ci.includes("github.ref == 'refs/heads/develop/v1.4.1'"), 'full QA marker must work on v1.4.1');
   const declaredSteps=new Set([...ci.matchAll(/^\s+- name: (.+)$/gmu)].map(match=>match[1]));
   const stepBlock=workflow.match(/const fullQaSteps=\[([\s\S]*?)\];/u);
   assert.ok(stepBlock,'release gate must declare explicit full QA steps');
