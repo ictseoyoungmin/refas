@@ -3,46 +3,31 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath, pathToFileURL} from 'node:url';
 import {spawnSync} from 'node:child_process';
+import {REFAS_VERSION, sha256File} from './lib/canonical.mjs';
+import {CAPABILITY_ORDER} from './lib/ownership.mjs';
+import {nextAgentWork, diagnoseAgentWork} from './lib/agent-workflow.mjs';
 import {
-  REFAS_VERSION,
-  CAPABILITY_ORDER,
-  nextAgentWork,
-  diagnoseAgentWork,
-  abortEdit,
-  auditProject,
-  beginEdit,
-  bindSource,
-  certifyProject,
-  commitCheckpoint,
-  createReferenceRegistration,
-  finishEdit,
-  initProject,
-  inspectGlb,
-  listCheckpoints,
-  loadProject,
-  reportFinding,
-  resumeProject,
-  restoreCheckpoint,
-  routeFinding,
-  validateAssemblyContract,
-  validateObservation,
-  validateReferenceRegistration,
-  validateSpatialHypothesisSet,
-  validateSurfaceNetwork,
-  validateVisualHierarchy,
-  validateVisualReview,
-  validatePbrRenderReport,
-  validateEarlyResemblanceBarrier,
-  validateRegisteredComparison,
-  validateRealizedAssemblyProof,
-  validateConstructionQuality,
-  createParameterFitPlan,
-  fitParameters,
-  validateParameterFitPlan,
-  validateParameterFitReport,
-  sha256File,
-} from './lib/index.mjs';
-import * as PUBLIC_API from './lib/index.mjs';
+  abortEdit, beginEdit, bindSource, commitCheckpoint, finishEdit,
+  initProject, listCheckpoints, loadProject, reportFinding, restoreCheckpoint,
+} from './lib/checkpoint-store.mjs';
+import {auditProject, certifyProject, resumeProject} from './lib/physical-claim-certification-gate.mjs';
+import {createReferenceRegistration, validateReferenceRegistration} from './lib/registration.mjs';
+import {inspectGlb} from './lib/glb.mjs';
+import {routeFinding} from './lib/failure-router.mjs';
+import {validateAssemblyContract} from './lib/assembly.mjs';
+import {validateObservation, validateVisualHierarchy} from './lib/hierarchy.mjs';
+import {validateSpatialHypothesisSet} from './lib/spatial-hypotheses.mjs';
+import {validateSurfaceNetwork} from './lib/surface-network.mjs';
+import {validateVisualReview} from './lib/visual-review.mjs';
+import {validatePbrRenderReport} from './lib/pbr-render-report.mjs';
+import {validateEarlyResemblanceBarrier} from './lib/early-resemblance-barrier.mjs';
+import {validateRegisteredComparison} from './lib/registered-comparison.mjs';
+import {validateRealizedAssemblyProof} from './lib/realized-assembly.mjs';
+import {validateConstructionQuality} from './lib/construction-quality.mjs';
+import {
+  createParameterFitPlan, fitParameters,
+  validateParameterFitPlan, validateParameterFitReport,
+} from './lib/parameter-fit.mjs';
 import {verifySourceBoundObject} from './lib/qa-coverage.mjs';
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
@@ -136,6 +121,9 @@ async function describeCapability(graph, capability) {
   };
 }
 
+// Public discovery is rare; preserve the complete API surface without paying
+// for the library barrel on every CLI startup.
+let PUBLIC_API;
 async function describe(options) {
   const [namespace, id, ...extra] = options._positional;
   if (!namespace || !['node', 'capability'].includes(namespace)) {
@@ -145,6 +133,7 @@ async function describe(options) {
     const placeholder = namespace === 'node' ? '<instruction-node-id>' : '<runtime-capability-id>';
     throw new Error(`describe ${namespace} requires exactly one ID: refas describe ${namespace} ${placeholder}`);
   }
+  PUBLIC_API ??= await import('./lib/index.mjs');
   const graph = await instructionGraph();
   return namespace === 'node' ? await describeNode(graph, id) : await describeCapability(graph, id);
 }
