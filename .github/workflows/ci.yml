@@ -2,9 +2,9 @@ name: RefAs CI
 
 on:
   push:
-    branches: [main, rc/post-1.1, develop/v1.2.0, develop/v1.2.1, develop/v1.3.0, develop/v1.4.0]
+    branches: [main, rc/post-1.1, develop/v1.2.0, develop/v1.2.1, develop/v1.3.0, develop/v1.4.0, develop/v1.4.1]
   pull_request:
-    branches: [main, rc/post-1.1, develop/v1.2.0, develop/v1.2.1, develop/v1.3.0, develop/v1.4.0]
+    branches: [main, rc/post-1.1, develop/v1.2.0, develop/v1.2.1, develop/v1.3.0, develop/v1.4.0, develop/v1.4.1]
 
 # Tier 1: full regression and critical source-bound defenses on every PR/develop push.
 # Tier 2: expensive complete dogfood on main push or an explicit [full-qa] develop push.
@@ -69,79 +69,79 @@ jobs:
         run: npm run dogfood:fresh-worker
       - name: First neutral-clay multiview operational baseline
         # Release/promotion deep validation only; reserve expensive scene tests for explicit deep validation.
-        if: matrix.node == 24 && github.event_name == 'push' && (github.ref == 'refs/heads/main' || ((github.ref == 'refs/heads/develop/v1.2.1' || github.ref == 'refs/heads/develop/v1.3.0' || github.ref == 'refs/heads/develop/v1.4.0') && contains(github.event.head_commit.message, '[full-qa]')))
+        if: matrix.node == 24 && github.event_name == 'push' && (github.ref == 'refs/heads/main' || ((github.ref == 'refs/heads/develop/v1.2.1' || github.ref == 'refs/heads/develop/v1.3.0' || github.ref == 'refs/heads/develop/v1.4.0' || github.ref == 'refs/heads/develop/v1.4.1') && contains(github.event.head_commit.message, '[full-qa]')))
         run: npm run benchmark:first-multiview
       - name: External construction fresh-worker dogfood
         # Release/promotion deep validation only; reserve expensive scene tests for explicit deep validation.
-        if: matrix.node == 24 && github.event_name == 'push' && (github.ref == 'refs/heads/main' || ((github.ref == 'refs/heads/develop/v1.2.1' || github.ref == 'refs/heads/develop/v1.3.0' || github.ref == 'refs/heads/develop/v1.4.0') && contains(github.event.head_commit.message, '[full-qa]')))
+        if: matrix.node == 24 && github.event_name == 'push' && (github.ref == 'refs/heads/main' || ((github.ref == 'refs/heads/develop/v1.2.1' || github.ref == 'refs/heads/develop/v1.3.0' || github.ref == 'refs/heads/develop/v1.4.0' || github.ref == 'refs/heads/develop/v1.4.1') && contains(github.event.head_commit.message, '[full-qa]')))
         run: npm run dogfood:external-construction
       - name: Subdivision cage organic dogfood
         # Release/promotion deep validation only; reserve expensive scene tests for explicit deep validation.
-        if: matrix.node == 24 && github.event_name == 'push' && (github.ref == 'refs/heads/main' || ((github.ref == 'refs/heads/develop/v1.2.1' || github.ref == 'refs/heads/develop/v1.3.0' || github.ref == 'refs/heads/develop/v1.4.0') && contains(github.event.head_commit.message, '[full-qa]')))
+        if: matrix.node == 24 && github.event_name == 'push' && (github.ref == 'refs/heads/main' || ((github.ref == 'refs/heads/develop/v1.2.1' || github.ref == 'refs/heads/develop/v1.3.0' || github.ref == 'refs/heads/develop/v1.4.0' || github.ref == 'refs/heads/develop/v1.4.1') && contains(github.event.head_commit.message, '[full-qa]')))
         run: npm run dogfood:subdivision-cage
       - name: Bilateral pair fresh-worker dogfood
         # Release/promotion deep validation only; reserve expensive scene tests for explicit deep validation.
-        if: matrix.node == 24 && github.event_name == 'push' && (github.ref == 'refs/heads/main' || ((github.ref == 'refs/heads/develop/v1.2.1' || github.ref == 'refs/heads/develop/v1.3.0' || github.ref == 'refs/heads/develop/v1.4.0') && contains(github.event.head_commit.message, '[full-qa]')))
+        if: matrix.node == 24 && github.event_name == 'push' && (github.ref == 'refs/heads/main' || ((github.ref == 'refs/heads/develop/v1.2.1' || github.ref == 'refs/heads/develop/v1.3.0' || github.ref == 'refs/heads/develop/v1.4.0' || github.ref == 'refs/heads/develop/v1.4.1') && contains(github.event.head_commit.message, '[full-qa]')))
         run: npm run dogfood:bilateral-pair
       - name: Structural plausibility fresh-worker dogfood
         # Release/promotion deep validation only; reserve expensive scene tests for explicit deep validation.
-        if: matrix.node == 24 && github.event_name == 'push' && (github.ref == 'refs/heads/main' || ((github.ref == 'refs/heads/develop/v1.2.1' || github.ref == 'refs/heads/develop/v1.3.0' || github.ref == 'refs/heads/develop/v1.4.0') && contains(github.event.head_commit.message, '[full-qa]')))
+        if: matrix.node == 24 && github.event_name == 'push' && (github.ref == 'refs/heads/main' || ((github.ref == 'refs/heads/develop/v1.2.1' || github.ref == 'refs/heads/develop/v1.3.0' || github.ref == 'refs/heads/develop/v1.4.0' || github.ref == 'refs/heads/develop/v1.4.1') && contains(github.event.head_commit.message, '[full-qa]')))
         run: npm run dogfood:structural-plausibility
       - name: Competing blockout fresh-worker dogfood
         # Release/promotion deep validation only; reserve expensive scene tests for explicit deep validation.
-        if: matrix.node == 24 && github.event_name == 'push' && (github.ref == 'refs/heads/main' || ((github.ref == 'refs/heads/develop/v1.2.1' || github.ref == 'refs/heads/develop/v1.3.0' || github.ref == 'refs/heads/develop/v1.4.0') && contains(github.event.head_commit.message, '[full-qa]')))
+        if: matrix.node == 24 && github.event_name == 'push' && (github.ref == 'refs/heads/main' || ((github.ref == 'refs/heads/develop/v1.2.1' || github.ref == 'refs/heads/develop/v1.3.0' || github.ref == 'refs/heads/develop/v1.4.0' || github.ref == 'refs/heads/develop/v1.4.1') && contains(github.event.head_commit.message, '[full-qa]')))
         run: npm run dogfood:blockout-competition
       - name: Prior quarantine fresh-worker dogfood
         # Release/promotion deep validation only; reserve expensive scene tests for explicit deep validation.
-        if: matrix.node == 24 && github.event_name == 'push' && (github.ref == 'refs/heads/main' || ((github.ref == 'refs/heads/develop/v1.2.1' || github.ref == 'refs/heads/develop/v1.3.0' || github.ref == 'refs/heads/develop/v1.4.0') && contains(github.event.head_commit.message, '[full-qa]')))
+        if: matrix.node == 24 && github.event_name == 'push' && (github.ref == 'refs/heads/main' || ((github.ref == 'refs/heads/develop/v1.2.1' || github.ref == 'refs/heads/develop/v1.3.0' || github.ref == 'refs/heads/develop/v1.4.0' || github.ref == 'refs/heads/develop/v1.4.1') && contains(github.event.head_commit.message, '[full-qa]')))
         run: npm run dogfood:prior-quarantine
       - name: Discovery closure verifier
         # Release/promotion deep validation only; reserve expensive scene tests for explicit deep validation.
-        if: matrix.node == 24 && github.event_name == 'push' && (github.ref == 'refs/heads/main' || ((github.ref == 'refs/heads/develop/v1.2.1' || github.ref == 'refs/heads/develop/v1.3.0' || github.ref == 'refs/heads/develop/v1.4.0') && contains(github.event.head_commit.message, '[full-qa]')))
+        if: matrix.node == 24 && github.event_name == 'push' && (github.ref == 'refs/heads/main' || ((github.ref == 'refs/heads/develop/v1.2.1' || github.ref == 'refs/heads/develop/v1.3.0' || github.ref == 'refs/heads/develop/v1.4.0' || github.ref == 'refs/heads/develop/v1.4.1') && contains(github.event.head_commit.message, '[full-qa]')))
         run: npm run check:discovery-closure
       - name: VC00 volume-closure regression fixtures
         # Release/promotion deep validation only; reserve expensive scene tests for explicit deep validation.
-        if: matrix.node == 24 && github.event_name == 'push' && (github.ref == 'refs/heads/main' || ((github.ref == 'refs/heads/develop/v1.2.1' || github.ref == 'refs/heads/develop/v1.3.0' || github.ref == 'refs/heads/develop/v1.4.0') && contains(github.event.head_commit.message, '[full-qa]')))
+        if: matrix.node == 24 && github.event_name == 'push' && (github.ref == 'refs/heads/main' || ((github.ref == 'refs/heads/develop/v1.2.1' || github.ref == 'refs/heads/develop/v1.3.0' || github.ref == 'refs/heads/develop/v1.4.0' || github.ref == 'refs/heads/develop/v1.4.1') && contains(github.event.head_commit.message, '[full-qa]')))
         run: npm run dogfood:volume-regression
       - name: VC08 adversarial public-boundary dogfood
         if: matrix.node == 24
         run: npm run dogfood:adversarial
       - name: Joint parameter-fit dogfood
         # Release/promotion deep validation only; reserve expensive scene tests for explicit deep validation.
-        if: matrix.node == 24 && github.event_name == 'push' && (github.ref == 'refs/heads/main' || ((github.ref == 'refs/heads/develop/v1.2.1' || github.ref == 'refs/heads/develop/v1.3.0' || github.ref == 'refs/heads/develop/v1.4.0') && contains(github.event.head_commit.message, '[full-qa]')))
+        if: matrix.node == 24 && github.event_name == 'push' && (github.ref == 'refs/heads/main' || ((github.ref == 'refs/heads/develop/v1.2.1' || github.ref == 'refs/heads/develop/v1.3.0' || github.ref == 'refs/heads/develop/v1.4.0' || github.ref == 'refs/heads/develop/v1.4.1') && contains(github.event.head_commit.message, '[full-qa]')))
         run: npm run dogfood:parameter-fit
       - name: Independent PBR material dogfood
         # Release/promotion deep validation only; reserve expensive scene tests for explicit deep validation.
-        if: matrix.node == 24 && github.event_name == 'push' && (github.ref == 'refs/heads/main' || ((github.ref == 'refs/heads/develop/v1.2.1' || github.ref == 'refs/heads/develop/v1.3.0' || github.ref == 'refs/heads/develop/v1.4.0') && contains(github.event.head_commit.message, '[full-qa]')))
+        if: matrix.node == 24 && github.event_name == 'push' && (github.ref == 'refs/heads/main' || ((github.ref == 'refs/heads/develop/v1.2.1' || github.ref == 'refs/heads/develop/v1.3.0' || github.ref == 'refs/heads/develop/v1.4.0' || github.ref == 'refs/heads/develop/v1.4.1') && contains(github.event.head_commit.message, '[full-qa]')))
         run: npm run dogfood:pbr
       - name: Textured material dogfood
         # Release/promotion deep validation only; reserve expensive scene tests for explicit deep validation.
-        if: matrix.node == 24 && github.event_name == 'push' && (github.ref == 'refs/heads/main' || ((github.ref == 'refs/heads/develop/v1.2.1' || github.ref == 'refs/heads/develop/v1.3.0' || github.ref == 'refs/heads/develop/v1.4.0') && contains(github.event.head_commit.message, '[full-qa]')))
+        if: matrix.node == 24 && github.event_name == 'push' && (github.ref == 'refs/heads/main' || ((github.ref == 'refs/heads/develop/v1.2.1' || github.ref == 'refs/heads/develop/v1.3.0' || github.ref == 'refs/heads/develop/v1.4.0' || github.ref == 'refs/heads/develop/v1.4.1') && contains(github.event.head_commit.message, '[full-qa]')))
         run: npm run dogfood:textured-material
       - name: Hard-surface topology dogfood
         # Release/promotion deep validation only; reserve expensive scene tests for explicit deep validation.
-        if: matrix.node == 24 && github.event_name == 'push' && (github.ref == 'refs/heads/main' || ((github.ref == 'refs/heads/develop/v1.2.1' || github.ref == 'refs/heads/develop/v1.3.0' || github.ref == 'refs/heads/develop/v1.4.0') && contains(github.event.head_commit.message, '[full-qa]')))
+        if: matrix.node == 24 && github.event_name == 'push' && (github.ref == 'refs/heads/main' || ((github.ref == 'refs/heads/develop/v1.2.1' || github.ref == 'refs/heads/develop/v1.3.0' || github.ref == 'refs/heads/develop/v1.4.0' || github.ref == 'refs/heads/develop/v1.4.1') && contains(github.event.head_commit.message, '[full-qa]')))
         run: npm run dogfood:hard-surface
       - name: Modular assembly contact dogfood
         # Release/promotion deep validation only; reserve expensive scene tests for explicit deep validation.
-        if: matrix.node == 24 && github.event_name == 'push' && (github.ref == 'refs/heads/main' || ((github.ref == 'refs/heads/develop/v1.2.1' || github.ref == 'refs/heads/develop/v1.3.0' || github.ref == 'refs/heads/develop/v1.4.0') && contains(github.event.head_commit.message, '[full-qa]')))
+        if: matrix.node == 24 && github.event_name == 'push' && (github.ref == 'refs/heads/main' || ((github.ref == 'refs/heads/develop/v1.2.1' || github.ref == 'refs/heads/develop/v1.3.0' || github.ref == 'refs/heads/develop/v1.4.0' || github.ref == 'refs/heads/develop/v1.4.1') && contains(github.event.head_commit.message, '[full-qa]')))
         run: npm run dogfood:assembly
       - name: Release audit
         # Release/promotion deep validation only; reserve expensive scene tests for explicit deep validation.
-        if: matrix.node == 24 && github.event_name == 'push' && (github.ref == 'refs/heads/main' || ((github.ref == 'refs/heads/develop/v1.2.1' || github.ref == 'refs/heads/develop/v1.3.0' || github.ref == 'refs/heads/develop/v1.4.0') && contains(github.event.head_commit.message, '[full-qa]')))
+        if: matrix.node == 24 && github.event_name == 'push' && (github.ref == 'refs/heads/main' || ((github.ref == 'refs/heads/develop/v1.2.1' || github.ref == 'refs/heads/develop/v1.3.0' || github.ref == 'refs/heads/develop/v1.4.0' || github.ref == 'refs/heads/develop/v1.4.1') && contains(github.event.head_commit.message, '[full-qa]')))
         run: npm run release:audit
       - name: Checkout published v1.2.1 for compatibility smoke
-        if: matrix.node == 24 && github.event_name == 'push' && (github.ref == 'refs/heads/main' || ((github.ref == 'refs/heads/develop/v1.2.1' || github.ref == 'refs/heads/develop/v1.3.0' || github.ref == 'refs/heads/develop/v1.4.0') && contains(github.event.head_commit.message, '[full-qa]')))
+        if: matrix.node == 24 && github.event_name == 'push' && (github.ref == 'refs/heads/main' || ((github.ref == 'refs/heads/develop/v1.2.1' || github.ref == 'refs/heads/develop/v1.3.0' || github.ref == 'refs/heads/develop/v1.4.0' || github.ref == 'refs/heads/develop/v1.4.1') && contains(github.event.head_commit.message, '[full-qa]')))
         uses: actions/checkout@v7
         with:
           ref: v1.2.1
           path: .refas-v121-baseline
           persist-credentials: false
       - name: Verify actual npm package installation
-        if: matrix.node == 24 && github.event_name == 'push' && (github.ref == 'refs/heads/main' || ((github.ref == 'refs/heads/develop/v1.2.1' || github.ref == 'refs/heads/develop/v1.3.0' || github.ref == 'refs/heads/develop/v1.4.0') && contains(github.event.head_commit.message, '[full-qa]')))
+        if: matrix.node == 24 && github.event_name == 'push' && (github.ref == 'refs/heads/main' || ((github.ref == 'refs/heads/develop/v1.2.1' || github.ref == 'refs/heads/develop/v1.3.0' || github.ref == 'refs/heads/develop/v1.4.0' || github.ref == 'refs/heads/develop/v1.4.1') && contains(github.event.head_commit.message, '[full-qa]')))
         run: node tools/verify-packed-install.mjs
       - name: Verify saved v1.2.1 project upgrade
-        if: matrix.node == 24 && github.event_name == 'push' && (github.ref == 'refs/heads/main' || ((github.ref == 'refs/heads/develop/v1.2.1' || github.ref == 'refs/heads/develop/v1.3.0' || github.ref == 'refs/heads/develop/v1.4.0') && contains(github.event.head_commit.message, '[full-qa]')))
+        if: matrix.node == 24 && github.event_name == 'push' && (github.ref == 'refs/heads/main' || ((github.ref == 'refs/heads/develop/v1.2.1' || github.ref == 'refs/heads/develop/v1.3.0' || github.ref == 'refs/heads/develop/v1.4.0' || github.ref == 'refs/heads/develop/v1.4.1') && contains(github.event.head_commit.message, '[full-qa]')))
         env:
           REFAS_V121_ROOT: ${{ github.workspace }}/.refas-v121-baseline
         run: node tools/verify-v121-upgrade.mjs
