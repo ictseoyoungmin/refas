@@ -64,7 +64,7 @@ Single-view imagery does not establish physical dimensions by itself. Real-world
 
 ## v1.4.2 renderer A/B finding (unreleased)
 
-The new opt-in opaque-v2 studio-light profile replaces a tiny fixed ambient term
+The new default opaque-v2 studio-light profile replaces a tiny fixed ambient term
 with deterministic hemispherical irradiance, finite-area reflected panels and
 display-preview ACES tone mapping. This is an analytic approximation, **not** HDR
 environment image sampling, a complete glTF PBR implementation or a source-fidelity

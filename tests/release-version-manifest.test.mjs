@@ -65,6 +65,14 @@ test('full independent release audit retains all 34 JS replay tests; CI only ski
   }
 });
 
+test('agent renderer guidance identifies v2 as default and does not steer workers to historical PBR',async()=>{
+  const guide=await fs.readFile(new URL('../skills/refas/references/validation.md',import.meta.url),'utf8');
+  assert.match(guide,/defaults to the new Numba studio PBR/u);
+  assert.match(guide,/uses v2 by default/u);
+  assert.match(guide,/no automatic legacy fallback/u);
+  assert.doesNotMatch(guide,/legacy.*remains the default/u);
+});
+
 test('installed agent default describes a complete editable object and practical review',async()=>{
   const a=await fs.readFile(new URL('../skills/refas/agents/openai.yaml',import.meta.url),'utf8');
   assert.match(a,/complete, editable 3D asset/);
