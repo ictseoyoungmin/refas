@@ -177,6 +177,26 @@ class MaterialCliIntegration(unittest.TestCase):
             self.assertEqual(report["colorPipeline"]["toneMapping"],"ACES-fitted-v2")
             self.assertEqual(len(report["outputs"]),8)
             self.assertNotIn("presentation",report)
+            self.assertEqual(report["materialSupport"]["supported"],
+                             sorted(set(report["materialSupport"]["supported"])))
+            self.assertEqual(report["materialSupport"]["unsupported"],
+                             sorted(set(report["materialSupport"]["unsupported"])))
+            # The canonical JS report verifier must accept the *exact*
+            # independent Python v2 report, not just eight successful PNGs.
+            from os.path import relpath
+            root_repo=Path(__file__).resolve().parents[1]
+            script=(
+                "import fs from 'node:fs';"
+                "import {validatePbrRenderReport} from './skills/refas/scripts/lib/pbr-render-report.mjs';"
+                "const r=JSON.parse(fs.readFileSync(process.argv[1],'utf8'));"
+                "const v=validatePbrRenderReport(r);"
+                "if(!v.valid){console.error(v.errors.join('; '));process.exit(2)}"
+            )
+            check=subprocess.run(["node","--input-type=module","-e",script,
+                str(out/"render-report.json")],cwd=root_repo,
+                text=True,capture_output=True,timeout=15)
+            self.assertEqual(check.returncode,0,check.stderr)
+
             for row in report["outputs"]:
                 file=out/Path(row["path"]).name
                 self.assertTrue(file.exists(),file)

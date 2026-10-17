@@ -461,6 +461,10 @@ def main():
         unsupported=["clearcoat","image-based-lighting","normal-maps"] + (["textures"] if a.neutral_clay else [])
         if a.backend == 'opaque-v2':
             unsupported += ["emissive","occlusion-maps","alpha-blending","alpha-masking"]
+            # JS report validators normalize material feature sets; unsorted
+            # per-backend declarations would self-invalidate the report digest.
+            supported=sorted(set(supported))
+            unsupported=sorted(set(unsupported))
         payload={"schema":"refas.pbr-render-report/v1","claimScope":"shape-resemblance-only" if a.neutral_clay else "visual-fidelity","assetSha256":sha256(glb),"frameDigest":fd,"renderer":{"family":"other","name":"RefAs Independent PBR",
               "version":"2.0.0" if a.backend == 'opaque-v2' else "1.0.0",
               "backend":"numba-studio-pbr-v2" if a.backend == 'opaque-v2' else "numpy-cook-torrance-headless",
