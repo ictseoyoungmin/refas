@@ -72,8 +72,13 @@ claim. A VTK 9.6 reference render of the user's private chest GLB showed visibly
 better metal/wood legibility under studio lighting; exact-camera, exact-light and
 pixel-output parity against the CPU renderer is **not yet proven**. The user-supplied
 GLB contains 169 meshes, 10,604 triangles, 11 materials, two base-color textures
-and no emissive or normal-map material definitions. Its blue ornament cannot be
-made physically emissive by renderer configuration alone.
+and no emissive textures or normal maps. Two material definitions explicitly
+contain nonzero linear-RGB `emissiveFactor` (`magic_cyan_emissive`:
+`[0.06,1.0,1.0]`; `bright_cyan_emissive`: `[0.55,1.0,1.0]`).
+The prior claim that the GLB had no emissiveFactor was **incorrect** and
+blocked normal v2 rendering via strict material refusal. The v2 renderer now
+adds these unlit linear values before tone mapping; this reproduces a luminous
+surface color but **not** bloom, emissive textures or image-based lighting.
 
 ## 1.4.0 rendering previews are not source-photo certification
 

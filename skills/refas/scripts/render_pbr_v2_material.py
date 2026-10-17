@@ -24,7 +24,7 @@ from render_pbr_v2_texture import resolve_base_sampler, sample_linear_texture
 from render_pbr_v2_mip import compute_uv_derivatives
 
 SCHEMA="refas.pbr-v2-material-preview/v1"
-PROFILE="RefAs PBR v2 Opaque Studio Preview/0.4.0-analytic-panels"
+PROFILE="RefAs PBR v2 Opaque Studio Preview/0.5.0-emissive-factor"
 PASSES=("albedo","normal","object-id","beauty")
 BACKGROUND=np.array([12,15,19],dtype=np.uint8)
 
@@ -95,8 +95,9 @@ def validate_opaque_materials(model,primitives):
             raise ValueError("PBR_V2_UNSUPPORTED_MATERIAL: alpha MASK/BLEND")
         if mat.get("extensions") or mat.get("normalTexture") or mat.get("occlusionTexture") or mat.get("emissiveTexture"):
             raise ValueError("PBR_V2_UNSUPPORTED_MATERIAL: maps or extensions")
-        if mat.get("emissiveFactor") and any(abs(float(c))>1e-15 for c in mat["emissiveFactor"]):
-            raise ValueError("PBR_V2_UNSUPPORTED_MATERIAL: emissive")
+        emissive=np.asarray(mat.get("emissiveFactor",[0.0,0.0,0.0]),dtype=np.float64)
+        if emissive.shape!=(3,) or not np.isfinite(emissive).all() or np.any(emissive<0) or np.any(emissive>1):
+            raise ValueError("PBR_V2_INVALID_ASSET: emissiveFactor must be three linear RGB values in [0,1]")
         pbr=mat.get("pbrMetallicRoughness",{})
         if set(pbr)-{"baseColorFactor","metallicFactor","roughnessFactor","baseColorTexture"}:
             raise ValueError("PBR_V2_UNSUPPORTED_MATERIAL: metallic/roughness texture")
@@ -121,7 +122,7 @@ def validate_opaque_materials(model,primitives):
                                       image_cache=image_cache)
                  if base_texture is not None else None)
         result.append((np.asarray(rgba[:3],dtype=np.float64),metal,rough,
-                       bool(mat.get("doubleSided",False)),sampler))
+                       bool(mat.get("doubleSided",False)),sampler,emissive))
     return result
 
 
@@ -165,7 +166,7 @@ def _aces_fitted(linear):
     return np.clip((x*(2.51*x+.03))/(x*(2.43*x+.59)+.14),0.,1.)
 
 
-def _pbr_preview(base,normal,eye,metallic,roughness):
+def _pbr_preview(base,normal,eye,metallic,roughness,emissive=None):
     """GGX direct lighting plus bounded analytic studio environment.
 
     The studio panel approximation is *not* image based lighting or a final
@@ -203,7 +204,12 @@ def _pbr_preview(base,normal,eye,metallic,roughness):
         spec=(d*g/np.maximum(4*ndotv*nl,1e-5))[:,None]*fresnel
         diffuse=(1-fresnel)*(1-metallic)*base/math.pi
         accum+=(diffuse+spec)*nl[:,None]*intensity*np.asarray(tint)
-    return _aces_fitted(accum*.92)
+    # glTF emissiveFactor is unlit linear RGB radiance. Apply before the
+    # output tone mapper; it must not be dimmed by direct-light orientation.
+    radiance=accum*.92
+    if emissive is not None:
+        radiance=radiance+np.asarray(emissive,dtype=np.float64)
+    return _aces_fitted(radiance)
 
 def shade_visible(primitives,visibility,material_specs,position,
                   passes=PASSES,*,background=BACKGROUND,camera_fov=None):
@@ -235,7 +241,7 @@ def shade_visible(primitives,visibility,material_specs,position,
         else np.zeros((len(p.positions),2),dtype=np.float64) for p in primitives]))
         if gradient_required else None)
     texture_pixel_count=0
-    for pid,(primitive,(factor,metallic,roughness,double_sided,sampler)) in enumerate(zip(primitives,material_specs)):
+    for pid,(primitive,(factor,metallic,roughness,double_sided,sampler,emissive)) in enumerate(zip(primitives,material_specs)):
         choose=np.nonzero(parts==pid)[0]
         if not len(choose): continue
         ty,tx=yy[choose],xx[choose]
@@ -282,7 +288,7 @@ def shade_visible(primitives,visibility,material_specs,position,
                 outputs["normal"][ty,tx]=np.rint(
                     np.clip(normal*.5+.5,0,1)*255).astype(np.uint8)
             if "beauty" in outputs:
-                lit=_pbr_preview(color,normal,view,metallic,roughness)
+                lit=_pbr_preview(color,normal,view,metallic,roughness,emissive=emissive)
                 outputs["beauty"][ty,tx]=np.rint(linear_to_srgb(lit)*255).astype(np.uint8)
         shaded+=len(choose)
     return outputs,{"shadedPixels":int(shaded),"coveredPixels":int(len(xx)),

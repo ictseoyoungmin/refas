@@ -462,12 +462,12 @@ def main():
         texture_bindings=[] if a.neutral_clay else sorted({p.base_color_texture_sha256 for p in primitives if p.base_color_texture_sha256})
         supported=["base-color-factor","metallic-factor","roughness-factor"] if a.neutral_clay else ["base-color-factor","base-color-texture","metallic-factor","roughness-factor","texcoord-0"]
         if a.backend == 'opaque-v2':
-            supported += ["opaque","mipmap-sampling"]
+            supported += ["opaque","mipmap-sampling","emissive-factor"]
         if not a.neutral_clay and any(p.vertex_colors is not None for p in primitives):
             supported.append("vertex-color-0")
         unsupported=["clearcoat","image-based-lighting","normal-maps"] + (["textures"] if a.neutral_clay else [])
         if a.backend == 'opaque-v2':
-            unsupported += ["emissive","occlusion-maps","alpha-blending","alpha-masking"]
+            unsupported += ["emissive-texture","occlusion-maps","alpha-blending","alpha-masking"]
             # JS report validators normalize material feature sets; unsorted
             # per-backend declarations would self-invalidate the report digest.
             supported=sorted(set(supported))

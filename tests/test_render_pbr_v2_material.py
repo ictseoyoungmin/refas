@@ -36,6 +36,41 @@ def fixture():
 
 
 class PureMaterialChecks(unittest.TestCase):
+    def test_emissive_factor_is_unlit_and_independent_of_geometry_normal(self):
+        p,model=fixture()
+        model["materials"][0]["emissiveFactor"]=[.06,1.,1.]
+        specs=validate_opaque_materials(model,[p])
+        np.testing.assert_allclose(specs[0][5],[.06,1.,1.])
+        n=np.array([[0.,0.,1.],[0.,-1.,0.]])
+        base=np.broadcast_to(np.array([.05,.04,.04]),(2,3))
+        view=np.repeat(np.array([[0.,0.,1.]]),2,axis=0)
+        with_emission=_pbr_preview(base,n,view,.1,.7,emissive=specs[0][5])
+        without=_pbr_preview(base,n,view,.1,.7)
+        self.assertTrue((with_emission[:,1:] > without[:,1:]).all())
+        self.assertGreater(float(np.min(with_emission[:,1:])),.75)
+        # Albedo and object-ID remain material- and lighting-independent.
+        vis={"winnerSourceTriangle":np.array([[0]],dtype=np.int64),
+            "sourceWeights":np.array([[[.2,.3,.5]]],dtype=float),
+            "primitiveBySourceTriangle":np.array([0],dtype=np.int32)}
+        before=shade_visible([p],vis,validate_opaque_materials({
+            **model,"materials":[{k:v for k,v in model["materials"][0].items()
+                                   if k!="emissiveFactor"}]},[p]),
+            np.array([0.,0.,0.]),("albedo","beauty"))[0]
+        after=shade_visible([p],vis,specs,np.array([0.,0.,0.]),("albedo","beauty"))[0]
+        np.testing.assert_array_equal(before["albedo"],after["albedo"])
+        self.assertGreater(int(after["beauty"][0,0,1]),int(before["beauty"][0,0,1]))
+
+    def test_emissive_factor_rejects_malformed_and_unsupported_emissive_texture(self):
+        p,model=fixture()
+        for value in ([float("nan"),0,0],[-1,0,0],[0,1.1,0],[.5,.3],[0,0,0,0]):
+            model["materials"][0]["emissiveFactor"]=value
+            with self.assertRaisesRegex(ValueError,"PBR_V2_INVALID_ASSET.*emissiveFactor"):
+                validate_opaque_materials(model,[p])
+        model["materials"][0]["emissiveFactor"]=[0,0,0]
+        model["materials"][0]["emissiveTexture"]={"index":0}
+        with self.assertRaisesRegex(ValueError,"PBR_V2_UNSUPPORTED_MATERIAL.*maps"):
+            validate_opaque_materials(model,[p])
+
     def test_studio_shading_keeps_rough_metals_readable_from_three_directions(self):
         # Legacy three-light-only rendering collapsed dark forged metal toward
         # black outside its fixed key-light direction. A studio inspection
