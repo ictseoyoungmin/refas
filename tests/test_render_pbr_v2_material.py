@@ -131,6 +131,46 @@ class MaterialVisibilityIntegration(unittest.TestCase):
 
 @unittest.skipUnless(njit is not None,"optional Numba not installed")
 class MaterialCliIntegration(unittest.TestCase):
+    def test_unified_cli_opaque_v2_preview_cache_and_certification_guard(self):
+        import hashlib
+        import shutil
+        if not shutil.which("node"):
+            self.skipTest("Node unavailable")
+        cli=Path(__file__).resolve().parents[1]/"skills/refas/scripts/refas.mjs"
+        with tempfile.TemporaryDirectory(prefix="refas-unified-pbr-") as tmp:
+            root=Path(tmp); glb=root/"asset.glb"; frame=root/"frame.json"
+            create_fixture(glb,frame,"strands",120,31)
+            out=root/"preview"
+            args=["node",str(cli),"preview-pbr","--glb",str(glb),"--frame",str(frame),
+                  "--out",str(out),"--backend","opaque-v2","--views","hero,side",
+                  "--size","48","--tile-size","32","--max-working-mb","512",
+                  "--timeout-seconds","120","--reuse"]
+            first=subprocess.run(args,text=True,capture_output=True,timeout=140)
+            self.assertEqual(first.returncode,0,first.stderr[-4000:])
+            report=json.loads((out/"preview-manifest.json").read_text())
+            self.assertEqual(report["backend"],"opaque-v2")
+            self.assertEqual(report["claimScope"],"preview-only")
+            self.assertFalse(report["eligibleForCertification"])
+            self.assertEqual([x["viewId"] for x in report["outputs"]],["hero","side"])
+            self.assertFalse((out/"render-report.json").exists())
+            for entry in report["outputs"]:
+                data=(out/entry["path"]).read_bytes()
+                self.assertEqual(hashlib.sha256(data).hexdigest(),entry["sha256"])
+                self.assertEqual(np.asarray(Image.open(out/entry["path"])).shape,(48,48,3))
+            cached=subprocess.run(args,text=True,capture_output=True,timeout=20)
+            self.assertEqual(cached.returncode,0,cached.stderr)
+            self.assertIn("REUSED",cached.stdout)
+            (out/"hero.png").write_bytes(b"tampered")
+            repaired=subprocess.run(args,text=True,capture_output=True,timeout=140)
+            self.assertEqual(repaired.returncode,0,repaired.stderr[-4000:])
+            self.assertIn('"PASS"',repaired.stdout)
+            forbidden=subprocess.run(["node",str(cli),"render-pbr","--glb",str(glb),
+                "--frame",str(frame),"--out",str(root/"canonical"),"--backend","opaque-v2"],
+                text=True,capture_output=True,timeout=15)
+            self.assertNotEqual(forbidden.returncode,0)
+            self.assertIn("preview-only",forbidden.stderr)
+            self.assertFalse((root/"canonical"/"render-report.json").exists())
+
     def test_actual_glb_cli_signed_output_preview_not_certification(self):
         worker=Path(__file__).resolve().parents[1]/"skills/refas/scripts/render_pbr_v2_material.py"
         with tempfile.TemporaryDirectory(prefix="refas-r14-06c-") as temp:

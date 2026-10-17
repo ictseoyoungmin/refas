@@ -32,7 +32,7 @@ The 1.4.1 patch improves Visibility Buffer cache invalidation when the GLB parse
 ### Renderer architecture and diagnostic previews in 1.4.0
 
 - Shared visibility-buffer and bounded CPU rasterization paths reduce repeated geometry work across normal, object-ID, albedo and appearance previews; deterministic original-source provenance remains part of the render report.
-- The opt-in PBR v2 material preview supports scoped glTF `COLOR_0` and supported texture/sampler/mip behavior. It is not a complete physically based renderer or a photo-fidelity certificate. Unsupported appearance attributes must fail closed or remain explicitly excluded.
+- The opt-in PBR v2 material preview supports scoped glTF `COLOR_0` and supported texture/sampler/mip behavior. Use `refas preview-pbr --backend opaque-v2 --views hero,side --reuse` through the existing CLI (optional Numba required). The default backend remains `legacy`, and `render-pbr` certification still uses the unchanged canonical eight-view renderer. Unsupported appearance attributes fail closed without silent fallback; backend parity and a default switch remain unproven.
 - The optional external Blender Cycles adapter provides independent, SHA-bound offline renders. The original Monster Bed was independently rendered at 160/384px and accepted under an **unregistered diagnostic camera**, not a source-photo camera or trusted resemblance gate. Blender is **not** a mandatory bundled runtime dependency.
 - Source-photo-registered canonical views, generalized cross-engine PBR equivalence, and source-to-asset identity certification remain separate future acceptance gates.
 

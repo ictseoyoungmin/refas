@@ -99,10 +99,7 @@ canonical clay and final PBR **individual output images and reports** remain
 necessary for their respective gates. A `preview-pbr` directory cannot serve
 as a canonical report input.
 
-For fast intermediate iteration call `preview-pbr --views hero,side --reuse`
-after real edits; the resulting `preview-only` manifest is never accepted
-as `refas.pbr-render-report/v1`. When the current candidate reaches a
-closure gate, rerun the full canonical eight-view set under existing policies.
+For fast intermediate iteration call `preview-pbr --views hero,side --reuse` after real edits. The public CLI now accepts `preview-pbr --backend opaque-v2 --views hero,side --reuse`, selecting the newer opaque visibility/material path without changing the command name. Its optional Numba runtime, fixed direct-light shading, 16/32/64 tile constraints and unsupported glTF material refusals must remain explicit; there is no silent backend fallback. The `legacy` backend remains the default and is still the *only* `render-pbr` eight-view certification path. Both preview backends emit only `preview-only` manifests, never `refas.pbr-render-report/v1`. A normal full render after the edit is mandatory for canonical review.
 
 ## Critique order
 

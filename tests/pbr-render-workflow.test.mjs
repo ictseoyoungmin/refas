@@ -56,6 +56,18 @@ test('PBR nondegenerate geometry is tile-size invariant, with optional single pr
   await assert.rejects(fs.access(path.join(normal,'pbr-review-board.png')),'successful boardless rerender must remove a stale previous montage');
 });
 
+test('canonical PBR rejects experimental backend without publishing evidence',async(t)=>{
+  const {root,glb,frame}=await fixture(t);
+  const out=path.join(root,'forbidden');
+  const invalid=run(glb,frame,out,['--backend','opaque-v2']);
+  assert.equal(invalid.status,1);
+  assert.match(invalid.stderr,/preview-only/);
+  await assert.rejects(fs.access(path.join(out,'render-report.json')));
+  const unknown=run(glb,frame,path.join(root,'unknown'),['--backend','imaginary']);
+  assert.equal(unknown.status,1);
+  assert.match(unknown.stderr,/unknown PBR backend/);
+});
+
 test('PBR tiny memory and timeout refuse partial publication',async(t)=>{
   const {root,glb,frame}=await fixture(t);
   const lowMem=path.join(root,'lowmem');
