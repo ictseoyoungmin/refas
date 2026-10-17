@@ -327,7 +327,7 @@ def main():
         raise MemoryError('PBR working memory budget cannot hold a one-pixel shading tile')
     tile_size=min(policy['tileSize'], max(1, int(math.sqrt(free_scratch / 512))))
     if a.backend == 'opaque-v2':
-        from render_pbr_v2_material import render_material_preview, PROFILE as V2_PROFILE
+        from render_pbr_v2_material import render_material_preview, PROFILE as V2_PROFILE, BACKGROUND as V2_BACKGROUND
         v2_tile_size = 32 if a.tile_size == 128 else a.tile_size
         model,primitives=load_primitives(glb,parsed=(model,binary),
             max_texture_pixels=2_097_152,max_total_texture_pixels=4_194_304,
@@ -376,6 +376,13 @@ def main():
         }
         if a.backend == 'opaque-v2':
             preview_input.update(backend='opaque-v2',tileSize=v2_tile_size,threads=4)
+            preview_input['background']=[int(c) for c in V2_BACKGROUND]
+            preview_input['rendererCodeSha256']=canonical_digest({
+                name:sha256(Path(__file__).with_name(name))
+                for name in ('render_pbr.py','render_glb.py','render_pbr_v2_material.py',
+                             'render_pbr_v2_visibility.py','render_pbr_v2_texture.py',
+                             'render_pbr_v2_mip.py')
+            })
         preview_digest=canonical_digest(preview_input)
         if a.reuse and _preview_cache_valid(out,preview_digest,selection):
             print(json.dumps({'status':'REUSED','claimScope':'preview-only','manifest':str(out/'preview-manifest.json'),'frames':len(selection)},indent=2))
@@ -398,10 +405,10 @@ def main():
             if a.backend == 'opaque-v2':
                 check_deadline(deadline)
                 images, _, _ = render_material_preview(primitives,model,pos,target,up_hint,fov,
-                    a.size,passes=('beauty',),tile_size=v2_tile_size,threads=4,
+                    a.size,passes=(mode,),tile_size=v2_tile_size,threads=4,
                     max_working_mib=a.max_working_mb)
                 check_deadline(deadline)
-                Image.fromarray(images['beauty'],'RGB').save(path)
+                Image.fromarray(images[mode],'RGB').save(path)
                 rec = {'path':path.name,'sha256':sha256(path),'mode':mode}
             else:
                 rec = render(primitives, pos, target, path, size=a.size, mode=mode,

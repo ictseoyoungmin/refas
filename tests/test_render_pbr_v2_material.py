@@ -164,6 +164,17 @@ class MaterialCliIntegration(unittest.TestCase):
             repaired=subprocess.run(args,text=True,capture_output=True,timeout=140)
             self.assertEqual(repaired.returncode,0,repaired.stderr[-4000:])
             self.assertIn('"PASS"',repaired.stdout)
+            # Non-beauty views must be real v2 diagnostics, never mislabeled beauty.
+            diag_args=list(args)
+            diag_args[diag_args.index("--out")+1]=str(root/"diagnostics")
+            diag_args[diag_args.index("--views")+1]="normal,albedo"
+            diagnostic=subprocess.run(diag_args,text=True,capture_output=True,timeout=140)
+            self.assertEqual(diagnostic.returncode,0,diagnostic.stderr[-4000:])
+            diag=json.loads((root/"diagnostics"/"preview-manifest.json").read_text())
+            self.assertEqual([x["viewId"] for x in diag["outputs"]],["normal","albedo"])
+            normal=np.asarray(Image.open(root/"diagnostics"/"normal.png"))
+            albedo=np.asarray(Image.open(root/"diagnostics"/"albedo.png"))
+            self.assertFalse(np.array_equal(normal,albedo))
             forbidden=subprocess.run(["node",str(cli),"render-pbr","--glb",str(glb),
                 "--frame",str(frame),"--out",str(root/"canonical"),"--backend","opaque-v2"],
                 text=True,capture_output=True,timeout=15)
