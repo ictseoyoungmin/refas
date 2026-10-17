@@ -190,8 +190,8 @@ function help() {
       'inspect-glb': 'inspect-glb --glb asset.glb',
       evidence: 'evidence --spec REQUEST --out DIR [--reuse] | evidence --assess DECISIONS --out DIR [--prune] | evidence --image FILE --out DIR [--scope ID] [--roi x,y,w,h] (legacy compatibility)',
       render: 'render --glb asset.glb --out DIR [--reference image.png] [--frame canonical-frame.json] [--size 640] [--timeout-seconds 300] [--max-working-mb 512] [--tile-size 256] [--max-triangles N] [--hero-only]',
-      'render-pbr': 'render-pbr --glb asset.glb --out DIR --frame canonical-frame.json [--reference image.png] [--size 420] [--max-working-mb 512] [--no-board] (opaque-v2 default; --neutral-clay uses pinned historical gate)',
-      'preview-pbr': 'preview-pbr --glb asset.glb --out PREVIEW_DIR --frame canonical-frame.json [--views hero,side] [--reuse] [--size 420] [--max-working-mb 512] (opaque-v2 default)',
+      'render-pbr': 'render-pbr --glb asset.glb --out DIR --frame canonical-frame.json [--reference image.png] [--size 420] [--ssaa 1|2] [--max-working-mb 512] [--no-board] (opaque-v2 default; --neutral-clay uses pinned historical gate)',
+      'preview-pbr': 'preview-pbr --glb asset.glb --out PREVIEW_DIR --frame canonical-frame.json [--views hero,side] [--reuse] [--ssaa 1|2] [--size 420] [--max-working-mb 512] (opaque-v2 default)',
       'review-board': 'review-board --portable PORTABLE_DIR --pbr PBR_DIR [--clay CLAY_DIR] [--reference source.png] --out board.png',
       compare: 'compare --input registered-comparison-input.json --out DIR [--timeout-seconds 120]',
       'fit-parameters': 'fit-parameters --root DIR --plan parameter-fit-plan.json --worker evaluator.mjs --out parameter-fit-report.json',
@@ -365,6 +365,7 @@ async function main() {
     if (options['timeout-seconds']) args.push('--timeout-seconds', options['timeout-seconds']); if (options['max-working-mb']) args.push('--max-working-mb', options['max-working-mb']);
     if (options['neutral-clay'] === true) args.push('--neutral-clay');
     if (options['tile-size']) args.push('--tile-size', options['tile-size']);
+    if (options.ssaa) args.push('--ssaa',options.ssaa);
     if (options['no-board'] === true) args.push('--no-board');
     if (command === 'preview-pbr') {
       args.push('--preview');

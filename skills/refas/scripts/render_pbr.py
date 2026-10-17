@@ -298,9 +298,13 @@ def publish_outputs_rollback_safe(staging: Path, out: Path, committed_name: str,
 
 
 def main():
-    p=argparse.ArgumentParser(); p.add_argument('--glb',required=True); p.add_argument('--out',required=True); p.add_argument('--frame',required=True); p.add_argument('--reference'); p.add_argument('--size',type=int,default=420); p.add_argument('--timeout-seconds',type=float,default=180); p.add_argument('--max-working-mb',type=float,default=512); p.add_argument('--exposure',type=float,default=0.0); p.add_argument('--background',default='15,18,23'); p.add_argument('--key-intensity',type=float,default=3.4); p.add_argument('--fill-intensity',type=float,default=1.5); p.add_argument('--rim-intensity',type=float,default=0.65); p.add_argument('--neutral-clay',action='store_true'); p.add_argument('--tile-size',type=int,default=128); p.add_argument('--no-board',action='store_true'); p.add_argument('--preview',action='store_true'); p.add_argument('--views',default='hero,side'); p.add_argument('--reuse',action='store_true'); p.add_argument('--backend',choices=('legacy','opaque-v2'),default=None); a=p.parse_args()
+    p=argparse.ArgumentParser(); p.add_argument('--glb',required=True); p.add_argument('--out',required=True); p.add_argument('--frame',required=True); p.add_argument('--reference'); p.add_argument('--size',type=int,default=420); p.add_argument('--timeout-seconds',type=float,default=180); p.add_argument('--max-working-mb',type=float,default=512); p.add_argument('--exposure',type=float,default=0.0); p.add_argument('--background',default='15,18,23'); p.add_argument('--key-intensity',type=float,default=3.4); p.add_argument('--fill-intensity',type=float,default=1.5); p.add_argument('--rim-intensity',type=float,default=0.65); p.add_argument('--neutral-clay',action='store_true'); p.add_argument('--tile-size',type=int,default=128); p.add_argument('--no-board',action='store_true'); p.add_argument('--preview',action='store_true'); p.add_argument('--views',default='hero,side'); p.add_argument('--reuse',action='store_true'); p.add_argument('--backend',choices=('legacy','opaque-v2'),default=None); p.add_argument('--ssaa',type=int,choices=(1,2),default=1); a=p.parse_args()
     if a.backend is None: a.backend = 'legacy' if a.neutral_clay else 'opaque-v2'
+    if a.backend != 'opaque-v2' and a.ssaa != 1:
+        raise ValueError('PBR_SSAA_UNSUPPORTED: supersampling is supported only by the current v2 appearance renderer')
     if a.backend == 'opaque-v2':
+        if a.size * a.ssaa > 1024:
+            raise ValueError('PBR_V2_RESOURCE: supersampled resolution exceeds 1024')
         if a.neutral_clay:
             raise ValueError('PBR_V2_NEUTRAL_CLAY: historical shape certification requires the pinned neutral-clay profile')
         if (a.background != '15,18,23' or a.exposure != 0 or
@@ -376,7 +380,7 @@ def main():
             'renderer':V2_PROFILE if a.backend == 'opaque-v2' else 'numpy-cook-torrance-headless/1.0.0'
         }
         if a.backend == 'opaque-v2':
-            preview_input.update(backend='opaque-v2',tileSize=v2_tile_size,threads=4)
+            preview_input.update(backend='opaque-v2',tileSize=v2_tile_size,threads=4,ssaa=a.ssaa)
             preview_input['background']=[int(c) for c in V2_BACKGROUND]
             preview_input['rendererCodeSha256']=canonical_digest({
                 name:sha256(Path(__file__).with_name(name))
@@ -406,10 +410,13 @@ def main():
             if a.backend == 'opaque-v2':
                 check_deadline(deadline)
                 images, _, _ = render_material_preview(primitives,model,pos,target,up_hint,fov,
-                    a.size,passes=(mode,),tile_size=v2_tile_size,threads=4,
+                    a.size*a.ssaa,passes=(mode,),tile_size=v2_tile_size,threads=4,
                     max_working_mib=a.max_working_mb)
                 check_deadline(deadline)
-                Image.fromarray(images[mode],'RGB').save(path)
+                image=Image.fromarray(images[mode],'RGB')
+                if a.ssaa==2:
+                    image=image.resize((a.size,a.size),Image.Resampling.LANCZOS)
+                image.save(path)
                 rec = {'path':path.name,'sha256':sha256(path),'mode':mode}
             else:
                 rec = render(primitives, pos, target, path, size=a.size, mode=mode,
@@ -437,7 +444,7 @@ def main():
         if a.backend == 'opaque-v2':
             rig={"lights":"direct-three-plus-studio-hemisphere-panels-v2",
                  "background":[int(c) for c in V2_BACKGROUND],"cameraFovY":31,
-                 "rendererProfile":V2_PROFILE}
+                 "rendererProfile":V2_PROFILE,"supersampleFactor":a.ssaa}
             color={"exposure":0,"toneMapping":"ACES-fitted-v2","outputColorSpace":"sRGB"}
         rig_id="analytic-studio-review-v2" if a.backend == 'opaque-v2' else "fixed-three-light-review-rig"
         if a.neutral_clay:

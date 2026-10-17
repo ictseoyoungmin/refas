@@ -197,6 +197,16 @@ class MaterialCliIntegration(unittest.TestCase):
                 text=True,capture_output=True,timeout=15)
             self.assertEqual(check.returncode,0,check.stderr)
 
+            high=root/"canonical-ssaa"
+            high_run=subprocess.run(["node",str(cli),"render-pbr","--glb",str(glb),
+                "--frame",str(frame),"--out",str(high),"--size","64","--tile-size","32",
+                "--max-working-mb","512","--timeout-seconds","120","--no-board","--ssaa","2"],
+                text=True,capture_output=True,timeout=180)
+            self.assertEqual(high_run.returncode,0,high_run.stderr[-6000:])
+            high_report=json.loads((high/"render-report.json").read_text())
+            self.assertEqual(len(high_report["outputs"]),8)
+            self.assertNotEqual(report["reportDigest"],high_report["reportDigest"])
+            self.assertEqual(np.asarray(Image.open(high/"hero.png")).shape,(64,64,3))
             for row in report["outputs"]:
                 file=out/Path(row["path"]).name
                 self.assertTrue(file.exists(),file)
