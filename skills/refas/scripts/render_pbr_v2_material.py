@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""R14-06C: source-faithful opaque base-color samples on PBR v2 visibility.
+"""Material/shading backend for the RefAs v2 studio PBR renderer.
 
-Material/shading diagnostic ONLY. Deliberately distinct from trusted
-render_pbr.py/v1, v1 neutral clay identity and external engine certification.
+Used by the default appearance render-pbr path and noncertifying previews.
+Historical v1 neutral-clay source evidence remains independently versioned.
 """
 from __future__ import annotations
 
@@ -24,9 +24,10 @@ from render_pbr_v2_texture import resolve_base_sampler, sample_linear_texture
 from render_pbr_v2_mip import compute_uv_derivatives
 
 SCHEMA="refas.pbr-v2-material-preview/v1"
-PROFILE="RefAs PBR v2 Opaque Studio Preview/0.5.0-emissive-factor"
+PROFILE="RefAs PBR v2 Studio/0.6.0-calibrated-direct-light"
 PASSES=("albedo","normal","object-id","beauty")
 BACKGROUND=np.array([12,15,19],dtype=np.uint8)
+STUDIO_LIGHT_SCALE=0.49  # Calibrated light-rig strength; glTF material factors unchanged.
 
 
 def srgb_to_linear(rgb):
@@ -206,7 +207,10 @@ def _pbr_preview(base,normal,eye,metallic,roughness,emissive=None):
         accum+=(diffuse+spec)*nl[:,None]*intensity*np.asarray(tint)
     # glTF emissiveFactor is unlit linear RGB radiance. Apply before the
     # output tone mapper; it must not be dimmed by direct-light orientation.
-    radiance=accum*.92
+    # Studio lights are calibrated against an independent rendering oracle:
+    # reduce reflected/direct radiance rather than altering the GLB materials.
+    # The asset's unlit emissiveFactor remains independent of studio lights.
+    radiance=accum*STUDIO_LIGHT_SCALE
     if emissive is not None:
         radiance=radiance+np.asarray(emissive,dtype=np.float64)
     return _aces_fitted(radiance)

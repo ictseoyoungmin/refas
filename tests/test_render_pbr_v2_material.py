@@ -86,6 +86,22 @@ class PureMaterialChecks(unittest.TestCase):
         self.assertGreater(float(np.ptp(values,axis=0).max()),.02,'normal variation must remain visible')
         np.testing.assert_array_equal(values,_pbr_preview(metal,n,eye,.78,.7))
 
+    def test_studio_dark_iron_retains_headroom_without_suppressing_emission(self):
+        # A generic rough iron response must be readable but not washed white;
+        # studio lighting must never suppress unlit glTF material emission.
+        n=np.array([[0.,0.,1.],[0.,.8,.6],[.6,.5,.6]],dtype=float)
+        eye=np.tile(np.array([[0.,0.,1.]]),(len(n),1))
+        iron=np.tile(np.array([[.188,.216,.231]]),(len(n),1))
+        appearance=_pbr_preview(iron,n,eye,.72,.69)
+        self.assertLess(float(appearance.max()),.35,
+                        'rough iron must not appear washed out')
+        self.assertGreater(float(appearance.mean()),.07,
+                           'shadows must retain visibility')
+        with_emission=_pbr_preview(iron,n,eye,.72,.69,
+                                    emissive=np.array([.06,1.0,1.0]))
+        self.assertGreater(float(np.min(with_emission[:,1:])),.75,
+                           'source emission must survive a dimmer studio light')
+
     def test_studio_pbr_preserves_roughness_and_dielectric_vs_metal_contrast(self):
         n=np.array([[.2,.9,.3],[.6,.5,.6]],dtype=float)
         eye=np.array([[0.,0.,1.],[0.,0.,1.]])
