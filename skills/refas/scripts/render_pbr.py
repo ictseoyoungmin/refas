@@ -298,10 +298,11 @@ def publish_outputs_rollback_safe(staging: Path, out: Path, committed_name: str,
 
 
 def main():
-    p=argparse.ArgumentParser(); p.add_argument('--glb',required=True); p.add_argument('--out',required=True); p.add_argument('--frame',required=True); p.add_argument('--reference'); p.add_argument('--size',type=int,default=420); p.add_argument('--timeout-seconds',type=float,default=180); p.add_argument('--max-working-mb',type=float,default=512); p.add_argument('--exposure',type=float,default=0.0); p.add_argument('--background',default='15,18,23'); p.add_argument('--key-intensity',type=float,default=3.4); p.add_argument('--fill-intensity',type=float,default=1.5); p.add_argument('--rim-intensity',type=float,default=0.65); p.add_argument('--neutral-clay',action='store_true'); p.add_argument('--tile-size',type=int,default=128); p.add_argument('--no-board',action='store_true'); p.add_argument('--preview',action='store_true'); p.add_argument('--views',default='hero,side'); p.add_argument('--reuse',action='store_true'); p.add_argument('--backend',choices=('legacy','opaque-v2'),default='legacy'); a=p.parse_args()
+    p=argparse.ArgumentParser(); p.add_argument('--glb',required=True); p.add_argument('--out',required=True); p.add_argument('--frame',required=True); p.add_argument('--reference'); p.add_argument('--size',type=int,default=420); p.add_argument('--timeout-seconds',type=float,default=180); p.add_argument('--max-working-mb',type=float,default=512); p.add_argument('--exposure',type=float,default=0.0); p.add_argument('--background',default='15,18,23'); p.add_argument('--key-intensity',type=float,default=3.4); p.add_argument('--fill-intensity',type=float,default=1.5); p.add_argument('--rim-intensity',type=float,default=0.65); p.add_argument('--neutral-clay',action='store_true'); p.add_argument('--tile-size',type=int,default=128); p.add_argument('--no-board',action='store_true'); p.add_argument('--preview',action='store_true'); p.add_argument('--views',default='hero,side'); p.add_argument('--reuse',action='store_true'); p.add_argument('--backend',choices=('legacy','opaque-v2'),default=None); a=p.parse_args()
+    if a.backend is None: a.backend = 'legacy' if a.neutral_clay else 'opaque-v2'
     if a.backend == 'opaque-v2':
-        if not a.preview:
-            raise ValueError('PBR_V2_PREVIEW_ONLY: canonical render-pbr remains legacy evidence')
+        if a.neutral_clay:
+            raise ValueError('PBR_V2_NEUTRAL_CLAY: historical shape certification requires the pinned neutral-clay profile')
         if (a.background != '15,18,23' or a.exposure != 0 or
             (a.key_intensity,a.fill_intensity,a.rim_intensity) != (3.4,1.5,0.65)):
             raise ValueError('PBR_V2_UNSUPPORTED_LIGHTING: fixed three-light preview only')
@@ -433,7 +434,12 @@ def main():
             print(json.dumps({'status':'PASS','claimScope':'preview-only','manifest':str(out/'preview-manifest.json'),'frames':len(frames)},indent=2))
             return
         rig={"lights":"three-directional-calibrated-v1","keyIntensity":key_intensity,"fillIntensity":fill_intensity,"rimIntensity":rim_intensity,"background":list(background),"cameraFovY":31}; color={"exposure":exposure,"toneMapping":"Reinhard","outputColorSpace":"sRGB"}
-        rig_id="fixed-three-light-review-rig"
+        if a.backend == 'opaque-v2':
+            rig={"lights":"direct-three-plus-studio-hemisphere-panels-v2",
+                 "background":[int(c) for c in V2_BACKGROUND],"cameraFovY":31,
+                 "rendererProfile":V2_PROFILE}
+            color={"exposure":0,"toneMapping":"ACES-fitted-v2","outputColorSpace":"sRGB"}
+        rig_id="analytic-studio-review-v2" if a.backend == 'opaque-v2' else "fixed-three-light-review-rig"
         if a.neutral_clay:
             rig_id=NEUTRAL_CLAY_PRESET["lighting"]["rigId"]
             rig={
@@ -448,10 +454,17 @@ def main():
         output_prefix="renders/clay" if a.neutral_clay else "renders/pbr"
         texture_bindings=[] if a.neutral_clay else sorted({p.base_color_texture_sha256 for p in primitives if p.base_color_texture_sha256})
         supported=["base-color-factor","metallic-factor","roughness-factor"] if a.neutral_clay else ["base-color-factor","base-color-texture","metallic-factor","roughness-factor","texcoord-0"]
+        if a.backend == 'opaque-v2':
+            supported += ["opaque","mipmap-sampling"]
         if not a.neutral_clay and any(p.vertex_colors is not None for p in primitives):
             supported.append("vertex-color-0")
         unsupported=["clearcoat","image-based-lighting","normal-maps"] + (["textures"] if a.neutral_clay else [])
-        payload={"schema":"refas.pbr-render-report/v1","claimScope":"shape-resemblance-only" if a.neutral_clay else "visual-fidelity","assetSha256":sha256(glb),"frameDigest":fd,"renderer":{"family":"other","name":"RefAs Independent PBR","version":"1.0.0","backend":"numpy-cook-torrance-headless","independentProcess":True},"lighting":{"rigId":rig_id,"digest":canonical_digest(rig)},"colorPipeline":color,"materialSupport":{"supported":supported,"unsupported":unsupported},"textureBindings":[{"sha256":digest,"mimeType":"image/png","channel":"base-color"} for digest in texture_bindings],"outputs":[{"viewId":f['viewId'],"path":f"{output_prefix}/{f['path']}","sha256":f['sha256']} for f in frames],"reproducibility":{"mode":"deterministic","tolerance":""}}
+        if a.backend == 'opaque-v2':
+            unsupported += ["emissive","occlusion-maps","alpha-blending","alpha-masking"]
+        payload={"schema":"refas.pbr-render-report/v1","claimScope":"shape-resemblance-only" if a.neutral_clay else "visual-fidelity","assetSha256":sha256(glb),"frameDigest":fd,"renderer":{"family":"other","name":"RefAs Independent PBR",
+              "version":"2.0.0" if a.backend == 'opaque-v2' else "1.0.0",
+              "backend":"numba-studio-pbr-v2" if a.backend == 'opaque-v2' else "numpy-cook-torrance-headless",
+              "independentProcess":True},"lighting":{"rigId":rig_id,"digest":canonical_digest(rig)},"colorPipeline":color,"materialSupport":{"supported":supported,"unsupported":unsupported},"textureBindings":[{"sha256":digest,"mimeType":"image/png","channel":"base-color"} for digest in texture_bindings],"outputs":[{"viewId":f['viewId'],"path":f"{output_prefix}/{f['path']}","sha256":f['sha256']} for f in frames],"reproducibility":{"mode":"deterministic","tolerance":""}}
         if a.neutral_clay:
             payload["presentation"]={"mode":"neutral-clay","presetId":NEUTRAL_CLAY_PRESET["id"],"presetDigest":canonical_digest(NEUTRAL_CLAY_PRESET)}
         payload['reportDigest']=canonical_digest(payload)

@@ -157,6 +157,31 @@ class MaterialVisibilityIntegration(unittest.TestCase):
 
 @unittest.skipUnless(njit is not None,"optional Numba not installed")
 class MaterialCliIntegration(unittest.TestCase):
+    def test_default_eight_view_pbr_uses_studio_v2(self):
+        import hashlib
+        import shutil
+        if not shutil.which("node"): self.skipTest("Node unavailable")
+        cli=Path(__file__).resolve().parents[1]/"skills/refas/scripts/refas.mjs"
+        with tempfile.TemporaryDirectory(prefix="refas-default-v2-") as temp:
+            root=Path(temp); glb=root/"asset.glb"; frame=root/"frame.json"
+            create_fixture(glb,frame,"strands",120,31)
+            out=root/"canonical"
+            result=subprocess.run(["node",str(cli),"render-pbr","--glb",str(glb),
+                "--frame",str(frame),"--out",str(out),"--size","64","--tile-size","32",
+                "--max-working-mb","512","--timeout-seconds","120","--no-board"],
+                text=True,capture_output=True,timeout=180)
+            self.assertEqual(result.returncode,0,result.stderr[-6000:])
+            report=json.loads((out/"render-report.json").read_text())
+            self.assertEqual(report["claimScope"],"visual-fidelity")
+            self.assertEqual(report["renderer"]["backend"],"numba-studio-pbr-v2")
+            self.assertEqual(report["colorPipeline"]["toneMapping"],"ACES-fitted-v2")
+            self.assertEqual(len(report["outputs"]),8)
+            self.assertNotIn("presentation",report)
+            for row in report["outputs"]:
+                file=out/Path(row["path"]).name
+                self.assertTrue(file.exists(),file)
+                self.assertEqual(hashlib.sha256(file.read_bytes()).hexdigest(),row["sha256"])
+
     def test_unified_cli_opaque_v2_preview_cache_and_certification_guard(self):
         import hashlib
         import shutil
@@ -202,10 +227,10 @@ class MaterialCliIntegration(unittest.TestCase):
             albedo=np.asarray(Image.open(root/"diagnostics"/"albedo.png"))
             self.assertFalse(np.array_equal(normal,albedo))
             forbidden=subprocess.run(["node",str(cli),"render-pbr","--glb",str(glb),
-                "--frame",str(frame),"--out",str(root/"canonical"),"--backend","opaque-v2"],
-                text=True,capture_output=True,timeout=15)
+                "--frame",str(frame),"--out",str(root/"canonical"),"--backend","opaque-v2",
+                "--neutral-clay"],text=True,capture_output=True,timeout=15)
             self.assertNotEqual(forbidden.returncode,0)
-            self.assertIn("preview-only",forbidden.stderr)
+            self.assertIn("NEUTRAL_CLAY",forbidden.stderr)
             self.assertFalse((root/"canonical"/"render-report.json").exists())
 
     def test_actual_glb_cli_signed_output_preview_not_certification(self):

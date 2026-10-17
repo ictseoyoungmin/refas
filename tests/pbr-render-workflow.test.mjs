@@ -31,7 +31,7 @@ async function fixture(t){
 }
 
 function run(glb,frame,out,extra=[]){
-  return spawnSync(process.execPath,[CLI,'render-pbr','--glb',glb,'--frame',frame,'--out',out,'--size','80',
+  return spawnSync(process.execPath,[CLI,'render-pbr','--backend','legacy','--glb',glb,'--frame',frame,'--out',out,'--size','80',
     '--max-working-mb','24','--timeout-seconds','60',...extra],{encoding:'utf8',timeout:70_000});
 }
 
@@ -56,12 +56,12 @@ test('PBR nondegenerate geometry is tile-size invariant, with optional single pr
   await assert.rejects(fs.access(path.join(normal,'pbr-review-board.png')),'successful boardless rerender must remove a stale previous montage');
 });
 
-test('canonical PBR rejects experimental backend without publishing evidence',async(t)=>{
+test('explicit v2 neutral-clay override remains prohibited',async(t)=>{
   const {root,glb,frame}=await fixture(t);
   const out=path.join(root,'forbidden');
-  const invalid=run(glb,frame,out,['--backend','opaque-v2']);
+  const invalid=run(glb,frame,out,['--backend','opaque-v2','--neutral-clay']);
   assert.equal(invalid.status,1);
-  assert.match(invalid.stderr,/preview-only/);
+  assert.match(invalid.stderr,/NEUTRAL_CLAY/);
   await assert.rejects(fs.access(path.join(out,'render-report.json')));
   const unknown=run(glb,frame,path.join(root,'unknown'),['--backend','imaginary']);
   assert.equal(unknown.status,1);
@@ -85,7 +85,7 @@ test('PBR tiny memory and timeout refuse partial publication',async(t)=>{
 test('preview-only selective renderer reuses exact inputs without providing canonical gate evidence',async(t)=>{
   const {root,glb,frame}=await fixture(t);
   const out=path.join(root,'preview');
-  const args=[CLI,'preview-pbr','--glb',glb,'--frame',frame,'--out',out,
+  const args=[CLI,'preview-pbr','--backend','legacy','--glb',glb,'--frame',frame,'--out',out,
     '--size','80','--views','hero,side','--reuse','--timeout-seconds','60','--max-working-mb','24'];
   const runPreview=()=>spawnSync(process.execPath,args,{encoding:'utf8',timeout:70_000});
   const first=runPreview();
@@ -111,11 +111,11 @@ test('preview-only selective renderer reuses exact inputs without providing cano
   assert.match(changed.stdout,/"status": "PASS"/);
   const refreshed=JSON.parse(await fs.readFile(path.join(out,'preview-manifest.json'),'utf8'));
   assert.notEqual(manifest.inputDigest,refreshed.inputDigest);
-  const invalid=spawnSync(process.execPath,[CLI,'render-pbr','--glb',glb,'--frame',frame,'--out',path.join(root,'invalid'),
+  const invalid=spawnSync(process.execPath,[CLI,'render-pbr','--backend','legacy','--glb',glb,'--frame',frame,'--out',path.join(root,'invalid'),
       '--views','hero','--size','80'],{encoding:'utf8',timeout:15000});
   assert.equal(invalid.status,1);
   assert.match(invalid.stderr,/preview-only/);
-  const badClay=spawnSync(process.execPath,[CLI,'preview-pbr','--glb',glb,'--frame',frame,'--out',path.join(root,'bad-clay'),
+  const badClay=spawnSync(process.execPath,[CLI,'preview-pbr','--backend','legacy','--glb',glb,'--frame',frame,'--out',path.join(root,'bad-clay'),
       '--neutral-clay','--size','80'],{encoding:'utf8',timeout:15000});
   assert.equal(badClay.status,1);
   assert.match(badClay.stderr,/cannot produce canonical neutral-clay/);
@@ -145,7 +145,7 @@ test('unified review board binds exact portable, PBR and neutral-clay images and
   assert.equal(rejected.status,1);
   assert.match(rejected.stderr,/digest mismatch/);
   const preview=path.join(root,'preview');
-  const previewRun=spawnSync(process.execPath,[CLI,'preview-pbr','--glb',glb,'--frame',frame,'--out',preview,'--size','80'],
+  const previewRun=spawnSync(process.execPath,[CLI,'preview-pbr','--backend','legacy','--glb',glb,'--frame',frame,'--out',preview,'--size','80'],
     {encoding:'utf8',timeout:30000});
   assert.equal(previewRun.status,0,previewRun.stderr);
   const invalid=spawnSync(process.execPath,[CLI,'review-board','--portable',portable,'--pbr',preview,'--out',path.join(root,'invalid.png')],
@@ -161,7 +161,7 @@ test('PBR publication fault restores the prior complete report, frames and board
   const files=(await fs.readdir(out)).sort();
   const before=Object.fromEntries(await Promise.all(files.map(async file=>[file,await fs.readFile(path.join(out,file),'base64')])));
   await fs.writeFile(frame,JSON.stringify({...FRAME,hero:{...FRAME.hero,fovY:42}}));
-  const bad=spawnSync(process.execPath,[CLI,'render-pbr','--glb',glb,'--frame',frame,'--out',out,
+  const bad=spawnSync(process.execPath,[CLI,'render-pbr','--backend','legacy','--glb',glb,'--frame',frame,'--out',out,
     '--size','80','--max-working-mb','24','--timeout-seconds','60'],
     {encoding:'utf8',timeout:70_000,
      env:{...process.env,REFAS_TEST_PBR_PUBLISH_FAIL_AFTER:'2'}});
@@ -182,7 +182,7 @@ test('PBR publication fault restores the prior complete report, frames and board
 test('preview publish rollback also retains an exact reusable prior manifest',async(t)=>{
   const {root,glb,frame}=await fixture(t);
   const out=path.join(root,'preview-transaction');
-  const args=[CLI,'preview-pbr','--glb',glb,'--frame',frame,'--out',out,'--size','80',
+  const args=[CLI,'preview-pbr','--backend','legacy','--glb',glb,'--frame',frame,'--out',out,'--size','80',
     '--views','hero,side','--timeout-seconds','60','--max-working-mb','24'];
   const first=spawnSync(process.execPath,args,{encoding:'utf8',timeout:70_000});
   assert.equal(first.status,0,first.stderr);

@@ -83,7 +83,7 @@ test('registered hero camera parity between portable and PBR and stable diagnost
   const portable=path.join(root,'portable'),pbrA=path.join(root,'pbr-a'),pbrB=path.join(root,'pbr-b');
   const portableRun=render(glb,portable,frameA);
   assert.equal(portableRun.status,0,portableRun.stderr);
-  const runPbr=(frame,out)=>spawnSync(process.execPath,[CLI,'render-pbr','--glb',glb,'--out',out,'--frame',frame,'--size','96','--timeout-seconds','60','--max-working-mb','64'],{encoding:'utf8',timeout:70_000});
+  const runPbr=(frame,out)=>spawnSync(process.execPath,[CLI,'render-pbr','--backend','legacy','--glb',glb,'--out',out,'--frame',frame,'--size','96','--timeout-seconds','60','--max-working-mb','64'],{encoding:'utf8',timeout:70_000});
   const a=runPbr(frameA,pbrA),b=runPbr(frameB,pbrB);
   assert.equal(a.status,0,a.stderr);
   assert.equal(b.status,0,b.stderr);
