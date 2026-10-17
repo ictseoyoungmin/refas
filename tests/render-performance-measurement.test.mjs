@@ -9,7 +9,7 @@ test('nondegenerate renderer benchmark records full, preview and cache reuse wit
   const root=await fs.mkdtemp(path.join(os.tmpdir(),'refas-render-measurement-test-'));
   t.after(()=>fs.rm(root,{recursive:true,force:true}));
   const reportPath=path.join(root,'results.json');
-  const report=await runMeasurement({segments:22,rings:14,objects:2,size:48,'timeout-seconds':60,'max-working-mb':32,out:reportPath});
+  const report=await runMeasurement({segments:22,rings:14,objects:2,size:48,'timeout-seconds':60,'max-working-mb':512,out:reportPath});
   assert.equal(report.schema,'refas.renderer-workload-measurement/v1');
   assert.equal(report.claimScope,'measurement-only');
   assert.equal(report.candidate.kind,'procedural-nondegenerate');

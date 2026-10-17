@@ -115,14 +115,14 @@ export async function runMeasurement(options={}){
     const digest=await fs.readFile(inputs.glb);
     const hash=(await import('node:crypto')).createHash('sha256').update(digest).digest('hex');
     const base=['--glb',inputs.glb,'--frame',inputs.frame,'--size',String(size),
-      '--timeout-seconds',String(timeout),'--max-working-mb',String(maxMem),'--tile-size','96'];
+      '--timeout-seconds',String(timeout),'--max-working-mb',String(maxMem),'--tile-size','32'];
     const full=await measure('canonical-full-8',[...base,'--out',path.join(temporary,'full'),'--no-board'],{out:temporary});
     const edit=await measure('iterative-preview-hero-side',[...base,'--out',path.join(temporary,'preview'),'--preview','--views','hero,side'],{out:temporary});
     const repeat=await measure('identical-preview-reuse',[...base,'--out',path.join(temporary,'preview'),'--preview','--views','hero,side','--reuse'],{out:temporary});
     const report={
       schema:'refas.renderer-workload-measurement/v1',claimScope:'measurement-only',
       candidate:{kind:inputs.workloadKind,sha256:hash,sourceBytes:digest.length,estimatedTriangles:inputs.estimatedTriangles},
-      settings:{size,timeoutSeconds:timeout,maxWorkingMiB:maxMem,backend:'numpy-cook-torrance-headless'},
+      settings:{size,timeoutSeconds:timeout,maxWorkingMiB:maxMem,backend:'numba-studio-pbr-v2'},
       measurements:[full,edit,repeat],
       finding:{
         everyRunSucceeded:[full,edit,repeat].every(r=>r.status==='PASS'),

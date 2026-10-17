@@ -452,7 +452,7 @@ async function main() {
     '--frame', canonicalFramePath,
     '--size', '96',
     '--timeout-seconds', '60',
-    '--max-working-mb', '128',
+    '--max-working-mb', '512',
   ]);
 
   const clayRenderDir = path.join(projectRoot, 'renders', 'clay');

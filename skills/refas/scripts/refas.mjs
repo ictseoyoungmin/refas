@@ -190,7 +190,7 @@ function help() {
       'inspect-glb': 'inspect-glb --glb asset.glb',
       evidence: 'evidence --spec REQUEST --out DIR [--reuse] | evidence --assess DECISIONS --out DIR [--prune] | evidence --image FILE --out DIR [--scope ID] [--roi x,y,w,h] (legacy compatibility)',
       render: 'render --glb asset.glb --out DIR [--reference image.png] [--frame canonical-frame.json] [--size 640] [--timeout-seconds 300] [--max-working-mb 512] [--tile-size 256] [--max-triangles N] [--hero-only]',
-      'render-pbr': 'render-pbr --glb asset.glb --out DIR --frame canonical-frame.json [--reference image.png] [--size 420] [--ssaa 1|2] [--max-working-mb 512] [--no-board] (opaque-v2 default; --neutral-clay uses pinned historical gate)',
+      'render-pbr': 'render-pbr --glb asset.glb --out DIR --frame canonical-frame.json [--reference image.png] [--size 420] [--ssaa 1|2] [--timeout-seconds 180] [--max-working-mb 512] [--no-board] (opaque-v2 default; --neutral-clay uses pinned historical gate)',
       'preview-pbr': 'preview-pbr --glb asset.glb --out PREVIEW_DIR --frame canonical-frame.json [--views hero,side] [--reuse] [--ssaa 1|2] [--size 420] [--max-working-mb 512] (opaque-v2 default)',
       'review-board': 'review-board --portable PORTABLE_DIR --pbr PBR_DIR [--clay CLAY_DIR] [--reference source.png] --out board.png',
       compare: 'compare --input registered-comparison-input.json --out DIR [--timeout-seconds 120]',
