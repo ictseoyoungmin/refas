@@ -127,9 +127,10 @@ jobs:
         if: matrix.node == 24 && github.event_name == 'push' && (github.ref == 'refs/heads/main' || ((github.ref == 'refs/heads/develop/v1.2.1' || github.ref == 'refs/heads/develop/v1.3.0' || github.ref == 'refs/heads/develop/v1.4.0' || (github.ref == 'refs/heads/develop/v1.4.1' || github.ref == 'refs/heads/develop/v1.4.2')) && contains(github.event.head_commit.message, '[full-qa]')))
         run: npm run dogfood:assembly
       - name: Release audit
-        # Release/promotion deep validation only; reserve expensive scene tests for explicit deep validation.
+        # All JS tests already passed in this exact job; do not replay 34 files.
+        # Keep package, source-bound and documentation audits unchanged.
         if: matrix.node == 24 && github.event_name == 'push' && (github.ref == 'refs/heads/main' || ((github.ref == 'refs/heads/develop/v1.2.1' || github.ref == 'refs/heads/develop/v1.3.0' || github.ref == 'refs/heads/develop/v1.4.0' || (github.ref == 'refs/heads/develop/v1.4.1' || github.ref == 'refs/heads/develop/v1.4.2')) && contains(github.event.head_commit.message, '[full-qa]')))
-        run: npm run release:audit
+        run: npm run release:audit:ci
       - name: Checkout published v1.2.1 for compatibility smoke
         if: matrix.node == 24 && github.event_name == 'push' && (github.ref == 'refs/heads/main' || ((github.ref == 'refs/heads/develop/v1.2.1' || github.ref == 'refs/heads/develop/v1.3.0' || github.ref == 'refs/heads/develop/v1.4.0' || (github.ref == 'refs/heads/develop/v1.4.1' || github.ref == 'refs/heads/develop/v1.4.2')) && contains(github.event.head_commit.message, '[full-qa]')))
         uses: actions/checkout@v7

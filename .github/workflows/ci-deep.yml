@@ -84,7 +84,8 @@ jobs:
       - name: Modular assembly contact dogfood
         run: npm run dogfood:assembly
       - name: Release audit
-        run: npm run release:audit
+        # npm test must have passed above in this same job.
+        run: npm run release:audit:ci
       - name: Checkout published v1.2.1 for compatibility smoke
         uses: actions/checkout@v7
         with:

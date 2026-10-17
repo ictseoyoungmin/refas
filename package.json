@@ -49,6 +49,7 @@
     "dogfood:structural-plausibility": "node skills/refas/scripts/verify_structural_plausibility_dogfood.mjs",
     "dogfood:blockout-competition": "node skills/refas/scripts/verify_blockout_competition_dogfood.mjs",
     "dogfood:prior-quarantine": "node skills/refas/scripts/verify_prior_quarantine_dogfood.mjs",
-    "dogfood:textured-material": "node skills/refas/scripts/verify_textured_material_dogfood.mjs"
+    "dogfood:textured-material": "node skills/refas/scripts/verify_textured_material_dogfood.mjs",
+    "release:audit:ci": "node tools/verify-plugin-distribution.mjs && node tools/release-audit.mjs --ci-pretested-js"
   }
 }

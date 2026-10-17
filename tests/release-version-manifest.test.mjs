@@ -38,6 +38,33 @@ test('scheduled deep QA targets existing main instead of a deleted 1.4.1 branch'
   assert.doesNotMatch(deep,/develop\/v1\.4\.1/u);
 });
 
+test('full independent release audit retains all 34 JS replay tests; CI only skips after full npm test',async()=>{
+  const read=async p=>fs.readFile(new URL('../'+p,import.meta.url),'utf8');
+  const pkg=JSON.parse(await read('package.json'));
+  assert.equal(pkg.scripts.test,'node --test tests/*.test.mjs');
+  assert.equal(pkg.scripts['release:audit'],'node tools/verify-plugin-distribution.mjs && node tools/release-audit.mjs');
+  assert.equal(pkg.scripts['release:audit:ci'],'node tools/verify-plugin-distribution.mjs && node tools/release-audit.mjs --ci-pretested-js');
+  const audit=await read('tools/release-audit.mjs');
+  assert.match(audit,/if \(!ciPretestedJs\) run\(process\.execPath, \['--test'/u);
+  assert.match(audit,/process\.env\.GITHUB_ACTIONS !== 'true'/u);
+  const replay=audit.match(/run\(process\.execPath, \['--test',([\s\S]*?)\]\);/u);
+  assert.ok(replay,'the full standalone release audit must retain the JS suite');
+  const paths=[...replay[1].matchAll(/'tests\/([^']+\.test\.mjs)'/gu)].map(m=>m[1]);
+  assert.equal(paths.length,34,'baseline replay list must remain intact');
+  assert.equal(new Set(paths).size,paths.length);
+  const present=new Set(await fs.readdir(new URL('../tests/',import.meta.url)));
+  for(const filename of paths)assert.ok(present.has(filename),filename);
+  for(const workflowPath of ['.github/workflows/ci.yml','.github/workflows/ci-deep.yml']){
+    const workflow=await read(workflowPath);
+    const testAt=workflow.indexOf('      - name: JavaScript regression tests');
+    const auditAt=workflow.indexOf('      - name: Release audit');
+    assert.ok(testAt>=0 && auditAt>testAt,workflowPath);
+    assert.match(workflow.slice(testAt,auditAt),/run: npm test/u,workflowPath);
+    const end=workflow.indexOf('\n      - name:',auditAt+10);
+    assert.match(workflow.slice(auditAt,end<0?undefined:end),/run: npm run release:audit:ci/u,workflowPath);
+  }
+});
+
 test('installed agent default describes a complete editable object and practical review',async()=>{
   const a=await fs.readFile(new URL('../skills/refas/agents/openai.yaml',import.meta.url),'utf8');
   assert.match(a,/complete, editable 3D asset/);

@@ -11,6 +11,15 @@ import {REFAS_VERSION} from '../skills/refas/scripts/lib/canonical.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
+// Full independent release:audit replays its targeted JS regression tests.
+// In CI, npm test already ran every tests/*.test.mjs file earlier in the
+// same fail-fast job. Keep all other release checks and their output intact.
+const ciPretestedJs = process.argv.length === 3 && process.argv[2] === '--ci-pretested-js';
+if (process.argv.length > 2 && !ciPretestedJs) throw new Error('unsupported release-audit argument');
+if (ciPretestedJs && process.env.GITHUB_ACTIONS !== 'true') {
+  throw new Error('--ci-pretested-js is reserved for a GitHub Actions job after npm test');
+}
+
 function run(command, args) {
   const result = spawnSync(command, args, {
     cwd: ROOT,
@@ -30,7 +39,7 @@ async function main() {
   run(process.execPath, ['tools/check-repository.mjs']);
   const instructionGraph = await verifyInstructionGraph({root: ROOT});
   const semanticGraph = await verifySemanticInstructionGraph({skillRoot: path.join(ROOT, 'skills/refas')});
-  run(process.execPath, ['--test',
+  if (!ciPretestedJs) run(process.execPath, ['--test',
     'tests/assembly-and-routing.test.mjs','tests/checkpoints.test.mjs','tests/cli.test.mjs','tests/contracts.test.mjs','tests/geometry.test.mjs','tests/subdivision-cage.test.mjs','tests/bilateral-pair.test.mjs','tests/bilateral-articulated-regression.test.mjs','tests/structural-plausibility.test.mjs','tests/blockout-competition.test.mjs','tests/prior-quarantine.test.mjs','tests/uv-texture.test.mjs','tests/textured-material-dogfood.test.mjs','tests/governance.test.mjs','tests/instruction-graph.test.mjs','tests/semantic-instruction-graph.test.mjs',
     'tests/orientation-frame.test.mjs','tests/orientation-fitting.test.mjs','tests/orientation-hardening.test.mjs',
     'tests/relational-structure.test.mjs','tests/semantic-authority.test.mjs','tests/whole-system-relational-barrier.test.mjs','tests/relational-discrepancy.test.mjs','tests/relational-fit.test.mjs','tests/certification-relational-evidence.test.mjs',
@@ -88,7 +97,7 @@ async function main() {
     if (!readme.includes(`releases/tag/v${REFAS_VERSION}`)) throw new Error(`README.md published release link omits ${REFAS_VERSION}`);
     if (readme.includes(`development-v${REFAS_VERSION}-`)) throw new Error(`README.md still labels released v${REFAS_VERSION} as development`);
   }
-  process.stdout.write(`${JSON.stringify({status:'PASS',version:packageJson.version,packagedFiles:names.length,unpackedBytes:pack.unpackedSize,skillBytes,instructionReferenceLeaves:instructionGraph.referenceLeaves,semanticInstructionNodes:semanticGraph.nodeCount,routedInstructionTargets:instructionGraph.routedPackagePaths.length},null,2)}\n`);
+  process.stdout.write(`${JSON.stringify({status:'PASS',version:packageJson.version,jsRegressionReplay:ciPretestedJs?'skipped-after-ci-npm-test':'executed',packagedFiles:names.length,unpackedBytes:pack.unpackedSize,skillBytes,instructionReferenceLeaves:instructionGraph.referenceLeaves,semanticInstructionNodes:semanticGraph.nodeCount,routedInstructionTargets:instructionGraph.routedPackagePaths.length},null,2)}\n`);
 }
 
 main().catch((error)=>{process.stderr.write(`Release audit failed: ${error.message}\n`);process.exit(1);});
