@@ -190,8 +190,8 @@ function help() {
       'inspect-glb': 'inspect-glb --glb asset.glb',
       evidence: 'evidence --spec REQUEST --out DIR [--reuse] | evidence --assess DECISIONS --out DIR [--prune] | evidence --image FILE --out DIR [--scope ID] [--roi x,y,w,h] (legacy compatibility)',
       render: 'render --glb asset.glb --out DIR [--reference image.png] [--frame canonical-frame.json] [--size 640] [--timeout-seconds 300] [--max-working-mb 512] [--tile-size 256] [--max-triangles N] [--hero-only]',
-      'render-pbr': 'render-pbr --glb asset.glb --out DIR --frame canonical-frame.json [--reference image.png] [--size 420] [--timeout-seconds 180] [--max-working-mb 512] [--tile-size 128] [--neutral-clay] [--no-board]',
-      'preview-pbr': 'preview-pbr --glb asset.glb --out PREVIEW_DIR --frame canonical-frame.json [--views hero,side] [--reuse] [--size 420] [--timeout-seconds 180] [--max-working-mb 512] [--tile-size 128]',
+      'render-pbr': 'render-pbr --glb asset.glb --out DIR --frame canonical-frame.json [--backend legacy] [--reference image.png] [--size 420] [--timeout-seconds 180] [--max-working-mb 512] [--tile-size 128] [--neutral-clay] [--no-board]',
+      'preview-pbr': 'preview-pbr --glb asset.glb --out PREVIEW_DIR --frame canonical-frame.json [--backend legacy|opaque-v2] [--views hero,side] [--reuse] [--size 420] [--timeout-seconds 180] [--max-working-mb 512] [--tile-size 128]',
       'review-board': 'review-board --portable PORTABLE_DIR --pbr PBR_DIR [--clay CLAY_DIR] [--reference source.png] --out board.png',
       compare: 'compare --input registered-comparison-input.json --out DIR [--timeout-seconds 120]',
       'fit-parameters': 'fit-parameters --root DIR --plan parameter-fit-plan.json --worker evaluator.mjs --out parameter-fit-report.json',
@@ -358,7 +358,10 @@ async function main() {
     throw new Error('view selection and cache reuse are preview-only; canonical render-pbr always renders all eight evidence views');
   }
   if (command === 'render-pbr' || command === 'preview-pbr') {
+    if (options.backend && !['legacy','opaque-v2'].includes(options.backend)) throw new Error('unknown PBR backend: choose legacy or opaque-v2');
+    if (command === 'render-pbr' && options.backend === 'opaque-v2') throw new Error('opaque-v2 is preview-only and cannot issue canonical PBR evidence');
     const args = ['--glb', required(options, 'glb'), '--out', required(options, 'out'), '--frame', required(options, 'frame')];
+    if (options.backend) args.push('--backend', options.backend);
     if (options.reference) args.push('--reference', options.reference); if (options.size) args.push('--size', options.size);
     if (options['timeout-seconds']) args.push('--timeout-seconds', options['timeout-seconds']); if (options['max-working-mb']) args.push('--max-working-mb', options['max-working-mb']);
     if (options['neutral-clay'] === true) args.push('--neutral-clay');

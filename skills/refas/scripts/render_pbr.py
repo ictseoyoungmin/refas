@@ -298,7 +298,15 @@ def publish_outputs_rollback_safe(staging: Path, out: Path, committed_name: str,
 
 
 def main():
-    p=argparse.ArgumentParser(); p.add_argument('--glb',required=True); p.add_argument('--out',required=True); p.add_argument('--frame',required=True); p.add_argument('--reference'); p.add_argument('--size',type=int,default=420); p.add_argument('--timeout-seconds',type=float,default=180); p.add_argument('--max-working-mb',type=float,default=512); p.add_argument('--exposure',type=float,default=0.0); p.add_argument('--background',default='15,18,23'); p.add_argument('--key-intensity',type=float,default=3.4); p.add_argument('--fill-intensity',type=float,default=1.5); p.add_argument('--rim-intensity',type=float,default=0.65); p.add_argument('--neutral-clay',action='store_true'); p.add_argument('--tile-size',type=int,default=128); p.add_argument('--no-board',action='store_true'); p.add_argument('--preview',action='store_true'); p.add_argument('--views',default='hero,side'); p.add_argument('--reuse',action='store_true'); a=p.parse_args()
+    p=argparse.ArgumentParser(); p.add_argument('--glb',required=True); p.add_argument('--out',required=True); p.add_argument('--frame',required=True); p.add_argument('--reference'); p.add_argument('--size',type=int,default=420); p.add_argument('--timeout-seconds',type=float,default=180); p.add_argument('--max-working-mb',type=float,default=512); p.add_argument('--exposure',type=float,default=0.0); p.add_argument('--background',default='15,18,23'); p.add_argument('--key-intensity',type=float,default=3.4); p.add_argument('--fill-intensity',type=float,default=1.5); p.add_argument('--rim-intensity',type=float,default=0.65); p.add_argument('--neutral-clay',action='store_true'); p.add_argument('--tile-size',type=int,default=128); p.add_argument('--no-board',action='store_true'); p.add_argument('--preview',action='store_true'); p.add_argument('--views',default='hero,side'); p.add_argument('--reuse',action='store_true'); p.add_argument('--backend',choices=('legacy','opaque-v2'),default='legacy'); a=p.parse_args()
+    if a.backend == 'opaque-v2':
+        if not a.preview:
+            raise ValueError('PBR_V2_PREVIEW_ONLY: canonical render-pbr remains legacy evidence')
+        if (a.background != '15,18,23' or a.exposure != 0 or
+            (a.key_intensity,a.fill_intensity,a.rim_intensity) != (3.4,1.5,0.65)):
+            raise ValueError('PBR_V2_UNSUPPORTED_LIGHTING: fixed three-light preview only')
+        if a.tile_size not in (16,32,64,128):
+            raise ValueError('PBR_V2_UNSUPPORTED_TILE: use 16, 32, 64 (default 128 maps to 32)')
     if not a.preview and a.reuse:
         raise ValueError('--reuse is preview-only; canonical final evidence must rerender')
     if not a.preview and a.views != 'hero,side':
@@ -318,7 +326,14 @@ def main():
     if free_scratch < 512:
         raise MemoryError('PBR working memory budget cannot hold a one-pixel shading tile')
     tile_size=min(policy['tileSize'], max(1, int(math.sqrt(free_scratch / 512))))
-    model,primitives=load_primitives(glb,parsed=(model,binary));
+    if a.backend == 'opaque-v2':
+        from render_pbr_v2_material import render_material_preview, PROFILE as V2_PROFILE
+        v2_tile_size = 32 if a.tile_size == 128 else a.tile_size
+        model,primitives=load_primitives(glb,parsed=(model,binary),
+            max_texture_pixels=2_097_152,max_total_texture_pixels=4_194_304,
+            max_image_encoded_bytes=16*1024*1024,max_total_image_encoded_bytes=32*1024*1024)
+    else:
+        model,primitives=load_primitives(glb,parsed=(model,binary));
     if a.neutral_clay:
         clay = NEUTRAL_CLAY_PRESET["material"]
         for primitive in primitives:
@@ -357,8 +372,10 @@ def main():
             'assetSha256':sha256(glb),'frameDigest':fd,'viewIds':selection,
             'size':a.size,'background':list(background),'exposure':exposure,
             'lights':[key_intensity,fill_intensity,rim_intensity],
-            'renderer':'numpy-cook-torrance-headless/1.0.0'
+            'renderer':V2_PROFILE if a.backend == 'opaque-v2' else 'numpy-cook-torrance-headless/1.0.0'
         }
+        if a.backend == 'opaque-v2':
+            preview_input.update(backend='opaque-v2',tileSize=v2_tile_size,threads=4)
         preview_digest=canonical_digest(preview_input)
         if a.reuse and _preview_cache_valid(out,preview_digest,selection):
             print(json.dumps({'status':'REUSED','claimScope':'preview-only','manifest':str(out/'preview-manifest.json'),'frames':len(selection)},indent=2))
@@ -378,9 +395,18 @@ def main():
                 up_hint = local_to_world(up, basis)
                 fov = 31
             path = staging / f'{name}.png'
-            rec = render(primitives, pos, target, path, size=a.size, mode=mode,
-                         up_hint=up_hint, deadline=deadline, fov=fov, tile_size=tile_size, lights=lights,
-                         exposure=exposure, background=background)
+            if a.backend == 'opaque-v2':
+                check_deadline(deadline)
+                images, _, _ = render_material_preview(primitives,model,pos,target,up_hint,fov,
+                    a.size,passes=('beauty',),tile_size=v2_tile_size,threads=4,
+                    max_working_mib=a.max_working_mb)
+                check_deadline(deadline)
+                Image.fromarray(images['beauty'],'RGB').save(path)
+                rec = {'path':path.name,'sha256':sha256(path),'mode':mode}
+            else:
+                rec = render(primitives, pos, target, path, size=a.size, mode=mode,
+                             up_hint=up_hint, deadline=deadline, fov=fov, tile_size=tile_size, lights=lights,
+                             exposure=exposure, background=background)
             frames.append({**rec, 'viewId':name,'label':label,'absolutePath':str(path)})
         if not a.no_board and not a.preview:
             board=staging/'pbr-review-board.png'
@@ -389,6 +415,7 @@ def main():
             manifest={
                 'schema':'refas.render-preview/v1','claimScope':'preview-only',
                 'eligibleForCertification':False,'inputDigest':preview_digest,
+                **({'backend':'opaque-v2','rendererProfile':V2_PROFILE} if a.backend == 'opaque-v2' else {}),
                 'assetSha256':preview_input['assetSha256'],'frameDigest':fd,
                 'outputs':[{'viewId':frame['viewId'],'path':frame['path'],'sha256':frame['sha256']} for frame in frames]
             }
