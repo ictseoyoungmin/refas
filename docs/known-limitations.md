@@ -62,6 +62,19 @@ Conversely, an upstream joint frame, mechanism, dynamics, or module-interface ch
 
 Single-view imagery does not establish physical dimensions by itself. Real-world scale, camera intrinsics, and lens distortion require calibration evidence when they matter to a claim.
 
+## v1.4.2 renderer A/B finding (unreleased)
+
+The new opt-in opaque-v2 studio-light profile replaces a tiny fixed ambient term
+with deterministic hemispherical irradiance, finite-area reflected panels and
+display-preview ACES tone mapping. This is an analytic approximation, **not** HDR
+environment image sampling, a complete glTF PBR implementation or a source-fidelity
+claim. A VTK 9.6 reference render of the user's private chest GLB showed visibly
+better metal/wood legibility under studio lighting; exact-camera, exact-light and
+pixel-output parity against the CPU renderer is **not yet proven**. The user-supplied
+GLB contains 169 meshes, 10,604 triangles, 11 materials, two base-color textures
+and no emissive or normal-map material definitions. Its blue ornament cannot be
+made physically emissive by renderer configuration alone.
+
 ## 1.4.0 rendering previews are not source-photo certification
 
 The optimized CPU renderer and material-preview PBR v2 operate on supported, explicitly declared glTF features. Unsupported appearance features are a typed limitation, not permission to substitute a gray fallback and silently report visual fidelity. A valid visibility buffer and exact material or image SHA prove reproducible processing, not a full light-transport or material-quality oracle.

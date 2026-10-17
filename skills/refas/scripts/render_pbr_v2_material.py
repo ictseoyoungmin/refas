@@ -24,7 +24,7 @@ from render_pbr_v2_texture import resolve_base_sampler, sample_linear_texture
 from render_pbr_v2_mip import compute_uv_derivatives
 
 SCHEMA="refas.pbr-v2-material-preview/v1"
-PROFILE="RefAs PBR v2 Opaque Preview/0.3.0-analytic-mips"
+PROFILE="RefAs PBR v2 Opaque Studio Preview/0.4.0-analytic-panels"
 PASSES=("albedo","normal","object-id","beauty")
 BACKGROUND=np.array([12,15,19],dtype=np.uint8)
 
@@ -130,18 +130,63 @@ def _safe_normal(v):
     return v/np.maximum(lengths,1e-12)
 
 
+def _studio_environment(n,view,roughness):
+    """Deterministic low-frequency studio illumination; NOT a sampled HDR IBL.
+
+    Hemisphere diffuse irradiance and finite-size reflection panels keep dark
+    metallic objects inspectable without inventing a texture or emissive map.
+    Values are linear-light, bounded, and view-dependent only for reflections.
+    """
+    sky=np.array([.72,.80,.94],dtype=np.float64)
+    ground=np.array([.32,.28,.25],dtype=np.float64)
+    above=np.clip(n[:,1:2]*.5+.5,0.,1.)
+    irradiance=(.35+.43*above)*sky[None,:]+(.23*(1-above))*ground[None,:]
+    ndotv=np.clip(np.sum(n*view,axis=1,keepdims=True),0.,1.)
+    reflection=_safe_normal(2.*ndotv*n-view)
+    # A small soft whitebox and a broad fill panel. Lobe width increases
+    # continuously with material roughness; dark iron remains legible.
+    panel_dirs=np.array([[-.44,.82,.36],[.72,.48,.50],[-.18,.56,-.81]],dtype=np.float64)
+    panel_dirs=_safe_normal(panel_dirs)
+    colors=np.array([[1.0,.94,.85],[.70,.81,1.0],[.96,.98,1.0]])
+    powers=(1.05,.56,.36)
+    widths=(.12,.38,.29)
+    spec=np.broadcast_to(.25*irradiance,irradiance.shape).copy()
+    for direction,tint,power,width in zip(panel_dirs,colors,powers,widths):
+        cosine=np.clip(np.sum(reflection*direction,axis=1),-1.,1.)
+        blur=np.maximum(width+.72*roughness, .05)
+        lobe=np.exp(-((1.-cosine)/blur)**2)
+        spec+=power*lobe[:,None]*tint
+    return irradiance,np.clip(spec,0.,3.)
+
+
+def _aces_fitted(linear):
+    """Monotone display-preview tone map, applied only in the new v2 profile."""
+    x=np.maximum(linear,0.)
+    return np.clip((x*(2.51*x+.03))/(x*(2.43*x+.59)+.14),0.,1.)
+
+
 def _pbr_preview(base,normal,eye,metallic,roughness):
-    """Pinned explicit direct-light approximation; not IBL/full glTF PBR."""
+    """GGX direct lighting plus bounded analytic studio environment.
+
+    The studio panel approximation is *not* image based lighting or a final
+    appearance certificate. It is more legible than v1's tiny ambient constant,
+    while retaining energy-aware metallic diffuse/specular separation.
+    """
     n=_safe_normal(normal)
     view=_safe_normal(eye)
     ndotv=np.clip(np.sum(n*view,axis=1),0.001,1)
     alpha=max(.04,roughness*roughness)
     f0=.04*(1-metallic)+base*metallic
-    accum=base*(.025+.055*(1-roughness))*(1-metallic)+f0*(.10+.16*(1-roughness))
+    irr,env_spec=_studio_environment(n,view,roughness)
+    fresnel_view=f0+(1.-f0)*np.power(1.-ndotv[:,None],5.)
+    # Diffuse has no contribution for fully metallic surfaces; environment
+    # reflection is essential to reveal metallic edges and curvature.
+    accum=base*(1-metallic)*irr*(1.-fresnel_view)*.60
+    accum+=env_spec*fresnel_view
     lights=(
-        ([-.55,.75,.65],3.4,[1,.96,.9]),
-        ([.72,.18,.54],1.5,[.70,.82,1]),
-        ([-.15,-.62,.77],.65,[1,.76,.58])
+        ([-.55,.75,.65],2.4,[1.,.96,.90]),
+        ([.72,.18,.54],1.2,[.70,.82,1.]),
+        ([-.15,-.62,.77],.85,[1.,.83,.68])
     )
     for direction,intensity,tint in lights:
         light=np.asarray(direction,dtype=np.float64)
@@ -154,12 +199,11 @@ def _pbr_preview(base,normal,eye,metallic,roughness):
         d=alpha*alpha/np.maximum(math.pi*denom*denom,1e-6)
         k=(roughness+1)**2/8
         g=(ndotv/(ndotv*(1-k)+k))*(nl/(nl*(1-k)+k))
-        fresnel=f0+(1-f0)*((1-vh[:,None])**5)
+        fresnel=f0+(1-f0)*np.power(1-vh[:,None],5)
         spec=(d*g/np.maximum(4*ndotv*nl,1e-5))[:,None]*fresnel
         diffuse=(1-fresnel)*(1-metallic)*base/math.pi
         accum+=(diffuse+spec)*nl[:,None]*intensity*np.asarray(tint)
-    return np.clip(accum/(1+accum),0,1)
-
+    return _aces_fitted(accum*.92)
 
 def shade_visible(primitives,visibility,material_specs,position,
                   passes=PASSES,*,background=BACKGROUND,camera_fov=None):
@@ -338,9 +382,10 @@ def main():
                              "base-color-texture-png-analytic-mipmap-nearest-linear-trilinear"],
                 "unsupported":["texture-extensions","texture-derivative-singular",
                                "normal-map","alpha-mask","alpha-blend","ibl","emissive","extensions"],
-                "lighting":"fixed-direct-three-light-preview-no-ibl",
+                "lighting":"analytic-studio-hemisphere-and-panels-no-hdr-ibl",
                 "transfer":"srgb-decode-before-texel-filter-piecewise-v1",
                 "textureSampling":"analytic-original-triangle-ray-derivatives-min-mag-mips",
+                "toneMapping":"ACES-fitted-v2-linear-to-srgb",
                 "mipmapGeneration":"linear-rgb-box-2x2-edge-replicated-v1",
                 "appearanceCertified":False},
             "stats":stats,"outputs":entries,

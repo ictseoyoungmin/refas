@@ -17,6 +17,7 @@ from render_glb import Primitive,parse_glb
 from render_pbr_v2_visibility import njit, numba_config
 from render_pbr_v2_material import (
     srgb_to_linear,linear_to_srgb,shade_visible,validate_opaque_materials,
+    _pbr_preview,
     render_material_preview)
 
 
@@ -35,6 +36,31 @@ def fixture():
 
 
 class PureMaterialChecks(unittest.TestCase):
+    def test_studio_shading_keeps_rough_metals_readable_from_three_directions(self):
+        # Legacy three-light-only rendering collapsed dark forged metal toward
+        # black outside its fixed key-light direction. A studio inspection
+        # preview must preserve finite curvature/ambient reflections.
+        n=np.array([[0.,1.,0.],[.6,.6,.52],[0.,0.,1.]],dtype=float)
+        eye=np.repeat(np.array([[0.,0.,1.]]),(3),axis=0)
+        metal=np.repeat(np.array([[.18,.22,.25]]),(3),axis=0)
+        values=_pbr_preview(metal,n,eye,.78,.7)
+        self.assertEqual(values.shape,(3,3))
+        self.assertTrue(np.isfinite(values).all())
+        self.assertTrue(((values>=0)&(values<=1)).all())
+        self.assertGreater(float(values.min()),.035,'unlit-looking metal must not collapse to black')
+        self.assertGreater(float(np.ptp(values,axis=0).max()),.02,'normal variation must remain visible')
+        np.testing.assert_array_equal(values,_pbr_preview(metal,n,eye,.78,.7))
+
+    def test_studio_pbr_preserves_roughness_and_dielectric_vs_metal_contrast(self):
+        n=np.array([[.2,.9,.3],[.6,.5,.6]],dtype=float)
+        eye=np.array([[0.,0.,1.],[0.,0.,1.]])
+        base=np.broadcast_to(np.array([.42,.22,.09]),(2,3))
+        wood=_pbr_preview(base,n,eye,0.0,.9)
+        bronze=_pbr_preview(base,n,eye,.83,.4)
+        self.assertTrue(np.isfinite(wood).all())
+        self.assertGreater(float(np.max(np.abs(wood-bronze))),.05)
+        self.assertGreater(float(np.min(wood)),.035)
+
     def test_iec_piecewise_transfer_and_inverse(self):
         values=np.array([[0,.0031308,.18,.9]],dtype=float)
         expected=np.array([[0,.040449936, .46135613,.95468717]])
