@@ -27,9 +27,9 @@ async function mutateGraph(skillRoot, mutate) {
 test('AD06 public discovery surface is statically closed', {timeout: 120000}, async () => {
   const report = await analyzeDiscoveryClosure({skillRoot: SKILL_ROOT, schemaRoot: SCHEMA_ROOT, runFreshWorker: false});
   assert.equal(report.status, 'PASS', JSON.stringify(report, null, 2));
-  assert.equal(report.instructionNodes, 41);
+  assert.equal(report.instructionNodes, 43);
   assert.equal(report.runtimeCapabilities, 11);
-  assert.equal(report.describedNodes, 41);
+  assert.equal(report.describedNodes, 43);
   assert.equal(report.describedCapabilities, 11);
   assert.equal(report.publicReferenceLeaves, report.reachableReferenceLeaves);
   assert.equal(report.publicTemplates, report.reachableTemplates);
@@ -49,7 +49,7 @@ test('AD06 closure verifier passes from copied installed skill without repositor
   const report = await analyzeDiscoveryClosure({skillRoot, schemaRoot: null, runFreshWorker: false});
   assert.equal(report.status, 'PASS', JSON.stringify(report, null, 2));
   assert.equal(report.installedSkillOnly, true);
-  assert.equal(report.describedNodes, 41);
+  assert.equal(report.describedNodes, 43);
   assert.equal(report.describedCapabilities, 11);
   assert.equal(report.resolvedWorkerFacingSchemaIds, report.workerFacingSchemaIds);
   assert.equal(report.missing.length, 0);

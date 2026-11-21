@@ -1,0 +1,903 @@
+{
+  "schema": "refas.independent.authoring.exercise-report/v1",
+  "asset": "AURIX MK-IV automail arm",
+  "exercise": "fresh source-image RefAs 2.0 authoring, focused corrections, local panel edit, exact restoration and limited rigid-pose exercise",
+  "timing": {
+    "start_utc": "2026-11-21T21:19:14+00:00",
+    "start_recorded_before_guidance": true,
+    "first_complete_candidate_published_utc": "2026-11-21T21:24:33.939926+00:00",
+    "workflow_checks_completed_utc": "2026-11-21T21:32:24.242727+00:00",
+    "end_utc": "2026-11-21T21:37:11.183931+00:00",
+    "wall_elapsed_seconds": 1077.183931,
+    "model_id": null,
+    "token_count": null,
+    "unavailable_reason": "Exact model identity and token accounting were not exposed; neither is inferred."
+  },
+  "isolation": {
+    "source_reference_only": true,
+    "other_cases_or_agents_results_read": false,
+    "subagents_used": false,
+    "imagegen_used": false,
+    "only_frozen_skill_used": "/tmp/refas-dual-asset-20261122/skill-snapshot/SKILL.md",
+    "external_apps_used": false,
+    "git_modified": false,
+    "scope": "Owned automail scripts and isolated output root only; source/TASK/reference metadata and runtime untouched."
+  },
+  "guidance_reads": [
+    {
+      "path": "/workspace/scratch/2eb72029c71e/refas-v2/AGENTS.md",
+      "bytes": 4067,
+      "sha256": "37110006dba0f58c0c1b2992f7762c84a799f8e1a7cdd25bd8db05adba2761a6",
+      "method": "read"
+    },
+    {
+      "path": "/workspace/scratch/2eb72029c71e/refas-v2/examples/automail-arm/TASK.md",
+      "bytes": 2685,
+      "sha256": "9c66c39d514ca06746cea6fccedd232895c9c154f7976bbbae4b924a7a1d1878",
+      "method": "read"
+    },
+    {
+      "path": "/workspace/scratch/2eb72029c71e/refas-v2/examples/automail-arm/reference.json",
+      "bytes": 2182,
+      "sha256": "ccddd0d3b7dd359b943331977548263a1f3f5be2c4fcc958be19827d96f4ac6d",
+      "method": "read"
+    },
+    {
+      "path": "/workspace/scratch/2eb72029c71e/refas-v2/examples/automail-arm/source/reference.png",
+      "bytes": 3215297,
+      "sha256": "3c7856dd632f8a1cde8036078573f569db55b6af97fae853237d8a9356f3c872",
+      "method": "view_image"
+    },
+    {
+      "path": "/tmp/refas-dual-asset-20261122/skill-snapshot/SKILL.md",
+      "bytes": 10350,
+      "sha256": "94bc317ac22c88a38fc33a52427d9fa41aca8a47917f994c2648b787107dadb0",
+      "method": "read"
+    },
+    {
+      "path": "/tmp/refas-dual-asset-20261122/skill-snapshot/references/production-assemblies.md",
+      "bytes": 3595,
+      "sha256": "33606e47875ff4bc8607c4b4fecaf81fc762dac47ccd0630d43b60a9620676bf",
+      "method": "read"
+    },
+    {
+      "path": "/tmp/refas-dual-asset-20261122/skill-snapshot/references/production-review.md",
+      "bytes": 2240,
+      "sha256": "18df5b68cf20d3277f8a64bb01d0c15ffd1e58c7e030de4e04a91820f491c1fa",
+      "method": "read"
+    }
+  ],
+  "source_provenance": {
+    "path": "/workspace/scratch/2eb72029c71e/refas-v2/examples/automail-arm/source/reference.png",
+    "bytes": 3215297,
+    "sha256": "3c7856dd632f8a1cde8036078573f569db55b6af97fae853237d8a9356f3c872",
+    "copied_source_path": "/tmp/refas-dual-asset-20261122/automail/project/.refas2/sources/001-reference.png",
+    "copied_source_sha256": "3c7856dd632f8a1cde8036078573f569db55b6af97fae853237d8a9356f3c872",
+    "original_and_copy_match": true
+  },
+  "frame_and_interpretation": {
+    "units": "metres",
+    "up": "+Z",
+    "front": "-Y",
+    "hand": "right-hand interpretation; thumb on -X viewed from front",
+    "pivot_centers_m": {
+      "shoulder": [
+        0,
+        0,
+        0.69
+      ],
+      "elbow": [
+        0,
+        0,
+        0.426
+      ],
+      "wrist": [
+        0,
+        0,
+        0.184
+      ]
+    },
+    "neutral": "extended elbow, slight finger fan and small palm-directed phalanx offsets",
+    "measured_bounds_m": {
+      "dimensions": [
+        0.16524,
+        0.12064147,
+        0.74309468
+      ],
+      "max": [
+        0.08262,
+        0.05861147,
+        0.75299317
+      ],
+      "min": [
+        -0.08262,
+        -0.06203,
+        0.00989849
+      ]
+    },
+    "source_nominal_total_m": 0.76,
+    "measured_total_m": 0.74309468,
+    "dimension_limit": "743.095 mm actual mesh envelope, not an exact 760 mm engineering reconstruction; lowest fingertip is 9.898 mm above chosen Z=0.",
+    "ambiguities": [
+      "Source views have uncalibrated cameras and different digit poses.",
+      "The 110 mm shoulder label is interpreted as connector extent/diameter rather than a separate full upper-arm segment.",
+      "Hidden attachment backs, core routing, panel thicknesses, screw placements and neutral thumb pose are inferred.",
+      "Weight, power-assist, neural-control and claimed source motion range are fictional specifications, not tested engineering performance."
+    ]
+  },
+  "production": {
+    "selected_neutral_revision": "d4012de785ad42d5b67d5df0d12e6632",
+    "final_restored_revision": "3b26f1ad9446435e9e4dcc2b836227dc",
+    "first_complete_candidate": "0f982e173cfe4160a3b411361590be7e",
+    "retained_revisions": [
+      {
+        "id": "0f982e173cfe4160a3b411361590be7e",
+        "intent": "Build the complete source-led AURIX arm with shaped shells, exposed core and separate rigid articulated digits",
+        "createdAt": "2026-11-21T21:24:33.939926+00:00",
+        "parent": null,
+        "captured_script_sha256": "0cdf9f03b28bce21b980d62cdba79271b94f002c8c9575372d490979055964f9"
+      },
+      {
+        "id": "f1d628cbbc2e4f32a3c4a0f42f4a8a08",
+        "intent": "Reveal the mechanical side channel, narrow the bright socket rim and lift shoulder markings",
+        "createdAt": "2026-11-21T21:27:18.821402+00:00",
+        "parent": "0f982e173cfe4160a3b411361590be7e",
+        "captured_script_sha256": "711e9446ff79f90ee43d2baadef3869a330154efbc4b25caad120d0c35de7ac9"
+      },
+      {
+        "id": "d4012de785ad42d5b67d5df0d12e6632",
+        "intent": "Restore source shoulder-to-elbow width contrast and slightly broaden the main armor",
+        "createdAt": "2026-11-21T21:29:35.613741+00:00",
+        "parent": "f1d628cbbc2e4f32a3c4a0f42f4a8a08",
+        "captured_script_sha256": "fba65df4b7f7e1280ba2e8e97c0d0b8e9bb044d8bb8076938c68e88eda795395"
+      },
+      {
+        "id": "a729d09cab3b4603a71a13967c268ff9",
+        "intent": "service-cover-outward-3mm",
+        "createdAt": "2026-11-21T21:31:52.104640+00:00",
+        "parent": "d4012de785ad42d5b67d5df0d12e6632",
+        "captured_script_sha256": "523ad603f9dc23d82b786ce00a82797df1b5c9d24b1c4d0997eb47f1a8f780db"
+      },
+      {
+        "id": "dea9f287afdd421084b7140ef42dcfb3",
+        "intent": "Restore revision d4012de785ad42d5b67d5df0d12e6632",
+        "createdAt": "2026-11-21T21:31:52.310690+00:00",
+        "parent": "a729d09cab3b4603a71a13967c268ff9",
+        "captured_script_sha256": "fba65df4b7f7e1280ba2e8e97c0d0b8e9bb044d8bb8076938c68e88eda795395"
+      },
+      {
+        "id": "b82cddb7b87b4aa199ba7e6559e6b8e4",
+        "intent": "sample-elbow-0",
+        "createdAt": "2026-11-21T21:31:59.646034+00:00",
+        "parent": "dea9f287afdd421084b7140ef42dcfb3",
+        "captured_script_sha256": "a09fdd709e6d2a26b8cd9dfcf66f6669f2540feed5b275ab65fe9d54a53bad37"
+      },
+      {
+        "id": "3b3e40c4f54c4eb295b29b2a73985f58",
+        "intent": "sample-elbow-45",
+        "createdAt": "2026-11-21T21:32:07.112731+00:00",
+        "parent": "b82cddb7b87b4aa199ba7e6559e6b8e4",
+        "captured_script_sha256": "f2f123f434a047e476a7d5fd3e21df64265e18f14c0490c630cb33c9703d4f4b"
+      },
+      {
+        "id": "83608af3ea0343a0bcf8e3d53d25073b",
+        "intent": "sample-elbow-90",
+        "createdAt": "2026-11-21T21:32:14.416482+00:00",
+        "parent": "3b3e40c4f54c4eb295b29b2a73985f58",
+        "captured_script_sha256": "7ff7dafe0a112ae7ea529da34e557a4ae973232c65e8dc881c968bd48e04cbc6"
+      },
+      {
+        "id": "e8f8e45033134e5c87bf0ea30e6a5a23",
+        "intent": "sample-wrist-20-index-35",
+        "createdAt": "2026-11-21T21:32:21.802865+00:00",
+        "parent": "83608af3ea0343a0bcf8e3d53d25073b",
+        "captured_script_sha256": "bc14f761ab1928f73844685d580471968cb39546be1f0277e7eea246160abcfc"
+      },
+      {
+        "id": "3b26f1ad9446435e9e4dcc2b836227dc",
+        "intent": "Restore revision d4012de785ad42d5b67d5df0d12e6632",
+        "createdAt": "2026-11-21T21:32:22.011330+00:00",
+        "parent": "e8f8e45033134e5c87bf0ea30e6a5a23",
+        "captured_script_sha256": "fba65df4b7f7e1280ba2e8e97c0d0b8e9bb044d8bb8076938c68e88eda795395"
+      }
+    ],
+    "runner_mode_actually_executed": "exercise-only; initial fresh creation and two corrections ran directly through produce.py",
+    "full_runner_rerun_performed": false,
+    "command_log": "/tmp/refas-dual-asset-20261122/automail/commands.json",
+    "code_provenance": [
+      {
+        "path": "/workspace/scratch/2eb72029c71e/refas-v2/examples/automail-arm/correct_proportions.py",
+        "bytes": 1508,
+        "sha256": "fba65df4b7f7e1280ba2e8e97c0d0b8e9bb044d8bb8076938c68e88eda795395"
+      },
+      {
+        "path": "/workspace/scratch/2eb72029c71e/refas-v2/examples/automail-arm/correct_shells.py",
+        "bytes": 3529,
+        "sha256": "711e9446ff79f90ee43d2baadef3869a330154efbc4b25caad120d0c35de7ac9"
+      },
+      {
+        "path": "/workspace/scratch/2eb72029c71e/refas-v2/examples/automail-arm/create.py",
+        "bytes": 21389,
+        "sha256": "0cdf9f03b28bce21b980d62cdba79271b94f002c8c9575372d490979055964f9"
+      },
+      {
+        "path": "/workspace/scratch/2eb72029c71e/refas-v2/examples/automail-arm/edit_panel.py",
+        "bytes": 4208,
+        "sha256": "523ad603f9dc23d82b786ce00a82797df1b5c9d24b1c4d0997eb47f1a8f780db"
+      },
+      {
+        "path": "/workspace/scratch/2eb72029c71e/refas-v2/examples/automail-arm/pose_check.py",
+        "bytes": 3201,
+        "sha256": "e5e47ea44bd9effa34579c5087b4cf0db2515463c56cfd549c5909632d483d6a"
+      },
+      {
+        "path": "/workspace/scratch/2eb72029c71e/refas-v2/examples/automail-arm/run.py",
+        "bytes": 12311,
+        "sha256": "5db964f016221b4f57cce21104ea1c73f6984377928df5d5f960c2bdbd2b6f3c"
+      }
+    ]
+  },
+  "visual_review": {
+    "inspected_first_views": [
+      "front",
+      "side",
+      "back",
+      "hero",
+      "service-detail"
+    ],
+    "inspected_corrected_views": [
+      "front",
+      "side",
+      "back",
+      "hero",
+      "service-detail"
+    ],
+    "corrections": [
+      {
+        "from": "0f982e173cfe4160a3b411361590be7e",
+        "to": "f1d628cbbc2e4f32a3c4a0f42f4a8a08",
+        "observed_problem": "Broad side armor closed too much of the mechanical channel; shoulder rim read as a plain silver disc; markings partly intersected the armor.",
+        "action": "Re-profiled four existing side shells, changed shoulder flange appearance and added thin rims, lifted markings and added fine cap seams.",
+        "decision": "Retained; more of the side mechanics is visible, though the shoulder remains simplified."
+      },
+      {
+        "from": "f1d628cbbc2e4f32a3c4a0f42f4a8a08",
+        "to": "d4012de785ad42d5b67d5df0d12e6632",
+        "observed_problem": "The shoulder was too narrow relative to an over-wide elbow crossbar compared with the source front silhouette.",
+        "action": "Broadened shoulder X dimension 20%, narrowed elbow bearing X widths 22%, modestly broadened blade profiles. Pivot centers and hand remained unchanged.",
+        "decision": "Selected as the neutral prototype."
+      }
+    ],
+    "accepted_observations": [
+      "Complete shoulder-to-five-digit arm with coherent segment ordering and intentional open mechanical channels.",
+      "Ivory, graphite, steel and gold palette, recessed circular shoulder socket, visible elbow rotor and long tapered forearm are present.",
+      "All required neutral view directions are actual fixed-camera Blender renders."
+    ],
+    "unresolved": [
+      "Shoulder and forearm compound curvature is flatter and more regular than the source; armor seams and side transitions need further sculptural refinement.",
+      "Rear mechanical routing and asymmetric detailing are simplified; the rear structural spine is broader and more monolithic than the reference.",
+      "The source has denser fine machining and more nuanced composite/ceramic finishes than this prototype.",
+      "The 512 px / 16-sample CPU renders contain visible grain and bright metallic highlights that reduce small-detail readability.",
+      "The geometry height is 743.095 mm rather than an exact 760 mm source-label reconstruction."
+    ],
+    "reference_fit_status": "Qualitative prototype assessment only; no human likeness acceptance or numeric likeness score."
+  },
+  "asset_condition": {
+    "statistics": {
+      "armatures": 0,
+      "materialSlots": 280,
+      "meshes": 280,
+      "objects": 300,
+      "shapeKeyObjects": 0,
+      "triangles": 159462,
+      "uvObjects": 142,
+      "vertices": 81023
+    },
+    "rigid_empty_nodes": 20,
+    "articulation_pivots": 18,
+    "digits": {
+      "THUMB": [
+        "THUMB_J0",
+        "THUMB_J1",
+        "THUMB_J2"
+      ],
+      "INDEX": [
+        "INDEX_J0",
+        "INDEX_J1",
+        "INDEX_J2"
+      ],
+      "MIDDLE": [
+        "MIDDLE_J0",
+        "MIDDLE_J1",
+        "MIDDLE_J2"
+      ],
+      "RING": [
+        "RING_J0",
+        "RING_J1",
+        "RING_J2"
+      ],
+      "LITTLE": [
+        "LITTLE_J0",
+        "LITTLE_J1",
+        "LITTLE_J2"
+      ]
+    },
+    "native_editability": "Profile meshes with editable Solidify, Bevel and Weighted Normal modifiers; separate rigid mesh hardware and named empty pivots.",
+    "uv_limit": "142 objects contain generated primitive UV layers; no authored complete production UV layout or bake.",
+    "no_claims": [
+      "skin deformation rig",
+      "working hydraulic linkage",
+      "physics",
+      "animation clips",
+      "LOD budget",
+      "engine integration"
+    ]
+  },
+  "service_panel_edit": {
+    "normal_local": [
+      0.0,
+      1.0,
+      0.0
+    ],
+    "requested_distance_m": 0.003,
+    "measured_group_world_delta_m": [
+      0.0,
+      0.00299999862909317,
+      0.0
+    ],
+    "selected_count": 26,
+    "unrelated_count": 274,
+    "unrelated_changed": [],
+    "geometry_material_modifier_or_parent_changes": [],
+    "preservation_pass": true,
+    "displacement_pass": true
+  },
+  "serialized_scene_preservation": {
+    "changed_object_count": 26,
+    "changed_objects": [
+      "SERVICE_COVER",
+      "Service_cover_center_inset",
+      "Service_cover_graphite",
+      "Service_cover_screw_-1_249",
+      "Service_cover_screw_-1_249_hex_socket",
+      "Service_cover_screw_-1_305",
+      "Service_cover_screw_-1_305_hex_socket",
+      "Service_cover_screw_-1_351",
+      "Service_cover_screw_-1_351_hex_socket",
+      "Service_cover_screw_1_249",
+      "Service_cover_screw_1_249_hex_socket",
+      "Service_cover_screw_1_305",
+      "Service_cover_screw_1_305_hex_socket",
+      "Service_cover_screw_1_351",
+      "Service_cover_screw_1_351_hex_socket",
+      "Service_cover_status_light",
+      "Service_cover_vent_00",
+      "Service_cover_vent_01",
+      "Service_cover_vent_02",
+      "Service_cover_vent_03",
+      "Service_cover_vent_04",
+      "Service_cover_vent_05",
+      "Service_cover_vent_06",
+      "Service_cover_vent_07",
+      "Service_cover_vent_08",
+      "Service_cover_vent_09"
+    ],
+    "unexpected_changed_objects": [],
+    "all_274_unrelated_serialized_object_records_equal": true
+  },
+  "restoration": {
+    "method": "public produce.py restore; baseline bundle published as a new retained revision",
+    "after_panel_artifact_byte_equality": {
+      "blend": true,
+      "glb": true,
+      "scene": true
+    },
+    "final_artifact_byte_equality": {
+      "blend": true,
+      "glb": true,
+      "scene": true
+    },
+    "all_five_restored_render_bytes_equal": {
+      "front": true,
+      "side": true,
+      "back": true,
+      "hero": true,
+      "service-detail": true
+    }
+  },
+  "pose_samples": [
+    {
+      "label": "elbow-0",
+      "revision": "b82cddb7b87b4aa199ba7e6559e6b8e4",
+      "directory": "/tmp/refas-dual-asset-20261122/automail/poses/elbow-0",
+      "check": {
+        "pose": {
+          "elbow_deg": 0,
+          "wrist_deg": 0,
+          "index_deg": [
+            0,
+            0,
+            0
+          ]
+        },
+        "upper_objects_checked": 96,
+        "unexpected_upper_changes": [],
+        "named_shell_intersections": [],
+        "shell_pairs_tested": 30,
+        "digit_world_origins": {
+          "WRIST_PIVOT": [
+            0.0,
+            0.0,
+            0.18400000035762787
+          ],
+          "INDEX_J0": [
+            -0.029999999329447746,
+            0.0,
+            0.10599999874830246
+          ],
+          "INDEX_J1": [
+            -0.03200000151991844,
+            0.0010000000474974513,
+            0.06800000369548798
+          ],
+          "INDEX_J2": [
+            -0.03400000184774399,
+            0.004000000189989805,
+            0.03999999910593033
+          ]
+        },
+        "parent_relations": {
+          "SHOULDER_PIVOT": "AURIX_ROOT",
+          "ELBOW_PIVOT": "SHOULDER_PIVOT",
+          "WRIST_PIVOT": "ELBOW_PIVOT",
+          "SERVICE_COVER": "ELBOW_PIVOT",
+          "INDEX_J0": "WRIST_PIVOT",
+          "INDEX_J1": "INDEX_J0",
+          "INDEX_J2": "INDEX_J1"
+        },
+        "static_spanning_links": "No authored cable or hydraulic mesh crosses the elbow; all such parts are local to upper or forearm. There is no dynamic tendon or telescoping linkage simulation.",
+        "limits": "Named-shell triangle-surface BVH checks and inspected renders at sampled poses only; no all-object collision test, containment test, continuous collision clearance, load or physical-performance validation."
+      }
+    },
+    {
+      "label": "elbow-45",
+      "revision": "3b3e40c4f54c4eb295b29b2a73985f58",
+      "directory": "/tmp/refas-dual-asset-20261122/automail/poses/elbow-45",
+      "check": {
+        "pose": {
+          "elbow_deg": 45,
+          "wrist_deg": 0,
+          "index_deg": [
+            0,
+            0,
+            0
+          ]
+        },
+        "upper_objects_checked": 96,
+        "unexpected_upper_changes": [],
+        "named_shell_intersections": [],
+        "shell_pairs_tested": 30,
+        "digit_world_origins": {
+          "WRIST_PIVOT": [
+            0.0,
+            0.1711198389530182,
+            0.2548801600933075
+          ],
+          "INDEX_J0": [
+            -0.029999999329447746,
+            0.22627416253089905,
+            0.19972583651542664
+          ],
+          "INDEX_J1": [
+            -0.03200000151991844,
+            0.2538513243198395,
+            0.1735628843307495
+          ],
+          "INDEX_J2": [
+            -0.03400000184774399,
+            0.2757716178894043,
+            0.1558852195739746
+          ]
+        },
+        "parent_relations": {
+          "SHOULDER_PIVOT": "AURIX_ROOT",
+          "ELBOW_PIVOT": "SHOULDER_PIVOT",
+          "WRIST_PIVOT": "ELBOW_PIVOT",
+          "SERVICE_COVER": "ELBOW_PIVOT",
+          "INDEX_J0": "WRIST_PIVOT",
+          "INDEX_J1": "INDEX_J0",
+          "INDEX_J2": "INDEX_J1"
+        },
+        "static_spanning_links": "No authored cable or hydraulic mesh crosses the elbow; all such parts are local to upper or forearm. There is no dynamic tendon or telescoping linkage simulation.",
+        "limits": "Named-shell triangle-surface BVH checks and inspected renders at sampled poses only; no all-object collision test, containment test, continuous collision clearance, load or physical-performance validation."
+      }
+    },
+    {
+      "label": "elbow-90",
+      "revision": "83608af3ea0343a0bcf8e3d53d25073b",
+      "directory": "/tmp/refas-dual-asset-20261122/automail/poses/elbow-90",
+      "check": {
+        "pose": {
+          "elbow_deg": 90,
+          "wrist_deg": 0,
+          "index_deg": [
+            0,
+            0,
+            0
+          ]
+        },
+        "upper_objects_checked": 96,
+        "unexpected_upper_changes": [],
+        "named_shell_intersections": [],
+        "shell_pairs_tested": 30,
+        "digit_world_origins": {
+          "WRIST_PIVOT": [
+            0.0,
+            0.24199999868869781,
+            0.42600002884864807
+          ],
+          "INDEX_J0": [
+            -0.029999999329447746,
+            0.3199999928474426,
+            0.42600002884864807
+          ],
+          "INDEX_J1": [
+            -0.03200000151991844,
+            0.3579999804496765,
+            0.4270000159740448
+          ],
+          "INDEX_J2": [
+            -0.03400000184774399,
+            0.38600000739097595,
+            0.43000003695487976
+          ]
+        },
+        "parent_relations": {
+          "SHOULDER_PIVOT": "AURIX_ROOT",
+          "ELBOW_PIVOT": "SHOULDER_PIVOT",
+          "WRIST_PIVOT": "ELBOW_PIVOT",
+          "SERVICE_COVER": "ELBOW_PIVOT",
+          "INDEX_J0": "WRIST_PIVOT",
+          "INDEX_J1": "INDEX_J0",
+          "INDEX_J2": "INDEX_J1"
+        },
+        "static_spanning_links": "No authored cable or hydraulic mesh crosses the elbow; all such parts are local to upper or forearm. There is no dynamic tendon or telescoping linkage simulation.",
+        "limits": "Named-shell triangle-surface BVH checks and inspected renders at sampled poses only; no all-object collision test, containment test, continuous collision clearance, load or physical-performance validation."
+      }
+    },
+    {
+      "label": "wrist-20-index-35",
+      "revision": "e8f8e45033134e5c87bf0ea30e6a5a23",
+      "directory": "/tmp/refas-dual-asset-20261122/automail/poses/wrist-20-index-35",
+      "check": {
+        "pose": {
+          "elbow_deg": 45,
+          "wrist_deg": 20,
+          "index_deg": [
+            35,
+            20,
+            10
+          ]
+        },
+        "upper_objects_checked": 96,
+        "unexpected_upper_changes": [],
+        "named_shell_intersections": [],
+        "shell_pairs_tested": 30,
+        "digit_world_origins": {
+          "WRIST_PIVOT": [
+            0.0,
+            0.1711198389530182,
+            0.2548801600933075
+          ],
+          "INDEX_J0": [
+            -0.029999999329447746,
+            0.2418118417263031,
+            0.22191593050956726
+          ],
+          "INDEX_J1": [
+            -0.03200000151991844,
+            0.27906087040901184,
+            0.22949936985969543
+          ],
+          "INDEX_J2": [
+            -0.03400000184774399,
+            0.3018095791339874,
+            0.24609746038913727
+          ]
+        },
+        "parent_relations": {
+          "SHOULDER_PIVOT": "AURIX_ROOT",
+          "ELBOW_PIVOT": "SHOULDER_PIVOT",
+          "WRIST_PIVOT": "ELBOW_PIVOT",
+          "SERVICE_COVER": "ELBOW_PIVOT",
+          "INDEX_J0": "WRIST_PIVOT",
+          "INDEX_J1": "INDEX_J0",
+          "INDEX_J2": "INDEX_J1"
+        },
+        "static_spanning_links": "No authored cable or hydraulic mesh crosses the elbow; all such parts are local to upper or forearm. There is no dynamic tendon or telescoping linkage simulation.",
+        "limits": "Named-shell triangle-surface BVH checks and inspected renders at sampled poses only; no all-object collision test, containment test, continuous collision clearance, load or physical-performance validation."
+      }
+    }
+  ],
+  "pose_visual_review": {
+    "actual_images_inspected": [
+      "elbow-0/side.png",
+      "elbow-45/side.png",
+      "elbow-90/side.png",
+      "elbow-90/hero.png",
+      "wrist-20-index-35/side.png",
+      "wrist-20-index-35/hero.png"
+    ],
+    "findings": "The forearm, wrist and hand follow the elbow pivot and remain visibly joined at 0, 45 and 90 degrees. The limited wrist/index sample visibly changes the hand and index chain. No gross upper-shell/forearm-shell penetration was seen in the inspected views.",
+    "intersection_scope": "30 named upper-armor/forearm-shell BVH surface pairs per sample; zero reported intersections. Expected bearing overlaps and other object pairs are excluded; contained intersections and continuous motion are not tested.",
+    "static_links": "No authored hydraulic/cable mesh spans the elbow. Segment-local rods and cables are static approximations; no moving telescoping or tendon linkage is implemented."
+  },
+  "export": {
+    "mode": "independent Blender factory-startup GLB reimport",
+    "native_object_count": 300,
+    "imported_object_count": 300,
+    "imported_mesh_count": 280,
+    "missing": [],
+    "extra": [],
+    "parent_mismatches": [],
+    "matrix_errors_over_1e_5": {},
+    "required_parent_relationships": {
+      "SHOULDER_PIVOT": "AURIX_ROOT",
+      "ELBOW_PIVOT": "SHOULDER_PIVOT",
+      "WRIST_PIVOT": "ELBOW_PIVOT",
+      "SERVICE_COVER": "ELBOW_PIVOT",
+      "THUMB_J0": "WRIST_PIVOT",
+      "THUMB_J1": "THUMB_J0",
+      "THUMB_J2": "THUMB_J1",
+      "INDEX_J0": "WRIST_PIVOT",
+      "INDEX_J1": "INDEX_J0",
+      "INDEX_J2": "INDEX_J1",
+      "MIDDLE_J0": "WRIST_PIVOT",
+      "MIDDLE_J1": "MIDDLE_J0",
+      "MIDDLE_J2": "MIDDLE_J1",
+      "RING_J0": "WRIST_PIVOT",
+      "RING_J1": "RING_J0",
+      "RING_J2": "RING_J1",
+      "LITTLE_J0": "WRIST_PIVOT",
+      "LITTLE_J1": "LITTLE_J0",
+      "LITTLE_J2": "LITTLE_J1"
+    },
+    "required_parent_relationships_pass": true,
+    "bounds_min_m": [
+      -0.08262000232934952,
+      -0.06202999874949455,
+      0.009898493066430092
+    ],
+    "bounds_max_m": [
+      0.08262000232934952,
+      0.05861147120594978,
+      0.7529931664466858
+    ],
+    "bounds_max_error_m": 3.5533141984345207e-09,
+    "exported_panel_edit": {
+      "selected_count": 26,
+      "unrelated_changed": [],
+      "displacements_m": {
+        "SERVICE_COVER": [
+          0.0,
+          0.00299999862909317,
+          0.0
+        ],
+        "Service_cover_center_inset": [
+          0.0,
+          0.00299999862909317,
+          0.0
+        ],
+        "Service_cover_graphite": [
+          0.0,
+          0.00299999862909317,
+          0.0
+        ],
+        "Service_cover_screw_-1_249": [
+          0.0,
+          0.00299999862909317,
+          0.0
+        ],
+        "Service_cover_screw_-1_249_hex_socket": [
+          0.0,
+          0.00299999862909317,
+          0.0
+        ],
+        "Service_cover_screw_-1_305": [
+          0.0,
+          0.00299999862909317,
+          0.0
+        ],
+        "Service_cover_screw_-1_305_hex_socket": [
+          0.0,
+          0.00299999862909317,
+          0.0
+        ],
+        "Service_cover_screw_-1_351": [
+          0.0,
+          0.00299999862909317,
+          0.0
+        ],
+        "Service_cover_screw_-1_351_hex_socket": [
+          0.0,
+          0.00299999862909317,
+          0.0
+        ],
+        "Service_cover_screw_1_249": [
+          0.0,
+          0.00299999862909317,
+          0.0
+        ],
+        "Service_cover_screw_1_249_hex_socket": [
+          0.0,
+          0.00299999862909317,
+          0.0
+        ],
+        "Service_cover_screw_1_305": [
+          0.0,
+          0.00299999862909317,
+          0.0
+        ],
+        "Service_cover_screw_1_305_hex_socket": [
+          0.0,
+          0.00299999862909317,
+          0.0
+        ],
+        "Service_cover_screw_1_351": [
+          0.0,
+          0.00299999862909317,
+          0.0
+        ],
+        "Service_cover_screw_1_351_hex_socket": [
+          0.0,
+          0.00299999862909317,
+          0.0
+        ],
+        "Service_cover_status_light": [
+          0.0,
+          0.00299999862909317,
+          0.0
+        ],
+        "Service_cover_vent_00": [
+          0.0,
+          0.00299999862909317,
+          0.0
+        ],
+        "Service_cover_vent_01": [
+          0.0,
+          0.00299999862909317,
+          0.0
+        ],
+        "Service_cover_vent_02": [
+          0.0,
+          0.00299999862909317,
+          0.0
+        ],
+        "Service_cover_vent_03": [
+          0.0,
+          0.00299999862909317,
+          0.0
+        ],
+        "Service_cover_vent_04": [
+          0.0,
+          0.00299999862909317,
+          0.0
+        ],
+        "Service_cover_vent_05": [
+          0.0,
+          0.00299999862909317,
+          0.0
+        ],
+        "Service_cover_vent_06": [
+          0.0,
+          0.00299999862909317,
+          0.0
+        ],
+        "Service_cover_vent_07": [
+          0.0,
+          0.00299999862909317,
+          0.0
+        ],
+        "Service_cover_vent_08": [
+          0.0,
+          0.00299999862909317,
+          0.0
+        ],
+        "Service_cover_vent_09": [
+          0.0,
+          0.00299999862909317,
+          0.0
+        ]
+      },
+      "passed": true
+    },
+    "exported_articulation_samples": [
+      {
+        "pivot": "ELBOW_PIVOT",
+        "descendant": "WRIST_PIVOT",
+        "degrees": 45,
+        "orbit_error_m": 3.332000937312528e-08,
+        "passed": true,
+        "moved_m": 0.18521878070864833
+      },
+      {
+        "pivot": "WRIST_PIVOT",
+        "descendant": "INDEX_J0",
+        "degrees": 20,
+        "orbit_error_m": 1.862645149230957e-09,
+        "passed": true,
+        "moved_m": 0.027089107256918543
+      },
+      {
+        "pivot": "INDEX_J0",
+        "descendant": "INDEX_J1",
+        "degrees": 35,
+        "orbit_error_m": 3.332000937312528e-08,
+        "passed": true,
+        "moved_m": 0.022861536259617916
+      }
+    ],
+    "limits": "GLB rigid node hierarchy and numeric orbit checks only. No engine, material visual-equivalence, continuous-collision or physical-linkage claim.",
+    "passed": true
+  },
+  "integrity": {
+    "ok": true,
+    "scope": "recorded-file-integrity",
+    "head": "3b26f1ad9446435e9e4dcc2b836227dc",
+    "artifactCount": 10,
+    "referenceResemblance": "not-evaluated",
+    "gameReadiness": "not-evaluated"
+  },
+  "failures_and_retained_attempts": [
+    {
+      "kind": "read error",
+      "detail": "Initial batched cat used source/reference.json, which does not exist; exit 1. Correct examples/automail-arm/reference.json read immediately afterward. No scene or runtime state was affected."
+    },
+    {
+      "kind": "pre-run authoring typo",
+      "detail": "A source SHA transcription typo in review.json was corrected before the first production run."
+    },
+    {
+      "kind": "superseded visual states",
+      "detail": "The first complete candidate and first shell correction were retained in the revision history; the second correction was selected."
+    }
+  ],
+  "failed_production_runs": [],
+  "deliverables": {
+    "root": "/tmp/refas-dual-asset-20261122/automail",
+    "native": "/tmp/refas-dual-asset-20261122/automail/candidate.blend",
+    "glb": "/tmp/refas-dual-asset-20261122/automail/candidate.glb",
+    "panel_native": "/tmp/refas-dual-asset-20261122/automail/panel-edited.blend",
+    "panel_glb": "/tmp/refas-dual-asset-20261122/automail/panel-edited.glb",
+    "before_images": "/tmp/refas-dual-asset-20261122/automail/renders/first-candidate",
+    "after_images": "/tmp/refas-dual-asset-20261122/automail/renders/candidate",
+    "pose_directory": "/tmp/refas-dual-asset-20261122/automail/poses",
+    "artifact_hashes": {
+      "candidate.blend": {
+        "bytes": 4352856,
+        "sha256": "b6fb8825244feca1951f486bab3efa5db1fdced04f81240e6bda6caba6504c35"
+      },
+      "candidate.glb": {
+        "bytes": 4181260,
+        "sha256": "351de7e9491dcb8bb75bb59178522cb6f374a30c1d3fc4d237e1a6b776b4a79d"
+      },
+      "first-candidate.blend": {
+        "bytes": 4279768,
+        "sha256": "fe9b18fc2d4d0c10d4378859bf868ff8dac2c4d27eba94255b9531e198a55c52"
+      },
+      "first-candidate.glb": {
+        "bytes": 4119080,
+        "sha256": "99fd9e060d878673dd0d7460af7be01cbe8f8d00cef4cfa547e4f17792481e65"
+      },
+      "panel-edited.blend": {
+        "bytes": 4352856,
+        "sha256": "35a137873e6ea8672b8cf0e686ff7f15c1a4e476d815b20fc55b1c4357f2b89f"
+      },
+      "panel-edited.glb": {
+        "bytes": 4181260,
+        "sha256": "08affd426de3eddadf280a4205c883e2a0dd3c01cc54775ef273f8077ab42f5e"
+      }
+    }
+  },
+  "target_readiness": "Native and GLB hierarchy/export path exercised. No actual game engine, material visual-equivalence test, gameplay budget, physics or production-readiness certification."
+}

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Render an unchanged native candidate with this case's common review setup."""
+"""Render an unchanged native candidate with an explicit common review setup."""
 import argparse
 import hashlib
 import json
@@ -25,17 +25,22 @@ def main():
     parser.add_argument("--blender", default="blender")
     parser.add_argument("--size", type=int, default=512)
     parser.add_argument("--samples", type=int, default=24)
+    parser.add_argument("--review-spec", type=Path, default=HERE / "review.json",
+                        help="Fixed cameras/light; defaults to the jacket specification")
+    parser.add_argument("--asset-root", help="Explicit named hierarchy to observe, excluding studio objects")
     args = parser.parse_args()
     source, out = args.blend.resolve(), args.out.resolve()
     out.mkdir(parents=True, exist_ok=False)
     review = out / "review.json"
-    shutil.copy2(HERE / "review.json", review)
+    shutil.copy2(args.review_spec.resolve(), review)
     config = json.loads(review.read_text())
     original = sha(source)
     env = {**os.environ, "PYTHONDONTWRITEBYTECODE": "1"}
     prepare = [args.blender, "-b", "--factory-startup", "--threads", "2",
                "--python-exit-code", "1", "--python", str(HERE / "prepare_observation.py"),
                "--", str(source), str(out / "observation.blend")]
+    if args.asset_root:
+        prepare.append(args.asset_root)
     with (out / "prepare.log").open("w") as log:
         subprocess.run(prepare, stdout=log, stderr=subprocess.STDOUT,
                        env=env, timeout=120, check=True)
@@ -53,9 +58,12 @@ def main():
             env=env, timeout=900)
     record = {"inputSha256": original, "inputUnchanged": sha(source) == original,
               "reviewSha256": sha(review), "workerSha256": sha(WORKER),
+              "observerSha256": sha(Path(__file__)),
+              "normalizerSha256": sha(HERE / "prepare_observation.py"),
               "observationBlendSha256": sha(out / "observation.blend"),
               "normalizationRecordSha256": sha(out / "normalization.json"),
-              "normalization": "Curves realized in a separate observation copy; source unchanged",
+              "assetRoot": args.asset_root,
+              "normalization": "Curves/text realized in a separate observation copy; source unchanged",
               "elapsedSeconds": round(time.monotonic() - started, 3),
               "returncode": result.returncode,
               "scope": "Common observation after construction; excluded from trial timing"}

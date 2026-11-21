@@ -5271,6 +5271,42 @@
         "mode": "instruction-only",
         "interfaces": []
       }
+    },
+    {
+      "id": "production-garments",
+      "path": "references/production-garments.md",
+      "owners": [
+        "shape-reconstruction"
+      ],
+      "requires": [],
+      "conditionalRequires": [],
+      "authority": "production-construction-guide",
+      "closureEffects": [],
+      "runtimeCapabilities": [
+        "shape-reconstruction"
+      ],
+      "interface": {
+        "mode": "instruction-only",
+        "interfaces": []
+      }
+    },
+    {
+      "id": "production-assemblies",
+      "path": "references/production-assemblies.md",
+      "owners": [
+        "assembly"
+      ],
+      "requires": [],
+      "conditionalRequires": [],
+      "authority": "production-construction-guide",
+      "closureEffects": [],
+      "runtimeCapabilities": [
+        "assembly"
+      ],
+      "interface": {
+        "mode": "instruction-only",
+        "interfaces": []
+      }
     }
   ],
   "findingOwners": {

@@ -1,0 +1,43 @@
+{
+  "source": {
+    "path": "/workspace/scratch/2eb72029c71e/refas-v2/examples/automail-arm/source/reference.png",
+    "bytes": 3215297,
+    "sha256": "3c7856dd632f8a1cde8036078573f569db55b6af97fae853237d8a9356f3c872"
+  },
+  "skill_entry": {
+    "path": "/tmp/refas-dual-asset-20261122/skill-snapshot/SKILL.md",
+    "sha256": "94bc317ac22c88a38fc33a52427d9fa41aca8a47917f994c2648b787107dadb0"
+  },
+  "code": [
+    {
+      "path": "/workspace/scratch/2eb72029c71e/refas-v2/examples/automail-arm/correct_proportions.py",
+      "bytes": 1508,
+      "sha256": "fba65df4b7f7e1280ba2e8e97c0d0b8e9bb044d8bb8076938c68e88eda795395"
+    },
+    {
+      "path": "/workspace/scratch/2eb72029c71e/refas-v2/examples/automail-arm/correct_shells.py",
+      "bytes": 3529,
+      "sha256": "711e9446ff79f90ee43d2baadef3869a330154efbc4b25caad120d0c35de7ac9"
+    },
+    {
+      "path": "/workspace/scratch/2eb72029c71e/refas-v2/examples/automail-arm/create.py",
+      "bytes": 21389,
+      "sha256": "0cdf9f03b28bce21b980d62cdba79271b94f002c8c9575372d490979055964f9"
+    },
+    {
+      "path": "/workspace/scratch/2eb72029c71e/refas-v2/examples/automail-arm/edit_panel.py",
+      "bytes": 4208,
+      "sha256": "523ad603f9dc23d82b786ce00a82797df1b5c9d24b1c4d0997eb47f1a8f780db"
+    },
+    {
+      "path": "/workspace/scratch/2eb72029c71e/refas-v2/examples/automail-arm/pose_check.py",
+      "bytes": 3201,
+      "sha256": "e5e47ea44bd9effa34579c5087b4cf0db2515463c56cfd549c5909632d483d6a"
+    },
+    {
+      "path": "/workspace/scratch/2eb72029c71e/refas-v2/examples/automail-arm/run.py",
+      "bytes": 12311,
+      "sha256": "5db964f016221b4f57cce21104ea1c73f6984377928df5d5f960c2bdbd2b6f3c"
+    }
+  ]
+}

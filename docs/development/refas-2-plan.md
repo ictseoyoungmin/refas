@@ -84,6 +84,15 @@ closed the sleeve/body gaps using shared topology. The case justified fixed
 camera/light capture and explicit unsupported-object inspection failures. It
 does not complete the broader profile or release milestone below.
 
+The subsequent [garment and automail checkpoint](evidence/garment-and-automail/README.md)
+adds an informed garment refinement and fresh independent arm controls. Anonymous
+review prefers the refined garment but rejects both states. For the arm it
+prefers ordinary Blender narrowly over fixed 1.x, then 2.0; all are unfinished.
+Short optional guides are reachable and local edits/recovery work, but this
+does not establish a visual-quality advantage. R2-05/06 remain WIP. The next
+quality task should address the recorded broad-form and compound-surface
+failures, while retaining these original comparison candidates.
+
 Use permitted real references representing at least a hard-surface prop, an organic shape, and a multi-part object. Establish consistent source comparison views, preserve uncertain camera choices, and demonstrate visible improvement from local edits. Add a comparison helper only when a real review failure requires it.
 
 Evaluate the 1.x entry and the new entry using the same model, prompt purpose, references, toolchain, and time/resource budget. Record time to a credible whole, repair success, source/project retention, and blind visual preference. Technical pass/fail and research evaluations remain separate; a higher preference score does not become a certificate.

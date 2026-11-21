@@ -19,6 +19,8 @@ Build continuous major volumes and believable connections before small decoratio
 
 For surfaces that should form one continuous shell, derive adjoining regions from a shared boundary. Separately subdivided edges can open a crack even when their control points meet. Inspect the connection with the final modifiers from both sides before adding small detail; preserve intentional openings.
 
+Load a construction guide only when its problem is present: `references/production-garments.md` for cloth transitions and folded collars, or `references/production-assemblies.md` for segmented hard surfaces, joint pivots and local pose checks. These guides support ordinary Blender authoring without the 1.x certification loop.
+
 ## Start or resume a production project
 
 Paths below are relative to the installed skill root. Run the entry script by its absolute path if the working directory differs. Store the project outside the installed skill directory.

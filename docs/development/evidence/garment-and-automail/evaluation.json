@@ -1,0 +1,284 @@
+{
+  "schema": "refas.development.two-asset-evidence/v1",
+  "date": "2026-11-22",
+  "timezone": "Asia/Seoul",
+  "parentCommit": "0064129159b722e43b87b43c85f72d3831d795c0",
+  "branch": "rewrite/v2",
+  "pr": "https://github.com/ictseoyoungmin/refas/pull/399",
+  "sources": [
+    {
+      "asset": "garment",
+      "path": "examples/uniform-jacket/source/reference.png",
+      "sha256": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5",
+      "bytes": 2666378,
+      "unchanged": true
+    },
+    {
+      "asset": "automail",
+      "path": "examples/automail-arm/source/reference.png",
+      "sha256": "3c7856dd632f8a1cde8036078573f569db55b6af97fae853237d8a9356f3c872",
+      "bytes": 3215297,
+      "unchanged": true
+    }
+  ],
+  "skillSnapshot": {
+    "manifest": "records/skill-snapshot.json",
+    "files": 277,
+    "sha256": "1423652a6989d9fa5452952a6bfb0ba91245768cd3526a15e32c67ecf57cb61a",
+    "finalSkillFilesAllMatch": true,
+    "references": 43,
+    "runtimeInterfaces": 121,
+    "runtimeChangedThisCheckpoint": false
+  },
+  "garment": {
+    "taskType": "Informed continuation from previous delivered native; lead feedback disclosed",
+    "selectedRevision": "9fe00caf1e1649a58554b3a761ee7bbb",
+    "editedRevision": "939cbce741ea4707b211092b42cdde7d",
+    "restoredRevision": "f84f840b4d604957b7717b95e8fb873c",
+    "visualPreference": "after",
+    "anonymousMapping": {
+      "A": "before",
+      "B": "after"
+    },
+    "finishedVisualAcceptance": false,
+    "objects": 271,
+    "triangles": 302196,
+    "sharedArmholeEdges": 80,
+    "cuffEdit": {
+      "measuredBeforeMetres": 0.059987178043229505,
+      "measuredAfterMetres": 0.0699871884426102,
+      "changedObjects": 7,
+      "unchangedObjects": 264,
+      "outsideCuffProtected": 263,
+      "unchangedDistalPiping": 1,
+      "recordedMaterialsUnchanged": true
+    },
+    "exactRestoredFiles": 14,
+    "authoringElapsedSeconds": 1374.327,
+    "freshReplayCommandSeconds": 71.307,
+    "replayIsNotIndependentAuthoring": true,
+    "sceneFingerprint": "50685b52a722d64aee4659531cbf1d71491e446de9c5fb6116f9a379ae54a2cc",
+    "report": "records/author-garment-report.json",
+    "visualReview": "records/blind-garment-review.json"
+  },
+  "automail": {
+    "taskType": "Fresh independent creation, one attempt per condition",
+    "visualRanking": [
+      "plain",
+      "legacy",
+      "production"
+    ],
+    "anonymousMapping": {
+      "A": "legacy",
+      "B": "plain",
+      "C": "production"
+    },
+    "rankingQualification": "Plain narrowly leads legacy; stronger confidence in rejecting all candidates than in exact first/second ordering.",
+    "finishedVisualAcceptance": {
+      "plain": false,
+      "legacy": false,
+      "production": false
+    },
+    "qualitySuperiorityEstablished": false,
+    "commonObserver": {
+      "viewsPerCondition": 5,
+      "records": "records/common-comparison.json",
+      "allCameraLightRendererMetadataMatch": true,
+      "allNativeInputsUnchanged": true,
+      "sourceRegistration": "unregistered",
+      "engine": "Blender 4.3.2 Cycles CPU",
+      "size": [
+        512,
+        512
+      ],
+      "samples": 24,
+      "denoising": false
+    },
+    "production": {
+      "selectedRevision": "d4012de785ad42d5b67d5df0d12e6632",
+      "restoredRevision": "3b26f1ad9446435e9e4dcc2b836227dc",
+      "objects": 300,
+      "meshes": 280,
+      "hierarchyEmpties": 20,
+      "triangles": 159462,
+      "heightMetres": 0.74309468,
+      "panelMovedNodes": 26,
+      "panelDeltaMetres": 0.002999998629,
+      "protectedObjects": 274,
+      "poseElbowDegrees": [
+        0,
+        45,
+        90
+      ],
+      "combinedPose": {
+        "elbowDegrees": 45,
+        "wristDegrees": 20,
+        "indexDegrees": [
+          35,
+          20,
+          10
+        ]
+      },
+      "sampledShellPairsPerPose": 30,
+      "noSampledTriangleSurfaceIntersectionsObserved": true,
+      "fullClearanceClaimed": false,
+      "independentImportedNodes": 300,
+      "report": "records/author-automail-v2-report.json",
+      "authoringTiming": {
+        "start_utc": "2026-11-21T21:19:14+00:00",
+        "start_recorded_before_guidance": true,
+        "first_complete_candidate_published_utc": "2026-11-21T21:24:33.939926+00:00",
+        "workflow_checks_completed_utc": "2026-11-21T21:32:24.242727+00:00",
+        "end_utc": "2026-11-21T21:37:11.183931+00:00",
+        "wall_elapsed_seconds": 1077.183931,
+        "model_id": null,
+        "token_count": null,
+        "unavailable_reason": "Exact model identity and token accounting were not exposed; neither is inferred."
+      }
+    },
+    "plain": {
+      "assetNodes": 311,
+      "studioObjects": 5,
+      "curveConversions": 18,
+      "textConversions": 4,
+      "panelMovedNodes": 14,
+      "unchangedAssetObjects": 297,
+      "restore": "Reopened state equality; not exact file bytes",
+      "elapsedSeconds": 1059.868329,
+      "report": "records/author-automail-plain-report.json"
+    },
+    "legacy": {
+      "assetNodes": 247,
+      "meshes": 227,
+      "studioObjects": 5,
+      "panelMovedNodes": 17,
+      "restore": "Exact candidate native/GLB file bytes and separate reopened full-scene state comparison",
+      "formalValidation": "BLOCKED",
+      "missingFormalChecks": [
+        "candidate-lineage",
+        "source-semantic-current-glb",
+        "relational-evidence",
+        "registered-multiview",
+        "independent-visual-review",
+        "realized-contact-support",
+        "whole-object-certification"
+      ],
+      "certificates": 0,
+      "postWeldNonmanifoldImportedMeshes": 18,
+      "elapsedSeconds": 1185.193653,
+      "timingScope": "Original report completion; a later read-only centroid-measurement correction is retained separately. No speed comparison.",
+      "report": "records/author-automail-legacy-report.json"
+    },
+    "visualReview": "records/blind-automail-review.json"
+  },
+  "deliveryFiles": {
+    "garment": [
+      {
+        "originalExecutionPath": "/tmp/refas-dual-asset-20261122/garment/candidate.blend",
+        "name": "candidate.blend",
+        "bytes": 5828572,
+        "sha256": "ab7a3b93b40b431f820dc7cdc96c711005c185096fa3038d93405dceb7a84dbb"
+      },
+      {
+        "originalExecutionPath": "/tmp/refas-dual-asset-20261122/garment/candidate.glb",
+        "name": "candidate.glb",
+        "bytes": 5857472,
+        "sha256": "30e2557a727e61a6e3e3a929522aa8a650e0cfff3e8e3d80f1dd3e6c45fae42f"
+      },
+      {
+        "originalExecutionPath": "/tmp/refas-dual-asset-20261122/garment/cuff-edited.blend",
+        "name": "cuff-edited.blend",
+        "bytes": 5828572,
+        "sha256": "c0cc36124dc2a5bfbb2f340906c69e8e8acd2853971d97cec6cb5ab85ca02d20"
+      },
+      {
+        "originalExecutionPath": "/tmp/refas-dual-asset-20261122/garment/cuff-edited.glb",
+        "name": "cuff-edited.glb",
+        "bytes": 5857800,
+        "sha256": "941cc8285201dd767411dad1e1d75fbb7334176f8ac64155bf415c03997282cc"
+      },
+      {
+        "originalExecutionPath": "/tmp/refas-dual-asset-20261122/garment/restored.blend",
+        "name": "restored.blend",
+        "bytes": 5828572,
+        "sha256": "ab7a3b93b40b431f820dc7cdc96c711005c185096fa3038d93405dceb7a84dbb"
+      },
+      {
+        "originalExecutionPath": "/tmp/refas-dual-asset-20261122/garment/restored.glb",
+        "name": "restored.glb",
+        "bytes": 5857472,
+        "sha256": "30e2557a727e61a6e3e3a929522aa8a650e0cfff3e8e3d80f1dd3e6c45fae42f"
+      }
+    ],
+    "automail": [
+      {
+        "originalExecutionPath": "/tmp/refas-dual-asset-20261122/automail/candidate.blend",
+        "name": "candidate.blend",
+        "bytes": 4352856,
+        "sha256": "b6fb8825244feca1951f486bab3efa5db1fdced04f81240e6bda6caba6504c35"
+      },
+      {
+        "originalExecutionPath": "/tmp/refas-dual-asset-20261122/automail/candidate.glb",
+        "name": "candidate.glb",
+        "bytes": 4181260,
+        "sha256": "351de7e9491dcb8bb75bb59178522cb6f374a30c1d3fc4d237e1a6b776b4a79d"
+      },
+      {
+        "originalExecutionPath": "/tmp/refas-dual-asset-20261122/automail/panel-edited.blend",
+        "name": "panel-edited.blend",
+        "bytes": 4352856,
+        "sha256": "35a137873e6ea8672b8cf0e686ff7f15c1a4e476d815b20fc55b1c4357f2b89f"
+      },
+      {
+        "originalExecutionPath": "/tmp/refas-dual-asset-20261122/automail/panel-edited.glb",
+        "name": "panel-edited.glb",
+        "bytes": 4181260,
+        "sha256": "08affd426de3eddadf280a4205c883e2a0dd3c01cc54775ef273f8077ab42f5e"
+      }
+    ]
+  },
+  "installedPackage": {
+    "record": "records/installed-package.json",
+    "packagedFiles": 399,
+    "commands": 14,
+    "productionCliCommands": 13,
+    "finalRestoredFiles": 13,
+    "allCommandsPass": true,
+    "fullArtifactInputBytesMatch": true,
+    "actualConfiguredBlenderPathExercised": true,
+    "scope": "Informed replay after runner checks/provenance/portability fixes; not another independent author trial"
+  },
+  "verification": {
+    "javascriptPassed": 931,
+    "productionPassed": 35,
+    "projectCliTests": 23,
+    "actualBlenderTests": 12,
+    "skippedLocal": 0,
+    "guideRoutingFocusedPassed": 31,
+    "pythonSyntax": "pass",
+    "repositoryCheck": "pass",
+    "legacyDogfoodCheckpoints": 11,
+    "packageAudit": "pass",
+    "record": "records/local-checks.json",
+    "remoteCi": "See exact new commit checks on Draft PR #399; not inferred from local tests."
+  },
+  "interpretationLimits": [
+    "No exact model/provider IDs, token usage or monetary cost telemetry",
+    "Staggered starts and concurrent resource contention; roughly 30-minute author allowance is not an instrumented compute cap",
+    "One independent author per automail condition; jacket is an informed follow-up",
+    "Original source panels are not calibrated cameras; no numeric likeness score",
+    "No skin rig, dynamic hydraulic linkage, continuous collision, full UV/material baking, game-engine profile or physical feasibility acceptance"
+  ],
+  "decision": {
+    "implementationCheckpoint": "Ready for Draft PR review",
+    "R2-05": "WIP",
+    "R2-06": "WIP",
+    "nextVisualWork": [
+      "Jacket broad folded collar/lapel relationship and garment shaping",
+      "Automail contoured overlapping armor, shoulder mass and readable mechanical negative space"
+    ],
+    "packageVersion": "1.4.2",
+    "releasePublished": false,
+    "mainMerged": false
+  }
+}

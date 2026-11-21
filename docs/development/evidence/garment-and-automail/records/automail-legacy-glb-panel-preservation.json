@@ -1,0 +1,96 @@
+{
+  "candidate_sha256": "2a6d9e4ca1a4e5f73515413eb7bfb789868cc984f90177d34d833006bc52013a",
+  "edited_sha256": "22bd41d92d5b660ed03b33f33d9a8c8ed6aafc3dbb0ea24c2aea8f4a968706ed",
+  "binary_chunk_byte_identical": true,
+  "candidate_binary_sha256": "5ef5f3701ea223d68e046742b5b190ccc873967762aadfecc04096463e96282c",
+  "edited_binary_sha256": "5ef5f3701ea223d68e046742b5b190ccc873967762aadfecc04096463e96282c",
+  "named_node_sets_identical": true,
+  "changed_node_json_names": [
+    "SERVICE_COVER_ROOT"
+  ],
+  "preserved_structures": {
+    "meshes": true,
+    "materials": true,
+    "accessors": true,
+    "bufferViews": true,
+    "images": true,
+    "textures": true,
+    "samplers": true,
+    "scenes": true
+  },
+  "node_diffs": {
+    "SERVICE_COVER_ROOT": {
+      "candidate": {
+        "children": [
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          51,
+          52,
+          53,
+          54,
+          55
+        ],
+        "extras": {
+          "declared_local_outward_normal": [
+            0.0,
+            1.0,
+            0.0
+          ],
+          "panel_edit_offset_metres": 0.003,
+          "relation": "removable rigid cover; child fasteners and latches rigid-follow this root"
+        },
+        "name": "SERVICE_COVER_ROOT",
+        "translation": [
+          0,
+          -0.11599999666213989,
+          -0.03799999877810478
+        ]
+      },
+      "edited": {
+        "children": [
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          51,
+          52,
+          53,
+          54,
+          55
+        ],
+        "extras": {
+          "declared_local_outward_normal": [
+            0.0,
+            1.0,
+            0.0
+          ],
+          "panel_edit_offset_metres": 0.003,
+          "relation": "removable rigid cover; child fasteners and latches rigid-follow this root"
+        },
+        "name": "SERVICE_COVER_ROOT",
+        "translation": [
+          0,
+          -0.11599999666213989,
+          -0.04099999740719795
+        ]
+      }
+    }
+  },
+  "evidence_boundary": "Byte-level equality is checked separately for the GLB BIN chunk and each immutable JSON structure. File bytes differ because the service cover transform changes."
+}

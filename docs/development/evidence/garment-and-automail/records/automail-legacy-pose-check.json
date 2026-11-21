@@ -1,0 +1,92 @@
+{
+  "tests": [
+    {
+      "pose": "elbow-000",
+      "elbow_degrees": 0,
+      "wrist_world_position": [
+        0.0,
+        0.0,
+        0.1940000057220459
+      ],
+      "expected_wrist_world_position": [
+        0.0,
+        0.0,
+        0.1940000057220459
+      ],
+      "wrist_position_error_m": 0.0,
+      "geometry_unchanged": true,
+      "protected_upstream_unchanged": true,
+      "armor_intersections": {
+        "pair_count": 16,
+        "intersections": [],
+        "scope": "Triangle-surface overlap only for the named armor pairs; not full collision/clearance certification"
+      }
+    },
+    {
+      "pose": "elbow-045",
+      "elbow_degrees": -45,
+      "wrist_world_position": [
+        0.0,
+        -0.17041273415088654,
+        0.26458728313446045
+      ],
+      "expected_wrist_world_position": [
+        0.0,
+        -0.17041274905204773,
+        0.26458728313446045
+      ],
+      "wrist_position_error_m": 1.4901161193847656e-08,
+      "geometry_unchanged": true,
+      "protected_upstream_unchanged": true,
+      "armor_intersections": {
+        "pair_count": 16,
+        "intersections": [],
+        "scope": "Triangle-surface overlap only for the named armor pairs; not full collision/clearance certification"
+      }
+    },
+    {
+      "pose": "elbow-090",
+      "elbow_degrees": -90,
+      "wrist_world_position": [
+        0.0,
+        -0.2409999966621399,
+        0.4350000023841858
+      ],
+      "expected_wrist_world_position": [
+        0.0,
+        -0.2409999966621399,
+        0.4350000023841858
+      ],
+      "wrist_position_error_m": 0.0,
+      "geometry_unchanged": true,
+      "protected_upstream_unchanged": true,
+      "armor_intersections": {
+        "pair_count": 16,
+        "intersections": [],
+        "scope": "Triangle-surface overlap only for the named armor pairs; not full collision/clearance certification"
+      }
+    },
+    {
+      "pose": "wrist-index",
+      "wrist_degrees": -20,
+      "Index_MCP_degrees": -20,
+      "Index_PIP_degrees": -40,
+      "Index_DIP_degrees": -25,
+      "geometry_unchanged": true,
+      "palm_forearm_intersections": {
+        "pair_count": 20,
+        "intersections": [],
+        "scope": "Triangle-surface overlap only for the named armor pairs; not full collision/clearance certification"
+      }
+    }
+  ],
+  "neutral_state_restored_exact": true,
+  "not_claimed": [
+    "physics",
+    "skin rig",
+    "hydraulic actuation",
+    "full range clearance certification",
+    "source stated 135 degree range"
+  ],
+  "static_spanning_links": "No modeled actuator/rail crosses a tested elbow or wrist pivot: upper actuators remain under ShoulderPivot, forearm actuators under ElbowPivot. These are visual rigid components, not dynamic pistons."
+}

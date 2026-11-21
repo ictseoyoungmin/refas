@@ -1,0 +1,777 @@
+{
+  "task": "Independent no-skill whole-sheet AURIX cybernetic arm baseline",
+  "start_utc": "2026-11-21T21:21:58+00:00",
+  "end_utc": "2026-11-21T21:39:37.868329+00:00",
+  "elapsed_seconds": 1059.868329,
+  "elapsed_minutes": 17.664472149999998,
+  "target_budget_minutes_approximately": 30,
+  "timing_note": "Measured elapsed working time; no model/token/cost inference. Completion is a limited prototype with the stated visual limits, not a speed score.",
+  "Blender_version": "4.3.2",
+  "root_name": "AURIX_ROOT",
+  "source": {
+    "image": "/workspace/scratch/2eb72029c71e/refas-v2/examples/automail-arm/source/reference.png",
+    "metadata": "/workspace/scratch/2eb72029c71e/refas-v2/examples/automail-arm/reference.json",
+    "pixel_size": [
+      1447,
+      1087
+    ],
+    "metadata_provided_sha256": "3c7856dd632f8a1cde8036078573f569db55b6af97fae853237d8a9356f3c872",
+    "labels_mm": {
+      "total": 760,
+      "shoulder_interface": 110,
+      "upper_arm": 215,
+      "forearm": 250,
+      "hand": 185
+    },
+    "interpretation": "Metres, native Z up, front camera at negative Y. Shoulder pivot z=.700, elbow z=.435, wrist z=.187. Front-view thumb negative X. Labels are concept proportions, not calibrated manufacturing dimensions."
+  },
+  "provenance": {
+    "skills_read": false,
+    "repository_code_read": false,
+    "other_candidates_read": false,
+    "subagents_used": false,
+    "image_generation_used": false,
+    "external_3d_generation_used": false,
+    "existing_arm_mesh_used": false,
+    "work_directory": "/tmp/refas-dual-asset-20261122/automail-plain"
+  },
+  "selected_candidate": {
+    "stage": "correction2",
+    "native": "/tmp/refas-dual-asset-20261122/automail-plain/candidate.blend",
+    "glb": "/tmp/refas-dual-asset-20261122/automail-plain/candidate.glb",
+    "renders": {
+      "front": "/tmp/refas-dual-asset-20261122/automail-plain/renders/candidate/front.png",
+      "left": "/tmp/refas-dual-asset-20261122/automail-plain/renders/candidate/left.png",
+      "back": "/tmp/refas-dual-asset-20261122/automail-plain/renders/candidate/back.png",
+      "frontthreequarter": "/tmp/refas-dual-asset-20261122/automail-plain/renders/candidate/frontthreequarter.png",
+      "rearthreequarter": "/tmp/refas-dual-asset-20261122/automail-plain/renders/candidate/rearthreequarter.png"
+    }
+  },
+  "attempts": [
+    {
+      "id": "initial",
+      "selected": false,
+      "native": "initial.blend",
+      "glb": "initial.glb",
+      "renders": "renders/initial",
+      "changes": "First complete assembly; custom profiles, all joints, five digits, service cover, full studio.",
+      "observed": "Actual front/left/back/three-quarter renders revealed lost transverse primitive orientation during parenting, over-bright surfaces, and short finger endpoints."
+    },
+    {
+      "id": "correction1",
+      "selected": false,
+      "native": "correction1.blend",
+      "glb": "correction1.glb",
+      "renders": "renders/correction1",
+      "changes": "Force dependency-graph update before copying world matrices during parenting.",
+      "observed": "Shoulder sockets, elbow disks, wrist bearings and digit pin axes became transverse as intended; actual outputs inspected."
+    },
+    {
+      "id": "correction2",
+      "selected": true,
+      "native": "correction2.blend",
+      "glb": "correction2.glb",
+      "renders": "renders/correction2",
+      "changes": "Add swept shoulder armor returns, rear graphite spine cover and inset; lengthen staggered finger chains; moderate ivory/graphite/titanium PBR values.",
+      "observed": "Selected for more credible shoulder volume, rear structure and nominal 760 mm envelope. Copied unchanged to candidate files."
+    },
+    {
+      "id": "correction3",
+      "selected": false,
+      "native": "correction3.blend",
+      "glb": "correction3.glb",
+      "renders": "renders/correction3",
+      "changes": "Further darken three PBR materials while preserving geometry and all rendering settings.",
+      "observed": "Rejected: the preserved bright lighting still compressed shading; compensating further risked implausibly dark asset materials."
+    }
+  ],
+  "commands": [
+    {
+      "command": "Read source/reference.png with view_image; cat corrected ../reference.json",
+      "outcome": "Raw source sheet and metadata inspected; no other source code, skill, prior result or other agent files read."
+    },
+    {
+      "command": "/usr/bin/blender --version",
+      "outcome": "Blender 4.3.2"
+    },
+    {
+      "command": "/usr/bin/blender -b -t 2 --python build_arm.py > build.log 2>&1",
+      "outcome": "First native save succeeded; GLB export selector failed on unavailable Object.parent_recursive API. Saved artifact preserved as initial-export-failed.blend."
+    },
+    {
+      "command": "/usr/bin/blender -b -t 2 --python build_arm.py > build-retry.log 2>&1",
+      "outcome": "After using root.children_recursive, complete initial native/GLB and five actual renders succeeded."
+    },
+    {
+      "command": "AURIX_STAGE=correction1 /usr/bin/blender -b -t 2 --python build_arm.py > correction1.log 2>&1",
+      "outcome": "Completed five renders and both exports."
+    },
+    {
+      "command": "AURIX_STAGE=correction2 /usr/bin/blender -b -t 2 --python build_arm.py > correction2.log 2>&1",
+      "outcome": "Completed five renders and both exports; selected candidate."
+    },
+    {
+      "command": "AURIX_STAGE=correction3 /usr/bin/blender -b -t 2 --python build_arm.py > correction3.log 2>&1",
+      "outcome": "Completed five renders and both exports; material trial rejected."
+    },
+    {
+      "command": "/usr/bin/blender -b correction3.blend -t 2 --python-expr [material slot diagnostic] > materials-check.log 2>&1",
+      "outcome": "Confirmed intended material assignments and values; no hidden missing-material explanation for bright previews."
+    },
+    {
+      "command": "/usr/bin/blender -b -t 2 --python verify_edit_poses.py > verify-edit-poses.log 2>&1",
+      "outcome": "Edited variant saved/exported/rendered; native state restored exactly; requested native poses rendered and restored."
+    },
+    {
+      "command": "/usr/bin/blender -b -t 2 --python check_glb.py > check-glb.log 2>&1",
+      "outcome": "First test used Euler fields on quaternion-mode imported nodes and did not move them. Preserved in attempt1-* and renders/glb-attempt1. Corrected matrix_basis test succeeded."
+    },
+    {
+      "command": "/usr/bin/blender -b -t 2 --python audit_saved_states.py > saved-state-audit.log 2>&1",
+      "outcome": "Read back candidate, edited, restored and initial files. All 302 protected saved-scene objects unchanged; all restored scene object state exactly matches candidate; studio and settings unchanged from initial."
+    }
+  ],
+  "failures_and_setup_friction": [
+    {
+      "kind": "setup",
+      "detail": "First exec attempt used the not-yet-created work directory and was rejected before process creation; retried from /tmp."
+    },
+    {
+      "kind": "source locator",
+      "detail": "source/reference.json did not exist; root supplied /workspace/scratch/2eb72029c71e/refas-v2/examples/automail-arm/reference.json and that exact raw-source metadata was then read."
+    },
+    {
+      "kind": "Blender API",
+      "detail": "Object.parent_recursive unavailable in Blender 4.3.2; replaced export selection with root.children_recursive. Initial-export-failed.blend and build.log retained."
+    },
+    {
+      "kind": "construction defect",
+      "detail": "Un-evaluated rotation matrix was captured during parenting, losing transverse orientations in initial candidate. Corrected in correction1, not hidden or overwritten."
+    },
+    {
+      "kind": "nonfatal exporter notice",
+      "detail": "Exporter printed Draco library unavailable. Uncompressed GLB exports completed; no Draco compression was requested or required."
+    },
+    {
+      "kind": "GLB test defect",
+      "detail": "Imported joints use QUATERNION rotation mode. First Euler-field test produced zero motion. Corrected test applies local matrix_basis rotation; failed import file/report/log/images retained."
+    },
+    {
+      "kind": "audit report scope defect",
+      "detail": "First studio-change report included a global material digest and therefore also listed intentional asset PBR changes. Final report compares studio objects/render settings separately; first audit retained."
+    }
+  ],
+  "native_observations": {
+    "total_objects": 316,
+    "asset_objects_including_root": 311,
+    "asset_geometry_objects": 291,
+    "asset_mesh_objects": 269,
+    "asset_curve_objects": 18,
+    "asset_text_objects": 4,
+    "asset_empty_objects": 20,
+    "studio_objects": [
+      "FILL_SOFTBOX",
+      "FIXED_REVIEW_CAMERA",
+      "KEY_SOFTBOX",
+      "RIM_SOFTBOX",
+      "STUDIO_GROUND"
+    ],
+    "evaluated_triangles": 120964,
+    "evaluated_vertices": 62000,
+    "evaluated_bounds_m": {
+      "x": [
+        -0.0806114599108696,
+        0.0722000002861023
+      ],
+      "y": [
+        -0.05995597690343857,
+        0.05349999666213989
+      ],
+      "z": [
+        -0.0005000047385692596,
+        0.7586215138435364
+      ]
+    },
+    "evaluated_extent_m": {
+      "x": 0.1528114601969719,
+      "y": 0.11345597356557846,
+      "z": 0.7591215185821056
+    }
+  },
+  "render_settings": {
+    "engine": "CYCLES",
+    "device": "CPU",
+    "samples": 16,
+    "threads": 2,
+    "denoising": false,
+    "resolution": [
+      512,
+      512,
+      100
+    ],
+    "view_transform": "AgX",
+    "look": "AgX - Medium High Contrast",
+    "exposure": 0.5
+  },
+  "studio_unchanged_from_initial": true,
+  "local_edit": {
+    "scope_names": [
+      "Removable forearm service cover",
+      "SERVICE_COVER_ROOT",
+      "Service cover captive screw",
+      "Service cover captive screw socket",
+      "Service cover captive screw socket.001",
+      "Service cover captive screw socket.002",
+      "Service cover captive screw socket.003",
+      "Service cover captive screw.001",
+      "Service cover captive screw.002",
+      "Service cover captive screw.003",
+      "Service cover gold border",
+      "Service cover vent recess",
+      "Service cover vent trim",
+      "Service serial"
+    ],
+    "scope_node_count": 14,
+    "declared_local_normal": [
+      0.0,
+      -1.0,
+      0.0
+    ],
+    "requested_mm": 3,
+    "measured_mm": {
+      "SERVICE_COVER_ROOT": 2.999998688813944,
+      "Removable forearm service cover": 2.999998688813944,
+      "Service cover captive screw": 2.999998688813944,
+      "Service cover captive screw socket": 2.999998688813944,
+      "Service cover captive screw socket.001": 2.999998688813944,
+      "Service cover captive screw socket.002": 2.999998688813944,
+      "Service cover captive screw socket.003": 2.999998688813944,
+      "Service cover captive screw.001": 2.999998688813944,
+      "Service cover captive screw.002": 2.999998688813944,
+      "Service cover captive screw.003": 2.999998688813944,
+      "Service cover gold border": 2.999998688813944,
+      "Service cover vent recess": 2.999998688813944,
+      "Service cover vent trim": 2.999998688813944,
+      "Service serial": 2.999998688813944
+    },
+    "protected_object_count_including_studio": 302,
+    "protected_objects": [
+      "AURIX emblem",
+      "AURIX shoulder lettering",
+      "AURIX_ROOT",
+      "Central upper tendon",
+      "Crest fastener",
+      "Crest fastener socket",
+      "Crest fastener socket.001",
+      "Crest fastener socket.002",
+      "Crest fastener socket.003",
+      "Crest fastener.001",
+      "Crest fastener.002",
+      "Crest fastener.003",
+      "DIGIT_INDEX_J1",
+      "DIGIT_INDEX_J2",
+      "DIGIT_INDEX_J3",
+      "DIGIT_LITTLE_J1",
+      "DIGIT_LITTLE_J2",
+      "DIGIT_LITTLE_J3",
+      "DIGIT_MIDDLE_J1",
+      "DIGIT_MIDDLE_J2",
+      "DIGIT_MIDDLE_J3",
+      "DIGIT_RING_J1",
+      "DIGIT_RING_J2",
+      "DIGIT_RING_J3",
+      "DIGIT_THUMB_J1",
+      "DIGIT_THUMB_J2",
+      "DIGIT_THUMB_J3",
+      "Dorsal hand armor -1",
+      "Dorsal hand armor 1",
+      "ELBOW_JOINT",
+      "Elbow bearing cap -1",
+      "Elbow bearing cap 1",
+      "Elbow bridge gold left",
+      "Elbow bridge gold right",
+      "Elbow central ivory bridge",
+      "Elbow full axle",
+      "Elbow gold race -1",
+      "Elbow gold race 1",
+      "Elbow rotating drum -1",
+      "Elbow rotating drum 1",
+      "Elbow side bearing -1",
+      "Elbow side bearing 1",
+      "Elbow silver bearing edge -1",
+      "Elbow silver bearing edge 1",
+      "FILL_SOFTBOX",
+      "FIXED_REVIEW_CAMERA",
+      "Forearm black inner cradle",
+      "Forearm gold edge -1",
+      "Forearm gold edge 1",
+      "Forearm long titanium rail -1",
+      "Forearm long titanium rail 1",
+      "Forearm outer conduit -1",
+      "Forearm outer conduit 1",
+      "Forearm outer wrap -1",
+      "Forearm outer wrap 1",
+      "Forearm rail gold stop -1",
+      "Forearm rail gold stop 1",
+      "Forearm rear gold collar -1",
+      "Forearm rear gold collar 1",
+      "Forearm rear piston barrel -1",
+      "Forearm rear piston barrel 1",
+      "Forearm rear piston rod -1",
+      "Forearm rear piston rod 1",
+      "Forearm rear rim -1",
+      "Forearm rear rim 1",
+      "Forearm rear service block",
+      "Forearm rear status recess -1",
+      "Forearm rear status recess 1",
+      "Forearm rear status strip -1",
+      "Forearm rear status strip 1",
+      "Forearm side armor -1",
+      "Forearm side armor 1",
+      "Forearm side screw lower -1",
+      "Forearm side screw lower -1 socket",
+      "Forearm side screw lower 1",
+      "Forearm side screw lower 1 socket",
+      "Forearm side screw upper -1",
+      "Forearm side screw upper -1 socket",
+      "Forearm side screw upper 1",
+      "Forearm side screw upper 1 socket",
+      "Hand central chassis",
+      "Hand central dorsal keystone",
+      "Hand tendon gold -1",
+      "Hand tendon gold 1",
+      "INDEX dorsal phalanx 1",
+      "INDEX dorsal phalanx 2",
+      "INDEX dorsal phalanx 3",
+      "INDEX fingertip cap",
+      "INDEX knuckle 1",
+      "INDEX knuckle 2",
+      "INDEX knuckle 3",
+      "INDEX knuckle status",
+      "INDEX palm grip 1",
+      "INDEX palm grip 2",
+      "INDEX palm grip 3",
+      "INDEX pin 1 -1",
+      "INDEX pin 1 1",
+      "INDEX pin 2 -1",
+      "INDEX pin 2 1",
+      "INDEX pin 3 -1",
+      "INDEX pin 3 1",
+      "INDEX tendon 1",
+      "INDEX tendon 2",
+      "INDEX tendon 3",
+      "KEY_SOFTBOX",
+      "LITTLE dorsal phalanx 1",
+      "LITTLE dorsal phalanx 2",
+      "LITTLE dorsal phalanx 3",
+      "LITTLE fingertip cap",
+      "LITTLE knuckle 1",
+      "LITTLE knuckle 2",
+      "LITTLE knuckle 3",
+      "LITTLE knuckle status",
+      "LITTLE palm grip 1",
+      "LITTLE palm grip 2",
+      "LITTLE palm grip 3",
+      "LITTLE pin 1 -1",
+      "LITTLE pin 1 1",
+      "LITTLE pin 2 -1",
+      "LITTLE pin 2 1",
+      "LITTLE pin 3 -1",
+      "LITTLE pin 3 1",
+      "LITTLE tendon 1",
+      "LITTLE tendon 2",
+      "LITTLE tendon 3",
+      "MIDDLE dorsal phalanx 1",
+      "MIDDLE dorsal phalanx 2",
+      "MIDDLE dorsal phalanx 3",
+      "MIDDLE fingertip cap",
+      "MIDDLE knuckle 1",
+      "MIDDLE knuckle 2",
+      "MIDDLE knuckle 3",
+      "MIDDLE knuckle status",
+      "MIDDLE palm grip 1",
+      "MIDDLE palm grip 2",
+      "MIDDLE palm grip 3",
+      "MIDDLE pin 1 -1",
+      "MIDDLE pin 1 1",
+      "MIDDLE pin 2 -1",
+      "MIDDLE pin 2 1",
+      "MIDDLE pin 3 -1",
+      "MIDDLE pin 3 1",
+      "MIDDLE tendon 1",
+      "MIDDLE tendon 2",
+      "MIDDLE tendon 3",
+      "Palm central rubber pad",
+      "Palm pad seam",
+      "RIM_SOFTBOX",
+      "RING dorsal phalanx 1",
+      "RING dorsal phalanx 2",
+      "RING dorsal phalanx 3",
+      "RING fingertip cap",
+      "RING knuckle 1",
+      "RING knuckle 2",
+      "RING knuckle 3",
+      "RING knuckle status",
+      "RING palm grip 1",
+      "RING palm grip 2",
+      "RING palm grip 3",
+      "RING pin 1 -1",
+      "RING pin 1 1",
+      "RING pin 2 -1",
+      "RING pin 2 1",
+      "RING pin 3 -1",
+      "RING pin 3 1",
+      "RING tendon 1",
+      "RING tendon 2",
+      "RING tendon 3",
+      "Rear heat exchanger fin 0",
+      "Rear heat exchanger fin 1",
+      "Rear heat exchanger fin 2",
+      "Rear heat exchanger fin 3",
+      "Rear heat exchanger fin 4",
+      "Rear heat exchanger fin 5",
+      "Rear heat exchanger fin 6",
+      "SHOULDER_JOINT",
+      "STUDIO_GROUND",
+      "Shoulder crown ivory",
+      "Shoulder gold interface -1",
+      "Shoulder gold interface 1",
+      "Shoulder hub backplate -1",
+      "Shoulder hub backplate 1",
+      "Shoulder lug screw -1 0",
+      "Shoulder lug screw -1 0 socket",
+      "Shoulder lug screw -1 135",
+      "Shoulder lug screw -1 135 socket",
+      "Shoulder lug screw -1 180",
+      "Shoulder lug screw -1 180 socket",
+      "Shoulder lug screw -1 225",
+      "Shoulder lug screw -1 225 socket",
+      "Shoulder lug screw -1 270",
+      "Shoulder lug screw -1 270 socket",
+      "Shoulder lug screw -1 315",
+      "Shoulder lug screw -1 315 socket",
+      "Shoulder lug screw -1 45",
+      "Shoulder lug screw -1 45 socket",
+      "Shoulder lug screw -1 90",
+      "Shoulder lug screw -1 90 socket",
+      "Shoulder lug screw 1 0",
+      "Shoulder lug screw 1 0 socket",
+      "Shoulder lug screw 1 135",
+      "Shoulder lug screw 1 135 socket",
+      "Shoulder lug screw 1 180",
+      "Shoulder lug screw 1 180 socket",
+      "Shoulder lug screw 1 225",
+      "Shoulder lug screw 1 225 socket",
+      "Shoulder lug screw 1 270",
+      "Shoulder lug screw 1 270 socket",
+      "Shoulder lug screw 1 315",
+      "Shoulder lug screw 1 315 socket",
+      "Shoulder lug screw 1 45",
+      "Shoulder lug screw 1 45 socket",
+      "Shoulder lug screw 1 90",
+      "Shoulder lug screw 1 90 socket",
+      "Shoulder rear cap",
+      "Shoulder seal -1",
+      "Shoulder seal 1",
+      "Shoulder serial",
+      "Shoulder socket lip -1",
+      "Shoulder socket lip 1",
+      "Shoulder titanium collar -1",
+      "Shoulder titanium collar 1",
+      "Socket cavity -1",
+      "Socket cavity 1",
+      "Socket radial lug -1 0",
+      "Socket radial lug -1 135",
+      "Socket radial lug -1 180",
+      "Socket radial lug -1 225",
+      "Socket radial lug -1 270",
+      "Socket radial lug -1 315",
+      "Socket radial lug -1 45",
+      "Socket radial lug -1 90",
+      "Socket radial lug 1 0",
+      "Socket radial lug 1 135",
+      "Socket radial lug 1 180",
+      "Socket radial lug 1 225",
+      "Socket radial lug 1 270",
+      "Socket radial lug 1 315",
+      "Socket radial lug 1 45",
+      "Socket radial lug 1 90",
+      "THUMB articulation 1",
+      "THUMB articulation 2",
+      "THUMB articulation 3",
+      "THUMB gold pin 1",
+      "THUMB gold pin 2",
+      "THUMB gold pin 3",
+      "THUMB inner link 1",
+      "THUMB inner link 2",
+      "THUMB inner link 3",
+      "THUMB ivory segment 1",
+      "THUMB ivory segment 2",
+      "THUMB ivory segment 3",
+      "Upper cheek armor -1",
+      "Upper cheek armor 1",
+      "Upper cheek screw -1",
+      "Upper cheek screw -1 socket",
+      "Upper cheek screw 1",
+      "Upper cheek screw 1 socket",
+      "Upper cheek trim -1",
+      "Upper cheek trim 1",
+      "Upper crest gold lower mark",
+      "Upper crest gold seam",
+      "Upper crest swept left return",
+      "Upper crest swept right return",
+      "Upper elbow clevis -1",
+      "Upper elbow clevis 1",
+      "Upper front crest armor",
+      "Upper front piston gold sleeve -1",
+      "Upper front piston gold sleeve 1",
+      "Upper front piston housing -1",
+      "Upper front piston housing 1",
+      "Upper front piston rod -1",
+      "Upper front piston rod 1",
+      "Upper inner gold cable -1",
+      "Upper inner gold cable 1",
+      "Upper lateral spar -1",
+      "Upper lateral spar 1",
+      "Upper outer cable -1",
+      "Upper outer cable 1",
+      "Upper rail gold stop -1",
+      "Upper rail gold stop 1",
+      "Upper rear actuator -1",
+      "Upper rear actuator 1",
+      "Upper rear actuator seal -1",
+      "Upper rear actuator seal 1",
+      "Upper rear flank -1",
+      "Upper rear flank 1",
+      "Upper rear graphite spine cover",
+      "Upper rear tendon strip",
+      "Upper spine core",
+      "Upper tendon inset",
+      "Upper tendon status",
+      "WRIST_JOINT",
+      "Wrist articulated bearing",
+      "Wrist back bridge",
+      "Wrist forearm mount",
+      "Wrist front bridge",
+      "Wrist side cap -1",
+      "Wrist side cap 1",
+      "Wrist side gold ring -1",
+      "Wrist side gold ring 1",
+      "Wrist upper gold collar"
+    ],
+    "protected_changes": {},
+    "geometry_and_material_changes_in_scope": {
+      "Removable forearm service cover": [],
+      "SERVICE_COVER_ROOT": [],
+      "Service cover captive screw": [],
+      "Service cover captive screw socket": [],
+      "Service cover captive screw socket.001": [],
+      "Service cover captive screw socket.002": [],
+      "Service cover captive screw socket.003": [],
+      "Service cover captive screw.001": [],
+      "Service cover captive screw.002": [],
+      "Service cover captive screw.003": [],
+      "Service cover gold border": [],
+      "Service cover vent recess": [],
+      "Service cover vent trim": [],
+      "Service serial": []
+    }
+  },
+  "restore": {
+    "exact_saved_scene_state_match": true,
+    "candidate_state_sha256": "6e5fe575e491a4ee07aba4d789bc43b520882fab30398331c22d448edfefd513",
+    "restored_state_sha256": "6e5fe575e491a4ee07aba4d789bc43b520882fab30398331c22d448edfefd513",
+    "state_scope": "Every scene object parent, local/basis/world matrix, geometry data, modifier settings, material slots and material parameters; light/camera data and render settings. Exact captured-state equality, not native-file byte identity.",
+    "differences": {}
+  },
+  "native_pose_tests": {
+    "tested_angles_degrees": {
+      "elbow": [
+        0,
+        45,
+        90
+      ],
+      "wrist": [
+        25
+      ],
+      "index_second_joint": [
+        45
+      ]
+    },
+    "pose_observations": [
+      {
+        "joint": "ELBOW_JOINT",
+        "degrees": 0,
+        "wrist_world_translation_m": [
+          0.0,
+          0.0,
+          0.18700000643730164
+        ],
+        "forearm_descendants": 194
+      },
+      {
+        "joint": "ELBOW_JOINT",
+        "degrees": 45,
+        "wrist_world_translation_m": [
+          0.0,
+          0.1753624826669693,
+          0.2596375346183777
+        ],
+        "forearm_descendants": 194
+      },
+      {
+        "joint": "ELBOW_JOINT",
+        "degrees": 90,
+        "wrist_world_translation_m": [
+          0.0,
+          0.24799999594688416,
+          0.4350000023841858
+        ],
+        "forearm_descendants": 194
+      }
+    ],
+    "restored_neutral_exact_state_match": true,
+    "restored_neutral_differences": {},
+    "validation_scope": "Rigid hierarchy transforms plus rendered visual inspection. No full kinematic collision solver, physics, hydraulic simulation, skinning or force/range claim."
+  },
+  "glb_observations": {
+    "Blender_version": "4.3.2",
+    "imported_object_count": 311,
+    "imported_meshes": 291,
+    "native_asset_object_count": 311,
+    "missing_native_object_names": [],
+    "named_parent_mismatches": [],
+    "world_matrix_mismatches_over_1e_5": [],
+    "bounds_m": {
+      "x": [
+        -0.0806114673614502,
+        0.0722000002861023
+      ],
+      "y": [
+        -0.05995597690343857,
+        0.05349999666213989
+      ],
+      "z": [
+        -0.0005000047385692596,
+        0.7586215138435364
+      ]
+    },
+    "required_joint_names_present": {
+      "AURIX_ROOT": true,
+      "ELBOW_JOINT": true,
+      "WRIST_JOINT": true,
+      "SERVICE_COVER_ROOT": true,
+      "DIGIT_INDEX_J2": true
+    },
+    "movement_tests": {
+      "elbow45": {
+        "rotation_mode": "QUATERNION",
+        "method": "postmultiply local matrix_basis by X rotation",
+        "before_wrist_world": [
+          0.0,
+          0.0,
+          0.18700000643730164
+        ],
+        "after_wrist_world": [
+          0.0,
+          0.1753624975681305,
+          0.2596375346183777
+        ],
+        "wrist_moved_m": 0.18981099984364694,
+        "descendants": 194
+      },
+      "wrist25": {
+        "before_finger_world": [
+          -0.031333331018686295,
+          -0.0020000000949949026,
+          0.07000000774860382
+        ],
+        "after_finger_world": [
+          -0.031333331018686295,
+          0.04763370752334595,
+          0.08011674880981445
+        ],
+        "finger_moved_m": 0.05065425308814729
+      },
+      "index_second_joint45": {
+        "before_distal_world": [
+          -0.03266666457056999,
+          -0.0020000000949949026,
+          0.040000006556510925
+        ],
+        "after_distal_world": [
+          -0.03266666457056999,
+          0.019213205203413963,
+          0.04878680408000946
+        ],
+        "distal_moved_m": 0.022961008088633935
+      }
+    },
+    "restore_exact_transform_match": true,
+    "restore_transform_difference_names": [],
+    "validation_scope": "Independent Blender import of candidate GLB, named-parent comparison, current-world-matrix comparison at 1e-5 tolerance, actual neutral and elbow45 renders, elbow/wrist/finger rigid descendants movement. No third-party DCC/runtime test."
+  },
+  "visual_and_validation_limits": [
+    "This is a complete editable procedural prototype, not a high-fidelity reconstruction. Front armor silhouettes, lateral returns, panel curvature and rear mechanical routing remain simplified relative to the concept sheet.",
+    "The unchanged studio rig is too intense for nuanced ivory/graphite shading, and 16-sample denoising-off Cycles previews are visibly noisy. No exposure, camera or light changes were used to make a later revision look better. Root may perform a separate matched review.",
+    "The shoulder interface is a layered recessed socket with a dark backing, not a fully engineered connector. Armor fasteners and hoses are visual assembly details.",
+    "Elbow and wrist motion is rigid hierarchy articulation. Pistons and cables do not dynamically extend or constrain motion. Fixed upper clevis and rotating bearing intentionally overlap as joint parts; full mesh collision detection was not performed.",
+    "Native elbow 0/45/90 views and combined wrist25/index-J2-45 views showed coherent rigid motion without an obvious gross clash at the inspected scale. At elbow90 the fingertips approach the fixed side-view image boundary. Small interference and inaccessible fasteners may remain.",
+    "Thumb/front orientation follows the source front view, with thumb on image left. Other sheet views contain pose/handedness ambiguities and were not forced into an inconsistent exact match.",
+    "The GLB test covers Blender import, names/parents, neutral transforms and selected rigid joint motions only. No game engine or separate third-party DCC was tested. Native curves/text/modifiers become baked meshes in GLB.",
+    "No skin rig, IK, physics, functional hydraulics, performance claims, UV atlas, texture bake or production topology optimization is supplied. Source weight, force, neural interface and range claims were not validated."
+  ],
+  "files": {
+    "candidate.blend": {
+      "path": "/tmp/refas-dual-asset-20261122/automail-plain/candidate.blend",
+      "bytes": 3930916,
+      "sha256": "7684714baf19c924d5447053d7611b0f8ac148918460794e33ba76c00d493d96"
+    },
+    "candidate.glb": {
+      "path": "/tmp/refas-dual-asset-20261122/automail-plain/candidate.glb",
+      "bytes": 5580244,
+      "sha256": "52d1c6d1f8b8702394296920aa986cb934e1ae11b2f97d1ba984beaa41c1236b"
+    },
+    "initial.blend": {
+      "path": "/tmp/refas-dual-asset-20261122/automail-plain/initial.blend",
+      "bytes": 3899736,
+      "sha256": "27ace6c8cafe3cf7888801f79ab23c4a04bdc8c64afa41a1f74b02e89996482c"
+    },
+    "initial.glb": {
+      "path": "/tmp/refas-dual-asset-20261122/automail-plain/initial.glb",
+      "bytes": 5430228,
+      "sha256": "d95730f1a98bf1d7d58220fbba9856ef4b9d3544f9746cc1bf0b938938b4b533"
+    },
+    "panel-edited.blend": {
+      "path": "/tmp/refas-dual-asset-20261122/automail-plain/panel-edited.blend",
+      "bytes": 3930916,
+      "sha256": "b587aba7922f6960a3f88a3e69af8a1e044162825214f4169622782491c260a4"
+    },
+    "panel-edited.glb": {
+      "path": "/tmp/refas-dual-asset-20261122/automail-plain/panel-edited.glb",
+      "bytes": 5580244,
+      "sha256": "c0b19c5c08e128bf119d587422f0ee10e67d9fbf1a04e95a9d25a4a5d889ba2b"
+    },
+    "restored.blend": {
+      "path": "/tmp/refas-dual-asset-20261122/automail-plain/restored.blend",
+      "bytes": 3930916,
+      "sha256": "d1d2520b928af1249c6793cd79aadae99ff9f199330a063e8ddc47ffc103c2f2"
+    }
+  },
+  "scripts": [
+    "build_initial.py",
+    "build_arm.py",
+    "run_corrections.py",
+    "build_material_trial.py",
+    "verify_edit_poses.py",
+    "check_glb.py",
+    "audit_saved_states.py",
+    "write_report.py"
+  ],
+  "usage_accounting": {
+    "model_id": null,
+    "tokens": null,
+    "cost": null,
+    "reason": "Unavailable in this execution context; not inferred."
+  }
+}

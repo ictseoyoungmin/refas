@@ -1,0 +1,239 @@
+{
+  "selected_neutral_revision": "d4012de785ad42d5b67d5df0d12e6632",
+  "final_restored_revision": "3b26f1ad9446435e9e4dcc2b836227dc",
+  "panel_revision": "a729d09cab3b4603a71a13967c268ff9",
+  "restore_after_panel_artifact_byte_equality": {
+    "blend": true,
+    "glb": true,
+    "scene": true
+  },
+  "restore_final_artifact_byte_equality": {
+    "blend": true,
+    "glb": true,
+    "scene": true
+  },
+  "pose_samples": [
+    {
+      "label": "elbow-0",
+      "revision": "b82cddb7b87b4aa199ba7e6559e6b8e4",
+      "directory": "/tmp/refas-dual-asset-20261122/automail/poses/elbow-0",
+      "check": {
+        "pose": {
+          "elbow_deg": 0,
+          "wrist_deg": 0,
+          "index_deg": [
+            0,
+            0,
+            0
+          ]
+        },
+        "upper_objects_checked": 96,
+        "unexpected_upper_changes": [],
+        "named_shell_intersections": [],
+        "shell_pairs_tested": 30,
+        "digit_world_origins": {
+          "WRIST_PIVOT": [
+            0.0,
+            0.0,
+            0.18400000035762787
+          ],
+          "INDEX_J0": [
+            -0.029999999329447746,
+            0.0,
+            0.10599999874830246
+          ],
+          "INDEX_J1": [
+            -0.03200000151991844,
+            0.0010000000474974513,
+            0.06800000369548798
+          ],
+          "INDEX_J2": [
+            -0.03400000184774399,
+            0.004000000189989805,
+            0.03999999910593033
+          ]
+        },
+        "parent_relations": {
+          "SHOULDER_PIVOT": "AURIX_ROOT",
+          "ELBOW_PIVOT": "SHOULDER_PIVOT",
+          "WRIST_PIVOT": "ELBOW_PIVOT",
+          "SERVICE_COVER": "ELBOW_PIVOT",
+          "INDEX_J0": "WRIST_PIVOT",
+          "INDEX_J1": "INDEX_J0",
+          "INDEX_J2": "INDEX_J1"
+        },
+        "static_spanning_links": "No authored cable or hydraulic mesh crosses the elbow; all such parts are local to upper or forearm. There is no dynamic tendon or telescoping linkage simulation.",
+        "limits": "Named-shell triangle-surface BVH checks and inspected renders at sampled poses only; no all-object collision test, containment test, continuous collision clearance, load or physical-performance validation."
+      }
+    },
+    {
+      "label": "elbow-45",
+      "revision": "3b3e40c4f54c4eb295b29b2a73985f58",
+      "directory": "/tmp/refas-dual-asset-20261122/automail/poses/elbow-45",
+      "check": {
+        "pose": {
+          "elbow_deg": 45,
+          "wrist_deg": 0,
+          "index_deg": [
+            0,
+            0,
+            0
+          ]
+        },
+        "upper_objects_checked": 96,
+        "unexpected_upper_changes": [],
+        "named_shell_intersections": [],
+        "shell_pairs_tested": 30,
+        "digit_world_origins": {
+          "WRIST_PIVOT": [
+            0.0,
+            0.1711198389530182,
+            0.2548801600933075
+          ],
+          "INDEX_J0": [
+            -0.029999999329447746,
+            0.22627416253089905,
+            0.19972583651542664
+          ],
+          "INDEX_J1": [
+            -0.03200000151991844,
+            0.2538513243198395,
+            0.1735628843307495
+          ],
+          "INDEX_J2": [
+            -0.03400000184774399,
+            0.2757716178894043,
+            0.1558852195739746
+          ]
+        },
+        "parent_relations": {
+          "SHOULDER_PIVOT": "AURIX_ROOT",
+          "ELBOW_PIVOT": "SHOULDER_PIVOT",
+          "WRIST_PIVOT": "ELBOW_PIVOT",
+          "SERVICE_COVER": "ELBOW_PIVOT",
+          "INDEX_J0": "WRIST_PIVOT",
+          "INDEX_J1": "INDEX_J0",
+          "INDEX_J2": "INDEX_J1"
+        },
+        "static_spanning_links": "No authored cable or hydraulic mesh crosses the elbow; all such parts are local to upper or forearm. There is no dynamic tendon or telescoping linkage simulation.",
+        "limits": "Named-shell triangle-surface BVH checks and inspected renders at sampled poses only; no all-object collision test, containment test, continuous collision clearance, load or physical-performance validation."
+      }
+    },
+    {
+      "label": "elbow-90",
+      "revision": "83608af3ea0343a0bcf8e3d53d25073b",
+      "directory": "/tmp/refas-dual-asset-20261122/automail/poses/elbow-90",
+      "check": {
+        "pose": {
+          "elbow_deg": 90,
+          "wrist_deg": 0,
+          "index_deg": [
+            0,
+            0,
+            0
+          ]
+        },
+        "upper_objects_checked": 96,
+        "unexpected_upper_changes": [],
+        "named_shell_intersections": [],
+        "shell_pairs_tested": 30,
+        "digit_world_origins": {
+          "WRIST_PIVOT": [
+            0.0,
+            0.24199999868869781,
+            0.42600002884864807
+          ],
+          "INDEX_J0": [
+            -0.029999999329447746,
+            0.3199999928474426,
+            0.42600002884864807
+          ],
+          "INDEX_J1": [
+            -0.03200000151991844,
+            0.3579999804496765,
+            0.4270000159740448
+          ],
+          "INDEX_J2": [
+            -0.03400000184774399,
+            0.38600000739097595,
+            0.43000003695487976
+          ]
+        },
+        "parent_relations": {
+          "SHOULDER_PIVOT": "AURIX_ROOT",
+          "ELBOW_PIVOT": "SHOULDER_PIVOT",
+          "WRIST_PIVOT": "ELBOW_PIVOT",
+          "SERVICE_COVER": "ELBOW_PIVOT",
+          "INDEX_J0": "WRIST_PIVOT",
+          "INDEX_J1": "INDEX_J0",
+          "INDEX_J2": "INDEX_J1"
+        },
+        "static_spanning_links": "No authored cable or hydraulic mesh crosses the elbow; all such parts are local to upper or forearm. There is no dynamic tendon or telescoping linkage simulation.",
+        "limits": "Named-shell triangle-surface BVH checks and inspected renders at sampled poses only; no all-object collision test, containment test, continuous collision clearance, load or physical-performance validation."
+      }
+    },
+    {
+      "label": "wrist-20-index-35",
+      "revision": "e8f8e45033134e5c87bf0ea30e6a5a23",
+      "directory": "/tmp/refas-dual-asset-20261122/automail/poses/wrist-20-index-35",
+      "check": {
+        "pose": {
+          "elbow_deg": 45,
+          "wrist_deg": 20,
+          "index_deg": [
+            35,
+            20,
+            10
+          ]
+        },
+        "upper_objects_checked": 96,
+        "unexpected_upper_changes": [],
+        "named_shell_intersections": [],
+        "shell_pairs_tested": 30,
+        "digit_world_origins": {
+          "WRIST_PIVOT": [
+            0.0,
+            0.1711198389530182,
+            0.2548801600933075
+          ],
+          "INDEX_J0": [
+            -0.029999999329447746,
+            0.2418118417263031,
+            0.22191593050956726
+          ],
+          "INDEX_J1": [
+            -0.03200000151991844,
+            0.27906087040901184,
+            0.22949936985969543
+          ],
+          "INDEX_J2": [
+            -0.03400000184774399,
+            0.3018095791339874,
+            0.24609746038913727
+          ]
+        },
+        "parent_relations": {
+          "SHOULDER_PIVOT": "AURIX_ROOT",
+          "ELBOW_PIVOT": "SHOULDER_PIVOT",
+          "WRIST_PIVOT": "ELBOW_PIVOT",
+          "SERVICE_COVER": "ELBOW_PIVOT",
+          "INDEX_J0": "WRIST_PIVOT",
+          "INDEX_J1": "INDEX_J0",
+          "INDEX_J2": "INDEX_J1"
+        },
+        "static_spanning_links": "No authored cable or hydraulic mesh crosses the elbow; all such parts are local to upper or forearm. There is no dynamic tendon or telescoping linkage simulation.",
+        "limits": "Named-shell triangle-surface BVH checks and inspected renders at sampled poses only; no all-object collision test, containment test, continuous collision clearance, load or physical-performance validation."
+      }
+    }
+  ],
+  "export_passed": true,
+  "integrity": {
+    "ok": true,
+    "scope": "recorded-file-integrity",
+    "head": "3b26f1ad9446435e9e4dcc2b836227dc",
+    "artifactCount": 10,
+    "referenceResemblance": "not-evaluated",
+    "gameReadiness": "not-evaluated"
+  },
+  "finished_utc": "2026-11-21T21:32:24.242727+00:00"
+}

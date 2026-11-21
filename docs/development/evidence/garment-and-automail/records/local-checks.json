@@ -1,0 +1,92 @@
+{
+  "scope": "Local repository checks; actual asset results are recorded separately",
+  "environment": {
+    "python": "3.12.14",
+    "blender": "4.3.2",
+    "node": "24.22.3"
+  },
+  "commands": [
+    {
+      "command": [
+        "npm",
+        "test"
+      ],
+      "startUtc": "2026-11-21T21:22:59.498639+00:00",
+      "elapsedSeconds": 110.802,
+      "exitCode": 0,
+      "log": "test.log",
+      "logSha256": "f269556f91034d9312c6d18486ba4fcfb258b7e9b1d430c116c29f5bef474e21"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "test:python"
+      ],
+      "startUtc": "2026-11-21T21:24:50.300792+00:00",
+      "elapsedSeconds": 0.244,
+      "exitCode": 0,
+      "log": "run-test-python.log",
+      "logSha256": "b19a8d3adcd2a080a854c70b29f90c1259599ee4d1e45173f4f46069dbcecc41"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "check"
+      ],
+      "startUtc": "2026-11-21T21:24:50.544715+00:00",
+      "elapsedSeconds": 11.188,
+      "exitCode": 0,
+      "log": "run-check.log",
+      "logSha256": "5fe754c73378ebc2fdc5eb9a7f3c76a0dffda783f547ed4a711c0844595fddbd"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "dogfood"
+      ],
+      "startUtc": "2026-11-21T21:25:01.732687+00:00",
+      "elapsedSeconds": 116.625,
+      "exitCode": 0,
+      "log": "run-dogfood.log",
+      "logSha256": "77ebb0acea82203a58fcb3128a6f98ffebca04c837c1217568a2be624662da5e"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "release:audit"
+      ],
+      "startUtc": "2026-11-21T21:26:58.357953+00:00",
+      "elapsedSeconds": 27.646,
+      "exitCode": 0,
+      "log": "run-release-audit.log",
+      "logSha256": "da3583359158a51dc369b7ad4a8036fd6ea54c69fcacc4d56fc1e0b170d8c7fb"
+    }
+  ],
+  "javascript": {
+    "passed": 931,
+    "failed": 0,
+    "skipped": 0
+  },
+  "production": {
+    "passed": 35,
+    "projectCli": 23,
+    "actualBlender": 12,
+    "skipped": 0,
+    "execution": "Independent runtime reviewer ran REFAS_BLENDER_TESTS=1 PYTHONDONTWRITEBYTECODE=1 npm run test:production; 33.428 seconds. Source: its actual execution report; not inferred from remote CI."
+  },
+  "rigidHierarchyRegression": {
+    "name": "test_rigid_hinge_hierarchy_and_pose_survive_native_and_glb_reopen",
+    "scope": "Translated/rotated root, editable bevel,90degree elbow, independent native/GLB reimport,parent links/world matrices,second60degree motion with analytic hand position; no collisions/animation/general rig claim",
+    "matrixTolerance": 1e-06
+  },
+  "distribution": {
+    "packagedFiles": 399,
+    "referenceLeaves": 43,
+    "version": "1.4.2",
+    "published": false
+  }
+}

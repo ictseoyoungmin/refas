@@ -3,9 +3,16 @@
 This file is the canonical installed-skill route from `SKILL.md`. The machine-readable `references/GRAPH.json` defines capability ownership, prerequisites, interface descriptors and trust boundaries; prose only routes the active work. Read `references/workflow.md` for the eleven-capability loop and only the relevant reference leaf below.
 
 The loop below serves existing 1.x projects and explicit certification work.
-For the 2.0 production entry in `SKILL.md`, read `references/production-review.md`
-only when defining fixed diagnostic cameras and lighting. That optional format
-guide does not require the 1.x capability loop or issue a source certificate.
+The 2.0 production entry in `SKILL.md` has optional task guides:
+
+| Current production problem | Reference |
+|---|---|
+| Cloth transitions, sleeve caps, folded collars and fabric appearance | `references/production-garments.md` |
+| Segmented hard surfaces, joint pivots and limited pose/edit checks | `references/production-assemblies.md` |
+| Fixed diagnostic cameras, lighting and source-region provenance | `references/production-review.md` |
+
+Load only the applicable guide. These routes do not require the 1.x capability
+loop, add a runtime capability or issue a source certificate.
 
 ## Installation boundary and discovery
 

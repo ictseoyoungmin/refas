@@ -1,0 +1,132 @@
+{
+  "owner": "assembly",
+  "intent": "Translate only the removable service cover subtree outward 3 mm",
+  "declared_local_normal": [
+    0,
+    1,
+    0
+  ],
+  "offset_metres": 0.003,
+  "affected_nodes": [
+    "SERVICE_COVER_ROOT",
+    "ServiceCover_Latch_-1",
+    "ServiceCover_Latch_1",
+    "ServiceCover_LowerScrew_-1",
+    "ServiceCover_LowerScrew_1",
+    "ServiceCover_Plate",
+    "ServiceCover_UpperScrew_-1",
+    "ServiceCover_UpperScrew_1",
+    "ServiceCover_VentRib_00",
+    "ServiceCover_VentRib_01",
+    "ServiceCover_VentRib_02",
+    "ServiceCover_VentRib_03",
+    "ServiceCover_VentRib_04",
+    "ServiceCover_VentRib_05",
+    "ServiceCover_VentRib_06",
+    "ServiceCover_VentRib_07",
+    "ServiceCover_VentRib_08"
+  ],
+  "local_matrix_changed_nodes": [
+    "SERVICE_COVER_ROOT"
+  ],
+  "world_translation_delta_by_node": {
+    "ServiceCover_Latch_1": [
+      0.0,
+      0.0029999987,
+      0.0
+    ],
+    "ServiceCover_VentRib_00": [
+      0.0,
+      0.0029999987,
+      0.0
+    ],
+    "ServiceCover_VentRib_03": [
+      0.0,
+      0.0029999987,
+      0.0
+    ],
+    "ServiceCover_VentRib_05": [
+      0.0,
+      0.0029999986,
+      0.0
+    ],
+    "ServiceCover_UpperScrew_-1": [
+      0.0,
+      0.0029999987,
+      0.0
+    ],
+    "SERVICE_COVER_ROOT": [
+      0.0,
+      0.0029999986,
+      0.0
+    ],
+    "ServiceCover_UpperScrew_1": [
+      0.0,
+      0.0029999987,
+      0.0
+    ],
+    "ServiceCover_VentRib_04": [
+      0.0,
+      0.0029999986,
+      0.0
+    ],
+    "ServiceCover_VentRib_06": [
+      0.0,
+      0.0029999987,
+      0.0
+    ],
+    "ServiceCover_VentRib_07": [
+      0.0,
+      0.0029999986,
+      0.0
+    ],
+    "ServiceCover_Latch_-1": [
+      0.0,
+      0.0029999987,
+      0.0
+    ],
+    "ServiceCover_LowerScrew_1": [
+      0.0,
+      0.0029999987,
+      0.0
+    ],
+    "ServiceCover_Plate": [
+      0.0,
+      0.0029999986,
+      0.0
+    ],
+    "ServiceCover_VentRib_01": [
+      0.0,
+      0.0029999986,
+      0.0
+    ],
+    "ServiceCover_LowerScrew_-1": [
+      0.0,
+      0.0029999987,
+      0.0
+    ],
+    "ServiceCover_VentRib_02": [
+      0.0,
+      0.0029999986,
+      0.0
+    ],
+    "ServiceCover_VentRib_08": [
+      0.0,
+      0.0029999986,
+      0.0
+    ]
+  },
+  "protected_object_state_changed": [],
+  "geometry_changed": [],
+  "material_assignment_changed": [],
+  "material_values_unchanged": true,
+  "native_state_pass": true,
+  "in_memory_state_restoration_exact": true,
+  "byte_restoration": {
+    "method": "Copy preserved candidate bytes to restored.blend and restored.glb after independent in-memory state restoration check",
+    "candidate_blend_sha256": "4e81abdf0d95fd44a576f3a646dabaf7e86a51d04eebc51dc15913b5713109f4",
+    "restored_blend_sha256": "4e81abdf0d95fd44a576f3a646dabaf7e86a51d04eebc51dc15913b5713109f4",
+    "candidate_glb_sha256": "2a6d9e4ca1a4e5f73515413eb7bfb789868cc984f90177d34d833006bc52013a",
+    "restored_glb_sha256": "2a6d9e4ca1a4e5f73515413eb7bfb789868cc984f90177d34d833006bc52013a"
+  }
+}

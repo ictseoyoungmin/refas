@@ -1,0 +1,162 @@
+{
+  "before": "/workspace/scratch/2eb72029c71e/refas-jacket-dogfood/jacket.blend",
+  "candidate": "/tmp/refas-dual-asset-20261122/garment/project/.refas2/revisions/9fe00caf1e1649a58554b3a761ee7bbb/artifacts/scene.blend",
+  "protected_object_count": 231,
+  "protected_changes": [],
+  "changed_object_names": [
+    "Body | continuous open front and shoulder yoke",
+    "Back | centre tailoring seam",
+    "R body | princess seam",
+    "L body | princess seam",
+    "Collar | standing back and neck facing",
+    "Collar | pale upper edge",
+    "R Lapel | folded lower notched facing",
+    "R Lapel | fine piping",
+    "R Collar | pointed folded front",
+    "R Collar | piped point",
+    "R lapel | silver snap",
+    "R Shoulder | tab",
+    "R Shoulder | pale edge",
+    "R Shoulder | button",
+    "L Lapel | folded lower notched facing",
+    "L Lapel | fine piping",
+    "L Collar | pointed folded front",
+    "L Collar | piped point",
+    "L lapel | silver snap",
+    "L Shoulder | tab",
+    "L Shoulder | pale edge",
+    "L Shoulder | button",
+    "R Sleeve | back seam",
+    "L Sleeve | back seam"
+  ],
+  "changed_material_names": [
+    "Interior | black satin lining",
+    "Main | charcoal woven wool",
+    "Seams | tonal thread"
+  ],
+  "protected_materials_unchanged": true,
+  "control_shell": {
+    "vertices": 2164,
+    "faces": 2032,
+    "edges": 4197,
+    "connected_components": 1,
+    "boundary_edges": 266,
+    "nonmanifold_edges_above_two_faces": 0,
+    "boundary_components": [
+      {
+        "vertices": 186,
+        "min": [
+          -0.13199999928474426,
+          -0.0953894555568695,
+          0.0
+        ],
+        "max": [
+          0.13199999928474426,
+          0.08399999886751175,
+          0.4232148230075836
+        ]
+      },
+      {
+        "vertices": 40,
+        "min": [
+          0.3000251054763794,
+          -0.04979337751865387,
+          -0.18084712326526642
+        ],
+        "max": [
+          0.3792482018470764,
+          0.028913866728544235,
+          -0.15968815982341766
+        ]
+      },
+      {
+        "vertices": 40,
+        "min": [
+          -0.3792482018470764,
+          -0.04979340359568596,
+          -0.18084712326526642
+        ],
+        "max": [
+          -0.3000251054763794,
+          0.028913840651512146,
+          -0.15968815982341766
+        ]
+      }
+    ],
+    "boundary_all_degree_two": true,
+    "zero_area_faces": 0
+  },
+  "evaluated_subdivision_solidify": {
+    "vertices": 66086,
+    "faces": 66088,
+    "edges": 132176,
+    "connected_components": 1,
+    "boundary_edges": 0,
+    "nonmanifold_edges_above_two_faces": 0,
+    "boundary_components": [],
+    "boundary_all_degree_two": true,
+    "zero_area_faces": 0
+  },
+  "opening_rays": {
+    "front_open_to_back": {
+      "hit": [
+        0.0,
+        0.10392409563064575,
+        0.20000000298023224
+      ],
+      "distance": 0.6039240956306458,
+      "scope": "ray against evaluated body only"
+    },
+    "neck_open_vertical": {
+      "hit": null,
+      "distance": null,
+      "scope": "ray against evaluated body only"
+    },
+    "L_wrist_axial_open": {
+      "hit": null,
+      "distance": null,
+      "scope": "11 cm axial ray inside evaluated sleeve opening"
+    },
+    "R_wrist_axial_open": {
+      "hit": null,
+      "distance": null,
+      "scope": "11 cm axial ray inside evaluated sleeve opening"
+    }
+  },
+  "measurements": {
+    "L_cuff_axial_extent_m": 0.059987178043229505,
+    "L_cuff_center_world_m": [
+      0.3318968415260315,
+      -0.010245519690215588,
+      -0.14128831028938293
+    ],
+    "L_armhole_top_m": [
+      0.19200000166893005,
+      -0.0,
+      0.4059999883174896
+    ],
+    "L_outer_sleeve_control_meridian_m": 0.6073971188686696,
+    "L_outer_meridian_limit": "Control-polygon arclength, not a cloth pattern length or evaluated smooth seam.",
+    "R_cuff_axial_extent_m": 0.059987178043229505,
+    "R_cuff_center_world_m": [
+      -0.3318968117237091,
+      -0.01024551596492529,
+      -0.14128831028938293
+    ],
+    "R_armhole_top_m": [
+      -0.19200000166893005,
+      0.0,
+      0.4059999883174896
+    ],
+    "R_outer_sleeve_control_meridian_m": 0.6073971188686696,
+    "R_outer_meridian_limit": "Control-polygon arclength, not a cloth pattern length or evaluated smooth seam.",
+    "shoulder_seam_top_span_m": 0.3840000033378601,
+    "back_center_hem_to_neck_m": 0.42,
+    "original_sleeve_axis_construction_m": 0.58,
+    "sleeve_measurement_limit": "Sleeve axis is the retained construction parameter; it is not a newly measured curved surface seam."
+  },
+  "limitations": [
+    "Manifold edge incidence and sparse rays do not certify no self-intersection.",
+    "No cloth simulation, deformation, rigging, UV audit or engine readiness check."
+  ]
+}

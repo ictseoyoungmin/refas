@@ -8,7 +8,59 @@ The user approved implementation of the new production path, starting from `main
 
 This is development work. The latest published release remains `v1.4.1`; package/runtime/plugin version `1.4.2` is retained until the coordinated 2.0 packaging milestone. No release or merge to main is part of this slice.
 
-## Current: uniform-jacket pilot and fixed review controls
+## Current: garment refinement and fresh automail validation
+
+The user's two selected sources now have actual editable assets, partial-edit
+and recovery exercises, native/GLB readback and anonymous visual reviews. Read
+the [complete evidence and offline viewer](development/evidence/garment-and-automail/README.md).
+
+The informed jacket refinement is visually preferred to its prior delivered
+state for darker cloth and smoother rear shoulder/underarm transitions. Both
+states remain unfinished: the revised front collar is still angular/crowded,
+and cloth shaping and ornament identity remain weak. Its cuff edit increases
+band height by 1 cm and changes seven objects, preserves 264 other object fingerprints and materials,
+and restores all 14 selected artifact/input files exactly.
+
+The fresh automail comparison is **ordinary Blender narrowly ahead of fixed
+1.x, then candidate 2.0**, with all three rejected for finished visual
+acceptance. The 2.0 arm has oversimplified large armor panels and sparse rear
+mechanisms. This is one independent attempt per condition, not a statistical
+model/skill benchmark. There is no measured quality or cost advantage for 2.0.
+
+The 2.0 arm's 26-node service cover moves 3 mm while 274 objects are preserved.
+Saved elbow 0/45/90 and wrist/index poses exercise a rigid hierarchy; independent
+GLB import retains 300 named nodes/parents. Limited named-shell observations
+do not prove full collision clearance. The final installed-package replay
+completes 14 commands and verifies exact restoration of all 13 artifacts/inputs.
+Both selected GLBs were independently imported and rendered again.
+
+Two optional garment/assembly guides were added and used from a frozen skill
+snapshot. The graph now has 43 reference leaves; 121 runtime interfaces and
+the production implementation are unchanged. The common observer explicitly
+records curve/text conversion and studio exclusions in disposable copies.
+A new actual Blender regression covers transformed parent hierarchies, live
+bevels, native/GLB reopening and analytic hinge movement.
+
+| Current local check | Result |
+| --- | --- |
+| JavaScript regression | 931 passed, 0 failed/skipped |
+| Production tests | 35 passed: 23 project/CLI + 12 actual Blender, 0 skipped |
+| Python syntax / repository checks | PASS |
+| Retained 1.x dogfood | PASS, 11 checkpoints |
+| Package audit | PASS, 399 files and 43 reference leaves |
+| Actual extracted package | 14 commands pass outside the repo with one configured Blender executable; full artifact/input restore and independent GLB checks pass |
+
+The plain control restores state rather than claiming byte-identical files.
+The 1.x control preserves exact candidate files, but its formal `validate`
+result remains BLOCKED for seven missing source-bound checks; an imported-mesh
+diagnostic also finds topology limitations. These results are preserved in the
+raw reports, and no legacy certificate is claimed.
+
+R2-05/06 remain WIP: guidance is usable but source-quality goals, broader
+evaluation, migration and coordinated distribution work remain. Code/evidence
+are ready for Draft PR review. The earlier jacket trial below remains intact.
+
+## Previous: uniform-jacket pilot and fixed review controls — 00641291
 
 The user's original jacket sheet now drives a completed exploratory
 no-skill/1.x/2.0 construction and cuff-edit comparison. Read the
@@ -88,17 +140,18 @@ Ordinary production CI intentionally skips the eight Blender tests unless `REFAS
 
 ## Current limits and next work
 
-The native workflow is exercised on original scripted fixtures and the jacket's source-image creation/local-edit tasks. The jacket pilot does **not** establish production-quality reconstruction, a newer model's superiority, complete character deformation or target-engine readiness. The independent mug exercise remains a usability check; the later jacket comparison has its own bounded evidence.
+The native workflow is exercised on original scripted fixtures, jacket creation/refinement/local edits and fresh rigid-arm creation/local edits/pose samples. These cases do **not** establish production-quality reconstruction, a newer model's superiority, complete character deformation or target-engine readiness. The independent mug exercise remains a usability check; each later source comparison has its own bounded evidence.
 
 The supported export scene uses visible meshes, armatures/non-instancing empties and packed still textures. Convert curves/text to meshes, realize object instances, and keep hidden guides outside the asset scene. Linked libraries, external movie/audio/cache dependencies and non-armature modifiers on deformable meshes are unsupported. Procedural materials may need baking for matching GLB appearance. General rigs, drivers, animation, simulation and node-group behavior are not exhaustively verified.
 
 Revision storage uses local full-file copies. Exercised recovery cases are process/IO failures, stale edits, file tampering and explicit restore. Power-loss durability, network filesystems, history compaction and automatic stale-lock recovery are not acceptance claims.
 
-Next: refine connected garment curvature, collar/lapel folding and appearance;
-turn useful construction lessons into concise guidance and forward-test it on
-an unfamiliar asset. Extend editing/export profiles only for actual needs.
-The first source task and useful correction are now recorded; broader repeated
-evaluation, explicit migration, coordinated packaging and release remain open.
+Next: improve source-specific broad form and compound surfaces using the
+recorded failures: folded collar/lapel readability, layered armor volume and
+mechanical negative space. Preserve the current negative comparison as a
+baseline for the next independent trial. Extend editing/export profiles only
+for actual needs. Broader repeated evaluation, explicit migration, measured
+costs, coordinated packaging and release remain open.
 
 ## Resume order
 

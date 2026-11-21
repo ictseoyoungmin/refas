@@ -1,0 +1,1833 @@
+{
+  "importer": "Blender 4.3.2 glTF importer in fresh factory scene",
+  "candidate_glb_sha256": "2a6d9e4ca1a4e5f73515413eb7bfb789868cc984f90177d34d833006bc52013a",
+  "asset_root": "AURIX_ARM_ROOT",
+  "asset_node_count": 247,
+  "mesh_count": 227,
+  "missing_native_nodes": [],
+  "unexpected_nodes": [],
+  "parent_errors": [],
+  "max_world_transform_error_against_native": 2.383999999633346e-07,
+  "transform_errors_over_2e_6": [],
+  "motion_tests": [
+    {
+      "joint": "ElbowPivot",
+      "applied_degrees_x": -45,
+      "moved_target": "WristPivot",
+      "target_world_displacement_m": 0.18445342010561688,
+      "protected_object": "Shoulder_FrontShield",
+      "protected_transform_unchanged": true,
+      "motion_observed": true,
+      "target_restored_error_m": 0.0
+    },
+    {
+      "joint": "WristPivot",
+      "applied_degrees_x": -20,
+      "moved_target": "Hand_PalmFrame",
+      "target_world_displacement_m": 0.01840670692634672,
+      "protected_object": "Forearm_FrontMainShield",
+      "protected_transform_unchanged": true,
+      "motion_observed": true,
+      "target_restored_error_m": 0.0
+    },
+    {
+      "joint": "Index_PIP",
+      "applied_degrees_x": -40,
+      "moved_target": "Index_Armor_2",
+      "target_world_displacement_m": 0.029362130258325448,
+      "protected_object": "Middle_Armor_2",
+      "protected_transform_unchanged": true,
+      "motion_observed": true,
+      "target_restored_error_m": 0.0
+    }
+  ],
+  "neutral_restore_max_world_matrix_error": 0.0,
+  "mesh_qa": [
+    {
+      "name": "AURIX shoulder wordmark",
+      "vertices": 1194,
+      "polygons": 784,
+      "nonmanifold_edges": 1194,
+      "finite_vertices": true
+    },
+    {
+      "name": "AURIX_Mark_Cross",
+      "vertices": 34,
+      "polygons": 28,
+      "nonmanifold_edges": 34,
+      "finite_vertices": true
+    },
+    {
+      "name": "AURIX_Mark_Left",
+      "vertices": 43,
+      "polygons": 44,
+      "nonmanifold_edges": 36,
+      "finite_vertices": true
+    },
+    {
+      "name": "Elbow_GoldBearingRim_-1",
+      "vertices": 1024,
+      "polygons": 2048,
+      "nonmanifold_edges": 0,
+      "finite_vertices": true
+    },
+    {
+      "name": "Elbow_GoldBearingRim_1",
+      "vertices": 1024,
+      "polygons": 2048,
+      "nonmanifold_edges": 0,
+      "finite_vertices": true
+    },
+    {
+      "name": "Elbow_ProximalYoke_-1",
+      "vertices": 384,
+      "polygons": 188,
+      "nonmanifold_edges": 384,
+      "finite_vertices": true
+    },
+    {
+      "name": "Elbow_ProximalYoke_1",
+      "vertices": 384,
+      "polygons": 188,
+      "nonmanifold_edges": 384,
+      "finite_vertices": true
+    },
+    {
+      "name": "Elbow_YokeBearing_-1",
+      "vertices": 737,
+      "polygons": 764,
+      "nonmanifold_edges": 672,
+      "finite_vertices": true
+    },
+    {
+      "name": "Elbow_YokeBearing_1",
+      "vertices": 737,
+      "polygons": 764,
+      "nonmanifold_edges": 672,
+      "finite_vertices": true
+    },
+    {
+      "name": "Elbow_CenterBolt_-1",
+      "vertices": 186,
+      "polygons": 188,
+      "nonmanifold_edges": 168,
+      "finite_vertices": true
+    },
+    {
+      "name": "Elbow_CenterBolt_1",
+      "vertices": 186,
+      "polygons": 188,
+      "nonmanifold_edges": 168,
+      "finite_vertices": true
+    },
+    {
+      "name": "Elbow_DistalBridge",
+      "vertices": 384,
+      "polygons": 188,
+      "nonmanifold_edges": 384,
+      "finite_vertices": true
+    },
+    {
+      "name": "Elbow_FrontGoldBand",
+      "vertices": 384,
+      "polygons": 188,
+      "nonmanifold_edges": 384,
+      "finite_vertices": true
+    },
+    {
+      "name": "Elbow_HubInset_-1",
+      "vertices": 1024,
+      "polygons": 2048,
+      "nonmanifold_edges": 0,
+      "finite_vertices": true
+    },
+    {
+      "name": "Elbow_HubInset_1",
+      "vertices": 1024,
+      "polygons": 2048,
+      "nonmanifold_edges": 0,
+      "finite_vertices": true
+    },
+    {
+      "name": "Elbow_MainAxle",
+      "vertices": 735,
+      "polygons": 764,
+      "nonmanifold_edges": 672,
+      "finite_vertices": true
+    },
+    {
+      "name": "Elbow_RotatingHub_-1",
+      "vertices": 721,
+      "polygons": 764,
+      "nonmanifold_edges": 660,
+      "finite_vertices": true
+    },
+    {
+      "name": "Elbow_RotatingHub_1",
+      "vertices": 721,
+      "polygons": 764,
+      "nonmanifold_edges": 660,
+      "finite_vertices": true
+    },
+    {
+      "name": "Forearm_ActuatorBody_-1",
+      "vertices": 481,
+      "polygons": 508,
+      "nonmanifold_edges": 448,
+      "finite_vertices": true
+    },
+    {
+      "name": "Forearm_ActuatorBody_1",
+      "vertices": 481,
+      "polygons": 508,
+      "nonmanifold_edges": 448,
+      "finite_vertices": true
+    },
+    {
+      "name": "Forearm_ActuatorRail_-1",
+      "vertices": 481,
+      "polygons": 508,
+      "nonmanifold_edges": 448,
+      "finite_vertices": true
+    },
+    {
+      "name": "Forearm_ActuatorRail_1",
+      "vertices": 481,
+      "polygons": 508,
+      "nonmanifold_edges": 448,
+      "finite_vertices": true
+    },
+    {
+      "name": "Forearm_Chassis",
+      "vertices": 384,
+      "polygons": 764,
+      "nonmanifold_edges": 0,
+      "finite_vertices": true
+    },
+    {
+      "name": "Forearm_FrontMainShield",
+      "vertices": 1214,
+      "polygons": 612,
+      "nonmanifold_edges": 1214,
+      "finite_vertices": true
+    },
+    {
+      "name": "Forearm_FrontSecondaryBlade",
+      "vertices": 1186,
+      "polygons": 600,
+      "nonmanifold_edges": 1186,
+      "finite_vertices": true
+    },
+    {
+      "name": "Forearm_FrontVisiblePiston",
+      "vertices": 452,
+      "polygons": 508,
+      "nonmanifold_edges": 388,
+      "finite_vertices": true
+    },
+    {
+      "name": "Forearm_GoldSideEdge_-1",
+      "vertices": 52,
+      "polygons": 60,
+      "nonmanifold_edges": 38,
+      "finite_vertices": true
+    },
+    {
+      "name": "Forearm_GoldSideEdge_1",
+      "vertices": 52,
+      "polygons": 60,
+      "nonmanifold_edges": 38,
+      "finite_vertices": true
+    },
+    {
+      "name": "Forearm_MainPanelGoldSeam",
+      "vertices": 52,
+      "polygons": 60,
+      "nonmanifold_edges": 38,
+      "finite_vertices": true
+    },
+    {
+      "name": "Forearm_OuterWrap_-1",
+      "vertices": 386,
+      "polygons": 768,
+      "nonmanifold_edges": 0,
+      "finite_vertices": true
+    },
+    {
+      "name": "Forearm_OuterWrap_1",
+      "vertices": 386,
+      "polygons": 768,
+      "nonmanifold_edges": 0,
+      "finite_vertices": true
+    },
+    {
+      "name": "Forearm_RailCollar_-1",
+      "vertices": 674,
+      "polygons": 764,
+      "nonmanifold_edges": 578,
+      "finite_vertices": true
+    },
+    {
+      "name": "Forearm_RailCollar_1",
+      "vertices": 674,
+      "polygons": 764,
+      "nonmanifold_edges": 578,
+      "finite_vertices": true
+    },
+    {
+      "name": "Forearm_ServiceIndicatorGold",
+      "vertices": 384,
+      "polygons": 188,
+      "nonmanifold_edges": 384,
+      "finite_vertices": true
+    },
+    {
+      "name": "Forearm_ServiceIndicatorRecess",
+      "vertices": 384,
+      "polygons": 188,
+      "nonmanifold_edges": 384,
+      "finite_vertices": true
+    },
+    {
+      "name": "Forearm_StatusSlot_-1",
+      "vertices": 384,
+      "polygons": 188,
+      "nonmanifold_edges": 384,
+      "finite_vertices": true
+    },
+    {
+      "name": "Forearm_StatusSlot_1",
+      "vertices": 384,
+      "polygons": 188,
+      "nonmanifold_edges": 384,
+      "finite_vertices": true
+    },
+    {
+      "name": "ForearmArmorBolt_0.2380.012",
+      "vertices": 176,
+      "polygons": 188,
+      "nonmanifold_edges": 152,
+      "finite_vertices": true
+    },
+    {
+      "name": "ForearmArmorBolt_0.379-0.03",
+      "vertices": 176,
+      "polygons": 188,
+      "nonmanifold_edges": 152,
+      "finite_vertices": true
+    },
+    {
+      "name": "ForearmArmorBolt_0.380.026",
+      "vertices": 176,
+      "polygons": 188,
+      "nonmanifold_edges": 152,
+      "finite_vertices": true
+    },
+    {
+      "name": "ServiceCover_Latch_-1",
+      "vertices": 384,
+      "polygons": 188,
+      "nonmanifold_edges": 384,
+      "finite_vertices": true
+    },
+    {
+      "name": "ServiceCover_Latch_1",
+      "vertices": 384,
+      "polygons": 188,
+      "nonmanifold_edges": 384,
+      "finite_vertices": true
+    },
+    {
+      "name": "ServiceCover_LowerScrew_-1",
+      "vertices": 184,
+      "polygons": 188,
+      "nonmanifold_edges": 162,
+      "finite_vertices": true
+    },
+    {
+      "name": "ServiceCover_LowerScrew_1",
+      "vertices": 184,
+      "polygons": 188,
+      "nonmanifold_edges": 162,
+      "finite_vertices": true
+    },
+    {
+      "name": "ServiceCover_Plate",
+      "vertices": 1044,
+      "polygons": 532,
+      "nonmanifold_edges": 1044,
+      "finite_vertices": true
+    },
+    {
+      "name": "ServiceCover_UpperScrew_-1",
+      "vertices": 184,
+      "polygons": 188,
+      "nonmanifold_edges": 162,
+      "finite_vertices": true
+    },
+    {
+      "name": "ServiceCover_UpperScrew_1",
+      "vertices": 184,
+      "polygons": 188,
+      "nonmanifold_edges": 162,
+      "finite_vertices": true
+    },
+    {
+      "name": "ServiceCover_VentRib_00",
+      "vertices": 384,
+      "polygons": 188,
+      "nonmanifold_edges": 384,
+      "finite_vertices": true
+    },
+    {
+      "name": "ServiceCover_VentRib_01",
+      "vertices": 384,
+      "polygons": 188,
+      "nonmanifold_edges": 384,
+      "finite_vertices": true
+    },
+    {
+      "name": "ServiceCover_VentRib_02",
+      "vertices": 384,
+      "polygons": 188,
+      "nonmanifold_edges": 384,
+      "finite_vertices": true
+    },
+    {
+      "name": "ServiceCover_VentRib_03",
+      "vertices": 384,
+      "polygons": 188,
+      "nonmanifold_edges": 384,
+      "finite_vertices": true
+    },
+    {
+      "name": "ServiceCover_VentRib_04",
+      "vertices": 384,
+      "polygons": 188,
+      "nonmanifold_edges": 384,
+      "finite_vertices": true
+    },
+    {
+      "name": "ServiceCover_VentRib_05",
+      "vertices": 384,
+      "polygons": 188,
+      "nonmanifold_edges": 384,
+      "finite_vertices": true
+    },
+    {
+      "name": "ServiceCover_VentRib_06",
+      "vertices": 384,
+      "polygons": 188,
+      "nonmanifold_edges": 384,
+      "finite_vertices": true
+    },
+    {
+      "name": "ServiceCover_VentRib_07",
+      "vertices": 384,
+      "polygons": 188,
+      "nonmanifold_edges": 384,
+      "finite_vertices": true
+    },
+    {
+      "name": "ServiceCover_VentRib_08",
+      "vertices": 384,
+      "polygons": 188,
+      "nonmanifold_edges": 384,
+      "finite_vertices": true
+    },
+    {
+      "name": "Wrist_GoldSeal",
+      "vertices": 768,
+      "polygons": 764,
+      "nonmanifold_edges": 672,
+      "finite_vertices": true
+    },
+    {
+      "name": "Wrist_ProximalCuff",
+      "vertices": 702,
+      "polygons": 764,
+      "nonmanifold_edges": 606,
+      "finite_vertices": true
+    },
+    {
+      "name": "Hand_DorsalArmor_Center",
+      "vertices": 868,
+      "polygons": 444,
+      "nonmanifold_edges": 868,
+      "finite_vertices": true
+    },
+    {
+      "name": "Hand_DorsalArmor_Left",
+      "vertices": 896,
+      "polygons": 458,
+      "nonmanifold_edges": 896,
+      "finite_vertices": true
+    },
+    {
+      "name": "Hand_DorsalArmor_Right",
+      "vertices": 868,
+      "polygons": 444,
+      "nonmanifold_edges": 868,
+      "finite_vertices": true
+    },
+    {
+      "name": "Hand_DorsalBolt_-0.025",
+      "vertices": 185,
+      "polygons": 188,
+      "nonmanifold_edges": 168,
+      "finite_vertices": true
+    },
+    {
+      "name": "Hand_DorsalBolt_0.026",
+      "vertices": 185,
+      "polygons": 188,
+      "nonmanifold_edges": 168,
+      "finite_vertices": true
+    },
+    {
+      "name": "Hand_KnuckleGoldInset_-0.006",
+      "vertices": 384,
+      "polygons": 188,
+      "nonmanifold_edges": 384,
+      "finite_vertices": true
+    },
+    {
+      "name": "Hand_KnuckleGoldInset_-0.026",
+      "vertices": 384,
+      "polygons": 188,
+      "nonmanifold_edges": 384,
+      "finite_vertices": true
+    },
+    {
+      "name": "Hand_KnuckleGoldInset_0.015",
+      "vertices": 384,
+      "polygons": 188,
+      "nonmanifold_edges": 384,
+      "finite_vertices": true
+    },
+    {
+      "name": "Hand_KnuckleGoldInset_0.034",
+      "vertices": 384,
+      "polygons": 188,
+      "nonmanifold_edges": 384,
+      "finite_vertices": true
+    },
+    {
+      "name": "Hand_KnuckleSeat_-0.006",
+      "vertices": 729,
+      "polygons": 764,
+      "nonmanifold_edges": 650,
+      "finite_vertices": true
+    },
+    {
+      "name": "Hand_KnuckleSeat_-0.026",
+      "vertices": 729,
+      "polygons": 764,
+      "nonmanifold_edges": 650,
+      "finite_vertices": true
+    },
+    {
+      "name": "Hand_KnuckleSeat_0.015",
+      "vertices": 729,
+      "polygons": 764,
+      "nonmanifold_edges": 650,
+      "finite_vertices": true
+    },
+    {
+      "name": "Hand_KnuckleSeat_0.034",
+      "vertices": 729,
+      "polygons": 764,
+      "nonmanifold_edges": 650,
+      "finite_vertices": true
+    },
+    {
+      "name": "Hand_PalmFrame",
+      "vertices": 363,
+      "polygons": 722,
+      "nonmanifold_edges": 0,
+      "finite_vertices": true
+    },
+    {
+      "name": "Hand_PalmGripPad",
+      "vertices": 924,
+      "polygons": 472,
+      "nonmanifold_edges": 924,
+      "finite_vertices": true
+    },
+    {
+      "name": "Index_Armor_0",
+      "vertices": 652,
+      "polygons": 328,
+      "nonmanifold_edges": 652,
+      "finite_vertices": true
+    },
+    {
+      "name": "Index_Core_0",
+      "vertices": 160,
+      "polygons": 316,
+      "nonmanifold_edges": 0,
+      "finite_vertices": true
+    },
+    {
+      "name": "Index_Grip_0",
+      "vertices": 564,
+      "polygons": 284,
+      "nonmanifold_edges": 564,
+      "finite_vertices": true
+    },
+    {
+      "name": "Index_Joint_0",
+      "vertices": 481,
+      "polygons": 508,
+      "nonmanifold_edges": 432,
+      "finite_vertices": true
+    },
+    {
+      "name": "Index_KnuckleLight",
+      "vertices": 384,
+      "polygons": 188,
+      "nonmanifold_edges": 384,
+      "finite_vertices": true
+    },
+    {
+      "name": "Index_Pin_0_-1",
+      "vertices": 361,
+      "polygons": 380,
+      "nonmanifold_edges": 328,
+      "finite_vertices": true
+    },
+    {
+      "name": "Index_Pin_0_1",
+      "vertices": 361,
+      "polygons": 380,
+      "nonmanifold_edges": 328,
+      "finite_vertices": true
+    },
+    {
+      "name": "Index_Armor_1",
+      "vertices": 652,
+      "polygons": 328,
+      "nonmanifold_edges": 652,
+      "finite_vertices": true
+    },
+    {
+      "name": "Index_Core_1",
+      "vertices": 160,
+      "polygons": 316,
+      "nonmanifold_edges": 0,
+      "finite_vertices": true
+    },
+    {
+      "name": "Index_Armor_2",
+      "vertices": 856,
+      "polygons": 428,
+      "nonmanifold_edges": 856,
+      "finite_vertices": true
+    },
+    {
+      "name": "Index_Core_2",
+      "vertices": 208,
+      "polygons": 412,
+      "nonmanifold_edges": 0,
+      "finite_vertices": true
+    },
+    {
+      "name": "Index_Grip_2",
+      "vertices": 564,
+      "polygons": 284,
+      "nonmanifold_edges": 564,
+      "finite_vertices": true
+    },
+    {
+      "name": "Index_Joint_2",
+      "vertices": 481,
+      "polygons": 508,
+      "nonmanifold_edges": 432,
+      "finite_vertices": true
+    },
+    {
+      "name": "Index_Pin_2_-1",
+      "vertices": 361,
+      "polygons": 380,
+      "nonmanifold_edges": 328,
+      "finite_vertices": true
+    },
+    {
+      "name": "Index_Pin_2_1",
+      "vertices": 361,
+      "polygons": 380,
+      "nonmanifold_edges": 328,
+      "finite_vertices": true
+    },
+    {
+      "name": "Index_Grip_1",
+      "vertices": 564,
+      "polygons": 284,
+      "nonmanifold_edges": 564,
+      "finite_vertices": true
+    },
+    {
+      "name": "Index_Joint_1",
+      "vertices": 481,
+      "polygons": 508,
+      "nonmanifold_edges": 432,
+      "finite_vertices": true
+    },
+    {
+      "name": "Index_Pin_1_-1",
+      "vertices": 361,
+      "polygons": 380,
+      "nonmanifold_edges": 328,
+      "finite_vertices": true
+    },
+    {
+      "name": "Index_Pin_1_1",
+      "vertices": 361,
+      "polygons": 380,
+      "nonmanifold_edges": 328,
+      "finite_vertices": true
+    },
+    {
+      "name": "Little_Armor_0",
+      "vertices": 652,
+      "polygons": 328,
+      "nonmanifold_edges": 652,
+      "finite_vertices": true
+    },
+    {
+      "name": "Little_Core_0",
+      "vertices": 160,
+      "polygons": 316,
+      "nonmanifold_edges": 0,
+      "finite_vertices": true
+    },
+    {
+      "name": "Little_Grip_0",
+      "vertices": 564,
+      "polygons": 284,
+      "nonmanifold_edges": 564,
+      "finite_vertices": true
+    },
+    {
+      "name": "Little_Joint_0",
+      "vertices": 450,
+      "polygons": 508,
+      "nonmanifold_edges": 386,
+      "finite_vertices": true
+    },
+    {
+      "name": "Little_KnuckleLight",
+      "vertices": 384,
+      "polygons": 188,
+      "nonmanifold_edges": 384,
+      "finite_vertices": true
+    },
+    {
+      "name": "Little_Pin_0_-1",
+      "vertices": 364,
+      "polygons": 380,
+      "nonmanifold_edges": 330,
+      "finite_vertices": true
+    },
+    {
+      "name": "Little_Pin_0_1",
+      "vertices": 364,
+      "polygons": 380,
+      "nonmanifold_edges": 330,
+      "finite_vertices": true
+    },
+    {
+      "name": "Little_Armor_1",
+      "vertices": 652,
+      "polygons": 328,
+      "nonmanifold_edges": 652,
+      "finite_vertices": true
+    },
+    {
+      "name": "Little_Core_1",
+      "vertices": 206,
+      "polygons": 408,
+      "nonmanifold_edges": 0,
+      "finite_vertices": true
+    },
+    {
+      "name": "Little_Armor_2",
+      "vertices": 916,
+      "polygons": 460,
+      "nonmanifold_edges": 916,
+      "finite_vertices": true
+    },
+    {
+      "name": "Little_Core_2",
+      "vertices": 208,
+      "polygons": 412,
+      "nonmanifold_edges": 0,
+      "finite_vertices": true
+    },
+    {
+      "name": "Little_Grip_2",
+      "vertices": 564,
+      "polygons": 284,
+      "nonmanifold_edges": 564,
+      "finite_vertices": true
+    },
+    {
+      "name": "Little_Joint_2",
+      "vertices": 450,
+      "polygons": 508,
+      "nonmanifold_edges": 386,
+      "finite_vertices": true
+    },
+    {
+      "name": "Little_Pin_2_-1",
+      "vertices": 364,
+      "polygons": 380,
+      "nonmanifold_edges": 330,
+      "finite_vertices": true
+    },
+    {
+      "name": "Little_Pin_2_1",
+      "vertices": 364,
+      "polygons": 380,
+      "nonmanifold_edges": 330,
+      "finite_vertices": true
+    },
+    {
+      "name": "Little_Grip_1",
+      "vertices": 564,
+      "polygons": 284,
+      "nonmanifold_edges": 564,
+      "finite_vertices": true
+    },
+    {
+      "name": "Little_Joint_1",
+      "vertices": 450,
+      "polygons": 508,
+      "nonmanifold_edges": 386,
+      "finite_vertices": true
+    },
+    {
+      "name": "Little_Pin_1_-1",
+      "vertices": 364,
+      "polygons": 380,
+      "nonmanifold_edges": 330,
+      "finite_vertices": true
+    },
+    {
+      "name": "Little_Pin_1_1",
+      "vertices": 364,
+      "polygons": 380,
+      "nonmanifold_edges": 330,
+      "finite_vertices": true
+    },
+    {
+      "name": "Middle_Armor_0",
+      "vertices": 652,
+      "polygons": 328,
+      "nonmanifold_edges": 652,
+      "finite_vertices": true
+    },
+    {
+      "name": "Middle_Core_0",
+      "vertices": 160,
+      "polygons": 316,
+      "nonmanifold_edges": 0,
+      "finite_vertices": true
+    },
+    {
+      "name": "Middle_Grip_0",
+      "vertices": 564,
+      "polygons": 284,
+      "nonmanifold_edges": 564,
+      "finite_vertices": true
+    },
+    {
+      "name": "Middle_Joint_0",
+      "vertices": 493,
+      "polygons": 508,
+      "nonmanifold_edges": 442,
+      "finite_vertices": true
+    },
+    {
+      "name": "Middle_KnuckleLight",
+      "vertices": 384,
+      "polygons": 188,
+      "nonmanifold_edges": 384,
+      "finite_vertices": true
+    },
+    {
+      "name": "Middle_Pin_0_-1",
+      "vertices": 361,
+      "polygons": 380,
+      "nonmanifold_edges": 328,
+      "finite_vertices": true
+    },
+    {
+      "name": "Middle_Pin_0_1",
+      "vertices": 361,
+      "polygons": 380,
+      "nonmanifold_edges": 328,
+      "finite_vertices": true
+    },
+    {
+      "name": "Middle_Armor_1",
+      "vertices": 652,
+      "polygons": 328,
+      "nonmanifold_edges": 652,
+      "finite_vertices": true
+    },
+    {
+      "name": "Middle_Core_1",
+      "vertices": 160,
+      "polygons": 316,
+      "nonmanifold_edges": 0,
+      "finite_vertices": true
+    },
+    {
+      "name": "Middle_Armor_2",
+      "vertices": 652,
+      "polygons": 328,
+      "nonmanifold_edges": 652,
+      "finite_vertices": true
+    },
+    {
+      "name": "Middle_Core_2",
+      "vertices": 194,
+      "polygons": 384,
+      "nonmanifold_edges": 0,
+      "finite_vertices": true
+    },
+    {
+      "name": "Middle_Grip_2",
+      "vertices": 564,
+      "polygons": 284,
+      "nonmanifold_edges": 564,
+      "finite_vertices": true
+    },
+    {
+      "name": "Middle_Joint_2",
+      "vertices": 493,
+      "polygons": 508,
+      "nonmanifold_edges": 442,
+      "finite_vertices": true
+    },
+    {
+      "name": "Middle_Pin_2_-1",
+      "vertices": 361,
+      "polygons": 380,
+      "nonmanifold_edges": 328,
+      "finite_vertices": true
+    },
+    {
+      "name": "Middle_Pin_2_1",
+      "vertices": 361,
+      "polygons": 380,
+      "nonmanifold_edges": 328,
+      "finite_vertices": true
+    },
+    {
+      "name": "Middle_Grip_1",
+      "vertices": 564,
+      "polygons": 284,
+      "nonmanifold_edges": 564,
+      "finite_vertices": true
+    },
+    {
+      "name": "Middle_Joint_1",
+      "vertices": 493,
+      "polygons": 508,
+      "nonmanifold_edges": 442,
+      "finite_vertices": true
+    },
+    {
+      "name": "Middle_Pin_1_-1",
+      "vertices": 361,
+      "polygons": 380,
+      "nonmanifold_edges": 328,
+      "finite_vertices": true
+    },
+    {
+      "name": "Middle_Pin_1_1",
+      "vertices": 361,
+      "polygons": 380,
+      "nonmanifold_edges": 328,
+      "finite_vertices": true
+    },
+    {
+      "name": "Ring_Armor_0",
+      "vertices": 652,
+      "polygons": 328,
+      "nonmanifold_edges": 652,
+      "finite_vertices": true
+    },
+    {
+      "name": "Ring_Core_0",
+      "vertices": 160,
+      "polygons": 316,
+      "nonmanifold_edges": 0,
+      "finite_vertices": true
+    },
+    {
+      "name": "Ring_Grip_0",
+      "vertices": 564,
+      "polygons": 284,
+      "nonmanifold_edges": 564,
+      "finite_vertices": true
+    },
+    {
+      "name": "Ring_Joint_0",
+      "vertices": 464,
+      "polygons": 508,
+      "nonmanifold_edges": 400,
+      "finite_vertices": true
+    },
+    {
+      "name": "Ring_KnuckleLight",
+      "vertices": 384,
+      "polygons": 188,
+      "nonmanifold_edges": 384,
+      "finite_vertices": true
+    },
+    {
+      "name": "Ring_Pin_0_-1",
+      "vertices": 367,
+      "polygons": 380,
+      "nonmanifold_edges": 336,
+      "finite_vertices": true
+    },
+    {
+      "name": "Ring_Pin_0_1",
+      "vertices": 367,
+      "polygons": 380,
+      "nonmanifold_edges": 336,
+      "finite_vertices": true
+    },
+    {
+      "name": "Ring_Armor_1",
+      "vertices": 652,
+      "polygons": 328,
+      "nonmanifold_edges": 652,
+      "finite_vertices": true
+    },
+    {
+      "name": "Ring_Core_1",
+      "vertices": 160,
+      "polygons": 316,
+      "nonmanifold_edges": 0,
+      "finite_vertices": true
+    },
+    {
+      "name": "Ring_Armor_2",
+      "vertices": 856,
+      "polygons": 428,
+      "nonmanifold_edges": 856,
+      "finite_vertices": true
+    },
+    {
+      "name": "Ring_Core_2",
+      "vertices": 208,
+      "polygons": 412,
+      "nonmanifold_edges": 0,
+      "finite_vertices": true
+    },
+    {
+      "name": "Ring_Grip_2",
+      "vertices": 564,
+      "polygons": 284,
+      "nonmanifold_edges": 564,
+      "finite_vertices": true
+    },
+    {
+      "name": "Ring_Joint_2",
+      "vertices": 464,
+      "polygons": 508,
+      "nonmanifold_edges": 400,
+      "finite_vertices": true
+    },
+    {
+      "name": "Ring_Pin_2_-1",
+      "vertices": 367,
+      "polygons": 380,
+      "nonmanifold_edges": 336,
+      "finite_vertices": true
+    },
+    {
+      "name": "Ring_Pin_2_1",
+      "vertices": 367,
+      "polygons": 380,
+      "nonmanifold_edges": 336,
+      "finite_vertices": true
+    },
+    {
+      "name": "Ring_Grip_1",
+      "vertices": 564,
+      "polygons": 284,
+      "nonmanifold_edges": 564,
+      "finite_vertices": true
+    },
+    {
+      "name": "Ring_Joint_1",
+      "vertices": 464,
+      "polygons": 508,
+      "nonmanifold_edges": 400,
+      "finite_vertices": true
+    },
+    {
+      "name": "Ring_Pin_1_-1",
+      "vertices": 367,
+      "polygons": 380,
+      "nonmanifold_edges": 336,
+      "finite_vertices": true
+    },
+    {
+      "name": "Ring_Pin_1_1",
+      "vertices": 367,
+      "polygons": 380,
+      "nonmanifold_edges": 336,
+      "finite_vertices": true
+    },
+    {
+      "name": "Thumb_Armor_0",
+      "vertices": 654,
+      "polygons": 328,
+      "nonmanifold_edges": 654,
+      "finite_vertices": true
+    },
+    {
+      "name": "Thumb_Core_0",
+      "vertices": 160,
+      "polygons": 316,
+      "nonmanifold_edges": 0,
+      "finite_vertices": true
+    },
+    {
+      "name": "Thumb_Grip_0",
+      "vertices": 564,
+      "polygons": 284,
+      "nonmanifold_edges": 564,
+      "finite_vertices": true
+    },
+    {
+      "name": "Thumb_Joint_0",
+      "vertices": 501,
+      "polygons": 508,
+      "nonmanifold_edges": 448,
+      "finite_vertices": true
+    },
+    {
+      "name": "Thumb_KnuckleLight",
+      "vertices": 384,
+      "polygons": 188,
+      "nonmanifold_edges": 384,
+      "finite_vertices": true
+    },
+    {
+      "name": "Thumb_Pin_0_-1",
+      "vertices": 357,
+      "polygons": 380,
+      "nonmanifold_edges": 322,
+      "finite_vertices": true
+    },
+    {
+      "name": "Thumb_Pin_0_1",
+      "vertices": 357,
+      "polygons": 380,
+      "nonmanifold_edges": 322,
+      "finite_vertices": true
+    },
+    {
+      "name": "Thumb_Armor_1",
+      "vertices": 652,
+      "polygons": 328,
+      "nonmanifold_edges": 652,
+      "finite_vertices": true
+    },
+    {
+      "name": "Thumb_Core_1",
+      "vertices": 160,
+      "polygons": 316,
+      "nonmanifold_edges": 0,
+      "finite_vertices": true
+    },
+    {
+      "name": "Thumb_Armor_2",
+      "vertices": 916,
+      "polygons": 460,
+      "nonmanifold_edges": 916,
+      "finite_vertices": true
+    },
+    {
+      "name": "Thumb_Core_2",
+      "vertices": 208,
+      "polygons": 412,
+      "nonmanifold_edges": 0,
+      "finite_vertices": true
+    },
+    {
+      "name": "Thumb_Grip_2",
+      "vertices": 564,
+      "polygons": 284,
+      "nonmanifold_edges": 564,
+      "finite_vertices": true
+    },
+    {
+      "name": "Thumb_Joint_2",
+      "vertices": 501,
+      "polygons": 508,
+      "nonmanifold_edges": 448,
+      "finite_vertices": true
+    },
+    {
+      "name": "Thumb_Pin_2_-1",
+      "vertices": 357,
+      "polygons": 380,
+      "nonmanifold_edges": 322,
+      "finite_vertices": true
+    },
+    {
+      "name": "Thumb_Pin_2_1",
+      "vertices": 357,
+      "polygons": 380,
+      "nonmanifold_edges": 322,
+      "finite_vertices": true
+    },
+    {
+      "name": "Thumb_Grip_1",
+      "vertices": 564,
+      "polygons": 284,
+      "nonmanifold_edges": 564,
+      "finite_vertices": true
+    },
+    {
+      "name": "Thumb_Joint_1",
+      "vertices": 501,
+      "polygons": 508,
+      "nonmanifold_edges": 448,
+      "finite_vertices": true
+    },
+    {
+      "name": "Thumb_Pin_1_-1",
+      "vertices": 357,
+      "polygons": 380,
+      "nonmanifold_edges": 322,
+      "finite_vertices": true
+    },
+    {
+      "name": "Thumb_Pin_1_1",
+      "vertices": 357,
+      "polygons": 380,
+      "nonmanifold_edges": 322,
+      "finite_vertices": true
+    },
+    {
+      "name": "Wrist_DistalCuff",
+      "vertices": 722,
+      "polygons": 764,
+      "nonmanifold_edges": 672,
+      "finite_vertices": true
+    },
+    {
+      "name": "Wrist_EndCap_-1",
+      "vertices": 729,
+      "polygons": 764,
+      "nonmanifold_edges": 658,
+      "finite_vertices": true
+    },
+    {
+      "name": "Wrist_EndCap_1",
+      "vertices": 729,
+      "polygons": 764,
+      "nonmanifold_edges": 658,
+      "finite_vertices": true
+    },
+    {
+      "name": "Wrist_FlexAxle",
+      "vertices": 678,
+      "polygons": 764,
+      "nonmanifold_edges": 582,
+      "finite_vertices": true
+    },
+    {
+      "name": "Shoulder_FrontShield",
+      "vertices": 2056,
+      "polygons": 1032,
+      "nonmanifold_edges": 2056,
+      "finite_vertices": true
+    },
+    {
+      "name": "Shoulder_RearBridge",
+      "vertices": 1474,
+      "polygons": 742,
+      "nonmanifold_edges": 1474,
+      "finite_vertices": true
+    },
+    {
+      "name": "ShoulderCenterGoldAccent",
+      "vertices": 34,
+      "polygons": 28,
+      "nonmanifold_edges": 34,
+      "finite_vertices": true
+    },
+    {
+      "name": "ShoulderCollarBolt_-1_0",
+      "vertices": 250,
+      "polygons": 316,
+      "nonmanifold_edges": 172,
+      "finite_vertices": true
+    },
+    {
+      "name": "ShoulderCollarBolt_-1_1",
+      "vertices": 250,
+      "polygons": 316,
+      "nonmanifold_edges": 172,
+      "finite_vertices": true
+    },
+    {
+      "name": "ShoulderCollarBolt_-1_2",
+      "vertices": 250,
+      "polygons": 316,
+      "nonmanifold_edges": 172,
+      "finite_vertices": true
+    },
+    {
+      "name": "ShoulderCollarBolt_-1_3",
+      "vertices": 250,
+      "polygons": 316,
+      "nonmanifold_edges": 172,
+      "finite_vertices": true
+    },
+    {
+      "name": "ShoulderCollarBolt_-1_4",
+      "vertices": 250,
+      "polygons": 316,
+      "nonmanifold_edges": 172,
+      "finite_vertices": true
+    },
+    {
+      "name": "ShoulderCollarBolt_-1_5",
+      "vertices": 250,
+      "polygons": 316,
+      "nonmanifold_edges": 172,
+      "finite_vertices": true
+    },
+    {
+      "name": "ShoulderCollarBolt_-1_6",
+      "vertices": 250,
+      "polygons": 316,
+      "nonmanifold_edges": 172,
+      "finite_vertices": true
+    },
+    {
+      "name": "ShoulderCollarBolt_-1_7",
+      "vertices": 250,
+      "polygons": 316,
+      "nonmanifold_edges": 172,
+      "finite_vertices": true
+    },
+    {
+      "name": "ShoulderCollarBolt_1_0",
+      "vertices": 250,
+      "polygons": 316,
+      "nonmanifold_edges": 172,
+      "finite_vertices": true
+    },
+    {
+      "name": "ShoulderCollarBolt_1_1",
+      "vertices": 250,
+      "polygons": 316,
+      "nonmanifold_edges": 172,
+      "finite_vertices": true
+    },
+    {
+      "name": "ShoulderCollarBolt_1_2",
+      "vertices": 250,
+      "polygons": 316,
+      "nonmanifold_edges": 172,
+      "finite_vertices": true
+    },
+    {
+      "name": "ShoulderCollarBolt_1_3",
+      "vertices": 250,
+      "polygons": 316,
+      "nonmanifold_edges": 172,
+      "finite_vertices": true
+    },
+    {
+      "name": "ShoulderCollarBolt_1_4",
+      "vertices": 250,
+      "polygons": 316,
+      "nonmanifold_edges": 172,
+      "finite_vertices": true
+    },
+    {
+      "name": "ShoulderCollarBolt_1_5",
+      "vertices": 250,
+      "polygons": 316,
+      "nonmanifold_edges": 172,
+      "finite_vertices": true
+    },
+    {
+      "name": "ShoulderCollarBolt_1_6",
+      "vertices": 250,
+      "polygons": 316,
+      "nonmanifold_edges": 172,
+      "finite_vertices": true
+    },
+    {
+      "name": "ShoulderCollarBolt_1_7",
+      "vertices": 244,
+      "polygons": 316,
+      "nonmanifold_edges": 166,
+      "finite_vertices": true
+    },
+    {
+      "name": "ShoulderFaceBolt_-1",
+      "vertices": 170,
+      "polygons": 188,
+      "nonmanifold_edges": 146,
+      "finite_vertices": true
+    },
+    {
+      "name": "ShoulderFaceBolt_1",
+      "vertices": 170,
+      "polygons": 188,
+      "nonmanifold_edges": 146,
+      "finite_vertices": true
+    },
+    {
+      "name": "ShoulderGoldEdge_-1",
+      "vertices": 61,
+      "polygons": 76,
+      "nonmanifold_edges": 40,
+      "finite_vertices": true
+    },
+    {
+      "name": "ShoulderGoldEdge_1",
+      "vertices": 61,
+      "polygons": 76,
+      "nonmanifold_edges": 40,
+      "finite_vertices": true
+    },
+    {
+      "name": "ShoulderSidePauldron_-1_0",
+      "vertices": 1160,
+      "polygons": 604,
+      "nonmanifold_edges": 1160,
+      "finite_vertices": true
+    },
+    {
+      "name": "ShoulderSidePauldron_-1_1",
+      "vertices": 1162,
+      "polygons": 604,
+      "nonmanifold_edges": 1162,
+      "finite_vertices": true
+    },
+    {
+      "name": "ShoulderSidePauldron_-1_2",
+      "vertices": 1162,
+      "polygons": 604,
+      "nonmanifold_edges": 1162,
+      "finite_vertices": true
+    },
+    {
+      "name": "ShoulderSidePauldron_1_0",
+      "vertices": 1160,
+      "polygons": 604,
+      "nonmanifold_edges": 1160,
+      "finite_vertices": true
+    },
+    {
+      "name": "ShoulderSidePauldron_1_1",
+      "vertices": 1162,
+      "polygons": 604,
+      "nonmanifold_edges": 1162,
+      "finite_vertices": true
+    },
+    {
+      "name": "ShoulderSidePauldron_1_2",
+      "vertices": 1162,
+      "polygons": 604,
+      "nonmanifold_edges": 1162,
+      "finite_vertices": true
+    },
+    {
+      "name": "ShoulderSocket_GoldRim_-1",
+      "vertices": 1024,
+      "polygons": 2048,
+      "nonmanifold_edges": 0,
+      "finite_vertices": true
+    },
+    {
+      "name": "ShoulderSocket_GoldRim_1",
+      "vertices": 1024,
+      "polygons": 2048,
+      "nonmanifold_edges": 0,
+      "finite_vertices": true
+    },
+    {
+      "name": "ShoulderSocket_InnerLiner",
+      "vertices": 1024,
+      "polygons": 2048,
+      "nonmanifold_edges": 0,
+      "finite_vertices": true
+    },
+    {
+      "name": "ShoulderSocket_MainBore",
+      "vertices": 1024,
+      "polygons": 2048,
+      "nonmanifold_edges": 0,
+      "finite_vertices": true
+    },
+    {
+      "name": "ShoulderSocket_OuterCollar_-1",
+      "vertices": 1024,
+      "polygons": 2048,
+      "nonmanifold_edges": 0,
+      "finite_vertices": true
+    },
+    {
+      "name": "ShoulderSocket_OuterCollar_1",
+      "vertices": 1024,
+      "polygons": 2048,
+      "nonmanifold_edges": 0,
+      "finite_vertices": true
+    },
+    {
+      "name": "ShoulderSocket_Recess_-1",
+      "vertices": 1024,
+      "polygons": 2048,
+      "nonmanifold_edges": 0,
+      "finite_vertices": true
+    },
+    {
+      "name": "ShoulderSocket_Recess_1",
+      "vertices": 1024,
+      "polygons": 2048,
+      "nonmanifold_edges": 0,
+      "finite_vertices": true
+    },
+    {
+      "name": "UpperActuator_Body_-1",
+      "vertices": 491,
+      "polygons": 508,
+      "nonmanifold_edges": 448,
+      "finite_vertices": true
+    },
+    {
+      "name": "UpperActuator_Body_1",
+      "vertices": 491,
+      "polygons": 508,
+      "nonmanifold_edges": 448,
+      "finite_vertices": true
+    },
+    {
+      "name": "UpperActuator_GoldCollar_-1",
+      "vertices": 674,
+      "polygons": 764,
+      "nonmanifold_edges": 578,
+      "finite_vertices": true
+    },
+    {
+      "name": "UpperActuator_GoldCollar_1",
+      "vertices": 674,
+      "polygons": 764,
+      "nonmanifold_edges": 578,
+      "finite_vertices": true
+    },
+    {
+      "name": "UpperActuator_Piston_-1",
+      "vertices": 512,
+      "polygons": 508,
+      "nonmanifold_edges": 448,
+      "finite_vertices": true
+    },
+    {
+      "name": "UpperActuator_Piston_1",
+      "vertices": 512,
+      "polygons": 508,
+      "nonmanifold_edges": 448,
+      "finite_vertices": true
+    },
+    {
+      "name": "UpperArm_CentralFrame",
+      "vertices": 352,
+      "polygons": 700,
+      "nonmanifold_edges": 0,
+      "finite_vertices": true
+    },
+    {
+      "name": "UpperArm_Conduit_-1",
+      "vertices": 52,
+      "polygons": 60,
+      "nonmanifold_edges": 38,
+      "finite_vertices": true
+    },
+    {
+      "name": "UpperArm_Conduit_1",
+      "vertices": 52,
+      "polygons": 60,
+      "nonmanifold_edges": 38,
+      "finite_vertices": true
+    },
+    {
+      "name": "UpperArm_FrontLeaf_-1",
+      "vertices": 996,
+      "polygons": 508,
+      "nonmanifold_edges": 996,
+      "finite_vertices": true
+    },
+    {
+      "name": "UpperArm_FrontLeaf_1",
+      "vertices": 996,
+      "polygons": 508,
+      "nonmanifold_edges": 996,
+      "finite_vertices": true
+    },
+    {
+      "name": "UpperArm_GoldSeam_-1",
+      "vertices": 43,
+      "polygons": 44,
+      "nonmanifold_edges": 36,
+      "finite_vertices": true
+    },
+    {
+      "name": "UpperArm_GoldSeam_1",
+      "vertices": 43,
+      "polygons": 44,
+      "nonmanifold_edges": 36,
+      "finite_vertices": true
+    },
+    {
+      "name": "UpperArm_OuterArmor_-1",
+      "vertices": 386,
+      "polygons": 768,
+      "nonmanifold_edges": 0,
+      "finite_vertices": true
+    },
+    {
+      "name": "UpperArm_OuterArmor_1",
+      "vertices": 386,
+      "polygons": 768,
+      "nonmanifold_edges": 0,
+      "finite_vertices": true
+    },
+    {
+      "name": "UpperFront_ExposedPiston",
+      "vertices": 460,
+      "polygons": 508,
+      "nonmanifold_edges": 396,
+      "finite_vertices": true
+    },
+    {
+      "name": "UpperFront_GoldCollar",
+      "vertices": 726,
+      "polygons": 764,
+      "nonmanifold_edges": 672,
+      "finite_vertices": true
+    },
+    {
+      "name": "UpperFront_PistonSleeve",
+      "vertices": 706,
+      "polygons": 764,
+      "nonmanifold_edges": 622,
+      "finite_vertices": true
+    }
+  ],
+  "all_vertices_finite": true,
+  "nonmanifold_mesh_names": [
+    "AURIX shoulder wordmark",
+    "AURIX_Mark_Cross",
+    "AURIX_Mark_Left",
+    "Elbow_ProximalYoke_-1",
+    "Elbow_ProximalYoke_1",
+    "Elbow_YokeBearing_-1",
+    "Elbow_YokeBearing_1",
+    "Elbow_CenterBolt_-1",
+    "Elbow_CenterBolt_1",
+    "Elbow_DistalBridge",
+    "Elbow_FrontGoldBand",
+    "Elbow_MainAxle",
+    "Elbow_RotatingHub_-1",
+    "Elbow_RotatingHub_1",
+    "Forearm_ActuatorBody_-1",
+    "Forearm_ActuatorBody_1",
+    "Forearm_ActuatorRail_-1",
+    "Forearm_ActuatorRail_1",
+    "Forearm_FrontMainShield",
+    "Forearm_FrontSecondaryBlade",
+    "Forearm_FrontVisiblePiston",
+    "Forearm_GoldSideEdge_-1",
+    "Forearm_GoldSideEdge_1",
+    "Forearm_MainPanelGoldSeam",
+    "Forearm_RailCollar_-1",
+    "Forearm_RailCollar_1",
+    "Forearm_ServiceIndicatorGold",
+    "Forearm_ServiceIndicatorRecess",
+    "Forearm_StatusSlot_-1",
+    "Forearm_StatusSlot_1",
+    "ForearmArmorBolt_0.2380.012",
+    "ForearmArmorBolt_0.379-0.03",
+    "ForearmArmorBolt_0.380.026",
+    "ServiceCover_Latch_-1",
+    "ServiceCover_Latch_1",
+    "ServiceCover_LowerScrew_-1",
+    "ServiceCover_LowerScrew_1",
+    "ServiceCover_Plate",
+    "ServiceCover_UpperScrew_-1",
+    "ServiceCover_UpperScrew_1",
+    "ServiceCover_VentRib_00",
+    "ServiceCover_VentRib_01",
+    "ServiceCover_VentRib_02",
+    "ServiceCover_VentRib_03",
+    "ServiceCover_VentRib_04",
+    "ServiceCover_VentRib_05",
+    "ServiceCover_VentRib_06",
+    "ServiceCover_VentRib_07",
+    "ServiceCover_VentRib_08",
+    "Wrist_GoldSeal",
+    "Wrist_ProximalCuff",
+    "Hand_DorsalArmor_Center",
+    "Hand_DorsalArmor_Left",
+    "Hand_DorsalArmor_Right",
+    "Hand_DorsalBolt_-0.025",
+    "Hand_DorsalBolt_0.026",
+    "Hand_KnuckleGoldInset_-0.006",
+    "Hand_KnuckleGoldInset_-0.026",
+    "Hand_KnuckleGoldInset_0.015",
+    "Hand_KnuckleGoldInset_0.034",
+    "Hand_KnuckleSeat_-0.006",
+    "Hand_KnuckleSeat_-0.026",
+    "Hand_KnuckleSeat_0.015",
+    "Hand_KnuckleSeat_0.034",
+    "Hand_PalmGripPad",
+    "Index_Armor_0",
+    "Index_Grip_0",
+    "Index_Joint_0",
+    "Index_KnuckleLight",
+    "Index_Pin_0_-1",
+    "Index_Pin_0_1",
+    "Index_Armor_1",
+    "Index_Armor_2",
+    "Index_Grip_2",
+    "Index_Joint_2",
+    "Index_Pin_2_-1",
+    "Index_Pin_2_1",
+    "Index_Grip_1",
+    "Index_Joint_1",
+    "Index_Pin_1_-1",
+    "Index_Pin_1_1",
+    "Little_Armor_0",
+    "Little_Grip_0",
+    "Little_Joint_0",
+    "Little_KnuckleLight",
+    "Little_Pin_0_-1",
+    "Little_Pin_0_1",
+    "Little_Armor_1",
+    "Little_Armor_2",
+    "Little_Grip_2",
+    "Little_Joint_2",
+    "Little_Pin_2_-1",
+    "Little_Pin_2_1",
+    "Little_Grip_1",
+    "Little_Joint_1",
+    "Little_Pin_1_-1",
+    "Little_Pin_1_1",
+    "Middle_Armor_0",
+    "Middle_Grip_0",
+    "Middle_Joint_0",
+    "Middle_KnuckleLight",
+    "Middle_Pin_0_-1",
+    "Middle_Pin_0_1",
+    "Middle_Armor_1",
+    "Middle_Armor_2",
+    "Middle_Grip_2",
+    "Middle_Joint_2",
+    "Middle_Pin_2_-1",
+    "Middle_Pin_2_1",
+    "Middle_Grip_1",
+    "Middle_Joint_1",
+    "Middle_Pin_1_-1",
+    "Middle_Pin_1_1",
+    "Ring_Armor_0",
+    "Ring_Grip_0",
+    "Ring_Joint_0",
+    "Ring_KnuckleLight",
+    "Ring_Pin_0_-1",
+    "Ring_Pin_0_1",
+    "Ring_Armor_1",
+    "Ring_Armor_2",
+    "Ring_Grip_2",
+    "Ring_Joint_2",
+    "Ring_Pin_2_-1",
+    "Ring_Pin_2_1",
+    "Ring_Grip_1",
+    "Ring_Joint_1",
+    "Ring_Pin_1_-1",
+    "Ring_Pin_1_1",
+    "Thumb_Armor_0",
+    "Thumb_Grip_0",
+    "Thumb_Joint_0",
+    "Thumb_KnuckleLight",
+    "Thumb_Pin_0_-1",
+    "Thumb_Pin_0_1",
+    "Thumb_Armor_1",
+    "Thumb_Armor_2",
+    "Thumb_Grip_2",
+    "Thumb_Joint_2",
+    "Thumb_Pin_2_-1",
+    "Thumb_Pin_2_1",
+    "Thumb_Grip_1",
+    "Thumb_Joint_1",
+    "Thumb_Pin_1_-1",
+    "Thumb_Pin_1_1",
+    "Wrist_DistalCuff",
+    "Wrist_EndCap_-1",
+    "Wrist_EndCap_1",
+    "Wrist_FlexAxle",
+    "Shoulder_FrontShield",
+    "Shoulder_RearBridge",
+    "ShoulderCenterGoldAccent",
+    "ShoulderCollarBolt_-1_0",
+    "ShoulderCollarBolt_-1_1",
+    "ShoulderCollarBolt_-1_2",
+    "ShoulderCollarBolt_-1_3",
+    "ShoulderCollarBolt_-1_4",
+    "ShoulderCollarBolt_-1_5",
+    "ShoulderCollarBolt_-1_6",
+    "ShoulderCollarBolt_-1_7",
+    "ShoulderCollarBolt_1_0",
+    "ShoulderCollarBolt_1_1",
+    "ShoulderCollarBolt_1_2",
+    "ShoulderCollarBolt_1_3",
+    "ShoulderCollarBolt_1_4",
+    "ShoulderCollarBolt_1_5",
+    "ShoulderCollarBolt_1_6",
+    "ShoulderCollarBolt_1_7",
+    "ShoulderFaceBolt_-1",
+    "ShoulderFaceBolt_1",
+    "ShoulderGoldEdge_-1",
+    "ShoulderGoldEdge_1",
+    "ShoulderSidePauldron_-1_0",
+    "ShoulderSidePauldron_-1_1",
+    "ShoulderSidePauldron_-1_2",
+    "ShoulderSidePauldron_1_0",
+    "ShoulderSidePauldron_1_1",
+    "ShoulderSidePauldron_1_2",
+    "UpperActuator_Body_-1",
+    "UpperActuator_Body_1",
+    "UpperActuator_GoldCollar_-1",
+    "UpperActuator_GoldCollar_1",
+    "UpperActuator_Piston_-1",
+    "UpperActuator_Piston_1",
+    "UpperArm_Conduit_-1",
+    "UpperArm_Conduit_1",
+    "UpperArm_FrontLeaf_-1",
+    "UpperArm_FrontLeaf_1",
+    "UpperArm_GoldSeam_-1",
+    "UpperArm_GoldSeam_1",
+    "UpperFront_ExposedPiston",
+    "UpperFront_GoldCollar",
+    "UpperFront_PistonSleeve"
+  ],
+  "boundary": "Imported geometry is the evaluated triangulated export, not byte-identical to native editable control meshes. Exact native-to-GLB mesh byte equality is not claimed."
+}

@@ -1,0 +1,62 @@
+{
+  "A": {
+    "condition": "before",
+    "sourceFolder": "/tmp/refas-dual-asset-20261122/garment/renders/before",
+    "images": [
+      {
+        "file": "view-back.png",
+        "sha256": "c16b900b5548a237fb24c1fe3821267ea02260c855f93f78e6cc32b40aa1f10b"
+      },
+      {
+        "file": "view-front-three-quarter.png",
+        "sha256": "cdd8e2e6dab5471ad595938d7b81bfc0f0b84e5d0545d62e8159ad86fc2fc58a"
+      },
+      {
+        "file": "view-front.png",
+        "sha256": "ec4c6876f2dc65257fe1901424e3801d6177070f725867e5cb2cddcdb3cbcfc2"
+      },
+      {
+        "file": "view-left.png",
+        "sha256": "417ebc9bfdb09a948cf3be9b322a5ba0d27d3a5a0fdab92119ebb47087bc8d00"
+      },
+      {
+        "file": "view-rear-three-quarter.png",
+        "sha256": "3b4e65406beb34cd71807b71c2a2a875e2142d97036dce35d013affd77f3c141"
+      },
+      {
+        "file": "view-right.png",
+        "sha256": "753b96c70b471affe42b2c372a6ef2fa9f8aa22dfb3c2909dbc7c9fadde6526e"
+      }
+    ]
+  },
+  "B": {
+    "condition": "after",
+    "sourceFolder": "/tmp/refas-dual-asset-20261122/garment/renders/after",
+    "images": [
+      {
+        "file": "view-back.png",
+        "sha256": "212d78ee2868a17aee01076953afe019f8b614f868be05df8d6f78d30d0269b2"
+      },
+      {
+        "file": "view-front-three-quarter.png",
+        "sha256": "12b2eb2c2cdcd89b4872efad271bd0e1181e8732174ba2eaf6f20a96d460c3fc"
+      },
+      {
+        "file": "view-front.png",
+        "sha256": "0fe8f4ae4ef9b7e5b2e71202b3f920ddcc8c4686f09224279b734e459c3daf3c"
+      },
+      {
+        "file": "view-left.png",
+        "sha256": "763d3848152289f3d208842361988cc0954a2951cf16bf6cf7855abda94ab64f"
+      },
+      {
+        "file": "view-rear-three-quarter.png",
+        "sha256": "8af9bd1b6244fb0ca59dc46e20b73178ba1349824478206d72c13b11bedbdfad"
+      },
+      {
+        "file": "view-right.png",
+        "sha256": "1b43bd00485a423885a71fbb0d7f2166a72b34b0471ff7168506906879927c3c"
+      }
+    ]
+  }
+}

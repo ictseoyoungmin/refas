@@ -1,0 +1,50 @@
+{
+  "tested_angles_degrees": {
+    "elbow": [
+      0,
+      45,
+      90
+    ],
+    "wrist": [
+      25
+    ],
+    "index_second_joint": [
+      45
+    ]
+  },
+  "pose_observations": [
+    {
+      "joint": "ELBOW_JOINT",
+      "degrees": 0,
+      "wrist_world_translation_m": [
+        0.0,
+        0.0,
+        0.18700000643730164
+      ],
+      "forearm_descendants": 194
+    },
+    {
+      "joint": "ELBOW_JOINT",
+      "degrees": 45,
+      "wrist_world_translation_m": [
+        0.0,
+        0.1753624826669693,
+        0.2596375346183777
+      ],
+      "forearm_descendants": 194
+    },
+    {
+      "joint": "ELBOW_JOINT",
+      "degrees": 90,
+      "wrist_world_translation_m": [
+        0.0,
+        0.24799999594688416,
+        0.4350000023841858
+      ],
+      "forearm_descendants": 194
+    }
+  ],
+  "restored_neutral_exact_state_match": true,
+  "restored_neutral_differences": {},
+  "validation_scope": "Rigid hierarchy transforms plus rendered visual inspection. No full kinematic collision solver, physics, hydraulic simulation, skinning or force/range claim."
+}

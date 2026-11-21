@@ -211,6 +211,121 @@ for vertex in raised.data:
         self.assertEqual(encoded["morphMeshes"], 1)
         self.assertTrue(all(result["verification"]["glb"]["checks"].values()))
 
+    def test_rigid_hinge_hierarchy_and_pose_survive_native_and_glb_reopen(self):
+        script = self.root / "rigid-arm.py"
+        script.write_text('''import bpy, math
+def pivot(name, location, parent=None):
+    obj = bpy.data.objects.new(name, None)
+    bpy.context.scene.collection.objects.link(obj)
+    obj.parent = parent
+    obj.location = location
+    return obj
+def part(name, parent, location, scale):
+    bpy.ops.mesh.primitive_cube_add()
+    obj = bpy.context.object
+    obj.name = name
+    obj.parent = parent
+    obj.location = location
+    for vertex in obj.data.vertices:
+        vertex.co.x *= scale[0]
+        vertex.co.y *= scale[1]
+        vertex.co.z *= scale[2]
+    bevel = obj.modifiers.new("EditableEdge", "BEVEL")
+    bevel.width = 0.004
+    bevel.segments = 2
+    return obj
+root = pivot("ShoulderPivot", (0.2, -0.1, 0.8))
+root.rotation_euler.z = math.radians(20)
+part("UpperArmor", root, (0, 0, -0.12), (0.04, 0.05, 0.12))
+hinge = pivot("ElbowPivot", (0, 0, -0.28), root)
+part("ForearmArmor", hinge, (0, 0, -0.12), (0.03, 0.04, 0.12))
+wrist = pivot("WristPivot", (0, 0, -0.25), hinge)
+part("HandArmor", wrist, (0, 0, -0.04), (0.04, 0.02, 0.04))
+''', encoding="utf-8")
+        self.run_job("rigid-arm-before", script=str(script))
+        baseline = self.root / "rigid-arm-before/scene.blend"
+        baseline_sha = sha(baseline)
+        edit = self.root / "bend-elbow.py"
+        edit.write_text("import bpy, math\nbpy.data.objects['ElbowPivot'].rotation_euler.x = math.pi / 2\n")
+        result = self.run_job("rigid-arm-after", script=str(edit), baseBlend=str(baseline))
+        self.assertTrue(result["verification"]["native"]["fingerprintMatches"])
+        self.assertTrue(all(result["verification"]["glb"]["checks"].values()))
+        before = {o["name"]: o for o in json.loads(
+            (self.root / "rigid-arm-before/scene.json").read_text())["objects"]}
+        after = {o["name"]: o for o in json.loads(
+            (self.root / "rigid-arm-after/scene.json").read_text())["objects"]}
+        self.assertEqual(before.keys(), after.keys())
+        for name in ("ShoulderPivot", "UpperArmor"):
+            self.assertEqual(before[name]["fingerprint"], after[name]["fingerprint"])
+        for name in ("ForearmArmor", "WristPivot", "HandArmor"):
+            for a_row, b_row in zip(before[name]["matrixLocal"], after[name]["matrixLocal"]):
+                for a, b in zip(a_row, b_row):
+                    self.assertAlmostEqual(a, b, delta=1e-6)
+            self.assertNotEqual(before[name]["matrixWorld"], after[name]["matrixWorld"])
+        for name in ("UpperArmor", "ForearmArmor", "HandArmor"):
+            self.assertEqual(before[name]["mesh"], after[name]["mesh"])
+            self.assertEqual(before[name]["evaluatedMesh"], after[name]["evaluatedMesh"])
+            self.assertEqual([m["type"] for m in after[name]["modifiers"]], ["BEVEL"])
+        # Independently reopen both formats: the worker's count/bounds checks do
+        # not establish that a rigid articulation remains an editable hierarchy.
+        probe = self.root / "probe-rigid-arm.py"
+        output = self.root / "rigid-arm-readback.json"
+        paths = [("native", str(self.root / "rigid-arm-after/scene.blend")),
+                 ("glb", str(self.root / "rigid-arm-after/asset.glb"))]
+        probe.write_text('''import bpy, json, math
+from mathutils import Vector
+records = {}
+for kind, path in ''' + repr(paths) + ''':
+    if kind == "native":
+        bpy.ops.wm.open_mainfile(filepath=path, load_ui=False, use_scripts=False)
+    else:
+        bpy.ops.wm.read_factory_settings(use_empty=True)
+        bpy.ops.import_scene.gltf(filepath=path)
+    bpy.context.view_layer.update()
+    root = bpy.data.objects["ShoulderPivot"]
+    hinge = bpy.data.objects["ElbowPivot"]
+    upper = bpy.data.objects["UpperArmor"]
+    hand = bpy.data.objects["HandArmor"]
+    assert hinge.parent == root
+    assert bpy.data.objects["ForearmArmor"].parent == hinge
+    assert bpy.data.objects["WristPivot"].parent == hinge
+    assert hand.parent == bpy.data.objects["WristPivot"]
+    # The hand's origin is 0.29 m below the elbow in local rest coordinates.
+    expected = root.matrix_world @ Vector((0, 0.29, -0.28))
+    assert (hand.matrix_world.translation - expected).length < 1e-6
+    objects = {obj.name: {"parent": obj.parent.name if obj.parent else None,
+               "world": [list(row) for row in obj.matrix_world]}
+               for obj in bpy.context.scene.objects}
+    upper_before = upper.matrix_world.copy()
+    hinge.rotation_mode = "XYZ"
+    hinge.rotation_euler.x = math.pi / 3
+    bpy.context.view_layer.update()
+    expected = root.matrix_world @ Vector((0, 0.29 * math.sin(math.pi / 3),
+                                          -0.28 - 0.29 * math.cos(math.pi / 3)))
+    assert (hand.matrix_world.translation - expected).length < 1e-6
+    assert max(abs(a - b) for row_a, row_b in zip(upper_before, upper.matrix_world)
+               for a, b in zip(row_a, row_b)) < 1e-7
+    records[kind] = {"objects": objects, "handAtSixtyDegrees": list(hand.matrix_world.translation)}
+with open(''' + repr(str(output)) + ''', "w") as stream:
+    json.dump(records, stream)
+''', encoding="utf-8")
+        checked = subprocess.run([str(BLENDER), "-b", "--factory-startup", "--threads", "2",
+                                  "--python-exit-code", "1", "--python", str(probe)],
+                                 capture_output=True, text=True, timeout=90)
+        self.assertEqual(checked.returncode, 0, checked.stdout[-2000:] + checked.stderr[-2000:])
+        records = json.loads(output.read_text())
+        native, glb = records["native"], records["glb"]
+        self.assertEqual(native["objects"].keys(), glb["objects"].keys())
+        for name, native_object in native["objects"].items():
+            glb_object = glb["objects"][name]
+            self.assertEqual(native_object["parent"], glb_object["parent"])
+            for native_row, glb_row in zip(native_object["world"], glb_object["world"]):
+                for a, b in zip(native_row, glb_row):
+                    self.assertAlmostEqual(a, b, delta=1e-6)
+        for a, b in zip(native["handAtSixtyDegrees"], glb["handAtSixtyDegrees"]):
+            self.assertAlmostEqual(a, b, delta=1e-6)
+        self.assertEqual(sha(baseline), baseline_sha)
+
     def test_dirty_packed_texture_pixels_survive_native_save_and_glb_export(self):
         script = self.root / "packed-texture.py"
         script.write_text('''import bpy
