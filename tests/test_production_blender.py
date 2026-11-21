@@ -102,6 +102,85 @@ class ProductionBlenderTests(unittest.TestCase):
         self.assertEqual(sha(self.source), self.source_sha)
         self.assertEqual(sha(glb), original_glb)
 
+    def test_fixed_review_camera_and_lighting_survive_changed_bounds(self):
+        spec = self.root / "fixed-review.json"
+        spec.write_text(json.dumps({"schema": "refas.production.review/v2",
+            "lighting": {"center": [0, 0, 0.1], "radius": 0.3},
+            "background": [0.8, 0.85, 0.9], "transparent": True,
+            "views": [{"name": "registered-hypothesis", "position": [0, -2, 0.1],
+                       "target": [0, 0, 0.1], "orthoScale": 0.8}]}))
+        script = self.root / "change-bounds.py"
+        script.write_text("import bpy\nbpy.data.objects['HeadbandOuter'].location.x += 0.3\n")
+        before = self.run_job("fixed-before", operation="inspect", baseBlend=str(self.source),
+                              reviewSpec=str(spec), views=["registered-hypothesis"])
+        after = self.run_job("fixed-after", script=str(script), baseBlend=str(self.source),
+                             reviewSpec=str(spec), views=["registered-hypothesis"])
+        a, b = before["observations"][0], after["observations"][0]
+        self.assertEqual(a["camera"], b["camera"])
+        self.assertEqual(a["lighting"], b["lighting"])
+        self.assertEqual(a["renderer"], b["renderer"])
+        self.assertNotEqual(a["sourceSceneFingerprint"], b["sourceSceneFingerprint"])
+        self.assertEqual(a["registration"], "unregistered")
+        self.assertEqual(a["framing"], "fixed-review-spec")
+        self.assertEqual(sha(self.source), self.source_sha)
+
+    def test_inspection_rejects_curves_instead_of_silently_omitting_them(self):
+        source = self.root / "native-with-curve.blend"
+        script = self.root / "native-with-curve.py"
+        script.write_text('''import bpy
+bpy.ops.wm.read_factory_settings(use_empty=True)
+bpy.ops.mesh.primitive_cube_add()
+bpy.ops.curve.primitive_bezier_circle_add(radius=2)
+bpy.context.object.name = "VisiblePiping"
+bpy.context.object.data.bevel_depth = 0.1
+bpy.ops.wm.save_as_mainfile(filepath=''' + repr(str(source)) + ''')
+''')
+        built = subprocess.run([str(BLENDER), "-b", "--factory-startup", "--threads", "2",
+                                "--python-exit-code", "1", "--python", str(script)],
+                               capture_output=True, text=True, timeout=60)
+        self.assertEqual(built.returncode, 0, built.stdout[-2000:])
+        original = sha(source)
+        result = self.run_job("inspect-curve", expect_success=False, operation="inspect",
+                              baseBlend=str(source), views=["front"])
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("VisiblePiping:CURVE", result.stdout + result.stderr)
+        self.assertFalse((self.root / "inspect-curve/view-front.png").exists())
+        self.assertEqual(sha(source), original)
+
+    def test_instances_cannot_render_outside_the_inventoried_asset_scope(self):
+        source = self.root / "native-with-instance.blend"
+        script = self.root / "native-with-instance.py"
+        script.write_text('''import bpy
+bpy.ops.wm.read_factory_settings(use_empty=True)
+bpy.ops.mesh.primitive_cube_add()
+hidden_collection = bpy.data.collections.new("InstanceContents")
+bpy.ops.curve.primitive_bezier_circle_add(radius=2)
+piping = bpy.context.object
+piping.data.bevel_depth = 0.1
+for collection in list(piping.users_collection):
+    collection.objects.unlink(piping)
+hidden_collection.objects.link(piping)
+instance = bpy.data.objects.new("UninventoriedDecoration", None)
+instance.instance_type = "COLLECTION"
+instance.instance_collection = hidden_collection
+bpy.context.scene.collection.objects.link(instance)
+bpy.ops.wm.save_as_mainfile(filepath=''' + repr(str(source)) + ''')
+''')
+        built = subprocess.run([str(BLENDER), "-b", "--factory-startup", "--threads", "2",
+                                "--python-exit-code", "1", "--python", str(script)],
+                               capture_output=True, text=True, timeout=60)
+        self.assertEqual(built.returncode, 0, built.stdout[-2000:])
+        original = sha(source)
+        noop = self.root / "instance-noop.py"
+        noop.write_text("# Preserve the input scene.\n")
+        for operation in ("inspect", "edit"):
+            result = self.run_job(operation + "-instance", expect_success=False,
+                operation=operation, baseBlend=str(source), script=str(noop), views=["front"])
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("UninventoriedDecoration", result.stdout + result.stderr)
+            self.assertFalse((self.root / (operation + "-instance") / "view-front.png").exists())
+        self.assertEqual(sha(source), original)
+
     def test_static_modifiers_export_evaluated_geometry_without_losing_morphs(self):
         script = self.root / "mixed-modifiers.py"
         script.write_text('''import bpy

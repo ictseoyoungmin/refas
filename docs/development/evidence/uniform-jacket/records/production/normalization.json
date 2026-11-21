@@ -1,0 +1,8 @@
+{
+  "sourceSha256": "3ac6d8e5bb3a2571475efb90274142a6d550ce39669e179feb4b630050d08542",
+  "convertedCurves": [],
+  "sourceObjectCount": 277,
+  "method": "Blender object.convert MESH on a separate copy, no source resave",
+  "observationObjectCount": 277,
+  "sourceUnchanged": true
+}

@@ -20,7 +20,7 @@ function cli(...args){
 
 test('released agent operations are discoverable in canonical graph, CLI help and describe node',async()=>{
  const graph=JSON.parse(await fs.readFile(path.join(root,'references','GRAPH.json'),'utf8'));
- assert.equal(graph.nodes.length,40,'do not add capabilities or instructional leaves');
+ assert.equal(graph.nodes.length,41,'include the optional production review guide without adding runtime capabilities');
  assert.equal(CAPABILITY_ORDER.length,11,'runtime ownership remains canonical');
  const help=cli('--help').commands;
  for(const expected of specs){

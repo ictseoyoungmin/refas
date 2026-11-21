@@ -2,6 +2,11 @@
 
 This file is the canonical installed-skill route from `SKILL.md`. The machine-readable `references/GRAPH.json` defines capability ownership, prerequisites, interface descriptors and trust boundaries; prose only routes the active work. Read `references/workflow.md` for the eleven-capability loop and only the relevant reference leaf below.
 
+The loop below serves existing 1.x projects and explicit certification work.
+For the 2.0 production entry in `SKILL.md`, read `references/production-review.md`
+only when defining fixed diagnostic cameras and lighting. That optional format
+guide does not require the 1.x capability loop or issue a source certificate.
+
 ## Installation boundary and discovery
 
 - Paths resolve inside the installed skill root: `references/...`, `assets/...`, `scripts/...`. Do not use repository-root `docs/`, `schemas/`, `tests/`, `examples/`, `tools/` or `skills/refas/` self-prefixes as installed skill dependencies. No `../` or bare sibling Markdown routes.

@@ -23,7 +23,7 @@ The new production entry lets an agent **build, edit, inspect and export** using
 
 The main workflow is **observe → construct → render → compare → locally revise**. Validation exists to support asset quality rather than replace modeling.
 
-Start with the [production create/edit example](examples/production-workflow/) and the [installed skill](skills/refas/SKILL.md). The [older demo](demo/index.html), [1.x construction guide](skills/refas/references/construction.md), and 1.x runtime remain available for explicit compatibility. The following release-history and certification sections describe that retained runtime.
+Start with the [production create/edit example](examples/production-workflow/) and the [installed skill](skills/refas/SKILL.md). The [uniform-jacket reference pilot](examples/uniform-jacket/) includes an actual three-condition comparison, a connected-armhole correction, and a reproducible cuff edit/restore. Its initial blind review favored the no-skill candidate; it does not establish 2.0 modeling superiority. The [older demo](demo/index.html), [1.x construction guide](skills/refas/references/construction.md), and 1.x runtime remain available for explicit compatibility. The following release-history and certification sections describe that retained runtime.
 
 ## Production quick start — 2.0 development
 
@@ -50,9 +50,11 @@ python3 skills/refas/scripts/produce.py restore --root work/headset --revision R
 
 Replace `REVISION_ID` with an actual value from `status`. Restore records the prior bundle as a new revision while retaining history. To import a separately saved manual edit, pass `--input-blend /path/to/edited.blend` to `run`; `--expected-revision ID` can require the exact base you inspected. `verify` checks recorded file identities; inspect shape, materials, and required deformation separately. Scripts execute as trusted local code. Failure or stale state must leave the previous current revision available. Successful execution records an output revision, not visual approval.
 
+For before/after work, use `--review-spec REVIEW_JSON` to capture fixed orthographic cameras and lighting with a revision. See the [format guide](skills/refas/references/production-review.md). Default views follow the current bounds; neither mode claims calibration to the reference image.
+
 For a copied skill, invoke `scripts/produce.py` inside that copy; repository examples are optional authoring inputs and are not runtime dependencies. Ordinary modeling can use the full Blender API. The worker saves the native scene and handles export/capture, while useful view selection and final visual review remain agent work.
 
-The initial export scope is self-contained scenes with visible meshes, optional armatures/shape keys, and packed still-image textures. Convert curves and text to meshes first. Static modifiers remain editable in the native scene and are evaluated for GLB export; dirty packed pixels are saved before export. Hidden/excluded meshes and unapplied non-armature modifiers on skinned or shape-key meshes are explicitly rejected in this alpha. Procedural materials may still need baking for faithful GLB appearance.
+The initial export scope is self-contained scenes with visible meshes, optional armatures/shape keys, and packed still-image textures. Convert curves and text to meshes and realize object instances first. Inspection rejects unsupported object scopes instead of silently omitting them. Static modifiers remain editable in the native scene and are evaluated for GLB export; dirty packed pixels are saved before export. Hidden/excluded meshes and unapplied non-armature modifiers on skinned or shape-key meshes are explicitly rejected in this alpha. Procedural materials may still need baking for faithful GLB appearance.
 
 ## 1.x runtime history and capabilities
 

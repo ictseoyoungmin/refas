@@ -1,0 +1,47 @@
+{
+  "scope": "Actual extracted npm package CLI with real Blender, run outside repository; informed compatibility check, not new blind trial",
+  "packageSha256": "b5dbe41c1b538965373f6768cc4952c0012462a048c24d7def0068094efc429f",
+  "packagedFiles": 397,
+  "steps": [
+    {
+      "name": "doctor",
+      "elapsedSeconds": 0.523,
+      "head": null
+    },
+    {
+      "name": "init",
+      "elapsedSeconds": 0.061,
+      "head": null
+    },
+    {
+      "name": "adopt",
+      "elapsedSeconds": 4.646,
+      "head": "789ab1d048914477ac85dc6cf130fbb2"
+    },
+    {
+      "name": "edit",
+      "elapsedSeconds": 4.385,
+      "head": "5dede7451f0e42eb8bca5947854aca4a"
+    },
+    {
+      "name": "restore",
+      "elapsedSeconds": 0.158,
+      "head": "dd54f95c408b4e08b00cbb7aa1d6856b"
+    },
+    {
+      "name": "verify",
+      "elapsedSeconds": 0.072,
+      "head": "dd54f95c408b4e08b00cbb7aa1d6856b"
+    }
+  ],
+  "exactArtifactAndInputRestore": true,
+  "verify": {
+    "ok": true,
+    "scope": "recorded-file-integrity",
+    "head": "dd54f95c408b4e08b00cbb7aa1d6856b",
+    "artifactCount": 5,
+    "referenceResemblance": "not-evaluated",
+    "gameReadiness": "not-evaluated"
+  },
+  "sourceCandidateSha256": "ea207c07cb50bf188d8a603d88b1822f460e7dab3362544cbe8cffdec6cc8a4a"
+}

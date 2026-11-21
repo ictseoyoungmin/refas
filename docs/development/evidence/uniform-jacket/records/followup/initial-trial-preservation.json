@@ -1,0 +1,18 @@
+{
+  "initial_trial_artifacts_unchanged": {
+    "create.py": true,
+    "correct.py": true,
+    "edit_cuff.py": true,
+    "initial.blend": true,
+    "candidate.blend": true,
+    "candidate.glb": true,
+    "edited.blend": true,
+    "edited.glb": true,
+    "restored.blend": true,
+    "construction.json": true,
+    "cuff-edit-checks.json": true,
+    "restore-checks.json": true
+  },
+  "all_match": true,
+  "before_fingerprint_matches_initial": true
+}

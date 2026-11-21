@@ -50,7 +50,7 @@ The initial production command is `python3 skills/refas/scripts/produce.py` in a
 | `verify --root DIR` | Verify project artifact bindings and report missing or changed files. |
 | `restore --root DIR --revision ID` | Publish a verified previous bundle as a new revision while retaining history. |
 
-Rendering flags initially include `--views`, `--size`, `--samples`, and `--timeout`. The runner owns publication of the current revision; failure, stale inputs, or missing outputs must not replace the previous usable state. Successful publication records an execution result, not human visual approval.
+Rendering flags include `--views`, `--size`, `--samples`, `--timeout`, and optional `--review-spec` for captured fixed cameras and lighting. The runner owns publication of the current revision; failure, stale inputs, or missing outputs must not replace the previous usable state. Successful publication records an execution result, not human visual approval.
 
 The Blender worker accepts a regular trusted Python script and exposes `bpy` plus `REFAS_OUTPUT_DIR`. It handles export and requested captures, so agents do not have to hand-author evidence JSON. It is not a sandbox for untrusted code.
 
@@ -75,6 +75,14 @@ Use small Python unit checks for revision/state failure paths. Real Blender exec
 ## Subsequent milestones
 
 ### S2 — Reference reconstruction and useful visual comparison
+
+The [uniform-jacket pilot](evidence/uniform-jacket/README.md) is the first completed
+exploratory source-image case: one fresh no-skill/1.x/2.0 attempt each, followed by
+the same cuff edit and recovery task. Anonymous review favored the no-skill
+prototype; all candidates remained unfinished. A separate informed 2.0 follow-up
+closed the sleeve/body gaps using shared topology. The case justified fixed
+camera/light capture and explicit unsupported-object inspection failures. It
+does not complete the broader profile or release milestone below.
 
 Use permitted real references representing at least a hard-surface prop, an organic shape, and a multi-part object. Establish consistent source comparison views, preserve uncertain camera choices, and demonstrate visible improvement from local edits. Add a comparison helper only when a real review failure requires it.
 

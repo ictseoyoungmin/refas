@@ -24,14 +24,14 @@ test('typed semantic instruction graph covers every leaf and matches runtime own
   const report = await analyzeSemanticInstructionGraph();
   assert.equal(report.status, 'PASS', report.errors.join('\n'));
   assert.equal(report.schema, 'refas.instruction-graph/v1');
-  assert.equal(report.nodeCount, 40);
-  assert.equal(report.referenceLeaves, 40);
+  assert.equal(report.nodeCount, 41);
+  assert.equal(report.referenceLeaves, 41);
   assert.equal(report.cycle, null);
   assert.deepEqual(report.missingCapabilityOwners, []);
   assert.deepEqual(report.bareMarkdownRoutes, []);
   assert.deepEqual(report.legacyHiddenGeometryPolicyHits, []);
   assert.equal(report.interfaceSchema, 'refas.instruction-node-interface/v1');
-  assert.equal(report.interfaceNodes, 40);
+  assert.equal(report.interfaceNodes, 41);
   assert.equal(report.interfaceOperations, 121);
   assert.equal(report.runtimeCapabilitiesCovered.length, 11);
   assert.deepEqual(report.runtimeCapabilitiesCovered.sort(), [
@@ -172,13 +172,13 @@ test('semantic graph verifies from a bare copied installed skill with repository
     assert.equal(result.status, 0, result.stderr || result.stdout);
     const report = JSON.parse(result.stdout);
     assert.equal(report.status, 'PASS');
-    assert.equal(report.nodeCount, 40);
-    assert.equal(report.referenceLeaves, 40);
+    assert.equal(report.nodeCount, 41);
+    assert.equal(report.referenceLeaves, 41);
     assert.equal(report.missingCapabilityOwners, 0);
     assert.equal(report.bareMarkdownRoutes, 0);
     assert.equal(report.legacyHiddenGeometryPolicyHits, 0);
     assert.equal(report.interfaceSchema, 'refas.instruction-node-interface/v1');
-    assert.equal(report.interfaceNodes, 40);
+    assert.equal(report.interfaceNodes, 41);
     assert.equal(report.interfaceOperations, 121);
     assert.equal(report.runtimeCapabilitiesCovered, 11);
   } finally {
@@ -203,7 +203,7 @@ test('early neutral-clay assessment is reachable from construction without final
   const final=ancestors('claim-certification');
   for(const id of ['construction','assembly','appearance','validation','candidate-transactions'])
     assert.ok(final.has(id),'final certification must depend on '+id);
-  assert.equal(g.nodes.length,40);
+  assert.equal(g.nodes.length,41);
   assert.equal(byId.validation.interface.interfaces.some(i=>i.id==='early-resemblance-barrier'),true);
   assert.equal(byId.validation.interface.interfaces.some(i=>i.id==='final-resemblance-closure'),true);
 });

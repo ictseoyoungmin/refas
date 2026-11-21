@@ -1,0 +1,353 @@
+{
+  "condition": "Fixed RefAs 1.x snapshot, main a29bcc42 / reported runtime 1.4.2",
+  "status": "EDITABLE_REFERENCE_PROTOTYPE_WITH_UNRESOLVED_DEFECTS",
+  "workspace": "/tmp/refas-jacket-evaluation/legacy",
+  "start_time_before_guidance": null,
+  "first_recorded_time_utc": "2026-11-21T18:52:59.814435+00:00",
+  "end_time_utc": "2026-11-21T19:02:50.613155+00:00",
+  "elapsed_since_first_recorded_seconds": 590.79872,
+  "soft_budget_seconds": 900,
+  "overrun": "No overrun observed from first reliable timestamp; exact pre-read total unavailable.",
+  "guidance_files": [
+    {
+      "path": "/tmp/refas-jacket-evaluation/legacy/skills/refas/SKILL.md",
+      "bytes": 9491,
+      "coverage": "full text read"
+    },
+    {
+      "path": "/tmp/refas-jacket-evaluation/legacy/skills/refas/references/INDEX.md",
+      "bytes": 14330,
+      "coverage": "full text read"
+    },
+    {
+      "path": "/tmp/refas-jacket-evaluation/legacy/skills/refas/references/workflow.md",
+      "bytes": 15470,
+      "coverage": "full text read"
+    },
+    {
+      "path": "/tmp/refas-jacket-evaluation/legacy/skills/refas/references/observation.md",
+      "bytes": 12654,
+      "coverage": "full text read"
+    },
+    {
+      "path": "/tmp/refas-jacket-evaluation/legacy/skills/refas/references/provenance.md",
+      "bytes": 2091,
+      "coverage": "full text read"
+    },
+    {
+      "path": "/tmp/refas-jacket-evaluation/legacy/skills/refas/references/spatial-reasoning.md",
+      "bytes": 30732,
+      "coverage": "Full text requested in oversized output; output truncated. Opening 125 lines reread as the applicable spatial/camera guidance; certification sections not fully consumed."
+    },
+    {
+      "path": "/tmp/refas-jacket-evaluation/legacy/skills/refas/references/construction.md",
+      "bytes": 19245,
+      "coverage": "full text read"
+    },
+    {
+      "path": "/tmp/refas-jacket-evaluation/legacy/skills/refas/references/checkpointing.md",
+      "bytes": 8849,
+      "coverage": "full text read"
+    },
+    {
+      "path": "/tmp/refas-jacket-evaluation/legacy/skills/refas/references/validation.md",
+      "bytes": 24678,
+      "coverage": "full text read"
+    },
+    {
+      "path": "/tmp/refas-jacket-evaluation/legacy/skills/refas/references/appearance.md",
+      "bytes": 8238,
+      "coverage": "full text read"
+    },
+    {
+      "path": "/tmp/refas-jacket-evaluation/legacy/skills/refas/references/failure-routing.md",
+      "bytes": 5608,
+      "coverage": "full text read"
+    },
+    {
+      "path": "/tmp/refas-jacket-evaluation/legacy/skills/refas/references/contracts/canonical-edit-boundary.md",
+      "bytes": 4023,
+      "coverage": "full text read"
+    }
+  ],
+  "unique_guidance_bytes_accessed": 155409,
+  "read_output_truncation_disclosed": true,
+  "additional_read_inputs": [
+    {
+      "path": "/tmp/refas-jacket-evaluation/legacy/skills/refas/assets/templates/canonical-object-frame.json",
+      "bytes": 415,
+      "coverage": "full template read"
+    },
+    {
+      "path": "assigned scripts/refas.mjs",
+      "coverage": "CLI help/argument parsing snippets only, plus rg matching lines"
+    }
+  ],
+  "sole_visual_reference": {
+    "path": "source/reference.png",
+    "sha256": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5",
+    "bytes": 2666378,
+    "visually_inspected_before_modeling": true
+  },
+  "geometry_candidates": {
+    "initial": "initial/candidate.blend",
+    "corrections_after_review": 1,
+    "selected": "candidate.blend",
+    "geometry_only_corrected": "geometry-correction.blend",
+    "appearance_change_separate": true
+  },
+  "construction": "Parametric hollow torso shell with Boolean armholes; separate shoulder yoke, notched lapels and standing collar; shaped hollow sleeve lofts; solidified cuff bands; curve piping and geometric hardware; original constructed meshes only.",
+  "attempts": [
+    {
+      "command": "/usr/bin/blender -b -t 4 --python create.py",
+      "result": "First run failed at denoising after native/GLB export; no geometry review or correction yet",
+      "runtime_seconds": null
+    },
+    {
+      "command": "/usr/bin/blender -b -t 4 --python create.py",
+      "result": "Same initial geometry rerun with denoising disabled; three views completed",
+      "runtime_seconds": 14.105587482452393
+    },
+    {
+      "command": "/usr/bin/blender -b -t 4 --python correct.py",
+      "result": "One geometry correction, separately saved geometry stage, then color conversion; three views",
+      "runtime_seconds": 26.984947443008423
+    },
+    {
+      "command": "/usr/bin/blender -b -t 4 --python edit_cuff.py",
+      "result": "Local native edit, exported edited asset, detail render, reopened verification, byte-exact restore",
+      "runtime_seconds": 3.2454206943511963
+    },
+    {
+      "command": "/usr/bin/blender -b -t 4 --python render_glb_verify.py",
+      "result": "Imported exact GLB after removing native asset, actual front and underside views",
+      "runtime_seconds": 6.997783184051514
+    }
+  ],
+  "renderer": {
+    "version": "Blender 4.3.2",
+    "backend": "Cycles CPU, 4 threads",
+    "resolution": [
+      768,
+      768
+    ],
+    "samples_initial": 24,
+    "samples_selected": 48,
+    "denoising": false,
+    "view_transform": "AgX",
+    "source_camera_registration": false,
+    "scene_floor": false
+  },
+  "glb": {
+    "file_sha256": "6c831a2cc4765ec3989ba149fbbd58b2832404bf491b87ffc77850974941d5cb",
+    "valid_inspection": true,
+    "meshes": 111,
+    "triangles": 71382,
+    "materials": 4,
+    "cameras": 0,
+    "lights": 0,
+    "mannequin_or_floor": false
+  },
+  "local_edit": {
+    "baseline_band_height_m": 0.06000000797212124,
+    "edited_band_height_m": 0.0700000086799264,
+    "height_target_m": 0.07,
+    "height_ok": true,
+    "protected_object_count": 104,
+    "protected_changed": [],
+    "materials_unchanged": true,
+    "left_cuff_members": [
+      "Left cuff band",
+      "Left cuff lower piping",
+      "Left cuff upper piping",
+      "Left cuff buckle frame",
+      "Left cuff buckle pin",
+      "Left cuff eyelet",
+      "Left cuff eyelet.001"
+    ],
+    "actual_changed_objects": [
+      "Left cuff band",
+      "Left cuff upper piping",
+      "Left cuff buckle frame",
+      "Left cuff buckle pin",
+      "Left cuff eyelet",
+      "Left cuff eyelet.001"
+    ],
+    "native_source_edit": true,
+    "direct_glb_mutation": false,
+    "persisted_height_m": 0.0700000086799264,
+    "persisted_protected_changed": [],
+    "candidate_blend_sha256": "12bad67bdd8ac19d44291af29919f3036aca833eeb5ecde820ebed35062275a2",
+    "restored_blend_sha256": "12bad67bdd8ac19d44291af29919f3036aca833eeb5ecde820ebed35062275a2",
+    "restore_byte_identical": true,
+    "runtime_seconds": 3.2454206943511963
+  },
+  "source_bound_validation": {
+    "decision": "BLOCKED",
+    "blocking_checks": [
+      "candidate-lineage",
+      "source-semantic-current-glb",
+      "relational-evidence",
+      "registered-multiview",
+      "independent-visual-review",
+      "realized-contact-support",
+      "whole-object-certification"
+    ],
+    "full_report": "logs/validate.json",
+    "source_only_audit_valid": true,
+    "source_checkpoint_id": "cp_9fd83ee1db1029fc003f",
+    "no_final_certification_requested": true,
+    "runtime_shape_checkpoint": false,
+    "native_recovery_is_not_a_refas_authority_claim": true
+  },
+  "reference_ambiguities": [
+    "G=13 cm interpreted as laid-flat cuff width (~26 cm around); N=13 cm unresolved",
+    "Collar-width I=7.5 cm not imposed as full neckline width",
+    "Prioritised front/back/labelled left decoration over contradictory obliques"
+  ],
+  "circumference_interpretation": "A hypothetical closed ellipse at chest uses semiaxes approximately 0.18 and 0.106 m (about 0.91 m around); hem uses 0.136 and 0.074 m (about 0.68 m around). The actual open-front shell omits an arc and is not claimed as a measured closed garment.",
+  "unresolved_visible_defects": [
+    {
+      "category": "attachment-mismatch",
+      "scope": "shoulder-armhole junctions",
+      "severity": "major",
+      "observation": "Separate body/yoke/sleeve surfaces are not welded; shoulder peaks and visible sleeve-cap gaps remain, especially rear/oblique. Subdivision can separate the sewn boundary."
+    },
+    {
+      "category": "curvature-mismatch",
+      "scope": "whole fabric",
+      "severity": "major",
+      "observation": "Sleeves and body remain stiff and smooth; tailored folds, fabric ease, chest shaping and soft collar/lapel roll are simplified."
+    },
+    {
+      "category": "attachment-mismatch",
+      "scope": "rear waist buckles",
+      "severity": "minor",
+      "observation": "Buckle frames are partially buried by the curved rear belt in the back render."
+    },
+    {
+      "category": "silhouette-mismatch",
+      "scope": "lapels and shoulders",
+      "severity": "minor",
+      "observation": "Lapel notch geometry is sharp and schematic; shoulder yoke width is about 0.362 m, at the lower edge of the requested 0.38 m tolerance."
+    },
+    {
+      "category": "relief-mismatch",
+      "scope": "left shield and chains",
+      "severity": "minor",
+      "observation": "Shield fleur-de-lis and chain link pattern are coarse approximations; sleeve badge faces mostly sideways and decoration does not exactly match the sheet."
+    },
+    {
+      "category": "finish-mismatch",
+      "scope": "export appearance",
+      "severity": "note",
+      "observation": "Native procedural bump is not embedded in GLB. Export keeps editable base color, metallic and roughness factors. Render noise remains without denoising."
+    }
+  ],
+  "workflow_friction": [
+    "The timestamp was recorded just after the first guidance read, not before it. Pre-read start is unavailable; measured elapsed is a lower bound, with no fabricated pre-read duration.",
+    "The first multi-leaf guidance call produced an oversized, truncated response. Several operative leaves were reread individually; this cost attention and additional calls. Byte totals below measure accessed files, not model tokens.",
+    "Blender Cycles first failed because this build lacks OpenImageDenoise. Optional denoising was disabled; the identical initial construction was rerun.",
+    "Checkpoint CLI discovery did not show a compact complete artifact example. Initial invocation supplied an inline JSON string, then paths, then incomplete objects; it succeeded after reading provenance and supplying path/kind/sha256/sizeBytes objects in files.",
+    "preview-pbr requires --frame. A frame with an unregistered hero lacked registrationDigest and was rejected. Removing the optional hero allowed semantic-axis diagnostic previews without inventing source registration.",
+    "External-construction attestation, canonical shape checkpoints, registered source projection, and certified downstream closure were not attempted for this draft. The source checkpoint is valid, but native edits are not claimed to be runtime-admitted RefAs transactions.",
+    "Initial sleeve frame logic caused one mirrored shoulder to twist. The single permitted geometry correction repaired angular correspondence and smoothed both sleeves.",
+    "Initial palette values were entered as linear RGB and looked too pale. A separate appearance step converted the given sRGB palette to linear factors; geometry-only correction was saved before that step."
+  ],
+  "artifacts": [
+    {
+      "path": "/tmp/refas-jacket-evaluation/legacy/create.py",
+      "bytes": 14877,
+      "sha256": "6c3934c72c41da57b615729899bf7827764eba24e43d96a4d37f8e39ffd73584"
+    },
+    {
+      "path": "/tmp/refas-jacket-evaluation/legacy/correct.py",
+      "bytes": 3497,
+      "sha256": "9b0d473b56607d4ed1bb556b53726908cc54bd4350ce9ee864879d4ad49cc6d5"
+    },
+    {
+      "path": "/tmp/refas-jacket-evaluation/legacy/edit_cuff.py",
+      "bytes": 4374,
+      "sha256": "4d596cdacdae3327b6eb56735cc5e33cced263e02f99712e08e6956eb3ad2780"
+    },
+    {
+      "path": "/tmp/refas-jacket-evaluation/legacy/render_glb_verify.py",
+      "bytes": 1542,
+      "sha256": "7e94c9adb9c17389c94eecf8940d0c2d5961a150bbd8dd9f9c84590639b7a898"
+    },
+    {
+      "path": "/tmp/refas-jacket-evaluation/legacy/candidate.blend",
+      "bytes": 1652336,
+      "sha256": "12bad67bdd8ac19d44291af29919f3036aca833eeb5ecde820ebed35062275a2"
+    },
+    {
+      "path": "/tmp/refas-jacket-evaluation/legacy/candidate.glb",
+      "bytes": 1586980,
+      "sha256": "6c831a2cc4765ec3989ba149fbbd58b2832404bf491b87ffc77850974941d5cb"
+    },
+    {
+      "path": "/tmp/refas-jacket-evaluation/legacy/edited.blend",
+      "bytes": 1652336,
+      "sha256": "5824faa237cc272ee168821487bff45bc8fdffda1fc0f599431ddbee133fb132"
+    },
+    {
+      "path": "/tmp/refas-jacket-evaluation/legacy/edited.glb",
+      "bytes": 1587108,
+      "sha256": "ba1f41d29866a8734c5fffc6f2580ffd3115e437b6ac17a5abc0f76292456d37"
+    },
+    {
+      "path": "/tmp/refas-jacket-evaluation/legacy/restored.blend",
+      "bytes": 1652336,
+      "sha256": "12bad67bdd8ac19d44291af29919f3036aca833eeb5ecde820ebed35062275a2"
+    },
+    {
+      "path": "/tmp/refas-jacket-evaluation/legacy/geometry-correction.blend",
+      "bytes": 1652336,
+      "sha256": "e7e71e35c92c36b719173cc61fca010e85edcffe17102625f59e1ab8095a91ce"
+    },
+    {
+      "path": "/tmp/refas-jacket-evaluation/legacy/local-edit-verification.json",
+      "bytes": 22820,
+      "sha256": "cad6ff00d98a5011029a6572676aa9f352002d920408542edf4a7a02911db67c"
+    },
+    {
+      "path": "/tmp/refas-jacket-evaluation/legacy/observations.json",
+      "bytes": 2066,
+      "sha256": "07c0a4685613b008b8eeab2554fbd06d1e6cf7528158ec2160e350b73cb226d2"
+    },
+    {
+      "path": "/tmp/refas-jacket-evaluation/legacy/renders/back.png",
+      "bytes": 649782,
+      "sha256": "383caf692b7f99dbd4cb05eb48e8a448698222f1bf59b1844dac60bbdedcbfaa"
+    },
+    {
+      "path": "/tmp/refas-jacket-evaluation/legacy/renders/edited-left-cuff.png",
+      "bytes": 311535,
+      "sha256": "163d6a0335371b49945bfce8b41ee6fa9032cfa7ce16361d899d20fbbf54fe6b"
+    },
+    {
+      "path": "/tmp/refas-jacket-evaluation/legacy/renders/exported-glb-front.png",
+      "bytes": 501821,
+      "sha256": "839cc78b3ea2e079713de69cb5cd8cdc8d830c701cb27475acc4118abfb64331"
+    },
+    {
+      "path": "/tmp/refas-jacket-evaluation/legacy/renders/exported-glb-openings.png",
+      "bytes": 493327,
+      "sha256": "2006fa4900f75b464869327ee31451ee8fe51673e802111195873e7891a70055"
+    },
+    {
+      "path": "/tmp/refas-jacket-evaluation/legacy/renders/front.png",
+      "bytes": 707287,
+      "sha256": "bc881a408cb319c50554bf3c9f9246e56f37a48de98b5d35b53a8a951f621870"
+    },
+    {
+      "path": "/tmp/refas-jacket-evaluation/legacy/renders/three-quarter.png",
+      "bytes": 703896,
+      "sha256": "740ee47537a9915d9639f966274403e31c4ea24ca15299b1c4cf642906cd86df"
+    }
+  ],
+  "tokens": null,
+  "tool_call_count": null,
+  "likeness_score": null,
+  "comparison_scope": "One exploratory attempt; no general superiority claim."
+}

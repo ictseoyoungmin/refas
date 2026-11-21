@@ -14,6 +14,8 @@ import tempfile
 import time
 import uuid
 
+from .review import validate_review
+
 
 SCHEMA = "refas.production.project/v2"
 REVISION_SCHEMA = "refas.production.revision/v2"
@@ -342,8 +344,8 @@ def _validate_worker_result(artifact_dir):
     return result
 
 
-def run_edit(root, script, intent, blender="blender", input_blend=None, views=("hero", "side"),
-             size=384, samples=8, timeout=180, expected_revision=None, executor=None):
+def run_edit(root, script, intent, blender="blender", input_blend=None, views=None,
+             size=384, samples=8, timeout=180, expected_revision=None, executor=None, review_spec=None):
     root, meta = _meta(root)
     base = load_project(root)
     verify_project(root)
@@ -355,8 +357,20 @@ def run_edit(root, script, intent, blender="blender", input_blend=None, views=("
         raise ProductionError("timeout must be between 1 and 3600 seconds")
     if type(size) is not int or not 64 <= size <= 2048 or type(samples) is not int or not 1 <= samples <= 256:
         raise ProductionError("invalid render size or sample count")
-    supported_views = {"hero", "front", "back", "side", "top"}
-    views = list(views)
+    if review_spec:
+        review_spec = Path(review_spec).expanduser().resolve()
+        if not review_spec.is_file() or review_spec.stat().st_size > 65536:
+            raise ProductionError("review specification must be a JSON file under 64 KiB")
+    review = validate_review(read_json(review_spec)) if review_spec else None
+    if review:
+        supported_views = {v["name"] for v in review["views"]}
+        source_digests = {source["sha256"] for source in base["sources"]}
+        if any(v.get("reference", {}).get("sourceSha256") not in source_digests
+               for v in review["views"] if "reference" in v):
+            raise ProductionError("review references a source outside this project's captured inputs")
+    else:
+        supported_views = {"hero", "front", "back", "side", "top"}
+    views = list(views) if views is not None else ([v["name"] for v in review["views"]] if review else ["hero", "side"])
     if len(views) != len(set(views)) or any(view not in supported_views for view in views):
         raise ProductionError("unknown or duplicate requested view")
     script = Path(script).expanduser().resolve()
@@ -376,6 +390,14 @@ def run_edit(root, script, intent, blender="blender", input_blend=None, views=("
            "intent": intent.strip(), "baseRevision": base["head"], "startedAt": utc_now()}
     atomic_json(run_dir / "run.json", run)
     try:
+        if review:
+            source_review = Path(review_spec).expanduser().resolve()
+            review_sha = digest(source_review)
+            shutil.copy2(source_review, inputs / "review.json")
+            if digest(inputs / "review.json") != review_sha or digest(source_review) != review_sha:
+                raise ProductionError("review specification changed during capture")
+            if validate_review(read_json(inputs / "review.json")) != review:
+                raise ProductionError("review specification changed before capture")
         script_sha = digest(script)
         shutil.copy2(script, inputs / "edit.py")
         if digest(inputs / "edit.py") != script_sha or digest(script) != script_sha:
@@ -397,6 +419,8 @@ def run_edit(root, script, intent, blender="blender", input_blend=None, views=("
         job = {"operation": "edit", "baseBlend": str(inputs / "base.blend") if source_blend else None,
                "script": str(inputs / "edit.py"), "inputDir": str(inputs), "outputDir": str(artifact_dir),
                "views": views, "render": {"engine": "CYCLES", "samples": samples, "size": size}}
+        if review:
+            job["reviewSpec"] = str(inputs / "review.json")
         atomic_json(run_dir / "job.json", job)
         worker = Path(__file__).with_name("blender_worker.py")
         command = [executable or blender, "-b", "--factory-startup", "--threads", "2", "--python-exit-code", "1",

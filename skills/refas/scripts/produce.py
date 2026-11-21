@@ -25,7 +25,8 @@ def parser():
     run.add_argument("--intent", required=True)
     run.add_argument("--input-blend", help="Explicitly import a separately saved manual edit")
     run.add_argument("--blender", default="blender")
-    run.add_argument("--views", default="hero,side", help="Comma-separated hero,front(-Y),back(+Y),side(+X),top(+Z); bbox-framed, empty skips previews")
+    run.add_argument("--views", help="Comma-separated view names; default hero,side, or all supplied review views; empty skips previews")
+    run.add_argument("--review-spec", help="Capture fixed orthographic cameras and lighting from a review JSON file")
     run.add_argument("--size", type=int, default=384)
     run.add_argument("--samples", type=int, default=8)
     run.add_argument("--timeout", type=float, default=180)
@@ -55,8 +56,8 @@ def main():
             output = initialize(args.root, args.name, args.reference)
         elif args.command == "run":
             output = run_edit(args.root, args.script, args.intent, args.blender, args.input_blend,
-                              [view.strip() for view in args.views.split(",") if view.strip()],
-                              args.size, args.samples, args.timeout, args.expected_revision)
+                              [view.strip() for view in args.views.split(",") if view.strip()] if args.views is not None else None,
+                              args.size, args.samples, args.timeout, args.expected_revision, review_spec=args.review_spec)
         elif args.command == "status":
             output = status(args.root)
         elif args.command == "verify":

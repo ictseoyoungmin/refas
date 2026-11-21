@@ -1,0 +1,87 @@
+{
+  "blenderVersion": "4.3.2",
+  "observations": [],
+  "ok": true,
+  "operation": "inspect",
+  "outputs": {
+    "scene": "scene.json"
+  },
+  "schema": "refas.production.result/v2",
+  "verification": {
+    "glb": {
+      "boundsTolerance": 7.5945061e-05,
+      "checks": {
+        "boundsMatchNative": true,
+        "noDiagnosticCamerasOrLights": true,
+        "nonEmpty": true,
+        "trianglesMatchEncoded": true,
+        "trianglesMatchNative": true
+      },
+      "encoded": {
+        "animations": 0,
+        "cameras": 0,
+        "lights": 0,
+        "materials": 4,
+        "meshes": 111,
+        "morphMeshes": 0,
+        "nodes": 111,
+        "skins": 0,
+        "triangles": 71382
+      },
+      "reimportedBounds": {
+        "dimensions": [
+          0.75945061,
+          0.23565,
+          0.61448097
+        ],
+        "max": [
+          0.3797107,
+          0.10935,
+          0.45112255
+        ],
+        "min": [
+          -0.37973991,
+          -0.12630001,
+          -0.16335842
+        ]
+      },
+      "reimportedStatistics": {
+        "armatures": 0,
+        "materialSlots": 111,
+        "meshes": 111,
+        "objects": 111,
+        "shapeKeyObjects": 0,
+        "triangles": 71382,
+        "uvObjects": 94,
+        "vertices": 41567
+      },
+      "scope": "geometry counts, bounds and basic feature presence only",
+      "status": "passed"
+    },
+    "native": {
+      "reopened": true,
+      "scope": "current-frame inventory",
+      "statistics": {
+        "armatures": 0,
+        "materialSlots": 111,
+        "meshes": 111,
+        "objects": 115,
+        "shapeKeyObjects": 0,
+        "triangles": 71382,
+        "uvObjects": 94,
+        "vertices": 35973
+      },
+      "status": "passed"
+    }
+  },
+  "warnings": [
+    "Diagnostic views are unregistered; they do not establish reference likeness.",
+    "GLB reimport checks geometry counts, bounds and basic feature presence, not visual equivalence.",
+    "Fingerprints cover the recorded state at the current frame, not all animation or simulation states.",
+    "Node-group internals and drivers are not exhaustively represented by the state fingerprints.",
+    "Static mesh modifiers are evaluated for GLB export; unapplied non-armature modifiers on skinned or shape-key meshes are unsupported.",
+    "Hidden or excluded meshes are rejected by this alpha so GLB export and diagnostic renders cannot silently use different asset scopes.",
+    "Object instances must be realized into explicit scene objects; curves and other non-mesh geometry must be converted before production inspection or export.",
+    "Procedural Blender materials may need baking for faithful GLB appearance."
+  ]
+}

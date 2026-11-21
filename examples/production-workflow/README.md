@@ -95,11 +95,18 @@ both deliverable files.
 fresh `scene.json` and verification result without resaving either input. It can
 also render requested views. Supported view names are `hero`, `front`, `side`,
 `back`, and `top`; these are bbox-framed diagnostic cameras, not registration to
-a reference. A changed bounding box can change a camera between revisions;
-compare the recorded camera specifications before claiming a matched-view fix.
+a reference. A changed bounding box can change a camera between revisions.
+Use the CLI's `--review-spec` to capture explicit orthographic cameras and fixed
+lighting for before/after comparisons. Its format and limits are documented in
+[`production-review.md`](../../skills/refas/references/production-review.md).
+The worker's corresponding job field is `reviewSpec`, an absolute path to the
+captured JSON. Compare the recorded camera and lighting specifications before
+claiming a matched-view fix; fixed diagnostic views remain unregistered.
 
-The current export boundary supports mesh objects, armatures and empties, and
-packed still image textures. Convert curves/text/metaballs to meshes first.
+The current export boundary supports mesh objects, armatures and non-instancing
+empties, and packed still image textures. Convert curves/text/metaballs to
+meshes and realize instances first. Inspection applies the same object-scope
+restriction instead of rendering an incomplete or unrecorded subset.
 Linked libraries, external movie/audio/cache dependencies, and image sequences
 are rejected explicitly. Procedural Blender shaders may require baking for the
 GLB to look the same. Node group contents, drivers, full animation behavior and

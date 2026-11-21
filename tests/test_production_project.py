@@ -12,6 +12,7 @@ sys.dont_write_bytecode = True
 SCRIPTS = Path(__file__).resolve().parents[1] / "skills" / "refas" / "scripts"
 sys.path.insert(0, str(SCRIPTS))
 from production import project
+from production.review import validate_review
 
 
 def fake_worker(command, cwd, log_file, timeout):
@@ -51,6 +52,66 @@ class ProductionProjectTests(unittest.TestCase):
 
     def run_edit(self, **kwargs):
         return project.run_edit(self.root, self.script, "create shape", executor=fake_worker, **kwargs)
+
+    def review_file(self):
+        spec = {"schema": "refas.production.review/v2",
+                "lighting": {"center": [0, 0, 0], "radius": 1},
+                "views": [{"name": "front-detail", "position": [0, -3, 0], "target": [0, 0, 0],
+                           "orthoScale": 2, "reference": {"sourceSha256": project.digest(self.reference),
+                                                         "regionPixels": [0, 0, 100, 100]}}]}
+        path = self.folder / "review.json"
+        project.atomic_json(path, spec)
+        return path, spec
+
+    def test_review_spec_is_captured_and_restored_with_revision(self):
+        path, spec = self.review_file()
+        first = self.run_edit(review_spec=path)
+        captured = Path(first["inputs"]["review.json"])
+        self.assertEqual(project.read_json(captured), spec)
+        self.assertEqual([x["view"] for x in first["observations"]], ["front-detail"])
+        path.write_text("changed after successful capture")
+        self.run_edit()
+        restored = project.restore(self.root, first["head"])
+        self.assertEqual(project.read_json(restored["inputs"]["review.json"]), spec)
+
+    def test_review_cannot_claim_an_uncaptured_reference(self):
+        path, spec = self.review_file()
+        spec["views"][0]["reference"]["sourceSha256"] = "0" * 64
+        project.atomic_json(path, spec)
+        with self.assertRaisesRegex(project.ProductionError, "outside this project"):
+            self.run_edit(review_spec=path)
+        self.assertEqual(list((self.root / project.STATE_DIR / "runs").iterdir()), [])
+
+    def test_worker_cannot_mutate_captured_review(self):
+        path, spec = self.review_file()
+        def mutate(command, cwd, log_file, timeout):
+            elapsed = fake_worker(command, cwd, log_file, timeout)
+            Path(project.read_json(command[-1])["reviewSpec"]).write_text("changed")
+            return elapsed
+        with self.assertRaisesRegex(project.ProductionError, "artifact changed"):
+            project.run_edit(self.root, self.script, "edit", executor=mutate, review_spec=path)
+        self.assertIsNone(project.load_project(self.root)["head"])
+
+    def test_review_rejects_unsafe_names_and_invalid_camera(self):
+        _, spec = self.review_file()
+        for name in ("../external", "front/side", "front.png", ""):
+            candidate = json.loads(json.dumps(spec))
+            candidate["views"][0]["name"] = name
+            with self.subTest(name=name), self.assertRaises(ValueError):
+                validate_review(candidate)
+        spec["views"][0]["position"] = spec["views"][0]["target"]
+        with self.assertRaisesRegex(ValueError, "must differ"):
+            validate_review(spec)
+
+    def test_review_rejects_nonfinite_light_and_claim_fields(self):
+        _, spec = self.review_file()
+        spec["lighting"]["radius"] = float("nan")
+        with self.assertRaisesRegex(ValueError, "finite"):
+            validate_review(spec)
+        spec["lighting"]["radius"] = 1
+        spec["views"][0]["registration"] = "certified"
+        with self.assertRaisesRegex(ValueError, "fields"):
+            validate_review(spec)
 
     def test_reference_capture_is_independent_and_tamper_is_detected(self):
         self.reference.write_bytes(b"changed outside source")

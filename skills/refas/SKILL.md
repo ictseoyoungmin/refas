@@ -17,6 +17,8 @@ Separate what the image shows from inferred depth and engineered choices. Comple
 
 Build continuous major volumes and believable connections before small decoration. Reuse shared profiles and mirrored or repeated geometry where appropriate; preserve visible asymmetry. Choose Blender's existing modeling tools when they express the form well. A large number of primitives or polygons does not establish shape quality.
 
+For surfaces that should form one continuous shell, derive adjoining regions from a shared boundary. Separately subdivided edges can open a crack even when their control points meet. Inspect the connection with the final modifiers from both sides before adding small detail; preserve intentional openings.
+
 ## Start or resume a production project
 
 Paths below are relative to the installed skill root. Run the entry script by its absolute path if the working directory differs. Store the project outside the installed skill directory.
@@ -39,7 +41,7 @@ Write a normal Blender Python script using `bpy`. The worker executes it inside 
 python3 scripts/produce.py run --root PROJECT --script BUILD_SCRIPT --intent "build the complete primary form" --views hero,side --size 384 --samples 8 --timeout 120
 ```
 
-The first run starts from an empty scene. A subsequent run opens the current saved native scene before applying the script:
+The first run starts from an empty scene, including no World datablock. Create any scene resources your script needs. A subsequent run opens the current saved native scene before applying the script:
 
 ```bash
 python3 scripts/produce.py run --root PROJECT --script EDIT_SCRIPT --intent "adjust the headband pad while preserving the earcups" --views hero,side --size 384 --samples 8 --timeout 120
@@ -55,7 +57,9 @@ Use `--input-blend PATH` to import a separately saved manual edit. An edit scrip
 
 Preserve UVs, materials, rigs, weights, shape keys, and object identity during local edits when the asset contains them. Inspect affected geometry and deformation, not only object counts. Saved fingerprints are change observations and can help locate unexpected edits; they do not prove deformation quality or game readiness.
 
-The current export scope uses visible meshes and packed still-image textures. Convert curves or text to meshes first. Static mesh modifiers stay editable in the native scene and are evaluated for GLB export. This alpha rejects hidden/excluded meshes and unapplied non-armature modifiers on skinned or shape-key meshes; resolve those explicit limitations before submission. Dirty packed textures are refreshed before the native save.
+For before/after comparison, keep the camera and lighting fixed. Pass `--review-spec REVIEW_JSON` to capture explicit orthographic views and a fixed light rig with the revision; omit `--views` to render all views in that file. Read `references/production-review.md` when defining those views. The default views frame the current bounding box and can move when geometry changes. Neither route establishes registration to the source image.
+
+The current export scope uses visible meshes and packed still-image textures. Convert curves or text to meshes and realize object instances first; inspection rejects unsupported object scopes instead of silently dropping them. Static mesh modifiers stay editable in the native scene and are evaluated for GLB export. This alpha rejects hidden/excluded meshes and unapplied non-armature modifiers on skinned or shape-key meshes; resolve those explicit limitations before submission. Dirty packed textures are refreshed before the native save.
 
 ## Keep source, review, and recovery connected
 

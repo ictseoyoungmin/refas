@@ -11,6 +11,13 @@ All notable RefAs changes are documented here. RefAs follows semantic versioning
 - Publish revisions only after execution and artifact checks. Preserve failed runs, reject stale edits, and restore a known intact bundle without requiring a damaged current payload to pass verification.
 - Add an original headset creation/local-edit example, actual Blender integration checks, and independent production CI. See [the implementation plan](docs/development/refas-2-plan.md) and [verification status](docs/WORK_STATUS.md).
 
+### First original-reference pilot and review controls
+
+- Add the user-supplied uniform-jacket sheet, explicit dimension ambiguities, a common construction/local-edit task, fixed-snapshot no-skill/1.x/2.0 trial records, and independent anonymous visual review. The initial review favors the no-skill prototype; all three remain visually unaccepted.
+- Preserve a separate informed 2.0 follow-up that joins actual body/sleeve boundaries and seats shoulder tabs. Add portable construction scripts and a public-CLI reproduction with a 6-to-7 cm cuff edit and exact restore.
+- Add `--review-spec` for captured orthographic cameras, fixed lighting and optional source-region provenance. Fixed observations remain explicitly unregistered.
+- Reject unsupported geometry during native inspection and reject object instances that could render outside the inventoried scope. Retain the initial incomplete curve-omitting observations as rejected evidence; use complete realized observation copies for the actual comparison.
+
 ### Compatibility and scope
 
 - Keep 1.x runtime, project formats, and source-bound certification behavior available through an explicit optional route. The production integrity command does not issue a 1.x certificate.

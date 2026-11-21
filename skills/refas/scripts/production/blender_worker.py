@@ -22,6 +22,10 @@ import runpy
 import sys
 import traceback
 
+sys.dont_write_bytecode = True
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from review import validate_review
+
 import bpy
 from mathutils import Vector
 
@@ -37,6 +41,7 @@ LIMITATIONS = [
     "Node-group internals and drivers are not exhaustively represented by the state fingerprints.",
     "Static mesh modifiers are evaluated for GLB export; unapplied non-armature modifiers on skinned or shape-key meshes are unsupported.",
     "Hidden or excluded meshes are rejected by this alpha so GLB export and diagnostic renders cannot silently use different asset scopes.",
+    "Object instances must be realized into explicit scene objects; curves and other non-mesh geometry must be converted before production inspection or export.",
     "Procedural Blender materials may need baking for faithful GLB appearance.",
 ]
 
@@ -279,15 +284,25 @@ def require_visible_meshes():
                          + ", ".join(sorted(hidden)))
 
 
-def require_portable_scene():
-    """Support self-contained native geometry and packed still textures explicitly."""
-    require_visible_meshes()
-    if bpy.data.libraries:
-        raise ValueError("Linked Blender libraries are unsupported; make required data local first")
+def require_supported_objects():
+    """Do not silently omit native renderable types from export or observation."""
+    instanced = [obj.name for obj in bpy.context.scene.objects if obj.instance_type != "NONE"]
+    if instanced:
+        raise ValueError("Object instancing is unsupported by the production alpha; realize instances "
+                         "into explicit scene objects first: " + ", ".join(sorted(instanced)))
     unsupported = [obj.name + ":" + obj.type for obj in bpy.context.scene.objects
                    if obj.type not in ASSET_TYPES | {"CAMERA", "LIGHT"}]
     if unsupported:
-        raise ValueError("Convert unsupported geometry to meshes before export: " + ", ".join(unsupported))
+        raise ValueError("Convert unsupported geometry to meshes before production export or inspection: "
+                         + ", ".join(unsupported))
+
+
+def require_portable_scene():
+    """Support self-contained native geometry and packed still textures explicitly."""
+    require_visible_meshes()
+    require_supported_objects()
+    if bpy.data.libraries:
+        raise ValueError("Linked Blender libraries are unsupported; make required data local first")
     for kind in ("movieclips", "cache_files", "sounds"):
         if any(item.users for item in getattr(bpy.data, kind, [])):
             raise ValueError("External " + kind + " are outside the current portable-scene contract")
@@ -399,7 +414,7 @@ def export_scene(out):
         raise RuntimeError("GLB export did not finish")
 
 
-def render_views(out, views, config, source):
+def render_views(out, views, config, source, specification=None):
     if not views:
         return []
     original = bpy.context.scene
@@ -423,16 +438,20 @@ def render_views(out, views, config, source):
     review.render.resolution_percentage = 100
     review.render.image_settings.file_format = "PNG"
     review.render.image_settings.color_mode = "RGBA"
-    review.render.film_transparent = False
+    review.render.film_transparent = specification["transparent"] if specification else False
     review.view_settings.view_transform = "AgX"
     review.world = bpy.data.worlds.new("__RefAsDiagnosticWorld")
     review.world.use_nodes = True
     background = next(node for node in review.world.node_tree.nodes if node.type == "BACKGROUND")
-    background.inputs["Color"].default_value = (0.065, 0.08, 0.115, 1)
+    background.inputs["Color"].default_value = (*specification["background"], 1) if specification else (0.065, 0.08, 0.115, 1)
     background.inputs["Strength"].default_value = 0.45
     low, high = Vector(source["bounds"]["min"]), Vector(source["bounds"]["max"])
     center = (low + high) / 2
     radius = max((high - low).length / 2, 0.001)
+    if specification:
+        center = Vector(specification["lighting"]["center"])
+        radius = specification["lighting"]["radius"]
+    fixed_views = {view["name"]: view for view in specification["views"]} if specification else {}
     for name, direction, energy, color, scale in [
             ("Key", (-1.4, -1.8, 2.4), 650, (1, 0.94, 0.86), 2.0),
             ("Fill", (1.8, -0.6, 0.8), 300, (0.72, 0.82, 1), 1.8),
@@ -452,9 +471,17 @@ def render_views(out, views, config, source):
     review.camera = camera
     observed = []
     for name in views:
-        direction = Vector(VIEWS[name]).normalized()
-        camera.location = center + direction * radius * 4
-        camera.rotation_euler = (center - camera.location).to_track_quat("-Z", "Y").to_euler()
+        selected = fixed_views.get(name)
+        target = Vector(selected["target"]) if selected else center
+        if selected:
+            camera.location = Vector(selected["position"])
+            data.ortho_scale = selected["orthoScale"]
+            distance = (camera.location - target).length
+            data.clip_start = min(distance, data.ortho_scale) * 0.001
+            data.clip_end = max(distance, data.ortho_scale) * 100
+        else:
+            camera.location = center + Vector(VIEWS[name]).normalized() * radius * 4
+        camera.rotation_euler = (target - camera.location).to_track_quat("-Z", "Y").to_euler()
         bpy.context.view_layer.update()
         filename = "view-" + name + ".png"
         review.render.filepath = str(out / filename)
@@ -463,11 +490,17 @@ def render_views(out, views, config, source):
             raise RuntimeError("Render produced no PNG: " + name)
         observed.append({"view": name, "path": filename, "sha256": file_hash(out / filename),
                          "registration": "unregistered", "sourceSceneFingerprint": source["fingerprint"],
+                         "framing": "fixed-review-spec" if selected else "automatic-bounds",
+                         "referenceRegion": selected.get("reference") if selected else None,
+                         "lighting": {"center": vector(center), "radius": number(radius),
+                                      "rig": "three-area-lights/v1"},
                          "renderer": {"engine": "CYCLES", "device": "CPU", "samples": config["samples"],
                                       "size": [config["size"], config["size"]], "viewTransform": "AgX",
-                                      "denoising": False},
+                                      "denoising": False, "transparent": review.render.film_transparent,
+                                      "worldColor": vector(background.inputs["Color"].default_value[:3]),
+                                      "worldStrength": 0.45},
                          "camera": {"projection": "orthographic", "position": vector(camera.location),
-                                    "target": vector(center), "orthoScale": number(data.ortho_scale),
+                                    "target": vector(target), "orthoScale": number(data.ortho_scale),
                                     "matrixWorld": [vector(row) for row in camera.matrix_world]}})
     bpy.context.window.scene = original
     return observed
@@ -480,8 +513,15 @@ def validate_job(job):
     if not out.is_absolute():
         raise ValueError("outputDir must be absolute")
     views = job.get("views", [])
-    if not isinstance(views, list) or len(views) != len(set(views)) or any(view not in VIEWS for view in views):
-        raise ValueError("views must be unique names from: " + ", ".join(VIEWS))
+    specification = None
+    if job.get("reviewSpec"):
+        path = Path(job["reviewSpec"])
+        if not path.is_absolute() or not path.is_file() or path.stat().st_size > 65536:
+            raise ValueError("reviewSpec must be an existing absolute JSON file under 64 KiB")
+        specification = validate_review(json.loads(path.read_text(encoding="utf-8")))
+    supported = {view["name"] for view in specification["views"]} if specification else set(VIEWS)
+    if not isinstance(views, list) or len(views) != len(set(views)) or any(view not in supported for view in views):
+        raise ValueError("views must be unique names from: " + ", ".join(sorted(supported)))
     config = job.get("render", {})
     if config.get("engine", "CYCLES") != "CYCLES":
         raise ValueError("Only the explicitly tested CYCLES CPU backend is supported")
@@ -500,11 +540,11 @@ def validate_job(job):
     out.mkdir(parents=True, exist_ok=True)
     if any(out.iterdir()):
         raise ValueError("outputDir must be empty; do not overwrite earlier evidence")
-    return out, views, config
+    return out, views, config, specification
 
 
 def execute(job):
-    out, views, config = validate_job(job)
+    out, views, config, specification = validate_job(job)
     if job.get("baseBlend"):
         bpy.ops.wm.open_mainfile(filepath=job["baseBlend"], load_ui=False, use_scripts=False)
     else:
@@ -533,6 +573,7 @@ def execute(job):
         result["outputs"].update(blend="scene.blend", glb="asset.glb")
     else:
         require_visible_meshes()
+        require_supported_objects()
         source = inventory()
         result["verification"]["native"] = {"status": "passed", "reopened": True,
                                                "statistics": source["statistics"], "scope": "current-frame inventory"}
@@ -541,7 +582,7 @@ def execute(job):
             bpy.ops.wm.open_mainfile(filepath=job["baseBlend"], load_ui=False, use_scripts=False)
     write_json(out / "scene.json", source)
     result["outputs"]["scene"] = "scene.json"
-    result["observations"] = render_views(out, views, config, source)
+    result["observations"] = render_views(out, views, config, source, specification)
     result["ok"] = True
     write_json(out / "result.json", result)
     print("REFAS_RESULT " + json.dumps({"ok": True, "operation": result["operation"],

@@ -5253,6 +5253,24 @@
           }
         ]
       }
+    },
+    {
+      "id": "production-review",
+      "path": "references/production-review.md",
+      "owners": [
+        "rendering"
+      ],
+      "requires": [],
+      "conditionalRequires": [],
+      "authority": "diagnostic-format-guide",
+      "closureEffects": [],
+      "runtimeCapabilities": [
+        "rendering"
+      ],
+      "interface": {
+        "mode": "instruction-only",
+        "interfaces": []
+      }
     }
   ],
   "findingOwners": {
