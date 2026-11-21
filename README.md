@@ -2,7 +2,8 @@
   <img src="skills/refas/assets/icon.svg" width="180" alt="RefAs robotic arm icon">
   <h1>RefAs</h1>
   <p>
-    <a href="https://github.com/ictseoyoungmin/refas/releases/tag/v1.4.2"><img src="https://img.shields.io/badge/version-v1.4.2-6f5a46" alt="Version v1.4.2"></a>
+    <a href="https://github.com/ictseoyoungmin/refas/releases/tag/v1.4.1"><img src="https://img.shields.io/badge/published-v1.4.1-6f5a46" alt="Published release v1.4.1"></a>
+    <img src="https://img.shields.io/badge/package-v1.4.2%20development-777777" alt="Development package v1.4.2">
     <a href="https://github.com/ictseoyoungmin/refas/actions/workflows/ci.yml"><img src="https://github.com/ictseoyoungmin/refas/actions/workflows/ci.yml/badge.svg" alt="CI status"></a>
     <img src="https://img.shields.io/badge/node-20%2B-339933" alt="Node.js 20+">
     <img src="https://img.shields.io/badge/Agent%20Skill-Vision--first%203D-b06f47" alt="Agent Skill: Vision-first 3D">
@@ -10,17 +11,50 @@
   </p>
 </div>
 
-**Reference Asset Foundry** is a vision-first reconstruction system for AI agents that turn reference images into traceable, editable, evidence-bound 3D assets and, when justified, explicit physical construction semantics.
+**Reference Asset Foundry** helps AI agents create and revise editable 3D assets from visual references. Its production workflow connects ordinary Blender scripts, a native scene, GLB export, actual renders, and recoverable project revisions.
 
-RefAs is designed for work where a quick image-to-mesh approximation is not enough. The raw reference remains authoritative, whole-object context survives part inspection, observation stays distinct from inference and engineering choice, actual renders are compared, risky edits remain recoverable, and certification fails when the exact evidence chain cannot be reproduced.
+**2.0 rewrite development:** new projects use the Python production entry below. This is an initial production alpha, not a published 2.0 release. The latest published release is [v1.4.1](https://github.com/ictseoyoungmin/refas/releases/tag/v1.4.1); package/runtime/plugin metadata remains **1.4.2 development** until the coordinated version cutover. See the [2.0 plan](docs/development/refas-2-plan.md) and [work status](docs/WORK_STATUS.md) for scope and actual evidence.
+
+Original references remain the basis for visible design. Keep observation distinct from inferred depth and engineered choices, inspect actual results, and preserve useful source files for the next edit. A successful export or file-integrity check does not establish reference resemblance or game-engine readiness.
 
 ## What RefAs does
 
-RefAs helps an AI agent **build, edit, inspect and export** reference-driven 3D assets. It records what is visible in the original image, proposes plausible 3D form where a view is ambiguous, constructs actual geometry, captures multiple views, and routes concrete problems back to the part that needs repair. Work products include editable construction state, GLB assets, rendered evidence and recoverable checkpoints. An external 3D authoring tool or worker may be used; installing the skill does not make every photograph an automatically generated model.
+The new production entry lets an agent **build, edit, inspect and export** using normal `bpy` scripts. It keeps a native `.blend`, GLB, requested renders, executed script, and revision metadata together. The agent judges the visible result and decides the next local correction. The project layer handles artifact integrity and recovery without requiring manual evidence JSON or a fixed modeling capability sequence.
 
 The main workflow is **observe → construct → render → compare → locally revise**. Validation exists to support asset quality rather than replace modeling.
 
-The bundled [demo](demo/index.html) illustrates the tooling. For reproducible examples see [examples](examples/) and [the construction guide](skills/refas/references/construction.md).
+Start with the [production create/edit example](examples/production-workflow/) and the [installed skill](skills/refas/SKILL.md). The [older demo](demo/index.html), [1.x construction guide](skills/refas/references/construction.md), and 1.x runtime remain available for explicit compatibility. The following release-history and certification sections describe that retained runtime.
+
+## Production quick start — 2.0 development
+
+Use Python 3 and a Blender executable available to `doctor`. The project layer uses the Python standard library; Blender provides its own `bpy`. Keep project output outside the installed skill directory.
+
+From a repository checkout, run the original headset fixture:
+
+```bash
+python3 skills/refas/scripts/produce.py doctor
+python3 skills/refas/scripts/produce.py init --root work/headset --name headset-demo
+python3 skills/refas/scripts/produce.py run --root work/headset --script examples/production-workflow/create_headset.py --intent "build the complete headset" --views hero,side --size 384 --samples 8 --timeout 120
+python3 skills/refas/scripts/produce.py status --root work/headset
+```
+
+For reference-driven work, add one or more `--reference /path/to/original.png` arguments to `init`, then write the appropriate construction script. The headset fixture has no supplied reference and demonstrates execution and editing; it is not a photo-resemblance benchmark.
+
+Open the actual output renders and native scene. The next run opens the current saved `.blend` before applying its edit:
+
+```bash
+python3 skills/refas/scripts/produce.py run --root work/headset --script examples/production-workflow/revise_headset.py --intent "adjust only the headband comfort pad" --views hero,side --size 384 --samples 8 --timeout 120
+python3 skills/refas/scripts/produce.py verify --root work/headset
+python3 skills/refas/scripts/produce.py restore --root work/headset --revision REVISION_ID
+```
+
+Replace `REVISION_ID` with an actual value from `status`. Restore records the prior bundle as a new revision while retaining history. To import a separately saved manual edit, pass `--input-blend /path/to/edited.blend` to `run`; `--expected-revision ID` can require the exact base you inspected. `verify` checks recorded file identities; inspect shape, materials, and required deformation separately. Scripts execute as trusted local code. Failure or stale state must leave the previous current revision available. Successful execution records an output revision, not visual approval.
+
+For a copied skill, invoke `scripts/produce.py` inside that copy; repository examples are optional authoring inputs and are not runtime dependencies. Ordinary modeling can use the full Blender API. The worker saves the native scene and handles export/capture, while useful view selection and final visual review remain agent work.
+
+The initial export scope is self-contained scenes with visible meshes, optional armatures/shape keys, and packed still-image textures. Convert curves and text to meshes first. Static modifiers remain editable in the native scene and are evaluated for GLB export; dirty packed pixels are saved before export. Hidden/excluded meshes and unapplied non-armature modifiers on skinned or shape-key meshes are explicitly rejected in this alpha. Procedural materials may still need baking for faithful GLB appearance.
+
+## 1.x runtime history and capabilities
 
 ### Release stabilization in 1.4.1
 
@@ -73,7 +107,7 @@ Use the matching `--agent` value for another supported agent. RefAs also ships t
 cp -r skills/refas /path/to/your/skills/
 ```
 
-## Quick start
+## Existing 1.x project quick start
 
 Requirements:
 
@@ -92,14 +126,14 @@ Place the original image at `project/source/reference.png` first. The commands i
 
 The executable runtime lives inside the distributable skill. Tests and examples import that same code; there is no second runtime implementation to drift.
 
-## Agent workflow interface
+## 1.x agent workflow interface — optional compatibility
 
-The installed skill defaults to a short routing path
-(`SKILL.md` → `references/INDEX.md` → `references/workflow.md`);
-checkpoint/recovery guides are loaded when a corresponding operation is
-actually needed. Choose static, organic, mechanically articulated or physical
-runtime guides according to the work, rather than loading the entire
-assembly/physical stack for a simple object.
+For a saved 1.x project or an explicit 1.x certification task, use the optional
+compatibility route in `SKILL.md` → `references/INDEX.md` →
+`references/workflow.md`. Load checkpoint/recovery guides when the corresponding
+1.x operation is needed. New production projects use `produce.py` and do not
+preload this graph. Choose static, organic, mechanically articulated or physical
+runtime guides according to the legacy task.
 For a runnable, explicitly non-authoritative geometry example use
 `node skills/refas/scripts/subdivision-cage-demo.mjs`.
 
@@ -129,7 +163,7 @@ to discover public contracts). For the detailed agent execution order see
 
 **Known limitation:** independent original-photo part/role recognition is not yet a trusted positive evaluator. Even a structurally valid GLB may therefore remain `INSUFFICIENT` and source-bound final Handoff remains `BLOCKED`. The interface release does **not** promise automatic image-to-3D accuracy or game-ready assets. [Foundry production roadmap](docs/development/foundry-production-roadmap.md).
 
-## Reconstruction, physical closure, and certification flow
+## 1.x reconstruction, physical closure, and certification flow
 
 1. Bind the primary source to immutable digest identity.
 2. Observe the whole frame and build a context-preserving hierarchy.
@@ -167,7 +201,15 @@ refas/
 
 ## Development and verification
 
-Contributors can run the repository's existing regression, installed-skill and release audits:
+Run the focused production checks with:
+
+```bash
+npm run test:production
+```
+
+The separate production workflow checks Python behavior, syntax, and the CLI in a copied skill. A real Blender create/edit/render/restore run is separate integration evidence; it is not replaced by those checks. Record its version, commands, result paths, and review findings in [work status](docs/WORK_STATUS.md).
+
+The existing 1.x regression, installed-skill and release audits remain available:
 
 ```bash
 npm test

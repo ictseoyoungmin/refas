@@ -1,0 +1,379 @@
+{
+  "scope": "Known-fixture compatibility follow-up after the original independent evaluation; not a new blind usability evaluation.",
+  "path_normalization": "Only local work/repository prefixes in copied records are replaced with $WORK/$REPO. Absolute path existence was checked against the unmodified local output.",
+  "original_skill_sha256": "9ea820ffbb15fca6e40f1018d31d50eeb199c86b94424dad179653231accc0b2",
+  "followup_candidate_files_sha256": {
+    "scripts/production/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "scripts/production/blender_worker.py": "9243e817246493f788b56fafca45a6144cf9a1a4528d0b700ea66bd6900c7b12",
+    "scripts/production/project.py": "5752fb588f7fb185601def9372bc807b6aa5e8bb2f069b3b5bc986c2462ee80f",
+    "scripts/produce.py": "7c333775d3c5b31d2012f75d35ea385e5a4fd5fbeb1584a3c9014256b7dd3e59",
+    "SKILL.md": "e4de3bf4c3e08fc8e2c8092de6a3975be29d2746f36352e9c71fd9b188c7a48a"
+  },
+  "doctor": {
+    "ok": true,
+    "entry": "RefAs 2.0 production development",
+    "python": "3.12.14",
+    "blender": {
+      "path": "/usr/bin/blender",
+      "version": "Blender 4.3.2"
+    },
+    "scope": "executable probe; render device availability is checked during execution"
+  },
+  "revisions": {
+    "build": "110c72f26b4b4d16a2e421509aa0d4c6",
+    "edit": "b1f5cfe5c9c742538d772320b514e8e4",
+    "restore": "2ffbd63a3f194b47be3ce28033066c72"
+  },
+  "runs": [
+    {
+      "operation": "build",
+      "ok": true,
+      "runId": "6cf60c556bbd4a31a96929b4eab61d6c",
+      "publishedRevision": "110c72f26b4b4d16a2e421509aa0d4c6",
+      "elapsedSeconds": 4.276
+    },
+    {
+      "operation": "edit",
+      "ok": true,
+      "runId": "32f162f8ec3f4113b2207dc792b64f06",
+      "publishedRevision": "b1f5cfe5c9c742538d772320b514e8e4",
+      "elapsedSeconds": 4.483
+    }
+  ],
+  "final_verify": {
+    "ok": true,
+    "scope": "recorded-file-integrity",
+    "head": "2ffbd63a3f194b47be3ce28033066c72",
+    "artifactCount": 6,
+    "referenceResemblance": "not-evaluated",
+    "gameReadiness": "not-evaluated"
+  },
+  "final_incomplete_runs": [],
+  "native_and_glb_roundtrip": {
+    "110c72f26b4b4d16a2e421509aa0d4c6": {
+      "glb": {
+        "boundsTolerance": 0.000322000003,
+        "checks": {
+          "boundsMatchNative": true,
+          "noDiagnosticCamerasOrLights": true,
+          "nonEmpty": true,
+          "trianglesMatchEncoded": true,
+          "trianglesMatchNative": true
+        },
+        "encoded": {
+          "animations": 0,
+          "cameras": 0,
+          "lights": 0,
+          "materials": 1,
+          "meshes": 2,
+          "morphMeshes": 0,
+          "nodes": 2,
+          "skins": 0,
+          "triangles": 11824
+        },
+        "reimportedBounds": {
+          "dimensions": [
+            3.22000003,
+            2.0999999,
+            2.4000001
+          ],
+          "max": [
+            2.17000008,
+            1.04999995,
+            2.46000004
+          ],
+          "min": [
+            -1.04999995,
+            -1.04999995,
+            0.06
+          ]
+        },
+        "reimportedStatistics": {
+          "armatures": 0,
+          "materialSlots": 2,
+          "meshes": 2,
+          "objects": 2,
+          "shapeKeyObjects": 0,
+          "triangles": 11824,
+          "uvObjects": 0,
+          "vertices": 5916
+        },
+        "scope": "geometry counts, bounds and basic feature presence only",
+        "status": "passed"
+      },
+      "native": {
+        "fingerprintMatches": true,
+        "reopened": true,
+        "statistics": {
+          "armatures": 0,
+          "materialSlots": 2,
+          "meshes": 2,
+          "objects": 2,
+          "shapeKeyObjects": 0,
+          "triangles": 11824,
+          "uvObjects": 0,
+          "vertices": 5916
+        },
+        "status": "passed"
+      }
+    },
+    "b1f5cfe5c9c742538d772320b514e8e4": {
+      "glb": {
+        "boundsTolerance": 0.000333500004,
+        "checks": {
+          "boundsMatchNative": true,
+          "noDiagnosticCamerasOrLights": true,
+          "nonEmpty": true,
+          "trianglesMatchEncoded": true,
+          "trianglesMatchNative": true
+        },
+        "encoded": {
+          "animations": 0,
+          "cameras": 0,
+          "lights": 0,
+          "materials": 1,
+          "meshes": 2,
+          "morphMeshes": 0,
+          "nodes": 2,
+          "skins": 0,
+          "triangles": 11824
+        },
+        "reimportedBounds": {
+          "dimensions": [
+            3.33500004,
+            2.0999999,
+            2.4000001
+          ],
+          "max": [
+            2.28500009,
+            1.04999995,
+            2.46000004
+          ],
+          "min": [
+            -1.04999995,
+            -1.04999995,
+            0.06
+          ]
+        },
+        "reimportedStatistics": {
+          "armatures": 0,
+          "materialSlots": 2,
+          "meshes": 2,
+          "objects": 2,
+          "shapeKeyObjects": 0,
+          "triangles": 11824,
+          "uvObjects": 0,
+          "vertices": 5916
+        },
+        "scope": "geometry counts, bounds and basic feature presence only",
+        "status": "passed"
+      },
+      "native": {
+        "fingerprintMatches": true,
+        "reopened": true,
+        "statistics": {
+          "armatures": 0,
+          "materialSlots": 2,
+          "meshes": 2,
+          "objects": 2,
+          "shapeKeyObjects": 0,
+          "triangles": 11824,
+          "uvObjects": 0,
+          "vertices": 5916
+        },
+        "status": "passed"
+      }
+    },
+    "2ffbd63a3f194b47be3ce28033066c72": {
+      "glb": {
+        "boundsTolerance": 0.000322000003,
+        "checks": {
+          "boundsMatchNative": true,
+          "noDiagnosticCamerasOrLights": true,
+          "nonEmpty": true,
+          "trianglesMatchEncoded": true,
+          "trianglesMatchNative": true
+        },
+        "encoded": {
+          "animations": 0,
+          "cameras": 0,
+          "lights": 0,
+          "materials": 1,
+          "meshes": 2,
+          "morphMeshes": 0,
+          "nodes": 2,
+          "skins": 0,
+          "triangles": 11824
+        },
+        "reimportedBounds": {
+          "dimensions": [
+            3.22000003,
+            2.0999999,
+            2.4000001
+          ],
+          "max": [
+            2.17000008,
+            1.04999995,
+            2.46000004
+          ],
+          "min": [
+            -1.04999995,
+            -1.04999995,
+            0.06
+          ]
+        },
+        "reimportedStatistics": {
+          "armatures": 0,
+          "materialSlots": 2,
+          "meshes": 2,
+          "objects": 2,
+          "shapeKeyObjects": 0,
+          "triangles": 11824,
+          "uvObjects": 0,
+          "vertices": 5916
+        },
+        "scope": "geometry counts, bounds and basic feature presence only",
+        "status": "passed"
+      },
+      "native": {
+        "fingerprintMatches": true,
+        "reopened": true,
+        "statistics": {
+          "armatures": 0,
+          "materialSlots": 2,
+          "meshes": 2,
+          "objects": 2,
+          "shapeKeyObjects": 0,
+          "triangles": 11824,
+          "uvObjects": 0,
+          "vertices": 5916
+        },
+        "status": "passed"
+      }
+    }
+  },
+  "path_discovery": {
+    "build": {
+      "views": [
+        "hero",
+        "side"
+      ],
+      "observation_paths_absolute_and_exist": true,
+      "input_paths_absolute_and_exist": true,
+      "input_keys": [
+        "edit.py"
+      ],
+      "observations": [
+        {
+          "view": "hero",
+          "path": "$WORK/project-final/.refas2/revisions/110c72f26b4b4d16a2e421509aa0d4c6/artifacts/view-hero.png",
+          "sha256": "fc47bcfb192a1c109567dd1e35d8c723f719d3f9b03a53fe5f4131efdedaa065"
+        },
+        {
+          "view": "side",
+          "path": "$WORK/project-final/.refas2/revisions/110c72f26b4b4d16a2e421509aa0d4c6/artifacts/view-side.png",
+          "sha256": "bef00ce2bac1dd24b4b23432c9c580baaadd87743efe3514ec4cf6ac80fd87f2"
+        }
+      ],
+      "inputs": {
+        "edit.py": "$WORK/project-final/.refas2/revisions/110c72f26b4b4d16a2e421509aa0d4c6/inputs/edit.py"
+      }
+    },
+    "edit": {
+      "views": [
+        "hero",
+        "side"
+      ],
+      "observation_paths_absolute_and_exist": true,
+      "input_paths_absolute_and_exist": true,
+      "input_keys": [
+        "base.blend",
+        "edit.py"
+      ],
+      "observations": [
+        {
+          "view": "hero",
+          "path": "$WORK/project-final/.refas2/revisions/b1f5cfe5c9c742538d772320b514e8e4/artifacts/view-hero.png",
+          "sha256": "33dbf5a2d9ecfba0940d9d74c055e5514a8234620bbf59aaad7f1cdea9dccc71"
+        },
+        {
+          "view": "side",
+          "path": "$WORK/project-final/.refas2/revisions/b1f5cfe5c9c742538d772320b514e8e4/artifacts/view-side.png",
+          "sha256": "ffc6ad4480a3380f98e532cb98025f3361f83edc1864d3435e3573d1507e8623"
+        }
+      ],
+      "inputs": {
+        "base.blend": "$WORK/project-final/.refas2/revisions/b1f5cfe5c9c742538d772320b514e8e4/inputs/base.blend",
+        "edit.py": "$WORK/project-final/.refas2/revisions/b1f5cfe5c9c742538d772320b514e8e4/inputs/edit.py"
+      }
+    },
+    "status": {
+      "views": [
+        "hero",
+        "side"
+      ],
+      "observation_paths_absolute_and_exist": true,
+      "input_paths_absolute_and_exist": true,
+      "input_keys": [
+        "edit.py"
+      ],
+      "observations": [
+        {
+          "view": "hero",
+          "path": "$WORK/project-final/.refas2/revisions/2ffbd63a3f194b47be3ce28033066c72/artifacts/view-hero.png",
+          "sha256": "fc47bcfb192a1c109567dd1e35d8c723f719d3f9b03a53fe5f4131efdedaa065"
+        },
+        {
+          "view": "side",
+          "path": "$WORK/project-final/.refas2/revisions/2ffbd63a3f194b47be3ce28033066c72/artifacts/view-side.png",
+          "sha256": "bef00ce2bac1dd24b4b23432c9c580baaadd87743efe3514ec4cf6ac80fd87f2"
+        }
+      ],
+      "inputs": {
+        "edit.py": "$WORK/project-final/.refas2/revisions/2ffbd63a3f194b47be3ce28033066c72/inputs/edit.py"
+      }
+    }
+  },
+  "help_checks": {
+    "axes_listed": true,
+    "bbox_framing_listed": true
+  },
+  "script_sha256": {
+    "scripts/check_native.py": "7ab69abf52db7914460f1a85f2d0a219ecda14e77906f06d904efdaf4aef6c43",
+    "scripts/create_mug.py": "b1aba2cfbde4f8f0d71f167d00062b7284a1041e2ce3eb66aef9499bfdb2286d",
+    "scripts/enlarge_handle.py": "134d8707cc0bedfeac5f025b08bdcb87fe29b1e336b18e7d8d22ee6bf3d1d420"
+  },
+  "images": [
+    {
+      "file": "before-hero.png",
+      "revision": "110c72f26b4b4d16a2e421509aa0d4c6",
+      "view": "hero",
+      "sha256": "fc47bcfb192a1c109567dd1e35d8c723f719d3f9b03a53fe5f4131efdedaa065",
+      "bytes": 300487,
+      "original_png_bytes_unchanged": true,
+      "source_path": "$WORK/project-final/.refas2/revisions/110c72f26b4b4d16a2e421509aa0d4c6/artifacts/view-hero.png"
+    },
+    {
+      "file": "after-hero.png",
+      "revision": "b1f5cfe5c9c742538d772320b514e8e4",
+      "view": "hero",
+      "sha256": "33dbf5a2d9ecfba0940d9d74c055e5514a8234620bbf59aaad7f1cdea9dccc71",
+      "bytes": 298051,
+      "original_png_bytes_unchanged": true,
+      "source_path": "$WORK/project-final/.refas2/revisions/b1f5cfe5c9c742538d772320b514e8e4/artifacts/view-hero.png"
+    }
+  ],
+  "warnings": [
+    "Diagnostic views are unregistered; they do not establish reference likeness.",
+    "GLB reimport checks geometry counts, bounds and basic feature presence, not visual equivalence.",
+    "Fingerprints cover the recorded state at the current frame, not all animation or simulation states.",
+    "Node-group internals and drivers are not exhaustively represented by the state fingerprints.",
+    "Static mesh modifiers are evaluated for GLB export; unapplied non-armature modifiers on skinned or shape-key meshes are unsupported.",
+    "Hidden or excluded meshes are rejected by this alpha so GLB export and diagnostic renders cannot silently use different asset scopes.",
+    "Procedural Blender materials may need baking for faithful GLB appearance."
+  ],
+  "not_covered": [
+    "Static modifiers, dirty packed textures, hidden helper rejection (covered by separate reviews, not exercised by this fixture).",
+    "Source-photograph fidelity, model comparisons, engine integration, animation, manufacturing suitability."
+  ]
+}

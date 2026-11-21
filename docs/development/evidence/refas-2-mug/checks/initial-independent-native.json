@@ -1,0 +1,100 @@
+{
+  "checks": {
+    "body_geometry_identical_all": true,
+    "body_material_identical_all": true,
+    "handle_changed_in_edit": true,
+    "handle_restored": true,
+    "opening_enlarged": true,
+    "restore_artifacts_byte_identical": true,
+    "closed_manifold_components": true,
+    "positive_component_volumes": true
+  },
+  "snapshots": [
+    {
+      "revision": "6333aff2202647c0a265f844519f1493",
+      "body_geometry": "5808ae2ac38b26afe15546637ffc3d81650dd6a1bc5d3962c7f386cbbb00ce74",
+      "body_material": "d1676240852b12ff81fb1256a0e61f81d2b201cce0c75af8cd9771f74164e08b",
+      "handle_geometry": "06ff861887fdd24377f41470955353f61e23e4bb27edd2fa538d10f798bb33e0",
+      "body_checks": {
+        "vertices": 3586,
+        "edges": 7296,
+        "faces": 3712,
+        "nonmanifold_edges": 0,
+        "volume_signed": 2.643839422462833
+      },
+      "handle_checks": {
+        "vertices": 2330,
+        "edges": 4680,
+        "faces": 2352,
+        "nonmanifold_edges": 0,
+        "volume_signed": 0.24967440436879534
+      },
+      "opening_midheight_actual_mesh": 0.8012500701099636,
+      "handle_parameters": {
+        "span": 1.02,
+        "tube_radius": 0.17,
+        "halfheight": 0.74
+      }
+    },
+    {
+      "revision": "18882a8b98a0469684d51e12725166e6",
+      "body_geometry": "5808ae2ac38b26afe15546637ffc3d81650dd6a1bc5d3962c7f386cbbb00ce74",
+      "body_material": "d1676240852b12ff81fb1256a0e61f81d2b201cce0c75af8cd9771f74164e08b",
+      "handle_geometry": "15cb16cbcf776576ce014489cf75cdd75e217f68e978b02fed1620b16ab9ea62",
+      "body_checks": {
+        "vertices": 3586,
+        "edges": 7296,
+        "faces": 3712,
+        "nonmanifold_edges": 0,
+        "volume_signed": 2.643839422462833
+      },
+      "handle_checks": {
+        "vertices": 2330,
+        "edges": 4680,
+        "faces": 2352,
+        "nonmanifold_edges": 0,
+        "volume_signed": 0.14826023838208552
+      },
+      "opening_midheight_actual_mesh": 1.0062501130253079,
+      "handle_parameters": {
+        "span": 1.18,
+        "tube_radius": 0.125,
+        "halfheight": 0.74
+      }
+    },
+    {
+      "revision": "75da7fbfe9fa4c54a93aa505557e79b9",
+      "body_geometry": "5808ae2ac38b26afe15546637ffc3d81650dd6a1bc5d3962c7f386cbbb00ce74",
+      "body_material": "d1676240852b12ff81fb1256a0e61f81d2b201cce0c75af8cd9771f74164e08b",
+      "handle_geometry": "06ff861887fdd24377f41470955353f61e23e4bb27edd2fa538d10f798bb33e0",
+      "body_checks": {
+        "vertices": 3586,
+        "edges": 7296,
+        "faces": 3712,
+        "nonmanifold_edges": 0,
+        "volume_signed": 2.643839422462833
+      },
+      "handle_checks": {
+        "vertices": 2330,
+        "edges": 4680,
+        "faces": 2352,
+        "nonmanifold_edges": 0,
+        "volume_signed": 0.24967440436879534
+      },
+      "opening_midheight_actual_mesh": 0.8012500701099636,
+      "handle_parameters": {
+        "span": 1.02,
+        "tube_radius": 0.17,
+        "halfheight": 0.74
+      }
+    }
+  ],
+  "restore_files": {
+    "scene.blend": true,
+    "asset.glb": true,
+    "scene.json": true,
+    "result.json": true,
+    "view-hero.png": true,
+    "view-side.png": true
+  }
+}

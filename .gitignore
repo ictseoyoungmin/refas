@@ -7,6 +7,7 @@ release/
 __pycache__/
 .DS_Store
 .refas/
+.refas2/
 examples/**/output/
 temp/
 docs/works/

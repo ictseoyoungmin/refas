@@ -55,6 +55,7 @@ async function main() {
   if (forbidden.length) throw new Error(`release package contains forbidden files: ${forbidden.join(', ')}`);
 
   for (const required of [
+    'skills/refas/scripts/produce.py','skills/refas/scripts/production/__init__.py','skills/refas/scripts/production/project.py','skills/refas/scripts/production/blender_worker.py',
     'package.json','requirements.txt','skills/refas/SKILL.md','skills/refas/references/INDEX.md','skills/refas/references/GRAPH.json','skills/refas/references/host-integration.md','skills/refas/scripts/refas.mjs','skills/refas/scripts/refas-host.mjs','skills/refas/scripts/verify_installation_boundary.mjs','skills/refas/scripts/verify_semantic_instruction_graph.mjs','skills/refas/scripts/external_construction_fresh_worker.mjs','skills/refas/scripts/verify_external_construction_dogfood.mjs','skills/refas/scripts/verify_subdivision_cage_dogfood.mjs','skills/refas/scripts/bilateral_pair_fresh_worker.mjs','skills/refas/scripts/verify_bilateral_pair_dogfood.mjs','skills/refas/scripts/structural_plausibility_fresh_worker.mjs','skills/refas/scripts/verify_structural_plausibility_dogfood.mjs','skills/refas/scripts/blockout_competition_fresh_worker.mjs','skills/refas/scripts/verify_blockout_competition_dogfood.mjs','skills/refas/scripts/prior_quarantine_fresh_worker.mjs','skills/refas/scripts/verify_prior_quarantine_dogfood.mjs','skills/refas/scripts/verify_textured_material_dogfood.mjs','skills/refas/scripts/compare_registered.py','skills/refas/scripts/lib/index.mjs',
     'skills/refas/scripts/lib/host-state.mjs','skills/refas/scripts/lib/host-session.mjs','skills/refas/scripts/lib/host-event.mjs','skills/refas/scripts/lib/host-operation.mjs','skills/refas/scripts/lib/host-review-bundle.mjs','skills/refas/scripts/lib/host-artifact-handoff.mjs','skills/refas/scripts/lib/host-worker.mjs',
     'skills/refas/scripts/lib/parameter-fit.mjs','skills/refas/scripts/lib/shape-repair.mjs','skills/refas/scripts/lib/subdivision-cage.mjs','skills/refas/scripts/lib/bilateral-pair.mjs','skills/refas/scripts/lib/structural-plausibility.mjs','skills/refas/scripts/lib/blockout-competition.mjs','skills/refas/scripts/lib/prior-quarantine.mjs','skills/refas/scripts/lib/uv.mjs','skills/refas/scripts/lib/orientation-evidence.mjs','skills/refas/scripts/lib/orientation-frame.mjs','skills/refas/scripts/lib/orientation-discrepancy.mjs','skills/refas/scripts/lib/orientation-pose-fit.mjs',
@@ -79,7 +80,9 @@ async function main() {
   const changelog=await fs.readFile(path.join(ROOT,'CHANGELOG.md'),'utf8');
   if (!changelog.includes(`## ${REFAS_VERSION} —`)) throw new Error(`CHANGELOG.md omits current version ${REFAS_VERSION}`);
   const readme=await fs.readFile(path.join(ROOT,'README.md'),'utf8');
-  if (!readme.includes(`releases/tag/v${REFAS_VERSION}`)) throw new Error(`README.md badge omits ${REFAS_VERSION}`);
+  if (!readme.includes(`alt="Development package v${REFAS_VERSION}"`)) throw new Error(`README.md omits development package version ${REFAS_VERSION}`);
+  const publishedVersion=readme.match(/alt="Published release v(\d+\.\d+\.\d+)"/u)?.[1];
+  if (!publishedVersion || !readme.includes(`releases/tag/v${publishedVersion}`)) throw new Error('README.md must identify its published release separately from the development package');
   process.stdout.write(`${JSON.stringify({status:'PASS',version:packageJson.version,packagedFiles:names.length,unpackedBytes:pack.unpackedSize,skillBytes,instructionReferenceLeaves:instructionGraph.referenceLeaves,semanticInstructionNodes:semanticGraph.nodeCount,routedInstructionTargets:instructionGraph.routedPackagePaths.length},null,2)}\n`);
 }
 

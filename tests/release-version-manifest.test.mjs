@@ -3,7 +3,7 @@ import fs from 'node:fs/promises';
 import test from 'node:test';
 import {REFAS_VERSION} from '../skills/refas/scripts/lib/canonical.mjs';
 
-test('npm, runtime, plugin manifests and release-facing docs share one version',async()=>{
+test('package identities align while published release and development version stay explicit',async()=>{
   const read=async p=>fs.readFile(new URL('../'+p,import.meta.url),'utf8');
   const packageJson=JSON.parse(await read('package.json'));
   assert.equal(packageJson.version,'1.4.2');
@@ -15,7 +15,11 @@ test('npm, runtime, plugin manifests and release-facing docs share one version',
   }
   const readme=await read('README.md');
   const changelog=await read('CHANGELOG.md');
-  assert.match(readme,new RegExp('releases/tag/v'+REFAS_VERSION.replaceAll('.','\\.')));
+  assert.ok(readme.includes(`alt="Development package v${REFAS_VERSION}"`));
+  assert.match(readme,/alt="Published release v1\.4\.1"/u);
+  assert.match(readme,/releases\/tag\/v1\.4\.1/u);
+  assert.doesNotMatch(readme,new RegExp('releases/tag/v'+REFAS_VERSION.replaceAll('.','\\.')));
+  assert.match(readme,/not a published 2\.0 release/u);
   assert.ok(changelog.includes('## '+REFAS_VERSION+' —'));
 });
 

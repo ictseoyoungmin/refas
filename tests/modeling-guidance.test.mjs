@@ -5,13 +5,17 @@ import test from 'node:test';
 const skillRoot = new URL('../skills/refas/', import.meta.url);
 const read = (path) => fs.readFile(new URL(path, skillRoot), 'utf8');
 
-test('agent entry prioritizes whole-object construction and repeated geometry', async () => {
+test('production entry teaches direct authoring before optional 1.x compatibility', async () => {
   const skill = await read('SKILL.md');
-  const priorities = skill.indexOf('## Modeling priorities');
-  const certification = skill.indexOf('Source-bound approval', priorities);
-  assert.ok(priorities >= 0 && certification > priorities);
-  assert.match(skill, /Build a coherent whole with continuous side\/back geometry/);
-  assert.match(skill, /Reuse shared profiles and mirrored\/repeated geometry/);
+  const compatibility = skill.indexOf('## Optional 1.x project compatibility');
+  assert.ok(compatibility > 0);
+  const production = skill.slice(0, compatibility);
+  assert.match(production, /scripts\/produce\.py run/);
+  assert.match(production, /scripts\/produce\.py restore/);
+  assert.match(production, /`bpy`/);
+  assert.match(production, /inferred depth and engineered choices/);
+  assert.doesNotMatch(production, /node scripts\/refas\.mjs|references\/INDEX\.md/);
+  assert.match(skill.slice(compatibility), /references\/INDEX\.md/);
 });
 
 test('single-view worked example demonstrates complete surfaces and functional continuity', async () => {

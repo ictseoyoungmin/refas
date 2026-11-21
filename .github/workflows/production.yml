@@ -1,0 +1,59 @@
+name: RefAs production alpha
+
+on:
+  pull_request:
+    paths:
+      - 'skills/refas/SKILL.md'
+      - 'skills/refas/scripts/produce.py'
+      - 'skills/refas/scripts/production/**'
+      - 'tests/test_production*.py'
+      - 'examples/production-workflow/**'
+      - 'package.json'
+      - '.github/workflows/production.yml'
+  push:
+    branches: [main, rewrite/v2]
+    paths:
+      - 'skills/refas/SKILL.md'
+      - 'skills/refas/scripts/produce.py'
+      - 'skills/refas/scripts/production/**'
+      - 'tests/test_production*.py'
+      - 'examples/production-workflow/**'
+      - 'package.json'
+      - '.github/workflows/production.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  production:
+    runs-on: ubuntu-latest
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - name: Project revisions, failure recovery and copied-skill CLI
+        run: python -B -m unittest discover -s tests -p 'test_production*.py'
+      - name: Compile production entry, Blender worker and example scripts
+        run: |
+          python -B - <<'PY'
+          from pathlib import Path
+          paths = [Path('skills/refas/scripts/produce.py')]
+          paths += sorted(Path('skills/refas/scripts/production').glob('*.py'))
+          paths += sorted(Path('examples/production-workflow').glob('*.py'))
+          for path in paths:
+              compile(path.read_text(encoding='utf-8'), str(path), 'exec')
+          print(f'Compiled {len(paths)} production Python files')
+          PY
+
+      # Real Blender create/edit/render/restore is separately recorded integration
+      # evidence. These standard-library checks do not establish visual quality.

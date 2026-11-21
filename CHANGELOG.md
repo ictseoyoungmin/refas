@@ -2,6 +2,21 @@
 
 All notable RefAs changes are documented here. RefAs follows semantic versioning.
 
+## Unreleased — 2.0 production rewrite
+
+### Native production workflow
+
+- Rewrite the installed skill's default route around normal Blender Python authoring, actual render review, focused edits, and recoverable native projects.
+- Add the Python production CLI with environment checks, reference capture, current-scene edits, integrity verification, and restore. Each committed revision retains the native scene, GLB, script inputs, rendered views, and file identities.
+- Publish revisions only after execution and artifact checks. Preserve failed runs, reject stale edits, and restore a known intact bundle without requiring a damaged current payload to pass verification.
+- Add an original headset creation/local-edit example, actual Blender integration checks, and independent production CI. See [the implementation plan](docs/development/refas-2-plan.md) and [verification status](docs/WORK_STATUS.md).
+
+### Compatibility and scope
+
+- Keep 1.x runtime, project formats, and source-bound certification behavior available through an explicit optional route. The production integrity command does not issue a 1.x certificate.
+- Keep package/runtime/plugin metadata at `1.4.2` during development; the published release remains `v1.4.1`. A coordinated 2.0 packaging and migration milestone is still required.
+- Demonstration assets establish execution and local-edit behavior. Reference-image reconstruction quality, complete rig behavior, and target-engine readiness remain separate acceptance work.
+
 ## 1.4.2 — 2026-10-16
 
 ### Agent-guidance economy

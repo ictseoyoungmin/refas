@@ -1,0 +1,42 @@
+{
+  "images": [
+    {
+      "bytes": 302402,
+      "originalArtifactPath": "view-hero.png",
+      "path": "before-hero.png",
+      "revision": "e1409703a3e746b2b7fee84b5f425b91",
+      "sha256": "7be5a14b8379a5317fa019598eb3a9f5a57214e236095b32aa9d6383114e4f26",
+      "stage": "before",
+      "view": "hero"
+    },
+    {
+      "bytes": 280336,
+      "originalArtifactPath": "view-side.png",
+      "path": "before-side.png",
+      "revision": "e1409703a3e746b2b7fee84b5f425b91",
+      "sha256": "780ac69180219ceab9f190a2910a0094699a101312f1f893d5f0271d6a28a689",
+      "stage": "before",
+      "view": "side"
+    },
+    {
+      "bytes": 302189,
+      "originalArtifactPath": "view-hero.png",
+      "path": "after-hero.png",
+      "revision": "41706cc2b2f34c9f8227bfb580806a3c",
+      "sha256": "5d85985b6c7c80efa0501104c670aaab9de7cea3d0aa94563631638851006ce2",
+      "stage": "after",
+      "view": "hero"
+    },
+    {
+      "bytes": 280413,
+      "originalArtifactPath": "view-side.png",
+      "path": "after-side.png",
+      "revision": "41706cc2b2f34c9f8227bfb580806a3c",
+      "sha256": "946af3c8d0f2aacb5d2955f52bc83ad34b3da80f2c6ab76bb7f780ebd3e16e6e",
+      "stage": "after",
+      "view": "side"
+    }
+  ],
+  "method": "Byte-for-byte copies of original worker PNGs; no compositing, resizing or retouching",
+  "schema": "refas.production.published-observations/v2"
+}

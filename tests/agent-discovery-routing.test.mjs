@@ -44,12 +44,17 @@ test('released agent operations are discoverable in canonical graph, CLI help an
  }
 });
 test('installed instruction router links actual source-bound agent commands without granting authority',async()=>{
- for(const file of ['references/INDEX.md','references/workflow.md','references/failure-routing.md','references/validation.md','SKILL.md']){
+ for(const file of ['references/INDEX.md','references/workflow.md','references/failure-routing.md','references/validation.md']){
   const s=await fs.readFile(path.join(root,file),'utf8');
   assert.match(s,/(?:next|agent-next)/);
   assert.match(s,/(?:diagnose|agent-diagnose)/);
   assert.match(s,/(?:validate|agent-validate-source-bound)/);
  }
+ const skill=await fs.readFile(path.join(root,'SKILL.md'),'utf8');
+ const compatibility=skill.indexOf('## Optional 1.x project compatibility');
+ assert.ok(compatibility>0,'1.x commands must remain reachable through explicit compatibility');
+ for(const command of ['next','diagnose','validate']) assert.ok(skill.slice(compatibility).includes(command));
+ assert.doesNotMatch(skill.slice(0,compatibility),/node scripts\/refas\.mjs/);
  const f=await fs.readFile(path.join(root,'references/validation.md'),'utf8');
  assert.match(f,/exit code 2|Exit code 2/);
  assert.match(f,/INSUFFICIENT/);
