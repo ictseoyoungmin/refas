@@ -2,10 +2,13 @@
 
 ## Current recorded checkpoint
 
-**87% — 27 of 31 criteria demonstrated.** Verified 2026-11-22 against
-[`d8bb5dc7`](https://github.com/ictseoyoungmin/refas/commit/d8bb5dc71a86fe1b5012735c89aca3fb32f8006e).
-The previous checkpoint is **24/31 = 77%**; E3, E5 and D1 account for this increase.
-The initial **22/31 = 71%** baseline and intervening checkpoint remain intact.
+**90% — 28 of 31 criteria demonstrated.** Verified 2026-11-22 against
+[`815e9f76`](https://github.com/ictseoyoungmin/refas/commit/815e9f76f36ee294ae3cb554215116a08adb168e).
+The previous checkpoint is **27/31 = 87%**; K4 accounts for this increase.
+The original 71%, intervening 77% and previous 87% checkpoints remain intact.
+The [isolated review](evidence/source-identity/review/isolated-visual-review.md)
+accepts both selected assets within their declared visual prototype scope;
+neither receives finished-art approval.
 
 This measures binary acceptance coverage against the [Notion plan](https://app.notion.com/p/41fc6a3b5bf181c2b2cdfac4605ef7d7) and its separate delivery milestones. It does **not** estimate effort or time remaining, score visual quality, or equate to Notion CLOSED status. The [machine-readable ledger](refas-2-progress.json) is the canonical list of IDs, full criteria, source/evidence links and checkpoint history.
 
@@ -15,10 +18,10 @@ This measures binary acceptance coverage against the [Notion plan](https://app.n
 | [R2-02](https://app.notion.com/p/41fc6a3b5bf181e0bcc1cdc55fc1d036) | 4/4 | REVIEW |
 | [R2-03](https://app.notion.com/p/41fc6a3b5bf1814fb380f3d649a3fc10) | 6/6 | REVIEW |
 | [R2-04](https://app.notion.com/p/41fc6a3b5bf181cd946ff7cd70581fb7) | 4/4 | REVIEW |
-| [R2-05](https://app.notion.com/p/41fc6a3b5bf181999d88cac97f324601) | 3/4 | WIP |
+| [R2-05](https://app.notion.com/p/41fc6a3b5bf181999d88cac97f324601) | 4/4 | REVIEW |
 | [R2-06](https://app.notion.com/p/41fc6a3b5bf1813191c0c59b6fff1aa8) | 5/6 | WIP |
 | Coordinated delivery | 1/3 | Main merge and release unfinished |
-| **Total** | **27/31 = 87% rounded** | **0/6 tasks CLOSED** |
+| **Total** | **28/31 = 90% rounded** | **0/6 tasks CLOSED** |
 
 REVIEW means review remains; it does not earn an arbitrary fractional score. Both selected assets remain rejected for finished visual acceptance. Active development metadata is 2.0.0-alpha.1; retained legacy runtime is 1.4.2, the recorded published release remains v1.4.1, and PR #399 is Draft. Those boundaries are independent of runtime-test progress.
 
@@ -69,7 +72,7 @@ REVIEW means review remains; it does not earn an arbitrary fractional score. Bot
 ## Interpretation and remaining boundaries
 
 - **B3/B4 versus E2/E3:** R2-01 asks for measurement and renderer-isolation methods to be *defined*, so definitions earn credit. Actual comparable timing/cost telemetry remains open in R2-06; the new same-asset renderer experiment demonstrates E3 within its stated scope. Fixed cameras on different candidate geometry are not renderer isolation.
-- **K4:** This interprets the stated source-identity requirement against the declared task. The latest reviews identify material jacket collar/cloth/ornament/strap and arm armor/mechanism/hand differences. It does not introduce a universal finished-art or character/engine gate. Relative preference and technical restoration do not close it.
+- **K4:** The baseline reviews identified major jacket collar/ornament/strap and arm armor/mechanism/hand gaps. The source-identity checkpoint repairs those major prototype constructions, and a fresh anonymous review accepts both selected assets against the unchanged task. Relative preference alone is not the basis. Finished-art, UV, physics and engine readiness remain separate; no universal quality gate is added.
 - **S6 versus E5:** Production assessments remain unevaluated; that earns non-inheritance credit. The explicit selected-asset import now demonstrates preservation/loss rules, unchanged legacy bytes and no certificate transfer. Whole history and untested authoring features are not implied.
 - **E4 versus D1–D3:** A tested extracted 1.4.2 development package earns execution credit. The coordinated 2.0 alpha metadata/distribution conversion now demonstrates D1. Main merge and formal publication remain separate unfinished milestones. Publication still needs the applicable authorization.
 
@@ -137,3 +140,28 @@ The initial denominator covers the Notion first application: new assets and loca
 [baseline-runtime]: https://github.com/ictseoyoungmin/refas/blob/3217b46ee3670f2bc8acc1eff320981a539ce70c/skills/refas/scripts/production/project.py
 [baseline-tests]: https://github.com/ictseoyoungmin/refas/blob/3217b46ee3670f2bc8acc1eff320981a539ce70c/tests/test_production_project.py
 
+
+## Verified checkpoint — source identity and major construction
+
+**K4 is demonstrated: 28/31 = 90%.** The criterion meanings and previous
+checkpoints remain unchanged. R2-05 is **4/4, REVIEW**.
+
+The [source-identity report](evidence/source-identity/README.md) preserves the
+literal prompts, all rejected iterations, matched actual renders, isolated
+visual review and code-review repairs. The reviewer inspected both full source
+sheets and all 44 anonymous candidate renders. Jacket identity-04 and arm
+candidate-05 meet their declared visual prototype scope, while neither is
+accepted as finished art. Actual cuff/cover local edits preserve unrelated
+state; all 18 jacket and 19 arm selected artifact/input files restore exactly.
+Native reopening, independent GLB import/render and bounded joint samples pass.
+
+The active production runtime and 15-file skill / 17-file npm distribution
+remain unchanged. Existing regression gates pass with 935 JavaScript tests;
+new asset workflows execute in actual Blender. The prior checkpoint's 65
+production tests remain historical execution, not a new run attributed here.
+
+**Remaining criteria: E2, D2 and D3.** E2 still lacks prospective matched
+three-condition controls and actual model/tool billing. Recorded continuation
+times, including first render and observed completion, do not substitute for
+those measurements. Main merge and formal release are separate unfinished
+steps. PR #399 remains Draft and 0/6 Notion tasks are CLOSED.

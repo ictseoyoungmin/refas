@@ -8,7 +8,49 @@ The user approved implementation of the new production path, starting from `main
 
 This is development work. Active package/Python runtime/plugin identity is `2.0.0-alpha.1`; the retained legacy runtime remains `1.4.2`. The recorded published release remains `v1.4.1`. Main merge and formal publication are separate unfinished milestones.
 
-## Current: production-only skill, explicit 1.x import and renderer isolation
+## Current: source identity and major prototype construction
+
+Implemented and verified at
+[`815e9f76`](https://github.com/ictseoyoungmin/refas/commit/815e9f76f36ee294ae3cb554215116a08adb168e).
+The fixed [plan ledger](development/refas-2-progress.md) advances from
+**27/31 (87%) to 28/31 (90%)**, adding K4. R2-05 is **4/4, REVIEW**;
+R2-06 remains **5/6, WIP**. No criterion or historical checkpoint changes.
+
+The existing selected jacket now has chest-seated lapels/collar roll, restrained
+cloth shaping, dark straps distinct from buckles, and coherent left crest,
+chain and pendant construction. The arm now has nested shells, an exposed
+actuator core, an actual recessed service compartment, and differentiated
+palm/finger shells. A fresh anonymous reviewer inspected both complete sources
+and all 44 candidate images, accepting both selected results within the original
+prototype scope. Neither is accepted as finished art.
+
+The jacket's 1 cm cuff edit preserves 92 non-cuff objects, distal cuff piping
+and materials; all 18 selected artifact/input files restore exactly. The arm's
+3 mm cover edit preserves 315 unrelated objects; all 19 selected files restore
+exactly. All 300 original arm objects and 20 pivots remain, with declared crown
+marking/material-assignment exceptions. Independent native/GLB checks and
+actual readback renders pass; joint and surface checks remain explicitly sampled.
+
+JavaScript regression is **935 passed**; existing Python, repository/plugin/
+skill checks, retained 11-checkpoint dogfood and package audit pass. Actual
+new asset workflows and final code review pass. The previous 65-production-test
+execution remains historical. Active skill/runtime/distribution bytes remain
+unchanged at 15 skill files and 17 packaged files, with no legacy reinsertion.
+
+Read the [complete evidence](development/evidence/source-identity/README.md),
+[isolated visual review](development/evidence/source-identity/review/isolated-visual-review.md)
+and [final code review](development/evidence/source-identity/code-review-addendum.md).
+The selected native/GLB, original sources, scripts, rejected candidates and full
+recoverable project histories are retained in the delivery archives. Both main
+projects verify after relocation to the delivery directory.
+
+**Remaining: E2, D2 and D3.** Actual command clocks are recorded, but these
+informed concurrent continuations lack complete pre-read clocks, matched
+no-skill/1.x/2.0 resources and exposed token/model/tool costs. They cannot close
+E2. Main merge and formal publication remain unfinished, PR #399 stays Draft,
+and no Notion task is CLOSED.
+
+## Previous: production-only skill, explicit 1.x import and renderer isolation
 
 Implemented and verified at
 [`d8bb5dc7`](https://github.com/ictseoyoungmin/refas/commit/d8bb5dc71a86fe1b5012735c89aca3fb32f8006e).

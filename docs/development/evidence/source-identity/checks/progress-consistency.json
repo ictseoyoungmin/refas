@@ -1,0 +1,13 @@
+{
+  "checked_utc": "2026-11-22T12:51:25.211923+00:00",
+  "fixed_criteria_and_previous_checkpoints_unchanged": true,
+  "denominator": 31,
+  "demonstrated": 28,
+  "percent_rounded": 90,
+  "remaining": [
+    "E2",
+    "D2",
+    "D3"
+  ],
+  "source_commit": "815e9f76f36ee294ae3cb554215116a08adb168e"
+}

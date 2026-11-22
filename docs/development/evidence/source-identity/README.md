@@ -6,6 +6,22 @@ and repeatable local editing using the unchanged extracted `2.0.0-alpha.1`
 production package. The full protocol and claim boundaries are in
 [PROTOCOL.md](PROTOCOL.md).
 
+## Delivered files
+
+| File | Contents | Size |
+| --- | --- | ---: |
+| [refas-source-identity-models.zip](https://chatgpt.com/library?file_id=libfile_76ab1fe190588191a17df58137f192fe&account_id=personal) | Selected native/GLB, original input/reference, executable reproduction scripts, deliberate local edits, actual comparison images and reports | 46,370,426 bytes |
+| [refas-source-identity.tar.gz](https://chatgpt.com/library?file_id=libfile_995afebb2c88819193454269e1688289&account_id=personal) | Full main and diagnostic production projects, all retained candidates/failures, originals, selected/edited/restored assets, captured scripts, logs and anonymous review packet | 246,316,495 bytes |
+
+The model archive verifies all 96 manifest entries. The full history verifies
+all 1,761 entries, using internal hardlinks for repeated identical payloads.
+`tar -xzf refas-source-identity.tar.gz` reconstructs the full folder. Both main
+projects passed public CLI verification after relocation to the delivery path.
+The [delivery receipt](delivery.json), [model checks](models-verification.json)
+and [complete-history checks](archive-verification.json) bind these files to
+exact SHA-256 identities. The initial larger ZIP failed during upload preparation;
+no finalization occurred, and the smaller lossless archive saved successfully.
+
 ## Result and acceptance
 
 **K4 is demonstrated for the declared prototype scope. The fixed plan advances

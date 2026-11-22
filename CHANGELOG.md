@@ -32,6 +32,13 @@ All notable RefAs changes are documented here. RefAs follows semantic versioning
 - Verify historical source copies, retain active references during exact restore, and allow `run`/`restore` to guard the expected project sequence. A reference change invalidates an in-flight candidate even when the native head does not change.
 - Add a public-CLI input-adoption example and actual Blender regression, and track Notion design progress with a fixed 31-criterion acceptance checklist. Progress is independent of visual acceptance, CLOSED tasks and release status.
 
+### Source identity and major prototype construction
+
+- Continue the selected uniform jacket with chest-seated lapels, collar roll, cloth shaping, dark straps and a coherent shield/linked-chain/pendant assembly. Preserve the continuous body cage and shared armholes; exercise the 1 cm cuff change and exact 18-file selected payload recovery.
+- Continue the selected AURIX arm with nested armor, exposed actuators, a recessed service compartment and differentiated palm/finger shells. Retain original pivots and hierarchy; exercise the 3 mm cover change, sampled articulation and exact 19-file selected payload recovery.
+- Add timed example runners, independent baseline/native/GLB inspectors and packaging guards. Retain failed attempts, rejected candidates, actual fixed-condition comparisons, literal prompts and isolated visual review. Both selected results meet the declared source-specific prototype criterion; finished-art and engine readiness remain unapproved.
+- Advance the unchanged 31-item plan from 27/31 (87%) to 28/31 (90%) by demonstrating K4. Comparable time/cost, main merge and formal publication remain open. Active production runtime, skill and package bytes are unchanged by these example refinements.
+
 ### Compatibility and scope
 
 - Reject evaluated Geometry Nodes instances until they are realized, and reject mesh modifiers whose viewport/render visibility or subdivision levels differ. Inspect and edit now fail before publishing incomplete native/GLB/render bundles; actual Blender regressions retain the failing-before and passing-after cases.

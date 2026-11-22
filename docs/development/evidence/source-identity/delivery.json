@@ -1,0 +1,32 @@
+{
+  "results": [
+    {
+      "local_path": "/workspace/scratch/5765cde18054/delivery/refas-source-identity-models.zip",
+      "purpose": "create_library_file",
+      "status": "succeeded",
+      "file_id": "file_0000000031c881f7ba7523cb0b1d2f05",
+      "library_file_id": "libfile_76ab1fe190588191a17df58137f192fe",
+      "file_name": "refas-source-identity-models.zip",
+      "local_metadata_applied": true,
+      "path": "/refas-source-identity-models.zip",
+      "current_version_number": 0,
+      "bytes": 46370426,
+      "sha256": "54d71b9f321946db79f1eb7ca7490bc34d41aec52b02ba27e729e8e0b4027a51",
+      "url": "https://chatgpt.com/library?file_id=libfile_76ab1fe190588191a17df58137f192fe&account_id=personal"
+    },
+    {
+      "local_path": "/workspace/scratch/5765cde18054/delivery/refas-source-identity.tar.gz",
+      "purpose": "create_library_file",
+      "status": "succeeded",
+      "file_id": "file_0000000082a481f7802bb0f491d8283e",
+      "library_file_id": "libfile_995afebb2c88819193454269e1688289",
+      "file_name": "refas-source-identity.tar.gz",
+      "local_metadata_applied": true,
+      "path": "/refas-source-identity.tar.gz",
+      "current_version_number": 0,
+      "bytes": 246316495,
+      "sha256": "8c5b7833a97d41e8d2088d38f34de0253d4c4cf07d5d079c8d162a9006b08721",
+      "url": "https://chatgpt.com/library?file_id=libfile_995afebb2c88819193454269e1688289&account_id=personal"
+    }
+  ]
+}
