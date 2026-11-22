@@ -1,0 +1,7 @@
+{
+  "sourceSha256": "74d2d346bf767fb03410d72da3d92e833443ef4438c84abe2e54d3aed67a7973",
+  "qualifiedSha256": "962410bdb8e9fe6a5d2659c024b0f8987059cded792e6158d9fe5295bad21445",
+  "changedBoneSelectors": 25,
+  "selector": "./Rig/Skeleton3D",
+  "nativeMatricesAndSkinPositionsUnchanged": true
+}

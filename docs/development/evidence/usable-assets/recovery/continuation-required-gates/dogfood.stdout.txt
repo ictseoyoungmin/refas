@@ -1,0 +1,89 @@
+
+> refas@2.0.0-alpha.1 dogfood
+> node examples/wing-cover/run.mjs
+
+{
+  "status": "PASS",
+  "manifest": "/workspace/scratch/61afcdd4e3c6/refas/examples/wing-cover/output/project/source/source-manifest.json",
+  "sourceSha256": "6076b27fadfcb1a929b306ce74d6b7ef22d1d8996102065df6a74012e3466148"
+}
+{
+  "status": "PASS",
+  "claimScope": "derived-observation-aid-only",
+  "manifest": "/workspace/scratch/61afcdd4e3c6/refas/examples/wing-cover/output/project/evidence/whole/derived/manifest.json",
+  "sources": 1,
+  "views": 1,
+  "derivedFiles": 1,
+  "board": "/workspace/scratch/61afcdd4e3c6/refas/examples/wing-cover/output/project/evidence/whole/derived/snapshots/afcb5d48b6a3d4fd28476696/observation-board.png"
+}
+{
+  "status": "PASS",
+  "claimScope": "derived-observation-aid-only",
+  "manifest": "/workspace/scratch/61afcdd4e3c6/refas/examples/wing-cover/output/project/evidence/cover/derived/manifest.json",
+  "sources": 1,
+  "views": 1,
+  "derivedFiles": 1,
+  "board": "/workspace/scratch/61afcdd4e3c6/refas/examples/wing-cover/output/project/evidence/cover/derived/snapshots/c61a0f1e6a4a302fca3e9e98/observation-board.png"
+}
+{
+  "status": "PASS",
+  "claimScope": "derived-observation-aid-only",
+  "manifest": "/workspace/scratch/61afcdd4e3c6/refas/examples/wing-cover/output/project/evidence/fastener/derived/manifest.json",
+  "sources": 1,
+  "views": 1,
+  "derivedFiles": 2,
+  "board": "/workspace/scratch/61afcdd4e3c6/refas/examples/wing-cover/output/project/evidence/fastener/derived/snapshots/55397c0738319c024275ce79/observation-board.png"
+}
+{
+  "status": "PASS",
+  "claimScope": "render-integrity-only",
+  "report": "/workspace/scratch/61afcdd4e3c6/refas/examples/wing-cover/output/project/renders/assembly-baseline/render-report.json",
+  "board": "/workspace/scratch/61afcdd4e3c6/refas/examples/wing-cover/output/project/renders/assembly-baseline/multiview-review-board.png",
+  "triangles": 38354
+}
+{
+  "status": "PASS",
+  "claimScope": "render-integrity-only",
+  "report": "/workspace/scratch/61afcdd4e3c6/refas/examples/wing-cover/output/project/renders/assembly-candidate/render-report.json",
+  "board": "/workspace/scratch/61afcdd4e3c6/refas/examples/wing-cover/output/project/renders/assembly-candidate/multiview-review-board.png",
+  "triangles": 38242
+}
+{
+  "status": "PASS",
+  "claimScope": "render-integrity-only",
+  "report": "/workspace/scratch/61afcdd4e3c6/refas/examples/wing-cover/output/project/renders/final/render-report.json",
+  "board": "/workspace/scratch/61afcdd4e3c6/refas/examples/wing-cover/output/project/renders/final/multiview-review-board.png",
+  "triangles": 38354
+}
+{
+  "status": "PASS",
+  "report": "/workspace/scratch/61afcdd4e3c6/refas/examples/wing-cover/output/project/reviews/registered-comparison/comparison-report.json",
+  "comparisonDigest": "ca1f42361374e7a173a562097dd0f21a7c0a0fdb52b9f975d12bc00d1d2e188b",
+  "scopes": 4,
+  "projectionEvidenceRequired": false,
+  "projectionEvidenceScopes": 0
+}
+{
+  "status": "PASS",
+  "report": "/workspace/scratch/61afcdd4e3c6/refas/examples/wing-cover/output/project/reviews/registered-comparison-negative/shifted-scaled/comparison/comparison-report.json",
+  "comparisonDigest": "0ae4c372e561b4cf5f4746d152511b4f1a1ad5ea7697be1cd29ca919956a40da",
+  "scopes": 4,
+  "projectionEvidenceRequired": false,
+  "projectionEvidenceScopes": 0
+}
+{
+  "status": "PASS",
+  "report": "/workspace/scratch/61afcdd4e3c6/refas/examples/wing-cover/output/project/reviews/registered-comparison-negative/better-global-worse-local/comparison/comparison-report.json",
+  "comparisonDigest": "74a8c937cbc4aa87b5b03bac6d41a52d634d6f84627a573a27ac8a42a051882c",
+  "scopes": 4,
+  "projectionEvidenceRequired": false,
+  "projectionEvidenceScopes": 0
+}
+{
+  "status": "PASS",
+  "summary": "examples/wing-cover/output/dogfood-summary.json",
+  "project": "examples/wing-cover/output/project",
+  "asset": "examples/wing-cover/output/project/assets/wing-cover.glb",
+  "reviewBoard": "examples/wing-cover/output/project/renders/final/multiview-review-board.png",
+  "checkpoints": 11
+}

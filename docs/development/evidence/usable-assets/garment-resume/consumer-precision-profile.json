@@ -1,0 +1,35 @@
+{
+  "schema": "refas.consumer-precision-profile/v1",
+  "profile": "Godot 4.7.2 imported four-influence garment skin",
+  "frozenBeforeFinalAssetSelection": true,
+  "date": "2026-11-23",
+  "timezone": "Asia/Seoul",
+  "nativeMatrixElementTolerance": 2e-05,
+  "restAssociationToleranceM": 1e-05,
+  "actualConsumerSkinPositionToleranceM": 0.0001,
+  "defaultStrictSkinPositionToleranceM": 2e-05,
+  "scope": "Declared garment probes over all 97 sampled frames in the final named clip. Original avatar geometry is unchanged. No global all-vertex, continuous-time, GPU or frame-rate guarantee.",
+  "derivation": {
+    "prototype": "Unselected candidate08 pipeline export",
+    "prototypeNote": "The actual GLB identity is recorded in the diagnostic evidence; this profile does not accept the prototype's rejected geometry.",
+    "sourceWeightType": "glTF FLOAT (5126)",
+    "observedConsumerPacking": "All examined coefficients match floor(source weight * 65535) / 65535, represented in consumer float arrays.",
+    "maximumObservedRawSkinErrorM": 6.573306018253e-05,
+    "maximumPredictedWeightPackingErrorM": 6.575035116566503e-05,
+    "maximumSameEngineTermsWithDecodedSourceWeightsResidualM": 5.188611838865814e-07,
+    "maximumFourInfluenceCoefficientStepBoundM": 9.121458449001844e-05,
+    "observedEnvelopeIncludingResidualAndArithmeticM": 9.185999879818555e-05,
+    "reason": "The 0.1 mm profile includes the measured four-coefficient UNORM16 storage envelope and numeric residual. The independent 1.5 mm fitted-surface optimization budget is unchanged.",
+    "prototypeGlbSha256": "02907fcc69aaf1d3d84c1cd8455e61980fb6619ab0ce34508d42ab11982e7b23",
+    "rawConsumerDumpSha256": "68ff84f997c22deec1b9270b14aff9f8b5d7f3ae52feb95161b55bc69e5c80f0"
+  },
+  "finalAcceptanceRequirements": [
+    "Run and retain the default 20 micrometer result before the explicit 100 micrometer run.",
+    "Recompute decoded-source versus raw-consumer weight identity and the four-influence transformed-point bound over the final 97-frame probe scope.",
+    "Require the final derived envelope to remain below the frozen 100 micrometer profile; do not increase it after observing a failure.",
+    "Retain raw consumer deformation errors and weights. Normalize only the existing rest-point association, never actual playback.",
+    "Verify an actual exported weight corruption remains rejected under the same 100 micrometer profile.",
+    "Pass final native and exported geometry, contact, source preservation and visual gates separately."
+  ],
+  "frozenUtc": "2026-11-22T20:12:03.699263+00:00"
+}

@@ -50,7 +50,52 @@ with corrupted skin weights, and leaves wrong-bone matrix rejection intact.
 This is a deliberately changed expectation fixture, not a new measurement of
 the missing jacket candidate.
 
-## Verification
+## Continued observer repair: two imported rigs
+
+The new garment prototype contains the unchanged avatar rig and a separate
+rigid-hardware rig. Godot imports both with the name `Skeleton3D`; the original
+observer correctly refused that ambiguous bare selector but could not yet accept
+an explicit path. It now supports exact scene-relative paths and reports them
+in the skeleton inventory. The real paths are `./Rig/Skeleton3D` and
+`./JacketHardwareRig/Skeleton3D`. Ambiguous bare names remain errors.
+
+Rest-point association now computes each surface's positions once per sample,
+then clears that cache after the next animation seek. Actual deformation still
+uses the current pose and raw consumer weights. The actual two-rig fixture,
+later-introduced probe, and persistent failed-association controls all pass.
+The complete [Production suite](multi-rig-consumer-checks/summary.json) now has
+**95 passing tests, zero failures or skips**, including 13 actual consumer
+regressions. The [independent review](review-observer-paths-cache.md) records
+the exact source hashes and real-model observations.
+
+The rejected prototype's 30-point/five-pose observation now completes in
+24.354 seconds, where repeated association previously timed out at 120 seconds.
+All 25 bone matrices and 150 vertex associations succeed. Its raw cloth skin
+positions still fail the unchanged 20 µm default, reaching 65.733 µm. This is
+retained negative evidence, not garment acceptance or an efficiency benchmark.
+
+Direct comparison of decoded FLOAT GLB weights with actual Godot arrays explains
+the discrepancy: the consumer packs coefficients as UNORM16, and its raw sums
+can be below one. Weight packing predicts 65.750 µm; retaining the same engine
+transforms with decoded source coefficients in a diagnostic calculation leaves
+at most 0.519 µm. Actual playback is never replaced by that counterfactual.
+
+The independently reviewed [precision rationale](review-consumer-precision-profile.md)
+supports an explicit [100 µm garment consumer profile](../garment-resume/consumer-precision-profile.json)
+frozen before final selection. The sampled four-coefficient storage envelope
+plus residuals is 91.860 µm. Final 97-frame weight/term bounds must be recomputed,
+and the original strict result must be retained. An actual exported wrong-weight
+control still fails this profile, with 19.8–46.8 mm errors; see the
+[control summary](consumer-precision/control-summary.json). Native geometry,
+attachment, fit, visual and source-preservation acceptance remain separate.
+
+The observer continuation also repeats all five
+[required repository gates](continuation-required-gates/summary.json):
+935 JavaScript tests pass, the legacy dogfood retains 11 checkpoints, and the
+installed package audit retains the same 19-file distribution. These checks
+do not accept the still-unfinished garment.
+
+## Initial continuation verification
 
 [Production execution](checks/production.summary.json): 92 passed, zero failed
 or skipped, with actual Blender 4.3.2 and Godot 4.7.2. The command record retains

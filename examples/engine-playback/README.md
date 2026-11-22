@@ -25,10 +25,17 @@ exits nonzero and remains evidence.
 
 The inspection document contains `consumer_samples` with `fps`, `fps_base`,
 `matrix_order: "row-major, Blender Z-up world space"` and at least three samples.
-Each sample has `seconds` and a `nodes` object mapping exact node names to
+Each sample has `seconds` and a `nodes` object mapping node selectors to
 row-major 16-number or 4-by-4 world matrices. Bone probes use an optional `bones`
-array with `node` (the imported Skeleton3D name), `bone`, and native world
-`matrix`. Names must identify one node in the imported scene.
+array with `node` (the imported Skeleton3D selector), `bone`, and native world
+`matrix`. A bare name must identify exactly one node in the imported scene;
+ambiguous names remain errors. An exact scene-relative path can disambiguate
+nodes, for example `./CharacterRig/Skeleton3D` and
+`./HardwareRig/Skeleton3D`. The geometry result records each skeleton's `path`;
+use that reported path rather than assuming an import hierarchy. Paths apply to
+`nodes` keys, bone `node` selectors and skin-vertex `node` selectors. Prefix `./`
+when selecting a direct child explicitly. Lookup stays within the imported
+scene; absolute SceneTree paths and traversal aliases are not accepted.
 
 The runner changes basis from Blender Z-up to glTF/Godot `(X,Z,-Y)` with matrix
 `C`. Object worlds use `C*M*C^-1`; bone worlds use `C*M`, matching the extra
@@ -51,8 +58,10 @@ thresholds; they are never automatically increased after observing a difference.
 
 For an actual skin-deformation probe, each native sample can also contain
 `skin_vertices` entries with `node`, `label`, `rest_world` and current `world`
-positions in Blender coordinates. The first sample must be that recorded rest
-pose. Godot matches an actual imported skinned vertex at that rest position
+positions in Blender coordinates. A vertex label is associated when it first
+appears, and its recorded rest position must correspond to that sample's pose;
+normally all labels are included in the first sample at rest. Godot matches an
+actual imported skinned vertex at that recorded position
 (within 10 micrometers), retains its surface/index and evaluates its delivered
 joint indices, weights and inverse-bind matrices against the current Skeleton3D
 pose. Each resulting world point must match the native evaluated position within
@@ -65,6 +74,14 @@ A missing skin, invalid binding, failed morph bake or unresolved rest match
 is not accepted by this narrow probe. Repeated coincident export vertices
 are not an exhaustive inspection of all weights; use representative affected
 regions and retain that sampling limit.
+
+Rest-association positions are computed once per mesh surface within a sample
+and shared by that sample's probes. This cache is cleared after every animation
+seek, alongside the morph snapshot cache. A failed match remains a failure;
+only a successful per-label surface/index association is reused over time.
+Actual deformation results are never cached across samples or normalized by
+this optimization. Later-introduced labels still associate against their own
+first sampled pose.
 
 For rest-vertex association only, the weighted position is divided by its
 near-unit weight sum in skeleton-local space. Godot's packed weights can sum
@@ -100,10 +117,13 @@ The script uses documented public APIs:
 - [GLTFDocument](https://docs.godotengine.org/en/stable/classes/class_gltfdocument.html)
 - [AnimationPlayer](https://docs.godotengine.org/en/stable/classes/class_animationplayer.html)
 - [Skeleton3D](https://docs.godotengine.org/en/stable/classes/class_skeleton3d.html)
+- [Scene-relative node paths](https://docs.godotengine.org/en/stable/classes/class_node.html#class-node-method-get-path-to)
 - [MeshInstance3D blend-shape snapshot](https://docs.godotengine.org/en/stable/classes/class_meshinstance3d.html)
 
-Run actual consumer regressions, including wrong native matrices/skin positions,
-a stationary named clip and a missing clip, with both applications installed:
+Run actual consumer regressions, including two independently animated skeletons
+with ambiguous names and qualified paths, failed rest associations, wrong native
+matrices/skin positions, a stationary named clip and a missing clip, with both
+applications installed:
 
 ```bash
 REFAS_GODOT_TESTS=1 python3 -B -m unittest discover -s tests -p test_production_engine_playback.py -v

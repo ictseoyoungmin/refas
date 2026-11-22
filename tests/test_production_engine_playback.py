@@ -97,6 +97,12 @@ write_case('morph')
                 "--python-exit-code", "1", "--python", str(script)], capture_output=True, text=True, timeout=90)
         if result.returncode:
             raise AssertionError(result.stdout[-5000:] + result.stderr[-5000:])
+        result = subprocess.run([BLENDER, "-b", "--factory-startup", "--threads", "2",
+                "--python-exit-code", "1", "--python", str(ROOT / "tests/fixtures/production_two_skeletons.py"),
+                "--", str(ROOT / "skills/refas/scripts/production"), str(cls.root / "two-rigs")],
+                capture_output=True, text=True, timeout=90)
+        if result.returncode:
+            raise AssertionError(result.stdout[-5000:] + result.stderr[-5000:])
         cls.clip = json.loads((cls.root / "moving/inspection.json").read_text())["clip"]
         result = subprocess.run([BLENDER, "-b", "--factory-startup", "--threads", "2",
                 "--python-exit-code", "1", "--python", str(ROOT / "tests/fixtures/production_weighted_skin.py"),
@@ -110,12 +116,13 @@ write_case('morph')
         cls.temp.cleanup()
 
     def run_case(self, label, fixture="moving", inspection=None, clip=None, asset_name="asset.glb",
-                 vertex_tolerance=None):
+                 vertex_tolerance=None, expected_triangles=12, required_skinned_meshes=1):
         command = [sys.executable, "-B", str(EXAMPLE / "run.py"), "--asset",
                 str(self.root / fixture / asset_name), "--inspection",
                 str(inspection or self.root / fixture / "inspection.json"), "--clip", clip or self.clip,
                 "--out", str(self.root / label), "--godot", str(GODOT),
-                "--required-skinned-meshes", "1", "--expected-triangles", "12"]
+                "--required-skinned-meshes", str(required_skinned_meshes),
+                "--expected-triangles", str(expected_triangles)]
         if vertex_tolerance is not None:
             command += ["--vertex-tolerance", str(vertex_tolerance)]
         result = subprocess.run(command, capture_output=True, text=True, timeout=90)
@@ -132,6 +139,62 @@ write_case('morph')
         self.assertEqual(sum(len(row["vertexProbes"]) for row in report["samples"]), 4)
         self.assertEqual(report["tolerances"], {"matrix": 2e-5, "skinVertexM": 2e-5,
                                                "restVertexMatchM": 1e-5})
+
+    def test_two_skeletons_require_explicit_paths_and_verify_both_rigs(self):
+        ambiguous, report = self.run_case("two-rigs-ambiguous", fixture="two-rigs", clip="DualRigMotion",
+                                           expected_triangles=24, required_skinned_meshes=2)
+        self.assertNotEqual(ambiguous.returncode, 0)
+        skeletons = report["geometry"]["skeletons"]
+        self.assertEqual([s["name"] for s in skeletons], ["Skeleton3D", "Skeleton3D"])
+        self.assertEqual(len({s["path"] for s in skeletons}), 2)
+        self.assertTrue(all(not row["probes"] for row in report["samples"]))
+        self.assertEqual(sum(not c["ok"] and c["name"].startswith("probeNode:")
+                             for c in report["checks"]), 10)
+        paths = {root: next(s["path"] for s in skeletons if s["path"].startswith("./" + root + "/"))
+                 for root in ("CharacterRoot", "HardwareRoot")}
+        source = json.loads((self.root / "two-rigs/inspection.json").read_text())
+        for sample in source["consumer_samples"]["samples"]:
+            for bone in sample["bones"]:
+                bone["node"] = paths[bone["fixture_root"]]
+        inspection = self.root / "two-rigs-qualified.json"
+        inspection.write_text(json.dumps(source))
+        result, report = self.run_case("two-rigs-qualified", fixture="two-rigs", clip="DualRigMotion",
+            inspection=inspection, expected_triangles=24, required_skinned_meshes=2)
+        self.assertEqual(result.returncode, 0, report)
+        self.assertEqual(sum(len(row["probes"]) for row in report["samples"]), 10)
+        self.assertEqual(sum(len(row["vertexProbes"]) for row in report["samples"]), 20)
+        self.assertTrue(all(row["maxMatrixError"] <= 2e-5 for row in report["samples"]))
+
+    def test_association_cache_uses_current_sample_for_a_new_label(self):
+        source = json.loads((self.root / "moving/inspection.json").read_text())
+        samples = source["consumer_samples"]["samples"]
+        late_rest = samples[1]["skin_vertices"][0]["world"]
+        for sample in samples[1:]:
+            sample["skin_vertices"].append({**sample["skin_vertices"][0],
+                "label": "introduced-during-motion", "rest_world": late_rest})
+        inspection = self.root / "later-association.json"
+        inspection.write_text(json.dumps(source))
+        result, report = self.run_case("later-association", inspection=inspection)
+        self.assertEqual(result.returncode, 0, report)
+        self.assertEqual([len(row["vertexProbes"]) for row in report["samples"]], [1, 2, 2, 2])
+
+    def test_cached_association_does_not_hide_or_retry_a_failed_rest_match(self):
+        source = json.loads((self.root / "moving/inspection.json").read_text())
+        samples = source["consumer_samples"]["samples"]
+        for index, sample in enumerate(samples):
+            probe = {**sample["skin_vertices"][0], "label": "missing-rest"}
+            # Subsequent samples provide a real current point, but an invalid
+            # initial association must not be silently retried after motion.
+            probe["rest_world"] = [10, 10, 10] if index == 0 else probe["world"]
+            sample["skin_vertices"].append(probe)
+        inspection = self.root / "missing-rest.json"
+        inspection.write_text(json.dumps(source))
+        result, report = self.run_case("missing-rest", inspection=inspection)
+        self.assertNotEqual(result.returncode, 0)
+        failures = [c for c in report["checks"] if c["name"].endswith(":missing-rest")]
+        self.assertEqual(len(failures), len(samples))
+        self.assertTrue(all(c["name"].startswith("restVertexMatch:") and not c["ok"] for c in failures))
+        self.assertEqual(sum(len(row["vertexProbes"]) for row in report["samples"]), len(samples))
 
     def test_wrong_native_expectation_is_rejected(self):
         source = json.loads((self.root / "moving/inspection.json").read_text())

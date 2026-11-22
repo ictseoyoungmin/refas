@@ -1,0 +1,45 @@
+{
+  "recordedUtc": "2026-11-22T20:06:11.607937+00:00",
+  "changedFiles": [
+    {
+      "path": "examples/engine-playback/verify_godot.gd",
+      "sha256": "47846d01208f55e70b40eaa2c0bb444322995360863f5d3b933e893ac375eaad"
+    },
+    {
+      "path": "examples/engine-playback/README.md",
+      "sha256": "a769be230ec39ee126e03dc008bc9acfd45abc1ab27e666c8387546b2a8cb8ee"
+    },
+    {
+      "path": "tests/test_production_engine_playback.py",
+      "sha256": "45869012f115851b468e26e3463f65290d7a288a7f15592ee679bdd1abbc2798"
+    },
+    {
+      "path": "tests/fixtures/production_two_skeletons.py",
+      "sha256": "35334a8cc95b162bc4ccde4d1dd6ab5703b9bdd7d289582f21384ff54355b33c"
+    }
+  ],
+  "capabilityTest": {
+    "argv": [
+      "python",
+      "-B",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests",
+      "-p",
+      "test_production_engine_playback.py",
+      "-v"
+    ],
+    "env": {
+      "REFAS_GODOT_TESTS": "1",
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "observedTests": 13,
+    "observedFailures": 0,
+    "observedSkipped": 0,
+    "observedTestSeconds": 7.576,
+    "evidence": "Actual process stdout in this recovery session; root is separately capturing the full Production suite for these same source bytes."
+  },
+  "scope": "Paths and per-sample rest association cache only; no threshold/raw-weight change; real retained-negative asset still fails strict skin-position budget."
+}

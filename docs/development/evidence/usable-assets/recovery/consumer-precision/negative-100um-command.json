@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "/usr/local/bin/godot",
+    "--headless",
+    "--path",
+    "/workspace/scratch/61afcdd4e3c6/refas/examples/engine-playback",
+    "--script",
+    "/workspace/scratch/61afcdd4e3c6/refas/examples/engine-playback/verify_godot.gd",
+    "--",
+    "/workspace/scratch/61afcdd4e3c6/work/garment/root-precision-control/negative-100um/configuration.json"
+  ],
+  "startedUtc": "2026-11-22T20:11:35.764474+00:00",
+  "endedUtc": "2026-11-22T20:11:36.022054+00:00",
+  "elapsedSeconds": 0.25758647400016343,
+  "returncode": 1
+}

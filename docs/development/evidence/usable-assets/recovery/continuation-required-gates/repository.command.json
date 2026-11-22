@@ -1,0 +1,21 @@
+{
+  "argv": [
+    "npm",
+    "run",
+    "check"
+  ],
+  "baseCommit": "7c4a3bda7f530c55f63e8eece5b1b615b24628eb",
+  "note": "Multi-rig observer source and regression fixture recorded by hash; garment authoring remains in progress. Active installed package unchanged.",
+  "sourceFileSha256": {
+    "examples/engine-playback/verify_godot.gd": "47846d01208f55e70b40eaa2c0bb444322995360863f5d3b933e893ac375eaad",
+    "tests/test_production_engine_playback.py": "45869012f115851b468e26e3463f65290d7a288a7f15592ee679bdd1abbc2798",
+    "tests/fixtures/production_two_skeletons.py": "35334a8cc95b162bc4ccde4d1dd6ab5703b9bdd7d289582f21384ff54355b33c"
+  },
+  "sourceFilesUnchanged": true,
+  "startedUtc": "2026-11-22T20:14:52.267762+00:00",
+  "endedUtc": "2026-11-22T20:15:12.514745+00:00",
+  "elapsedSeconds": 20.246984497000085,
+  "returncode": 0,
+  "stdoutSha256": "de353cb17d3dec171973bc19600891c36e9359db88a6b6ad50ff06894559c8b0",
+  "stderrSha256": "81de847aa5ed54f15ebdbcd1618f3adffb21dae26ec19c0bc8c388dc125e576d"
+}

@@ -5,8 +5,10 @@ extends SceneTree
 var report = {"schema": "refas.godot.playback/v1", "ok": false, "checks": [], "samples": []}
 var configuration = {}
 var nodes = {}
+var node_paths = {}
 var vertex_matches = {}
 var morph_meshes = {}
+var rest_surfaces = {}
 
 func _initialize():
 	call_deferred("_run")
@@ -49,6 +51,10 @@ func matrix_error(actual, expected):
 	return maximum
 
 func named_node(node_name):
+	# Exact paths are relative to the imported scene, never the SceneTree root.
+	# A bare name still has to identify one node even if it is a direct child.
+	if node_name == "." or "/" in node_name:
+		return node_paths.get(node_name.trim_prefix("./"))
 	if not nodes.has(node_name) or nodes[node_name].size() != 1:
 		return null
 	return nodes[node_name][0]
@@ -116,12 +122,19 @@ func match_vertex(probe):
 		if not candidate is MeshInstance3D or not candidate.mesh or not candidate.skin:
 			continue
 		for surface in range(candidate.mesh.get_surface_count()):
-			var arrays = candidate.mesh.surface_get_arrays(surface)
-			for vertex in range(arrays[Mesh.ARRAY_VERTEX].size()):
-				var point = skinned_point(candidate, arrays, surface, vertex, true)
+			var cache_key = str(candidate.get_instance_id()) + ":" + str(surface)
+			if not rest_surfaces.has(cache_key):
+				var arrays = candidate.mesh.surface_get_arrays(surface)
+				var positions = []
+				for vertex in range(arrays[Mesh.ARRAY_VERTEX].size()):
+					positions.append(skinned_point(candidate, arrays, surface, vertex, true))
+				rest_surfaces[cache_key] = {"arrays": arrays, "positions": positions}
+			var cached = rest_surfaces[cache_key]
+			for vertex in range(cached.positions.size()):
+				var point = cached.positions[vertex]
 				if point != null and point.distance_to(target) < distance:
 					distance = point.distance_to(target)
-					best = {"node": candidate, "arrays": arrays, "vertex": vertex,
+					best = {"node": candidate, "arrays": cached.arrays, "vertex": vertex,
 						"surface": surface, "restMatchDistance": distance}
 	if distance > configuration.get("vertexMatchTolerance", 0.00001):
 		return null
@@ -171,13 +184,16 @@ func _run():
 	var geometry = {"meshes": 0, "surfaces": 0, "triangles": 0, "skinnedMeshes": 0, "skeletons": []}
 	for node in all_nodes:
 		var key = str(node.name)
+		var relative_path = str(scene.get_path_to(node))
+		node_paths[relative_path] = node
 		if not nodes.has(key):
 			nodes[key] = []
 		nodes[key].append(node)
 		if node is AnimationPlayer:
 			players.append(node)
 		if node is Skeleton3D:
-			geometry.skeletons.append({"name": key, "bones": node.get_bone_count()})
+			geometry.skeletons.append({"name": key, "bones": node.get_bone_count(),
+				"path": "." if relative_path == "." else "./" + relative_path})
 		if node is MeshInstance3D and node.mesh:
 			geometry.meshes += 1
 			geometry.surfaces += node.mesh.get_surface_count()
@@ -224,6 +240,9 @@ func _run():
 		player.seek(sample.time, true)
 		player.advance(0)
 		morph_meshes.clear()
+		# Reuse expensive skin/morph association positions between this sample's
+		# probes only. Actual deformation is evaluated fresh for every probe.
+		rest_surfaces.clear()
 		for node in all_nodes:
 			if node is Skeleton3D:
 				node.force_update_all_bone_transforms()

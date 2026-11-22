@@ -1,0 +1,19 @@
+{
+	"animations": [
+		"Jacket_Wear_Reach_Return"
+	],
+	"skeletons": [
+		{
+			"bones": 235,
+			"hasOriginalUpperArm": true,
+			"name": "Skeleton3D",
+			"path": "./Rig/Skeleton3D"
+		},
+		{
+			"bones": 447,
+			"hasOriginalUpperArm": false,
+			"name": "Skeleton3D",
+			"path": "./JacketHardwareRig/Skeleton3D"
+		}
+	]
+}

@@ -1,0 +1,50 @@
+{
+  "reviewUtc": "2026-11-22T19:55:04.854227+00:00",
+  "scope": "Preliminary read-only source-bound visual and report review of frozen sections-03; no new Blender geometry execution",
+  "inputs": [
+    {
+      "path": "work/garment/geometry-repair/sections-03/repaired-cage.blend",
+      "sha256": "446c66f145391ac742e40d74aaf617d64e300fbc9ad2b790667f922e93dd5a1a"
+    },
+    {
+      "path": "work/garment/geometry-repair/sections-03/repaired-detailed.blend",
+      "sha256": "35b6f37f9bd9e9c96fa1b735e88325c3e5df11a03f28b72127bab26f13300d20"
+    },
+    {
+      "path": "work/garment/geometry-repair/sections-03/report.json",
+      "sha256": "8ad0cf347466dfb49da205c71aa15f9c9bee6d98cf68042d843b05aebb92b930"
+    },
+    {
+      "path": "work/garment/geometry-repair/sections-03/audit/report.json",
+      "sha256": "5ba9a5a92699a70b7a8d43256df184a79ea803d7fccc791370b8fe356e997e4b"
+    },
+    {
+      "path": "work/garment/geometry-repair/sections-03/views/low-nape.png",
+      "sha256": "c74c231d4ec46875dbad25439ef1ba8d9e07bbef1e94f1134c8bcf5ddef358fc"
+    },
+    {
+      "path": "work/garment/geometry-repair/sections-03/views/low-whole-front.png",
+      "sha256": "bae1582ee79152725e5c8cdb561dce463ce4f23fd0a675ddeaa96a6dd0cca587"
+    },
+    {
+      "path": "work/garment/geometry-repair/sections-03/views/low-collar-front.png",
+      "sha256": "4cb290c87a550e31e85715fafdc9e2309b6e062c38f07d5ec9f91a36bf8ea58f"
+    },
+    {
+      "path": "work/garment/geometry-repair/sections-03/views/high-nape.png",
+      "sha256": "85a74e9ddb0f595b36cca298a1435b46ade747629f084f8e51db0f21a0264fc6"
+    },
+    {
+      "path": "work/garment/geometry-repair/sections-03/views/high-whole-front.png",
+      "sha256": "a213bce887c7b87085d235019ee7a69456720a6cec9b7b2594fc0d059af25701"
+    },
+    {
+      "path": "work/garment/geometry-repair/sections-03/views/high-collar-front.png",
+      "sha256": "5e75ecff5932eda43366b8d593c465b6fcd264babbe1a09a60ec579cd3b0123a"
+    },
+    {
+      "path": "refas/examples/uniform-jacket/source/reference.png",
+      "sha256": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5"
+    }
+  ]
+}
