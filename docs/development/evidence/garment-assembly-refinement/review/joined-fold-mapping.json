@@ -1,0 +1,133 @@
+{
+  "created_at": "2026-11-22T09:37:29.906086+00:00",
+  "packet": "/workspace/scratch/c52cb753f160/blind-review-joined-fold/garment",
+  "mapping": {
+    "A": "unchanged delivered baseline",
+    "B": "joined-fold revision 10b36b81230848fb9d81ceb9dc355f1f"
+  },
+  "selected_native_sha256": "03de5a60b31bf32bae05cec46eeb4fe6220089c1043f274c772a4383cb9a1268",
+  "selected_glb_sha256": "d298c7cfa098999762f1e713ded4813b33b3f1942bc07c641bd3b41ee8b2ee4a",
+  "files": [
+    {
+      "file": "A/view-back.png",
+      "bytes": 252806,
+      "sha256": "b43fe802485476909912bd8fa18a98bc79325b785a45f0d174bf7c96fc3e816c"
+    },
+    {
+      "file": "A/view-fold-front.png",
+      "bytes": 342329,
+      "sha256": "7a4de50c07c5ce5c6e12d2608022bad281aa3225a2f030bce1cbfa50e6fc3440"
+    },
+    {
+      "file": "A/view-fold-oblique.png",
+      "bytes": 359318,
+      "sha256": "fa40adde8fb63831e673ba251156b50a3fe5de3750f1eeb78add62047b4e04aa"
+    },
+    {
+      "file": "A/view-fold-side.png",
+      "bytes": 304769,
+      "sha256": "b6bb0c9536d723086db5a43c658b1dfd95d5768728870f6732cf6a8179350738"
+    },
+    {
+      "file": "A/view-front-three-quarter.png",
+      "bytes": 265007,
+      "sha256": "dcef0f1c7ecd7b35a5bf2dc25e09b5f88ec01102408aaa274441d5f7df9342d4"
+    },
+    {
+      "file": "A/view-front.png",
+      "bytes": 273190,
+      "sha256": "37022ce7da02c642eb4d3e1c71cdf413a38141662b7d8ab9b83cf5127f0ee572"
+    },
+    {
+      "file": "A/view-left.png",
+      "bytes": 206296,
+      "sha256": "64e5138fe5f4c0fa7255cc5d36b74b610ab300512bdbe90ac9608b2494141dd5"
+    },
+    {
+      "file": "A/view-rear-three-quarter.png",
+      "bytes": 241518,
+      "sha256": "8bb84388b829cce31ddfd01d43d7a1824a117b844da31a555852429a0a03824c"
+    },
+    {
+      "file": "A/view-right.png",
+      "bytes": 199606,
+      "sha256": "ce8c15b608e69963ed24caffa87f78e9dd7ca393845086693daec96513e1ff3b"
+    },
+    {
+      "file": "A-details.png",
+      "bytes": 735868,
+      "sha256": "443f4958e3cf990849f6ce73c5e50225b6ce3de5df9b0a81a5b9864dd3f2d687"
+    },
+    {
+      "file": "A-whole.png",
+      "bytes": 675380,
+      "sha256": "6dc789aa3796caa39a3d675d3a1f4e0c938a6a906d28bcea07466d2d196d8f93"
+    },
+    {
+      "file": "B/view-back.png",
+      "bytes": 252731,
+      "sha256": "517e66f073d817b6f605177da058a8992f6b16965c16aec9deb4b177c48c0e6d"
+    },
+    {
+      "file": "B/view-fold-front.png",
+      "bytes": 338761,
+      "sha256": "5a82b50bdd01c6f382313e196e949af2c4c69685e7cec4c945efb91d89a4a796"
+    },
+    {
+      "file": "B/view-fold-oblique.png",
+      "bytes": 359253,
+      "sha256": "e5be7dec71f55de59b37d6e2850a005831e015f59eb0fdf054e85bf2242df74c"
+    },
+    {
+      "file": "B/view-fold-side.png",
+      "bytes": 302043,
+      "sha256": "381d305986d5ae20ee3f7f8fc67e49ebf2b8fff36166cc393252f440460423c9"
+    },
+    {
+      "file": "B/view-front-three-quarter.png",
+      "bytes": 264479,
+      "sha256": "898c5ae375b041c3b3778c3546f04db4e327ba11ea27ad6e1927c17f2e5b1093"
+    },
+    {
+      "file": "B/view-front.png",
+      "bytes": 271425,
+      "sha256": "5528683cc073b168932013677b48cd379cb2470d2e57368314cd7772fdf324fc"
+    },
+    {
+      "file": "B/view-left.png",
+      "bytes": 206341,
+      "sha256": "7be62d7bfc7841ed0a9801ff0961a8a8e635d7c6bb979dcbf1cfd8217b178a16"
+    },
+    {
+      "file": "B/view-rear-three-quarter.png",
+      "bytes": 242171,
+      "sha256": "f4b61976ac13c8b2442d9efc479630a615fe3b9d9d6dfe8b9a8eeb421dd42d15"
+    },
+    {
+      "file": "B/view-right.png",
+      "bytes": 198913,
+      "sha256": "2afd9c32bf77c91312f595d60b0abc273f1e693d9e6e3f6176bd8803e92bfa22"
+    },
+    {
+      "file": "B-details.png",
+      "bytes": 731874,
+      "sha256": "6af432ddec0998fe5f7d79050841e3fac8924907659e0c7828b7176642119b70"
+    },
+    {
+      "file": "B-whole.png",
+      "bytes": 674969,
+      "sha256": "195578c5959f13bf93e6c63730941b9dc36e436ef0502fd688f126031484807a"
+    },
+    {
+      "file": "source.png",
+      "bytes": 2666378,
+      "sha256": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5"
+    }
+  ],
+  "review_received_at": "2026-11-22T09:42:42.031306+00:00",
+  "unblinded_after_literal_review": true,
+  "review_sha256": {
+    "md": "a4032bbf3587a69fe6c9cf3be6554c0372cec55dfe81e287e13148b6ab333e86",
+    "json": "bc75fc1b33de462ae1e6ef67989761e09ccd531774d00f9d76fda9dfd749cda4"
+  }
+}

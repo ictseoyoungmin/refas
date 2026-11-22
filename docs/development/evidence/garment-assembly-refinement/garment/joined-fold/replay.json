@@ -1,0 +1,61 @@
+{
+  "purpose": "Informed structural correction after the first isolated review tied and rejected both candidates; not an independent authoring trial.",
+  "package": {
+    "path": "/workspace/scratch/c52cb753f160/installed-refas/refas-1.4.2.tgz",
+    "bytes": 884390,
+    "sha256": "0b62e372e335cdf090718ee0a3384e5a51b3e48f309d8c7c1e9e0ba8bbf4e01a",
+    "skill_root": "/workspace/scratch/c52cb753f160/installed-refas/package/skills/refas",
+    "version": "1.4.2 development"
+  },
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "/workspace/scratch/c52cb753f160/refas/examples/uniform-jacket/run_fold_refinement.py",
+    "--root",
+    "/workspace/scratch/c52cb753f160/work/garment/joined-fold",
+    "--skill-root",
+    "/workspace/scratch/c52cb753f160/installed-refas/package/skills/refas",
+    "--input-blend",
+    "/workspace/scratch/c52cb753f160/baseline/refas-garment-automail-dogfood/garment/jacket.blend",
+    "--blender",
+    "/usr/bin/blender"
+  ],
+  "source_hashes": {
+    "/workspace/scratch/c52cb753f160/baseline/refas-garment-automail-dogfood/garment/jacket.blend": "ab7a3b93b40b431f820dc7cdc96c711005c185096fa3038d93405dceb7a84dbb",
+    "/workspace/scratch/c52cb753f160/refas/examples/uniform-jacket/source/reference.png": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5",
+    "/workspace/scratch/c52cb753f160/refas/examples/uniform-jacket/review.json": "be6e20645867d04c6c07536ddc1a3cf2736d2111e0d3739628063ee989b134c1",
+    "/workspace/scratch/c52cb753f160/refas/examples/uniform-jacket/review-fold-detail.json": "12f76f37e21acd2155660369a5742b7a2e41f79d6b1229be12356a2966c75abe",
+    "/workspace/scratch/c52cb753f160/refas/examples/uniform-jacket/refine_fold.py": "56ae10879acb31fa86325a8693d00c0aa9bc51050c42b42832fde3e877db91b8",
+    "/workspace/scratch/c52cb753f160/refas/examples/uniform-jacket/inspect_fold.py": "34c680216ceffae65ecc17306db775afb01972992362fa2c039c7420c8d6060c",
+    "/workspace/scratch/c52cb753f160/refas/examples/uniform-jacket/run_fold_refinement.py": "721a8eff0fcb64ed2c3ead9382ae72a1848f81ad6dc1145bbd39147c7bc939f5"
+  },
+  "started_at": "2026-11-22T09:32:24.114128+00:00",
+  "ended_at": "2026-11-22T09:34:13.964438+00:00",
+  "command_count": 15,
+  "public_production_cli_commands": 14,
+  "command_execution_seconds": 109.659,
+  "authoring_time_instrumented": false,
+  "all_commands_passed": true,
+  "baseline_revision": "f13cfbf83b5a4c029d83a2ce804faf8c",
+  "selected_revision": "10b36b81230848fb9d81ceb9dc355f1f",
+  "edited_revision": "ad101bf5c3c0452db81bf0c15e3dc134",
+  "restored_revision": "48fd4fb0d33d437ea9f3ca40e4bfe17e",
+  "selected_scene_fingerprint": "6cc442a0602709198f76d67948498b94d2da7f6e53f499ed59c69d332741ebfa",
+  "exact_bundle_restore": true,
+  "fixed_six_view_metadata_match": true,
+  "fixed_detail_metadata_match": true,
+  "prior_selection_retained": {
+    "previous_selected_revision": "02b51b5409e64333b17b6565eb7c5a38",
+    "previous_nine_asset_files_match_recorded_hashes": true,
+    "previous_first_review_before_after_render_pairs_match_original_final_root": true,
+    "previous_four_example_source_snapshots_match_archive": true,
+    "previous_evidence_files_remain_in_place": true,
+    "new_root": "/workspace/scratch/c52cb753f160/work/garment/joined-fold",
+    "new_evidence_directory": "/workspace/scratch/c52cb753f160/refas/docs/development/evidence/garment-assembly-refinement/garment/joined-fold",
+    "scope": "Read-only verification of prior asset/source/render identities. Prior reports and first review are retained, not rewritten."
+  },
+  "limits": [
+    "Source camera registration and finished visual acceptance remain unestablished.",
+    "One selected post-review structural candidate was executed in this root; earlier candidates remain in their original roots.",
+    "Execution timing excludes inspection, authoring, review and shared-machine contention; no model/token/cost comparison."
+  ]
+}

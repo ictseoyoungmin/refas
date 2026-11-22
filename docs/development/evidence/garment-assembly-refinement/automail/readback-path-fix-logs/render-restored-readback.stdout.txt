@@ -1,0 +1,119 @@
+{
+  "ok": true,
+  "schema": "refas.production.project/v2",
+  "name": "aurix-revision-readback",
+  "projectId": "61f1cfa6c7f64758987bf29d33a04aad",
+  "head": "1fb66b771aa143cc90551684df1b8966",
+  "sequence": 1,
+  "sources": [
+    {
+      "path": "sources/001-reference.png",
+      "name": "reference.png",
+      "role": "user-reference",
+      "sha256": "3c7856dd632f8a1cde8036078573f569db55b6af97fae853237d8a9356f3c872",
+      "bytes": 3215297
+    }
+  ],
+  "outputs": {
+    "blend": "/workspace/scratch/c52cb753f160/work/automail/readback-projects/94657a5cbc04466295f601f6620b1ea2/.refas2/revisions/1fb66b771aa143cc90551684df1b8966/artifacts/scene.blend",
+    "glb": "/workspace/scratch/c52cb753f160/work/automail/readback-projects/94657a5cbc04466295f601f6620b1ea2/.refas2/revisions/1fb66b771aa143cc90551684df1b8966/artifacts/asset.glb",
+    "scene": "/workspace/scratch/c52cb753f160/work/automail/readback-projects/94657a5cbc04466295f601f6620b1ea2/.refas2/revisions/1fb66b771aa143cc90551684df1b8966/artifacts/scene.json"
+  },
+  "observations": [
+    {
+      "camera": {
+        "matrixWorld": [
+          [
+            0.84269625,
+            -0.06258653,
+            0.5347392,
+            1.14999998
+          ],
+          [
+            0.53838933,
+            0.09796156,
+            -0.83698297,
+            -1.79999995
+          ],
+          [
+            -3e-08,
+            0.99322027,
+            0.11624776,
+            0.63
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "orthoScale": 0.82999998,
+        "position": [
+          1.14999998,
+          -1.79999995,
+          0.63
+        ],
+        "projection": "orthographic",
+        "target": [
+          0.0,
+          0.0,
+          0.38
+        ]
+      },
+      "framing": "fixed-review-spec",
+      "lighting": {
+        "center": [
+          0.0,
+          0.0,
+          0.38
+        ],
+        "radius": 0.5,
+        "rig": "three-area-lights/v1"
+      },
+      "path": "/workspace/scratch/c52cb753f160/work/automail/readback-projects/94657a5cbc04466295f601f6620b1ea2/.refas2/revisions/1fb66b771aa143cc90551684df1b8966/artifacts/view-hero.png",
+      "referenceRegion": null,
+      "registration": "unregistered",
+      "renderer": {
+        "denoising": false,
+        "device": "CPU",
+        "engine": "CYCLES",
+        "samples": 16,
+        "size": [
+          512,
+          512
+        ],
+        "transparent": false,
+        "viewTransform": "AgX",
+        "worldColor": [
+          0.16,
+          0.18000001,
+          0.20999999
+        ],
+        "worldStrength": 0.45
+      },
+      "sha256": "45cc4c069f801b3638539da4d4177a7d59a0837184f6552365930118b30d5899",
+      "sourceSceneFingerprint": "bf24cefceb59d62863fe9783d6230ae316d9e22fa6aeeef9589617aba0fd67cb",
+      "view": "hero"
+    }
+  ],
+  "inputs": {
+    "base.blend": "/workspace/scratch/c52cb753f160/work/automail/readback-projects/94657a5cbc04466295f601f6620b1ea2/.refas2/revisions/1fb66b771aa143cc90551684df1b8966/inputs/base.blend",
+    "edit.py": "/workspace/scratch/c52cb753f160/work/automail/readback-projects/94657a5cbc04466295f601f6620b1ea2/.refas2/revisions/1fb66b771aa143cc90551684df1b8966/inputs/edit.py",
+    "review.json": "/workspace/scratch/c52cb753f160/work/automail/readback-projects/94657a5cbc04466295f601f6620b1ea2/.refas2/revisions/1fb66b771aa143cc90551684df1b8966/inputs/review.json"
+  },
+  "revisions": [
+    {
+      "id": "1fb66b771aa143cc90551684df1b8966",
+      "intent": "revision-scoped repeated readback after restored selection",
+      "createdAt": "2026-11-22T09:27:28.144543+00:00",
+      "parent": null
+    }
+  ],
+  "incompleteRuns": [],
+  "referenceResemblance": "not-evaluated",
+  "gameReadiness": "not-evaluated",
+  "runId": "731b4d11b81d4133ab6a9f43d42afad6",
+  "publishedRevision": "1fb66b771aa143cc90551684df1b8966",
+  "elapsedSeconds": 5.933
+}

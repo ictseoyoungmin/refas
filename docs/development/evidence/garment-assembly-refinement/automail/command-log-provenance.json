@@ -1,0 +1,7 @@
+{
+  "early_stdout_limit": "Before the numbered logger was added, repeated doctor and revision-status log basenames were overwritten during visual iteration. Exact argv/timestamps and all production revisions are retained; overwritten prior stdout is not reconstructed.",
+  "restored_first_revision_stdout": "The open-channel revision stdout/stderr were copied to iterations/open-channel/refinement-logs before the next revision completed.",
+  "current_author_command_log": "/workspace/scratch/c52cb753f160/work/automail/refinement-commands.json",
+  "fresh_replay_logs_complete": true,
+  "installed_package_logs_complete": true
+}

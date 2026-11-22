@@ -8,7 +8,54 @@ The user approved implementation of the new production path, starting from `main
 
 This is development work. The latest published release remains `v1.4.1`; package/runtime/plugin version `1.4.2` is retained until the coordinated 2.0 packaging milestone. No release or merge to main is part of this slice.
 
-## Interruption recovery (2026-11-22) — no new geometry acceptance
+## Current: joined jacket facing, compound automail and runtime scope guards
+
+The reattached original sheets now have a new informed refinement with actual
+editable native/GLB delivery. Both final selections are preferred to their
+delivered baselines in isolated source-and-render reviews, while **both remain
+rejected as finished assets**. The jacket's first tied candidate and its literal
+review remain intact; a second structural correction receives a fresh review.
+See the [complete evidence and offline viewer](development/evidence/garment-assembly-refinement/README.md).
+
+The final jacket joins the collar and both lapels through 22 shared gorge
+edges. It preserves 261 original object fingerprints and all six materials.
+Its cuff exercise changes seven objects and preserves 260, then restores all
+14 selected artifact/input files exactly. The current asset has 267 meshes and
+418,540 evaluated triangles; named lapel/gorge vertex groups replace the former
+separate lapel selections. Tailoring, the rear collar roll, straps and ornaments
+still need source-specific work.
+
+The arm gains layered socket surfaces, varying forearm sections and a real
+side channel, plus a restrained volumetric palm. It changes 44 objects and
+preserves 256. The 26-node cover moves 3 mm with 274 other objects exact;
+cover/pose restoration preserves all 16 selected files. Four saved poses and
+independent 300-node GLB import pass their declared checks. Sparse mechanisms,
+simplified armor/hand construction and broad shoulder silhouette remain.
+
+Two actual runtime defects are fixed: evaluated Geometry Nodes instances were
+missed by the old object-instancing guard, and differing viewport/render
+modifier settings could give inventory/export and renders different geometry.
+Eight inspect/edit rejection subcases fail on the old worker and pass after
+the repair. Realized instances export/import successfully. Both example
+runners also preserve repeat-use observation histories.
+
+| Current verification | Result |
+| --- | --- |
+| JavaScript regression | 931 passed; zero failed/skipped |
+| Production regression | 37 passed: 23 project/CLI + 14 actual Blender; zero skipped |
+| Python syntax / repository / skill checks | PASS |
+| Retained 1.x dogfood | PASS, 11 checkpoints |
+| Package audit | PASS, 399 files, 43 reference leaves, 68 routed targets |
+| Actual extracted package | Initial jacket replay, final joined-jacket workflow and bounded arm compatibility checks pass; individual evidence states their different scopes |
+
+Literal assignments, feedback, isolated review prompts and packaging requests
+are saved before dispatch. The initial authoring uses a frozen skill; the
+later joined jacket uses the tested extracted package. No new general
+workflow superiority, token/cost result, rig/cloth/engine acceptance or release
+is inferred. R2-05/06 remain WIP, PR #399 remains Draft, version metadata stays
+at 1.4.2 development and the published release remains v1.4.1.
+
+## Previous: interruption recovery (2026-11-22) — no new geometry acceptance
 
 The unpublished next-step work on the jacket collar/lapels and AURIX overlapping
 armor/hand was interrupted. Its reported local script/render/review outputs are
@@ -30,7 +77,7 @@ and [prepared new author/reviewer prompts](development/evidence/garment-and-auto
 Shape edits, fixed-camera reviews, actual new native/GLB delivery and post-edit
 acceptance **remain open**. Existing PR #399 stays Draft; 2.0 is unreleased.
 
-## Current: garment refinement and fresh automail validation
+## Previous: garment refinement and fresh automail validation — e265a35f
 
 The user's two selected sources now have actual editable assets, partial-edit
 and recovery exercises, native/GLB readback and anonymous visual reviews. Read

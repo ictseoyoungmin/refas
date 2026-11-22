@@ -16,6 +16,12 @@ and joint centers before screws, cables or labels. Use a few purposeful panel
 profiles with thickness and bevels rather than a stack of boxes that only
 matches one silhouette. Follow the reference's asymmetry where visible.
 
+Vary a shell's section width, depth, center and tilt along its length. Shape
+the broad face, returning side wall and free edge together, then inspect the
+gap to the next layer from a side or grazing view. A seam line on a broad flat
+plate does not demonstrate overlapping armor. Keep exposed mechanisms visible
+while giving each outer plate enough volume to read under the fixed lights.
+
 ## Make the motion hierarchy explicit
 
 Place a named pivot at each intended joint center, with its local axis aligned
@@ -34,6 +40,11 @@ Place flexion centers along each digit and keep joint gaps intentional.
 Use readable proportions and segment ordering before repeated knuckle detail.
 Whether the reference shows a front or palm side must be resolved before
 mirroring or assigning a hand's side.
+
+Compare total palm thickness, including both the dorsal shell and grip pads.
+Keep the central bed and local thumb-side/outer pads distinct where the source
+shows them. Increasing every surface's bulge can close articulation spaces
+and produce a swollen hand; inspect the palm and side as well as the back.
 
 ## Exercise a limited, useful pose
 

@@ -1,0 +1,127 @@
+{
+  "scope": "frozen-replay",
+  "command_elapsed_seconds_excluding_nested_double_count": 105.165884,
+  "rows": [
+    {
+      "label": "refinement-doctor",
+      "start": "2026-11-22T09:21:07.672108+00:00",
+      "end": "2026-11-22T09:21:08.274611+00:00",
+      "seconds": 0.602503
+    },
+    {
+      "label": "refinement-init",
+      "start": "2026-11-22T09:21:08.275104+00:00",
+      "end": "2026-11-22T09:21:08.339750+00:00",
+      "seconds": 0.064646
+    },
+    {
+      "label": "import-unchanged-baseline",
+      "start": "2026-11-22T09:21:08.340028+00:00",
+      "end": "2026-11-22T09:21:30.098983+00:00",
+      "seconds": 21.758955
+    },
+    {
+      "label": "refine-compound-shells",
+      "start": "2026-11-22T09:21:30.139570+00:00",
+      "end": "2026-11-22T09:21:51.527904+00:00",
+      "seconds": 21.388334
+    },
+    {
+      "label": "local-edit-pose-export-exercises",
+      "start": "2026-11-22T09:21:51.627895+00:00",
+      "end": "2026-11-22T09:22:40.275202+00:00",
+      "seconds": 48.647307
+    },
+    {
+      "label": "independent-native-readback",
+      "start": "2026-11-22T09:22:40.275461+00:00",
+      "end": "2026-11-22T09:22:42.628734+00:00",
+      "seconds": 2.353273
+    },
+    {
+      "label": "readback-init",
+      "start": "2026-11-22T09:22:42.628999+00:00",
+      "end": "2026-11-22T09:22:42.697342+00:00",
+      "seconds": 0.068343
+    },
+    {
+      "label": "readback-render",
+      "start": "2026-11-22T09:22:42.697752+00:00",
+      "end": "2026-11-22T09:22:53.145223+00:00",
+      "seconds": 10.447471
+    },
+    {
+      "label": "readback-verify",
+      "start": "2026-11-22T09:22:53.160120+00:00",
+      "end": "2026-11-22T09:22:53.286958+00:00",
+      "seconds": 0.126838
+    },
+    {
+      "label": "doctor",
+      "start": "2026-11-22T09:21:51.659347+00:00",
+      "end": "2026-11-22T09:21:52.135390+00:00",
+      "seconds": 0.476043
+    },
+    {
+      "label": "initial-status",
+      "start": "2026-11-22T09:21:52.136042+00:00",
+      "end": "2026-11-22T09:21:52.225160+00:00",
+      "seconds": 0.089118
+    },
+    {
+      "label": "service-cover-outward-3mm",
+      "start": "2026-11-22T09:21:52.324401+00:00",
+      "end": "2026-11-22T09:22:05.481246+00:00",
+      "seconds": 13.156845
+    },
+    {
+      "label": "restore-after-panel",
+      "start": "2026-11-22T09:22:05.522929+00:00",
+      "end": "2026-11-22T09:22:05.730010+00:00",
+      "seconds": 0.207081
+    },
+    {
+      "label": "sample-elbow-0",
+      "start": "2026-11-22T09:22:05.755242+00:00",
+      "end": "2026-11-22T09:22:13.635831+00:00",
+      "seconds": 7.880589
+    },
+    {
+      "label": "sample-elbow-45",
+      "start": "2026-11-22T09:22:13.667732+00:00",
+      "end": "2026-11-22T09:22:21.332985+00:00",
+      "seconds": 7.665253
+    },
+    {
+      "label": "sample-elbow-90",
+      "start": "2026-11-22T09:22:21.336515+00:00",
+      "end": "2026-11-22T09:22:29.393293+00:00",
+      "seconds": 8.056778
+    },
+    {
+      "label": "sample-wrist-20-index-35",
+      "start": "2026-11-22T09:22:29.397131+00:00",
+      "end": "2026-11-22T09:22:37.745010+00:00",
+      "seconds": 8.347879
+    },
+    {
+      "label": "restore-neutral-final",
+      "start": "2026-11-22T09:22:37.750502+00:00",
+      "end": "2026-11-22T09:22:37.914919+00:00",
+      "seconds": 0.164417
+    },
+    {
+      "label": "verify-final",
+      "start": "2026-11-22T09:22:37.947298+00:00",
+      "end": "2026-11-22T09:22:38.026690+00:00",
+      "seconds": 0.079392
+    },
+    {
+      "label": "independent-glb-check",
+      "start": "2026-11-22T09:22:38.027134+00:00",
+      "end": "2026-11-22T09:22:40.259260+00:00",
+      "seconds": 2.232126
+    }
+  ],
+  "limits": "Tool command wall time, not total authoring time; concurrent jobs and human/agent review intervals are excluded or uncontrolled."
+}

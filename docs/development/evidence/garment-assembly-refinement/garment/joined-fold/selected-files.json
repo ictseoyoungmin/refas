@@ -1,0 +1,60 @@
+{
+  "selected_revision": "10b36b81230848fb9d81ceb9dc355f1f",
+  "recorded_at": "2026-11-22T09:38:13.683607+00:00",
+  "files": [
+    {
+      "path": "/workspace/scratch/c52cb753f160/work/garment/joined-fold/baseline.blend",
+      "filename": "baseline.blend",
+      "bytes": 5828572,
+      "sha256": "61c5de9931ca9ac9d7ca0079bad39dd7749f3a4e96f49e55d5adde3767f42d46"
+    },
+    {
+      "path": "/workspace/scratch/c52cb753f160/work/garment/joined-fold/baseline.glb",
+      "filename": "baseline.glb",
+      "bytes": 5857472,
+      "sha256": "30e2557a727e61a6e3e3a929522aa8a650e0cfff3e8e3d80f1dd3e6c45fae42f"
+    },
+    {
+      "path": "/workspace/scratch/c52cb753f160/work/garment/joined-fold/candidate.blend",
+      "filename": "candidate.blend",
+      "bytes": 6237520,
+      "sha256": "03de5a60b31bf32bae05cec46eeb4fe6220089c1043f274c772a4383cb9a1268"
+    },
+    {
+      "path": "/workspace/scratch/c52cb753f160/work/garment/joined-fold/candidate.glb",
+      "filename": "candidate.glb",
+      "bytes": 7994896,
+      "sha256": "d298c7cfa098999762f1e713ded4813b33b3f1942bc07c641bd3b41ee8b2ee4a"
+    },
+    {
+      "path": "/workspace/scratch/c52cb753f160/work/garment/joined-fold/cuff-edited.blend",
+      "filename": "cuff-edited.blend",
+      "bytes": 6237520,
+      "sha256": "6038d6addb6e0a7ce3bab1b11956a8b5e4c434d5ee14ce58364f885142b0bcfd"
+    },
+    {
+      "path": "/workspace/scratch/c52cb753f160/work/garment/joined-fold/cuff-edited.glb",
+      "filename": "cuff-edited.glb",
+      "bytes": 7995224,
+      "sha256": "46c8de40ff8bec80d7a0ac2799d0ba2320037c0b2b6019d09c917ab502806767"
+    },
+    {
+      "path": "/workspace/scratch/c52cb753f160/work/garment/joined-fold/restored.blend",
+      "filename": "restored.blend",
+      "bytes": 6237520,
+      "sha256": "03de5a60b31bf32bae05cec46eeb4fe6220089c1043f274c772a4383cb9a1268"
+    },
+    {
+      "path": "/workspace/scratch/c52cb753f160/work/garment/joined-fold/restored.glb",
+      "filename": "restored.glb",
+      "bytes": 7994896,
+      "sha256": "d298c7cfa098999762f1e713ded4813b33b3f1942bc07c641bd3b41ee8b2ee4a"
+    },
+    {
+      "path": "/workspace/scratch/c52cb753f160/work/garment/joined-fold/imported-glb.blend",
+      "filename": "imported-glb.blend",
+      "bytes": 31234792,
+      "sha256": "c930ef2f5ac00fcbd6df4f6520acb230db9763be12ac7beb3a2900abd0c9d1d2"
+    }
+  ]
+}

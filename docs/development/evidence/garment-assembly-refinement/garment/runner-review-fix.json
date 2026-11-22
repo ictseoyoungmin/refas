@@ -1,0 +1,19 @@
+{
+  "reason": "Repeated --resume-selected runs must not collide with completed observation project folders. Scope the observation directory to the selected revision.",
+  "before_sha256": "1ce3c2b30ffad24323b363f4042523514e228fece04e8b4e3f57a6c4e1f1ff4e",
+  "after_sha256": "721a8eff0fcb64ed2c3ead9382ae72a1848f81ad6dc1145bbd39147c7bc939f5",
+  "changed_at": "2026-11-22T09:22:15.527404+00:00",
+  "geometry_scripts_unchanged": true,
+  "original_selected_assets_unchanged": true,
+  "verification_status": "passed",
+  "completed_at": "2026-11-22T09:23:29.912325+00:00",
+  "selected_revision": "4074a198f28d4c30b20d61f63a2ece96",
+  "restored_revision": "be5f6e7550d246afbe83c2ddda4b8018",
+  "exact_bundle_restore": true,
+  "restored_file_count": 14,
+  "independent_native_glb_passed": true,
+  "command_count": 14,
+  "sum_command_seconds": 72.225,
+  "selected_native_bytes_equal": true,
+  "selected_glb_bytes_equal": true
+}

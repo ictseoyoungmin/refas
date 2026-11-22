@@ -1,0 +1,113 @@
+{
+  "passed": true,
+  "native": "/workspace/scratch/c52cb753f160/work/garment/final/candidate.blend",
+  "glb": "/workspace/scratch/c52cb753f160/work/garment/final/candidate.glb",
+  "mesh_objects": 269,
+  "names_match": true,
+  "parents_match": true,
+  "maximum_matrix_error": 1.6858739826375313e-07,
+  "maximum_bounds_error_m": 1.862645149230957e-09,
+  "native_triangles": 405996,
+  "imported_glb_triangles": 405996,
+  "topology": {
+    "Body | continuous open front and shoulder yoke": {
+      "cage": {
+        "vertices": 2164,
+        "faces": 2032,
+        "boundary_edges": 266,
+        "boundary_components": 3,
+        "boundary_components_are_loops": true,
+        "edges_more_than_two_faces": 0,
+        "zero_area_faces": 0
+      },
+      "evaluated": {
+        "vertices": 66086,
+        "faces": 66088,
+        "boundary_edges": 0,
+        "boundary_components": 0,
+        "boundary_components_are_loops": true,
+        "edges_more_than_two_faces": 0,
+        "zero_area_faces": 0
+      }
+    },
+    "Collar | standing back and neck facing": {
+      "cage": {
+        "vertices": 1644,
+        "faces": 1496,
+        "boundary_edges": 294,
+        "boundary_components": 1,
+        "boundary_components_are_loops": true,
+        "edges_more_than_two_faces": 0,
+        "zero_area_faces": 0
+      },
+      "evaluated": {
+        "vertices": 49050,
+        "faces": 49048,
+        "boundary_edges": 0,
+        "boundary_components": 0,
+        "boundary_components_are_loops": true,
+        "edges_more_than_two_faces": 0,
+        "zero_area_faces": 0
+      }
+    },
+    "L Lapel | folded lower notched facing": {
+      "cage": {
+        "vertices": 864,
+        "faces": 760,
+        "boundary_edges": 206,
+        "boundary_components": 1,
+        "boundary_components_are_loops": true,
+        "edges_more_than_two_faces": 0,
+        "zero_area_faces": 0
+      },
+      "evaluated": {
+        "vertices": 25146,
+        "faces": 25144,
+        "boundary_edges": 0,
+        "boundary_components": 0,
+        "boundary_components_are_loops": true,
+        "edges_more_than_two_faces": 0,
+        "zero_area_faces": 0
+      }
+    },
+    "R Lapel | folded lower notched facing": {
+      "cage": {
+        "vertices": 864,
+        "faces": 760,
+        "boundary_edges": 206,
+        "boundary_components": 1,
+        "boundary_components_are_loops": true,
+        "edges_more_than_two_faces": 0,
+        "zero_area_faces": 0
+      },
+      "evaluated": {
+        "vertices": 25146,
+        "faces": 25144,
+        "boundary_edges": 0,
+        "boundary_components": 0,
+        "boundary_components_are_loops": true,
+        "edges_more_than_two_faces": 0,
+        "zero_area_faces": 0
+      }
+    }
+  },
+  "shared_armhole_seams": [
+    {
+      "name": "L Armhole | shared 40-edge seam",
+      "edges": 40,
+      "all_edges_two_faces": true
+    },
+    {
+      "name": "R Armhole | shared 40-edge seam",
+      "edges": 40,
+      "all_edges_two_faces": true
+    }
+  ],
+  "limits": [
+    "Topology checks do not establish absence of all self-intersections.",
+    "Three cage boundary loops are the connected front/neck/hem edge and two wrists.",
+    "Closed solidified meshes retain hollow space and rimmed openings; they do not fill the garment.",
+    "GLB material conversion is not a proof of baked procedural cloth equivalence.",
+    "No rigging, cloth simulation, new UV layout or engine test is claimed."
+  ]
+}

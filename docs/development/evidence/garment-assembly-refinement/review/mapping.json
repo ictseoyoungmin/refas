@@ -1,0 +1,60 @@
+{
+  "garment": {
+    "source_sha256": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5",
+    "selected_native_sha256": "e3e26aa3bc5f8cead5497f91a1144e79aa26a883074ff9eaa79a685f52a4567e",
+    "mapping": {
+      "A": "after",
+      "B": "before"
+    },
+    "image_hashes": {
+      "A/view-front.png": "369723baba39dbbfba084e6fbd2f776d324ce03e8ffa1e944fd1f03e12016886",
+      "A/view-front-three-quarter.png": "e9754e78edaa033d6dbd92a7e8bb9229b054367c434800c3b6f5f457a9659711",
+      "A/view-left.png": "2380187c9c53895adeb2612d0c98e8de526b9bed546eb058595c0486ee895e12",
+      "A/view-back.png": "082a09551b918f5f221aa3082b00edef2882e1f823b71edf58668803afb9a937",
+      "A/view-right.png": "8257dc751e88c0b520a09f1e4ee5ecf55a6af12ed5a0ab7db4b62f41222062bc",
+      "A/view-rear-three-quarter.png": "d497ec5810b4c4b7e0c9998daeac62c21c2d2763a58312e2adb03b76c8e64563",
+      "A/view-fold-front.png": "1be6d5a9559b7cb1b4fd87b22b13d5c4294ed5c43cac085098db479acfc92ded",
+      "A/view-fold-oblique.png": "30f1918005ef7d38541b33c99543b05059e1ab3fea37d56b081b3ed2d4ced6e9",
+      "A/view-fold-side.png": "0a99983f5ec5121817dd556a0563c4ee4948e16054b7c523b458e3ae87431815",
+      "B/view-front.png": "c38c44bb768d55506325f154cbb33199402c3e9c8269da56f83b4c3470a8c911",
+      "B/view-front-three-quarter.png": "7c5d29d21c3fa247a6170a192169d7e8bad19b3be32541b3633e296f1a83c039",
+      "B/view-left.png": "43336cd81dbbe515fddf2c308afc996aab7eea3d6c11108d1278bac3e0629986",
+      "B/view-back.png": "011a836de20803183208f155f2490f50196db49844068d9c48351fa634d28330",
+      "B/view-right.png": "e3690609a8847e19e0656195dc0230661eb3bad7d1c14a017b5ab20b2da1584b",
+      "B/view-rear-three-quarter.png": "30f73d92c0c6ce78ec11e2931bfa73672db17d44f55126ea982088620973c2c8",
+      "B/view-fold-front.png": "54acdcbdc7f0e85116987c41c62503651d79d34f97604d5d2f14b60fcc97795e",
+      "B/view-fold-oblique.png": "996c5866b64d6205f084e282ba5f7dbfa15d098ea3d6ee7ac1ca0f200a586055",
+      "B/view-fold-side.png": "a835840d7e247841dad437221f5261f2c871231096628f53acbba2a5ec21f3c3"
+    },
+    "sealed_at": "2026-11-22T09:20:24.264818+00:00"
+  },
+  "automail": {
+    "source_sha256": "3c7856dd632f8a1cde8036078573f569db55b6af97fae853237d8a9356f3c872",
+    "selected_native_sha256": "ff8010b6e25efec357b469121c905f9db8f717a8b9e5a07cbc78986ff12924b5",
+    "mapping": {
+      "A": "before",
+      "B": "after"
+    },
+    "image_hashes": {
+      "A/front.png": "f10090ea919c5606138efba3b341f045b6503a3e58cfd95e234b942ffbffe278",
+      "A/hero.png": "2967728c3b586ae32d76f0e1e806fae5e2c0dc180f62e8b5576bc1740c4dd2e5",
+      "A/side.png": "d46b4a7001d3be8ed1180bec2ee0965d2e4f830cff2e20059608a90e85e7ea8a",
+      "A/back.png": "74a608a2ac70e4c89b268ef0eee80517420716535b6637ef03ebeed618e4df3f",
+      "A/service-detail.png": "fb6b69c05bc07c34bd9f7ab2a81bbe3e81871ba49b1764480ffb73138c679d00",
+      "A/armor-depth.png": "8334a0841acc6f9512c74d6e04b2c56a55106ce7a2c3aebef0bdd6986eed1aee",
+      "A/socket-depth.png": "58333264e38694248f0c8c408a53eaf3b42cd950c2199816222114bf0497e18d",
+      "A/palm-depth.png": "4991858a225bf69ed6a2e5248d1f17f9ebe0ced9bf0b8647361e4778fb568cb7",
+      "B/front.png": "66a99eaffe86d8298a3cb53b760dccdb7db254aaa12f3443e894fb7b6dcb5360",
+      "B/hero.png": "5ed1f33571ac92239a7a4af367d17b574e374d59629c75039d06c2cbfb4c59b4",
+      "B/side.png": "50b81adbcfd5d8ab383e50e052d03a0651a3e5d00a61f5b592d1a91bf4e67843",
+      "B/back.png": "e39312ae4ffcfd904ac03c5002f650d77633ae3e7f550714b4ef4df9e0e6a96f",
+      "B/service-detail.png": "43068994506b7f023e99f0c3bbbed0c911f726f4ab957a8a8efa3d6c38153627",
+      "B/armor-depth.png": "a3b70e24976b5cb0f814207677cc0aa32e83efaeb09c3191829f1626ff0c17c0",
+      "B/socket-depth.png": "e7ea7054d5967835904b3d735aad2e4d9732cd50cfdafab1e9e4abe45012e5a0",
+      "B/palm-depth.png": "95a831cbd43999184905976ec8cce7a8623ff8cbf74f82004cce366b5b58b213"
+    },
+    "sealed_at": "2026-11-22T09:20:25.060731+00:00"
+  },
+  "review_received_at": "2026-11-22T09:28:00.970865+00:00",
+  "unblinded_after_literal_review": true
+}

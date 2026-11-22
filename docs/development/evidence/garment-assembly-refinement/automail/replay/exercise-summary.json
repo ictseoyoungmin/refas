@@ -1,0 +1,259 @@
+{
+  "selected_neutral_revision": "2ca965fc493d4d4893aa356055305488",
+  "final_restored_revision": "be59a5eec0594ef08035c812158138aa",
+  "panel_revision": "7fc22e497a0144cc9f691bedbf514203",
+  "restore_after_panel_artifact_byte_equality": {
+    "blend": true,
+    "glb": true,
+    "scene": true
+  },
+  "restore_final_artifact_byte_equality": {
+    "blend": true,
+    "glb": true,
+    "scene": true
+  },
+  "pose_samples": [
+    {
+      "label": "elbow-0",
+      "revision": "f5548926a9114601b206a6d769d57f31",
+      "directory": "/workspace/scratch/c52cb753f160/work/automail-replay/poses/elbow-0",
+      "check": {
+        "pose": {
+          "elbow_deg": 0,
+          "wrist_deg": 0,
+          "index_deg": [
+            0,
+            0,
+            0
+          ]
+        },
+        "upper_objects_checked": 96,
+        "unexpected_upper_changes": [],
+        "named_shell_intersections": [],
+        "shell_pairs_tested": 30,
+        "digit_world_origins": {
+          "WRIST_PIVOT": [
+            0.0,
+            0.0,
+            0.18400000035762787
+          ],
+          "INDEX_J0": [
+            -0.029999999329447746,
+            0.0,
+            0.10599999874830246
+          ],
+          "INDEX_J1": [
+            -0.03200000151991844,
+            0.0010000000474974513,
+            0.06800000369548798
+          ],
+          "INDEX_J2": [
+            -0.03400000184774399,
+            0.004000000189989805,
+            0.03999999910593033
+          ]
+        },
+        "parent_relations": {
+          "SHOULDER_PIVOT": "AURIX_ROOT",
+          "ELBOW_PIVOT": "SHOULDER_PIVOT",
+          "WRIST_PIVOT": "ELBOW_PIVOT",
+          "SERVICE_COVER": "ELBOW_PIVOT",
+          "INDEX_J0": "WRIST_PIVOT",
+          "INDEX_J1": "INDEX_J0",
+          "INDEX_J2": "INDEX_J1"
+        },
+        "static_spanning_links": "No authored cable or hydraulic mesh crosses the elbow; all such parts are local to upper or forearm. There is no dynamic tendon or telescoping linkage simulation.",
+        "limits": "Named-shell triangle-surface BVH checks and inspected renders at sampled poses only; no all-object collision test, containment test, continuous collision clearance, load or physical-performance validation."
+      }
+    },
+    {
+      "label": "elbow-45",
+      "revision": "4ecd869515d3491ebef1e2e34379bfa3",
+      "directory": "/workspace/scratch/c52cb753f160/work/automail-replay/poses/elbow-45",
+      "check": {
+        "pose": {
+          "elbow_deg": 45,
+          "wrist_deg": 0,
+          "index_deg": [
+            0,
+            0,
+            0
+          ]
+        },
+        "upper_objects_checked": 96,
+        "unexpected_upper_changes": [],
+        "named_shell_intersections": [],
+        "shell_pairs_tested": 30,
+        "digit_world_origins": {
+          "WRIST_PIVOT": [
+            0.0,
+            0.1711198389530182,
+            0.2548801600933075
+          ],
+          "INDEX_J0": [
+            -0.029999999329447746,
+            0.22627416253089905,
+            0.19972583651542664
+          ],
+          "INDEX_J1": [
+            -0.03200000151991844,
+            0.2538513243198395,
+            0.1735628843307495
+          ],
+          "INDEX_J2": [
+            -0.03400000184774399,
+            0.2757716178894043,
+            0.1558852195739746
+          ]
+        },
+        "parent_relations": {
+          "SHOULDER_PIVOT": "AURIX_ROOT",
+          "ELBOW_PIVOT": "SHOULDER_PIVOT",
+          "WRIST_PIVOT": "ELBOW_PIVOT",
+          "SERVICE_COVER": "ELBOW_PIVOT",
+          "INDEX_J0": "WRIST_PIVOT",
+          "INDEX_J1": "INDEX_J0",
+          "INDEX_J2": "INDEX_J1"
+        },
+        "static_spanning_links": "No authored cable or hydraulic mesh crosses the elbow; all such parts are local to upper or forearm. There is no dynamic tendon or telescoping linkage simulation.",
+        "limits": "Named-shell triangle-surface BVH checks and inspected renders at sampled poses only; no all-object collision test, containment test, continuous collision clearance, load or physical-performance validation."
+      }
+    },
+    {
+      "label": "elbow-90",
+      "revision": "9c3d705504af401c8882891a7f50b67d",
+      "directory": "/workspace/scratch/c52cb753f160/work/automail-replay/poses/elbow-90",
+      "check": {
+        "pose": {
+          "elbow_deg": 90,
+          "wrist_deg": 0,
+          "index_deg": [
+            0,
+            0,
+            0
+          ]
+        },
+        "upper_objects_checked": 96,
+        "unexpected_upper_changes": [],
+        "named_shell_intersections": [],
+        "shell_pairs_tested": 30,
+        "digit_world_origins": {
+          "WRIST_PIVOT": [
+            0.0,
+            0.24199999868869781,
+            0.42600002884864807
+          ],
+          "INDEX_J0": [
+            -0.029999999329447746,
+            0.3199999928474426,
+            0.42600002884864807
+          ],
+          "INDEX_J1": [
+            -0.03200000151991844,
+            0.3579999804496765,
+            0.4270000159740448
+          ],
+          "INDEX_J2": [
+            -0.03400000184774399,
+            0.38600000739097595,
+            0.43000003695487976
+          ]
+        },
+        "parent_relations": {
+          "SHOULDER_PIVOT": "AURIX_ROOT",
+          "ELBOW_PIVOT": "SHOULDER_PIVOT",
+          "WRIST_PIVOT": "ELBOW_PIVOT",
+          "SERVICE_COVER": "ELBOW_PIVOT",
+          "INDEX_J0": "WRIST_PIVOT",
+          "INDEX_J1": "INDEX_J0",
+          "INDEX_J2": "INDEX_J1"
+        },
+        "static_spanning_links": "No authored cable or hydraulic mesh crosses the elbow; all such parts are local to upper or forearm. There is no dynamic tendon or telescoping linkage simulation.",
+        "limits": "Named-shell triangle-surface BVH checks and inspected renders at sampled poses only; no all-object collision test, containment test, continuous collision clearance, load or physical-performance validation."
+      }
+    },
+    {
+      "label": "wrist-20-index-35",
+      "revision": "81a993d16a9645d7a8a1cd0dcc5fd406",
+      "directory": "/workspace/scratch/c52cb753f160/work/automail-replay/poses/wrist-20-index-35",
+      "check": {
+        "pose": {
+          "elbow_deg": 45,
+          "wrist_deg": 20,
+          "index_deg": [
+            35,
+            20,
+            10
+          ]
+        },
+        "upper_objects_checked": 96,
+        "unexpected_upper_changes": [],
+        "named_shell_intersections": [],
+        "shell_pairs_tested": 30,
+        "digit_world_origins": {
+          "WRIST_PIVOT": [
+            0.0,
+            0.1711198389530182,
+            0.2548801600933075
+          ],
+          "INDEX_J0": [
+            -0.029999999329447746,
+            0.2418118417263031,
+            0.22191593050956726
+          ],
+          "INDEX_J1": [
+            -0.03200000151991844,
+            0.27906087040901184,
+            0.22949936985969543
+          ],
+          "INDEX_J2": [
+            -0.03400000184774399,
+            0.3018095791339874,
+            0.24609746038913727
+          ]
+        },
+        "parent_relations": {
+          "SHOULDER_PIVOT": "AURIX_ROOT",
+          "ELBOW_PIVOT": "SHOULDER_PIVOT",
+          "WRIST_PIVOT": "ELBOW_PIVOT",
+          "SERVICE_COVER": "ELBOW_PIVOT",
+          "INDEX_J0": "WRIST_PIVOT",
+          "INDEX_J1": "INDEX_J0",
+          "INDEX_J2": "INDEX_J1"
+        },
+        "static_spanning_links": "No authored cable or hydraulic mesh crosses the elbow; all such parts are local to upper or forearm. There is no dynamic tendon or telescoping linkage simulation.",
+        "limits": "Named-shell triangle-surface BVH checks and inspected renders at sampled poses only; no all-object collision test, containment test, continuous collision clearance, load or physical-performance validation."
+      }
+    }
+  ],
+  "restore_after_panel_full_bundle_equality": true,
+  "restore_final_full_bundle_equality": true,
+  "selected_bundle_file_hashes": {
+    "artifacts/asset.glb": "56f210e732ea94e261ccda625bec82583048ddf9ddae432db7eab907d95c3f0e",
+    "artifacts/result.json": "9565708e54e2b4f472021b6ad3f69eb4b4999c8fffc7e44b04df8bd4d28a9e0c",
+    "artifacts/scene.blend": "5f4c66f07b26db9a5a406e271bb2dce6f4d53857c313ce1bc94c8d72f96f0987",
+    "artifacts/scene.json": "9951c9f68f33b7b107dd87fe98576747cd699f282b4f1b6806163298550b2fc4",
+    "artifacts/surface-refinement.json": "49c57b18ab8a361c8741a103e90d01a1aa26eb76e60dd6aa7fb149054c577b21",
+    "artifacts/view-armor-depth.png": "663b17f9c2603e6b2ae70bc808599204c634b4355c69c92dbacf1f7b3039bf4a",
+    "artifacts/view-back.png": "3cca485616c769a3d3b8b8cd65659434beb8e2bd1984d8aeec89a57cea94d547",
+    "artifacts/view-front.png": "21e076c5b0e18cf34f3c3d0b6e54421451119e1646d05982127b4cf6d7885f59",
+    "artifacts/view-hero.png": "382f3201f155f7a5cff510728a98633b1b657bead224c994db4226c91edd76ca",
+    "artifacts/view-palm-depth.png": "6a58a455a23923b2b220a85c200c56d85ff72b827a007f5ccd9d67ea59c1e84a",
+    "artifacts/view-service-detail.png": "faf6c20a8ea43ed455cb05ce7c0fc7be3c6ad6142fbe4085ff7dfa1126328810",
+    "artifacts/view-side.png": "7670a1dd2b4444aeeb63e1c5accf745f7114ab59efdece42d2d01e4e20c8da20",
+    "artifacts/view-socket-depth.png": "781f1ab9a339e56363b5d53e584f90dc49321c03bdac40304f06e881c3a1d43f",
+    "inputs/base.blend": "5502cb5a8d7564e4653fa99b2839d3cb7779861dfbc63d7c639302a5b322fab6",
+    "inputs/edit.py": "c25346b22aadfa5ef13fdd295af504a3b5dd9dfdd819d0374a8a4feb01d38225",
+    "inputs/review.json": "59712ba34822f523b550ea640cb04d63c03f12c50427cdfe51377b26bcffab6d"
+  },
+  "export_passed": true,
+  "integrity": {
+    "ok": true,
+    "scope": "recorded-file-integrity",
+    "head": "be59a5eec0594ef08035c812158138aa",
+    "artifactCount": 13,
+    "referenceResemblance": "not-evaluated",
+    "gameReadiness": "not-evaluated"
+  },
+  "finished_utc": "2026-11-22T09:22:40.265738+00:00"
+}

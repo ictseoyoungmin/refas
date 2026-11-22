@@ -1,0 +1,49 @@
+{
+  "scope": "package",
+  "command_elapsed_seconds_excluding_nested_double_count": 25.291628000000003,
+  "rows": [
+    {
+      "label": "doctor",
+      "start": "2026-11-22T09:24:45.893781+00:00",
+      "end": "2026-11-22T09:24:46.376287+00:00",
+      "seconds": 0.482506
+    },
+    {
+      "label": "init",
+      "start": "2026-11-22T09:24:46.376493+00:00",
+      "end": "2026-11-22T09:24:46.450214+00:00",
+      "seconds": 0.073721
+    },
+    {
+      "label": "import-selected",
+      "start": "2026-11-22T09:24:46.450694+00:00",
+      "end": "2026-11-22T09:24:59.098166+00:00",
+      "seconds": 12.647472
+    },
+    {
+      "label": "cover-edit",
+      "start": "2026-11-22T09:24:59.163777+00:00",
+      "end": "2026-11-22T09:25:08.490598+00:00",
+      "seconds": 9.326821
+    },
+    {
+      "label": "restore",
+      "start": "2026-11-22T09:25:08.533509+00:00",
+      "end": "2026-11-22T09:25:08.917563+00:00",
+      "seconds": 0.384054
+    },
+    {
+      "label": "verify",
+      "start": "2026-11-22T09:25:08.940279+00:00",
+      "end": "2026-11-22T09:25:09.021976+00:00",
+      "seconds": 0.081697
+    },
+    {
+      "label": "independent-glb",
+      "start": "2026-11-22T09:25:09.022794+00:00",
+      "end": "2026-11-22T09:25:11.318151+00:00",
+      "seconds": 2.295357
+    }
+  ],
+  "limits": "Tool command wall time, not total authoring time; concurrent jobs and human/agent review intervals are excluded or uncontrolled."
+}

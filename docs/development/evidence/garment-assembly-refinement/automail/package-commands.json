@@ -1,0 +1,159 @@
+[
+  {
+    "label": "doctor",
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "/workspace/scratch/c52cb753f160/installed-refas/package/skills/refas/scripts/produce.py",
+      "doctor",
+      "--blender",
+      "/usr/bin/blender"
+    ],
+    "started_utc": "2026-11-22T09:24:45.893781+00:00",
+    "ended_utc": "2026-11-22T09:24:46.376287+00:00",
+    "returncode": 0,
+    "stdout": "/workspace/scratch/c52cb753f160/work/automail-package/logs/doctor.stdout.txt",
+    "stderr": "/workspace/scratch/c52cb753f160/work/automail-package/logs/doctor.stderr.txt"
+  },
+  {
+    "label": "init",
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "/workspace/scratch/c52cb753f160/installed-refas/package/skills/refas/scripts/produce.py",
+      "init",
+      "--root",
+      "/workspace/scratch/c52cb753f160/work/automail-package/project",
+      "--name",
+      "aurix-package-compatibility",
+      "--reference",
+      "/workspace/scratch/c52cb753f160/refas/examples/automail-arm/source/reference.png"
+    ],
+    "started_utc": "2026-11-22T09:24:46.376493+00:00",
+    "ended_utc": "2026-11-22T09:24:46.450214+00:00",
+    "returncode": 0,
+    "stdout": "/workspace/scratch/c52cb753f160/work/automail-package/logs/init.stdout.txt",
+    "stderr": "/workspace/scratch/c52cb753f160/work/automail-package/logs/init.stderr.txt"
+  },
+  {
+    "label": "import-selected",
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "/workspace/scratch/c52cb753f160/installed-refas/package/skills/refas/scripts/produce.py",
+      "run",
+      "--root",
+      "/workspace/scratch/c52cb753f160/work/automail-package/project",
+      "--blender",
+      "/usr/bin/blender",
+      "--input-blend",
+      "/workspace/scratch/c52cb753f160/work/automail/after.blend",
+      "--script",
+      "/workspace/scratch/c52cb753f160/work/automail-package/retain_selected.py",
+      "--intent",
+      "installed package import of selected refined arm",
+      "--expected-revision",
+      "none",
+      "--review-spec",
+      "/workspace/scratch/c52cb753f160/work/automail/refinement-review.json",
+      "--views",
+      "hero,armor-depth,palm-depth",
+      "--size",
+      "512",
+      "--samples",
+      "16",
+      "--timeout",
+      "600"
+    ],
+    "started_utc": "2026-11-22T09:24:46.450694+00:00",
+    "ended_utc": "2026-11-22T09:24:59.098166+00:00",
+    "returncode": 0,
+    "stdout": "/workspace/scratch/c52cb753f160/work/automail-package/logs/import-selected.stdout.txt",
+    "stderr": "/workspace/scratch/c52cb753f160/work/automail-package/logs/import-selected.stderr.txt"
+  },
+  {
+    "label": "cover-edit",
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "/workspace/scratch/c52cb753f160/installed-refas/package/skills/refas/scripts/produce.py",
+      "run",
+      "--root",
+      "/workspace/scratch/c52cb753f160/work/automail-package/project",
+      "--blender",
+      "/usr/bin/blender",
+      "--script",
+      "/workspace/scratch/c52cb753f160/refas/examples/automail-arm/edit_panel.py",
+      "--intent",
+      "installed package 3mm service-cover edit",
+      "--expected-revision",
+      "9b74eb85fb5f47a1a9f394fcc8d50244",
+      "--review-spec",
+      "/workspace/scratch/c52cb753f160/work/automail/refinement-review.json",
+      "--views",
+      "service-detail",
+      "--size",
+      "512",
+      "--samples",
+      "16",
+      "--timeout",
+      "600"
+    ],
+    "started_utc": "2026-11-22T09:24:59.163777+00:00",
+    "ended_utc": "2026-11-22T09:25:08.490598+00:00",
+    "returncode": 0,
+    "stdout": "/workspace/scratch/c52cb753f160/work/automail-package/logs/cover-edit.stdout.txt",
+    "stderr": "/workspace/scratch/c52cb753f160/work/automail-package/logs/cover-edit.stderr.txt"
+  },
+  {
+    "label": "restore",
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "/workspace/scratch/c52cb753f160/installed-refas/package/skills/refas/scripts/produce.py",
+      "restore",
+      "--root",
+      "/workspace/scratch/c52cb753f160/work/automail-package/project",
+      "--revision",
+      "9b74eb85fb5f47a1a9f394fcc8d50244"
+    ],
+    "started_utc": "2026-11-22T09:25:08.533509+00:00",
+    "ended_utc": "2026-11-22T09:25:08.917563+00:00",
+    "returncode": 0,
+    "stdout": "/workspace/scratch/c52cb753f160/work/automail-package/logs/restore.stdout.txt",
+    "stderr": "/workspace/scratch/c52cb753f160/work/automail-package/logs/restore.stderr.txt"
+  },
+  {
+    "label": "verify",
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "/workspace/scratch/c52cb753f160/installed-refas/package/skills/refas/scripts/produce.py",
+      "verify",
+      "--root",
+      "/workspace/scratch/c52cb753f160/work/automail-package/project"
+    ],
+    "started_utc": "2026-11-22T09:25:08.940279+00:00",
+    "ended_utc": "2026-11-22T09:25:09.021976+00:00",
+    "returncode": 0,
+    "stdout": "/workspace/scratch/c52cb753f160/work/automail-package/logs/verify.stdout.txt",
+    "stderr": "/workspace/scratch/c52cb753f160/work/automail-package/logs/verify.stderr.txt"
+  },
+  {
+    "label": "independent-glb",
+    "argv": [
+      "/usr/bin/blender",
+      "--background",
+      "--factory-startup",
+      "--threads",
+      "2",
+      "--python-exit-code",
+      "1",
+      "--python",
+      "/workspace/scratch/c52cb753f160/work/automail-package/verify_export.py",
+      "--",
+      "/workspace/scratch/c52cb753f160/work/automail-package/selected.glb",
+      "/workspace/scratch/c52cb753f160/work/automail-package/selected.scene.json",
+      "/workspace/scratch/c52cb753f160/work/automail-package/export-check.json"
+    ],
+    "started_utc": "2026-11-22T09:25:09.022794+00:00",
+    "ended_utc": "2026-11-22T09:25:11.318151+00:00",
+    "returncode": 0,
+    "stdout": "/workspace/scratch/c52cb753f160/work/automail-package/logs/independent-glb.stdout.txt",
+    "stderr": "/workspace/scratch/c52cb753f160/work/automail-package/logs/independent-glb.stderr.txt"
+  }
+]

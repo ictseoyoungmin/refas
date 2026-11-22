@@ -1,0 +1,1376 @@
+{
+  "started_at": "2026-11-22T09:23:21.973756+00:00",
+  "ended_at": "2026-11-22T09:25:10.461310+00:00",
+  "mode": "informed existing-asset refinement and edit/restore exercise",
+  "resume_selected": false,
+  "source_hashes": {
+    "/workspace/scratch/c52cb753f160/baseline/refas-garment-automail-dogfood/garment/jacket.blend": "ab7a3b93b40b431f820dc7cdc96c711005c185096fa3038d93405dceb7a84dbb",
+    "/workspace/scratch/c52cb753f160/refas/examples/uniform-jacket/source/reference.png": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5",
+    "/workspace/scratch/c52cb753f160/refas/examples/uniform-jacket/review.json": "be6e20645867d04c6c07536ddc1a3cf2736d2111e0d3739628063ee989b134c1",
+    "/workspace/scratch/c52cb753f160/refas/examples/uniform-jacket/review-fold-detail.json": "12f76f37e21acd2155660369a5742b7a2e41f79d6b1229be12356a2966c75abe",
+    "/workspace/scratch/c52cb753f160/refas/examples/uniform-jacket/refine_fold.py": "10b7fb60501f72fd5e14bfae968551b49e10e3d5dfd70a6ccc1692524ca273df",
+    "/workspace/scratch/c52cb753f160/refas/examples/uniform-jacket/inspect_fold.py": "34c680216ceffae65ecc17306db775afb01972992362fa2c039c7420c8d6060c",
+    "/workspace/scratch/c52cb753f160/refas/examples/uniform-jacket/run_fold_refinement.py": "721a8eff0fcb64ed2c3ead9382ae72a1848f81ad6dc1145bbd39147c7bc939f5"
+  },
+  "original_bytes_preserved": true,
+  "blender_probe": {
+    "ok": true,
+    "entry": "RefAs 2.0 production development",
+    "python": "3.12.14",
+    "blender": {
+      "path": "/usr/bin/blender",
+      "version": "Blender 4.3.2"
+    },
+    "scope": "executable probe; render device availability is checked during execution"
+  },
+  "baseline_revision": "79326dd886c5432089aa20c79dec3ed6",
+  "selected_revision": "bf55cb6a37f64388bd3a58a73d915eb7",
+  "edited_revision": "b0fe43d97da947ce861ad2894903677d",
+  "restored_revision": "4bd85cd630784b8db84a436302ae7fbd",
+  "bundle_exact_restore": true,
+  "selected_bundle_hashes": {
+    "artifacts/view-rear-three-quarter.png": {
+      "sha256": "e7c6d91603230230e422bfd5beba271e88a1c780defe2f77f9dd3a299cb39dfa",
+      "bytes": 242390
+    },
+    "artifacts/result.json": {
+      "sha256": "0ff0ce7ff789a9d837669ece04339626fe4ff9fa06ff3ecf2755e10571f9a640",
+      "bytes": 13926
+    },
+    "artifacts/fold-checks.json": {
+      "sha256": "72795122894a6ea05ecc17ef062179cc06296666d03325d59f818db3239f99b1",
+      "bytes": 57373
+    },
+    "artifacts/scene.blend": {
+      "sha256": "db9424fa66159ae1ca50e429e21d20bde5d7197853e4fb33eb57a39412dc7b69",
+      "bytes": 6154912
+    },
+    "artifacts/view-front.png": {
+      "sha256": "cdefec04dbc66911b826ad29aba72900839cf93c68b94aae299aec61be2bc1bd",
+      "bytes": 271603
+    },
+    "artifacts/view-front-three-quarter.png": {
+      "sha256": "80e2d631e87c4d5d2528053417528b46eda23a5a13c6070f4ca6d7681687dd77",
+      "bytes": 263861
+    },
+    "artifacts/asset.glb": {
+      "sha256": "ff9ddac60bbd4a0a16e3119c78202d7e9795c6b994988a894fcec39697b30ef9",
+      "bytes": 7773256
+    },
+    "artifacts/view-left.png": {
+      "sha256": "dfbe199ed5b866215023c532b600e0b735e0507ac467bc8651dd85b220711214",
+      "bytes": 208847
+    },
+    "artifacts/view-back.png": {
+      "sha256": "972f6df1ff3de520957e42e667ae431be0e99d3a3c2a8f83023f87cc508e888a",
+      "bytes": 252854
+    },
+    "artifacts/scene.json": {
+      "sha256": "15cb07d43b730c0c6f81e7e31008ea56761a124d278a236dc9bf307b7581201f",
+      "bytes": 3407691
+    },
+    "artifacts/view-right.png": {
+      "sha256": "dfd84f25c2f1b019f2e41b40ab36e979c970e254d9e76b918d0aa2fc5233df1e",
+      "bytes": 201590
+    },
+    "inputs/base.blend": {
+      "sha256": "366c754687c423e2a2133d32271e4686d20bba3d0c476e80b1eca4b5ed1ad618",
+      "bytes": 5828572
+    },
+    "inputs/edit.py": {
+      "sha256": "10b7fb60501f72fd5e14bfae968551b49e10e3d5dfd70a6ccc1692524ca273df",
+      "bytes": 9800
+    },
+    "inputs/review.json": {
+      "sha256": "be6e20645867d04c6c07536ddc1a3cf2736d2111e0d3739628063ee989b134c1",
+      "bytes": 2727
+    }
+  },
+  "restored_bundle_hashes": {
+    "artifacts/view-rear-three-quarter.png": {
+      "sha256": "e7c6d91603230230e422bfd5beba271e88a1c780defe2f77f9dd3a299cb39dfa",
+      "bytes": 242390
+    },
+    "artifacts/result.json": {
+      "sha256": "0ff0ce7ff789a9d837669ece04339626fe4ff9fa06ff3ecf2755e10571f9a640",
+      "bytes": 13926
+    },
+    "artifacts/fold-checks.json": {
+      "sha256": "72795122894a6ea05ecc17ef062179cc06296666d03325d59f818db3239f99b1",
+      "bytes": 57373
+    },
+    "artifacts/scene.blend": {
+      "sha256": "db9424fa66159ae1ca50e429e21d20bde5d7197853e4fb33eb57a39412dc7b69",
+      "bytes": 6154912
+    },
+    "artifacts/view-front.png": {
+      "sha256": "cdefec04dbc66911b826ad29aba72900839cf93c68b94aae299aec61be2bc1bd",
+      "bytes": 271603
+    },
+    "artifacts/view-front-three-quarter.png": {
+      "sha256": "80e2d631e87c4d5d2528053417528b46eda23a5a13c6070f4ca6d7681687dd77",
+      "bytes": 263861
+    },
+    "artifacts/asset.glb": {
+      "sha256": "ff9ddac60bbd4a0a16e3119c78202d7e9795c6b994988a894fcec39697b30ef9",
+      "bytes": 7773256
+    },
+    "artifacts/view-left.png": {
+      "sha256": "dfbe199ed5b866215023c532b600e0b735e0507ac467bc8651dd85b220711214",
+      "bytes": 208847
+    },
+    "artifacts/view-back.png": {
+      "sha256": "972f6df1ff3de520957e42e667ae431be0e99d3a3c2a8f83023f87cc508e888a",
+      "bytes": 252854
+    },
+    "artifacts/scene.json": {
+      "sha256": "15cb07d43b730c0c6f81e7e31008ea56761a124d278a236dc9bf307b7581201f",
+      "bytes": 3407691
+    },
+    "artifacts/view-right.png": {
+      "sha256": "dfd84f25c2f1b019f2e41b40ab36e979c970e254d9e76b918d0aa2fc5233df1e",
+      "bytes": 201590
+    },
+    "inputs/base.blend": {
+      "sha256": "366c754687c423e2a2133d32271e4686d20bba3d0c476e80b1eca4b5ed1ad618",
+      "bytes": 5828572
+    },
+    "inputs/edit.py": {
+      "sha256": "10b7fb60501f72fd5e14bfae968551b49e10e3d5dfd70a6ccc1692524ca273df",
+      "bytes": 9800
+    },
+    "inputs/review.json": {
+      "sha256": "be6e20645867d04c6c07536ddc1a3cf2736d2111e0d3739628063ee989b134c1",
+      "bytes": 2727
+    }
+  },
+  "fixed_review_metadata_match": true,
+  "native_and_glb_reopen": {
+    "glb": {
+      "boundsTolerance": 7.6687968e-05,
+      "checks": {
+        "boundsMatchNative": true,
+        "noDiagnosticCamerasOrLights": true,
+        "nonEmpty": true,
+        "trianglesMatchEncoded": true,
+        "trianglesMatchNative": true
+      },
+      "encoded": {
+        "animations": 0,
+        "cameras": 0,
+        "lights": 0,
+        "materials": 6,
+        "meshes": 269,
+        "morphMeshes": 0,
+        "nodes": 269,
+        "skins": 0,
+        "triangles": 405996
+      },
+      "reimportedBounds": {
+        "dimensions": [
+          0.76687968,
+          0.23571829,
+          0.63321877
+        ],
+        "max": [
+          0.38343984,
+          0.1104271,
+          0.45046264
+        ],
+        "min": [
+          -0.38343984,
+          -0.1252912,
+          -0.1827561
+        ]
+      },
+      "reimportedStatistics": {
+        "armatures": 0,
+        "materialSlots": 284,
+        "meshes": 269,
+        "objects": 269,
+        "shapeKeyObjects": 0,
+        "triangles": 405996,
+        "uvObjects": 254,
+        "vertices": 214380
+      },
+      "scope": "geometry counts, bounds and basic feature presence only",
+      "status": "passed"
+    },
+    "native": {
+      "fingerprintMatches": true,
+      "reopened": true,
+      "statistics": {
+        "armatures": 0,
+        "materialSlots": 284,
+        "meshes": 269,
+        "objects": 269,
+        "shapeKeyObjects": 0,
+        "triangles": 405996,
+        "uvObjects": 254,
+        "vertices": 203240
+      },
+      "status": "passed"
+    }
+  },
+  "independent_native_and_glb": {
+    "passed": true,
+    "native": "/workspace/scratch/c52cb753f160/work/garment/installed-replay/candidate.blend",
+    "glb": "/workspace/scratch/c52cb753f160/work/garment/installed-replay/candidate.glb",
+    "mesh_objects": 269,
+    "names_match": true,
+    "parents_match": true,
+    "maximum_matrix_error": 1.6858739826375313e-07,
+    "maximum_bounds_error_m": 1.862645149230957e-09,
+    "native_triangles": 405996,
+    "imported_glb_triangles": 405996,
+    "topology": {
+      "Body | continuous open front and shoulder yoke": {
+        "cage": {
+          "vertices": 2164,
+          "faces": 2032,
+          "boundary_edges": 266,
+          "boundary_components": 3,
+          "boundary_components_are_loops": true,
+          "edges_more_than_two_faces": 0,
+          "zero_area_faces": 0
+        },
+        "evaluated": {
+          "vertices": 66086,
+          "faces": 66088,
+          "boundary_edges": 0,
+          "boundary_components": 0,
+          "boundary_components_are_loops": true,
+          "edges_more_than_two_faces": 0,
+          "zero_area_faces": 0
+        }
+      },
+      "Collar | standing back and neck facing": {
+        "cage": {
+          "vertices": 1644,
+          "faces": 1496,
+          "boundary_edges": 294,
+          "boundary_components": 1,
+          "boundary_components_are_loops": true,
+          "edges_more_than_two_faces": 0,
+          "zero_area_faces": 0
+        },
+        "evaluated": {
+          "vertices": 49050,
+          "faces": 49048,
+          "boundary_edges": 0,
+          "boundary_components": 0,
+          "boundary_components_are_loops": true,
+          "edges_more_than_two_faces": 0,
+          "zero_area_faces": 0
+        }
+      },
+      "L Lapel | folded lower notched facing": {
+        "cage": {
+          "vertices": 864,
+          "faces": 760,
+          "boundary_edges": 206,
+          "boundary_components": 1,
+          "boundary_components_are_loops": true,
+          "edges_more_than_two_faces": 0,
+          "zero_area_faces": 0
+        },
+        "evaluated": {
+          "vertices": 25146,
+          "faces": 25144,
+          "boundary_edges": 0,
+          "boundary_components": 0,
+          "boundary_components_are_loops": true,
+          "edges_more_than_two_faces": 0,
+          "zero_area_faces": 0
+        }
+      },
+      "R Lapel | folded lower notched facing": {
+        "cage": {
+          "vertices": 864,
+          "faces": 760,
+          "boundary_edges": 206,
+          "boundary_components": 1,
+          "boundary_components_are_loops": true,
+          "edges_more_than_two_faces": 0,
+          "zero_area_faces": 0
+        },
+        "evaluated": {
+          "vertices": 25146,
+          "faces": 25144,
+          "boundary_edges": 0,
+          "boundary_components": 0,
+          "boundary_components_are_loops": true,
+          "edges_more_than_two_faces": 0,
+          "zero_area_faces": 0
+        }
+      }
+    },
+    "shared_armhole_seams": [
+      {
+        "name": "L Armhole | shared 40-edge seam",
+        "edges": 40,
+        "all_edges_two_faces": true
+      },
+      {
+        "name": "R Armhole | shared 40-edge seam",
+        "edges": 40,
+        "all_edges_two_faces": true
+      }
+    ],
+    "limits": [
+      "Topology checks do not establish absence of all self-intersections.",
+      "Three cage boundary loops are the connected front/neck/hem edge and two wrists.",
+      "Closed solidified meshes retain hollow space and rimmed openings; they do not fill the garment.",
+      "GLB material conversion is not a proof of baked procedural cloth equivalence.",
+      "No rigging, cloth simulation, new UV layout or engine test is claimed."
+    ]
+  },
+  "observation_states": {
+    "detail-before": {
+      "ok": true,
+      "schema": "refas.production.project/v2",
+      "name": "detail-before",
+      "projectId": "aa531a200fef43118c2d5928ea52a57e",
+      "head": "96815505ce404ee2a078a3986a58ee00",
+      "sequence": 1,
+      "sources": [
+        {
+          "path": "sources/001-reference.png",
+          "name": "reference.png",
+          "role": "user-reference",
+          "sha256": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5",
+          "bytes": 2666378
+        }
+      ],
+      "outputs": {
+        "blend": "/workspace/scratch/c52cb753f160/work/garment/installed-replay/observations/bf55cb6a37f64388bd3a58a73d915eb7/detail-before/.refas2/revisions/96815505ce404ee2a078a3986a58ee00/artifacts/scene.blend",
+        "glb": "/workspace/scratch/c52cb753f160/work/garment/installed-replay/observations/bf55cb6a37f64388bd3a58a73d915eb7/detail-before/.refas2/revisions/96815505ce404ee2a078a3986a58ee00/artifacts/asset.glb",
+        "scene": "/workspace/scratch/c52cb753f160/work/garment/installed-replay/observations/bf55cb6a37f64388bd3a58a73d915eb7/detail-before/.refas2/revisions/96815505ce404ee2a078a3986a58ee00/artifacts/scene.json"
+      },
+      "observations": [
+        {
+          "camera": {
+            "matrixWorld": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                -1.6e-07,
+                -1.0,
+                -2.0
+              ],
+              [
+                0.0,
+                1.0,
+                -1.6e-07,
+                0.354
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "orthoScale": 0.36000001,
+            "position": [
+              0.0,
+              -2.0,
+              0.354
+            ],
+            "projection": "orthographic",
+            "target": [
+              0.0,
+              0.0,
+              0.354
+            ]
+          },
+          "framing": "fixed-review-spec",
+          "lighting": {
+            "center": [
+              0.0,
+              0.0,
+              0.18000001
+            ],
+            "radius": 0.48,
+            "rig": "three-area-lights/v1"
+          },
+          "path": "/workspace/scratch/c52cb753f160/work/garment/installed-replay/observations/bf55cb6a37f64388bd3a58a73d915eb7/detail-before/.refas2/revisions/96815505ce404ee2a078a3986a58ee00/artifacts/view-fold-front.png",
+          "referenceRegion": {
+            "regionPixels": [
+              7,
+              443,
+              224,
+              584
+            ],
+            "sourceSha256": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5"
+          },
+          "registration": "unregistered",
+          "renderer": {
+            "denoising": false,
+            "device": "CPU",
+            "engine": "CYCLES",
+            "samples": 16,
+            "size": [
+              512,
+              512
+            ],
+            "transparent": true,
+            "viewTransform": "AgX",
+            "worldColor": [
+              0.80000001,
+              0.82999998,
+              0.88
+            ],
+            "worldStrength": 0.45
+          },
+          "sha256": "cd3e01d40a11022ccf3c7979c19718fcd37f9e6c619380ad5d29ce0fce886276",
+          "sourceSceneFingerprint": "50685b52a722d64aee4659531cbf1d71491e446de9c5fb6116f9a379ae54a2cc",
+          "view": "fold-front"
+        },
+        {
+          "camera": {
+            "matrixWorld": [
+              [
+                0.71603727,
+                -0.03401785,
+                0.69723266,
+                1.41421366
+              ],
+              [
+                0.698062,
+                0.03489387,
+                -0.7151866,
+                -1.41421366
+              ],
+              [
+                -3e-08,
+                0.9988119,
+                0.04873188,
+                0.47
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "orthoScale": 0.27000001,
+            "position": [
+              1.41421366,
+              -1.41421366,
+              0.47
+            ],
+            "projection": "orthographic",
+            "target": [
+              0.055,
+              -0.02,
+              0.375
+            ]
+          },
+          "framing": "fixed-review-spec",
+          "lighting": {
+            "center": [
+              0.0,
+              0.0,
+              0.18000001
+            ],
+            "radius": 0.48,
+            "rig": "three-area-lights/v1"
+          },
+          "path": "/workspace/scratch/c52cb753f160/work/garment/installed-replay/observations/bf55cb6a37f64388bd3a58a73d915eb7/detail-before/.refas2/revisions/96815505ce404ee2a078a3986a58ee00/artifacts/view-fold-oblique.png",
+          "referenceRegion": null,
+          "registration": "unregistered",
+          "renderer": {
+            "denoising": false,
+            "device": "CPU",
+            "engine": "CYCLES",
+            "samples": 16,
+            "size": [
+              512,
+              512
+            ],
+            "transparent": true,
+            "viewTransform": "AgX",
+            "worldColor": [
+              0.80000001,
+              0.82999998,
+              0.88
+            ],
+            "worldStrength": 0.45
+          },
+          "sha256": "e0c8ed9a32b75e9c2a3b54311588888d4a9fab30455e0a2413b9ca553e1c949f",
+          "sourceSceneFingerprint": "50685b52a722d64aee4659531cbf1d71491e446de9c5fb6116f9a379ae54a2cc",
+          "view": "fold-oblique"
+        },
+        {
+          "camera": {
+            "matrixWorld": [
+              [
+                -4e-08,
+                4e-08,
+                1.0,
+                2.0
+              ],
+              [
+                1.0,
+                0.0,
+                4e-08,
+                -0.05
+              ],
+              [
+                0.0,
+                1.0,
+                -4e-08,
+                0.40000001
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "orthoScale": 0.25,
+            "position": [
+              2.0,
+              -0.05,
+              0.40000001
+            ],
+            "projection": "orthographic",
+            "target": [
+              0.055,
+              -0.05,
+              0.40000001
+            ]
+          },
+          "framing": "fixed-review-spec",
+          "lighting": {
+            "center": [
+              0.0,
+              0.0,
+              0.18000001
+            ],
+            "radius": 0.48,
+            "rig": "three-area-lights/v1"
+          },
+          "path": "/workspace/scratch/c52cb753f160/work/garment/installed-replay/observations/bf55cb6a37f64388bd3a58a73d915eb7/detail-before/.refas2/revisions/96815505ce404ee2a078a3986a58ee00/artifacts/view-fold-side.png",
+          "referenceRegion": null,
+          "registration": "unregistered",
+          "renderer": {
+            "denoising": false,
+            "device": "CPU",
+            "engine": "CYCLES",
+            "samples": 16,
+            "size": [
+              512,
+              512
+            ],
+            "transparent": true,
+            "viewTransform": "AgX",
+            "worldColor": [
+              0.80000001,
+              0.82999998,
+              0.88
+            ],
+            "worldStrength": 0.45
+          },
+          "sha256": "becb4d4b3d3388d666f7e96a3cc05955d33bd3fa3d7f3909e330cde0ca0d8b35",
+          "sourceSceneFingerprint": "50685b52a722d64aee4659531cbf1d71491e446de9c5fb6116f9a379ae54a2cc",
+          "view": "fold-side"
+        }
+      ],
+      "inputs": {
+        "base.blend": "/workspace/scratch/c52cb753f160/work/garment/installed-replay/observations/bf55cb6a37f64388bd3a58a73d915eb7/detail-before/.refas2/revisions/96815505ce404ee2a078a3986a58ee00/inputs/base.blend",
+        "edit.py": "/workspace/scratch/c52cb753f160/work/garment/installed-replay/observations/bf55cb6a37f64388bd3a58a73d915eb7/detail-before/.refas2/revisions/96815505ce404ee2a078a3986a58ee00/inputs/edit.py",
+        "review.json": "/workspace/scratch/c52cb753f160/work/garment/installed-replay/observations/bf55cb6a37f64388bd3a58a73d915eb7/detail-before/.refas2/revisions/96815505ce404ee2a078a3986a58ee00/inputs/review.json"
+      },
+      "revisions": [
+        {
+          "id": "96815505ce404ee2a078a3986a58ee00",
+          "intent": "Fixed view of unchanged detail-before",
+          "createdAt": "2026-11-22T09:24:39.908875+00:00",
+          "parent": null
+        }
+      ],
+      "incompleteRuns": [],
+      "referenceResemblance": "not-evaluated",
+      "gameReadiness": "not-evaluated",
+      "runId": "d42c9a6e0b36410f8c52688e3eac3975",
+      "publishedRevision": "96815505ce404ee2a078a3986a58ee00",
+      "elapsedSeconds": 19.452
+    },
+    "detail-after": {
+      "ok": true,
+      "schema": "refas.production.project/v2",
+      "name": "detail-after",
+      "projectId": "9653840b570f458e99eefb535ff40b97",
+      "head": "9d3b2c392c2f48bb9c921337261d7469",
+      "sequence": 1,
+      "sources": [
+        {
+          "path": "sources/001-reference.png",
+          "name": "reference.png",
+          "role": "user-reference",
+          "sha256": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5",
+          "bytes": 2666378
+        }
+      ],
+      "outputs": {
+        "blend": "/workspace/scratch/c52cb753f160/work/garment/installed-replay/observations/bf55cb6a37f64388bd3a58a73d915eb7/detail-after/.refas2/revisions/9d3b2c392c2f48bb9c921337261d7469/artifacts/scene.blend",
+        "glb": "/workspace/scratch/c52cb753f160/work/garment/installed-replay/observations/bf55cb6a37f64388bd3a58a73d915eb7/detail-after/.refas2/revisions/9d3b2c392c2f48bb9c921337261d7469/artifacts/asset.glb",
+        "scene": "/workspace/scratch/c52cb753f160/work/garment/installed-replay/observations/bf55cb6a37f64388bd3a58a73d915eb7/detail-after/.refas2/revisions/9d3b2c392c2f48bb9c921337261d7469/artifacts/scene.json"
+      },
+      "observations": [
+        {
+          "camera": {
+            "matrixWorld": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                -1.6e-07,
+                -1.0,
+                -2.0
+              ],
+              [
+                0.0,
+                1.0,
+                -1.6e-07,
+                0.354
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "orthoScale": 0.36000001,
+            "position": [
+              0.0,
+              -2.0,
+              0.354
+            ],
+            "projection": "orthographic",
+            "target": [
+              0.0,
+              0.0,
+              0.354
+            ]
+          },
+          "framing": "fixed-review-spec",
+          "lighting": {
+            "center": [
+              0.0,
+              0.0,
+              0.18000001
+            ],
+            "radius": 0.48,
+            "rig": "three-area-lights/v1"
+          },
+          "path": "/workspace/scratch/c52cb753f160/work/garment/installed-replay/observations/bf55cb6a37f64388bd3a58a73d915eb7/detail-after/.refas2/revisions/9d3b2c392c2f48bb9c921337261d7469/artifacts/view-fold-front.png",
+          "referenceRegion": {
+            "regionPixels": [
+              7,
+              443,
+              224,
+              584
+            ],
+            "sourceSha256": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5"
+          },
+          "registration": "unregistered",
+          "renderer": {
+            "denoising": false,
+            "device": "CPU",
+            "engine": "CYCLES",
+            "samples": 16,
+            "size": [
+              512,
+              512
+            ],
+            "transparent": true,
+            "viewTransform": "AgX",
+            "worldColor": [
+              0.80000001,
+              0.82999998,
+              0.88
+            ],
+            "worldStrength": 0.45
+          },
+          "sha256": "c8cc37670a8820ab6eaf2a4786c5f2bbb376873135b1a6a58f998187d176a97c",
+          "sourceSceneFingerprint": "33bef3d9d952bb4b3790b425fba57a7cb2983ba5108f36a21c5211f87f4d10a3",
+          "view": "fold-front"
+        },
+        {
+          "camera": {
+            "matrixWorld": [
+              [
+                0.71603727,
+                -0.03401785,
+                0.69723266,
+                1.41421366
+              ],
+              [
+                0.698062,
+                0.03489387,
+                -0.7151866,
+                -1.41421366
+              ],
+              [
+                -3e-08,
+                0.9988119,
+                0.04873188,
+                0.47
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "orthoScale": 0.27000001,
+            "position": [
+              1.41421366,
+              -1.41421366,
+              0.47
+            ],
+            "projection": "orthographic",
+            "target": [
+              0.055,
+              -0.02,
+              0.375
+            ]
+          },
+          "framing": "fixed-review-spec",
+          "lighting": {
+            "center": [
+              0.0,
+              0.0,
+              0.18000001
+            ],
+            "radius": 0.48,
+            "rig": "three-area-lights/v1"
+          },
+          "path": "/workspace/scratch/c52cb753f160/work/garment/installed-replay/observations/bf55cb6a37f64388bd3a58a73d915eb7/detail-after/.refas2/revisions/9d3b2c392c2f48bb9c921337261d7469/artifacts/view-fold-oblique.png",
+          "referenceRegion": null,
+          "registration": "unregistered",
+          "renderer": {
+            "denoising": false,
+            "device": "CPU",
+            "engine": "CYCLES",
+            "samples": 16,
+            "size": [
+              512,
+              512
+            ],
+            "transparent": true,
+            "viewTransform": "AgX",
+            "worldColor": [
+              0.80000001,
+              0.82999998,
+              0.88
+            ],
+            "worldStrength": 0.45
+          },
+          "sha256": "031ed7d4bafa876f001cc39673290d308b6ed1b7b12ecf9841a79831cf602c98",
+          "sourceSceneFingerprint": "33bef3d9d952bb4b3790b425fba57a7cb2983ba5108f36a21c5211f87f4d10a3",
+          "view": "fold-oblique"
+        },
+        {
+          "camera": {
+            "matrixWorld": [
+              [
+                -4e-08,
+                4e-08,
+                1.0,
+                2.0
+              ],
+              [
+                1.0,
+                0.0,
+                4e-08,
+                -0.05
+              ],
+              [
+                0.0,
+                1.0,
+                -4e-08,
+                0.40000001
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "orthoScale": 0.25,
+            "position": [
+              2.0,
+              -0.05,
+              0.40000001
+            ],
+            "projection": "orthographic",
+            "target": [
+              0.055,
+              -0.05,
+              0.40000001
+            ]
+          },
+          "framing": "fixed-review-spec",
+          "lighting": {
+            "center": [
+              0.0,
+              0.0,
+              0.18000001
+            ],
+            "radius": 0.48,
+            "rig": "three-area-lights/v1"
+          },
+          "path": "/workspace/scratch/c52cb753f160/work/garment/installed-replay/observations/bf55cb6a37f64388bd3a58a73d915eb7/detail-after/.refas2/revisions/9d3b2c392c2f48bb9c921337261d7469/artifacts/view-fold-side.png",
+          "referenceRegion": null,
+          "registration": "unregistered",
+          "renderer": {
+            "denoising": false,
+            "device": "CPU",
+            "engine": "CYCLES",
+            "samples": 16,
+            "size": [
+              512,
+              512
+            ],
+            "transparent": true,
+            "viewTransform": "AgX",
+            "worldColor": [
+              0.80000001,
+              0.82999998,
+              0.88
+            ],
+            "worldStrength": 0.45
+          },
+          "sha256": "cbee5fb2d5f64c66f63fe8e997458b89a51cac1ed543b1f9802a49be7f1e081e",
+          "sourceSceneFingerprint": "33bef3d9d952bb4b3790b425fba57a7cb2983ba5108f36a21c5211f87f4d10a3",
+          "view": "fold-side"
+        }
+      ],
+      "inputs": {
+        "base.blend": "/workspace/scratch/c52cb753f160/work/garment/installed-replay/observations/bf55cb6a37f64388bd3a58a73d915eb7/detail-after/.refas2/revisions/9d3b2c392c2f48bb9c921337261d7469/inputs/base.blend",
+        "edit.py": "/workspace/scratch/c52cb753f160/work/garment/installed-replay/observations/bf55cb6a37f64388bd3a58a73d915eb7/detail-after/.refas2/revisions/9d3b2c392c2f48bb9c921337261d7469/inputs/edit.py",
+        "review.json": "/workspace/scratch/c52cb753f160/work/garment/installed-replay/observations/bf55cb6a37f64388bd3a58a73d915eb7/detail-after/.refas2/revisions/9d3b2c392c2f48bb9c921337261d7469/inputs/review.json"
+      },
+      "revisions": [
+        {
+          "id": "9d3b2c392c2f48bb9c921337261d7469",
+          "intent": "Fixed view of unchanged detail-after",
+          "createdAt": "2026-11-22T09:25:01.186869+00:00",
+          "parent": null
+        }
+      ],
+      "incompleteRuns": [],
+      "referenceResemblance": "not-evaluated",
+      "gameReadiness": "not-evaluated",
+      "runId": "db2b96e256df4e3b94f1f17eca46840b",
+      "publishedRevision": "9d3b2c392c2f48bb9c921337261d7469",
+      "elapsedSeconds": 20.961
+    },
+    "glb-readback": {
+      "ok": true,
+      "schema": "refas.production.project/v2",
+      "name": "glb-readback",
+      "projectId": "b96b49d8ed0a46ac843cb0d58557dd4c",
+      "head": "d26a98085ad541eb8a287a2f38773ecd",
+      "sequence": 1,
+      "sources": [
+        {
+          "path": "sources/001-reference.png",
+          "name": "reference.png",
+          "role": "user-reference",
+          "sha256": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5",
+          "bytes": 2666378
+        }
+      ],
+      "outputs": {
+        "blend": "/workspace/scratch/c52cb753f160/work/garment/installed-replay/observations/bf55cb6a37f64388bd3a58a73d915eb7/glb-readback/.refas2/revisions/d26a98085ad541eb8a287a2f38773ecd/artifacts/scene.blend",
+        "glb": "/workspace/scratch/c52cb753f160/work/garment/installed-replay/observations/bf55cb6a37f64388bd3a58a73d915eb7/glb-readback/.refas2/revisions/d26a98085ad541eb8a287a2f38773ecd/artifacts/asset.glb",
+        "scene": "/workspace/scratch/c52cb753f160/work/garment/installed-replay/observations/bf55cb6a37f64388bd3a58a73d915eb7/glb-readback/.refas2/revisions/d26a98085ad541eb8a287a2f38773ecd/artifacts/scene.json"
+      },
+      "observations": [
+        {
+          "camera": {
+            "matrixWorld": [
+              [
+                0.70710683,
+                -7e-08,
+                0.70710677,
+                1.41421366
+              ],
+              [
+                0.70710677,
+                -1.4e-07,
+                -0.70710683,
+                -1.41421366
+              ],
+              [
+                1.5e-07,
+                1.0,
+                -4e-08,
+                0.15000001
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "orthoScale": 0.83999997,
+            "position": [
+              1.41421366,
+              -1.41421366,
+              0.15000001
+            ],
+            "projection": "orthographic",
+            "target": [
+              0.0,
+              0.0,
+              0.15000001
+            ]
+          },
+          "framing": "fixed-review-spec",
+          "lighting": {
+            "center": [
+              0.0,
+              0.0,
+              0.18000001
+            ],
+            "radius": 0.48,
+            "rig": "three-area-lights/v1"
+          },
+          "path": "/workspace/scratch/c52cb753f160/work/garment/installed-replay/observations/bf55cb6a37f64388bd3a58a73d915eb7/glb-readback/.refas2/revisions/d26a98085ad541eb8a287a2f38773ecd/artifacts/view-front-three-quarter.png",
+          "referenceRegion": {
+            "regionPixels": [
+              383,
+              47,
+              655,
+              399
+            ],
+            "sourceSha256": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5"
+          },
+          "registration": "unregistered",
+          "renderer": {
+            "denoising": false,
+            "device": "CPU",
+            "engine": "CYCLES",
+            "samples": 16,
+            "size": [
+              512,
+              512
+            ],
+            "transparent": true,
+            "viewTransform": "AgX",
+            "worldColor": [
+              0.80000001,
+              0.82999998,
+              0.88
+            ],
+            "worldStrength": 0.45
+          },
+          "sha256": "467730eac940e04a35700870a09a2c0752c97b7b81b02df1039cceeab09e77d6",
+          "sourceSceneFingerprint": "2313587c26c27eba81400be65be901c1b7a36e8da6bbe000e29dd691ffe5f1dc",
+          "view": "front-three-quarter"
+        }
+      ],
+      "inputs": {
+        "base.blend": "/workspace/scratch/c52cb753f160/work/garment/installed-replay/observations/bf55cb6a37f64388bd3a58a73d915eb7/glb-readback/.refas2/revisions/d26a98085ad541eb8a287a2f38773ecd/inputs/base.blend",
+        "edit.py": "/workspace/scratch/c52cb753f160/work/garment/installed-replay/observations/bf55cb6a37f64388bd3a58a73d915eb7/glb-readback/.refas2/revisions/d26a98085ad541eb8a287a2f38773ecd/inputs/edit.py",
+        "review.json": "/workspace/scratch/c52cb753f160/work/garment/installed-replay/observations/bf55cb6a37f64388bd3a58a73d915eb7/glb-readback/.refas2/revisions/d26a98085ad541eb8a287a2f38773ecd/inputs/review.json"
+      },
+      "revisions": [
+        {
+          "id": "d26a98085ad541eb8a287a2f38773ecd",
+          "intent": "Fixed view of unchanged glb-readback",
+          "createdAt": "2026-11-22T09:25:10.146192+00:00",
+          "parent": null
+        }
+      ],
+      "incompleteRuns": [],
+      "referenceResemblance": "not-evaluated",
+      "gameReadiness": "not-evaluated",
+      "runId": "05a0d85f4241480cb2f2afd5b356cda6",
+      "publishedRevision": "d26a98085ad541eb8a287a2f38773ecd",
+      "elapsedSeconds": 8.444
+    }
+  },
+  "detail_review_metadata_match": true,
+  "cuff_edit": {
+    "local_edit": "Wearer-left cuff band increased by 0.01 m along sleeve axis, keeping distal rim fixed",
+    "axis": [
+      0.257994294,
+      -0.017999602,
+      -0.965978742
+    ],
+    "nominal_before_m": 0.06,
+    "nominal_after_m": 0.07,
+    "native_band_axial_extent_before_m": 0.059987178043229505,
+    "native_band_axial_extent_after_m": 0.0699871884426102,
+    "native_band_delta_m": 0.010000010399380699,
+    "changed_objects": [
+      "L_Cuff_Band",
+      "L_Cuff_Buckle frame",
+      "L_Cuff_Buckle tongue",
+      "L_Cuff_Piping_Proximal",
+      "L_Cuff_Rivet_-0.022",
+      "L_Cuff_Rivet_0.022",
+      "L_Cuff_Strap"
+    ],
+    "protected_object_count": 261,
+    "protected_changed": [],
+    "material_hash_before": "eef5b8a1134a55b3a2909c44a91f6f5b3d0b7accdfb38effb4ee54f733e5ed26",
+    "material_hash_after": "eef5b8a1134a55b3a2909c44a91f6f5b3d0b7accdfb38effb4ee54f733e5ed26",
+    "materials_unchanged": true,
+    "opposite_cuff_unchanged": true,
+    "distal_piping_unchanged": true
+  },
+  "integrity_verify": {
+    "ok": true,
+    "scope": "recorded-file-integrity",
+    "head": "4bd85cd630784b8db84a436302ae7fbd",
+    "artifactCount": 11,
+    "referenceResemblance": "not-evaluated",
+    "gameReadiness": "not-evaluated"
+  },
+  "commands": [
+    {
+      "label": "doctor",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/scratch/c52cb753f160/installed-refas/package/skills/refas/scripts/produce.py",
+        "doctor",
+        "--blender",
+        "/usr/bin/blender"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.4
+    },
+    {
+      "label": "init",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/scratch/c52cb753f160/installed-refas/package/skills/refas/scripts/produce.py",
+        "init",
+        "--root",
+        "/workspace/scratch/c52cb753f160/work/garment/installed-replay/project",
+        "--name",
+        "uniform-jacket-refinement",
+        "--reference",
+        "/workspace/scratch/c52cb753f160/refas/examples/uniform-jacket/source/reference.png"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.064
+    },
+    {
+      "label": "baseline",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/scratch/c52cb753f160/installed-refas/package/skills/refas/scripts/produce.py",
+        "run",
+        "--root",
+        "/workspace/scratch/c52cb753f160/work/garment/installed-replay/project",
+        "--script",
+        "/workspace/scratch/c52cb753f160/work/garment/installed-replay/baseline.py",
+        "--intent",
+        "Imported native source before informed refinement",
+        "--review-spec",
+        "/workspace/scratch/c52cb753f160/refas/examples/uniform-jacket/review.json",
+        "--size",
+        "512",
+        "--samples",
+        "16",
+        "--timeout",
+        "240",
+        "--blender",
+        "/usr/bin/blender",
+        "--input-blend",
+        "/workspace/scratch/c52cb753f160/baseline/refas-garment-automail-dogfood/garment/jacket.blend",
+        "--expected-revision",
+        "none"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 17.372
+    },
+    {
+      "label": "fold",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/scratch/c52cb753f160/installed-refas/package/skills/refas/scripts/produce.py",
+        "run",
+        "--root",
+        "/workspace/scratch/c52cb753f160/work/garment/installed-replay/project",
+        "--script",
+        "/workspace/scratch/c52cb753f160/refas/examples/uniform-jacket/refine_fold.py",
+        "--intent",
+        "Refine continuous turned collar and rolled lapels with one clear notched border",
+        "--review-spec",
+        "/workspace/scratch/c52cb753f160/refas/examples/uniform-jacket/review.json",
+        "--size",
+        "512",
+        "--samples",
+        "16",
+        "--timeout",
+        "240",
+        "--blender",
+        "/usr/bin/blender",
+        "--expected-revision",
+        "79326dd886c5432089aa20c79dec3ed6"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 18.457
+    },
+    {
+      "label": "cuff-edit",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/scratch/c52cb753f160/installed-refas/package/skills/refas/scripts/produce.py",
+        "run",
+        "--root",
+        "/workspace/scratch/c52cb753f160/work/garment/installed-replay/project",
+        "--script",
+        "/workspace/scratch/c52cb753f160/refas/examples/uniform-jacket/edit_cuff.py",
+        "--intent",
+        "Only wearer-left cuff assembly: extend band 0.01 m proximally; keep distal rim and other asset objects",
+        "--review-spec",
+        "/workspace/scratch/c52cb753f160/refas/examples/uniform-jacket/review.json",
+        "--size",
+        "512",
+        "--samples",
+        "16",
+        "--timeout",
+        "240",
+        "--blender",
+        "/usr/bin/blender",
+        "--expected-revision",
+        "bf55cb6a37f64388bd3a58a73d915eb7"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 17.98
+    },
+    {
+      "label": "restore",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/scratch/c52cb753f160/installed-refas/package/skills/refas/scripts/produce.py",
+        "restore",
+        "--root",
+        "/workspace/scratch/c52cb753f160/work/garment/installed-replay/project",
+        "--revision",
+        "bf55cb6a37f64388bd3a58a73d915eb7",
+        "--expected-revision",
+        "b0fe43d97da947ce861ad2894903677d"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.474
+    },
+    {
+      "label": "restored-status",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/scratch/c52cb753f160/installed-refas/package/skills/refas/scripts/produce.py",
+        "status",
+        "--root",
+        "/workspace/scratch/c52cb753f160/work/garment/installed-replay/project"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.095
+    },
+    {
+      "label": "final-verify",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/scratch/c52cb753f160/installed-refas/package/skills/refas/scripts/produce.py",
+        "verify",
+        "--root",
+        "/workspace/scratch/c52cb753f160/work/garment/installed-replay/project"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.086
+    },
+    {
+      "label": "independent-glb",
+      "argv": [
+        "/usr/bin/blender",
+        "--background",
+        "--factory-startup",
+        "--threads",
+        "2",
+        "--python-exit-code",
+        "1",
+        "--python",
+        "/workspace/scratch/c52cb753f160/refas/examples/uniform-jacket/inspect_fold.py",
+        "--",
+        "/workspace/scratch/c52cb753f160/work/garment/installed-replay/candidate.blend",
+        "/workspace/scratch/c52cb753f160/work/garment/installed-replay/candidate.glb",
+        "/workspace/scratch/c52cb753f160/work/garment/installed-replay/independent-check.json",
+        "/workspace/scratch/c52cb753f160/work/garment/installed-replay/imported-glb.blend"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 3.159
+    },
+    {
+      "label": "detail-before-init",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/scratch/c52cb753f160/installed-refas/package/skills/refas/scripts/produce.py",
+        "init",
+        "--root",
+        "/workspace/scratch/c52cb753f160/work/garment/installed-replay/observations/bf55cb6a37f64388bd3a58a73d915eb7/detail-before",
+        "--name",
+        "detail-before",
+        "--reference",
+        "/workspace/scratch/c52cb753f160/refas/examples/uniform-jacket/source/reference.png"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.054
+    },
+    {
+      "label": "detail-before",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/scratch/c52cb753f160/installed-refas/package/skills/refas/scripts/produce.py",
+        "run",
+        "--root",
+        "/workspace/scratch/c52cb753f160/work/garment/installed-replay/observations/bf55cb6a37f64388bd3a58a73d915eb7/detail-before",
+        "--input-blend",
+        "/workspace/scratch/c52cb753f160/work/garment/installed-replay/baseline.blend",
+        "--script",
+        "/workspace/scratch/c52cb753f160/work/garment/installed-replay/observe.py",
+        "--intent",
+        "Fixed view of unchanged detail-before",
+        "--blender",
+        "/usr/bin/blender",
+        "--review-spec",
+        "/workspace/scratch/c52cb753f160/refas/examples/uniform-jacket/review-fold-detail.json",
+        "--size",
+        "512",
+        "--samples",
+        "16",
+        "--timeout",
+        "240",
+        "--expected-revision",
+        "none"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 19.697
+    },
+    {
+      "label": "detail-after-init",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/scratch/c52cb753f160/installed-refas/package/skills/refas/scripts/produce.py",
+        "init",
+        "--root",
+        "/workspace/scratch/c52cb753f160/work/garment/installed-replay/observations/bf55cb6a37f64388bd3a58a73d915eb7/detail-after",
+        "--name",
+        "detail-after",
+        "--reference",
+        "/workspace/scratch/c52cb753f160/refas/examples/uniform-jacket/source/reference.png"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.06
+    },
+    {
+      "label": "detail-after",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/scratch/c52cb753f160/installed-refas/package/skills/refas/scripts/produce.py",
+        "run",
+        "--root",
+        "/workspace/scratch/c52cb753f160/work/garment/installed-replay/observations/bf55cb6a37f64388bd3a58a73d915eb7/detail-after",
+        "--input-blend",
+        "/workspace/scratch/c52cb753f160/work/garment/installed-replay/candidate.blend",
+        "--script",
+        "/workspace/scratch/c52cb753f160/work/garment/installed-replay/observe.py",
+        "--intent",
+        "Fixed view of unchanged detail-after",
+        "--blender",
+        "/usr/bin/blender",
+        "--review-spec",
+        "/workspace/scratch/c52cb753f160/refas/examples/uniform-jacket/review-fold-detail.json",
+        "--size",
+        "512",
+        "--samples",
+        "16",
+        "--timeout",
+        "240",
+        "--expected-revision",
+        "none"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 21.253
+    },
+    {
+      "label": "glb-readback-init",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/scratch/c52cb753f160/installed-refas/package/skills/refas/scripts/produce.py",
+        "init",
+        "--root",
+        "/workspace/scratch/c52cb753f160/work/garment/installed-replay/observations/bf55cb6a37f64388bd3a58a73d915eb7/glb-readback",
+        "--name",
+        "glb-readback",
+        "--reference",
+        "/workspace/scratch/c52cb753f160/refas/examples/uniform-jacket/source/reference.png"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.062
+    },
+    {
+      "label": "glb-readback",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/scratch/c52cb753f160/installed-refas/package/skills/refas/scripts/produce.py",
+        "run",
+        "--root",
+        "/workspace/scratch/c52cb753f160/work/garment/installed-replay/observations/bf55cb6a37f64388bd3a58a73d915eb7/glb-readback",
+        "--input-blend",
+        "/workspace/scratch/c52cb753f160/work/garment/installed-replay/imported-glb.blend",
+        "--script",
+        "/workspace/scratch/c52cb753f160/work/garment/installed-replay/observe.py",
+        "--intent",
+        "Fixed view of unchanged glb-readback",
+        "--blender",
+        "/usr/bin/blender",
+        "--review-spec",
+        "/workspace/scratch/c52cb753f160/refas/examples/uniform-jacket/review.json",
+        "--size",
+        "512",
+        "--samples",
+        "16",
+        "--timeout",
+        "240",
+        "--expected-revision",
+        "none",
+        "--views",
+        "front-three-quarter"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 8.993
+    }
+  ],
+  "claim_limits": [
+    "Successful execution does not select a visually accepted asset.",
+    "Native/GLB reopening checks recorded fingerprints, geometry counts, bounds and basic presence.",
+    "Exact restore compares every selected artifact and input file by bytes and SHA-256.",
+    "This runner does not grade resemblance, cloth simulation, skinning, UV quality or engine readiness."
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "ok": true,
+  "entry": "RefAs 2.0 production development",
+  "python": "3.12.14",
+  "blender": {
+    "path": "/usr/bin/blender",
+    "version": "Blender 4.3.2"
+  },
+  "scope": "executable probe; render device availability is checked during execution"
+}

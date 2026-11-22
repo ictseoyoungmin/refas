@@ -1,0 +1,74 @@
+{
+  "baseline_revision": "cc7a3144117744e78a07f2c777aa0136",
+  "selected_revision": "02b51b5409e64333b17b6565eb7c5a38",
+  "changed": [
+    "Collar | pale upper edge",
+    "Collar | standing back and neck facing",
+    "L Lapel | fine piping",
+    "L Lapel | folded lower notched facing",
+    "L lapel | silver snap",
+    "R Lapel | fine piping",
+    "R Lapel | folded lower notched facing",
+    "R lapel | silver snap"
+  ],
+  "removed": [
+    "L Collar | piped point",
+    "R Collar | piped point"
+  ],
+  "unchanged_count": 261,
+  "materials_unchanged": true,
+  "before_materials": {
+    "Seams | tonal thread": "c39487f4b2b9d2671e2a02f49aa36565c1b825bbbd24b038635a8b1c897d5647",
+    "Main | charcoal woven wool": "ba9827532c808449506064210c574ee9547a5aaeb5aa393f5ddd0228307b0b97",
+    "Interior | black satin lining": "346608d62741f1f3617806eb2dc377b76b500cb88c744b2b6332cdbf2d984ecf",
+    "Piping | pale silver grey": "249eb6b850d6a9937a8bcae67df9d6a3f57c169f2d07da74ddab3bdb4b5a427d",
+    "Hardware | brushed silver": "675e04c1c90ef01fdf900cad6045c29c220a0af1fb0902217cf570c8ca1a06ed",
+    "Straps | charcoal twill": "e1ca88bdf6ad3d2a109ef77b6b0ef4333beb035bd1cf3a876e10ee4b049e6759"
+  },
+  "after_materials": {
+    "Seams | tonal thread": "c39487f4b2b9d2671e2a02f49aa36565c1b825bbbd24b038635a8b1c897d5647",
+    "Main | charcoal woven wool": "ba9827532c808449506064210c574ee9547a5aaeb5aa393f5ddd0228307b0b97",
+    "Interior | black satin lining": "346608d62741f1f3617806eb2dc377b76b500cb88c744b2b6332cdbf2d984ecf",
+    "Piping | pale silver grey": "249eb6b850d6a9937a8bcae67df9d6a3f57c169f2d07da74ddab3bdb4b5a427d",
+    "Hardware | brushed silver": "675e04c1c90ef01fdf900cad6045c29c220a0af1fb0902217cf570c8ca1a06ed",
+    "Straps | charcoal twill": "e1ca88bdf6ad3d2a109ef77b6b0ef4333beb035bd1cf3a876e10ee4b049e6759"
+  },
+  "protected_body_unchanged": true,
+  "baseline_statistics": {
+    "armatures": 0,
+    "materialSlots": 286,
+    "meshes": 271,
+    "objects": 271,
+    "shapeKeyObjects": 0,
+    "triangles": 302196,
+    "uvObjects": 256,
+    "vertices": 151350
+  },
+  "candidate_statistics": {
+    "armatures": 0,
+    "materialSlots": 284,
+    "meshes": 269,
+    "objects": 269,
+    "shapeKeyObjects": 0,
+    "triangles": 405996,
+    "uvObjects": 254,
+    "vertices": 203240
+  },
+  "bounds": {
+    "dimensions": [
+      0.76687968,
+      0.23571829,
+      0.63321877
+    ],
+    "max": [
+      0.38343984,
+      0.1104271,
+      0.45046264
+    ],
+    "min": [
+      -0.38343984,
+      -0.1252912,
+      -0.1827561
+    ]
+  }
+}

@@ -24,11 +24,18 @@ identify the recipient, context mode, saved text hash and timestamps. The
 current user request and attachment identities are included. A terminal newline
 is added to text files; otherwise the message text is literal.
 
-Authors use a frozen copy of the 277-file skill at the base commit. Its exact
+The initial authors use a frozen copy of the 277-file skill at the base commit. Its exact
 file identities are in [skill-snapshot.json](skill-snapshot.json). Runtime
 repairs and guidance derived during this work are validated separately; they
 are not retrospectively credited as the instructions that produced a model.
 Exact backend model identifiers, tokens and costs are not available.
+
+After the first blind review tied the jacket candidates, an explicitly informed
+second correction joined the collar and lapels. That correction uses the actual
+extracted current npm package, whose identity is in [checks/package.json](checks/package.json),
+and receives a separate fresh-context blind review. The first candidate and its
+literal tied review remain unchanged. Compatibility replays of the earlier
+selections are separate from the initial frozen-skill authoring executions.
 
 ## Work and observation
 

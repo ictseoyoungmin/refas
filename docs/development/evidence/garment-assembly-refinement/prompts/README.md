@@ -15,9 +15,14 @@ binds the current user request to the unchanged original source images.
 | [Garment package replay](garment-package-replay.txt) | Final runner repair and extracted-package compatibility check. |
 | [Arm package replay](automail-package-replay.txt) | Extracted-package compatibility after the frozen-skill replay. |
 | [Anonymous visual reviewer](visual-reviewer.txt) | Isolated original-source and A/B render judgment. |
+| [Arm runner review](automail-runner-feedback.txt) | Repair and exercise repeated readback project paths. |
+| [Jacket correction after review](garment-post-review.txt) | Join the collar/lapel structure after the first tied review. |
+| [Fresh jacket reviewer](joined-fold-visual-reviewer.txt) | Separate isolated comparison of the joined facing against the unchanged baseline. |
+| [Arm delivery packaging](automail-delivery-packaging.txt) | Copy and hash selected assets, poses and retained iterations. |
+| [Jacket delivery packaging](garment-delivery-packaging.txt) | Copy and hash the final joined facing and preserve earlier candidates. |
 
 Authors inherited the preceding conversation and were explicitly informed about
-prior weaknesses. The visual reviewer starts without that history and receives
+prior weaknesses. Each visual reviewer starts without that history and receives
 only original sources and anonymous renders. The condition mapping is outside
 its input packet. Authoring, informed correction, compatibility replay and
 independent visual review are distinct activities.

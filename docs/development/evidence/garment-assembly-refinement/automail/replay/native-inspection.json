@@ -1,0 +1,1291 @@
+{
+  "native_sha256": "5f4c66f07b26db9a5a406e271bb2dce6f4d53857c313ce1bc94c8d72f96f0987",
+  "glb_sha256": "56f210e732ea94e261ccda625bec82583048ddf9ddae432db7eab907d95c3f0e",
+  "changed_mesh_inspection": [
+    {
+      "name": "Crown_AURIX",
+      "evaluated_vertices": 796,
+      "boundary_edges": 796,
+      "nonmanifold_edges": 796,
+      "zero_area_faces": 0,
+      "world_bounds_min_m": [
+        -0.015062281861901283,
+        -0.06303000450134277,
+        0.6819441914558411
+      ],
+      "world_bounds_max_m": [
+        0.015047403052449226,
+        -0.06296999752521515,
+        0.6862531900405884
+      ],
+      "world_size_m": [
+        0.03010968491435051,
+        6.000697612762451e-05,
+        0.0043089985847473145
+      ],
+      "shell_modifiers": []
+    },
+    {
+      "name": "Crown_A_mark",
+      "evaluated_vertices": 224,
+      "boundary_edges": 224,
+      "nonmanifold_edges": 224,
+      "zero_area_faces": 0,
+      "world_bounds_min_m": [
+        -0.008448000997304916,
+        -0.06603000313043594,
+        0.7009999752044678
+      ],
+      "world_bounds_max_m": [
+        0.008421601727604866,
+        -0.06596999615430832,
+        0.7170159816741943
+      ],
+      "world_size_m": [
+        0.016869602724909782,
+        6.000697612762451e-05,
+        0.016016006469726562
+      ],
+      "shell_modifiers": []
+    },
+    {
+      "name": "Crown_inset_border_-1",
+      "evaluated_vertices": 168,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0,
+      "world_bounds_min_m": [
+        -0.03746965527534485,
+        -0.04214242100715637,
+        0.6277767419815063
+      ],
+      "world_bounds_max_m": [
+        -0.01671915501356125,
+        -0.019482458010315895,
+        0.7443026304244995
+      ],
+      "world_size_m": [
+        0.0207505002617836,
+        0.022659962996840477,
+        0.11652588844299316
+      ],
+      "shell_modifiers": []
+    },
+    {
+      "name": "Crown_inset_border_1",
+      "evaluated_vertices": 168,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0,
+      "world_bounds_min_m": [
+        0.01970960944890976,
+        -0.042142413556575775,
+        0.6278151869773865
+      ],
+      "world_bounds_max_m": [
+        0.03746965527534485,
+        -0.022195355966687202,
+        0.7443026304244995
+      ],
+      "world_size_m": [
+        0.01776004582643509,
+        0.019947057589888573,
+        0.11648744344711304
+      ],
+      "shell_modifiers": []
+    },
+    {
+      "name": "Forearm_gold_outer_reveal_-1",
+      "evaluated_vertices": 200,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0,
+      "world_bounds_min_m": [
+        -0.041712384670972824,
+        -0.023192327469587326,
+        0.23877115547657013
+      ],
+      "world_bounds_max_m": [
+        -0.01954970322549343,
+        -0.006530666258186102,
+        0.3792937695980072
+      ],
+      "world_size_m": [
+        0.022162681445479393,
+        0.016661661211401224,
+        0.14052261412143707
+      ],
+      "shell_modifiers": []
+    },
+    {
+      "name": "Forearm_gold_outer_reveal_1",
+      "evaluated_vertices": 200,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0,
+      "world_bounds_min_m": [
+        0.01954970322549343,
+        -0.023192329332232475,
+        0.23877115547657013
+      ],
+      "world_bounds_max_m": [
+        0.04371237754821777,
+        -0.0065306671895086765,
+        0.3822937607765198
+      ],
+      "world_size_m": [
+        0.024162674322724342,
+        0.0166616621427238,
+        0.14352260529994965
+      ],
+      "shell_modifiers": []
+    },
+    {
+      "name": "Forearm_lateral_blade_-1",
+      "evaluated_vertices": 1210,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0,
+      "world_bounds_min_m": [
+        -0.053563326597213745,
+        -0.010581934824585915,
+        0.23888245224952698
+      ],
+      "world_bounds_max_m": [
+        -0.018264416605234146,
+        0.028951628133654594,
+        0.3743138909339905
+      ],
+      "world_size_m": [
+        0.0352989099919796,
+        0.03953356295824051,
+        0.1354314386844635
+      ],
+      "shell_modifiers": [
+        {
+          "name": "Measured shell thickness",
+          "thickness_local_m": 0.003000000026077032,
+          "object_scale": [
+            1.059999942779541,
+            1.0,
+            1.0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Forearm_lateral_blade_1",
+      "evaluated_vertices": 1210,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0,
+      "world_bounds_min_m": [
+        0.020120233297348022,
+        -0.010707676410675049,
+        0.23885005712509155
+      ],
+      "world_bounds_max_m": [
+        0.053575754165649414,
+        0.02536521479487419,
+        0.37434840202331543
+      ],
+      "world_size_m": [
+        0.03345552086830139,
+        0.03607289120554924,
+        0.13549834489822388
+      ],
+      "shell_modifiers": [
+        {
+          "name": "Measured shell thickness",
+          "thickness_local_m": 0.003000000026077032,
+          "object_scale": [
+            1.059999942779541,
+            1.0,
+            1.0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Forearm_swept_front_armor_-1",
+      "evaluated_vertices": 1762,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0,
+      "world_bounds_min_m": [
+        -0.04956691339612007,
+        -0.049140725284814835,
+        0.21575284004211426
+      ],
+      "world_bounds_max_m": [
+        -0.001868415274657309,
+        0.006481624208390713,
+        0.3938227891921997
+      ],
+      "world_size_m": [
+        0.04769849812146276,
+        0.05562234949320555,
+        0.17806994915008545
+      ],
+      "shell_modifiers": [
+        {
+          "name": "Measured shell thickness",
+          "thickness_local_m": 0.0034000000450760126,
+          "object_scale": [
+            1.059999942779541,
+            1.0,
+            1.0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Forearm_swept_front_armor_1",
+      "evaluated_vertices": 1762,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0,
+      "world_bounds_min_m": [
+        0.003868398955091834,
+        -0.049140430986881256,
+        0.21575284004211426
+      ],
+      "world_bounds_max_m": [
+        0.05156625062227249,
+        0.00648165587335825,
+        0.39682281017303467
+      ],
+      "world_size_m": [
+        0.04769785166718066,
+        0.055622086860239506,
+        0.1810699701309204
+      ],
+      "shell_modifiers": [
+        {
+          "name": "Measured shell thickness",
+          "thickness_local_m": 0.0034000000450760126,
+          "object_scale": [
+            1.059999942779541,
+            1.0,
+            1.0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Palm_center_grip",
+      "evaluated_vertices": 842,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0,
+      "world_bounds_min_m": [
+        -0.008003264665603638,
+        0.0116028543561697,
+        0.11384859681129456
+      ],
+      "world_bounds_max_m": [
+        0.01602754183113575,
+        0.01987968571484089,
+        0.14501649141311646
+      ],
+      "world_size_m": [
+        0.024030806496739388,
+        0.008276831358671188,
+        0.0311678946018219
+      ],
+      "shell_modifiers": [
+        {
+          "name": "Measured shell thickness",
+          "thickness_local_m": 0.001500000013038516,
+          "object_scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Palm_dorsal_main_plate",
+      "evaluated_vertices": 1026,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0,
+      "world_bounds_min_m": [
+        -0.0166423749178648,
+        -0.028081784024834633,
+        0.10921184718608856
+      ],
+      "world_bounds_max_m": [
+        0.02569061703979969,
+        -0.008831551298499107,
+        0.16536149382591248
+      ],
+      "world_size_m": [
+        0.04233299195766449,
+        0.019250232726335526,
+        0.056149646639823914
+      ],
+      "shell_modifiers": [
+        {
+          "name": "Measured shell thickness",
+          "thickness_local_m": 0.0024999999441206455,
+          "object_scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Palm_edge_plate_-1",
+      "evaluated_vertices": 842,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0,
+      "world_bounds_min_m": [
+        -0.039892349392175674,
+        -0.027490681037306786,
+        0.11356189101934433
+      ],
+      "world_bounds_max_m": [
+        -0.015586825087666512,
+        -0.008663552813231945,
+        0.15866824984550476
+      ],
+      "world_size_m": [
+        0.024305524304509163,
+        0.01882712822407484,
+        0.04510635882616043
+      ],
+      "shell_modifiers": [
+        {
+          "name": "Measured shell thickness",
+          "thickness_local_m": 0.0024999999441206455,
+          "object_scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Palm_edge_plate_1",
+      "evaluated_vertices": 842,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0,
+      "world_bounds_min_m": [
+        0.021815720945596695,
+        -0.01956210285425186,
+        0.11240832507610321
+      ],
+      "world_bounds_max_m": [
+        0.04199385643005371,
+        -0.0037154294550418854,
+        0.15345533192157745
+      ],
+      "world_size_m": [
+        0.020178135484457016,
+        0.015846673399209976,
+        0.04104700684547424
+      ],
+      "shell_modifiers": [
+        {
+          "name": "Measured shell thickness",
+          "thickness_local_m": 0.0024999999441206455,
+          "object_scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Palm_gold_split_-1",
+      "evaluated_vertices": 104,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0,
+      "world_bounds_min_m": [
+        -0.02159998007118702,
+        -0.027920294553041458,
+        0.11256972700357437
+      ],
+      "world_bounds_max_m": [
+        -0.01740398444235325,
+        -0.017588894814252853,
+        0.15426762402057648
+      ],
+      "world_size_m": [
+        0.004195995628833771,
+        0.010331399738788605,
+        0.041697897017002106
+      ],
+      "shell_modifiers": []
+    },
+    {
+      "name": "Palm_gold_split_1",
+      "evaluated_vertices": 104,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0,
+      "world_bounds_min_m": [
+        0.01740398444235325,
+        -0.027920294553041458,
+        0.11256972700357437
+      ],
+      "world_bounds_max_m": [
+        0.02159998007118702,
+        -0.017588894814252853,
+        0.15426762402057648
+      ],
+      "world_size_m": [
+        0.004195995628833771,
+        0.010331399738788605,
+        0.041697897017002106
+      ],
+      "shell_modifiers": []
+    },
+    {
+      "name": "Palm_graphite_body",
+      "evaluated_vertices": 1116,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0,
+      "world_bounds_min_m": [
+        -0.04100000113248825,
+        -0.019144000485539436,
+        0.10700000077486038
+      ],
+      "world_bounds_max_m": [
+        0.04100000113248825,
+        0.016168000176548958,
+        0.16899999976158142
+      ],
+      "world_size_m": [
+        0.0820000022649765,
+        0.035312000662088394,
+        0.06199999898672104
+      ],
+      "shell_modifiers": []
+    },
+    {
+      "name": "Palm_grip_pad_-1",
+      "evaluated_vertices": 842,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0,
+      "world_bounds_min_m": [
+        -0.035654354840517044,
+        0.010730231180787086,
+        0.11352923512458801
+      ],
+      "world_bounds_max_m": [
+        -0.009992030449211597,
+        0.023979289457201958,
+        0.15249937772750854
+      ],
+      "world_size_m": [
+        0.025662324391305447,
+        0.013249058276414871,
+        0.03897014260292053
+      ],
+      "shell_modifiers": [
+        {
+          "name": "Measured shell thickness",
+          "thickness_local_m": 0.0024999999441206455,
+          "object_scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Palm_grip_pad_1",
+      "evaluated_vertices": 842,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0,
+      "world_bounds_min_m": [
+        0.02043979987502098,
+        0.008678635582327843,
+        0.11241240799427032
+      ],
+      "world_bounds_max_m": [
+        0.038562849164009094,
+        0.019866757094860077,
+        0.1452808380126953
+      ],
+      "world_size_m": [
+        0.018123049288988113,
+        0.011188121512532234,
+        0.03286843001842499
+      ],
+      "shell_modifiers": [
+        {
+          "name": "Measured shell thickness",
+          "thickness_local_m": 0.0024999999441206455,
+          "object_scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Shoulder_L_gold_neural_bus",
+      "evaluated_vertices": 1536,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0,
+      "world_bounds_min_m": [
+        -0.0787995383143425,
+        -0.037880778312683105,
+        0.6521192193031311
+      ],
+      "world_bounds_max_m": [
+        -0.0731864869594574,
+        0.037880778312683105,
+        0.7278807759284973
+      ],
+      "world_size_m": [
+        0.005613051354885101,
+        0.07576155662536621,
+        0.07576155662536621
+      ],
+      "shell_modifiers": []
+    },
+    {
+      "name": "Shoulder_L_inner_dark_bore",
+      "evaluated_vertices": 1536,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0,
+      "world_bounds_min_m": [
+        -0.07380690425634384,
+        -0.03398313745856285,
+        0.6560168862342834
+      ],
+      "world_bounds_max_m": [
+        -0.04200000315904617,
+        0.03398313745856285,
+        0.723983108997345
+      ],
+      "world_size_m": [
+        0.03180690109729767,
+        0.0679662749171257,
+        0.06796622276306152
+      ],
+      "shell_modifiers": []
+    },
+    {
+      "name": "Shoulder_L_load_ring",
+      "evaluated_vertices": 2688,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0,
+      "world_bounds_min_m": [
+        -0.07791148126125336,
+        -0.05790755897760391,
+        0.6320924758911133
+      ],
+      "world_bounds_max_m": [
+        -0.050020456314086914,
+        0.05790755897760391,
+        0.7479075789451599
+      ],
+      "world_size_m": [
+        0.027891024947166443,
+        0.11581511795520782,
+        0.11581510305404663
+      ],
+      "shell_modifiers": []
+    },
+    {
+      "name": "Shoulder_L_locking_dog_00",
+      "evaluated_vertices": 408,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0,
+      "world_bounds_min_m": [
+        -0.0808175727725029,
+        0.04078412055969238,
+        0.6951363682746887
+      ],
+      "world_bounds_max_m": [
+        -0.05915533006191254,
+        0.06154748424887657,
+        0.7273069620132446
+      ],
+      "world_size_m": [
+        0.021662242710590363,
+        0.02076336368918419,
+        0.03217059373855591
+      ],
+      "shell_modifiers": []
+    },
+    {
+      "name": "Shoulder_L_locking_dog_01",
+      "evaluated_vertices": 408,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0,
+      "world_bounds_min_m": [
+        -0.0808175653219223,
+        -0.007755808532238007,
+        0.7366394400596619
+      ],
+      "world_bounds_max_m": [
+        -0.05915533006191254,
+        0.02530503273010254,
+        0.7519120573997498
+      ],
+      "world_size_m": [
+        0.021662235260009766,
+        0.033060841262340546,
+        0.01527261734008789
+      ],
+      "shell_modifiers": []
+    },
+    {
+      "name": "Shoulder_L_locking_dog_02",
+      "evaluated_vertices": 408,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0,
+      "world_bounds_min_m": [
+        -0.0808175653219223,
+        -0.05696147680282593,
+        0.7098724246025085
+      ],
+      "world_bounds_max_m": [
+        -0.059155333787202835,
+        -0.029964298009872437,
+        0.7400991916656494
+      ],
+      "world_size_m": [
+        0.021662231534719467,
+        0.02699717879295349,
+        0.03022676706314087
+      ],
+      "shell_modifiers": []
+    },
+    {
+      "name": "Shoulder_L_locking_dog_03",
+      "evaluated_vertices": 408,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0,
+      "world_bounds_min_m": [
+        -0.0808175727725029,
+        -0.06154748424887657,
+        0.652692973613739
+      ],
+      "world_bounds_max_m": [
+        -0.05915533006191254,
+        -0.04078412055969238,
+        0.6848636269569397
+      ],
+      "world_size_m": [
+        0.021662242710590363,
+        0.02076336368918419,
+        0.032170653343200684
+      ],
+      "shell_modifiers": []
+    },
+    {
+      "name": "Shoulder_L_locking_dog_04",
+      "evaluated_vertices": 408,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0,
+      "world_bounds_min_m": [
+        -0.0808175653219223,
+        -0.02530503273010254,
+        0.6280879378318787
+      ],
+      "world_bounds_max_m": [
+        -0.05915533006191254,
+        0.007755808532238007,
+        0.6433604955673218
+      ],
+      "world_size_m": [
+        0.021662235260009766,
+        0.033060841262340546,
+        0.015272557735443115
+      ],
+      "shell_modifiers": []
+    },
+    {
+      "name": "Shoulder_L_locking_dog_05",
+      "evaluated_vertices": 408,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0,
+      "world_bounds_min_m": [
+        -0.0808175653219223,
+        0.029964298009872437,
+        0.639900803565979
+      ],
+      "world_bounds_max_m": [
+        -0.059155333787202835,
+        0.05696150287985802,
+        0.6701276302337646
+      ],
+      "world_size_m": [
+        0.021662231534719467,
+        0.02699720486998558,
+        0.030226826667785645
+      ],
+      "shell_modifiers": []
+    },
+    {
+      "name": "Shoulder_L_narrow_machined_rim",
+      "evaluated_vertices": 1920,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0,
+      "world_bounds_min_m": [
+        -0.08239859342575073,
+        -0.0462806336581707,
+        0.6437193751335144
+      ],
+      "world_bounds_max_m": [
+        -0.07855597883462906,
+        0.0462806336581707,
+        0.736280620098114
+      ],
+      "world_size_m": [
+        0.0038426145911216736,
+        0.0925612673163414,
+        0.09256124496459961
+      ],
+      "shell_modifiers": []
+    },
+    {
+      "name": "Shoulder_L_recess_back",
+      "evaluated_vertices": 288,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0,
+      "world_bounds_min_m": [
+        -0.04120001196861267,
+        -0.029999999329447746,
+        0.6600000262260437
+      ],
+      "world_bounds_max_m": [
+        -0.03880000486969948,
+        0.029999999329447746,
+        0.7199999690055847
+      ],
+      "world_size_m": [
+        0.0024000070989131927,
+        0.05999999865889549,
+        0.059999942779541016
+      ],
+      "shell_modifiers": []
+    },
+    {
+      "name": "Shoulder_L_titanium_flange",
+      "evaluated_vertices": 1920,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0,
+      "world_bounds_min_m": [
+        -0.08092769235372543,
+        -0.051894981414079666,
+        0.638105034828186
+      ],
+      "world_bounds_max_m": [
+        -0.07203742861747742,
+        0.051894981414079666,
+        0.7418949604034424
+      ],
+      "world_size_m": [
+        0.008890263736248016,
+        0.10378996282815933,
+        0.10378992557525635
+      ],
+      "shell_modifiers": []
+    },
+    {
+      "name": "Shoulder_R_gold_neural_bus",
+      "evaluated_vertices": 1536,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0,
+      "world_bounds_min_m": [
+        0.0731864869594574,
+        -0.037880778312683105,
+        0.6521192193031311
+      ],
+      "world_bounds_max_m": [
+        0.0787995383143425,
+        0.037880778312683105,
+        0.7278807759284973
+      ],
+      "world_size_m": [
+        0.005613051354885101,
+        0.07576155662536621,
+        0.07576155662536621
+      ],
+      "shell_modifiers": []
+    },
+    {
+      "name": "Shoulder_R_inner_dark_bore",
+      "evaluated_vertices": 1536,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0,
+      "world_bounds_min_m": [
+        0.04200000315904617,
+        -0.03398313745856285,
+        0.6560168862342834
+      ],
+      "world_bounds_max_m": [
+        0.07380690425634384,
+        0.03398313745856285,
+        0.723983108997345
+      ],
+      "world_size_m": [
+        0.03180690109729767,
+        0.0679662749171257,
+        0.06796622276306152
+      ],
+      "shell_modifiers": []
+    },
+    {
+      "name": "Shoulder_R_load_ring",
+      "evaluated_vertices": 2688,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0,
+      "world_bounds_min_m": [
+        0.050020456314086914,
+        -0.05790755897760391,
+        0.6320924758911133
+      ],
+      "world_bounds_max_m": [
+        0.07791148126125336,
+        0.05790755897760391,
+        0.7479075789451599
+      ],
+      "world_size_m": [
+        0.027891024947166443,
+        0.11581511795520782,
+        0.11581510305404663
+      ],
+      "shell_modifiers": []
+    },
+    {
+      "name": "Shoulder_R_locking_dog_00",
+      "evaluated_vertices": 408,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0,
+      "world_bounds_min_m": [
+        0.05915532633662224,
+        0.040784116834402084,
+        0.6951364278793335
+      ],
+      "world_bounds_max_m": [
+        0.0808175727725029,
+        0.06154748052358627,
+        0.7273069620132446
+      ],
+      "world_size_m": [
+        0.02166224643588066,
+        0.02076336368918419,
+        0.03217053413391113
+      ],
+      "shell_modifiers": []
+    },
+    {
+      "name": "Shoulder_R_locking_dog_01",
+      "evaluated_vertices": 408,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0,
+      "world_bounds_min_m": [
+        0.05915532633662224,
+        -0.00775580620393157,
+        0.7366394400596619
+      ],
+      "world_bounds_max_m": [
+        0.0808175653219223,
+        0.02530502900481224,
+        0.7519120573997498
+      ],
+      "world_size_m": [
+        0.021662238985300064,
+        0.03306083520874381,
+        0.01527261734008789
+      ],
+      "shell_modifiers": []
+    },
+    {
+      "name": "Shoulder_R_locking_dog_02",
+      "evaluated_vertices": 408,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0,
+      "world_bounds_min_m": [
+        0.059155333787202835,
+        -0.056961480528116226,
+        0.7098725438117981
+      ],
+      "world_bounds_max_m": [
+        0.0808175727725029,
+        -0.02996431104838848,
+        0.7400992512702942
+      ],
+      "world_size_m": [
+        0.021662238985300064,
+        0.026997169479727745,
+        0.030226707458496094
+      ],
+      "shell_modifiers": []
+    },
+    {
+      "name": "Shoulder_R_locking_dog_03",
+      "evaluated_vertices": 408,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0,
+      "world_bounds_min_m": [
+        0.05915533006191254,
+        -0.06154749169945717,
+        0.652692973613739
+      ],
+      "world_bounds_max_m": [
+        0.0808175727725029,
+        -0.04078412055969238,
+        0.6848635673522949
+      ],
+      "world_size_m": [
+        0.021662242710590363,
+        0.020763371139764786,
+        0.03217059373855591
+      ],
+      "shell_modifiers": []
+    },
+    {
+      "name": "Shoulder_R_locking_dog_04",
+      "evaluated_vertices": 408,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0,
+      "world_bounds_min_m": [
+        0.05915532633662224,
+        -0.02530502900481224,
+        0.6280879378318787
+      ],
+      "world_bounds_max_m": [
+        0.0808175653219223,
+        0.00775580620393157,
+        0.6433604955673218
+      ],
+      "world_size_m": [
+        0.021662238985300064,
+        0.03306083520874381,
+        0.015272557735443115
+      ],
+      "shell_modifiers": []
+    },
+    {
+      "name": "Shoulder_R_locking_dog_05",
+      "evaluated_vertices": 408,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0,
+      "world_bounds_min_m": [
+        0.059155333787202835,
+        0.02996431104838848,
+        0.639900803565979
+      ],
+      "world_bounds_max_m": [
+        0.0808175727725029,
+        0.05696149915456772,
+        0.6701275110244751
+      ],
+      "world_size_m": [
+        0.021662238985300064,
+        0.026997188106179237,
+        0.030226707458496094
+      ],
+      "shell_modifiers": []
+    },
+    {
+      "name": "Shoulder_R_narrow_machined_rim",
+      "evaluated_vertices": 1920,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0,
+      "world_bounds_min_m": [
+        0.07855597883462906,
+        -0.0462806336581707,
+        0.6437193751335144
+      ],
+      "world_bounds_max_m": [
+        0.08239859342575073,
+        0.0462806336581707,
+        0.736280620098114
+      ],
+      "world_size_m": [
+        0.0038426145911216736,
+        0.0925612673163414,
+        0.09256124496459961
+      ],
+      "shell_modifiers": []
+    },
+    {
+      "name": "Shoulder_R_recess_back",
+      "evaluated_vertices": 288,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0,
+      "world_bounds_min_m": [
+        0.03880000486969948,
+        -0.029999999329447746,
+        0.6600000262260437
+      ],
+      "world_bounds_max_m": [
+        0.04120001196861267,
+        0.029999999329447746,
+        0.7199999690055847
+      ],
+      "world_size_m": [
+        0.0024000070989131927,
+        0.05999999865889549,
+        0.059999942779541016
+      ],
+      "shell_modifiers": []
+    },
+    {
+      "name": "Shoulder_R_titanium_flange",
+      "evaluated_vertices": 1920,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0,
+      "world_bounds_min_m": [
+        0.07203742861747742,
+        -0.051894981414079666,
+        0.638105034828186
+      ],
+      "world_bounds_max_m": [
+        0.08092769235372543,
+        0.051894981414079666,
+        0.7418949604034424
+      ],
+      "world_size_m": [
+        0.008890263736248016,
+        0.10378996282815933,
+        0.10378992557525635
+      ],
+      "shell_modifiers": []
+    },
+    {
+      "name": "Upper_crown_front",
+      "evaluated_vertices": 1609,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0,
+      "world_bounds_min_m": [
+        -0.05571018159389496,
+        -0.06617864966392517,
+        0.6113297343254089
+      ],
+      "world_bounds_max_m": [
+        0.055710334330797195,
+        0.003977073356509209,
+        0.7525290846824646
+      ],
+      "world_size_m": [
+        0.11142051592469215,
+        0.07015572302043438,
+        0.14119935035705566
+      ],
+      "shell_modifiers": [
+        {
+          "name": "Measured shell thickness",
+          "thickness_local_m": 0.004000000189989805,
+          "object_scale": [
+            1.2000000476837158,
+            1.0,
+            1.0
+          ]
+        }
+      ]
+    }
+  ],
+  "pivots": {
+    "AURIX_ROOT": {
+      "parent": null,
+      "world_origin": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "SHOULDER_PIVOT": {
+      "parent": "AURIX_ROOT",
+      "world_origin": [
+        0.0,
+        0.0,
+        0.6899999976158142
+      ]
+    },
+    "ELBOW_PIVOT": {
+      "parent": "SHOULDER_PIVOT",
+      "world_origin": [
+        0.0,
+        0.0,
+        0.4259999990463257
+      ]
+    },
+    "WRIST_PIVOT": {
+      "parent": "ELBOW_PIVOT",
+      "world_origin": [
+        0.0,
+        0.0,
+        0.18400000035762787
+      ]
+    },
+    "SERVICE_COVER": {
+      "parent": "ELBOW_PIVOT",
+      "world_origin": [
+        0.0,
+        0.03700000047683716,
+        0.29899999499320984
+      ]
+    },
+    "INDEX_J0": {
+      "parent": "WRIST_PIVOT",
+      "world_origin": [
+        -0.029999999329447746,
+        0.0,
+        0.10599999874830246
+      ]
+    },
+    "INDEX_J1": {
+      "parent": "INDEX_J0",
+      "world_origin": [
+        -0.03200000151991844,
+        0.0010000000474974513,
+        0.06800000369548798
+      ]
+    },
+    "INDEX_J2": {
+      "parent": "INDEX_J1",
+      "world_origin": [
+        -0.03400000184774399,
+        0.004000000189989805,
+        0.03999999910593033
+      ]
+    },
+    "MIDDLE_J0": {
+      "parent": "WRIST_PIVOT",
+      "world_origin": [
+        -0.008999999612569809,
+        0.0,
+        0.10499999672174454
+      ]
+    },
+    "MIDDLE_J1": {
+      "parent": "MIDDLE_J0",
+      "world_origin": [
+        -0.009999999776482582,
+        0.0,
+        0.06300000101327896
+      ]
+    },
+    "MIDDLE_J2": {
+      "parent": "MIDDLE_J1",
+      "world_origin": [
+        -0.009999999776482582,
+        0.003000000026077032,
+        0.03200000151991844
+      ]
+    },
+    "RING_J0": {
+      "parent": "WRIST_PIVOT",
+      "world_origin": [
+        0.013000000268220901,
+        0.0,
+        0.10599999874830246
+      ]
+    },
+    "RING_J1": {
+      "parent": "RING_J0",
+      "world_origin": [
+        0.014000000432133675,
+        0.0010000000474974513,
+        0.06700000166893005
+      ]
+    },
+    "RING_J2": {
+      "parent": "RING_J1",
+      "world_origin": [
+        0.014999999664723873,
+        0.004000000189989805,
+        0.039000000804662704
+      ]
+    },
+    "LITTLE_J0": {
+      "parent": "WRIST_PIVOT",
+      "world_origin": [
+        0.032999999821186066,
+        0.0010000000474974513,
+        0.10899999737739563
+      ]
+    },
+    "LITTLE_J1": {
+      "parent": "LITTLE_J0",
+      "world_origin": [
+        0.03700000047683716,
+        0.003000000026077032,
+        0.07699999958276749
+      ]
+    },
+    "LITTLE_J2": {
+      "parent": "LITTLE_J1",
+      "world_origin": [
+        0.039000000804662704,
+        0.006000000052154064,
+        0.05400000140070915
+      ]
+    },
+    "THUMB_J0": {
+      "parent": "WRIST_PIVOT",
+      "world_origin": [
+        -0.035999998450279236,
+        0.0,
+        0.1469999998807907
+      ]
+    },
+    "THUMB_J1": {
+      "parent": "THUMB_J0",
+      "world_origin": [
+        -0.054999999701976776,
+        -0.0010000000474974513,
+        0.12399999797344208
+      ]
+    },
+    "THUMB_J2": {
+      "parent": "THUMB_J1",
+      "world_origin": [
+        -0.0689999982714653,
+        0.0010000000474974513,
+        0.0949999988079071
+      ]
+    }
+  },
+  "limits": "Native evaluated topology and sizes only. Closed surfaces do not prove absence of inter-object penetration or valid fabrication. Socket annuli and decorative glyphs can retain open/degenerate historical details; inspect each named row."
+}

@@ -1,0 +1,75 @@
+{
+  "kind": "informed installed npm package compatibility replay after complete frozen-skill replay",
+  "package": {
+    "path": "/workspace/scratch/c52cb753f160/installed-refas/refas-1.4.2.tgz",
+    "bytes": 884390,
+    "sha256": "0b62e372e335cdf090718ee0a3384e5a51b3e48f309d8c7c1e9e0ba8bbf4e01a"
+  },
+  "skill_root": "/workspace/scratch/c52cb753f160/installed-refas/package/skills/refas",
+  "selected_revision": "9b74eb85fb5f47a1a9f394fcc8d50244",
+  "restored_revision": "2e7d98257b6e46e3a5d1cfa0b66c8214",
+  "author_selected_revision": "358e1ecd90204e388120b258ceabf042",
+  "scene_equivalent_to_author_selection": true,
+  "scene_fingerprint": "050364c0d3f340ea99c49528d64d5a6e66dd4ad01c97e7a5afd337948806fd7b",
+  "selected_bundle_file_hashes": {
+    "artifacts/asset.glb": "56f210e732ea94e261ccda625bec82583048ddf9ddae432db7eab907d95c3f0e",
+    "artifacts/result.json": "0d74b2c7367b8720140c6b71c1cbc54ee2771103f6470c5c9cbdddcf84fd26e3",
+    "artifacts/scene.blend": "7b3575e70c2ff248710e27468260b6c81609a5441957ea1599876c514c52e162",
+    "artifacts/scene.json": "2da245bff2baab2da0159ed1567dc8bf301cc75fbf469a9b848189a65954df53",
+    "artifacts/view-armor-depth.png": "917d8004c0d97fc5e61077a85d8e2274477280a81f383ec1493b9086b645633b",
+    "artifacts/view-hero.png": "076a3a5edd3af6a5fe2e487c923851b617200d9f5f5e7d0f06e798a0099c7f44",
+    "artifacts/view-palm-depth.png": "c38a1fbeb3313c07595dc5638236c444a3dece5ebe81cd0e29f91addbc466b4d",
+    "inputs/base.blend": "ff8010b6e25efec357b469121c905f9db8f717a8b9e5a07cbc78986ff12924b5",
+    "inputs/edit.py": "11d9768254aab6311f8422f300c72e579778552f771efe362fe8e5f8350e9baa",
+    "inputs/review.json": "59712ba34822f523b550ea640cb04d63c03f12c50427cdfe51377b26bcffab6d"
+  },
+  "full_bundle_byte_restoration": true,
+  "cover_edit": {
+    "selected_count": 26,
+    "unrelated_count": 274,
+    "preservation_pass": true,
+    "displacement_pass": true,
+    "measured_group_world_delta_m": [
+      0.0,
+      0.00299999862909317,
+      0.0
+    ]
+  },
+  "independent_glb_pass": true,
+  "integrity": {
+    "ok": true,
+    "scope": "recorded-file-integrity",
+    "head": "2e7d98257b6e46e3a5d1cfa0b66c8214",
+    "artifactCount": 7,
+    "referenceResemblance": "not-evaluated",
+    "gameReadiness": "not-evaluated"
+  },
+  "scripts": [
+    {
+      "path": "/workspace/scratch/c52cb753f160/refas/examples/automail-arm/refine_armor.py",
+      "sha256": "c25346b22aadfa5ef13fdd295af504a3b5dd9dfdd819d0374a8a4feb01d38225"
+    },
+    {
+      "path": "/workspace/scratch/c52cb753f160/refas/examples/automail-arm/run_refinement.py",
+      "sha256": "7d5e2920f29d35345b4d044ee8bbc99694affdc9772aab8622118b3ee9734827"
+    },
+    {
+      "path": "/workspace/scratch/c52cb753f160/refas/examples/automail-arm/inspect_refinement.py",
+      "sha256": "33e4631ce10a4fad2672e05180a368bbdced0297fc8896ecb21a8d00f6e9c118"
+    },
+    {
+      "path": "/workspace/scratch/c52cb753f160/refas/examples/automail-arm/edit_panel.py",
+      "sha256": "523ad603f9dc23d82b786ce00a82797df1b5c9d24b1c4d0997eb47f1a8f780db"
+    },
+    {
+      "path": "/workspace/scratch/c52cb753f160/installed-refas/package/skills/refas/scripts/produce.py",
+      "sha256": "2ac9d0bf58d7a44aa8003f599a4389a4cee56f5b22fa8efa79edc3344d23b43c"
+    },
+    {
+      "path": "/workspace/scratch/c52cb753f160/installed-refas/package/skills/refas/scripts/production/blender_worker.py",
+      "sha256": "50541ecf88c0e931999d88fc8241238d6e8f10500b15735e2d5831ce6acc1614"
+    }
+  ],
+  "limits": "Imports the final selected native and executes the cover edit/recovery and GLB analytic node checks with the package. The full build and four rendered poses were already executed in the separate frozen-skill clean replay; they are not attributed to this packaged replay.",
+  "finished_utc": "2026-11-22T09:25:11.323465+00:00"
+}

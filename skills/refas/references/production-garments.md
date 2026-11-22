@@ -44,6 +44,13 @@ relationship with connected or deliberately overlapping cloth strips, then
 shape the notch and tips. A flat polygon floating over the chest can match a
 front outline while failing in depth.
 
+Control section width, depth and turning height independently. Trace a section
+from the neck attachment over the roll to the free leaf, then compare its
+clearance with the shoulder and chest. An over-wide side or back leaf can
+become a projecting shelf even when the front notch improves. Inspect that
+profile before finalizing the front outline. Give the collar border and lapel
+notch one readable edge each; do not accumulate short overlapping trim strokes.
+
 Use controlled thickness and softened fold curvature. Check the neckline,
 inside face, lapel-to-body distance and collar-to-shoulder clearance from side
 and rear views. Place piping on the final cloth surface after these forms are

@@ -1,0 +1,37 @@
+{
+  "kind": "clean portable runner replay against frozen skill at 94930b3d",
+  "original_selected_revision": "358e1ecd90204e388120b258ceabf042",
+  "replay_selected_revision": "2ca965fc493d4d4893aa356055305488",
+  "replay_restored_revision": "be59a5eec0594ef08035c812158138aa",
+  "scene_fingerprint_identical": true,
+  "all_object_records_identical": true,
+  "scene_fingerprint": "050364c0d3f340ea99c49528d64d5a6e66dd4ad01c97e7a5afd337948806fd7b",
+  "cover_full_bundle_restore": true,
+  "pose_full_bundle_restore": true,
+  "selected_bundle_files": 16,
+  "export_passed": true,
+  "native_final_glb_sha256": "56f210e732ea94e261ccda625bec82583048ddf9ddae432db7eab907d95c3f0e",
+  "author_glb_sha256": "56f210e732ea94e261ccda625bec82583048ddf9ddae432db7eab907d95c3f0e",
+  "script_hashes": {
+    "edit_panel.py": "523ad603f9dc23d82b786ce00a82797df1b5c9d24b1c4d0997eb47f1a8f780db",
+    "create.py": "0cdf9f03b28bce21b980d62cdba79271b94f002c8c9575372d490979055964f9",
+    "inspect_refinement.py": "33e4631ce10a4fad2672e05180a368bbdced0297fc8896ecb21a8d00f6e9c118",
+    "refine_armor.py": "c25346b22aadfa5ef13fdd295af504a3b5dd9dfdd819d0374a8a4feb01d38225",
+    "pose_check.py": "e5e47ea44bd9effa34579c5087b4cf0db2515463c56cfd549c5909632d483d6a",
+    "run_refinement.py": "7d5e2920f29d35345b4d044ee8bbc99694affdc9772aab8622118b3ee9734827",
+    "correct_shells.py": "3a124277fcb9297a0535a4dcbcb6242d53eff0a6464de034c396fafeffd13b92",
+    "run.py": "0234969924766b6b82b9b3a6075254b0d1acaca63893282b55295415b6df6d42",
+    "correct_proportions.py": "fba65df4b7f7e1280ba2e8e97c0d0b8e9bb044d8bb8076938c68e88eda795395"
+  },
+  "recorded_at": "2026-11-22T09:25:18.767295+00:00",
+  "subsequent_runner_fix": {
+    "full_replay_runner_sha256": "7d5e2920f29d35345b4d044ee8bbc99694affdc9772aab8622118b3ee9734827",
+    "final_runner_sha256": "e70aa06cc70c1c4da708d42c376a7f50d52ab87f90cb7e1a36b8a7fda6ed1147",
+    "change": "Scope disposable readback project by selected revision; if that scope already exists, read status and append a guarded new readback revision. Existing production and observation histories remain.",
+    "both_initializations_pass": true,
+    "second_real_render_pass": true,
+    "existing_readback_reuse_pass": true,
+    "previous_readback_revision_retained": true,
+    "record": "readback-path-fix.json"
+  }
+}

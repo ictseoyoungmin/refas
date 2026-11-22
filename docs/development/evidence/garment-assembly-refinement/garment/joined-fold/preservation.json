@@ -1,0 +1,981 @@
+{
+  "baseline_revision": "f13cfbf83b5a4c029d83a2ce804faf8c",
+  "selected_revision": "10b36b81230848fb9d81ceb9dc355f1f",
+  "baseline_scene_fingerprint": "50685b52a722d64aee4659531cbf1d71491e446de9c5fb6116f9a379ae54a2cc",
+  "selected_scene_fingerprint": "6cc442a0602709198f76d67948498b94d2da7f6e53f499ed59c69d332741ebfa",
+  "changed": [
+    "Collar | pale upper edge",
+    "Collar | standing back and neck facing",
+    "L Lapel | fine piping",
+    "L lapel | silver snap",
+    "R Lapel | fine piping",
+    "R lapel | silver snap"
+  ],
+  "removed": [
+    "L Collar | piped point",
+    "L Lapel | folded lower notched facing",
+    "R Collar | piped point",
+    "R Lapel | folded lower notched facing"
+  ],
+  "added": [],
+  "unchanged_count": 261,
+  "unchanged_object_fingerprints": {
+    "Back | centre tailoring seam": "f0c3f21fe27e8a55e1968fdf55344aad2e5224933559a7c6bc532665214f0d32",
+    "Body | continuous open front and shoulder yoke": "64f8e463d31b07cd6031342a9a59c923cf20888f57e4b75cb516886d16bdb2d1",
+    "Hem | narrow stitched edge": "dc1dfbc37a99345397751feca372ac1d78767d7f2f7df565d4a914e9f38a4483",
+    "L Chain | back lower link 00": "a14b33ea393e9abb670e3a5cdc48f5d509731b1598effbbb370dee50b1d09236",
+    "L Chain | back lower link 01": "b8a054d7bf8455b264dd8e48180fa67f32517549b1e89b21211f751d30187481",
+    "L Chain | back lower link 02": "5d5b6361dab51306766999c905db95865d9ac279167882b48b40cd802688c578",
+    "L Chain | back lower link 03": "586f7bb87659caf3df524e9e99955eb952769de20c68bf42d81f78cb681d8a71",
+    "L Chain | back lower link 04": "69fccbc00c782af043084a39d1e5c1ff9645523492e6804b733442b27647f66d",
+    "L Chain | back lower link 05": "2088781aa1fd0b259ad504102bddac1d6571d08d1fb531e9490fee846cedc8c6",
+    "L Chain | back lower link 06": "807a46af47e73916f797bf09bedc008262791a2a54e4c48102a6ad81177f217c",
+    "L Chain | back lower link 07": "d4cd1623aa583052fb2dbd78ae803d8cb99a2d61353f711091a1d90c4660a044",
+    "L Chain | back lower link 08": "9f0f4f94c2d48208ca9957fbe35f4e46058f0af834466c45901a33989d75dab5",
+    "L Chain | back lower link 09": "1a0bab9f34a66e6be56f024a3f4853982cccfb7d992dbf356da6b32b0179fce7",
+    "L Chain | back lower link 10": "ff49935c00c1214d19cd034ccf565647d4b0e95797a070ca25375ec5657b2257",
+    "L Chain | back lower link 11": "b40876049fc7f074b02c04b0896f8b8308a7f3c061221813fce659fb91ca3c40",
+    "L Chain | back lower link 12": "4b5615ef285c2aee5b66a9d861dda9c7e7388db38fc64b4a0870a9828357f85d",
+    "L Chain | back lower link 13": "57a6ff7e6b93c67cd5f6947845448f9eb03e7738deab07ac99bfd0dffaddabf6",
+    "L Chain | back lower link 14": "8a41e7cd0b84dcad47ffafeba74489868090c682575b23cc4345caf68666dc46",
+    "L Chain | back lower link 15": "bfc3e4212721cae6b777cc5b68482ca5a36304524b5496ee89c3282a135893dd",
+    "L Chain | back lower link 16": "64d367254288b7519e54db97bcd61a036e100987fc0dcceab948082b995a93ab",
+    "L Chain | back lower link 17": "e986dfc484247cdc7b45c208b5ba1f1cb8bbd055b4381c012324079eb1bd1a45",
+    "L Chain | back lower link 18": "384c7cd793f45e31d477a65d75c27d266d0a53f01183d2a20918763949dc75bb",
+    "L Chain | back lower link 19": "e2022cfcbe12035000791aeddef1d5bcfe947c104f61542604d52c8aaf0d1027",
+    "L Chain | back lower link 20": "f48a5470ac9ac6929c1af61b2cce5341dd5c63bd8d6db3441ea67222738bbf2d",
+    "L Chain | back lower link 21": "9cbb2a817fc2b918cf7021e80a454502d13f17094fde8341d415919efe49b550",
+    "L Chain | back lower link 22": "963446306dec6158cbf0377ec12f3e6adce3029ece42d8dc0ed3b15746e7958c",
+    "L Chain | back lower link 23": "ff848b95cdc16aad452edf73ed372e074c1cbd5f6ab397df93c290ea7a85a391",
+    "L Chain | back lower link 24": "5a53ee093e9ead0b4851777aba4bd6ae2763a3f57740efa2dfff6ee67e35917d",
+    "L Chain | back lower link 25": "3eba0e2d375dbb6147180f929c1fe786ad5efdb88b3587d79ace2e7ff51bf32b",
+    "L Chain | back lower link 26": "11ff47fedc8e00a1bfa253fb6f8ec92ac886515f588e355cbb6a2d4b36f7e34e",
+    "L Chain | back lower link 27": "bcf575a56d2c0a1221f71290444f9685b4ae09379c737e58c6333ca026c653af",
+    "L Chain | back lower link 28": "53de1767ed29501c074333b948d73f20cd721fefc18a04a04d00b70e92de1a83",
+    "L Chain | back lower link 29": "00741c2270927998885eb073b805965b52a591feb7b0e21725b0d274fdf5137e",
+    "L Chain | back lower link 30": "5866badd3738c25fa697a1920bbdb3e0bf011b06e9169582046d1ec65be32cd2",
+    "L Chain | back lower link 31": "a3091c6e8674590a9b063c4d7eb89766bb8b31ac1d6c07b228cc2f07725d083b",
+    "L Chain | back lower link 32": "2a6a2b1dd3439869a9177b20aeb16ae833e14dd15d29193e761c8e59c4aa82e7",
+    "L Chain | back lower link 33": "aa28459a8106d2aa04bef15d647e530f16df3dec7f9e150d1d64e6c10bc88cb0",
+    "L Chain | back lower link 34": "ceb43dfcb85ced19e9f65279370eb3be8efa76c33a8d2fb4716857e41a5aa4c3",
+    "L Chain | back lower link 35": "d150434b366f56d90cb4a54677909c197b23e1a5db812223d7292e92cf6f9940",
+    "L Chain | back lower link 36": "684b17cbdcbfa59afe24ede2fbc17b2fb90f4915027081302d4606af02cb20b7",
+    "L Chain | back lower link 37": "3cf8e9b5dd8c3c5066ca31889ff64da471a66a812f61d23b57bcd4ae3616f762",
+    "L Chain | back lower link 38": "042e84481dcd4d166cffb4f6902e8017a9278688f84a5fea6a769e2f9249f9e7",
+    "L Chain | back lower link 39": "e89b8dbb66d0cf8f4e3097332eee933c4c271458ca7121cfefee4d7d3a8a8c6b",
+    "L Chain | back lower link 40": "58e3fc97764a248a104c38d2e783fe4a17d690d240dfb05d115217535d867fef",
+    "L Chain | back lower link 41": "19674946969512956f40ab2e42c58f6043852c2ee6ea11fcf909194cc8436b54",
+    "L Chain | back lower link 42": "9c31317c10a2b00cd2eee6b4c230f509783eefd3607aa39c6794ed519c9a0e7b",
+    "L Chain | back lower link 43": "bbfea9a77cb61f95089bcaba8b2396c5e3aa8449ec937c2c67e6219b5df9a0a0",
+    "L Chain | back upper link 00": "6b1f851f5241763ed0f9817a7686f43f543fa0bb0e12bd85456bd5f64422ec92",
+    "L Chain | back upper link 01": "2dd0023899f7c169b4f6037b044967832db473fb1672184fdc22627f970e565b",
+    "L Chain | back upper link 02": "2129b3020bc2651f7f688080a568b3f072d7d2bec238507b108e3647defb917c",
+    "L Chain | back upper link 03": "22aaf289d1b17f326df574fd18c59a7ea51db17a5ec5a7cf8d0e077c0ce6ce06",
+    "L Chain | back upper link 04": "08b47341c8eca465899385f26b63c8d38368f0481175e69b0c7bea8c73ec9a8d",
+    "L Chain | back upper link 05": "53ad9c893aa8be66fb2d940b3f9fa7e40b6cc4d78c7d7fd2b237e41988694a07",
+    "L Chain | back upper link 06": "0630c4c65fd0ab4c4611d5ef0eb05337b9101c10bac61c468a3fb3458e944082",
+    "L Chain | back upper link 07": "d22fe6e4380d9e0ded3a7fec9f4d696293b155ba9431fd3941fc78d59d46f6fd",
+    "L Chain | back upper link 08": "c238d6a4eb1505278ed102149cd352d377908833c9bdb4c0dd564dc483430512",
+    "L Chain | back upper link 09": "7218ff4630cea3052aef0fd58560b9ec2a9918788fd3e2e483c736b3eb423ea6",
+    "L Chain | back upper link 10": "50b4914083ca3b99858749d4cbee646f87d6e9ea818f7465db251b3029761bb2",
+    "L Chain | back upper link 11": "ab2e7c2995367faabb7ff88bfc48bd18996bd3c5f79eed7aa0bbff3d7aace5e5",
+    "L Chain | back upper link 12": "cffdd29505ed6057f1723ee53a88e0dacb3f78f8eb89f62da93cf42def86b363",
+    "L Chain | back upper link 13": "51cf29fd46baf5871922768b705c69099f16afcb7e694d69a94e1a0e22ff1661",
+    "L Chain | back upper link 14": "5ca03fc81746125e60e8a92f9b64214b1f99b3996a3cb9c59613f41a1ed41bae",
+    "L Chain | back upper link 15": "64bc94170f6aa35b440fb6a55e752e6e6b839fe80e26865fe288cb48fdb726c6",
+    "L Chain | back upper link 16": "b031163a803d388a393e9a57c0798503a9c6892d7ef835722c3bbeea9d227019",
+    "L Chain | back upper link 17": "0f3c769f10140a1a7c687bd27842939439d453986b5a98472fe4d66010621db3",
+    "L Chain | back upper link 18": "a08f96aa8bee954d38d547245111bfc2ec417317e2ede0c83cea0c4f6cbbfe9b",
+    "L Chain | back upper link 19": "acfd4bd821a07501d0d035ffb110b1c7913e00659ec9dc44f4fed05aedbe23da",
+    "L Chain | back upper link 20": "0fb721ddb3045887f8235913fc8f393e1cd1e07884a08bf84b5105b9e30e3c8c",
+    "L Chain | back upper link 21": "4e18fff7dd4d9ceed68a7719a05348c6fea5b47f678a6eb362b3efa3fc31f778",
+    "L Chain | back upper link 22": "c19519c9174023f2d0a0f210f8d739db9e8bb8d3a0e68b3c83f3458f74f78c86",
+    "L Chain | back upper link 23": "1501fb9a7db923eeb7f707134ef8f8b338dc9cf66c224234db1e3f37651669a4",
+    "L Chain | back upper link 24": "70927a7cffeb1c7feb26e918cd2a385d7748b3eb85acfc78ae1dc0c1e7e7c0b1",
+    "L Chain | back upper link 25": "febef5c72afc06c2890f43f780469fc91f5438f374d4cfaae932e42a2fdf7e7a",
+    "L Chain | back upper link 26": "838ca299fc96e4396495b77562d0f3776c0756c196401b9c1c499e470512960e",
+    "L Chain | back upper link 27": "a4a274db8d852df8113873bc8eba5f6bd35c95743c61d08fd366812a677c488a",
+    "L Chain | back upper link 28": "9a7951e011756c3ea930c97260655ba4c717d8c2fa0f88de1d65e89b2963f9b7",
+    "L Chain | back upper link 29": "5229c868d1b19b93d480e4b106d47c674ef06d5f3340dd8991bcbaf742a4b03d",
+    "L Chain | back upper link 30": "87bb79d9c6e994dffac8ae36e604dabf4735801f452514b0d23e5ef81191f3e3",
+    "L Chain | back upper link 31": "bb29d070617c27072915f9727b24246c5de167c6b4e55921fa159de0d39b5b1f",
+    "L Chain | back upper link 32": "f8aade2b46d57ce92b9b2fcc5a8bc0e47f560eb7cdf48606126ea9e55476cc72",
+    "L Chain | back upper link 33": "127a981c2c895ff01b2c6e55f8475bf56e2b5918e93c2ed5aa531b3a9292d241",
+    "L Chain | back upper link 34": "9a33a58dcda4c5e5b6bfb1e857329f345d9cb7e1ef4131907c2d46b84df8c984",
+    "L Chain | back upper link 35": "1f1c2f9a34ea81cfb79a9450da2a117db506414dfdf6dec4150ffb64b7129190",
+    "L Chain | back upper link 36": "ab4aa7484201d5e7de69ad38ed01c39dc46be52454754737f4230df2f168e8d3",
+    "L Chain | back upper link 37": "8cbbb9d1536e7ad1cfb1e48d2144ccc775231e1107975f00a51534ba4ccafc83",
+    "L Chain | front lower link 00": "028a23d132f8189ce2c26f3b3bfbce6ab7e9e51f83600e618c84b98c00bcf487",
+    "L Chain | front lower link 01": "8faa2ba8fc6fc1b965f0f40af98909186d76019d2ad8f1279cfa67173454aeab",
+    "L Chain | front lower link 02": "5ac710d5ebcba9bc73c7c089150ef234dd6f95fbcee386ca8c3f0dda2595e7c1",
+    "L Chain | front lower link 03": "98efa0393876fb87f2169df898576d6e94d7d2941bb14c3be3858cdc6329fac0",
+    "L Chain | front lower link 04": "757db3250cf9dbe778ecc3d4ff5dbe6b1f07ed629facb352acf00cafdff3313a",
+    "L Chain | front lower link 05": "7066d0cef29b0aeb990b469ea6783290381012d66132bd780292a9286b401c07",
+    "L Chain | front lower link 06": "e46f7fe09e7a8cb10da669b6b928a66110712fa730c835d59a1b0c9be49b0b06",
+    "L Chain | front lower link 07": "de20f4a812b9da992193a65da19e3928f12b5a46fb7d8ec078657919cdd05af5",
+    "L Chain | front lower link 08": "54d4a38913b4ebec460cb45ea73a69408dbbfb853428a287992cba1f855d0180",
+    "L Chain | front lower link 09": "c0bd61d39eaef3ae1013713a4b6f4a10a4ca6cfadc3ff232fd40a67a9bea50cf",
+    "L Chain | front lower link 10": "6ae326df633e1aeb0744faddc5c807f76d1549cd0a040d0b9764486e5a7e3693",
+    "L Chain | front lower link 11": "99a3c8c7491b65f6a2a1afaf5f258a13a35f356b9615ebb6dd5a350171e7b9d8",
+    "L Chain | front lower link 12": "ae172137d9e93b35a0a1e495c617f223538a107517d20e1c5b280537582ce24e",
+    "L Chain | front lower link 13": "a77ace92fe1ecd492be492c59108f880e207faeb9796d5283082e0d9821c3eb1",
+    "L Chain | front lower link 14": "7f759dacef9ce20d116512e038601b31c650b65f1c31deed887ce54db078a2d2",
+    "L Chain | front lower link 15": "f54840d89d65f33dbda4ca69b90c168660bb6a029bc3ce02deff251ea25e411a",
+    "L Chain | front lower link 16": "fd340eff1f7dc8847fee6bb21afcdcc119b244755a4e179343b80e99637080af",
+    "L Chain | front lower link 17": "a6f23a8e2388665098737db311c2ee3bc9d924bd6c558dd6408eeaec34171643",
+    "L Chain | front lower link 18": "5415ffebb9baa2f2b4640c32b53de7b9678539a6c33cd4cae3717ae7f8591528",
+    "L Chain | front lower link 19": "62f01492c2d5ea1b7755fd7477ff074a407af05f63f99d558977f3ee6c212eb4",
+    "L Chain | front lower link 20": "3b24448261b34bb3eb4910da16c6668e79d6d1c1769a3bae696d30088a441072",
+    "L Chain | front lower link 21": "99e7d422cac97f2cc0187bf1d26e05144d6269aceab8a740fab3aef7f8c659e2",
+    "L Chain | front lower link 22": "580d7834cfa6f1984025d0bd66400d128b18dd084f0d8fc3d4f2d097d8e57510",
+    "L Chain | front lower link 23": "430f9dcb6ec993fec461b77a23dc6901fca87e243aae6f51cb96420ed94d0ab4",
+    "L Chain | front lower link 24": "e9eaf939a284bf19bf8b2c5f04ddf7f505d9acf9f049520a8aa1a7c426500bf5",
+    "L Chain | front lower link 25": "a462384a895658faa413104d7fa50f2fe01d7359949d2ff74cfc9f44dc4a150d",
+    "L Chain | front lower link 26": "479b27d24c2a8b9d1e6d17f1746a62dfbc4a6e3ac836ccddecb85b93a70c1303",
+    "L Chain | front lower link 27": "e6e7a0209c6131616b5612f548653d95a43ff976c3b9e1eacd218ef968b1b2bf",
+    "L Chain | front lower link 28": "94ef6fd4a228e51a6c9151665c83ce3b5db8671f3b516cc13b1c2dc9fb04f76b",
+    "L Chain | front lower link 29": "1705c9a25fa4069ec8ea0f5908dc9c29e4566050c7da74cc566d2cb54964ab6b",
+    "L Chain | front lower link 30": "28a353406d324198046f779d8a79f3bb8781526fb4eaa4788c85e2e050114289",
+    "L Chain | front lower link 31": "c2f53e953e0b2b2823ff439cd4a4ddc132209d1b1ef48c25959091c0af878e58",
+    "L Chain | front lower link 32": "f5b5e4e7944a784c3a2305db71d95e277b09e140b17db832dc35aa06223ca2f3",
+    "L Chain | front lower link 33": "32434690bf534c7223322bb21f3ea4496e40448f6378e44515bb137cf2cafc17",
+    "L Chain | front lower link 34": "68641b3e30639b20772f241db079b1101380e0ab13a6a78a78a05bc500ba2f56",
+    "L Chain | front lower link 35": "99bc8dd4862afcd31d38732ce988b3c139892c15b2df635667d38c62deaea32f",
+    "L Chain | front lower link 36": "3bc87bcc9c4a89c76426921794e8540d615522fe5396f91e880f8122dbda31f1",
+    "L Chain | front lower link 37": "3f1135da0f0e27c0164aa3ba62680e840f16f72ce19c5884c7064358d92eade9",
+    "L Chain | front upper link 00": "2e58ab452a41eac5b10b424e56b91767afdbd328632bfff4e010272fa595632f",
+    "L Chain | front upper link 01": "0a3aba43296c2162986eeb1866e3b089eca2ed0744f686d37c7d3379712d8d0b",
+    "L Chain | front upper link 02": "219fcdc6873291d5029599b1941a2c289a669941626b2c8a5f54ce6bd2f7070a",
+    "L Chain | front upper link 03": "3d281799e88d68bad761f02969212b75fd163c50a4fc3c67b6a8c6e39e3262dd",
+    "L Chain | front upper link 04": "df0b9bb0f5ea7ecc6caf9ea969c7b940fa8f224dfdd115f78de57c4097cf0aaa",
+    "L Chain | front upper link 05": "fbabb8e3b48aaf414cf2c27cd17e9996e2da585e755285f131b9d478aac3c755",
+    "L Chain | front upper link 06": "4c24580c0664d323755bbf5846cad063178d27f0776fc5548e8ea095ab6faf37",
+    "L Chain | front upper link 07": "e07d100188d465eb1d7848c4289474cce8ac1f064606be0f22d44284a714e8a7",
+    "L Chain | front upper link 08": "c5e57706961eb670157dbaba5f068d23254f3477c1c040ba3ae1131c60e4309f",
+    "L Chain | front upper link 09": "c3ad5dac6bd3605200202463decc8d21dc3895f0cca2eda27492e32e59302e1f",
+    "L Chain | front upper link 10": "0a12e46d2a8c5536ed6eda9e473fb1dd760dd4d07230046e521f400338ab1aa3",
+    "L Chain | front upper link 11": "52aec719b76b43ce383188966aa463907208624d4fe77649401a071981957a44",
+    "L Chain | front upper link 12": "014392572dcda093a6656db5857aceb8098dd0d0e5b89a30e61547778436e161",
+    "L Chain | front upper link 13": "71afe8c2fb2ddf26b5764aacc105eb9c7610d7be6fa72faa6a7e40f276dfee31",
+    "L Chain | front upper link 14": "ddc409bdb27099cf12fc603f495baf47ff2cf2913d87f3c702618765d65f19fe",
+    "L Chain | front upper link 15": "31f7088e28e2a37f9d2248d648ce23e3ba1c93b73554b386fd1b11fa7e315b60",
+    "L Chain | front upper link 16": "f2c0ebbe40d3c2608f78489f1ab45419a295237f37f32c5253fc74975cb45b9a",
+    "L Chain | front upper link 17": "b68d9bad0e88389c1f757fde8f99f9151fc08cc57ea58bee48088654f39cc94f",
+    "L Chain | front upper link 18": "a18af68e79bd66f1a5088c3ad05ced21c6c7e18802fdf1088e4efcb8b025342a",
+    "L Chain | front upper link 19": "186f2817f1d294f6986cbd4c87ed7b20e80581dc376ef3217ae803b47c6b52e9",
+    "L Chain | front upper link 20": "d7e85a55e1cd8157d2f7118dd4fd09ab462d428f05ac0f97091ccda25eae1ee9",
+    "L Chain | front upper link 21": "a481ac0c93abb16a1918063c8cb2c70df1a455f462ecd01e8de1cd9c036314f5",
+    "L Chain | front upper link 22": "96131f681309d230bf831d4af450803a48de402739839d4d1d51412747612ff4",
+    "L Chain | front upper link 23": "81ee84b98c5f1b6fd6dba739ddf80c6d2866c4edcf5fd2d24b0374845be11069",
+    "L Chain | front upper link 24": "2319fb463dde1c66293b90b6e71e5f595f17f1c03bb6446955552e991e87e679",
+    "L Chain | front upper link 25": "cf80e1ffddfcf10d12a8e844fd8abbf8abaae89b1349b84262df03528439cc70",
+    "L Chain | front upper link 26": "b6b2c23e1eb646ce71f89f6dc230f5299c7075f03aa64e2df6e10acc3c1e3449",
+    "L Chain | front upper link 27": "8fa94268325eac7525cd3c1926264189275eae1f792eda554feefd826c0891e3",
+    "L Chain | front upper link 28": "243f12d25a23a2f7479f58f6dca6db120e77f1c415183c8f77683b0db6788ced",
+    "L Chain | front upper link 29": "7e3a3829f1c1722a547f833347c2e165d7f00677d7c8462c627ccd79564d6c61",
+    "L Chain | front upper link 30": "03e71fe0a308c84fa2c840e2fdd1aa164efe3be9ecc84e55f8fe9827b22dc2e5",
+    "L Chain | front upper link 31": "110ac16f2d7951cf1b46873ad52635a1acb068afc55a9c5e5bb0c90c728c7557",
+    "L Ornament | small breast shield dark embroidered field": "1c0f11e67ffbd594a2d51b2bd4608d1b5346f563addf54ce1e19d04984f39836",
+    "L Ornament | small breast shield fleur crossbar": "9f55302c59065118e4ea28cd5c3138b095d52760289551d46dfc6901a6948c45",
+    "L Ornament | small breast shield fleur left": "959227971f4c5aa7e9b33ccaa4e9ccd6cb205764f4c783dad9efe0f4bf1069fc",
+    "L Ornament | small breast shield fleur right": "5e73f13728dcfe04ec1c696d64550d2b0a580deeae7695b229b15807a24b4adf",
+    "L Ornament | small breast shield fleur stem": "2b70c60fe7fc29b5b46132f469a82b10f270c2108b3242cdecef8b1114631ebe",
+    "L Ornament | small breast shield silver border": "b06116c403f04457f3cbff6fbbb4325c1408d62800fab9210baf567c2d502592",
+    "L Ornament | tassel 0 link 00": "7b4e208639f26924871d1ac82b4c4baabd4684fec4ca4330fc2b640eb4f66367",
+    "L Ornament | tassel 0 link 01": "e3132fd86f1abb33ab03d667af8005f983d2bfe086a108ab36b7f91ff33f14b0",
+    "L Ornament | tassel 0 link 02": "b48a5549dc57605874fb0e3d6f6ac0a350f1cdd3b45d3644b86a6b3d32f90933",
+    "L Ornament | tassel 0 link 03": "f805c3512f68bc6f81d2b894486f98f29042970a100e430c8ba204a235ca5a55",
+    "L Ornament | tassel 0 link 04": "055b4f0f46b62d9002dda763b541bc417b4581d079912aa2b3ff0be4765c2e7e",
+    "L Ornament | tassel 0 link 05": "f9eda299b80f328101306aa8a6c85c294b2e9f63494237e72a54df28b15a9d32",
+    "L Ornament | tassel 0 link 06": "e3c88a5b544a36b8ebaf18a47bf91a04d479fbc0f989de9f463a14a0bc6bad73",
+    "L Ornament | tassel 0 link 07": "65dcaf6eea54c607158d1017edaa854d4dd27cb772aeebd527850479c69e364f",
+    "L Ornament | tassel 0 link 08": "6b93b159757d16e47d0c2e3358d3083a3eb41822cde933520cdad1394bc1d8b9",
+    "L Ornament | tassel 0 link 09": "35e42c60ff90caf87ecae1978c997b4c7545e82d2c8124d73b1399bc86c631dc",
+    "L Ornament | tassel 0 link 10": "e5668566d5363104c991a8c28e809a84df1d6dfdabd13f53e9b1c50b9575e0de",
+    "L Ornament | tassel 0 link 11": "71bf679eeab0fc98d556c24ce416a213993953eb5fd35f980a55d79a432d1cff",
+    "L Ornament | tassel 0 link 12": "de43543a5d2bd161d6d9aa9974071df5b7e42ceed8dbd289b13165e3fa56547f",
+    "L Ornament | tassel 0 link 13": "f55aea9552d58cdf98d6c17e73066c84498857938039addf0fa92a6b530cc618",
+    "L Ornament | tassel 1 link 00": "57f8e142c2b81350af9d35f4fab2a578222eb4027549a11410d2ccc35bbc2c84",
+    "L Ornament | tassel 1 link 01": "53eed89dbeb826e19a416230c7b085ecc44e0f84ac563e66fd6a6cea6be99340",
+    "L Ornament | tassel 1 link 02": "eff74840e995d66d069b10b9477ea54df4642b566fe8e22dad57f51e27d5a864",
+    "L Ornament | tassel 1 link 03": "f3b9727617d3a517cb8c3c3d2ab6454d96eb6e7f2418eab096aa8e86a31e1bc0",
+    "L Ornament | tassel 1 link 04": "3ae75894553b2b96ae347fe6160a27800adaa3d1ab2c973e009a09c52be3677b",
+    "L Ornament | tassel 1 link 05": "8d9a97a85e6b20dd10be2b81eed4634d119edd2c5967f4f801ba4afab9b0aac9",
+    "L Ornament | tassel 1 link 06": "3baf0a4ff67d4f26f7ef51f4b6d4b287b2374493713497468d0f42b2c4f4b040",
+    "L Ornament | tassel 1 link 07": "4a72e1538f894799475d8140b9b4dd1649ae4bae79a1d455f4eda1ccf0c273a2",
+    "L Ornament | tassel 1 link 08": "c3862c7f92bf8b6c108e19df9fa82050453f2f96a9d324e3c42ea7223f61b2df",
+    "L Ornament | tassel 1 link 09": "21a970f9ed1c59b7275d8504212d45f61e6ed18c66262aa891efd1abf8de89f8",
+    "L Ornament | tassel 1 link 10": "aa9510df00cada03644bae8ff84a8fe6088c1dc5e55ead53804b77138c210cae",
+    "L Ornament | tassel 1 link 11": "79786fe1d21eb6fb7daaaf53ad33905cc1ded779d5b0362c09b4704abfdee3ea",
+    "L Ornament | tassel 1 link 12": "8564fbe3bf9a648c3bb15ab814d40a93a48a353390d0431097b7d5525550dff6",
+    "L Ornament | tassel 1 link 13": "6aa19485aaad58657ddcc2dbcf06db74a276e62d45e8fc48d24ffdf9051d8618",
+    "L Ornament | tassel 1 link 14": "536490f6b7bb96cbafaf1d904bca433ee07ef30805f090100ac4eae7ccc6b3c9",
+    "L Ornament | tassel 1 link 15": "a80f70a92e56f6a15d3157d7baf4072f1634d1cdb418b726df4f752e3eaeb42f",
+    "L Ornament | tassel 2 link 00": "4c55422e8e3beda7e6e82f55a3b313cb08049bca89b966a4bc50a26e78420c59",
+    "L Ornament | tassel 2 link 01": "1548d5bc7e92396f9e6246df4d05b43ec746d3f0a932852b81f3b620a0de9205",
+    "L Ornament | tassel 2 link 02": "ca0fddf7ff79ae570eac84be301a9170c2c92caf0e7c5c630e11fe466db2ec48",
+    "L Ornament | tassel 2 link 03": "078d7aedc3d3253ca37983eb06b0930e9d6ae84408eeab42c712514fae63685b",
+    "L Ornament | tassel 2 link 04": "383cc155d6e13b3c311025925201f3343959ac020e96356b0003cc8c271f3dc2",
+    "L Ornament | tassel 2 link 05": "3c432722246ebbecb0e62e731b02390e0b93226c5e205b7402f50a29185777fc",
+    "L Ornament | tassel 2 link 06": "a618fef517ce8f042b084d90979556b299ca29fff0edc64bdf3a383571b7e516",
+    "L Ornament | tassel 2 link 07": "511eaec95c2553c39f2c00ce3c74242dc501c1e29ee373e9b7897aad45acd714",
+    "L Ornament | tassel 2 link 08": "d3271a822873d9596c23e941227735bc34b1808af243554c7073d2503c996a4d",
+    "L Ornament | tassel 2 link 09": "483a7525f55d940ddc2574b66acfa62a5e6f6c7ae01f0463c177e0a7f9e97bba",
+    "L Ornament | tassel 2 link 10": "1e4866a64c67a7d7f6daf4e37cfee445473667533337d0082fb82cbf246a736d",
+    "L Ornament | tassel 2 link 11": "9c5bfd706101ffc2654e8f299754ecfc235a6cebd109802870b31440e54a2dce",
+    "L Ornament | tassel 2 link 12": "63354089b5e6383d18655683efc3f3ee0a7bda33f375c67d8029f080e9e863e0",
+    "L Ornament | tassel 2 link 13": "432e3986b332c3ee357bede72f6fd9daaacb52b169ddefeae72b73038be03cf8",
+    "L Ornament | tassel 2 link 14": "36dc69a096790ba91b1d606267f8703b61179b412968006747708fa670e9a405",
+    "L Ornament | tassel 2 link 15": "8231fa4c431e0ac462a52ccbd0922d172f4b7e96e6617e3bdc639efe83afa610",
+    "L Ornament | tassel 2 link 16": "321f028aab186a88977944828b156f337ac3d6f9340d126c3ac06a4e7ec6a037",
+    "L Ornament | tassel 2 link 17": "9ff1457bb1db0239e456ed47d7fdf40e5b4d3a90bd5e12177cf54d2e72b6a9c3",
+    "L Ornament | tassel terminal 0": "46af9b593086320977cb3edc0f1ad5f0342d250e2ae35e0ffe06bc5c2a5982e9",
+    "L Ornament | tassel terminal 1": "80e68b35d107f9497a5a3ecef4580b5b6d4e236be02f29a2380bad736cd23f3a",
+    "L Ornament | tassel terminal 2": "a9088ca1fa5534918e37d2a8c05ff9f46fe32b6aaaf53638b57589f1a0224175",
+    "L Ornament | upper sleeve shield dark embroidered field": "c271b54c072fbf7175413e4ced594b8a36b83ded6369a2ccc0b0703a21a1e5e9",
+    "L Ornament | upper sleeve shield fleur crossbar": "19386c392b44f1c8790fd8b6fa22078840224eee1f4b2ea8382d526efbe348a3",
+    "L Ornament | upper sleeve shield fleur left": "9e10ab0098153c27ab878430aaeaa3a33824c24ec5bdc7a27bc2102b0bab03b4",
+    "L Ornament | upper sleeve shield fleur right": "a2b9fd36182cb49b172e0f8df0217eae25594fd4953302efc8a5bf8476d24fab",
+    "L Ornament | upper sleeve shield fleur stem": "b8e0a3df64f2f0167e5ed586cbaa635a4bc1de284e8575ea03119969b4ca4c0c",
+    "L Ornament | upper sleeve shield silver border": "cd0b64e027ed0fad1e899d0d87c700d56ecc0f6f091b5a12044d0f9ef03d4182",
+    "L Shoulder | button": "87ea19ee91eeb18021969caabe4d8831906dca42e72791775883df9f94916d81",
+    "L Shoulder | pale edge": "f0eb0301403799b50642ed1695d48495f0c72da21f43333a32bafb3f7db36dec",
+    "L Shoulder | tab": "40f5c8a6244a51247a9cd17818672c537368ce6bf92b4f409a4aff798c3a77a5",
+    "L Sleeve | back seam": "b338bd1023f7af6222d91c443cb0e5eaf3ef9f2a54788cb265968ef8b6c92a0b",
+    "L Waist | belt eyelet": "31a298029b9f225520cef1f7746df9c976dffa2dfe77aa2a041095d62ac0e44f",
+    "L Waist | belt eyelet.001": "4153037b56724f0ee6c1c1c98a6604fc1f01ecf52b3974589bf711ea13ec0665",
+    "L Waist | front buckle frame": "5386830577e64cbb1d9718537b6b59e44d4d101f644649fc8c7452a7a87c94bb",
+    "L Waist | front buckle tongue": "707557acbfd391a96e79a0cffadeb98d737b94471b27b752b641a4a23e0cecbe",
+    "L Waist | front short belt": "f9543a7dafe549b75304695818012ff12e3ae211f3f336819b69ea1940cf5594",
+    "L Waist | rear buckle frame": "3d54fcd62d0980993ece3c6e780c1d4460c68e2457e7b1ca0860a08117c55cab",
+    "L Waist | rear buckle tongue": "11e4fc1605b8927b164b3031938ee15f39715b43a8741181242c50c6bd20533b",
+    "L body | princess seam": "ebef4756af6af141d95aea9ca40f8675124763b2db5483bafaea92299d1a778d",
+    "L hem | silver rivet": "0d56fc5ce88f582df2725e9f77877c7d24f6cf00836ffb34d6e9b91392315091",
+    "L_Cuff_Band": "fb2205e42e2a45eb8a365254e5f28d0df439e3d32921a05508be32b5b4c0fb1b",
+    "L_Cuff_Buckle frame": "77e9a71d9045d4d535a9b3c883d1403a42e820b05d7c57c946a8ffb55a83ee57",
+    "L_Cuff_Buckle tongue": "3b8c3b6087ea247e67a97ea85e5aee2126ed45e30e10931fcb537a9324161a7e",
+    "L_Cuff_Piping_Distal": "de0d581878085d875d76fdf996418f31167704c9d58f6101b28468300be7b1f6",
+    "L_Cuff_Piping_Proximal": "a6add126eae86d22e239f83503ee3d2a26b942a7f16fcdcdcd0bd209ca25fd7f",
+    "L_Cuff_Rivet_-0.022": "2e784a7991aa473a0c05f837f540c6b5e5bc75ffbb78042a4f1e86484a3a7d54",
+    "L_Cuff_Rivet_0.022": "e82763032fa029502e12448fc9c1e6a36e65b30c31cf9fa4de9cca0562e03c3d",
+    "L_Cuff_Strap": "0c94b344957a7324eb4ab8b5ad2f4a72ce8df9391ce0d08c559e8d47bac26c29",
+    "R Shoulder | button": "9fd4ca2b276fd3555787d4545ae012ee05496829e6784fd0b8a2fad389a0a593",
+    "R Shoulder | pale edge": "818b675132827cf71ca3cbb3a8a986b46f1aef7e16295ebc5942d2a9c0f9cb0c",
+    "R Shoulder | tab": "2f992dbea2be190c275e73ec34fbfe8dffbb66a6968e7f4d740d472653ff1abc",
+    "R Sleeve | back seam": "e666f136525160724a519eb6d269cb9038257bf382080e8e8991314623e0b005",
+    "R Waist | belt eyelet": "491880b0f752164913c95bbe0af143db3b858febe3d6e0729cb4f7467b94ad80",
+    "R Waist | belt eyelet.001": "feb2265635135903a54dcd9809577db1749408da857349842f90ff3f624b1152",
+    "R Waist | front buckle frame": "82d0dbcdf7ba08cd1fcc566083875a6f29e1980be3cae1f1116ecbcbe458b06e",
+    "R Waist | front buckle tongue": "646c4477c5ac681eba0ca954097ae7d760e9796fb82b9eb0f5f2daede673c652",
+    "R Waist | front short belt": "4bbaf88f5779d096533cbf32ab36b2d0f769e7afd8d4cd4bdbd5ccd35005a3bb",
+    "R Waist | rear buckle frame": "41f91d3291d48ae840ed1ebd604e9c6763191e7089759d4d0ccd4d6a021e167c",
+    "R Waist | rear buckle tongue": "da366b234314d364c64cb9c42a5d2db44c3a8df59d1c952d0cebcc974af048c6",
+    "R body | princess seam": "50f48870d367b5362385d58ae8bd5fd4a9d734056b7b8937a990ec961abe998f",
+    "R hem | silver rivet": "4c3970e05937e475bd6f8425211bb846edb3587e8f269cb8a1b19bc99ac93b1c",
+    "R_Cuff_Band": "a6e42171fef2a6e8df34d892adef5e5ab1a3043a6fdcc00dfdb9bd3470fd22d6",
+    "R_Cuff_Buckle frame": "13d1a3fff3df7e32b456776e88b3ac43c9de3c02f82e8ed8178ac2b4170bdca0",
+    "R_Cuff_Buckle tongue": "76716712afa32169b99cf9be98c5f4fd0605fab48c7dcd8d8a66306ed68e3d52",
+    "R_Cuff_Piping_Distal": "9891b68c8e94448007c4232388ed01cefcc5b13f3ce39306538cd9cca3abd104",
+    "R_Cuff_Piping_Proximal": "6bfec5653eaaa105e9e081385e1de19b816a972a68dc4ee4a9f1f9840a6f859d",
+    "R_Cuff_Rivet_-0.022": "7af3ed3b2ec7371f8c63edd770f6f1c8abc088dba5932433e4ecb016ec088d73",
+    "R_Cuff_Rivet_0.022": "b5a10533597644dd663d027c37b537829d40d53deda356098770c4afd2335c41",
+    "R_Cuff_Strap": "748d5a0e90a78ab67cddf55bd342592da907f4f235ca7b3c45bcdf61f532a5bf",
+    "Waist | rear wrap belt": "eabd82b4ef429987a19f5477ed2f2bc1a99fcc609e97516bbe841795d3610756"
+  },
+  "changed_and_removed_state": {
+    "Collar | pale upper edge": {
+      "before": {
+        "fingerprint": "8bebe5a106bf09c3bda472bab93f9ce5532aca261dba5437dbfc4b03cab25fc8",
+        "matrixWorld": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "parent": null,
+        "cage_vertices": 792,
+        "cage_polygons": 784,
+        "cage_positions_hash": "593ff26555174b923f97e6d463b37d4cf7d58ddfdedb0e9d0e68b37d5435455b",
+        "evaluated_vertices": 792,
+        "evaluated_triangles": 1568,
+        "evaluated_positions_hash": "593ff26555174b923f97e6d463b37d4cf7d58ddfdedb0e9d0e68b37d5435455b",
+        "vertex_groups": []
+      },
+      "after": {
+        "fingerprint": "c757ac1bdcd94c15d2a1aa2d4d2e12a3c2febffa898f33324aef9266499dd4bb",
+        "matrixWorld": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "parent": null,
+        "cage_vertices": 1230,
+        "cage_polygons": 1220,
+        "cage_positions_hash": "79b0bff82ff62c2521cab9a34a7ce70d4e1beb976042b95b2bb7e1b6e2dec2cf",
+        "evaluated_vertices": 1230,
+        "evaluated_triangles": 2440,
+        "evaluated_positions_hash": "79b0bff82ff62c2521cab9a34a7ce70d4e1beb976042b95b2bb7e1b6e2dec2cf",
+        "vertex_groups": []
+      }
+    },
+    "Collar | standing back and neck facing": {
+      "before": {
+        "fingerprint": "f50acd0300ac9f8c50e1b4c9c5e1141f5f189e6d7a7d8f0a16f52b1e883f9256",
+        "matrixWorld": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "parent": null,
+        "cage_vertices": 990,
+        "cage_polygons": 882,
+        "cage_positions_hash": "5aa7c30887aa78ce5973fc110f4ea3a908be8f805c81ef4379b75cfb7197d1d3",
+        "evaluated_vertices": 29082,
+        "evaluated_triangles": 58160,
+        "evaluated_positions_hash": "00d912344916a1fe37bcddff37d6fd474ece3460f8587d62b937fbbddd62dd7f",
+        "vertex_groups": []
+      },
+      "after": {
+        "fingerprint": "9dff44a4804b5122005216e0f66829757eac64e027558b8a47448fe4994eea12",
+        "matrixWorld": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "parent": null,
+        "cage_vertices": 3540,
+        "cage_polygons": 3234,
+        "cage_positions_hash": "6b775732cc9c31285153485cbc70656d9fbea11baf27e8f3192732366e804024",
+        "evaluated_vertices": 105930,
+        "evaluated_triangles": 211856,
+        "evaluated_positions_hash": "ad008eb9045a0d67d9d72b5c155e0984a296200d48091234481e1c68d5e48b5f",
+        "vertex_groups": [
+          "Collar stand and turned leaves",
+          "L Gorge | shared cloth seam",
+          "L Lapel | rolled facing",
+          "R Gorge | shared cloth seam",
+          "R Lapel | rolled facing"
+        ]
+      }
+    },
+    "L Collar | piped point": {
+      "before": {
+        "fingerprint": "5c14ff2a24cbd26978be6c035d95ebcb83ea8a415f198645bf35be09183cfaf0",
+        "matrixWorld": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "parent": null,
+        "cage_vertices": 48,
+        "cage_polygons": 40,
+        "cage_positions_hash": "06b463656b48c8175371079597cff85f3fe59a1da9e139ca342c9f5377688e67",
+        "evaluated_vertices": 48,
+        "evaluated_triangles": 80,
+        "evaluated_positions_hash": "06b463656b48c8175371079597cff85f3fe59a1da9e139ca342c9f5377688e67",
+        "vertex_groups": []
+      },
+      "after": null
+    },
+    "L Lapel | fine piping": {
+      "before": {
+        "fingerprint": "bf2506c8d43a56c41a1c0e8fc1386dbc61778c1b3729ecaa9158f5df79c46e78",
+        "matrixWorld": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "parent": null,
+        "cage_vertices": 352,
+        "cage_polygons": 344,
+        "cage_positions_hash": "347b239241daa18d71f6054d389c203312fbc43698a030290b932d7f1764ab3c",
+        "evaluated_vertices": 352,
+        "evaluated_triangles": 688,
+        "evaluated_positions_hash": "347b239241daa18d71f6054d389c203312fbc43698a030290b932d7f1764ab3c",
+        "vertex_groups": []
+      },
+      "after": {
+        "fingerprint": "914aa5e72c46344665daa74f88f2c3fcb0aacf95d35db280d44ae7d1c7a524cf",
+        "matrixWorld": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "parent": null,
+        "cage_vertices": 870,
+        "cage_polygons": 860,
+        "cage_positions_hash": "b9c7dc40bc2dd5247e2f0a5010c4bb73fb3c5f87e928be6ebe9a7162754f3de3",
+        "evaluated_vertices": 870,
+        "evaluated_triangles": 1720,
+        "evaluated_positions_hash": "b9c7dc40bc2dd5247e2f0a5010c4bb73fb3c5f87e928be6ebe9a7162754f3de3",
+        "vertex_groups": []
+      }
+    },
+    "L Lapel | folded lower notched facing": {
+      "before": {
+        "fingerprint": "9ff9aadf6f56fad96148daad3c282bd7e394a94eaee73ccb43356c9db14cffd5",
+        "matrixWorld": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "parent": null,
+        "cage_vertices": 352,
+        "cage_polygons": 301,
+        "cage_positions_hash": "d032407fd770621d870548cccf199e59f75303a87aa64f47cb2a83ccee58fe0b",
+        "evaluated_vertices": 10034,
+        "evaluated_triangles": 20064,
+        "evaluated_positions_hash": "c4db6b5712eb5eb0646fe0432352c89548809bc15d43c083991bb825c1184972",
+        "vertex_groups": []
+      },
+      "after": null
+    },
+    "L lapel | silver snap": {
+      "before": {
+        "fingerprint": "695b7c83bf7666056f6ef0fcd69a3583db99cff6fd5cb665868826f545c2a969",
+        "matrixWorld": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.112
+          ],
+          [
+            0.0,
+            3e-08,
+            -0.34999999,
+            -0.10998758
+          ],
+          [
+            0.0,
+            1.0,
+            1e-08,
+            0.301
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "parent": null,
+        "cage_vertices": 114,
+        "cage_polygons": 128,
+        "cage_positions_hash": "b6083996106601a8d5952d8945a375d2a84ec41303c12a0584847cac86504b9e",
+        "evaluated_vertices": 114,
+        "evaluated_triangles": 224,
+        "evaluated_positions_hash": "b6083996106601a8d5952d8945a375d2a84ec41303c12a0584847cac86504b9e",
+        "vertex_groups": []
+      },
+      "after": {
+        "fingerprint": "026c243fe4ddcdf5078e408092462e93d6f34ffe3aae26f5edd68342a72479d1",
+        "matrixWorld": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.111
+          ],
+          [
+            0.0,
+            3e-08,
+            -0.34999999,
+            -0.11576539
+          ],
+          [
+            0.0,
+            1.0,
+            1e-08,
+            0.29699999
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "parent": null,
+        "cage_vertices": 114,
+        "cage_polygons": 128,
+        "cage_positions_hash": "b6083996106601a8d5952d8945a375d2a84ec41303c12a0584847cac86504b9e",
+        "evaluated_vertices": 114,
+        "evaluated_triangles": 224,
+        "evaluated_positions_hash": "b6083996106601a8d5952d8945a375d2a84ec41303c12a0584847cac86504b9e",
+        "vertex_groups": []
+      }
+    },
+    "R Collar | piped point": {
+      "before": {
+        "fingerprint": "fab2fc1dc5a15e2dfb4ba18307b793d21f68ac548cbcfedefa4ecb7667283447",
+        "matrixWorld": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "parent": null,
+        "cage_vertices": 48,
+        "cage_polygons": 40,
+        "cage_positions_hash": "e1ce90232e043e13a62c7f55b00442436e1e6f026cc490930491a212b704e33a",
+        "evaluated_vertices": 48,
+        "evaluated_triangles": 80,
+        "evaluated_positions_hash": "e1ce90232e043e13a62c7f55b00442436e1e6f026cc490930491a212b704e33a",
+        "vertex_groups": []
+      },
+      "after": null
+    },
+    "R Lapel | fine piping": {
+      "before": {
+        "fingerprint": "8fa1c27ef9063b2fa5593d2b4bb1f652fd4d3a936d8595e1597c3c3a061f6600",
+        "matrixWorld": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "parent": null,
+        "cage_vertices": 352,
+        "cage_polygons": 344,
+        "cage_positions_hash": "3d5f9462de17d81b7ebdb1bf9ea7223d928ed76cefb47ba357dfa1d103903e6e",
+        "evaluated_vertices": 352,
+        "evaluated_triangles": 688,
+        "evaluated_positions_hash": "3d5f9462de17d81b7ebdb1bf9ea7223d928ed76cefb47ba357dfa1d103903e6e",
+        "vertex_groups": []
+      },
+      "after": {
+        "fingerprint": "f394452e26803a6e2b62f0c4a0c3837028011bed7f589a695781c5d442205999",
+        "matrixWorld": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "parent": null,
+        "cage_vertices": 870,
+        "cage_polygons": 860,
+        "cage_positions_hash": "2e4a1da605e84bf031ca15fbb138be8fbe6dbd6e061d39e782e73fbf09f65121",
+        "evaluated_vertices": 870,
+        "evaluated_triangles": 1720,
+        "evaluated_positions_hash": "2e4a1da605e84bf031ca15fbb138be8fbe6dbd6e061d39e782e73fbf09f65121",
+        "vertex_groups": []
+      }
+    },
+    "R Lapel | folded lower notched facing": {
+      "before": {
+        "fingerprint": "7df1f7a81bef22b052f4c29f87943cd0cc8cf6535cbf8267f5ea408d257d0301",
+        "matrixWorld": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "parent": null,
+        "cage_vertices": 352,
+        "cage_polygons": 301,
+        "cage_positions_hash": "4801b7ea6218f19a199bc4ae95d801a998e964ab3ca9c08997b85afa80d9f6db",
+        "evaluated_vertices": 10034,
+        "evaluated_triangles": 20064,
+        "evaluated_positions_hash": "78fe63968dbc3962d4b93dea5afc13c1bedc0390cf20443d97060c9191db6167",
+        "vertex_groups": []
+      },
+      "after": null
+    },
+    "R lapel | silver snap": {
+      "before": {
+        "fingerprint": "f2dbf5c3f25f67ffc0ea03e331785b7fc2e75331fd677c0ed06e6b059b7ad509",
+        "matrixWorld": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            -0.112
+          ],
+          [
+            0.0,
+            3e-08,
+            -0.34999999,
+            -0.10998755
+          ],
+          [
+            0.0,
+            1.0,
+            1e-08,
+            0.301
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "parent": null,
+        "cage_vertices": 114,
+        "cage_polygons": 128,
+        "cage_positions_hash": "b6083996106601a8d5952d8945a375d2a84ec41303c12a0584847cac86504b9e",
+        "evaluated_vertices": 114,
+        "evaluated_triangles": 224,
+        "evaluated_positions_hash": "b6083996106601a8d5952d8945a375d2a84ec41303c12a0584847cac86504b9e",
+        "vertex_groups": []
+      },
+      "after": {
+        "fingerprint": "02116f01c8e557803dd7bef15334409da0fd5f8b2f8ccebd7fa0af984387ea77",
+        "matrixWorld": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            -0.111
+          ],
+          [
+            0.0,
+            3e-08,
+            -0.34999999,
+            -0.11576977
+          ],
+          [
+            0.0,
+            1.0,
+            1e-08,
+            0.29699999
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "parent": null,
+        "cage_vertices": 114,
+        "cage_polygons": 128,
+        "cage_positions_hash": "b6083996106601a8d5952d8945a375d2a84ec41303c12a0584847cac86504b9e",
+        "evaluated_vertices": 114,
+        "evaluated_triangles": 224,
+        "evaluated_positions_hash": "b6083996106601a8d5952d8945a375d2a84ec41303c12a0584847cac86504b9e",
+        "vertex_groups": []
+      }
+    }
+  },
+  "materials_unchanged": true,
+  "before_materials": {
+    "Seams | tonal thread": "c39487f4b2b9d2671e2a02f49aa36565c1b825bbbd24b038635a8b1c897d5647",
+    "Main | charcoal woven wool": "ba9827532c808449506064210c574ee9547a5aaeb5aa393f5ddd0228307b0b97",
+    "Interior | black satin lining": "346608d62741f1f3617806eb2dc377b76b500cb88c744b2b6332cdbf2d984ecf",
+    "Piping | pale silver grey": "249eb6b850d6a9937a8bcae67df9d6a3f57c169f2d07da74ddab3bdb4b5a427d",
+    "Hardware | brushed silver": "675e04c1c90ef01fdf900cad6045c29c220a0af1fb0902217cf570c8ca1a06ed",
+    "Straps | charcoal twill": "e1ca88bdf6ad3d2a109ef77b6b0ef4333beb035bd1cf3a876e10ee4b049e6759"
+  },
+  "after_materials": {
+    "Seams | tonal thread": "c39487f4b2b9d2671e2a02f49aa36565c1b825bbbd24b038635a8b1c897d5647",
+    "Main | charcoal woven wool": "ba9827532c808449506064210c574ee9547a5aaeb5aa393f5ddd0228307b0b97",
+    "Interior | black satin lining": "346608d62741f1f3617806eb2dc377b76b500cb88c744b2b6332cdbf2d984ecf",
+    "Piping | pale silver grey": "249eb6b850d6a9937a8bcae67df9d6a3f57c169f2d07da74ddab3bdb4b5a427d",
+    "Hardware | brushed silver": "675e04c1c90ef01fdf900cad6045c29c220a0af1fb0902217cf570c8ca1a06ed",
+    "Straps | charcoal twill": "e1ca88bdf6ad3d2a109ef77b6b0ef4333beb035bd1cf3a876e10ee4b049e6759"
+  },
+  "protected_body_unchanged": true,
+  "baseline_statistics": {
+    "armatures": 0,
+    "materialSlots": 286,
+    "meshes": 271,
+    "objects": 271,
+    "shapeKeyObjects": 0,
+    "triangles": 302196,
+    "uvObjects": 256,
+    "vertices": 151350
+  },
+  "candidate_statistics": {
+    "armatures": 0,
+    "materialSlots": 280,
+    "meshes": 267,
+    "objects": 267,
+    "shapeKeyObjects": 0,
+    "triangles": 418540,
+    "uvObjects": 254,
+    "vertices": 209508
+  },
+  "baseline_bounds": {
+    "dimensions": [
+      0.76687968,
+      0.23093899,
+      0.63312572
+    ],
+    "max": [
+      0.38343984,
+      0.1104271,
+      0.45036963
+    ],
+    "min": [
+      -0.38343984,
+      -0.12051189,
+      -0.1827561
+    ]
+  },
+  "candidate_bounds": {
+    "dimensions": [
+      0.76687968,
+      0.23055837,
+      0.63279259
+    ],
+    "max": [
+      0.38343984,
+      0.1104271,
+      0.4500365
+    ],
+    "min": [
+      -0.38343984,
+      -0.12013128,
+      -0.1827561
+    ]
+  }
+}

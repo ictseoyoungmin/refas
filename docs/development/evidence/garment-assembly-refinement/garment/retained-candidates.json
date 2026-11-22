@@ -1,0 +1,32 @@
+[
+  {
+    "label": "broad side and rear leaf",
+    "revision": "a34a7415e6014fb3bf90837b883f244d",
+    "reason": "Author close inspection found angular side overhang. Full first candidate, cuff proof and detail images retained.",
+    "native": {
+      "path": "/workspace/scratch/c52cb753f160/work/garment/retained-broad-collar/candidate.blend",
+      "bytes": 6154912,
+      "sha256": "e34ac41f335670f6a94d88433b13d75b096dd9b46bfac1ab8ffea93c3cd12aba"
+    },
+    "glb": {
+      "path": "/workspace/scratch/c52cb753f160/work/garment/retained-broad-collar/candidate.glb",
+      "bytes": 7773260,
+      "sha256": "e13c311144b79b5793906d4191b461d69bdb496179f699737d1e5cb409dcae52"
+    }
+  },
+  {
+    "label": "narrow leaf before upper-edge placement",
+    "revision": "f95ac7728feb4eb1ad446d02ae206272",
+    "reason": "Intermediate actual six-view candidate retained before placing the upper free edge closer to the neck. No new cuff exercise or independent acceptance was claimed for this intermediate.",
+    "native": {
+      "path": "/workspace/scratch/c52cb753f160/work/garment/project/.refas2/revisions/f95ac7728feb4eb1ad446d02ae206272/artifacts/scene.blend",
+      "bytes": 6154912,
+      "sha256": "2058e6c9d4565397dbd83b897ff926894464a9b42fdb42120aeb59e75572ee5a"
+    },
+    "glb": {
+      "path": "/workspace/scratch/c52cb753f160/work/garment/project/.refas2/revisions/f95ac7728feb4eb1ad446d02ae206272/artifacts/asset.glb",
+      "bytes": 7773268,
+      "sha256": "14459f84d0e3076c4184dc7a87d4a045eb1178f319e614a5e5a6452afb36ada7"
+    }
+  }
+]

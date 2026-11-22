@@ -20,6 +20,10 @@ All notable RefAs changes are documented here. RefAs follows semantic versioning
 
 ### Compatibility and scope
 
+- Reject evaluated Geometry Nodes instances until they are realized, and reject mesh modifiers whose viewport/render visibility or subdivision levels differ. Inspect and edit now fail before publishing incomplete native/GLB/render bundles; actual Blender regressions retain the failing-before and passing-after cases.
+- Add informed jacket collar/lapel and AURIX socket/forearm/palm refinements, fixed native/GLB observations, local cuff/cover edits, exact restoration and portable replay examples. Retain rejected intermediates, literal dispatched prompts and separate anonymous visual judgments.
+- Make repeated example readbacks use revision-scoped observation projects, preserving previous observations when a selected revision is revisited.
+
 - Keep 1.x runtime, project formats, and source-bound certification behavior available through an explicit optional route. The production integrity command does not issue a 1.x certificate.
 - Keep package/runtime/plugin metadata at `1.4.2` during development; the published release remains `v1.4.1`. A coordinated 2.0 packaging and migration milestone is still required.
 - Demonstration assets establish execution and local-edit behavior. Reference-image reconstruction quality, complete rig behavior, and target-engine readiness remain separate acceptance work.

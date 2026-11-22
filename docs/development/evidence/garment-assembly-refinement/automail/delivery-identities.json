@@ -1,0 +1,96 @@
+{
+  "timestamp_utc": "2026-11-22T09:21:09.087449+00:00",
+  "source_sha256": "3c7856dd632f8a1cde8036078573f569db55b6af97fae853237d8a9356f3c872",
+  "assets": [
+    {
+      "name": "before.blend",
+      "bytes": 4352856,
+      "sha256": "d1cd62e8e016e276a5a81337b188b2eec05a3e398e09f5c201d8d50bdaf71bc7"
+    },
+    {
+      "name": "before.glb",
+      "bytes": 4181260,
+      "sha256": "351de7e9491dcb8bb75bb59178522cb6f374a30c1d3fc4d237e1a6b776b4a79d"
+    },
+    {
+      "name": "after.blend",
+      "bytes": 4874912,
+      "sha256": "ff8010b6e25efec357b469121c905f9db8f717a8b9e5a07cbc78986ff12924b5"
+    },
+    {
+      "name": "after.glb",
+      "bytes": 4727752,
+      "sha256": "56f210e732ea94e261ccda625bec82583048ddf9ddae432db7eab907d95c3f0e"
+    },
+    {
+      "name": "candidate.blend",
+      "bytes": 4874912,
+      "sha256": "ff8010b6e25efec357b469121c905f9db8f717a8b9e5a07cbc78986ff12924b5"
+    },
+    {
+      "name": "candidate.glb",
+      "bytes": 4727752,
+      "sha256": "56f210e732ea94e261ccda625bec82583048ddf9ddae432db7eab907d95c3f0e"
+    }
+  ],
+  "scripts": [
+    {
+      "path": "examples/automail-arm/correct_proportions.py",
+      "sha256": "fba65df4b7f7e1280ba2e8e97c0d0b8e9bb044d8bb8076938c68e88eda795395"
+    },
+    {
+      "path": "examples/automail-arm/correct_shells.py",
+      "sha256": "3a124277fcb9297a0535a4dcbcb6242d53eff0a6464de034c396fafeffd13b92"
+    },
+    {
+      "path": "examples/automail-arm/create.py",
+      "sha256": "0cdf9f03b28bce21b980d62cdba79271b94f002c8c9575372d490979055964f9"
+    },
+    {
+      "path": "examples/automail-arm/edit_panel.py",
+      "sha256": "523ad603f9dc23d82b786ce00a82797df1b5c9d24b1c4d0997eb47f1a8f780db"
+    },
+    {
+      "path": "examples/automail-arm/inspect_refinement.py",
+      "sha256": "33e4631ce10a4fad2672e05180a368bbdced0297fc8896ecb21a8d00f6e9c118"
+    },
+    {
+      "path": "examples/automail-arm/pose_check.py",
+      "sha256": "e5e47ea44bd9effa34579c5087b4cf0db2515463c56cfd549c5909632d483d6a"
+    },
+    {
+      "path": "examples/automail-arm/refine_armor.py",
+      "sha256": "c25346b22aadfa5ef13fdd295af504a3b5dd9dfdd819d0374a8a4feb01d38225"
+    },
+    {
+      "path": "examples/automail-arm/run.py",
+      "sha256": "0234969924766b6b82b9b3a6075254b0d1acaca63893282b55295415b6df6d42"
+    },
+    {
+      "path": "examples/automail-arm/run_refinement.py",
+      "sha256": "e70aa06cc70c1c4da708d42c376a7f50d52ab87f90cb7e1a36b8a7fda6ed1147",
+      "executed_full_replay_sha256": "7d5e2920f29d35345b4d044ee8bbc99694affdc9772aab8622118b3ee9734827",
+      "post_replay_change": "revision-scoped/reusable readback path, covered by targeted actual readback commands"
+    }
+  ],
+  "intermediates": [
+    {
+      "label": "open-channel",
+      "revision": "bcd12118b3c94de095a9e3fe61289a97",
+      "native_sha256": "0d7316fcc507ccda3dadf066804a8cd9abf83f4f28aff98cd74140a53e71eacd",
+      "glb_sha256": "b95c3eac0c9a4f1498399319be2580248d759c19463863a6a134ad4814b016f4"
+    },
+    {
+      "label": "restrained-palm",
+      "revision": "284d338f7e4d47cf9e8be87a9c84b08e",
+      "native_sha256": "95d0991ac508932408e68ae74992c2ecb8c7e7d3fb23327af47e776cca1d5a98",
+      "glb_sha256": "b47b8f9acb5e4300dcfbb27b1cae6e5848e01a1b145bc37f50ba9ffc877a26b1"
+    },
+    {
+      "label": "rounded-shells",
+      "revision": "0e7de019d12a4b34ae38989ae514e667",
+      "native_sha256": "30fba7ce7fe2c8f598200163ba808e0473a3a522c6e64b7c2d4b0449e1c2f2e8",
+      "glb_sha256": "43443b37bdfdb7a5faf0515aa62d96d86432d846bfc898f0126bfe749fc09c8d"
+    }
+  ]
+}

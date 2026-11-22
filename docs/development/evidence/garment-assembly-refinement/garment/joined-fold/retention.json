@@ -1,0 +1,10 @@
+{
+  "previous_selected_revision": "02b51b5409e64333b17b6565eb7c5a38",
+  "previous_nine_asset_files_match_recorded_hashes": true,
+  "previous_first_review_before_after_render_pairs_match_original_final_root": true,
+  "previous_four_example_source_snapshots_match_archive": true,
+  "previous_evidence_files_remain_in_place": true,
+  "new_root": "/workspace/scratch/c52cb753f160/work/garment/joined-fold",
+  "new_evidence_directory": "/workspace/scratch/c52cb753f160/refas/docs/development/evidence/garment-assembly-refinement/garment/joined-fold",
+  "scope": "Read-only verification of prior asset/source/render identities. Prior reports and first review are retained, not rewritten."
+}
