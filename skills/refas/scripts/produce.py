@@ -7,7 +7,7 @@ import subprocess
 import sys
 
 sys.dont_write_bytecode = True
-from production.project import ProductionError, initialize, run_edit, status, verify_project, restore
+from production.project import ProductionError, initialize, replace_references, run_edit, status, verify_project, restore
 
 
 def parser():
@@ -19,6 +19,13 @@ def parser():
     init.add_argument("--root", required=True)
     init.add_argument("--name", required=True)
     init.add_argument("--reference", action="append", default=[])
+    references = commands.add_parser("references", help="Replace active reference files while retaining model history")
+    references.add_argument("--root", required=True)
+    selection = references.add_mutually_exclusive_group(required=True)
+    selection.add_argument("--reference", action="append", help="Copy a reference file; repeat for the complete set")
+    selection.add_argument("--clear", action="store_true", help="Explicitly adopt an empty reference set")
+    references.add_argument("--expected-revision", help="Also require the current model revision; use none before the first run")
+    references.add_argument("--expected-sequence", type=int, required=True, help="Require the sequence returned by status")
     run = commands.add_parser("run", help="Apply a Python modeling script to a copy of the current native asset")
     run.add_argument("--root", required=True)
     run.add_argument("--script", required=True)
@@ -31,6 +38,7 @@ def parser():
     run.add_argument("--samples", type=int, default=8)
     run.add_argument("--timeout", type=float, default=180)
     run.add_argument("--expected-revision", help="Reject stale edits; use none for a new project")
+    run.add_argument("--expected-sequence", type=int, help="Also reject a changed reference set or project sequence")
     for name in ("status", "verify"):
         sub = commands.add_parser(name)
         sub.add_argument("--root", required=True)
@@ -38,6 +46,7 @@ def parser():
     revert.add_argument("--root", required=True)
     revert.add_argument("--revision", required=True)
     revert.add_argument("--expected-revision")
+    revert.add_argument("--expected-sequence", type=int)
     return p
 
 
@@ -54,16 +63,20 @@ def main():
                       "scope": "executable probe; render device availability is checked during execution"}
         elif args.command == "init":
             output = initialize(args.root, args.name, args.reference)
+        elif args.command == "references":
+            output = replace_references(args.root, args.reference, args.clear,
+                                        args.expected_revision, args.expected_sequence)
         elif args.command == "run":
             output = run_edit(args.root, args.script, args.intent, args.blender, args.input_blend,
                               [view.strip() for view in args.views.split(",") if view.strip()] if args.views is not None else None,
-                              args.size, args.samples, args.timeout, args.expected_revision, review_spec=args.review_spec)
+                              args.size, args.samples, args.timeout, args.expected_revision, review_spec=args.review_spec,
+                              expected_sequence=args.expected_sequence)
         elif args.command == "status":
             output = status(args.root)
         elif args.command == "verify":
             output = verify_project(args.root)
         else:
-            output = restore(args.root, args.revision, args.expected_revision)
+            output = restore(args.root, args.revision, args.expected_revision, args.expected_sequence)
         print(json.dumps(output, ensure_ascii=False, indent=2, allow_nan=False))
         return 0
     except (ProductionError, OSError, ValueError, subprocess.SubprocessError) as exc:

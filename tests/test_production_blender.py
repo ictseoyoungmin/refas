@@ -12,6 +12,7 @@ from pathlib import Path
 import shutil
 import struct
 import subprocess
+import sys
 import tempfile
 import unittest
 
@@ -92,6 +93,39 @@ class ProductionBlenderTests(unittest.TestCase):
         self.assertEqual(before["bounds"], after["bounds"])
         for a_view, b_view in zip(self.create["observations"], self.revised["observations"]):
             self.assertEqual(a_view["camera"], b_view["camera"])
+
+    def test_public_cli_reference_refresh_manual_import_and_exact_restore(self):
+        reference = self.root / "create/view-hero.png"
+        review = self.root / "reference-refresh-review.json"
+        review.write_text(json.dumps({"schema": "refas.production.review/v2",
+            "lighting": {"center": [0, 0, 0.1], "radius": 0.3},
+            "background": [0.8, 0.85, 0.9], "transparent": True,
+            "views": [{"name": "front", "position": [0, -2, 0.1],
+                       "target": [0, 0, 0.1], "orthoScale": 0.8,
+                       "reference": {"sourceSha256": sha(reference), "regionPixels": [0, 0, 96, 96]}}]}))
+        demo = self.root / "reference-refresh"
+        result = subprocess.run([sys.executable, "-B", str(ROOT / "examples/reference-refresh/run.py"),
+            "--root", str(demo), "--skill-root", str(ROOT / "skills/refas"),
+            "--input-blend", str(self.source), "--reference", str(reference), "--review-spec", str(review),
+            "--manual-edit", str(EXAMPLES / "revise_headset.py"), "--blender", str(BLENDER)],
+            capture_output=True, text=True, timeout=180)
+        self.assertEqual(result.returncode, 0, result.stderr[-4000:] + result.stdout[-4000:])
+        report = json.loads((demo / "result.json").read_text())
+        self.assertTrue(report["ok"])
+        self.assertEqual(report["commandCount"], 12)
+        self.assertTrue(all(report["checks"].values()))
+        revisions = demo / "project/.refas2/revisions"
+        before = json.loads((revisions / report["stages"]["first"]["head"] / "artifacts/scene.json").read_text())
+        after_dir = revisions / report["stages"]["adopted"]["head"] / "artifacts"
+        after = json.loads((after_dir / "scene.json").read_text())
+        a = {row["name"]: row["fingerprint"] for row in before["objects"]}
+        b = {row["name"]: row["fingerprint"] for row in after["objects"]}
+        self.assertEqual(a.keys(), b.keys())
+        self.assertEqual([name for name in a if a[name] != b[name]], ["HeadbandComfortPad"])
+        png = (after_dir / "view-front.png").read_bytes()
+        self.assertEqual(png[:8], b"\x89PNG\r\n\x1a\n")
+        self.assertEqual(struct.unpack(">II", png[16:24]), (128, 128))
+        self.assertEqual(sha(self.source), self.source_sha)
 
     def test_inspection_does_not_resave_or_mutate_inputs(self):
         glb = self.root / "create/asset.glb"

@@ -18,6 +18,13 @@ All notable RefAs changes are documented here. RefAs follows semantic versioning
 - Add `--review-spec` for captured orthographic cameras, fixed lighting and optional source-region provenance. Fixed observations remain explicitly unregistered.
 - Reject unsupported geometry during native inspection and reject object instances that could render outside the inventoried scope. Retain the initial incomplete curve-omitting observations as rejected evidence; use complete realized observation copies for the actual comparison.
 
+### Explicit reference adoption and coherent recovery
+
+- Add `references` with a required sequence lease, immutable source copies and exact no-op handling for identical content sets. Retain all model history and report reference evidence as current, stale or absent separately from recorded-file integrity.
+- Pin status, verification, edit inputs and restore targets to one project snapshot. Fix a concurrent-read bug that could combine an older head with newer observation/input paths, including first-publication races.
+- Verify historical source copies, retain active references during exact restore, and allow `run`/`restore` to guard the expected project sequence. A reference change invalidates an in-flight candidate even when the native head does not change.
+- Add a public-CLI input-adoption example and actual Blender regression, and track Notion design progress with a fixed 31-criterion acceptance checklist. Progress is independent of visual acceptance, CLOSED tasks and release status.
+
 ### Compatibility and scope
 
 - Reject evaluated Geometry Nodes instances until they are realized, and reject mesh modifiers whose viewport/render visibility or subdivision levels differ. Inspect and edit now fail before publishing incomplete native/GLB/render bundles; actual Blender regressions retain the failing-before and passing-after cases.

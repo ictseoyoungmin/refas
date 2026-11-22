@@ -35,6 +35,14 @@ Repeat `--reference` for multiple original files. A design brief without an imag
 
 For existing work, inspect `status`, the current native scene, and its renders before editing. Read any retained intent and findings so that a new agent continues the same asset. A production project and a 1.x project have different state formats; do not treat one as the other.
 
+To adopt changed references, pass the complete desired set and the `sequence` returned by `status`:
+
+```bash
+python3 scripts/produce.py references --root PROJECT --reference ORIGINAL_IMAGE --reference UPDATED_BRIEF --expected-sequence SEQUENCE
+```
+
+This preserves the model and its history. Use `--clear` instead of reference flags to explicitly remove all active references. Identical file contents are a no-op regardless of paths or order. `status` and `verify` report `evidenceFreshness.status`: `current`, `stale`, or `no-revision`. `stale` means the current bundle used a different reference content set; its files can still have valid integrity. New references require a new edit/review before deciding visual acceptance.
+
 ## Build, inspect, revise
 
 Write a normal Blender Python script using `bpy`. The worker executes it inside Blender; no RefAs geometry DSL, capability graph, or manually authored evidence JSON is required. Use meaningful object names and a scene organization that makes the next local edit clear.
@@ -49,7 +57,7 @@ The first run starts from an empty scene, including no World datablock. Create a
 python3 scripts/produce.py run --root PROJECT --script EDIT_SCRIPT --intent "adjust the headband pad while preserving the earcups" --views hero,side --size 384 --samples 8 --timeout 120
 ```
 
-Use `--input-blend PATH` to import a separately saved manual edit. An edit script should modify the existing scene rather than recreate unrelated objects. The worker provides `bpy` and the absolute `REFAS_OUTPUT_DIR` to scripts; the production runner manages the native scene, GLB export, requested renders, and revision metadata. Use `--expected-revision REVISION_ID` when an edit must start from the exact revision you inspected.
+Use Blender's Save As to create a separate manual edit, then import it with `--input-blend PATH`. Files returned by `status` are immutable revision files. An edit script should modify the existing scene rather than recreate unrelated objects. The worker provides `bpy` and the absolute `REFAS_OUTPUT_DIR` to scripts; the production runner manages the native scene, GLB export, requested renders, and revision metadata. Use `--expected-revision REVISION_ID --expected-sequence SEQUENCE` to require the revision and reference state you inspected.
 
 1. **Construct the whole.** Resolve silhouette, proportions, thickness, negative space, and component relationships. For a character, establish face and body identity before clothing detail or accessories.
 2. **Inspect real output.** Open the rendered images and compare them with the original reference. Choose views that reveal the current question: a side view for depth, a close view for a face, or a material-aware view for appearance. Use enough views to expose hidden defects; no fixed eight-view pack is required for every edit.
@@ -60,6 +68,8 @@ Use `--input-blend PATH` to import a separately saved manual edit. An edit scrip
 Preserve UVs, materials, rigs, weights, shape keys, and object identity during local edits when the asset contains them. Inspect affected geometry and deformation, not only object counts. Saved fingerprints are change observations and can help locate unexpected edits; they do not prove deformation quality or game readiness.
 
 For before/after comparison, keep the camera and lighting fixed. Pass `--review-spec REVIEW_JSON` to capture explicit orthographic views and a fixed light rig with the revision; omit `--views` to render all views in that file. Read `references/production-review.md` when defining those views. The default views frame the current bounding box and can move when geometry changes. Neither route establishes registration to the source image.
+
+Each `run` explicitly adopts its native input, script and supplied render/review options and records fresh outputs together. Pass the desired options on each run; prior options are not implicit defaults. External originals can change without altering their captured historical copies.
 
 The current export scope uses visible meshes and packed still-image textures. Convert curves or text to meshes and realize object instances, including Geometry Nodes instances, first; inspection rejects unsupported object scopes instead of silently dropping them. Static mesh modifiers stay editable in the native scene and are evaluated for GLB export. Match each modifier's viewport/render visibility and enabled subdivision levels, or apply the intended geometry: inventory and export use the viewport dependency graph, while Cycles uses render settings. This alpha rejects hidden/excluded meshes and unapplied non-armature modifiers on skinned or shape-key meshes; resolve those explicit limitations before submission. Dirty packed textures are refreshed before the native save.
 
@@ -72,7 +82,7 @@ python3 scripts/produce.py verify --root PROJECT
 python3 scripts/produce.py restore --root PROJECT --revision REVISION_ID
 ```
 
-Use `verify` to check the recorded project artifacts, and inspect `status` after recovery. Restore publishes the selected prior bundle as a new revision and retains history. File hashes show which bytes were saved; they do not judge resemblance, topology quality, or usability in a game engine. If the project reports missing or changed artifacts, resolve that condition before building on them.
+Use `verify` to check the recorded project artifacts, and inspect `status` after recovery. Restore publishes the selected prior bundle as a new revision and retains history and the currently active references. A restored bundle can therefore be `stale`; restore does not silently re-adopt its old references. Add `--expected-revision` and `--expected-sequence` to protect a planned restore from concurrent changes. File hashes show which bytes were saved; they do not judge resemblance, topology quality, or usability in a game engine. If the project reports missing or changed artifacts, resolve that condition before building on them.
 
 Do not hide an unavailable Blender backend by generating a substitute preview and calling the run successful. Explain the concrete execution failure, retain the prior usable revision, and repair the toolchain or script.
 

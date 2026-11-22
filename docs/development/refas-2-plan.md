@@ -4,6 +4,12 @@ Status: development alpha. This document describes the accepted direction and th
 
 Work OS plan: <https://app.notion.com/p/41fc6a3b5bf181c2b2cdfac4605ef7d7>.
 
+Report progress using the fixed [Notion acceptance checklist](refas-2-progress.md)
+and its [machine-readable record](refas-2-progress.json). Count verified criteria,
+show the denominator and open items, and keep visual acceptance, task review
+status and release status separate. Broader optional profiles below are not
+implicitly complete when this first-application checklist advances.
+
 ## Product outcome
 
 An agent can start from visual references, create a credible editable asset, inspect real output, make a local correction, and continue the same native project in a later session. The deliverable is the asset and its useful source material. Tools record enough state to make edits recoverable and reviews traceable.
@@ -44,13 +50,22 @@ The initial production command is `python3 skills/refas/scripts/produce.py` in a
 |---|---|
 | `doctor` | Report the Python/Blender environment before authoring. |
 | `init --root DIR --name NAME [--reference FILE ...]` | Create a production project and retain reference copies. |
+| `references --root DIR --reference FILE ... --expected-sequence N` | Adopt the complete active reference set while retaining all model/source history; use `--clear` for an empty set. |
 | `run --root DIR --script FILE --intent TEXT` | Execute a Blender script and record the native scene, GLB, renders, script, and metadata as a revision. |
 | `run ... --input-blend FILE` | Import a separately saved native edit; ordinary runs reopen the current revision automatically. |
-| `status --root DIR` | Expose the current revision, its artifacts, and recorded work. |
-| `verify --root DIR` | Verify project artifact bindings and report missing or changed files. |
-| `restore --root DIR --revision ID` | Publish a verified previous bundle as a new revision while retaining history. |
+| `status --root DIR` | Expose one coherent revision snapshot, artifacts, inputs, sequence and reference freshness. |
+| `verify --root DIR` | Verify recorded file integrity and separately report current/stale/no-revision evidence. |
+| `restore --root DIR --revision ID` | Publish an exact previous bundle as a new revision while retaining history and the active reference set. |
 
 Rendering flags include `--views`, `--size`, `--samples`, `--timeout`, and optional `--review-spec` for captured fixed cameras and lighting. The runner owns publication of the current revision; failure, stale inputs, or missing outputs must not replace the previous usable state. Successful publication records an execution result, not human visual approval.
+
+Reference freshness compares captured content sets, independent of file names,
+duplicates and order. The required reference-update sequence prevents stale
+updates even when the native head is unchanged. `run` and `restore` also accept
+`--expected-sequence` alongside `--expected-revision`. Native, script and review/
+render changes enter through an explicit `run`, which captures new inputs and
+publishes their outputs together. Historical copies remain independent of
+external files. No external filesystem watcher is implied.
 
 The Blender worker accepts a regular trusted Python script and exposes `bpy` plus `REFAS_OUTPUT_DIR`. It handles export and requested captures, so agents do not have to hand-author evidence JSON. It is not a sandbox for untrusted code.
 
@@ -59,6 +74,12 @@ The Blender worker accepts a regular trusted Python script and exposes `bpy` plu
 The repository example under `examples/production-workflow/` builds an original static headset and then adjusts its headband comfort pad in the saved scene. Meaningful object names make the edit target explicit. Compare the before/after renders and relevant scene observations to demonstrate that earcups and other protected parts survive.
 
 This fixture proves the native authoring/edit/recovery path. It is not evidence that an arbitrary source image can already be reconstructed faithfully, nor is it a completed rigged-character or target-engine test.
+
+The [reference-refresh demonstration](../../examples/reference-refresh/README.md)
+exercises a changed reference set, a separate native Save As edit, changed
+script/review/render inputs, coherent restarted reads and exact restore through
+the public CLI. Its [evidence record](evidence/reference-freshness/README.md)
+separates transaction probes from actual Blender and extracted-package runs.
 
 ### Required evidence for this slice
 

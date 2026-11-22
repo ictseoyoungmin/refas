@@ -1,0 +1,90 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> refas@1.4.2 dogfood
+> node examples/wing-cover/run.mjs
+
+{
+  "status": "PASS",
+  "manifest": "/workspace/scratch/c52cb753f160/refas/examples/wing-cover/output/project/source/source-manifest.json",
+  "sourceSha256": "6076b27fadfcb1a929b306ce74d6b7ef22d1d8996102065df6a74012e3466148"
+}
+{
+  "status": "PASS",
+  "claimScope": "derived-observation-aid-only",
+  "manifest": "/workspace/scratch/c52cb753f160/refas/examples/wing-cover/output/project/evidence/whole/derived/manifest.json",
+  "sources": 1,
+  "views": 1,
+  "derivedFiles": 1,
+  "board": "/workspace/scratch/c52cb753f160/refas/examples/wing-cover/output/project/evidence/whole/derived/snapshots/204c4ac2edfef7b83beff44b/observation-board.png"
+}
+{
+  "status": "PASS",
+  "claimScope": "derived-observation-aid-only",
+  "manifest": "/workspace/scratch/c52cb753f160/refas/examples/wing-cover/output/project/evidence/cover/derived/manifest.json",
+  "sources": 1,
+  "views": 1,
+  "derivedFiles": 1,
+  "board": "/workspace/scratch/c52cb753f160/refas/examples/wing-cover/output/project/evidence/cover/derived/snapshots/50bc49703c29a446fdfdf9de/observation-board.png"
+}
+{
+  "status": "PASS",
+  "claimScope": "derived-observation-aid-only",
+  "manifest": "/workspace/scratch/c52cb753f160/refas/examples/wing-cover/output/project/evidence/fastener/derived/manifest.json",
+  "sources": 1,
+  "views": 1,
+  "derivedFiles": 2,
+  "board": "/workspace/scratch/c52cb753f160/refas/examples/wing-cover/output/project/evidence/fastener/derived/snapshots/158ead9bf82721c6c5dc0f29/observation-board.png"
+}
+{
+  "status": "PASS",
+  "claimScope": "render-integrity-only",
+  "report": "/workspace/scratch/c52cb753f160/refas/examples/wing-cover/output/project/renders/assembly-baseline/render-report.json",
+  "board": "/workspace/scratch/c52cb753f160/refas/examples/wing-cover/output/project/renders/assembly-baseline/multiview-review-board.png",
+  "triangles": 38354
+}
+{
+  "status": "PASS",
+  "claimScope": "render-integrity-only",
+  "report": "/workspace/scratch/c52cb753f160/refas/examples/wing-cover/output/project/renders/assembly-candidate/render-report.json",
+  "board": "/workspace/scratch/c52cb753f160/refas/examples/wing-cover/output/project/renders/assembly-candidate/multiview-review-board.png",
+  "triangles": 38242
+}
+{
+  "status": "PASS",
+  "claimScope": "render-integrity-only",
+  "report": "/workspace/scratch/c52cb753f160/refas/examples/wing-cover/output/project/renders/final/render-report.json",
+  "board": "/workspace/scratch/c52cb753f160/refas/examples/wing-cover/output/project/renders/final/multiview-review-board.png",
+  "triangles": 38354
+}
+{
+  "status": "PASS",
+  "report": "/workspace/scratch/c52cb753f160/refas/examples/wing-cover/output/project/reviews/registered-comparison/comparison-report.json",
+  "comparisonDigest": "a5048a77ba88c7ebd277fd00b04c5eb232affb9bd4dd239dc2953f2481ca2914",
+  "scopes": 4,
+  "projectionEvidenceRequired": false,
+  "projectionEvidenceScopes": 0
+}
+{
+  "status": "PASS",
+  "report": "/workspace/scratch/c52cb753f160/refas/examples/wing-cover/output/project/reviews/registered-comparison-negative/shifted-scaled/comparison/comparison-report.json",
+  "comparisonDigest": "184828c74addd7bfd92e347890e41e1055ce2102bec65e00bdec9049c80ad8c5",
+  "scopes": 4,
+  "projectionEvidenceRequired": false,
+  "projectionEvidenceScopes": 0
+}
+{
+  "status": "PASS",
+  "report": "/workspace/scratch/c52cb753f160/refas/examples/wing-cover/output/project/reviews/registered-comparison-negative/better-global-worse-local/comparison/comparison-report.json",
+  "comparisonDigest": "a4c9fa0ffb273845abe38b72378e693feeca30fd849f2bf72cfe7d8f9345bf35",
+  "scopes": 4,
+  "projectionEvidenceRequired": false,
+  "projectionEvidenceScopes": 0
+}
+{
+  "status": "PASS",
+  "summary": "examples/wing-cover/output/dogfood-summary.json",
+  "project": "examples/wing-cover/output/project",
+  "asset": "examples/wing-cover/output/project/assets/wing-cover.glb",
+  "reviewBoard": "examples/wing-cover/output/project/renders/final/multiview-review-board.png",
+  "checkpoints": 11
+}

@@ -63,6 +63,257 @@ class ProductionProjectTests(unittest.TestCase):
         project.atomic_json(path, spec)
         return path, spec
 
+    def replace_references(self, references=None, **kwargs):
+        kwargs.setdefault("expected_sequence", project.load_project(self.root)["sequence"])
+        return project.replace_references(self.root, references, **kwargs)
+
+    def second_reference(self):
+        path = self.folder / "reference-b.png"
+        path.write_bytes(b"different-reference-content")
+        return path
+
+    def test_legacy_project_freshness_is_derived_without_rewriting_history(self):
+        # The existing v2 layout has sources/001-name and no freshness fields.
+        first = self.run_edit()
+        meta = self.root / project.STATE_DIR
+        recorded = {path: path.read_bytes() for path in [meta / "project.json",
+                    meta / "revisions" / first["head"] / "revision.json"]}
+        self.assertNotIn("evidenceFreshness", project.load_project(self.root))
+        self.assertEqual(project.load_revision(self.root)["sources"][0]["path"], "sources/001-reference.png")
+        for result in (project.status(self.root), project.verify_project(self.root)):
+            self.assertTrue(result["ok"])
+            self.assertEqual(result["evidenceFreshness"]["status"], "current")
+            self.assertEqual(result["evidenceFreshness"]["scope"], "active-reference-content-set")
+            self.assertEqual(result["evidenceFreshness"]["visualAcceptance"], "not-evaluated")
+        for path, original in recorded.items():
+            self.assertEqual(path.read_bytes(), original)
+
+    def test_reference_replacement_marks_intact_evidence_stale_and_clear_is_explicit(self):
+        first = self.run_edit()
+        old = project.load_project(self.root)
+        old_bundle = project.inventory(self.root / project.STATE_DIR / "revisions" / first["head"])
+        replacement = self.second_reference()
+        changed = self.replace_references([replacement], expected_revision=first["head"])
+        self.assertTrue(changed["referencesChanged"])
+        self.assertEqual(changed["head"], first["head"])
+        self.assertEqual(changed["sequence"], first["sequence"] + 1)
+        self.assertEqual(project.inventory(self.root / project.STATE_DIR / "revisions" / first["head"]), old_bundle)
+        copied = self.root / project.STATE_DIR / changed["sources"][0]["path"]
+        self.assertEqual(copied.read_bytes(), replacement.read_bytes())
+        replacement.unlink()
+        self.assertEqual(changed["evidenceFreshness"]["status"], "stale")
+        verified = project.verify_project(self.root)
+        self.assertTrue(verified["ok"])
+        self.assertEqual(verified["scope"], "recorded-file-integrity")
+        self.assertEqual(verified["evidenceFreshness"]["status"], "stale")
+        self.assertEqual(verified["referenceResemblance"], "not-evaluated")
+        for source in old["sources"]:
+            project.check_inventory(self.root / project.STATE_DIR, [source], exact=False)
+        before = (self.root / project.STATE_DIR / "project.json").read_bytes()
+        for references in (None, []):
+            with self.subTest(references=references), self.assertRaisesRegex(project.ProductionError, "reference|clear"):
+                self.replace_references(references)
+        self.assertEqual((self.root / project.STATE_DIR / "project.json").read_bytes(), before)
+        cleared = self.replace_references(clear=True)
+        self.assertEqual(cleared["sources"], [])
+        self.assertEqual(cleared["evidenceFreshness"]["status"], "stale")
+        self.assertTrue(project.verify_project(self.root)["ok"])
+
+    def test_reference_content_set_ignores_duplicate_paths_names_and_order(self):
+        second = self.second_reference()
+        self.replace_references([self.reference, second])
+        first = self.run_edit()
+        alias = self.folder / "same-content-other-name.png"
+        shutil.copy2(self.reference, alias)
+        meta = self.root / project.STATE_DIR
+        before = (meta / "project.json").read_bytes()
+        original_sources = project.inventory(meta / "sources")
+        for references in ([second, alias, alias], [self.reference, second], [alias, second, self.reference]):
+            result = self.replace_references(references)
+            self.assertFalse(result["referencesChanged"])
+            self.assertEqual(result["sequence"], first["sequence"])
+            self.assertEqual(result["evidenceFreshness"]["status"], "current")
+            self.assertEqual((meta / "project.json").read_bytes(), before)
+            self.assertEqual(project.inventory(meta / "sources"), original_sources)
+
+    def test_restore_preserves_active_references_and_exact_historical_inputs_and_artifacts(self):
+        review, _ = self.review_file()
+        first = self.run_edit(review_spec=review)
+        meta = self.root / project.STATE_DIR
+        original = project.load_revision(self.root)
+        changed = self.replace_references([self.second_reference()])
+        second = self.run_edit(views=["top"])
+        restored = project.restore(self.root, first["head"], second["head"], second["sequence"])
+        restored_revision = project.load_revision(self.root)
+        self.assertEqual(restored["sources"], changed["sources"])
+        self.assertEqual(restored_revision["sources"], original["sources"])
+        self.assertEqual(restored["evidenceFreshness"]["status"], "stale")
+        for folder in ("inputs", "artifacts"):
+            self.assertEqual(project.inventory(meta / "revisions" / restored["head"] / folder),
+                             project.inventory(meta / "revisions" / first["head"] / folder))
+        self.assertTrue(project.verify_project(self.root)["ok"])
+
+    def test_historical_reference_tamper_is_rejected_before_restore_publication(self):
+        first = self.run_edit()
+        historical_source = first["sources"][0]
+        self.replace_references([self.second_reference()])
+        self.run_edit()
+        meta = self.root / project.STATE_DIR
+        (meta / historical_source["path"]).write_bytes(b"tampered historical source")
+        self.assertTrue(project.verify_project(self.root)["ok"])
+        before = (meta / "project.json").read_bytes()
+        with self.assertRaisesRegex(project.ProductionError, "artifact changed"):
+            project.restore(self.root, first["head"])
+        self.assertEqual((meta / "project.json").read_bytes(), before)
+
+    def test_reference_copy_and_publication_failure_roll_back_state_and_copies(self):
+        first = self.run_edit()
+        meta = self.root / project.STATE_DIR
+        before = (meta / "project.json").read_bytes()
+        original_sources = project.inventory(meta / "sources")
+        replacement = self.second_reference()
+        real_atomic = project.atomic_json
+        def broken_pointer(path, value):
+            if Path(path) == meta / "project.json":
+                raise OSError("reference publication failure")
+            return real_atomic(path, value)
+        def broken_copy(source, target, *args, **kwargs):
+            Path(target).write_bytes(b"partial copy")
+            raise OSError("reference copy failure")
+        for operation, failure in (("copy2", broken_copy), ("atomic_json", broken_pointer)):
+            target = project.shutil if operation == "copy2" else project
+            with self.subTest(operation=operation), mock.patch.object(target, operation, side_effect=failure):
+                with self.assertRaisesRegex(OSError, "reference .* failure"):
+                    self.replace_references([replacement])
+            self.assertEqual((meta / "project.json").read_bytes(), before)
+            self.assertEqual(project.inventory(meta / "sources"), original_sources)
+            self.assertEqual(project.status(self.root)["head"], first["head"])
+
+    def test_reference_response_validation_failure_precedes_publication(self):
+        first = self.run_edit()
+        self.run_edit()
+        meta = self.root / project.STATE_DIR
+        before = (meta / "project.json").read_bytes()
+        original_sources = project.inventory(meta / "sources")
+        historic = meta / "revisions" / first["head"] / "revision.json"
+        historic.write_text("damaged historical manifest", encoding="utf-8")
+        # The current bundle remains intact, but status also needs history metadata.
+        self.assertTrue(project.verify_project(self.root)["ok"])
+        with self.assertRaisesRegex(project.ProductionError, "manifest changed"):
+            self.replace_references([self.second_reference()])
+        self.assertEqual((meta / "project.json").read_bytes(), before)
+        self.assertEqual(project.inventory(meta / "sources"), original_sources)
+
+    def test_expected_sequence_is_validated_before_work(self):
+        first = self.run_edit()
+        replacement = self.second_reference()
+        self.replace_references([replacement])
+        before = (self.root / project.STATE_DIR / "project.json").read_bytes()
+        # HEAD is unchanged, so the sequence lease catches a newer reference intent.
+        with mock.patch.object(project.shutil, "copy2") as copy, mock.patch.object(project, "_execute") as worker:
+            for sequence in (None, True, -1, "2", first["sequence"]):
+                with self.subTest(sequence=sequence), self.assertRaisesRegex(project.ProductionError, "expected sequence"):
+                    project.replace_references(self.root, [self.reference], expected_sequence=sequence)
+            with self.assertRaisesRegex(project.ProductionError, "expected sequence"):
+                self.run_edit(expected_revision=first["head"], expected_sequence=first["sequence"])
+            with self.assertRaisesRegex(project.ProductionError, "expected sequence"):
+                project.restore(self.root, first["head"], first["head"], first["sequence"])
+            copy.assert_not_called()
+            worker.assert_not_called()
+        self.assertEqual((self.root / project.STATE_DIR / "project.json").read_bytes(), before)
+
+    def test_reference_update_during_run_invalidates_lease_even_when_content_returns(self):
+        first = self.run_edit()
+        replacement = self.second_reference()
+        for back_to_original in (False, True):
+            with self.subTest(back_to_original=back_to_original):
+                self.replace_references([self.reference])
+                base = project.load_project(self.root)
+                def update_during_work(*args):
+                    elapsed = fake_worker(*args)
+                    self.replace_references([replacement])
+                    if back_to_original:
+                        self.replace_references([self.reference])
+                    return elapsed
+                with self.assertRaisesRegex(project.ProductionError, "project changed"):
+                    project.run_edit(self.root, self.script, "candidate with old references",
+                                     executor=update_during_work, expected_sequence=base["sequence"])
+                latest = project.status(self.root)
+                self.assertEqual(latest["head"], first["head"])
+                self.assertGreater(latest["sequence"], base["sequence"])
+                self.assertEqual(len(latest["revisions"]), 1)
+                self.assertEqual(latest["evidenceFreshness"]["status"], "current" if back_to_original else "stale")
+                for run in latest["incompleteRuns"]:
+                    self.assertEqual(run["status"], "failed")
+                    self.assertTrue((self.root / project.STATE_DIR / "runs" / run["id"] / "artifacts" / "scene.blend").is_file())
+
+    def test_status_and_verify_pin_revision_and_freshness_to_one_state_snapshot(self):
+        second = self.second_reference()
+        for reader_name in ("status", "verify_project"):
+            for existing_head in (False, True):
+                with self.subTest(reader=reader_name, existing_head=existing_head):
+                    root = self.folder / (reader_name + str(existing_head))
+                    project.initialize(root, "snapshot", [self.reference])
+                    if existing_head:
+                        project.run_edit(root, self.script, "first", executor=fake_worker)
+                    before = project.status(root)
+                    real_load = project.load_project
+                    advanced = {}
+                    once = False
+                    def publish_after_read(candidate_root):
+                        nonlocal once
+                        captured = real_load(candidate_root)
+                        if not once:
+                            once = True
+                            project.replace_references(root, [second], expected_sequence=captured["sequence"])
+                            advanced.update(project.run_edit(root, self.script, "new source and view",
+                                                             views=["top"], executor=fake_worker))
+                        return captured
+                    with mock.patch.object(project, "load_project", side_effect=publish_after_read):
+                        observed = getattr(project, reader_name)(root)
+                    self.assertEqual(observed["head"], before["head"])
+                    self.assertEqual(observed["evidenceFreshness"], before["evidenceFreshness"])
+                    if reader_name == "status":
+                        for key in ("outputs", "observations", "inputs", "revisions", "sources", "sequence"):
+                            self.assertEqual(observed[key], before[key])
+                        for item in observed["observations"]:
+                            self.assertTrue(Path(item["path"]).is_file())
+                    else:
+                        self.assertEqual(observed["artifactCount"], 6 if existing_head else 0)
+                    self.assertEqual(project.status(root)["head"], advanced["head"])
+
+    def test_edit_uses_native_input_from_its_declared_snapshot(self):
+        first = self.run_edit()
+        real_load = project.load_project
+        once = False
+        advanced = {}
+        captured_base = []
+        def renamed_output(*args):
+            elapsed = fake_worker(*args)
+            out = Path(project.read_json(args[0][-1])["outputDir"])
+            (out / "scene.blend").rename(out / "newer.blend")
+            result = project.read_json(out / "result.json")
+            result["outputs"]["blend"] = "newer.blend"
+            project.atomic_json(out / "result.json", result)
+            return elapsed
+        def publish_after_read(candidate_root):
+            nonlocal once
+            captured = real_load(candidate_root)
+            if not once:
+                once = True
+                self.script.write_text("# new native content\n", encoding="utf-8")
+                advanced.update(project.run_edit(self.root, self.script, "new native file",
+                                                  views=["top"], executor=renamed_output))
+            return captured
+        def record_base(command, cwd, log_file, timeout):
+            captured_base.append(Path(project.read_json(command[-1])["baseBlend"]).read_bytes())
+            return fake_worker(command, cwd, log_file, timeout)
+        with mock.patch.object(project, "load_project", side_effect=publish_after_read):
+            with self.assertRaisesRegex(project.ProductionError, "project changed"):
+                project.run_edit(self.root, self.script, "stale declared base", executor=record_base)
+        self.assertEqual(captured_base, [Path(first["outputs"]["blend"]).read_bytes()])
+        self.assertEqual(project.status(self.root)["head"], advanced["head"])
+
     def test_review_spec_is_captured_and_restored_with_revision(self):
         path, spec = self.review_file()
         first = self.run_edit(review_spec=path)
@@ -293,6 +544,33 @@ class ProductionProjectTests(unittest.TestCase):
                                  "--name", "isolated"], cwd=self.folder, capture_output=True, text=True)
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(json.loads(result.stdout)["name"], "isolated")
+        cli = [sys.executable, "-B", str(copied / "produce.py")]
+        def invoke(*arguments):
+            return subprocess.run(cli + list(arguments), cwd=self.folder, capture_output=True, text=True)
+        invalid = [[], ["--reference", str(self.reference)], ["--expected-sequence", "0"],
+                   ["--expected-sequence", "0", "--reference", str(self.reference), "--clear"]]
+        for flags in invalid:
+            result = invoke("references", "--root", str(other), *flags)
+            self.assertNotEqual(result.returncode, 0, result.stdout)
+            self.assertEqual(project.load_project(other)["sequence"], 0)
+        result = invoke("references", "--root", str(other), "--reference", str(self.reference),
+                        "--reference", str(self.reference), "--expected-sequence", "0", "--expected-revision", "none")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        adopted = json.loads(result.stdout)
+        self.assertTrue(adopted["referencesChanged"])
+        self.assertEqual(adopted["sequence"], 1)
+        self.assertEqual(len(adopted["sources"]), 1)
+        self.assertEqual(adopted["evidenceFreshness"]["status"], "no-revision")
+        result = invoke("references", "--root", str(other), "--clear", "--expected-sequence", "0")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("expected sequence", json.loads(result.stderr)["error"])
+        result = invoke("references", "--root", str(other), "--clear", "--expected-sequence", "1")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(json.loads(result.stdout)["sources"], [])
+        self.assertEqual(json.loads(result.stdout)["sequence"], 2)
+        result = invoke("verify", "--root", str(other))
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(json.loads(result.stdout)["evidenceFreshness"]["status"], "no-revision")
 
 
 if __name__ == "__main__":

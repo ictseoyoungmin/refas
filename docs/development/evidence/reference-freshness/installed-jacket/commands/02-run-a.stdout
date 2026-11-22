@@ -1,0 +1,223 @@
+{
+  "ok": true,
+  "schema": "refas.production.project/v2",
+  "name": "reference-refresh",
+  "projectId": "c10583ea89844229a739759ec487d3be",
+  "head": "964c33e53195403cb5c89b09fa699312",
+  "sequence": 1,
+  "sources": [
+    {
+      "path": "sources/001-reference.png",
+      "name": "reference.png",
+      "role": "user-reference",
+      "sha256": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5",
+      "bytes": 2666378
+    }
+  ],
+  "outputs": {
+    "blend": "/workspace/scratch/c52cb753f160/next-jacket-refresh/project/.refas2/revisions/964c33e53195403cb5c89b09fa699312/artifacts/scene.blend",
+    "glb": "/workspace/scratch/c52cb753f160/next-jacket-refresh/project/.refas2/revisions/964c33e53195403cb5c89b09fa699312/artifacts/asset.glb",
+    "scene": "/workspace/scratch/c52cb753f160/next-jacket-refresh/project/.refas2/revisions/964c33e53195403cb5c89b09fa699312/artifacts/scene.json"
+  },
+  "observations": [
+    {
+      "camera": {
+        "matrixWorld": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            -1.6e-07,
+            -1.0,
+            -2.0
+          ],
+          [
+            0.0,
+            1.0,
+            -1.6e-07,
+            0.15000001
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "orthoScale": 0.83999997,
+        "position": [
+          0.0,
+          -2.0,
+          0.15000001
+        ],
+        "projection": "orthographic",
+        "target": [
+          0.0,
+          0.0,
+          0.15000001
+        ]
+      },
+      "framing": "fixed-review-spec",
+      "lighting": {
+        "center": [
+          0.0,
+          0.0,
+          0.18000001
+        ],
+        "radius": 0.48,
+        "rig": "three-area-lights/v1"
+      },
+      "path": "/workspace/scratch/c52cb753f160/next-jacket-refresh/project/.refas2/revisions/964c33e53195403cb5c89b09fa699312/artifacts/view-front.png",
+      "referenceRegion": {
+        "regionPixels": [
+          6,
+          47,
+          380,
+          399
+        ],
+        "sourceSha256": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5"
+      },
+      "registration": "unregistered",
+      "renderer": {
+        "denoising": false,
+        "device": "CPU",
+        "engine": "CYCLES",
+        "samples": 4,
+        "size": [
+          192,
+          192
+        ],
+        "transparent": true,
+        "viewTransform": "AgX",
+        "worldColor": [
+          0.80000001,
+          0.82999998,
+          0.88
+        ],
+        "worldStrength": 0.45
+      },
+      "sha256": "adae6d07f36ba815f211b39a7612d46a549b926fb4bba622ba84abf8b314dcc1",
+      "sourceSceneFingerprint": "6cc442a0602709198f76d67948498b94d2da7f6e53f499ed59c69d332741ebfa",
+      "view": "front"
+    },
+    {
+      "camera": {
+        "matrixWorld": [
+          [
+            0.70710683,
+            -7e-08,
+            0.70710677,
+            1.41421366
+          ],
+          [
+            0.70710677,
+            -1.4e-07,
+            -0.70710683,
+            -1.41421366
+          ],
+          [
+            1.5e-07,
+            1.0,
+            -4e-08,
+            0.15000001
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "orthoScale": 0.83999997,
+        "position": [
+          1.41421366,
+          -1.41421366,
+          0.15000001
+        ],
+        "projection": "orthographic",
+        "target": [
+          0.0,
+          0.0,
+          0.15000001
+        ]
+      },
+      "framing": "fixed-review-spec",
+      "lighting": {
+        "center": [
+          0.0,
+          0.0,
+          0.18000001
+        ],
+        "radius": 0.48,
+        "rig": "three-area-lights/v1"
+      },
+      "path": "/workspace/scratch/c52cb753f160/next-jacket-refresh/project/.refas2/revisions/964c33e53195403cb5c89b09fa699312/artifacts/view-front-three-quarter.png",
+      "referenceRegion": {
+        "regionPixels": [
+          383,
+          47,
+          655,
+          399
+        ],
+        "sourceSha256": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5"
+      },
+      "registration": "unregistered",
+      "renderer": {
+        "denoising": false,
+        "device": "CPU",
+        "engine": "CYCLES",
+        "samples": 4,
+        "size": [
+          192,
+          192
+        ],
+        "transparent": true,
+        "viewTransform": "AgX",
+        "worldColor": [
+          0.80000001,
+          0.82999998,
+          0.88
+        ],
+        "worldStrength": 0.45
+      },
+      "sha256": "843c2d6fc66a07feb293681d0bad2827dd83a00b2c786391e2466d9ca6e4986c",
+      "sourceSceneFingerprint": "6cc442a0602709198f76d67948498b94d2da7f6e53f499ed59c69d332741ebfa",
+      "view": "front-three-quarter"
+    }
+  ],
+  "inputs": {
+    "base.blend": "/workspace/scratch/c52cb753f160/next-jacket-refresh/project/.refas2/revisions/964c33e53195403cb5c89b09fa699312/inputs/base.blend",
+    "edit.py": "/workspace/scratch/c52cb753f160/next-jacket-refresh/project/.refas2/revisions/964c33e53195403cb5c89b09fa699312/inputs/edit.py",
+    "review.json": "/workspace/scratch/c52cb753f160/next-jacket-refresh/project/.refas2/revisions/964c33e53195403cb5c89b09fa699312/inputs/review.json"
+  },
+  "revisions": [
+    {
+      "id": "964c33e53195403cb5c89b09fa699312",
+      "intent": "Capture the original native asset and its current references",
+      "createdAt": "2026-11-22T10:39:10.572986+00:00",
+      "parent": null
+    }
+  ],
+  "incompleteRuns": [],
+  "evidenceFreshness": {
+    "status": "current",
+    "scope": "active-reference-content-set",
+    "revision": "964c33e53195403cb5c89b09fa699312",
+    "activeSourceSha256": [
+      "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5"
+    ],
+    "revisionSourceSha256": [
+      "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5"
+    ],
+    "visualAcceptance": "not-evaluated"
+  },
+  "referenceResemblance": "not-evaluated",
+  "gameReadiness": "not-evaluated",
+  "runId": "91b9a06ceec845f8bb1a68aa58bd1cd5",
+  "publishedRevision": "964c33e53195403cb5c89b09fa699312",
+  "elapsedSeconds": 6.246
+}

@@ -1,0 +1,131 @@
+{
+  "schema": "refas.verification-record/v1",
+  "date": "2026-11-22",
+  "timezone": "Asia/Seoul",
+  "recordedAt": "2026-11-22T10:42:06.483124+00:00",
+  "baseCommit": "3217b46ee3670f2bc8acc1eff320981a539ce70c",
+  "environment": {
+    "python": "3.12.14",
+    "blender": "Blender 4.3.2",
+    "node": "v24.22.3"
+  },
+  "checks": [
+    {
+      "command": "npm test",
+      "returncode": 0,
+      "log": "javascript.log",
+      "result": {
+        "passed": 931,
+        "failed": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "command": "REFAS_BLENDER_TESTS=1 PYTHONDONTWRITEBYTECODE=1 python3 -B -m unittest discover -s tests -p test_production*.py",
+      "returncode": 0,
+      "log": "production-blender.log",
+      "result": {
+        "passed": 49,
+        "projectAndCli": 34,
+        "actualBlender": 15,
+        "skipped": 0
+      }
+    },
+    {
+      "command": "npm run test:python",
+      "returncode": 0,
+      "log": "python-syntax.log"
+    },
+    {
+      "command": "npm run check",
+      "returncode": 0,
+      "log": "repository.log"
+    },
+    {
+      "command": "npm run dogfood",
+      "returncode": 0,
+      "log": "legacy-dogfood.log",
+      "result": {
+        "checkpoints": 11
+      }
+    },
+    {
+      "command": "npm run release:audit",
+      "returncode": 0,
+      "log": "release-audit.log",
+      "result": {
+        "packagedFiles": 399,
+        "referenceLeaves": 43,
+        "routedTargets": 68
+      }
+    },
+    {
+      "command": "python3 /home/agent/.codex/plugins/cache/openai-curated-remote/work-skill-creator/0.1.2/skills/skill-creator/scripts/quick_validate.py skills/refas",
+      "returncode": 0,
+      "log": "skill-validation.log"
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": "skills/refas/SKILL.md",
+      "sha256": "5a6270ced6276e227913b46c65317c305b5d8e502be7d3ba79cc49acf320bb47"
+    },
+    {
+      "path": "skills/refas/references/production-review.md",
+      "sha256": "4ad42fc619213ec6503bd9253c225f10868b7e1cae022422ac9b37ff436779a7"
+    },
+    {
+      "path": "skills/refas/scripts/produce.py",
+      "sha256": "db21f4195109f1c2fcba592d145e6ab5456422385297e45af64a1329884ee1f1"
+    },
+    {
+      "path": "skills/refas/scripts/production/project.py",
+      "sha256": "986c29ccf594044a30221220a88bb2b4ad227d377db6e6959f8be3988d16f016"
+    },
+    {
+      "path": "skills/refas/scripts/production/blender_worker.py",
+      "sha256": "50541ecf88c0e931999d88fc8241238d6e8f10500b15735e2d5831ce6acc1614"
+    },
+    {
+      "path": "skills/refas/scripts/production/review.py",
+      "sha256": "0d4a3cfea62d7140ad923c18ece4cdd2728e90d2b056a4cad80c4dd42282265a"
+    },
+    {
+      "path": "tests/test_production_project.py",
+      "sha256": "6ada16ab65135a0ad4d6aac1d53ff90312182c7c2e9d7626cf5fd77778a806f7"
+    },
+    {
+      "path": "tests/test_production_blender.py",
+      "sha256": "6a4cdda1e9174cb3d7929cf6e10633ba381446dad628325518949fe8e4f09216"
+    },
+    {
+      "path": "examples/reference-refresh/run.py",
+      "sha256": "539e3a5839eebb0035fb0d00ef81b6653cbbd5572cb8bc771930efac87dcb9fd"
+    }
+  ],
+  "package": {
+    "parity": "package-parity.json",
+    "allFilesMatchRepository": true
+  },
+  "additionalPythonCompilation": {
+    "passed": true,
+    "paths": [
+      "examples/reference-refresh/run.py",
+      "tests/test_production_blender.py",
+      "skills/refas/scripts/produce.py",
+      "skills/refas/scripts/production/project.py"
+    ]
+  },
+  "installedReplay": {
+    "result": "../installed-jacket/result.json",
+    "commands": 12,
+    "checks": 22,
+    "restoredFiles": 9,
+    "actualBlender": true
+  },
+  "boundaries": {
+    "remoteCi": "Report separately at the final published head; these records are local.",
+    "visualAcceptance": "not-evaluated in this runtime slice",
+    "release": "No release or main merge"
+  }
+}

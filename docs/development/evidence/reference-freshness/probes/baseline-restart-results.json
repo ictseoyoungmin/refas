@@ -1,0 +1,140 @@
+{
+  "repo": "/workspace/scratch/c52cb753f160/refas",
+  "revision": "3217b46ee3670f2bc8acc1eff320981a539ce70c",
+  "scope": "production state transaction behavior only; fake worker is not Blender or visual evidence",
+  "concurrentStatus": {
+    "classification": "reproducible coherent-read bug",
+    "root": "/workspace/scratch/c52cb753f160/next-workspace-audit/restart/cases-_0eizj89/status-read-race/project",
+    "firstHead": "e162ba34e4224e1a97be194c218f81eb",
+    "committedHead": "dc76847f35b44a048abac86e4769806b",
+    "racingStatus": {
+      "ok": true,
+      "schema": "refas.production.project/v2",
+      "name": "status-read-race",
+      "projectId": "84759609185441889ab8b4cb31f69149",
+      "head": "e162ba34e4224e1a97be194c218f81eb",
+      "sequence": 1,
+      "sources": [],
+      "outputs": {
+        "blend": "/workspace/scratch/c52cb753f160/next-workspace-audit/restart/cases-_0eizj89/status-read-race/project/.refas2/revisions/e162ba34e4224e1a97be194c218f81eb/artifacts/scene.blend",
+        "glb": "/workspace/scratch/c52cb753f160/next-workspace-audit/restart/cases-_0eizj89/status-read-race/project/.refas2/revisions/e162ba34e4224e1a97be194c218f81eb/artifacts/asset.glb",
+        "scene": "/workspace/scratch/c52cb753f160/next-workspace-audit/restart/cases-_0eizj89/status-read-race/project/.refas2/revisions/e162ba34e4224e1a97be194c218f81eb/artifacts/scene.json"
+      },
+      "observations": [
+        {
+          "view": "top",
+          "path": "/workspace/scratch/c52cb753f160/next-workspace-audit/restart/cases-_0eizj89/status-read-race/project/.refas2/revisions/e162ba34e4224e1a97be194c218f81eb/artifacts/top.png",
+          "registration": "unregistered"
+        }
+      ],
+      "inputs": {
+        "base.blend": "/workspace/scratch/c52cb753f160/next-workspace-audit/restart/cases-_0eizj89/status-read-race/project/.refas2/revisions/e162ba34e4224e1a97be194c218f81eb/inputs/base.blend",
+        "edit.py": "/workspace/scratch/c52cb753f160/next-workspace-audit/restart/cases-_0eizj89/status-read-race/project/.refas2/revisions/e162ba34e4224e1a97be194c218f81eb/inputs/edit.py"
+      },
+      "revisions": [
+        {
+          "id": "e162ba34e4224e1a97be194c218f81eb",
+          "intent": "create initial revision",
+          "createdAt": "2026-11-22T10:25:04.423278+00:00",
+          "parent": null
+        }
+      ],
+      "incompleteRuns": [],
+      "referenceResemblance": "not-evaluated",
+      "gameReadiness": "not-evaluated"
+    },
+    "missingPathsReturnedWithOkTrue": [
+      "/workspace/scratch/c52cb753f160/next-workspace-audit/restart/cases-_0eizj89/status-read-race/project/.refas2/revisions/e162ba34e4224e1a97be194c218f81eb/artifacts/top.png",
+      "/workspace/scratch/c52cb753f160/next-workspace-audit/restart/cases-_0eizj89/status-read-race/project/.refas2/revisions/e162ba34e4224e1a97be194c218f81eb/inputs/base.blend"
+    ],
+    "stableStatus": {
+      "ok": true,
+      "schema": "refas.production.project/v2",
+      "name": "status-read-race",
+      "projectId": "84759609185441889ab8b4cb31f69149",
+      "head": "dc76847f35b44a048abac86e4769806b",
+      "sequence": 2,
+      "sources": [],
+      "outputs": {
+        "blend": "/workspace/scratch/c52cb753f160/next-workspace-audit/restart/cases-_0eizj89/status-read-race/project/.refas2/revisions/dc76847f35b44a048abac86e4769806b/artifacts/scene.blend",
+        "glb": "/workspace/scratch/c52cb753f160/next-workspace-audit/restart/cases-_0eizj89/status-read-race/project/.refas2/revisions/dc76847f35b44a048abac86e4769806b/artifacts/asset.glb",
+        "scene": "/workspace/scratch/c52cb753f160/next-workspace-audit/restart/cases-_0eizj89/status-read-race/project/.refas2/revisions/dc76847f35b44a048abac86e4769806b/artifacts/scene.json"
+      },
+      "observations": [
+        {
+          "view": "top",
+          "path": "/workspace/scratch/c52cb753f160/next-workspace-audit/restart/cases-_0eizj89/status-read-race/project/.refas2/revisions/dc76847f35b44a048abac86e4769806b/artifacts/top.png",
+          "registration": "unregistered"
+        }
+      ],
+      "inputs": {
+        "base.blend": "/workspace/scratch/c52cb753f160/next-workspace-audit/restart/cases-_0eizj89/status-read-race/project/.refas2/revisions/dc76847f35b44a048abac86e4769806b/inputs/base.blend",
+        "edit.py": "/workspace/scratch/c52cb753f160/next-workspace-audit/restart/cases-_0eizj89/status-read-race/project/.refas2/revisions/dc76847f35b44a048abac86e4769806b/inputs/edit.py"
+      },
+      "revisions": [
+        {
+          "id": "e162ba34e4224e1a97be194c218f81eb",
+          "intent": "create initial revision",
+          "createdAt": "2026-11-22T10:25:04.423278+00:00",
+          "parent": null
+        },
+        {
+          "id": "dc76847f35b44a048abac86e4769806b",
+          "intent": "concurrent new capture",
+          "createdAt": "2026-11-22T10:25:04.444483+00:00",
+          "parent": "e162ba34e4224e1a97be194c218f81eb"
+        }
+      ],
+      "incompleteRuns": [],
+      "referenceResemblance": "not-evaluated",
+      "gameReadiness": "not-evaluated"
+    },
+    "historyIntegrityAfterRace": {
+      "ok": true,
+      "scope": "recorded-file-integrity",
+      "head": "dc76847f35b44a048abac86e4769806b",
+      "artifactCount": 5,
+      "referenceResemblance": "not-evaluated",
+      "gameReadiness": "not-evaluated"
+    }
+  },
+  "abandonedLock": {
+    "classification": "documented automatic stale-lock recovery limit",
+    "root": "/workspace/scratch/c52cb753f160/next-workspace-audit/restart/cases-_0eizj89/abandoned-publication-lock/project",
+    "abruptChildExit": 73,
+    "lock": {
+      "pid": 6,
+      "createdAt": "2026-11-22T10:25:04.536369+00:00"
+    },
+    "statusOkDespiteLock": true,
+    "statusFields": [
+      "gameReadiness",
+      "head",
+      "incompleteRuns",
+      "inputs",
+      "name",
+      "observations",
+      "ok",
+      "outputs",
+      "projectId",
+      "referenceResemblance",
+      "revisions",
+      "schema",
+      "sequence",
+      "sources"
+    ],
+    "verify": {
+      "ok": true,
+      "scope": "recorded-file-integrity",
+      "head": "780575a4b1604c1ca2cd60310a33638d",
+      "artifactCount": 6,
+      "referenceResemblance": "not-evaluated",
+      "gameReadiness": "not-evaluated"
+    },
+    "restoreError": "project publication is locked; inspect write.lock before recovery",
+    "headUnchanged": true,
+    "staleExpectedRevisionError": "expected revision is not current",
+    "staleExpectedRevisionWorkerCalls": 0,
+    "lockRetainedForInspection": "/workspace/scratch/c52cb753f160/next-workspace-audit/restart/cases-_0eizj89/abandoned-publication-lock/project/.refas2/write.lock"
+  }
+}

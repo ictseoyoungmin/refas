@@ -208,7 +208,19 @@ def load_revision(root, revision_id=None, verify=True):
     state = load_project(root)
     _, meta = _meta(root)
     revision_id = revision_id or state["head"]
-    if not revision_id:
+    return _load_revision(meta, state, revision_id, verify)
+
+
+def _check_sources(meta, sources):
+    if not isinstance(sources, list):
+        raise ProductionError("invalid captured source inventory")
+    for source in sources:
+        check_inventory(meta, [source], exact=False)
+
+
+def _load_revision(meta, state, revision_id, verify=True):
+    """Read only the declared snapshot; an explicit None never follows a newer HEAD."""
+    if revision_id is None:
         return None
     if revision_id not in state["revisionDigests"]:
         raise ProductionError("revision is not in the committed project history")
@@ -221,17 +233,36 @@ def load_revision(root, revision_id=None, verify=True):
     if verify:
         check_inventory(folder / "artifacts", revision.get("artifacts"))
         check_inventory(folder / "inputs", revision.get("inputs"))
+        _check_sources(meta, revision.get("sources"))
     return revision
+
+
+def _source_hashes(sources):
+    # References represent a content set, independent of names, order or aliases.
+    return sorted({source["sha256"] for source in sources})
+
+
+def _evidence_freshness(state, current):
+    active = _source_hashes(state["sources"])
+    captured = _source_hashes(current["sources"]) if current else []
+    return {"status": ("current" if active == captured else "stale") if current else "no-revision",
+            "scope": "active-reference-content-set", "revision": state["head"],
+            "activeSourceSha256": active, "revisionSourceSha256": captured,
+            "visualAcceptance": "not-evaluated"}
+
+
+def _verify_state(meta, state):
+    _check_sources(meta, state["sources"])
+    return _load_revision(meta, state, state["head"])
 
 
 def verify_project(root):
     state = load_project(root)
     _, meta = _meta(root)
-    for source in state["sources"]:
-        check_inventory(meta, [source], exact=False)
-    current = load_revision(root)
+    current = _verify_state(meta, state)
     return {"ok": True, "scope": "recorded-file-integrity", "head": state["head"],
             "artifactCount": len(current["artifacts"]) if current else 0,
+            "evidenceFreshness": _evidence_freshness(state, current),
             "referenceResemblance": "not-evaluated", "gameReadiness": "not-evaluated"}
 
 
@@ -245,11 +276,15 @@ def _runs_dir(meta):
 def status(root):
     state = load_project(root)
     _, meta = _meta(root)
-    current = load_revision(root)
+    return _status(meta, state)
+
+
+def _status(meta, state):
+    current = _verify_state(meta, state)
     revisions = []
     committed_run_ids = set()
     for revision_id in state["revisionDigests"]:
-        rev = load_revision(root, revision_id, verify=False)
+        rev = _load_revision(meta, state, revision_id, verify=False)
         if rev.get("runId"):
             committed_run_ids.add(rev["runId"])
         revisions.append({"id": rev.get("id"), "intent": rev.get("intent"),
@@ -277,22 +312,89 @@ def status(root):
             "head": state["head"], "sequence": state["sequence"], "sources": state["sources"],
             "outputs": artifact_paths, "observations": observations, "inputs": input_paths,
             "revisions": revisions, "incompleteRuns": runs,
+            "evidenceFreshness": _evidence_freshness(state, current),
             "referenceResemblance": "not-evaluated", "gameReadiness": "not-evaluated"}
+
+
+def _check_expected(base, expected_revision, expected_sequence, require_sequence=False):
+    if expected_revision is not None and expected_revision != (base["head"] or "none"):
+        raise ProductionError("expected revision is not current")
+    if require_sequence or expected_sequence is not None:
+        if type(expected_sequence) is not int or expected_sequence < 0:
+            raise ProductionError("expected sequence must be a nonnegative integer")
+        if expected_sequence != base["sequence"]:
+            raise ProductionError("expected sequence is not current")
 
 
 def _assert_base(root, base, verify_head=True):
     latest = load_project(root)
     if latest != base:
-        raise ProductionError("project changed during execution; candidate retained, current revision untouched")
+        raise ProductionError("project changed during execution; publication cancelled")
+    _, meta = _meta(root)
     if verify_head:
-        verify_project(root)
+        _verify_state(meta, latest)
     else:
         # Recovery may replace a damaged HEAD with an intact older bundle.
         # Keep source identity and the state lease strict without requiring
         # the damaged payload to pass the very check recovery will repair.
-        _, meta = _meta(root)
-        for source in latest["sources"]:
-            check_inventory(meta, [source], exact=False)
+        _check_sources(meta, latest["sources"])
+
+
+def replace_references(root, references=None, clear=False, expected_revision=None, expected_sequence=None):
+    """Adopt an explicit content set without changing any committed model bundle."""
+    root, meta = _meta(root)
+    base = load_project(root)
+    _check_expected(base, expected_revision, expected_sequence, require_sequence=True)
+    references = list(references) if references is not None else []
+    if (clear and references) or (not clear and not references):
+        raise ProductionError("supply reference files or explicitly clear the reference set")
+    _verify_state(meta, base)
+    batch_id = uuid.uuid4().hex
+    temp = Path(tempfile.mkdtemp(prefix=".refas-sources-", dir=meta))
+    try:
+        sources = []
+        seen = set()
+        for reference in references:
+            source = Path(reference).expanduser().resolve()
+            if not source.is_file() or source.stat().st_size == 0:
+                raise ProductionError("reference file is missing or empty: " + str(source))
+            before = digest(source)
+            if before in seen:
+                continue
+            name = str(len(sources) + 1).zfill(3) + "-" + source.name
+            target = relative_file(temp, name)
+            shutil.copy2(source, target)
+            if digest(target) != before or digest(source) != before:
+                raise ProductionError("reference changed while it was copied")
+            sources.append({"path": "sources/" + batch_id + "/" + name,
+                            "name": source.name, "role": "user-reference",
+                            "sha256": before, "bytes": target.stat().st_size})
+            seen.add(before)
+        changed = _source_hashes(sources) != _source_hashes(base["sources"])
+        with project_lock(meta):
+            _assert_base(root, base)
+            if changed:
+                destination = relative_file(meta, "sources/" + batch_id) if sources else None
+                if destination:
+                    os.rename(temp, destination)
+                state = {**base, "sources": sources, "sequence": base["sequence"] + 1,
+                         "updatedAt": utc_now()}
+                try:
+                    # Validate the response before the commit point, including
+                    # history manifests that the current bundle does not use.
+                    result = _status(meta, state)
+                    atomic_json(meta / "project.json", state)
+                except BaseException:
+                    # Only discard unpublished copies; a committed pointer owns them.
+                    if destination and load_project(root) == base:
+                        shutil.rmtree(destination)
+                    raise
+            else:
+                result = _status(meta, base)
+        return {**result, "referencesChanged": changed}
+    finally:
+        if temp.exists():
+            shutil.rmtree(temp)
 
 
 def _execute(command, cwd, log_file, timeout):
@@ -345,12 +447,12 @@ def _validate_worker_result(artifact_dir):
 
 
 def run_edit(root, script, intent, blender="blender", input_blend=None, views=None,
-             size=384, samples=8, timeout=180, expected_revision=None, executor=None, review_spec=None):
+             size=384, samples=8, timeout=180, expected_revision=None, executor=None, review_spec=None,
+             expected_sequence=None):
     root, meta = _meta(root)
     base = load_project(root)
-    verify_project(root)
-    if expected_revision is not None and expected_revision != (base["head"] or "none"):
-        raise ProductionError("expected revision is not current")
+    _check_expected(base, expected_revision, expected_sequence)
+    current = _verify_state(meta, base)
     if not isinstance(intent, str) or not intent.strip():
         raise ProductionError("a concrete edit intent is required")
     if not isinstance(timeout, (int, float)) or not 1 <= timeout <= 3600:
@@ -406,7 +508,6 @@ def run_edit(root, script, intent, blender="blender", input_blend=None, views=No
         if input_blend:
             source_blend = Path(input_blend).expanduser().resolve()
         elif base["head"]:
-            current = load_revision(root)
             source_blend = relative_file(_revision_dir(meta, base["head"]) / "artifacts", current["outputs"]["blend"])
         if source_blend:
             if not source_blend.is_file():
@@ -475,12 +576,11 @@ def run_edit(root, script, intent, blender="blender", input_blend=None, views=No
         raise
 
 
-def restore(root, revision_id, expected_revision=None):
+def restore(root, revision_id, expected_revision=None, expected_sequence=None):
     root, meta = _meta(root)
     base = load_project(root)
-    if expected_revision is not None and expected_revision != (base["head"] or "none"):
-        raise ProductionError("expected revision is not current")
-    target = load_revision(root, revision_id)
+    _check_expected(base, expected_revision, expected_sequence)
+    target = _load_revision(meta, base, revision_id)
     if not target:
         raise ProductionError("restore target is missing")
     source_dir = _revision_dir(meta, revision_id)
@@ -497,6 +597,7 @@ def restore(root, revision_id, expected_revision=None):
         atomic_json(final / "revision.json", revision)
         check_inventory(final / "artifacts", target["artifacts"])
         check_inventory(final / "inputs", target["inputs"])
+        _check_sources(meta, target["sources"])
         state = {**base, "head": new_id, "sequence": base["sequence"] + 1,
                  "revisionDigests": {**base["revisionDigests"], new_id: digest(final / "revision.json")},
                  "updatedAt": utc_now()}

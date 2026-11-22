@@ -1,0 +1,27 @@
+{
+  "historicalManifestFailure": "revision manifest changed",
+  "pointerByteIdentical": true,
+  "sourceArchiveIdentical": true,
+  "stagingCleaned": true,
+  "currentIntegrity": {
+    "ok": true,
+    "scope": "recorded-file-integrity",
+    "head": "6dbf2f77a4644232b0cbedb232b86ca5",
+    "artifactCount": 6,
+    "evidenceFreshness": {
+      "status": "current",
+      "scope": "active-reference-content-set",
+      "revision": "6dbf2f77a4644232b0cbedb232b86ca5",
+      "activeSourceSha256": [
+        "5eaafe73f0ccb06024d407affacca655aa0622f185d5a53099bf5a31d898641d"
+      ],
+      "revisionSourceSha256": [
+        "5eaafe73f0ccb06024d407affacca655aa0622f185d5a53099bf5a31d898641d"
+      ],
+      "visualAcceptance": "not-evaluated"
+    },
+    "referenceResemblance": "not-evaluated",
+    "gameReadiness": "not-evaluated"
+  },
+  "root": "/workspace/scratch/c52cb753f160/next-workspace-audit/response-fix-review-2rhzc5jx/project"
+}

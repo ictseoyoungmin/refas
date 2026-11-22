@@ -48,6 +48,12 @@ that the worker did not change it, and restores it with that revision. The JSON
 must be at most 64 KiB. Unknown fields and non-finite camera values are rejected.
 Use `--views front,detail` to select named views or `--views ''` to skip renders.
 
+After `references` adopts a different content set, the previous bundle reports
+`stale` without changing its captured views. A new run accepts source-region
+bindings only to the active references and captures its own review and outputs.
+Restore keeps the current reference set, so restored views can also be stale.
+Pass review, view and render flags on each run; settings are not inherited.
+
 Without a specification, the built-in views use Z up, front looking from -Y,
 back from +Y, side from +X, top from +Z, and an oblique hero view. These are
 diagnostic conventions; orient the asset deliberately and inspect the result.

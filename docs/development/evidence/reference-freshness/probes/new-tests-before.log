@@ -1,0 +1,252 @@
+test_concurrent_edit_does_not_overwrite_newer_revision (test_production_project.ProductionProjectTests.test_concurrent_edit_does_not_overwrite_newer_revision) ... ok
+test_copied_skill_cli_works_without_repository (test_production_project.ProductionProjectTests.test_copied_skill_cli_works_without_repository) ... ok
+test_edit_and_restore_keep_exact_native_and_render_bytes (test_production_project.ProductionProjectTests.test_edit_and_restore_keep_exact_native_and_render_bytes) ... ok
+test_edit_uses_native_input_from_its_declared_snapshot (test_production_project.ProductionProjectTests.test_edit_uses_native_input_from_its_declared_snapshot) ... ok
+test_existing_project_is_not_overwritten (test_production_project.ProductionProjectTests.test_existing_project_is_not_overwritten) ... ok
+test_expected_sequence_is_validated_before_work (test_production_project.ProductionProjectTests.test_expected_sequence_is_validated_before_work) ... ERROR
+test_explicit_manual_blend_input_is_captured (test_production_project.ProductionProjectTests.test_explicit_manual_blend_input_is_captured) ... ok
+test_failed_pointer_publish_preserves_old_head (test_production_project.ProductionProjectTests.test_failed_pointer_publish_preserves_old_head) ... ok
+test_failure_retains_current_asset_and_failure_record (test_production_project.ProductionProjectTests.test_failure_retains_current_asset_and_failure_record) ... ok
+test_historic_revision_manifest_tamper_cannot_be_restored (test_production_project.ProductionProjectTests.test_historic_revision_manifest_tamper_cannot_be_restored) ... ok
+test_historical_reference_tamper_is_rejected_before_restore_publication (test_production_project.ProductionProjectTests.test_historical_reference_tamper_is_rejected_before_restore_publication) ... ERROR
+test_intact_history_can_recover_a_corrupted_current_payload (test_production_project.ProductionProjectTests.test_intact_history_can_recover_a_corrupted_current_payload) ... ok
+test_legacy_project_freshness_is_derived_without_rewriting_history (test_production_project.ProductionProjectTests.test_legacy_project_freshness_is_derived_without_rewriting_history) ... ERROR
+test_manifest_paths_and_symlinks_cannot_escape (test_production_project.ProductionProjectTests.test_manifest_paths_and_symlinks_cannot_escape) ... ok
+test_missing_requested_view_does_not_publish (test_production_project.ProductionProjectTests.test_missing_requested_view_does_not_publish) ... ok
+test_post_commit_log_failure_still_reports_published_revision (test_production_project.ProductionProjectTests.test_post_commit_log_failure_still_reports_published_revision) ... ok
+test_reference_capture_is_independent_and_tamper_is_detected (test_production_project.ProductionProjectTests.test_reference_capture_is_independent_and_tamper_is_detected) ... ok
+test_reference_content_set_ignores_duplicate_paths_names_and_order (test_production_project.ProductionProjectTests.test_reference_content_set_ignores_duplicate_paths_names_and_order) ... ERROR
+test_reference_copy_and_publication_failure_roll_back_state_and_copies (test_production_project.ProductionProjectTests.test_reference_copy_and_publication_failure_roll_back_state_and_copies) ... 
+  test_reference_copy_and_publication_failure_roll_back_state_and_copies (test_production_project.ProductionProjectTests.test_reference_copy_and_publication_failure_roll_back_state_and_copies) (operation='copy2') ... ERROR
+  test_reference_copy_and_publication_failure_roll_back_state_and_copies (test_production_project.ProductionProjectTests.test_reference_copy_and_publication_failure_roll_back_state_and_copies) (operation='atomic_json') ... ERROR
+test_reference_replacement_marks_intact_evidence_stale_and_clear_is_explicit (test_production_project.ProductionProjectTests.test_reference_replacement_marks_intact_evidence_stale_and_clear_is_explicit) ... ERROR
+test_reference_update_during_run_invalidates_lease_even_when_content_returns (test_production_project.ProductionProjectTests.test_reference_update_during_run_invalidates_lease_even_when_content_returns) ... 
+  test_reference_update_during_run_invalidates_lease_even_when_content_returns (test_production_project.ProductionProjectTests.test_reference_update_during_run_invalidates_lease_even_when_content_returns) (back_to_original=False) ... ERROR
+  test_reference_update_during_run_invalidates_lease_even_when_content_returns (test_production_project.ProductionProjectTests.test_reference_update_during_run_invalidates_lease_even_when_content_returns) (back_to_original=True) ... ERROR
+test_restore_preserves_active_references_and_exact_historical_inputs_and_artifacts (test_production_project.ProductionProjectTests.test_restore_preserves_active_references_and_exact_historical_inputs_and_artifacts) ... ERROR
+test_review_cannot_claim_an_uncaptured_reference (test_production_project.ProductionProjectTests.test_review_cannot_claim_an_uncaptured_reference) ... ok
+test_review_rejects_nonfinite_light_and_claim_fields (test_production_project.ProductionProjectTests.test_review_rejects_nonfinite_light_and_claim_fields) ... ok
+test_review_rejects_unsafe_names_and_invalid_camera (test_production_project.ProductionProjectTests.test_review_rejects_unsafe_names_and_invalid_camera) ... ok
+test_review_spec_is_captured_and_restored_with_revision (test_production_project.ProductionProjectTests.test_review_spec_is_captured_and_restored_with_revision) ... ok
+test_run_directory_symlink_is_rejected_before_external_writes (test_production_project.ProductionProjectTests.test_run_directory_symlink_is_rejected_before_external_writes) ... ok
+test_stale_explicit_base_is_rejected_before_execution (test_production_project.ProductionProjectTests.test_stale_explicit_base_is_rejected_before_execution) ... ok
+test_status_and_verify_pin_revision_and_freshness_to_one_state_snapshot (test_production_project.ProductionProjectTests.test_status_and_verify_pin_revision_and_freshness_to_one_state_snapshot) ... 
+  test_status_and_verify_pin_revision_and_freshness_to_one_state_snapshot (test_production_project.ProductionProjectTests.test_status_and_verify_pin_revision_and_freshness_to_one_state_snapshot) (reader='status', existing_head=False) ... ERROR
+  test_status_and_verify_pin_revision_and_freshness_to_one_state_snapshot (test_production_project.ProductionProjectTests.test_status_and_verify_pin_revision_and_freshness_to_one_state_snapshot) (reader='status', existing_head=True) ... ERROR
+  test_status_and_verify_pin_revision_and_freshness_to_one_state_snapshot (test_production_project.ProductionProjectTests.test_status_and_verify_pin_revision_and_freshness_to_one_state_snapshot) (reader='verify_project', existing_head=False) ... ERROR
+  test_status_and_verify_pin_revision_and_freshness_to_one_state_snapshot (test_production_project.ProductionProjectTests.test_status_and_verify_pin_revision_and_freshness_to_one_state_snapshot) (reader='verify_project', existing_head=True) ... ERROR
+test_uncommitted_revision_is_not_a_restore_target (test_production_project.ProductionProjectTests.test_uncommitted_revision_is_not_a_restore_target) ... ok
+test_worker_cannot_modify_captured_input_silently (test_production_project.ProductionProjectTests.test_worker_cannot_modify_captured_input_silently) ... ok
+test_worker_cannot_mutate_captured_review (test_production_project.ProductionProjectTests.test_worker_cannot_mutate_captured_review) ... ok
+test_wrong_output_type_is_rejected_at_submission (test_production_project.ProductionProjectTests.test_wrong_output_type_is_rejected_at_submission) ... ok
+
+======================================================================
+ERROR: test_expected_sequence_is_validated_before_work (test_production_project.ProductionProjectTests.test_expected_sequence_is_validated_before_work)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/c52cb753f160/refas/tests/test_production_project.py", line 195, in test_expected_sequence_is_validated_before_work
+    self.replace_references([replacement])
+  File "/workspace/scratch/c52cb753f160/refas/tests/test_production_project.py", line 68, in replace_references
+    return project.replace_references(self.root, references, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'production.project' has no attribute 'replace_references'
+
+======================================================================
+ERROR: test_historical_reference_tamper_is_rejected_before_restore_publication (test_production_project.ProductionProjectTests.test_historical_reference_tamper_is_rejected_before_restore_publication)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/c52cb753f160/refas/tests/test_production_project.py", line 159, in test_historical_reference_tamper_is_rejected_before_restore_publication
+    self.replace_references([self.second_reference()])
+  File "/workspace/scratch/c52cb753f160/refas/tests/test_production_project.py", line 68, in replace_references
+    return project.replace_references(self.root, references, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'production.project' has no attribute 'replace_references'
+
+======================================================================
+ERROR: test_legacy_project_freshness_is_derived_without_rewriting_history (test_production_project.ProductionProjectTests.test_legacy_project_freshness_is_derived_without_rewriting_history)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/c52cb753f160/refas/tests/test_production_project.py", line 85, in test_legacy_project_freshness_is_derived_without_rewriting_history
+    self.assertEqual(result["evidenceFreshness"]["status"], "current")
+                     ~~~~~~^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'evidenceFreshness'
+
+======================================================================
+ERROR: test_reference_content_set_ignores_duplicate_paths_names_and_order (test_production_project.ProductionProjectTests.test_reference_content_set_ignores_duplicate_paths_names_and_order)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/c52cb753f160/refas/tests/test_production_project.py", line 124, in test_reference_content_set_ignores_duplicate_paths_names_and_order
+    self.replace_references([self.reference, second])
+  File "/workspace/scratch/c52cb753f160/refas/tests/test_production_project.py", line 68, in replace_references
+    return project.replace_references(self.root, references, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'production.project' has no attribute 'replace_references'
+
+======================================================================
+ERROR: test_reference_copy_and_publication_failure_roll_back_state_and_copies (test_production_project.ProductionProjectTests.test_reference_copy_and_publication_failure_roll_back_state_and_copies) (operation='copy2')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/c52cb753f160/refas/tests/test_production_project.py", line 187, in test_reference_copy_and_publication_failure_roll_back_state_and_copies
+    self.replace_references([replacement])
+  File "/workspace/scratch/c52cb753f160/refas/tests/test_production_project.py", line 68, in replace_references
+    return project.replace_references(self.root, references, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'production.project' has no attribute 'replace_references'
+
+======================================================================
+ERROR: test_reference_copy_and_publication_failure_roll_back_state_and_copies (test_production_project.ProductionProjectTests.test_reference_copy_and_publication_failure_roll_back_state_and_copies) (operation='atomic_json')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/c52cb753f160/refas/tests/test_production_project.py", line 187, in test_reference_copy_and_publication_failure_roll_back_state_and_copies
+    self.replace_references([replacement])
+  File "/workspace/scratch/c52cb753f160/refas/tests/test_production_project.py", line 68, in replace_references
+    return project.replace_references(self.root, references, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'production.project' has no attribute 'replace_references'
+
+======================================================================
+ERROR: test_reference_replacement_marks_intact_evidence_stale_and_clear_is_explicit (test_production_project.ProductionProjectTests.test_reference_replacement_marks_intact_evidence_stale_and_clear_is_explicit)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/c52cb753f160/refas/tests/test_production_project.py", line 96, in test_reference_replacement_marks_intact_evidence_stale_and_clear_is_explicit
+    changed = self.replace_references([replacement], expected_revision=first["head"])
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/c52cb753f160/refas/tests/test_production_project.py", line 68, in replace_references
+    return project.replace_references(self.root, references, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'production.project' has no attribute 'replace_references'
+
+======================================================================
+ERROR: test_reference_update_during_run_invalidates_lease_even_when_content_returns (test_production_project.ProductionProjectTests.test_reference_update_during_run_invalidates_lease_even_when_content_returns) (back_to_original=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/c52cb753f160/refas/tests/test_production_project.py", line 215, in test_reference_update_during_run_invalidates_lease_even_when_content_returns
+    self.replace_references([self.reference])
+  File "/workspace/scratch/c52cb753f160/refas/tests/test_production_project.py", line 68, in replace_references
+    return project.replace_references(self.root, references, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'production.project' has no attribute 'replace_references'
+
+======================================================================
+ERROR: test_reference_update_during_run_invalidates_lease_even_when_content_returns (test_production_project.ProductionProjectTests.test_reference_update_during_run_invalidates_lease_even_when_content_returns) (back_to_original=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/c52cb753f160/refas/tests/test_production_project.py", line 215, in test_reference_update_during_run_invalidates_lease_even_when_content_returns
+    self.replace_references([self.reference])
+  File "/workspace/scratch/c52cb753f160/refas/tests/test_production_project.py", line 68, in replace_references
+    return project.replace_references(self.root, references, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'production.project' has no attribute 'replace_references'
+
+======================================================================
+ERROR: test_restore_preserves_active_references_and_exact_historical_inputs_and_artifacts (test_production_project.ProductionProjectTests.test_restore_preserves_active_references_and_exact_historical_inputs_and_artifacts)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/c52cb753f160/refas/tests/test_production_project.py", line 144, in test_restore_preserves_active_references_and_exact_historical_inputs_and_artifacts
+    changed = self.replace_references([self.second_reference()])
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/c52cb753f160/refas/tests/test_production_project.py", line 68, in replace_references
+    return project.replace_references(self.root, references, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'production.project' has no attribute 'replace_references'
+
+======================================================================
+ERROR: test_status_and_verify_pin_revision_and_freshness_to_one_state_snapshot (test_production_project.ProductionProjectTests.test_status_and_verify_pin_revision_and_freshness_to_one_state_snapshot) (reader='status', existing_head=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/c52cb753f160/refas/tests/test_production_project.py", line 258, in test_status_and_verify_pin_revision_and_freshness_to_one_state_snapshot
+    observed = getattr(project, reader_name)(root)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/c52cb753f160/refas/skills/refas/scripts/production/project.py", line 246, in status
+    state = load_project(root)
+            ^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1204, in _execute_mock_call
+    result = effect(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/c52cb753f160/refas/tests/test_production_project.py", line 253, in publish_after_read
+    project.replace_references(root, [second], expected_sequence=captured["sequence"])
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'production.project' has no attribute 'replace_references'
+
+======================================================================
+ERROR: test_status_and_verify_pin_revision_and_freshness_to_one_state_snapshot (test_production_project.ProductionProjectTests.test_status_and_verify_pin_revision_and_freshness_to_one_state_snapshot) (reader='status', existing_head=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/c52cb753f160/refas/tests/test_production_project.py", line 258, in test_status_and_verify_pin_revision_and_freshness_to_one_state_snapshot
+    observed = getattr(project, reader_name)(root)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/c52cb753f160/refas/skills/refas/scripts/production/project.py", line 246, in status
+    state = load_project(root)
+            ^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1204, in _execute_mock_call
+    result = effect(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/c52cb753f160/refas/tests/test_production_project.py", line 253, in publish_after_read
+    project.replace_references(root, [second], expected_sequence=captured["sequence"])
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'production.project' has no attribute 'replace_references'
+
+======================================================================
+ERROR: test_status_and_verify_pin_revision_and_freshness_to_one_state_snapshot (test_production_project.ProductionProjectTests.test_status_and_verify_pin_revision_and_freshness_to_one_state_snapshot) (reader='verify_project', existing_head=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/c52cb753f160/refas/tests/test_production_project.py", line 258, in test_status_and_verify_pin_revision_and_freshness_to_one_state_snapshot
+    observed = getattr(project, reader_name)(root)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/c52cb753f160/refas/skills/refas/scripts/production/project.py", line 228, in verify_project
+    state = load_project(root)
+            ^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1204, in _execute_mock_call
+    result = effect(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/c52cb753f160/refas/tests/test_production_project.py", line 253, in publish_after_read
+    project.replace_references(root, [second], expected_sequence=captured["sequence"])
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'production.project' has no attribute 'replace_references'
+
+======================================================================
+ERROR: test_status_and_verify_pin_revision_and_freshness_to_one_state_snapshot (test_production_project.ProductionProjectTests.test_status_and_verify_pin_revision_and_freshness_to_one_state_snapshot) (reader='verify_project', existing_head=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/c52cb753f160/refas/tests/test_production_project.py", line 258, in test_status_and_verify_pin_revision_and_freshness_to_one_state_snapshot
+    observed = getattr(project, reader_name)(root)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/c52cb753f160/refas/skills/refas/scripts/production/project.py", line 228, in verify_project
+    state = load_project(root)
+            ^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1204, in _execute_mock_call
+    result = effect(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/c52cb753f160/refas/tests/test_production_project.py", line 253, in publish_after_read
+    project.replace_references(root, [second], expected_sequence=captured["sequence"])
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'production.project' has no attribute 'replace_references'
+
+----------------------------------------------------------------------
+Ran 33 tests in 0.421s
+
+FAILED (errors=14)
