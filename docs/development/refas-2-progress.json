@@ -406,7 +406,7 @@
       "baselineNote": "Added by the user's explicit 2026-11-22 scope expansion; no credit at the scope-change baseline."
     }
   ],
-  "currentCheckpointId": "scope-v2-usable-assets",
+  "currentCheckpointId": "r2-07-automail-recovery-bb8e8aff",
   "checkpoints": [
     {
       "id": "baseline-3217b46e",
@@ -1001,6 +1001,158 @@
         }
       },
       "note": "Original criteria/checkpoints preserved. New user-authorized scope increases the denominator; no new execution credit. 28/31=90% remains the prior prototype milestone."
+    },
+    {
+      "id": "r2-07-automail-recovery-bb8e8aff",
+      "date": "2026-11-23",
+      "kind": "verified-implementation",
+      "checklistVersion": 2,
+      "sourceCommit": "bb8e8affbbb6b5cf53dcb637114710511d354913",
+      "runtimeCommit": "5f2f39c6e9f1e4bbdef6dfd463e84991daa73e57",
+      "demonstratedCriteria": [
+        "B1",
+        "B2",
+        "B3",
+        "B4",
+        "W1",
+        "W2",
+        "W3",
+        "W4",
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "O1",
+        "O2",
+        "O3",
+        "O4",
+        "K1",
+        "K2",
+        "K3",
+        "K4",
+        "E1",
+        "E3",
+        "E4",
+        "E5",
+        "E6",
+        "D1",
+        "U4",
+        "U5"
+      ],
+      "counts": {
+        "demonstrated": 30,
+        "total": 37,
+        "percentRounded": 81,
+        "bySlice": {
+          "R2-01": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-02": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-03": {
+            "demonstrated": 6,
+            "total": 6
+          },
+          "R2-04": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-05": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-06": {
+            "demonstrated": 5,
+            "total": 7
+          },
+          "Delivery": {
+            "demonstrated": 1,
+            "total": 3
+          },
+          "R2-07": {
+            "demonstrated": 2,
+            "total": 5
+          }
+        }
+      },
+      "notionTaskStatuses": {
+        "R2-01": "REVIEW",
+        "R2-02": "REVIEW",
+        "R2-03": "REVIEW",
+        "R2-04": "REVIEW",
+        "R2-05": "REVIEW",
+        "R2-06": "WIP",
+        "R2-07": "WIP"
+      },
+      "evidenceUpdates": {
+        "U4": {
+          "evidence": [
+            "docs/development/evidence/usable-assets/automail-resume/README.md",
+            "docs/development/evidence/usable-assets/automail-resume/godot-summary.json",
+            "docs/development/evidence/usable-assets/recovery/review-automail-candidate08.md"
+          ],
+          "note": "New continuation from the saved source checkpoint. Original rotary mechanisms retained, with correct elbow/wrist centers. The declared reach/partial-grip clip, 133 surface pairs at 121 frames, and 119 nodes at 121 actual Godot times pass; external thumb-cover penetration is repaired. No arbitrary-pose, physical-grasp or FPS claim."
+        },
+        "U5": {
+          "evidence": [
+            "docs/development/evidence/usable-assets/automail-resume/README.md",
+            "docs/development/evidence/usable-assets/automail-resume/source-part-correspondence.json",
+            "docs/development/evidence/usable-assets/recovery/review-automail-candidate08-attributes.json",
+            "docs/development/evidence/usable-assets/recovery/review-automail-candidate08.md"
+          ],
+          "note": "Deliberate connected palm section topology and periodic wrist annuli, source comparison and exercised grip support this criterion. Reduction is separately measured. Original materials and parent assignments remain; no source image textures or skin groups. Exactly Crown_A_mark loses an unused generated UVMap during cap repair; this is explicitly recorded and the untouched original retains it."
+        },
+        "U2": {
+          "evidence": [
+            "docs/development/evidence/usable-assets/automail-resume/topology-summary.json",
+            "docs/development/evidence/usable-assets/automail-resume/flipped-glb-control.json",
+            "docs/development/evidence/usable-assets/recovery/review-jacket-transferred-lining.md"
+          ],
+          "note": "The selected arm native/export/attachments and actual flipped-GLB control pass. The whole criterion remains open: the jacket intermediate has nonmanifold rim junctions and visible lining crossings and remains rejected."
+        },
+        "U3": {
+          "evidence": [
+            "docs/development/evidence/usable-assets/recovery/garment-geometry/README.md"
+          ],
+          "note": "Actual-avatar garment fit, motion andhardware work continues. No selected clean garment or final consumer proof yet; no credit."
+        },
+        "U6": {
+          "evidence": [
+            "docs/development/evidence/usable-assets/automail-resume/summary.json",
+            "docs/development/evidence/usable-assets/recovery/garment-geometry/summary.json",
+            "docs/development/evidence/usable-assets/recovery/review-jacket-transferred-lining.md"
+          ],
+          "note": "Arm 86,564 triangles, 99 primitives and 0.423727 mm sampled optimization error satisfy its frozen budget, with actual consumer playback. The jacket distance/budget-only intermediate is rejected for topology and visual defects. The criterion requires both assets and remains open."
+        }
+      },
+      "boundaries": {
+        "closedTasks": 0,
+        "totalTasks": 7,
+        "finishedVisualAcceptance": {
+          "jacket": "rejected",
+          "automail": "rejected"
+        },
+        "developmentMetadata": "2.0.0-alpha.1",
+        "retainedLegacyRuntime": "1.4.2",
+        "publishedRelease": "v1.4.1",
+        "pullRequest": "https://github.com/ictseoyoungmin/refas/pull/399",
+        "pullRequestState": "Draft",
+        "prototypeSourceAcceptance": {
+          "jacket": "demonstrated within original task scope",
+          "automail": "demonstrated within original task scope"
+        },
+        "usableAssetAcceptance": {
+          "automail": "accepted only for declared rigid reach/partial grip and documented untextured scope",
+          "jacket": "rejected intermediate; active repair"
+        },
+        "standaloneAutomailLibraryId": "libfile_469aa206ad3c819180cbc2007000a572"
+      },
+      "note": "Interruption recovery retained core f236477f and exactly verified 96 source-model files; no later 78,998-triangle arm or 97-frame jacket was recovered. The missing vertex-tolerance option was completed at 5f2f39c6 with 935 JavaScript and 92 Production tests passing. The newly authored selected arm is separately hash-verified and durably delivered. Prior counts and criteria remain unchanged."
     }
   ],
   "projections": [

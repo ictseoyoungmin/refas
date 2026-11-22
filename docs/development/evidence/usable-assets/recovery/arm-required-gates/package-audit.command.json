@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "npm",
+    "run",
+    "release:audit"
+  ],
+  "startedUtc": "2026-11-22T19:41:20.540398+00:00",
+  "endedUtc": "2026-11-22T19:41:22.020118+00:00",
+  "elapsedSeconds": 1.4797433670000828,
+  "returncode": 0,
+  "sourceCommit": "bb8e8affbbb6b5cf53dcb637114710511d354913",
+  "note": "Asset-source commit plus pending progress documentation; active runtime/skill unchanged from5f2f39c6."
+}

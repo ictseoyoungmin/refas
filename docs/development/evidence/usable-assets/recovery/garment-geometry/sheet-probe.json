@@ -1,0 +1,1646 @@
+{
+  "Body | continuous open front and shoulder yoke": {
+    "high": {
+      "vertices": 76326,
+      "triangles": 152656,
+      "baseVertices": 38163,
+      "materials": [
+        "Identity | charcoal tailored cloth",
+        "Interior | black satin lining"
+      ],
+      "trianglesByMaterial": {
+        "0": 75264,
+        "1": 77392
+      },
+      "vertexMaterialMemberships": {
+        "0,1": 1064,
+        "0": 37099,
+        "1": 38163
+      },
+      "modifiers": [
+        [
+          "SOLIDIFY",
+          "Reconstructed fabric lining"
+        ]
+      ]
+    },
+    "low": {
+      "vertices": 21186,
+      "triangles": 42376,
+      "baseVertices": 21186,
+      "materials": [
+        "Identity | charcoal tailored cloth",
+        "Interior | black satin lining"
+      ],
+      "trianglesByMaterial": {
+        "0": 19720,
+        "1": 22656
+      },
+      "vertexMaterialMemberships": {
+        "0,1": 1076,
+        "0": 9321,
+        "1": 10789
+      },
+      "modifiers": [
+        [
+          "ARMATURE",
+          "Wearable skin"
+        ]
+      ]
+    },
+    "highToLow": {
+      "maximumM": 0.0020290613174438477,
+      "over1_5mm": 74,
+      "worst": [
+        {
+          "errorM": 0.0020290613174438477,
+          "vertex": 50621,
+          "position": [
+            -0.07119036465883255,
+            0.07074078917503357,
+            1.4312723875045776
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            -0.07274476438760757,
+            0.07169443368911743,
+            1.4303827285766602
+          ],
+          "nearestTriangle": 42354,
+          "nearestTriangleMaterial": 0
+        },
+        {
+          "errorM": 0.001995886443182826,
+          "vertex": 60655,
+          "position": [
+            -0.12584611773490906,
+            0.08110976219177246,
+            1.3795924186706543
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            -0.12433389574289322,
+            0.08241233974695206,
+            1.3795862197875977
+          ],
+          "nearestTriangle": 21567,
+          "nearestTriangleMaterial": 1
+        },
+        {
+          "errorM": 0.0019719493575394154,
+          "vertex": 43196,
+          "position": [
+            0.06931067258119583,
+            0.07158944755792618,
+            1.4302823543548584
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            0.0709940567612648,
+            0.0725831538438797,
+            1.4305418729782104
+          ],
+          "nearestTriangle": 42104,
+          "nearestTriangleMaterial": 0
+        },
+        {
+          "errorM": 0.001964910188689828,
+          "vertex": 62221,
+          "position": [
+            0.06310641765594482,
+            0.07968879491090775,
+            1.4324156045913696
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            0.06407395750284195,
+            0.08085297048091888,
+            1.4311628341674805
+          ],
+          "nearestTriangle": 42180,
+          "nearestTriangleMaterial": 0
+        },
+        {
+          "errorM": 0.001958858221769333,
+          "vertex": 62235,
+          "position": [
+            0.05288432538509369,
+            0.08340096473693848,
+            1.4316341876983643
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            0.05221560224890709,
+            0.0850578099489212,
+            1.4308311939239502
+          ],
+          "nearestTriangle": 41024,
+          "nearestTriangleMaterial": 1
+        },
+        {
+          "errorM": 0.0019057609606534243,
+          "vertex": 43199,
+          "position": [
+            0.06953641772270203,
+            0.0734400674700737,
+            1.4323885440826416
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            0.07023961842060089,
+            0.0739482194185257,
+            1.4306917190551758
+          ],
+          "nearestTriangle": 42109,
+          "nearestTriangleMaterial": 0
+        },
+        {
+          "errorM": 0.001896509900689125,
+          "vertex": 62222,
+          "position": [
+            0.061579152941703796,
+            0.08110635727643967,
+            1.4324415922164917
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            0.0625557079911232,
+            0.08226732164621353,
+            1.4313035011291504
+          ],
+          "nearestTriangle": 41191,
+          "nearestTriangleMaterial": 0
+        },
+        {
+          "errorM": 0.001871271408163011,
+          "vertex": 62373,
+          "position": [
+            -0.07121686637401581,
+            0.07074345648288727,
+            1.430895447731018
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            -0.0727478638291359,
+            0.07168947160243988,
+            1.4303828477859497
+          ],
+          "nearestTriangle": 42354,
+          "nearestTriangleMaterial": 0
+        },
+        {
+          "errorM": 0.0018568573286756873,
+          "vertex": 62211,
+          "position": [
+            0.0686742290854454,
+            0.07323317974805832,
+            1.431409478187561
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            0.07015783339738846,
+            0.07409743964672089,
+            1.4307024478912354
+          ],
+          "nearestTriangle": 42109,
+          "nearestTriangleMaterial": 0
+        },
+        {
+          "errorM": 0.001848189509473741,
+          "vertex": 50570,
+          "position": [
+            0.052459556609392166,
+            0.08546656370162964,
+            1.4336738586425781
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            0.05239824578166008,
+            0.08557187765836716,
+            1.4318296909332275
+          ],
+          "nearestTriangle": 42166,
+          "nearestTriangleMaterial": 0
+        },
+        {
+          "errorM": 0.0018450715579092503,
+          "vertex": 43212,
+          "position": [
+            0.030507247895002365,
+            0.0905086100101471,
+            1.4318554401397705
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            0.030769629403948784,
+            0.09231563657522202,
+            1.4321202039718628
+          ],
+          "nearestTriangle": 41830,
+          "nearestTriangleMaterial": 0
+        },
+        {
+          "errorM": 0.0018416069215163589,
+          "vertex": 62239,
+          "position": [
+            0.048470184206962585,
+            0.08670377731323242,
+            1.4338059425354004
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            0.04853377118706703,
+            0.08712221682071686,
+            1.4320136308670044
+          ],
+          "nearestTriangle": 41877,
+          "nearestTriangleMaterial": 0
+        },
+        {
+          "errorM": 0.0018414674559608102,
+          "vertex": 62316,
+          "position": [
+            -0.0316571481525898,
+            0.09143513441085815,
+            1.4343034029006958
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            -0.03141426295042038,
+            0.09312381595373154,
+            1.4336103200912476
+          ],
+          "nearestTriangle": 42264,
+          "nearestTriangleMaterial": 1
+        },
+        {
+          "errorM": 0.0018390262266620994,
+          "vertex": 43238,
+          "position": [
+            -0.044734448194503784,
+            0.08818375319242477,
+            1.4338059425354004
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            -0.04491564258933067,
+            0.0890471339225769,
+            1.432192325592041
+          ],
+          "nearestTriangle": 42116,
+          "nearestTriangleMaterial": 0
+        },
+        {
+          "errorM": 0.0018281338270753622,
+          "vertex": 62209,
+          "position": [
+            0.06938920170068741,
+            0.07238391786813736,
+            1.4294596910476685
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            0.0710815042257309,
+            0.07304074615240097,
+            1.4296759366989136
+          ],
+          "nearestTriangle": 38821,
+          "nearestTriangleMaterial": 1
+        },
+        {
+          "errorM": 0.001827994012273848,
+          "vertex": 43208,
+          "position": [
+            0.044821012765169144,
+            0.089183509349823,
+            1.4339230060577393
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            0.044662073254585266,
+            0.08857359737157822,
+            1.4322071075439453
+          ],
+          "nearestTriangle": 12561,
+          "nearestTriangleMaterial": 0
+        },
+        {
+          "errorM": 0.0018275942420586944,
+          "vertex": 62238,
+          "position": [
+            0.04989098757505417,
+            0.08556230366230011,
+            1.4334981441497803
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            0.050177209079265594,
+            0.08645905554294586,
+            1.4319316148757935
+          ],
+          "nearestTriangle": 41242,
+          "nearestTriangleMaterial": 0
+        },
+        {
+          "errorM": 0.0018105516210198402,
+          "vertex": 61599,
+          "position": [
+            -0.036385729908943176,
+            0.09014134854078293,
+            1.4306316375732422
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            -0.03677985817193985,
+            0.09171756356954575,
+            1.4314305782318115
+          ],
+          "nearestTriangle": 42202,
+          "nearestTriangleMaterial": 0
+        },
+        {
+          "errorM": 0.001810538931749761,
+          "vertex": 62330,
+          "position": [
+            -0.0429157093167305,
+            0.09001113474369049,
+            1.434077501296997
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            -0.042755428701639175,
+            0.08970312774181366,
+            1.4323005676269531
+          ],
+          "nearestTriangle": 42115,
+          "nearestTriangleMaterial": 0
+        },
+        {
+          "errorM": 0.0018085261108353734,
+          "vertex": 43230,
+          "position": [
+            -0.030659036710858345,
+            0.09073169529438019,
+            1.4319242238998413
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            -0.030908817425370216,
+            0.09245943278074265,
+            1.4323967695236206
+          ],
+          "nearestTriangle": 42126,
+          "nearestTriangleMaterial": 0
+        }
+      ]
+    },
+    "lowToHigh": {
+      "maximumM": 1.2394192481224309e-06,
+      "over1_5mm": 0,
+      "worst": [
+        {
+          "errorM": 1.2394192481224309e-06,
+          "vertex": 20823,
+          "position": [
+            -0.11959876865148544,
+            -0.07352830469608307,
+            1.2754322290420532
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            -0.11959896981716156,
+            -0.07352741062641144,
+            1.27543306350708
+          ],
+          "nearestTriangle": 91920,
+          "nearestTriangleMaterial": 1
+        },
+        {
+          "errorM": 9.38654864057753e-07,
+          "vertex": 20108,
+          "position": [
+            -0.12089642882347107,
+            -0.06751453876495361,
+            1.2786645889282227
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            -0.12089654803276062,
+            -0.06751382350921631,
+            1.2786651849746704
+          ],
+          "nearestTriangle": 91906,
+          "nearestTriangleMaterial": 1
+        },
+        {
+          "errorM": 7.465838507414446e-07,
+          "vertex": 19946,
+          "position": [
+            0.11689553409814835,
+            -0.0746178925037384,
+            1.3135145902633667
+          ],
+          "sourceMaterialMemberships": [
+            0
+          ],
+          "nearest": [
+            0.11689556390047073,
+            -0.07461731880903244,
+            1.313515067100525
+          ],
+          "nearestTriangle": 17121,
+          "nearestTriangleMaterial": 0
+        },
+        {
+          "errorM": 6.029103474247677e-07,
+          "vertex": 2726,
+          "position": [
+            0.4769423007965088,
+            0.04163961857557297,
+            1.3211115598678589
+          ],
+          "sourceMaterialMemberships": [
+            0
+          ],
+          "nearest": [
+            0.4769423305988312,
+            0.04163970425724983,
+            1.3211109638214111
+          ],
+          "nearestTriangle": 56718,
+          "nearestTriangleMaterial": 0
+        },
+        {
+          "errorM": 6.023922196618514e-07,
+          "vertex": 15244,
+          "position": [
+            0.47180867195129395,
+            0.04112326353788376,
+            1.3232911825180054
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            0.47180870175361633,
+            0.041123345494270325,
+            1.3232905864715576
+          ],
+          "nearestTriangle": 130706,
+          "nearestTriangleMaterial": 1
+        },
+        {
+          "errorM": 5.415014356913161e-07,
+          "vertex": 18480,
+          "position": [
+            0.4718109965324402,
+            0.05215578153729439,
+            1.327360987663269
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            0.47181105613708496,
+            0.052156031131744385,
+            1.3273605108261108
+          ],
+          "nearestTriangle": 130756,
+          "nearestTriangleMaterial": 1
+        },
+        {
+          "errorM": 5.414885890786536e-07,
+          "vertex": 20337,
+          "position": [
+            -0.12019335478544235,
+            -0.071230947971344,
+            1.2762037515640259
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            -0.12019345164299011,
+            -0.07123055309057236,
+            1.2762041091918945
+          ],
+          "nearestTriangle": 91906,
+          "nearestTriangleMaterial": 1
+        },
+        {
+          "errorM": 5.364418029785156e-07,
+          "vertex": 8540,
+          "position": [
+            0.46105632185935974,
+            0.05518191307783127,
+            1.325803279876709
+          ],
+          "sourceMaterialMemberships": [
+            0
+          ],
+          "nearest": [
+            0.4610563814640045,
+            0.05518215149641037,
+            1.3258028030395508
+          ],
+          "nearestTriangle": 55490,
+          "nearestTriangleMaterial": 0
+        },
+        {
+          "errorM": 5.290568196869572e-07,
+          "vertex": 12666,
+          "position": [
+            0.47709596157073975,
+            0.054111629724502563,
+            1.3277429342269897
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            0.47709599137306213,
+            0.05411185696721077,
+            1.3277424573898315
+          ],
+          "nearestTriangle": 132043,
+          "nearestTriangleMaterial": 1
+        },
+        {
+          "errorM": 5.274674208521901e-07,
+          "vertex": 18479,
+          "position": [
+            0.46105921268463135,
+            0.05432858690619469,
+            1.327387809753418
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            0.46105924248695374,
+            0.054328810423612595,
+            1.3273873329162598
+          ],
+          "nearestTriangle": 130755,
+          "nearestTriangleMaterial": 1
+        },
+        {
+          "errorM": 5.238770199866849e-07,
+          "vertex": 18392,
+          "position": [
+            0.4489923417568207,
+            0.053836509585380554,
+            1.3270974159240723
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            0.44899240136146545,
+            0.05383671820163727,
+            1.327096939086914
+          ],
+          "nearestTriangle": 129495,
+          "nearestTriangleMaterial": 1
+        },
+        {
+          "errorM": 5.158148610462376e-07,
+          "vertex": 12729,
+          "position": [
+            0.5046435594558716,
+            0.05231345072388649,
+            1.3294343948364258
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            0.5046437382698059,
+            0.052313532680273056,
+            1.3294339179992676
+          ],
+          "nearestTriangle": 133338,
+          "nearestTriangleMaterial": 1
+        },
+        {
+          "errorM": 5.141575343259319e-07,
+          "vertex": 18671,
+          "position": [
+            0.49988415837287903,
+            0.04837506636977196,
+            1.327144980430603
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            0.4998841881752014,
+            0.04837525635957718,
+            1.3271445035934448
+          ],
+          "nearestTriangle": 133283,
+          "nearestTriangleMaterial": 1
+        },
+        {
+          "errorM": 5.137196126270283e-07,
+          "vertex": 18566,
+          "position": [
+            0.5024154186248779,
+            0.012984935194253922,
+            1.4093785285949707
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            0.5024153590202332,
+            0.012985116802155972,
+            1.4093780517578125
+          ],
+          "nearestTriangle": 132722,
+          "nearestTriangleMaterial": 1
+        },
+        {
+          "errorM": 5.136385539117327e-07,
+          "vertex": 12682,
+          "position": [
+            0.49996086955070496,
+            0.01171834859997034,
+            1.4089136123657227
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            0.49996086955070496,
+            0.011718539521098137,
+            1.4089131355285645
+          ],
+          "nearestTriangle": 132720,
+          "nearestTriangleMaterial": 1
+        },
+        {
+          "errorM": 5.114512759973877e-07,
+          "vertex": 8536,
+          "position": [
+            0.46103766560554504,
+            0.048348214477300644,
+            1.3227365016937256
+          ],
+          "sourceMaterialMemberships": [
+            0
+          ],
+          "nearest": [
+            0.46103769540786743,
+            0.04834839701652527,
+            1.3227360248565674
+          ],
+          "nearestTriangle": 55472,
+          "nearestTriangleMaterial": 0
+        },
+        {
+          "errorM": 5.114512759973877e-07,
+          "vertex": 18530,
+          "position": [
+            0.4718012511730194,
+            0.0501846969127655,
+            1.4083161354064941
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            0.471801221370697,
+            0.05018451437354088,
+            1.408315658569336
+          ],
+          "nearestTriangle": 131206,
+          "nearestTriangleMaterial": 1
+        },
+        {
+          "errorM": 5.111196514917538e-07,
+          "vertex": 18563,
+          "position": [
+            0.4999604821205139,
+            0.012913540937006474,
+            1.4094610214233398
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            0.49996045231819153,
+            0.012913722544908524,
+            1.4094605445861816
+          ],
+          "nearestTriangle": 132720,
+          "nearestTriangleMaterial": 1
+        },
+        {
+          "errorM": 5.105822538098437e-07,
+          "vertex": 18412,
+          "position": [
+            0.46086862683296204,
+            0.011670403182506561,
+            1.4101409912109375
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            0.46086862683296204,
+            0.011670585721731186,
+            1.4101405143737793
+          ],
+          "nearestTriangle": 130156,
+          "nearestTriangleMaterial": 1
+        },
+        {
+          "errorM": 5.098078759147029e-07,
+          "vertex": 18561,
+          "position": [
+            0.4999701976776123,
+            0.015599866397678852,
+            1.4104845523834229
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            0.4999701678752899,
+            0.015600044280290604,
+            1.4104840755462646
+          ],
+          "nearestTriangle": 132733,
+          "nearestTriangleMaterial": 1
+        }
+      ]
+    }
+  },
+  "Collar | standing back and neck facing": {
+    "high": {
+      "vertices": 124650,
+      "triangles": 249296,
+      "baseVertices": 62325,
+      "materials": [
+        "Identity | charcoal tailored cloth",
+        "Interior | black satin lining"
+      ],
+      "trianglesByMaterial": {
+        "0": 121792,
+        "1": 127504
+      },
+      "vertexMaterialMemberships": {
+        "0,1": 2856,
+        "0": 59469,
+        "1": 62325
+      },
+      "modifiers": [
+        [
+          "SOLIDIFY",
+          "Reconstructed fabric lining"
+        ]
+      ]
+    },
+    "low": {
+      "vertices": 23760,
+      "triangles": 47516,
+      "baseVertices": 23760,
+      "materials": [
+        "Identity | charcoal tailored cloth",
+        "Interior | black satin lining"
+      ],
+      "trianglesByMaterial": {
+        "0": 18586,
+        "1": 28930
+      },
+      "vertexMaterialMemberships": {
+        "0,1": 3048,
+        "0": 7770,
+        "1": 12942
+      },
+      "modifiers": [
+        [
+          "ARMATURE",
+          "Wearable skin"
+        ]
+      ]
+    },
+    "highToLow": {
+      "maximumM": 0.009713223204016685,
+      "over1_5mm": 7035,
+      "worst": [
+        {
+          "errorM": 0.009713223204016685,
+          "vertex": 97850,
+          "position": [
+            0.0030123135074973106,
+            0.10324759781360626,
+            1.4577850103378296
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            0.0007076890906319022,
+            0.10499031841754913,
+            1.4485114812850952
+          ],
+          "nearestTriangle": 43232,
+          "nearestTriangleMaterial": 1
+        },
+        {
+          "errorM": 0.009598109871149063,
+          "vertex": 97856,
+          "position": [
+            0.0025389036163687706,
+            0.10326428711414337,
+            1.457783579826355
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            -0.0010248119942843914,
+            0.10625030845403671,
+            1.449386715888977
+          ],
+          "nearestTriangle": 42478,
+          "nearestTriangleMaterial": 1
+        },
+        {
+          "errorM": 0.009447472169995308,
+          "vertex": 97949,
+          "position": [
+            0.0021010388154536486,
+            0.10327287763357162,
+            1.4577960968017578
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            -0.0011603586608543992,
+            0.10624567419290543,
+            1.4494426250457764
+          ],
+          "nearestTriangle": 31774,
+          "nearestTriangleMaterial": 1
+        },
+        {
+          "errorM": 0.00934310257434845,
+          "vertex": 81431,
+          "position": [
+            0.003925456199795008,
+            0.10320042818784714,
+            1.457755446434021
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            0.012041522189974785,
+            0.10240291804075241,
+            1.4531961679458618
+          ],
+          "nearestTriangle": 44401,
+          "nearestTriangleMaterial": 0
+        },
+        {
+          "errorM": 0.009178565815091133,
+          "vertex": 97853,
+          "position": [
+            0.0020578487310558558,
+            0.10332481563091278,
+            1.4575270414352417
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            -0.0011603586608543992,
+            0.10624567419290543,
+            1.4494426250457764
+          ],
+          "nearestTriangle": 31774,
+          "nearestTriangleMaterial": 1
+        },
+        {
+          "errorM": 0.009142694994807243,
+          "vertex": 97952,
+          "position": [
+            0.0026562847197055817,
+            0.10334303230047226,
+            1.4572913646697998
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            0.0006777698872610927,
+            0.10506657510995865,
+            1.448533296585083
+          ],
+          "nearestTriangle": 43232,
+          "nearestTriangleMaterial": 1
+        },
+        {
+          "errorM": 0.008891616947948933,
+          "vertex": 98054,
+          "position": [
+            -0.0019353482639417052,
+            0.10330697894096375,
+            1.457798719406128
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            -0.0011603586608543992,
+            0.10624567419290543,
+            1.4494426250457764
+          ],
+          "nearestTriangle": 31774,
+          "nearestTriangleMaterial": 1
+        },
+        {
+          "errorM": 0.008856148459017277,
+          "vertex": 98051,
+          "position": [
+            -0.0016563714016228914,
+            0.103306345641613,
+            1.4577820301055908
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            -0.0011603586608543992,
+            0.10624567419290543,
+            1.4494426250457764
+          ],
+          "nearestTriangle": 31774,
+          "nearestTriangleMaterial": 1
+        },
+        {
+          "errorM": 0.008627141825854778,
+          "vertex": 98048,
+          "position": [
+            -0.0016399796586483717,
+            0.10333981364965439,
+            1.4575514793395996
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            -0.0011603586608543992,
+            0.10624567419290543,
+            1.4494426250457764
+          ],
+          "nearestTriangle": 31774,
+          "nearestTriangleMaterial": 1
+        },
+        {
+          "errorM": 0.008534342981874943,
+          "vertex": 97955,
+          "position": [
+            0.002367340261116624,
+            0.10341045260429382,
+            1.4567331075668335
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            0.0006709614535793662,
+            0.10508393496274948,
+            1.4485381841659546
+          ],
+          "nearestTriangle": 43232,
+          "nearestTriangleMaterial": 1
+        },
+        {
+          "errorM": 0.008440142497420311,
+          "vertex": 81464,
+          "position": [
+            0.004219707101583481,
+            0.10338728874921799,
+            1.456390142440796
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            0.011531996540725231,
+            0.10247765481472015,
+            1.4522744417190552
+          ],
+          "nearestTriangle": 44424,
+          "nearestTriangleMaterial": 0
+        },
+        {
+          "errorM": 0.008317233063280582,
+          "vertex": 97753,
+          "position": [
+            0.0045858086086809635,
+            0.10522135347127914,
+            1.4559850692749023
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            0.011139780282974243,
+            0.10261210799217224,
+            1.451578974723816
+          ],
+          "nearestTriangle": 44396,
+          "nearestTriangleMaterial": 0
+        },
+        {
+          "errorM": 0.008256343193352222,
+          "vertex": 35432,
+          "position": [
+            0.003984266892075539,
+            0.10343049466609955,
+            1.4560105800628662
+          ],
+          "sourceMaterialMemberships": [
+            0
+          ],
+          "nearest": [
+            0.003031941130757332,
+            0.10292471200227737,
+            1.4478249549865723
+          ],
+          "nearestTriangle": 36540,
+          "nearestTriangleMaterial": 1
+        },
+        {
+          "errorM": 0.00819386262446642,
+          "vertex": 97756,
+          "position": [
+            0.004066914785653353,
+            0.10524030029773712,
+            1.45604407787323
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            0.0003640598151832819,
+            0.1058662161231041,
+            1.4487614631652832
+          ],
+          "nearestTriangle": 42476,
+          "nearestTriangleMaterial": 1
+        },
+        {
+          "errorM": 0.008155230432748795,
+          "vertex": 19106,
+          "position": [
+            0.0035511290188878775,
+            0.10345213115215302,
+            1.4560128450393677
+          ],
+          "sourceMaterialMemberships": [
+            0
+          ],
+          "nearest": [
+            0.0008704957435838878,
+            0.10457532852888107,
+            1.4483931064605713
+          ],
+          "nearestTriangle": 43232,
+          "nearestTriangleMaterial": 1
+        },
+        {
+          "errorM": 0.00811443105340004,
+          "vertex": 6860,
+          "position": [
+            0.003987948410212994,
+            0.10344988107681274,
+            1.455865740776062
+          ],
+          "sourceMaterialMemberships": [
+            0
+          ],
+          "nearest": [
+            0.003031941130757332,
+            0.10292471200227737,
+            1.4478249549865723
+          ],
+          "nearestTriangle": 36540,
+          "nearestTriangleMaterial": 1
+        },
+        {
+          "errorM": 0.008071782067418098,
+          "vertex": 35431,
+          "position": [
+            0.003984575625509024,
+            0.10345586389303207,
+            1.4558227062225342
+          ],
+          "sourceMaterialMemberships": [
+            0
+          ],
+          "nearest": [
+            0.003031941130757332,
+            0.10292471200227737,
+            1.4478249549865723
+          ],
+          "nearestTriangle": 36540,
+          "nearestTriangleMaterial": 1
+        },
+        {
+          "errorM": 0.00805999431759119,
+          "vertex": 35525,
+          "position": [
+            0.003250662935897708,
+            0.10346699506044388,
+            1.4560143947601318
+          ],
+          "sourceMaterialMemberships": [
+            0
+          ],
+          "nearest": [
+            0.0008282007183879614,
+            0.10468313843011856,
+            1.4484238624572754
+          ],
+          "nearestTriangle": 43232,
+          "nearestTriangleMaterial": 1
+        },
+        {
+          "errorM": 0.008026969619095325,
+          "vertex": 81430,
+          "position": [
+            0.0036413439083844423,
+            0.10525903850793839,
+            1.4560657739639282
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            0.0003031219821423292,
+            0.10602154582738876,
+            1.448805809020996
+          ],
+          "nearestTriangle": 43232,
+          "nearestTriangleMaterial": 1
+        },
+        {
+          "errorM": 0.008018739521503448,
+          "vertex": 904,
+          "position": [
+            0.0035541995894163847,
+            0.10347146540880203,
+            1.4558683633804321
+          ],
+          "sourceMaterialMemberships": [
+            0
+          ],
+          "nearest": [
+            0.0008778343326412141,
+            0.1045566201210022,
+            1.4483877420425415
+          ],
+          "nearestTriangle": 43232,
+          "nearestTriangleMaterial": 1
+        }
+      ]
+    },
+    "lowToHigh": {
+      "maximumM": 3.530103640514426e-05,
+      "over1_5mm": 0,
+      "worst": [
+        {
+          "errorM": 3.530103640514426e-05,
+          "vertex": 13726,
+          "position": [
+            0.10656878352165222,
+            0.045216549187898636,
+            1.0691640377044678
+          ],
+          "sourceMaterialMemberships": [
+            0
+          ],
+          "nearest": [
+            0.10656844824552536,
+            0.04521557316184044,
+            1.0691287517547607
+          ],
+          "nearestTriangle": 87267,
+          "nearestTriangleMaterial": 0
+        },
+        {
+          "errorM": 9.612120265956037e-06,
+          "vertex": 12797,
+          "position": [
+            -0.18445731699466705,
+            0.008910245262086391,
+            1.429930329322815
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            -0.18444770574569702,
+            0.008910374715924263,
+            1.429930329322815
+          ],
+          "nearestTriangle": 164388,
+          "nearestTriangleMaterial": 1
+        },
+        {
+          "errorM": 9.272513125324622e-06,
+          "vertex": 13732,
+          "position": [
+            -0.11646607518196106,
+            -0.09115932136774063,
+            1.3292758464813232
+          ],
+          "sourceMaterialMemberships": [
+            0
+          ],
+          "nearest": [
+            -0.11646519601345062,
+            -0.09116801619529724,
+            1.329272747039795
+          ],
+          "nearestTriangle": 93262,
+          "nearestTriangleMaterial": 0
+        },
+        {
+          "errorM": 5.754897301812889e-06,
+          "vertex": 12693,
+          "position": [
+            0.17645704746246338,
+            0.03772164136171341,
+            1.4314578771591187
+          ],
+          "sourceMaterialMemberships": [
+            0
+          ],
+          "nearest": [
+            0.17645134031772614,
+            0.0377209410071373,
+            1.4314576387405396
+          ],
+          "nearestTriangle": 12688,
+          "nearestTriangleMaterial": 0
+        },
+        {
+          "errorM": 3.9807318898965605e-06,
+          "vertex": 12984,
+          "position": [
+            0.1542671024799347,
+            0.03945165127515793,
+            1.43202805519104
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            0.15427105128765106,
+            0.03945200517773628,
+            1.4320276975631714
+          ],
+          "nearestTriangle": 134487,
+          "nearestTriangleMaterial": 1
+        },
+        {
+          "errorM": 3.7053962387290085e-06,
+          "vertex": 19966,
+          "position": [
+            0.11808262765407562,
+            -0.0804905816912651,
+            1.3272037506103516
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            0.11808211356401443,
+            -0.08049400895833969,
+            1.3272024393081665
+          ],
+          "nearestTriangle": 183310,
+          "nearestTriangleMaterial": 1
+        },
+        {
+          "errorM": 3.1234560537996003e-06,
+          "vertex": 12671,
+          "position": [
+            -0.17714418470859528,
+            0.013887599110603333,
+            1.4315147399902344
+          ],
+          "sourceMaterialMemberships": [
+            0
+          ],
+          "nearest": [
+            -0.1771472990512848,
+            0.013887597247958183,
+            1.4315149784088135
+          ],
+          "nearestTriangle": 42606,
+          "nearestTriangleMaterial": 0
+        },
+        {
+          "errorM": 3.049654651476885e-06,
+          "vertex": 12767,
+          "position": [
+            0.17565126717090607,
+            0.04218992963433266,
+            1.4313485622406006
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            0.17565429210662842,
+            0.04219023510813713,
+            1.4313483238220215
+          ],
+          "nearestTriangle": 134486,
+          "nearestTriangleMaterial": 1
+        },
+        {
+          "errorM": 2.9849688871763647e-06,
+          "vertex": 15152,
+          "position": [
+            0.11818525940179825,
+            -0.08376049995422363,
+            1.3256536722183228
+          ],
+          "sourceMaterialMemberships": [
+            0
+          ],
+          "nearest": [
+            0.11818553507328033,
+            -0.08375783264636993,
+            1.3256549835205078
+          ],
+          "nearestTriangle": 62529,
+          "nearestTriangleMaterial": 0
+        },
+        {
+          "errorM": 2.706920668060775e-06,
+          "vertex": 12602,
+          "position": [
+            0.18002474308013916,
+            0.016351886093616486,
+            1.4314512014389038
+          ],
+          "sourceMaterialMemberships": [
+            0
+          ],
+          "nearest": [
+            0.18002206087112427,
+            0.016351813450455666,
+            1.4314508438110352
+          ],
+          "nearestTriangle": 11632,
+          "nearestTriangleMaterial": 0
+        },
+        {
+          "errorM": 2.4988230507005937e-06,
+          "vertex": 12890,
+          "position": [
+            0.15942886471748352,
+            0.0434095673263073,
+            1.4302066564559937
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            0.15942643582820892,
+            0.04340903088450432,
+            1.4302068948745728
+          ],
+          "nearestTriangle": 134846,
+          "nearestTriangleMaterial": 1
+        },
+        {
+          "errorM": 2.4204191504395567e-06,
+          "vertex": 15150,
+          "position": [
+            0.11622387170791626,
+            0.02444097399711609,
+            1.0682587623596191
+          ],
+          "sourceMaterialMemberships": [
+            0
+          ],
+          "nearest": [
+            0.11622316390275955,
+            0.024443285539746284,
+            1.0682586431503296
+          ],
+          "nearestTriangle": 87186,
+          "nearestTriangleMaterial": 0
+        },
+        {
+          "errorM": 2.189050974266138e-06,
+          "vertex": 12774,
+          "position": [
+            0.17616072297096252,
+            0.03480939567089081,
+            1.4312711954116821
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            0.17616289854049683,
+            0.03480944037437439,
+            1.431270956993103
+          ],
+          "nearestTriangle": 136198,
+          "nearestTriangleMaterial": 1
+        },
+        {
+          "errorM": 2.1193334305280587e-06,
+          "vertex": 17450,
+          "position": [
+            -0.06621260941028595,
+            -0.0291820727288723,
+            1.443865180015564
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            -0.06621087342500687,
+            -0.02918088063597679,
+            1.443865418434143
+          ],
+          "nearestTriangle": 169049,
+          "nearestTriangleMaterial": 1
+        },
+        {
+          "errorM": 2.0892468910460593e-06,
+          "vertex": 12964,
+          "position": [
+            -0.19848977029323578,
+            0.037994157522916794,
+            1.4317626953125
+          ],
+          "sourceMaterialMemberships": [
+            0
+          ],
+          "nearest": [
+            -0.19848769903182983,
+            0.03799402341246605,
+            1.431762933731079
+          ],
+          "nearestTriangle": 40099,
+          "nearestTriangleMaterial": 0
+        },
+        {
+          "errorM": 2.050091325145331e-06,
+          "vertex": 12972,
+          "position": [
+            0.19949056208133698,
+            0.048459380865097046,
+            1.4302915334701538
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            0.19949254393577576,
+            0.04845976456999779,
+            1.4302911758422852
+          ],
+          "nearestTriangle": 134847,
+          "nearestTriangleMaterial": 1
+        },
+        {
+          "errorM": 2.0190464056213386e-06,
+          "vertex": 12973,
+          "position": [
+            -0.15367677807807922,
+            0.0309244766831398,
+            1.4306817054748535
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            -0.15367476642131805,
+            0.030924351885914803,
+            1.430681824684143
+          ],
+          "nearestTriangle": 161914,
+          "nearestTriangleMaterial": 1
+        },
+        {
+          "errorM": 1.998589596041711e-06,
+          "vertex": 14774,
+          "position": [
+            0.12403131276369095,
+            -0.09570544213056564,
+            1.2823784351348877
+          ],
+          "sourceMaterialMemberships": [
+            1
+          ],
+          "nearest": [
+            0.12403164058923721,
+            -0.09570378810167313,
+            1.2823795080184937
+          ],
+          "nearestTriangle": 189305,
+          "nearestTriangleMaterial": 1
+        },
+        {
+          "errorM": 1.8082054111800971e-06,
+          "vertex": 12627,
+          "position": [
+            0.11824335902929306,
+            -0.08430277556180954,
+            1.3250595331192017
+          ],
+          "sourceMaterialMemberships": [
+            0
+          ],
+          "nearest": [
+            0.11824321001768112,
+            -0.08430442959070206,
+            1.3250588178634644
+          ],
+          "nearestTriangle": 62531,
+          "nearestTriangleMaterial": 0
+        },
+        {
+          "errorM": 1.8005141555477167e-06,
+          "vertex": 19498,
+          "position": [
+            0.11801843345165253,
+            -0.09017754346132278,
+            1.32179594039917
+          ],
+          "sourceMaterialMemberships": [
+            0
+          ],
+          "nearest": [
+            0.11801822483539581,
+            -0.09017918258905411,
+            1.3217952251434326
+          ],
+          "nearestTriangle": 62893,
+          "nearestTriangleMaterial": 0
+        }
+      ]
+    }
+  }
+}

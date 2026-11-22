@@ -1,0 +1,116 @@
+{
+  "source": "/workspace/scratch/61afcdd4e3c6/work/garment/candidate-08/fitted-detailed.blend",
+  "acceptance": "experiment, not a selected asset",
+  "objects": {
+    "Body | continuous open front and shoulder yoke": {
+      "iterations": [
+        {
+          "iteration": 0,
+          "protectedOuterVertices": 4930,
+          "triangles": 24704,
+          "highToLowMaxM": 0.013678815215826035,
+          "lowToHighMaxM": 0.0017998063703998923,
+          "highVerticesOver1_5mm": 364,
+          "sourceVerticesToProtect": 504,
+          "seconds": 0.7725125279998792
+        },
+        {
+          "iteration": 1,
+          "protectedOuterVertices": 6117,
+          "triangles": 25776,
+          "highToLowMaxM": 0.029320310801267624,
+          "lowToHighMaxM": 0.011354804039001465,
+          "highVerticesOver1_5mm": 19771,
+          "sourceVerticesToProtect": 14640,
+          "seconds": 0.8863916779996543
+        },
+        {
+          "iteration": 2,
+          "protectedOuterVertices": 26024,
+          "triangles": 107780,
+          "highToLowMaxM": 0.003704821690917015,
+          "lowToHighMaxM": 0.0037101968191564083,
+          "highVerticesOver1_5mm": 165,
+          "sourceVerticesToProtect": 250,
+          "seconds": 1.0394881619999978
+        },
+        {
+          "iteration": 3,
+          "protectedOuterVertices": 26557,
+          "triangles": 110104,
+          "highToLowMaxM": 0.001800040015950799,
+          "lowToHighMaxM": 0.0017999937990680337,
+          "highVerticesOver1_5mm": 9,
+          "sourceVerticesToProtect": 14,
+          "seconds": 0.8956270730000142
+        },
+        {
+          "iteration": 4,
+          "protectedOuterVertices": 26562,
+          "triangles": 110140,
+          "highToLowMaxM": 0.001800040015950799,
+          "lowToHighMaxM": 0.0017999937990680337,
+          "highVerticesOver1_5mm": 9,
+          "sourceVerticesToProtect": 13,
+          "seconds": 0.9227371049996691
+        }
+      ]
+    },
+    "Collar | standing back and neck facing": {
+      "iterations": [
+        {
+          "iteration": 0,
+          "protectedOuterVertices": 5704,
+          "triangles": 23252,
+          "highToLowMaxM": 0.028266754001379013,
+          "lowToHighMaxM": 0.007105235941708088,
+          "highVerticesOver1_5mm": 21843,
+          "sourceVerticesToProtect": 16863,
+          "seconds": 1.6889608679998673
+        },
+        {
+          "iteration": 1,
+          "protectedOuterVertices": 29103,
+          "triangles": 119976,
+          "highToLowMaxM": 0.0022605936974287033,
+          "lowToHighMaxM": 0.0018000055570155382,
+          "highVerticesOver1_5mm": 244,
+          "sourceVerticesToProtect": 429,
+          "seconds": 1.6839674749999176
+        },
+        {
+          "iteration": 2,
+          "protectedOuterVertices": 29839,
+          "triangles": 123200,
+          "highToLowMaxM": 0.002120731631293893,
+          "lowToHighMaxM": 0.0018000055570155382,
+          "highVerticesOver1_5mm": 103,
+          "sourceVerticesToProtect": 156,
+          "seconds": 1.7754882879999059
+        },
+        {
+          "iteration": 3,
+          "protectedOuterVertices": 30045,
+          "triangles": 124072,
+          "highToLowMaxM": 0.0018000169657170773,
+          "lowToHighMaxM": 0.0018000055570155382,
+          "highVerticesOver1_5mm": 23,
+          "sourceVerticesToProtect": 46,
+          "seconds": 1.850517722999939
+        },
+        {
+          "iteration": 4,
+          "protectedOuterVertices": 30048,
+          "triangles": 124088,
+          "highToLowMaxM": 0.0018000169657170773,
+          "lowToHighMaxM": 0.0018000055570155382,
+          "highVerticesOver1_5mm": 23,
+          "sourceVerticesToProtect": 45,
+          "seconds": 1.712537927000085
+        }
+      ]
+    }
+  },
+  "bothWithin1_5mm": false,
+  "totalClothTriangles": 0
+}

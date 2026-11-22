@@ -1,0 +1,65 @@
+{
+  "blenderVersion": "4.3.2",
+  "cases": [
+    {
+      "case": "ungrouped",
+      "weightsUpperLower": [
+        null,
+        null
+      ],
+      "factor": 1,
+      "targetRatio": 0.1,
+      "originalVertices": 1986,
+      "remainingVertices": 200,
+      "originalUpperVertices": 961,
+      "exactUpperVerticesPreserved": 0,
+      "originalLowerVertices": 1025,
+      "exactLowerVerticesPreserved": 0
+    },
+    {
+      "case": "upper_zero_lower_one",
+      "weightsUpperLower": [
+        0.0,
+        1.0
+      ],
+      "factor": 1,
+      "targetRatio": 0.1,
+      "originalVertices": 1986,
+      "remainingVertices": 962,
+      "originalUpperVertices": 961,
+      "exactUpperVerticesPreserved": 961,
+      "originalLowerVertices": 1025,
+      "exactLowerVerticesPreserved": 0
+    },
+    {
+      "case": "upper_one_lower_zero",
+      "weightsUpperLower": [
+        1.0,
+        0.0
+      ],
+      "factor": 1,
+      "targetRatio": 0.1,
+      "originalVertices": 1986,
+      "remainingVertices": 1026,
+      "originalUpperVertices": 961,
+      "exactUpperVerticesPreserved": 0,
+      "originalLowerVertices": 1025,
+      "exactLowerVerticesPreserved": 1025
+    },
+    {
+      "case": "upper_quarter_lower_one",
+      "weightsUpperLower": [
+        0.25,
+        1.0
+      ],
+      "factor": 1000,
+      "targetRatio": 0.1,
+      "originalVertices": 1986,
+      "remainingVertices": 200,
+      "originalUpperVertices": 961,
+      "exactUpperVerticesPreserved": 8,
+      "originalLowerVertices": 1025,
+      "exactLowerVerticesPreserved": 0
+    }
+  ]
+}

@@ -69,7 +69,10 @@ source-identity model inputs. Existing failed trials and earlier reports remain
 unchanged. New scripts, commands, candidate models and rejected iterations are
 retained with the continuation rather than being described as the old lost work.
 
-The fixed checklist currently remains 28/37 (76%). U2–U6 receive credit only
-when their complete stated asset evidence passes independent review. Matched
+The initial recovery kept the fixed checklist at 28/37 (76%). The independently
+reviewed new arm now supports U4/U5, bringing the ledger to 30/37 (81%). Its
+[report](../automail-resume/README.md) and [durable delivery](../automail-resume/delivery-archive.json)
+identify the exact selected bytes. U2/U3/U6 remain open because the garment is
+still rejected; a distance-only passing intermediate is not a selected asset. Matched
 three-condition comparison U1, measured comparable time/cost E2, main merge D2
 and publication D3 remain separate open requirements. No release is implied.

@@ -2,6 +2,43 @@
 
 ## Current recorded checkpoint
 
+**81% — 30 of 37 fixed checklist-v2 criteria demonstrated.** The recovery
+continuation at [`bb8e8aff`](https://github.com/ictseoyoungmin/refas/commit/bb8e8affbbb6b5cf53dcb637114710511d354913)
+adds **U4 and U5** after independent review of the new articulated arm. It is
+not a recovery of the lost historical 78,998-triangle candidate. R2-07 is
+**2/5, WIP**; R2-06 remains **5/7, WIP**. All seven tasks remain unclosed.
+
+The selected arm has 86,564 triangles and retains all 321 original parts through
+99 delivered meshes. Its declared 121-frame reach/partial grip,133 surface pairs,
+actual Godot playback, deliberate palm/annulus retopology, actual flipped-face
+negative control, and exact 16-file restoration pass. Required materials and
+parents remain; the unused generated Lambda UV omission is explicitly recorded.
+See [the complete report](evidence/usable-assets/automail-resume/README.md),
+[independent review](evidence/usable-assets/recovery/review-automail-candidate08.md)
+and [durable delivery record](evidence/usable-assets/automail-resume/delivery-archive.json).
+
+The jacket remains unaccepted. A promising 123,208-triangle geometry experiment
+met its 1.5 mm vertex-distance limit but exposed nonmanifold rim junctions and
+visible lining crossings under independent review. It is retained as a failed
+intermediate. U2, U3 and U6 stay open until the garment's complete mesh, wearing,
+attachment and consumer evidence passes. E2, U1, D2, D3 remain separately open.
+
+| Slice | Current coverage | Status |
+| --- | --- | --- |
+| R2-01 / R2-02 / R2-04 / R2-05 | 4/4 each | REVIEW |
+| R2-03 | 6/6 | REVIEW |
+| R2-06 | 5/7 | WIP |
+| R2-07 | 2/5 | WIP |
+| Coordinated delivery | 1/3 | Main merge and release unfinished |
+| **Total** | **30/37 = 81% rounded** | **0/7 tasks CLOSED** |
+
+The runtime recovery at 5f2f39c6 passes 935 JavaScript and 92 Production tests,
+including actual Blender/Godot. Both remote workflows passed. Runtime tests are
+separate from model-use acceptance. PR #399 remains Draft; development identity
+remains 2.0.0-alpha.1. This is criterion coverage, not effort or time remaining.
+
+## Historical checklist-v2 scope baseline
+
 **Checklist v2 scope-change baseline: 76% — 28 of 37 criteria demonstrated.**
 On 2026-11-22 the user explicitly added actual wearing/mechanical use, mesh
 condition, retopology and optimization to 2.0 and its comparison. The six added

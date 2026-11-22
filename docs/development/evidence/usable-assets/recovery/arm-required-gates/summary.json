@@ -1,0 +1,95 @@
+{
+  "schema": "refas.required-gates/v1",
+  "sourceCommit": "bb8e8affbbb6b5cf53dcb637114710511d354913",
+  "allPassed": true,
+  "javascript": {
+    "tests": 935,
+    "passed": 935,
+    "failed": 0,
+    "skipped": 0
+  },
+  "retainedLegacyDogfoodCheckpoints": 11,
+  "runtimeProductionEvidence": {
+    "commit": "5f2f39c6e9f1e4bbdef6dfd463e84991daa73e57",
+    "tests": 92,
+    "failed": 0,
+    "skipped": 0,
+    "note": "Actual Blender/Godot execution; active runtime and skill bytes unchanged by asset/evidence work."
+  },
+  "commands": [
+    {
+      "argv": [
+        "npm",
+        "test"
+      ],
+      "startedUtc": "2026-11-22T19:41:20.436683+00:00",
+      "endedUtc": "2026-11-22T19:43:11.297498+00:00",
+      "elapsedSeconds": 110.8608238099996,
+      "returncode": 0,
+      "sourceCommit": "bb8e8affbbb6b5cf53dcb637114710511d354913",
+      "note": "Asset-source commit plus pending progress documentation; active runtime/skill unchanged from5f2f39c6.",
+      "stdoutSha256": "e7a80c1c66d7da74ffd768e160d81a681f221fbf2a3fda81c8ac123e921d0714",
+      "stderrSha256": "9aac3da9a7039a99c345545c32f286aa65c358d571bfce7e00d94625d095c829"
+    },
+    {
+      "argv": [
+        "npm",
+        "run",
+        "dogfood"
+      ],
+      "startedUtc": "2026-11-22T19:41:20.456649+00:00",
+      "endedUtc": "2026-11-22T19:43:32.365311+00:00",
+      "elapsedSeconds": 131.90867034999974,
+      "returncode": 0,
+      "sourceCommit": "bb8e8affbbb6b5cf53dcb637114710511d354913",
+      "note": "Asset-source commit plus pending progress documentation; active runtime/skill unchanged from5f2f39c6.",
+      "stdoutSha256": "ac5e31303ffd489e3f624d4f44ff8eb94e7cc9dcc032b1ac03a5c1d419608192",
+      "stderrSha256": "9aac3da9a7039a99c345545c32f286aa65c358d571bfce7e00d94625d095c829"
+    },
+    {
+      "argv": [
+        "npm",
+        "run",
+        "release:audit"
+      ],
+      "startedUtc": "2026-11-22T19:41:20.540398+00:00",
+      "endedUtc": "2026-11-22T19:41:22.020118+00:00",
+      "elapsedSeconds": 1.4797433670000828,
+      "returncode": 0,
+      "sourceCommit": "bb8e8affbbb6b5cf53dcb637114710511d354913",
+      "note": "Asset-source commit plus pending progress documentation; active runtime/skill unchanged from5f2f39c6.",
+      "stdoutSha256": "748436fa7ca255009d6650e19afdfe868ba9696a420954fdb0871ebbb41bd84e",
+      "stderrSha256": "9aac3da9a7039a99c345545c32f286aa65c358d571bfce7e00d94625d095c829"
+    },
+    {
+      "argv": [
+        "npm",
+        "run",
+        "test:python"
+      ],
+      "startedUtc": "2026-11-22T19:41:20.487864+00:00",
+      "endedUtc": "2026-11-22T19:41:20.796665+00:00",
+      "elapsedSeconds": 0.3088095120001526,
+      "returncode": 0,
+      "sourceCommit": "bb8e8affbbb6b5cf53dcb637114710511d354913",
+      "note": "Asset-source commit plus pending progress documentation; active runtime/skill unchanged from5f2f39c6.",
+      "stdoutSha256": "1523f788878b4fd0eb26816fbd5e640bdb3db384355380f2e9bd7921e1393b3b",
+      "stderrSha256": "9aac3da9a7039a99c345545c32f286aa65c358d571bfce7e00d94625d095c829"
+    },
+    {
+      "argv": [
+        "npm",
+        "run",
+        "check"
+      ],
+      "startedUtc": "2026-11-22T19:41:20.461418+00:00",
+      "endedUtc": "2026-11-22T19:41:43.522508+00:00",
+      "elapsedSeconds": 23.061100128999897,
+      "returncode": 0,
+      "sourceCommit": "bb8e8affbbb6b5cf53dcb637114710511d354913",
+      "note": "Asset-source commit plus pending progress documentation; active runtime/skill unchanged from5f2f39c6.",
+      "stdoutSha256": "923b330c5f4bfc2ce9b6e41d21c0bf2c58fb4c8d5bcd50d0507d7ef287f24683",
+      "stderrSha256": "81de847aa5ed54f15ebdbcd1618f3adffb21dae26ec19c0bc8c388dc125e576d"
+    }
+  ]
+}

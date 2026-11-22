@@ -1,5 +1,16 @@
 # RefAs 2.0: actual use, mesh condition, retopology and optimization
 
+## Current recovery continuation
+
+On 2026-11-23 the interrupted work was checked against actual retained files.
+The runtime was retained, but the later model candidates were not recovered.
+The [recovery report](recovery/README.md) records that boundary and the strict
+consumer-option repair. The [new selected arm](automail-resume/README.md) now
+has complete scoped motion/retopology evidence, raising the fixed ledger to
+**30/37 = 81% (U4/U5 added)**. The garment remains an explicitly rejected work
+in progress. Historical implementation and 90-test records below remain intact;
+the later 92-test runtime execution is linked from the recovery report.
+
 ## Scope and status
 
 This slice implements the user's 2026-11-22 expansion from static prototype

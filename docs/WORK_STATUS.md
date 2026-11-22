@@ -4,11 +4,47 @@
 
 RefAs 2.0 production rewrite — native authoring and the first original-reference pilot, [issue #398](https://github.com/ictseoyoungmin/refas/issues/398), branch [`rewrite/v2`](https://github.com/ictseoyoungmin/refas/tree/rewrite/v2), [Draft PR #399](https://github.com/ictseoyoungmin/refas/pull/399).
 
-The user approved implementation of the new production path, starting from `main@a29bcc42f4da666c812462eb130836f2d766b0a1`. The [implementation plan](development/refas-2-plan.md) and [Work OS plan](https://app.notion.com/p/41fc6a3b5bf181c2b2cdfac4605ef7d7) record the accepted direction. Status date: 2026-11-22, Asia/Seoul.
+The user approved implementation of the new production path, starting from `main@a29bcc42f4da666c812462eb130836f2d766b0a1`. The [implementation plan](development/refas-2-plan.md) and [Work OS plan](https://app.notion.com/p/41fc6a3b5bf181c2b2cdfac4605ef7d7) record the accepted direction. Status date: 2026-11-23, Asia/Seoul.
 
 This is development work. Active package/Python runtime/plugin identity is `2.0.0-alpha.1`; the retained legacy runtime remains `1.4.2`. The recorded published release remains `v1.4.1`. Main merge and formal publication are separate unfinished milestones.
 
-## Current: actual use, mesh condition, retopology and optimization
+## Current: recovered runtime and validated articulated-arm delivery
+
+The continuation at [`bb8e8aff`](https://github.com/ictseoyoungmin/refas/commit/bb8e8affbbb6b5cf53dcb637114710511d354913)
+advances the fixed [plan ledger](development/refas-2-progress.md) to
+**30/37 = 81%**, adding U4 and U5. R2-07 remains WIP at 2/5; the garment is still
+being repaired. The old 78,998-triangle arm and later 97-frame jacket were not
+found in the retained files. New work explicitly starts from the hash-verified
+source-identity models. Earlier failed candidates and judgments remain.
+
+The new arm has 86,564 triangles, 99 meshes/primitives and 20 controls. All 321 source
+parts are accounted for; 289 detailed parts remain exact and 32 repairs are
+identified. Declared133 surface pairs across 121 frames are clear. Actual Godot
+playback verifies 119 nodes at 121 times. Native/export topology, a deliberately
+flipped actual GLB triangle, fixed-camera visual review, and a cover edit that
+preserves 114 unrelated objects and restores 16 files pass. Its connected palm and
+periodic wrist annuli demonstrate deliberate construction retopology separately
+from reduction. The one unused generated glyph UV omission is explicit.
+
+Read the [asset report](development/evidence/usable-assets/automail-resume/README.md),
+[independent review](development/evidence/usable-assets/recovery/review-automail-candidate08.md)
+and [download record](development/evidence/usable-assets/automail-resume/delivery-archive.json).
+The standalone ZIP has 93 verified entries and retains the untouched original,
+detailed version, native/GLB, images, scripts and complete compressed observations.
+
+The missing finite-positive vertex-tolerance option was restored at 5f2f39c6.
+Its unchanged strictdefault and actualnegative controls pass in 92 Production
+tests with Blender/Godot; 935 JavaScript tests and the required repository gates
+pass. Production and Node 20/22/24 remote CI succeeded. The active 19-file package
+is unchanged by the later repository-only asset scripts.
+
+The jacket's distance-budget experiment remains rejected after independent
+inspection found four-wall rim junctions and visible nape lining crossings.
+The actual avatar remains present while geometry, motion and hardware are
+repaired. U2/U3/U6 remain open; U1/E2 comparisons, main merge D2 and publication D3
+also remain open. This checkpoint is not a release or whole-project completion.
+
+## Previous: actual use, mesh condition, retopology and optimization
 
 The user explicitly expanded the scope on 2026-11-22. The original checklist
 remains historically **28/31 = 90%**; checklist v2 adds U1–U6 and begins at

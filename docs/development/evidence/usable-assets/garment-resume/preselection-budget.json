@@ -1,0 +1,18 @@
+{
+  "frozenUtc": "2026-11-22T18:55:40.482866+00:00",
+  "jacketTrianglesMaximum": 125000,
+  "jacketMaterialPrimitivesMaximum": 150,
+  "clothSurfaceSampleErrorM": 0.0015,
+  "maximumSkinInfluences": 4,
+  "motion": {
+    "frames": [
+      1,
+      97
+    ],
+    "fps": 30,
+    "upperArmLoweringDegrees": 45,
+    "elbowFlexionDegrees": 55,
+    "spineTwistDegrees": 8
+  },
+  "scope": "One identified avatar; ordinary skeletal deformation and baked chain motion, not cloth simulation or universal sizing."
+}
