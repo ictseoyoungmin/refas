@@ -1,0 +1,2018 @@
+{
+  "created_at": "2026-11-22T09:22:03.007949+00:00",
+  "file": "/workspace/scratch/c52cb753f160/installed-refas/refas-1.4.2.tgz",
+  "sha256": "0b62e372e335cdf090718ee0a3384e5a51b3e48f309d8c7c1e9e0ba8bbf4e01a",
+  "bytes": 884390,
+  "package_files": 399,
+  "skill_root": "/workspace/scratch/c52cb753f160/installed-refas/package/skills/refas",
+  "version": "1.4.2",
+  "npm_pack": {
+    "id": "refas@1.4.2",
+    "name": "refas",
+    "version": "1.4.2",
+    "size": 884390,
+    "unpackedSize": 4016807,
+    "shasum": "c3606ec54211eb3c3a94ca474ab09c27044486a5",
+    "integrity": "sha512-A0QOVidzIgr3oBSNXbOVn7MjblkKzzLmb3NBx5kDMCHbgytPU9uekRvc57fTTJktPUNsNEwfbn66RBDmnTPboQ==",
+    "filename": "refas-1.4.2.tgz",
+    "files": [
+      {
+        "path": "LICENSE",
+        "size": 1071,
+        "mode": 420
+      },
+      {
+        "path": "README.md",
+        "size": 19525,
+        "mode": 420
+      },
+      {
+        "path": "package.json",
+        "size": 6533,
+        "mode": 420
+      },
+      {
+        "path": "requirements.txt",
+        "size": 33,
+        "mode": 420
+      },
+      {
+        "path": "schemas/actuation-model.schema.json",
+        "size": 8679,
+        "mode": 420
+      },
+      {
+        "path": "schemas/appearance-fit.schema.json",
+        "size": 857,
+        "mode": 420
+      },
+      {
+        "path": "schemas/articulated-joint-report.schema.json",
+        "size": 2158,
+        "mode": 420
+      },
+      {
+        "path": "schemas/articulated-joint.schema.json",
+        "size": 2764,
+        "mode": 420
+      },
+      {
+        "path": "schemas/articulation-graph.schema.json",
+        "size": 5273,
+        "mode": 420
+      },
+      {
+        "path": "schemas/artifact-handoff.schema.json",
+        "size": 3571,
+        "mode": 420
+      },
+      {
+        "path": "schemas/assembly-contract.schema.json",
+        "size": 2371,
+        "mode": 420
+      },
+      {
+        "path": "schemas/attachment-follow-report.schema.json",
+        "size": 3144,
+        "mode": 420
+      },
+      {
+        "path": "schemas/attachment-follow-state.schema.json",
+        "size": 3997,
+        "mode": 420
+      },
+      {
+        "path": "schemas/attachment-propagation-plan.schema.json",
+        "size": 5005,
+        "mode": 420
+      },
+      {
+        "path": "schemas/attachment-propagation-report.schema.json",
+        "size": 5516,
+        "mode": 420
+      },
+      {
+        "path": "schemas/attachment-semantics.schema.json",
+        "size": 6818,
+        "mode": 420
+      },
+      {
+        "path": "schemas/backend-export.schema.json",
+        "size": 6661,
+        "mode": 420
+      },
+      {
+        "path": "schemas/benchmark-matrix.schema.json",
+        "size": 578,
+        "mode": 420
+      },
+      {
+        "path": "schemas/bilateral-pair-realization.schema.json",
+        "size": 9250,
+        "mode": 420
+      },
+      {
+        "path": "schemas/blockout-competition-decision.schema.json",
+        "size": 2588,
+        "mode": 420
+      },
+      {
+        "path": "schemas/blockout-competition-policy.schema.json",
+        "size": 1079,
+        "mode": 420
+      },
+      {
+        "path": "schemas/camera-fit.schema.json",
+        "size": 1275,
+        "mode": 420
+      },
+      {
+        "path": "schemas/candidate-lineage-proof.schema.json",
+        "size": 710,
+        "mode": 420
+      },
+      {
+        "path": "schemas/candidate-transaction.schema.json",
+        "size": 5830,
+        "mode": 420
+      },
+      {
+        "path": "schemas/candidate-transition.schema.json",
+        "size": 1383,
+        "mode": 420
+      },
+      {
+        "path": "schemas/canonical-edit-intent.schema.json",
+        "size": 2575,
+        "mode": 420
+      },
+      {
+        "path": "schemas/canonical-export-view.schema.json",
+        "size": 2685,
+        "mode": 420
+      },
+      {
+        "path": "schemas/canonical-object-frame.schema.json",
+        "size": 1507,
+        "mode": 420
+      },
+      {
+        "path": "schemas/certification-policy.schema.json",
+        "size": 2876,
+        "mode": 420
+      },
+      {
+        "path": "schemas/certification-relational-evidence.schema.json",
+        "size": 3051,
+        "mode": 420
+      },
+      {
+        "path": "schemas/checkpoint.schema.json",
+        "size": 1477,
+        "mode": 420
+      },
+      {
+        "path": "schemas/claim-certification-decision.schema.json",
+        "size": 2468,
+        "mode": 420
+      },
+      {
+        "path": "schemas/collision-model.schema.json",
+        "size": 7437,
+        "mode": 420
+      },
+      {
+        "path": "schemas/common.schema.json",
+        "size": 4846,
+        "mode": 420
+      },
+      {
+        "path": "schemas/construction-execution-proof.schema.json",
+        "size": 4553,
+        "mode": 420
+      },
+      {
+        "path": "schemas/construction-operation-permit.schema.json",
+        "size": 2402,
+        "mode": 420
+      },
+      {
+        "path": "schemas/construction-quality.schema.json",
+        "size": 5795,
+        "mode": 420
+      },
+      {
+        "path": "schemas/construction-vocabulary.schema.json",
+        "size": 4199,
+        "mode": 420
+      },
+      {
+        "path": "schemas/control-profile.schema.json",
+        "size": 5787,
+        "mode": 420
+      },
+      {
+        "path": "schemas/cross-representation-validation.schema.json",
+        "size": 5306,
+        "mode": 420
+      },
+      {
+        "path": "schemas/divergence-authorization.schema.json",
+        "size": 5473,
+        "mode": 420
+      },
+      {
+        "path": "schemas/early-resemblance-barrier.schema.json",
+        "size": 4213,
+        "mode": 420
+      },
+      {
+        "path": "schemas/evidence-request.schema.json",
+        "size": 4736,
+        "mode": 420
+      },
+      {
+        "path": "schemas/evidence-utility-decisions.schema.json",
+        "size": 5530,
+        "mode": 420
+      },
+      {
+        "path": "schemas/external-construction-receipt.schema.json",
+        "size": 4830,
+        "mode": 420
+      },
+      {
+        "path": "schemas/final-resemblance-closure.schema.json",
+        "size": 1563,
+        "mode": 420
+      },
+      {
+        "path": "schemas/final-spatial-continuity.schema.json",
+        "size": 6596,
+        "mode": 420
+      },
+      {
+        "path": "schemas/finding.schema.json",
+        "size": 1054,
+        "mode": 420
+      },
+      {
+        "path": "schemas/first-multiview-observation.schema.json",
+        "size": 2636,
+        "mode": 420
+      },
+      {
+        "path": "schemas/fit-structural-eligibility.schema.json",
+        "size": 3177,
+        "mode": 420
+      },
+      {
+        "path": "schemas/fusion-provenance.schema.json",
+        "size": 2181,
+        "mode": 420
+      },
+      {
+        "path": "schemas/geometry-backend.schema.json",
+        "size": 604,
+        "mode": 420
+      },
+      {
+        "path": "schemas/hard-surface-spec.schema.json",
+        "size": 1489,
+        "mode": 420
+      },
+      {
+        "path": "schemas/host-event.schema.json",
+        "size": 3324,
+        "mode": 420
+      },
+      {
+        "path": "schemas/host-operation.schema.json",
+        "size": 2026,
+        "mode": 420
+      },
+      {
+        "path": "schemas/host-review-bundle.schema.json",
+        "size": 7707,
+        "mode": 420
+      },
+      {
+        "path": "schemas/host-session.schema.json",
+        "size": 1526,
+        "mode": 420
+      },
+      {
+        "path": "schemas/lighting-fit.schema.json",
+        "size": 919,
+        "mode": 420
+      },
+      {
+        "path": "schemas/logical-fusion-invalidation.schema.json",
+        "size": 2303,
+        "mode": 420
+      },
+      {
+        "path": "schemas/logical-fusion.schema.json",
+        "size": 2734,
+        "mode": 420
+      },
+      {
+        "path": "schemas/macro-fit.schema.json",
+        "size": 763,
+        "mode": 420
+      },
+      {
+        "path": "schemas/mechanism-graph.schema.json",
+        "size": 4942,
+        "mode": 420
+      },
+      {
+        "path": "schemas/multi-anchor-plan.schema.json",
+        "size": 3652,
+        "mode": 420
+      },
+      {
+        "path": "schemas/multi-anchor-report.schema.json",
+        "size": 4328,
+        "mode": 420
+      },
+      {
+        "path": "schemas/normalized-representation.schema.json",
+        "size": 4670,
+        "mode": 420
+      },
+      {
+        "path": "schemas/orientation-discrepancy.schema.json",
+        "size": 3260,
+        "mode": 420
+      },
+      {
+        "path": "schemas/orientation-evidence.schema.json",
+        "size": 3075,
+        "mode": 420
+      },
+      {
+        "path": "schemas/orientation-pose-fit.schema.json",
+        "size": 7286,
+        "mode": 420
+      },
+      {
+        "path": "schemas/parameter-fit-plan.schema.json",
+        "size": 5293,
+        "mode": 420
+      },
+      {
+        "path": "schemas/parameter-fit-report.schema.json",
+        "size": 5785,
+        "mode": 420
+      },
+      {
+        "path": "schemas/pbr-render-report.schema.json",
+        "size": 5032,
+        "mode": 420
+      },
+      {
+        "path": "schemas/perceptual-discrepancy.schema.json",
+        "size": 827,
+        "mode": 420
+      },
+      {
+        "path": "schemas/perceptual-signature-evidence.schema.json",
+        "size": 4122,
+        "mode": 420
+      },
+      {
+        "path": "schemas/perceptual-signature-set.schema.json",
+        "size": 3922,
+        "mode": 420
+      },
+      {
+        "path": "schemas/physical-asset-bundle.schema.json",
+        "size": 5741,
+        "mode": 420
+      },
+      {
+        "path": "schemas/physical-claim-evidence.schema.json",
+        "size": 6473,
+        "mode": 420
+      },
+      {
+        "path": "schemas/physical-fusion-plan.schema.json",
+        "size": 2766,
+        "mode": 420
+      },
+      {
+        "path": "schemas/physical-fusion-report.schema.json",
+        "size": 2028,
+        "mode": 420
+      },
+      {
+        "path": "schemas/physical-identity-graph.schema.json",
+        "size": 8883,
+        "mode": 420
+      },
+      {
+        "path": "schemas/pose-fit.schema.json",
+        "size": 1242,
+        "mode": 420
+      },
+      {
+        "path": "schemas/prior-quarantine-authority.schema.json",
+        "size": 2370,
+        "mode": 420
+      },
+      {
+        "path": "schemas/prior-quarantine.schema.json",
+        "size": 2925,
+        "mode": 420
+      },
+      {
+        "path": "schemas/project-state.schema.json",
+        "size": 1427,
+        "mode": 420
+      },
+      {
+        "path": "schemas/projection-fit.schema.json",
+        "size": 7356,
+        "mode": 420
+      },
+      {
+        "path": "schemas/qa-coverage-report.schema.json",
+        "size": 1749,
+        "mode": 420
+      },
+      {
+        "path": "schemas/README.md",
+        "size": 20451,
+        "mode": 420
+      },
+      {
+        "path": "schemas/realized-assembly-proof.schema.json",
+        "size": 1028,
+        "mode": 420
+      },
+      {
+        "path": "schemas/realized-contact-graph.schema.json",
+        "size": 1261,
+        "mode": 420
+      },
+      {
+        "path": "schemas/realized-contact-plan.schema.json",
+        "size": 1774,
+        "mode": 420
+      },
+      {
+        "path": "schemas/realized-contact-report.schema.json",
+        "size": 1548,
+        "mode": 420
+      },
+      {
+        "path": "schemas/realized-projection.schema.json",
+        "size": 7153,
+        "mode": 420
+      },
+      {
+        "path": "schemas/reference-geometry.schema.json",
+        "size": 7710,
+        "mode": 420
+      },
+      {
+        "path": "schemas/reference-registration.schema.json",
+        "size": 2113,
+        "mode": 420
+      },
+      {
+        "path": "schemas/registered-comparison.schema.json",
+        "size": 4078,
+        "mode": 420
+      },
+      {
+        "path": "schemas/relational-discrepancy.schema.json",
+        "size": 11151,
+        "mode": 420
+      },
+      {
+        "path": "schemas/relational-structure.schema.json",
+        "size": 8394,
+        "mode": 420
+      },
+      {
+        "path": "schemas/representation-capacity.schema.json",
+        "size": 5753,
+        "mode": 420
+      },
+      {
+        "path": "schemas/rigid-body-dynamics.schema.json",
+        "size": 4762,
+        "mode": 420
+      },
+      {
+        "path": "schemas/runtime-binding.schema.json",
+        "size": 8008,
+        "mode": 420
+      },
+      {
+        "path": "schemas/semantic-authority.schema.json",
+        "size": 3578,
+        "mode": 420
+      },
+      {
+        "path": "schemas/source-bound-release-handoff.schema.json",
+        "size": 1645,
+        "mode": 420
+      },
+      {
+        "path": "schemas/source-manifest.schema.json",
+        "size": 989,
+        "mode": 420
+      },
+      {
+        "path": "schemas/spatial-closure-evidence.schema.json",
+        "size": 11990,
+        "mode": 420
+      },
+      {
+        "path": "schemas/spatial-collapse-classification.schema.json",
+        "size": 4573,
+        "mode": 420
+      },
+      {
+        "path": "schemas/spatial-hypothesis-set.schema.json",
+        "size": 2483,
+        "mode": 420
+      },
+      {
+        "path": "schemas/spatial-role-expectation-set.schema.json",
+        "size": 2993,
+        "mode": 420
+      },
+      {
+        "path": "schemas/structural-plausibility.schema.json",
+        "size": 5315,
+        "mode": 420
+      },
+      {
+        "path": "schemas/subdivision-cage-organic.schema.json",
+        "size": 4635,
+        "mode": 420
+      },
+      {
+        "path": "schemas/supported-clearance-report.schema.json",
+        "size": 3885,
+        "mode": 420
+      },
+      {
+        "path": "schemas/supported-clearance.schema.json",
+        "size": 4061,
+        "mode": 420
+      },
+      {
+        "path": "schemas/surface-anchor-rebind.schema.json",
+        "size": 2552,
+        "mode": 420
+      },
+      {
+        "path": "schemas/surface-anchor-set.schema.json",
+        "size": 4006,
+        "mode": 420
+      },
+      {
+        "path": "schemas/surface-network.schema.json",
+        "size": 2076,
+        "mode": 420
+      },
+      {
+        "path": "schemas/transmission-model.schema.json",
+        "size": 7441,
+        "mode": 420
+      },
+      {
+        "path": "schemas/trusted-spatial-gate-authority.schema.json",
+        "size": 4071,
+        "mode": 420
+      },
+      {
+        "path": "schemas/uv-mapping.schema.json",
+        "size": 1038,
+        "mode": 420
+      },
+      {
+        "path": "schemas/visual-hierarchy.schema.json",
+        "size": 1643,
+        "mode": 420
+      },
+      {
+        "path": "schemas/visual-observation.schema.json",
+        "size": 2093,
+        "mode": 420
+      },
+      {
+        "path": "schemas/visual-review.schema.json",
+        "size": 7314,
+        "mode": 420
+      },
+      {
+        "path": "schemas/volume-barrier.schema.json",
+        "size": 4111,
+        "mode": 420
+      },
+      {
+        "path": "schemas/whole-object-certificate.schema.json",
+        "size": 6265,
+        "mode": 420
+      },
+      {
+        "path": "schemas/whole-system-relational-barrier.schema.json",
+        "size": 3186,
+        "mode": 420
+      },
+      {
+        "path": "schemas/worker-request.schema.json",
+        "size": 1955,
+        "mode": 420
+      },
+      {
+        "path": "schemas/worker-response.schema.json",
+        "size": 1409,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/agents/openai.yaml",
+        "size": 438,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/assets/examples/subdivision-cage-demo.md",
+        "size": 642,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/assets/icon.svg",
+        "size": 7749,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/assets/templates/assembly-contract.json",
+        "size": 1384,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/assets/templates/canonical-object-frame.json",
+        "size": 415,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/assets/templates/capability-interface-inputs.json",
+        "size": 82000,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/assets/templates/closure-gates.json",
+        "size": 719,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/assets/templates/construction-quality.json",
+        "size": 1387,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/assets/templates/evaluation.json",
+        "size": 285,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/assets/templates/evidence-request.json",
+        "size": 1479,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/assets/templates/evidence-utility-decisions.json",
+        "size": 1728,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/assets/templates/finding.json",
+        "size": 238,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/assets/templates/handoff-capsule.json",
+        "size": 374,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/assets/templates/hard-surface-spec.json",
+        "size": 442,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/assets/templates/parameter-fit-plan.json",
+        "size": 1156,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/assets/templates/pbr-render-report.json",
+        "size": 884,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/assets/templates/projection-fit.json",
+        "size": 577,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/assets/templates/realized-assembly-input.json",
+        "size": 557,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/assets/templates/realized-projection-input.json",
+        "size": 402,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/assets/templates/reference-geometry.json",
+        "size": 1995,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/assets/templates/registered-comparison-input.json",
+        "size": 558,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/assets/templates/registration-input.json",
+        "size": 964,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/assets/templates/relational-structure.json",
+        "size": 1326,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/assets/templates/semantic-authority.json",
+        "size": 1352,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/assets/templates/source-manifest.json",
+        "size": 361,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/assets/templates/spatial-hypotheses.json",
+        "size": 1814,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/assets/templates/surface-network.json",
+        "size": 747,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/assets/templates/visual-hierarchy.json",
+        "size": 615,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/assets/templates/visual-observation.json",
+        "size": 739,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/assets/templates/visual-review.json",
+        "size": 2355,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/references/appearance.md",
+        "size": 8238,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/references/assembly.md",
+        "size": 27914,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/references/candidate-transactions.md",
+        "size": 4632,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/references/checkpointing.md",
+        "size": 8849,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/references/claim-certification.md",
+        "size": 5011,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/references/construction.md",
+        "size": 19245,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/references/contracts/actuation-model.md",
+        "size": 10227,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/references/contracts/articulation-clearance.md",
+        "size": 3389,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/references/contracts/attachment-follow.md",
+        "size": 2379,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/references/contracts/attachment-propagation.md",
+        "size": 2962,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/references/contracts/attachment-semantics.md",
+        "size": 5290,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/references/contracts/backend-export.md",
+        "size": 10489,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/references/contracts/canonical-edit-boundary.md",
+        "size": 4023,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/references/contracts/control-profile.md",
+        "size": 3957,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/references/contracts/cross-representation-validation.md",
+        "size": 4811,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/references/contracts/divergence-authorization.md",
+        "size": 7299,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/references/contracts/logical-fusion.md",
+        "size": 2920,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/references/contracts/multi-anchor-solver.md",
+        "size": 3103,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/references/contracts/physical-asset-bundle.md",
+        "size": 6740,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/references/contracts/physical-claims.md",
+        "size": 7236,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/references/contracts/representation-capacity.md",
+        "size": 5889,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/references/contracts/representation-normalizer.md",
+        "size": 9415,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/references/contracts/runtime-binding.md",
+        "size": 7112,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/references/contracts/surface-anchor-frames.md",
+        "size": 2592,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/references/contracts/transmission-model.md",
+        "size": 8241,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/references/failure-routing.md",
+        "size": 5608,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/references/GRAPH.json",
+        "size": 194272,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/references/host-integration.md",
+        "size": 9069,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/references/INDEX.md",
+        "size": 14995,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/references/inference-authority.md",
+        "size": 5860,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/references/observation.md",
+        "size": 12654,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/references/organic-articulated-construction.md",
+        "size": 4211,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/references/parameter-fitting.md",
+        "size": 12311,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/references/physical-fusion.md",
+        "size": 1566,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/references/production-assemblies.md",
+        "size": 4290,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/references/production-garments.md",
+        "size": 3769,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/references/production-review.md",
+        "size": 2538,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/references/provenance.md",
+        "size": 2091,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/references/realized-contact-support.md",
+        "size": 3136,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/references/relational-structure.md",
+        "size": 9240,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/references/single-view-volumetric-reasoning-example.md",
+        "size": 2441,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/references/spatial-reasoning.md",
+        "size": 30732,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/references/validation.md",
+        "size": 24678,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/references/whole-system-relational-barrier.md",
+        "size": 4857,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/references/workflow.md",
+        "size": 15470,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/requirements.txt",
+        "size": 28,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/benchmark_pbr_v2_full.py",
+        "size": 11259,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/benchmark_render_cpu_dense.py",
+        "size": 9659,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/benchmark_render_cpu_warm.py",
+        "size": 12487,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/benchmark_render_cpu.py",
+        "size": 18618,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/bilateral_pair_fresh_worker.mjs",
+        "size": 5651,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/blockout_competition_fresh_worker.mjs",
+        "size": 15353,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/capability_interface_fixtures.mjs",
+        "size": 41631,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/compare_registered.py",
+        "size": 32263,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/compose_review_board.py",
+        "size": 9375,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/create_blender_color0_texture_fixture.py",
+        "size": 2388,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/create_blender_no_color_control.py",
+        "size": 1750,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/create_pbr_v2_texture_benchmark_fixture.py",
+        "size": 3705,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/evidence_compat.py",
+        "size": 6789,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/evidence_request.py",
+        "size": 22806,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/evidence_utility.py",
+        "size": 14229,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/external_construction_fresh_worker.mjs",
+        "size": 7291,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/fresh_worker_access_loader.mjs",
+        "size": 3425,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/fresh_worker_access_policy.mjs",
+        "size": 2669,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/fresh_worker_access_preload.mjs",
+        "size": 1565,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/fresh_worker_dogfood_worker.mjs",
+        "size": 37418,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/fresh_worker_guarded_child_process.mjs",
+        "size": 1244,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/fresh_worker_guarded_fs_promises.mjs",
+        "size": 3260,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/fresh_worker_guarded_fs.mjs",
+        "size": 4977,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/actuation-model.mjs",
+        "size": 32734,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/agent-workflow.mjs",
+        "size": 8085,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/appearance-fit.mjs",
+        "size": 12136,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/articulation-clearance.mjs",
+        "size": 17016,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/articulation-graph.mjs",
+        "size": 30235,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/assembly.mjs",
+        "size": 14069,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/attachment-follow.mjs",
+        "size": 13411,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/attachment-propagation.mjs",
+        "size": 24280,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/attachment-semantics.mjs",
+        "size": 11346,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/backend-export-core.mjs",
+        "size": 41872,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/backend-export.mjs",
+        "size": 21486,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/benchmark.mjs",
+        "size": 10867,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/bilateral-pair.mjs",
+        "size": 27736,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/blockout-competition.mjs",
+        "size": 20038,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/camera-fit.mjs",
+        "size": 15881,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/candidate-authority.mjs",
+        "size": 6836,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/candidate-transaction.mjs",
+        "size": 22383,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/canonical-edit.mjs",
+        "size": 6592,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/canonical.mjs",
+        "size": 2485,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/certification-authority.mjs",
+        "size": 2533,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/certification-gate.mjs",
+        "size": 35252,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/certification-policy.mjs",
+        "size": 12610,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/certification-projection-evidence.mjs",
+        "size": 4791,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/certification-relational-evidence.mjs",
+        "size": 8924,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/checkpoint-gates.mjs",
+        "size": 8844,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/checkpoint-store.mjs",
+        "size": 194807,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/collision-model.mjs",
+        "size": 29386,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/construction-quality.mjs",
+        "size": 10989,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/construction-vocabulary.mjs",
+        "size": 45221,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/contract-fixture-authority.mjs",
+        "size": 2342,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/contract-fixture-project.mjs",
+        "size": 1517,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/control-profile.mjs",
+        "size": 28216,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/cross-representation-validator.mjs",
+        "size": 32762,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/divergence-authorization.mjs",
+        "size": 30285,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/early-resemblance-barrier.mjs",
+        "size": 7779,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/failure-router.mjs",
+        "size": 7620,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/final-resemblance-closure.mjs",
+        "size": 6448,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/final-spatial-continuity.mjs",
+        "size": 13121,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/fit-structural-eligibility.mjs",
+        "size": 12157,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/geometry-backend.mjs",
+        "size": 14625,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/glb.mjs",
+        "size": 29153,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/hard-surface.mjs",
+        "size": 17458,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/hierarchy.mjs",
+        "size": 9437,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/host-artifact-handoff.mjs",
+        "size": 16161,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/host-event.mjs",
+        "size": 8810,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/host-operation.mjs",
+        "size": 16464,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/host-review-bundle.mjs",
+        "size": 13936,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/host-session.mjs",
+        "size": 6123,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/host-state.mjs",
+        "size": 4299,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/host-worker.mjs",
+        "size": 23546,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/independent-source-render-pixels.mjs",
+        "size": 4987,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/index.mjs",
+        "size": 6198,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/interface-contracts.mjs",
+        "size": 4479,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/logical-fusion.mjs",
+        "size": 7246,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/macro-fit.mjs",
+        "size": 5697,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/mechanism-graph.mjs",
+        "size": 32577,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/mesh.mjs",
+        "size": 33871,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/metric-authority.mjs",
+        "size": 8614,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/multi-anchor.mjs",
+        "size": 18308,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/orientation-discrepancy.mjs",
+        "size": 4917,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/orientation-evidence.mjs",
+        "size": 4493,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/orientation-frame.mjs",
+        "size": 6620,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/orientation-pose-fit.mjs",
+        "size": 20600,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/ownership.mjs",
+        "size": 3233,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/parameter-fit.mjs",
+        "size": 34159,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/pbr-render-report.mjs",
+        "size": 9219,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/perceptual-discrepancy.mjs",
+        "size": 11649,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/perceptual-signature.mjs",
+        "size": 13036,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/physical-asset-bundle.mjs",
+        "size": 24147,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/physical-claim-certification-gate.mjs",
+        "size": 2936,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/physical-claim-certification.mjs",
+        "size": 5091,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/physical-claims.mjs",
+        "size": 36402,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/physical-fusion.mjs",
+        "size": 25131,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/physical-identity-graph.mjs",
+        "size": 25968,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/pose-fit.mjs",
+        "size": 21669,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/prior-quarantine.mjs",
+        "size": 15617,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/projection-findings.mjs",
+        "size": 5088,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/projection-fit.mjs",
+        "size": 12956,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/qa-component-support.mjs",
+        "size": 12760,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/qa-contact-replay.mjs",
+        "size": 12341,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/qa-coverage.mjs",
+        "size": 25495,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/qa-fusion-replay.mjs",
+        "size": 7451,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/qa-glb-geometry-accessors.mjs",
+        "size": 4840,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/qa-glb-rigid-frames.mjs",
+        "size": 4015,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/qa-propagation-dependencies.mjs",
+        "size": 3201,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/qa-propagation-world-frames.mjs",
+        "size": 6639,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/qa-source-semantic-replay.mjs",
+        "size": 6133,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/qa-surface-mesh.mjs",
+        "size": 7090,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/qa-triangle-components.mjs",
+        "size": 9110,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/realized-assembly.mjs",
+        "size": 10835,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/realized-contact.mjs",
+        "size": 34315,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/realized-projection-verification.mjs",
+        "size": 1574,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/realized-projection.mjs",
+        "size": 18240,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/realized-segmentation.mjs",
+        "size": 10136,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/reference-geometry.mjs",
+        "size": 14886,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/registered-comparison.mjs",
+        "size": 16215,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/registered-render-replay.mjs",
+        "size": 8075,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/registration.mjs",
+        "size": 9922,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/relational-discrepancy.mjs",
+        "size": 10371,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/relational-structure.mjs",
+        "size": 15174,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/render-backend.mjs",
+        "size": 12526,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/representation-capacity.mjs",
+        "size": 26183,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/representation-normalizer.mjs",
+        "size": 34107,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/rigid-body-dynamics.mjs",
+        "size": 24239,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/runtime-binding.mjs",
+        "size": 34165,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/semantic-authority.mjs",
+        "size": 9909,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/shape-repair.mjs",
+        "size": 16482,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/source-interface-gap-screen.mjs",
+        "size": 5787,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/source-macro-orientation-screen.mjs",
+        "size": 4671,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/source-macro-section-screen.mjs",
+        "size": 4129,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/source-negative-space-screen.mjs",
+        "size": 9412,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/source-occlusion-screen.mjs",
+        "size": 5715,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/source-pixel-frame.mjs",
+        "size": 3038,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/source-profile-vector-screen.mjs",
+        "size": 6156,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/source-role-relations-screen.mjs",
+        "size": 6381,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/source-visible-part-loss-screen.mjs",
+        "size": 5449,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/spatial-closure-evidence.mjs",
+        "size": 26165,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/spatial-collapse-classifier.mjs",
+        "size": 2003,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/spatial-collapse-core.mjs",
+        "size": 11677,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/spatial-gate-authority.mjs",
+        "size": 8051,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/spatial-hypotheses.mjs",
+        "size": 4653,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/spatial-role-expectation.mjs",
+        "size": 5254,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/structural-plausibility.mjs",
+        "size": 18059,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/subdivision-cage.mjs",
+        "size": 19841,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/surface-anchor.mjs",
+        "size": 17831,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/surface-network.mjs",
+        "size": 10514,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/transmission-model.mjs",
+        "size": 39901,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/uv.mjs",
+        "size": 3793,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/visual-review.mjs",
+        "size": 14687,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/volume-barrier.mjs",
+        "size": 8064,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/lib/whole-system-relational-barrier.mjs",
+        "size": 10224,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/measure_first_multiview_baseline.mjs",
+        "size": 11757,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/measure_render_pbr.mjs",
+        "size": 7895,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/observation_image.py",
+        "size": 2158,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/prior_quarantine_fresh_worker.mjs",
+        "size": 9934,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/produce.py",
+        "size": 3975,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/production/__init__.py",
+        "size": 0,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/production/blender_worker.py",
+        "size": 34560,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/production/project.py",
+        "size": 24465,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/production/review.py",
+        "size": 3638,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/refas-host.mjs",
+        "size": 6092,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/refas.mjs",
+        "size": 24181,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/render_cpu_opt.py",
+        "size": 13242,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/render_cpu_tiled.py",
+        "size": 19470,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/render_cpu_visibility.py",
+        "size": 15484,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/render_external_blender_guard.py",
+        "size": 4450,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/render_external_blender_worker.py",
+        "size": 8937,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/render_external_blender.py",
+        "size": 12707,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/render_glb.py",
+        "size": 37801,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/render_pbr_v2_material.py",
+        "size": 18358,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/render_pbr_v2_mip.py",
+        "size": 3722,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/render_pbr_v2_texture.py",
+        "size": 9018,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/render_pbr_v2_visibility.py",
+        "size": 19144,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/render_pbr.py",
+        "size": 25440,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/source_manifest.py",
+        "size": 4975,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/source_pixel_frame.py",
+        "size": 1058,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/source_render_pixel_screen.py",
+        "size": 2713,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/structural_plausibility_fresh_worker.mjs",
+        "size": 5760,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/subdivision-cage-demo.mjs",
+        "size": 1704,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/vc08_adversarial_worker.mjs",
+        "size": 27841,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/verify_bilateral_pair_dogfood.mjs",
+        "size": 4115,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/verify_blender_private_source_e2_review_v2.py",
+        "size": 10770,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/verify_blender_private_source_e2.py",
+        "size": 11715,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/verify_blockout_competition_dogfood.mjs",
+        "size": 3798,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/verify_capability_interfaces.mjs",
+        "size": 11292,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/verify_discovery_closure.mjs",
+        "size": 22092,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/verify_external_construction_dogfood.mjs",
+        "size": 4488,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/verify_fresh_worker_dogfood.mjs",
+        "size": 16407,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/verify_installation_boundary.mjs",
+        "size": 10675,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/verify_prior_quarantine_dogfood.mjs",
+        "size": 3283,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/verify_semantic_instruction_graph.mjs",
+        "size": 20817,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/verify_structural_plausibility_dogfood.mjs",
+        "size": 3808,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/verify_subdivision_cage_dogfood.mjs",
+        "size": 11380,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/verify_textured_material_dogfood.mjs",
+        "size": 4935,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/verify_vc08_adversarial_dogfood.mjs",
+        "size": 8331,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/SKILL.md",
+        "size": 10591,
+        "mode": 420
+      }
+    ],
+    "entryCount": 399,
+    "bundled": []
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "request_text": "user-request.txt",
+  "sources": [
+    {
+      "asset": "garment",
+      "uploaded_name": "image(20261122-085835).png",
+      "repository_path": "examples/uniform-jacket/source/reference.png",
+      "sha256": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5"
+    },
+    {
+      "asset": "automail",
+      "uploaded_name": "image(20261122-085813).png",
+      "repository_path": "examples/automail-arm/source/reference.png",
+      "sha256": "3c7856dd632f8a1cde8036078573f569db55b6af97fae853237d8a9356f3c872"
+    }
+  ]
+}

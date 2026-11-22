@@ -42,6 +42,8 @@ LIMITATIONS = [
     "Static mesh modifiers are evaluated for GLB export; unapplied non-armature modifiers on skinned or shape-key meshes are unsupported.",
     "Hidden or excluded meshes are rejected by this alpha so GLB export and diagnostic renders cannot silently use different asset scopes.",
     "Object instances must be realized into explicit scene objects; curves and other non-mesh geometry must be converted before production inspection or export.",
+    "Unrealized evaluated instances, including Geometry Nodes instances, are rejected; realize their geometry before production inspection or export.",
+    "Viewport/render modifier visibility and enabled subdivision levels must agree so inventory, export and diagnostic renders use the same declared geometry.",
     "Procedural Blender materials may need baking for faithful GLB appearance.",
 ]
 
@@ -295,12 +297,42 @@ def require_supported_objects():
     if unsupported:
         raise ValueError("Convert unsupported geometry to meshes before production export or inspection: "
                          + ", ".join(unsupported))
+    bpy.context.view_layer.update()
+    depsgraph = bpy.context.evaluated_depsgraph_get()
+    instancers = {instance.parent.name if instance.parent else instance.object.name
+                  for instance in depsgraph.object_instances if instance.is_instance}
+    if instancers:
+        raise ValueError("Evaluated geometry instances are unsupported by the production alpha; "
+                         "use Realize Instances or convert them to explicit mesh objects first: "
+                         + ", ".join(sorted(instancers)))
+
+
+def require_matching_modifier_evaluation():
+    """Inventory/export use the viewport graph; Cycles uses render settings."""
+    mismatched = []
+    for obj in bpy.context.scene.objects:
+        if obj.type != "MESH":
+            continue
+        for modifier in obj.modifiers:
+            reason = None
+            if modifier.show_viewport != modifier.show_render:
+                reason = "viewport/render visibility"
+            elif (modifier.show_viewport and modifier.type in {"SUBSURF", "MULTIRES"}
+                  and modifier.levels != modifier.render_levels):
+                reason = "viewport/render subdivision levels"
+            if reason:
+                mismatched.append(obj.name + ":" + modifier.name + " (" + reason + ")")
+    if mismatched:
+        raise ValueError("Different viewport/render modifier evaluation is unsupported; "
+                         "match both settings or apply the intended geometry before production: "
+                         + ", ".join(sorted(mismatched)))
 
 
 def require_portable_scene():
     """Support self-contained native geometry and packed still textures explicitly."""
     require_visible_meshes()
     require_supported_objects()
+    require_matching_modifier_evaluation()
     if bpy.data.libraries:
         raise ValueError("Linked Blender libraries are unsupported; make required data local first")
     for kind in ("movieclips", "cache_files", "sounds"):
@@ -574,6 +606,7 @@ def execute(job):
     else:
         require_visible_meshes()
         require_supported_objects()
+        require_matching_modifier_evaluation()
         source = inventory()
         result["verification"]["native"] = {"status": "passed", "reopened": True,
                                                "statistics": source["statistics"], "scope": "current-frame inventory"}

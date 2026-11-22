@@ -1,0 +1,5 @@
+REPRO_GN {"guardAccepted": true, "sceneObjectCount": 1, "objectInstanceType": "NONE", "inventoryMeshVertices": 8, "inventoryTriangles": 12, "depsgraphInstances": 8}
+REPRO_MODIFIER {"guardAccepted": true, "viewportEnabled": false, "renderEnabled": true, "inventoryTriangles": 12}
+Blender 4.3.2
+
+Blender quit

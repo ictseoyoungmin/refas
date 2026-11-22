@@ -181,6 +181,97 @@ bpy.ops.wm.save_as_mainfile(filepath=''' + repr(str(source)) + ''')
             self.assertFalse((self.root / (operation + "-instance") / "view-front.png").exists())
         self.assertEqual(sha(source), original)
 
+    def native_fixture(self, name, body):
+        source = self.root / (name + ".blend")
+        script = self.root / (name + ".py")
+        script.write_text("import bpy\nbpy.ops.wm.read_factory_settings(use_empty=True)\n"
+                          + body + "\nbpy.ops.wm.save_as_mainfile(filepath=" + repr(str(source)) + ")\n")
+        result = subprocess.run([str(BLENDER), "-b", "--factory-startup", "--threads", "2",
+                                 "--python-exit-code", "1", "--python", str(script)],
+                                capture_output=True, text=True, timeout=60)
+        self.assertEqual(result.returncode, 0, result.stdout[-2000:] + result.stderr[-2000:])
+        return source
+
+    def test_geometry_node_instances_are_rejected_until_realized(self):
+        source = self.native_fixture("geometry-instances", '''
+bpy.ops.mesh.primitive_cube_add()
+obj = bpy.context.object
+obj.name = "InstancedShell"
+group = bpy.data.node_groups.new("Decorations", "GeometryNodeTree")
+group.interface.new_socket(name="Geometry", in_out="INPUT", socket_type="NodeSocketGeometry")
+group.interface.new_socket(name="Geometry", in_out="OUTPUT", socket_type="NodeSocketGeometry")
+source_node = group.nodes.new("NodeGroupInput")
+output = group.nodes.new("NodeGroupOutput")
+cube = group.nodes.new("GeometryNodeMeshCube")
+cube.inputs["Size"].default_value = (0.2, 0.2, 0.2)
+instances = group.nodes.new("GeometryNodeInstanceOnPoints")
+join = group.nodes.new("GeometryNodeJoinGeometry")
+group.links.new(source_node.outputs["Geometry"], instances.inputs["Points"])
+group.links.new(cube.outputs["Mesh"], instances.inputs["Instance"])
+group.links.new(source_node.outputs["Geometry"], join.inputs["Geometry"])
+group.links.new(instances.outputs["Instances"], join.inputs["Geometry"])
+group.links.new(join.outputs["Geometry"], output.inputs["Geometry"])
+obj.modifiers.new("Decorations", "NODES").node_group = group
+''')
+        original = sha(source)
+        noop = self.root / "instances-noop.py"
+        noop.write_text("# Keep all source geometry.\n")
+        for operation in ("edit", "inspect"):
+            with self.subTest(operation=operation):
+                name = operation + "-geometry-instances"
+                result = self.run_job(name, expect_success=False, operation=operation,
+                                      baseBlend=str(source), script=str(noop), views=["front"])
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn("Realize Instances", result.stdout + result.stderr)
+                self.assertIn("InstancedShell", result.stdout + result.stderr)
+                self.assertFalse((self.root / name / "asset.glb").exists())
+                self.assertFalse((self.root / name / "view-front.png").exists())
+        self.assertEqual(sha(source), original)
+        repair = self.root / "realize-decorations.py"
+        repair.write_text('''import bpy
+group = bpy.data.node_groups["Decorations"]
+output = next(node for node in group.nodes if node.type == "GROUP_OUTPUT")
+link = output.inputs["Geometry"].links[0]
+socket = link.from_socket
+group.links.remove(link)
+realize = group.nodes.new("GeometryNodeRealizeInstances")
+group.links.new(socket, realize.inputs["Geometry"])
+group.links.new(realize.outputs["Geometry"], output.inputs["Geometry"])
+''')
+        result = self.run_job("realized-decorations", baseBlend=str(source), script=str(repair))
+        scene = json.loads((self.root / "realized-decorations/scene.json").read_text())
+        self.assertEqual(scene["statistics"]["triangles"], 108)
+        self.assertEqual(result["verification"]["glb"]["encoded"]["triangles"], 108)
+        self.assertTrue(all(result["verification"]["glb"]["checks"].values()))
+        self.assertEqual(sha(source), original)
+
+    def test_render_only_and_differently_subdivided_geometry_are_rejected(self):
+        cases = {
+            "render-only-bevel": 'm = obj.modifiers.new("EdgeShape", "BEVEL")\n'
+                                 'm.width = 0.2\nm.segments = 3\nm.show_viewport = False\n',
+            "viewport-only-bevel": 'm = obj.modifiers.new("EdgeShape", "BEVEL")\n'
+                                   'm.width = 0.2\nm.segments = 3\nm.show_render = False\n',
+            "different-subdivision": 'm = obj.modifiers.new("EdgeShape", "SUBSURF")\n'
+                                     'm.levels = 1\nm.render_levels = 2\n',
+        }
+        noop = self.root / "modifier-noop.py"
+        noop.write_text("# Keep the native modifier settings.\n")
+        for case, body in cases.items():
+            source = self.native_fixture(case, 'bpy.ops.mesh.primitive_cube_add()\n'
+                                         'obj = bpy.context.object\nobj.name = "Shell"\n' + body)
+            original = sha(source)
+            for operation in ("edit", "inspect"):
+                with self.subTest(case=case, operation=operation):
+                    name = operation + "-" + case
+                    result = self.run_job(name, expect_success=False, operation=operation,
+                                          baseBlend=str(source), script=str(noop), views=["front"])
+                    self.assertNotEqual(result.returncode, 0)
+                    self.assertIn("viewport/render", result.stdout + result.stderr)
+                    self.assertIn("Shell:EdgeShape", result.stdout + result.stderr)
+                    self.assertFalse((self.root / name / "asset.glb").exists())
+                    self.assertFalse((self.root / name / "view-front.png").exists())
+            self.assertEqual(sha(source), original)
+
     def test_static_modifiers_export_evaluated_geometry_without_losing_morphs(self):
         script = self.root / "mixed-modifiers.py"
         script.write_text('''import bpy

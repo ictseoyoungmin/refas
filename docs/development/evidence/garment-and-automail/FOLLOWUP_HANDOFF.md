@@ -22,7 +22,7 @@ Date: 2026-11-22 (Asia/Seoul). Source branch `rewrite/v2`, last
   **pre-follow-up baseline**, not a recovered new geometry revision.
 
 The preceding checkpoint has recorded local Blender 4.3.2 and independent
-GLB checks, documented in [README](README.md) and [Work Status](../../WORK_STATUS.md).
+GLB checks, documented in [README](README.md) and [Work Status](../../../WORK_STATUS.md).
 This recovery verified archive bytes and repository state only; it did **not**
 rerun Blender, revise the shapes or repeat the anonymous review.
 

@@ -51,3 +51,8 @@ Use `--views front,detail` to select named views or `--views ''` to skip renders
 Without a specification, the built-in views use Z up, front looking from -Y,
 back from +Y, side from +X, top from +Z, and an oblique hero view. These are
 diagnostic conventions; orient the asset deliberately and inspect the result.
+
+Keep geometry evaluation consistent too. Realize Geometry Nodes instances
+before review, and match viewport/render modifier visibility and enabled
+subdivision levels. The runner rejects these mismatches before export or
+observation; fixed cameras cannot compensate for comparing different meshes.

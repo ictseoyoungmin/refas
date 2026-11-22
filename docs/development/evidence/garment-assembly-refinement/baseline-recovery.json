@@ -1,0 +1,11 @@
+{
+  "checked_at": "2026-11-22T09:04:40.388211+00:00",
+  "zip_sha256": "8bb25bc22678be184354bca950296568d7c89cda0885d389279d843b08e9b259",
+  "zip_bytes": 93743833,
+  "manifest_files": 415,
+  "all_hashes_match": true,
+  "extra_files": false,
+  "base_commit": "94930b3d3dade455336ce6240805ea96d7a13e53",
+  "blender": "4.3.2",
+  "new_original_images_match_prior_source_hashes": true
+}

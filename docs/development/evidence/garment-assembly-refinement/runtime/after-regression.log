@@ -1,0 +1,7 @@
+test_geometry_node_instances_are_rejected_until_realized (test_production_blender.ProductionBlenderTests.test_geometry_node_instances_are_rejected_until_realized) ... ok
+test_render_only_and_differently_subdivided_geometry_are_rejected (test_production_blender.ProductionBlenderTests.test_render_only_and_differently_subdivided_geometry_are_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 20.198s
+
+OK

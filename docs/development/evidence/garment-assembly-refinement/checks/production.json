@@ -1,0 +1,24 @@
+{
+  "command": [
+    "python",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-p",
+    "test_production*.py"
+  ],
+  "environment": {
+    "REFAS_BLENDER_TESTS": "1",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "started_at": "2026-11-22T09:15:50.865578+00:00",
+  "input_sha256": {
+    "skills/refas/scripts/production/blender_worker.py": "50541ecf88c0e931999d88fc8241238d6e8f10500b15735e2d5831ce6acc1614",
+    "tests/test_production_blender.py": "450eebbff2d3ece6cc071c67dede06e6419e5f320291d27c182b7b025f3a900e"
+  },
+  "returncode": 0,
+  "seconds": 82.731
+}
