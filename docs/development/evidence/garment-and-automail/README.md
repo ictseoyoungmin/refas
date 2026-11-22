@@ -246,6 +246,21 @@ or every large revision history. Absolute paths inside raw reports describe
 the original execution environment; included file identities and a bundle
 manifest identify the delivered copies.
 
+
+## Interrupted post-checkpoint follow-up — recovery record
+
+The additional collar/lapel and contoured armor/hand work **after**
+`e265a35f` was interrupted before its new native, GLB, images, literal
+prompt archive and reviewer evidence were durably published. The available
+94 MB baseline delivery bundle passed ZIP and manifest checks on recovery,
+but it is **not** proof of a newer geometry result.
+
+See [the exact archive/checkpoint handoff](FOLLOWUP_HANDOFF.md),
+[historical prompt provenance (missing literal messages explicitly marked)](PROMPT_PROVENANCE.md),
+and [new, unsent next-run author/reviewer prompts](NEXT_EXECUTION_PROMPTS.md).
+No Blender edit or new visual preference is claimed by this documentation-only
+recovery. Draft PR #399 remains open; R2-05/R2-06 are WIP.
+
 ## Decision and next work
 
 Short domain guidance is reachable and usable on both continuous cloth and

@@ -8,6 +8,28 @@ The user approved implementation of the new production path, starting from `main
 
 This is development work. The latest published release remains `v1.4.1`; package/runtime/plugin version `1.4.2` is retained until the coordinated 2.0 packaging milestone. No release or merge to main is part of this slice.
 
+## Interruption recovery (2026-11-22) — no new geometry acceptance
+
+The unpublished next-step work on the jacket collar/lapels and AURIX overlapping
+armor/hand was interrupted. Its reported local script/render/review outputs are
+not available in the current durable GitHub branch, the existing Library delivery,
+or the Work OS page. The latest published asset result remains **e265a35f**,
+with the prior negative/unfinished visual judgments unchanged.
+
+Recovered the **93,743,833-byte** published bundle and verified its ZIP CRC,
+the complete 415-entry manifest, all hashes and exact file counts. This is
+baseline evidence only; the recovery environment lacks Blender and did not
+rerender any asset. Prompt provenance now separates literal persisted
+assignment files, reports, actual messages reported in the interrupted session
+but unavailable verbatim (reported six recovered/eight unrecovered), and *new
+unsent* next-run instructions. No missing messages were reconstructed.
+
+See [archive handoff](development/evidence/garment-and-automail/FOLLOWUP_HANDOFF.md),
+[prompt provenance](development/evidence/garment-and-automail/PROMPT_PROVENANCE.md)
+and [prepared new author/reviewer prompts](development/evidence/garment-and-automail/NEXT_EXECUTION_PROMPTS.md).
+Shape edits, fixed-camera reviews, actual new native/GLB delivery and post-edit
+acceptance **remain open**. Existing PR #399 stays Draft; 2.0 is unreleased.
+
 ## Current: garment refinement and fresh automail validation
 
 The user's two selected sources now have actual editable assets, partial-edit
