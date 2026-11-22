@@ -6,9 +6,76 @@ RefAs 2.0 production rewrite — native authoring and the first original-referen
 
 The user approved implementation of the new production path, starting from `main@a29bcc42f4da666c812462eb130836f2d766b0a1`. The [implementation plan](development/refas-2-plan.md) and [Work OS plan](https://app.notion.com/p/41fc6a3b5bf181c2b2cdfac4605ef7d7) record the accepted direction. Status date: 2026-11-22, Asia/Seoul.
 
-This is development work. The latest published release remains `v1.4.1`; package/runtime/plugin version `1.4.2` is retained until the coordinated 2.0 packaging milestone. No release or merge to main is part of this slice.
+This is development work. Active package/Python runtime/plugin identity is `2.0.0-alpha.1`; the retained legacy runtime remains `1.4.2`. The recorded published release remains `v1.4.1`. Main merge and formal publication are separate unfinished milestones.
 
-## Current: explicit references, evidence freshness and coherent reads
+## Current: production-only skill, explicit 1.x import and renderer isolation
+
+Implemented and verified at
+[`d8bb5dc7`](https://github.com/ictseoyoungmin/refas/commit/d8bb5dc71a86fe1b5012735c89aca3fb32f8006e).
+The fixed [Notion checklist](development/refas-2-progress.md) advances from
+**24/31 (77%) to 27/31 (87%)**, adding E3, E5 and D1. R2-06 is **5/6, WIP**;
+coordinated delivery is **1/3**. All previous counts and criterion meanings are
+retained. No task is CLOSED and neither model receives finished visual approval.
+
+The 264 old runtime/guide/template files move to one repository-only
+`legacy/v1/`. The active skill changes from **277 to 15 files**, including two
+cache-exclusion files. Its 13 substantive files are the production entry,
+directly used Python modules, four focused guides, agent metadata and icon.
+There are no old JS forwarders, certification graph, templates or schemas in
+the active skill. The old runtime library and renderers retain their bytes;
+seven boundary/routing files change their explicit repository locations.
+
+The actual npm artifact changes from **399 to 17 files**. Package, runtime,
+plugin and documentation versions agree at unpublished `2.0.0-alpha.1`. The
+npm executable invokes the production Python entry. Exact allowlists reject
+an injected old file, and all 17 installed file hashes match tested source.
+Copied-skill and npm installation are exercised; host marketplace installation
+is not independently executed.
+
+The new `import-v1` selects a checkpoint and archived `.blend`/GLB explicitly,
+verifies its source and bytes, and records exact provenance without inheriting
+old approval. Actual installed wing-cover import/edit/restore passes 18 checks:
+247 old project files unchanged, one mesh edited and 65 preserved, all 11
+selected input/artifact files restored exactly. Native import, supported GLB
+and unsupported-resource/required-extension failures run in actual Blender.
+The fixture is a generated contract reference, not a source-photo quality case.
+
+The renderer experiment uses one unchanged four-material GLB and verifies
+geometry, materials, camera and projected coordinates independently. All 11
+scoped checks pass. CPU surface-to-light vectors require opposite SUN
+propagation signs in the external adapter configuration; algorithms remain
+unchanged. Initial normal-threshold failure, a separate API precision probe
+and final angular tolerance are all retained. Beauty differences do not become
+claims of shader equivalence, model quality or performance advantage.
+
+| Current verification | Result |
+| --- | --- |
+| JavaScript regression | 935 passed, zero failed/skipped |
+| Production regression | 65 passed: 47 unit/CLI + 18 actual Blender; zero skipped |
+| Python, repository, plugin, skill checks | PASS |
+| Retained 1.x dogfood | PASS, 11 checkpoints |
+| Actual npm audit/install/source parity | PASS, 17 files |
+| Installed import/edit/restore | PASS, 18 checks / 8 commands |
+| Same-input renderer experiment | PASS, 11 checks |
+| Independent scope review | E3, E5 and D1 demonstrated within their stated boundaries |
+
+A separate fresh session used only the installed skill and raw task/source to
+import the asset, visibly lift the selected panel using fixed comparison views,
+preserve 65 other objects, and restore the initial 11-file bundle. Literal
+prompts, raw commands, actual renders, the session's initial helper-path error
+and corrected result are retained. This is a practical skill-use check, not a
+new no-skill/1.x/2.0 quality or timing comparison.
+
+Read the [full evidence](development/evidence/v2-distribution-and-import/README.md),
+[portable import example](../examples/legacy-import/README.md),
+[renderer example](../examples/renderer-isolation/README.md) and
+[legacy boundary guide](legacy-1x.md).
+Remaining criteria are **K4, E2, D2 and D3**: source identity/major construction,
+comparable actual time/cost, main merge and formal publication. Next production
+work should address the recorded source-specific jacket/arm defects while
+capturing an honestly comparable authoring budget and available telemetry.
+
+## Previous: explicit references, evidence freshness and coherent reads
 
 The remaining R2-03 workflow is implemented and verified at
 [`d36a461e`](https://github.com/ictseoyoungmin/refas/commit/d36a461e08a9c905792d045a3eb26ad53778635c).

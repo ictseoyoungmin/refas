@@ -1,0 +1,295 @@
+{
+  "ok": true,
+  "schema": "refas.production.project/v2",
+  "name": "wing-cover-forward-choice",
+  "projectId": "e9933abd5e2b4eb88d92c0655e7cf14e",
+  "head": "ecfc78fcd169476e8c4da1358d4cb173",
+  "sequence": 3,
+  "sources": [
+    {
+      "path": "sources/001-reference.png",
+      "name": "reference.png",
+      "role": "user-reference",
+      "sha256": "6076b27fadfcb1a929b306ce74d6b7ef22d1d8996102065df6a74012e3466148",
+      "bytes": 41281
+    }
+  ],
+  "outputs": {
+    "blend": "/workspace/scratch/c52cb753f160/v2-import-proof/forward-use/project/.refas2/revisions/ecfc78fcd169476e8c4da1358d4cb173/artifacts/scene.blend",
+    "glb": "/workspace/scratch/c52cb753f160/v2-import-proof/forward-use/project/.refas2/revisions/ecfc78fcd169476e8c4da1358d4cb173/artifacts/asset.glb",
+    "scene": "/workspace/scratch/c52cb753f160/v2-import-proof/forward-use/project/.refas2/revisions/ecfc78fcd169476e8c4da1358d4cb173/artifacts/scene.json"
+  },
+  "observations": [
+    {
+      "camera": {
+        "matrixWorld": [
+          [
+            0.8349582,
+            -0.22013363,
+            0.50436693,
+            3.48310137
+          ],
+          [
+            0.55031341,
+            0.33399591,
+            -0.76524633,
+            -5.35757208
+          ],
+          [
+            -5e-08,
+            0.91650856,
+            0.40001509,
+            2.76545572
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "orthoScale": 3.25,
+        "position": [
+          3.48310137,
+          -5.35757208,
+          2.76545572
+        ],
+        "projection": "orthographic",
+        "target": [
+          0.01181483,
+          -0.09079336,
+          0.01236677
+        ]
+      },
+      "framing": "fixed-review-spec",
+      "lighting": {
+        "center": [
+          0.01181483,
+          -0.09079336,
+          0.01236677
+        ],
+        "radius": 1.72061566,
+        "rig": "three-area-lights/v1"
+      },
+      "path": "/workspace/scratch/c52cb753f160/v2-import-proof/forward-use/project/.refas2/revisions/ecfc78fcd169476e8c4da1358d4cb173/artifacts/view-hero.png",
+      "referenceRegion": null,
+      "registration": "unregistered",
+      "renderer": {
+        "denoising": false,
+        "device": "CPU",
+        "engine": "CYCLES",
+        "samples": 32,
+        "size": [
+          640,
+          640
+        ],
+        "transparent": false,
+        "viewTransform": "AgX",
+        "worldColor": [
+          0.065,
+          0.08,
+          0.115
+        ],
+        "worldStrength": 0.45
+      },
+      "sha256": "d3eb854e3b670d639305fafc9803179326b9227821e7e2d7441b4a4a84dbd0c7",
+      "sourceSceneFingerprint": "abaf6fd484bddaf167bc3f724824383d4c66b5004ebf14c59f984c0a6a52213a",
+      "view": "hero"
+    },
+    {
+      "camera": {
+        "matrixWorld": [
+          [
+            0.98503888,
+            0.0545348,
+            -0.16347603,
+            -0.25
+          ],
+          [
+            -0.17233241,
+            0.31171679,
+            -0.93441647,
+            -2.0
+          ],
+          [
+            2e-08,
+            0.94860876,
+            0.31645128,
+            1.85000002
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "orthoScale": 0.57999998,
+        "position": [
+          -0.25,
+          -2.0,
+          1.85000002
+        ],
+        "projection": "orthographic",
+        "target": [
+          0.08612458,
+          -0.07873785,
+          1.19934177
+        ]
+      },
+      "framing": "fixed-review-spec",
+      "lighting": {
+        "center": [
+          0.01181483,
+          -0.09079336,
+          0.01236677
+        ],
+        "radius": 1.72061566,
+        "rig": "three-area-lights/v1"
+      },
+      "path": "/workspace/scratch/c52cb753f160/v2-import-proof/forward-use/project/.refas2/revisions/ecfc78fcd169476e8c4da1358d4cb173/artifacts/view-detail.png",
+      "referenceRegion": null,
+      "registration": "unregistered",
+      "renderer": {
+        "denoising": false,
+        "device": "CPU",
+        "engine": "CYCLES",
+        "samples": 32,
+        "size": [
+          640,
+          640
+        ],
+        "transparent": false,
+        "viewTransform": "AgX",
+        "worldColor": [
+          0.065,
+          0.08,
+          0.115
+        ],
+        "worldStrength": 0.45
+      },
+      "sha256": "d28db8235558b63bed94a6fde683fb8b27af21e48fe7e7f373272572aa81804b",
+      "sourceSceneFingerprint": "abaf6fd484bddaf167bc3f724824383d4c66b5004ebf14c59f984c0a6a52213a",
+      "view": "detail"
+    },
+    {
+      "camera": {
+        "matrixWorld": [
+          [
+            0.5379225,
+            -0.19870311,
+            0.8192414,
+            2.0
+          ],
+          [
+            0.84299433,
+            0.1267942,
+            -0.52276558,
+            -1.29999995
+          ],
+          [
+            7e-08,
+            0.97182316,
+            0.23571104,
+            1.75
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "orthoScale": 0.60000002,
+        "position": [
+          2.0,
+          -1.29999995,
+          1.75
+        ],
+        "projection": "orthographic",
+        "target": [
+          0.08612458,
+          -0.07873785,
+          1.19934177
+        ]
+      },
+      "framing": "fixed-review-spec",
+      "lighting": {
+        "center": [
+          0.01181483,
+          -0.09079336,
+          0.01236677
+        ],
+        "radius": 1.72061566,
+        "rig": "three-area-lights/v1"
+      },
+      "path": "/workspace/scratch/c52cb753f160/v2-import-proof/forward-use/project/.refas2/revisions/ecfc78fcd169476e8c4da1358d4cb173/artifacts/view-grazing.png",
+      "referenceRegion": null,
+      "registration": "unregistered",
+      "renderer": {
+        "denoising": false,
+        "device": "CPU",
+        "engine": "CYCLES",
+        "samples": 32,
+        "size": [
+          640,
+          640
+        ],
+        "transparent": false,
+        "viewTransform": "AgX",
+        "worldColor": [
+          0.065,
+          0.08,
+          0.115
+        ],
+        "worldStrength": 0.45
+      },
+      "sha256": "c44c8d284225055dd7ef160b0074aa4262df468e543bcff02963cf0516d67520",
+      "sourceSceneFingerprint": "abaf6fd484bddaf167bc3f724824383d4c66b5004ebf14c59f984c0a6a52213a",
+      "view": "grazing"
+    }
+  ],
+  "inputs": {
+    "base.blend": "/workspace/scratch/c52cb753f160/v2-import-proof/forward-use/project/.refas2/revisions/ecfc78fcd169476e8c4da1358d4cb173/inputs/base.blend",
+    "edit.py": "/workspace/scratch/c52cb753f160/v2-import-proof/forward-use/project/.refas2/revisions/ecfc78fcd169476e8c4da1358d4cb173/inputs/edit.py",
+    "review.json": "/workspace/scratch/c52cb753f160/v2-import-proof/forward-use/project/.refas2/revisions/ecfc78fcd169476e8c4da1358d4cb173/inputs/review.json"
+  },
+  "revisions": [
+    {
+      "id": "6f23fe22c89f40ea96b99f1b4060f196",
+      "intent": "Import RefAs 1.x cp_a744fb4e4fae0cd60712: assets/wing-cover.glb",
+      "createdAt": "2026-11-22T11:45:13.855832+00:00",
+      "parent": null
+    },
+    {
+      "id": "3795c8dfcb8f43aeab6728e837b09044",
+      "intent": "Capture unchanged imported asset with fixed hero, tip detail and grazing views",
+      "createdAt": "2026-11-22T11:47:30.153957+00:00",
+      "parent": "6f23fe22c89f40ea96b99f1b4060f196"
+    },
+    {
+      "id": "ecfc78fcd169476e8c4da1358d4cb173",
+      "intent": "Raise only panel:cell-00 outward by 0.025 scene units; preserve the remaining asset",
+      "createdAt": "2026-11-22T11:48:36.348037+00:00",
+      "parent": "3795c8dfcb8f43aeab6728e837b09044"
+    }
+  ],
+  "incompleteRuns": [],
+  "evidenceFreshness": {
+    "status": "current",
+    "scope": "active-reference-content-set",
+    "revision": "ecfc78fcd169476e8c4da1358d4cb173",
+    "activeSourceSha256": [
+      "6076b27fadfcb1a929b306ce74d6b7ef22d1d8996102065df6a74012e3466148"
+    ],
+    "revisionSourceSha256": [
+      "6076b27fadfcb1a929b306ce74d6b7ef22d1d8996102065df6a74012e3466148"
+    ],
+    "visualAcceptance": "not-evaluated"
+  },
+  "referenceResemblance": "not-evaluated",
+  "gameReadiness": "not-evaluated",
+  "runId": "8c0ef041c633487bb7f1fae6194f7568",
+  "publishedRevision": "ecfc78fcd169476e8c4da1358d4cb173",
+  "elapsedSeconds": 31.334
+}

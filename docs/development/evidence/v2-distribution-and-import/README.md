@@ -192,6 +192,18 @@ Implementation collaborators saw engineering context; they are not represented
 as blind authoring controls. The fresh-session task sees only the installed
 skill, raw source project and its requested local edit/recovery task.
 
+The completed [fresh-session continuation](forward-use/README.md) uses the
+installed skill without repository code/test context. It explicitly imports
+the archived asset, chooses fixed hero/detail/grazing observations, lifts only
+the requested panel and restores the original 11-file bundle. All 65 other
+object records and the old project's 247 files remain equal. The target's
+transform changes; its mesh/material data and GLB binary geometry stay equal.
+The root reviewer also opened the two grazing renders, which show the exposed
+raised edge. This proves the requested local edit and recovery, not mechanical
+attachment quality or source-photo likeness. The skill's installed bytes remain
+equal to the tested archive. The session's initial helper-path error and final
+successful verification are both retained.
+
 The [independent scope review](checks/cutover-scope-review.md) found no blocker
 for E3, E5 or D1. It independently checked actual source/output identities and
 the retained legacy regression changes. Copied-skill and npm installation are

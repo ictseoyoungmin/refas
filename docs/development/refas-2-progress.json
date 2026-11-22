@@ -350,7 +350,7 @@
       "baselineNote": "The published baseline remains v1.4.1. Tag/Release/registry publication requires applicable explicit authorization and remains separate from implementation."
     }
   ],
-  "currentCheckpointId": "r2-03-reference-freshness-d36a461e",
+  "currentCheckpointId": "r2-06-distribution-import-renderer-d8bb5dc7",
   "checkpoints": [
     {
       "id": "baseline-3217b46e",
@@ -547,6 +547,142 @@
         "pullRequestState": "Draft"
       },
       "note": "S3 and S5 independently reviewed and demonstrated. Local gates: 931 JavaScript tests, 49 production tests (34 project/CLI and 15 actual Blender), repository/skill checks, 11-checkpoint retained dogfood and package audit. All 399 extracted files match tested repository bytes. R2-03 is ready for review; no task is CLOSED and no visual/release credit is added."
+    },
+    {
+      "id": "r2-06-distribution-import-renderer-d8bb5dc7",
+      "date": "2026-11-22",
+      "kind": "verified-implementation",
+      "sourceCommit": "d8bb5dc71a86fe1b5012735c89aca3fb32f8006e",
+      "demonstratedCriteria": [
+        "B1",
+        "B2",
+        "B3",
+        "B4",
+        "W1",
+        "W2",
+        "W3",
+        "W4",
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "O1",
+        "O2",
+        "O3",
+        "O4",
+        "K1",
+        "K2",
+        "K3",
+        "E1",
+        "E3",
+        "E4",
+        "E5",
+        "E6",
+        "D1"
+      ],
+      "counts": {
+        "demonstrated": 27,
+        "total": 31,
+        "percentRounded": 87,
+        "bySlice": {
+          "R2-01": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-02": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-03": {
+            "demonstrated": 6,
+            "total": 6
+          },
+          "R2-04": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-05": {
+            "demonstrated": 3,
+            "total": 4
+          },
+          "R2-06": {
+            "demonstrated": 5,
+            "total": 6
+          },
+          "Delivery": {
+            "demonstrated": 1,
+            "total": 3
+          }
+        }
+      },
+      "notionTaskStatuses": {
+        "R2-01": "REVIEW",
+        "R2-02": "REVIEW",
+        "R2-03": "REVIEW",
+        "R2-04": "REVIEW",
+        "R2-05": "WIP",
+        "R2-06": "WIP"
+      },
+      "evidenceUpdates": {
+        "E3": {
+          "evidence": [
+            "docs/development/evidence/v2-distribution-and-import/renderer/run-02/result.json",
+            "docs/development/evidence/v2-distribution-and-import/renderer/run-02/README.md",
+            "docs/development/evidence/v2-distribution-and-import/renderer/run-01/result.json",
+            "docs/development/evidence/v2-distribution-and-import/renderer/normal-roundtrip/result.json",
+            "examples/renderer-isolation/README.md",
+            "docs/development/evidence/v2-distribution-and-import/checks/cutover-scope-review.md"
+          ],
+          "note": "One unchanged 27,120-byte GLB, actual imported triangle/material/camera observations and independent projected coordinates pass 11 scoped checks. CPU surface-to-light L requires external SUN propagation -L. Initial normal-check failure and separate Blender custom-normal round-trip remain recorded; final normal direction tolerance is declared. Beauty differences retain lighting, ambient, shader and output-transfer limitations. No image equivalence, asset-quality or performance superiority is inferred."
+        },
+        "E5": {
+          "evidence": [
+            "skills/refas/scripts/production/legacy_import.py",
+            "skills/refas/references/production-import.md",
+            "tests/test_production_import.py",
+            "tests/test_production_blender.py",
+            "docs/development/evidence/v2-distribution-and-import/installed-import/result.json",
+            "docs/development/evidence/v2-distribution-and-import/installed-import/commands.json",
+            "docs/development/evidence/v2-distribution-and-import/checks/final-production.log",
+            "docs/development/evidence/v2-distribution-and-import/checks/cutover-scope-review.md"
+          ],
+          "note": "Explicit checkpoint/artifact import verifies archived bytes, captures source/manifests/provenance and uses normal production transactions. Actual npm-installed replay passes 18 checks over eight CLI commands: 247 old files unchanged, one edited mesh and 65 preserved, all 11 selected artifact/input files restored exactly. Actual old certificate is null; synthetic claimed-certificate tests demonstrate no inheritance. Actual Blender proves native/GLB import and unsupported resource/required-extension refusal. Scope is selected supported asset adoption, not whole history or universal rig/extension fidelity."
+        },
+        "D1": {
+          "evidence": [
+            "package.json",
+            "bin/refas.mjs",
+            ".claude-plugin/plugin.json",
+            ".codex-plugin/plugin.json",
+            "skills/refas/scripts/production/__init__.py",
+            "README.md",
+            "docs/legacy-1x.md",
+            "tools/verify-production-distribution.mjs",
+            "tests/production-distribution.test.mjs",
+            "docs/development/evidence/v2-distribution-and-import/package/parity.json",
+            "docs/development/evidence/v2-distribution-and-import/checks/distribution-summary.json",
+            "docs/development/evidence/v2-distribution-and-import/checks/verification.json",
+            "docs/development/evidence/v2-distribution-and-import/checks/cutover-scope-review.md"
+          ],
+          "note": "Coordinated unpublished 2.0.0-alpha.1 package/runtime/plugin/docs cutover. Move 264 old files to one repository-only legacy/v1; active skill is 15 files including two ignores, actual npm payload 17 files with exact installed/source parity. Both copied skill and actual npm launcher execute outside the repository; injected legacy-file tarball is rejected. Plugin routing is structurally validated; host-specific marketplace installation is unexecuted. Existing legacy regression assertions remain. Main merge and formal publication remain separate open criteria."
+        }
+      },
+      "boundaries": {
+        "closedTasks": 0,
+        "totalTasks": 6,
+        "finishedVisualAcceptance": {
+          "jacket": "rejected",
+          "automail": "rejected"
+        },
+        "developmentMetadata": "2.0.0-alpha.1",
+        "retainedLegacyRuntime": "1.4.2",
+        "publishedRelease": "v1.4.1",
+        "pullRequest": "https://github.com/ictseoyoungmin/refas/pull/399",
+        "pullRequestState": "Draft"
+      },
+      "note": "E3, E5 and D1 independently reviewed and demonstrated. Local gates: 935 JavaScript tests, 65 production tests (47 unit/CLI and 18 actual Blender, no skips), repository/plugin/skill checks, 11-checkpoint retained dogfood and actual package audit. R2-06 is 5/6 and remains WIP; delivery 1/3. K4, E2, D2 and D3 remain open. No task is CLOSED and no finished visual or release credit is added."
     }
   ],
   "projections": [

@@ -2,9 +2,10 @@
 
 ## Current recorded checkpoint
 
-**77% — 24 of 31 criteria demonstrated.** Verified 2026-11-22 against
-[`d36a461e`](https://github.com/ictseoyoungmin/refas/commit/d36a461e08a9c905792d045a3eb26ad53778635c).
-The retained baseline is **22/31 = 71%** at `3217b46e`; S3 and S5 account for the increase.
+**87% — 27 of 31 criteria demonstrated.** Verified 2026-11-22 against
+[`d8bb5dc7`](https://github.com/ictseoyoungmin/refas/commit/d8bb5dc71a86fe1b5012735c89aca3fb32f8006e).
+The previous checkpoint is **24/31 = 77%**; E3, E5 and D1 account for this increase.
+The initial **22/31 = 71%** baseline and intervening checkpoint remain intact.
 
 This measures binary acceptance coverage against the [Notion plan](https://app.notion.com/p/41fc6a3b5bf181c2b2cdfac4605ef7d7) and its separate delivery milestones. It does **not** estimate effort or time remaining, score visual quality, or equate to Notion CLOSED status. The [machine-readable ledger](refas-2-progress.json) is the canonical list of IDs, full criteria, source/evidence links and checkpoint history.
 
@@ -15,11 +16,11 @@ This measures binary acceptance coverage against the [Notion plan](https://app.n
 | [R2-03](https://app.notion.com/p/41fc6a3b5bf1814fb380f3d649a3fc10) | 6/6 | REVIEW |
 | [R2-04](https://app.notion.com/p/41fc6a3b5bf181cd946ff7cd70581fb7) | 4/4 | REVIEW |
 | [R2-05](https://app.notion.com/p/41fc6a3b5bf181999d88cac97f324601) | 3/4 | WIP |
-| [R2-06](https://app.notion.com/p/41fc6a3b5bf1813191c0c59b6fff1aa8) | 3/6 | WIP |
-| Coordinated delivery | 0/3 | Unfinished |
-| **Total** | **24/31 = 77% rounded** | **0/6 tasks CLOSED** |
+| [R2-06](https://app.notion.com/p/41fc6a3b5bf1813191c0c59b6fff1aa8) | 5/6 | WIP |
+| Coordinated delivery | 1/3 | Main merge and release unfinished |
+| **Total** | **27/31 = 87% rounded** | **0/6 tasks CLOSED** |
 
-REVIEW means review remains; it does not earn an arbitrary fractional score. Both selected assets remain rejected for finished visual acceptance. Development metadata is 1.4.2, the recorded published release remains v1.4.1, and PR #399 is Draft. Those boundaries are independent of runtime-test progress.
+REVIEW means review remains; it does not earn an arbitrary fractional score. Both selected assets remain rejected for finished visual acceptance. Active development metadata is 2.0.0-alpha.1; retained legacy runtime is 1.4.2, the recorded published release remains v1.4.1, and PR #399 is Draft. Those boundaries are independent of runtime-test progress.
 
 ## Fixed baseline checklist
 
@@ -67,10 +68,10 @@ REVIEW means review remains; it does not earn an arbitrary fractional score. Bot
 
 ## Interpretation and remaining boundaries
 
-- **B3/B4 versus E2/E3:** R2-01 asks for measurement and renderer-isolation methods to be *defined*, so definitions earn credit. Missing actual timing/cost telemetry and the same-asset renderer experiment stay open only in R2-06. Fixed cameras on different candidate geometry are not renderer isolation.
+- **B3/B4 versus E2/E3:** R2-01 asks for measurement and renderer-isolation methods to be *defined*, so definitions earn credit. Actual comparable timing/cost telemetry remains open in R2-06; the new same-asset renderer experiment demonstrates E3 within its stated scope. Fixed cameras on different candidate geometry are not renderer isolation.
 - **K4:** This interprets the stated source-identity requirement against the declared task. The latest reviews identify material jacket collar/cloth/ornament/strap and arm armor/mechanism/hand differences. It does not introduce a universal finished-art or character/engine gate. Relative preference and technical restoration do not close it.
-- **S6 versus E5:** Production assessments remain unevaluated; that earns non-inheritance credit. Explicit 1.x conversion still needs preservation/loss rules, unchanged legacy bytes and demonstrated non-transfer of certificates.
-- **E4 versus D1–D3:** A tested extracted 1.4.2 development package earns execution credit. Coordinated 2.0 metadata/distribution conversion, main merge and formal publication are separate unfinished milestones. Publication still needs the applicable authorization.
+- **S6 versus E5:** Production assessments remain unevaluated; that earns non-inheritance credit. The explicit selected-asset import now demonstrates preservation/loss rules, unchanged legacy bytes and no certificate transfer. Whole history and untested authoring features are not implied.
+- **E4 versus D1–D3:** A tested extracted 1.4.2 development package earns execution credit. The coordinated 2.0 alpha metadata/distribution conversion now demonstrates D1. Main merge and formal publication remain separate unfinished milestones. Publication still needs the applicable authorization.
 
 ## Verified checkpoint — reference adoption and coherent reads
 
@@ -95,9 +96,33 @@ captures the new inputs and regenerates their bound outputs. This earns S5
 within its agreed scope, without implying external-file monitoring. R2-03 is
 6/6 demonstrated and REVIEW; no task is CLOSED.
 
-**Seven criteria remain open:** K4 (source identity/construction), E2 (actual
+**At that earlier checkpoint, seven criteria remained open:** K4 (source identity/construction), E2 (actual
 comparable timing/cost), E3 (same-asset renderer isolation), E5 (explicit 1.x
 migration), and D1–D3 (coordinated cutover, main merge, formal publication).
+
+## Verified checkpoint — production distribution, selected import and renderer isolation
+
+**E3, E5 and D1 are demonstrated: 27/31 = 87%.** The fixed 31-item denominator,
+criterion meanings and all historical decisions are preserved.
+
+| Newly demonstrated criterion | Actual evidence |
+| --- | --- |
+| E3: same-GLB/camera/known-material renderer isolation | Four-material GLB, independent geometry/camera observations, 11 checks; light-direction and normal-precision findings with the initial failed check retained |
+| E5: explicit 1.x import with preserved/lost scope and no certification transfer | Actual installed import/edit/restore, 18 checks, 247 old files unchanged, 65 objects preserved, 11 selected files restored; actual native/GLB and refusal cases |
+| D1: coordinated 2.0 distribution cutover | Unpublished 2.0.0-alpha.1 identities; 264 old files moved outside the active skill, 17-file actual npm package, exact parity, isolated copied-skill/npm execution and legacy-insertion rejection |
+
+Read the [complete evidence](evidence/v2-distribution-and-import/README.md) and
+[independent scope review](evidence/v2-distribution-and-import/checks/cutover-scope-review.md).
+Local gates pass 935 JavaScript tests and 65 production tests, including 18 actual
+Blender cases without skips. Host-specific marketplace installation is not
+independently exercised; plugin manifest routing is structurally checked.
+
+R2-06 advances to **5/6** but remains **WIP**. Coordinated delivery is **1/3**.
+**Four criteria remain open:** K4 (declared source identity/major construction),
+E2 (comparable actual useful-edit/total time and resource cost), D2 (main merge)
+and D3 (formal release/publication). Both asset visual decisions and CLOSED 0/6
+remain unchanged. File reduction and successful import do not close quality or
+cost criteria.
 
 ## Updating the ledger
 
