@@ -1,0 +1,33 @@
+{
+  "commit": "5f2f39c6e9f1e4bbdef6dfd463e84991daa73e57",
+  "production": {
+    "id": 45058091494,
+    "status": "completed",
+    "conclusion": "success"
+  },
+  "ci": {
+    "id": 45058091523,
+    "status": "completed",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "name": "Node 24",
+        "id": 137317719626,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Node 20",
+        "id": 137317719846,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Node 22",
+        "id": 137317719874,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  }
+}

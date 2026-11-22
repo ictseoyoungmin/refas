@@ -1,0 +1,50 @@
+{
+  "passed": true,
+  "selectedRevision": "a6a2e5dec7884effa9c42821e19549b6",
+  "editedRevision": "99adbf2c59044bcba53c3dec0c3f53b1",
+  "restoredRevision": "449d31abeb56475ca1c6b318db9801b6",
+  "selectedCount": 5,
+  "unrelatedCount": 114,
+  "unrelatedChanged": [],
+  "exactRestoredFileCount": 16,
+  "before": {
+    "artifacts/asset.glb": "08c4f510e903891eab2c0eee276b55de71abf6f1cda3d584a880ee508e3e63f5",
+    "artifacts/construction.json": "ccb5a24e34dbe18aa3806c9e391572194c97b87b13909097f82f6dc24a175195",
+    "artifacts/detailed-functional.blend": "85012f440e0e58b33b0d184d20fddcab1b259ac6b360b38040f39c9f92a3d219",
+    "artifacts/optimized-part-triangles.json.gz": "dfa99d3c484eabd818b46d44aa29f65e5a1d2d4dac8512776caee60ae4241f36",
+    "artifacts/result.json": "1c3af6dd8596cfd103408a9677fbf24a6c69e7ef3657d279143a93c4073d133f",
+    "artifacts/scene.blend": "badf3fd5134ea44c77bef19890cf0f3157c8e2dbe622484eba7df713791d36f1",
+    "artifacts/scene.json": "6973c2cd8cbc293d36f45882dfd8002ad15af0bf60b07cf38ea8a7eb7a380f6b",
+    "artifacts/view-elbow-detail.png": "2d98461a8f0d923296db9aa61dc0ef352e95c60b77d8c62674860875de8374b1",
+    "artifacts/view-front.png": "34952e6bb4a3cd00b42b2da8dcacbbd30f77e169f3fdb5553ba6ee620e8246a2",
+    "artifacts/view-hand-front.png": "98dd8a94bb33404c03f97898916531520dc5011ad5fcdd4b40768ab9d7d2d1e7",
+    "artifacts/view-hand-palm.png": "36e66d94f4ef15e6137f9d646e36c7110ff07ae48b26d9f140b0e6a15f1063b0",
+    "artifacts/view-hero.png": "0b8b15a8f6f72709b3aa371ec301401684c6d668df4877e4eb0cd0c5c13a07fb",
+    "artifacts/view-side.png": "8e3b99fa137850f5e4dc666fd41dd13121cd9df2a64e9a63384b99df0d9a3df3",
+    "inputs/base.blend": "e7b2ac7cbd671d979af6e178ec85efc574ad9860c9695000980cf4a29f8a2dd7",
+    "inputs/edit.py": "e1b8df23a01335d21ab414b4455e0145df91c58c951895039119643e5f56679e",
+    "inputs/review.json": "bca1703eb436c275984b6f252c4efc1666e852f7797a0150a0a4c3c3473639db"
+  },
+  "after": {
+    "artifacts/asset.glb": "08c4f510e903891eab2c0eee276b55de71abf6f1cda3d584a880ee508e3e63f5",
+    "artifacts/construction.json": "ccb5a24e34dbe18aa3806c9e391572194c97b87b13909097f82f6dc24a175195",
+    "artifacts/detailed-functional.blend": "85012f440e0e58b33b0d184d20fddcab1b259ac6b360b38040f39c9f92a3d219",
+    "artifacts/optimized-part-triangles.json.gz": "dfa99d3c484eabd818b46d44aa29f65e5a1d2d4dac8512776caee60ae4241f36",
+    "artifacts/result.json": "1c3af6dd8596cfd103408a9677fbf24a6c69e7ef3657d279143a93c4073d133f",
+    "artifacts/scene.blend": "badf3fd5134ea44c77bef19890cf0f3157c8e2dbe622484eba7df713791d36f1",
+    "artifacts/scene.json": "6973c2cd8cbc293d36f45882dfd8002ad15af0bf60b07cf38ea8a7eb7a380f6b",
+    "artifacts/view-elbow-detail.png": "2d98461a8f0d923296db9aa61dc0ef352e95c60b77d8c62674860875de8374b1",
+    "artifacts/view-front.png": "34952e6bb4a3cd00b42b2da8dcacbbd30f77e169f3fdb5553ba6ee620e8246a2",
+    "artifacts/view-hand-front.png": "98dd8a94bb33404c03f97898916531520dc5011ad5fcdd4b40768ab9d7d2d1e7",
+    "artifacts/view-hand-palm.png": "36e66d94f4ef15e6137f9d646e36c7110ff07ae48b26d9f140b0e6a15f1063b0",
+    "artifacts/view-hero.png": "0b8b15a8f6f72709b3aa371ec301401684c6d668df4877e4eb0cd0c5c13a07fb",
+    "artifacts/view-side.png": "8e3b99fa137850f5e4dc666fd41dd13121cd9df2a64e9a63384b99df0d9a3df3",
+    "inputs/base.blend": "e7b2ac7cbd671d979af6e178ec85efc574ad9860c9695000980cf4a29f8a2dd7",
+    "inputs/edit.py": "e1b8df23a01335d21ab414b4455e0145df91c58c951895039119643e5f56679e",
+    "inputs/review.json": "bca1703eb436c275984b6f252c4efc1666e852f7797a0150a0a4c3c3473639db"
+  },
+  "selectedBytesUnchanged": {
+    "scene.blend": "badf3fd5134ea44c77bef19890cf0f3157c8e2dbe622484eba7df713791d36f1",
+    "asset.glb": "08c4f510e903891eab2c0eee276b55de71abf6f1cda3d584a880ee508e3e63f5"
+  }
+}

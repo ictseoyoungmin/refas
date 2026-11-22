@@ -1,0 +1,1460 @@
+{
+  "nativeSha256": "da55dbd4cd8d0831b593984df24750ccbb07c04dc12228e22971c2e3e8a0162b",
+  "scope": "Read-only actual triangle crossings. Distances reported in current THUMB_J0 frame. Signed nearest-surface vertex/centroid penetration is a sample, not an exhaustive depth bound.",
+  "originalThumbKnuckleRadiusM": 0.00782,
+  "originalThumbKnuckleHalfAxialLengthM": 0.009520000000000002,
+  "rows": [
+    {
+      "frame": 37,
+      "bvhTrianglePairs": 7,
+      "verifiedCrossingTrianglePairs": 7,
+      "intersectionPointCountIncludingDuplicates": 14,
+      "minHingeAxisRadiusM": 0.011664131148105768,
+      "maxHingeAxisRadiusM": 0.013077619164136777,
+      "maxSampledArmorDepthIntoPalmM": 6.543136669279193e-05,
+      "intersectionBoundsInThumbRootM": {
+        "min": [
+          -0.0001683272421360016,
+          -0.004655227065086365,
+          -0.012232784181833267
+        ],
+        "max": [
+          0.0007309503853321075,
+          -0.004323288798332214,
+          -0.010833334177732468
+        ]
+      }
+    },
+    {
+      "frame": 38,
+      "bvhTrianglePairs": 11,
+      "verifiedCrossingTrianglePairs": 11,
+      "intersectionPointCountIncludingDuplicates": 22,
+      "minHingeAxisRadiusM": 0.011232509879660598,
+      "maxHingeAxisRadiusM": 0.013591282409891903,
+      "maxSampledArmorDepthIntoPalmM": 0.00015509679633396445,
+      "intersectionBoundsInThumbRootM": {
+        "min": [
+          -0.0006911419332027435,
+          -0.004744553938508034,
+          -0.012773195281624794
+        ],
+        "max": [
+          0.0007384307682514191,
+          -0.004284895956516266,
+          -0.010383108630776405
+        ]
+      }
+    },
+    {
+      "frame": 39,
+      "bvhTrianglePairs": 11,
+      "verifiedCrossingTrianglePairs": 11,
+      "intersectionPointCountIncludingDuplicates": 22,
+      "minHingeAxisRadiusM": 0.010868116780671204,
+      "maxHingeAxisRadiusM": 0.013715305247554288,
+      "maxSampledArmorDepthIntoPalmM": 0.0002431158300169045,
+      "intersectionBoundsInThumbRootM": {
+        "min": [
+          -0.0008170604705810547,
+          -0.0048321885988116264,
+          -0.012903356924653053
+        ],
+        "max": [
+          0.0007455535233020782,
+          -0.0042831385508179665,
+          -0.009988527745008469
+        ]
+      }
+    },
+    {
+      "frame": 40,
+      "bvhTrianglePairs": 11,
+      "verifiedCrossingTrianglePairs": 11,
+      "intersectionPointCountIncludingDuplicates": 22,
+      "minHingeAxisRadiusM": 0.01053694384850111,
+      "maxHingeAxisRadiusM": 0.013838522839248427,
+      "maxSampledArmorDepthIntoPalmM": 0.00032907632703427225,
+      "intersectionBoundsInThumbRootM": {
+        "min": [
+          -0.0009420327842235565,
+          -0.004917968064546585,
+          -0.01303253322839737
+        ],
+        "max": [
+          0.0007523000240325928,
+          -0.004281575791537762,
+          -0.009627839550375938
+        ]
+      }
+    },
+    {
+      "frame": 41,
+      "bvhTrianglePairs": 11,
+      "verifiedCrossingTrianglePairs": 11,
+      "intersectionPointCountIncludingDuplicates": 22,
+      "minHingeAxisRadiusM": 0.010235855682904393,
+      "maxHingeAxisRadiusM": 0.013960518179718584,
+      "maxSampledArmorDepthIntoPalmM": 0.00041282211168436334,
+      "intersectionBoundsInThumbRootM": {
+        "min": [
+          -0.0010656490921974182,
+          -0.005001526325941086,
+          -0.013160333037376404
+        ],
+        "max": [
+          0.0007586963474750519,
+          -0.004280093591660261,
+          -0.009298039600253105
+        ]
+      }
+    },
+    {
+      "frame": 42,
+      "bvhTrianglePairs": 11,
+      "verifiedCrossingTrianglePairs": 11,
+      "intersectionPointCountIncludingDuplicates": 22,
+      "minHingeAxisRadiusM": 0.009961567419260443,
+      "maxHingeAxisRadiusM": 0.014080943879766513,
+      "maxSampledArmorDepthIntoPalmM": 0.0004942448431393132,
+      "intersectionBoundsInThumbRootM": {
+        "min": [
+          -0.0011875703930854797,
+          -0.005083443596959114,
+          -0.013286376371979713
+        ],
+        "max": [
+          0.000764746218919754,
+          -0.0042787399142980576,
+          -0.008995844051241875
+        ]
+      }
+    },
+    {
+      "frame": 43,
+      "bvhTrianglePairs": 13,
+      "verifiedCrossingTrianglePairs": 13,
+      "intersectionPointCountIncludingDuplicates": 26,
+      "minHingeAxisRadiusM": 0.009712308402520584,
+      "maxHingeAxisRadiusM": 0.014201052380362582,
+      "maxSampledArmorDepthIntoPalmM": 0.000572880906474893,
+      "intersectionBoundsInThumbRootM": {
+        "min": [
+          -0.001309078186750412,
+          -0.005170486867427826,
+          -0.013411972671747208
+        ],
+        "max": [
+          0.0007704421877861023,
+          -0.004277542233467102,
+          -0.008719608187675476
+        ]
+      }
+    },
+    {
+      "frame": 44,
+      "bvhTrianglePairs": 13,
+      "verifiedCrossingTrianglePairs": 13,
+      "intersectionPointCountIncludingDuplicates": 26,
+      "minHingeAxisRadiusM": 0.009485682623221666,
+      "maxHingeAxisRadiusM": 0.014326343404845263,
+      "maxSampledArmorDepthIntoPalmM": 0.0006486444090114674,
+      "intersectionBoundsInThumbRootM": {
+        "min": [
+          -0.001435738056898117,
+          -0.005254216492176056,
+          -0.013542912900447845
+        ],
+        "max": [
+          0.0007757954299449921,
+          -0.00427636131644249,
+          -0.008467048406600952
+        ]
+      }
+    },
+    {
+      "frame": 45,
+      "bvhTrianglePairs": 13,
+      "verifiedCrossingTrianglePairs": 13,
+      "intersectionPointCountIncludingDuplicates": 26,
+      "minHingeAxisRadiusM": 0.009279693898458648,
+      "maxHingeAxisRadiusM": 0.01444837405201091,
+      "maxSampledArmorDepthIntoPalmM": 0.0007213226490421221,
+      "intersectionBoundsInThumbRootM": {
+        "min": [
+          -0.0015590600669384003,
+          -0.005334671586751938,
+          -0.013670329004526138
+        ],
+        "max": [
+          0.0007808133959770203,
+          -0.004275325685739517,
+          -0.008236158639192581
+        ]
+      }
+    },
+    {
+      "frame": 46,
+      "bvhTrianglePairs": 13,
+      "verifiedCrossingTrianglePairs": 13,
+      "intersectionPointCountIncludingDuplicates": 26,
+      "minHingeAxisRadiusM": 0.00909293418271055,
+      "maxHingeAxisRadiusM": 0.014566630384507546,
+      "maxSampledArmorDepthIntoPalmM": 0.0007906898545115837,
+      "intersectionBoundsInThumbRootM": {
+        "min": [
+          -0.001678377389907837,
+          -0.005411483347415924,
+          -0.013793691992759705
+        ],
+        "max": [
+          0.0007854998111724854,
+          -0.004274409264326096,
+          -0.0080256387591362
+        ]
+      }
+    },
+    {
+      "frame": 47,
+      "bvhTrianglePairs": 13,
+      "verifiedCrossingTrianglePairs": 13,
+      "intersectionPointCountIncludingDuplicates": 26,
+      "minHingeAxisRadiusM": 0.008923844625971894,
+      "maxHingeAxisRadiusM": 0.014680455956053906,
+      "maxSampledArmorDepthIntoPalmM": 0.0008564920772187179,
+      "intersectionBoundsInThumbRootM": {
+        "min": [
+          -0.0017931647598743439,
+          -0.005484346300363541,
+          -0.013912372291088104
+        ],
+        "max": [
+          0.0007898584008216858,
+          -0.004273530095815659,
+          -0.007834024727344513
+        ]
+      }
+    },
+    {
+      "frame": 48,
+      "bvhTrianglePairs": 17,
+      "verifiedCrossingTrianglePairs": 17,
+      "intersectionPointCountIncludingDuplicates": 32,
+      "minHingeAxisRadiusM": 0.008771159205118497,
+      "maxHingeAxisRadiusM": 0.014789305528652411,
+      "maxSampledArmorDepthIntoPalmM": 0.0009185792014250183,
+      "intersectionBoundsInThumbRootM": {
+        "min": [
+          -0.0019028931856155396,
+          -0.005536697804927826,
+          -0.014025785028934479
+        ],
+        "max": [
+          0.0007938966155052185,
+          -0.004272758960723877,
+          -0.007660076022148132
+        ]
+      }
+    },
+    {
+      "frame": 49,
+      "bvhTrianglePairs": 17,
+      "verifiedCrossingTrianglePairs": 17,
+      "intersectionPointCountIncludingDuplicates": 34,
+      "minHingeAxisRadiusM": 0.008631842798200541,
+      "maxHingeAxisRadiusM": 0.014892731626286935,
+      "maxSampledArmorDepthIntoPalmM": 0.0009768006493686698,
+      "intersectionBoundsInThumbRootM": {
+        "min": [
+          -0.00200706347823143,
+          -0.005570352077484131,
+          -0.014133453369140625
+        ],
+        "max": [
+          0.000797610729932785,
+          -0.0042721182107925415,
+          -0.007500514388084412
+        ]
+      }
+    },
+    {
+      "frame": 50,
+      "bvhTrianglePairs": 17,
+      "verifiedCrossingTrianglePairs": 17,
+      "intersectionPointCountIncludingDuplicates": 34,
+      "minHingeAxisRadiusM": 0.008504590162341497,
+      "maxHingeAxisRadiusM": 0.01499014906343943,
+      "maxSampledArmorDepthIntoPalmM": 0.0010310368743375875,
+      "intersectionBoundsInThumbRootM": {
+        "min": [
+          -0.0021051615476608276,
+          -0.005601152777671814,
+          -0.014234848320484161
+        ],
+        "max": [
+          0.0008010230958461761,
+          -0.004271365702152252,
+          -0.007354147732257843
+        ]
+      }
+    },
+    {
+      "frame": 51,
+      "bvhTrianglePairs": 17,
+      "verifiedCrossingTrianglePairs": 17,
+      "intersectionPointCountIncludingDuplicates": 34,
+      "minHingeAxisRadiusM": 0.00839141462302417,
+      "maxHingeAxisRadiusM": 0.015080975609865089,
+      "maxSampledArmorDepthIntoPalmM": 0.0010810077096721216,
+      "intersectionBoundsInThumbRootM": {
+        "min": [
+          -0.002196546643972397,
+          -0.005629152059555054,
+          -0.014329314231872559
+        ],
+        "max": [
+          0.0008041225373744965,
+          -0.004270829260349274,
+          -0.007223285734653473
+        ]
+      }
+    },
+    {
+      "frame": 52,
+      "bvhTrianglePairs": 19,
+      "verifiedCrossingTrianglePairs": 19,
+      "intersectionPointCountIncludingDuplicates": 38,
+      "minHingeAxisRadiusM": 0.008351061393147105,
+      "maxHingeAxisRadiusM": 0.015164735795152888,
+      "maxSampledArmorDepthIntoPalmM": 0.00112661860271146,
+      "intersectionBoundsInThumbRootM": {
+        "min": [
+          -0.002280827611684799,
+          -0.005654461681842804,
+          -0.014416404068470001
+        ],
+        "max": [
+          0.000806909054517746,
+          -0.004282563924789429,
+          -0.007167927920818329
+        ]
+      }
+    },
+    {
+      "frame": 53,
+      "bvhTrianglePairs": 19,
+      "verifiedCrossingTrianglePairs": 19,
+      "intersectionPointCountIncludingDuplicates": 38,
+      "minHingeAxisRadiusM": 0.008337020640516965,
+      "maxHingeAxisRadiusM": 0.015241106955922318,
+      "maxSampledArmorDepthIntoPalmM": 0.0011678384983042633,
+      "intersectionBoundsInThumbRootM": {
+        "min": [
+          -0.002357546240091324,
+          -0.005677059292793274,
+          -0.014495760202407837
+        ],
+        "max": [
+          0.0008093975484371185,
+          -0.004297681152820587,
+          -0.007140681147575378
+        ]
+      }
+    },
+    {
+      "frame": 54,
+      "bvhTrianglePairs": 19,
+      "verifiedCrossingTrianglePairs": 19,
+      "intersectionPointCountIncludingDuplicates": 38,
+      "minHingeAxisRadiusM": 0.008324538098511493,
+      "maxHingeAxisRadiusM": 0.015309564909532856,
+      "maxSampledArmorDepthIntoPalmM": 0.001204512152753523,
+      "intersectionBoundsInThumbRootM": {
+        "min": [
+          -0.002426356077194214,
+          -0.0056969597935676575,
+          -0.014566868543624878
+        ],
+        "max": [
+          0.0008115842938423157,
+          -0.004311069846153259,
+          -0.007116392254829407
+        ]
+      }
+    },
+    {
+      "frame": 55,
+      "bvhTrianglePairs": 19,
+      "verifiedCrossingTrianglePairs": 19,
+      "intersectionPointCountIncludingDuplicates": 38,
+      "minHingeAxisRadiusM": 0.008313903276517938,
+      "maxHingeAxisRadiusM": 0.015369694247178116,
+      "maxSampledArmorDepthIntoPalmM": 0.001236434316751911,
+      "intersectionBoundsInThumbRootM": {
+        "min": [
+          -0.0024867691099643707,
+          -0.005714215338230133,
+          -0.0146293044090271
+        ],
+        "max": [
+          0.0008134804666042328,
+          -0.004322737455368042,
+          -0.007095441222190857
+        ]
+      }
+    },
+    {
+      "frame": 56,
+      "bvhTrianglePairs": 19,
+      "verifiedCrossingTrianglePairs": 19,
+      "intersectionPointCountIncludingDuplicates": 38,
+      "minHingeAxisRadiusM": 0.008304866861915249,
+      "maxHingeAxisRadiusM": 0.015421195804241328,
+      "maxSampledArmorDepthIntoPalmM": 0.0012636148109095302,
+      "intersectionBoundsInThumbRootM": {
+        "min": [
+          -0.0025384649634361267,
+          -0.0057287514209747314,
+          -0.014682754874229431
+        ],
+        "max": [
+          0.000815078616142273,
+          -0.0043326616287231445,
+          -0.007077619433403015
+        ]
+      }
+    },
+    {
+      "frame": 57,
+      "bvhTrianglePairs": 21,
+      "verifiedCrossingTrianglePairs": 21,
+      "intersectionPointCountIncludingDuplicates": 42,
+      "minHingeAxisRadiusM": 0.008297506262187155,
+      "maxHingeAxisRadiusM": 0.015451221114841247,
+      "maxSampledArmorDepthIntoPalmM": 0.0012860173920898887,
+      "intersectionBoundsInThumbRootM": {
+        "min": [
+          -0.0025686807930469513,
+          -0.005740635097026825,
+          -0.014711394906044006
+        ],
+        "max": [
+          0.0008163861930370331,
+          -0.004340805113315582,
+          -0.007062986493110657
+        ]
+      }
+    },
+    {
+      "frame": 58,
+      "bvhTrianglePairs": 21,
+      "verifiedCrossingTrianglePairs": 21,
+      "intersectionPointCountIncludingDuplicates": 42,
+      "minHingeAxisRadiusM": 0.008291793680446677,
+      "maxHingeAxisRadiusM": 0.015451179234709976,
+      "maxSampledArmorDepthIntoPalmM": 0.0013034155115292378,
+      "intersectionBoundsInThumbRootM": {
+        "min": [
+          -0.0025686733424663544,
+          -0.005749836564064026,
+          -0.014704614877700806
+        ],
+        "max": [
+          0.0008173957467079163,
+          -0.004347160458564758,
+          -0.007051602005958557
+        ]
+      }
+    },
+    {
+      "frame": 59,
+      "bvhTrianglePairs": 21,
+      "verifiedCrossingTrianglePairs": 21,
+      "intersectionPointCountIncludingDuplicates": 42,
+      "minHingeAxisRadiusM": 0.0082876887390295,
+      "maxHingeAxisRadiusM": 0.01545108913941198,
+      "maxSampledArmorDepthIntoPalmM": 0.0013159247753264935,
+      "intersectionBoundsInThumbRootM": {
+        "min": [
+          -0.002568662166595459,
+          -0.00575641542673111,
+          -0.014699667692184448
+        ],
+        "max": [
+          0.0008181147277355194,
+          -0.004351675510406494,
+          -0.0070434510707855225
+        ]
+      }
+    },
+    {
+      "frame": 60,
+      "bvhTrianglePairs": 21,
+      "verifiedCrossingTrianglePairs": 21,
+      "intersectionPointCountIncludingDuplicates": 42,
+      "minHingeAxisRadiusM": 0.008285269087825151,
+      "maxHingeAxisRadiusM": 0.015451123242904779,
+      "maxSampledArmorDepthIntoPalmM": 0.001323439715861241,
+      "intersectionBoundsInThumbRootM": {
+        "min": [
+          -0.0025686584413051605,
+          -0.005760371685028076,
+          -0.014696717262268066
+        ],
+        "max": [
+          0.000818546861410141,
+          -0.00435444712638855,
+          -0.007038578391075134
+        ]
+      }
+    },
+    {
+      "frame": 61,
+      "bvhTrianglePairs": 21,
+      "verifiedCrossingTrianglePairs": 21,
+      "intersectionPointCountIncludingDuplicates": 42,
+      "minHingeAxisRadiusM": 0.00828442053761221,
+      "maxHingeAxisRadiusM": 0.01545110475665479,
+      "maxSampledArmorDepthIntoPalmM": 0.0013259608340376872,
+      "intersectionBoundsInThumbRootM": {
+        "min": [
+          -0.0025686509907245636,
+          -0.0057617053389549255,
+          -0.014695718884468079
+        ],
+        "max": [
+          0.000818692147731781,
+          -0.004355348646640778,
+          -0.0070368945598602295
+        ]
+      }
+    },
+    {
+      "frame": 62,
+      "bvhTrianglePairs": 21,
+      "verifiedCrossingTrianglePairs": 21,
+      "intersectionPointCountIncludingDuplicates": 42,
+      "minHingeAxisRadiusM": 0.008285243769895636,
+      "maxHingeAxisRadiusM": 0.015451092964259013,
+      "maxSampledArmorDepthIntoPalmM": 0.0013234116431704024,
+      "intersectionBoundsInThumbRootM": {
+        "min": [
+          -0.0025686509907245636,
+          -0.005760356783866882,
+          -0.014696702361106873
+        ],
+        "max": [
+          0.000818546861410141,
+          -0.004354409873485565,
+          -0.007038548588752747
+        ]
+      }
+    },
+    {
+      "frame": 63,
+      "bvhTrianglePairs": 21,
+      "verifiedCrossingTrianglePairs": 21,
+      "intersectionPointCountIncludingDuplicates": 42,
+      "minHingeAxisRadiusM": 0.008287690896037937,
+      "maxHingeAxisRadiusM": 0.015451135662038516,
+      "maxSampledArmorDepthIntoPalmM": 0.001315965306275757,
+      "intersectionBoundsInThumbRootM": {
+        "min": [
+          -0.0025686584413051605,
+          -0.0057564377784729,
+          -0.014699719846248627
+        ],
+        "max": [
+          0.0008181221783161163,
+          -0.0043517351150512695,
+          -0.007043421268463135
+        ]
+      }
+    },
+    {
+      "frame": 64,
+      "bvhTrianglePairs": 21,
+      "verifiedCrossingTrianglePairs": 21,
+      "intersectionPointCountIncludingDuplicates": 42,
+      "minHingeAxisRadiusM": 0.00829174540737245,
+      "maxHingeAxisRadiusM": 0.01545112457609762,
+      "maxSampledArmorDepthIntoPalmM": 0.0013034547309871414,
+      "intersectionBoundsInThumbRootM": {
+        "min": [
+          -0.002568662166595459,
+          -0.00574985146522522,
+          -0.01470453292131424
+        ],
+        "max": [
+          0.0008173957467079163,
+          -0.004347153007984161,
+          -0.007051549851894379
+        ]
+      }
+    },
+    {
+      "frame": 65,
+      "bvhTrianglePairs": 21,
+      "verifiedCrossingTrianglePairs": 21,
+      "intersectionPointCountIncludingDuplicates": 42,
+      "minHingeAxisRadiusM": 0.008297501398388966,
+      "maxHingeAxisRadiusM": 0.015451249749658584,
+      "maxSampledArmorDepthIntoPalmM": 0.001285971289689769,
+      "intersectionBoundsInThumbRootM": {
+        "min": [
+          -0.0025686845183372498,
+          -0.005740605294704437,
+          -0.014711432158946991
+        ],
+        "max": [
+          0.0008163824677467346,
+          -0.004340827465057373,
+          -0.007062971591949463
+        ]
+      }
+    },
+    {
+      "frame": 66,
+      "bvhTrianglePairs": 19,
+      "verifiedCrossingTrianglePairs": 19,
+      "intersectionPointCountIncludingDuplicates": 38,
+      "minHingeAxisRadiusM": 0.008304892260229412,
+      "maxHingeAxisRadiusM": 0.015421212789865225,
+      "maxSampledArmorDepthIntoPalmM": 0.0012636386491067242,
+      "intersectionBoundsInThumbRootM": {
+        "min": [
+          -0.0025384649634361267,
+          -0.005728714168071747,
+          -0.014682784676551819
+        ],
+        "max": [
+          0.0008150748908519745,
+          -0.004332646727561951,
+          -0.007077649235725403
+        ]
+      }
+    },
+    {
+      "frame": 67,
+      "bvhTrianglePairs": 19,
+      "verifiedCrossingTrianglePairs": 19,
+      "intersectionPointCountIncludingDuplicates": 38,
+      "minHingeAxisRadiusM": 0.008313886676087056,
+      "maxHingeAxisRadiusM": 0.015369676161210065,
+      "maxSampledArmorDepthIntoPalmM": 0.0012364281465124805,
+      "intersectionBoundsInThumbRootM": {
+        "min": [
+          -0.0024867430329322815,
+          -0.005714192986488342,
+          -0.014629274606704712
+        ],
+        "max": [
+          0.0008134767413139343,
+          -0.004322748631238937,
+          -0.007095426321029663
+        ]
+      }
+    },
+    {
+      "frame": 68,
+      "bvhTrianglePairs": 19,
+      "verifiedCrossingTrianglePairs": 19,
+      "intersectionPointCountIncludingDuplicates": 38,
+      "minHingeAxisRadiusM": 0.008324617604414507,
+      "maxHingeAxisRadiusM": 0.015309514139349301,
+      "maxSampledArmorDepthIntoPalmM": 0.0012044887553201988,
+      "intersectionBoundsInThumbRootM": {
+        "min": [
+          -0.0024263039231300354,
+          -0.005696974694728851,
+          -0.0145668163895607
+        ],
+        "max": [
+          0.0008115805685520172,
+          -0.0043110474944114685,
+          -0.007116496562957764
+        ]
+      }
+    },
+    {
+      "frame": 69,
+      "bvhTrianglePairs": 19,
+      "verifiedCrossingTrianglePairs": 19,
+      "intersectionPointCountIncludingDuplicates": 38,
+      "minHingeAxisRadiusM": 0.008337004199489453,
+      "maxHingeAxisRadiusM": 0.015241095781109926,
+      "maxSampledArmorDepthIntoPalmM": 0.0011678878763632383,
+      "intersectionBoundsInThumbRootM": {
+        "min": [
+          -0.0023575425148010254,
+          -0.005677118897438049,
+          -0.01449572667479515
+        ],
+        "max": [
+          0.000809401273727417,
+          -0.004297718405723572,
+          -0.007140621542930603
+        ]
+      }
+    },
+    {
+      "frame": 70,
+      "bvhTrianglePairs": 19,
+      "verifiedCrossingTrianglePairs": 19,
+      "intersectionPointCountIncludingDuplicates": 38,
+      "minHingeAxisRadiusM": 0.008351074148010187,
+      "maxHingeAxisRadiusM": 0.015164700232439357,
+      "maxSampledArmorDepthIntoPalmM": 0.0011266343026363757,
+      "intersectionBoundsInThumbRootM": {
+        "min": [
+          -0.00228080153465271,
+          -0.00565449520945549,
+          -0.01441635936498642
+        ],
+        "max": [
+          0.000806909054517746,
+          -0.004282593727111816,
+          -0.007167931646108627
+        ]
+      }
+    },
+    {
+      "frame": 71,
+      "bvhTrianglePairs": 17,
+      "verifiedCrossingTrianglePairs": 17,
+      "intersectionPointCountIncludingDuplicates": 34,
+      "minHingeAxisRadiusM": 0.008391545150526885,
+      "maxHingeAxisRadiusM": 0.015080909048559613,
+      "maxSampledArmorDepthIntoPalmM": 0.0010809715022332966,
+      "intersectionBoundsInThumbRootM": {
+        "min": [
+          -0.002196483314037323,
+          -0.005629172548651695,
+          -0.014329250901937485
+        ],
+        "max": [
+          0.000804118812084198,
+          -0.0042708273977041245,
+          -0.00722343847155571
+        ]
+      }
+    },
+    {
+      "frame": 72,
+      "bvhTrianglePairs": 17,
+      "verifiedCrossingTrianglePairs": 17,
+      "intersectionPointCountIncludingDuplicates": 34,
+      "minHingeAxisRadiusM": 0.00850465386155132,
+      "maxHingeAxisRadiusM": 0.01499017647103063,
+      "maxSampledArmorDepthIntoPalmM": 0.0010310218494851142,
+      "intersectionBoundsInThumbRootM": {
+        "min": [
+          -0.0021051540970802307,
+          -0.005601118318736553,
+          -0.0142348762601614
+        ],
+        "max": [
+          0.0008010230958461761,
+          -0.004271361045539379,
+          -0.0073542241007089615
+        ]
+      }
+    },
+    {
+      "frame": 73,
+      "bvhTrianglePairs": 17,
+      "verifiedCrossingTrianglePairs": 17,
+      "intersectionPointCountIncludingDuplicates": 34,
+      "minHingeAxisRadiusM": 0.008631742518249703,
+      "maxHingeAxisRadiusM": 0.014892795625097308,
+      "maxSampledArmorDepthIntoPalmM": 0.0009768712843651883,
+      "intersectionBoundsInThumbRootM": {
+        "min": [
+          -0.002007119357585907,
+          -0.0055703092366456985,
+          -0.014133540913462639
+        ],
+        "max": [
+          0.0007976219058036804,
+          -0.0042720758356153965,
+          -0.007500423118472099
+        ]
+      }
+    },
+    {
+      "frame": 74,
+      "bvhTrianglePairs": 17,
+      "verifiedCrossingTrianglePairs": 17,
+      "intersectionPointCountIncludingDuplicates": 32,
+      "minHingeAxisRadiusM": 0.00877101679790561,
+      "maxHingeAxisRadiusM": 0.014789348517883204,
+      "maxSampledArmorDepthIntoPalmM": 0.0009186211391352117,
+      "intersectionBoundsInThumbRootM": {
+        "min": [
+          -0.0019029714167118073,
+          -0.005536680109798908,
+          -0.014025828801095486
+        ],
+        "max": [
+          0.000793900340795517,
+          -0.004272745456546545,
+          -0.0076599204912781715
+        ]
+      }
+    },
+    {
+      "frame": 75,
+      "bvhTrianglePairs": 13,
+      "verifiedCrossingTrianglePairs": 13,
+      "intersectionPointCountIncludingDuplicates": 26,
+      "minHingeAxisRadiusM": 0.00892388728925674,
+      "maxHingeAxisRadiusM": 0.014680437133550179,
+      "maxSampledArmorDepthIntoPalmM": 0.0008564496238250285,
+      "intersectionBoundsInThumbRootM": {
+        "min": [
+          -0.0017931759357452393,
+          -0.00548437237739563,
+          -0.013912351801991463
+        ],
+        "max": [
+          0.0007898621261119843,
+          -0.004273533821105957,
+          -0.007834071293473244
+        ]
+      }
+    },
+    {
+      "frame": 76,
+      "bvhTrianglePairs": 13,
+      "verifiedCrossingTrianglePairs": 13,
+      "intersectionPointCountIncludingDuplicates": 26,
+      "minHingeAxisRadiusM": 0.009092908325385094,
+      "maxHingeAxisRadiusM": 0.014566659738336409,
+      "maxSampledArmorDepthIntoPalmM": 0.0007907014005468227,
+      "intersectionBoundsInThumbRootM": {
+        "min": [
+          -0.0016783848404884338,
+          -0.005411483347415924,
+          -0.01379372552037239
+        ],
+        "max": [
+          0.0007855072617530823,
+          -0.004274396225810051,
+          -0.00802561640739441
+        ]
+      }
+    },
+    {
+      "frame": 77,
+      "bvhTrianglePairs": 13,
+      "verifiedCrossingTrianglePairs": 13,
+      "intersectionPointCountIncludingDuplicates": 26,
+      "minHingeAxisRadiusM": 0.009279805103706833,
+      "maxHingeAxisRadiusM": 0.014448448443440062,
+      "maxSampledArmorDepthIntoPalmM": 0.0007213227872853167,
+      "intersectionBoundsInThumbRootM": {
+        "min": [
+          -0.0015590488910675049,
+          -0.0053346604108810425,
+          -0.013670392334461212
+        ],
+        "max": [
+          0.0007808133959770203,
+          -0.0042753517627716064,
+          -0.008236270397901535
+        ]
+      }
+    },
+    {
+      "frame": 78,
+      "bvhTrianglePairs": 13,
+      "verifiedCrossingTrianglePairs": 13,
+      "intersectionPointCountIncludingDuplicates": 26,
+      "minHingeAxisRadiusM": 0.00948567281583649,
+      "maxHingeAxisRadiusM": 0.014326339285958634,
+      "maxSampledArmorDepthIntoPalmM": 0.000648665885819355,
+      "intersectionBoundsInThumbRootM": {
+        "min": [
+          -0.0014357641339302063,
+          -0.005254287272691727,
+          -0.013542890548706055
+        ],
+        "max": [
+          0.0007757954299449921,
+          -0.004276398569345474,
+          -0.008467018604278564
+        ]
+      }
+    },
+    {
+      "frame": 79,
+      "bvhTrianglePairs": 13,
+      "verifiedCrossingTrianglePairs": 13,
+      "intersectionPointCountIncludingDuplicates": 26,
+      "minHingeAxisRadiusM": 0.009712409243846214,
+      "maxHingeAxisRadiusM": 0.014200998674893495,
+      "maxSampledArmorDepthIntoPalmM": 0.0005728704527427908,
+      "intersectionBoundsInThumbRootM": {
+        "min": [
+          -0.0013090632855892181,
+          -0.005170397460460663,
+          -0.013411939144134521
+        ],
+        "max": [
+          0.0007704459130764008,
+          -0.004277482628822327,
+          -0.008719749748706818
+        ]
+      }
+    },
+    {
+      "frame": 80,
+      "bvhTrianglePairs": 11,
+      "verifiedCrossingTrianglePairs": 11,
+      "intersectionPointCountIncludingDuplicates": 22,
+      "minHingeAxisRadiusM": 0.009961603542818543,
+      "maxHingeAxisRadiusM": 0.014080889954246448,
+      "maxSampledArmorDepthIntoPalmM": 0.0004942105260852259,
+      "intersectionBoundsInThumbRootM": {
+        "min": [
+          -0.0011875219643115997,
+          -0.005083397030830383,
+          -0.013286307454109192
+        ],
+        "max": [
+          0.000764746218919754,
+          -0.004278741776943207,
+          -0.008995883166790009
+        ]
+      }
+    },
+    {
+      "frame": 81,
+      "bvhTrianglePairs": 11,
+      "verifiedCrossingTrianglePairs": 11,
+      "intersectionPointCountIncludingDuplicates": 22,
+      "minHingeAxisRadiusM": 0.010235791447850959,
+      "maxHingeAxisRadiusM": 0.01396058776237061,
+      "maxSampledArmorDepthIntoPalmM": 0.00041286911437055096,
+      "intersectionBoundsInThumbRootM": {
+        "min": [
+          -0.001065712422132492,
+          -0.005001552402973175,
+          -0.013160400092601776
+        ],
+        "max": [
+          0.0007587000727653503,
+          -0.004280097782611847,
+          -0.009297966957092285
+        ]
+      }
+    },
+    {
+      "frame": 82,
+      "bvhTrianglePairs": 11,
+      "verifiedCrossingTrianglePairs": 11,
+      "intersectionPointCountIncludingDuplicates": 22,
+      "minHingeAxisRadiusM": 0.010537045025904128,
+      "maxHingeAxisRadiusM": 0.013838554507574846,
+      "maxSampledArmorDepthIntoPalmM": 0.00032906663182075135,
+      "intersectionBoundsInThumbRootM": {
+        "min": [
+          -0.0009420290589332581,
+          -0.004917964339256287,
+          -0.013032563030719757
+        ],
+        "max": [
+          0.0007523037493228912,
+          -0.0042816027998924255,
+          -0.009627938270568848
+        ]
+      }
+    },
+    {
+      "frame": 83,
+      "bvhTrianglePairs": 11,
+      "verifiedCrossingTrianglePairs": 11,
+      "intersectionPointCountIncludingDuplicates": 22,
+      "minHingeAxisRadiusM": 0.01086811298984435,
+      "maxHingeAxisRadiusM": 0.013715341068172397,
+      "maxSampledArmorDepthIntoPalmM": 0.00024307497187692206,
+      "intersectionBoundsInThumbRootM": {
+        "min": [
+          -0.0008170716464519501,
+          -0.004832208156585693,
+          -0.012903392314910889
+        ],
+        "max": [
+          0.0007455572485923767,
+          -0.004283137619495392,
+          -0.00998852401971817
+        ]
+      }
+    },
+    {
+      "frame": 84,
+      "bvhTrianglePairs": 11,
+      "verifiedCrossingTrianglePairs": 11,
+      "intersectionPointCountIncludingDuplicates": 22,
+      "minHingeAxisRadiusM": 0.011232631360749123,
+      "maxHingeAxisRadiusM": 0.013591290843837976,
+      "maxSampledArmorDepthIntoPalmM": 0.00015509372860833537,
+      "intersectionBoundsInThumbRootM": {
+        "min": [
+          -0.0006911419332027435,
+          -0.0047445520758628845,
+          -0.012773200869560242
+        ],
+        "max": [
+          0.0007384307682514191,
+          -0.004284948110580444,
+          -0.01038321852684021
+        ]
+      }
+    },
+    {
+      "frame": 85,
+      "bvhTrianglePairs": 7,
+      "verifiedCrossingTrianglePairs": 7,
+      "intersectionPointCountIncludingDuplicates": 14,
+      "minHingeAxisRadiusM": 0.01166426948198418,
+      "maxHingeAxisRadiusM": 0.013077453602226976,
+      "maxSampledArmorDepthIntoPalmM": 6.544386587847839e-05,
+      "intersectionBoundsInThumbRootM": {
+        "min": [
+          -0.00016815215349197388,
+          -0.004655174911022186,
+          -0.012232612818479538
+        ],
+        "max": [
+          0.0007309503853321075,
+          -0.004323363304138184,
+          -0.010833453387022018
+        ]
+      }
+    }
+  ],
+  "peakFrame61": {
+    "trianglePairs": [
+      {
+        "coreTriangle": 156,
+        "armorTriangle": 35,
+        "intersectionPointsInThumbRootM": [
+          [
+            -0.002096042037010193,
+            -0.005066610872745514,
+            -0.014105454087257385
+          ],
+          [
+            -0.001309569925069809,
+            -0.005552440881729126,
+            -0.01312457025051117
+          ]
+        ]
+      },
+      {
+        "coreTriangle": 156,
+        "armorTriangle": 72,
+        "intersectionPointsInThumbRootM": [
+          [
+            -0.0025686509907245636,
+            -0.004774667322635651,
+            -0.01469486951828003
+          ],
+          [
+            -0.002096042037010193,
+            -0.005066610872745514,
+            -0.014105454087257385
+          ]
+        ]
+      },
+      {
+        "coreTriangle": 156,
+        "armorTriangle": 61,
+        "intersectionPointsInThumbRootM": [
+          [
+            -0.002509690821170807,
+            -0.0046881139278411865,
+            -0.014428496360778809
+          ],
+          [
+            -0.0023168735206127167,
+            -0.004647418856620789,
+            -0.013937443494796753
+          ]
+        ]
+      },
+      {
+        "coreTriangle": 156,
+        "armorTriangle": 25,
+        "intersectionPointsInThumbRootM": [
+          [
+            -0.0023168735206127167,
+            -0.004647418856620789,
+            -0.013937443494796753
+          ],
+          [
+            -0.001989271491765976,
+            -0.004425697028636932,
+            -0.01286385953426361
+          ]
+        ]
+      },
+      {
+        "coreTriangle": 156,
+        "armorTriangle": 5,
+        "intersectionPointsInThumbRootM": [
+          [
+            -0.0012851469218730927,
+            -0.005558028817176819,
+            -0.013079196214675903
+          ],
+          [
+            -0.001309569925069809,
+            -0.005552440881729126,
+            -0.01312457025051117
+          ]
+        ]
+      },
+      {
+        "coreTriangle": 156,
+        "armorTriangle": 41,
+        "intersectionPointsInThumbRootM": [
+          [
+            -0.001194886863231659,
+            -0.004581235349178314,
+            -0.01134750247001648
+          ],
+          [
+            -0.001989271491765976,
+            -0.004425697028636932,
+            -0.01286385953426361
+          ]
+        ]
+      },
+      {
+        "coreTriangle": 157,
+        "armorTriangle": 5,
+        "intersectionPointsInThumbRootM": [
+          [
+            -0.0012851469218730927,
+            -0.005558028817176819,
+            -0.013079196214675903
+          ],
+          [
+            -0.00047717243432998657,
+            -0.0057617053389549255,
+            -0.011519357562065125
+          ]
+        ]
+      },
+      {
+        "coreTriangle": 157,
+        "armorTriangle": 41,
+        "intersectionPointsInThumbRootM": [
+          [
+            -0.001194886863231659,
+            -0.004581235349178314,
+            -0.01134750247001648
+          ],
+          [
+            -0.0006250888109207153,
+            -0.004705831408500671,
+            -0.01021777093410492
+          ]
+        ]
+      },
+      {
+        "coreTriangle": 157,
+        "armorTriangle": 50,
+        "intersectionPointsInThumbRootM": [
+          [
+            -0.0006250888109207153,
+            -0.004705831408500671,
+            -0.01021777093410492
+          ],
+          [
+            0.0003653876483440399,
+            -0.0044326335191726685,
+            -0.007490932941436768
+          ]
+        ]
+      },
+      {
+        "coreTriangle": 157,
+        "armorTriangle": 10,
+        "intersectionPointsInThumbRootM": [
+          [
+            0.00040122121572494507,
+            -0.004418648779392242,
+            -0.00738583505153656
+          ],
+          [
+            0.0003653876483440399,
+            -0.0044326335191726685,
+            -0.007490932941436768
+          ]
+        ]
+      },
+      {
+        "coreTriangle": 158,
+        "armorTriangle": 5,
+        "intersectionPointsInThumbRootM": [
+          [
+            -0.00047717243432998657,
+            -0.0057617053389549255,
+            -0.011519357562065125
+          ],
+          [
+            0.00030070170760154724,
+            -0.005715847015380859,
+            -0.010739773511886597
+          ]
+        ]
+      },
+      {
+        "coreTriangle": 158,
+        "armorTriangle": 43,
+        "intersectionPointsInThumbRootM": [
+          [
+            0.00030070170760154724,
+            -0.005715847015380859,
+            -0.010739773511886597
+          ],
+          [
+            0.0007537268102169037,
+            -0.0054298266768455505,
+            -0.009632423520088196
+          ]
+        ]
+      },
+      {
+        "coreTriangle": 158,
+        "armorTriangle": 69,
+        "intersectionPointsInThumbRootM": [
+          [
+            0.0007537268102169037,
+            -0.0054298266768455505,
+            -0.009632423520088196
+          ],
+          [
+            0.000818692147731781,
+            -0.005088083446025848,
+            -0.008716017007827759
+          ]
+        ]
+      },
+      {
+        "coreTriangle": 158,
+        "armorTriangle": 33,
+        "intersectionPointsInThumbRootM": [
+          [
+            0.0007671378552913666,
+            -0.004704497754573822,
+            -0.007793635129928589
+          ],
+          [
+            0.000818692147731781,
+            -0.005088083446025848,
+            -0.008716017007827759
+          ]
+        ]
+      },
+      {
+        "coreTriangle": 158,
+        "armorTriangle": 10,
+        "intersectionPointsInThumbRootM": [
+          [
+            0.00040122121572494507,
+            -0.004418648779392242,
+            -0.00738583505153656
+          ],
+          [
+            0.0005267858505249023,
+            -0.00436440110206604,
+            -0.007142007350921631
+          ]
+        ]
+      },
+      {
+        "coreTriangle": 187,
+        "armorTriangle": 72,
+        "intersectionPointsInThumbRootM": [
+          [
+            -0.0025686509907245636,
+            -0.004774667322635651,
+            -0.01469486951828003
+          ],
+          [
+            -0.0025510266423225403,
+            -0.004715338349342346,
+            -0.014695718884468079
+          ]
+        ]
+      },
+      {
+        "coreTriangle": 187,
+        "armorTriangle": 61,
+        "intersectionPointsInThumbRootM": [
+          [
+            -0.002509690821170807,
+            -0.0046881139278411865,
+            -0.014428496360778809
+          ],
+          [
+            -0.0025510266423225403,
+            -0.004715338349342346,
+            -0.014695718884468079
+          ]
+        ]
+      },
+      {
+        "coreTriangle": 159,
+        "armorTriangle": 33,
+        "intersectionPointsInThumbRootM": [
+          [
+            0.0007671378552913666,
+            -0.004704497754573822,
+            -0.007793635129928589
+          ],
+          [
+            0.000733543187379837,
+            -0.004454120993614197,
+            -0.007182985544204712
+          ]
+        ]
+      },
+      {
+        "coreTriangle": 159,
+        "armorTriangle": 10,
+        "intersectionPointsInThumbRootM": [
+          [
+            0.0005267858505249023,
+            -0.00436440110206604,
+            -0.007142007350921631
+          ],
+          [
+            0.0005478821694850922,
+            -0.004355348646640778,
+            -0.007099539041519165
+          ]
+        ]
+      },
+      {
+        "coreTriangle": 159,
+        "armorTriangle": 18,
+        "intersectionPointsInThumbRootM": [
+          [
+            0.000733543187379837,
+            -0.004454120993614197,
+            -0.007182985544204712
+          ],
+          [
+            0.0006630010902881622,
+            -0.004371926188468933,
+            -0.0070368945598602295
+          ]
+        ]
+      },
+      {
+        "coreTriangle": 159,
+        "armorTriangle": 57,
+        "intersectionPointsInThumbRootM": [
+          [
+            0.0006630010902881622,
+            -0.004371926188468933,
+            -0.0070368945598602295
+          ],
+          [
+            0.0005478821694850922,
+            -0.004355348646640778,
+            -0.007099539041519165
+          ]
+        ]
+      }
+    ],
+    "deepestArmorSamples": [
+      {
+        "depthM": 0.0013259608340376872,
+        "thumbRootM": [
+          0.000725332647562027,
+          -0.004590019583702087,
+          -0.011309027671813965
+        ],
+        "palmTriangle": 158
+      },
+      {
+        "depthM": 0.0008986832835944369,
+        "thumbRootM": [
+          6.1355531215667725e-06,
+          -0.004286639392375946,
+          -0.010767966508865356
+        ],
+        "palmTriangle": 157
+      },
+      {
+        "depthM": 0.0008775163205427816,
+        "thumbRootM": [
+          0.00047907978296279907,
+          -0.0043824538588523865,
+          -0.009755522012710571
+        ],
+        "palmTriangle": 157
+      },
+      {
+        "depthM": 0.00046437392131792876,
+        "thumbRootM": [
+          0.000683363527059555,
+          -0.005453519523143768,
+          -0.011071890592575073
+        ],
+        "palmTriangle": 158
+      },
+      {
+        "depthM": 0.0003298055487448437,
+        "thumbRootM": [
+          0.0007612593472003937,
+          -0.005144156515598297,
+          -0.009843558073043823
+        ],
+        "palmTriangle": 158
+      },
+      {
+        "depthM": 0.00022620752707780412,
+        "thumbRootM": [
+          0.0007687285542488098,
+          -0.004749871790409088,
+          -0.008549436926841736
+        ],
+        "palmTriangle": 158
+      },
+      {
+        "depthM": 0.00015567335231025936,
+        "thumbRootM": [
+          0.0007057711482048035,
+          -0.004270680248737335,
+          -0.007189527153968811
+        ],
+        "palmTriangle": 159
+      },
+      {
+        "depthM": 0.0001542520608381892,
+        "thumbRootM": [
+          -0.0018332749605178833,
+          -0.004532672464847565,
+          -0.01313212513923645
+        ],
+        "palmTriangle": 156
+      },
+      {
+        "depthM": 1.9249566150847386e-05,
+        "thumbRootM": [
+          -0.001695789396762848,
+          -0.00528445839881897,
+          -0.013615816831588745
+        ],
+        "palmTriangle": 156
+      }
+    ]
+  }
+}

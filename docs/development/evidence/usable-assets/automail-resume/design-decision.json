@@ -1,0 +1,16 @@
+{
+  "recordedUtc": "2026-11-22T19:03:51.924002+00:00",
+  "beforeFinalSelection": true,
+  "decision": "Reject invented external linear actuator; retain source rotary elbow and segment-local hydraulic mechanisms.",
+  "reason": "Actual close-up review showed a rectangular scaffold outside the rounded source elbow form. Moving the links inward preserved clearance but still changed design unnecessarily.",
+  "preservedRejectedCandidates": [
+    "8d6b75ab6eff405fbe4c23d358f22653",
+    "1e7803575f054321ba997e44e15eeb8b",
+    "4e5ee6baf7664263818b6678d6de05ef"
+  ],
+  "frozenBudgetUnchanged": true,
+  "motionScopeUnchanged": true,
+  "amendment": "Two invented spanning links no longer required; original potential spanning parts receive explicit geometry/parent/endpoint classification, rotary contact and121-frame clearance/playback checks. No original source mechanism may be deleted to evade acceptance.",
+  "wristFinding": "Original wrist pivot184mm is9mm below real gimbal axle193mm; correct rotation center while preserving all neutral descendant world matrices.",
+  "acceptanceDefinitionUnchanged": "U4 original joint and attachment use with sampled native and actual consumer execution; no physical dynamics or load claim."
+}

@@ -1,0 +1,26 @@
+{
+  "originalSha256": "08c4f510e903891eab2c0eee276b55de71abf6f1cda3d584a880ee508e3e63f5",
+  "negativeSha256": "18beb298d3c69527c2ae1c3e960d956767c02ef7d839833f8085c4c09af3dd61",
+  "mesh": "Shoulder_L_gold_neural_bus_compound_section.001",
+  "primitive": 0,
+  "triangleIndex": 0,
+  "indexComponentType": 5123,
+  "absoluteBinaryOffset": 107512,
+  "originalIndices": [
+    89,
+    269,
+    0
+  ],
+  "flippedIndices": [
+    89,
+    0,
+    269
+  ],
+  "changedByteOffsets": [
+    107514,
+    107515,
+    107516,
+    107517
+  ],
+  "lengthUnchanged": true
+}

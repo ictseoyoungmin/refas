@@ -1,0 +1,23 @@
+{
+  "passed": true,
+  "operation": "one actual exported GLB triangle winding reversed",
+  "detectedFailures": [
+    {
+      "object": "Delivery_AURIX_ROOT_Anodized_champagne_gold",
+      "nativeTriangles": 1472,
+      "importedTriangles": 1472,
+      "nativeVertices": 736,
+      "importedVerticesIncludingNormalUvSplits": 736,
+      "maxMappedVertexErrorM": 0.0,
+      "missingOrReversedTriangles": 1,
+      "extraOrReversedTriangles": 1,
+      "passed": false
+    }
+  ],
+  "allOtherImportedMeshesMatched": true,
+  "negativeReturncode": 2,
+  "selectedBytesUnchanged": {
+    "scene.blend": "badf3fd5134ea44c77bef19890cf0f3157c8e2dbe622484eba7df713791d36f1",
+    "asset.glb": "08c4f510e903891eab2c0eee276b55de71abf6f1cda3d584a880ee508e3e63f5"
+  }
+}

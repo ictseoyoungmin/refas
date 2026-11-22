@@ -1,0 +1,21 @@
+{
+  "schema": "refas.archive-verification/v1",
+  "archive": "/workspace/scratch/61afcdd4e3c6/deliverables/refas-usable-automail-2026-11-23.zip",
+  "archiveSha256": "a0c9ae142e06f199e526607bbbbc7375071c184b06b7191531ac263904a0b78f",
+  "archiveBytes": 19243457,
+  "topFolder": "refas-usable-automail",
+  "fileEntries": 93,
+  "manifestContentEntries": 92,
+  "embeddedManifestSha256": "be2b62577f810fe2a6a3a2aff456437c2334e9df04cf3ecada14705be1d2ce6a",
+  "uncompressedBytes": 35861018,
+  "verification": "Every ZIP file entry decompressed and SHA-256/length matched against the frozen staging manifest; embedded manifest additionally matched exact staged bytes; ZIP CRC test passed.",
+  "allFilesMatched": true,
+  "sourceFilesUnchangedAfterPackaging": true,
+  "selectedNativeSha256": "badf3fd5134ea44c77bef19890cf0f3157c8e2dbe622484eba7df713791d36f1",
+  "selectedGlbSha256": "08c4f510e903891eab2c0eee276b55de71abf6f1cda3d584a880ee508e3e63f5",
+  "startedUtc": "2026-11-22T19:32:20.725454+00:00",
+  "endedUtc": "2026-11-22T19:32:24.676958+00:00",
+  "elapsedSeconds": 3.9515186439998615,
+  "modelTokens": null,
+  "billedCost": null
+}

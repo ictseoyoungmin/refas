@@ -1,0 +1,16 @@
+{
+  "recordedUtc": "2026-11-22T19:13:59.739035+00:00",
+  "beforeRepairCandidate": true,
+  "inputCandidate": "candidate-05",
+  "motionAnd133PairScopeUnchanged": true,
+  "observation": "Actual moving ivory thumb armor crosses chassis at49of121frames. Peak intersection radialdistance15.451mm from Xaxis,7.04..14.70mm distal coordinate; original knuckle radius7.82mm. This extends beyond intended root-bearing seating.",
+  "decision": "Local left/dorsal palm-core relief at Z120..139mm only; retain original pivot, knuckle, support at Z147mm and all frozen thumb angles.",
+  "maxRequestedLocalInsetM": 0.0045,
+  "failedRenderHashes": {
+    "view-grip-front.png": "55a79b58b0fdbfdd2f4673a0ad33823e5db4ddc1070bf3a30387e22791863c55",
+    "view-grip-palm.png": "bc1f80501d4f814d284a347427359daa0a1a03dba4203e5f0503b9f0676697d9",
+    "view-grip-thumb.png": "d5caac0347f335b6e37d6755535466a8f4d46cb390267f01a4b67648d2a7cfda",
+    "view-motion.png": "99e1cb5ea97833bf233850f4cd2b2a2b094ca038821ee0feadbe292759cd8ce8"
+  },
+  "negativeGeometryAndProbeRetained": true
+}

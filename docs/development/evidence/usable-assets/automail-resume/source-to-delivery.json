@@ -1,0 +1,5924 @@
+{
+  "mapping": {
+    "Palm_graphite_body": [
+      "Palm_graphite_body"
+    ],
+    "Delivery_AURIX_ROOT_Graphite_structural_composite": [
+      "Shoulder_L_load_ring",
+      "Shoulder_L_locking_dog_00",
+      "Shoulder_L_locking_dog_01",
+      "Shoulder_L_locking_dog_02",
+      "Shoulder_L_locking_dog_03",
+      "Shoulder_L_locking_dog_04",
+      "Shoulder_L_locking_dog_05",
+      "Shoulder_L_titanium_flange",
+      "Shoulder_R_load_ring",
+      "Shoulder_R_locking_dog_00",
+      "Shoulder_R_locking_dog_01",
+      "Shoulder_R_locking_dog_02",
+      "Shoulder_R_locking_dog_03",
+      "Shoulder_R_locking_dog_04",
+      "Shoulder_R_locking_dog_05",
+      "Shoulder_R_titanium_flange"
+    ],
+    "Delivery_AURIX_ROOT_Anodized_champagne_gold": [
+      "Shoulder_L_gold_neural_bus",
+      "Shoulder_R_gold_neural_bus"
+    ],
+    "Delivery_AURIX_ROOT_Recess_interiors": [
+      "Shoulder_L_inner_dark_bore",
+      "Shoulder_L_lock_00_hex_socket",
+      "Shoulder_L_lock_01_hex_socket",
+      "Shoulder_L_lock_02_hex_socket",
+      "Shoulder_L_lock_03_hex_socket",
+      "Shoulder_L_lock_04_hex_socket",
+      "Shoulder_L_lock_05_hex_socket",
+      "Shoulder_L_recess_back",
+      "Shoulder_R_inner_dark_bore",
+      "Shoulder_R_lock_00_hex_socket",
+      "Shoulder_R_lock_01_hex_socket",
+      "Shoulder_R_lock_02_hex_socket",
+      "Shoulder_R_lock_03_hex_socket",
+      "Shoulder_R_lock_04_hex_socket",
+      "Shoulder_R_lock_05_hex_socket",
+      "Shoulder_R_recess_back"
+    ],
+    "Delivery_AURIX_ROOT_Piston_chrome": [
+      "Shoulder_L_lock_00",
+      "Shoulder_L_lock_01",
+      "Shoulder_L_lock_02",
+      "Shoulder_L_lock_03",
+      "Shoulder_L_lock_04",
+      "Shoulder_L_lock_05",
+      "Shoulder_R_lock_00",
+      "Shoulder_R_lock_01",
+      "Shoulder_R_lock_02",
+      "Shoulder_R_lock_03",
+      "Shoulder_R_lock_04",
+      "Shoulder_R_lock_05"
+    ],
+    "Delivery_SHOULDER_PIVOT_Ivory": [
+      "Crown_side_cap_-1",
+      "Crown_side_cap_1",
+      "Crown_top_lock_plate",
+      "Upper_crown_front",
+      "Upper_crown_rear",
+      "Upper_lower_side_pad_-1",
+      "Upper_lower_side_pad_1",
+      "Upper_outer_wrap_-1",
+      "Upper_outer_wrap_1",
+      "Upper_sculpted_blade_-1",
+      "Upper_sculpted_blade_1"
+    ],
+    "Delivery_SHOULDER_PIVOT_Anodized_champagne_gold": [
+      "Crown_gold_pinstripe_-1",
+      "Crown_gold_pinstripe_1",
+      "Crown_gold_signature",
+      "Elbow_gold_ring_-1",
+      "Elbow_gold_ring_1",
+      "Upper_gold_conduit_-1",
+      "Upper_gold_conduit_1",
+      "Upper_primary_gland",
+      "Upper_side_gland_-1",
+      "Upper_side_gland_1"
+    ],
+    "Delivery_SHOULDER_PIVOT_Piston_chrome": [
+      "Crown_front_fastener_-1",
+      "Crown_front_fastener_1",
+      "Elbow_fixed_axle",
+      "Upper_blade_screw_-1",
+      "Upper_blade_screw_1",
+      "Upper_elbow_yoke_-1",
+      "Upper_elbow_yoke_1",
+      "Upper_exposed_hydraulic_-1",
+      "Upper_exposed_hydraulic_1",
+      "Upper_primary_rod",
+      "Upper_return_pipe_-1",
+      "Upper_return_pipe_1",
+      "Upper_side_rod_-1",
+      "Upper_side_rod_1"
+    ],
+    "Delivery_SHOULDER_PIVOT_Recess_interiors": [
+      "Crown_front_fastener_-1_hex_socket",
+      "Crown_front_fastener_1_hex_socket",
+      "Crown_inset_border_-1",
+      "Crown_inset_border_1",
+      "Upper_actuator_upper_seal",
+      "Upper_blade_screw_-1_hex_socket",
+      "Upper_blade_screw_1_hex_socket",
+      "Upper_hose_return_-1",
+      "Upper_hose_return_1"
+    ],
+    "Delivery_SHOULDER_PIVOT_AURIX_carbon_markings": [
+      "Crown_AURIX",
+      "Crown_A_mark"
+    ],
+    "Delivery_SHOULDER_PIVOT_Graphite_structural_composite": [
+      "Crown_recessed_carrier",
+      "Crown_side_carrier_-1",
+      "Crown_side_carrier_1",
+      "Elbow_cheek_-1",
+      "Elbow_cheek_1",
+      "Upper_actuator_lower_band",
+      "Upper_blade_carrier_-1",
+      "Upper_blade_carrier_1",
+      "Upper_core_backbone",
+      "Upper_primary_cylinder",
+      "Upper_rear_rod_bridge",
+      "Upper_return_pipe_mount_-1",
+      "Upper_return_pipe_mount_1",
+      "Upper_side_actuator_-1",
+      "Upper_side_actuator_1"
+    ],
+    "Delivery_ELBOW_PIVOT_Piston_chrome": [
+      "Elbow_-1_cap_bolt_0",
+      "Elbow_-1_cap_bolt_1",
+      "Elbow_-1_cap_bolt_2",
+      "Elbow_1_cap_bolt_0",
+      "Elbow_1_cap_bolt_1",
+      "Elbow_1_cap_bolt_2",
+      "Elbow_silver_rim_-1",
+      "Elbow_silver_rim_1",
+      "Forearm_channel_hydraulic_-1",
+      "Forearm_channel_hydraulic_1",
+      "Forearm_elbow_rod_-1",
+      "Forearm_elbow_rod_1",
+      "Forearm_shoulder_bolt_-1",
+      "Forearm_shoulder_bolt_1",
+      "Forearm_titanium_rail_-1",
+      "Forearm_titanium_rail_1",
+      "Forearm_wrist_bolt_-1",
+      "Forearm_wrist_bolt_1",
+      "Wrist_upper_silver_collar"
+    ],
+    "Delivery_ELBOW_PIVOT_Graphite_structural_composite": [
+      "Elbow_central_rotor",
+      "Elbow_hub_-1",
+      "Elbow_hub_1",
+      "Forearm_power_cell_-1",
+      "Forearm_power_cell_1",
+      "Forearm_recessed_carrier_-1",
+      "Forearm_recessed_carrier_1",
+      "Forearm_side_cable_-1",
+      "Forearm_side_cable_1",
+      "Service_bay_structural_rim",
+      "Service_cartridge_lower_band_-1",
+      "Service_cartridge_lower_band_1",
+      "Service_lower_manifold",
+      "Wrist_gimbal_axle",
+      "Wrist_upper_mount"
+    ],
+    "Delivery_ELBOW_PIVOT_Warm_silver": [
+      "Elbow_hub_engraving_-1",
+      "Elbow_hub_engraving_1",
+      "Service_bay_machined_lip",
+      "Service_cartridge_sleeve_-1",
+      "Service_cartridge_sleeve_1"
+    ],
+    "Delivery_ELBOW_PIVOT_Recess_interiors": [
+      "Elbow_-1_cap_bolt_0_hex_socket",
+      "Elbow_-1_cap_bolt_1_hex_socket",
+      "Elbow_-1_cap_bolt_2_hex_socket",
+      "Elbow_1_cap_bolt_0_hex_socket",
+      "Elbow_1_cap_bolt_1_hex_socket",
+      "Elbow_1_cap_bolt_2_hex_socket",
+      "Forearm_front_recess",
+      "Forearm_lateral_underlayer_-1",
+      "Forearm_lateral_underlayer_1",
+      "Forearm_shoulder_bolt_-1_hex_socket",
+      "Forearm_shoulder_bolt_1_hex_socket",
+      "Forearm_structural_spine",
+      "Forearm_wrist_bolt_-1_hex_socket",
+      "Forearm_wrist_bolt_1_hex_socket",
+      "Service_cartridge_upper_band_-1",
+      "Service_cartridge_upper_band_1"
+    ],
+    "Delivery_ELBOW_PIVOT_Anodized_champagne_gold": [
+      "Elbow_center_gold_band",
+      "Forearm_gold_outer_reveal_-1",
+      "Forearm_gold_outer_reveal_1",
+      "Forearm_gold_recess_edge",
+      "Forearm_power_gland_-1",
+      "Forearm_power_gland_1",
+      "Service_return_conduit_-1",
+      "Service_return_conduit_1",
+      "Wrist_side_ring_-1",
+      "Wrist_side_ring_1"
+    ],
+    "Delivery_ELBOW_PIVOT_Ivory": [
+      "Forearm_front_keel",
+      "Forearm_lateral_blade_-1",
+      "Forearm_lateral_blade_1",
+      "Forearm_swept_front_armor_-1",
+      "Forearm_swept_front_armor_1"
+    ],
+    "Forearm_front_indicator": [
+      "Forearm_front_indicator"
+    ],
+    "Delivery_SERVICE_COVER_Graphite_structural_composite": [
+      "Service_cover_graphite",
+      "Service_cover_vent_00",
+      "Service_cover_vent_01",
+      "Service_cover_vent_02",
+      "Service_cover_vent_03",
+      "Service_cover_vent_04",
+      "Service_cover_vent_05",
+      "Service_cover_vent_06",
+      "Service_cover_vent_07",
+      "Service_cover_vent_08",
+      "Service_cover_vent_09"
+    ],
+    "Delivery_SERVICE_COVER_Recess_interiors": [
+      "Service_cover_center_inset",
+      "Service_cover_screw_-1_249_hex_socket",
+      "Service_cover_screw_-1_305_hex_socket",
+      "Service_cover_screw_-1_351_hex_socket",
+      "Service_cover_screw_1_249_hex_socket",
+      "Service_cover_screw_1_305_hex_socket",
+      "Service_cover_screw_1_351_hex_socket"
+    ],
+    "Service_cover_status_light": [
+      "Service_cover_status_light"
+    ],
+    "Delivery_SERVICE_COVER_Piston_chrome": [
+      "Service_cover_screw_-1_249",
+      "Service_cover_screw_-1_305",
+      "Service_cover_screw_-1_351",
+      "Service_cover_screw_1_249",
+      "Service_cover_screw_1_305",
+      "Service_cover_screw_1_351"
+    ],
+    "Wrist_rotating_stem": [
+      "Wrist_rotating_stem"
+    ],
+    "Delivery_WRIST_PIVOT_Anodized_champagne_gold": [
+      "Palm_gold_split_-1",
+      "Palm_gold_split_1",
+      "Wrist_gold_lock"
+    ],
+    "Delivery_WRIST_PIVOT_Graphite_structural_composite": [
+      "Palm_center_pad_seam",
+      "Palm_thenar_pad_seam",
+      "Wrist_dorsal_fairing"
+    ],
+    "Delivery_WRIST_PIVOT_Ivory": [
+      "Palm_dorsal_main_plate",
+      "Palm_dorsal_ring_plate",
+      "Palm_edge_plate_-1",
+      "Palm_edge_plate_1"
+    ],
+    "Delivery_WRIST_PIVOT_Palm_and_joint_elastomer": [
+      "Palm_center_grip",
+      "Palm_grip_pad_-1",
+      "Palm_grip_pad_1"
+    ],
+    "Delivery_INDEX_J0_Graphite_structural_composite": [
+      "INDEX_S0_structural_link",
+      "INDEX_knuckle_0"
+    ],
+    "INDEX_S0_ivory_phalanx": [
+      "INDEX_S0_ivory_phalanx"
+    ],
+    "INDEX_S0_palm_grip": [
+      "INDEX_S0_palm_grip"
+    ],
+    "Delivery_INDEX_J0_Anodized_champagne_gold": [
+      "INDEX_gold_bearing_0_-1",
+      "INDEX_gold_bearing_0_1"
+    ],
+    "INDEX_knuckle_status": [
+      "INDEX_knuckle_status"
+    ],
+    "Delivery_INDEX_J1_Graphite_structural_composite": [
+      "INDEX_S1_structural_link",
+      "INDEX_knuckle_1"
+    ],
+    "INDEX_S1_ivory_phalanx": [
+      "INDEX_S1_ivory_phalanx"
+    ],
+    "INDEX_S1_palm_grip": [
+      "INDEX_S1_palm_grip"
+    ],
+    "Delivery_INDEX_J1_Anodized_champagne_gold": [
+      "INDEX_gold_bearing_1_-1",
+      "INDEX_gold_bearing_1_1"
+    ],
+    "Delivery_INDEX_J2_Graphite_structural_composite": [
+      "INDEX_S2_structural_link",
+      "INDEX_knuckle_2"
+    ],
+    "INDEX_S2_ivory_phalanx": [
+      "INDEX_S2_ivory_phalanx"
+    ],
+    "INDEX_S2_palm_grip": [
+      "INDEX_S2_palm_grip"
+    ],
+    "Delivery_INDEX_J2_Anodized_champagne_gold": [
+      "INDEX_gold_bearing_2_-1",
+      "INDEX_gold_bearing_2_1"
+    ],
+    "Delivery_MIDDLE_J0_Graphite_structural_composite": [
+      "MIDDLE_S0_structural_link",
+      "MIDDLE_knuckle_0"
+    ],
+    "MIDDLE_S0_ivory_phalanx": [
+      "MIDDLE_S0_ivory_phalanx"
+    ],
+    "MIDDLE_S0_palm_grip": [
+      "MIDDLE_S0_palm_grip"
+    ],
+    "Delivery_MIDDLE_J0_Anodized_champagne_gold": [
+      "MIDDLE_gold_bearing_0_-1",
+      "MIDDLE_gold_bearing_0_1"
+    ],
+    "MIDDLE_knuckle_status": [
+      "MIDDLE_knuckle_status"
+    ],
+    "Delivery_MIDDLE_J1_Graphite_structural_composite": [
+      "MIDDLE_S1_structural_link",
+      "MIDDLE_knuckle_1"
+    ],
+    "MIDDLE_S1_ivory_phalanx": [
+      "MIDDLE_S1_ivory_phalanx"
+    ],
+    "MIDDLE_S1_palm_grip": [
+      "MIDDLE_S1_palm_grip"
+    ],
+    "Delivery_MIDDLE_J1_Anodized_champagne_gold": [
+      "MIDDLE_gold_bearing_1_-1",
+      "MIDDLE_gold_bearing_1_1"
+    ],
+    "Delivery_MIDDLE_J2_Graphite_structural_composite": [
+      "MIDDLE_S2_structural_link",
+      "MIDDLE_knuckle_2"
+    ],
+    "MIDDLE_S2_ivory_phalanx": [
+      "MIDDLE_S2_ivory_phalanx"
+    ],
+    "MIDDLE_S2_palm_grip": [
+      "MIDDLE_S2_palm_grip"
+    ],
+    "Delivery_MIDDLE_J2_Anodized_champagne_gold": [
+      "MIDDLE_gold_bearing_2_-1",
+      "MIDDLE_gold_bearing_2_1"
+    ],
+    "Delivery_RING_J0_Graphite_structural_composite": [
+      "RING_S0_structural_link",
+      "RING_knuckle_0"
+    ],
+    "RING_S0_ivory_phalanx": [
+      "RING_S0_ivory_phalanx"
+    ],
+    "RING_S0_palm_grip": [
+      "RING_S0_palm_grip"
+    ],
+    "Delivery_RING_J0_Anodized_champagne_gold": [
+      "RING_gold_bearing_0_-1",
+      "RING_gold_bearing_0_1"
+    ],
+    "RING_knuckle_status": [
+      "RING_knuckle_status"
+    ],
+    "Delivery_RING_J1_Graphite_structural_composite": [
+      "RING_S1_structural_link",
+      "RING_knuckle_1"
+    ],
+    "RING_S1_ivory_phalanx": [
+      "RING_S1_ivory_phalanx"
+    ],
+    "RING_S1_palm_grip": [
+      "RING_S1_palm_grip"
+    ],
+    "Delivery_RING_J1_Anodized_champagne_gold": [
+      "RING_gold_bearing_1_-1",
+      "RING_gold_bearing_1_1"
+    ],
+    "Delivery_RING_J2_Graphite_structural_composite": [
+      "RING_S2_structural_link",
+      "RING_knuckle_2"
+    ],
+    "RING_S2_ivory_phalanx": [
+      "RING_S2_ivory_phalanx"
+    ],
+    "RING_S2_palm_grip": [
+      "RING_S2_palm_grip"
+    ],
+    "Delivery_RING_J2_Anodized_champagne_gold": [
+      "RING_gold_bearing_2_-1",
+      "RING_gold_bearing_2_1"
+    ],
+    "Delivery_LITTLE_J0_Graphite_structural_composite": [
+      "LITTLE_S0_structural_link",
+      "LITTLE_knuckle_0"
+    ],
+    "LITTLE_S0_ivory_phalanx": [
+      "LITTLE_S0_ivory_phalanx"
+    ],
+    "LITTLE_S0_palm_grip": [
+      "LITTLE_S0_palm_grip"
+    ],
+    "Delivery_LITTLE_J0_Anodized_champagne_gold": [
+      "LITTLE_gold_bearing_0_-1",
+      "LITTLE_gold_bearing_0_1"
+    ],
+    "LITTLE_knuckle_status": [
+      "LITTLE_knuckle_status"
+    ],
+    "Delivery_LITTLE_J1_Graphite_structural_composite": [
+      "LITTLE_S1_structural_link",
+      "LITTLE_knuckle_1"
+    ],
+    "LITTLE_S1_ivory_phalanx": [
+      "LITTLE_S1_ivory_phalanx"
+    ],
+    "LITTLE_S1_palm_grip": [
+      "LITTLE_S1_palm_grip"
+    ],
+    "Delivery_LITTLE_J1_Anodized_champagne_gold": [
+      "LITTLE_gold_bearing_1_-1",
+      "LITTLE_gold_bearing_1_1"
+    ],
+    "Delivery_LITTLE_J2_Graphite_structural_composite": [
+      "LITTLE_S2_structural_link",
+      "LITTLE_knuckle_2"
+    ],
+    "LITTLE_S2_ivory_phalanx": [
+      "LITTLE_S2_ivory_phalanx"
+    ],
+    "LITTLE_S2_palm_grip": [
+      "LITTLE_S2_palm_grip"
+    ],
+    "Delivery_LITTLE_J2_Anodized_champagne_gold": [
+      "LITTLE_gold_bearing_2_-1",
+      "LITTLE_gold_bearing_2_1"
+    ],
+    "Delivery_THUMB_J0_Graphite_structural_composite": [
+      "THUMB_S0_structural_link",
+      "THUMB_knuckle_0"
+    ],
+    "THUMB_S0_ivory_phalanx": [
+      "THUMB_S0_ivory_phalanx"
+    ],
+    "THUMB_S0_palm_grip": [
+      "THUMB_S0_palm_grip"
+    ],
+    "Delivery_THUMB_J0_Anodized_champagne_gold": [
+      "THUMB_gold_bearing_0_-1",
+      "THUMB_gold_bearing_0_1"
+    ],
+    "THUMB_knuckle_status": [
+      "THUMB_knuckle_status"
+    ],
+    "Delivery_THUMB_J1_Graphite_structural_composite": [
+      "THUMB_S1_structural_link",
+      "THUMB_knuckle_1"
+    ],
+    "THUMB_S1_ivory_phalanx": [
+      "THUMB_S1_ivory_phalanx"
+    ],
+    "THUMB_S1_palm_grip": [
+      "THUMB_S1_palm_grip"
+    ],
+    "Delivery_THUMB_J1_Anodized_champagne_gold": [
+      "THUMB_gold_bearing_1_-1",
+      "THUMB_gold_bearing_1_1"
+    ],
+    "Delivery_THUMB_J2_Graphite_structural_composite": [
+      "THUMB_S2_structural_link",
+      "THUMB_knuckle_2"
+    ],
+    "THUMB_S2_ivory_phalanx": [
+      "THUMB_S2_ivory_phalanx"
+    ],
+    "THUMB_S2_palm_grip": [
+      "THUMB_S2_palm_grip"
+    ],
+    "Delivery_THUMB_J2_Anodized_champagne_gold": [
+      "THUMB_gold_bearing_2_-1",
+      "THUMB_gold_bearing_2_1"
+    ],
+    "Delivery_AURIX_ROOT_Warm_silver": [
+      "Shoulder_L_narrow_machined_rim",
+      "Shoulder_R_narrow_machined_rim"
+    ],
+    "Upper_actuator_machined_sleeve": [
+      "Upper_actuator_machined_sleeve"
+    ],
+    "INDEX_S0_side_tendon_guide": [
+      "INDEX_S0_side_tendon_guide"
+    ],
+    "MIDDLE_S0_side_tendon_guide": [
+      "MIDDLE_S0_side_tendon_guide"
+    ],
+    "RING_S0_side_tendon_guide": [
+      "RING_S0_side_tendon_guide"
+    ],
+    "LITTLE_S0_side_tendon_guide": [
+      "LITTLE_S0_side_tendon_guide"
+    ],
+    "THUMB_S0_side_tendon_guide": [
+      "THUMB_S0_side_tendon_guide"
+    ]
+  },
+  "parts": [
+    {
+      "object": "Shoulder_L_load_ring",
+      "detailedTriangles": 5376,
+      "optimizedTriangles": 1290,
+      "sourceParent": "AURIX_ROOT"
+    },
+    {
+      "object": "Shoulder_L_titanium_flange",
+      "detailedTriangles": 3840,
+      "optimizedTriangles": 920,
+      "sourceParent": "AURIX_ROOT"
+    },
+    {
+      "object": "Shoulder_L_gold_neural_bus",
+      "detailedTriangles": 3072,
+      "optimizedTriangles": 736,
+      "sourceParent": "AURIX_ROOT"
+    },
+    {
+      "object": "Shoulder_L_inner_dark_bore",
+      "detailedTriangles": 3072,
+      "optimizedTriangles": 736,
+      "sourceParent": "AURIX_ROOT"
+    },
+    {
+      "object": "Shoulder_L_recess_back",
+      "detailedTriangles": 572,
+      "optimizedTriangles": 182,
+      "sourceParent": "AURIX_ROOT"
+    },
+    {
+      "object": "Shoulder_L_locking_dog_00",
+      "detailedTriangles": 812,
+      "optimizedTriangles": 158,
+      "sourceParent": "AURIX_ROOT"
+    },
+    {
+      "object": "Shoulder_L_lock_00",
+      "detailedTriangles": 188,
+      "optimizedTriangles": 124,
+      "sourceParent": "AURIX_ROOT"
+    },
+    {
+      "object": "Shoulder_L_lock_00_hex_socket",
+      "detailedTriangles": 164,
+      "optimizedTriangles": 68,
+      "sourceParent": "AURIX_ROOT"
+    },
+    {
+      "object": "Shoulder_L_locking_dog_01",
+      "detailedTriangles": 812,
+      "optimizedTriangles": 158,
+      "sourceParent": "AURIX_ROOT"
+    },
+    {
+      "object": "Shoulder_L_lock_01",
+      "detailedTriangles": 188,
+      "optimizedTriangles": 124,
+      "sourceParent": "AURIX_ROOT"
+    },
+    {
+      "object": "Shoulder_L_lock_01_hex_socket",
+      "detailedTriangles": 164,
+      "optimizedTriangles": 68,
+      "sourceParent": "AURIX_ROOT"
+    },
+    {
+      "object": "Shoulder_L_locking_dog_02",
+      "detailedTriangles": 812,
+      "optimizedTriangles": 158,
+      "sourceParent": "AURIX_ROOT"
+    },
+    {
+      "object": "Shoulder_L_lock_02",
+      "detailedTriangles": 188,
+      "optimizedTriangles": 124,
+      "sourceParent": "AURIX_ROOT"
+    },
+    {
+      "object": "Shoulder_L_lock_02_hex_socket",
+      "detailedTriangles": 164,
+      "optimizedTriangles": 68,
+      "sourceParent": "AURIX_ROOT"
+    },
+    {
+      "object": "Shoulder_L_locking_dog_03",
+      "detailedTriangles": 812,
+      "optimizedTriangles": 158,
+      "sourceParent": "AURIX_ROOT"
+    },
+    {
+      "object": "Shoulder_L_lock_03",
+      "detailedTriangles": 188,
+      "optimizedTriangles": 124,
+      "sourceParent": "AURIX_ROOT"
+    },
+    {
+      "object": "Shoulder_L_lock_03_hex_socket",
+      "detailedTriangles": 164,
+      "optimizedTriangles": 68,
+      "sourceParent": "AURIX_ROOT"
+    },
+    {
+      "object": "Shoulder_L_locking_dog_04",
+      "detailedTriangles": 812,
+      "optimizedTriangles": 158,
+      "sourceParent": "AURIX_ROOT"
+    },
+    {
+      "object": "Shoulder_L_lock_04",
+      "detailedTriangles": 188,
+      "optimizedTriangles": 124,
+      "sourceParent": "AURIX_ROOT"
+    },
+    {
+      "object": "Shoulder_L_lock_04_hex_socket",
+      "detailedTriangles": 164,
+      "optimizedTriangles": 68,
+      "sourceParent": "AURIX_ROOT"
+    },
+    {
+      "object": "Shoulder_L_locking_dog_05",
+      "detailedTriangles": 812,
+      "optimizedTriangles": 158,
+      "sourceParent": "AURIX_ROOT"
+    },
+    {
+      "object": "Shoulder_L_lock_05",
+      "detailedTriangles": 188,
+      "optimizedTriangles": 124,
+      "sourceParent": "AURIX_ROOT"
+    },
+    {
+      "object": "Shoulder_L_lock_05_hex_socket",
+      "detailedTriangles": 164,
+      "optimizedTriangles": 68,
+      "sourceParent": "AURIX_ROOT"
+    },
+    {
+      "object": "Shoulder_R_load_ring",
+      "detailedTriangles": 5376,
+      "optimizedTriangles": 1290,
+      "sourceParent": "AURIX_ROOT"
+    },
+    {
+      "object": "Shoulder_R_titanium_flange",
+      "detailedTriangles": 3840,
+      "optimizedTriangles": 920,
+      "sourceParent": "AURIX_ROOT"
+    },
+    {
+      "object": "Shoulder_R_gold_neural_bus",
+      "detailedTriangles": 3072,
+      "optimizedTriangles": 736,
+      "sourceParent": "AURIX_ROOT"
+    },
+    {
+      "object": "Shoulder_R_inner_dark_bore",
+      "detailedTriangles": 3072,
+      "optimizedTriangles": 736,
+      "sourceParent": "AURIX_ROOT"
+    },
+    {
+      "object": "Shoulder_R_recess_back",
+      "detailedTriangles": 572,
+      "optimizedTriangles": 182,
+      "sourceParent": "AURIX_ROOT"
+    },
+    {
+      "object": "Shoulder_R_locking_dog_00",
+      "detailedTriangles": 812,
+      "optimizedTriangles": 158,
+      "sourceParent": "AURIX_ROOT"
+    },
+    {
+      "object": "Shoulder_R_lock_00",
+      "detailedTriangles": 188,
+      "optimizedTriangles": 124,
+      "sourceParent": "AURIX_ROOT"
+    },
+    {
+      "object": "Shoulder_R_lock_00_hex_socket",
+      "detailedTriangles": 164,
+      "optimizedTriangles": 68,
+      "sourceParent": "AURIX_ROOT"
+    },
+    {
+      "object": "Shoulder_R_locking_dog_01",
+      "detailedTriangles": 812,
+      "optimizedTriangles": 158,
+      "sourceParent": "AURIX_ROOT"
+    },
+    {
+      "object": "Shoulder_R_lock_01",
+      "detailedTriangles": 188,
+      "optimizedTriangles": 124,
+      "sourceParent": "AURIX_ROOT"
+    },
+    {
+      "object": "Shoulder_R_lock_01_hex_socket",
+      "detailedTriangles": 164,
+      "optimizedTriangles": 68,
+      "sourceParent": "AURIX_ROOT"
+    },
+    {
+      "object": "Shoulder_R_locking_dog_02",
+      "detailedTriangles": 812,
+      "optimizedTriangles": 158,
+      "sourceParent": "AURIX_ROOT"
+    },
+    {
+      "object": "Shoulder_R_lock_02",
+      "detailedTriangles": 188,
+      "optimizedTriangles": 124,
+      "sourceParent": "AURIX_ROOT"
+    },
+    {
+      "object": "Shoulder_R_lock_02_hex_socket",
+      "detailedTriangles": 164,
+      "optimizedTriangles": 68,
+      "sourceParent": "AURIX_ROOT"
+    },
+    {
+      "object": "Shoulder_R_locking_dog_03",
+      "detailedTriangles": 812,
+      "optimizedTriangles": 158,
+      "sourceParent": "AURIX_ROOT"
+    },
+    {
+      "object": "Shoulder_R_lock_03",
+      "detailedTriangles": 188,
+      "optimizedTriangles": 124,
+      "sourceParent": "AURIX_ROOT"
+    },
+    {
+      "object": "Shoulder_R_lock_03_hex_socket",
+      "detailedTriangles": 164,
+      "optimizedTriangles": 68,
+      "sourceParent": "AURIX_ROOT"
+    },
+    {
+      "object": "Shoulder_R_locking_dog_04",
+      "detailedTriangles": 812,
+      "optimizedTriangles": 158,
+      "sourceParent": "AURIX_ROOT"
+    },
+    {
+      "object": "Shoulder_R_lock_04",
+      "detailedTriangles": 188,
+      "optimizedTriangles": 124,
+      "sourceParent": "AURIX_ROOT"
+    },
+    {
+      "object": "Shoulder_R_lock_04_hex_socket",
+      "detailedTriangles": 164,
+      "optimizedTriangles": 68,
+      "sourceParent": "AURIX_ROOT"
+    },
+    {
+      "object": "Shoulder_R_locking_dog_05",
+      "detailedTriangles": 812,
+      "optimizedTriangles": 158,
+      "sourceParent": "AURIX_ROOT"
+    },
+    {
+      "object": "Shoulder_R_lock_05",
+      "detailedTriangles": 188,
+      "optimizedTriangles": 124,
+      "sourceParent": "AURIX_ROOT"
+    },
+    {
+      "object": "Shoulder_R_lock_05_hex_socket",
+      "detailedTriangles": 164,
+      "optimizedTriangles": 68,
+      "sourceParent": "AURIX_ROOT"
+    },
+    {
+      "object": "Upper_crown_front",
+      "detailedTriangles": 2216,
+      "optimizedTriangles": 1152,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Upper_crown_rear",
+      "detailedTriangles": 1296,
+      "optimizedTriangles": 624,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Crown_side_cap_-1",
+      "detailedTriangles": 1388,
+      "optimizedTriangles": 352,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Crown_gold_pinstripe_-1",
+      "detailedTriangles": 176,
+      "optimizedTriangles": 176,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Crown_front_fastener_-1",
+      "detailedTriangles": 188,
+      "optimizedTriangles": 124,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Crown_front_fastener_-1_hex_socket",
+      "detailedTriangles": 164,
+      "optimizedTriangles": 68,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Crown_side_cap_1",
+      "detailedTriangles": 1388,
+      "optimizedTriangles": 352,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Crown_gold_pinstripe_1",
+      "detailedTriangles": 176,
+      "optimizedTriangles": 176,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Crown_front_fastener_1",
+      "detailedTriangles": 188,
+      "optimizedTriangles": 124,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Crown_front_fastener_1_hex_socket",
+      "detailedTriangles": 164,
+      "optimizedTriangles": 68,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Crown_A_mark",
+      "detailedTriangles": 228,
+      "optimizedTriangles": 228,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Crown_AURIX",
+      "detailedTriangles": 784,
+      "optimizedTriangles": 784,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Crown_gold_signature",
+      "detailedTriangles": 96,
+      "optimizedTriangles": 96,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Upper_core_backbone",
+      "detailedTriangles": 920,
+      "optimizedTriangles": 248,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Upper_primary_cylinder",
+      "detailedTriangles": 636,
+      "optimizedTriangles": 182,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Upper_primary_rod",
+      "detailedTriangles": 636,
+      "optimizedTriangles": 182,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Upper_primary_gland",
+      "detailedTriangles": 1020,
+      "optimizedTriangles": 242,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Upper_side_actuator_-1",
+      "detailedTriangles": 636,
+      "optimizedTriangles": 182,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Upper_side_rod_-1",
+      "detailedTriangles": 636,
+      "optimizedTriangles": 182,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Upper_side_gland_-1",
+      "detailedTriangles": 1020,
+      "optimizedTriangles": 242,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Upper_elbow_yoke_-1",
+      "detailedTriangles": 572,
+      "optimizedTriangles": 182,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Upper_sculpted_blade_-1",
+      "detailedTriangles": 1628,
+      "optimizedTriangles": 892,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Upper_outer_wrap_-1",
+      "detailedTriangles": 1302,
+      "optimizedTriangles": 348,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Upper_exposed_hydraulic_-1",
+      "detailedTriangles": 816,
+      "optimizedTriangles": 390,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Upper_gold_conduit_-1",
+      "detailedTriangles": 176,
+      "optimizedTriangles": 176,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Upper_blade_screw_-1",
+      "detailedTriangles": 188,
+      "optimizedTriangles": 124,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Upper_blade_screw_-1_hex_socket",
+      "detailedTriangles": 164,
+      "optimizedTriangles": 68,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Upper_lower_side_pad_-1",
+      "detailedTriangles": 348,
+      "optimizedTriangles": 100,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Upper_side_actuator_1",
+      "detailedTriangles": 636,
+      "optimizedTriangles": 182,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Upper_side_rod_1",
+      "detailedTriangles": 636,
+      "optimizedTriangles": 182,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Upper_side_gland_1",
+      "detailedTriangles": 1020,
+      "optimizedTriangles": 242,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Upper_elbow_yoke_1",
+      "detailedTriangles": 572,
+      "optimizedTriangles": 182,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Upper_sculpted_blade_1",
+      "detailedTriangles": 1628,
+      "optimizedTriangles": 892,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Upper_outer_wrap_1",
+      "detailedTriangles": 1302,
+      "optimizedTriangles": 348,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Upper_exposed_hydraulic_1",
+      "detailedTriangles": 816,
+      "optimizedTriangles": 390,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Upper_gold_conduit_1",
+      "detailedTriangles": 176,
+      "optimizedTriangles": 176,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Upper_blade_screw_1",
+      "detailedTriangles": 188,
+      "optimizedTriangles": 124,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Upper_blade_screw_1_hex_socket",
+      "detailedTriangles": 164,
+      "optimizedTriangles": 68,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Upper_lower_side_pad_1",
+      "detailedTriangles": 348,
+      "optimizedTriangles": 100,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Elbow_fixed_axle",
+      "detailedTriangles": 572,
+      "optimizedTriangles": 182,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Elbow_cheek_-1",
+      "detailedTriangles": 2204,
+      "optimizedTriangles": 504,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Elbow_gold_ring_-1",
+      "detailedTriangles": 2204,
+      "optimizedTriangles": 504,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Elbow_silver_rim_-1",
+      "detailedTriangles": 2204,
+      "optimizedTriangles": 504,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Elbow_hub_-1",
+      "detailedTriangles": 572,
+      "optimizedTriangles": 182,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Elbow_hub_engraving_-1",
+      "detailedTriangles": 1692,
+      "optimizedTriangles": 382,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Elbow_-1_cap_bolt_0",
+      "detailedTriangles": 188,
+      "optimizedTriangles": 124,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Elbow_-1_cap_bolt_0_hex_socket",
+      "detailedTriangles": 164,
+      "optimizedTriangles": 68,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Elbow_-1_cap_bolt_1",
+      "detailedTriangles": 188,
+      "optimizedTriangles": 124,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Elbow_-1_cap_bolt_1_hex_socket",
+      "detailedTriangles": 164,
+      "optimizedTriangles": 68,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Elbow_-1_cap_bolt_2",
+      "detailedTriangles": 188,
+      "optimizedTriangles": 124,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Elbow_-1_cap_bolt_2_hex_socket",
+      "detailedTriangles": 164,
+      "optimizedTriangles": 68,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Elbow_cheek_1",
+      "detailedTriangles": 2204,
+      "optimizedTriangles": 504,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Elbow_gold_ring_1",
+      "detailedTriangles": 2204,
+      "optimizedTriangles": 504,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Elbow_silver_rim_1",
+      "detailedTriangles": 2204,
+      "optimizedTriangles": 504,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Elbow_hub_1",
+      "detailedTriangles": 572,
+      "optimizedTriangles": 182,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Elbow_hub_engraving_1",
+      "detailedTriangles": 1692,
+      "optimizedTriangles": 382,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Elbow_1_cap_bolt_0",
+      "detailedTriangles": 188,
+      "optimizedTriangles": 124,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Elbow_1_cap_bolt_0_hex_socket",
+      "detailedTriangles": 164,
+      "optimizedTriangles": 68,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Elbow_1_cap_bolt_1",
+      "detailedTriangles": 188,
+      "optimizedTriangles": 124,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Elbow_1_cap_bolt_1_hex_socket",
+      "detailedTriangles": 164,
+      "optimizedTriangles": 68,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Elbow_1_cap_bolt_2",
+      "detailedTriangles": 188,
+      "optimizedTriangles": 124,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Elbow_1_cap_bolt_2_hex_socket",
+      "detailedTriangles": 164,
+      "optimizedTriangles": 68,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Elbow_central_rotor",
+      "detailedTriangles": 572,
+      "optimizedTriangles": 182,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Elbow_center_gold_band",
+      "detailedTriangles": 2204,
+      "optimizedTriangles": 504,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Forearm_structural_spine",
+      "detailedTriangles": 1128,
+      "optimizedTriangles": 318,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Forearm_titanium_rail_-1",
+      "detailedTriangles": 572,
+      "optimizedTriangles": 182,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Forearm_power_cell_-1",
+      "detailedTriangles": 636,
+      "optimizedTriangles": 182,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Forearm_power_gland_-1",
+      "detailedTriangles": 1020,
+      "optimizedTriangles": 242,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Forearm_elbow_rod_-1",
+      "detailedTriangles": 636,
+      "optimizedTriangles": 182,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Forearm_side_cable_-1",
+      "detailedTriangles": 416,
+      "optimizedTriangles": 198,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Forearm_swept_front_armor_-1",
+      "detailedTriangles": 1936,
+      "optimizedTriangles": 1168,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Forearm_lateral_blade_-1",
+      "detailedTriangles": 1336,
+      "optimizedTriangles": 808,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Forearm_gold_outer_reveal_-1",
+      "detailedTriangles": 416,
+      "optimizedTriangles": 198,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Forearm_shoulder_bolt_-1",
+      "detailedTriangles": 188,
+      "optimizedTriangles": 124,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Forearm_shoulder_bolt_-1_hex_socket",
+      "detailedTriangles": 164,
+      "optimizedTriangles": 68,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Forearm_wrist_bolt_-1",
+      "detailedTriangles": 188,
+      "optimizedTriangles": 124,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Forearm_wrist_bolt_-1_hex_socket",
+      "detailedTriangles": 164,
+      "optimizedTriangles": 68,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Forearm_titanium_rail_1",
+      "detailedTriangles": 572,
+      "optimizedTriangles": 182,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Forearm_power_cell_1",
+      "detailedTriangles": 636,
+      "optimizedTriangles": 182,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Forearm_power_gland_1",
+      "detailedTriangles": 1020,
+      "optimizedTriangles": 242,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Forearm_elbow_rod_1",
+      "detailedTriangles": 636,
+      "optimizedTriangles": 182,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Forearm_side_cable_1",
+      "detailedTriangles": 416,
+      "optimizedTriangles": 198,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Forearm_swept_front_armor_1",
+      "detailedTriangles": 1936,
+      "optimizedTriangles": 1168,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Forearm_lateral_blade_1",
+      "detailedTriangles": 1336,
+      "optimizedTriangles": 808,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Forearm_gold_outer_reveal_1",
+      "detailedTriangles": 416,
+      "optimizedTriangles": 198,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Forearm_shoulder_bolt_1",
+      "detailedTriangles": 188,
+      "optimizedTriangles": 124,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Forearm_shoulder_bolt_1_hex_socket",
+      "detailedTriangles": 164,
+      "optimizedTriangles": 68,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Forearm_wrist_bolt_1",
+      "detailedTriangles": 188,
+      "optimizedTriangles": 124,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Forearm_wrist_bolt_1_hex_socket",
+      "detailedTriangles": 164,
+      "optimizedTriangles": 68,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Forearm_front_keel",
+      "detailedTriangles": 1616,
+      "optimizedTriangles": 384,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Forearm_front_recess",
+      "detailedTriangles": 504,
+      "optimizedTriangles": 110,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Forearm_gold_recess_edge",
+      "detailedTriangles": 176,
+      "optimizedTriangles": 176,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Forearm_front_indicator",
+      "detailedTriangles": 96,
+      "optimizedTriangles": 96,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Service_cover_graphite",
+      "detailedTriangles": 1336,
+      "optimizedTriangles": 808,
+      "sourceParent": "SERVICE_COVER"
+    },
+    {
+      "object": "Service_cover_center_inset",
+      "detailedTriangles": 920,
+      "optimizedTriangles": 520,
+      "sourceParent": "SERVICE_COVER"
+    },
+    {
+      "object": "Service_cover_vent_00",
+      "detailedTriangles": 256,
+      "optimizedTriangles": 256,
+      "sourceParent": "SERVICE_COVER"
+    },
+    {
+      "object": "Service_cover_vent_01",
+      "detailedTriangles": 256,
+      "optimizedTriangles": 256,
+      "sourceParent": "SERVICE_COVER"
+    },
+    {
+      "object": "Service_cover_vent_02",
+      "detailedTriangles": 256,
+      "optimizedTriangles": 256,
+      "sourceParent": "SERVICE_COVER"
+    },
+    {
+      "object": "Service_cover_vent_03",
+      "detailedTriangles": 256,
+      "optimizedTriangles": 256,
+      "sourceParent": "SERVICE_COVER"
+    },
+    {
+      "object": "Service_cover_vent_04",
+      "detailedTriangles": 256,
+      "optimizedTriangles": 256,
+      "sourceParent": "SERVICE_COVER"
+    },
+    {
+      "object": "Service_cover_vent_05",
+      "detailedTriangles": 256,
+      "optimizedTriangles": 256,
+      "sourceParent": "SERVICE_COVER"
+    },
+    {
+      "object": "Service_cover_vent_06",
+      "detailedTriangles": 256,
+      "optimizedTriangles": 256,
+      "sourceParent": "SERVICE_COVER"
+    },
+    {
+      "object": "Service_cover_vent_07",
+      "detailedTriangles": 256,
+      "optimizedTriangles": 256,
+      "sourceParent": "SERVICE_COVER"
+    },
+    {
+      "object": "Service_cover_vent_08",
+      "detailedTriangles": 256,
+      "optimizedTriangles": 256,
+      "sourceParent": "SERVICE_COVER"
+    },
+    {
+      "object": "Service_cover_vent_09",
+      "detailedTriangles": 256,
+      "optimizedTriangles": 256,
+      "sourceParent": "SERVICE_COVER"
+    },
+    {
+      "object": "Service_cover_status_light",
+      "detailedTriangles": 96,
+      "optimizedTriangles": 96,
+      "sourceParent": "SERVICE_COVER"
+    },
+    {
+      "object": "Service_cover_screw_-1_351",
+      "detailedTriangles": 1020,
+      "optimizedTriangles": 508,
+      "sourceParent": "SERVICE_COVER"
+    },
+    {
+      "object": "Service_cover_screw_-1_351_hex_socket",
+      "detailedTriangles": 636,
+      "optimizedTriangles": 380,
+      "sourceParent": "SERVICE_COVER"
+    },
+    {
+      "object": "Service_cover_screw_-1_305",
+      "detailedTriangles": 1020,
+      "optimizedTriangles": 508,
+      "sourceParent": "SERVICE_COVER"
+    },
+    {
+      "object": "Service_cover_screw_-1_305_hex_socket",
+      "detailedTriangles": 636,
+      "optimizedTriangles": 380,
+      "sourceParent": "SERVICE_COVER"
+    },
+    {
+      "object": "Service_cover_screw_-1_249",
+      "detailedTriangles": 1020,
+      "optimizedTriangles": 508,
+      "sourceParent": "SERVICE_COVER"
+    },
+    {
+      "object": "Service_cover_screw_-1_249_hex_socket",
+      "detailedTriangles": 636,
+      "optimizedTriangles": 380,
+      "sourceParent": "SERVICE_COVER"
+    },
+    {
+      "object": "Service_cover_screw_1_351",
+      "detailedTriangles": 1020,
+      "optimizedTriangles": 508,
+      "sourceParent": "SERVICE_COVER"
+    },
+    {
+      "object": "Service_cover_screw_1_351_hex_socket",
+      "detailedTriangles": 636,
+      "optimizedTriangles": 380,
+      "sourceParent": "SERVICE_COVER"
+    },
+    {
+      "object": "Service_cover_screw_1_305",
+      "detailedTriangles": 1020,
+      "optimizedTriangles": 508,
+      "sourceParent": "SERVICE_COVER"
+    },
+    {
+      "object": "Service_cover_screw_1_305_hex_socket",
+      "detailedTriangles": 636,
+      "optimizedTriangles": 380,
+      "sourceParent": "SERVICE_COVER"
+    },
+    {
+      "object": "Service_cover_screw_1_249",
+      "detailedTriangles": 1020,
+      "optimizedTriangles": 508,
+      "sourceParent": "SERVICE_COVER"
+    },
+    {
+      "object": "Service_cover_screw_1_249_hex_socket",
+      "detailedTriangles": 636,
+      "optimizedTriangles": 380,
+      "sourceParent": "SERVICE_COVER"
+    },
+    {
+      "object": "Wrist_upper_mount",
+      "detailedTriangles": 572,
+      "optimizedTriangles": 182,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Wrist_upper_silver_collar",
+      "detailedTriangles": 2204,
+      "optimizedTriangles": 504,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Wrist_gimbal_axle",
+      "detailedTriangles": 572,
+      "optimizedTriangles": 182,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Wrist_side_ring_-1",
+      "detailedTriangles": 2048,
+      "optimizedTriangles": 490,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Wrist_side_ring_1",
+      "detailedTriangles": 2048,
+      "optimizedTriangles": 490,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Wrist_rotating_stem",
+      "detailedTriangles": 572,
+      "optimizedTriangles": 182,
+      "sourceParent": "WRIST_PIVOT"
+    },
+    {
+      "object": "Wrist_gold_lock",
+      "detailedTriangles": 2204,
+      "optimizedTriangles": 504,
+      "sourceParent": "WRIST_PIVOT"
+    },
+    {
+      "object": "Wrist_dorsal_fairing",
+      "detailedTriangles": 2204,
+      "optimizedTriangles": 504,
+      "sourceParent": "WRIST_PIVOT"
+    },
+    {
+      "object": "Palm_graphite_body",
+      "detailedTriangles": 284,
+      "optimizedTriangles": 284,
+      "sourceParent": "WRIST_PIVOT"
+    },
+    {
+      "object": "Palm_dorsal_main_plate",
+      "detailedTriangles": 1208,
+      "optimizedTriangles": 608,
+      "sourceParent": "WRIST_PIVOT"
+    },
+    {
+      "object": "Palm_edge_plate_-1",
+      "detailedTriangles": 1144,
+      "optimizedTriangles": 596,
+      "sourceParent": "WRIST_PIVOT"
+    },
+    {
+      "object": "Palm_gold_split_-1",
+      "detailedTriangles": 176,
+      "optimizedTriangles": 176,
+      "sourceParent": "WRIST_PIVOT"
+    },
+    {
+      "object": "Palm_grip_pad_-1",
+      "detailedTriangles": 920,
+      "optimizedTriangles": 520,
+      "sourceParent": "WRIST_PIVOT"
+    },
+    {
+      "object": "Palm_edge_plate_1",
+      "detailedTriangles": 820,
+      "optimizedTriangles": 408,
+      "sourceParent": "WRIST_PIVOT"
+    },
+    {
+      "object": "Palm_gold_split_1",
+      "detailedTriangles": 176,
+      "optimizedTriangles": 176,
+      "sourceParent": "WRIST_PIVOT"
+    },
+    {
+      "object": "Palm_grip_pad_1",
+      "detailedTriangles": 920,
+      "optimizedTriangles": 520,
+      "sourceParent": "WRIST_PIVOT"
+    },
+    {
+      "object": "Palm_center_grip",
+      "detailedTriangles": 920,
+      "optimizedTriangles": 248,
+      "sourceParent": "WRIST_PIVOT"
+    },
+    {
+      "object": "INDEX_S0_structural_link",
+      "detailedTriangles": 508,
+      "optimizedTriangles": 74,
+      "sourceParent": "INDEX_J0"
+    },
+    {
+      "object": "INDEX_S0_ivory_phalanx",
+      "detailedTriangles": 508,
+      "optimizedTriangles": 74,
+      "sourceParent": "INDEX_J0"
+    },
+    {
+      "object": "INDEX_S0_palm_grip",
+      "detailedTriangles": 340,
+      "optimizedTriangles": 52,
+      "sourceParent": "INDEX_J0"
+    },
+    {
+      "object": "INDEX_knuckle_0",
+      "detailedTriangles": 1020,
+      "optimizedTriangles": 242,
+      "sourceParent": "INDEX_J0"
+    },
+    {
+      "object": "INDEX_gold_bearing_0_-1",
+      "detailedTriangles": 1280,
+      "optimizedTriangles": 306,
+      "sourceParent": "INDEX_J0"
+    },
+    {
+      "object": "INDEX_gold_bearing_0_1",
+      "detailedTriangles": 1280,
+      "optimizedTriangles": 306,
+      "sourceParent": "INDEX_J0"
+    },
+    {
+      "object": "INDEX_knuckle_status",
+      "detailedTriangles": 636,
+      "optimizedTriangles": 182,
+      "sourceParent": "INDEX_J0"
+    },
+    {
+      "object": "INDEX_S1_structural_link",
+      "detailedTriangles": 508,
+      "optimizedTriangles": 74,
+      "sourceParent": "INDEX_J1"
+    },
+    {
+      "object": "INDEX_S1_ivory_phalanx",
+      "detailedTriangles": 508,
+      "optimizedTriangles": 74,
+      "sourceParent": "INDEX_J1"
+    },
+    {
+      "object": "INDEX_S1_palm_grip",
+      "detailedTriangles": 340,
+      "optimizedTriangles": 52,
+      "sourceParent": "INDEX_J1"
+    },
+    {
+      "object": "INDEX_knuckle_1",
+      "detailedTriangles": 1020,
+      "optimizedTriangles": 242,
+      "sourceParent": "INDEX_J1"
+    },
+    {
+      "object": "INDEX_gold_bearing_1_-1",
+      "detailedTriangles": 1280,
+      "optimizedTriangles": 306,
+      "sourceParent": "INDEX_J1"
+    },
+    {
+      "object": "INDEX_gold_bearing_1_1",
+      "detailedTriangles": 1280,
+      "optimizedTriangles": 306,
+      "sourceParent": "INDEX_J1"
+    },
+    {
+      "object": "INDEX_S2_structural_link",
+      "detailedTriangles": 572,
+      "optimizedTriangles": 90,
+      "sourceParent": "INDEX_J2"
+    },
+    {
+      "object": "INDEX_S2_ivory_phalanx",
+      "detailedTriangles": 572,
+      "optimizedTriangles": 90,
+      "sourceParent": "INDEX_J2"
+    },
+    {
+      "object": "INDEX_S2_palm_grip",
+      "detailedTriangles": 352,
+      "optimizedTriangles": 54,
+      "sourceParent": "INDEX_J2"
+    },
+    {
+      "object": "INDEX_knuckle_2",
+      "detailedTriangles": 1020,
+      "optimizedTriangles": 242,
+      "sourceParent": "INDEX_J2"
+    },
+    {
+      "object": "INDEX_gold_bearing_2_-1",
+      "detailedTriangles": 1280,
+      "optimizedTriangles": 306,
+      "sourceParent": "INDEX_J2"
+    },
+    {
+      "object": "INDEX_gold_bearing_2_1",
+      "detailedTriangles": 1280,
+      "optimizedTriangles": 306,
+      "sourceParent": "INDEX_J2"
+    },
+    {
+      "object": "MIDDLE_S0_structural_link",
+      "detailedTriangles": 508,
+      "optimizedTriangles": 74,
+      "sourceParent": "MIDDLE_J0"
+    },
+    {
+      "object": "MIDDLE_S0_ivory_phalanx",
+      "detailedTriangles": 508,
+      "optimizedTriangles": 74,
+      "sourceParent": "MIDDLE_J0"
+    },
+    {
+      "object": "MIDDLE_S0_palm_grip",
+      "detailedTriangles": 340,
+      "optimizedTriangles": 52,
+      "sourceParent": "MIDDLE_J0"
+    },
+    {
+      "object": "MIDDLE_knuckle_0",
+      "detailedTriangles": 1020,
+      "optimizedTriangles": 242,
+      "sourceParent": "MIDDLE_J0"
+    },
+    {
+      "object": "MIDDLE_gold_bearing_0_-1",
+      "detailedTriangles": 1280,
+      "optimizedTriangles": 306,
+      "sourceParent": "MIDDLE_J0"
+    },
+    {
+      "object": "MIDDLE_gold_bearing_0_1",
+      "detailedTriangles": 1280,
+      "optimizedTriangles": 306,
+      "sourceParent": "MIDDLE_J0"
+    },
+    {
+      "object": "MIDDLE_knuckle_status",
+      "detailedTriangles": 636,
+      "optimizedTriangles": 182,
+      "sourceParent": "MIDDLE_J0"
+    },
+    {
+      "object": "MIDDLE_S1_structural_link",
+      "detailedTriangles": 508,
+      "optimizedTriangles": 74,
+      "sourceParent": "MIDDLE_J1"
+    },
+    {
+      "object": "MIDDLE_S1_ivory_phalanx",
+      "detailedTriangles": 508,
+      "optimizedTriangles": 74,
+      "sourceParent": "MIDDLE_J1"
+    },
+    {
+      "object": "MIDDLE_S1_palm_grip",
+      "detailedTriangles": 340,
+      "optimizedTriangles": 52,
+      "sourceParent": "MIDDLE_J1"
+    },
+    {
+      "object": "MIDDLE_knuckle_1",
+      "detailedTriangles": 1020,
+      "optimizedTriangles": 242,
+      "sourceParent": "MIDDLE_J1"
+    },
+    {
+      "object": "MIDDLE_gold_bearing_1_-1",
+      "detailedTriangles": 1280,
+      "optimizedTriangles": 306,
+      "sourceParent": "MIDDLE_J1"
+    },
+    {
+      "object": "MIDDLE_gold_bearing_1_1",
+      "detailedTriangles": 1280,
+      "optimizedTriangles": 306,
+      "sourceParent": "MIDDLE_J1"
+    },
+    {
+      "object": "MIDDLE_S2_structural_link",
+      "detailedTriangles": 572,
+      "optimizedTriangles": 90,
+      "sourceParent": "MIDDLE_J2"
+    },
+    {
+      "object": "MIDDLE_S2_ivory_phalanx",
+      "detailedTriangles": 572,
+      "optimizedTriangles": 90,
+      "sourceParent": "MIDDLE_J2"
+    },
+    {
+      "object": "MIDDLE_S2_palm_grip",
+      "detailedTriangles": 352,
+      "optimizedTriangles": 54,
+      "sourceParent": "MIDDLE_J2"
+    },
+    {
+      "object": "MIDDLE_knuckle_2",
+      "detailedTriangles": 1020,
+      "optimizedTriangles": 242,
+      "sourceParent": "MIDDLE_J2"
+    },
+    {
+      "object": "MIDDLE_gold_bearing_2_-1",
+      "detailedTriangles": 1280,
+      "optimizedTriangles": 306,
+      "sourceParent": "MIDDLE_J2"
+    },
+    {
+      "object": "MIDDLE_gold_bearing_2_1",
+      "detailedTriangles": 1280,
+      "optimizedTriangles": 306,
+      "sourceParent": "MIDDLE_J2"
+    },
+    {
+      "object": "RING_S0_structural_link",
+      "detailedTriangles": 508,
+      "optimizedTriangles": 74,
+      "sourceParent": "RING_J0"
+    },
+    {
+      "object": "RING_S0_ivory_phalanx",
+      "detailedTriangles": 508,
+      "optimizedTriangles": 74,
+      "sourceParent": "RING_J0"
+    },
+    {
+      "object": "RING_S0_palm_grip",
+      "detailedTriangles": 340,
+      "optimizedTriangles": 52,
+      "sourceParent": "RING_J0"
+    },
+    {
+      "object": "RING_knuckle_0",
+      "detailedTriangles": 1020,
+      "optimizedTriangles": 242,
+      "sourceParent": "RING_J0"
+    },
+    {
+      "object": "RING_gold_bearing_0_-1",
+      "detailedTriangles": 1280,
+      "optimizedTriangles": 306,
+      "sourceParent": "RING_J0"
+    },
+    {
+      "object": "RING_gold_bearing_0_1",
+      "detailedTriangles": 1280,
+      "optimizedTriangles": 306,
+      "sourceParent": "RING_J0"
+    },
+    {
+      "object": "RING_knuckle_status",
+      "detailedTriangles": 636,
+      "optimizedTriangles": 182,
+      "sourceParent": "RING_J0"
+    },
+    {
+      "object": "RING_S1_structural_link",
+      "detailedTriangles": 508,
+      "optimizedTriangles": 74,
+      "sourceParent": "RING_J1"
+    },
+    {
+      "object": "RING_S1_ivory_phalanx",
+      "detailedTriangles": 508,
+      "optimizedTriangles": 74,
+      "sourceParent": "RING_J1"
+    },
+    {
+      "object": "RING_S1_palm_grip",
+      "detailedTriangles": 340,
+      "optimizedTriangles": 52,
+      "sourceParent": "RING_J1"
+    },
+    {
+      "object": "RING_knuckle_1",
+      "detailedTriangles": 1020,
+      "optimizedTriangles": 242,
+      "sourceParent": "RING_J1"
+    },
+    {
+      "object": "RING_gold_bearing_1_-1",
+      "detailedTriangles": 1280,
+      "optimizedTriangles": 306,
+      "sourceParent": "RING_J1"
+    },
+    {
+      "object": "RING_gold_bearing_1_1",
+      "detailedTriangles": 1280,
+      "optimizedTriangles": 306,
+      "sourceParent": "RING_J1"
+    },
+    {
+      "object": "RING_S2_structural_link",
+      "detailedTriangles": 572,
+      "optimizedTriangles": 90,
+      "sourceParent": "RING_J2"
+    },
+    {
+      "object": "RING_S2_ivory_phalanx",
+      "detailedTriangles": 572,
+      "optimizedTriangles": 90,
+      "sourceParent": "RING_J2"
+    },
+    {
+      "object": "RING_S2_palm_grip",
+      "detailedTriangles": 380,
+      "optimizedTriangles": 54,
+      "sourceParent": "RING_J2"
+    },
+    {
+      "object": "RING_knuckle_2",
+      "detailedTriangles": 1020,
+      "optimizedTriangles": 242,
+      "sourceParent": "RING_J2"
+    },
+    {
+      "object": "RING_gold_bearing_2_-1",
+      "detailedTriangles": 1280,
+      "optimizedTriangles": 306,
+      "sourceParent": "RING_J2"
+    },
+    {
+      "object": "RING_gold_bearing_2_1",
+      "detailedTriangles": 1280,
+      "optimizedTriangles": 306,
+      "sourceParent": "RING_J2"
+    },
+    {
+      "object": "LITTLE_S0_structural_link",
+      "detailedTriangles": 508,
+      "optimizedTriangles": 74,
+      "sourceParent": "LITTLE_J0"
+    },
+    {
+      "object": "LITTLE_S0_ivory_phalanx",
+      "detailedTriangles": 508,
+      "optimizedTriangles": 74,
+      "sourceParent": "LITTLE_J0"
+    },
+    {
+      "object": "LITTLE_S0_palm_grip",
+      "detailedTriangles": 340,
+      "optimizedTriangles": 52,
+      "sourceParent": "LITTLE_J0"
+    },
+    {
+      "object": "LITTLE_knuckle_0",
+      "detailedTriangles": 1020,
+      "optimizedTriangles": 242,
+      "sourceParent": "LITTLE_J0"
+    },
+    {
+      "object": "LITTLE_gold_bearing_0_-1",
+      "detailedTriangles": 1280,
+      "optimizedTriangles": 306,
+      "sourceParent": "LITTLE_J0"
+    },
+    {
+      "object": "LITTLE_gold_bearing_0_1",
+      "detailedTriangles": 1280,
+      "optimizedTriangles": 306,
+      "sourceParent": "LITTLE_J0"
+    },
+    {
+      "object": "LITTLE_knuckle_status",
+      "detailedTriangles": 636,
+      "optimizedTriangles": 182,
+      "sourceParent": "LITTLE_J0"
+    },
+    {
+      "object": "LITTLE_S1_structural_link",
+      "detailedTriangles": 508,
+      "optimizedTriangles": 74,
+      "sourceParent": "LITTLE_J1"
+    },
+    {
+      "object": "LITTLE_S1_ivory_phalanx",
+      "detailedTriangles": 508,
+      "optimizedTriangles": 74,
+      "sourceParent": "LITTLE_J1"
+    },
+    {
+      "object": "LITTLE_S1_palm_grip",
+      "detailedTriangles": 340,
+      "optimizedTriangles": 52,
+      "sourceParent": "LITTLE_J1"
+    },
+    {
+      "object": "LITTLE_knuckle_1",
+      "detailedTriangles": 1020,
+      "optimizedTriangles": 242,
+      "sourceParent": "LITTLE_J1"
+    },
+    {
+      "object": "LITTLE_gold_bearing_1_-1",
+      "detailedTriangles": 1280,
+      "optimizedTriangles": 306,
+      "sourceParent": "LITTLE_J1"
+    },
+    {
+      "object": "LITTLE_gold_bearing_1_1",
+      "detailedTriangles": 1280,
+      "optimizedTriangles": 306,
+      "sourceParent": "LITTLE_J1"
+    },
+    {
+      "object": "LITTLE_S2_structural_link",
+      "detailedTriangles": 572,
+      "optimizedTriangles": 90,
+      "sourceParent": "LITTLE_J2"
+    },
+    {
+      "object": "LITTLE_S2_ivory_phalanx",
+      "detailedTriangles": 572,
+      "optimizedTriangles": 90,
+      "sourceParent": "LITTLE_J2"
+    },
+    {
+      "object": "LITTLE_S2_palm_grip",
+      "detailedTriangles": 380,
+      "optimizedTriangles": 54,
+      "sourceParent": "LITTLE_J2"
+    },
+    {
+      "object": "LITTLE_knuckle_2",
+      "detailedTriangles": 1020,
+      "optimizedTriangles": 242,
+      "sourceParent": "LITTLE_J2"
+    },
+    {
+      "object": "LITTLE_gold_bearing_2_-1",
+      "detailedTriangles": 1280,
+      "optimizedTriangles": 306,
+      "sourceParent": "LITTLE_J2"
+    },
+    {
+      "object": "LITTLE_gold_bearing_2_1",
+      "detailedTriangles": 1280,
+      "optimizedTriangles": 306,
+      "sourceParent": "LITTLE_J2"
+    },
+    {
+      "object": "THUMB_S0_structural_link",
+      "detailedTriangles": 572,
+      "optimizedTriangles": 78,
+      "sourceParent": "THUMB_J0"
+    },
+    {
+      "object": "THUMB_S0_ivory_phalanx",
+      "detailedTriangles": 572,
+      "optimizedTriangles": 78,
+      "sourceParent": "THUMB_J0"
+    },
+    {
+      "object": "THUMB_S0_palm_grip",
+      "detailedTriangles": 292,
+      "optimizedTriangles": 48,
+      "sourceParent": "THUMB_J0"
+    },
+    {
+      "object": "THUMB_knuckle_0",
+      "detailedTriangles": 1020,
+      "optimizedTriangles": 242,
+      "sourceParent": "THUMB_J0"
+    },
+    {
+      "object": "THUMB_gold_bearing_0_-1",
+      "detailedTriangles": 1280,
+      "optimizedTriangles": 306,
+      "sourceParent": "THUMB_J0"
+    },
+    {
+      "object": "THUMB_gold_bearing_0_1",
+      "detailedTriangles": 1280,
+      "optimizedTriangles": 306,
+      "sourceParent": "THUMB_J0"
+    },
+    {
+      "object": "THUMB_knuckle_status",
+      "detailedTriangles": 636,
+      "optimizedTriangles": 182,
+      "sourceParent": "THUMB_J0"
+    },
+    {
+      "object": "THUMB_S1_structural_link",
+      "detailedTriangles": 508,
+      "optimizedTriangles": 74,
+      "sourceParent": "THUMB_J1"
+    },
+    {
+      "object": "THUMB_S1_ivory_phalanx",
+      "detailedTriangles": 508,
+      "optimizedTriangles": 74,
+      "sourceParent": "THUMB_J1"
+    },
+    {
+      "object": "THUMB_S1_palm_grip",
+      "detailedTriangles": 340,
+      "optimizedTriangles": 52,
+      "sourceParent": "THUMB_J1"
+    },
+    {
+      "object": "THUMB_knuckle_1",
+      "detailedTriangles": 1020,
+      "optimizedTriangles": 242,
+      "sourceParent": "THUMB_J1"
+    },
+    {
+      "object": "THUMB_gold_bearing_1_-1",
+      "detailedTriangles": 1280,
+      "optimizedTriangles": 306,
+      "sourceParent": "THUMB_J1"
+    },
+    {
+      "object": "THUMB_gold_bearing_1_1",
+      "detailedTriangles": 1280,
+      "optimizedTriangles": 306,
+      "sourceParent": "THUMB_J1"
+    },
+    {
+      "object": "THUMB_S2_structural_link",
+      "detailedTriangles": 572,
+      "optimizedTriangles": 90,
+      "sourceParent": "THUMB_J2"
+    },
+    {
+      "object": "THUMB_S2_ivory_phalanx",
+      "detailedTriangles": 572,
+      "optimizedTriangles": 90,
+      "sourceParent": "THUMB_J2"
+    },
+    {
+      "object": "THUMB_S2_palm_grip",
+      "detailedTriangles": 340,
+      "optimizedTriangles": 52,
+      "sourceParent": "THUMB_J2"
+    },
+    {
+      "object": "THUMB_knuckle_2",
+      "detailedTriangles": 1020,
+      "optimizedTriangles": 242,
+      "sourceParent": "THUMB_J2"
+    },
+    {
+      "object": "THUMB_gold_bearing_2_-1",
+      "detailedTriangles": 1280,
+      "optimizedTriangles": 306,
+      "sourceParent": "THUMB_J2"
+    },
+    {
+      "object": "THUMB_gold_bearing_2_1",
+      "detailedTriangles": 1280,
+      "optimizedTriangles": 306,
+      "sourceParent": "THUMB_J2"
+    },
+    {
+      "object": "Shoulder_L_narrow_machined_rim",
+      "detailedTriangles": 3840,
+      "optimizedTriangles": 920,
+      "sourceParent": "AURIX_ROOT"
+    },
+    {
+      "object": "Shoulder_R_narrow_machined_rim",
+      "detailedTriangles": 3840,
+      "optimizedTriangles": 920,
+      "sourceParent": "AURIX_ROOT"
+    },
+    {
+      "object": "Crown_inset_border_-1",
+      "detailedTriangles": 336,
+      "optimizedTriangles": 160,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Crown_inset_border_1",
+      "detailedTriangles": 336,
+      "optimizedTriangles": 160,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Crown_recessed_carrier",
+      "detailedTriangles": 2128,
+      "optimizedTriangles": 1136,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Crown_top_lock_plate",
+      "detailedTriangles": 928,
+      "optimizedTriangles": 424,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Crown_side_carrier_-1",
+      "detailedTriangles": 1350,
+      "optimizedTriangles": 732,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Crown_side_carrier_1",
+      "detailedTriangles": 1350,
+      "optimizedTriangles": 732,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Upper_actuator_machined_sleeve",
+      "detailedTriangles": 1020,
+      "optimizedTriangles": 242,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Upper_actuator_lower_band",
+      "detailedTriangles": 1280,
+      "optimizedTriangles": 306,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Upper_actuator_upper_seal",
+      "detailedTriangles": 1280,
+      "optimizedTriangles": 306,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Upper_rear_rod_bridge",
+      "detailedTriangles": 712,
+      "optimizedTriangles": 180,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Upper_return_pipe_-1",
+      "detailedTriangles": 416,
+      "optimizedTriangles": 198,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Upper_hose_return_-1",
+      "detailedTriangles": 336,
+      "optimizedTriangles": 160,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Upper_return_pipe_mount_-1",
+      "detailedTriangles": 1280,
+      "optimizedTriangles": 306,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Upper_blade_carrier_-1",
+      "detailedTriangles": 1628,
+      "optimizedTriangles": 892,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Upper_return_pipe_1",
+      "detailedTriangles": 416,
+      "optimizedTriangles": 198,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Upper_hose_return_1",
+      "detailedTriangles": 336,
+      "optimizedTriangles": 160,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Upper_return_pipe_mount_1",
+      "detailedTriangles": 1280,
+      "optimizedTriangles": 306,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Upper_blade_carrier_1",
+      "detailedTriangles": 1628,
+      "optimizedTriangles": 892,
+      "sourceParent": "SHOULDER_PIVOT"
+    },
+    {
+      "object": "Forearm_recessed_carrier_-1",
+      "detailedTriangles": 2032,
+      "optimizedTriangles": 1200,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Forearm_lateral_underlayer_-1",
+      "detailedTriangles": 1336,
+      "optimizedTriangles": 386,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Forearm_channel_hydraulic_-1",
+      "detailedTriangles": 336,
+      "optimizedTriangles": 160,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Forearm_recessed_carrier_1",
+      "detailedTriangles": 2032,
+      "optimizedTriangles": 1200,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Forearm_lateral_underlayer_1",
+      "detailedTriangles": 1336,
+      "optimizedTriangles": 386,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Forearm_channel_hydraulic_1",
+      "detailedTriangles": 336,
+      "optimizedTriangles": 160,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Service_bay_structural_rim",
+      "detailedTriangles": 704,
+      "optimizedTriangles": 98,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Service_bay_machined_lip",
+      "detailedTriangles": 704,
+      "optimizedTriangles": 98,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Service_cartridge_sleeve_-1",
+      "detailedTriangles": 636,
+      "optimizedTriangles": 182,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Service_cartridge_lower_band_-1",
+      "detailedTriangles": 1280,
+      "optimizedTriangles": 306,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Service_cartridge_upper_band_-1",
+      "detailedTriangles": 1280,
+      "optimizedTriangles": 306,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Service_return_conduit_-1",
+      "detailedTriangles": 336,
+      "optimizedTriangles": 160,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Service_cartridge_sleeve_1",
+      "detailedTriangles": 636,
+      "optimizedTriangles": 182,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Service_cartridge_lower_band_1",
+      "detailedTriangles": 1280,
+      "optimizedTriangles": 306,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Service_cartridge_upper_band_1",
+      "detailedTriangles": 1280,
+      "optimizedTriangles": 306,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Service_return_conduit_1",
+      "detailedTriangles": 336,
+      "optimizedTriangles": 160,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Service_lower_manifold",
+      "detailedTriangles": 504,
+      "optimizedTriangles": 110,
+      "sourceParent": "ELBOW_PIVOT"
+    },
+    {
+      "object": "Palm_dorsal_ring_plate",
+      "detailedTriangles": 1260,
+      "optimizedTriangles": 616,
+      "sourceParent": "WRIST_PIVOT"
+    },
+    {
+      "object": "Palm_thenar_pad_seam",
+      "detailedTriangles": 176,
+      "optimizedTriangles": 176,
+      "sourceParent": "WRIST_PIVOT"
+    },
+    {
+      "object": "Palm_center_pad_seam",
+      "detailedTriangles": 256,
+      "optimizedTriangles": 256,
+      "sourceParent": "WRIST_PIVOT"
+    },
+    {
+      "object": "INDEX_S0_side_tendon_guide",
+      "detailedTriangles": 96,
+      "optimizedTriangles": 96,
+      "sourceParent": "INDEX_J0"
+    },
+    {
+      "object": "MIDDLE_S0_side_tendon_guide",
+      "detailedTriangles": 96,
+      "optimizedTriangles": 96,
+      "sourceParent": "MIDDLE_J0"
+    },
+    {
+      "object": "RING_S0_side_tendon_guide",
+      "detailedTriangles": 96,
+      "optimizedTriangles": 96,
+      "sourceParent": "RING_J0"
+    },
+    {
+      "object": "LITTLE_S0_side_tendon_guide",
+      "detailedTriangles": 96,
+      "optimizedTriangles": 96,
+      "sourceParent": "LITTLE_J0"
+    },
+    {
+      "object": "THUMB_S0_side_tendon_guide",
+      "detailedTriangles": 96,
+      "optimizedTriangles": 96,
+      "sourceParent": "THUMB_J0"
+    }
+  ],
+  "optimizedSurfaceDistances": [
+    {
+      "object": "Shoulder_L_load_ring",
+      "samples": 514,
+      "maxM": 0.0001495542674092576,
+      "meanM": 4.9453316318396676e-05
+    },
+    {
+      "object": "Shoulder_L_titanium_flange",
+      "samples": 542,
+      "maxM": 0.00017292583652306348,
+      "meanM": 5.678851183041375e-05
+    },
+    {
+      "object": "Shoulder_L_gold_neural_bus",
+      "samples": 588,
+      "maxM": 0.00018001324497163296,
+      "meanM": 4.8169624865279724e-05
+    },
+    {
+      "object": "Shoulder_L_inner_dark_bore",
+      "samples": 588,
+      "maxM": 0.00019612479081843048,
+      "meanM": 4.412703665420084e-05
+    },
+    {
+      "object": "Shoulder_L_recess_back",
+      "samples": 562,
+      "maxM": 0.0004237265675328672,
+      "meanM": 0.0001314766432653193
+    },
+    {
+      "object": "Shoulder_L_locking_dog_00",
+      "samples": 511,
+      "maxM": 0.00021180568728595972,
+      "meanM": 6.441842962327769e-05
+    },
+    {
+      "object": "Shoulder_L_lock_00",
+      "samples": 472,
+      "maxM": 8.211480599129573e-05,
+      "meanM": 2.3416518052087313e-05
+    },
+    {
+      "object": "Shoulder_L_lock_00_hex_socket",
+      "samples": 352,
+      "maxM": 1.2628926015167963e-05,
+      "meanM": 4.690460380016051e-06
+    },
+    {
+      "object": "Shoulder_L_locking_dog_01",
+      "samples": 511,
+      "maxM": 0.00019450967374723405,
+      "meanM": 6.422939156212086e-05
+    },
+    {
+      "object": "Shoulder_L_lock_01",
+      "samples": 472,
+      "maxM": 8.211480599129573e-05,
+      "meanM": 2.3415266531317055e-05
+    },
+    {
+      "object": "Shoulder_L_lock_01_hex_socket",
+      "samples": 352,
+      "maxM": 1.2627863725356292e-05,
+      "meanM": 4.690571484192415e-06
+    },
+    {
+      "object": "Shoulder_L_locking_dog_02",
+      "samples": 511,
+      "maxM": 0.00020246942585799843,
+      "meanM": 6.392305650488793e-05
+    },
+    {
+      "object": "Shoulder_L_lock_02",
+      "samples": 472,
+      "maxM": 8.211480599129573e-05,
+      "meanM": 2.3416081217097288e-05
+    },
+    {
+      "object": "Shoulder_L_lock_02_hex_socket",
+      "samples": 352,
+      "maxM": 1.2628926015167963e-05,
+      "meanM": 4.6890169174544516e-06
+    },
+    {
+      "object": "Shoulder_L_locking_dog_03",
+      "samples": 511,
+      "maxM": 0.0002128001651726663,
+      "meanM": 6.309228506428602e-05
+    },
+    {
+      "object": "Shoulder_L_lock_03",
+      "samples": 472,
+      "maxM": 8.211480599129573e-05,
+      "meanM": 2.3415225753329667e-05
+    },
+    {
+      "object": "Shoulder_L_lock_03_hex_socket",
+      "samples": 352,
+      "maxM": 1.2628926015167963e-05,
+      "meanM": 4.691478747789998e-06
+    },
+    {
+      "object": "Shoulder_L_locking_dog_04",
+      "samples": 511,
+      "maxM": 0.000211088772630319,
+      "meanM": 6.480362632505379e-05
+    },
+    {
+      "object": "Shoulder_L_lock_04",
+      "samples": 472,
+      "maxM": 8.211480599129573e-05,
+      "meanM": 2.3414687410776457e-05
+    },
+    {
+      "object": "Shoulder_L_lock_04_hex_socket",
+      "samples": 352,
+      "maxM": 1.2627863725356292e-05,
+      "meanM": 4.690861414534776e-06
+    },
+    {
+      "object": "Shoulder_L_locking_dog_05",
+      "samples": 511,
+      "maxM": 0.00019686772429849952,
+      "meanM": 6.484718024835536e-05
+    },
+    {
+      "object": "Shoulder_L_lock_05",
+      "samples": 472,
+      "maxM": 8.211480599129573e-05,
+      "meanM": 2.3416255535811177e-05
+    },
+    {
+      "object": "Shoulder_L_lock_05_hex_socket",
+      "samples": 352,
+      "maxM": 1.2628926015167963e-05,
+      "meanM": 4.689756815940365e-06
+    },
+    {
+      "object": "Shoulder_R_load_ring",
+      "samples": 514,
+      "maxM": 0.000164085126016289,
+      "meanM": 4.8373602935992704e-05
+    },
+    {
+      "object": "Shoulder_R_titanium_flange",
+      "samples": 542,
+      "maxM": 0.00018514636030886322,
+      "meanM": 5.6762199047461656e-05
+    },
+    {
+      "object": "Shoulder_R_gold_neural_bus",
+      "samples": 588,
+      "maxM": 0.0001788843801477924,
+      "meanM": 5.522155411027415e-05
+    },
+    {
+      "object": "Shoulder_R_inner_dark_bore",
+      "samples": 588,
+      "maxM": 0.00019711563072632998,
+      "meanM": 4.8580451146746824e-05
+    },
+    {
+      "object": "Shoulder_R_recess_back",
+      "samples": 562,
+      "maxM": 0.0004237265675328672,
+      "meanM": 0.00013147662324768683
+    },
+    {
+      "object": "Shoulder_R_locking_dog_00",
+      "samples": 511,
+      "maxM": 0.00019982278172392398,
+      "meanM": 6.520321016260919e-05
+    },
+    {
+      "object": "Shoulder_R_lock_00",
+      "samples": 472,
+      "maxM": 8.211480599129573e-05,
+      "meanM": 2.3416533590573064e-05
+    },
+    {
+      "object": "Shoulder_R_lock_00_hex_socket",
+      "samples": 352,
+      "maxM": 1.2628926015167963e-05,
+      "meanM": 4.690320514846101e-06
+    },
+    {
+      "object": "Shoulder_R_locking_dog_01",
+      "samples": 511,
+      "maxM": 0.00021108183136675507,
+      "meanM": 6.463219650746294e-05
+    },
+    {
+      "object": "Shoulder_R_lock_01",
+      "samples": 472,
+      "maxM": 8.211480599129573e-05,
+      "meanM": 2.3415271719784414e-05
+    },
+    {
+      "object": "Shoulder_R_lock_01_hex_socket",
+      "samples": 352,
+      "maxM": 1.2627863725356292e-05,
+      "meanM": 4.690344183428346e-06
+    },
+    {
+      "object": "Shoulder_R_locking_dog_02",
+      "samples": 511,
+      "maxM": 0.00019950495334342122,
+      "meanM": 6.33870374270598e-05
+    },
+    {
+      "object": "Shoulder_R_lock_02",
+      "samples": 472,
+      "maxM": 8.211480599129573e-05,
+      "meanM": 2.341606365151741e-05
+    },
+    {
+      "object": "Shoulder_R_lock_02_hex_socket",
+      "samples": 352,
+      "maxM": 1.2628926015167963e-05,
+      "meanM": 4.689433204080833e-06
+    },
+    {
+      "object": "Shoulder_R_locking_dog_03",
+      "samples": 511,
+      "maxM": 0.00019981918740086257,
+      "meanM": 6.52853004410727e-05
+    },
+    {
+      "object": "Shoulder_R_lock_03",
+      "samples": 472,
+      "maxM": 8.211480599129573e-05,
+      "meanM": 2.3415218847335997e-05
+    },
+    {
+      "object": "Shoulder_R_lock_03_hex_socket",
+      "samples": 352,
+      "maxM": 1.2628926015167963e-05,
+      "meanM": 4.69113489387496e-06
+    },
+    {
+      "object": "Shoulder_R_locking_dog_04",
+      "samples": 511,
+      "maxM": 0.0002110913919750601,
+      "meanM": 6.415686485769268e-05
+    },
+    {
+      "object": "Shoulder_R_lock_04",
+      "samples": 472,
+      "maxM": 8.211480599129573e-05,
+      "meanM": 2.3414666569263385e-05
+    },
+    {
+      "object": "Shoulder_R_lock_04_hex_socket",
+      "samples": 352,
+      "maxM": 1.2627863725356292e-05,
+      "meanM": 4.690961054104099e-06
+    },
+    {
+      "object": "Shoulder_R_locking_dog_05",
+      "samples": 511,
+      "maxM": 0.00019457882444839925,
+      "meanM": 6.505125276559453e-05
+    },
+    {
+      "object": "Shoulder_R_lock_05",
+      "samples": 472,
+      "maxM": 8.211480599129573e-05,
+      "meanM": 2.34162609002884e-05
+    },
+    {
+      "object": "Shoulder_R_lock_05_hex_socket",
+      "samples": 352,
+      "maxM": 1.2628926015167963e-05,
+      "meanM": 4.689372086762557e-06
+    },
+    {
+      "object": "Upper_crown_front",
+      "samples": 543,
+      "maxM": 0.00035449175629764795,
+      "meanM": 6.210984705617012e-05
+    },
+    {
+      "object": "Upper_crown_rear",
+      "samples": 573,
+      "maxM": 0.00029101435211487114,
+      "meanM": 5.2430419435896095e-05
+    },
+    {
+      "object": "Crown_side_cap_-1",
+      "samples": 633,
+      "maxM": 0.0003217122866772115,
+      "meanM": 7.114338255085104e-05
+    },
+    {
+      "object": "Crown_gold_pinstripe_-1",
+      "samples": 532,
+      "maxM": 7.902534093773284e-08,
+      "meanM": 8.508829488948927e-09
+    },
+    {
+      "object": "Crown_front_fastener_-1",
+      "samples": 472,
+      "maxM": 6.135221337899566e-05,
+      "meanM": 1.6821509207275413e-05
+    },
+    {
+      "object": "Crown_front_fastener_-1_hex_socket",
+      "samples": 352,
+      "maxM": 1.311809683102183e-05,
+      "meanM": 4.7216854959634835e-06
+    },
+    {
+      "object": "Crown_side_cap_1",
+      "samples": 633,
+      "maxM": 0.0003077404689975083,
+      "meanM": 7.311257323625035e-05
+    },
+    {
+      "object": "Crown_gold_pinstripe_1",
+      "samples": 532,
+      "maxM": 7.860715811602859e-08,
+      "meanM": 9.345653602711837e-09
+    },
+    {
+      "object": "Crown_front_fastener_1",
+      "samples": 472,
+      "maxM": 6.135221337899566e-05,
+      "meanM": 1.6821627649691363e-05
+    },
+    {
+      "object": "Crown_front_fastener_1_hex_socket",
+      "samples": 352,
+      "maxM": 1.311809683102183e-05,
+      "meanM": 4.721983144899284e-06
+    },
+    {
+      "object": "Crown_A_mark",
+      "samples": 684,
+      "maxM": 1.0833229680429213e-05,
+      "meanM": 6.284178404444239e-07
+    },
+    {
+      "object": "Crown_AURIX",
+      "samples": 528,
+      "maxM": 1.1325433888487169e-06,
+      "meanM": 1.4119604287112921e-08
+    },
+    {
+      "object": "Crown_gold_signature",
+      "samples": 292,
+      "maxM": 6.194695600925115e-08,
+      "meanM": 8.56691204125511e-09
+    },
+    {
+      "object": "Upper_core_backbone",
+      "samples": 660,
+      "maxM": 0.0002847644209396094,
+      "meanM": 7.056034800311637e-05
+    },
+    {
+      "object": "Upper_primary_cylinder",
+      "samples": 594,
+      "maxM": 0.00015270127914845943,
+      "meanM": 5.287105998835171e-05
+    },
+    {
+      "object": "Upper_primary_rod",
+      "samples": 594,
+      "maxM": 8.905151480576023e-05,
+      "meanM": 3.941125490563144e-05
+    },
+    {
+      "object": "Upper_primary_gland",
+      "samples": 639,
+      "maxM": 6.818484689574689e-05,
+      "meanM": 2.9226202310932483e-05
+    },
+    {
+      "object": "Upper_side_actuator_-1",
+      "samples": 594,
+      "maxM": 0.0001365895295748487,
+      "meanM": 4.40985435426685e-05
+    },
+    {
+      "object": "Upper_side_rod_-1",
+      "samples": 594,
+      "maxM": 7.432410347973928e-05,
+      "meanM": 2.9935246293268807e-05
+    },
+    {
+      "object": "Upper_side_gland_-1",
+      "samples": 639,
+      "maxM": 7.564807310700417e-05,
+      "meanM": 2.618576946046404e-05
+    },
+    {
+      "object": "Upper_elbow_yoke_-1",
+      "samples": 562,
+      "maxM": 0.0003314722271170467,
+      "meanM": 0.00010703842821855373
+    },
+    {
+      "object": "Upper_sculpted_blade_-1",
+      "samples": 571,
+      "maxM": 0.00025471122353337705,
+      "meanM": 4.1109077803475436e-05
+    },
+    {
+      "object": "Upper_outer_wrap_-1",
+      "samples": 612,
+      "maxM": 0.00011253211414441466,
+      "meanM": 1.9813946567753705e-05
+    },
+    {
+      "object": "Upper_exposed_hydraulic_-1",
+      "samples": 600,
+      "maxM": 6.453343667089939e-05,
+      "meanM": 1.687608614418042e-05
+    },
+    {
+      "object": "Upper_gold_conduit_-1",
+      "samples": 532,
+      "maxM": 6.21199802708361e-08,
+      "meanM": 6.62081505743737e-09
+    },
+    {
+      "object": "Upper_blade_screw_-1",
+      "samples": 472,
+      "maxM": 6.789553299313411e-05,
+      "meanM": 1.9352452601272633e-05
+    },
+    {
+      "object": "Upper_blade_screw_-1_hex_socket",
+      "samples": 352,
+      "maxM": 1.2036324733344372e-05,
+      "meanM": 4.460957061848024e-06
+    },
+    {
+      "object": "Upper_lower_side_pad_-1",
+      "samples": 502,
+      "maxM": 0.0004180780379101634,
+      "meanM": 0.0001605840217968878
+    },
+    {
+      "object": "Upper_side_actuator_1",
+      "samples": 594,
+      "maxM": 0.00011791153519880027,
+      "meanM": 4.5285775482782025e-05
+    },
+    {
+      "object": "Upper_side_rod_1",
+      "samples": 594,
+      "maxM": 7.683454896323383e-05,
+      "meanM": 3.138997970984924e-05
+    },
+    {
+      "object": "Upper_side_gland_1",
+      "samples": 639,
+      "maxM": 7.010409171925858e-05,
+      "meanM": 2.6065915744067864e-05
+    },
+    {
+      "object": "Upper_elbow_yoke_1",
+      "samples": 562,
+      "maxM": 0.00033147199428640306,
+      "meanM": 0.00010703836616470728
+    },
+    {
+      "object": "Upper_sculpted_blade_1",
+      "samples": 571,
+      "maxM": 0.00027250920538790524,
+      "meanM": 4.03824238461139e-05
+    },
+    {
+      "object": "Upper_outer_wrap_1",
+      "samples": 612,
+      "maxM": 8.760749187786132e-05,
+      "meanM": 1.9451916043088183e-05
+    },
+    {
+      "object": "Upper_exposed_hydraulic_1",
+      "samples": 600,
+      "maxM": 6.453669629991055e-05,
+      "meanM": 1.6619992719756708e-05
+    },
+    {
+      "object": "Upper_gold_conduit_1",
+      "samples": 532,
+      "maxM": 6.420724218969553e-08,
+      "meanM": 5.8173528884601655e-09
+    },
+    {
+      "object": "Upper_blade_screw_1",
+      "samples": 472,
+      "maxM": 6.789553299313411e-05,
+      "meanM": 1.9352612610679487e-05
+    },
+    {
+      "object": "Upper_blade_screw_1_hex_socket",
+      "samples": 352,
+      "maxM": 1.2036324733344372e-05,
+      "meanM": 4.460995004184166e-06
+    },
+    {
+      "object": "Upper_lower_side_pad_1",
+      "samples": 502,
+      "maxM": 0.00041665954631753266,
+      "meanM": 0.00016076827066411478
+    },
+    {
+      "object": "Elbow_fixed_axle",
+      "samples": 562,
+      "maxM": 0.00031662301626056433,
+      "meanM": 0.00011158312667066932
+    },
+    {
+      "object": "Elbow_cheek_-1",
+      "samples": 690,
+      "maxM": 0.00026046994025819004,
+      "meanM": 5.492857555760526e-05
+    },
+    {
+      "object": "Elbow_gold_ring_-1",
+      "samples": 690,
+      "maxM": 0.00027799245435744524,
+      "meanM": 5.4789068532170776e-05
+    },
+    {
+      "object": "Elbow_silver_rim_-1",
+      "samples": 690,
+      "maxM": 0.0002586671616882086,
+      "meanM": 5.26492819535104e-05
+    },
+    {
+      "object": "Elbow_hub_-1",
+      "samples": 562,
+      "maxM": 0.0003171375428792089,
+      "meanM": 0.00010490554803774817
+    },
+    {
+      "object": "Elbow_hub_engraving_-1",
+      "samples": 657,
+      "maxM": 9.235755715053529e-05,
+      "meanM": 2.757942919015238e-05
+    },
+    {
+      "object": "Elbow_-1_cap_bolt_0",
+      "samples": 472,
+      "maxM": 4.419289325596765e-05,
+      "meanM": 1.2654261129362844e-05
+    },
+    {
+      "object": "Elbow_-1_cap_bolt_0_hex_socket",
+      "samples": 352,
+      "maxM": 1.1000264748872723e-05,
+      "meanM": 4.060872879397724e-06
+    },
+    {
+      "object": "Elbow_-1_cap_bolt_1",
+      "samples": 472,
+      "maxM": 4.419289325596765e-05,
+      "meanM": 1.265384507485185e-05
+    },
+    {
+      "object": "Elbow_-1_cap_bolt_1_hex_socket",
+      "samples": 352,
+      "maxM": 1.1000149243045598e-05,
+      "meanM": 4.060732027562479e-06
+    },
+    {
+      "object": "Elbow_-1_cap_bolt_2",
+      "samples": 472,
+      "maxM": 4.419289325596765e-05,
+      "meanM": 1.2653910735618692e-05
+    },
+    {
+      "object": "Elbow_-1_cap_bolt_2_hex_socket",
+      "samples": 352,
+      "maxM": 1.1000149243045598e-05,
+      "meanM": 4.060582957937148e-06
+    },
+    {
+      "object": "Elbow_cheek_1",
+      "samples": 690,
+      "maxM": 0.000260472996160388,
+      "meanM": 5.389397747447466e-05
+    },
+    {
+      "object": "Elbow_gold_ring_1",
+      "samples": 690,
+      "maxM": 0.0002806822012644261,
+      "meanM": 5.5200139570275e-05
+    },
+    {
+      "object": "Elbow_silver_rim_1",
+      "samples": 690,
+      "maxM": 0.00025866812211461365,
+      "meanM": 5.316959116424261e-05
+    },
+    {
+      "object": "Elbow_hub_1",
+      "samples": 562,
+      "maxM": 0.0003171375428792089,
+      "meanM": 0.00010490554803774817
+    },
+    {
+      "object": "Elbow_hub_engraving_1",
+      "samples": 657,
+      "maxM": 9.235755715053529e-05,
+      "meanM": 2.7657217005802755e-05
+    },
+    {
+      "object": "Elbow_1_cap_bolt_0",
+      "samples": 472,
+      "maxM": 4.419289325596765e-05,
+      "meanM": 1.2654261129362844e-05
+    },
+    {
+      "object": "Elbow_1_cap_bolt_0_hex_socket",
+      "samples": 352,
+      "maxM": 1.1000264748872723e-05,
+      "meanM": 4.060872879397724e-06
+    },
+    {
+      "object": "Elbow_1_cap_bolt_1",
+      "samples": 472,
+      "maxM": 4.419289325596765e-05,
+      "meanM": 1.2653910735618692e-05
+    },
+    {
+      "object": "Elbow_1_cap_bolt_1_hex_socket",
+      "samples": 352,
+      "maxM": 1.1000149243045598e-05,
+      "meanM": 4.060582957937148e-06
+    },
+    {
+      "object": "Elbow_1_cap_bolt_2",
+      "samples": 472,
+      "maxM": 4.419289325596765e-05,
+      "meanM": 1.265384507485185e-05
+    },
+    {
+      "object": "Elbow_1_cap_bolt_2_hex_socket",
+      "samples": 352,
+      "maxM": 1.1000149243045598e-05,
+      "meanM": 4.060732027562479e-06
+    },
+    {
+      "object": "Elbow_central_rotor",
+      "samples": 562,
+      "maxM": 0.0004110359004698694,
+      "meanM": 0.00013079445410237424
+    },
+    {
+      "object": "Elbow_center_gold_band",
+      "samples": 690,
+      "maxM": 0.00026282184990122914,
+      "meanM": 6.086812327364145e-05
+    },
+    {
+      "object": "Forearm_structural_spine",
+      "samples": 603,
+      "maxM": 0.00025601708330214024,
+      "meanM": 6.475129009671179e-05
+    },
+    {
+      "object": "Forearm_titanium_rail_-1",
+      "samples": 562,
+      "maxM": 0.00024195501464419067,
+      "meanM": 7.789808526304626e-05
+    },
+    {
+      "object": "Forearm_power_cell_-1",
+      "samples": 594,
+      "maxM": 0.00010815174027811736,
+      "meanM": 4.097731437239945e-05
+    },
+    {
+      "object": "Forearm_power_gland_-1",
+      "samples": 639,
+      "maxM": 7.208561873994768e-05,
+      "meanM": 2.932277238593363e-05
+    },
+    {
+      "object": "Forearm_elbow_rod_-1",
+      "samples": 594,
+      "maxM": 6.136989395599812e-05,
+      "meanM": 2.5449545715482775e-05
+    },
+    {
+      "object": "Forearm_side_cable_-1",
+      "samples": 648,
+      "maxM": 6.542899063788354e-05,
+      "meanM": 2.686947678191608e-06
+    },
+    {
+      "object": "Forearm_swept_front_armor_-1",
+      "samples": 546,
+      "maxM": 0.0002822953392751515,
+      "meanM": 4.2082928805300135e-05
+    },
+    {
+      "object": "Forearm_lateral_blade_-1",
+      "samples": 539,
+      "maxM": 0.0002556995314080268,
+      "meanM": 4.239595787953549e-05
+    },
+    {
+      "object": "Forearm_gold_outer_reveal_-1",
+      "samples": 648,
+      "maxM": 5.800689450552454e-06,
+      "meanM": 3.0683570329119123e-07
+    },
+    {
+      "object": "Forearm_shoulder_bolt_-1",
+      "samples": 472,
+      "maxM": 6.034918988007121e-05,
+      "meanM": 1.720089294157161e-05
+    },
+    {
+      "object": "Forearm_shoulder_bolt_-1_hex_socket",
+      "samples": 352,
+      "maxM": 1.203734427690506e-05,
+      "meanM": 4.45262246172685e-06
+    },
+    {
+      "object": "Forearm_wrist_bolt_-1",
+      "samples": 472,
+      "maxM": 5.2800656703766435e-05,
+      "meanM": 1.5050064190206325e-05
+    },
+    {
+      "object": "Forearm_wrist_bolt_-1_hex_socket",
+      "samples": 352,
+      "maxM": 1.2036324733344372e-05,
+      "meanM": 4.4536277281790024e-06
+    },
+    {
+      "object": "Forearm_titanium_rail_1",
+      "samples": 562,
+      "maxM": 0.00024195514561142772,
+      "meanM": 7.786498734401838e-05
+    },
+    {
+      "object": "Forearm_power_cell_1",
+      "samples": 594,
+      "maxM": 0.00010728208144428208,
+      "meanM": 3.9326358264946534e-05
+    },
+    {
+      "object": "Forearm_power_gland_1",
+      "samples": 639,
+      "maxM": 7.400920731015503e-05,
+      "meanM": 2.957342360966222e-05
+    },
+    {
+      "object": "Forearm_elbow_rod_1",
+      "samples": 594,
+      "maxM": 6.427217158488929e-05,
+      "meanM": 2.4774733984822364e-05
+    },
+    {
+      "object": "Forearm_side_cable_1",
+      "samples": 648,
+      "maxM": 6.312501500360668e-05,
+      "meanM": 3.205703357410332e-06
+    },
+    {
+      "object": "Forearm_swept_front_armor_1",
+      "samples": 546,
+      "maxM": 0.0002845347917173058,
+      "meanM": 4.22616041111692e-05
+    },
+    {
+      "object": "Forearm_lateral_blade_1",
+      "samples": 539,
+      "maxM": 0.0002600431616883725,
+      "meanM": 4.263301852084433e-05
+    },
+    {
+      "object": "Forearm_gold_outer_reveal_1",
+      "samples": 648,
+      "maxM": 3.7960494410071988e-06,
+      "meanM": 3.058493844610837e-07
+    },
+    {
+      "object": "Forearm_shoulder_bolt_1",
+      "samples": 472,
+      "maxM": 6.034918988007121e-05,
+      "meanM": 1.7200872874881303e-05
+    },
+    {
+      "object": "Forearm_shoulder_bolt_1_hex_socket",
+      "samples": 352,
+      "maxM": 1.203734427690506e-05,
+      "meanM": 4.452509917005833e-06
+    },
+    {
+      "object": "Forearm_wrist_bolt_1",
+      "samples": 472,
+      "maxM": 5.2800656703766435e-05,
+      "meanM": 1.5050058266929391e-05
+    },
+    {
+      "object": "Forearm_wrist_bolt_1_hex_socket",
+      "samples": 352,
+      "maxM": 1.2036324733344372e-05,
+      "meanM": 4.453632628424615e-06
+    },
+    {
+      "object": "Forearm_front_keel",
+      "samples": 592,
+      "maxM": 0.00024889453197829425,
+      "meanM": 4.214531158569662e-05
+    },
+    {
+      "object": "Forearm_front_recess",
+      "samples": 589,
+      "maxM": 4.0049024391919374e-05,
+      "meanM": 1.3305929743475997e-05
+    },
+    {
+      "object": "Forearm_gold_recess_edge",
+      "samples": 532,
+      "maxM": 3.073364496231079e-08,
+      "meanM": 3.417183256493651e-09
+    },
+    {
+      "object": "Forearm_front_indicator",
+      "samples": 292,
+      "maxM": 3.003552251357178e-08,
+      "meanM": 3.316973064556416e-09
+    },
+    {
+      "object": "Service_cover_graphite",
+      "samples": 539,
+      "maxM": 0.00021922826999798417,
+      "meanM": 4.037802316948051e-05
+    },
+    {
+      "object": "Service_cover_center_inset",
+      "samples": 547,
+      "maxM": 0.00018243977683596313,
+      "meanM": 3.583122544085274e-05
+    },
+    {
+      "object": "Service_cover_vent_00",
+      "samples": 516,
+      "maxM": 3.286130478841187e-08,
+      "meanM": 4.459559260201611e-09
+    },
+    {
+      "object": "Service_cover_vent_01",
+      "samples": 516,
+      "maxM": 3.301929396570813e-08,
+      "meanM": 4.312719141326017e-09
+    },
+    {
+      "object": "Service_cover_vent_02",
+      "samples": 516,
+      "maxM": 3.613003585201113e-08,
+      "meanM": 4.952203318393488e-09
+    },
+    {
+      "object": "Service_cover_vent_03",
+      "samples": 516,
+      "maxM": 3.3333023452541966e-08,
+      "meanM": 5.087975209109075e-09
+    },
+    {
+      "object": "Service_cover_vent_04",
+      "samples": 516,
+      "maxM": 3.5156656252866014e-08,
+      "meanM": 4.6668641165146305e-09
+    },
+    {
+      "object": "Service_cover_vent_05",
+      "samples": 516,
+      "maxM": 3.332000986233652e-08,
+      "meanM": 4.561961408117026e-09
+    },
+    {
+      "object": "Service_cover_vent_06",
+      "samples": 516,
+      "maxM": 6.150255416059736e-08,
+      "meanM": 5.4709978149892166e-09
+    },
+    {
+      "object": "Service_cover_vent_07",
+      "samples": 516,
+      "maxM": 3.3785322983703736e-08,
+      "meanM": 4.564190999305702e-09
+    },
+    {
+      "object": "Service_cover_vent_08",
+      "samples": 516,
+      "maxM": 3.316345242865282e-08,
+      "meanM": 4.2058668623631336e-09
+    },
+    {
+      "object": "Service_cover_vent_09",
+      "samples": 516,
+      "maxM": 3.514431767825954e-08,
+      "meanM": 4.711612015268833e-09
+    },
+    {
+      "object": "Service_cover_status_light",
+      "samples": 292,
+      "maxM": 3.0725043842494415e-08,
+      "meanM": 4.262276562136136e-09
+    },
+    {
+      "object": "Service_cover_screw_-1_351",
+      "samples": 572,
+      "maxM": 4.398457804200007e-06,
+      "meanM": 9.246791034716412e-07
+    },
+    {
+      "object": "Service_cover_screw_-1_351_hex_socket",
+      "samples": 701,
+      "maxM": 9.407814900441736e-07,
+      "meanM": 2.474744920549927e-07
+    },
+    {
+      "object": "Service_cover_screw_-1_305",
+      "samples": 572,
+      "maxM": 4.398457804200007e-06,
+      "meanM": 9.242184061669384e-07
+    },
+    {
+      "object": "Service_cover_screw_-1_305_hex_socket",
+      "samples": 701,
+      "maxM": 9.318364959653991e-07,
+      "meanM": 2.473585212138836e-07
+    },
+    {
+      "object": "Service_cover_screw_-1_249",
+      "samples": 572,
+      "maxM": 4.392856226331787e-06,
+      "meanM": 9.23957745504886e-07
+    },
+    {
+      "object": "Service_cover_screw_-1_249_hex_socket",
+      "samples": 701,
+      "maxM": 9.294324172515189e-07,
+      "meanM": 2.470819101076966e-07
+    },
+    {
+      "object": "Service_cover_screw_1_351",
+      "samples": 572,
+      "maxM": 4.398375949676847e-06,
+      "meanM": 9.245580503942113e-07
+    },
+    {
+      "object": "Service_cover_screw_1_351_hex_socket",
+      "samples": 701,
+      "maxM": 9.32113835006021e-07,
+      "meanM": 2.4720049191271545e-07
+    },
+    {
+      "object": "Service_cover_screw_1_305",
+      "samples": 572,
+      "maxM": 4.398375949676847e-06,
+      "meanM": 9.242659625150753e-07
+    },
+    {
+      "object": "Service_cover_screw_1_305_hex_socket",
+      "samples": 701,
+      "maxM": 9.366716540171183e-07,
+      "meanM": 2.4750034201403394e-07
+    },
+    {
+      "object": "Service_cover_screw_1_249",
+      "samples": 572,
+      "maxM": 4.392856226331787e-06,
+      "meanM": 9.238254450549588e-07
+    },
+    {
+      "object": "Service_cover_screw_1_249_hex_socket",
+      "samples": 701,
+      "maxM": 9.301152772422938e-07,
+      "meanM": 2.4714288136395407e-07
+    },
+    {
+      "object": "Wrist_upper_mount",
+      "samples": 562,
+      "maxM": 0.00034411775413900614,
+      "meanM": 0.00012403256059408688
+    },
+    {
+      "object": "Wrist_upper_silver_collar",
+      "samples": 690,
+      "maxM": 0.0002962394501082599,
+      "meanM": 5.9485902998044635e-05
+    },
+    {
+      "object": "Wrist_gimbal_axle",
+      "samples": 562,
+      "maxM": 0.00035293467226438224,
+      "meanM": 0.00011044240656581407
+    },
+    {
+      "object": "Wrist_side_ring_-1",
+      "samples": 665,
+      "maxM": 0.00012508226791396737,
+      "meanM": 2.880052624620326e-05
+    },
+    {
+      "object": "Wrist_side_ring_1",
+      "samples": 665,
+      "maxM": 0.00012707420683000237,
+      "meanM": 2.8761973264376397e-05
+    },
+    {
+      "object": "Wrist_rotating_stem",
+      "samples": 562,
+      "maxM": 0.0003573595895431936,
+      "meanM": 0.0001143277417807968
+    },
+    {
+      "object": "Wrist_gold_lock",
+      "samples": 690,
+      "maxM": 0.0002847844734787941,
+      "meanM": 5.656587643333417e-05
+    },
+    {
+      "object": "Wrist_dorsal_fairing",
+      "samples": 690,
+      "maxM": 0.00028467204538173974,
+      "meanM": 6.006629834132427e-05
+    },
+    {
+      "object": "Palm_graphite_body",
+      "samples": 572,
+      "maxM": 1.3228715545210434e-07,
+      "meanM": 1.5922467035609868e-09
+    },
+    {
+      "object": "Palm_dorsal_main_plate",
+      "samples": 592,
+      "maxM": 0.0002694912545848638,
+      "meanM": 4.6442427025725924e-05
+    },
+    {
+      "object": "Palm_edge_plate_-1",
+      "samples": 586,
+      "maxM": 0.0002796986955218017,
+      "meanM": 4.832313411761851e-05
+    },
+    {
+      "object": "Palm_gold_split_-1",
+      "samples": 532,
+      "maxM": 1.6344644748755854e-08,
+      "meanM": 2.9842791187268224e-09
+    },
+    {
+      "object": "Palm_grip_pad_-1",
+      "samples": 547,
+      "maxM": 0.00032664218451827765,
+      "meanM": 6.6287126546903e-05
+    },
+    {
+      "object": "Palm_edge_plate_1",
+      "samples": 617,
+      "maxM": 0.00014161782746668905,
+      "meanM": 2.391953113483314e-05
+    },
+    {
+      "object": "Palm_gold_split_1",
+      "samples": 532,
+      "maxM": 3.188334929404846e-08,
+      "meanM": 3.1971907761207785e-09
+    },
+    {
+      "object": "Palm_grip_pad_1",
+      "samples": 547,
+      "maxM": 0.00019232710474170744,
+      "meanM": 3.872017458984828e-05
+    },
+    {
+      "object": "Palm_center_grip",
+      "samples": 660,
+      "maxM": 0.0003054554108530283,
+      "meanM": 7.784071595100528e-05
+    },
+    {
+      "object": "INDEX_S0_structural_link",
+      "samples": 411,
+      "maxM": 0.0002610644150990993,
+      "meanM": 0.00011515099802563516
+    },
+    {
+      "object": "INDEX_S0_ivory_phalanx",
+      "samples": 411,
+      "maxM": 0.00035935264895670116,
+      "meanM": 0.00012022014165093229
+    },
+    {
+      "object": "INDEX_S0_palm_grip",
+      "samples": 422,
+      "maxM": 0.0003324496792629361,
+      "meanM": 0.00011188164793210931
+    },
+    {
+      "object": "INDEX_knuckle_0",
+      "samples": 639,
+      "maxM": 7.144467963371426e-05,
+      "meanM": 2.7365439139328647e-05
+    },
+    {
+      "object": "INDEX_gold_bearing_0_-1",
+      "samples": 562,
+      "maxM": 7.873976574046537e-05,
+      "meanM": 2.2847391102040453e-05
+    },
+    {
+      "object": "INDEX_gold_bearing_0_1",
+      "samples": 562,
+      "maxM": 7.696865941397846e-05,
+      "meanM": 2.313763838472634e-05
+    },
+    {
+      "object": "INDEX_knuckle_status",
+      "samples": 594,
+      "maxM": 1.1725714102794882e-05,
+      "meanM": 3.2458675498802502e-06
+    },
+    {
+      "object": "INDEX_S1_structural_link",
+      "samples": 411,
+      "maxM": 0.0002375694311922416,
+      "meanM": 0.00011104631680875145
+    },
+    {
+      "object": "INDEX_S1_ivory_phalanx",
+      "samples": 411,
+      "maxM": 0.0003678453213069588,
+      "meanM": 0.0001217641023406226
+    },
+    {
+      "object": "INDEX_S1_palm_grip",
+      "samples": 422,
+      "maxM": 0.0003117841260973364,
+      "meanM": 0.00011032158386222803
+    },
+    {
+      "object": "INDEX_knuckle_1",
+      "samples": 639,
+      "maxM": 6.684850086458027e-05,
+      "meanM": 2.6602531153612816e-05
+    },
+    {
+      "object": "INDEX_gold_bearing_1_-1",
+      "samples": 562,
+      "maxM": 7.50903200241737e-05,
+      "meanM": 2.2963091162972984e-05
+    },
+    {
+      "object": "INDEX_gold_bearing_1_1",
+      "samples": 562,
+      "maxM": 6.808900070609525e-05,
+      "meanM": 2.1773737651004474e-05
+    },
+    {
+      "object": "INDEX_S2_structural_link",
+      "samples": 424,
+      "maxM": 0.00011469034507172182,
+      "meanM": 4.933222359762516e-05
+    },
+    {
+      "object": "INDEX_S2_ivory_phalanx",
+      "samples": 424,
+      "maxM": 0.0003345652366988361,
+      "meanM": 0.00011736862514953935
+    },
+    {
+      "object": "INDEX_S2_palm_grip",
+      "samples": 437,
+      "maxM": 0.0002722078934311867,
+      "meanM": 0.00010073766331435931
+    },
+    {
+      "object": "INDEX_knuckle_2",
+      "samples": 639,
+      "maxM": 5.609994332189672e-05,
+      "meanM": 2.3163839540403043e-05
+    },
+    {
+      "object": "INDEX_gold_bearing_2_-1",
+      "samples": 562,
+      "maxM": 6.891307566547766e-05,
+      "meanM": 2.153341455877129e-05
+    },
+    {
+      "object": "INDEX_gold_bearing_2_1",
+      "samples": 562,
+      "maxM": 6.893206591485068e-05,
+      "meanM": 2.063663126727939e-05
+    },
+    {
+      "object": "MIDDLE_S0_structural_link",
+      "samples": 411,
+      "maxM": 0.0002574119425844401,
+      "meanM": 0.00011362915336370609
+    },
+    {
+      "object": "MIDDLE_S0_ivory_phalanx",
+      "samples": 411,
+      "maxM": 0.0003585809899959713,
+      "meanM": 0.0001191844555929811
+    },
+    {
+      "object": "MIDDLE_S0_palm_grip",
+      "samples": 422,
+      "maxM": 0.0003377655812073499,
+      "meanM": 0.00011548283626764921
+    },
+    {
+      "object": "MIDDLE_knuckle_0",
+      "samples": 639,
+      "maxM": 7.987459684954956e-05,
+      "meanM": 2.44693891046441e-05
+    },
+    {
+      "object": "MIDDLE_gold_bearing_0_-1",
+      "samples": 562,
+      "maxM": 7.813412230461836e-05,
+      "meanM": 2.3459282329709525e-05
+    },
+    {
+      "object": "MIDDLE_gold_bearing_0_1",
+      "samples": 562,
+      "maxM": 7.828269735909998e-05,
+      "meanM": 2.277381200073756e-05
+    },
+    {
+      "object": "MIDDLE_knuckle_status",
+      "samples": 594,
+      "maxM": 1.0338038009649608e-05,
+      "meanM": 3.2904984701162627e-06
+    },
+    {
+      "object": "MIDDLE_S1_structural_link",
+      "samples": 411,
+      "maxM": 0.0002488660393282771,
+      "meanM": 0.0001144963990973205
+    },
+    {
+      "object": "MIDDLE_S1_ivory_phalanx",
+      "samples": 411,
+      "maxM": 0.0003666953998617828,
+      "meanM": 0.00012245583474555853
+    },
+    {
+      "object": "MIDDLE_S1_palm_grip",
+      "samples": 422,
+      "maxM": 0.0003175941819790751,
+      "meanM": 0.00011091762060265485
+    },
+    {
+      "object": "MIDDLE_knuckle_1",
+      "samples": 639,
+      "maxM": 6.951974501134828e-05,
+      "meanM": 2.797567260791488e-05
+    },
+    {
+      "object": "MIDDLE_gold_bearing_1_-1",
+      "samples": 562,
+      "maxM": 7.857337914174423e-05,
+      "meanM": 2.247802711354466e-05
+    },
+    {
+      "object": "MIDDLE_gold_bearing_1_1",
+      "samples": 562,
+      "maxM": 7.339652074733749e-05,
+      "meanM": 2.2174773341585463e-05
+    },
+    {
+      "object": "MIDDLE_S2_structural_link",
+      "samples": 424,
+      "maxM": 0.00012618325126823038,
+      "meanM": 5.1034271921156564e-05
+    },
+    {
+      "object": "MIDDLE_S2_ivory_phalanx",
+      "samples": 424,
+      "maxM": 0.0003487083304207772,
+      "meanM": 0.00011946609268098861
+    },
+    {
+      "object": "MIDDLE_S2_palm_grip",
+      "samples": 437,
+      "maxM": 0.0002756585890892893,
+      "meanM": 0.00010165216277263773
+    },
+    {
+      "object": "MIDDLE_knuckle_2",
+      "samples": 639,
+      "maxM": 6.350118928821757e-05,
+      "meanM": 2.3879456984513432e-05
+    },
+    {
+      "object": "MIDDLE_gold_bearing_2_-1",
+      "samples": 562,
+      "maxM": 7.867845124565065e-05,
+      "meanM": 2.1659486182115414e-05
+    },
+    {
+      "object": "MIDDLE_gold_bearing_2_1",
+      "samples": 562,
+      "maxM": 7.584894046885893e-05,
+      "meanM": 2.2244671286789352e-05
+    },
+    {
+      "object": "RING_S0_structural_link",
+      "samples": 411,
+      "maxM": 0.0002656767319422215,
+      "meanM": 0.0001166573333294496
+    },
+    {
+      "object": "RING_S0_ivory_phalanx",
+      "samples": 411,
+      "maxM": 0.00035218734410591424,
+      "meanM": 0.00012033849651336196
+    },
+    {
+      "object": "RING_S0_palm_grip",
+      "samples": 422,
+      "maxM": 0.0003294857160653919,
+      "meanM": 0.00011162121831587789
+    },
+    {
+      "object": "RING_knuckle_0",
+      "samples": 639,
+      "maxM": 7.001014455454424e-05,
+      "meanM": 2.813702675578562e-05
+    },
+    {
+      "object": "RING_gold_bearing_0_-1",
+      "samples": 562,
+      "maxM": 7.336168346228078e-05,
+      "meanM": 2.27945971634602e-05
+    },
+    {
+      "object": "RING_gold_bearing_0_1",
+      "samples": 562,
+      "maxM": 7.440818444592878e-05,
+      "meanM": 2.257089092520444e-05
+    },
+    {
+      "object": "RING_knuckle_status",
+      "samples": 594,
+      "maxM": 1.0665919035091065e-05,
+      "meanM": 3.301670096652202e-06
+    },
+    {
+      "object": "RING_S1_structural_link",
+      "samples": 411,
+      "maxM": 0.00023954699281603098,
+      "meanM": 0.00010719498994524118
+    },
+    {
+      "object": "RING_S1_ivory_phalanx",
+      "samples": 411,
+      "maxM": 0.00035971024772152305,
+      "meanM": 0.00012218750424815972
+    },
+    {
+      "object": "RING_S1_palm_grip",
+      "samples": 422,
+      "maxM": 0.00030839137616567314,
+      "meanM": 0.00011222759248993734
+    },
+    {
+      "object": "RING_knuckle_1",
+      "samples": 639,
+      "maxM": 6.561730697285384e-05,
+      "meanM": 2.5511089371558897e-05
+    },
+    {
+      "object": "RING_gold_bearing_1_-1",
+      "samples": 562,
+      "maxM": 8.036256622290239e-05,
+      "meanM": 2.1878650135878e-05
+    },
+    {
+      "object": "RING_gold_bearing_1_1",
+      "samples": 562,
+      "maxM": 8.036247891141102e-05,
+      "meanM": 2.13328914629873e-05
+    },
+    {
+      "object": "RING_S2_structural_link",
+      "samples": 424,
+      "maxM": 0.00011745376832550392,
+      "meanM": 4.788231143707752e-05
+    },
+    {
+      "object": "RING_S2_ivory_phalanx",
+      "samples": 424,
+      "maxM": 0.0003331064945086837,
+      "meanM": 0.00011685968459573814
+    },
+    {
+      "object": "RING_S2_palm_grip",
+      "samples": 465,
+      "maxM": 0.00024344102712348104,
+      "meanM": 0.00010089525501688934
+    },
+    {
+      "object": "RING_knuckle_2",
+      "samples": 639,
+      "maxM": 5.739043263019994e-05,
+      "meanM": 2.239534611159882e-05
+    },
+    {
+      "object": "RING_gold_bearing_2_-1",
+      "samples": 562,
+      "maxM": 6.762775592505932e-05,
+      "meanM": 2.145191591616886e-05
+    },
+    {
+      "object": "RING_gold_bearing_2_1",
+      "samples": 562,
+      "maxM": 6.948370719328523e-05,
+      "meanM": 2.1789735306000364e-05
+    },
+    {
+      "object": "LITTLE_S0_structural_link",
+      "samples": 411,
+      "maxM": 0.0002545526367612183,
+      "meanM": 0.0001171798674044413
+    },
+    {
+      "object": "LITTLE_S0_ivory_phalanx",
+      "samples": 411,
+      "maxM": 0.00035276086418889463,
+      "meanM": 0.00012343035428760446
+    },
+    {
+      "object": "LITTLE_S0_palm_grip",
+      "samples": 422,
+      "maxM": 0.00031187929562292993,
+      "meanM": 0.00011233067268760191
+    },
+    {
+      "object": "LITTLE_knuckle_0",
+      "samples": 639,
+      "maxM": 6.04207489232067e-05,
+      "meanM": 2.6211936830572028e-05
+    },
+    {
+      "object": "LITTLE_gold_bearing_0_-1",
+      "samples": 562,
+      "maxM": 7.398724119411781e-05,
+      "meanM": 2.2252293784956215e-05
+    },
+    {
+      "object": "LITTLE_gold_bearing_0_1",
+      "samples": 562,
+      "maxM": 7.15201604180038e-05,
+      "meanM": 2.152121114115283e-05
+    },
+    {
+      "object": "LITTLE_knuckle_status",
+      "samples": 594,
+      "maxM": 1.2330642675806303e-05,
+      "meanM": 3.1855955049435357e-06
+    },
+    {
+      "object": "LITTLE_S1_structural_link",
+      "samples": 411,
+      "maxM": 0.0001974693004740402,
+      "meanM": 9.319008195605004e-05
+    },
+    {
+      "object": "LITTLE_S1_ivory_phalanx",
+      "samples": 411,
+      "maxM": 0.00035964392009191215,
+      "meanM": 0.00012762405815149836
+    },
+    {
+      "object": "LITTLE_S1_palm_grip",
+      "samples": 422,
+      "maxM": 0.0002900443214457482,
+      "meanM": 0.00010993828923918347
+    },
+    {
+      "object": "LITTLE_knuckle_1",
+      "samples": 639,
+      "maxM": 5.24766328453552e-05,
+      "meanM": 2.247257695881027e-05
+    },
+    {
+      "object": "LITTLE_gold_bearing_1_-1",
+      "samples": 562,
+      "maxM": 6.710642628604546e-05,
+      "meanM": 2.105873326859793e-05
+    },
+    {
+      "object": "LITTLE_gold_bearing_1_1",
+      "samples": 562,
+      "maxM": 7.354066474363208e-05,
+      "meanM": 2.09369509641515e-05
+    },
+    {
+      "object": "LITTLE_S2_structural_link",
+      "samples": 424,
+      "maxM": 0.00010342816676711664,
+      "meanM": 4.195512102336137e-05
+    },
+    {
+      "object": "LITTLE_S2_ivory_phalanx",
+      "samples": 424,
+      "maxM": 0.0003063936601392925,
+      "meanM": 0.00011542131521815477
+    },
+    {
+      "object": "LITTLE_S2_palm_grip",
+      "samples": 465,
+      "maxM": 0.00023485218116547912,
+      "meanM": 0.00010087267405505108
+    },
+    {
+      "object": "LITTLE_knuckle_2",
+      "samples": 639,
+      "maxM": 4.595345671987161e-05,
+      "meanM": 1.9800948321522512e-05
+    },
+    {
+      "object": "LITTLE_gold_bearing_2_-1",
+      "samples": 562,
+      "maxM": 6.484040204668418e-05,
+      "meanM": 2.049553790120694e-05
+    },
+    {
+      "object": "LITTLE_gold_bearing_2_1",
+      "samples": 562,
+      "maxM": 7.263090810738504e-05,
+      "meanM": 2.0311312097889073e-05
+    },
+    {
+      "object": "THUMB_S0_structural_link",
+      "samples": 406,
+      "maxM": 0.0002540955028962344,
+      "meanM": 9.7875421060069e-05
+    },
+    {
+      "object": "THUMB_S0_ivory_phalanx",
+      "samples": 406,
+      "maxM": 0.00029208583873696625,
+      "meanM": 0.00011345439845736177
+    },
+    {
+      "object": "THUMB_S0_palm_grip",
+      "samples": 368,
+      "maxM": 0.00032785767689347267,
+      "meanM": 0.00012333054547227724
+    },
+    {
+      "object": "THUMB_knuckle_0",
+      "samples": 639,
+      "maxM": 7.439389446517453e-05,
+      "meanM": 2.673788591918355e-05
+    },
+    {
+      "object": "THUMB_gold_bearing_0_-1",
+      "samples": 562,
+      "maxM": 9.352927736472338e-05,
+      "meanM": 2.3389196999168456e-05
+    },
+    {
+      "object": "THUMB_gold_bearing_0_1",
+      "samples": 562,
+      "maxM": 8.256664295913652e-05,
+      "meanM": 2.35613957745165e-05
+    },
+    {
+      "object": "THUMB_knuckle_status",
+      "samples": 594,
+      "maxM": 1.0833738997462206e-05,
+      "meanM": 3.3915864124429103e-06
+    },
+    {
+      "object": "THUMB_S1_structural_link",
+      "samples": 411,
+      "maxM": 0.0002730287378653884,
+      "meanM": 0.00012520889582400655
+    },
+    {
+      "object": "THUMB_S1_ivory_phalanx",
+      "samples": 411,
+      "maxM": 0.0003736786893568933,
+      "meanM": 0.00012411573246520844
+    },
+    {
+      "object": "THUMB_S1_palm_grip",
+      "samples": 422,
+      "maxM": 0.0003304507408756763,
+      "meanM": 0.00011179227753084767
+    },
+    {
+      "object": "THUMB_knuckle_1",
+      "samples": 639,
+      "maxM": 7.525082037318498e-05,
+      "meanM": 2.4700392058760088e-05
+    },
+    {
+      "object": "THUMB_gold_bearing_1_-1",
+      "samples": 562,
+      "maxM": 8.34100937936455e-05,
+      "meanM": 2.2828425964919766e-05
+    },
+    {
+      "object": "THUMB_gold_bearing_1_1",
+      "samples": 562,
+      "maxM": 7.775570702506229e-05,
+      "meanM": 2.3490017376135992e-05
+    },
+    {
+      "object": "THUMB_S2_structural_link",
+      "samples": 424,
+      "maxM": 0.00014254162670113146,
+      "meanM": 5.8226721554030156e-05
+    },
+    {
+      "object": "THUMB_S2_ivory_phalanx",
+      "samples": 424,
+      "maxM": 0.0003642026276793331,
+      "meanM": 0.00012019830637118846
+    },
+    {
+      "object": "THUMB_S2_palm_grip",
+      "samples": 422,
+      "maxM": 0.0002695405564736575,
+      "meanM": 0.00010826917952583623
+    },
+    {
+      "object": "THUMB_knuckle_2",
+      "samples": 639,
+      "maxM": 7.771101081743836e-05,
+      "meanM": 2.6374601786188893e-05
+    },
+    {
+      "object": "THUMB_gold_bearing_2_-1",
+      "samples": 562,
+      "maxM": 7.607815496157855e-05,
+      "meanM": 2.2501476267009023e-05
+    },
+    {
+      "object": "THUMB_gold_bearing_2_1",
+      "samples": 562,
+      "maxM": 7.197299419203773e-05,
+      "meanM": 2.306447883172465e-05
+    },
+    {
+      "object": "Shoulder_L_narrow_machined_rim",
+      "samples": 542,
+      "maxM": 0.00017373911396134645,
+      "meanM": 5.53108238481118e-05
+    },
+    {
+      "object": "Shoulder_R_narrow_machined_rim",
+      "samples": 542,
+      "maxM": 0.00017333093273919076,
+      "meanM": 5.5307430285386996e-05
+    },
+    {
+      "object": "Crown_inset_border_-1",
+      "samples": 580,
+      "maxM": 3.4584304557938594e-06,
+      "meanM": 1.9808595935602103e-07
+    },
+    {
+      "object": "Crown_inset_border_1",
+      "samples": 580,
+      "maxM": 4.285941486159572e-06,
+      "meanM": 1.9295400617291846e-07
+    },
+    {
+      "object": "Crown_recessed_carrier",
+      "samples": 552,
+      "maxM": 0.0002543119771871716,
+      "meanM": 4.567176976190392e-05
+    },
+    {
+      "object": "Crown_top_lock_plate",
+      "samples": 645,
+      "maxM": 0.00029453978640958667,
+      "meanM": 5.0230347876753105e-05
+    },
+    {
+      "object": "Crown_side_carrier_-1",
+      "samples": 602,
+      "maxM": 0.0002788847777992487,
+      "meanM": 4.217470004217505e-05
+    },
+    {
+      "object": "Crown_side_carrier_1",
+      "samples": 602,
+      "maxM": 0.0002799459616653621,
+      "meanM": 4.175056559170328e-05
+    },
+    {
+      "object": "Upper_actuator_machined_sleeve",
+      "samples": 639,
+      "maxM": 0.00010848864621948451,
+      "meanM": 2.8094637625420192e-05
+    },
+    {
+      "object": "Upper_actuator_lower_band",
+      "samples": 562,
+      "maxM": 0.00011843522224808112,
+      "meanM": 3.451745880792307e-05
+    },
+    {
+      "object": "Upper_actuator_upper_seal",
+      "samples": 562,
+      "maxM": 0.00010331093653803691,
+      "meanM": 2.661109315419475e-05
+    },
+    {
+      "object": "Upper_rear_rod_bridge",
+      "samples": 594,
+      "maxM": 0.0003028782084584236,
+      "meanM": 7.639254755691727e-05
+    },
+    {
+      "object": "Upper_return_pipe_-1",
+      "samples": 648,
+      "maxM": 3.289440428488888e-05,
+      "meanM": 3.649387547426879e-06
+    },
+    {
+      "object": "Upper_hose_return_-1",
+      "samples": 580,
+      "maxM": 1.4647741409135051e-05,
+      "meanM": 1.205772332239833e-06
+    },
+    {
+      "object": "Upper_return_pipe_mount_-1",
+      "samples": 562,
+      "maxM": 7.75542066548951e-05,
+      "meanM": 2.292338382002195e-05
+    },
+    {
+      "object": "Upper_blade_carrier_-1",
+      "samples": 571,
+      "maxM": 0.0002553078520577401,
+      "meanM": 3.9100727292916906e-05
+    },
+    {
+      "object": "Upper_return_pipe_1",
+      "samples": 648,
+      "maxM": 2.9085162168485112e-05,
+      "meanM": 3.9558508957899725e-06
+    },
+    {
+      "object": "Upper_hose_return_1",
+      "samples": 580,
+      "maxM": 1.4473356714006513e-05,
+      "meanM": 1.2021468331197567e-06
+    },
+    {
+      "object": "Upper_return_pipe_mount_1",
+      "samples": 562,
+      "maxM": 7.77767927502282e-05,
+      "meanM": 2.292466671767878e-05
+    },
+    {
+      "object": "Upper_blade_carrier_1",
+      "samples": 571,
+      "maxM": 0.0002608145587146282,
+      "meanM": 3.844571459376858e-05
+    },
+    {
+      "object": "Forearm_recessed_carrier_-1",
+      "samples": 567,
+      "maxM": 0.00025751753128133714,
+      "meanM": 4.0922722196031045e-05
+    },
+    {
+      "object": "Forearm_lateral_underlayer_-1",
+      "samples": 592,
+      "maxM": 0.00027269567362964153,
+      "meanM": 5.372345006160312e-05
+    },
+    {
+      "object": "Forearm_channel_hydraulic_-1",
+      "samples": 580,
+      "maxM": 7.375882887572516e-06,
+      "meanM": 3.292955220980425e-07
+    },
+    {
+      "object": "Forearm_recessed_carrier_1",
+      "samples": 567,
+      "maxM": 0.0002569338248576969,
+      "meanM": 4.108824337333826e-05
+    },
+    {
+      "object": "Forearm_lateral_underlayer_1",
+      "samples": 592,
+      "maxM": 0.00027426768792793155,
+      "meanM": 5.326513356524949e-05
+    },
+    {
+      "object": "Forearm_channel_hydraulic_1",
+      "samples": 580,
+      "maxM": 7.658069080207497e-06,
+      "meanM": 3.26055011493746e-07
+    },
+    {
+      "object": "Service_bay_structural_rim",
+      "samples": 464,
+      "maxM": 0.00027950535877607763,
+      "meanM": 0.00010238170293272549
+    },
+    {
+      "object": "Service_bay_machined_lip",
+      "samples": 464,
+      "maxM": 0.000285073125269264,
+      "meanM": 9.673953749137698e-05
+    },
+    {
+      "object": "Service_cartridge_sleeve_-1",
+      "samples": 594,
+      "maxM": 8.950347546488047e-05,
+      "meanM": 4.101793779895549e-05
+    },
+    {
+      "object": "Service_cartridge_lower_band_-1",
+      "samples": 562,
+      "maxM": 9.703971591079608e-05,
+      "meanM": 2.7864646131841214e-05
+    },
+    {
+      "object": "Service_cartridge_upper_band_-1",
+      "samples": 562,
+      "maxM": 0.00010398034646641463,
+      "meanM": 2.7992008563370074e-05
+    },
+    {
+      "object": "Service_return_conduit_-1",
+      "samples": 580,
+      "maxM": 6.625724836339941e-06,
+      "meanM": 4.40729539953754e-07
+    },
+    {
+      "object": "Service_cartridge_sleeve_1",
+      "samples": 594,
+      "maxM": 8.779131167102605e-05,
+      "meanM": 3.9074221123965525e-05
+    },
+    {
+      "object": "Service_cartridge_lower_band_1",
+      "samples": 562,
+      "maxM": 9.199701162287965e-05,
+      "meanM": 2.803294645583235e-05
+    },
+    {
+      "object": "Service_cartridge_upper_band_1",
+      "samples": 562,
+      "maxM": 0.0001023076256387867,
+      "meanM": 2.7816426842193463e-05
+    },
+    {
+      "object": "Service_return_conduit_1",
+      "samples": 580,
+      "maxM": 6.492573447758332e-06,
+      "meanM": 4.2302558112645943e-07
+    },
+    {
+      "object": "Service_lower_manifold",
+      "samples": 589,
+      "maxM": 0.0002740263589657843,
+      "meanM": 8.503293129682194e-05
+    },
+    {
+      "object": "Palm_dorsal_ring_plate",
+      "samples": 607,
+      "maxM": 0.00028424724587239325,
+      "meanM": 4.6460914821933605e-05
+    },
+    {
+      "object": "Palm_thenar_pad_seam",
+      "samples": 532,
+      "maxM": 1.5472291892137946e-08,
+      "meanM": 2.0159219439962404e-09
+    },
+    {
+      "object": "Palm_center_pad_seam",
+      "samples": 516,
+      "maxM": 1.6686016124367598e-08,
+      "meanM": 1.8511278375787663e-09
+    },
+    {
+      "object": "INDEX_S0_side_tendon_guide",
+      "samples": 292,
+      "maxM": 8.336152212962133e-09,
+      "meanM": 1.3316980760134345e-09
+    },
+    {
+      "object": "MIDDLE_S0_side_tendon_guide",
+      "samples": 292,
+      "maxM": 1.493035028943268e-08,
+      "meanM": 1.1476591944665648e-09
+    },
+    {
+      "object": "RING_S0_side_tendon_guide",
+      "samples": 292,
+      "maxM": 7.686552727648177e-09,
+      "meanM": 1.078518256438392e-09
+    },
+    {
+      "object": "LITTLE_S0_side_tendon_guide",
+      "samples": 292,
+      "maxM": 1.5028401634253896e-08,
+      "meanM": 1.1628495137886e-09
+    },
+    {
+      "object": "THUMB_S0_side_tendon_guide",
+      "samples": 292,
+      "maxM": 1.6890261633761838e-08,
+      "meanM": 2.221087225859836e-09
+    }
+  ],
+  "hexRecessBevelRepairs": [
+    {
+      "object": "Shoulder_L_lock_00_hex_socket",
+      "beforeWidthM": 0.00010920000204350799,
+      "afterWidthM": 3.39999794960022e-05,
+      "rawLocalExtentsM": [
+        0.001454922603443265,
+        0.0016799999866634607,
+        0.00016999989748001099
+      ]
+    },
+    {
+      "object": "Shoulder_L_lock_01_hex_socket",
+      "beforeWidthM": 0.00010920000204350799,
+      "afterWidthM": 3.39999794960022e-05,
+      "rawLocalExtentsM": [
+        0.001454922603443265,
+        0.0016799999866634607,
+        0.00016999989748001099
+      ]
+    },
+    {
+      "object": "Shoulder_L_lock_02_hex_socket",
+      "beforeWidthM": 0.00010920000204350799,
+      "afterWidthM": 3.39999794960022e-05,
+      "rawLocalExtentsM": [
+        0.001454922603443265,
+        0.0016799999866634607,
+        0.00016999989748001099
+      ]
+    },
+    {
+      "object": "Shoulder_L_lock_03_hex_socket",
+      "beforeWidthM": 0.00010920000204350799,
+      "afterWidthM": 3.39999794960022e-05,
+      "rawLocalExtentsM": [
+        0.001454922603443265,
+        0.0016799999866634607,
+        0.00016999989748001099
+      ]
+    },
+    {
+      "object": "Shoulder_L_lock_04_hex_socket",
+      "beforeWidthM": 0.00010920000204350799,
+      "afterWidthM": 3.39999794960022e-05,
+      "rawLocalExtentsM": [
+        0.001454922603443265,
+        0.0016799999866634607,
+        0.00016999989748001099
+      ]
+    },
+    {
+      "object": "Shoulder_L_lock_05_hex_socket",
+      "beforeWidthM": 0.00010920000204350799,
+      "afterWidthM": 3.39999794960022e-05,
+      "rawLocalExtentsM": [
+        0.001454922603443265,
+        0.0016799999866634607,
+        0.00016999989748001099
+      ]
+    },
+    {
+      "object": "Shoulder_R_lock_00_hex_socket",
+      "beforeWidthM": 0.00010920000204350799,
+      "afterWidthM": 3.39999794960022e-05,
+      "rawLocalExtentsM": [
+        0.001454922603443265,
+        0.0016799999866634607,
+        0.00016999989748001099
+      ]
+    },
+    {
+      "object": "Shoulder_R_lock_01_hex_socket",
+      "beforeWidthM": 0.00010920000204350799,
+      "afterWidthM": 3.39999794960022e-05,
+      "rawLocalExtentsM": [
+        0.001454922603443265,
+        0.0016799999866634607,
+        0.00016999989748001099
+      ]
+    },
+    {
+      "object": "Shoulder_R_lock_02_hex_socket",
+      "beforeWidthM": 0.00010920000204350799,
+      "afterWidthM": 3.39999794960022e-05,
+      "rawLocalExtentsM": [
+        0.001454922603443265,
+        0.0016799999866634607,
+        0.00016999989748001099
+      ]
+    },
+    {
+      "object": "Shoulder_R_lock_03_hex_socket",
+      "beforeWidthM": 0.00010920000204350799,
+      "afterWidthM": 3.39999794960022e-05,
+      "rawLocalExtentsM": [
+        0.001454922603443265,
+        0.0016799999866634607,
+        0.00016999989748001099
+      ]
+    },
+    {
+      "object": "Shoulder_R_lock_04_hex_socket",
+      "beforeWidthM": 0.00010920000204350799,
+      "afterWidthM": 3.39999794960022e-05,
+      "rawLocalExtentsM": [
+        0.001454922603443265,
+        0.0016799999866634607,
+        0.00016999989748001099
+      ]
+    },
+    {
+      "object": "Shoulder_R_lock_05_hex_socket",
+      "beforeWidthM": 0.00010920000204350799,
+      "afterWidthM": 3.39999794960022e-05,
+      "rawLocalExtentsM": [
+        0.001454922603443265,
+        0.0016799999866634607,
+        0.00016999989748001099
+      ]
+    },
+    {
+      "object": "Crown_front_fastener_-1_hex_socket",
+      "beforeWidthM": 8.189999789465219e-05,
+      "afterWidthM": 3.39999794960022e-05,
+      "rawLocalExtentsM": [
+        0.0010911920107901096,
+        0.0012600000482052565,
+        0.00016999989748001099
+      ]
+    },
+    {
+      "object": "Crown_front_fastener_1_hex_socket",
+      "beforeWidthM": 8.189999789465219e-05,
+      "afterWidthM": 3.39999794960022e-05,
+      "rawLocalExtentsM": [
+        0.0010911920107901096,
+        0.0012600000482052565,
+        0.00016999989748001099
+      ]
+    },
+    {
+      "object": "Upper_blade_screw_-1_hex_socket",
+      "beforeWidthM": 9.827999747358263e-05,
+      "afterWidthM": 3.39999794960022e-05,
+      "rawLocalExtentsM": [
+        0.0013094303430989385,
+        0.0015119999879971147,
+        0.00016999989748001099
+      ]
+    },
+    {
+      "object": "Upper_blade_screw_1_hex_socket",
+      "beforeWidthM": 9.827999747358263e-05,
+      "afterWidthM": 3.39999794960022e-05,
+      "rawLocalExtentsM": [
+        0.0013094303430989385,
+        0.0015119999879971147,
+        0.00016999989748001099
+      ]
+    },
+    {
+      "object": "Elbow_-1_cap_bolt_0_hex_socket",
+      "beforeWidthM": 7.370999810518697e-05,
+      "afterWidthM": 3.39999794960022e-05,
+      "rawLocalExtentsM": [
+        0.0009820727864280343,
+        0.0011340000201016665,
+        0.00016999989748001099
+      ]
+    },
+    {
+      "object": "Elbow_-1_cap_bolt_1_hex_socket",
+      "beforeWidthM": 7.370999810518697e-05,
+      "afterWidthM": 3.39999794960022e-05,
+      "rawLocalExtentsM": [
+        0.0009820727864280343,
+        0.0011340000201016665,
+        0.00016999989748001099
+      ]
+    },
+    {
+      "object": "Elbow_-1_cap_bolt_2_hex_socket",
+      "beforeWidthM": 7.370999810518697e-05,
+      "afterWidthM": 3.39999794960022e-05,
+      "rawLocalExtentsM": [
+        0.0009820727864280343,
+        0.0011340000201016665,
+        0.00016999989748001099
+      ]
+    },
+    {
+      "object": "Elbow_1_cap_bolt_0_hex_socket",
+      "beforeWidthM": 7.370999810518697e-05,
+      "afterWidthM": 3.39999794960022e-05,
+      "rawLocalExtentsM": [
+        0.0009820727864280343,
+        0.0011340000201016665,
+        0.00016999989748001099
+      ]
+    },
+    {
+      "object": "Elbow_1_cap_bolt_1_hex_socket",
+      "beforeWidthM": 7.370999810518697e-05,
+      "afterWidthM": 3.39999794960022e-05,
+      "rawLocalExtentsM": [
+        0.0009820727864280343,
+        0.0011340000201016665,
+        0.00016999989748001099
+      ]
+    },
+    {
+      "object": "Elbow_1_cap_bolt_2_hex_socket",
+      "beforeWidthM": 7.370999810518697e-05,
+      "afterWidthM": 3.39999794960022e-05,
+      "rawLocalExtentsM": [
+        0.0009820727864280343,
+        0.0011340000201016665,
+        0.00016999989748001099
+      ]
+    },
+    {
+      "object": "Forearm_shoulder_bolt_-1_hex_socket",
+      "beforeWidthM": 8.736000017961487e-05,
+      "afterWidthM": 3.39999794960022e-05,
+      "rawLocalExtentsM": [
+        0.001163938082754612,
+        0.0013439999893307686,
+        0.00016999989748001099
+      ]
+    },
+    {
+      "object": "Forearm_wrist_bolt_-1_hex_socket",
+      "beforeWidthM": 7.644000288564712e-05,
+      "afterWidthM": 3.39999794960022e-05,
+      "rawLocalExtentsM": [
+        0.0010184458224102855,
+        0.0011759999906644225,
+        0.00016999989748001099
+      ]
+    },
+    {
+      "object": "Forearm_shoulder_bolt_1_hex_socket",
+      "beforeWidthM": 8.736000017961487e-05,
+      "afterWidthM": 3.39999794960022e-05,
+      "rawLocalExtentsM": [
+        0.001163938082754612,
+        0.0013439999893307686,
+        0.00016999989748001099
+      ]
+    },
+    {
+      "object": "Forearm_wrist_bolt_1_hex_socket",
+      "beforeWidthM": 7.644000288564712e-05,
+      "afterWidthM": 3.39999794960022e-05,
+      "rawLocalExtentsM": [
+        0.0010184458224102855,
+        0.0011759999906644225,
+        0.00016999989748001099
+      ]
+    }
+  ],
+  "originalMechanismInventory": [
+    {
+      "object": "Upper_primary_cylinder",
+      "parent": "SHOULDER_PIVOT",
+      "boundsM": {
+        "min": [
+          -0.011500000022351742,
+          0.011663418263196945,
+          0.4907854497432709
+        ],
+        "max": [
+          0.011500000022351742,
+          0.03613658249378204,
+          0.5732511281967163
+        ]
+      },
+      "rawPolygonCapCentersM": [
+        [
+          -5.987688123099133e-11,
+          0.023000000044703484,
+          0.4909999966621399
+        ],
+        [
+          -1.1830725288319854e-10,
+          0.02500000037252903,
+          0.5730000138282776
+        ]
+      ],
+      "classification": "segment-local mechanism; does not bridge a moving joint",
+      "endpointScope": "Raw ngon cap-center observations when present; bounds and actual whole/detail views classify the curved guides. No inferred two-anchor connection is certified from parenting alone."
+    },
+    {
+      "object": "Upper_primary_rod",
+      "parent": "SHOULDER_PIVOT",
+      "boundsM": {
+        "min": [
+          -0.006000000052154064,
+          0.01900000125169754,
+          0.5680000185966492
+        ],
+        "max": [
+          0.006000000052154064,
+          0.03099999949336052,
+          0.6420000195503235
+        ]
+      },
+      "rawPolygonCapCentersM": [
+        [
+          -6.009959196973114e-11,
+          0.02500000223517418,
+          0.5680000185966492
+        ],
+        [
+          -6.009948094742867e-11,
+          0.02500000037252903,
+          0.6420000195503235
+        ]
+      ],
+      "classification": "segment-local mechanism; does not bridge a moving joint",
+      "endpointScope": "Raw ngon cap-center observations when present; bounds and actual whole/detail views classify the curved guides. No inferred two-anchor connection is certified from parenting alone."
+    },
+    {
+      "object": "Upper_primary_gland",
+      "parent": "SHOULDER_PIVOT",
+      "boundsM": {
+        "min": [
+          -0.013000000268220901,
+          0.012000000104308128,
+          0.5690000057220459
+        ],
+        "max": [
+          0.013000000268220901,
+          0.03800000250339508,
+          0.5820000171661377
+        ]
+      },
+      "rawPolygonCapCentersM": [
+        [
+          -3.0995428446090045e-11,
+          0.02499999850988388,
+          0.5690000057220459
+        ],
+        [
+          2.600425430543396e-10,
+          0.02500000223517418,
+          0.5820000171661377
+        ]
+      ],
+      "classification": "segment-local mechanism; does not bridge a moving joint",
+      "endpointScope": "Raw ngon cap-center observations when present; bounds and actual whole/detail views classify the curved guides. No inferred two-anchor connection is certified from parenting alone."
+    },
+    {
+      "object": "Upper_side_actuator_-1",
+      "parent": "SHOULDER_PIVOT",
+      "boundsM": {
+        "min": [
+          -0.031200001016259193,
+          0.009124193340539932,
+          0.48546797037124634
+        ],
+        "max": [
+          -0.01680000312626362,
+          0.02887580171227455,
+          0.559532105922699
+        ]
+      },
+      "rawPolygonCapCentersM": [
+        [
+          -0.024000002071261406,
+          0.01599999889731407,
+          0.4860000014305115
+        ],
+        [
+          -0.024000002071261406,
+          0.02199999801814556,
+          0.5590000152587891
+        ]
+      ],
+      "classification": "segment-local mechanism; does not bridge a moving joint",
+      "endpointScope": "Raw ngon cap-center observations when present; bounds and actual whole/detail views classify the curved guides. No inferred two-anchor connection is certified from parenting alone."
+    },
+    {
+      "object": "Upper_side_rod_-1",
+      "parent": "SHOULDER_PIVOT",
+      "boundsM": {
+        "min": [
+          -0.034974269568920135,
+          0.017750494182109833,
+          0.5545917749404907
+        ],
+        "max": [
+          -0.020025741308927536,
+          0.027249516919255257,
+          0.6214082837104797
+        ]
+      },
+      "rawPolygonCapCentersM": [
+        [
+          -0.024000003933906555,
+          0.022000005468726158,
+          0.5550000071525574
+        ],
+        [
+          -0.031000005081295967,
+          0.02300000563263893,
+          0.6210000514984131
+        ]
+      ],
+      "classification": "segment-local mechanism; does not bridge a moving joint",
+      "endpointScope": "Raw ngon cap-center observations when present; bounds and actual whole/detail views classify the curved guides. No inferred two-anchor connection is certified from parenting alone."
+    },
+    {
+      "object": "Upper_side_gland_-1",
+      "parent": "SHOULDER_PIVOT",
+      "boundsM": {
+        "min": [
+          -0.03200000151991844,
+          0.014100962318480015,
+          0.5543445944786072
+        ],
+        "max": [
+          -0.01600000075995922,
+          0.030899038538336754,
+          0.5666553974151611
+        ]
+      },
+      "rawPolygonCapCentersM": [
+        [
+          -0.024000002071261406,
+          0.02199999988079071,
+          0.5550000071525574
+        ],
+        [
+          -0.024000000208616257,
+          0.023000001907348633,
+          0.5659999847412109
+        ]
+      ],
+      "classification": "segment-local mechanism; does not bridge a moving joint",
+      "endpointScope": "Raw ngon cap-center observations when present; bounds and actual whole/detail views classify the curved guides. No inferred two-anchor connection is certified from parenting alone."
+    },
+    {
+      "object": "Upper_exposed_hydraulic_-1",
+      "parent": "SHOULDER_PIVOT",
+      "boundsM": {
+        "min": [
+          -0.04380814731121063,
+          -0.026959620416164398,
+          0.4594286382198334
+        ],
+        "max": [
+          -0.016610968858003616,
+          -0.0025765541940927505,
+          0.6044214963912964
+        ]
+      },
+      "rawPolygonCapCentersM": [
+        [
+          -0.03200000524520874,
+          -0.006000000052154064,
+          0.6029999852180481
+        ],
+        [
+          -0.020999999716877937,
+          -0.01600000075995922,
+          0.46000003814697266
+        ]
+      ],
+      "classification": "segment-local mechanism; does not bridge a moving joint",
+      "endpointScope": "Raw ngon cap-center observations when present; bounds and actual whole/detail views classify the curved guides. No inferred two-anchor connection is certified from parenting alone."
+    },
+    {
+      "object": "Upper_side_actuator_1",
+      "parent": "SHOULDER_PIVOT",
+      "boundsM": {
+        "min": [
+          0.01680000312626362,
+          0.009124195203185081,
+          0.48546797037124634
+        ],
+        "max": [
+          0.031200001016259193,
+          0.02887580543756485,
+          0.559532105922699
+        ]
+      },
+      "rawPolygonCapCentersM": [
+        [
+          0.024000002071261406,
+          0.01600000075995922,
+          0.4860000014305115
+        ],
+        [
+          0.024000002071261406,
+          0.02200000360608101,
+          0.5590000152587891
+        ]
+      ],
+      "classification": "segment-local mechanism; does not bridge a moving joint",
+      "endpointScope": "Raw ngon cap-center observations when present; bounds and actual whole/detail views classify the curved guides. No inferred two-anchor connection is certified from parenting alone."
+    },
+    {
+      "object": "Upper_side_rod_1",
+      "parent": "SHOULDER_PIVOT",
+      "boundsM": {
+        "min": [
+          0.020025741308927536,
+          0.017750494182109833,
+          0.5545917749404907
+        ],
+        "max": [
+          0.034974269568920135,
+          0.027249516919255257,
+          0.6214082837104797
+        ]
+      },
+      "rawPolygonCapCentersM": [
+        [
+          0.024000003933906555,
+          0.022000005468726158,
+          0.5550000667572021
+        ],
+        [
+          0.031000005081295967,
+          0.02300000563263893,
+          0.6210000514984131
+        ]
+      ],
+      "classification": "segment-local mechanism; does not bridge a moving joint",
+      "endpointScope": "Raw ngon cap-center observations when present; bounds and actual whole/detail views classify the curved guides. No inferred two-anchor connection is certified from parenting alone."
+    },
+    {
+      "object": "Upper_side_gland_1",
+      "parent": "SHOULDER_PIVOT",
+      "boundsM": {
+        "min": [
+          0.015999997034668922,
+          0.01410096138715744,
+          0.5543445944786072
+        ],
+        "max": [
+          0.03200000151991844,
+          0.030899038538336754,
+          0.5666553974151611
+        ]
+      },
+      "rawPolygonCapCentersM": [
+        [
+          0.024000000208616257,
+          0.02199999801814556,
+          0.5550000071525574
+        ],
+        [
+          0.023999998345971107,
+          0.023000001907348633,
+          0.5659999847412109
+        ]
+      ],
+      "classification": "segment-local mechanism; does not bridge a moving joint",
+      "endpointScope": "Raw ngon cap-center observations when present; bounds and actual whole/detail views classify the curved guides. No inferred two-anchor connection is certified from parenting alone."
+    },
+    {
+      "object": "Upper_exposed_hydraulic_1",
+      "parent": "SHOULDER_PIVOT",
+      "boundsM": {
+        "min": [
+          0.016610968858003616,
+          -0.026959620416164398,
+          0.4594286382198334
+        ],
+        "max": [
+          0.04380814731121063,
+          -0.002576554426923394,
+          0.6044214963912964
+        ]
+      },
+      "rawPolygonCapCentersM": [
+        [
+          0.03200000151991844,
+          -0.006000000052154064,
+          0.6029999852180481
+        ],
+        [
+          0.020999999716877937,
+          -0.01600000075995922,
+          0.46000000834465027
+        ]
+      ],
+      "classification": "segment-local mechanism; does not bridge a moving joint",
+      "endpointScope": "Raw ngon cap-center observations when present; bounds and actual whole/detail views classify the curved guides. No inferred two-anchor connection is certified from parenting alone."
+    },
+    {
+      "object": "Elbow_fixed_axle",
+      "parent": "SHOULDER_PIVOT",
+      "boundsM": {
+        "min": [
+          -0.03431999683380127,
+          -0.01899999938905239,
+          0.40700000524520874
+        ],
+        "max": [
+          0.03431999683380127,
+          0.01899999938905239,
+          0.4449999928474426
+        ]
+      },
+      "rawPolygonCapCentersM": [
+        [
+          0.03432001173496246,
+          8.003553375601768e-11,
+          0.4259999990463257
+        ],
+        [
+          -0.03432001173496246,
+          2.837623469531536e-10,
+          0.4259999990463257
+        ]
+      ],
+      "classification": "rotary-bearing axle at declared joint",
+      "endpointScope": "Raw ngon cap-center observations when present; bounds and actual whole/detail views classify the curved guides. No inferred two-anchor connection is certified from parenting alone."
+    },
+    {
+      "object": "Forearm_titanium_rail_-1",
+      "parent": "ELBOW_PIVOT",
+      "boundsM": {
+        "min": [
+          -0.03770199790596962,
+          -0.0028000138700008392,
+          0.2205202281475067
+        ],
+        "max": [
+          -0.011298004537820816,
+          0.008800013922154903,
+          0.3784797489643097
+        ]
+      },
+      "rawPolygonCapCentersM": [
+        [
+          -0.03200000151991844,
+          0.002999985823407769,
+          0.3779999613761902
+        ],
+        [
+          -0.017000002786517143,
+          0.003000014228746295,
+          0.22100001573562622
+        ]
+      ],
+      "classification": "segment-local mechanism; does not bridge a moving joint",
+      "endpointScope": "Raw ngon cap-center observations when present; bounds and actual whole/detail views classify the curved guides. No inferred two-anchor connection is certified from parenting alone."
+    },
+    {
+      "object": "Forearm_power_gland_-1",
+      "parent": "ELBOW_PIVOT",
+      "boundsM": {
+        "min": [
+          -0.018300002440810204,
+          0.01640000008046627,
+          0.3240000009536743
+        ],
+        "max": [
+          -0.003099999623373151,
+          0.031599998474121094,
+          0.335999995470047
+        ]
+      },
+      "rawPolygonCapCentersM": [
+        [
+          -0.010700002312660217,
+          0.023999998345971107,
+          0.3240000009536743
+        ],
+        [
+          -0.010699999518692493,
+          0.023999998345971107,
+          0.335999995470047
+        ]
+      ],
+      "classification": "segment-local mechanism; does not bridge a moving joint",
+      "endpointScope": "Raw ngon cap-center observations when present; bounds and actual whole/detail views classify the curved guides. No inferred two-anchor connection is certified from parenting alone."
+    },
+    {
+      "object": "Forearm_elbow_rod_-1",
+      "parent": "ELBOW_PIVOT",
+      "boundsM": {
+        "min": [
+          -0.01563071645796299,
+          0.018410081043839455,
+          0.33270934224128723
+        ],
+        "max": [
+          -0.007069282699376345,
+          0.027589913457632065,
+          0.36029067635536194
+        ]
+      },
+      "rawPolygonCapCentersM": [
+        [
+          -0.010700002312660217,
+          0.023999996483325958,
+          0.3330000042915344
+        ],
+        [
+          -0.012000002898275852,
+          0.02199999801814556,
+          0.36000001430511475
+        ]
+      ],
+      "classification": "segment-local mechanism; does not bridge a moving joint",
+      "endpointScope": "Raw ngon cap-center observations when present; bounds and actual whole/detail views classify the curved guides. No inferred two-anchor connection is certified from parenting alone."
+    },
+    {
+      "object": "Forearm_side_cable_-1",
+      "parent": "ELBOW_PIVOT",
+      "boundsM": {
+        "min": [
+          -0.0421999990940094,
+          0.010985573753714561,
+          0.22349140048027039
+        ],
+        "max": [
+          -0.014813755638897419,
+          0.0290420800447464,
+          0.3917927145957947
+        ]
+      },
+      "rawPolygonCapCentersM": [
+        [
+          -0.02800000086426735,
+          0.01400000136345625,
+          0.38999998569488525
+        ],
+        [
+          -0.017999999225139618,
+          0.014000000432133675,
+          0.2240000069141388
+        ]
+      ],
+      "classification": "segment-local mechanism; does not bridge a moving joint",
+      "endpointScope": "Raw ngon cap-center observations when present; bounds and actual whole/detail views classify the curved guides. No inferred two-anchor connection is certified from parenting alone."
+    },
+    {
+      "object": "Forearm_titanium_rail_1",
+      "parent": "ELBOW_PIVOT",
+      "boundsM": {
+        "min": [
+          0.011298004537820816,
+          -0.0028000138700008392,
+          0.2205202281475067
+        ],
+        "max": [
+          0.03770199790596962,
+          0.008800013922154903,
+          0.3784797489643097
+        ]
+      },
+      "rawPolygonCapCentersM": [
+        [
+          0.03200000151991844,
+          0.002999985823407769,
+          0.3779999613761902
+        ],
+        [
+          0.017000002786517143,
+          0.003000014228746295,
+          0.22100001573562622
+        ]
+      ],
+      "classification": "segment-local mechanism; does not bridge a moving joint",
+      "endpointScope": "Raw ngon cap-center observations when present; bounds and actual whole/detail views classify the curved guides. No inferred two-anchor connection is certified from parenting alone."
+    },
+    {
+      "object": "Forearm_power_gland_1",
+      "parent": "ELBOW_PIVOT",
+      "boundsM": {
+        "min": [
+          0.003099999623373151,
+          0.01640000008046627,
+          0.3240000009536743
+        ],
+        "max": [
+          0.018300002440810204,
+          0.031599998474121094,
+          0.335999995470047
+        ]
+      },
+      "rawPolygonCapCentersM": [
+        [
+          0.010700002312660217,
+          0.023999998345971107,
+          0.3240000009536743
+        ],
+        [
+          0.010700002312660217,
+          0.023999998345971107,
+          0.335999995470047
+        ]
+      ],
+      "classification": "segment-local mechanism; does not bridge a moving joint",
+      "endpointScope": "Raw ngon cap-center observations when present; bounds and actual whole/detail views classify the curved guides. No inferred two-anchor connection is certified from parenting alone."
+    },
+    {
+      "object": "Forearm_elbow_rod_1",
+      "parent": "ELBOW_PIVOT",
+      "boundsM": {
+        "min": [
+          0.007069282699376345,
+          0.018410081043839455,
+          0.33270934224128723
+        ],
+        "max": [
+          0.01563071645796299,
+          0.027589913457632065,
+          0.36029067635536194
+        ]
+      },
+      "rawPolygonCapCentersM": [
+        [
+          0.010700000450015068,
+          0.023999998345971107,
+          0.3330000042915344
+        ],
+        [
+          0.012000001035630703,
+          0.02199999988079071,
+          0.36000001430511475
+        ]
+      ],
+      "classification": "segment-local mechanism; does not bridge a moving joint",
+      "endpointScope": "Raw ngon cap-center observations when present; bounds and actual whole/detail views classify the curved guides. No inferred two-anchor connection is certified from parenting alone."
+    },
+    {
+      "object": "Forearm_side_cable_1",
+      "parent": "ELBOW_PIVOT",
+      "boundsM": {
+        "min": [
+          0.014813755638897419,
+          0.010985573753714561,
+          0.22349140048027039
+        ],
+        "max": [
+          0.0421999990940094,
+          0.0290420800447464,
+          0.3917927145957947
+        ]
+      },
+      "rawPolygonCapCentersM": [
+        [
+          0.02800000086426735,
+          0.01400000136345625,
+          0.38999998569488525
+        ],
+        [
+          0.018000001087784767,
+          0.014000000432133675,
+          0.2240000069141388
+        ]
+      ],
+      "classification": "segment-local mechanism; does not bridge a moving joint",
+      "endpointScope": "Raw ngon cap-center observations when present; bounds and actual whole/detail views classify the curved guides. No inferred two-anchor connection is certified from parenting alone."
+    },
+    {
+      "object": "Wrist_gimbal_axle",
+      "parent": "ELBOW_PIVOT",
+      "boundsM": {
+        "min": [
+          -0.019999999552965164,
+          -0.012000000104308128,
+          0.1810000091791153
+        ],
+        "max": [
+          0.019999999552965164,
+          0.012000000104308128,
+          0.20499999821186066
+        ]
+      },
+      "rawPolygonCapCentersM": [
+        [
+          0.019999990239739418,
+          6.548361852765083e-11,
+          0.19300000369548798
+        ],
+        [
+          -0.019999990239739418,
+          -1.673470251262188e-10,
+          0.19300000369548798
+        ]
+      ],
+      "classification": "rotary-bearing axle at declared joint",
+      "endpointScope": "Raw ngon cap-center observations when present; bounds and actual whole/detail views classify the curved guides. No inferred two-anchor connection is certified from parenting alone."
+    },
+    {
+      "object": "Upper_actuator_machined_sleeve",
+      "parent": "SHOULDER_PIVOT",
+      "boundsM": {
+        "min": [
+          -0.012000000104308128,
+          0.013000001199543476,
+          0.5389999747276306
+        ],
+        "max": [
+          0.012000000104308128,
+          0.03700000047683716,
+          0.5690000057220459
+        ]
+      },
+      "rawPolygonCapCentersM": [
+        [
+          5.820766091346741e-11,
+          0.02499999664723873,
+          0.5389997959136963
+        ],
+        [
+          -1.4551915228366852e-10,
+          0.02500000409781933,
+          0.5690001845359802
+        ]
+      ],
+      "classification": "segment-local mechanism; does not bridge a moving joint",
+      "endpointScope": "Raw ngon cap-center observations when present; bounds and actual whole/detail views classify the curved guides. No inferred two-anchor connection is certified from parenting alone."
+    },
+    {
+      "object": "Upper_actuator_lower_band",
+      "parent": "SHOULDER_PIVOT",
+      "boundsM": {
+        "min": [
+          -0.013000000268220901,
+          0.010499998927116394,
+          0.5090000033378601
+        ],
+        "max": [
+          0.013000000268220901,
+          0.0364999994635582,
+          0.51500004529953
+        ]
+      },
+      "rawPolygonCapCentersM": [],
+      "classification": "segment-local mechanism; does not bridge a moving joint",
+      "endpointScope": "Raw ngon cap-center observations when present; bounds and actual whole/detail views classify the curved guides. No inferred two-anchor connection is certified from parenting alone."
+    },
+    {
+      "object": "Upper_actuator_upper_seal",
+      "parent": "SHOULDER_PIVOT",
+      "boundsM": {
+        "min": [
+          -0.008500000461935997,
+          0.016499999910593033,
+          0.5855000019073486
+        ],
+        "max": [
+          0.008500000461935997,
+          0.03350000083446503,
+          0.590499997138977
+        ]
+      },
+      "rawPolygonCapCentersM": [],
+      "classification": "segment-local mechanism; does not bridge a moving joint",
+      "endpointScope": "Raw ngon cap-center observations when present; bounds and actual whole/detail views classify the curved guides. No inferred two-anchor connection is certified from parenting alone."
+    },
+    {
+      "object": "Upper_rear_rod_bridge",
+      "parent": "SHOULDER_PIVOT",
+      "boundsM": {
+        "min": [
+          -0.032036326825618744,
+          0.017823120579123497,
+          0.6277430057525635
+        ],
+        "max": [
+          0.03203631937503815,
+          0.026503637433052063,
+          0.6468307375907898
+        ]
+      },
+      "rawPolygonCapCentersM": [],
+      "classification": "segment-local mechanism; does not bridge a moving joint",
+      "endpointScope": "Raw ngon cap-center observations when present; bounds and actual whole/detail views classify the curved guides. No inferred two-anchor connection is certified from parenting alone."
+    },
+    {
+      "object": "Upper_return_pipe_-1",
+      "parent": "SHOULDER_PIVOT",
+      "boundsM": {
+        "min": [
+          -0.042980439960956573,
+          0.01825210638344288,
+          0.4772356450557709
+        ],
+        "max": [
+          -0.01801036298274994,
+          0.0418509915471077,
+          0.6295503973960876
+        ]
+      },
+      "rawPolygonCapCentersM": [
+        [
+          -0.0279999990016222,
+          0.021000001579523087,
+          0.628000020980835
+        ],
+        [
+          -0.020999999716877937,
+          0.024000000208616257,
+          0.4780000150203705
+        ]
+      ],
+      "classification": "segment-local mechanism; does not bridge a moving joint",
+      "endpointScope": "Raw ngon cap-center observations when present; bounds and actual whole/detail views classify the curved guides. No inferred two-anchor connection is certified from parenting alone."
+    },
+    {
+      "object": "Upper_hose_return_-1",
+      "parent": "SHOULDER_PIVOT",
+      "boundsM": {
+        "min": [
+          -0.022199787199497223,
+          0.021080544218420982,
+          0.4945811629295349
+        ],
+        "max": [
+          -0.0118050966411829,
+          0.0410911925137043,
+          0.6299604177474976
+        ]
+      },
+      "rawPolygonCapCentersM": [
+        [
+          -0.014000000432133675,
+          0.023000000044703484,
+          0.6290000081062317
+        ],
+        [
+          -0.01400000136345625,
+          0.03099999949336052,
+          0.4950000047683716
+        ]
+      ],
+      "classification": "segment-local mechanism; does not bridge a moving joint",
+      "endpointScope": "Raw ngon cap-center observations when present; bounds and actual whole/detail views classify the curved guides. No inferred two-anchor connection is certified from parenting alone."
+    },
+    {
+      "object": "Upper_return_pipe_mount_-1",
+      "parent": "SHOULDER_PIVOT",
+      "boundsM": {
+        "min": [
+          -0.03199999779462814,
+          0.016699999570846558,
+          0.622700035572052
+        ],
+        "max": [
+          -0.025999998673796654,
+          0.027300000190734863,
+          0.6333000063896179
+        ]
+      },
+      "rawPolygonCapCentersM": [],
+      "classification": "segment-local mechanism; does not bridge a moving joint",
+      "endpointScope": "Raw ngon cap-center observations when present; bounds and actual whole/detail views classify the curved guides. No inferred two-anchor connection is certified from parenting alone."
+    },
+    {
+      "object": "Upper_return_pipe_1",
+      "parent": "SHOULDER_PIVOT",
+      "boundsM": {
+        "min": [
+          0.01801036298274994,
+          0.01825210638344288,
+          0.4772356450557709
+        ],
+        "max": [
+          0.042980439960956573,
+          0.0418509915471077,
+          0.6295503973960876
+        ]
+      },
+      "rawPolygonCapCentersM": [
+        [
+          0.02800000086426735,
+          0.021000001579523087,
+          0.628000020980835
+        ],
+        [
+          0.021000001579523087,
+          0.024000000208616257,
+          0.4779999852180481
+        ]
+      ],
+      "classification": "segment-local mechanism; does not bridge a moving joint",
+      "endpointScope": "Raw ngon cap-center observations when present; bounds and actual whole/detail views classify the curved guides. No inferred two-anchor connection is certified from parenting alone."
+    },
+    {
+      "object": "Upper_hose_return_1",
+      "parent": "SHOULDER_PIVOT",
+      "boundsM": {
+        "min": [
+          0.0118050966411829,
+          0.021080544218420982,
+          0.4945811629295349
+        ],
+        "max": [
+          0.022199787199497223,
+          0.0410911925137043,
+          0.6299604177474976
+        ]
+      },
+      "rawPolygonCapCentersM": [
+        [
+          0.01400000136345625,
+          0.023000000044703484,
+          0.6290000677108765
+        ],
+        [
+          0.01400000136345625,
+          0.03099999949336052,
+          0.4950000047683716
+        ]
+      ],
+      "classification": "segment-local mechanism; does not bridge a moving joint",
+      "endpointScope": "Raw ngon cap-center observations when present; bounds and actual whole/detail views classify the curved guides. No inferred two-anchor connection is certified from parenting alone."
+    },
+    {
+      "object": "Upper_return_pipe_mount_1",
+      "parent": "SHOULDER_PIVOT",
+      "boundsM": {
+        "min": [
+          0.025999998673796654,
+          0.016699999570846558,
+          0.622700035572052
+        ],
+        "max": [
+          0.03199999779462814,
+          0.027300000190734863,
+          0.6333000063896179
+        ]
+      },
+      "rawPolygonCapCentersM": [],
+      "classification": "segment-local mechanism; does not bridge a moving joint",
+      "endpointScope": "Raw ngon cap-center observations when present; bounds and actual whole/detail views classify the curved guides. No inferred two-anchor connection is certified from parenting alone."
+    },
+    {
+      "object": "Forearm_channel_hydraulic_-1",
+      "parent": "ELBOW_PIVOT",
+      "boundsM": {
+        "min": [
+          -0.042394112795591354,
+          -0.000282535795122385,
+          0.23459608852863312
+        ],
+        "max": [
+          -0.017634231597185135,
+          0.00828187633305788,
+          0.3767057955265045
+        ]
+      },
+      "rawPolygonCapCentersM": [
+        [
+          -0.03200000151991844,
+          0.0020000003278255463,
+          0.37599998712539673
+        ],
+        [
+          -0.019999999552965164,
+          0.005999999586492777,
+          0.23500001430511475
+        ]
+      ],
+      "classification": "segment-local mechanism; does not bridge a moving joint",
+      "endpointScope": "Raw ngon cap-center observations when present; bounds and actual whole/detail views classify the curved guides. No inferred two-anchor connection is certified from parenting alone."
+    },
+    {
+      "object": "Forearm_channel_hydraulic_1",
+      "parent": "ELBOW_PIVOT",
+      "boundsM": {
+        "min": [
+          0.017634231597185135,
+          -0.000282535795122385,
+          0.23459608852863312
+        ],
+        "max": [
+          0.042394112795591354,
+          0.00828187633305788,
+          0.3767057955265045
+        ]
+      },
+      "rawPolygonCapCentersM": [
+        [
+          0.03200000151991844,
+          0.0020000003278255463,
+          0.37599998712539673
+        ],
+        [
+          0.019999997690320015,
+          0.005999999586492777,
+          0.23500002920627594
+        ]
+      ],
+      "classification": "segment-local mechanism; does not bridge a moving joint",
+      "endpointScope": "Raw ngon cap-center observations when present; bounds and actual whole/detail views classify the curved guides. No inferred two-anchor connection is certified from parenting alone."
+    },
+    {
+      "object": "Service_cartridge_sleeve_-1",
+      "parent": "ELBOW_PIVOT",
+      "boundsM": {
+        "min": [
+          -0.01795000024139881,
+          0.01580747961997986,
+          0.2987029552459717
+        ],
+        "max": [
+          -0.003450001124292612,
+          0.031192520633339882,
+          0.3212970495223999
+        ]
+      },
+      "rawPolygonCapCentersM": [
+        [
+          -0.010700002312660217,
+          0.023000000044703484,
+          0.29899999499320984
+        ],
+        [
+          -0.010700001381337643,
+          0.024000002071261406,
+          0.32100003957748413
+        ]
+      ],
+      "classification": "segment-local mechanism; does not bridge a moving joint",
+      "endpointScope": "Raw ngon cap-center observations when present; bounds and actual whole/detail views classify the curved guides. No inferred two-anchor connection is certified from parenting alone."
+    },
+    {
+      "object": "Service_cartridge_lower_band_-1",
+      "parent": "ELBOW_PIVOT",
+      "boundsM": {
+        "min": [
+          -0.018699999898672104,
+          0.0139999995008111,
+          0.27300000190734863
+        ],
+        "max": [
+          -0.0027000000700354576,
+          0.030000001192092896,
+          0.2770000100135803
+        ]
+      },
+      "rawPolygonCapCentersM": [],
+      "classification": "segment-local mechanism; does not bridge a moving joint",
+      "endpointScope": "Raw ngon cap-center observations when present; bounds and actual whole/detail views classify the curved guides. No inferred two-anchor connection is certified from parenting alone."
+    },
+    {
+      "object": "Service_cartridge_upper_band_-1",
+      "parent": "ELBOW_PIVOT",
+      "boundsM": {
+        "min": [
+          -0.018699999898672104,
+          0.014999999664723873,
+          0.29349997639656067
+        ],
+        "max": [
+          -0.0027000000700354576,
+          0.03099999949336052,
+          0.29649999737739563
+        ]
+      },
+      "rawPolygonCapCentersM": [],
+      "classification": "segment-local mechanism; does not bridge a moving joint",
+      "endpointScope": "Raw ngon cap-center observations when present; bounds and actual whole/detail views classify the curved guides. No inferred two-anchor connection is certified from parenting alone."
+    },
+    {
+      "object": "Service_return_conduit_-1",
+      "parent": "ELBOW_PIVOT",
+      "boundsM": {
+        "min": [
+          -0.023599999025464058,
+          0.018509456887841225,
+          0.25260046124458313
+        ],
+        "max": [
+          -0.010421769693493843,
+          0.028521690517663956,
+          0.34931865334510803
+        ]
+      },
+      "rawPolygonCapCentersM": [
+        [
+          -0.019999999552965164,
+          0.02199999988079071,
+          0.3490000069141388
+        ],
+        [
+          -0.012000000104308128,
+          0.020000001415610313,
+          0.2529999911785126
+        ]
+      ],
+      "classification": "segment-local mechanism; does not bridge a moving joint",
+      "endpointScope": "Raw ngon cap-center observations when present; bounds and actual whole/detail views classify the curved guides. No inferred two-anchor connection is certified from parenting alone."
+    },
+    {
+      "object": "Service_cartridge_sleeve_1",
+      "parent": "ELBOW_PIVOT",
+      "boundsM": {
+        "min": [
+          0.003450001124292612,
+          0.01580747961997986,
+          0.2987029552459717
+        ],
+        "max": [
+          0.01795000024139881,
+          0.031192520633339882,
+          0.3212970495223999
+        ]
+      },
+      "rawPolygonCapCentersM": [
+        [
+          0.010700000450015068,
+          0.023000000044703484,
+          0.29899999499320984
+        ],
+        [
+          0.010699999518692493,
+          0.024000002071261406,
+          0.32100003957748413
+        ]
+      ],
+      "classification": "segment-local mechanism; does not bridge a moving joint",
+      "endpointScope": "Raw ngon cap-center observations when present; bounds and actual whole/detail views classify the curved guides. No inferred two-anchor connection is certified from parenting alone."
+    },
+    {
+      "object": "Service_cartridge_lower_band_1",
+      "parent": "ELBOW_PIVOT",
+      "boundsM": {
+        "min": [
+          0.0027000000700354576,
+          0.0139999995008111,
+          0.27300000190734863
+        ],
+        "max": [
+          0.018699999898672104,
+          0.030000001192092896,
+          0.2770000100135803
+        ]
+      },
+      "rawPolygonCapCentersM": [],
+      "classification": "segment-local mechanism; does not bridge a moving joint",
+      "endpointScope": "Raw ngon cap-center observations when present; bounds and actual whole/detail views classify the curved guides. No inferred two-anchor connection is certified from parenting alone."
+    },
+    {
+      "object": "Service_cartridge_upper_band_1",
+      "parent": "ELBOW_PIVOT",
+      "boundsM": {
+        "min": [
+          0.0027000000700354576,
+          0.014999999664723873,
+          0.29349997639656067
+        ],
+        "max": [
+          0.018699999898672104,
+          0.03099999949336052,
+          0.29649999737739563
+        ]
+      },
+      "rawPolygonCapCentersM": [],
+      "classification": "segment-local mechanism; does not bridge a moving joint",
+      "endpointScope": "Raw ngon cap-center observations when present; bounds and actual whole/detail views classify the curved guides. No inferred two-anchor connection is certified from parenting alone."
+    },
+    {
+      "object": "Service_return_conduit_1",
+      "parent": "ELBOW_PIVOT",
+      "boundsM": {
+        "min": [
+          0.010421769693493843,
+          0.018509456887841225,
+          0.25260046124458313
+        ],
+        "max": [
+          0.023599999025464058,
+          0.028521690517663956,
+          0.34931865334510803
+        ]
+      },
+      "rawPolygonCapCentersM": [
+        [
+          0.019999999552965164,
+          0.02199999988079071,
+          0.3490000367164612
+        ],
+        [
+          0.012000000104308128,
+          0.020000001415610313,
+          0.2529999613761902
+        ]
+      ],
+      "classification": "segment-local mechanism; does not bridge a moving joint",
+      "endpointScope": "Raw ngon cap-center observations when present; bounds and actual whole/detail views classify the curved guides. No inferred two-anchor connection is certified from parenting alone."
+    },
+    {
+      "object": "INDEX_S0_side_tendon_guide",
+      "parent": "INDEX_J0",
+      "boundsM": {
+        "min": [
+          -0.036259185522794724,
+          -0.0003655103500932455,
+          0.08036299794912338
+        ],
+        "max": [
+          -0.03482319042086601,
+          0.0013455103617161512,
+          0.09487712383270264
+        ]
+      },
+      "rawPolygonCapCentersM": [
+        [
+          -0.0355231910943985,
+          0.0003000000142492354,
+          0.09485912322998047
+        ],
+        [
+          -0.035559188574552536,
+          0.0006800000555813313,
+          0.08038101345300674
+        ]
+      ],
+      "classification": "segment-local mechanism; does not bridge a moving joint",
+      "endpointScope": "Raw ngon cap-center observations when present; bounds and actual whole/detail views classify the curved guides. No inferred two-anchor connection is certified from parenting alone."
+    },
+    {
+      "object": "MIDDLE_S0_side_tendon_guide",
+      "parent": "MIDDLE_J0",
+      "boundsM": {
+        "min": [
+          -0.01509836781769991,
+          -0.0006657395279034972,
+          0.07652734220027924
+        ],
+        "max": [
+          -0.013328954577445984,
+          0.0006657395279034972,
+          0.09253758937120438
+        ]
+      },
+      "rawPolygonCapCentersM": [
+        [
+          -0.014398554340004921,
+          3.637978807091713e-12,
+          0.09252139925956726
+        ],
+        [
+          -0.014028766192495823,
+          -3.637978807091713e-12,
+          0.07654353976249695
+        ]
+      ],
+      "classification": "segment-local mechanism; does not bridge a moving joint",
+      "endpointScope": "Raw ngon cap-center observations when present; bounds and actual whole/detail views classify the curved guides. No inferred two-anchor connection is certified from parenting alone."
+    },
+    {
+      "object": "RING_S0_side_tendon_guide",
+      "parent": "RING_J0",
+      "boundsM": {
+        "min": [
+          0.007843420840799809,
+          -0.00036552140954881907,
+          0.07932422310113907
+        ],
+        "max": [
+          0.010319479741156101,
+          0.0013455215375870466,
+          0.09422969818115234
+        ]
+      },
+      "rawPolygonCapCentersM": [
+        [
+          0.008541565388441086,
+          0.00029999998514540493,
+          0.09417799115180969
+        ],
+        [
+          0.009621335193514824,
+          0.0006800001137889922,
+          0.07937593758106232
+        ]
+      ],
+      "classification": "segment-local mechanism; does not bridge a moving joint",
+      "endpointScope": "Raw ngon cap-center observations when present; bounds and actual whole/detail views classify the curved guides. No inferred two-anchor connection is certified from parenting alone."
+    },
+    {
+      "object": "LITTLE_S0_side_tendon_guide",
+      "parent": "LITTLE_J0",
+      "boundsM": {
+        "min": [
+          0.029394613578915596,
+          0.0009355340152978897,
+          0.08667802065610886
+        ],
+        "max": [
+          0.032898738980293274,
+          0.0030244658701121807,
+          0.09900864213705063
+        ]
+      },
+      "rawPolygonCapCentersM": [
+        [
+          0.03008403442800045,
+          0.001600000192411244,
+          0.09888549894094467
+        ],
+        [
+          0.03220932185649872,
+          0.0023599995765835047,
+          0.08680115640163422
+        ]
+      ],
+      "classification": "segment-local mechanism; does not bridge a moving joint",
+      "endpointScope": "Raw ngon cap-center observations when present; bounds and actual whole/detail views classify the curved guides. No inferred two-anchor connection is certified from parenting alone."
+    },
+    {
+      "object": "THUMB_S0_side_tendon_guide",
+      "parent": "THUMB_J0",
+      "boundsM": {
+        "min": [
+          -0.05329233780503273,
+          -0.0013453681021928787,
+          0.13409559428691864
+        ],
+        "max": [
+          -0.04558466002345085,
+          0.00036536797415465117,
+          0.1441853940486908
+        ]
+      },
+      "rawPolygonCapCentersM": [
+        [
+          -0.046156156808137894,
+          -0.0003000000142492354,
+          0.1437811553478241
+        ],
+        [
+          -0.052720844745635986,
+          -0.0006800001719966531,
+          0.13449981808662415
+        ]
+      ],
+      "classification": "segment-local mechanism; does not bridge a moving joint",
+      "endpointScope": "Raw ngon cap-center observations when present; bounds and actual whole/detail views classify the curved guides. No inferred two-anchor connection is certified from parenting alone."
+    }
+  ]
+}

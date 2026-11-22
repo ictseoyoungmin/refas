@@ -1,0 +1,24 @@
+{
+  "schema": "refas.recovery-archives/v1",
+  "checkpoints": [
+    {
+      "date": "2026-11-23",
+      "timezone": "Asia/Seoul",
+      "status": "in-progress; assets explicitly unaccepted",
+      "fileName": "refas-recovery-checkpoint-2026-11-23.tar.zst",
+      "libraryFileId": "libfile_2934f2197c90819196e0e197a0b50396",
+      "fileId": "file_00000000785881f5a7cbdcde81233679",
+      "libraryVersion": 0,
+      "bytes": 168886641,
+      "sha256": "f29956fb44825aa231cdd5bff45c8eef0d5bb0ae49090c639f3f4135603d1213",
+      "verifiedFileCount": 478,
+      "manifestVerified": true,
+      "sourceBytes": 1856150552,
+      "compression": "zstd -8 -T2 --long=29 (512MiB decode window)",
+      "contents": "Recovered source-model ZIP, original avatar, new authoring scripts, arm histories through candidate04 with topology rejection, rejected jacket candidates01\u201305, original commands and numeric reviews. Later active candidates are outside this checkpoint.",
+      "privacy": "Private owner delivery. Includes original avatar/native geometry and uncropped views; not committed to the public repository.",
+      "snapshotScope": "Stable files captured and verified individually. No claim of atomic application-level capture of an active project pointer.",
+      "link": "https://chatgpt.com/library?file_id=libfile_2934f2197c90819196e0e197a0b50396&account_id=personal"
+    }
+  ]
+}

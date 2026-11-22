@@ -1,0 +1,28 @@
+{
+  "assetSha256": "08c4f510e903891eab2c0eee276b55de71abf6f1cda3d584a880ee508e3e63f5",
+  "ok": true,
+  "geometry": {
+    "meshes": 99,
+    "skeletons": [],
+    "skinnedMeshes": 0,
+    "surfaces": 99,
+    "triangles": 86564
+  },
+  "engine": "4.7.2-stable (official)",
+  "clip": {
+    "lengthSeconds": 4.03333330154419,
+    "name": "AURIX_ReachGrip_Return",
+    "tracks": 17
+  },
+  "tolerances": {
+    "matrix": 2e-05,
+    "restVertexMatchM": 1e-05,
+    "skinVertexM": 2e-05
+  },
+  "checkCount": 29049,
+  "failedChecks": 0,
+  "matrixProbes": 14399,
+  "maximumMatrixError": 8.16769897944714e-07,
+  "maximumObservedMatrixChange": 1.99999982118607,
+  "mode": "headless GLTFDocument import and AnimationPlayer evaluation; no GPU or FPS claim"
+}

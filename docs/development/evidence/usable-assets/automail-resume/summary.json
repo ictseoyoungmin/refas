@@ -1,0 +1,232 @@
+{
+  "schema": "refas.automail-resume-delivery/v1",
+  "recordedUtc": "2026-11-22T19:26:34.698730+00:00",
+  "selectedCandidate": "candidate-08",
+  "selectedRevision": "a6a2e5dec7884effa9c42821e19549b6",
+  "restoredRevision": "449d31abeb56475ca1c6b318db9801b6",
+  "status": "frozen selected arm; author checks, independent geometry/visual review and actual Godot passed within declared scope",
+  "historicalBoundary": "Rebuilt from saved source-identity candidate05; not a restoration or reproduction of the unavailable 78998-triangle candidate.",
+  "originalNativeSha256": "e7b2ac7cbd671d979af6e178ec85efc574ad9860c9695000980cf4a29f8a2dd7",
+  "sourceImageSha256": "3c7856dd632f8a1cde8036078573f569db55b6af97fae853237d8a9356f3c872",
+  "selected": {
+    "scene.blend": {
+      "workPath": "/workspace/scratch/61afcdd4e3c6/work/automail/candidate-08/scene.blend",
+      "sha256": "badf3fd5134ea44c77bef19890cf0f3157c8e2dbe622484eba7df713791d36f1",
+      "bytes": 6862756
+    },
+    "asset.glb": {
+      "workPath": "/workspace/scratch/61afcdd4e3c6/work/automail/candidate-08/asset.glb",
+      "sha256": "08c4f510e903891eab2c0eee276b55de71abf6f1cda3d584a880ee508e3e63f5",
+      "bytes": 2026408
+    },
+    "detailed-functional.blend": {
+      "workPath": "/workspace/scratch/61afcdd4e3c6/work/automail/candidate-08/detailed-functional.blend",
+      "sha256": "85012f440e0e58b33b0d184d20fddcab1b259ac6b360b38040f39c9f92a3d219",
+      "bytes": 5990496
+    },
+    "construction.json": {
+      "workPath": "/workspace/scratch/61afcdd4e3c6/work/automail/candidate-08/construction.json",
+      "sha256": "ccb5a24e34dbe18aa3806c9e391572194c97b87b13909097f82f6dc24a175195",
+      "bytes": 408513
+    },
+    "optimized-part-triangles.json.gz": {
+      "workPath": "/workspace/scratch/61afcdd4e3c6/work/automail/candidate-08/optimized-part-triangles.json.gz",
+      "sha256": "dfa99d3c484eabd818b46d44aa29f65e5a1d2d4dac8512776caee60ae4241f36",
+      "bytes": 1304651
+    }
+  },
+  "budget": {
+    "exportTriangles": 110000,
+    "materialPrimitives": 180,
+    "sampledSurfaceErrorM": 0.0006,
+    "scope": "single game/animation arm, near-mid distance; no FPS claim"
+  },
+  "geometry": {
+    "originalTriangles": 271840,
+    "functionalDetailedTriangles": 270704,
+    "deliveryTriangles": 86564,
+    "triangleReductionPercent": 68.15626839317245,
+    "originalMeshes": 321,
+    "deliveryMeshes": 99,
+    "retainedControlEmpties": 20,
+    "deliveryNodes": 119,
+    "materialPrimitives": 99,
+    "all321SourcePartsMapped": true,
+    "actualGLBOrientedTrianglesMapped": true,
+    "maxImportedVertexMappingErrorM": 6.006850128414953e-08
+  },
+  "topology": {
+    "aggregate": {
+      "boundaryEdges": 796,
+      "nonManifoldEdges": 0,
+      "nonManifoldVertices": 0,
+      "inconsistentWindingEdges": 0,
+      "degenerateTriangles": 0,
+      "negativeClosedComponents": 0,
+      "nearZeroClosedComponents": 0,
+      "wireEdges": 0,
+      "looseVertices": 0
+    },
+    "onlyBoundaryException": "796 inherited untextured AURIX lettering contour edges; no winding/degenerate/nonmanifold exemption"
+  },
+  "surfaceDeviation": {
+    "worstPart": {
+      "object": "Shoulder_L_recess_back",
+      "samples": 562,
+      "maxM": 0.0004237265675328672,
+      "meanM": 0.0001314766432653193
+    },
+    "scope": "Both directions, vertices and triangle centroids, about 256 samples each direction per source part; not exhaustive Hausdorff bound.",
+    "reference": "already repaired detailed functional version; not original-design displacement"
+  },
+  "repairs": {
+    "palmRetopology": "Palm chassis rebuilt as connected section rings; two wrist annuli rebuilt with periodic shared boundaries; upper hose endpoints explicitly capped. Outer armor retained. Hardware decimation and bevel reduction are separately named.",
+    "thumbCoreRelief": {
+      "leftSectionHalfWidthsM": {
+        "0.139": 0.034,
+        "0.1295": 0.0345,
+        "0.12": 0.038
+      },
+      "scope": "Left/dorsal side only, cross-section y<=0.43; original bearing/knuckle and pivot retained.",
+      "reason": "Measured moving ivory thumb armor crossed core 7..15mm distal to pivot, beyond7.82mm bearing radius; candidate05 negative retained."
+    },
+    "wristPivotCorrectionM": 0.009,
+    "hexBevelParts": 26,
+    "lambdaCap": {
+      "object": "Crown_A_mark",
+      "originalCapTriangles": 56,
+      "unionCapTriangles": 57,
+      "boundaryEdgesPerCap": 57,
+      "extrusionDepthM": 5.999999848427251e-05,
+      "excludedUncoveredConstraintRegions": 49,
+      "overlapRegionsMerged": 1,
+      "method": "Constrained Delaunay triangulation of original cap triangle union; shared closed rim; original material retained."
+    }
+  },
+  "attributes": {
+    "allOriginalMaterialAssignmentsRetained": true,
+    "allOriginalParentAssignmentsRetainedExceptDocumentedWristPivotLocation": true,
+    "sourceHasImageTextures": false,
+    "sourceHasSkinVertexGroups": false,
+    "omittedUnusedUvLayer": {
+      "object": "Crown_A_mark",
+      "layer": "UVMap",
+      "reason": "reconstructed unused glyph cap UV; original retained in untouched source"
+    },
+    "otherExistingUvLayerNamesRetained": true,
+    "immutableConstructionUvSentenceQualification": "Broad layer-preservation statement excludes this unused generated glyph UVMap."
+  },
+  "motion": {
+    "clip": "AURIX_ReachGrip_Return",
+    "frames": [
+      1,
+      121
+    ],
+    "fps": 30,
+    "nodesPerFrame": 119,
+    "matrixProbes": 14399,
+    "surfacePairCount": 133,
+    "surfaceIntersectionCount": 0,
+    "limits": "Named arm armor transitions, hand-core/armor against all digit armor, and all cross-digit armor pairs; bearing, fastener, other intra-segment contact and exhaustive all-object collision are outside this surface-pair test."
+  },
+  "godot": {
+    "assetSha256": "08c4f510e903891eab2c0eee276b55de71abf6f1cda3d584a880ee508e3e63f5",
+    "ok": true,
+    "geometry": {
+      "meshes": 99,
+      "skeletons": [],
+      "skinnedMeshes": 0,
+      "surfaces": 99,
+      "triangles": 86564
+    },
+    "engine": "4.7.2-stable (official)",
+    "clip": {
+      "lengthSeconds": 4.03333330154419,
+      "name": "AURIX_ReachGrip_Return",
+      "tracks": 17
+    },
+    "tolerances": {
+      "matrix": 2e-05,
+      "restVertexMatchM": 1e-05,
+      "skinVertexM": 2e-05
+    },
+    "failedChecks": 0,
+    "matrixProbes": 14399,
+    "maximumMatrixError": 8.16769897944714e-07,
+    "maximumObservedMatrixChange": 1.99999982118607,
+    "mode": "headless GLTFDocument import and AnimationPlayer evaluation; no GPU or FPS claim"
+  },
+  "coverRestore": {
+    "passed": true,
+    "selectedRevision": "a6a2e5dec7884effa9c42821e19549b6",
+    "editedRevision": "99adbf2c59044bcba53c3dec0c3f53b1",
+    "restoredRevision": "449d31abeb56475ca1c6b318db9801b6",
+    "selectedCount": 5,
+    "unrelatedCount": 114,
+    "unrelatedChanged": [],
+    "exactRestoredFileCount": 16,
+    "selectedBytesUnchanged": {
+      "scene.blend": "badf3fd5134ea44c77bef19890cf0f3157c8e2dbe622484eba7df713791d36f1",
+      "asset.glb": "08c4f510e903891eab2c0eee276b55de71abf6f1cda3d584a880ee508e3e63f5"
+    }
+  },
+  "flippedGlbNegativeControl": {
+    "passed": true,
+    "operation": "one actual exported GLB triangle winding reversed",
+    "detectedFailures": [
+      {
+        "object": "Delivery_AURIX_ROOT_Anodized_champagne_gold",
+        "nativeTriangles": 1472,
+        "importedTriangles": 1472,
+        "nativeVertices": 736,
+        "importedVerticesIncludingNormalUvSplits": 736,
+        "maxMappedVertexErrorM": 0.0,
+        "missingOrReversedTriangles": 1,
+        "extraOrReversedTriangles": 1,
+        "passed": false
+      }
+    ],
+    "allOtherImportedMeshesMatched": true,
+    "negativeReturncode": 2,
+    "selectedBytesUnchanged": {
+      "scene.blend": "badf3fd5134ea44c77bef19890cf0f3157c8e2dbe622484eba7df713791d36f1",
+      "asset.glb": "08c4f510e903891eab2c0eee276b55de71abf6f1cda3d584a880ee508e3e63f5"
+    }
+  },
+  "remainingLimits": [
+    "Coordinated authored motion only; no arbitrary-pose or continuous-time guarantee",
+    "Shoulder/root fixed; no forearm pronation, physics, load or grasp-force simulation",
+    "133 named surface pairs; bearing/fastener seating and other intra-segment pairs are separate intentional-contact review",
+    "No new production UV atlas; only unused Lambda generated UVMap omitted",
+    "No collision proxy, LOD or FPS/platform-ready claim",
+    "Concept source unregistered; hidden depth inferred in saved source model"
+  ],
+  "modelTokens": null,
+  "billedCost": null,
+  "independentReview": {
+    "status": "Recommended acceptance for scoped arm U4/U5; arm U2/U6 supported, other project gates separate",
+    "report": "../recovery/review-automail-candidate08.md",
+    "reportSha256": "aeb2376ce17e59a125648e35a36ab68cabf70ee38c75f189d2acb858cebdf760",
+    "sourcePartsAccounted": 321,
+    "unchangedDetailedPartsExact": 289,
+    "explicitRepairParts": 32,
+    "attributes": "All materials and rigid parents retained; only unused Lambda generated UVMap omitted; other original UV-layer names retained."
+  },
+  "runtimeSourceCommit": "5f2f39c6e9f1e4bbdef6dfd463e84991daa73e57",
+  "presentation": {
+    "source": "actual selected GLB",
+    "frame": 61,
+    "seconds": 2.033333333333333,
+    "fps": 30,
+    "size": [
+      1024,
+      1024
+    ],
+    "samples": 64,
+    "cameraScope": "Additional fitted posed bounds cameras; not source-matched diagnostics",
+    "images": {
+      "presentation-whole.png": "6cdc567db05d425654e3b6867af7f986089d1a0966c523766793cdce3a1a3783",
+      "presentation-hand.png": "c696ab8a9293731a95f4acf2ed8d6c454d1521a536cd03ccbfc080c850ddbbf7"
+    }
+  }
+}

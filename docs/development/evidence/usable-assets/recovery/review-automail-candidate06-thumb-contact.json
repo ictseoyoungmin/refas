@@ -1,0 +1,8 @@
+{
+  "nativeSha256": "0c38bbf8927cf3e1e72443b61d09ffee4fa11e9a5dfcdf202c6acdfa623670a8",
+  "scope": "Read-only actual triangle crossings. Distances reported in current THUMB_J0 frame. Signed nearest-surface vertex/centroid penetration is a sample, not an exhaustive depth bound.",
+  "originalThumbKnuckleRadiusM": 0.00782,
+  "originalThumbKnuckleHalfAxialLengthM": 0.009520000000000002,
+  "rows": [],
+  "peakFrame61": []
+}
