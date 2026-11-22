@@ -1,0 +1,356 @@
+{
+  "beganUtc": "2026-11-22T21:33:06.280589+00:00",
+  "inputs": {
+    "high": {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/lining-42/repaired-detailed.blend",
+      "sha256": "d390171806d787c21f98ca5a398117526d7cfc1f302c34bd46ea992ae28fcf0d"
+    },
+    "low": {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/paired-low-44/optimized-cloth.blend",
+      "sha256": "2abed15053c1521bb2ad103d19c9d715b488e7cfcb7b5f2f15c8dea79f61b803"
+    }
+  },
+  "method": "Reload the immutable native files, evaluate actual meshes; compare all vertices and all triangle centroids in both directions for each corresponding surface and the complete closed shell.",
+  "sampledErrorBudgetM": 0.0015,
+  "limitations": "Finite samples do not prove continuous Hausdorff distance; final assembly and motion are separate acceptance gates.",
+  "objects": {
+    "Body | continuous open front and shoulder yoke": {
+      "highNative": {
+        "vertices": 76326,
+        "triangles": 152656,
+        "surfaceTriangles": {
+          "outer": 75264,
+          "inner": 75264,
+          "rim": 2128,
+          "full": 152656
+        },
+        "duplicateIndexTriangles": 0,
+        "duplicateCoordinateTriangles": 0,
+        "pairAttributes": {
+          "wearable_shell_pair": {
+            "domain": "POINT",
+            "dataType": "INT",
+            "count": 76326,
+            "correct": true
+          },
+          "wearable_shell_side": {
+            "domain": "POINT",
+            "dataType": "INT",
+            "count": 76326,
+            "correct": true
+          }
+        },
+        "minimumPairOffsetM": 0.0002501466421892367,
+        "maximumPairOffsetM": 0.0018000614723427204,
+        "materialNames": [
+          "Identity | charcoal tailored cloth.003",
+          "Interior | black satin lining.003"
+        ]
+      },
+      "lowNative": {
+        "vertices": 18732,
+        "triangles": 37468,
+        "surfaceTriangles": {
+          "outer": 17670,
+          "inner": 17670,
+          "rim": 2128,
+          "full": 37468
+        },
+        "duplicateIndexTriangles": 0,
+        "duplicateCoordinateTriangles": 0,
+        "pairAttributes": {
+          "wearable_shell_pair": {
+            "domain": "POINT",
+            "dataType": "INT",
+            "count": 18732,
+            "correct": true
+          },
+          "wearable_shell_side": {
+            "domain": "POINT",
+            "dataType": "INT",
+            "count": 18732,
+            "correct": true
+          }
+        },
+        "minimumPairOffsetM": 0.0002501812563799274,
+        "maximumPairOffsetM": 0.0018000608678323709,
+        "materialNames": [
+          "Identity | charcoal tailored cloth.002",
+          "Interior | black satin lining.002"
+        ]
+      },
+      "distances": {
+        "outer": {
+          "highToLow": {
+            "allVertices": 38163,
+            "allTriangleCentroids": 75264,
+            "vertexMaximumM": 0.00028888953966088593,
+            "worstVertex": 11733,
+            "centroidMaximumM": 0.00028845827910117805,
+            "worstSurfaceTriangle": 13668,
+            "maximumM": 0.00028888953966088593,
+            "verticesOver1_5mm": 0,
+            "centroidsOver1_5mm": 0
+          },
+          "lowToHigh": {
+            "allVertices": 9366,
+            "allTriangleCentroids": 17670,
+            "vertexMaximumM": 0.0003021572483703494,
+            "worstVertex": 9093,
+            "centroidMaximumM": 0.00023216684348881245,
+            "worstSurfaceTriangle": 3932,
+            "maximumM": 0.0003021572483703494,
+            "verticesOver1_5mm": 0,
+            "centroidsOver1_5mm": 0
+          }
+        },
+        "inner": {
+          "highToLow": {
+            "allVertices": 38163,
+            "allTriangleCentroids": 75264,
+            "vertexMaximumM": 0.0003192655567545444,
+            "worstVertex": 49896,
+            "centroidMaximumM": 0.0003161385247949511,
+            "worstSurfaceTriangle": 26198,
+            "maximumM": 0.0003192655567545444,
+            "verticesOver1_5mm": 0,
+            "centroidsOver1_5mm": 0
+          },
+          "lowToHigh": {
+            "allVertices": 9366,
+            "allTriangleCentroids": 17670,
+            "vertexMaximumM": 0.0003040210285689682,
+            "worstVertex": 18459,
+            "centroidMaximumM": 0.0002638873702380806,
+            "worstSurfaceTriangle": 5272,
+            "maximumM": 0.0003040210285689682,
+            "verticesOver1_5mm": 0,
+            "centroidsOver1_5mm": 0
+          }
+        },
+        "rim": {
+          "highToLow": {
+            "allVertices": 2128,
+            "allTriangleCentroids": 2128,
+            "vertexMaximumM": 5.820766091346741e-11,
+            "worstVertex": 40635,
+            "centroidMaximumM": 2.3934808268677443e-07,
+            "worstSurfaceTriangle": 415,
+            "maximumM": 2.3934808268677443e-07,
+            "verticesOver1_5mm": 0,
+            "centroidsOver1_5mm": 0
+          },
+          "lowToHigh": {
+            "allVertices": 2128,
+            "allTriangleCentroids": 2128,
+            "vertexMaximumM": 5.820766091346741e-11,
+            "worstVertex": 11062,
+            "centroidMaximumM": 2.3934808268677443e-07,
+            "worstSurfaceTriangle": 415,
+            "maximumM": 2.3934808268677443e-07,
+            "verticesOver1_5mm": 0,
+            "centroidsOver1_5mm": 0
+          }
+        },
+        "full": {
+          "highToLow": {
+            "allVertices": 76326,
+            "allTriangleCentroids": 152656,
+            "vertexMaximumM": 0.0003192655567545444,
+            "worstVertex": 49896,
+            "centroidMaximumM": 0.0003161385247949511,
+            "worstSurfaceTriangle": 101462,
+            "maximumM": 0.0003192655567545444,
+            "verticesOver1_5mm": 0,
+            "centroidsOver1_5mm": 0
+          },
+          "lowToHigh": {
+            "allVertices": 18732,
+            "allTriangleCentroids": 37468,
+            "vertexMaximumM": 0.0003040210285689682,
+            "worstVertex": 18459,
+            "centroidMaximumM": 0.0002638873702380806,
+            "worstSurfaceTriangle": 22942,
+            "maximumM": 0.0003040210285689682,
+            "verticesOver1_5mm": 0,
+            "centroidsOver1_5mm": 0
+          }
+        }
+      },
+      "within1_5mm": true,
+      "nativeFacetsAndPairsValid": true
+    },
+    "Collar | standing back and neck facing": {
+      "highNative": {
+        "vertices": 124650,
+        "triangles": 249296,
+        "surfaceTriangles": {
+          "outer": 121792,
+          "inner": 121792,
+          "rim": 5712,
+          "full": 249296
+        },
+        "duplicateIndexTriangles": 0,
+        "duplicateCoordinateTriangles": 0,
+        "pairAttributes": {
+          "wearable_shell_pair": {
+            "domain": "POINT",
+            "dataType": "INT",
+            "count": 124650,
+            "correct": true
+          },
+          "wearable_shell_side": {
+            "domain": "POINT",
+            "dataType": "INT",
+            "count": 124650,
+            "correct": true
+          }
+        },
+        "minimumPairOffsetM": 0.00025014730530857035,
+        "maximumPairOffsetM": 0.0018000495798077925,
+        "materialNames": [
+          "Identity | charcoal tailored cloth.001",
+          "Interior | black satin lining.001"
+        ]
+      },
+      "lowNative": {
+        "vertices": 11356,
+        "triangles": 22708,
+        "surfaceTriangles": {
+          "outer": 10819,
+          "inner": 10819,
+          "rim": 1070,
+          "full": 22708
+        },
+        "duplicateIndexTriangles": 0,
+        "duplicateCoordinateTriangles": 0,
+        "pairAttributes": {
+          "wearable_shell_pair": {
+            "domain": "POINT",
+            "dataType": "INT",
+            "count": 11356,
+            "correct": true
+          },
+          "wearable_shell_side": {
+            "domain": "POINT",
+            "dataType": "INT",
+            "count": 11356,
+            "correct": true
+          }
+        },
+        "minimumPairOffsetM": 0.00025018474705647373,
+        "maximumPairOffsetM": 0.0018000459549294384,
+        "materialNames": [
+          "Identity | charcoal tailored cloth.004",
+          "Interior | black satin lining.004"
+        ]
+      },
+      "distances": {
+        "outer": {
+          "highToLow": {
+            "allVertices": 62325,
+            "allTriangleCentroids": 121792,
+            "vertexMaximumM": 0.0007747670169919729,
+            "worstVertex": 12212,
+            "centroidMaximumM": 0.0007012517307884991,
+            "worstSurfaceTriangle": 78510,
+            "maximumM": 0.0007747670169919729,
+            "verticesOver1_5mm": 0,
+            "centroidsOver1_5mm": 0
+          },
+          "lowToHigh": {
+            "allVertices": 5678,
+            "allTriangleCentroids": 10819,
+            "vertexMaximumM": 1.666000493116826e-08,
+            "worstVertex": 5496,
+            "centroidMaximumM": 0.0006850569625385106,
+            "worstSurfaceTriangle": 7089,
+            "maximumM": 0.0006850569625385106,
+            "verticesOver1_5mm": 0,
+            "centroidsOver1_5mm": 0
+          }
+        },
+        "inner": {
+          "highToLow": {
+            "allVertices": 62325,
+            "allTriangleCentroids": 121792,
+            "vertexMaximumM": 0.0007702638395130634,
+            "worstVertex": 74537,
+            "centroidMaximumM": 0.0006978052551858127,
+            "worstSurfaceTriangle": 78510,
+            "maximumM": 0.0007702638395130634,
+            "verticesOver1_5mm": 0,
+            "centroidsOver1_5mm": 0
+          },
+          "lowToHigh": {
+            "allVertices": 5678,
+            "allTriangleCentroids": 10819,
+            "vertexMaximumM": 2.107342389479072e-08,
+            "worstVertex": 11037,
+            "centroidMaximumM": 0.0007085683755576611,
+            "worstSurfaceTriangle": 7089,
+            "maximumM": 0.0007085683755576611,
+            "verticesOver1_5mm": 0,
+            "centroidsOver1_5mm": 0
+          }
+        },
+        "rim": {
+          "highToLow": {
+            "allVertices": 5712,
+            "allTriangleCentroids": 5712,
+            "vertexMaximumM": 0.0009544717031531036,
+            "worstVertex": 71477,
+            "centroidMaximumM": 0.000795366708189249,
+            "worstSurfaceTriangle": 2213,
+            "maximumM": 0.0009544717031531036,
+            "verticesOver1_5mm": 0,
+            "centroidsOver1_5mm": 0
+          },
+          "lowToHigh": {
+            "allVertices": 1070,
+            "allTriangleCentroids": 1070,
+            "vertexMaximumM": 0.0,
+            "worstVertex": 0,
+            "centroidMaximumM": 0.0007131677120923996,
+            "worstSurfaceTriangle": 691,
+            "maximumM": 0.0007131677120923996,
+            "verticesOver1_5mm": 0,
+            "centroidsOver1_5mm": 0
+          }
+        },
+        "full": {
+          "highToLow": {
+            "allVertices": 124650,
+            "allTriangleCentroids": 249296,
+            "vertexMaximumM": 0.0007716662366874516,
+            "worstVertex": 12212,
+            "centroidMaximumM": 0.0007501329528167844,
+            "worstSurfaceTriangle": 247158,
+            "maximumM": 0.0007716662366874516,
+            "verticesOver1_5mm": 0,
+            "centroidsOver1_5mm": 0
+          },
+          "lowToHigh": {
+            "allVertices": 11356,
+            "allTriangleCentroids": 22708,
+            "vertexMaximumM": 2.107342389479072e-08,
+            "worstVertex": 11037,
+            "centroidMaximumM": 0.0007131677120923996,
+            "worstSurfaceTriangle": 22329,
+            "maximumM": 0.0007131677120923996,
+            "verticesOver1_5mm": 0,
+            "centroidsOver1_5mm": 0
+          }
+        }
+      },
+      "within1_5mm": true,
+      "nativeFacetsAndPairsValid": true
+    }
+  },
+  "tokens": null,
+  "cost": null,
+  "clothTriangles": 60176,
+  "pass": true,
+  "completedUtc": "2026-11-22T21:33:12.066619+00:00",
+  "elapsedSeconds": 5.904092992999722
+}

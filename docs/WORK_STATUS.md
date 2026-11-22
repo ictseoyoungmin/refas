@@ -30,6 +30,22 @@ valid individual rest shells, source-bound assembly, actual avatar fit,
 all 97 poses and final consumer/export acceptance remain distinct gates.
 The fixed checklist stays **30/37 = 81%**, with U2/U3/U6 open.
 
+The frozen high42/low44 files now pass an independent review of each
+individual closed rest shell. Their main-cloth subtotal is 60,176 triangles;
+the sampled corresponding body/collar errors are at most 0.319266/0.954472 mm.
+The source's erroneous rear-reaching lapel endpoints are separately repaired
+and documented. This [bounded rest review](development/evidence/usable-assets/recovery/review-jacket-high42-low44.md)
+does not accept the separate fitted candidate14, whose
+[remaining interface contacts](development/evidence/usable-assets/recovery/review-jacket-candidate14-contact-map.md)
+were independently localized without a blanket seam allowance.
+
+The prepared [all-phase native/GLB checker](development/evidence/usable-assets/recovery/review-all-phase-correspondence.md)
+now pins every oriented/material triangle corner at rest and evaluates all
+97 frames at the unchanged 2 micrometre tolerance. An actual one-byte
+intermediate morph corruption passes three-pose sampling but fails the new
+check at precisely the changed frame. This is a fixture/control result;
+final garment execution is still pending.
+
 Runtime commit `1435ce1a` adds qualified two-rig scene paths and caches
 per-sample rest associations without changing raw skin evaluation. Actual
 Blender/Godot verification has 95 Production passes, zero failures/skips;

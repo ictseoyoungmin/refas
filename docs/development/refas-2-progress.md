@@ -32,6 +32,12 @@ and [predicate review](evidence/usable-assets/recovery/review-contact-predicate.
 This observer repair earns no new criterion and does not invalidate the
 arm's separately verified direct-BVH pair gate.
 
+The replacement high42/low44 pair has since passed the
+[individual rest-shell review](evidence/usable-assets/recovery/review-jacket-high42-low44.md).
+Separate fitted candidates and the final all97 native/export and consumer
+runs remain unaccepted. The [actual intermediate-phase GLB control](evidence/usable-assets/recovery/review-all-phase-correspondence.md)
+validates broader correspondence coverage without adding criterion credit.
+
 | Slice | Current coverage | Status |
 | --- | --- | --- |
 | R2-01 / R2-02 / R2-04 / R2-05 | 4/4 each | REVIEW |

@@ -1,0 +1,158 @@
+{
+  "recordedUtc": "2026-11-22T21:36:32.363808+00:00",
+  "status": "Frozen main-cloth rest geometry handoff; full wearing, interface, animation and export acceptance remain pending.",
+  "high": {
+    "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/lining-42/repaired-detailed.blend",
+    "sha256": "d390171806d787c21f98ca5a398117526d7cfc1f302c34bd46ea992ae28fcf0d",
+    "bytes": 24374932
+  },
+  "low": {
+    "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/paired-low-44/optimized-cloth.blend",
+    "sha256": "2abed15053c1521bb2ad103d19c9d715b488e7cfcb7b5f2f15c8dea79f61b803",
+    "bytes": 3959508
+  },
+  "nativeObjects": [
+    "Body | continuous open front and shoulder yoke",
+    "Collar | standing back and neck facing"
+  ],
+  "highOuterVertexCounts": {
+    "body": 38163,
+    "collar": 62325
+  },
+  "lowOuterVertexCounts": {
+    "body": 9366,
+    "collar": 5678
+  },
+  "lowClosedTriangles": {
+    "body": 37468,
+    "collar": 22708,
+    "mainClothTotal": 60176
+  },
+  "wholeCoatBudget": 125000,
+  "secondarySubtotalFromAuthor": 57814,
+  "forecastWholeCoatTriangles": 117990,
+  "remainingTriangleBudget": 7010,
+  "sampledSurfaceErrorBudgetM": 0.0015,
+  "sampledWorstM": {
+    "body": 0.0003192655567545444,
+    "collar": 0.0009544717031531036
+  },
+  "highRobustAudit": {
+    "beganUtc": "2026-11-22T21:29:20.234030+00:00",
+    "input": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/lining-42/repaired-detailed.blend",
+    "inputSha256": "d390171806d787c21f98ca5a398117526d7cfc1f302c34bd46ea992ae28fcf0d",
+    "predicateSha256": "fa0e97d1fe0632fc18a867fcb965fed09f8340ed1937376a9e74ffe3bceed476",
+    "scope": "Actual saved evaluated triangles. BVH candidate pairs, then float64 finite segment/triangle predicates with relative determinant conditioning; separately classify coplanar overlap and boundary contact. Skip only pairs sharing native vertex indices.",
+    "lengthEpsilonM": 1e-12,
+    "objects": [
+      {
+        "name": "Body | continuous open front and shoulder yoke",
+        "vertices": 76326,
+        "triangles": 152656,
+        "nonadjacentBvhCandidates": 0,
+        "nonadjacentContacts": 0,
+        "shellKinds": {},
+        "contactKinds": {},
+        "minimumProjectedThicknessM": 0.00018297501871252007,
+        "nonpositiveThicknessFaces": 0,
+        "examples": []
+      },
+      {
+        "name": "Collar | standing back and neck facing",
+        "vertices": 124650,
+        "triangles": 249296,
+        "nonadjacentBvhCandidates": 0,
+        "nonadjacentContacts": 0,
+        "shellKinds": {},
+        "contactKinds": {},
+        "minimumProjectedThicknessM": 0.00012980423766496347,
+        "nonpositiveThicknessFaces": 0,
+        "examples": []
+      }
+    ],
+    "tokens": null,
+    "cost": null,
+    "passed": true,
+    "completedUtc": "2026-11-22T21:29:22.516398+00:00",
+    "elapsedSeconds": 2.2823855790011294,
+    "inputBytesUnchanged": true
+  },
+  "lowRobustAudit": {
+    "beganUtc": "2026-11-22T21:33:03.456429+00:00",
+    "input": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/paired-low-44/optimized-cloth.blend",
+    "inputSha256": "2abed15053c1521bb2ad103d19c9d715b488e7cfcb7b5f2f15c8dea79f61b803",
+    "predicateSha256": "fa0e97d1fe0632fc18a867fcb965fed09f8340ed1937376a9e74ffe3bceed476",
+    "scope": "Actual saved evaluated triangles. BVH candidate pairs, then float64 finite segment/triangle predicates with relative determinant conditioning; separately classify coplanar overlap and boundary contact. Skip only pairs sharing native vertex indices.",
+    "lengthEpsilonM": 1e-12,
+    "objects": [
+      {
+        "name": "Body | continuous open front and shoulder yoke",
+        "vertices": 18732,
+        "triangles": 37468,
+        "nonadjacentBvhCandidates": 0,
+        "nonadjacentContacts": 0,
+        "shellKinds": {},
+        "contactKinds": {},
+        "minimumProjectedThicknessM": 0.0001886351869395257,
+        "nonpositiveThicknessFaces": 0,
+        "examples": []
+      },
+      {
+        "name": "Collar | standing back and neck facing",
+        "vertices": 11356,
+        "triangles": 22708,
+        "nonadjacentBvhCandidates": 0,
+        "nonadjacentContacts": 0,
+        "shellKinds": {},
+        "contactKinds": {},
+        "minimumProjectedThicknessM": 9.466431557819449e-05,
+        "nonpositiveThicknessFaces": 0,
+        "examples": []
+      }
+    ],
+    "tokens": null,
+    "cost": null,
+    "passed": true,
+    "completedUtc": "2026-11-22T21:33:03.954954+00:00",
+    "elapsedSeconds": 0.49854178200075694,
+    "inputBytesUnchanged": true
+  },
+  "sourceRepair": {
+    "erroneousCoarseEndpointRows": [
+      0,
+      1,
+      2,
+      344,
+      345,
+      346
+    ],
+    "cause": "refine_identity.py lapel_row ray from front opening missed front cloth and accepted a back-body hit, overwriting the intended front y coordinate.",
+    "maximumErroneousEndpointCageChangeM": 0.13873738050460815,
+    "maximumFinalCollarOuterChangeVsHigh16M": 0.1384821981191635,
+    "meanFinalCollarOuterChangeVsHigh16M": 0.0010953808295138957,
+    "bodyOuterChangeVsHigh16M": 0,
+    "maximumBodyInnerChangeVsHigh16M": 0.0005856783487300348,
+    "classification": "Explicit source/functional geometry repairs, separate from high/low reduction approximation."
+  },
+  "pairing": {
+    "layout": "outer first half, corresponding inner second half",
+    "attributes": [
+      "wearable_shell_pair",
+      "wearable_shell_side"
+    ],
+    "lowCollarAdditionalAttributes": [
+      "wearable_source_row",
+      "wearable_source_column"
+    ],
+    "sourceHighIndexCorrespondence": "Unchanged from prefit outer: body38163, collar62325. No high outer vertex deletion/reordering."
+  },
+  "limitations": [
+    "Finite all-vertex/all-triangle-centroid bidirectional error is not a continuous Hausdorff proof.",
+    "The minimum pair offset and mean face-normal projection are distinct; neither proves universal pointwise or posed separation.",
+    "Each individual closed cloth object is clean at rest; body/collar inter-object contacts, intended sewn allowances, garment/avatar clearance, hardware, all97 poses and final GLB remain author-owned acceptance gates.",
+    "The author has observed genuine body41 DQ apex failures (58 shell contacts and12 nonpositive projected facets) on a separate binding probe; this handoff does not claim final motion acceptance.",
+    "Old high16/low29 ray-filtered contact-zero claims are superseded by robust float64 negative-control evidence. Their original bytes/reports remain unchanged."
+  ],
+  "tokens": null,
+  "cost": null
+}

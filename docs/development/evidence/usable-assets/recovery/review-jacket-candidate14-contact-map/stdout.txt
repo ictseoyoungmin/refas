@@ -1,0 +1,4 @@
+{"summary": {"pairs": 3017, "mappedPairs": 3017, "actualContactBoundsM": {"min": [-0.11657435752731388, -0.10822833598439814, 1.1639509803348878], "max": [0.11507001043031628, 0.11348584378040671, 1.4420648389951134]}, "sourceParameterBounds": {"min": [98.93670109161016, 0.0], "max": [1283.4226168769667, 44.00000000000001]}, "nativeNearestColumn0PolylineRangeM": [0.0, 0.03302639361556701], "sourceNearestColumn0PolylineRangeM": [0.0, 0.038931464201025764], "originalDefectiveEndpointRegionPairs": 0, "knownVisibleGorgePatchPairs": 5, "shellTypes": {"outer/rim": 135, "outer/inner": 996, "inner/outer": 384, "inner/inner": 590, "inner/rim": 118, "outer/outer": 461, "rim/rim": 229, "rim/outer": 104}}, "bands": {"beyond_first_original_width_cell": 1306, "column0_boundary": 466, "first_original_width_cell_0_to_4": 1245}, "regions": {"Collar stand and turned leaves": 2136, "L Lapel | rolled facing": 447, "R Lapel | rolled facing": 434}}
+Blender 4.3.2
+
+Blender quit

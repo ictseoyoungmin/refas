@@ -1,0 +1,28 @@
+{
+  "source": "/workspace/scratch/61afcdd4e3c6/work/garment/export-review/phase-fixture/asset.glb",
+  "sourceSha256": "f7f58b5e065b703e7b38ac01c3b90c265d862cc22da76080f9d7daeb5c2f583b",
+  "mutated": "/workspace/scratch/61afcdd4e3c6/work/garment/export-review/phase-fixture/intermediate-morph-within-range.glb",
+  "mutatedSha256": "ffbe4eabbdd838fc496e7cbd1b431845f33d4689f51d98f0577195f9c40cd1f0",
+  "channelNode": "Phase fixture 000",
+  "channelPath": "weights",
+  "sampleIndex": 24,
+  "sampleSeconds": 0.8333333134651184,
+  "frame": 25,
+  "before": 1.0,
+  "after": 0.75,
+  "changedByteOffsets": [
+    19118
+  ],
+  "restApexEndKeyIndicesUnchanged": {
+    "1": [
+      0
+    ],
+    "49": [
+      48
+    ],
+    "97": [
+      96
+    ]
+  },
+  "scope": "Real exported GLB animation-buffer mutation; only one intermediate morph key value changes. This is a checker negative control, not a garment asset."
+}

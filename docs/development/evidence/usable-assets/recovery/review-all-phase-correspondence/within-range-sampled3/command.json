@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "/usr/bin/blender",
+    "--background",
+    "--threads",
+    "2",
+    "--python-exit-code",
+    "1",
+    "--python",
+    "/workspace/scratch/61afcdd4e3c6/work/garment/export-review/inspect_correspondence.py",
+    "--",
+    "--native",
+    "/workspace/scratch/61afcdd4e3c6/work/garment/export-review/phase-fixture/native.blend",
+    "--glb",
+    "/workspace/scratch/61afcdd4e3c6/work/garment/export-review/phase-fixture/intermediate-morph-within-range.glb",
+    "--scope",
+    "/workspace/scratch/61afcdd4e3c6/work/garment/export-review/phase-fixture/scope.json",
+    "--out",
+    "/workspace/scratch/61afcdd4e3c6/work/garment/export-review/phase-fixture/within-range-sampled3/report.json"
+  ],
+  "scriptSha256": "542f51b1061fd0f29256e3a6a2ae1ebc863414630cd548771ff0bff71b0b7eb2",
+  "startedUtc": "2026-11-22T21:37:59.479007+00:00",
+  "exitCode": 0,
+  "completedUtc": "2026-11-22T21:38:01.197420+00:00",
+  "elapsedSeconds": 1.7184239929993055
+}

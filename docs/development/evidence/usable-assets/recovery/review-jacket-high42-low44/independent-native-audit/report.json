@@ -1,0 +1,335 @@
+{
+  "startedUtc": "2026-11-22T21:39:33.242649+00:00",
+  "helperSha256": "b08db640f84950f8e051041b3ad0044962e0a9984e952fb2b7d67545c9d96a8f",
+  "scope": "Two main cloth meshes in rest pose before body gorge relief; not complete garment acceptance.",
+  "contactMethod": "BVH with 0.1 micrometre broadphase padding; independent float64 triangle SAT including coplanar axes, 1 pm arithmetic epsilon; shared-vertex face pairs excluded.",
+  "topologyMethod": "Production mesh observer freshly run on the exact saved native meshes.",
+  "inputs": {
+    "high": {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/lining-42/repaired-detailed.blend",
+      "sha256": "d390171806d787c21f98ca5a398117526d7cfc1f302c34bd46ea992ae28fcf0d"
+    },
+    "low": {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/paired-low-44/optimized-cloth.blend",
+      "sha256": "2abed15053c1521bb2ad103d19c9d715b488e7cfcb7b5f2f15c8dea79f61b803"
+    }
+  },
+  "objects": {
+    "high": [
+      {
+        "name": "Collar | standing back and neck facing",
+        "topology": {
+          "vertices": 124650,
+          "edges": 373944,
+          "polygons": 249296,
+          "triangles": 249296,
+          "components": 1,
+          "surfaceComponents": 1,
+          "nonManifoldVertices": 0,
+          "boundaryEdges": 0,
+          "boundaryGroups": 0,
+          "closedBoundaryLoops": 0,
+          "wireEdges": 0,
+          "looseVertices": 0,
+          "nonManifoldEdges": 0,
+          "inconsistentWindingEdges": 0,
+          "degenerateTriangles": 0,
+          "negativeClosedComponents": 0,
+          "nearZeroClosedComponents": 0
+        },
+        "pairAttributesValid": {
+          "wearable_shell_pair": true,
+          "wearable_shell_side": true
+        },
+        "outerTriangles": 121792,
+        "innerTriangles": 121792,
+        "pairedFaceMultiplicityEqual": true,
+        "minimumMeanProjectedGapM": 0.00012980423766496347,
+        "nonpositiveMeanGapFaces": 0,
+        "duplicateCoordinateTriangles": 0,
+        "broadphaseNonadjacentCandidates": 0,
+        "nonadjacentContacts": 0,
+        "contactKinds": {},
+        "contactPairs": [],
+        "contactExamples": [],
+        "positiveClosedComponents": {
+          "count": 1,
+          "items": [
+            {
+              "index": 0,
+              "connectivity": "vertex-and-edge-index",
+              "firstVertex": 0,
+              "vertices": 124650,
+              "edges": 373944,
+              "faces": 249296,
+              "triangles": 249296,
+              "boundaryEdges": 0,
+              "wireEdges": 0,
+              "nonManifoldEdges": 0,
+              "nonManifoldVertices": 0,
+              "sharedSingularVertices": 0,
+              "inconsistentWindingEdges": 0,
+              "degenerateTriangles": 0,
+              "boundsM": {
+                "min": [
+                  -0.12982071936130524,
+                  -0.09241434931755066,
+                  1.06022047996521
+                ],
+                "max": [
+                  0.12685135006904602,
+                  0.10436229407787323,
+                  1.4665992259979248
+                ]
+              },
+              "volumeToleranceM3": 1.4009763064402686e-13,
+              "worldSignedVolumeM3": 5.076313797448107e-05,
+              "closedSurface": true,
+              "orientationAdjustedVolumeM3": 5.076313797448107e-05,
+              "orientation": "positive"
+            }
+          ],
+          "truncated": false
+        },
+        "passed": true
+      },
+      {
+        "name": "Body | continuous open front and shoulder yoke",
+        "topology": {
+          "vertices": 76326,
+          "edges": 228984,
+          "polygons": 152656,
+          "triangles": 152656,
+          "components": 1,
+          "surfaceComponents": 1,
+          "nonManifoldVertices": 0,
+          "boundaryEdges": 0,
+          "boundaryGroups": 0,
+          "closedBoundaryLoops": 0,
+          "wireEdges": 0,
+          "looseVertices": 0,
+          "nonManifoldEdges": 0,
+          "inconsistentWindingEdges": 0,
+          "degenerateTriangles": 0,
+          "negativeClosedComponents": 0,
+          "nearZeroClosedComponents": 0
+        },
+        "pairAttributesValid": {
+          "wearable_shell_pair": true,
+          "wearable_shell_side": true
+        },
+        "outerTriangles": 75264,
+        "innerTriangles": 75264,
+        "pairedFaceMultiplicityEqual": true,
+        "minimumMeanProjectedGapM": 0.00018297501871252007,
+        "nonpositiveMeanGapFaces": 0,
+        "duplicateCoordinateTriangles": 0,
+        "broadphaseNonadjacentCandidates": 0,
+        "nonadjacentContacts": 0,
+        "contactKinds": {},
+        "contactPairs": [],
+        "contactExamples": [],
+        "positiveClosedComponents": {
+          "count": 1,
+          "items": [
+            {
+              "index": 0,
+              "connectivity": "vertex-and-edge-index",
+              "firstVertex": 0,
+              "vertices": 76326,
+              "edges": 228984,
+              "faces": 152656,
+              "triangles": 152656,
+              "boundaryEdges": 0,
+              "wireEdges": 0,
+              "nonManifoldEdges": 0,
+              "nonManifoldVertices": 0,
+              "sharedSingularVertices": 0,
+              "inconsistentWindingEdges": 0,
+              "degenerateTriangles": 0,
+              "boundsM": {
+                "min": [
+                  -0.509029746055603,
+                  -0.09180854260921478,
+                  1.0474553108215332
+                ],
+                "max": [
+                  0.5051994323730469,
+                  0.12269864976406097,
+                  1.4421746730804443
+                ]
+              },
+              "volumeToleranceM3": 1.364930488450218e-12,
+              "worldSignedVolumeM3": 0.0008184402783494445,
+              "closedSurface": true,
+              "orientationAdjustedVolumeM3": 0.0008184402783494445,
+              "orientation": "positive"
+            }
+          ],
+          "truncated": false
+        },
+        "passed": true
+      }
+    ],
+    "low": [
+      {
+        "name": "Collar | standing back and neck facing",
+        "topology": {
+          "vertices": 11356,
+          "edges": 34062,
+          "polygons": 22708,
+          "triangles": 22708,
+          "components": 1,
+          "surfaceComponents": 1,
+          "nonManifoldVertices": 0,
+          "boundaryEdges": 0,
+          "boundaryGroups": 0,
+          "closedBoundaryLoops": 0,
+          "wireEdges": 0,
+          "looseVertices": 0,
+          "nonManifoldEdges": 0,
+          "inconsistentWindingEdges": 0,
+          "degenerateTriangles": 0,
+          "negativeClosedComponents": 0,
+          "nearZeroClosedComponents": 0
+        },
+        "pairAttributesValid": {
+          "wearable_shell_pair": true,
+          "wearable_shell_side": true
+        },
+        "outerTriangles": 10819,
+        "innerTriangles": 10819,
+        "pairedFaceMultiplicityEqual": true,
+        "minimumMeanProjectedGapM": 9.466431557819449e-05,
+        "nonpositiveMeanGapFaces": 0,
+        "duplicateCoordinateTriangles": 0,
+        "broadphaseNonadjacentCandidates": 0,
+        "nonadjacentContacts": 0,
+        "contactKinds": {},
+        "contactPairs": [],
+        "contactExamples": [],
+        "positiveClosedComponents": {
+          "count": 1,
+          "items": [
+            {
+              "index": 0,
+              "connectivity": "vertex-and-edge-index",
+              "firstVertex": 0,
+              "vertices": 11356,
+              "edges": 34062,
+              "faces": 22708,
+              "triangles": 22708,
+              "boundaryEdges": 0,
+              "wireEdges": 0,
+              "nonManifoldEdges": 0,
+              "nonManifoldVertices": 0,
+              "sharedSingularVertices": 0,
+              "inconsistentWindingEdges": 0,
+              "degenerateTriangles": 0,
+              "boundsM": {
+                "min": [
+                  -0.12981565296649933,
+                  -0.09241433441638947,
+                  1.06022047996521
+                ],
+                "max": [
+                  0.1267789602279663,
+                  0.10416880995035172,
+                  1.4664674997329712
+                ]
+              },
+              "volumeToleranceM3": 1.3992400376629571e-13,
+              "worldSignedVolumeM3": 5.0497783289957236e-05,
+              "closedSurface": true,
+              "orientationAdjustedVolumeM3": 5.0497783289957236e-05,
+              "orientation": "positive"
+            }
+          ],
+          "truncated": false
+        },
+        "passed": true
+      },
+      {
+        "name": "Body | continuous open front and shoulder yoke",
+        "topology": {
+          "vertices": 18732,
+          "edges": 56202,
+          "polygons": 37468,
+          "triangles": 37468,
+          "components": 1,
+          "surfaceComponents": 1,
+          "nonManifoldVertices": 0,
+          "boundaryEdges": 0,
+          "boundaryGroups": 0,
+          "closedBoundaryLoops": 0,
+          "wireEdges": 0,
+          "looseVertices": 0,
+          "nonManifoldEdges": 0,
+          "inconsistentWindingEdges": 0,
+          "degenerateTriangles": 0,
+          "negativeClosedComponents": 0,
+          "nearZeroClosedComponents": 0
+        },
+        "pairAttributesValid": {
+          "wearable_shell_pair": true,
+          "wearable_shell_side": true
+        },
+        "outerTriangles": 17670,
+        "innerTriangles": 17670,
+        "pairedFaceMultiplicityEqual": true,
+        "minimumMeanProjectedGapM": 0.0001886351869395257,
+        "nonpositiveMeanGapFaces": 0,
+        "duplicateCoordinateTriangles": 0,
+        "broadphaseNonadjacentCandidates": 0,
+        "nonadjacentContacts": 0,
+        "contactKinds": {},
+        "contactPairs": [],
+        "contactExamples": [],
+        "positiveClosedComponents": {
+          "count": 1,
+          "items": [
+            {
+              "index": 0,
+              "connectivity": "vertex-and-edge-index",
+              "firstVertex": 0,
+              "vertices": 18732,
+              "edges": 56202,
+              "faces": 37468,
+              "triangles": 37468,
+              "boundaryEdges": 0,
+              "wireEdges": 0,
+              "nonManifoldEdges": 0,
+              "nonManifoldVertices": 0,
+              "sharedSingularVertices": 0,
+              "inconsistentWindingEdges": 0,
+              "degenerateTriangles": 0,
+              "boundsM": {
+                "min": [
+                  -0.509029746055603,
+                  -0.09180854260921478,
+                  1.0474553108215332
+                ],
+                "max": [
+                  0.5051994323730469,
+                  0.1226576641201973,
+                  1.4421746730804443
+                ]
+              },
+              "volumeToleranceM3": 1.3649012342198654e-12,
+              "worldSignedVolumeM3": 0.0008164250463699519,
+              "closedSurface": true,
+              "orientationAdjustedVolumeM3": 0.0008164250463699519,
+              "orientation": "positive"
+            }
+          ],
+          "truncated": false
+        },
+        "passed": true
+      }
+    ]
+  },
+  "inputBytesUnchanged": true,
+  "passed": true,
+  "completedUtc": "2026-11-22T21:39:55.463277+00:00",
+  "elapsedSeconds": 22.22064934700029
+}

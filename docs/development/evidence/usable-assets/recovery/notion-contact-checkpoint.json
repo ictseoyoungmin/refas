@@ -1,0 +1,12 @@
+{
+  "recordedUtc": "2026-11-22T21:49:37.767479+00:00",
+  "sourceCommit": "e570ed6536d1240948e84ca23ffd6ddda151ddad",
+  "pages": [
+    "41fc6a3b-5bf1-81c2-b2cd-fac4605ef7d7",
+    "420c6a3b-5bf1-81cd-8228-ce6ff6174c5a",
+    "41fc6a3b-5bf1-8131-91c0-c59b6fff1aa8"
+  ],
+  "changes": "Added evidence correction and reviewed individual rest handoff; retained 30/37=81%, R2-07 2/5 WIP and R2-06 5/7 WIP; no geometry or release acceptance; preserved historical records.",
+  "toolWarnings": [],
+  "mainPlanPanelOpened": true
+}

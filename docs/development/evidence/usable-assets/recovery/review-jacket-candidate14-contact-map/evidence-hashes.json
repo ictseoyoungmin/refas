@@ -1,0 +1,74 @@
+{
+  "recordedUtc": "2026-11-22T21:48:44.392529+00:00",
+  "scope": "Numeric cloth-only source-parameter contact localization of separate partial regional-fit candidate14. No geometry mutation or contact allowance.",
+  "files": [
+    {
+      "path": "classification-summary.json",
+      "sourcePath": "/workspace/scratch/61afcdd4e3c6/work/garment/export-review/body-collar-map-candidate14/classification-summary.json",
+      "sha256": "c611ca919838353d131aee2782728407b23d9ef7837719f60b116b3a63cb17fc",
+      "bytes": 9842
+    },
+    {
+      "path": "contact-parameter-map.png",
+      "sourcePath": "/workspace/scratch/61afcdd4e3c6/work/garment/export-review/body-collar-map-candidate14/contact-parameter-map.png",
+      "sha256": "9d84394db07d02550cc476ec37b913265ac21ead46cd8230c59c32f3bce7db0f",
+      "bytes": 295381
+    },
+    {
+      "path": "collar-self-contact-edge-solves.json",
+      "sourcePath": "/workspace/scratch/61afcdd4e3c6/work/garment/export-review/body-collar-map-candidate14/collar-self-contact-edge-solves.json",
+      "sha256": "262a910fb93563eceb005af979e7f65f4edce6e31633773c7b342989ad482769",
+      "bytes": 1063
+    },
+    {
+      "path": "command.json",
+      "sourcePath": "/workspace/scratch/61afcdd4e3c6/work/garment/export-review/body-collar-map-candidate14/command.json",
+      "sha256": "2e4ad5701ab1db6ba2f546a4de7a46aa7d1fc3493ec726136e36a7b62520abb5",
+      "bytes": 523
+    },
+    {
+      "path": "stdout.txt",
+      "sourcePath": "/workspace/scratch/61afcdd4e3c6/work/garment/export-review/body-collar-map-candidate14/stdout.txt",
+      "sha256": "f57126229fe04fbdf44040c8faaed766cfc8a93c5bb7d629cfd885ab62efcc8c",
+      "bytes": 969
+    },
+    {
+      "path": "stderr.txt",
+      "sourcePath": "/workspace/scratch/61afcdd4e3c6/work/garment/export-review/body-collar-map-candidate14/stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "classify_candidate14_body_collar_contacts.py",
+      "sourcePath": "/workspace/scratch/61afcdd4e3c6/work/garment/export-review/classify_candidate14_body_collar_contacts.py",
+      "sha256": "28d5f8bb0a4d0a08b4cd95c473e063fe7f13e0c1d591f59b68d5bfd7d9a21ba0",
+      "bytes": 15647
+    },
+    {
+      "path": "summarize_candidate14_contacts.py",
+      "sourcePath": "/workspace/scratch/61afcdd4e3c6/work/garment/export-review/summarize_candidate14_contacts.py",
+      "sha256": "4d70c02093c2778b95c77f7554da1ccf5b7cc7bf6f95fa6959d7b842919f0f62",
+      "bytes": 5369
+    },
+    {
+      "path": "check_lining_gap.py",
+      "sourcePath": "/workspace/scratch/61afcdd4e3c6/work/garment/export-review/check_lining_gap.py",
+      "sha256": "9276677062d8e7e5e4e770a510885d0e5c802d248946e1ab2628cf8a60c7b118",
+      "bytes": 20089
+    },
+    {
+      "path": "author-shell-motion.json",
+      "sourcePath": "/workspace/scratch/61afcdd4e3c6/work/garment/candidate-14-clean44/regional-fit-shell/shell-motion.json",
+      "sha256": "bc0faad2982e596b3a67db490f1cac5fe54ee894d98cac83bd76391aa3d8865c",
+      "bytes": 10267
+    },
+    {
+      "path": "all-contact-records.json.gz",
+      "sourcePath": "/workspace/scratch/61afcdd4e3c6/work/garment/export-review/body-collar-map-candidate14/report.json",
+      "sha256": "c8d10a4b700e52b5b2c8b48588c6b6f18333e3e4d0491d0228417314a25722c0",
+      "bytes": 588251,
+      "uncompressedSha256": "34381f32e74fb55376bb05962b7af88f757a82acb7449527d91ce1e33ed44459",
+      "uncompressedBytes": 6858688
+    }
+  ]
+}
