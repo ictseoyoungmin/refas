@@ -350,7 +350,7 @@
       "baselineNote": "The published baseline remains v1.4.1. Tag/Release/registry publication requires applicable explicit authorization and remains separate from implementation."
     }
   ],
-  "currentCheckpointId": "baseline-3217b46e",
+  "currentCheckpointId": "r2-03-reference-freshness-d36a461e",
   "checkpoints": [
     {
       "id": "baseline-3217b46e",
@@ -438,12 +438,121 @@
         "pullRequestState": "Draft"
       },
       "note": "R2-01 receives credit for measurement definitions; missing actual metrics are open only in E2. S3 is open because a deterministic read-consistency counterexample invalidates the broader concurrency criterion despite passing write-side tests."
+    },
+    {
+      "id": "r2-03-reference-freshness-d36a461e",
+      "date": "2026-11-22",
+      "kind": "verified-implementation",
+      "sourceCommit": "d36a461e08a9c905792d045a3eb26ad53778635c",
+      "demonstratedCriteria": [
+        "B1",
+        "B2",
+        "B3",
+        "B4",
+        "W1",
+        "W2",
+        "W3",
+        "W4",
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "O1",
+        "O2",
+        "O3",
+        "O4",
+        "K1",
+        "K2",
+        "K3",
+        "E1",
+        "E4",
+        "E6"
+      ],
+      "counts": {
+        "demonstrated": 24,
+        "total": 31,
+        "percentRounded": 77,
+        "bySlice": {
+          "R2-01": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-02": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-03": {
+            "demonstrated": 6,
+            "total": 6
+          },
+          "R2-04": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-05": {
+            "demonstrated": 3,
+            "total": 4
+          },
+          "R2-06": {
+            "demonstrated": 3,
+            "total": 6
+          },
+          "Delivery": {
+            "demonstrated": 0,
+            "total": 3
+          }
+        }
+      },
+      "notionTaskStatuses": {
+        "R2-01": "REVIEW",
+        "R2-02": "REVIEW",
+        "R2-03": "REVIEW",
+        "R2-04": "REVIEW",
+        "R2-05": "WIP",
+        "R2-06": "WIP"
+      },
+      "evidenceUpdates": {
+        "S3": {
+          "evidence": [
+            "tests/test_production_project.py",
+            "docs/development/evidence/reference-freshness/probes/baseline-restart-results.json",
+            "docs/development/evidence/reference-freshness/probes/independent-review-after-fix.json",
+            "docs/development/evidence/reference-freshness/checks/verification.json"
+          ],
+          "note": "Both status and verify retain one declared state across concurrent publication, with and without an existing head. Edit setup uses the declared native base. Reference A-to-B-to-A changes invalidate an in-flight lease. Copy/publication and response-preparation failures preserve the authoritative state."
+        },
+        "S5": {
+          "evidence": [
+            "docs/development/evidence/reference-freshness/installed-jacket/result.json",
+            "docs/development/evidence/reference-freshness/installed-jacket/commands.json",
+            "docs/development/evidence/reference-freshness/installed-jacket/cuff-edit-checks.json",
+            "docs/development/evidence/reference-freshness/checks/package-parity.json",
+            "tests/test_production_blender.py"
+          ],
+          "note": "Actual extracted-package replay passes 22 checks across 12 commands (11 public CLI plus one Blender Save As). Explicit reference-set adoption marks intact prior evidence stale. Native, script, review and render changes are captured by successful regeneration; exact restore retains active references. The freshness field is scoped to the active reference content set; no external-file watcher or universal dependency graph is implied."
+        }
+      },
+      "boundaries": {
+        "closedTasks": 0,
+        "totalTasks": 6,
+        "finishedVisualAcceptance": {
+          "jacket": "rejected",
+          "automail": "rejected"
+        },
+        "developmentMetadata": "1.4.2",
+        "publishedRelease": "v1.4.1",
+        "pullRequest": "https://github.com/ictseoyoungmin/refas/pull/399",
+        "pullRequestState": "Draft"
+      },
+      "note": "S3 and S5 independently reviewed and demonstrated. Local gates: 931 JavaScript tests, 49 production tests (34 project/CLI and 15 actual Blender), repository/skill checks, 11-checkpoint retained dogfood and package audit. All 399 extracted files match tested repository bytes. R2-03 is ready for review; no task is CLOSED and no visual/release credit is added."
     }
   ],
   "projections": [
     {
       "id": "r2-03-freshness",
-      "status": "pending-validation",
+      "status": "fulfilled",
       "basedOn": "baseline-3217b46e",
       "criteriaToDemonstrate": [
         "S3",
@@ -489,9 +598,8 @@
         "S5: explicitly adopted reference/native/script/review/render changes produce correctly bound freshness and history states, with safe failure/concurrency and truthful restore behavior.",
         "Record actual execution and declared scope. Fake-worker transaction tests do not substitute for actual Blender output claims."
       ],
-      "resolvedBy": null,
-      "note": "Projected only. Neither S3 nor S5 is demonstrated in the current recorded checkpoint. Snapshot-consistent reads alone would yield 23/31, rounded to 74%."
+      "resolvedBy": "r2-03-reference-freshness-d36a461e",
+      "note": "Validated by the referenced implementation checkpoint: coherent reads and the full agreed explicit-adoption workflow are demonstrated. Historical projection and baseline counts are retained."
     }
   ]
 }
-

@@ -8,7 +8,55 @@ The user approved implementation of the new production path, starting from `main
 
 This is development work. The latest published release remains `v1.4.1`; package/runtime/plugin version `1.4.2` is retained until the coordinated 2.0 packaging milestone. No release or merge to main is part of this slice.
 
-## Current: joined jacket facing, compound automail and runtime scope guards
+## Current: explicit references, evidence freshness and coherent reads
+
+The remaining R2-03 workflow is implemented and verified at
+[`d36a461e`](https://github.com/ictseoyoungmin/refas/commit/d36a461e08a9c905792d045a3eb26ad53778635c).
+The fixed [Notion acceptance checklist](development/refas-2-progress.md) advances
+from **22/31 (71%) to 24/31 (77%)**, adding S3 and S5. R2-03 is **6/6 demonstrated,
+REVIEW**. No task is CLOSED; R2-05/06 remain WIP. Future reports must show this
+same denominator, verified changes and open criteria. This percentage measures
+acceptance coverage, independently of effort, visual quality and release status.
+
+`references` adopts the complete active source set with a required sequence
+lease. Model history and archived sources remain intact; equal contents are an
+exact no-op. `status` and `verify` expose reference evidence as current, stale
+or no-revision separately from recorded-file integrity. Restore reproduces the
+old bundle exactly while retaining current references, so a restored bundle may
+be stale. Explicit runs capture native/script/review/render changes and publish
+their new outputs together.
+
+The baseline concurrent-read bug could mix an old head with newer input/render
+paths. Reads now use one declared state, including the initial empty state.
+Historical source hashes, stale sequence leases and A-to-B-to-A reference changes
+are checked. Independent review also found and verified a repair for reference
+publication followed by a failed status response; the response is now validated
+before committing the pointer.
+
+| Current verification | Result |
+| --- | --- |
+| JavaScript regression | 931 passed; zero failed/skipped |
+| Production regression | 49 passed: 34 project/CLI + 15 actual Blender; zero skipped |
+| Python / repository / skill checks | PASS |
+| Retained 1.x dogfood | PASS, 11 checkpoints |
+| Package audit and exact extracted parity | PASS, all 399 files match; 43 reference leaves, 68 routed targets |
+| Actual installed-package jacket replay | 12 commands (11 CLI + one Blender Save As), all 22 checks pass; nine artifact/input files restored exactly |
+
+The existing joined jacket is the real input for the runtime exercise. Its
+cuff changes by 1 cm, seven object fingerprints change and 260 remain equal;
+materials and original native/source bytes stay unchanged. Review/render
+conditions deliberately change to test adoption, so this is not another visual
+comparison or a new selected asset. Both delivered assets retain their previous
+unfinished visual decisions. Read the [complete evidence](development/evidence/reference-freshness/README.md)
+and [portable example](../examples/reference-refresh/README.md).
+
+Remaining criteria: source-specific identity (K4), actual comparable time/cost
+(E2), same-GLB/camera/material renderer isolation (E3), explicit 1.x import with
+preservation/loss and no certificate transfer (E5), and coordinated 2.0 cutover,
+main merge and publication (D1–D3). Local atomic storage is verified; power-loss
+durability, network filesystems and automatic stale-lock recovery are not added.
+
+## Previous: joined jacket facing, compound automail and runtime scope guards
 
 The reattached original sheets now have a new informed refinement with actual
 editable native/GLB delivery. Both final selections are preferred to their

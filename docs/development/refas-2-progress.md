@@ -2,20 +2,22 @@
 
 ## Current recorded checkpoint
 
-**71% — 22 of 31 criteria demonstrated.** Baseline: `3217b46ee3670f2bc8acc1eff320981a539ce70c`, audited 2026-11-22.
+**77% — 24 of 31 criteria demonstrated.** Verified 2026-11-22 against
+[`d36a461e`](https://github.com/ictseoyoungmin/refas/commit/d36a461e08a9c905792d045a3eb26ad53778635c).
+The retained baseline is **22/31 = 71%** at `3217b46e`; S3 and S5 account for the increase.
 
 This measures binary acceptance coverage against the [Notion plan](https://app.notion.com/p/41fc6a3b5bf181c2b2cdfac4605ef7d7) and its separate delivery milestones. It does **not** estimate effort or time remaining, score visual quality, or equate to Notion CLOSED status. The [machine-readable ledger](refas-2-progress.json) is the canonical list of IDs, full criteria, source/evidence links and checkpoint history.
 
-| Slice | Baseline coverage | Notion status |
+| Slice | Current coverage | Notion status |
 | --- | --- | --- |
 | [R2-01](https://app.notion.com/p/41fc6a3b5bf1811d9a2df89722fde724) | 4/4 | REVIEW |
 | [R2-02](https://app.notion.com/p/41fc6a3b5bf181e0bcc1cdc55fc1d036) | 4/4 | REVIEW |
-| [R2-03](https://app.notion.com/p/41fc6a3b5bf1814fb380f3d649a3fc10) | 4/6 | WIP |
+| [R2-03](https://app.notion.com/p/41fc6a3b5bf1814fb380f3d649a3fc10) | 6/6 | REVIEW |
 | [R2-04](https://app.notion.com/p/41fc6a3b5bf181cd946ff7cd70581fb7) | 4/4 | REVIEW |
 | [R2-05](https://app.notion.com/p/41fc6a3b5bf181999d88cac97f324601) | 3/4 | WIP |
 | [R2-06](https://app.notion.com/p/41fc6a3b5bf1813191c0c59b6fff1aa8) | 3/6 | WIP |
 | Coordinated delivery | 0/3 | Unfinished |
-| **Total** | **22/31 = 71% rounded** | **0/6 tasks CLOSED** |
+| **Total** | **24/31 = 77% rounded** | **0/6 tasks CLOSED** |
 
 REVIEW means review remains; it does not earn an arbitrary fractional score. Both selected assets remain rejected for finished visual acceptance. Development metadata is 1.4.2, the recorded published release remains v1.4.1, and PR #399 is Draft. Those boundaries are independent of runtime-test progress.
 
@@ -59,9 +61,9 @@ REVIEW means review remains; it does not earn an arbitrary fractional score. Bot
 
 ## Baseline counterevidence
 
-**S3 remains open despite successful write-side concurrency tests.** A deterministic storage probe scheduled a legitimate new commit after `status()` captured the old state. Its separate `load_revision()` call then selected the new head. The response reported `ok: true` and the old head while returning the new revision's `top.png` and `inputs/base.blend` under the old directory; those paths did not exist. The probe used the existing fake worker and makes no Blender or visual claim. `verify_project()` has the same separate state/head read pattern. See the [pinned runtime][baseline-runtime] and [existing transaction tests][baseline-tests]. The next checkpoint must retain a reproducible test of the repair, including the initially empty-head case.
+**S3 was open despite successful write-side concurrency tests.** A deterministic storage probe scheduled a legitimate new commit after `status()` captured the old state. Its separate `load_revision()` call then selected the new head. The response reported `ok: true` and the old head while returning the new revision's `top.png` and `inputs/base.blend` under the old directory; those paths did not exist. The probe used the existing fake worker and makes no Blender or visual claim. `verify_project()` had the same separate state/head read pattern. See the [pinned runtime][baseline-runtime], [baseline trace](evidence/reference-freshness/probes/baseline-restart-results.json) and [existing transaction tests][baseline-tests]. The verified checkpoint below retains regressions for the repair, including the initially empty-head case.
 
-**S5 is a missing explicit-adoption workflow.** At baseline, initialization freezes references; an existing project cannot replace them through the CLI, and status has no dependent-evidence freshness report. Original external files changing or disappearing does not invalidate historical captured evidence. The scope can use explicit reference intake and existing run/native/review/render inputs; it does not add file watchers, mutable native storage, inherited render defaults or automatic stale-lock recovery. Frozen-file integrity, stale publication rejection and current-context freshness remain distinct.
+**S5 was a missing explicit-adoption workflow.** At baseline, initialization freezes references; an existing project cannot replace them through the CLI, and status has no dependent-evidence freshness report. Original external files changing or disappearing does not invalidate historical captured evidence. The implemented scope uses explicit reference intake and run/native/review/render inputs; it does not add file watchers, mutable native storage, inherited render defaults or automatic stale-lock recovery. Frozen-file integrity, stale publication rejection and current-context freshness remain distinct.
 
 ## Interpretation and remaining boundaries
 
@@ -70,16 +72,32 @@ REVIEW means review remains; it does not earn an arbitrary fractional score. Bot
 - **S6 versus E5:** Production assessments remain unevaluated; that earns non-inheritance credit. Explicit 1.x conversion still needs preservation/loss rules, unchanged legacy bytes and demonstrated non-transfer of certificates.
 - **E4 versus D1–D3:** A tested extracted 1.4.2 development package earns execution credit. Coordinated 2.0 metadata/distribution conversion, main merge and formal publication are separate unfinished milestones. Publication still needs the applicable authorization.
 
-## Projected next checkpoint — pending validation
+## Verified checkpoint — reference adoption and coherent reads
 
-**Target only: 24/31 = 77%. S3 and S5 are still zero in the current recorded checkpoint.**
+**S3 and S5 are now demonstrated: 24/31 = 77%.** The original pending projection
+is retained as fulfilled in the JSON, resolved by `r2-03-reference-freshness-d36a461e`.
 
-| Required validated change | Coverage if demonstrated |
+| Validated change | Resulting coverage |
 | --- | ---: |
 | S3: status/verify return one coherent revision during concurrent changes | 23/31 = 74% |
 | S3 plus S5: explicit adopted-input freshness, retained history, safe failure/concurrency and truthful restore behavior | 24/31 = 77% |
 
-Close S5 only with evidence covering the declared reference/native/script/render dependencies. Reference intake alone is partial. Record the scope of transaction tests separately from actual Blender execution. Even when R2-03 reaches 6/6 demonstrated, Notion REVIEW/CLOSED, source quality, migration and release remain separate decisions.
+The [evidence report](evidence/reference-freshness/README.md) links 34 transaction/
+CLI regressions, 15 actual Blender tests and the extracted-package jacket replay.
+All 22 replay checks pass across 12 recorded commands: eleven CLI calls plus a
+separate Blender Save As. All nine selected artifact/input files restore exactly.
+The independent reviewer also rechecked historical-source and failed-response
+rollback behavior. Local JavaScript regression remains 931 passed.
+
+The exposed freshness field compares the **active reference content set**.
+Native/script/review/render changes are explicitly adopted through `run`, which
+captures the new inputs and regenerates their bound outputs. This earns S5
+within its agreed scope, without implying external-file monitoring. R2-03 is
+6/6 demonstrated and REVIEW; no task is CLOSED.
+
+**Seven criteria remain open:** K4 (source identity/construction), E2 (actual
+comparable timing/cost), E3 (same-asset renderer isolation), E5 (explicit 1.x
+migration), and D1–D3 (coordinated cutover, main merge, formal publication).
 
 ## Updating the ledger
 
