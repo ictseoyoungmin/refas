@@ -1,0 +1,46 @@
+{
+  "criterion": "K4",
+  "decision": "demonstrated",
+  "scope": "Declared static editable garment and rigid articulated arm prototypes; source-specific identity and major construction, not finished art or engine readiness.",
+  "decision_observed_utc": "2026-11-22T12:38:51.322244+00:00",
+  "review_prompt": "prompts/isolated-visual-review.txt",
+  "review_report_sha256": "fa60a2cea33ea44da691673e94f85ca9596332d90c327096ca3db0933027877a",
+  "independent_context": "Fresh session; complete sources, neutral requirements and anonymous fixed-condition renders only. No author reports or prior critique.",
+  "selected": {
+    "garment": {
+      "candidate": "identity-04",
+      "anonymous_label": "A",
+      "revision": "d83189287d4d458397b05534083f00e1",
+      "review_decision": "meets declared visual prototype scope"
+    },
+    "automail": {
+      "candidate": "candidate-05",
+      "anonymous_label": "B",
+      "revision": "e661b5fd53e447879bd4baff5f4bbb9f",
+      "review_decision": "meets declared visual prototype scope"
+    }
+  },
+  "finished_art": {
+    "garment": "not accepted",
+    "automail": "not accepted"
+  },
+  "remaining_criteria": [
+    "E2",
+    "D2",
+    "D3"
+  ],
+  "progress": {
+    "previous": 27,
+    "demonstrated": 28,
+    "denominator": 31,
+    "percent_rounded": 90
+  },
+  "technical_evidence": [
+    "garment/independent-check.json",
+    "garment/cuff-edit-checks.json",
+    "garment/execution.json",
+    "automail/independent-inspection.json",
+    "automail/exercise-summary.json"
+  ],
+  "reason": "The isolated reviewer identifies each selected candidate as meeting the original prototype scope, explicitly distinguishes major gaps in the prior candidates, and retains finished-art concerns. Actual local edit/restore and independent native/GLB checks pass for these same selected revisions."
+}

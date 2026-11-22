@@ -1,0 +1,71 @@
+{
+  "selected_revision": "e661b5fd53e447879bd4baff5f4bbb9f",
+  "restored_revision": "041215ef5be3467fa64df97041c9a5ee",
+  "service_edit_directory": "/workspace/scratch/5765cde18054/work/automail/candidates/service-cover-3mm",
+  "restore_after_service_full_bundle_equality": true,
+  "restore_after_poses_full_bundle_equality": true,
+  "pose_samples": [
+    {
+      "label": "elbow-0",
+      "directory": "/workspace/scratch/5765cde18054/work/automail/candidates/pose-elbow-0",
+      "revision": "f36f3360212c446095f824eb497e796c"
+    },
+    {
+      "label": "elbow-45",
+      "directory": "/workspace/scratch/5765cde18054/work/automail/candidates/pose-elbow-45",
+      "revision": "8e314ba609e04f06bd318a6b3bc25dca"
+    },
+    {
+      "label": "elbow-90",
+      "directory": "/workspace/scratch/5765cde18054/work/automail/candidates/pose-elbow-90",
+      "revision": "61f385a7c0fc41258f20b5989b3f85ab"
+    },
+    {
+      "label": "wrist-20-index-35",
+      "directory": "/workspace/scratch/5765cde18054/work/automail/candidates/pose-wrist-20-index-35",
+      "revision": "88f7e63d728b42bfbbcf3a108fd80185"
+    }
+  ],
+  "selected_bundle_file_hashes": {
+    "artifacts/asset.glb": "0c2ca4c96351a1fdac73af9b5c2f1f854132b1df4855651dfdb53f188bc65f19",
+    "artifacts/construction-report.json": "4687255c7d04bdb5f14ca696c2ad413acc41dde72acdac82c27652d26d42e2e2",
+    "artifacts/result.json": "6d4912a7fbe5c23004182bfd1d221f9826dfb17689cf6e8d5cb38a024dd725f9",
+    "artifacts/scene.blend": "e7b2ac7cbd671d979af6e178ec85efc574ad9860c9695000980cf4a29f8a2dd7",
+    "artifacts/scene.json": "52c676774ab64772d50ae3a2e96827584c0c24333f3b7fca9c061072b4ed4955",
+    "artifacts/view-armor-depth.png": "f7dc69ceb1f2907c1f38d4381af33698d179da6fd54341fb46580cdb88901523",
+    "artifacts/view-back.png": "bad58f6a9d7a15f3aaeac7790bfeb7305d50fce4891fdaf42ee63c46abbc8cd9",
+    "artifacts/view-front.png": "f4d7fdc8f65f91fa10ea4b831622e713f8c0caa40ce1721f5d57ebe73d21cd0f",
+    "artifacts/view-hand-front.png": "2df7bdeb7671303f8c257ded615d9e196add009198ff1b76eaaea0bb12676352",
+    "artifacts/view-hand-palm.png": "d5a376f045857fefa17fb1814b28bb1a1cead2f2c8bdab7dcdad2d5788753858",
+    "artifacts/view-hero.png": "54e49f26249d5d210f138637c76e41ffed6cdf6dbc5b21f031d466a98969a94a",
+    "artifacts/view-mechanism-detail.png": "af16c9aed834d191ea6d4bf230440e934a5b19b8d17fb5ef6f2b250c64aab04d",
+    "artifacts/view-palm-depth.png": "3027c58bf31e79d942fb863b015e770d93e779ab7e21297203c48cccf2df8602",
+    "artifacts/view-service-detail.png": "38e8fe0a58743c13019f48cde44c54ee493e67b3aa15ad538c71bb24a5ee641a",
+    "artifacts/view-side.png": "909da609d494d99607c4df02d7933dace557bdc6c97aa84806d62926304dca13",
+    "artifacts/view-socket-depth.png": "80c7d2ff2ea511e1a7a2379a85485e55d2a9e713c555b8f059639f7001035263",
+    "inputs/base.blend": "ff8010b6e25efec357b469121c905f9db8f717a8b9e5a07cbc78986ff12924b5",
+    "inputs/edit.py": "f63acc198938757f4eae7057201db93fcb1b40320ede59ba722e0019c4b9be42",
+    "inputs/review.json": "f3b177f5a97436f591186065f699e065de7b81de93afee3921101d7bb8d61545"
+  },
+  "integrity": {
+    "ok": true,
+    "scope": "recorded-file-integrity",
+    "head": "041215ef5be3467fa64df97041c9a5ee",
+    "artifactCount": 16,
+    "evidenceFreshness": {
+      "status": "current",
+      "scope": "active-reference-content-set",
+      "revision": "041215ef5be3467fa64df97041c9a5ee",
+      "activeSourceSha256": [
+        "3c7856dd632f8a1cde8036078573f569db55b6af97fae853237d8a9356f3c872"
+      ],
+      "revisionSourceSha256": [
+        "3c7856dd632f8a1cde8036078573f569db55b6af97fae853237d8a9356f3c872"
+      ],
+      "visualAcceptance": "not-evaluated"
+    },
+    "referenceResemblance": "not-evaluated",
+    "gameReadiness": "not-evaluated"
+  },
+  "finished_utc": "2026-11-22T12:31:04.527683+00:00"
+}

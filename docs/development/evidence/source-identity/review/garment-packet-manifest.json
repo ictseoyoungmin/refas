@@ -1,0 +1,94 @@
+{
+  "A/back.png": {
+    "bytes": 378739,
+    "sha256": "2c6eb69373eb3433b1eac52ef74463781e194d3ef33b233f4658d8ccaf8638b5"
+  },
+  "A/fold-front.png": {
+    "bytes": 490208,
+    "sha256": "610020f5fc621d1bac802634cc5f77d8b12f0fbec8966fbb7892ff1f2f8b1ea3"
+  },
+  "A/fold-oblique.png": {
+    "bytes": 525343,
+    "sha256": "a3f0bb3dd40d5537fc31ee549eaa356a6712f982dd5b86a30bea2dd0ae8147c7"
+  },
+  "A/fold-side.png": {
+    "bytes": 438804,
+    "sha256": "5c0aa18f781f5eca5ab666783bc1b1fe4a2d8fb7816bb74358aedb6a93ded7b6"
+  },
+  "A/front-three-quarter.png": {
+    "bytes": 386701,
+    "sha256": "763db193d5a7af4f9403f1633a921b1456ad0b1ca98cd4f1e0ec952a94f10e06"
+  },
+  "A/front.png": {
+    "bytes": 395669,
+    "sha256": "a117ad0419e7663a20a22ffad74ccc729a9c474ce049797b6b4bf4b682418493"
+  },
+  "A/left.png": {
+    "bytes": 306952,
+    "sha256": "3afc8f6d8181e7aec7422b882882ee71365d2dbee0662dd2f2ba0eebbf7478ca"
+  },
+  "A/ornament.png": {
+    "bytes": 630075,
+    "sha256": "74a254ace3cc78db1750b762f53fb79507505b5fdd181698e32e0ac679b9c539"
+  },
+  "A/rear-three-quarter.png": {
+    "bytes": 363219,
+    "sha256": "80789c57af4ae3ce223edfc0614d59dac306bcd621a7daf4525942551f30d939"
+  },
+  "A/right.png": {
+    "bytes": 292823,
+    "sha256": "bbdc4a887e03dd6a3526e8013397c9f23c6eae73cfe0b879296de91bf3b719e9"
+  },
+  "B/back.png": {
+    "bytes": 367310,
+    "sha256": "2783a74f7af210f30535038146a77db4c5d21ce4dd4b47d32c0b0df4ee2e7b98"
+  },
+  "B/fold-front.png": {
+    "bytes": 486396,
+    "sha256": "371f6dfd5c4b1439cda5e589f18d82472eab4226f4e2457cd7fa023297505f24"
+  },
+  "B/fold-oblique.png": {
+    "bytes": 513314,
+    "sha256": "40421726e989991db428cc4f552f972bfb484a1c40449d6216dfae83d7b58ef6"
+  },
+  "B/fold-side.png": {
+    "bytes": 431042,
+    "sha256": "e866f258ce74af562b0bf7d7e4ff45cac6e54e603d078481551fd75d4c9dbbfd"
+  },
+  "B/front-three-quarter.png": {
+    "bytes": 383620,
+    "sha256": "ed41a3296e7f1509c0dcd2cbc0676c831a6458384261f9bcbc50488c97781cc5"
+  },
+  "B/front.png": {
+    "bytes": 393634,
+    "sha256": "9e95a46a93e9afa063a2632d48e2f7dc795902f355d6a7a5b82ddc890f69a62d"
+  },
+  "B/left.png": {
+    "bytes": 305435,
+    "sha256": "f46f5e4f66d77600fcc70b2531d939c625d4518ef6747863c13d57db41ff233a"
+  },
+  "B/ornament.png": {
+    "bytes": 603749,
+    "sha256": "fb5b0cc70d90b1b7fee3b9c1a40b3fbad613bceacf7b56929a4d05535e38455d"
+  },
+  "B/rear-three-quarter.png": {
+    "bytes": 353920,
+    "sha256": "9bb8adf7d80a43224fdfa290f6ae03c4c2e27fd143753156e04d3dcf767e88d1"
+  },
+  "B/right.png": {
+    "bytes": 293342,
+    "sha256": "5ab571f5e8917bc5df0d4ecd9121f4b9a02b3ef9211f642c642c70b48d126348"
+  },
+  "construction-pairs.png": {
+    "bytes": 1602399,
+    "sha256": "e136d50e59c92d562635d4d04c0bad357beca5badb997c58643c2c576f47a028"
+  },
+  "source.png": {
+    "bytes": 2666378,
+    "sha256": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5"
+  },
+  "whole-pairs.png": {
+    "bytes": 1390240,
+    "sha256": "235bb488c350e97d715e4a06ae4b5fcf6823823419a49ccd9008bdd70fb593a8"
+  }
+}

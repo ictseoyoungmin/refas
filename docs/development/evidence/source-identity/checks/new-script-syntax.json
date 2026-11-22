@@ -1,0 +1,51 @@
+{
+  "checked_utc": "2026-11-22T12:38:51.322867+00:00",
+  "method": "ast.parse (syntax only; actual behavior separately executed in Blender and packaging)",
+  "files": [
+    {
+      "path": "examples/uniform-jacket/inspect_identity.py",
+      "sha256": "ca83cb707270ddf5729769a1e119e0c32637354168d30f6f23ec182336425cc5",
+      "passed": true
+    },
+    {
+      "path": "examples/uniform-jacket/refine_identity.py",
+      "sha256": "2906c70eaa0aa5a82961c6d59b408d907eadc035eae86b9e2afbfdf859537abd",
+      "passed": true
+    },
+    {
+      "path": "examples/uniform-jacket/compose_identity_review.py",
+      "sha256": "b518ae470928fc2948f01b6dbd3dd102f522b78b0e6cd81a4c2d8ebae19bb6f6",
+      "passed": true
+    },
+    {
+      "path": "examples/uniform-jacket/run_identity.py",
+      "sha256": "164412013eea57973546ad49595a0ed0bcfe74e423ee023bb0731e82e9cce65c",
+      "passed": true
+    },
+    {
+      "path": "examples/automail-arm/inspect_construction.py",
+      "sha256": "467984254cc34acb642de23d3ca44e6f37c8469783c5b604407c49f80d4aec32",
+      "passed": true
+    },
+    {
+      "path": "examples/automail-arm/construction_pose_check.py",
+      "sha256": "2655c7f9b82a9eae2f6b48fc67a991a950e35bfa38f436ca9826f82cf0ed8e01",
+      "passed": true
+    },
+    {
+      "path": "examples/automail-arm/package_construction.py",
+      "sha256": "adc3ec2784298351ced2b7c12c6987fdf9fd63801e9ea48d37a6f77a0f556803",
+      "passed": true
+    },
+    {
+      "path": "examples/automail-arm/run_construction.py",
+      "sha256": "c24196675d33567efc2c5d3994e46f8300cfbe6b125c8681f5440921f9c67744",
+      "passed": true
+    },
+    {
+      "path": "examples/automail-arm/refine_construction.py",
+      "sha256": "f63acc198938757f4eae7057201db93fcb1b40320ede59ba722e0019c4b9be42",
+      "passed": true
+    }
+  ]
+}

@@ -1,0 +1,223 @@
+{
+  "ok": true,
+  "schema": "refas.production.project/v2",
+  "name": "independent-glb-observation",
+  "projectId": "6117a33cd9624ecd99149cdeda6fa21b",
+  "head": "2ada5ad1e693425c9074591fdb7b9122",
+  "sequence": 1,
+  "sources": [
+    {
+      "path": "sources/001-reference.png",
+      "name": "reference.png",
+      "role": "user-reference",
+      "sha256": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5",
+      "bytes": 2666378
+    }
+  ],
+  "outputs": {
+    "blend": "/workspace/scratch/5765cde18054/work/garment/glb-observation/.refas2/revisions/2ada5ad1e693425c9074591fdb7b9122/artifacts/scene.blend",
+    "glb": "/workspace/scratch/5765cde18054/work/garment/glb-observation/.refas2/revisions/2ada5ad1e693425c9074591fdb7b9122/artifacts/asset.glb",
+    "scene": "/workspace/scratch/5765cde18054/work/garment/glb-observation/.refas2/revisions/2ada5ad1e693425c9074591fdb7b9122/artifacts/scene.json"
+  },
+  "observations": [
+    {
+      "camera": {
+        "matrixWorld": [
+          [
+            0.70710683,
+            -7e-08,
+            0.70710677,
+            1.41421366
+          ],
+          [
+            0.70710677,
+            -1.4e-07,
+            -0.70710683,
+            -1.41421366
+          ],
+          [
+            1.5e-07,
+            1.0,
+            -4e-08,
+            0.15000001
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "orthoScale": 0.83999997,
+        "position": [
+          1.41421366,
+          -1.41421366,
+          0.15000001
+        ],
+        "projection": "orthographic",
+        "target": [
+          0.0,
+          0.0,
+          0.15000001
+        ]
+      },
+      "framing": "fixed-review-spec",
+      "lighting": {
+        "center": [
+          0.0,
+          0.0,
+          0.18000001
+        ],
+        "radius": 0.48,
+        "rig": "three-area-lights/v1"
+      },
+      "path": "/workspace/scratch/5765cde18054/work/garment/glb-observation/.refas2/revisions/2ada5ad1e693425c9074591fdb7b9122/artifacts/view-front-three-quarter.png",
+      "referenceRegion": {
+        "regionPixels": [
+          383,
+          47,
+          655,
+          399
+        ],
+        "sourceSha256": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5"
+      },
+      "registration": "unregistered",
+      "renderer": {
+        "denoising": false,
+        "device": "CPU",
+        "engine": "CYCLES",
+        "samples": 32,
+        "size": [
+          640,
+          640
+        ],
+        "transparent": true,
+        "viewTransform": "AgX",
+        "worldColor": [
+          0.80000001,
+          0.82999998,
+          0.88
+        ],
+        "worldStrength": 0.45
+      },
+      "sha256": "5f7c67e5b1c215fdb77a07599652ff645d9d691ee306e8795bc2dc6131b7e32f",
+      "sourceSceneFingerprint": "f893cd28e09996611c78ea8fac44ac42f9690ef448533e649c4dea652238b08a",
+      "view": "front-three-quarter"
+    },
+    {
+      "camera": {
+        "matrixWorld": [
+          [
+            0.82732815,
+            -0.01213284,
+            0.56158787,
+            1.5
+          ],
+          [
+            0.56171894,
+            0.01786985,
+            -0.82713515,
+            -2.0
+          ],
+          [
+            1e-08,
+            0.99976671,
+            0.02159948,
+            0.31999999
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "orthoScale": 0.245,
+        "position": [
+          1.5,
+          -2.0,
+          0.31999999
+        ],
+        "projection": "orthographic",
+        "target": [
+          0.17399999,
+          -0.047,
+          0.26899999
+        ]
+      },
+      "framing": "fixed-review-spec",
+      "lighting": {
+        "center": [
+          0.0,
+          0.0,
+          0.18000001
+        ],
+        "radius": 0.48,
+        "rig": "three-area-lights/v1"
+      },
+      "path": "/workspace/scratch/5765cde18054/work/garment/glb-observation/.refas2/revisions/2ada5ad1e693425c9074591fdb7b9122/artifacts/view-ornament.png",
+      "referenceRegion": {
+        "regionPixels": [
+          414,
+          444,
+          582,
+          580
+        ],
+        "sourceSha256": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5"
+      },
+      "registration": "unregistered",
+      "renderer": {
+        "denoising": false,
+        "device": "CPU",
+        "engine": "CYCLES",
+        "samples": 32,
+        "size": [
+          640,
+          640
+        ],
+        "transparent": true,
+        "viewTransform": "AgX",
+        "worldColor": [
+          0.80000001,
+          0.82999998,
+          0.88
+        ],
+        "worldStrength": 0.45
+      },
+      "sha256": "aca5e5ee6a6965d64c3c3d848edb2bc65e06140e998b63865107c0d50348e6a3",
+      "sourceSceneFingerprint": "f893cd28e09996611c78ea8fac44ac42f9690ef448533e649c4dea652238b08a",
+      "view": "ornament"
+    }
+  ],
+  "inputs": {
+    "base.blend": "/workspace/scratch/5765cde18054/work/garment/glb-observation/.refas2/revisions/2ada5ad1e693425c9074591fdb7b9122/inputs/base.blend",
+    "edit.py": "/workspace/scratch/5765cde18054/work/garment/glb-observation/.refas2/revisions/2ada5ad1e693425c9074591fdb7b9122/inputs/edit.py",
+    "review.json": "/workspace/scratch/5765cde18054/work/garment/glb-observation/.refas2/revisions/2ada5ad1e693425c9074591fdb7b9122/inputs/review.json"
+  },
+  "revisions": [
+    {
+      "id": "2ada5ad1e693425c9074591fdb7b9122",
+      "intent": "Independent actual GLB readback in same review camera",
+      "createdAt": "2026-11-22T12:29:47.812074+00:00",
+      "parent": null
+    }
+  ],
+  "incompleteRuns": [],
+  "evidenceFreshness": {
+    "status": "current",
+    "scope": "active-reference-content-set",
+    "revision": "2ada5ad1e693425c9074591fdb7b9122",
+    "activeSourceSha256": [
+      "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5"
+    ],
+    "revisionSourceSha256": [
+      "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5"
+    ],
+    "visualAcceptance": "not-evaluated"
+  },
+  "referenceResemblance": "not-evaluated",
+  "gameReadiness": "not-evaluated",
+  "runId": "ada6e820e9044d15819dd609d10d74c0",
+  "publishedRevision": "2ada5ad1e693425c9074591fdb7b9122",
+  "elapsedSeconds": 29.713
+}

@@ -1,0 +1,19 @@
+{
+  "mode": "informed-v2-refinement",
+  "authoring_start_utc": null,
+  "authoring_start_source": "not supplied; first explicit clock read after guidance was 2026-11-22T12:10:44+00:00",
+  "runner_started_utc": "2026-11-22T12:14:57.373725+00:00",
+  "first_candidate_script_execution_utc": "2026-11-22T12:18:10.654644+00:00",
+  "first_actual_rendered_candidate_utc": "2026-11-22T12:19:50.685558+00:00",
+  "first_visually_validated_useful_change_utc": null,
+  "authoring_end_utc": "2026-11-22T12:36:25+00:00",
+  "model_tokens": null,
+  "model_cost": null,
+  "tool_billing_cost": null,
+  "unavailable_cost_reason": "Provider usage, billing and infrastructure price are not exposed to this authoring session.",
+  "blender_threads": 2,
+  "concurrency": "A separate garment author runs concurrently; CPU contention is not controlled.",
+  "comparison_limit": "Continuation benefits from previous geometry, critiques and informed design decisions. It is not a no-skill/1.x/2.0 benchmark.",
+  "first_candidate_render_bundle_observed_complete_utc": "2026-11-22T12:19:50.685558+00:00",
+  "render_timestamp_label_correction": "The retained first_actual_rendered_candidate_utc field measured bundle publication after all requested images finished; it was not first-image completion."
+}

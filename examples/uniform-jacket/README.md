@@ -80,3 +80,39 @@ visual likeness, cloth deformation, a production UV layout or engine readiness.
 The original sheet's cuff circumference/flat-width and collar-width labels
 remain ambiguous. No rig, cloth simulation or target-engine integration is
 included in this example.
+
+## Source-identity continuation
+
+The later [source-identity checkpoint](../../docs/development/evidence/source-identity/README.md)
+continues the selected joined native garment. `refine_identity.py` seats the
+notched lapels against the chest, models collar roll and restrained cloth
+shaping, separates dark straps from metal buckles, and builds the left
+shield/linked-chain/pendant decoration. It retains the connected body/sleeve
+construction and the existing cuff edit roles. This is an informed continuation;
+the earlier independent comparison and its negative findings remain intact.
+
+`run_identity.py` separates baseline observation, candidate creation and final
+edit/restore/readback. Start with a fresh output root and the previous selected
+native, using an extracted production skill:
+
+```bash
+python3 examples/uniform-jacket/run_identity.py \
+  --stage baseline \
+  --root /absolute/output/jacket-identity \
+  --skill-root /absolute/extracted/skills/refas \
+  --input-blend /absolute/previous-selected/jacket.blend
+```
+
+Use the same arguments with `--stage candidate --label source-identity`, inspect
+the actual whole/collar/ornament views, then use
+`--stage finalize --label source-identity`. Candidate labels must be unique;
+the supplied source and native hashes must continue to match the first input.
+Each new candidate starts from that immutable native. Finalization selects the
+named revision explicitly, exercises the seven-object cuff change, verifies
+exact payload recovery, independently imports the GLB and renders its readback.
+
+The selected `.blend` and `.glb`, edited/restored versions, rejected iterations,
+captured scripts and actual command clocks are retained in the output root.
+Native cloth construction and exported appearance are assessed separately.
+This workflow does not turn successful file checks into likeness or release
+approval; see the checkpoint's isolated source review and remaining limits.

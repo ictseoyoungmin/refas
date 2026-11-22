@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-B",
+    "examples/uniform-jacket/run_identity.py",
+    "--stage",
+    "candidate",
+    "--label",
+    "identity-01",
+    "--root",
+    "/workspace/scratch/5765cde18054/work/garment",
+    "--skill-root",
+    "/workspace/scratch/5765cde18054/installed/package/skills/refas",
+    "--input-blend",
+    "/workspace/scratch/5765cde18054/baseline/extracted/refas-jacket-automail-refinement/garment/selected/jacket.blend"
+  ],
+  "start_utc": "2026-11-22T12:19:32.640028+00:00",
+  "start_monotonic": 12713.563592698,
+  "end_utc": "2026-11-22T12:19:32.682381+00:00",
+  "end_monotonic": 12713.605952829,
+  "exit_status": 1,
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\n  File \"/workspace/scratch/5765cde18054/refas/examples/uniform-jacket/run_identity.py\", line 195, in <module>\n    main()\n  File \"/workspace/scratch/5765cde18054/refas/examples/uniform-jacket/run_identity.py\", line 67, in main\n    raise ValueError('Candidate label already exists; choose a unique --label to retain its native/renders: ' + args.label)\nValueError: Candidate label already exists; choose a unique --label to retain its native/renders: identity-01\n",
+  "duration_seconds": 0.042360131001260015,
+  "execution_record_unchanged": true
+}

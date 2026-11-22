@@ -1,0 +1,43 @@
+{
+  "selected_candidate": "candidate-05",
+  "selected_revision": "e661b5fd53e447879bd4baff5f4bbb9f",
+  "restored_revision": "041215ef5be3467fa64df97041c9a5ee",
+  "selected_native_sha256": "e7b2ac7cbd671d979af6e178ec85efc574ad9860c9695000980cf4a29f8a2dd7",
+  "selected_glb_sha256": "0c2ca4c96351a1fdac73af9b5c2f1f854132b1df4855651dfdb53f188bc65f19",
+  "source_sha256": "3c7856dd632f8a1cde8036078573f569db55b6af97fae853237d8a9356f3c872",
+  "baseline_sha256": "ff8010b6e25efec357b469121c905f9db8f717a8b9e5a07cbc78986ff12924b5",
+  "statistics": {
+    "armatures": 0,
+    "materialSlots": 321,
+    "meshes": 321,
+    "objects": 341,
+    "shapeKeyObjects": 0,
+    "triangles": 271840,
+    "uvObjects": 69,
+    "vertices": 136990
+  },
+  "bounds": {
+    "dimensions": [
+      0.16524,
+      0.12707749,
+      0.74534506
+    ],
+    "max": [
+      0.08262,
+      0.06154748,
+      0.75316447
+    ],
+    "min": [
+      -0.08262,
+      -0.06553,
+      0.00781941
+    ]
+  },
+  "original_object_count": 300,
+  "original_pivot_count": 20,
+  "added_objects": 41,
+  "removed_objects": 0,
+  "original_material_datablocks_preserved": 10,
+  "introduced_mesh_topology_problem_rows": [],
+  "packaged_utc": "2026-11-22T12:37:13.330331+00:00"
+}

@@ -80,3 +80,38 @@ The prototype still simplifies the source's compound armor curvature, rear
 mechanical density, asymmetric fasteners and surface finishes. It has no skin
 rig, animation clips, authored production UV layout, texture baking or LODs.
 The retained 512 px / 16-sample CPU renders show visible sampling noise.
+
+## Source-construction continuation
+
+The later [source-identity checkpoint](../../docs/development/evidence/source-identity/README.md)
+continues the selected arm with `refine_construction.py`. It adds nested armor
+and recessed carriers, exposes the rear mechanism, builds a recessed service
+assembly, and differentiates palm and phalanx shells. New parts attach to the
+existing rigid hierarchy. Original pivots and material datablocks remain;
+intentional shell material assignments and two moved crown markings are
+recorded explicitly.
+
+Begin `run_construction.py` with the previous selected native and a fresh root:
+
+```bash
+python3 examples/automail-arm/run_construction.py \
+  --phase baseline \
+  --root /absolute/output/arm-construction \
+  --skill-root /absolute/extracted/skills/refas \
+  --input-blend /absolute/previous-selected/arm.blend
+```
+
+Run the same arguments with `--phase revise` to produce a candidate and inspect
+the fixed whole/detail views. `--phase open-service` produces the matched
+before/after cover-opening diagnostic. `--phase exercise` explicitly selects
+the latest candidate, applies the 3 mm local cover change, samples elbow and
+wrist/index poses, restores exact payload bytes and independently imports the
+GLB. Finally, `--phase readback` renders the independently imported asset.
+
+The large cover-opening diagnostic is separate from the 3 mm editing exercise;
+it is not a tested physical hinge. `inspect_construction.py` compares all
+original native parents/transforms/material snapshots, then checks exported
+hierarchy, transforms and bounded rigid motion. `construction_pose_check.py`
+checks the added descendants under the declared samples. Neither inspection
+proves continuous collision clearance or physical behavior. Timings retain
+their measured scope and unknown model/tool monetary costs remain null.

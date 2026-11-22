@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-B",
+    "examples/uniform-jacket/compose_identity_review.py",
+    "--root",
+    "/workspace/scratch/5765cde18054/work/garment"
+  ],
+  "start_utc": "2026-11-22T12:29:32.750513+00:00",
+  "start_monotonic": 13313.674085523,
+  "end_utc": "2026-11-22T12:29:33.429718+00:00",
+  "end_monotonic": 13314.353295681,
+  "exit_status": 0,
+  "stdout": "",
+  "stderr": "",
+  "duration_seconds": 0.6792101579994778
+}

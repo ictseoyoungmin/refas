@@ -1,0 +1,9 @@
+{
+  "archive": "/workspace/scratch/5765cde18054/delivery/refas-source-identity-models.zip",
+  "bytes": 46370426,
+  "sha256": "54d71b9f321946db79f1eb7ca7490bc34d41aec52b02ba27e729e8e0b4027a51",
+  "verified_manifest_entries": 96,
+  "zip_crc": "passed",
+  "every_entry_sha256": "passed",
+  "created_utc": "2026-11-22T12:48:34.187340+00:00"
+}

@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-B",
+    "examples/uniform-jacket/run_identity.py",
+    "--stage",
+    "candidate",
+    "--label",
+    "must-reject-different-native",
+    "--root",
+    "/workspace/scratch/5765cde18054/work/garment",
+    "--skill-root",
+    "/workspace/scratch/5765cde18054/installed/package/skills/refas",
+    "--input-blend",
+    "/workspace/scratch/5765cde18054/work/garment/project/.refas2/revisions/59a42f0458544897a025246f53b2796d/artifacts/scene.blend"
+  ],
+  "start_utc": "2026-11-22T12:20:43.236331+00:00",
+  "start_monotonic": 12784.159900537,
+  "end_utc": "2026-11-22T12:20:43.293328+00:00",
+  "end_monotonic": 12784.216904466,
+  "exit_status": 1,
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\n  File \"/workspace/scratch/5765cde18054/refas/examples/uniform-jacket/run_identity.py\", line 201, in <module>\n    main()\n  File \"/workspace/scratch/5765cde18054/refas/examples/uniform-jacket/run_identity.py\", line 68, in main\n    raise ValueError('Native input differs from the recorded immutable baseline; start a new --root for different bytes')\nValueError: Native input differs from the recorded immutable baseline; start a new --root for different bytes\n",
+  "duration_seconds": 0.05700392899962026,
+  "execution_record_unchanged": true
+}

@@ -1,0 +1,114 @@
+{
+  "A/armor-depth.png": {
+    "bytes": 341998,
+    "sha256": "c3e458fc213b2fc460171945fdd12801cfb200cfbed1b1dd2728c51dd21c930d"
+  },
+  "A/back.png": {
+    "bytes": 303846,
+    "sha256": "db88080a4461dbd2ff54e7578d7ab6f94dbe05005930d687c1f7c6f68108e185"
+  },
+  "A/front.png": {
+    "bytes": 302296,
+    "sha256": "b610a3f3cf4a316cbe5e99080d3b19740346294bc607a2d2e8e36600e81064a7"
+  },
+  "A/hand-front.png": {
+    "bytes": 367912,
+    "sha256": "b96ef0ec147fd73cd8d612ee855ea6788a53601e87c27c59a4b9ffb236872363"
+  },
+  "A/hand-palm.png": {
+    "bytes": 351880,
+    "sha256": "c206b178c994f1fafc714838f6f206e638f66b6b4ea94c175345441e1a491781"
+  },
+  "A/hero.png": {
+    "bytes": 304902,
+    "sha256": "ae80ed1a0d8893abeee3e27158c8b4bb9c0574fa5df238f40f7efa390110f1ee"
+  },
+  "A/mechanism-detail.png": {
+    "bytes": 403936,
+    "sha256": "d2314187308bfb56b302a56515157f5373152828ba42f462bf36be2e9354982d"
+  },
+  "A/palm-depth.png": {
+    "bytes": 381307,
+    "sha256": "e1eb7685969f453e4cc3fb152ca74e568c5d602882da77b5da090b76512127e7"
+  },
+  "A/service-detail.png": {
+    "bytes": 350327,
+    "sha256": "f508cbdaba32a2b48191d150db0f632a7201a88b4bc18b17b9fa151fb6447e75"
+  },
+  "A/service-open.png": {
+    "bytes": 363729,
+    "sha256": "ad2d3f0cefc1038bab2957ca6ae758231ad1e9e374ff163cf5e8091708e298a2"
+  },
+  "A/side.png": {
+    "bytes": 285581,
+    "sha256": "a4206bba067001ce532074b04a6531be425121a8e60a98f7525ca90f16076dd6"
+  },
+  "A/socket-depth.png": {
+    "bytes": 427207,
+    "sha256": "3645974250b482c302c50582a02838db5f38fe622f3113dfc3b076dce84dfbf6"
+  },
+  "B/armor-depth.png": {
+    "bytes": 345598,
+    "sha256": "f7dc69ceb1f2907c1f38d4381af33698d179da6fd54341fb46580cdb88901523"
+  },
+  "B/back.png": {
+    "bytes": 304402,
+    "sha256": "bad58f6a9d7a15f3aaeac7790bfeb7305d50fce4891fdaf42ee63c46abbc8cd9"
+  },
+  "B/front.png": {
+    "bytes": 299151,
+    "sha256": "f4d7fdc8f65f91fa10ea4b831622e713f8c0caa40ce1721f5d57ebe73d21cd0f"
+  },
+  "B/hand-front.png": {
+    "bytes": 350620,
+    "sha256": "2df7bdeb7671303f8c257ded615d9e196add009198ff1b76eaaea0bb12676352"
+  },
+  "B/hand-palm.png": {
+    "bytes": 341038,
+    "sha256": "d5a376f045857fefa17fb1814b28bb1a1cead2f2c8bdab7dcdad2d5788753858"
+  },
+  "B/hero.png": {
+    "bytes": 303697,
+    "sha256": "54e49f26249d5d210f138637c76e41ffed6cdf6dbc5b21f031d466a98969a94a"
+  },
+  "B/mechanism-detail.png": {
+    "bytes": 430905,
+    "sha256": "af16c9aed834d191ea6d4bf230440e934a5b19b8d17fb5ef6f2b250c64aab04d"
+  },
+  "B/palm-depth.png": {
+    "bytes": 369796,
+    "sha256": "3027c58bf31e79d942fb863b015e770d93e779ab7e21297203c48cccf2df8602"
+  },
+  "B/service-detail.png": {
+    "bytes": 349855,
+    "sha256": "38e8fe0a58743c13019f48cde44c54ee493e67b3aa15ad538c71bb24a5ee641a"
+  },
+  "B/service-open.png": {
+    "bytes": 386953,
+    "sha256": "95ca39a31705c46a52d5f42c84bfe2d8d789191caca72abf46c18a311c4b0f81"
+  },
+  "B/side.png": {
+    "bytes": 284858,
+    "sha256": "909da609d494d99607c4df02d7933dace557bdc6c97aa84806d62926304dca13"
+  },
+  "B/socket-depth.png": {
+    "bytes": 427606,
+    "sha256": "80c7d2ff2ea511e1a7a2379a85485e55d2a9e713c555b8f059639f7001035263"
+  },
+  "service-pairs.png": {
+    "bytes": 479766,
+    "sha256": "1f28a22911289e2a5a4e1435c4b8d96192e3f03a52c902a11a306ce5473632fa"
+  },
+  "source.png": {
+    "bytes": 3215297,
+    "sha256": "3c7856dd632f8a1cde8036078573f569db55b6af97fae853237d8a9356f3c872"
+  },
+  "structure-pairs.png": {
+    "bytes": 1593455,
+    "sha256": "a6c91f281944645eb72bb1ee47756fece0cc2a142581db36c7abde11199c7e42"
+  },
+  "whole-pairs.png": {
+    "bytes": 867558,
+    "sha256": "814c3f7c59a9b4366059dd687c5ed0e6a957535149819ceda824664cc5790d9e"
+  }
+}

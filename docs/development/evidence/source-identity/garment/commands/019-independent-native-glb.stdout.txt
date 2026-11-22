@@ -1,0 +1,112 @@
+21:29:15 | INFO: Data are loaded, start creating Blender stuff
+21:29:15 | INFO: Blender create Mesh node Fitted shell with matched rounded sleeve caps.002
+21:29:15 | INFO: Blender create Mesh node Hem | narrow stitched edge curve
+21:29:15 | INFO: Blender create Mesh node Sphere
+21:29:15 | INFO: Blender create Mesh node Sphere.001
+21:29:15 | INFO: Blender create Mesh node R Shoulder | tab mesh.001
+21:29:15 | INFO: Blender create Mesh node R Shoulder | pale edge curve
+21:29:15 | INFO: Blender create Mesh node Sphere.002
+21:29:15 | INFO: Blender create Mesh node Sphere.003
+21:29:15 | INFO: Blender create Mesh node Sphere.004
+21:29:15 | INFO: Blender create Mesh node L Shoulder | tab mesh.001
+21:29:15 | INFO: Blender create Mesh node L Shoulder | pale edge curve
+21:29:15 | INFO: Blender create Mesh node Sphere.005
+21:29:15 | INFO: Blender create Mesh node R_Cuff_Band mesh.001
+21:29:15 | INFO: Blender create Mesh node R_Cuff_Piping_Proximal curve
+21:29:15 | INFO: Blender create Mesh node R_Cuff_Piping_Distal curve
+21:29:15 | INFO: Blender create Mesh node R_Cuff_Strap identity mesh.001
+21:29:15 | INFO: Blender create Mesh node R_Cuff_Buckle frame curve
+21:29:15 | INFO: Blender create Mesh node R_Cuff_Buckle tongue curve
+21:29:15 | INFO: Blender create Mesh node Sphere.006
+21:29:15 | INFO: Blender create Mesh node Sphere.007
+21:29:15 | INFO: Blender create Mesh node L_Cuff_Band mesh.001
+21:29:15 | INFO: Blender create Mesh node L_Cuff_Piping_Proximal curve
+21:29:15 | INFO: Blender create Mesh node L_Cuff_Piping_Distal curve
+21:29:15 | INFO: Blender create Mesh node L_Cuff_Strap identity mesh.001
+21:29:15 | INFO: Blender create Mesh node L_Cuff_Buckle frame curve
+21:29:15 | INFO: Blender create Mesh node L_Cuff_Buckle tongue curve
+21:29:15 | INFO: Blender create Mesh node Sphere.008
+21:29:15 | INFO: Blender create Mesh node Sphere.009
+21:29:15 | INFO: Blender create Mesh node Waist | rear wrap belt identity mesh.001
+21:29:15 | INFO: Blender create Mesh node R Waist | front short belt identity mesh.001
+21:29:15 | INFO: Blender create Mesh node R Waist | front buckle frame curve
+21:29:15 | INFO: Blender create Mesh node R Waist | front buckle tongue curve
+21:29:15 | INFO: Blender create Mesh node R Waist | rear buckle frame curve
+21:29:15 | INFO: Blender create Mesh node R Waist | rear buckle tongue curve
+21:29:15 | INFO: Blender create Mesh node Sphere.010
+21:29:15 | INFO: Blender create Mesh node Sphere.011
+21:29:15 | INFO: Blender create Mesh node L Waist | front short belt identity mesh.001
+21:29:15 | INFO: Blender create Mesh node L Waist | front buckle frame curve
+21:29:15 | INFO: Blender create Mesh node L Waist | front buckle tongue curve
+21:29:15 | INFO: Blender create Mesh node L Waist | rear buckle frame curve
+21:29:15 | INFO: Blender create Mesh node L Waist | rear buckle tongue curve
+21:29:15 | INFO: Blender create Mesh node Sphere.012
+21:29:15 | INFO: Blender create Mesh node Sphere.013
+21:29:15 | INFO: Blender create Mesh node Back | centre tailoring seam fitted centerline
+21:29:15 | INFO: Blender create Mesh node L body | princess seam fitted centerline
+21:29:15 | INFO: Blender create Mesh node R body | princess seam fitted centerline
+21:29:15 | INFO: Blender create Mesh node L Sleeve | back seam fitted centerline
+21:29:15 | INFO: Blender create Mesh node R Sleeve | back seam fitted centerline
+21:29:15 | INFO: Blender create Mesh node L Lapel | fine piping fitted centerline
+21:29:15 | INFO: Blender create Mesh node R Lapel | fine piping fitted centerline
+21:29:15 | INFO: Blender create Mesh node Collar | standing back and neck facing identity mesh.001
+21:29:16 | INFO: Blender create Mesh node Collar | pale upper edge fitted centerline
+21:29:16 | INFO: Blender create Mesh node L Identity sleeve | black shield field identity mesh.001
+21:29:16 | INFO: Blender create Mesh node L Identity sleeve | pale shield border fitted centerline
+21:29:16 | INFO: Blender create Mesh node L Identity sleeve | fleur central spear identity mesh.001
+21:29:16 | INFO: Blender create Mesh node L Identity sleeve | fleur left lobe identity mesh.001
+21:29:16 | INFO: Blender create Mesh node L Identity sleeve | fleur right lobe identity mesh.001
+21:29:16 | INFO: Blender create Mesh node L Identity sleeve | fleur left lower curl identity mesh.001
+21:29:16 | INFO: Blender create Mesh node L Identity sleeve | fleur right lower curl identity mesh.001
+21:29:16 | INFO: Blender create Mesh node L Identity sleeve | fleur crossbar fitted centerline
+21:29:16 | INFO: Blender create Mesh node Sphere.017
+21:29:16 | INFO: Blender create Mesh node Sphere.018
+21:29:16 | INFO: Blender create Mesh node L Identity breast | black shield field identity mesh.001
+21:29:16 | INFO: Blender create Mesh node L Identity breast | pale shield border fitted centerline
+21:29:16 | INFO: Blender create Mesh node L Identity breast | fleur central spear identity mesh.001
+21:29:16 | INFO: Blender create Mesh node L Identity breast | fleur left lobe identity mesh.001
+21:29:16 | INFO: Blender create Mesh node L Identity breast | fleur right lobe identity mesh.001
+21:29:16 | INFO: Blender create Mesh node L Identity breast | fleur left lower curl identity mesh.001
+21:29:16 | INFO: Blender create Mesh node L Identity breast | fleur right lower curl identity mesh.001
+21:29:16 | INFO: Blender create Mesh node L Identity breast | fleur crossbar fitted centerline
+21:29:16 | INFO: Blender create Mesh node Sphere.019
+21:29:16 | INFO: Blender create Mesh node Sphere.020
+21:29:16 | INFO: Blender create Mesh node L Identity | front upper draped chain identity mesh
+21:29:16 | INFO: Blender create Mesh node L Identity | front lower draped chain identity mesh
+21:29:16 | INFO: Blender create Mesh node L Identity | shoulder suspension ring fitted centerline
+21:29:16 | INFO: Blender create Mesh node L Identity | rear upper draped chain identity mesh
+21:29:16 | INFO: Blender create Mesh node L Identity | rear lower draped chain identity mesh
+21:29:16 | INFO: Blender create Mesh node L Identity | sleeve hanging chain 0 identity mesh
+21:29:16 | INFO: Blender create Mesh node Sphere.021
+21:29:16 | INFO: Blender create Mesh node L Identity | sleeve lance pendant 0 identity mesh.001
+21:29:16 | INFO: Blender create Mesh node L Identity | sleeve hanging chain 1 identity mesh
+21:29:16 | INFO: Blender create Mesh node Sphere.022
+21:29:16 | INFO: Blender create Mesh node L Identity | sleeve lance pendant 1 identity mesh.001
+21:29:16 | INFO: Blender create Mesh node L Identity | sleeve hanging chain 2 identity mesh
+21:29:16 | INFO: Blender create Mesh node Sphere.023
+21:29:16 | INFO: Blender create Mesh node L Identity | sleeve lance pendant 2 identity mesh.001
+21:29:16 | INFO: Blender create Mesh node L Identity | sleeve hanging chain 3 identity mesh
+21:29:16 | INFO: Blender create Mesh node Sphere.024
+21:29:16 | INFO: Blender create Mesh node L Identity | sleeve lance pendant 3 identity mesh.001
+21:29:16 | INFO: Blender create Mesh node L Identity | sleeve hanging chain 4 identity mesh
+21:29:16 | INFO: Blender create Mesh node Sphere.025
+21:29:16 | INFO: Blender create Mesh node L Identity | sleeve lance pendant 4 identity mesh.001
+21:29:16 | INFO: Blender create Mesh node L Identity | shoulder hanging chain 0 identity mesh
+21:29:16 | INFO: Blender create Mesh node L Identity | shoulder pendant 0 identity mesh.001
+21:29:16 | INFO: Blender create Mesh node L Identity | shoulder hanging chain 1 identity mesh
+21:29:16 | INFO: Blender create Mesh node L Identity | shoulder pendant 1 identity mesh.001
+21:29:16 | INFO: Blender create Mesh node L Identity | breast hanging chain 0 identity mesh
+21:29:16 | INFO: Blender create Mesh node L Identity | breast pendant 0 identity mesh.001
+21:29:16 | INFO: Blender create Mesh node L Identity | breast hanging chain 1 identity mesh
+21:29:16 | INFO: Blender create Mesh node L Identity | breast pendant 1 identity mesh.001
+21:29:16 | INFO: glTF import finished in 0.77s
+Info: Saved "imported-glb.blend"
+INDEPENDENT_CHECK {"passed": true, "native": "/workspace/scratch/5765cde18054/work/garment/native.blend", "glb": "/workspace/scratch/5765cde18054/work/garment/native.glb", "mesh_objects": 100, "names_match": true, "parents_match": true, "maximum_matrix_error": 1.6858739826375313e-07, "maximum_bounds_error_m": 1.862645149230957e-09, "native_triangles": 493958, "imported_glb_triangles": 493958, "topology": {"Body | continuous open front and shoulder yoke": {"cage": {"vertices": 2164, "faces": 2032, "boundary_edges": 266, "boundary_components": 3, "boundary_components_are_loops": true, "edges_more_than_two_faces": 0, "zero_area_faces": 0}, "evaluated": {"vertices": 66086, "faces": 66088, "boundary_edges": 0, "boundary_components": 0, "boundary_components_are_loops": true, "edges_more_than_two_faces": 0, "zero_area_faces": 0}}, "Collar | standing back and neck facing": {"cage": {"vertices": 4164, "faces": 3806, "boundary_edges": 714, "boundary_components": 1, "boundary_components_are_loops": true, "edges_more_than_two_faces": 0, "zero_area_faces": 0}, "evaluated": {"vertices": 124650, "faces": 124648, "boundary_edges": 0, "boundary_components": 0, "boundary_components_are_loops": true, "edges_more_than_two_faces": 0, "zero_area_faces": 0}}}, "shared_armhole_seams": [{"name": "L Armhole | shared 40-edge seam", "edges": 40, "all_edges_two_faces": true}, {"name": "R Armhole | shared 40-edge seam", "edges": 40, "all_edges_two_faces": true}], "limits": ["Topology checks do not establish absence of all self-intersections.", "Three cage boundary loops are the connected front/neck/hem edge and two wrists.", "Closed solidified meshes retain hollow space and rimmed openings; they do not fill the garment.", "GLB material conversion is not a proof of baked procedural cloth equivalence.", "No rigging, cloth simulation, new UV layout or engine test is claimed."]}
+IDENTITY_INDEPENDENT_CHECK {"passed": true, "native": "/workspace/scratch/5765cde18054/work/garment/native.blend", "glb": "/workspace/scratch/5765cde18054/work/garment/native.glb", "mesh_objects": 100, "names_match": true, "parents_match": true, "maximum_matrix_error": 1.6858739826375313e-07, "maximum_bounds_error_m": 1.862645149230957e-09, "native_triangles": 493958, "imported_glb_triangles": 493958, "topology": {"Body | continuous open front and shoulder yoke": {"cage": {"vertices": 2164, "faces": 2032, "boundary_edges": 266, "boundary_components": 3, "boundary_components_are_loops": true, "edges_more_than_two_faces": 0, "zero_area_faces": 0}, "evaluated": {"vertices": 66086, "faces": 66088, "boundary_edges": 0, "boundary_components": 0, "boundary_components_are_loops": true, "edges_more_than_two_faces": 0, "zero_area_faces": 0}}, "Collar | standing back and neck facing": {"cage": {"vertices": 4164, "faces": 3806, "boundary_edges": 714, "boundary_components": 1, "boundary_components_are_loops": true, "edges_more_than_two_faces": 0, "zero_area_faces": 0}, "evaluated": {"vertices": 124650, "faces": 124648, "boundary_edges": 0, "boundary_components": 0, "boundary_components_are_loops": true, "edges_more_than_two_faces": 0, "zero_area_faces": 0}}}, "shared_armhole_seams": [{"name": "L Armhole | shared 40-edge seam", "edges": 40, "all_edges_two_faces": true}, {"name": "R Armhole | shared 40-edge seam", "edges": 40, "all_edges_two_faces": true}], "limits": ["Topology checks do not establish absence of all self-intersections.", "Three cage boundary loops are the connected front/neck/hem edge and two wrists.", "Closed solidified meshes retain hollow space and rimmed openings; they do not fill the garment.", "GLB material conversion is not a proof of baked procedural cloth equivalence.", "No rigging, cloth simulation, new UV layout or engine test is claimed."], "baseline_preservation": {"body_cage_topology_exact": true, "nominal_dimension_metadata_exact": true, "nominal_dimensions": {"nominal_shoulder_width_m": 0.38, "nominal_back_length_m": 0.42, "nominal_sleeve_axis_m": 0.58}, "body_maximum_cage_displacement_m": 0.014481324051218802, "left_cuff_names": ["L_Cuff_Band", "L_Cuff_Buckle frame", "L_Cuff_Buckle tongue", "L_Cuff_Piping_Distal", "L_Cuff_Piping_Proximal", "L_Cuff_Rivet_-0.022", "L_Cuff_Rivet_0.022", "L_Cuff_Strap"], "right_cuff_names": ["R_Cuff_Band", "R_Cuff_Buckle frame", "R_Cuff_Buckle tongue", "R_Cuff_Piping_Distal", "R_Cuff_Piping_Proximal", "R_Cuff_Rivet_-0.022", "R_Cuff_Rivet_0.022", "R_Cuff_Strap"], "original_material_names_in_selected_native": ["Hardware | brushed silver", "Interior | black satin lining", "Main | charcoal woven wool", "Piping | pale silver grey", "Seams | tonal thread", "Straps | charcoal twill"], "original_unused_material_names_absent_in_selected_native": []}, "last_correction_preservation": {"prior_native": "/workspace/scratch/5765cde18054/work/garment/project/.refas2/revisions/76998d0f6f7242fbb6a0fc2ef7fa1a37/artifacts/scene.blend", "changed_geometry_objects": ["L Identity | front lower draped chain"], "other_mesh_geometry_materials_and_transforms_canonically_exact": true, "protected_mesh_objects": 99, "note": "Nine newly authored sphere beads/studs may have different polygon allocation order; canonical vertex/face geometry is identical."}}
+Blender 4.3.2
+Read blend: "/workspace/scratch/5765cde18054/work/garment/native.blend"
+Read blend: "/workspace/scratch/5765cde18054/work/garment/native.blend"
+Read blend: "/workspace/scratch/5765cde18054/baseline/extracted/refas-jacket-automail-refinement/garment/selected/jacket.blend"
+Read blend: "/workspace/scratch/5765cde18054/work/garment/project/.refas2/revisions/76998d0f6f7242fbb6a0fc2ef7fa1a37/artifacts/scene.blend"
+
+Blender quit

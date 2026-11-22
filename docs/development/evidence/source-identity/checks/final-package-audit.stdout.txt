@@ -1,0 +1,23 @@
+
+> refas@2.0.0-alpha.1 release:audit
+> node tools/verify-plugin-distribution.mjs && node tools/release-audit.mjs
+
+{
+  "status": "PASS",
+  "version": "2.0.0-alpha.1",
+  "skillSource": "./skills/",
+  "icon": "./skills/refas/assets/icon.svg",
+  "adapters": [
+    "claude",
+    "codex",
+    "agents"
+  ]
+}
+{
+  "status": "PASS",
+  "version": "2.0.0-alpha.1",
+  "skillFiles": 13,
+  "packagedFiles": 17,
+  "unpackedBytes": 139434,
+  "skillBytes": 121712
+}

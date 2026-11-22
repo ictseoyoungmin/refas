@@ -1,0 +1,34 @@
+{
+  "ok": true,
+  "schema": "refas.production.project/v2",
+  "name": "independent-glb-observation",
+  "projectId": "6117a33cd9624ecd99149cdeda6fa21b",
+  "head": null,
+  "sequence": 0,
+  "sources": [
+    {
+      "path": "sources/001-reference.png",
+      "name": "reference.png",
+      "role": "user-reference",
+      "sha256": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5",
+      "bytes": 2666378
+    }
+  ],
+  "outputs": {},
+  "observations": [],
+  "inputs": {},
+  "revisions": [],
+  "incompleteRuns": [],
+  "evidenceFreshness": {
+    "status": "no-revision",
+    "scope": "active-reference-content-set",
+    "revision": null,
+    "activeSourceSha256": [
+      "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5"
+    ],
+    "revisionSourceSha256": [],
+    "visualAcceptance": "not-evaluated"
+  },
+  "referenceResemblance": "not-evaluated",
+  "gameReadiness": "not-evaluated"
+}
