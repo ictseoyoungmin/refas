@@ -1,0 +1,24 @@
+{
+  "checkedAt": "2026-11-22T18:53:40.192724+00:00",
+  "remoteHead": "f236477fe91b2fcb8453fcbc0cc55c91df0edacc",
+  "recoveredModelManifestEntries": 96,
+  "mismatches": [],
+  "inputs": {
+    "jacket": {
+      "name": "native.blend",
+      "bytes": 6640120,
+      "sha256": "528a8b67b2cd74dd5724225a6da4065281f6cfdf033d52a0b28123eab804cafd"
+    },
+    "automail": {
+      "name": "native.blend",
+      "bytes": 5539412,
+      "sha256": "e7b2ac7cbd671d979af6e178ec85efc574ad9860c9695000980cf4a29f8a2dd7"
+    },
+    "avatar": {
+      "name": "character(2).vrm",
+      "bytes": 35463852,
+      "sha256": "3173dcf6bfbf2f01af2040d70ee3430975510e8a5ab8b30eba5c493937451430"
+    }
+  },
+  "unrecovered": "Post-f236477 asset candidates/scripts (reported automail 78998 tris, jacket 97-frame fit/metal repair) not found in current local files or durable files. New candidate reconstruction starts from exact source-identity model checkpoint, not old reported final."
+}

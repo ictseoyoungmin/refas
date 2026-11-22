@@ -6,6 +6,7 @@ import argparse
 import datetime as dt
 import hashlib
 import json
+import math
 from pathlib import Path
 import shutil
 import subprocess
@@ -38,6 +39,13 @@ def point(value):
     return [value[0], value[2], -value[1]]
 
 
+def positive_finite(value):
+    number = float(value)
+    if not math.isfinite(number) or number <= 0:
+        raise argparse.ArgumentTypeError("must be a finite positive number")
+    return number
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--asset", type=Path, required=True)
@@ -45,7 +53,10 @@ def main():
     parser.add_argument("--clip", required=True)
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--godot", default="godot")
-    parser.add_argument("--tolerance", type=float, default=2e-5)
+    parser.add_argument("--tolerance", type=positive_finite, default=2e-5,
+                        help="Maximum sampled matrix-element error (default: 2e-5)")
+    parser.add_argument("--vertex-tolerance", type=positive_finite, default=2e-5,
+                        help="Maximum sampled skin-position error in meters (default: 2e-5)")
     parser.add_argument("--required-skinned-meshes", type=int)
     parser.add_argument("--expected-triangles", type=int)
     args = parser.parse_args()
@@ -66,6 +77,7 @@ def main():
         samples.append({"time": sample["seconds"], "probes": probes, "vertexProbes": vertex_probes})
     configuration = {"asset": str(args.asset.resolve()), "clip": args.clip, "samples": samples,
                      "output": str(out / "result.json"), "tolerance": args.tolerance,
+                     "vertexTolerance": args.vertex_tolerance,
                      "bakeFps": source["fps"] / source.get("fps_base", 1),
                      "inspectionSha256": hashlib.sha256(raw).hexdigest(),
                      "coordinateConversion": "Godot/glTF = (Blender X, Blender Z, -Blender Y)",

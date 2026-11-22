@@ -43,8 +43,11 @@ must come from the same selected revision and pose, not from the imported GLB.
 Optional `--required-skinned-meshes` checks actual skin bindings to a Skeleton3D;
 `--expected-triangles` checks imported surface indices. Matrix matching requires
 the entire sampled animation to pass and requires observable motion; a static
-rest pose alone cannot pass. An explicit tolerance is recorded, never silently
-increased after observing a difference.
+rest pose alone cannot pass. `--tolerance` controls matrix-element error and
+defaults to `2e-5`. `--vertex-tolerance` separately controls skin-position error
+in meters and defaults to `2e-5` (20 micrometers). Both must be finite and
+strictly positive. The configuration and Godot result record the selected
+thresholds; they are never automatically increased after observing a difference.
 
 For an actual skin-deformation probe, each native sample can also contain
 `skin_vertices` entries with `node`, `label`, `rest_world` and current `world`
@@ -53,7 +56,7 @@ pose. Godot matches an actual imported skinned vertex at that rest position
 (within 10 micrometers), retains its surface/index and evaluates its delivered
 joint indices, weights and inverse-bind matrices against the current Skeleton3D
 pose. Each resulting world point must match the native evaluated position within
-20 micrometers. Active corrective shapes are evaluated first through Godot's
+the declared vertex tolerance. Active corrective shapes are evaluated first through Godot's
 public `bake_mesh_from_current_blend_shape_mix()` API, with the actual animation
 weights recorded per sample. The resulting points are then skinned. This
 exercises the delivered morph/skin data in CPU observations inside Godot; it is
@@ -71,6 +74,16 @@ reports their measurable error; it does not normalize away the discrepancy.
 An independent two-bone/transformed/morph fixture retains its approximately
 18-micrometer consumer difference, and an actual GLB with replaced weights
 fails. Renderer appearance remains unexecuted in the headless environment.
+
+An asset-specific consumer precision budget may be selected explicitly, for
+example `--vertex-tolerance 0.00005` for 0.05 mm in a meter-scale scene. Retain
+the stricter failing result, diagnose the exported and imported weights, and
+state why the budget is suitable for the intended use before adopting it. This
+option changes only the acceptance threshold: it does not alter imported
+weights, normalize actual deformation, relax matrix matching, or widen the
+10-micrometer rest association. Measured errors remain in every sample, and
+corrupted delivered weights beyond the declared budget still fail. This budget
+does not establish mesh clearance or hide a failed visual or attachment review.
 
 The observer checks only the declared nodes/bones and sample times. It does not
 prove universal joint clearance, continuous collision freedom, physics response,

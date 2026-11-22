@@ -15,6 +15,9 @@ func check(label, ok, details = null):
 	report.checks.append({"name": label, "ok": bool(ok), "details": details})
 	return bool(ok)
 
+func positive_finite(value):
+	return (value is float or value is int) and is_finite(float(value)) and value > 0
+
 func finish():
 	report.ok = not report.checks.is_empty()
 	for item in report.checks:
@@ -137,9 +140,15 @@ func _run():
 		return
 	configuration = parsed
 	if not check("requiredConfiguration", configuration.has_all(["asset", "clip", "samples", "output", "tolerance"])
-			and configuration.get("samples", []).size() >= 3 and configuration.get("tolerance", 0) > 0):
+			and configuration.get("samples", []).size() >= 3
+			and positive_finite(configuration.get("tolerance", 0))
+			and positive_finite(configuration.get("vertexTolerance", 0.00002))
+			and positive_finite(configuration.get("vertexMatchTolerance", 0.00001))):
 		finish()
 		return
+	report.tolerances = {"matrix": configuration.tolerance,
+		"skinVertexM": configuration.get("vertexTolerance", 0.00002),
+		"restVertexMatchM": configuration.get("vertexMatchTolerance", 0.00001)}
 	report.engine = Engine.get_version_info()
 	report.assetSha256 = FileAccess.get_sha256(configuration.asset)
 	report.mode = "headless GLTFDocument import and AnimationPlayer evaluation; no GPU or FPS claim"
