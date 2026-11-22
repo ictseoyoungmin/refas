@@ -16,9 +16,9 @@ import {
   finalizeMesh,
   partsToGlb,
   validateSpatialCollapseClassification,
-} from '../skills/refas/scripts/lib/index.mjs';
-import {_classifySpatialCollapseFromAuthority} from '../skills/refas/scripts/lib/spatial-collapse-classifier.mjs';
-import {initTrustedContractFixtureProject} from '../skills/refas/scripts/lib/contract-fixture-project.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
+import {_classifySpatialCollapseFromAuthority} from '../legacy/v1/scripts/lib/spatial-collapse-classifier.mjs';
+import {initTrustedContractFixtureProject} from '../legacy/v1/scripts/lib/contract-fixture-project.mjs';
 import {buildVolumeClosureRegressionFixture} from './fixtures/volume-closure-regression-fixtures.mjs';
 
 const D=(c)=>c.repeat(64);

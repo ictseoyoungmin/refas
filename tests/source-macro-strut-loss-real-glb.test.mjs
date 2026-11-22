@@ -4,7 +4,7 @@ import {
  createReferenceGeometry,createRealizedProjection,
  createSegmentPrism,partsToGlb,
  screenLostSourceVisibleParts,replaySourceSemanticPhysicalEvidence,
-} from '../skills/refas/scripts/lib/index.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
 
 const SOURCE='source/original-frame.png',SHA='a'.repeat(64);
 const camera={projection:'orthographic',position:[0,0,5],target:[0,0,0],

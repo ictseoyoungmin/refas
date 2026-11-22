@@ -33,14 +33,14 @@ jobs:
       - name: Generate ACTUAL 1024px PNG-containing indexed synthetic GLB
         run: |
           mkdir -p temp/r14-06d
-          python skills/refas/scripts/create_pbr_v2_texture_benchmark_fixture.py \
+          python legacy/v1/scripts/create_pbr_v2_texture_benchmark_fixture.py \
             --out-glb temp/r14-06d/textured-stress.glb \
             --out-frame temp/r14-06d/camera.frame.json \
             --size 1024 --triangles 120 --seed 137 --filter 9987 \
             > temp/r14-06d/fixture.json
       - name: Same CPU/process cold and warm full-pass SHA verification
         run: |
-          python skills/refas/scripts/benchmark_pbr_v2_full.py \
+          python legacy/v1/scripts/benchmark_pbr_v2_full.py \
             --glb temp/r14-06d/textured-stress.glb \
             --frame temp/r14-06d/camera.frame.json \
             --out temp/r14-06d/render \

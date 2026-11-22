@@ -11,7 +11,7 @@ import sys
 import tempfile
 import unittest
 
-sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"skills/refas/scripts"))
+sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"legacy/v1/scripts"))
 from create_blender_color0_texture_fixture import generate
 from create_blender_no_color_control import make_control
 from render_external_blender import preflight,run

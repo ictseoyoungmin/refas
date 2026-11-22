@@ -9,7 +9,7 @@ from pathlib import Path
 
 import numpy as np
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "skills/refas/scripts"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "legacy/v1/scripts"))
 from render_cpu_opt import njit
 from render_cpu_tiled import render_hero_tiled, numba_config
 from render_glb import Primitive

@@ -8,9 +8,9 @@ import {
   initProject,loadProject,createCylinder,partsToGlb,
   AGENT_NEXT_SCHEMA,AGENT_DIAGNOSIS_SCHEMA,
   nextAgentWork,diagnoseAgentWork,summarizeCoverage,AGENT_NEXT_ACTION_PLANS,
-} from '../skills/refas/scripts/lib/index.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
 
-const CLI=path.resolve('skills/refas/scripts/refas.mjs');
+const CLI=path.resolve('legacy/v1/scripts/refas.mjs');
 function run(...args){return spawnSync(process.execPath,[CLI,...args],{encoding:'utf8'});}
 const materials={clay:{baseColor:[.5,.5,.5,1],metallic:0,roughness:1}};
 async function project(t){

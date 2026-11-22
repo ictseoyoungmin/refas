@@ -8,7 +8,7 @@ import unittest
 
 import numpy as np
 
-sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"skills/refas/scripts"))
+sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"legacy/v1/scripts"))
 from render_pbr_v2_mip import compute_uv_derivatives,mip_linear_pyramid
 from render_pbr_v2_texture import sample_linear_texture,resolve_base_sampler
 from render_pbr_v2_material import validate_opaque_materials,shade_visible
@@ -157,7 +157,7 @@ class EndToEndMipmapGLB(unittest.TestCase):
                 load_primitives(glb,max_texture_pixels=3)
             worker=root/"out"
             script=Path(__file__).resolve().parents[1]/(
-                "skills/refas/scripts/render_pbr_v2_material.py")
+                "legacy/v1/scripts/render_pbr_v2_material.py")
             result=subprocess.run([sys.executable,str(script),"--glb",str(glb),
                 "--frame",str(frame),"--out",str(worker),"--size","48",
                 "--threads","1","--max-working-mb","512"],

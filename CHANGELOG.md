@@ -2,7 +2,14 @@
 
 All notable RefAs changes are documented here. RefAs follows semantic versioning.
 
-## Unreleased — 2.0 production rewrite
+## 2.0.0-alpha.1 — Unreleased
+
+### Production-only distribution and explicit legacy import
+
+- Move the retained 1.x runtime, contract graph, templates and historical guides to repository-only `legacy/v1/`. The active skill contains the production entry, directly used Python modules and focused guides; old schemas and comparison tooling are not installed.
+- Coordinate package, production runtime and plugin metadata at the development identity `2.0.0-alpha.1`. Point the npm `refas` command to the same Python CLI as the copied skill. Check the actual archive against an exact file list and reject undeclared legacy additions. No tag, package or stable release is published by this change.
+- Add explicit selected-asset `import-v1` from an archived 1.x checkpoint. Preserve exact asset/source/provenance inputs, leave the old project untouched, create fresh native/GLB/render output and start with unevaluated visual and target readiness. Legacy certificates and full project history are not imported as production approval.
+- Add a repository-only same-GLB renderer experiment with recorded cameras, materials, normal precision and light-direction controls. Keep renderer differences separate from modeling or source-likeness judgments.
 
 ### Native production workflow
 
@@ -31,8 +38,8 @@ All notable RefAs changes are documented here. RefAs follows semantic versioning
 - Add informed jacket collar/lapel and AURIX socket/forearm/palm refinements, fixed native/GLB observations, local cuff/cover edits, exact restoration and portable replay examples. Retain rejected intermediates, literal dispatched prompts and separate anonymous visual judgments.
 - Make repeated example readbacks use revision-scoped observation projects, preserving previous observations when a selected revision is revisited.
 
-- Keep 1.x runtime, project formats, and source-bound certification behavior available through an explicit optional route. The production integrity command does not issue a 1.x certificate.
-- Keep package/runtime/plugin metadata at `1.4.2` during development; the published release remains `v1.4.1`. A coordinated 2.0 packaging and migration milestone is still required.
+- Keep the 1.x runtime, project formats and source-bound certification behavior in the repository-only legacy implementation. The production integrity command does not issue a 1.x certificate.
+- Retain the preserved 1.4.2 development rollback branch and historical release evidence. The 2.0 alpha metadata cutover is separate from main merge and publication.
 - Demonstration assets establish execution and local-edit behavior. Reference-image reconstruction quality, complete rig behavior, and target-engine readiness remain separate acceptance work.
 
 ## 1.4.2 — 2026-10-16

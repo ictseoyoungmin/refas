@@ -7,7 +7,7 @@ description: Build and revise reference-driven 3D assets with Blender, preserve 
 
 Create an editable 3D asset that answers the user's visual and practical requirements. Work from the original references, build a coherent whole, inspect actual renders, and improve the largest visible defect. Keep the successful model available for further edits.
 
-This is the **2.0 production workflow under development**, not a published 2.0 release. The Python commands below are the entry for new production projects. The existing 1.x runtime remains available for its saved projects and explicit certification contracts.
+Use the Python production commands below to create and continue assets. The installed skill contains this workflow and its focused guides; it does not include the old capability or certification runtime.
 
 ## Start with the asset
 
@@ -98,10 +98,12 @@ Review three separate questions:
 
 A render or technical check can support only the claim it actually demonstrates. Report a prototype as a prototype. Human visual acceptance, technical verification, and a future automated resemblance evaluator are separate evidence.
 
-## Optional 1.x project compatibility
+## Import an existing 1.x asset
 
-Use this route only to resume a saved 1.x project or when the user explicitly needs its existing source-bound or physical certification contracts. Do not preload this reference stack for the production workflow above.
+Read `references/production-import.md` only when the source is a saved 1.x project. Select a recorded checkpoint and native/GLB artifact, then import into a new production project:
 
-Read `references/INDEX.md`, then its active `references/workflow.md` route. The 1.x commands remain `node scripts/refas.mjs next`, `diagnose`, and `validate`; they keep their existing state and authority semantics. Load `references/checkpointing.md` before 1.x checkpoint/edit/restore operations and `references/failure-routing.md` for typed repair. Source-bound approval remains governed by `references/validation.md` and `references/claim-certification.md`.
+```bash
+python3 scripts/produce.py import-v1 --root NEW_PROJECT --source-project OLD_PROJECT --checkpoint CHECKPOINT_ID --artifact assets/selected.glb --name imported-asset
+```
 
-The new production `verify` command is an artifact integrity check and does not issue a 1.x certificate. Keeping this compatibility route reachable does not make its fixed capability progression a prerequisite for producing a new asset.
+Inspect the captured import report and actual output before continuing. The command keeps the old project unchanged and records the selected archived bytes, source and provenance. GLB import cannot recover absent authoring history. Previous certificates and review decisions do not approve the new revision; assess reference fit and intended use again.

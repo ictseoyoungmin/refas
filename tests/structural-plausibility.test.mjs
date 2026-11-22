@@ -7,7 +7,7 @@ import {
   partsToGlb,
   validateAttachmentSemantics,
   validateStructuralPlausibility,
-} from '../skills/refas/scripts/lib/index.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
 import {CORVID_ROOT_SUPPORT_EVIDENCE,boxMesh} from './fixtures/root-support-corvid-fixture.mjs';
 import {buildArticulatedFigure} from '../examples/articulated-figure/model.mjs';
 

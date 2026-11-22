@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import {runTexturedMaterialDogfood} from '../skills/refas/scripts/verify_textured_material_dogfood.mjs';
-import {createPbrRenderReport, validatePbrRenderReport} from '../skills/refas/scripts/lib/index.mjs';
+import {runTexturedMaterialDogfood} from '../legacy/v1/scripts/verify_textured_material_dogfood.mjs';
+import {createPbrRenderReport, validatePbrRenderReport} from '../legacy/v1/scripts/lib/index.mjs';
 
 test('portable renderer samples embedded base-color textures deterministically',async()=>{
   const result=await runTexturedMaterialDogfood();

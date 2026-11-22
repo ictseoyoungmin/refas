@@ -12,7 +12,7 @@ import unittest
 
 import numpy as np
 
-sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"skills/refas/scripts"))
+sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"legacy/v1/scripts"))
 from render_glb import Primitive
 from benchmark_render_cpu import create_fixture
 from render_pbr_v2_visibility import (NEAR, njit, numba_config, render_visibility)
@@ -126,7 +126,7 @@ class PbrV2VisibilityTests(unittest.TestCase):
 @unittest.skipUnless(njit is not None,"optional Numba not installed")
 class PbrV2VisibilityCliTests(unittest.TestCase):
     def test_real_glb_frame_cli_no_source_photo_certification(self):
-        tool=Path(__file__).resolve().parents[1]/"skills/refas/scripts/render_pbr_v2_visibility.py"
+        tool=Path(__file__).resolve().parents[1]/"legacy/v1/scripts/render_pbr_v2_visibility.py"
         with tempfile.TemporaryDirectory(prefix="refas-pbr-v2-cli-") as tmp:
             root=Path(tmp); glb=root/"geometry.glb"; frame=root/"frame.json"
             create_fixture(glb,frame,"strands",150,37)

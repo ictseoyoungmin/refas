@@ -1,5 +1,5 @@
-import {finalizeMesh} from '../../skills/refas/scripts/lib/mesh.mjs';
-import {partsToGlb} from '../../skills/refas/scripts/lib/glb.mjs';
+import {finalizeMesh} from '../../legacy/v1/scripts/lib/mesh.mjs';
+import {partsToGlb} from '../../legacy/v1/scripts/lib/glb.mjs';
 
 const EPS = 1e-8;
 const sub = (a, b) => a.map((value, index) => value - b[index]);

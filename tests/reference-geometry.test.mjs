@@ -4,7 +4,7 @@ import {test} from 'node:test';
 import {
   createReferenceGeometry,
   validateReferenceGeometry,
-} from '../skills/refas/scripts/lib/index.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
 
 const SOURCE = 'a'.repeat(64);
 

@@ -1,0 +1,244 @@
+{
+  "blenderVersion": "4.3.2",
+  "observations": [
+    {
+      "camera": {
+        "matrixWorld": [
+          [
+            0.8349582,
+            -0.22013363,
+            0.50436693,
+            3.48310137
+          ],
+          [
+            0.55031341,
+            0.33399591,
+            -0.76524633,
+            -5.35757208
+          ],
+          [
+            -5e-08,
+            0.91650856,
+            0.40001509,
+            2.76545572
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "orthoScale": 4.04344702,
+        "position": [
+          3.48310137,
+          -5.35757208,
+          2.76545572
+        ],
+        "projection": "orthographic",
+        "target": [
+          0.01181483,
+          -0.09079336,
+          0.01236677
+        ]
+      },
+      "framing": "automatic-bounds",
+      "lighting": {
+        "center": [
+          0.01181483,
+          -0.09079336,
+          0.01236677
+        ],
+        "radius": 1.72061566,
+        "rig": "three-area-lights/v1"
+      },
+      "path": "view-hero.png",
+      "referenceRegion": null,
+      "registration": "unregistered",
+      "renderer": {
+        "denoising": false,
+        "device": "CPU",
+        "engine": "CYCLES",
+        "samples": 4,
+        "size": [
+          192,
+          192
+        ],
+        "transparent": false,
+        "viewTransform": "AgX",
+        "worldColor": [
+          0.065,
+          0.08,
+          0.115
+        ],
+        "worldStrength": 0.45
+      },
+      "sha256": "ab1fdf1deb17b9fbd68bf12e45dfb9f161b47dbe982336210233366fc940cf34",
+      "sourceSceneFingerprint": "58c980c007782d9b2e9a7e8035dc1d43b24b6448dd5e1e1db245349ee2113b68",
+      "view": "hero"
+    },
+    {
+      "camera": {
+        "matrixWorld": [
+          [
+            -4e-08,
+            4e-08,
+            1.0,
+            6.89427757
+          ],
+          [
+            1.0,
+            0.0,
+            4e-08,
+            -0.09079336
+          ],
+          [
+            0.0,
+            1.0,
+            -4e-08,
+            0.01236677
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "orthoScale": 4.04344702,
+        "position": [
+          6.89427757,
+          -0.09079336,
+          0.01236677
+        ],
+        "projection": "orthographic",
+        "target": [
+          0.01181483,
+          -0.09079336,
+          0.01236677
+        ]
+      },
+      "framing": "automatic-bounds",
+      "lighting": {
+        "center": [
+          0.01181483,
+          -0.09079336,
+          0.01236677
+        ],
+        "radius": 1.72061566,
+        "rig": "three-area-lights/v1"
+      },
+      "path": "view-side.png",
+      "referenceRegion": null,
+      "registration": "unregistered",
+      "renderer": {
+        "denoising": false,
+        "device": "CPU",
+        "engine": "CYCLES",
+        "samples": 4,
+        "size": [
+          192,
+          192
+        ],
+        "transparent": false,
+        "viewTransform": "AgX",
+        "worldColor": [
+          0.065,
+          0.08,
+          0.115
+        ],
+        "worldStrength": 0.45
+      },
+      "sha256": "c23baa8752acfa27a56bcb66aec9b126f25c35ac8db083d15f37843875a59bdc",
+      "sourceSceneFingerprint": "58c980c007782d9b2e9a7e8035dc1d43b24b6448dd5e1e1db245349ee2113b68",
+      "view": "side"
+    }
+  ],
+  "ok": true,
+  "operation": "edit",
+  "outputs": {
+    "blend": "scene.blend",
+    "glb": "asset.glb",
+    "scene": "scene.json"
+  },
+  "schema": "refas.production.result/v2",
+  "verification": {
+    "glb": {
+      "boundsTolerance": 0.00026896870100000004,
+      "checks": {
+        "boundsMatchNative": true,
+        "noDiagnosticCamerasOrLights": true,
+        "nonEmpty": true,
+        "trianglesMatchEncoded": true,
+        "trianglesMatchNative": true
+      },
+      "encoded": {
+        "animations": 0,
+        "cameras": 0,
+        "lights": 0,
+        "materials": 4,
+        "meshes": 66,
+        "morphMeshes": 0,
+        "nodes": 66,
+        "skins": 0,
+        "triangles": 38354
+      },
+      "reimportedBounds": {
+        "dimensions": [
+          2.08425236,
+          0.51337016,
+          2.68968701
+        ],
+        "max": [
+          1.05394101,
+          0.16589172,
+          1.35721028
+        ],
+        "min": [
+          -1.03031135,
+          -0.34747845,
+          -1.33247674
+        ]
+      },
+      "reimportedStatistics": {
+        "armatures": 0,
+        "materialSlots": 66,
+        "meshes": 66,
+        "objects": 66,
+        "shapeKeyObjects": 0,
+        "triangles": 38354,
+        "uvObjects": 0,
+        "vertices": 20017
+      },
+      "scope": "geometry counts, bounds and basic feature presence only",
+      "status": "passed"
+    },
+    "native": {
+      "fingerprintMatches": true,
+      "reopened": true,
+      "statistics": {
+        "armatures": 0,
+        "materialSlots": 66,
+        "meshes": 66,
+        "objects": 66,
+        "shapeKeyObjects": 0,
+        "triangles": 38354,
+        "uvObjects": 0,
+        "vertices": 19307
+      },
+      "status": "passed"
+    }
+  },
+  "warnings": [
+    "Diagnostic views are unregistered; they do not establish reference likeness.",
+    "GLB reimport checks geometry counts, bounds and basic feature presence, not visual equivalence.",
+    "Fingerprints cover the recorded state at the current frame, not all animation or simulation states.",
+    "Node-group internals and drivers are not exhaustively represented by the state fingerprints.",
+    "Static mesh modifiers are evaluated for GLB export; unapplied non-armature modifiers on skinned or shape-key meshes are unsupported.",
+    "Hidden or excluded meshes are rejected by this alpha so GLB export and diagnostic renders cannot silently use different asset scopes.",
+    "Object instances must be realized into explicit scene objects; curves and other non-mesh geometry must be converted before production inspection or export.",
+    "Unrealized evaluated instances, including Geometry Nodes instances, are rejected; realize their geometry before production inspection or export.",
+    "Viewport/render modifier visibility and enabled subdivision levels must agree so inventory, export and diagnostic renders use the same declared geometry.",
+    "Procedural Blender materials may need baking for faithful GLB appearance."
+  ]
+}

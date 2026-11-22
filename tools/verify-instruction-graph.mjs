@@ -7,31 +7,31 @@ import {
   extractInstructionRoutes,
   resolveSkillRoute,
   verifyInstallationBoundary,
-} from '../skills/refas/scripts/verify_installation_boundary.mjs';
+} from '../legacy/v1/scripts/verify_installation_boundary.mjs';
 
 const DEFAULT_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
 export {extractInstructionRoutes};
 
 export function resolveInstructionRoute(route, {root = DEFAULT_ROOT} = {}) {
-  const relative = resolveSkillRoute(route, {skillRoot: path.join(root, 'skills/refas')});
-  return `skills/refas/${relative}`;
+  const relative = resolveSkillRoute(route, {skillRoot: path.join(root, 'legacy/v1')});
+  return `legacy/v1/${relative}`;
 }
 
 function adapt(result) {
   return {
     ...result,
     packageDanglingRoutes: [],
-    routedPackagePaths: result.routedSkillPaths.map((entry) => `skills/refas/${entry}`),
+    routedPackagePaths: result.routedSkillPaths.map((entry) => `legacy/v1/${entry}`),
   };
 }
 
 export async function analyzeInstructionGraph({root = DEFAULT_ROOT} = {}) {
-  return adapt(await analyzeInstallationBoundary({skillRoot: path.join(root, 'skills/refas')}));
+  return adapt(await analyzeInstallationBoundary({skillRoot: path.join(root, 'legacy/v1')}));
 }
 
 export async function verifyInstructionGraph({root = DEFAULT_ROOT} = {}) {
-  return adapt(await verifyInstallationBoundary({skillRoot: path.join(root, 'skills/refas')}));
+  return adapt(await verifyInstallationBoundary({skillRoot: path.join(root, 'legacy/v1')}));
 }
 
 async function main() {

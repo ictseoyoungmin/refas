@@ -1,0 +1,184 @@
+[
+  {
+    "label": "driver",
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "examples/renderer-isolation/run.py",
+      "--legacy-root",
+      "/workspace/scratch/c52cb753f160/refas/legacy/v1",
+      "--blender",
+      "/usr/bin/blender",
+      "--out",
+      "/workspace/scratch/c52cb753f160/v2-next-renderer/run-02",
+      "--size",
+      "384",
+      "--samples",
+      "32"
+    ]
+  },
+  {
+    "label": "cpu-albedo",
+    "function": "render_pbr.render",
+    "glbSha256": "005f4e2f463c88d0cc10a46e9ca16fa5f98a8bac098e6cb8726cdd00694da3af",
+    "camera": {
+      "position": [
+        0,
+        0.55,
+        8
+      ],
+      "target": [
+        0,
+        0.55,
+        0
+      ],
+      "up": [
+        0,
+        1,
+        0
+      ],
+      "fovY": 31
+    },
+    "mode": "albedo",
+    "size": 384,
+    "lights": [
+      [
+        [
+          -0.55,
+          0.75,
+          0.65
+        ],
+        2.8,
+        [
+          1,
+          0.96,
+          0.9
+        ]
+      ],
+      [
+        [
+          0.72,
+          0.18,
+          0.54
+        ],
+        1.3,
+        [
+          0.7,
+          0.82,
+          1
+        ]
+      ],
+      [
+        [
+          -0.15,
+          -0.62,
+          0.77
+        ],
+        0.5,
+        [
+          1,
+          0.76,
+          0.58
+        ]
+      ]
+    ],
+    "exposure": 0,
+    "background": [
+      15,
+      18,
+      23
+    ],
+    "elapsedSeconds": 0.4942
+  },
+  {
+    "label": "cpu-beauty",
+    "function": "render_pbr.render",
+    "glbSha256": "005f4e2f463c88d0cc10a46e9ca16fa5f98a8bac098e6cb8726cdd00694da3af",
+    "camera": {
+      "position": [
+        0,
+        0.55,
+        8
+      ],
+      "target": [
+        0,
+        0.55,
+        0
+      ],
+      "up": [
+        0,
+        1,
+        0
+      ],
+      "fovY": 31
+    },
+    "mode": "beauty",
+    "size": 384,
+    "lights": [
+      [
+        [
+          -0.55,
+          0.75,
+          0.65
+        ],
+        2.8,
+        [
+          1,
+          0.96,
+          0.9
+        ]
+      ],
+      [
+        [
+          0.72,
+          0.18,
+          0.54
+        ],
+        1.3,
+        [
+          0.7,
+          0.82,
+          1
+        ]
+      ],
+      [
+        [
+          -0.15,
+          -0.62,
+          0.77
+        ],
+        0.5,
+        [
+          1,
+          0.76,
+          0.58
+        ]
+      ]
+    ],
+    "exposure": 0,
+    "background": [
+      15,
+      18,
+      23
+    ],
+    "elapsedSeconds": 1.410024
+  },
+  {
+    "label": "cycles-and-observation",
+    "argv": [
+      "/usr/bin/blender",
+      "-b",
+      "--factory-startup",
+      "--threads",
+      "2",
+      "--python-exit-code",
+      "1",
+      "--python",
+      "/workspace/scratch/c52cb753f160/refas/examples/renderer-isolation/blender_observe.py",
+      "--",
+      "--config",
+      "/workspace/scratch/c52cb753f160/v2-next-renderer/run-02/blender-config.json"
+    ],
+    "returncode": 0,
+    "elapsedSeconds": 6.553502
+  }
+]

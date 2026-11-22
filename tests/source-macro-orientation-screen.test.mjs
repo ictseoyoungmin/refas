@@ -3,7 +3,7 @@ import {test} from 'node:test';
 import {
   createReferenceGeometry,createRealizedProjection,createSegmentPrism,partsToGlb,
   screenSourceMacroSectionEnvelopes,screenSourceMacroPartOrientation,verifyRealizedProjection,
-} from '../skills/refas/scripts/lib/index.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
 
 // Pre-authored synthetic reference geometry; this test verifies that the
 // *runtime* derives orientation from GLB mesh, not that source interpretation

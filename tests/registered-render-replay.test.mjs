@@ -7,9 +7,9 @@ import {test} from 'node:test';
 import {
   createSegmentPrism, partsToGlb, digestBytes, sha256File,
   verifyRegisteredRenderReplay,
-} from '../skills/refas/scripts/lib/index.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
 
-const CLI=path.resolve('skills/refas/scripts/refas.mjs');
+const CLI=path.resolve('legacy/v1/scripts/refas.mjs');
 const REG='a'.repeat(64);
 const MATERIALS={panel:{baseColor:[.55,.65,.72,1],metallic:.1,roughness:.6}};
 

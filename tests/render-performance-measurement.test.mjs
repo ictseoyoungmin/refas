@@ -3,7 +3,7 @@ import {test} from 'node:test';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import {runMeasurement} from '../skills/refas/scripts/measure_render_pbr.mjs';
+import {runMeasurement} from '../legacy/v1/scripts/measure_render_pbr.mjs';
 
 test('nondegenerate renderer benchmark records full, preview and cache reuse with bounded resource accounting',async(t)=>{
   const root=await fs.mkdtemp(path.join(os.tmpdir(),'refas-render-measurement-test-'));

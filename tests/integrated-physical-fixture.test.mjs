@@ -10,7 +10,7 @@ import {
   validatePhysicalAssetBundleBindings,
   validatePhysicalClaimEvidenceBindings,
   validatePhysicalIdentityGraph,
-} from '../skills/refas/scripts/lib/index.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
 import {
   authorizeIntegratedMassDrift,
   certifyIntegratedRuntimeReady,

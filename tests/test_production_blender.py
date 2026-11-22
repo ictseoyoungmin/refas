@@ -94,6 +94,52 @@ class ProductionBlenderTests(unittest.TestCase):
         for a_view, b_view in zip(self.create["observations"], self.revised["observations"]):
             self.assertEqual(a_view["camera"], b_view["camera"])
 
+    def test_standalone_legacy_import_opens_native_and_glb_with_actual_observations(self):
+        from test_production_import import create_legacy_project
+        from production import project
+        installed = self.root / "installed-import-skill"
+        shutil.copytree(ROOT / "skills/refas", installed)
+        entry = installed / "scripts/produce.py"
+        reference = (self.root / "create/view-hero.png").read_bytes()
+        original_scene = json.loads((self.root / "create/scene.json").read_text())
+        for route, artifact in (("native", self.source), ("glb", self.root / "create/asset.glb")):
+            with self.subTest(route=route):
+                legacy = create_legacy_project(self.root / ("legacy-" + route), artifact.read_bytes(),
+                                               artifact.suffix, reference)
+                before = project.inventory(legacy["root"])
+                target = self.root / ("imported-" + route)
+                process = subprocess.run([sys.executable, "-B", str(entry), "import-v1",
+                    "--root", str(target), "--source-project", str(legacy["root"]),
+                    "--checkpoint", legacy["checkpoint"], "--artifact", legacy["artifact"],
+                    "--name", "Imported " + route, "--blender", str(BLENDER),
+                    "--views", "front", "--size", "96", "--samples", "2"],
+                    capture_output=True, text=True, timeout=90)
+                self.assertEqual(process.returncode, 0, process.stderr[-4000:] + process.stdout[-4000:])
+                result = json.loads(process.stdout)
+                self.assertTrue(project.verify_project(target)["ok"])
+                revision = project.load_revision(target)
+                self.assertEqual(revision["kind"], "import-v1")
+                self.assertEqual(revision["migration"]["route"], route)
+                self.assertEqual(revision["migration"]["certification"],
+                                 {"inherited": False, "status": "not-evaluated"})
+                self.assertEqual(project.inventory(legacy["root"]), before)
+                self.assertEqual(Path(result["inputs"]["import/asset" + artifact.suffix]).read_bytes(), artifact.read_bytes())
+                self.assertEqual(Path(result["outputs"]["blend"]).read_bytes()[:7], b"BLENDER")
+                self.assertEqual(Path(result["outputs"]["glb"]).read_bytes()[:4], b"glTF")
+                png = Path(result["observations"][0]["path"]).read_bytes()
+                self.assertEqual(png[:8], b"\x89PNG\r\n\x1a\n")
+                self.assertEqual(struct.unpack(">II", png[16:24]), (96, 96))
+                self.assertTrue(revision["verification"]["native"]["fingerprintMatches"])
+                self.assertTrue(all(revision["verification"]["glb"]["checks"].values()))
+                imported_scene = json.loads(Path(result["outputs"]["scene"]).read_text())
+                self.assertEqual(imported_scene["statistics"]["meshes"], original_scene["statistics"]["meshes"])
+                self.assertEqual(imported_scene["statistics"]["triangles"], original_scene["statistics"]["triangles"])
+                if route == "native":
+                    self.assertEqual(imported_scene["fingerprint"], original_scene["fingerprint"])
+                self.assertEqual(revision["assessment"],
+                                 {"referenceResemblance": "not-evaluated", "gameReadiness": "not-evaluated"})
+        self.assertEqual(sha(self.source), self.source_sha)
+
     def test_public_cli_reference_refresh_manual_import_and_exact_restore(self):
         reference = self.root / "create/view-hero.png"
         review = self.root / "reference-refresh-review.json"
@@ -225,6 +271,70 @@ bpy.ops.wm.save_as_mainfile(filepath=''' + repr(str(source)) + ''')
                                 capture_output=True, text=True, timeout=60)
         self.assertEqual(result.returncode, 0, result.stdout[-2000:] + result.stderr[-2000:])
         return source
+
+    def test_legacy_native_import_refuses_uncaptured_libraries_and_image_files(self):
+        from test_production_import import create_legacy_project
+        from production import legacy_import, project
+        cases = [
+            ("linked-library", "no linked libraries", '''
+with bpy.data.libraries.load(''' + repr(str(self.source)) + ''', link=True) as (source, target):
+    target.objects = ["HeadbandOuter"]
+bpy.context.scene.collection.objects.link(target.objects[0])
+'''),
+            ("external-image", "packed image textures", '''
+bpy.ops.mesh.primitive_cube_add()
+material = bpy.data.materials.new("UncapturedTexture")
+material.use_nodes = True
+texture = material.node_tree.nodes.new("ShaderNodeTexImage")
+texture.image = bpy.data.images.load(''' + repr(str(self.root / "create/view-hero.png")) + ''')
+bpy.context.object.data.materials.append(material)
+''')]
+        for name, message, body in cases:
+            with self.subTest(resource=name):
+                native = self.native_fixture("legacy-" + name, body)
+                legacy = create_legacy_project(self.root / ("legacy-project-" + name), native.read_bytes(), ".blend")
+                before = project.inventory(legacy["root"])
+                target = self.root / ("rejected-import-" + name)
+                with self.assertRaises(project.ProductionError):
+                    legacy_import.import_v1(target, legacy["root"], legacy["checkpoint"], legacy["artifact"],
+                                            "Rejected import", blender=str(BLENDER), views=[])
+                state = project.status(target)
+                self.assertIsNone(state["head"])
+                self.assertEqual(len(state["incompleteRuns"]), 1)
+                run = state["incompleteRuns"][0]
+                self.assertEqual(run["status"], "failed")
+                failed = target / ".refas2/runs" / run["id"] / "artifacts/result.json"
+                self.assertIn(message, json.loads(failed.read_text())["error"]["message"])
+                self.assertEqual(project.inventory(legacy["root"]), before)
+
+    def test_legacy_glb_required_extension_failure_never_publishes(self):
+        from test_production_import import create_legacy_project
+        from production import legacy_import, project
+        data = (self.root / "create/asset.glb").read_bytes()
+        length = struct.unpack("<I", data[12:16])[0]
+        document = json.loads(data[20:20 + length])
+        extension = "REFAS_unverified_test_extension"
+        document["extensionsUsed"] = [*document.get("extensionsUsed", []), extension]
+        document["extensionsRequired"] = [*document.get("extensionsRequired", []), extension]
+        payload = json.dumps(document).encode()
+        payload += b" " * (-len(payload) % 4)
+        tail = data[20 + length:]
+        changed = (b"glTF" + struct.pack("<II", 2, 20 + len(payload) + len(tail)) +
+                   struct.pack("<I", len(payload)) + b"JSON" + payload + tail)
+        legacy = create_legacy_project(self.root / "legacy-required-extension", changed)
+        before = project.inventory(legacy["root"])
+        target = self.root / "rejected-required-extension"
+        with self.assertRaises(project.ProductionError):
+            legacy_import.import_v1(target, legacy["root"], legacy["checkpoint"], legacy["artifact"],
+                                    "Unsupported required extension", blender=str(BLENDER), views=[])
+        state = project.status(target)
+        self.assertIsNone(state["head"])
+        self.assertEqual(state["incompleteRuns"][0]["status"], "failed")
+        run = target / ".refas2/runs" / state["incompleteRuns"][0]["id"]
+        self.assertIn(extension, json.loads((run / "artifacts/result.json").read_text())["error"]["message"])
+        migration = json.loads((run / "inputs/import/migration.json").read_text())
+        self.assertIn(extension, migration["artifact"]["extensionsRequired"])
+        self.assertEqual(project.inventory(legacy["root"]), before)
 
     def test_geometry_node_instances_are_rejected_until_realized(self):
         source = self.native_fixture("geometry-instances", '''

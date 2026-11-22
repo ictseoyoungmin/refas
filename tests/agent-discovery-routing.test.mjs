@@ -3,9 +3,9 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {test} from 'node:test';
-import {CAPABILITY_ORDER,AGENT_NEXT_SCHEMA,AGENT_DIAGNOSIS_SCHEMA} from '../skills/refas/scripts/lib/index.mjs';
+import {CAPABILITY_ORDER,AGENT_NEXT_SCHEMA,AGENT_DIAGNOSIS_SCHEMA} from '../legacy/v1/scripts/lib/index.mjs';
 
-const root=path.resolve('skills/refas');
+const root=path.resolve('legacy/v1');
 const script=path.join(root,'scripts','refas.mjs');
 const specs=[
  {node:'workflow',id:'agent-next',command:'next',symbol:'nextAgentWork',schema:AGENT_NEXT_SCHEMA},
@@ -20,7 +20,8 @@ function cli(...args){
 
 test('released agent operations are discoverable in canonical graph, CLI help and describe node',async()=>{
  const graph=JSON.parse(await fs.readFile(path.join(root,'references','GRAPH.json'),'utf8'));
- assert.equal(graph.nodes.length,43,'include optional production guides without adding runtime capabilities');
+ assert.equal(graph.nodes.length,40,'legacy graph excludes production-only guides');
+ assert.ok(graph.nodes.every(node=>!node.id.startsWith('production-')));
  assert.equal(CAPABILITY_ORDER.length,11,'runtime ownership remains canonical');
  const help=cli('--help').commands;
  for(const expected of specs){
@@ -51,10 +52,8 @@ test('installed instruction router links actual source-bound agent commands with
   assert.match(s,/(?:validate|agent-validate-source-bound)/);
  }
  const skill=await fs.readFile(path.join(root,'SKILL.md'),'utf8');
- const compatibility=skill.indexOf('## Optional 1.x project compatibility');
- assert.ok(compatibility>0,'1.x commands must remain reachable through explicit compatibility');
- for(const command of ['next','diagnose','validate']) assert.ok(skill.slice(compatibility).includes(command));
- assert.doesNotMatch(skill.slice(0,compatibility),/node scripts\/refas\.mjs/);
+ for(const command of ['next','diagnose','validate']) assert.ok(skill.includes('node scripts/refas.mjs '+command));
+ assert.doesNotMatch(skill,/scripts\/produce\.py|references\/production-/);
  const f=await fs.readFile(path.join(root,'references/validation.md'),'utf8');
  assert.match(f,/exit code 2|Exit code 2/);
  assert.match(f,/INSUFFICIENT/);

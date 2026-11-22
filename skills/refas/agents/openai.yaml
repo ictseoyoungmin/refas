@@ -1,6 +1,6 @@
 interface:
   display_name: RefAs
-  short_description: Vision-first reference-to-3D reconstruction
+  short_description: Build editable Blender assets from references
   default_prompt: Use $refas to construct a complete, editable 3D asset from this reference.
     Build coherent volume and repeated structures, then review and refine multiview renders.
   icon_small: assets/icon.svg

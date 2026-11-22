@@ -15,7 +15,7 @@ from pathlib import Path
 
 import numpy as np
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "skills/refas/scripts"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "legacy/v1/scripts"))
 import render_cpu_tiled as tiled
 from benchmark_render_cpu import strand_geometry
 from render_glb import Primitive
@@ -122,7 +122,7 @@ class DenseBoundsTests(unittest.TestCase):
         self.assertLess(stats["candidatePixelTests"] * 2, stats["tileWidePixelTests"])
 
     def test_opt_in_runner_reports_real_hero_and_digest(self):
-        runner = Path(__file__).resolve().parents[1] / "skills/refas/scripts/benchmark_render_cpu_dense.py"
+        runner = Path(__file__).resolve().parents[1] / "legacy/v1/scripts/benchmark_render_cpu_dense.py"
         with tempfile.TemporaryDirectory(prefix="refas-r14-05-measured-") as folder:
             output = Path(folder) / "measurement.json"
             cmd = [sys.executable, str(runner), "--case", "strands",

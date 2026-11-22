@@ -3,22 +3,34 @@ name: RefAs production alpha
 on:
   pull_request:
     paths:
-      - 'skills/refas/SKILL.md'
+      - 'skills/refas/**'
       - 'skills/refas/scripts/produce.py'
       - 'skills/refas/scripts/production/**'
       - 'tests/test_production*.py'
       - 'examples/production-workflow/**'
       - 'package.json'
+      - 'bin/refas.mjs'
+      - 'tools/verify-production-distribution.mjs'
+      - 'tools/verify-packed-install.mjs'
+      - 'tests/production-distribution.test.mjs'
+      - '.codex-plugin/plugin.json'
+      - '.claude-plugin/plugin.json'
       - '.github/workflows/production.yml'
   push:
     branches: [main, rewrite/v2]
     paths:
-      - 'skills/refas/SKILL.md'
+      - 'skills/refas/**'
       - 'skills/refas/scripts/produce.py'
       - 'skills/refas/scripts/production/**'
       - 'tests/test_production*.py'
       - 'examples/production-workflow/**'
       - 'package.json'
+      - 'bin/refas.mjs'
+      - 'tools/verify-production-distribution.mjs'
+      - 'tools/verify-packed-install.mjs'
+      - 'tests/production-distribution.test.mjs'
+      - '.codex-plugin/plugin.json'
+      - '.claude-plugin/plugin.json'
       - '.github/workflows/production.yml'
   workflow_dispatch:
 
@@ -41,6 +53,11 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: '3.12'
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+      - name: Production package boundary and installed CLI
+        run: node --test tests/production-distribution.test.mjs
       - name: Project revisions, failure recovery and copied-skill CLI
         run: python -B -m unittest discover -s tests -p 'test_production*.py'
       - name: Compile production entry, Blender worker and example scripts

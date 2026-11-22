@@ -1,0 +1,495 @@
+20:42:15 | INFO: Data are loaded, start creating Blender stuff
+20:42:15 | INFO: Blender create Mesh node support-shell
+20:42:15 | INFO: Blender create Mesh node panel:cell-00
+20:42:15 | INFO: Blender create Mesh node panel:cell-01
+20:42:15 | INFO: Blender create Mesh node panel:cell-02
+20:42:15 | INFO: Blender create Mesh node panel:cell-03
+20:42:15 | INFO: Blender create Mesh node panel:cell-04
+20:42:15 | INFO: Blender create Mesh node panel:cell-05
+20:42:15 | INFO: Blender create Mesh node panel:cell-06
+20:42:15 | INFO: Blender create Mesh node panel:cell-07
+20:42:15 | INFO: Blender create Mesh node panel:cell-08
+20:42:15 | INFO: Blender create Mesh node panel:cell-09
+20:42:15 | INFO: Blender create Mesh node panel:cell-10
+20:42:15 | INFO: Blender create Mesh node panel:cell-11
+20:42:15 | INFO: Blender create Mesh node panel:cell-12
+20:42:15 | INFO: Blender create Mesh node panel:cell-13
+20:42:15 | INFO: Blender create Mesh node panel:cell-14
+20:42:15 | INFO: Blender create Mesh node panel:cell-15
+20:42:15 | INFO: Blender create Mesh node boundary:cell-00:cell-02
+20:42:15 | INFO: Blender create Mesh node boundary:cell-01:cell-02
+20:42:15 | INFO: Blender create Mesh node boundary:cell-01:cell-04
+20:42:15 | INFO: Blender create Mesh node boundary:cell-02:cell-03
+20:42:15 | INFO: Blender create Mesh node boundary:cell-02:cell-04
+20:42:15 | INFO: Blender create Mesh node boundary:cell-02:cell-05
+20:42:15 | INFO: Blender create Mesh node boundary:cell-03:cell-05
+20:42:15 | INFO: Blender create Mesh node boundary:cell-03:cell-07
+20:42:15 | INFO: Blender create Mesh node boundary:cell-04:cell-05
+20:42:15 | INFO: Blender create Mesh node boundary:cell-04:cell-06
+20:42:15 | INFO: Blender create Mesh node boundary:cell-04:cell-08
+20:42:15 | INFO: Blender create Mesh node boundary:cell-05:cell-07
+20:42:15 | INFO: Blender create Mesh node boundary:cell-05:cell-08
+20:42:15 | INFO: Blender create Mesh node boundary:cell-05:cell-09
+20:42:15 | INFO: Blender create Mesh node boundary:cell-06:cell-08
+20:42:15 | INFO: Blender create Mesh node boundary:cell-06:cell-10
+20:42:15 | INFO: Blender create Mesh node boundary:cell-07:cell-09
+20:42:15 | INFO: Blender create Mesh node boundary:cell-07:cell-11
+20:42:15 | INFO: Blender create Mesh node boundary:cell-08:cell-09
+20:42:15 | INFO: Blender create Mesh node boundary:cell-08:cell-10
+20:42:15 | INFO: Blender create Mesh node boundary:cell-08:cell-14
+20:42:15 | INFO: Blender create Mesh node boundary:cell-09:cell-11
+20:42:15 | INFO: Blender create Mesh node boundary:cell-09:cell-13
+20:42:15 | INFO: Blender create Mesh node boundary:cell-09:cell-14
+20:42:15 | INFO: Blender create Mesh node boundary:cell-10:cell-12
+20:42:15 | INFO: Blender create Mesh node boundary:cell-10:cell-14
+20:42:15 | INFO: Blender create Mesh node boundary:cell-11:cell-13
+20:42:15 | INFO: Blender create Mesh node boundary:cell-12:cell-14
+20:42:15 | INFO: Blender create Mesh node boundary:cell-12:cell-15
+20:42:15 | INFO: Blender create Mesh node boundary:cell-13:cell-14
+20:42:15 | INFO: Blender create Mesh node boundary:cell-14:cell-15
+20:42:15 | INFO: Blender create Mesh node junction:junction-0
+20:42:15 | INFO: Blender create Mesh node junction:junction-1
+20:42:15 | INFO: Blender create Mesh node junction:junction-2
+20:42:15 | INFO: Blender create Mesh node junction:junction-3
+20:42:15 | INFO: Blender create Mesh node junction:junction-4
+20:42:15 | INFO: Blender create Mesh node junction:junction-5
+20:42:15 | INFO: Blender create Mesh node junction:junction-6
+20:42:15 | INFO: Blender create Mesh node junction:junction-7
+20:42:15 | INFO: Blender create Mesh node junction:junction-8
+20:42:15 | INFO: Blender create Mesh node junction:junction-9
+20:42:15 | INFO: Blender create Mesh node junction:junction-10
+20:42:15 | INFO: Blender create Mesh node junction:junction-11
+20:42:15 | INFO: Blender create Mesh node junction:junction-12
+20:42:15 | INFO: Blender create Mesh node junction:junction-13
+20:42:15 | INFO: Blender create Mesh node outer-rim
+20:42:15 | INFO: Blender create Mesh node fastener-base
+20:42:15 | INFO: Blender create Mesh node fastener-ring
+20:42:15 | INFO: Blender create Mesh node fastener-inlay
+20:42:15 | INFO: glTF import finished in 0.07s
+Info: No new files have been packed
+Info: Saved "scene.blend"
+ERROR Draco mesh compression is not available because library could not be found at /usr/bin/4.3/python/lib/python3.13/site-packages/libextern_draco.so
+20:42:15 | INFO: Starting glTF 2.0 export
+20:42:15 | INFO: Extracting primitive: support-shell
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: panel:cell-00
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: panel:cell-01
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: panel:cell-02
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: panel:cell-03
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: panel:cell-04
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: panel:cell-05
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: panel:cell-06
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: panel:cell-07
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: panel:cell-08
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: panel:cell-09
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: panel:cell-10
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: panel:cell-11
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: panel:cell-12
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: panel:cell-13
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: panel:cell-14
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: panel:cell-15
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: boundary:cell-00:cell-02
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: boundary:cell-01:cell-02
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: boundary:cell-01:cell-04
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: boundary:cell-02:cell-03
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: boundary:cell-02:cell-04
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: boundary:cell-02:cell-05
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: boundary:cell-03:cell-05
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: boundary:cell-03:cell-07
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: boundary:cell-04:cell-05
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: boundary:cell-04:cell-06
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: boundary:cell-04:cell-08
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: boundary:cell-05:cell-07
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: boundary:cell-05:cell-08
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: boundary:cell-05:cell-09
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: boundary:cell-06:cell-08
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: boundary:cell-06:cell-10
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: boundary:cell-07:cell-09
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: boundary:cell-07:cell-11
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: boundary:cell-08:cell-09
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: boundary:cell-08:cell-10
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: boundary:cell-08:cell-14
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: boundary:cell-09:cell-11
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: boundary:cell-09:cell-13
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: boundary:cell-09:cell-14
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: boundary:cell-10:cell-12
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: boundary:cell-10:cell-14
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: boundary:cell-11:cell-13
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: boundary:cell-12:cell-14
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: boundary:cell-12:cell-15
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: boundary:cell-13:cell-14
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: boundary:cell-14:cell-15
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: junction:junction-0
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: junction:junction-1
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: junction:junction-2
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: junction:junction-3
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: junction:junction-4
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: junction:junction-5
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: junction:junction-6
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: junction:junction-7
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: junction:junction-8
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: junction:junction-9
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: junction:junction-10
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: junction:junction-11
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: junction:junction-12
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: junction:junction-13
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: outer-rim
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: fastener-base
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: fastener-ring
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Extracting primitive: fastener-inlay
+20:42:16 | INFO: Primitives created: 1
+20:42:16 | INFO: Finished glTF 2.0 export in 0.1076667308807373 s
+
+20:42:16 | INFO: Data are loaded, start creating Blender stuff
+20:42:16 | INFO: Blender create Mesh node support-shell
+20:42:16 | INFO: Blender create Mesh node panel:cell-00
+20:42:16 | INFO: Blender create Mesh node panel:cell-01
+20:42:16 | INFO: Blender create Mesh node panel:cell-02
+20:42:16 | INFO: Blender create Mesh node panel:cell-03
+20:42:16 | INFO: Blender create Mesh node panel:cell-04
+20:42:16 | INFO: Blender create Mesh node panel:cell-05
+20:42:16 | INFO: Blender create Mesh node panel:cell-06
+20:42:16 | INFO: Blender create Mesh node panel:cell-07
+20:42:16 | INFO: Blender create Mesh node panel:cell-08
+20:42:16 | INFO: Blender create Mesh node panel:cell-09
+20:42:16 | INFO: Blender create Mesh node panel:cell-10
+20:42:16 | INFO: Blender create Mesh node panel:cell-11
+20:42:16 | INFO: Blender create Mesh node panel:cell-12
+20:42:16 | INFO: Blender create Mesh node panel:cell-13
+20:42:16 | INFO: Blender create Mesh node panel:cell-14
+20:42:16 | INFO: Blender create Mesh node panel:cell-15
+20:42:16 | INFO: Blender create Mesh node boundary:cell-00:cell-02
+20:42:16 | INFO: Blender create Mesh node boundary:cell-01:cell-02
+20:42:16 | INFO: Blender create Mesh node boundary:cell-01:cell-04
+20:42:16 | INFO: Blender create Mesh node boundary:cell-02:cell-03
+20:42:16 | INFO: Blender create Mesh node boundary:cell-02:cell-04
+20:42:16 | INFO: Blender create Mesh node boundary:cell-02:cell-05
+20:42:16 | INFO: Blender create Mesh node boundary:cell-03:cell-05
+20:42:16 | INFO: Blender create Mesh node boundary:cell-03:cell-07
+20:42:16 | INFO: Blender create Mesh node boundary:cell-04:cell-05
+20:42:16 | INFO: Blender create Mesh node boundary:cell-04:cell-06
+20:42:16 | INFO: Blender create Mesh node boundary:cell-04:cell-08
+20:42:16 | INFO: Blender create Mesh node boundary:cell-05:cell-07
+20:42:16 | INFO: Blender create Mesh node boundary:cell-05:cell-08
+20:42:16 | INFO: Blender create Mesh node boundary:cell-05:cell-09
+20:42:16 | INFO: Blender create Mesh node boundary:cell-06:cell-08
+20:42:16 | INFO: Blender create Mesh node boundary:cell-06:cell-10
+20:42:16 | INFO: Blender create Mesh node boundary:cell-07:cell-09
+20:42:16 | INFO: Blender create Mesh node boundary:cell-07:cell-11
+20:42:16 | INFO: Blender create Mesh node boundary:cell-08:cell-09
+20:42:16 | INFO: Blender create Mesh node boundary:cell-08:cell-10
+20:42:16 | INFO: Blender create Mesh node boundary:cell-08:cell-14
+20:42:16 | INFO: Blender create Mesh node boundary:cell-09:cell-11
+20:42:16 | INFO: Blender create Mesh node boundary:cell-09:cell-13
+20:42:16 | INFO: Blender create Mesh node boundary:cell-09:cell-14
+20:42:16 | INFO: Blender create Mesh node boundary:cell-10:cell-12
+20:42:16 | INFO: Blender create Mesh node boundary:cell-10:cell-14
+20:42:16 | INFO: Blender create Mesh node boundary:cell-11:cell-13
+20:42:16 | INFO: Blender create Mesh node boundary:cell-12:cell-14
+20:42:16 | INFO: Blender create Mesh node boundary:cell-12:cell-15
+20:42:16 | INFO: Blender create Mesh node boundary:cell-13:cell-14
+20:42:16 | INFO: Blender create Mesh node boundary:cell-14:cell-15
+20:42:16 | INFO: Blender create Mesh node junction:junction-0
+20:42:16 | INFO: Blender create Mesh node junction:junction-1
+20:42:16 | INFO: Blender create Mesh node junction:junction-2
+20:42:16 | INFO: Blender create Mesh node junction:junction-3
+20:42:16 | INFO: Blender create Mesh node junction:junction-4
+20:42:16 | INFO: Blender create Mesh node junction:junction-5
+20:42:16 | INFO: Blender create Mesh node junction:junction-6
+20:42:16 | INFO: Blender create Mesh node junction:junction-7
+20:42:16 | INFO: Blender create Mesh node junction:junction-8
+20:42:16 | INFO: Blender create Mesh node junction:junction-9
+20:42:16 | INFO: Blender create Mesh node junction:junction-10
+20:42:16 | INFO: Blender create Mesh node junction:junction-11
+20:42:16 | INFO: Blender create Mesh node junction:junction-12
+20:42:16 | INFO: Blender create Mesh node junction:junction-13
+20:42:16 | INFO: Blender create Mesh node outer-rim
+20:42:16 | INFO: Blender create Mesh node fastener-base
+20:42:16 | INFO: Blender create Mesh node fastener-ring
+20:42:16 | INFO: Blender create Mesh node fastener-inlay
+20:42:16 | INFO: glTF import finished in 0.07s
+Blender 4.3.2
+Read blend: "/workspace/scratch/c52cb753f160/v2-import-proof/installed-run/project/.refas2/runs/b4f4b984c94f4289aad972365182015f/artifacts/scene.blend"
+Read blend: "/workspace/scratch/c52cb753f160/v2-import-proof/installed-run/project/.refas2/runs/b4f4b984c94f4289aad972365182015f/artifacts/scene.blend"
+Fra:1 Mem:20.15M (Peak 20.15M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | support-shell
+Fra:1 Mem:22.21M (Peak 22.21M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | fastener-inlay
+Fra:1 Mem:22.23M (Peak 22.23M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | fastener-ring
+Fra:1 Mem:22.25M (Peak 22.25M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | fastener-base
+Fra:1 Mem:22.27M (Peak 22.27M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | outer-rim
+Fra:1 Mem:22.46M (Peak 22.46M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | junction:junction-13
+Fra:1 Mem:22.46M (Peak 22.46M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | junction:junction-12
+Fra:1 Mem:22.53M (Peak 22.53M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | junction:junction-11
+Fra:1 Mem:22.54M (Peak 22.54M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | junction:junction-10
+Fra:1 Mem:22.55M (Peak 22.55M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | junction:junction-9
+Fra:1 Mem:22.55M (Peak 22.55M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | junction:junction-8
+Fra:1 Mem:22.56M (Peak 22.56M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | junction:junction-7
+Fra:1 Mem:22.57M (Peak 22.57M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | junction:junction-6
+Fra:1 Mem:22.58M (Peak 22.58M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | junction:junction-5
+Fra:1 Mem:22.59M (Peak 22.59M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | junction:junction-4
+Fra:1 Mem:22.60M (Peak 22.60M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | junction:junction-3
+Fra:1 Mem:22.61M (Peak 22.61M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | junction:junction-2
+Fra:1 Mem:22.61M (Peak 22.61M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | junction:junction-1
+Fra:1 Mem:22.62M (Peak 22.62M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | junction:junction-0
+Fra:1 Mem:22.63M (Peak 22.63M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-14:cell-15
+Fra:1 Mem:22.64M (Peak 22.64M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-13:cell-14
+Fra:1 Mem:22.70M (Peak 22.70M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-12:cell-15
+Fra:1 Mem:22.70M (Peak 22.70M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-12:cell-14
+Fra:1 Mem:23.08M (Peak 23.08M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-11:cell-13
+Fra:1 Mem:23.08M (Peak 23.08M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-10:cell-14
+Fra:1 Mem:23.08M (Peak 23.08M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-10:cell-12
+Fra:1 Mem:23.09M (Peak 23.09M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-09:cell-14
+Fra:1 Mem:23.09M (Peak 23.09M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-09:cell-13
+Fra:1 Mem:23.09M (Peak 23.09M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-09:cell-11
+Fra:1 Mem:23.10M (Peak 23.10M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-08:cell-14
+Fra:1 Mem:23.10M (Peak 23.10M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-08:cell-10
+Fra:1 Mem:23.11M (Peak 23.11M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-08:cell-09
+Fra:1 Mem:23.11M (Peak 23.11M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-07:cell-11
+Fra:1 Mem:23.11M (Peak 23.11M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-07:cell-09
+Fra:1 Mem:23.12M (Peak 23.12M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-06:cell-10
+Fra:1 Mem:23.12M (Peak 23.12M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-06:cell-08
+Fra:1 Mem:23.12M (Peak 23.12M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-05:cell-09
+Fra:1 Mem:23.13M (Peak 23.13M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-05:cell-08
+Fra:1 Mem:23.13M (Peak 23.13M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-05:cell-07
+Fra:1 Mem:23.14M (Peak 23.14M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-04:cell-08
+Fra:1 Mem:23.14M (Peak 23.14M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-04:cell-06
+Fra:1 Mem:23.14M (Peak 23.14M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-04:cell-05
+Fra:1 Mem:23.15M (Peak 23.15M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-03:cell-07
+Fra:1 Mem:23.15M (Peak 23.15M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-03:cell-05
+Fra:1 Mem:23.16M (Peak 23.16M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-02:cell-05
+Fra:1 Mem:23.16M (Peak 23.16M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-02:cell-04
+Fra:1 Mem:23.16M (Peak 23.16M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-02:cell-03
+Fra:1 Mem:23.17M (Peak 23.17M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-01:cell-04
+Fra:1 Mem:23.17M (Peak 23.17M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-01:cell-02
+Fra:1 Mem:23.17M (Peak 23.17M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-00:cell-02
+Fra:1 Mem:23.18M (Peak 23.18M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | panel:cell-15
+Fra:1 Mem:23.19M (Peak 23.19M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | panel:cell-14
+Fra:1 Mem:23.22M (Peak 23.22M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | panel:cell-13
+Fra:1 Mem:23.25M (Peak 23.25M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | panel:cell-12
+Fra:1 Mem:23.27M (Peak 23.27M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | panel:cell-11
+Fra:1 Mem:23.29M (Peak 23.29M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | panel:cell-10
+Fra:1 Mem:23.31M (Peak 23.31M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | panel:cell-09
+Fra:1 Mem:23.34M (Peak 23.34M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | panel:cell-08
+Fra:1 Mem:23.36M (Peak 23.36M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | panel:cell-07
+Fra:1 Mem:23.38M (Peak 23.38M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | panel:cell-06
+Fra:1 Mem:23.39M (Peak 23.39M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | panel:cell-05
+Fra:1 Mem:23.42M (Peak 23.42M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | panel:cell-04
+Fra:1 Mem:23.44M (Peak 23.44M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | panel:cell-03
+Fra:1 Mem:23.46M (Peak 23.46M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | panel:cell-02
+Fra:1 Mem:23.48M (Peak 23.48M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | panel:cell-01
+Fra:1 Mem:23.50M (Peak 23.50M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | panel:cell-00
+Fra:1 Mem:25.19M (Peak 29.38M) | Time:00:00.04 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Initializing
+Fra:1 Mem:22.82M (Peak 29.38M) | Time:00:00.04 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Waiting for render to start
+Fra:1 Mem:22.82M (Peak 29.38M) | Time:00:00.04 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Loading render kernels (may take a few minutes the first time)
+Fra:1 Mem:22.82M (Peak 29.38M) | Time:00:00.04 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Updating Scene
+Fra:1 Mem:22.82M (Peak 29.38M) | Time:00:00.04 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Updating Shaders
+Fra:1 Mem:22.90M (Peak 29.38M) | Time:00:00.04 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Updating Procedurals
+Fra:1 Mem:22.90M (Peak 29.38M) | Time:00:00.04 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Updating Background
+Fra:1 Mem:22.90M (Peak 29.38M) | Time:00:00.04 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Updating Camera
+Fra:1 Mem:22.90M (Peak 29.38M) | Time:00:00.04 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Updating Meshes Flags
+Fra:1 Mem:22.90M (Peak 29.38M) | Time:00:00.04 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Updating Objects
+Fra:1 Mem:22.90M (Peak 29.38M) | Time:00:00.04 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Updating Objects | Copying Transformations to device
+Fra:1 Mem:22.92M (Peak 29.38M) | Time:00:00.04 | Mem:0.02M, Peak:0.02M | __RefAsDiagnosticScene, ViewLayer | Updating Objects | Applying Static Transformations
+Fra:1 Mem:22.92M (Peak 29.38M) | Time:00:00.04 | Mem:0.02M, Peak:0.02M | __RefAsDiagnosticScene, ViewLayer | Updating Particle Systems
+Fra:1 Mem:22.92M (Peak 29.38M) | Time:00:00.04 | Mem:0.02M, Peak:0.02M | __RefAsDiagnosticScene, ViewLayer | Updating Particle Systems | Copying Particles to device
+Fra:1 Mem:22.92M (Peak 29.38M) | Time:00:00.04 | Mem:0.02M, Peak:0.02M | __RefAsDiagnosticScene, ViewLayer | Updating Meshes
+Fra:1 Mem:23.51M (Peak 29.38M) | Time:00:00.04 | Mem:0.02M, Peak:0.02M | __RefAsDiagnosticScene, ViewLayer | Updating Mesh | Computing attributes
+Fra:1 Mem:23.75M (Peak 29.38M) | Time:00:00.04 | Mem:0.02M, Peak:0.02M | __RefAsDiagnosticScene, ViewLayer | Updating Mesh | Copying Attributes to device
+Fra:1 Mem:23.74M (Peak 29.38M) | Time:00:00.04 | Mem:0.25M, Peak:0.25M | __RefAsDiagnosticScene, ViewLayer | Updating Scene BVH | Building
+Fra:1 Mem:23.74M (Peak 29.38M) | Time:00:00.04 | Mem:0.25M, Peak:0.25M | __RefAsDiagnosticScene, ViewLayer | Updating Scene BVH | Building BVH
+Fra:1 Mem:23.74M (Peak 29.38M) | Time:00:00.05 | Mem:1.42M, Peak:1.42M | __RefAsDiagnosticScene, ViewLayer | Updating Scene BVH | Building BVH 0%
+Fra:1 Mem:23.74M (Peak 29.38M) | Time:00:00.05 | Mem:2.58M, Peak:3.75M | __RefAsDiagnosticScene, ViewLayer | Updating Scene BVH | Copying BVH to device
+Fra:1 Mem:23.74M (Peak 29.38M) | Time:00:00.05 | Mem:2.58M, Peak:3.75M | __RefAsDiagnosticScene, ViewLayer | Updating Mesh | Computing normals
+Fra:1 Mem:25.09M (Peak 29.38M) | Time:00:00.05 | Mem:2.58M, Peak:3.75M | __RefAsDiagnosticScene, ViewLayer | Updating Mesh | Copying Mesh to device
+Fra:1 Mem:25.09M (Peak 29.38M) | Time:00:00.05 | Mem:3.92M, Peak:3.92M | __RefAsDiagnosticScene, ViewLayer | Updating Objects Flags
+Fra:1 Mem:25.09M (Peak 29.38M) | Time:00:00.05 | Mem:3.92M, Peak:3.92M | __RefAsDiagnosticScene, ViewLayer | Updating Primitive Offsets
+Fra:1 Mem:25.09M (Peak 29.38M) | Time:00:00.05 | Mem:3.92M, Peak:3.92M | __RefAsDiagnosticScene, ViewLayer | Updating Images
+Fra:1 Mem:25.09M (Peak 29.38M) | Time:00:00.05 | Mem:3.92M, Peak:3.92M | __RefAsDiagnosticScene, ViewLayer | Updating Camera Volume
+Fra:1 Mem:25.09M (Peak 29.38M) | Time:00:00.05 | Mem:3.92M, Peak:3.92M | __RefAsDiagnosticScene, ViewLayer | Updating Lookup Tables
+Fra:1 Mem:25.09M (Peak 29.38M) | Time:00:00.05 | Mem:4.00M, Peak:4.00M | __RefAsDiagnosticScene, ViewLayer | Updating Lights
+Fra:1 Mem:25.09M (Peak 29.38M) | Time:00:00.05 | Mem:4.00M, Peak:4.00M | __RefAsDiagnosticScene, ViewLayer | Updating Lights | Computing tree
+Fra:1 Mem:25.09M (Peak 29.38M) | Time:00:00.05 | Mem:4.01M, Peak:4.01M | __RefAsDiagnosticScene, ViewLayer | Updating Integrator
+Fra:1 Mem:25.09M (Peak 29.38M) | Time:00:00.05 | Mem:4.01M, Peak:4.01M | __RefAsDiagnosticScene, ViewLayer | Updating Film
+Fra:1 Mem:25.09M (Peak 29.38M) | Time:00:00.05 | Mem:3.92M, Peak:4.01M | __RefAsDiagnosticScene, ViewLayer | Updating Lookup Tables
+Fra:1 Mem:25.09M (Peak 29.38M) | Time:00:00.05 | Mem:4.01M, Peak:4.01M | __RefAsDiagnosticScene, ViewLayer | Updating Baking
+Fra:1 Mem:25.09M (Peak 29.38M) | Time:00:00.05 | Mem:4.01M, Peak:4.01M | __RefAsDiagnosticScene, ViewLayer | Updating Device | Writing constant memory
+Fra:1 Mem:25.09M (Peak 29.38M) | Time:00:00.05 | Mem:4.01M, Peak:4.01M | __RefAsDiagnosticScene, ViewLayer | Sample 0/4
+Fra:1 Mem:25.66M (Peak 29.38M) | Time:00:00.07 | Remaining:00:00.04 | Mem:4.57M, Peak:4.57M | __RefAsDiagnosticScene, ViewLayer | Sample 1/4
+Fra:1 Mem:26.23M (Peak 29.38M) | Time:00:00.11 | Mem:4.57M, Peak:4.57M | __RefAsDiagnosticScene, ViewLayer | Sample 4/4
+Fra:1 Mem:26.23M (Peak 29.38M) | Time:00:00.11 | Mem:4.57M, Peak:4.57M | __RefAsDiagnosticScene, ViewLayer | Finished
+Saved: '/workspace/scratch/c52cb753f160/v2-import-proof/installed-run/project/.refas2/runs/b4f4b984c94f4289aad972365182015f/artifacts/view-hero.png'
+Time: 00:00.23 (Saving: 00:00.11)
+
+Fra:1 Mem:23.64M (Peak 23.64M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | support-shell
+Fra:1 Mem:24.44M (Peak 24.44M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | fastener-inlay
+Fra:1 Mem:24.45M (Peak 24.45M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | fastener-ring
+Fra:1 Mem:24.46M (Peak 24.46M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | fastener-base
+Fra:1 Mem:24.46M (Peak 24.46M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | outer-rim
+Fra:1 Mem:24.51M (Peak 24.51M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | junction:junction-13
+Fra:1 Mem:24.52M (Peak 24.52M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | junction:junction-12
+Fra:1 Mem:24.52M (Peak 24.52M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | junction:junction-11
+Fra:1 Mem:24.52M (Peak 24.52M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | junction:junction-10
+Fra:1 Mem:24.52M (Peak 24.52M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | junction:junction-9
+Fra:1 Mem:24.53M (Peak 24.53M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | junction:junction-8
+Fra:1 Mem:24.53M (Peak 24.53M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | junction:junction-7
+Fra:1 Mem:24.53M (Peak 24.53M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | junction:junction-6
+Fra:1 Mem:24.54M (Peak 24.54M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | junction:junction-5
+Fra:1 Mem:24.54M (Peak 24.54M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | junction:junction-4
+Fra:1 Mem:24.54M (Peak 24.54M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | junction:junction-3
+Fra:1 Mem:24.54M (Peak 24.54M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | junction:junction-2
+Fra:1 Mem:24.55M (Peak 24.55M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | junction:junction-1
+Fra:1 Mem:24.55M (Peak 24.55M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | junction:junction-0
+Fra:1 Mem:24.55M (Peak 24.55M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-14:cell-15
+Fra:1 Mem:24.55M (Peak 24.55M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-13:cell-14
+Fra:1 Mem:24.55M (Peak 24.55M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-12:cell-15
+Fra:1 Mem:24.55M (Peak 24.55M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-12:cell-14
+Fra:1 Mem:24.56M (Peak 24.56M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-11:cell-13
+Fra:1 Mem:24.56M (Peak 24.56M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-10:cell-14
+Fra:1 Mem:24.56M (Peak 24.56M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-10:cell-12
+Fra:1 Mem:24.56M (Peak 24.56M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-09:cell-14
+Fra:1 Mem:24.56M (Peak 24.56M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-09:cell-13
+Fra:1 Mem:24.56M (Peak 24.56M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-09:cell-11
+Fra:1 Mem:24.56M (Peak 24.56M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-08:cell-14
+Fra:1 Mem:24.56M (Peak 24.56M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-08:cell-10
+Fra:1 Mem:24.57M (Peak 24.57M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-08:cell-09
+Fra:1 Mem:24.57M (Peak 24.57M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-07:cell-11
+Fra:1 Mem:24.57M (Peak 24.57M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-07:cell-09
+Fra:1 Mem:24.57M (Peak 24.57M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-06:cell-10
+Fra:1 Mem:24.57M (Peak 24.57M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-06:cell-08
+Fra:1 Mem:24.57M (Peak 24.57M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-05:cell-09
+Fra:1 Mem:24.57M (Peak 24.57M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-05:cell-08
+Fra:1 Mem:24.57M (Peak 24.57M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-05:cell-07
+Fra:1 Mem:24.57M (Peak 24.57M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-04:cell-08
+Fra:1 Mem:24.58M (Peak 24.58M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-04:cell-06
+Fra:1 Mem:24.76M (Peak 24.76M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-04:cell-05
+Fra:1 Mem:24.76M (Peak 24.76M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-03:cell-07
+Fra:1 Mem:24.80M (Peak 24.80M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-03:cell-05
+Fra:1 Mem:24.81M (Peak 24.81M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-02:cell-05
+Fra:1 Mem:24.82M (Peak 24.82M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-02:cell-04
+Fra:1 Mem:24.83M (Peak 24.83M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-02:cell-03
+Fra:1 Mem:24.84M (Peak 24.84M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-01:cell-04
+Fra:1 Mem:25.21M (Peak 25.21M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-01:cell-02
+Fra:1 Mem:25.21M (Peak 25.21M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | boundary:cell-00:cell-02
+Fra:1 Mem:25.21M (Peak 25.21M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | panel:cell-15
+Fra:1 Mem:25.59M (Peak 25.59M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | panel:cell-14
+Fra:1 Mem:25.60M (Peak 25.60M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | panel:cell-13
+Fra:1 Mem:25.97M (Peak 25.97M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | panel:cell-12
+Fra:1 Mem:25.98M (Peak 25.98M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | panel:cell-11
+Fra:1 Mem:26.08M (Peak 26.08M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | panel:cell-10
+Fra:1 Mem:26.00M (Peak 26.08M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | panel:cell-09
+Fra:1 Mem:26.04M (Peak 26.08M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | panel:cell-08
+Fra:1 Mem:26.05M (Peak 26.08M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | panel:cell-07
+Fra:1 Mem:26.06M (Peak 26.08M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | panel:cell-06
+Fra:1 Mem:26.06M (Peak 26.08M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | panel:cell-05
+Fra:1 Mem:26.07M (Peak 26.08M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | panel:cell-04
+Fra:1 Mem:26.08M (Peak 26.08M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | panel:cell-03
+Fra:1 Mem:26.08M (Peak 26.08M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | panel:cell-02
+Fra:1 Mem:26.09M (Peak 26.09M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | panel:cell-01
+Fra:1 Mem:26.10M (Peak 26.10M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Synchronizing object | panel:cell-00
+Fra:1 Mem:25.19M (Peak 29.51M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Initializing
+Fra:1 Mem:22.82M (Peak 29.51M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Waiting for render to start
+Fra:1 Mem:22.82M (Peak 29.51M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Loading render kernels (may take a few minutes the first time)
+Fra:1 Mem:22.82M (Peak 29.51M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Updating Scene
+Fra:1 Mem:22.82M (Peak 29.51M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Updating Shaders
+Fra:1 Mem:22.90M (Peak 29.51M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Updating Procedurals
+Fra:1 Mem:22.90M (Peak 29.51M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Updating Background
+Fra:1 Mem:22.90M (Peak 29.51M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Updating Camera
+Fra:1 Mem:22.90M (Peak 29.51M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Updating Meshes Flags
+Fra:1 Mem:22.90M (Peak 29.51M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Updating Objects
+Fra:1 Mem:22.90M (Peak 29.51M) | Time:00:00.01 | Mem:0.00M, Peak:0.00M | __RefAsDiagnosticScene, ViewLayer | Updating Objects | Copying Transformations to device
+Fra:1 Mem:22.92M (Peak 29.51M) | Time:00:00.01 | Mem:0.02M, Peak:0.02M | __RefAsDiagnosticScene, ViewLayer | Updating Objects | Applying Static Transformations
+Fra:1 Mem:22.92M (Peak 29.51M) | Time:00:00.01 | Mem:0.02M, Peak:0.02M | __RefAsDiagnosticScene, ViewLayer | Updating Particle Systems
+Fra:1 Mem:22.92M (Peak 29.51M) | Time:00:00.01 | Mem:0.02M, Peak:0.02M | __RefAsDiagnosticScene, ViewLayer | Updating Particle Systems | Copying Particles to device
+Fra:1 Mem:22.92M (Peak 29.51M) | Time:00:00.01 | Mem:0.02M, Peak:0.02M | __RefAsDiagnosticScene, ViewLayer | Updating Meshes
+Fra:1 Mem:23.51M (Peak 29.51M) | Time:00:00.01 | Mem:0.02M, Peak:0.02M | __RefAsDiagnosticScene, ViewLayer | Updating Mesh | Computing attributes
+Fra:1 Mem:23.75M (Peak 29.51M) | Time:00:00.01 | Mem:0.02M, Peak:0.02M | __RefAsDiagnosticScene, ViewLayer | Updating Mesh | Copying Attributes to device
+Fra:1 Mem:23.74M (Peak 29.51M) | Time:00:00.01 | Mem:0.25M, Peak:0.25M | __RefAsDiagnosticScene, ViewLayer | Updating Scene BVH | Building
+Fra:1 Mem:23.74M (Peak 29.51M) | Time:00:00.01 | Mem:0.25M, Peak:0.25M | __RefAsDiagnosticScene, ViewLayer | Updating Scene BVH | Building BVH
+Fra:1 Mem:23.74M (Peak 29.51M) | Time:00:00.02 | Mem:2.58M, Peak:3.75M | __RefAsDiagnosticScene, ViewLayer | Updating Scene BVH | Copying BVH to device
+Fra:1 Mem:23.74M (Peak 29.51M) | Time:00:00.02 | Mem:2.58M, Peak:3.75M | __RefAsDiagnosticScene, ViewLayer | Updating Mesh | Computing normals
+Fra:1 Mem:25.09M (Peak 29.51M) | Time:00:00.02 | Mem:2.58M, Peak:3.75M | __RefAsDiagnosticScene, ViewLayer | Updating Mesh | Copying Mesh to device
+Fra:1 Mem:25.09M (Peak 29.51M) | Time:00:00.02 | Mem:3.92M, Peak:3.92M | __RefAsDiagnosticScene, ViewLayer | Updating Objects Flags
+Fra:1 Mem:25.09M (Peak 29.51M) | Time:00:00.02 | Mem:3.92M, Peak:3.92M | __RefAsDiagnosticScene, ViewLayer | Updating Primitive Offsets
+Fra:1 Mem:25.09M (Peak 29.51M) | Time:00:00.02 | Mem:3.92M, Peak:3.92M | __RefAsDiagnosticScene, ViewLayer | Updating Images
+Fra:1 Mem:25.09M (Peak 29.51M) | Time:00:00.02 | Mem:3.92M, Peak:3.92M | __RefAsDiagnosticScene, ViewLayer | Updating Camera Volume
+Fra:1 Mem:25.09M (Peak 29.51M) | Time:00:00.02 | Mem:3.92M, Peak:3.92M | __RefAsDiagnosticScene, ViewLayer | Updating Lookup Tables
+Fra:1 Mem:25.09M (Peak 29.51M) | Time:00:00.02 | Mem:4.00M, Peak:4.00M | __RefAsDiagnosticScene, ViewLayer | Updating Lights
+Fra:1 Mem:25.09M (Peak 29.51M) | Time:00:00.02 | Mem:4.00M, Peak:4.00M | __RefAsDiagnosticScene, ViewLayer | Updating Lights | Computing tree
+Fra:1 Mem:25.09M (Peak 29.51M) | Time:00:00.02 | Mem:4.01M, Peak:4.01M | __RefAsDiagnosticScene, ViewLayer | Updating Integrator
+Fra:1 Mem:25.09M (Peak 29.51M) | Time:00:00.02 | Mem:4.01M, Peak:4.01M | __RefAsDiagnosticScene, ViewLayer | Updating Film
+Fra:1 Mem:25.09M (Peak 29.51M) | Time:00:00.02 | Mem:3.92M, Peak:4.01M | __RefAsDiagnosticScene, ViewLayer | Updating Lookup Tables
+Fra:1 Mem:25.09M (Peak 29.51M) | Time:00:00.02 | Mem:4.01M, Peak:4.01M | __RefAsDiagnosticScene, ViewLayer | Updating Baking
+Fra:1 Mem:25.09M (Peak 29.51M) | Time:00:00.02 | Mem:4.01M, Peak:4.01M | __RefAsDiagnosticScene, ViewLayer | Updating Device | Writing constant memory
+Fra:1 Mem:25.09M (Peak 29.51M) | Time:00:00.02 | Mem:4.01M, Peak:4.01M | __RefAsDiagnosticScene, ViewLayer | Sample 0/4
+Fra:1 Mem:25.66M (Peak 29.51M) | Time:00:00.02 | Remaining:00:00.02 | Mem:4.57M, Peak:4.57M | __RefAsDiagnosticScene, ViewLayer | Sample 1/4
+Fra:1 Mem:26.23M (Peak 29.51M) | Time:00:00.05 | Mem:4.57M, Peak:4.57M | __RefAsDiagnosticScene, ViewLayer | Sample 4/4
+Fra:1 Mem:26.23M (Peak 29.51M) | Time:00:00.05 | Mem:4.57M, Peak:4.57M | __RefAsDiagnosticScene, ViewLayer | Finished
+Saved: '/workspace/scratch/c52cb753f160/v2-import-proof/installed-run/project/.refas2/runs/b4f4b984c94f4289aad972365182015f/artifacts/view-side.png'
+Time: 00:00.05 (Saving: 00:00.00)
+
+REFAS_RESULT {"ok": true, "operation": "edit", "statistics": {"objects": 66, "meshes": 66, "vertices": 19307, "triangles": 38354, "armatures": 0, "shapeKeyObjects": 0, "uvObjects": 0, "materialSlots": 66}}
+
+Blender quit

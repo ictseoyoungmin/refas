@@ -5,18 +5,18 @@ import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {test} from 'node:test';
 
-import {FINDING_OWNERS} from '../skills/refas/scripts/lib/ownership.mjs';
+import {FINDING_OWNERS} from '../legacy/v1/scripts/lib/ownership.mjs';
 import {
   analyzeSemanticInstructionGraph,
   extractBareMarkdownRoutes,
-} from '../skills/refas/scripts/verify_semantic_instruction_graph.mjs';
+} from '../legacy/v1/scripts/verify_semantic_instruction_graph.mjs';
 
 const REPOSITORY = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 
 async function copyInstalledSkill(prefix) {
   const temp = await fs.mkdtemp(path.join(os.tmpdir(), prefix));
   const installed = path.join(temp, 'refas');
-  await fs.cp(path.join(REPOSITORY, 'skills/refas'), installed, {recursive: true});
+  await fs.cp(path.join(REPOSITORY, 'legacy/v1'), installed, {recursive: true});
   return {temp, installed};
 }
 
@@ -24,14 +24,14 @@ test('typed semantic instruction graph covers every leaf and matches runtime own
   const report = await analyzeSemanticInstructionGraph();
   assert.equal(report.status, 'PASS', report.errors.join('\n'));
   assert.equal(report.schema, 'refas.instruction-graph/v1');
-  assert.equal(report.nodeCount, 43);
-  assert.equal(report.referenceLeaves, 43);
+  assert.equal(report.nodeCount, 40);
+  assert.equal(report.referenceLeaves, 40);
   assert.equal(report.cycle, null);
   assert.deepEqual(report.missingCapabilityOwners, []);
   assert.deepEqual(report.bareMarkdownRoutes, []);
   assert.deepEqual(report.legacyHiddenGeometryPolicyHits, []);
   assert.equal(report.interfaceSchema, 'refas.instruction-node-interface/v1');
-  assert.equal(report.interfaceNodes, 43);
+  assert.equal(report.interfaceNodes, 40);
   assert.equal(report.interfaceOperations, 121);
   assert.equal(report.runtimeCapabilitiesCovered.length, 11);
   assert.deepEqual(report.runtimeCapabilitiesCovered.sort(), [
@@ -172,13 +172,13 @@ test('semantic graph verifies from a bare copied installed skill with repository
     assert.equal(result.status, 0, result.stderr || result.stdout);
     const report = JSON.parse(result.stdout);
     assert.equal(report.status, 'PASS');
-    assert.equal(report.nodeCount, 43);
-    assert.equal(report.referenceLeaves, 43);
+    assert.equal(report.nodeCount, 40);
+    assert.equal(report.referenceLeaves, 40);
     assert.equal(report.missingCapabilityOwners, 0);
     assert.equal(report.bareMarkdownRoutes, 0);
     assert.equal(report.legacyHiddenGeometryPolicyHits, 0);
     assert.equal(report.interfaceSchema, 'refas.instruction-node-interface/v1');
-    assert.equal(report.interfaceNodes, 43);
+    assert.equal(report.interfaceNodes, 40);
     assert.equal(report.interfaceOperations, 121);
     assert.equal(report.runtimeCapabilitiesCovered, 11);
   } finally {
@@ -187,7 +187,7 @@ test('semantic graph verifies from a bare copied installed skill with repository
 });
 
 test('early neutral-clay assessment is reachable from construction without final-only prerequisites', async () => {
-  const g = JSON.parse(await fs.readFile(path.resolve('skills/refas/references/GRAPH.json'),'utf8'));
+  const g = JSON.parse(await fs.readFile(path.resolve('legacy/v1/references/GRAPH.json'),'utf8'));
   const byId = Object.fromEntries(g.nodes.map(n=>[n.id,n]));
   const ancestors=(id,seen=new Set())=>{
     for(const dep of byId[id].requires){if(!seen.has(dep)){seen.add(dep);ancestors(dep,seen);}}
@@ -203,7 +203,7 @@ test('early neutral-clay assessment is reachable from construction without final
   const final=ancestors('claim-certification');
   for(const id of ['construction','assembly','appearance','validation','candidate-transactions'])
     assert.ok(final.has(id),'final certification must depend on '+id);
-  assert.equal(g.nodes.length,43);
+  assert.equal(g.nodes.length,40);
   assert.equal(byId.validation.interface.interfaces.some(i=>i.id==='early-resemblance-barrier'),true);
   assert.equal(byId.validation.interface.interfaces.some(i=>i.id==='final-resemblance-closure'),true);
 });

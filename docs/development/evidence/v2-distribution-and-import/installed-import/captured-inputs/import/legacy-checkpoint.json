@@ -1,0 +1,104 @@
+{
+  "schema": "refas.checkpoint/v1",
+  "parentId": "cp_a0b1b93a17a3ce60f4fb",
+  "capability": "rendering",
+  "scopeId": "whole",
+  "reason": "Actual GLB geometry renders in every standard diagnostic view with reproducible camera records.",
+  "artifactRefs": [
+    {
+      "kind": "artifact",
+      "path": "assets/wing-cover.glb",
+      "sha256": "3fcf70e36a0b42723c3abed6ebc60cdfea0143e19c047ba802258753ee41fdec",
+      "sizeBytes": 746976
+    },
+    {
+      "kind": "artifact",
+      "path": "renders/final/render-report.json",
+      "sha256": "72eb2d88d05f0dd0c28126f0947078e501edc62ef6c18fc0be913a72ef80e8ea",
+      "sizeBytes": 15739
+    },
+    {
+      "kind": "artifact",
+      "path": "renders/final/multiview-review-board.png",
+      "sha256": "89b06a49e9bf54291beac15c2e0b37f24b40f4c5f3741f46807f5a6087d3fb2a",
+      "sizeBytes": 645342
+    },
+    {
+      "kind": "artifact",
+      "path": "renders/final/hero.png",
+      "sha256": "54cb619026a87e8a3762fb44428e7b6dc49474217dd7474302df0e8167e1e951",
+      "sizeBytes": 27130
+    },
+    {
+      "kind": "artifact",
+      "path": "renders/final/oblique.png",
+      "sha256": "29373ca641666a913c0205af1450e9a63726a1908c63a82238d9c77489b6bd2d",
+      "sizeBytes": 24796
+    },
+    {
+      "kind": "artifact",
+      "path": "renders/final/side.png",
+      "sha256": "76401542ac5af08d8f2f840a3361cc78e1a0aed76627563569377eaf5ac1dae2",
+      "sizeBytes": 12800
+    },
+    {
+      "kind": "artifact",
+      "path": "renders/final/top.png",
+      "sha256": "20344c557f9fa8e9c0832974dfdffdeccc8b4cd770e639cb52e12a11627fe7a3",
+      "sizeBytes": 15799
+    },
+    {
+      "kind": "artifact",
+      "path": "renders/final/grazing.png",
+      "sha256": "8a1ea0516c57fad70b4e06b813e7d8d2c2efea5b3448ee19d7fedd95786e5092",
+      "sizeBytes": 9636
+    },
+    {
+      "kind": "artifact",
+      "path": "renders/final/normal.png",
+      "sha256": "e2a26c55275fc6423b5304a3bb7e91dfc67aa535a64338672f6552d6a34a47bf",
+      "sizeBytes": 32259
+    },
+    {
+      "kind": "artifact",
+      "path": "renders/final/object-id.png",
+      "sha256": "9dead4c2d1919ed206f8055b8ae2336e16ef4e9a944e3e4fa72ac06c9b3952be",
+      "sizeBytes": 6142
+    },
+    {
+      "kind": "artifact",
+      "path": "renders/final/albedo.png",
+      "sha256": "f7cedf96ea6b6b9298360c4d33d263e03344900b8b893fd82939bced3a0aa37e",
+      "sizeBytes": 3529
+    }
+  ],
+  "claims": [],
+  "gates": [
+    {
+      "schema": "refas.checkpoint-gate-verdict/v1",
+      "id": "rendering-gate",
+      "status": "pass",
+      "evidenceRefs": [
+        "assets/wing-cover.glb",
+        "renders/final/albedo.png",
+        "renders/final/grazing.png",
+        "renders/final/hero.png",
+        "renders/final/multiview-review-board.png",
+        "renders/final/normal.png",
+        "renders/final/object-id.png",
+        "renders/final/oblique.png",
+        "renders/final/render-report.json",
+        "renders/final/side.png",
+        "renders/final/top.png"
+      ],
+      "evaluator": "bound-evidence",
+      "policyDigest": "daf403ceaba3114cbad2f57e8a538b8fb7aa102f1795aa2d933901618c20841b",
+      "decisionDigest": "6c2afce8fc3f6dd3e88df247a89c8710a74279c53a235077b4d116afdc45d65f"
+    }
+  ],
+  "metadata": {},
+  "transactionId": null,
+  "id": "cp_a744fb4e4fae0cd60712",
+  "createdAt": "2026-11-22T10:40:39.384Z",
+  "contentDigest": "a744fb4e4fae0cd60712fbc1d60df60336e912bfd392ec01e1b56476f1a935d6"
+}

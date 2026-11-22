@@ -10,7 +10,7 @@ import {
   partsToGlb,
   validateRealizedProjection,
   verifyRealizedProjection,
-} from '../skills/refas/scripts/lib/index.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
 
 const D = (char) => char.repeat(64);
 const material = {wood: {baseColor:[0.75,0.6,0.4,1], metallic:0, roughness:0.7}};

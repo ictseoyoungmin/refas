@@ -50,7 +50,7 @@ jobs:
             500000) repeats=2 ;;
             1000000) repeats=1 ;;
           esac
-          python skills/refas/scripts/benchmark_render_cpu_dense.py \
+          python legacy/v1/scripts/benchmark_render_cpu_dense.py \
             --case strands --triangles "${{ matrix.triangles }}" \
             --seed 12345 --size 160 --tile-size 32 --threads 4 \
             --max-working-mb 1024 --timeout-seconds 540 \

@@ -15,7 +15,7 @@ import {
   validateCollisionModelAuthority,
   validateCollisionModelBindings,
   validateCollisionVisualReuseBindings,
-} from '../skills/refas/scripts/lib/index.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
 
 const D = (character = 'a') => character.repeat(64);
 

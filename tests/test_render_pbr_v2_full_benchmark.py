@@ -11,7 +11,7 @@ import sys
 import tempfile
 import unittest
 
-sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"skills/refas/scripts"))
+sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"legacy/v1/scripts"))
 from benchmark_pbr_v2_full import run, sha
 from create_pbr_v2_texture_benchmark_fixture import make_fixture
 from render_pbr_v2_visibility import njit, numba_config

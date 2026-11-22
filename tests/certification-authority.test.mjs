@@ -6,7 +6,7 @@ import {
   createDefaultWholeObjectCertificationPolicy,
   validateCertificationPolicy,
   validateWholeObjectPolicyAuthority,
-} from '../skills/refas/scripts/lib/index.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
 
 test('source-bound whole-object authority refuses a re-signed policy that drops registered comparison', () => {
   const fixtureFloor = createDefaultWholeObjectCertificationPolicy({requiresRegisteredComparison:false});

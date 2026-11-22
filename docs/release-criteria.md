@@ -1,5 +1,33 @@
 # RefAs release criteria
 
+## Production 2.0 development boundary
+
+The active development package is `2.0.0-alpha.1`. Its installed skill contains
+only the production workflow, directly used guidance, metadata and resources.
+Required distribution evidence includes the real npm archive's intended file
+set, matching package/runtime/plugin versions, the isolated npm entry and copied
+skill execution without the repository or retained 1.x implementation.
+
+Use the [2.0 plan](development/refas-2-plan.md) and its
+[fixed acceptance checklist](development/refas-2-progress.md) for the declared
+production scope. Actual Blender creation/edit/import/restore, source retention,
+failure/concurrency handling and honest visual/target assessments remain
+required. An explicit 1.x import must preserve selected bytes, report lost scope
+and leave both legacy project bytes and legacy certification authority separate.
+Broader rig, physics and engine profiles require evidence when promised.
+
+A development metadata cutover or successful package audit does not publish
+a release. The existing explicit manual publication authorization, exact current
+main SHA, immutable tag rules and required current CI remain in force. Main
+merge and formal publication are separate unfinished delivery criteria.
+
+## Retained 1.x release contracts
+
+The following historical gates describe the retained 1.x implementation and
+its published formats. Its repository root is now `legacy/v1/`; it is excluded
+from the production package. Versioned release evidence and original contract
+wording below are preserved.
+
 These gates were introduced for 1.1.0 and remain mandatory for every 1.1.x release. 1.1.1 adds the spatial volume-closure and metric-authority gates in [`v1.1.1-release-readiness.md`](v1.1.1-release-readiness.md).
 
 RefAs 1.1.0 is releasable only when the current exact head satisfies the gates below without relying on historical CI, stale evidence, or undocumented runtime behavior.

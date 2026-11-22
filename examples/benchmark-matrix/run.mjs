@@ -2,7 +2,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {createBenchmarkMatrix, digestBytes, recordBenchmarkResult, validateBenchmarkMatrix} from '../../skills/refas/scripts/lib/index.mjs';
+import {createBenchmarkMatrix, digestBytes, recordBenchmarkResult, validateBenchmarkMatrix} from '../../legacy/v1/scripts/lib/index.mjs';
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const OUT = path.join(ROOT, 'output', 'benchmark-matrix.json');

@@ -8,7 +8,7 @@ import sys
 import tempfile
 import unittest
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "skills/refas/scripts"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "legacy/v1/scripts"))
 from render_cpu_tiled import njit, numba_config
 
 
@@ -16,7 +16,7 @@ from render_cpu_tiled import njit, numba_config
 class WarmCpuMatrixTests(unittest.TestCase):
     def test_same_host_warm_parity_and_source_sha(self):
         runner = Path(__file__).resolve().parents[1] / (
-            "skills/refas/scripts/benchmark_render_cpu_warm.py")
+            "legacy/v1/scripts/benchmark_render_cpu_warm.py")
         workers = (1, 2) if numba_config.NUMBA_NUM_THREADS >= 2 else (1,)
         with tempfile.TemporaryDirectory(prefix="refas-warm-matrix-") as tmp:
             out = Path(tmp) / "warm.json"
@@ -54,7 +54,7 @@ class WarmCpuMatrixTests(unittest.TestCase):
 
     def test_invalid_tier_is_refused_without_output(self):
         runner = Path(__file__).resolve().parents[1] / (
-            "skills/refas/scripts/benchmark_render_cpu_warm.py")
+            "legacy/v1/scripts/benchmark_render_cpu_warm.py")
         with tempfile.TemporaryDirectory(prefix="refas-warm-refuse-") as tmp:
             out = Path(tmp) / "invalid.json"
             proc = subprocess.run([sys.executable, str(runner),

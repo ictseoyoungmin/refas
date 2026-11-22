@@ -1,0 +1,16 @@
+✔ AD03 classifies all interfaces and executes every deterministic public invocation contract (711.844019ms)
+✔ AD03 describe exposes public invocation, placeholders, and enum constants (465.034771ms)
+✔ AD03 verifier passes from a bare copied installed skill (1005.64494ms)
+✔ package identities align while the unpublished alpha status stays explicit (125.467925ms)
+✔ installed agent default describes a complete editable object and practical review (4.690852ms)
+✔ release CI and npm nested packaging exclude generated Python bytecode (1.909183ms)
+✔ retained 1.x upgrade checks keep their own canonical runtime target (5.726396ms)
+✔ historical v1 near-plane triangle omission stays explicit until a versioned replacement (1.020421ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2483.311832

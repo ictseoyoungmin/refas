@@ -6,10 +6,10 @@ import {spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import {test} from 'node:test';
 
-import {digestJson, REFAS_VERSION} from '../skills/refas/scripts/lib/index.mjs';
+import {digestJson, REFAS_VERSION} from '../legacy/v1/scripts/lib/index.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const CLI = path.join(ROOT, 'skills', 'refas', 'scripts', 'refas-host.mjs');
+const CLI = path.join(ROOT, 'legacy', 'v1', 'scripts', 'refas-host.mjs');
 
 function run(args, {expect = 0} = {}) {
   const result = spawnSync(process.execPath, [CLI, ...args], {cwd:ROOT, encoding:'utf8'});

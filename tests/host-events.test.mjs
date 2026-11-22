@@ -11,7 +11,7 @@ import {
   getHostSession,
   openHostSession,
   subscribeHostEvents,
-} from '../skills/refas/scripts/lib/index.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
 
 async function project(t) {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), 'refas-host-events-'));

@@ -448,11 +448,13 @@ def _validate_worker_result(artifact_dir):
 
 def run_edit(root, script, intent, blender="blender", input_blend=None, views=None,
              size=384, samples=8, timeout=180, expected_revision=None, executor=None, review_spec=None,
-             expected_sequence=None):
+             expected_sequence=None, _import_bundle=None):
     root, meta = _meta(root)
     base = load_project(root)
     _check_expected(base, expected_revision, expected_sequence)
     current = _verify_state(meta, base)
+    if _import_bundle is not None and (input_blend is not None or base["head"] is not None):
+        raise ProductionError("legacy import inputs require a new project without another native input")
     if not isinstance(intent, str) or not intent.strip():
         raise ProductionError("a concrete edit intent is required")
     if not isinstance(timeout, (int, float)) or not 1 <= timeout <= 3600:
@@ -516,10 +518,28 @@ def run_edit(root, script, intent, blender="blender", input_blend=None, views=No
             shutil.copy2(source_blend, inputs / "base.blend")
             if digest(inputs / "base.blend") != source_sha or digest(source_blend) != source_sha:
                 raise ProductionError("native input changed during capture")
+        migration = None
+        if _import_bundle is not None:
+            bundle, captured = _import_bundle
+            bundle = Path(bundle)
+            check_inventory(bundle, captured)
+            migration = read_json(bundle / "migration.json")
+            if (not isinstance(migration, dict) or migration.get("schema") != "refas.production.legacy-import/v2" or
+                    migration.get("route") not in {"native", "glb"}):
+                raise ProductionError("invalid legacy import capture")
+            import_asset = "asset.blend" if migration["route"] == "native" else "asset.glb"
+            if {item["path"] for item in captured} != {"legacy-project.json", "legacy-checkpoint.json", "migration.json", import_asset}:
+                raise ProductionError("invalid legacy import file set")
+            shutil.copytree(bundle, inputs / "import")
+            check_inventory(inputs / "import", captured)
+            check_inventory(bundle, captured)
         frozen_inputs = inventory(inputs)
         job = {"operation": "edit", "baseBlend": str(inputs / "base.blend") if source_blend else None,
                "script": str(inputs / "edit.py"), "inputDir": str(inputs), "outputDir": str(artifact_dir),
                "views": views, "render": {"engine": "CYCLES", "samples": samples, "size": size}}
+        if migration:
+            job["baseBlend" if migration["route"] == "native" else "baseGlb"] = str(inputs / "import" / import_asset)
+            job["legacyImport"] = True
         if review:
             job["reviewSpec"] = str(inputs / "review.json")
         atomic_json(run_dir / "job.json", job)
@@ -541,6 +561,8 @@ def run_edit(root, script, intent, blender="blender", input_blend=None, views=No
                     "elapsedSeconds": elapsed, "verification": result.get("verification", {}),
                     "warnings": result.get("warnings", []),
                     "assessment": {"referenceResemblance": "not-evaluated", "gameReadiness": "not-evaluated"}}
+        if migration:
+            revision.update(kind="import-v1", migration=migration)
         with project_lock(meta):
             _assert_base(root, base)
             final = _revision_dir(meta, revision_id)

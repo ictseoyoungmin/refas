@@ -31,14 +31,14 @@ jobs:
       - name: Generate SHA-pinned synthetic indexed GLB (COLOR_0 plus baseColorTexture)
         run: |
           mkdir -p temp/r14-06e
-          python skills/refas/scripts/create_blender_color0_texture_fixture.py \
+          python legacy/v1/scripts/create_blender_color0_texture_fixture.py \
             --glb temp/r14-06e/color0-texture.glb \
             --frame temp/r14-06e/camera.frame.json \
             --side 256 --triangles 120 \
             > temp/r14-06e/fixture.json
       - name: Run Blender imported source / real Cycles renderer
         run: |
-          python skills/refas/scripts/render_external_blender.py \
+          python legacy/v1/scripts/render_external_blender.py \
             --glb temp/r14-06e/color0-texture.glb \
             --frame temp/r14-06e/camera.frame.json \
             --out temp/r14-06e/external \
@@ -47,11 +47,11 @@ jobs:
             --max-working-mb 2048
       - name: Render geometry/texture-identical no-COLOR_0 control
         run: |
-          python skills/refas/scripts/create_blender_no_color_control.py \
+          python legacy/v1/scripts/create_blender_no_color_control.py \
             --source temp/r14-06e/color0-texture.glb \
             --out temp/r14-06e/no-color-control.glb \
             > temp/r14-06e/control-fixture.json
-          python skills/refas/scripts/render_external_blender.py \
+          python legacy/v1/scripts/render_external_blender.py \
             --glb temp/r14-06e/no-color-control.glb \
             --frame temp/r14-06e/camera.frame.json \
             --out temp/r14-06e/control \

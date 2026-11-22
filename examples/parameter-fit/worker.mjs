@@ -3,12 +3,12 @@ import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 
-import {contentReference, createSegmentPrism, partsToGlb} from '../../skills/refas/scripts/lib/index.mjs';
+import {contentReference, createSegmentPrism, partsToGlb} from '../../legacy/v1/scripts/lib/index.mjs';
 
 const EXAMPLE = path.dirname(fileURLToPath(import.meta.url));
 const OUTPUT = path.join(EXAMPLE, 'output');
 const CONFIG = path.join(OUTPUT, 'fixture-config.json');
-const CLI = path.resolve(EXAMPLE, '../../skills/refas/scripts/refas.mjs');
+const CLI = path.resolve(EXAMPLE, '../../legacy/v1/scripts/refas.mjs');
 
 function frame(report, id) {
   const value = report.frames.find((item) => item.path === `${id}.png`);

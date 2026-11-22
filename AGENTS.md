@@ -9,8 +9,9 @@ here. Query GitHub and the RefAs project state at the start of each turn.
 - `skills/refas/SKILL.md` owns reconstruction execution and reference routing.
 - `docs/github-governance.md` owns Issue, Pull Request, review, reopen, and
   release collaboration policy.
-- `skills/refas/scripts/lib/ownership.mjs` owns capability order and normalized
-  finding ownership.
+- `legacy/v1/scripts/lib/ownership.mjs` retains the 1.x capability order and
+  normalized finding ownership used by repository taxonomy and legacy work.
+  The production entry and its saved project state own the 2.0 execution path.
 - The active RefAs project state owns resumption, invalidation, checkpoints,
   and rollback.
 - GitHub labels summarize work; they do not override runtime ownership or

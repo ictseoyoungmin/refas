@@ -19,14 +19,14 @@ The rewrite tests a concrete hypothesis: a shorter, production-oriented skill an
 ## Current baseline and version boundary
 
 - Published release baseline: `v1.4.1`.
-- Repository package/runtime/plugin metadata: `1.4.2`, previously staged development work, not a published release established by that version string.
+- Active package/Python runtime/plugin metadata: `2.0.0-alpha.1`, a coordinated development identity. It is not a published stable 2.0 release.
 - Starting main: `a29bcc42f4da666c812462eb130836f2d766b0a1`.
 - Preserved 1.4.2 rollback branch: `develop/v1.4.2` at `67143f45bf6f5152c404caa2d643109881bfeca2`.
-- The first 2.0 slice adds a new Python production entry within the distributable skill. It does not publish a tag, release, or package.
+- The installed skill and npm artifact contain only the 2.0 production path. The retained 1.x runtime keeps its own `1.4.2` identity under repository-only `legacy/v1/`.
 
-The 1.x JavaScript runtime, stored-project formats, references, and their validators remain intact for explicit compatibility. New production projects do not run through that capability state machine. The installed skill introduces the production entry first and keeps the existing reference index as an optional 1.x route.
+The 1.x JavaScript runtime, stored-project formats, references and validators remain in the repository for explicit compatibility and comparative checks. They are excluded from the active skill and npm package. New production projects do not run through that capability state machine. The new `import-v1` command reads selected legacy project data directly; it neither imports the old JavaScript runtime nor transfers its certification authority.
 
-Package version cutover is a separate milestone: update package metadata, runtime identity, both plugin manifests, release docs, packaging tests, and migration guidance together. Do not call a branch or a README heading a completed 2.0 release. Before publication, decide which 1.x files remain packaged and prove the resulting installed distribution.
+Package metadata, runtime identity, both plugin manifests, release docs, packaging tests and migration guidance change together. The npm entry invokes the same production Python CLI as a copied skill. An exact file allowlist rejects accidental legacy reintroduction. Actual installed-package evidence is required for the cutover criterion; main merge and formal publication remain separate milestones. Do not call a branch or development identity a completed 2.0 release.
 
 ## Design decisions
 
@@ -38,7 +38,7 @@ Package version cutover is a separate milestone: update package metadata, runtim
 | Requested views are rendered from actual geometry | Each iteration captures useful evidence without requiring a universal view pack. |
 | File hashes bind a stored result | Artifact integrity does not require every authoring operation to reproduce identical bytes on a second execution. |
 | Technical checks and visual review remain distinct | An exported model cannot obtain a likeness or game-readiness claim from file validity. |
-| Existing 1.x contracts stay behind an explicit compatibility route | The rewrite can be evaluated without changing old certification behavior. |
+| Existing 1.x contracts remain repository-only under `legacy/v1/` | The rewrite can be evaluated without installing old runtime files or changing old certification behavior. |
 
 Reference images remain authoritative for visible design. Unseen surfaces can be inferred or engineered and should be identified accordingly. Preserve these concise principles; do not carry the entire historical proof chain into the default authoring loop.
 
@@ -53,6 +53,7 @@ The initial production command is `python3 skills/refas/scripts/produce.py` in a
 | `references --root DIR --reference FILE ... --expected-sequence N` | Adopt the complete active reference set while retaining all model/source history; use `--clear` for an empty set. |
 | `run --root DIR --script FILE --intent TEXT` | Execute a Blender script and record the native scene, GLB, renders, script, and metadata as a revision. |
 | `run ... --input-blend FILE` | Import a separately saved native edit; ordinary runs reopen the current revision automatically. |
+| `import-v1 --root NEW --source-project OLD --checkpoint ID --artifact PATH --name NAME` | Import one explicitly selected archived native or supported GLB asset, retaining exact input bytes and provenance without old approval inheritance. |
 | `status --root DIR` | Expose one coherent revision snapshot, artifacts, inputs, sequence and reference freshness. |
 | `verify --root DIR` | Verify recorded file integrity and separately report current/stale/no-revision evidence. |
 | `restore --root DIR --revision ID` | Publish an exact previous bundle as a new revision while retaining history and the active reference set. |
@@ -89,7 +90,7 @@ separates transaction probes from actual Blender and extracted-package runs.
 4. Show that a failed run leaves the current usable revision unchanged.
 5. Detect missing/tampered recorded artifacts and stale publication attempts.
 6. Restore an earlier revision and verify the selected artifact identities.
-7. Preserve the existing 1.x installed reference graph and runtime regression behavior.
+7. Preserve the 1.x reference graph and runtime regression behavior in the repository-only legacy implementation, while proving the active installed distribution has no dependency on it.
 
 Use small Python unit checks for revision/state failure paths. Real Blender execution is a separate integration check; syntax compilation or a fake worker cannot substitute for it. Record the actual Blender version and commands with the result.
 
@@ -124,7 +125,9 @@ Extend proven operations to UV/material edits, assemblies, and existing rigs. Fo
 
 ### S4 — Packaging and explicit migration
 
-Cut over version metadata consistently, decide the supported installation forms, and add a documented import path from 1.x artifacts when useful. Preserve legacy project bytes; migrating an asset does not transfer certification authority. Review the 1.x compatibility package size and deletion boundary before removing any retained runtime.
+Cut over version metadata consistently and prove the copied skill and npm launcher in isolation. The active skill contains focused production guides and Python code; `legacy/v1/`, schemas, old templates and comparison tooling remain repository-only. Test the actual archive against its exact file list, including rejection of an injected legacy file.
+
+The explicit `import-v1` path selects a checkpoint and artifact recorded in a 1.x project, verifies archived bytes and source identity, and creates a fresh production revision. Preserve the old project's bytes. Capture chosen manifests and an import report as provenance; do not execute old validators or inherit old certificates. A GLB can reconstruct only the supported data it contains, not absent native construction history. Native import is restricted to supported self-contained scenes. Whole-project/history migration and untested rig, animation or engine fidelity remain outside this demonstrated scope.
 
 ### S5 — Release acceptance
 
@@ -134,6 +137,6 @@ Publish only after the installed skill completes unfamiliar reference tasks, rea
 
 The independent production workflow runs targeted Python checks, syntax compilation, and the installed-copy CLI check. It does not install Blender during every ordinary CI run. A real Blender integration run is required as recorded local or dedicated integration evidence before calling S1 complete.
 
-The existing 1.x CI remains unchanged. Update old instruction-text tests only where the default route intentionally changes; preserve assertions over the existing graph, source-bound authority, replay, and saved projects. Repository release audit remains a distribution gate, not the default model-authoring loop.
+The existing 1.x regression assertions remain in force with imports updated to their explicit repository location. Update instruction-text and package tests where the default route intentionally changes; preserve assertions over the existing graph, source-bound authority, replay and saved projects. Repository release audit remains a distribution gate, not the default model-authoring loop.
 
 Current implementation and evidence are tracked in `docs/WORK_STATUS.md`.

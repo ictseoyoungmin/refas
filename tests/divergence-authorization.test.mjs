@@ -18,7 +18,7 @@ import {
   runRepresentationNormalizer,
   validateDivergenceAuthorization,
   validateDivergenceAuthorizationBindings,
-} from '../skills/refas/scripts/lib/index.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
 
 const D = (character = 'a') => character.repeat(64);
 const Z90 = [0, 0, Math.SQRT1_2, Math.SQRT1_2];

@@ -1,0 +1,53 @@
+{
+  "schema": "refas.development-checks/v1",
+  "date": "2026-11-22",
+  "baselineCommit": "ef1d6b8acb944b545bebb486571d7841a3eea1b6",
+  "commands": [
+    {
+      "command": "npm test",
+      "result": "PASS",
+      "tests": 935,
+      "failures": 0,
+      "skipped": 0,
+      "log": "checks/full-js-regression-final.log"
+    },
+    {
+      "command": "REFAS_BLENDER_TESTS=1 PYTHONDONTWRITEBYTECODE=1 npm run test:production",
+      "result": "PASS",
+      "tests": 65,
+      "unitTests": 47,
+      "actualBlenderTests": 18,
+      "failures": 0,
+      "skipped": 0,
+      "log": "checks/final-production.log"
+    },
+    {
+      "command": "npm run test:python",
+      "result": "PASS",
+      "log": "checks/python-compile.log"
+    },
+    {
+      "command": "npm run check",
+      "result": "PASS",
+      "log": "checks/final-check.log"
+    },
+    {
+      "command": "npm run dogfood",
+      "result": "PASS",
+      "checkpoints": 11,
+      "log": "checks/final-dogfood.log"
+    },
+    {
+      "command": "npm run release:audit",
+      "result": "PASS",
+      "log": "checks/final-release-audit.log"
+    }
+  ],
+  "skillFormatValidator": "PASS",
+  "newExampleSyntax": "PASS",
+  "whitespace": "PASS",
+  "packageParity": "package/parity.json",
+  "installedReplay": "installed-import/result.json",
+  "rendererExperiment": "renderer/run-02/result.json",
+  "scope": "Local actual execution. Standard remote CI skips Blender unless explicitly enabled; no visual, time/cost, main-merge or release acceptance implied."
+}

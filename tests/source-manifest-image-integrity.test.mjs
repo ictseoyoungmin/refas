@@ -6,7 +6,7 @@ import {spawnSync} from 'node:child_process';
 import test from 'node:test';
 
 const PYTHON = process.env.CODEX_PRIMARY_RUNTIME_PYTHON || 'python3';
-const INTAKE = path.resolve('skills/refas/scripts/source_manifest.py');
+const INTAKE = path.resolve('legacy/v1/scripts/source_manifest.py');
 
 function python(args) {
   return spawnSync(PYTHON, args, {encoding:'utf8', timeout:20_000});

@@ -7,7 +7,7 @@ import {
   createNegativeSpaceCutaway, createPerceptualDiscrepancy, createRepresentationCapacityReport, createSectionProfileLoft,
   createSegmentPrism, createPoseFitPlan, fitAppearance, fitCamera, fitLighting, fitPose,
   partsToGlb, applyParentLocalTransformEdits, parseGlb, assessBenchmarkCapabilityClosure, recordBenchmarkResult, validateBenchmarkMatrix, validateCameraFitPlan, validatePoseFitPlan,
-} from '../skills/refas/scripts/lib/index.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
 
 const D = (value = 'a') => value.repeat(64);
 const sourceRef = {schema: 'refas.content-reference/v1', kind: 'glb', path: 'baseline.glb', sha256: D(), sizeBytes: 1};
@@ -34,7 +34,7 @@ test('pose fitter preserves exact mesh bytes while changing only transform edits
   const glb = partsToGlb({parts: [{id: 'root-part', scopeId: 'whole', materialId: 'wood', mesh: createSegmentPrism({start: [-.1, 0, 0], end: [.1, 0, 0], width: .1, height: .1})}], materials: {wood: {baseColor: [0.6, 0.4, 0.2, 1], roughness: .7, metallic: 0}}});
   const plan = createPoseFitPlan({id: 'pose-fit', scopeId: 'whole', sourceSha256: D(), baselineAsset: {...sourceRef, sizeBytes: glb.length, sha256: '0'.repeat(64)}, variables: [{id: 'bend', binding: 'assembly.joint.root-part.angle', minimum: -1, maximum: 1, initial: 0}], evaluationBudget: 4, structuralEligibilityRequired: false});
   // Bind the real baseline digest after construction to keep the fixture explicit.
-  const bound = createPoseFitPlan({...plan, evaluationBudget: 6, baselineAsset: {...plan.baselineAsset, sha256: (await import('../skills/refas/scripts/lib/index.mjs')).digestBytes(glb)}});
+  const bound = createPoseFitPlan({...plan, evaluationBudget: 6, baselineAsset: {...plan.baselineAsset, sha256: (await import('../legacy/v1/scripts/lib/index.mjs')).digestBytes(glb)}});
   assert.equal(validatePoseFitPlan(bound).valid, true);
   const report = await fitPose(bound, {baselineGlb: glb, buildCandidate: ({baselineGlb, edits}) => applyParentLocalTransformEdits(baselineGlb, edits), evaluate: async (_candidate, context) => ({measurements: {'pose-loss': Math.abs(context.parameters.bend - .5)}})});
   assert.equal(report.status, 'IMPROVED');
@@ -75,7 +75,7 @@ test('appearance and lighting plans require frozen geometry evidence', async () 
 test('macro coordinator enforces camera → pose → shape sequence and benchmark closure', async () => {
   const plan = createMacroFitCoordinatorPlan({id: 'macro-fit', scopeId: 'whole', sourceSha256: D(), maxOuterCycles: 1});
   const order = [];
-  const report = await (await import('../skills/refas/scripts/lib/index.mjs')).runMacroFit({plan, fitters: {camera: async () => { order.push('camera'); return {state: {stage: 'camera'}, status: 'IMPROVED', evaluationCount: 1}; }, pose: async (state) => { order.push('pose'); return {state, status: 'NO_IMPROVEMENT', evaluationCount: 1}; }, shape: async (state) => { order.push('shape'); return {state, status: 'NO_IMPROVEMENT', evaluationCount: 1}; }}});
+  const report = await (await import('../legacy/v1/scripts/lib/index.mjs')).runMacroFit({plan, fitters: {camera: async () => { order.push('camera'); return {state: {stage: 'camera'}, status: 'IMPROVED', evaluationCount: 1}; }, pose: async (state) => { order.push('pose'); return {state, status: 'NO_IMPROVEMENT', evaluationCount: 1}; }, shape: async (state) => { order.push('shape'); return {state, status: 'NO_IMPROVEMENT', evaluationCount: 1}; }}});
   assert.deepEqual(order, ['camera', 'pose', 'shape']); assert.equal(report.policy.coordinatorCannotCertify, true);
   const matrix = createBenchmarkMatrix({benchmarks: [{id: 'organic', category: 'articulated-manufactured-organic', source: sourceRef}, {id: 'mechanical', category: 'hard-surface-mechanical', source: {...sourceRef, path: 'mechanical.png', sha256: D('b')}}]});
   assert.equal(validateBenchmarkMatrix(matrix).valid, true);

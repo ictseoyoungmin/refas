@@ -15,7 +15,7 @@ import {
   validateConstructionOperationPermit,
   validateConstructionQuality,
   validateConstructionVocabulary,
-} from '../skills/refas/scripts/lib/index.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
 
 const D = (ch) => ch.repeat(64);
 const SOURCE = D('a');

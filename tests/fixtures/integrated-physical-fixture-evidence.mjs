@@ -1,4 +1,4 @@
-import {digestJson} from '../../skills/refas/scripts/lib/index.mjs';
+import {digestJson} from '../../legacy/v1/scripts/lib/index.mjs';
 import {integratedFixtureEvidenceDigest} from './integrated-physical-fixture.mjs';
 
 export function integratedFixtureClosureEvidenceDigest({

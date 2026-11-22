@@ -1,0 +1,106 @@
+{
+  "baselineCommit": "ef1d6b8acb944b545bebb486571d7841a3eea1b6",
+  "before": {
+    "skillFilesIncludingIgnores": 277,
+    "skillBytesIncludingIgnores": 3516060,
+    "packageFiles": 399
+  },
+  "after": {
+    "skillFilesIncludingIgnores": 15,
+    "skillBytesIncludingIgnores": 121947,
+    "skillFilesShipped": 13,
+    "packageFiles": 17,
+    "legacyRepositoryFiles": 265
+  },
+  "activeFiles": [
+    {
+      "path": "skills/refas/.npmignore",
+      "bytes": 108,
+      "sha256": "58229a12fb9726be69c01178475fcb1c347a12a463f74970710316dee340fd97"
+    },
+    {
+      "path": "skills/refas/SKILL.md",
+      "bytes": 11693,
+      "sha256": "2b44cb072067840f4b9272bd6bf19dac2ef3140f490c02414a1cb8b1e69c0455"
+    },
+    {
+      "path": "skills/refas/agents/openai.yaml",
+      "bytes": 440,
+      "sha256": "144f6abfe3aa659d16df90aa4635cddb78f6e408c41126affab10d72486c825e"
+    },
+    {
+      "path": "skills/refas/assets/icon.svg",
+      "bytes": 7749,
+      "sha256": "ee5477b3f387cbf783f09abaa0463a7395ee61d1d3f2e10b33b0e5a3146beb31"
+    },
+    {
+      "path": "skills/refas/references/production-assemblies.md",
+      "bytes": 4290,
+      "sha256": "6205ef372889e13cbdaf60bca0d44ba2057e058fd713f39b2bcf39189e6e48d8"
+    },
+    {
+      "path": "skills/refas/references/production-garments.md",
+      "bytes": 3769,
+      "sha256": "da2232e230b60fcaba90745acd6d715951240a7b9ab418e2466dc7d6e1bbd6a2"
+    },
+    {
+      "path": "skills/refas/references/production-import.md",
+      "bytes": 2834,
+      "sha256": "0f7d21a1dcd171e9026b5dd53a6072324a3d3d4f0cf9ff85452b4794900d198d"
+    },
+    {
+      "path": "skills/refas/references/production-review.md",
+      "bytes": 2929,
+      "sha256": "4ad42fc619213ec6503bd9253c225f10868b7e1cae022422ac9b37ff436779a7"
+    },
+    {
+      "path": "skills/refas/scripts/.npmignore",
+      "bytes": 127,
+      "sha256": "277e9173a81244d3087523626a9a33ea3c7602bc1860afeca9e045bcde3359bf"
+    },
+    {
+      "path": "skills/refas/scripts/produce.py",
+      "bytes": 6488,
+      "sha256": "d347c63e6254a592d150687f25bef14a7616dd3941f27acb1d65f2b50ae9582c"
+    },
+    {
+      "path": "skills/refas/scripts/production/__init__.py",
+      "bytes": 68,
+      "sha256": "acc2a3d888c2540d6a7d1f94eddcb01119c21fdecebce25ac8f9207ff5135cba"
+    },
+    {
+      "path": "skills/refas/scripts/production/blender_worker.py",
+      "bytes": 35332,
+      "sha256": "91b34e3cc3542e903846697265cd1a3ab1da8f5a00770f73717a284abd361477"
+    },
+    {
+      "path": "skills/refas/scripts/production/legacy_import.py",
+      "bytes": 11866,
+      "sha256": "897d98263430268c0a1033f5e7d5086225b3bb060da558e9be81e4a1e156fc82"
+    },
+    {
+      "path": "skills/refas/scripts/production/project.py",
+      "bytes": 30616,
+      "sha256": "a978f55449cdeb28f32bcd22abda283ce640acc2bae7803d76b46ff8ad706033"
+    },
+    {
+      "path": "skills/refas/scripts/production/review.py",
+      "bytes": 3638,
+      "sha256": "0d4a3cfea62d7140ad923c18ece4cdd2728e90d2b056a4cad80c4dd42282265a"
+    }
+  ],
+  "movedFiles": 264,
+  "movedFilesWithRoutingEdits": [
+    "legacy/v1/references/GRAPH.json",
+    "legacy/v1/references/INDEX.md",
+    "legacy/v1/scripts/vc08_adversarial_worker.mjs",
+    "legacy/v1/scripts/verify_capability_interfaces.mjs",
+    "legacy/v1/scripts/verify_discovery_closure.mjs",
+    "legacy/v1/scripts/verify_installation_boundary.mjs",
+    "legacy/v1/scripts/verify_semantic_instruction_graph.mjs"
+  ],
+  "allMovedRuntimeLibraryFilesByteIdentical": true,
+  "legacyRuntimeVersion": "1.4.2",
+  "activeDevelopmentVersion": "2.0.0-alpha.1",
+  "publishedStable2": false
+}

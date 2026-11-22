@@ -19,7 +19,7 @@ import {
   cancelHostOperation,
   validateWorkerRequest,
   validateWorkerResponse,
-} from '../skills/refas/scripts/lib/index.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
 
 async function makeHost(t, suffix) {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), 'refas-worker-test-'));

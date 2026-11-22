@@ -4,12 +4,12 @@ import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
 
-import * as PublicApi from '../skills/refas/scripts/lib/index.mjs';
+import * as PublicApi from '../legacy/v1/scripts/lib/index.mjs';
 import {
   isTrustedContractFixtureProject,
   validateContractFixtureAuthority,
-} from '../skills/refas/scripts/lib/contract-fixture-authority.mjs';
-import {initTrustedContractFixtureProject} from '../skills/refas/scripts/lib/contract-fixture-project.mjs';
+} from '../legacy/v1/scripts/lib/contract-fixture-authority.mjs';
+import {initTrustedContractFixtureProject} from '../legacy/v1/scripts/lib/contract-fixture-project.mjs';
 
 async function sourceAt(root, {kind = 'photo-reference'} = {}) {
   const bytes = Buffer.from('source bytes\n');

@@ -1,7 +1,7 @@
 {
   "name": "refas",
-  "version": "1.4.2",
-  "description": "Vision-first, evidence-bound reference image to 3D reconstruction with multiview QA and explicit physical semantics.",
+  "version": "2.0.0-alpha.1",
+  "description": "Build editable Blender assets from visual references with multiview review and recoverable revisions.",
   "author": {
     "name": "ictseoyoungmin",
     "url": "https://github.com/ictseoyoungmin"
@@ -15,14 +15,14 @@
     "agent-skill",
     "visual-qa",
     "reference-image",
-    "physical-semantics",
-    "multiview"
+    "multiview",
+    "blender"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "RefAs",
-    "shortDescription": "Reconstruct references into evidence-bound 3D assets",
-    "longDescription": "Construct complete editable 3D assets from visual references with shared/repeated geometry, source-bound observation, multiview rendering, and targeted revisions.",
+    "shortDescription": "Build editable Blender assets from references",
+    "longDescription": "Create complete editable 3D assets from references, inspect actual multiview renders, and refine the asset through recoverable revisions.",
     "developerName": "ictseoyoungmin",
     "category": "Creative Tools",
     "capabilities": [

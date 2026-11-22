@@ -4,75 +4,77 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import {spawnSync} from 'node:child_process';
-import {createHash} from 'node:crypto';
 import {fileURLToPath} from 'node:url';
-import {REFAS_VERSION} from '../skills/refas/scripts/lib/canonical.mjs';
+import {packProduction, verifyProductionDistribution, verifyProductionPack} from './verify-production-distribution.mjs';
 
-const ROOT=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
-const PYTHON=process.env.CODEX_PRIMARY_RUNTIME_PYTHON||'python3';
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const PYTHON = process.env.REFAS_PYTHON || process.env.CODEX_PRIMARY_RUNTIME_PYTHON || 'python3';
 
-function run(command,args,options={}){
-  const result=spawnSync(command,args,{encoding:'utf8',timeout:120000,
-    cwd:options.cwd??ROOT,
-    env:{...process.env,NPM_CONFIG_AUDIT:'false',NPM_CONFIG_FUND:'false',NPM_CONFIG_OFFLINE:'true'},
-  });
-  assert.equal(result.status,0,`${command} ${args.join(' ')}: ${result.stderr||result.stdout}`);
-  return result.stdout;
+function run(command, args, {cwd = ROOT, env = {}, status = 0} = {}) {
+  const result = spawnSync(command, args, {cwd, encoding: 'utf8', timeout: 120000,
+    env: {...process.env, NPM_CONFIG_AUDIT: 'false', NPM_CONFIG_FUND: 'false', NPM_CONFIG_OFFLINE: 'true',
+      PYTHONDONTWRITEBYTECODE: '1', ...env}});
+  assert.equal(result.status, status, `${command} ${args.join(' ')}: ${result.stderr || result.stdout}`);
+  return result;
 }
-const readJson=async(file)=>JSON.parse(await fs.readFile(file,'utf8'));
-const sha=(buf)=>createHash('sha256').update(buf).digest('hex');
 
-async function main(){
-  const tmp=await fs.mkdtemp(path.join(os.tmpdir(),'refas-installed-tarball-'));
-  try{
-    const packed=JSON.parse(run('npm',['pack','--json','--ignore-scripts','--pack-destination',tmp]))[0];
-    assert.equal(packed.name,'refas');
-    assert.equal(packed.version,REFAS_VERSION);
-    const tarball=path.join(tmp,packed.filename);
-    assert.ok((await fs.stat(tarball)).size>0);
-    const prefix=path.join(tmp,'installed');
-    run('npm',['install','--prefix',prefix,'--ignore-scripts','--no-audit','--no-fund','--offline',tarball]);
-    const mod=path.join(prefix,'node_modules','refas');
-    const pkg=await readJson(path.join(mod,'package.json'));
-    assert.equal(pkg.version,REFAS_VERSION);
-    for(const bin of ['refas','refas-host']){
-      assert.ok((await fs.lstat(path.join(prefix,'node_modules','.bin',bin))).isSymbolicLink(),
-        `npm binary ${bin} not installed`);
-    }
-    const cli=path.join(mod,'skills','refas','scripts','refas.mjs');
-    const host=path.join(mod,'skills','refas','scripts','refas-host.mjs');
-    assert.equal(JSON.parse(run(process.execPath,[cli,'--help'],{cwd:tmp})).version,REFAS_VERSION);
-    assert.equal(JSON.parse(run(process.execPath,[host,'help'],{cwd:tmp})).version,REFAS_VERSION);
-    const installedSkill=path.join(mod,'skills','refas');
-    const instruction=JSON.parse(run(process.execPath,[
-      path.join(installedSkill,'scripts','verify_installation_boundary.mjs'),
-    ],{cwd:tmp}));
-    assert.equal(instruction.status,'PASS');
-    const discovered=JSON.parse(run(process.execPath,[
-      path.join(installedSkill,'scripts','verify_semantic_instruction_graph.mjs'),
-    ],{cwd:tmp}));
-    assert.equal(discovered.status,'PASS');
-    const source=path.join(tmp,'reference.png');
-    const img=`from PIL import Image;import sys;Image.new('RGB',(64,48),(90,115,145)).save(sys.argv[1])`;
-    run(PYTHON,['-c',img,source],{cwd:tmp});
-    const output=path.join(tmp,'legacy-observation');
-    const created=JSON.parse(run(process.execPath,[cli,'evidence','--image',source,
-      '--out',output,'--scope','whole','--roi','0,0,1,1'],{cwd:tmp}));
-    assert.equal(created.status,'PASS');
-    const manifest=await readJson(path.join(output,'manifest.json'));
-    assert.equal(manifest.schema,'refas.evidence-manifest/v1');
-    assert.equal(manifest.source.sha256,sha(await fs.readFile(source)));
-    for(const name of ['context','crop','contrast','low-frequency',
-      'high-frequency','gradient','edges','highlights']){
-      const part=manifest.items.find(x=>x.id==='whole.'+name);
-      assert.ok(part,`missing legacy artifact: ${name}`);
-      assert.equal(part.sha256,sha(await fs.readFile(path.join(output,part.path))));
-    }
-    console.log(JSON.stringify({status:'PASS',version:pkg.version,
-      tarball:packed.filename,installedCli:true,installedHost:true,skillRoutes:instruction.referenceLeaves,
-      graphNodes:discovered.nodeCount,legacyEvidence:true},null,2));
-  }finally{
-    await fs.rm(tmp,{recursive:true,force:true});
+export async function verifyPackedInstall() {
+  const tmp = await fs.mkdtemp(path.join(os.tmpdir(), 'refas-installed-tarball-'));
+  try {
+    const packed = packProduction({destination: tmp});
+    const distribution = await verifyProductionDistribution({pack: packed});
+    const version = distribution.version;
+    assert.equal(packed.name, 'refas');
+    assert.equal(packed.version, version);
+    const tarball = path.join(tmp, packed.filename);
+    const tarFiles = run('tar', ['-tzf', tarball]).stdout.trim().split('\n').filter(name => !name.endsWith('/'));
+    verifyProductionPack({...packed, files: tarFiles.map(name => {
+      assert.ok(name.startsWith('package/'), `unexpected tarball root: ${name}`);
+      return {path: name.slice('package/'.length), size: 0};
+    })});
+    const prefix = path.join(tmp, 'installed');
+    run('npm', ['install', '--prefix', prefix, '--ignore-scripts', '--no-audit', '--no-fund', '--offline', tarball]);
+    const mod = path.join(prefix, 'node_modules/refas');
+    const pkg = JSON.parse(await fs.readFile(path.join(mod, 'package.json'), 'utf8'));
+    assert.equal(pkg.version, version);
+    assert.deepEqual(pkg.bin, {refas: 'bin/refas.mjs'});
+    const executable = path.join(prefix, 'node_modules/.bin/refas');
+    assert.ok((await fs.lstat(executable)).isSymbolicLink(), 'npm must install the refas executable');
+    await assert.rejects(fs.access(path.join(prefix, 'node_modules/.bin/refas-host')), {code: 'ENOENT'});
+    assert.equal(run(executable, ['--version'], {cwd: tmp}).stdout.trim(), `RefAs ${version}`);
+    const help = run(executable, ['--help'], {cwd: tmp}).stdout;
+    for (const command of ['init', 'run', 'restore', 'import-v1']) assert.ok(help.includes(command), command);
+    const project = path.join(tmp, 'project with spaces 한글');
+    const reference = path.join(tmp, 'reference with spaces.txt');
+    await fs.writeFile(reference, 'source bytes for installed argument and copy verification\n');
+    const initialized = JSON.parse(run(executable, ['init', '--root', project, '--name', 'Asset 한글 with spaces', '--reference', reference], {cwd: tmp}).stdout);
+    assert.equal(initialized.name, 'Asset 한글 with spaces');
+    assert.equal(initialized.head, null);
+    assert.equal(JSON.parse(run(executable, ['status', '--root', project], {cwd: tmp}).stdout).projectId, initialized.projectId);
+    assert.equal(JSON.parse(run(executable, ['verify', '--root', project], {cwd: tmp}).stdout).ok, true);
+    run(executable, ['not-a-command'], {cwd: tmp, status: 2});
+    const missing = run(executable, ['status', '--root', path.join(tmp, 'missing')], {cwd: tmp, status: 1});
+    assert.equal(JSON.parse(missing.stderr).ok, false);
+    const noPython = run(executable, ['--version'], {cwd: tmp, env: {REFAS_PYTHON: path.join(tmp, 'missing-python')}, status: 127});
+    assert.match(noPython.stderr, /could not start Python/u);
+
+    // A plain installed-skill copy must also work without Node or site packages.
+    const python = run(PYTHON, ['-c', 'import sys; print(sys.executable)']).stdout.trim();
+    const copied = path.join(tmp, 'copied-skill');
+    await fs.cp(path.join(mod, 'skills/refas'), copied, {recursive: true});
+    const standaloneEnv = {PATH: path.join(tmp, 'empty-path'), PYTHONPATH: '', PYTHONNOUSERSITE: '1'};
+    const cli = path.join(copied, 'scripts/produce.py');
+    assert.equal(run(python, ['-B', '-S', cli, '--version'], {cwd: tmp, env: standaloneEnv}).stdout.trim(), `RefAs ${version}`);
+    const standalone = JSON.parse(run(python, ['-B', '-S', cli, 'init', '--root', path.join(tmp, 'standalone-project'), '--name', 'Copied skill'], {cwd: tmp, env: standaloneEnv}).stdout);
+    assert.equal(standalone.name, 'Copied skill');
+    return {...distribution, tarball: packed.filename, installedCli: true,
+      exitStatuses: [0, 1, 2, 127], plainSkillWithoutNodeOrSitePackages: true};
+  } finally {
+    await fs.rm(tmp, {recursive: true, force: true});
   }
 }
-main().catch(error=>{console.error(error);process.exitCode=1;});
+
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  verifyPackedInstall().then(result => console.log(JSON.stringify(result, null, 2)))
+    .catch(error => {console.error(error); process.exitCode = 1;});
+}

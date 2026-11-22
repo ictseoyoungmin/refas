@@ -11,7 +11,7 @@ import unittest
 import numpy as np
 from PIL import Image
 
-sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"skills/refas/scripts"))
+sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"legacy/v1/scripts"))
 from benchmark_render_cpu import create_fixture
 from render_glb import Primitive,parse_glb
 from render_pbr_v2_visibility import njit, numba_config
@@ -132,7 +132,7 @@ class MaterialVisibilityIntegration(unittest.TestCase):
 @unittest.skipUnless(njit is not None,"optional Numba not installed")
 class MaterialCliIntegration(unittest.TestCase):
     def test_actual_glb_cli_signed_output_preview_not_certification(self):
-        worker=Path(__file__).resolve().parents[1]/"skills/refas/scripts/render_pbr_v2_material.py"
+        worker=Path(__file__).resolve().parents[1]/"legacy/v1/scripts/render_pbr_v2_material.py"
         with tempfile.TemporaryDirectory(prefix="refas-r14-06c-") as temp:
             root=Path(temp); glb=root/"asset.glb"; frame=root/"frame.json"
             create_fixture(glb,frame,"strands",120,31)

@@ -4,7 +4,7 @@ import {spawnSync} from 'node:child_process';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {appendPartsToClosedGlb, createHardSurfaceShell, createRealizedAssemblyProof, digestBytes, parseGlb, partsToGlb, validateRealizedAssemblyProof} from '../../skills/refas/scripts/lib/index.mjs';
+import {appendPartsToClosedGlb, createHardSurfaceShell, createRealizedAssemblyProof, digestBytes, parseGlb, partsToGlb, validateRealizedAssemblyProof} from '../../legacy/v1/scripts/lib/index.mjs';
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url)), REPOSITORY = path.resolve(ROOT, '../..'), OUTPUT = path.join(ROOT, 'output');
 const PYTHON = process.env.CODEX_PRIMARY_RUNTIME_PYTHON || 'python3';
@@ -48,7 +48,7 @@ const assembledPath=path.join(OUTPUT,'assets','modular-assembly.glb'), explodedP
 await fs.writeFile(assembledPath,assembled.glb); await fs.writeFile(explodedPath,exploded.glb);
 const framePath=path.join(OUTPUT,'canonical-frame.json'); await fs.writeFile(framePath,`${JSON.stringify({schema:'refas.canonical-object-frame/v1',id:'modular-fixture-frame',scopeId:'whole',origin:[0,0,0],axes:{right:[1,0,0],up:[0,1,0],forward:[0,0,1]}},null,2)}\n`);
 await fs.writeFile(path.join(OUTPUT,'realized-assembly-proof.json'),`${JSON.stringify(proof,null,2)}\n`);
-function render(script, glb, out, timeoutSeconds=90){ const result=spawnSync(PYTHON,[path.join(REPOSITORY,`skills/refas/scripts/${script}`),'--glb',glb,'--out',out,'--frame',framePath,'--size','420','--timeout-seconds',String(timeoutSeconds),'--max-working-mb','768'],{encoding:'utf8',timeout:(timeoutSeconds+10)*1000,env:{...process.env,PYTHONDONTWRITEBYTECODE:'1'}}); if(result.error?.code==='ETIMEDOUT') throw new Error(`${script} exceeded parent timeout`); if(result.status!==0) throw new Error(result.stderr||result.stdout); process.stdout.write(result.stdout); }
+function render(script, glb, out, timeoutSeconds=90){ const result=spawnSync(PYTHON,[path.join(REPOSITORY,`legacy/v1/scripts/${script}`),'--glb',glb,'--out',out,'--frame',framePath,'--size','420','--timeout-seconds',String(timeoutSeconds),'--max-working-mb','768'],{encoding:'utf8',timeout:(timeoutSeconds+10)*1000,env:{...process.env,PYTHONDONTWRITEBYTECODE:'1'}}); if(result.error?.code==='ETIMEDOUT') throw new Error(`${script} exceeded parent timeout`); if(result.status!==0) throw new Error(result.stderr||result.stdout); process.stdout.write(result.stdout); }
 render('render_glb.py',assembledPath,path.join(OUTPUT,'renders','assembled')); render('render_glb.py',explodedPath,path.join(OUTPUT,'renders','exploded')); render('render_pbr.py',assembledPath,path.join(OUTPUT,'renders','pbr'),120);
 const summary={status:'PASS',nestedLevels:proof.metrics.nestedLevels,attachments:proof.attachmentChecks.length,derivedSupport:proof.attachmentChecks.every((check)=>check.supportDerivedFromContact),derivedPenetration:proof.attachmentChecks.every((check)=>check.penetrationDepth===0),closedChildPrefixPreserved:assembled.report.sourceBinaryPrefixPreserved,objectIdParts:proof.objectIdCheck.partIds,explodedCandidateRejected:floatingProof.valid===false,triangles:[baseMesh,carrierMesh,latchMesh].reduce((sum,mesh)=>sum+mesh.analysis.triangleCount,0),boards:{assembled:'renders/assembled/multiview-review-board.png',exploded:'renders/exploded/multiview-review-board.png',pbr:'renders/pbr/pbr-review-board.png'}};
 await fs.writeFile(path.join(OUTPUT,'summary.json'),`${JSON.stringify(summary,null,2)}\n`); process.stdout.write(`${JSON.stringify(summary,null,2)}\n`);

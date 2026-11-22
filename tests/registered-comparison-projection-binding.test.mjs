@@ -19,11 +19,11 @@ import {
   partsToGlb,
   sha256File,
   validateRegisteredComparison,
-} from '../skills/refas/scripts/lib/index.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
 
 const PYTHON = process.env.CODEX_PRIMARY_RUNTIME_PYTHON || 'python3';
 const REPOSITORY = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const COMPARE = path.join(REPOSITORY, 'skills/refas/scripts/compare_registered.py');
+const COMPARE = path.join(REPOSITORY, 'legacy/v1/scripts/compare_registered.py');
 
 test('Python registered comparison reproduces JavaScript canonical double formatting', () => {
   const payload = {basis: [-2.2515212045446777e-5, 1, 1e-7, 1e21], nested: {value: 0.30000000000000004}};

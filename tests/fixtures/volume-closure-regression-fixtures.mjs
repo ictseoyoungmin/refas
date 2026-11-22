@@ -5,7 +5,7 @@ import {
   finalizeMesh,
   inspectGlb,
   partsToGlb,
-} from '../../skills/refas/scripts/lib/index.mjs';
+} from '../../legacy/v1/scripts/lib/index.mjs';
 
 const MANIFEST = JSON.parse(readFileSync(new URL('./volume-closure-regression-manifest.json', import.meta.url), 'utf8'));
 const MATERIALS = Object.freeze({

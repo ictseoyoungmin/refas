@@ -5,7 +5,7 @@ import {
   assertCanonicalEditOperation,
   createCanonicalEditIntent,
   validateCanonicalEditIntent,
-} from '../skills/refas/scripts/lib/index.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
 
 test('shape edits are upstream construction edits that rebuild GLB', () => {
   const intent = createCanonicalEditIntent({

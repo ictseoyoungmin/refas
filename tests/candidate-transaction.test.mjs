@@ -6,7 +6,7 @@ import {
   digestBytes,
   digestJson,
   validateCandidateTransaction,
-} from '../skills/refas/scripts/lib/index.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
 
 const candidate = Buffer.from('candidate-v1-glb-bytes');
 const candidateSha256 = digestBytes(candidate);

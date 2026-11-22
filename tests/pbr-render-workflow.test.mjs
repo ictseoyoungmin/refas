@@ -4,9 +4,9 @@ import os from 'node:os';
 import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {test} from 'node:test';
-import {createSegmentPrism, partsToGlb} from '../skills/refas/scripts/lib/index.mjs';
+import {createSegmentPrism, partsToGlb} from '../legacy/v1/scripts/lib/index.mjs';
 
-const CLI=path.resolve('skills/refas/scripts/refas.mjs');
+const CLI=path.resolve('legacy/v1/scripts/refas.mjs');
 const FRAME={
   schema:'refas.canonical-object-frame/v1',id:'fixture-frame',scopeId:'whole',
   origin:[0,0,0],axes:{right:[1,0,0],up:[0,1,0],forward:[0,0,1]},

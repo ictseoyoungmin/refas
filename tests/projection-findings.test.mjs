@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
-import {createProjectionFit, createReferenceGeometry, findingsFromProjectionFit, comparisonMetricsFromProjectionFit, routeFinding} from '../skills/refas/scripts/lib/index.mjs';
+import {createProjectionFit, createReferenceGeometry, findingsFromProjectionFit, comparisonMetricsFromProjectionFit, routeFinding} from '../legacy/v1/scripts/lib/index.mjs';
 const D=c=>c.repeat(64);
 function ref(){return createReferenceGeometry({scopeId:'whole',sourceSha256:D('a'),anchors:[
 {id:'aa',importance:'macro',evidenceRefs:['source.png'],xy:[.2,.2],visibility:'visible',confidence:1},{id:'bb',importance:'macro',evidenceRefs:['source.png'],xy:[.4,.4],visibility:'visible',confidence:1},{id:'cc',importance:'macro',evidenceRefs:['source.png'],xy:[.7,.5],visibility:'visible',confidence:1}],chains:[{id:'abc-chain',importance:'macro',evidenceRefs:['source.png'],anchorIds:['aa','bb','cc']}],axes:[{id:'ab-axis',importance:'macro',evidenceRefs:['source.png'],fromAnchorId:'aa',toAnchorId:'bb'}],negativeSpaces:[{id:'gap',importance:'macro',evidenceRefs:['source.png'],polygon:[[.2,.3],[.3,.5],[.5,.35]]}],attestation:{attested:true,evidenceRefs:['source.png']}})}

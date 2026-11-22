@@ -3,7 +3,7 @@ import {test} from 'node:test';
 import {
  createReferenceGeometry,createRealizedProjection,verifyRealizedProjection,
  createSegmentPrism,partsToGlb,screenSourceNegativeSpaces,
-} from '../skills/refas/scripts/lib/index.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
 
 const SRC='source/original.png',SHA='a'.repeat(64);
 const camera={projection:'orthographic',position:[0,0,5],target:[0,0,0],

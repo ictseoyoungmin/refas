@@ -13,7 +13,7 @@ import {
   digestJson,
   partsToGlb,
   validateCertificationRelationalEvidence,
-} from '../skills/refas/scripts/lib/index.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
 
 const D = (c) => c.repeat(64);
 const bytes = (value) => Buffer.from(`${JSON.stringify(value)}\n`, 'utf8');

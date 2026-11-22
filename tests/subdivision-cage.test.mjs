@@ -17,7 +17,7 @@ import {
   validateConstructionExecutionProof,
   validateConstructionQuality,
   validateSubdivisionCageOrganic,
-} from '../skills/refas/scripts/lib/index.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
 
 const SOURCE = 'a'.repeat(64);
 const COMPARISON = 'c'.repeat(64);

@@ -4,7 +4,7 @@ import {spawnSync} from 'node:child_process';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {parseGlb} from '../../skills/refas/scripts/lib/glb.mjs';
+import {parseGlb} from '../../legacy/v1/scripts/lib/glb.mjs';
 import {buildArticulatedFigure} from './model.mjs';
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
@@ -35,7 +35,7 @@ await fs.writeFile(neutralFramePath, `${JSON.stringify({
 
 function render(glb, out, frame, pbr = false) {
   const script = pbr ? 'render_pbr.py' : 'render_glb.py';
-  const result = spawnSync(PYTHON, [path.join(REPOSITORY,'skills/refas/scripts',script),'--glb',glb,'--out',out,'--frame',frame,'--size','480','--timeout-seconds','150','--max-working-mb','1024'], {encoding:'utf8',timeout:165_000,env:{...process.env,PYTHONDONTWRITEBYTECODE:'1'}});
+  const result = spawnSync(PYTHON, [path.join(REPOSITORY,'legacy/v1/scripts',script),'--glb',glb,'--out',out,'--frame',frame,'--size','480','--timeout-seconds','150','--max-working-mb','1024'], {encoding:'utf8',timeout:165_000,env:{...process.env,PYTHONDONTWRITEBYTECODE:'1'}});
   if (result.status !== 0) throw new Error(result.stderr || result.stdout || `${script} failed`);
   process.stdout.write(result.stdout);
 }

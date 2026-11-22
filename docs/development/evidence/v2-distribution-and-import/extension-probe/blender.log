@@ -1,0 +1,13 @@
+Error: Extension REFAS_unverified_probe is not available on this addon version
+Blender 4.3.2
+
+Blender quit
+Traceback (most recent call last):
+  File "/workspace/scratch/c52cb753f160/v2-next-audit/extension-probe/probe.py", line 3, in <module>
+    result=bpy.ops.import_scene.gltf(filepath='/workspace/scratch/c52cb753f160/v2-next-audit/extension-probe/unknown-required.glb')
+  File "/usr/share/blender/scripts/modules/bpy/ops.py", line 109, in __call__
+    ret = _op_call(self.idname_py(), kw)
+RuntimeError: Error: Extension REFAS_unverified_probe is not available on this addon version
+
+
+Error: script failed, file: '/workspace/scratch/c52cb753f160/v2-next-audit/extension-probe/probe.py', exiting.

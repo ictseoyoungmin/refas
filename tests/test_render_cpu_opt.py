@@ -9,7 +9,7 @@ from pathlib import Path
 import numpy as np
 from PIL import Image
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "skills/refas/scripts"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "legacy/v1/scripts"))
 from render_glb import Primitive, render as render_legacy
 from benchmark_render_cpu import grid_geometry
 from render_cpu_opt import render_hero, require_supported, njit

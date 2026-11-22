@@ -5,7 +5,7 @@ import {
   createRelationalStructure,
   digestJson,
   validateRelationalDiscrepancy,
-} from '../skills/refas/scripts/lib/index.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
 
 const D = (c = 'a') => c.repeat(64);
 

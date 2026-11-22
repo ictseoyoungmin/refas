@@ -5,7 +5,7 @@ import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {test} from 'node:test';
 
-const CLI=path.resolve('skills/refas/scripts/refas.mjs');
+const CLI=path.resolve('legacy/v1/scripts/refas.mjs');
 const align4=(value)=>(value+3)&~3;
 
 function buildLargeGlb(extraTriangles=30_000){

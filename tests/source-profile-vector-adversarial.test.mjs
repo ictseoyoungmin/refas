@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
-import {screenSourceProfileVector} from '../skills/refas/scripts/lib/source-profile-vector-screen.mjs';
+import {screenSourceProfileVector} from '../legacy/v1/scripts/lib/source-profile-vector-screen.mjs';
 
 const SRC='source.png',SHA='a'.repeat(64);
 const poly=(x,y=.5,w=.03,h=.03)=>[[x-w/2,y-h/2],[x+w/2,y-h/2],[x+w/2,y+h/2],[x-w/2,y+h/2]];

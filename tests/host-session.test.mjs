@@ -14,8 +14,8 @@ import {
   loadProject,
   openHostSession,
   initProject,
-} from '../skills/refas/scripts/lib/index.mjs';
-import {initTrustedContractFixtureProject} from '../skills/refas/scripts/lib/contract-fixture-project.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
+import {initTrustedContractFixtureProject} from '../legacy/v1/scripts/lib/contract-fixture-project.mjs';
 
 async function tempRoot(t) {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), 'refas-host-session-'));

@@ -6,7 +6,7 @@ import {
   digestBytes,
   partsToGlb,
   validateSpatialClosureEvidence,
-} from '../skills/refas/scripts/lib/index.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
 import {buildVolumeClosureRegressionFixture} from './fixtures/volume-closure-regression-fixtures.mjs';
 
 function containsAuthorityVerdict(value) {

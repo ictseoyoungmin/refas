@@ -3,7 +3,7 @@ import {
   createControlProfile,
   createPhysicalAssetBundle,
   createRuntimeBinding,
-} from '../../skills/refas/scripts/lib/index.mjs';
+} from '../../legacy/v1/scripts/lib/index.mjs';
 import {
   P17_IMPLEMENTATION_ARTIFACT_SHA256,
   P17_SOURCE_SHA256,

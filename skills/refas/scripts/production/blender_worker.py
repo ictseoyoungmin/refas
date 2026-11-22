@@ -562,9 +562,11 @@ def validate_job(job):
         if isinstance(value, bool) or not isinstance(value, int) or not low <= value <= high:
             raise ValueError(f"render.{key} must be an integer between {low} and {high}")
         config[key] = value
-    for key in ("baseBlend", "script", "assetGlb"):
+    for key in ("baseBlend", "baseGlb", "script", "assetGlb"):
         if job.get(key) and (not Path(job[key]).is_absolute() or not Path(job[key]).is_file()):
             raise ValueError(key + " must name an existing absolute file")
+    if job.get("baseGlb") and (job.get("baseBlend") or job["operation"] != "edit"):
+        raise ValueError("baseGlb is an edit input mutually exclusive with baseBlend")
     if job["operation"] == "inspect" and not job.get("baseBlend"):
         raise ValueError("inspect requires baseBlend")
     if job["operation"] == "edit" and not job.get("script"):
@@ -579,8 +581,17 @@ def execute(job):
     out, views, config, specification = validate_job(job)
     if job.get("baseBlend"):
         bpy.ops.wm.open_mainfile(filepath=job["baseBlend"], load_ui=False, use_scripts=False)
+        if job.get("legacyImport"):
+            if bpy.data.libraries:
+                raise ValueError("Legacy native import requires no linked libraries")
+            if any(image.users and image.source == "FILE" and not (image.packed_file or image.packed_files)
+                   for image in bpy.data.images):
+                raise ValueError("Legacy native import requires packed image textures")
     else:
         bpy.ops.wm.read_factory_settings(use_empty=True)
+        if job.get("baseGlb"):
+            if "FINISHED" not in bpy.ops.import_scene.gltf(filepath=job["baseGlb"]):
+                raise RuntimeError("Legacy GLB import did not finish")
     result = {"schema": SCHEMA, "ok": False, "operation": job["operation"],
               "blenderVersion": bpy.app.version_string, "outputs": {}, "observations": [],
               "verification": {}, "warnings": list(LIMITATIONS)}

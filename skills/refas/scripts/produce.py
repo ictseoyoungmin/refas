@@ -7,11 +7,13 @@ import subprocess
 import sys
 
 sys.dont_write_bytecode = True
+from production import VERSION
 from production.project import ProductionError, initialize, replace_references, run_edit, status, verify_project, restore
 
 
 def parser():
     p = argparse.ArgumentParser(description=__doc__)
+    p.add_argument("--version", action="version", version="RefAs " + VERSION)
     commands = p.add_subparsers(dest="command", required=True)
     doctor = commands.add_parser("doctor", help="Inspect the actual Blender executable")
     doctor.add_argument("--blender", default="blender")
@@ -39,6 +41,15 @@ def parser():
     run.add_argument("--timeout", type=float, default=180)
     run.add_argument("--expected-revision", help="Reject stale edits; use none for a new project")
     run.add_argument("--expected-sequence", type=int, help="Also reject a changed reference set or project sequence")
+    legacy = commands.add_parser("import-v1", help="Import one explicitly selected archived 1.x asset into a new production project")
+    for name in ("root", "source-project", "checkpoint", "artifact", "name"):
+        legacy.add_argument("--" + name, required=True)
+    legacy.add_argument("--blender", default="blender")
+    legacy.add_argument("--views", help="Comma-separated views; default hero,side, or all supplied review views")
+    legacy.add_argument("--review-spec")
+    legacy.add_argument("--size", type=int, default=384)
+    legacy.add_argument("--samples", type=int, default=8)
+    legacy.add_argument("--timeout", type=float, default=180)
     for name in ("status", "verify"):
         sub = commands.add_parser(name)
         sub.add_argument("--root", required=True)
@@ -58,7 +69,7 @@ def main():
             if not executable:
                 raise ProductionError("Blender executable is unavailable: " + args.blender)
             result = subprocess.run([executable, "--version"], capture_output=True, text=True, timeout=15, check=True)
-            output = {"ok": True, "entry": "RefAs 2.0 production development", "python": sys.version.split()[0],
+            output = {"ok": True, "entry": "RefAs production", "version": VERSION, "python": sys.version.split()[0],
                       "blender": {"path": executable, "version": result.stdout.splitlines()[0]},
                       "scope": "executable probe; render device availability is checked during execution"}
         elif args.command == "init":
@@ -71,6 +82,12 @@ def main():
                               [view.strip() for view in args.views.split(",") if view.strip()] if args.views is not None else None,
                               args.size, args.samples, args.timeout, args.expected_revision, review_spec=args.review_spec,
                               expected_sequence=args.expected_sequence)
+        elif args.command == "import-v1":
+            from production.legacy_import import import_v1
+            output = import_v1(args.root, args.source_project, args.checkpoint, args.artifact, args.name,
+                               blender=args.blender,
+                               views=[view.strip() for view in args.views.split(",") if view.strip()] if args.views is not None else None,
+                               size=args.size, samples=args.samples, timeout=args.timeout, review_spec=args.review_spec)
         elif args.command == "status":
             output = status(args.root)
         elif args.command == "verify":

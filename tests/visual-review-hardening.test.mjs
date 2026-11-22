@@ -14,7 +14,7 @@ import {
   auditProject,
   certifyProject,
   findComparisonContradictions,
-} from '../skills/refas/scripts/lib/index.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
 
 const D = (char) => char.repeat(64);
 const observation = (id) => ({

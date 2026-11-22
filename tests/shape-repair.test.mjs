@@ -19,7 +19,7 @@ import {
   projectionResidualMeasurements,
   repairShapeFromProjection,
   validateParameterFitReport,
-} from '../skills/refas/scripts/lib/index.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
 
 const D = (character) => character.repeat(64);
 const camera = {projection: 'perspective', position: [1.73, 0.61, 4.27], target: [0.12, -0.24, 0.31], up: [0.03, 1.0, 0.07], fovY: 37.25, aspect: 1};
@@ -93,7 +93,7 @@ test('projection repair binds residuals to shape parameters and keeps an improve
       const renderDirectory = path.join(directory, 'render');
       await fs.writeFile(assetPath, glb);
       const rendered = spawnSync(process.env.CODEX_PRIMARY_RUNTIME_PYTHON || 'python3', [
-        path.resolve('skills/refas/scripts/render_glb.py'), '--glb', assetPath, '--out', renderDirectory,
+        path.resolve('legacy/v1/scripts/render_glb.py'), '--glb', assetPath, '--out', renderDirectory,
         '--frame', framePath, '--size', '96', '--timeout-seconds', '30', '--max-working-mb', '64',
       ], {encoding: 'utf8', timeout: 60000});
       if (rendered.status !== 0) throw new Error(`portable renderer failed: ${rendered.stderr || rendered.stdout}`);
@@ -215,7 +215,7 @@ test('projection repair rejects a report whose recorded hero camera differs from
       const assetPath = path.join(directory, 'candidate.glb');
       await fs.writeFile(assetPath, glb);
       const rendered = spawnSync(process.env.CODEX_PRIMARY_RUNTIME_PYTHON || 'python3', [
-        path.resolve('skills/refas/scripts/render_glb.py'), '--glb', assetPath, '--out', renderDirectory,
+        path.resolve('legacy/v1/scripts/render_glb.py'), '--glb', assetPath, '--out', renderDirectory,
         '--frame', framePath, '--size', '48', '--timeout-seconds', '30', '--max-working-mb', '64',
       ], {encoding: 'utf8', timeout: 60000});
       if (rendered.status !== 0) throw new Error(`portable renderer failed: ${rendered.stderr || rendered.stdout}`);

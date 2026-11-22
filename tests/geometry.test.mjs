@@ -17,7 +17,7 @@ import {
   partsToGlb,
   surfaceFrame,
   validateSurfaceNetwork,
-} from '../skills/refas/scripts/lib/index.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
 
 test('hard-surface shells keep true apertures, curved thickness, treatments, and semantic topology', () => {
   const mesh = createHardSurfaceShell({

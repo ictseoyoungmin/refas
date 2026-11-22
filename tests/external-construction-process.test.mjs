@@ -14,7 +14,7 @@ import {
   inspectGlb,
   validateConstructionExecutionProof,
   validateConstructionQuality,
-} from '../skills/refas/scripts/lib/index.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
 
 const TOOL_SOURCE = String.raw`import fs from 'node:fs';
 const source = fs.readFileSync(process.argv[2]);

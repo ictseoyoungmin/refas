@@ -1,89 +1,23 @@
 #!/usr/bin/env node
+import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
-import os from 'node:os';
 import path from 'node:path';
-import {spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
-
-import {verifyInstructionGraph} from './verify-instruction-graph.mjs';
-import {verifySemanticInstructionGraph} from '../skills/refas/scripts/verify_semantic_instruction_graph.mjs';
-import {REFAS_VERSION} from '../skills/refas/scripts/lib/canonical.mjs';
+import {packProduction, verifyProductionDistribution} from './verify-production-distribution.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
-function run(command, args) {
-  const result = spawnSync(command, args, {
-    cwd: ROOT,
-    encoding: 'utf8',
-    env: {
-      ...process.env,
-      NPM_CONFIG_UPDATE_NOTIFIER: 'false', NPM_CONFIG_AUDIT: 'false', NPM_CONFIG_FUND: 'false',
-      NPM_CONFIG_OFFLINE: 'true', NPM_CONFIG_CACHE: path.join(os.tmpdir(), 'refas-npm-cache'),
-      PYTHONDONTWRITEBYTECODE: '1',
-    },
-  });
-  if (result.status !== 0) throw new Error(`${command} ${args.join(' ')} failed:\n${result.stderr || result.stdout}`);
-  return result.stdout;
-}
-
 async function main() {
-  run(process.execPath, ['tools/check-repository.mjs']);
-  const instructionGraph = await verifyInstructionGraph({root: ROOT});
-  const semanticGraph = await verifySemanticInstructionGraph({skillRoot: path.join(ROOT, 'skills/refas')});
-  run(process.execPath, ['--test',
-    'tests/assembly-and-routing.test.mjs','tests/checkpoints.test.mjs','tests/cli.test.mjs','tests/contracts.test.mjs','tests/geometry.test.mjs','tests/subdivision-cage.test.mjs','tests/bilateral-pair.test.mjs','tests/bilateral-articulated-regression.test.mjs','tests/structural-plausibility.test.mjs','tests/blockout-competition.test.mjs','tests/prior-quarantine.test.mjs','tests/uv-texture.test.mjs','tests/textured-material-dogfood.test.mjs','tests/governance.test.mjs','tests/instruction-graph.test.mjs','tests/semantic-instruction-graph.test.mjs',
-    'tests/orientation-frame.test.mjs','tests/orientation-fitting.test.mjs','tests/orientation-hardening.test.mjs',
-    'tests/relational-structure.test.mjs','tests/semantic-authority.test.mjs','tests/whole-system-relational-barrier.test.mjs','tests/relational-discrepancy.test.mjs','tests/relational-fit.test.mjs','tests/certification-relational-evidence.test.mjs',
-    'tests/integrated-physical-fixture.test.mjs',
-    'tests/host-session.test.mjs','tests/host-session-recovery.test.mjs','tests/host-events.test.mjs','tests/host-operation.test.mjs','tests/host-review-bundle.test.mjs','tests/host-artifact-handoff.test.mjs','tests/host-worker.test.mjs','tests/host-cli.test.mjs',
-  ]);
-  const python = process.env.CODEX_PRIMARY_RUNTIME_PYTHON || 'python3';
-  const sources = ['examples/parameter-fit/create_comparison.py','skills/refas/scripts/compare_registered.py','skills/refas/scripts/observation_image.py','skills/refas/scripts/evidence_request.py','skills/refas/scripts/evidence_compat.py','skills/refas/scripts/evidence_utility.py','skills/refas/scripts/render_glb.py','skills/refas/scripts/render_pbr.py','skills/refas/scripts/source_manifest.py'];
-  const compileProgram = 'import pathlib,sys; [compile(pathlib.Path(p).read_text(encoding="utf-8"), p, "exec") for p in sys.argv[1:]]';
-  run(python, ['-c', compileProgram, ...sources]);
-
-  const output = run('npm', ['pack','--dry-run','--json','--ignore-scripts']);
-  const pack = JSON.parse(output)[0];
-  if (!pack?.files?.length) throw new Error('npm dry-run did not report a package file list');
-  const names = pack.files.map((item)=>item.path);
-  // Package-local examples are installed skill resources. The repository-root
-  // examples/ directory remains excluded from the published npm package.
-  const forbidden = names.filter((name)=>
-    /^(?:examples)\//u.test(name) ||
-    /(?:^|\/)(?:__pycache__|\.refas|tests|legacy)(?:\/|$)|\.pyc$|\.zip$/u.test(name)
-  );
-  if (forbidden.length) throw new Error(`release package contains forbidden files: ${forbidden.join(', ')}`);
-
-  for (const required of [
-    'skills/refas/scripts/produce.py','skills/refas/scripts/production/__init__.py','skills/refas/scripts/production/project.py','skills/refas/scripts/production/blender_worker.py','skills/refas/scripts/production/review.py',
-    'package.json','requirements.txt','skills/refas/SKILL.md','skills/refas/references/INDEX.md','skills/refas/references/GRAPH.json','skills/refas/references/host-integration.md','skills/refas/scripts/refas.mjs','skills/refas/scripts/refas-host.mjs','skills/refas/scripts/verify_installation_boundary.mjs','skills/refas/scripts/verify_semantic_instruction_graph.mjs','skills/refas/scripts/external_construction_fresh_worker.mjs','skills/refas/scripts/verify_external_construction_dogfood.mjs','skills/refas/scripts/verify_subdivision_cage_dogfood.mjs','skills/refas/scripts/bilateral_pair_fresh_worker.mjs','skills/refas/scripts/verify_bilateral_pair_dogfood.mjs','skills/refas/scripts/structural_plausibility_fresh_worker.mjs','skills/refas/scripts/verify_structural_plausibility_dogfood.mjs','skills/refas/scripts/blockout_competition_fresh_worker.mjs','skills/refas/scripts/verify_blockout_competition_dogfood.mjs','skills/refas/scripts/prior_quarantine_fresh_worker.mjs','skills/refas/scripts/verify_prior_quarantine_dogfood.mjs','skills/refas/scripts/verify_textured_material_dogfood.mjs','skills/refas/scripts/compare_registered.py','skills/refas/scripts/lib/index.mjs',
-    'skills/refas/scripts/lib/host-state.mjs','skills/refas/scripts/lib/host-session.mjs','skills/refas/scripts/lib/host-event.mjs','skills/refas/scripts/lib/host-operation.mjs','skills/refas/scripts/lib/host-review-bundle.mjs','skills/refas/scripts/lib/host-artifact-handoff.mjs','skills/refas/scripts/lib/host-worker.mjs',
-    'skills/refas/scripts/lib/parameter-fit.mjs','skills/refas/scripts/lib/shape-repair.mjs','skills/refas/scripts/lib/subdivision-cage.mjs','skills/refas/scripts/lib/bilateral-pair.mjs','skills/refas/scripts/lib/structural-plausibility.mjs','skills/refas/scripts/lib/blockout-competition.mjs','skills/refas/scripts/lib/prior-quarantine.mjs','skills/refas/scripts/lib/uv.mjs','skills/refas/scripts/lib/orientation-evidence.mjs','skills/refas/scripts/lib/orientation-frame.mjs','skills/refas/scripts/lib/orientation-discrepancy.mjs','skills/refas/scripts/lib/orientation-pose-fit.mjs',
-    'skills/refas/scripts/lib/relational-structure.mjs','skills/refas/scripts/lib/relational-discrepancy.mjs','skills/refas/scripts/lib/semantic-authority.mjs','skills/refas/scripts/lib/whole-system-relational-barrier.mjs','skills/refas/scripts/lib/certification-relational-evidence.mjs',
-    'skills/refas/scripts/lib/physical-identity-graph.mjs','skills/refas/scripts/lib/rigid-body-dynamics.mjs','skills/refas/scripts/lib/collision-model.mjs','skills/refas/scripts/lib/articulation-graph.mjs','skills/refas/scripts/lib/mechanism-graph.mjs','skills/refas/scripts/lib/transmission-model.mjs','skills/refas/scripts/lib/actuation-model.mjs','skills/refas/scripts/lib/control-profile.mjs','skills/refas/scripts/lib/runtime-binding.mjs','skills/refas/scripts/lib/physical-asset-bundle.mjs','skills/refas/scripts/lib/representation-capacity.mjs','skills/refas/scripts/lib/backend-export-core.mjs','skills/refas/scripts/lib/backend-export.mjs','skills/refas/scripts/lib/representation-normalizer.mjs','skills/refas/scripts/lib/cross-representation-validator.mjs','skills/refas/scripts/lib/divergence-authorization.mjs','skills/refas/scripts/lib/physical-claims.mjs','skills/refas/scripts/lib/physical-claim-certification.mjs','skills/refas/scripts/lib/physical-claim-certification-gate.mjs',
-    'skills/refas/references/parameter-fitting.md','skills/refas/references/relational-structure.md','skills/refas/references/inference-authority.md','skills/refas/references/whole-system-relational-barrier.md','skills/refas/references/physical-fusion.md','skills/refas/references/realized-contact-support.md','skills/refas/references/claim-certification.md',
-    'skills/refas/references/contracts/transmission-model.md','skills/refas/references/contracts/actuation-model.md','skills/refas/references/contracts/control-profile.md','skills/refas/references/contracts/runtime-binding.md','skills/refas/references/contracts/physical-asset-bundle.md','skills/refas/references/contracts/representation-capacity.md','skills/refas/references/contracts/backend-export.md','skills/refas/references/contracts/representation-normalizer.md','skills/refas/references/contracts/cross-representation-validation.md','skills/refas/references/contracts/divergence-authorization.md','skills/refas/references/contracts/physical-claims.md',
-    'schemas/checkpoint.schema.json','schemas/construction-quality.schema.json','schemas/external-construction-receipt.schema.json','schemas/subdivision-cage-organic.schema.json','schemas/bilateral-pair-realization.schema.json','schemas/structural-plausibility.schema.json','schemas/blockout-competition-policy.schema.json','schemas/blockout-competition-decision.schema.json','schemas/prior-quarantine.schema.json','schemas/prior-quarantine-authority.schema.json','schemas/uv-mapping.schema.json','schemas/parameter-fit-plan.schema.json','schemas/parameter-fit-report.schema.json','schemas/orientation-evidence.schema.json','schemas/orientation-discrepancy.schema.json','schemas/orientation-pose-fit.schema.json',
-    'schemas/relational-structure.schema.json','schemas/relational-discrepancy.schema.json','schemas/semantic-authority.schema.json','schemas/whole-system-relational-barrier.schema.json','schemas/certification-relational-evidence.schema.json',
-    'schemas/physical-identity-graph.schema.json','schemas/rigid-body-dynamics.schema.json','schemas/collision-model.schema.json','schemas/articulation-graph.schema.json','schemas/mechanism-graph.schema.json','schemas/transmission-model.schema.json','schemas/actuation-model.schema.json','schemas/control-profile.schema.json','schemas/runtime-binding.schema.json','schemas/physical-asset-bundle.schema.json','schemas/representation-capacity.schema.json','schemas/canonical-export-view.schema.json','schemas/backend-export.schema.json','schemas/normalized-representation.schema.json','schemas/cross-representation-validation.schema.json','schemas/divergence-authorization.schema.json','schemas/physical-claim-evidence.schema.json',
-    'schemas/realized-assembly-proof.schema.json','schemas/registered-comparison.schema.json','schemas/visual-review.schema.json','schemas/whole-object-certificate.schema.json',
-    'schemas/host-session.schema.json','schemas/host-event.schema.json','schemas/host-operation.schema.json','schemas/host-review-bundle.schema.json','schemas/artifact-handoff.schema.json','schemas/worker-request.schema.json','schemas/worker-response.schema.json',
-  ]) if (!names.includes(required)) throw new Error(`release package omits ${required}`);
-
-  for (const routed of instructionGraph.routedPackagePaths) {
-    if (!names.includes(routed)) throw new Error(`release package omits routed instruction target ${routed}`);
-  }
-
-  const skillBytes = names.filter((name)=>name.startsWith('skills/refas/')).reduce((total,name)=>total+Number(pack.files.find((item)=>item.path===name)?.size??0),0);
-  const packageJson = JSON.parse(await fs.readFile(path.join(ROOT,'package.json'),'utf8'));
-  if (packageJson.version !== REFAS_VERSION) throw new Error(`release audit version mismatch: npm ${packageJson.version} vs runtime ${REFAS_VERSION}`);
-  const changelog=await fs.readFile(path.join(ROOT,'CHANGELOG.md'),'utf8');
-  if (!changelog.includes(`## ${REFAS_VERSION} —`)) throw new Error(`CHANGELOG.md omits current version ${REFAS_VERSION}`);
-  const readme=await fs.readFile(path.join(ROOT,'README.md'),'utf8');
-  if (!readme.includes(`alt="Development package v${REFAS_VERSION}"`)) throw new Error(`README.md omits development package version ${REFAS_VERSION}`);
-  const publishedVersion=readme.match(/alt="Published release v(\d+\.\d+\.\d+)"/u)?.[1];
-  if (!publishedVersion || !readme.includes(`releases/tag/v${publishedVersion}`)) throw new Error('README.md must identify its published release separately from the development package');
-  process.stdout.write(`${JSON.stringify({status:'PASS',version:packageJson.version,packagedFiles:names.length,unpackedBytes:pack.unpackedSize,skillBytes,instructionReferenceLeaves:instructionGraph.referenceLeaves,semanticInstructionNodes:semanticGraph.nodeCount,routedInstructionTargets:instructionGraph.routedPackagePaths.length},null,2)}\n`);
+  // The ordinary repository and legacy regression gates run separately in CI.
+  // This audit describes what the production distribution will actually ship.
+  const result = await verifyProductionDistribution({root: ROOT, pack: packProduction({root: ROOT})});
+  const changelog = await fs.readFile(path.join(ROOT, 'CHANGELOG.md'), 'utf8');
+  assert.ok(changelog.includes(`## ${result.version} —`), `CHANGELOG.md omits current version ${result.version}`);
+  const readme = await fs.readFile(path.join(ROOT, 'README.md'), 'utf8');
+  assert.ok(readme.includes(`**Development version: ${result.version}.**`), `README.md omits development package version ${result.version}`);
+  assert.match(readme, /not a published stable 2\.0 release/u, 'README.md must identify the development status');
+  assert.ok(!readme.includes(`releases/tag/v${result.version}`), 'an unpublished development version cannot be presented as a published release');
+  console.log(JSON.stringify(result, null, 2));
 }
 
-main().catch((error)=>{process.stderr.write(`Release audit failed: ${error.message}\n`);process.exit(1);});
+main().catch(error => {process.stderr.write(`Release audit failed: ${error.message}\n`); process.exitCode = 1;});

@@ -1,0 +1,33 @@
+✔ released agent operations are discoverable in canonical graph, CLI help and describe node (884.458283ms)
+✔ installed instruction router links actual source-bound agent commands without granting authority (6.793245ms)
+✔ early modeling demo executes from installed skill without any source-fidelity claim (165.489031ms)
+✔ existing audit, strict verification and Handoff modes are graph discoverable (126.984868ms)
+✔ installed-skill instruction graph reaches every reference leaf with no boundary escapes (231.07802ms)
+✔ instruction routes resolve only inside legacy/v1 (1.131187ms)
+✔ route extraction exposes allowed and forbidden repository routes to the verifier (0.464101ms)
+✔ a bare copied legacy/v1 directory verifies with the repository absent (418.625984ms)
+✔ production entry teaches direct authoring without legacy runtime routes (4.627135ms)
+✔ single-view worked example demonstrates complete surfaces and functional continuity (1.549188ms)
+✔ claim provenance stays scoped to explicit semantic propositions (3.620285ms)
+✔ plugin distribution adapters resolve one canonical RefAs skill tree (12.219295ms)
+✔ plugin distribution rejects manifest version drift (13.79927ms)
+✔ plugin distribution rejects alternate skill sources (12.166426ms)
+✔ plugin distribution rejects icon drift or missing product identity (7.167138ms)
+✔ typed semantic instruction graph covers every leaf and matches runtime ownership (58.872591ms)
+✔ semantic graph requires interface metadata on every instruction node (228.043688ms)
+✔ semantic graph separates runtime capabilities from routing owner tags (113.984228ms)
+✔ semantic graph rejects implementation paths and missing public symbols in interface metadata (105.301636ms)
+✔ bare sibling Markdown instruction references are rejected as ambiguous routes (0.39802ms)
+✔ semantic graph rejects a runtime capability with no instruction owner (88.159679ms)
+✔ semantic graph rejects unconditional relational barrier routing for construction (87.299637ms)
+✔ semantic graph rejects the legacy hidden-geometry suppression policy (68.490749ms)
+✔ semantic graph verifies from a bare copied installed skill with repository absent (241.486216ms)
+✔ early neutral-clay assessment is reachable from construction without final-only prerequisites (4.111947ms)
+ℹ tests 25
+ℹ suites 0
+ℹ pass 25
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1433.83327

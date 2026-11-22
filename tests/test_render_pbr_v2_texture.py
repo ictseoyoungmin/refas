@@ -14,7 +14,7 @@ import unittest
 import numpy as np
 from PIL import Image
 
-sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"skills/refas/scripts"))
+sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"legacy/v1/scripts"))
 from render_glb import Primitive, parse_glb, load_primitives
 from render_pbr_v2_texture import (
     LINEAR,NEAREST,REPEAT,CLAMP_TO_EDGE,MIRRORED_REPEAT,
@@ -183,7 +183,7 @@ def fixture_embedded_texture(glb,frame):
 
 class EndToEndEmbeddedTexture(unittest.TestCase):
     def test_real_glb_embedded_png_and_all_four_pass_hashes(self):
-        worker=Path(__file__).resolve().parents[1]/"skills/refas/scripts/render_pbr_v2_material.py"
+        worker=Path(__file__).resolve().parents[1]/"legacy/v1/scripts/render_pbr_v2_material.py"
         with tempfile.TemporaryDirectory(prefix="r14-06c2-") as d:
             glb=Path(d)/"test.glb";frame=Path(d)/"frame.json"
             fixture_embedded_texture(glb,frame)

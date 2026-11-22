@@ -7,7 +7,7 @@ const root = path.resolve(import.meta.dirname, '..');
 const planPath = path.join(root, 'docs', 'physical-semantics-plan.md');
 const boundaryPath = path.join(root, 'docs', 'physical-semantics-boundary.md');
 const architecturePath = path.join(root, 'docs', 'architecture.md');
-const instructionGraphPath = path.join(root, 'skills', 'refas', 'references', 'GRAPH.json');
+const instructionGraphPath = path.join(root, 'legacy', 'v1', 'references', 'GRAPH.json');
 const semanticAuthorityPath = path.join(root, 'schemas', 'semantic-authority.schema.json');
 const representationCapacityPath = path.join(root, 'schemas', 'representation-capacity.schema.json');
 

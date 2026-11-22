@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import {parseGlb} from '../skills/refas/scripts/lib/index.mjs';
+import {parseGlb} from '../legacy/v1/scripts/lib/index.mjs';
 import {buildArticulatedFigure} from '../examples/articulated-figure/model.mjs';
 
 test('articulated figure model path remains local-mesh invariant after bilateral authority addition',()=>{

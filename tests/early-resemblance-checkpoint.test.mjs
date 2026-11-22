@@ -35,8 +35,8 @@ import {
   resolveVolumeBarrierAdmission,
   reopenFromTrustedSourceAdmission,
   resumeProject,
-} from '../skills/refas/scripts/lib/index.mjs';
-import {initTrustedContractFixtureProject} from '../skills/refas/scripts/lib/contract-fixture-project.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
+import {initTrustedContractFixtureProject} from '../legacy/v1/scripts/lib/contract-fixture-project.mjs';
 
 const D = (ch) => ch.repeat(64);
 // Verified real 64x64 raster in the source-bound nonfixture contract tests.

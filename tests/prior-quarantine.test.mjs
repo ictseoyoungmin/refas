@@ -5,8 +5,8 @@ import {
   createPriorQuarantine,
   digestBytes,
   validatePriorQuarantine,
-} from '../skills/refas/scripts/lib/index.mjs';
-import {runPriorQuarantineFreshWorkerDogfood} from '../skills/refas/scripts/verify_prior_quarantine_dogfood.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
+import {runPriorQuarantineFreshWorkerDogfood} from '../legacy/v1/scripts/verify_prior_quarantine_dogfood.mjs';
 
 function glb({positions=[0,0,0,1,0,0,0,1,0],morph=false,materials=false,tag=''}={}){
   const data=new Float32Array(positions);const binary=Buffer.from(data.buffer,data.byteOffset,data.byteLength);

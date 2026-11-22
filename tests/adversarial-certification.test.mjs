@@ -24,8 +24,8 @@ import {
   validateCertificationPolicy,
   validateClaimCertificationDecision,
   validateWholeObjectPolicyAuthority,
-} from '../skills/refas/scripts/lib/index.mjs';
-import {initTrustedContractFixtureProject} from '../skills/refas/scripts/lib/contract-fixture-project.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
+import {initTrustedContractFixtureProject} from '../legacy/v1/scripts/lib/contract-fixture-project.mjs';
 
 function checkpointFor(candidateBytes, reason = 'adversarial fixture') {
   const artifact = {kind: 'glb', path: 'assets/candidate.glb', sha256: digestBytes(candidateBytes), sizeBytes: candidateBytes.length};

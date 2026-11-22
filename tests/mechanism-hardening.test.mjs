@@ -8,7 +8,7 @@ import {
   createMechanismGraph,
   createPhysicalIdentityGraph,
   validateMechanismGraphBindings,
-} from '../skills/refas/scripts/lib/index.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
 
 const D = 'a'.repeat(64);
 const I = (origin = [0, 0, 0]) => ({origin, xAxis: [1, 0, 0], yAxis: [0, 1, 0], zAxis: [0, 0, 1]});

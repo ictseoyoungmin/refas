@@ -8,7 +8,7 @@ import {
   fitParameters,
   validateParameterFitPlan,
   validateParameterFitReport,
-} from '../skills/refas/scripts/lib/index.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
 
 const D = (character) => character.repeat(64);
 const reference = (path, kind = 'fixture') => ({
