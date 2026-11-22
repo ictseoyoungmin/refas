@@ -39,6 +39,100 @@
       "privacy": "Private owner delivery. Contains avatar geometry, textures and native fitted scenes; not committed to the public repository.",
       "snapshotScope": "Stable files captured and verified individually. No claim of atomic application-level capture of an active project pointer.",
       "link": "https://chatgpt.com/library?file_id=libfile_2934f2197c90819196e0e197a0b50396&account_id=personal"
+    },
+    {
+      "date": "2026-11-23",
+      "timezone": "Asia/Seoul",
+      "status": "arm selected; garment unfinished; continuation of immutable v2 base",
+      "fileName": "refas-recovery-continuation-2026-11-23-v3.tar.zst",
+      "libraryFileId": "libfile_bd50353ed4388191aa82bb843f81a729",
+      "fileId": "file_000000008e6481fdbe702b4bc314cc8e",
+      "libraryVersion": 0,
+      "bytes": 327014508,
+      "sha256": "126e86cd3b762797b32fc7240bdb7c58f9a62707ffd39c4387e51fd0c02b0e8d",
+      "kind": "continuation",
+      "standalone": false,
+      "base": {
+        "fileName": "refas-recovery-checkpoint-2026-11-23-v2.tar.zst",
+        "libraryFileId": "libfile_2934f2197c90819196e0e197a0b50396",
+        "libraryVersion": 1,
+        "sha256": "5753795ae8fe1e7b39242a4f8c50bbdd810ef3a05748673fab9e507e7e073413",
+        "preserveUnchanged": true
+      },
+      "payloadFiles": 533,
+      "verifiedArchiveFiles": 538,
+      "verifiedLogicalTargetFiles": 1922,
+      "verifiedActualReconstructedFiles": 1922,
+      "targetManifestSha256": "43c7d6dd8824a39b5c7485367a3e63fff3e2aa114ff491efd7764a6a42c9309b",
+      "manifestVerified": true,
+      "compression": "zstd -8 -T2 --long=29 (512 MiB decode window)",
+      "contents": "533 new or changed files since v2. Includes coherent garment trials through detailed lining16, consumer precision diagnosis and path/cache observer change1435, installed 19-file package, and original failed trial logs. The later low23 error rejection, final seam repair and final wearable acceptance are outside this captured snapshot.",
+      "privacy": "Private owner delivery. Contains avatar geometry, textures and native fitted scenes; not committed to the public repository.",
+      "snapshotScope": "Individually stable captured files, not an atomic application-level project pointer. Base plus continuation was copied into a fresh directory and every one of the 1922 reconstructed files was verified by SHA256 and byte count.",
+      "link": "https://chatgpt.com/library?file_id=libfile_bd50353ed4388191aa82bb843f81a729&account_id=personal",
+      "fullArchiveAttempt": {
+        "bytes": 802051320,
+        "sha256": "b4d3c62e1bb578acf480ee0005ee5571116b4648f52a6d2f30da430ea54a07e3",
+        "localVerificationPassed": true,
+        "uploadSucceeded": false,
+        "observedError": "prepare_uploads failed",
+        "providerReasonAvailable": false
+      }
+    },
+    {
+      "date": "2026-11-23",
+      "timezone": "Asia/Seoul",
+      "status": "rejected cloth checkpoint; previous ray-only zero-contact claims superseded",
+      "kind": "selected intermediate geometry handoff",
+      "fileName": "refas-clean-cloth-handoff-2026-11-23.zip",
+      "libraryFileId": "libfile_47e2352777a08191b58320625bfe2dc6",
+      "fileId": "file_00000000159c81fd8a32e1a9d30c3a8c",
+      "libraryVersion": 0,
+      "bytes": 12064664,
+      "sha256": "f271a95be65a2e4dbaa7de66ebc60fe388140c42f0c6176311ce6b948029fc72",
+      "verifiedArchiveFiles": 31,
+      "verifiedPayloadFiles": 30,
+      "crcPass": true,
+      "manifestVerified": true,
+      "inputManifestSha256": "31c00faeb1646e753b2f0863a613cfe734e5d1a3d535f1fbe0a4be8dc87955d3",
+      "highNativeSha256": "9eb977d1a3c8bd7ff1e565e2640fa03cd3c0e507ccc5ba290e9b9ed4662994fc",
+      "lowNativeSha256": "6afdd36a0c9a1c1dcfb22252aa87d33b7c4c7554f63264ca3a0cf65cc8d3db29",
+      "contents": "Frozen high16/low29 cloth pair, exact saved-file topology/error records, matched diagnostic views and helper source. Rest fitting against original avatar, visible gorge repair, full motion, export and installed editing remain open. This is not a final wearable. Original inputs/construction history/runtime dependencies remain in the existing recovery archives.",
+      "privacy": "Private owner native geometry handoff; binary models are not committed to the public repository.",
+      "link": "https://chatgpt.com/library?file_id=libfile_47e2352777a08191b58320625bfe2dc6&account_id=personal",
+      "laterContactFinding": {
+        "high16": {
+          "collar": 6326,
+          "body": 4
+        },
+        "low29": {
+          "collar": 1224,
+          "body": 5
+        },
+        "interpretation": "Nonadjacent tested contact pairs, not unique defect regions. Independent float64 SAT and strict edge/triangle linear solves reject the earlier ray-only zero-contact results. Native bytes, topology and sampled error facts remain unchanged."
+      },
+      "supersededByLibraryVersion": 1
+    },
+    {
+      "date": "2026-11-23",
+      "timezone": "Asia/Seoul",
+      "kind": "rejected geometry checkpoint with superseding independent evidence",
+      "status": "rejected cloth checkpoint; ray-only contact acceptance withdrawn",
+      "fileName": "refas-cloth-rejected-checkpoint-2026-11-23.zip",
+      "libraryFileId": "libfile_47e2352777a08191b58320625bfe2dc6",
+      "fileId": "file_0000000060e881f5966095e7849c6a1e",
+      "libraryVersion": 1,
+      "bytes": 12268265,
+      "sha256": "8f24773e463ed948fbfc81c73eeaa9c648a0d7980d422cc42524752cd31047e5",
+      "verifiedArchiveFiles": 57,
+      "verifiedPayloadFiles": 56,
+      "crcPass": true,
+      "manifestVerified": true,
+      "nativeInputsUnchanged": true,
+      "supersedesArchiveSha256": "f271a95be65a2e4dbaa7de66ebc60fe388140c42f0c6176311ce6b948029fc72",
+      "contents": "Retains exact high16/low29 native bytes and original numeric/visual observations, adds overriding rejection notice, complete independent SAT pair report and all 7,559 strict edge/triangle solve classifications, exact ray scale reproduction and helper snapshots. This is retained negative evidence, not usable garment acceptance.",
+      "privacy": "Private owner native geometry handoff; binary models are not committed to the public repository.",
+      "link": "https://chatgpt.com/library?file_id=libfile_47e2352777a08191b58320625bfe2dc6&account_id=personal"
     }
   ]
 }

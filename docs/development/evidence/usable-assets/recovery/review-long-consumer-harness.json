@@ -1,0 +1,27 @@
+{
+  "scope": "Static independent source review; final97-frame execution has not occurred",
+  "sourceSha256": {
+    "work/garment/consumer-precision/run_playback.py": "c43a87b288ed0843db14253e54cbf00618040e90063ab4d69e15b038e8e536c6",
+    "work/garment/consumer-precision/inspect_skin_precision.py": "92bb5acdbb1a2eebcb1a442ec70b1af67241d11384ea9813829477de25e45e2c",
+    "refas/examples/engine-playback/run.py": "9fa886267aa57409564636f3f25b90cdfc5b11746c3d08631a8442e2e7c5c814",
+    "refas/examples/engine-playback/verify_godot.gd": "47846d01208f55e70b40eaa2c0bb444322995360863f5d3b933e893ac375eaad"
+  },
+  "findings": {
+    "allProbeClassesPreserved": true,
+    "usesExactRepositoryCoordinateHelpers": true,
+    "requires97Consecutive30fpsSamples": true,
+    "sameProbeIdentitiesAcrossAllSamples": true,
+    "matrixTolerance": 2e-05,
+    "restToleranceUnchangedObserverDefaultM": 1e-05,
+    "allowedSkinToleranceM": [
+      2e-05,
+      0.0001
+    ],
+    "processTimeoutSeconds": 900,
+    "timeoutExitCode": 124,
+    "inputAndObserverHashesCheckedAfterRun": true,
+    "precisionAnalyzerRequiresExactly4ImportedSlots": true,
+    "precisionScopeCountsAreDynamic": true,
+    "actualWeightsNotNormalized": true
+  }
+}

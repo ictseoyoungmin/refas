@@ -1,0 +1,97 @@
+{
+  "schema": "refas.review-inputs/v1",
+  "review": "root high16 visual and saved audit reading; not final garment acceptance",
+  "files": [
+    {
+      "path": "work/garment/geometry-repair/lining-16/repaired-detailed.blend",
+      "bytes": 24374932,
+      "sha256": "9eb977d1a3c8bd7ff1e565e2640fa03cd3c0e507ccc5ba290e9b9ed4662994fc"
+    },
+    {
+      "path": "work/garment/geometry-repair/lining-16/full-audit/report.json",
+      "bytes": 12523,
+      "sha256": "2c0eb045eac061b90b8da37b3c2e749fbb8444e2650e3d8e43c08e36d81ff31e"
+    },
+    {
+      "path": "work/garment/geometry-repair/lining-16/gorge-face-classification.json",
+      "bytes": 13937,
+      "sha256": "49c6dc67978eb260ed767fa5b55b83e4cce9448863ecd7b7b17cefe333cde4b9"
+    },
+    {
+      "path": "work/garment/geometry-repair/lining-16/views/low-nape.png",
+      "bytes": 378935,
+      "sha256": "9cea9f960796a3be567e8a9a17fba396d22684e5e3039370ac9a13c40a73a6ca"
+    },
+    {
+      "path": "work/garment/geometry-repair/lining-16/views/low-collar-front.png",
+      "bytes": 515958,
+      "sha256": "e461f94f066ec976fc7073a7505081bce86bee40dfe22ae3798dc0e99373d4cf"
+    },
+    {
+      "path": "work/garment/geometry-repair/lining-16/gorge-views/low-gorge-front.png",
+      "bytes": 543864,
+      "sha256": "ddbf21bb7877218ddb968cad38a18dc2dd02ff53c914c288cc8d6486da0cbbb6"
+    },
+    {
+      "path": "work/garment/geometry-repair/lining-16/gorge-views/low-gorge-side.png",
+      "bytes": 533503,
+      "sha256": "072613dc32fb923b299a44500c51a7260381d5d317241d68143d1916f264e62e"
+    },
+    {
+      "path": "work/garment/geometry-repair/lining-16/gorge-views/low-gorge-top.png",
+      "bytes": 496334,
+      "sha256": "efd344ae3fbea5a74c8f661cdcbb83eddc945d7aefe1ae79058588cdf09d4ccc"
+    },
+    {
+      "path": "work/garment/geometry-repair/lining-16/gorge-views/high-gorge-side.png",
+      "bytes": 544575,
+      "sha256": "e61b00b762c21f0aae3abd7d64c1920e0cdc38c21d043d78eae7f4504b035426"
+    },
+    {
+      "path": "work/garment/geometry-repair/lining-16/isolated-gorge/low-gorge-side.png",
+      "bytes": 478205,
+      "sha256": "21f3f7079af4589a0782a82ac40e4d4499637b3ab3a52d9d2c892781b02f5342"
+    }
+  ],
+  "laterSeamReviewInputs": [
+    {
+      "path": "work/garment/seam-source-review-v3/seam-correspondence.json",
+      "sha256": "550d017269e28eee57e3770f102ca47a7ccc207d5e1f023a08836a1f3483f71d",
+      "bytes": 2583578
+    },
+    {
+      "path": "work/garment/seam-source-review-v3/pixel-localization/seam-pixel-locations.json",
+      "sha256": "47acce208c82474ea924d94c378b8b47a4fd363062a0f7231085deab42d576f0",
+      "bytes": 18031
+    },
+    {
+      "path": "work/garment/seam-source-review-v3/source-renders/front-oblique.png",
+      "sha256": "b38736e20568c7029e75bdcec186404d050e709d8e96f4dbe73f11a84f3417e4",
+      "bytes": 757072
+    },
+    {
+      "path": "work/garment/seam-source-review-v3/fitted-renders/front-oblique.png",
+      "sha256": "680aa1df93464f3ed2b2a003df13ed4d0c0c0e78b73c658b0222a2c021a22e8d",
+      "bytes": 762276
+    }
+  ],
+  "supersedingContactReviewInputs": [
+    {
+      "path": "work/garment/export-review/frozen-cloth-review/report.json",
+      "sha256": "35e60d11c12ace3227f836d5012a239ddcc7b2ee972b0662f184485f986409d3"
+    },
+    {
+      "path": "work/garment/export-review/frozen-cloth-review/contact-diagnosis.json",
+      "sha256": "ec13c102c68198d32dd86c35778be9c0563d17688e2155c44c94a48345913cfb"
+    },
+    {
+      "path": "work/garment/export-review/frozen-cloth-review/ray-scale-diagnosis.json",
+      "sha256": "494c4d544e06d7f593b84748c491c831dcb4285d8a85b9fcc2a431c3daa34fb7"
+    },
+    {
+      "path": "work/garment/export-review/frozen-cloth-review/lining-sat-scale-countercheck.json",
+      "sha256": "60b88f1f8952f7a26fec775c925b00613ae92ca5ce42fbda9852edc631cb89b8"
+    }
+  ],
+  "currentContactAcceptance": "rejected; prior metre-scale ray-only zero counts superseded"
+}

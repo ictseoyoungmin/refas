@@ -23,6 +23,15 @@ visible lining crossings under independent review. It is retained as a failed
 intermediate. U2, U3 and U6 stay open until the garment's complete mesh, wearing,
 attachment and consumer evidence passes. E2, U1, D2, D3 remain separately open.
 
+Later high16/low29 contact-zero claims were also withdrawn: independent SAT
+and strict edge/triangle solves corroborated 7,559 actual crossing pairs
+missed by the task's metre-scale Blender ray filter. The corrected helper
+passes 17 scale/translation and geometric controls, while both old models
+remain rejected. See the [independent rejection](evidence/usable-assets/recovery/review-jacket-high16-low29.md)
+and [predicate review](evidence/usable-assets/recovery/review-contact-predicate.md).
+This observer repair earns no new criterion and does not invalidate the
+arm's separately verified direct-BVH pair gate.
+
 | Slice | Current coverage | Status |
 | --- | --- | --- |
 | R2-01 / R2-02 / R2-04 / R2-05 | 4/4 each | REVIEW |
@@ -32,8 +41,9 @@ attachment and consumer evidence passes. E2, U1, D2, D3 remain separately open.
 | Coordinated delivery | 1/3 | Main merge and release unfinished |
 | **Total** | **30/37 = 81% rounded** | **0/7 tasks CLOSED** |
 
-The runtime recovery at 5f2f39c6 passes 935 JavaScript and 92 Production tests,
-including actual Blender/Godot. Both remote workflows passed. Runtime tests are
+The later runtime checkpoint at 1435ce1a passes 935 JavaScript and 95 Production
+tests, including actual Blender/Godot and 13 consumer regressions. Both exact-head
+remote workflows passed; the 19 installed package files still match. Runtime tests are
 separate from model-use acceptance. PR #399 remains Draft; development identity
 remains 2.0.0-alpha.1. This is criterion coverage, not effort or time remaining.
 

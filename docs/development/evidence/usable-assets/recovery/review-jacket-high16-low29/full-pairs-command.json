@@ -1,0 +1,23 @@
+{
+  "argv": [
+    "/usr/bin/blender",
+    "--background",
+    "--threads",
+    "2",
+    "--python-exit-code",
+    "1",
+    "--python",
+    "/workspace/scratch/61afcdd4e3c6/work/garment/export-review/review_frozen_cloth.py",
+    "--",
+    "--high",
+    "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/lining-16/repaired-detailed.blend",
+    "--low",
+    "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/paired-low-29/optimized-cloth.blend",
+    "--out",
+    "/workspace/scratch/61afcdd4e3c6/work/garment/export-review/frozen-cloth-review/full-pairs-report.json"
+  ],
+  "startedUtc": "2026-11-22T21:03:28.431399+00:00",
+  "exitCode": 2,
+  "completedUtc": "2026-11-22T21:03:59.200546+00:00",
+  "elapsedSeconds": 30.769157127000653
+}

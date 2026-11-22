@@ -1,0 +1,11 @@
+{
+  "files": {
+    "low29-comparison.json": "b001946612f9710d580e258df4cf8670b12ae50340f8ba6f7f2e92d6b61482a1",
+    "stdout.txt": "a88743b9f1407d966f9209c66a92336cbba30243ae7b4ef59b44cfcc02b09e44",
+    "controls.json": "851d2817ddead9e1f223d207e9464b65c440ec11d5ee7755cac2f9a0b5282777",
+    "author-low29-command-record.json": "7d1fe68ff37eabcc7c2575756fb7ca693452af8a4b9d407257bc517391bebe1d",
+    "author-low29-shell-motion.json": "cec7e211027430bf789c5ec51776ed047428ec99e04d1a755bc9affc2aa0a6d0",
+    "command.json": "038033a76a767c83436665c13195a288edef83d618df0982d04884162a13a418",
+    "stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

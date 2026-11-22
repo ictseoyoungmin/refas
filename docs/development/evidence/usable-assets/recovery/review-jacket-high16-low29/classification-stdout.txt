@@ -1,0 +1,7 @@
+{"variant": "high", "name": "Collar | standing back and neck facing", "satPairs": 6326, "strictCrossings": 6326, "notStrictlyCorroborated": 0, "minimumNonzeroIntersectionSpanM": 1.8559201603939503e-08, "maximumIntersectionSpanM": 0.005463022297952132}
+{"variant": "high", "name": "Body | continuous open front and shoulder yoke", "satPairs": 4, "strictCrossings": 4, "notStrictlyCorroborated": 0, "minimumNonzeroIntersectionSpanM": 4.78639071133293e-05, "maximumIntersectionSpanM": 0.0003502896578121239}
+{"variant": "low", "name": "Collar | standing back and neck facing", "satPairs": 1224, "strictCrossings": 1224, "notStrictlyCorroborated": 0, "minimumNonzeroIntersectionSpanM": 1.9826051140976278e-07, "maximumIntersectionSpanM": 0.005463022297952132}
+{"variant": "low", "name": "Body | continuous open front and shoulder yoke", "satPairs": 5, "strictCrossings": 5, "notStrictlyCorroborated": 0, "minimumNonzeroIntersectionSpanM": 0.001079522498228133, "maximumIntersectionSpanM": 0.0021634441803050596}
+Blender 4.3.2
+
+Blender quit

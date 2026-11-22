@@ -1,0 +1,96 @@
+{
+  "method": "Actual frozen-native counterexamples and an analytically separated translation of one copied face, in original metre units and after local centering and x1000 scaling. No asset mutation.",
+  "helperSha256": "9276677062d8e7e5e4e770a510885d0e5c802d248946e1ab2628cf8a60c7b118",
+  "sourceSha256": "ec13c102c68198d32dd86c35778be9c0563d17688e2155c44c94a48345913cfb",
+  "passed": true,
+  "rows": [
+    {
+      "name": "Collar | standing back and neck facing",
+      "actualTriangles": [
+        15033,
+        15037
+      ],
+      "minimumConstructedPlaneGapM": 0.0012224351250497015,
+      "cases": [
+        {
+          "scale": 1,
+          "actualCrossing": {
+            "assessed": true,
+            "intersects": true,
+            "coplanar": false,
+            "contactScope": "Boundary touch or interior overlap; no contact is waived",
+            "maximumSeparatingGapM": 0.0,
+            "numericalEpsilonM": 1e-12
+          },
+          "copiedFaceSeparatedByAtLeast1mm": {
+            "assessed": true,
+            "intersects": false,
+            "separatingAxisGapM": 0.0012224351250497015,
+            "numericalEpsilonM": 1e-12
+          }
+        },
+        {
+          "scale": 1000,
+          "actualCrossing": {
+            "assessed": true,
+            "intersects": true,
+            "coplanar": false,
+            "contactScope": "Boundary touch or interior overlap; no contact is waived",
+            "maximumSeparatingGapM": 0.0,
+            "numericalEpsilonM": 1e-12
+          },
+          "copiedFaceSeparatedByAtLeast1mm": {
+            "assessed": true,
+            "intersects": false,
+            "separatingAxisGapM": 1.2224351250497016,
+            "numericalEpsilonM": 1e-12
+          }
+        }
+      ]
+    },
+    {
+      "name": "Body | continuous open front and shoulder yoke",
+      "actualTriangles": [
+        4481,
+        22202
+      ],
+      "minimumConstructedPlaneGapM": 0.0009999999999999868,
+      "cases": [
+        {
+          "scale": 1,
+          "actualCrossing": {
+            "assessed": true,
+            "intersects": true,
+            "coplanar": false,
+            "contactScope": "Boundary touch or interior overlap; no contact is waived",
+            "maximumSeparatingGapM": 0.0,
+            "numericalEpsilonM": 1e-12
+          },
+          "copiedFaceSeparatedByAtLeast1mm": {
+            "assessed": true,
+            "intersects": false,
+            "separatingAxisGapM": 0.000999999999999986,
+            "numericalEpsilonM": 1e-12
+          }
+        },
+        {
+          "scale": 1000,
+          "actualCrossing": {
+            "assessed": true,
+            "intersects": true,
+            "coplanar": false,
+            "contactScope": "Boundary touch or interior overlap; no contact is waived",
+            "maximumSeparatingGapM": 0.0,
+            "numericalEpsilonM": 1e-12
+          },
+          "copiedFaceSeparatedByAtLeast1mm": {
+            "assessed": true,
+            "intersects": false,
+            "separatingAxisGapM": 0.9999999999999862,
+            "numericalEpsilonM": 1e-12
+          }
+        }
+      ]
+    }
+  ]
+}

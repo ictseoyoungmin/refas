@@ -1,0 +1,11 @@
+{
+  "recordedUtc": "2026-11-22T21:06:50.016020+00:00",
+  "sourceReport": "/workspace/scratch/61afcdd4e3c6/work/garment/export-review/frozen-cloth-review/contact-diagnosis.json",
+  "sourceReportSha256": "ec13c102c68198d32dd86c35778be9c0563d17688e2155c44c94a48345913cfb",
+  "fixtureCopySha256": "ec13c102c68198d32dd86c35778be9c0563d17688e2155c44c94a48345913cfb",
+  "nativeInput": "work/garment/geometry-repair/paired-low-29/optimized-cloth.blend",
+  "nativeInputSha256": "6afdd36a0c9a1c1dcfb22252aa87d33b7c4c7554f63264ca3a0cf65cc8d3db29",
+  "meaning": "Two actually observed garment-only noncoplanar strict-interior triangle crossings missed by the earlier mathutils ray predicate. Independent float64 linear-system edge solves, barycentric coordinates and intersection segment lengths are retained with each fixture. No avatar geometry is included.",
+  "tokens": null,
+  "cost": null
+}

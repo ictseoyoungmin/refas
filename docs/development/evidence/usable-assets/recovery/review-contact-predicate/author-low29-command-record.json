@@ -1,0 +1,35 @@
+{
+  "input": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/paired-low-29/optimized-cloth.blend",
+  "inputSha256": "6afdd36a0c9a1c1dcfb22252aa87d33b7c4c7554f63264ca3a0cf65cc8d3db29",
+  "script": "/workspace/scratch/61afcdd4e3c6/refas/examples/uniform-jacket/inspect_shell_motion_wearable.py",
+  "scriptSha256": "08a5fb4ca78c2c4e6e95318d9a3b8b15c5f80c9b1245286c234b0e821c7e1ddd",
+  "command": [
+    "/usr/bin/blender",
+    "-b",
+    "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/paired-low-29/optimized-cloth.blend",
+    "-t",
+    "2",
+    "--python",
+    "/workspace/scratch/61afcdd4e3c6/refas/examples/uniform-jacket/inspect_shell_motion_wearable.py"
+  ],
+  "environment": {
+    "JACKET_WEARABLE_OUT": "/workspace/scratch/61afcdd4e3c6/work/garment/contact-predicate-low29-negative",
+    "WEARABLE_SHELL_FRAMES": "1"
+  },
+  "tokens": null,
+  "cost": null,
+  "contactHelperSha256": "f3ebefdb756cc7d24d314901580d587536244df7b8a84f3cfaaf1fbf5825b738",
+  "startedUtc": "2026-11-22T21:06:02.449577+00:00",
+  "finishedUtc": "2026-11-22T21:06:04.990881+00:00",
+  "processExitCode": 0,
+  "pythonTraceback": false,
+  "expectedOutputExists": true,
+  "scriptUnchangedDuringRun": true,
+  "expectedOutput": {
+    "path": "/workspace/scratch/61afcdd4e3c6/work/garment/contact-predicate-low29-negative/shell-motion.json",
+    "sha256": "cec7e211027430bf789c5ec51776ed047428ec99e04d1a755bc9affc2aa0a6d0",
+    "bytes": 16805
+  },
+  "stageExecuted": true,
+  "scope": "Command completion and output identity only; no visual, geometry or delivery acceptance."
+}

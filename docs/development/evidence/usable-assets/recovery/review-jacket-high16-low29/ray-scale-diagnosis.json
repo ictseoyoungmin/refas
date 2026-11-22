@@ -1,0 +1,144 @@
+[
+  {
+    "name": "Collar | standing back and neck facing",
+    "triangleIds": [
+      15033,
+      15037
+    ],
+    "observations": [
+      {
+        "coordinateScale": 1,
+        "unitRayDirection": false,
+        "segmentHits": []
+      },
+      {
+        "coordinateScale": 1,
+        "unitRayDirection": true,
+        "segmentHits": []
+      },
+      {
+        "coordinateScale": 1000,
+        "unitRayDirection": false,
+        "segmentHits": [
+          {
+            "side": 0,
+            "edge": 2,
+            "segmentT": 0.3706643257013168,
+            "pointM": [
+              0.07468326389789581,
+              -0.07810146361589432,
+              1.1105573177337646
+            ]
+          },
+          {
+            "side": 1,
+            "edge": 2,
+            "segmentT": 0.5125024080914863,
+            "pointM": [
+              0.07495161145925522,
+              -0.07826991379261017,
+              1.1116405725479126
+            ]
+          }
+        ]
+      },
+      {
+        "coordinateScale": 1000,
+        "unitRayDirection": true,
+        "segmentHits": [
+          {
+            "side": 0,
+            "edge": 2,
+            "segmentT": 0.37066359491343276,
+            "pointM": [
+              0.07468326389789581,
+              -0.07810145616531372,
+              1.1105573177337646
+            ]
+          },
+          {
+            "side": 1,
+            "edge": 2,
+            "segmentT": 0.5125024080914863,
+            "pointM": [
+              0.07495161145925522,
+              -0.07826991379261017,
+              1.1116405725479126
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Body | continuous open front and shoulder yoke",
+    "triangleIds": [
+      4481,
+      22202
+    ],
+    "observations": [
+      {
+        "coordinateScale": 1,
+        "unitRayDirection": false,
+        "segmentHits": []
+      },
+      {
+        "coordinateScale": 1,
+        "unitRayDirection": true,
+        "segmentHits": []
+      },
+      {
+        "coordinateScale": 1000,
+        "unitRayDirection": false,
+        "segmentHits": [
+          {
+            "side": 0,
+            "edge": 2,
+            "segmentT": 0.11006422592838801,
+            "pointM": [
+              0.1388394981622696,
+              0.07386580109596252,
+              1.3820757865905762
+            ]
+          },
+          {
+            "side": 1,
+            "edge": 2,
+            "segmentT": 0.4844141442009668,
+            "pointM": [
+              0.13976173102855682,
+              0.07421783357858658,
+              1.3811007738113403
+            ]
+          }
+        ]
+      },
+      {
+        "coordinateScale": 1000,
+        "unitRayDirection": true,
+        "segmentHits": [
+          {
+            "side": 0,
+            "edge": 2,
+            "segmentT": 0.11007080496223222,
+            "pointM": [
+              0.138839453458786,
+              0.07386578619480133,
+              1.3820757865905762
+            ]
+          },
+          {
+            "side": 1,
+            "edge": 2,
+            "segmentT": 0.4844141442009668,
+            "pointM": [
+              0.13976173102855682,
+              0.07421783357858658,
+              1.3811007738113403
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

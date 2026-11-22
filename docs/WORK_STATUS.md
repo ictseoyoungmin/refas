@@ -8,7 +8,39 @@ The user approved implementation of the new production path, starting from `main
 
 This is development work. Active package/Python runtime/plugin identity is `2.0.0-alpha.1`; the retained legacy runtime remains `1.4.2`. The recorded published release remains `v1.4.1`. Main merge and formal publication are separate unfinished milestones.
 
-## Current: recovered runtime and validated articulated-arm delivery
+## Current: garment contact-observer correction; wearable gates remain open
+
+The garment's earlier high16/low29 zero-contact claims are withdrawn. An
+independent float64 SAT check and separate strict edge/triangle solves
+corroborated all 7,559 crossing pairs missed by the metre-scale Blender ray
+filter. The task-local contact helper now passes 17 retained scale,
+translation, coplanar, separated and boundary controls. Degenerate geometry
+remains a separate rejection gate. Read the
+[rejected-candidate review](development/evidence/usable-assets/recovery/review-jacket-high16-low29.md)
+and [predicate review](development/evidence/usable-assets/recovery/review-contact-predicate.md).
+This correction does not expand the production topology observer into a
+self-intersection checker.
+
+The accepted arm used direct BVH overlap for its declared pairs, not the
+faulty garment ray filter. Its exact delivered inspection bytes and scope
+were checked in the
+[impact review](development/evidence/usable-assets/recovery/arm-contact-predicate-impact.json).
+Its existing acceptance is unchanged. The garment is still under repair:
+valid individual rest shells, source-bound assembly, actual avatar fit,
+all 97 poses and final consumer/export acceptance remain distinct gates.
+The fixed checklist stays **30/37 = 81%**, with U2/U3/U6 open.
+
+Runtime commit `1435ce1a` adds qualified two-rig scene paths and caches
+per-sample rest associations without changing raw skin evaluation. Actual
+Blender/Godot verification has 95 Production passes, zero failures/skips;
+935 JavaScript tests and all five repository gates passed at that runtime
+checkpoint. Both exact-head remote workflows succeeded. The
+[CI receipt](development/evidence/usable-assets/recovery/remote-ci-observer-checkpoint.json)
+and [19-file installed package identity](development/evidence/usable-assets/recovery/final-installed-package.json)
+are retained. These runtime results do not accept unfinished garment
+geometry, and the final installed-package garment edit remains pending.
+
+## Accepted asset checkpoint: recovered articulated-arm delivery
 
 The continuation at [`bb8e8aff`](https://github.com/ictseoyoungmin/refas/commit/bb8e8affbbb6b5cf53dcb637114710511d354913)
 advances the fixed [plan ledger](development/refas-2-progress.md) to

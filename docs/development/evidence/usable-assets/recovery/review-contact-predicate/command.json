@@ -1,0 +1,28 @@
+{
+  "argv": [
+    "python",
+    "/workspace/scratch/61afcdd4e3c6/refas/examples/uniform-jacket/check_contact_wearable.py",
+    "--fixtures",
+    "/workspace/scratch/61afcdd4e3c6/refas/docs/development/evidence/usable-assets/garment-resume/contact-predicate-fixtures.json",
+    "--out",
+    "/workspace/scratch/61afcdd4e3c6/refas/docs/development/evidence/usable-assets/recovery/review-contact-predicate/controls.json"
+  ],
+  "cwd": "/workspace/scratch/61afcdd4e3c6/refas",
+  "startedUtc": "2026-11-22T21:10:01.587216+00:00",
+  "sourceHashesBefore": {
+    "geometry_wearable.py": "f3ebefdb756cc7d24d314901580d587536244df7b8a84f3cfaaf1fbf5825b738",
+    "check_contact_wearable.py": "5398303449d4fa67fa6a4785b267f425533c77c6aa8be47ea89072a5aa400a28",
+    "inspect_shell_motion_wearable.py": "08a5fb4ca78c2c4e6e95318d9a3b8b15c5f80c9b1245286c234b0e821c7e1ddd",
+    "fixtures": "ec13c102c68198d32dd86c35778be9c0563d17688e2155c44c94a48345913cfb"
+  },
+  "exitCode": 0,
+  "completedUtc": "2026-11-22T21:10:01.736613+00:00",
+  "elapsedSeconds": 0.14940044799914176,
+  "sourceHashesAfter": {
+    "geometry_wearable.py": "f3ebefdb756cc7d24d314901580d587536244df7b8a84f3cfaaf1fbf5825b738",
+    "check_contact_wearable.py": "5398303449d4fa67fa6a4785b267f425533c77c6aa8be47ea89072a5aa400a28",
+    "inspect_shell_motion_wearable.py": "08a5fb4ca78c2c4e6e95318d9a3b8b15c5f80c9b1245286c234b0e821c7e1ddd",
+    "fixtures": "ec13c102c68198d32dd86c35778be9c0563d17688e2155c44c94a48345913cfb"
+  },
+  "inputsUnchanged": true
+}
