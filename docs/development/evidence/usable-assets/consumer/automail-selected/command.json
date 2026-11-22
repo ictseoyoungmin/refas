@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "/usr/local/bin/godot",
+    "--headless",
+    "--path",
+    "/workspace/scratch/5765cde18054/refas/examples/engine-playback",
+    "--script",
+    "/workspace/scratch/5765cde18054/refas/examples/engine-playback/verify_godot.gd",
+    "--",
+    "/workspace/scratch/5765cde18054/work/usability/consumer/automail-candidate-06/configuration.json"
+  ],
+  "startedUtc": "2026-11-22T14:28:11.699168+00:00",
+  "endedUtc": "2026-11-22T14:28:12.149930+00:00",
+  "elapsedSeconds": 0.4507629010004166,
+  "returncode": 0
+}

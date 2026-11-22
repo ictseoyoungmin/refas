@@ -62,3 +62,30 @@ Keep geometry evaluation consistent too. Realize Geometry Nodes instances
 before review, and match viewport/render modifier visibility and enabled
 subdivision levels. The runner rejects these mismatches before export or
 observation; fixed cameras cannot compensate for comparing different meshes.
+
+## Compare design, defects and use
+
+Inspect the complete original before source-region close-ups. Compare the
+whole silhouette and proportions, then defining parts, connections and finish.
+Record visible mismatches and uncertainty in the source camera. Unregistered
+image crops or a similarity score alone cannot establish accurate 3D shape.
+
+Use additional diagnostic views for mesh openings, winding, intersections and
+floating attachments: inside/back faces, side/grazing views, wireframe and
+motion frames as needed. Identify intentional openings and component gaps;
+do not accept a defect merely because a beauty view hides it. A small mesh
+audit can locate suspected faults, but source intent and actual renders decide
+whether they are faults.
+
+For clothing compare the actual target character wearing it in the declared
+poses. For articulated assets compare the moving whole and its linkages at
+intermediate frames. Compare original and optimized meshes with fixed cameras,
+the same motion, source features and declared budgets. Report source likeness,
+mesh condition, useful deformation/motion and target-consumer behavior as
+separate outcomes. Retain failures and untested cases.
+
+When comparing production workflows, freeze the same task, source, target
+character or mechanism, motion, budgets and available resources for each path.
+Include these practical criteria in the brief before execution. Later informed
+repairs are valuable development evidence but do not replace an independent
+matched attempt or its elapsed-time and cost record.

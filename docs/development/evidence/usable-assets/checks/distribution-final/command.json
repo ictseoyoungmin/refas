@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "node",
+    "--test",
+    "tests/production-distribution.test.mjs"
+  ],
+  "startedUtc": "2026-11-22T14:21:34.911847+00:00",
+  "endedUtc": "2026-11-22T14:21:38.170502+00:00",
+  "elapsedSeconds": 3.258658253998874,
+  "returncode": 0,
+  "environment": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "REFAS_BLENDER_TESTS": "1",
+    "REFAS_GODOT_TESTS": "1"
+  }
+}

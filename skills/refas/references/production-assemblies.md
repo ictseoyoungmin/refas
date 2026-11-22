@@ -60,6 +60,31 @@ visible pose are different claims; report which was actually exercised.
 Pose samples are limited observations, not exhaustive collision clearance,
 kinematic correctness, load capacity or a physical safety certification.
 
+## Deliver useful animation
+
+For an arm intended for games or 3D animation, define a useful motion range
+and a repeatable action such as reach, grip and return. Exercise the assembly
+at intermediate frames. Inspect joint housings, fingers, layered armor and
+attachments for intersections, detachment or inverted surfaces. An attached
+object can still float away from its intended support; measure the actual
+named attachment points against the appropriate surfaces.
+
+For an actuator spanning moving segments, define both anchors and update its
+axis, extension and overlap throughout the action. Check that its rod remains
+inside its housing and that both endpoints stay connected. A cable needs
+enough routed length or deformation. Preserve these evaluated motions in the
+export, baking them when the consumer cannot reproduce the DCC constraints.
+Keyframe a meaningful synchronized action and verify its imported playback;
+separate unsynchronized object actions do not prove one working assembly.
+
+Choose a delivery budget and simplify according to part function. Retain joint
+centers, moving-part separation, service access and local edit targets. Parts
+with the same rigid motion and material can share a delivery mesh when their
+source-to-delivery mapping remains clear. Do not merge across moving joints.
+Read `references/production-topology.md` for measured topology/optimization
+checks. State the tested engine and range without inferring physical load or
+manufacturability from a game animation.
+
 ## Revise a component without disturbing the assembly
 
 Use meaningful part names and local coordinates. Before moving a panel or

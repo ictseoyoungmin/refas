@@ -1,0 +1,34 @@
+{
+  "sourceNativeSha256": "8f0882acc5cd0ebc639bee5b39af1b27ed70b2c79fe4e12bfd3a3eb5dabc9243",
+  "sourceUnchanged": true,
+  "initialRevision": "6de54501c2864a1cadc5c92d0281c97b",
+  "restoredRevision": "d6d79742a1b4490ebc68b27b96e8ac75",
+  "restoredFiles": 8,
+  "exactRestore": true,
+  "localEdit": {
+    "protectedObjects": 131,
+    "unexpectedChanges": [],
+    "coverOffsetM": 0.003
+  },
+  "verify": {
+    "ok": true,
+    "scope": "recorded-file-integrity",
+    "head": "d6d79742a1b4490ebc68b27b96e8ac75",
+    "artifactCount": 6,
+    "evidenceFreshness": {
+      "status": "current",
+      "scope": "active-reference-content-set",
+      "revision": "d6d79742a1b4490ebc68b27b96e8ac75",
+      "activeSourceSha256": [
+        "3c7856dd632f8a1cde8036078573f569db55b6af97fae853237d8a9356f3c872"
+      ],
+      "revisionSourceSha256": [
+        "3c7856dd632f8a1cde8036078573f569db55b6af97fae853237d8a9356f3c872"
+      ],
+      "visualAcceptance": "not-evaluated"
+    },
+    "referenceResemblance": "not-evaluated",
+    "gameReadiness": "not-evaluated"
+  },
+  "scope": "Actual installed-package helper, animated native/GLB, local edit and restore execution; this does not accept input geometry or likeness."
+}

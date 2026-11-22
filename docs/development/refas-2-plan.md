@@ -14,6 +14,17 @@ implicitly complete when this first-application checklist advances.
 
 An agent can start from visual references, create a credible editable asset, inspect real output, make a local correction, and continue the same native project in a later session. The deliverable is the asset and its useful source material. Tools record enough state to make edits recoverable and reviews traceable.
 
+The 2026-11-22 user expansion makes actual use part of the garment and automail
+scope: a garment must be wearable by an identified real 3D character, and the
+arm must perform useful articulated motion in a 3D consumer. Static figures
+remain intermediate representations for these tasks. Source-image likeness,
+unintended holes/winding/intersections, floating attachments, functional use,
+retopology and optimized delivery must all appear in comparison and review.
+Use the [fixed additional acceptance criteria](evidence/usable-assets/new-criteria.json)
+and [execution protocol](evidence/usable-assets/PROTOCOL.md). The original 31
+criteria and their 28/31 prototype milestone remain historical; checklist v2
+adds six criteria and begins at 28/37.
+
 The rewrite tests a concrete hypothesis: a shorter, production-oriented skill and direct authoring tools can improve useful modeling output and reduce iteration cost. No claim about a particular old or new model's ability is assumed from its version. Compare behavior on actual references using a pinned model and toolchain.
 
 ## Current baseline and version boundary
@@ -122,6 +133,22 @@ Evaluate the 1.x entry and the new entry using the same model, prompt purpose, r
 ### S3 — Editing and delivery profiles
 
 Extend proven operations to UV/material edits, assemblies, and existing rigs. For a character track, demonstrate preservation of skin weights, shape keys, and deformation using a real character case. Add target-engine import/animation/budget checks only for the promised profile. Preserve actual source and dependent resources in the handoff.
+
+The expanded garment/arm profile requires actual character fitting without
+hiding or shrinking the supplied body, intermediate deformation and attachment
+checks, and exported synchronized playback in an identified consumer. Declare
+intentional garment openings, mechanical clearances and articulated ranges
+before assessment. Retopology must change useful edge flow and preserve or
+explicitly transfer required materials, UVs, weights and part associations;
+decimation alone is not evidence of that capability. Fix per-asset geometry,
+material and error budgets before selecting optimized outputs, retain detailed
+sources, and assess the same appearance and motion after optimization.
+
+U1's next no-skill/fixed-1.x/2.0 trial must give every condition the same character,
+motion, reference, starting geometry where used, budgets and backend. These
+informed development repairs cannot replace new independent controls. Record
+actual measured clocks and available billing telemetry without inferring costs
+from elapsed time, command count or subscription pricing.
 
 ### S4 — Packaging and explicit migration
 

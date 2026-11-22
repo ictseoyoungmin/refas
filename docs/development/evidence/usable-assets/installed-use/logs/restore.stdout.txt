@@ -1,0 +1,139 @@
+{
+  "ok": true,
+  "schema": "refas.production.project/v2",
+  "name": "installed-topology-and-animation",
+  "projectId": "d9f65363853c4e2291ffa863aa742df4",
+  "head": "d6d79742a1b4490ebc68b27b96e8ac75",
+  "sequence": 3,
+  "sources": [
+    {
+      "path": "sources/001-reference.png",
+      "name": "reference.png",
+      "role": "user-reference",
+      "sha256": "3c7856dd632f8a1cde8036078573f569db55b6af97fae853237d8a9356f3c872",
+      "bytes": 3215297
+    }
+  ],
+  "outputs": {
+    "blend": "/workspace/scratch/5765cde18054/work/usability/installed/project/.refas2/revisions/d6d79742a1b4490ebc68b27b96e8ac75/artifacts/scene.blend",
+    "glb": "/workspace/scratch/5765cde18054/work/usability/installed/project/.refas2/revisions/d6d79742a1b4490ebc68b27b96e8ac75/artifacts/asset.glb",
+    "scene": "/workspace/scratch/5765cde18054/work/usability/installed/project/.refas2/revisions/d6d79742a1b4490ebc68b27b96e8ac75/artifacts/scene.json"
+  },
+  "observations": [
+    {
+      "camera": {
+        "matrixWorld": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            -1.6e-07,
+            -1.0,
+            -1.54984343
+          ],
+          [
+            0.0,
+            1.0,
+            -1.6e-07,
+            0.38049653
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "orthoScale": 0.90936166,
+        "position": [
+          0.0,
+          -1.54984343,
+          0.38049653
+        ],
+        "projection": "orthographic",
+        "target": [
+          0.0,
+          -0.00199375,
+          0.38049653
+        ]
+      },
+      "framing": "automatic-bounds",
+      "lighting": {
+        "center": [
+          0.0,
+          -0.00199375,
+          0.38049653
+        ],
+        "radius": 0.38696241,
+        "rig": "three-area-lights/v1"
+      },
+      "path": "/workspace/scratch/5765cde18054/work/usability/installed/project/.refas2/revisions/d6d79742a1b4490ebc68b27b96e8ac75/artifacts/view-front.png",
+      "referenceRegion": null,
+      "registration": "unregistered",
+      "renderer": {
+        "denoising": false,
+        "device": "CPU",
+        "engine": "CYCLES",
+        "samples": 2,
+        "size": [
+          128,
+          128
+        ],
+        "transparent": false,
+        "viewTransform": "AgX",
+        "worldColor": [
+          0.065,
+          0.08,
+          0.115
+        ],
+        "worldStrength": 0.45
+      },
+      "sha256": "9e565a0b22ecdcf6748220fd887693f91eda7c9e2aa65c64e3dc2fd9638b003a",
+      "sourceSceneFingerprint": "9373be4a272fdaa413ef59d8abc1e7fa91c012d453959f23d9458d9065112d20",
+      "view": "front"
+    }
+  ],
+  "inputs": {
+    "base.blend": "/workspace/scratch/5765cde18054/work/usability/installed/project/.refas2/revisions/d6d79742a1b4490ebc68b27b96e8ac75/inputs/base.blend",
+    "edit.py": "/workspace/scratch/5765cde18054/work/usability/installed/project/.refas2/revisions/d6d79742a1b4490ebc68b27b96e8ac75/inputs/edit.py"
+  },
+  "revisions": [
+    {
+      "id": "6de54501c2864a1cadc5c92d0281c97b",
+      "intent": "observe actual cover through the installed mesh helper",
+      "createdAt": "2026-11-22T14:10:22.557562+00:00",
+      "parent": null
+    },
+    {
+      "id": "d01979eda5f2437994c1828e12961687",
+      "intent": "move service cover outward 3mm",
+      "createdAt": "2026-11-22T14:10:28.921866+00:00",
+      "parent": "6de54501c2864a1cadc5c92d0281c97b"
+    },
+    {
+      "id": "d6d79742a1b4490ebc68b27b96e8ac75",
+      "intent": "Restore revision 6de54501c2864a1cadc5c92d0281c97b",
+      "createdAt": "2026-11-22T14:10:29.296656+00:00",
+      "parent": "d01979eda5f2437994c1828e12961687"
+    }
+  ],
+  "incompleteRuns": [],
+  "evidenceFreshness": {
+    "status": "current",
+    "scope": "active-reference-content-set",
+    "revision": "d6d79742a1b4490ebc68b27b96e8ac75",
+    "activeSourceSha256": [
+      "3c7856dd632f8a1cde8036078573f569db55b6af97fae853237d8a9356f3c872"
+    ],
+    "revisionSourceSha256": [
+      "3c7856dd632f8a1cde8036078573f569db55b6af97fae853237d8a9356f3c872"
+    ],
+    "visualAcceptance": "not-evaluated"
+  },
+  "referenceResemblance": "not-evaluated",
+  "gameReadiness": "not-evaluated"
+}

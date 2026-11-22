@@ -66,5 +66,45 @@ Do not darken the entire scene to conceal poor form.
 
 Inspect the largest silhouette or connection defect first, then folds and
 trim. A good still image does not establish cloth simulation, UV quality,
-skinning or deformation. Verify those only when they are part of the intended
-asset, using the actual native and export paths.
+skinning or deformation.
+
+## Make the garment wearable
+
+For game or animated clothing, import a copy of the actual target character
+and inspect its scale, rest pose, body surface, skeleton and existing weights.
+Fit the garment to that body and pose while preserving the design. A jacket
+modeled with lowered arms must be repositioned and reshaped for a T-pose rig;
+parenting the whole jacket to the chest cannot provide sleeve deformation.
+Keep the source character unchanged. Do not shrink the body or hide penetrating
+skin to manufacture a successful fit. Any intentional body masking is a
+separate declared delivery choice, not evidence of geometric clearance.
+Some supplied characters already omit skin under their clothes. Retain the
+actual original undershirt when it is the fit target and state the missing
+body coverage; do not claim clearance against a surface that is absent.
+
+Build useful edge flow around the shoulder, armhole, elbow, collar and torso
+bends. Transfer or author skin weights, normalize them and inspect influences
+near the chest/arm boundary. Transfer is a starting point; nearby sleeves and
+torso can receive the wrong bone. Keep ornaments and straps attached to the
+surface or segment they belong to throughout the motion.
+
+If useful poses still collapse or intersect after correcting fit and weights,
+author garment corrective shapes and test their intermediate blends. Preserve
+the character body. Bake the corrective weights together with the bone action
+when the consumer cannot evaluate authoring drivers. With the tested Blender
+glTF NLA export, matching track names combine the involved actions into one
+clip; inspect actual clip names and key timestamps after export.
+
+Check rest pose, arm raising, elbow flexion and a useful torso bend or twist,
+including intermediate frames. Inspect front, side, back and underarm views
+for body penetration, collapsed folds, reversed faces and floating details.
+Keep intentional neck/front/hem/cuff openings distinct from accidental tears.
+Record the exact character and tested range. A body proxy supports a proxy-fit
+claim only; one fitted character does not establish universal sizing.
+
+Read `references/production-topology.md` for rebuilding and reducing the mesh.
+Apply required static modifiers before skinning/export, or use a separately
+baked delivery mesh while retaining the editable source. Reopen the exported
+skin and animation, and play them in the declared consumer. Keep cloth
+simulation, baked animation and ordinary skeletal deformation as separate
+claims; choose the method needed by the requested use.

@@ -19,6 +19,15 @@ exported GLB, requested observations, executed script and source identities
 together. Successful execution and file integrity remain separate from visual
 acceptance or target-engine readiness.
 
+For game or cinematic garments and articulated mechanisms, 2.0 now targets
+actual character wearing and useful motion. Review the source likeness,
+unintended holes/winding/intersections and attachment gaps, then exercise
+skinning or connected mechanisms in the exported consumer. Retopology and
+mesh optimization are part of this production route; a static figure or a
+lower triangle count alone does not establish that intended use. Follow the
+[topology guide](skills/refas/references/production-topology.md) and the
+[expanded acceptance protocol](docs/development/evidence/usable-assets/PROTOCOL.md).
+
 The installed skill contains the production path only. The old JavaScript
 capability runtime, certification graph, schemas, templates, host facade and
 CPU renderers are retained in the repository for explicit compatibility and
@@ -143,7 +152,7 @@ certificates and review decisions do not approve the new revision. Read the
 | --- | --- | --- |
 | `skills/refas/SKILL.md` | Short production instructions | Yes |
 | `skills/refas/scripts/produce.py` and `production/` | Project, Blender, review and explicit import implementation | Yes |
-| `skills/refas/references/production-*.md` | Focused garment, assembly, review and import guidance | Yes |
+| `skills/refas/references/production-*.md` | Focused garment, assembly, review, topology and import guidance | Yes |
 | `skills/refas/agents/`, `assets/icon.svg` | Agent metadata and icon | Yes |
 | `bin/refas.mjs` | npm-to-Python CLI adapter | Yes |
 | `legacy/v1/` | Retained 1.x code for explicit repository compatibility and renderer evaluation | No |

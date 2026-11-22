@@ -8,6 +8,10 @@ on:
       - 'skills/refas/scripts/production/**'
       - 'tests/test_production*.py'
       - 'examples/production-workflow/**'
+      - 'examples/engine-playback/**'
+      - 'examples/uniform-jacket/*.py'
+      - 'examples/automail-arm/*.py'
+      - 'tests/fixtures/production*.py'
       - 'package.json'
       - 'bin/refas.mjs'
       - 'tools/verify-production-distribution.mjs'
@@ -24,6 +28,10 @@ on:
       - 'skills/refas/scripts/production/**'
       - 'tests/test_production*.py'
       - 'examples/production-workflow/**'
+      - 'examples/engine-playback/**'
+      - 'examples/uniform-jacket/*.py'
+      - 'examples/automail-arm/*.py'
+      - 'tests/fixtures/production*.py'
       - 'package.json'
       - 'bin/refas.mjs'
       - 'tools/verify-production-distribution.mjs'
@@ -67,6 +75,9 @@ jobs:
           paths = [Path('skills/refas/scripts/produce.py')]
           paths += sorted(Path('skills/refas/scripts/production').glob('*.py'))
           paths += sorted(Path('examples/production-workflow').glob('*.py'))
+          for example in ('engine-playback', 'uniform-jacket', 'automail-arm'):
+              paths += sorted((Path('examples') / example).glob('*.py'))
+          paths += sorted(Path('tests/fixtures').glob('production*.py'))
           for path in paths:
               compile(path.read_text(encoding='utf-8'), str(path), 'exec')
           print(f'Compiled {len(paths)} production Python files')

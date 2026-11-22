@@ -1,0 +1,65 @@
+{
+  "schema": "refas.usable-assets.consumer-summary/v1",
+  "assetSha256": "dcadab69d09af4abbbd641f8587ed4632fe583f9f173077382f56fe4e18e57b9",
+  "candidate": "candidate-06",
+  "revision": "bbad5a986ce24699a61f503f6577f938",
+  "passed": true,
+  "sampleCount": 121,
+  "allChecks": 6300,
+  "failedChecks": 0,
+  "maxMatrixError": 6.85453414916992e-07,
+  "engine": {
+    "build": "official",
+    "hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+    "hex": 263938,
+    "major": 4,
+    "minor": 7,
+    "patch": 2,
+    "status": "stable",
+    "string": "4.7.2-stable (official)",
+    "timestamp": 0
+  },
+  "geometry": {
+    "meshes": 108,
+    "skeletons": [],
+    "skinnedMeshes": 0,
+    "surfaces": 108,
+    "triangles": 78998
+  },
+  "clip": {
+    "lengthSeconds": 4.03333330154419,
+    "name": "AURIX_ReachGrip_Return",
+    "tracks": 63
+  },
+  "limits": [
+    "Headless imported scene/AnimationPlayer, not GPU or FPS",
+    "Only named probes and sampled times; no universal continuous collision or dynamics claim"
+  ],
+  "files": [
+    {
+      "path": "command.json",
+      "sha256": "6bdb088206cffb0469a9324e26defd00dc8edffa8da7754f53c1ae93cca61046",
+      "bytes": 526
+    },
+    {
+      "path": "configuration.json",
+      "sha256": "dd51f91db5d88ec44802a0b5e14e3fea4f9ee898f52b2772be0ccb200ba0af28",
+      "bytes": 1888601
+    },
+    {
+      "path": "result.json",
+      "sha256": "5d4dd353f12824beebda69549a2ba2dfc4cf14bfb0f201c52343eac64fd91a94",
+      "bytes": 1991032
+    },
+    {
+      "path": "stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "stdout.txt",
+      "sha256": "b76c31b85ec399a4ca0defed9d174c86ffac9a0c17c6cc006103848c9f3eb540",
+      "bytes": 212
+    }
+  ]
+}

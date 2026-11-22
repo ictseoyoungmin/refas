@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "/usr/local/bin/godot",
+    "--headless",
+    "--path",
+    "/workspace/scratch/5765cde18054/refas/examples/engine-playback",
+    "--script",
+    "/workspace/scratch/5765cde18054/refas/examples/engine-playback/verify_godot.gd",
+    "--",
+    "/tmp/refas_review_weighted_skin/wrong-weights/configuration.json"
+  ],
+  "startedUtc": "2026-11-22T14:09:22.306404+00:00",
+  "endedUtc": "2026-11-22T14:09:22.605288+00:00",
+  "elapsedSeconds": 0.29888786199808237,
+  "returncode": 1
+}

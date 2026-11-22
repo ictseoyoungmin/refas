@@ -37,7 +37,7 @@ ASSET_TYPES = {"MESH", "ARMATURE", "EMPTY"}
 LIMITATIONS = [
     "Diagnostic views are unregistered; they do not establish reference likeness.",
     "GLB reimport checks geometry counts, bounds and basic feature presence, not visual equivalence.",
-    "Fingerprints cover the recorded state at the current frame, not all animation or simulation states.",
+    "Fingerprints hash recorded action curves and current-frame scene state; they do not establish correctness at every animation or simulation frame.",
     "Node-group internals and drivers are not exhaustively represented by the state fingerprints.",
     "Static mesh modifiers are evaluated for GLB export; unapplied non-armature modifiers on skinned or shape-key meshes are unsupported.",
     "Hidden or excluded meshes are rejected by this alpha so GLB export and diagnostic renders cannot silently use different asset scopes.",
@@ -174,10 +174,40 @@ def action_record(action):
         return None
     curves = []
     for curve in getattr(action, "fcurves", []):
+        # Dense baked animation belongs in the native file and GLB. Hash every
+        # key/sample here instead of duplicating their arrays in scene.json
+        # (and again in each NLA strip). Interior changes remain observable.
+        state = {"path": curve.data_path, "index": curve.array_index,
+                 "extrapolation": curve.extrapolation, "mute": curve.mute,
+                 "autoSmoothing": curve.auto_smoothing,
+                 "keys": [{"co": vector(p.co), "left": vector(p.handle_left),
+                           "right": vector(p.handle_right),
+                           "leftType": p.handle_left_type, "rightType": p.handle_right_type,
+                           "interpolation": p.interpolation, "easing": p.easing,
+                           "amplitude": number(p.amplitude), "back": number(p.back),
+                           "period": number(p.period)} for p in curve.keyframe_points],
+                 "samples": [vector(p.co) for p in curve.sampled_points],
+                 "modifiers": [{"type": m.type, "properties": properties(m),
+                                "controlPoints": [properties(p) for p in getattr(m, "control_points", [])]}
+                               for m in curve.modifiers]}
         curves.append({"path": curve.data_path, "index": curve.array_index,
-                       "points": [[vector(p.co), vector(p.handle_left), vector(p.handle_right),
-                                   p.interpolation] for p in curve.keyframe_points]})
-    return {"name": action.name, "curves": curves}
+                       "keyframeCount": len(state["keys"]), "sampleCount": len(state["samples"]),
+                       "modifierCount": len(state["modifiers"]), "stateSha256": digest(state)})
+    return {"name": action.name, "representation": "fcurve-state-sha256/v1",
+            "frameRange": vector(action.frame_range), "properties": properties(action, {"name"}),
+            "curves": curves}
+
+
+def animation_record(animation):
+    if animation is None:
+        return None
+    return {"action": action_record(animation.action),
+            "tracks": [{"name": track.name, "mute": track.mute, "solo": track.is_solo,
+                        "strips": [{"name": strip.name, "start": number(strip.frame_start),
+                                    "end": number(strip.frame_end),
+                                    "properties": properties(strip, {"name", "select"}),
+                                    "action": action_record(strip.action)} for strip in track.strips]}
+                       for track in animation.nla_tracks]}
 
 
 def object_record(obj, depsgraph):
@@ -207,6 +237,7 @@ def object_record(obj, depsgraph):
         state["weights"] = digest(weights)
         state["shapeKeys"] = []
         if obj.data.shape_keys:
+            state["shapeKeyAnimation"] = animation_record(obj.data.shape_keys.animation_data)
             for key in obj.data.shape_keys.key_blocks:
                 state["shapeKeys"].append({"name": key.name, "value": number(key.value),
                                           "relativeKey": key.relative_key.name,
@@ -220,11 +251,7 @@ def object_record(obj, depsgraph):
                          for bone in sorted(obj.pose.bones, key=lambda x: x.name)]
     animation = obj.animation_data
     if animation:
-        state["animation"] = {"action": action_record(animation.action),
-                              "tracks": [{"name": track.name, "strips": [
-                                  {"name": strip.name, "start": number(strip.frame_start),
-                                   "end": number(strip.frame_end), "action": action_record(strip.action)}
-                                  for strip in track.strips]} for track in animation.nla_tracks]}
+        state["animation"] = animation_record(animation)
     state["fingerprint"] = digest(state)
     return state
 
@@ -251,6 +278,9 @@ def inventory():
     meshes = [row for row in rows if row["type"] == "MESH"]
     result = {"schema": "refas.production.scene/v2", "blenderVersion": bpy.app.version_string,
               "frame": bpy.context.scene.frame_current, "objects": rows,
+              "timing": {"fps": bpy.context.scene.render.fps,
+                         "fpsBase": number(bpy.context.scene.render.fps_base),
+                         "subframe": number(bpy.context.scene.frame_subframe)},
               "units": {"system": bpy.context.scene.unit_settings.system,
                         "scaleLength": number(bpy.context.scene.unit_settings.scale_length)},
               "statistics": {"objects": len(rows), "meshes": len(meshes),
@@ -261,7 +291,8 @@ def inventory():
                              "uvObjects": sum(bool(row["mesh"]["uvLayers"]) for row in meshes),
                              "materialSlots": sum(len(row["materialSlots"]) for row in meshes)},
               "bounds": bounds(objects, depsgraph), "limitations": LIMITATIONS}
-    result["fingerprint"] = digest({"frame": result["frame"], "units": result["units"], "objects": rows})
+    result["fingerprint"] = digest({"frame": result["frame"], "timing": result["timing"],
+                                    "units": result["units"], "objects": rows})
     return result
 
 
@@ -384,9 +415,15 @@ def glb_counts(path):
 def verify_glb(path, source):
     encoded = glb_counts(path)
     bpy.ops.wm.read_factory_settings(use_empty=True)
-    result = bpy.ops.import_scene.gltf(filepath=str(path))
+    # Importer display-only bone shapes are not delivery geometry. Prevent
+    # their creation rather than filtering legitimate asset meshes by name.
+    timing = source["timing"]
+    bpy.context.scene.render.fps = timing["fps"]
+    bpy.context.scene.render.fps_base = timing["fpsBase"]
+    result = bpy.ops.import_scene.gltf(filepath=str(path), disable_bone_shape=True)
     if "FINISHED" not in result:
         raise RuntimeError("GLB reimport did not finish")
+    bpy.context.scene.frame_set(source["frame"], subframe=timing["subframe"])
     observed = inventory()
     checks = {"trianglesMatchEncoded": observed["statistics"]["triangles"] == encoded["triangles"],
               "trianglesMatchNative": observed["statistics"]["triangles"] == source["statistics"]["triangles"],
@@ -455,7 +492,9 @@ def render_views(out, views, config, source, specification=None):
         if obj.type in ASSET_TYPES:
             review.collection.objects.link(obj)
     bpy.context.window.scene = review
-    review.frame_set(original.frame_current)
+    review.render.fps = original.render.fps
+    review.render.fps_base = original.render.fps_base
+    review.frame_set(original.frame_current, subframe=original.frame_subframe)
     review.render.engine = "CYCLES"
     review.cycles.device = "CPU"
     review.cycles.samples = config["samples"]
@@ -590,7 +629,7 @@ def execute(job):
     else:
         bpy.ops.wm.read_factory_settings(use_empty=True)
         if job.get("baseGlb"):
-            if "FINISHED" not in bpy.ops.import_scene.gltf(filepath=job["baseGlb"]):
+            if "FINISHED" not in bpy.ops.import_scene.gltf(filepath=job["baseGlb"], disable_bone_shape=True):
                 raise RuntimeError("Legacy GLB import did not finish")
     result = {"schema": SCHEMA, "ok": False, "operation": job["operation"],
               "blenderVersion": bpy.app.version_string, "outputs": {}, "observations": [],

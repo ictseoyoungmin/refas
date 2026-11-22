@@ -4,6 +4,14 @@ All notable RefAs changes are documented here. RefAs follows semantic versioning
 
 ## 2.0.0-alpha.1 — Unreleased
 
+### Actual-use scope, topology and animated delivery
+
+- Expand the user-authorized plan with six fixed criteria for comparable source/mesh/use evaluations, real character wearing, connected mechanical motion, deliberate retopology and budgeted optimization. Preserve the original 31-item meanings and all historical checkpoints; checklist v2 begins at 28/37 (76%).
+- Add focused topology guidance and a read-only Blender mesh/anchor observation helper. Keep intention, whole-scene intersections, visual likeness and use acceptance separate from raw topology counts.
+- Bound dense object/bone and shape-key animation inventory by hashing every recorded key, handle, easing value, sample and modifier per curve, retaining counts and playback properties. Native and exported files keep the actual animation. Preserve the existing manifest-size limit and detect interior key and NLA playback changes.
+- Disable importer-created bone display shapes instead of counting them as delivered geometry. Preserve real meshes with the same names, and match native frame rate and subframe during GLB verification.
+- Add source-derived garment/arm authoring examples and a separate Godot GLB playback observer. Actual candidate findings, failed attempts and acceptance decisions are recorded in the [usable-assets protocol and evidence](docs/development/evidence/usable-assets/PROTOCOL.md).
+
 ### Production-only distribution and explicit legacy import
 
 - Move the retained 1.x runtime, contract graph, templates and historical guides to repository-only `legacy/v1/`. The active skill contains the production entry, directly used Python modules and focused guides; old schemas and comparison tooling are not installed.

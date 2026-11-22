@@ -1,0 +1,50 @@
+{
+  "observer-after.gd": {
+    "sha256": "325ed366c6386e06b84c179eabfd70b87d8ca497b9f112b2d80a6b4593ad5846",
+    "bytes": 11777
+  },
+  "positive/command.json": {
+    "sha256": "f82c8503142a1311631fc2474f4b737766df6464e2bd2c107c9c5178b203df06",
+    "bytes": 579
+  },
+  "positive/configuration.json": {
+    "sha256": "b4d668fdb19f1d2c703b2f13757466e8ea8f7e21eb1f7442ddaa113bc63a4e91",
+    "bytes": 13639
+  },
+  "positive/result.json": {
+    "sha256": "3b87b512250f19522d50b9a84f15a5896dbe8be24b060c019b51e642e78673d6",
+    "bytes": 21777
+  },
+  "positive/stderr.txt": {
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "bytes": 0
+  },
+  "positive/stdout.txt": {
+    "sha256": "3c31218195eee5a177fd71f90d4c6f3c27c3e4969e279d03e84504ca69f20f62",
+    "bytes": 262
+  },
+  "summary.json": {
+    "sha256": "afe0f0eeefb0f0a6a060b1438701f6b3c11248f9cd941f68c0821bb52f80fdd6",
+    "bytes": 1567
+  },
+  "wrong-weights/command.json": {
+    "sha256": "22a9a4f96d8f517fd59c31e2fb84487d1ed3775b2a67d7afd481a7fda16a383c",
+    "bytes": 583
+  },
+  "wrong-weights/configuration.json": {
+    "sha256": "b0fbbd79eedcacffec522d009c9b00af05cdab49404cd962608a0ea58a3ceda8",
+    "bytes": 13652
+  },
+  "wrong-weights/result.json": {
+    "sha256": "74133a69783b4eab54b1c742d42d2c2a11b023d72047d48949090e333bacd31f",
+    "bytes": 21743
+  },
+  "wrong-weights/stderr.txt": {
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "bytes": 0
+  },
+  "wrong-weights/stdout.txt": {
+    "sha256": "c3d2ed709bae1614cd3d64f0a3ffd3c4490a68af89bce0dd358a3e35651622cf",
+    "bytes": 1084
+  }
+}

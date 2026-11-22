@@ -1,14 +1,15 @@
 {
   "schema": "refas.plan-progress/v1",
-  "checklistVersion": 1,
-  "definition": "Binary coverage of demonstrated acceptance criteria from the current Notion first-application plan and separate delivery milestones; not effort, remaining time, visual-quality percentage, or Notion CLOSED status.",
-  "denominator": 31,
+  "checklistVersion": 2,
+  "definition": "Binary coverage of demonstrated acceptance criteria from the explicitly expanded 2.0 plan: original first-application criteria plus real use, retopology and optimization; not effort, visual-quality percentage, time remaining or Notion CLOSED status.",
+  "denominator": 37,
   "denominatorPolicy": [
     "The 31 IDs and their acceptance meanings are fixed for checklist version 1; each item is either demonstrated or open, with no partial or effort-weighted credit.",
     "A new checkpoint lists the complete demonstrated ID set and cites evidence for changed decisions. Stronger counterevidence can reopen an item.",
     "Preserve prior checkpoints and baselineEvidence/baselineNote. Criteria are not split, removed, or reworded to make progress rise.",
     "A material scope change requires a new checklistVersion, an explicit mapping/reason, and preserved previous counts.",
-    "Optional broader character, UV, physics and engine profiles are outside this first-application denominator unless explicitly added by a recorded scope change."
+    "Optional broader character, UV, physics and engine profiles are outside this first-application denominator unless explicitly added by a recorded scope change.",
+    "Checklist version 2, explicitly authorized by the user on 2026-11-22, preserves all 31 original meanings and adds U1-U6; its fixed denominator is 37. Earlier 31-item checkpoints remain historical and are not recomputed."
   ],
   "sources": {
     "notionPlan": "https://app.notion.com/p/41fc6a3b5bf181c2b2cdfac4605ef7d7",
@@ -18,7 +19,8 @@
       "R2-03": "https://app.notion.com/p/41fc6a3b5bf1814fb380f3d649a3fc10",
       "R2-04": "https://app.notion.com/p/41fc6a3b5bf181cd946ff7cd70581fb7",
       "R2-05": "https://app.notion.com/p/41fc6a3b5bf181999d88cac97f324601",
-      "R2-06": "https://app.notion.com/p/41fc6a3b5bf1813191c0c59b6fff1aa8"
+      "R2-06": "https://app.notion.com/p/41fc6a3b5bf1813191c0c59b6fff1aa8",
+      "R2-07": "https://app.notion.com/p/420c6a3b5bf181cd8228ce6ff6174c5a"
     },
     "repositoryPlan": "docs/development/refas-2-plan.md",
     "workStatus": "docs/WORK_STATUS.md"
@@ -348,9 +350,63 @@
         "AGENTS.md"
       ],
       "baselineNote": "The published baseline remains v1.4.1. Tag/Release/registry publication requires applicable explicit authorization and remains separate from implementation."
+    },
+    {
+      "id": "U1",
+      "slice": "R2-06",
+      "acceptance": "For both task types, the matched no-skill/fixed-1.x/2.0 comparison evaluates original-reference visual similarity, unintended mesh defects and floating attachments, actual wearing or mechanical motion, retopology and delivery optimization under the same declared inputs and resources. Later informed repairs do not replace an independent comparison.",
+      "baselineEvidence": [
+        "docs/development/evidence/usable-assets/PROTOCOL.md"
+      ],
+      "baselineNote": "Added by the user's explicit 2026-11-22 scope expansion; no credit at the scope-change baseline."
+    },
+    {
+      "id": "U2",
+      "slice": "R2-07",
+      "acceptance": "Actual selected native and reimported delivery meshes are checked for unintended holes, nonmanifold/degenerate geometry, inconsistent or inward winding, intersections and floating attachments. Intentional openings and connections are explicitly classified; major unintended defects in the declared use are repaired. Seeded counterexamples demonstrate the observation tools detect their stated defects.",
+      "baselineEvidence": [
+        "docs/development/evidence/usable-assets/PROTOCOL.md"
+      ],
+      "baselineNote": "Added by the user's explicit 2026-11-22 scope expansion; no credit at the scope-change baseline."
+    },
+    {
+      "id": "U3",
+      "slice": "R2-07",
+      "acceptance": "The reference-derived garment fits an identified real 3D character without concealing or shrinking the body to manufacture clearance, has usable skinning/deformation, and passes documented rest, useful motion and intermediate-frame checks. Native/exported animation and skinning are exercised in an identified consumer; tested fit and motion scope remain explicit.",
+      "baselineEvidence": [
+        "docs/development/evidence/usable-assets/PROTOCOL.md"
+      ],
+      "baselineNote": "Added by the user's explicit 2026-11-22 scope expansion; no credit at the scope-change baseline."
+    },
+    {
+      "id": "U4",
+      "slice": "R2-07",
+      "acceptance": "The reference-derived articulated arm performs a declared useful action with correct joint centers and attached moving parts; any spanning actuators or cables remain connected through sampled intermediate motion. Native and exported synchronized animation are exercised in an identified consumer, with collision/kinematic scope and limitations explicit.",
+      "baselineEvidence": [
+        "docs/development/evidence/usable-assets/PROTOCOL.md"
+      ],
+      "baselineNote": "Added by the user's explicit 2026-11-22 scope expansion; no credit at the scope-change baseline."
+    },
+    {
+      "id": "U5",
+      "slice": "R2-07",
+      "acceptance": "RefAs 2.0 executes deliberate retopology on a real asset for its intended deformation or construction, with inspectable edge flow, source-shape comparison and exercised use. Required materials, UVs, weights and semantic attachments are preserved or explicitly transferred; polygon reduction alone is not credited as retopology.",
+      "baselineEvidence": [
+        "docs/development/evidence/usable-assets/PROTOCOL.md"
+      ],
+      "baselineNote": "Added by the user's explicit 2026-11-22 scope expansion; no credit at the scope-change baseline."
+    },
+    {
+      "id": "U6",
+      "slice": "R2-07",
+      "acceptance": "Both assets have optimized delivery candidates against budgets fixed before selection, with measured base/evaluated/export geometry, material primitives and file size, stated surface-error sampling, fixed-view likeness and required motion checks. Editable detailed sources and mappings are retained; actual consumer use is exercised without inferring a frame-time benefit from triangle count alone.",
+      "baselineEvidence": [
+        "docs/development/evidence/usable-assets/PROTOCOL.md"
+      ],
+      "baselineNote": "Added by the user's explicit 2026-11-22 scope expansion; no credit at the scope-change baseline."
     }
   ],
-  "currentCheckpointId": "r2-05-source-identity-815e9f76",
+  "currentCheckpointId": "scope-v2-usable-assets",
   "checkpoints": [
     {
       "id": "baseline-3217b46e",
@@ -804,6 +860,147 @@
         }
       },
       "note": "K4 is demonstrated within the unchanged prototype criterion; R2-05 is 4/4 and REVIEW. Current gates: 935 JavaScript tests, existing Python/repository/plugin/skill checks, 11-checkpoint retained dogfood and 17-file package audit. New nine example scripts execute in actual authoring/inspection/packaging workflows; isolated visual and final code reviews retained. The previous 65 production tests are historical, not reported as rerun here. Active skill/runtime/distribution bytes remain unchanged. E2, D2 and D3 remain open; 0/6 tasks CLOSED, Draft PR #399, no finished-art or release approval."
+    },
+    {
+      "id": "scope-v2-usable-assets",
+      "date": "2026-11-22",
+      "kind": "scope-change",
+      "checklistVersion": 2,
+      "sourceCommit": "5fd694ade366bba9f1a977df7ebcae67625e1b9c",
+      "demonstratedCriteria": [
+        "B1",
+        "B2",
+        "B3",
+        "B4",
+        "W1",
+        "W2",
+        "W3",
+        "W4",
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "O1",
+        "O2",
+        "O3",
+        "O4",
+        "K1",
+        "K2",
+        "K3",
+        "K4",
+        "E1",
+        "E3",
+        "E4",
+        "E5",
+        "E6",
+        "D1"
+      ],
+      "counts": {
+        "demonstrated": 28,
+        "total": 37,
+        "percentRounded": 76,
+        "bySlice": {
+          "R2-01": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-02": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-03": {
+            "demonstrated": 6,
+            "total": 6
+          },
+          "R2-04": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-05": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-06": {
+            "demonstrated": 5,
+            "total": 7
+          },
+          "Delivery": {
+            "demonstrated": 1,
+            "total": 3
+          },
+          "R2-07": {
+            "demonstrated": 0,
+            "total": 5
+          }
+        }
+      },
+      "notionTaskStatuses": {
+        "R2-01": "REVIEW",
+        "R2-02": "REVIEW",
+        "R2-03": "REVIEW",
+        "R2-04": "REVIEW",
+        "R2-05": "REVIEW",
+        "R2-06": "WIP",
+        "R2-07": "WIP"
+      },
+      "evidenceUpdates": {
+        "U1": {
+          "evidence": [
+            "docs/development/evidence/usable-assets/PROTOCOL.md"
+          ],
+          "note": "New explicit requirement; implementation started, not yet demonstrated."
+        },
+        "U2": {
+          "evidence": [
+            "docs/development/evidence/usable-assets/PROTOCOL.md"
+          ],
+          "note": "New explicit requirement; implementation started, not yet demonstrated."
+        },
+        "U3": {
+          "evidence": [
+            "docs/development/evidence/usable-assets/PROTOCOL.md"
+          ],
+          "note": "New explicit requirement; implementation started, not yet demonstrated."
+        },
+        "U4": {
+          "evidence": [
+            "docs/development/evidence/usable-assets/PROTOCOL.md"
+          ],
+          "note": "New explicit requirement; implementation started, not yet demonstrated."
+        },
+        "U5": {
+          "evidence": [
+            "docs/development/evidence/usable-assets/PROTOCOL.md"
+          ],
+          "note": "New explicit requirement; implementation started, not yet demonstrated."
+        },
+        "U6": {
+          "evidence": [
+            "docs/development/evidence/usable-assets/PROTOCOL.md"
+          ],
+          "note": "New explicit requirement; implementation started, not yet demonstrated."
+        }
+      },
+      "boundaries": {
+        "closedTasks": 0,
+        "totalTasks": 6,
+        "finishedVisualAcceptance": {
+          "jacket": "rejected",
+          "automail": "rejected"
+        },
+        "developmentMetadata": "2.0.0-alpha.1",
+        "retainedLegacyRuntime": "1.4.2",
+        "publishedRelease": "v1.4.1",
+        "pullRequest": "https://github.com/ictseoyoungmin/refas/pull/399",
+        "pullRequestState": "Draft",
+        "prototypeSourceAcceptance": {
+          "jacket": "demonstrated within original task scope",
+          "automail": "demonstrated within original task scope"
+        }
+      },
+      "note": "Original criteria/checkpoints preserved. New user-authorized scope increases the denominator; no new execution credit. 28/31=90% remains the prior prototype milestone."
     }
   ],
   "projections": [
@@ -857,6 +1054,128 @@
       ],
       "resolvedBy": "r2-03-reference-freshness-d36a461e",
       "note": "Validated by the referenced implementation checkpoint: coherent reads and the full agreed explicit-adoption workflow are demonstrated. Historical projection and baseline counts are retained."
+    }
+  ],
+  "checklistVersions": [
+    {
+      "version": 1,
+      "denominator": 31,
+      "criterionIds": [
+        "B1",
+        "B2",
+        "B3",
+        "B4",
+        "W1",
+        "W2",
+        "W3",
+        "W4",
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "O1",
+        "O2",
+        "O3",
+        "O4",
+        "K1",
+        "K2",
+        "K3",
+        "K4",
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6",
+        "D1",
+        "D2",
+        "D3"
+      ],
+      "finalCheckpointId": "r2-05-source-identity-815e9f76",
+      "finalCounts": {
+        "demonstrated": 28,
+        "total": 31,
+        "percentRounded": 90,
+        "bySlice": {
+          "R2-01": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-02": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-03": {
+            "demonstrated": 6,
+            "total": 6
+          },
+          "R2-04": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-05": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-06": {
+            "demonstrated": 5,
+            "total": 6
+          },
+          "Delivery": {
+            "demonstrated": 1,
+            "total": 3
+          }
+        }
+      }
+    },
+    {
+      "version": 2,
+      "denominator": 37,
+      "preservedIds": [
+        "B1",
+        "B2",
+        "B3",
+        "B4",
+        "W1",
+        "W2",
+        "W3",
+        "W4",
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "O1",
+        "O2",
+        "O3",
+        "O4",
+        "K1",
+        "K2",
+        "K3",
+        "K4",
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6",
+        "D1",
+        "D2",
+        "D3"
+      ],
+      "addedIds": [
+        "U1",
+        "U2",
+        "U3",
+        "U4",
+        "U5",
+        "U6"
+      ],
+      "reason": "Explicit user requirement for source similarity, mesh defects/attachments, actual character wearing/mechanical use, retopology and optimization.",
+      "source": "docs/development/evidence/usable-assets/prompts/user-scope.txt"
     }
   ]
 }

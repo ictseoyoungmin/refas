@@ -8,7 +8,23 @@ The user approved implementation of the new production path, starting from `main
 
 This is development work. Active package/Python runtime/plugin identity is `2.0.0-alpha.1`; the retained legacy runtime remains `1.4.2`. The recorded published release remains `v1.4.1`. Main merge and formal publication are separate unfinished milestones.
 
-## Current: source identity and major prototype construction
+## Current: actual use, mesh condition, retopology and optimization
+
+The user explicitly expanded the scope on 2026-11-22. The original checklist
+remains historically **28/31 = 90%**; checklist v2 adds U1–U6 and begins at
+**28/37 = 76%**. R2-06 is **5/7, WIP** and the new R2-07 is **0/5, WIP**.
+The [fixed protocol](development/evidence/usable-assets/PROTOCOL.md) separates
+new wearing/motion acceptance from prior prototype approval.
+
+Implementation is exercising the selected source assets on an actual existing
+character and through animated GLB import in Godot. New production guidance
+covers mesh defects/attachments, deliberate retopology and budgeted optimization.
+Failed fits, mesh detector counterexamples and export/runtime failures are
+retained before repair. A new criterion receives credit only after actual
+candidate evidence and independent review; no result is implied by this scope
+update. E2, D2, D3 and U1–U6 remain open at this baseline.
+
+## Previous: source identity and major prototype construction
 
 Implemented and verified at
 [`815e9f76`](https://github.com/ictseoyoungmin/refas/commit/815e9f76f36ee294ae3cb554215116a08adb168e).

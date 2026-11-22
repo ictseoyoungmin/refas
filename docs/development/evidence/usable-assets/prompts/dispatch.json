@@ -1,0 +1,17 @@
+{
+  "captured_before_dispatch_utc": "2026-11-22T13:27:35.609519+00:00",
+  "prompts": [
+    {
+      "path": "automail-author.txt",
+      "sha256": "b8c8abdd5f882ce2a45d6e2ee19a699f645abae8db1eca41298a9e30c3b6c124"
+    },
+    {
+      "path": "garment-author.txt",
+      "sha256": "bc878d95d5cccddf68afb9f5e7dbac40179096c8bcff28b0716b4239780aea44"
+    },
+    {
+      "path": "mesh-audit-author.txt",
+      "sha256": "a2e6b17b3b6419b6e99e2f154682bcc484738dbd40485bf79016293203b1595a"
+    }
+  ]
+}

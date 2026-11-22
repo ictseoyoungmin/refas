@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "npm",
+    "test"
+  ],
+  "startedUtc": "2026-11-22T14:00:43.354164+00:00",
+  "endedUtc": "2026-11-22T14:02:55.511754+00:00",
+  "elapsedSeconds": 132.15759292099756,
+  "returncode": 0,
+  "environment": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "REFAS_BLENDER_TESTS": "1",
+    "REFAS_GODOT_TESTS": "1"
+  }
+}

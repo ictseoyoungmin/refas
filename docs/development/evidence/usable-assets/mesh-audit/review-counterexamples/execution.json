@@ -1,0 +1,19 @@
+{
+  "command": [
+    "python3",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-p",
+    "test_production_mesh_audit.py",
+    "-v"
+  ],
+  "startedUtc": "2026-11-22T13:45:08.723943+00:00",
+  "endedUtc": "2026-11-22T13:45:10.400852+00:00",
+  "elapsedSeconds": 1.6769311339994601,
+  "exitCode": 1,
+  "scope": "Independent R1/R2 counterexamples before correction."
+}

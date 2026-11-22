@@ -1,0 +1,26 @@
+{
+  "schema": "refas.review.multi-influence/v1",
+  "blenderVersion": "4.3.2",
+  "godotVersion": "4.7.2-stable official ed1daf0bf001b61586d9930840f2f1394092c079",
+  "reviewedSha256": {
+    "examples/engine-playback/run.py": "1369adf6f804a02137fe3f2f3cf97312597fb8a9a86464105dda5a002b1b9034",
+    "examples/engine-playback/verify_godot.gd": "7ac1c173b250acf515bcff917fa615aa1f1e11426182203b61d1bbe72409ecda",
+    "skills/refas/scripts/production/blender_worker.py": "28e12da88efddd995a4ed7e8127763941626c4467ce4f8c8182e26c8250a80cc",
+    "tests/test_production_engine_playback.py": "1ecf1a7c637268c04a269375d13a14d70a5078ff9ba92f1bdc5d453eae3e428e",
+    "tests/test_production_animation.py": "99adb85b96c5d5150d880b24464e0996421fb1cbe9c54c7846cea136cf78ae1c"
+  },
+  "nativeFirstVertexGodotWorld": [
+    0.8109430074691772,
+    1.4907653331756592,
+    0.3070255219936371
+  ],
+  "firstVertexDistanceM": {
+    "rawPoint": 1.5190211855451747e-05,
+    "normalizedPoint": 1.332800372442477e-07,
+    "unskinnedRestWorld": 1.007206699287525,
+    "deltaFormulaPoint": 1.537895130364251e-05
+  },
+  "diagnosis": "Quantized skin evaluation is used to establish rest identity, causing a 10-micrometer match failure before the separate 20-micrometer deformation comparison. Weight normalization changes renderer semantics and is not an approved correction.",
+  "publicSkeletonBake": "Actual call returned null and emitted an invalid skeleton RID error under this headless backend; it was not a successful oracle.",
+  "rendererSourceScope": "Official Godot master RD/GLES3 4/8-influence shader source inspected; exact installed build commit URL could not be retrieved; no GPU execution claim."
+}

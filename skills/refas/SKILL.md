@@ -5,13 +5,15 @@ description: Build and revise reference-driven 3D assets with Blender, preserve 
 
 # RefAs — Reference Asset Foundry
 
-Create an editable 3D asset that answers the user's visual and practical requirements. Work from the original references, build a coherent whole, inspect actual renders, and improve the largest visible defect. Keep the successful model available for further edits.
+Create an editable 3D asset that answers the user's visual and practical requirements. Work from the original references, build a coherent whole, inspect actual renders, and improve the largest visible defect. Keep the successful model available for further edits and its intended use.
 
 Use the Python production commands below to create and continue assets. The installed skill contains this workflow and its focused guides; it does not include the old capability or certification runtime.
 
 ## Start with the asset
 
 Inspect the supplied references before modeling. Establish the intended use, major proportions, distinctive shapes, important openings, materials, and any required movement. Use the user's existing decisions; ask only for missing information that would materially change the asset.
+
+For clothing or articulated subjects intended for games or animation, make wearing or movement part of construction from the start. Use the actual target character or mechanism when available. A static figure is an intermediate result unless that is the requested deliverable. Declare the supported character, motion range, export consumer and asset budget; do useful work without inventing a universal game-ready profile.
 
 Separate what the image shows from inferred depth and engineered choices. Complete plausible side and rear surfaces, while keeping hidden details identifiable as assumptions. Generated reference views, depth maps, and model renders are working aids rather than new observations of the original subject.
 
@@ -20,6 +22,8 @@ Build continuous major volumes and believable connections before small decoratio
 For surfaces that should form one continuous shell, derive adjoining regions from a shared boundary. Separately subdivided edges can open a crack even when their control points meet. Inspect the connection with the final modifiers from both sides before adding small detail; preserve intentional openings.
 
 Load a construction guide only when its problem is present: `references/production-garments.md` for cloth transitions and folded collars, or `references/production-assemblies.md` for segmented hard surfaces, joint pivots and local pose checks. These guides support ordinary Blender authoring without the 1.x certification loop.
+
+Read `references/production-topology.md` when checking mesh defects, rebuilding topology, or optimizing an asset for delivery. Choose topology for the actual deformation and use; reducing polygon count alone does not establish useful retopology.
 
 ## Start or resume a production project
 
@@ -67,6 +71,8 @@ Use Blender's Save As to create a separate manual edit, then import it with `--i
 
 Preserve UVs, materials, rigs, weights, shape keys, and object identity during local edits when the asset contains them. Inspect affected geometry and deformation, not only object counts. Saved fingerprints are change observations and can help locate unexpected edits; they do not prove deformation quality or game readiness.
 
+Before delivery, inspect unintended openings, winding, intersections and unsupported attachments on evaluated geometry and on the reopened export. Classify intentional neck/cuff openings and separate moving parts explicitly. Exercise wearing or motion through useful intermediate states, then retopologize or reduce excessive geometry while retaining the source design and protected data. Keep the detailed source and compare the optimized candidate under fixed views and the same poses.
+
 For before/after comparison, keep the camera and lighting fixed. Pass `--review-spec REVIEW_JSON` to capture explicit orthographic views and a fixed light rig with the revision; omit `--views` to render all views in that file. Read `references/production-review.md` when defining those views. The default views frame the current bounding box and can move when geometry changes. Neither route establishes registration to the source image.
 
 Each `run` explicitly adopts its native input, script and supplied render/review options and records fresh outputs together. Pass the desired options on each run; prior options are not implicit defaults. External originals can change without altering their captured historical copies.
@@ -93,8 +99,8 @@ Deliver the native project, GLB, necessary textures or other source resources, u
 Review three separate questions:
 
 - **Reference fit:** Do silhouette, proportions, distinctive parts, and appearance match the source-visible design? Mark uncertain or invented details as such.
-- **Asset condition:** Are geometry, connections, materials, UVs, and required deformations suitable for the intended use? Make checks proportional to the asset.
-- **Target readiness:** Has the actual requested engine/export path been exercised, including animation and budgets when relevant? An exported GLB alone is not an engine test.
+- **Asset condition:** Are unintended holes, reversed faces, intersections and floating attachments resolved? Are topology, materials, UVs and required deformations suitable for the intended use? Report the tested surfaces and intentional exceptions.
+- **Target readiness:** Can the actual character wear the garment, or can the assembly perform its declared motion with connected parts? Has the engine/export consumer exercised skinning or animation and the chosen geometry/material budget? An exported GLB alone is not an engine test.
 
 A render or technical check can support only the claim it actually demonstrates. Report a prototype as a prototype. Human visual acceptance, technical verification, and a future automated resemblance evaluator are separate evidence.
 

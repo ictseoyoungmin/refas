@@ -1,0 +1,4 @@
+ERROR: The source mesh must have its skin registered with a valid skeleton.
+   at: bake_mesh_from_current_skeleton_pose (scene/3d/mesh_instance_3d.cpp:719)
+   GDScript backtrace (most recent call first):
+       [0] run (/tmp/refas_review_skin_weights-diagnosis.gd:39)

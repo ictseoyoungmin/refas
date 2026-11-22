@@ -1,0 +1,56 @@
+[
+  {
+    "id": "U1",
+    "slice": "R2-06",
+    "acceptance": "For both task types, the matched no-skill/fixed-1.x/2.0 comparison evaluates original-reference visual similarity, unintended mesh defects and floating attachments, actual wearing or mechanical motion, retopology and delivery optimization under the same declared inputs and resources. Later informed repairs do not replace an independent comparison.",
+    "baselineEvidence": [
+      "docs/development/evidence/usable-assets/PROTOCOL.md"
+    ],
+    "baselineNote": "Added by the user's explicit 2026-11-22 scope expansion; no credit at the scope-change baseline."
+  },
+  {
+    "id": "U2",
+    "slice": "R2-07",
+    "acceptance": "Actual selected native and reimported delivery meshes are checked for unintended holes, nonmanifold/degenerate geometry, inconsistent or inward winding, intersections and floating attachments. Intentional openings and connections are explicitly classified; major unintended defects in the declared use are repaired. Seeded counterexamples demonstrate the observation tools detect their stated defects.",
+    "baselineEvidence": [
+      "docs/development/evidence/usable-assets/PROTOCOL.md"
+    ],
+    "baselineNote": "Added by the user's explicit 2026-11-22 scope expansion; no credit at the scope-change baseline."
+  },
+  {
+    "id": "U3",
+    "slice": "R2-07",
+    "acceptance": "The reference-derived garment fits an identified real 3D character without concealing or shrinking the body to manufacture clearance, has usable skinning/deformation, and passes documented rest, useful motion and intermediate-frame checks. Native/exported animation and skinning are exercised in an identified consumer; tested fit and motion scope remain explicit.",
+    "baselineEvidence": [
+      "docs/development/evidence/usable-assets/PROTOCOL.md"
+    ],
+    "baselineNote": "Added by the user's explicit 2026-11-22 scope expansion; no credit at the scope-change baseline."
+  },
+  {
+    "id": "U4",
+    "slice": "R2-07",
+    "acceptance": "The reference-derived articulated arm performs a declared useful action with correct joint centers and attached moving parts; any spanning actuators or cables remain connected through sampled intermediate motion. Native and exported synchronized animation are exercised in an identified consumer, with collision/kinematic scope and limitations explicit.",
+    "baselineEvidence": [
+      "docs/development/evidence/usable-assets/PROTOCOL.md"
+    ],
+    "baselineNote": "Added by the user's explicit 2026-11-22 scope expansion; no credit at the scope-change baseline."
+  },
+  {
+    "id": "U5",
+    "slice": "R2-07",
+    "acceptance": "RefAs 2.0 executes deliberate retopology on a real asset for its intended deformation or construction, with inspectable edge flow, source-shape comparison and exercised use. Required materials, UVs, weights and semantic attachments are preserved or explicitly transferred; polygon reduction alone is not credited as retopology.",
+    "baselineEvidence": [
+      "docs/development/evidence/usable-assets/PROTOCOL.md"
+    ],
+    "baselineNote": "Added by the user's explicit 2026-11-22 scope expansion; no credit at the scope-change baseline."
+  },
+  {
+    "id": "U6",
+    "slice": "R2-07",
+    "acceptance": "Both assets have optimized delivery candidates against budgets fixed before selection, with measured base/evaluated/export geometry, material primitives and file size, stated surface-error sampling, fixed-view likeness and required motion checks. Editable detailed sources and mappings are retained; actual consumer use is exercised without inferring a frame-time benefit from triangle count alone.",
+    "baselineEvidence": [
+      "docs/development/evidence/usable-assets/PROTOCOL.md"
+    ],
+    "baselineNote": "Added by the user's explicit 2026-11-22 scope expansion; no credit at the scope-change baseline."
+  }
+]

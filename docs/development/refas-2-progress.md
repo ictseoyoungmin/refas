@@ -2,13 +2,17 @@
 
 ## Current recorded checkpoint
 
-**90% — 28 of 31 criteria demonstrated.** Verified 2026-11-22 against
+**Checklist v2 scope-change baseline: 76% — 28 of 37 criteria demonstrated.**
+On 2026-11-22 the user explicitly added actual wearing/mechanical use, mesh
+condition, retopology and optimization to 2.0 and its comparison. The six added
+criteria U1–U6 are fixed in the [execution protocol](evidence/usable-assets/PROTOCOL.md).
+Their implementation and review are in progress; requirements alone earn no credit.
+
+The earlier checklist remains **28/31 = 90%**, verified against
 [`815e9f76`](https://github.com/ictseoyoungmin/refas/commit/815e9f76f36ee294ae3cb554215116a08adb168e).
-The previous checkpoint is **27/31 = 87%**; K4 accounts for this increase.
-The original 71%, intervening 77% and previous 87% checkpoints remain intact.
-The [isolated review](evidence/source-identity/review/isolated-visual-review.md)
-accepts both selected assets within their declared visual prototype scope;
-neither receives finished-art approval.
+Its 71%, 77%, 87% and 90% checkpoints, original meanings and evidence are retained.
+That review accepted both assets only within the original prototype scope;
+it does not approve the newly required wearing, motion or optimized delivery.
 
 This measures binary acceptance coverage against the [Notion plan](https://app.notion.com/p/41fc6a3b5bf181c2b2cdfac4605ef7d7) and its separate delivery milestones. It does **not** estimate effort or time remaining, score visual quality, or equate to Notion CLOSED status. The [machine-readable ledger](refas-2-progress.json) is the canonical list of IDs, full criteria, source/evidence links and checkpoint history.
 
@@ -19,15 +23,29 @@ This measures binary acceptance coverage against the [Notion plan](https://app.n
 | [R2-03](https://app.notion.com/p/41fc6a3b5bf1814fb380f3d649a3fc10) | 6/6 | REVIEW |
 | [R2-04](https://app.notion.com/p/41fc6a3b5bf181cd946ff7cd70581fb7) | 4/4 | REVIEW |
 | [R2-05](https://app.notion.com/p/41fc6a3b5bf181999d88cac97f324601) | 4/4 | REVIEW |
-| [R2-06](https://app.notion.com/p/41fc6a3b5bf1813191c0c59b6fff1aa8) | 5/6 | WIP |
+| [R2-06](https://app.notion.com/p/41fc6a3b5bf1813191c0c59b6fff1aa8) | 5/7 | WIP |
+| [R2-07](https://app.notion.com/p/420c6a3b5bf181cd8228ce6ff6174c5a) | 0/5 | WIP |
 | Coordinated delivery | 1/3 | Main merge and release unfinished |
-| **Total** | **28/31 = 90% rounded** | **0/6 tasks CLOSED** |
+| **Total** | **28/37 = 76% rounded** | **0/7 tasks CLOSED** |
 
 REVIEW means review remains; it does not earn an arbitrary fractional score. Both selected assets remain rejected for finished visual acceptance. Active development metadata is 2.0.0-alpha.1; retained legacy runtime is 1.4.2, the recorded published release remains v1.4.1, and PR #399 is Draft. Those boundaries are independent of runtime-test progress.
 
 ## Fixed baseline checklist
 
 `1` means demonstrated within the stated scope; `0` remains open. These baseline decisions stay intact when later checkpoints are appended. Repository evidence is bound to the baseline commit; the JSON provides the full evidence paths.
+
+The table below is the unchanged original 31-item baseline. Checklist v2 adds:
+
+| ID | Owner | Additional acceptance |
+| --- | --- | --- |
+| U1 | R2-06 | Matched comparisons include source likeness, mesh condition, wearing/motion, retopology and optimization. |
+| U2 | R2-07 | Selected native/exported mesh defects and attachments are inspected and repaired; seeded counterexamples exercise the detectors. |
+| U3 | R2-07 | A real identified character wears the garment in useful/intermediate poses, with skin and animation exercised in a consumer. |
+| U4 | R2-07 | The articulated arm performs useful synchronized motion with correct joint centers and maintained connections, including consumer playback. |
+| U5 | R2-07 | Deliberate functional retopology is compared with its source, retains required data and works during actual use. |
+| U6 | R2-07 | Both assets meet budgets fixed before selection, with measured error, appearance and motion after optimization and consumer execution. |
+
+The full, fixed new definitions are in [new-criteria.json](evidence/usable-assets/new-criteria.json).
 
 | ID | Baseline | Acceptance criterion | Evidence / requirement |
 | --- | ---: | --- | --- |
