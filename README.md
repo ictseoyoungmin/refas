@@ -139,6 +139,13 @@ A supplied review specification requests its views unless narrowed by `--views`.
 The internal Python `run_edit` API retains its delivery default for existing
 scripted callers; the CLI is the documented native iteration entry.
 
+For trim or hardware on a deforming surface, ordinary edit scripts can use the
+installed `surface_binding` Python helper. Bind points to an explicit outer
+triangle and barycentric anchor, then transport a whole section while preserving
+its dimensions. No automatic surface selection, scene handler or extra report
+is created. See the [surface attachment guide](skills/refas/references/production-assemblies.md#follow-a-deforming-surface-with-an-attached-section)
+for evaluated-coordinate handling and the remaining seam/clearance checks.
+
 ## References, observations and recovery
 
 Adopt the complete desired reference set explicitly:

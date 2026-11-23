@@ -4,6 +4,11 @@ All notable RefAs changes are documented here. RefAs follows semantic versioning
 
 ## 2.0.0-alpha.1 — Unreleased
 
+### Explicit surface attachments
+
+- Add an opt-in Python authoring helper that follows an explicitly selected triangle and barycentric anchor with a rigid section frame. It preserves section dimensions during nonlinear host deformation without a new CLI, scene handler or report format.
+- Reject changed oriented topology, invalid anchors and nonfinite or degenerate geometry. Keep surface choice, skin-space conversion, neighboring-section continuity and actual clearance in the authoring/review workflow; the helper does not grant whole-asset acceptance.
+
 ### Native iteration and bounded artifacts
 
 - Default public `run` to a native save/reopen with one hero preview; `--outputs delivery` and the new `deliver` command explicitly produce GLB. Existing Python callers and old worker jobs retain their delivery default.
