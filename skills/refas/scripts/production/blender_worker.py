@@ -648,9 +648,130 @@ def render_views(out, views, config, source, specification=None):
     return observed
 
 
+def exact_objects(names, field):
+    """Resolve explicit scene names without substring matching or fallback."""
+    missing = [name for name in names if bpy.context.scene.objects.get(name) is None]
+    if missing:
+        raise ValueError(field + " names missing from the native scene: " + ", ".join(missing))
+    return [bpy.context.scene.objects[name] for name in names]
+
+
+def protected_snapshot(names, frame):
+    if not names:
+        return {}
+    scene = bpy.context.scene
+    current = (scene.frame_current, scene.frame_subframe)
+    try:
+        scene.frame_set(frame[0], subframe=frame[1])
+        bpy.context.view_layer.update()
+        depsgraph = bpy.context.evaluated_depsgraph_get()
+        return {obj.name: object_record(obj, depsgraph)["fingerprint"]
+                for obj in exact_objects(names, "protectedObjects")}
+    finally:
+        scene.frame_set(current[0], subframe=current[1])
+
+
+def require_protected(expected, frame):
+    observed = protected_snapshot(list(expected), frame)
+    changed = [name for name in expected if expected[name] != observed[name]]
+    if changed:
+        raise ValueError("Protected objects changed in recorded geometry, materials or state: "
+                         + ", ".join(changed))
+
+
+def query_native(job, source_sha):
+    """Read selected native samples without building delivery or render artifacts."""
+    scene = bpy.context.scene
+    names = job.get("queryObjects")
+    if names is None:
+        names = sorted(obj.name for obj in scene.objects)
+    objects = exact_objects(names, "queryObjects")
+    original_frame = (scene.frame_current, scene.frame_subframe)
+    frames = job.get("queryFrames")
+    requested = [(frame, 0.0) for frame in frames] if frames is not None else [original_frame]
+    units = {"system": scene.unit_settings.system, "scaleLength": number(scene.unit_settings.scale_length)}
+    result = {"schema": "refas.production.query/v2", "blendSha256": source_sha,
+              "blenderVersion": bpy.app.version_string, "objectNames": names, "units": units,
+              "samples": [], "scope": "selected native objects at requested frames; no saved or exported model",
+              "limitations": ["Samples do not establish continuous motion, collision freedom, visual likeness or game readiness.",
+                              "Topology uses the native scene unit scale; the query does not independently establish real-world dimensions."]}
+    try:
+        for frame, subframe in requested:
+            scene.frame_set(frame, subframe=subframe)
+            if scene.frame_current != frame:
+                raise ValueError("queryFrames contains a frame outside Blender's supported range")
+            bpy.context.view_layer.update()
+            depsgraph = bpy.context.evaluated_depsgraph_get()
+            rows = []
+            for obj in objects:
+                evaluated = obj.evaluated_get(depsgraph)
+                row = {"name": obj.name, "type": obj.type,
+                       "parent": obj.parent.name if obj.parent else None,
+                       "matrixWorld": [vector(value) for value in evaluated.matrix_world],
+                       "visible": obj.visible_get(view_layer=bpy.context.view_layer),
+                       "hideRender": obj.hide_render, "instanceType": obj.instance_type}
+                if obj.type == "MESH":
+                    mesh = evaluated.to_mesh(preserve_all_data_layers=True, depsgraph=depsgraph)
+                    try:
+                        mesh.calc_loop_triangles()
+                        row["mesh"] = {"vertices": len(mesh.vertices), "edges": len(mesh.edges),
+                                       "polygons": len(mesh.polygons), "triangles": len(mesh.loop_triangles)}
+                    finally:
+                        evaluated.to_mesh_clear()
+                    row["materials"] = [slot.material.name if slot.material else None for slot in obj.material_slots]
+                    row["shapeKeys"] = [{"name": key.name, "value": number(key.value)}
+                                        for key in obj.data.shape_keys.key_blocks] if obj.data.shape_keys else []
+                    row["bounds"] = bounds([obj], depsgraph)
+                    if job.get("queryTopology", False):
+                        from mesh_audit import audit_mesh
+                        audit = audit_mesh(obj, depsgraph=depsgraph, meters_per_unit=units["scaleLength"], max_details=8)
+                        row["topology"] = {key: audit[key] for key in
+                            ("schema", "scope", "metersPerUnit", "lengthToleranceM", "statistics", "limitations")}
+                        row["topology"]["details"] = {key: value for key, value in audit.items()
+                                                       if isinstance(value, dict) and "truncated" in value}
+                rows.append(row)
+            result["samples"].append({"frame": frame, "subframe": number(subframe), "objects": rows})
+    finally:
+        scene.frame_set(original_frame[0], subframe=original_frame[1])
+    if file_hash(job["baseBlend"]) != source_sha:
+        raise ValueError("Native input bytes changed during read-only query")
+    return result
+
+
+def export_preflight():
+    """Check supported exporter hooks without creating or exporting a model."""
+    required = {"export_all_influences", "export_optimize_animation_size",
+                "export_optimize_animation_keep_anim_armature"}
+    available = {prop.identifier for prop in bpy.ops.export_scene.gltf.get_rna_type().properties}
+    missing = sorted(required - available)
+    if missing:
+        raise RuntimeError("Installed glTF exporter lacks required options: " + ", ".join(missing))
+    with preserve_positive_skin_weights():
+        pass
+    return {"schema": "refas.production.preflight/v2", "status": "passed",
+            "blenderVersion": bpy.app.version_string, "requiredOptions": sorted(required),
+            "positiveSkinWeightGuard": "supported-and-restored",
+            "scope": "required exporter options and guarded positive-weight hook; no model export, rendering or quality validation"}
+
+
 def validate_job(job):
-    if job.get("operation") not in {"edit", "inspect"}:
-        raise ValueError("operation must be edit or inspect")
+    if job.get("operation") not in {"edit", "inspect", "query", "preflight"}:
+        raise ValueError("operation must be edit, inspect, query or preflight")
+    if job.get("outputProfile", "delivery") not in {"native", "delivery"}:
+        raise ValueError("outputProfile must be native or delivery")
+    for field in ("protectedObjects", "queryObjects"):
+        names = job.get(field)
+        if names is not None and (not isinstance(names, list) or any(not isinstance(name, str) or not name for name in names)
+                                  or len(names) != len(set(names))):
+            raise ValueError(field + " must contain unique exact object names")
+    frames = job.get("queryFrames")
+    if frames is not None and (not isinstance(frames, list) or not frames or
+                               any(type(frame) is not int for frame in frames) or len(frames) != len(set(frames))):
+        raise ValueError("queryFrames must be a nonempty list of unique integers")
+    if type(job.get("queryTopology", False)) is not bool:
+        raise ValueError("queryTopology must be boolean")
+    if job["operation"] in {"query", "preflight"} and (job.get("views") or job.get("reviewSpec") or job.get("script")):
+        raise ValueError("query and preflight do not run scripts, save models or render views")
     out = Path(job["outputDir"])
     if not out.is_absolute():
         raise ValueError("outputDir must be absolute")
@@ -677,8 +798,8 @@ def validate_job(job):
             raise ValueError(key + " must name an existing absolute file")
     if job.get("baseGlb") and (job.get("baseBlend") or job["operation"] != "edit"):
         raise ValueError("baseGlb is an edit input mutually exclusive with baseBlend")
-    if job["operation"] == "inspect" and not job.get("baseBlend"):
-        raise ValueError("inspect requires baseBlend")
+    if job["operation"] in {"inspect", "query"} and not job.get("baseBlend"):
+        raise ValueError(job["operation"] + " requires baseBlend")
     if job["operation"] == "edit" and not job.get("script"):
         raise ValueError("edit requires script")
     out.mkdir(parents=True, exist_ok=True)
@@ -689,6 +810,17 @@ def validate_job(job):
 
 def execute(job):
     out, views, config, specification = validate_job(job)
+    result = {"schema": SCHEMA, "ok": False, "operation": job["operation"],
+              "blenderVersion": bpy.app.version_string, "outputs": {}, "observations": [],
+              "verification": {}, "warnings": list(LIMITATIONS)}
+    if job["operation"] == "preflight":
+        preflight = export_preflight()
+        write_json(out / "preflight.json", preflight)
+        result.update(ok=True, outputs={"preflight": "preflight.json"}, warnings=[])
+        result["verification"]["exportCompatibility"] = preflight
+        write_json(out / "result.json", result)
+        return result
+    source_sha = file_hash(job["baseBlend"]) if job["operation"] == "query" else None
     if job.get("baseBlend"):
         bpy.ops.wm.open_mainfile(filepath=job["baseBlend"], load_ui=False, use_scripts=False)
         if job.get("legacyImport"):
@@ -702,28 +834,52 @@ def execute(job):
         if job.get("baseGlb"):
             if "FINISHED" not in bpy.ops.import_scene.gltf(filepath=job["baseGlb"], disable_bone_shape=True):
                 raise RuntimeError("Legacy GLB import did not finish")
-    result = {"schema": SCHEMA, "ok": False, "operation": job["operation"],
-              "blenderVersion": bpy.app.version_string, "outputs": {}, "observations": [],
-              "verification": {}, "warnings": list(LIMITATIONS)}
+    if job["operation"] == "query":
+        query = query_native(job, source_sha)
+        write_json(out / "query.json", query)
+        result.update(ok=True, outputs={"query": "query.json"}, warnings=query["limitations"])
+        result["verification"]["native"] = {"status": "passed", "scope": "read-only selected-object observation",
+                                               "sourceSha256": source_sha, "inputUnchanged": True}
+        write_json(out / "result.json", result)
+        return result
     if job["operation"] == "edit":
+        profile = job.get("outputProfile", "delivery")
+        result["outputProfile"] = profile
+        protected_names = job.get("protectedObjects", [])
+        exact_objects(protected_names, "protectedObjects")
+        if protected_names:
+            require_portable_scene()
+        protected_frame = (bpy.context.scene.frame_current, bpy.context.scene.frame_subframe)
+        protected = protected_snapshot(protected_names, protected_frame)
         script = Path(job["script"])
         runpy.run_path(str(script), init_globals={"bpy": bpy, "REFAS_OUTPUT_DIR": str(out),
                                                  "REFAS_INPUT_DIR": str(script.parent)}, run_name="__main__")
         if bpy.context.object and bpy.context.object.mode != "OBJECT":
             bpy.ops.object.mode_set(mode="OBJECT")
         require_portable_scene()
+        require_protected(protected, protected_frame)
         before = inventory()
         bpy.ops.wm.save_as_mainfile(filepath=str(out / "scene.blend"), check_existing=False, compress=False)
-        export_scene(out)
+        if profile == "delivery":
+            export_scene(out)
         bpy.ops.wm.open_mainfile(filepath=str(out / "scene.blend"), load_ui=False, use_scripts=False)
         source = inventory()
         if before["fingerprint"] != source["fingerprint"]:
             raise ValueError("Native scene changed across save/reopen; inspect recorded-state preservation")
+        require_protected(protected, protected_frame)
         result["verification"]["native"] = {"status": "passed", "reopened": True,
                                                "fingerprintMatches": True, "statistics": source["statistics"]}
-        result["verification"]["glb"] = verify_glb(out / "asset.glb", source)
-        bpy.ops.wm.open_mainfile(filepath=str(out / "scene.blend"), load_ui=False, use_scripts=False)
-        result["outputs"].update(blend="scene.blend", glb="asset.glb")
+        result["verification"]["protectedObjects"] = {"status": "passed" if protected else "not-requested",
+            "objects": sorted(protected), "frame": protected_frame[0], "subframe": number(protected_frame[1]),
+            "scope": "recorded-object-state-and-materials",
+            "limitations": ["Compared at the source frame; drivers and node-group internals are not exhaustively represented."]}
+        result["outputs"]["blend"] = "scene.blend"
+        if profile == "delivery":
+            result["verification"]["glb"] = verify_glb(out / "asset.glb", source)
+            bpy.ops.wm.open_mainfile(filepath=str(out / "scene.blend"), load_ui=False, use_scripts=False)
+            result["outputs"]["glb"] = "asset.glb"
+        else:
+            result["verification"]["glb"] = {"status": "not-requested", "reason": "native-output-profile"}
     else:
         require_visible_meshes()
         require_supported_objects()

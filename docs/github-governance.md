@@ -25,7 +25,7 @@ RefAs artifacts; GitHub metadata must reflect that state but never replace it.
    continue elsewhere, but a second mutation path does not begin.
 6. **Reopen is corrective, not exceptional.** Stronger evidence, an upstream
    representation change, or a visible regression reopens the owning
-   capability. Rejected candidates remain evidence.
+   capability. Relevant rejected candidates remain in the working project.
 
 These rules are development governance. They must not be copied into product
 schemas as work-state architecture.
@@ -145,6 +145,25 @@ Relation authority and relation realization have deliberately different owners. 
   absence of an open dependent Pull Request. If any relation is ambiguous, keep
   the branch and resolve the ambiguity first.
 
+## Source and asset boundary
+
+Default to a source Pull Request: implementation, small synthetic tests and
+concise documentation. Keep user models, GLBs, rendered images or video, raw
+logs, large arrays and recovery archives outside the repository. Tests should
+generate small assets in temporary directories rather than checking them in.
+An evidence directory or fixture name does not bypass this boundary.
+
+Describe the tested scope, result and limitation once. Link necessary external
+evidence when available; do not upload private assets to make a public review
+self-contained. Run `npm run check:artifacts` on the local change or its
+`--staged` form before publishing. Existing historical evidence is retained;
+this boundary does not request its deletion or a Git history rewrite.
+
+Use temporary diagnostic reads while modeling and keep recovery in one working
+project. Persist detailed observations only when they explain an unresolved
+failure or support the selected deliverable. Repeated reports, crops, videos
+and checkpoint archives are not routine completion requirements.
+
 ## Pull Request contract
 
 A Pull Request must:
@@ -153,17 +172,19 @@ A Pull Request must:
 - preserve one runtime capability and hierarchy scope, or one explicit
   repository boundary and the `repository` scope, as the mutation owner;
 - describe the bounded intent and public contract impact;
-- list the baseline and candidate checkpoints when artifact bytes change;
+- identify the baseline and selected candidate when modeling output changes;
 - state the invalidation range and exact rollback point;
-- include reproducible commands and results;
-- include raw reference, BEFORE, AFTER, split comparison, and required
-  multiview renders for visual work;
-- retain rejected candidates as evidence rather than deleting history;
+- include the relevant reproducible commands and concise results;
+- for visual work, inspect the raw reference and actual BEFORE/AFTER output,
+  then link only the views or comparison needed to assess that change;
+- keep relevant rejected candidates in the working project without copying
+  the entire recovery history into Git;
 - remain Draft until required evidence is present.
 
 Repository CI is necessary but not sufficient for visual closure. The reviewer
-must inspect actual renders whole → region → part → subpart → feature and may
-reopen an upstream owner despite green checks.
+must inspect actual output from the whole to the affected detail and may reopen
+an upstream owner despite green checks. Select diagnostic views for the question;
+there is no mandatory all-view, video or full-array bundle for every PR.
 
 ## Review and merge
 

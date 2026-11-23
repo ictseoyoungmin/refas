@@ -63,7 +63,7 @@ def main():
         ("join_armholes", "Join shared body/sleeve boundaries and seat shoulder tabs"),
         ("edit_cuff", "Increase only the left cuff band from six to seven centimetres"),
     ]:
-        state = invoke(name, "run", "--root", root, "--script", HERE / (name + ".py"),
+        state = invoke(name, "run", "--outputs", "delivery", "--root", root, "--script", HERE / (name + ".py"),
             "--intent", intent, "--expected-revision", head, "--blender", args.blender,
             "--review-spec", HERE / "review.json", "--views", "front,front-three-quarter,back",
             "--size", args.size, "--samples", args.samples, "--timeout", 180)

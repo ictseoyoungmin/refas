@@ -19,7 +19,7 @@ cli=repo/'skills/refas/scripts/produce.py'
 script=Path(__file__).with_name('build_usable.py')
 if a.phase=='baseline':
     script=root/'capture-original.py';script.write_text('pass\n')
-cmd=[sys.executable,'-B',str(cli),'run','--root',str(root/'project'),
+cmd=[sys.executable,'-B',str(cli),'run','--outputs','delivery','--root',str(root/'project'),
      '--input-blend',str(a.input_blend.resolve()),'--script',str(script),
      '--intent',('capture original checkpoint' if a.phase=='baseline' else 'rebuild source rotary articulation with repaired palm and measured optimization'),
      '--review-spec',str(a.review_spec.resolve()),'--views','front,side,hero,hand-front,hand-palm,elbow-detail',

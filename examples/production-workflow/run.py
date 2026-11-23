@@ -112,7 +112,8 @@ def run_demo(args):
     doctor = invoke("doctor", "doctor", "--blender", args.blender)
     initialized = invoke("init", "init", "--root", root, "--name", "Original headset production fixture")
     require(initialized["head"] is None and initialized["sequence"] == 0, "new project already has a head")
-    render_arguments = ["--blender", args.blender, "--views", "hero,side", "--size", args.size,
+    # This retained integration harness verifies native/GLB round trips.
+    render_arguments = ["--outputs", "delivery", "--blender", args.blender, "--views", "hero,side", "--size", args.size,
                         "--samples", args.samples, "--timeout", args.timeout]
     created = invoke("create", "run", "--root", root, "--script", HERE / "create_headset.py",
                      "--intent", "Create an original editable headset fixture", "--expected-revision", "none",

@@ -297,7 +297,13 @@ def _status(meta, state):
             # not be updated afterwards (for example, on a full disk).
             committed = run.get("id") in committed_run_ids
             if run.get("status") != "committed" and not committed:
-                runs.append({"id": run.get("id"), "status": run.get("status"), "error": run.get("error")})
+                incomplete = {"id": run.get("id"), "status": run.get("status"), "error": run.get("error")}
+                if run.get("candidateRevision"):
+                    candidate = _revision_dir(meta, run["candidateRevision"])
+                    if candidate.exists():
+                        incomplete.update(candidateRevision=run["candidateRevision"],
+                                          preservedCandidatePath=str(candidate))
+                runs.append(incomplete)
     artifact_paths = {}
     observations = []
     input_paths = {}
@@ -312,6 +318,7 @@ def _status(meta, state):
             "head": state["head"], "sequence": state["sequence"], "sources": state["sources"],
             "outputs": artifact_paths, "observations": observations, "inputs": input_paths,
             "revisions": revisions, "incompleteRuns": runs,
+            "outputProfile": current.get("execution", {}).get("outputProfile", "delivery") if current else None,
             "evidenceFreshness": _evidence_freshness(state, current),
             "referenceResemblance": "not-evaluated", "gameReadiness": "not-evaluated"}
 
@@ -417,26 +424,36 @@ def _execute(command, cwd, log_file, timeout):
     return round(time.monotonic() - started, 3)
 
 
-def _validate_worker_result(artifact_dir):
+def _validate_worker_result(artifact_dir, output_profile="delivery", protected_objects=()):
     result = read_json(artifact_dir / "result.json")
     if result.get("schema") != "refas.production.result/v2" or result.get("ok") is not True:
         raise ProductionError("worker did not report a successful production result")
     outputs = result.get("outputs", {})
-    if set(outputs) != {"blend", "glb", "scene"}:
-        raise ProductionError("worker must return native, GLB and scene inventory")
-    for key, suffix in (("blend", ".blend"), ("glb", ".glb"), ("scene", ".json")):
+    required = {"blend": ".blend", "scene": ".json"}
+    if output_profile == "delivery":
+        required["glb"] = ".glb"
+    if set(outputs) != set(required) or result.get("outputProfile", "delivery") != output_profile:
+        raise ProductionError("worker outputs do not match the requested output profile")
+    if protected_objects:
+        protection = result.get("verification", {}).get("protectedObjects", {})
+        if (protection.get("status") != "passed"
+                or protection.get("scope") != "recorded-object-state-and-materials"
+                or sorted(protection.get("objects", [])) != sorted(protected_objects)):
+            raise ProductionError("worker did not verify all protected objects")
+    for key, suffix in required.items():
         path = relative_file(artifact_dir, outputs[key])
         if path.suffix != suffix or not path.is_file() or not path.stat().st_size:
             raise ProductionError("worker output missing or wrong type: " + key)
     with relative_file(artifact_dir, outputs["blend"]).open("rb") as stream:
         if stream.read(7) != b"BLENDER":
             raise ProductionError("native output is not an uncompressed Blender project")
-    with relative_file(artifact_dir, outputs["glb"]).open("rb") as stream:
-        header = stream.read(12)
-    if len(header) != 12 or header[:4] != b"glTF" or int.from_bytes(header[4:8], "little") != 2:
-        raise ProductionError("output is not GLB 2")
-    if int.from_bytes(header[8:12], "little") != relative_file(artifact_dir, outputs["glb"]).stat().st_size:
-        raise ProductionError("GLB length does not match header")
+    if "glb" in outputs:
+        with relative_file(artifact_dir, outputs["glb"]).open("rb") as stream:
+            header = stream.read(12)
+        if len(header) != 12 or header[:4] != b"glTF" or int.from_bytes(header[4:8], "little") != 2:
+            raise ProductionError("output is not GLB 2")
+        if int.from_bytes(header[8:12], "little") != relative_file(artifact_dir, outputs["glb"]).stat().st_size:
+            raise ProductionError("GLB length does not match header")
     read_json(relative_file(artifact_dir, outputs["scene"]))
     for observation in result.get("observations", []):
         path = relative_file(artifact_dir, observation["path"])
@@ -448,11 +465,18 @@ def _validate_worker_result(artifact_dir):
 
 def run_edit(root, script, intent, blender="blender", input_blend=None, views=None,
              size=384, samples=8, timeout=180, expected_revision=None, executor=None, review_spec=None,
-             expected_sequence=None, _import_bundle=None):
+             expected_sequence=None, _import_bundle=None, output_profile="delivery", protected_objects=(),
+             keep_diagnostics=False):
     root, meta = _meta(root)
     base = load_project(root)
     _check_expected(base, expected_revision, expected_sequence)
     current = _verify_state(meta, base)
+    if output_profile not in {"native", "delivery"}:
+        raise ProductionError("output profile must be native or delivery")
+    protected_objects = list(protected_objects)
+    if (any(not isinstance(name, str) or not name.strip() for name in protected_objects)
+            or len(set(protected_objects)) != len(protected_objects)):
+        raise ProductionError("protected objects must be unique, exact nonempty object names")
     if _import_bundle is not None and (input_blend is not None or base["head"] is not None):
         raise ProductionError("legacy import inputs require a new project without another native input")
     if not isinstance(intent, str) or not intent.strip():
@@ -474,7 +498,8 @@ def run_edit(root, script, intent, blender="blender", input_blend=None, views=No
             raise ProductionError("review references a source outside this project's captured inputs")
     else:
         supported_views = {"hero", "front", "back", "side", "top"}
-    views = list(views) if views is not None else ([v["name"] for v in review["views"]] if review else ["hero", "side"])
+    views = list(views) if views is not None else ([v["name"] for v in review["views"]] if review
+                                                else (["hero"] if output_profile == "native" else ["hero", "side"]))
     if len(views) != len(set(views)) or any(view not in supported_views for view in views):
         raise ProductionError("unknown or duplicate requested view")
     script = Path(script).expanduser().resolve()
@@ -491,7 +516,8 @@ def run_edit(root, script, intent, blender="blender", input_blend=None, views=No
     artifact_dir = run_dir / "artifacts"
     artifact_dir.mkdir()
     run = {"schema": "refas.production.run/v2", "id": run_id, "status": "running",
-           "intent": intent.strip(), "baseRevision": base["head"], "startedAt": utc_now()}
+           "intent": intent.strip(), "baseRevision": base["head"], "startedAt": utc_now(),
+           "outputProfile": output_profile, "diagnosticsKept": bool(keep_diagnostics)}
     atomic_json(run_dir / "run.json", run)
     try:
         if review:
@@ -536,7 +562,8 @@ def run_edit(root, script, intent, blender="blender", input_blend=None, views=No
         frozen_inputs = inventory(inputs)
         job = {"operation": "edit", "baseBlend": str(inputs / "base.blend") if source_blend else None,
                "script": str(inputs / "edit.py"), "inputDir": str(inputs), "outputDir": str(artifact_dir),
-               "views": views, "render": {"engine": "CYCLES", "samples": samples, "size": size}}
+               "views": views, "render": {"engine": "CYCLES", "samples": samples, "size": size},
+               "outputProfile": output_profile, "protectedObjects": protected_objects}
         if migration:
             job["baseBlend" if migration["route"] == "native" else "baseGlb"] = str(inputs / "import" / import_asset)
             job["legacyImport"] = True
@@ -548,7 +575,7 @@ def run_edit(root, script, intent, blender="blender", input_blend=None, views=No
                    "--python", str(worker), "--", "--job", str(run_dir / "job.json")]
         elapsed = (executor or _execute)(command, run_dir, run_dir / "blender.log", timeout)
         check_inventory(inputs, frozen_inputs)
-        result = _validate_worker_result(artifact_dir)
+        result = _validate_worker_result(artifact_dir, output_profile, protected_objects)
         observed_views = [item.get("view") for item in result.get("observations", [])]
         if sorted(observed_views) != sorted(views):
             raise ProductionError("worker did not render exactly the requested views")
@@ -559,18 +586,26 @@ def run_edit(root, script, intent, blender="blender", input_blend=None, views=No
                     "artifacts": inventory(artifact_dir), "outputs": result["outputs"],
                     "observations": result.get("observations", []), "blenderVersion": result.get("blenderVersion"),
                     "elapsedSeconds": elapsed, "verification": result.get("verification", {}),
+                    "execution": {"outputProfile": output_profile, "views": views, "render": job["render"],
+                                  "protectedObjects": protected_objects},
                     "warnings": result.get("warnings", []),
                     "assessment": {"referenceResemblance": "not-evaluated", "gameReadiness": "not-evaluated"}}
         if migration:
             revision.update(kind="import-v1", migration=migration)
+        # Keep interrupted publication discoverable when staged payloads have
+        # already moved into a candidate that was never made current.
+        run["candidateRevision"] = revision_id
+        atomic_json(run_dir / "run.json", run)
         with project_lock(meta):
             _assert_base(root, base)
             final = _revision_dir(meta, revision_id)
             # Build a complete revision before publishing its pointer. Interrupted
             # orphan revisions are retained and never mistaken for the current one.
             final.mkdir()
-            shutil.copytree(artifact_dir, final / "artifacts")
-            shutil.copytree(inputs, final / "inputs")
+            # The staging and revision directories share a filesystem. Transfer
+            # ownership instead of retaining a second complete native/render copy.
+            os.rename(artifact_dir, final / "artifacts")
+            os.rename(inputs, final / "inputs")
             atomic_json(final / "revision.json", revision)
             check_inventory(final / "artifacts", revision["artifacts"])
             check_inventory(final / "inputs", revision["inputs"])
@@ -580,6 +615,9 @@ def run_edit(root, script, intent, blender="blender", input_blend=None, views=No
             atomic_json(meta / "project.json", state)
         run.update(status="committed", revision=revision_id, endedAt=utc_now())
         atomic_json(run_dir / "run.json", run)
+        if not keep_diagnostics:
+            for name in ("job.json", "blender.log"):
+                (run_dir / name).unlink(missing_ok=True)
         return {**status(root), "runId": run_id, "publishedRevision": revision_id, "elapsedSeconds": elapsed}
     except BaseException as exc:
         # Do not convert a post-publication logging error into a failed edit.
@@ -625,3 +663,168 @@ def restore(root, revision_id, expected_revision=None, expected_sequence=None):
                  "updatedAt": utc_now()}
         atomic_json(meta / "project.json", state)
     return status(root)
+
+
+def deliver(root, blender="blender", views=None, size=384, samples=8, timeout=180,
+            expected_revision=None, expected_sequence=None, review_spec=None, executor=None,
+            keep_diagnostics=False):
+    """Derive a delivery bundle from the selected native without a user edit script."""
+    base = load_project(root)
+    _check_expected(base, expected_revision, expected_sequence)
+    if not base["head"]:
+        raise ProductionError("create a native revision before preparing delivery")
+    with tempfile.TemporaryDirectory(prefix="refas-delivery-") as temporary:
+        script = Path(temporary) / "deliver.py"
+        script.write_text("# Prepare delivery from the current native without authoring changes.\n", encoding="utf-8")
+        return run_edit(root, script, "Prepare delivery from the current native", blender=blender,
+                        views=views, size=size, samples=samples, timeout=timeout,
+                        expected_revision=base["head"], expected_sequence=base["sequence"],
+                        review_spec=review_spec, executor=executor, output_profile="delivery",
+                        keep_diagnostics=keep_diagnostics)
+
+
+def _temporary_observation(job, output_key, blender, timeout, executor=None):
+    """Run a read-only worker query and retain only its JSON value, not a bundle."""
+    if not isinstance(timeout, (int, float)) or not 1 <= timeout <= 3600:
+        raise ProductionError("timeout must be between 1 and 3600 seconds")
+    executable = shutil.which(blender)
+    if not executable and executor is None:
+        raise ProductionError("Blender executable is unavailable: " + blender)
+    with tempfile.TemporaryDirectory(prefix="refas-query-") as temporary:
+        folder = Path(temporary)
+        output = folder / "output"
+        output.mkdir()
+        job = {**job, "outputDir": str(output), "views": []}
+        atomic_json(folder / "job.json", job)
+        worker = Path(__file__).with_name("blender_worker.py")
+        command = [executable or blender, "-b", "--factory-startup", "--threads", "2", "--python-exit-code", "1",
+                   "--python", str(worker), "--", "--job", str(folder / "job.json")]
+        log = folder / "blender.log"
+        try:
+            (executor or _execute)(command, folder, log, timeout)
+            result = read_json(output / "result.json")
+            if (result.get("schema") != "refas.production.result/v2" or result.get("ok") is not True
+                    or set(result.get("outputs", {})) != {output_key}):
+                raise ProductionError("worker did not return the requested native observation")
+            observed = read_json(relative_file(output, result["outputs"][output_key]))
+            if observed.get("schema") != "refas.production." + output_key + "/v2":
+                raise ProductionError("worker returned an invalid observation schema")
+            return observed
+        except (ProductionError, OSError, ValueError) as exc:
+            tail = ""
+            if log.is_file():
+                with log.open("rb") as stream:
+                    stream.seek(max(0, log.stat().st_size - 2048))
+                    tail = stream.read().decode("utf-8", errors="replace")
+            raise ProductionError(str(exc) + ("\nBlender diagnostic tail:\n" + tail if tail else "")) from exc
+
+
+def inspect_native(root, objects=(), frames=(), topology=False, blender="blender", timeout=180,
+                   expected_revision=None, expected_sequence=None, executor=None):
+    state = load_project(root)
+    _check_expected(state, expected_revision, expected_sequence)
+    _, meta = _meta(root)
+    revision = _verify_state(meta, state)
+    if revision is None:
+        raise ProductionError("create a native revision before inspecting it")
+    objects, frames = list(objects), list(frames)
+    if (any(not isinstance(name, str) or not name.strip() for name in objects)
+            or len(set(objects)) != len(objects)):
+        raise ProductionError("query objects must be unique exact names")
+    if any(type(frame) is not int for frame in frames) or len(set(frames)) != len(frames):
+        raise ProductionError("query frames must be unique integers")
+    native = relative_file(_revision_dir(meta, revision["id"]) / "artifacts", revision["outputs"]["blend"])
+    before = digest(native)
+    job = {"operation": "query", "baseBlend": str(native), "queryTopology": bool(topology)}
+    if objects:
+        job["queryObjects"] = objects
+    if frames:
+        job["queryFrames"] = frames
+    observed = _temporary_observation(job, "query", blender, timeout, executor)
+    if digest(native) != before:
+        raise ProductionError("native source changed during inspection")
+    if observed.get("blendSha256") != before:
+        raise ProductionError("observation does not match the selected native source")
+    return {**observed, "revision": revision["id"], "nativeSha256": before,
+            "evidenceFreshness": _evidence_freshness(state, revision), "persisted": False}
+
+
+def export_preflight(blender="blender", timeout=60, executor=None):
+    return _temporary_observation({"operation": "preflight"}, "preflight", blender, timeout, executor)
+
+
+def _file_usage(folder):
+    count = size = 0
+    if folder.is_symlink():
+        raise ProductionError("storage directory cannot be a symlink")
+    for path in folder.rglob("*"):
+        if path.is_symlink():
+            raise ProductionError("symlink in project storage: " + str(path))
+        if path.is_file():
+            count += 1
+            size += path.stat().st_size
+    return {"files": count, "bytes": size}
+
+
+def storage_stats(root):
+    state = load_project(root)
+    _, meta = _meta(root)
+    _verify_state(meta, state)
+    groups = {name: _file_usage(relative_file(meta, name)) for name in ("sources", "revisions", "runs")}
+    return {"ok": True, "scope": "logical-file-bytes", "head": state["head"], "sequence": state["sequence"],
+            "committedRevisions": len(state["revisionDigests"]), "groups": groups,
+            "total": _file_usage(meta), "hint": "compact previews only redundant committed run payloads; checkpoints remain"}
+
+
+def _redundant_run_payloads(meta, state):
+    candidates, skipped = [], []
+    runs = _runs_dir(meta)
+    for revision_id in state["revisionDigests"]:
+        revision = _load_revision(meta, state, revision_id, verify=False)
+        run_id = revision.get("runId")
+        if not run_id:
+            continue
+        # An authoritative revision owns only its own UUID-named staging folder.
+        if not isinstance(run_id, str) or len(run_id) != 32 or any(c not in "0123456789abcdef" for c in run_id):
+            raise ProductionError("invalid committed run ID")
+        run = relative_file(runs, run_id)
+        names = [name for name in ("inputs", "artifacts") if (run / name).exists() or (run / name).is_symlink()]
+        if not names:
+            continue
+        try:
+            _load_revision(meta, state, revision_id, verify=True)
+            for name in names:
+                check_inventory(relative_file(run, name), revision[name])
+        except (ProductionError, OSError) as exc:
+            skipped.append({"runId": run_id, "reason": str(exc)})
+            continue
+        candidates.append({"runId": run_id, "revision": revision_id,
+                           "paths": ["runs/" + run_id + "/" + name for name in names],
+                           "bytes": sum(sum(item["bytes"] for item in revision[name]) for name in names),
+                           "files": sum(len(revision[name]) for name in names)})
+    return candidates, skipped
+
+
+def compact(root, apply=False, expected_sequence=None):
+    """Remove only byte-verified staging copies already held by committed revisions."""
+    state = load_project(root)
+    _check_expected(state, None, expected_sequence)
+    _, meta = _meta(root)
+    _verify_state(meta, state)
+    candidates, skipped = _redundant_run_payloads(meta, state)
+    reclaimed = 0
+    if apply:
+        with project_lock(meta):
+            _assert_base(root, state)
+            for candidate in candidates:
+                revision = _load_revision(meta, state, candidate["revision"], verify=True)
+                for relative in candidate["paths"]:
+                    path = relative_file(meta, relative)
+                    check_inventory(path, revision[path.name])
+                for relative in candidate["paths"]:
+                    shutil.rmtree(relative_file(meta, relative))
+                reclaimed += candidate["bytes"]
+    return {"ok": True, "scope": "redundant-committed-run-payloads", "applied": bool(apply),
+            "head": state["head"], "sequence": state["sequence"], "candidates": candidates, "skipped": skipped,
+            "reclaimableBytes": sum(item["bytes"] for item in candidates), "reclaimedBytes": reclaimed,
+            "preserved": ["source references", "committed revisions", "failed and uncommitted runs"]}

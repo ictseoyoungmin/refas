@@ -15,8 +15,10 @@ identity; it is not a published stable 2.0 release. Follow the
 
 The agent reads the original reference, constructs a coherent whole, inspects
 real output and makes a focused correction. RefAs records the native `.blend`,
-exported GLB, requested observations, executed script and source identities
-together. Successful execution and file integrity remain separate from visual
+requested observations, executed script and source identities together. Normal
+CLI iterations save native scenes with one hero preview; GLB export and reimport
+are reserved for explicit delivery or an export-specific check. Successful
+execution and file integrity remain separate from visual
 acceptance or target-engine readiness.
 
 For game or cinematic garments and articulated mechanisms, 2.0 now targets
@@ -35,10 +37,14 @@ comparative work; they are not installed with 2.0.
 
 ## Install the development checkout
 
-The production runner needs Python 3 and Blender. It uses Python's standard
+The production runner needs Python 3.9 or newer and Blender. It uses Python's standard
 library; Blender provides `bpy` and `mathutils`. The npm launcher additionally
 uses Node.js 20 or newer. Current execution evidence records Python 3.12 and
-Blender 4.3.2; `doctor` reports the actual available executables.
+Blender 4.3.2; `doctor` reports the actual available executables. Use
+`doctor --check-export` to probe required exporter capabilities and the guarded
+skin-weight preservation path before delivery. A different Blender exporter's
+unsupported structure fails explicitly; a version report alone is not an export
+compatibility or asset-readiness test.
 
 For an agent that loads skill folders, copy **this branch's** canonical folder
 into its skill location:
@@ -72,7 +78,7 @@ From a repository checkout:
 ```bash
 python3 skills/refas/scripts/produce.py doctor
 python3 skills/refas/scripts/produce.py init --root work/headset --name headset-demo
-python3 skills/refas/scripts/produce.py run --root work/headset --script examples/production-workflow/create_headset.py --intent "build the complete headset" --views hero,side --size 384 --samples 8
+python3 skills/refas/scripts/produce.py run --root work/headset --script examples/production-workflow/create_headset.py --intent "build the complete headset" --size 384 --samples 8
 python3 skills/refas/scripts/produce.py status --root work/headset
 ```
 
@@ -85,7 +91,7 @@ A later run opens the saved native scene before applying an ordinary `bpy`
 edit. Use meaningful object names and modify the requested part:
 
 ```bash
-python3 skills/refas/scripts/produce.py run --root work/headset --script examples/production-workflow/revise_headset.py --intent "adjust the comfort pad while preserving the earcups" --views hero,side
+python3 skills/refas/scripts/produce.py run --root work/headset --script examples/production-workflow/revise_headset.py --intent "adjust the comfort pad while preserving the earcups" --views side
 python3 skills/refas/scripts/produce.py verify --root work/headset
 python3 skills/refas/scripts/produce.py restore --root work/headset --revision REVISION_ID
 ```
@@ -99,6 +105,39 @@ Open the actual renders and editable native scene to judge the result. For
 manual editing, use Blender Save As to a separate file, then pass
 `--input-blend FILE` to `run`. The files returned by `status` belong to immutable
 revision history.
+
+Batch related modeling changes in one native edit. Add repeated
+`--protect-object NAME` for exact existing objects whose recorded native and
+material state must remain unchanged. The guard rejects an unexpected edit
+before publishing the revision. It compares at the starting frame; drivers and
+node-group internals are not exhaustive, and this is not an all-frame or visual
+quality guarantee. The baseline is the selected native input: with
+`--input-blend`, protection begins at that manual input rather than the previous
+project head.
+
+Use temporary observations and export only when needed:
+
+```bash
+python3 skills/refas/scripts/produce.py inspect --root PROJECT --object OBJECT_NAME --frame 1 --frame 24 --topology
+python3 skills/refas/scripts/produce.py deliver --root PROJECT
+```
+
+`inspect` returns compact object/frame JSON without a revision, permanent report
+or render. With no object selection it gives a scene overview; with no frames
+it reads the saved current frame. Topology observations are optional and do not
+establish scene-wide collision clearance or engine readiness. `deliver` exports
+the current native without reapplying an earlier edit script. Use
+`run --outputs delivery` when finishing and export belong in one edit.
+
+| CLI output mode | Retained model | Default requested views |
+| --- | --- | --- |
+| `run --outputs native` (default) | Editable `.blend` | `hero` |
+| `deliver` or `run --outputs delivery` | `.blend` and reopened GLB | `hero,side` |
+
+Explicit `--views` selects the necessary views, including `--views ''` for none.
+A supplied review specification requests its views unless narrowed by `--views`.
+The internal Python `run_edit` API retains its delivery default for existing
+scripted callers; the CLI is the documented native iteration entry.
 
 ## References, observations and recovery
 
@@ -125,6 +164,24 @@ originals are independent of their frozen historical copies.
 Use `--review-spec REVIEW_JSON` for fixed orthographic cameras and lighting;
 see the [review format](skills/refas/references/production-review.md). Default
 views follow current bounds. Neither route establishes source-camera calibration.
+
+Keep one working project and retain only useful diagnostic material. Inspect
+storage and safely remove redundant committed-run copies when needed:
+
+```bash
+python3 skills/refas/scripts/produce.py storage --root PROJECT
+python3 skills/refas/scripts/produce.py compact --root PROJECT
+python3 skills/refas/scripts/produce.py compact --root PROJECT --apply
+```
+
+The default compact command previews only; `--apply` removes payload copies that
+match retained revisions exactly. Checkpoints, source and failed runs remain.
+New successful runs move payload into revision storage instead of retaining a
+second full copy. Deliver one selected native/export pair and necessary scripts
+and resources. Avoid a new recovery archive, video or exhaustive report for
+each iteration; summarize changes and unresolved findings once.
+Use `--keep-diagnostics` on a run or delivery when successful raw job/Blender
+logs are needed for debugging. Failed-run diagnostics remain available.
 
 ## Import selected 1.x assets
 
@@ -166,22 +223,30 @@ and approval system.
 
 ## Verified scope and limitations
 
-The worker handles supported visible meshes, packed still-image textures and
-its tested native/GLB preservation scope. Convert curves/text to meshes and
-realize instances first. Match viewport/render modifier visibility and
-subdivision levels. Unsupported scopes fail explicitly; procedural appearances
+Native and delivery submissions both require supported visible meshes and
+packed still-image textures. Convert curves/text to meshes and realize instances
+first. Match viewport/render modifier visibility and subdivision levels.
+Temporary `inspect` queries can describe other object types without approving
+them for submission. Delivery additionally requires applying non-armature
+modifiers on skinned or shape-key meshes. Unsupported scopes fail explicitly; procedural appearances
 may need baking for the GLB target. Native source retention alone does not prove
 animation, simulation, skin deformation or target-engine acceptance.
 
 The [uniform-jacket](examples/uniform-jacket/) and
 [automail](examples/automail-arm/) cases retain real source images, scripts,
 renders, local edits and negative as well as positive review findings. Both
-current selected assets remain unfinished. Smaller instructions and successful
-execution do not by themselves prove better modeling quality or lower cost.
+cases began as prototypes. The later arm is accepted for its declared rigid
+reach/partial-grip range; the full-character jacket remains unaccepted. See the
+[current progress](docs/development/refas-2-progress.md) for exact scope. Smaller
+instructions and successful execution do not by themselves prove better
+modeling quality or lower cost.
 
 Local atomic storage and exact historical restoration are tested. Power-loss
 durability, network filesystems and automatic abandoned-lock recovery remain
 outside the current guarantee.
+
+Diagnostic previews currently use Cycles CPU with two threads. They are bounded
+review images, not an automatically accelerated final-render pipeline.
 
 ## Development
 
@@ -195,6 +260,12 @@ npm run check
 npm run dogfood
 npm run release:audit
 ```
+
+Keep source PRs to implementation, small synthetic regressions and concise
+documentation. Generate test assets in temporary directories. Keep user models,
+renders, raw logs and recovery archives outside Git; link only needed evidence
+and state the result and limitations. Run `npm run check:artifacts` before
+staging. Historical tracked evidence is retained rather than purged.
 
 Run actual Blender integration explicitly:
 

@@ -114,7 +114,7 @@ def main():
     noop.write_text('# Preserve the supplied native asset and render fixed review views.\n')
     def run(label, script, intent, input_blend=None, target=project, views=None):
         current = cli(label + '-status', 'status', '--root', target)
-        words = ['run', '--root', target, '--script', script, '--intent', intent,
+        words = ['run', '--outputs', 'delivery', '--root', target, '--script', script, '--intent', intent,
                  '--review-spec', review, '--size', args.size, '--samples', args.samples,
                  '--timeout', 600, '--blender', args.blender, '--expected-revision', current.get('head') or 'none',
                  '--expected-sequence', current['sequence']]

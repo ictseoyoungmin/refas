@@ -29,6 +29,11 @@ the CLI's `--size` and `--samples`; hold them constant too. `lighting.center`
 and `lighting.radius` fix the three-area-light rig's location, scale and energy.
 `background` is a linear RGB world colour; `transparent` controls film alpha.
 
+Define only views needed for the current comparison. A native iteration defaults
+to one hero view; delivery defaults to hero and side. A supplied review file
+requests all its views unless `--views` selects a smaller set. Reuse a concise
+specification rather than accumulating diagnostic cameras for every edit.
+
 Optionally associate a view with a captured source region:
 
 ```json
@@ -72,7 +77,8 @@ image crops or a similarity score alone cannot establish accurate 3D shape.
 
 Use additional diagnostic views for mesh openings, winding, intersections and
 floating attachments: inside/back faces, side/grazing views, wireframe and
-motion frames as needed. Identify intentional openings and component gaps;
+motion frames as needed. Start with `inspect` for a temporary object/frame
+observation when an image is not needed. Identify intentional openings and component gaps;
 do not accept a defect merely because a beauty view hides it. A small mesh
 audit can locate suspected faults, but source intent and actual renders decide
 whether they are faults.
@@ -82,7 +88,8 @@ poses. For articulated assets compare the moving whole and its linkages at
 intermediate frames. Compare original and optimized meshes with fixed cameras,
 the same motion, source features and declared budgets. Report source likeness,
 mesh condition, useful deformation/motion and target-consumer behavior as
-separate outcomes. Retain failures and untested cases.
+separate outcomes. Record a concise finding for failures and untested cases;
+retain detailed dumps only for an unresolved question or a requested handoff.
 
 When comparing production workflows, freeze the same task, source, target
 character or mechanism, motion, budgets and available resources for each path.

@@ -8,7 +8,34 @@ The user approved implementation of the new production path, starting from `main
 
 This is development work. Active package/Python runtime/plugin identity is `2.0.0-alpha.1`; the retained legacy runtime remains `1.4.2`. The recorded published release remains `v1.4.1`. Main merge and formal publication are separate unfinished milestones.
 
-## Current: development checkpoint frozen; alpha runtime verified, garment unaccepted
+## Current: native iteration and bounded diagnostics
+
+The source checkpoint `ea64de8a` is published in Draft PR #399 with passing
+Production and Node 20/22/24 CI. The earlier upload-preparation notes below are
+historical. The user authorized the next runtime improvement on
+`feat/native-iteration`, targeting `rewrite/v2`; main and release remain separate.
+The exact candidate, validation and merge state are tracked in
+[issue #400](https://github.com/ictseoyoungmin/refas/issues/400) and its feature PR.
+
+This change makes CLI modeling native-first, reserves GLB export for delivery,
+adds temporary object/frame inspection and explicit protected-object checks,
+and limits storage cleanup to redundant committed-run payloads. Documentation
+and source PR policy now keep user assets, media and recovery payloads outside
+Git and request only useful views and concise findings. Local validation passes
+120 Production tests with actual Blender/Godot and zero skips, 943 JavaScript
+tests, syntax/repository checks, retained dogfood and the release audit. The new
+coverage includes seven actual-Blender native regressions and fifteen
+host/resource regressions, including partial-publication recovery and
+byte-verified cleanup. The production distribution remains 15 skill files and
+19 packaged files. The feature PR records the installed-copy and remote CI
+checks. This runtime work does not grant new garment fitting or asset acceptance.
+
+The fixed acceptance ledger remains **30/37 = 81%**. The arm's declared range
+remains accepted; full-character jacket fitting, U1/E2 comparison, main merge
+and publication remain open. Read the recorded development checkpoint below
+for those distinct asset results.
+
+## Previous: development checkpoint frozen; alpha runtime verified, garment unaccepted
 
 At the user's request, this session closes at the current development checkpoint.
 Further model authoring, fitting and export experiments are paused. Completed

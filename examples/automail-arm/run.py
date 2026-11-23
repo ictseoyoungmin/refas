@@ -102,7 +102,7 @@ def main():
         return p.stdout
     def cli(label,*parts):return json.loads(command([sys.executable,entry,*parts],label))
     def run(label,script,state,review,views=None):
-        argv=['run','--root',project,'--blender',blender,'--script',script,'--intent',label,'--expected-revision',state['head'] or 'none','--review-spec',review,'--size','512','--samples','16','--timeout','600']
+        argv=['run','--outputs','delivery','--root',project,'--blender',blender,'--script',script,'--intent',label,'--expected-revision',state['head'] or 'none','--review-spec',review,'--size','512','--samples','16','--timeout','600']
         if views is not None:argv+=['--views',views]
         return cli(label,*argv)
     def materialize(state,label):

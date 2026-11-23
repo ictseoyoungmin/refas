@@ -96,7 +96,7 @@ class ProductionLegacyImportTests(unittest.TestCase):
         result = self.run_import(source_project=native["root"], artifact=native["artifact"], executor=worker)
         self.assertEqual(result["migration"]["route"], "native")
         self.assertTrue(jobs[0]["legacyImport"])
-        self.assertEqual(Path(jobs[0]["baseBlend"]).read_bytes(), native["archive"].read_bytes())
+        self.assertEqual(Path(result["inputs"]["import/asset.blend"]).read_bytes(), native["archive"].read_bytes())
         self.assertNotIn("baseGlb", jobs[0])
         self.assertIn("packed textures", result["migration"]["limitations"][0])
 
