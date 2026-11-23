@@ -3,8 +3,9 @@
 Use this guide for segmented mechanisms, armor and manufactured parts with
 visible joints. Begin with the reference's complete assembly and proportions.
 
-Sections: scale and hierarchy; editable cables and trim; motion hierarchy;
-surface attachments; useful poses; delivered animation; local component revisions.
+Sections: scale and hierarchy; editable cables and trim; lattice deformation;
+motion hierarchy; surface attachments; useful poses; delivered animation;
+local component revisions.
 
 ## Establish scale and hierarchy before detail
 
@@ -39,6 +40,48 @@ resolution, or match every non-POLY spline's `resolution_u`. Inspect intermediat
 native preservation does not establish that the motion will survive conversion.
 Follow the [topology guide](production-topology.md#keep-curve-controls-until-mesh-delivery)
 for explicit mesh conversion and the required motion checks before GLB delivery.
+
+## Shape a region with an editable lattice
+
+Use Blender's native `LATTICE` and Lattice modifier when a small control cage
+expresses a broad local shape change. This is useful for adjusting a housing,
+belt or collar volume while retaining the host's base mesh. Place and size the
+cage around the intended region; use the host modifier's vertex group when the
+affected region needs an explicit boundary. Inspect the transition into the
+unchanged surface, not only the most displaced controls.
+
+Create and edit the cage through ordinary `bpy`. For an existing cage and host:
+
+```python
+host = bpy.data.objects["Housing"]
+cage = bpy.data.objects["HousingCage"]
+modifier = host.modifiers.new("Local shape", "LATTICE")
+modifier.object = cage
+```
+
+Reuse that modifier on subsequent edits instead of stacking a fresh deformation.
+Link the cage into the current scene and keep it enabled and visible in the
+active view layer. Its `hide_render` flag may be set; the cage is a control
+object, not rendered geometry. Off-scene lattice dependencies are unsupported
+for native submission. This does not permit hidden mesh cutters or other
+unsupported helper geometry.
+
+Native save/reopen and exact-name object protection record the cage's grid,
+interpolation, control positions, group weights, shape keys and animation.
+Protect unchanged cages and neighboring objects when revising a host. A cage
+edit can intentionally change the host's evaluated surface, so choose protection
+names accordingly. `inspect` provides a compact cage summary; select the host
+to observe its evaluated geometry or topology. Cage controls do not contribute
+surface triangles or the rendered asset bounds. Check useful intermediate poses
+when the cage animates; native preservation does not establish collision-free
+motion, fitting quality or export readiness.
+
+Every scene lattice must be resolved before delivery. For a static result,
+apply the intended deformation at the selected frame through ordinary `bpy`,
+remove the cage, and inspect the resulting mesh in a recoverable edit before
+exporting. Earlier native revisions retain the editable controls. Required
+animated deformation needs deliberate baking or rebuilding into the delivered
+mesh/rig; applying a modifier at one frame does not bake that motion.
 
 ## Make the motion hierarchy explicit
 
