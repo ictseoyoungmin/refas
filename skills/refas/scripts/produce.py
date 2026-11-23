@@ -10,7 +10,7 @@ sys.dont_write_bytecode = True
 from production import VERSION
 from production.project import (ProductionError, initialize, replace_references, run_edit, status,
                                 verify_project, restore, deliver, inspect_native, export_preflight,
-                                storage_stats, compact)
+                                storage_stats, compact, compare_views)
 
 
 def parser():
@@ -73,6 +73,11 @@ def parser():
     inspect.add_argument("--timeout", type=float, default=180)
     inspect.add_argument("--expected-revision")
     inspect.add_argument("--expected-sequence", type=int)
+    compare = commands.add_parser("compare", help="Read fixed transparent views and measure declared coverage preservation")
+    for name in ("root", "baseline", "candidate", "view", "regions"):
+        compare.add_argument("--" + name, required=True)
+    compare.add_argument("--blender", default="blender")
+    compare.add_argument("--timeout", type=float, default=180)
     legacy = commands.add_parser("import-v1", help="Import one explicitly selected archived 1.x asset into a new production project")
     for name in ("root", "source-project", "checkpoint", "artifact", "name"):
         legacy.add_argument("--" + name, required=True)
@@ -135,6 +140,9 @@ def main():
                                     blender=args.blender, timeout=args.timeout,
                                     expected_revision=args.expected_revision, expected_sequence=args.expected_sequence,
                                     input_blend=args.input_blend, topology_details=args.topology_details)
+        elif args.command == "compare":
+            output = compare_views(args.root, args.baseline, args.candidate, args.view,
+                                   args.regions, args.blender, args.timeout)
         elif args.command == "import-v1":
             from production.asset_import import import_v1
             output = import_v1(args.root, args.source_project, args.checkpoint, args.artifact, args.name,

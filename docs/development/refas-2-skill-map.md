@@ -5,10 +5,10 @@ and what a change or removal affects. It is a repository maintenance document;
 agents making assets start with the installed `SKILL.md`, not this map.
 
 The [distribution allowlist](../../tools/verify-production-distribution.mjs)
-declares **16 installed skill files**: eight Python files, five guides, the
+declares **17 installed skill files**: nine Python files, five guides, the
 skill entry, discovery metadata and one icon. Two `.npmignore` files also live
 in the source folder but are excluded from the package. The complete npm
-package has 20 files: those 16 plus the root README, LICENSE, package metadata
+package has 21 files: those 17 plus the root README, LICENSE, package metadata
 and [Node launcher](../../bin/refas.mjs). The launcher delegates to Python;
 the copied Python skill can run without Node.
 
@@ -36,6 +36,8 @@ flowchart TD
     Project -- "validate view specification" --> Review["production/review.py"]
     Project -- "Blender process" --> Worker["production/blender_worker.py"]
     Worker --> Review
+    Project -- "region validation" --> Comparison["production/image_compare.py"]
+    Worker -- "compare only" --> Comparison
     Worker -- "curve instance checks and topology" --> Audit["production/mesh_audit.py"]
     Worker -- "runpy inside Blender" --> Script["Project bpy authoring script"]
     Guides -. "authoring guidance" .-> Script
@@ -78,6 +80,7 @@ Paths in the first column are relative to `skills/refas/`.
 | [scripts/production/project.py](../../skills/refas/scripts/production/project.py) | Owns references, snapshots, revisions, integrity, recovery, temporary queries and storage cleanup. CLI and saved-project importer call it; it captures explicit native/GLB inputs, shares the asset format check and starts the Blender worker. | Changes can affect publication or recovery even when geometry code is untouched. Follow input selection/capture, job/result contracts and source/revision integrity tests. |
 | [scripts/production/blender_worker.py](../../skills/refas/scripts/production/blender_worker.py) | Loads the selected native or imports GLB, runs the `bpy` authoring script, saves/reopens, protects objects, observes, renders and explicitly exports. It retains lattice controls and explicit construction meshes separately from final asset surfaces. | Follow its job/result contract with `project.py`, source roles and modifier dependencies, control-data/protected-object state, compact queries, surface scope, delivery boundaries and actual Blender tests. A host-only test cannot establish Blender behavior. |
 | [scripts/production/review.py](../../skills/refas/scripts/production/review.py) | Validates fixed camera/light specifications in both the host project code and Blender worker. | Both callers and the review guide must agree. Preserve captured settings through save/restore and test actual views where relevant. |
+| [scripts/production/image_compare.py](../../skills/refas/scripts/production/image_compare.py) | Optional alpha coverage comparison. Project validates regions; the temporary Blender worker decodes captured PNGs. | Removal requires retiring `compare`, both callers, review guidance, package allowlist and comparison tests. It does not own edits or baseline approval. |
 | [scripts/production/mesh_audit.py](../../skills/refas/scripts/production/mesh_audit.py) | Observes evaluated topology and anchor gaps. The worker imports its curve-tessellation discriminator at startup and calls `audit_mesh` for topology queries. Authoring scripts can also import it. | It is not optional as a whole: deleting it also breaks normal worker startup and curve instance checks. Follow worker imports, query output, topology guidance and author scripts. |
 | [scripts/production/surface_binding.py](../../skills/refas/scripts/production/surface_binding.py) | Optional numeric authoring API for binding and transporting a section on an explicitly chosen host triangle. No core module automatically calls it. | Search documented and retained author-script imports, not only core imports. Removing it retires the supported surface-attachment recipe and its tests. |
 | [scripts/production/asset_import.py](../../skills/refas/scripts/production/asset_import.py) | Shares the GLB container/resource check with `run --input-glb` through a lazy project import. The `import-v1` command also uses it to capture archived bytes and call the current project path. | Both ordinary GLB editing and saved-project adoption depend on this file. Coordinate their commands, input capture, guide and tests; keep stored migration formats compatible. It is not removable solely because no 1.x migration is planned. |
@@ -90,7 +93,7 @@ Paths in the first column are relative to `skills/refas/`.
 | [references/production-assemblies.md](../../skills/refas/references/production-assemblies.md) | Segmented forms, editable Boolean openings, pivots, local curve/lattice edits and the optional surface-binding API; links to topology guidance. | Check SKILL routing, construction-source and native control-cage delivery scope, the garment guide's attachment reference and helper examples. |
 | [references/production-garments.md](../../skills/refas/references/production-garments.md) | Shared cloth boundaries, sleeves, folded collars and wearing/deformation; refers to assemblies and topology. | Keep construction advice consistent with those guides and the intended character/motion scope. |
 | [references/production-topology.md](../../skills/refas/references/production-topology.md) | Mesh observations, curve-to-mesh delivery, retained Shrinkwrap sources, retopology and optimization; demonstrates `inspect` and `mesh_audit`. | Follow CLI/query changes, source/output scope, helper APIs and incoming links from SKILL, garments and assemblies. |
-| [references/production-review.md](../../skills/refas/references/production-review.md) | Fixed orthographic cameras and lights supplied through `--review-spec`. | Match `review.py`, CLI options and actual render behavior. |
+| [references/production-review.md](../../skills/refas/references/production-review.md) | Fixed views and optional region coverage comparison. | Match `review.py`, `image_compare.py`, CLI options and actual render behavior. |
 | [references/production-import.md](../../skills/refas/references/production-import.md) | Direct GLB/native starting scenes, continued native editing, source preservation and conditional saved-project adoption. | Match input selection, imported-object protection, output defaults and recovery. Keep absent authoring history and asset acceptance limits explicit. |
 | [agents/openai.yaml](../../skills/refas/agents/openai.yaml) | Host discovery, displayed name, default prompt, invocation policy and the icon references. | Changes affect discovery/UX rather than Python geometry. Check the referenced icon and plugin identity. |
 | [assets/icon.svg](../../skills/refas/assets/icon.svg) | Shared visual identity referenced by `openai.yaml` and repository plugin metadata. | Update both references if moved or replaced; the plugin distribution check requires the canonical icon. |

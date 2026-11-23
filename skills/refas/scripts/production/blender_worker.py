@@ -990,8 +990,8 @@ def export_preflight():
 
 
 def validate_job(job):
-    if job.get("operation") not in {"edit", "inspect", "query", "preflight"}:
-        raise ValueError("operation must be edit, inspect, query or preflight")
+    if job.get("operation") not in {"edit", "inspect", "query", "preflight", "compare"}:
+        raise ValueError("operation must be edit, inspect, query, preflight or compare")
     if job.get("outputProfile", "delivery") not in {"native", "delivery"}:
         raise ValueError("outputProfile must be native or delivery")
     for field in ("protectedObjects", "queryObjects"):
@@ -1007,8 +1007,16 @@ def validate_job(job):
         raise ValueError("queryTopology must be boolean")
     if type(job.get("queryTopologyDetails", True)) is not bool:
         raise ValueError("queryTopologyDetails must be boolean")
-    if job["operation"] in {"query", "preflight"} and (job.get("views") or job.get("reviewSpec") or job.get("script")):
-        raise ValueError("query and preflight do not run scripts, save models or render views")
+    if job["operation"] in {"query", "preflight", "compare"} and (job.get("views") or job.get("reviewSpec") or job.get("script")):
+        raise ValueError("query, preflight and compare do not run scripts, save models or render views")
+    if job["operation"] == "compare":
+        if any(job.get(key) for key in ("baseBlend", "baseGlb", "assetGlb")):
+            raise ValueError("compare accepts captured PNGs only")
+        images, digests = job.get("comparisonImages"), job.get("comparisonDigests")
+        if (not isinstance(images, dict) or set(images) != {"baseline", "candidate"}
+                or not isinstance(digests, dict) or set(digests) != set(images)
+                or any(not Path(path).is_absolute() or not Path(path).is_file() for path in images.values())):
+            raise ValueError("compare requires two absolute PNG paths and their digests")
     out = Path(job["outputDir"])
     if not out.is_absolute():
         raise ValueError("outputDir must be absolute")
@@ -1050,6 +1058,17 @@ def execute(job):
     result = {"schema": SCHEMA, "ok": False, "operation": job["operation"],
               "blenderVersion": bpy.app.version_string, "outputs": {}, "observations": [],
               "verification": {}, "warnings": list(LIMITATIONS)}
+    if job["operation"] == "compare":
+        from image_compare import compare_images
+        images = job["comparisonImages"]
+        comparison = compare_images(images["baseline"], images["candidate"],
+                                    job["comparisonRegions"], job["comparisonSize"])
+        if comparison["inputSha256"] != job["comparisonDigests"]:
+            raise ValueError("comparison image digests do not match the selected captures")
+        write_json(out / "comparison.json", comparison)
+        result.update(ok=True, outputs={"comparison": "comparison.json"}, warnings=[])
+        write_json(out / "result.json", result)
+        return result
     if job["operation"] == "preflight":
         preflight = export_preflight()
         write_json(out / "preflight.json", preflight)

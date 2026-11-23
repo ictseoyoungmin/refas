@@ -60,6 +60,7 @@ The initial production command is `python3 skills/refas/scripts/produce.py` in a
 | Command | Responsibility |
 |---|---|
 | `doctor` | Report the Python/Blender environment before authoring. |
+| `compare` | Read two fixed transparent revision views and explicit regions; measure coverage preservation without promoting a baseline. |
 | `init --root DIR --name NAME [--reference FILE ...]` | Create a production project and retain reference copies. |
 | `references --root DIR --reference FILE ... --expected-sequence N` | Adopt the complete active reference set while retaining all model/source history; use `--clear` for an empty set. |
 | `run --root DIR --script FILE --intent TEXT` | Execute a Blender script and record the native scene, requested renders, script and metadata as a revision. GLB is explicit through `--outputs delivery` or `deliver`. |
