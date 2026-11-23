@@ -24,10 +24,19 @@ For a bounded read of an existing native scene, start with:
 python3 scripts/produce.py inspect --root PROJECT --object garment --frame 1 --topology
 ```
 
-This returns a compact temporary observation without another revision, image or
-permanent report. Request only objects and frames needed for the question. An
-ordinary production Blender script can also use the installed observation helper
-when observations need to accompany an actual edit:
+This returns complete counts without location samples, another revision, image
+or permanent report. Each detail category keeps its full `count`, empty `items`
+and `truncated: true` when observations exist; empty samples do not mean no
+findings. `detailsIncluded` identifies the selected output mode.
+
+When a count needs investigation, use `--topology-details` in place of
+`--topology`. It includes topology and at most eight items per detail category
+and nested sample. Request only the objects and frames needed to locate the
+problem. Both modes compute the same topology; summary mode reduces returned
+JSON rather than promising faster geometry analysis.
+
+An ordinary production Blender script can also use the installed observation
+helper when observations need to accompany an actual edit:
 
 ```python
 import json

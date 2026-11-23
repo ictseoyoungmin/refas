@@ -1,6 +1,7 @@
 """Opt-in native curve authoring and installed public-CLI regressions."""
 from __future__ import annotations
 
+import copy
 import hashlib
 import json
 import os
@@ -245,8 +246,13 @@ bpy.ops.object.convert(target='MESH')
 
     def test_standalone_curve_query_observes_actual_animation_without_persistent_files(self):
         before = {str(path.relative_to(self.root)) for path in self.root.rglob("*")}
-        result = self.cli("inspect", "--input-blend", self.source.name, "--object", "EditableBezier",
-                          "--frame", 1, "--frame", 5, "--topology", "--blender", BLENDER)
+        command = [sys.executable, "-B", self.skill / "scripts/produce.py", "inspect",
+                   "--input-blend", self.source.name, "--object", "EditableBezier",
+                   "--frame", 1, "--frame", 5, "--blender", BLENDER]
+        summary_output = self.invoke([*command, "--topology"])
+        detailed_output = self.invoke([*command, "--topology-details"])
+        result = json.loads(summary_output.stdout)
+        detailed = json.loads(detailed_output.stdout)
         self.assertFalse(result["persisted"])
         self.assertIsNone(result["revision"])
         self.assertEqual(result["nativeSha256"], self.source_sha)
@@ -258,7 +264,24 @@ bpy.ops.object.convert(target='MESH')
         for row in (a, b):
             self.assertGreater(row["mesh"]["triangles"], 0)
             self.assertEqual(row["topology"]["statistics"]["triangles"], row["mesh"]["triangles"])
-            self.assertTrue(all(len(detail["items"]) <= 8 for detail in row["topology"]["details"].values()))
+            self.assertGreater(row["topology"]["statistics"]["boundaryEdges"], 0)
+            self.assertIs(row["topology"]["detailsIncluded"], False)
+            for detail in row["topology"]["details"].values():
+                self.assertEqual(detail["items"], [])
+                self.assertEqual(detail["truncated"], detail["count"] > 0)
+        expected = copy.deepcopy(detailed)
+        for sample in expected["samples"]:
+            for row in sample["objects"]:
+                topology = row["topology"]
+                self.assertIs(topology["detailsIncluded"], True)
+                self.assertTrue(topology["details"]["boundaryEdges"]["items"])
+                self.assertTrue(all(len(detail["items"]) <= 8 for detail in topology["details"].values()))
+                topology["detailsIncluded"] = False
+                for detail in topology["details"].values():
+                    detail.update(items=[], truncated=detail["count"] > 0)
+        self.assertEqual(result, expected)
+        self.assertLess(len(summary_output.stdout.encode("utf-8")),
+                        len(detailed_output.stdout.encode("utf-8")) / 2)
         self.assertGreater(b["bounds"]["max"][2] - a["bounds"]["max"][2], .3)
         self.assertEqual(next(key["value"] for key in a["shapeKeys"] if key["name"] == "Bend"), 0)
         self.assertEqual(next(key["value"] for key in b["shapeKeys"] if key["name"] == "Bend"), 1)

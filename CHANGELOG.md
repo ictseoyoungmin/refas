@@ -4,6 +4,12 @@ All notable RefAs changes are documented here. RefAs follows semantic versioning
 
 ## 2.0.0-alpha.1 — Unreleased
 
+### Summary-first topology queries
+
+- Return complete topology counts without detail samples from CLI `inspect --topology`. Use `--topology-details` to request the previous bounded samples; omitted locations retain honest counts/truncation and an explicit output-mode marker.
+- Preserve existing Python and worker detail defaults, positional calls, source integrity and temporary-query cleanup. Keep the observation helper's public behavior unchanged.
+- Document the active skill's actual calls, guidance links, optional authoring APIs and removal impact in a repository-only component map, maintained with feature changes and included in development reports.
+
 ### Focused continuous integration
 
 - Validate regular changes on Node 22 and 24, keeping release preflight aligned with those job names. Retain the existing runtime compatibility declaration and explicit release authorization.

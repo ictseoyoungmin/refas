@@ -65,7 +65,8 @@ def parser():
     inspect_source.add_argument("--input-blend", help="Read a standalone native directly without creating a project or copying the model")
     inspect.add_argument("--object", action="append", default=[], help="Exact object name; repeat to select parts, omit for the scene")
     inspect.add_argument("--frame", type=int, action="append", default=[], help="Frame to sample; repeat as needed, omit for the saved frame")
-    inspect.add_argument("--topology", action="store_true", help="Include bounded mesh topology observations for the selected scope")
+    inspect.add_argument("--topology", action="store_true", help="Include complete topology counts without location samples")
+    inspect.add_argument("--topology-details", action="store_true", help="Include bounded topology detail samples (implies --topology)")
     inspect.add_argument("--blender", default="blender")
     inspect.add_argument("--timeout", type=float, default=180)
     inspect.add_argument("--expected-revision")
@@ -130,7 +131,7 @@ def main():
             output = inspect_native(args.root, objects=args.object, frames=args.frame, topology=args.topology,
                                     blender=args.blender, timeout=args.timeout,
                                     expected_revision=args.expected_revision, expected_sequence=args.expected_sequence,
-                                    input_blend=args.input_blend)
+                                    input_blend=args.input_blend, topology_details=args.topology_details)
         elif args.command == "import-v1":
             from production.legacy_import import import_v1
             output = import_v1(args.root, args.source_project, args.checkpoint, args.artifact, args.name,
