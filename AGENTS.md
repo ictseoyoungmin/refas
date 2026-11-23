@@ -59,6 +59,19 @@ with its recovery history and hand off one selected result with the necessary
 source resources. Report concise findings rather than repeatedly packaging
 every intermediate artifact.
 
+## Component maintenance and reporting
+
+Keep `docs/development/refas-2-skill-map.md` current when an installed file,
+public command, helper responsibility or guide relationship changes. Record
+its purpose, actual consumers and the callers, references, package entries and
+tests affected by removal. Distinguish runtime calls from guidance and optional
+authoring-script imports; an absent core import does not prove a helper unused.
+
+Development reports include a compact relationship diagram and explain which
+elements changed, why they are needed and what replacement/removal would affect.
+Keep this maintenance map outside the installed skill; do not add development
+history or another mandatory startup guide to the production instructions.
+
 ## Repository-owner standing authorization
 
 When authenticated as the repository owner and acting only within

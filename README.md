@@ -129,10 +129,18 @@ it reads the saved current frame. Choose either `--root` for the selected projec
 revision or `--input-blend` to read a standalone native without adopting or
 copying it. Standalone results identify the original path/hash, set `revision`
 to `null` and make no project reference-freshness claim; revision/sequence guards
-require `--root`. Topology observations are optional and do not
-establish scene-wide collision clearance or engine readiness. `deliver` exports
+require `--root`. `--topology` returns complete counts with empty detail samples;
+`--topology-details` implies topology and returns the existing bounded samples.
+Each category retains its count and truncation marker, and `detailsIncluded`
+identifies the output mode. Topology observations do not establish scene-wide
+collision clearance or engine readiness. `deliver` exports
 the current native without reapplying an earlier edit script. Use
 `run --outputs delivery` when finishing and export belong in one edit.
+
+Existing Python `inspect_native(..., topology=True)` calls and older worker jobs
+retain detailed output by default. The new keyword-only `topology_details=False`
+requests summaries; `True` requests topology with details. Existing positional
+arguments and the `audit_mesh` helper's defaults are unchanged.
 
 | CLI output mode | Retained model | Default requested views |
 | --- | --- | --- |
@@ -276,7 +284,10 @@ review images, not an automatically accelerated final-render pipeline.
 ## Development
 
 Read [CONTRIBUTING.md](CONTRIBUTING.md) and the
-[GitHub governance contract](docs/github-governance.md). Required closing checks:
+[GitHub governance contract](docs/github-governance.md). The
+[skill component map](docs/development/refas-2-skill-map.md) explains actual
+calls, guidance links, optional authoring APIs and change/removal checks.
+Required closing checks:
 
 ```bash
 npm test

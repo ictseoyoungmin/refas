@@ -720,8 +720,11 @@ def _temporary_observation(job, output_key, blender, timeout, executor=None):
 
 
 def inspect_native(root=None, objects=(), frames=(), topology=False, blender="blender", timeout=180,
-                   expected_revision=None, expected_sequence=None, executor=None, *, input_blend=None):
-    """Observe one managed revision or standalone native without adopting its bytes."""
+                   expected_revision=None, expected_sequence=None, executor=None, *, input_blend=None,
+                   topology_details=None):
+    """Observe native bytes; None preserves Python callers' historical detail mode."""
+    if topology_details is not None and type(topology_details) is not bool:
+        raise ProductionError("topology_details must be boolean or None")
     if (root is None) == (input_blend is None):
         raise ProductionError("inspect requires exactly one of root or input_blend")
     if input_blend is not None:
@@ -747,7 +750,9 @@ def inspect_native(root=None, objects=(), frames=(), topology=False, blender="bl
     if any(type(frame) is not int for frame in frames) or len(set(frames)) != len(frames):
         raise ProductionError("query frames must be unique integers")
     before = digest(native)
-    job = {"operation": "query", "baseBlend": str(native), "queryTopology": bool(topology)}
+    job = {"operation": "query", "baseBlend": str(native),
+           "queryTopology": bool(topology) or topology_details is True,
+           "queryTopologyDetails": True if topology_details is None else topology_details}
     if objects:
         job["queryObjects"] = objects
     if frames:

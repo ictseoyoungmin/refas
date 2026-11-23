@@ -1,6 +1,7 @@
 """Opt-in Blender coverage for native iteration, protection and read-only queries."""
 from __future__ import annotations
 
+import copy
 import hashlib
 import json
 import os
@@ -139,8 +140,23 @@ bpy.context.scene.frame_set(5)
         self.assertEqual(b["matrixWorld"][2][3] - a["matrixWorld"][2][3], 1)
         self.assertEqual(a["topology"]["statistics"]["triangles"], 12)
         self.assertEqual(a["topology"]["statistics"]["boundaryEdges"], 0)
+        self.assertIs(a["topology"]["detailsIncluded"], True)
+        self.assertTrue(a["topology"]["details"]["components"]["items"])
         self.assertTrue(all(len(detail["items"]) <= 8 for detail in a["topology"]["details"].values()))
         self.assertEqual(sorted(p.name for p in (self.root / "query").iterdir()), ["query.json", "result.json"])
+
+        self.job("query-summary", operation="query", baseBlend=str(self.source),
+                 queryObjects=["Editable"], queryFrames=[1, 5], queryTopology=True,
+                 queryTopologyDetails=False)
+        summary = json.loads((self.root / "query-summary/query.json").read_text())
+        expected = copy.deepcopy(query)
+        for sample in expected["samples"]:
+            for row in sample["objects"]:
+                row["topology"]["detailsIncluded"] = False
+                for detail in row["topology"]["details"].values():
+                    detail.update(items=[], truncated=detail["count"] > 0)
+        self.assertEqual(summary, expected)
+        self.assertEqual(sorted(p.name for p in (self.root / "query-summary").iterdir()), ["query.json", "result.json"])
         self.assertEqual(sha(self.source), self.source_sha)
 
     def test_query_default_and_invalid_exact_selection(self):
@@ -149,9 +165,23 @@ bpy.context.scene.frame_set(5)
         self.assertEqual(query["objectNames"], ["Editable", "Protected"])
         self.assertEqual(len(query["samples"]), 1)
         self.assertNotIn("topology", query["samples"][0]["objects"][0])
+        self.job("query-details-without-topology", operation="query", baseBlend=str(self.source),
+                 queryTopology=False, queryTopologyDetails=True)
+        explicit = json.loads((self.root / "query-details-without-topology/query.json").read_text())
+        self.assertEqual(explicit, query)
         output = self.job("query-missing", expect_success=False, operation="query", baseBlend=str(self.source),
                           queryObjects=["Edit"])
         self.assertIn("queryObjects names missing", output)
+        self.assertEqual(sha(self.source), self.source_sha)
+
+    def test_query_rejects_nonboolean_worker_detail_choices(self):
+        for index, value in enumerate((None, 0, 1, 0.0, "true", [])):
+            name = "query-invalid-details-" + str(index)
+            with self.subTest(value=value):
+                output = self.job(name, expect_success=False, operation="query", baseBlend=str(self.source),
+                                  queryTopology=True, queryTopologyDetails=value)
+                self.assertIn("queryTopologyDetails must be boolean", output)
+                self.assertFalse((self.root / name / "query.json").exists())
         self.assertEqual(sha(self.source), self.source_sha)
 
     def test_export_preflight_has_no_model_outputs(self):
@@ -188,6 +218,8 @@ bpy.context.scene.frame_set(5)
         self.assertEqual([sample["frame"] for sample in observed["samples"]], [1, 5])
         self.assertEqual(last["matrixWorld"][2][3] - first["matrixWorld"][2][3], 1)
         self.assertEqual(first["topology"]["statistics"]["triangles"], 12)
+        self.assertIs(first["topology"]["detailsIncluded"], False)
+        self.assertTrue(all(not detail["items"] for detail in first["topology"]["details"].values()))
         self.assertEqual(sha(self.source), self.source_sha)
         self.assertEqual({str(path.relative_to(self.root)) for path in self.root.rglob("*")}, before)
         self.assertEqual(list(temporary.iterdir()), [])

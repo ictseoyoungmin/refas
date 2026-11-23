@@ -286,6 +286,57 @@ class ProductionResourceTests(unittest.TestCase):
         self.assertTrue(all(not directory.exists() for directory in directories))
         self.assertEqual(project.inventory(self.meta), before)
 
+    def test_inspection_cli_uses_summaries_unless_details_are_requested(self):
+        cases = [((), False, False), (("--topology",), True, False),
+                 (("--topology-details",), False, True),
+                 (("--topology", "--topology-details"), True, True)]
+        for flags, topology, details in cases:
+            with self.subTest(flags=flags), mock.patch.object(produce.sys, "argv", [
+                    "produce.py", "inspect", "--input-blend", "candidate.blend", *flags]), \
+                    mock.patch.object(produce, "inspect_native", return_value={}) as inspect, \
+                    contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(produce.main(), 0)
+            inspect.assert_called_once()
+            self.assertIs(inspect.call_args.kwargs["topology"], topology)
+            self.assertIs(inspect.call_args.kwargs["topology_details"], details)
+
+    def test_inspection_api_preserves_positional_calls_and_routes_detail_choice(self):
+        first = self.edit()
+        before = project.inventory(self.meta)
+        jobs = []
+        directories = []
+        def observe(command, cwd, *args):
+            jobs.append(project.read_json(command[-1]))
+            directories.append(Path(cwd))
+            return self.observation_worker(command, cwd, *args)
+
+        # The existing positional signature, including the executor, stays valid.
+        legacy = project.inspect_native(self.root, ["Selected"], [1, 5], True, "blender", 180,
+                                        first["head"], first["sequence"], observe)
+        self.assertEqual(legacy["revision"], first["head"])
+        self.assertIs(jobs[-1]["queryTopology"], True)
+        self.assertIs(jobs[-1].get("queryTopologyDetails", True), True)
+        for topology, choice, expected_topology, expected_details in [
+                (True, None, True, True), (True, False, True, False),
+                (False, True, True, True), (False, False, False, False)]:
+            with self.subTest(topology=topology, details=choice):
+                project.inspect_native(self.root, topology=topology, topology_details=choice,
+                                       executor=observe)
+                self.assertIs(jobs[-1]["queryTopology"], expected_topology)
+                self.assertIs(jobs[-1].get("queryTopologyDetails", True), expected_details)
+        self.assertTrue(all(not directory.exists() for directory in directories))
+        self.assertEqual(project.inventory(self.meta), before)
+
+    def test_inspection_api_rejects_nonboolean_detail_choices_before_execution(self):
+        self.edit()
+        before = project.inventory(self.meta)
+        worker = mock.Mock(side_effect=AssertionError("invalid details reached worker"))
+        for value in (0, 1, -1, 0.0, 1.5, "true", "false", [], {}):
+            with self.subTest(value=value), self.assertRaisesRegex(project.ProductionError, "topology_details"):
+                project.inspect_native(self.root, topology=True, topology_details=value, executor=worker)
+        worker.assert_not_called()
+        self.assertEqual(project.inventory(self.meta), before)
+
     def test_query_rejects_unbound_output_and_retains_no_failure_bundle(self):
         self.edit()
         before = project.inventory(self.meta)

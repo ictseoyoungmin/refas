@@ -8,7 +8,36 @@ The user approved implementation of the new production path, starting from `main
 
 This is development work. Active package/Python runtime/plugin identity is `2.0.0-alpha.1`; the retained legacy runtime remains `1.4.2`. The recorded published release remains `v1.4.1`. Main merge and formal publication are separate unfinished milestones.
 
-## Current: focused CI validation
+## Current: summary-first topology queries and skill relationships
+
+[Issue #410](https://github.com/ictseoyoungmin/refas/issues/410) starts from
+`rewrite/v2@7e77432d`, after [CI PR #409](https://github.com/ictseoyoungmin/refas/pull/409),
+on `feat/topology-summaries`. CLI `inspect --topology` retains complete counts
+and honest truncation while omitting location samples; `--topology-details`
+implies topology and retains the previous bounded detail. Existing Python and
+raw-worker defaults remain detailed. The query still uses temporary storage,
+checks native identity and creates no revision, render or permanent report.
+
+The baseline installed two-cable query emits 53,017 UTF-8 stdout bytes. The
+feature PR records the actual final comparison and source-hash checks; this
+change reduces returned JSON rather than claiming faster topology computation.
+The [skill component map](development/refas-2-skill-map.md) records file purpose,
+actual imports/calls, guidance, optional authoring APIs and removal dependencies.
+Stable repository instructions require keeping that map and report diagrams
+current. No extra installed module or startup guide is introduced.
+
+The preceding CI feature passes 944 JavaScript tests and all required local
+gates. Its [feature CI](https://github.com/ictseoyoungmin/refas/actions/runs/45196831354)
+uses Node 22/24 and skips legacy JIT in ordinary PRs. In the observed pair,
+Node 24's log span changed from 235.497 to 196.773 seconds while JavaScript
+time varied; this is not a universal speedup. Main/full-QA/deep JIT is retained.
+
+The acceptance ledger remains **30/37 = 81%**. U1/U2/U3/U6/E2/D2/D3 and the
+retained garment's existing fitting failures remain open; no geometry is edited
+by this capability change. Final source, package and remote checks belong to
+the feature PR. Completed branch deletion remains with the user.
+
+## Previous: focused CI validation
 
 [Issue #408](https://github.com/ictseoyoungmin/refas/issues/408) starts from
 `rewrite/v2@4b82be48` on `ci/focused-validation`. Regular CI uses Node 22/24;

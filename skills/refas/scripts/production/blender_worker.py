@@ -768,6 +768,7 @@ def require_protected(expected, frame):
 def query_native(job, source_sha):
     """Read selected native samples without building delivery or render artifacts."""
     scene = bpy.context.scene
+    topology_details = job.get("queryTopologyDetails", True)
     names = job.get("queryObjects")
     if names is None:
         names = sorted(obj.name for obj in scene.objects)
@@ -817,11 +818,14 @@ def query_native(job, source_sha):
                     row["bounds"] = bounds([obj], depsgraph)
                     if job.get("queryTopology", False):
                         from mesh_audit import audit_mesh
-                        audit = audit_mesh(obj, depsgraph=depsgraph, meters_per_unit=units["scaleLength"], max_details=8)
+                        audit = audit_mesh(obj, depsgraph=depsgraph, meters_per_unit=units["scaleLength"],
+                                           max_details=8 if topology_details else 1)
                         row["topology"] = {key: audit[key] for key in
                             ("schema", "scope", "metersPerUnit", "lengthToleranceM", "statistics", "limitations")}
-                        row["topology"]["details"] = {key: value for key, value in audit.items()
-                                                       if isinstance(value, dict) and "truncated" in value}
+                        row["topology"]["detailsIncluded"] = topology_details
+                        row["topology"]["details"] = {
+                            key: value if topology_details else {**value, "items": [], "truncated": value["count"] > 0}
+                            for key, value in audit.items() if isinstance(value, dict) and "truncated" in value}
                 rows.append(row)
             result["samples"].append({"frame": frame, "subframe": number(subframe), "objects": rows})
     finally:
@@ -863,6 +867,8 @@ def validate_job(job):
         raise ValueError("queryFrames must be a nonempty list of unique integers")
     if type(job.get("queryTopology", False)) is not bool:
         raise ValueError("queryTopology must be boolean")
+    if type(job.get("queryTopologyDetails", True)) is not bool:
+        raise ValueError("queryTopologyDetails must be boolean")
     if job["operation"] in {"query", "preflight"} and (job.get("views") or job.get("reviewSpec") or job.get("script")):
         raise ValueError("query and preflight do not run scripts, save models or render views")
     out = Path(job["outputDir"])
