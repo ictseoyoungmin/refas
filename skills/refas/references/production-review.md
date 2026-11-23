@@ -68,6 +68,39 @@ before review, and match viewport/render modifier visibility and enabled
 subdivision levels. The runner rejects these mismatches before export or
 observation; fixed cameras cannot compensate for comparing different meshes.
 
+## Optional coverage preservation check
+
+Compare two committed revisions captured with the same transparent review:
+
+```bash
+python3 scripts/produce.py compare --root PROJECT --baseline BEFORE_ID \
+  --candidate AFTER_ID --view front --regions REGIONS_JSON
+```
+
+Declare nonoverlapping top-left pixel rectangles before comparing. Right/bottom
+bounds are exclusive. Example for a 512-pixel view:
+
+```json
+{"regions":[
+  {"name":"edit","role":"target","rectPixels":[0,0,256,512]},
+  {"name":"keep","role":"protected","rectPixels":[256,0,512,512],
+   "maxChangedPixels":4}
+]}
+```
+
+Choose tolerances for the task and capture noise; four pixels is not a default.
+At least one protected region is required. Alpha >=0.5 defines coverage,
+including material transparency. RGB, surface detail, contour displacement and
+hidden geometry are unmeasured. The image limit is 1,048,576 pixels.
+
+JSON reports IoU, added/removed pixels and changed bounds.
+`decision` uses only protected changed-pixel limits: `protected-regression` or
+`within-protected-limits`; an empty whole image is `inconclusive` unless a
+protected violation exists. Exit zero means measurement completed. Capture or
+source mismatches are errors. No revision, render, baseline promotion or report
+file is created. Target improvement, uncovered pixels and whole-asset quality
+remain unapproved; inspect the images and native target requirement separately.
+
 ## Compare design, defects and use
 
 Inspect the complete original before source-region close-ups. Compare the

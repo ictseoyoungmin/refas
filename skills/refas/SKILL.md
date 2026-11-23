@@ -99,6 +99,8 @@ The compact JSON describes the requested objects and frames; omit object selecti
 
 For before/after comparison, keep the camera and lighting fixed. Pass `--review-spec REVIEW_JSON` to capture explicit orthographic views and a fixed light rig with the revision; omit `--views` to render all views in that file. Read `references/production-review.md` when defining those views. The default views frame the current bounding box and can move when geometry changes. Neither route establishes registration to the source image.
 
+Optional `compare` measures coverage changes in fixed transparent views and explicit regions. Read the review guide for limits; it never approves target improvement or promotes a baseline.
+
 Each `run` captures its starting asset, script and supplied render/review options and records fresh outputs together. Pass the desired options on each run; prior options are not implicit defaults. External originals can change without altering their captured historical copies.
 
 Native `run` submissions accept portable scenes with visible meshes and classic `CURVE` objects, explicitly marked construction meshes, editable `LATTICE` control cages and packed still-image textures. Link cages to the scene and keep them enabled and visible in the active view layer; a cage may have `hide_render` set because it is not a renderable surface. Unmarked hidden mesh/curve geometry, disabled or excluded construction sources, text (`FONT`), `SURFACE`, modern hair `CURVES` and object instances remain unsupported; convert or realize them explicitly before submission. Temporary `inspect` queries can describe other object types without approving them for submission.
