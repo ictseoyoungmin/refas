@@ -31,11 +31,13 @@ def parser():
     selection.add_argument("--clear", action="store_true", help="Explicitly adopt an empty reference set")
     references.add_argument("--expected-revision", help="Also require the current model revision; use none before the first run")
     references.add_argument("--expected-sequence", type=int, required=True, help="Require the sequence returned by status")
-    run = commands.add_parser("run", help="Apply a Python modeling script to a copy of the current native asset")
+    run = commands.add_parser("run", help="Apply a modeling script to the current native or an explicit starting asset")
     run.add_argument("--root", required=True)
     run.add_argument("--script", required=True)
     run.add_argument("--intent", required=True)
-    run.add_argument("--input-blend", help="Explicitly import a separately saved manual edit")
+    run_source = run.add_mutually_exclusive_group()
+    run_source.add_argument("--input-blend", help="Use a separately saved native scene as the complete starting asset")
+    run_source.add_argument("--input-glb", help="Use a self-contained GLB as the complete starting scene for editing")
     run.add_argument("--blender", default="blender")
     run.add_argument("--views", help="Comma-separated views; native defaults to hero, delivery to hero,side, or all supplied review views; empty skips previews")
     run.add_argument("--review-spec", help="Capture fixed orthographic cameras and lighting from a review JSON file")
@@ -120,7 +122,8 @@ def main():
                               [view.strip() for view in args.views.split(",") if view.strip()] if args.views is not None else None,
                               args.size, args.samples, args.timeout, args.expected_revision, review_spec=args.review_spec,
                               expected_sequence=args.expected_sequence, output_profile=args.outputs,
-                              protected_objects=args.protect_object, keep_diagnostics=args.keep_diagnostics)
+                              protected_objects=args.protect_object, keep_diagnostics=args.keep_diagnostics,
+                              input_glb=args.input_glb)
         elif args.command == "deliver":
             output = deliver(args.root, blender=args.blender,
                              views=[view.strip() for view in args.views.split(",") if view.strip()] if args.views is not None else None,

@@ -1,6 +1,7 @@
 """Host resource/transaction contracts; synthetic worker results are not asset approval."""
 import contextlib
 import io
+from inspect import signature
 import json
 from pathlib import Path
 import shutil
@@ -9,6 +10,7 @@ import unittest
 from unittest import mock
 
 from test_production_project import fake_worker
+from test_production_import import glb_bytes
 from production import project
 import produce
 
@@ -59,6 +61,157 @@ class ProductionResourceTests(unittest.TestCase):
         result = project.run_edit(self.root, self.script, "old API", executor=fake_worker, views=[])
         self.assertEqual(result["outputProfile"], "delivery")
         self.assertIn("glb", result["outputs"])
+
+    def test_run_cli_selects_one_explicit_native_or_glb_source(self):
+        command = ["run", "--root", "project", "--script", "edit.py", "--intent", "edit asset"]
+        for flags, native, glb in [([], None, None), (["--input-blend", "source.blend"], "source.blend", None),
+                                   (["--input-glb", "source.glb"], None, "source.glb")]:
+            with self.subTest(flags=flags), mock.patch.object(produce.sys, "argv", ["produce.py", *command, *flags]), \
+                    mock.patch.object(produce, "run_edit", return_value={}) as edit, \
+                    contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(produce.main(), 0)
+            edit.assert_called_once()
+            bound = signature(project.run_edit).bind(*edit.call_args.args, **edit.call_args.kwargs)
+            bound.apply_defaults()
+            self.assertEqual(bound.arguments["input_blend"], native)
+            self.assertEqual(bound.arguments["input_glb"], glb)
+            self.assertEqual(bound.arguments["output_profile"], "native")
+        with contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit) as rejected:
+            produce.parser().parse_args([*command, "--input-blend", "source.blend", "--input-glb", "source.glb"])
+        self.assertEqual(rejected.exception.code, 2)
+
+    def test_glb_input_is_frozen_then_continued_and_restored_as_native(self):
+        accepted = self.edit()
+        accepted_bundle = project.inventory(self.meta / "revisions" / accepted["head"])
+        source = self.folder / "editable input.glb"
+        original = glb_bytes({"asset": {"version": "2.0"}, "extras": {"source": "external asset"}})
+        source.write_bytes(original)
+        observed = []
+        def worker(command, *args):
+            job = project.read_json(command[-1])
+            observed.append((job, Path(job.get("baseGlb") or job["baseBlend"]).read_bytes()))
+            return fake_worker(command, *args)
+        self.script.write_text("# modify imported asset\n")
+        imported = self.edit(input_glb=source, executor=worker, protected_objects=["RetainedImportedPart"],
+                             expected_revision=accepted["head"], expected_sequence=accepted["sequence"])
+        imported_revision = project.load_revision(self.root)
+        job, captured = observed[0]
+        self.assertIsNone(job.get("baseBlend"))
+        self.assertNotEqual(Path(job["baseGlb"]), source)
+        self.assertEqual(captured, original)
+        self.assertEqual(job["protectedObjects"], ["RetainedImportedPart"])
+        self.assertEqual(Path(imported["inputs"]["base.glb"]).read_bytes(), original)
+        self.assertNotIn("base.blend", imported["inputs"])
+        self.assertNotIn("glb", imported["outputs"])
+        self.assertEqual(imported_revision["parent"], accepted["head"])
+        self.assertEqual(imported_revision["kind"], "edit")
+        self.assertNotIn("migration", imported_revision)
+        imported_native = Path(imported["outputs"]["blend"]).read_bytes()
+        self.script.write_text("# continue editing the imported native\n")
+        self.edit(executor=worker)
+        self.assertIsNone(observed[1][0].get("baseGlb"))
+        self.assertEqual(observed[1][1], imported_native)
+        restored = project.restore(self.root, imported["head"])
+        restored_revision = project.load_revision(self.root)
+        self.assertEqual(restored_revision["inputs"], imported_revision["inputs"])
+        self.assertEqual(restored_revision["artifacts"], imported_revision["artifacts"])
+        self.assertEqual(Path(restored["inputs"]["base.glb"]).read_bytes(), original)
+        self.assertEqual(source.read_bytes(), original)
+        self.assertEqual(project.inventory(self.meta / "revisions" / accepted["head"]), accepted_bundle)
+        self.assertTrue(project.verify_project(self.root)["ok"])
+
+    def test_run_preserves_old_positional_arguments_and_rejects_mixed_input_sources(self):
+        source = self.folder / "input.glb"
+        source.write_bytes(glb_bytes())
+        native = self.folder / "manual.blend"
+        native.write_bytes(b"BLENDER-manual-fixture")
+        before = project.inventory(self.meta)
+        refused = mock.Mock(side_effect=AssertionError("ambiguous source reached worker"))
+        for options in ({"input_blend": native, "input_glb": source},
+                        {"input_glb": source, "_import_bundle": (self.folder, [])}):
+            with self.subTest(options=options), self.assertRaises(project.ProductionError):
+                self.edit(executor=refused, **options)
+        refused.assert_not_called()
+        self.assertEqual(project.inventory(self.meta), before)
+        jobs = []
+        def worker(command, *args):
+            jobs.append(project.read_json(command[-1]))
+            return fake_worker(command, *args)
+        # Every pre-existing positional argument, including protection and diagnostics, stays in place.
+        result = project.run_edit(self.root, self.script, "old positional API", "blender", native, [],
+                                  64, 1, 180, "none", worker, None, 0, None, "native", ["Kept"], False)
+        self.assertEqual(result["outputProfile"], "native")
+        self.assertEqual(Path(result["inputs"]["base.blend"]).read_bytes(), native.read_bytes())
+        self.assertIsNone(jobs[0].get("baseGlb"))
+        self.assertEqual(jobs[0]["protectedObjects"], ["Kept"])
+
+    def test_invalid_glb_inputs_fail_before_execution_and_preserve_the_current_revision(self):
+        accepted = self.edit()
+        accepted_bundle = project.inventory(self.meta / "revisions" / accepted["head"])
+        malformed = self.folder / "malformed.glb"
+        malformed.write_bytes(b"not a GLB container")
+        external = self.folder / "external-resource.glb"
+        external.write_bytes(glb_bytes({"asset": {"version": "2.0"}, "images": [{"uri": "outside.png"}]}))
+        worker = mock.Mock(side_effect=AssertionError("invalid GLB reached worker"))
+        for source in (self.folder / "missing.glb", self.folder, malformed, external):
+            with self.subTest(source=source), self.assertRaises(project.ProductionError):
+                self.edit(input_glb=source, executor=worker)
+            self.assertEqual(project.status(self.root)["head"], accepted["head"])
+            self.assertEqual(project.status(self.root)["sequence"], accepted["sequence"])
+        worker.assert_not_called()
+        self.assertEqual(project.inventory(self.meta / "revisions" / accepted["head"]), accepted_bundle)
+
+    def test_glb_capture_race_tampering_and_worker_failure_never_publish(self):
+        accepted = self.edit()
+        accepted_bundle = project.inventory(self.meta / "revisions" / accepted["head"])
+        source = self.folder / "input.glb"
+        original = glb_bytes()
+        source.write_bytes(original)
+        copy = project.shutil.copy2
+        def changed_during_capture(origin, target, *args, **kwargs):
+            result = copy(origin, target, *args, **kwargs)
+            if Path(origin) == source:
+                source.write_bytes(glb_bytes({"asset": {"version": "2.0"}, "extras": {"changed": True}}))
+            return result
+        refused = mock.Mock(side_effect=AssertionError("changing input reached worker"))
+        with mock.patch.object(project.shutil, "copy2", side_effect=changed_during_capture), \
+                self.assertRaises(project.ProductionError):
+            self.edit(input_glb=source, executor=refused)
+        refused.assert_not_called()
+        self.assertEqual(project.status(self.root)["head"], accepted["head"])
+        for failure in ("captured-input-tamper", "worker-failure"):
+            source.write_bytes(original)
+            captured_paths = []
+            def fail(command, *args):
+                captured = Path(project.read_json(command[-1])["baseGlb"])
+                captured_paths.append(captured)
+                elapsed = fake_worker(command, *args)
+                if failure == "captured-input-tamper":
+                    captured.write_bytes(b"altered frozen input")
+                    return elapsed
+                raise project.ProductionError("intentional GLB worker failure")
+            with self.subTest(failure=failure), self.assertRaises(project.ProductionError):
+                self.edit(input_glb=source, executor=fail)
+            self.assertEqual(project.status(self.root)["head"], accepted["head"])
+            self.assertEqual(project.status(self.root)["sequence"], accepted["sequence"])
+            self.assertEqual(captured_paths[0].read_bytes(),
+                             b"altered frozen input" if failure == "captured-input-tamper" else original)
+            self.assertEqual(project.read_json(captured_paths[0].parents[1] / "run.json")["status"], "failed")
+            self.assertEqual(source.read_bytes(), original)
+        self.assertEqual(project.inventory(self.meta / "revisions" / accepted["head"]), accepted_bundle)
+        self.assertTrue(project.verify_project(self.root)["ok"])
+
+    def test_external_glb_changes_after_capture_do_not_replace_frozen_inputs(self):
+        source = self.folder / "input.glb"
+        original = glb_bytes()
+        source.write_bytes(original)
+        def changed_after_capture(command, *args):
+            source.write_bytes(b"externally changed after capture")
+            return fake_worker(command, *args)
+        result = self.edit(input_glb=source, executor=changed_after_capture)
+        self.assertEqual(Path(result["inputs"]["base.glb"]).read_bytes(), original)
+        self.assertEqual(source.read_bytes(), b"externally changed after capture")
+        self.assertTrue(project.verify_project(self.root)["ok"])
 
     def test_success_transfers_payload_once_and_diagnostics_are_opt_in(self):
         native = self.edit()

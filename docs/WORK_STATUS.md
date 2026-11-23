@@ -8,10 +8,35 @@ The user approved implementation of the new production path, starting from `main
 
 This is development work. Active package/Python runtime/plugin identity is `2.0.0-alpha.1`; the retained legacy runtime remains `1.4.2`. The recorded published release remains `v1.4.1`. Main merge and formal publication are separate unfinished milestones.
 
-## Current: current skill guidance and historical documentation
+## Current: ordinary GLB authoring input
 
-[Issue #412](https://github.com/ictseoyoungmin/refas/issues/412) starts from
-`rewrite/v2@19935327` on `refactor/current-skill-docs`. The installed adapter is
+[Issue #414](https://github.com/ictseoyoungmin/refas/issues/414) starts from
+`rewrite/v2@e8dfa5d8` on `feat/glb-authoring-input`. Public `run --input-glb`
+captures a self-contained GLB and applies the requested modeling script through
+the existing native revision workflow. The selected file supplies the complete
+starting scene; it is not appended to the current native. Omitting both explicit
+input flags continues the current native, or starts empty before the first run.
+
+The shared asset format checks reject invalid containers and external buffer or
+image dependencies. Capture verifies the original/copy identity; subsequent
+worker execution uses frozen captured bytes and checks their inventory before
+publication. Existing object protection, failure retention, source provenance,
+explicit delivery and exact revision restore remain the same paths. The new
+Python argument is keyword-only so old positional callers remain valid.
+
+This gives ordinary reusable assets an immediate modeling entry without a
+saved-project adapter, new installed module or new report/schema. GLB cannot
+recover authoring data absent from its contents. Actual installed-use edits,
+matched renders, protected neighbors and restoration are checked in the feature
+PR; they do not establish whole-character or general lossless-import acceptance.
+The fixed ledger stays **30/37 = 81%**, with U1/U2/U3/U6/E2/D2/D3 open and the
+retained garment unchanged.
+
+## Previous: current skill guidance and historical documentation
+
+[Issue #412](https://github.com/ictseoyoungmin/refas/issues/412) was completed in
+[PR #413](https://github.com/ictseoyoungmin/refas/pull/413), merged into
+`rewrite/v2@e8dfa5d8`. The installed adapter is
 now named `asset_import.py` for its current responsibility. Its implementation,
 explicit `import-v1` command and stored migration contracts remain unchanged.
 General entry guidance focuses on authoring; saved 1.x inputs retain their
@@ -28,11 +53,12 @@ or modified payload. File counts and all file/path/binary/size limits remain;
 copies, edited docs and evidence/output paths receive no relocation exemption.
 The feature and cumulative parent ranges must both pass before merge.
 
-The next authoring capability is a public `run --input-glb` route for editing an
-ordinary asset directly into the existing native revision workflow. It belongs
-to a separate feature change after this repository cleanup. No asset is edited
-by the cleanup; **30/37 = 81%** and U1/U2/U3/U6/E2/D2/D3 remain open. Final
-verification and package/source measurements are recorded in the feature PR.
+The cleanup passes 948 JavaScript tests, required local gates and three focused
+actual Blender import checks. Its package has 20 files / 245,882 unpacked bytes.
+Post-merge Production, artifact and Node 22/24 CI pass. All 1,193 existing
+evidence files retain their paths and bytes. No asset is edited by the cleanup;
+**30/37 = 81%** and U1/U2/U3/U6/E2/D2/D3 remain open. Final verification and
+source measurements are recorded in the feature PR.
 
 ## Previous: summary-first topology queries and skill relationships
 

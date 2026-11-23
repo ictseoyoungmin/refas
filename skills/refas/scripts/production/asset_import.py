@@ -1,4 +1,4 @@
-"""Explicit, read-only adoption of one archived 1.x artifact into production."""
+"""Asset format checks and explicit saved-project adoption into production."""
 from __future__ import annotations
 
 import json
@@ -39,39 +39,39 @@ def _asset_format(path, suffix):
         header = stream.read(20)
         if suffix == ".blend":
             if header[:7] != b"BLENDER":
-                raise ProductionError("legacy native input must be an uncompressed .blend file")
+                raise ProductionError("native input must be an uncompressed .blend file")
             return "native", None
         if (len(header) != 20 or header[:4] != b"glTF" or
                 int.from_bytes(header[4:8], "little") != 2 or
                 int.from_bytes(header[8:12], "little") != path.stat().st_size or header[16:20] != b"JSON"):
-            raise ProductionError("legacy artifact is not a valid GLB 2 container")
+            raise ProductionError("asset is not a valid GLB 2 container")
         length = int.from_bytes(header[12:16], "little")
         if not 1 <= length <= MAX_MANIFEST_BYTES or 20 + length > path.stat().st_size:
-            raise ProductionError("legacy GLB JSON chunk is missing or oversized")
+            raise ProductionError("GLB JSON chunk is missing or oversized")
         payload = stream.read(length)
     try:
         document = json.loads(payload)
     except (UnicodeError, ValueError) as exc:
-        raise ProductionError("invalid legacy GLB JSON") from exc
+        raise ProductionError("invalid GLB JSON") from exc
     if (not isinstance(document, dict) or not isinstance(document.get("asset"), dict) or
             document["asset"].get("version") != "2.0"):
-        raise ProductionError("legacy GLB must declare glTF 2.0")
+        raise ProductionError("GLB must declare glTF 2.0")
     buffers, images = document.get("buffers", []), document.get("images", [])
     if not isinstance(buffers, list) or not isinstance(images, list):
-        raise ProductionError("invalid legacy GLB resource records")
+        raise ProductionError("invalid GLB resource records")
     for record in buffers + images:
         if not isinstance(record, dict):
-            raise ProductionError("invalid legacy GLB resource record")
+            raise ProductionError("invalid GLB resource record")
         uri = record.get("uri")
         if uri is not None and (not isinstance(uri, str) or not uri.startswith("data:")):
-            raise ProductionError("legacy GLB must embed its buffers and images; external resources are not captured")
+            raise ProductionError("GLB must embed its buffers and images; external resources are not captured")
     extensions = {key: document.get(key, []) for key in ("extensionsUsed", "extensionsRequired")}
     for names in extensions.values():
         if (not isinstance(names, list) or any(not isinstance(name, str) or not name for name in names) or
                 len(names) != len(set(names))):
-            raise ProductionError("invalid legacy GLB extension declarations")
+            raise ProductionError("invalid GLB extension declarations")
     if not set(extensions["extensionsRequired"]).issubset(extensions["extensionsUsed"]):
-        raise ProductionError("required legacy GLB extensions must also be declared as used")
+        raise ProductionError("required GLB extensions must also be declared as used")
     return "glb", extensions
 
 
