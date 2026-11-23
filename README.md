@@ -235,14 +235,27 @@ and approval system.
 
 ## Verified scope and limitations
 
-Native and delivery submissions both require supported visible meshes and
-packed still-image textures. Convert curves/text to meshes and realize instances
-first. Match viewport/render modifier visibility and subdivision levels.
-Temporary `inspect` queries can describe other object types without approving
-them for submission. Delivery additionally requires applying non-armature
-modifiers on skinned or shape-key meshes. Unsupported scopes fail explicitly; procedural appearances
-may need baking for the GLB target. Native source retention alone does not prove
-animation, simulation, skin deformation or target-engine acceptance.
+Native submissions support visible meshes and classic Blender `CURVE` objects
+with Bezier, POLY or NURBS splines. Native save/reopen, rendering, protection and
+temporary inspection retain recorded curve controls, settings, shape keys and
+materials; topology observations use the evaluated surface. Match curve
+`render_resolution_u` to the non-POLY splines' `resolution_u`, or use `0`
+to reuse their viewport resolution.
+
+Delivery remains mesh-only and refuses unconverted curves. Explicitly convert
+the selected final curves through ordinary Blender scripting in a recoverable
+`run --outputs delivery`. A current-frame conversion does not preserve curve
+shape-key or geometry animation; deliberately bake or rebuild required motion
+and verify exported playback. See the [curve delivery guide](skills/refas/references/production-topology.md#keep-curve-controls-until-mesh-delivery).
+
+Scenes still require packed still-image textures. Hidden/excluded geometry,
+text (`FONT`), `SURFACE`, modern hair `CURVES` and instances remain unsupported;
+convert or realize them before submission. Match viewport/render modifier
+visibility and subdivision levels. Temporary `inspect` can describe other
+object types without approving them for submission. Delivery additionally
+requires applying non-armature modifiers on skinned or shape-key meshes.
+Procedural appearances may need baking for GLB. Native source retention alone
+does not prove animation, simulation, skin deformation or target-engine acceptance.
 
 The [uniform-jacket](examples/uniform-jacket/) and
 [automail](examples/automail-arm/) cases retain real source images, scripts,

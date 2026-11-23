@@ -204,15 +204,15 @@ class ProductionBlenderTests(unittest.TestCase):
         self.assertEqual(a["framing"], "fixed-review-spec")
         self.assertEqual(sha(self.source), self.source_sha)
 
-    def test_inspection_rejects_curves_instead_of_silently_omitting_them(self):
-        source = self.root / "native-with-curve.blend"
-        script = self.root / "native-with-curve.py"
+    def test_inspection_rejects_text_instead_of_silently_omitting_it(self):
+        source = self.root / "native-with-text.blend"
+        script = self.root / "native-with-text.py"
         script.write_text('''import bpy
 bpy.ops.wm.read_factory_settings(use_empty=True)
 bpy.ops.mesh.primitive_cube_add()
-bpy.ops.curve.primitive_bezier_circle_add(radius=2)
-bpy.context.object.name = "VisiblePiping"
-bpy.context.object.data.bevel_depth = 0.1
+bpy.ops.object.text_add()
+bpy.context.object.name = "VisibleLettering"
+bpy.context.object.data.extrude = 0.1
 bpy.ops.wm.save_as_mainfile(filepath=''' + repr(str(source)) + ''')
 ''')
         built = subprocess.run([str(BLENDER), "-b", "--factory-startup", "--threads", "2",
@@ -220,11 +220,11 @@ bpy.ops.wm.save_as_mainfile(filepath=''' + repr(str(source)) + ''')
                                capture_output=True, text=True, timeout=60)
         self.assertEqual(built.returncode, 0, built.stdout[-2000:])
         original = sha(source)
-        result = self.run_job("inspect-curve", expect_success=False, operation="inspect",
+        result = self.run_job("inspect-text", expect_success=False, operation="inspect",
                               baseBlend=str(source), views=["front"])
         self.assertNotEqual(result.returncode, 0)
-        self.assertIn("VisiblePiping:CURVE", result.stdout + result.stderr)
-        self.assertFalse((self.root / "inspect-curve/view-front.png").exists())
+        self.assertIn("VisibleLettering:FONT", result.stdout + result.stderr)
+        self.assertFalse((self.root / "inspect-text/view-front.png").exists())
         self.assertEqual(sha(source), original)
 
     def test_instances_cannot_render_outside_the_inventoried_asset_scope(self):

@@ -56,6 +56,32 @@ perform an exhaustive scene collision scan. Save a small finding into
 full arrays and exhaustive diagnostics for an identified debugging need.
 Inspect suspicious locations in actual geometry and renders.
 
+## Keep curve controls until mesh delivery
+
+Use classic Blender `CURVE` objects for editable Bezier, POLY or NURBS profiles
+during native iterations. Inspect their evaluated tessellation with
+`inspect --topology`; control points and handles are authoring data, not mesh vertices.
+Match curve viewport/render resolution (`render_resolution_u = 0` reuses
+each spline's `resolution_u`) so the observed and rendered surfaces agree.
+
+Delivery refuses curves rather than converting them implicitly. Select only the
+intended final objects in a normal Blender script, then use
+`run --outputs delivery` for the conversion and export. For example, a **static** cable:
+
+```python
+bpy.ops.object.select_all(action="DESELECT")
+cable = bpy.data.objects["Cable"]
+cable.select_set(True)
+bpy.context.view_layer.objects.active = cable
+bpy.ops.object.convert(target="MESH")
+```
+
+Keep the prior native revision as the editable source. A current-frame conversion
+does not preserve curve shape keys or animated control geometry. Bake or rebuild
+required motion deliberately, then verify the resulting mesh, materials and
+exported animation in the target consumer. Inspect tessellation density and
+surface continuity after conversion; conversion alone is not retopology.
+
 ## Retopologize for function
 
 Choose topology that follows the form and deformation. For clothing, place
