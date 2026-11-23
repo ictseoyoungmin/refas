@@ -719,21 +719,33 @@ def _temporary_observation(job, output_key, blender, timeout, executor=None):
             raise ProductionError(str(exc) + ("\nBlender diagnostic tail:\n" + tail if tail else "")) from exc
 
 
-def inspect_native(root, objects=(), frames=(), topology=False, blender="blender", timeout=180,
-                   expected_revision=None, expected_sequence=None, executor=None):
-    state = load_project(root)
-    _check_expected(state, expected_revision, expected_sequence)
-    _, meta = _meta(root)
-    revision = _verify_state(meta, state)
-    if revision is None:
-        raise ProductionError("create a native revision before inspecting it")
+def inspect_native(root=None, objects=(), frames=(), topology=False, blender="blender", timeout=180,
+                   expected_revision=None, expected_sequence=None, executor=None, *, input_blend=None):
+    """Observe one managed revision or standalone native without adopting its bytes."""
+    if (root is None) == (input_blend is None):
+        raise ProductionError("inspect requires exactly one of root or input_blend")
+    if input_blend is not None:
+        if expected_revision is not None or expected_sequence is not None:
+            raise ProductionError("expected revision and sequence require a project root")
+        native = Path(input_blend).expanduser().resolve()
+        if not native.is_file():
+            raise ProductionError("input_blend must name an existing native file")
+        source = {"revision": None, "inputBlend": str(native)}
+    else:
+        state = load_project(root)
+        _check_expected(state, expected_revision, expected_sequence)
+        _, meta = _meta(root)
+        revision = _verify_state(meta, state)
+        if revision is None:
+            raise ProductionError("create a native revision before inspecting it")
+        native = relative_file(_revision_dir(meta, revision["id"]) / "artifacts", revision["outputs"]["blend"])
+        source = {"revision": revision["id"], "evidenceFreshness": _evidence_freshness(state, revision)}
     objects, frames = list(objects), list(frames)
     if (any(not isinstance(name, str) or not name.strip() for name in objects)
             or len(set(objects)) != len(objects)):
         raise ProductionError("query objects must be unique exact names")
     if any(type(frame) is not int for frame in frames) or len(set(frames)) != len(frames):
         raise ProductionError("query frames must be unique integers")
-    native = relative_file(_revision_dir(meta, revision["id"]) / "artifacts", revision["outputs"]["blend"])
     before = digest(native)
     job = {"operation": "query", "baseBlend": str(native), "queryTopology": bool(topology)}
     if objects:
@@ -745,8 +757,7 @@ def inspect_native(root, objects=(), frames=(), topology=False, blender="blender
         raise ProductionError("native source changed during inspection")
     if observed.get("blendSha256") != before:
         raise ProductionError("observation does not match the selected native source")
-    return {**observed, "revision": revision["id"], "nativeSha256": before,
-            "evidenceFreshness": _evidence_freshness(state, revision), "persisted": False}
+    return {**observed, **source, "nativeSha256": before, "persisted": False}
 
 
 def export_preflight(blender="blender", timeout=60, executor=None):

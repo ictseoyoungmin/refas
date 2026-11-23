@@ -4,6 +4,11 @@ All notable RefAs changes are documented here. RefAs follows semantic versioning
 
 ## 2.0.0-alpha.1 — Unreleased
 
+### Standalone native inspection
+
+- Let public `inspect` read either the selected project revision or an explicit `--input-blend` without creating a project or copying the model. Reuse temporary object/frame/topology queries and unchanged-source hash checks; standalone reads have no revision or reference-freshness claim.
+- Reject ambiguous source selection and project-only guards on standalone files. Exercise the copied installed skill outside the repository, including actual animated readback, exact-name failure and temporary-file cleanup.
+
 ### Explicit surface attachments
 
 - Add an opt-in Python authoring helper that follows an explicitly selected triangle and barycentric anchor with a rigid section frame. It preserves section dimensions during nonlinear host deformation without a new CLI, scene handler or report format.

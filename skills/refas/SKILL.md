@@ -83,6 +83,12 @@ Use a temporary native observation to answer a specific geometry question withou
 python3 scripts/produce.py inspect --root PROJECT --object SleeveLeft --frame 1 --frame 24 --topology
 ```
 
+To inspect a standalone native before adopting it into a project, replace
+`--root PROJECT` with `--input-blend EXISTING.blend`. The same read-only query
+uses the original file directly and verifies its unchanged hash; it does not
+create a project or copy the model. Its result has `revision: null` and no
+project reference-freshness claim. Revision/sequence guards require `--root`.
+
 The compact JSON describes the requested objects and frames; omit object selection for a scene overview and omit frames for the saved current frame. `--topology` adds mesh-condition observations. This read creates no project revision or permanent diagnostic files. It does not establish full-scene collision clearance, continuous animation quality or engine readiness. Inspect the locations it identifies, and retain detailed diagnostics only when needed to resolve a defect.
 
 For before/after comparison, keep the camera and lighting fixed. Pass `--review-spec REVIEW_JSON` to capture explicit orthographic views and a fixed light rig with the revision; omit `--views` to render all views in that file. Read `references/production-review.md` when defining those views. The default views frame the current bounding box and can move when geometry changes. Neither route establishes registration to the source image.

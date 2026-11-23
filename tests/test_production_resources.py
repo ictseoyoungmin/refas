@@ -1,5 +1,6 @@
 """Host resource/transaction contracts; synthetic worker results are not asset approval."""
 import contextlib
+import io
 import json
 from pathlib import Path
 import shutil
@@ -301,6 +302,71 @@ class ProductionResourceTests(unittest.TestCase):
             project.inspect_native(self.root, executor=unbound)
         self.assertTrue(all(not directory.exists() for directory in directories))
         self.assertEqual(project.inventory(self.meta), before)
+
+    def test_standalone_query_uses_original_path_without_project_adoption(self):
+        external = self.folder / "external"
+        external.mkdir()
+        native = external / "candidate native.blend"
+        native.write_bytes(b"BLENDER-standalone-contract-fixture")
+        before = project.inventory(self.folder)
+        directories = []
+        def observe(command, cwd, *args):
+            directories.append(Path(cwd))
+            job = project.read_json(command[-1])
+            self.assertEqual(job["baseBlend"], str(native.resolve()))
+            self.assertEqual(job["queryObjects"], ["Selected"])
+            self.assertEqual(job["queryFrames"], [1, 49])
+            self.assertTrue(job["queryTopology"])
+            return self.observation_worker(command, cwd, *args)
+        result = project.inspect_native(input_blend=native, objects=["Selected"], frames=[1, 49],
+                                        topology=True, executor=observe)
+        self.assertIsNone(result["revision"])
+        self.assertEqual(result["inputBlend"], str(native.resolve()))
+        self.assertEqual(result["nativeSha256"], project.digest(native))
+        self.assertNotIn("evidenceFreshness", result)
+        self.assertFalse(result["persisted"])
+        self.assertEqual(project.inventory(self.folder), before)
+        self.assertTrue(all(not directory.exists() for directory in directories))
+
+    def test_inspection_sources_are_unambiguous_in_cli_and_python(self):
+        arguments = produce.parser().parse_args(["inspect", "--input-blend", "standalone.blend"])
+        self.assertIsNone(arguments.root)
+        self.assertEqual(arguments.input_blend, "standalone.blend")
+        for argv in (["inspect"], ["inspect", "--root", "project", "--input-blend", "source.blend"]):
+            with self.subTest(argv=argv), contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit):
+                produce.parser().parse_args(argv)
+        worker = mock.Mock(side_effect=AssertionError("invalid source reached worker"))
+        for options in ({}, {"root": self.root, "input_blend": "source.blend"},
+                        {"input_blend": "source.blend", "expected_revision": "none"},
+                        {"input_blend": "source.blend", "expected_sequence": 0}):
+            with self.subTest(options=options), self.assertRaises(project.ProductionError):
+                project.inspect_native(**options, executor=worker)
+        worker.assert_not_called()
+
+    def test_standalone_invalid_inputs_do_not_start_blender(self):
+        worker = mock.Mock(side_effect=AssertionError("invalid input reached worker"))
+        for path in (self.folder / "missing.blend", self.folder):
+            with self.subTest(path=path), self.assertRaisesRegex(project.ProductionError, "existing native file"):
+                project.inspect_native(input_blend=path, executor=worker)
+        worker.assert_not_called()
+
+    def test_standalone_input_change_and_worker_failure_discard_temporary_outputs(self):
+        native = self.folder / "external.blend"
+        directories = []
+        for mode in ("changed", "failed"):
+            native.write_bytes(b"BLENDER-original-fixture")
+            def fail(command, cwd, *args):
+                directories.append(Path(cwd))
+                elapsed = self.observation_worker(command, cwd, *args)
+                if mode == "changed":
+                    native.write_bytes(b"BLENDER-concurrently-changed-fixture")
+                    return elapsed
+                raise project.ProductionError("intentional standalone worker failure")
+            error = "native source changed" if mode == "changed" else "standalone worker failure"
+            with self.subTest(mode=mode), self.assertRaisesRegex(project.ProductionError, error):
+                project.inspect_native(input_blend=native, executor=fail)
+            self.assertTrue(all(not directory.exists() for directory in directories))
+            self.assertEqual(list((self.meta / "revisions").iterdir()), [])
 
 
 if __name__ == "__main__":

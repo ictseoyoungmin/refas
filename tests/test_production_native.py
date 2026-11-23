@@ -7,6 +7,7 @@ import os
 from pathlib import Path
 import shutil
 import subprocess
+import sys
 import tempfile
 import unittest
 
@@ -160,6 +161,46 @@ bpy.context.scene.frame_set(5)
         self.assertEqual(report["positiveSkinWeightGuard"], "supported-and-restored")
         self.assertEqual(result["outputs"], {"preflight": "preflight.json"})
         self.assertEqual(sorted(p.name for p in (self.root / "preflight").iterdir()), ["preflight.json", "result.json"])
+
+    def test_copied_skill_inspects_standalone_native_without_persistent_files(self):
+        copied = self.root / "standalone-installed-skill"
+        shutil.copytree(ROOT / "skills/refas", copied, ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
+        outside = self.root / "standalone-outside-repository"
+        outside.mkdir()
+        temporary = outside / "temporary"
+        temporary.mkdir()
+        entry = copied / "scripts/produce.py"
+        before = {str(path.relative_to(self.root)) for path in self.root.rglob("*")}
+        env = {**os.environ, "PYTHONPATH": "", "PYTHONDONTWRITEBYTECODE": "1", "TMPDIR": str(temporary)}
+        command = [sys.executable, "-B", str(entry), "inspect", "--input-blend",
+                   os.path.relpath(self.source, outside), "--object", "Editable", "--frame", "1",
+                   "--frame", "5", "--topology", "--blender", str(BLENDER)]
+        result = subprocess.run(command, cwd=outside, env=env, capture_output=True, text=True, timeout=60)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        observed = json.loads(result.stdout)
+        self.assertIsNone(observed["revision"])
+        self.assertNotIn("evidenceFreshness", observed)
+        self.assertEqual(observed["inputBlend"], str(self.source.resolve()))
+        self.assertEqual(observed["nativeSha256"], self.source_sha)
+        self.assertFalse(observed["persisted"])
+        first, last = [sample["objects"][0] for sample in observed["samples"]]
+        self.assertEqual(observed["objectNames"], ["Editable"])
+        self.assertEqual([sample["frame"] for sample in observed["samples"]], [1, 5])
+        self.assertEqual(last["matrixWorld"][2][3] - first["matrixWorld"][2][3], 1)
+        self.assertEqual(first["topology"]["statistics"]["triangles"], 12)
+        self.assertEqual(sha(self.source), self.source_sha)
+        self.assertEqual({str(path.relative_to(self.root)) for path in self.root.rglob("*")}, before)
+        self.assertEqual(list(temporary.iterdir()), [])
+
+        # An actual exact-name failure must also clean the worker's job/result/log directory.
+        command[command.index("Editable")] = "MissingObject"
+        failure = subprocess.run(command, cwd=outside, env=env, capture_output=True, text=True, timeout=60)
+        self.assertEqual(failure.returncode, 1)
+        self.assertEqual(failure.stdout, "")
+        self.assertIn("queryObjects names missing", json.loads(failure.stderr)["error"])
+        self.assertEqual(sha(self.source), self.source_sha)
+        self.assertEqual(list(temporary.iterdir()), [])
+        self.assertEqual({str(path.relative_to(self.root)) for path in self.root.rglob("*")}, before)
 
 
 if __name__ == "__main__":

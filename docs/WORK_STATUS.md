@@ -8,11 +8,41 @@ The user approved implementation of the new production path, starting from `main
 
 This is development work. Active package/Python runtime/plugin identity is `2.0.0-alpha.1`; the retained legacy runtime remains `1.4.2`. The recorded published release remains `v1.4.1`. Main merge and formal publication are separate unfinished milestones.
 
-## Current: explicit surface attachment authoring
+## Current: standalone native inspection
 
-[Issue #402](https://github.com/ictseoyoungmin/refas/issues/402) continues from
-the merged native-iteration checkpoint `4282ac99` on `feat/surface-attachments`,
-targeting `rewrite/v2`. The opt-in `surface_binding` Python module binds a
+[Issue #404](https://github.com/ictseoyoungmin/refas/issues/404) continues from
+`rewrite/v2@3de557a7` on `feat/standalone-native-inspection`. The public
+`inspect --input-blend PATH` route reads a standalone native directly without
+project adoption, model copying, rendering or export. It reuses the same
+temporary worker and before/after source hashes as managed-project inspection.
+Exactly one source is required; standalone input rejects project-only revision
+and sequence guards. Its result has the resolved input path, native hash,
+`revision: null` and no project reference-freshness claim.
+
+The source passes **140 Production tests with actual Blender/Godot and zero
+skips**, **943 JavaScript tests**, the required syntax/repository checks,
+11-checkpoint dogfood and release audit. Four host regressions and one copied
+installed-skill Blender test cover source selection, identity changes, actual
+animated readback, exact-name failure and cleanup. Independent review found no
+remaining P1/P2 issue. The actual retained garment also returned its established
+three-support triangle counts at frames 1/49 through the public command from
+outside the repository, preserving the exact input hash. The package remains
+16 skill files / 20 total files; this adds no module or dependency.
+
+Continued garment observations remain separate: original frozen-pair comparison
+confirms that the three supports' changed contacts are real, not triangle
+renumbering. The existing BODY/COLLAR eleven-region policy passes at the three
+observed poses, but this is not a whole97-frame or full-character clearance
+result. Further fitting and rejected attempts are retained outside Git; the
+feature PR records the final bounded continuation. No criterion is newly
+credited: **30/37 = 81%**, with U1/U2/U3/U6/E2/D2/D3 still open. The user will
+delete completed task branches after receiving their verified names.
+
+## Previous: explicit surface attachment authoring
+
+[Issue #402](https://github.com/ictseoyoungmin/refas/issues/402) was completed in
+[PR #403](https://github.com/ictseoyoungmin/refas/pull/403), merged into
+`rewrite/v2` at `3de557a7`. The opt-in `surface_binding` Python module binds a
 section to an explicit oriented host triangle and barycentric anchor, then
 transports its offsets in an orthonormal frame. It preserves section dimensions
 without a new CLI, Blender handler, nearest-surface guess or report format.
