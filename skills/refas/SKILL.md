@@ -57,15 +57,15 @@ Write a normal Blender Python script using `bpy`. The worker executes it inside 
 python3 scripts/produce.py run --root PROJECT --script BUILD_SCRIPT --intent "build the complete primary form" --outputs native --views hero --size 384 --samples 8 --timeout 120
 ```
 
-The CLI defaults to `--outputs native`: save the editable scene and requested views without GLB export or reimport. Its default view is `hero`; add a side or detail view only when it answers the current modeling question. Use `--views ''` when no render is needed. The first run starts from an empty scene, including no World datablock. Create any scene resources your script needs. A subsequent run opens the current saved native scene before applying the script:
+The CLI defaults to `--outputs native`: save the editable scene and requested views without GLB export or reimport. Its default view is `hero`; add a side or detail view only when it answers the current modeling question. Use `--views ''` when no render is needed. Without an explicit input, the first run starts from an empty scene, including no World datablock; create any scene resources your script needs. A subsequent run opens the current saved native scene before applying the script:
 
 ```bash
 python3 scripts/produce.py run --root PROJECT --script EDIT_SCRIPT --intent "adjust the headband pad while preserving the earcups" --protect-object EarcupLeft --protect-object EarcupRight --views side
 ```
 
-Use exact existing object names with repeated `--protect-object` flags to reject changes to their recorded native state and materials. Choose those names from the current scene; the earcup names above are examples. The baseline is the selected native input at its starting frame. With `--input-blend`, this means the manual input, not the earlier project head. An edit script should modify the existing scene rather than recreate unrelated objects. Drivers and node-group internals are not exhaustive, and the guard does not approve all animation frames or visual quality.
+Use exact existing object names with repeated `--protect-object` flags to reject changes to their recorded native state and materials. Choose those names from the starting scene; the earcup names above are examples. The baseline is that scene at its starting frame, including objects imported from an explicit asset before the script runs. An edit script should modify the existing scene rather than recreate unrelated objects. Drivers and node-group internals are not exhaustive, and the guard does not approve all animation frames or visual quality.
 
-Use Blender's Save As to create a separate manual edit, then import it with `--input-blend PATH`. Files returned by `status` are immutable revision files. The worker provides `bpy` and the absolute `REFAS_OUTPUT_DIR` to scripts; the production runner manages the native scene, selected outputs and revision metadata. Use `--expected-revision REVISION_ID --expected-sequence SEQUENCE` to require the revision and reference state you inspected.
+To edit an existing asset, select either `--input-glb ASSET.glb` for a self-contained GLB or `--input-blend ASSET.blend` for a separately saved native. Each flag chooses the complete starting scene; it does not append objects to the current revision. Read `references/production-import.md` for this workflow and its preservation limits. Omit both flags on later edits to continue the saved native. Use Blender's Save As for manual edits; files returned by `status` are immutable revision files. The worker provides `bpy` and the absolute `REFAS_OUTPUT_DIR` to scripts; the production runner manages the native scene, selected outputs and revision metadata. Use `--expected-revision REVISION_ID --expected-sequence SEQUENCE` to require the revision and reference state you inspected.
 
 1. **Construct the whole.** Resolve silhouette, proportions, thickness, negative space, and component relationships. For a character, establish face and body identity before clothing detail or accessories.
 2. **Inspect real output.** Open the rendered images and compare them with the original reference. Choose a small number of views that reveal the current question: a side view for depth, a close view for a face, or a material-aware view for appearance. Request further views only for unresolved defects; do not generate a default pack of crops, videos, full arrays or reports.
@@ -95,7 +95,7 @@ The compact JSON describes the requested objects and frames; omit object selecti
 
 For before/after comparison, keep the camera and lighting fixed. Pass `--review-spec REVIEW_JSON` to capture explicit orthographic views and a fixed light rig with the revision; omit `--views` to render all views in that file. Read `references/production-review.md` when defining those views. The default views frame the current bounding box and can move when geometry changes. Neither route establishes registration to the source image.
 
-Each `run` explicitly adopts its native input, script and supplied render/review options and records fresh outputs together. Pass the desired options on each run; prior options are not implicit defaults. External originals can change without altering their captured historical copies.
+Each `run` captures its starting asset, script and supplied render/review options and records fresh outputs together. Pass the desired options on each run; prior options are not implicit defaults. External originals can change without altering their captured historical copies.
 
 Native `run` submissions accept portable scenes with visible meshes and classic `CURVE` objects and packed still-image textures. Hidden/excluded geometry, text (`FONT`), `SURFACE`, modern hair `CURVES` and object instances remain unsupported; convert or realize them explicitly before submission. Temporary `inspect` queries can describe other object types without approving them for submission.
 
@@ -149,12 +149,7 @@ Review three separate questions:
 
 A render or technical check can support only the claim it actually demonstrates. Report a prototype as a prototype. Human visual acceptance, technical verification, and a future automated resemblance evaluator are separate evidence.
 
-## Import an existing 1.x asset
-
-Read `references/production-import.md` only when the source is a saved 1.x project. For an existing production project, use `status` and continue its revisions instead. Select a recorded 1.x checkpoint and native/GLB artifact, then import into a new production project:
-
-```bash
-python3 scripts/produce.py import-v1 --root NEW_PROJECT --source-project OLD_PROJECT --checkpoint CHECKPOINT_ID --artifact assets/selected.glb --name imported-asset
-```
-
-Inspect the captured import report and actual output before continuing. The command keeps the old project unchanged and records the selected archived bytes, source and provenance. GLB import cannot recover absent authoring history. Previous certificates and review decisions do not approve the new revision; assess reference fit and intended use again.
+For an existing production project, inspect `status` and continue its revisions.
+If the source is specifically a saved RefAs 1.x project, the import guide also
+describes selecting an archived asset with `import-v1`; previous approvals do
+not approve the new output.

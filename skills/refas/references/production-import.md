@@ -1,4 +1,62 @@
-# Import a selected 1.x asset
+# Start from an existing asset
+
+Use an existing GLB or separately saved Blender scene as the starting point for
+an ordinary production edit. Initialize a project if needed, keeping it outside
+the installed skill; include original references when available.
+
+```bash
+python3 scripts/produce.py init --root PROJECT --name revised-asset
+python3 scripts/produce.py run --root PROJECT --input-glb EXISTING.glb \
+  --script EDIT_SCRIPT --intent "refine the requested part while preserving the assembly" \
+  --views hero
+python3 scripts/produce.py status --root PROJECT
+```
+
+Write the edit script with normal `bpy` operations on the imported scene. Use
+exact imported object names with repeated `--protect-object NAME` flags for
+parts whose recorded state and materials must stay unchanged. Protection starts
+after loading the asset and before applying the script, at the starting frame.
+It does not establish all-frame or visual preservation.
+
+## Choose the starting scene
+
+| Input choice for `run` | Starting scene |
+| --- | --- |
+| Neither input flag | Current saved native, or an empty scene before the first revision |
+| `--input-glb EXISTING.glb` | Blender scene reconstructed from that self-contained GLB |
+| `--input-blend MANUAL.blend` | The separately saved native scene |
+
+Choose at most one explicit input. An explicit asset supplies the complete
+starting scene for this run; it is not appended to the current model. Earlier
+project revisions remain available for recovery. Omit both flags on subsequent
+edits to continue the new native instead of importing the original asset again.
+
+The GLB must embed its buffers and images; external files and URLs are not
+captured. The successful revision retains the exact GLB bytes as
+`inputs/base.glb`, alongside the edit script and new native. No intermediate
+manual `.blend` conversion is required. Use the normal `verify` and `restore`
+commands for project integrity and recovery.
+
+`run` keeps the native-output default and only the requested views. Use
+`deliver` when the current native is ready for export, or `run --outputs delivery`
+when the final edit and export belong together. Read the topology guide for
+curve conversion, modifiers and other delivery limits.
+
+## Preserve what the source contains
+
+GLB carries supported glTF scene data; it cannot recover original modifiers,
+construction scripts, sculpt history or other authoring data absent from the
+file. Inspect the imported geometry, materials, UVs, skin weights, shape keys
+and animation that matter to the edit. Preserve them deliberately and verify
+the actual output in its intended consumer. Successful import and native
+save/reopen do not establish reference likeness, lossless conversion of every
+feature or game readiness.
+
+For a separately edited `.blend`, use Blender's Save As and pass that separate
+file to `--input-blend`. Keep stored project revision files immutable. Both
+input routes use the production worker's supported scene and output scope.
+
+## Adopt an asset from a saved 1.x project
 
 Use `import-v1` when continuing an asset recorded in a saved RefAs 1.x project.
 Choose the intended checkpoint and asset from `.refas/project.json` and its

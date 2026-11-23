@@ -932,7 +932,7 @@ def execute(job):
         bpy.ops.wm.read_factory_settings(use_empty=True)
         if job.get("baseGlb"):
             if "FINISHED" not in bpy.ops.import_scene.gltf(filepath=job["baseGlb"], disable_bone_shape=True):
-                raise RuntimeError("Legacy GLB import did not finish")
+                raise RuntimeError("GLB import did not finish")
     if job["operation"] == "query":
         query = query_native(job, source_sha)
         write_json(out / "query.json", query)

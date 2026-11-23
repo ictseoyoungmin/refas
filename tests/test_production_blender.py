@@ -94,6 +94,143 @@ class ProductionBlenderTests(unittest.TestCase):
         for a_view, b_view in zip(self.create["observations"], self.revised["observations"]):
             self.assertEqual(a_view["camera"], b_view["camera"])
 
+    def test_installed_glb_input_edits_preserves_continues_and_restores_native(self):
+        installed = self.root / "installed-glb-authoring-skill"
+        shutil.copytree(ROOT / "skills/refas", installed,
+                        ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
+        entry = installed / "scripts/produce.py"
+        target = self.root / "glb-authoring-project"
+        glb = self.root / "create/asset.glb"
+        original_glb = glb.read_bytes()
+        edit = self.root / "widen-imported-pad.py"
+        edit.write_text("import bpy\nfor vertex in bpy.data.objects['HeadbandComfortPad'].data.vertices:\n"
+                        "    vertex.co.y *= 1.18\nbpy.context.view_layer.update()\n")
+        noop = self.root / "keep-imported-headset.py"
+        noop.write_text("# Keep the explicitly selected complete GLB scene.\n")
+        names = sorted(row["name"] for row in json.loads((self.root / "create/scene.json").read_text())["objects"])
+        protected = [name for name in names if name != "HeadbandComfortPad"]
+        guards = [value for name in protected for value in ("--protect-object", name)]
+
+        def cli(command, *args, success=True):
+            process = subprocess.run([sys.executable, "-B", str(entry), command, "--root", str(target),
+                                      *map(str, args)], cwd=self.root, capture_output=True, text=True,
+                                     env={**os.environ, "PYTHONDONTWRITEBYTECODE": "1", "PYTHONPATH": ""},
+                                     timeout=90)
+            self.assertEqual(process.returncode == 0, success,
+                             process.stderr[-4000:] + process.stdout[-4000:])
+            return json.loads(process.stdout) if success else process
+
+        cli("init", "--name", "ordinary GLB editing")
+        first = cli("run", "--input-glb", "create/asset.glb", "--script", edit, "--intent", "widen imported pad",
+                    "--blender", BLENDER, "--views", "front", "--size", "96", "--samples", "2",
+                    "--expected-revision", "none", "--expected-sequence", "0", *guards)
+        self.assertEqual(first["outputProfile"], "native")
+        self.assertEqual(set(first["outputs"]), {"blend", "scene"})
+        self.assertEqual(set(first["inputs"]), {"base.glb", "edit.py"})
+        self.assertEqual(Path(first["inputs"]["base.glb"]).read_bytes(), original_glb)
+        self.assertEqual(Path(first["inputs"]["edit.py"]).read_bytes(), edit.read_bytes())
+        self.assertEqual(len(first["observations"]), 1)
+        png = Path(first["observations"][0]["path"]).read_bytes()
+        self.assertEqual(png[:8], b"\x89PNG\r\n\x1a\n")
+        self.assertEqual(struct.unpack(">II", png[16:24]), (96, 96))
+        first_inputs = {name: Path(value).read_bytes() for name, value in first["inputs"].items()}
+        first_outputs = {name: Path(value).read_bytes() for name, value in first["outputs"].items()}
+        revision_path = target / ".refas2/revisions" / first["head"] / "revision.json"
+        revision = json.loads(revision_path.read_text())
+        self.assertEqual(revision["kind"], "edit")
+        self.assertNotIn("migration", revision)
+        self.assertEqual(revision["verification"]["protectedObjects"]["objects"], protected)
+        self.assertTrue(revision["verification"]["native"]["fingerprintMatches"])
+        self.assertEqual(revision["verification"]["glb"]["status"], "not-requested")
+
+        continued = cli("run", "--script", edit, "--intent", "continue from the edited native",
+                        "--blender", BLENDER, "--views", "", "--expected-revision", first["head"],
+                        "--expected-sequence", first["sequence"], *guards)
+        self.assertNotIn("base.glb", continued["inputs"])
+        self.assertEqual(Path(continued["inputs"]["base.blend"]).read_bytes(), first_outputs["blend"])
+        # The explicit GLB replaces the current edited starting scene, and the
+        # guard must compare against that GLB rather than the previous head.
+        selected = cli("run", "--input-glb", "create/asset.glb", "--script", noop,
+                       "--intent", "select the original GLB as the complete starting scene",
+                       "--blender", BLENDER, "--views", "", "--expected-revision", continued["head"],
+                       "--expected-sequence", continued["sequence"], "--protect-object", "HeadbandComfortPad", *guards)
+        self.assertEqual(set(selected["inputs"]), {"base.glb", "edit.py"})
+        failed = cli("run", "--input-glb", "create/asset.glb", "--script", edit,
+                     "--intent", "attempt a prohibited pad change", "--blender", BLENDER, "--views", "",
+                     "--protect-object", "HeadbandComfortPad", success=False)
+        self.assertIn("Blender failed", failed.stderr)
+        unchanged = cli("status")
+        self.assertEqual((unchanged["head"], unchanged["sequence"]), (selected["head"], selected["sequence"]))
+        self.assertEqual(len(unchanged["incompleteRuns"]), 1)
+        self.assertEqual(unchanged["incompleteRuns"][0]["status"], "failed")
+        failure_path = target / ".refas2/runs" / unchanged["incompleteRuns"][0]["id"] / "artifacts/result.json"
+        failure = json.loads(failure_path.read_text())["error"]["message"]
+        self.assertIn("Protected objects changed", failure)
+        self.assertIn("HeadbandComfortPad", failure)
+
+        # Independently reopen the original GLB and each saved native. Counts
+        # alone cannot show preserved UVs/materials or the actual local edit.
+        probe = self.root / "read-glb-authoring-data.py"
+        readback = self.root / "glb-authoring-readback.json"
+        stages = [(first["outputs"]["blend"], 1.18), (continued["outputs"]["blend"], 1.18 ** 2),
+                  (selected["outputs"]["blend"], 1.0)]
+        probe.write_text('''import bpy, json
+def snapshot():
+    rows = {}
+    for obj in bpy.context.scene.objects:
+        assert obj.type == "MESH"
+        materials = []
+        for slot in obj.material_slots:
+            material = slot.material
+            shader = next(node for node in material.node_tree.nodes if node.type == "BSDF_PRINCIPLED")
+            materials.append({"name": material.name,
+                "baseColor": list(shader.inputs["Base Color"].default_value),
+                "roughness": shader.inputs["Roughness"].default_value,
+                "metallic": shader.inputs["Metallic"].default_value})
+        rows[obj.name] = {"parent": obj.parent.name if obj.parent else None,
+            "matrix": [list(row) for row in obj.matrix_world],
+            "positions": [list(vertex.co) for vertex in obj.data.vertices],
+            "faces": [list(face.vertices) for face in obj.data.polygons],
+            "materialIndices": [face.material_index for face in obj.data.polygons],
+            "uv": [[list(loop.uv) for loop in layer.data] for layer in obj.data.uv_layers],
+            "materials": materials}
+    return rows
+bpy.ops.wm.read_factory_settings(use_empty=True)
+assert "FINISHED" in bpy.ops.import_scene.gltf(filepath=''' + repr(str(glb)) + ''', disable_bone_shape=True)
+baseline = snapshot()
+assert len(baseline) == 30
+assert all(row["uv"] and row["materials"] for row in baseline.values())
+for path, factor in ''' + repr(stages) + ''':
+    bpy.ops.wm.open_mainfile(filepath=path, load_ui=False, use_scripts=False)
+    actual = snapshot()
+    assert actual.keys() == baseline.keys()
+    for name, expected in baseline.items():
+        observed = actual[name]
+        if name != "HeadbandComfortPad":
+            assert observed == expected, name
+            continue
+        assert {k:v for k,v in observed.items() if k != "positions"} == {k:v for k,v in expected.items() if k != "positions"}
+        assert len(observed["positions"]) == len(expected["positions"])
+        for original, changed in zip(expected["positions"], observed["positions"]):
+            assert abs(changed[0] - original[0]) < 2e-7
+            assert abs(changed[1] - original[1] * factor) < 2e-7
+            assert abs(changed[2] - original[2]) < 2e-7
+with open(''' + repr(str(readback)) + ''', "w") as stream:
+    json.dump({"objects": len(baseline), "protectedObjects": len(baseline) - 1, "stages": 3}, stream)
+''')
+        checked = subprocess.run([str(BLENDER), "-b", "--factory-startup", "--threads", "2",
+                                  "--python-exit-code", "1", "--python", str(probe)],
+                                 capture_output=True, text=True, timeout=90)
+        self.assertEqual(checked.returncode, 0, checked.stdout[-3000:] + checked.stderr[-3000:])
+        self.assertEqual(json.loads(readback.read_text()), {"objects": 30, "protectedObjects": 29, "stages": 3})
+        restored = cli("restore", "--revision", first["head"], "--expected-revision", selected["head"],
+                       "--expected-sequence", selected["sequence"])
+        self.assertEqual({name: Path(value).read_bytes() for name, value in restored["inputs"].items()}, first_inputs)
+        self.assertEqual({name: Path(value).read_bytes() for name, value in restored["outputs"].items()}, first_outputs)
+        self.assertTrue(cli("verify")["ok"])
+        self.assertEqual(glb.read_bytes(), original_glb)
+        self.assertEqual(sha(self.source), self.source_sha)
+
     def test_standalone_legacy_import_opens_native_and_glb_with_actual_observations(self):
         from test_production_import import create_legacy_project
         from production import project

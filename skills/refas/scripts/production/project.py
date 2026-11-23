@@ -466,7 +466,7 @@ def _validate_worker_result(artifact_dir, output_profile="delivery", protected_o
 def run_edit(root, script, intent, blender="blender", input_blend=None, views=None,
              size=384, samples=8, timeout=180, expected_revision=None, executor=None, review_spec=None,
              expected_sequence=None, _import_bundle=None, output_profile="delivery", protected_objects=(),
-             keep_diagnostics=False):
+             keep_diagnostics=False, *, input_glb=None):
     root, meta = _meta(root)
     base = load_project(root)
     _check_expected(base, expected_revision, expected_sequence)
@@ -477,8 +477,10 @@ def run_edit(root, script, intent, blender="blender", input_blend=None, views=No
     if (any(not isinstance(name, str) or not name.strip() for name in protected_objects)
             or len(set(protected_objects)) != len(protected_objects)):
         raise ProductionError("protected objects must be unique, exact nonempty object names")
-    if _import_bundle is not None and (input_blend is not None or base["head"] is not None):
-        raise ProductionError("legacy import inputs require a new project without another native input")
+    if input_blend is not None and input_glb is not None:
+        raise ProductionError("input_blend and input_glb are mutually exclusive")
+    if _import_bundle is not None and (input_blend is not None or input_glb is not None or base["head"] is not None):
+        raise ProductionError("legacy import inputs require a new project without another asset input")
     if not isinstance(intent, str) or not intent.strip():
         raise ProductionError("a concrete edit intent is required")
     if not isinstance(timeout, (int, float)) or not 1 <= timeout <= 3600:
@@ -535,7 +537,7 @@ def run_edit(root, script, intent, blender="blender", input_blend=None, views=No
         source_blend = None
         if input_blend:
             source_blend = Path(input_blend).expanduser().resolve()
-        elif base["head"]:
+        elif input_glb is None and base["head"]:
             source_blend = relative_file(_revision_dir(meta, base["head"]) / "artifacts", current["outputs"]["blend"])
         if source_blend:
             if not source_blend.is_file():
@@ -544,6 +546,19 @@ def run_edit(root, script, intent, blender="blender", input_blend=None, views=No
             shutil.copy2(source_blend, inputs / "base.blend")
             if digest(inputs / "base.blend") != source_sha or digest(source_blend) != source_sha:
                 raise ProductionError("native input changed during capture")
+        source_glb = None
+        if input_glb is not None:
+            # The saved-project adapter also calls run_edit; load its shared
+            # format check only after this module has finished initialization.
+            from .asset_import import _asset_format
+            source_glb = Path(input_glb).expanduser().resolve()
+            if not source_glb.is_file():
+                raise ProductionError("GLB input is missing")
+            source_sha = digest(source_glb)
+            shutil.copy2(source_glb, inputs / "base.glb")
+            if digest(inputs / "base.glb") != source_sha or digest(source_glb) != source_sha:
+                raise ProductionError("GLB input changed during capture")
+            _asset_format(inputs / "base.glb", ".glb")
         migration = None
         if _import_bundle is not None:
             bundle, captured = _import_bundle
@@ -564,6 +579,8 @@ def run_edit(root, script, intent, blender="blender", input_blend=None, views=No
                "script": str(inputs / "edit.py"), "inputDir": str(inputs), "outputDir": str(artifact_dir),
                "views": views, "render": {"engine": "CYCLES", "samples": samples, "size": size},
                "outputProfile": output_profile, "protectedObjects": protected_objects}
+        if source_glb:
+            job["baseGlb"] = str(inputs / "base.glb")
         if migration:
             job["baseBlend" if migration["route"] == "native" else "baseGlb"] = str(inputs / "import" / import_asset)
             job["legacyImport"] = True

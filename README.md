@@ -106,14 +106,29 @@ manual editing, use Blender Save As to a separate file, then pass
 `--input-blend FILE` to `run`. The files returned by `status` belong to immutable
 revision history.
 
+To improve an existing GLB, pass it directly to an ordinary edit script:
+
+```bash
+python3 skills/refas/scripts/produce.py run --root PROJECT --input-glb EXISTING.glb --script EDIT_SCRIPT --intent "refine the requested part while preserving the assembly" --views hero
+```
+
+Initialize the project first if needed. Choose either `--input-glb` or
+`--input-blend`; an explicit input supplies the complete starting scene and does
+not append to the previous model. Omit both on later runs to continue the saved
+native. GLB buffers and images must be embedded. The original GLB is captured
+as `inputs/base.glb`, and the edit keeps the normal native-output default.
+GLB cannot recover absent original modifiers, sculpt history or construction
+scripts. See the [existing-asset guide](skills/refas/references/production-import.md)
+for preservation, protection and recovery.
+
 Batch related modeling changes in one native edit. Add repeated
 `--protect-object NAME` for exact existing objects whose recorded native and
 material state must remain unchanged. The guard rejects an unexpected edit
 before publishing the revision. It compares at the starting frame; drivers and
 node-group internals are not exhaustive, and this is not an all-frame or visual
-quality guarantee. The baseline is the selected native input: with
-`--input-blend`, protection begins at that manual input rather than the previous
-project head.
+quality guarantee. The baseline is the selected starting scene. Explicit GLB
+protection begins after import and before the script; explicit native input
+uses that saved scene rather than the earlier project head.
 
 Use temporary observations and export only when needed:
 
@@ -150,7 +165,8 @@ arguments and the `audit_mesh` helper's defaults are unchanged.
 Explicit `--views` selects the necessary views, including `--views ''` for none.
 A supplied review specification requests its views unless narrowed by `--views`.
 The internal Python `run_edit` API retains its delivery default for existing
-scripted callers; the CLI is the documented native iteration entry.
+scripted callers and accepts the new keyword-only `input_glb` without shifting
+existing positional arguments. The CLI is the documented native iteration entry.
 
 For trim or hardware on a deforming surface, ordinary edit scripts can use the
 installed `surface_binding` Python helper. Bind points to an explicit outer
@@ -177,9 +193,9 @@ the current bundle's captured set. Historical file integrity can still pass
 when evidence is stale. Restore preserves current references, so the restored
 bundle may also be stale.
 
-Each run captures its native/script/review inputs and regenerates the requested
-outputs together. Pass the desired view and render settings each time. External
-originals are independent of their frozen historical copies.
+Each run captures its starting asset, script and review inputs and regenerates
+the requested outputs together. Pass the desired view and render settings each
+time. External originals are independent of their frozen historical copies.
 
 Use `--review-spec REVIEW_JSON` for fixed orthographic cameras and lighting;
 see the [review format](skills/refas/references/production-review.md). Default
@@ -203,9 +219,10 @@ each iteration; summarize changes and unresolved findings once.
 Use `--keep-diagnostics` on a run or delivery when successful raw job/Blender
 logs are needed for debugging. Failed-run diagnostics remain available.
 
-## Import selected 1.x assets
+## Adopt selected assets from a saved 1.x project
 
-Import an explicitly selected archived asset into a new production project:
+Use this route only for an asset recorded in a saved RefAs 1.x project. Import
+an explicitly selected archived asset into a new production project:
 
 ```bash
 python3 skills/refas/scripts/produce.py import-v1 --root NEW_PROJECT --source-project OLD_PROJECT --checkpoint CHECKPOINT_ID --artifact assets/selected.glb --name imported-asset --views front,side

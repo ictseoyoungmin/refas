@@ -4,6 +4,12 @@ All notable RefAs changes are documented here. RefAs follows semantic versioning
 
 ## 2.0.0-alpha.1 — Unreleased
 
+### Direct GLB authoring input
+
+- Accept a self-contained GLB through `run --input-glb` as the complete starting scene for an ordinary Blender edit. Preserve its captured bytes, protect selected imported objects before applying the script, and keep native iteration as the CLI default.
+- Make explicit native and GLB inputs mutually exclusive; omit both to continue the saved native. Retain existing Python positional/default behavior, explicit delivery and revision recovery without a new module or report format.
+- Lead existing-asset guidance with direct GLB/native editing and keep saved 1.x adoption conditional. Document embedded-resource requirements and the authoring data a GLB cannot recover; update the skill relationship and removal map for the shared input check.
+
 ### Current skill and documentation navigation
 
 - Rename the current asset-capture adapter to `asset_import.py` and remove general 1.x implementation history from the installed entry. Keep the explicit `import-v1` command and stored provenance contracts unchanged.
