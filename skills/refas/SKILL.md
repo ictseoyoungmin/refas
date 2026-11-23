@@ -75,6 +75,8 @@ Use Blender's Save As to create a separate manual edit, then import it with `--i
 
 Preserve UVs, materials, rigs, weights, shape keys, and object identity during local edits when the asset contains them. Inspect affected geometry and deformation, not only object counts. Saved fingerprints are change observations and can help locate unexpected edits; they do not prove deformation quality or game readiness.
 
+Keep classic Blender `CURVE` objects editable during native iterations when their Bezier, POLY or NURBS controls express piping, cables or profiles well. Native save/reopen, renders and object protection retain their recorded controls, settings, shape keys and materials. Inspect the evaluated surface while editing the controls; tessellated mesh counts do not describe the control cage. Read the assembly guide for local curve edits and the topology guide before converting for delivery.
+
 Before delivery, inspect unintended openings, winding, intersections and unsupported attachments on evaluated geometry and on the reopened export. Classify intentional neck/cuff openings and separate moving parts explicitly. Exercise wearing or motion through useful intermediate states, then retopologize or reduce excessive geometry while retaining the source design and protected data. Keep the detailed source and compare the optimized candidate under fixed views and the same poses.
 
 Use a temporary native observation to answer a specific geometry question without making another revision or render:
@@ -89,15 +91,17 @@ uses the original file directly and verifies its unchanged hash; it does not
 create a project or copy the model. Its result has `revision: null` and no
 project reference-freshness claim. Revision/sequence guards require `--root`.
 
-The compact JSON describes the requested objects and frames; omit object selection for a scene overview and omit frames for the saved current frame. `--topology` adds mesh-condition observations. This read creates no project revision or permanent diagnostic files. It does not establish full-scene collision clearance, continuous animation quality or engine readiness. Inspect the locations it identifies, and retain detailed diagnostics only when needed to resolve a defect.
+The compact JSON describes the requested objects and frames; omit object selection for a scene overview and omit frames for the saved current frame. `--topology` adds mesh-condition observations, including the evaluated tessellation of supported classic curves. This read creates no project revision or permanent diagnostic files. It does not establish full-scene collision clearance, continuous animation quality or engine readiness. Inspect the locations it identifies, and retain detailed diagnostics only when needed to resolve a defect.
 
 For before/after comparison, keep the camera and lighting fixed. Pass `--review-spec REVIEW_JSON` to capture explicit orthographic views and a fixed light rig with the revision; omit `--views` to render all views in that file. Read `references/production-review.md` when defining those views. The default views frame the current bounding box and can move when geometry changes. Neither route establishes registration to the source image.
 
 Each `run` explicitly adopts its native input, script and supplied render/review options and records fresh outputs together. Pass the desired options on each run; prior options are not implicit defaults. External originals can change without altering their captured historical copies.
 
-Production `run` submissions require a portable scene with visible meshes and packed still-image textures, including in native mode. Convert curves or text to meshes and realize object instances, including Geometry Nodes instances, first. Submission rejects hidden/excluded meshes and unsupported object scopes instead of silently dropping them. The temporary `inspect` query can describe other object types; that does not approve them for submission.
+Native `run` submissions accept portable scenes with visible meshes and classic `CURVE` objects and packed still-image textures. Hidden/excluded geometry, text (`FONT`), `SURFACE`, modern hair `CURVES` and object instances remain unsupported; convert or realize them explicitly before submission. Temporary `inspect` queries can describe other object types without approving them for submission.
 
-Static mesh modifiers stay editable in the native scene and are evaluated for GLB export. Match each modifier's viewport/render visibility and enabled subdivision levels, or apply the intended geometry: inventory and export use the viewport dependency graph, while Cycles uses render settings. Delivery additionally rejects unapplied non-armature modifiers on skinned or shape-key meshes; resolve those before export. Dirty packed textures are refreshed before the native save.
+Delivery remains mesh-only and refuses unconverted curves. Choose the final curves and convert them through ordinary `bpy` in a recoverable `run --outputs delivery`; earlier native revisions keep their editable controls. Conversion at one frame does not preserve curve shape-key or geometry animation. Intentionally bake or rebuild required motion in a supported mesh representation and verify the exported playback before delivery.
+
+Static mesh modifiers stay editable in the native scene and are evaluated for GLB export. Match each modifier's viewport/render visibility and enabled subdivision levels, or apply the intended geometry: inventory and export use the viewport dependency graph, while Cycles uses render settings. For curves, set `render_resolution_u` to `0` (reuse viewport resolution) or match every non-POLY spline's `resolution_u`. Delivery additionally rejects unapplied non-armature modifiers on skinned or shape-key meshes; resolve those before export. Dirty packed textures are refreshed before the native save.
 
 ## Keep source, review, and recovery connected
 

@@ -129,8 +129,8 @@ cases['thresholdUncertain'] = audit.anchor_gap(translated_anchor, translated_cub
     anchor_local=(1.01,0,0), meters_per_unit=1.0, max_gap_m=.01)
 
 empty_mesh = make('empty-mesh', [], [])
-curve = bpy.data.curves.new('unconverted-curve', 'CURVE')
-curve_obj = bpy.data.objects.new('unconverted-curve', curve)
+curve = bpy.data.curves.new('empty-curve', 'CURVE')
+curve_obj = bpy.data.objects.new('empty-curve', curve)
 bpy.context.collection.objects.link(curve_obj)
 bad = {
  'zeroScale': lambda: audit.audit_mesh(cube, meters_per_unit=0),
@@ -139,7 +139,7 @@ bad = {
  'nanTolerance': lambda: observe(cube, relative_tolerance=float('nan')),
  'unresolvableTolerance': lambda: observe(cube, length_tolerance_m=1e-20),
  'badDetailCount': lambda: observe(cube, max_details=True),
- 'curve': lambda: observe(curve_obj),
+ 'emptyCurve': lambda: observe(curve_obj),
  'badAnchor': lambda: audit.anchor_gap(anchor, cube, anchor_local=[0,0], meters_per_unit=1, max_gap_m=1),
  'nanAnchor': lambda: audit.anchor_gap(anchor, cube, anchor_local=[0,float('nan'),0], meters_per_unit=1, max_gap_m=1),
  'negativeGap': lambda: audit.anchor_gap(anchor, cube, meters_per_unit=1, max_gap_m=-1),
@@ -255,6 +255,7 @@ class ProductionMeshAuditTests(unittest.TestCase):
     def test_invalid_parameters_and_unsupported_geometry_raise(self):
         self.assertEqual(len(self.result["errors"]), 12)
         self.assertTrue(all(self.result["errors"].values()), self.result["errors"])
+        self.assertIn("No evaluated mesh", self.result["errors"]["emptyCurve"])
 
     def test_pinched_vertex_fans_do_not_mask_an_inward_surface(self):
         value = self.cases["pinchedFans"]

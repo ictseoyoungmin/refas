@@ -3,8 +3,8 @@
 Use this guide for segmented mechanisms, armor and manufactured parts with
 visible joints. Begin with the reference's complete assembly and proportions.
 
-Sections: scale and hierarchy; motion hierarchy; surface attachments; useful
-poses; delivered animation; local component revisions.
+Sections: scale and hierarchy; editable cables and trim; motion hierarchy;
+surface attachments; useful poses; delivered animation; local component revisions.
 
 ## Establish scale and hierarchy before detail
 
@@ -24,6 +24,21 @@ the broad face, returning side wall and free edge together, then inspect the
 gap to the next layer from a side or grazing view. A seam line on a broad flat
 plate does not demonstrate overlapping armor. Keep exposed mechanisms visible
 while giving each outer plate enough volume to read under the fixed lights.
+
+## Shape cables and trim with native curves
+
+Use classic Blender `CURVE` objects when a routed centerline and cross-section
+make the next edit simpler. Keep Bezier handles or POLY/NURBS controls, point
+radius and tilt editable in native revisions. Adjust only the responsible span;
+preserve connection endpoints and inspect the evaluated surface at bends and
+near neighboring parts. More spline samples do not correct a poorly routed path.
+
+Use native `run`, exact-name `--protect-object` guards and temporary `inspect`
+queries as for meshes. Set `render_resolution_u` to `0` to reuse viewport
+resolution, or match every non-POLY spline's `resolution_u`. Inspect intermediate poses when controls or shape keys animate;
+native preservation does not establish that the motion will survive conversion.
+Follow the [topology guide](production-topology.md#keep-curve-controls-until-mesh-delivery)
+for explicit mesh conversion and the required motion checks before GLB delivery.
 
 ## Make the motion hierarchy explicit
 

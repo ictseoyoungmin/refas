@@ -26,6 +26,7 @@ import traceback
 sys.dont_write_bytecode = True
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from review import validate_review
+from mesh_audit import _is_curve_tessellation
 
 import bpy
 from mathutils import Vector
@@ -34,15 +35,17 @@ from mathutils import Vector
 SCHEMA = "refas.production.result/v2"
 VIEWS = {"hero": (1.45, -2.2, 1.15), "front": (0, -1, 0),
          "side": (1, 0, 0), "back": (0, 1, 0), "top": (0, 0, 1)}
-ASSET_TYPES = {"MESH", "ARMATURE", "EMPTY"}
+GEOMETRY_TYPES = {"MESH", "CURVE"}
+ASSET_TYPES = GEOMETRY_TYPES | {"ARMATURE", "EMPTY"}
 LIMITATIONS = [
     "Diagnostic views are unregistered; they do not establish reference likeness.",
     "GLB reimport checks geometry counts, bounds and basic feature presence, not visual equivalence.",
     "Fingerprints hash recorded action curves and current-frame scene state; they do not establish correctness at every animation or simulation frame.",
     "Node-group internals and drivers are not exhaustively represented by the state fingerprints.",
     "Static mesh modifiers are evaluated for GLB export; unapplied non-armature modifiers on skinned or shape-key meshes are unsupported.",
-    "Hidden or excluded meshes are rejected by this alpha so GLB export and diagnostic renders cannot silently use different asset scopes.",
-    "Object instances must be realized into explicit scene objects; curves and other non-mesh geometry must be converted before production inspection or export.",
+    "Hidden or excluded meshes and curves are rejected so inventory and diagnostic renders cannot silently use different asset scopes.",
+    "Classic curves retain their editable controls in native output; convert selected final curves explicitly to meshes before delivery. Curve deformation is not automatically baked for export.",
+    "Object instances must be realized into explicit scene objects; text, surfaces and other unsupported geometry must be converted before production submission.",
     "Unrealized evaluated instances, including Geometry Nodes instances, are rejected; realize their geometry before production inspection or export.",
     "Viewport/render modifier visibility and enabled subdivision levels must agree so inventory, export and diagnostic renders use the same declared geometry.",
     "Procedural Blender materials may need baking for faithful GLB appearance.",
@@ -211,6 +214,39 @@ def animation_record(animation):
                        for track in animation.nla_tracks]}
 
 
+def curve_points_hash(points):
+    """Hash authored controls, including dormant handles/keys, without rounding."""
+    rows = []
+    for point in points:
+        row = {"type": point.bl_rna.identifier}
+        for name in ("co", "location", "handle_left", "handle_right", "handle_left_type", "handle_right_type",
+                     "handle_type_1", "handle_type_2",
+                     "tilt", "radius", "weight", "weight_softbody"):
+            if not hasattr(point, name):
+                continue
+            value = getattr(point, name)
+            row[name] = list(value) if hasattr(value, "__len__") and not isinstance(value, str) else value
+        rows.append(row)
+    return digest(rows)
+
+
+def curve_record(curve):
+    """Keep source controls distinct from the current evaluated mesh."""
+    profile = curve.bevel_profile
+    return {"properties": properties(curve, {"name", "tag", "use_extra_user", "is_runtime_data"}),
+            "bevelObject": curve.bevel_object.name if curve.bevel_object else None,
+            "taperObject": curve.taper_object.name if curve.taper_object else None,
+            "bevelProfile": {"properties": properties(profile), "controlPointCount": len(profile.points),
+                             "controlPointsSha256": curve_points_hash(profile.points)}
+                            if profile else None,
+            "animation": animation_record(curve.animation_data),
+            "splines": [{"type": spline.type, "properties": properties(spline),
+                         "controlPointCount": len(spline.bezier_points) + len(spline.points),
+                         "controlPointsSha256": curve_points_hash(
+                             spline.bezier_points if spline.type == "BEZIER" else spline.points)}
+                        for spline in curve.splines]}
+
+
 def object_record(obj, depsgraph):
     state = {"name": obj.name, "type": obj.type, "parent": obj.parent.name if obj.parent else None,
              "parentType": obj.parent_type, "parentBone": obj.parent_bone,
@@ -223,26 +259,38 @@ def object_record(obj, depsgraph):
                               "target": getattr(getattr(c, "target", None), "name", None)} for c in obj.constraints]}
     if obj.type == "MESH":
         state["mesh"] = mesh_record(obj.data)
+    elif obj.type == "CURVE":
+        state["curve"] = curve_record(obj.data)
+    if obj.type in GEOMETRY_TYPES:
         evaluated = obj.evaluated_get(depsgraph)
         mesh = evaluated.to_mesh(preserve_all_data_layers=True, depsgraph=depsgraph)
         try:
+            if mesh is None:
+                raise ValueError("No evaluated mesh; the curve is empty or contains unrealized instances: " + obj.name)
             state["evaluatedMesh"] = mesh_record(mesh)
         finally:
             evaluated.to_mesh_clear()
         state["materialSlots"] = [{"link": slot.link, "material": material_record(slot.material)}
                                   for slot in obj.material_slots]
-        groups = {group.index: group.name for group in obj.vertex_groups}
-        weights = [[vertex.index, [[groups.get(g.group), number(g.weight)] for g in vertex.groups]]
-                   for vertex in obj.data.vertices if vertex.groups]
-        state["vertexGroups"] = [group.name for group in obj.vertex_groups]
-        state["weights"] = digest(weights)
+        if obj.type == "MESH":
+            groups = {group.index: group.name for group in obj.vertex_groups}
+            weights = [[vertex.index, [[groups.get(g.group), number(g.weight)] for g in vertex.groups]]
+                       for vertex in obj.data.vertices if vertex.groups]
+            state["vertexGroups"] = [group.name for group in obj.vertex_groups]
+            state["weights"] = digest(weights)
         state["shapeKeys"] = []
         if obj.data.shape_keys:
             state["shapeKeyAnimation"] = animation_record(obj.data.shape_keys.animation_data)
+            if obj.type == "CURVE":
+                state["curveKeySettings"] = properties(obj.data.shape_keys, {"name", "tag", "use_extra_user", "is_runtime_data"})
             for key in obj.data.shape_keys.key_blocks:
-                state["shapeKeys"].append({"name": key.name, "value": number(key.value),
-                                          "relativeKey": key.relative_key.name,
-                                          "positions": values_hash(key.data, "co", 3)})
+                entry = {"name": key.name, "value": number(key.value),
+                         "relativeKey": key.relative_key.name,
+                         "positions": values_hash(key.data, "co", 3)}
+                if obj.type == "CURVE":
+                    entry.update(properties=properties(key, {"name"}), frame=number(key.frame),
+                                 controlPointsSha256=curve_points_hash(key.data))
+                state["shapeKeys"].append(entry)
     if obj.type == "ARMATURE":
         state["bones"] = [{"name": bone.name, "parent": bone.parent.name if bone.parent else None,
                            "head": vector(bone.head_local), "tail": vector(bone.tail_local),
@@ -260,12 +308,23 @@ def object_record(obj, depsgraph):
 def bounds(objects, depsgraph):
     points = []
     for obj in objects:
-        if obj.type != "MESH":
+        if obj.type not in GEOMETRY_TYPES:
             continue
         evaluated = obj.evaluated_get(depsgraph)
-        points.extend(evaluated.matrix_world @ Vector(corner) for corner in evaluated.bound_box)
+        if obj.type == "CURVE":
+            # Curve.bound_box includes controls/handles and can stay unchanged
+            # while shape keys deform the surface. Observe actual tessellation.
+            mesh = evaluated.to_mesh(preserve_all_data_layers=True, depsgraph=depsgraph)
+            try:
+                if mesh is None:
+                    raise ValueError("No evaluated mesh; the curve is empty or contains unrealized instances: " + obj.name)
+                points.extend(evaluated.matrix_world @ vertex.co for vertex in mesh.vertices)
+            finally:
+                evaluated.to_mesh_clear()
+        else:
+            points.extend(evaluated.matrix_world @ Vector(corner) for corner in evaluated.bound_box)
     if not points:
-        raise ValueError("No mesh objects to observe or export")
+        raise ValueError("No evaluated mesh or curve geometry to observe")
     low = Vector([min(p[i] for p in points) for i in range(3)])
     high = Vector([max(p[i] for p in points) for i in range(3)])
     return {"min": vector(low), "max": vector(high), "dimensions": vector(high - low)}
@@ -277,6 +336,8 @@ def inventory():
     objects = list(bpy.context.scene.objects)
     rows = [object_record(obj, depsgraph) for obj in sorted(objects, key=lambda x: x.name)]
     meshes = [row for row in rows if row["type"] == "MESH"]
+    curves = [row for row in rows if row["type"] == "CURVE"]
+    geometry = meshes + curves
     result = {"schema": "refas.production.scene/v2", "blenderVersion": bpy.app.version_string,
               "frame": bpy.context.scene.frame_current, "objects": rows,
               "timing": {"fps": bpy.context.scene.render.fps,
@@ -284,20 +345,20 @@ def inventory():
                          "subframe": number(bpy.context.scene.frame_subframe)},
               "units": {"system": bpy.context.scene.unit_settings.system,
                         "scaleLength": number(bpy.context.scene.unit_settings.scale_length)},
-              "statistics": {"objects": len(rows), "meshes": len(meshes),
-                             "vertices": sum(row["evaluatedMesh"]["vertices"] for row in meshes),
-                             "triangles": sum(row["evaluatedMesh"]["triangles"] for row in meshes),
+              "statistics": {"objects": len(rows), "meshes": len(meshes), "curves": len(curves),
+                             "vertices": sum(row["evaluatedMesh"]["vertices"] for row in geometry),
+                             "triangles": sum(row["evaluatedMesh"]["triangles"] for row in geometry),
                              "armatures": sum(row["type"] == "ARMATURE" for row in rows),
-                             "shapeKeyObjects": sum(bool(row["shapeKeys"]) for row in meshes),
-                             "uvObjects": sum(bool(row["mesh"]["uvLayers"]) for row in meshes),
-                             "materialSlots": sum(len(row["materialSlots"]) for row in meshes)},
+                             "shapeKeyObjects": sum(bool(row["shapeKeys"]) for row in geometry),
+                             "uvObjects": sum(bool(row.get("mesh", row["evaluatedMesh"])["uvLayers"]) for row in geometry),
+                             "materialSlots": sum(len(row["materialSlots"]) for row in geometry)},
               "bounds": bounds(objects, depsgraph), "limitations": LIMITATIONS}
     result["fingerprint"] = digest({"frame": result["frame"], "timing": result["timing"],
                                     "units": result["units"], "objects": rows})
     return result
 
 
-def require_visible_meshes():
+def require_visible_geometry():
     """Keep one honest asset scope until hidden authoring helpers are supported."""
     render_visible = set()
 
@@ -309,11 +370,11 @@ def require_visible_meshes():
             visit(child, hidden)
 
     visit(bpy.context.scene.collection)
-    hidden = [obj.name for obj in bpy.context.scene.objects if obj.type == "MESH"
+    hidden = [obj.name for obj in bpy.context.scene.objects if obj.type in GEOMETRY_TYPES
               and (obj.hide_render or obj.name not in render_visible
                    or not obj.visible_get(view_layer=bpy.context.view_layer))]
     if hidden:
-        raise ValueError("Hidden or excluded meshes are unsupported by the production alpha; "
+        raise ValueError("Hidden or excluded meshes or curves are unsupported by the production alpha; "
                          "unhide them or remove helper geometry from the asset scene: "
                          + ", ".join(sorted(hidden)))
 
@@ -332,7 +393,8 @@ def require_supported_objects():
     bpy.context.view_layer.update()
     depsgraph = bpy.context.evaluated_depsgraph_get()
     instancers = {instance.parent.name if instance.parent else instance.object.name
-                  for instance in depsgraph.object_instances if instance.is_instance}
+                  for instance in depsgraph.object_instances
+                  if instance.is_instance and not _is_curve_tessellation(instance)}
     if instancers:
         raise ValueError("Evaluated geometry instances are unsupported by the production alpha; "
                          "use Realize Instances or convert them to explicit mesh objects first: "
@@ -342,9 +404,24 @@ def require_supported_objects():
 def require_matching_modifier_evaluation():
     """Inventory/export use the viewport graph; Cycles uses render settings."""
     mismatched = []
-    for obj in bpy.context.scene.objects:
-        if obj.type != "MESH":
+    pending = list(bpy.context.scene.objects)
+    visited = set()
+    while pending:
+        obj = pending.pop()
+        if obj in visited:
             continue
+        visited.add(obj)
+        if obj.type not in GEOMETRY_TYPES:
+            continue
+        if obj.type == "CURVE":
+            # Bevel/taper helpers can be local datablocks outside the scene.
+            # Their render tessellation still changes the visible host surface.
+            pending.extend(dependency for dependency in (obj.data.bevel_object, obj.data.taper_object)
+                           if dependency is not None)
+            if obj.data.render_resolution_u:
+                if any(spline.resolution_u != obj.data.render_resolution_u
+                       for spline in obj.data.splines if spline.type != "POLY"):
+                    mismatched.append(obj.name + " (viewport/render curve resolution)")
         for modifier in obj.modifiers:
             reason = None
             if modifier.show_viewport != modifier.show_render:
@@ -362,7 +439,7 @@ def require_matching_modifier_evaluation():
 
 def require_portable_scene():
     """Support self-contained native geometry and packed still textures explicitly."""
-    require_visible_meshes()
+    require_visible_geometry()
     require_supported_objects()
     require_matching_modifier_evaluation()
     if bpy.data.libraries:
@@ -509,7 +586,16 @@ def preserve_positive_skin_weights(required=True):
         setattr(PrimitiveCreator, name, original)
 
 
+def require_delivery_geometry():
+    curves = sorted(obj.name for obj in bpy.context.scene.objects if obj.type == "CURVE")
+    if curves:
+        raise ValueError("Delivery requires meshes; explicitly convert selected final CURVE objects "
+                         "in a production edit before delivery (curve deformation is not automatically baked): "
+                         + ", ".join(curves))
+
+
 def export_scene(out):
+    require_delivery_geometry()
     scene = bpy.context.scene
     objects = list(scene.objects)
     depsgraph = bpy.context.evaluated_depsgraph_get()
@@ -710,15 +796,22 @@ def query_native(job, source_sha):
                        "matrixWorld": [vector(value) for value in evaluated.matrix_world],
                        "visible": obj.visible_get(view_layer=bpy.context.view_layer),
                        "hideRender": obj.hide_render, "instanceType": obj.instance_type}
-                if obj.type == "MESH":
+                if obj.type in GEOMETRY_TYPES:
                     mesh = evaluated.to_mesh(preserve_all_data_layers=True, depsgraph=depsgraph)
                     try:
+                        if mesh is None:
+                            raise ValueError("No evaluated mesh; the curve is empty or contains unrealized instances: " + obj.name)
                         mesh.calc_loop_triangles()
                         row["mesh"] = {"vertices": len(mesh.vertices), "edges": len(mesh.edges),
                                        "polygons": len(mesh.polygons), "triangles": len(mesh.loop_triangles)}
                     finally:
                         evaluated.to_mesh_clear()
                     row["materials"] = [slot.material.name if slot.material else None for slot in obj.material_slots]
+                    if obj.type == "CURVE":
+                        row["curve"] = {"splines": len(obj.data.splines),
+                                        "controlPoints": sum(len(spline.bezier_points) + len(spline.points)
+                                                             for spline in obj.data.splines),
+                                        "splineTypes": sorted({spline.type for spline in obj.data.splines})}
                     row["shapeKeys"] = [{"name": key.name, "value": number(key.value)}
                                         for key in obj.data.shape_keys.key_blocks] if obj.data.shape_keys else []
                     row["bounds"] = bounds([obj], depsgraph)
@@ -858,6 +951,8 @@ def execute(job):
             bpy.ops.object.mode_set(mode="OBJECT")
         require_portable_scene()
         require_protected(protected, protected_frame)
+        if profile == "delivery":
+            require_delivery_geometry()
         before = inventory()
         bpy.ops.wm.save_as_mainfile(filepath=str(out / "scene.blend"), check_existing=False, compress=False)
         if profile == "delivery":
@@ -881,7 +976,7 @@ def execute(job):
         else:
             result["verification"]["glb"] = {"status": "not-requested", "reason": "native-output-profile"}
     else:
-        require_visible_meshes()
+        require_visible_geometry()
         require_supported_objects()
         require_matching_modifier_evaluation()
         source = inventory()

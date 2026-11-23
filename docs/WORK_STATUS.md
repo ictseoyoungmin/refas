@@ -8,7 +8,44 @@ The user approved implementation of the new production path, starting from `main
 
 This is development work. Active package/Python runtime/plugin identity is `2.0.0-alpha.1`; the retained legacy runtime remains `1.4.2`. The recorded published release remains `v1.4.1`. Main merge and formal publication are separate unfinished milestones.
 
-## Current: standalone native inspection
+## Current: editable native curves
+
+[Issue #406](https://github.com/ictseoyoungmin/refas/issues/406) continues from
+`rewrite/v2@d8bf50e1` on `feat/native-curves`, targeting `rewrite/v2`. Classic
+Blender `CURVE` objects with Bezier, POLY or NURBS splines now remain editable
+through native save/reopen, rendering, object protection and temporary inspection.
+Recorded controls, curve settings, shape keys and materials are fingerprinted;
+geometry and topology observations use the evaluated surface. No new command,
+module or dependency is added.
+
+Delivery still requires meshes and explicitly rejects unconverted curves.
+Select the final curves and convert through ordinary `bpy` in a recoverable
+`run --outputs delivery`. Current-frame conversion does not preserve curve
+shape-key or geometry animation; required motion must be deliberately baked
+or rebuilt and verified in its consumer. Hidden/excluded geometry, text,
+surfaces, modern hair curves and genuine object/evaluated instances remain
+unsupported. Blender's own curve tessellation is distinguished from such
+instances. Viewport/render parity checks include off-scene bevel/taper profiles.
+
+The full local suite passes **144 Production tests with actual Blender/Godot,
+zero failures and zero skips** in 147.485 seconds, and **943 JavaScript tests
+with zero failures and zero skips**. Actual Blender is **4.3.2**. Four new
+integration scenarios cover copied-skill native editing, explicit delivery
+refusal/conversion and exact restore; standalone animated inspection; protected
+controls, keys, materials and noncurrent animation; and unsupported geometry
+or evaluation mismatches. A separate installed-copy cable exercise also
+completed a 70 mm edit, preserved neighboring objects, exported a static GLB
+and restored the retained files byte-for-byte. The package remains 20 files;
+its final byte size and remote validation belong to the final feature record.
+
+That exercise also found that bounded topology output for two cables can still
+occupy about 13,000 tokens. Improving the generic compact query is follow-up
+work, not an additional feature in this change. No garment was newly accepted
+and no U1/E2 independent comparison was performed. The ledger remains
+**30/37 = 81%**, with U1/U2/U3/U6/E2/D2/D3 open. The saved garment checkpoint
+and its failed fitting observations remain separate from this runtime change.
+
+## Previous: standalone native inspection
 
 [Issue #404](https://github.com/ictseoyoungmin/refas/issues/404) continues from
 `rewrite/v2@3de557a7` on `feat/standalone-native-inspection`. The public

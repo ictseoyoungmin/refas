@@ -49,6 +49,24 @@ def _world(point, origin):
     return [math.fsum((point[i], origin[i])) for i in range(3)]
 
 
+def _is_curve_tessellation(instance):
+    """Blender exposes a beveled curve's own mesh as one identity self-instance.
+
+    This is the surface returned by the curve's to_mesh(), not another copy of
+    the asset. Keep transformed, nested, particle and other-object instances
+    subject to the ordinary realization requirement.
+    """
+    parent = instance.parent
+    original = parent.original if parent is not None else None
+    source = instance.instance_object
+    return (instance.is_instance and original is not None and original.type == "CURVE"
+            and instance.object.type == "MESH" and instance.object.original == original
+            and source is not None and source.original == original
+            and instance.particle_system is None
+            and tuple(instance.persistent_id) == (0,) + (2147483647,) * 7
+            and instance.matrix_world == parent.matrix_world)
+
+
 def _surface(obj, depsgraph, meters_per_unit):
     """Copy evaluated geometry into a nearby metric frame using Python doubles.
 
@@ -56,17 +74,20 @@ def _surface(obj, depsgraph, meters_per_unit):
     float32, losing small geometry long before later float conversion/rebasing.
     World coordinates below are reporting values, never calculation inputs.
     """
-    if getattr(obj, "type", None) != "MESH":
-        raise TypeError("mesh audit requires a Blender MESH object")
+    if getattr(obj, "type", None) not in {"MESH", "CURVE"}:
+        raise TypeError("mesh audit requires a Blender MESH or classic CURVE object")
     if getattr(obj, "instance_type", "NONE") != "NONE":
         raise ValueError("realize object instances before auditing a mesh")
     for instance in depsgraph.object_instances:
         parent = instance.parent
-        if instance.is_instance and parent is not None and parent.original == obj.original:
+        if (instance.is_instance and parent is not None and parent.original == obj.original
+                and not _is_curve_tessellation(instance)):
             raise ValueError("realize evaluated instances before auditing " + obj.name)
     evaluated = obj.evaluated_get(depsgraph)
     mesh = evaluated.to_mesh(preserve_all_data_layers=True, depsgraph=depsgraph)
     try:
+        if mesh is None:
+            raise ValueError("No evaluated mesh; the curve is empty or contains unrealized instances: " + obj.name)
         matrix = _matrix(obj, depsgraph)
         determinant = _dot(matrix[0][:3], _cross(matrix[1][:3], matrix[2][:3]))
         local = [tuple(float(x) for x in v.co) for v in mesh.vertices]

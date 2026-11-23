@@ -4,6 +4,12 @@ All notable RefAs changes are documented here. RefAs follows semantic versioning
 
 ## 2.0.0-alpha.1 — Unreleased
 
+### Editable native curves
+
+- Keep classic Blender Bezier, POLY and NURBS curves editable through native save/reopen, rendering and object protection. Record curve controls, settings, shape keys and materials; temporary inspection observes their evaluated surface without converting the source.
+- Require matching viewport/render curve resolution. Retain the existing exclusions for hidden geometry, text, surfaces, modern hair curves and instances.
+- Keep delivery mesh-only with an explicit refusal for unconverted curves. Document recoverable, author-selected conversion and deliberate baking or reconstruction of required motion; current-frame conversion does not preserve curve geometry animation.
+
 ### Standalone native inspection
 
 - Let public `inspect` read either the selected project revision or an explicit `--input-blend` without creating a project or copying the model. Reuse temporary object/frame/topology queries and unchanged-source hash checks; standalone reads have no revision or reference-freshness claim.
