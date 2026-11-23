@@ -4,11 +4,37 @@
 
 RefAs 2.0 production rewrite — native authoring and the first original-reference pilot, [issue #398](https://github.com/ictseoyoungmin/refas/issues/398), branch [`rewrite/v2`](https://github.com/ictseoyoungmin/refas/tree/rewrite/v2), [Draft PR #399](https://github.com/ictseoyoungmin/refas/pull/399).
 
-The user approved implementation of the new production path, starting from `main@a29bcc42f4da666c812462eb130836f2d766b0a1`. The [implementation plan](development/refas-2-plan.md) and [Work OS plan](https://app.notion.com/p/41fc6a3b5bf181c2b2cdfac4605ef7d7) record the accepted direction. Status date: 2026-11-23, Asia/Seoul.
+The user approved implementation of the new production path, starting from `main@a29bcc42f4da666c812462eb130836f2d766b0a1`. The [implementation plan](development/refas-2-plan.md) and [Work OS plan](https://app.notion.com/p/41fc6a3b5bf181c2b2cdfac4605ef7d7) record the accepted direction. Status date: 2026-11-24, Asia/Seoul.
 
 This is development work. Active package/Python runtime/plugin identity is `2.0.0-alpha.1`; the retained legacy runtime remains `1.4.2`. The recorded published release remains `v1.4.1`. Main merge and formal publication are separate unfinished milestones.
 
-## Current: summary-first topology queries and skill relationships
+## Current: current skill guidance and historical documentation
+
+[Issue #412](https://github.com/ictseoyoungmin/refas/issues/412) starts from
+`rewrite/v2@19935327` on `refactor/current-skill-docs`. The installed adapter is
+now named `asset_import.py` for its current responsibility. Its implementation,
+explicit `import-v1` command and stored migration contracts remain unchanged.
+General entry guidance focuses on authoring; saved 1.x inputs retain their
+conditional guide.
+
+The [documentation index](README.md) separates active 2.0 guidance from the
+[1.x archive](archive/v1/README.md). Ninety-four earlier documents move to that
+archive; the hybrid release criteria separates current and historical scope.
+Existing 2.0 evaluation, failed candidates and recovery evidence retain their
+paths and contents. The skill map records the renamed adapter and its consumers.
+
+Source-budget checks distinguish exact one-for-one documentation moves from new
+or modified payload. File counts and all file/path/binary/size limits remain;
+copies, edited docs and evidence/output paths receive no relocation exemption.
+The feature and cumulative parent ranges must both pass before merge.
+
+The next authoring capability is a public `run --input-glb` route for editing an
+ordinary asset directly into the existing native revision workflow. It belongs
+to a separate feature change after this repository cleanup. No asset is edited
+by the cleanup; **30/37 = 81%** and U1/U2/U3/U6/E2/D2/D3 remain open. Final
+verification and package/source measurements are recorded in the feature PR.
+
+## Previous: summary-first topology queries and skill relationships
 
 [Issue #410](https://github.com/ictseoyoungmin/refas/issues/410) starts from
 `rewrite/v2@7e77432d`, after [CI PR #409](https://github.com/ictseoyoungmin/refas/pull/409),

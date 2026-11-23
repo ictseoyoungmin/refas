@@ -154,6 +154,101 @@ test('per-file, cumulative byte and file-count budgets reject oversized addition
   assert.match(checkArtifactBudget({root}).errors[0], /Changed file count/u);
 });
 
+test('identical documentation relocations are reported separately in every input mode', async t => {
+  const {root} = await fixture(t);
+  let bytes = 0;
+  for (let i = 0; i < 6; i++) {
+    const content = `# Historical document ${i}\n${'x'.repeat(200 * 1024)}\n`;
+    bytes += Buffer.byteLength(content);
+    await write(root, `docs/old ${i}.md`, content);
+  }
+  const base = save(root, 'existing documentation');
+  await fs.mkdir(path.join(root, 'docs/archive/v1'), {recursive: true});
+  for (let i = 0; i < 6; i++) {
+    await fs.rename(path.join(root, `docs/old ${i}.md`), path.join(root, `docs/archive/v1/old ${i}.md`));
+  }
+  const assertRelocations = checked => {
+    assert.equal(checked.ok, true, checked.errors.join('\n'));
+    assert.equal(checked.changedFiles, 6, 'relocations still count against the file limit');
+    assert.equal(checked.changedBytes, 0);
+    assert.equal(checked.relocatedFiles, 6);
+    assert.equal(checked.relocatedBytes, bytes);
+    assert.ok(bytes > ARTIFACT_LIMITS.changedBytes);
+  };
+  assertRelocations(checkArtifactBudget({root}));
+  git(root, 'add', '-A');
+  assertRelocations(checkArtifactBudget({root, staged: true}));
+  save(root, 'relocate existing documentation');
+  assertRelocations(checkArtifactBudget({root, base, head: 'HEAD'}));
+});
+
+test('edited documents, copies and overwritten paths retain their full byte charge', async t => {
+  const {root} = await fixture(t);
+  const originals = {'move.md': 'Move once\n', 'edit.md': 'Before edit\n',
+    'keep.md': 'Keep the original\n', 'removed.md': 'Replace destination\n', 'existing.md': 'Earlier destination\n'};
+  for (const [name, text] of Object.entries(originals)) await write(root, `docs/${name}`, text);
+  save(root, 'existing documents');
+  for (const name of ['move.md', 'edit.md', 'removed.md']) await fs.rm(path.join(root, `docs/${name}`));
+  const candidates = {'archive/v1/first.md': originals['move.md'], 'archive/v1/second.md': originals['move.md'],
+    'archive/v1/edited.md': 'After edit\n', 'archive/v1/copy.md': originals['keep.md'],
+    'existing.md': originals['removed.md']};
+  for (const [name, text] of Object.entries(candidates)) await write(root, `docs/${name}`, text);
+  const checked = checkArtifactBudget({root});
+  assert.equal(checked.ok, true, checked.errors.join('\n'));
+  assert.equal(checked.relocatedFiles, 1, 'one deleted source cannot exempt multiple copies');
+  assert.equal(checked.relocatedBytes, Buffer.byteLength(originals['move.md']));
+  assert.equal(checked.changedBytes, Object.values(candidates).reduce((sum, text) => sum + Buffer.byteLength(text), 0) - checked.relocatedBytes);
+});
+
+test('a staged deletion recreated in the working tree cannot supply relocation credit', async t => {
+  const {root} = await fixture(t);
+  for (let i = 0; i < 6; i++) await write(root, `docs/source${i}.md`, `${i}\n${'x'.repeat(200 * 1024)}`);
+  const base = save(root, 'existing documents');
+  git(root, 'rm', '-r', 'docs');
+  for (let i = 0; i < 6; i++) {
+    await write(root, `docs/source${i}.md`, 'Replacement\n');
+    await write(root, `docs/archive/v1/source${i}.md`, `${i}\n${'x'.repeat(200 * 1024)}`);
+  }
+  const assertCopies = checked => {
+    assert.equal(checked.ok, false);
+    assert.equal(checked.relocatedFiles, 0);
+    assert.ok(checked.changedBytes > ARTIFACT_LIMITS.changedBytes);
+    assert.match(checked.errors.join('\n'), /Changed payload/u);
+  };
+  assertCopies(checkArtifactBudget({root}));
+  git(root, 'add', '-A');
+  assertCopies(checkArtifactBudget({root, staged: true}));
+  save(root, 'keep originals and add copies');
+  assertCopies(checkArtifactBudget({root, base, head: 'HEAD'}));
+});
+
+test('relocation accounting never exempts evidence, non-documents, forbidden paths or invalid files', async t => {
+  const {root} = await fixture(t);
+  const originals = {
+    'docs/evidence/record.md': 'Existing evidence\n',
+    'docs/logs/record.md': 'Existing log\n',
+    'outside/record.md': 'Outside docs\n',
+    'docs/record.txt': 'Not Markdown\n',
+    'docs/binary.md': Buffer.from([0, 255, 1]),
+    'docs/oversized.md': 'x'.repeat(ARTIFACT_LIMITS.textBytes + 1),
+    'docs/source.md': 'Ordinary document\n',
+  };
+  for (const [name, content] of Object.entries(originals)) await write(root, name, content);
+  save(root, 'historical files');
+  let index = 0;
+  for (const [name, content] of Object.entries(originals)) {
+    await fs.rm(path.join(root, name));
+    await write(root, name === 'docs/source.md' ? 'docs/outputs/result.md' : `docs/archive/v1/${index++}.md`, content);
+  }
+  const checked = checkArtifactBudget({root});
+  assert.equal(checked.relocatedFiles, 0);
+  assert.equal(checked.relocatedBytes, 0);
+  assert.equal(checked.ok, false);
+  assert.ok(checked.errors.some(error => /binary payload/u.test(error)));
+  assert.ok(checked.errors.some(error => /file budget/u.test(error)));
+  assert.ok(checked.errors.some(error => /outputs\/result\.md.*payload/u.test(error)));
+});
+
 test('ignored local work is excluded, forced staging is checked, and CLI has no policy override', async t => {
   const {root} = await fixture(t);
   await write(root, '.gitignore', '*.blend\n');

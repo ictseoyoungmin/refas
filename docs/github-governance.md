@@ -159,6 +159,14 @@ self-contained. Run `npm run check:artifacts` on the local change or its
 `--staged` form before publishing. Existing historical evidence is retained;
 this boundary does not request its deletion or a Git history rewrite.
 
+The budget reports exact one-for-one moves of existing UTF-8 Markdown under
+`docs/` separately from changed bytes. Both paths must be outside evidence and
+output directories; the old path must be deleted and the new path added with
+identical complete contents. Every destination still counts against the file
+limit and passes the regular-file, size, path and text checks. Modified docs,
+copies and non-documentation files retain their full byte charge. This is
+relocation accounting, not permission to move generated payloads into Git.
+
 Use temporary diagnostic reads while modeling and keep recovery in one working
 project. Persist detailed observations only when they explain an unresolved
 failure or support the selected deliverable. Repeated reports, crops, videos

@@ -7,7 +7,7 @@ description: Build and revise reference-driven 3D assets with Blender, preserve 
 
 Create an editable 3D asset that answers the user's visual and practical requirements. Work from the original references, build a coherent whole, inspect actual renders, and improve the largest visible defect. Keep the successful model available for further edits and its intended use.
 
-Use the Python production commands below to create and continue assets. The installed skill contains this workflow and its focused guides; it does not include the old capability or certification runtime.
+Use the Python production commands below to create and continue assets.
 
 ## Start with the asset
 
@@ -21,7 +21,7 @@ Build continuous major volumes and believable connections before small decoratio
 
 For surfaces that should form one continuous shell, derive adjoining regions from a shared boundary. Separately subdivided edges can open a crack even when their control points meet. Inspect the connection with the final modifiers from both sides before adding small detail; preserve intentional openings.
 
-Load a construction guide only when its problem is present: `references/production-garments.md` for cloth transitions and folded collars, or `references/production-assemblies.md` for segmented hard surfaces, joint pivots and local pose checks. These guides support ordinary Blender authoring without the 1.x certification loop.
+Load a construction guide only when its problem is present: `references/production-garments.md` for cloth transitions and folded collars, or `references/production-assemblies.md` for segmented hard surfaces, joint pivots and local pose checks.
 
 For trim or hardware that must follow a deforming surface, the assembly guide also covers the optional `scripts/production/surface_binding.py` authoring helper. Bind to an explicitly selected outer triangle and move a section together; inspect neighboring sections and clearance after authoring the result.
 
@@ -39,7 +39,7 @@ python3 scripts/produce.py status --root PROJECT
 
 Repeat `--reference` for multiple original files. A design brief without an image can start without that flag. Initialization copies the supplied references into the project; preserve those copies. `doctor` reports the available Python/Blender environment and `status` identifies the current revision and its files.
 
-For existing work, inspect `status`, the current native scene, and its renders before editing. Read any retained intent and findings so that a new agent continues the same asset. A production project and a 1.x project have different state formats; do not treat one as the other.
+For existing work, inspect `status`, the current native scene, and its renders before editing. Read any retained intent and findings so that a new agent continues the same asset.
 
 To adopt changed references, pass the complete desired set and the `sequence` returned by `status`:
 
@@ -151,7 +151,7 @@ A render or technical check can support only the claim it actually demonstrates.
 
 ## Import an existing 1.x asset
 
-Read `references/production-import.md` only when the source is a saved 1.x project. Select a recorded checkpoint and native/GLB artifact, then import into a new production project:
+Read `references/production-import.md` only when the source is a saved 1.x project. For an existing production project, use `status` and continue its revisions instead. Select a recorded 1.x checkpoint and native/GLB artifact, then import into a new production project:
 
 ```bash
 python3 scripts/produce.py import-v1 --root NEW_PROJECT --source-project OLD_PROJECT --checkpoint CHECKPOINT_ID --artifact assets/selected.glb --name imported-asset

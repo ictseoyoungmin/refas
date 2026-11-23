@@ -274,7 +274,7 @@ bpy.ops.wm.save_as_mainfile(filepath=''' + repr(str(source)) + ''')
 
     def test_legacy_native_import_refuses_uncaptured_libraries_and_image_files(self):
         from test_production_import import create_legacy_project
-        from production import legacy_import, project
+        from production import asset_import, project
         cases = [
             ("linked-library", "no linked libraries", '''
 with bpy.data.libraries.load(''' + repr(str(self.source)) + ''', link=True) as (source, target):
@@ -296,7 +296,7 @@ bpy.context.object.data.materials.append(material)
                 before = project.inventory(legacy["root"])
                 target = self.root / ("rejected-import-" + name)
                 with self.assertRaises(project.ProductionError):
-                    legacy_import.import_v1(target, legacy["root"], legacy["checkpoint"], legacy["artifact"],
+                    asset_import.import_v1(target, legacy["root"], legacy["checkpoint"], legacy["artifact"],
                                             "Rejected import", blender=str(BLENDER), views=[])
                 state = project.status(target)
                 self.assertIsNone(state["head"])
@@ -309,7 +309,7 @@ bpy.context.object.data.materials.append(material)
 
     def test_legacy_glb_required_extension_failure_never_publishes(self):
         from test_production_import import create_legacy_project
-        from production import legacy_import, project
+        from production import asset_import, project
         data = (self.root / "create/asset.glb").read_bytes()
         length = struct.unpack("<I", data[12:16])[0]
         document = json.loads(data[20:20 + length])
@@ -325,7 +325,7 @@ bpy.context.object.data.materials.append(material)
         before = project.inventory(legacy["root"])
         target = self.root / "rejected-required-extension"
         with self.assertRaises(project.ProductionError):
-            legacy_import.import_v1(target, legacy["root"], legacy["checkpoint"], legacy["artifact"],
+            asset_import.import_v1(target, legacy["root"], legacy["checkpoint"], legacy["artifact"],
                                     "Unsupported required extension", blender=str(BLENDER), views=[])
         state = project.status(target)
         self.assertIsNone(state["head"])

@@ -12,7 +12,7 @@ The parameter-fit runtime closes the gap between source-bound measurements and a
 - `refas.parameter-fit-plan/v1` and `refas.parameter-fit-report/v1`
 - `refas fit-parameters --root DIR --plan PLAN --worker WORKER --out REPORT`
 
-The generic ledger is implemented in [parameter-fit.mjs](../skills/refas/scripts/lib/parameter-fit.mjs). The optional realized-GLB repair backend is implemented in [shape-repair.mjs](../skills/refas/scripts/lib/shape-repair.mjs). Usage and bounded-edit routing are authoritative in [parameter-fitting.md](../skills/refas/references/parameter-fitting.md).
+The generic ledger is implemented in [parameter-fit.mjs](../../../legacy/v1/scripts/lib/parameter-fit.mjs). The optional realized-GLB repair backend is implemented in [shape-repair.mjs](../../../legacy/v1/scripts/lib/shape-repair.mjs). Usage and bounded-edit routing are authoritative in [parameter-fitting.md](../../../legacy/v1/references/parameter-fitting.md).
 
 ## Projection repair backend
 

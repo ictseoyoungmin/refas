@@ -37,8 +37,9 @@ that original project. They do not become current approval of the imported
 
 ## Earlier documentation and evidence
 
-Versioned 1.x plans, release reports and literal dogfood logs are historical
-records. Their original paths identify the recorded checkout, not the current
+The [1.x documentation archive](archive/v1/README.md) contains the earlier
+architecture, capability notes, development plans and release reports. These
+documents and literal dogfood logs are historical records. Their original paths identify the recorded checkout, not the current
 production package. The [pre-cutover README](https://github.com/ictseoyoungmin/refas/blob/ef1d6b8acb944b545bebb486571d7841a3eea1b6/README.md)
 preserves the complete earlier capability, workflow, physical-contract and
 installation description. Current executable examples/tests use the explicit

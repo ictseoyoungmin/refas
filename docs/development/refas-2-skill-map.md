@@ -29,7 +29,7 @@ flowchart TD
 
     CLI -- "version" --> Identity["production/__init__.py"]
     CLI -- "commands" --> Project["production/project.py"]
-    CLI -- "import-v1 only" --> Import["production/legacy_import.py"]
+    CLI -- "import-v1 only" --> Import["production/asset_import.py"]
     Import --> Project
 
     Project -- "validate view specification" --> Review["production/review.py"]
@@ -60,7 +60,7 @@ Paths in the first column are relative to `skills/refas/`.
 | [scripts/production/review.py](../../skills/refas/scripts/production/review.py) | Validates fixed camera/light specifications in both the host project code and Blender worker. | Both callers and the review guide must agree. Preserve captured settings through save/restore and test actual views where relevant. |
 | [scripts/production/mesh_audit.py](../../skills/refas/scripts/production/mesh_audit.py) | Observes evaluated topology and anchor gaps. The worker imports its curve-tessellation discriminator at startup and calls `audit_mesh` for topology queries. Authoring scripts can also import it. | It is not optional as a whole: deleting it also breaks normal worker startup and curve instance checks. Follow worker imports, query output, topology guidance and author scripts. |
 | [scripts/production/surface_binding.py](../../skills/refas/scripts/production/surface_binding.py) | Optional numeric authoring API for binding and transporting a section on an explicitly chosen host triangle. No core module automatically calls it. | Search documented and retained author-script imports, not only core imports. Removing it retires the supported surface-attachment recipe and its tests. |
-| [scripts/production/legacy_import.py](../../skills/refas/scripts/production/legacy_import.py) | Lazily loaded by `import-v1`; captures selected archived asset bytes and uses the current `project.py` path. | Coordinate the command, import guide, provenance capture and import tests. Despite its name, this is current 2.0 code; it does not import the retained 1.x runtime. |
+| [scripts/production/asset_import.py](../../skills/refas/scripts/production/asset_import.py) | Lazily loaded by `import-v1`; captures selected archived asset bytes and uses the current `project.py` path. | Coordinate the command, import guide, provenance capture and import tests. Keep stored migration formats and captured input identities compatible. |
 
 ## Guidance and discovery
 

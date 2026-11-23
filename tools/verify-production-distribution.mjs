@@ -23,7 +23,7 @@ export const PRODUCTION_SKILL_FILES = Object.freeze([
   'scripts/production/project.py',
   'scripts/production/blender_worker.py',
   'scripts/production/review.py',
-  'scripts/production/legacy_import.py',
+  'scripts/production/asset_import.py',
   'scripts/production/mesh_audit.py',
   'scripts/production/surface_binding.py',
 ]);

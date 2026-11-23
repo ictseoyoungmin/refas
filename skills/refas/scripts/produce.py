@@ -133,7 +133,7 @@ def main():
                                     expected_revision=args.expected_revision, expected_sequence=args.expected_sequence,
                                     input_blend=args.input_blend, topology_details=args.topology_details)
         elif args.command == "import-v1":
-            from production.legacy_import import import_v1
+            from production.asset_import import import_v1
             output = import_v1(args.root, args.source_project, args.checkpoint, args.artifact, args.name,
                                blender=args.blender,
                                views=[view.strip() for view in args.views.split(",") if view.strip()] if args.views is not None else None,
