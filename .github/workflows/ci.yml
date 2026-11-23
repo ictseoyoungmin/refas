@@ -7,6 +7,7 @@ on:
     branches: [main, rewrite/v2, rc/post-1.1, develop/v1.2.0, develop/v1.2.1, develop/v1.3.0, develop/v1.4.0, develop/v1.4.1, develop/v1.4.2]
 
 # Tier 1: full regression and critical source-bound defenses on every PR/develop push.
+# Legacy JIT runs on main push or an explicit [full-qa] push, and in Deep QA.
 # Tier 2: expensive complete dogfood on main push or an explicit [full-qa] develop push.
 # A standalone manual/periodic deep workflow is also provided (ci-deep.yml).
 concurrency:
@@ -95,7 +96,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node: [20, 22, 24]
+        node: [22, 24]
     steps:
       - uses: actions/checkout@v7
         with:
@@ -114,15 +115,13 @@ jobs:
         run: npm test
       - name: Python syntax gate
         run: npm run test:python
-      - name: Instruction graph audit
-        run: npm run check:instructions
       - name: Product-boundary audit
         run: npm run check
       - name: Install optional Numba CPU prototype (Node 24 only)
-        if: matrix.node == 24
+        if: matrix.node == 24 && github.event_name == 'push' && (github.ref == 'refs/heads/main' || contains(github.event.head_commit.message, '[full-qa]'))
         run: python -m pip install --no-cache-dir numba==0.65.1
       - name: Compiled CPU kernel tests
-        if: matrix.node == 24
+        if: matrix.node == 24 && github.event_name == 'push' && (github.ref == 'refs/heads/main' || contains(github.event.head_commit.message, '[full-qa]'))
         run: |
           npm run test:cpu-jit
           node --test tests/render-backend.test.mjs

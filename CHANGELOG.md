@@ -4,6 +4,11 @@ All notable RefAs changes are documented here. RefAs follows semantic versioning
 
 ## 2.0.0-alpha.1 — Unreleased
 
+### Focused continuous integration
+
+- Validate regular changes on Node 22 and 24, keeping release preflight aligned with those job names. Retain the existing runtime compatibility declaration and explicit release authorization.
+- Run archived renderer Numba/JIT checks on main or explicitly requested full-QA pushes and in the manual/weekly deep workflow. Keep complete JavaScript, Production, source-artifact and product-boundary checks in regular CI, and remove the instruction audit already included by the product-boundary audit.
+
 ### Editable native curves
 
 - Keep classic Blender Bezier, POLY and NURBS curves editable through native save/reopen, rendering and object protection. Record curve controls, settings, shape keys and materials; temporary inspection observes their evaluated surface without converting the source.
