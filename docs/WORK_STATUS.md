@@ -8,10 +8,40 @@ The user approved implementation of the new production path, starting from `main
 
 This is development work. Active package/Python runtime/plugin identity is `2.0.0-alpha.1`; the retained legacy runtime remains `1.4.2`. The recorded published release remains `v1.4.1`. Main merge and formal publication are separate unfinished milestones.
 
-## Current: ordinary GLB authoring input
+## Current: editable native lattice deformation
 
-[Issue #414](https://github.com/ictseoyoungmin/refas/issues/414) starts from
-`rewrite/v2@e8dfa5d8` on `feat/glb-authoring-input`. Public `run --input-glb`
+[Issue #416](https://github.com/ictseoyoungmin/refas/issues/416) continues from
+`rewrite/v2@b63e20d6` on `feat/native-lattice-authoring`. An actual Blender source
+with a mesh and Lattice modifier previously failed the unsupported-object gate.
+The existing worker now keeps native `LATTICE` cages editable through ordinary
+`bpy` scripts, save/reopen, object protection and continued revisions. No command,
+module, geometry solver or installed file is added.
+
+Grid/interpolation, original/deformed controls, group and softbody weights,
+shape keys, evaluation selectors and recorded animation are fingerprinted.
+Compact queries describe cage controls separately from the evaluated host
+surface; cage points do not inflate render bounds or surface counts. Diagnostic
+scenes retain the cage dependency. Off-scene and disabled/excluded cage
+dependencies are refused, including indirect parent chains.
+
+Delivery rejects every remaining scene lattice. Apply the intended deformation
+at the selected frame and remove construction cages in a recoverable edit; the
+earlier native revision keeps them. This does not automatically bake animation.
+Installed-package authoring, actual matched views, delivery, protection and
+restore evidence are recorded in the feature PR, alongside required local and
+remote gates. Source-only changes retain generated assets and logs outside Git.
+
+This fills a native authoring support gap rather than approving the garment or
+adding a new Blender modeling algorithm. The fixed ledger remains **30/37 = 81%**,
+with U1/U2/U3/U6/E2/D2/D3 open. The next garment edits still start with the lower
+left piping's centerline/section, then belt control sections and upper collar
+reconstruction under the existing contact criteria.
+
+## Previous: ordinary GLB authoring input
+
+[Issue #414](https://github.com/ictseoyoungmin/refas/issues/414) was completed in
+[PR #415](https://github.com/ictseoyoungmin/refas/pull/415), merged into
+`rewrite/v2@b63e20d6`. Public `run --input-glb`
 captures a self-contained GLB and applies the requested modeling script through
 the existing native revision workflow. The selected file supplies the complete
 starting scene; it is not appended to the current native. Omitting both explicit

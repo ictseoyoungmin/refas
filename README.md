@@ -267,13 +267,26 @@ materials; topology observations use the evaluated surface. Match curve
 `render_resolution_u` to the non-POLY splines' `resolution_u`, or use `0`
 to reuse their viewport resolution.
 
+Native iterations also retain editable `LATTICE` deformation cages: grid,
+interpolation, controls, group weights, shape keys and recorded animation.
+Use ordinary `bpy` to change the cage; observations and renders use the affected
+host's evaluated surface. Cage points do not count as surface geometry or enlarge
+asset bounds. Keep cages linked to the scene and visible/enabled in the active
+view layer; `hide_render` is allowed for these non-renderable controls. See the
+[lattice authoring guide](skills/refas/references/production-assemblies.md#shape-a-region-with-an-editable-lattice).
+
 Delivery remains mesh-only and refuses unconverted curves. Explicitly convert
 the selected final curves through ordinary Blender scripting in a recoverable
 `run --outputs delivery`. A current-frame conversion does not preserve curve
 shape-key or geometry animation; deliberately bake or rebuild required motion
 and verify exported playback. See the [curve delivery guide](skills/refas/references/production-topology.md#keep-curve-controls-until-mesh-delivery).
 
-Scenes still require packed still-image textures. Hidden/excluded geometry,
+Delivery also refuses every remaining scene lattice. Apply the intended static
+deformation at the selected frame and remove its cage in a recoverable edit;
+earlier native revisions keep the controls. This does not automatically bake
+lattice or shape-key animation.
+
+Scenes still require packed still-image textures. Hidden/excluded mesh or curve geometry,
 text (`FONT`), `SURFACE`, modern hair `CURVES` and instances remain unsupported;
 convert or realize them before submission. Match viewport/render modifier
 visibility and subdivision levels. Temporary `inspect` can describe other

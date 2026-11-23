@@ -36,7 +36,7 @@ SCHEMA = "refas.production.result/v2"
 VIEWS = {"hero": (1.45, -2.2, 1.15), "front": (0, -1, 0),
          "side": (1, 0, 0), "back": (0, 1, 0), "top": (0, 0, 1)}
 GEOMETRY_TYPES = {"MESH", "CURVE"}
-ASSET_TYPES = GEOMETRY_TYPES | {"ARMATURE", "EMPTY"}
+ASSET_TYPES = GEOMETRY_TYPES | {"ARMATURE", "EMPTY", "LATTICE"}
 LIMITATIONS = [
     "Diagnostic views are unregistered; they do not establish reference likeness.",
     "GLB reimport checks geometry counts, bounds and basic feature presence, not visual equivalence.",
@@ -45,6 +45,7 @@ LIMITATIONS = [
     "Static mesh modifiers are evaluated for GLB export; unapplied non-armature modifiers on skinned or shape-key meshes are unsupported.",
     "Hidden or excluded meshes and curves are rejected so inventory and diagnostic renders cannot silently use different asset scopes.",
     "Classic curves retain their editable controls in native output; convert selected final curves explicitly to meshes before delivery. Curve deformation is not automatically baked for export.",
+    "Lattices retain editable deformation controls in native output, not render geometry. Keep cages enabled in the scene/view layer; apply the intended deformation and remove cages explicitly before delivery. Lattice animation is not automatically baked.",
     "Object instances must be realized into explicit scene objects; text, surfaces and other unsupported geometry must be converted before production submission.",
     "Unrealized evaluated instances, including Geometry Nodes instances, are rejected; realize their geometry before production inspection or export.",
     "Viewport/render modifier visibility and enabled subdivision levels must agree so inventory, export and diagnostic renders use the same declared geometry.",
@@ -214,7 +215,7 @@ def animation_record(animation):
                        for track in animation.nla_tracks]}
 
 
-def curve_points_hash(points):
+def control_points_hash(points):
     """Hash authored controls, including dormant handles/keys, without rounding."""
     rows = []
     for point in points:
@@ -237,14 +238,24 @@ def curve_record(curve):
             "bevelObject": curve.bevel_object.name if curve.bevel_object else None,
             "taperObject": curve.taper_object.name if curve.taper_object else None,
             "bevelProfile": {"properties": properties(profile), "controlPointCount": len(profile.points),
-                             "controlPointsSha256": curve_points_hash(profile.points)}
+                             "controlPointsSha256": control_points_hash(profile.points)}
                             if profile else None,
             "animation": animation_record(curve.animation_data),
             "splines": [{"type": spline.type, "properties": properties(spline),
                          "controlPointCount": len(spline.bezier_points) + len(spline.points),
-                         "controlPointsSha256": curve_points_hash(
+                         "controlPointsSha256": control_points_hash(
                              spline.bezier_points if spline.type == "BEZIER" else spline.points)}
                         for spline in curve.splines]}
+
+
+def lattice_record(lattice):
+    """Retain the editable cage without counting its points as surface geometry."""
+    return {"properties": properties(lattice, {"name", "tag", "use_extra_user", "is_runtime_data"}),
+            "controlPointCount": len(lattice.points),
+            "restPositions": values_hash(lattice.points, "co", 3),
+            "deformedPositions": values_hash(lattice.points, "co_deform", 3),
+            "softbodyWeights": values_hash(lattice.points, "weight_softbody"),
+            "animation": animation_record(lattice.animation_data)}
 
 
 def object_record(obj, depsgraph):
@@ -261,6 +272,10 @@ def object_record(obj, depsgraph):
         state["mesh"] = mesh_record(obj.data)
     elif obj.type == "CURVE":
         state["curve"] = curve_record(obj.data)
+    elif obj.type == "LATTICE":
+        state["lattice"] = lattice_record(obj.data)
+        state["shapeKeyEvaluation"] = {"showOnlyShapeKey": obj.show_only_shape_key,
+                                       "activeShapeKeyIndex": obj.active_shape_key_index}
     if obj.type in GEOMETRY_TYPES:
         evaluated = obj.evaluated_get(depsgraph)
         mesh = evaluated.to_mesh(preserve_all_data_layers=True, depsgraph=depsgraph)
@@ -272,24 +287,28 @@ def object_record(obj, depsgraph):
             evaluated.to_mesh_clear()
         state["materialSlots"] = [{"link": slot.link, "material": material_record(slot.material)}
                                   for slot in obj.material_slots]
-        if obj.type == "MESH":
-            groups = {group.index: group.name for group in obj.vertex_groups}
-            weights = [[vertex.index, [[groups.get(g.group), number(g.weight)] for g in vertex.groups]]
-                       for vertex in obj.data.vertices if vertex.groups]
-            state["vertexGroups"] = [group.name for group in obj.vertex_groups]
-            state["weights"] = digest(weights)
+    if obj.type in {"MESH", "LATTICE"}:
+        groups = {group.index: group.name for group in obj.vertex_groups}
+        points = obj.data.vertices if obj.type == "MESH" else obj.data.points
+        weights = [[index, [[groups.get(g.group), number(g.weight) if obj.type == "MESH" else g.weight]
+                            for g in point.groups]]
+                   for index, point in enumerate(points) if point.groups]
+        state["vertexGroups"] = [group.name for group in obj.vertex_groups]
+        state["weights"] = digest(weights)
+    if obj.type in GEOMETRY_TYPES | {"LATTICE"}:
         state["shapeKeys"] = []
         if obj.data.shape_keys:
             state["shapeKeyAnimation"] = animation_record(obj.data.shape_keys.animation_data)
-            if obj.type == "CURVE":
-                state["curveKeySettings"] = properties(obj.data.shape_keys, {"name", "tag", "use_extra_user", "is_runtime_data"})
+            if obj.type in {"CURVE", "LATTICE"}:
+                state[obj.type.lower() + "KeySettings"] = properties(
+                    obj.data.shape_keys, {"name", "tag", "use_extra_user", "is_runtime_data"})
             for key in obj.data.shape_keys.key_blocks:
                 entry = {"name": key.name, "value": number(key.value),
                          "relativeKey": key.relative_key.name,
                          "positions": values_hash(key.data, "co", 3)}
-                if obj.type == "CURVE":
+                if obj.type in {"CURVE", "LATTICE"}:
                     entry.update(properties=properties(key, {"name"}), frame=number(key.frame),
-                                 controlPointsSha256=curve_points_hash(key.data))
+                                 controlPointsSha256=control_points_hash(key.data))
                 state["shapeKeys"].append(entry)
     if obj.type == "ARMATURE":
         state["bones"] = [{"name": bone.name, "parent": bone.parent.name if bone.parent else None,
@@ -346,10 +365,11 @@ def inventory():
               "units": {"system": bpy.context.scene.unit_settings.system,
                         "scaleLength": number(bpy.context.scene.unit_settings.scale_length)},
               "statistics": {"objects": len(rows), "meshes": len(meshes), "curves": len(curves),
+                             "lattices": sum(row["type"] == "LATTICE" for row in rows),
                              "vertices": sum(row["evaluatedMesh"]["vertices"] for row in geometry),
                              "triangles": sum(row["evaluatedMesh"]["triangles"] for row in geometry),
                              "armatures": sum(row["type"] == "ARMATURE" for row in rows),
-                             "shapeKeyObjects": sum(bool(row["shapeKeys"]) for row in geometry),
+                             "shapeKeyObjects": sum(bool(row.get("shapeKeys")) for row in rows),
                              "uvObjects": sum(bool(row.get("mesh", row["evaluatedMesh"])["uvLayers"]) for row in geometry),
                              "materialSlots": sum(len(row["materialSlots"]) for row in geometry)},
               "bounds": bounds(objects, depsgraph), "limitations": LIMITATIONS}
@@ -411,8 +431,14 @@ def require_matching_modifier_evaluation():
         if obj in visited:
             continue
         visited.add(obj)
-        if obj.type not in GEOMETRY_TYPES:
+        if obj.parent:
+            pending.append(obj.parent)
+        if obj.type not in GEOMETRY_TYPES | {"LATTICE"}:
             continue
+        if obj.type == "LATTICE" and (obj.name not in bpy.context.scene.objects
+                or not obj.visible_get(view_layer=bpy.context.view_layer)):
+            raise ValueError("Lattice cages must be enabled in the scene and active view layer "
+                             "for consistent surface evaluation: " + obj.name)
         if obj.type == "CURVE":
             # Bevel/taper helpers can be local datablocks outside the scene.
             # Their render tessellation still changes the visible host surface.
@@ -423,6 +449,10 @@ def require_matching_modifier_evaluation():
                        for spline in obj.data.splines if spline.type != "POLY"):
                     mismatched.append(obj.name + " (viewport/render curve resolution)")
         for modifier in obj.modifiers:
+            if modifier.type == "LATTICE" and modifier.object:
+                # Diagnostic scenes link scene objects, so an off-scene or
+                # excluded cage must not silently acquire a different scope.
+                pending.append(modifier.object)
             reason = None
             if modifier.show_viewport != modifier.show_render:
                 reason = "viewport/render visibility"
@@ -592,6 +622,12 @@ def require_delivery_geometry():
         raise ValueError("Delivery requires meshes; explicitly convert selected final CURVE objects "
                          "in a production edit before delivery (curve deformation is not automatically baked): "
                          + ", ".join(curves))
+    lattices = sorted(obj.name for obj in bpy.context.scene.objects if obj.type == "LATTICE")
+    if lattices:
+        raise ValueError("Delivery cannot retain LATTICE cages; explicitly apply the intended deformation "
+                         "at the selected frame and remove construction cages in a production edit "
+                         "before delivery (lattice animation is not automatically baked): "
+                         + ", ".join(lattices))
 
 
 def export_scene(out):
@@ -797,6 +833,19 @@ def query_native(job, source_sha):
                        "matrixWorld": [vector(value) for value in evaluated.matrix_world],
                        "visible": obj.visible_get(view_layer=bpy.context.view_layer),
                        "hideRender": obj.hide_render, "instanceType": obj.instance_type}
+                if obj.type == "LATTICE":
+                    data = obj.data
+                    row["lattice"] = {"pointsU": data.points_u, "pointsV": data.points_v,
+                                      "pointsW": data.points_w, "controlPointCount": len(data.points),
+                                      "interpolationU": data.interpolation_type_u,
+                                      "interpolationV": data.interpolation_type_v,
+                                      "interpolationW": data.interpolation_type_w,
+                                      "useOutside": data.use_outside}
+                    row["shapeKeyEvaluation"] = {"showOnlyShapeKey": obj.show_only_shape_key,
+                                                 "activeShapeKeyIndex": obj.active_shape_key_index}
+                if obj.type in GEOMETRY_TYPES | {"LATTICE"}:
+                    row["shapeKeys"] = [{"name": key.name, "value": number(key.value)}
+                                        for key in obj.data.shape_keys.key_blocks] if obj.data.shape_keys else []
                 if obj.type in GEOMETRY_TYPES:
                     mesh = evaluated.to_mesh(preserve_all_data_layers=True, depsgraph=depsgraph)
                     try:
@@ -813,8 +862,6 @@ def query_native(job, source_sha):
                                         "controlPoints": sum(len(spline.bezier_points) + len(spline.points)
                                                              for spline in obj.data.splines),
                                         "splineTypes": sorted({spline.type for spline in obj.data.splines})}
-                    row["shapeKeys"] = [{"name": key.name, "value": number(key.value)}
-                                        for key in obj.data.shape_keys.key_blocks] if obj.data.shape_keys else []
                     row["bounds"] = bounds([obj], depsgraph)
                     if job.get("queryTopology", False):
                         from mesh_audit import audit_mesh
