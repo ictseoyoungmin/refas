@@ -111,6 +111,7 @@ test('raw arrays, numeric tables, logs, archives, media and disguised binary out
   const {root} = await fixture(t);
   const payloads = {
     'docs/evidence/vertices.json': JSON.stringify({positions: Array.from({length: 64}, () => [1, 2, 3])}),
+    'docs/evidence/vertices.JSON': JSON.stringify({positions: Array.from({length: 64}, () => [1, 2, 3])}),
     'docs/evidence/frames.json': JSON.stringify({frames: Array.from({length: 97}, (_, frame) => ({frame, passed: true}))}),
     'docs/evidence/stdout.txt': 'long command output',
     'small.csv': 'frame,x,y\n1,0,0\n',

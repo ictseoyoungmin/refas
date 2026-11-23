@@ -129,7 +129,7 @@ export function checkArtifactBudget({root = process.cwd(), base = null, head = n
         result.errors.push(`${name}: binary payload is not source text`);
         continue;
       }
-      if (name.endsWith('.json')) {
+      if (/\.json$/iu.test(name)) {
         let value;
         try { value = JSON.parse(text); } catch { continue; }
         if (hasRawRows(value)) result.errors.push(`${name}: raw numeric/per-sample arrays; retain aggregates and generate test fixtures in temporary directories`);
