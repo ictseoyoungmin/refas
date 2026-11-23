@@ -3,6 +3,9 @@
 Use this guide for segmented mechanisms, armor and manufactured parts with
 visible joints. Begin with the reference's complete assembly and proportions.
 
+Sections: scale and hierarchy; motion hierarchy; surface attachments; useful
+poses; delivered animation; local component revisions.
+
 ## Establish scale and hierarchy before detail
 
 Choose world units and a repeatable front/up convention. Resolve overall
@@ -45,6 +48,59 @@ Compare total palm thickness, including both the dorsal shell and grip pads.
 Keep the central bed and local thumb-side/outer pads distinct where the source
 shows them. Increasing every surface's bulge can close articulation spaces
 and produce a swollen hand; inspect the palm and side as well as the back.
+
+## Follow a deforming surface with an attached section
+
+Use Blender parenting or constraints when an existing rigid relationship is
+sufficient. For a small badge or a trim cross-section on deforming cloth, use
+`scripts/production/surface_binding.py` from a normal production edit script.
+Choose the supporting **outer** triangle and barycentric weights explicitly.
+Keep that oriented triangle fixed; a nearest-face search at every pose can jump
+to a lining, rim or neighboring part.
+
+```python
+from surface_binding import (
+    surface_sample, bind_surface_points, transport_surface_points,
+)
+
+# Coordinates from evaluated geometry, all in the same coordinate space.
+# outer_triangle_index and anchor_weights come from the selected attachment.
+rest = surface_sample(rest_vertices, triangles)
+binding = bind_surface_points(
+    rest, outer_triangle_index, section_points, barycentric=anchor_weights,
+)
+posed = surface_sample(posed_vertices, posed_triangles)
+new_section_points = transport_surface_points(binding, posed)
+```
+
+Create one sample per host mesh and pose and reuse it for all section bindings.
+The sample copies positions and oriented topology; the binding captures the
+authored anchor and section offsets. Transport follows the anchor and a proper
+orthonormal tangent/normal frame. It preserves distances within that section
+instead of stretching it with the host. Applying the same nonlinear displacement
+independently to host and ornament does not preserve this relationship.
+
+Supply evaluated host coordinates and attachment points in a shared space.
+World space includes parent and object transforms; convert the returned points
+back into the edited object's local space before writing mesh or shape-key
+coordinates. With existing skinning, solve in the intended pre-skin space or
+use the existing inverse/bake procedure; writing already posed world points
+directly into a skinned key applies the deformation twice. The helper does not
+read Blender objects, write data, set keyframes or install scene handlers.
+
+Freeze the intended triangles before binding, and retain vertex identity across
+poses. Nonfinite coordinates, a degenerate selected triangle, invalid weights
+and changed topology are rejected. A same-count semantic vertex relabel that
+retains the same index arrays cannot be inferred from coordinates. Nonuniform scale changes the host
+but does not scale the attached section; reflections follow the supplied
+winding. Supply consistent winding and inspect the intended outside.
+
+Write the returned coordinates or derived rigid transform through ordinary
+`bpy` operations and save with `run`. Keep only the useful native revision and
+views. This is a local attachment construction aid: separate section frames
+can still kink or intersect, and a large rigid badge can intersect a curved
+host away from its anchor. Check the actual seams, support depth and neighboring
+surfaces at useful intermediate poses before delivery.
 
 ## Exercise a limited, useful pose
 

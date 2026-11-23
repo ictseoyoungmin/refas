@@ -8,7 +8,35 @@ The user approved implementation of the new production path, starting from `main
 
 This is development work. Active package/Python runtime/plugin identity is `2.0.0-alpha.1`; the retained legacy runtime remains `1.4.2`. The recorded published release remains `v1.4.1`. Main merge and formal publication are separate unfinished milestones.
 
-## Current: native iteration and bounded diagnostics
+## Current: explicit surface attachment authoring
+
+[Issue #402](https://github.com/ictseoyoungmin/refas/issues/402) continues from
+the merged native-iteration checkpoint `4282ac99` on `feat/surface-attachments`,
+targeting `rewrite/v2`. The opt-in `surface_binding` Python module binds a
+section to an explicit oriented host triangle and barycentric anchor, then
+transports its offsets in an orthonormal frame. It preserves section dimensions
+without a new CLI, Blender handler, nearest-surface guess or report format.
+The helper copies inputs, checks ordered topology and rejects invalid anchors
+and degenerate selected triangles. Authoring still owns surface selection,
+coordinate conversion, skin baking, seam continuity and actual clearance.
+
+The final local source passes **135 Production tests with actual Blender/Godot
+and zero skips**, including 14 numerical controls and a copied-skill native
+create/edit/failure/restore test. Independent review found and corrected a
+skinny-triangle loss of orthogonality; the retained regression detects it.
+All 943 JavaScript tests and the required syntax, repository, 11-checkpoint
+dogfood and release-audit gates pass. The exact package has 16 skill files,
+20 total files and 231,100 unpacked bytes. Actual fixed-view synthetic renders
+were inspected; they support this local construction scope only.
+
+The preserved garment trial uses the same helper for explicit outer-surface
+attachments and keeps its geometry and review records outside Git. A long belt
+face can still cross a curved host between valid anchors, so local topology
+and whole-garment acceptance remain separate from the helper. The feature PR
+records the bounded trial and remote checks. No new checklist credit is claimed:
+**30/37 = 81%**, with U1/U2/U3/U6/E2/D2/D3 still open.
+
+## Previous: native iteration and bounded diagnostics
 
 The source checkpoint `ea64de8a` is published in Draft PR #399 with passing
 Production and Node 20/22/24 CI. The earlier upload-preparation notes below are

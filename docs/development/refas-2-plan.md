@@ -62,7 +62,7 @@ The initial production command is `python3 skills/refas/scripts/produce.py` in a
 | `doctor` | Report the Python/Blender environment before authoring. |
 | `init --root DIR --name NAME [--reference FILE ...]` | Create a production project and retain reference copies. |
 | `references --root DIR --reference FILE ... --expected-sequence N` | Adopt the complete active reference set while retaining all model/source history; use `--clear` for an empty set. |
-| `run --root DIR --script FILE --intent TEXT` | Execute a Blender script and record the native scene, GLB, renders, script, and metadata as a revision. |
+| `run --root DIR --script FILE --intent TEXT` | Execute a Blender script and record the native scene, requested renders, script and metadata as a revision. GLB is explicit through `--outputs delivery` or `deliver`. |
 | `run ... --input-blend FILE` | Import a separately saved native edit; ordinary runs reopen the current revision automatically. |
 | `import-v1 --root NEW --source-project OLD --checkpoint ID --artifact PATH --name NAME` | Import one explicitly selected archived native or supported GLB asset, retaining exact input bytes and provenance without old approval inheritance. |
 | `status --root DIR` | Expose one coherent revision snapshot, artifacts, inputs, sequence and reference freshness. |

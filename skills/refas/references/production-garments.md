@@ -88,6 +88,14 @@ near the chest/arm boundary. Transfer is a starting point; nearby sleeves and
 torso can receive the wrong bone. Keep ornaments and straps attached to the
 surface or segment they belong to throughout the motion.
 
+For trim on a fitted shell, preserve the attachment to an explicit outer
+triangle rather than applying a nonlinear displacement independently to cloth
+and trim. Move a whole cross-section in the triangle's orthonormal frame to
+retain its thickness. The optional surface-binding helper and coordinate-space
+requirements are described in `references/production-assemblies.md`. Check
+connections between sections; local rigid transport does not guarantee a
+continuous strip or clearance from the lining and nearby hardware.
+
 If useful poses still collapse or intersect after correcting fit and weights,
 author garment corrective shapes and test their intermediate blends. Preserve
 the character body. Bake the corrective weights together with the bone action
