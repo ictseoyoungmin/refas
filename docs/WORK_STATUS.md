@@ -8,7 +8,41 @@ The user approved implementation of the new production path, starting from `main
 
 This is development work. Active package/Python runtime/plugin identity is `2.0.0-alpha.1`; the retained legacy runtime remains `1.4.2`. The recorded published release remains `v1.4.1`. Main merge and formal publication are separate unfinished milestones.
 
-## Current: editable native lattice deformation
+## Current: editable native construction geometry
+
+[Issue #418](https://github.com/ictseoyoungmin/refas/issues/418) continues from
+`rewrite/v2@e6cecf2d` on `feat/native-construction-geometry`. The previous
+worker rejects a normal hidden Boolean cutter even though Blender evaluates
+the opening correctly. Explicit construction meshes remove that authoring
+restriction for retained cutters and projection sources. The public CLI failure
+is reproduced on a small housing with Boolean and Shrinkwrap dependencies.
+
+Authors mark only intentional source meshes with
+`obj["refas_role"] = "construction"` and object-level `hide_render = True`.
+The native keeps source geometry, dependency identities and protection state.
+Final asset surface counts, automatic framing and GLB omit source surfaces;
+diagnostic evaluation keeps their modifier dependencies. Explicit inspection
+can still observe a source. Disabled/out-of-scene dependencies, invalid roles,
+unmarked hidden geometry and construction ancestry of deliverable objects are
+refused. Static modifier export uses the selected frame; no source-driven
+animation bake or new geometry solver is claimed.
+
+Implementation and actual installed-use evidence belong to the feature PR.
+The source change adds no command, installed module or package entry. Generated
+models, renders and raw logs remain outside Git. The
+[skill relationship map](development/refas-2-skill-map.md) connects construction
+guidance, native state, dependency evaluation and output scope.
+
+This improves an editable production workflow, not the fixed comparison score.
+**30/37 = 81%** and U1/U2/U3/U6/E2/D2/D3 remain open. Current evidence does not
+establish general 2.0 visual superiority over 1.4.x. After this bounded authoring
+feature, prioritize an actual retained garment correction: lower-left piping
+section direction, useful belt sections, then shared upper collar construction.
+Use the existing native curves, lattices and bindings, protect the actual body,
+and keep the existing contact/motion criteria. A new generic sweep solver or
+another native-type extension needs a demonstrated modeling blocker first.
+
+## Previous: editable native lattice deformation
 
 [Issue #416](https://github.com/ictseoyoungmin/refas/issues/416) continues from
 `rewrite/v2@b63e20d6` on `feat/native-lattice-authoring`. An actual Blender source

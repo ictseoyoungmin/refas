@@ -106,6 +106,35 @@ decimation may be useful intermediate operations; neither alone demonstrates
 deformation-friendly edge flow. Retopology can also be a deliberate local
 rebuild, provided its affected region and benefit are shown.
 
+Keep a detailed source as an explicit construction mesh when the new topology
+needs a live projection target. This lets the source and working mesh coexist
+in one recoverable native project without double surfaces in renders or GLB:
+
+```python
+source = bpy.data.objects["DetailedSource"]
+source["refas_role"] = "construction"
+source.hide_render = True
+source.display_type = "WIRE"
+working = bpy.data.objects["Retopology"]
+fit = working.modifiers.new("Surface fit", "SHRINKWRAP")
+fit.target = source
+fit.wrap_method = "NEAREST_SURFACEPOINT"
+```
+
+Reuse the saved modifier on later edits. Keep the source enabled in the current
+scene and active view layer, with matching viewport/render modifier settings.
+Use an explicit vertex group, projection direction and offset when the intended
+surface requires them. Nearest projection can land on a lining or the wrong
+side of a thin shell; inspect the actual fitted surface and clearances. The
+source's geometry and modifier target identity remain recorded; a helper role
+is not evidence of correct correspondence or automatic retopology.
+
+Inspect the working mesh for delivery counts; select the source explicitly
+when checking its topology. Static delivery retains the editable source in
+`.blend` and exports the evaluated working surface without the source mesh.
+For skinned or shape-key output, resolve unsupported live modifiers deliberately
+and verify required transfers and motion before exporting.
+
 Transfer and verify UVs, material boundaries, weights, shape keys and semantic
 attachments required by the task. Preserve untouched data. Record deliberate
 loss or replacement and test the resulting use; do not describe newly generated
