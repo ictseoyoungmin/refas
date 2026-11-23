@@ -43,7 +43,8 @@ LIMITATIONS = [
     "Fingerprints hash recorded action curves and current-frame scene state; they do not establish correctness at every animation or simulation frame.",
     "Node-group internals and drivers are not exhaustively represented by the state fingerprints.",
     "Static mesh modifiers are evaluated for GLB export; unapplied non-armature modifiers on skinned or shape-key meshes are unsupported.",
-    "Hidden or excluded meshes and curves are rejected so inventory and diagnostic renders cannot silently use different asset scopes.",
+    "Hidden or excluded asset meshes and curves are rejected. Explicit refas_role=construction meshes stay in native source, remain enabled in the scene/view layer, and require object-level hide_render; they are omitted from asset surface counts, bounds and delivery.",
+    "Construction geometry is evaluated for static modifier delivery at the selected frame; its geometry animation is not automatically baked.",
     "Classic curves retain their editable controls in native output; convert selected final curves explicitly to meshes before delivery. Curve deformation is not automatically baked for export.",
     "Lattices retain editable deformation controls in native output, not render geometry. Keep cages enabled in the scene/view layer; apply the intended deformation and remove cages explicitly before delivery. Lattice animation is not automatically baked.",
     "Object instances must be realized into explicit scene objects; text, surfaces and other unsupported geometry must be converted before production submission.",
@@ -105,6 +106,55 @@ def properties(owner, excluded=()):
             value = sorted(value)
         result[key] = value
     return result
+
+
+def object_role(obj):
+    """An explicit native role chooses surface scope; hiding alone does not."""
+    role = obj.get("refas_role", "asset")
+    if not isinstance(role, str) or role not in {"asset", "construction"}:
+        raise ValueError("refas_role must be asset or construction: " + obj.name)
+    if role == "construction" and obj.type != "MESH":
+        raise ValueError("The construction role supports MESH objects only: " + obj.name)
+    return role
+
+
+def object_references(owner):
+    """Read direct RNA object/collection pointers, not node trees or drivers."""
+    references = {}
+    for prop in owner.bl_rna.properties:
+        if prop.type != "POINTER" or prop.identifier == "rna_type":
+            continue
+        value = getattr(owner, prop.identifier)
+        if isinstance(value, (bpy.types.Object, bpy.types.Collection)):
+            references[prop.identifier] = value
+    return references
+
+
+def references_record(owner):
+    result = {}
+    for field, value in object_references(owner).items():
+        row = {"type": "OBJECT" if isinstance(value, bpy.types.Object) else "COLLECTION",
+               "name": value.name}
+        if isinstance(value, bpy.types.Collection):
+            row["objects"] = sorted(obj.name for obj in value.all_objects)
+        result[field] = row
+    return result
+
+
+def enabled_layer_members():
+    """Keep per-object hide_set distinct from disabled/excluded collections."""
+    objects, collections = set(), set()
+
+    def visit(layer):
+        if layer.exclude or layer.hide_viewport or layer.collection.hide_viewport:
+            return
+        collections.add(layer.collection)
+        objects.update(obj for obj in layer.collection.objects if not obj.hide_viewport)
+        for child in layer.children:
+            visit(child)
+
+    visit(bpy.context.view_layer.layer_collection)
+    return objects, collections
 
 
 def image_record(image):
@@ -259,14 +309,15 @@ def lattice_record(lattice):
 
 
 def object_record(obj, depsgraph):
-    state = {"name": obj.name, "type": obj.type, "parent": obj.parent.name if obj.parent else None,
+    state = {"name": obj.name, "type": obj.type, "role": object_role(obj),
+             "parent": obj.parent.name if obj.parent else None,
              "parentType": obj.parent_type, "parentBone": obj.parent_bone,
              "matrixWorld": [vector(row) for row in obj.matrix_world],
              "matrixLocal": [vector(row) for row in obj.matrix_local],
              "hideRender": obj.hide_render, "hideViewport": obj.hide_viewport,
-             "modifiers": [{"type": m.type, "properties": properties(m),
+             "modifiers": [{"type": m.type, "properties": properties(m), "dependencies": references_record(m),
                             "object": getattr(getattr(m, "object", None), "name", None)} for m in obj.modifiers],
-             "constraints": [{"type": c.type, "properties": properties(c),
+             "constraints": [{"type": c.type, "properties": properties(c), "dependencies": references_record(c),
                               "target": getattr(getattr(c, "target", None), "name", None)} for c in obj.constraints]}
     if obj.type == "MESH":
         state["mesh"] = mesh_record(obj.data)
@@ -354,8 +405,9 @@ def inventory():
     depsgraph = bpy.context.evaluated_depsgraph_get()
     objects = list(bpy.context.scene.objects)
     rows = [object_record(obj, depsgraph) for obj in sorted(objects, key=lambda x: x.name)]
-    meshes = [row for row in rows if row["type"] == "MESH"]
-    curves = [row for row in rows if row["type"] == "CURVE"]
+    asset_rows = [row for row in rows if row["role"] == "asset"]
+    meshes = [row for row in asset_rows if row["type"] == "MESH"]
+    curves = [row for row in asset_rows if row["type"] == "CURVE"]
     geometry = meshes + curves
     result = {"schema": "refas.production.scene/v2", "blenderVersion": bpy.app.version_string,
               "frame": bpy.context.scene.frame_current, "objects": rows,
@@ -365,21 +417,38 @@ def inventory():
               "units": {"system": bpy.context.scene.unit_settings.system,
                         "scaleLength": number(bpy.context.scene.unit_settings.scale_length)},
               "statistics": {"objects": len(rows), "meshes": len(meshes), "curves": len(curves),
+                             "constructionMeshes": sum(row["role"] == "construction" for row in rows),
                              "lattices": sum(row["type"] == "LATTICE" for row in rows),
                              "vertices": sum(row["evaluatedMesh"]["vertices"] for row in geometry),
                              "triangles": sum(row["evaluatedMesh"]["triangles"] for row in geometry),
                              "armatures": sum(row["type"] == "ARMATURE" for row in rows),
-                             "shapeKeyObjects": sum(bool(row.get("shapeKeys")) for row in rows),
+                             "shapeKeyObjects": sum(bool(row.get("shapeKeys")) for row in asset_rows),
                              "uvObjects": sum(bool(row.get("mesh", row["evaluatedMesh"])["uvLayers"]) for row in geometry),
                              "materialSlots": sum(len(row["materialSlots"]) for row in geometry)},
-              "bounds": bounds(objects, depsgraph), "limitations": LIMITATIONS}
+              "bounds": bounds([obj for obj in objects if object_role(obj) == "asset"], depsgraph),
+              "limitations": LIMITATIONS}
     result["fingerprint"] = digest({"frame": result["frame"], "timing": result["timing"],
                                     "units": result["units"], "objects": rows})
     return result
 
 
 def require_visible_geometry():
-    """Keep one honest asset scope until hidden authoring helpers are supported."""
+    """Require a visible asset and explicitly hidden, enabled construction meshes."""
+    enabled, _ = enabled_layer_members()
+    for obj in bpy.context.scene.objects:
+        role = object_role(obj)
+        if role == "construction":
+            if not obj.hide_render:
+                raise ValueError("Construction meshes require object-level hide_render=True: " + obj.name)
+            if obj not in enabled:
+                raise ValueError("Construction meshes must be enabled in the scene and active view layer: " + obj.name)
+        elif obj.type in ASSET_TYPES:
+            parent = obj.parent
+            while parent:
+                if object_role(parent) == "construction":
+                    raise ValueError("Construction meshes cannot be ancestors of delivered objects: "
+                                     + parent.name + " -> " + obj.name)
+                parent = parent.parent
     render_visible = set()
 
     def visit(collection, hidden=False):
@@ -391,6 +460,7 @@ def require_visible_geometry():
 
     visit(bpy.context.scene.collection)
     hidden = [obj.name for obj in bpy.context.scene.objects if obj.type in GEOMETRY_TYPES
+              and object_role(obj) == "asset"
               and (obj.hide_render or obj.name not in render_visible
                    or not obj.visible_get(view_layer=bpy.context.view_layer))]
     if hidden:
@@ -424,15 +494,38 @@ def require_supported_objects():
 def require_matching_modifier_evaluation():
     """Inventory/export use the viewport graph; Cycles uses render settings."""
     mismatched = []
-    pending = list(bpy.context.scene.objects)
+    enabled_objects, enabled_collections = enabled_layer_members()
+    pending = [(obj, False) for obj in bpy.context.scene.objects]
     visited = set()
+
+    def follow_references(owner, construction_source):
+        for dependency in object_references(owner).values():
+            if isinstance(dependency, bpy.types.Collection):
+                members = list(dependency.all_objects)
+                if (construction_source or any(object_role(obj) == "construction" for obj in members)):
+                    if dependency not in enabled_collections:
+                        raise ValueError("Construction dependency collections must be enabled in the scene "
+                                         "and active view layer: " + dependency.name)
+                pending.extend((obj, construction_source) for obj in members)
+            else:
+                pending.append((dependency, construction_source))
+
     while pending:
-        obj = pending.pop()
-        if obj in visited:
+        obj, construction_source = pending.pop()
+        construction_source = construction_source or object_role(obj) == "construction"
+        identity = (obj, construction_source)
+        if identity in visited:
             continue
-        visited.add(obj)
+        visited.add(identity)
+        if construction_source and obj not in enabled_objects:
+            raise ValueError("Construction dependencies must be enabled in the scene and active view layer: "
+                             + obj.name)
+        if object_role(obj) == "construction" and not obj.hide_render:
+            raise ValueError("Construction meshes require object-level hide_render=True: " + obj.name)
         if obj.parent:
-            pending.append(obj.parent)
+            pending.append((obj.parent, construction_source))
+        for constraint in obj.constraints:
+            follow_references(constraint, construction_source)
         if obj.type not in GEOMETRY_TYPES | {"LATTICE"}:
             continue
         if obj.type == "LATTICE" and (obj.name not in bpy.context.scene.objects
@@ -442,17 +535,15 @@ def require_matching_modifier_evaluation():
         if obj.type == "CURVE":
             # Bevel/taper helpers can be local datablocks outside the scene.
             # Their render tessellation still changes the visible host surface.
-            pending.extend(dependency for dependency in (obj.data.bevel_object, obj.data.taper_object)
+            pending.extend((dependency, construction_source)
+                           for dependency in (obj.data.bevel_object, obj.data.taper_object)
                            if dependency is not None)
             if obj.data.render_resolution_u:
                 if any(spline.resolution_u != obj.data.render_resolution_u
                        for spline in obj.data.splines if spline.type != "POLY"):
                     mismatched.append(obj.name + " (viewport/render curve resolution)")
         for modifier in obj.modifiers:
-            if modifier.type == "LATTICE" and modifier.object:
-                # Diagnostic scenes link scene objects, so an off-scene or
-                # excluded cage must not silently acquire a different scope.
-                pending.append(modifier.object)
+            follow_references(modifier, construction_source)
             reason = None
             if modifier.show_viewport != modifier.show_render:
                 reason = "viewport/render visibility"
@@ -637,7 +728,7 @@ def export_scene(out):
     depsgraph = bpy.context.evaluated_depsgraph_get()
     realized = []
     for obj in objects:
-        if obj.type != "MESH" or not obj.modifiers:
+        if obj.type != "MESH" or object_role(obj) == "construction" or not obj.modifiers:
             continue
         deformable = bool(obj.data.shape_keys) or any(m.type == "ARMATURE" for m in obj.modifiers)
         if deformable:
@@ -658,8 +749,8 @@ def export_scene(out):
         obj.data = mesh
         obj.modifiers.clear()
     for obj in objects:
-        obj.select_set(obj.type in ASSET_TYPES)
-    selected = [obj for obj in objects if obj.type in ASSET_TYPES]
+        obj.select_set(obj.type in ASSET_TYPES and object_role(obj) == "asset")
+    selected = [obj for obj in objects if obj.type in ASSET_TYPES and object_role(obj) == "asset"]
     bpy.context.view_layer.objects.active = next((obj for obj in selected if obj.type == "MESH"), None)
     has_skins = any(obj.type == "MESH" and any(m.type == "ARMATURE" and m.object
                     for m in obj.modifiers) for obj in selected)
@@ -828,7 +919,7 @@ def query_native(job, source_sha):
             rows = []
             for obj in objects:
                 evaluated = obj.evaluated_get(depsgraph)
-                row = {"name": obj.name, "type": obj.type,
+                row = {"name": obj.name, "type": obj.type, "role": object_role(obj),
                        "parent": obj.parent.name if obj.parent else None,
                        "matrixWorld": [vector(value) for value in evaluated.matrix_world],
                        "visible": obj.visible_get(view_layer=bpy.context.view_layer),
