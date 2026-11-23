@@ -4,6 +4,12 @@ All notable RefAs changes are documented here. RefAs follows semantic versioning
 
 ## 2.0.0-alpha.1 — Unreleased
 
+### Current skill and documentation navigation
+
+- Rename the current asset-capture adapter to `asset_import.py` and remove general 1.x implementation history from the installed entry. Keep the explicit `import-v1` command and stored provenance contracts unchanged.
+- Move earlier architecture, capability and release documents to the [1.x archive](docs/archive/v1/README.md), with a [current documentation index](docs/README.md) and separate release criteria. Preserve existing 2.0 evidence and recovery records.
+- Report exact one-for-one Markdown documentation relocations separately in source-budget checks. Keep byte/file limits and all payload, binary and path checks; modified documents and copies retain their full charge.
+
 ### Summary-first topology queries
 
 - Return complete topology counts without detail samples from CLI `inspect --topology`. Use `--topology-details` to request the previous bounded samples; omitted locations retain honest counts/truncation and an explicit output-mode marker.
@@ -163,7 +169,7 @@ An agent workflow interface release for the existing reference-driven 3D constru
 - Existing construction, camera, registered render, GLB and source-region contradiction validators remain unchanged.
 - Strict source-bound release handoff still refuses to authorize likeness when independent original-photo semantic provenance is absent. A general checkpoint/certificate or a `draft-transfer` receipt is **not** a positive source-fidelity authorization.
 - #271, #272 and #265 remain open as deferred source-fidelity work. Their absence is disclosed, not silently marked as PASS; full real-photo success/negative benchmark remains future work.
-- Production-oriented follow-up (flagship geometry construction, editable agent geometry kit, character/mechanical/material tracks) is recorded in `docs/development/foundry-production-roadmap.md`.
+- Production-oriented follow-up (flagship geometry construction, editable agent geometry kit, character/mechanical/material tracks) is recorded in the [archived roadmap](docs/archive/v1/development/foundry-production-roadmap.md).
 
 ## 1.2.0 — 2026-10-09
 
@@ -316,7 +322,7 @@ Promotes the post-1.1 hardening line (`rc/post-1.1`) to stable `main`. Public `.
 
 ### Known limits
 
-RefAs 1.0.2 can justify hidden construction as `inferred` or `engineered` when typed evidence, priors, specifications, or functional/downstream requirements support it. That permission does not identify unseen manufacturer truth. Ambiguous single-view orientation, absolute scale, material composition, and simulation-ready physical calibration still require additional evidence. See `docs/known-limitations.md`.
+RefAs 1.0.2 can justify hidden construction as `inferred` or `engineered` when typed evidence, priors, specifications, or functional/downstream requirements support it. That permission does not identify unseen manufacturer truth. Ambiguous single-view orientation, absolute scale, material composition, and simulation-ready physical calibration still require additional evidence. See [the archived limitations](docs/archive/v1/known-limitations.md).
 
 ## 1.0.1 — 2026-09-06
 
@@ -344,7 +350,7 @@ RefAs 1.0.2 can justify hidden construction as `inferred` or `engineered` when t
 
 ### Known limits
 
-RefAs 1.0.1 can preserve and fit full orientation only when evidence or an explicit parent-frame relation constrains it. Genuinely ambiguous single-view roll remains ambiguous. Engineering authority for unseen mechanisms and calibrated simulation-ready physical truth remain outside this patch release. See `docs/known-limitations.md`.
+RefAs 1.0.1 can preserve and fit full orientation only when evidence or an explicit parent-frame relation constrains it. Genuinely ambiguous single-view roll remains ambiguous. Engineering authority for unseen mechanisms and calibrated simulation-ready physical truth remain outside this patch release. See [the archived limitations](docs/archive/v1/known-limitations.md).
 
 ## 1.0.0 — 2026-09-05
 
@@ -378,6 +384,6 @@ RefAs 1.0.1 can preserve and fit full orientation only when evidence or an expli
 
 ### Known limits
 
-RefAs 1.0 does not claim fully resolved terminal 3D orientation from ambiguous single views, unseen manufacturer-internal mechanisms, or calibrated simulation-ready mass/collider/actuator truth without additional evidence. See `docs/known-limitations.md`.
+RefAs 1.0 does not claim fully resolved terminal 3D orientation from ambiguous single views, unseen manufacturer-internal mechanisms, or calibrated simulation-ready mass/collider/actuator truth without additional evidence. See [the archived limitations](docs/archive/v1/known-limitations.md).
 
 This release intentionally contains no development-iteration identity in public schemas, runtime APIs, or deployable skill instructions.

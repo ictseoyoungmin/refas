@@ -55,7 +55,7 @@ test('retained 1.x upgrade checks keep their own canonical runtime target',async
 
 test('historical v1 near-plane triangle omission stays explicit until a versioned replacement',async()=>{
   const legacy=await fs.readFile(new URL('../legacy/v1/scripts/render_pbr.py',import.meta.url),'utf8');
-  const limitations=await fs.readFile(new URL('../docs/known-limitations.md',import.meta.url),'utf8');
+  const limitations=await fs.readFile(new URL('../docs/archive/v1/known-limitations.md',import.meta.url),'utf8');
   // Characterization canary only: changing this algorithm requires new raster
   // goldens and evidence namespace, not an in-place v1 behavior change.
   assert.ok(legacy.includes('if np.any(vertices[:, 2] <= 0.01):'));

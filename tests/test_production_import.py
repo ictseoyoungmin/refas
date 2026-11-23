@@ -13,7 +13,7 @@ sys.dont_write_bytecode = True
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS = ROOT / "skills/refas/scripts"
 sys.path.insert(0, str(SCRIPTS))
-from production import VERSION, legacy_import, project
+from production import VERSION, asset_import, project
 from test_production_project import fake_worker
 
 
@@ -66,7 +66,7 @@ class ProductionLegacyImportTests(unittest.TestCase):
         defaults = {"root": self.destination, "source_project": self.legacy["root"],
                     "checkpoint": self.legacy["checkpoint"], "artifact": self.legacy["artifact"],
                     "name": "imported", "executor": fake_worker}
-        return legacy_import.import_v1(**{**defaults, **kwargs})
+        return asset_import.import_v1(**{**defaults, **kwargs})
 
     def test_explicit_archived_asset_and_provenance_without_certificate_transfer(self):
         # The live file is intentionally uncommitted; selection names archived bytes.
@@ -164,7 +164,7 @@ class ProductionLegacyImportTests(unittest.TestCase):
             if Path(source) == self.legacy["checkpointFile"]:
                 self.legacy["manifest"].write_text('{"changed": true}')
             return result
-        with mock.patch.object(legacy_import.shutil, "copy2", side_effect=changing_copy):
+        with mock.patch.object(asset_import.shutil, "copy2", side_effect=changing_copy):
             with self.assertRaisesRegex(project.ProductionError, "snapshot changed"):
                 self.run_import()
         self.assertFalse(self.destination.exists())

@@ -284,7 +284,9 @@ review images, not an automatically accelerated final-render pipeline.
 ## Development
 
 Read [CONTRIBUTING.md](CONTRIBUTING.md) and the
-[GitHub governance contract](docs/github-governance.md). The
+[GitHub governance contract](docs/github-governance.md). Use the
+[documentation index](docs/README.md) for current 2.0 guidance and the separate
+1.x archive. The
 [skill component map](docs/development/refas-2-skill-map.md) explains actual
 calls, guidance links, optional authoring APIs and change/removal checks.
 Required closing checks:

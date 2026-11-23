@@ -2,6 +2,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {spawnSync} from 'node:child_process';
+import {createHash} from 'node:crypto';
 import {fileURLToPath} from 'node:url';
 
 // Historical evidence stays in Git. This exact checkpoint is the only legacy
@@ -12,6 +13,11 @@ export const ARTIFACT_LIMITS = Object.freeze({textBytes: 256 * 1024,
 const SOURCE = /\.(?:[cm]?[jt]sx?|py|gd|sh|bash|ps1|c|h|cc|cpp|hpp|rs|go|java|cs|glsl|vert|frag|wgsl)$/iu;
 const PAYLOAD = /\.(?:blend\d*|glb|gltf|obj|fbx|stl|ply|usd[acz]?|abc|dae|3ds|png|jpe?g|webp|gif|avif|exr|hdr|tiff?|bmp|mp4|mov|webm|avi|mkv|wav|mp3|ogg|flac|zip|tar|tgz|gz|bz2|xz|zst|7z|rar|npy|npz|bin|parquet|arrow|h5|hdf5|pt|pth|safetensors|sqlite3?|db|jsonl|ndjson|csv|tsv|log)$/iu;
 const OUTPUT_PATH = /(?:^|\/)(?:work|artifacts|outputs?|renders|logs|checkpoints)(?:\/|$)|(?:^|\/)(?:stdout|stderr)(?:\.|$)/iu;
+
+function documentation(name) {
+  return /^docs\/.+\.md$/iu.test(name) && !/(?:^|\/)evidence(?:\/|$)/iu.test(name) &&
+    !OUTPUT_PATH.test(name);
+}
 
 function git(root, args, {allowFailure = false, binary = false} = {}) {
   const result = spawnSync('git', args, {cwd: root, encoding: binary ? undefined : 'utf8',
@@ -88,20 +94,36 @@ export function checkArtifactBudget({root = process.cwd(), base = null, head = n
       effectiveBase = grandfatherCommit;
     }
   }
-  const args = ['diff', '--name-only', '--no-renames', '--diff-filter=ACMRTUXB', '-z'];
-  if (staged) args.push('--cached');
-  args.push(effectiveBase);
-  if (base) args.push(target);
-  args.push('--');
-  const names = git(root, args).stdout.split('\0').filter(Boolean);
-  if (!base && !staged) names.push(...git(root, ['ls-files', '--others', '--exclude-standard', '-z']).stdout.split('\0').filter(Boolean));
+  const diffNames = filter => {
+    const args = ['diff', '--name-only', '--no-renames', `--diff-filter=${filter}`, '-z'];
+    if (staged) args.push('--cached');
+    args.push(effectiveBase);
+    if (base) args.push(target);
+    args.push('--');
+    return git(root, args).stdout.split('\0').filter(Boolean);
+  };
+  const untracked = !base && !staged
+    ? git(root, ['ls-files', '--others', '--exclude-standard', '-z']).stdout.split('\0').filter(Boolean) : [];
+  const names = [...diffNames('ACMRTUXB'), ...untracked];
   const changed = [...new Set(names)].sort();
   const result = {ok: true, mode: base ? 'committed' : staged ? 'staged' : 'working',
     requestedBase, effectiveBase, head: target, grandfatherApplied,
-    changedFiles: changed.length, changedBytes: 0, limits: ARTIFACT_LIMITS, errors: []};
+    changedFiles: changed.length, changedBytes: 0, relocatedFiles: 0, relocatedBytes: 0,
+    limits: ARTIFACT_LIMITS, errors: []};
   if (changed.length > ARTIFACT_LIMITS.changedFiles) {
     result.errors.push(`Changed file count ${changed.length} exceeds ${ARTIFACT_LIMITS.changedFiles}; keep generated evidence outside the source PR.`);
   } else {
+    const added = new Set([...diffNames('A'), ...untracked]);
+    const removedDocuments = new Map();
+    if ([...added].some(documentation)) {
+      for (const name of diffNames('D').filter(documentation)) {
+        if (untracked.includes(name)) continue;
+        const entry = readEntry(root, name, effectiveBase);
+        if (!entry.regular || entry.size > ARTIFACT_LIMITS.textBytes) continue;
+        const hash = createHash('sha256').update(entry.read()).digest('hex');
+        removedDocuments.set(hash, (removedDocuments.get(hash) || 0) + 1);
+      }
+    }
     for (const name of changed) {
       // Reject known payload paths before asking Git for blob size/content: in
       // the sparse CI clone that lookup could otherwise fetch a large model.
@@ -120,14 +142,27 @@ export function checkArtifactBudget({root = process.cwd(), base = null, head = n
         result.errors.push(`${name}: ${entry.size} bytes exceeds the ${limit}-byte file budget`);
         continue;
       }
-      let text;
+      let text, bytes;
       try {
-        const bytes = entry.read();
+        bytes = entry.read();
         if (bytes.includes(0)) throw new Error('NUL byte');
         text = new TextDecoder('utf-8', {fatal: true}).decode(bytes);
       } catch {
         result.errors.push(`${name}: binary payload is not source text`);
         continue;
+      }
+      // A one-for-one move of identical documentation adds no new payload.
+      // Still count/check the file, and never exempt evidence, edited text,
+      // copies, binary data or non-documentation paths.
+      if (added.has(name) && documentation(name)) {
+        const hash = createHash('sha256').update(bytes).digest('hex');
+        const remaining = removedDocuments.get(hash) || 0;
+        if (remaining) {
+          removedDocuments.set(hash, remaining - 1);
+          result.relocatedFiles += 1;
+          result.relocatedBytes += entry.size;
+          result.changedBytes -= entry.size;
+        }
       }
       if (/\.json$/iu.test(name)) {
         let value;

@@ -695,7 +695,7 @@
         },
         "E5": {
           "evidence": [
-            "skills/refas/scripts/production/legacy_import.py",
+            "skills/refas/scripts/production/asset_import.py",
             "skills/refas/references/production-import.md",
             "tests/test_production_import.py",
             "tests/test_production_blender.py",
