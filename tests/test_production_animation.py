@@ -184,7 +184,7 @@ class ProductionAnimationTests(unittest.TestCase):
         script.write_text(code)
         project = self.root / name
         self.call([sys.executable, "-B", ENTRY, "init", "--root", project, "--name", name])
-        result = json.loads(self.call([sys.executable, "-B", ENTRY, "run", "--root", project,
+        result = json.loads(self.call([sys.executable, "-B", ENTRY, "run", "--outputs", "delivery", "--root", project,
                     "--script", script, "--intent", name, "--views", "", "--blender", BLENDER,
                     "--timeout", "110", "--expected-revision", "none", "--expected-sequence", "0"]))
         verification = json.loads(self.call([sys.executable, "-B", ENTRY, "verify", "--root", project]))

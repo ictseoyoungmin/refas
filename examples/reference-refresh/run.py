@@ -103,7 +103,7 @@ def main():
     (root / "change-request.txt").write_text(args.intent + "\n", encoding="utf-8")
 
     initial = cli("01-init", "init", "--name", "reference-refresh", "--reference", reference)
-    first = cli("02-run-a", "run", "--script", root / "import-a.py", "--input-blend", native,
+    first = cli("02-run-a", "run", "--outputs", "delivery", "--script", root / "import-a.py", "--input-blend", native,
                 "--intent", "Capture the original native asset and its current references",
                 "--review-spec", root / "review-a.json", "--size", args.initial_size,
                 "--samples", args.samples, "--blender", blender, "--timeout", args.timeout, *lease(initial))
@@ -125,7 +125,7 @@ def main():
         + "bpy.ops.wm.save_as_mainfile(filepath=" + repr(str(manual_native)) + ")\n", encoding="utf-8")
     execute("05-manual-save-as", [blender, "-b", "--factory-startup", "--threads", "2",
                                   "--python-exit-code", "1", "--python", wrapper])
-    adopted = cli("06-run-b", "run", "--script", root / "import-b.py", "--input-blend", manual_native,
+    adopted = cli("06-run-b", "run", "--outputs", "delivery", "--script", root / "import-b.py", "--input-blend", manual_native,
                   "--intent", args.intent, "--review-spec", root / "review-b.json",
                   "--size", args.updated_size, "--samples", args.samples + 1,
                   "--blender", blender, "--timeout", args.timeout, *lease(stale))

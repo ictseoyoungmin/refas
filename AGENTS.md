@@ -34,11 +34,30 @@ here. Query GitHub and the RefAs project state at the start of each turn.
    repository Pull Request template without removing evidence or recovery
    sections.
 7. Require current CI and capability-local acceptance. For visual work, inspect
-   raw-reference context and actual renders whole → region → part → subpart →
-   feature. A metric PASS cannot clear a visible mismatch.
+   raw-reference context and actual renders from the whole to the affected
+   detail, choosing views for the unresolved question. A metric PASS cannot
+   clear a visible mismatch.
 8. Reopen the owning capability when stronger evidence, an upstream
    representation change, or a visible regression invalidates acceptance.
-   Retain rejected candidates as evidence.
+   Keep relevant rejected candidates in the working project; avoid making a
+   new archive or permanent diagnostic bundle for each observation.
+
+## Source changes and working assets
+
+Keep Pull Requests to implementation, small synthetic regression cases and
+concise documentation. User models, rendered media, raw logs, large numerical
+arrays and recovery archives belong outside Git. Generate synthetic assets in
+temporary test directories; include a short result and only necessary evidence
+references in the PR. Run `npm run check:artifacts` before staging. Preserve
+historical tracked evidence; this rule does not authorize deletion or history
+rewriting.
+
+Use native production iterations for related modeling changes, request only
+useful views, and use temporary `inspect` observations for bounded questions.
+Export on delivery or to investigate export behavior. Keep one working project
+with its recovery history and hand off one selected result with the necessary
+source resources. Report concise findings rather than repeatedly packaging
+every intermediate artifact.
 
 ## Repository-owner standing authorization
 
@@ -80,6 +99,9 @@ npm run dogfood
 npm run release:audit
 ```
 
-Visual changes also require source-bound BEFORE/AFTER evidence, a split or
-overlay comparison, actual diagnostic renders, and an explicit rollback
-checkpoint.
+Visual changes also require source-bound BEFORE/AFTER inspection and a
+recoverable baseline. Choose a matched render, split/overlay or diagnostic view
+only when it answers the change's visual question. Record the result and the
+necessary evidence reference; a source PR need not contain the asset or render
+bytes. Run further checks to resolve a specific remaining risk, not to recreate
+unchanged reports.

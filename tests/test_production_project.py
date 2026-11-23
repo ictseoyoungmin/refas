@@ -18,13 +18,17 @@ from production.review import validate_review
 def fake_worker(command, cwd, log_file, timeout):
     job = project.read_json(command[-1])
     out = Path(job["outputDir"])
+    profile = job.get("outputProfile", "delivery")
     script = Path(job["script"]).read_bytes()
     (out / "scene.blend").write_bytes(b"BLENDER-v300" + script)
-    payload = json.dumps({"asset": {"version": "2.0"}, "extras": {"testScript": script.hex()}}).encode()
-    payload += b" " * (-len(payload) % 4)
-    glb = b"glTF" + (2).to_bytes(4, "little") + (20 + len(payload)).to_bytes(4, "little")
-    glb += len(payload).to_bytes(4, "little") + b"JSON" + payload
-    (out / "asset.glb").write_bytes(glb)
+    outputs = {"blend": "scene.blend", "scene": "scene.json"}
+    if profile == "delivery":
+        payload = json.dumps({"asset": {"version": "2.0"}, "extras": {"testScript": script.hex()}}).encode()
+        payload += b" " * (-len(payload) % 4)
+        glb = b"glTF" + (2).to_bytes(4, "little") + (20 + len(payload)).to_bytes(4, "little")
+        glb += len(payload).to_bytes(4, "little") + b"JSON" + payload
+        (out / "asset.glb").write_bytes(glb)
+        outputs["glb"] = "asset.glb"
     project.atomic_json(out / "scene.json", {"fixture": True})
     observations = []
     for view in job["views"]:
@@ -32,8 +36,13 @@ def fake_worker(command, cwd, log_file, timeout):
         observations.append({"view": view, "path": view + ".png", "registration": "unregistered"})
     project.atomic_json(out / "result.json", {
         "schema": "refas.production.result/v2", "ok": True, "blenderVersion": "test-double",
-        "outputs": {"blend": "scene.blend", "glb": "asset.glb", "scene": "scene.json"},
-        "observations": observations, "verification": {"fixture": True}, "warnings": []})
+        "outputProfile": profile, "outputs": outputs,
+        "observations": observations, "verification": {"fixture": True,
+            "native": {"status": "passed", "fingerprintMatches": True},
+            "glb": {"status": "passed" if profile == "delivery" else "not-requested"},
+            "protectedObjects": {"status": "passed" if job.get("protectedObjects") else "not-requested",
+                                 "objects": sorted(job.get("protectedObjects", [])),
+                                 "scope": "recorded-object-state-and-materials"}}, "warnings": []})
     Path(log_file).write_text("test worker completed", encoding="utf-8")
     return 0.001
 

@@ -80,7 +80,10 @@ def main():
             data=json.loads(info.read_text())
             for name in ['run.json','job.json','blender.log']:
                 if (run/name).exists():copy(run/name,out/'evidence/production-runs'/run.name/name)
-            if (run/'inputs/edit.py').exists():copy(run/'inputs/edit.py',out/'evidence/production-runs'/run.name/'edit.py')
+            edit=run/'inputs/edit.py'
+            if not edit.exists() and data.get('revision'):
+                edit=root/'project/.refas2/revisions'/data['revision']/'inputs/edit.py'
+            if edit.exists():copy(edit,out/'evidence/production-runs'/run.name/'edit.py')
     comp=out/'comparisons';comp.mkdir(exist_ok=True)
     try:font=ImageFont.truetype('DejaVuSans.ttf',17)
     except OSError:font=ImageFont.load_default()

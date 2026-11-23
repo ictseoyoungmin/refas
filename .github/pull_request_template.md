@@ -14,32 +14,21 @@ Closes #<!-- exactly one primary Issue -->
 
 ## Bounded Intent
 
-<!-- State the one testable change. Explain why unrelated scopes and upstream evidence remain unchanged. -->
+<!-- State the concrete problem, one testable change and resulting behavior. -->
 
 ## Contract and Implementation
 
 <!-- Summarize public schema, CLI, ownership, artifact, or implementation changes. Do not use temporary stage identity. -->
 
-## Evidence
+## Evidence and limits
 
-For nonvisual work, mark visual rows N/A and explain why.
-
-| Evidence | BEFORE / reference | AFTER / candidate | Verdict |
-|---|---|---|---|
-| Raw reference with whole context | | | |
-| Context-preserving crop | | | |
-| Actual hero or matched render | | | |
-| Split or overlay comparison | | | |
-| Side / top / grazing views | | | |
-| Object ID / normal / albedo diagnostics | | | |
-
-### Direct observation
-
-<!-- Facts visible in the source and actual renders. -->
-
-### Interpretation, hypotheses, and ambiguities
-
-<!-- Keep inference separate. State competitors and falsifiers. -->
+<!-- Keep the source PR to code, small synthetic regressions and concise docs.
+Generate test assets temporarily. Keep user models, renders, raw logs, numerical
+arrays and recovery archives outside Git. Report what was observed, its scope
+and remaining uncertainty; link only evidence needed to assess the change.
+For visual work, inspect the original and actual before/after output. Choose
+views or a matched comparison for that question; do not generate every view.
+For nonvisual work, state why visual inspection is not applicable. -->
 
 ## Recovery and Invalidation
 
@@ -49,9 +38,10 @@ For nonvisual work, mark visual rows N/A and explain why.
 | Candidate checkpoint | |
 | Invalidated capabilities | |
 | Safe rollback checkpoint | |
-| Rejected candidate evidence retained at | |
+| Relevant rejected candidate retained at (if applicable) | |
 
-<!-- Explain why this rollback location follows typed ownership rather than a score. -->
+<!-- Keep recovery in the working project. Reference its location without
+attaching a full archive or every diagnostic observation. -->
 
 ## Verification
 
@@ -61,15 +51,17 @@ npm run test:python
 npm run check
 npm run dogfood
 npm run release:audit
+npm run check:artifacts
 ```
 
-| Check | Result and evidence URL or artifact |
+| Check | Concise result and necessary reference |
 |---|---|
 | JavaScript regression tests | |
 | Python syntax gate | |
 | Product-boundary audit | |
 | Complete dogfood | |
 | Release audit | |
+| Source artifact boundary | |
 | Additional capability-local checks | |
 
 ## Review Gates
@@ -80,10 +72,10 @@ npm run release:audit
 - [ ] The canonical runtime remains under `skills/refas/`; no duplicate implementation was added.
 - [ ] Source identity and provenance are current.
 - [ ] Direct observations are separated from interpretations, hypotheses, and ambiguities.
-- [ ] Visual changes include actual renders and whole → region → part → subpart → feature inspection.
+- [ ] Visual changes were inspected from the whole to the affected detail using the necessary actual output; nonvisual scope is stated.
 - [ ] Protected regressions pass; green metrics do not override a visible mismatch.
 - [ ] Checkpoint bytes, invalidation range, and rollback path were verified.
-- [ ] Rejected candidates remain available as evidence.
+- [ ] Relevant rejected candidates remain in the working project; no private model, media or recovery payload was added to Git.
 - [ ] Documentation, changelog, migration, and semantic-version impact are current when applicable.
 
 ## Reopen Conditions

@@ -18,7 +18,16 @@ links. Blindly filling every boundary or joining all components destroys these
 designs. Check attachment points against the actual receiving surface and pose.
 Parenting and object names alone do not establish support or connection.
 
-An ordinary production Blender script can use the installed observation helper:
+For a bounded read of an existing native scene, start with:
+
+```bash
+python3 scripts/produce.py inspect --root PROJECT --object garment --frame 1 --topology
+```
+
+This returns a compact temporary observation without another revision, image or
+permanent report. Request only objects and frames needed for the question. An
+ordinary production Blender script can also use the installed observation helper
+when observations need to accompany an actual edit:
 
 ```python
 import json
@@ -42,9 +51,10 @@ deforming garment. A distance overlapping numerical uncertainty returns an
 explicit indeterminate result, which must not be treated as within the limit.
 These helpers
 do not assign visual or game-readiness approval, infer intended openings, or
-perform an exhaustive scene collision scan. Save additional findings into
-`REFAS_OUTPUT_DIR` so the existing revision inventory retains them with the
-candidate. Inspect suspicious locations in actual geometry and renders.
+perform an exhaustive scene collision scan. Save a small finding into
+`REFAS_OUTPUT_DIR` only when it must remain with an edited candidate. Keep
+full arrays and exhaustive diagnostics for an identified debugging need.
+Inspect suspicious locations in actual geometry and renders.
 
 ## Retopologize for function
 

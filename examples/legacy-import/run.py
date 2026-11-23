@@ -92,7 +92,7 @@ def main():
                    + "target = bpy.data.objects[" + repr(args.edit_object) + "]\n"
                    + "assert target.type == 'MESH'\n"
                    + "target.location.z += 0.005\n", encoding="utf-8")
-    changed = execute("04-local-edit", "run", "--root", project, "--script", edit,
+    changed = execute("04-local-edit", "run", "--outputs", "delivery", "--root", project, "--script", edit,
                       "--intent", "Move only " + args.edit_object + " by 0.005 along Blender Z; retain all other objects",
                       "--expected-revision", first["head"], "--expected-sequence", first["sequence"],
                       "--views", "hero,side", "--size", 192, "--samples", 4,

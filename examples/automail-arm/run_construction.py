@@ -123,7 +123,8 @@ def main():
     neutral_views = 'front,side,back,hero,service-detail,armor-depth,socket-depth,palm-depth,mechanism-detail,hand-front,hand-palm'
 
     def run(label, script, state, input_blend=None, views=neutral_views, review_path=review, project_root=project):
-        argv = ['run', '--root', project_root, '--blender', blender, '--script', script,
+        # package_construction retains raw execution logs for this historical harness.
+        argv = ['run', '--outputs', 'delivery', '--keep-diagnostics', '--root', project_root, '--blender', blender, '--script', script,
                 '--intent', label, '--expected-revision', state['head'] or 'none',
                 '--review-spec', review_path, '--views', views, '--size', '512', '--samples', '16', '--timeout', '1200']
         if input_blend: argv += ['--input-blend', input_blend]

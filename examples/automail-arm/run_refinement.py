@@ -55,6 +55,8 @@ def main():
             raise RuntimeError(label+' failed; retained logs: '+str(log))
         return p.stdout
     def cli(label,*argv):
+        # Every run in this comparison harness materializes a GLB readback.
+        if argv and argv[0]=='run':argv=(*argv,'--outputs','delivery')
         return json.loads(command(label,[sys.executable,skill/'scripts/produce.py',*argv]))
     def save(state,label):
         for k,e in [('blend','blend'),('glb','glb'),('scene','scene.json')]:

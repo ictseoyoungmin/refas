@@ -4,6 +4,13 @@ All notable RefAs changes are documented here. RefAs follows semantic versioning
 
 ## 2.0.0-alpha.1 — Unreleased
 
+### Native iteration and bounded artifacts
+
+- Default public `run` to a native save/reopen with one hero preview; `--outputs delivery` and the new `deliver` command explicitly produce GLB. Existing Python callers and old worker jobs retain their delivery default.
+- Add temporary object/frame `inspect` queries, optional bounded topology observations, exporter capability preflight, and exact-name protection for recorded object/material state at the starting frame. These observations do not grant visual or game-readiness acceptance.
+- Move successful staged inputs and outputs into their revision once, retain only compact run metadata by default, and make raw success diagnostics opt-in. Add storage accounting and preview-first compaction of byte-identical historical run copies while preserving checkpoints, sources and failed runs.
+- Keep agent output focused on the selected deliverable and necessary views. Enforce a source-only change budget in Git and CI; unchanged historical evidence remains preserved, while new models, media, raw arrays/logs and recovery archives stay outside commits.
+
 ### Actual-use scope, topology and animated delivery
 
 - Preserve sub-0.1 mm animation channels and all positive skin influences in GLB. Guard the installed exporter cutoff structurally, scope the temporary change to one export, and restore on exceptions. Actual 80 µm motion and tiny fifth-influence controls retain the original failures and verify the correction.

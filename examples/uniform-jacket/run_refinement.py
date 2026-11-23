@@ -67,7 +67,7 @@ def main():
         return value
 
     def run(label, script, intent, current=None, input_blend=None):
-        words = ['run', '--root', project, '--script', script, '--intent', intent,
+        words = ['run', '--outputs', 'delivery', '--root', project, '--script', script, '--intent', intent,
                  '--review-spec', review, '--size', args.size, '--samples', args.samples,
                  '--timeout', 240]
         if input_blend:

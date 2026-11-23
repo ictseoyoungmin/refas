@@ -121,7 +121,7 @@ def main():
                     for area in ('artifacts', 'inputs') for row in manifest[area]}
 
         before = bundle(state)
-        edited = json.loads(command('local-cover-edit', [sys.executable, cli, 'run',
+        edited = json.loads(command('local-cover-edit', [sys.executable, cli, 'run', '--outputs', 'delivery',
             '--root', project, '--script', Path(__file__).with_name('edit_panel.py'),
             '--intent', 'move selected service-cover subtree 3 mm; preserve all unrelated objects',
             '--expected-revision', state['head'], '--expected-sequence', state['sequence'],
