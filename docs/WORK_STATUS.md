@@ -8,7 +8,90 @@ The user approved implementation of the new production path, starting from `main
 
 This is development work. Active package/Python runtime/plugin identity is `2.0.0-alpha.1`; the retained legacy runtime remains `1.4.2`. The recorded published release remains `v1.4.1`. Main merge and formal publication are separate unfinished milestones.
 
-## Current: garment contact-observer correction; wearable gates remain open
+## Current: development checkpoint frozen; alpha runtime verified, garment unaccepted
+
+At the user's request, this session closes at the current development checkpoint.
+Further model authoring, fitting and export experiments are paused. Completed
+observations and failed candidates are retained without new acceptance credit.
+Read the [Korean development report and next-work plan](development/refas-2-development-report-2026-11-23.md)
+for the implementation boundary, fixed checklist, unresolved geometry and next
+approval conditions.
+
+Actual export exposed two independent data-loss paths in Blender 4.3.2. The
+production worker now retains every sampled animation channel and every positive
+skin influence. The skin cutoff has no public setting: a structurally guarded,
+export-call-only replacement changes its isolated 1e-4 constant to zero and
+restores the original function in finally. Installed Blender source and saved
+native data are unchanged; unknown cutoff structures fail for explicit review.
+All positive joint sets are exported.
+
+Actual regressions retain the old failures and verify an 80-micrometre middle-pose
+excursion, a 50-micrometre excursion driven by a tiny fifth influence, and cleanup
+after an exception. The complete Production suite passed 98 tests with actual
+Blender/Godot and zero skips; 935 JavaScript tests and all five required repository
+gates passed. The extracted production package remains 19 files. An actual-asset
+export-only preflight preserves 22,034 formerly dropped influences exactly and
+passes raw original-avatar 26-mesh replay at all 97 frames under 2 micrometres.
+
+The task contact observer now uses conservative float64 AABB candidates and the
+reviewed SAT predicate. Blender BVHTree.overlap omits the retained small-coplanar
+counterexample; older BVH-filtered zero-contact claims are superseded. Named
+fixtures, 2,000 scalar parity cases and 30 brute-force candidate recall cases pass.
+The declared accepted-arm 133 pairs over 121 frames also pass this corrected check.
+
+The retained garment has 100 meshes and 122,898 triangles. A later native candidate
+repairs the internal hardware contacts across all 97 frames and preserves all
+389 chain links; local shoulder and short-belt corrections also have independent
+phase observations. These are bounded component results, not whole-character
+wearing acceptance. The earlier wearing observer covered only three original
+avatar meshes. Checking the other 23 exposed real trousers/belt intersections
+at the coat hem and opaque hair intersections at the neck. Original avatar
+geometry, materials and visibility remain unchanged. The combined native c67633a
+is unaccepted; ac419cd is a separate hardware-only lower-follow candidate, with
+no completed matching lower-cloth correction. Neither has a matching final
+GLB/consumer delivery pair. Final native/export/consumer verification must use
+newly selected geometry after the remaining fit problems are repaired.
+The avatar's inherited zero-area faces and numerically sensitive reimport
+results stay explicitly recorded.
+
+The latest lower v4 support review found new inner-sheet and rim contacts, so its
+passing partial scopes do not accept that fit. The already-running v5 affine
+alternative finished with BODY sampled reduction error 1.669290 mm, exceeding
+the unchanged 1.5 mm budget. It is also unselected. Actual original-alpha testing
+confirms 9,661 opaque hair contact pairs at rest; the separate hair proposals
+remain failed and unadopted. No new lower-cloth native, independent 49-phase
+target patch or final detailed-reference pair was completed before this pause.
+
+The fixed checklist remains **30/37 = 81%**. U2/U3/U6, U1/E2, main merge and formal
+publication remain open. Read the [bounded continuation report](development/evidence/usable-assets/recovery/topology-continuation/README.md).
+The pre-update public baseline is 12076a3e; the verified local runtime core is
+03b4a5c. Earlier automatic approval review rejected public uploads; that history
+is retained. The user has now explicitly requested the PR update, so the prepared
+executable source, synthetic controls and aggregate records are being readied for
+PR #399. Actual remote success, the updated remote SHA and its CI results have
+not yet been observed here. PR #399 remains Draft; merge and formal publication
+remain separate. Private asset payloads are excluded, and the rejected broad
+recovery commit is not an ancestor of this review tree.
+
+## Previous: fixed triangles and recovery continuation
+
+The recovered v5 chain was freshly reconstructed and all 4,177 recorded files
+match their hashes and sizes. New source-bound work repairs five twisted trim
+strips and freezes actual evaluated rest triangles for 100 garment meshes.
+Independent native checks cover 97 frames; all 28 trim meshes have zero
+self-contacts, degeneracy, orientation reversals or protected coordinate changes
+over 2,716 object-frames. Read the [bounded topology checkpoint](development/evidence/usable-assets/recovery/topology-continuation/README.md).
+
+The intermediate garment has 122,898 triangles. Chain assembly, final complete
+wearing/GLB/consumer observations and installed-copy edit/restore remain open.
+The fixed checklist is **30/37 = 81%**, with no new criterion credit. The original
+avatar, accepted arm and rejected models remain preserved. All five required
+repository gates passed again (935 JavaScript tests, 19 packaged files).
+
+This public change contains source and aggregate summaries only, not the
+previously rejected broad recovery payload. Runtime/distribution are unchanged.
+
+## Previous: garment contact-observer correction; wearable gates remain open
 
 The garment's earlier high16/low29 zero-contact claims are withdrawn. An
 independent float64 SAT check and separate strict edge/triangle solves

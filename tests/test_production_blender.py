@@ -561,6 +561,210 @@ with open(''' + repr(str(output)) + ''', "w") as stream:
             self.assertAlmostEqual(a, b, delta=1e-6)
         self.assertEqual(sha(baseline), baseline_sha)
 
+    def test_submillimetre_bone_motion_survives_glb_middle_frame(self):
+        script = self.root / "tiny-bone-motion.py"
+        script.write_text('''import bpy
+scene = bpy.context.scene
+scene.frame_start, scene.frame_end, scene.render.fps = 1, 3, 30
+data = bpy.data.armatures.new("MotionBones")
+rig = bpy.data.objects.new("MotionRig", data)
+scene.collection.objects.link(rig)
+bpy.context.view_layer.objects.active = rig
+rig.select_set(True)
+bpy.ops.object.mode_set(mode="EDIT")
+for name in ("KeyedMotion", "BakedMotion"):
+    bone = data.edit_bones.new(name)
+    bone.head, bone.tail = (0, 0, 0), (0, 0.2, 0)
+bpy.ops.object.mode_set(mode="OBJECT")
+follow = rig.pose.bones["BakedMotion"].constraints.new("COPY_LOCATION")
+follow.target, follow.subtarget = rig, "KeyedMotion"
+follow.owner_space = follow.target_space = "POSE"
+for name, bone, offset in (("KeyedPanel", "KeyedMotion", 0),
+                           ("BakedPanel", "BakedMotion", 0.2)):
+    mesh = bpy.data.meshes.new(name)
+    mesh.from_pydata([(offset, 0, 0), (offset+0.1, 0, 0),
+                     (offset, 0.1, 0)], [], [(0, 1, 2)])
+    obj = bpy.data.objects.new(name, mesh)
+    scene.collection.objects.link(obj)
+    obj.vertex_groups.new(name=bone).add([0, 1, 2], 1.0, "REPLACE")
+    obj.modifiers.new("MotionSkin", "ARMATURE").object = rig
+pose = rig.pose.bones["KeyedMotion"]
+for frame, movement in ((1, 0), (2, 0.00008), (3, 0)):
+    pose.location.x = movement
+    pose.keyframe_insert("location", frame=frame)
+rig.animation_data.action.name = "TinyMotion"
+for curve in rig.animation_data.action.fcurves:
+    for key in curve.keyframe_points:
+        key.interpolation = "LINEAR"
+scene.frame_set(1)
+bpy.context.view_layer.update()
+''', encoding="utf-8")
+        result = self.run_job("tiny-bone-motion", script=str(script))
+        self.assertTrue(result["verification"]["native"]["fingerprintMatches"])
+        # Rest bounds alone cannot observe an excursion whose two endpoints are
+        # equal. Reopen both files and measure the actual skinned middle pose,
+        # including a constrained bone without its own keyed channel.
+        native = self.root / "tiny-bone-motion/scene.blend"
+        glb = self.root / "tiny-bone-motion/asset.glb"
+        native_sha, glb_sha = sha(native), sha(glb)
+        output = self.root / "tiny-bone-motion-readback.json"
+        probe = self.root / "probe-tiny-bone-motion.py"
+        probe.write_text('''import bpy, json
+records = {}
+for kind, path in ''' + repr([("native", str(native)), ("glb", str(glb))]) + ''':
+    if kind == "native":
+        bpy.ops.wm.open_mainfile(filepath=path, load_ui=False, use_scripts=False)
+    else:
+        bpy.ops.wm.read_factory_settings(use_empty=True)
+        bpy.context.scene.render.fps = 30
+        bpy.ops.import_scene.gltf(filepath=path, disable_bone_shape=True)
+    records[kind] = {}
+    for frame in (1, 2, 3):
+        bpy.context.scene.frame_set(frame)
+        bpy.context.view_layer.update()
+        graph = bpy.context.evaluated_depsgraph_get()
+        records[kind][frame] = {}
+        for name in ("KeyedPanel", "BakedPanel"):
+            obj = bpy.data.objects[name].evaluated_get(graph)
+            mesh = obj.to_mesh()
+            records[kind][frame][name] = sorted(list(obj.matrix_world @ v.co)
+                                               for v in mesh.vertices)
+            obj.to_mesh_clear()
+with open(''' + repr(str(output)) + ''', "w") as stream:
+    json.dump(records, stream)
+''', encoding="utf-8")
+        checked = subprocess.run([str(BLENDER), "-b", "--factory-startup", "--threads", "2",
+                                  "--python-exit-code", "1", "--python", str(probe)],
+                                 capture_output=True, text=True, timeout=90)
+        self.assertEqual(checked.returncode, 0, checked.stdout[-2000:] + checked.stderr[-2000:])
+        records = json.loads(output.read_text())
+        for name in ("KeyedPanel", "BakedPanel"):
+            native_motion = (records["native"]["2"][name][0][0]
+                             - records["native"]["1"][name][0][0])
+            self.assertAlmostEqual(native_motion, 0.00008, delta=2e-7)
+            for frame in ("1", "2", "3"):
+                expected, actual = records["native"][frame][name], records["glb"][frame][name]
+                self.assertEqual(len(expected), len(actual))
+                for source_vertex, exported_vertex in zip(expected, actual):
+                    for source_value, exported_value in zip(source_vertex, exported_vertex):
+                        self.assertAlmostEqual(source_value, exported_value, delta=2e-6,
+                                               msg=f"{name} at frame {frame}")
+        self.assertEqual(sha(native), native_sha)
+        self.assertEqual(sha(glb), glb_sha)
+
+    def test_tiny_positive_skin_weights_survive_glb_motion(self):
+        script = self.root / "tiny-skin-weight.py"
+        script.write_text('''import bpy
+scene = bpy.context.scene
+scene.frame_start, scene.frame_end, scene.render.fps = 1, 3, 30
+data = bpy.data.armatures.new("FineSkin")
+rig = bpy.data.objects.new("FineRig", data)
+scene.collection.objects.link(rig)
+bpy.context.view_layer.objects.active = rig
+rig.select_set(True)
+bpy.ops.object.mode_set(mode="EDIT")
+for name in ("Fixed", "FineMotion", "AuxA", "AuxB", "AuxC"):
+    bone = data.edit_bones.new(name)
+    bone.head, bone.tail = (0, 0, 0), (0, 0.2, 0)
+bpy.ops.object.mode_set(mode="OBJECT")
+mesh = bpy.data.meshes.new("WeightedPanel")
+mesh.from_pydata([(0, 0, 0), (0.1, 0, 0), (0, 0.1, 0)], [], [(0, 1, 2)])
+obj = bpy.data.objects.new("WeightedPanel", mesh)
+scene.collection.objects.link(obj)
+for name, weight in (("Fixed", 0.49995), ("FineMotion", 0.00005),
+                     ("AuxA", 0.2), ("AuxB", 0.2), ("AuxC", 0.1)):
+    obj.vertex_groups.new(name=name).add([0, 1, 2], weight, "REPLACE")
+obj.modifiers.new("FineSkin", "ARMATURE").object = rig
+for frame, movement in ((1, 0), (2, 1), (3, 0)):
+    rig.pose.bones["FineMotion"].location.x = movement
+    rig.pose.bones["FineMotion"].keyframe_insert("location", frame=frame)
+rig.animation_data.action.name = "FineInfluence"
+for curve in rig.animation_data.action.fcurves:
+    for key in curve.keyframe_points:
+        key.interpolation = "LINEAR"
+scene.frame_set(1)
+bpy.context.view_layer.update()
+''', encoding="utf-8")
+        result = self.run_job("tiny-skin-weight", script=str(script))
+        self.assertTrue(result["verification"]["native"]["fingerprintMatches"])
+        native = self.root / "tiny-skin-weight/scene.blend"
+        glb = self.root / "tiny-skin-weight/asset.glb"
+        native_sha, glb_sha = sha(native), sha(glb)
+        output = self.root / "tiny-skin-weight-readback.json"
+        probe = self.root / "probe-tiny-skin-weight.py"
+        probe.write_text('''import bpy, json
+records = {}
+for kind, path in ''' + repr([("native", str(native)), ("glb", str(glb))]) + ''':
+    if kind == "native":
+        bpy.ops.wm.open_mainfile(filepath=path, load_ui=False, use_scripts=False)
+    else:
+        bpy.ops.wm.read_factory_settings(use_empty=True)
+        bpy.context.scene.render.fps = 30
+        bpy.ops.import_scene.gltf(filepath=path, disable_bone_shape=True)
+    obj = bpy.data.objects["WeightedPanel"]
+    records[kind] = {"weights": [{obj.vertex_groups[g.group].name: g.weight
+                                  for g in vertex.groups if g.weight > 0}
+                                 for vertex in obj.data.vertices], "poses": {}}
+    for frame in (1, 2, 3):
+        bpy.context.scene.frame_set(frame)
+        bpy.context.view_layer.update()
+        evaluated = obj.evaluated_get(bpy.context.evaluated_depsgraph_get())
+        mesh = evaluated.to_mesh()
+        records[kind]["poses"][frame] = sorted(list(evaluated.matrix_world @ v.co)
+                                               for v in mesh.vertices)
+        evaluated.to_mesh_clear()
+with open(''' + repr(str(output)) + ''', "w") as stream:
+    json.dump(records, stream)
+''', encoding="utf-8")
+        checked = subprocess.run([str(BLENDER), "-b", "--factory-startup", "--threads", "2",
+                                  "--python-exit-code", "1", "--python", str(probe)],
+                                 capture_output=True, text=True, timeout=90)
+        self.assertEqual(checked.returncode, 0, checked.stdout[-2000:] + checked.stderr[-2000:])
+        records = json.loads(output.read_text())
+        for kind in ("native", "glb"):
+            for weights in records[kind]["weights"]:
+                self.assertEqual(set(weights), {"Fixed", "FineMotion", "AuxA", "AuxB", "AuxC"})
+                self.assertAlmostEqual(weights["FineMotion"], 0.00005, delta=1e-9)
+        source = records["native"]["poses"]
+        self.assertAlmostEqual(source["2"][0][0] - source["1"][0][0], 0.00005, delta=2e-7)
+        for frame in ("1", "2", "3"):
+            expected, actual = source[frame], records["glb"]["poses"][frame]
+            self.assertEqual(len(expected), len(actual))
+            for source_vertex, exported_vertex in zip(expected, actual):
+                for source_value, exported_value in zip(source_vertex, exported_vertex):
+                    self.assertAlmostEqual(source_value, exported_value, delta=2e-6,
+                                           msg=f"Tiny skin influence at frame {frame}")
+        self.assertEqual(sha(native), native_sha)
+        self.assertEqual(sha(glb), glb_sha)
+
+    def test_skin_export_preservation_restores_state_after_error(self):
+        probe = self.root / "skin-export-error-cleanup.py"
+        output = self.root / "skin-export-error-cleanup.json"
+        probe.write_text('''import hashlib, json, runpy
+from pathlib import Path
+worker = runpy.run_path(''' + repr(str(WORKER)) + ''')
+from io_scene_gltf2.blender.exp.primitive_extract import PrimitiveCreator
+name = "_PrimitiveCreator__get_bone_data"
+original = getattr(PrimitiveCreator, name)
+source = Path(original.__code__.co_filename)
+before = hashlib.sha256(source.read_bytes()).hexdigest()
+try:
+    with worker["preserve_positive_skin_weights"]():
+        raise RuntimeError("forced export failure")
+except RuntimeError as error:
+    assert str(error) == "forced export failure", str(error)
+record = {"originalFunctionRestored": getattr(PrimitiveCreator, name) is original,
+          "installedSourceUnchanged": hashlib.sha256(source.read_bytes()).hexdigest() == before}
+with open(''' + repr(str(output)) + ''', "w") as stream:
+    json.dump(record, stream)
+''', encoding="utf-8")
+        checked = subprocess.run([str(BLENDER), "-b", "--factory-startup", "--threads", "2",
+                                  "--python-exit-code", "1", "--python", str(probe)],
+                                 capture_output=True, text=True, timeout=60)
+        self.assertEqual(checked.returncode, 0, checked.stdout[-2000:] + checked.stderr[-2000:])
+        self.assertEqual(json.loads(output.read_text()),
+                         {"originalFunctionRestored": True, "installedSourceUnchanged": True})
+
     def test_dirty_packed_texture_pixels_survive_native_save_and_glb_export(self):
         script = self.root / "packed-texture.py"
         script.write_text('''import bpy

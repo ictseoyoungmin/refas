@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import argparse
 from array import array
+from contextlib import contextmanager
 import hashlib
 import json
 import math
@@ -445,6 +446,69 @@ def verify_glb(path, source):
             "boundsTolerance": tolerance, "scope": "geometry counts, bounds and basic feature presence only"}
 
 
+@contextmanager
+def preserve_positive_skin_weights(required=True):
+    """Disable the exporter's tiny-weight cutoff only for this export call.
+
+    Blender 4.3's exporter has no public threshold option or skin-extraction
+    hook. Guard the precise local constant and comparison before changing a
+    temporary function object; retain the exporter's own gathering, sorting
+    and neutral-bone behavior. Neither installed source nor native data changes.
+    """
+    if not required:
+        yield
+        return
+    import ast
+    import inspect
+    import textwrap
+    import types
+    from io_scene_gltf2.blender.exp.primitive_extract import PrimitiveCreator
+
+    name = "_PrimitiveCreator__get_bone_data"
+    original = getattr(PrimitiveCreator, name, None)
+    if original is None or not inspect.isfunction(original):
+        raise RuntimeError("Installed glTF exporter has an unsupported skin-weight extractor")
+    parsed = ast.parse(textwrap.dedent(inspect.getsource(original)))
+    assignments = [node for node in ast.walk(parsed) if isinstance(node, ast.Assign)
+                   and any(isinstance(target, ast.Name) and target.id == "min_influence"
+                           for target in node.targets)]
+    comparisons = [node for node in ast.walk(parsed) if isinstance(node, ast.Compare)
+                   and isinstance(node.left, ast.Name) and node.left.id == "weight"
+                   and len(node.ops) == 1 and isinstance(node.ops[0], ast.LtE)
+                   and len(node.comparators) == 1
+                   and isinstance(node.comparators[0], ast.Name)
+                   and node.comparators[0].id == "min_influence"]
+    uses = [node for node in ast.walk(parsed)
+            if isinstance(node, ast.Name) and node.id == "min_influence"]
+    filters = [node for node in ast.walk(parsed) if isinstance(node, ast.If)
+               and node.test in comparisons and len(node.body) == 1
+               and isinstance(node.body[0], ast.Continue) and not node.orelse]
+    if (len(assignments) != 1 or len(comparisons) != 1 or len(uses) != 2
+            or len(filters) != 1 or not isinstance(assignments[0].value, ast.Constant)):
+        raise RuntimeError("Installed glTF skin-weight cutoff changed; preservation needs review")
+    cutoff = assignments[0].value.value
+    if cutoff == 0.0:
+        yield
+        return
+    constants = original.__code__.co_consts
+    source_literals = [node for node in ast.walk(parsed) if isinstance(node, ast.Constant)
+                       and type(node.value) is float and node.value == cutoff]
+    matching = [index for index, value in enumerate(constants)
+                if type(value) is float and value == cutoff]
+    if cutoff != 0.0001 or len(source_literals) != 1 or len(matching) != 1:
+        raise RuntimeError("Installed glTF skin-weight cutoff is not the supported isolated constant")
+    updated = list(constants)
+    updated[matching[0]] = 0.0
+    replacement = types.FunctionType(original.__code__.replace(co_consts=tuple(updated)),
+                                     original.__globals__, original.__name__,
+                                     original.__defaults__, original.__closure__)
+    setattr(PrimitiveCreator, name, replacement)
+    try:
+        yield
+    finally:
+        setattr(PrimitiveCreator, name, original)
+
+
 def export_scene(out):
     scene = bpy.context.scene
     objects = list(scene.objects)
@@ -475,10 +539,17 @@ def export_scene(out):
         obj.select_set(obj.type in ASSET_TYPES)
     selected = [obj for obj in objects if obj.type in ASSET_TYPES]
     bpy.context.view_layer.objects.active = next((obj for obj in selected if obj.type == "MESH"), None)
-    result = bpy.ops.export_scene.gltf(filepath=str(out / "asset.glb"), export_format="GLB",
-                                      use_selection=True, export_cameras=False, export_lights=False,
-                                      export_animations=True, export_apply=False, export_extras=False,
-                                      export_texcoords=True, export_normals=True, export_materials="EXPORT")
+    has_skins = any(obj.type == "MESH" and any(m.type == "ARMATURE" and m.object
+                    for m in obj.modifiers) for obj in selected)
+    with preserve_positive_skin_weights(has_skins):
+        result = bpy.ops.export_scene.gltf(filepath=str(out / "asset.glb"), export_format="GLB",
+                                          use_selection=True, export_cameras=False, export_lights=False,
+                                          export_animations=True, export_apply=False, export_extras=False,
+                                          # Small authored motion and skin influences remain data.
+                                          export_optimize_animation_size=False,
+                                          export_optimize_animation_keep_anim_armature=True,
+                                          export_all_influences=True,
+                                          export_texcoords=True, export_normals=True, export_materials="EXPORT")
     if "FINISHED" not in result:
         raise RuntimeError("GLB export did not finish")
 

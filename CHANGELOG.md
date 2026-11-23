@@ -6,6 +6,11 @@ All notable RefAs changes are documented here. RefAs follows semantic versioning
 
 ### Actual-use scope, topology and animated delivery
 
+- Preserve sub-0.1 mm animation channels and all positive skin influences in GLB. Guard the installed exporter cutoff structurally, scope the temporary change to one export, and restore on exceptions. Actual 80 µm motion and tiny fifth-influence controls retain the original failures and verify the correction.
+- Replace task-observer BVH overlap candidate filtering with conservative float64 AABB enumeration and batched SAT. Add coplanar, randomized scalar parity and exhaustive candidate-recall controls; retain final garment acceptance as open while remaining inter-part contacts are repaired.
+
+- Add the task-local evaluated-triangle freeze and exact native/corner/edge preservation checks. Repair five source-derived trim connections without changing vertex, shape-key or skin data; record full 97-frame intermediate verification while leaving final garment acceptance open.
+
 - Expand the user-authorized plan with six fixed criteria for comparable source/mesh/use evaluations, real character wearing, connected mechanical motion, deliberate retopology and budgeted optimization. Preserve the original 31-item meanings and all historical checkpoints; checklist v2 begins at 28/37 (76%).
 - Add focused topology guidance and a read-only Blender mesh/anchor observation helper. Keep intention, whole-scene intersections, visual likeness and use acceptance separate from raw topology counts.
 - Bound dense object/bone and shape-key animation inventory by hashing every recorded key, handle, easing value, sample and modifier per curve, retaining counts and playback properties. Native and exported files keep the actual animation. Preserve the existing manifest-size limit and detect interior key and NLA playback changes.
