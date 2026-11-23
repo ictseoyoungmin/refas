@@ -119,12 +119,17 @@ Use temporary observations and export only when needed:
 
 ```bash
 python3 skills/refas/scripts/produce.py inspect --root PROJECT --object OBJECT_NAME --frame 1 --frame 24 --topology
+python3 skills/refas/scripts/produce.py inspect --input-blend EXISTING.blend --object OBJECT_NAME
 python3 skills/refas/scripts/produce.py deliver --root PROJECT
 ```
 
 `inspect` returns compact object/frame JSON without a revision, permanent report
 or render. With no object selection it gives a scene overview; with no frames
-it reads the saved current frame. Topology observations are optional and do not
+it reads the saved current frame. Choose either `--root` for the selected project
+revision or `--input-blend` to read a standalone native without adopting or
+copying it. Standalone results identify the original path/hash, set `revision`
+to `null` and make no project reference-freshness claim; revision/sequence guards
+require `--root`. Topology observations are optional and do not
 establish scene-wide collision clearance or engine readiness. `deliver` exports
 the current native without reapplying an earlier edit script. Use
 `run --outputs delivery` when finishing and export belong in one edit.

@@ -60,7 +60,9 @@ def parser():
     delivery.add_argument("--expected-sequence", type=int)
     delivery.add_argument("--keep-diagnostics", action="store_true")
     inspect = commands.add_parser("inspect", help="Read native object/pose facts without creating a revision, render or export")
-    inspect.add_argument("--root", required=True)
+    inspect_source = inspect.add_mutually_exclusive_group(required=True)
+    inspect_source.add_argument("--root", help="Inspect the selected managed project revision")
+    inspect_source.add_argument("--input-blend", help="Read a standalone native directly without creating a project or copying the model")
     inspect.add_argument("--object", action="append", default=[], help="Exact object name; repeat to select parts, omit for the scene")
     inspect.add_argument("--frame", type=int, action="append", default=[], help="Frame to sample; repeat as needed, omit for the saved frame")
     inspect.add_argument("--topology", action="store_true", help="Include bounded mesh topology observations for the selected scope")
@@ -127,7 +129,8 @@ def main():
         elif args.command == "inspect":
             output = inspect_native(args.root, objects=args.object, frames=args.frame, topology=args.topology,
                                     blender=args.blender, timeout=args.timeout,
-                                    expected_revision=args.expected_revision, expected_sequence=args.expected_sequence)
+                                    expected_revision=args.expected_revision, expected_sequence=args.expected_sequence,
+                                    input_blend=args.input_blend)
         elif args.command == "import-v1":
             from production.legacy_import import import_v1
             output = import_v1(args.root, args.source_project, args.checkpoint, args.artifact, args.name,
