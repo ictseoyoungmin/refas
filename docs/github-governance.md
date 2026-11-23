@@ -186,6 +186,31 @@ must inspect actual output from the whole to the affected detail and may reopen
 an upstream owner despite green checks. Select diagnostic views for the question;
 there is no mandatory all-view, video or full-array bundle for every PR.
 
+## Continuous integration tiers
+
+Regular CI keeps stable `Source artifact budget`, `Node 22` and `Node 24`
+checks. Both Node jobs run the complete JavaScript regression suite, Python
+syntax gate and product-boundary audit. `npm run check` already includes the
+installation, instruction-graph and capability-interface audits; a second
+`check:instructions` step is unnecessary. Production CI separately checks the
+installed CLI, revisions, recovery and production Python syntax. Actual
+Blender/Godot integration remains explicit evidence rather than an inferred
+result from optional remote tests.
+
+Archived renderer Numba installation and compiled CPU checks run on main
+pushes, pushes explicitly marked `[full-qa]`, and the manual/weekly deep
+workflow. Run that deep scope when changing the retained compiled renderer.
+Ordinary PRs keep the fresh-worker, adversarial and package-bytecode defenses
+without paying for unchanged JIT compilation. Full-QA release prerequisites
+and exact-main-SHA manual publication authorization remain separate from the
+regular matrix. Keep required job names in the release preflight synchronized
+with the workflow; changing a test matrix does not change `engines.node`.
+
+PR and push triggers retain their existing independent checks. Do not merge
+their concurrency groups as a shortcut: cancellation can leave required checks
+incomplete. Report CI measurements with the run and measured interval; one
+runner's wall time is not a universal speedup estimate.
+
 ## Review and merge
 
 Review in this order:

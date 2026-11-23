@@ -8,7 +8,29 @@ The user approved implementation of the new production path, starting from `main
 
 This is development work. Active package/Python runtime/plugin identity is `2.0.0-alpha.1`; the retained legacy runtime remains `1.4.2`. The recorded published release remains `v1.4.1`. Main merge and formal publication are separate unfinished milestones.
 
-## Current: editable native curves
+## Current: focused CI validation
+
+[Issue #408](https://github.com/ictseoyoungmin/refas/issues/408) starts from
+`rewrite/v2@4b82be48` on `ci/focused-validation`. Regular CI uses Node 22/24;
+release preflight follows the same stable job names. Legacy Numba/JIT moves
+to main, explicit full-QA and manual/weekly deep validation, while complete
+JavaScript, Production, artifact-budget and product-boundary checks remain.
+The separately repeated instruction audit is already part of `npm run check`.
+
+In [baseline CI](https://github.com/ictseoyoungmin/refas/actions/runs/45191601694),
+Node 24's log spans about 235.5 seconds, including 3.46 seconds of Numba install
+and 70.93 seconds of compiled-renderer checks. Node 22 spans about 120.3 seconds.
+These are one run's timestamp intervals; Node 20 removal reduces duplicated
+execution, while moving JIT removes work from the observed longest job.
+Final local/remote results and the new measured interval belong to the feature
+PR. No raw logs are committed. The installed skill and package are unchanged.
+
+This repository-only change does not add asset or comparison credit:
+**30/37 = 81%**, with U1/U2/U3/U6/E2/D2/D3 open. The next capability work is
+summary-first native topology queries with opt-in bounded detail, accompanied
+by a maintained map of the active skill's real dependencies and removal impact.
+
+## Previous: editable native curves
 
 [Issue #406](https://github.com/ictseoyoungmin/refas/issues/406) continues from
 `rewrite/v2@d8bf50e1` on `feat/native-curves`, targeting `rewrite/v2`. Classic

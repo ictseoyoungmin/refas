@@ -69,7 +69,7 @@ jobs:
           for(const run of matching){
             const batch=await get(`/actions/runs/${run.id}/jobs?per_page=100`);
             const jobs=batch.jobs||[];
-            if(!['Node 20','Node 22','Node 24'].every(name=>
+            if(!['Node 22','Node 24'].every(name=>
               jobs.some(job=>job.name===name&&job.conclusion==='success')))continue;
             const node24=jobs.find(job=>job.name==='Node 24'&&job.conclusion==='success');
             // These are exact named steps in ci.yml; a removed/renamed gate fails closed.
