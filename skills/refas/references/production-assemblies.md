@@ -84,6 +84,39 @@ native preservation does not establish that the motion will survive conversion.
 Follow the [topology guide](production-topology.md#keep-curve-controls-until-mesh-delivery)
 for explicit mesh conversion and the required motion checks before GLB delivery.
 
+## Sweep explicitly corresponding sampled sections
+
+When native curve bevel controls do not express changing noncircular section
+shape or stable seam correspondence, use the optional sampled section sweep.
+Supply one ordered profile at every open guide sample, in consistent units;
+index j must denote the same feature. Use a nonparallel initial section axis.
+Minimum-rotation transport avoids world-axis switches; optional twist is an
+absolute angle in radians at each sample.
+
+```python
+from section_sweep import sweep_sections
+
+# In the author's ordinary bpy script, guide and profiles are explicit controls.
+result = sweep_sections(guide, profiles, initial_u=(0, 0, 1),
+                        closed_profile=True, cap_ends=False)
+mesh = bpy.data.meshes.new("ProfileSweep")
+mesh.from_pydata(result.vertices, [], result.faces)
+mesh.update()
+obj = bpy.data.objects.new("ProfileSweep", mesh)
+bpy.context.collection.objects.link(obj)
+```
+
+Closed profiles must be counterclockwise, without a repeated seam vertex;
+open profiles are ordered polylines. End caps are optional and strictly convex
+only. Retain control data in the captured authoring script and explicitly
+rebuild a selected candidate rather than overwriting unrelated geometry.
+Do not infer semantic correspondence from vertex count. The helper refuses
+invalid local input and folded/degenerate quads but does not guarantee global
+intersection clearance, smooth curvature, closed guide twist closure,
+attribute transfer or native shape-key/skin reconstruction. Use ordinary
+Blender operations when sufficient; inspect the actual candidate and its
+connections before selecting or delivering it.
+
 ## Shape a region with an editable lattice
 
 Use Blender's native `LATTICE` and Lattice modifier when a small control cage

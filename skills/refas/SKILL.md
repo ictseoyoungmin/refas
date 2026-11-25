@@ -25,6 +25,8 @@ Load a construction guide only when its problem is present: `references/producti
 
 Keep Boolean cutters and surface-fitting sources editable when later shape corrections depend on them. Explicitly mark only a construction **mesh** with `obj["refas_role"] = "construction"` and `obj.hide_render = True`; keep it enabled in the current scene and active view layer. The assembly guide shows editable negative-space construction, and the topology guide shows a retained projection source. Native revisions preserve these meshes while asset surface counts, framing and GLB exclude them. Ordinary hidden objects are not inferred to be construction sources.
 
+For varying explicit cross-sections that need stable orientation, the assembly guide describes the optional `scripts/production/section_sweep.py` helper. Use native curves when their controls are sufficient.
+
 For trim or hardware that must follow a deforming surface, the assembly guide also covers the optional `scripts/production/surface_binding.py` authoring helper. Bind to an explicitly selected outer triangle and move a section together; inspect neighboring sections and clearance after authoring the result.
 
 Read `references/production-topology.md` when checking mesh defects, rebuilding topology, or optimizing an asset for delivery. Choose topology for the actual deformation and use; reducing polygon count alone does not establish useful retopology.

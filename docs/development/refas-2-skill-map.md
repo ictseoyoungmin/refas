@@ -5,10 +5,10 @@ and what a change or removal affects. It is a repository maintenance document;
 agents making assets start with the installed `SKILL.md`, not this map.
 
 The [distribution allowlist](../../tools/verify-production-distribution.mjs)
-declares **17 installed skill files**: nine Python files, five guides, the
+declares **18 installed skill files**: ten Python files, five guides, the
 skill entry, discovery metadata and one icon. Two `.npmignore` files also live
 in the source folder but are excluded from the package. The complete npm
-package has 21 files: those 17 plus the root README, LICENSE, package metadata
+package has 22 files: those 18 plus the root README, LICENSE, package metadata
 and [Node launcher](../../bin/refas.mjs). The launcher delegates to Python;
 the copied Python skill can run without Node.
 
@@ -43,6 +43,7 @@ flowchart TD
     Guides -. "authoring guidance" .-> Script
     Script -- "optional import" --> Audit
     Script -- "optional import" --> Binding["production/surface_binding.py"]
+    Script -- "optional import" --> Sweep["production/section_sweep.py"]
 ```
 
 The guides influence the agent's commands and scripts; Python does not execute
@@ -83,6 +84,7 @@ Paths in the first column are relative to `skills/refas/`.
 | [scripts/production/image_compare.py](../../skills/refas/scripts/production/image_compare.py) | Optional alpha coverage comparison. Project validates regions; the temporary Blender worker decodes captured PNGs. | Removal requires retiring `compare`, both callers, review guidance, package allowlist and comparison tests. It does not own edits or baseline approval. |
 | [scripts/production/mesh_audit.py](../../skills/refas/scripts/production/mesh_audit.py) | Observes evaluated topology and anchor gaps. The worker imports its curve-tessellation discriminator at startup and calls `audit_mesh` for topology queries. Authoring scripts can also import it. | It is not optional as a whole: deleting it also breaks normal worker startup and curve instance checks. Follow worker imports, query output, topology guidance and author scripts. |
 | [scripts/production/surface_binding.py](../../skills/refas/scripts/production/surface_binding.py) | Optional numeric authoring API for binding and transporting a section on an explicitly chosen host triangle. No core module automatically calls it. | Search documented and retained author-script imports, not only core imports. Removing it retires the supported surface-attachment recipe and its tests. |
+| [scripts/production/section_sweep.py](../../skills/refas/scripts/production/section_sweep.py) | Optional authoring math for explicitly corresponding profiles on sampled open guides; returns vertices, faces and frames. | Remove the author-script import and recipe, package allowlist entry and numeric tests together. No automatic core caller. |
 | [scripts/production/asset_import.py](../../skills/refas/scripts/production/asset_import.py) | Shares the GLB container/resource check with `run --input-glb` through a lazy project import. The `import-v1` command also uses it to capture archived bytes and call the current project path. | Both ordinary GLB editing and saved-project adoption depend on this file. Coordinate their commands, input capture, guide and tests; keep stored migration formats compatible. It is not removable solely because no 1.x migration is planned. |
 
 ## Guidance and discovery
@@ -137,6 +139,7 @@ or render merely to update this map.
 | Animation and consumer execution | [Animation tests](../../tests/test_production_animation.py), [engine playback tests](../../tests/test_production_engine_playback.py) |
 | Mesh observations | [Mesh-audit tests](../../tests/test_production_mesh_audit.py), native and curve query tests above |
 | Optional surface-binding API | [Numeric tests](../../tests/test_production_surface_binding.py), [installed Blender tests](../../tests/test_production_surface_blender.py) |
+| Optional section sweep candidate | [Numeric controls](../../tests/test_production_section_sweep.py); actual installed Blender and matched real-use acceptance remain pending. |
 | Direct GLB input selection, capture and continued editing | [Resource tests](../../tests/test_production_resources.py), actual Blender/installed-input checks above |
 | 1.x asset adoption | [Import tests](../../tests/test_production_import.py), Blender import tests above |
 | Repository CI execution | [Normal CI](../../.github/workflows/ci.yml), [production CI](../../.github/workflows/production.yml), [Deep QA](../../.github/workflows/ci-deep.yml) |
