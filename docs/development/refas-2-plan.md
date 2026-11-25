@@ -108,6 +108,10 @@ Use small Python unit checks for revision/state failure paths. Real Blender exec
 
 ## Subsequent milestones
 
+### Geometry authoring toolkit
+
+Prioritize optional Python geometry helpers over new workflow gates: section loft/sweep, shared seams, constrained deformation/attachment, reference fitting, retopology/attribute transfer and LOD. Reuse Blender and useful 1.x mathematics, not its runtime or DSL. Keep inference optional and the native revision path unchanged. Admit helpers only after matched plain-bpy/current-v2/tool-assisted trials demonstrate real shape or effort gains without protected regressions. The [Work OS plan](https://app.notion.com/p/41fc6a3b5bf181c2b2cdfac4605ef7d7) owns detailed acceptance; the 37-item ledger stays unchanged.
+
 ### S2 — Reference reconstruction and useful visual comparison
 
 The [uniform-jacket pilot](evidence/uniform-jacket/README.md) is the first completed
