@@ -37,10 +37,12 @@ that original project. They do not become current approval of the imported
 
 ## Earlier documentation and evidence
 
-The [1.x documentation archive](archive/v1/README.md) contains the earlier
-architecture, capability notes, development plans and release reports. These
-documents and literal dogfood logs are historical records. Their original paths identify the recorded checkout, not the current
-production package. The [pre-cutover README](https://github.com/ictseoyoungmin/refas/blob/ef1d6b8acb944b545bebb486571d7841a3eea1b6/README.md)
+The [1.x documentation index](archive/v1/README.md) links the complete
+[immutable historical archive](https://github.com/ictseoyoungmin/refas/tree/285413169bf8fd5aeb666061ff6a113ef364f6f3/docs/archive/v1).
+Earlier plans, reports and duplicate contract notes are not needed in the
+current checkout. The four locally retained historical documents are test inputs,
+not active authoring instructions. Original paths and literal dogfood records
+describe their recorded checkout, not the current production package. The [pre-cutover README](https://github.com/ictseoyoungmin/refas/blob/ef1d6b8acb944b545bebb486571d7841a3eea1b6/README.md)
 preserves the complete earlier capability, workflow, physical-contract and
 installation description. Current executable examples/tests use the explicit
 legacy root; historical raw records are not rewritten.
