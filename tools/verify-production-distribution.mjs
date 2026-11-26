@@ -27,6 +27,8 @@ export const PRODUCTION_SKILL_FILES = Object.freeze([
   'scripts/production/asset_import.py',
   'scripts/production/mesh_audit.py',
   'scripts/production/surface_binding.py',
+  'scripts/production/thickness_field.py',
+  'scripts/production/capabilities.py',
 ]);
 const SKILL_IGNORE_FILES = ['.npmignore', 'scripts/.npmignore'];
 const PACKAGE_FILES = ['LICENSE', 'README.md', 'package.json', 'bin/refas.mjs', ...PRODUCTION_SKILL_FILES.map(file => `skills/refas/${file}`)];

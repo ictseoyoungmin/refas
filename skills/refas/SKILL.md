@@ -17,9 +17,9 @@ For clothing or articulated subjects intended for games or animation, make weari
 
 Separate what the image shows from inferred depth and engineered choices. Complete plausible side and rear surfaces, while keeping hidden details identifiable as assumptions. Generated reference views, depth maps, and model renders are working aids rather than new observations of the original subject.
 
-Build continuous major volumes and believable connections before small decoration. Reuse shared profiles and mirrored or repeated geometry where appropriate; preserve visible asymmetry. Choose Blender's existing modeling tools when they express the form well. A large number of primitives or polygons does not establish shape quality.
+Resolve primary volume, proportions and negative spaces first; then shape transitions, folds and thickness before adding small decoration. Use these as modeling priorities, not mandatory stages or report bundles. Compare the whole form in a neutral material from useful angles. Reuse shared profiles and mirrored or repeated geometry where appropriate; preserve visible asymmetry. Choose a shared control cage, direct sculpt, curves or lattice when it expresses the form better than joining separate primitives. A large number of primitives or polygons does not establish shape quality.
 
-For surfaces that should form one continuous shell, derive adjoining regions from a shared boundary. Separately subdivided edges can open a crack even when their control points meet. Inspect the connection with the final modifiers from both sides before adding small detail; preserve intentional openings.
+For surfaces that should form one continuous shell, derive adjoining regions from a shared boundary and give neighboring rows room to turn gradually. Separately subdivided edges can open a crack even when their control points meet. Inspect the actual evaluated connection, thickness and nearby curvature from both sides before adding small detail; preserve intentional openings. Change the cage or construction method when the evaluated form remains poor.
 
 Load a construction guide only when its problem is present: `references/production-garments.md` for cloth transitions and folded collars, or `references/production-assemblies.md` for segmented hard surfaces, joint pivots and local pose checks.
 
@@ -28,6 +28,8 @@ Keep Boolean cutters and surface-fitting sources editable when later shape corre
 For trim or hardware that must follow a deforming surface, the assembly guide also covers the optional `scripts/production/surface_binding.py` authoring helper. Bind to an explicitly selected outer triangle and move a section together; inspect neighboring sections and clearance after authoring the result.
 
 Read `references/production-topology.md` when checking mesh defects, rebuilding topology, or optimizing an asset for delivery. Choose topology for the actual deformation and use; reducing polygon count alone does not establish useful retopology.
+
+Find an installed helper or focused guide with `python3 scripts/produce.py authoring-capabilities --query "thickness"`. The optional catalogue reports available paths and their scope; ordinary `bpy` authoring remains available.
 
 ## Start or resume a production project
 
