@@ -26,6 +26,51 @@ gap to the next layer from a side or grazing view. A seam line on a broad flat
 plate does not demonstrate overlapping armor. Keep exposed mechanisms visible
 while giving each outer plate enough volume to read under the fixed lights.
 
+Treat shell thickness as a design constraint. Where it is fixed, revise
+curvature, panel spacing or local shape to resolve interference. Where it may
+vary, `grade_thickness` from `thickness_field.py` grades explicit vertex values
+along supplied edges while retaining minimums and protected values. All lengths
+must share one unit; `max_gradient` is thickness change per edge length. This
+helper returns a field without changing geometry or checking collisions.
+Requested and minimum thicknesses may be scalars or per-vertex values; optional
+`caps` maps vertex indices to upper thickness bounds. Protected indices retain
+their requested values. Conflicting bounds return `FAIL` without a field.
+
+For a reviewed mesh, apply non-rigid object/parent transforms first. This
+example converts source coordinates and thickness to metres, then maps an
+accepted field to a dedicated group on the intended ordinary Solidify modifier.
+Use no even-thickness correction, clamping or inverted group influence:
+
+```python
+from thickness_field import grade_thickness
+
+scale = bpy.context.scene.unit_settings.scale_length
+result = grade_thickness(
+    [tuple(c * scale for c in vertex.co) for vertex in obj.data.vertices],
+    [tuple(edge.vertices) for edge in obj.data.edges], requested_m,
+    minimum=minimum_m, max_gradient=maximum_taper, protected=protected_ids,
+)
+if result['status'] != 'PASS':
+    raise ValueError('No thickness field satisfies the declared bounds')
+field = result['vertexThickness']
+nominal = max(field)
+group = obj.vertex_groups.get('ShellThickness') or obj.vertex_groups.new(name='ShellThickness')
+for index, thickness in enumerate(field):
+    group.add([index], thickness / nominal, 'REPLACE')
+solidify.thickness = nominal / scale
+solidify.vertex_group = group.name
+solidify.thickness_vertex_group = 0.0
+solidify.solidify_mode = 'EXTRUDE'
+solidify.use_even_offset = False
+solidify.thickness_clamp = 0.0
+solidify.invert_vertex_group = False
+```
+
+For outward normals and an exterior to preserve, use `solidify.offset = -1`.
+Reuse the intended modifier and inspect its actual evaluated interior, rims,
+openings and neighboring parts. Subdivision or deformation can change the field
+between source vertices; verify the resulting shell in required poses.
+
 ## Keep openings editable with construction meshes
 
 Use Blender's Boolean modifier for a real socket, service recess or through-hole
