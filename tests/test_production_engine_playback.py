@@ -11,6 +11,7 @@ import tempfile
 import unittest
 
 from test_production_animation import SKIN
+from fixtures.production_bound_points import write_fixture
 
 ROOT = Path(__file__).resolve().parents[1]
 EXAMPLE = ROOT / "examples/engine-playback"
@@ -19,10 +20,10 @@ GODOT = os.environ.get("GODOT_EXE") or shutil.which("godot")
 
 
 class ProductionEnginePlaybackArgumentTests(unittest.TestCase):
-    def test_tolerances_reject_nonfinite_and_nonpositive_values_before_writing(self):
+    def test_limits_reject_nonfinite_and_nonpositive_values_before_writing(self):
         with tempfile.TemporaryDirectory(prefix="refas-godot-arguments-") as directory:
             output = Path(directory) / "unexpected-output"
-            for flag in ("--tolerance", "--vertex-tolerance"):
+            for flag in ("--tolerance", "--vertex-tolerance", "--timeout"):
                 for value in ("nan", "inf", "-inf", "0", "-0.00001"):
                     with self.subTest(flag=flag, value=value):
                         result = subprocess.run([sys.executable, "-B", str(EXAMPLE / "run.py"),
@@ -32,6 +33,110 @@ class ProductionEnginePlaybackArgumentTests(unittest.TestCase):
                         self.assertEqual(result.returncode, 2, result.stderr)
                         self.assertIn("must be a finite positive number", result.stderr)
                         self.assertFalse(output.exists())
+
+    def test_timeout_preserves_partial_output_and_records_deadline(self):
+        with tempfile.TemporaryDirectory(prefix="refas-godot-timeout-") as directory:
+            root = Path(directory)
+            inspection = root / "inspection.json"
+            inspection.write_text(json.dumps({"consumer_samples": {"fps": 30,
+                "matrix_order": "row-major, Blender Z-up world space", "samples": []}}))
+            consumer = root / "slow-consumer"
+            consumer.write_text("#!" + sys.executable + "\nimport sys, time\n"
+                "print('partial stdout', flush=True)\n"
+                "print('partial stderr', file=sys.stderr, flush=True)\ntime.sleep(5)\n")
+            consumer.chmod(0o755)
+            output = root / "result"
+            result = subprocess.run([sys.executable, "-B", str(EXAMPLE / "run.py"),
+                "--asset", "unused.glb", "--inspection", str(inspection), "--clip", "Unused",
+                "--out", str(output), "--godot", str(consumer), "--timeout", "0.25"],
+                capture_output=True, text=True, timeout=10)
+            self.assertEqual(result.returncode, 124, result.stderr)
+            self.assertIn("partial stdout", (output / "stdout.txt").read_text())
+            self.assertIn("partial stderr", (output / "stderr.txt").read_text())
+            command = json.loads((output / "command.json").read_text())
+            self.assertEqual(command["timeoutSeconds"], .25)
+            self.assertTrue(command["timedOut"])
+            self.assertEqual(command["returncode"], 124)
+            self.assertGreaterEqual(command["elapsedSeconds"], .25)
+            self.assertGreater(command["deadlineUtc"], command["startedUtc"])
+            self.assertLessEqual(command["deadlineUtc"], command["endedUtc"])
+
+
+@unittest.skipUnless(os.environ.get("REFAS_GODOT_TESTS") == "1" and GODOT,
+                     "Set REFAS_GODOT_TESTS=1 with Godot for static-point regressions")
+class ProductionEngineStaticPointTests(unittest.TestCase):
+    def setUp(self):
+        temp = tempfile.TemporaryDirectory(prefix="refas-godot-points-")
+        self.addCleanup(temp.cleanup)
+        self.root = Path(temp.name)
+        write_fixture(self.root / "fixture")
+
+    def run_case(self, label, *, fixture="fixture", inspection=None):
+        output = self.root / label
+        result = subprocess.run([sys.executable, "-B", str(EXAMPLE / "run.py"),
+            "--asset", str(self.root / fixture / "asset.glb"),
+            "--inspection", str(inspection or self.root / fixture / "inspection.json"),
+            "--clip", "BoneAttachedPoint", "--out", str(output), "--godot", str(GODOT),
+            "--expected-triangles", "4", "--required-skinned-meshes", "1"],
+            capture_output=True, text=True, timeout=30)
+        path = output / "result.json"
+        self.assertTrue(path.exists(), result.stdout + result.stderr)
+        return result, json.loads(path.read_text())
+
+    def test_attached_static_and_skinned_points_survive_import_name_collisions(self):
+        result, report = self.run_case("positive")
+        self.assertEqual(result.returncode, 0, report)
+        self.assertTrue(report["ok"])
+        self.assertEqual(report["geometry"]["meshes"], 4)  # Includes an unrequested unnamed node.
+        self.assertEqual(report["geometry"]["skinnedMeshes"], 1)
+        resolved = {row["originalName"]: row for row in report["sourceNodeResolution"]}
+        punctuated = resolved["Static.Probe:Sample"]
+        collision = resolved["Static_Probe_Sample"]
+        self.assertNotEqual(punctuated["originalName"], punctuated["importerAssignedName"])
+        self.assertEqual(punctuated["importerAssignedName"], collision["originalName"])
+        self.assertNotEqual(punctuated["importerAssignedName"], collision["importerAssignedName"])
+        self.assertNotEqual(punctuated["actualPath"], collision["actualPath"])
+        self.assertEqual(report["tolerances"], {"matrix": 2e-5, "skinVertexM": 2e-5,
+                                               "restVertexMatchM": 1e-5})
+        self.assertEqual([len(row["vertexProbes"]) for row in report["samples"]], [9, 9, 9])
+        for sample, x in zip(report["samples"], (.25, .27, .25)):
+            corner = next(p for p in sample["vertexProbes"] if p["name"] == "Static.Probe:Sample:0")
+            self.assertAlmostEqual(corner["actual"][0], x, delta=2e-5)
+        command = json.loads((self.root / "positive/command.json").read_text())
+        self.assertEqual(command["timeoutSeconds"], 120)
+        self.assertFalse(command["timedOut"])
+
+    def test_wrong_static_point_is_rejected_after_attachment_moves(self):
+        source = json.loads((self.root / "fixture/inspection.json").read_text())
+        source["consumer_samples"]["samples"][1]["skin_vertices"][0]["world"][0] += .001
+        inspection = self.root / "wrong-static.json"
+        inspection.write_text(json.dumps(source))
+        result, report = self.run_case("negative", inspection=inspection)
+        self.assertNotEqual(result.returncode, 0)
+        failures = [c for c in report["checks"] if not c["ok"]]
+        self.assertEqual([c["name"] for c in failures], ["nativeSkinVertex:Static.Probe:Sample:0"])
+        self.assertAlmostEqual(failures[0]["details"], .001, delta=2e-5)
+
+    def test_duplicate_source_names_require_an_explicit_live_path(self):
+        write_fixture(self.root / "duplicates", duplicate_names=True)
+        result, report = self.run_case("ambiguous", fixture="duplicates")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(sum(not c["ok"] and c["name"] == "probeNode:Static.Probe:Sample"
+                             for c in report["checks"]), 3)
+        self.assertTrue(all(not row["probes"] for row in report["samples"]))
+        matches = [row for row in report["sourceNodeResolution"] if row["originalName"] == "Static.Probe:Sample"]
+        self.assertEqual(len(matches), 2)
+        path = "./" + next(row["actualPath"] for row in matches if row["gltfNodeIndex"] == 2)
+        source = json.loads((self.root / "duplicates/inspection.json").read_text())
+        for sample in source["consumer_samples"]["samples"]:
+            sample["nodes"][path] = sample["nodes"].pop("Static.Probe:Sample")
+            for probe in sample["skin_vertices"]:
+                if probe["node"] == "Static.Probe:Sample":
+                    probe["node"] = path
+        inspection = self.root / "qualified.json"
+        inspection.write_text(json.dumps(source))
+        result, report = self.run_case("qualified", fixture="duplicates", inspection=inspection)
+        self.assertEqual(result.returncode, 0, report)
 
 
 @unittest.skipUnless(os.environ.get("REFAS_GODOT_TESTS") == "1" and BLENDER and GODOT,

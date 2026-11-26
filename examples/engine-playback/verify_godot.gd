@@ -6,6 +6,7 @@ var report = {"schema": "refas.godot.playback/v1", "ok": false, "checks": [], "s
 var configuration = {}
 var nodes = {}
 var node_paths = {}
+var source_nodes = {}
 var vertex_matches = {}
 var morph_meshes = {}
 var rest_surfaces = {}
@@ -55,6 +56,8 @@ func named_node(node_name):
 	# A bare name still has to identify one node even if it is a direct child.
 	if node_name == "." or "/" in node_name:
 		return node_paths.get(node_name.trim_prefix("./"))
+	if source_nodes.has(node_name):
+		return source_nodes[node_name][0] if source_nodes[node_name].size() == 1 else null
 	if not nodes.has(node_name) or nodes[node_name].size() != 1:
 		return null
 	return nodes[node_name][0]
@@ -62,9 +65,6 @@ func named_node(node_name):
 func skinned_point(mesh_node, arrays, surface_index, vertex_index, rest_association = false):
 	# Exercise the imported Skin, joint indices, weights and inverse-bind poses
 	# with Godot's evaluated skeleton. This CPU observation is not a GPU render.
-	var skeleton = mesh_node.get_node_or_null(mesh_node.skeleton)
-	if not mesh_node.skin or not skeleton is Skeleton3D:
-		return null
 	var vertices = arrays[Mesh.ARRAY_VERTEX]
 	if mesh_node.mesh.get_blend_shape_count() > 0:
 		var key = mesh_node.get_instance_id()
@@ -77,6 +77,11 @@ func skinned_point(mesh_node, arrays, surface_index, vertex_index, rest_associat
 		vertices = morph_meshes[key].surface_get_arrays(surface_index)[Mesh.ARRAY_VERTEX]
 		if vertices.size() != arrays[Mesh.ARRAY_VERTEX].size():
 			return null
+	if not mesh_node.skin:
+		return mesh_node.global_transform * vertices[vertex_index]
+	var skeleton = mesh_node.get_node_or_null(mesh_node.skeleton)
+	if not skeleton is Skeleton3D:
+		return null
 	var weights = arrays[Mesh.ARRAY_WEIGHTS]
 	var joints = arrays[Mesh.ARRAY_BONES]
 	if weights == null or joints == null or vertices.is_empty() or weights.size() != joints.size():
@@ -119,7 +124,7 @@ func match_vertex(probe):
 	var best = null
 	var distance = INF
 	for candidate in candidates:
-		if not candidate is MeshInstance3D or not candidate.mesh or not candidate.skin:
+		if not candidate is MeshInstance3D or not candidate.mesh:
 			continue
 		for surface in range(candidate.mesh.get_surface_count()):
 			var cache_key = str(candidate.get_instance_id()) + ":" + str(surface)
@@ -165,7 +170,7 @@ func _run():
 	report.engine = Engine.get_version_info()
 	report.assetSha256 = FileAccess.get_sha256(configuration.asset)
 	report.mode = "headless GLTFDocument import and AnimationPlayer evaluation; no GPU or FPS claim"
-	report.vertexEvaluation = "Godot bake_mesh_from_current_blend_shape_mix, then imported Skin binds/weights and evaluated Skeleton3D poses"
+	report.vertexEvaluation = "Godot bake_mesh_from_current_blend_shape_mix, then imported Skin binds/weights and evaluated Skeleton3D poses, or the live mesh global transform for unskinned vertices"
 	report.restAssociation = "Normalize weight sum only to associate the rest vertex; actual deformation retains imported raw quantized weights"
 	var document = GLTFDocument.new()
 	var state = GLTFState.new()
@@ -206,6 +211,25 @@ func _run():
 					if count == 0:
 						count = arrays[Mesh.ARRAY_VERTEX].size()
 					geometry.triangles += count / 3
+	# Join original mesh names through the importer's assigned names to live
+	# nodes. GLTFState scene-node pointers can be stale after mesh recreation.
+	report.sourceNodeResolution = []
+	var encoded_nodes = state.get_nodes()
+	for index in range(encoded_nodes.size()):
+		var encoded = encoded_nodes[index]
+		var original_name = str(encoded.original_name)
+		if encoded.mesh < 0 or original_name.is_empty():
+			continue
+		var assigned_name = str(encoded.get_name())
+		var matches = nodes.get(assigned_name, []).filter(func(n): return n is MeshInstance3D)
+		if not source_nodes.has(original_name):
+			source_nodes[original_name] = []
+		source_nodes[original_name].append(matches[0] if matches.size() == 1 else null)
+		if not check("sourceMeshIdentity:" + original_name, matches.size() == 1, assigned_name):
+			continue
+		report.sourceNodeResolution.append({"gltfNodeIndex": index, "gltfMeshIndex": encoded.mesh,
+			"originalName": original_name, "importerAssignedName": assigned_name,
+			"actualPath": str(scene.get_path_to(matches[0]))})
 	report.geometry = geometry
 	check("nonemptyMeshes", geometry.meshes > 0)
 	if configuration.has("expectedTriangles"):
@@ -246,6 +270,9 @@ func _run():
 		for node in all_nodes:
 			if node is Skeleton3D:
 				node.force_update_all_bone_transforms()
+		# BoneAttachment3D children observe the sought pose during the normal
+		# SceneTree update, after Skeleton3D transforms have been forced.
+		await process_frame
 		var row = {"time": sample.time, "probes": [], "maxMatrixError": 0.0, "vertexProbes": []}
 		if not check("nonemptySampleProbes", sample.has("probes") and not sample.probes.is_empty()):
 			continue
