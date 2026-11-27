@@ -23,6 +23,6 @@ merge and formal publication are separate unfinished delivery criteria.
 
 ## Earlier release contracts
 
-The [retained 1.x release contracts](archive/v1/release-criteria.md) describe
+The [historical 1.x release contracts](https://github.com/ictseoyoungmin/refas/blob/285413169bf8fd5aeb666061ff6a113ef364f6f3/docs/archive/v1/release-criteria.md) describe
 the earlier implementation and its published formats. Use them only for that
 version boundary; they do not add requirements to the 2.0 production workflow.

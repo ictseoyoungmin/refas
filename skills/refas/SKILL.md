@@ -17,15 +17,19 @@ For clothing or articulated subjects intended for games or animation, make weari
 
 Separate what the image shows from inferred depth and engineered choices. Complete plausible side and rear surfaces, while keeping hidden details identifiable as assumptions. Generated reference views, depth maps, and model renders are working aids rather than new observations of the original subject.
 
-Build continuous major volumes and believable connections before small decoration. Reuse shared profiles and mirrored or repeated geometry where appropriate; preserve visible asymmetry. Choose Blender's existing modeling tools when they express the form well. A large number of primitives or polygons does not establish shape quality.
+Resolve primary volume, proportions and negative spaces first; then shape transitions, folds and thickness before adding small decoration. Use these as modeling priorities, not mandatory stages or report bundles. Compare the whole form in a neutral material from useful angles. Reuse shared profiles and mirrored or repeated geometry where appropriate; preserve visible asymmetry. Choose a shared control cage, direct sculpt, curves or lattice when it expresses the form better than joining separate primitives. A large number of primitives or polygons does not establish shape quality.
 
-For surfaces that should form one continuous shell, derive adjoining regions from a shared boundary. Separately subdivided edges can open a crack even when their control points meet. Inspect the connection with the final modifiers from both sides before adding small detail; preserve intentional openings.
+For surfaces that should form one continuous shell, derive adjoining regions from a shared boundary and give neighboring rows room to turn gradually. Separately subdivided edges can open a crack even when their control points meet. Inspect the actual evaluated connection, thickness and nearby curvature from both sides before adding small detail; preserve intentional openings. Change the cage or construction method when the evaluated form remains poor.
 
 Load a construction guide only when its problem is present: `references/production-garments.md` for cloth transitions and folded collars, or `references/production-assemblies.md` for segmented hard surfaces, joint pivots and local pose checks.
+
+Keep Boolean cutters and surface-fitting sources editable when later shape corrections depend on them. Explicitly mark only a construction **mesh** with `obj["refas_role"] = "construction"` and `obj.hide_render = True`; keep it enabled in the current scene and active view layer. The assembly guide shows editable negative-space construction, and the topology guide shows a retained projection source. Native revisions preserve these meshes while asset surface counts, framing and GLB exclude them. Ordinary hidden objects are not inferred to be construction sources.
 
 For trim or hardware that must follow a deforming surface, the assembly guide also covers the optional `scripts/production/surface_binding.py` authoring helper. Bind to an explicitly selected outer triangle and move a section together; inspect neighboring sections and clearance after authoring the result.
 
 Read `references/production-topology.md` when checking mesh defects, rebuilding topology, or optimizing an asset for delivery. Choose topology for the actual deformation and use; reducing polygon count alone does not establish useful retopology.
+
+Find an installed helper or focused guide with `python3 scripts/produce.py authoring-capabilities --query "thickness"`. The optional catalogue reports available paths and their scope; ordinary `bpy` authoring remains available.
 
 ## Start or resume a production project
 
@@ -97,15 +101,19 @@ The compact JSON describes the requested objects and frames; omit object selecti
 
 For before/after comparison, keep the camera and lighting fixed. Pass `--review-spec REVIEW_JSON` to capture explicit orthographic views and a fixed light rig with the revision; omit `--views` to render all views in that file. Read `references/production-review.md` when defining those views. The default views frame the current bounding box and can move when geometry changes. Neither route establishes registration to the source image.
 
+Optional `compare` measures coverage changes in fixed transparent views and explicit regions. Read the review guide for limits; it never approves target improvement or promotes a baseline.
+
 Each `run` captures its starting asset, script and supplied render/review options and records fresh outputs together. Pass the desired options on each run; prior options are not implicit defaults. External originals can change without altering their captured historical copies.
 
-Native `run` submissions accept portable scenes with visible meshes and classic `CURVE` objects, editable `LATTICE` control cages and packed still-image textures. Link cages to the scene and keep them enabled and visible in the active view layer; a cage may have `hide_render` set because it is not a renderable surface. Hidden/excluded mesh or curve geometry, text (`FONT`), `SURFACE`, modern hair `CURVES` and object instances remain unsupported; convert or realize them explicitly before submission. Temporary `inspect` queries can describe other object types without approving them for submission.
+Native `run` submissions accept portable scenes with visible meshes and classic `CURVE` objects, explicitly marked construction meshes, editable `LATTICE` control cages and packed still-image textures. Link cages to the scene and keep them enabled and visible in the active view layer; a cage may have `hide_render` set because it is not a renderable surface. Unmarked hidden mesh/curve geometry, disabled or excluded construction sources, text (`FONT`), `SURFACE`, modern hair `CURVES` and object instances remain unsupported; convert or realize them explicitly before submission. Temporary `inspect` queries can describe other object types without approving them for submission.
 
 Delivery remains mesh-only and refuses unconverted curves. Choose the final curves and convert them through ordinary `bpy` in a recoverable `run --outputs delivery`; earlier native revisions keep their editable controls. Conversion at one frame does not preserve curve shape-key or geometry animation. Intentionally bake or rebuild required motion in a supported mesh representation and verify the exported playback before delivery.
 
 Delivery also rejects every remaining scene `LATTICE`. For a static result, apply the intended deformation at the selected frame and remove the cage in a recoverable edit before delivery. Keep the editable cage in the earlier native revision. This does not automatically bake cage or shape-key animation; resolve required motion deliberately before removing its controls.
 
 Other supported static mesh modifiers stay editable in the native scene and are evaluated for GLB export. Match each modifier's viewport/render visibility and enabled subdivision levels, or apply the intended geometry: inventory and export use the viewport dependency graph, while Cycles uses render settings. For curves, set `render_resolution_u` to `0` (reuse viewport resolution) or match every non-POLY spline's `resolution_u`. Delivery additionally rejects unapplied non-armature modifiers on skinned or shape-key meshes; resolve those before export. Dirty packed textures are refreshed before the native save.
+
+Construction meshes remain in the delivered `.blend`; the GLB contains the evaluated asset without those source surfaces. Static modifier evaluation uses the selected frame and does not bake source-driven animation. Do not parent deliverable objects to a construction mesh. Select construction sources explicitly with `inspect --object` or `--protect-object` when inspecting or preserving them; protecting a host also protects its recorded evaluated shape and modifier target identity.
 
 ## Keep source, review, and recovery connected
 

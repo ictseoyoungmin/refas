@@ -43,7 +43,7 @@ export async function verifyPackedInstall() {
     await assert.rejects(fs.access(path.join(prefix, 'node_modules/.bin/refas-host')), {code: 'ENOENT'});
     assert.equal(run(executable, ['--version'], {cwd: tmp}).stdout.trim(), `RefAs ${version}`);
     const help = run(executable, ['--help'], {cwd: tmp}).stdout;
-    for (const command of ['init', 'run', 'restore', 'import-v1']) assert.ok(help.includes(command), command);
+    for (const command of ['init', 'run', 'restore', 'import-v1', 'authoring-capabilities']) assert.ok(help.includes(command), command);
     const project = path.join(tmp, 'project with spaces 한글');
     const reference = path.join(tmp, 'reference with spaces.txt');
     await fs.writeFile(reference, 'source bytes for installed argument and copy verification\n');
@@ -65,6 +65,9 @@ export async function verifyPackedInstall() {
     const standaloneEnv = {PATH: path.join(tmp, 'empty-path'), PYTHONPATH: '', PYTHONNOUSERSITE: '1'};
     const cli = path.join(copied, 'scripts/produce.py');
     assert.equal(run(python, ['-B', '-S', cli, '--version'], {cwd: tmp, env: standaloneEnv}).stdout.trim(), `RefAs ${version}`);
+    const capabilities = JSON.parse(run(python, ['-B', '-S', cli, 'authoring-capabilities', '--id', 'thickness-field'], {cwd: tmp, env: standaloneEnv}).stdout);
+    assert.equal(capabilities.matches[0].callables[0].authoringImport, 'from thickness_field import grade_thickness');
+    assert.match(capabilities.matches[0].callables[0].signature, /minimum.*max_gradient/u);
     const standalone = JSON.parse(run(python, ['-B', '-S', cli, 'init', '--root', path.join(tmp, 'standalone-project'), '--name', 'Copied skill'], {cwd: tmp, env: standaloneEnv}).stdout);
     assert.equal(standalone.name, 'Copied skill');
     return {...distribution, tarball: packed.filename, installedCli: true,

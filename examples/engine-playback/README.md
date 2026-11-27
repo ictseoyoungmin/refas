@@ -19,7 +19,10 @@ Use the selected asset's actual triangle count, clip name and inspection file;
 the example values belong to an intermediate arm candidate. The output directory
 must be new. The runner records the configuration, source inspection SHA256,
 actual command, elapsed time, stdout/stderr and complete Godot result. A failure
-exits nonzero and remains evidence.
+exits nonzero and remains evidence. `--timeout` accepts a finite positive number
+of seconds (default 120); large profiles can explicitly select `--timeout 900`.
+The command record includes the timeout, deadline and whether it expired. A
+timeout exits 124 and preserves partial stdout/stderr.
 
 ## Native observation format
 
@@ -36,6 +39,11 @@ use that reported path rather than assuming an import hierarchy. Paths apply to
 `nodes` keys, bone `node` selectors and skin-vertex `node` selectors. Prefix `./`
 when selecting a direct child explicitly. Lookup stays within the imported
 scene; absolute SceneTree paths and traversal aliases are not accepted.
+
+Original glTF mesh names resolve through the importer's assigned names to unique
+live mesh nodes, including punctuation changes and sanitized-name collisions.
+`sourceNodeResolution` records that association; duplicate original bare names
+still require explicit paths. Unnamed, unrequested meshes remain valid.
 
 The runner changes basis from Blender Z-up to glTF/Godot `(X,Z,-Y)` with matrix
 `C`. Object worlds use `C*M*C^-1`; bone worlds use `C*M`, matching the extra
@@ -61,16 +69,18 @@ For an actual skin-deformation probe, each native sample can also contain
 positions in Blender coordinates. A vertex label is associated when it first
 appears, and its recorded rest position must correspond to that sample's pose;
 normally all labels are included in the first sample at rest. Godot matches an
-actual imported skinned vertex at that recorded position
+actual imported vertex at that recorded position
 (within 10 micrometers), retains its surface/index and evaluates its delivered
 joint indices, weights and inverse-bind matrices against the current Skeleton3D
-pose. Each resulting world point must match the native evaluated position within
+pose. Unskinned vertices use the live mesh's world transform; bone-attached
+children receive a normal SceneTree update after each manual animation seek.
+Each resulting world point must match the native evaluated position within
 the declared vertex tolerance. Active corrective shapes are evaluated first through Godot's
 public `bake_mesh_from_current_blend_shape_mix()` API, with the actual animation
 weights recorded per sample. The resulting points are then skinned. This
 exercises the delivered morph/skin data in CPU observations inside Godot; it is
 still not a GPU rendering test. Four/eight influence layouts are supported.
-A missing skin, invalid binding, failed morph bake or unresolved rest match
+An invalid skin binding, failed morph bake or unresolved rest match
 is not accepted by this narrow probe. Repeated coincident export vertices
 are not an exhaustive inspection of all weights; use representative affected
 regions and retain that sampling limit.
@@ -122,7 +132,8 @@ The script uses documented public APIs:
 
 Run actual consumer regressions, including two independently animated skeletons
 with ambiguous names and qualified paths, failed rest associations, wrong native
-matrices/skin positions, a stationary named clip and a missing clip, with both
+matrices/skin positions, moving static attachments with colliding source names,
+a stationary named clip and a missing clip, with both
 applications installed:
 
 ```bash

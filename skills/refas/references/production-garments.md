@@ -16,6 +16,12 @@ and wrist openings. Match its negative spaces as well as its outer silhouette.
 Keep intentional openings open. Treat the unseen body or lining as an inferred
 fit aid, not additional reference evidence.
 
+For oversized or boxy garments, shape the torso and sleeves as one envelope.
+Compare shoulder slope, the arm-body gap, hem width, neckline opening and sleeve
+volume in a neutral material. Retain the source's ease instead of defaulting to
+a fitted torso. A dropped shoulder may need a shared control surface or local
+sculpting. Resolve that silhouette before adding trim.
+
 ## Make a seam continue in position and direction
 
 For a continuous cloth shell, construct both sides of a seam from the same
@@ -55,6 +61,13 @@ Use controlled thickness and softened fold curvature. Check the neckline,
 inside face, lapel-to-body distance and collar-to-shoulder clearance from side
 and rear views. Place piping on the final cloth surface after these forms are
 stable. Decorative strips must not conceal a structural gap.
+
+Decide whether thickness itself is editable. If its approved value causes an
+intersection, revise the source curvature, spacing or fold while retaining that
+value. Grade variable thickness only within explicit minimum, taper and
+protected-region limits; the assembly guide shows the optional thickness-field
+helper and native application. Inspect the evaluated inner surface, rim and
+nearby layers after either edit. A valid field does not establish shell clearance.
 
 ## Judge fabric under stable lighting
 

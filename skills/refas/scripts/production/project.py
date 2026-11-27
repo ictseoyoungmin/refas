@@ -786,6 +786,96 @@ def export_preflight(blender="blender", timeout=60, executor=None):
     return _temporary_observation({"operation": "preflight"}, "preflight", blender, timeout, executor)
 
 
+def _comparison_view(meta, state, revision_id, view):
+    revision = _load_revision(meta, state, revision_id)
+    if revision is None or _source_hashes(revision["sources"]) != _source_hashes(state["sources"]):
+        raise ProductionError("not comparable: require explicit revisions with current sources")
+    folder = _revision_dir(meta, revision_id)
+    # Exact input/artifact inventories above also bind every file read below.
+    review = validate_review(read_json(folder / "inputs" / "review.json"))
+    selected = next((row for row in review["views"] if row["name"] == view), None)
+    rows = [row for row in revision.get("observations", []) if row.get("view") == view]
+    if selected is None or len(rows) != 1 or not review["transparent"]:
+        raise ProductionError("not comparable: require a unique fixed transparent view")
+    observed = rows[0]
+    scene = read_json(relative_file(folder / "artifacts", revision["outputs"]["scene"]))
+    camera, renderer, lighting = (observed.get(key) for key in ("camera", "renderer", "lighting"))
+    for record, fields in ((camera, {"projection", "position", "target", "orthoScale", "matrixWorld"}),
+            (renderer, {"engine", "device", "samples", "size", "viewTransform", "denoising",
+                        "transparent", "worldColor", "worldStrength"}),
+            (lighting, {"center", "radius", "rig"}),
+            (scene.get("timing"), {"fps", "fpsBase", "subframe"}),
+            (scene.get("units"), {"system", "scaleLength"})):
+        if not isinstance(record, dict) or not fields <= record.keys():
+            raise ProductionError("not comparable: incomplete capture metadata")
+    if (observed.get("framing") != "fixed-review-spec" or observed.get("registration") != "unregistered"
+            or observed.get("sourceSceneFingerprint") != scene.get("fingerprint")
+            or not isinstance(scene.get("fingerprint"), str) or len(scene["fingerprint"]) != 64
+            or observed.get("referenceRegion") != selected.get("reference")
+            or camera["projection"] != "orthographic" or renderer["transparent"] is not True
+            or renderer["engine"] != "CYCLES" or renderer["device"] != "CPU"
+            or lighting["rig"] != "three-area-lights/v1"
+            or type(scene.get("frame")) is not int
+            or not isinstance(revision.get("blenderVersion"), str)
+            or scene.get("blenderVersion") != revision["blenderVersion"]):
+        raise ProductionError("not comparable: incomplete or inconsistent capture metadata")
+    image = relative_file(folder / "artifacts", observed["path"])
+    if image.suffix.lower() != ".png" or digest(image) != observed.get("sha256"):
+        raise ProductionError("not comparable: image identity mismatch")
+    conditions = {key: observed.get(key) for key in ("camera", "renderer", "lighting", "referenceRegion")}
+    conditions.update({key: scene[key] for key in ("frame", "timing", "units", "blenderVersion")})
+    conditions["review"] = review
+    json.dumps(conditions, allow_nan=False)
+    return image, observed["sha256"], conditions
+
+
+def compare_views(root, baseline, candidate, view, regions, blender="blender", timeout=180, executor=None):
+    """Measure declared coverage preservation; never approve a target or publish state."""
+    from .image_compare import validate_regions
+    root, meta = _meta(root)
+    state = load_project(root)
+    try:
+        captures = [_comparison_view(meta, state, revision_id, view) for revision_id in (baseline, candidate)]
+        conditions = captures[0][2]
+        if conditions != captures[1][2]:
+            raise ProductionError("not comparable: capture conditions differ")
+        size = conditions["renderer"].get("size")
+        if not isinstance(size, list) or len(size) != 2:
+            raise ProductionError("not comparable: missing image dimensions")
+        region_file = Path(regions).expanduser()
+        if region_file.is_symlink() or not region_file.is_file() or region_file.stat().st_size > 65536:
+            raise ProductionError("regions must name a JSON file under 64 KiB")
+        region_sha = digest(region_file)
+        specification = {"regions": validate_regions(read_json(region_file), *size)}
+        if digest(region_file) != region_sha:
+            raise ProductionError("regions changed while reading")
+        expected = dict(zip(("baseline", "candidate"), (item[1] for item in captures)))
+        with tempfile.TemporaryDirectory(prefix="refas-comparison-") as temporary:
+            images = {}
+            for name, (source, sha, _) in zip(expected, captures):
+                copied = Path(temporary) / (name + ".png")
+                shutil.copyfile(source, copied)
+                if digest(source) != sha or digest(copied) != sha:
+                    raise ProductionError("image changed while copying")
+                images[name] = str(copied)
+            observed = _temporary_observation({"operation": "compare", "comparisonImages": images,
+                "comparisonDigests": expected, "comparisonRegions": specification,
+                "comparisonSize": size}, "comparison", blender, timeout, executor)
+            if (observed.get("inputSha256") != expected
+                    or any(digest(images[name]) != sha for name, sha in expected.items())):
+                raise ProductionError("comparison image digest mismatch")
+        for revision_id in (baseline, candidate):
+            _load_revision(meta, state, revision_id)
+        _assert_base(root, state)
+        if digest(region_file) != region_sha:
+            raise ProductionError("regions changed during comparison")
+        return {**observed, "ok": True, "baselineRevision": baseline, "candidateRevision": candidate,
+                "view": view, "conditions": conditions, "sourceSha256": _source_hashes(state["sources"]),
+                "regionSpecSha256": region_sha, "persisted": False}
+    except (KeyError, TypeError, ValueError) as exc:
+        raise ProductionError("not comparable: " + str(exc)) from exc
+
+
 def _file_usage(folder):
     count = size = 0
     if folder.is_symlink():

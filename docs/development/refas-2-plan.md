@@ -60,6 +60,7 @@ The initial production command is `python3 skills/refas/scripts/produce.py` in a
 | Command | Responsibility |
 |---|---|
 | `doctor` | Report the Python/Blender environment before authoring. |
+| `compare` | Read two fixed transparent revision views and explicit regions; measure coverage preservation without promoting a baseline. |
 | `init --root DIR --name NAME [--reference FILE ...]` | Create a production project and retain reference copies. |
 | `references --root DIR --reference FILE ... --expected-sequence N` | Adopt the complete active reference set while retaining all model/source history; use `--clear` for an empty set. |
 | `run --root DIR --script FILE --intent TEXT` | Execute a Blender script and record the native scene, requested renders, script and metadata as a revision. GLB is explicit through `--outputs delivery` or `deliver`. |
@@ -106,6 +107,10 @@ separates transaction probes from actual Blender and extracted-package runs.
 Use small Python unit checks for revision/state failure paths. Real Blender execution is a separate integration check; syntax compilation or a fake worker cannot substitute for it. Record the actual Blender version and commands with the result.
 
 ## Subsequent milestones
+
+### Geometry authoring toolkit
+
+Prioritize optional Python geometry helpers over new workflow gates: section loft/sweep, shared seams, constrained deformation/attachment, reference fitting, retopology/attribute transfer and LOD. Reuse Blender and useful 1.x mathematics, not its runtime or DSL. Keep inference optional and the native revision path unchanged. Admit helpers only after matched plain-bpy/current-v2/tool-assisted trials demonstrate real shape or effort gains without protected regressions. The [Work OS plan](https://app.notion.com/p/41fc6a3b5bf181c2b2cdfac4605ef7d7) owns detailed acceptance; the 37-item ledger stays unchanged.
 
 ### S2 — Reference reconstruction and useful visual comparison
 

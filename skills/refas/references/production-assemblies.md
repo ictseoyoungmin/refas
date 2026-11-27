@@ -3,7 +3,7 @@
 Use this guide for segmented mechanisms, armor and manufactured parts with
 visible joints. Begin with the reference's complete assembly and proportions.
 
-Sections: scale and hierarchy; editable cables and trim; lattice deformation;
+Sections: scale and hierarchy; editable cutters; editable cables and trim; lattice deformation;
 motion hierarchy; surface attachments; useful poses; delivered animation;
 local component revisions.
 
@@ -25,6 +25,94 @@ the broad face, returning side wall and free edge together, then inspect the
 gap to the next layer from a side or grazing view. A seam line on a broad flat
 plate does not demonstrate overlapping armor. Keep exposed mechanisms visible
 while giving each outer plate enough volume to read under the fixed lights.
+
+Treat shell thickness as a design constraint. Where it is fixed, revise
+curvature, panel spacing or local shape to resolve interference. Where it may
+vary, `grade_thickness` from `thickness_field.py` grades explicit vertex values
+along supplied edges while retaining minimums and protected values. All lengths
+must share one unit; `max_gradient` is thickness change per edge length. This
+helper returns a field without changing geometry or checking collisions.
+Requested and minimum thicknesses may be scalars or per-vertex values; optional
+`caps` maps vertex indices to upper thickness bounds. Protected indices retain
+their requested values. Conflicting bounds return `FAIL` without a field.
+
+For a reviewed mesh, apply non-rigid object/parent transforms first. This
+example converts source coordinates and thickness to metres, then maps an
+accepted field to a dedicated group on the intended ordinary Solidify modifier.
+Use no even-thickness correction, clamping or inverted group influence:
+
+```python
+from thickness_field import grade_thickness
+
+scale = bpy.context.scene.unit_settings.scale_length
+result = grade_thickness(
+    [tuple(c * scale for c in vertex.co) for vertex in obj.data.vertices],
+    [tuple(edge.vertices) for edge in obj.data.edges], requested_m,
+    minimum=minimum_m, max_gradient=maximum_taper, protected=protected_ids,
+)
+if result['status'] != 'PASS':
+    raise ValueError('No thickness field satisfies the declared bounds')
+field = result['vertexThickness']
+nominal = max(field)
+group = obj.vertex_groups.get('ShellThickness') or obj.vertex_groups.new(name='ShellThickness')
+for index, thickness in enumerate(field):
+    group.add([index], thickness / nominal, 'REPLACE')
+solidify.thickness = nominal / scale
+solidify.vertex_group = group.name
+solidify.thickness_vertex_group = 0.0
+solidify.solidify_mode = 'EXTRUDE'
+solidify.use_even_offset = False
+solidify.thickness_clamp = 0.0
+solidify.invert_vertex_group = False
+```
+
+For outward normals and an exterior to preserve, use `solidify.offset = -1`.
+Reuse the intended modifier and inspect its actual evaluated interior, rims,
+openings and neighboring parts. Subdivision or deformation can change the field
+between source vertices; verify the resulting shell in required poses.
+
+## Keep openings editable with construction meshes
+
+Use Blender's Boolean modifier for a real socket, service recess or through-hole
+when moving the cutter will make subsequent revisions easier. Keep a clear
+wall thickness and inspect the opening from an oblique view; a dark mark on a
+solid plate does not form a cavity. Use suitable closed cutter geometry and
+inspect the resulting edges before adding bevels or optimizing the shell.
+
+For an existing host and cutter, declare the cutter's purpose explicitly:
+
+```python
+housing = bpy.data.objects["Housing"]
+cutter = bpy.data.objects["SocketCutter"]
+cutter["refas_role"] = "construction"
+cutter.hide_render = True
+cutter.display_type = "WIRE"
+socket = housing.modifiers.new("Socket", "BOOLEAN")
+socket.operation = "DIFFERENCE"
+socket.solver = "EXACT"
+socket.object = cutter
+```
+
+Reuse the saved modifier and edit its cutter on subsequent runs. Keep sources
+linked to the current scene and enabled in its active view layer; do not disable
+or exclude their collection. Each source needs its own `hide_render` flag, even
+inside a hidden collection, so diagnostic views preserve the same separation.
+Only meshes can carry the construction role. Unmarked hidden asset geometry
+still fails rather than disappearing from delivery. Do not use a construction
+mesh as the parent of deliverable objects.
+
+Protect neighboring components and unchanged sources by exact name. A host's
+evaluated shape changes when its cutter changes, so do not protect the intended
+host against that edit. Native `.blend` revisions keep source meshes and their
+dependencies; `inspect --object SocketCutter` can still observe the source.
+Asset surface counts and automatic framing exclude construction surfaces.
+
+For a static delivery, the existing exporter evaluates all final meshes before
+changing its temporary export state, then omits construction meshes from GLB.
+The saved `.blend` remains editable. Animated source-driven deformation needs
+deliberate baking or rebuilding and consumer playback verification; exporting
+one evaluated frame does not bake that motion. Use fixed front/oblique views
+to compare the opening and its surrounding wall before and after the edit.
 
 ## Shape cables and trim with native curves
 
@@ -63,8 +151,8 @@ Reuse that modifier on subsequent edits instead of stacking a fresh deformation.
 Link the cage into the current scene and keep it enabled and visible in the
 active view layer. Its `hide_render` flag may be set; the cage is a control
 object, not rendered geometry. Off-scene lattice dependencies are unsupported
-for native submission. This does not permit hidden mesh cutters or other
-unsupported helper geometry.
+for native submission. Mesh cutters use the separate explicit construction
+role described above; that role does not change lattice delivery rules.
 
 Native save/reopen and exact-name object protection record the cage's grid,
 interpolation, control positions, group weights, shape keys and animation.

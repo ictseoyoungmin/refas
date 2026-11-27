@@ -175,7 +175,7 @@ An agent workflow interface release for the existing reference-driven 3D constru
 - Existing construction, camera, registered render, GLB and source-region contradiction validators remain unchanged.
 - Strict source-bound release handoff still refuses to authorize likeness when independent original-photo semantic provenance is absent. A general checkpoint/certificate or a `draft-transfer` receipt is **not** a positive source-fidelity authorization.
 - #271, #272 and #265 remain open as deferred source-fidelity work. Their absence is disclosed, not silently marked as PASS; full real-photo success/negative benchmark remains future work.
-- Production-oriented follow-up (flagship geometry construction, editable agent geometry kit, character/mechanical/material tracks) is recorded in the [archived roadmap](docs/archive/v1/development/foundry-production-roadmap.md).
+- Production-oriented follow-up (flagship geometry construction, editable agent geometry kit, character/mechanical/material tracks) is recorded in the [archived roadmap](https://github.com/ictseoyoungmin/refas/blob/285413169bf8fd5aeb666061ff6a113ef364f6f3/docs/archive/v1/development/foundry-production-roadmap.md).
 
 ## 1.2.0 — 2026-10-09
 
