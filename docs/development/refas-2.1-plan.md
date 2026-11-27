@@ -32,8 +32,11 @@ intended form; do not ban them or infer quality from polygon/part counts.
 
 ## Fixed functional acceptance
 
-Current count: **12/20 demonstrated (M1–M4, R1–R4, J1–J4)**. Each item below is one criterion; changing
-scope requires an explicit revision rather than silently changing the count.
+Original ledger: **12 demonstrated, 4 active, 4 retired proposal criteria out of
+20**. M1–M4, R1–R4 and J1–J4 are demonstrated. The user-authorized scope revision
+retires the present Sweep proposal, S1–S4, after its practical benefit was not
+demonstrated. Retirement is not completion and does not improve a percentage.
+Each item below remains visible; future scope changes require an explicit revision.
 Whole-asset visual acceptance, performance/cost evidence and release status
 are separate outcomes. Writing this plan does not complete a criterion.
 
@@ -41,16 +44,16 @@ are separate outcomes. Writing this plan does not complete a criterion.
 |---|---|---|
 | Surface mounting | **M1:** evaluated host frame from a bounded ray and explicit tangent; **M2:** multipoint gap bounds, preserved rigid shape/scale and failure nonmutation; **M3:** copied-skill actual Blender edit/save/reopen/re-edit with unrelated preservation; **M4:** useful source-bound garment/car feature studies, observed in actual renders. | [PR #443](https://github.com/ictseoyoungmin/refas/pull/443), M1–M4 demonstrated and merged |
 | Recesses and openings | **R1:** actual declared depth/walls/floor or through opening; **R2:** wall/input limits and failure recovery; **R3:** editable cutter/outline/depth/edge controls; **R4:** installed car-feature construction and visual comparison, with cloth-shell openings distinguished. | [PR #444](https://github.com/ictseoyoungmin/refas/pull/444), R1–R4 demonstrated and merged |
-| Sweep and loft | **S1:** controlled straight/curved intent and section changes; **S2:** editable guide/section scene generation and re-edit; **S3:** explicit handling of twist, degeneration and folded connections; **S4:** installed garment and hard-surface source-bound trials. | [#424](https://github.com/ictseoyoungmin/refas/issues/424), [draft #425](https://github.com/ictseoyoungmin/refas/pull/425): technically working candidate; admission deferred after matched trial found no demonstrated net benefit |
+| Sweep and loft | **S1:** controlled straight/curved intent and section changes; **S2:** editable guide/section scene generation and re-edit; **S3:** explicit handling of twist, degeneration and folded connections; **S4:** installed garment and hard-surface source-bound trials. | Retired proposal: [#424](https://github.com/ictseoyoungmin/refas/issues/424) closed as not planned; [#425](https://github.com/ictseoyoungmin/refas/pull/425) closed without merge. Branch and frozen trial retained; no installed feature removed. |
 | Boundary transitions | **J1:** actual join from explicit boundary correspondence; **J2:** position/tangent direction/transition width with intended creases retained; **J3:** invalid-input handling and preserved surrounding controls; **J4:** demonstrated garment junction and housing transition improvement. | [PR #446](https://github.com/ictseoyoungmin/refas/pull/446), J1–J4 demonstrated and merged |
-| Local constrained edits | **D1:** handles and fixed boundary limit the edited region; **D2:** supported size/thickness/obstacle-gap constraints are met or conflicts returned; **D3:** existing anchors/sections and unrelated required data retained; **D4:** useful garment/car local edits and re-edit with bounded claims. | queued |
+| Local constrained edits | **D1:** handles and fixed boundary limit the edited region; **D2:** supported size/thickness/obstacle-gap constraints are met or conflicts returned; **D3:** existing anchors/sections and unrelated required data retained; **D4:** useful garment/car local edits and re-edit with bounded claims. | [#450](https://github.com/ictseoyoungmin/refas/issues/450): bounded joint displacement editing in development; feasibility is not acceptance. |
 
 ## Implementation sequence and interfaces
 
-First integrate surface mounting, then actual recess construction using the
-same surface-selection conventions. The sweep candidate's native path and
-matched comparison are complete, but its admission is deferred; preserve the
-candidate and proceed to boundary transitions and bounded local fitting.
+Surface mounting, actual recess construction, boundary transitions and bounded
+native projection are integrated. The managed Sweep proposal is retired after
+its native path and matched comparison failed to demonstrate net benefit;
+preserve its branch and frozen evidence. Continue with bounded joint local edits.
 Use one active implementation issue/PR at a time and merge feature branches
 into the development integration branch after their evidence passes.
 
@@ -132,7 +135,7 @@ editable, but the helper has no radius/bevel parameter and regenerates its
 cutter mesh on re-edit. This is a blind prismatic feature study, not an airflow
 duct, thin cloth pocket, complete car or whole-asset quality acceptance.
 
-### Deferred sweep candidate
+### Retired sweep proposal
 
 The native candidate completed actual copied-skill save/reopen/re-edit with
 editable guide, start-axis and corresponding profile meshes. Twelve numerical
@@ -159,12 +162,25 @@ The candidate retained 150 wire-control objects, including unit-length axes
 oversized for these features, and an external rebuild dependency. A nonplanar
 guide or unplanned section-edit advantage was not exercised.
 
-Keep PR #425 as a candidate rather than admitting it because its checks pass.
-Useful net benefit remains unproven; source fidelity and reduced editing burden
-must be demonstrated before reopening admission. Preserve the frozen trials
-outside Git and do not revise their geometry after comparison. S1-S4 add no
-accepted criteria. This does not establish that sweep math is
-useless; it limits what this implementation and this trial justify.
+Close #424 as not planned and #425 without merge; retain the feature branch.
+Neither proposed Sweep module is installed in develop, so retiring the proposal
+breaks no installed consumer. The API couples one profile object to every guide
+sample and still requires external rebuild. Combining controls into one object
+would not remove those costs. The pure kernel is not admitted merely because
+its numerical tests pass.
+
+A separate Blender feasibility retained the same dense sections in ordinary
+meshes with native Curve modifiers and two guide objects. Guide edits and a
+newly authored Shape Key survived reopening without the Sweep modules. The
+surfaces differed from the frozen candidate by up to 0.630/0.606 mm; this was
+not a new matched trial, a fidelity improvement or a RefAs delivery proof.
+There is no demonstrated need for a wrapper around that existing native path.
+
+Preserve the frozen trials outside Git without revising their compared geometry.
+S1–S4 remain visible as retired criteria, not accepted or completed criteria.
+A future proposal requires a concrete unsupported construction/editing need and
+useful source-bound benefit over native tools. This disposition concerns the
+present implementation; it does not declare all sweep mathematics useless.
 
 ### Demonstrated boundary transition scope
 
