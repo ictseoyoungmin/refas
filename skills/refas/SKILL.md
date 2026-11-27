@@ -31,7 +31,7 @@ Create a rigid badge, button, buckle or bracket in its local mounting frame, the
 
 For a prepared flexible surface layer, `project_region` from `scripts/production/surface_project.py` fits an existing mask with native Shrinkwrap, checks bounded hits and actual residuals, and restores a failed edit. The assembly guide describes layer preparation, supported stacks and retained native controls.
 
-For several local target positions, `edit_region` from `scripts/production/local_edit.py` moves handles jointly inside an explicit region while retaining the outside cage. The assembly guide describes supported size, shell-pair and directional gap bounds, failed-edit recovery and ordinary native continuation.
+For several local target positions, `edit_region` from `scripts/production/local_edit.py` moves handles jointly inside an explicit region while retaining the outside cage and supported native Solidify → Bevel → Weighted Normal finishes. Use it on a static unparented cage; the assembly guide gives a complete panel example, sampled bounds and failed-edit recovery.
 
 Read `references/production-topology.md` when checking mesh defects, rebuilding topology, or optimizing an asset for delivery. Choose topology for the actual deformation and use; reducing polygon count alone does not establish useful retopology.
 

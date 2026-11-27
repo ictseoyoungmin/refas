@@ -2,9 +2,10 @@
 
 The positive symmetric graph Laplacian acts on displacements, not positions.
 This is not rotation-preserving deformation or automatic constraint repair.
-Distance observations cover named cage pairs, paired Solidify vertices and
+Distance observations cover named cage pairs, paired Solidify-prefix vertices and
 declared first-hit obstacle rays only; they do not certify global wall thickness,
-continuous contact, self-intersection or swept collision. Units are world units.
+continuous contact, finished Bevel margins, self-intersection or swept collision.
+Units are world units.
 """
 from __future__ import annotations
 
@@ -110,32 +111,46 @@ def _static(obj, label):
 
 
 def _shell_modifier(obj):
-    if not obj.modifiers:
+    types = [m.type for m in obj.modifiers]
+    if types != [kind for kind in ('SOLIDIFY', 'BEVEL', 'WEIGHTED_NORMAL') if kind in types]:
+        raise ValueError('source supports optional Solidify, Bevel and Weighted Normal in that order without duplicates')
+    if any(m.show_viewport != m.show_render for m in obj.modifiers):
+        raise ValueError('source modifiers must have matching viewport/render visibility')
+    if not types or types[0] != 'SOLIDIFY':
         return None
     m = obj.modifiers[0]
-    if (len(obj.modifiers) != 1 or m.type != 'SOLIDIFY' or not m.show_viewport or not m.show_render
+    if (not m.show_viewport or not m.show_render
             or m.solidify_mode != 'EXTRUDE' or not m.use_rim or m.use_rim_only or m.vertex_group
             or m.thickness_clamp != 0 or not math.isfinite(m.thickness) or m.thickness <= 0
             or not math.isfinite(m.offset) or not -1 <= m.offset <= 1):
-        raise ValueError('source supports no modifiers or one enabled plain EXTRUDE Solidify with rims')
+        raise ValueError('source Solidify must be enabled plain EXTRUDE with rims')
     return m
 
 
-def _evaluate(obj):
+def _evaluate(obj, disabled=()):
     import bpy
-    bpy.context.view_layer.update()
-    evaluated = obj.evaluated_get(bpy.context.evaluated_depsgraph_get())
-    if not evaluated.is_evaluated:
-        raise ValueError('enable the object in the current view layer')
-    data = evaluated.to_mesh()
+    flags = [(m, m.show_viewport, m.show_render) for m in disabled]
     try:
-        data.calc_loop_triangles()
-        points = [tuple(v.co) for v in data.vertices]
-        if any(not math.isfinite(x) for p in points for x in p):
-            raise ValueError('evaluated coordinates must remain finite')
-        return points, [tuple(p.vertices) for p in data.polygons], [tuple(t.vertices) for t in data.loop_triangles]
+        for m, _, _ in flags:
+            m.show_viewport = m.show_render = False
+        bpy.context.view_layer.update()
+        evaluated = obj.evaluated_get(bpy.context.evaluated_depsgraph_get())
+        if not evaluated.is_evaluated:
+            raise ValueError('enable the object in the current view layer')
+        data = evaluated.to_mesh()
+        try:
+            data.calc_loop_triangles()
+            points = [tuple(v.co) for v in data.vertices]
+            if any(not math.isfinite(x) for p in points for x in p):
+                raise ValueError('evaluated coordinates must remain finite')
+            return points, [tuple(p.vertices) for p in data.polygons], [tuple(t.vertices) for t in data.loop_triangles]
+        finally:
+            evaluated.to_mesh_clear()
     finally:
-        evaluated.to_mesh_clear()
+        for m, viewport, render in flags:
+            m.show_viewport, m.show_render = viewport, render
+        if flags:
+            bpy.context.view_layer.update()
 
 
 def _cycle(face):
@@ -144,8 +159,8 @@ def _cycle(face):
 
 
 def _shell_points(obj, matrix):
-    """Check native vertex pairing against both shell face sets and every rim."""
-    points, faces, _ = _evaluate(obj)
+    """Verify both face sets and every rim at the supported Solidify prefix."""
+    points, faces, _ = _evaluate(obj, list(obj.modifiers)[1:])
     n = len(obj.data.vertices)
     original = [tuple(p.vertices) for p in obj.data.polygons]
     uses = Counter(tuple(sorted((f[i-1], f[i]))) for f in original for i in range(len(f)))
@@ -347,8 +362,11 @@ def edit_region(mesh, *, region, handles, max_displacement, distances=(), shell_
     region indices to absolute world targets. Bounds use ``{name,min,max}`` plus:
     ``distances``: ``vertices=(a,b)``; ``shell_pairs``: source ``vertex=i``;
     ``obstacles``: ``object``, sample ``vertices``, world ``direction``.
-    Shell pairing requires verified plain Solidify topology. A failed constraint
-    rejects this one proposal, without asserting that no feasible edit exists.
+    Optional plain Solidify, Bevel and Weighted Normal are retained in that
+    order, each at most once, with matching viewport/render visibility.
+    Solidify must remain enabled. Shell pairs use its verified prefix before
+    Bevel/Weighted Normal; final finish margins require separate inspection.
+    A failed constraint rejects this proposal, not all possible feasible edits.
     Frozen exterior refers to the cage, not neighboring evaluated shell normals.
     ``trueResiduals`` describe the ideal linear solve; ``maxRealizationError``
     separately bounds every stored region point against that solved proposal.
@@ -440,7 +458,7 @@ def edit_region(mesh, *, region, handles, max_displacement, distances=(), shell_
         committed = True
         return {'object': mesh.name, 'regionVertices': len(selected), 'handleCount': len(targets),
                 'iterations': iterations, 'trueResiduals': residuals, **report,
-                'scope': 'frozen source cage; finite named pair/ray samples only; no global thickness or collision guarantee'}
+                'scope': 'frozen source cage; Solidify pairs before finishes; finite named pair/ray samples only; no final finish, global thickness or collision guarantee'}
     finally:
         if not committed:
             for i in selected:

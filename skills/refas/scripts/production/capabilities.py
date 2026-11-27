@@ -9,7 +9,7 @@ ROUTES = (
     ("local-edit", "Move several local handles jointly while freezing the outside cage.",
      "local edit handle fixed deformation dimension shell pair obstacle ray gap 국소 편집 핸들 고정 변형 치수 간격",
      "Blender Python", "production-assemblies.md", ("local_edit.edit_region",),
-     "Small static mesh displacement with explicit size, shell-pair and directional gap checks; rejects a conflicting proposal, not a general constraint solver."),
+     "Static unparented cage; optional plain Solidify then Bevel then Weighted Normal. Shell pairs measure the Solidify prefix, not final finish thickness; rejects conflicting sampled bounds, not a general constraint solver."),
     ("surface-projection", "Fit a prepared surface layer with bounded native projection and rollback.",
      "projection shrinkwrap conform flexible patch layer fit gap miss 투영 곡면 피팅 패치 맞춤 간격",
      "Blender Python", "production-assemblies.md", ("surface_project.project_region",),
