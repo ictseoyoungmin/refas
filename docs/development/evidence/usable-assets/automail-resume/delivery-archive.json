@@ -1,0 +1,16 @@
+{
+  "schema": "refas.selected-asset-delivery/v1",
+  "date": "2026-11-23",
+  "asset": "automail",
+  "candidate": "08",
+  "selectedRevision": "a6a2e5dec7884effa9c42821e19549b6",
+  "fileName": "refas-usable-automail-2026-11-23.zip",
+  "libraryFileId": "libfile_469aa206ad3c819180cbc2007000a572",
+  "fileId": "file_00000000ac8881fda6f87aa68e94eebe",
+  "libraryVersion": 0,
+  "bytes": 19243457,
+  "sha256": "a0c9ae142e06f199e526607bbbbc7375071c184b06b7191531ac263904a0b78f",
+  "verifiedEntries": 93,
+  "link": "https://chatgpt.com/library?file_id=libfile_469aa206ad3c819180cbc2007000a572&account_id=personal",
+  "contentScope": "Selected native and GLB, detailed functional native, original recovered native/reference, readable report, fixed and presentation views, complete compressed observations, scripts and commands. Includes no character-avatar data."
+}

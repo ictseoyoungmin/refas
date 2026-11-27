@@ -4,9 +4,9 @@ import os from 'node:os';
 import path from 'node:path';
 import {test} from 'node:test';
 
-import {analyzeDiscoveryClosure} from '../skills/refas/scripts/verify_discovery_closure.mjs';
+import {analyzeDiscoveryClosure} from '../legacy/v1/scripts/verify_discovery_closure.mjs';
 
-const SKILL_ROOT = path.resolve('skills/refas');
+const SKILL_ROOT = path.resolve('legacy/v1');
 const SCHEMA_ROOT = path.resolve('schemas');
 
 async function copySkill(t, name) {

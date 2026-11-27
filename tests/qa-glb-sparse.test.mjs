@@ -10,8 +10,8 @@ import {
  inventoryGlbTriangleComponents,parseGlb,replayRealizedContactEvidence,
  verifyRealizedSurfaceDescriptors,initProject,commitCheckpoint,contentReference,verifySourceBoundObject,
  createReferenceGeometry,createRealizedProjection,verifyRealizedProjection,
-} from '../skills/refas/scripts/lib/index.mjs';
-import {readQaGeometryAccessor} from '../skills/refas/scripts/lib/qa-glb-geometry-accessors.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
+import {readQaGeometryAccessor} from '../legacy/v1/scripts/lib/qa-glb-geometry-accessors.mjs';
 
 const D=(v='a')=>v.repeat(64);
 const sha=bytes=>createHash('sha256').update(Buffer.from(bytes)).digest('hex');

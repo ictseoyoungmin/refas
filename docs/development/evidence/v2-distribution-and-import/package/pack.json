@@ -1,0 +1,101 @@
+[
+  {
+    "id": "refas@2.0.0-alpha.1",
+    "name": "refas",
+    "version": "2.0.0-alpha.1",
+    "size": 41389,
+    "unpackedSize": 139434,
+    "shasum": "fcdb7428e7a77530817d3b0f08ad1b24bb882cc1",
+    "integrity": "sha512-VblSBYojMAc5vwwP2/NCDqudVUCf3aDyP6alS6JLK1CM8GeetFyqWatnsxDCte2a0wNE0sxvnJWDPu/51cVjAw==",
+    "filename": "refas-2.0.0-alpha.1.tgz",
+    "files": [
+      {
+        "path": "LICENSE",
+        "size": 1071,
+        "mode": 420
+      },
+      {
+        "path": "README.md",
+        "size": 9458,
+        "mode": 420
+      },
+      {
+        "path": "bin/refas.mjs",
+        "size": 795,
+        "mode": 493
+      },
+      {
+        "path": "package.json",
+        "size": 6398,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/agents/openai.yaml",
+        "size": 440,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/assets/icon.svg",
+        "size": 7749,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/references/production-assemblies.md",
+        "size": 4290,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/references/production-garments.md",
+        "size": 3769,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/references/production-import.md",
+        "size": 2834,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/references/production-review.md",
+        "size": 2929,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/produce.py",
+        "size": 6488,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/production/__init__.py",
+        "size": 68,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/production/blender_worker.py",
+        "size": 35332,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/production/legacy_import.py",
+        "size": 11866,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/production/project.py",
+        "size": 30616,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/scripts/production/review.py",
+        "size": 3638,
+        "mode": 420
+      },
+      {
+        "path": "skills/refas/SKILL.md",
+        "size": 11693,
+        "mode": 420
+      }
+    ],
+    "entryCount": 17,
+    "bundled": []
+  }
+]

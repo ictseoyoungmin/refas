@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import {assessBenchmarkCapabilityClosure, createBenchmarkMatrix, validateBenchmarkMatrix} from '../skills/refas/scripts/lib/index.mjs';
+import {assessBenchmarkCapabilityClosure, createBenchmarkMatrix, validateBenchmarkMatrix} from '../legacy/v1/scripts/lib/index.mjs';
 
 const D = (char) => char.repeat(64);
 function source(id, digest) { return {kind: 'measurement-fixture', path: `measurement/${id}.json`, sha256: digest, sizeBytes: 10}; }

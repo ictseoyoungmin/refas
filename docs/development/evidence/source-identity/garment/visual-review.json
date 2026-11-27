@@ -1,0 +1,34 @@
+{
+  "recorded_utc": "2026-11-22T12:32:07.103594+00:00",
+  "selected_label": "identity-04",
+  "selected_revision": "d83189287d4d458397b05534083f00e1",
+  "source": "Original 1672x941 reference.png; complete image visually inspected before model edits.",
+  "review_order": "whole garment, collar/lapel profile, straps, left ornament and chain attachments",
+  "decisions": [
+    {
+      "label": "identity-01",
+      "decision": "retained, rejected for selection",
+      "observed": "Black strap faces and filled fleurs improved identity, but added cloth sheen made the garment too gray and vertical sleeve pendants entered the sloped sleeve."
+    },
+    {
+      "label": "identity-02",
+      "decision": "retained intermediate",
+      "observed": "Darker cloth and sleeve-axis pendants fixed those defects. Inherited lapel leaves still stood too far forward of the actual chest."
+    },
+    {
+      "label": "identity-03",
+      "decision": "retained, rejected after region review",
+      "observed": "Chest-seated lapels improved the source side profile and the breast emblem no longer had piping across its center. The lower front drape entered the sleeve near its anchor and appeared as disconnected silver dashes."
+    },
+    {
+      "label": "identity-04",
+      "decision": "selected after fixed whole/detail review",
+      "observed": "Only the lower front chain centerline was changed from identity-03, adding 4.5 mm clearance to the evaluated front cloth. The chain now reads continuously; the predecessor geometry comparator preserves all 99 other mesh objects."
+    }
+  ],
+  "limits": [
+    "The collar and sleeves remain simplified tailored cloth; some shoulder folds and smooth panels are still less natural than the source.",
+    "Fleur-de-lys relief, hidden lining, fold depths and chain suspension geometry are plausible authored interpretations, not additional source observations.",
+    "No numeric resemblance score, engine validation or simulation claim."
+  ]
+}

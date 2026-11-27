@@ -6,7 +6,7 @@ import {
   createVisualHierarchy,
   createVolumeBarrier,
   validateVolumeBarrier,
-} from '../skills/refas/scripts/lib/index.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
 
 const D=(c)=>c.repeat(64);
 const SOURCE=D('a');
@@ -50,7 +50,7 @@ function awaitDigest(value){
   // test helper mirrors canonical digest without introducing async.
   return requireDigest(value);
 }
-import {digestJson as requireDigest} from '../skills/refas/scripts/lib/index.mjs';
+import {digestJson as requireDigest} from '../legacy/v1/scripts/lib/index.mjs';
 
 test('VC04 protects whole + macro/identity scopes and ignores detail-only scope for compensation',()=>{
   const whole=classification('whole','volumetric','NO_PLANAR_COLLAPSE','d');

@@ -1,0 +1,208 @@
+{
+  "mode": "independent Blender factory-startup GLB reimport",
+  "native_object_count": 300,
+  "imported_object_count": 300,
+  "imported_mesh_count": 280,
+  "missing": [],
+  "extra": [],
+  "parent_mismatches": [],
+  "matrix_errors_over_1e_5": {},
+  "required_parent_relationships": {
+    "SHOULDER_PIVOT": "AURIX_ROOT",
+    "ELBOW_PIVOT": "SHOULDER_PIVOT",
+    "WRIST_PIVOT": "ELBOW_PIVOT",
+    "SERVICE_COVER": "ELBOW_PIVOT",
+    "THUMB_J0": "WRIST_PIVOT",
+    "THUMB_J1": "THUMB_J0",
+    "THUMB_J2": "THUMB_J1",
+    "INDEX_J0": "WRIST_PIVOT",
+    "INDEX_J1": "INDEX_J0",
+    "INDEX_J2": "INDEX_J1",
+    "MIDDLE_J0": "WRIST_PIVOT",
+    "MIDDLE_J1": "MIDDLE_J0",
+    "MIDDLE_J2": "MIDDLE_J1",
+    "RING_J0": "WRIST_PIVOT",
+    "RING_J1": "RING_J0",
+    "RING_J2": "RING_J1",
+    "LITTLE_J0": "WRIST_PIVOT",
+    "LITTLE_J1": "LITTLE_J0",
+    "LITTLE_J2": "LITTLE_J1"
+  },
+  "required_parent_relationships_pass": true,
+  "bounds_min_m": [
+    -0.08262000232934952,
+    -0.06617864966392517,
+    0.009898493066430092
+  ],
+  "bounds_max_m": [
+    0.08262000232934952,
+    0.06154748424887657,
+    0.7529931664466858
+  ],
+  "bounds_max_error_m": 4.248876570023263e-09,
+  "exported_panel_edit": {
+    "selected_count": 26,
+    "unrelated_changed": [],
+    "displacements_m": {
+      "SERVICE_COVER": [
+        0.0,
+        0.00299999862909317,
+        0.0
+      ],
+      "Service_cover_center_inset": [
+        0.0,
+        0.00299999862909317,
+        0.0
+      ],
+      "Service_cover_graphite": [
+        0.0,
+        0.00299999862909317,
+        0.0
+      ],
+      "Service_cover_screw_-1_249": [
+        0.0,
+        0.00299999862909317,
+        0.0
+      ],
+      "Service_cover_screw_-1_249_hex_socket": [
+        0.0,
+        0.00299999862909317,
+        0.0
+      ],
+      "Service_cover_screw_-1_305": [
+        0.0,
+        0.00299999862909317,
+        0.0
+      ],
+      "Service_cover_screw_-1_305_hex_socket": [
+        0.0,
+        0.00299999862909317,
+        0.0
+      ],
+      "Service_cover_screw_-1_351": [
+        0.0,
+        0.00299999862909317,
+        0.0
+      ],
+      "Service_cover_screw_-1_351_hex_socket": [
+        0.0,
+        0.00299999862909317,
+        0.0
+      ],
+      "Service_cover_screw_1_249": [
+        0.0,
+        0.00299999862909317,
+        0.0
+      ],
+      "Service_cover_screw_1_249_hex_socket": [
+        0.0,
+        0.00299999862909317,
+        0.0
+      ],
+      "Service_cover_screw_1_305": [
+        0.0,
+        0.00299999862909317,
+        0.0
+      ],
+      "Service_cover_screw_1_305_hex_socket": [
+        0.0,
+        0.00299999862909317,
+        0.0
+      ],
+      "Service_cover_screw_1_351": [
+        0.0,
+        0.00299999862909317,
+        0.0
+      ],
+      "Service_cover_screw_1_351_hex_socket": [
+        0.0,
+        0.00299999862909317,
+        0.0
+      ],
+      "Service_cover_status_light": [
+        0.0,
+        0.00299999862909317,
+        0.0
+      ],
+      "Service_cover_vent_00": [
+        0.0,
+        0.00299999862909317,
+        0.0
+      ],
+      "Service_cover_vent_01": [
+        0.0,
+        0.00299999862909317,
+        0.0
+      ],
+      "Service_cover_vent_02": [
+        0.0,
+        0.00299999862909317,
+        0.0
+      ],
+      "Service_cover_vent_03": [
+        0.0,
+        0.00299999862909317,
+        0.0
+      ],
+      "Service_cover_vent_04": [
+        0.0,
+        0.00299999862909317,
+        0.0
+      ],
+      "Service_cover_vent_05": [
+        0.0,
+        0.00299999862909317,
+        0.0
+      ],
+      "Service_cover_vent_06": [
+        0.0,
+        0.00299999862909317,
+        0.0
+      ],
+      "Service_cover_vent_07": [
+        0.0,
+        0.00299999862909317,
+        0.0
+      ],
+      "Service_cover_vent_08": [
+        0.0,
+        0.00299999862909317,
+        0.0
+      ],
+      "Service_cover_vent_09": [
+        0.0,
+        0.00299999862909317,
+        0.0
+      ]
+    },
+    "passed": true
+  },
+  "exported_articulation_samples": [
+    {
+      "pivot": "ELBOW_PIVOT",
+      "descendant": "WRIST_PIVOT",
+      "degrees": 45,
+      "orbit_error_m": 3.332000937312528e-08,
+      "passed": true,
+      "moved_m": 0.18521878070864833
+    },
+    {
+      "pivot": "WRIST_PIVOT",
+      "descendant": "INDEX_J0",
+      "degrees": 20,
+      "orbit_error_m": 1.862645149230957e-09,
+      "passed": true,
+      "moved_m": 0.027089107256918543
+    },
+    {
+      "pivot": "INDEX_J0",
+      "descendant": "INDEX_J1",
+      "degrees": 35,
+      "orbit_error_m": 3.332000937312528e-08,
+      "passed": true,
+      "moved_m": 0.022861536259617916
+    }
+  ],
+  "limits": "GLB rigid node hierarchy and numeric orbit checks only. No engine, material visual-equivalence, continuous-collision or physical-linkage claim.",
+  "passed": true
+}

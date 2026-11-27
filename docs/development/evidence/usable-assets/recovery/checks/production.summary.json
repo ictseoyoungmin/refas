@@ -1,0 +1,40 @@
+{
+  "schema": "refas.recovery.production-check/v1",
+  "ok": true,
+  "testsRun": 92,
+  "passed": 92,
+  "failed": 0,
+  "skipped": 0,
+  "suiteSeconds": 91.275,
+  "baseCommit": "f236477fe91b2fcb8453fcbc0cc55c91df0edacc",
+  "execution": {
+    "argv": [
+      "npm",
+      "run",
+      "test:production"
+    ],
+    "cwd": "/workspace/scratch/61afcdd4e3c6/refas",
+    "environment": {
+      "REFAS_BLENDER_TESTS": "1",
+      "REFAS_GODOT_TESTS": "1",
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "startedUtc": "2026-11-22T18:53:36.780586+00:00",
+    "endedUtc": "2026-11-22T18:55:08.639715+00:00",
+    "elapsedSeconds": 91.85917241200013,
+    "returncode": 0
+  },
+  "tools": {
+    "blender": "Blender 4.3.2",
+    "godot": "4.7.2.stable.official.ed1daf0bf"
+  },
+  "changedObserverFiles": {
+    "examples/engine-playback/run.py": "9fa886267aa57409564636f3f25b90cdfc5b11746c3d08631a8442e2e7c5c814",
+    "examples/engine-playback/verify_godot.gd": "727b21cee817065adda37ba96aee9f758ceaf748d65a5a1d39f7b61596f9191e",
+    "examples/engine-playback/README.md": "2ee58c428eb473682ddc2d8f52ed103e79ff2c12e224dadd7a3d6588fad4236a",
+    "tests/test_production_engine_playback.py": "3fbf0ac3aebc1bd55e51eb94e9f3afd0a864f7e0d58dfa2b2b0f54dbe95cf4ba"
+  },
+  "stdout": "production.stdout.txt",
+  "stderr": "production.stderr.txt",
+  "scope": "Full production regression with actual Blender and Godot enabled. Does not accept the current jacket/automail visuals, collisions, or final asset quality."
+}

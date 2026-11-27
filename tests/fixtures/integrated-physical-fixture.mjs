@@ -33,7 +33,7 @@ import {
   runExportAdapter,
   runRepresentationNormalizer,
   stableStringify,
-} from '../../skills/refas/scripts/lib/index.mjs';
+} from '../../legacy/v1/scripts/lib/index.mjs';
 
 export const P17_SOURCE_SHA256 = '7'.repeat(64);
 export const P17_IMPLEMENTATION_ARTIFACT_SHA256 = '8'.repeat(64);

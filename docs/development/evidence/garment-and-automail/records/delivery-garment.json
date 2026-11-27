@@ -1,0 +1,581 @@
+{
+  "import": {
+    "sourceGlbSha256": "30e2557a727e61a6e3e3a929522aa8a650e0cfff3e8e3d80f1dd3e6c45fae42f",
+    "sourceUnchanged": true,
+    "nativeObservationCopySha256": "6fda272276a50057e78a710d0af61c631e3fedd98570a1d43faca6df6e79a437",
+    "objects": 271,
+    "meshObjects": 271,
+    "purpose": "Independent GLB visual readback copy; not a revised asset or an engine test"
+  },
+  "observation": {
+    "inputSha256": "6fda272276a50057e78a710d0af61c631e3fedd98570a1d43faca6df6e79a437",
+    "inputUnchanged": true,
+    "reviewSha256": "be6e20645867d04c6c07536ddc1a3cf2736d2111e0d3739628063ee989b134c1",
+    "workerSha256": "a3d0c85e8a733487605c20bac5f41d1b06a15ead07dda4c7bca12caa231f3e1a",
+    "observerSha256": "1cdd8322c8ee4b2226691b9f3f2f7a102b6c1c0eb74955c2cd67794220254f2c",
+    "normalizerSha256": "347a260de65dd7fc8df49b8d59749d1503cfe4669d0d4d7dee718065cb8fc9c3",
+    "observationBlendSha256": "59f0ca3db4f5c5a2b5f72268963a6712de53d3419e484ce3cf276371f736196e",
+    "normalizationRecordSha256": "136b70f3ddaf1fce242e42c094e45db3d8f0f3288337b2e968e3000e420b583b",
+    "assetRoot": null,
+    "normalization": "Curves/text realized in a separate observation copy; source unchanged",
+    "elapsedSeconds": 12.22,
+    "returncode": 0,
+    "scope": "Common observation after construction; excluded from trial timing"
+  },
+  "normalization": {
+    "sourceSha256": "6fda272276a50057e78a710d0af61c631e3fedd98570a1d43faca6df6e79a437",
+    "convertedCurves": [],
+    "convertedText": [],
+    "sourceObjectCount": 271,
+    "selectedObjectCount": 271,
+    "assetRoot": null,
+    "excludedObjects": [],
+    "method": "Blender object.convert MESH on a separate copy, no source resave",
+    "observationObjectCount": 271,
+    "sourceUnchanged": true
+  },
+  "render": {
+    "blenderVersion": "4.3.2",
+    "observations": [
+      {
+        "camera": {
+          "matrixWorld": [
+            [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -1.6e-07,
+              -1.0,
+              -2.0
+            ],
+            [
+              0.0,
+              1.0,
+              -1.6e-07,
+              0.15000001
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "orthoScale": 0.83999997,
+          "position": [
+            0.0,
+            -2.0,
+            0.15000001
+          ],
+          "projection": "orthographic",
+          "target": [
+            0.0,
+            0.0,
+            0.15000001
+          ]
+        },
+        "framing": "fixed-review-spec",
+        "lighting": {
+          "center": [
+            0.0,
+            0.0,
+            0.18000001
+          ],
+          "radius": 0.48,
+          "rig": "three-area-lights/v1"
+        },
+        "path": "view-front.png",
+        "referenceRegion": {
+          "regionPixels": [
+            6,
+            47,
+            380,
+            399
+          ],
+          "sourceSha256": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5"
+        },
+        "registration": "unregistered",
+        "renderer": {
+          "denoising": false,
+          "device": "CPU",
+          "engine": "CYCLES",
+          "samples": 16,
+          "size": [
+            512,
+            512
+          ],
+          "transparent": true,
+          "viewTransform": "AgX",
+          "worldColor": [
+            0.80000001,
+            0.82999998,
+            0.88
+          ],
+          "worldStrength": 0.45
+        },
+        "sha256": "366228975f6b062e5bf1f65db80e51bf1642c6e28fd470f67cf93e0be068183e",
+        "sourceSceneFingerprint": "0b16a80db3ac556be9c639332c334261e8250e3e78c458a914ad53ceb5356c7a",
+        "view": "front"
+      },
+      {
+        "camera": {
+          "matrixWorld": [
+            [
+              0.70710683,
+              -7e-08,
+              0.70710677,
+              1.41421366
+            ],
+            [
+              0.70710677,
+              -1.4e-07,
+              -0.70710683,
+              -1.41421366
+            ],
+            [
+              1.5e-07,
+              1.0,
+              -4e-08,
+              0.15000001
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "orthoScale": 0.83999997,
+          "position": [
+            1.41421366,
+            -1.41421366,
+            0.15000001
+          ],
+          "projection": "orthographic",
+          "target": [
+            0.0,
+            0.0,
+            0.15000001
+          ]
+        },
+        "framing": "fixed-review-spec",
+        "lighting": {
+          "center": [
+            0.0,
+            0.0,
+            0.18000001
+          ],
+          "radius": 0.48,
+          "rig": "three-area-lights/v1"
+        },
+        "path": "view-front-three-quarter.png",
+        "referenceRegion": {
+          "regionPixels": [
+            383,
+            47,
+            655,
+            399
+          ],
+          "sourceSha256": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5"
+        },
+        "registration": "unregistered",
+        "renderer": {
+          "denoising": false,
+          "device": "CPU",
+          "engine": "CYCLES",
+          "samples": 16,
+          "size": [
+            512,
+            512
+          ],
+          "transparent": true,
+          "viewTransform": "AgX",
+          "worldColor": [
+            0.80000001,
+            0.82999998,
+            0.88
+          ],
+          "worldStrength": 0.45
+        },
+        "sha256": "4f696aebe81ecf69beec9ab6d6fbc9a2d91e0c3c2895cf443d008833e5c07bca",
+        "sourceSceneFingerprint": "0b16a80db3ac556be9c639332c334261e8250e3e78c458a914ad53ceb5356c7a",
+        "view": "front-three-quarter"
+      },
+      {
+        "camera": {
+          "matrixWorld": [
+            [
+              -4e-08,
+              4e-08,
+              1.0,
+              2.0
+            ],
+            [
+              1.0,
+              0.0,
+              4e-08,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              -4e-08,
+              0.15000001
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "orthoScale": 0.83999997,
+          "position": [
+            2.0,
+            -0.0,
+            0.15000001
+          ],
+          "projection": "orthographic",
+          "target": [
+            0.0,
+            0.0,
+            0.15000001
+          ]
+        },
+        "framing": "fixed-review-spec",
+        "lighting": {
+          "center": [
+            0.0,
+            0.0,
+            0.18000001
+          ],
+          "radius": 0.48,
+          "rig": "three-area-lights/v1"
+        },
+        "path": "view-left.png",
+        "referenceRegion": {
+          "regionPixels": [
+            658,
+            47,
+            867,
+            399
+          ],
+          "sourceSha256": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5"
+        },
+        "registration": "unregistered",
+        "renderer": {
+          "denoising": false,
+          "device": "CPU",
+          "engine": "CYCLES",
+          "samples": 16,
+          "size": [
+            512,
+            512
+          ],
+          "transparent": true,
+          "viewTransform": "AgX",
+          "worldColor": [
+            0.80000001,
+            0.82999998,
+            0.88
+          ],
+          "worldStrength": 0.45
+        },
+        "sha256": "16034eb70a17b91e68fbc627ce047cd794ba8f386694a2c90a5776fc2f249b97",
+        "sourceSceneFingerprint": "0b16a80db3ac556be9c639332c334261e8250e3e78c458a914ad53ceb5356c7a",
+        "view": "left"
+      },
+      {
+        "camera": {
+          "matrixWorld": [
+            [
+              -1.0,
+              -1.5e-07,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              8e-08,
+              1.0,
+              2.0
+            ],
+            [
+              -1.5e-07,
+              1.0,
+              -8e-08,
+              0.15000001
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "orthoScale": 0.83999997,
+          "position": [
+            0.0,
+            2.0,
+            0.15000001
+          ],
+          "projection": "orthographic",
+          "target": [
+            0.0,
+            0.0,
+            0.15000001
+          ]
+        },
+        "framing": "fixed-review-spec",
+        "lighting": {
+          "center": [
+            0.0,
+            0.0,
+            0.18000001
+          ],
+          "radius": 0.48,
+          "rig": "three-area-lights/v1"
+        },
+        "path": "view-back.png",
+        "referenceRegion": {
+          "regionPixels": [
+            871,
+            47,
+            1201,
+            399
+          ],
+          "sourceSha256": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5"
+        },
+        "registration": "unregistered",
+        "renderer": {
+          "denoising": false,
+          "device": "CPU",
+          "engine": "CYCLES",
+          "samples": 16,
+          "size": [
+            512,
+            512
+          ],
+          "transparent": true,
+          "viewTransform": "AgX",
+          "worldColor": [
+            0.80000001,
+            0.82999998,
+            0.88
+          ],
+          "worldStrength": 0.45
+        },
+        "sha256": "56e0c989a5df57080c8ecad4ba4f0620c6576dac15544c1217870e9c822bab6f",
+        "sourceSceneFingerprint": "0b16a80db3ac556be9c639332c334261e8250e3e78c458a914ad53ceb5356c7a",
+        "view": "back"
+      },
+      {
+        "camera": {
+          "matrixWorld": [
+            [
+              -4e-08,
+              -4e-08,
+              -1.0,
+              -2.0
+            ],
+            [
+              -1.0,
+              0.0,
+              4e-08,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              -4e-08,
+              0.15000001
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "orthoScale": 0.83999997,
+          "position": [
+            -2.0,
+            0.0,
+            0.15000001
+          ],
+          "projection": "orthographic",
+          "target": [
+            0.0,
+            0.0,
+            0.15000001
+          ]
+        },
+        "framing": "fixed-review-spec",
+        "lighting": {
+          "center": [
+            0.0,
+            0.0,
+            0.18000001
+          ],
+          "radius": 0.48,
+          "rig": "three-area-lights/v1"
+        },
+        "path": "view-right.png",
+        "referenceRegion": {
+          "regionPixels": [
+            1205,
+            47,
+            1400,
+            399
+          ],
+          "sourceSha256": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5"
+        },
+        "registration": "unregistered",
+        "renderer": {
+          "denoising": false,
+          "device": "CPU",
+          "engine": "CYCLES",
+          "samples": 16,
+          "size": [
+            512,
+            512
+          ],
+          "transparent": true,
+          "viewTransform": "AgX",
+          "worldColor": [
+            0.80000001,
+            0.82999998,
+            0.88
+          ],
+          "worldStrength": 0.45
+        },
+        "sha256": "31b80793de90072b81a94f5a56fb182917360c84750837490474ac0022a53ab1",
+        "sourceSceneFingerprint": "0b16a80db3ac556be9c639332c334261e8250e3e78c458a914ad53ceb5356c7a",
+        "view": "right"
+      },
+      {
+        "camera": {
+          "matrixWorld": [
+            [
+              -0.70710695,
+              -6e-08,
+              -0.70710659,
+              -1.41421366
+            ],
+            [
+              -0.70710659,
+              0.0,
+              0.70710695,
+              1.41421366
+            ],
+            [
+              -4e-08,
+              1.0,
+              -4e-08,
+              0.15000001
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "orthoScale": 0.83999997,
+          "position": [
+            -1.41421366,
+            1.41421366,
+            0.15000001
+          ],
+          "projection": "orthographic",
+          "target": [
+            0.0,
+            0.0,
+            0.15000001
+          ]
+        },
+        "framing": "fixed-review-spec",
+        "lighting": {
+          "center": [
+            0.0,
+            0.0,
+            0.18000001
+          ],
+          "radius": 0.48,
+          "rig": "three-area-lights/v1"
+        },
+        "path": "view-rear-three-quarter.png",
+        "referenceRegion": {
+          "regionPixels": [
+            1404,
+            47,
+            1667,
+            399
+          ],
+          "sourceSha256": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5"
+        },
+        "registration": "unregistered",
+        "renderer": {
+          "denoising": false,
+          "device": "CPU",
+          "engine": "CYCLES",
+          "samples": 16,
+          "size": [
+            512,
+            512
+          ],
+          "transparent": true,
+          "viewTransform": "AgX",
+          "worldColor": [
+            0.80000001,
+            0.82999998,
+            0.88
+          ],
+          "worldStrength": 0.45
+        },
+        "sha256": "1370aa55a280324e1ca48b4e7458fbcd3efd956896d36da93a170558a7afba73",
+        "sourceSceneFingerprint": "0b16a80db3ac556be9c639332c334261e8250e3e78c458a914ad53ceb5356c7a",
+        "view": "rear-three-quarter"
+      }
+    ],
+    "ok": true,
+    "operation": "inspect",
+    "outputs": {
+      "scene": "scene.json"
+    },
+    "schema": "refas.production.result/v2",
+    "verification": {
+      "native": {
+        "reopened": true,
+        "scope": "current-frame inventory",
+        "statistics": {
+          "armatures": 0,
+          "materialSlots": 286,
+          "meshes": 271,
+          "objects": 271,
+          "shapeKeyObjects": 0,
+          "triangles": 302196,
+          "uvObjects": 256,
+          "vertices": 161192
+        },
+        "status": "passed"
+      }
+    },
+    "warnings": [
+      "Diagnostic views are unregistered; they do not establish reference likeness.",
+      "GLB reimport checks geometry counts, bounds and basic feature presence, not visual equivalence.",
+      "Fingerprints cover the recorded state at the current frame, not all animation or simulation states.",
+      "Node-group internals and drivers are not exhaustively represented by the state fingerprints.",
+      "Static mesh modifiers are evaluated for GLB export; unapplied non-armature modifiers on skinned or shape-key meshes are unsupported.",
+      "Hidden or excluded meshes are rejected by this alpha so GLB export and diagnostic renders cannot silently use different asset scopes.",
+      "Object instances must be realized into explicit scene objects; curves and other non-mesh geometry must be converted before production inspection or export.",
+      "Procedural Blender materials may need baking for faithful GLB appearance."
+    ]
+  },
+  "visualInspection": "The lead inspected the native and independently reimported GLB three-quarter renders. Broad form/material appearance is retained at this preview scale; no pixel identity, texture-bake, or engine-material equivalence is claimed.",
+  "nativeCameraLightingRendererMatch": true
+}

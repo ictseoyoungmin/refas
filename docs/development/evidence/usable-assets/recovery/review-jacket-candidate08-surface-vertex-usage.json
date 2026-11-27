@@ -1,0 +1,42 @@
+[
+  {
+    "file": "fitted-detailed.blend",
+    "fileSha256": "34a7c27eb08c0acd9e6071cab1821230b6e47012fb346c9ae638b41c967dfcc1",
+    "object": "Body | continuous open front and shoulder yoke",
+    "vertices": 76326,
+    "polygonReferencedVertices": 76326,
+    "triangleReferencedVertices": 76326,
+    "unreferencedVertices": 0,
+    "firstUnreferencedWorldPointsM": []
+  },
+  {
+    "file": "fitted-detailed.blend",
+    "fileSha256": "34a7c27eb08c0acd9e6071cab1821230b6e47012fb346c9ae638b41c967dfcc1",
+    "object": "Collar | standing back and neck facing",
+    "vertices": 124650,
+    "polygonReferencedVertices": 124650,
+    "triangleReferencedVertices": 124650,
+    "unreferencedVertices": 0,
+    "firstUnreferencedWorldPointsM": []
+  },
+  {
+    "file": "wearable-precheck.blend",
+    "fileSha256": "fd10a95bac2e6a2c353aefdaac10f06b88d95ad29e866fe44bcefd4a025c16a7",
+    "object": "Body | continuous open front and shoulder yoke",
+    "vertices": 21186,
+    "polygonReferencedVertices": 21186,
+    "triangleReferencedVertices": 21186,
+    "unreferencedVertices": 0,
+    "firstUnreferencedWorldPointsM": []
+  },
+  {
+    "file": "wearable-precheck.blend",
+    "fileSha256": "fd10a95bac2e6a2c353aefdaac10f06b88d95ad29e866fe44bcefd4a025c16a7",
+    "object": "Collar | standing back and neck facing",
+    "vertices": 23760,
+    "polygonReferencedVertices": 23760,
+    "triangleReferencedVertices": 23760,
+    "unreferencedVertices": 0,
+    "firstUnreferencedWorldPointsM": []
+  }
+]

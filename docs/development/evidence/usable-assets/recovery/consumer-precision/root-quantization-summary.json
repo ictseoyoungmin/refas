@@ -1,0 +1,31 @@
+{
+  "schema": "refas.skin-weight-quantization-analysis/v1",
+  "scope": "Rejected geometry prototype; explanatory diagnostic, not changed playback or a final consumer pass.",
+  "assetSha256": "02907fcc69aaf1d3d84c1cd8455e61980fb6619ab0ce34508d42ab11982e7b23",
+  "rawConsumerDumpSha256": "68ff84f997c22deec1b9270b14aff9f8b5d7f3ae52feb95161b55bc69e5c80f0",
+  "samples": 5,
+  "observations": 150,
+  "uniqueSourcePoints": 30,
+  "sourceWeightComponentTypes": [
+    5126
+  ],
+  "maxNativeErrorM": 6.573306018253e-05,
+  "maxRawReconstructionDifferenceM": 1.265531242805298e-07,
+  "maxSameEngineTransformsWithDecodedSourceWeightsResidualM": 5.188611838865814e-07,
+  "maxPredictedWeightPackingErrorM": 6.575035116566503e-05,
+  "maxCoefficientDifferenceBoundM": 6.575768410163314e-05,
+  "maxFourInfluenceUnorm16WorstCaseBoundM": 9.121458449001844e-05,
+  "maxUnorm16RepresentationResidual": 2.811472910035917e-08,
+  "maxConsumerWeightDifference": 1.4901161193736634e-05,
+  "allWeightsAgreeWithSourceFloorUnorm16": true,
+  "consumerWeightSumRange": [
+    0.999954196624458,
+    1.0
+  ],
+  "limitations": [
+    "Only the 30 associated points and five poses are analyzed.",
+    "Using decoded source weights with engine transforms is a diagnostic counterfactual; actual playback retains consumer weights.",
+    "The four-influence bound uses observed transformed point norms and a 1/65535 coefficient step; it is not a universal engine bound.",
+    "The original strict 20 micrometer failures and raw GLB remain unchanged."
+  ]
+}

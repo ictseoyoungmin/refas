@@ -3,8 +3,8 @@ import {test} from 'node:test';
 import {
   createReferenceGeometry,createRealizedProjection,
   createSegmentPrism,partsToGlb,replaySourceSemanticPhysicalEvidence,
-} from '../skills/refas/scripts/lib/index.mjs';
-import {constrainSourceRelationalCoverage} from '../skills/refas/scripts/lib/qa-coverage.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
+import {constrainSourceRelationalCoverage} from '../legacy/v1/scripts/lib/qa-coverage.mjs';
 
 const sourceSha256='a'.repeat(64),sourcePath='source/primary.png';
 const camera={projection:'orthographic',position:[0,0,5],

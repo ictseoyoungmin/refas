@@ -1,0 +1,290 @@
+{
+  "assetSha256": "02907fcc69aaf1d3d84c1cd8455e61980fb6619ab0ce34508d42ab11982e7b23",
+  "ok": false,
+  "geometry": {
+    "meshes": 126,
+    "skeletons": [
+      {
+        "bones": 235,
+        "name": "Skeleton3D",
+        "path": "./Rig/Skeleton3D"
+      },
+      {
+        "bones": 447,
+        "name": "Skeleton3D",
+        "path": "./JacketHardwareRig/Skeleton3D"
+      }
+    ],
+    "skinnedMeshes": 123,
+    "surfaces": 178,
+    "triangles": 838379
+  },
+  "tolerances": {
+    "matrix": 2e-05,
+    "restVertexMatchM": 1e-05,
+    "skinVertexM": 2e-05
+  },
+  "samples": 5,
+  "matrixProbes": 25,
+  "skinProbes": 150,
+  "maximumMatrixError": 5.96046447753906e-07,
+  "maximumSkinErrorM": 6.57330601825379e-05,
+  "maximumRestAssociationErrorM": 5.09752567268151e-07,
+  "failuresByCategory": {
+    "nativeSkinVertex": 50
+  },
+  "failedChecks": [
+    {
+      "details": 3.2097570510814e-05,
+      "name": "nativeSkinVertex:Body | continuous open front and shoulder yoke:0",
+      "ok": false
+    },
+    {
+      "details": 4.36866939708125e-05,
+      "name": "nativeSkinVertex:Body | continuous open front and shoulder yoke:7062",
+      "ok": false
+    },
+    {
+      "details": 4.60055489384104e-05,
+      "name": "nativeSkinVertex:Body | continuous open front and shoulder yoke:10593",
+      "ok": false
+    },
+    {
+      "details": 4.3272662878735e-05,
+      "name": "nativeSkinVertex:Body | continuous open front and shoulder yoke:14124",
+      "ok": false
+    },
+    {
+      "details": 2.19881785596954e-05,
+      "name": "nativeSkinVertex:Body | continuous open front and shoulder yoke:21185",
+      "ok": false
+    },
+    {
+      "details": 4.18260824517347e-05,
+      "name": "nativeSkinVertex:Collar | standing back and neck facing:0",
+      "ok": false
+    },
+    {
+      "details": 3.52660354110412e-05,
+      "name": "nativeSkinVertex:Collar | standing back and neck facing:3960",
+      "ok": false
+    },
+    {
+      "details": 4.18263771280181e-05,
+      "name": "nativeSkinVertex:Collar | standing back and neck facing:7920",
+      "ok": false
+    },
+    {
+      "details": 6.57128402963281e-05,
+      "name": "nativeSkinVertex:Collar | standing back and neck facing:15840",
+      "ok": false
+    },
+    {
+      "details": 4.4425753003452e-05,
+      "name": "nativeSkinVertex:Collar | standing back and neck facing:23759",
+      "ok": false
+    },
+    {
+      "details": 3.20964354614262e-05,
+      "name": "nativeSkinVertex:Body | continuous open front and shoulder yoke:0",
+      "ok": false
+    },
+    {
+      "details": 4.36838963651098e-05,
+      "name": "nativeSkinVertex:Body | continuous open front and shoulder yoke:7062",
+      "ok": false
+    },
+    {
+      "details": 4.16804141423199e-05,
+      "name": "nativeSkinVertex:Body | continuous open front and shoulder yoke:10593",
+      "ok": false
+    },
+    {
+      "details": 4.33985223935451e-05,
+      "name": "nativeSkinVertex:Body | continuous open front and shoulder yoke:14124",
+      "ok": false
+    },
+    {
+      "details": 2.18673176277662e-05,
+      "name": "nativeSkinVertex:Body | continuous open front and shoulder yoke:21185",
+      "ok": false
+    },
+    {
+      "details": 4.21823424403556e-05,
+      "name": "nativeSkinVertex:Collar | standing back and neck facing:0",
+      "ok": false
+    },
+    {
+      "details": 3.51487979060039e-05,
+      "name": "nativeSkinVertex:Collar | standing back and neck facing:3960",
+      "ok": false
+    },
+    {
+      "details": 4.19441348640248e-05,
+      "name": "nativeSkinVertex:Collar | standing back and neck facing:7920",
+      "ok": false
+    },
+    {
+      "details": 6.5603235270828e-05,
+      "name": "nativeSkinVertex:Collar | standing back and neck facing:15840",
+      "ok": false
+    },
+    {
+      "details": 4.44238066847902e-05,
+      "name": "nativeSkinVertex:Collar | standing back and neck facing:23759",
+      "ok": false
+    },
+    {
+      "details": 3.20958970405627e-05,
+      "name": "nativeSkinVertex:Body | continuous open front and shoulder yoke:0",
+      "ok": false
+    },
+    {
+      "details": 4.36824957432691e-05,
+      "name": "nativeSkinVertex:Body | continuous open front and shoulder yoke:7062",
+      "ok": false
+    },
+    {
+      "details": 3.82301550416742e-05,
+      "name": "nativeSkinVertex:Body | continuous open front and shoulder yoke:10593",
+      "ok": false
+    },
+    {
+      "details": 4.34068351751193e-05,
+      "name": "nativeSkinVertex:Body | continuous open front and shoulder yoke:14124",
+      "ok": false
+    },
+    {
+      "details": 2.18678087549051e-05,
+      "name": "nativeSkinVertex:Body | continuous open front and shoulder yoke:21185",
+      "ok": false
+    },
+    {
+      "details": 4.25458019890357e-05,
+      "name": "nativeSkinVertex:Collar | standing back and neck facing:0",
+      "ok": false
+    },
+    {
+      "details": 3.51489688910078e-05,
+      "name": "nativeSkinVertex:Collar | standing back and neck facing:3960",
+      "ok": false
+    },
+    {
+      "details": 4.23053352278657e-05,
+      "name": "nativeSkinVertex:Collar | standing back and neck facing:7920",
+      "ok": false
+    },
+    {
+      "details": 6.57330601825379e-05,
+      "name": "nativeSkinVertex:Collar | standing back and neck facing:15840",
+      "ok": false
+    },
+    {
+      "details": 4.44232391600963e-05,
+      "name": "nativeSkinVertex:Collar | standing back and neck facing:23759",
+      "ok": false
+    },
+    {
+      "details": 3.20964354614262e-05,
+      "name": "nativeSkinVertex:Body | continuous open front and shoulder yoke:0",
+      "ok": false
+    },
+    {
+      "details": 4.36838963651098e-05,
+      "name": "nativeSkinVertex:Body | continuous open front and shoulder yoke:7062",
+      "ok": false
+    },
+    {
+      "details": 4.16804141423199e-05,
+      "name": "nativeSkinVertex:Body | continuous open front and shoulder yoke:10593",
+      "ok": false
+    },
+    {
+      "details": 4.33985223935451e-05,
+      "name": "nativeSkinVertex:Body | continuous open front and shoulder yoke:14124",
+      "ok": false
+    },
+    {
+      "details": 2.18673176277662e-05,
+      "name": "nativeSkinVertex:Body | continuous open front and shoulder yoke:21185",
+      "ok": false
+    },
+    {
+      "details": 4.21823424403556e-05,
+      "name": "nativeSkinVertex:Collar | standing back and neck facing:0",
+      "ok": false
+    },
+    {
+      "details": 3.51487979060039e-05,
+      "name": "nativeSkinVertex:Collar | standing back and neck facing:3960",
+      "ok": false
+    },
+    {
+      "details": 4.19441348640248e-05,
+      "name": "nativeSkinVertex:Collar | standing back and neck facing:7920",
+      "ok": false
+    },
+    {
+      "details": 6.5603235270828e-05,
+      "name": "nativeSkinVertex:Collar | standing back and neck facing:15840",
+      "ok": false
+    },
+    {
+      "details": 4.44238066847902e-05,
+      "name": "nativeSkinVertex:Collar | standing back and neck facing:23759",
+      "ok": false
+    },
+    {
+      "details": 3.2097570510814e-05,
+      "name": "nativeSkinVertex:Body | continuous open front and shoulder yoke:0",
+      "ok": false
+    },
+    {
+      "details": 4.36866939708125e-05,
+      "name": "nativeSkinVertex:Body | continuous open front and shoulder yoke:7062",
+      "ok": false
+    },
+    {
+      "details": 4.60055489384104e-05,
+      "name": "nativeSkinVertex:Body | continuous open front and shoulder yoke:10593",
+      "ok": false
+    },
+    {
+      "details": 4.3272662878735e-05,
+      "name": "nativeSkinVertex:Body | continuous open front and shoulder yoke:14124",
+      "ok": false
+    },
+    {
+      "details": 2.19881785596954e-05,
+      "name": "nativeSkinVertex:Body | continuous open front and shoulder yoke:21185",
+      "ok": false
+    },
+    {
+      "details": 4.18260824517347e-05,
+      "name": "nativeSkinVertex:Collar | standing back and neck facing:0",
+      "ok": false
+    },
+    {
+      "details": 3.52660354110412e-05,
+      "name": "nativeSkinVertex:Collar | standing back and neck facing:3960",
+      "ok": false
+    },
+    {
+      "details": 4.18263771280181e-05,
+      "name": "nativeSkinVertex:Collar | standing back and neck facing:7920",
+      "ok": false
+    },
+    {
+      "details": 6.57128402963281e-05,
+      "name": "nativeSkinVertex:Collar | standing back and neck facing:15840",
+      "ok": false
+    },
+    {
+      "details": 4.4425753003452e-05,
+      "name": "nativeSkinVertex:Collar | standing back and neck facing:23759",
+      "ok": false
+    }
+  ],
+  "elapsedSeconds": 24.353654186999847,
+  "scope": "Observer qualification/performance check on retained failed jacket geometry; not final asset acceptance."
+}

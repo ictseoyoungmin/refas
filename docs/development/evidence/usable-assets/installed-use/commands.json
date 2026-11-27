@@ -1,0 +1,53 @@
+[
+  {
+    "label": "pack",
+    "argv": [
+      "npm",
+      "pack",
+      "--json",
+      "--ignore-scripts",
+      "--pack-destination",
+      "/workspace/scratch/5765cde18054/work/usability/installed/packed"
+    ],
+    "startedUtc": "2026-11-22T14:08:06.786881+00:00",
+    "elapsedSeconds": 0.45823438499792246,
+    "returncode": 0
+  },
+  {
+    "label": "install",
+    "argv": [
+      "npm",
+      "install",
+      "--prefix",
+      "/workspace/scratch/5765cde18054/work/usability/installed/npm",
+      "--offline",
+      "--ignore-scripts",
+      "--no-audit",
+      "--no-fund",
+      "/workspace/scratch/5765cde18054/work/usability/installed/packed/refas-2.0.0-alpha.1.tgz"
+    ],
+    "startedUtc": "2026-11-22T14:08:07.245434+00:00",
+    "elapsedSeconds": 0.35005524000007426,
+    "returncode": 0
+  },
+  {
+    "label": "version",
+    "argv": [
+      "/workspace/scratch/5765cde18054/work/usability/installed/npm/node_modules/.bin/refas",
+      "--version"
+    ],
+    "startedUtc": "2026-11-22T14:08:07.596775+00:00",
+    "elapsedSeconds": 0.11445257700324873,
+    "returncode": 0
+  },
+  {
+    "label": "doctor",
+    "argv": [
+      "/workspace/scratch/5765cde18054/work/usability/installed/npm/node_modules/.bin/refas",
+      "doctor"
+    ],
+    "startedUtc": "2026-11-22T14:08:07.711409+00:00",
+    "elapsedSeconds": 0.5126248090018635,
+    "returncode": 0
+  }
+]

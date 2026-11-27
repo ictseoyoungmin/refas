@@ -1,0 +1,1024 @@
+{
+  "before": {
+    "revision": "e24b94fb37b54f6693dcab08a242c97e",
+    "resultSha256": "2090198e0d4ebd718e835ac3cdd17563b23e057b1efcb7cf60d0766ad3969ca4",
+    "observations": [
+      {
+        "camera": {
+          "matrixWorld": [
+            [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -1.6e-07,
+              -1.0,
+              -2.0
+            ],
+            [
+              0.0,
+              1.0,
+              -1.6e-07,
+              0.15000001
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "orthoScale": 0.83999997,
+          "position": [
+            0.0,
+            -2.0,
+            0.15000001
+          ],
+          "projection": "orthographic",
+          "target": [
+            0.0,
+            0.0,
+            0.15000001
+          ]
+        },
+        "framing": "fixed-review-spec",
+        "lighting": {
+          "center": [
+            0.0,
+            0.0,
+            0.18000001
+          ],
+          "radius": 0.48,
+          "rig": "three-area-lights/v1"
+        },
+        "path": "view-front.png",
+        "referenceRegion": {
+          "regionPixels": [
+            6,
+            47,
+            380,
+            399
+          ],
+          "sourceSha256": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5"
+        },
+        "registration": "unregistered",
+        "renderer": {
+          "denoising": false,
+          "device": "CPU",
+          "engine": "CYCLES",
+          "samples": 16,
+          "size": [
+            512,
+            512
+          ],
+          "transparent": true,
+          "viewTransform": "AgX",
+          "worldColor": [
+            0.80000001,
+            0.82999998,
+            0.88
+          ],
+          "worldStrength": 0.45
+        },
+        "sha256": "ec4c6876f2dc65257fe1901424e3801d6177070f725867e5cb2cddcdb3cbcfc2",
+        "sourceSceneFingerprint": "392fe44fbb26bd47195f1188445a9502339d2ba2b67ceba8cfc155651d8e0437",
+        "view": "front"
+      },
+      {
+        "camera": {
+          "matrixWorld": [
+            [
+              0.70710683,
+              -7e-08,
+              0.70710677,
+              1.41421366
+            ],
+            [
+              0.70710677,
+              -1.4e-07,
+              -0.70710683,
+              -1.41421366
+            ],
+            [
+              1.5e-07,
+              1.0,
+              -4e-08,
+              0.15000001
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "orthoScale": 0.83999997,
+          "position": [
+            1.41421366,
+            -1.41421366,
+            0.15000001
+          ],
+          "projection": "orthographic",
+          "target": [
+            0.0,
+            0.0,
+            0.15000001
+          ]
+        },
+        "framing": "fixed-review-spec",
+        "lighting": {
+          "center": [
+            0.0,
+            0.0,
+            0.18000001
+          ],
+          "radius": 0.48,
+          "rig": "three-area-lights/v1"
+        },
+        "path": "view-front-three-quarter.png",
+        "referenceRegion": {
+          "regionPixels": [
+            383,
+            47,
+            655,
+            399
+          ],
+          "sourceSha256": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5"
+        },
+        "registration": "unregistered",
+        "renderer": {
+          "denoising": false,
+          "device": "CPU",
+          "engine": "CYCLES",
+          "samples": 16,
+          "size": [
+            512,
+            512
+          ],
+          "transparent": true,
+          "viewTransform": "AgX",
+          "worldColor": [
+            0.80000001,
+            0.82999998,
+            0.88
+          ],
+          "worldStrength": 0.45
+        },
+        "sha256": "cdd8e2e6dab5471ad595938d7b81bfc0f0b84e5d0545d62e8159ad86fc2fc58a",
+        "sourceSceneFingerprint": "392fe44fbb26bd47195f1188445a9502339d2ba2b67ceba8cfc155651d8e0437",
+        "view": "front-three-quarter"
+      },
+      {
+        "camera": {
+          "matrixWorld": [
+            [
+              -4e-08,
+              4e-08,
+              1.0,
+              2.0
+            ],
+            [
+              1.0,
+              0.0,
+              4e-08,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              -4e-08,
+              0.15000001
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "orthoScale": 0.83999997,
+          "position": [
+            2.0,
+            -0.0,
+            0.15000001
+          ],
+          "projection": "orthographic",
+          "target": [
+            0.0,
+            0.0,
+            0.15000001
+          ]
+        },
+        "framing": "fixed-review-spec",
+        "lighting": {
+          "center": [
+            0.0,
+            0.0,
+            0.18000001
+          ],
+          "radius": 0.48,
+          "rig": "three-area-lights/v1"
+        },
+        "path": "view-left.png",
+        "referenceRegion": {
+          "regionPixels": [
+            658,
+            47,
+            867,
+            399
+          ],
+          "sourceSha256": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5"
+        },
+        "registration": "unregistered",
+        "renderer": {
+          "denoising": false,
+          "device": "CPU",
+          "engine": "CYCLES",
+          "samples": 16,
+          "size": [
+            512,
+            512
+          ],
+          "transparent": true,
+          "viewTransform": "AgX",
+          "worldColor": [
+            0.80000001,
+            0.82999998,
+            0.88
+          ],
+          "worldStrength": 0.45
+        },
+        "sha256": "417ebc9bfdb09a948cf3be9b322a5ba0d27d3a5a0fdab92119ebb47087bc8d00",
+        "sourceSceneFingerprint": "392fe44fbb26bd47195f1188445a9502339d2ba2b67ceba8cfc155651d8e0437",
+        "view": "left"
+      },
+      {
+        "camera": {
+          "matrixWorld": [
+            [
+              -1.0,
+              -1.5e-07,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              8e-08,
+              1.0,
+              2.0
+            ],
+            [
+              -1.5e-07,
+              1.0,
+              -8e-08,
+              0.15000001
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "orthoScale": 0.83999997,
+          "position": [
+            0.0,
+            2.0,
+            0.15000001
+          ],
+          "projection": "orthographic",
+          "target": [
+            0.0,
+            0.0,
+            0.15000001
+          ]
+        },
+        "framing": "fixed-review-spec",
+        "lighting": {
+          "center": [
+            0.0,
+            0.0,
+            0.18000001
+          ],
+          "radius": 0.48,
+          "rig": "three-area-lights/v1"
+        },
+        "path": "view-back.png",
+        "referenceRegion": {
+          "regionPixels": [
+            871,
+            47,
+            1201,
+            399
+          ],
+          "sourceSha256": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5"
+        },
+        "registration": "unregistered",
+        "renderer": {
+          "denoising": false,
+          "device": "CPU",
+          "engine": "CYCLES",
+          "samples": 16,
+          "size": [
+            512,
+            512
+          ],
+          "transparent": true,
+          "viewTransform": "AgX",
+          "worldColor": [
+            0.80000001,
+            0.82999998,
+            0.88
+          ],
+          "worldStrength": 0.45
+        },
+        "sha256": "c16b900b5548a237fb24c1fe3821267ea02260c855f93f78e6cc32b40aa1f10b",
+        "sourceSceneFingerprint": "392fe44fbb26bd47195f1188445a9502339d2ba2b67ceba8cfc155651d8e0437",
+        "view": "back"
+      },
+      {
+        "camera": {
+          "matrixWorld": [
+            [
+              -4e-08,
+              -4e-08,
+              -1.0,
+              -2.0
+            ],
+            [
+              -1.0,
+              0.0,
+              4e-08,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              -4e-08,
+              0.15000001
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "orthoScale": 0.83999997,
+          "position": [
+            -2.0,
+            0.0,
+            0.15000001
+          ],
+          "projection": "orthographic",
+          "target": [
+            0.0,
+            0.0,
+            0.15000001
+          ]
+        },
+        "framing": "fixed-review-spec",
+        "lighting": {
+          "center": [
+            0.0,
+            0.0,
+            0.18000001
+          ],
+          "radius": 0.48,
+          "rig": "three-area-lights/v1"
+        },
+        "path": "view-right.png",
+        "referenceRegion": {
+          "regionPixels": [
+            1205,
+            47,
+            1400,
+            399
+          ],
+          "sourceSha256": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5"
+        },
+        "registration": "unregistered",
+        "renderer": {
+          "denoising": false,
+          "device": "CPU",
+          "engine": "CYCLES",
+          "samples": 16,
+          "size": [
+            512,
+            512
+          ],
+          "transparent": true,
+          "viewTransform": "AgX",
+          "worldColor": [
+            0.80000001,
+            0.82999998,
+            0.88
+          ],
+          "worldStrength": 0.45
+        },
+        "sha256": "753b96c70b471affe42b2c372a6ef2fa9f8aa22dfb3c2909dbc7c9fadde6526e",
+        "sourceSceneFingerprint": "392fe44fbb26bd47195f1188445a9502339d2ba2b67ceba8cfc155651d8e0437",
+        "view": "right"
+      },
+      {
+        "camera": {
+          "matrixWorld": [
+            [
+              -0.70710695,
+              -6e-08,
+              -0.70710659,
+              -1.41421366
+            ],
+            [
+              -0.70710659,
+              0.0,
+              0.70710695,
+              1.41421366
+            ],
+            [
+              -4e-08,
+              1.0,
+              -4e-08,
+              0.15000001
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "orthoScale": 0.83999997,
+          "position": [
+            -1.41421366,
+            1.41421366,
+            0.15000001
+          ],
+          "projection": "orthographic",
+          "target": [
+            0.0,
+            0.0,
+            0.15000001
+          ]
+        },
+        "framing": "fixed-review-spec",
+        "lighting": {
+          "center": [
+            0.0,
+            0.0,
+            0.18000001
+          ],
+          "radius": 0.48,
+          "rig": "three-area-lights/v1"
+        },
+        "path": "view-rear-three-quarter.png",
+        "referenceRegion": {
+          "regionPixels": [
+            1404,
+            47,
+            1667,
+            399
+          ],
+          "sourceSha256": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5"
+        },
+        "registration": "unregistered",
+        "renderer": {
+          "denoising": false,
+          "device": "CPU",
+          "engine": "CYCLES",
+          "samples": 16,
+          "size": [
+            512,
+            512
+          ],
+          "transparent": true,
+          "viewTransform": "AgX",
+          "worldColor": [
+            0.80000001,
+            0.82999998,
+            0.88
+          ],
+          "worldStrength": 0.45
+        },
+        "sha256": "3b4e65406beb34cd71807b71c2a2a875e2142d97036dce35d013affd77f3c141",
+        "sourceSceneFingerprint": "392fe44fbb26bd47195f1188445a9502339d2ba2b67ceba8cfc155651d8e0437",
+        "view": "rear-three-quarter"
+      }
+    ]
+  },
+  "after": {
+    "revision": "9fe00caf1e1649a58554b3a761ee7bbb",
+    "resultSha256": "43805234b0ac86cc943a964c57dcbf233e9673cd98279266d78c2e116d7e4aec",
+    "observations": [
+      {
+        "camera": {
+          "matrixWorld": [
+            [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -1.6e-07,
+              -1.0,
+              -2.0
+            ],
+            [
+              0.0,
+              1.0,
+              -1.6e-07,
+              0.15000001
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "orthoScale": 0.83999997,
+          "position": [
+            0.0,
+            -2.0,
+            0.15000001
+          ],
+          "projection": "orthographic",
+          "target": [
+            0.0,
+            0.0,
+            0.15000001
+          ]
+        },
+        "framing": "fixed-review-spec",
+        "lighting": {
+          "center": [
+            0.0,
+            0.0,
+            0.18000001
+          ],
+          "radius": 0.48,
+          "rig": "three-area-lights/v1"
+        },
+        "path": "view-front.png",
+        "referenceRegion": {
+          "regionPixels": [
+            6,
+            47,
+            380,
+            399
+          ],
+          "sourceSha256": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5"
+        },
+        "registration": "unregistered",
+        "renderer": {
+          "denoising": false,
+          "device": "CPU",
+          "engine": "CYCLES",
+          "samples": 16,
+          "size": [
+            512,
+            512
+          ],
+          "transparent": true,
+          "viewTransform": "AgX",
+          "worldColor": [
+            0.80000001,
+            0.82999998,
+            0.88
+          ],
+          "worldStrength": 0.45
+        },
+        "sha256": "0fe8f4ae4ef9b7e5b2e71202b3f920ddcc8c4686f09224279b734e459c3daf3c",
+        "sourceSceneFingerprint": "50685b52a722d64aee4659531cbf1d71491e446de9c5fb6116f9a379ae54a2cc",
+        "view": "front"
+      },
+      {
+        "camera": {
+          "matrixWorld": [
+            [
+              0.70710683,
+              -7e-08,
+              0.70710677,
+              1.41421366
+            ],
+            [
+              0.70710677,
+              -1.4e-07,
+              -0.70710683,
+              -1.41421366
+            ],
+            [
+              1.5e-07,
+              1.0,
+              -4e-08,
+              0.15000001
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "orthoScale": 0.83999997,
+          "position": [
+            1.41421366,
+            -1.41421366,
+            0.15000001
+          ],
+          "projection": "orthographic",
+          "target": [
+            0.0,
+            0.0,
+            0.15000001
+          ]
+        },
+        "framing": "fixed-review-spec",
+        "lighting": {
+          "center": [
+            0.0,
+            0.0,
+            0.18000001
+          ],
+          "radius": 0.48,
+          "rig": "three-area-lights/v1"
+        },
+        "path": "view-front-three-quarter.png",
+        "referenceRegion": {
+          "regionPixels": [
+            383,
+            47,
+            655,
+            399
+          ],
+          "sourceSha256": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5"
+        },
+        "registration": "unregistered",
+        "renderer": {
+          "denoising": false,
+          "device": "CPU",
+          "engine": "CYCLES",
+          "samples": 16,
+          "size": [
+            512,
+            512
+          ],
+          "transparent": true,
+          "viewTransform": "AgX",
+          "worldColor": [
+            0.80000001,
+            0.82999998,
+            0.88
+          ],
+          "worldStrength": 0.45
+        },
+        "sha256": "12b2eb2c2cdcd89b4872efad271bd0e1181e8732174ba2eaf6f20a96d460c3fc",
+        "sourceSceneFingerprint": "50685b52a722d64aee4659531cbf1d71491e446de9c5fb6116f9a379ae54a2cc",
+        "view": "front-three-quarter"
+      },
+      {
+        "camera": {
+          "matrixWorld": [
+            [
+              -4e-08,
+              4e-08,
+              1.0,
+              2.0
+            ],
+            [
+              1.0,
+              0.0,
+              4e-08,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              -4e-08,
+              0.15000001
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "orthoScale": 0.83999997,
+          "position": [
+            2.0,
+            -0.0,
+            0.15000001
+          ],
+          "projection": "orthographic",
+          "target": [
+            0.0,
+            0.0,
+            0.15000001
+          ]
+        },
+        "framing": "fixed-review-spec",
+        "lighting": {
+          "center": [
+            0.0,
+            0.0,
+            0.18000001
+          ],
+          "radius": 0.48,
+          "rig": "three-area-lights/v1"
+        },
+        "path": "view-left.png",
+        "referenceRegion": {
+          "regionPixels": [
+            658,
+            47,
+            867,
+            399
+          ],
+          "sourceSha256": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5"
+        },
+        "registration": "unregistered",
+        "renderer": {
+          "denoising": false,
+          "device": "CPU",
+          "engine": "CYCLES",
+          "samples": 16,
+          "size": [
+            512,
+            512
+          ],
+          "transparent": true,
+          "viewTransform": "AgX",
+          "worldColor": [
+            0.80000001,
+            0.82999998,
+            0.88
+          ],
+          "worldStrength": 0.45
+        },
+        "sha256": "763d3848152289f3d208842361988cc0954a2951cf16bf6cf7855abda94ab64f",
+        "sourceSceneFingerprint": "50685b52a722d64aee4659531cbf1d71491e446de9c5fb6116f9a379ae54a2cc",
+        "view": "left"
+      },
+      {
+        "camera": {
+          "matrixWorld": [
+            [
+              -1.0,
+              -1.5e-07,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              8e-08,
+              1.0,
+              2.0
+            ],
+            [
+              -1.5e-07,
+              1.0,
+              -8e-08,
+              0.15000001
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "orthoScale": 0.83999997,
+          "position": [
+            0.0,
+            2.0,
+            0.15000001
+          ],
+          "projection": "orthographic",
+          "target": [
+            0.0,
+            0.0,
+            0.15000001
+          ]
+        },
+        "framing": "fixed-review-spec",
+        "lighting": {
+          "center": [
+            0.0,
+            0.0,
+            0.18000001
+          ],
+          "radius": 0.48,
+          "rig": "three-area-lights/v1"
+        },
+        "path": "view-back.png",
+        "referenceRegion": {
+          "regionPixels": [
+            871,
+            47,
+            1201,
+            399
+          ],
+          "sourceSha256": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5"
+        },
+        "registration": "unregistered",
+        "renderer": {
+          "denoising": false,
+          "device": "CPU",
+          "engine": "CYCLES",
+          "samples": 16,
+          "size": [
+            512,
+            512
+          ],
+          "transparent": true,
+          "viewTransform": "AgX",
+          "worldColor": [
+            0.80000001,
+            0.82999998,
+            0.88
+          ],
+          "worldStrength": 0.45
+        },
+        "sha256": "212d78ee2868a17aee01076953afe019f8b614f868be05df8d6f78d30d0269b2",
+        "sourceSceneFingerprint": "50685b52a722d64aee4659531cbf1d71491e446de9c5fb6116f9a379ae54a2cc",
+        "view": "back"
+      },
+      {
+        "camera": {
+          "matrixWorld": [
+            [
+              -4e-08,
+              -4e-08,
+              -1.0,
+              -2.0
+            ],
+            [
+              -1.0,
+              0.0,
+              4e-08,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              -4e-08,
+              0.15000001
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "orthoScale": 0.83999997,
+          "position": [
+            -2.0,
+            0.0,
+            0.15000001
+          ],
+          "projection": "orthographic",
+          "target": [
+            0.0,
+            0.0,
+            0.15000001
+          ]
+        },
+        "framing": "fixed-review-spec",
+        "lighting": {
+          "center": [
+            0.0,
+            0.0,
+            0.18000001
+          ],
+          "radius": 0.48,
+          "rig": "three-area-lights/v1"
+        },
+        "path": "view-right.png",
+        "referenceRegion": {
+          "regionPixels": [
+            1205,
+            47,
+            1400,
+            399
+          ],
+          "sourceSha256": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5"
+        },
+        "registration": "unregistered",
+        "renderer": {
+          "denoising": false,
+          "device": "CPU",
+          "engine": "CYCLES",
+          "samples": 16,
+          "size": [
+            512,
+            512
+          ],
+          "transparent": true,
+          "viewTransform": "AgX",
+          "worldColor": [
+            0.80000001,
+            0.82999998,
+            0.88
+          ],
+          "worldStrength": 0.45
+        },
+        "sha256": "1b43bd00485a423885a71fbb0d7f2166a72b34b0471ff7168506906879927c3c",
+        "sourceSceneFingerprint": "50685b52a722d64aee4659531cbf1d71491e446de9c5fb6116f9a379ae54a2cc",
+        "view": "right"
+      },
+      {
+        "camera": {
+          "matrixWorld": [
+            [
+              -0.70710695,
+              -6e-08,
+              -0.70710659,
+              -1.41421366
+            ],
+            [
+              -0.70710659,
+              0.0,
+              0.70710695,
+              1.41421366
+            ],
+            [
+              -4e-08,
+              1.0,
+              -4e-08,
+              0.15000001
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "orthoScale": 0.83999997,
+          "position": [
+            -1.41421366,
+            1.41421366,
+            0.15000001
+          ],
+          "projection": "orthographic",
+          "target": [
+            0.0,
+            0.0,
+            0.15000001
+          ]
+        },
+        "framing": "fixed-review-spec",
+        "lighting": {
+          "center": [
+            0.0,
+            0.0,
+            0.18000001
+          ],
+          "radius": 0.48,
+          "rig": "three-area-lights/v1"
+        },
+        "path": "view-rear-three-quarter.png",
+        "referenceRegion": {
+          "regionPixels": [
+            1404,
+            47,
+            1667,
+            399
+          ],
+          "sourceSha256": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5"
+        },
+        "registration": "unregistered",
+        "renderer": {
+          "denoising": false,
+          "device": "CPU",
+          "engine": "CYCLES",
+          "samples": 16,
+          "size": [
+            512,
+            512
+          ],
+          "transparent": true,
+          "viewTransform": "AgX",
+          "worldColor": [
+            0.80000001,
+            0.82999998,
+            0.88
+          ],
+          "worldStrength": 0.45
+        },
+        "sha256": "8af9bd1b6244fb0ca59dc46e20b73178ba1349824478206d72c13b11bedbdfad",
+        "sourceSceneFingerprint": "50685b52a722d64aee4659531cbf1d71491e446de9c5fb6116f9a379ae54a2cc",
+        "view": "rear-three-quarter"
+      }
+    ]
+  },
+  "allSixCameraLightRendererRecordsMatch": true,
+  "independentCopyHashesVerified": true
+}

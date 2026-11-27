@@ -11,7 +11,7 @@ import {
   digestJson,
   partsToGlb,
   validateExternalConstructionReceipt,
-} from '../skills/refas/scripts/lib/index.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
 
 const SOURCE_BYTES = Buffer.from('external construction primary source bytes');
 const GUIDE_BYTES = Buffer.from('external construction guide bytes');

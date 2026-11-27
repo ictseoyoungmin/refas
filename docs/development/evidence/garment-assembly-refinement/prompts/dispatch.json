@@ -1,0 +1,107 @@
+[
+  {
+    "file": "automail-author.txt",
+    "sha256": "02c15995ab6911d23a2560794160589fb6d9ba3a0f3e7144c271a024c219088e",
+    "saved_before_dispatch_at": "2026-11-22T09:05:50.841368+00:00",
+    "role": "informed author",
+    "fork_turns": "all",
+    "status": "sent",
+    "agent_task": "/root/automail_author",
+    "dispatch_confirmed_at": "2026-11-22T09:07:21.677732+00:00",
+    "text_storage": "UTF-8 literal message, final newline added in file"
+  },
+  {
+    "file": "garment-author.txt",
+    "sha256": "30db66b5bc9c931798220a73220a484d444ba24675dc6999e63675cdf904147b",
+    "saved_before_dispatch_at": "2026-11-22T09:05:50.841397+00:00",
+    "role": "informed author",
+    "fork_turns": "all",
+    "status": "sent",
+    "agent_task": "/root/garment_author",
+    "dispatch_confirmed_at": "2026-11-22T09:07:21.677744+00:00",
+    "text_storage": "UTF-8 literal message, final newline added in file"
+  },
+  {
+    "file": "automail-feedback-palm.txt",
+    "sha256": "c48fb19010d774144dd23d291ac2f4ba53bccf2d08ccb3fc6cae341426b52988",
+    "saved_before_dispatch_at": "2026-11-22T09:15:19.373085+00:00",
+    "role": "informed lead feedback",
+    "agent_task": "/root/automail_author",
+    "status": "sent",
+    "dispatch_confirmed_at": "2026-11-22T09:15:50.433986+00:00"
+  },
+  {
+    "file": "visual-reviewer.txt",
+    "sha256": "70e3caa4d4c4c04f57f27fcd50adb883bfa58ba26976ae69c0e6ef1ca8dcf3e9",
+    "saved_before_dispatch_at": "2026-11-22T09:20:26.999129+00:00",
+    "role": "blind visual reviewer",
+    "fork_turns": "none",
+    "status": "sent",
+    "agent_task": "/root/visual_reviewer",
+    "dispatch_confirmed_at": "2026-11-22T09:20:55.584216+00:00"
+  },
+  {
+    "file": "garment-package-replay.txt",
+    "sha256": "96a6568c5d200b914483cbf21bd9872f0330baa2eed17f1cc27da7e20366ca97",
+    "saved_before_dispatch_at": "2026-11-22T09:22:40.314023+00:00",
+    "role": "informed compatibility replay request",
+    "status": "sent",
+    "dispatch_confirmed_at": "2026-11-22T09:23:44.476401+00:00",
+    "agent_task": "/root/garment_author"
+  },
+  {
+    "file": "automail-package-replay.txt",
+    "sha256": "080721572c9af84bcf94c517a395d7e462a740284a38efedcb26f002c56f1b59",
+    "saved_before_dispatch_at": "2026-11-22T09:22:40.314054+00:00",
+    "role": "informed compatibility replay request",
+    "status": "sent",
+    "dispatch_confirmed_at": "2026-11-22T09:23:44.476413+00:00",
+    "agent_task": "/root/automail_author"
+  },
+  {
+    "file": "automail-runner-feedback.txt",
+    "sha256": "e0894dc771385ce1e986a71cff4a60f56db3790ecf1cbbfc989c50f9e5ec029f",
+    "saved_before_dispatch_at": "2026-11-22T09:26:08.094317+00:00",
+    "role": "portable runner review",
+    "agent_task": "/root/automail_author",
+    "status": "sent",
+    "dispatch_confirmed_at": "2026-11-22T09:28:34.837271+00:00"
+  },
+  {
+    "file": "garment-post-review.txt",
+    "sha256": "c96e2c3e25ef5b1e6bfb8c69bafb42f2f71a3abb001094e1dc44492e03ae755f",
+    "saved_before_dispatch_at": "2026-11-22T09:28:01.954023+00:00",
+    "role": "informed correction after tied blind review",
+    "agent_task": "/root/garment_author",
+    "status": "sent",
+    "dispatch_confirmed_at": "2026-11-22T09:28:34.837286+00:00"
+  },
+  {
+    "file": "automail-delivery-packaging.txt",
+    "sha256": "95f02c6cbd58945c567f8af7970a4f5368a25c48877b87112d2e6108e1eb6192",
+    "saved_before_dispatch_at": "2026-11-22T09:36:50.945917+00:00",
+    "role": "delivery packaging only",
+    "agent_task": "/root/automail_author",
+    "status": "sent",
+    "dispatch_confirmed_at": "2026-11-22T09:37:05.489648+00:00"
+  },
+  {
+    "file": "joined-fold-visual-reviewer.txt",
+    "sha256": "3f1d1b57f2b418b355490376e2b5a4b3837ed06c68260533d90f891855e7915a",
+    "saved_before_dispatch_at": "2026-11-22T09:37:30.967988+00:00",
+    "role": "fresh blind visual reviewer",
+    "fork_turns": "none",
+    "status": "sent",
+    "agent_task": "/root/joined_fold_reviewer",
+    "dispatch_confirmed_at": "2026-11-22T09:37:44.027352+00:00"
+  },
+  {
+    "file": "garment-delivery-packaging.txt",
+    "sha256": "68bb02c8da4d577b75da9c43af43331fb345c399ffd61add647374ee8d857171",
+    "saved_before_dispatch_at": "2026-11-22T09:39:54.712844+00:00",
+    "role": "delivery packaging only",
+    "agent_task": "/root/garment_author",
+    "status": "sent",
+    "dispatch_confirmed_at": "2026-11-22T09:40:23.636289+00:00"
+  }
+]

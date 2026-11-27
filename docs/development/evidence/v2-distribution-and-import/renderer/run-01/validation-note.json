@@ -1,0 +1,7 @@
+{
+  "status": "retained-rejected-provisional-check",
+  "reason": "All conditions except the provisional 2e-5 componentwise normal equality check passed. A separate Blender custom-normal API round-trip reproduced the observed 0.000153 component loss. The final protocol uses a declared 0.1-degree angular preservation tolerance and continues to report the exact observed difference. Exact bitwise normal equivalence is not claimed.",
+  "followup": "../normal-roundtrip/result.json",
+  "resultUnchanged": true,
+  "scriptSnapshot": "harness/"
+}

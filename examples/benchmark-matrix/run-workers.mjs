@@ -10,7 +10,7 @@ import {
   digestJson,
   NEUTRAL_CLAY_REQUIRED_VIEW_IDS,
   validatePbrRenderReport,
-} from '../../skills/refas/scripts/lib/index.mjs';
+} from '../../legacy/v1/scripts/lib/index.mjs';
 
 const sha256 = (bytes) => createHash('sha256').update(bytes).digest('hex');
 const fail = (message) => { throw new Error(message); };

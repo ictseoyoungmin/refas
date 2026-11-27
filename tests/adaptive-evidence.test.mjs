@@ -6,7 +6,7 @@ import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
 
-const CLI=path.resolve('skills/refas/scripts/refas.mjs');
+const CLI=path.resolve('legacy/v1/scripts/refas.mjs');
 const PY=process.env.CODEX_PRIMARY_RUNTIME_PYTHON||'python3';
 
 async function fixture(t){
@@ -161,7 +161,7 @@ test('cache reuse re-extracts when only the bound source manifest bytes change',
   const {root,sha}=await fixture(t);
   const source=path.join(root,'flat.png');
   const manifestPath=path.join(root,'source-manifest.json');
-  const create=spawnSync(PY,[path.resolve('skills/refas/scripts/source_manifest.py'),
+  const create=spawnSync(PY,[path.resolve('legacy/v1/scripts/source_manifest.py'),
     '--root',root,'--image',source,'--id','flat','--out',manifestPath],
     {encoding:'utf8'});
   assert.equal(create.status,0,create.stderr);

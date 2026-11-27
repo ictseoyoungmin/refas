@@ -1,0 +1,8 @@
+; Headless import/playback verification and optional interactive asset inspection.
+config_version=5
+
+[application]
+config/name="RefAs delivery playback"
+
+[rendering]
+renderer/rendering_method="gl_compatibility"

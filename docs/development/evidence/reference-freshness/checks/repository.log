@@ -1,0 +1,442 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> refas@1.4.2 check
+> node tools/check-repository.mjs && npm run check:plugins && node skills/refas/scripts/verify_installation_boundary.mjs && node skills/refas/scripts/verify_semantic_instruction_graph.mjs && node skills/refas/scripts/verify_capability_interfaces.mjs && node skills/refas/scripts/verify_discovery_closure.mjs --no-fresh-worker
+
+{
+  "status": "PASS",
+  "version": "1.4.2",
+  "productFiles": 915,
+  "publicSchemas": 117,
+  "templates": 27,
+  "managedLabels": 59,
+  "issueForms": 5
+}
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> refas@1.4.2 check:plugins
+> node tools/verify-plugin-distribution.mjs
+
+{
+  "status": "PASS",
+  "version": "1.4.2",
+  "skillSource": "./skills/",
+  "icon": "./skills/refas/assets/icon.svg",
+  "adapters": [
+    "claude",
+    "codex",
+    "agents"
+  ]
+}
+{
+  "status": "PASS",
+  "referenceLeaves": 43,
+  "reachableLeaves": 43,
+  "danglingRoutes": 0,
+  "outsideSkillRoutes": 0,
+  "runtimeDependencyEscapes": 0,
+  "requirementsPresent": true
+}
+{
+  "status": "PASS",
+  "schema": "refas.instruction-graph/v1",
+  "nodeCount": 43,
+  "referenceLeaves": 43,
+  "missingCapabilityOwners": 0,
+  "bareMarkdownRoutes": 0,
+  "legacyHiddenGeometryPolicyHits": 0,
+  "interfaceSchema": "refas.instruction-node-interface/v1",
+  "interfaceNodes": 43,
+  "interfaceOperations": 121,
+  "runtimeCapabilitiesCovered": 11
+}
+{
+  "status": "PASS",
+  "schema": "refas.capability-interface-alignment-report/v1",
+  "instructionNodes": 43,
+  "executableInterfaces": 121,
+  "classifiedInterfaces": 121,
+  "declaredTemplates": 73,
+  "classifiedTemplates": 73,
+  "operationInputTemplates": 65,
+  "executableContracts": 64,
+  "invocationContractsExercised": 64
+}
+{
+  "status": "PASS",
+  "schema": "refas.discovery-closure-report/v1",
+  "installedSkillOnly": false,
+  "instructionNodes": 43,
+  "runtimeCapabilities": 11,
+  "executableInterfaces": 121,
+  "describedNodes": 43,
+  "describedCapabilities": 11,
+  "reachableReferenceLeaves": 44,
+  "publicReferenceLeaves": 44,
+  "reachableTemplates": 27,
+  "publicTemplates": 27,
+  "outputSchemaContracts": 78,
+  "workerFacingSchemaIds": 88,
+  "resolvedWorkerFacingSchemaIds": 88,
+  "schemaAuthorities": {
+    "refas.actuation-model/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.articulated-joint-report/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.articulated-joint/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.assembly-contract/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.attachment-follow-report/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.attachment-follow-state/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.attachment-propagation-plan/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.attachment-propagation-report/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.attachment-semantics/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.backend-export/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.bilateral-pair-realization/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.blockout-competition-decision/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.blockout-competition-policy/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.candidate-lineage-proof/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.candidate-transaction/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.candidate-transition/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.canonical-edit-intent/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.canonical-export-view/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.canonical-object-frame/v1": [
+      "canonical-template-name:assets/templates/canonical-object-frame.json",
+      "concrete-schema"
+    ],
+    "refas.capability-interface-input-catalog/v1": [
+      "non-persisted-template-catalog:assets/templates/capability-interface-inputs.json"
+    ],
+    "refas.certification-policy/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.checkpoint/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.claim-certification-decision/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.construction-execution-proof/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.construction-operation-permit/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.construction-quality/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.construction-vocabulary/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.content-reference/v1": [
+      "enclosing-public-validation:refas.parameter-fit-plan/v1",
+      "non-persisted-catalog-example:assets/templates/capability-interface-inputs.json"
+    ],
+    "refas.control-profile/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.cross-representation-validation/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.divergence-authorization/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.early-resemblance-barrier/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.evidence-request/v1": [
+      "canonical-template-name:assets/templates/evidence-request.json",
+      "concrete-schema"
+    ],
+    "refas.evidence-utility-decisions/v1": [
+      "canonical-template-name:assets/templates/evidence-utility-decisions.json",
+      "concrete-schema"
+    ],
+    "refas.external-construction-receipt/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.final-resemblance-closure/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.final-spatial-continuity/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.fixture-evidence/v1": [
+      "non-persisted-catalog-example:assets/templates/capability-interface-inputs.json"
+    ],
+    "refas.handoff-capsule/v1": [
+      "canonical-template-name:assets/templates/handoff-capsule.json"
+    ],
+    "refas.hard-surface-spec/v1": [
+      "canonical-template-name:assets/templates/hard-surface-spec.json",
+      "concrete-schema"
+    ],
+    "refas.logical-fusion-invalidation/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.logical-fusion/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.multi-anchor-plan/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.multi-anchor-report/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.normalized-representation/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.parameter-fit-plan/v1": [
+      "canonical-template-name:assets/templates/parameter-fit-plan.json",
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.parameter-fit-report/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.pbr-render-report/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.perceptual-signature-evidence/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.perceptual-signature-set/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.physical-asset-bundle/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.physical-claim-evidence/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.physical-fusion-plan/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.physical-fusion-report/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.prior-quarantine-authority/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.prior-quarantine/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.project-state/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.projection-fit/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.realized-assembly-input/v1": [
+      "canonical-template-name:assets/templates/realized-assembly-input.json"
+    ],
+    "refas.realized-assembly-proof/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.realized-contact-plan/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.realized-contact-report/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.reference-geometry/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.reference-registration/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.registered-comparison-input/v1": [
+      "canonical-template-name:assets/templates/registered-comparison-input.json"
+    ],
+    "refas.registered-comparison/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.relational-structure/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.representation-capacity/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.runtime-binding/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.semantic-authority-set/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.source-manifest/v1": [
+      "canonical-template-name:assets/templates/source-manifest.json",
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.spatial-closure-evidence/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.spatial-collapse-classification/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.spatial-hypothesis-set/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.spatial-role-expectation-set/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.structural-plausibility/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.supported-clearance-report/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.supported-clearance/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.surface-anchor-rebind/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.surface-anchor-set/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.surface-network/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.transmission-model/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.trusted-spatial-gate-authority/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.visual-hierarchy/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.visual-observation/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.visual-review/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.volume-barrier/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ],
+    "refas.whole-system-relational-barrier/v1": [
+      "concrete-schema",
+      "graph-output-validation"
+    ]
+  },
+  "concreteSchemaFilesAvailable": true,
+  "concreteSchemaIds": 117,
+  "publicApiSymbols": 265,
+  "cliOperations": 29,
+  "freshWorker": null,
+  "missing": [],
+  "orphan": [],
+  "privateDependencies": [],
+  "unreachable": [],
+  "notes": []
+}

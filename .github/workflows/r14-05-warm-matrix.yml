@@ -39,7 +39,7 @@ jobs:
       - name: Measure same-process warm-JIT and exact image/depth parity
         run: |
           mkdir -p temp/r14-05d
-          python skills/refas/scripts/benchmark_render_cpu_warm.py \
+          python legacy/v1/scripts/benchmark_render_cpu_warm.py \
             --triangles 100000,500000,1000000 \
             --matrix-count 500000 --case strands --seed 12345 \
             --size 160 --baseline-tile 32 --baseline-threads 4 \

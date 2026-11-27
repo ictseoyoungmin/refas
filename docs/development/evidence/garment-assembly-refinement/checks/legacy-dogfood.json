@@ -1,0 +1,10 @@
+{
+  "command": [
+    "npm",
+    "run",
+    "dogfood"
+  ],
+  "started_at": "2026-11-22T09:17:22.453493+00:00",
+  "returncode": 0,
+  "seconds": 133.226
+}

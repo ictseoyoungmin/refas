@@ -4,9 +4,9 @@ import os from 'node:os';
 import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import test from 'node:test';
-import {analyzeCapabilityInterfaces} from '../skills/refas/scripts/verify_capability_interfaces.mjs';
+import {analyzeCapabilityInterfaces} from '../legacy/v1/scripts/verify_capability_interfaces.mjs';
 
-const CLI=path.resolve('skills/refas/scripts/refas.mjs');
+const CLI=path.resolve('legacy/v1/scripts/refas.mjs');
 const runCli=(args,cli=CLI,cwd=process.cwd())=>spawnSync(process.execPath,[cli,...args],{encoding:'utf8',cwd});
 
 test('AD03 classifies all interfaces and executes every deterministic public invocation contract',async()=>{
@@ -44,7 +44,7 @@ test('AD03 describe exposes public invocation, placeholders, and enum constants'
 });
 
 test('AD03 verifier passes from a bare copied installed skill',async(t)=>{
-  const temp=await fs.mkdtemp(path.join(os.tmpdir(),'refas-ad03-installed-'));t.after(()=>fs.rm(temp,{recursive:true,force:true}));const installed=path.join(temp,'refas');await fs.cp(path.resolve('skills/refas'),installed,{recursive:true});
+  const temp=await fs.mkdtemp(path.join(os.tmpdir(),'refas-ad03-installed-'));t.after(()=>fs.rm(temp,{recursive:true,force:true}));const installed=path.join(temp,'refas');await fs.cp(path.resolve('legacy/v1'),installed,{recursive:true});
   const result=spawnSync(process.execPath,[path.join(installed,'scripts','verify_capability_interfaces.mjs')],{cwd:temp,encoding:'utf8'});assert.equal(result.status,0,result.stderr||result.stdout);const report=JSON.parse(result.stdout);
   assert.equal(report.status,'PASS');assert.equal(report.instructionNodes,40);assert.equal(report.executableInterfaces,121);assert.equal(report.classifiedInterfaces,121);assert.equal(report.classifiedTemplates,report.declaredTemplates);assert.equal(report.invocationContractsExercised,report.executableContracts);assert.ok(report.executableContracts>=56);
 });

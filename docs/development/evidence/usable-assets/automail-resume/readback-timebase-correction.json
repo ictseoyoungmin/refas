@@ -1,0 +1,21 @@
+{
+  "recordedUtc": "2026-11-22T19:26:34.766777+00:00",
+  "intendedFrame": 61,
+  "importFps": 30,
+  "renderFps": 30,
+  "fpsBase": 1,
+  "intendedSeconds": 2.033333333333333,
+  "correctedRendererScriptSha256": "e9905beb01b694de602407510ec6554ba8698931a9025d9ce3a70a397ee7b094",
+  "correction": "Set Blender30fps before GLB import so imported seconds map to matching frame indices. Previous factory24fps observations retained separately; asset bytes unchanged.",
+  "actualCorrectedObservations": {
+    "actual-glb-neutral/view-hand-front.png": "3de67b199930620e19d678ed559f82a4f8c2232624a2b7eb444c5bf5e6c011e4",
+    "actual-glb-neutral/view-hero.png": "bb522326eb4977c095821cc68c6952a3d3f1362aee00d3aa9ad48716adbd00fa",
+    "actual-glb-neutral/render-observation.json": "ee3b3fa5e49af1e76f229a6160f0b514a4efbe47ac3797b8c89dc7a9eec3bfc2",
+    "actual-glb-grip/view-grip-front.png": "0f918e39ab7224b134862cd354ab783769301217105757a7d391398548783ff7",
+    "actual-glb-grip/view-grip-palm.png": "b096ab40074bd1dd6a6ab54c90b75b182360c53010445dfa190dcc4a403140e0",
+    "actual-glb-grip/view-grip-thumb.png": "24a4b491e3c06ec48e6c9bc901a00ee87fa9fcb46fcbcb895d056c2fe44b28b5",
+    "actual-glb-grip/view-motion.png": "2ed26ec3fa8dcc4115c412712d571199c06fa0f51c1e80e8672afec9a2de5106",
+    "actual-glb-grip/render-observation.json": "33e25298dd9825fda4a13cc0e896018d383555fc1d5ca3c764434def42f3bbe6"
+  },
+  "nativePeakObservation": "/workspace/scratch/61afcdd4e3c6/work/automail/observations-candidate-08/grip/render-observation.json"
+}

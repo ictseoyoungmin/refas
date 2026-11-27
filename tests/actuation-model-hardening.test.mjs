@@ -14,7 +14,7 @@ import {
   digestJson,
   physicalActuationIdentityProjection,
   validateActuationModelBindings,
-} from '../skills/refas/scripts/lib/index.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
 
 const D = (value = 'a') => value.repeat(64);
 const Q = (parentId, translation_m = [0, 0, 0], rotation_quat_xyzw = [0, 0, 0, 1]) => ({parentId, translation_m, rotation_quat_xyzw});

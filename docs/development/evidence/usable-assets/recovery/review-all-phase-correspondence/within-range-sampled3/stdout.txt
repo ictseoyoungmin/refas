@@ -1,0 +1,15 @@
+{"stage": "native captured", "frame": 1, "meshes": 100}
+{"stage": "native captured", "frame": 49, "meshes": 100}
+{"stage": "native captured", "frame": 97, "meshes": 100}
+06:38:00 | INFO: Data are loaded, start creating Blender stuff
+06:38:00 | INFO: Blender create Mesh node Fixture morph mesh
+06:38:00 | INFO: Blender create Mesh node Fixture static mesh
+06:38:00 | INFO: glTF import finished in 0.01s
+{"stage": "actual GLB compared", "frame": 1, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 49, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 97, "passedMeshes": 100, "failed": []}
+{"passed": true, "garmentMeshes": 100, "encodedDuplicateFaces": 0, "frames": [{"frame": 1, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 49, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 97, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}]}
+Blender 4.3.2
+Read blend: "/workspace/scratch/61afcdd4e3c6/work/garment/export-review/phase-fixture/native.blend"
+
+Blender quit

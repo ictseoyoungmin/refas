@@ -1,0 +1,71 @@
+[
+  {
+    "label": "javascript",
+    "argv": [
+      "npm",
+      "test"
+    ],
+    "started_utc": "2026-11-22T12:12:31.988298+00:00",
+    "ended_utc": "2026-11-22T12:14:21.336256+00:00",
+    "elapsed_seconds": 109.348,
+    "returncode": 0,
+    "source_runtime_commit": "1280b74d7da56ca6541246d4e8ca16c99f4f43e2",
+    "scope_note": "Existing runtime and distribution unchanged during this run; new asset scripts receive their own actual Blender execution checks."
+  },
+  {
+    "label": "python-syntax",
+    "argv": [
+      "npm",
+      "run",
+      "test:python"
+    ],
+    "started_utc": "2026-11-22T12:14:21.336619+00:00",
+    "ended_utc": "2026-11-22T12:14:21.579778+00:00",
+    "elapsed_seconds": 0.243,
+    "returncode": 0,
+    "source_runtime_commit": "1280b74d7da56ca6541246d4e8ca16c99f4f43e2",
+    "scope_note": "Existing runtime and distribution unchanged during this run; new asset scripts receive their own actual Blender execution checks."
+  },
+  {
+    "label": "distribution",
+    "argv": [
+      "npm",
+      "run",
+      "check"
+    ],
+    "started_utc": "2026-11-22T12:14:21.580200+00:00",
+    "ended_utc": "2026-11-22T12:14:33.061139+00:00",
+    "elapsed_seconds": 11.481,
+    "returncode": 0,
+    "source_runtime_commit": "1280b74d7da56ca6541246d4e8ca16c99f4f43e2",
+    "scope_note": "Existing runtime and distribution unchanged during this run; new asset scripts receive their own actual Blender execution checks."
+  },
+  {
+    "label": "legacy-dogfood",
+    "argv": [
+      "npm",
+      "run",
+      "dogfood"
+    ],
+    "started_utc": "2026-11-22T12:14:33.061489+00:00",
+    "ended_utc": "2026-11-22T12:16:37.263337+00:00",
+    "elapsed_seconds": 124.202,
+    "returncode": 0,
+    "source_runtime_commit": "1280b74d7da56ca6541246d4e8ca16c99f4f43e2",
+    "scope_note": "Existing runtime and distribution unchanged during this run; new asset scripts receive their own actual Blender execution checks."
+  },
+  {
+    "label": "package-audit",
+    "argv": [
+      "npm",
+      "run",
+      "release:audit"
+    ],
+    "started_utc": "2026-11-22T12:16:37.263897+00:00",
+    "ended_utc": "2026-11-22T12:16:37.837909+00:00",
+    "elapsed_seconds": 0.574,
+    "returncode": 0,
+    "source_runtime_commit": "1280b74d7da56ca6541246d4e8ca16c99f4f43e2",
+    "scope_note": "Existing runtime and distribution unchanged during this run; new asset scripts receive their own actual Blender execution checks."
+  }
+]

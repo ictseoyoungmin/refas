@@ -7,7 +7,7 @@ test('review-board warns when flat clay/normal image lacks surface information w
 from pathlib import Path
 import sys
 import tempfile
-sys.path.insert(0, str(Path('skills/refas/scripts').resolve()))
+sys.path.insert(0, str(Path('legacy/v1/scripts').resolve()))
 from compose_review_board import _presentation_warning, _framing_warning
 from PIL import Image
 

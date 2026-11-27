@@ -1,0 +1,363 @@
+{
+  "schema": "exploratory-fixed-legacy-trial/v1",
+  "title": "AURIX automail \u2014 pinned RefAs 1.x exploratory control",
+  "status": "Editable prototype delivered; formal source-bound validation BLOCKED",
+  "start_utc": "2026-11-21T21:38:02Z",
+  "end_utc": "2026-11-21T21:57:47.193653Z",
+  "elapsed_seconds": 1185.193653,
+  "elapsed_basis": "UTC start recorded before reading guidance; end at report write. Filesystem UTC mtimes are used only for milestones.",
+  "milestones_utc": {
+    "first_complete_native": "2026-11-21T21:43:46.581519Z",
+    "first_complete_five_views": "2026-11-21T21:43:59.321325Z",
+    "selected_candidate_native": "2026-11-21T21:49:08.489955Z",
+    "panel_and_pose_checks": "2026-11-21T21:50:49.540066Z",
+    "independent_glb_check": "2026-11-21T21:57:14.535104Z"
+  },
+  "budget": {
+    "requested_substantive_scope": "About 30 minutes",
+    "wall_time_observed_seconds": 1185.193653,
+    "over_30_minutes": false,
+    "not_a_general_speed_or_quality_claim": true
+  },
+  "isolation": {
+    "supplied_snapshot": "main a29bcc42",
+    "runtime_reported_version": "1.4.2",
+    "guidance_root": "/tmp/refas-dual-asset-20261122/legacy-snapshot/skills/refas",
+    "work_root": "/tmp/refas-dual-asset-20261122/automail-legacy",
+    "no_current_2_x_guidance_or_runtime_read": true,
+    "no_other_agent_assets_or_results_read": true,
+    "no_subagents": true,
+    "no_imagegen_or_external_3d_or_existing_arm_meshes": true,
+    "no_git_or_external_app_writes": true
+  },
+  "model_usage": {
+    "model_id": null,
+    "tokens": null,
+    "cost": null,
+    "reason": "Unavailable; not inferred from file or guidance byte counts."
+  },
+  "guidance": {
+    "files": [
+      {
+        "path": "/tmp/refas-dual-asset-20261122/legacy-snapshot/skills/refas/SKILL.md",
+        "bytes": 9491,
+        "sha256": "d10e4b7979d242c6eb25f104cc6292a6df52a88d8d58fad24500e81c4514fb36"
+      },
+      {
+        "path": "/tmp/refas-dual-asset-20261122/legacy-snapshot/skills/refas/references/INDEX.md",
+        "bytes": 14330,
+        "sha256": "19e6517d6f8909e8487217e76d42265cc68af2e0f3987d2dc05eb99d3e1714c5"
+      },
+      {
+        "path": "/tmp/refas-dual-asset-20261122/legacy-snapshot/skills/refas/references/workflow.md",
+        "bytes": 15470,
+        "sha256": "1c3660b004abcaae3683a9b2446d3ad93f616ba39ef1d3a3396756022b98c6ce"
+      },
+      {
+        "path": "/tmp/refas-dual-asset-20261122/legacy-snapshot/skills/refas/references/observation.md",
+        "bytes": 12654,
+        "sha256": "365882eb898351762e90c5a1c827e4affac0eff9982f61419bb214e702eb6c0a"
+      },
+      {
+        "path": "/tmp/refas-dual-asset-20261122/legacy-snapshot/skills/refas/references/provenance.md",
+        "bytes": 2091,
+        "sha256": "98d1753a7eaa8f981322322f827bd7d5f0361f8b696acf16e29b6a93a2a44c9b"
+      },
+      {
+        "path": "/tmp/refas-dual-asset-20261122/legacy-snapshot/skills/refas/references/spatial-reasoning.md",
+        "bytes": 30732,
+        "sha256": "994cff34a2b9f51a47d6965695603a049f458a9d0f95025c1edc226c79d08919"
+      },
+      {
+        "path": "/tmp/refas-dual-asset-20261122/legacy-snapshot/skills/refas/references/construction.md",
+        "bytes": 19245,
+        "sha256": "bc21e3cf72639464b5bf69ffbade0ecf0590c3da6437143897c8056c08dc74be"
+      },
+      {
+        "path": "/tmp/refas-dual-asset-20261122/legacy-snapshot/skills/refas/references/organic-articulated-construction.md",
+        "bytes": 4211,
+        "sha256": "37a9d65d48366616f19c2d4536fbce9c8139bebc24c4d402f3bbbed270be2330"
+      },
+      {
+        "path": "/tmp/refas-dual-asset-20261122/legacy-snapshot/skills/refas/references/assembly.md",
+        "bytes": 27914,
+        "sha256": "6319810e19ffb2fbeec52795108dab7aa5348fa85e47a2f67f1c81aa4240b60d"
+      },
+      {
+        "path": "/tmp/refas-dual-asset-20261122/legacy-snapshot/skills/refas/references/checkpointing.md",
+        "bytes": 8849,
+        "sha256": "9bd5a75161a272d52cfa017f8bf3ef3a4b35b548cb678f025065f0ff1fb25dd3"
+      },
+      {
+        "path": "/tmp/refas-dual-asset-20261122/legacy-snapshot/skills/refas/references/failure-routing.md",
+        "bytes": 5608,
+        "sha256": "ad4bf1e98137bb44fc7968474cd0807c523bafdf57adaecc7a3e826a6207d8bc"
+      },
+      {
+        "path": "/tmp/refas-dual-asset-20261122/legacy-snapshot/skills/refas/references/appearance.md",
+        "bytes": 8238,
+        "sha256": "1075f58898a211b8278fb0181caaf4f87a35ced619b82674c416fc4e6ece0ef1"
+      },
+      {
+        "path": "/tmp/refas-dual-asset-20261122/legacy-snapshot/skills/refas/references/validation.md",
+        "bytes": 24678,
+        "sha256": "a7c2e8db4866e6ee1d388ed2bd35e76af251a9b7ec985345f6d9103bd8eed86d"
+      },
+      {
+        "path": "/tmp/refas-dual-asset-20261122/legacy-snapshot/skills/refas/references/contracts/canonical-edit-boundary.md",
+        "bytes": 4023,
+        "sha256": "d73d84296c0773ee37b6f7bc372deb9ec62a3a06be8ea16eff83ac414eb3b9e3"
+      },
+      {
+        "path": "/tmp/refas-dual-asset-20261122/legacy-snapshot/skills/refas/references/contracts/attachment-semantics.md",
+        "bytes": 5290,
+        "sha256": "99198f5f5fb57cf5e245bc3c2ab8661b61cb31acd3c00a765bb80e1ed557fc08"
+      },
+      {
+        "path": "/tmp/refas-dual-asset-20261122/legacy-snapshot/skills/refas/references/contracts/articulation-clearance.md",
+        "bytes": 3389,
+        "sha256": "27d5ae0105f547fa172c4c9975c6bd109e1419e9b1405a38614605272536d46d"
+      }
+    ],
+    "unique_bytes_accessed": 196213,
+    "boundary": "Exact accessed files and sizes; combined tool output truncation is disclosed in access-log.json. No claim that byte count equals tokens or reasoning effort."
+  },
+  "asset": {
+    "native": "candidate.blend",
+    "glb": "candidate.glb",
+    "native_sha256": "4e81abdf0d95fd44a576f3a646dabaf7e86a51d04eebc51dc15913b5713109f4",
+    "glb_sha256": "2a6d9e4ca1a4e5f73515413eb7bfb789868cc984f90177d34d833006bc52013a",
+    "asset_root": "AURIX_ARM_ROOT",
+    "asset_nodes": 247,
+    "asset_meshes": 227,
+    "studio_exclusion": "Only collection STUDIO: STUDIO_Ground, STUDIO_Camera, STUDIO_Key, STUDIO_Fill, STUDIO_Rim, plus Studio World. All asset meshes remain under AURIX_ARM_ROOT.",
+    "units": "metres",
+    "up": "+Z",
+    "front_looks_from": "-Y",
+    "thumb_world_side": "-X",
+    "overall_height_m": 0.7534967017,
+    "source_observations": "source-observations.json"
+  },
+  "revisions": [
+    {
+      "candidate": "initial.blend / initial.glb",
+      "result": "First complete candidate retained unchanged",
+      "finding": "Shoulder front plate intersected/was occluded by the socket barrel, side armor crossed the bore, elbow was too wide, and thumb was high and short."
+    },
+    {
+      "candidate": "shape-correction.blend / shape-correction.glb",
+      "owner": "shape-reconstruction",
+      "changes": [
+        "Moved shoulder shield support sections outside the socket barrel and moved its attached trim/wordmark with the profile.",
+        "Replaced bore-intruding side shoulder plates with external annular-sector armor.",
+        "Reduced elbow assembly width to 70% while preserving the same pivot and YZ radius.",
+        "Lowered and lengthened the thumb and reduced its neutral splay to 28 degrees."
+      ],
+      "result": "Inspected front/left/three-quarter renders showed the intended silhouette corrections; no formal resemblance PASS."
+    },
+    {
+      "candidate": "candidate.blend / candidate.glb",
+      "owner": "appearance",
+      "changes": [
+        "Assigned the existing graphite material to the two shoulder outer collars."
+      ],
+      "result": "Frozen selected candidate; studio and geometry unchanged from shape-correction."
+    }
+  ],
+  "panel_edit": {
+    "report": "panel-edit-check.json",
+    "glb_report": "glb-panel-preservation.json",
+    "native_file_report": "native-file-preservation.json",
+    "offset_metres": 0.003,
+    "normal_local": [
+      0,
+      1,
+      0
+    ],
+    "cover_mesh_children": 16,
+    "native_protected_state_unchanged": true,
+    "all_scene_objects_checked": 252,
+    "edited_noncover_scene_state_changes": [],
+    "glb_binary_byte_identical": true,
+    "glb_only_changed_node_json": [
+      "SERVICE_COVER_ROOT"
+    ],
+    "full_scene_byte_restore": true,
+    "full_scene_reopen_state_restore": true,
+    "asset_state_restore": true,
+    "state_vs_bytes": "restored-state.blend demonstrates asset state restoration but retains the diagnostic camera. restored.blend and restored.glb are byte-exact copies of the preserved candidate, and restored.blend was separately reopened and compared across every scene object."
+  },
+  "pose_checks": {
+    "report": "pose-check.json",
+    "elbow_angles_degrees": [
+      0,
+      45,
+      90
+    ],
+    "wrist_index_pose": {
+      "wrist_x_degrees": -20,
+      "index_mcp": -20,
+      "index_pip": -40,
+      "index_dip": -25
+    },
+    "neutral_asset_state_restored": true,
+    "intersection_result": "No triangle-surface overlaps in 16 named upper/forearm armor pairs at each elbow angle or 20 palm/forearm armor pairs at the wrist pose. Bearings, hidden internal pairs, finger self-collision and full motion clearance were not globally certified.",
+    "static_links": "Modeled actuator rods and conduits remain within one rigid link; none was modeled as a functioning piston spanning elbow or wrist."
+  },
+  "glb_import": {
+    "report": "glb-import-check.json",
+    "fresh_factory_import": true,
+    "parent_errors": [],
+    "missing_nodes": [],
+    "max_world_matrix_error": 2.383999999633346e-07,
+    "motion_tests": [
+      {
+        "joint": "ElbowPivot",
+        "applied_degrees_x": -45,
+        "moved_target": "WristPivot",
+        "target_world_displacement_m": 0.18445342010561688,
+        "protected_object": "Shoulder_FrontShield",
+        "protected_transform_unchanged": true,
+        "motion_observed": true,
+        "target_restored_error_m": 0.0
+      },
+      {
+        "joint": "WristPivot",
+        "applied_degrees_x": -20,
+        "moved_target": "Hand_PalmFrame",
+        "target_world_displacement_m": 0.01840670692634672,
+        "protected_object": "Forearm_FrontMainShield",
+        "protected_transform_unchanged": true,
+        "motion_observed": true,
+        "target_restored_error_m": 0.0
+      },
+      {
+        "joint": "Index_PIP",
+        "applied_degrees_x": -40,
+        "moved_target": "Index_Armor_2",
+        "target_world_displacement_m": 0.029362130258325448,
+        "protected_object": "Middle_Armor_2",
+        "protected_transform_unchanged": true,
+        "motion_observed": true,
+        "target_restored_error_m": 0.0
+      }
+    ],
+    "actual_five_view_glb_renders": "renders/candidate-glb",
+    "all_vertices_finite": true,
+    "measurement_correction": "A first mesh-centroid displacement calculation averaged after the world transform instead of before it. The checker was corrected and rerun; first outputs are retained in logs/glb-import-check-first-measurement.json and logs/glb-import-first-measurement.log. Candidate bytes never changed."
+  },
+  "topology_limit": {
+    "report": "mesh-qa-diagnostic.json",
+    "raw_glb_nonmanifold_meshes": 193,
+    "diagnostic_position_welded_glb_nonmanifold_meshes": [
+      "Hand_PalmGripPad",
+      "Index_Grip_0",
+      "Index_Grip_1",
+      "Index_Grip_2",
+      "Little_Grip_0",
+      "Little_Grip_1",
+      "Little_Grip_2",
+      "Middle_Grip_0",
+      "Middle_Grip_1",
+      "Middle_Grip_2",
+      "Ring_Grip_0",
+      "Ring_Grip_1",
+      "Ring_Grip_2",
+      "ServiceCover_Plate",
+      "Shoulder_RearBridge",
+      "Thumb_Grip_0",
+      "Thumb_Grip_1",
+      "Thumb_Grip_2"
+    ],
+    "native_welded_nonmanifold_meshes": [],
+    "negative_winding_meshes": [
+      "Forearm_OuterWrap_-1",
+      "Hand_PalmGripPad",
+      "Index_Grip_0",
+      "Index_Grip_1",
+      "Index_Grip_2",
+      "Little_Grip_0",
+      "Little_Grip_1",
+      "Little_Grip_2",
+      "Middle_Grip_0",
+      "Middle_Grip_1",
+      "Middle_Grip_2",
+      "Ring_Grip_0",
+      "Ring_Grip_1",
+      "Ring_Grip_2",
+      "ServiceCover_Plate",
+      "Shoulder_RearBridge",
+      "ShoulderSidePauldron_-1_1",
+      "ShoulderSidePauldron_-1_2",
+      "ShoulderSidePauldron_1_0",
+      "Thumb_Grip_0",
+      "Thumb_Grip_1",
+      "Thumb_Grip_2",
+      "UpperArm_OuterArmor_-1"
+    ],
+    "zero_area_after_weld": [],
+    "proposed_later_fix": "Recompute consistent outward winding on native base meshes before bevel evaluation, then re-export and recheck. Not executed in this trial, per parent direction to preserve the frozen observer candidate.",
+    "claim": "No watertight, manufacturing-ready or physical-readiness claim."
+  },
+  "formal_refas": {
+    "commands": "commands.json",
+    "source_manifest_created": true,
+    "project_initialized": true,
+    "next_queried": true,
+    "source_intake_contract_described": true,
+    "inspect_glb_exit_code": 0,
+    "audit": {
+      "schema": "refas.project-audit/v1",
+      "valid": true,
+      "errors": [],
+      "warnings": [],
+      "checkpointCount": 0,
+      "objectCount": 0,
+      "head": null,
+      "activeTransactionId": null
+    },
+    "strict_validate_exit_code": 2,
+    "strict_validate_raw_output": "logs/refas-validate.txt",
+    "decision": {
+      "state": "BLOCKED",
+      "blockingCheckIds": [
+        "candidate-lineage",
+        "source-semantic-current-glb",
+        "relational-evidence",
+        "registered-multiview",
+        "independent-visual-review",
+        "realized-contact-support",
+        "whole-object-certification"
+      ]
+    },
+    "passing_checks": [
+      "source-provenance",
+      "primary-source-pixel-frame",
+      "glb-integrity"
+    ],
+    "checkpoint_count": 0,
+    "certification": null,
+    "boundary": "Only source manifest/init/next/describe/inspect/audit/strict validate were exercised. No accepted downstream checkpoint, external construction attestation, registered source camera, canonical neutral-clay barrier, candidate-lineage proof, independent source-semantic review, or certificate was minted."
+  },
+  "visual_limits": [
+    "The selected geometry is an exploratory interpretation, not an exact source reconstruction.",
+    "Shoulder barrel and armor segmentation remain simpler and more regular than the sheet, with a more slender and cleaner overall silhouette.",
+    "Finger phalanges are blockier and the rear mechanics less dense than the reference; hidden supports and rod routing are engineered.",
+    "The bright fixed studio washes out some ivory surface detail at 16 samples, and metallic regions remain visibly noisy. The common observer may inspect the same bytes under its separate studio.",
+    "Source views and dimensions are not calibrated; 0.7535 m bounds, neutral pose and depth allocation are explicit interpretations.",
+    "The disclosed reverse-shell winding and exported topology defects remain open."
+  ],
+  "retained_evidence": {
+    "initial": "initial.blend / initial.glb / renders/initial",
+    "focused_correction": "shape-correction.blend / shape-correction.glb / renders/shape-correction",
+    "selected": "candidate.blend / candidate.glb / renders/candidate",
+    "edited": "panel-edited.blend / panel-edited.glb / renders/edited",
+    "restored": "restored.blend / restored.glb / restored-state.blend",
+    "poses": "poses/*.blend / renders/poses",
+    "independent_import": "candidate-glb-reimport.blend / renders/candidate-glb",
+    "render_manifest": "render-manifest.json",
+    "artifact_manifest": "artifact-manifest.json",
+    "scripts": "scripts/"
+  },
+  "evaluation_boundary": "One exploratory control with one source image and one execution. It does not prove general workflow performance, quality, speed or certification reachability."
+}

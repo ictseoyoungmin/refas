@@ -1,0 +1,9 @@
+{
+  "blender": "4.3.2",
+  "operation": "Mesh.from_pydata then normals_split_custom_set_from_vertices; no glTF importer or renderer involved",
+  "loops": 2880,
+  "maxComponentDelta": 0.0001531839370727539,
+  "maxAngleDegrees": 0.008948762859621236,
+  "meanAngleDegrees": 0.001233262378874243,
+  "note": "Observed Blender custom-normal API round-trip precision; not an assumed precision guarantee for all Blender versions."
+}

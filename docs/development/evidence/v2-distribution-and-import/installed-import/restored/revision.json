@@ -1,0 +1,380 @@
+{
+  "schema": "refas.production.revision/v2",
+  "id": "fb6c1245a385462a89de1c791e511caa",
+  "parent": "8de2559bfda54c4fa2364f83f9754f8b",
+  "createdAt": "2026-11-22T11:42:19.887536+00:00",
+  "intent": "Restore revision da41ee883cde4066b42f1594522cdf2c",
+  "kind": "restore",
+  "runId": null,
+  "sources": [
+    {
+      "path": "sources/001-reference.png",
+      "name": "reference.png",
+      "role": "user-reference",
+      "sha256": "6076b27fadfcb1a929b306ce74d6b7ef22d1d8996102065df6a74012e3466148",
+      "bytes": 41281
+    }
+  ],
+  "inputs": [
+    {
+      "path": "edit.py",
+      "sha256": "8ad6932b1d92f7ae362ee0f1795ec42f1b04e75f5e595c73cd0a4cef431c806f",
+      "bytes": 82
+    },
+    {
+      "path": "import/asset.glb",
+      "sha256": "3fcf70e36a0b42723c3abed6ebc60cdfea0143e19c047ba802258753ee41fdec",
+      "bytes": 746976
+    },
+    {
+      "path": "import/legacy-checkpoint.json",
+      "sha256": "363545c0579a7b63a789fe7fd8456436c6868034d4d9871f780fb251a630e7f9",
+      "bytes": 3398
+    },
+    {
+      "path": "import/legacy-project.json",
+      "sha256": "ade7d6bfe6f96d8b6ab9fd972e2b9d8c9d31eb24f8a220f66a1d92edc593fe47",
+      "bytes": 5175
+    },
+    {
+      "path": "import/migration.json",
+      "sha256": "84c64a3aad9ecf5f18402aa0fa2027f178357df2b682956f1ad870cfaee01880",
+      "bytes": 2189
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "asset.glb",
+      "sha256": "63b75d461420f748fd85e4769cf8439e1f2b8ce867cc04d1f178737b2d2389a1",
+      "bytes": 728900
+    },
+    {
+      "path": "result.json",
+      "sha256": "4a6aa656f2a8c09596099072689a1454032416fb7d3f66bdc6bcd88295cd1426",
+      "bytes": 6375
+    },
+    {
+      "path": "scene.blend",
+      "sha256": "7fd32d37e82c68939d3aee3249cf0ac71ff3d413b402dfe6a89b31385f227fca",
+      "bytes": 3716432
+    },
+    {
+      "path": "scene.json",
+      "sha256": "d16c58ac858cbc11061d7756615042e52d0b3c63387ba36747c25d49ce0666a8",
+      "bytes": 766254
+    },
+    {
+      "path": "view-hero.png",
+      "sha256": "fbd29769943a3e9c2c2e6adea609c931e606cdc6679cde6b68a1c994836d8134",
+      "bytes": 52411
+    },
+    {
+      "path": "view-side.png",
+      "sha256": "3bb9c9fe4d02f6196b31af521b5f8cd3f915edc6cf424e2e651cdfce3ab58be0",
+      "bytes": 42144
+    }
+  ],
+  "outputs": {
+    "blend": "scene.blend",
+    "glb": "asset.glb",
+    "scene": "scene.json"
+  },
+  "observations": [
+    {
+      "camera": {
+        "matrixWorld": [
+          [
+            0.8349582,
+            -0.22013363,
+            0.50436693,
+            3.48310137
+          ],
+          [
+            0.55031341,
+            0.33399591,
+            -0.76524633,
+            -5.35757208
+          ],
+          [
+            -5e-08,
+            0.91650856,
+            0.40001509,
+            2.76545572
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "orthoScale": 4.04344702,
+        "position": [
+          3.48310137,
+          -5.35757208,
+          2.76545572
+        ],
+        "projection": "orthographic",
+        "target": [
+          0.01181483,
+          -0.09079336,
+          0.01236677
+        ]
+      },
+      "framing": "automatic-bounds",
+      "lighting": {
+        "center": [
+          0.01181483,
+          -0.09079336,
+          0.01236677
+        ],
+        "radius": 1.72061566,
+        "rig": "three-area-lights/v1"
+      },
+      "path": "view-hero.png",
+      "referenceRegion": null,
+      "registration": "unregistered",
+      "renderer": {
+        "denoising": false,
+        "device": "CPU",
+        "engine": "CYCLES",
+        "samples": 4,
+        "size": [
+          192,
+          192
+        ],
+        "transparent": false,
+        "viewTransform": "AgX",
+        "worldColor": [
+          0.065,
+          0.08,
+          0.115
+        ],
+        "worldStrength": 0.45
+      },
+      "sha256": "fbd29769943a3e9c2c2e6adea609c931e606cdc6679cde6b68a1c994836d8134",
+      "sourceSceneFingerprint": "6950b1f78841a0724860033fbf492dca93df347f1fc8227492a8aa1279a2f54f",
+      "view": "hero"
+    },
+    {
+      "camera": {
+        "matrixWorld": [
+          [
+            -4e-08,
+            4e-08,
+            1.0,
+            6.89427757
+          ],
+          [
+            1.0,
+            0.0,
+            4e-08,
+            -0.09079336
+          ],
+          [
+            0.0,
+            1.0,
+            -4e-08,
+            0.01236677
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "orthoScale": 4.04344702,
+        "position": [
+          6.89427757,
+          -0.09079336,
+          0.01236677
+        ],
+        "projection": "orthographic",
+        "target": [
+          0.01181483,
+          -0.09079336,
+          0.01236677
+        ]
+      },
+      "framing": "automatic-bounds",
+      "lighting": {
+        "center": [
+          0.01181483,
+          -0.09079336,
+          0.01236677
+        ],
+        "radius": 1.72061566,
+        "rig": "three-area-lights/v1"
+      },
+      "path": "view-side.png",
+      "referenceRegion": null,
+      "registration": "unregistered",
+      "renderer": {
+        "denoising": false,
+        "device": "CPU",
+        "engine": "CYCLES",
+        "samples": 4,
+        "size": [
+          192,
+          192
+        ],
+        "transparent": false,
+        "viewTransform": "AgX",
+        "worldColor": [
+          0.065,
+          0.08,
+          0.115
+        ],
+        "worldStrength": 0.45
+      },
+      "sha256": "3bb9c9fe4d02f6196b31af521b5f8cd3f915edc6cf424e2e651cdfce3ab58be0",
+      "sourceSceneFingerprint": "6950b1f78841a0724860033fbf492dca93df347f1fc8227492a8aa1279a2f54f",
+      "view": "side"
+    }
+  ],
+  "blenderVersion": "4.3.2",
+  "elapsedSeconds": 0,
+  "verification": {
+    "glb": {
+      "boundsTolerance": 0.00026896870100000004,
+      "checks": {
+        "boundsMatchNative": true,
+        "noDiagnosticCamerasOrLights": true,
+        "nonEmpty": true,
+        "trianglesMatchEncoded": true,
+        "trianglesMatchNative": true
+      },
+      "encoded": {
+        "animations": 0,
+        "cameras": 0,
+        "lights": 0,
+        "materials": 4,
+        "meshes": 66,
+        "morphMeshes": 0,
+        "nodes": 66,
+        "skins": 0,
+        "triangles": 38354
+      },
+      "reimportedBounds": {
+        "dimensions": [
+          2.08425236,
+          0.51337016,
+          2.68968701
+        ],
+        "max": [
+          1.05394101,
+          0.16589172,
+          1.35721028
+        ],
+        "min": [
+          -1.03031135,
+          -0.34747845,
+          -1.33247674
+        ]
+      },
+      "reimportedStatistics": {
+        "armatures": 0,
+        "materialSlots": 66,
+        "meshes": 66,
+        "objects": 66,
+        "shapeKeyObjects": 0,
+        "triangles": 38354,
+        "uvObjects": 0,
+        "vertices": 20017
+      },
+      "scope": "geometry counts, bounds and basic feature presence only",
+      "status": "passed"
+    },
+    "native": {
+      "fingerprintMatches": true,
+      "reopened": true,
+      "statistics": {
+        "armatures": 0,
+        "materialSlots": 66,
+        "meshes": 66,
+        "objects": 66,
+        "shapeKeyObjects": 0,
+        "triangles": 38354,
+        "uvObjects": 0,
+        "vertices": 19307
+      },
+      "status": "passed"
+    }
+  },
+  "warnings": [
+    "Diagnostic views are unregistered; they do not establish reference likeness.",
+    "GLB reimport checks geometry counts, bounds and basic feature presence, not visual equivalence.",
+    "Fingerprints cover the recorded state at the current frame, not all animation or simulation states.",
+    "Node-group internals and drivers are not exhaustively represented by the state fingerprints.",
+    "Static mesh modifiers are evaluated for GLB export; unapplied non-armature modifiers on skinned or shape-key meshes are unsupported.",
+    "Hidden or excluded meshes are rejected by this alpha so GLB export and diagnostic renders cannot silently use different asset scopes.",
+    "Object instances must be realized into explicit scene objects; curves and other non-mesh geometry must be converted before production inspection or export.",
+    "Unrealized evaluated instances, including Geometry Nodes instances, are rejected; realize their geometry before production inspection or export.",
+    "Viewport/render modifier visibility and enabled subdivision levels must agree so inventory, export and diagnostic renders use the same declared geometry.",
+    "Procedural Blender materials may need baking for faithful GLB appearance."
+  ],
+  "assessment": {
+    "referenceResemblance": "not-evaluated",
+    "gameReadiness": "not-evaluated"
+  },
+  "migration": {
+    "schema": "refas.production.legacy-import/v2",
+    "route": "glb",
+    "scope": "selected-archived-artifact-import",
+    "sourceProject": {
+      "schema": "refas.project-state/v1",
+      "version": "1.4.2",
+      "projectId": "wing-cover-dogfood",
+      "head": "cp_a45c8a02f85b5cf8b743",
+      "manifestSha256": "ade7d6bfe6f96d8b6ab9fd972e2b9d8c9d31eb24f8a220f66a1d92edc593fe47"
+    },
+    "checkpoint": {
+      "id": "cp_a744fb4e4fae0cd60712",
+      "manifestSha256": "363545c0579a7b63a789fe7fd8456436c6868034d4d9871f780fb251a630e7f9",
+      "legacyAuthorityValidation": "not-performed"
+    },
+    "artifact": {
+      "path": "assets/wing-cover.glb",
+      "kind": "artifact",
+      "sha256": "3fcf70e36a0b42723c3abed6ebc60cdfea0143e19c047ba802258753ee41fdec",
+      "bytes": 746976,
+      "capturedPath": "import/asset.glb",
+      "extensionsUsed": [],
+      "extensionsRequired": []
+    },
+    "reference": {
+      "path": "source/reference.png",
+      "sha256": "6076b27fadfcb1a929b306ce74d6b7ef22d1d8996102065df6a74012e3466148",
+      "bytes": 41281,
+      "legacyAuthority": "primary",
+      "legacyAcquisition": {
+        "kind": "generated-contract-reference",
+        "origin": "RefAs trusted contract harness"
+      }
+    },
+    "preserved": [
+      "Exact selected archived asset bytes",
+      "Exact captured project and checkpoint manifests",
+      "Exact original reference bytes",
+      "Old project files remain untouched"
+    ],
+    "conversion": "Reconstruct a Blender scene from supported GLB data and use production save/reopen checks",
+    "notImported": [
+      "Legacy checkpoint/transaction history as active production history",
+      "Legacy certificates, approvals, gates, findings and render evidence as current acceptance"
+    ],
+    "limitations": [
+      "GLB does not recover original modifiers, procedural graphs, construction scripts or sculpt history",
+      "External buffers/images are unsupported; importer feature handling and current-frame checks are bounded",
+      "Declared extensions are recorded; Blender importer support is not per-extension round-trip certification"
+    ],
+    "certification": {
+      "inherited": false,
+      "status": "not-evaluated"
+    },
+    "referenceResemblance": "not-evaluated",
+    "gameReadiness": "not-evaluated"
+  },
+  "restoredFrom": "da41ee883cde4066b42f1594522cdf2c"
+}

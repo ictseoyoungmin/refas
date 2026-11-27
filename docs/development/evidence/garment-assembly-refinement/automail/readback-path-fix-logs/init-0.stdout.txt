@@ -1,0 +1,24 @@
+{
+  "ok": true,
+  "schema": "refas.production.project/v2",
+  "name": "aurix-revision-readback",
+  "projectId": "1b9cca302b664b2b8ba69d147e57d817",
+  "head": null,
+  "sequence": 0,
+  "sources": [
+    {
+      "path": "sources/001-reference.png",
+      "name": "reference.png",
+      "role": "user-reference",
+      "sha256": "3c7856dd632f8a1cde8036078573f569db55b6af97fae853237d8a9356f3c872",
+      "bytes": 3215297
+    }
+  ],
+  "outputs": {},
+  "observations": [],
+  "inputs": {},
+  "revisions": [],
+  "incompleteRuns": [],
+  "referenceResemblance": "not-evaluated",
+  "gameReadiness": "not-evaluated"
+}

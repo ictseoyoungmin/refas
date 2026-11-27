@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "npm",
+    "run",
+    "test:production"
+  ],
+  "cwd": "/workspace/scratch/61afcdd4e3c6/refas",
+  "environment": {
+    "REFAS_BLENDER_TESTS": "1",
+    "REFAS_GODOT_TESTS": "1",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "startedUtc": "2026-11-22T18:53:36.780586+00:00",
+  "endedUtc": "2026-11-22T18:55:08.639715+00:00",
+  "elapsedSeconds": 91.85917241200013,
+  "returncode": 0
+}

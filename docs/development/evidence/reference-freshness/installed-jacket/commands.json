@@ -1,0 +1,245 @@
+[
+  {
+    "label": "01-init",
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "-B",
+      "/workspace/scratch/c52cb753f160/next-installed-refas/package/skills/refas/scripts/produce.py",
+      "init",
+      "--root",
+      "/workspace/scratch/c52cb753f160/next-jacket-refresh/project",
+      "--name",
+      "reference-refresh",
+      "--reference",
+      "/workspace/scratch/c52cb753f160/refas/examples/uniform-jacket/source/reference.png"
+    ],
+    "startedUnix": 1795343944.0626798,
+    "elapsedSeconds": 0.081,
+    "returncode": 0
+  },
+  {
+    "label": "02-run-a",
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "-B",
+      "/workspace/scratch/c52cb753f160/next-installed-refas/package/skills/refas/scripts/produce.py",
+      "run",
+      "--root",
+      "/workspace/scratch/c52cb753f160/next-jacket-refresh/project",
+      "--script",
+      "/workspace/scratch/c52cb753f160/next-jacket-refresh/import-a.py",
+      "--input-blend",
+      "/workspace/scratch/c52cb753f160/work/garment/joined-fold/candidate.blend",
+      "--intent",
+      "Capture the original native asset and its current references",
+      "--review-spec",
+      "/workspace/scratch/c52cb753f160/next-jacket-refresh/review-a.json",
+      "--size",
+      "192",
+      "--samples",
+      "4",
+      "--blender",
+      "/usr/bin/blender",
+      "--timeout",
+      "300",
+      "--expected-revision",
+      "none",
+      "--expected-sequence",
+      "0"
+    ],
+    "startedUnix": 1795343944.1434348,
+    "elapsedSeconds": 6.584,
+    "returncode": 0
+  },
+  {
+    "label": "03-adopt-reference-set",
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "-B",
+      "/workspace/scratch/c52cb753f160/next-installed-refas/package/skills/refas/scripts/produce.py",
+      "references",
+      "--root",
+      "/workspace/scratch/c52cb753f160/next-jacket-refresh/project",
+      "--reference",
+      "/workspace/scratch/c52cb753f160/refas/examples/uniform-jacket/source/reference.png",
+      "--reference",
+      "/workspace/scratch/c52cb753f160/next-jacket-refresh/change-request.txt",
+      "--expected-revision",
+      "964c33e53195403cb5c89b09fa699312",
+      "--expected-sequence",
+      "1"
+    ],
+    "startedUnix": 1795343950.7731571,
+    "elapsedSeconds": 0.198,
+    "returncode": 0
+  },
+  {
+    "label": "04-verify-stale",
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "-B",
+      "/workspace/scratch/c52cb753f160/next-installed-refas/package/skills/refas/scripts/produce.py",
+      "verify",
+      "--root",
+      "/workspace/scratch/c52cb753f160/next-jacket-refresh/project"
+    ],
+    "startedUnix": 1795343950.9710474,
+    "elapsedSeconds": 0.09,
+    "returncode": 0
+  },
+  {
+    "label": "05-manual-save-as",
+    "argv": [
+      "/usr/bin/blender",
+      "-b",
+      "--factory-startup",
+      "--threads",
+      "2",
+      "--python-exit-code",
+      "1",
+      "--python",
+      "/workspace/scratch/c52cb753f160/next-jacket-refresh/manual/save-as.py"
+    ],
+    "startedUnix": 1795343951.0615714,
+    "elapsedSeconds": 1.927,
+    "returncode": 0
+  },
+  {
+    "label": "06-run-b",
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "-B",
+      "/workspace/scratch/c52cb753f160/next-installed-refas/package/skills/refas/scripts/produce.py",
+      "run",
+      "--root",
+      "/workspace/scratch/c52cb753f160/next-jacket-refresh/project",
+      "--script",
+      "/workspace/scratch/c52cb753f160/next-jacket-refresh/import-b.py",
+      "--input-blend",
+      "/workspace/scratch/c52cb753f160/next-jacket-refresh/manual/edited.blend",
+      "--intent",
+      "Increase the wearer-left cuff band by 1 cm, retain the distal rim, other objects and materials, and adopt a new review context.",
+      "--review-spec",
+      "/workspace/scratch/c52cb753f160/next-jacket-refresh/review-b.json",
+      "--size",
+      "256",
+      "--samples",
+      "5",
+      "--blender",
+      "/usr/bin/blender",
+      "--timeout",
+      "300",
+      "--expected-revision",
+      "964c33e53195403cb5c89b09fa699312",
+      "--expected-sequence",
+      "2"
+    ],
+    "startedUnix": 1795343952.9889631,
+    "elapsedSeconds": 7.109,
+    "returncode": 0
+  },
+  {
+    "label": "07-verify-current",
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "-B",
+      "/workspace/scratch/c52cb753f160/next-installed-refas/package/skills/refas/scripts/produce.py",
+      "verify",
+      "--root",
+      "/workspace/scratch/c52cb753f160/next-jacket-refresh/project"
+    ],
+    "startedUnix": 1795343960.098246,
+    "elapsedSeconds": 0.098,
+    "returncode": 0
+  },
+  {
+    "label": "08-restore-a-under-b",
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "-B",
+      "/workspace/scratch/c52cb753f160/next-installed-refas/package/skills/refas/scripts/produce.py",
+      "restore",
+      "--root",
+      "/workspace/scratch/c52cb753f160/next-jacket-refresh/project",
+      "--revision",
+      "964c33e53195403cb5c89b09fa699312",
+      "--expected-revision",
+      "dadc7d826db14cf7910d2197f7a938b4",
+      "--expected-sequence",
+      "3"
+    ],
+    "startedUnix": 1795343960.2179718,
+    "elapsedSeconds": 0.366,
+    "returncode": 0
+  },
+  {
+    "label": "09-verify-restored",
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "-B",
+      "/workspace/scratch/c52cb753f160/next-installed-refas/package/skills/refas/scripts/produce.py",
+      "verify",
+      "--root",
+      "/workspace/scratch/c52cb753f160/next-jacket-refresh/project"
+    ],
+    "startedUnix": 1795343960.584359,
+    "elapsedSeconds": 0.22,
+    "returncode": 0
+  },
+  {
+    "label": "10-readopt-reference-a",
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "-B",
+      "/workspace/scratch/c52cb753f160/next-installed-refas/package/skills/refas/scripts/produce.py",
+      "references",
+      "--root",
+      "/workspace/scratch/c52cb753f160/next-jacket-refresh/project",
+      "--reference",
+      "/workspace/scratch/c52cb753f160/refas/examples/uniform-jacket/source/reference.png",
+      "--expected-revision",
+      "8a81a49041b24caea56933a3602d9340",
+      "--expected-sequence",
+      "4"
+    ],
+    "startedUnix": 1795343960.8054128,
+    "elapsedSeconds": 0.253,
+    "returncode": 0
+  },
+  {
+    "label": "11-same-content-noop",
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "-B",
+      "/workspace/scratch/c52cb753f160/next-installed-refas/package/skills/refas/scripts/produce.py",
+      "references",
+      "--root",
+      "/workspace/scratch/c52cb753f160/next-jacket-refresh/project",
+      "--reference",
+      "/workspace/scratch/c52cb753f160/next-jacket-refresh/same-reference-different-name.bin",
+      "--reference",
+      "/workspace/scratch/c52cb753f160/refas/examples/uniform-jacket/source/reference.png",
+      "--expected-revision",
+      "8a81a49041b24caea56933a3602d9340",
+      "--expected-sequence",
+      "5"
+    ],
+    "startedUnix": 1795343961.0669022,
+    "elapsedSeconds": 0.223,
+    "returncode": 0
+  },
+  {
+    "label": "12-restarted-status",
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "-B",
+      "/workspace/scratch/c52cb753f160/next-installed-refas/package/skills/refas/scripts/produce.py",
+      "status",
+      "--root",
+      "/workspace/scratch/c52cb753f160/next-jacket-refresh/project"
+    ],
+    "startedUnix": 1795343961.2907507,
+    "elapsedSeconds": 0.143,
+    "returncode": 0
+  }
+]

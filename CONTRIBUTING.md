@@ -16,4 +16,10 @@ Before opening a change:
 
 Do not add parallel `new`, `v2`, `final`, `backup`, or iteration-coded implementations. Replace a path deliberately and remove the superseded implementation in the same change.
 
+The canonical installed product is `skills/refas/`. Retained 1.x code lives
+once under `legacy/v1/` for explicit saved-project regressions and comparison;
+it is not a second production implementation or a package fallback. Update
+legacy test/example imports directly when their code moves. Product package
+checks must reject accidental reintroduction of old graphs, templates or runtimes.
+
 A green check does not override a visible regression. Reopen the owning capability when stronger evidence invalidates a prior acceptance, and retain rejected candidates as evidence.

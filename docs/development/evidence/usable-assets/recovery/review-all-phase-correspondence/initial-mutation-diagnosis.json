@@ -1,0 +1,344 @@
+[
+  {
+    "kind": "native",
+    "object": "Phase fixture 000",
+    "keys": [
+      [
+        "Basis",
+        0.0,
+        1.0
+      ],
+      [
+        "Intermediate pulse",
+        0.0,
+        1.0
+      ]
+    ],
+    "actions": [
+      "KeyAction"
+    ],
+    "nla": [
+      [
+        "Correspondence_Phase_Fixture",
+        false,
+        [
+          [
+            "KeyAction",
+            "KeyAction",
+            1.0,
+            97.0,
+            0.0
+          ]
+        ]
+      ]
+    ],
+    "action": null,
+    "samples": [
+      {
+        "frame": 1,
+        "values": [
+          0.0,
+          0.0
+        ],
+        "zMinMax": [
+          -0.009999999776482582,
+          0.009999999776482582
+        ]
+      },
+      {
+        "frame": 24,
+        "values": [
+          0.0,
+          0.9583333134651184
+        ],
+        "zMinMax": [
+          -0.009999999776482582,
+          0.013833332806825638
+        ]
+      },
+      {
+        "frame": 25,
+        "values": [
+          0.0,
+          1.0
+        ],
+        "zMinMax": [
+          -0.009999999776482582,
+          0.0139999995008111
+        ]
+      },
+      {
+        "frame": 26,
+        "values": [
+          0.0,
+          0.9583333134651184
+        ],
+        "zMinMax": [
+          -0.009999999776482582,
+          0.013833332806825638
+        ]
+      },
+      {
+        "frame": 49,
+        "values": [
+          0.0,
+          0.0
+        ],
+        "zMinMax": [
+          -0.009999999776482582,
+          0.009999999776482582
+        ]
+      },
+      {
+        "frame": 73,
+        "values": [
+          0.0,
+          1.0
+        ],
+        "zMinMax": [
+          -0.009999999776482582,
+          0.0139999995008111
+        ]
+      },
+      {
+        "frame": 97,
+        "values": [
+          0.0,
+          0.0
+        ],
+        "zMinMax": [
+          -0.009999999776482582,
+          0.009999999776482582
+        ]
+      }
+    ]
+  },
+  {
+    "kind": "baseline",
+    "object": "Phase fixture 000",
+    "keys": [
+      [
+        "Basis",
+        0.0,
+        1.0
+      ],
+      [
+        "Intermediate pulse",
+        0.0,
+        1.0
+      ]
+    ],
+    "actions": [
+      "Correspondence_Phase_Fixture_Phase fixture 000"
+    ],
+    "nla": [
+      [
+        "Correspondence_Phase_Fixture",
+        true,
+        [
+          [
+            "Correspondence_Phase_Fixture_Phase fixture 000",
+            "Correspondence_Phase_Fixture_Phase fixture 000",
+            1.0,
+            97.0,
+            0.0
+          ]
+        ]
+      ]
+    ],
+    "action": "Correspondence_Phase_Fixture_Phase fixture 000",
+    "samples": [
+      {
+        "frame": 1,
+        "values": [
+          0.0,
+          0.0
+        ],
+        "zMinMax": [
+          -0.009999999776482582,
+          0.009999999776482582
+        ]
+      },
+      {
+        "frame": 24,
+        "values": [
+          0.0,
+          0.9583333134651184
+        ],
+        "zMinMax": [
+          -0.009999999776482582,
+          0.013833332806825638
+        ]
+      },
+      {
+        "frame": 25,
+        "values": [
+          0.0,
+          1.0
+        ],
+        "zMinMax": [
+          -0.009999999776482582,
+          0.0139999995008111
+        ]
+      },
+      {
+        "frame": 26,
+        "values": [
+          0.0,
+          0.9583333134651184
+        ],
+        "zMinMax": [
+          -0.009999999776482582,
+          0.013833332806825638
+        ]
+      },
+      {
+        "frame": 49,
+        "values": [
+          0.0,
+          0.0
+        ],
+        "zMinMax": [
+          -0.009999999776482582,
+          0.009999999776482582
+        ]
+      },
+      {
+        "frame": 73,
+        "values": [
+          0.0,
+          1.0
+        ],
+        "zMinMax": [
+          -0.009999999776482582,
+          0.0139999995008111
+        ]
+      },
+      {
+        "frame": 97,
+        "values": [
+          0.0,
+          0.0
+        ],
+        "zMinMax": [
+          -0.009999999776482582,
+          0.009999999776482582
+        ]
+      }
+    ]
+  },
+  {
+    "kind": "mutated",
+    "object": "Phase fixture 000",
+    "keys": [
+      [
+        "Basis",
+        0.0,
+        1.0
+      ],
+      [
+        "Intermediate pulse",
+        0.0,
+        1.0
+      ]
+    ],
+    "actions": [
+      "Correspondence_Phase_Fixture_Phase fixture 000"
+    ],
+    "nla": [
+      [
+        "Correspondence_Phase_Fixture",
+        true,
+        [
+          [
+            "Correspondence_Phase_Fixture_Phase fixture 000",
+            "Correspondence_Phase_Fixture_Phase fixture 000",
+            1.0,
+            97.0,
+            0.0
+          ]
+        ]
+      ]
+    ],
+    "action": "Correspondence_Phase_Fixture_Phase fixture 000",
+    "samples": [
+      {
+        "frame": 1,
+        "values": [
+          0.0,
+          0.0
+        ],
+        "zMinMax": [
+          -0.009999999776482582,
+          0.009999999776482582
+        ]
+      },
+      {
+        "frame": 24,
+        "values": [
+          0.0,
+          0.9583333134651184
+        ],
+        "zMinMax": [
+          -0.009999999776482582,
+          0.013833332806825638
+        ]
+      },
+      {
+        "frame": 25,
+        "values": [
+          0.0,
+          1.0
+        ],
+        "zMinMax": [
+          -0.009999999776482582,
+          0.0139999995008111
+        ]
+      },
+      {
+        "frame": 26,
+        "values": [
+          0.0,
+          0.9583333134651184
+        ],
+        "zMinMax": [
+          -0.009999999776482582,
+          0.013833332806825638
+        ]
+      },
+      {
+        "frame": 49,
+        "values": [
+          0.0,
+          0.0
+        ],
+        "zMinMax": [
+          -0.009999999776482582,
+          0.009999999776482582
+        ]
+      },
+      {
+        "frame": 73,
+        "values": [
+          0.0,
+          1.0
+        ],
+        "zMinMax": [
+          -0.009999999776482582,
+          0.0139999995008111
+        ]
+      },
+      {
+        "frame": 97,
+        "values": [
+          0.0,
+          0.0
+        ],
+        "zMinMax": [
+          -0.009999999776482582,
+          0.009999999776482582
+        ]
+      }
+    ]
+  }
+]

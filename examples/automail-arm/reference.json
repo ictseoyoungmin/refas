@@ -1,0 +1,79 @@
+{
+  "schema": "refas.dogfood.reference/v1",
+  "id": "automail-arm",
+  "role": "user-design-reference",
+  "sourceFile": "source/reference.png",
+  "uploadedName": "image(20261121-211410).png",
+  "sha256": "3c7856dd632f8a1cde8036078573f569db55b6af97fae853237d8a9356f3c872",
+  "bytes": 3215297,
+  "pixelSize": [
+    1447,
+    1087
+  ],
+  "receivedDate": "2026-11-22",
+  "timezone": "Asia/Seoul",
+  "authority": "User explicitly selected this exact automail sheet alongside the existing jacket for RefAs 2.0 validation.",
+  "scope": "One complete fictional cybernetic arm with shoulder interface, upper arm, elbow, forearm, wrist and five-digit hand. No wearer body.",
+  "viewRegistration": "Design-sheet labels only; source cameras are not calibrated.",
+  "views": [
+    {
+      "role": "front",
+      "regionPixels": [
+        125,
+        116,
+        266,
+        692
+      ]
+    },
+    {
+      "role": "left",
+      "regionPixels": [
+        278,
+        116,
+        421,
+        692
+      ]
+    },
+    {
+      "role": "back",
+      "regionPixels": [
+        441,
+        116,
+        588,
+        692
+      ]
+    },
+    {
+      "role": "front-three-quarter",
+      "regionPixels": [
+        602,
+        116,
+        804,
+        692
+      ]
+    },
+    {
+      "role": "rear-three-quarter",
+      "regionPixels": [
+        811,
+        116,
+        1002,
+        692
+      ]
+    }
+  ],
+  "sourceLabelsMm": {
+    "totalLength": 760,
+    "shoulderInterface": 110,
+    "upperArm": 215,
+    "forearm": 250,
+    "hand": 185
+  },
+  "ambiguities": [
+    "The shoulder-interface 110 mm label may describe a connector diameter/extent; its allocation along the 760 mm total is an interpretation, not a manufacturing drawing.",
+    "Views show different finger/thumb poses and perspective. No single neutral pose matches every panel exactly.",
+    "Front and rear hand surfaces and thumb side must be resolved against the actual source before choosing a left/right arm convention.",
+    "Hidden attachment geometry and hydraulic routing are inferred.",
+    "Weight, power-assist, neural-interface and motion-range text are concept-sheet claims, not validated engineering performance."
+  ]
+}

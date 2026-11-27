@@ -6,7 +6,7 @@ import {
   createCertificationPolicy,
   evaluateCertificationPolicy,
   validateClaimCertificationDecision,
-} from '../skills/refas/scripts/lib/index.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
 
 test('public generic certification detects P16 nodes even when a policy hides them behind a generic selector', () => {
   const policy = createCertificationPolicy({

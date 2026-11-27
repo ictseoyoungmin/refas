@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "godot",
+    "--headless",
+    "--path",
+    "/workspace/scratch/5765cde18054/refas/examples/engine-playback",
+    "--script",
+    "/tmp/refas_review_skin_weights-diagnosis.gd"
+  ],
+  "returncode": 0
+}

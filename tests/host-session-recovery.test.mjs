@@ -8,7 +8,7 @@ import {
   getHostEvents,
   initProject,
   openHostSession,
-} from '../skills/refas/scripts/lib/index.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
 
 test('reopening a zero-sequence host state repairs exactly one session-opened event', async (t) => {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), 'refas-host-recovery-'));

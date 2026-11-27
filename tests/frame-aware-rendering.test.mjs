@@ -4,9 +4,9 @@ import os from 'node:os';
 import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {test} from 'node:test';
-import {createSegmentPrism, partsToGlb} from '../skills/refas/scripts/lib/index.mjs';
+import {createSegmentPrism, partsToGlb} from '../legacy/v1/scripts/lib/index.mjs';
 
-const CLI=path.resolve('skills/refas/scripts/refas.mjs');
+const CLI=path.resolve('legacy/v1/scripts/refas.mjs');
 const DIGEST='a'.repeat(64);
 const material={frame:{baseColor:[0.25,0.55,0.8,1],metallic:0.1,roughness:0.45}};
 

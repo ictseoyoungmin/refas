@@ -1,0 +1,2938 @@
+{
+  "statistics": {
+    "vertices": 16948,
+    "edges": 47872,
+    "polygons": 31253,
+    "triangles": 33272,
+    "components": 311,
+    "surfaceComponents": 1,
+    "nonManifoldVertices": 34,
+    "boundaryEdges": 0,
+    "boundaryGroups": 0,
+    "closedBoundaryLoops": 0,
+    "wireEdges": 0,
+    "looseVertices": 310,
+    "nonManifoldEdges": 17,
+    "inconsistentWindingEdges": 0,
+    "degenerateTriangles": 0,
+    "negativeClosedComponents": 0,
+    "nearZeroClosedComponents": 0
+  },
+  "nonManifoldEdges": [
+    {
+      "edge": {
+        "edge": 23647,
+        "vertices": [
+          4168,
+          12642
+        ],
+        "pointsM": [
+          [
+            -0.1050754189491272,
+            -0.06294760853052139,
+            1.3808773756027222
+          ],
+          [
+            -0.10494417697191238,
+            -0.06137504056096077,
+            1.3800123929977417
+          ]
+        ],
+        "incidentFaces": [
+          30236,
+          30239,
+          30240,
+          30243
+        ]
+      },
+      "incidentPolygonDetails": [
+        {
+          "polygon": 30236,
+          "vertices": [
+            4168,
+            426,
+            8900,
+            12642
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        },
+        {
+          "polygon": 30239,
+          "vertices": [
+            4168,
+            427,
+            8901,
+            12642
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        },
+        {
+          "polygon": 30240,
+          "vertices": [
+            4161,
+            4168,
+            12642,
+            12635
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        },
+        {
+          "polygon": 30243,
+          "vertices": [
+            4171,
+            4168,
+            12642,
+            12645
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        }
+      ]
+    },
+    {
+      "edge": {
+        "edge": 23662,
+        "vertices": [
+          2038,
+          10512
+        ],
+        "pointsM": [
+          [
+            0.10427176207304001,
+            -0.08610521256923676,
+            1.3567110300064087
+          ],
+          [
+            0.10296763479709625,
+            -0.08551603555679321,
+            1.355650544166565
+          ]
+        ],
+        "incidentFaces": [
+          30261,
+          30879,
+          30880,
+          30882
+        ]
+      },
+      "incidentPolygonDetails": [
+        {
+          "polygon": 30261,
+          "vertices": [
+            2031,
+            2038,
+            10512,
+            10505
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        },
+        {
+          "polygon": 30879,
+          "vertices": [
+            2038,
+            4210,
+            12684,
+            10512
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        },
+        {
+          "polygon": 30880,
+          "vertices": [
+            4209,
+            2038,
+            10512,
+            12683
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        },
+        {
+          "polygon": 30882,
+          "vertices": [
+            2038,
+            452,
+            8926,
+            10512
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        }
+      ]
+    },
+    {
+      "edge": {
+        "edge": 23902,
+        "vertices": [
+          754,
+          9228
+        ],
+        "pointsM": [
+          [
+            0.08847178518772125,
+            -0.0800066739320755,
+            1.3711674213409424
+          ],
+          [
+            0.08843310922384262,
+            -0.07843496650457382,
+            1.3705461025238037
+          ]
+        ],
+        "incidentFaces": [
+          30576,
+          30578,
+          30579,
+          30582
+        ]
+      },
+      "incidentPolygonDetails": [
+        {
+          "polygon": 30576,
+          "vertices": [
+            754,
+            5,
+            8479,
+            9228
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        },
+        {
+          "polygon": 30578,
+          "vertices": [
+            754,
+            2838,
+            11312,
+            9228
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        },
+        {
+          "polygon": 30579,
+          "vertices": [
+            2837,
+            754,
+            9228,
+            11311
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        },
+        {
+          "polygon": 30582,
+          "vertices": [
+            9,
+            754,
+            9228,
+            8483
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        }
+      ]
+    },
+    {
+      "edge": {
+        "edge": 23905,
+        "vertices": [
+          764,
+          9238
+        ],
+        "pointsM": [
+          [
+            0.09202162176370621,
+            -0.06638040393590927,
+            1.3759909868240356
+          ],
+          [
+            0.09155948460102081,
+            -0.06526485085487366,
+            1.3746753931045532
+          ]
+        ],
+        "incidentFaces": [
+          30581,
+          30585,
+          30586,
+          30587
+        ]
+      },
+      "incidentPolygonDetails": [
+        {
+          "polygon": 30581,
+          "vertices": [
+            764,
+            9,
+            8483,
+            9238
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        },
+        {
+          "polygon": 30585,
+          "vertices": [
+            764,
+            11,
+            8485,
+            9238
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        },
+        {
+          "polygon": 30586,
+          "vertices": [
+            2843,
+            764,
+            9238,
+            11317
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        },
+        {
+          "polygon": 30587,
+          "vertices": [
+            2845,
+            764,
+            9238,
+            11319
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        }
+      ]
+    },
+    {
+      "edge": {
+        "edge": 23935,
+        "vertices": [
+          3660,
+          12134
+        ],
+        "pointsM": [
+          [
+            -0.07291828095912933,
+            0.08911838382482529,
+            1.432568907737732
+          ],
+          [
+            -0.07188638299703598,
+            0.08765513449907303,
+            1.4323854446411133
+          ]
+        ],
+        "incidentFaces": [
+          30752,
+          30754,
+          30756,
+          30758
+        ]
+      },
+      "incidentPolygonDetails": [
+        {
+          "polygon": 30752,
+          "vertices": [
+            3660,
+            272,
+            8746,
+            12134
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        },
+        {
+          "polygon": 30754,
+          "vertices": [
+            3661,
+            3660,
+            12134,
+            12135
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        },
+        {
+          "polygon": 30756,
+          "vertices": [
+            3660,
+            276,
+            8750,
+            12134
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        },
+        {
+          "polygon": 30758,
+          "vertices": [
+            3677,
+            3660,
+            12134,
+            12151
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        }
+      ]
+    },
+    {
+      "edge": {
+        "edge": 24025,
+        "vertices": [
+          8040,
+          16514
+        ],
+        "pointsM": [
+          [
+            -0.09927380084991455,
+            -0.08699800074100494,
+            1.2184863090515137
+          ],
+          [
+            -0.09811433404684067,
+            -0.0858045220375061,
+            1.2191705703735352
+          ]
+        ],
+        "incidentFaces": [
+          31132,
+          31137,
+          31141,
+          31144
+        ]
+      },
+      "incidentPolygonDetails": [
+        {
+          "polygon": 31132,
+          "vertices": [
+            8040,
+            4769,
+            13243,
+            16514
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        },
+        {
+          "polygon": 31137,
+          "vertices": [
+            4777,
+            8040,
+            16514,
+            13251
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        },
+        {
+          "polygon": 31141,
+          "vertices": [
+            8040,
+            4790,
+            13264,
+            16514
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        },
+        {
+          "polygon": 31144,
+          "vertices": [
+            4794,
+            8040,
+            16514,
+            13268
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        }
+      ]
+    },
+    {
+      "edge": {
+        "edge": 24040,
+        "vertices": [
+          8160,
+          16634
+        ],
+        "pointsM": [
+          [
+            -0.0788678228855133,
+            -0.087429940700531,
+            1.0970412492752075
+          ],
+          [
+            -0.07854096591472626,
+            -0.08907371014356613,
+            1.09673011302948
+          ]
+        ],
+        "incidentFaces": [
+          31180,
+          31183,
+          31185,
+          31188
+        ]
+      },
+      "incidentPolygonDetails": [
+        {
+          "polygon": 31180,
+          "vertices": [
+            2776,
+            8160,
+            16634,
+            11250
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        },
+        {
+          "polygon": 31183,
+          "vertices": [
+            2780,
+            8160,
+            16634,
+            11254
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        },
+        {
+          "polygon": 31185,
+          "vertices": [
+            8160,
+            723,
+            9197,
+            16634
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        },
+        {
+          "polygon": 31188,
+          "vertices": [
+            8160,
+            2784,
+            11258,
+            16634
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        }
+      ]
+    },
+    {
+      "edge": {
+        "edge": 47218,
+        "vertices": [
+          749,
+          9223
+        ],
+        "pointsM": [
+          [
+            0.07934979349374771,
+            -0.08460607379674911,
+            1.3674315214157104
+          ],
+          [
+            0.07916977256536484,
+            -0.08344138413667679,
+            1.3660954236984253
+          ]
+        ],
+        "incidentFaces": [
+          29908,
+          30256,
+          30569,
+          30570
+        ]
+      },
+      "incidentPolygonDetails": [
+        {
+          "polygon": 29908,
+          "vertices": [
+            2830,
+            749,
+            9223,
+            11304
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        },
+        {
+          "polygon": 30256,
+          "vertices": [
+            749,
+            441,
+            8915,
+            9223
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        },
+        {
+          "polygon": 30569,
+          "vertices": [
+            749,
+            2829,
+            11303,
+            9223
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        },
+        {
+          "polygon": 30570,
+          "vertices": [
+            1,
+            749,
+            9223,
+            8475
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        }
+      ]
+    },
+    {
+      "edge": {
+        "edge": 47239,
+        "vertices": [
+          5027,
+          13501
+        ],
+        "pointsM": [
+          [
+            0.09400986135005951,
+            -0.05216870456933975,
+            1.3961397409439087
+          ],
+          [
+            0.09285803139209747,
+            -0.05143725126981735,
+            1.3951715230941772
+          ]
+        ],
+        "incidentFaces": [
+          29937,
+          30598,
+          30599,
+          30601
+        ]
+      },
+      "incidentPolygonDetails": [
+        {
+          "polygon": 29937,
+          "vertices": [
+            2882,
+            5027,
+            13501,
+            11356
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        },
+        {
+          "polygon": 30598,
+          "vertices": [
+            5027,
+            23,
+            8497,
+            13501
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        },
+        {
+          "polygon": 30599,
+          "vertices": [
+            2876,
+            5027,
+            13501,
+            11350
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        },
+        {
+          "polygon": 30601,
+          "vertices": [
+            5027,
+            26,
+            8500,
+            13501
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        }
+      ]
+    },
+    {
+      "edge": {
+        "edge": 47266,
+        "vertices": [
+          945,
+          9419
+        ],
+        "pointsM": [
+          [
+            0.1212192103266716,
+            -0.025606466457247734,
+            1.4317238330841064
+          ],
+          [
+            0.12026429921388626,
+            -0.024805529043078423,
+            1.4304708242416382
+          ]
+        ],
+        "incidentFaces": [
+          29970,
+          29976,
+          30636,
+          30638
+        ]
+      },
+      "incidentPolygonDetails": [
+        {
+          "polygon": 29970,
+          "vertices": [
+            945,
+            3012,
+            11486,
+            9419
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        },
+        {
+          "polygon": 29976,
+          "vertices": [
+            3026,
+            945,
+            9419,
+            11500
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        },
+        {
+          "polygon": 30636,
+          "vertices": [
+            69,
+            945,
+            9419,
+            8543
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        },
+        {
+          "polygon": 30638,
+          "vertices": [
+            945,
+            3025,
+            11499,
+            9419
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        }
+      ]
+    },
+    {
+      "edge": {
+        "edge": 47489,
+        "vertices": [
+          7391,
+          15865
+        ],
+        "pointsM": [
+          [
+            0.12204791605472565,
+            -0.10847489535808563,
+            1.2785815000534058
+          ],
+          [
+            0.12326768040657043,
+            -0.10746583342552185,
+            1.2782883644104004
+          ]
+        ],
+        "incidentFaces": [
+          30297,
+          30916,
+          30917,
+          30919
+        ]
+      },
+      "incidentPolygonDetails": [
+        {
+          "polygon": 30297,
+          "vertices": [
+            4314,
+            7391,
+            15865,
+            12788
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        },
+        {
+          "polygon": 30916,
+          "vertices": [
+            7391,
+            484,
+            8958,
+            15865
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        },
+        {
+          "polygon": 30917,
+          "vertices": [
+            4324,
+            7391,
+            15865,
+            12798
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        },
+        {
+          "polygon": 30919,
+          "vertices": [
+            7391,
+            4323,
+            12797,
+            15865
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        }
+      ]
+    },
+    {
+      "edge": {
+        "edge": 47499,
+        "vertices": [
+          487,
+          8961
+        ],
+        "pointsM": [
+          [
+            0.12093298137187958,
+            -0.11519892513751984,
+            1.2665019035339355
+          ],
+          [
+            0.11990969628095627,
+            -0.11409700661897659,
+            1.267491102218628
+          ]
+        ],
+        "incidentFaces": [
+          30307,
+          30308,
+          30310,
+          30921
+        ]
+      },
+      "incidentPolygonDetails": [
+        {
+          "polygon": 30307,
+          "vertices": [
+            4338,
+            487,
+            8961,
+            12812
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        },
+        {
+          "polygon": 30308,
+          "vertices": [
+            487,
+            7431,
+            15905,
+            8961
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        },
+        {
+          "polygon": 30310,
+          "vertices": [
+            487,
+            493,
+            8967,
+            8961
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        },
+        {
+          "polygon": 30921,
+          "vertices": [
+            4329,
+            487,
+            8961,
+            12803
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        }
+      ]
+    },
+    {
+      "edge": {
+        "edge": 47511,
+        "vertices": [
+          2215,
+          10689
+        ],
+        "pointsM": [
+          [
+            0.12377407401800156,
+            -0.09507853537797928,
+            1.2615820169448853
+          ],
+          [
+            0.12214504182338715,
+            -0.09492671489715576,
+            1.2623299360275269
+          ]
+        ],
+        "incidentFaces": [
+          30321,
+          30326,
+          30944,
+          30946
+        ]
+      },
+      "incidentPolygonDetails": [
+        {
+          "polygon": 30321,
+          "vertices": [
+            4375,
+            2215,
+            10689,
+            12849
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        },
+        {
+          "polygon": 30326,
+          "vertices": [
+            2215,
+            510,
+            8984,
+            10689
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        },
+        {
+          "polygon": 30944,
+          "vertices": [
+            4379,
+            2215,
+            10689,
+            12853
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        },
+        {
+          "polygon": 30946,
+          "vertices": [
+            2215,
+            4378,
+            12852,
+            10689
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        }
+      ]
+    },
+    {
+      "edge": {
+        "edge": 47517,
+        "vertices": [
+          4397,
+          12871
+        ],
+        "pointsM": [
+          [
+            0.10661447048187256,
+            -0.11306679248809814,
+            1.248279094696045
+          ],
+          [
+            0.10544660687446594,
+            -0.11170247197151184,
+            1.2482330799102783
+          ]
+        ],
+        "incidentFaces": [
+          30330,
+          30950,
+          30952,
+          30956
+        ]
+      },
+      "incidentPolygonDetails": [
+        {
+          "polygon": 30330,
+          "vertices": [
+            2243,
+            4397,
+            12871,
+            10717
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        },
+        {
+          "polygon": 30950,
+          "vertices": [
+            4397,
+            511,
+            8985,
+            12871
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        },
+        {
+          "polygon": 30952,
+          "vertices": [
+            513,
+            4397,
+            12871,
+            8987
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        },
+        {
+          "polygon": 30956,
+          "vertices": [
+            4397,
+            2239,
+            10713,
+            12871
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        }
+      ]
+    },
+    {
+      "edge": {
+        "edge": 47671,
+        "vertices": [
+          711,
+          9185
+        ],
+        "pointsM": [
+          [
+            -0.08227843046188354,
+            -0.09125831723213196,
+            1.1257317066192627
+          ],
+          [
+            -0.08118343353271484,
+            -0.09267672151327133,
+            1.1256132125854492
+          ]
+        ],
+        "incidentFaces": [
+          30538,
+          30540,
+          30541,
+          31170
+        ]
+      },
+      "incidentPolygonDetails": [
+        {
+          "polygon": 30538,
+          "vertices": [
+            2743,
+            711,
+            9185,
+            11217
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        },
+        {
+          "polygon": 30540,
+          "vertices": [
+            711,
+            2742,
+            11216,
+            9185
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        },
+        {
+          "polygon": 30541,
+          "vertices": [
+            709,
+            711,
+            9185,
+            9183
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        },
+        {
+          "polygon": 31170,
+          "vertices": [
+            711,
+            2749,
+            11223,
+            9185
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        }
+      ]
+    },
+    {
+      "edge": {
+        "edge": 47685,
+        "vertices": [
+          2797,
+          11271
+        ],
+        "pointsM": [
+          [
+            -0.07459858804941177,
+            -0.08208487927913666,
+            1.0728737115859985
+          ],
+          [
+            -0.07328788936138153,
+            -0.08144356310367584,
+            1.0727488994598389
+          ]
+        ],
+        "incidentFaces": [
+          30559,
+          31193,
+          31195,
+          31201
+        ]
+      },
+      "incidentPolygonDetails": [
+        {
+          "polygon": 30559,
+          "vertices": [
+            2795,
+            2797,
+            11271,
+            11269
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        },
+        {
+          "polygon": 31193,
+          "vertices": [
+            2799,
+            2797,
+            11271,
+            11273
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        },
+        {
+          "polygon": 31195,
+          "vertices": [
+            2797,
+            2798,
+            11272,
+            11271
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        },
+        {
+          "polygon": 31201,
+          "vertices": [
+            2797,
+            2802,
+            11276,
+            11271
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        }
+      ]
+    },
+    {
+      "edge": {
+        "edge": 47835,
+        "vertices": [
+          2647,
+          11121
+        ],
+        "pointsM": [
+          [
+            -0.10775540769100189,
+            -0.09138014167547226,
+            1.2372838258743286
+          ],
+          [
+            -0.1063239797949791,
+            -0.09070786088705063,
+            1.2381435632705688
+          ]
+        ],
+        "incidentFaces": [
+          31123,
+          31126,
+          31131,
+          31133
+        ]
+      },
+      "incidentPolygonDetails": [
+        {
+          "polygon": 31123,
+          "vertices": [
+            2647,
+            4759,
+            13233,
+            11121
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        },
+        {
+          "polygon": 31126,
+          "vertices": [
+            4761,
+            2647,
+            11121,
+            13235
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        },
+        {
+          "polygon": 31131,
+          "vertices": [
+            2647,
+            4764,
+            13238,
+            11121
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        },
+        {
+          "polygon": 31133,
+          "vertices": [
+            4769,
+            2647,
+            11121,
+            13243
+          ],
+          "material": 1,
+          "side": "rim",
+          "repeatedVertices": false
+        }
+      ]
+    }
+  ],
+  "nonManifoldVertices": {
+    "count": 34,
+    "items": [
+      {
+        "vertex": 487,
+        "pointM": [
+          0.12093298137187958,
+          -0.11519892513751984,
+          1.2665019035339355
+        ],
+        "faceFans": 1,
+        "fanFaceSamples": [
+          [
+            5552,
+            5584,
+            5586,
+            5588,
+            12827,
+            12900,
+            30307,
+            30308,
+            30310,
+            30921
+          ]
+        ],
+        "fanSamplesTruncated": false,
+        "boundaryDegree": 0,
+        "wireDegree": 0,
+        "overfullEdge": true
+      },
+      {
+        "vertex": 711,
+        "pointM": [
+          -0.08227843046188354,
+          -0.09125831723213196,
+          1.1257317066192627
+        ],
+        "faceFans": 1,
+        "fanFaceSamples": [
+          [
+            7302,
+            7303,
+            7304,
+            7305,
+            7306,
+            7307,
+            7310,
+            7331,
+            7335,
+            14508,
+            14512,
+            14513,
+            14526,
+            14528,
+            14529,
+            14544,
+            14545,
+            30538,
+            30540,
+            30541,
+            31170
+          ]
+        ],
+        "fanSamplesTruncated": false,
+        "boundaryDegree": 0,
+        "wireDegree": 0,
+        "overfullEdge": true
+      },
+      {
+        "vertex": 749,
+        "pointM": [
+          0.07934979349374771,
+          -0.08460607379674911,
+          1.3674315214157104
+        ],
+        "faceFans": 1,
+        "fanFaceSamples": [
+          [
+            0,
+            15,
+            5092,
+            5093,
+            5098,
+            5100,
+            5102,
+            5108,
+            7530,
+            7546,
+            12466,
+            12467,
+            12471,
+            12472,
+            12473,
+            12480,
+            12489,
+            12491,
+            12498,
+            29908,
+            30256,
+            30569,
+            30570
+          ]
+        ],
+        "fanSamplesTruncated": false,
+        "boundaryDegree": 0,
+        "wireDegree": 0,
+        "overfullEdge": true
+      },
+      {
+        "vertex": 754,
+        "pointM": [
+          0.08847178518772125,
+          -0.0800066739320755,
+          1.3711674213409424
+        ],
+        "faceFans": 1,
+        "fanFaceSamples": [
+          [
+            17,
+            37,
+            38,
+            7550,
+            7551,
+            7552,
+            7554,
+            7555,
+            7570,
+            30576,
+            30578,
+            30579,
+            30582
+          ]
+        ],
+        "fanSamplesTruncated": false,
+        "boundaryDegree": 0,
+        "wireDegree": 0,
+        "overfullEdge": true
+      },
+      {
+        "vertex": 764,
+        "pointM": [
+          0.09202162176370621,
+          -0.06638040393590927,
+          1.3759909868240356
+        ],
+        "faceFans": 1,
+        "fanFaceSamples": [
+          [
+            38,
+            51,
+            7570,
+            7577,
+            7579,
+            7582,
+            7583,
+            7590,
+            30581,
+            30585,
+            30586,
+            30587
+          ]
+        ],
+        "fanSamplesTruncated": false,
+        "boundaryDegree": 0,
+        "wireDegree": 0,
+        "overfullEdge": true
+      },
+      {
+        "vertex": 945,
+        "pointM": [
+          0.1212192103266716,
+          -0.025606466457247734,
+          1.4317238330841064
+        ],
+        "faceFans": 1,
+        "fanFaceSamples": [
+          [
+            725,
+            726,
+            777,
+            8224,
+            8225,
+            8226,
+            8272,
+            29970,
+            29976,
+            30636,
+            30638
+          ]
+        ],
+        "fanSamplesTruncated": false,
+        "boundaryDegree": 0,
+        "wireDegree": 0,
+        "overfullEdge": true
+      },
+      {
+        "vertex": 2038,
+        "pointM": [
+          0.10427176207304001,
+          -0.08610521256923676,
+          1.3567110300064087
+        ],
+        "faceFans": 1,
+        "fanFaceSamples": [
+          [
+            5125,
+            5126,
+            5133,
+            5148,
+            12505,
+            12508,
+            12510,
+            12511,
+            12519,
+            12533,
+            12534,
+            30261,
+            30879,
+            30880,
+            30882
+          ]
+        ],
+        "fanSamplesTruncated": false,
+        "boundaryDegree": 0,
+        "wireDegree": 0,
+        "overfullEdge": true
+      },
+      {
+        "vertex": 2215,
+        "pointM": [
+          0.12377407401800156,
+          -0.09507853537797928,
+          1.2615820169448853
+        ],
+        "faceFans": 1,
+        "fanFaceSamples": [
+          [
+            5672,
+            5681,
+            5685,
+            5707,
+            5718,
+            13005,
+            13006,
+            13007,
+            13009,
+            13012,
+            13031,
+            13032,
+            30321,
+            30326,
+            30944,
+            30946
+          ]
+        ],
+        "fanSamplesTruncated": false,
+        "boundaryDegree": 0,
+        "wireDegree": 0,
+        "overfullEdge": true
+      },
+      {
+        "vertex": 2647,
+        "pointM": [
+          -0.10775540769100189,
+          -0.09138014167547226,
+          1.2372838258743286
+        ],
+        "faceFans": 1,
+        "fanFaceSamples": [
+          [
+            6979,
+            6994,
+            7003,
+            7006,
+            14220,
+            14224,
+            14232,
+            14237,
+            14240,
+            14241,
+            14259,
+            14260,
+            14271,
+            14272,
+            31123,
+            31126,
+            31131,
+            31133
+          ]
+        ],
+        "fanSamplesTruncated": false,
+        "boundaryDegree": 0,
+        "wireDegree": 0,
+        "overfullEdge": true
+      },
+      {
+        "vertex": 2797,
+        "pointM": [
+          -0.07459858804941177,
+          -0.08208487927913666,
+          1.0728737115859985
+        ],
+        "faceFans": 1,
+        "fanFaceSamples": [
+          [
+            7441,
+            7452,
+            7453,
+            14667,
+            14668,
+            14680,
+            30559,
+            31193,
+            31195,
+            31201
+          ]
+        ],
+        "fanSamplesTruncated": false,
+        "boundaryDegree": 0,
+        "wireDegree": 0,
+        "overfullEdge": true
+      },
+      {
+        "vertex": 3660,
+        "pointM": [
+          -0.07291828095912933,
+          0.08911838382482529,
+          1.432568907737732
+        ],
+        "faceFans": 1,
+        "fanFaceSamples": [
+          [
+            3097,
+            3101,
+            3177,
+            3185,
+            10551,
+            10554,
+            10558,
+            10577,
+            10578,
+            10579,
+            10623,
+            10627,
+            10628,
+            10629,
+            10632,
+            30752,
+            30754,
+            30756,
+            30758
+          ]
+        ],
+        "fanSamplesTruncated": false,
+        "boundaryDegree": 0,
+        "wireDegree": 0,
+        "overfullEdge": true
+      },
+      {
+        "vertex": 4168,
+        "pointM": [
+          -0.1050754189491272,
+          -0.06294760853052139,
+          1.3808773756027222
+        ],
+        "faceFans": 1,
+        "fanFaceSamples": [
+          [
+            4952,
+            4953,
+            4959,
+            4964,
+            4979,
+            4980,
+            5001,
+            12332,
+            12373,
+            12376,
+            30236,
+            30239,
+            30240,
+            30243
+          ]
+        ],
+        "fanSamplesTruncated": false,
+        "boundaryDegree": 0,
+        "wireDegree": 0,
+        "overfullEdge": true
+      },
+      {
+        "vertex": 4397,
+        "pointM": [
+          0.10661447048187256,
+          -0.11306679248809814,
+          1.248279094696045
+        ],
+        "faceFans": 1,
+        "fanFaceSamples": [
+          [
+            5708,
+            5709,
+            5727,
+            5750,
+            5762,
+            13015,
+            13017,
+            13034,
+            13035,
+            13037,
+            13039,
+            13040,
+            13060,
+            13079,
+            13080,
+            30330,
+            30950,
+            30952,
+            30956
+          ]
+        ],
+        "fanSamplesTruncated": false,
+        "boundaryDegree": 0,
+        "wireDegree": 0,
+        "overfullEdge": true
+      },
+      {
+        "vertex": 5027,
+        "pointM": [
+          0.09400986135005951,
+          -0.05216870456933975,
+          1.3961397409439087
+        ],
+        "faceFans": 1,
+        "fanFaceSamples": [
+          [
+            221,
+            7671,
+            7711,
+            7712,
+            29937,
+            30598,
+            30599,
+            30601
+          ]
+        ],
+        "fanSamplesTruncated": false,
+        "boundaryDegree": 0,
+        "wireDegree": 0,
+        "overfullEdge": true
+      },
+      {
+        "vertex": 7391,
+        "pointM": [
+          0.12204791605472565,
+          -0.10847489535808563,
+          1.2785815000534058
+        ],
+        "faceFans": 1,
+        "fanFaceSamples": [
+          [
+            5448,
+            5469,
+            5511,
+            5526,
+            5548,
+            12814,
+            12815,
+            12841,
+            12842,
+            12864,
+            30297,
+            30916,
+            30917,
+            30919
+          ]
+        ],
+        "fanSamplesTruncated": false,
+        "boundaryDegree": 0,
+        "wireDegree": 0,
+        "overfullEdge": true
+      },
+      {
+        "vertex": 8040,
+        "pointM": [
+          -0.09927380084991455,
+          -0.08699800074100494,
+          1.2184863090515137
+        ],
+        "faceFans": 1,
+        "fanFaceSamples": [
+          [
+            7043,
+            7076,
+            14271,
+            14272,
+            14284,
+            14292,
+            14304,
+            14305,
+            14327,
+            14343,
+            31132,
+            31137,
+            31141,
+            31144
+          ]
+        ],
+        "fanSamplesTruncated": false,
+        "boundaryDegree": 0,
+        "wireDegree": 0,
+        "overfullEdge": true
+      },
+      {
+        "vertex": 8160,
+        "pointM": [
+          -0.0788678228855133,
+          -0.087429940700531,
+          1.0970412492752075
+        ],
+        "faceFans": 1,
+        "fanFaceSamples": [
+          [
+            7378,
+            7394,
+            7397,
+            7410,
+            14600,
+            14613,
+            14615,
+            14629,
+            14630,
+            14631,
+            14639,
+            31180,
+            31183,
+            31185,
+            31188
+          ]
+        ],
+        "fanSamplesTruncated": false,
+        "boundaryDegree": 0,
+        "wireDegree": 0,
+        "overfullEdge": true
+      },
+      {
+        "vertex": 8961,
+        "pointM": [
+          0.11990969628095627,
+          -0.11409700661897659,
+          1.267491102218628
+        ],
+        "faceFans": 1,
+        "fanFaceSamples": [
+          [
+            20506,
+            20538,
+            20540,
+            20542,
+            27781,
+            27854,
+            30307,
+            30308,
+            30310,
+            30921
+          ]
+        ],
+        "fanSamplesTruncated": false,
+        "boundaryDegree": 0,
+        "wireDegree": 0,
+        "overfullEdge": true
+      },
+      {
+        "vertex": 9185,
+        "pointM": [
+          -0.08118343353271484,
+          -0.09267672151327133,
+          1.1256132125854492
+        ],
+        "faceFans": 1,
+        "fanFaceSamples": [
+          [
+            22256,
+            22257,
+            22258,
+            22259,
+            22260,
+            22261,
+            22264,
+            22285,
+            22289,
+            29462,
+            29466,
+            29467,
+            29480,
+            29482,
+            29483,
+            29498,
+            29499,
+            30538,
+            30540,
+            30541,
+            31170
+          ]
+        ],
+        "fanSamplesTruncated": false,
+        "boundaryDegree": 0,
+        "wireDegree": 0,
+        "overfullEdge": true
+      },
+      {
+        "vertex": 9223,
+        "pointM": [
+          0.07916977256536484,
+          -0.08344138413667679,
+          1.3660954236984253
+        ],
+        "faceFans": 1,
+        "fanFaceSamples": [
+          [
+            14954,
+            14969,
+            20046,
+            20047,
+            20052,
+            20054,
+            20056,
+            20062,
+            22484,
+            22500,
+            27420,
+            27421,
+            27425,
+            27426,
+            27427,
+            27434,
+            27443,
+            27445,
+            27452,
+            29908,
+            30256,
+            30569,
+            30570
+          ]
+        ],
+        "fanSamplesTruncated": false,
+        "boundaryDegree": 0,
+        "wireDegree": 0,
+        "overfullEdge": true
+      },
+      {
+        "vertex": 9228,
+        "pointM": [
+          0.08843310922384262,
+          -0.07843496650457382,
+          1.3705461025238037
+        ],
+        "faceFans": 1,
+        "fanFaceSamples": [
+          [
+            14971,
+            14991,
+            14992,
+            22504,
+            22505,
+            22506,
+            22508,
+            22509,
+            22524,
+            30576,
+            30578,
+            30579,
+            30582
+          ]
+        ],
+        "fanSamplesTruncated": false,
+        "boundaryDegree": 0,
+        "wireDegree": 0,
+        "overfullEdge": true
+      },
+      {
+        "vertex": 9238,
+        "pointM": [
+          0.09155948460102081,
+          -0.06526485085487366,
+          1.3746753931045532
+        ],
+        "faceFans": 1,
+        "fanFaceSamples": [
+          [
+            14992,
+            15005,
+            22524,
+            22531,
+            22533,
+            22536,
+            22537,
+            22544,
+            30581,
+            30585,
+            30586,
+            30587
+          ]
+        ],
+        "fanSamplesTruncated": false,
+        "boundaryDegree": 0,
+        "wireDegree": 0,
+        "overfullEdge": true
+      },
+      {
+        "vertex": 9419,
+        "pointM": [
+          0.12026429921388626,
+          -0.024805529043078423,
+          1.4304708242416382
+        ],
+        "faceFans": 1,
+        "fanFaceSamples": [
+          [
+            15679,
+            15680,
+            15731,
+            23178,
+            23179,
+            23180,
+            23226,
+            29970,
+            29976,
+            30636,
+            30638
+          ]
+        ],
+        "fanSamplesTruncated": false,
+        "boundaryDegree": 0,
+        "wireDegree": 0,
+        "overfullEdge": true
+      },
+      {
+        "vertex": 10512,
+        "pointM": [
+          0.10296763479709625,
+          -0.08551603555679321,
+          1.355650544166565
+        ],
+        "faceFans": 1,
+        "fanFaceSamples": [
+          [
+            20079,
+            20080,
+            20087,
+            20102,
+            27459,
+            27462,
+            27464,
+            27465,
+            27473,
+            27487,
+            27488,
+            30261,
+            30879,
+            30880,
+            30882
+          ]
+        ],
+        "fanSamplesTruncated": false,
+        "boundaryDegree": 0,
+        "wireDegree": 0,
+        "overfullEdge": true
+      },
+      {
+        "vertex": 10689,
+        "pointM": [
+          0.12214504182338715,
+          -0.09492671489715576,
+          1.2623299360275269
+        ],
+        "faceFans": 1,
+        "fanFaceSamples": [
+          [
+            20626,
+            20635,
+            20639,
+            20661,
+            20672,
+            27959,
+            27960,
+            27961,
+            27963,
+            27966,
+            27985,
+            27986,
+            30321,
+            30326,
+            30944,
+            30946
+          ]
+        ],
+        "fanSamplesTruncated": false,
+        "boundaryDegree": 0,
+        "wireDegree": 0,
+        "overfullEdge": true
+      },
+      {
+        "vertex": 11121,
+        "pointM": [
+          -0.1063239797949791,
+          -0.09070786088705063,
+          1.2381435632705688
+        ],
+        "faceFans": 1,
+        "fanFaceSamples": [
+          [
+            21933,
+            21948,
+            21957,
+            21960,
+            29174,
+            29178,
+            29186,
+            29191,
+            29194,
+            29195,
+            29213,
+            29214,
+            29225,
+            29226,
+            31123,
+            31126,
+            31131,
+            31133
+          ]
+        ],
+        "fanSamplesTruncated": false,
+        "boundaryDegree": 0,
+        "wireDegree": 0,
+        "overfullEdge": true
+      },
+      {
+        "vertex": 11271,
+        "pointM": [
+          -0.07328788936138153,
+          -0.08144356310367584,
+          1.0727488994598389
+        ],
+        "faceFans": 1,
+        "fanFaceSamples": [
+          [
+            22395,
+            22406,
+            22407,
+            29621,
+            29622,
+            29634,
+            30559,
+            31193,
+            31195,
+            31201
+          ]
+        ],
+        "fanSamplesTruncated": false,
+        "boundaryDegree": 0,
+        "wireDegree": 0,
+        "overfullEdge": true
+      },
+      {
+        "vertex": 12134,
+        "pointM": [
+          -0.07188638299703598,
+          0.08765513449907303,
+          1.4323854446411133
+        ],
+        "faceFans": 1,
+        "fanFaceSamples": [
+          [
+            18051,
+            18055,
+            18131,
+            18139,
+            25505,
+            25508,
+            25512,
+            25531,
+            25532,
+            25533,
+            25577,
+            25581,
+            25582,
+            25583,
+            25586,
+            30752,
+            30754,
+            30756,
+            30758
+          ]
+        ],
+        "fanSamplesTruncated": false,
+        "boundaryDegree": 0,
+        "wireDegree": 0,
+        "overfullEdge": true
+      },
+      {
+        "vertex": 12642,
+        "pointM": [
+          -0.10494417697191238,
+          -0.06137504056096077,
+          1.3800123929977417
+        ],
+        "faceFans": 1,
+        "fanFaceSamples": [
+          [
+            19906,
+            19907,
+            19913,
+            19918,
+            19933,
+            19934,
+            19955,
+            27286,
+            27327,
+            27330,
+            30236,
+            30239,
+            30240,
+            30243
+          ]
+        ],
+        "fanSamplesTruncated": false,
+        "boundaryDegree": 0,
+        "wireDegree": 0,
+        "overfullEdge": true
+      },
+      {
+        "vertex": 12871,
+        "pointM": [
+          0.10544660687446594,
+          -0.11170247197151184,
+          1.2482330799102783
+        ],
+        "faceFans": 1,
+        "fanFaceSamples": [
+          [
+            20662,
+            20663,
+            20681,
+            20704,
+            20716,
+            27969,
+            27971,
+            27988,
+            27989,
+            27991,
+            27993,
+            27994,
+            28014,
+            28033,
+            28034,
+            30330,
+            30950,
+            30952,
+            30956
+          ]
+        ],
+        "fanSamplesTruncated": false,
+        "boundaryDegree": 0,
+        "wireDegree": 0,
+        "overfullEdge": true
+      },
+      {
+        "vertex": 13501,
+        "pointM": [
+          0.09285803139209747,
+          -0.05143725126981735,
+          1.3951715230941772
+        ],
+        "faceFans": 1,
+        "fanFaceSamples": [
+          [
+            15175,
+            22625,
+            22665,
+            22666,
+            29937,
+            30598,
+            30599,
+            30601
+          ]
+        ],
+        "fanSamplesTruncated": false,
+        "boundaryDegree": 0,
+        "wireDegree": 0,
+        "overfullEdge": true
+      },
+      {
+        "vertex": 15865,
+        "pointM": [
+          0.12326768040657043,
+          -0.10746583342552185,
+          1.2782883644104004
+        ],
+        "faceFans": 1,
+        "fanFaceSamples": [
+          [
+            20402,
+            20423,
+            20465,
+            20480,
+            20502,
+            27768,
+            27769,
+            27795,
+            27796,
+            27818,
+            30297,
+            30916,
+            30917,
+            30919
+          ]
+        ],
+        "fanSamplesTruncated": false,
+        "boundaryDegree": 0,
+        "wireDegree": 0,
+        "overfullEdge": true
+      },
+      {
+        "vertex": 16514,
+        "pointM": [
+          -0.09811433404684067,
+          -0.0858045220375061,
+          1.2191705703735352
+        ],
+        "faceFans": 1,
+        "fanFaceSamples": [
+          [
+            21997,
+            22030,
+            29225,
+            29226,
+            29238,
+            29246,
+            29258,
+            29259,
+            29281,
+            29297,
+            31132,
+            31137,
+            31141,
+            31144
+          ]
+        ],
+        "fanSamplesTruncated": false,
+        "boundaryDegree": 0,
+        "wireDegree": 0,
+        "overfullEdge": true
+      },
+      {
+        "vertex": 16634,
+        "pointM": [
+          -0.07854096591472626,
+          -0.08907371014356613,
+          1.09673011302948
+        ],
+        "faceFans": 1,
+        "fanFaceSamples": [
+          [
+            22332,
+            22348,
+            22351,
+            22364,
+            29554,
+            29567,
+            29569,
+            29583,
+            29584,
+            29585,
+            29593,
+            31180,
+            31183,
+            31185,
+            31188
+          ]
+        ],
+        "fanSamplesTruncated": false,
+        "boundaryDegree": 0,
+        "wireDegree": 0,
+        "overfullEdge": true
+      }
+    ],
+    "truncated": false
+  },
+  "looseVertices": {
+    "count": 310,
+    "items": [
+      {
+        "vertex": 0,
+        "pointM": [
+          0.06340286880731583,
+          -0.07096980512142181,
+          1.3672274351119995
+        ]
+      },
+      {
+        "vertex": 12,
+        "pointM": [
+          0.05828721821308136,
+          -0.06441205739974976,
+          1.3928700685501099
+        ]
+      },
+      {
+        "vertex": 14,
+        "pointM": [
+          0.10535052418708801,
+          -0.06271913647651672,
+          1.3812180757522583
+        ]
+      },
+      {
+        "vertex": 27,
+        "pointM": [
+          0.08106852322816849,
+          -0.04899588227272034,
+          1.4271454811096191
+        ]
+      },
+      {
+        "vertex": 76,
+        "pointM": [
+          0.2145153135061264,
+          0.02218937687575817,
+          1.4284286499023438
+        ]
+      },
+      {
+        "vertex": 106,
+        "pointM": [
+          0.2180212140083313,
+          0.022216498851776123,
+          1.431425929069519
+        ]
+      },
+      {
+        "vertex": 135,
+        "pointM": [
+          0.09568825364112854,
+          0.07771476358175278,
+          1.4318116903305054
+        ]
+      },
+      {
+        "vertex": 159,
+        "pointM": [
+          0.058649107813835144,
+          0.09543117880821228,
+          1.4335565567016602
+        ]
+      },
+      {
+        "vertex": 347,
+        "pointM": [
+          -0.21414926648139954,
+          0.022182228043675423,
+          1.4284286499023438
+        ]
+      },
+      {
+        "vertex": 387,
+        "pointM": [
+          -0.12031175196170807,
+          -0.029446212574839592,
+          1.428403615951538
+        ]
+      },
+      {
+        "vertex": 392,
+        "pointM": [
+          -0.08969873189926147,
+          -0.045222170650959015,
+          1.4288363456726074
+        ]
+      },
+      {
+        "vertex": 395,
+        "pointM": [
+          -0.09212228655815125,
+          -0.047700196504592896,
+          1.4181773662567139
+        ]
+      },
+      {
+        "vertex": 411,
+        "pointM": [
+          -0.0810684859752655,
+          -0.04899585247039795,
+          1.4271454811096191
+        ]
+      },
+      {
+        "vertex": 415,
+        "pointM": [
+          -0.09369727224111557,
+          -0.051401227712631226,
+          1.4000334739685059
+        ]
+      },
+      {
+        "vertex": 419,
+        "pointM": [
+          -0.09407490491867065,
+          -0.05221739411354065,
+          1.395944356918335
+        ]
+      },
+      {
+        "vertex": 428,
+        "pointM": [
+          -0.05935489013791084,
+          -0.0659780502319336,
+          1.3875981569290161
+        ]
+      },
+      {
+        "vertex": 429,
+        "pointM": [
+          -0.09647615253925323,
+          -0.06497308611869812,
+          1.377618432044983
+        ]
+      },
+      {
+        "vertex": 435,
+        "pointM": [
+          -0.09081770479679108,
+          -0.07392854243516922,
+          1.3732434511184692
+        ]
+      },
+      {
+        "vertex": 443,
+        "pointM": [
+          0.0863802507519722,
+          -0.08891226351261139,
+          1.3654553890228271
+        ]
+      },
+      {
+        "vertex": 445,
+        "pointM": [
+          0.06711820513010025,
+          -0.07488369196653366,
+          1.363200068473816
+        ]
+      },
+      {
+        "vertex": 448,
+        "pointM": [
+          0.09465747326612473,
+          -0.08812027424573898,
+          1.361343502998352
+        ]
+      },
+      {
+        "vertex": 451,
+        "pointM": [
+          0.09867103397846222,
+          -0.08721575140953064,
+          1.3593213558197021
+        ]
+      },
+      {
+        "vertex": 480,
+        "pointM": [
+          0.10929549485445023,
+          -0.1158575788140297,
+          1.3077319860458374
+        ]
+      },
+      {
+        "vertex": 502,
+        "pointM": [
+          0.11147791147232056,
+          -0.11663153022527695,
+          1.2706029415130615
+        ]
+      },
+      {
+        "vertex": 544,
+        "pointM": [
+          0.08856791257858276,
+          -0.08459163457155228,
+          1.16576087474823
+        ]
+      },
+      {
+        "vertex": 573,
+        "pointM": [
+          0.06829971820116043,
+          -0.07680186629295349,
+          1.0825127363204956
+        ]
+      },
+      {
+        "vertex": 590,
+        "pointM": [
+          0.06628315150737762,
+          0.08695375919342041,
+          1.0625590085983276
+        ]
+      },
+      {
+        "vertex": 594,
+        "pointM": [
+          -0.09537481516599655,
+          -0.08892448991537094,
+          1.361343502998352
+        ]
+      },
+      {
+        "vertex": 621,
+        "pointM": [
+          -0.11966675519943237,
+          -0.1094467043876648,
+          1.3017873764038086
+        ]
+      },
+      {
+        "vertex": 625,
+        "pointM": [
+          -0.12097003310918808,
+          -0.1105843335390091,
+          1.2941551208496094
+        ]
+      },
+      {
+        "vertex": 649,
+        "pointM": [
+          -0.11039082705974579,
+          -0.11761219799518585,
+          1.2841747999191284
+        ]
+      },
+      {
+        "vertex": 663,
+        "pointM": [
+          -0.10445211827754974,
+          -0.11036756634712219,
+          1.2504596710205078
+        ]
+      },
+      {
+        "vertex": 666,
+        "pointM": [
+          -0.11273331940174103,
+          -0.09165754914283752,
+          1.2469868659973145
+        ]
+      },
+      {
+        "vertex": 667,
+        "pointM": [
+          -0.10141514241695404,
+          -0.10709379613399506,
+          1.2437388896942139
+        ]
+      },
+      {
+        "vertex": 693,
+        "pointM": [
+          -0.09369944036006927,
+          -0.08903668820858002,
+          1.1733105182647705
+        ]
+      },
+      {
+        "vertex": 722,
+        "pointM": [
+          -0.08114369958639145,
+          -0.08925964683294296,
+          1.102465271949768
+        ]
+      },
+      {
+        "vertex": 750,
+        "pointM": [
+          0.061005134135484695,
+          -0.06821167469024658,
+          1.3687382936477661
+        ]
+      },
+      {
+        "vertex": 769,
+        "pointM": [
+          0.0601058155298233,
+          -0.06683465838432312,
+          1.3838783502578735
+        ]
+      },
+      {
+        "vertex": 779,
+        "pointM": [
+          0.057509202510118484,
+          -0.06232239678502083,
+          1.401951551437378
+        ]
+      },
+      {
+        "vertex": 877,
+        "pointM": [
+          0.1227395236492157,
+          -0.027645550668239594,
+          1.4284058809280396
+        ]
+      },
+      {
+        "vertex": 880,
+        "pointM": [
+          0.12563468515872955,
+          -0.02455737441778183,
+          1.4284089803695679
+        ]
+      },
+      {
+        "vertex": 913,
+        "pointM": [
+          0.13235919177532196,
+          -0.003234932664781809,
+          1.4284236431121826
+        ]
+      },
+      {
+        "vertex": 936,
+        "pointM": [
+          0.14326123893260956,
+          0.005111807491630316,
+          1.4284263849258423
+        ]
+      },
+      {
+        "vertex": 1027,
+        "pointM": [
+          0.13406617939472198,
+          0.043525852262973785,
+          1.4284247159957886
+        ]
+      },
+      {
+        "vertex": 1066,
+        "pointM": [
+          0.11351905763149261,
+          0.06016106531023979,
+          1.4284143447875977
+        ]
+      },
+      {
+        "vertex": 1215,
+        "pointM": [
+          0.05864188075065613,
+          0.09539422392845154,
+          1.4282910823822021
+        ]
+      },
+      {
+        "vertex": 1246,
+        "pointM": [
+          0.04143822193145752,
+          0.09984175860881805,
+          1.4282283782958984
+        ]
+      },
+      {
+        "vertex": 1407,
+        "pointM": [
+          -0.010760637931525707,
+          0.10100314766168594,
+          1.428285837173462
+        ]
+      },
+      {
+        "vertex": 1421,
+        "pointM": [
+          -0.015182744711637497,
+          0.10115785896778107,
+          1.428255558013916
+        ]
+      },
+      {
+        "vertex": 1480,
+        "pointM": [
+          -0.037395935505628586,
+          0.10074236989021301,
+          1.428213119506836
+        ]
+      },
+      {
+        "vertex": 1496,
+        "pointM": [
+          -0.0459933839738369,
+          0.09962067008018494,
+          1.4282457828521729
+        ]
+      },
+      {
+        "vertex": 1525,
+        "pointM": [
+          -0.059892065823078156,
+          0.0931265577673912,
+          1.433454990386963
+        ]
+      },
+      {
+        "vertex": 1710,
+        "pointM": [
+          -0.13004276156425476,
+          0.045430414378643036,
+          1.4284236431121826
+        ]
+      },
+      {
+        "vertex": 1757,
+        "pointM": [
+          -0.21362492442131042,
+          0.03496428206562996,
+          1.4284284114837646
+        ]
+      },
+      {
+        "vertex": 1813,
+        "pointM": [
+          -0.14463475346565247,
+          0.006439269986003637,
+          1.428426742553711
+        ]
+      },
+      {
+        "vertex": 1907,
+        "pointM": [
+          -0.10847975313663483,
+          -0.03748301416635513,
+          1.4269402027130127
+        ]
+      },
+      {
+        "vertex": 1987,
+        "pointM": [
+          -0.05800197273492813,
+          -0.0638105645775795,
+          1.395512342453003
+        ]
+      },
+      {
+        "vertex": 2041,
+        "pointM": [
+          0.0749693214893341,
+          -0.08345679193735123,
+          1.3567231893539429
+        ]
+      },
+      {
+        "vertex": 2047,
+        "pointM": [
+          0.08032197505235672,
+          -0.08909789472818375,
+          1.3521721363067627
+        ]
+      },
+      {
+        "vertex": 2063,
+        "pointM": [
+          0.08741364628076553,
+          -0.09685452282428741,
+          1.3461201190948486
+        ]
+      },
+      {
+        "vertex": 2100,
+        "pointM": [
+          0.10362716019153595,
+          -0.11095981299877167,
+          1.3243935108184814
+        ]
+      },
+      {
+        "vertex": 2128,
+        "pointM": [
+          0.10970914363861084,
+          -0.1160936951637268,
+          1.3118259906768799
+        ]
+      },
+      {
+        "vertex": 2152,
+        "pointM": [
+          0.11006050556898117,
+          -0.11716155707836151,
+          1.2985165119171143
+        ]
+      },
+      {
+        "vertex": 2176,
+        "pointM": [
+          0.10872671753168106,
+          -0.11564313620328903,
+          1.2892534732818604
+        ]
+      }
+    ],
+    "truncated": true
+  }
+}

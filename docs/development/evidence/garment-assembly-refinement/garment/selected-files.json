@@ -1,0 +1,60 @@
+{
+  "selected_revision": "02b51b5409e64333b17b6565eb7c5a38",
+  "recorded_at": "2026-11-22T09:20:15.473062+00:00",
+  "files": [
+    {
+      "path": "/workspace/scratch/c52cb753f160/work/garment/final/baseline.blend",
+      "filename": "baseline.blend",
+      "bytes": 5828572,
+      "sha256": "e1b015a54ef159726ed5c8c8216311a0df1db43fe0b57fdcf4fc22d6ef0dd432"
+    },
+    {
+      "path": "/workspace/scratch/c52cb753f160/work/garment/final/baseline.glb",
+      "filename": "baseline.glb",
+      "bytes": 5857472,
+      "sha256": "30e2557a727e61a6e3e3a929522aa8a650e0cfff3e8e3d80f1dd3e6c45fae42f"
+    },
+    {
+      "path": "/workspace/scratch/c52cb753f160/work/garment/final/candidate.blend",
+      "filename": "candidate.blend",
+      "bytes": 6154912,
+      "sha256": "e3e26aa3bc5f8cead5497f91a1144e79aa26a883074ff9eaa79a685f52a4567e"
+    },
+    {
+      "path": "/workspace/scratch/c52cb753f160/work/garment/final/candidate.glb",
+      "filename": "candidate.glb",
+      "bytes": 7773256,
+      "sha256": "ff9ddac60bbd4a0a16e3119c78202d7e9795c6b994988a894fcec39697b30ef9"
+    },
+    {
+      "path": "/workspace/scratch/c52cb753f160/work/garment/final/cuff-edited.blend",
+      "filename": "cuff-edited.blend",
+      "bytes": 6154912,
+      "sha256": "43d7a032b0592dc7af38af8ca83f5e6179a602b5d530132a4898f924f2ef7b0f"
+    },
+    {
+      "path": "/workspace/scratch/c52cb753f160/work/garment/final/cuff-edited.glb",
+      "filename": "cuff-edited.glb",
+      "bytes": 7773584,
+      "sha256": "bd62c7faad76ef3907501f6764b6a1374b386f61383e1deed85c542e5023147f"
+    },
+    {
+      "path": "/workspace/scratch/c52cb753f160/work/garment/final/restored.blend",
+      "filename": "restored.blend",
+      "bytes": 6154912,
+      "sha256": "e3e26aa3bc5f8cead5497f91a1144e79aa26a883074ff9eaa79a685f52a4567e"
+    },
+    {
+      "path": "/workspace/scratch/c52cb753f160/work/garment/final/restored.glb",
+      "filename": "restored.glb",
+      "bytes": 7773256,
+      "sha256": "ff9ddac60bbd4a0a16e3119c78202d7e9795c6b994988a894fcec39697b30ef9"
+    },
+    {
+      "path": "/workspace/scratch/c52cb753f160/work/garment/final/imported-glb.blend",
+      "filename": "imported-glb.blend",
+      "bytes": 30440892,
+      "sha256": "e9fbbfb452c19e415f57b2a0acae0ec1cd9b4bad3685ad468c3c48e2b0028305"
+    }
+  ]
+}

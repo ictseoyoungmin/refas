@@ -1,0 +1,81 @@
+{
+  "ok": false,
+  "geometry": {
+    "meshes": 126,
+    "skeletons": [
+      {
+        "bones": 235,
+        "name": "Skeleton3D"
+      },
+      {
+        "bones": 447,
+        "name": "Skeleton3D"
+      }
+    ],
+    "skinnedMeshes": 123,
+    "surfaces": 178,
+    "triangles": 838379
+  },
+  "clip": {
+    "lengthSeconds": 3.23333334922791,
+    "name": "Jacket_Wear_Reach_Return",
+    "tracks": 2220
+  },
+  "failedChecks": 26,
+  "firstFailures": [
+    {
+      "details": null,
+      "name": "probeNode:Skeleton3D:DEF-upper_arm.L",
+      "ok": false
+    },
+    {
+      "details": null,
+      "name": "probeNode:Skeleton3D:DEF-upper_arm.R",
+      "ok": false
+    },
+    {
+      "details": null,
+      "name": "probeNode:Skeleton3D:DEF-forearm.L",
+      "ok": false
+    },
+    {
+      "details": null,
+      "name": "probeNode:Skeleton3D:DEF-forearm.R",
+      "ok": false
+    },
+    {
+      "details": null,
+      "name": "probeNode:Skeleton3D:DEF-spine.002",
+      "ok": false
+    }
+  ],
+  "maxMatrixError": null,
+  "timing": {
+    "argv": [
+      "/usr/local/bin/godot",
+      "--headless",
+      "--path",
+      "/workspace/scratch/61afcdd4e3c6/refas/examples/engine-playback",
+      "--script",
+      "/workspace/scratch/61afcdd4e3c6/refas/examples/engine-playback/verify_godot.gd",
+      "--",
+      "/workspace/scratch/61afcdd4e3c6/work/garment/root-consumer-negative-bones/configuration.json"
+    ],
+    "startedUtc": "2026-11-22T19:55:23.629654+00:00",
+    "endedUtc": "2026-11-22T19:55:26.137018+00:00",
+    "elapsedSeconds": 2.507372110000688,
+    "returncode": 1
+  },
+  "evaluatedBoneProbes": 0,
+  "scope": "Import/counts pass; zero bone probes evaluated because two imported skeletons share the bare name. This is not a matrix-accuracy pass. Geometry remains rejected independently.",
+  "timeoutProbe": {
+    "schema": "refas.consumer-timeout/v1",
+    "scope": "Unselected garment geometry; 30 skin points across five samples. No acceptance result.",
+    "timeoutSeconds": 120,
+    "exception": "subprocess.TimeoutExpired",
+    "resultFileProduced": false,
+    "configurationSha256": "6994bfb35ea9845264d97bf53c0bb1b8e010b8a8c898045ba21d1dda58049946",
+    "runtimeCommit": "5f2f39c6e9f1e4bbdef6dfd463e84991daa73e57",
+    "nextDiagnostic": "Bones-only import completes in 2.507 seconds; two Skeleton3D names are ambiguous. Resolve explicit paths and reduce repeated rest-association work without altering exported bytes."
+  }
+}

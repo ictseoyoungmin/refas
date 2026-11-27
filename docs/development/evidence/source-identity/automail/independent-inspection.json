@@ -1,0 +1,2432 @@
+{
+  "mode": "Independent Blender factory-startup native/GLB readback",
+  "baseline_sha256": "ff8010b6e25efec357b469121c905f9db8f717a8b9e5a07cbc78986ff12924b5",
+  "baseline_to_selected_identity": {
+    "original_object_count": 300,
+    "original_pivot_count": 20,
+    "all_original_parent_basis_parent_inverse_world_and_material_slot_comparisons": true,
+    "allowed_crown_marking_transform_changes": [
+      {
+        "name": "Crown_A_mark",
+        "field": "matrix_basis",
+        "before": [
+          [
+            1.2000000476837158,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            7.549790126404332e-08,
+            -1.0,
+            -0.06599999964237213
+          ],
+          [
+            0.0,
+            1.0,
+            7.549790126404332e-08,
+            0.7009999752044678
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "after": [
+          [
+            1.2000000476837158,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            7.549790126404332e-08,
+            -1.0,
+            -0.06549999862909317
+          ],
+          [
+            0.0,
+            1.0,
+            7.549790126404332e-08,
+            0.7009999752044678
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "name": "Crown_A_mark",
+        "field": "matrix_world",
+        "before": [
+          [
+            1.2000000476837158,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            7.549790126404332e-08,
+            -1.0,
+            -0.06599999964237213
+          ],
+          [
+            0.0,
+            1.0,
+            7.549790126404332e-08,
+            0.7009999752044678
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "after": [
+          [
+            1.2000000476837158,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            7.549790126404332e-08,
+            -1.0,
+            -0.06549999862909317
+          ],
+          [
+            0.0,
+            1.0,
+            7.549790126404332e-08,
+            0.7009999752044678
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "name": "Crown_AURIX",
+        "field": "matrix_basis",
+        "before": [
+          [
+            1.2000000476837158,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            7.549790126404332e-08,
+            -1.0,
+            -0.06300000101327896
+          ],
+          [
+            0.0,
+            1.0,
+            7.549790126404332e-08,
+            0.6819999814033508
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "after": [
+          [
+            1.2000000476837158,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            7.549790126404332e-08,
+            -1.0,
+            -0.061000000685453415
+          ],
+          [
+            0.0,
+            1.0,
+            7.549790126404332e-08,
+            0.6819999814033508
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "name": "Crown_AURIX",
+        "field": "matrix_world",
+        "before": [
+          [
+            1.2000000476837158,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            7.549790126404332e-08,
+            -1.0,
+            -0.06300000101327896
+          ],
+          [
+            0.0,
+            1.0,
+            7.549790126404332e-08,
+            0.6819999814033508
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "after": [
+          [
+            1.2000000476837158,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            7.549790126404332e-08,
+            -1.0,
+            -0.061000000685453415
+          ],
+          [
+            0.0,
+            1.0,
+            7.549790126404332e-08,
+            0.6819999814033508
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      }
+    ],
+    "unexpected_original_changes": [],
+    "declared_material_assignment_changes": [
+      {
+        "name": "Forearm_structural_spine",
+        "field": "material_slots",
+        "before": [
+          "Graphite structural composite"
+        ],
+        "after": [
+          "Recess interiors"
+        ]
+      },
+      {
+        "name": "Service_cover_vent_00",
+        "field": "material_slots",
+        "before": [
+          "Warm silver \u2022 machined bevels"
+        ],
+        "after": [
+          "Graphite structural composite"
+        ]
+      },
+      {
+        "name": "Service_cover_vent_01",
+        "field": "material_slots",
+        "before": [
+          "Warm silver \u2022 machined bevels"
+        ],
+        "after": [
+          "Graphite structural composite"
+        ]
+      },
+      {
+        "name": "Service_cover_vent_02",
+        "field": "material_slots",
+        "before": [
+          "Warm silver \u2022 machined bevels"
+        ],
+        "after": [
+          "Graphite structural composite"
+        ]
+      },
+      {
+        "name": "Service_cover_vent_03",
+        "field": "material_slots",
+        "before": [
+          "Warm silver \u2022 machined bevels"
+        ],
+        "after": [
+          "Graphite structural composite"
+        ]
+      },
+      {
+        "name": "Service_cover_vent_04",
+        "field": "material_slots",
+        "before": [
+          "Warm silver \u2022 machined bevels"
+        ],
+        "after": [
+          "Graphite structural composite"
+        ]
+      },
+      {
+        "name": "Service_cover_vent_05",
+        "field": "material_slots",
+        "before": [
+          "Warm silver \u2022 machined bevels"
+        ],
+        "after": [
+          "Graphite structural composite"
+        ]
+      },
+      {
+        "name": "Service_cover_vent_06",
+        "field": "material_slots",
+        "before": [
+          "Warm silver \u2022 machined bevels"
+        ],
+        "after": [
+          "Graphite structural composite"
+        ]
+      },
+      {
+        "name": "Service_cover_vent_07",
+        "field": "material_slots",
+        "before": [
+          "Warm silver \u2022 machined bevels"
+        ],
+        "after": [
+          "Graphite structural composite"
+        ]
+      },
+      {
+        "name": "Service_cover_vent_08",
+        "field": "material_slots",
+        "before": [
+          "Warm silver \u2022 machined bevels"
+        ],
+        "after": [
+          "Graphite structural composite"
+        ]
+      },
+      {
+        "name": "Service_cover_vent_09",
+        "field": "material_slots",
+        "before": [
+          "Warm silver \u2022 machined bevels"
+        ],
+        "after": [
+          "Graphite structural composite"
+        ]
+      },
+      {
+        "name": "Crown_inset_border_-1",
+        "field": "material_slots",
+        "before": [
+          "Graphite structural composite"
+        ],
+        "after": [
+          "Recess interiors"
+        ]
+      },
+      {
+        "name": "Crown_inset_border_1",
+        "field": "material_slots",
+        "before": [
+          "Graphite structural composite"
+        ],
+        "after": [
+          "Recess interiors"
+        ]
+      }
+    ],
+    "original_material_count": 10,
+    "original_material_hashes": {
+      "Anodized champagne gold": "8aa56e9d7acb0fd7e01820a68f73741b75919dbad77150ce49a1de97e4d03760",
+      "AURIX carbon markings": "368b0ae4ac2aad3e30b058575f9a7d1e0f1e9870274edc97529dd33677c0ae1d",
+      "Cool status glass": "9ab4b46414303d45d19b8e94cf6625fc625522ed8459bea608d3348808a9d445",
+      "Graphite structural composite": "2cb0e6fa76a62ca2d50dae5406dd1786af7be84702f26fe8c9abb7ec488b6d9e",
+      "Ivory \u2022 ceramic titanium armor": "d95bd3094a2805abe67e532b64930706c3d23c01bf6176e07c5bcab659b867a4",
+      "Palm and joint elastomer": "5252792834090dd6f4af88175015ac8be9a772698d28ff10a45ad38d130664f8",
+      "Palm structural matte composite": "7dc0eafb427ee8fc729f98a7b052047e6e34fa26ddbfc62b6d597545385565e5",
+      "Piston chrome": "b138064d539d13b63e879aeb1f784d9e7c3311ac98aaa6d9fe37ddb3e09bf5c9",
+      "Recess interiors": "655e478440d2c08f8d73759e90851e7b2fbc200aad64a2b993b170ca761d907f",
+      "Warm silver \u2022 machined bevels": "8892c9fc4ba6c40a7e6ae6316bf7b47bc4fb5262b53f59e1d59a6173d81e2d09"
+    },
+    "candidate_original_material_hashes": {
+      "Anodized champagne gold": "8aa56e9d7acb0fd7e01820a68f73741b75919dbad77150ce49a1de97e4d03760",
+      "AURIX carbon markings": "368b0ae4ac2aad3e30b058575f9a7d1e0f1e9870274edc97529dd33677c0ae1d",
+      "Cool status glass": "9ab4b46414303d45d19b8e94cf6625fc625522ed8459bea608d3348808a9d445",
+      "Graphite structural composite": "2cb0e6fa76a62ca2d50dae5406dd1786af7be84702f26fe8c9abb7ec488b6d9e",
+      "Ivory \u2022 ceramic titanium armor": "d95bd3094a2805abe67e532b64930706c3d23c01bf6176e07c5bcab659b867a4",
+      "Palm and joint elastomer": "5252792834090dd6f4af88175015ac8be9a772698d28ff10a45ad38d130664f8",
+      "Palm structural matte composite": "7dc0eafb427ee8fc729f98a7b052047e6e34fa26ddbfc62b6d597545385565e5",
+      "Piston chrome": "b138064d539d13b63e879aeb1f784d9e7c3311ac98aaa6d9fe37ddb3e09bf5c9",
+      "Recess interiors": "655e478440d2c08f8d73759e90851e7b2fbc200aad64a2b993b170ca761d907f",
+      "Warm silver \u2022 machined bevels": "8892c9fc4ba6c40a7e6ae6316bf7b47bc4fb5262b53f59e1d59a6173d81e2d09"
+    },
+    "changed_original_material_datablocks": [],
+    "passed": true
+  },
+  "neutral_service_lid_cartridge_clearance": {
+    "lid_parts": [
+      "Service_cover_graphite",
+      "Service_cover_vent_00",
+      "Service_cover_vent_01",
+      "Service_cover_vent_02",
+      "Service_cover_vent_03",
+      "Service_cover_vent_04",
+      "Service_cover_vent_05",
+      "Service_cover_vent_06",
+      "Service_cover_vent_07",
+      "Service_cover_vent_08",
+      "Service_cover_vent_09"
+    ],
+    "bay_components": [
+      "Forearm_power_cell_-1",
+      "Forearm_power_gland_-1",
+      "Forearm_elbow_rod_-1",
+      "Service_cartridge_sleeve_-1",
+      "Service_cartridge_lower_band_-1",
+      "Service_cartridge_upper_band_-1",
+      "Forearm_power_cell_1",
+      "Forearm_power_gland_1",
+      "Forearm_elbow_rod_1",
+      "Service_cartridge_sleeve_1",
+      "Service_cartridge_lower_band_1",
+      "Service_cartridge_upper_band_1"
+    ],
+    "pairs_tested": 132,
+    "surface_intersections": [],
+    "passed": true,
+    "limits": "Triangle-surface intersection check of neutral cover body/ribs versus paired cartridges only; no containment or complete clearance assertion."
+  },
+  "native_sha256": "e7b2ac7cbd671d979af6e178ec85efc574ad9860c9695000980cf4a29f8a2dd7",
+  "glb_sha256": "0c2ca4c96351a1fdac73af9b5c2f1f854132b1df4855651dfdb53f188bc65f19",
+  "native_changed_and_added_topology": [
+    {
+      "name": "Crown_AURIX",
+      "evaluated_vertices": 796,
+      "boundary_edges": 796,
+      "nonmanifold_edges": 796,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Crown_A_mark",
+      "evaluated_vertices": 224,
+      "boundary_edges": 224,
+      "nonmanifold_edges": 224,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Crown_gold_pinstripe_-1",
+      "evaluated_vertices": 90,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Crown_gold_pinstripe_1",
+      "evaluated_vertices": 90,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Crown_gold_signature",
+      "evaluated_vertices": 50,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Crown_inset_border_-1",
+      "evaluated_vertices": 170,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Crown_inset_border_1",
+      "evaluated_vertices": 170,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Crown_recessed_carrier",
+      "evaluated_vertices": 1066,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Crown_side_cap_-1",
+      "evaluated_vertices": 696,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Crown_side_cap_1",
+      "evaluated_vertices": 696,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Crown_side_carrier_-1",
+      "evaluated_vertices": 677,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Crown_side_carrier_1",
+      "evaluated_vertices": 677,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Crown_top_lock_plate",
+      "evaluated_vertices": 466,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Forearm_channel_hydraulic_-1",
+      "evaluated_vertices": 170,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Forearm_channel_hydraulic_1",
+      "evaluated_vertices": 170,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Forearm_elbow_rod_-1",
+      "evaluated_vertices": 320,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Forearm_elbow_rod_1",
+      "evaluated_vertices": 320,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Forearm_front_indicator",
+      "evaluated_vertices": 50,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Forearm_front_keel",
+      "evaluated_vertices": 810,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Forearm_front_recess",
+      "evaluated_vertices": 254,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Forearm_gold_outer_reveal_-1",
+      "evaluated_vertices": 210,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Forearm_gold_outer_reveal_1",
+      "evaluated_vertices": 210,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Forearm_gold_recess_edge",
+      "evaluated_vertices": 90,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Forearm_lateral_blade_-1",
+      "evaluated_vertices": 670,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Forearm_lateral_blade_1",
+      "evaluated_vertices": 670,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Forearm_lateral_underlayer_-1",
+      "evaluated_vertices": 670,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Forearm_lateral_underlayer_1",
+      "evaluated_vertices": 670,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Forearm_power_cell_-1",
+      "evaluated_vertices": 320,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Forearm_power_cell_1",
+      "evaluated_vertices": 320,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Forearm_power_gland_-1",
+      "evaluated_vertices": 512,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Forearm_power_gland_1",
+      "evaluated_vertices": 512,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Forearm_recessed_carrier_-1",
+      "evaluated_vertices": 1018,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Forearm_recessed_carrier_1",
+      "evaluated_vertices": 1018,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Forearm_side_cable_-1",
+      "evaluated_vertices": 210,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Forearm_side_cable_1",
+      "evaluated_vertices": 210,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Forearm_structural_spine",
+      "evaluated_vertices": 566,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Forearm_swept_front_armor_-1",
+      "evaluated_vertices": 970,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Forearm_swept_front_armor_1",
+      "evaluated_vertices": 970,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "INDEX_S0_ivory_phalanx",
+      "evaluated_vertices": 256,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "INDEX_S0_palm_grip",
+      "evaluated_vertices": 172,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "INDEX_S0_side_tendon_guide",
+      "evaluated_vertices": 50,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "INDEX_S0_structural_link",
+      "evaluated_vertices": 256,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "INDEX_S1_ivory_phalanx",
+      "evaluated_vertices": 256,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "INDEX_S1_palm_grip",
+      "evaluated_vertices": 172,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "INDEX_S1_structural_link",
+      "evaluated_vertices": 256,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "INDEX_S2_ivory_phalanx",
+      "evaluated_vertices": 288,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "INDEX_S2_palm_grip",
+      "evaluated_vertices": 178,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "INDEX_S2_structural_link",
+      "evaluated_vertices": 288,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "INDEX_gold_bearing_0_-1",
+      "evaluated_vertices": 640,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "INDEX_gold_bearing_0_1",
+      "evaluated_vertices": 640,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "INDEX_gold_bearing_1_-1",
+      "evaluated_vertices": 640,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "INDEX_gold_bearing_1_1",
+      "evaluated_vertices": 640,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "INDEX_gold_bearing_2_-1",
+      "evaluated_vertices": 640,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "INDEX_gold_bearing_2_1",
+      "evaluated_vertices": 640,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "INDEX_knuckle_0",
+      "evaluated_vertices": 512,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "INDEX_knuckle_1",
+      "evaluated_vertices": 512,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "INDEX_knuckle_2",
+      "evaluated_vertices": 512,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "INDEX_knuckle_status",
+      "evaluated_vertices": 320,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "LITTLE_S0_ivory_phalanx",
+      "evaluated_vertices": 256,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "LITTLE_S0_palm_grip",
+      "evaluated_vertices": 172,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "LITTLE_S0_side_tendon_guide",
+      "evaluated_vertices": 50,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "LITTLE_S0_structural_link",
+      "evaluated_vertices": 256,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "LITTLE_S1_ivory_phalanx",
+      "evaluated_vertices": 256,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "LITTLE_S1_palm_grip",
+      "evaluated_vertices": 172,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "LITTLE_S1_structural_link",
+      "evaluated_vertices": 256,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "LITTLE_S2_ivory_phalanx",
+      "evaluated_vertices": 288,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "LITTLE_S2_palm_grip",
+      "evaluated_vertices": 192,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "LITTLE_S2_structural_link",
+      "evaluated_vertices": 288,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "LITTLE_gold_bearing_0_-1",
+      "evaluated_vertices": 640,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "LITTLE_gold_bearing_0_1",
+      "evaluated_vertices": 640,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "LITTLE_gold_bearing_1_-1",
+      "evaluated_vertices": 640,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "LITTLE_gold_bearing_1_1",
+      "evaluated_vertices": 640,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "LITTLE_gold_bearing_2_-1",
+      "evaluated_vertices": 640,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "LITTLE_gold_bearing_2_1",
+      "evaluated_vertices": 640,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "LITTLE_knuckle_0",
+      "evaluated_vertices": 512,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "LITTLE_knuckle_1",
+      "evaluated_vertices": 512,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "LITTLE_knuckle_2",
+      "evaluated_vertices": 512,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "LITTLE_knuckle_status",
+      "evaluated_vertices": 320,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "MIDDLE_S0_ivory_phalanx",
+      "evaluated_vertices": 256,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "MIDDLE_S0_palm_grip",
+      "evaluated_vertices": 172,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "MIDDLE_S0_side_tendon_guide",
+      "evaluated_vertices": 50,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "MIDDLE_S0_structural_link",
+      "evaluated_vertices": 256,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "MIDDLE_S1_ivory_phalanx",
+      "evaluated_vertices": 256,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "MIDDLE_S1_palm_grip",
+      "evaluated_vertices": 172,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "MIDDLE_S1_structural_link",
+      "evaluated_vertices": 256,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "MIDDLE_S2_ivory_phalanx",
+      "evaluated_vertices": 288,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "MIDDLE_S2_palm_grip",
+      "evaluated_vertices": 178,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "MIDDLE_S2_structural_link",
+      "evaluated_vertices": 288,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "MIDDLE_gold_bearing_0_-1",
+      "evaluated_vertices": 640,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "MIDDLE_gold_bearing_0_1",
+      "evaluated_vertices": 640,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "MIDDLE_gold_bearing_1_-1",
+      "evaluated_vertices": 640,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "MIDDLE_gold_bearing_1_1",
+      "evaluated_vertices": 640,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "MIDDLE_gold_bearing_2_-1",
+      "evaluated_vertices": 640,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "MIDDLE_gold_bearing_2_1",
+      "evaluated_vertices": 640,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "MIDDLE_knuckle_0",
+      "evaluated_vertices": 512,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "MIDDLE_knuckle_1",
+      "evaluated_vertices": 512,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "MIDDLE_knuckle_2",
+      "evaluated_vertices": 512,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "MIDDLE_knuckle_status",
+      "evaluated_vertices": 320,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Palm_center_grip",
+      "evaluated_vertices": 462,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Palm_center_pad_seam",
+      "evaluated_vertices": 130,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Palm_dorsal_main_plate",
+      "evaluated_vertices": 606,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Palm_dorsal_ring_plate",
+      "evaluated_vertices": 632,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Palm_edge_plate_-1",
+      "evaluated_vertices": 574,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Palm_edge_plate_1",
+      "evaluated_vertices": 412,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Palm_gold_split_-1",
+      "evaluated_vertices": 90,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Palm_gold_split_1",
+      "evaluated_vertices": 90,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Palm_graphite_body",
+      "evaluated_vertices": 574,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Palm_grip_pad_-1",
+      "evaluated_vertices": 462,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Palm_grip_pad_1",
+      "evaluated_vertices": 462,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Palm_thenar_pad_seam",
+      "evaluated_vertices": 90,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "RING_S0_ivory_phalanx",
+      "evaluated_vertices": 256,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "RING_S0_palm_grip",
+      "evaluated_vertices": 172,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "RING_S0_side_tendon_guide",
+      "evaluated_vertices": 50,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "RING_S0_structural_link",
+      "evaluated_vertices": 256,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "RING_S1_ivory_phalanx",
+      "evaluated_vertices": 256,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "RING_S1_palm_grip",
+      "evaluated_vertices": 172,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "RING_S1_structural_link",
+      "evaluated_vertices": 256,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "RING_S2_ivory_phalanx",
+      "evaluated_vertices": 288,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "RING_S2_palm_grip",
+      "evaluated_vertices": 192,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "RING_S2_structural_link",
+      "evaluated_vertices": 288,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "RING_gold_bearing_0_-1",
+      "evaluated_vertices": 640,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "RING_gold_bearing_0_1",
+      "evaluated_vertices": 640,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "RING_gold_bearing_1_-1",
+      "evaluated_vertices": 640,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "RING_gold_bearing_1_1",
+      "evaluated_vertices": 640,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "RING_gold_bearing_2_-1",
+      "evaluated_vertices": 640,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "RING_gold_bearing_2_1",
+      "evaluated_vertices": 640,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "RING_knuckle_0",
+      "evaluated_vertices": 512,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "RING_knuckle_1",
+      "evaluated_vertices": 512,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "RING_knuckle_2",
+      "evaluated_vertices": 512,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "RING_knuckle_status",
+      "evaluated_vertices": 320,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Service_bay_machined_lip",
+      "evaluated_vertices": 352,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Service_bay_structural_rim",
+      "evaluated_vertices": 352,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Service_cartridge_lower_band_-1",
+      "evaluated_vertices": 640,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Service_cartridge_lower_band_1",
+      "evaluated_vertices": 640,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Service_cartridge_sleeve_-1",
+      "evaluated_vertices": 320,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Service_cartridge_sleeve_1",
+      "evaluated_vertices": 320,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Service_cartridge_upper_band_-1",
+      "evaluated_vertices": 640,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Service_cartridge_upper_band_1",
+      "evaluated_vertices": 640,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Service_cover_center_inset",
+      "evaluated_vertices": 462,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Service_cover_graphite",
+      "evaluated_vertices": 670,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Service_cover_screw_-1_249",
+      "evaluated_vertices": 512,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Service_cover_screw_-1_249_hex_socket",
+      "evaluated_vertices": 320,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Service_cover_screw_-1_305",
+      "evaluated_vertices": 512,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Service_cover_screw_-1_305_hex_socket",
+      "evaluated_vertices": 320,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Service_cover_screw_-1_351",
+      "evaluated_vertices": 512,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Service_cover_screw_-1_351_hex_socket",
+      "evaluated_vertices": 320,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Service_cover_screw_1_249",
+      "evaluated_vertices": 512,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Service_cover_screw_1_249_hex_socket",
+      "evaluated_vertices": 320,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Service_cover_screw_1_305",
+      "evaluated_vertices": 512,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Service_cover_screw_1_305_hex_socket",
+      "evaluated_vertices": 320,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Service_cover_screw_1_351",
+      "evaluated_vertices": 512,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Service_cover_screw_1_351_hex_socket",
+      "evaluated_vertices": 320,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Service_cover_status_light",
+      "evaluated_vertices": 50,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Service_cover_vent_00",
+      "evaluated_vertices": 130,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Service_cover_vent_01",
+      "evaluated_vertices": 130,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Service_cover_vent_02",
+      "evaluated_vertices": 130,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Service_cover_vent_03",
+      "evaluated_vertices": 130,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Service_cover_vent_04",
+      "evaluated_vertices": 130,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Service_cover_vent_05",
+      "evaluated_vertices": 130,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Service_cover_vent_06",
+      "evaluated_vertices": 130,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Service_cover_vent_07",
+      "evaluated_vertices": 130,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Service_cover_vent_08",
+      "evaluated_vertices": 130,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Service_cover_vent_09",
+      "evaluated_vertices": 130,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Service_lower_manifold",
+      "evaluated_vertices": 254,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Service_return_conduit_-1",
+      "evaluated_vertices": 170,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Service_return_conduit_1",
+      "evaluated_vertices": 170,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "THUMB_S0_ivory_phalanx",
+      "evaluated_vertices": 288,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "THUMB_S0_palm_grip",
+      "evaluated_vertices": 148,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "THUMB_S0_side_tendon_guide",
+      "evaluated_vertices": 50,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "THUMB_S0_structural_link",
+      "evaluated_vertices": 288,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "THUMB_S1_ivory_phalanx",
+      "evaluated_vertices": 256,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "THUMB_S1_palm_grip",
+      "evaluated_vertices": 172,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "THUMB_S1_structural_link",
+      "evaluated_vertices": 256,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "THUMB_S2_ivory_phalanx",
+      "evaluated_vertices": 288,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "THUMB_S2_palm_grip",
+      "evaluated_vertices": 172,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "THUMB_S2_structural_link",
+      "evaluated_vertices": 288,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "THUMB_gold_bearing_0_-1",
+      "evaluated_vertices": 640,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "THUMB_gold_bearing_0_1",
+      "evaluated_vertices": 640,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "THUMB_gold_bearing_1_-1",
+      "evaluated_vertices": 640,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "THUMB_gold_bearing_1_1",
+      "evaluated_vertices": 640,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "THUMB_gold_bearing_2_-1",
+      "evaluated_vertices": 640,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "THUMB_gold_bearing_2_1",
+      "evaluated_vertices": 640,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "THUMB_knuckle_0",
+      "evaluated_vertices": 512,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "THUMB_knuckle_1",
+      "evaluated_vertices": 512,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "THUMB_knuckle_2",
+      "evaluated_vertices": 512,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "THUMB_knuckle_status",
+      "evaluated_vertices": 320,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Upper_actuator_lower_band",
+      "evaluated_vertices": 640,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Upper_actuator_machined_sleeve",
+      "evaluated_vertices": 512,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Upper_actuator_upper_seal",
+      "evaluated_vertices": 640,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Upper_blade_carrier_-1",
+      "evaluated_vertices": 816,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Upper_blade_carrier_1",
+      "evaluated_vertices": 816,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Upper_core_backbone",
+      "evaluated_vertices": 462,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Upper_crown_front",
+      "evaluated_vertices": 1110,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Upper_crown_rear",
+      "evaluated_vertices": 650,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Upper_gold_conduit_-1",
+      "evaluated_vertices": 90,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Upper_gold_conduit_1",
+      "evaluated_vertices": 90,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Upper_hose_return_-1",
+      "evaluated_vertices": 170,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Upper_hose_return_1",
+      "evaluated_vertices": 170,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Upper_outer_wrap_-1",
+      "evaluated_vertices": 653,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Upper_outer_wrap_1",
+      "evaluated_vertices": 653,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Upper_primary_cylinder",
+      "evaluated_vertices": 320,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Upper_primary_gland",
+      "evaluated_vertices": 512,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Upper_primary_rod",
+      "evaluated_vertices": 320,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Upper_rear_rod_bridge",
+      "evaluated_vertices": 358,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Upper_return_pipe_-1",
+      "evaluated_vertices": 210,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Upper_return_pipe_1",
+      "evaluated_vertices": 210,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Upper_return_pipe_mount_-1",
+      "evaluated_vertices": 640,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Upper_return_pipe_mount_1",
+      "evaluated_vertices": 640,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Upper_sculpted_blade_-1",
+      "evaluated_vertices": 816,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Upper_sculpted_blade_1",
+      "evaluated_vertices": 816,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Upper_side_actuator_-1",
+      "evaluated_vertices": 320,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Upper_side_actuator_1",
+      "evaluated_vertices": 320,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Upper_side_gland_-1",
+      "evaluated_vertices": 512,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Upper_side_gland_1",
+      "evaluated_vertices": 512,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Upper_side_rod_-1",
+      "evaluated_vertices": 320,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    },
+    {
+      "name": "Upper_side_rod_1",
+      "evaluated_vertices": 320,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "zero_area_faces": 0
+    }
+  ],
+  "native_pivots": {
+    "AURIX_ROOT": {
+      "parent": null,
+      "origin": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "SHOULDER_PIVOT": {
+      "parent": "AURIX_ROOT",
+      "origin": [
+        0.0,
+        0.0,
+        0.6899999976158142
+      ]
+    },
+    "ELBOW_PIVOT": {
+      "parent": "SHOULDER_PIVOT",
+      "origin": [
+        0.0,
+        0.0,
+        0.4259999990463257
+      ]
+    },
+    "WRIST_PIVOT": {
+      "parent": "ELBOW_PIVOT",
+      "origin": [
+        0.0,
+        0.0,
+        0.18400000035762787
+      ]
+    },
+    "SERVICE_COVER": {
+      "parent": "ELBOW_PIVOT",
+      "origin": [
+        0.0,
+        0.03700000047683716,
+        0.29899999499320984
+      ]
+    },
+    "INDEX_J0": {
+      "parent": "WRIST_PIVOT",
+      "origin": [
+        -0.029999999329447746,
+        0.0,
+        0.10599999874830246
+      ]
+    },
+    "INDEX_J1": {
+      "parent": "INDEX_J0",
+      "origin": [
+        -0.03200000151991844,
+        0.0010000000474974513,
+        0.06800000369548798
+      ]
+    },
+    "INDEX_J2": {
+      "parent": "INDEX_J1",
+      "origin": [
+        -0.03400000184774399,
+        0.004000000189989805,
+        0.03999999910593033
+      ]
+    },
+    "MIDDLE_J0": {
+      "parent": "WRIST_PIVOT",
+      "origin": [
+        -0.008999999612569809,
+        0.0,
+        0.10499999672174454
+      ]
+    },
+    "MIDDLE_J1": {
+      "parent": "MIDDLE_J0",
+      "origin": [
+        -0.009999999776482582,
+        0.0,
+        0.06300000101327896
+      ]
+    },
+    "MIDDLE_J2": {
+      "parent": "MIDDLE_J1",
+      "origin": [
+        -0.009999999776482582,
+        0.003000000026077032,
+        0.03200000151991844
+      ]
+    },
+    "RING_J0": {
+      "parent": "WRIST_PIVOT",
+      "origin": [
+        0.013000000268220901,
+        0.0,
+        0.10599999874830246
+      ]
+    },
+    "RING_J1": {
+      "parent": "RING_J0",
+      "origin": [
+        0.014000000432133675,
+        0.0010000000474974513,
+        0.06700000166893005
+      ]
+    },
+    "RING_J2": {
+      "parent": "RING_J1",
+      "origin": [
+        0.014999999664723873,
+        0.004000000189989805,
+        0.039000000804662704
+      ]
+    },
+    "LITTLE_J0": {
+      "parent": "WRIST_PIVOT",
+      "origin": [
+        0.032999999821186066,
+        0.0010000000474974513,
+        0.10899999737739563
+      ]
+    },
+    "LITTLE_J1": {
+      "parent": "LITTLE_J0",
+      "origin": [
+        0.03700000047683716,
+        0.003000000026077032,
+        0.07699999958276749
+      ]
+    },
+    "LITTLE_J2": {
+      "parent": "LITTLE_J1",
+      "origin": [
+        0.039000000804662704,
+        0.006000000052154064,
+        0.05400000140070915
+      ]
+    },
+    "THUMB_J0": {
+      "parent": "WRIST_PIVOT",
+      "origin": [
+        -0.035999998450279236,
+        0.0,
+        0.1469999998807907
+      ]
+    },
+    "THUMB_J1": {
+      "parent": "THUMB_J0",
+      "origin": [
+        -0.054999999701976776,
+        -0.0010000000474974513,
+        0.12399999797344208
+      ]
+    },
+    "THUMB_J2": {
+      "parent": "THUMB_J1",
+      "origin": [
+        -0.0689999982714653,
+        0.0010000000474974513,
+        0.0949999988079071
+      ]
+    }
+  },
+  "missing_objects": [],
+  "extra_objects": [],
+  "parent_mismatches": [],
+  "matrix_errors_over_1e_5": {},
+  "bounds_max_error_m": 4.248876570023263e-09,
+  "required_parent_relationships": {
+    "SHOULDER_PIVOT": "AURIX_ROOT",
+    "ELBOW_PIVOT": "SHOULDER_PIVOT",
+    "WRIST_PIVOT": "ELBOW_PIVOT",
+    "SERVICE_COVER": "ELBOW_PIVOT",
+    "THUMB_J0": "WRIST_PIVOT",
+    "THUMB_J1": "THUMB_J0",
+    "THUMB_J2": "THUMB_J1",
+    "INDEX_J0": "WRIST_PIVOT",
+    "INDEX_J1": "INDEX_J0",
+    "INDEX_J2": "INDEX_J1",
+    "MIDDLE_J0": "WRIST_PIVOT",
+    "MIDDLE_J1": "MIDDLE_J0",
+    "MIDDLE_J2": "MIDDLE_J1",
+    "RING_J0": "WRIST_PIVOT",
+    "RING_J1": "RING_J0",
+    "RING_J2": "RING_J1",
+    "LITTLE_J0": "WRIST_PIVOT",
+    "LITTLE_J1": "LITTLE_J0",
+    "LITTLE_J2": "LITTLE_J1",
+    "Crown_recessed_carrier": "SHOULDER_PIVOT",
+    "Crown_side_carrier_-1": "SHOULDER_PIVOT",
+    "Crown_side_carrier_1": "SHOULDER_PIVOT",
+    "Crown_top_lock_plate": "SHOULDER_PIVOT",
+    "Forearm_channel_hydraulic_-1": "ELBOW_PIVOT",
+    "Forearm_channel_hydraulic_1": "ELBOW_PIVOT",
+    "Forearm_lateral_underlayer_-1": "ELBOW_PIVOT",
+    "Forearm_lateral_underlayer_1": "ELBOW_PIVOT",
+    "Forearm_recessed_carrier_-1": "ELBOW_PIVOT",
+    "Forearm_recessed_carrier_1": "ELBOW_PIVOT",
+    "INDEX_S0_side_tendon_guide": "INDEX_J0",
+    "LITTLE_S0_side_tendon_guide": "LITTLE_J0",
+    "MIDDLE_S0_side_tendon_guide": "MIDDLE_J0",
+    "Palm_center_pad_seam": "WRIST_PIVOT",
+    "Palm_dorsal_ring_plate": "WRIST_PIVOT",
+    "Palm_thenar_pad_seam": "WRIST_PIVOT",
+    "RING_S0_side_tendon_guide": "RING_J0",
+    "Service_bay_machined_lip": "ELBOW_PIVOT",
+    "Service_bay_structural_rim": "ELBOW_PIVOT",
+    "Service_cartridge_lower_band_-1": "ELBOW_PIVOT",
+    "Service_cartridge_lower_band_1": "ELBOW_PIVOT",
+    "Service_cartridge_sleeve_-1": "ELBOW_PIVOT",
+    "Service_cartridge_sleeve_1": "ELBOW_PIVOT",
+    "Service_cartridge_upper_band_-1": "ELBOW_PIVOT",
+    "Service_cartridge_upper_band_1": "ELBOW_PIVOT",
+    "Service_lower_manifold": "ELBOW_PIVOT",
+    "Service_return_conduit_-1": "ELBOW_PIVOT",
+    "Service_return_conduit_1": "ELBOW_PIVOT",
+    "THUMB_S0_side_tendon_guide": "THUMB_J0",
+    "Upper_actuator_lower_band": "SHOULDER_PIVOT",
+    "Upper_actuator_machined_sleeve": "SHOULDER_PIVOT",
+    "Upper_actuator_upper_seal": "SHOULDER_PIVOT",
+    "Upper_blade_carrier_-1": "SHOULDER_PIVOT",
+    "Upper_blade_carrier_1": "SHOULDER_PIVOT",
+    "Upper_hose_return_-1": "SHOULDER_PIVOT",
+    "Upper_hose_return_1": "SHOULDER_PIVOT",
+    "Upper_rear_rod_bridge": "SHOULDER_PIVOT",
+    "Upper_return_pipe_-1": "SHOULDER_PIVOT",
+    "Upper_return_pipe_1": "SHOULDER_PIVOT",
+    "Upper_return_pipe_mount_-1": "SHOULDER_PIVOT",
+    "Upper_return_pipe_mount_1": "SHOULDER_PIVOT"
+  },
+  "required_parent_relationships_pass": true,
+  "exported_panel_edit": {
+    "selected_count": 26,
+    "unrelated_changed": [],
+    "displacements_m": {
+      "Service_cover_vent_00": [
+        0.0,
+        0.00299999862909317,
+        0.0
+      ],
+      "Service_cover_screw_1_351_hex_socket": [
+        0.0,
+        0.00299999862909317,
+        0.0
+      ],
+      "Service_cover_vent_03": [
+        0.0,
+        0.00299999862909317,
+        0.0
+      ],
+      "Service_cover_vent_07": [
+        0.0,
+        0.00299999862909317,
+        0.0
+      ],
+      "Service_cover_screw_-1_351": [
+        0.0,
+        0.00299999862909317,
+        0.0
+      ],
+      "Service_cover_status_light": [
+        0.0,
+        0.00299999862909317,
+        0.0
+      ],
+      "Service_cover_screw_1_305_hex_socket": [
+        0.0,
+        0.00299999862909317,
+        0.0
+      ],
+      "Service_cover_screw_-1_305_hex_socket": [
+        0.0,
+        0.00299999862909317,
+        0.0
+      ],
+      "Service_cover_screw_-1_249_hex_socket": [
+        0.0,
+        0.00299999862909317,
+        0.0
+      ],
+      "Service_cover_screw_-1_351_hex_socket": [
+        0.0,
+        0.00299999862909317,
+        0.0
+      ],
+      "Service_cover_vent_08": [
+        0.0,
+        0.00299999862909317,
+        0.0
+      ],
+      "Service_cover_vent_09": [
+        0.0,
+        0.00299999862909317,
+        0.0
+      ],
+      "Service_cover_vent_04": [
+        0.0,
+        0.00299999862909317,
+        0.0
+      ],
+      "Service_cover_screw_1_305": [
+        0.0,
+        0.00299999862909317,
+        0.0
+      ],
+      "Service_cover_vent_01": [
+        0.0,
+        0.00299999862909317,
+        0.0
+      ],
+      "Service_cover_vent_02": [
+        0.0,
+        0.00299999862909317,
+        0.0
+      ],
+      "Service_cover_vent_06": [
+        0.0,
+        0.00299999862909317,
+        0.0
+      ],
+      "Service_cover_screw_1_249_hex_socket": [
+        0.0,
+        0.00299999862909317,
+        0.0
+      ],
+      "Service_cover_center_inset": [
+        0.0,
+        0.00299999862909317,
+        0.0
+      ],
+      "Service_cover_graphite": [
+        0.0,
+        0.00299999862909317,
+        0.0
+      ],
+      "Service_cover_screw_1_351": [
+        0.0,
+        0.00299999862909317,
+        0.0
+      ],
+      "Service_cover_screw_-1_305": [
+        0.0,
+        0.00299999862909317,
+        0.0
+      ],
+      "Service_cover_vent_05": [
+        0.0,
+        0.00299999862909317,
+        0.0
+      ],
+      "Service_cover_screw_-1_249": [
+        0.0,
+        0.00299999862909317,
+        0.0
+      ],
+      "Service_cover_screw_1_249": [
+        0.0,
+        0.00299999862909317,
+        0.0
+      ],
+      "SERVICE_COVER": [
+        0.0,
+        0.00299999862909317,
+        0.0
+      ]
+    },
+    "passed": true
+  },
+  "exported_rigid_pose_samples": [
+    {
+      "pivot": "ELBOW_PIVOT",
+      "degrees": 45,
+      "descendant_mesh_count": 211,
+      "added_descendants": [
+        "Forearm_channel_hydraulic_-1",
+        "Forearm_channel_hydraulic_1",
+        "Forearm_lateral_underlayer_-1",
+        "Forearm_lateral_underlayer_1",
+        "Forearm_recessed_carrier_-1",
+        "Forearm_recessed_carrier_1",
+        "INDEX_S0_side_tendon_guide",
+        "LITTLE_S0_side_tendon_guide",
+        "MIDDLE_S0_side_tendon_guide",
+        "Palm_center_pad_seam",
+        "Palm_dorsal_ring_plate",
+        "Palm_thenar_pad_seam",
+        "RING_S0_side_tendon_guide",
+        "Service_bay_machined_lip",
+        "Service_bay_structural_rim",
+        "Service_cartridge_lower_band_-1",
+        "Service_cartridge_lower_band_1",
+        "Service_cartridge_sleeve_-1",
+        "Service_cartridge_sleeve_1",
+        "Service_cartridge_upper_band_-1",
+        "Service_cartridge_upper_band_1",
+        "Service_lower_manifold",
+        "Service_return_conduit_-1",
+        "Service_return_conduit_1",
+        "THUMB_S0_side_tendon_guide"
+      ],
+      "max_centroid_orbit_error_m": 6.664001874625056e-08,
+      "unexpected_unrelated_changes": [],
+      "passed": true
+    },
+    {
+      "pivot": "ELBOW_PIVOT",
+      "degrees": 90,
+      "descendant_mesh_count": 211,
+      "added_descendants": [
+        "Forearm_channel_hydraulic_-1",
+        "Forearm_channel_hydraulic_1",
+        "Forearm_lateral_underlayer_-1",
+        "Forearm_lateral_underlayer_1",
+        "Forearm_recessed_carrier_-1",
+        "Forearm_recessed_carrier_1",
+        "INDEX_S0_side_tendon_guide",
+        "LITTLE_S0_side_tendon_guide",
+        "MIDDLE_S0_side_tendon_guide",
+        "Palm_center_pad_seam",
+        "Palm_dorsal_ring_plate",
+        "Palm_thenar_pad_seam",
+        "RING_S0_side_tendon_guide",
+        "Service_bay_machined_lip",
+        "Service_bay_structural_rim",
+        "Service_cartridge_lower_band_-1",
+        "Service_cartridge_lower_band_1",
+        "Service_cartridge_sleeve_-1",
+        "Service_cartridge_sleeve_1",
+        "Service_cartridge_upper_band_-1",
+        "Service_cartridge_upper_band_1",
+        "Service_lower_manifold",
+        "Service_return_conduit_-1",
+        "Service_return_conduit_1",
+        "THUMB_S0_side_tendon_guide"
+      ],
+      "max_centroid_orbit_error_m": 8.462232866585662e-08,
+      "unexpected_unrelated_changes": [],
+      "passed": true
+    },
+    {
+      "pivot": "WRIST_PIVOT",
+      "degrees": 20,
+      "descendant_mesh_count": 115,
+      "added_descendants": [
+        "INDEX_S0_side_tendon_guide",
+        "LITTLE_S0_side_tendon_guide",
+        "MIDDLE_S0_side_tendon_guide",
+        "Palm_center_pad_seam",
+        "Palm_dorsal_ring_plate",
+        "Palm_thenar_pad_seam",
+        "RING_S0_side_tendon_guide",
+        "THUMB_S0_side_tendon_guide"
+      ],
+      "max_centroid_orbit_error_m": 2.3853496601554932e-08,
+      "unexpected_unrelated_changes": [],
+      "passed": true
+    },
+    {
+      "pivot": "INDEX_J0",
+      "degrees": 35,
+      "descendant_mesh_count": 20,
+      "added_descendants": [
+        "INDEX_S0_side_tendon_guide"
+      ],
+      "max_centroid_orbit_error_m": 1.862645149230957e-08,
+      "unexpected_unrelated_changes": [],
+      "passed": true
+    },
+    {
+      "pivot": "INDEX_J1",
+      "degrees": 20,
+      "descendant_mesh_count": 12,
+      "added_descendants": [],
+      "max_centroid_orbit_error_m": 4.16500117164066e-09,
+      "unexpected_unrelated_changes": [],
+      "passed": true
+    },
+    {
+      "pivot": "INDEX_J2",
+      "degrees": 10,
+      "descendant_mesh_count": 6,
+      "added_descendants": [],
+      "max_centroid_orbit_error_m": 2.3283064365386963e-09,
+      "unexpected_unrelated_changes": [],
+      "passed": true
+    }
+  ],
+  "limits": "Topology rows and named-node hierarchy/centroid motion only. Closed meshes do not prove inter-part clearance. No engine, skinning, UV/bake, continuous collision or physical linkage claim.",
+  "passed": true
+}

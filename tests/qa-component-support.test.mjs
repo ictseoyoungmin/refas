@@ -11,7 +11,7 @@ import {
   createTriangleComponentSupportPlan,replayTriangleComponentSupport,
   replayRealizedContactEvidence,initProject,commitCheckpoint,
   contentReference,verifySourceBoundObject,
-} from '../skills/refas/scripts/lib/index.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
 
 const digest=(c='a')=>c.repeat(64);
 const sha=bytes=>createHash('sha256').update(Buffer.from(bytes)).digest('hex');

@@ -1,0 +1,21 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-p",
+    "test_production_engine_playback.py",
+    "-v"
+  ],
+  "environment": {
+    "REFAS_GODOT_TESTS": "1"
+  },
+  "startedUtc": "2026-11-22T13:54:20.190037+00:00",
+  "endedUtc": "2026-11-22T13:54:23.082149+00:00",
+  "elapsedSeconds": 2.8921189100001357,
+  "returncode": 1
+}

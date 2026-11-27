@@ -13,7 +13,7 @@ import {
   NEUTRAL_CLAY_PRESENTATION_PRESET_DIGEST,
   NEUTRAL_CLAY_RENDERER_PROFILE,
   NEUTRAL_CLAY_REQUIRED_VIEW_IDS,
-} from '../skills/refas/scripts/lib/index.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
 
 const script = path.resolve('examples/benchmark-matrix/run-workers.mjs');
 const digest = (value) => createHash('sha256').update(value).digest('hex');

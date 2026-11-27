@@ -1,0 +1,12 @@
+{
+  "inputSha256": "7decd014021226ac606d6565f401989ec7f30ac5d330e95d97be1550fa6045ea",
+  "inputUnchanged": true,
+  "reviewSha256": "be6e20645867d04c6c07536ddc1a3cf2736d2111e0d3739628063ee989b134c1",
+  "workerSha256": "5949a1c2ff52a0b2e91260358ba44fa4eef2f7276f0842e2b391fda6a846ba80",
+  "observationBlendSha256": "68ac6faee24136e354b4ca03ad0622d05c5cc38509babaeb8078daa37c90a67a",
+  "normalizationRecordSha256": "86ca6f3b622318a709ea3edd24a603f5c7be527149360994b7287cad3ef29fa0",
+  "normalization": "Curves realized in a separate observation copy; source unchanged",
+  "elapsedSeconds": 24.812,
+  "returncode": 0,
+  "scope": "Common observation after construction; excluded from trial timing"
+}

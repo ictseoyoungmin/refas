@@ -29,8 +29,8 @@ import {
   loadProject,
   openHostSession,
   validateArtifactHandoff,
-} from '../skills/refas/scripts/lib/index.mjs';
-import {initTrustedContractFixtureProject} from '../skills/refas/scripts/lib/contract-fixture-project.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
+import {initTrustedContractFixtureProject} from '../legacy/v1/scripts/lib/contract-fixture-project.mjs';
 
 async function tempProject(t, projectId = 'handoff-project') {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), 'refas-handoff-'));
@@ -363,7 +363,7 @@ test('source-bound final host CLI refuses a draft while keeping ordinary draft h
   const {root, artifactPath}=await tempProject(t,projectId);
   await commitCandidate(root,artifactPath,'candidate-for-host-cli\n');
   await openFixtureSession(root,projectId);
-  const cli=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../skills/refas/scripts/refas-host.mjs');
+  const cli=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../legacy/v1/scripts/refas-host.mjs');
   const run=(args)=>spawnSync(process.execPath,[cli,...args],{encoding:'utf8'});
   const draft=run(['handoff','--root',root]);
   assert.equal(draft.status,0,draft.stderr);

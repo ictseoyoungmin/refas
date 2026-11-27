@@ -1,0 +1,10 @@
+{
+  "command": [
+    "npm",
+    "run",
+    "test:python"
+  ],
+  "started_at": "2026-11-22T09:17:07.819815+00:00",
+  "returncode": 0,
+  "seconds": 0.297
+}

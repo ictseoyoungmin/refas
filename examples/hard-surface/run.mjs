@@ -4,7 +4,7 @@ import {spawnSync} from 'node:child_process';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {analyzeMesh, createHardSurfaceShell, parseGlb, partsToGlb} from '../../skills/refas/scripts/lib/index.mjs';
+import {analyzeMesh, createHardSurfaceShell, parseGlb, partsToGlb} from '../../legacy/v1/scripts/lib/index.mjs';
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const REPOSITORY = path.resolve(ROOT, '../..');
@@ -69,7 +69,7 @@ const framePath = path.join(OUTPUT, 'canonical-frame.json');
 await fs.writeFile(framePath, `${JSON.stringify({schema: 'refas.canonical-object-frame/v1', id: 'hard-surface-fixture-frame', scopeId: 'whole', origin: [0, 0, 0], axes: {right: [1, 0, 0], up: [0, 1, 0], forward: [0, 0, 1]}}, null, 2)}\n`);
 
 const renderDir = path.join(OUTPUT, 'renders', 'portable');
-const result = spawnSync(PYTHON, [path.join(REPOSITORY, 'skills/refas/scripts/render_glb.py'), '--glb', glbPath, '--out', renderDir, '--frame', framePath, '--size', '420', '--timeout-seconds', '90', '--max-working-mb', '768', '--max-triangles', '1000000'], {encoding: 'utf8', timeout: 100_000, env: {...process.env, PYTHONDONTWRITEBYTECODE: '1'}});
+const result = spawnSync(PYTHON, [path.join(REPOSITORY, 'legacy/v1/scripts/render_glb.py'), '--glb', glbPath, '--out', renderDir, '--frame', framePath, '--size', '420', '--timeout-seconds', '90', '--max-working-mb', '768', '--max-triangles', '1000000'], {encoding: 'utf8', timeout: 100_000, env: {...process.env, PYTHONDONTWRITEBYTECODE: '1'}});
 if (result.error?.code === 'ETIMEDOUT') throw new Error('hard-surface visual validation exceeded 100 seconds');
 if (result.status !== 0) throw new Error(result.stderr || result.stdout);
 process.stdout.write(result.stdout);

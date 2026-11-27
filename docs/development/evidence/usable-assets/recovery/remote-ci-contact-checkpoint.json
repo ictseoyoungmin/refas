@@ -1,0 +1,22 @@
+{
+  "recordedUtc": "2026-11-22T21:50:29.795482+00:00",
+  "commit": "e570ed6536d1240948e84ca23ffd6ddda151ddad",
+  "tree": "63103cc4ce36c1723ddad4cb6558bbba90f67506",
+  "workflows": [
+    {
+      "id": 45073853228,
+      "name": "RefAs production alpha",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/ictseoyoungmin/refas/actions/runs/45073853228"
+    },
+    {
+      "id": 45073853216,
+      "name": "RefAs CI",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/ictseoyoungmin/refas/actions/runs/45073853216"
+    }
+  ],
+  "scope": "Exact remote contact-predicate/evidence checkpoint. Does not rerun or accept actual final garment geometry. Runtime95 actual Blender/Godot tests remain separately identified at1435."
+}

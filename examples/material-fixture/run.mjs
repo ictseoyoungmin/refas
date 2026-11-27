@@ -2,7 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
-import {partsToGlb} from '../../skills/refas/scripts/lib/index.mjs';
+import {partsToGlb} from '../../legacy/v1/scripts/lib/index.mjs';
 
 const ROOT=path.dirname(fileURLToPath(import.meta.url)), OUT=path.join(ROOT,'output');
 function sphere(center,radius,segments=32,rings=20){
@@ -28,7 +28,7 @@ const parts=entries.map(([id,center,materialId])=>({id,materialId,role:'material
 await fs.rm(OUT,{recursive:true,force:true}); await fs.mkdir(path.join(OUT,'assets'),{recursive:true});
 const glb=partsToGlb({parts,materials,assetId:'pbr-material-fixture',name:'PBR Material Fixture'}); const glbPath=path.join(OUT,'assets','material-fixture.glb'); await fs.writeFile(glbPath,glb);
 const frame={schema:'refas.canonical-object-frame/v1',id:'material-fixture-frame',scopeId:'whole',origin:[0,0,0],axes:{right:[1,0,0],up:[0,1,0],forward:[0,0,1]}}; const framePath=path.join(OUT,'canonical-frame.json'); await fs.writeFile(framePath,`${JSON.stringify(frame,null,2)}\n`);
-const renderer=path.resolve(ROOT,'../../skills/refas/scripts/render_pbr.py'), renderDir=path.join(OUT,'renders','pbr');
+const renderer=path.resolve(ROOT,'../../legacy/v1/scripts/render_pbr.py'), renderDir=path.join(OUT,'renders','pbr');
 const pythonEnv={...process.env,PYTHONDONTWRITEBYTECODE:'1'};
 const result=spawnSync(process.env.CODEX_PRIMARY_RUNTIME_PYTHON||'python3',[renderer,'--glb',glbPath,'--out',renderDir,'--frame',framePath,'--size','420','--timeout-seconds','120'],{encoding:'utf8',timeout:130000,env:pythonEnv});
 if(result.status!==0) throw new Error(result.stderr||result.stdout); process.stdout.write(result.stdout);

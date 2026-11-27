@@ -1,0 +1,19 @@
+{
+  "files": {
+    "ray-scale-diagnosis.json": "494c4d544e06d7f593b84748c491c831dcb4285d8a85b9fcc2a431c3daa34fb7",
+    "full-pairs-stdout.txt": "ed5781c6c44075d960622c1b3e575173c8e39fe8b7e05536725ccdf557b708ca",
+    "review_frozen_cloth.py": "b08db640f84950f8e051041b3ad0044962e0a9984e952fb2b7d67545c9d96a8f",
+    "lining-sat-scale-countercheck.json": "60b88f1f8952f7a26fec775c925b00613ae92ca5ce42fbda9852edc631cb89b8",
+    "diagnose_sat_contacts.py": "c6ff22ca4d4f2a9d157ed7d41d8144cfb64e75a372863bd410c7ae3f6f1ea5eb",
+    "strict-crossing-classification.json": "4bfb4c7ed2fb4174874aa30528ab74e25b5dd24c572d44be82d9906099588a04",
+    "diagnose_ray_scale.py": "49844be3b249518753f403475b89dcd97c062dfe88fd3cc8bae6fc36338112d9",
+    "full-pairs-report.json": "28f06bc7bf02c4d0eafe60aa2095fdf3d34dbcfe3525cffc49f365677dba8b01",
+    "full-pairs-stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "classification-stdout.txt": "a2f299ffa3e689312acbb3477b237102cd49b3e7d4298696d4d8bb6b2891a67b",
+    "classification-stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "contact-diagnosis.json": "ec13c102c68198d32dd86c35778be9c0563d17688e2155c44c94a48345913cfb",
+    "check_lining_gap.py": "9276677062d8e7e5e4e770a510885d0e5c802d248946e1ab2628cf8a60c7b118",
+    "full-pairs-command.json": "944fcf54e0722fc2aeed55eeab57433fec158f487da9ce3d1326ef3e5a4597c7",
+    "classify_frozen_contacts.py": "b131b5c56fb5acd1f61f0847d5bb92bcb97535e5075704c04a1dd46318b7b255"
+  }
+}

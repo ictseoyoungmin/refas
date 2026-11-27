@@ -1,0 +1,132 @@
+{
+  "review_type": "anonymous image-only visual comparison",
+  "acceptance_target": "finished visual realization of the supplied source",
+  "limits": [
+    "Only supplied images in garment and automail were inspected.",
+    "Complete sources were inspected before candidate renders.",
+    "Matched candidate cameras and conditions support qualitative A/B comparison.",
+    "Source cameras are unregistered; no calibrated likeness score or exact dimensional claim.",
+    "512-pixel renders and visible grain limit fine-detail and material judgments.",
+    "No inference about unseen components, topology, articulation, UVs, rigging, engine readiness, or workflow/model superiority."
+  ],
+  "assets": {
+    "garment": {
+      "relative_preference": "tie",
+      "confidence": "moderate",
+      "reasons": [
+        "Whole torso and sleeve silhouettes are very similar and share reduced tailoring relative to the source.",
+        "B has a more continuous collar-to-body relationship and reduces A's projecting rectangular-tab appearance.",
+        "A has more intelligible white edge trim; B introduces fragmented inward slashes and V-like marks that do not consistently explain a folded edge.",
+        "A's open gap between upper collar tab and lower lapel and B's ambiguous fold/trim treatment are competing substantial defects."
+      ],
+      "potential_preference_reversal": "Weight collar surface continuity more heavily to prefer B; weight clean pale-edged notch readability more heavily to prefer A.",
+      "acceptance": {
+        "A": {
+          "verdict": "reject",
+          "main_reasons": [
+            "Flat projecting upper collar tabs and abrupt separation from lower lapels.",
+            "Limited torso and sleeve tailoring.",
+            "Pale/metallic-looking bands instead of the source's dark strap construction.",
+            "Simplified emblems, chains, hanging ornaments, shoulder tabs, and fasteners."
+          ]
+        },
+        "B": {
+          "verdict": "reject",
+          "main_reasons": [
+            "Fragmented upper trim and unclear collar/lapel fold relationship.",
+            "Retains the shared body, sleeve, strap, and ornament simplifications."
+          ]
+        }
+      },
+      "inspected": {
+        "complete_source": "garment/source.png",
+        "whole_sheets": [
+          "garment/A-whole.png",
+          "garment/B-whole.png"
+        ],
+        "whole_views_per_candidate": [
+          "front",
+          "front-three-quarter",
+          "left",
+          "back",
+          "right",
+          "rear-three-quarter"
+        ],
+        "detail_sheets": [
+          "garment/A-details.png",
+          "garment/B-details.png"
+        ],
+        "detail_views_per_candidate": [
+          "fold-front",
+          "fold-oblique",
+          "fold-side"
+        ],
+        "individual_originals_per_candidate": [
+          "view-front.png",
+          "view-fold-oblique.png",
+          "view-fold-side.png"
+        ]
+      }
+    },
+    "automail": {
+      "relative_preference": "B",
+      "confidence": "moderately high",
+      "reasons": [
+        "B's shoulder shell has more continuous formed volume; A shows broad planar faceting.",
+        "B's curved forearm cover reads more volumetrically than A's flat slabs.",
+        "B's socket lips and stepped rim show stronger layered depth.",
+        "B's rounded palm and pads read more like grip surfaces than A's faceted blocks."
+      ],
+      "potential_preference_reversal": "A may be preferred locally for harder mechanical planes; B over-softens some panel language and has swollen-looking palm pads. These tradeoffs do not outweigh B's combined surface-volume advantage.",
+      "acceptance": {
+        "A": {
+          "verdict": "reject",
+          "main_reasons": [
+            "Coarse faceting of prominent shells and palm.",
+            "Simplified straight assembly and limited layered mechanical relationships.",
+            "Coarse finger segments and repetitive cylindrical joints.",
+            "Sparse armor divisions, rear structure, service-area detail, and material differentiation relative to source."
+          ]
+        },
+        "B": {
+          "verdict": "reject",
+          "main_reasons": [
+            "Broad smooth armor remains sparsely divided and unlike the source's nested panels.",
+            "Improved socket depth retains simplified surrounding construction and a conspicuous bright inner lip.",
+            "Forearm cover and service plate remain simplified.",
+            "Rounded but generic palm pads and unchanged coarse finger construction."
+          ]
+        }
+      },
+      "inspected": {
+        "complete_source": "automail/source.png",
+        "whole_sheets": [
+          "automail/A-whole.png",
+          "automail/B-whole.png"
+        ],
+        "whole_views_per_candidate": [
+          "front",
+          "hero",
+          "side",
+          "back"
+        ],
+        "detail_sheets": [
+          "automail/A-details.png",
+          "automail/B-details.png"
+        ],
+        "detail_views_per_candidate": [
+          "service-detail",
+          "armor-depth",
+          "socket-depth",
+          "palm-depth"
+        ],
+        "individual_originals_per_candidate": [
+          "service-detail.png",
+          "armor-depth.png",
+          "socket-depth.png",
+          "palm-depth.png"
+        ]
+      }
+    }
+  }
+}

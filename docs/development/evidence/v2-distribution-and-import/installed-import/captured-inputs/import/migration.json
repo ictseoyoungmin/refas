@@ -1,0 +1,58 @@
+{
+  "schema": "refas.production.legacy-import/v2",
+  "route": "glb",
+  "scope": "selected-archived-artifact-import",
+  "sourceProject": {
+    "schema": "refas.project-state/v1",
+    "version": "1.4.2",
+    "projectId": "wing-cover-dogfood",
+    "head": "cp_a45c8a02f85b5cf8b743",
+    "manifestSha256": "ade7d6bfe6f96d8b6ab9fd972e2b9d8c9d31eb24f8a220f66a1d92edc593fe47"
+  },
+  "checkpoint": {
+    "id": "cp_a744fb4e4fae0cd60712",
+    "manifestSha256": "363545c0579a7b63a789fe7fd8456436c6868034d4d9871f780fb251a630e7f9",
+    "legacyAuthorityValidation": "not-performed"
+  },
+  "artifact": {
+    "path": "assets/wing-cover.glb",
+    "kind": "artifact",
+    "sha256": "3fcf70e36a0b42723c3abed6ebc60cdfea0143e19c047ba802258753ee41fdec",
+    "bytes": 746976,
+    "capturedPath": "import/asset.glb",
+    "extensionsUsed": [],
+    "extensionsRequired": []
+  },
+  "reference": {
+    "path": "source/reference.png",
+    "sha256": "6076b27fadfcb1a929b306ce74d6b7ef22d1d8996102065df6a74012e3466148",
+    "bytes": 41281,
+    "legacyAuthority": "primary",
+    "legacyAcquisition": {
+      "kind": "generated-contract-reference",
+      "origin": "RefAs trusted contract harness"
+    }
+  },
+  "preserved": [
+    "Exact selected archived asset bytes",
+    "Exact captured project and checkpoint manifests",
+    "Exact original reference bytes",
+    "Old project files remain untouched"
+  ],
+  "conversion": "Reconstruct a Blender scene from supported GLB data and use production save/reopen checks",
+  "notImported": [
+    "Legacy checkpoint/transaction history as active production history",
+    "Legacy certificates, approvals, gates, findings and render evidence as current acceptance"
+  ],
+  "limitations": [
+    "GLB does not recover original modifiers, procedural graphs, construction scripts or sculpt history",
+    "External buffers/images are unsupported; importer feature handling and current-frame checks are bounded",
+    "Declared extensions are recorded; Blender importer support is not per-extension round-trip certification"
+  ],
+  "certification": {
+    "inherited": false,
+    "status": "not-evaluated"
+  },
+  "referenceResemblance": "not-evaluated",
+  "gameReadiness": "not-evaluated"
+}

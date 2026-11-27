@@ -6,7 +6,7 @@ const root=new URL('../',import.meta.url);
 const read=async p=>JSON.parse(await fs.readFile(new URL(p,root),'utf8'));
 test('adaptive evidence request schema describes installed request template and source alternatives',async()=>{
   const schema=await read('schemas/evidence-request.schema.json');
-  const template=await read('skills/refas/assets/templates/evidence-request.json');
+  const template=await read('legacy/v1/assets/templates/evidence-request.json');
   assert.equal(template.schema,schema.properties.schema.const);
   assert.equal(schema.$schema,'https://json-schema.org/draft/2020-12/schema');
   assert.deepEqual(schema.required,['schema','subjectId','sources']);
@@ -25,7 +25,7 @@ test('adaptive evidence request schema describes installed request template and 
 });
 test('utility decisions schema matches installed outcomes and explicit model impact',async()=>{
   const schema=await read('schemas/evidence-utility-decisions.schema.json');
-  const template=await read('skills/refas/assets/templates/evidence-utility-decisions.json');
+  const template=await read('legacy/v1/assets/templates/evidence-utility-decisions.json');
   assert.equal(schema.properties.schema.const,template.schema);
   const item=schema.properties.assessments.items;
   const allowed=item.properties.outcome.enum;

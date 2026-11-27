@@ -1,0 +1,224 @@
+{
+  "ok": true,
+  "schema": "refas.production.project/v2",
+  "name": "wing-cover-forward-choice",
+  "projectId": "e9933abd5e2b4eb88d92c0655e7cf14e",
+  "head": "5b20ffb343054e2a90d6f4fb1f915d6b",
+  "sequence": 4,
+  "sources": [
+    {
+      "path": "sources/001-reference.png",
+      "name": "reference.png",
+      "role": "user-reference",
+      "sha256": "6076b27fadfcb1a929b306ce74d6b7ef22d1d8996102065df6a74012e3466148",
+      "bytes": 41281
+    }
+  ],
+  "outputs": {
+    "blend": "/workspace/scratch/c52cb753f160/v2-import-proof/forward-use/project/.refas2/revisions/5b20ffb343054e2a90d6f4fb1f915d6b/artifacts/scene.blend",
+    "glb": "/workspace/scratch/c52cb753f160/v2-import-proof/forward-use/project/.refas2/revisions/5b20ffb343054e2a90d6f4fb1f915d6b/artifacts/asset.glb",
+    "scene": "/workspace/scratch/c52cb753f160/v2-import-proof/forward-use/project/.refas2/revisions/5b20ffb343054e2a90d6f4fb1f915d6b/artifacts/scene.json"
+  },
+  "observations": [
+    {
+      "camera": {
+        "matrixWorld": [
+          [
+            0.8349582,
+            -0.22013363,
+            0.50436693,
+            3.48310137
+          ],
+          [
+            0.55031341,
+            0.33399591,
+            -0.76524633,
+            -5.35757208
+          ],
+          [
+            -5e-08,
+            0.91650856,
+            0.40001509,
+            2.76545572
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "orthoScale": 4.04344702,
+        "position": [
+          3.48310137,
+          -5.35757208,
+          2.76545572
+        ],
+        "projection": "orthographic",
+        "target": [
+          0.01181483,
+          -0.09079336,
+          0.01236677
+        ]
+      },
+      "framing": "automatic-bounds",
+      "lighting": {
+        "center": [
+          0.01181483,
+          -0.09079336,
+          0.01236677
+        ],
+        "radius": 1.72061566,
+        "rig": "three-area-lights/v1"
+      },
+      "path": "/workspace/scratch/c52cb753f160/v2-import-proof/forward-use/project/.refas2/revisions/5b20ffb343054e2a90d6f4fb1f915d6b/artifacts/view-hero.png",
+      "referenceRegion": null,
+      "registration": "unregistered",
+      "renderer": {
+        "denoising": false,
+        "device": "CPU",
+        "engine": "CYCLES",
+        "samples": 16,
+        "size": [
+          512,
+          512
+        ],
+        "transparent": false,
+        "viewTransform": "AgX",
+        "worldColor": [
+          0.065,
+          0.08,
+          0.115
+        ],
+        "worldStrength": 0.45
+      },
+      "sha256": "9d056440b700eb65cb6c457d177d0c4f4b3fe3da20445d6126a431001549b3e7",
+      "sourceSceneFingerprint": "6950b1f78841a0724860033fbf492dca93df347f1fc8227492a8aa1279a2f54f",
+      "view": "hero"
+    },
+    {
+      "camera": {
+        "matrixWorld": [
+          [
+            -4e-08,
+            4e-08,
+            1.0,
+            6.89427757
+          ],
+          [
+            1.0,
+            0.0,
+            4e-08,
+            -0.09079336
+          ],
+          [
+            0.0,
+            1.0,
+            -4e-08,
+            0.01236677
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "orthoScale": 4.04344702,
+        "position": [
+          6.89427757,
+          -0.09079336,
+          0.01236677
+        ],
+        "projection": "orthographic",
+        "target": [
+          0.01181483,
+          -0.09079336,
+          0.01236677
+        ]
+      },
+      "framing": "automatic-bounds",
+      "lighting": {
+        "center": [
+          0.01181483,
+          -0.09079336,
+          0.01236677
+        ],
+        "radius": 1.72061566,
+        "rig": "three-area-lights/v1"
+      },
+      "path": "/workspace/scratch/c52cb753f160/v2-import-proof/forward-use/project/.refas2/revisions/5b20ffb343054e2a90d6f4fb1f915d6b/artifacts/view-side.png",
+      "referenceRegion": null,
+      "registration": "unregistered",
+      "renderer": {
+        "denoising": false,
+        "device": "CPU",
+        "engine": "CYCLES",
+        "samples": 16,
+        "size": [
+          512,
+          512
+        ],
+        "transparent": false,
+        "viewTransform": "AgX",
+        "worldColor": [
+          0.065,
+          0.08,
+          0.115
+        ],
+        "worldStrength": 0.45
+      },
+      "sha256": "abc117600c436e10eadaa5363a0cc4c65b29fc6bd5a2a0d8ee658f59d31c1a27",
+      "sourceSceneFingerprint": "6950b1f78841a0724860033fbf492dca93df347f1fc8227492a8aa1279a2f54f",
+      "view": "side"
+    }
+  ],
+  "inputs": {
+    "edit.py": "/workspace/scratch/c52cb753f160/v2-import-proof/forward-use/project/.refas2/revisions/5b20ffb343054e2a90d6f4fb1f915d6b/inputs/edit.py",
+    "import/asset.glb": "/workspace/scratch/c52cb753f160/v2-import-proof/forward-use/project/.refas2/revisions/5b20ffb343054e2a90d6f4fb1f915d6b/inputs/import/asset.glb",
+    "import/legacy-checkpoint.json": "/workspace/scratch/c52cb753f160/v2-import-proof/forward-use/project/.refas2/revisions/5b20ffb343054e2a90d6f4fb1f915d6b/inputs/import/legacy-checkpoint.json",
+    "import/legacy-project.json": "/workspace/scratch/c52cb753f160/v2-import-proof/forward-use/project/.refas2/revisions/5b20ffb343054e2a90d6f4fb1f915d6b/inputs/import/legacy-project.json",
+    "import/migration.json": "/workspace/scratch/c52cb753f160/v2-import-proof/forward-use/project/.refas2/revisions/5b20ffb343054e2a90d6f4fb1f915d6b/inputs/import/migration.json"
+  },
+  "revisions": [
+    {
+      "id": "6f23fe22c89f40ea96b99f1b4060f196",
+      "intent": "Import RefAs 1.x cp_a744fb4e4fae0cd60712: assets/wing-cover.glb",
+      "createdAt": "2026-11-22T11:45:13.855832+00:00",
+      "parent": null
+    },
+    {
+      "id": "3795c8dfcb8f43aeab6728e837b09044",
+      "intent": "Capture unchanged imported asset with fixed hero, tip detail and grazing views",
+      "createdAt": "2026-11-22T11:47:30.153957+00:00",
+      "parent": "6f23fe22c89f40ea96b99f1b4060f196"
+    },
+    {
+      "id": "ecfc78fcd169476e8c4da1358d4cb173",
+      "intent": "Raise only panel:cell-00 outward by 0.025 scene units; preserve the remaining asset",
+      "createdAt": "2026-11-22T11:48:36.348037+00:00",
+      "parent": "3795c8dfcb8f43aeab6728e837b09044"
+    },
+    {
+      "id": "5b20ffb343054e2a90d6f4fb1f915d6b",
+      "intent": "Restore revision 6f23fe22c89f40ea96b99f1b4060f196",
+      "createdAt": "2026-11-22T11:49:46.461262+00:00",
+      "parent": "ecfc78fcd169476e8c4da1358d4cb173"
+    }
+  ],
+  "incompleteRuns": [],
+  "evidenceFreshness": {
+    "status": "current",
+    "scope": "active-reference-content-set",
+    "revision": "5b20ffb343054e2a90d6f4fb1f915d6b",
+    "activeSourceSha256": [
+      "6076b27fadfcb1a929b306ce74d6b7ef22d1d8996102065df6a74012e3466148"
+    ],
+    "revisionSourceSha256": [
+      "6076b27fadfcb1a929b306ce74d6b7ef22d1d8996102065df6a74012e3466148"
+    ],
+    "visualAcceptance": "not-evaluated"
+  },
+  "referenceResemblance": "not-evaluated",
+  "gameReadiness": "not-evaluated"
+}

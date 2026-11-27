@@ -1,0 +1,29 @@
+{
+  "review": "Independent read-only example and evidence review",
+  "runtimeChanged": false,
+  "findings": [
+    {
+      "issue": "Hardcoded original trial baseline ID in shell-correction evidence",
+      "fix": "Removed stale ID; each production revision manifest owns its actual parent."
+    },
+    {
+      "issue": "Independent export check hardcoded /usr/bin/blender",
+      "fix": "--blender is resolved through the public doctor and used by all production and independent export commands."
+    },
+    {
+      "issue": "Collar comment said lining was unchanged",
+      "fix": "Comment now states the intentional cloth and lining material changes."
+    }
+  ],
+  "reviewerFixVerification": "All three fixes inspected on disk; no remaining blocker found in the exercised paths.",
+  "scopeLimits": [
+    "Pose script records named shell-pair intersections; command success is not a collision-clearance gate.",
+    "Garment object fingerprints have an explicitly bounded property scope; shader node edits are intentional and reported separately.",
+    "Observation asset-root filtering is explicit and does not claim excluded studio objects were absent."
+  ],
+  "finalFiles": {
+    "examples/automail-arm/run.py": "0234969924766b6b82b9b3a6075254b0d1acaca63893282b55295415b6df6d42",
+    "examples/automail-arm/correct_shells.py": "3a124277fcb9297a0535a4dcbcb6242d53eff0a6464de034c396fafeffd13b92",
+    "examples/uniform-jacket/refine_collar.py": "af2ac7c17c86e5ae941d2b4d7c6df2a806a63e28c3709906eaa8bb8cdbf4ddb3"
+  }
+}

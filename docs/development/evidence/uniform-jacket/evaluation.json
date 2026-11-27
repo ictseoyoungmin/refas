@@ -1,0 +1,1227 @@
+{
+  "schema": "refas.uniform-jacket.evidence/v1",
+  "status": "exploratory pilot; no finished visual acceptance",
+  "reference": {
+    "schema": "refas.dogfood.reference/v1",
+    "id": "uniform-jacket",
+    "role": "user-design-reference",
+    "sourceFile": "source/reference.png",
+    "uploadedName": "image(20261121-184635).png",
+    "sha256": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5",
+    "bytes": 2666378,
+    "pixelSize": [
+      1672,
+      941
+    ],
+    "receivedDate": "2026-11-22",
+    "timezone": "Asia/Seoul",
+    "authority": "User designated this exact sheet as the dogfooding asset reference.",
+    "scope": "Uniform jacket only; no body, head, trousers or mannequin",
+    "views": [
+      {
+        "role": "front",
+        "yawDegrees": 0,
+        "regionPixels": [
+          6,
+          47,
+          380,
+          399
+        ]
+      },
+      {
+        "role": "front-three-quarter",
+        "yawDegrees": 45,
+        "regionPixels": [
+          383,
+          47,
+          655,
+          399
+        ]
+      },
+      {
+        "role": "wearer-left",
+        "yawDegrees": 90,
+        "regionPixels": [
+          658,
+          47,
+          867,
+          399
+        ]
+      },
+      {
+        "role": "back",
+        "yawDegrees": 180,
+        "regionPixels": [
+          871,
+          47,
+          1201,
+          399
+        ]
+      },
+      {
+        "role": "unlabelled-opposite-side",
+        "yawDegrees": 270,
+        "regionPixels": [
+          1205,
+          47,
+          1400,
+          399
+        ],
+        "confidence": "inferred"
+      },
+      {
+        "role": "rear-three-quarter",
+        "yawDegrees": 225,
+        "regionPixels": [
+          1404,
+          47,
+          1667,
+          399
+        ]
+      }
+    ],
+    "viewRegistration": "design-sheet labels; not calibrated cameras",
+    "sizeTableCm": {
+      "A": 38.0,
+      "B": 90.0,
+      "C": 42.0,
+      "D": 36.0,
+      "E": 68.0,
+      "F": 58.0,
+      "G": 13.0,
+      "H": 20.0,
+      "I": 7.5,
+      "J": 3.0,
+      "K": 72.0,
+      "L": 3.5,
+      "M": 6.0,
+      "N": 13.0
+    },
+    "ambiguities": [
+      "G sleeve opening flat width and N outer cuff circumference both read 13 cm; do not enforce both as circumference.",
+      "I 7.5 cm is labeled collar width but its arrow spans a larger collar outline; treat as a local design dimension, not full neck opening.",
+      "C diagram arrow spans more than the back-center body length named in the table.",
+      "Decorations vary between oblique views; front/back/labelled left decide the decorated side.",
+      "The unlabelled fifth top panel is treated as the opposite side, not an independent duplicate left view."
+    ]
+  },
+  "design": {
+    "attempts_per_condition": 1,
+    "independent_conditions": true,
+    "model_assignment": "same inherited model; provider/model ID not instrumented",
+    "provider": null,
+    "model_id": null,
+    "tokens": null,
+    "complete_tool_call_count": null,
+    "soft_budget_seconds": 900,
+    "maximum_geometry_corrections_after_visual_review": 1,
+    "blender_version": "4.3.2",
+    "common_assignment": "../../../../examples/uniform-jacket/TASK.md",
+    "scope": "Jacket prototype and native cuff edit/restore; no mannequin, simulation, rig, deformation or target-engine test.",
+    "statistical_superiority_claimed": false,
+    "numerical_likeness_scores": null
+  },
+  "conditions": {
+    "plain": {
+      "label": "Plain Blender",
+      "blind_label": "B",
+      "trial_report_sha256": "a8a1b8106cd85dd23c0e19adff7554dd035ae119be270b6e4e9d6b09e9b5f0d3",
+      "trial_report_markdown_sha256": "a11ec91f5a7be8d5387262c184aafaa9ee48681f21b7d007c3e08e96de75efe4",
+      "trial_report_origin": "/tmp/refas-jacket-evaluation/plain/report.json",
+      "timing": {
+        "recorded_seconds": 721.111929,
+        "is_lower_bound": false,
+        "pre_read_start_recorded": true,
+        "note": "Full recorded interval."
+      },
+      "guidance": {
+        "primary_guidance_bytes_accessed": 0,
+        "basis": "No RefAs guidance.",
+        "additional_snapshot_code_inspection": null
+      },
+      "construction": {
+        "initial_complete_candidate_count": 1,
+        "post_review_geometry_corrections": 1,
+        "initial_candidate_retained": true
+      },
+      "cuff_edit": {
+        "before_band_height_m": 0.05999999865889549,
+        "edited_band_height_m": 0.07000000029802322,
+        "axis": "cuff parent local +Z, aligned along sleeve toward shoulder",
+        "changed_objects": [
+          "CUFF L | 60mm outer band",
+          "CUFF L | top pale piping",
+          "CUFF L | buckle strap",
+          "CUFF L | silver buckle",
+          "CUFF L | buckle pin",
+          "CUFF L | eyelet",
+          "CUFF L | eyelet.001"
+        ],
+        "protected_object_count": 78,
+        "protected_geometry_and_transforms_unchanged": true,
+        "materials_unchanged": true,
+        "restored_all_asset_geometry_and_transforms_exact": true,
+        "restored_materials_exact": true,
+        "buckle_and_strap_translation_along_axis_m": 0.005,
+        "upper_piping_translation_along_axis_m": 0.01,
+        "lower_piping_unchanged": true,
+        "candidate_file_was_not_modified": true,
+        "elapsed_seconds": 25.632601022720337
+      },
+      "restoration": {
+        "evidence": "Recorded geometry/transform and material fingerprints match after reopen/resave; byte-identical native file not asserted.",
+        "byte_identical_claimed": false
+      },
+      "observation": {
+        "inputSha256": "7decd014021226ac606d6565f401989ec7f30ac5d330e95d97be1550fa6045ea",
+        "inputUnchanged": true,
+        "reviewSha256": "be6e20645867d04c6c07536ddc1a3cf2736d2111e0d3739628063ee989b134c1",
+        "workerSha256": "5949a1c2ff52a0b2e91260358ba44fa4eef2f7276f0842e2b391fda6a846ba80",
+        "observationBlendSha256": "68ac6faee24136e354b4ca03ad0622d05c5cc38509babaeb8078daa37c90a67a",
+        "normalizationRecordSha256": "86ca6f3b622318a709ea3edd24a603f5c7be527149360994b7287cad3ef29fa0",
+        "normalization": "Curves realized in a separate observation copy; source unchanged",
+        "elapsedSeconds": 24.812,
+        "returncode": 0,
+        "scope": "Common observation after construction; excluded from trial timing"
+      },
+      "normalization": {
+        "sourceSha256": "7decd014021226ac606d6565f401989ec7f30ac5d330e95d97be1550fa6045ea",
+        "convertedCurves": [
+          "Armscye L | fine seam",
+          "Sleeve L | back seam",
+          "CUFF L | bottom pale piping",
+          "CUFF L | top pale piping",
+          "CUFF L | silver buckle",
+          "CUFF L | buckle pin",
+          "CUFF L | eyelet",
+          "CUFF L | eyelet.001",
+          "Armscye R | fine seam",
+          "Sleeve R | back seam",
+          "CUFF R | bottom pale piping",
+          "CUFF R | top pale piping",
+          "CUFF R | silver buckle",
+          "CUFF R | buckle pin",
+          "CUFF R | eyelet",
+          "CUFF R | eyelet.001",
+          "LAPEL L | pale perimeter",
+          "LAPEL L | roll line",
+          "LAPEL R | pale perimeter",
+          "LAPEL R | roll line",
+          "COLLAR | fine pale upper rim",
+          "EPAULET L | pale edging",
+          "EPAULET R | pale edging",
+          "Belt | stitched edge 0.01",
+          "Belt | stitched edge 0.041",
+          "WAIST L | front silver buckle",
+          "WAIST L | buckle tongue",
+          "BELT L | rear buckle",
+          "BELT L | rear tongue",
+          "WAIST R | front silver buckle",
+          "WAIST R | buckle tongue",
+          "BELT R | rear buckle",
+          "BELT R | rear tongue",
+          "BODY | center back seam",
+          "BODY | back princess seam -1",
+          "BODY | back princess seam 1",
+          "INSIGNIA L | silver shield border",
+          "INSIGNIA L | fleur central stem",
+          "INSIGNIA L | fleur left petal",
+          "INSIGNIA L | fleur right petal",
+          "INSIGNIA L | crossbar",
+          "INSIGNIA L | front shield silver rim",
+          "INSIGNIA L | front badge motif",
+          "INSIGNIA L | front badge cross"
+        ],
+        "sourceObjectCount": 89,
+        "method": "Blender object.convert MESH on a separate copy, no source resave",
+        "observationObjectCount": 89,
+        "sourceUnchanged": true
+      },
+      "scene_statistics": {
+        "armatures": 0,
+        "materialSlots": 100,
+        "meshes": 83,
+        "objects": 89,
+        "shapeKeyObjects": 0,
+        "triangles": 434268,
+        "uvObjects": 59,
+        "vertices": 217422
+      },
+      "scene_fingerprint": "8eeb85c155f80b63c3df313f48c2058b6f111d9313f06726428b1d3a430febd0",
+      "render_files": [
+        {
+          "view": "front",
+          "path": "renders/plain/view-front.png",
+          "sha256": "ad6be5a9d13fa5ebd4c74bc8ee346659b6a4b795c2246bdbb2240117b8feb2b2"
+        },
+        {
+          "view": "front-three-quarter",
+          "path": "renders/plain/view-front-three-quarter.png",
+          "sha256": "899e10698a6f5960a85f1fca25f572113f53c7cba534348a8d40f79fcaf133d0"
+        },
+        {
+          "view": "left",
+          "path": "renders/plain/view-left.png",
+          "sha256": "70807a1fd2a85b20688e4833e8185730d1a5133b231a929d60982730a510046e"
+        },
+        {
+          "view": "back",
+          "path": "renders/plain/view-back.png",
+          "sha256": "590be79a954fb5cebd65aac74cc056e0ad173e71e05cfe57a5e60af76a57a253"
+        },
+        {
+          "view": "right",
+          "path": "renders/plain/view-right.png",
+          "sha256": "cb5e72768e9c48a7f9c80232580f2f9564ffb010eadbc095ec47a5db4d9b827e"
+        },
+        {
+          "view": "rear-three-quarter",
+          "path": "renders/plain/view-rear-three-quarter.png",
+          "sha256": "d49b2161c705dcc2af0133b9b6584bf98b63678e2fe10c64f5afe07d9a4373b8"
+        }
+      ]
+    },
+    "legacy": {
+      "label": "RefAs 1.x",
+      "blind_label": "C",
+      "trial_report_sha256": "fa7ac7a09f57dac027b39822411205d4beb44c8c4ea6726e8612e9300e41699f",
+      "trial_report_markdown_sha256": "4410570b11530a80769dcf03f5e7ef7357b952f8f8e64caecca4c140446e3b63",
+      "trial_report_origin": "/tmp/refas-jacket-evaluation/legacy/report.json",
+      "timing": {
+        "recorded_seconds": 590.79872,
+        "is_lower_bound": true,
+        "pre_read_start_recorded": false,
+        "note": "Pre-read start missed; do not infer comparative speed or confirmed full-budget compliance."
+      },
+      "guidance": {
+        "primary_guidance_bytes_accessed": 155409,
+        "basis": "12 Markdown guidance files; truncated reads and rereads; accessed bytes, not fully consumed bytes.",
+        "additional_snapshot_code_inspection": null
+      },
+      "construction": {
+        "initial_complete_candidate_count": 1,
+        "post_review_geometry_corrections": 1,
+        "initial_candidate_retained": true
+      },
+      "cuff_edit": {
+        "baseline_band_height_m": 0.06000000797212124,
+        "edited_band_height_m": 0.0700000086799264,
+        "height_target_m": 0.07,
+        "height_ok": true,
+        "protected_object_count": 104,
+        "protected_changed": [],
+        "materials_unchanged": true,
+        "left_cuff_members": [
+          "Left cuff band",
+          "Left cuff lower piping",
+          "Left cuff upper piping",
+          "Left cuff buckle frame",
+          "Left cuff buckle pin",
+          "Left cuff eyelet",
+          "Left cuff eyelet.001"
+        ],
+        "actual_changed_objects": [
+          "Left cuff band",
+          "Left cuff upper piping",
+          "Left cuff buckle frame",
+          "Left cuff buckle pin",
+          "Left cuff eyelet",
+          "Left cuff eyelet.001"
+        ],
+        "native_source_edit": true,
+        "direct_glb_mutation": false,
+        "persisted_height_m": 0.0700000086799264,
+        "persisted_protected_changed": [],
+        "candidate_blend_sha256": "12bad67bdd8ac19d44291af29919f3036aca833eeb5ecde820ebed35062275a2",
+        "restored_blend_sha256": "12bad67bdd8ac19d44291af29919f3036aca833eeb5ecde820ebed35062275a2",
+        "restore_byte_identical": true,
+        "runtime_seconds": 3.2454206943511963
+      },
+      "restoration": {
+        "evidence": "Restored native file is byte-identical to selected candidate; recorded scene checks also match.",
+        "byte_identical_claimed": true
+      },
+      "observation": {
+        "inputSha256": "12bad67bdd8ac19d44291af29919f3036aca833eeb5ecde820ebed35062275a2",
+        "inputUnchanged": true,
+        "reviewSha256": "be6e20645867d04c6c07536ddc1a3cf2736d2111e0d3739628063ee989b134c1",
+        "workerSha256": "5949a1c2ff52a0b2e91260358ba44fa4eef2f7276f0842e2b391fda6a846ba80",
+        "observationBlendSha256": "2ac9d279ec4216c1824245f9b49ec3529d82cb779388721df449d5f115713579",
+        "normalizationRecordSha256": "f2078c5b6ca6ab6d603fa4105e51ff25b62e883541733710a7f688155d6c98ff",
+        "normalization": "Curves realized in a separate observation copy; source unchanged",
+        "elapsedSeconds": 22.642,
+        "returncode": 0,
+        "scope": "Common observation after construction; excluded from trial timing"
+      },
+      "normalization": {
+        "sourceSha256": "12bad67bdd8ac19d44291af29919f3036aca833eeb5ecde820ebed35062275a2",
+        "convertedCurves": [
+          "Right front opening edge",
+          "Left front opening edge",
+          "Hem tailored edge",
+          "Collar pale top edge",
+          "Right lapel piping",
+          "Right shoulder tab piping",
+          "Left lapel piping",
+          "Left shoulder tab piping",
+          "Right sleeve outer seam",
+          "Right cuff lower piping",
+          "Right cuff upper piping",
+          "Right cuff buckle frame",
+          "Right cuff buckle pin",
+          "Right armhole seam",
+          "Left sleeve outer seam",
+          "Left cuff lower piping",
+          "Left cuff upper piping",
+          "Left cuff buckle frame",
+          "Left cuff buckle pin",
+          "Left armhole seam",
+          "Right front waist buckle frame",
+          "Right front waist buckle pin",
+          "Left front waist buckle frame",
+          "Left front waist buckle pin",
+          "Right rear belt buckle frame",
+          "Right rear belt buckle pin",
+          "Left rear belt buckle frame",
+          "Left rear belt buckle pin",
+          "Back centre seam",
+          "Right back princess seam",
+          "Left back princess seam",
+          "Left chest shield silver outline",
+          "Left chest shield fleur -1",
+          "Left chest shield fleur 1",
+          "Left chest shield fleur cross",
+          "Left sleeve shield silver outline",
+          "Left sleeve shield fleur -1",
+          "Left sleeve shield fleur 1",
+          "Left sleeve shield fleur cross",
+          "Left draped chain 0",
+          "Left chain link 0 0",
+          "Left chain link 0 1",
+          "Left chain link 0 2",
+          "Left chain link 0 3",
+          "Left chain link 0 4",
+          "Left chain link 0 5",
+          "Left chain link 0 6",
+          "Left chain link 0 7",
+          "Left chain link 0 8",
+          "Left chain link 0 9",
+          "Left chain link 0 10",
+          "Left chain link 0 11",
+          "Left chain link 0 12",
+          "Left chain link 0 13",
+          "Left chain link 0 14",
+          "Left chain link 0 15",
+          "Left draped chain 1",
+          "Left chain link 1 0",
+          "Left chain link 1 1",
+          "Left chain link 1 2",
+          "Left chain link 1 3",
+          "Left chain link 1 4",
+          "Left chain link 1 5",
+          "Left chain link 1 6",
+          "Left chain link 1 7",
+          "Left chain link 1 8",
+          "Left chain link 1 9",
+          "Left chain link 1 10",
+          "Left chain link 1 11",
+          "Left chain link 1 12",
+          "Left chain link 1 13",
+          "Left chain link 1 14",
+          "Left chain link 1 15",
+          "Left hanging chain 0",
+          "Left hanging chain 1",
+          "Left hanging chain 2"
+        ],
+        "sourceObjectCount": 115,
+        "method": "Blender object.convert MESH on a separate copy, no source resave",
+        "observationObjectCount": 115,
+        "sourceUnchanged": true
+      },
+      "scene_statistics": {
+        "armatures": 0,
+        "materialSlots": 111,
+        "meshes": 111,
+        "objects": 115,
+        "shapeKeyObjects": 0,
+        "triangles": 71382,
+        "uvObjects": 94,
+        "vertices": 35973
+      },
+      "scene_fingerprint": "97d59998832fc3921e1b52afb2e3c3565e7f87864248cbea140aff2f5bd5485c",
+      "render_files": [
+        {
+          "view": "front",
+          "path": "renders/legacy/view-front.png",
+          "sha256": "b702e32b43b63b9ea41ccc868dcce42d29e1aa07f5c7335027fae49aa733007d"
+        },
+        {
+          "view": "front-three-quarter",
+          "path": "renders/legacy/view-front-three-quarter.png",
+          "sha256": "261d8662551d92bbedb3c67eb70ed63a7c80681be85617209d8e1c9adb726c4a"
+        },
+        {
+          "view": "left",
+          "path": "renders/legacy/view-left.png",
+          "sha256": "397e0efea4492b37286112df99f5e7cf661f397a4ee868f127f0ece892a5daf9"
+        },
+        {
+          "view": "back",
+          "path": "renders/legacy/view-back.png",
+          "sha256": "708169e0c17ef464a74f4f3230bbf789ec6c103ad302c3ea08267a5c45b1187d"
+        },
+        {
+          "view": "right",
+          "path": "renders/legacy/view-right.png",
+          "sha256": "e2f75b7ee615f450a86651e44a329b34b678acc56433980e4939bc92ddd218f7"
+        },
+        {
+          "view": "rear-three-quarter",
+          "path": "renders/legacy/view-rear-three-quarter.png",
+          "sha256": "f58ae7ef43ad10701fa89641e32e6d18c6f81d0e4f710c6f646ea11f935b24b0"
+        }
+      ]
+    },
+    "production": {
+      "label": "RefAs 2.0 production",
+      "blind_label": "A",
+      "trial_report_sha256": "8591dc43f93960f4870a70abb067a9f1c036c020930bb19329f01c427b1cc492",
+      "trial_report_markdown_sha256": "0c201e616e79a735f0f13410be3dc9f33611ae2ee1a66f5342efc116c69e1e93",
+      "trial_report_origin": "/tmp/refas-jacket-evaluation/production/report.json",
+      "timing": {
+        "recorded_seconds": 573.108655,
+        "is_lower_bound": true,
+        "pre_read_start_recorded": false,
+        "note": "Pre-read start missed; do not infer comparative speed or confirmed full-budget compliance."
+      },
+      "guidance": {
+        "primary_guidance_bytes_accessed": 9090,
+        "basis": "Full SKILL.md; additional diagnostic worker excerpt recorded separately in trial report.",
+        "additional_snapshot_code_inspection": [
+          {
+            "path": "/tmp/refas-jacket-evaluation/production/skills/refas/scripts/production/blender_worker.py",
+            "whole_file_bytes": 29908,
+            "coverage": "Only rg matching material|energy|roughness|diagnostic plus lines 410-458 to understand diagnostic lighting, not whole file",
+            "matching_source_line_bytes": 1482,
+            "lines_410_458_bytes": 2605
+          }
+        ]
+      },
+      "construction": {
+        "initial_complete_candidate_count": 1,
+        "post_review_geometry_corrections": 1,
+        "initial_candidate_retained": true
+      },
+      "cuff_edit": {
+        "local_edit": "Wearer-left cuff band increased by 0.01 m along sleeve axis, keeping distal rim fixed",
+        "axis": [
+          0.257994294,
+          -0.017999602,
+          -0.965978742
+        ],
+        "nominal_before_m": 0.06,
+        "nominal_after_m": 0.07,
+        "native_band_axial_extent_before_m": 0.059987178043229505,
+        "native_band_axial_extent_after_m": 0.0699871884426102,
+        "native_band_delta_m": 0.010000010399380699,
+        "changed_objects": [
+          "L_Cuff_Band",
+          "L_Cuff_Buckle frame",
+          "L_Cuff_Buckle tongue",
+          "L_Cuff_Piping_Proximal",
+          "L_Cuff_Rivet_-0.022",
+          "L_Cuff_Rivet_0.022",
+          "L_Cuff_Strap"
+        ],
+        "protected_object_count": 269,
+        "protected_changed": [],
+        "material_hash_before": "69a552a4ec64721abfb497154b06781a78c817a24b608d85484b46b420d9fccd",
+        "material_hash_after": "69a552a4ec64721abfb497154b06781a78c817a24b608d85484b46b420d9fccd",
+        "materials_unchanged": true,
+        "opposite_cuff_unchanged": true,
+        "distal_piping_unchanged": true
+      },
+      "restoration": {
+        "evidence": "Restored native file is byte-identical to selected candidate; recorded scene checks also match.",
+        "byte_identical_claimed": true
+      },
+      "observation": {
+        "inputSha256": "3ac6d8e5bb3a2571475efb90274142a6d550ce39669e179feb4b630050d08542",
+        "inputUnchanged": true,
+        "reviewSha256": "be6e20645867d04c6c07536ddc1a3cf2736d2111e0d3739628063ee989b134c1",
+        "workerSha256": "5949a1c2ff52a0b2e91260358ba44fa4eef2f7276f0842e2b391fda6a846ba80",
+        "observationBlendSha256": "ebf2d2725c899b424850c6b3a73e22ffb6b063a19b57355941ea6ad1627fff37",
+        "normalizationRecordSha256": "5fbe3b0dc03eb3edacab82556e123f0fd7731f60b7596c4cb856ba9bbb3f2493",
+        "normalization": "Curves realized in a separate observation copy; source unchanged",
+        "elapsedSeconds": 24.289,
+        "returncode": 0,
+        "scope": "Common observation after construction; excluded from trial timing"
+      },
+      "normalization": {
+        "sourceSha256": "3ac6d8e5bb3a2571475efb90274142a6d550ce39669e179feb4b630050d08542",
+        "convertedCurves": [],
+        "sourceObjectCount": 277,
+        "method": "Blender object.convert MESH on a separate copy, no source resave",
+        "observationObjectCount": 277,
+        "sourceUnchanged": true
+      },
+      "scene_statistics": {
+        "armatures": 0,
+        "materialSlots": 296,
+        "meshes": 277,
+        "objects": 277,
+        "shapeKeyObjects": 0,
+        "triangles": 161820,
+        "uvObjects": 258,
+        "vertices": 81290
+      },
+      "scene_fingerprint": "5f2d5357a2b116d146480c2215e0b9c78c954f5fa0ca5bb4c694fa3f91d38f00",
+      "render_files": [
+        {
+          "view": "front",
+          "path": "renders/production/view-front.png",
+          "sha256": "b5c2d60abaa64f3bc3f88ba5a69a70b828fd44e7e90d2eca7ea2fb48b95dc1af"
+        },
+        {
+          "view": "front-three-quarter",
+          "path": "renders/production/view-front-three-quarter.png",
+          "sha256": "32d7682cc77cc13a801e406ea9118aa8460a372e0a0bdc7d9ff50afe45cfd341"
+        },
+        {
+          "view": "left",
+          "path": "renders/production/view-left.png",
+          "sha256": "7623cdaed5e9153dc2d2f1f714c825312dc4304da0f2aae7f49001df1cf730da"
+        },
+        {
+          "view": "back",
+          "path": "renders/production/view-back.png",
+          "sha256": "fb3b95c24c861b1a15b305e7b83b33f742d51d6f414d6e46d9028426b4d3cd44"
+        },
+        {
+          "view": "right",
+          "path": "renders/production/view-right.png",
+          "sha256": "5f9342117581e86f648a1662bb4258c084cf0421554ddc08c7d05714014b1cac"
+        },
+        {
+          "view": "rear-three-quarter",
+          "path": "renders/production/view-rear-three-quarter.png",
+          "sha256": "c8a9b2db6eb63d828065a94da2f9c33e27d7de18dfde703d435ed3c65ef38745"
+        }
+      ]
+    }
+  },
+  "common_observer": {
+    "authoritative_source_directory": "/tmp/refas-jacket-evaluation/common-final",
+    "excluded_from_trial_timing": true,
+    "source_candidates_unchanged": true,
+    "six_camera_light_and_renderer_records_identical": true,
+    "settings_per_view": [
+      {
+        "view": "front",
+        "camera": {
+          "matrixWorld": [
+            [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -1.6e-07,
+              -1.0,
+              -2.0
+            ],
+            [
+              0.0,
+              1.0,
+              -1.6e-07,
+              0.15000001
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "orthoScale": 0.83999997,
+          "position": [
+            0.0,
+            -2.0,
+            0.15000001
+          ],
+          "projection": "orthographic",
+          "target": [
+            0.0,
+            0.0,
+            0.15000001
+          ]
+        },
+        "lighting": {
+          "center": [
+            0.0,
+            0.0,
+            0.18000001
+          ],
+          "radius": 0.48,
+          "rig": "three-area-lights/v1"
+        },
+        "renderer": {
+          "denoising": false,
+          "device": "CPU",
+          "engine": "CYCLES",
+          "samples": 24,
+          "size": [
+            512,
+            512
+          ],
+          "transparent": true,
+          "viewTransform": "AgX",
+          "worldColor": [
+            0.80000001,
+            0.82999998,
+            0.88
+          ],
+          "worldStrength": 0.45
+        },
+        "framing": "fixed-review-spec",
+        "registration": "unregistered"
+      },
+      {
+        "view": "front-three-quarter",
+        "camera": {
+          "matrixWorld": [
+            [
+              0.70710683,
+              -7e-08,
+              0.70710677,
+              1.41421366
+            ],
+            [
+              0.70710677,
+              -1.4e-07,
+              -0.70710683,
+              -1.41421366
+            ],
+            [
+              1.5e-07,
+              1.0,
+              -4e-08,
+              0.15000001
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "orthoScale": 0.83999997,
+          "position": [
+            1.41421366,
+            -1.41421366,
+            0.15000001
+          ],
+          "projection": "orthographic",
+          "target": [
+            0.0,
+            0.0,
+            0.15000001
+          ]
+        },
+        "lighting": {
+          "center": [
+            0.0,
+            0.0,
+            0.18000001
+          ],
+          "radius": 0.48,
+          "rig": "three-area-lights/v1"
+        },
+        "renderer": {
+          "denoising": false,
+          "device": "CPU",
+          "engine": "CYCLES",
+          "samples": 24,
+          "size": [
+            512,
+            512
+          ],
+          "transparent": true,
+          "viewTransform": "AgX",
+          "worldColor": [
+            0.80000001,
+            0.82999998,
+            0.88
+          ],
+          "worldStrength": 0.45
+        },
+        "framing": "fixed-review-spec",
+        "registration": "unregistered"
+      },
+      {
+        "view": "left",
+        "camera": {
+          "matrixWorld": [
+            [
+              -4e-08,
+              4e-08,
+              1.0,
+              2.0
+            ],
+            [
+              1.0,
+              0.0,
+              4e-08,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              -4e-08,
+              0.15000001
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "orthoScale": 0.83999997,
+          "position": [
+            2.0,
+            -0.0,
+            0.15000001
+          ],
+          "projection": "orthographic",
+          "target": [
+            0.0,
+            0.0,
+            0.15000001
+          ]
+        },
+        "lighting": {
+          "center": [
+            0.0,
+            0.0,
+            0.18000001
+          ],
+          "radius": 0.48,
+          "rig": "three-area-lights/v1"
+        },
+        "renderer": {
+          "denoising": false,
+          "device": "CPU",
+          "engine": "CYCLES",
+          "samples": 24,
+          "size": [
+            512,
+            512
+          ],
+          "transparent": true,
+          "viewTransform": "AgX",
+          "worldColor": [
+            0.80000001,
+            0.82999998,
+            0.88
+          ],
+          "worldStrength": 0.45
+        },
+        "framing": "fixed-review-spec",
+        "registration": "unregistered"
+      },
+      {
+        "view": "back",
+        "camera": {
+          "matrixWorld": [
+            [
+              -1.0,
+              -1.5e-07,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              8e-08,
+              1.0,
+              2.0
+            ],
+            [
+              -1.5e-07,
+              1.0,
+              -8e-08,
+              0.15000001
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "orthoScale": 0.83999997,
+          "position": [
+            0.0,
+            2.0,
+            0.15000001
+          ],
+          "projection": "orthographic",
+          "target": [
+            0.0,
+            0.0,
+            0.15000001
+          ]
+        },
+        "lighting": {
+          "center": [
+            0.0,
+            0.0,
+            0.18000001
+          ],
+          "radius": 0.48,
+          "rig": "three-area-lights/v1"
+        },
+        "renderer": {
+          "denoising": false,
+          "device": "CPU",
+          "engine": "CYCLES",
+          "samples": 24,
+          "size": [
+            512,
+            512
+          ],
+          "transparent": true,
+          "viewTransform": "AgX",
+          "worldColor": [
+            0.80000001,
+            0.82999998,
+            0.88
+          ],
+          "worldStrength": 0.45
+        },
+        "framing": "fixed-review-spec",
+        "registration": "unregistered"
+      },
+      {
+        "view": "right",
+        "camera": {
+          "matrixWorld": [
+            [
+              -4e-08,
+              -4e-08,
+              -1.0,
+              -2.0
+            ],
+            [
+              -1.0,
+              0.0,
+              4e-08,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              -4e-08,
+              0.15000001
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "orthoScale": 0.83999997,
+          "position": [
+            -2.0,
+            0.0,
+            0.15000001
+          ],
+          "projection": "orthographic",
+          "target": [
+            0.0,
+            0.0,
+            0.15000001
+          ]
+        },
+        "lighting": {
+          "center": [
+            0.0,
+            0.0,
+            0.18000001
+          ],
+          "radius": 0.48,
+          "rig": "three-area-lights/v1"
+        },
+        "renderer": {
+          "denoising": false,
+          "device": "CPU",
+          "engine": "CYCLES",
+          "samples": 24,
+          "size": [
+            512,
+            512
+          ],
+          "transparent": true,
+          "viewTransform": "AgX",
+          "worldColor": [
+            0.80000001,
+            0.82999998,
+            0.88
+          ],
+          "worldStrength": 0.45
+        },
+        "framing": "fixed-review-spec",
+        "registration": "unregistered"
+      },
+      {
+        "view": "rear-three-quarter",
+        "camera": {
+          "matrixWorld": [
+            [
+              -0.70710695,
+              -6e-08,
+              -0.70710659,
+              -1.41421366
+            ],
+            [
+              -0.70710659,
+              0.0,
+              0.70710695,
+              1.41421366
+            ],
+            [
+              -4e-08,
+              1.0,
+              -4e-08,
+              0.15000001
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "orthoScale": 0.83999997,
+          "position": [
+            -1.41421366,
+            1.41421366,
+            0.15000001
+          ],
+          "projection": "orthographic",
+          "target": [
+            0.0,
+            0.0,
+            0.15000001
+          ]
+        },
+        "lighting": {
+          "center": [
+            0.0,
+            0.0,
+            0.18000001
+          ],
+          "radius": 0.48,
+          "rig": "three-area-lights/v1"
+        },
+        "renderer": {
+          "denoising": false,
+          "device": "CPU",
+          "engine": "CYCLES",
+          "samples": 24,
+          "size": [
+            512,
+            512
+          ],
+          "transparent": true,
+          "viewTransform": "AgX",
+          "worldColor": [
+            0.80000001,
+            0.82999998,
+            0.88
+          ],
+          "worldStrength": 0.45
+        },
+        "framing": "fixed-review-spec",
+        "registration": "unregistered"
+      }
+    ],
+    "registration": "unregistered to the design sheet",
+    "normalization": "Native curves realized to meshes in separate observation copies; original native files were not resaved.",
+    "rejected_observations": [
+      {
+        "directory": "/tmp/refas-jacket-evaluation/common",
+        "reason": "Native CURVE objects silently omitted; incomplete garment images are rejected."
+      },
+      {
+        "directory": "/tmp/refas-jacket-evaluation/common-complete",
+        "reason": "Superseded because the normalization audit was overwritten; common-final preserves the authoritative audit."
+      }
+    ],
+    "runtime_response": "Unsupported native object types and instances now fail explicitly rather than being silently omitted. Independent runtime review reproduced an instanced-curve fingerprint hole; explicit rejection was added. This does not claim support for curve instances."
+  },
+  "blind_review": {
+    "mapping": {
+      "A": "production",
+      "B": "plain",
+      "C": "legacy"
+    },
+    "markdown": "blind-review.md",
+    "json": "blind-review.json",
+    "markdown_sha256": "46eec72b86ea1610c91acb1920feb4a5dc863e9b3d63d31ef57b4a5d557115b2",
+    "json_sha256": "723166b3bbe5177206f649f0eb85d164c3666d10a7f70331a0cd33db91e337b0",
+    "copied_byte_identically": true,
+    "basis": "Anonymous PNG-only independent review; labels revealed after review.",
+    "preferred_development_starting_point": [
+      "plain",
+      "legacy",
+      "production"
+    ],
+    "all_finished_candidates_rejected": true,
+    "verdict": "Original v2 lost to plain in blind whole-shape quality; plain and legacy remained unfinished prototypes.",
+    "qualification": "One attempt per condition, one qualitative review, unregistered cameras; no general or statistical workflow superiority."
+  },
+  "followup": {
+    "included_in_original_trial": false,
+    "informed_by_trial_findings": true,
+    "elapsed_seconds": 363.472668,
+    "source_sha256": "3ac6d8e5bb3a2571475efb90274142a6d550ce39669e179feb4b630050d08542",
+    "selected_revision": "2e8ebbe18a9a48ecac8c115bbb735ded",
+    "original_trial_preservation": {
+      "initial_trial_artifacts_unchanged": {
+        "create.py": true,
+        "correct.py": true,
+        "edit_cuff.py": true,
+        "initial.blend": true,
+        "candidate.blend": true,
+        "candidate.glb": true,
+        "edited.blend": true,
+        "edited.glb": true,
+        "restored.blend": true,
+        "construction.json": true,
+        "cuff-edit-checks.json": true,
+        "restore-checks.json": true
+      },
+      "all_match": true,
+      "before_fingerprint_matches_initial": true
+    },
+    "shared_armhole_edges": 84,
+    "shared_armhole_edges_all_two_faces": true,
+    "protected_object_count": 266,
+    "protected_changed": [],
+    "materials_unchanged": true,
+    "cuffs_unchanged": true,
+    "decoration_unchanged": true,
+    "body_cage_vertices_retained": 970,
+    "lower_sleeve_cage_checks": [
+      {
+        "side": "L",
+        "retained_vertices": 440,
+        "maximum_coordinate_change_m": 0.0,
+        "first_retained_axis_parameter_m": 0.14
+      },
+      {
+        "side": "R",
+        "retained_vertices": 440,
+        "maximum_coordinate_change_m": 0.0,
+        "first_retained_axis_parameter_m": 0.14
+      }
+    ],
+    "object_selection_change": "Sleeves now use named vertex groups in one cloth mesh; cuffs remain separate.",
+    "body_subdivision_change": "Level one to level two on unified cloth; retained cage vertices do not imply unchanged evaluated body shape.",
+    "before_statistics": {
+      "armatures": 0,
+      "materialSlots": 296,
+      "meshes": 277,
+      "objects": 277,
+      "shapeKeyObjects": 0,
+      "triangles": 161820,
+      "uvObjects": 258,
+      "vertices": 81290
+    },
+    "after_statistics": {
+      "armatures": 0,
+      "materialSlots": 290,
+      "meshes": 273,
+      "objects": 273,
+      "shapeKeyObjects": 0,
+      "triangles": 189172,
+      "uvObjects": 256,
+      "vertices": 94966
+    },
+    "bounds_unchanged": true,
+    "residual_problems": [
+      "Underarm transitions are pinched, most clearly from back and rear-three-quarter views; topology is continuous but tailoring curvature needs further refinement.",
+      "The main cloth remains brighter and more blue-grey under these lights than the original black reference; materials were intentionally unchanged.",
+      "Collar/lapel stiffness, front buckle placement, approximate shield/fleur and chain routing, and occluded rear ornament remain from the original asset.",
+      "Cloth UV unwrap, rigging, deformation, simulation and target-engine validation remain unperformed.",
+      "Diagnostic renders use 24 samples and show grain.",
+      "The shared body/sleeve mesh changes object-level sleeve selection into named vertex-group selection. Cuffs remain separately editable under the same object names."
+    ],
+    "integrity_verification": {
+      "ok": true,
+      "scope": "recorded-file-integrity",
+      "head": "2e8ebbe18a9a48ecac8c115bbb735ded",
+      "artifactCount": 10,
+      "referenceResemblance": "not-evaluated",
+      "gameReadiness": "not-evaluated"
+    },
+    "render_directory": "renders/followup",
+    "report_sha256": "3ba26f2fd09edd0e78767529cdc77c921c6da1141634a647f2342a784322ac3e",
+    "protected_checks_sha256": "a39b2fdcbc0ecde6e51091dbd75b290425c96f27c710d7ef690edda1a5d96459"
+  },
+  "verification_checkpoint": {
+    "source": "Final local verification for this change; remote CI is reported separately on PR #399.",
+    "javascript_tests": {
+      "status": "passed",
+      "count": 931
+    },
+    "production_tests": {
+      "status": "passed",
+      "total": 34,
+      "unit": 23,
+      "actual_blender": 11
+    },
+    "other_required_gates": {
+      "python_syntax": "passed",
+      "repository_checks": "passed",
+      "legacy_dogfood": {
+        "status": "passed",
+        "checkpoints": 11
+      },
+      "package_audit": {
+        "status": "passed",
+        "packaged_files": 397,
+        "reference_leaves": 41
+      },
+      "focused_guidance_version_tests": {
+        "status": "passed",
+        "count": 8
+      }
+    },
+    "visual_acceptance": "not passed",
+    "informed_reproduction": {
+      "public_cli_commands": 8,
+      "unchanged_objects": 266,
+      "exact_artifact_and_input_restore": true,
+      "record": "records/reproduction.json"
+    },
+    "installed_package": {
+      "status": "passed",
+      "public_cli_commands": 6,
+      "actual_blender": true,
+      "outside_repository": true,
+      "exact_artifact_and_input_restore": true,
+      "record": "records/installed-package.json"
+    }
+  },
+  "limitations": [
+    "Guidance file bytes are not model tokens or proof every truncated byte was consumed.",
+    "Legacy and v2 missed the pre-read wall-clock start; their elapsed intervals are lower bounds.",
+    "Current-frame fingerprints and file integrity are not visual fidelity or deformation evidence.",
+    "No target-engine import, rigging, animation, cloth simulation or production-readiness validation is claimed."
+  ]
+}

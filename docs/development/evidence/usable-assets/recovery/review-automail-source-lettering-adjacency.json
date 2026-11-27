@@ -1,0 +1,169 @@
+{
+  "nativeSha256": "e7b2ac7cbd671d979af6e178ec85efc574ad9860c9695000980cf4a29f8a2dd7",
+  "object": "Crown_A_mark",
+  "statistics": {
+    "vertices": 224,
+    "edges": 392,
+    "polygons": 168,
+    "triangles": 224,
+    "components": 3,
+    "surfaceComponents": 3,
+    "nonManifoldVertices": 0,
+    "boundaryEdges": 224,
+    "boundaryGroups": 4,
+    "closedBoundaryLoops": 4,
+    "wireEdges": 0,
+    "looseVertices": 0,
+    "nonManifoldEdges": 0,
+    "inconsistentWindingEdges": 2,
+    "degenerateTriangles": 0,
+    "negativeClosedComponents": 0,
+    "nearZeroClosedComponents": 0
+  },
+  "flaggedCapAdjacencies": [
+    {
+      "edge": 19,
+      "edgeLengthM": 0.0001851286107919221,
+      "faces": [
+        {
+          "polygon": 9,
+          "vertices": [
+            34,
+            27,
+            28
+          ],
+          "worldPointsM": [
+            [
+              -0.00013282512372825295,
+              -0.06552999466657639,
+              0.7150696516036987
+            ],
+            [
+              5.197479549678974e-05,
+              -0.06552999466657639,
+              0.7150806784629822
+            ],
+            [
+              -5.903358760406263e-05,
+              -0.06552999466657639,
+              0.7153931856155396
+            ]
+          ],
+          "triangleAreaM2": 2.9487685189380895e-08,
+          "worldNormal": [
+            0.0,
+            -0.9999999403953552,
+            0.0
+          ],
+          "thirdVertexSideInXZ": 5.8975370365033086e-08
+        },
+        {
+          "polygon": 10,
+          "vertices": [
+            34,
+            27,
+            33
+          ],
+          "worldPointsM": [
+            [
+              -0.00013282512372825295,
+              -0.06552999466657639,
+              0.7150696516036987
+            ],
+            [
+              5.197479549678974e-05,
+              -0.06552999466657639,
+              0.7150806784629822
+            ],
+            [
+              -2.0900153685943224e-05,
+              -0.06552999466657639,
+              0.7153858542442322
+            ]
+          ],
+          "triangleAreaM2": 2.8600021700294493e-08,
+          "worldNormal": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "thirdVertexSideInXZ": 5.720004025988601e-08
+        }
+      ],
+      "normalDot": 0.9999999403953552,
+      "thirdVerticesOnSameSideOfSharedEdge": true
+    },
+    {
+      "edge": 131,
+      "edgeLengthM": 0.0001851286107919221,
+      "faces": [
+        {
+          "polygon": 65,
+          "vertices": [
+            90,
+            84,
+            83
+          ],
+          "worldPointsM": [
+            [
+              -0.00013282512372825295,
+              -0.06546999514102936,
+              0.7150696516036987
+            ],
+            [
+              -5.903358760406263e-05,
+              -0.06546999514102936,
+              0.7153931856155396
+            ],
+            [
+              5.197479549678974e-05,
+              -0.06546999514102936,
+              0.7150806784629822
+            ]
+          ],
+          "triangleAreaM2": 2.9487685189380895e-08,
+          "worldNormal": [
+            0.0,
+            0.9999999403953552,
+            0.0
+          ],
+          "thirdVertexSideInXZ": 5.8975370365033086e-08
+        },
+        {
+          "polygon": 66,
+          "vertices": [
+            90,
+            89,
+            83
+          ],
+          "worldPointsM": [
+            [
+              -0.00013282512372825295,
+              -0.06546999514102936,
+              0.7150696516036987
+            ],
+            [
+              -2.0900153685943224e-05,
+              -0.06546999514102936,
+              0.7153858542442322
+            ],
+            [
+              5.197479549678974e-05,
+              -0.06546999514102936,
+              0.7150806784629822
+            ]
+          ],
+          "triangleAreaM2": 2.8600021700294493e-08,
+          "worldNormal": [
+            0.0,
+            1.0,
+            0.0
+          ],
+          "thirdVertexSideInXZ": 5.720004025988601e-08
+        }
+      ],
+      "normalDot": 0.9999999403953552,
+      "thirdVerticesOnSameSideOfSharedEdge": true
+    }
+  ]
+}

@@ -1,1 +1,2 @@
--r skills/refas/requirements.txt
+# Repository-only 1.x regression dependencies; the 2.0 production CLI uses the standard library.
+-r legacy/v1/requirements.txt

@@ -12,7 +12,7 @@ import {
   validateAssemblyContract,
   validateRealizedAssembly,
   validateRealizedAssemblyProof,
-} from '../skills/refas/scripts/lib/index.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
 
 const DIGEST = 'f'.repeat(64);
 const MODULE_MATERIALS = {metal: {baseColor: [0.3, 0.4, 0.5, 1], metallic: 0.8, roughness: 0.3}};

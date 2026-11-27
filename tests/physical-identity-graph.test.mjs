@@ -10,7 +10,7 @@ import {
   physicalRelationsForEntity,
   validatePhysicalIdentityGraph,
   validatePhysicalIdentityGraphBindings,
-} from '../skills/refas/scripts/lib/index.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
 
 const SOURCE_DIGEST = 'a'.repeat(64);
 

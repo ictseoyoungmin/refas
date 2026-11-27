@@ -1,0 +1,171 @@
+{
+  "schema": "refas.project-state/v1",
+  "version": "1.4.2",
+  "projectId": "wing-cover-dogfood",
+  "source": {
+    "schema": "refas.source-manifest/v1",
+    "id": "wing-cover-reference",
+    "path": "source/reference.png",
+    "sha256": "6076b27fadfcb1a929b306ce74d6b7ef22d1d8996102065df6a74012e3466148",
+    "sizeBytes": 41281,
+    "width": 900,
+    "height": 900,
+    "authority": "primary",
+    "acquisition": {
+      "kind": "generated-contract-reference",
+      "origin": "RefAs trusted contract harness"
+    }
+  },
+  "head": "cp_a45c8a02f85b5cf8b743",
+  "status": "working",
+  "activeScopeId": "whole",
+  "activeTransaction": null,
+  "reopenedCapability": null,
+  "invalidatedCapabilities": [],
+  "checkpointIds": [
+    "cp_4fe38b2f9d5f8a28b6f0",
+    "cp_2b1023efdccc2054eda8",
+    "cp_28781ad6536b23b2061f",
+    "cp_bcc981d31caa440b1821",
+    "cp_81ad4e88326aee8163b8",
+    "cp_bfcd0fd4b72d7e6c521f",
+    "cp_781a620c0fa4f78f99be",
+    "cp_4d1b638ff2df373b2b9b",
+    "cp_a0b1b93a17a3ce60f4fb",
+    "cp_a744fb4e4fae0cd60712",
+    "cp_a45c8a02f85b5cf8b743"
+  ],
+  "certification": null,
+  "journal": [
+    {
+      "event": "PROJECT_INITIALIZED",
+      "at": "2026-11-22T10:38:03.723Z"
+    },
+    {
+      "event": "CONTRACT_FIXTURE_AUTHORITY_GRANTED",
+      "fixtureId": "wing-cover-complete-dogfood",
+      "sourceSha256": "6076b27fadfcb1a929b306ce74d6b7ef22d1d8996102065df6a74012e3466148",
+      "authorityDigest": "f1b5e16537b22775eb1f2b0bc3cab3ea169a4a8aef68159efa84c0d589ac9f7d",
+      "at": "2026-11-22T10:38:03.730Z"
+    },
+    {
+      "event": "CHECKPOINT_COMMITTED",
+      "id": "cp_4fe38b2f9d5f8a28b6f0",
+      "capability": "source-intake",
+      "scopeId": "whole",
+      "transactionId": null,
+      "at": "2026-11-22T10:38:03.754Z"
+    },
+    {
+      "event": "CHECKPOINT_COMMITTED",
+      "id": "cp_2b1023efdccc2054eda8",
+      "capability": "visual-hierarchy",
+      "scopeId": "whole",
+      "transactionId": null,
+      "at": "2026-11-22T10:38:05.126Z"
+    },
+    {
+      "event": "CHECKPOINT_COMMITTED",
+      "id": "cp_28781ad6536b23b2061f",
+      "capability": "visual-observation",
+      "scopeId": "whole",
+      "transactionId": null,
+      "at": "2026-11-22T10:38:05.177Z"
+    },
+    {
+      "event": "CHECKPOINT_COMMITTED",
+      "id": "cp_bcc981d31caa440b1821",
+      "capability": "spatial-hypotheses",
+      "scopeId": "whole",
+      "transactionId": null,
+      "at": "2026-11-22T10:38:05.246Z"
+    },
+    {
+      "event": "CHECKPOINT_COMMITTED",
+      "id": "cp_81ad4e88326aee8163b8",
+      "capability": "shape-reconstruction",
+      "scopeId": "whole",
+      "transactionId": null,
+      "at": "2026-11-22T10:38:06.429Z"
+    },
+    {
+      "event": "CHECKPOINT_COMMITTED",
+      "id": "cp_bfcd0fd4b72d7e6c521f",
+      "capability": "surface-topology",
+      "scopeId": "whole",
+      "transactionId": null,
+      "at": "2026-11-22T10:38:07.028Z"
+    },
+    {
+      "event": "CHECKPOINT_COMMITTED",
+      "id": "cp_781a620c0fa4f78f99be",
+      "capability": "assembly",
+      "scopeId": "whole",
+      "transactionId": null,
+      "at": "2026-11-22T10:39:16.398Z"
+    },
+    {
+      "event": "EDIT_BEGAN",
+      "id": "edit_7999dd38001938ca55d0",
+      "baseline": "cp_781a620c0fa4f78f99be",
+      "ownerCapability": "assembly",
+      "scopeId": "whole",
+      "at": "2026-11-22T10:39:16.400Z"
+    },
+    {
+      "event": "CHECKPOINT_COMMITTED",
+      "id": "cp_4d1b638ff2df373b2b9b",
+      "capability": "assembly",
+      "scopeId": "whole",
+      "transactionId": "edit_7999dd38001938ca55d0",
+      "at": "2026-11-22T10:39:58.796Z"
+    },
+    {
+      "event": "EDIT_DECIDED",
+      "id": "decision_af29daaf238a97c75772",
+      "action": "ROLLBACK_EDIT",
+      "head": "cp_781a620c0fa4f78f99be",
+      "restoredArtifacts": [
+        "assets/wing-cover.glb",
+        "model/assembly-contract.json",
+        "reviews/assembly-validation.json",
+        "reviews/closed-child-composition.json",
+        "renders/assembly-baseline/render-report.json",
+        "renders/assembly-baseline/multiview-review-board.png"
+      ],
+      "at": "2026-11-22T10:39:58.808Z"
+    },
+    {
+      "event": "CHECKPOINT_COMMITTED",
+      "id": "cp_a0b1b93a17a3ce60f4fb",
+      "capability": "appearance",
+      "scopeId": "whole",
+      "transactionId": null,
+      "at": "2026-11-22T10:39:58.843Z"
+    },
+    {
+      "event": "CHECKPOINT_COMMITTED",
+      "id": "cp_a744fb4e4fae0cd60712",
+      "capability": "rendering",
+      "scopeId": "whole",
+      "transactionId": null,
+      "at": "2026-11-22T10:40:39.385Z"
+    },
+    {
+      "event": "CHECKPOINT_COMMITTED",
+      "id": "cp_a45c8a02f85b5cf8b743",
+      "capability": "visual-critique",
+      "scopeId": "whole",
+      "transactionId": null,
+      "at": "2026-11-22T10:40:41.356Z"
+    }
+  ],
+  "contractFixtureAuthority": {
+    "schema": "refas.contract-fixture-authority/v1",
+    "sourceSha256": "6076b27fadfcb1a929b306ce74d6b7ef22d1d8996102065df6a74012e3466148",
+    "fixtureId": "wing-cover-complete-dogfood",
+    "purpose": "contract-testing-only",
+    "issuer": "refas-internal-contract-harness",
+    "authorityDigest": "f1b5e16537b22775eb1f2b0bc3cab3ea169a4a8aef68159efa84c0d589ac9f7d"
+  }
+}

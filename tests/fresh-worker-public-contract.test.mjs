@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
 
-import {runFreshWorkerDogfood} from '../skills/refas/scripts/verify_fresh_worker_dogfood.mjs';
+import {runFreshWorkerDogfood} from '../legacy/v1/scripts/verify_fresh_worker_dogfood.mjs';
 
 test('AD05 fresh worker executes the canonical chain without raw implementation discovery', {timeout: 120000}, async () => {
   const report = await runFreshWorkerDogfood();

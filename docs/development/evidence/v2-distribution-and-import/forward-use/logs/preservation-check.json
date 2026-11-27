@@ -1,0 +1,73 @@
+{
+  "checks": {
+    "baselineMatchesImportedSceneFingerprint": true,
+    "sameObjectNames": true,
+    "onlyTargetObjectChanged": true,
+    "targetOnlyTransformAndFingerprintChanged": true,
+    "expectedWorldTranslation": true,
+    "sameSceneStatistics": true,
+    "fixedCamerasLightingRenderSettings": true,
+    "sameExportedNodeNames": true,
+    "onlyTargetExportedNodeChanged": true,
+    "exportedBinaryGeometryEqual": true,
+    "preservedExportedSections": true
+  },
+  "passed": true,
+  "revisionIds": {
+    "import": "6f23fe22c89f40ea96b99f1b4060f196",
+    "baseline": "3795c8dfcb8f43aeab6728e837b09044",
+    "raised": "ecfc78fcd169476e8c4da1358d4cb173"
+  },
+  "changedObjectNames": [
+    "panel:cell-00"
+  ],
+  "unchangedObjectCount": 65,
+  "targetChangedFields": [
+    "fingerprint",
+    "matrixLocal",
+    "matrixWorld"
+  ],
+  "targetWorldTranslationDelta": [
+    0.0,
+    -0.025,
+    0.0
+  ],
+  "sceneStatistics": {
+    "armatures": 0,
+    "materialSlots": 66,
+    "meshes": 66,
+    "objects": 66,
+    "shapeKeyObjects": 0,
+    "triangles": 38354,
+    "uvObjects": 0,
+    "vertices": 19307
+  },
+  "changedExportedNodes": [
+    "panel:cell-00"
+  ],
+  "targetExportedNodeBefore": {
+    "mesh": 1,
+    "name": "panel:cell-00"
+  },
+  "targetExportedNodeAfter": {
+    "mesh": 1,
+    "name": "panel:cell-00",
+    "translation": [
+      0,
+      0,
+      0.02500000037252903
+    ]
+  },
+  "exportedBinarySha256": "003858fe9ce8d3514065620875b6f9f360f3170f6d1dbc60ba2f56b3f6ad1f7c",
+  "preservedExportedSections": {
+    "meshes": true,
+    "materials": true,
+    "accessors": true,
+    "bufferViews": true,
+    "skins": true,
+    "animations": true,
+    "textures": true,
+    "images": true
+  },
+  "scope": "Recorded current-frame scene data and the saved GLB; this does not establish source likeness or engine readiness."
+}

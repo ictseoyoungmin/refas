@@ -1,0 +1,104 @@
+[
+  {
+    "file": "automail-author.txt",
+    "sha256": "6f827683c5d606661c041d0f15afa5f9e591da4677d5de06562389fac0eda9e4",
+    "recorded_before_dispatch_utc": "2026-11-22T12:09:36.272500+00:00",
+    "type": "literal informed production assignment"
+  },
+  {
+    "file": "garment-author.txt",
+    "sha256": "8deaab843352aaff6212f43d1e6b00620b954df68b255f7874fa52958ec8f793",
+    "recorded_before_dispatch_utc": "2026-11-22T12:09:36.272533+00:00",
+    "type": "literal informed production assignment"
+  },
+  {
+    "file": "installed-package-followup.txt",
+    "sha256": "25caa844f5b3df264e50725642c3eaddb19f41f0a6e1c6ed9d9660da5285a5c2",
+    "recorded_before_dispatch_utc": "2026-11-22T12:11:05.807749+00:00",
+    "recipients": [
+      "garment_author",
+      "automail_author"
+    ],
+    "type": "literal shared production follow-up"
+  },
+  {
+    "file": "garment-timing-feedback.txt",
+    "sha256": "26784229c71fdbfc74ec701db795f6150575070e37d9d663fba2abd4a0625aad",
+    "recorded_before_dispatch_utc": "2026-11-22T12:14:22.620775+00:00",
+    "recipient": "garment_author",
+    "type": "literal review follow-up"
+  },
+  {
+    "file": "automail-timing-feedback.txt",
+    "sha256": "0b859f38615539ee7591061c7e944b97e0ffaaf9b234d37e2e500d36996158ce",
+    "recorded_before_dispatch_utc": "2026-11-22T12:15:11.135829+00:00",
+    "recipient": "automail_author",
+    "type": "literal review follow-up"
+  },
+  {
+    "file": "code-reviewer.txt",
+    "sha256": "c0b8ecf4d0c3e47f4cb2640de7cf30bb429d340c9903159c3de344210e62e1e7",
+    "recorded_before_dispatch_utc": "2026-11-22T12:16:44.284659+00:00",
+    "recipient": "acceptance_review",
+    "type": "literal code review assignment"
+  },
+  {
+    "file": "garment-candidate-label-feedback.txt",
+    "sha256": "37cb0446093cc515ac79c3ffb06fa4a50091d1be500321c3e7502dbfd36704e4",
+    "recorded_before_dispatch_utc": "2026-11-22T12:18:12.109689+00:00",
+    "recipient": "garment_author",
+    "type": "literal code review follow-up"
+  },
+  {
+    "file": "automail-replay-clock-feedback.txt",
+    "sha256": "52d179d88d6de44be77567f196f2b4ee4c94fd1878543a90944188c33586e147",
+    "recorded_before_dispatch_utc": "2026-11-22T12:18:12.109804+00:00",
+    "recipient": "automail_author",
+    "type": "literal code review follow-up"
+  },
+  {
+    "file": "automail-mesh-feedback.txt",
+    "sha256": "309a7dac4010b3d3cda19fdf1030292afdbafe7ec8bbd4bc975fd32c17b2ca63",
+    "recorded_before_dispatch_utc": "2026-11-22T12:18:49.418364+00:00",
+    "recipient": "automail_author",
+    "type": "literal code review follow-up"
+  },
+  {
+    "file": "garment-source-feedback.txt",
+    "sha256": "2442187e64be21320f19f9d506a8f50650f8b24861aed1ed9df3edb872791cc3",
+    "recorded_before_dispatch_utc": "2026-11-22T12:19:27.971551+00:00",
+    "recipient": "garment_author",
+    "type": "literal code review follow-up"
+  },
+  {
+    "prompt": "code-review-final.txt",
+    "recipient": "/root/acceptance_review",
+    "recorded_before_dispatch_utc": "2026-11-22T12:23:18.819867+00:00",
+    "sha256": "290846c8715dddff3e7b03a9ab2e0fd926181b0e868b71051a9f1408f994ce52"
+  },
+  {
+    "prompt": "garment-chain-feedback.txt",
+    "recipient": "/root/garment_author",
+    "recorded_before_dispatch_utc": "2026-11-22T12:25:25.677140+00:00",
+    "sha256": "aae7b03d027b8a929736c47fe4cfc058426024bf1986d47a9def6fed2efd0f76"
+  },
+  {
+    "prompt": "isolated-visual-review.txt",
+    "recipient": "/root/isolated_visual_review",
+    "recorded_before_dispatch_utc": "2026-11-22T12:32:46.787774+00:00",
+    "sha256": "174d16546629aaa3a42c95dca53c9d134adc9e2567165531cd3d6a95e07f74d2",
+    "context": "fresh session, source/task/anonymous renders only"
+  },
+  {
+    "prompt": "code-review-addendum.txt",
+    "recipient": "/root/acceptance_review",
+    "recorded_before_dispatch_utc": "2026-11-22T12:35:01.943598+00:00",
+    "sha256": "286b02d23f41f451129cf6e0801f0ff0d68ed9617e19598da0504335b4bbb7f5"
+  },
+  {
+    "prompt": "automail-package-feedback.txt",
+    "recipient": "/root/automail_author",
+    "recorded_before_dispatch_utc": "2026-11-22T12:36:46.145976+00:00",
+    "sha256": "b34b19ff51dd3b2c635eee9d451fda8422bc85c7a00cdf03f78529c6ab3f7cd4"
+  }
+]

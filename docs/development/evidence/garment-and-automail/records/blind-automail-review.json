@@ -1,0 +1,434 @@
+{
+  "title": "Anonymous automail visual review",
+  "preference": "B",
+  "ranking": [
+    "B",
+    "A",
+    "C"
+  ],
+  "rankingQualifier": "B narrowly leads A; A has meaningful local advantages. C ranks lower on visible mechanical richness. This is a preference about supplied visual evidence, not technical model superiority.",
+  "rankingRationale": [
+    {
+      "finding": "B combines more visibly segmented shoulder-rim treatment, clear front actuator cues, layered forearm detail, and differentiated hand/palm surfaces.",
+      "supportingViews": [
+        "B/front",
+        "B/front-three-quarter",
+        "B/back",
+        "B/rear-three-quarter"
+      ]
+    },
+    {
+      "finding": "A retains clearer exposed rear upper-arm rods and asymmetric forearm armor, limiting the margin between A and B.",
+      "supportingViews": [
+        "A/back",
+        "A/rear-three-quarter",
+        "A/front",
+        "A/front-three-quarter"
+      ]
+    },
+    {
+      "finding": "C's large flat panels and sparse rear upper-arm assembly provide less developed visible mechanical richness.",
+      "supportingViews": [
+        "C/back",
+        "C/rear-three-quarter",
+        "C/front-three-quarter"
+      ]
+    }
+  ],
+  "pathsInspected": [
+    "/tmp/refas-dual-asset-20261122/blind/automail/reference.png",
+    "/tmp/refas-dual-asset-20261122/blind/automail/A/view-front.png",
+    "/tmp/refas-dual-asset-20261122/blind/automail/A/view-left.png",
+    "/tmp/refas-dual-asset-20261122/blind/automail/A/view-back.png",
+    "/tmp/refas-dual-asset-20261122/blind/automail/A/view-front-three-quarter.png",
+    "/tmp/refas-dual-asset-20261122/blind/automail/A/view-rear-three-quarter.png",
+    "/tmp/refas-dual-asset-20261122/blind/automail/B/view-front.png",
+    "/tmp/refas-dual-asset-20261122/blind/automail/B/view-left.png",
+    "/tmp/refas-dual-asset-20261122/blind/automail/B/view-back.png",
+    "/tmp/refas-dual-asset-20261122/blind/automail/B/view-front-three-quarter.png",
+    "/tmp/refas-dual-asset-20261122/blind/automail/B/view-rear-three-quarter.png",
+    "/tmp/refas-dual-asset-20261122/blind/automail/C/view-front.png",
+    "/tmp/refas-dual-asset-20261122/blind/automail/C/view-left.png",
+    "/tmp/refas-dual-asset-20261122/blind/automail/C/view-back.png",
+    "/tmp/refas-dual-asset-20261122/blind/automail/C/view-front-three-quarter.png",
+    "/tmp/refas-dual-asset-20261122/blind/automail/C/view-rear-three-quarter.png"
+  ],
+  "inspectedOrder": [
+    "reference",
+    "A/front",
+    "A/left",
+    "A/back",
+    "A/front-three-quarter",
+    "A/rear-three-quarter",
+    "B/front",
+    "B/left",
+    "B/back",
+    "B/front-three-quarter",
+    "B/rear-three-quarter",
+    "C/front",
+    "C/left",
+    "C/back",
+    "C/front-three-quarter",
+    "C/rear-three-quarter"
+  ],
+  "evidenceContext": {
+    "fullSourceInspectedFirst": true,
+    "candidateViewsInspected": 15,
+    "sharedExternalRenderMetadata": "Supplied by the task; used as comparison context, not independently verified.",
+    "sourceProjectionRegistered": false,
+    "candidateAuthorshipKnown": false,
+    "chronologyKnown": false,
+    "noOtherTrialMaterialsConsulted": true
+  },
+  "wholeSourceFindings": [
+    {
+      "finding": "All candidates retain a recognizable shoulder, upper arm, elbow, forearm, wrist, and five-digit hand sequence.",
+      "supportingViews": [
+        "A/front",
+        "A/back",
+        "B/front",
+        "B/back",
+        "C/front",
+        "C/back"
+      ]
+    },
+    {
+      "finding": "All appear comparatively straight and regularly stacked, with elongated slab-like side shells and simplified transitions between covered armor and exposed mechanisms.",
+      "supportingViews": [
+        "A/left",
+        "A/front-three-quarter",
+        "B/left",
+        "B/front-three-quarter",
+        "C/left",
+        "C/front-three-quarter"
+      ]
+    },
+    {
+      "finding": "Nested shoulder housings, routed tubes, layered elbow surroundings, forearm service depth, and refined hand shapes remain inadequately represented.",
+      "supportingViews": [
+        "A/front-three-quarter",
+        "A/rear-three-quarter",
+        "B/front-three-quarter",
+        "B/rear-three-quarter",
+        "C/front-three-quarter",
+        "C/rear-three-quarter"
+      ]
+    },
+    {
+      "finding": "The broad pale/dark/gold palette is recognizable, but pale armor and uniform gray structural areas lack the source's more nuanced material hierarchy.",
+      "supportingViews": [
+        "A/front",
+        "A/back",
+        "B/front",
+        "B/back",
+        "C/front",
+        "C/back"
+      ]
+    }
+  ],
+  "candidates": {
+    "A": {
+      "strengths": [
+        {
+          "finding": "Readable shoulder-to-arm taper and circular socket cue.",
+          "supportingViews": [
+            "front",
+            "left",
+            "front-three-quarter"
+          ]
+        },
+        {
+          "finding": "Distinct exposed rear upper-arm rods connect to the source's actuator language.",
+          "supportingViews": [
+            "back",
+            "rear-three-quarter"
+          ]
+        },
+        {
+          "finding": "Asymmetric pale forearm armor and dark gaps suggest overlapping protection.",
+          "supportingViews": [
+            "front",
+            "front-three-quarter"
+          ]
+        },
+        {
+          "finding": "Separate pale dorsal hand strips and dark palm distinguish the hand sides.",
+          "supportingViews": [
+            "front",
+            "back"
+          ]
+        }
+      ],
+      "defects": [
+        {
+          "finding": "Simple barrel shoulder with straight bright bands lacks nested irregular housing detail.",
+          "supportingViews": [
+            "back",
+            "rear-three-quarter",
+            "left"
+          ]
+        },
+        {
+          "finding": "Upper-arm mechanisms are sparse straight rods with limited visible tubing and connectors.",
+          "supportingViews": [
+            "back",
+            "rear-three-quarter"
+          ]
+        },
+        {
+          "finding": "Elbow is a simple concentric disc; forearm sides and rear ribs remain slab-like and shallow in appearance.",
+          "supportingViews": [
+            "left",
+            "back",
+            "rear-three-quarter"
+          ]
+        },
+        {
+          "finding": "Dorsal hand strips, plain dark palm, and repeated chunky fingers remain schematic.",
+          "supportingViews": [
+            "front",
+            "back",
+            "front-three-quarter"
+          ]
+        },
+        {
+          "finding": "Bright armor and rims dominate, with limited resolved material and hardware nuance.",
+          "supportingViews": [
+            "front",
+            "left",
+            "front-three-quarter",
+            "rear-three-quarter"
+          ]
+        }
+      ],
+      "finishedAcceptance": {
+        "pass": false,
+        "reason": "Shoulder, elbow, internal machinery, hand, and materials remain too simplified for the complete source."
+      }
+    },
+    "B": {
+      "strengths": [
+        {
+          "finding": "More visibly segmented shoulder perimeter gives the rim a more assembled appearance.",
+          "supportingViews": [
+            "front-three-quarter",
+            "rear-three-quarter"
+          ]
+        },
+        {
+          "finding": "Central pale/silver and gold actuator cues, side rails, and separate armor edges create the strongest front mechanical treatment among the supplied candidates.",
+          "supportingViews": [
+            "front",
+            "front-three-quarter"
+          ]
+        },
+        {
+          "finding": "Forearm edge layers, rear strips, and vent/rib details are legible.",
+          "supportingViews": [
+            "front-three-quarter",
+            "back",
+            "rear-three-quarter"
+          ]
+        },
+        {
+          "finding": "Pale dorsal shield, shaped dark palm, finger members, and joints are visually differentiated.",
+          "supportingViews": [
+            "front",
+            "back",
+            "rear-three-quarter"
+          ]
+        }
+      ],
+      "defects": [
+        {
+          "finding": "Narrow slab edges and long rails still produce a thin straight-stack appearance.",
+          "supportingViews": [
+            "left",
+            "front-three-quarter"
+          ]
+        },
+        {
+          "finding": "Shoulder remains a simple capped cylinder/disc despite added perimeter treatment.",
+          "supportingViews": [
+            "left",
+            "front-three-quarter",
+            "rear-three-quarter"
+          ]
+        },
+        {
+          "finding": "Broad flat rear upper-arm panel loses the exposed-rod character evident in the source and A.",
+          "supportingViews": [
+            "back",
+            "rear-three-quarter"
+          ]
+        },
+        {
+          "finding": "Pale front elbow face, simple side disc, broad forearm plate, and dorsal hand plate remain generic.",
+          "supportingViews": [
+            "front",
+            "left",
+            "front-three-quarter"
+          ]
+        },
+        {
+          "finding": "Repeated block/bar finger forms and bright armor/uniform gray mechanisms fall short of refined shape and material hierarchy.",
+          "supportingViews": [
+            "front",
+            "back",
+            "front-three-quarter",
+            "rear-three-quarter"
+          ]
+        }
+      ],
+      "finishedAcceptance": {
+        "pass": false,
+        "reason": "A narrow visible-detail lead does not resolve sculpted broad form, nested shoulder assembly, exposed mechanical complexity, or the developed hand."
+      }
+    },
+    "C": {
+      "strengths": [
+        {
+          "finding": "Readable white/dark/gold palette and clear major component sequence.",
+          "supportingViews": [
+            "front",
+            "back",
+            "front-three-quarter"
+          ]
+        },
+        {
+          "finding": "Split upper forearm edges, taper, elbow break, and narrow wrist establish a recognizable armored silhouette.",
+          "supportingViews": [
+            "front",
+            "front-three-quarter"
+          ]
+        },
+        {
+          "finding": "Dark shoulder-ring centers with bright/gold edging retain the main socket cue in oblique views.",
+          "supportingViews": [
+            "front-three-quarter",
+            "rear-three-quarter"
+          ]
+        },
+        {
+          "finding": "Separate fingers, small gold joint accents, and multiple dark palm surfaces remain legible.",
+          "supportingViews": [
+            "front",
+            "back",
+            "rear-three-quarter"
+          ]
+        }
+      ],
+      "defects": [
+        {
+          "finding": "Large simple shoulder, rear upper-arm, and forearm panels reduce visible assembly richness.",
+          "supportingViews": [
+            "back",
+            "rear-three-quarter",
+            "front-three-quarter"
+          ]
+        },
+        {
+          "finding": "Wide cylindrical shoulder and faceted pale cap lack nested source housing and B's more articulated perimeter.",
+          "supportingViews": [
+            "front",
+            "left",
+            "front-three-quarter",
+            "rear-three-quarter"
+          ]
+        },
+        {
+          "finding": "Regular bars and circular joints produce a schematic upper-arm/elbow/wrist sequence.",
+          "supportingViews": [
+            "front",
+            "left"
+          ]
+        },
+        {
+          "finding": "Near-symmetric broad forearm shell and single dark rear inset face simplify overlapping armor and service machinery.",
+          "supportingViews": [
+            "front",
+            "back",
+            "rear-three-quarter"
+          ]
+        },
+        {
+          "finding": "Boxy hand/finger shapes and large bright flat armor areas remain underdeveloped.",
+          "supportingViews": [
+            "front",
+            "front-three-quarter",
+            "rear-three-quarter"
+          ]
+        }
+      ],
+      "finishedAcceptance": {
+        "pass": false,
+        "reason": "The object category and palette are recognizable, but visible mechanical assembly is the least developed of the three supplied candidates."
+      }
+    }
+  },
+  "relativeDrawbacks": [
+    {
+      "candidate": "B",
+      "relativeTo": "A",
+      "finding": "A broad rear upper-arm panel obscures the exposed twin-rod impression, and the pale front elbow face is less evocative of the source's dark/gold joint.",
+      "supportingViews": [
+        "B/back",
+        "B/rear-three-quarter",
+        "B/front",
+        "A/back",
+        "A/rear-three-quarter",
+        "A/front"
+      ]
+    },
+    {
+      "candidate": "A",
+      "relativeTo": "B",
+      "finding": "Simpler shoulder perimeter, plainer palm, and weaker small-scale hand/rear forearm separation.",
+      "supportingViews": [
+        "A/back",
+        "A/rear-three-quarter",
+        "B/back",
+        "B/rear-three-quarter"
+      ]
+    },
+    {
+      "candidate": "C",
+      "relativeTo": "A and B",
+      "finding": "Large flat rear upper-arm and shell surfaces reduce visible mechanical richness despite useful gold-ring and forearm cues.",
+      "supportingViews": [
+        "C/back",
+        "C/rear-three-quarter",
+        "A/back",
+        "B/back"
+      ]
+    }
+  ],
+  "finishedAcceptance": {
+    "A": false,
+    "B": false,
+    "C": false,
+    "anyPasses": false,
+    "status": "All three candidates fail finished visual acceptance."
+  },
+  "uncertainty": [
+    "Confidence is higher in rejecting all three for finished visual acceptance than in the precise B-versus-A ordering.",
+    "B's lead over A is narrow; A has meaningful source-related local advantages.",
+    "Matching view names do not establish correspondence with the unregistered and differently posed source.",
+    "No exact dimensional ratios are inferred.",
+    "Image scale, render noise, bright highlights, and dark recesses limit assessment of tiny hardware, labels, LEDs, and fine materials.",
+    "An unresolved detail is not proof of absence from an underlying asset.",
+    "A visible dark center or apparent recess does not establish internal construction."
+  ],
+  "prohibitedInferencesNotMade": [
+    "Numerical likeness metrics",
+    "Geometry correctness or manifoldness",
+    "Dimensional accuracy",
+    "Rigging or actual articulation",
+    "Collisions",
+    "Export readiness",
+    "Motion capability",
+    "Technical model superiority"
+  ],
+  "status": "Final anonymous visual verdict for this trial, preserved as submitted; visual evidence and development preference, not human approval.",
+  "rawVerdict": "# Anonymous automail visual review\n\n## Verdict\n\n**Visual development preference: B, narrowly ahead of A; C ranks third. Finished visual acceptance: A fails, B fails, and C fails.**\n\nThis is a ranking of visible resemblance and development promise in the supplied images, not a claim that one underlying model is technically superior.\n\nB has the most useful combination of a segmented shoulder rim, exposed front actuator cues, layered plate edges, and differentiated hand surfaces. Those features give it a narrow overall visual lead. A is a credible alternative because its rear upper-arm rods and asymmetric forearm armor preserve parts of the source's exposed mechanical character more clearly than B. C retains the broad arm layout and a readable white/dark/gold palette, but its large simple panels and sparse rear upper arm produce the least developed mechanical impression of the three.\n\nThe gaps are substantial for every candidate. All three simplify the source into a mostly straight stack of large shells, circular joints, and small segmented fingers. The source's defining character comes from an intricate, layered shoulder assembly; overlapping contoured armor; exposed actuators and routed tubes; and a carefully developed hand. None of the candidates convincingly reproduces that whole-system visual richness across the supplied views.\n\n## Inspection scope and order\n\nI inspected the complete original source sheet first, including all five assembled arm views, the exploded assembly illustration, the attachment view, and the hand, elbow, shoulder-socket, and service-port detail panels. I then inspected all five actual images in A, all five in B, and all five in C.\n\nThe supplied instruction states that the candidates share identical external camera, light, and render metadata. I use that as context for comparison between candidates. The cameras are not registered to the source, and matching view names do not establish matching projections.\n\nNo repository contents, author reports, mapping files, other trial folders, or other reviewers' outputs were consulted. Candidate authorship, construction method, and chronology are unknown.\n\n### Paths inspected\n\n- /tmp/refas-dual-asset-20261122/blind/automail/reference.png\n- /tmp/refas-dual-asset-20261122/blind/automail/A/view-front.png\n- /tmp/refas-dual-asset-20261122/blind/automail/A/view-left.png\n- /tmp/refas-dual-asset-20261122/blind/automail/A/view-back.png\n- /tmp/refas-dual-asset-20261122/blind/automail/A/view-front-three-quarter.png\n- /tmp/refas-dual-asset-20261122/blind/automail/A/view-rear-three-quarter.png\n- /tmp/refas-dual-asset-20261122/blind/automail/B/view-front.png\n- /tmp/refas-dual-asset-20261122/blind/automail/B/view-left.png\n- /tmp/refas-dual-asset-20261122/blind/automail/B/view-back.png\n- /tmp/refas-dual-asset-20261122/blind/automail/B/view-front-three-quarter.png\n- /tmp/refas-dual-asset-20261122/blind/automail/B/view-rear-three-quarter.png\n- /tmp/refas-dual-asset-20261122/blind/automail/C/view-front.png\n- /tmp/refas-dual-asset-20261122/blind/automail/C/view-left.png\n- /tmp/refas-dual-asset-20261122/blind/automail/C/view-back.png\n- /tmp/refas-dual-asset-20261122/blind/automail/C/view-front-three-quarter.png\n- /tmp/refas-dual-asset-20261122/blind/automail/C/view-rear-three-quarter.png\n\n## Whole-source comparison\n\n### Proportions and broad form\n\nAll candidates have a recognizable shoulder-to-hand sequence, a broad shoulder region tapering toward the upper arm, a visible elbow break, a long forearm shell, a narrow wrist, and a five-digit hand silhouette. Their major component order is readable from both front and rear.\n\nThe principal shared weakness is a straight, evenly stacked appearance. The source has a more sculpted arrangement of shoulder mass, upper-arm recesses, overlapping forearm plates, and a naturally posed hand. The candidates' long central arm sections are comparatively simple and regular. From the side, the upper-arm and forearm shells frequently read as thin elongated slabs around a central bar rather than the source's fuller, nested assembly.\n\nThe source also uses strong shifts between covered areas and exposed dark mechanical recesses. All three candidates reduce that rhythm: exposed regions are often a few straight rods or one broad flat panel, and armor transitions are abrupt. The wrists read as simple short collars between arm and hand, while the source gives this area a more layered, compact mechanical treatment.\n\nThese are qualitative appearance findings. I am not asserting specific dimensional errors. Source pose and projection differences make exact shoulder, forearm, and hand ratios uncertain.\n\n**Supporting views:** all three front, left, front-three-quarter, back, and rear-three-quarter renders, compared with the complete source rather than one supposedly matching projection.\n\n### Mechanical identity\n\nThe white armor, dark interior, circular shoulder socket, round elbow, small gold accents, and finger segmentation make the intended reference recognizable. However, the source's mechanical identity is much more specific than those broad cues.\n\nThe shoulder should visually read as several nested rings and housings, with sculpted armor wrapping around them. The candidates mostly present a simple barrel/disc with a front cap and a decorated rim. The upper arm lacks much of the source's intertwined actuator, tube, and armor relationship. The elbow is reduced to a circular disc or short drum instead of the source's visibly layered hubs and surrounding actuator connections. The rear forearm/service area is represented by a simple ribbed or vented panel, with little of the source's service-compartment depth and internal machinery visible.\n\nThe source's hand has differentiated knuckles, overlapping dorsal armor, palm pads, small joints, and carefully shaped phalanges. The candidates establish the fingers, but their small repeated segments remain blocky and visually schematic. This is a comparison of visible shapes and detail only; it says nothing about actual articulation.\n\n### Material impression\n\nAll candidates communicate pale armor, darker structure, and gold accents. They are substantially simpler in material hierarchy than the source, whose dark recesses, bright machined metal, restrained warm trim, pale armor, and small cool light accents work together.\n\nThe rendered pale parts often appear very bright and chalky, while some structural areas read as uniform blue-gray. The source gives the mechanisms greater dark-to-metal contrast and the armor more nuanced surface separation. Fine finishes and small illuminated details are not well resolved at this image scale, so their exact presence or absence cannot be established.\n\n## Candidate A\n\n### Strengths\n\n- The shoulder mass and narrowing upper arm create a clear major silhouette, and the circular socket is immediately legible in the left and oblique views.\n- The back and rear-three-quarter views show distinct parallel upper-arm rods instead of a single large covering panel. This is a useful connection to the source's exposed rear actuator language.\n- The front and front-three-quarter forearm have an offset, asymmetric arrangement of pale armor and dark gaps. That is more suggestive of overlapping protection than one uninterrupted rectangular plate.\n- Two-tone elbow/shoulder rings, a forearm slot, gold accents, and rear forearm ribs provide recognizable mechanical cues.\n- The hand's separate pale dorsal strips and dark palm side make its two sides distinguishable.\n\n### Defects\n\n- The shoulder reads as a large simple barrel with bright straight bands and a broad pale front cap. In the back and rear-three-quarter views especially, it lacks the source's layered, irregular housing and deeply developed ring assembly.\n- The exposed upper-arm rods are visually useful but sparse and very straight. There is little of the source's varied tubing, connectors, and nested armor around them.\n- The elbow side is a small concentric target-like disc, with limited surrounding mechanical mass and few visible connections.\n- The forearm side shell is smooth and slab-like; the rear forearm reads mainly as a long ribbed strip. Neither view supplies the source's depth of assembled parts.\n- The hand front is dominated by long triangular strips, and the fingers look like repeated chunky small segments. The broad dark palm is relatively plain.\n- Pale armor and light silver rims dominate the render. Surface variation and fine hardware are weakly resolved, particularly on the shoulder.\n\n**Most diagnostic views:** back and rear-three-quarter for the useful exposed rods but simplified barrel shoulder; front and front-three-quarter for asymmetric forearm armor and schematic dorsal hand; left for flat shell profiles and the simple elbow disc.\n\n### Acceptance\n\n**Fail.** A preserves several useful source cues, especially the exposed rear upper-arm mechanism, but the shoulder, elbow, forearm internals, hand, and material detail remain too simplified for finished visual acceptance.\n\n## Candidate B\n\n### Strengths\n\n- The shoulder rim has more visibly segmented perimeter detail than A or C. Front-three-quarter and rear-three-quarter views give the ring and surrounding pieces a more assembled appearance.\n- Front and front-three-quarter views show a clear actuator-like central upper-arm element with contrasting pale/silver and gold sections, plus side rails and separate armor edges. This is the strongest front-facing mechanical treatment among the supplied candidates.\n- The forearm has several legible layers and edge breaks. Its rear panel includes distinct central strip, vent/rib, and side elements rather than one uninterrupted face.\n- The hand distinguishes a pale dorsal shield, a shaped dark palm, finger members, and joints. The back and rear-three-quarter views provide more palm-side surface treatment than A's simpler dark palm.\n- Compared with A and C, B offers more small-scale visual separation around the shoulder rim, wrist, hand, and rear forearm.\n\n### Defects\n\n- The overall arm still reads as a thin straight stack. The left view exposes especially narrow shell edges and long rails, without the source's fuller contoured armor volumes.\n- The shoulder remains a fairly simple capped cylinder/disc. Perimeter segmentation helps, but the nested source socket and its sculpted surrounding shell are not convincingly reproduced.\n- The rear upper arm is dominated by a broad flat blue-gray panel. This obscures the exposed-rod visual rhythm that A preserves and that is prominent in the source.\n- The front elbow's pale rectangular face and the side disc are visually generic. The source's layered joint hubs, gold/black bands, and surrounding machinery are much richer.\n- The front forearm and dorsal hand are broad simple pale panels. The source has more shaped overlaps, inset details, and differentiated transitions.\n- Finger shapes remain small repeated bars and blocks, and their posture is comparatively stiff. Visible detail does not establish functional articulation.\n- Bright pale parts and relatively uniform blue-gray structural surfaces still fall short of the source's metal, dark recess, armor, and accent hierarchy.\n\n**Most diagnostic views:** front and front-three-quarter for the central actuator cues, layered forearm, and dorsal hand; rear-three-quarter for shoulder perimeter detail and hand/palm separation; back for the flat upper-arm covering panel; left for thin slab-like side profiles.\n\n### Acceptance\n\n**Fail.** B has the strongest overall visible detail treatment of these supplied renders, but the lead is narrow and local. It still lacks the source's sculpted broad form, nested shoulder assembly, exposed mechanical complexity, and developed hand.\n\n## Candidate C\n\n### Strengths\n\n- White armor, dark structural areas, and gold joint accents are clear in front and oblique views.\n- The front forearm's split upper edges and taper give it a readable armored silhouette. The elbow break and narrow wrist remain easy to distinguish.\n- The oblique shoulder-ring views provide a dark center bounded by bright and gold rings, retaining the main socket cue.\n- The hand shows separate digits, visible small gold joint accents, and more than one dark palm surface.\n- Front-to-back component order remains coherent and recognizable.\n\n### Defects\n\n- Large simple panels dominate the shoulder, rear upper arm, and forearm. The rear upper-arm center is especially plain and lacks the richer exposed components seen in the source and, in a limited way, A.\n- The shoulder appears as a wide simple cylinder with a large faceted pale cap. The rim is less visibly articulated than B's, and the surrounding armor lacks source-like nesting.\n- The upper arm, elbow, and wrist form a very regular sequence of narrow bars and circular rings. The result is visually schematic.\n- The forearm front has a clean tapered shell, but its broad surfaces and near-symmetric layout reduce the source's more intricate overlapping armor character.\n- The rear forearm is largely a single dark inset face with a small vent/light-like treatment. It gives less sense of layered machinery than the source.\n- Hand plates and finger segments are boxy. Gold joint dots make the segmentation legible but do not replace the source's nuanced knuckle, finger, and palm shapes.\n- The armor has conspicuous large flat/faceted areas and bright, uniform surfaces. Material separation is readable, but the result remains less developed than the source.\n\n**Most diagnostic views:** back and rear-three-quarter for sparse upper-arm and forearm surfaces; front and front-three-quarter for simple faceted armor and regular component stacking; left for broad smooth shell profiles and basic disc joints.\n\n### Acceptance\n\n**Fail.** C communicates the object category and color arrangement but provides the least developed visible mechanical assembly of the three candidates.\n\n## Relative drawbacks and regressions\n\nChronology is unknown. The following are relative losses or tradeoffs, not claims that one candidate was produced by modifying another.\n\n- **B relative to A:** B's broad rear upper-arm panel loses A's clearer exposed twin-rod appearance. B's pale front elbow face is also a less convincing cue for the source's dark/gold mechanical joint. Its extra perimeter detail should not be treated as an across-the-board improvement.\n- **A relative to B:** A has a simpler shoulder perimeter, plainer palm surface, and less small-scale separation in the hand and rear forearm. Its white bands on the rear shoulder accentuate the basic barrel form.\n- **C relative to A and B:** C's large flat rear upper-arm panel and simple shell surfaces reduce the visible mechanical richness. It retains useful gold-ring and forearm silhouette cues, but these do not offset the overall simplification.\n- **Shared shortfall:** none solves the source's nested shoulder, contoured overlapping armor, dense but readable actuator/tube assembly, or refined hand. The ranking does not indicate that any candidate is close to final acceptance.\n\n## Why B ranks first, and how certain that is\n\nB wins narrowly on the combined evidence of shoulder perimeter treatment, front actuator cues, layered forearm detail, and hand/palm differentiation across its five views. A has meaningful local advantages, especially rear upper-arm exposure and asymmetric forearm armor. The A-versus-B margin is therefore modest; a different emphasis on source details could reasonably favor A.\n\nC's simpler broad panels and sparse rear assembly provide a clearer basis for ranking it below the other two in the supplied images.\n\nConfidence is higher in rejecting all three for finished visual acceptance than in the precise A-versus-B ordering.\n\n## Limitations and status\n\nThis judgment is based only on the complete source sheet and fifteen supplied candidate PNG images. The matching candidate view setup supports comparison between candidates, but the source is unregistered and differently posed. I do not infer exact dimensional ratios or exact projection correspondence.\n\nThe full arm occupies a limited area of each render. Noise, bright highlights, dark recesses, and image scale restrict the assessment of tiny fasteners, labels, fine surface texture, LEDs, and small joint detail. An unresolved detail is not proof that the underlying asset lacks it. A dark circle or apparent recess does not establish internal construction.\n\nNo numerical likeness metrics are assigned. No claims are made about geometry correctness, manifoldness, dimensions, rigging, collisions, export readiness, motion capability, or technical model superiority. Apparent component connections are evaluated only as visual presentation.\n\nThis is a final anonymous visual verdict for this trial, preserved as submitted. It is visual evidence and a development preference, not human approval.\n"
+}

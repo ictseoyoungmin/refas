@@ -54,8 +54,8 @@ import {
   checkpointGatePolicy,
   normalizeCheckpointGateRequests,
   resumeProject,
-} from '../skills/refas/scripts/lib/index.mjs';
-import {initTrustedContractFixtureProject} from '../skills/refas/scripts/lib/contract-fixture-project.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
+import {initTrustedContractFixtureProject} from '../legacy/v1/scripts/lib/contract-fixture-project.mjs';
 
 const CONTRACT_FIXTURES = new Set(['test-fixture','deterministic-project-fixture','synthetic-test-fixture']);
 
@@ -532,7 +532,7 @@ async function commitCertification(root, source, {
   };
   const registeredCameraPath=await json(path.join(root,'model','source-registered-frame.json'),registeredCamera);
   const registeredCameraRef=await contentReference(registeredCameraPath,{kind:'canonical-object-frame',root});
-  const cli=path.resolve('skills/refas/scripts/refas.mjs');
+  const cli=path.resolve('legacy/v1/scripts/refas.mjs');
   const replayDir=path.join(root,'renders','registered');
   const portable=spawnSync(process.execPath,[cli,'render','--glb',assetPath,'--frame',registeredCameraPath,
     '--out',replayDir,'--size','384','--timeout-seconds','30','--max-working-mb','256','--hero-only'],

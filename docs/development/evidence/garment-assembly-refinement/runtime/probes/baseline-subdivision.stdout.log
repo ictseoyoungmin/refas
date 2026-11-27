@@ -1,0 +1,4 @@
+REPRO_SUBDIVISION {"guardAccepted": true, "viewportEnabled": true, "renderEnabled": true, "levels": 1, "renderLevels": 2, "inventoryTriangles": 48, "inventoryBounds": {"min": [-0.83950627, -0.83950627, -0.83950627], "max": [0.83950627, 0.83950627, 0.83950627], "dimensions": [1.67901254, 1.67901254, 1.67901254]}, "trianglesAtRenderSubdivisionLevel": 192, "boundsAtRenderSubdivisionLevel": {"min": [-0.83950627, -0.83950627, -0.83950627], "max": [0.83950627, 0.83950627, 0.83950627], "dimensions": [1.67901254, 1.67901254, 1.67901254]}, "probeScope": "In-memory geometry only; no images, native saves or GLB export"}
+Blender 4.3.2
+
+Blender quit

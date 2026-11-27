@@ -1,0 +1,10 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> refas@2.0.0-alpha.1 test:production
+> python3 -B -m unittest discover -s tests -p "test_production*.py"
+
+.................................................................
+----------------------------------------------------------------------
+Ran 65 tests in 70.189s
+
+OK

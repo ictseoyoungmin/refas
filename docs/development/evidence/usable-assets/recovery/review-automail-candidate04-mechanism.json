@@ -1,0 +1,5828 @@
+{
+  "scope": "Read-only source-to-detailed comparison and 121-frame rigid axis contact observation; no saved input mutation, dynamics, load or exhaustive collision claim.",
+  "inputs": {
+    "source": {
+      "path": "/workspace/scratch/61afcdd4e3c6/recovered/source-models/refas-source-identity-models/automail/native.blend",
+      "sha256": "e7b2ac7cbd671d979af6e178ec85efc574ad9860c9695000980cf4a29f8a2dd7"
+    },
+    "detailed": {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/automail/candidate-04/detailed-functional.blend",
+      "sha256": "cc4c2aaefab15a52919e4e5c55211ff787e913f801d5c9573b4d15e0db540079"
+    },
+    "candidate": {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/automail/candidate-04/scene.blend",
+      "sha256": "9a9c4b4a102751f5b09ca6352a335042a8f23dbee9cd1031cd105e98fddf8a62"
+    },
+    "construction": {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/automail/candidate-04/construction.json",
+      "sha256": "0fc812e9de126a18f222b6342925248db16dcb60f9459d26efe3d2105b981c12"
+    }
+  },
+  "sourceMeshes": 321,
+  "detailedMeshes": 321,
+  "missingSourceMeshesInDetailed": [],
+  "extraDetailedMeshes": [],
+  "deliberatelyRebuiltSourceParts": [
+    "Palm_graphite_body",
+    "Upper_exposed_hydraulic_-1",
+    "Upper_exposed_hydraulic_1",
+    "Wrist_side_ring_-1",
+    "Wrist_side_ring_1"
+  ],
+  "unchangedParts": [
+    {
+      "object": "Crown_AURIX",
+      "sourceVertices": 796,
+      "detailedVertices": 796,
+      "sourceTriangles": 784,
+      "detailedTriangles": 784,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Crown_A_mark",
+      "sourceVertices": 224,
+      "detailedVertices": 224,
+      "sourceTriangles": 224,
+      "detailedTriangles": 224,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Crown_front_fastener_-1",
+      "sourceVertices": 96,
+      "detailedVertices": 96,
+      "sourceTriangles": 188,
+      "detailedTriangles": 188,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Crown_front_fastener_-1_hex_socket",
+      "sourceVertices": 84,
+      "detailedVertices": 84,
+      "sourceTriangles": 164,
+      "detailedTriangles": 164,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Crown_front_fastener_1",
+      "sourceVertices": 96,
+      "detailedVertices": 96,
+      "sourceTriangles": 188,
+      "detailedTriangles": 188,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Crown_front_fastener_1_hex_socket",
+      "sourceVertices": 84,
+      "detailedVertices": 84,
+      "sourceTriangles": 164,
+      "detailedTriangles": 164,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Crown_gold_pinstripe_-1",
+      "sourceVertices": 90,
+      "detailedVertices": 90,
+      "sourceTriangles": 176,
+      "detailedTriangles": 176,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Crown_gold_pinstripe_1",
+      "sourceVertices": 90,
+      "detailedVertices": 90,
+      "sourceTriangles": 176,
+      "detailedTriangles": 176,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Crown_gold_signature",
+      "sourceVertices": 50,
+      "detailedVertices": 50,
+      "sourceTriangles": 96,
+      "detailedTriangles": 96,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Crown_inset_border_-1",
+      "sourceVertices": 170,
+      "detailedVertices": 170,
+      "sourceTriangles": 336,
+      "detailedTriangles": 336,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Crown_inset_border_1",
+      "sourceVertices": 170,
+      "detailedVertices": 170,
+      "sourceTriangles": 336,
+      "detailedTriangles": 336,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Crown_recessed_carrier",
+      "sourceVertices": 1066,
+      "detailedVertices": 1066,
+      "sourceTriangles": 2128,
+      "detailedTriangles": 2128,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Crown_side_cap_-1",
+      "sourceVertices": 696,
+      "detailedVertices": 696,
+      "sourceTriangles": 1388,
+      "detailedTriangles": 1388,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Crown_side_cap_1",
+      "sourceVertices": 696,
+      "detailedVertices": 696,
+      "sourceTriangles": 1388,
+      "detailedTriangles": 1388,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Crown_side_carrier_-1",
+      "sourceVertices": 677,
+      "detailedVertices": 677,
+      "sourceTriangles": 1350,
+      "detailedTriangles": 1350,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Crown_side_carrier_1",
+      "sourceVertices": 677,
+      "detailedVertices": 677,
+      "sourceTriangles": 1350,
+      "detailedTriangles": 1350,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Crown_top_lock_plate",
+      "sourceVertices": 466,
+      "detailedVertices": 466,
+      "sourceTriangles": 928,
+      "detailedTriangles": 928,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Elbow_-1_cap_bolt_0",
+      "sourceVertices": 96,
+      "detailedVertices": 96,
+      "sourceTriangles": 188,
+      "detailedTriangles": 188,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Elbow_-1_cap_bolt_0_hex_socket",
+      "sourceVertices": 84,
+      "detailedVertices": 84,
+      "sourceTriangles": 164,
+      "detailedTriangles": 164,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Elbow_-1_cap_bolt_1",
+      "sourceVertices": 96,
+      "detailedVertices": 96,
+      "sourceTriangles": 188,
+      "detailedTriangles": 188,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Elbow_-1_cap_bolt_1_hex_socket",
+      "sourceVertices": 84,
+      "detailedVertices": 84,
+      "sourceTriangles": 164,
+      "detailedTriangles": 164,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Elbow_-1_cap_bolt_2",
+      "sourceVertices": 96,
+      "detailedVertices": 96,
+      "sourceTriangles": 188,
+      "detailedTriangles": 188,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Elbow_-1_cap_bolt_2_hex_socket",
+      "sourceVertices": 84,
+      "detailedVertices": 84,
+      "sourceTriangles": 164,
+      "detailedTriangles": 164,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Elbow_1_cap_bolt_0",
+      "sourceVertices": 96,
+      "detailedVertices": 96,
+      "sourceTriangles": 188,
+      "detailedTriangles": 188,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Elbow_1_cap_bolt_0_hex_socket",
+      "sourceVertices": 84,
+      "detailedVertices": 84,
+      "sourceTriangles": 164,
+      "detailedTriangles": 164,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Elbow_1_cap_bolt_1",
+      "sourceVertices": 96,
+      "detailedVertices": 96,
+      "sourceTriangles": 188,
+      "detailedTriangles": 188,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Elbow_1_cap_bolt_1_hex_socket",
+      "sourceVertices": 84,
+      "detailedVertices": 84,
+      "sourceTriangles": 164,
+      "detailedTriangles": 164,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Elbow_1_cap_bolt_2",
+      "sourceVertices": 96,
+      "detailedVertices": 96,
+      "sourceTriangles": 188,
+      "detailedTriangles": 188,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Elbow_1_cap_bolt_2_hex_socket",
+      "sourceVertices": 84,
+      "detailedVertices": 84,
+      "sourceTriangles": 164,
+      "detailedTriangles": 164,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Elbow_center_gold_band",
+      "sourceVertices": 1104,
+      "detailedVertices": 1104,
+      "sourceTriangles": 2204,
+      "detailedTriangles": 2204,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Elbow_central_rotor",
+      "sourceVertices": 288,
+      "detailedVertices": 288,
+      "sourceTriangles": 572,
+      "detailedTriangles": 572,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Elbow_cheek_-1",
+      "sourceVertices": 1104,
+      "detailedVertices": 1104,
+      "sourceTriangles": 2204,
+      "detailedTriangles": 2204,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Elbow_cheek_1",
+      "sourceVertices": 1104,
+      "detailedVertices": 1104,
+      "sourceTriangles": 2204,
+      "detailedTriangles": 2204,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Elbow_fixed_axle",
+      "sourceVertices": 288,
+      "detailedVertices": 288,
+      "sourceTriangles": 572,
+      "detailedTriangles": 572,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Elbow_gold_ring_-1",
+      "sourceVertices": 1104,
+      "detailedVertices": 1104,
+      "sourceTriangles": 2204,
+      "detailedTriangles": 2204,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Elbow_gold_ring_1",
+      "sourceVertices": 1104,
+      "detailedVertices": 1104,
+      "sourceTriangles": 2204,
+      "detailedTriangles": 2204,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Elbow_hub_-1",
+      "sourceVertices": 288,
+      "detailedVertices": 288,
+      "sourceTriangles": 572,
+      "detailedTriangles": 572,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Elbow_hub_1",
+      "sourceVertices": 288,
+      "detailedVertices": 288,
+      "sourceTriangles": 572,
+      "detailedTriangles": 572,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Elbow_hub_engraving_-1",
+      "sourceVertices": 848,
+      "detailedVertices": 848,
+      "sourceTriangles": 1692,
+      "detailedTriangles": 1692,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Elbow_hub_engraving_1",
+      "sourceVertices": 848,
+      "detailedVertices": 848,
+      "sourceTriangles": 1692,
+      "detailedTriangles": 1692,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Elbow_silver_rim_-1",
+      "sourceVertices": 1104,
+      "detailedVertices": 1104,
+      "sourceTriangles": 2204,
+      "detailedTriangles": 2204,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Elbow_silver_rim_1",
+      "sourceVertices": 1104,
+      "detailedVertices": 1104,
+      "sourceTriangles": 2204,
+      "detailedTriangles": 2204,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Forearm_channel_hydraulic_-1",
+      "sourceVertices": 170,
+      "detailedVertices": 170,
+      "sourceTriangles": 336,
+      "detailedTriangles": 336,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Forearm_channel_hydraulic_1",
+      "sourceVertices": 170,
+      "detailedVertices": 170,
+      "sourceTriangles": 336,
+      "detailedTriangles": 336,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Forearm_elbow_rod_-1",
+      "sourceVertices": 320,
+      "detailedVertices": 320,
+      "sourceTriangles": 636,
+      "detailedTriangles": 636,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Forearm_elbow_rod_1",
+      "sourceVertices": 320,
+      "detailedVertices": 320,
+      "sourceTriangles": 636,
+      "detailedTriangles": 636,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Forearm_front_indicator",
+      "sourceVertices": 50,
+      "detailedVertices": 50,
+      "sourceTriangles": 96,
+      "detailedTriangles": 96,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Forearm_front_keel",
+      "sourceVertices": 810,
+      "detailedVertices": 810,
+      "sourceTriangles": 1616,
+      "detailedTriangles": 1616,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Forearm_front_recess",
+      "sourceVertices": 254,
+      "detailedVertices": 254,
+      "sourceTriangles": 504,
+      "detailedTriangles": 504,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Forearm_gold_outer_reveal_-1",
+      "sourceVertices": 210,
+      "detailedVertices": 210,
+      "sourceTriangles": 416,
+      "detailedTriangles": 416,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Forearm_gold_outer_reveal_1",
+      "sourceVertices": 210,
+      "detailedVertices": 210,
+      "sourceTriangles": 416,
+      "detailedTriangles": 416,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Forearm_gold_recess_edge",
+      "sourceVertices": 90,
+      "detailedVertices": 90,
+      "sourceTriangles": 176,
+      "detailedTriangles": 176,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Forearm_lateral_blade_-1",
+      "sourceVertices": 670,
+      "detailedVertices": 670,
+      "sourceTriangles": 1336,
+      "detailedTriangles": 1336,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Forearm_lateral_blade_1",
+      "sourceVertices": 670,
+      "detailedVertices": 670,
+      "sourceTriangles": 1336,
+      "detailedTriangles": 1336,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Forearm_lateral_underlayer_-1",
+      "sourceVertices": 670,
+      "detailedVertices": 670,
+      "sourceTriangles": 1336,
+      "detailedTriangles": 1336,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Forearm_lateral_underlayer_1",
+      "sourceVertices": 670,
+      "detailedVertices": 670,
+      "sourceTriangles": 1336,
+      "detailedTriangles": 1336,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Forearm_power_cell_-1",
+      "sourceVertices": 320,
+      "detailedVertices": 320,
+      "sourceTriangles": 636,
+      "detailedTriangles": 636,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Forearm_power_cell_1",
+      "sourceVertices": 320,
+      "detailedVertices": 320,
+      "sourceTriangles": 636,
+      "detailedTriangles": 636,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Forearm_power_gland_-1",
+      "sourceVertices": 512,
+      "detailedVertices": 512,
+      "sourceTriangles": 1020,
+      "detailedTriangles": 1020,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Forearm_power_gland_1",
+      "sourceVertices": 512,
+      "detailedVertices": 512,
+      "sourceTriangles": 1020,
+      "detailedTriangles": 1020,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Forearm_recessed_carrier_-1",
+      "sourceVertices": 1018,
+      "detailedVertices": 1018,
+      "sourceTriangles": 2032,
+      "detailedTriangles": 2032,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Forearm_recessed_carrier_1",
+      "sourceVertices": 1018,
+      "detailedVertices": 1018,
+      "sourceTriangles": 2032,
+      "detailedTriangles": 2032,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Forearm_shoulder_bolt_-1",
+      "sourceVertices": 96,
+      "detailedVertices": 96,
+      "sourceTriangles": 188,
+      "detailedTriangles": 188,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Forearm_shoulder_bolt_-1_hex_socket",
+      "sourceVertices": 84,
+      "detailedVertices": 84,
+      "sourceTriangles": 164,
+      "detailedTriangles": 164,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Forearm_shoulder_bolt_1",
+      "sourceVertices": 96,
+      "detailedVertices": 96,
+      "sourceTriangles": 188,
+      "detailedTriangles": 188,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Forearm_shoulder_bolt_1_hex_socket",
+      "sourceVertices": 84,
+      "detailedVertices": 84,
+      "sourceTriangles": 164,
+      "detailedTriangles": 164,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Forearm_side_cable_-1",
+      "sourceVertices": 210,
+      "detailedVertices": 210,
+      "sourceTriangles": 416,
+      "detailedTriangles": 416,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Forearm_side_cable_1",
+      "sourceVertices": 210,
+      "detailedVertices": 210,
+      "sourceTriangles": 416,
+      "detailedTriangles": 416,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Forearm_structural_spine",
+      "sourceVertices": 566,
+      "detailedVertices": 566,
+      "sourceTriangles": 1128,
+      "detailedTriangles": 1128,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Forearm_swept_front_armor_-1",
+      "sourceVertices": 970,
+      "detailedVertices": 970,
+      "sourceTriangles": 1936,
+      "detailedTriangles": 1936,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Forearm_swept_front_armor_1",
+      "sourceVertices": 970,
+      "detailedVertices": 970,
+      "sourceTriangles": 1936,
+      "detailedTriangles": 1936,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Forearm_titanium_rail_-1",
+      "sourceVertices": 288,
+      "detailedVertices": 288,
+      "sourceTriangles": 572,
+      "detailedTriangles": 572,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Forearm_titanium_rail_1",
+      "sourceVertices": 288,
+      "detailedVertices": 288,
+      "sourceTriangles": 572,
+      "detailedTriangles": 572,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Forearm_wrist_bolt_-1",
+      "sourceVertices": 96,
+      "detailedVertices": 96,
+      "sourceTriangles": 188,
+      "detailedTriangles": 188,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Forearm_wrist_bolt_-1_hex_socket",
+      "sourceVertices": 84,
+      "detailedVertices": 84,
+      "sourceTriangles": 164,
+      "detailedTriangles": 164,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Forearm_wrist_bolt_1",
+      "sourceVertices": 96,
+      "detailedVertices": 96,
+      "sourceTriangles": 188,
+      "detailedTriangles": 188,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Forearm_wrist_bolt_1_hex_socket",
+      "sourceVertices": 84,
+      "detailedVertices": 84,
+      "sourceTriangles": 164,
+      "detailedTriangles": 164,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "INDEX_S0_ivory_phalanx",
+      "sourceVertices": 256,
+      "detailedVertices": 256,
+      "sourceTriangles": 508,
+      "detailedTriangles": 508,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "INDEX_S0_palm_grip",
+      "sourceVertices": 172,
+      "detailedVertices": 172,
+      "sourceTriangles": 340,
+      "detailedTriangles": 340,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "INDEX_S0_side_tendon_guide",
+      "sourceVertices": 50,
+      "detailedVertices": 50,
+      "sourceTriangles": 96,
+      "detailedTriangles": 96,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "INDEX_S0_structural_link",
+      "sourceVertices": 256,
+      "detailedVertices": 256,
+      "sourceTriangles": 508,
+      "detailedTriangles": 508,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "INDEX_S1_ivory_phalanx",
+      "sourceVertices": 256,
+      "detailedVertices": 256,
+      "sourceTriangles": 508,
+      "detailedTriangles": 508,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "INDEX_S1_palm_grip",
+      "sourceVertices": 172,
+      "detailedVertices": 172,
+      "sourceTriangles": 340,
+      "detailedTriangles": 340,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "INDEX_S1_structural_link",
+      "sourceVertices": 256,
+      "detailedVertices": 256,
+      "sourceTriangles": 508,
+      "detailedTriangles": 508,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "INDEX_S2_ivory_phalanx",
+      "sourceVertices": 288,
+      "detailedVertices": 288,
+      "sourceTriangles": 572,
+      "detailedTriangles": 572,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "INDEX_S2_palm_grip",
+      "sourceVertices": 178,
+      "detailedVertices": 178,
+      "sourceTriangles": 352,
+      "detailedTriangles": 352,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "INDEX_S2_structural_link",
+      "sourceVertices": 288,
+      "detailedVertices": 288,
+      "sourceTriangles": 572,
+      "detailedTriangles": 572,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "INDEX_gold_bearing_0_-1",
+      "sourceVertices": 640,
+      "detailedVertices": 640,
+      "sourceTriangles": 1280,
+      "detailedTriangles": 1280,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "INDEX_gold_bearing_0_1",
+      "sourceVertices": 640,
+      "detailedVertices": 640,
+      "sourceTriangles": 1280,
+      "detailedTriangles": 1280,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "INDEX_gold_bearing_1_-1",
+      "sourceVertices": 640,
+      "detailedVertices": 640,
+      "sourceTriangles": 1280,
+      "detailedTriangles": 1280,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "INDEX_gold_bearing_1_1",
+      "sourceVertices": 640,
+      "detailedVertices": 640,
+      "sourceTriangles": 1280,
+      "detailedTriangles": 1280,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "INDEX_gold_bearing_2_-1",
+      "sourceVertices": 640,
+      "detailedVertices": 640,
+      "sourceTriangles": 1280,
+      "detailedTriangles": 1280,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "INDEX_gold_bearing_2_1",
+      "sourceVertices": 640,
+      "detailedVertices": 640,
+      "sourceTriangles": 1280,
+      "detailedTriangles": 1280,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "INDEX_knuckle_0",
+      "sourceVertices": 512,
+      "detailedVertices": 512,
+      "sourceTriangles": 1020,
+      "detailedTriangles": 1020,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "INDEX_knuckle_1",
+      "sourceVertices": 512,
+      "detailedVertices": 512,
+      "sourceTriangles": 1020,
+      "detailedTriangles": 1020,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "INDEX_knuckle_2",
+      "sourceVertices": 512,
+      "detailedVertices": 512,
+      "sourceTriangles": 1020,
+      "detailedTriangles": 1020,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "INDEX_knuckle_status",
+      "sourceVertices": 320,
+      "detailedVertices": 320,
+      "sourceTriangles": 636,
+      "detailedTriangles": 636,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "LITTLE_S0_ivory_phalanx",
+      "sourceVertices": 256,
+      "detailedVertices": 256,
+      "sourceTriangles": 508,
+      "detailedTriangles": 508,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "LITTLE_S0_palm_grip",
+      "sourceVertices": 172,
+      "detailedVertices": 172,
+      "sourceTriangles": 340,
+      "detailedTriangles": 340,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "LITTLE_S0_side_tendon_guide",
+      "sourceVertices": 50,
+      "detailedVertices": 50,
+      "sourceTriangles": 96,
+      "detailedTriangles": 96,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "LITTLE_S0_structural_link",
+      "sourceVertices": 256,
+      "detailedVertices": 256,
+      "sourceTriangles": 508,
+      "detailedTriangles": 508,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "LITTLE_S1_ivory_phalanx",
+      "sourceVertices": 256,
+      "detailedVertices": 256,
+      "sourceTriangles": 508,
+      "detailedTriangles": 508,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "LITTLE_S1_palm_grip",
+      "sourceVertices": 172,
+      "detailedVertices": 172,
+      "sourceTriangles": 340,
+      "detailedTriangles": 340,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "LITTLE_S1_structural_link",
+      "sourceVertices": 256,
+      "detailedVertices": 256,
+      "sourceTriangles": 508,
+      "detailedTriangles": 508,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "LITTLE_S2_ivory_phalanx",
+      "sourceVertices": 288,
+      "detailedVertices": 288,
+      "sourceTriangles": 572,
+      "detailedTriangles": 572,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "LITTLE_S2_palm_grip",
+      "sourceVertices": 192,
+      "detailedVertices": 192,
+      "sourceTriangles": 380,
+      "detailedTriangles": 380,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "LITTLE_S2_structural_link",
+      "sourceVertices": 288,
+      "detailedVertices": 288,
+      "sourceTriangles": 572,
+      "detailedTriangles": 572,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "LITTLE_gold_bearing_0_-1",
+      "sourceVertices": 640,
+      "detailedVertices": 640,
+      "sourceTriangles": 1280,
+      "detailedTriangles": 1280,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "LITTLE_gold_bearing_0_1",
+      "sourceVertices": 640,
+      "detailedVertices": 640,
+      "sourceTriangles": 1280,
+      "detailedTriangles": 1280,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "LITTLE_gold_bearing_1_-1",
+      "sourceVertices": 640,
+      "detailedVertices": 640,
+      "sourceTriangles": 1280,
+      "detailedTriangles": 1280,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "LITTLE_gold_bearing_1_1",
+      "sourceVertices": 640,
+      "detailedVertices": 640,
+      "sourceTriangles": 1280,
+      "detailedTriangles": 1280,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "LITTLE_gold_bearing_2_-1",
+      "sourceVertices": 640,
+      "detailedVertices": 640,
+      "sourceTriangles": 1280,
+      "detailedTriangles": 1280,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "LITTLE_gold_bearing_2_1",
+      "sourceVertices": 640,
+      "detailedVertices": 640,
+      "sourceTriangles": 1280,
+      "detailedTriangles": 1280,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "LITTLE_knuckle_0",
+      "sourceVertices": 512,
+      "detailedVertices": 512,
+      "sourceTriangles": 1020,
+      "detailedTriangles": 1020,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "LITTLE_knuckle_1",
+      "sourceVertices": 512,
+      "detailedVertices": 512,
+      "sourceTriangles": 1020,
+      "detailedTriangles": 1020,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "LITTLE_knuckle_2",
+      "sourceVertices": 512,
+      "detailedVertices": 512,
+      "sourceTriangles": 1020,
+      "detailedTriangles": 1020,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "LITTLE_knuckle_status",
+      "sourceVertices": 320,
+      "detailedVertices": 320,
+      "sourceTriangles": 636,
+      "detailedTriangles": 636,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "MIDDLE_S0_ivory_phalanx",
+      "sourceVertices": 256,
+      "detailedVertices": 256,
+      "sourceTriangles": 508,
+      "detailedTriangles": 508,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "MIDDLE_S0_palm_grip",
+      "sourceVertices": 172,
+      "detailedVertices": 172,
+      "sourceTriangles": 340,
+      "detailedTriangles": 340,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "MIDDLE_S0_side_tendon_guide",
+      "sourceVertices": 50,
+      "detailedVertices": 50,
+      "sourceTriangles": 96,
+      "detailedTriangles": 96,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "MIDDLE_S0_structural_link",
+      "sourceVertices": 256,
+      "detailedVertices": 256,
+      "sourceTriangles": 508,
+      "detailedTriangles": 508,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "MIDDLE_S1_ivory_phalanx",
+      "sourceVertices": 256,
+      "detailedVertices": 256,
+      "sourceTriangles": 508,
+      "detailedTriangles": 508,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "MIDDLE_S1_palm_grip",
+      "sourceVertices": 172,
+      "detailedVertices": 172,
+      "sourceTriangles": 340,
+      "detailedTriangles": 340,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "MIDDLE_S1_structural_link",
+      "sourceVertices": 256,
+      "detailedVertices": 256,
+      "sourceTriangles": 508,
+      "detailedTriangles": 508,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "MIDDLE_S2_ivory_phalanx",
+      "sourceVertices": 288,
+      "detailedVertices": 288,
+      "sourceTriangles": 572,
+      "detailedTriangles": 572,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "MIDDLE_S2_palm_grip",
+      "sourceVertices": 178,
+      "detailedVertices": 178,
+      "sourceTriangles": 352,
+      "detailedTriangles": 352,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "MIDDLE_S2_structural_link",
+      "sourceVertices": 288,
+      "detailedVertices": 288,
+      "sourceTriangles": 572,
+      "detailedTriangles": 572,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "MIDDLE_gold_bearing_0_-1",
+      "sourceVertices": 640,
+      "detailedVertices": 640,
+      "sourceTriangles": 1280,
+      "detailedTriangles": 1280,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "MIDDLE_gold_bearing_0_1",
+      "sourceVertices": 640,
+      "detailedVertices": 640,
+      "sourceTriangles": 1280,
+      "detailedTriangles": 1280,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "MIDDLE_gold_bearing_1_-1",
+      "sourceVertices": 640,
+      "detailedVertices": 640,
+      "sourceTriangles": 1280,
+      "detailedTriangles": 1280,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "MIDDLE_gold_bearing_1_1",
+      "sourceVertices": 640,
+      "detailedVertices": 640,
+      "sourceTriangles": 1280,
+      "detailedTriangles": 1280,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "MIDDLE_gold_bearing_2_-1",
+      "sourceVertices": 640,
+      "detailedVertices": 640,
+      "sourceTriangles": 1280,
+      "detailedTriangles": 1280,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "MIDDLE_gold_bearing_2_1",
+      "sourceVertices": 640,
+      "detailedVertices": 640,
+      "sourceTriangles": 1280,
+      "detailedTriangles": 1280,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "MIDDLE_knuckle_0",
+      "sourceVertices": 512,
+      "detailedVertices": 512,
+      "sourceTriangles": 1020,
+      "detailedTriangles": 1020,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "MIDDLE_knuckle_1",
+      "sourceVertices": 512,
+      "detailedVertices": 512,
+      "sourceTriangles": 1020,
+      "detailedTriangles": 1020,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "MIDDLE_knuckle_2",
+      "sourceVertices": 512,
+      "detailedVertices": 512,
+      "sourceTriangles": 1020,
+      "detailedTriangles": 1020,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "MIDDLE_knuckle_status",
+      "sourceVertices": 320,
+      "detailedVertices": 320,
+      "sourceTriangles": 636,
+      "detailedTriangles": 636,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Palm_center_grip",
+      "sourceVertices": 462,
+      "detailedVertices": 462,
+      "sourceTriangles": 920,
+      "detailedTriangles": 920,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Palm_center_pad_seam",
+      "sourceVertices": 130,
+      "detailedVertices": 130,
+      "sourceTriangles": 256,
+      "detailedTriangles": 256,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Palm_dorsal_main_plate",
+      "sourceVertices": 606,
+      "detailedVertices": 606,
+      "sourceTriangles": 1208,
+      "detailedTriangles": 1208,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Palm_dorsal_ring_plate",
+      "sourceVertices": 632,
+      "detailedVertices": 632,
+      "sourceTriangles": 1260,
+      "detailedTriangles": 1260,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Palm_edge_plate_-1",
+      "sourceVertices": 574,
+      "detailedVertices": 574,
+      "sourceTriangles": 1144,
+      "detailedTriangles": 1144,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Palm_edge_plate_1",
+      "sourceVertices": 412,
+      "detailedVertices": 412,
+      "sourceTriangles": 820,
+      "detailedTriangles": 820,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Palm_gold_split_-1",
+      "sourceVertices": 90,
+      "detailedVertices": 90,
+      "sourceTriangles": 176,
+      "detailedTriangles": 176,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Palm_gold_split_1",
+      "sourceVertices": 90,
+      "detailedVertices": 90,
+      "sourceTriangles": 176,
+      "detailedTriangles": 176,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Palm_grip_pad_-1",
+      "sourceVertices": 462,
+      "detailedVertices": 462,
+      "sourceTriangles": 920,
+      "detailedTriangles": 920,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Palm_grip_pad_1",
+      "sourceVertices": 462,
+      "detailedVertices": 462,
+      "sourceTriangles": 920,
+      "detailedTriangles": 920,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Palm_thenar_pad_seam",
+      "sourceVertices": 90,
+      "detailedVertices": 90,
+      "sourceTriangles": 176,
+      "detailedTriangles": 176,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "RING_S0_ivory_phalanx",
+      "sourceVertices": 256,
+      "detailedVertices": 256,
+      "sourceTriangles": 508,
+      "detailedTriangles": 508,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "RING_S0_palm_grip",
+      "sourceVertices": 172,
+      "detailedVertices": 172,
+      "sourceTriangles": 340,
+      "detailedTriangles": 340,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "RING_S0_side_tendon_guide",
+      "sourceVertices": 50,
+      "detailedVertices": 50,
+      "sourceTriangles": 96,
+      "detailedTriangles": 96,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "RING_S0_structural_link",
+      "sourceVertices": 256,
+      "detailedVertices": 256,
+      "sourceTriangles": 508,
+      "detailedTriangles": 508,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "RING_S1_ivory_phalanx",
+      "sourceVertices": 256,
+      "detailedVertices": 256,
+      "sourceTriangles": 508,
+      "detailedTriangles": 508,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "RING_S1_palm_grip",
+      "sourceVertices": 172,
+      "detailedVertices": 172,
+      "sourceTriangles": 340,
+      "detailedTriangles": 340,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "RING_S1_structural_link",
+      "sourceVertices": 256,
+      "detailedVertices": 256,
+      "sourceTriangles": 508,
+      "detailedTriangles": 508,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "RING_S2_ivory_phalanx",
+      "sourceVertices": 288,
+      "detailedVertices": 288,
+      "sourceTriangles": 572,
+      "detailedTriangles": 572,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "RING_S2_palm_grip",
+      "sourceVertices": 192,
+      "detailedVertices": 192,
+      "sourceTriangles": 380,
+      "detailedTriangles": 380,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "RING_S2_structural_link",
+      "sourceVertices": 288,
+      "detailedVertices": 288,
+      "sourceTriangles": 572,
+      "detailedTriangles": 572,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "RING_gold_bearing_0_-1",
+      "sourceVertices": 640,
+      "detailedVertices": 640,
+      "sourceTriangles": 1280,
+      "detailedTriangles": 1280,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "RING_gold_bearing_0_1",
+      "sourceVertices": 640,
+      "detailedVertices": 640,
+      "sourceTriangles": 1280,
+      "detailedTriangles": 1280,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "RING_gold_bearing_1_-1",
+      "sourceVertices": 640,
+      "detailedVertices": 640,
+      "sourceTriangles": 1280,
+      "detailedTriangles": 1280,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "RING_gold_bearing_1_1",
+      "sourceVertices": 640,
+      "detailedVertices": 640,
+      "sourceTriangles": 1280,
+      "detailedTriangles": 1280,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "RING_gold_bearing_2_-1",
+      "sourceVertices": 640,
+      "detailedVertices": 640,
+      "sourceTriangles": 1280,
+      "detailedTriangles": 1280,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "RING_gold_bearing_2_1",
+      "sourceVertices": 640,
+      "detailedVertices": 640,
+      "sourceTriangles": 1280,
+      "detailedTriangles": 1280,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "RING_knuckle_0",
+      "sourceVertices": 512,
+      "detailedVertices": 512,
+      "sourceTriangles": 1020,
+      "detailedTriangles": 1020,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "RING_knuckle_1",
+      "sourceVertices": 512,
+      "detailedVertices": 512,
+      "sourceTriangles": 1020,
+      "detailedTriangles": 1020,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "RING_knuckle_2",
+      "sourceVertices": 512,
+      "detailedVertices": 512,
+      "sourceTriangles": 1020,
+      "detailedTriangles": 1020,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "RING_knuckle_status",
+      "sourceVertices": 320,
+      "detailedVertices": 320,
+      "sourceTriangles": 636,
+      "detailedTriangles": 636,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Service_bay_machined_lip",
+      "sourceVertices": 352,
+      "detailedVertices": 352,
+      "sourceTriangles": 704,
+      "detailedTriangles": 704,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Service_bay_structural_rim",
+      "sourceVertices": 352,
+      "detailedVertices": 352,
+      "sourceTriangles": 704,
+      "detailedTriangles": 704,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Service_cartridge_lower_band_-1",
+      "sourceVertices": 640,
+      "detailedVertices": 640,
+      "sourceTriangles": 1280,
+      "detailedTriangles": 1280,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Service_cartridge_lower_band_1",
+      "sourceVertices": 640,
+      "detailedVertices": 640,
+      "sourceTriangles": 1280,
+      "detailedTriangles": 1280,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Service_cartridge_sleeve_-1",
+      "sourceVertices": 320,
+      "detailedVertices": 320,
+      "sourceTriangles": 636,
+      "detailedTriangles": 636,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Service_cartridge_sleeve_1",
+      "sourceVertices": 320,
+      "detailedVertices": 320,
+      "sourceTriangles": 636,
+      "detailedTriangles": 636,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Service_cartridge_upper_band_-1",
+      "sourceVertices": 640,
+      "detailedVertices": 640,
+      "sourceTriangles": 1280,
+      "detailedTriangles": 1280,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Service_cartridge_upper_band_1",
+      "sourceVertices": 640,
+      "detailedVertices": 640,
+      "sourceTriangles": 1280,
+      "detailedTriangles": 1280,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Service_cover_center_inset",
+      "sourceVertices": 462,
+      "detailedVertices": 462,
+      "sourceTriangles": 920,
+      "detailedTriangles": 920,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Service_cover_graphite",
+      "sourceVertices": 670,
+      "detailedVertices": 670,
+      "sourceTriangles": 1336,
+      "detailedTriangles": 1336,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Service_cover_screw_-1_249",
+      "sourceVertices": 512,
+      "detailedVertices": 512,
+      "sourceTriangles": 1020,
+      "detailedTriangles": 1020,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Service_cover_screw_-1_249_hex_socket",
+      "sourceVertices": 320,
+      "detailedVertices": 320,
+      "sourceTriangles": 636,
+      "detailedTriangles": 636,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Service_cover_screw_-1_305",
+      "sourceVertices": 512,
+      "detailedVertices": 512,
+      "sourceTriangles": 1020,
+      "detailedTriangles": 1020,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Service_cover_screw_-1_305_hex_socket",
+      "sourceVertices": 320,
+      "detailedVertices": 320,
+      "sourceTriangles": 636,
+      "detailedTriangles": 636,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Service_cover_screw_-1_351",
+      "sourceVertices": 512,
+      "detailedVertices": 512,
+      "sourceTriangles": 1020,
+      "detailedTriangles": 1020,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Service_cover_screw_-1_351_hex_socket",
+      "sourceVertices": 320,
+      "detailedVertices": 320,
+      "sourceTriangles": 636,
+      "detailedTriangles": 636,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Service_cover_screw_1_249",
+      "sourceVertices": 512,
+      "detailedVertices": 512,
+      "sourceTriangles": 1020,
+      "detailedTriangles": 1020,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Service_cover_screw_1_249_hex_socket",
+      "sourceVertices": 320,
+      "detailedVertices": 320,
+      "sourceTriangles": 636,
+      "detailedTriangles": 636,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Service_cover_screw_1_305",
+      "sourceVertices": 512,
+      "detailedVertices": 512,
+      "sourceTriangles": 1020,
+      "detailedTriangles": 1020,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Service_cover_screw_1_305_hex_socket",
+      "sourceVertices": 320,
+      "detailedVertices": 320,
+      "sourceTriangles": 636,
+      "detailedTriangles": 636,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Service_cover_screw_1_351",
+      "sourceVertices": 512,
+      "detailedVertices": 512,
+      "sourceTriangles": 1020,
+      "detailedTriangles": 1020,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Service_cover_screw_1_351_hex_socket",
+      "sourceVertices": 320,
+      "detailedVertices": 320,
+      "sourceTriangles": 636,
+      "detailedTriangles": 636,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Service_cover_status_light",
+      "sourceVertices": 50,
+      "detailedVertices": 50,
+      "sourceTriangles": 96,
+      "detailedTriangles": 96,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Service_cover_vent_00",
+      "sourceVertices": 130,
+      "detailedVertices": 130,
+      "sourceTriangles": 256,
+      "detailedTriangles": 256,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Service_cover_vent_01",
+      "sourceVertices": 130,
+      "detailedVertices": 130,
+      "sourceTriangles": 256,
+      "detailedTriangles": 256,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Service_cover_vent_02",
+      "sourceVertices": 130,
+      "detailedVertices": 130,
+      "sourceTriangles": 256,
+      "detailedTriangles": 256,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Service_cover_vent_03",
+      "sourceVertices": 130,
+      "detailedVertices": 130,
+      "sourceTriangles": 256,
+      "detailedTriangles": 256,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Service_cover_vent_04",
+      "sourceVertices": 130,
+      "detailedVertices": 130,
+      "sourceTriangles": 256,
+      "detailedTriangles": 256,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Service_cover_vent_05",
+      "sourceVertices": 130,
+      "detailedVertices": 130,
+      "sourceTriangles": 256,
+      "detailedTriangles": 256,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Service_cover_vent_06",
+      "sourceVertices": 130,
+      "detailedVertices": 130,
+      "sourceTriangles": 256,
+      "detailedTriangles": 256,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Service_cover_vent_07",
+      "sourceVertices": 130,
+      "detailedVertices": 130,
+      "sourceTriangles": 256,
+      "detailedTriangles": 256,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Service_cover_vent_08",
+      "sourceVertices": 130,
+      "detailedVertices": 130,
+      "sourceTriangles": 256,
+      "detailedTriangles": 256,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Service_cover_vent_09",
+      "sourceVertices": 130,
+      "detailedVertices": 130,
+      "sourceTriangles": 256,
+      "detailedTriangles": 256,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Service_lower_manifold",
+      "sourceVertices": 254,
+      "detailedVertices": 254,
+      "sourceTriangles": 504,
+      "detailedTriangles": 504,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Service_return_conduit_-1",
+      "sourceVertices": 170,
+      "detailedVertices": 170,
+      "sourceTriangles": 336,
+      "detailedTriangles": 336,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Service_return_conduit_1",
+      "sourceVertices": 170,
+      "detailedVertices": 170,
+      "sourceTriangles": 336,
+      "detailedTriangles": 336,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Shoulder_L_gold_neural_bus",
+      "sourceVertices": 1536,
+      "detailedVertices": 1536,
+      "sourceTriangles": 3072,
+      "detailedTriangles": 3072,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Shoulder_L_inner_dark_bore",
+      "sourceVertices": 1536,
+      "detailedVertices": 1536,
+      "sourceTriangles": 3072,
+      "detailedTriangles": 3072,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Shoulder_L_load_ring",
+      "sourceVertices": 2688,
+      "detailedVertices": 2688,
+      "sourceTriangles": 5376,
+      "detailedTriangles": 5376,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Shoulder_L_lock_00",
+      "sourceVertices": 96,
+      "detailedVertices": 96,
+      "sourceTriangles": 188,
+      "detailedTriangles": 188,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Shoulder_L_lock_00_hex_socket",
+      "sourceVertices": 84,
+      "detailedVertices": 84,
+      "sourceTriangles": 164,
+      "detailedTriangles": 164,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Shoulder_L_lock_01",
+      "sourceVertices": 96,
+      "detailedVertices": 96,
+      "sourceTriangles": 188,
+      "detailedTriangles": 188,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Shoulder_L_lock_01_hex_socket",
+      "sourceVertices": 84,
+      "detailedVertices": 84,
+      "sourceTriangles": 164,
+      "detailedTriangles": 164,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Shoulder_L_lock_02",
+      "sourceVertices": 96,
+      "detailedVertices": 96,
+      "sourceTriangles": 188,
+      "detailedTriangles": 188,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Shoulder_L_lock_02_hex_socket",
+      "sourceVertices": 84,
+      "detailedVertices": 84,
+      "sourceTriangles": 164,
+      "detailedTriangles": 164,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Shoulder_L_lock_03",
+      "sourceVertices": 96,
+      "detailedVertices": 96,
+      "sourceTriangles": 188,
+      "detailedTriangles": 188,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Shoulder_L_lock_03_hex_socket",
+      "sourceVertices": 84,
+      "detailedVertices": 84,
+      "sourceTriangles": 164,
+      "detailedTriangles": 164,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Shoulder_L_lock_04",
+      "sourceVertices": 96,
+      "detailedVertices": 96,
+      "sourceTriangles": 188,
+      "detailedTriangles": 188,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Shoulder_L_lock_04_hex_socket",
+      "sourceVertices": 84,
+      "detailedVertices": 84,
+      "sourceTriangles": 164,
+      "detailedTriangles": 164,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Shoulder_L_lock_05",
+      "sourceVertices": 96,
+      "detailedVertices": 96,
+      "sourceTriangles": 188,
+      "detailedTriangles": 188,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Shoulder_L_lock_05_hex_socket",
+      "sourceVertices": 84,
+      "detailedVertices": 84,
+      "sourceTriangles": 164,
+      "detailedTriangles": 164,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Shoulder_L_locking_dog_00",
+      "sourceVertices": 408,
+      "detailedVertices": 408,
+      "sourceTriangles": 812,
+      "detailedTriangles": 812,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Shoulder_L_locking_dog_01",
+      "sourceVertices": 408,
+      "detailedVertices": 408,
+      "sourceTriangles": 812,
+      "detailedTriangles": 812,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Shoulder_L_locking_dog_02",
+      "sourceVertices": 408,
+      "detailedVertices": 408,
+      "sourceTriangles": 812,
+      "detailedTriangles": 812,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Shoulder_L_locking_dog_03",
+      "sourceVertices": 408,
+      "detailedVertices": 408,
+      "sourceTriangles": 812,
+      "detailedTriangles": 812,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Shoulder_L_locking_dog_04",
+      "sourceVertices": 408,
+      "detailedVertices": 408,
+      "sourceTriangles": 812,
+      "detailedTriangles": 812,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Shoulder_L_locking_dog_05",
+      "sourceVertices": 408,
+      "detailedVertices": 408,
+      "sourceTriangles": 812,
+      "detailedTriangles": 812,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Shoulder_L_narrow_machined_rim",
+      "sourceVertices": 1920,
+      "detailedVertices": 1920,
+      "sourceTriangles": 3840,
+      "detailedTriangles": 3840,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Shoulder_L_recess_back",
+      "sourceVertices": 288,
+      "detailedVertices": 288,
+      "sourceTriangles": 572,
+      "detailedTriangles": 572,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Shoulder_L_titanium_flange",
+      "sourceVertices": 1920,
+      "detailedVertices": 1920,
+      "sourceTriangles": 3840,
+      "detailedTriangles": 3840,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Shoulder_R_gold_neural_bus",
+      "sourceVertices": 1536,
+      "detailedVertices": 1536,
+      "sourceTriangles": 3072,
+      "detailedTriangles": 3072,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Shoulder_R_inner_dark_bore",
+      "sourceVertices": 1536,
+      "detailedVertices": 1536,
+      "sourceTriangles": 3072,
+      "detailedTriangles": 3072,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Shoulder_R_load_ring",
+      "sourceVertices": 2688,
+      "detailedVertices": 2688,
+      "sourceTriangles": 5376,
+      "detailedTriangles": 5376,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Shoulder_R_lock_00",
+      "sourceVertices": 96,
+      "detailedVertices": 96,
+      "sourceTriangles": 188,
+      "detailedTriangles": 188,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Shoulder_R_lock_00_hex_socket",
+      "sourceVertices": 84,
+      "detailedVertices": 84,
+      "sourceTriangles": 164,
+      "detailedTriangles": 164,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Shoulder_R_lock_01",
+      "sourceVertices": 96,
+      "detailedVertices": 96,
+      "sourceTriangles": 188,
+      "detailedTriangles": 188,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Shoulder_R_lock_01_hex_socket",
+      "sourceVertices": 84,
+      "detailedVertices": 84,
+      "sourceTriangles": 164,
+      "detailedTriangles": 164,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Shoulder_R_lock_02",
+      "sourceVertices": 96,
+      "detailedVertices": 96,
+      "sourceTriangles": 188,
+      "detailedTriangles": 188,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Shoulder_R_lock_02_hex_socket",
+      "sourceVertices": 84,
+      "detailedVertices": 84,
+      "sourceTriangles": 164,
+      "detailedTriangles": 164,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Shoulder_R_lock_03",
+      "sourceVertices": 96,
+      "detailedVertices": 96,
+      "sourceTriangles": 188,
+      "detailedTriangles": 188,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Shoulder_R_lock_03_hex_socket",
+      "sourceVertices": 84,
+      "detailedVertices": 84,
+      "sourceTriangles": 164,
+      "detailedTriangles": 164,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Shoulder_R_lock_04",
+      "sourceVertices": 96,
+      "detailedVertices": 96,
+      "sourceTriangles": 188,
+      "detailedTriangles": 188,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Shoulder_R_lock_04_hex_socket",
+      "sourceVertices": 84,
+      "detailedVertices": 84,
+      "sourceTriangles": 164,
+      "detailedTriangles": 164,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Shoulder_R_lock_05",
+      "sourceVertices": 96,
+      "detailedVertices": 96,
+      "sourceTriangles": 188,
+      "detailedTriangles": 188,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Shoulder_R_lock_05_hex_socket",
+      "sourceVertices": 84,
+      "detailedVertices": 84,
+      "sourceTriangles": 164,
+      "detailedTriangles": 164,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Shoulder_R_locking_dog_00",
+      "sourceVertices": 408,
+      "detailedVertices": 408,
+      "sourceTriangles": 812,
+      "detailedTriangles": 812,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Shoulder_R_locking_dog_01",
+      "sourceVertices": 408,
+      "detailedVertices": 408,
+      "sourceTriangles": 812,
+      "detailedTriangles": 812,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Shoulder_R_locking_dog_02",
+      "sourceVertices": 408,
+      "detailedVertices": 408,
+      "sourceTriangles": 812,
+      "detailedTriangles": 812,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Shoulder_R_locking_dog_03",
+      "sourceVertices": 408,
+      "detailedVertices": 408,
+      "sourceTriangles": 812,
+      "detailedTriangles": 812,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Shoulder_R_locking_dog_04",
+      "sourceVertices": 408,
+      "detailedVertices": 408,
+      "sourceTriangles": 812,
+      "detailedTriangles": 812,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Shoulder_R_locking_dog_05",
+      "sourceVertices": 408,
+      "detailedVertices": 408,
+      "sourceTriangles": 812,
+      "detailedTriangles": 812,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Shoulder_R_narrow_machined_rim",
+      "sourceVertices": 1920,
+      "detailedVertices": 1920,
+      "sourceTriangles": 3840,
+      "detailedTriangles": 3840,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Shoulder_R_recess_back",
+      "sourceVertices": 288,
+      "detailedVertices": 288,
+      "sourceTriangles": 572,
+      "detailedTriangles": 572,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Shoulder_R_titanium_flange",
+      "sourceVertices": 1920,
+      "detailedVertices": 1920,
+      "sourceTriangles": 3840,
+      "detailedTriangles": 3840,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "THUMB_S0_ivory_phalanx",
+      "sourceVertices": 288,
+      "detailedVertices": 288,
+      "sourceTriangles": 572,
+      "detailedTriangles": 572,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "THUMB_S0_palm_grip",
+      "sourceVertices": 148,
+      "detailedVertices": 148,
+      "sourceTriangles": 292,
+      "detailedTriangles": 292,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "THUMB_S0_side_tendon_guide",
+      "sourceVertices": 50,
+      "detailedVertices": 50,
+      "sourceTriangles": 96,
+      "detailedTriangles": 96,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "THUMB_S0_structural_link",
+      "sourceVertices": 288,
+      "detailedVertices": 288,
+      "sourceTriangles": 572,
+      "detailedTriangles": 572,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "THUMB_S1_ivory_phalanx",
+      "sourceVertices": 256,
+      "detailedVertices": 256,
+      "sourceTriangles": 508,
+      "detailedTriangles": 508,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "THUMB_S1_palm_grip",
+      "sourceVertices": 172,
+      "detailedVertices": 172,
+      "sourceTriangles": 340,
+      "detailedTriangles": 340,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "THUMB_S1_structural_link",
+      "sourceVertices": 256,
+      "detailedVertices": 256,
+      "sourceTriangles": 508,
+      "detailedTriangles": 508,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "THUMB_S2_ivory_phalanx",
+      "sourceVertices": 288,
+      "detailedVertices": 288,
+      "sourceTriangles": 572,
+      "detailedTriangles": 572,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "THUMB_S2_palm_grip",
+      "sourceVertices": 172,
+      "detailedVertices": 172,
+      "sourceTriangles": 340,
+      "detailedTriangles": 340,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "THUMB_S2_structural_link",
+      "sourceVertices": 288,
+      "detailedVertices": 288,
+      "sourceTriangles": 572,
+      "detailedTriangles": 572,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "THUMB_gold_bearing_0_-1",
+      "sourceVertices": 640,
+      "detailedVertices": 640,
+      "sourceTriangles": 1280,
+      "detailedTriangles": 1280,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "THUMB_gold_bearing_0_1",
+      "sourceVertices": 640,
+      "detailedVertices": 640,
+      "sourceTriangles": 1280,
+      "detailedTriangles": 1280,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "THUMB_gold_bearing_1_-1",
+      "sourceVertices": 640,
+      "detailedVertices": 640,
+      "sourceTriangles": 1280,
+      "detailedTriangles": 1280,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "THUMB_gold_bearing_1_1",
+      "sourceVertices": 640,
+      "detailedVertices": 640,
+      "sourceTriangles": 1280,
+      "detailedTriangles": 1280,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "THUMB_gold_bearing_2_-1",
+      "sourceVertices": 640,
+      "detailedVertices": 640,
+      "sourceTriangles": 1280,
+      "detailedTriangles": 1280,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "THUMB_gold_bearing_2_1",
+      "sourceVertices": 640,
+      "detailedVertices": 640,
+      "sourceTriangles": 1280,
+      "detailedTriangles": 1280,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "THUMB_knuckle_0",
+      "sourceVertices": 512,
+      "detailedVertices": 512,
+      "sourceTriangles": 1020,
+      "detailedTriangles": 1020,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "THUMB_knuckle_1",
+      "sourceVertices": 512,
+      "detailedVertices": 512,
+      "sourceTriangles": 1020,
+      "detailedTriangles": 1020,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "THUMB_knuckle_2",
+      "sourceVertices": 512,
+      "detailedVertices": 512,
+      "sourceTriangles": 1020,
+      "detailedTriangles": 1020,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "THUMB_knuckle_status",
+      "sourceVertices": 320,
+      "detailedVertices": 320,
+      "sourceTriangles": 636,
+      "detailedTriangles": 636,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Upper_actuator_lower_band",
+      "sourceVertices": 640,
+      "detailedVertices": 640,
+      "sourceTriangles": 1280,
+      "detailedTriangles": 1280,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Upper_actuator_machined_sleeve",
+      "sourceVertices": 512,
+      "detailedVertices": 512,
+      "sourceTriangles": 1020,
+      "detailedTriangles": 1020,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Upper_actuator_upper_seal",
+      "sourceVertices": 640,
+      "detailedVertices": 640,
+      "sourceTriangles": 1280,
+      "detailedTriangles": 1280,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Upper_blade_carrier_-1",
+      "sourceVertices": 816,
+      "detailedVertices": 816,
+      "sourceTriangles": 1628,
+      "detailedTriangles": 1628,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Upper_blade_carrier_1",
+      "sourceVertices": 816,
+      "detailedVertices": 816,
+      "sourceTriangles": 1628,
+      "detailedTriangles": 1628,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Upper_blade_screw_-1",
+      "sourceVertices": 96,
+      "detailedVertices": 96,
+      "sourceTriangles": 188,
+      "detailedTriangles": 188,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Upper_blade_screw_-1_hex_socket",
+      "sourceVertices": 84,
+      "detailedVertices": 84,
+      "sourceTriangles": 164,
+      "detailedTriangles": 164,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Upper_blade_screw_1",
+      "sourceVertices": 96,
+      "detailedVertices": 96,
+      "sourceTriangles": 188,
+      "detailedTriangles": 188,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Upper_blade_screw_1_hex_socket",
+      "sourceVertices": 84,
+      "detailedVertices": 84,
+      "sourceTriangles": 164,
+      "detailedTriangles": 164,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Upper_core_backbone",
+      "sourceVertices": 462,
+      "detailedVertices": 462,
+      "sourceTriangles": 920,
+      "detailedTriangles": 920,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Upper_crown_front",
+      "sourceVertices": 1110,
+      "detailedVertices": 1110,
+      "sourceTriangles": 2216,
+      "detailedTriangles": 2216,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Upper_crown_rear",
+      "sourceVertices": 650,
+      "detailedVertices": 650,
+      "sourceTriangles": 1296,
+      "detailedTriangles": 1296,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Upper_elbow_yoke_-1",
+      "sourceVertices": 288,
+      "detailedVertices": 288,
+      "sourceTriangles": 572,
+      "detailedTriangles": 572,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Upper_elbow_yoke_1",
+      "sourceVertices": 288,
+      "detailedVertices": 288,
+      "sourceTriangles": 572,
+      "detailedTriangles": 572,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Upper_gold_conduit_-1",
+      "sourceVertices": 90,
+      "detailedVertices": 90,
+      "sourceTriangles": 176,
+      "detailedTriangles": 176,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Upper_gold_conduit_1",
+      "sourceVertices": 90,
+      "detailedVertices": 90,
+      "sourceTriangles": 176,
+      "detailedTriangles": 176,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Upper_hose_return_-1",
+      "sourceVertices": 170,
+      "detailedVertices": 170,
+      "sourceTriangles": 336,
+      "detailedTriangles": 336,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Upper_hose_return_1",
+      "sourceVertices": 170,
+      "detailedVertices": 170,
+      "sourceTriangles": 336,
+      "detailedTriangles": 336,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Upper_lower_side_pad_-1",
+      "sourceVertices": 176,
+      "detailedVertices": 176,
+      "sourceTriangles": 348,
+      "detailedTriangles": 348,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Upper_lower_side_pad_1",
+      "sourceVertices": 176,
+      "detailedVertices": 176,
+      "sourceTriangles": 348,
+      "detailedTriangles": 348,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Upper_outer_wrap_-1",
+      "sourceVertices": 653,
+      "detailedVertices": 653,
+      "sourceTriangles": 1302,
+      "detailedTriangles": 1302,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Upper_outer_wrap_1",
+      "sourceVertices": 653,
+      "detailedVertices": 653,
+      "sourceTriangles": 1302,
+      "detailedTriangles": 1302,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Upper_primary_cylinder",
+      "sourceVertices": 320,
+      "detailedVertices": 320,
+      "sourceTriangles": 636,
+      "detailedTriangles": 636,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Upper_primary_gland",
+      "sourceVertices": 512,
+      "detailedVertices": 512,
+      "sourceTriangles": 1020,
+      "detailedTriangles": 1020,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Upper_primary_rod",
+      "sourceVertices": 320,
+      "detailedVertices": 320,
+      "sourceTriangles": 636,
+      "detailedTriangles": 636,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Upper_rear_rod_bridge",
+      "sourceVertices": 358,
+      "detailedVertices": 358,
+      "sourceTriangles": 712,
+      "detailedTriangles": 712,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Upper_return_pipe_-1",
+      "sourceVertices": 210,
+      "detailedVertices": 210,
+      "sourceTriangles": 416,
+      "detailedTriangles": 416,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Upper_return_pipe_1",
+      "sourceVertices": 210,
+      "detailedVertices": 210,
+      "sourceTriangles": 416,
+      "detailedTriangles": 416,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Upper_return_pipe_mount_-1",
+      "sourceVertices": 640,
+      "detailedVertices": 640,
+      "sourceTriangles": 1280,
+      "detailedTriangles": 1280,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Upper_return_pipe_mount_1",
+      "sourceVertices": 640,
+      "detailedVertices": 640,
+      "sourceTriangles": 1280,
+      "detailedTriangles": 1280,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Upper_sculpted_blade_-1",
+      "sourceVertices": 816,
+      "detailedVertices": 816,
+      "sourceTriangles": 1628,
+      "detailedTriangles": 1628,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Upper_sculpted_blade_1",
+      "sourceVertices": 816,
+      "detailedVertices": 816,
+      "sourceTriangles": 1628,
+      "detailedTriangles": 1628,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Upper_side_actuator_-1",
+      "sourceVertices": 320,
+      "detailedVertices": 320,
+      "sourceTriangles": 636,
+      "detailedTriangles": 636,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Upper_side_actuator_1",
+      "sourceVertices": 320,
+      "detailedVertices": 320,
+      "sourceTriangles": 636,
+      "detailedTriangles": 636,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Upper_side_gland_-1",
+      "sourceVertices": 512,
+      "detailedVertices": 512,
+      "sourceTriangles": 1020,
+      "detailedTriangles": 1020,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Upper_side_gland_1",
+      "sourceVertices": 512,
+      "detailedVertices": 512,
+      "sourceTriangles": 1020,
+      "detailedTriangles": 1020,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Upper_side_rod_-1",
+      "sourceVertices": 320,
+      "detailedVertices": 320,
+      "sourceTriangles": 636,
+      "detailedTriangles": 636,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Upper_side_rod_1",
+      "sourceVertices": 320,
+      "detailedVertices": 320,
+      "sourceTriangles": 636,
+      "detailedTriangles": 636,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Wrist_dorsal_fairing",
+      "sourceVertices": 1104,
+      "detailedVertices": 1104,
+      "sourceTriangles": 2204,
+      "detailedTriangles": 2204,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Wrist_gimbal_axle",
+      "sourceVertices": 288,
+      "detailedVertices": 288,
+      "sourceTriangles": 572,
+      "detailedTriangles": 572,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Wrist_gold_lock",
+      "sourceVertices": 1104,
+      "detailedVertices": 1104,
+      "sourceTriangles": 2204,
+      "detailedTriangles": 2204,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Wrist_rotating_stem",
+      "sourceVertices": 288,
+      "detailedVertices": 288,
+      "sourceTriangles": 572,
+      "detailedTriangles": 572,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Wrist_upper_mount",
+      "sourceVertices": 288,
+      "detailedVertices": 288,
+      "sourceTriangles": 572,
+      "detailedTriangles": 572,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    },
+    {
+      "object": "Wrist_upper_silver_collar",
+      "sourceVertices": 1104,
+      "detailedVertices": 1104,
+      "sourceTriangles": 2204,
+      "detailedTriangles": 2204,
+      "maxCorrespondingWorldVertexErrorM": 0.0,
+      "parentPreserved": true
+    }
+  ],
+  "sourcePivots": {
+    "AURIX_ROOT": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "SHOULDER_PIVOT": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.6899999976158142
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "ELBOW_PIVOT": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.4259999990463257
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "WRIST_PIVOT": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.18400000035762787
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "SERVICE_COVER": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.03700000047683716
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.29899999499320984
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "INDEX_J0": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        -0.029999999329447746
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.10599999874830246
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "INDEX_J1": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        -0.03200000151991844
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0010000000474974513
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.06800000369548798
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "INDEX_J2": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        -0.03400000184774399
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.004000000189989805
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.03999999910593033
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "MIDDLE_J0": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        -0.008999999612569809
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.10499999672174454
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "MIDDLE_J1": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        -0.009999999776482582
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.06300000101327896
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "MIDDLE_J2": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        -0.009999999776482582
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.003000000026077032
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.03200000151991844
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "RING_J0": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.013000000268220901
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.10599999874830246
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "RING_J1": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.014000000432133675
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0010000000474974513
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.06700000166893005
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "RING_J2": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.014999999664723873
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.004000000189989805
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.039000000804662704
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "LITTLE_J0": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.032999999821186066
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0010000000474974513
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.10899999737739563
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "LITTLE_J1": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.03700000047683716
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.003000000026077032
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.07699999958276749
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "LITTLE_J2": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.039000000804662704
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.006000000052154064
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.05400000140070915
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "THUMB_J0": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        -0.035999998450279236
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.1469999998807907
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "THUMB_J1": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        -0.054999999701976776
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        -0.0010000000474974513
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.12399999797344208
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "THUMB_J2": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        -0.0689999982714653
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0010000000474974513
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.0949999988079071
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ]
+  },
+  "detailedPivots": {
+    "AURIX_ROOT": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "SHOULDER_PIVOT": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.6899999976158142
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "ELBOW_PIVOT": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.4259999990463257
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "WRIST_PIVOT": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.19300000369548798
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "SERVICE_COVER": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.03700000047683716
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.29899999499320984
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "INDEX_J0": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        -0.029999999329447746
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.10599999874830246
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "INDEX_J1": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        -0.03200000151991844
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0010000000474974513
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.06800000369548798
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "INDEX_J2": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        -0.03400000184774399
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.004000000189989805
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.03999999910593033
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "MIDDLE_J0": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        -0.008999999612569809
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.10499999672174454
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "MIDDLE_J1": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        -0.009999999776482582
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.06300000101327896
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "MIDDLE_J2": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        -0.009999999776482582
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.003000000026077032
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.03200000151991844
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "RING_J0": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.013000000268220901
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.10599999874830246
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "RING_J1": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.014000000432133675
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0010000000474974513
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.06700000166893005
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "RING_J2": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.014999999664723873
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.004000000189989805
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.039000000804662704
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "LITTLE_J0": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.032999999821186066
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0010000000474974513
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.10899999737739563
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "LITTLE_J1": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.03700000047683716
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.003000000026077032
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.07699999958276749
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "LITTLE_J2": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.039000000804662704
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.006000000052154064
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.05400000140070915
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "THUMB_J0": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        -0.035999998450279236
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.1469999998807907
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "THUMB_J1": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        -0.054999999701976776
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        -0.0010000000474974513
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.12399999797344208
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "THUMB_J2": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        -0.0689999982714653
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0010000000474974513
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.0949999988079071
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ]
+  },
+  "candidatePivots": {
+    "AURIX_ROOT": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "SHOULDER_PIVOT": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.6899999976158142
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "ELBOW_PIVOT": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.4259999990463257
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "WRIST_PIVOT": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.19300000369548798
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "SERVICE_COVER": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.03700000047683716
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.29899999499320984
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "INDEX_J0": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        -0.029999999329447746
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.10599999874830246
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "INDEX_J1": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        -0.03200000151991844
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0010000000474974513
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.06800000369548798
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "INDEX_J2": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        -0.03400000184774399
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.004000000189989805
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.03999999910593033
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "MIDDLE_J0": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        -0.008999999612569809
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.10499999672174454
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "MIDDLE_J1": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        -0.009999999776482582
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.06300000101327896
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "MIDDLE_J2": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        -0.009999999776482582
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.003000000026077032
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.03200000151991844
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "RING_J0": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.013000000268220901
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.10599999874830246
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "RING_J1": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.014000000432133675
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0010000000474974513
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.06700000166893005
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "RING_J2": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.014999999664723873
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.004000000189989805
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.039000000804662704
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "LITTLE_J0": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.032999999821186066
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0010000000474974513
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.10899999737739563
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "LITTLE_J1": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.03700000047683716
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.003000000026077032
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.07699999958276749
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "LITTLE_J2": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.039000000804662704
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.006000000052154064
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.05400000140070915
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "THUMB_J0": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        -0.035999998450279236
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.1469999998807907
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "THUMB_J1": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        -0.054999999701976776
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        -0.0010000000474974513
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.12399999797344208
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "THUMB_J2": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        -0.0689999982714653
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0010000000474974513
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.0949999988079071
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ]
+  },
+  "mechanicalSourceInventory": [
+    {
+      "object": "Elbow_fixed_axle",
+      "sourceParent": "SHOULDER_PIVOT",
+      "sourceBoundsM": {
+        "min": [
+          -0.03431999683380127,
+          -0.01899999938905239,
+          0.40700000524520874
+        ],
+        "max": [
+          0.03431999683380127,
+          0.01899999938905239,
+          0.4449999928474426
+        ]
+      },
+      "detailedBoundsM": {
+        "min": [
+          -0.03431999683380127,
+          -0.01899999938905239,
+          0.40700000524520874
+        ],
+        "max": [
+          0.03431999683380127,
+          0.01899999938905239,
+          0.4449999928474426
+        ]
+      }
+    },
+    {
+      "object": "Forearm_channel_hydraulic_-1",
+      "sourceParent": "ELBOW_PIVOT",
+      "sourceBoundsM": {
+        "min": [
+          -0.042394112795591354,
+          -0.000282535795122385,
+          0.23459608852863312
+        ],
+        "max": [
+          -0.017634231597185135,
+          0.00828187633305788,
+          0.3767057955265045
+        ]
+      },
+      "detailedBoundsM": {
+        "min": [
+          -0.042394112795591354,
+          -0.000282535795122385,
+          0.23459608852863312
+        ],
+        "max": [
+          -0.017634231597185135,
+          0.00828187633305788,
+          0.3767057955265045
+        ]
+      }
+    },
+    {
+      "object": "Forearm_channel_hydraulic_1",
+      "sourceParent": "ELBOW_PIVOT",
+      "sourceBoundsM": {
+        "min": [
+          0.017634231597185135,
+          -0.000282535795122385,
+          0.23459608852863312
+        ],
+        "max": [
+          0.042394112795591354,
+          0.00828187633305788,
+          0.3767057955265045
+        ]
+      },
+      "detailedBoundsM": {
+        "min": [
+          0.017634231597185135,
+          -0.000282535795122385,
+          0.23459608852863312
+        ],
+        "max": [
+          0.042394112795591354,
+          0.00828187633305788,
+          0.3767057955265045
+        ]
+      }
+    },
+    {
+      "object": "Forearm_elbow_rod_-1",
+      "sourceParent": "ELBOW_PIVOT",
+      "sourceBoundsM": {
+        "min": [
+          -0.01563071645796299,
+          0.018410081043839455,
+          0.33270934224128723
+        ],
+        "max": [
+          -0.007069282699376345,
+          0.027589913457632065,
+          0.36029067635536194
+        ]
+      },
+      "detailedBoundsM": {
+        "min": [
+          -0.01563071645796299,
+          0.018410081043839455,
+          0.33270934224128723
+        ],
+        "max": [
+          -0.007069282699376345,
+          0.027589913457632065,
+          0.36029067635536194
+        ]
+      }
+    },
+    {
+      "object": "Forearm_elbow_rod_1",
+      "sourceParent": "ELBOW_PIVOT",
+      "sourceBoundsM": {
+        "min": [
+          0.007069282699376345,
+          0.018410081043839455,
+          0.33270934224128723
+        ],
+        "max": [
+          0.01563071645796299,
+          0.027589913457632065,
+          0.36029067635536194
+        ]
+      },
+      "detailedBoundsM": {
+        "min": [
+          0.007069282699376345,
+          0.018410081043839455,
+          0.33270934224128723
+        ],
+        "max": [
+          0.01563071645796299,
+          0.027589913457632065,
+          0.36029067635536194
+        ]
+      }
+    },
+    {
+      "object": "Forearm_power_gland_-1",
+      "sourceParent": "ELBOW_PIVOT",
+      "sourceBoundsM": {
+        "min": [
+          -0.018300002440810204,
+          0.01640000008046627,
+          0.3240000009536743
+        ],
+        "max": [
+          -0.003099999623373151,
+          0.031599998474121094,
+          0.335999995470047
+        ]
+      },
+      "detailedBoundsM": {
+        "min": [
+          -0.018300002440810204,
+          0.01640000008046627,
+          0.3240000009536743
+        ],
+        "max": [
+          -0.003099999623373151,
+          0.031599998474121094,
+          0.335999995470047
+        ]
+      }
+    },
+    {
+      "object": "Forearm_power_gland_1",
+      "sourceParent": "ELBOW_PIVOT",
+      "sourceBoundsM": {
+        "min": [
+          0.003099999623373151,
+          0.01640000008046627,
+          0.3240000009536743
+        ],
+        "max": [
+          0.018300002440810204,
+          0.031599998474121094,
+          0.335999995470047
+        ]
+      },
+      "detailedBoundsM": {
+        "min": [
+          0.003099999623373151,
+          0.01640000008046627,
+          0.3240000009536743
+        ],
+        "max": [
+          0.018300002440810204,
+          0.031599998474121094,
+          0.335999995470047
+        ]
+      }
+    },
+    {
+      "object": "Forearm_side_cable_-1",
+      "sourceParent": "ELBOW_PIVOT",
+      "sourceBoundsM": {
+        "min": [
+          -0.0421999990940094,
+          0.010985573753714561,
+          0.22349140048027039
+        ],
+        "max": [
+          -0.014813755638897419,
+          0.0290420800447464,
+          0.3917927145957947
+        ]
+      },
+      "detailedBoundsM": {
+        "min": [
+          -0.0421999990940094,
+          0.010985573753714561,
+          0.22349140048027039
+        ],
+        "max": [
+          -0.014813755638897419,
+          0.0290420800447464,
+          0.3917927145957947
+        ]
+      }
+    },
+    {
+      "object": "Forearm_side_cable_1",
+      "sourceParent": "ELBOW_PIVOT",
+      "sourceBoundsM": {
+        "min": [
+          0.014813755638897419,
+          0.010985573753714561,
+          0.22349140048027039
+        ],
+        "max": [
+          0.0421999990940094,
+          0.0290420800447464,
+          0.3917927145957947
+        ]
+      },
+      "detailedBoundsM": {
+        "min": [
+          0.014813755638897419,
+          0.010985573753714561,
+          0.22349140048027039
+        ],
+        "max": [
+          0.0421999990940094,
+          0.0290420800447464,
+          0.3917927145957947
+        ]
+      }
+    },
+    {
+      "object": "Forearm_titanium_rail_-1",
+      "sourceParent": "ELBOW_PIVOT",
+      "sourceBoundsM": {
+        "min": [
+          -0.03770199790596962,
+          -0.0028000138700008392,
+          0.2205202281475067
+        ],
+        "max": [
+          -0.011298004537820816,
+          0.008800013922154903,
+          0.3784797489643097
+        ]
+      },
+      "detailedBoundsM": {
+        "min": [
+          -0.03770199790596962,
+          -0.0028000138700008392,
+          0.2205202281475067
+        ],
+        "max": [
+          -0.011298004537820816,
+          0.008800013922154903,
+          0.3784797489643097
+        ]
+      }
+    },
+    {
+      "object": "Forearm_titanium_rail_1",
+      "sourceParent": "ELBOW_PIVOT",
+      "sourceBoundsM": {
+        "min": [
+          0.011298004537820816,
+          -0.0028000138700008392,
+          0.2205202281475067
+        ],
+        "max": [
+          0.03770199790596962,
+          0.008800013922154903,
+          0.3784797489643097
+        ]
+      },
+      "detailedBoundsM": {
+        "min": [
+          0.011298004537820816,
+          -0.0028000138700008392,
+          0.2205202281475067
+        ],
+        "max": [
+          0.03770199790596962,
+          0.008800013922154903,
+          0.3784797489643097
+        ]
+      }
+    },
+    {
+      "object": "INDEX_S0_side_tendon_guide",
+      "sourceParent": "INDEX_J0",
+      "sourceBoundsM": {
+        "min": [
+          -0.036259185522794724,
+          -0.0003655103500932455,
+          0.08036299794912338
+        ],
+        "max": [
+          -0.03482319042086601,
+          0.0013455103617161512,
+          0.09487712383270264
+        ]
+      },
+      "detailedBoundsM": {
+        "min": [
+          -0.036259185522794724,
+          -0.0003655103500932455,
+          0.08036299794912338
+        ],
+        "max": [
+          -0.03482319042086601,
+          0.0013455103617161512,
+          0.09487712383270264
+        ]
+      }
+    },
+    {
+      "object": "LITTLE_S0_side_tendon_guide",
+      "sourceParent": "LITTLE_J0",
+      "sourceBoundsM": {
+        "min": [
+          0.029394613578915596,
+          0.0009355340152978897,
+          0.08667802065610886
+        ],
+        "max": [
+          0.032898738980293274,
+          0.0030244658701121807,
+          0.09900864213705063
+        ]
+      },
+      "detailedBoundsM": {
+        "min": [
+          0.029394613578915596,
+          0.0009355340152978897,
+          0.08667802065610886
+        ],
+        "max": [
+          0.032898738980293274,
+          0.0030244658701121807,
+          0.09900864213705063
+        ]
+      }
+    },
+    {
+      "object": "MIDDLE_S0_side_tendon_guide",
+      "sourceParent": "MIDDLE_J0",
+      "sourceBoundsM": {
+        "min": [
+          -0.01509836781769991,
+          -0.0006657395279034972,
+          0.07652734220027924
+        ],
+        "max": [
+          -0.013328954577445984,
+          0.0006657395279034972,
+          0.09253758937120438
+        ]
+      },
+      "detailedBoundsM": {
+        "min": [
+          -0.01509836781769991,
+          -0.0006657395279034972,
+          0.07652734220027924
+        ],
+        "max": [
+          -0.013328954577445984,
+          0.0006657395279034972,
+          0.09253758937120438
+        ]
+      }
+    },
+    {
+      "object": "RING_S0_side_tendon_guide",
+      "sourceParent": "RING_J0",
+      "sourceBoundsM": {
+        "min": [
+          0.007843420840799809,
+          -0.00036552140954881907,
+          0.07932422310113907
+        ],
+        "max": [
+          0.010319479741156101,
+          0.0013455215375870466,
+          0.09422969818115234
+        ]
+      },
+      "detailedBoundsM": {
+        "min": [
+          0.007843420840799809,
+          -0.00036552140954881907,
+          0.07932422310113907
+        ],
+        "max": [
+          0.010319479741156101,
+          0.0013455215375870466,
+          0.09422969818115234
+        ]
+      }
+    },
+    {
+      "object": "Service_cartridge_lower_band_-1",
+      "sourceParent": "ELBOW_PIVOT",
+      "sourceBoundsM": {
+        "min": [
+          -0.018699999898672104,
+          0.0139999995008111,
+          0.27300000190734863
+        ],
+        "max": [
+          -0.0027000000700354576,
+          0.030000001192092896,
+          0.2770000100135803
+        ]
+      },
+      "detailedBoundsM": {
+        "min": [
+          -0.018699999898672104,
+          0.0139999995008111,
+          0.27300000190734863
+        ],
+        "max": [
+          -0.0027000000700354576,
+          0.030000001192092896,
+          0.2770000100135803
+        ]
+      }
+    },
+    {
+      "object": "Service_cartridge_lower_band_1",
+      "sourceParent": "ELBOW_PIVOT",
+      "sourceBoundsM": {
+        "min": [
+          0.0027000000700354576,
+          0.0139999995008111,
+          0.27300000190734863
+        ],
+        "max": [
+          0.018699999898672104,
+          0.030000001192092896,
+          0.2770000100135803
+        ]
+      },
+      "detailedBoundsM": {
+        "min": [
+          0.0027000000700354576,
+          0.0139999995008111,
+          0.27300000190734863
+        ],
+        "max": [
+          0.018699999898672104,
+          0.030000001192092896,
+          0.2770000100135803
+        ]
+      }
+    },
+    {
+      "object": "Service_cartridge_sleeve_-1",
+      "sourceParent": "ELBOW_PIVOT",
+      "sourceBoundsM": {
+        "min": [
+          -0.01795000024139881,
+          0.01580747961997986,
+          0.2987029552459717
+        ],
+        "max": [
+          -0.003450001124292612,
+          0.031192520633339882,
+          0.3212970495223999
+        ]
+      },
+      "detailedBoundsM": {
+        "min": [
+          -0.01795000024139881,
+          0.01580747961997986,
+          0.2987029552459717
+        ],
+        "max": [
+          -0.003450001124292612,
+          0.031192520633339882,
+          0.3212970495223999
+        ]
+      }
+    },
+    {
+      "object": "Service_cartridge_sleeve_1",
+      "sourceParent": "ELBOW_PIVOT",
+      "sourceBoundsM": {
+        "min": [
+          0.003450001124292612,
+          0.01580747961997986,
+          0.2987029552459717
+        ],
+        "max": [
+          0.01795000024139881,
+          0.031192520633339882,
+          0.3212970495223999
+        ]
+      },
+      "detailedBoundsM": {
+        "min": [
+          0.003450001124292612,
+          0.01580747961997986,
+          0.2987029552459717
+        ],
+        "max": [
+          0.01795000024139881,
+          0.031192520633339882,
+          0.3212970495223999
+        ]
+      }
+    },
+    {
+      "object": "Service_cartridge_upper_band_-1",
+      "sourceParent": "ELBOW_PIVOT",
+      "sourceBoundsM": {
+        "min": [
+          -0.018699999898672104,
+          0.014999999664723873,
+          0.29349997639656067
+        ],
+        "max": [
+          -0.0027000000700354576,
+          0.03099999949336052,
+          0.29649999737739563
+        ]
+      },
+      "detailedBoundsM": {
+        "min": [
+          -0.018699999898672104,
+          0.014999999664723873,
+          0.29349997639656067
+        ],
+        "max": [
+          -0.0027000000700354576,
+          0.03099999949336052,
+          0.29649999737739563
+        ]
+      }
+    },
+    {
+      "object": "Service_cartridge_upper_band_1",
+      "sourceParent": "ELBOW_PIVOT",
+      "sourceBoundsM": {
+        "min": [
+          0.0027000000700354576,
+          0.014999999664723873,
+          0.29349997639656067
+        ],
+        "max": [
+          0.018699999898672104,
+          0.03099999949336052,
+          0.29649999737739563
+        ]
+      },
+      "detailedBoundsM": {
+        "min": [
+          0.0027000000700354576,
+          0.014999999664723873,
+          0.29349997639656067
+        ],
+        "max": [
+          0.018699999898672104,
+          0.03099999949336052,
+          0.29649999737739563
+        ]
+      }
+    },
+    {
+      "object": "Service_return_conduit_-1",
+      "sourceParent": "ELBOW_PIVOT",
+      "sourceBoundsM": {
+        "min": [
+          -0.023599999025464058,
+          0.018509456887841225,
+          0.25260046124458313
+        ],
+        "max": [
+          -0.010421769693493843,
+          0.028521690517663956,
+          0.34931865334510803
+        ]
+      },
+      "detailedBoundsM": {
+        "min": [
+          -0.023599999025464058,
+          0.018509456887841225,
+          0.25260046124458313
+        ],
+        "max": [
+          -0.010421769693493843,
+          0.028521690517663956,
+          0.34931865334510803
+        ]
+      }
+    },
+    {
+      "object": "Service_return_conduit_1",
+      "sourceParent": "ELBOW_PIVOT",
+      "sourceBoundsM": {
+        "min": [
+          0.010421769693493843,
+          0.018509456887841225,
+          0.25260046124458313
+        ],
+        "max": [
+          0.023599999025464058,
+          0.028521690517663956,
+          0.34931865334510803
+        ]
+      },
+      "detailedBoundsM": {
+        "min": [
+          0.010421769693493843,
+          0.018509456887841225,
+          0.25260046124458313
+        ],
+        "max": [
+          0.023599999025464058,
+          0.028521690517663956,
+          0.34931865334510803
+        ]
+      }
+    },
+    {
+      "object": "THUMB_S0_side_tendon_guide",
+      "sourceParent": "THUMB_J0",
+      "sourceBoundsM": {
+        "min": [
+          -0.05329233780503273,
+          -0.0013453681021928787,
+          0.13409559428691864
+        ],
+        "max": [
+          -0.04558466002345085,
+          0.00036536797415465117,
+          0.1441853940486908
+        ]
+      },
+      "detailedBoundsM": {
+        "min": [
+          -0.05329233780503273,
+          -0.0013453681021928787,
+          0.13409559428691864
+        ],
+        "max": [
+          -0.04558466002345085,
+          0.00036536797415465117,
+          0.1441853940486908
+        ]
+      }
+    },
+    {
+      "object": "Upper_actuator_lower_band",
+      "sourceParent": "SHOULDER_PIVOT",
+      "sourceBoundsM": {
+        "min": [
+          -0.013000000268220901,
+          0.010499998927116394,
+          0.5090000033378601
+        ],
+        "max": [
+          0.013000000268220901,
+          0.0364999994635582,
+          0.51500004529953
+        ]
+      },
+      "detailedBoundsM": {
+        "min": [
+          -0.013000000268220901,
+          0.010499998927116394,
+          0.5090000033378601
+        ],
+        "max": [
+          0.013000000268220901,
+          0.0364999994635582,
+          0.51500004529953
+        ]
+      }
+    },
+    {
+      "object": "Upper_actuator_machined_sleeve",
+      "sourceParent": "SHOULDER_PIVOT",
+      "sourceBoundsM": {
+        "min": [
+          -0.012000000104308128,
+          0.013000001199543476,
+          0.5389999747276306
+        ],
+        "max": [
+          0.012000000104308128,
+          0.03700000047683716,
+          0.5690000057220459
+        ]
+      },
+      "detailedBoundsM": {
+        "min": [
+          -0.012000000104308128,
+          0.013000001199543476,
+          0.5389999747276306
+        ],
+        "max": [
+          0.012000000104308128,
+          0.03700000047683716,
+          0.5690000057220459
+        ]
+      }
+    },
+    {
+      "object": "Upper_actuator_upper_seal",
+      "sourceParent": "SHOULDER_PIVOT",
+      "sourceBoundsM": {
+        "min": [
+          -0.008500000461935997,
+          0.016499999910593033,
+          0.5855000019073486
+        ],
+        "max": [
+          0.008500000461935997,
+          0.03350000083446503,
+          0.590499997138977
+        ]
+      },
+      "detailedBoundsM": {
+        "min": [
+          -0.008500000461935997,
+          0.016499999910593033,
+          0.5855000019073486
+        ],
+        "max": [
+          0.008500000461935997,
+          0.03350000083446503,
+          0.590499997138977
+        ]
+      }
+    },
+    {
+      "object": "Upper_exposed_hydraulic_-1",
+      "sourceParent": "SHOULDER_PIVOT",
+      "sourceBoundsM": {
+        "min": [
+          -0.04380814731121063,
+          -0.026959620416164398,
+          0.4594286382198334
+        ],
+        "max": [
+          -0.016610968858003616,
+          -0.0025765541940927505,
+          0.6044214963912964
+        ]
+      },
+      "detailedBoundsM": {
+        "min": [
+          -0.04380814731121063,
+          -0.026959620416164398,
+          0.4594286382198334
+        ],
+        "max": [
+          -0.016610968858003616,
+          -0.0025765541940927505,
+          0.6044214963912964
+        ]
+      }
+    },
+    {
+      "object": "Upper_exposed_hydraulic_1",
+      "sourceParent": "SHOULDER_PIVOT",
+      "sourceBoundsM": {
+        "min": [
+          0.016610968858003616,
+          -0.026959620416164398,
+          0.4594286382198334
+        ],
+        "max": [
+          0.04380814731121063,
+          -0.002576554426923394,
+          0.6044214963912964
+        ]
+      },
+      "detailedBoundsM": {
+        "min": [
+          0.016610968858003616,
+          -0.026959620416164398,
+          0.4594286382198334
+        ],
+        "max": [
+          0.04380814731121063,
+          -0.002576554426923394,
+          0.6044214963912964
+        ]
+      }
+    },
+    {
+      "object": "Upper_hose_return_-1",
+      "sourceParent": "SHOULDER_PIVOT",
+      "sourceBoundsM": {
+        "min": [
+          -0.022199787199497223,
+          0.021080544218420982,
+          0.4945811629295349
+        ],
+        "max": [
+          -0.0118050966411829,
+          0.0410911925137043,
+          0.6299604177474976
+        ]
+      },
+      "detailedBoundsM": {
+        "min": [
+          -0.022199787199497223,
+          0.021080544218420982,
+          0.4945811629295349
+        ],
+        "max": [
+          -0.0118050966411829,
+          0.0410911925137043,
+          0.6299604177474976
+        ]
+      }
+    },
+    {
+      "object": "Upper_hose_return_1",
+      "sourceParent": "SHOULDER_PIVOT",
+      "sourceBoundsM": {
+        "min": [
+          0.0118050966411829,
+          0.021080544218420982,
+          0.4945811629295349
+        ],
+        "max": [
+          0.022199787199497223,
+          0.0410911925137043,
+          0.6299604177474976
+        ]
+      },
+      "detailedBoundsM": {
+        "min": [
+          0.0118050966411829,
+          0.021080544218420982,
+          0.4945811629295349
+        ],
+        "max": [
+          0.022199787199497223,
+          0.0410911925137043,
+          0.6299604177474976
+        ]
+      }
+    },
+    {
+      "object": "Upper_primary_cylinder",
+      "sourceParent": "SHOULDER_PIVOT",
+      "sourceBoundsM": {
+        "min": [
+          -0.011500000022351742,
+          0.011663418263196945,
+          0.4907854497432709
+        ],
+        "max": [
+          0.011500000022351742,
+          0.03613658249378204,
+          0.5732511281967163
+        ]
+      },
+      "detailedBoundsM": {
+        "min": [
+          -0.011500000022351742,
+          0.011663418263196945,
+          0.4907854497432709
+        ],
+        "max": [
+          0.011500000022351742,
+          0.03613658249378204,
+          0.5732511281967163
+        ]
+      }
+    },
+    {
+      "object": "Upper_primary_gland",
+      "sourceParent": "SHOULDER_PIVOT",
+      "sourceBoundsM": {
+        "min": [
+          -0.013000000268220901,
+          0.012000000104308128,
+          0.5690000057220459
+        ],
+        "max": [
+          0.013000000268220901,
+          0.03800000250339508,
+          0.5820000171661377
+        ]
+      },
+      "detailedBoundsM": {
+        "min": [
+          -0.013000000268220901,
+          0.012000000104308128,
+          0.5690000057220459
+        ],
+        "max": [
+          0.013000000268220901,
+          0.03800000250339508,
+          0.5820000171661377
+        ]
+      }
+    },
+    {
+      "object": "Upper_primary_rod",
+      "sourceParent": "SHOULDER_PIVOT",
+      "sourceBoundsM": {
+        "min": [
+          -0.006000000052154064,
+          0.01900000125169754,
+          0.5680000185966492
+        ],
+        "max": [
+          0.006000000052154064,
+          0.03099999949336052,
+          0.6420000195503235
+        ]
+      },
+      "detailedBoundsM": {
+        "min": [
+          -0.006000000052154064,
+          0.01900000125169754,
+          0.5680000185966492
+        ],
+        "max": [
+          0.006000000052154064,
+          0.03099999949336052,
+          0.6420000195503235
+        ]
+      }
+    },
+    {
+      "object": "Upper_rear_rod_bridge",
+      "sourceParent": "SHOULDER_PIVOT",
+      "sourceBoundsM": {
+        "min": [
+          -0.032036326825618744,
+          0.017823120579123497,
+          0.6277430057525635
+        ],
+        "max": [
+          0.03203631937503815,
+          0.026503637433052063,
+          0.6468307375907898
+        ]
+      },
+      "detailedBoundsM": {
+        "min": [
+          -0.032036326825618744,
+          0.017823120579123497,
+          0.6277430057525635
+        ],
+        "max": [
+          0.03203631937503815,
+          0.026503637433052063,
+          0.6468307375907898
+        ]
+      }
+    },
+    {
+      "object": "Upper_return_pipe_-1",
+      "sourceParent": "SHOULDER_PIVOT",
+      "sourceBoundsM": {
+        "min": [
+          -0.042980439960956573,
+          0.01825210638344288,
+          0.4772356450557709
+        ],
+        "max": [
+          -0.01801036298274994,
+          0.0418509915471077,
+          0.6295503973960876
+        ]
+      },
+      "detailedBoundsM": {
+        "min": [
+          -0.042980439960956573,
+          0.01825210638344288,
+          0.4772356450557709
+        ],
+        "max": [
+          -0.01801036298274994,
+          0.0418509915471077,
+          0.6295503973960876
+        ]
+      }
+    },
+    {
+      "object": "Upper_return_pipe_1",
+      "sourceParent": "SHOULDER_PIVOT",
+      "sourceBoundsM": {
+        "min": [
+          0.01801036298274994,
+          0.01825210638344288,
+          0.4772356450557709
+        ],
+        "max": [
+          0.042980439960956573,
+          0.0418509915471077,
+          0.6295503973960876
+        ]
+      },
+      "detailedBoundsM": {
+        "min": [
+          0.01801036298274994,
+          0.01825210638344288,
+          0.4772356450557709
+        ],
+        "max": [
+          0.042980439960956573,
+          0.0418509915471077,
+          0.6295503973960876
+        ]
+      }
+    },
+    {
+      "object": "Upper_return_pipe_mount_-1",
+      "sourceParent": "SHOULDER_PIVOT",
+      "sourceBoundsM": {
+        "min": [
+          -0.03199999779462814,
+          0.016699999570846558,
+          0.622700035572052
+        ],
+        "max": [
+          -0.025999998673796654,
+          0.027300000190734863,
+          0.6333000063896179
+        ]
+      },
+      "detailedBoundsM": {
+        "min": [
+          -0.03199999779462814,
+          0.016699999570846558,
+          0.622700035572052
+        ],
+        "max": [
+          -0.025999998673796654,
+          0.027300000190734863,
+          0.6333000063896179
+        ]
+      }
+    },
+    {
+      "object": "Upper_return_pipe_mount_1",
+      "sourceParent": "SHOULDER_PIVOT",
+      "sourceBoundsM": {
+        "min": [
+          0.025999998673796654,
+          0.016699999570846558,
+          0.622700035572052
+        ],
+        "max": [
+          0.03199999779462814,
+          0.027300000190734863,
+          0.6333000063896179
+        ]
+      },
+      "detailedBoundsM": {
+        "min": [
+          0.025999998673796654,
+          0.016699999570846558,
+          0.622700035572052
+        ],
+        "max": [
+          0.03199999779462814,
+          0.027300000190734863,
+          0.6333000063896179
+        ]
+      }
+    },
+    {
+      "object": "Upper_side_actuator_-1",
+      "sourceParent": "SHOULDER_PIVOT",
+      "sourceBoundsM": {
+        "min": [
+          -0.031200001016259193,
+          0.009124193340539932,
+          0.48546797037124634
+        ],
+        "max": [
+          -0.01680000312626362,
+          0.02887580171227455,
+          0.559532105922699
+        ]
+      },
+      "detailedBoundsM": {
+        "min": [
+          -0.031200001016259193,
+          0.009124193340539932,
+          0.48546797037124634
+        ],
+        "max": [
+          -0.01680000312626362,
+          0.02887580171227455,
+          0.559532105922699
+        ]
+      }
+    },
+    {
+      "object": "Upper_side_actuator_1",
+      "sourceParent": "SHOULDER_PIVOT",
+      "sourceBoundsM": {
+        "min": [
+          0.01680000312626362,
+          0.009124195203185081,
+          0.48546797037124634
+        ],
+        "max": [
+          0.031200001016259193,
+          0.02887580543756485,
+          0.559532105922699
+        ]
+      },
+      "detailedBoundsM": {
+        "min": [
+          0.01680000312626362,
+          0.009124195203185081,
+          0.48546797037124634
+        ],
+        "max": [
+          0.031200001016259193,
+          0.02887580543756485,
+          0.559532105922699
+        ]
+      }
+    },
+    {
+      "object": "Upper_side_gland_-1",
+      "sourceParent": "SHOULDER_PIVOT",
+      "sourceBoundsM": {
+        "min": [
+          -0.03200000151991844,
+          0.014100962318480015,
+          0.5543445944786072
+        ],
+        "max": [
+          -0.01600000075995922,
+          0.030899038538336754,
+          0.5666553974151611
+        ]
+      },
+      "detailedBoundsM": {
+        "min": [
+          -0.03200000151991844,
+          0.014100962318480015,
+          0.5543445944786072
+        ],
+        "max": [
+          -0.01600000075995922,
+          0.030899038538336754,
+          0.5666553974151611
+        ]
+      }
+    },
+    {
+      "object": "Upper_side_gland_1",
+      "sourceParent": "SHOULDER_PIVOT",
+      "sourceBoundsM": {
+        "min": [
+          0.015999997034668922,
+          0.01410096138715744,
+          0.5543445944786072
+        ],
+        "max": [
+          0.03200000151991844,
+          0.030899038538336754,
+          0.5666553974151611
+        ]
+      },
+      "detailedBoundsM": {
+        "min": [
+          0.015999997034668922,
+          0.01410096138715744,
+          0.5543445944786072
+        ],
+        "max": [
+          0.03200000151991844,
+          0.030899038538336754,
+          0.5666553974151611
+        ]
+      }
+    },
+    {
+      "object": "Upper_side_rod_-1",
+      "sourceParent": "SHOULDER_PIVOT",
+      "sourceBoundsM": {
+        "min": [
+          -0.034974269568920135,
+          0.017750494182109833,
+          0.5545917749404907
+        ],
+        "max": [
+          -0.020025741308927536,
+          0.027249516919255257,
+          0.6214082837104797
+        ]
+      },
+      "detailedBoundsM": {
+        "min": [
+          -0.034974269568920135,
+          0.017750494182109833,
+          0.5545917749404907
+        ],
+        "max": [
+          -0.020025741308927536,
+          0.027249516919255257,
+          0.6214082837104797
+        ]
+      }
+    },
+    {
+      "object": "Upper_side_rod_1",
+      "sourceParent": "SHOULDER_PIVOT",
+      "sourceBoundsM": {
+        "min": [
+          0.020025741308927536,
+          0.017750494182109833,
+          0.5545917749404907
+        ],
+        "max": [
+          0.034974269568920135,
+          0.027249516919255257,
+          0.6214082837104797
+        ]
+      },
+      "detailedBoundsM": {
+        "min": [
+          0.020025741308927536,
+          0.017750494182109833,
+          0.5545917749404907
+        ],
+        "max": [
+          0.034974269568920135,
+          0.027249516919255257,
+          0.6214082837104797
+        ]
+      }
+    },
+    {
+      "object": "Wrist_gimbal_axle",
+      "sourceParent": "ELBOW_PIVOT",
+      "sourceBoundsM": {
+        "min": [
+          -0.019999999552965164,
+          -0.012000000104308128,
+          0.1810000091791153
+        ],
+        "max": [
+          0.019999999552965164,
+          0.012000000104308128,
+          0.20499999821186066
+        ]
+      },
+      "detailedBoundsM": {
+        "min": [
+          -0.019999999552965164,
+          -0.012000000104308128,
+          0.1810000091791153
+        ],
+        "max": [
+          0.019999999552965164,
+          0.012000000104308128,
+          0.20499999821186066
+        ]
+      }
+    }
+  ],
+  "detailedRotaryAxisMotion": [
+    {
+      "joint": "elbow",
+      "fixed": "Elbow_fixed_axle",
+      "moving": "Elbow_central_rotor",
+      "fixedBoundsM": {
+        "min": [
+          -0.03431999683380127,
+          -0.01899999938905239,
+          0.40700000524520874
+        ],
+        "max": [
+          0.03431999683380127,
+          0.01899999938905239,
+          0.4449999928474426
+        ]
+      },
+      "movingBoundsM": {
+        "min": [
+          -0.013260000385344028,
+          -0.028999999165534973,
+          0.3970000147819519
+        ],
+        "max": [
+          0.013260000385344028,
+          0.028999999165534973,
+          0.45499998331069946
+        ]
+      },
+      "neutralCenterM": [
+        0.0,
+        0.0,
+        0.4259999990463257
+      ],
+      "maxAxisCenterSeparationM": 0.0,
+      "maxAxisCrossMagnitude": 0.0
+    },
+    {
+      "joint": "wrist",
+      "fixed": "Wrist_gimbal_axle",
+      "moving": "Wrist_rotating_stem",
+      "fixedBoundsM": {
+        "min": [
+          -0.019999999552965164,
+          -0.012000000104308128,
+          0.1810000091791153
+        ],
+        "max": [
+          0.019999999552965164,
+          0.012000000104308128,
+          0.20499999821186066
+        ]
+      },
+      "movingBoundsM": {
+        "min": [
+          -0.014000000432133675,
+          -0.014000000432133675,
+          0.1720000058412552
+        ],
+        "max": [
+          0.014000000432133675,
+          0.014000000432133675,
+          0.19300000369548798
+        ]
+      },
+      "neutralCenterM": [
+        0.0,
+        0.0,
+        0.19300000369548798
+      ],
+      "maxAxisCenterSeparationM": 3.332000937312528e-08,
+      "maxAxisCrossMagnitude": 0.0
+    }
+  ],
+  "deliveryRotaryAxisMotion": [
+    {
+      "joint": "elbow",
+      "fixedDeliveryMesh": "Delivery_SHOULDER_PIVOT_Piston_chrome",
+      "movingDeliveryMesh": "Delivery_ELBOW_PIVOT_Graphite_structural_composite",
+      "maxAxisCenterSeparationM": 1.2639063100466755e-09
+    },
+    {
+      "joint": "wrist",
+      "fixedDeliveryMesh": "Delivery_ELBOW_PIVOT_Graphite_structural_composite",
+      "movingDeliveryMesh": "Wrist_rotating_stem",
+      "maxAxisCenterSeparationM": 4.2146848510894035e-08
+    }
+  ],
+  "unmappedDetailedParts": [
+    "Palm_graphite_body"
+  ],
+  "duplicateMappedParts": [],
+  "missingDeliveryMeshes": [],
+  "inventedElbowLinkObjects": []
+}

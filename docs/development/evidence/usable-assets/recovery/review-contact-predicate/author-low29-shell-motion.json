@@ -1,0 +1,634 @@
+{
+  "startedUtc": "2026-11-22T21:06:03.769452+00:00",
+  "latestObservationUtc": "2026-11-22T21:06:04.920041+00:00",
+  "tokens": null,
+  "cost": null,
+  "requestedFrames": [
+    1
+  ],
+  "observations": [
+    {
+      "frame": 1,
+      "cloth": [
+        {
+          "object": "Body | continuous open front and shoulder yoke",
+          "vertices": 18246,
+          "triangles": 36496,
+          "nonadjacentBvhCandidatePairs": 5,
+          "confirmedNonadjacentShellTrianglePairs": 5,
+          "intersectionTypes": {
+            "inner/outer": 4,
+            "inner/inner": 1
+          },
+          "examples": [
+            {
+              "faces": [
+                4481,
+                22202
+              ],
+              "centroidM": [
+                0.13995400071144104,
+                0.07433345913887024,
+                1.3809709548950195
+              ]
+            },
+            {
+              "faces": [
+                4481,
+                22197
+              ],
+              "centroidM": [
+                0.13995400071144104,
+                0.07433345913887024,
+                1.3809709548950195
+              ]
+            },
+            {
+              "faces": [
+                4482,
+                22202
+              ],
+              "centroidM": [
+                0.13422340154647827,
+                0.07246281206607819,
+                1.3872289657592773
+              ]
+            },
+            {
+              "faces": [
+                4482,
+                22197
+              ],
+              "centroidM": [
+                0.13422340154647827,
+                0.07246281206607819,
+                1.3872289657592773
+              ]
+            },
+            {
+              "faces": [
+                22198,
+                22203
+              ],
+              "centroidM": [
+                0.13415591418743134,
+                0.07231761515140533,
+                1.3871352672576904
+              ]
+            }
+          ],
+          "nonpositiveThicknessOuterFaces": 0,
+          "nonpositiveThicknessFaceExamples": [],
+          "minimumProjectedSheetThicknessM": 5.1225924835307524e-05,
+          "minimumThicknessOuterFaceIndex": 4484,
+          "minimumThicknessOuterTriangleVertices": [
+            9118,
+            9112,
+            7456
+          ],
+          "minimumThicknessInnerPartnerVertices": [
+            18241,
+            18235,
+            16579
+          ],
+          "degenerateTriangleCount": 0
+        },
+        {
+          "object": "Collar | standing back and neck facing",
+          "vertices": 14784,
+          "triangles": 29564,
+          "nonadjacentBvhCandidatePairs": 1224,
+          "confirmedNonadjacentShellTrianglePairs": 1224,
+          "intersectionTypes": {
+            "inner/inner": 314,
+            "inner/outer": 554,
+            "inner/rim": 130,
+            "outer/outer": 134,
+            "outer/rim": 92
+          },
+          "examples": [
+            {
+              "faces": [
+                15033,
+                15037
+              ],
+              "centroidM": [
+                0.07521326839923859,
+                -0.07843051850795746,
+                1.112710952758789
+              ]
+            },
+            {
+              "faces": [
+                15032,
+                15037
+              ],
+              "centroidM": [
+                0.07460614293813705,
+                -0.07803727686405182,
+                1.1102694272994995
+              ]
+            },
+            {
+              "faces": [
+                15032,
+                15036
+              ],
+              "centroidM": [
+                0.07460614293813705,
+                -0.07803727686405182,
+                1.1102694272994995
+              ]
+            },
+            {
+              "faces": [
+                14979,
+                15032
+              ],
+              "centroidM": [
+                0.07372578233480453,
+                -0.07744323462247849,
+                1.1066999435424805
+              ]
+            },
+            {
+              "faces": [
+                14971,
+                14979
+              ],
+              "centroidM": [
+                0.07374560832977295,
+                -0.07748392224311829,
+                1.1066406965255737
+              ]
+            },
+            {
+              "faces": [
+                14972,
+                14979
+              ],
+              "centroidM": [
+                0.07343224436044693,
+                -0.07727019488811493,
+                1.1054080724716187
+              ]
+            },
+            {
+              "faces": [
+                14968,
+                14979
+              ],
+              "centroidM": [
+                0.0736829861998558,
+                -0.07741385698318481,
+                1.1066079139709473
+              ]
+            },
+            {
+              "faces": [
+                14968,
+                14978
+              ],
+              "centroidM": [
+                0.0736829861998558,
+                -0.07741385698318481,
+                1.1066079139709473
+              ]
+            },
+            {
+              "faces": [
+                14967,
+                14978
+              ],
+              "centroidM": [
+                0.07336235046386719,
+                -0.07718068361282349,
+                1.1053879261016846
+              ]
+            },
+            {
+              "faces": [
+                14967,
+                14977
+              ],
+              "centroidM": [
+                0.07336235046386719,
+                -0.07718068361282349,
+                1.1053879261016846
+              ]
+            },
+            {
+              "faces": [
+                14964,
+                14977
+              ],
+              "centroidM": [
+                0.07276492565870285,
+                -0.0768236592411995,
+                1.1029706001281738
+              ]
+            },
+            {
+              "faces": [
+                14964,
+                14982
+              ],
+              "centroidM": [
+                0.07276492565870285,
+                -0.0768236592411995,
+                1.1029706001281738
+              ]
+            },
+            {
+              "faces": [
+                14963,
+                14982
+              ],
+              "centroidM": [
+                0.0724339634180069,
+                -0.07657378166913986,
+                1.1017518043518066
+              ]
+            },
+            {
+              "faces": [
+                14963,
+                14981
+              ],
+              "centroidM": [
+                0.0724339634180069,
+                -0.07657378166913986,
+                1.1017518043518066
+              ]
+            },
+            {
+              "faces": [
+                14962,
+                14981
+              ],
+              "centroidM": [
+                0.07271357625722885,
+                -0.0766708105802536,
+                1.102949857711792
+              ]
+            },
+            {
+              "faces": [
+                14961,
+                14981
+              ],
+              "centroidM": [
+                0.07238387316465378,
+                -0.07640087604522705,
+                1.101731538772583
+              ]
+            },
+            {
+              "faces": [
+                14908,
+                14961
+              ],
+              "centroidM": [
+                0.07175561785697937,
+                -0.07615965604782104,
+                1.0994199514389038
+              ]
+            },
+            {
+              "faces": [
+                14883,
+                14908
+              ],
+              "centroidM": [
+                0.07176759093999863,
+                -0.07604631036520004,
+                1.0993132591247559
+              ]
+            },
+            {
+              "faces": [
+                14883,
+                14907
+              ],
+              "centroidM": [
+                0.07176759093999863,
+                -0.07604631036520004,
+                1.0993132591247559
+              ]
+            },
+            {
+              "faces": [
+                14883,
+                14910
+              ],
+              "centroidM": [
+                0.07176759093999863,
+                -0.07604631036520004,
+                1.0993132591247559
+              ]
+            }
+          ],
+          "nonpositiveThicknessOuterFaces": 0,
+          "nonpositiveThicknessFaceExamples": [],
+          "minimumProjectedSheetThicknessM": 5.0141028623329476e-05,
+          "minimumThicknessOuterFaceIndex": 5686,
+          "minimumThicknessOuterTriangleVertices": [
+            2952,
+            2953,
+            2983
+          ],
+          "minimumThicknessInnerPartnerVertices": [
+            10344,
+            10345,
+            10375
+          ],
+          "degenerateTriangleCount": 0
+        }
+      ],
+      "bodyCollarContacts": {
+        "bvhCandidates": 3116,
+        "confirmedTrianglePairs": 3116,
+        "examples": [
+          {
+            "bodyFace": 36072,
+            "collarFace": 22569,
+            "centroidM": [
+              -0.05740666389465332,
+              0.031112682074308395,
+              1.435180902481079
+            ]
+          },
+          {
+            "bodyFace": 36072,
+            "collarFace": 22568,
+            "centroidM": [
+              -0.05740666389465332,
+              0.031112682074308395,
+              1.435180902481079
+            ]
+          },
+          {
+            "bodyFace": 36072,
+            "collarFace": 29065,
+            "centroidM": [
+              -0.05740666389465332,
+              0.031112682074308395,
+              1.435180902481079
+            ]
+          },
+          {
+            "bodyFace": 6016,
+            "collarFace": 22615,
+            "centroidM": [
+              -0.06269603967666626,
+              0.028315145522356033,
+              1.4359259605407715
+            ]
+          },
+          {
+            "bodyFace": 6016,
+            "collarFace": 22659,
+            "centroidM": [
+              -0.06269603967666626,
+              0.028315145522356033,
+              1.4359259605407715
+            ]
+          },
+          {
+            "bodyFace": 6016,
+            "collarFace": 22658,
+            "centroidM": [
+              -0.06269603967666626,
+              0.028315145522356033,
+              1.4359259605407715
+            ]
+          },
+          {
+            "bodyFace": 6015,
+            "collarFace": 22659,
+            "centroidM": [
+              -0.06800717115402222,
+              0.028183912858366966,
+              1.4352693557739258
+            ]
+          },
+          {
+            "bodyFace": 23721,
+            "collarFace": 22613,
+            "centroidM": [
+              -0.06779424846172333,
+              0.02967314049601555,
+              1.433254599571228
+            ]
+          },
+          {
+            "bodyFace": 23722,
+            "collarFace": 22613,
+            "centroidM": [
+              -0.06257352977991104,
+              0.029520263895392418,
+              1.4338750839233398
+            ]
+          },
+          {
+            "bodyFace": 36077,
+            "collarFace": 22615,
+            "centroidM": [
+              -0.05746505782008171,
+              0.028982754796743393,
+              1.4351613521575928
+            ]
+          },
+          {
+            "bodyFace": 36077,
+            "collarFace": 22612,
+            "centroidM": [
+              -0.05746505782008171,
+              0.028982754796743393,
+              1.4351613521575928
+            ]
+          },
+          {
+            "bodyFace": 36076,
+            "collarFace": 22615,
+            "centroidM": [
+              -0.05746930465102196,
+              0.028690433129668236,
+              1.4358595609664917
+            ]
+          },
+          {
+            "bodyFace": 23724,
+            "collarFace": 29069,
+            "centroidM": [
+              -0.062481142580509186,
+              0.03083239495754242,
+              1.4335579872131348
+            ]
+          },
+          {
+            "bodyFace": 23724,
+            "collarFace": 22613,
+            "centroidM": [
+              -0.062481142580509186,
+              0.03083239495754242,
+              1.4335579872131348
+            ]
+          },
+          {
+            "bodyFace": 36079,
+            "collarFace": 22569,
+            "centroidM": [
+              -0.05749373883008957,
+              0.03016962856054306,
+              1.434809684753418
+            ]
+          },
+          {
+            "bodyFace": 36079,
+            "collarFace": 29065,
+            "centroidM": [
+              -0.05749373883008957,
+              0.03016962856054306,
+              1.434809684753418
+            ]
+          },
+          {
+            "bodyFace": 36079,
+            "collarFace": 29064,
+            "centroidM": [
+              -0.05749373883008957,
+              0.03016962856054306,
+              1.434809684753418
+            ]
+          },
+          {
+            "bodyFace": 36079,
+            "collarFace": 29069,
+            "centroidM": [
+              -0.05749373883008957,
+              0.03016962856054306,
+              1.434809684753418
+            ]
+          },
+          {
+            "bodyFace": 23723,
+            "collarFace": 22613,
+            "centroidM": [
+              -0.06765925884246826,
+              0.031135737895965576,
+              1.4329679012298584
+            ]
+          },
+          {
+            "bodyFace": 36078,
+            "collarFace": 22569,
+            "centroidM": [
+              -0.05756338685750961,
+              0.02993546426296234,
+              1.435505747795105
+            ]
+          },
+          {
+            "bodyFace": 36078,
+            "collarFace": 22612,
+            "centroidM": [
+              -0.05756338685750961,
+              0.02993546426296234,
+              1.435505747795105
+            ]
+          },
+          {
+            "bodyFace": 4880,
+            "collarFace": 23175,
+            "centroidM": [
+              -0.06364317983388901,
+              -0.02863859198987484,
+              1.4225237369537354
+            ]
+          },
+          {
+            "bodyFace": 4880,
+            "collarFace": 23176,
+            "centroidM": [
+              -0.06364317983388901,
+              -0.02863859198987484,
+              1.4225237369537354
+            ]
+          },
+          {
+            "bodyFace": 4880,
+            "collarFace": 23177,
+            "centroidM": [
+              -0.06364317983388901,
+              -0.02863859198987484,
+              1.4225237369537354
+            ]
+          },
+          {
+            "bodyFace": 4880,
+            "collarFace": 23216,
+            "centroidM": [
+              -0.06364317983388901,
+              -0.02863859198987484,
+              1.4225237369537354
+            ]
+          },
+          {
+            "bodyFace": 4880,
+            "collarFace": 23215,
+            "centroidM": [
+              -0.06364317983388901,
+              -0.02863859198987484,
+              1.4225237369537354
+            ]
+          },
+          {
+            "bodyFace": 4880,
+            "collarFace": 23180,
+            "centroidM": [
+              -0.06364317983388901,
+              -0.02863859198987484,
+              1.4225237369537354
+            ]
+          },
+          {
+            "bodyFace": 4880,
+            "collarFace": 23179,
+            "centroidM": [
+              -0.06364317983388901,
+              -0.02863859198987484,
+              1.4225237369537354
+            ]
+          },
+          {
+            "bodyFace": 4880,
+            "collarFace": 23182,
+            "centroidM": [
+              -0.06364317983388901,
+              -0.02863859198987484,
+              1.4225237369537354
+            ]
+          },
+          {
+            "bodyFace": 4880,
+            "collarFace": 23218,
+            "centroidM": [
+              -0.06364317983388901,
+              -0.02863859198987484,
+              1.4225237369537354
+            ]
+          }
+        ],
+        "classification": "Unclassified observed cloth-to-cloth contact; source sewn attachment and unintended interpenetration require separate review."
+      }
+    }
+  ],
+  "contactPredicate": {
+    "method": "Float64 local-coordinate triangle SAT including in-plane axes; boundary touch counts as contact.",
+    "sha256": "f3ebefdb756cc7d24d314901580d587536244df7b8a84f3cfaaf1fbf5825b738",
+    "bvhCandidatePaddingM": 1e-07,
+    "physicalPenetrationAllowanceM": 0
+  },
+  "scope": "Evaluated float64 triangle SAT contacts after padded BVH broad phase. Directly adjacent triangles sharing vertices are excluded from self-contact. Explicit outer/inner pair attributes are used for projected sheet thickness; this is not a universal continuous-time or cloth-simulation claim."
+}

@@ -5,9 +5,9 @@ import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
 import {test} from 'node:test';
-import {REFAS_VERSION} from '../skills/refas/scripts/lib/canonical.mjs';
+import {REFAS_VERSION} from '../legacy/v1/scripts/lib/canonical.mjs';
 
-const CLI = path.resolve('skills/refas/scripts/refas.mjs');
+const CLI = path.resolve('legacy/v1/scripts/refas.mjs');
 
 function run(args, {cli = CLI, cwd} = {}) {
   return spawnSync(process.execPath, [cli, ...args], {encoding: 'utf8', cwd});
@@ -31,7 +31,7 @@ test('CLI help exposes recovery, validation, and certification commands', () => 
 });
 
 test('CLI describe resolves every instruction node and runtime capability exactly', async () => {
-  const graph = JSON.parse(await fs.readFile(path.resolve('skills/refas/references/GRAPH.json'), 'utf8'));
+  const graph = JSON.parse(await fs.readFile(path.resolve('legacy/v1/references/GRAPH.json'), 'utf8'));
   for (const node of graph.nodes) {
     const result = run(['describe', 'node', node.id]);
     assert.equal(result.status, 0, result.stderr);
@@ -89,7 +89,7 @@ test('CLI describe works from a bare copied installed skill with repository abse
   const temp = await fs.mkdtemp(path.join(os.tmpdir(), 'refas-describe-installed-'));
   t.after(() => fs.rm(temp, {recursive: true, force: true}));
   const installed = path.join(temp, 'refas');
-  await fs.cp(path.resolve('skills/refas'), installed, {recursive: true});
+  await fs.cp(path.resolve('legacy/v1'), installed, {recursive: true});
   const installedCli = path.join(installed, 'scripts', 'refas.mjs');
 
   const node = run(['describe', 'node', 'attachment-follow'], {cli: installedCli, cwd: temp});

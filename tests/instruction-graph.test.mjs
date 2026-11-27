@@ -28,15 +28,15 @@ test('installed-skill instruction graph reaches every reference leaf with no bou
   assert.equal(graph.requirementsPresent, true);
 });
 
-test('instruction routes resolve only inside skills/refas', () => {
-  assert.equal(resolveInstructionRoute('references/validation.md'), 'skills/refas/references/validation.md');
-  assert.equal(resolveInstructionRoute('references/contracts/canonical-edit-boundary.md'), 'skills/refas/references/contracts/canonical-edit-boundary.md');
-  assert.equal(resolveInstructionRoute('assets/templates/visual-review.json'), 'skills/refas/assets/templates/visual-review.json');
-  assert.equal(resolveInstructionRoute('scripts/refas.mjs'), 'skills/refas/scripts/refas.mjs');
+test('instruction routes resolve only inside legacy/v1', () => {
+  assert.equal(resolveInstructionRoute('references/validation.md'), 'legacy/v1/references/validation.md');
+  assert.equal(resolveInstructionRoute('references/contracts/canonical-edit-boundary.md'), 'legacy/v1/references/contracts/canonical-edit-boundary.md');
+  assert.equal(resolveInstructionRoute('assets/templates/visual-review.json'), 'legacy/v1/assets/templates/visual-review.json');
+  assert.equal(resolveInstructionRoute('scripts/refas.mjs'), 'legacy/v1/scripts/refas.mjs');
   assert.throws(() => resolveInstructionRoute('docs/canonical-edit-boundary.md'), /repository-local route is forbidden/);
   assert.throws(() => resolveInstructionRoute('schemas/visual-review.schema.json'), /repository-local route is forbidden/);
   assert.throws(() => resolveInstructionRoute('../docs/architecture.md'), /unsafe skill route/);
-  assert.throws(() => resolveInstructionRoute('skills/refas/references/validation.md'), /repository-local route is forbidden/);
+  assert.throws(() => resolveInstructionRoute('legacy/v1/references/validation.md'), /repository-local route is forbidden/);
 });
 
 test('route extraction exposes allowed and forbidden repository routes to the verifier', () => {
@@ -57,11 +57,11 @@ test('route extraction exposes allowed and forbidden repository routes to the ve
   ]);
 });
 
-test('a bare copied skills/refas directory verifies with the repository absent', async () => {
+test('a bare copied legacy/v1 directory verifies with the repository absent', async () => {
   const temp = await fs.mkdtemp(path.join(os.tmpdir(), 'refas-installed-skill-'));
   try {
     const installed = path.join(temp, 'refas');
-    await fs.cp(path.join(REPOSITORY, 'skills/refas'), installed, {recursive: true});
+    await fs.cp(path.join(REPOSITORY, 'legacy/v1'), installed, {recursive: true});
     const verifier = path.join(installed, 'scripts/verify_installation_boundary.mjs');
     const result = spawnSync(process.execPath, [verifier], {cwd: temp, encoding: 'utf8'});
     assert.equal(result.status, 0, result.stderr || result.stdout);

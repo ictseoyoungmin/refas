@@ -1,0 +1,527 @@
+{
+  "views": [
+    {
+      "view": "front",
+      "matching": true,
+      "before_png_sha256": "f10090ea919c5606138efba3b341f045b6503a3e58cfd95e234b942ffbffe278",
+      "after_png_sha256": "66a99eaffe86d8298a3cb53b760dccdb7db254aaa12f3443e894fb7b6dcb5360",
+      "camera": {
+        "matrixWorld": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            -1.6e-07,
+            -1.0,
+            -1.79999995
+          ],
+          [
+            0.0,
+            1.0,
+            -1.6e-07,
+            0.38
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "orthoScale": 0.82999998,
+        "position": [
+          0.0,
+          -1.79999995,
+          0.38
+        ],
+        "projection": "orthographic",
+        "target": [
+          0.0,
+          0.0,
+          0.38
+        ]
+      },
+      "renderer": {
+        "denoising": false,
+        "device": "CPU",
+        "engine": "CYCLES",
+        "samples": 16,
+        "size": [
+          512,
+          512
+        ],
+        "transparent": false,
+        "viewTransform": "AgX",
+        "worldColor": [
+          0.16,
+          0.18000001,
+          0.20999999
+        ],
+        "worldStrength": 0.45
+      }
+    },
+    {
+      "view": "side",
+      "matching": true,
+      "before_png_sha256": "d46b4a7001d3be8ed1180bec2ee0965d2e4f830cff2e20059608a90e85e7ea8a",
+      "after_png_sha256": "50b81adbcfd5d8ab383e50e052d03a0651a3e5d00a61f5b592d1a91bf4e67843",
+      "camera": {
+        "matrixWorld": [
+          [
+            -4e-08,
+            4e-08,
+            1.0,
+            1.79999995
+          ],
+          [
+            1.0,
+            0.0,
+            4e-08,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            -4e-08,
+            0.38
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "orthoScale": 0.82999998,
+        "position": [
+          1.79999995,
+          0.0,
+          0.38
+        ],
+        "projection": "orthographic",
+        "target": [
+          0.0,
+          0.0,
+          0.38
+        ]
+      },
+      "renderer": {
+        "denoising": false,
+        "device": "CPU",
+        "engine": "CYCLES",
+        "samples": 16,
+        "size": [
+          512,
+          512
+        ],
+        "transparent": false,
+        "viewTransform": "AgX",
+        "worldColor": [
+          0.16,
+          0.18000001,
+          0.20999999
+        ],
+        "worldStrength": 0.45
+      }
+    },
+    {
+      "view": "back",
+      "matching": true,
+      "before_png_sha256": "74a608a2ac70e4c89b268ef0eee80517420716535b6637ef03ebeed618e4df3f",
+      "after_png_sha256": "e39312ae4ffcfd904ac03c5002f650d77633ae3e7f550714b4ef4df9e0e6a96f",
+      "camera": {
+        "matrixWorld": [
+          [
+            -1.0,
+            -1.5e-07,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            8e-08,
+            1.0,
+            1.79999995
+          ],
+          [
+            -1.5e-07,
+            1.0,
+            -8e-08,
+            0.38
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "orthoScale": 0.82999998,
+        "position": [
+          0.0,
+          1.79999995,
+          0.38
+        ],
+        "projection": "orthographic",
+        "target": [
+          0.0,
+          0.0,
+          0.38
+        ]
+      },
+      "renderer": {
+        "denoising": false,
+        "device": "CPU",
+        "engine": "CYCLES",
+        "samples": 16,
+        "size": [
+          512,
+          512
+        ],
+        "transparent": false,
+        "viewTransform": "AgX",
+        "worldColor": [
+          0.16,
+          0.18000001,
+          0.20999999
+        ],
+        "worldStrength": 0.45
+      }
+    },
+    {
+      "view": "hero",
+      "matching": true,
+      "before_png_sha256": "2967728c3b586ae32d76f0e1e806fae5e2c0dc180f62e8b5576bc1740c4dd2e5",
+      "after_png_sha256": "5ed1f33571ac92239a7a4af367d17b574e374d59629c75039d06c2cbfb4c59b4",
+      "camera": {
+        "matrixWorld": [
+          [
+            0.84269625,
+            -0.06258653,
+            0.5347392,
+            1.14999998
+          ],
+          [
+            0.53838933,
+            0.09796156,
+            -0.83698297,
+            -1.79999995
+          ],
+          [
+            -3e-08,
+            0.99322027,
+            0.11624776,
+            0.63
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "orthoScale": 0.82999998,
+        "position": [
+          1.14999998,
+          -1.79999995,
+          0.63
+        ],
+        "projection": "orthographic",
+        "target": [
+          0.0,
+          0.0,
+          0.38
+        ]
+      },
+      "renderer": {
+        "denoising": false,
+        "device": "CPU",
+        "engine": "CYCLES",
+        "samples": 16,
+        "size": [
+          512,
+          512
+        ],
+        "transparent": false,
+        "viewTransform": "AgX",
+        "worldColor": [
+          0.16,
+          0.18000001,
+          0.20999999
+        ],
+        "worldStrength": 0.45
+      }
+    },
+    {
+      "view": "service-detail",
+      "matching": true,
+      "before_png_sha256": "fb6b69c05bc07c34bd9f7ab2a81bbe3e81871ba49b1764480ffb73138c679d00",
+      "after_png_sha256": "43068994506b7f023e99f0c3bbbed0c911f726f4ab957a8a8efa3d6c38153627",
+      "camera": {
+        "matrixWorld": [
+          [
+            -0.95635152,
+            -0.01240939,
+            0.29195502,
+            0.55000001
+          ],
+          [
+            0.29221863,
+            -0.0406124,
+            0.95548886,
+            1.79999995
+          ],
+          [
+            -4e-08,
+            0.99909788,
+            0.04246598,
+            0.38
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "orthoScale": 0.30000001,
+        "position": [
+          0.55000001,
+          1.79999995,
+          0.38
+        ],
+        "projection": "orthographic",
+        "target": [
+          0.0,
+          0.0,
+          0.30000001
+        ]
+      },
+      "renderer": {
+        "denoising": false,
+        "device": "CPU",
+        "engine": "CYCLES",
+        "samples": 16,
+        "size": [
+          512,
+          512
+        ],
+        "transparent": false,
+        "viewTransform": "AgX",
+        "worldColor": [
+          0.16,
+          0.18000001,
+          0.20999999
+        ],
+        "worldStrength": 0.45
+      }
+    },
+    {
+      "view": "armor-depth",
+      "matching": true,
+      "before_png_sha256": "8334a0841acc6f9512c74d6e04b2c56a55106ce7a2c3aebef0bdd6986eed1aee",
+      "after_png_sha256": "a3b70e24976b5cb0f814207677cc0aa32e83efaeb09c3191829f1626ff0c17c0",
+      "camera": {
+        "matrixWorld": [
+          [
+            0.40613842,
+            -0.02782207,
+            0.91338795,
+            1.79999995
+          ],
+          [
+            0.91381156,
+            0.0123654,
+            -0.40595016,
+            -0.80000001
+          ],
+          [
+            -3e-08,
+            0.9995364,
+            0.03044619,
+            0.36000001
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "orthoScale": 0.28,
+        "position": [
+          1.79999995,
+          -0.80000001,
+          0.36000001
+        ],
+        "projection": "orthographic",
+        "target": [
+          0.0,
+          0.0,
+          0.30000001
+        ]
+      },
+      "renderer": {
+        "denoising": false,
+        "device": "CPU",
+        "engine": "CYCLES",
+        "samples": 16,
+        "size": [
+          512,
+          512
+        ],
+        "transparent": false,
+        "viewTransform": "AgX",
+        "worldColor": [
+          0.16,
+          0.18000001,
+          0.20999999
+        ],
+        "worldStrength": 0.45
+      }
+    },
+    {
+      "view": "socket-depth",
+      "matching": true,
+      "before_png_sha256": "58333264e38694248f0c8c408a53eaf3b42cd950c2199816222114bf0497e18d",
+      "after_png_sha256": "e7ea7054d5967835904b3d735aad2e4d9732cd50cfdafab1e9e4abe45012e5a0",
+      "camera": {
+        "matrixWorld": [
+          [
+            0.77611393,
+            -0.04029395,
+            0.62930405,
+            1.29999995
+          ],
+          [
+            0.6305927,
+            0.04959246,
+            -0.77452785,
+            -1.60000002
+          ],
+          [
+            5e-08,
+            0.9979564,
+            0.06389847,
+            0.81999999
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "orthoScale": 0.22,
+        "position": [
+          1.29999995,
+          -1.60000002,
+          0.81999999
+        ],
+        "projection": "orthographic",
+        "target": [
+          0.0,
+          0.0,
+          0.68800002
+        ]
+      },
+      "renderer": {
+        "denoising": false,
+        "device": "CPU",
+        "engine": "CYCLES",
+        "samples": 16,
+        "size": [
+          512,
+          512
+        ],
+        "transparent": false,
+        "viewTransform": "AgX",
+        "worldColor": [
+          0.16,
+          0.18000001,
+          0.20999999
+        ],
+        "worldStrength": 0.45
+      }
+    },
+    {
+      "view": "palm-depth",
+      "matching": true,
+      "before_png_sha256": "4991858a225bf69ed6a2e5248d1f17f9ebe0ced9bf0b8647361e4778fb568cb7",
+      "after_png_sha256": "95a831cbd43999184905976ec8cce7a8623ff8cbf74f82004cce366b5b58b213",
+      "camera": {
+        "matrixWorld": [
+          [
+            -0.87415737,
+            -0.01532262,
+            0.485401,
+            1.0
+          ],
+          [
+            0.48564279,
+            -0.02758058,
+            0.87372214,
+            1.79999995
+          ],
+          [
+            -8e-08,
+            0.99950212,
+            0.03155109,
+            0.19
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "orthoScale": 0.18000001,
+        "position": [
+          1.0,
+          1.79999995,
+          0.19
+        ],
+        "projection": "orthographic",
+        "target": [
+          0.0,
+          0.0,
+          0.125
+        ]
+      },
+      "renderer": {
+        "denoising": false,
+        "device": "CPU",
+        "engine": "CYCLES",
+        "samples": 16,
+        "size": [
+          512,
+          512
+        ],
+        "transparent": false,
+        "viewTransform": "AgX",
+        "worldColor": [
+          0.16,
+          0.18000001,
+          0.20999999
+        ],
+        "worldStrength": 0.45
+      }
+    }
+  ],
+  "unchanged_import_scene_fingerprint": true,
+  "matching_fields": [
+    "camera",
+    "framing",
+    "lighting",
+    "referenceRegion",
+    "registration",
+    "renderer"
+  ],
+  "all_eight_matched": true,
+  "note": "Camera positions are fixed between revisions but unregistered to the concept sheet."
+}

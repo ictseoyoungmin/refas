@@ -1,0 +1,232 @@
+{
+  "schema": "refas.topology-continuation-summary/v1",
+  "status": "Topology and export-runtime corrections verified; complete garment has known inter-part defects and remains unaccepted",
+  "progress": {
+    "demonstrated": 30,
+    "total": 37,
+    "percentRounded": 81,
+    "open": [
+      "U1",
+      "U2",
+      "U3",
+      "U6",
+      "E2",
+      "D2",
+      "D3"
+    ]
+  },
+  "recovery": {
+    "freshReconstructionFiles": 4177,
+    "allRecordedHashesAndSizesMatch": true,
+    "basis": "Verified v2-v5 chain; later logged v6 not recovered"
+  },
+  "trimMotion": {
+    "passed": true,
+    "summary": {
+      "objects": 28,
+      "frames": 97,
+      "objectFrames": 2716,
+      "contacts": 0,
+      "degenerateTriangles": 0,
+      "nonPositiveOrientationDots": 0,
+      "changedTriangulationFrames": 0,
+      "changedCoordinatesFrames": 0,
+      "minimumOrientationDot": 0.18785790539832403
+    },
+    "candidateMethod": "Conservative float64 AABB plus unchanged local-coordinate SAT; older BVH-filtered claims superseded"
+  },
+  "nativeIntegrity": {
+    "passed": true,
+    "garmentMeshCount": 100,
+    "frames": 97,
+    "requireTrianglePolygons": true
+  },
+  "geometry": {
+    "garmentMeshes": 100,
+    "garmentTriangles": 122898,
+    "declaredTriangleBudget": 125000,
+    "reportScope": "Intermediate fixed topology native, not final hardware or GLB"
+  },
+  "localRequiredChecks": {
+    "passed": true,
+    "checks": [
+      {
+        "name": "javascript",
+        "command": [
+          "npm",
+          "test"
+        ],
+        "startedUtc": "2026-11-23T07:11:26.460560+00:00",
+        "finishedUtc": "2026-11-23T07:13:36.521579+00:00",
+        "elapsedSeconds": 130.06102523000027,
+        "returncode": 0,
+        "logSha256": "ddc69c57f63017c843e31c310902a4ccd8328a6ccfadd060c0c4696a51c71ad8"
+      },
+      {
+        "name": "python-syntax",
+        "command": [
+          "npm",
+          "run",
+          "test:python"
+        ],
+        "startedUtc": "2026-11-23T07:11:26.460771+00:00",
+        "finishedUtc": "2026-11-23T07:11:26.877234+00:00",
+        "elapsedSeconds": 0.4164730659995257,
+        "returncode": 0,
+        "logSha256": "5b5e156c62d9cc1bf5afbe4b6db6537747c7068713c7f499518514bb449c896b"
+      },
+      {
+        "name": "repository",
+        "command": [
+          "npm",
+          "run",
+          "check"
+        ],
+        "startedUtc": "2026-11-23T07:11:26.878755+00:00",
+        "finishedUtc": "2026-11-23T07:11:51.167902+00:00",
+        "elapsedSeconds": 24.28916129299978,
+        "returncode": 0,
+        "logSha256": "1f6a7a406a1b81244372f016a017622fd4c1307776b317816c7ff79333b594ce"
+      },
+      {
+        "name": "legacy-dogfood",
+        "command": [
+          "npm",
+          "run",
+          "dogfood"
+        ],
+        "startedUtc": "2026-11-23T07:11:51.168551+00:00",
+        "finishedUtc": "2026-11-23T07:14:26.932112+00:00",
+        "elapsedSeconds": 155.76358219200029,
+        "returncode": 0,
+        "logSha256": "b90c15c73d651d3486e9382f755fe59354030ba5be92f2cc6db224995f51d5a5"
+      },
+      {
+        "name": "distribution",
+        "command": [
+          "npm",
+          "run",
+          "release:audit"
+        ],
+        "startedUtc": "2026-11-23T07:13:36.522505+00:00",
+        "finishedUtc": "2026-11-23T07:13:37.193250+00:00",
+        "elapsedSeconds": 0.670750080000289,
+        "returncode": 0,
+        "logSha256": "0c8acdf0cc781d157b31b710f75063d6ab97f7cda78512fc3eb0a1a298d35af6"
+      }
+    ]
+  },
+  "sourceFiles": {
+    "examples/uniform-jacket/fix_evaluated_topology.py": {
+      "bytes": 19738,
+      "sha256": "44b7b78e15de4ad06c4f2f477b6078daab60942b4114a6393cb05f7c4040dcf9"
+    },
+    "examples/uniform-jacket/inspect_native_integrity.py": {
+      "bytes": 13281,
+      "sha256": "c6ee6b2817ab49ecb7a8a89c343ba63458437990469c0b982c7f73d6c0854d0d"
+    },
+    "examples/uniform-jacket/inspect_trim_motion.py": {
+      "bytes": 6790,
+      "sha256": "208590cf1f7e0bc1b84be2b227efbbc4a552fe9af7bd01c130ff94b6a1541915"
+    },
+    "examples/uniform-jacket/conservative_candidates.py": {
+      "bytes": 6254,
+      "sha256": "edc7892da6944fa16e8bba6d828a7898f3b593458272024ac6d2822d0f0bb8ea"
+    },
+    "examples/uniform-jacket/test_conservative_candidates.py": {
+      "bytes": 4778,
+      "sha256": "5628259df4ce34a0f5eaf2e8bf069d7408d64c8c83d04057054c4ef98ef031be"
+    },
+    "skills/refas/scripts/production/blender_worker.py": {
+      "bytes": 41856,
+      "sha256": "78f616f6d534f55f3df11550288bb81392333578feae4f30188d6d7a71d6b51d"
+    },
+    "tests/test_production_blender.py": {
+      "bytes": 50001,
+      "sha256": "706a54bf4e6937c942f32b2f6d8f4cd0999c9a7446435de050074444d909a429"
+    }
+  },
+  "privacyScope": "Aggregate counts and executable source only. No native models, GLBs, avatar coordinates, per-object fingerprints, vertex mappings, or raw recovery reports are included.",
+  "publicationUpdate": {
+    "status": "Preparing the source/aggregate-only PR #399 update following the user's explicit request; actual remote result not yet observed",
+    "preUpdateRemoteCommit": "12076a3e",
+    "verifiedLocalRuntimeCore": "03b4a5c",
+    "priorAutomaticUploadRejectionsRetained": true,
+    "explicitPrUpdateRequested": true,
+    "updatedRemoteCommit": null,
+    "updatedRemoteCiStatus": "not-yet-observed",
+    "privateAssetPayloadIncluded": false,
+    "mainMerged": false,
+    "formalReleasePublished": false
+  },
+  "acceptanceLimit": "Native triangle/data integrity, trim self-contact controls and export data-loss corrections do not accept unresolved cross-object garment contacts. Final selected native/GLB/consumer/installed-edit and independent criteria review remain separate.",
+  "runtimeFixes": {
+    "sampledAnimationPreserved": true,
+    "allPositiveSkinInfluencesPreserved": true,
+    "nativeAndInstalledExporterSourceUnchanged": true,
+    "scopedCutoffGuard": "One isolated1e-4 assignment, exactly two variable uses and direct continue filter; temporary function restored in finally",
+    "actualRegressionMicrometres": {
+      "middlePoseMotion": 80,
+      "tinyFifthInfluenceMotion": 50
+    },
+    "actualAssetExportOnlyPreflight": {
+      "tinyPositiveInfluencesPreserved": 22034,
+      "rawWeightCoefficientMaxError": 0,
+      "originalAvatarMeshCount": 26,
+      "frames": 97,
+      "rawPositionLimitM": 2e-06,
+      "rawPositionMaxErrorM": 1.463364e-06,
+      "finalGarmentAccepted": false
+    }
+  },
+  "productionChecks": {
+    "passed": true,
+    "tests": 98,
+    "skipped": 0,
+    "realBlenderEnabled": true,
+    "realGodotEnabled": true,
+    "sourceBytesUnchanged": true,
+    "logSha256": "fffc810f870473b2bc40a53b04bbd8cff38a9e192292cbf596b5ff95b826f99e"
+  },
+  "originalAvatarLimitations": {
+    "inheritedZeroAreaFaces": 546,
+    "nearCollinearFaceObserved": true,
+    "strictBlenderPositiveGeometricWindingPassed": false,
+    "rawIndexLineagePreserved": true,
+    "originalSourceEdited": false,
+    "scope": "Encoded raw preservation and importer arithmetic remain distinct from positive-area/normal quality."
+  },
+  "remainingGeometry": "The earlier fit observer covered3 original avatar meshes, not all26. Checking the remaining23 at frames1/49/97 found trousers/belt and opaque-hair contacts. Local garment-only fitting and final selected native/export/consumer reruns remain required.",
+  "acceptedArmRecheck": {
+    "pairs": 133,
+    "frames": 121,
+    "pairPoses": 16093,
+    "contacts": 0,
+    "originalNativeUnchanged": true,
+    "scope": "Original declared pairs only; no unmeasured whole-scene or continuous-time claim."
+  },
+  "wholeAvatarFitScope": {
+    "previousTargetMeshes": 3,
+    "additionalTargetMeshes": 23,
+    "preflightFrames": [
+      1,
+      49,
+      97
+    ],
+    "passed": false,
+    "actualOpaqueHairContactPairsAtRest": 9661,
+    "originalAvatarEdited": false,
+    "tolerancesOrContactPolicyExpanded": false
+  },
+  "laterHardwareNativeScope": {
+    "frames": 97,
+    "hardwareMeshes": 70,
+    "clothMeshes": 30,
+    "chainLinks": 389,
+    "declaredHardwarePolicyViolations": 0,
+    "declaredHardwareClothPolicyViolations": 0,
+    "allOriginalAvatarHardwarePairFrames": 176540,
+    "originalAvatarHardwareContacts": 0,
+    "completeGarmentAccepted": false
+  }
+}

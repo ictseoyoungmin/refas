@@ -1,0 +1,20 @@
+{
+  "automail": {
+    "baseline_label": "A",
+    "selected_label": "B",
+    "baseline_path": "/workspace/scratch/5765cde18054/work/automail/candidates/before/renders",
+    "selected_path": "/workspace/scratch/5765cde18054/work/automail/candidates/candidate-05/renders",
+    "captured_utc": "2026-11-22T12:32:39.249736+00:00",
+    "pre_review_replacement": {
+      "selected_path": "/workspace/scratch/5765cde18054/work/automail/candidates/candidate-04/renders",
+      "reason": "Candidate-04 was replaced before isolated reviewer dispatch; candidate-05 reduces small degenerate bevel faces."
+    }
+  },
+  "garment": {
+    "baseline_label": "B",
+    "selected_label": "A",
+    "baseline_path": "/workspace/scratch/5765cde18054/work/garment/renders/before",
+    "selected_path": "/workspace/scratch/5765cde18054/work/garment/renders/after",
+    "captured_utc": "2026-11-22T12:29:08.820654+00:00"
+  }
+}

@@ -10,8 +10,8 @@ import {
   createPoseFitPlan,
   digestJson,
   rankDiscrepancyCandidates,
-} from '../skills/refas/scripts/lib/index.mjs';
-import {assertMetricUseAllowed, isIouDerivedMetric, metricAuthority} from '../skills/refas/scripts/lib/metric-authority.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
+import {assertMetricUseAllowed, isIouDerivedMetric, metricAuthority} from '../legacy/v1/scripts/lib/metric-authority.mjs';
 
 const D = (c) => c.repeat(64);
 const H = (value) => ((Number.parseInt(value, 16) || 0) % 16).toString(16);

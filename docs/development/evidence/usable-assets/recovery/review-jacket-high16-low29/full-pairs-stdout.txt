@@ -1,0 +1,5 @@
+{"name": "Collar | standing back and neck facing", "minimumMeanProjectedGapM": 4.8251572253498e-05, "broadphaseNonadjacentCandidates": 6326, "nonadjacentContacts": 6326, "passed": false}
+{"name": "Body | continuous open front and shoulder yoke", "minimumMeanProjectedGapM": 0.00018278894131944863, "broadphaseNonadjacentCandidates": 4, "nonadjacentContacts": 4, "passed": false}
+{"name": "Collar | standing back and neck facing", "minimumMeanProjectedGapM": 5.014102082383907e-05, "broadphaseNonadjacentCandidates": 1224, "nonadjacentContacts": 1224, "passed": false}
+{"name": "Body | continuous open front and shoulder yoke", "minimumMeanProjectedGapM": 5.122607459696069e-05, "broadphaseNonadjacentCandidates": 5, "nonadjacentContacts": 5, "passed": false}
+Blender 4.3.2

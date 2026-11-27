@@ -1,0 +1,284 @@
+{
+  "scope": "Separate informed follow-up after the closed initial condition. Not a new blind trial and excluded from original trial timing/comparison.",
+  "start_utc": "2026-11-21T19:04:19+00:00",
+  "end_utc": "2026-11-21T19:10:22.472668+00:00",
+  "elapsed_seconds": 363.472668,
+  "soft_budget_seconds": 480,
+  "geometry_correction_revisions": 1,
+  "diagnostic_baseline_runs": 1,
+  "source_candidate": "/tmp/refas-jacket-evaluation/production/candidate.blend",
+  "source_sha256": "3ac6d8e5bb3a2571475efb90274142a6d550ce39669e179feb4b630050d08542",
+  "initial_trial_preservation": {
+    "initial_trial_artifacts_unchanged": {
+      "create.py": true,
+      "correct.py": true,
+      "edit_cuff.py": true,
+      "initial.blend": true,
+      "candidate.blend": true,
+      "candidate.glb": true,
+      "edited.blend": true,
+      "edited.glb": true,
+      "restored.blend": true,
+      "construction.json": true,
+      "cuff-edit-checks.json": true,
+      "restore-checks.json": true
+    },
+    "all_match": true,
+    "before_fingerprint_matches_initial": true
+  },
+  "production_entry": "/workspace/scratch/2eb72029c71e/refas-v2/skills/refas/scripts/produce.py",
+  "review_spec": "/workspace/scratch/2eb72029c71e/refas-v2/examples/uniform-jacket/review.json",
+  "review_spec_sha256": "be6e20645867d04c6c07536ddc1a3cf2736d2111e0d3739628063ee989b134c1",
+  "review_settings": {
+    "views": [
+      "front",
+      "front-three-quarter",
+      "left",
+      "back",
+      "right",
+      "rear-three-quarter"
+    ],
+    "size": 512,
+    "samples": 24,
+    "timeout_seconds": 180,
+    "orthographic_scale_m": 0.84,
+    "camera_target": [
+      0,
+      0,
+      0.15
+    ],
+    "lighting_center": [
+      0,
+      0,
+      0.18
+    ],
+    "lighting_radius": 0.48
+  },
+  "selected_revision": "2e8ebbe18a9a48ecac8c115bbb735ded",
+  "native_run_elapsed_seconds": 26.756,
+  "baseline_run_elapsed_seconds": 22.086,
+  "approach": {
+    "armholes": "Extracted the two actual 42-edge body armhole boundary loops; made rounded cap bridges sharing those exact vertex indices; joined lower sleeve surfaces into the same cloth mesh. This is real topology rather than a trim strip covering a gap.",
+    "sleeve_preservation": "Retained 440 original lower cage vertices per side from the s=.14 m ring onward. Existing cuff objects and lower sleeve length endpoints stay unchanged.",
+    "body_preservation": "Retained all 970 original body cage vertices and existing body faces; connected new cap faces to the open armhole edges. The body subdivision level increased from one to two as the surfaces became one connected editable shell.",
+    "editability": "Left and right sleeves are named vertex groups within the continuous body mesh; cuffs, piping, buckle hardware, lapels, collar and decoration remain separate objects. Subdivision and solidify remain live.",
+    "shoulder_tabs": "Raycast onto the evaluated shoulder surface to fit tab vertices, pale edge and button, retaining the existing pieces and materials."
+  },
+  "protected_checks": {
+    "approach": "One mesh, shared armhole boundary vertices/edges, rounded cap bridge; existing lower sleeve cages retained; shoulder trim fitted by surface raycasts",
+    "changed_objects": [
+      "Body | continuous open front and shoulder yoke",
+      "R Shoulder | tab",
+      "R Shoulder | pale edge",
+      "R Shoulder | button",
+      "L Shoulder | tab",
+      "L Shoulder | pale edge",
+      "L Shoulder | button",
+      "R Sleeve | shaped open tube",
+      "L Sleeve | shaped open tube",
+      "R Sleeve | sewn shoulder cap",
+      "L Sleeve | sewn shoulder cap"
+    ],
+    "removed_objects": [
+      "R Sleeve | shaped open tube",
+      "L Sleeve | shaped open tube",
+      "R Sleeve | sewn shoulder cap",
+      "L Sleeve | sewn shoulder cap"
+    ],
+    "protected_object_count": 266,
+    "protected_changed": [],
+    "materials_unchanged": true,
+    "cuffs_unchanged": true,
+    "decoration_unchanged": true,
+    "shared_armhole_edges": 84,
+    "shared_armhole_edges_all_two_faces": true,
+    "lower_sleeve_cage_checks": [
+      {
+        "side": "L",
+        "retained_vertices": 440,
+        "maximum_coordinate_change_m": 0.0,
+        "first_retained_axis_parameter_m": 0.14
+      },
+      {
+        "side": "R",
+        "retained_vertices": 440,
+        "maximum_coordinate_change_m": 0.0,
+        "first_retained_axis_parameter_m": 0.14
+      }
+    ],
+    "original_body_cage_vertices_retained": 970,
+    "body_and_sleeves_named_vertex_groups": [
+      "L Sleeve | editable region",
+      "R Sleeve | editable region"
+    ]
+  },
+  "before_after_observations": [
+    {
+      "views": [
+        "front",
+        "back"
+      ],
+      "before": "Open black gaps between sleeve cap and torso near the shoulder; pale epaulette edges visibly floated above the yoke.",
+      "after": "The top/side armhole gaps close and the shoulder silhouette is continuous. Tabs lie on the shoulder surface."
+    },
+    {
+      "views": [
+        "front-three-quarter",
+        "rear-three-quarter"
+      ],
+      "before": "The gap exposes disconnected body and sleeve shells; inner sleeve caps appear detached through the open front.",
+      "after": "The shell reads as connected cloth around the shoulder. The intentional open front/neck and cuff openings remain visible."
+    },
+    {
+      "views": [
+        "left",
+        "right"
+      ],
+      "before": "The root/cap junction and tab height are discontinuous.",
+      "after": "The upper sleeve joins the yoke and the tab follows its surface. Some cap irregularity and underarm pinching remain."
+    }
+  ],
+  "residual_problems": [
+    "Underarm transitions are pinched, most clearly from back and rear-three-quarter views; topology is continuous but tailoring curvature needs further refinement.",
+    "The main cloth remains brighter and more blue-grey under these lights than the original black reference; materials were intentionally unchanged.",
+    "Collar/lapel stiffness, front buckle placement, approximate shield/fleur and chain routing, and occluded rear ornament remain from the original asset.",
+    "Cloth UV unwrap, rigging, deformation, simulation and target-engine validation remain unperformed.",
+    "Diagnostic renders use 24 samples and show grain.",
+    "The shared body/sleeve mesh changes object-level sleeve selection into named vertex-group selection. Cuffs remain separately editable under the same object names."
+  ],
+  "before_statistics": {
+    "armatures": 0,
+    "materialSlots": 296,
+    "meshes": 277,
+    "objects": 277,
+    "shapeKeyObjects": 0,
+    "triangles": 161820,
+    "uvObjects": 258,
+    "vertices": 81290
+  },
+  "after_statistics": {
+    "armatures": 0,
+    "materialSlots": 290,
+    "meshes": 273,
+    "objects": 273,
+    "shapeKeyObjects": 0,
+    "triangles": 189172,
+    "uvObjects": 256,
+    "vertices": 94966
+  },
+  "before_bounds": {
+    "dimensions": [
+      0.76687968,
+      0.24221379,
+      0.63385606
+    ],
+    "max": [
+      0.38343984,
+      0.11154979,
+      0.45109999
+    ],
+    "min": [
+      -0.38343984,
+      -0.13066399,
+      -0.1827561
+    ]
+  },
+  "after_bounds": {
+    "dimensions": [
+      0.76687968,
+      0.24221379,
+      0.63385606
+    ],
+    "max": [
+      0.38343984,
+      0.11154979,
+      0.45109999
+    ],
+    "min": [
+      -0.38343984,
+      -0.13066399,
+      -0.1827561
+    ]
+  },
+  "same_outer_asset_bounds": true,
+  "integrity_verify": {
+    "ok": true,
+    "scope": "recorded-file-integrity",
+    "head": "2e8ebbe18a9a48ecac8c115bbb735ded",
+    "artifactCount": 10,
+    "referenceResemblance": "not-evaluated",
+    "gameReadiness": "not-evaluated"
+  },
+  "artifacts": {
+    "candidate.blend": {
+      "path": "/tmp/refas-jacket-followup/candidate.blend",
+      "bytes": 5230612,
+      "sha256": "ea207c07cb50bf188d8a603d88b1822f460e7dab3362544cbe8cffdec6cc8a4a"
+    },
+    "candidate.glb": {
+      "path": "/tmp/refas-jacket-followup/candidate.glb",
+      "bytes": 3781828,
+      "sha256": "2eb866ccdd7382a5c380ff00a286bafb32826640780e3abe798a353c3ea340b0"
+    },
+    "correction.py": {
+      "path": "/tmp/refas-jacket-followup/correction.py",
+      "bytes": 8474,
+      "sha256": "0a77ba52d95aab743b1d339251ebd159920fe75862ca24f2df0376ad4ed45c9e"
+    },
+    "baseline.py": {
+      "path": "/tmp/refas-jacket-followup/baseline.py",
+      "bytes": 88,
+      "sha256": "1f9ea210115addfcf6b904be1e7eed0174021d2ffcb77433002b9aed46da5bbe"
+    },
+    "inspect_boundaries.py": {
+      "path": "/tmp/refas-jacket-followup/inspect_boundaries.py",
+      "bytes": 886,
+      "sha256": "860a5559cce9e9122e6475e82eac665184ce31f577e37f357605789d097f2c09"
+    },
+    "protected-checks.json": {
+      "path": "/tmp/refas-jacket-followup/protected-checks.json",
+      "bytes": 58796,
+      "sha256": "a39b2fdcbc0ecde6e51091dbd75b290425c96f27c710d7ef690edda1a5d96459"
+    },
+    "initial-trial-preservation.json": {
+      "path": "/tmp/refas-jacket-followup/initial-trial-preservation.json",
+      "bytes": 447,
+      "sha256": "6af195c8a05e45f8513741b56022f12995cc6679c766d4c51951ccaf4a023e13"
+    },
+    "correction-run.log": {
+      "path": "/tmp/refas-jacket-followup/correction-run.log",
+      "bytes": 13266,
+      "sha256": "2d450dd71473e6534f0b5afae635fd4bf7bcd2cf7571ac0344ad9ab989f6e8d2"
+    },
+    "baseline-run.log": {
+      "path": "/tmp/refas-jacket-followup/baseline-run.log",
+      "bytes": 13344,
+      "sha256": "55d1a47ecf6ba5a19ad5fcfbcddb8a21d189002b08ccb6ecc8e29252c8f9f100"
+    },
+    "verify.log": {
+      "path": "/tmp/refas-jacket-followup/verify.log",
+      "bytes": 203,
+      "sha256": "a36e267eabfe34ab44d9015d365ff210bed543ccccb20438e674fb0a7a854998"
+    }
+  },
+  "commands": [
+    "python3 /workspace/scratch/2eb72029c71e/refas-v2/skills/refas/scripts/produce.py init --root /tmp/refas-jacket-followup/project --name uniform-jacket-armhole-followup --reference /workspace/scratch/2eb72029c71e/refas-v2/examples/uniform-jacket/source/reference.png",
+    "python3 /workspace/scratch/2eb72029c71e/refas-v2/skills/refas/scripts/produce.py run --root /tmp/refas-jacket-followup/project --script /tmp/refas-jacket-followup/correction.py --input-blend /tmp/refas-jacket-evaluation/production/candidate.blend --review-spec /workspace/scratch/2eb72029c71e/refas-v2/examples/uniform-jacket/review.json --intent \"Separate informed follow-up: sew sleeve caps into exact body armhole boundaries and fit shoulder tabs to evaluated cloth surface\" --size 512 --samples 24 --timeout 180",
+    "python3 /workspace/scratch/2eb72029c71e/refas-v2/skills/refas/scripts/produce.py run --root /tmp/refas-jacket-followup/baseline-project --script /tmp/refas-jacket-followup/baseline.py --input-blend /tmp/refas-jacket-evaluation/production/candidate.blend --review-spec /workspace/scratch/2eb72029c71e/refas-v2/examples/uniform-jacket/review.json --intent \"Unchanged starting candidate, diagnostic-only fixed-camera before comparison; outside original trial\" --size 512 --samples 24 --timeout 180",
+    "python3 /workspace/scratch/2eb72029c71e/refas-v2/skills/refas/scripts/produce.py verify --root /tmp/refas-jacket-followup/project"
+  ],
+  "renders": [
+    "/tmp/refas-jacket-followup/renders/after/view-back.png",
+    "/tmp/refas-jacket-followup/renders/after/view-front-three-quarter.png",
+    "/tmp/refas-jacket-followup/renders/after/view-front.png",
+    "/tmp/refas-jacket-followup/renders/after/view-left.png",
+    "/tmp/refas-jacket-followup/renders/after/view-rear-three-quarter.png",
+    "/tmp/refas-jacket-followup/renders/after/view-right.png",
+    "/tmp/refas-jacket-followup/renders/before/view-back.png",
+    "/tmp/refas-jacket-followup/renders/before/view-front-three-quarter.png",
+    "/tmp/refas-jacket-followup/renders/before/view-front.png",
+    "/tmp/refas-jacket-followup/renders/before/view-left.png",
+    "/tmp/refas-jacket-followup/renders/before/view-rear-three-quarter.png",
+    "/tmp/refas-jacket-followup/renders/before/view-right.png"
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "stagedSourceMutation": {
+    "ok": false,
+    "type": "ProductionError",
+    "error": "artifact changed or missing: sources/2295e6d3ca6046bdb3b8e493be1ea8e8/001-b.png",
+    "stateUnchanged": true,
+    "sourceArchiveUnchanged": true,
+    "project": "/workspace/scratch/c52cb753f160/next-workspace-audit/independent-review-kvpth2kq/staged-source-mutation/project"
+  },
+  "concurrentReferenceReplacement": {
+    "ok": false,
+    "type": "ProductionError",
+    "error": "project changed during execution; candidate retained, current revision untouched",
+    "winnerPreserved": true,
+    "stagingCleaned": true,
+    "sequence": 2,
+    "project": "/workspace/scratch/c52cb753f160/next-workspace-audit/independent-review-kvpth2kq/concurrent-reference-replacement/project"
+  },
+  "restoreSourceMutation": {
+    "ok": false,
+    "type": "ProductionError",
+    "error": "artifact changed or missing: sources/001-a.png",
+    "stateUnchanged": true,
+    "currentIntegrity": true,
+    "project": "/workspace/scratch/c52cb753f160/next-workspace-audit/independent-review-kvpth2kq/restore-source-mutation/project"
+  },
+  "postPublicationStatusError": {
+    "ok": false,
+    "type": "ProductionError",
+    "error": "revision manifest changed",
+    "stateChanged": true,
+    "sequenceBefore": 2,
+    "sequenceAfter": 3,
+    "activeB": true,
+    "headUnchanged": true,
+    "project": "/workspace/scratch/c52cb753f160/next-workspace-audit/independent-review-kvpth2kq/post-publication-status-error/project",
+    "classification": "response after committed source replacement can fail on unrelated historical manifest; existing restore/run status behavior has related limitations"
+  }
+}

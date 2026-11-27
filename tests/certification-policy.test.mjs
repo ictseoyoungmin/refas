@@ -10,7 +10,7 @@ import {
   evaluateCertificationPolicy,
   validateCertificationPolicy,
   validateClaimCertificationDecision,
-} from '../skills/refas/scripts/lib/index.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
 
 function checkpointFor(candidateBytes) {
   const artifact = {kind: 'glb', path: 'assets/candidate.glb', sha256: digestBytes(candidateBytes), sizeBytes: candidateBytes.length};

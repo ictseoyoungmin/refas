@@ -24,7 +24,7 @@ def main():
     parser.add_argument("--registration", required=True)
     parser.add_argument("--out", required=True)
     args = parser.parse_args()
-    scripts = Path(__file__).resolve().parents[2] / "skills" / "refas" / "scripts"
+    scripts = Path(__file__).resolve().parents[2] / "legacy" / "v1" / "scripts"
     sys.path.insert(0, str(scripts))
     from compare_registered import warp_source  # pylint: disable=import-outside-toplevel
 

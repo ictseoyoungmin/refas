@@ -1,0 +1,109 @@
+{
+  "package_version": "2.0.0-alpha.1",
+  "frozen_source_commit": "1280b74d7da56ca6541246d4e8ca16c99f4f43e2",
+  "tarball_sha256": "b5108d679f05f85cd38be7bba16a28f5eadebb2511be1387785d2d1cda17512d",
+  "files": [
+    {
+      "path": "LICENSE",
+      "sha256": "84a95a9c82031de4dfee2659dd7ed23d93578b434c59d82083692f3847d67a12",
+      "source_match": true,
+      "bytes": 1071
+    },
+    {
+      "path": "README.md",
+      "sha256": "10a4861c703372288242e57ea6322da549e97df0844d72e58ae2c772c95197e9",
+      "source_match": true,
+      "bytes": 9458
+    },
+    {
+      "path": "bin/refas.mjs",
+      "sha256": "52e1488b64931c328c2f885b50166bb93d2e97680486f5dd81a20b27faa5ea8b",
+      "source_match": true,
+      "bytes": 795
+    },
+    {
+      "path": "package.json",
+      "sha256": "efdde03a950abc4cdf2ec0e650594f8d1622344326211a83be6c709935c6bb91",
+      "source_match": true,
+      "bytes": 6398
+    },
+    {
+      "path": "skills/refas/agents/openai.yaml",
+      "sha256": "144f6abfe3aa659d16df90aa4635cddb78f6e408c41126affab10d72486c825e",
+      "source_match": true,
+      "bytes": 440
+    },
+    {
+      "path": "skills/refas/assets/icon.svg",
+      "sha256": "ee5477b3f387cbf783f09abaa0463a7395ee61d1d3f2e10b33b0e5a3146beb31",
+      "source_match": true,
+      "bytes": 7749
+    },
+    {
+      "path": "skills/refas/references/production-assemblies.md",
+      "sha256": "6205ef372889e13cbdaf60bca0d44ba2057e058fd713f39b2bcf39189e6e48d8",
+      "source_match": true,
+      "bytes": 4290
+    },
+    {
+      "path": "skills/refas/references/production-garments.md",
+      "sha256": "da2232e230b60fcaba90745acd6d715951240a7b9ab418e2466dc7d6e1bbd6a2",
+      "source_match": true,
+      "bytes": 3769
+    },
+    {
+      "path": "skills/refas/references/production-import.md",
+      "sha256": "0f7d21a1dcd171e9026b5dd53a6072324a3d3d4f0cf9ff85452b4794900d198d",
+      "source_match": true,
+      "bytes": 2834
+    },
+    {
+      "path": "skills/refas/references/production-review.md",
+      "sha256": "4ad42fc619213ec6503bd9253c225f10868b7e1cae022422ac9b37ff436779a7",
+      "source_match": true,
+      "bytes": 2929
+    },
+    {
+      "path": "skills/refas/scripts/produce.py",
+      "sha256": "d347c63e6254a592d150687f25bef14a7616dd3941f27acb1d65f2b50ae9582c",
+      "source_match": true,
+      "bytes": 6488
+    },
+    {
+      "path": "skills/refas/scripts/production/__init__.py",
+      "sha256": "acc2a3d888c2540d6a7d1f94eddcb01119c21fdecebce25ac8f9207ff5135cba",
+      "source_match": true,
+      "bytes": 68
+    },
+    {
+      "path": "skills/refas/scripts/production/blender_worker.py",
+      "sha256": "91b34e3cc3542e903846697265cd1a3ab1da8f5a00770f73717a284abd361477",
+      "source_match": true,
+      "bytes": 35332
+    },
+    {
+      "path": "skills/refas/scripts/production/legacy_import.py",
+      "sha256": "897d98263430268c0a1033f5e7d5086225b3bb060da558e9be81e4a1e156fc82",
+      "source_match": true,
+      "bytes": 11866
+    },
+    {
+      "path": "skills/refas/scripts/production/project.py",
+      "sha256": "a978f55449cdeb28f32bcd22abda283ce640acc2bae7803d76b46ff8ad706033",
+      "source_match": true,
+      "bytes": 30616
+    },
+    {
+      "path": "skills/refas/scripts/production/review.py",
+      "sha256": "0d4a3cfea62d7140ad923c18ece4cdd2728e90d2b056a4cad80c4dd42282265a",
+      "source_match": true,
+      "bytes": 3638
+    },
+    {
+      "path": "skills/refas/SKILL.md",
+      "sha256": "2b44cb072067840f4b9272bd6bf19dac2ef3140f490c02414a1cb8b1e69c0455",
+      "source_match": true,
+      "bytes": 11693
+    }
+  ]
+}

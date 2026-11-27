@@ -12,7 +12,7 @@ import {
   parseGlb,
   partsToGlb,
   validateUvMapping,
-} from '../skills/refas/scripts/lib/index.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
 
 const PNG=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAHUlEQVR42mP4r6DwX8Hh/38YzYDM+a+g8J+BoAoA2NAk4WrV3IEAAAAASUVORK5CYII=','base64');
 

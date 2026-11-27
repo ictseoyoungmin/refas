@@ -10,7 +10,7 @@ import {
   partsToGlb,
   validateRealizedContactPlan,
   validateRealizedContactResult,
-} from '../skills/refas/scripts/lib/index.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
 
 const sha = (value) => createHash('sha256').update(Buffer.from(value)).digest('hex');
 const D = (value = 'a') => value.repeat(64);

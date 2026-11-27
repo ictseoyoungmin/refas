@@ -1,0 +1,532 @@
+{
+  "observation": {
+    "inputSha256": "7684714baf19c924d5447053d7611b0f8ac148918460794e33ba76c00d493d96",
+    "inputUnchanged": true,
+    "reviewSha256": "d462bb79713332898be298de9fb5993048a8a23af2080415d4f636d773f235ab",
+    "workerSha256": "a3d0c85e8a733487605c20bac5f41d1b06a15ead07dda4c7bca12caa231f3e1a",
+    "observerSha256": "1cdd8322c8ee4b2226691b9f3f2f7a102b6c1c0eb74955c2cd67794220254f2c",
+    "normalizerSha256": "347a260de65dd7fc8df49b8d59749d1503cfe4669d0d4d7dee718065cb8fc9c3",
+    "observationBlendSha256": "3e995722e318802591f05bf714263518e97ed1d3eab642879ab59eaae1d2df42",
+    "normalizationRecordSha256": "c40332316b5cdad0152dc1ec690749fb73ed8302eac24cd7ff6b889c29fc8ac3",
+    "assetRoot": "AURIX_ROOT",
+    "normalization": "Curves/text realized in a separate observation copy; source unchanged",
+    "elapsedSeconds": 9.237,
+    "returncode": 0,
+    "scope": "Common observation after construction; excluded from trial timing"
+  },
+  "normalization": {
+    "sourceSha256": "7684714baf19c924d5447053d7611b0f8ac148918460794e33ba76c00d493d96",
+    "convertedCurves": [
+      "Upper crest gold seam",
+      "Upper crest gold lower mark",
+      "Upper outer cable -1",
+      "Upper inner gold cable -1",
+      "Upper cheek trim -1",
+      "Upper outer cable 1",
+      "Upper inner gold cable 1",
+      "Upper cheek trim 1",
+      "Elbow bridge gold left",
+      "Elbow bridge gold right",
+      "Forearm outer conduit -1",
+      "Forearm gold edge -1",
+      "Forearm outer conduit 1",
+      "Forearm gold edge 1",
+      "Service cover gold border",
+      "Hand tendon gold -1",
+      "Hand tendon gold 1",
+      "Palm pad seam"
+    ],
+    "convertedText": [
+      "AURIX emblem",
+      "AURIX shoulder lettering",
+      "Shoulder serial",
+      "Service serial"
+    ],
+    "sourceObjectCount": 316,
+    "selectedObjectCount": 311,
+    "assetRoot": "AURIX_ROOT",
+    "excludedObjects": [
+      {
+        "name": "STUDIO_GROUND",
+        "type": "MESH"
+      },
+      {
+        "name": "KEY_SOFTBOX",
+        "type": "LIGHT"
+      },
+      {
+        "name": "FILL_SOFTBOX",
+        "type": "LIGHT"
+      },
+      {
+        "name": "RIM_SOFTBOX",
+        "type": "LIGHT"
+      },
+      {
+        "name": "FIXED_REVIEW_CAMERA",
+        "type": "CAMERA"
+      }
+    ],
+    "method": "Blender object.convert MESH on a separate copy, no source resave",
+    "observationObjectCount": 311,
+    "sourceUnchanged": true
+  },
+  "render": {
+    "blenderVersion": "4.3.2",
+    "observations": [
+      {
+        "camera": {
+          "matrixWorld": [
+            [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -1.6e-07,
+              -1.0,
+              -2.0
+            ],
+            [
+              0.0,
+              1.0,
+              -1.6e-07,
+              0.38
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "orthoScale": 0.89999998,
+          "position": [
+            0.0,
+            -2.0,
+            0.38
+          ],
+          "projection": "orthographic",
+          "target": [
+            0.0,
+            0.0,
+            0.38
+          ]
+        },
+        "framing": "fixed-review-spec",
+        "lighting": {
+          "center": [
+            0.0,
+            0.0,
+            0.38
+          ],
+          "radius": 0.48,
+          "rig": "three-area-lights/v1"
+        },
+        "path": "view-front.png",
+        "referenceRegion": {
+          "regionPixels": [
+            125,
+            116,
+            266,
+            692
+          ],
+          "sourceSha256": "3c7856dd632f8a1cde8036078573f569db55b6af97fae853237d8a9356f3c872"
+        },
+        "registration": "unregistered",
+        "renderer": {
+          "denoising": false,
+          "device": "CPU",
+          "engine": "CYCLES",
+          "samples": 24,
+          "size": [
+            512,
+            512
+          ],
+          "transparent": true,
+          "viewTransform": "AgX",
+          "worldColor": [
+            0.80000001,
+            0.82999998,
+            0.88
+          ],
+          "worldStrength": 0.45
+        },
+        "sha256": "3008740faf4c08e13f530a3f9bab11558e2f3c3234d383ba07f30adfc1be4508",
+        "sourceSceneFingerprint": "a1350e913b342f5e510000811f88428389088238de6c2db89882748c2f0b50c9",
+        "view": "front"
+      },
+      {
+        "camera": {
+          "matrixWorld": [
+            [
+              -4e-08,
+              4e-08,
+              1.0,
+              2.0
+            ],
+            [
+              1.0,
+              0.0,
+              4e-08,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              -4e-08,
+              0.38
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "orthoScale": 0.89999998,
+          "position": [
+            2.0,
+            -0.0,
+            0.38
+          ],
+          "projection": "orthographic",
+          "target": [
+            0.0,
+            0.0,
+            0.38
+          ]
+        },
+        "framing": "fixed-review-spec",
+        "lighting": {
+          "center": [
+            0.0,
+            0.0,
+            0.38
+          ],
+          "radius": 0.48,
+          "rig": "three-area-lights/v1"
+        },
+        "path": "view-left.png",
+        "referenceRegion": {
+          "regionPixels": [
+            278,
+            116,
+            421,
+            692
+          ],
+          "sourceSha256": "3c7856dd632f8a1cde8036078573f569db55b6af97fae853237d8a9356f3c872"
+        },
+        "registration": "unregistered",
+        "renderer": {
+          "denoising": false,
+          "device": "CPU",
+          "engine": "CYCLES",
+          "samples": 24,
+          "size": [
+            512,
+            512
+          ],
+          "transparent": true,
+          "viewTransform": "AgX",
+          "worldColor": [
+            0.80000001,
+            0.82999998,
+            0.88
+          ],
+          "worldStrength": 0.45
+        },
+        "sha256": "936efa581b42c75b500f1c48a4df3575e5a3256a15fe27d7d8325c915181d833",
+        "sourceSceneFingerprint": "a1350e913b342f5e510000811f88428389088238de6c2db89882748c2f0b50c9",
+        "view": "left"
+      },
+      {
+        "camera": {
+          "matrixWorld": [
+            [
+              -1.0,
+              -1.5e-07,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              8e-08,
+              1.0,
+              2.0
+            ],
+            [
+              -1.5e-07,
+              1.0,
+              -8e-08,
+              0.38
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "orthoScale": 0.89999998,
+          "position": [
+            0.0,
+            2.0,
+            0.38
+          ],
+          "projection": "orthographic",
+          "target": [
+            0.0,
+            0.0,
+            0.38
+          ]
+        },
+        "framing": "fixed-review-spec",
+        "lighting": {
+          "center": [
+            0.0,
+            0.0,
+            0.38
+          ],
+          "radius": 0.48,
+          "rig": "three-area-lights/v1"
+        },
+        "path": "view-back.png",
+        "referenceRegion": {
+          "regionPixels": [
+            441,
+            116,
+            588,
+            692
+          ],
+          "sourceSha256": "3c7856dd632f8a1cde8036078573f569db55b6af97fae853237d8a9356f3c872"
+        },
+        "registration": "unregistered",
+        "renderer": {
+          "denoising": false,
+          "device": "CPU",
+          "engine": "CYCLES",
+          "samples": 24,
+          "size": [
+            512,
+            512
+          ],
+          "transparent": true,
+          "viewTransform": "AgX",
+          "worldColor": [
+            0.80000001,
+            0.82999998,
+            0.88
+          ],
+          "worldStrength": 0.45
+        },
+        "sha256": "eb28c55e8ea15f01dce9450c133f660f9036a73be00c19f64cdffc9fc1f5b715",
+        "sourceSceneFingerprint": "a1350e913b342f5e510000811f88428389088238de6c2db89882748c2f0b50c9",
+        "view": "back"
+      },
+      {
+        "camera": {
+          "matrixWorld": [
+            [
+              0.70710683,
+              -7e-08,
+              0.70710677,
+              1.41421354
+            ],
+            [
+              0.70710677,
+              -1.4e-07,
+              -0.70710683,
+              -1.41421354
+            ],
+            [
+              1.5e-07,
+              1.0,
+              -4e-08,
+              0.38
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "orthoScale": 0.89999998,
+          "position": [
+            1.41421354,
+            -1.41421354,
+            0.38
+          ],
+          "projection": "orthographic",
+          "target": [
+            0.0,
+            0.0,
+            0.38
+          ]
+        },
+        "framing": "fixed-review-spec",
+        "lighting": {
+          "center": [
+            0.0,
+            0.0,
+            0.38
+          ],
+          "radius": 0.48,
+          "rig": "three-area-lights/v1"
+        },
+        "path": "view-front-three-quarter.png",
+        "referenceRegion": {
+          "regionPixels": [
+            602,
+            116,
+            804,
+            692
+          ],
+          "sourceSha256": "3c7856dd632f8a1cde8036078573f569db55b6af97fae853237d8a9356f3c872"
+        },
+        "registration": "unregistered",
+        "renderer": {
+          "denoising": false,
+          "device": "CPU",
+          "engine": "CYCLES",
+          "samples": 24,
+          "size": [
+            512,
+            512
+          ],
+          "transparent": true,
+          "viewTransform": "AgX",
+          "worldColor": [
+            0.80000001,
+            0.82999998,
+            0.88
+          ],
+          "worldStrength": 0.45
+        },
+        "sha256": "86ce5274212ab000954b39656131f55ba5ca2598530acd25ae502422a288dcba",
+        "sourceSceneFingerprint": "a1350e913b342f5e510000811f88428389088238de6c2db89882748c2f0b50c9",
+        "view": "front-three-quarter"
+      },
+      {
+        "camera": {
+          "matrixWorld": [
+            [
+              -0.70710695,
+              -6e-08,
+              -0.70710659,
+              -1.41421354
+            ],
+            [
+              -0.70710659,
+              0.0,
+              0.70710695,
+              1.41421354
+            ],
+            [
+              -4e-08,
+              1.0,
+              -4e-08,
+              0.38
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "orthoScale": 0.89999998,
+          "position": [
+            -1.41421354,
+            1.41421354,
+            0.38
+          ],
+          "projection": "orthographic",
+          "target": [
+            0.0,
+            0.0,
+            0.38
+          ]
+        },
+        "framing": "fixed-review-spec",
+        "lighting": {
+          "center": [
+            0.0,
+            0.0,
+            0.38
+          ],
+          "radius": 0.48,
+          "rig": "three-area-lights/v1"
+        },
+        "path": "view-rear-three-quarter.png",
+        "referenceRegion": {
+          "regionPixels": [
+            811,
+            116,
+            1002,
+            692
+          ],
+          "sourceSha256": "3c7856dd632f8a1cde8036078573f569db55b6af97fae853237d8a9356f3c872"
+        },
+        "registration": "unregistered",
+        "renderer": {
+          "denoising": false,
+          "device": "CPU",
+          "engine": "CYCLES",
+          "samples": 24,
+          "size": [
+            512,
+            512
+          ],
+          "transparent": true,
+          "viewTransform": "AgX",
+          "worldColor": [
+            0.80000001,
+            0.82999998,
+            0.88
+          ],
+          "worldStrength": 0.45
+        },
+        "sha256": "6f1ea9d2196604d72e095511f5bbf8dcd4d851c946367715c4b0642958219387",
+        "sourceSceneFingerprint": "a1350e913b342f5e510000811f88428389088238de6c2db89882748c2f0b50c9",
+        "view": "rear-three-quarter"
+      }
+    ],
+    "ok": true,
+    "operation": "inspect",
+    "outputs": {
+      "scene": "scene.json"
+    },
+    "schema": "refas.production.result/v2",
+    "verification": {
+      "native": {
+        "reopened": true,
+        "scope": "current-frame inventory",
+        "statistics": {
+          "armatures": 0,
+          "materialSlots": 291,
+          "meshes": 291,
+          "objects": 311,
+          "shapeKeyObjects": 0,
+          "triangles": 120964,
+          "uvObjects": 256,
+          "vertices": 62000
+        },
+        "status": "passed"
+      }
+    },
+    "warnings": [
+      "Diagnostic views are unregistered; they do not establish reference likeness.",
+      "GLB reimport checks geometry counts, bounds and basic feature presence, not visual equivalence.",
+      "Fingerprints cover the recorded state at the current frame, not all animation or simulation states.",
+      "Node-group internals and drivers are not exhaustively represented by the state fingerprints.",
+      "Static mesh modifiers are evaluated for GLB export; unapplied non-armature modifiers on skinned or shape-key meshes are unsupported.",
+      "Hidden or excluded meshes are rejected by this alpha so GLB export and diagnostic renders cannot silently use different asset scopes.",
+      "Object instances must be realized into explicit scene objects; curves and other non-mesh geometry must be converted before production inspection or export.",
+      "Procedural Blender materials may need baking for faithful GLB appearance."
+    ]
+  }
+}

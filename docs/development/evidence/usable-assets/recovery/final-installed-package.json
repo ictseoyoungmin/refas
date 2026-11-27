@@ -1,0 +1,126 @@
+{
+  "schema": "refas.final-installed-package/v1",
+  "sourceCommit": "1435ce1a2c90f32c5315fdcbd9eafa1d7966b900",
+  "archive": "refas-2.0.0-alpha.1.tgz",
+  "archiveSha256": "23cc0a26797b13472877fd571675a367acd230435b28db3386bed3f4461325b9",
+  "packageRoot": "/workspace/scratch/61afcdd4e3c6/work/final-installed-package/extracted/package",
+  "files": [
+    {
+      "path": "LICENSE",
+      "bytes": 1071,
+      "sha256": "84a95a9c82031de4dfee2659dd7ed23d93578b434c59d82083692f3847d67a12",
+      "matchesRepository": true
+    },
+    {
+      "path": "README.md",
+      "bytes": 10072,
+      "sha256": "13911d12559eb0f624be46ba86d2eb076842eb9d399e38b4cb6fe4c119619176",
+      "matchesRepository": true
+    },
+    {
+      "path": "bin/refas.mjs",
+      "bytes": 795,
+      "sha256": "52e1488b64931c328c2f885b50166bb93d2e97680486f5dd81a20b27faa5ea8b",
+      "matchesRepository": true
+    },
+    {
+      "path": "package.json",
+      "bytes": 6398,
+      "sha256": "efdde03a950abc4cdf2ec0e650594f8d1622344326211a83be6c709935c6bb91",
+      "matchesRepository": true
+    },
+    {
+      "path": "skills/refas/SKILL.md",
+      "bytes": 13073,
+      "sha256": "c1124ab7299945f92144a8743e3b8077205b49db8be0be86a7f028536dd3dfb0",
+      "matchesRepository": true
+    },
+    {
+      "path": "skills/refas/agents/openai.yaml",
+      "bytes": 440,
+      "sha256": "144f6abfe3aa659d16df90aa4635cddb78f6e408c41126affab10d72486c825e",
+      "matchesRepository": true
+    },
+    {
+      "path": "skills/refas/assets/icon.svg",
+      "bytes": 7749,
+      "sha256": "ee5477b3f387cbf783f09abaa0463a7395ee61d1d3f2e10b33b0e5a3146beb31",
+      "matchesRepository": true
+    },
+    {
+      "path": "skills/refas/references/production-assemblies.md",
+      "bytes": 5795,
+      "sha256": "a0235400ad0bbe38d825d8c7a995f058054b3cea19c44a1ddacd19d12c34bdca",
+      "matchesRepository": true
+    },
+    {
+      "path": "skills/refas/references/production-garments.md",
+      "bytes": 6239,
+      "sha256": "174759739624b88da02dbe07d13ea03c4c52c4dff01cd8848e2507096c80a59c",
+      "matchesRepository": true
+    },
+    {
+      "path": "skills/refas/references/production-import.md",
+      "bytes": 2834,
+      "sha256": "0f7d21a1dcd171e9026b5dd53a6072324a3d3d4f0cf9ff85452b4794900d198d",
+      "matchesRepository": true
+    },
+    {
+      "path": "skills/refas/references/production-review.md",
+      "bytes": 4481,
+      "sha256": "d8db6e9a958f6631835897e073f11aae575efc6a3bf099f324972d7de7ac2913",
+      "matchesRepository": true
+    },
+    {
+      "path": "skills/refas/references/production-topology.md",
+      "bytes": 5780,
+      "sha256": "0592373c12e45a3e32fd92a229801dd626220e65df96f1ef315fcb059ab1b4d8",
+      "matchesRepository": true
+    },
+    {
+      "path": "skills/refas/scripts/produce.py",
+      "bytes": 6488,
+      "sha256": "d347c63e6254a592d150687f25bef14a7616dd3941f27acb1d65f2b50ae9582c",
+      "matchesRepository": true
+    },
+    {
+      "path": "skills/refas/scripts/production/__init__.py",
+      "bytes": 68,
+      "sha256": "acc2a3d888c2540d6a7d1f94eddcb01119c21fdecebce25ac8f9207ff5135cba",
+      "matchesRepository": true
+    },
+    {
+      "path": "skills/refas/scripts/production/blender_worker.py",
+      "bytes": 37955,
+      "sha256": "28e12da88efddd995a4ed7e8127763941626c4467ce4f8c8182e26c8250a80cc",
+      "matchesRepository": true
+    },
+    {
+      "path": "skills/refas/scripts/production/legacy_import.py",
+      "bytes": 11866,
+      "sha256": "897d98263430268c0a1033f5e7d5086225b3bb060da558e9be81e4a1e156fc82",
+      "matchesRepository": true
+    },
+    {
+      "path": "skills/refas/scripts/production/mesh_audit.py",
+      "bytes": 26325,
+      "sha256": "5a095e8aef190a731f9ae785d0dbd25ac7604e73aef92df192922c75013c3257",
+      "matchesRepository": true
+    },
+    {
+      "path": "skills/refas/scripts/production/project.py",
+      "bytes": 30616,
+      "sha256": "a978f55449cdeb28f32bcd22abda283ce640acc2bae7803d76b46ff8ad706033",
+      "matchesRepository": true
+    },
+    {
+      "path": "skills/refas/scripts/production/review.py",
+      "bytes": 3638,
+      "sha256": "0d4a3cfea62d7140ad923c18ece4cdd2728e90d2b056a4cad80c4dd42282265a",
+      "matchesRepository": true
+    }
+  ],
+  "fileCount": 19,
+  "allMatch": true,
+  "scope": "Extracted actual npm package; archive creation does not publish a registry package. Final model edit/restore will be separate evidence."
+}

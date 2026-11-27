@@ -1,0 +1,23 @@
+{
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-B",
+    "/workspace/scratch/61afcdd4e3c6/refas/examples/engine-playback/run.py",
+    "--asset",
+    "/workspace/scratch/61afcdd4e3c6/work/garment/pipeline-probe/.refas2/runs/56cf929963eb4dcc8d9d0cdc92cc5104/artifacts/asset.glb",
+    "--inspection",
+    "/workspace/scratch/61afcdd4e3c6/work/garment/pipeline-probe/qualified-native-consumer-inspection.json",
+    "--clip",
+    "Jacket_Wear_Reach_Return",
+    "--out",
+    "/workspace/scratch/61afcdd4e3c6/work/garment/review-consumer-qualified-cache",
+    "--expected-triangles",
+    "838379",
+    "--required-skinned-meshes",
+    "100"
+  ],
+  "startUtc": "2026-11-22T20:02:59.792996+00:00",
+  "endUtc": "2026-11-22T20:03:24.186011+00:00",
+  "elapsedSeconds": 24.392342801000268,
+  "returncode": 1
+}

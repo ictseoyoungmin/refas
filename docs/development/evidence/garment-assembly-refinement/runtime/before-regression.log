@@ -1,0 +1,79 @@
+test_geometry_node_instances_are_rejected_until_realized (test_production_blender.ProductionBlenderTests.test_geometry_node_instances_are_rejected_until_realized) ... 
+  test_geometry_node_instances_are_rejected_until_realized (test_production_blender.ProductionBlenderTests.test_geometry_node_instances_are_rejected_until_realized) (operation='edit') ... FAIL
+  test_geometry_node_instances_are_rejected_until_realized (test_production_blender.ProductionBlenderTests.test_geometry_node_instances_are_rejected_until_realized) (operation='inspect') ... FAIL
+test_render_only_and_differently_subdivided_geometry_are_rejected (test_production_blender.ProductionBlenderTests.test_render_only_and_differently_subdivided_geometry_are_rejected) ... 
+  test_render_only_and_differently_subdivided_geometry_are_rejected (test_production_blender.ProductionBlenderTests.test_render_only_and_differently_subdivided_geometry_are_rejected) (case='render-only-bevel', operation='edit') ... FAIL
+  test_render_only_and_differently_subdivided_geometry_are_rejected (test_production_blender.ProductionBlenderTests.test_render_only_and_differently_subdivided_geometry_are_rejected) (case='render-only-bevel', operation='inspect') ... FAIL
+  test_render_only_and_differently_subdivided_geometry_are_rejected (test_production_blender.ProductionBlenderTests.test_render_only_and_differently_subdivided_geometry_are_rejected) (case='viewport-only-bevel', operation='edit') ... FAIL
+  test_render_only_and_differently_subdivided_geometry_are_rejected (test_production_blender.ProductionBlenderTests.test_render_only_and_differently_subdivided_geometry_are_rejected) (case='viewport-only-bevel', operation='inspect') ... FAIL
+  test_render_only_and_differently_subdivided_geometry_are_rejected (test_production_blender.ProductionBlenderTests.test_render_only_and_differently_subdivided_geometry_are_rejected) (case='different-subdivision', operation='edit') ... FAIL
+  test_render_only_and_differently_subdivided_geometry_are_rejected (test_production_blender.ProductionBlenderTests.test_render_only_and_differently_subdivided_geometry_are_rejected) (case='different-subdivision', operation='inspect') ... FAIL
+
+======================================================================
+FAIL: test_geometry_node_instances_are_rejected_until_realized (test_production_blender.ProductionBlenderTests.test_geometry_node_instances_are_rejected_until_realized) (operation='edit')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/c52cb753f160/refas/tests/test_production_blender.py", line 224, in test_geometry_node_instances_are_rejected_until_realized
+    self.assertNotEqual(result.returncode, 0)
+AssertionError: 0 == 0
+
+======================================================================
+FAIL: test_geometry_node_instances_are_rejected_until_realized (test_production_blender.ProductionBlenderTests.test_geometry_node_instances_are_rejected_until_realized) (operation='inspect')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/c52cb753f160/refas/tests/test_production_blender.py", line 224, in test_geometry_node_instances_are_rejected_until_realized
+    self.assertNotEqual(result.returncode, 0)
+AssertionError: 0 == 0
+
+======================================================================
+FAIL: test_render_only_and_differently_subdivided_geometry_are_rejected (test_production_blender.ProductionBlenderTests.test_render_only_and_differently_subdivided_geometry_are_rejected) (case='render-only-bevel', operation='edit')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/c52cb753f160/refas/tests/test_production_blender.py", line 268, in test_render_only_and_differently_subdivided_geometry_are_rejected
+    self.assertNotEqual(result.returncode, 0)
+AssertionError: 0 == 0
+
+======================================================================
+FAIL: test_render_only_and_differently_subdivided_geometry_are_rejected (test_production_blender.ProductionBlenderTests.test_render_only_and_differently_subdivided_geometry_are_rejected) (case='render-only-bevel', operation='inspect')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/c52cb753f160/refas/tests/test_production_blender.py", line 268, in test_render_only_and_differently_subdivided_geometry_are_rejected
+    self.assertNotEqual(result.returncode, 0)
+AssertionError: 0 == 0
+
+======================================================================
+FAIL: test_render_only_and_differently_subdivided_geometry_are_rejected (test_production_blender.ProductionBlenderTests.test_render_only_and_differently_subdivided_geometry_are_rejected) (case='viewport-only-bevel', operation='edit')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/c52cb753f160/refas/tests/test_production_blender.py", line 268, in test_render_only_and_differently_subdivided_geometry_are_rejected
+    self.assertNotEqual(result.returncode, 0)
+AssertionError: 0 == 0
+
+======================================================================
+FAIL: test_render_only_and_differently_subdivided_geometry_are_rejected (test_production_blender.ProductionBlenderTests.test_render_only_and_differently_subdivided_geometry_are_rejected) (case='viewport-only-bevel', operation='inspect')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/c52cb753f160/refas/tests/test_production_blender.py", line 268, in test_render_only_and_differently_subdivided_geometry_are_rejected
+    self.assertNotEqual(result.returncode, 0)
+AssertionError: 0 == 0
+
+======================================================================
+FAIL: test_render_only_and_differently_subdivided_geometry_are_rejected (test_production_blender.ProductionBlenderTests.test_render_only_and_differently_subdivided_geometry_are_rejected) (case='different-subdivision', operation='edit')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/c52cb753f160/refas/tests/test_production_blender.py", line 268, in test_render_only_and_differently_subdivided_geometry_are_rejected
+    self.assertNotEqual(result.returncode, 0)
+AssertionError: 0 == 0
+
+======================================================================
+FAIL: test_render_only_and_differently_subdivided_geometry_are_rejected (test_production_blender.ProductionBlenderTests.test_render_only_and_differently_subdivided_geometry_are_rejected) (case='different-subdivision', operation='inspect')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/c52cb753f160/refas/tests/test_production_blender.py", line 268, in test_render_only_and_differently_subdivided_geometry_are_rejected
+    self.assertNotEqual(result.returncode, 0)
+AssertionError: 0 == 0
+
+----------------------------------------------------------------------
+Ran 2 tests in 27.653s
+
+FAILED (failures=8)

@@ -4,12 +4,12 @@ import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 
-import {contentReference, createSegmentPrism, partsToGlb, sha256File, validateParameterFitReport} from '../../skills/refas/scripts/lib/index.mjs';
+import {contentReference, createSegmentPrism, partsToGlb, sha256File, validateParameterFitReport} from '../../legacy/v1/scripts/lib/index.mjs';
 
 const EXAMPLE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(EXAMPLE, '../..');
 const OUTPUT = path.join(EXAMPLE, 'output');
-const CLI = path.join(ROOT, 'skills/refas/scripts/refas.mjs');
+const CLI = path.join(ROOT, 'legacy/v1/scripts/refas.mjs');
 const PYTHON = process.env.CODEX_PRIMARY_RUNTIME_PYTHON || 'python3';
 
 const writeJson = async (target, value) => { await fs.mkdir(path.dirname(target), {recursive: true}); await fs.writeFile(target, `${JSON.stringify(value, null, 2)}\n`); return target; };

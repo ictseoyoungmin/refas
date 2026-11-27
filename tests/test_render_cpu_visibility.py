@@ -12,7 +12,7 @@ from pathlib import Path
 
 import numpy as np
 
-sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"skills/refas/scripts"))
+sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"legacy/v1/scripts"))
 from render_glb import Primitive
 from render_cpu_opt import njit
 from render_cpu_tiled import render_hero_tiled, numba_config
@@ -155,7 +155,7 @@ class VisibilityBundleTests(unittest.TestCase):
                 ("normal",),max_working_mib=128)
 
     def test_real_cli_two_runs_persist_identical_pngs_and_sha(self):
-        source=Path(__file__).resolve().parents[1]/"skills/refas/scripts/render_cpu_visibility.py"
+        source=Path(__file__).resolve().parents[1]/"legacy/v1/scripts/render_cpu_visibility.py"
         with tempfile.TemporaryDirectory(prefix="refas-vis-cli-") as folder:
             root=Path(folder)
             glb=root/"asset.glb"

@@ -5,9 +5,9 @@ import os from 'node:os';
 import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
-import {createSegmentPrism,partsToGlb} from '../skills/refas/scripts/lib/index.mjs';
+import {createSegmentPrism,partsToGlb} from '../legacy/v1/scripts/lib/index.mjs';
 
-const CLI=path.resolve('skills/refas/scripts/refas.mjs');
+const CLI=path.resolve('legacy/v1/scripts/refas.mjs');
 const PY=process.env.CODEX_PRIMARY_RUNTIME_PYTHON||'python3';
 const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
 const call=(args)=>spawnSync(process.execPath,[CLI,...args],{encoding:'utf8',timeout:45000});

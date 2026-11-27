@@ -1,0 +1,2628 @@
+{
+  "passed": true,
+  "capturedLineageSha256": "dfa99d3c484eabd818b46d44aa29f65e5a1d2d4dac8512776caee60ae4241f36",
+  "sourceParts": [
+    {
+      "sourcePart": "Palm_graphite_body",
+      "deliveryObject": "Palm_graphite_body",
+      "triangles": 284,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Shoulder_L_load_ring",
+      "deliveryObject": "Delivery_AURIX_ROOT_Graphite_structural_composite",
+      "triangles": 1290,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Shoulder_L_locking_dog_00",
+      "deliveryObject": "Delivery_AURIX_ROOT_Graphite_structural_composite",
+      "triangles": 158,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Shoulder_L_locking_dog_01",
+      "deliveryObject": "Delivery_AURIX_ROOT_Graphite_structural_composite",
+      "triangles": 158,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Shoulder_L_locking_dog_02",
+      "deliveryObject": "Delivery_AURIX_ROOT_Graphite_structural_composite",
+      "triangles": 158,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Shoulder_L_locking_dog_03",
+      "deliveryObject": "Delivery_AURIX_ROOT_Graphite_structural_composite",
+      "triangles": 158,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Shoulder_L_locking_dog_04",
+      "deliveryObject": "Delivery_AURIX_ROOT_Graphite_structural_composite",
+      "triangles": 158,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Shoulder_L_locking_dog_05",
+      "deliveryObject": "Delivery_AURIX_ROOT_Graphite_structural_composite",
+      "triangles": 158,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Shoulder_L_titanium_flange",
+      "deliveryObject": "Delivery_AURIX_ROOT_Graphite_structural_composite",
+      "triangles": 920,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Shoulder_R_load_ring",
+      "deliveryObject": "Delivery_AURIX_ROOT_Graphite_structural_composite",
+      "triangles": 1290,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Shoulder_R_locking_dog_00",
+      "deliveryObject": "Delivery_AURIX_ROOT_Graphite_structural_composite",
+      "triangles": 158,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Shoulder_R_locking_dog_01",
+      "deliveryObject": "Delivery_AURIX_ROOT_Graphite_structural_composite",
+      "triangles": 158,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Shoulder_R_locking_dog_02",
+      "deliveryObject": "Delivery_AURIX_ROOT_Graphite_structural_composite",
+      "triangles": 158,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Shoulder_R_locking_dog_03",
+      "deliveryObject": "Delivery_AURIX_ROOT_Graphite_structural_composite",
+      "triangles": 158,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Shoulder_R_locking_dog_04",
+      "deliveryObject": "Delivery_AURIX_ROOT_Graphite_structural_composite",
+      "triangles": 158,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Shoulder_R_locking_dog_05",
+      "deliveryObject": "Delivery_AURIX_ROOT_Graphite_structural_composite",
+      "triangles": 158,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Shoulder_R_titanium_flange",
+      "deliveryObject": "Delivery_AURIX_ROOT_Graphite_structural_composite",
+      "triangles": 920,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Shoulder_L_gold_neural_bus",
+      "deliveryObject": "Delivery_AURIX_ROOT_Anodized_champagne_gold",
+      "triangles": 736,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Shoulder_R_gold_neural_bus",
+      "deliveryObject": "Delivery_AURIX_ROOT_Anodized_champagne_gold",
+      "triangles": 736,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Shoulder_L_inner_dark_bore",
+      "deliveryObject": "Delivery_AURIX_ROOT_Recess_interiors",
+      "triangles": 736,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Shoulder_L_lock_00_hex_socket",
+      "deliveryObject": "Delivery_AURIX_ROOT_Recess_interiors",
+      "triangles": 68,
+      "maxVertexErrorM": 7.450580596923828e-09
+    },
+    {
+      "sourcePart": "Shoulder_L_lock_01_hex_socket",
+      "deliveryObject": "Delivery_AURIX_ROOT_Recess_interiors",
+      "triangles": 68,
+      "maxVertexErrorM": 7.450580596923828e-09
+    },
+    {
+      "sourcePart": "Shoulder_L_lock_02_hex_socket",
+      "deliveryObject": "Delivery_AURIX_ROOT_Recess_interiors",
+      "triangles": 68,
+      "maxVertexErrorM": 7.450580596923828e-09
+    },
+    {
+      "sourcePart": "Shoulder_L_lock_03_hex_socket",
+      "deliveryObject": "Delivery_AURIX_ROOT_Recess_interiors",
+      "triangles": 68,
+      "maxVertexErrorM": 7.450580596923828e-09
+    },
+    {
+      "sourcePart": "Shoulder_L_lock_04_hex_socket",
+      "deliveryObject": "Delivery_AURIX_ROOT_Recess_interiors",
+      "triangles": 68,
+      "maxVertexErrorM": 7.450580596923828e-09
+    },
+    {
+      "sourcePart": "Shoulder_L_lock_05_hex_socket",
+      "deliveryObject": "Delivery_AURIX_ROOT_Recess_interiors",
+      "triangles": 68,
+      "maxVertexErrorM": 7.450580596923828e-09
+    },
+    {
+      "sourcePart": "Shoulder_L_recess_back",
+      "deliveryObject": "Delivery_AURIX_ROOT_Recess_interiors",
+      "triangles": 182,
+      "maxVertexErrorM": 3.725290298461914e-09
+    },
+    {
+      "sourcePart": "Shoulder_R_inner_dark_bore",
+      "deliveryObject": "Delivery_AURIX_ROOT_Recess_interiors",
+      "triangles": 736,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Shoulder_R_lock_00_hex_socket",
+      "deliveryObject": "Delivery_AURIX_ROOT_Recess_interiors",
+      "triangles": 68,
+      "maxVertexErrorM": 7.450580596923828e-09
+    },
+    {
+      "sourcePart": "Shoulder_R_lock_01_hex_socket",
+      "deliveryObject": "Delivery_AURIX_ROOT_Recess_interiors",
+      "triangles": 68,
+      "maxVertexErrorM": 7.450580596923828e-09
+    },
+    {
+      "sourcePart": "Shoulder_R_lock_02_hex_socket",
+      "deliveryObject": "Delivery_AURIX_ROOT_Recess_interiors",
+      "triangles": 68,
+      "maxVertexErrorM": 7.450580596923828e-09
+    },
+    {
+      "sourcePart": "Shoulder_R_lock_03_hex_socket",
+      "deliveryObject": "Delivery_AURIX_ROOT_Recess_interiors",
+      "triangles": 68,
+      "maxVertexErrorM": 7.450580596923828e-09
+    },
+    {
+      "sourcePart": "Shoulder_R_lock_04_hex_socket",
+      "deliveryObject": "Delivery_AURIX_ROOT_Recess_interiors",
+      "triangles": 68,
+      "maxVertexErrorM": 7.450580596923828e-09
+    },
+    {
+      "sourcePart": "Shoulder_R_lock_05_hex_socket",
+      "deliveryObject": "Delivery_AURIX_ROOT_Recess_interiors",
+      "triangles": 68,
+      "maxVertexErrorM": 7.450580596923828e-09
+    },
+    {
+      "sourcePart": "Shoulder_R_recess_back",
+      "deliveryObject": "Delivery_AURIX_ROOT_Recess_interiors",
+      "triangles": 182,
+      "maxVertexErrorM": 3.725290298461914e-09
+    },
+    {
+      "sourcePart": "Shoulder_L_lock_00",
+      "deliveryObject": "Delivery_AURIX_ROOT_Piston_chrome",
+      "triangles": 124,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Shoulder_L_lock_01",
+      "deliveryObject": "Delivery_AURIX_ROOT_Piston_chrome",
+      "triangles": 124,
+      "maxVertexErrorM": 2.3283064365386963e-09
+    },
+    {
+      "sourcePart": "Shoulder_L_lock_02",
+      "deliveryObject": "Delivery_AURIX_ROOT_Piston_chrome",
+      "triangles": 124,
+      "maxVertexErrorM": 7.450580596923828e-09
+    },
+    {
+      "sourcePart": "Shoulder_L_lock_03",
+      "deliveryObject": "Delivery_AURIX_ROOT_Piston_chrome",
+      "triangles": 124,
+      "maxVertexErrorM": 3.725290298461914e-09
+    },
+    {
+      "sourcePart": "Shoulder_L_lock_04",
+      "deliveryObject": "Delivery_AURIX_ROOT_Piston_chrome",
+      "triangles": 124,
+      "maxVertexErrorM": 2.3283064365386963e-09
+    },
+    {
+      "sourcePart": "Shoulder_L_lock_05",
+      "deliveryObject": "Delivery_AURIX_ROOT_Piston_chrome",
+      "triangles": 124,
+      "maxVertexErrorM": 3.725290298461914e-09
+    },
+    {
+      "sourcePart": "Shoulder_R_lock_00",
+      "deliveryObject": "Delivery_AURIX_ROOT_Piston_chrome",
+      "triangles": 124,
+      "maxVertexErrorM": 1.4901161193847656e-08
+    },
+    {
+      "sourcePart": "Shoulder_R_lock_01",
+      "deliveryObject": "Delivery_AURIX_ROOT_Piston_chrome",
+      "triangles": 124,
+      "maxVertexErrorM": 1.5081964122032332e-08
+    },
+    {
+      "sourcePart": "Shoulder_R_lock_02",
+      "deliveryObject": "Delivery_AURIX_ROOT_Piston_chrome",
+      "triangles": 124,
+      "maxVertexErrorM": 1.666000493116826e-08
+    },
+    {
+      "sourcePart": "Shoulder_R_lock_03",
+      "deliveryObject": "Delivery_AURIX_ROOT_Piston_chrome",
+      "triangles": 124,
+      "maxVertexErrorM": 1.5359765015432458e-08
+    },
+    {
+      "sourcePart": "Shoulder_R_lock_04",
+      "deliveryObject": "Delivery_AURIX_ROOT_Piston_chrome",
+      "triangles": 124,
+      "maxVertexErrorM": 1.5081964122032332e-08
+    },
+    {
+      "sourcePart": "Shoulder_R_lock_05",
+      "deliveryObject": "Delivery_AURIX_ROOT_Piston_chrome",
+      "triangles": 124,
+      "maxVertexErrorM": 1.5359765015432458e-08
+    },
+    {
+      "sourcePart": "Crown_side_cap_-1",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Ivory",
+      "triangles": 352,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Crown_side_cap_1",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Ivory",
+      "triangles": 352,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Crown_top_lock_plate",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Ivory",
+      "triangles": 424,
+      "maxVertexErrorM": 1.862645149230957e-09
+    },
+    {
+      "sourcePart": "Upper_crown_front",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Ivory",
+      "triangles": 1152,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Upper_crown_rear",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Ivory",
+      "triangles": 624,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Upper_lower_side_pad_-1",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Ivory",
+      "triangles": 100,
+      "maxVertexErrorM": 1.862645149230957e-09
+    },
+    {
+      "sourcePart": "Upper_lower_side_pad_1",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Ivory",
+      "triangles": 100,
+      "maxVertexErrorM": 1.862645149230957e-09
+    },
+    {
+      "sourcePart": "Upper_outer_wrap_-1",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Ivory",
+      "triangles": 348,
+      "maxVertexErrorM": 7.450580596923828e-09
+    },
+    {
+      "sourcePart": "Upper_outer_wrap_1",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Ivory",
+      "triangles": 348,
+      "maxVertexErrorM": 3.725290298461914e-09
+    },
+    {
+      "sourcePart": "Upper_sculpted_blade_-1",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Ivory",
+      "triangles": 892,
+      "maxVertexErrorM": 3.725290298461914e-09
+    },
+    {
+      "sourcePart": "Upper_sculpted_blade_1",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Ivory",
+      "triangles": 892,
+      "maxVertexErrorM": 3.725290298461914e-09
+    },
+    {
+      "sourcePart": "Crown_gold_pinstripe_-1",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Anodized_champagne_gold",
+      "triangles": 176,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Crown_gold_pinstripe_1",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Anodized_champagne_gold",
+      "triangles": 176,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Crown_gold_signature",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Anodized_champagne_gold",
+      "triangles": 96,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Elbow_gold_ring_-1",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Anodized_champagne_gold",
+      "triangles": 504,
+      "maxVertexErrorM": 3.725290298461914e-09
+    },
+    {
+      "sourcePart": "Elbow_gold_ring_1",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Anodized_champagne_gold",
+      "triangles": 504,
+      "maxVertexErrorM": 3.725290298461914e-09
+    },
+    {
+      "sourcePart": "Upper_gold_conduit_-1",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Anodized_champagne_gold",
+      "triangles": 176,
+      "maxVertexErrorM": 3.725290298461914e-09
+    },
+    {
+      "sourcePart": "Upper_gold_conduit_1",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Anodized_champagne_gold",
+      "triangles": 176,
+      "maxVertexErrorM": 3.725290298461914e-09
+    },
+    {
+      "sourcePart": "Upper_primary_gland",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Anodized_champagne_gold",
+      "triangles": 242,
+      "maxVertexErrorM": 2.0825006163960325e-09
+    },
+    {
+      "sourcePart": "Upper_side_gland_-1",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Anodized_champagne_gold",
+      "triangles": 242,
+      "maxVertexErrorM": 4.165001232792065e-09
+    },
+    {
+      "sourcePart": "Upper_side_gland_1",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Anodized_champagne_gold",
+      "triangles": 242,
+      "maxVertexErrorM": 3.725290298461914e-09
+    },
+    {
+      "sourcePart": "Crown_front_fastener_-1",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Piston_chrome",
+      "triangles": 124,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Crown_front_fastener_1",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Piston_chrome",
+      "triangles": 124,
+      "maxVertexErrorM": 6.006850128414953e-08
+    },
+    {
+      "sourcePart": "Elbow_fixed_axle",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Piston_chrome",
+      "triangles": 182,
+      "maxVertexErrorM": 6.012814424138924e-08
+    },
+    {
+      "sourcePart": "Upper_blade_screw_-1",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Piston_chrome",
+      "triangles": 124,
+      "maxVertexErrorM": 5.972094641037984e-08
+    },
+    {
+      "sourcePart": "Upper_blade_screw_1",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Piston_chrome",
+      "triangles": 124,
+      "maxVertexErrorM": 6.006850128414953e-08
+    },
+    {
+      "sourcePart": "Upper_elbow_yoke_-1",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Piston_chrome",
+      "triangles": 182,
+      "maxVertexErrorM": 5.974998629199035e-08
+    },
+    {
+      "sourcePart": "Upper_elbow_yoke_1",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Piston_chrome",
+      "triangles": 182,
+      "maxVertexErrorM": 6.035659794179082e-08
+    },
+    {
+      "sourcePart": "Upper_exposed_hydraulic_-1",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Piston_chrome",
+      "triangles": 390,
+      "maxVertexErrorM": 5.972094641037984e-08
+    },
+    {
+      "sourcePart": "Upper_exposed_hydraulic_1",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Piston_chrome",
+      "triangles": 390,
+      "maxVertexErrorM": 6.009737063550347e-08
+    },
+    {
+      "sourcePart": "Upper_primary_rod",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Piston_chrome",
+      "triangles": 182,
+      "maxVertexErrorM": 5.990266771505048e-08
+    },
+    {
+      "sourcePart": "Upper_return_pipe_-1",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Piston_chrome",
+      "triangles": 198,
+      "maxVertexErrorM": 5.983702067169361e-08
+    },
+    {
+      "sourcePart": "Upper_return_pipe_1",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Piston_chrome",
+      "triangles": 198,
+      "maxVertexErrorM": 6.018390763529169e-08
+    },
+    {
+      "sourcePart": "Upper_side_rod_-1",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Piston_chrome",
+      "triangles": 182,
+      "maxVertexErrorM": 5.98949725372222e-08
+    },
+    {
+      "sourcePart": "Upper_side_rod_1",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Piston_chrome",
+      "triangles": 182,
+      "maxVertexErrorM": 5.998180085953209e-08
+    },
+    {
+      "sourcePart": "Crown_front_fastener_-1_hex_socket",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Recess_interiors",
+      "triangles": 68,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Crown_front_fastener_1_hex_socket",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Recess_interiors",
+      "triangles": 68,
+      "maxVertexErrorM": 6.006850128414953e-08
+    },
+    {
+      "sourcePart": "Crown_inset_border_-1",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Recess_interiors",
+      "triangles": 160,
+      "maxVertexErrorM": 5.963374150042e-08
+    },
+    {
+      "sourcePart": "Crown_inset_border_1",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Recess_interiors",
+      "triangles": 160,
+      "maxVertexErrorM": 5.986600370988526e-08
+    },
+    {
+      "sourcePart": "Upper_actuator_upper_seal",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Recess_interiors",
+      "triangles": 306,
+      "maxVertexErrorM": 5.980983530662343e-08
+    },
+    {
+      "sourcePart": "Upper_blade_screw_-1_hex_socket",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Recess_interiors",
+      "triangles": 68,
+      "maxVertexErrorM": 5.972094641037984e-08
+    },
+    {
+      "sourcePart": "Upper_blade_screw_1_hex_socket",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Recess_interiors",
+      "triangles": 68,
+      "maxVertexErrorM": 6.006850128414953e-08
+    },
+    {
+      "sourcePart": "Upper_hose_return_-1",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Recess_interiors",
+      "triangles": 160,
+      "maxVertexErrorM": 5.974998629199035e-08
+    },
+    {
+      "sourcePart": "Upper_hose_return_1",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Recess_interiors",
+      "triangles": 160,
+      "maxVertexErrorM": 5.983702067169361e-08
+    },
+    {
+      "sourcePart": "Crown_AURIX",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_AURIX_carbon_markings",
+      "triangles": 784,
+      "maxVertexErrorM": 6.006850128414953e-08
+    },
+    {
+      "sourcePart": "Crown_A_mark",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_AURIX_carbon_markings",
+      "triangles": 228,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Crown_recessed_carrier",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Graphite_structural_composite",
+      "triangles": 1136,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Crown_side_carrier_-1",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Graphite_structural_composite",
+      "triangles": 732,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Crown_side_carrier_1",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Graphite_structural_composite",
+      "triangles": 732,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Elbow_cheek_-1",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Graphite_structural_composite",
+      "triangles": 504,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Elbow_cheek_1",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Graphite_structural_composite",
+      "triangles": 504,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Upper_actuator_lower_band",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Graphite_structural_composite",
+      "triangles": 306,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Upper_blade_carrier_-1",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Graphite_structural_composite",
+      "triangles": 892,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Upper_blade_carrier_1",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Graphite_structural_composite",
+      "triangles": 892,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Upper_core_backbone",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Graphite_structural_composite",
+      "triangles": 248,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Upper_primary_cylinder",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Graphite_structural_composite",
+      "triangles": 182,
+      "maxVertexErrorM": 1.862645149230957e-09
+    },
+    {
+      "sourcePart": "Upper_rear_rod_bridge",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Graphite_structural_composite",
+      "triangles": 180,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Upper_return_pipe_mount_-1",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Graphite_structural_composite",
+      "triangles": 306,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Upper_return_pipe_mount_1",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Graphite_structural_composite",
+      "triangles": 306,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Upper_side_actuator_-1",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Graphite_structural_composite",
+      "triangles": 182,
+      "maxVertexErrorM": 2.9802322387695312e-08
+    },
+    {
+      "sourcePart": "Upper_side_actuator_1",
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Graphite_structural_composite",
+      "triangles": 182,
+      "maxVertexErrorM": 2.9802322387695312e-08
+    },
+    {
+      "sourcePart": "Elbow_-1_cap_bolt_0",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Piston_chrome",
+      "triangles": 124,
+      "maxVertexErrorM": 3.725290298461914e-09
+    },
+    {
+      "sourcePart": "Elbow_-1_cap_bolt_1",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Piston_chrome",
+      "triangles": 124,
+      "maxVertexErrorM": 3.725290298461914e-09
+    },
+    {
+      "sourcePart": "Elbow_-1_cap_bolt_2",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Piston_chrome",
+      "triangles": 124,
+      "maxVertexErrorM": 3.725290298461914e-09
+    },
+    {
+      "sourcePart": "Elbow_1_cap_bolt_0",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Piston_chrome",
+      "triangles": 124,
+      "maxVertexErrorM": 3.725290298461914e-09
+    },
+    {
+      "sourcePart": "Elbow_1_cap_bolt_1",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Piston_chrome",
+      "triangles": 124,
+      "maxVertexErrorM": 3.725290298461914e-09
+    },
+    {
+      "sourcePart": "Elbow_1_cap_bolt_2",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Piston_chrome",
+      "triangles": 124,
+      "maxVertexErrorM": 3.725290298461914e-09
+    },
+    {
+      "sourcePart": "Elbow_silver_rim_-1",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Piston_chrome",
+      "triangles": 504,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Elbow_silver_rim_1",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Piston_chrome",
+      "triangles": 504,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Forearm_channel_hydraulic_-1",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Piston_chrome",
+      "triangles": 160,
+      "maxVertexErrorM": 1.862645149230957e-09
+    },
+    {
+      "sourcePart": "Forearm_channel_hydraulic_1",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Piston_chrome",
+      "triangles": 160,
+      "maxVertexErrorM": 1.862645149230957e-09
+    },
+    {
+      "sourcePart": "Forearm_elbow_rod_-1",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Piston_chrome",
+      "triangles": 182,
+      "maxVertexErrorM": 2.9918510335846804e-08
+    },
+    {
+      "sourcePart": "Forearm_elbow_rod_1",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Piston_chrome",
+      "triangles": 182,
+      "maxVertexErrorM": 2.987499314599518e-08
+    },
+    {
+      "sourcePart": "Forearm_shoulder_bolt_-1",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Piston_chrome",
+      "triangles": 124,
+      "maxVertexErrorM": 3.725290298461914e-09
+    },
+    {
+      "sourcePart": "Forearm_shoulder_bolt_1",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Piston_chrome",
+      "triangles": 124,
+      "maxVertexErrorM": 3.725290298461914e-09
+    },
+    {
+      "sourcePart": "Forearm_titanium_rail_-1",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Piston_chrome",
+      "triangles": 182,
+      "maxVertexErrorM": 3.003786019917243e-08
+    },
+    {
+      "sourcePart": "Forearm_titanium_rail_1",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Piston_chrome",
+      "triangles": 182,
+      "maxVertexErrorM": 3.0034939868528454e-08
+    },
+    {
+      "sourcePart": "Forearm_wrist_bolt_-1",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Piston_chrome",
+      "triangles": 124,
+      "maxVertexErrorM": 2.0825006163960325e-09
+    },
+    {
+      "sourcePart": "Forearm_wrist_bolt_1",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Piston_chrome",
+      "triangles": 124,
+      "maxVertexErrorM": 2.0825006163960325e-09
+    },
+    {
+      "sourcePart": "Wrist_upper_silver_collar",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Piston_chrome",
+      "triangles": 504,
+      "maxVertexErrorM": 9.313225746154785e-10
+    },
+    {
+      "sourcePart": "Elbow_central_rotor",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Graphite_structural_composite",
+      "triangles": 182,
+      "maxVertexErrorM": 4.6566128730773926e-09
+    },
+    {
+      "sourcePart": "Elbow_hub_-1",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Graphite_structural_composite",
+      "triangles": 182,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Elbow_hub_1",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Graphite_structural_composite",
+      "triangles": 182,
+      "maxVertexErrorM": 7.450580596923828e-09
+    },
+    {
+      "sourcePart": "Forearm_power_cell_-1",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Graphite_structural_composite",
+      "triangles": 182,
+      "maxVertexErrorM": 3.009555626931615e-08
+    },
+    {
+      "sourcePart": "Forearm_power_cell_1",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Graphite_structural_composite",
+      "triangles": 182,
+      "maxVertexErrorM": 3.0221382729678226e-08
+    },
+    {
+      "sourcePart": "Forearm_recessed_carrier_-1",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Graphite_structural_composite",
+      "triangles": 1200,
+      "maxVertexErrorM": 3.725290298461914e-09
+    },
+    {
+      "sourcePart": "Forearm_recessed_carrier_1",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Graphite_structural_composite",
+      "triangles": 1200,
+      "maxVertexErrorM": 7.450580596923828e-09
+    },
+    {
+      "sourcePart": "Forearm_side_cable_-1",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Graphite_structural_composite",
+      "triangles": 198,
+      "maxVertexErrorM": 1.862645149230957e-09
+    },
+    {
+      "sourcePart": "Forearm_side_cable_1",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Graphite_structural_composite",
+      "triangles": 198,
+      "maxVertexErrorM": 7.450580596923828e-09
+    },
+    {
+      "sourcePart": "Service_bay_structural_rim",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Graphite_structural_composite",
+      "triangles": 98,
+      "maxVertexErrorM": 7.450580596923828e-09
+    },
+    {
+      "sourcePart": "Service_cartridge_lower_band_-1",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Graphite_structural_composite",
+      "triangles": 306,
+      "maxVertexErrorM": 3.725290298461914e-09
+    },
+    {
+      "sourcePart": "Service_cartridge_lower_band_1",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Graphite_structural_composite",
+      "triangles": 306,
+      "maxVertexErrorM": 4.6566128730773926e-09
+    },
+    {
+      "sourcePart": "Service_lower_manifold",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Graphite_structural_composite",
+      "triangles": 110,
+      "maxVertexErrorM": 4.190951585769653e-09
+    },
+    {
+      "sourcePart": "Wrist_gimbal_axle",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Graphite_structural_composite",
+      "triangles": 182,
+      "maxVertexErrorM": 3.725290298461914e-09
+    },
+    {
+      "sourcePart": "Wrist_upper_mount",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Graphite_structural_composite",
+      "triangles": 182,
+      "maxVertexErrorM": 3.725290298461914e-09
+    },
+    {
+      "sourcePart": "Elbow_hub_engraving_-1",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Warm_silver",
+      "triangles": 382,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Elbow_hub_engraving_1",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Warm_silver",
+      "triangles": 382,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Service_bay_machined_lip",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Warm_silver",
+      "triangles": 98,
+      "maxVertexErrorM": 1.862645149230957e-09
+    },
+    {
+      "sourcePart": "Service_cartridge_sleeve_-1",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Warm_silver",
+      "triangles": 182,
+      "maxVertexErrorM": 9.313225746154785e-10
+    },
+    {
+      "sourcePart": "Service_cartridge_sleeve_1",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Warm_silver",
+      "triangles": 182,
+      "maxVertexErrorM": 9.313225746154785e-10
+    },
+    {
+      "sourcePart": "Elbow_-1_cap_bolt_0_hex_socket",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Recess_interiors",
+      "triangles": 68,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Elbow_-1_cap_bolt_1_hex_socket",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Recess_interiors",
+      "triangles": 68,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Elbow_-1_cap_bolt_2_hex_socket",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Recess_interiors",
+      "triangles": 68,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Elbow_1_cap_bolt_0_hex_socket",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Recess_interiors",
+      "triangles": 68,
+      "maxVertexErrorM": 3.725290298461914e-09
+    },
+    {
+      "sourcePart": "Elbow_1_cap_bolt_1_hex_socket",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Recess_interiors",
+      "triangles": 68,
+      "maxVertexErrorM": 3.725290298461914e-09
+    },
+    {
+      "sourcePart": "Elbow_1_cap_bolt_2_hex_socket",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Recess_interiors",
+      "triangles": 68,
+      "maxVertexErrorM": 3.725290298461914e-09
+    },
+    {
+      "sourcePart": "Forearm_front_recess",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Recess_interiors",
+      "triangles": 110,
+      "maxVertexErrorM": 4.423782229423523e-09
+    },
+    {
+      "sourcePart": "Forearm_lateral_underlayer_-1",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Recess_interiors",
+      "triangles": 386,
+      "maxVertexErrorM": 3.725290298461914e-09
+    },
+    {
+      "sourcePart": "Forearm_lateral_underlayer_1",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Recess_interiors",
+      "triangles": 386,
+      "maxVertexErrorM": 7.450580596923828e-09
+    },
+    {
+      "sourcePart": "Forearm_shoulder_bolt_-1_hex_socket",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Recess_interiors",
+      "triangles": 68,
+      "maxVertexErrorM": 3.003425064207477e-08
+    },
+    {
+      "sourcePart": "Forearm_shoulder_bolt_1_hex_socket",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Recess_interiors",
+      "triangles": 68,
+      "maxVertexErrorM": 3.0719530030864917e-08
+    },
+    {
+      "sourcePart": "Forearm_structural_spine",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Recess_interiors",
+      "triangles": 318,
+      "maxVertexErrorM": 7.450580596923828e-09
+    },
+    {
+      "sourcePart": "Forearm_wrist_bolt_-1_hex_socket",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Recess_interiors",
+      "triangles": 68,
+      "maxVertexErrorM": 1.862645149230957e-09
+    },
+    {
+      "sourcePart": "Forearm_wrist_bolt_1_hex_socket",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Recess_interiors",
+      "triangles": 68,
+      "maxVertexErrorM": 5.587935447692871e-09
+    },
+    {
+      "sourcePart": "Service_cartridge_upper_band_-1",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Recess_interiors",
+      "triangles": 306,
+      "maxVertexErrorM": 4.190951585769653e-09
+    },
+    {
+      "sourcePart": "Service_cartridge_upper_band_1",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Recess_interiors",
+      "triangles": 306,
+      "maxVertexErrorM": 6.51925802230835e-09
+    },
+    {
+      "sourcePart": "Elbow_center_gold_band",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Anodized_champagne_gold",
+      "triangles": 504,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Forearm_gold_outer_reveal_-1",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Anodized_champagne_gold",
+      "triangles": 198,
+      "maxVertexErrorM": 3.725290298461914e-09
+    },
+    {
+      "sourcePart": "Forearm_gold_outer_reveal_1",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Anodized_champagne_gold",
+      "triangles": 198,
+      "maxVertexErrorM": 3.725290298461914e-09
+    },
+    {
+      "sourcePart": "Forearm_gold_recess_edge",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Anodized_champagne_gold",
+      "triangles": 176,
+      "maxVertexErrorM": 2.3283064365386963e-10
+    },
+    {
+      "sourcePart": "Forearm_power_gland_-1",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Anodized_champagne_gold",
+      "triangles": 242,
+      "maxVertexErrorM": 2.987499314599518e-08
+    },
+    {
+      "sourcePart": "Forearm_power_gland_1",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Anodized_champagne_gold",
+      "triangles": 242,
+      "maxVertexErrorM": 2.986047320518992e-08
+    },
+    {
+      "sourcePart": "Service_return_conduit_-1",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Anodized_champagne_gold",
+      "triangles": 160,
+      "maxVertexErrorM": 9.313225746154785e-10
+    },
+    {
+      "sourcePart": "Service_return_conduit_1",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Anodized_champagne_gold",
+      "triangles": 160,
+      "maxVertexErrorM": 9.313225746154785e-10
+    },
+    {
+      "sourcePart": "Wrist_side_ring_-1",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Anodized_champagne_gold",
+      "triangles": 490,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Wrist_side_ring_1",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Anodized_champagne_gold",
+      "triangles": 490,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Forearm_front_keel",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Ivory",
+      "triangles": 384,
+      "maxVertexErrorM": 9.313225746154785e-10
+    },
+    {
+      "sourcePart": "Forearm_lateral_blade_-1",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Ivory",
+      "triangles": 808,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Forearm_lateral_blade_1",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Ivory",
+      "triangles": 808,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Forearm_swept_front_armor_-1",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Ivory",
+      "triangles": 1168,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Forearm_swept_front_armor_1",
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Ivory",
+      "triangles": 1168,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Forearm_front_indicator",
+      "deliveryObject": "Forearm_front_indicator",
+      "triangles": 96,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Service_cover_graphite",
+      "deliveryObject": "Delivery_SERVICE_COVER_Graphite_structural_composite",
+      "triangles": 808,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Service_cover_vent_00",
+      "deliveryObject": "Delivery_SERVICE_COVER_Graphite_structural_composite",
+      "triangles": 256,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Service_cover_vent_01",
+      "deliveryObject": "Delivery_SERVICE_COVER_Graphite_structural_composite",
+      "triangles": 256,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Service_cover_vent_02",
+      "deliveryObject": "Delivery_SERVICE_COVER_Graphite_structural_composite",
+      "triangles": 256,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Service_cover_vent_03",
+      "deliveryObject": "Delivery_SERVICE_COVER_Graphite_structural_composite",
+      "triangles": 256,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Service_cover_vent_04",
+      "deliveryObject": "Delivery_SERVICE_COVER_Graphite_structural_composite",
+      "triangles": 256,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Service_cover_vent_05",
+      "deliveryObject": "Delivery_SERVICE_COVER_Graphite_structural_composite",
+      "triangles": 256,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Service_cover_vent_06",
+      "deliveryObject": "Delivery_SERVICE_COVER_Graphite_structural_composite",
+      "triangles": 256,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Service_cover_vent_07",
+      "deliveryObject": "Delivery_SERVICE_COVER_Graphite_structural_composite",
+      "triangles": 256,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Service_cover_vent_08",
+      "deliveryObject": "Delivery_SERVICE_COVER_Graphite_structural_composite",
+      "triangles": 256,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Service_cover_vent_09",
+      "deliveryObject": "Delivery_SERVICE_COVER_Graphite_structural_composite",
+      "triangles": 256,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Service_cover_center_inset",
+      "deliveryObject": "Delivery_SERVICE_COVER_Recess_interiors",
+      "triangles": 520,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Service_cover_screw_-1_249_hex_socket",
+      "deliveryObject": "Delivery_SERVICE_COVER_Recess_interiors",
+      "triangles": 380,
+      "maxVertexErrorM": 9.313225746154785e-10
+    },
+    {
+      "sourcePart": "Service_cover_screw_-1_305_hex_socket",
+      "deliveryObject": "Delivery_SERVICE_COVER_Recess_interiors",
+      "triangles": 380,
+      "maxVertexErrorM": 3.725290298461914e-09
+    },
+    {
+      "sourcePart": "Service_cover_screw_-1_351_hex_socket",
+      "deliveryObject": "Delivery_SERVICE_COVER_Recess_interiors",
+      "triangles": 380,
+      "maxVertexErrorM": 1.862645149230957e-09
+    },
+    {
+      "sourcePart": "Service_cover_screw_1_249_hex_socket",
+      "deliveryObject": "Delivery_SERVICE_COVER_Recess_interiors",
+      "triangles": 380,
+      "maxVertexErrorM": 9.313225746154785e-10
+    },
+    {
+      "sourcePart": "Service_cover_screw_1_305_hex_socket",
+      "deliveryObject": "Delivery_SERVICE_COVER_Recess_interiors",
+      "triangles": 380,
+      "maxVertexErrorM": 3.725290298461914e-09
+    },
+    {
+      "sourcePart": "Service_cover_screw_1_351_hex_socket",
+      "deliveryObject": "Delivery_SERVICE_COVER_Recess_interiors",
+      "triangles": 380,
+      "maxVertexErrorM": 1.862645149230957e-09
+    },
+    {
+      "sourcePart": "Service_cover_status_light",
+      "deliveryObject": "Service_cover_status_light",
+      "triangles": 96,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Service_cover_screw_-1_249",
+      "deliveryObject": "Delivery_SERVICE_COVER_Piston_chrome",
+      "triangles": 508,
+      "maxVertexErrorM": 2.999090042976604e-08
+    },
+    {
+      "sourcePart": "Service_cover_screw_-1_305",
+      "deliveryObject": "Delivery_SERVICE_COVER_Piston_chrome",
+      "triangles": 508,
+      "maxVertexErrorM": 5.974998629199035e-08
+    },
+    {
+      "sourcePart": "Service_cover_screw_-1_351",
+      "deliveryObject": "Delivery_SERVICE_COVER_Piston_chrome",
+      "triangles": 508,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Service_cover_screw_1_249",
+      "deliveryObject": "Delivery_SERVICE_COVER_Piston_chrome",
+      "triangles": 508,
+      "maxVertexErrorM": 2.999090042976604e-08
+    },
+    {
+      "sourcePart": "Service_cover_screw_1_305",
+      "deliveryObject": "Delivery_SERVICE_COVER_Piston_chrome",
+      "triangles": 508,
+      "maxVertexErrorM": 3.0091953817645845e-08
+    },
+    {
+      "sourcePart": "Service_cover_screw_1_351",
+      "deliveryObject": "Delivery_SERVICE_COVER_Piston_chrome",
+      "triangles": 508,
+      "maxVertexErrorM": 5.986600370988526e-08
+    },
+    {
+      "sourcePart": "Wrist_rotating_stem",
+      "deliveryObject": "Wrist_rotating_stem",
+      "triangles": 182,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Palm_gold_split_-1",
+      "deliveryObject": "Delivery_WRIST_PIVOT_Anodized_champagne_gold",
+      "triangles": 176,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Palm_gold_split_1",
+      "deliveryObject": "Delivery_WRIST_PIVOT_Anodized_champagne_gold",
+      "triangles": 176,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Wrist_gold_lock",
+      "deliveryObject": "Delivery_WRIST_PIVOT_Anodized_champagne_gold",
+      "triangles": 504,
+      "maxVertexErrorM": 4.727136609442009e-18
+    },
+    {
+      "sourcePart": "Palm_center_pad_seam",
+      "deliveryObject": "Delivery_WRIST_PIVOT_Graphite_structural_composite",
+      "triangles": 256,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Palm_thenar_pad_seam",
+      "deliveryObject": "Delivery_WRIST_PIVOT_Graphite_structural_composite",
+      "triangles": 176,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Wrist_dorsal_fairing",
+      "deliveryObject": "Delivery_WRIST_PIVOT_Graphite_structural_composite",
+      "triangles": 504,
+      "maxVertexErrorM": 5.46192486988562e-18
+    },
+    {
+      "sourcePart": "Palm_dorsal_main_plate",
+      "deliveryObject": "Delivery_WRIST_PIVOT_Ivory",
+      "triangles": 608,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Palm_dorsal_ring_plate",
+      "deliveryObject": "Delivery_WRIST_PIVOT_Ivory",
+      "triangles": 616,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Palm_edge_plate_-1",
+      "deliveryObject": "Delivery_WRIST_PIVOT_Ivory",
+      "triangles": 596,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Palm_edge_plate_1",
+      "deliveryObject": "Delivery_WRIST_PIVOT_Ivory",
+      "triangles": 408,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Palm_center_grip",
+      "deliveryObject": "Delivery_WRIST_PIVOT_Palm_and_joint_elastomer",
+      "triangles": 248,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Palm_grip_pad_-1",
+      "deliveryObject": "Delivery_WRIST_PIVOT_Palm_and_joint_elastomer",
+      "triangles": 520,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Palm_grip_pad_1",
+      "deliveryObject": "Delivery_WRIST_PIVOT_Palm_and_joint_elastomer",
+      "triangles": 520,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "INDEX_S0_structural_link",
+      "deliveryObject": "Delivery_INDEX_J0_Graphite_structural_composite",
+      "triangles": 74,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "INDEX_knuckle_0",
+      "deliveryObject": "Delivery_INDEX_J0_Graphite_structural_composite",
+      "triangles": 242,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "INDEX_S0_ivory_phalanx",
+      "deliveryObject": "INDEX_S0_ivory_phalanx",
+      "triangles": 74,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "INDEX_S0_palm_grip",
+      "deliveryObject": "INDEX_S0_palm_grip",
+      "triangles": 52,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "INDEX_gold_bearing_0_-1",
+      "deliveryObject": "Delivery_INDEX_J0_Anodized_champagne_gold",
+      "triangles": 306,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "INDEX_gold_bearing_0_1",
+      "deliveryObject": "Delivery_INDEX_J0_Anodized_champagne_gold",
+      "triangles": 306,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "INDEX_knuckle_status",
+      "deliveryObject": "INDEX_knuckle_status",
+      "triangles": 182,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "INDEX_S1_structural_link",
+      "deliveryObject": "Delivery_INDEX_J1_Graphite_structural_composite",
+      "triangles": 74,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "INDEX_knuckle_1",
+      "deliveryObject": "Delivery_INDEX_J1_Graphite_structural_composite",
+      "triangles": 242,
+      "maxVertexErrorM": 2.3283064365386963e-10
+    },
+    {
+      "sourcePart": "INDEX_S1_ivory_phalanx",
+      "deliveryObject": "INDEX_S1_ivory_phalanx",
+      "triangles": 74,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "INDEX_S1_palm_grip",
+      "deliveryObject": "INDEX_S1_palm_grip",
+      "triangles": 52,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "INDEX_gold_bearing_1_-1",
+      "deliveryObject": "Delivery_INDEX_J1_Anodized_champagne_gold",
+      "triangles": 306,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "INDEX_gold_bearing_1_1",
+      "deliveryObject": "Delivery_INDEX_J1_Anodized_champagne_gold",
+      "triangles": 306,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "INDEX_S2_structural_link",
+      "deliveryObject": "Delivery_INDEX_J2_Graphite_structural_composite",
+      "triangles": 90,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "INDEX_knuckle_2",
+      "deliveryObject": "Delivery_INDEX_J2_Graphite_structural_composite",
+      "triangles": 242,
+      "maxVertexErrorM": 4.656612873077393e-10
+    },
+    {
+      "sourcePart": "INDEX_S2_ivory_phalanx",
+      "deliveryObject": "INDEX_S2_ivory_phalanx",
+      "triangles": 90,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "INDEX_S2_palm_grip",
+      "deliveryObject": "INDEX_S2_palm_grip",
+      "triangles": 54,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "INDEX_gold_bearing_2_-1",
+      "deliveryObject": "Delivery_INDEX_J2_Anodized_champagne_gold",
+      "triangles": 306,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "INDEX_gold_bearing_2_1",
+      "deliveryObject": "Delivery_INDEX_J2_Anodized_champagne_gold",
+      "triangles": 306,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "MIDDLE_S0_structural_link",
+      "deliveryObject": "Delivery_MIDDLE_J0_Graphite_structural_composite",
+      "triangles": 74,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "MIDDLE_knuckle_0",
+      "deliveryObject": "Delivery_MIDDLE_J0_Graphite_structural_composite",
+      "triangles": 242,
+      "maxVertexErrorM": 7.508562660518692e-09
+    },
+    {
+      "sourcePart": "MIDDLE_S0_ivory_phalanx",
+      "deliveryObject": "MIDDLE_S0_ivory_phalanx",
+      "triangles": 74,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "MIDDLE_S0_palm_grip",
+      "deliveryObject": "MIDDLE_S0_palm_grip",
+      "triangles": 52,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "MIDDLE_gold_bearing_0_-1",
+      "deliveryObject": "Delivery_MIDDLE_J0_Anodized_champagne_gold",
+      "triangles": 306,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "MIDDLE_gold_bearing_0_1",
+      "deliveryObject": "Delivery_MIDDLE_J0_Anodized_champagne_gold",
+      "triangles": 306,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "MIDDLE_knuckle_status",
+      "deliveryObject": "MIDDLE_knuckle_status",
+      "triangles": 182,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "MIDDLE_S1_structural_link",
+      "deliveryObject": "Delivery_MIDDLE_J1_Graphite_structural_composite",
+      "triangles": 74,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "MIDDLE_knuckle_1",
+      "deliveryObject": "Delivery_MIDDLE_J1_Graphite_structural_composite",
+      "triangles": 242,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "MIDDLE_S1_ivory_phalanx",
+      "deliveryObject": "MIDDLE_S1_ivory_phalanx",
+      "triangles": 74,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "MIDDLE_S1_palm_grip",
+      "deliveryObject": "MIDDLE_S1_palm_grip",
+      "triangles": 52,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "MIDDLE_gold_bearing_1_-1",
+      "deliveryObject": "Delivery_MIDDLE_J1_Anodized_champagne_gold",
+      "triangles": 306,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "MIDDLE_gold_bearing_1_1",
+      "deliveryObject": "Delivery_MIDDLE_J1_Anodized_champagne_gold",
+      "triangles": 306,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "MIDDLE_S2_structural_link",
+      "deliveryObject": "Delivery_MIDDLE_J2_Graphite_structural_composite",
+      "triangles": 90,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "MIDDLE_knuckle_2",
+      "deliveryObject": "Delivery_MIDDLE_J2_Graphite_structural_composite",
+      "triangles": 242,
+      "maxVertexErrorM": 4.656612873077393e-10
+    },
+    {
+      "sourcePart": "MIDDLE_S2_ivory_phalanx",
+      "deliveryObject": "MIDDLE_S2_ivory_phalanx",
+      "triangles": 90,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "MIDDLE_S2_palm_grip",
+      "deliveryObject": "MIDDLE_S2_palm_grip",
+      "triangles": 54,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "MIDDLE_gold_bearing_2_-1",
+      "deliveryObject": "Delivery_MIDDLE_J2_Anodized_champagne_gold",
+      "triangles": 306,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "MIDDLE_gold_bearing_2_1",
+      "deliveryObject": "Delivery_MIDDLE_J2_Anodized_champagne_gold",
+      "triangles": 306,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "RING_S0_structural_link",
+      "deliveryObject": "Delivery_RING_J0_Graphite_structural_composite",
+      "triangles": 74,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "RING_knuckle_0",
+      "deliveryObject": "Delivery_RING_J0_Graphite_structural_composite",
+      "triangles": 242,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "RING_S0_ivory_phalanx",
+      "deliveryObject": "RING_S0_ivory_phalanx",
+      "triangles": 74,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "RING_S0_palm_grip",
+      "deliveryObject": "RING_S0_palm_grip",
+      "triangles": 52,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "RING_gold_bearing_0_-1",
+      "deliveryObject": "Delivery_RING_J0_Anodized_champagne_gold",
+      "triangles": 306,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "RING_gold_bearing_0_1",
+      "deliveryObject": "Delivery_RING_J0_Anodized_champagne_gold",
+      "triangles": 306,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "RING_knuckle_status",
+      "deliveryObject": "RING_knuckle_status",
+      "triangles": 182,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "RING_S1_structural_link",
+      "deliveryObject": "Delivery_RING_J1_Graphite_structural_composite",
+      "triangles": 74,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "RING_knuckle_1",
+      "deliveryObject": "Delivery_RING_J1_Graphite_structural_composite",
+      "triangles": 242,
+      "maxVertexErrorM": 2.3283064365386963e-10
+    },
+    {
+      "sourcePart": "RING_S1_ivory_phalanx",
+      "deliveryObject": "RING_S1_ivory_phalanx",
+      "triangles": 74,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "RING_S1_palm_grip",
+      "deliveryObject": "RING_S1_palm_grip",
+      "triangles": 52,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "RING_gold_bearing_1_-1",
+      "deliveryObject": "Delivery_RING_J1_Anodized_champagne_gold",
+      "triangles": 306,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "RING_gold_bearing_1_1",
+      "deliveryObject": "Delivery_RING_J1_Anodized_champagne_gold",
+      "triangles": 306,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "RING_S2_structural_link",
+      "deliveryObject": "Delivery_RING_J2_Graphite_structural_composite",
+      "triangles": 90,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "RING_knuckle_2",
+      "deliveryObject": "Delivery_RING_J2_Graphite_structural_composite",
+      "triangles": 242,
+      "maxVertexErrorM": 4.656612873077393e-10
+    },
+    {
+      "sourcePart": "RING_S2_ivory_phalanx",
+      "deliveryObject": "RING_S2_ivory_phalanx",
+      "triangles": 90,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "RING_S2_palm_grip",
+      "deliveryObject": "RING_S2_palm_grip",
+      "triangles": 54,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "RING_gold_bearing_2_-1",
+      "deliveryObject": "Delivery_RING_J2_Anodized_champagne_gold",
+      "triangles": 306,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "RING_gold_bearing_2_1",
+      "deliveryObject": "Delivery_RING_J2_Anodized_champagne_gold",
+      "triangles": 306,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "LITTLE_S0_structural_link",
+      "deliveryObject": "Delivery_LITTLE_J0_Graphite_structural_composite",
+      "triangles": 74,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "LITTLE_knuckle_0",
+      "deliveryObject": "Delivery_LITTLE_J0_Graphite_structural_composite",
+      "triangles": 242,
+      "maxVertexErrorM": 2.3283064365386963e-10
+    },
+    {
+      "sourcePart": "LITTLE_S0_ivory_phalanx",
+      "deliveryObject": "LITTLE_S0_ivory_phalanx",
+      "triangles": 74,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "LITTLE_S0_palm_grip",
+      "deliveryObject": "LITTLE_S0_palm_grip",
+      "triangles": 52,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "LITTLE_gold_bearing_0_-1",
+      "deliveryObject": "Delivery_LITTLE_J0_Anodized_champagne_gold",
+      "triangles": 306,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "LITTLE_gold_bearing_0_1",
+      "deliveryObject": "Delivery_LITTLE_J0_Anodized_champagne_gold",
+      "triangles": 306,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "LITTLE_knuckle_status",
+      "deliveryObject": "LITTLE_knuckle_status",
+      "triangles": 182,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "LITTLE_S1_structural_link",
+      "deliveryObject": "Delivery_LITTLE_J1_Graphite_structural_composite",
+      "triangles": 74,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "LITTLE_knuckle_1",
+      "deliveryObject": "Delivery_LITTLE_J1_Graphite_structural_composite",
+      "triangles": 242,
+      "maxVertexErrorM": 4.656612873077393e-10
+    },
+    {
+      "sourcePart": "LITTLE_S1_ivory_phalanx",
+      "deliveryObject": "LITTLE_S1_ivory_phalanx",
+      "triangles": 74,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "LITTLE_S1_palm_grip",
+      "deliveryObject": "LITTLE_S1_palm_grip",
+      "triangles": 52,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "LITTLE_gold_bearing_1_-1",
+      "deliveryObject": "Delivery_LITTLE_J1_Anodized_champagne_gold",
+      "triangles": 306,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "LITTLE_gold_bearing_1_1",
+      "deliveryObject": "Delivery_LITTLE_J1_Anodized_champagne_gold",
+      "triangles": 306,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "LITTLE_S2_structural_link",
+      "deliveryObject": "Delivery_LITTLE_J2_Graphite_structural_composite",
+      "triangles": 90,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "LITTLE_knuckle_2",
+      "deliveryObject": "Delivery_LITTLE_J2_Graphite_structural_composite",
+      "triangles": 242,
+      "maxVertexErrorM": 4.656612873077393e-10
+    },
+    {
+      "sourcePart": "LITTLE_S2_ivory_phalanx",
+      "deliveryObject": "LITTLE_S2_ivory_phalanx",
+      "triangles": 90,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "LITTLE_S2_palm_grip",
+      "deliveryObject": "LITTLE_S2_palm_grip",
+      "triangles": 54,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "LITTLE_gold_bearing_2_-1",
+      "deliveryObject": "Delivery_LITTLE_J2_Anodized_champagne_gold",
+      "triangles": 306,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "LITTLE_gold_bearing_2_1",
+      "deliveryObject": "Delivery_LITTLE_J2_Anodized_champagne_gold",
+      "triangles": 306,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "THUMB_S0_structural_link",
+      "deliveryObject": "Delivery_THUMB_J0_Graphite_structural_composite",
+      "triangles": 78,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "THUMB_knuckle_0",
+      "deliveryObject": "Delivery_THUMB_J0_Graphite_structural_composite",
+      "triangles": 242,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "THUMB_S0_ivory_phalanx",
+      "deliveryObject": "THUMB_S0_ivory_phalanx",
+      "triangles": 78,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "THUMB_S0_palm_grip",
+      "deliveryObject": "THUMB_S0_palm_grip",
+      "triangles": 48,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "THUMB_gold_bearing_0_-1",
+      "deliveryObject": "Delivery_THUMB_J0_Anodized_champagne_gold",
+      "triangles": 306,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "THUMB_gold_bearing_0_1",
+      "deliveryObject": "Delivery_THUMB_J0_Anodized_champagne_gold",
+      "triangles": 306,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "THUMB_knuckle_status",
+      "deliveryObject": "THUMB_knuckle_status",
+      "triangles": 182,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "THUMB_S1_structural_link",
+      "deliveryObject": "Delivery_THUMB_J1_Graphite_structural_composite",
+      "triangles": 74,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "THUMB_knuckle_1",
+      "deliveryObject": "Delivery_THUMB_J1_Graphite_structural_composite",
+      "triangles": 242,
+      "maxVertexErrorM": 2.3283064365386963e-10
+    },
+    {
+      "sourcePart": "THUMB_S1_ivory_phalanx",
+      "deliveryObject": "THUMB_S1_ivory_phalanx",
+      "triangles": 74,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "THUMB_S1_palm_grip",
+      "deliveryObject": "THUMB_S1_palm_grip",
+      "triangles": 52,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "THUMB_gold_bearing_1_-1",
+      "deliveryObject": "Delivery_THUMB_J1_Anodized_champagne_gold",
+      "triangles": 306,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "THUMB_gold_bearing_1_1",
+      "deliveryObject": "Delivery_THUMB_J1_Anodized_champagne_gold",
+      "triangles": 306,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "THUMB_S2_structural_link",
+      "deliveryObject": "Delivery_THUMB_J2_Graphite_structural_composite",
+      "triangles": 90,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "THUMB_knuckle_2",
+      "deliveryObject": "Delivery_THUMB_J2_Graphite_structural_composite",
+      "triangles": 242,
+      "maxVertexErrorM": 2.3283064365386963e-10
+    },
+    {
+      "sourcePart": "THUMB_S2_ivory_phalanx",
+      "deliveryObject": "THUMB_S2_ivory_phalanx",
+      "triangles": 90,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "THUMB_S2_palm_grip",
+      "deliveryObject": "THUMB_S2_palm_grip",
+      "triangles": 52,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "THUMB_gold_bearing_2_-1",
+      "deliveryObject": "Delivery_THUMB_J2_Anodized_champagne_gold",
+      "triangles": 306,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "THUMB_gold_bearing_2_1",
+      "deliveryObject": "Delivery_THUMB_J2_Anodized_champagne_gold",
+      "triangles": 306,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Shoulder_L_narrow_machined_rim",
+      "deliveryObject": "Delivery_AURIX_ROOT_Warm_silver",
+      "triangles": 920,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Shoulder_R_narrow_machined_rim",
+      "deliveryObject": "Delivery_AURIX_ROOT_Warm_silver",
+      "triangles": 920,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "Upper_actuator_machined_sleeve",
+      "deliveryObject": "Upper_actuator_machined_sleeve",
+      "triangles": 242,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "INDEX_S0_side_tendon_guide",
+      "deliveryObject": "INDEX_S0_side_tendon_guide",
+      "triangles": 96,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "MIDDLE_S0_side_tendon_guide",
+      "deliveryObject": "MIDDLE_S0_side_tendon_guide",
+      "triangles": 96,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "RING_S0_side_tendon_guide",
+      "deliveryObject": "RING_S0_side_tendon_guide",
+      "triangles": 96,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "LITTLE_S0_side_tendon_guide",
+      "deliveryObject": "LITTLE_S0_side_tendon_guide",
+      "triangles": 96,
+      "maxVertexErrorM": 0.0
+    },
+    {
+      "sourcePart": "THUMB_S0_side_tendon_guide",
+      "deliveryObject": "THUMB_S0_side_tendon_guide",
+      "triangles": 96,
+      "maxVertexErrorM": 0.0
+    }
+  ],
+  "deliveryObjects": [
+    {
+      "deliveryObject": "Palm_graphite_body",
+      "sourceParts": 1,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Delivery_AURIX_ROOT_Graphite_structural_composite",
+      "sourceParts": 16,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Delivery_AURIX_ROOT_Anodized_champagne_gold",
+      "sourceParts": 2,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Delivery_AURIX_ROOT_Recess_interiors",
+      "sourceParts": 16,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Delivery_AURIX_ROOT_Piston_chrome",
+      "sourceParts": 12,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Ivory",
+      "sourceParts": 11,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Anodized_champagne_gold",
+      "sourceParts": 10,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Piston_chrome",
+      "sourceParts": 14,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Recess_interiors",
+      "sourceParts": 9,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_AURIX_carbon_markings",
+      "sourceParts": 2,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Delivery_SHOULDER_PIVOT_Graphite_structural_composite",
+      "sourceParts": 15,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Piston_chrome",
+      "sourceParts": 19,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Graphite_structural_composite",
+      "sourceParts": 15,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Warm_silver",
+      "sourceParts": 5,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Recess_interiors",
+      "sourceParts": 16,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Anodized_champagne_gold",
+      "sourceParts": 10,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Delivery_ELBOW_PIVOT_Ivory",
+      "sourceParts": 5,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Forearm_front_indicator",
+      "sourceParts": 1,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Delivery_SERVICE_COVER_Graphite_structural_composite",
+      "sourceParts": 11,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Delivery_SERVICE_COVER_Recess_interiors",
+      "sourceParts": 7,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Service_cover_status_light",
+      "sourceParts": 1,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Delivery_SERVICE_COVER_Piston_chrome",
+      "sourceParts": 6,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Wrist_rotating_stem",
+      "sourceParts": 1,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Delivery_WRIST_PIVOT_Anodized_champagne_gold",
+      "sourceParts": 3,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Delivery_WRIST_PIVOT_Graphite_structural_composite",
+      "sourceParts": 3,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Delivery_WRIST_PIVOT_Ivory",
+      "sourceParts": 4,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Delivery_WRIST_PIVOT_Palm_and_joint_elastomer",
+      "sourceParts": 3,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Delivery_INDEX_J0_Graphite_structural_composite",
+      "sourceParts": 2,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "INDEX_S0_ivory_phalanx",
+      "sourceParts": 1,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "INDEX_S0_palm_grip",
+      "sourceParts": 1,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Delivery_INDEX_J0_Anodized_champagne_gold",
+      "sourceParts": 2,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "INDEX_knuckle_status",
+      "sourceParts": 1,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Delivery_INDEX_J1_Graphite_structural_composite",
+      "sourceParts": 2,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "INDEX_S1_ivory_phalanx",
+      "sourceParts": 1,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "INDEX_S1_palm_grip",
+      "sourceParts": 1,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Delivery_INDEX_J1_Anodized_champagne_gold",
+      "sourceParts": 2,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Delivery_INDEX_J2_Graphite_structural_composite",
+      "sourceParts": 2,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "INDEX_S2_ivory_phalanx",
+      "sourceParts": 1,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "INDEX_S2_palm_grip",
+      "sourceParts": 1,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Delivery_INDEX_J2_Anodized_champagne_gold",
+      "sourceParts": 2,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Delivery_MIDDLE_J0_Graphite_structural_composite",
+      "sourceParts": 2,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "MIDDLE_S0_ivory_phalanx",
+      "sourceParts": 1,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "MIDDLE_S0_palm_grip",
+      "sourceParts": 1,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Delivery_MIDDLE_J0_Anodized_champagne_gold",
+      "sourceParts": 2,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "MIDDLE_knuckle_status",
+      "sourceParts": 1,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Delivery_MIDDLE_J1_Graphite_structural_composite",
+      "sourceParts": 2,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "MIDDLE_S1_ivory_phalanx",
+      "sourceParts": 1,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "MIDDLE_S1_palm_grip",
+      "sourceParts": 1,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Delivery_MIDDLE_J1_Anodized_champagne_gold",
+      "sourceParts": 2,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Delivery_MIDDLE_J2_Graphite_structural_composite",
+      "sourceParts": 2,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "MIDDLE_S2_ivory_phalanx",
+      "sourceParts": 1,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "MIDDLE_S2_palm_grip",
+      "sourceParts": 1,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Delivery_MIDDLE_J2_Anodized_champagne_gold",
+      "sourceParts": 2,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Delivery_RING_J0_Graphite_structural_composite",
+      "sourceParts": 2,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "RING_S0_ivory_phalanx",
+      "sourceParts": 1,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "RING_S0_palm_grip",
+      "sourceParts": 1,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Delivery_RING_J0_Anodized_champagne_gold",
+      "sourceParts": 2,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "RING_knuckle_status",
+      "sourceParts": 1,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Delivery_RING_J1_Graphite_structural_composite",
+      "sourceParts": 2,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "RING_S1_ivory_phalanx",
+      "sourceParts": 1,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "RING_S1_palm_grip",
+      "sourceParts": 1,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Delivery_RING_J1_Anodized_champagne_gold",
+      "sourceParts": 2,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Delivery_RING_J2_Graphite_structural_composite",
+      "sourceParts": 2,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "RING_S2_ivory_phalanx",
+      "sourceParts": 1,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "RING_S2_palm_grip",
+      "sourceParts": 1,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Delivery_RING_J2_Anodized_champagne_gold",
+      "sourceParts": 2,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Delivery_LITTLE_J0_Graphite_structural_composite",
+      "sourceParts": 2,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "LITTLE_S0_ivory_phalanx",
+      "sourceParts": 1,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "LITTLE_S0_palm_grip",
+      "sourceParts": 1,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Delivery_LITTLE_J0_Anodized_champagne_gold",
+      "sourceParts": 2,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "LITTLE_knuckle_status",
+      "sourceParts": 1,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Delivery_LITTLE_J1_Graphite_structural_composite",
+      "sourceParts": 2,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "LITTLE_S1_ivory_phalanx",
+      "sourceParts": 1,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "LITTLE_S1_palm_grip",
+      "sourceParts": 1,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Delivery_LITTLE_J1_Anodized_champagne_gold",
+      "sourceParts": 2,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Delivery_LITTLE_J2_Graphite_structural_composite",
+      "sourceParts": 2,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "LITTLE_S2_ivory_phalanx",
+      "sourceParts": 1,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "LITTLE_S2_palm_grip",
+      "sourceParts": 1,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Delivery_LITTLE_J2_Anodized_champagne_gold",
+      "sourceParts": 2,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Delivery_THUMB_J0_Graphite_structural_composite",
+      "sourceParts": 2,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "THUMB_S0_ivory_phalanx",
+      "sourceParts": 1,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "THUMB_S0_palm_grip",
+      "sourceParts": 1,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Delivery_THUMB_J0_Anodized_champagne_gold",
+      "sourceParts": 2,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "THUMB_knuckle_status",
+      "sourceParts": 1,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Delivery_THUMB_J1_Graphite_structural_composite",
+      "sourceParts": 2,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "THUMB_S1_ivory_phalanx",
+      "sourceParts": 1,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "THUMB_S1_palm_grip",
+      "sourceParts": 1,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Delivery_THUMB_J1_Anodized_champagne_gold",
+      "sourceParts": 2,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Delivery_THUMB_J2_Graphite_structural_composite",
+      "sourceParts": 2,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "THUMB_S2_ivory_phalanx",
+      "sourceParts": 1,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "THUMB_S2_palm_grip",
+      "sourceParts": 1,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Delivery_THUMB_J2_Anodized_champagne_gold",
+      "sourceParts": 2,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Delivery_AURIX_ROOT_Warm_silver",
+      "sourceParts": 2,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "Upper_actuator_machined_sleeve",
+      "sourceParts": 1,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "INDEX_S0_side_tendon_guide",
+      "sourceParts": 1,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "MIDDLE_S0_side_tendon_guide",
+      "sourceParts": 1,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "RING_S0_side_tendon_guide",
+      "sourceParts": 1,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "LITTLE_S0_side_tendon_guide",
+      "sourceParts": 1,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    },
+    {
+      "deliveryObject": "THUMB_S0_side_tendon_guide",
+      "sourceParts": 1,
+      "missingOrReversedTriangles": 0,
+      "extraOrReversedTriangles": 0,
+      "passed": true
+    }
+  ],
+  "scope": "Actual pre-consolidation optimized triangles mapped to all saved-native triangles with cyclic winding. Original high-to-low surface distances are separate construction measurements."
+}

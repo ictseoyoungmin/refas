@@ -1,0 +1,91 @@
+{
+  "beganUtc": "2026-11-22T21:34:41.089782+00:00",
+  "inputs": {
+    "high": {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/lining-42/repaired-detailed.blend",
+      "sha256": "d390171806d787c21f98ca5a398117526d7cfc1f302c34bd46ea992ae28fcf0d"
+    },
+    "low": {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/paired-low-44/optimized-cloth.blend",
+      "sha256": "2abed15053c1521bb2ad103d19c9d715b488e7cfcb7b5f2f15c8dea79f61b803"
+    }
+  },
+  "scope": "Author saved-file comparison of the two main cloth meshes only. Avatar and secondary decoration are not loaded. Blue outer/rust lining material overrides reveal shell structure; these are diagnostic colors.",
+  "fixedViews": [
+    {
+      "name": "whole-front",
+      "position": [
+        0,
+        -3,
+        1.25
+      ],
+      "target": [
+        0,
+        0,
+        1.23
+      ],
+      "orthographicScale": 1.2
+    },
+    {
+      "name": "nape",
+      "position": [
+        0,
+        2,
+        1.76
+      ],
+      "target": [
+        0,
+        0,
+        1.405
+      ],
+      "orthographicScale": 0.32
+    },
+    {
+      "name": "collar-front",
+      "position": [
+        0,
+        -2,
+        1.6099999999999999
+      ],
+      "target": [
+        0,
+        0,
+        1.405
+      ],
+      "orthographicScale": 0.38
+    }
+  ],
+  "resolution": [
+    640,
+    480
+  ],
+  "samples": 16,
+  "threads": 2,
+  "outputs": [
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/paired-low-44/views/high-whole-front.png",
+      "sha256": "27fde427d3d168c6088866de0843d1bab0cd187e56858c5459186726b0ebc047"
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/paired-low-44/views/high-nape.png",
+      "sha256": "981c93f611bf7c910d7d6a476033e1f4349eafaf317774fe8066b7752b537419"
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/paired-low-44/views/high-collar-front.png",
+      "sha256": "0954355fa614eebc5f6655a30dcb529811211471c488969629928e64ba6a8c98"
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/paired-low-44/views/low-whole-front.png",
+      "sha256": "f811e7aec8fdc447432c558a89999e17198aea0ed63f6ff8ed3374b1dd86c42d"
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/paired-low-44/views/low-nape.png",
+      "sha256": "f8032e94cb951c1678ab4e172535ac54cef58d8197efe76ea64b5f4c60e2076e"
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/paired-low-44/views/low-collar-front.png",
+      "sha256": "bc165ddc7b9bd061a689ac0434b6874aee8058eb805a5ad43a4256fc4183905c"
+    }
+  ],
+  "completedUtc": "2026-11-22T21:35:02.089216+00:00"
+}

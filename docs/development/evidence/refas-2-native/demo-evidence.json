@@ -1,0 +1,1728 @@
+{
+  "assertions": {
+    "changedObjects": [
+      "HeadbandComfortPad"
+    ],
+    "earlierRevisionsUnchanged": true,
+    "exactBaseNativeCaptured": true,
+    "failedAttemptRetained": true,
+    "failedEditKeptHead": true,
+    "failedEditKeptProjectState": true,
+    "glbReimported": true,
+    "nativeReopened": true,
+    "onlyTargetPartChanged": true,
+    "preservedObjectCount": 29,
+    "preservedObjects": [
+      "DetachableMicrophoneBoom",
+      "HeadbandOuter",
+      "HeadbandSpine",
+      "LeftAdjustmentRail",
+      "LeftCupBadge",
+      "LeftCupFace",
+      "LeftCupShell",
+      "LeftCupTrim",
+      "LeftDriverGrille",
+      "LeftEarCushion",
+      "LeftJoint",
+      "LeftRailMark1",
+      "LeftRailMark2",
+      "LeftRailMark3",
+      "LeftYoke",
+      "MicrophoneCapsule",
+      "MicrophoneMount",
+      "RightAdjustmentRail",
+      "RightCupBadge",
+      "RightCupFace",
+      "RightCupShell",
+      "RightCupTrim",
+      "RightDriverGrille",
+      "RightEarCushion",
+      "RightJoint",
+      "RightRailMark1",
+      "RightRailMark2",
+      "RightRailMark3",
+      "RightYoke"
+    ],
+    "restoreArtifactInventoryExact": true,
+    "restoreInputInventoryExact": true,
+    "sameCameras": true
+  },
+  "assessments": {
+    "gameReadiness": "not-evaluated",
+    "referenceResemblance": "not-evaluated-no-reference",
+    "visualQuality": "requires-human-review"
+  },
+  "environment": {
+    "blender": {
+      "path": "/usr/bin/blender",
+      "version": "Blender 4.3.2"
+    },
+    "entry": "RefAs 2.0 production development",
+    "ok": true,
+    "python": "3.12.14",
+    "scope": "executable probe; render device availability is checked during execution"
+  },
+  "limitations": [
+    "Diagnostic views are unregistered; they do not establish reference likeness.",
+    "GLB reimport checks geometry counts, bounds and basic feature presence, not visual equivalence.",
+    "Fingerprints cover the recorded state at the current frame, not all animation or simulation states.",
+    "Node-group internals and drivers are not exhaustively represented by the state fingerprints.",
+    "Static mesh modifiers are evaluated for GLB export; unapplied non-armature modifiers on skinned or shape-key meshes are unsupported.",
+    "Hidden or excluded meshes are rejected by this alpha so GLB export and diagnostic renders cannot silently use different asset scopes.",
+    "Procedural Blender materials may need baking for faithful GLB appearance."
+  ],
+  "ok": true,
+  "projectRoot": "examples/production-workflow/output/native-evidence",
+  "recordedAt": "2026-11-21T15:47:23.261529+00:00",
+  "revisions": {
+    "after": {
+      "artifacts": [
+        {
+          "bytes": 574416,
+          "path": "asset.glb",
+          "sha256": "e2d15fe44f48ebde86c0a58807728f3f432bf51d41a8f8d4f78796959f511127"
+        },
+        {
+          "bytes": 5050,
+          "path": "result.json",
+          "sha256": "2d7dea3dc81457ddbed1981e9510a54b3693d7d3e0b4975faa4edbe07814df37"
+        },
+        {
+          "bytes": 1801720,
+          "path": "scene.blend",
+          "sha256": "852992409a16b20a29b25155648e4dbaee113662843e16886dac56ea174d80cd"
+        },
+        {
+          "bytes": 360103,
+          "path": "scene.json",
+          "sha256": "6c89634d12c31ea376b2181ec840ec0a051c85a4f2d85bf876530031ff25b298"
+        },
+        {
+          "bytes": 302189,
+          "path": "view-hero.png",
+          "sha256": "5d85985b6c7c80efa0501104c670aaab9de7cea3d0aa94563631638851006ce2"
+        },
+        {
+          "bytes": 280413,
+          "path": "view-side.png",
+          "sha256": "946af3c8d0f2aacb5d2955f52bc83ad34b3da80f2c6ab76bb7f780ebd3e16e6e"
+        }
+      ],
+      "assessment": {
+        "gameReadiness": "not-evaluated",
+        "referenceResemblance": "not-evaluated"
+      },
+      "blenderVersion": "4.3.2",
+      "createdAt": "2026-11-21T15:47:21.686846+00:00",
+      "elapsedSeconds": 3.426,
+      "id": "41706cc2b2f34c9f8227bfb580806a3c",
+      "inputs": [
+        {
+          "bytes": 1801528,
+          "path": "base.blend",
+          "sha256": "1a374987039e214f7a53e1b6a0cb849ff5bf412e2d311d9a4ed22267e95417f7"
+        },
+        {
+          "bytes": 623,
+          "path": "edit.py",
+          "sha256": "6200262dcaca3e5057fc9d8223c39dc6c8044762435e676cda0531e0e0e84ab1"
+        }
+      ],
+      "intent": "Widen only the headband comfort pad by 18 percent",
+      "kind": "edit",
+      "observations": [
+        {
+          "camera": {
+            "matrixWorld": [
+              [
+                0.8349582,
+                -0.2201336,
+                0.50436693,
+                0.38141549
+              ],
+              [
+                0.55031341,
+                0.33399579,
+                -0.76524633,
+                -0.62395287
+              ],
+              [
+                -0.0,
+                0.91650862,
+                0.400015,
+                0.48050189
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "orthoScale": 0.44428289,
+            "position": [
+              0.38141549,
+              -0.62395287,
+              0.48050189
+            ],
+            "projection": "orthographic",
+            "target": [
+              0.0,
+              -0.04525356,
+              0.17799999
+            ]
+          },
+          "path": "view-hero.png",
+          "registration": "unregistered",
+          "renderer": {
+            "denoising": false,
+            "device": "CPU",
+            "engine": "CYCLES",
+            "samples": 16,
+            "size": [
+              512,
+              512
+            ],
+            "viewTransform": "AgX"
+          },
+          "sha256": "5d85985b6c7c80efa0501104c670aaab9de7cea3d0aa94563631638851006ce2",
+          "sourceSceneFingerprint": "4d812a8495894ba757aea11a7e65477b454e84d635e2308e8d27e8f30f7fb2ef",
+          "view": "hero"
+        },
+        {
+          "camera": {
+            "matrixWorld": [
+              [
+                -4e-08,
+                4e-08,
+                1.0,
+                0.75622618
+              ],
+              [
+                1.0,
+                0.0,
+                4e-08,
+                -0.04525356
+              ],
+              [
+                0.0,
+                1.0,
+                -4e-08,
+                0.17799999
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "orthoScale": 0.44428289,
+            "position": [
+              0.75622618,
+              -0.04525356,
+              0.17799999
+            ],
+            "projection": "orthographic",
+            "target": [
+              0.0,
+              -0.04525356,
+              0.17799999
+            ]
+          },
+          "path": "view-side.png",
+          "registration": "unregistered",
+          "renderer": {
+            "denoising": false,
+            "device": "CPU",
+            "engine": "CYCLES",
+            "samples": 16,
+            "size": [
+              512,
+              512
+            ],
+            "viewTransform": "AgX"
+          },
+          "sha256": "946af3c8d0f2aacb5d2955f52bc83ad34b3da80f2c6ab76bb7f780ebd3e16e6e",
+          "sourceSceneFingerprint": "4d812a8495894ba757aea11a7e65477b454e84d635e2308e8d27e8f30f7fb2ef",
+          "view": "side"
+        }
+      ],
+      "outputs": {
+        "blend": "scene.blend",
+        "glb": "asset.glb",
+        "scene": "scene.json"
+      },
+      "parent": "e1409703a3e746b2b7fee84b5f425b91",
+      "runId": "e11f1f2fd09c409599800e8ef495cb07",
+      "schema": "refas.production.revision/v2",
+      "sources": [],
+      "verification": {
+        "glb": {
+          "boundsTolerance": 2.4720001e-05,
+          "checks": {
+            "boundsMatchNative": true,
+            "noDiagnosticCamerasOrLights": true,
+            "nonEmpty": true,
+            "trianglesMatchEncoded": true,
+            "trianglesMatchNative": true
+          },
+          "encoded": {
+            "animations": 0,
+            "cameras": 0,
+            "lights": 0,
+            "materials": 5,
+            "meshes": 30,
+            "morphMeshes": 0,
+            "nodes": 30,
+            "skins": 0,
+            "triangles": 19608
+          },
+          "reimportedBounds": {
+            "dimensions": [
+              0.24720001,
+              0.18049288,
+              0.22199997
+            ],
+            "max": [
+              0.12360001,
+              0.04499288,
+              0.28899997
+            ],
+            "min": [
+              -0.12360001,
+              -0.1355,
+              0.067
+            ]
+          },
+          "reimportedStatistics": {
+            "armatures": 0,
+            "materialSlots": 30,
+            "meshes": 30,
+            "objects": 30,
+            "shapeKeyObjects": 0,
+            "triangles": 19608,
+            "uvObjects": 30,
+            "vertices": 15262
+          },
+          "scope": "geometry counts, bounds and basic feature presence only",
+          "status": "passed"
+        },
+        "native": {
+          "fingerprintMatches": true,
+          "reopened": true,
+          "statistics": {
+            "armatures": 0,
+            "materialSlots": 30,
+            "meshes": 30,
+            "objects": 30,
+            "shapeKeyObjects": 0,
+            "triangles": 19608,
+            "uvObjects": 30,
+            "vertices": 9856
+          },
+          "status": "passed"
+        }
+      },
+      "warnings": [
+        "Diagnostic views are unregistered; they do not establish reference likeness.",
+        "GLB reimport checks geometry counts, bounds and basic feature presence, not visual equivalence.",
+        "Fingerprints cover the recorded state at the current frame, not all animation or simulation states.",
+        "Node-group internals and drivers are not exhaustively represented by the state fingerprints.",
+        "Static mesh modifiers are evaluated for GLB export; unapplied non-armature modifiers on skinned or shape-key meshes are unsupported.",
+        "Hidden or excluded meshes are rejected by this alpha so GLB export and diagnostic renders cannot silently use different asset scopes.",
+        "Procedural Blender materials may need baking for faithful GLB appearance."
+      ]
+    },
+    "before": {
+      "artifacts": [
+        {
+          "bytes": 574416,
+          "path": "asset.glb",
+          "sha256": "9a86a27ee092fbfeb827d61514498d591ad6aa36c0ce3cdbd850151f3ae02b58"
+        },
+        {
+          "bytes": 5050,
+          "path": "result.json",
+          "sha256": "61f2e65345cc3af626dc4d79bfe4759feb764af8a10a74bceeaa43f7c63b9032"
+        },
+        {
+          "bytes": 1801528,
+          "path": "scene.blend",
+          "sha256": "1a374987039e214f7a53e1b6a0cb849ff5bf412e2d311d9a4ed22267e95417f7"
+        },
+        {
+          "bytes": 360103,
+          "path": "scene.json",
+          "sha256": "a1087b4b2ace396ccd4f78eef5281802518583955c3e745f4ce3e2b312dd9796"
+        },
+        {
+          "bytes": 302402,
+          "path": "view-hero.png",
+          "sha256": "7be5a14b8379a5317fa019598eb3a9f5a57214e236095b32aa9d6383114e4f26"
+        },
+        {
+          "bytes": 280336,
+          "path": "view-side.png",
+          "sha256": "780ac69180219ceab9f190a2910a0094699a101312f1f893d5f0271d6a28a689"
+        }
+      ],
+      "assessment": {
+        "gameReadiness": "not-evaluated",
+        "referenceResemblance": "not-evaluated"
+      },
+      "blenderVersion": "4.3.2",
+      "createdAt": "2026-11-21T15:47:18.127993+00:00",
+      "elapsedSeconds": 3.887,
+      "id": "e1409703a3e746b2b7fee84b5f425b91",
+      "inputs": [
+        {
+          "bytes": 9403,
+          "path": "edit.py",
+          "sha256": "fac3cbf4d99d62d48bc6b4a4b9e65132addd1fd3f9938d57557a24cd4c68b465"
+        }
+      ],
+      "intent": "Create an original editable headset fixture",
+      "kind": "edit",
+      "observations": [
+        {
+          "camera": {
+            "matrixWorld": [
+              [
+                0.8349582,
+                -0.2201336,
+                0.50436693,
+                0.38141549
+              ],
+              [
+                0.55031341,
+                0.33399579,
+                -0.76524633,
+                -0.62395287
+              ],
+              [
+                -0.0,
+                0.91650862,
+                0.400015,
+                0.48050189
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "orthoScale": 0.44428289,
+            "position": [
+              0.38141549,
+              -0.62395287,
+              0.48050189
+            ],
+            "projection": "orthographic",
+            "target": [
+              0.0,
+              -0.04525356,
+              0.17799999
+            ]
+          },
+          "path": "view-hero.png",
+          "registration": "unregistered",
+          "renderer": {
+            "denoising": false,
+            "device": "CPU",
+            "engine": "CYCLES",
+            "samples": 16,
+            "size": [
+              512,
+              512
+            ],
+            "viewTransform": "AgX"
+          },
+          "sha256": "7be5a14b8379a5317fa019598eb3a9f5a57214e236095b32aa9d6383114e4f26",
+          "sourceSceneFingerprint": "2249e3fc414e65a5eba12b07910f1dc0c60ca70b4a69fb238fca2593f3a6564d",
+          "view": "hero"
+        },
+        {
+          "camera": {
+            "matrixWorld": [
+              [
+                -4e-08,
+                4e-08,
+                1.0,
+                0.75622618
+              ],
+              [
+                1.0,
+                0.0,
+                4e-08,
+                -0.04525356
+              ],
+              [
+                0.0,
+                1.0,
+                -4e-08,
+                0.17799999
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "orthoScale": 0.44428289,
+            "position": [
+              0.75622618,
+              -0.04525356,
+              0.17799999
+            ],
+            "projection": "orthographic",
+            "target": [
+              0.0,
+              -0.04525356,
+              0.17799999
+            ]
+          },
+          "path": "view-side.png",
+          "registration": "unregistered",
+          "renderer": {
+            "denoising": false,
+            "device": "CPU",
+            "engine": "CYCLES",
+            "samples": 16,
+            "size": [
+              512,
+              512
+            ],
+            "viewTransform": "AgX"
+          },
+          "sha256": "780ac69180219ceab9f190a2910a0094699a101312f1f893d5f0271d6a28a689",
+          "sourceSceneFingerprint": "2249e3fc414e65a5eba12b07910f1dc0c60ca70b4a69fb238fca2593f3a6564d",
+          "view": "side"
+        }
+      ],
+      "outputs": {
+        "blend": "scene.blend",
+        "glb": "asset.glb",
+        "scene": "scene.json"
+      },
+      "parent": null,
+      "runId": "f741c00f0ea145eda0384cb18fe686b5",
+      "schema": "refas.production.revision/v2",
+      "sources": [],
+      "verification": {
+        "glb": {
+          "boundsTolerance": 2.4720001e-05,
+          "checks": {
+            "boundsMatchNative": true,
+            "noDiagnosticCamerasOrLights": true,
+            "nonEmpty": true,
+            "trianglesMatchEncoded": true,
+            "trianglesMatchNative": true
+          },
+          "encoded": {
+            "animations": 0,
+            "cameras": 0,
+            "lights": 0,
+            "materials": 5,
+            "meshes": 30,
+            "morphMeshes": 0,
+            "nodes": 30,
+            "skins": 0,
+            "triangles": 19608
+          },
+          "reimportedBounds": {
+            "dimensions": [
+              0.24720001,
+              0.18049288,
+              0.22199997
+            ],
+            "max": [
+              0.12360001,
+              0.04499288,
+              0.28899997
+            ],
+            "min": [
+              -0.12360001,
+              -0.1355,
+              0.067
+            ]
+          },
+          "reimportedStatistics": {
+            "armatures": 0,
+            "materialSlots": 30,
+            "meshes": 30,
+            "objects": 30,
+            "shapeKeyObjects": 0,
+            "triangles": 19608,
+            "uvObjects": 30,
+            "vertices": 15262
+          },
+          "scope": "geometry counts, bounds and basic feature presence only",
+          "status": "passed"
+        },
+        "native": {
+          "fingerprintMatches": true,
+          "reopened": true,
+          "statistics": {
+            "armatures": 0,
+            "materialSlots": 30,
+            "meshes": 30,
+            "objects": 30,
+            "shapeKeyObjects": 0,
+            "triangles": 19608,
+            "uvObjects": 30,
+            "vertices": 9856
+          },
+          "status": "passed"
+        }
+      },
+      "warnings": [
+        "Diagnostic views are unregistered; they do not establish reference likeness.",
+        "GLB reimport checks geometry counts, bounds and basic feature presence, not visual equivalence.",
+        "Fingerprints cover the recorded state at the current frame, not all animation or simulation states.",
+        "Node-group internals and drivers are not exhaustively represented by the state fingerprints.",
+        "Static mesh modifiers are evaluated for GLB export; unapplied non-armature modifiers on skinned or shape-key meshes are unsupported.",
+        "Hidden or excluded meshes are rejected by this alpha so GLB export and diagnostic renders cannot silently use different asset scopes.",
+        "Procedural Blender materials may need baking for faithful GLB appearance."
+      ]
+    },
+    "restored": {
+      "artifacts": [
+        {
+          "bytes": 574416,
+          "path": "asset.glb",
+          "sha256": "9a86a27ee092fbfeb827d61514498d591ad6aa36c0ce3cdbd850151f3ae02b58"
+        },
+        {
+          "bytes": 5050,
+          "path": "result.json",
+          "sha256": "61f2e65345cc3af626dc4d79bfe4759feb764af8a10a74bceeaa43f7c63b9032"
+        },
+        {
+          "bytes": 1801528,
+          "path": "scene.blend",
+          "sha256": "1a374987039e214f7a53e1b6a0cb849ff5bf412e2d311d9a4ed22267e95417f7"
+        },
+        {
+          "bytes": 360103,
+          "path": "scene.json",
+          "sha256": "a1087b4b2ace396ccd4f78eef5281802518583955c3e745f4ce3e2b312dd9796"
+        },
+        {
+          "bytes": 302402,
+          "path": "view-hero.png",
+          "sha256": "7be5a14b8379a5317fa019598eb3a9f5a57214e236095b32aa9d6383114e4f26"
+        },
+        {
+          "bytes": 280336,
+          "path": "view-side.png",
+          "sha256": "780ac69180219ceab9f190a2910a0094699a101312f1f893d5f0271d6a28a689"
+        }
+      ],
+      "assessment": {
+        "gameReadiness": "not-evaluated",
+        "referenceResemblance": "not-evaluated"
+      },
+      "blenderVersion": "4.3.2",
+      "createdAt": "2026-11-21T15:47:23.166346+00:00",
+      "elapsedSeconds": 0,
+      "id": "882b8d4c856040f294533559a3737430",
+      "inputs": [
+        {
+          "bytes": 9403,
+          "path": "edit.py",
+          "sha256": "fac3cbf4d99d62d48bc6b4a4b9e65132addd1fd3f9938d57557a24cd4c68b465"
+        }
+      ],
+      "intent": "Restore revision e1409703a3e746b2b7fee84b5f425b91",
+      "kind": "restore",
+      "observations": [
+        {
+          "camera": {
+            "matrixWorld": [
+              [
+                0.8349582,
+                -0.2201336,
+                0.50436693,
+                0.38141549
+              ],
+              [
+                0.55031341,
+                0.33399579,
+                -0.76524633,
+                -0.62395287
+              ],
+              [
+                -0.0,
+                0.91650862,
+                0.400015,
+                0.48050189
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "orthoScale": 0.44428289,
+            "position": [
+              0.38141549,
+              -0.62395287,
+              0.48050189
+            ],
+            "projection": "orthographic",
+            "target": [
+              0.0,
+              -0.04525356,
+              0.17799999
+            ]
+          },
+          "path": "view-hero.png",
+          "registration": "unregistered",
+          "renderer": {
+            "denoising": false,
+            "device": "CPU",
+            "engine": "CYCLES",
+            "samples": 16,
+            "size": [
+              512,
+              512
+            ],
+            "viewTransform": "AgX"
+          },
+          "sha256": "7be5a14b8379a5317fa019598eb3a9f5a57214e236095b32aa9d6383114e4f26",
+          "sourceSceneFingerprint": "2249e3fc414e65a5eba12b07910f1dc0c60ca70b4a69fb238fca2593f3a6564d",
+          "view": "hero"
+        },
+        {
+          "camera": {
+            "matrixWorld": [
+              [
+                -4e-08,
+                4e-08,
+                1.0,
+                0.75622618
+              ],
+              [
+                1.0,
+                0.0,
+                4e-08,
+                -0.04525356
+              ],
+              [
+                0.0,
+                1.0,
+                -4e-08,
+                0.17799999
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "orthoScale": 0.44428289,
+            "position": [
+              0.75622618,
+              -0.04525356,
+              0.17799999
+            ],
+            "projection": "orthographic",
+            "target": [
+              0.0,
+              -0.04525356,
+              0.17799999
+            ]
+          },
+          "path": "view-side.png",
+          "registration": "unregistered",
+          "renderer": {
+            "denoising": false,
+            "device": "CPU",
+            "engine": "CYCLES",
+            "samples": 16,
+            "size": [
+              512,
+              512
+            ],
+            "viewTransform": "AgX"
+          },
+          "sha256": "780ac69180219ceab9f190a2910a0094699a101312f1f893d5f0271d6a28a689",
+          "sourceSceneFingerprint": "2249e3fc414e65a5eba12b07910f1dc0c60ca70b4a69fb238fca2593f3a6564d",
+          "view": "side"
+        }
+      ],
+      "outputs": {
+        "blend": "scene.blend",
+        "glb": "asset.glb",
+        "scene": "scene.json"
+      },
+      "parent": "41706cc2b2f34c9f8227bfb580806a3c",
+      "restoredFrom": "e1409703a3e746b2b7fee84b5f425b91",
+      "runId": null,
+      "schema": "refas.production.revision/v2",
+      "sources": [],
+      "verification": {
+        "glb": {
+          "boundsTolerance": 2.4720001e-05,
+          "checks": {
+            "boundsMatchNative": true,
+            "noDiagnosticCamerasOrLights": true,
+            "nonEmpty": true,
+            "trianglesMatchEncoded": true,
+            "trianglesMatchNative": true
+          },
+          "encoded": {
+            "animations": 0,
+            "cameras": 0,
+            "lights": 0,
+            "materials": 5,
+            "meshes": 30,
+            "morphMeshes": 0,
+            "nodes": 30,
+            "skins": 0,
+            "triangles": 19608
+          },
+          "reimportedBounds": {
+            "dimensions": [
+              0.24720001,
+              0.18049288,
+              0.22199997
+            ],
+            "max": [
+              0.12360001,
+              0.04499288,
+              0.28899997
+            ],
+            "min": [
+              -0.12360001,
+              -0.1355,
+              0.067
+            ]
+          },
+          "reimportedStatistics": {
+            "armatures": 0,
+            "materialSlots": 30,
+            "meshes": 30,
+            "objects": 30,
+            "shapeKeyObjects": 0,
+            "triangles": 19608,
+            "uvObjects": 30,
+            "vertices": 15262
+          },
+          "scope": "geometry counts, bounds and basic feature presence only",
+          "status": "passed"
+        },
+        "native": {
+          "fingerprintMatches": true,
+          "reopened": true,
+          "statistics": {
+            "armatures": 0,
+            "materialSlots": 30,
+            "meshes": 30,
+            "objects": 30,
+            "shapeKeyObjects": 0,
+            "triangles": 19608,
+            "uvObjects": 30,
+            "vertices": 9856
+          },
+          "status": "passed"
+        }
+      },
+      "warnings": [
+        "Diagnostic views are unregistered; they do not establish reference likeness.",
+        "GLB reimport checks geometry counts, bounds and basic feature presence, not visual equivalence.",
+        "Fingerprints cover the recorded state at the current frame, not all animation or simulation states.",
+        "Node-group internals and drivers are not exhaustively represented by the state fingerprints.",
+        "Static mesh modifiers are evaluated for GLB export; unapplied non-armature modifiers on skinned or shape-key meshes are unsupported.",
+        "Hidden or excluded meshes are rejected by this alpha so GLB export and diagnostic renders cannot silently use different asset scopes.",
+        "Procedural Blender materials may need baking for faithful GLB appearance."
+      ]
+    }
+  },
+  "schema": "refas.production.demo-evidence/v2",
+  "settings": {
+    "samples": 16,
+    "size": 512,
+    "views": [
+      "hero",
+      "side"
+    ]
+  },
+  "sourceFiles": [
+    {
+      "bytes": 3806,
+      "path": "skills/refas/scripts/produce.py",
+      "sha256": "7c333775d3c5b31d2012f75d35ea385e5a4fd5fbeb1584a3c9014256b7dd3e59"
+    },
+    {
+      "bytes": 22961,
+      "path": "skills/refas/scripts/production/project.py",
+      "sha256": "5752fb588f7fb185601def9372bc807b6aa5e8bb2f069b3b5bc986c2462ee80f"
+    },
+    {
+      "bytes": 29908,
+      "path": "skills/refas/scripts/production/blender_worker.py",
+      "sha256": "9243e817246493f788b56fafca45a6144cf9a1a4528d0b700ea66bd6900c7b12"
+    },
+    {
+      "bytes": 9403,
+      "path": "examples/production-workflow/create_headset.py",
+      "sha256": "fac3cbf4d99d62d48bc6b4a4b9e65132addd1fd3f9938d57557a24cd4c68b465"
+    },
+    {
+      "bytes": 623,
+      "path": "examples/production-workflow/revise_headset.py",
+      "sha256": "6200262dcaca3e5057fc9d8223c39dc6c8044762435e676cda0531e0e0e84ab1"
+    },
+    {
+      "bytes": 12869,
+      "path": "examples/production-workflow/run.py",
+      "sha256": "e367e5394398c3bb42b6a03df5679e25205b267e8e759a528500a55437c41bfa"
+    }
+  ],
+  "statistics": {
+    "after": {
+      "armatures": 0,
+      "materialSlots": 30,
+      "meshes": 30,
+      "objects": 30,
+      "shapeKeyObjects": 0,
+      "triangles": 19608,
+      "uvObjects": 30,
+      "vertices": 9856
+    },
+    "before": {
+      "armatures": 0,
+      "materialSlots": 30,
+      "meshes": 30,
+      "objects": 30,
+      "shapeKeyObjects": 0,
+      "triangles": 19608,
+      "uvObjects": 30,
+      "vertices": 9856
+    }
+  },
+  "steps": [
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "skills/refas/scripts/produce.py",
+        "doctor",
+        "--blender",
+        "blender"
+      ],
+      "elapsedSeconds": 0.522,
+      "exitCode": 0,
+      "name": "doctor",
+      "result": {
+        "blender": {
+          "path": "/usr/bin/blender",
+          "version": "Blender 4.3.2"
+        },
+        "entry": "RefAs 2.0 production development",
+        "ok": true,
+        "python": "3.12.14",
+        "scope": "executable probe; render device availability is checked during execution"
+      }
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "skills/refas/scripts/produce.py",
+        "init",
+        "--root",
+        "examples/production-workflow/output/native-evidence",
+        "--name",
+        "Original headset production fixture"
+      ],
+      "elapsedSeconds": 0.042,
+      "exitCode": 0,
+      "name": "init",
+      "result": {
+        "gameReadiness": "not-evaluated",
+        "head": null,
+        "incompleteRuns": [],
+        "inputs": {},
+        "name": "Original headset production fixture",
+        "observations": [],
+        "ok": true,
+        "outputs": {},
+        "projectId": "e6893c912110478c96a3a181ab793cf0",
+        "referenceResemblance": "not-evaluated",
+        "revisions": [],
+        "schema": "refas.production.project/v2",
+        "sequence": 0,
+        "sources": []
+      }
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "skills/refas/scripts/produce.py",
+        "run",
+        "--root",
+        "examples/production-workflow/output/native-evidence",
+        "--script",
+        "examples/production-workflow/create_headset.py",
+        "--intent",
+        "Create an original editable headset fixture",
+        "--expected-revision",
+        "none",
+        "--blender",
+        "blender",
+        "--views",
+        "hero,side",
+        "--size",
+        "512",
+        "--samples",
+        "16",
+        "--timeout",
+        "180"
+      ],
+      "elapsedSeconds": 3.977,
+      "exitCode": 0,
+      "name": "create",
+      "result": {
+        "elapsedSeconds": 3.887,
+        "gameReadiness": "not-evaluated",
+        "head": "e1409703a3e746b2b7fee84b5f425b91",
+        "incompleteRuns": [],
+        "inputs": {
+          "edit.py": "examples/production-workflow/output/native-evidence/.refas2/revisions/e1409703a3e746b2b7fee84b5f425b91/inputs/edit.py"
+        },
+        "name": "Original headset production fixture",
+        "observations": [
+          {
+            "camera": {
+              "matrixWorld": [
+                [
+                  0.8349582,
+                  -0.2201336,
+                  0.50436693,
+                  0.38141549
+                ],
+                [
+                  0.55031341,
+                  0.33399579,
+                  -0.76524633,
+                  -0.62395287
+                ],
+                [
+                  -0.0,
+                  0.91650862,
+                  0.400015,
+                  0.48050189
+                ],
+                [
+                  0.0,
+                  0.0,
+                  0.0,
+                  1.0
+                ]
+              ],
+              "orthoScale": 0.44428289,
+              "position": [
+                0.38141549,
+                -0.62395287,
+                0.48050189
+              ],
+              "projection": "orthographic",
+              "target": [
+                0.0,
+                -0.04525356,
+                0.17799999
+              ]
+            },
+            "path": "examples/production-workflow/output/native-evidence/.refas2/revisions/e1409703a3e746b2b7fee84b5f425b91/artifacts/view-hero.png",
+            "registration": "unregistered",
+            "renderer": {
+              "denoising": false,
+              "device": "CPU",
+              "engine": "CYCLES",
+              "samples": 16,
+              "size": [
+                512,
+                512
+              ],
+              "viewTransform": "AgX"
+            },
+            "sha256": "7be5a14b8379a5317fa019598eb3a9f5a57214e236095b32aa9d6383114e4f26",
+            "sourceSceneFingerprint": "2249e3fc414e65a5eba12b07910f1dc0c60ca70b4a69fb238fca2593f3a6564d",
+            "view": "hero"
+          },
+          {
+            "camera": {
+              "matrixWorld": [
+                [
+                  -4e-08,
+                  4e-08,
+                  1.0,
+                  0.75622618
+                ],
+                [
+                  1.0,
+                  0.0,
+                  4e-08,
+                  -0.04525356
+                ],
+                [
+                  0.0,
+                  1.0,
+                  -4e-08,
+                  0.17799999
+                ],
+                [
+                  0.0,
+                  0.0,
+                  0.0,
+                  1.0
+                ]
+              ],
+              "orthoScale": 0.44428289,
+              "position": [
+                0.75622618,
+                -0.04525356,
+                0.17799999
+              ],
+              "projection": "orthographic",
+              "target": [
+                0.0,
+                -0.04525356,
+                0.17799999
+              ]
+            },
+            "path": "examples/production-workflow/output/native-evidence/.refas2/revisions/e1409703a3e746b2b7fee84b5f425b91/artifacts/view-side.png",
+            "registration": "unregistered",
+            "renderer": {
+              "denoising": false,
+              "device": "CPU",
+              "engine": "CYCLES",
+              "samples": 16,
+              "size": [
+                512,
+                512
+              ],
+              "viewTransform": "AgX"
+            },
+            "sha256": "780ac69180219ceab9f190a2910a0094699a101312f1f893d5f0271d6a28a689",
+            "sourceSceneFingerprint": "2249e3fc414e65a5eba12b07910f1dc0c60ca70b4a69fb238fca2593f3a6564d",
+            "view": "side"
+          }
+        ],
+        "ok": true,
+        "outputs": {
+          "blend": "examples/production-workflow/output/native-evidence/.refas2/revisions/e1409703a3e746b2b7fee84b5f425b91/artifacts/scene.blend",
+          "glb": "examples/production-workflow/output/native-evidence/.refas2/revisions/e1409703a3e746b2b7fee84b5f425b91/artifacts/asset.glb",
+          "scene": "examples/production-workflow/output/native-evidence/.refas2/revisions/e1409703a3e746b2b7fee84b5f425b91/artifacts/scene.json"
+        },
+        "projectId": "e6893c912110478c96a3a181ab793cf0",
+        "publishedRevision": "e1409703a3e746b2b7fee84b5f425b91",
+        "referenceResemblance": "not-evaluated",
+        "revisions": [
+          {
+            "createdAt": "2026-11-21T15:47:18.127993+00:00",
+            "id": "e1409703a3e746b2b7fee84b5f425b91",
+            "intent": "Create an original editable headset fixture",
+            "parent": null
+          }
+        ],
+        "runId": "f741c00f0ea145eda0384cb18fe686b5",
+        "schema": "refas.production.project/v2",
+        "sequence": 1,
+        "sources": []
+      }
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "skills/refas/scripts/produce.py",
+        "run",
+        "--root",
+        "examples/production-workflow/output/native-evidence",
+        "--script",
+        "examples/production-workflow/revise_headset.py",
+        "--intent",
+        "Widen only the headband comfort pad by 18 percent",
+        "--expected-revision",
+        "e1409703a3e746b2b7fee84b5f425b91",
+        "--blender",
+        "blender",
+        "--views",
+        "hero,side",
+        "--size",
+        "512",
+        "--samples",
+        "16",
+        "--timeout",
+        "180"
+      ],
+      "elapsedSeconds": 3.566,
+      "exitCode": 0,
+      "name": "revise",
+      "result": {
+        "elapsedSeconds": 3.426,
+        "gameReadiness": "not-evaluated",
+        "head": "41706cc2b2f34c9f8227bfb580806a3c",
+        "incompleteRuns": [],
+        "inputs": {
+          "base.blend": "examples/production-workflow/output/native-evidence/.refas2/revisions/41706cc2b2f34c9f8227bfb580806a3c/inputs/base.blend",
+          "edit.py": "examples/production-workflow/output/native-evidence/.refas2/revisions/41706cc2b2f34c9f8227bfb580806a3c/inputs/edit.py"
+        },
+        "name": "Original headset production fixture",
+        "observations": [
+          {
+            "camera": {
+              "matrixWorld": [
+                [
+                  0.8349582,
+                  -0.2201336,
+                  0.50436693,
+                  0.38141549
+                ],
+                [
+                  0.55031341,
+                  0.33399579,
+                  -0.76524633,
+                  -0.62395287
+                ],
+                [
+                  -0.0,
+                  0.91650862,
+                  0.400015,
+                  0.48050189
+                ],
+                [
+                  0.0,
+                  0.0,
+                  0.0,
+                  1.0
+                ]
+              ],
+              "orthoScale": 0.44428289,
+              "position": [
+                0.38141549,
+                -0.62395287,
+                0.48050189
+              ],
+              "projection": "orthographic",
+              "target": [
+                0.0,
+                -0.04525356,
+                0.17799999
+              ]
+            },
+            "path": "examples/production-workflow/output/native-evidence/.refas2/revisions/41706cc2b2f34c9f8227bfb580806a3c/artifacts/view-hero.png",
+            "registration": "unregistered",
+            "renderer": {
+              "denoising": false,
+              "device": "CPU",
+              "engine": "CYCLES",
+              "samples": 16,
+              "size": [
+                512,
+                512
+              ],
+              "viewTransform": "AgX"
+            },
+            "sha256": "5d85985b6c7c80efa0501104c670aaab9de7cea3d0aa94563631638851006ce2",
+            "sourceSceneFingerprint": "4d812a8495894ba757aea11a7e65477b454e84d635e2308e8d27e8f30f7fb2ef",
+            "view": "hero"
+          },
+          {
+            "camera": {
+              "matrixWorld": [
+                [
+                  -4e-08,
+                  4e-08,
+                  1.0,
+                  0.75622618
+                ],
+                [
+                  1.0,
+                  0.0,
+                  4e-08,
+                  -0.04525356
+                ],
+                [
+                  0.0,
+                  1.0,
+                  -4e-08,
+                  0.17799999
+                ],
+                [
+                  0.0,
+                  0.0,
+                  0.0,
+                  1.0
+                ]
+              ],
+              "orthoScale": 0.44428289,
+              "position": [
+                0.75622618,
+                -0.04525356,
+                0.17799999
+              ],
+              "projection": "orthographic",
+              "target": [
+                0.0,
+                -0.04525356,
+                0.17799999
+              ]
+            },
+            "path": "examples/production-workflow/output/native-evidence/.refas2/revisions/41706cc2b2f34c9f8227bfb580806a3c/artifacts/view-side.png",
+            "registration": "unregistered",
+            "renderer": {
+              "denoising": false,
+              "device": "CPU",
+              "engine": "CYCLES",
+              "samples": 16,
+              "size": [
+                512,
+                512
+              ],
+              "viewTransform": "AgX"
+            },
+            "sha256": "946af3c8d0f2aacb5d2955f52bc83ad34b3da80f2c6ab76bb7f780ebd3e16e6e",
+            "sourceSceneFingerprint": "4d812a8495894ba757aea11a7e65477b454e84d635e2308e8d27e8f30f7fb2ef",
+            "view": "side"
+          }
+        ],
+        "ok": true,
+        "outputs": {
+          "blend": "examples/production-workflow/output/native-evidence/.refas2/revisions/41706cc2b2f34c9f8227bfb580806a3c/artifacts/scene.blend",
+          "glb": "examples/production-workflow/output/native-evidence/.refas2/revisions/41706cc2b2f34c9f8227bfb580806a3c/artifacts/asset.glb",
+          "scene": "examples/production-workflow/output/native-evidence/.refas2/revisions/41706cc2b2f34c9f8227bfb580806a3c/artifacts/scene.json"
+        },
+        "projectId": "e6893c912110478c96a3a181ab793cf0",
+        "publishedRevision": "41706cc2b2f34c9f8227bfb580806a3c",
+        "referenceResemblance": "not-evaluated",
+        "revisions": [
+          {
+            "createdAt": "2026-11-21T15:47:18.127993+00:00",
+            "id": "e1409703a3e746b2b7fee84b5f425b91",
+            "intent": "Create an original editable headset fixture",
+            "parent": null
+          },
+          {
+            "createdAt": "2026-11-21T15:47:21.686846+00:00",
+            "id": "41706cc2b2f34c9f8227bfb580806a3c",
+            "intent": "Widen only the headband comfort pad by 18 percent",
+            "parent": "e1409703a3e746b2b7fee84b5f425b91"
+          }
+        ],
+        "runId": "e11f1f2fd09c409599800e8ef495cb07",
+        "schema": "refas.production.project/v2",
+        "sequence": 2,
+        "sources": []
+      }
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "skills/refas/scripts/produce.py",
+        "run",
+        "--root",
+        "examples/production-workflow/output/native-evidence",
+        "--script",
+        "examples/production-workflow/output/native-evidence/intentional_failure.py",
+        "--intent",
+        "Exercise failed edit recovery without publishing a candidate",
+        "--expected-revision",
+        "41706cc2b2f34c9f8227bfb580806a3c",
+        "--blender",
+        "blender",
+        "--views",
+        "hero,side",
+        "--size",
+        "512",
+        "--samples",
+        "16",
+        "--timeout",
+        "180"
+      ],
+      "elapsedSeconds": 1.296,
+      "exitCode": 1,
+      "name": "intentional-failure",
+      "result": {
+        "error": "Blender failed with exit 1; inspect examples/production-workflow/output/native-evidence/.refas2/runs/d307d4d21c8a49328ccd688218a92927/blender.log",
+        "ok": false
+      }
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "skills/refas/scripts/produce.py",
+        "status",
+        "--root",
+        "examples/production-workflow/output/native-evidence"
+      ],
+      "elapsedSeconds": 0.053,
+      "exitCode": 0,
+      "name": "status-after-failure",
+      "result": {
+        "gameReadiness": "not-evaluated",
+        "head": "41706cc2b2f34c9f8227bfb580806a3c",
+        "incompleteRuns": [
+          {
+            "error": "Blender failed with exit 1; inspect examples/production-workflow/output/native-evidence/.refas2/runs/d307d4d21c8a49328ccd688218a92927/blender.log",
+            "id": "d307d4d21c8a49328ccd688218a92927",
+            "status": "failed"
+          }
+        ],
+        "inputs": {
+          "base.blend": "examples/production-workflow/output/native-evidence/.refas2/revisions/41706cc2b2f34c9f8227bfb580806a3c/inputs/base.blend",
+          "edit.py": "examples/production-workflow/output/native-evidence/.refas2/revisions/41706cc2b2f34c9f8227bfb580806a3c/inputs/edit.py"
+        },
+        "name": "Original headset production fixture",
+        "observations": [
+          {
+            "camera": {
+              "matrixWorld": [
+                [
+                  0.8349582,
+                  -0.2201336,
+                  0.50436693,
+                  0.38141549
+                ],
+                [
+                  0.55031341,
+                  0.33399579,
+                  -0.76524633,
+                  -0.62395287
+                ],
+                [
+                  -0.0,
+                  0.91650862,
+                  0.400015,
+                  0.48050189
+                ],
+                [
+                  0.0,
+                  0.0,
+                  0.0,
+                  1.0
+                ]
+              ],
+              "orthoScale": 0.44428289,
+              "position": [
+                0.38141549,
+                -0.62395287,
+                0.48050189
+              ],
+              "projection": "orthographic",
+              "target": [
+                0.0,
+                -0.04525356,
+                0.17799999
+              ]
+            },
+            "path": "examples/production-workflow/output/native-evidence/.refas2/revisions/41706cc2b2f34c9f8227bfb580806a3c/artifacts/view-hero.png",
+            "registration": "unregistered",
+            "renderer": {
+              "denoising": false,
+              "device": "CPU",
+              "engine": "CYCLES",
+              "samples": 16,
+              "size": [
+                512,
+                512
+              ],
+              "viewTransform": "AgX"
+            },
+            "sha256": "5d85985b6c7c80efa0501104c670aaab9de7cea3d0aa94563631638851006ce2",
+            "sourceSceneFingerprint": "4d812a8495894ba757aea11a7e65477b454e84d635e2308e8d27e8f30f7fb2ef",
+            "view": "hero"
+          },
+          {
+            "camera": {
+              "matrixWorld": [
+                [
+                  -4e-08,
+                  4e-08,
+                  1.0,
+                  0.75622618
+                ],
+                [
+                  1.0,
+                  0.0,
+                  4e-08,
+                  -0.04525356
+                ],
+                [
+                  0.0,
+                  1.0,
+                  -4e-08,
+                  0.17799999
+                ],
+                [
+                  0.0,
+                  0.0,
+                  0.0,
+                  1.0
+                ]
+              ],
+              "orthoScale": 0.44428289,
+              "position": [
+                0.75622618,
+                -0.04525356,
+                0.17799999
+              ],
+              "projection": "orthographic",
+              "target": [
+                0.0,
+                -0.04525356,
+                0.17799999
+              ]
+            },
+            "path": "examples/production-workflow/output/native-evidence/.refas2/revisions/41706cc2b2f34c9f8227bfb580806a3c/artifacts/view-side.png",
+            "registration": "unregistered",
+            "renderer": {
+              "denoising": false,
+              "device": "CPU",
+              "engine": "CYCLES",
+              "samples": 16,
+              "size": [
+                512,
+                512
+              ],
+              "viewTransform": "AgX"
+            },
+            "sha256": "946af3c8d0f2aacb5d2955f52bc83ad34b3da80f2c6ab76bb7f780ebd3e16e6e",
+            "sourceSceneFingerprint": "4d812a8495894ba757aea11a7e65477b454e84d635e2308e8d27e8f30f7fb2ef",
+            "view": "side"
+          }
+        ],
+        "ok": true,
+        "outputs": {
+          "blend": "examples/production-workflow/output/native-evidence/.refas2/revisions/41706cc2b2f34c9f8227bfb580806a3c/artifacts/scene.blend",
+          "glb": "examples/production-workflow/output/native-evidence/.refas2/revisions/41706cc2b2f34c9f8227bfb580806a3c/artifacts/asset.glb",
+          "scene": "examples/production-workflow/output/native-evidence/.refas2/revisions/41706cc2b2f34c9f8227bfb580806a3c/artifacts/scene.json"
+        },
+        "projectId": "e6893c912110478c96a3a181ab793cf0",
+        "referenceResemblance": "not-evaluated",
+        "revisions": [
+          {
+            "createdAt": "2026-11-21T15:47:18.127993+00:00",
+            "id": "e1409703a3e746b2b7fee84b5f425b91",
+            "intent": "Create an original editable headset fixture",
+            "parent": null
+          },
+          {
+            "createdAt": "2026-11-21T15:47:21.686846+00:00",
+            "id": "41706cc2b2f34c9f8227bfb580806a3c",
+            "intent": "Widen only the headband comfort pad by 18 percent",
+            "parent": "e1409703a3e746b2b7fee84b5f425b91"
+          }
+        ],
+        "schema": "refas.production.project/v2",
+        "sequence": 2,
+        "sources": []
+      }
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "skills/refas/scripts/produce.py",
+        "restore",
+        "--root",
+        "examples/production-workflow/output/native-evidence",
+        "--revision",
+        "e1409703a3e746b2b7fee84b5f425b91",
+        "--expected-revision",
+        "41706cc2b2f34c9f8227bfb580806a3c"
+      ],
+      "elapsedSeconds": 0.088,
+      "exitCode": 0,
+      "name": "restore",
+      "result": {
+        "gameReadiness": "not-evaluated",
+        "head": "882b8d4c856040f294533559a3737430",
+        "incompleteRuns": [
+          {
+            "error": "Blender failed with exit 1; inspect examples/production-workflow/output/native-evidence/.refas2/runs/d307d4d21c8a49328ccd688218a92927/blender.log",
+            "id": "d307d4d21c8a49328ccd688218a92927",
+            "status": "failed"
+          }
+        ],
+        "inputs": {
+          "edit.py": "examples/production-workflow/output/native-evidence/.refas2/revisions/882b8d4c856040f294533559a3737430/inputs/edit.py"
+        },
+        "name": "Original headset production fixture",
+        "observations": [
+          {
+            "camera": {
+              "matrixWorld": [
+                [
+                  0.8349582,
+                  -0.2201336,
+                  0.50436693,
+                  0.38141549
+                ],
+                [
+                  0.55031341,
+                  0.33399579,
+                  -0.76524633,
+                  -0.62395287
+                ],
+                [
+                  -0.0,
+                  0.91650862,
+                  0.400015,
+                  0.48050189
+                ],
+                [
+                  0.0,
+                  0.0,
+                  0.0,
+                  1.0
+                ]
+              ],
+              "orthoScale": 0.44428289,
+              "position": [
+                0.38141549,
+                -0.62395287,
+                0.48050189
+              ],
+              "projection": "orthographic",
+              "target": [
+                0.0,
+                -0.04525356,
+                0.17799999
+              ]
+            },
+            "path": "examples/production-workflow/output/native-evidence/.refas2/revisions/882b8d4c856040f294533559a3737430/artifacts/view-hero.png",
+            "registration": "unregistered",
+            "renderer": {
+              "denoising": false,
+              "device": "CPU",
+              "engine": "CYCLES",
+              "samples": 16,
+              "size": [
+                512,
+                512
+              ],
+              "viewTransform": "AgX"
+            },
+            "sha256": "7be5a14b8379a5317fa019598eb3a9f5a57214e236095b32aa9d6383114e4f26",
+            "sourceSceneFingerprint": "2249e3fc414e65a5eba12b07910f1dc0c60ca70b4a69fb238fca2593f3a6564d",
+            "view": "hero"
+          },
+          {
+            "camera": {
+              "matrixWorld": [
+                [
+                  -4e-08,
+                  4e-08,
+                  1.0,
+                  0.75622618
+                ],
+                [
+                  1.0,
+                  0.0,
+                  4e-08,
+                  -0.04525356
+                ],
+                [
+                  0.0,
+                  1.0,
+                  -4e-08,
+                  0.17799999
+                ],
+                [
+                  0.0,
+                  0.0,
+                  0.0,
+                  1.0
+                ]
+              ],
+              "orthoScale": 0.44428289,
+              "position": [
+                0.75622618,
+                -0.04525356,
+                0.17799999
+              ],
+              "projection": "orthographic",
+              "target": [
+                0.0,
+                -0.04525356,
+                0.17799999
+              ]
+            },
+            "path": "examples/production-workflow/output/native-evidence/.refas2/revisions/882b8d4c856040f294533559a3737430/artifacts/view-side.png",
+            "registration": "unregistered",
+            "renderer": {
+              "denoising": false,
+              "device": "CPU",
+              "engine": "CYCLES",
+              "samples": 16,
+              "size": [
+                512,
+                512
+              ],
+              "viewTransform": "AgX"
+            },
+            "sha256": "780ac69180219ceab9f190a2910a0094699a101312f1f893d5f0271d6a28a689",
+            "sourceSceneFingerprint": "2249e3fc414e65a5eba12b07910f1dc0c60ca70b4a69fb238fca2593f3a6564d",
+            "view": "side"
+          }
+        ],
+        "ok": true,
+        "outputs": {
+          "blend": "examples/production-workflow/output/native-evidence/.refas2/revisions/882b8d4c856040f294533559a3737430/artifacts/scene.blend",
+          "glb": "examples/production-workflow/output/native-evidence/.refas2/revisions/882b8d4c856040f294533559a3737430/artifacts/asset.glb",
+          "scene": "examples/production-workflow/output/native-evidence/.refas2/revisions/882b8d4c856040f294533559a3737430/artifacts/scene.json"
+        },
+        "projectId": "e6893c912110478c96a3a181ab793cf0",
+        "referenceResemblance": "not-evaluated",
+        "revisions": [
+          {
+            "createdAt": "2026-11-21T15:47:18.127993+00:00",
+            "id": "e1409703a3e746b2b7fee84b5f425b91",
+            "intent": "Create an original editable headset fixture",
+            "parent": null
+          },
+          {
+            "createdAt": "2026-11-21T15:47:21.686846+00:00",
+            "id": "41706cc2b2f34c9f8227bfb580806a3c",
+            "intent": "Widen only the headband comfort pad by 18 percent",
+            "parent": "e1409703a3e746b2b7fee84b5f425b91"
+          },
+          {
+            "createdAt": "2026-11-21T15:47:23.166346+00:00",
+            "id": "882b8d4c856040f294533559a3737430",
+            "intent": "Restore revision e1409703a3e746b2b7fee84b5f425b91",
+            "parent": "41706cc2b2f34c9f8227bfb580806a3c"
+          }
+        ],
+        "schema": "refas.production.project/v2",
+        "sequence": 3,
+        "sources": []
+      }
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "skills/refas/scripts/produce.py",
+        "verify",
+        "--root",
+        "examples/production-workflow/output/native-evidence"
+      ],
+      "elapsedSeconds": 0.051,
+      "exitCode": 0,
+      "name": "verify",
+      "result": {
+        "artifactCount": 6,
+        "gameReadiness": "not-evaluated",
+        "head": "882b8d4c856040f294533559a3737430",
+        "ok": true,
+        "referenceResemblance": "not-evaluated",
+        "scope": "recorded-file-integrity"
+      }
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "first_observed_utc": "2026-11-22T13:28:43Z",
+  "first_observed_scope": "After assignment and worker/test source read; not full agent start.",
+  "command": [
+    "python3",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-p",
+    "test_production_mesh_audit.py",
+    "-v"
+  ],
+  "startedUtc": "2026-11-22T13:35:00.063349+00:00",
+  "endedUtc": "2026-11-22T13:35:01.579967+00:00",
+  "elapsedSeconds": 1.516600559996732,
+  "exitCode": 0,
+  "tests": 10,
+  "passed": 10,
+  "failed": 0,
+  "skipped": 0,
+  "blenderVersion": "4.3.2",
+  "caseCount": 17,
+  "rejectedInvalidCalls": 11,
+  "moduleSha256": "ae8d4e88fe0df187152306f4409428ebc4768171a3633fd27b6ca6a7196d82d2",
+  "testSha256": "09f2f0c9f08056a94dea760b8333139bea1fd92ba67163d798c2d33f0cf55fbd",
+  "observationsSha256": "60d5fe2be40093f8b7d93d50d26c58b266ae215c4ce50c019ed3c9fced50a3a8",
+  "providerModel": null,
+  "tokens": null,
+  "modelCost": null,
+  "toolCost": null,
+  "measurementLimits": "Pre-reading clock and provider/model token/billing data are unavailable. This is a local regression run, not a controlled modeling-speed/cost comparison.",
+  "retainedPriorRuns": [
+    "initial/execution.json",
+    "degenerate-target-counterexample/execution.json"
+  ]
+}

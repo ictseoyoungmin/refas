@@ -25,7 +25,7 @@ RefAs artifacts; GitHub metadata must reflect that state but never replace it.
    continue elsewhere, but a second mutation path does not begin.
 6. **Reopen is corrective, not exceptional.** Stronger evidence, an upstream
    representation change, or a visible regression reopens the owning
-   capability. Rejected candidates remain evidence.
+   capability. Relevant rejected candidates remain in the working project.
 
 These rules are development governance. They must not be copied into product
 schemas as work-state architecture.
@@ -145,6 +145,33 @@ Relation authority and relation realization have deliberately different owners. 
   absence of an open dependent Pull Request. If any relation is ambiguous, keep
   the branch and resolve the ambiguity first.
 
+## Source and asset boundary
+
+Default to a source Pull Request: implementation, small synthetic tests and
+concise documentation. Keep user models, GLBs, rendered images or video, raw
+logs, large arrays and recovery archives outside the repository. Tests should
+generate small assets in temporary directories rather than checking them in.
+An evidence directory or fixture name does not bypass this boundary.
+
+Describe the tested scope, result and limitation once. Link necessary external
+evidence when available; do not upload private assets to make a public review
+self-contained. Run `npm run check:artifacts` on the local change or its
+`--staged` form before publishing. Existing historical evidence is retained;
+this boundary does not request its deletion or a Git history rewrite.
+
+The budget reports exact one-for-one moves of existing UTF-8 Markdown under
+`docs/` separately from changed bytes. Both paths must be outside evidence and
+output directories; the old path must be deleted and the new path added with
+identical complete contents. Every destination still counts against the file
+limit and passes the regular-file, size, path and text checks. Modified docs,
+copies and non-documentation files retain their full byte charge. This is
+relocation accounting, not permission to move generated payloads into Git.
+
+Use temporary diagnostic reads while modeling and keep recovery in one working
+project. Persist detailed observations only when they explain an unresolved
+failure or support the selected deliverable. Repeated reports, crops, videos
+and checkpoint archives are not routine completion requirements.
+
 ## Pull Request contract
 
 A Pull Request must:
@@ -153,17 +180,44 @@ A Pull Request must:
 - preserve one runtime capability and hierarchy scope, or one explicit
   repository boundary and the `repository` scope, as the mutation owner;
 - describe the bounded intent and public contract impact;
-- list the baseline and candidate checkpoints when artifact bytes change;
+- identify the baseline and selected candidate when modeling output changes;
 - state the invalidation range and exact rollback point;
-- include reproducible commands and results;
-- include raw reference, BEFORE, AFTER, split comparison, and required
-  multiview renders for visual work;
-- retain rejected candidates as evidence rather than deleting history;
+- include the relevant reproducible commands and concise results;
+- for visual work, inspect the raw reference and actual BEFORE/AFTER output,
+  then link only the views or comparison needed to assess that change;
+- keep relevant rejected candidates in the working project without copying
+  the entire recovery history into Git;
 - remain Draft until required evidence is present.
 
 Repository CI is necessary but not sufficient for visual closure. The reviewer
-must inspect actual renders whole → region → part → subpart → feature and may
-reopen an upstream owner despite green checks.
+must inspect actual output from the whole to the affected detail and may reopen
+an upstream owner despite green checks. Select diagnostic views for the question;
+there is no mandatory all-view, video or full-array bundle for every PR.
+
+## Continuous integration tiers
+
+Regular CI keeps stable `Source artifact budget`, `Node 22` and `Node 24`
+checks. Both Node jobs run the complete JavaScript regression suite, Python
+syntax gate and product-boundary audit. `npm run check` already includes the
+installation, instruction-graph and capability-interface audits; a second
+`check:instructions` step is unnecessary. Production CI separately checks the
+installed CLI, revisions, recovery and production Python syntax. Actual
+Blender/Godot integration remains explicit evidence rather than an inferred
+result from optional remote tests.
+
+Archived renderer Numba installation and compiled CPU checks run on main
+pushes, pushes explicitly marked `[full-qa]`, and the manual/weekly deep
+workflow. Run that deep scope when changing the retained compiled renderer.
+Ordinary PRs keep the fresh-worker, adversarial and package-bytecode defenses
+without paying for unchanged JIT compilation. Full-QA release prerequisites
+and exact-main-SHA manual publication authorization remain separate from the
+regular matrix. Keep required job names in the release preflight synchronized
+with the workflow; changing a test matrix does not change `engines.node`.
+
+PR and push triggers retain their existing independent checks. Do not merge
+their concurrency groups as a shortcut: cancellation can leave required checks
+incomplete. Report CI measurements with the run and measured interval; one
+runner's wall time is not a universal speedup estimate.
 
 ## Review and merge
 

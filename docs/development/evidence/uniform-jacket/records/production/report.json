@@ -1,0 +1,366 @@
+{
+  "condition": "fixed RefAs 2.0 production skill",
+  "assigned_snapshot": "601a7f93 (as assigned; no git inspection performed)",
+  "timing": {
+    "first_explicit_clock_utc": "2026-11-21T18:53:03+00:00",
+    "first_read_started_approximately_utc": "2026-11-21T18:53:02+00:00",
+    "end_utc": "2026-11-21T19:02:36.108655+00:00",
+    "elapsed_from_first_explicit_clock_seconds": 573.108655,
+    "soft_budget_seconds": 900,
+    "overrun": false,
+    "timing_note": "The first explicit UTC reading followed the initial one-second guidance/image tool call; pre-read start is approximate rather than independently clocked."
+  },
+  "guidance_read": [
+    {
+      "path": "/tmp/refas-jacket-evaluation/production/skills/refas/SKILL.md",
+      "bytes": 9090,
+      "coverage": "entire SKILL.md"
+    }
+  ],
+  "common_inputs_read": [
+    {
+      "path": "/workspace/scratch/2eb72029c71e/refas-v2/examples/uniform-jacket/TASK.md",
+      "bytes": 5219
+    },
+    {
+      "path": "/workspace/scratch/2eb72029c71e/refas-v2/examples/uniform-jacket/reference.json",
+      "bytes": 2391
+    },
+    {
+      "path": "/workspace/scratch/2eb72029c71e/refas-v2/examples/uniform-jacket/source/reference.png",
+      "bytes": 2666378
+    }
+  ],
+  "additional_snapshot_code_inspection": [
+    {
+      "path": "/tmp/refas-jacket-evaluation/production/skills/refas/scripts/production/blender_worker.py",
+      "whole_file_bytes": 29908,
+      "coverage": "Only rg matching material|energy|roughness|diagnostic plus lines 410-458 to understand diagnostic lighting, not whole file",
+      "matching_source_line_bytes": 1482,
+      "lines_410_458_bytes": 2605
+    }
+  ],
+  "workflow": {
+    "native_entry": "/tmp/refas-jacket-evaluation/production/skills/refas/scripts/produce.py",
+    "blender": "/usr/bin/blender",
+    "blender_version": "4.3.2",
+    "initial_whole_model_candidates": 1,
+    "geometry_corrections_after_visual_review": 1,
+    "script_initialization_retries": 1,
+    "local_edit_runs": 1,
+    "reference_views_visually_inspected": [
+      "original complete design sheet",
+      "initial front",
+      "initial back",
+      "initial hero",
+      "initial side",
+      "corrected front",
+      "corrected back",
+      "corrected hero",
+      "corrected side",
+      "edited front",
+      "edited side"
+    ],
+    "selected_revision": "b503f3577f474decad644a32fe9002ce",
+    "edit_revision": "e607aa717fad4621b745fe7b10f5bdca",
+    "restored_head": "d7b2e44e2fe24a00b22dacb1e3ba523e"
+  },
+  "native_run_records": [
+    {
+      "schema": "refas.production.run/v2",
+      "id": "a36f31f702ee4e90b07c3e15bfb01a01",
+      "status": "failed",
+      "intent": "Build complete hollow uniform jacket with fitted torso, shaped sleeves, notched lapels, piping and left silver chain decoration",
+      "baseRevision": null,
+      "startedAt": "2026-11-21T18:56:10.572606+00:00",
+      "endedAt": "2026-11-21T18:56:15.457021+00:00",
+      "error": "Blender failed with exit 1; inspect /tmp/refas-jacket-evaluation/production/project/.refas2/runs/a36f31f702ee4e90b07c3e15bfb01a01/blender.log",
+      "recorded_elapsed_seconds": 4.884415,
+      "metadata_path": "/tmp/refas-jacket-evaluation/production/project/.refas2/runs/a36f31f702ee4e90b07c3e15bfb01a01/run.json",
+      "log_path": "/tmp/refas-jacket-evaluation/production/project/.refas2/runs/a36f31f702ee4e90b07c3e15bfb01a01/blender.log"
+    },
+    {
+      "schema": "refas.production.run/v2",
+      "id": "d4701ec7107449fcbf3e10cb57206b3a",
+      "status": "committed",
+      "intent": "Build complete hollow uniform jacket; repair absent world initialization from first script attempt",
+      "baseRevision": null,
+      "startedAt": "2026-11-21T18:56:26.254423+00:00",
+      "revision": "989ae4d622ee4b4d9a265bde36f4c47c",
+      "endedAt": "2026-11-21T18:56:45.308927+00:00",
+      "recorded_elapsed_seconds": 19.054504,
+      "metadata_path": "/tmp/refas-jacket-evaluation/production/project/.refas2/runs/d4701ec7107449fcbf3e10cb57206b3a/run.json",
+      "log_path": "/tmp/refas-jacket-evaluation/production/project/.refas2/runs/d4701ec7107449fcbf3e10cb57206b3a/blender.log"
+    },
+    {
+      "schema": "refas.production.run/v2",
+      "id": "cd4f3a04f61a4f86b0258a704698e763",
+      "status": "committed",
+      "intent": "Single visual correction: sleeve caps connected to armholes, exposed left shield, restrained charcoal wool response",
+      "baseRevision": "989ae4d622ee4b4d9a265bde36f4c47c",
+      "startedAt": "2026-11-21T18:58:22.847037+00:00",
+      "revision": "b503f3577f474decad644a32fe9002ce",
+      "endedAt": "2026-11-21T18:58:58.657271+00:00",
+      "recorded_elapsed_seconds": 35.810234,
+      "metadata_path": "/tmp/refas-jacket-evaluation/production/project/.refas2/runs/cd4f3a04f61a4f86b0258a704698e763/run.json",
+      "log_path": "/tmp/refas-jacket-evaluation/production/project/.refas2/runs/cd4f3a04f61a4f86b0258a704698e763/blender.log"
+    },
+    {
+      "schema": "refas.production.run/v2",
+      "id": "5bec6628b3fe46ce8a5923456979bd42",
+      "status": "committed",
+      "intent": "Increase only wearer-left cuff band height from 6 to 7 cm along its sleeve axis, align piping and buckle, verify protected parts",
+      "baseRevision": "b503f3577f474decad644a32fe9002ce",
+      "startedAt": "2026-11-21T18:59:29.130188+00:00",
+      "revision": "e607aa717fad4621b745fe7b10f5bdca",
+      "endedAt": "2026-11-21T18:59:47.977283+00:00",
+      "recorded_elapsed_seconds": 18.847095,
+      "metadata_path": "/tmp/refas-jacket-evaluation/production/project/.refas2/runs/5bec6628b3fe46ce8a5923456979bd42/run.json",
+      "log_path": "/tmp/refas-jacket-evaluation/production/project/.refas2/runs/5bec6628b3fe46ce8a5923456979bd42/blender.log"
+    }
+  ],
+  "commands": [
+    {
+      "command": "python3 /tmp/refas-jacket-evaluation/production/skills/refas/scripts/produce.py doctor",
+      "outcome": "ok, Python 3.12.14 and Blender 4.3.2",
+      "reported_tool_wall_seconds": 0.36399396
+    },
+    {
+      "command": "python3 /tmp/refas-jacket-evaluation/production/skills/refas/scripts/produce.py init --root /tmp/refas-jacket-evaluation/production/project --name uniform-jacket --reference /workspace/scratch/2eb72029c71e/refas-v2/examples/uniform-jacket/source/reference.png",
+      "outcome": "ok"
+    },
+    {
+      "command": "produce.py run --root project --script create.py --views front,back,hero,side --size 640 --samples 24 --timeout 300",
+      "outcome": "first attempt failed at absent world; retry succeeded; exact intents/times in native run records"
+    },
+    {
+      "command": "produce.py run --root project --script correct.py --expected-revision 989ae4d622ee4b4d9a265bde36f4c47c --views front,back,hero,side --size 768 --samples 48 --timeout 300",
+      "outcome": "ok"
+    },
+    {
+      "command": "produce.py run --root project --script edit_cuff.py --expected-revision b503f3577f474decad644a32fe9002ce --views front,side --size 768 --samples 48 --timeout 300",
+      "outcome": "ok"
+    },
+    {
+      "command": "produce.py restore --root project --revision b503f3577f474decad644a32fe9002ce",
+      "outcome": "ok",
+      "reported_tool_wall_seconds": 0.085617162
+    },
+    {
+      "command": "produce.py verify --root project",
+      "outcome": {
+        "ok": true,
+        "scope": "recorded-file-integrity",
+        "head": "d7b2e44e2fe24a00b22dacb1e3ba523e",
+        "artifactCount": 8,
+        "referenceResemblance": "not-evaluated",
+        "gameReadiness": "not-evaluated"
+      }
+    }
+  ],
+  "dimensions_and_interpretation": {
+    "units": "metres, Z up, front -Y, wearer left +X, rear waist hem origin nominal (0,0,0)",
+    "nominal_shoulder_seam_width_m": 0.38,
+    "nominal_back_center_body_length_m": 0.42,
+    "nominal_sleeve_axis_parameter_m": 0.58,
+    "nominal_collar_stand_m": 0.03,
+    "nominal_cuff_band_height_m": 0.06,
+    "inferred_closed_chest_ellipse_m": {
+      "rx": 0.174,
+      "ry": 0.11,
+      "z": 0.255,
+      "circumference": 0.9035761649905375
+    },
+    "inferred_closed_hem_ellipse_m": {
+      "rx": 0.132,
+      "ry": 0.084,
+      "circumference": 0.6869877758396018
+    },
+    "cuff_opening_nominal_circumference_m": 0.25761059759436306,
+    "circumference_note": "These are extrapolated full ellipses through the missing open-front segment; they are not direct closed-garment measurements. The opening/cuff ellipse and shell thickness add small differences. Sleeve .58 is the construction axis parameter, not independently measured sewn seam length after cap correction.",
+    "full_asset_bounds": {
+      "dimensions": [
+        0.76687968,
+        0.24221379,
+        0.63385606
+      ],
+      "max": [
+        0.38343984,
+        0.11154979,
+        0.45109999
+      ],
+      "min": [
+        -0.38343984,
+        -0.13066399,
+        -0.1827561
+      ]
+    }
+  },
+  "ambiguities": [
+    "G=13 cm treated as flat cuff width, approximately 26 cm around; conflicting N=13 cm not separately enforced.",
+    "I=7.5 cm collar label treated as ambiguous, not full neck width.",
+    "C diagram extent not used literally; back centre body parameter is .42 m.",
+    "Front/back/labelled-left views decide decoration on wearer-left (+X); oblique contradictory placements were not duplicated.",
+    "Back belt and hidden inner structure are coherent inferred completion, not measured original tailoring."
+  ],
+  "local_edit_checks": {
+    "local_edit": "Wearer-left cuff band increased by 0.01 m along sleeve axis, keeping distal rim fixed",
+    "axis": [
+      0.257994294,
+      -0.017999602,
+      -0.965978742
+    ],
+    "nominal_before_m": 0.06,
+    "nominal_after_m": 0.07,
+    "native_band_axial_extent_before_m": 0.059987178043229505,
+    "native_band_axial_extent_after_m": 0.0699871884426102,
+    "native_band_delta_m": 0.010000010399380699,
+    "changed_objects": [
+      "L_Cuff_Band",
+      "L_Cuff_Buckle frame",
+      "L_Cuff_Buckle tongue",
+      "L_Cuff_Piping_Proximal",
+      "L_Cuff_Rivet_-0.022",
+      "L_Cuff_Rivet_0.022",
+      "L_Cuff_Strap"
+    ],
+    "protected_object_count": 269,
+    "protected_changed": [],
+    "material_hash_before": "69a552a4ec64721abfb497154b06781a78c817a24b608d85484b46b420d9fccd",
+    "material_hash_after": "69a552a4ec64721abfb497154b06781a78c817a24b608d85484b46b420d9fccd",
+    "materials_unchanged": true,
+    "opposite_cuff_unchanged": true,
+    "distal_piping_unchanged": true
+  },
+  "restore_checks": {
+    "candidate.blend": "3ac6d8e5bb3a2571475efb90274142a6d550ce39669e179feb4b630050d08542",
+    "candidate.glb": "ca40cecfd3e0f682fdc217d074a4ebe19d96193bb9001fafe83a549f9468dae6",
+    "edited.blend": "4009285cdc86b4cd01a4f98cc1e36e76c68f20c4c5abd709248cd3987d2dea21",
+    "restored.blend": "3ac6d8e5bb3a2571475efb90274142a6d550ce39669e179feb4b630050d08542",
+    "restored_native_identical_to_candidate": true,
+    "restored_scene_fingerprint_matches": true
+  },
+  "integrity_verification": {
+    "ok": true,
+    "scope": "recorded-file-integrity",
+    "head": "d7b2e44e2fe24a00b22dacb1e3ba523e",
+    "artifactCount": 8,
+    "referenceResemblance": "not-evaluated",
+    "gameReadiness": "not-evaluated"
+  },
+  "asset_statistics": {
+    "armatures": 0,
+    "materialSlots": 296,
+    "meshes": 277,
+    "objects": 277,
+    "shapeKeyObjects": 0,
+    "triangles": 161820,
+    "uvObjects": 258,
+    "vertices": 81290
+  },
+  "visual_review": {
+    "selection": "Corrected candidate selected: the cap silhouette is rounder, left shield becomes visible, and cloth response is darker than initial.",
+    "unresolved_defects": [
+      "Conspicuous gaps remain where the corrected sleeve caps meet the body armhole boundaries; sewn junctions are not production-clean.",
+      "Shoulder tabs sit partly above the shoulder surface and should be fitted in later work.",
+      "Sleeve shaping is smooth and relatively straight; elbow folds and tailored front/back seam curvature are simplified.",
+      "Diagnostic lighting still renders the cloth more blue-grey and brighter than the sheet black fabric.",
+      "The collar stand is too cylindrical/regular and lapels are somewhat stiff and thin compared with the soft folded reference.",
+      "Upper-arm shield/fleur design, chain routes and tassels are approximations; several rear links/tassels are occluded and do not reproduce the sheet arrangement.",
+      "Front straps and buckle seating are approximate; small contact/intersection issues remain.",
+      "No deliberate garment UV unwrap, rig, deformation test, or engine import was performed. Automatic detail UVs do not establish UV quality. Procedural weave noise is retained in Blender but not baked for GLB."
+    ],
+    "acceptance": "Prototype retained for common observation; visual resemblance is not certified or claimed accepted."
+  },
+  "runtime_friction": [
+    {
+      "type": "construction-script initialization",
+      "detail": "First native run failed because scene.world was None in the empty worker scene. Added a new World before setting its color and reran the unchanged geometry construction. Failed run and copied original edit.py remain preserved.",
+      "blocking": false
+    },
+    {
+      "type": "diagnostic rendering",
+      "detail": "Runner uses two-thread CPU Cycles with denoising disabled, producing visible grain at 24/48 samples. No render/backend failure occurred.",
+      "blocking": false
+    }
+  ],
+  "artifacts": {
+    "create.py": {
+      "path": "/tmp/refas-jacket-evaluation/production/create.py",
+      "bytes": 14456,
+      "sha256": "58ddd6e31fd7d2868b917107047e1379bac851f334019220674beff12ce6a428"
+    },
+    "correct.py": {
+      "path": "/tmp/refas-jacket-evaluation/production/correct.py",
+      "bytes": 2481,
+      "sha256": "a236c1f6faf90789ec229618711cd525d05302e0f33de86d7cf98963186d5f27"
+    },
+    "edit_cuff.py": {
+      "path": "/tmp/refas-jacket-evaluation/production/edit_cuff.py",
+      "bytes": 3783,
+      "sha256": "4c01db6969f9a4425e906a6d911f792e0eeaac342990b09c5d873296a251d51d"
+    },
+    "initial.blend": {
+      "path": "/tmp/refas-jacket-evaluation/production/initial.blend",
+      "bytes": 5320280,
+      "sha256": "0965f153f055fd4ece226e036fd093be6dea88b2c0cd112e8a7dc581c98abb3b"
+    },
+    "candidate.blend": {
+      "path": "/tmp/refas-jacket-evaluation/production/candidate.blend",
+      "bytes": 5320760,
+      "sha256": "3ac6d8e5bb3a2571475efb90274142a6d550ce39669e179feb4b630050d08542"
+    },
+    "candidate.glb": {
+      "path": "/tmp/refas-jacket-evaluation/production/candidate.glb",
+      "bytes": 3300424,
+      "sha256": "ca40cecfd3e0f682fdc217d074a4ebe19d96193bb9001fafe83a549f9468dae6"
+    },
+    "edited.blend": {
+      "path": "/tmp/refas-jacket-evaluation/production/edited.blend",
+      "bytes": 5320760,
+      "sha256": "4009285cdc86b4cd01a4f98cc1e36e76c68f20c4c5abd709248cd3987d2dea21"
+    },
+    "edited.glb": {
+      "path": "/tmp/refas-jacket-evaluation/production/edited.glb",
+      "bytes": 3300752,
+      "sha256": "bf9f70847cff0951759de754aecbfe93cb30e46c06b1734d62f7fd50a5e64136"
+    },
+    "restored.blend": {
+      "path": "/tmp/refas-jacket-evaluation/production/restored.blend",
+      "bytes": 5320760,
+      "sha256": "3ac6d8e5bb3a2571475efb90274142a6d550ce39669e179feb4b630050d08542"
+    },
+    "construction.json": {
+      "path": "/tmp/refas-jacket-evaluation/production/construction.json",
+      "bytes": 396,
+      "sha256": "1779429f1d110f310d19218a3b35ff13598ee5b80e13564a2cddc472eb604e17"
+    },
+    "cuff-edit-checks.json": {
+      "path": "/tmp/refas-jacket-evaluation/production/cuff-edit-checks.json",
+      "bytes": 58708,
+      "sha256": "398d714e8d44a6f485874241ed2d972755a4075d8d566f7e4c5762019a072e35"
+    },
+    "restore-checks.json": {
+      "path": "/tmp/refas-jacket-evaluation/production/restore-checks.json",
+      "bytes": 448,
+      "sha256": "108959ffaae2b01cd759703596abf216ae9c18bc3e42c62b5080fcc23767ce75"
+    }
+  },
+  "renders": [
+    "/tmp/refas-jacket-evaluation/production/renders/candidate/view-back.png",
+    "/tmp/refas-jacket-evaluation/production/renders/candidate/view-front.png",
+    "/tmp/refas-jacket-evaluation/production/renders/candidate/view-hero.png",
+    "/tmp/refas-jacket-evaluation/production/renders/candidate/view-side.png",
+    "/tmp/refas-jacket-evaluation/production/renders/edited/view-front.png",
+    "/tmp/refas-jacket-evaluation/production/renders/edited/view-side.png",
+    "/tmp/refas-jacket-evaluation/production/renders/initial/view-back.png",
+    "/tmp/refas-jacket-evaluation/production/renders/initial/view-front.png",
+    "/tmp/refas-jacket-evaluation/production/renders/initial/view-hero.png",
+    "/tmp/refas-jacket-evaluation/production/renders/initial/view-side.png"
+  ],
+  "limitations": [
+    "No exact model-token or tool-call total is available; none estimated.",
+    "The production verify result covers artifact integrity, not visual acceptance, welded topology, animation, or engine readiness.",
+    "One independent exploratory condition is not evidence for statistical workflow superiority."
+  ]
+}

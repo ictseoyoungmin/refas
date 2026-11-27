@@ -1,0 +1,146 @@
+{
+  "worker": "/workspace/scratch/c52cb753f160/refas/legacy/v1/scripts/render_external_blender_worker.py",
+  "matched": {
+    "glb": "/workspace/scratch/c52cb753f160/v2-next-renderer/run-01/known-materials.glb",
+    "sourceGlbSha256": "005f4e2f463c88d0cc10a46e9ca16fa5f98a8bac098e6cb8726cdd00694da3af",
+    "sourceUsesColor0": false,
+    "expectedTriangles": 3840,
+    "camera": {
+      "position": [
+        0,
+        0.55,
+        8
+      ],
+      "target": [
+        0,
+        0.55,
+        0
+      ],
+      "up": [
+        0,
+        1,
+        0
+      ],
+      "fovY": 31
+    },
+    "resolution": 384,
+    "threads": 2,
+    "samples": 32,
+    "png": "/workspace/scratch/c52cb753f160/v2-next-renderer/run-01/cycles-beauty.png",
+    "result": "/workspace/scratch/c52cb753f160/v2-next-renderer/run-01/cycles-worker.json",
+    "lights": [
+      {
+        "direction": [
+          0.55,
+          -0.75,
+          -0.65
+        ],
+        "intensity": 2.8,
+        "rgb": [
+          1,
+          0.96,
+          0.9
+        ]
+      },
+      {
+        "direction": [
+          -0.72,
+          -0.18,
+          -0.54
+        ],
+        "intensity": 1.3,
+        "rgb": [
+          0.7,
+          0.82,
+          1
+        ]
+      },
+      {
+        "direction": [
+          0.15,
+          0.62,
+          -0.77
+        ],
+        "intensity": 0.5,
+        "rgb": [
+          1,
+          0.76,
+          0.58
+        ]
+      }
+    ]
+  },
+  "asShippedDirection": {
+    "glb": "/workspace/scratch/c52cb753f160/v2-next-renderer/run-01/known-materials.glb",
+    "sourceGlbSha256": "005f4e2f463c88d0cc10a46e9ca16fa5f98a8bac098e6cb8726cdd00694da3af",
+    "sourceUsesColor0": false,
+    "expectedTriangles": 3840,
+    "camera": {
+      "position": [
+        0,
+        0.55,
+        8
+      ],
+      "target": [
+        0,
+        0.55,
+        0
+      ],
+      "up": [
+        0,
+        1,
+        0
+      ],
+      "fovY": 31
+    },
+    "resolution": 384,
+    "threads": 2,
+    "samples": 32,
+    "png": "/workspace/scratch/c52cb753f160/v2-next-renderer/run-01/cycles-as-shipped-direction.png",
+    "result": "/workspace/scratch/c52cb753f160/v2-next-renderer/run-01/cycles-as-shipped-worker.json",
+    "lights": [
+      {
+        "direction": [
+          -0.55,
+          0.75,
+          0.65
+        ],
+        "intensity": 2.8,
+        "rgb": [
+          1,
+          0.96,
+          0.9
+        ]
+      },
+      {
+        "direction": [
+          0.72,
+          0.18,
+          0.54
+        ],
+        "intensity": 1.3,
+        "rgb": [
+          0.7,
+          0.82,
+          1
+        ]
+      },
+      {
+        "direction": [
+          -0.15,
+          -0.62,
+          0.77
+        ],
+        "intensity": 0.5,
+        "rgb": [
+          1,
+          0.76,
+          0.58
+        ]
+      }
+    ]
+  },
+  "observed": "/workspace/scratch/c52cb753f160/v2-next-renderer/run-01/blender-observed.json",
+  "albedo": "/workspace/scratch/c52cb753f160/v2-next-renderer/run-01/cycles-albedo.png",
+  "albedoProfile": "/workspace/scratch/c52cb753f160/v2-next-renderer/run-01/cycles-albedo-profile.json"
+}

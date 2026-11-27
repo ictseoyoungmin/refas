@@ -1,0 +1,138 @@
+[
+  {
+    "label": "01-version",
+    "argv": [
+      "/workspace/scratch/c52cb753f160/v2-import-proof/installed/node_modules/refas/bin/refas.mjs",
+      "--version"
+    ],
+    "startedUnix": 1795347733.2792308,
+    "elapsedSeconds": 0.107,
+    "returncode": 0
+  },
+  {
+    "label": "02-doctor",
+    "argv": [
+      "/workspace/scratch/c52cb753f160/v2-import-proof/installed/node_modules/refas/bin/refas.mjs",
+      "doctor",
+      "--blender",
+      "blender"
+    ],
+    "startedUnix": 1795347733.3863647,
+    "elapsedSeconds": 0.601,
+    "returncode": 0
+  },
+  {
+    "label": "03-import",
+    "argv": [
+      "/workspace/scratch/c52cb753f160/v2-import-proof/installed/node_modules/refas/bin/refas.mjs",
+      "import-v1",
+      "--root",
+      "/workspace/scratch/c52cb753f160/v2-import-proof/installed-run/project",
+      "--source-project",
+      "/workspace/scratch/c52cb753f160/v2-import-proof/legacy-wing-cover",
+      "--checkpoint",
+      "cp_a744fb4e4fae0cd60712",
+      "--artifact",
+      "assets/wing-cover.glb",
+      "--name",
+      "legacy-import-proof",
+      "--views",
+      "hero,side",
+      "--size",
+      "192",
+      "--samples",
+      "4",
+      "--blender",
+      "blender",
+      "--timeout",
+      "240"
+    ],
+    "startedUnix": 1795347733.9872668,
+    "elapsedSeconds": 2.916,
+    "returncode": 0
+  },
+  {
+    "label": "04-local-edit",
+    "argv": [
+      "/workspace/scratch/c52cb753f160/v2-import-proof/installed/node_modules/refas/bin/refas.mjs",
+      "run",
+      "--root",
+      "/workspace/scratch/c52cb753f160/v2-import-proof/installed-run/project",
+      "--script",
+      "/workspace/scratch/c52cb753f160/v2-import-proof/installed-run/local-edit.py",
+      "--intent",
+      "Move only panel:cell-00 by 0.005 along Blender Z; retain all other objects",
+      "--expected-revision",
+      "da41ee883cde4066b42f1594522cdf2c",
+      "--expected-sequence",
+      "1",
+      "--views",
+      "hero,side",
+      "--size",
+      "192",
+      "--samples",
+      "4",
+      "--blender",
+      "blender",
+      "--timeout",
+      "240"
+    ],
+    "startedUnix": 1795347736.919341,
+    "elapsedSeconds": 2.713,
+    "returncode": 0
+  },
+  {
+    "label": "05-verify-edit",
+    "argv": [
+      "/workspace/scratch/c52cb753f160/v2-import-proof/installed/node_modules/refas/bin/refas.mjs",
+      "verify",
+      "--root",
+      "/workspace/scratch/c52cb753f160/v2-import-proof/installed-run/project"
+    ],
+    "startedUnix": 1795347739.6321905,
+    "elapsedSeconds": 0.125,
+    "returncode": 0
+  },
+  {
+    "label": "06-restore",
+    "argv": [
+      "/workspace/scratch/c52cb753f160/v2-import-proof/installed/node_modules/refas/bin/refas.mjs",
+      "restore",
+      "--root",
+      "/workspace/scratch/c52cb753f160/v2-import-proof/installed-run/project",
+      "--revision",
+      "da41ee883cde4066b42f1594522cdf2c",
+      "--expected-revision",
+      "8de2559bfda54c4fa2364f83f9754f8b",
+      "--expected-sequence",
+      "2"
+    ],
+    "startedUnix": 1795347739.7603753,
+    "elapsedSeconds": 0.167,
+    "returncode": 0
+  },
+  {
+    "label": "07-verify-restored",
+    "argv": [
+      "/workspace/scratch/c52cb753f160/v2-import-proof/installed/node_modules/refas/bin/refas.mjs",
+      "verify",
+      "--root",
+      "/workspace/scratch/c52cb753f160/v2-import-proof/installed-run/project"
+    ],
+    "startedUnix": 1795347739.9278276,
+    "elapsedSeconds": 0.113,
+    "returncode": 0
+  },
+  {
+    "label": "08-restarted-status",
+    "argv": [
+      "/workspace/scratch/c52cb753f160/v2-import-proof/installed/node_modules/refas/bin/refas.mjs",
+      "status",
+      "--root",
+      "/workspace/scratch/c52cb753f160/v2-import-proof/installed-run/project"
+    ],
+    "startedUnix": 1795347740.0413473,
+    "elapsedSeconds": 0.113,
+    "returncode": 0
+  }
+]

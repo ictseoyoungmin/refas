@@ -1,0 +1,104 @@
+{
+  "schema": "refas.dogfood.reference/v1",
+  "id": "uniform-jacket",
+  "role": "user-design-reference",
+  "sourceFile": "source/reference.png",
+  "uploadedName": "image(20261121-184635).png",
+  "sha256": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5",
+  "bytes": 2666378,
+  "pixelSize": [
+    1672,
+    941
+  ],
+  "receivedDate": "2026-11-22",
+  "timezone": "Asia/Seoul",
+  "authority": "User designated this exact sheet as the dogfooding asset reference.",
+  "scope": "Uniform jacket only; no body, head, trousers or mannequin",
+  "views": [
+    {
+      "role": "front",
+      "yawDegrees": 0,
+      "regionPixels": [
+        6,
+        47,
+        380,
+        399
+      ]
+    },
+    {
+      "role": "front-three-quarter",
+      "yawDegrees": 45,
+      "regionPixels": [
+        383,
+        47,
+        655,
+        399
+      ]
+    },
+    {
+      "role": "wearer-left",
+      "yawDegrees": 90,
+      "regionPixels": [
+        658,
+        47,
+        867,
+        399
+      ]
+    },
+    {
+      "role": "back",
+      "yawDegrees": 180,
+      "regionPixels": [
+        871,
+        47,
+        1201,
+        399
+      ]
+    },
+    {
+      "role": "unlabelled-opposite-side",
+      "yawDegrees": 270,
+      "regionPixels": [
+        1205,
+        47,
+        1400,
+        399
+      ],
+      "confidence": "inferred"
+    },
+    {
+      "role": "rear-three-quarter",
+      "yawDegrees": 225,
+      "regionPixels": [
+        1404,
+        47,
+        1667,
+        399
+      ]
+    }
+  ],
+  "viewRegistration": "design-sheet labels; not calibrated cameras",
+  "sizeTableCm": {
+    "A": 38.0,
+    "B": 90.0,
+    "C": 42.0,
+    "D": 36.0,
+    "E": 68.0,
+    "F": 58.0,
+    "G": 13.0,
+    "H": 20.0,
+    "I": 7.5,
+    "J": 3.0,
+    "K": 72.0,
+    "L": 3.5,
+    "M": 6.0,
+    "N": 13.0
+  },
+  "ambiguities": [
+    "G sleeve opening flat width and N outer cuff circumference both read 13 cm; do not enforce both as circumference.",
+    "I 7.5 cm is labeled collar width but its arrow spans a larger collar outline; treat as a local design dimension, not full neck opening.",
+    "C diagram arrow spans more than the back-center body length named in the table.",
+    "Decorations vary between oblique views; front/back/labelled left decide the decorated side.",
+    "The unlabelled fifth top panel is treated as the opposite side, not an independent duplicate left view."
+  ]
+}

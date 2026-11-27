@@ -1,0 +1,11 @@
+{
+  "mode": "imported-base-factor-emission",
+  "geometryCameraUnchanged": true,
+  "transparentBackground": true,
+  "maxBounces": 0,
+  "worldStrength": 0,
+  "viewTransform": "Standard",
+  "look": "None",
+  "exposure": 0.0,
+  "gamma": 1.0
+}

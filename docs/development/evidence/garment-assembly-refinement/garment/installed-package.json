@@ -1,0 +1,363 @@
+{
+  "purpose": "Informed compatibility replay against the actual extracted npm tarball; not a new visual-quality trial.",
+  "status": "passed",
+  "package": {
+    "path": "/workspace/scratch/c52cb753f160/installed-refas/refas-1.4.2.tgz",
+    "bytes": 884390,
+    "sha256": "0b62e372e335cdf090718ee0a3384e5a51b3e48f309d8c7c1e9e0ba8bbf4e01a",
+    "skill_root": "/workspace/scratch/c52cb753f160/installed-refas/package/skills/refas",
+    "version": "1.4.2 development"
+  },
+  "started_at": "2026-11-22T09:23:21.973756+00:00",
+  "ended_at": "2026-11-22T09:25:10.461310+00:00",
+  "selected_revision": "bf55cb6a37f64388bd3a58a73d915eb7",
+  "restored_revision": "4bd85cd630784b8db84a436302ae7fbd",
+  "original_selected_revision": "02b51b5409e64333b17b6565eb7c5a38",
+  "selected_scene_fingerprint": "33bef3d9d952bb4b3790b425fba57a7cb2983ba5108f36a21c5211f87f4d10a3",
+  "original_scene_fingerprint": "33bef3d9d952bb4b3790b425fba57a7cb2983ba5108f36a21c5211f87f4d10a3",
+  "selected_scene_equivalent": true,
+  "all_original_selected_asset_files_unchanged": true,
+  "glb_bytes_equal_to_author_selection": true,
+  "native_bytes_equal_to_author_selection": false,
+  "commands": [
+    {
+      "label": "doctor",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/scratch/c52cb753f160/installed-refas/package/skills/refas/scripts/produce.py",
+        "doctor",
+        "--blender",
+        "/usr/bin/blender"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.4
+    },
+    {
+      "label": "init",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/scratch/c52cb753f160/installed-refas/package/skills/refas/scripts/produce.py",
+        "init",
+        "--root",
+        "/workspace/scratch/c52cb753f160/work/garment/installed-replay/project",
+        "--name",
+        "uniform-jacket-refinement",
+        "--reference",
+        "/workspace/scratch/c52cb753f160/refas/examples/uniform-jacket/source/reference.png"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.064
+    },
+    {
+      "label": "baseline",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/scratch/c52cb753f160/installed-refas/package/skills/refas/scripts/produce.py",
+        "run",
+        "--root",
+        "/workspace/scratch/c52cb753f160/work/garment/installed-replay/project",
+        "--script",
+        "/workspace/scratch/c52cb753f160/work/garment/installed-replay/baseline.py",
+        "--intent",
+        "Imported native source before informed refinement",
+        "--review-spec",
+        "/workspace/scratch/c52cb753f160/refas/examples/uniform-jacket/review.json",
+        "--size",
+        "512",
+        "--samples",
+        "16",
+        "--timeout",
+        "240",
+        "--blender",
+        "/usr/bin/blender",
+        "--input-blend",
+        "/workspace/scratch/c52cb753f160/baseline/refas-garment-automail-dogfood/garment/jacket.blend",
+        "--expected-revision",
+        "none"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 17.372
+    },
+    {
+      "label": "fold",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/scratch/c52cb753f160/installed-refas/package/skills/refas/scripts/produce.py",
+        "run",
+        "--root",
+        "/workspace/scratch/c52cb753f160/work/garment/installed-replay/project",
+        "--script",
+        "/workspace/scratch/c52cb753f160/refas/examples/uniform-jacket/refine_fold.py",
+        "--intent",
+        "Refine continuous turned collar and rolled lapels with one clear notched border",
+        "--review-spec",
+        "/workspace/scratch/c52cb753f160/refas/examples/uniform-jacket/review.json",
+        "--size",
+        "512",
+        "--samples",
+        "16",
+        "--timeout",
+        "240",
+        "--blender",
+        "/usr/bin/blender",
+        "--expected-revision",
+        "79326dd886c5432089aa20c79dec3ed6"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 18.457
+    },
+    {
+      "label": "cuff-edit",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/scratch/c52cb753f160/installed-refas/package/skills/refas/scripts/produce.py",
+        "run",
+        "--root",
+        "/workspace/scratch/c52cb753f160/work/garment/installed-replay/project",
+        "--script",
+        "/workspace/scratch/c52cb753f160/refas/examples/uniform-jacket/edit_cuff.py",
+        "--intent",
+        "Only wearer-left cuff assembly: extend band 0.01 m proximally; keep distal rim and other asset objects",
+        "--review-spec",
+        "/workspace/scratch/c52cb753f160/refas/examples/uniform-jacket/review.json",
+        "--size",
+        "512",
+        "--samples",
+        "16",
+        "--timeout",
+        "240",
+        "--blender",
+        "/usr/bin/blender",
+        "--expected-revision",
+        "bf55cb6a37f64388bd3a58a73d915eb7"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 17.98
+    },
+    {
+      "label": "restore",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/scratch/c52cb753f160/installed-refas/package/skills/refas/scripts/produce.py",
+        "restore",
+        "--root",
+        "/workspace/scratch/c52cb753f160/work/garment/installed-replay/project",
+        "--revision",
+        "bf55cb6a37f64388bd3a58a73d915eb7",
+        "--expected-revision",
+        "b0fe43d97da947ce861ad2894903677d"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.474
+    },
+    {
+      "label": "restored-status",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/scratch/c52cb753f160/installed-refas/package/skills/refas/scripts/produce.py",
+        "status",
+        "--root",
+        "/workspace/scratch/c52cb753f160/work/garment/installed-replay/project"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.095
+    },
+    {
+      "label": "final-verify",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/scratch/c52cb753f160/installed-refas/package/skills/refas/scripts/produce.py",
+        "verify",
+        "--root",
+        "/workspace/scratch/c52cb753f160/work/garment/installed-replay/project"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.086
+    },
+    {
+      "label": "independent-glb",
+      "argv": [
+        "/usr/bin/blender",
+        "--background",
+        "--factory-startup",
+        "--threads",
+        "2",
+        "--python-exit-code",
+        "1",
+        "--python",
+        "/workspace/scratch/c52cb753f160/refas/examples/uniform-jacket/inspect_fold.py",
+        "--",
+        "/workspace/scratch/c52cb753f160/work/garment/installed-replay/candidate.blend",
+        "/workspace/scratch/c52cb753f160/work/garment/installed-replay/candidate.glb",
+        "/workspace/scratch/c52cb753f160/work/garment/installed-replay/independent-check.json",
+        "/workspace/scratch/c52cb753f160/work/garment/installed-replay/imported-glb.blend"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 3.159
+    },
+    {
+      "label": "detail-before-init",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/scratch/c52cb753f160/installed-refas/package/skills/refas/scripts/produce.py",
+        "init",
+        "--root",
+        "/workspace/scratch/c52cb753f160/work/garment/installed-replay/observations/bf55cb6a37f64388bd3a58a73d915eb7/detail-before",
+        "--name",
+        "detail-before",
+        "--reference",
+        "/workspace/scratch/c52cb753f160/refas/examples/uniform-jacket/source/reference.png"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.054
+    },
+    {
+      "label": "detail-before",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/scratch/c52cb753f160/installed-refas/package/skills/refas/scripts/produce.py",
+        "run",
+        "--root",
+        "/workspace/scratch/c52cb753f160/work/garment/installed-replay/observations/bf55cb6a37f64388bd3a58a73d915eb7/detail-before",
+        "--input-blend",
+        "/workspace/scratch/c52cb753f160/work/garment/installed-replay/baseline.blend",
+        "--script",
+        "/workspace/scratch/c52cb753f160/work/garment/installed-replay/observe.py",
+        "--intent",
+        "Fixed view of unchanged detail-before",
+        "--blender",
+        "/usr/bin/blender",
+        "--review-spec",
+        "/workspace/scratch/c52cb753f160/refas/examples/uniform-jacket/review-fold-detail.json",
+        "--size",
+        "512",
+        "--samples",
+        "16",
+        "--timeout",
+        "240",
+        "--expected-revision",
+        "none"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 19.697
+    },
+    {
+      "label": "detail-after-init",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/scratch/c52cb753f160/installed-refas/package/skills/refas/scripts/produce.py",
+        "init",
+        "--root",
+        "/workspace/scratch/c52cb753f160/work/garment/installed-replay/observations/bf55cb6a37f64388bd3a58a73d915eb7/detail-after",
+        "--name",
+        "detail-after",
+        "--reference",
+        "/workspace/scratch/c52cb753f160/refas/examples/uniform-jacket/source/reference.png"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.06
+    },
+    {
+      "label": "detail-after",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/scratch/c52cb753f160/installed-refas/package/skills/refas/scripts/produce.py",
+        "run",
+        "--root",
+        "/workspace/scratch/c52cb753f160/work/garment/installed-replay/observations/bf55cb6a37f64388bd3a58a73d915eb7/detail-after",
+        "--input-blend",
+        "/workspace/scratch/c52cb753f160/work/garment/installed-replay/candidate.blend",
+        "--script",
+        "/workspace/scratch/c52cb753f160/work/garment/installed-replay/observe.py",
+        "--intent",
+        "Fixed view of unchanged detail-after",
+        "--blender",
+        "/usr/bin/blender",
+        "--review-spec",
+        "/workspace/scratch/c52cb753f160/refas/examples/uniform-jacket/review-fold-detail.json",
+        "--size",
+        "512",
+        "--samples",
+        "16",
+        "--timeout",
+        "240",
+        "--expected-revision",
+        "none"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 21.253
+    },
+    {
+      "label": "glb-readback-init",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/scratch/c52cb753f160/installed-refas/package/skills/refas/scripts/produce.py",
+        "init",
+        "--root",
+        "/workspace/scratch/c52cb753f160/work/garment/installed-replay/observations/bf55cb6a37f64388bd3a58a73d915eb7/glb-readback",
+        "--name",
+        "glb-readback",
+        "--reference",
+        "/workspace/scratch/c52cb753f160/refas/examples/uniform-jacket/source/reference.png"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.062
+    },
+    {
+      "label": "glb-readback",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/scratch/c52cb753f160/installed-refas/package/skills/refas/scripts/produce.py",
+        "run",
+        "--root",
+        "/workspace/scratch/c52cb753f160/work/garment/installed-replay/observations/bf55cb6a37f64388bd3a58a73d915eb7/glb-readback",
+        "--input-blend",
+        "/workspace/scratch/c52cb753f160/work/garment/installed-replay/imported-glb.blend",
+        "--script",
+        "/workspace/scratch/c52cb753f160/work/garment/installed-replay/observe.py",
+        "--intent",
+        "Fixed view of unchanged glb-readback",
+        "--blender",
+        "/usr/bin/blender",
+        "--review-spec",
+        "/workspace/scratch/c52cb753f160/refas/examples/uniform-jacket/review.json",
+        "--size",
+        "512",
+        "--samples",
+        "16",
+        "--timeout",
+        "240",
+        "--expected-revision",
+        "none",
+        "--views",
+        "front-three-quarter"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 8.993
+    }
+  ],
+  "command_count": 15,
+  "public_cli_commands": 14,
+  "sum_command_seconds": 108.206,
+  "script_hashes": {
+    "refine_fold.py": "10b7fb60501f72fd5e14bfae968551b49e10e3d5dfd70a6ccc1692524ca273df",
+    "run_fold_refinement.py": "721a8eff0fcb64ed2c3ead9382ae72a1848f81ad6dc1145bbd39147c7bc939f5",
+    "inspect_fold.py": "34c680216ceffae65ecc17306db775afb01972992362fa2c039c7420c8d6060c",
+    "edit_cuff.py": "961a722cacc4274757c635773fa49ccc3460b38a1fa4e689d91bbc93266391b8",
+    "review.json": "be6e20645867d04c6c07536ddc1a3cf2736d2111e0d3739628063ee989b134c1",
+    "review-fold-detail.json": "12f76f37e21acd2155660369a5742b7a2e41f79d6b1229be12356a2966c75abe"
+  },
+  "exact_bundle_restore": true,
+  "restored_files": 14,
+  "fixed_review_metadata_match": true,
+  "detail_review_metadata_match": true,
+  "cuff_protected_changed": [],
+  "cuff_materials_unchanged": true,
+  "cuff_delta_m": 0.010000010399380699,
+  "independent_native_glb_passed": true,
+  "limits": [
+    "Execution timing is not authoring time; concurrent machine load is uncontrolled.",
+    "This verifies compatibility on the unchanged chosen asset; it does not compare skill quality.",
+    "Unsupported-instance and modifier-visibility guard tests are separate root verification, not exercised by these supported assets."
+  ]
+}

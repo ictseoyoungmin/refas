@@ -1,0 +1,288 @@
+{
+  "repo": "/workspace/scratch/c52cb753f160/refas",
+  "commit": "3217b46ee3670f2bc8acc1eff320981a539ce70c",
+  "evidence_scope": "Existing API and CLI storage behavior with existing fake worker; no real Blender, renders, or quality claims.",
+  "cases": [
+    {
+      "case": "explicit changed reference cannot enter an existing project",
+      "root": "/workspace/scratch/c52cb753f160/next-workspace-audit/cases/reference-replacement/project",
+      "head": "eb39b5d16fec42499c61da28911f17bf",
+      "captured_source": {
+        "path": "sources/001-reference.png",
+        "name": "reference.png",
+        "role": "user-reference",
+        "sha256": "59fb54bcbbb3267bba6dd7cdf5eac54fffa7571d4c75945b65dd245d844f13aa",
+        "bytes": 30
+      },
+      "new_reference_sha256": "e1fcbbbfeabd2ea82a8ef216f52a5efcd25d599697733772d92e106f06be56f1",
+      "reinitialize_with_new_reference": {
+        "ok": false,
+        "type": "ProductionError",
+        "error": "production project already exists"
+      },
+      "run_with_new_reference_review": {
+        "ok": false,
+        "type": "ProductionError",
+        "error": "review references a source outside this project's captured inputs"
+      },
+      "verify_after_external_change": {
+        "ok": true,
+        "scope": "recorded-file-integrity",
+        "head": "eb39b5d16fec42499c61da28911f17bf",
+        "artifactCount": 5,
+        "referenceResemblance": "not-evaluated",
+        "gameReadiness": "not-evaluated"
+      },
+      "status_after_external_change": {
+        "ok": true,
+        "schema": "refas.production.project/v2",
+        "name": "reference-replacement",
+        "projectId": "929da9f5e6fd4a9289e8c06afd2e3ac3",
+        "head": "eb39b5d16fec42499c61da28911f17bf",
+        "sequence": 1,
+        "sources": [
+          {
+            "path": "sources/001-reference.png",
+            "name": "reference.png",
+            "role": "user-reference",
+            "sha256": "59fb54bcbbb3267bba6dd7cdf5eac54fffa7571d4c75945b65dd245d844f13aa",
+            "bytes": 30
+          }
+        ],
+        "outputs": {
+          "blend": "/workspace/scratch/c52cb753f160/next-workspace-audit/cases/reference-replacement/project/.refas2/revisions/eb39b5d16fec42499c61da28911f17bf/artifacts/scene.blend",
+          "glb": "/workspace/scratch/c52cb753f160/next-workspace-audit/cases/reference-replacement/project/.refas2/revisions/eb39b5d16fec42499c61da28911f17bf/artifacts/asset.glb",
+          "scene": "/workspace/scratch/c52cb753f160/next-workspace-audit/cases/reference-replacement/project/.refas2/revisions/eb39b5d16fec42499c61da28911f17bf/artifacts/scene.json"
+        },
+        "observations": [
+          {
+            "view": "front-detail",
+            "path": "/workspace/scratch/c52cb753f160/next-workspace-audit/cases/reference-replacement/project/.refas2/revisions/eb39b5d16fec42499c61da28911f17bf/artifacts/front-detail.png",
+            "registration": "unregistered"
+          }
+        ],
+        "inputs": {
+          "edit.py": "/workspace/scratch/c52cb753f160/next-workspace-audit/cases/reference-replacement/project/.refas2/revisions/eb39b5d16fec42499c61da28911f17bf/inputs/edit.py",
+          "review.json": "/workspace/scratch/c52cb753f160/next-workspace-audit/cases/reference-replacement/project/.refas2/revisions/eb39b5d16fec42499c61da28911f17bf/inputs/review.json"
+        },
+        "revisions": [
+          {
+            "id": "eb39b5d16fec42499c61da28911f17bf",
+            "intent": "synthetic storage audit",
+            "createdAt": "2026-11-22T10:26:21.285939+00:00",
+            "parent": null
+          }
+        ],
+        "incompleteRuns": [],
+        "referenceResemblance": "not-evaluated",
+        "gameReadiness": "not-evaluated"
+      },
+      "classification": "Missing explicit intake workflow; independent reference snapshot is intentional."
+    },
+    {
+      "case": "original script native review and reference drift after freezing",
+      "root": "/workspace/scratch/c52cb753f160/next-workspace-audit/cases/outside-input-drift/project",
+      "head": "f4a57983c9d144ac80fc2dad96e78f17",
+      "old_external_hashes": {
+        "reference.png": "59fb54bcbbb3267bba6dd7cdf5eac54fffa7571d4c75945b65dd245d844f13aa",
+        "model.py": "61fbbd252e0ae826be4088befe2bcac34a8dd96ec52913297ae076ad19fad39e",
+        "manual.blend": "6ece980d5f820bd0586d93beb933fc27b4372be56fe9335c3fc1a64e3f7b2a53",
+        "review.json": "85423e112ba3ab56b45461f27ddd1c6ed84f2d10db7a785c8c8d53df17b61437"
+      },
+      "new_external_hashes": {
+        "reference.png": "e1fcbbbfeabd2ea82a8ef216f52a5efcd25d599697733772d92e106f06be56f1",
+        "model.py": "b378f72ceaea014095c3343001d6abe0e81ec163faccf3b1e3d1815cea366d51",
+        "manual.blend": "c338ea9b1285adb874314437c350e239692b7ff79681247978dd13ac3124f01d",
+        "review.json": "f62c8afa9d90f38d5071473df2ce1c15ac585a6d9b64d391bc5bf3249fca71d7"
+      },
+      "frozen_input_hashes": {
+        "base.blend": "6ece980d5f820bd0586d93beb933fc27b4372be56fe9335c3fc1a64e3f7b2a53",
+        "edit.py": "61fbbd252e0ae826be4088befe2bcac34a8dd96ec52913297ae076ad19fad39e",
+        "review.json": "85423e112ba3ab56b45461f27ddd1c6ed84f2d10db7a785c8c8d53df17b61437"
+      },
+      "publication": {
+        "ok": true,
+        "publishedRevision": "f4a57983c9d144ac80fc2dad96e78f17"
+      },
+      "restarted_status": {
+        "returncode": 0,
+        "stdout": {
+          "ok": true,
+          "schema": "refas.production.project/v2",
+          "name": "outside-input-drift",
+          "projectId": "24c8d639954541548297c49774c43568",
+          "head": "f4a57983c9d144ac80fc2dad96e78f17",
+          "sequence": 1,
+          "sources": [
+            {
+              "path": "sources/001-reference.png",
+              "name": "reference.png",
+              "role": "user-reference",
+              "sha256": "59fb54bcbbb3267bba6dd7cdf5eac54fffa7571d4c75945b65dd245d844f13aa",
+              "bytes": 30
+            }
+          ],
+          "outputs": {
+            "blend": "/workspace/scratch/c52cb753f160/next-workspace-audit/cases/outside-input-drift/project/.refas2/revisions/f4a57983c9d144ac80fc2dad96e78f17/artifacts/scene.blend",
+            "glb": "/workspace/scratch/c52cb753f160/next-workspace-audit/cases/outside-input-drift/project/.refas2/revisions/f4a57983c9d144ac80fc2dad96e78f17/artifacts/asset.glb",
+            "scene": "/workspace/scratch/c52cb753f160/next-workspace-audit/cases/outside-input-drift/project/.refas2/revisions/f4a57983c9d144ac80fc2dad96e78f17/artifacts/scene.json"
+          },
+          "observations": [
+            {
+              "view": "front-detail",
+              "path": "/workspace/scratch/c52cb753f160/next-workspace-audit/cases/outside-input-drift/project/.refas2/revisions/f4a57983c9d144ac80fc2dad96e78f17/artifacts/front-detail.png",
+              "registration": "unregistered"
+            }
+          ],
+          "inputs": {
+            "base.blend": "/workspace/scratch/c52cb753f160/next-workspace-audit/cases/outside-input-drift/project/.refas2/revisions/f4a57983c9d144ac80fc2dad96e78f17/inputs/base.blend",
+            "edit.py": "/workspace/scratch/c52cb753f160/next-workspace-audit/cases/outside-input-drift/project/.refas2/revisions/f4a57983c9d144ac80fc2dad96e78f17/inputs/edit.py",
+            "review.json": "/workspace/scratch/c52cb753f160/next-workspace-audit/cases/outside-input-drift/project/.refas2/revisions/f4a57983c9d144ac80fc2dad96e78f17/inputs/review.json"
+          },
+          "revisions": [
+            {
+              "id": "f4a57983c9d144ac80fc2dad96e78f17",
+              "intent": "external inputs change after capture",
+              "createdAt": "2026-11-22T10:26:21.314496+00:00",
+              "parent": null
+            }
+          ],
+          "incompleteRuns": [],
+          "referenceResemblance": "not-evaluated",
+          "gameReadiness": "not-evaluated"
+        },
+        "stderr": ""
+      },
+      "restarted_verify": {
+        "returncode": 0,
+        "stdout": {
+          "ok": true,
+          "scope": "recorded-file-integrity",
+          "head": "f4a57983c9d144ac80fc2dad96e78f17",
+          "artifactCount": 5,
+          "referenceResemblance": "not-evaluated",
+          "gameReadiness": "not-evaluated"
+        },
+        "stderr": ""
+      },
+      "classification": "Correct historical capture; no binding to a current workspace or freshness reporting."
+    },
+    {
+      "case": "direct native edit of status output blocks status and explicit import",
+      "root": "/workspace/scratch/c52cb753f160/next-workspace-audit/cases/manual-native-in-place/project",
+      "head": "fdaa3edc5cdf41a3beabcc2892e0ba2f",
+      "native_path": "/workspace/scratch/c52cb753f160/next-workspace-audit/cases/manual-native-in-place/project/.refas2/revisions/fdaa3edc5cdf41a3beabcc2892e0ba2f/artifacts/scene.blend",
+      "original_sha256": "7995f12f0a015528d73e8a71b89725679b29002cf9b8f57a6840cd6f9a2380ce",
+      "manual_sha256": "616490dc620d6fd254ed7bf0ad03317f1e696513affafb8f2c09cf0a20bdeca6",
+      "status": {
+        "ok": false,
+        "type": "ProductionError",
+        "error": "artifact changed or missing: scene.blend"
+      },
+      "verify": {
+        "ok": false,
+        "type": "ProductionError",
+        "error": "artifact changed or missing: scene.blend"
+      },
+      "explicit_manual_import": {
+        "ok": false,
+        "type": "ProductionError",
+        "error": "artifact changed or missing: scene.blend"
+      },
+      "restore_only_revision": {
+        "ok": false,
+        "type": "ProductionError",
+        "error": "artifact changed or missing: scene.blend"
+      },
+      "worker_called": false,
+      "restarted_cli_status": {
+        "returncode": 1,
+        "stdout": "",
+        "stderr": {
+          "ok": false,
+          "error": "artifact changed or missing: scene.blend"
+        }
+      },
+      "classification": "Documented manual input flow assumes Save As; no separate editable workspace or damaged-head import recovery."
+    },
+    {
+      "case": "ordinary resumed run does not inherit fixed review or render conditions",
+      "root": "/workspace/scratch/c52cb753f160/next-workspace-audit/cases/render-resume/project",
+      "first_head": "a510132aa3ad42218a37bb33e0064f96",
+      "second_head": "0e7c3bc5581547dd8932e0ac57f6507c",
+      "first_job": {
+        "operation": "edit",
+        "baseBlend": null,
+        "script": "/workspace/scratch/c52cb753f160/next-workspace-audit/cases/render-resume/project/.refas2/runs/67ac4611145c4f2e99805a516edebadf/inputs/edit.py",
+        "inputDir": "/workspace/scratch/c52cb753f160/next-workspace-audit/cases/render-resume/project/.refas2/runs/67ac4611145c4f2e99805a516edebadf/inputs",
+        "outputDir": "/workspace/scratch/c52cb753f160/next-workspace-audit/cases/render-resume/project/.refas2/runs/67ac4611145c4f2e99805a516edebadf/artifacts",
+        "views": [
+          "front-detail"
+        ],
+        "render": {
+          "engine": "CYCLES",
+          "samples": 16,
+          "size": 768
+        },
+        "reviewSpec": "/workspace/scratch/c52cb753f160/next-workspace-audit/cases/render-resume/project/.refas2/runs/67ac4611145c4f2e99805a516edebadf/inputs/review.json"
+      },
+      "second_job": {
+        "operation": "edit",
+        "baseBlend": "/workspace/scratch/c52cb753f160/next-workspace-audit/cases/render-resume/project/.refas2/runs/f627cf605adf420e9181ef4fd7131711/inputs/base.blend",
+        "script": "/workspace/scratch/c52cb753f160/next-workspace-audit/cases/render-resume/project/.refas2/runs/f627cf605adf420e9181ef4fd7131711/inputs/edit.py",
+        "inputDir": "/workspace/scratch/c52cb753f160/next-workspace-audit/cases/render-resume/project/.refas2/runs/f627cf605adf420e9181ef4fd7131711/inputs",
+        "outputDir": "/workspace/scratch/c52cb753f160/next-workspace-audit/cases/render-resume/project/.refas2/runs/f627cf605adf420e9181ef4fd7131711/artifacts",
+        "views": [
+          "hero",
+          "side"
+        ],
+        "render": {
+          "engine": "CYCLES",
+          "samples": 8,
+          "size": 384
+        }
+      },
+      "first_views": [
+        "front-detail"
+      ],
+      "second_views": [
+        "hero",
+        "side"
+      ],
+      "verify": {
+        "ok": true,
+        "scope": "recorded-file-integrity",
+        "head": "0e7c3bc5581547dd8932e0ac57f6507c",
+        "artifactCount": 6,
+        "referenceResemblance": "not-evaluated",
+        "gameReadiness": "not-evaluated"
+      },
+      "classification": "Documented per-run options; no persisted current render intent for freshness comparison."
+    },
+    {
+      "case": "control: separate manual save is imported and survives external deletion",
+      "root": "/workspace/scratch/c52cb753f160/next-workspace-audit/cases/explicit-manual-supported/project",
+      "first_head": "596d8ed032fc4e6aac9b5db40f7ec79f",
+      "import_head": "5117207408304180b06dbb4fcdfb2cda",
+      "captured_input": {
+        "path": "base.blend",
+        "sha256": "6ece980d5f820bd0586d93beb933fc27b4372be56fe9335c3fc1a64e3f7b2a53",
+        "bytes": 22
+      },
+      "verify_after_external_input_deleted": {
+        "ok": true,
+        "scope": "recorded-file-integrity",
+        "head": "5117207408304180b06dbb4fcdfb2cda",
+        "artifactCount": 6,
+        "referenceResemblance": "not-evaluated",
+        "gameReadiness": "not-evaluated"
+      },
+      "classification": "Already implemented; do not reinvent manual import or require originals for historical verification."
+    }
+  ],
+  "cli_help": {
+    "returncode": 0,
+    "stdout": "usage: produce.py [-h] {doctor,init,run,status,verify,restore} ...\n\nRefAs 2.0 development production entry; JSON on stdout, errors on stderr.\n\npositional arguments:\n  {doctor,init,run,status,verify,restore}\n    doctor              Inspect the actual Blender executable\n    init                Create a separate production project and copy\n                        references\n    run                 Apply a Python modeling script to a copy of the\n                        current native asset\n    restore             Publish an exact previous bundle as a new revision\n\noptions:\n  -h, --help            show this help message and exit\n",
+    "stderr": ""
+  }
+}

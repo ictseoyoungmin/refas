@@ -1,0 +1,25 @@
+{
+  "retained_at": "2026-11-22T09:28:32.668113+00:00",
+  "files": [
+    {
+      "name": "refine_fold.py",
+      "sha256": "10b7fb60501f72fd5e14bfae968551b49e10e3d5dfd70a6ccc1692524ca273df",
+      "bytes": 9800
+    },
+    {
+      "name": "run_fold_refinement.py",
+      "sha256": "721a8eff0fcb64ed2c3ead9382ae72a1848f81ad6dc1145bbd39147c7bc939f5",
+      "bytes": 13320
+    },
+    {
+      "name": "inspect_fold.py",
+      "sha256": "34c680216ceffae65ecc17306db775afb01972992362fa2c039c7420c8d6060c",
+      "bytes": 5827
+    },
+    {
+      "name": "review-fold-detail.json",
+      "sha256": "12f76f37e21acd2155660369a5742b7a2e41f79d6b1229be12356a2966c75abe",
+      "bytes": 650
+    }
+  ]
+}

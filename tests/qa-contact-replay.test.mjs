@@ -25,7 +25,7 @@ import {
   createAttachmentFollowState,
   createSurfaceAnchorSet,
   verifyRealizedSurfaceDescriptors,
-} from '../skills/refas/scripts/lib/index.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
 
 const D=(c)=>c.repeat(64);
 const sha=(v)=>createHash('sha256').update(Buffer.from(v)).digest('hex');

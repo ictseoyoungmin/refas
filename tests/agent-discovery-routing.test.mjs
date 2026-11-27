@@ -3,9 +3,9 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {test} from 'node:test';
-import {CAPABILITY_ORDER,AGENT_NEXT_SCHEMA,AGENT_DIAGNOSIS_SCHEMA} from '../skills/refas/scripts/lib/index.mjs';
+import {CAPABILITY_ORDER,AGENT_NEXT_SCHEMA,AGENT_DIAGNOSIS_SCHEMA} from '../legacy/v1/scripts/lib/index.mjs';
 
-const root=path.resolve('skills/refas');
+const root=path.resolve('legacy/v1');
 const script=path.join(root,'scripts','refas.mjs');
 const specs=[
  {node:'workflow',id:'agent-next',command:'next',symbol:'nextAgentWork',schema:AGENT_NEXT_SCHEMA},
@@ -20,7 +20,8 @@ function cli(...args){
 
 test('released agent operations are discoverable in canonical graph, CLI help and describe node',async()=>{
  const graph=JSON.parse(await fs.readFile(path.join(root,'references','GRAPH.json'),'utf8'));
- assert.equal(graph.nodes.length,40,'do not add capabilities or instructional leaves');
+ assert.equal(graph.nodes.length,40,'legacy graph excludes production-only guides');
+ assert.ok(graph.nodes.every(node=>!node.id.startsWith('production-')));
  assert.equal(CAPABILITY_ORDER.length,11,'runtime ownership remains canonical');
  const help=cli('--help').commands;
  for(const expected of specs){
@@ -44,12 +45,15 @@ test('released agent operations are discoverable in canonical graph, CLI help an
  }
 });
 test('installed instruction router links actual source-bound agent commands without granting authority',async()=>{
- for(const file of ['references/INDEX.md','references/workflow.md','references/failure-routing.md','references/validation.md','SKILL.md']){
+ for(const file of ['references/INDEX.md','references/workflow.md','references/failure-routing.md','references/validation.md']){
   const s=await fs.readFile(path.join(root,file),'utf8');
   assert.match(s,/(?:next|agent-next)/);
   assert.match(s,/(?:diagnose|agent-diagnose)/);
   assert.match(s,/(?:validate|agent-validate-source-bound)/);
  }
+ const skill=await fs.readFile(path.join(root,'SKILL.md'),'utf8');
+ for(const command of ['next','diagnose','validate']) assert.ok(skill.includes('node scripts/refas.mjs '+command));
+ assert.doesNotMatch(skill,/scripts\/produce\.py|references\/production-/);
  const f=await fs.readFile(path.join(root,'references/validation.md'),'utf8');
  assert.match(f,/exit code 2|Exit code 2/);
  assert.match(f,/INSUFFICIENT/);

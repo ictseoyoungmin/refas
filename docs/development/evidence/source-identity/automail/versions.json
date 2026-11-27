@@ -1,0 +1,22 @@
+{
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "doctor": {
+    "ok": true,
+    "entry": "RefAs production",
+    "version": "2.0.0-alpha.1",
+    "python": "3.12.14",
+    "blender": {
+      "path": "/usr/bin/blender",
+      "version": "Blender 4.3.2"
+    },
+    "scope": "executable probe; render device availability is checked during execution"
+  },
+  "skill_entry_sha256": "2b44cb072067840f4b9272bd6bf19dac2ef3140f490c02414a1cb8b1e69c0455",
+  "skill_root": "/workspace/scratch/5765cde18054/installed/package/skills/refas",
+  "source_revision": "1280b74d",
+  "source_revision_authority": "caller-supplied verified identity",
+  "render_size": 512,
+  "render_samples": 16,
+  "threads": 2
+}

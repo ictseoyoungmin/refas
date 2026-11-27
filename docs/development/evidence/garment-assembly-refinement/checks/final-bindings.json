@@ -1,0 +1,22 @@
+{
+  "verified_at": "2026-11-22T09:45:36.168386+00:00",
+  "tested_runtime_and_test_inputs_match": true,
+  "package_file_count": 399,
+  "package_drift": [],
+  "new_example_syntax": {
+    "examples/uniform-jacket/refine_fold.py": "56ae10879acb31fa86325a8693d00c0aa9bc51050c42b42832fde3e877db91b8",
+    "examples/uniform-jacket/run_fold_refinement.py": "721a8eff0fcb64ed2c3ead9382ae72a1848f81ad6dc1145bbd39147c7bc939f5",
+    "examples/uniform-jacket/inspect_fold.py": "34c680216ceffae65ecc17306db775afb01972992362fa2c039c7420c8d6060c",
+    "examples/automail-arm/refine_armor.py": "c25346b22aadfa5ef13fdd295af504a3b5dd9dfdd819d0374a8a4feb01d38225",
+    "examples/automail-arm/run_refinement.py": "e70aa06cc70c1c4da708d42c376a7f50d52ab87f90cb7e1a36b8a7fda6ed1147",
+    "examples/automail-arm/inspect_refinement.py": "33e4631ce10a4fad2672e05180a368bbdced0297fc8896ecb21a8d00f6e9c118"
+  },
+  "dispatched_prompt_hashes_and_chronology_verified": 11,
+  "json_records_parsed": 66,
+  "selected_assets": {
+    "/workspace/scratch/c52cb753f160/work/automail/after.blend": "ff8010b6e25efec357b469121c905f9db8f717a8b9e5a07cbc78986ff12924b5",
+    "/workspace/scratch/c52cb753f160/work/automail/after.glb": "56f210e732ea94e261ccda625bec82583048ddf9ddae432db7eab907d95c3f0e",
+    "/workspace/scratch/c52cb753f160/work/garment/joined-fold/candidate.blend": "03de5a60b31bf32bae05cec46eeb4fe6220089c1043f274c772a4383cb9a1268",
+    "/workspace/scratch/c52cb753f160/work/garment/joined-fold/candidate.glb": "d298c7cfa098999762f1e713ded4813b33b3f1942bc07c641bd3b41ee8b2ee4a"
+  }
+}

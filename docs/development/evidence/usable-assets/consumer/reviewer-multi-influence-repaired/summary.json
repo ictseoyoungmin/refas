@@ -1,0 +1,39 @@
+{
+  "reviewedHashes": {
+    "examples/engine-playback/verify_godot.gd": "325ed366c6386e06b84c179eabfd70b87d8ca497b9f112b2d80a6b4593ad5846",
+    "examples/engine-playback/README.md": "50735199e318072c59da58f1983f1652bd398aeb52fdd91e5eba3240b0c47b8a",
+    "tests/test_production_engine_playback.py": "13ce502a4b73068c8ea953cffcc93abe2e4bd83a923ff3dd61241b03c3d6b942",
+    "tests/fixtures/production_weighted_skin.py": "79684c1b839b548614cd050487703470a995ee7d907280f9b0406803abd1ef1e"
+  },
+  "actualGodotTests": {
+    "count": 8,
+    "skipped": 0,
+    "seconds": 6.645,
+    "passed": true
+  },
+  "method": "Replayed retained original and weight-corrupted GLBs against the same retained native inspection. No fixture regeneration and no tolerance change.",
+  "positive": {
+    "ok": true,
+    "probes": 15,
+    "failedChecks": [],
+    "maximumRawDistanceM": 1.77811507455772e-05,
+    "maximumRestMatchDistanceM": 1.33280039449346e-07
+  },
+  "wrong-weights": {
+    "ok": false,
+    "probes": 15,
+    "failedChecks": [
+      "nativeSkinVertex:WeightedPanel:corner-0",
+      "nativeSkinVertex:WeightedPanel:corner-2",
+      "nativeSkinVertex:WeightedPanel:corner-6",
+      "nativeSkinVertex:WeightedPanel:corner-0",
+      "nativeSkinVertex:WeightedPanel:corner-2",
+      "nativeSkinVertex:WeightedPanel:corner-6",
+      "nativeSkinVertex:WeightedPanel:corner-0",
+      "nativeSkinVertex:WeightedPanel:corner-2",
+      "nativeSkinVertex:WeightedPanel:corner-6"
+    ],
+    "maximumRawDistanceM": 0.0467854924499989,
+    "maximumRestMatchDistanceM": 1.2287812012346e-07
+  }
+}

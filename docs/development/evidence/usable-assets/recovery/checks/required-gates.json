@@ -1,0 +1,61 @@
+[
+  {
+    "label": "javascript",
+    "command": [
+      "npm",
+      "test"
+    ],
+    "start": "2026-11-22T18:53:40.671501+00:00",
+    "end": "2026-11-22T18:55:23.419159+00:00",
+    "elapsedSeconds": 102.74768437500006,
+    "exitCode": 0
+  },
+  {
+    "label": "python-syntax",
+    "command": [
+      "npm",
+      "run",
+      "test:python"
+    ],
+    "start": "2026-11-22T18:55:23.419659+00:00",
+    "end": "2026-11-22T18:55:23.623074+00:00",
+    "elapsedSeconds": 0.20342472099991937,
+    "exitCode": 0
+  },
+  {
+    "label": "repository",
+    "command": [
+      "npm",
+      "run",
+      "check"
+    ],
+    "start": "2026-11-22T18:55:23.623646+00:00",
+    "end": "2026-11-22T18:55:34.258249+00:00",
+    "elapsedSeconds": 10.63461820800012,
+    "exitCode": 0
+  },
+  {
+    "label": "legacy-dogfood",
+    "command": [
+      "npm",
+      "run",
+      "dogfood"
+    ],
+    "start": "2026-11-22T18:55:34.258805+00:00",
+    "end": "2026-11-22T18:57:26.753245+00:00",
+    "elapsedSeconds": 112.49446522699986,
+    "exitCode": 0
+  },
+  {
+    "label": "package-audit",
+    "command": [
+      "npm",
+      "run",
+      "release:audit"
+    ],
+    "start": "2026-11-22T18:57:26.753708+00:00",
+    "end": "2026-11-22T18:57:27.289026+00:00",
+    "elapsedSeconds": 0.5353338110001005,
+    "exitCode": 0
+  }
+]

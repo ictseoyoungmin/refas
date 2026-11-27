@@ -1,0 +1,1430 @@
+{
+  "scope": "Two garment meshes only; no avatar geometry linked or rendered. Source comparison and transferred-lining geometry; not a final wearable motion/export verdict.",
+  "inputs": {
+    "high": {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/candidate-08/fitted-detailed.blend",
+      "sha256": "34a7c27eb08c0acd9e6071cab1821230b6e47012fb346c9ae638b41c967dfcc1"
+    },
+    "low": {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/root-transferred-lining-bounded-08/optimized-cloth.blend",
+      "sha256": "8a5d5daf9159d8e0035576b17c2e0cd5eae708127714bbe5e0bac501ea12c90f"
+    }
+  },
+  "objects": [
+    {
+      "variant": "high",
+      "object": "high Collar | standing back and neck facing",
+      "statistics": {
+        "vertices": 124650,
+        "edges": 249296,
+        "polygons": 124648,
+        "triangles": 249296,
+        "components": 1,
+        "surfaceComponents": 1,
+        "nonManifoldVertices": 0,
+        "boundaryEdges": 0,
+        "boundaryGroups": 0,
+        "closedBoundaryLoops": 0,
+        "wireEdges": 0,
+        "looseVertices": 0,
+        "nonManifoldEdges": 0,
+        "inconsistentWindingEdges": 0,
+        "degenerateTriangles": 0,
+        "negativeClosedComponents": 0,
+        "nearZeroClosedComponents": 0
+      },
+      "outerTriangles": 121792,
+      "innerTriangles": 121792,
+      "rimTriangles": 5712,
+      "outerInnerBvhCandidates": 45867,
+      "verifiedOuterInnerCrossingPairs": 41232,
+      "outerInnerCrossingExamples": [
+        {
+          "outerTriangle": 23705,
+          "innerTriangle": 24048,
+          "pointsM": [
+            [
+              0.02303287573158741,
+              0.09964516013860703,
+              1.4550542831420898
+            ]
+          ]
+        },
+        {
+          "outerTriangle": 23705,
+          "innerTriangle": 24050,
+          "pointsM": [
+            [
+              0.022925516590476036,
+              0.09970760345458984,
+              1.4553232192993164
+            ]
+          ]
+        },
+        {
+          "outerTriangle": 24072,
+          "innerTriangle": 24052,
+          "pointsM": [
+            [
+              0.02252190001308918,
+              0.0998406857252121,
+              1.4555368423461914
+            ]
+          ]
+        },
+        {
+          "outerTriangle": 23737,
+          "innerTriangle": 24048,
+          "pointsM": [
+            [
+              0.023097481578588486,
+              0.09964117407798767,
+              1.4551563262939453
+            ]
+          ]
+        },
+        {
+          "outerTriangle": 23737,
+          "innerTriangle": 24050,
+          "pointsM": [
+            [
+              0.023085976019501686,
+              0.09965464472770691,
+              1.4552384614944458
+            ]
+          ]
+        },
+        {
+          "outerTriangle": 24074,
+          "innerTriangle": 24048,
+          "pointsM": [
+            [
+              0.023097481578588486,
+              0.09964117407798767,
+              1.4551563262939453
+            ],
+            [
+              0.022954842075705528,
+              0.09964998066425323,
+              1.4549310207366943
+            ]
+          ]
+        },
+        {
+          "outerTriangle": 24074,
+          "innerTriangle": 24050,
+          "pointsM": [
+            [
+              0.023085976019501686,
+              0.09965464472770691,
+              1.4552384614944458
+            ],
+            [
+              0.022913826629519463,
+              0.09971141815185547,
+              1.4553292989730835
+            ]
+          ]
+        },
+        {
+          "outerTriangle": 24075,
+          "innerTriangle": 24050,
+          "pointsM": [
+            [
+              0.022913826629519463,
+              0.09971141815185547,
+              1.4553292989730835
+            ]
+          ]
+        },
+        {
+          "outerTriangle": 23707,
+          "innerTriangle": 24045,
+          "pointsM": [
+            [
+              0.02332386188209057,
+              0.09948523342609406,
+              1.4543991088867188
+            ],
+            [
+              0.02289477363228798,
+              0.09958066791296005,
+              1.4542608261108398
+            ]
+          ]
+        },
+        {
+          "outerTriangle": 23707,
+          "innerTriangle": 24048,
+          "pointsM": [
+            [
+              0.02297431230545044,
+              0.09964881837368011,
+              1.4549617767333984
+            ],
+            [
+              0.02291068807244301,
+              0.09965278953313828,
+              1.4548611640930176
+            ]
+          ]
+        },
+        {
+          "outerTriangle": 23706,
+          "innerTriangle": 24045,
+          "pointsM": [
+            [
+              0.023605745285749435,
+              0.09942254424095154,
+              1.454489827156067
+            ],
+            [
+              0.02332386188209057,
+              0.09948523342609406,
+              1.4543991088867188
+            ]
+          ]
+        },
+        {
+          "outerTriangle": 23706,
+          "innerTriangle": 24048,
+          "pointsM": [
+            [
+              0.02303287573158741,
+              0.09964516013860703,
+              1.4550542831420898
+            ],
+            [
+              0.02297431230545044,
+              0.09964881837368011,
+              1.4549617767333984
+            ]
+          ]
+        }
+      ],
+      "signedInteriorThicknessMinM": -0.001797141731458396,
+      "signedInteriorThicknessMaxM": 0.0018000428099185228,
+      "nonpositiveInteriorThicknessTriangles": 773,
+      "nonpositiveInteriorThicknessExamples": [
+        {
+          "outerTriangle": 625,
+          "signedInteriorThicknessM": -7.657153764739633e-05,
+          "centroidM": [
+            0.08188530802726746,
+            -0.08508684486150742,
+            1.3683452606201172
+          ]
+        },
+        {
+          "outerTriangle": 653,
+          "signedInteriorThicknessM": -0.00037356602115323767,
+          "centroidM": [
+            0.08207477629184723,
+            -0.08530079573392868,
+            1.3681801557540894
+          ]
+        },
+        {
+          "outerTriangle": 655,
+          "signedInteriorThicknessM": -0.000601243918936234,
+          "centroidM": [
+            0.08221158385276794,
+            -0.08529473841190338,
+            1.368185043334961
+          ]
+        },
+        {
+          "outerTriangle": 681,
+          "signedInteriorThicknessM": -0.00018327128782402724,
+          "centroidM": [
+            0.08232182264328003,
+            -0.08529013395309448,
+            1.3681888580322266
+          ]
+        },
+        {
+          "outerTriangle": 1701,
+          "signedInteriorThicknessM": -3.949623533117119e-05,
+          "centroidM": [
+            0.08784328401088715,
+            -0.07950767129659653,
+            1.3714418411254883
+          ]
+        },
+        {
+          "outerTriangle": 1710,
+          "signedInteriorThicknessM": -3.368139005033299e-05,
+          "centroidM": [
+            0.08513076603412628,
+            -0.07894110679626465,
+            1.3705723285675049
+          ]
+        },
+        {
+          "outerTriangle": 1726,
+          "signedInteriorThicknessM": -0.00010258290421916172,
+          "centroidM": [
+            0.08479402959346771,
+            -0.07843054831027985,
+            1.3709774017333984
+          ]
+        },
+        {
+          "outerTriangle": 1736,
+          "signedInteriorThicknessM": -0.0005837171920575202,
+          "centroidM": [
+            0.08534732460975647,
+            -0.07896440476179123,
+            1.3705614805221558
+          ]
+        },
+        {
+          "outerTriangle": 1738,
+          "signedInteriorThicknessM": -0.0003846995132334996,
+          "centroidM": [
+            0.0855230912566185,
+            -0.07898342609405518,
+            1.3705525398254395
+          ]
+        },
+        {
+          "outerTriangle": 1778,
+          "signedInteriorThicknessM": -0.00020553556169033982,
+          "centroidM": [
+            0.05782735347747803,
+            -0.064955934882164,
+            1.373387098312378
+          ]
+        },
+        {
+          "outerTriangle": 1779,
+          "signedInteriorThicknessM": -0.0001706318580545485,
+          "centroidM": [
+            0.058372728526592255,
+            -0.0657615065574646,
+            1.3735955953598022
+          ]
+        },
+        {
+          "outerTriangle": 1784,
+          "signedInteriorThicknessM": -0.00027433607669991034,
+          "centroidM": [
+            0.0574721097946167,
+            -0.06463058292865753,
+            1.3739128112792969
+          ]
+        }
+      ],
+      "negativeClosedComponents": {
+        "count": 0,
+        "items": [],
+        "truncated": false
+      },
+      "degenerateTriangles": {
+        "count": 0,
+        "items": [],
+        "truncated": false
+      },
+      "inconsistentWindingEdges": {
+        "count": 0,
+        "items": [],
+        "truncated": false
+      },
+      "boundsM": {
+        "min": [
+          -0.22494706511497498,
+          -0.12014790624380112,
+          1.0624028444290161
+        ],
+        "max": [
+          0.2244245558977127,
+          0.10646293312311172,
+          1.457798719406128
+        ]
+      }
+    },
+    {
+      "variant": "high",
+      "object": "high Body | continuous open front and shoulder yoke",
+      "statistics": {
+        "vertices": 76326,
+        "edges": 152656,
+        "polygons": 76328,
+        "triangles": 152656,
+        "components": 1,
+        "surfaceComponents": 1,
+        "nonManifoldVertices": 0,
+        "boundaryEdges": 0,
+        "boundaryGroups": 0,
+        "closedBoundaryLoops": 0,
+        "wireEdges": 0,
+        "looseVertices": 0,
+        "nonManifoldEdges": 0,
+        "inconsistentWindingEdges": 0,
+        "degenerateTriangles": 0,
+        "negativeClosedComponents": 0,
+        "nearZeroClosedComponents": 0
+      },
+      "outerTriangles": 75264,
+      "innerTriangles": 75264,
+      "rimTriangles": 2128,
+      "outerInnerBvhCandidates": 3297,
+      "verifiedOuterInnerCrossingPairs": 3262,
+      "outerInnerCrossingExamples": [
+        {
+          "outerTriangle": 21097,
+          "innerTriangle": 21068,
+          "pointsM": [
+            [
+              -0.12382481247186661,
+              0.07887580990791321,
+              1.3925116062164307
+            ],
+            [
+              -0.12332044541835785,
+              0.07878853380680084,
+              1.3926674127578735
+            ]
+          ]
+        },
+        {
+          "outerTriangle": 21097,
+          "innerTriangle": 21067,
+          "pointsM": [
+            [
+              -0.12394072115421295,
+              0.07893979549407959,
+              1.392412781715393
+            ],
+            [
+              -0.12331993877887726,
+              0.0788591280579567,
+              1.3925660848617554
+            ]
+          ]
+        },
+        {
+          "outerTriangle": 21118,
+          "innerTriangle": 21068,
+          "pointsM": [
+            [
+              -0.12382481247186661,
+              0.07887580990791321,
+              1.3925116062164307
+            ],
+            [
+              -0.12490686774253845,
+              0.07904091477394104,
+              1.3922595977783203
+            ]
+          ]
+        },
+        {
+          "outerTriangle": 21118,
+          "innerTriangle": 21067,
+          "pointsM": [
+            [
+              -0.12394072115421295,
+              0.07893979549407959,
+              1.392412781715393
+            ],
+            [
+              -0.12490686774253845,
+              0.07904091477394104,
+              1.3922595977783203
+            ]
+          ]
+        },
+        {
+          "outerTriangle": 21157,
+          "innerTriangle": 23683,
+          "pointsM": [
+            [
+              -0.13066503405570984,
+              -0.02449399046599865,
+              1.4019867181777954
+            ],
+            [
+              -0.13027863204479218,
+              -0.024476848542690277,
+              1.402830719947815
+            ]
+          ]
+        },
+        {
+          "outerTriangle": 21157,
+          "innerTriangle": 23692,
+          "pointsM": [
+            [
+              -0.13027863204479218,
+              -0.024476848542690277,
+              1.402830719947815
+            ]
+          ]
+        },
+        {
+          "outerTriangle": 23681,
+          "innerTriangle": 21180,
+          "pointsM": [
+            [
+              -0.13240689039230347,
+              -0.022763634100556374,
+              1.3995391130447388
+            ],
+            [
+              -0.13371272385120392,
+              -0.02281312458217144,
+              1.3974838256835938
+            ]
+          ]
+        },
+        {
+          "outerTriangle": 23681,
+          "innerTriangle": 21143,
+          "pointsM": [
+            [
+              -0.13670310378074646,
+              -0.023642076179385185,
+              1.3943126201629639
+            ],
+            [
+              -0.13699467480182648,
+              -0.02366989478468895,
+              1.3938896656036377
+            ]
+          ]
+        },
+        {
+          "outerTriangle": 23680,
+          "innerTriangle": 21140,
+          "pointsM": [
+            [
+              -0.13526268303394318,
+              -0.023429488763213158,
+              1.3964569568634033
+            ],
+            [
+              -0.13379643857479095,
+              -0.023235121741890907,
+              1.3987452983856201
+            ]
+          ]
+        },
+        {
+          "outerTriangle": 23680,
+          "innerTriangle": 21141,
+          "pointsM": [
+            [
+              -0.13201019167900085,
+              -0.022969989106059074,
+              1.4013972282409668
+            ],
+            [
+              -0.13379645347595215,
+              -0.023235119879245758,
+              1.3987451791763306
+            ]
+          ]
+        },
+        {
+          "outerTriangle": 23680,
+          "innerTriangle": 21180,
+          "pointsM": [
+            [
+              -0.13059991598129272,
+              -0.02262229099869728,
+              1.4028290510177612
+            ],
+            [
+              -0.13240689039230347,
+              -0.022763634100556374,
+              1.3995391130447388
+            ]
+          ]
+        },
+        {
+          "outerTriangle": 23680,
+          "innerTriangle": 21143,
+          "pointsM": [
+            [
+              -0.13670310378074646,
+              -0.023642078042030334,
+              1.3943126201629639
+            ],
+            [
+              -0.13526268303394318,
+              -0.023429488763213158,
+              1.3964569568634033
+            ]
+          ]
+        }
+      ],
+      "signedInteriorThicknessMinM": -0.0017125071244663559,
+      "signedInteriorThicknessMaxM": 0.001800041477963532,
+      "nonpositiveInteriorThicknessTriangles": 229,
+      "nonpositiveInteriorThicknessExamples": [
+        {
+          "outerTriangle": 24,
+          "signedInteriorThicknessM": -0.0009273583127651364,
+          "centroidM": [
+            0.07035081088542938,
+            -0.07297627627849579,
+            1.05454683303833
+          ]
+        },
+        {
+          "outerTriangle": 26,
+          "signedInteriorThicknessM": -0.00016259579570032656,
+          "centroidM": [
+            0.06940197199583054,
+            -0.07361771166324615,
+            1.0543818473815918
+          ]
+        },
+        {
+          "outerTriangle": 27,
+          "signedInteriorThicknessM": -4.3396747059887275e-05,
+          "centroidM": [
+            0.06905365735292435,
+            -0.07385407388210297,
+            1.0543253421783447
+          ]
+        },
+        {
+          "outerTriangle": 2764,
+          "signedInteriorThicknessM": -0.0012229983403813094,
+          "centroidM": [
+            0.10245104879140854,
+            -0.047874271869659424,
+            1.0586307048797607
+          ]
+        },
+        {
+          "outerTriangle": 4443,
+          "signedInteriorThicknessM": -0.0005893181332794484,
+          "centroidM": [
+            -0.122731052339077,
+            0.03363419696688652,
+            1.082843542098999
+          ]
+        },
+        {
+          "outerTriangle": 4734,
+          "signedInteriorThicknessM": -0.0005243041377980262,
+          "centroidM": [
+            -0.13345667719841003,
+            -0.021611284464597702,
+            1.0639410018920898
+          ]
+        },
+        {
+          "outerTriangle": 5153,
+          "signedInteriorThicknessM": -0.0011411926716391463,
+          "centroidM": [
+            0.08391872048377991,
+            -0.07840634137392044,
+            1.107774257659912
+          ]
+        },
+        {
+          "outerTriangle": 5155,
+          "signedInteriorThicknessM": -0.0007383972406387329,
+          "centroidM": [
+            0.08503089845180511,
+            -0.07886471599340439,
+            1.1074864864349365
+          ]
+        },
+        {
+          "outerTriangle": 5156,
+          "signedInteriorThicknessM": -0.001515465359261725,
+          "centroidM": [
+            0.08389638364315033,
+            -0.07929196208715439,
+            1.1162992715835571
+          ]
+        },
+        {
+          "outerTriangle": 5169,
+          "signedInteriorThicknessM": -0.0012897187461931026,
+          "centroidM": [
+            0.08521728217601776,
+            -0.0782017931342125,
+            1.1071194410324097
+          ]
+        },
+        {
+          "outerTriangle": 5187,
+          "signedInteriorThicknessM": -0.001416328057530336,
+          "centroidM": [
+            0.08969937264919281,
+            -0.06742735207080841,
+            1.1078770160675049
+          ]
+        },
+        {
+          "outerTriangle": 5190,
+          "signedInteriorThicknessM": -0.0013107844388287049,
+          "centroidM": [
+            0.09009651839733124,
+            -0.06909283250570297,
+            1.1173466444015503
+          ]
+        }
+      ],
+      "negativeClosedComponents": {
+        "count": 0,
+        "items": [],
+        "truncated": false
+      },
+      "degenerateTriangles": {
+        "count": 0,
+        "items": [],
+        "truncated": false
+      },
+      "inconsistentWindingEdges": {
+        "count": 0,
+        "items": [],
+        "truncated": false
+      },
+      "boundsM": {
+        "min": [
+          -0.5048329830169678,
+          -0.11711772531270981,
+          1.0479954481124878
+        ],
+        "max": [
+          0.5048000812530518,
+          0.12277292460203171,
+          1.4348607063293457
+        ]
+      }
+    },
+    {
+      "variant": "low",
+      "object": "low Optimized Collar | standing back and neck facing",
+      "statistics": {
+        "vertices": 16948,
+        "edges": 47872,
+        "polygons": 31253,
+        "triangles": 33272,
+        "components": 311,
+        "surfaceComponents": 1,
+        "nonManifoldVertices": 34,
+        "boundaryEdges": 0,
+        "boundaryGroups": 0,
+        "closedBoundaryLoops": 0,
+        "wireEdges": 0,
+        "looseVertices": 310,
+        "nonManifoldEdges": 17,
+        "inconsistentWindingEdges": 0,
+        "degenerateTriangles": 0,
+        "negativeClosedComponents": 0,
+        "nearZeroClosedComponents": 0
+      },
+      "outerTriangles": 15291,
+      "innerTriangles": 15291,
+      "rimTriangles": 2690,
+      "outerInnerBvhCandidates": 26361,
+      "verifiedOuterInnerCrossingPairs": 25934,
+      "outerInnerCrossingExamples": [
+        {
+          "outerTriangle": 3286,
+          "innerTriangle": 3353,
+          "pointsM": [
+            [
+              -0.08723192662000656,
+              0.07686735689640045,
+              1.4379061460494995
+            ],
+            [
+              -0.08752912282943726,
+              0.07699436694383621,
+              1.4376459121704102
+            ]
+          ]
+        },
+        {
+          "outerTriangle": 3286,
+          "innerTriangle": 3355,
+          "pointsM": [
+            [
+              -0.0885014459490776,
+              0.07648704946041107,
+              1.4376893043518066
+            ],
+            [
+              -0.08851204812526703,
+              0.07649440318346024,
+              1.437677264213562
+            ]
+          ]
+        },
+        {
+          "outerTriangle": 3286,
+          "innerTriangle": 3289,
+          "pointsM": [
+            [
+              -0.07853452861309052,
+              0.07947278767824173,
+              1.439391851425171
+            ],
+            [
+              -0.07874276489019394,
+              0.0796937495470047,
+              1.4390815496444702
+            ]
+          ]
+        },
+        {
+          "outerTriangle": 3286,
+          "innerTriangle": 3356,
+          "pointsM": [
+            [
+              -0.08784264326095581,
+              0.07770124822854996,
+              1.4368157386779785
+            ],
+            [
+              -0.08752912282943726,
+              0.07699436694383621,
+              1.4376459121704102
+            ]
+          ]
+        },
+        {
+          "outerTriangle": 3286,
+          "innerTriangle": 10869,
+          "pointsM": [
+            [
+              -0.08893804997205734,
+              0.07720767706632614,
+              1.4367890357971191
+            ],
+            [
+              -0.08851204812526703,
+              0.07649440318346024,
+              1.437677264213562
+            ]
+          ]
+        },
+        {
+          "outerTriangle": 3326,
+          "innerTriangle": 3256,
+          "pointsM": [
+            [
+              -0.08143110573291779,
+              0.08291115611791611,
+              1.4324359893798828
+            ],
+            [
+              -0.08345526456832886,
+              0.08227208256721497,
+              1.4323042631149292
+            ]
+          ]
+        },
+        {
+          "outerTriangle": 3326,
+          "innerTriangle": 10777,
+          "pointsM": [
+            [
+              -0.08198047429323196,
+              0.0829058364033699,
+              1.4320954084396362
+            ],
+            [
+              -0.08345526456832886,
+              0.08227208256721497,
+              1.4323042631149292
+            ]
+          ]
+        },
+        {
+          "outerTriangle": 3326,
+          "innerTriangle": 3258,
+          "pointsM": [
+            [
+              -0.08562009036540985,
+              0.08153998851776123,
+              1.4322514533996582
+            ],
+            [
+              -0.08417883515357971,
+              0.08216120302677155,
+              1.4320440292358398
+            ]
+          ]
+        },
+        {
+          "outerTriangle": 3326,
+          "innerTriangle": 10806,
+          "pointsM": [
+            [
+              -0.08599777519702911,
+              0.08147110790014267,
+              1.4321354627609253
+            ],
+            [
+              -0.08562009036540985,
+              0.08153998851776123,
+              1.4322514533996582
+            ]
+          ]
+        },
+        {
+          "outerTriangle": 10836,
+          "innerTriangle": 3256,
+          "pointsM": [
+            [
+              -0.08112586289644241,
+              0.08302301913499832,
+              1.432458519935608
+            ],
+            [
+              -0.08143110573291779,
+              0.08291115611791611,
+              1.4324359893798828
+            ]
+          ]
+        },
+        {
+          "outerTriangle": 3306,
+          "innerTriangle": 3353,
+          "pointsM": [
+            [
+              -0.08326870203018188,
+              0.07435065507888794,
+              1.4403024911880493
+            ],
+            [
+              -0.08389903604984283,
+              0.074753537774086,
+              1.439924716949463
+            ]
+          ]
+        },
+        {
+          "outerTriangle": 3306,
+          "innerTriangle": 3355,
+          "pointsM": [
+            [
+              -0.08471560478210449,
+              0.07393424957990646,
+              1.4400418996810913
+            ],
+            [
+              -0.0859069973230362,
+              0.07473733276128769,
+              1.4393092393875122
+            ]
+          ]
+        }
+      ],
+      "signedInteriorThicknessMinM": -0.0017998855582845863,
+      "signedInteriorThicknessMaxM": 0.0018000148993451148,
+      "nonpositiveInteriorThicknessTriangles": 1324,
+      "nonpositiveInteriorThicknessExamples": [
+        {
+          "outerTriangle": 20,
+          "signedInteriorThicknessM": -0.0007109821381163783,
+          "centroidM": [
+            0.0634753406047821,
+            -0.06980856508016586,
+            1.3775522708892822
+          ]
+        },
+        {
+          "outerTriangle": 85,
+          "signedInteriorThicknessM": -0.0005999511759000598,
+          "centroidM": [
+            0.05903049558401108,
+            -0.05837787315249443,
+            1.4156923294067383
+          ]
+        },
+        {
+          "outerTriangle": 86,
+          "signedInteriorThicknessM": -0.0005999519307806622,
+          "centroidM": [
+            0.057941000908613205,
+            -0.060304611921310425,
+            1.4093999862670898
+          ]
+        },
+        {
+          "outerTriangle": 90,
+          "signedInteriorThicknessM": -0.00019683473510667682,
+          "centroidM": [
+            0.059805016964673996,
+            -0.05618587136268616,
+            1.4228729009628296
+          ]
+        },
+        {
+          "outerTriangle": 102,
+          "signedInteriorThicknessM": -0.000599558130488731,
+          "centroidM": [
+            0.06176575645804405,
+            -0.05581554025411606,
+            1.4225499629974365
+          ]
+        },
+        {
+          "outerTriangle": 112,
+          "signedInteriorThicknessM": -0.0005999384302413091,
+          "centroidM": [
+            0.06197028607130051,
+            -0.057033151388168335,
+            1.4181253910064697
+          ]
+        },
+        {
+          "outerTriangle": 157,
+          "signedInteriorThicknessM": -0.0005897033734072465,
+          "centroidM": [
+            0.06928636878728867,
+            -0.04634126275777817,
+            1.4396690130233765
+          ]
+        },
+        {
+          "outerTriangle": 163,
+          "signedInteriorThicknessM": -0.0005842487080371939,
+          "centroidM": [
+            0.06863679736852646,
+            -0.04464270919561386,
+            1.4410905838012695
+          ]
+        },
+        {
+          "outerTriangle": 164,
+          "signedInteriorThicknessM": -0.0005876699633518001,
+          "centroidM": [
+            0.07027619332075119,
+            -0.04635944962501526,
+            1.4392662048339844
+          ]
+        },
+        {
+          "outerTriangle": 165,
+          "signedInteriorThicknessM": -0.0005915442307014018,
+          "centroidM": [
+            0.0720045268535614,
+            -0.04689903184771538,
+            1.4379053115844727
+          ]
+        },
+        {
+          "outerTriangle": 169,
+          "signedInteriorThicknessM": -0.0012299248337512836,
+          "centroidM": [
+            0.07274025678634644,
+            -0.04510675370693207,
+            1.4391225576400757
+          ]
+        },
+        {
+          "outerTriangle": 172,
+          "signedInteriorThicknessM": -0.0005663085685227998,
+          "centroidM": [
+            0.06745949387550354,
+            -0.047170281410217285,
+            1.4394149780273438
+          ]
+        }
+      ],
+      "negativeClosedComponents": {
+        "count": 0,
+        "items": [],
+        "truncated": false
+      },
+      "degenerateTriangles": {
+        "count": 0,
+        "items": [],
+        "truncated": false
+      },
+      "inconsistentWindingEdges": {
+        "count": 0,
+        "items": [],
+        "truncated": false
+      },
+      "boundsM": {
+        "min": [
+          -0.22494706511497498,
+          -0.11987832188606262,
+          1.0624028444290161
+        ],
+        "max": [
+          0.2244245558977127,
+          0.10645531117916107,
+          1.457798719406128
+        ]
+      }
+    },
+    {
+      "variant": "low",
+      "object": "low Optimized Body | continuous open front and shoulder yoke",
+      "statistics": {
+        "vertices": 15774,
+        "edges": 44561,
+        "polygons": 28793,
+        "triangles": 31536,
+        "components": 9,
+        "surfaceComponents": 1,
+        "nonManifoldVertices": 0,
+        "boundaryEdges": 0,
+        "boundaryGroups": 0,
+        "closedBoundaryLoops": 0,
+        "wireEdges": 0,
+        "looseVertices": 8,
+        "nonManifoldEdges": 0,
+        "inconsistentWindingEdges": 0,
+        "degenerateTriangles": 0,
+        "negativeClosedComponents": 0,
+        "nearZeroClosedComponents": 0
+      },
+      "outerTriangles": 14987,
+      "innerTriangles": 14987,
+      "rimTriangles": 1562,
+      "outerInnerBvhCandidates": 1935,
+      "verifiedOuterInnerCrossingPairs": 1920,
+      "outerInnerCrossingExamples": [
+        {
+          "outerTriangle": 8746,
+          "innerTriangle": 2021,
+          "pointsM": [
+            [
+              0.05616576597094536,
+              0.08806242793798447,
+              1.4300159215927124
+            ],
+            [
+              0.058013878762722015,
+              0.08671123534440994,
+              1.4304373264312744
+            ]
+          ]
+        },
+        {
+          "outerTriangle": 8746,
+          "innerTriangle": 9146,
+          "pointsM": [
+            [
+              0.05614669993519783,
+              0.08765510469675064,
+              1.4306684732437134
+            ],
+            [
+              0.058013882488012314,
+              0.08671123534440994,
+              1.4304373264312744
+            ]
+          ]
+        },
+        {
+          "outerTriangle": 8746,
+          "innerTriangle": 9142,
+          "pointsM": [
+            [
+              0.05839482694864273,
+              0.08636579662561417,
+              1.4306285381317139
+            ],
+            [
+              0.0565100833773613,
+              0.08774422854185104,
+              1.430198073387146
+            ]
+          ]
+        },
+        {
+          "outerTriangle": 8746,
+          "innerTriangle": 9144,
+          "pointsM": [
+            [
+              0.05615949258208275,
+              0.08792838454246521,
+              1.430230736732483
+            ],
+            [
+              0.0565100833773613,
+              0.08774422854185104,
+              1.430198073387146
+            ]
+          ]
+        },
+        {
+          "outerTriangle": 8749,
+          "innerTriangle": 2021,
+          "pointsM": [
+            [
+              0.05570310726761818,
+              0.08842997997999191,
+              1.4299134016036987
+            ],
+            [
+              0.05368785932660103,
+              0.08868482708930969,
+              1.4293321371078491
+            ]
+          ]
+        },
+        {
+          "outerTriangle": 8749,
+          "innerTriangle": 9146,
+          "pointsM": [
+            [
+              0.05271143466234207,
+              0.08822235465049744,
+              1.4296979904174805
+            ],
+            [
+              0.05596465244889259,
+              0.08775399625301361,
+              1.430699110031128
+            ]
+          ]
+        },
+        {
+          "outerTriangle": 8749,
+          "innerTriangle": 9152,
+          "pointsM": [
+            [
+              0.05166453495621681,
+              0.08666009455919266,
+              1.431268334388733
+            ],
+            [
+              0.05326244980096817,
+              0.08658239990472794,
+              1.4315917491912842
+            ]
+          ]
+        },
+        {
+          "outerTriangle": 8749,
+          "innerTriangle": 9144,
+          "pointsM": [
+            [
+              0.05581977218389511,
+              0.0881284549832344,
+              1.430263876914978
+            ],
+            [
+              0.0524277426302433,
+              0.0875498503446579,
+              1.4303988218307495
+            ]
+          ]
+        },
+        {
+          "outerTriangle": 8749,
+          "innerTriangle": 9145,
+          "pointsM": [
+            [
+              0.053036876022815704,
+              0.08870799839496613,
+              1.42920982837677
+            ],
+            [
+              0.05368785932660103,
+              0.08868482708930969,
+              1.4293321371078491
+            ]
+          ]
+        },
+        {
+          "outerTriangle": 8749,
+          "innerTriangle": 2023,
+          "pointsM": [
+            [
+              0.05225181579589844,
+              0.08753647655248642,
+              1.4303873777389526
+            ],
+            [
+              0.0524277426302433,
+              0.0875498428940773,
+              1.4303988218307495
+            ]
+          ]
+        },
+        {
+          "outerTriangle": 8747,
+          "innerTriangle": 2021,
+          "pointsM": [
+            [
+              0.05570310726761818,
+              0.08842997997999191,
+              1.4299134016036987
+            ],
+            [
+              0.05616576597094536,
+              0.08806243538856506,
+              1.4300159215927124
+            ]
+          ]
+        },
+        {
+          "outerTriangle": 8747,
+          "innerTriangle": 9146,
+          "pointsM": [
+            [
+              0.05596465244889259,
+              0.08775399625301361,
+              1.430699110031128
+            ],
+            [
+              0.05614669993519783,
+              0.08765510469675064,
+              1.4306684732437134
+            ]
+          ]
+        }
+      ],
+      "signedInteriorThicknessMinM": -0.001792083254258614,
+      "signedInteriorThicknessMaxM": 0.0018000366621890862,
+      "nonpositiveInteriorThicknessTriangles": 197,
+      "nonpositiveInteriorThicknessExamples": [
+        {
+          "outerTriangle": 2,
+          "signedInteriorThicknessM": -0.001495148149842862,
+          "centroidM": [
+            0.07128553837537766,
+            -0.07229753583669662,
+            1.054734706878662
+          ]
+        },
+        {
+          "outerTriangle": 179,
+          "signedInteriorThicknessM": -6.051462059986079e-05,
+          "centroidM": [
+            0.11218470335006714,
+            -0.028530992567539215,
+            1.0674831867218018
+          ]
+        },
+        {
+          "outerTriangle": 272,
+          "signedInteriorThicknessM": -0.0006015124236000702,
+          "centroidM": [
+            -0.12281852960586548,
+            0.03340078890323639,
+            1.0829054117202759
+          ]
+        },
+        {
+          "outerTriangle": 355,
+          "signedInteriorThicknessM": -0.0014367589137691539,
+          "centroidM": [
+            0.08341018855571747,
+            -0.07851077616214752,
+            1.1075241565704346
+          ]
+        },
+        {
+          "outerTriangle": 388,
+          "signedInteriorThicknessM": -0.00022732610159437172,
+          "centroidM": [
+            0.11202257126569748,
+            -0.020175691694021225,
+            1.095346450805664
+          ]
+        },
+        {
+          "outerTriangle": 506,
+          "signedInteriorThicknessM": -0.0005686311924364418,
+          "centroidM": [
+            -0.08556193113327026,
+            -0.08121459186077118,
+            1.0960602760314941
+          ]
+        },
+        {
+          "outerTriangle": 587,
+          "signedInteriorThicknessM": -6.485879112005932e-06,
+          "centroidM": [
+            0.012985004112124443,
+            0.11467628926038742,
+            1.2008947134017944
+          ]
+        },
+        {
+          "outerTriangle": 725,
+          "signedInteriorThicknessM": -4.1070234146900475e-06,
+          "centroidM": [
+            0.08256804943084717,
+            0.09296613931655884,
+            1.2067171335220337
+          ]
+        },
+        {
+          "outerTriangle": 747,
+          "signedInteriorThicknessM": -8.166614315996412e-05,
+          "centroidM": [
+            -0.15520314872264862,
+            0.04689257964491844,
+            1.2481399774551392
+          ]
+        },
+        {
+          "outerTriangle": 1088,
+          "signedInteriorThicknessM": -7.7318744843069e-05,
+          "centroidM": [
+            0.12067963182926178,
+            -0.06713288277387619,
+            1.2831944227218628
+          ]
+        },
+        {
+          "outerTriangle": 1089,
+          "signedInteriorThicknessM": -0.0004637589336198289,
+          "centroidM": [
+            0.11868429183959961,
+            -0.0755552425980568,
+            1.2771724462509155
+          ]
+        },
+        {
+          "outerTriangle": 1090,
+          "signedInteriorThicknessM": -0.0008027763851714553,
+          "centroidM": [
+            0.12000894546508789,
+            -0.06964343041181564,
+            1.283205270767212
+          ]
+        }
+      ],
+      "negativeClosedComponents": {
+        "count": 0,
+        "items": [],
+        "truncated": false
+      },
+      "degenerateTriangles": {
+        "count": 0,
+        "items": [],
+        "truncated": false
+      },
+      "inconsistentWindingEdges": {
+        "count": 0,
+        "items": [],
+        "truncated": false
+      },
+      "boundsM": {
+        "min": [
+          -0.5048329830169678,
+          -0.11711772531270981,
+          1.047996163368225
+        ],
+        "max": [
+          0.504800021648407,
+          0.12251962721347809,
+          1.4348334074020386
+        ]
+      }
+    }
+  ],
+  "renders": true,
+  "renderColors": "blue outer cloth; rust lining/rims; diagnostic override only"
+}

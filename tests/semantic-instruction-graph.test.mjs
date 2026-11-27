@@ -5,18 +5,18 @@ import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {test} from 'node:test';
 
-import {FINDING_OWNERS} from '../skills/refas/scripts/lib/ownership.mjs';
+import {FINDING_OWNERS} from '../legacy/v1/scripts/lib/ownership.mjs';
 import {
   analyzeSemanticInstructionGraph,
   extractBareMarkdownRoutes,
-} from '../skills/refas/scripts/verify_semantic_instruction_graph.mjs';
+} from '../legacy/v1/scripts/verify_semantic_instruction_graph.mjs';
 
 const REPOSITORY = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 
 async function copyInstalledSkill(prefix) {
   const temp = await fs.mkdtemp(path.join(os.tmpdir(), prefix));
   const installed = path.join(temp, 'refas');
-  await fs.cp(path.join(REPOSITORY, 'skills/refas'), installed, {recursive: true});
+  await fs.cp(path.join(REPOSITORY, 'legacy/v1'), installed, {recursive: true});
   return {temp, installed};
 }
 
@@ -187,7 +187,7 @@ test('semantic graph verifies from a bare copied installed skill with repository
 });
 
 test('early neutral-clay assessment is reachable from construction without final-only prerequisites', async () => {
-  const g = JSON.parse(await fs.readFile(path.resolve('skills/refas/references/GRAPH.json'),'utf8'));
+  const g = JSON.parse(await fs.readFile(path.resolve('legacy/v1/references/GRAPH.json'),'utf8'));
   const byId = Object.fromEntries(g.nodes.map(n=>[n.id,n]));
   const ancestors=(id,seen=new Set())=>{
     for(const dep of byId[id].requires){if(!seen.has(dep)){seen.add(dep);ancestors(dep,seen);}}

@@ -1,0 +1,48 @@
+{
+  "frozenUtc": "2026-11-22T18:55:34.488251+00:00",
+  "baselineNative": {
+    "path": "/workspace/scratch/61afcdd4e3c6/recovered/source-models/refas-source-identity-models/automail/native.blend",
+    "sha256": "e7b2ac7cbd671d979af6e178ec85efc574ad9860c9695000980cf4a29f8a2dd7"
+  },
+  "sourceReference": {
+    "path": "examples/automail-arm/source/reference.png",
+    "sha256": "3c7856dd632f8a1cde8036078573f569db55b6af97fae853237d8a9356f3c872"
+  },
+  "beforeSelectionBudget": {
+    "exportTriangles": 110000,
+    "materialPrimitives": 180,
+    "sampledOptimizationSurfaceErrorM": 0.0006
+  },
+  "motion": {
+    "clip": "AURIX_ReachGrip_Return",
+    "frames": [
+      1,
+      121
+    ],
+    "fps": 30,
+    "elbowDegrees": [
+      0,
+      90
+    ],
+    "wristDegrees": [
+      -12,
+      12
+    ],
+    "fingerFlexionDegrees": [
+      45,
+      55,
+      30
+    ],
+    "thumbFlexionDegrees": [
+      18,
+      35,
+      20
+    ],
+    "twoAnchorElbowLinks": true
+  },
+  "intent": "New recovered-checkpoint continuation, not lost78998 candidate; fix hand shell crossing, keep armor/source identity and model useful reach/grip",
+  "modelTokens": null,
+  "billedCost": null,
+  "missingReason": "No provider telemetry",
+  "acceptance": "Actual reference/render review; native/export topology and named joint/hand collision checks; engine playback; local edit and exact restore; no static figure acceptance"
+}

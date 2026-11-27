@@ -1,0 +1,80 @@
+{
+  "A": {
+    "condition": "legacy",
+    "sourceFolder": "/tmp/refas-dual-asset-20261122/common/final/legacy/renders",
+    "images": [
+      {
+        "file": "view-back.png",
+        "sha256": "ab2e64dac62a5318542523119bcd3f2cb9195acec940d0e74e9979556eebd781"
+      },
+      {
+        "file": "view-front-three-quarter.png",
+        "sha256": "582a59b5b9ece1a93cf685587910d98bb4f23dfc734a3f89cfe2ea0331933ab2"
+      },
+      {
+        "file": "view-front.png",
+        "sha256": "755d5a4bb7c0de950537674725f020ecffe18b20e52c57b1207aaf6db85bd8ab"
+      },
+      {
+        "file": "view-left.png",
+        "sha256": "67c55af763840ba061e6fd60b7ee51af3ac6b5238a40aed592024349fba25818"
+      },
+      {
+        "file": "view-rear-three-quarter.png",
+        "sha256": "8a49b3a0d9bbfd25d3d19fa985653aea63b3abca6646ff7cad2a5a20168f41a3"
+      }
+    ]
+  },
+  "B": {
+    "condition": "plain",
+    "sourceFolder": "/tmp/refas-dual-asset-20261122/common/final/plain/renders",
+    "images": [
+      {
+        "file": "view-back.png",
+        "sha256": "eb28c55e8ea15f01dce9450c133f660f9036a73be00c19f64cdffc9fc1f5b715"
+      },
+      {
+        "file": "view-front-three-quarter.png",
+        "sha256": "86ce5274212ab000954b39656131f55ba5ca2598530acd25ae502422a288dcba"
+      },
+      {
+        "file": "view-front.png",
+        "sha256": "3008740faf4c08e13f530a3f9bab11558e2f3c3234d383ba07f30adfc1be4508"
+      },
+      {
+        "file": "view-left.png",
+        "sha256": "936efa581b42c75b500f1c48a4df3575e5a3256a15fe27d7d8325c915181d833"
+      },
+      {
+        "file": "view-rear-three-quarter.png",
+        "sha256": "6f1ea9d2196604d72e095511f5bbf8dcd4d851c946367715c4b0642958219387"
+      }
+    ]
+  },
+  "C": {
+    "condition": "production",
+    "sourceFolder": "/tmp/refas-dual-asset-20261122/common/final/production/renders",
+    "images": [
+      {
+        "file": "view-back.png",
+        "sha256": "c7da04b3e298b34767cc2eef1e5ae8ea733aaf245084455891737838cc743637"
+      },
+      {
+        "file": "view-front-three-quarter.png",
+        "sha256": "ffb110c4f27f4d22de5f0ecf4cfc37d7a274cd2cdaa49ce3f09122c9f5a18539"
+      },
+      {
+        "file": "view-front.png",
+        "sha256": "f176b3993fc24fd4680ffcf5c7b3ea2ea63427aa0d9107f887689552fc5da637"
+      },
+      {
+        "file": "view-left.png",
+        "sha256": "ba6ab2741204cb3fa609f2fa5cfb78022ae78190697fa9f213ec0c67bfdcb905"
+      },
+      {
+        "file": "view-rear-three-quarter.png",
+        "sha256": "1c0d1d33dc8d224ea38ea1377004225801461d7ae8178950b940a083e78e6ead"
+      }
+    ]
+  }
+}

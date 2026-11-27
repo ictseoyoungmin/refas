@@ -1,0 +1,81 @@
+{
+  "scope": {
+    "reference": "reference.png",
+    "viewed": ["front", "back", "front-three-quarter", "rear-three-quarter", "left", "right"],
+    "labels": ["A", "B", "C"],
+    "basis": "Independent visual assessment of the supplied PNGs only; full reference viewed first.",
+    "limitations": [
+      "Candidate cameras are shared but not calibrated or registered to the source.",
+      "No exact dimensions, topology, manifoldness, rigging, editability, or engine readiness can be established.",
+      "Transparent backgrounds displayed as black are not geometry defects.",
+      "Decoration side follows source front, back, and labelled-left views."
+    ]
+  },
+  "overall_verdict": "No candidate accepted as a faithful finished match. B and C are usable development prototypes; A requires major shoulder reconstruction.",
+  "shared_observations": [
+    "Open-front cropped jacket structure, light edge trim, waist and cuff hardware, and correct wearer-left chain placement are visible.",
+    "Dark elliptical cuff interiors provide open-cuff visual cues, without proving topology.",
+    "Front panels are comparatively planar and torso shaping is less fitted than the source.",
+    "No candidate fully reproduces the broad folded rear collar and coherent collar-to-lapel transition.",
+    "Main fabric appears lighter and cooler than the source; lighting and material response cannot be separated from these images.",
+    "Hardware, epaulettes, hanging ornament, and pale inner cuff facing remain simplified."
+  ],
+  "candidates": {
+    "A": {
+      "verdict": "Unaccepted whole-garment prototype; major shoulder reconstruction required.",
+      "strengths": [
+        {"observation": "Recognizable tapered cropped body, long sleeves, and wide open front.", "views": ["A/view-front.png"]},
+        {"observation": "Chest and sleeve shields and two chain swags are visible on the correct side.", "views": ["A/view-front-three-quarter.png", "A/view-left.png"]},
+        {"observation": "Layered cuffs, buckle frames, and open cuff interiors are readable.", "views": ["A/view-left.png", "A/view-right.png", "A/view-front-three-quarter.png"]}
+      ],
+      "major_defects": [
+        {"observation": "Large dark openings visibly separate sleeve caps from torso shoulders.", "views": ["A/view-front.png", "A/view-back.png", "A/view-right.png", "A/view-rear-three-quarter.png"], "inference": "Disconnected construction is suggested; exact topology is unknown."},
+        {"observation": "Upright neck band and hard planar lapels do not reproduce folded source collar.", "views": ["A/view-front.png", "A/view-front-three-quarter.png", "A/view-right.png"]},
+        {"observation": "Sleeves are smooth, straight tapered tubes with abrupt cap transitions.", "views": ["A/view-front.png", "A/view-right.png"]},
+        {"observation": "Shield scale/detail, hanging tails, and shoulder attachments are reduced.", "views": ["A/view-front-three-quarter.png", "A/view-left.png", "A/view-back.png"]}
+      ]
+    },
+    "B": {
+      "verdict": "Usable development prototype; unaccepted as a finished match.",
+      "strengths": [
+        {"observation": "Most continuous overall torso-to-sleeve appearance, without A's large shoulder gaps.", "views": ["B/view-front.png", "B/view-back.png", "B/view-rear-three-quarter.png"]},
+        {"observation": "Sleeve waviness suggests cloth, and the left sleeve shield and hanging decoration are most legible.", "views": ["B/view-back.png", "B/view-right.png", "B/view-front-three-quarter.png", "B/view-left.png"]},
+        {"observation": "Body depth, open center, layered cuffs, waist belt, and open cuff interiors read clearly.", "views": ["B/view-front-three-quarter.png", "B/view-back.png", "B/view-left.png"]}
+      ],
+      "major_defects": [
+        {"observation": "Dark triangular pinches and lumpy sleeve caps interrupt clean armhole shaping.", "views": ["B/view-front.png", "B/view-back.png", "B/view-rear-three-quarter.png"], "inference": "Underlying cause may be shape, overlap, or shading; PNGs cannot determine which."},
+        {"observation": "Upright neck band and planar zigzag lapels lack the source's folded collar transition.", "views": ["B/view-front.png", "B/view-front-three-quarter.png", "B/view-right.png"]},
+        {"observation": "Cuff drop below hem is shortest among candidates; broad upper sleeves and compact proportions weaken source-like cropped fit.", "views": ["B/view-front.png", "B/view-back.png"], "inference": "Qualitative proportion adjustment is warranted, without an exact dimension prescription."},
+        {"observation": "Shoulder straps, rear hanging assembly, and buckles remain simplified.", "views": ["B/view-left.png", "B/view-back.png", "B/view-front-three-quarter.png"]}
+      ]
+    },
+    "C": {
+      "verdict": "Usable development prototype; unaccepted as a finished match.",
+      "strengths": [
+        {"observation": "Tapered front body, broad lapels, and longer cuff drop than B retain a useful cropped silhouette.", "views": ["C/view-front.png"]},
+        {"observation": "Neck edge has more flare/roll and sleeve caps are rounder than A or B.", "views": ["C/view-front-three-quarter.png", "C/view-left.png"]},
+        {"observation": "Chest shield, left chain swags, waist and cuff hardware, and open cuff interiors are visible.", "views": ["C/view-front.png", "C/view-front-three-quarter.png", "C/view-left.png"]}
+      ],
+      "major_defects": [
+        {"observation": "Light sliver and adjacent dark wedge interrupt rear shoulder/armhole continuity.", "views": ["C/view-back.png", "C/view-right.png", "C/view-rear-three-quarter.png"], "inference": "Overlapping or disconnected layers are suggested, but mesh penetration is not proven."},
+        {"observation": "Upper-arm shield reads as a narrow fragment instead of a broad decorated face; hanging tails are not clear.", "views": ["C/view-front.png", "C/view-front-three-quarter.png", "C/view-left.png"], "inference": "Orientation, occlusion, or shape may contribute; cause remains unresolved."},
+        {"observation": "Cuffs look like plain cylindrical bands rather than layered buckle straps.", "views": ["C/view-front.png", "C/view-back.png", "C/view-left.png"]},
+        {"observation": "Shallow collar strip, planar lapels, boxy body profile, and smooth tubular sleeves remain unlike source tailoring.", "views": ["C/view-front-three-quarter.png", "C/view-left.png", "C/view-rear-three-quarter.png"]}
+      ]
+    }
+  },
+  "relative_order": {
+    "purpose": "Visual development starting point only",
+    "order": ["B", "C", "A"],
+    "basis": "A has the clearest shoulder separation. B has more continuous sleeve joins, readable ornament, and layered cuffs than C. C has a favorable sleeve drop and more flared neck edge.",
+    "qualification": "B versus C is an overall visual preference with tradeoffs; no topology or production-readiness ranking is implied."
+  },
+  "priority_acceptance_targets": [
+    "Continuous shoulders and clean armholes across front, side, and rear views.",
+    "Broad folded rear collar and coherent folded lapel transition.",
+    "Fitted cropped body and shaped long sleeves consistent across views.",
+    "Readable wearer-left sleeve shield, chain swags, hanging tails, and shoulder attachment.",
+    "Layered strap cuffs with visible interior opening and source-like facing.",
+    "Dark fabric appearance with distinct light piping and metallic hardware under shared lighting."
+  ]
+}

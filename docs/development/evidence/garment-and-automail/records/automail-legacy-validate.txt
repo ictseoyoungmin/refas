@@ -1,0 +1,258 @@
+{
+  "schema": "refas.agent-diagnosis/v1",
+  "version": "1.4.2",
+  "projectId": "automail-legacy",
+  "checkpointId": null,
+  "next": {
+    "schema": "refas.agent-next/v1",
+    "version": "1.4.2",
+    "projectId": "automail-legacy",
+    "checkpointId": null,
+    "projectStatus": "ready",
+    "action": "CHECKPOINT_SOURCE_INTAKE",
+    "ownerCapability": "source-intake",
+    "scopeId": "whole",
+    "guidance": {
+      "schema": "refas.resume-guidance/v1",
+      "status": "ready",
+      "safeCheckpointId": null,
+      "activeWork": {
+        "capability": "source-intake",
+        "scopeId": "whole"
+      },
+      "nextAction": "CHECKPOINT_SOURCE_INTAKE",
+      "reason": "the source is bound but has no trustworthy checkpoint"
+    },
+    "workPlan": {
+      "kind": "command",
+      "instructionNode": "checkpointing",
+      "nextStep": "COMMIT_SOURCE_CHECKPOINT",
+      "requiredEvidence": [
+        "trusted-source-manifest",
+        "source-intake-gate-evidence"
+      ]
+    },
+    "invocation": {
+      "bin": "refas",
+      "command": "checkpoint",
+      "requires": [
+        "--root",
+        "--capability source-intake",
+        "--scope",
+        "--artifacts",
+        "--gates"
+      ]
+    },
+    "discovery": {
+      "bin": "refas",
+      "command": "describe",
+      "arguments": [
+        "capability",
+        "source-intake"
+      ]
+    },
+    "finalSourceBoundAuthorization": "NOT_EVALUATED",
+    "note": "Read-only guidance; this result is not a completed action, gate, certificate or release receipt."
+  },
+  "route": null,
+  "coverage": {
+    "schema": "refas.qa-coverage-report/v1",
+    "profile": "source-bound-object",
+    "evaluatorVersion": "1.4.2",
+    "sourceSha256": "3c7856dd632f8a1cde8036078573f569db55b6af97fae853237d8a9356f3c872",
+    "assetSha256": "2a6d9e4ca1a4e5f73515413eb7bfb789868cc984f90177d34d833006bc52013a",
+    "checkpointId": null,
+    "checks": [
+      {
+        "id": "source-provenance",
+        "owner": "source-intake",
+        "required": true,
+        "status": "PASS",
+        "reason": "current raw source bytes match the manifest digest",
+        "evidence": [
+          "3c7856dd632f8a1cde8036078573f569db55b6af97fae853237d8a9356f3c872"
+        ]
+      },
+      {
+        "id": "primary-source-pixel-frame",
+        "owner": "source-intake",
+        "required": true,
+        "status": "PASS",
+        "reason": "trusted installed decoder replayed current original still image bytes, dimensions and encoded orientation; this does not verify observed contours",
+        "evidence": [
+          "3c7856dd632f8a1cde8036078573f569db55b6af97fae853237d8a9356f3c872"
+        ]
+      },
+      {
+        "id": "glb-integrity",
+        "owner": "shape-reconstruction",
+        "required": true,
+        "status": "PASS",
+        "reason": "GLB intrinsic structure is valid; this is not a source resemblance finding",
+        "evidence": [
+          "2a6d9e4ca1a4e5f73515413eb7bfb789868cc984f90177d34d833006bc52013a"
+        ]
+      },
+      {
+        "id": "candidate-lineage",
+        "owner": "whole-object-certification",
+        "required": true,
+        "status": "NOT_RUN",
+        "reason": "no checkpoint or current candidate lineage exists",
+        "evidence": []
+      },
+      {
+        "id": "source-semantic-current-glb",
+        "owner": "visual-observation",
+        "required": true,
+        "status": "NOT_RUN",
+        "reason": "original source and current checkpoint lineage are required",
+        "evidence": []
+      },
+      {
+        "id": "relational-evidence",
+        "owner": "spatial-hypotheses",
+        "required": true,
+        "status": "NOT_RUN",
+        "reason": "no checkpoint head exists",
+        "evidence": []
+      },
+      {
+        "id": "registered-multiview",
+        "owner": "rendering",
+        "required": true,
+        "status": "NOT_RUN",
+        "reason": "no checkpoint head exists",
+        "evidence": []
+      },
+      {
+        "id": "independent-visual-review",
+        "owner": "visual-critique",
+        "required": true,
+        "status": "NOT_RUN",
+        "reason": "no checkpoint head exists",
+        "evidence": []
+      },
+      {
+        "id": "realized-contact-support",
+        "owner": "assembly",
+        "required": true,
+        "status": "NOT_RUN",
+        "reason": "no checkpoint head exists",
+        "evidence": []
+      },
+      {
+        "id": "whole-object-certification",
+        "owner": "whole-object-certification",
+        "required": true,
+        "status": "NOT_RUN",
+        "reason": "trusted source-bound whole-object certification is absent or incomplete",
+        "evidence": []
+      }
+    ],
+    "decision": {
+      "state": "BLOCKED",
+      "blockingCheckIds": [
+        "candidate-lineage",
+        "source-semantic-current-glb",
+        "relational-evidence",
+        "registered-multiview",
+        "independent-visual-review",
+        "realized-contact-support",
+        "whole-object-certification"
+      ]
+    },
+    "limits": [
+      "No independent source semantic detection/reviewer provenance is established; physical contradictions alone cannot pass relational evidence",
+      "Contact replay verifies declared assembly evidence, not independent source semantics; final host admission is separate",
+      "This report is not a certificate"
+    ],
+    "reportDigest": "9a06a12151bf1ce1aa85be278488c4cb949b54976b5dc72c8ade316736a828b8"
+  },
+  "diagnosis": {
+    "profile": "source-bound-object",
+    "decision": {
+      "state": "BLOCKED",
+      "blockingCheckIds": [
+        "candidate-lineage",
+        "source-semantic-current-glb",
+        "relational-evidence",
+        "registered-multiview",
+        "independent-visual-review",
+        "realized-contact-support",
+        "whole-object-certification"
+      ]
+    },
+    "reportDigest": "9a06a12151bf1ce1aa85be278488c4cb949b54976b5dc72c8ade316736a828b8",
+    "assetSha256": "2a6d9e4ca1a4e5f73515413eb7bfb789868cc984f90177d34d833006bc52013a",
+    "blockers": [
+      {
+        "checkId": "candidate-lineage",
+        "status": "NOT_RUN",
+        "ownerCapability": "whole-object-certification",
+        "reason": "no checkpoint or current candidate lineage exists",
+        "evidenceRefs": [],
+        "followUp": "GATHER_OR_REVIEW_EVIDENCE"
+      },
+      {
+        "checkId": "source-semantic-current-glb",
+        "status": "NOT_RUN",
+        "ownerCapability": "visual-observation",
+        "reason": "original source and current checkpoint lineage are required",
+        "evidenceRefs": [],
+        "followUp": "GATHER_OR_REVIEW_EVIDENCE"
+      },
+      {
+        "checkId": "relational-evidence",
+        "status": "NOT_RUN",
+        "ownerCapability": "spatial-hypotheses",
+        "reason": "no checkpoint head exists",
+        "evidenceRefs": [],
+        "followUp": "GATHER_OR_REVIEW_EVIDENCE"
+      },
+      {
+        "checkId": "registered-multiview",
+        "status": "NOT_RUN",
+        "ownerCapability": "rendering",
+        "reason": "no checkpoint head exists",
+        "evidenceRefs": [],
+        "followUp": "GATHER_OR_REVIEW_EVIDENCE"
+      },
+      {
+        "checkId": "independent-visual-review",
+        "status": "NOT_RUN",
+        "ownerCapability": "visual-critique",
+        "reason": "no checkpoint head exists",
+        "evidenceRefs": [],
+        "followUp": "GATHER_OR_REVIEW_EVIDENCE"
+      },
+      {
+        "checkId": "realized-contact-support",
+        "status": "NOT_RUN",
+        "ownerCapability": "assembly",
+        "reason": "no checkpoint head exists",
+        "evidenceRefs": [],
+        "followUp": "GATHER_OR_REVIEW_EVIDENCE"
+      },
+      {
+        "checkId": "whole-object-certification",
+        "status": "NOT_RUN",
+        "ownerCapability": "whole-object-certification",
+        "reason": "trusted source-bound whole-object certification is absent or incomplete",
+        "evidenceRefs": [],
+        "followUp": "GATHER_OR_REVIEW_EVIDENCE"
+      }
+    ],
+    "blockerCount": 7,
+    "checkCount": 10,
+    "limits": [
+      "No independent source semantic detection/reviewer provenance is established; physical contradictions alone cannot pass relational evidence",
+      "Contact replay verifies declared assembly evidence, not independent source semantics; final host admission is separate",
+      "This report is not a certificate"
+    ]
+  },
+  "action": "REVIEW_SOURCE_BOUND_BLOCKERS",
+  "sourceBoundDecision": "BLOCKED",
+  "mutationPerformed": false,
+  "note": "Inspection only: no synthesized findings, no bypass of existing source-bound gates or certification."
+}

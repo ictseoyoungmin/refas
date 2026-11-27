@@ -1,0 +1,156 @@
+{
+  "recordedUtc": "2026-11-22T21:45:08.142001+00:00",
+  "scope": "Independent review evidence of frozen main-cloth rest handoff high42/low44; excludes avatar geometry and final wearable acceptance.",
+  "files": [
+    {
+      "evidencePath": "independent-native-audit/report.json",
+      "sourcePath": "/workspace/scratch/61afcdd4e3c6/work/garment/export-review/high42-low44-review/report.json",
+      "sha256": "2be237e6ddcb02a165d1c23799ec0ae7102607c9521a05e57fbf328f114fb1b3",
+      "bytes": 11293
+    },
+    {
+      "evidencePath": "independent-native-audit/command.json",
+      "sourcePath": "/workspace/scratch/61afcdd4e3c6/work/garment/export-review/high42-low44-review/command.json",
+      "sha256": "bae85ffd313a2a0ea76149bc325857460333a861686a4a84e93dbb8945229282",
+      "bytes": 746
+    },
+    {
+      "evidencePath": "independent-native-audit/stdout.txt",
+      "sourcePath": "/workspace/scratch/61afcdd4e3c6/work/garment/export-review/high42-low44-review/stdout.txt",
+      "sha256": "4bf1836a10a3250401e1d122f6f91570401d2d1567dc690faeb66b59fb4d0226",
+      "bytes": 760
+    },
+    {
+      "evidencePath": "independent-native-audit/stderr.txt",
+      "sourcePath": "/workspace/scratch/61afcdd4e3c6/work/garment/export-review/high42-low44-review/stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "evidencePath": "handoff-manifest-verification.json",
+      "sourcePath": "/workspace/scratch/61afcdd4e3c6/work/garment/export-review/high42-low44-review/handoff-manifest-verification.json",
+      "sha256": "8b84e3f048f3b051069b5b9f39da36bb53d13187cf62eb570cae6f1e7a1f9e0b",
+      "bytes": 23268
+    },
+    {
+      "evidencePath": "review_frozen_cloth.py",
+      "sourcePath": "/workspace/scratch/61afcdd4e3c6/work/garment/export-review/review_frozen_cloth.py",
+      "sha256": "b08db640f84950f8e051041b3ad0044962e0a9984e952fb2b7d67545c9d96a8f",
+      "bytes": 6879
+    },
+    {
+      "evidencePath": "author-handoff-summary.json",
+      "sourcePath": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/handoff-44/summary.json",
+      "sha256": "2e19c4d75721db8e8eb0d217f9d7041a275ab7d6e523dea4f5b0bce71701da0b",
+      "bytes": 6581
+    },
+    {
+      "evidencePath": "author-handoff-file-manifest.json",
+      "sourcePath": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/handoff-44/file-manifest.json",
+      "sha256": "e4e4f4c5fbc13a5a957879db254c88bfd18bb702f129424a590d47cf5f8e5e15",
+      "bytes": 14084
+    },
+    {
+      "evidencePath": "author-saved-surface-comparison.json",
+      "sourcePath": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/paired-low-44/saved-verification/report.json",
+      "sha256": "942753fb6bdcb60a5bb45c62a612742154c903b61df506a3a0cd4500d0e18bde",
+      "bytes": 11953
+    },
+    {
+      "evidencePath": "source-bottom-profile.json",
+      "sourcePath": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/source-bottom-profile.json",
+      "sha256": "2a892c56fe211e75e32fa1544803b7b0e0661f22d0cfb18d62fd1f9073fe3d12",
+      "bytes": 14397
+    },
+    {
+      "evidencePath": "reference.png",
+      "sourcePath": "/workspace/scratch/61afcdd4e3c6/recovered/source-models/refas-source-identity-models/jacket/reproduce/source/reference.png",
+      "sha256": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5",
+      "bytes": 2666378
+    },
+    {
+      "evidencePath": "matched-high-low/render-observation.json",
+      "sourcePath": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/paired-low-44/views/render-observation.json",
+      "sha256": "4d98929d6aa0872de6c8483a9ceaa203b4ee51efb012a555ffde2b1669f19958",
+      "bytes": 2779
+    },
+    {
+      "evidencePath": "source-endpoint-repair/render-observation.json",
+      "sourcePath": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/lining-42/endpoint-isolated-views/render-observation.json",
+      "sha256": "6a8433a39145eaac33659561e483f6378ddf09c2916a5e5403c88cc4c5b4ec6c",
+      "bytes": 2324
+    },
+    {
+      "evidencePath": "source-repair/render-observation.json",
+      "sourcePath": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/lining-42/source-repair-views/render-observation.json",
+      "sha256": "ad9f1eeb4723558133be7ed3f178ef6ba5c9475cec6e0f80eb4fed149d565c82",
+      "bytes": 4218
+    },
+    {
+      "evidencePath": "source-repair/before-nape.png",
+      "sourcePath": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/lining-42/source-repair-views/before-nape.png",
+      "sha256": "d1a10960ec82600641ad611901dbf879651b76b2b955bccf2555de3c1fe4c11c",
+      "bytes": 378935
+    },
+    {
+      "evidencePath": "matched-high-low/high-whole-front.png",
+      "sourcePath": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/paired-low-44/views/high-whole-front.png",
+      "sha256": "27fde427d3d168c6088866de0843d1bab0cd187e56858c5459186726b0ebc047",
+      "bytes": 364135
+    },
+    {
+      "evidencePath": "matched-high-low/high-nape.png",
+      "sourcePath": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/paired-low-44/views/high-nape.png",
+      "sha256": "981c93f611bf7c910d7d6a476033e1f4349eafaf317774fe8066b7752b537419",
+      "bytes": 378912
+    },
+    {
+      "evidencePath": "matched-high-low/high-collar-front.png",
+      "sourcePath": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/paired-low-44/views/high-collar-front.png",
+      "sha256": "0954355fa614eebc5f6655a30dcb529811211471c488969629928e64ba6a8c98",
+      "bytes": 515309
+    },
+    {
+      "evidencePath": "matched-high-low/low-whole-front.png",
+      "sourcePath": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/paired-low-44/views/low-whole-front.png",
+      "sha256": "f811e7aec8fdc447432c558a89999e17198aea0ed63f6ff8ed3374b1dd86c42d",
+      "bytes": 363632
+    },
+    {
+      "evidencePath": "matched-high-low/low-nape.png",
+      "sourcePath": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/paired-low-44/views/low-nape.png",
+      "sha256": "f8032e94cb951c1678ab4e172535ac54cef58d8197efe76ea64b5f4c60e2076e",
+      "bytes": 378782
+    },
+    {
+      "evidencePath": "matched-high-low/low-collar-front.png",
+      "sourcePath": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/paired-low-44/views/low-collar-front.png",
+      "sha256": "bc165ddc7b9bd061a689ac0434b6874aee8058eb805a5ad43a4256fc4183905c",
+      "bytes": 515123
+    },
+    {
+      "evidencePath": "source-endpoint-repair/before-lapel-end-front.png",
+      "sourcePath": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/lining-42/endpoint-isolated-views/before-lapel-end-front.png",
+      "sha256": "15cf2f2299d424812c0b6d65bc7964893b5f9c6dd6dc92c7c1c45e93f40e9d98",
+      "bytes": 303902
+    },
+    {
+      "evidencePath": "source-endpoint-repair/before-lapel-end-side.png",
+      "sourcePath": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/lining-42/endpoint-isolated-views/before-lapel-end-side.png",
+      "sha256": "66dbf85258b03efb76cb4f78344d51b2e0449b90a51d417c3c75cf303f67f494",
+      "bytes": 327136
+    },
+    {
+      "evidencePath": "source-endpoint-repair/after-lapel-end-front.png",
+      "sourcePath": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/lining-42/endpoint-isolated-views/after-lapel-end-front.png",
+      "sha256": "249f1dfe7c145accb1024230fa77f0d506ef9d045595dd04916a43ea3a07e5d4",
+      "bytes": 299546
+    },
+    {
+      "evidencePath": "source-endpoint-repair/after-lapel-end-side.png",
+      "sourcePath": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/lining-42/endpoint-isolated-views/after-lapel-end-side.png",
+      "sha256": "5112683cb40f2d2f41cf6ee0cca855bcce4c103243e3e811947bf134ab6a4c50",
+      "bytes": 306231
+    }
+  ]
+}

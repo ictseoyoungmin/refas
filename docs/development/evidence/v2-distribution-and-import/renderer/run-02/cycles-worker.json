@@ -1,0 +1,24 @@
+{
+  "blenderVersion": "4.3.2",
+  "blenderVersionCode": [
+    4,
+    3,
+    2
+  ],
+  "boundColorMaterialNodes": [],
+  "certificationEligible": false,
+  "claimScope": "external-pbr-preview-only",
+  "colorAttributes": [],
+  "colorBearingImportedTriangles": 0,
+  "device": "CPU",
+  "engine": "CYCLES",
+  "imageSha256": "7a5c602882f3a40b82cbe1002a5ea5cc58000756b239c24b0fe550dc0ea8a663",
+  "importMs": 13.646,
+  "meshObjects": 4,
+  "peakProcessRssKiB": 235388,
+  "renderMs": 1439.809,
+  "samples": 32,
+  "sourceGlbSha256": "005f4e2f463c88d0cc10a46e9ca16fa5f98a8bac098e6cb8726cdd00694da3af",
+  "triangleCount": 3840,
+  "worldProfile": "sun-direct3-worldAmbient-0.7-standard-sRGB"
+}

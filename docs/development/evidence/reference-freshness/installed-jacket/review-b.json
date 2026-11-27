@@ -1,0 +1,65 @@
+{
+  "schema": "refas.production.review/v2",
+  "lighting": {
+    "center": [
+      0,
+      0,
+      0.18
+    ],
+    "radius": 0.48
+  },
+  "background": [
+    0.12,
+    0.14,
+    0.18
+  ],
+  "transparent": false,
+  "views": [
+    {
+      "name": "front",
+      "position": [
+        0.0,
+        -2.0,
+        0.15
+      ],
+      "target": [
+        0,
+        0,
+        0.15
+      ],
+      "orthoScale": 0.84,
+      "reference": {
+        "sourceSha256": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5",
+        "regionPixels": [
+          6,
+          47,
+          380,
+          399
+        ]
+      }
+    },
+    {
+      "name": "front-three-quarter",
+      "position": [
+        1.4142136,
+        -1.4142136,
+        0.15
+      ],
+      "target": [
+        0,
+        0,
+        0.15
+      ],
+      "orthoScale": 0.84,
+      "reference": {
+        "sourceSha256": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5",
+        "regionPixels": [
+          383,
+          47,
+          655,
+          399
+        ]
+      }
+    }
+  ]
+}

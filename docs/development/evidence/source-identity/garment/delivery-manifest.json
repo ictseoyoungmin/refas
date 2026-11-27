@@ -1,0 +1,113 @@
+{
+  "native.blend": {
+    "sha256": "528a8b67b2cd74dd5724225a6da4065281f6cfdf033d52a0b28123eab804cafd",
+    "bytes": 6640120
+  },
+  "native.glb": {
+    "sha256": "0c1fe855873c220025ed1016598b1dd00b514f38f26d0b8d111101505971888a",
+    "bytes": 9195044
+  },
+  "baseline.blend": {
+    "sha256": "493a7f3b9b9e9fdcd330e2336aeb8b6370dd6bc4cc69898e8348a58e9d56da0c",
+    "bytes": 6237520
+  },
+  "baseline.glb": {
+    "sha256": "d298c7cfa098999762f1e713ded4813b33b3f1942bc07c641bd3b41ee8b2ee4a",
+    "bytes": 7994896
+  },
+  "cuff-edited.blend": {
+    "sha256": "cecb3a6be43df14250a243f4829466f007817b56f3c39b854dd71072e9809c72",
+    "bytes": 6581840
+  },
+  "cuff-edited.glb": {
+    "sha256": "553e7748023218ba595573e9fac6fc8a57f25a7c2818edba00e444d666827359",
+    "bytes": 9195372
+  },
+  "restored.blend": {
+    "sha256": "528a8b67b2cd74dd5724225a6da4065281f6cfdf033d52a0b28123eab804cafd",
+    "bytes": 6640120
+  },
+  "restored.glb": {
+    "sha256": "0c1fe855873c220025ed1016598b1dd00b514f38f26d0b8d111101505971888a",
+    "bytes": 9195044
+  },
+  "identity-checks.json": {
+    "sha256": "1a0ed3807c1112311b3377bd32d6f29b91e79eac7aff268f2366fa1cec699040",
+    "bytes": 20776
+  },
+  "independent-check.json": {
+    "sha256": "b9ad8cad034fd5541d763192f14191cff90d3051406df7109c19c33dfb03a8e8",
+    "bytes": 148057
+  },
+  "cuff-edit-checks.json": {
+    "sha256": "d30bf282e21e0a31e9ce7370d377a28648f29f4952d38b76137b03a3dc492ac0",
+    "bytes": 21975
+  },
+  "execution.json": {
+    "sha256": "05cc88ca2ab80cb801302bc03977cb6bd220aae0587eb57287815f595ca84054",
+    "bytes": 175773
+  },
+  "visual-review.json": {
+    "sha256": "e59b9cc839dd85738d81811a11c6549b4037c818e296fb9968b7c4a390b38aa3",
+    "bytes": 1979
+  },
+  "review-identity.json": {
+    "sha256": "4db2217d5b9f9d7d6142443d382c8146d49149bd4fcc13b26fe47b99bac579c7",
+    "bytes": 3979
+  },
+  "comparison-whole.png": {
+    "sha256": "f5b750cdeb7d8939f8c285a274d866b553f03735e533c28a78cd28a5642bd05f",
+    "bytes": 377555
+  },
+  "comparison-collar.png": {
+    "sha256": "5dd2db52bd5ff6da34c466b8fcf443b39dc4e9da39da7650a47a5663acc18df8",
+    "bytes": 528878
+  },
+  "comparison-ornament.png": {
+    "sha256": "2524fe8a27243ef8da23c1a72d6936f33328773b15edde07aa11330b1c65a57c",
+    "bytes": 974213
+  },
+  "duplicate-label-check.json": {
+    "sha256": "40361665c3bb7a68d32f2482055c23737a86b9c8ee07db3fba655c7108327a22",
+    "bytes": 1334
+  },
+  "different-native-check.json": {
+    "sha256": "ca7d4148d9f5adb1ca620de3f4c6b463622746ff909165a7c3a93eb3bfa55c94",
+    "bytes": 1360
+  },
+  "composition-command.json": {
+    "sha256": "5cd04f3be1a219430ccd3616b08e0f40394c38d1d7cd816951c275308a80873a",
+    "bytes": 502
+  },
+  "selected_revision": "d83189287d4d458397b05534083f00e1",
+  "retained_revisions": {
+    "identity-01": {
+      "revision": "59a42f0458544897a025246f53b2796d",
+      "native": "/workspace/scratch/5765cde18054/work/garment/project/.refas2/revisions/59a42f0458544897a025246f53b2796d/artifacts/scene.blend",
+      "glb": "/workspace/scratch/5765cde18054/work/garment/project/.refas2/revisions/59a42f0458544897a025246f53b2796d/artifacts/asset.glb",
+      "script": "/workspace/scratch/5765cde18054/work/garment/project/.refas2/revisions/59a42f0458544897a025246f53b2796d/inputs/edit.py",
+      "script_sha256": "0c9416c4d8b5234e3657ceb5d1d148b0ac0fbe9294daa869dffbe5b42f9f870a"
+    },
+    "identity-02": {
+      "revision": "a8fb6667eccf46ea907c9daf6f2ee0fe",
+      "native": "/workspace/scratch/5765cde18054/work/garment/project/.refas2/revisions/a8fb6667eccf46ea907c9daf6f2ee0fe/artifacts/scene.blend",
+      "glb": "/workspace/scratch/5765cde18054/work/garment/project/.refas2/revisions/a8fb6667eccf46ea907c9daf6f2ee0fe/artifacts/asset.glb",
+      "script": "/workspace/scratch/5765cde18054/work/garment/project/.refas2/revisions/a8fb6667eccf46ea907c9daf6f2ee0fe/inputs/edit.py",
+      "script_sha256": "16335bb9d273af4c49ab7cfdd15b805e246f7cd1910bdfba2c05c5fc1f0c6487"
+    },
+    "identity-03": {
+      "revision": "76998d0f6f7242fbb6a0fc2ef7fa1a37",
+      "native": "/workspace/scratch/5765cde18054/work/garment/project/.refas2/revisions/76998d0f6f7242fbb6a0fc2ef7fa1a37/artifacts/scene.blend",
+      "glb": "/workspace/scratch/5765cde18054/work/garment/project/.refas2/revisions/76998d0f6f7242fbb6a0fc2ef7fa1a37/artifacts/asset.glb",
+      "script": "/workspace/scratch/5765cde18054/work/garment/project/.refas2/revisions/76998d0f6f7242fbb6a0fc2ef7fa1a37/inputs/edit.py",
+      "script_sha256": "ef62eb28ff7a8e552a547972dfb3522f10178e6d0958a9692888c9268096553d"
+    },
+    "identity-04": {
+      "revision": "d83189287d4d458397b05534083f00e1",
+      "native": "/workspace/scratch/5765cde18054/work/garment/project/.refas2/revisions/d83189287d4d458397b05534083f00e1/artifacts/scene.blend",
+      "glb": "/workspace/scratch/5765cde18054/work/garment/project/.refas2/revisions/d83189287d4d458397b05534083f00e1/artifacts/asset.glb",
+      "script": "/workspace/scratch/5765cde18054/work/garment/project/.refas2/revisions/d83189287d4d458397b05534083f00e1/inputs/edit.py",
+      "script_sha256": "2906c70eaa0aa5a82961c6d59b408d907eadc035eae86b9e2afbfdf859537abd"
+    }
+  }
+}

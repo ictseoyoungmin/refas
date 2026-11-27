@@ -1,0 +1,25 @@
+{
+  "recordedUtc": "2026-11-22T18:55:49.429637+00:00",
+  "baselineCommit": "f236477fe91b2fcb8453fcbc0cc55c91df0edacc",
+  "inputs": [
+    {
+      "name": "native.blend",
+      "bytes": 6640120,
+      "sha256": "528a8b67b2cd74dd5724225a6da4065281f6cfdf033d52a0b28123eab804cafd"
+    },
+    {
+      "name": "reference.png",
+      "bytes": 2666378,
+      "sha256": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5"
+    },
+    {
+      "name": "character(2).vrm",
+      "bytes": 35463852,
+      "sha256": "3173dcf6bfbf2f01af2040d70ee3430975510e8a5ab8b30eba5c493937451430"
+    }
+  ],
+  "priorCandidateRecovered": false,
+  "note": "Rebuilt from identity-04; earlier reported 97-frame candidate and post-runtime geometry scripts unavailable. New observations must not inherit those claims.",
+  "tokens": null,
+  "cost": null
+}

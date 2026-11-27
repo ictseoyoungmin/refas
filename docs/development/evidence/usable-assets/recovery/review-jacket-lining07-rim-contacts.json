@@ -1,0 +1,798 @@
+{
+  "input": "work/garment/geometry-repair/lining-07/repaired-detailed.blend",
+  "inputSha256": "54cc4414189e6050d69e98e319f04f2bad99012bb5e31d8b589e877d61897406",
+  "audit": "work/garment/geometry-repair/lining-07/full-audit/collar.npz",
+  "auditSha256": "787c9f71de7420835e0b518ee3d7920f2ed9fb7370ca31f987851480053d073e",
+  "nativeVerticesExactlyMatchAudit": true,
+  "method": "Independent float64 Moller-Trumbore finite-edge/triangle calculation; 1e-10 inclusive barycentric tolerance; strict interiors >1e-8; robust span criterion >0.1 micrometre. Native float32 vertex quantization remains part of the actual asset.",
+  "scope": "Ten nominated collar pairs only; not a new whole-shell or acceptance audit",
+  "pairs": [
+    {
+      "triangles": [
+        7979,
+        243993
+      ],
+      "kinds": [
+        "outer",
+        "rim"
+      ],
+      "vertexIds": [
+        [
+          17367,
+          30313,
+          30312
+        ],
+        [
+          17508,
+          62636,
+          79833
+        ]
+      ],
+      "sharedVertexIndices": [],
+      "minimumVertexDistanceM": 0.0005673168177791112,
+      "normalDot": -0.03501861873623774,
+      "firstVerticesToSecondPlaneM": [
+        0.00033197550040732764,
+        -5.907292870216237e-05,
+        -0.0013926995699866474
+      ],
+      "secondVerticesToFirstPlaneM": [
+        -0.0003920322233047829,
+        0.0001231360619601113,
+        -0.00015440286752850454
+      ],
+      "firstEdgesAgainstSecondTriangle": [],
+      "secondEdgesAgainstFirstTriangle": [
+        {
+          "edge": 0,
+          "edgeParameter": 0.7609789548733653,
+          "triangleBarycentric": [
+            0.5388110832647843,
+            0.3474927034912502,
+            0.11369621324396542
+          ],
+          "pointM": [
+            0.06638050983508006,
+            -0.02579119769710546,
+            1.4338772232556738
+          ],
+          "edgeEndpointSignedPlaneDistanceM": [
+            -0.0003920322233047829,
+            0.0001231360619601113
+          ],
+          "strictEdgeAndFaceInterior": true
+        },
+        {
+          "edge": 1,
+          "edgeParameter": 0.4436713155412028,
+          "triangleBarycentric": [
+            0.667073871760866,
+            0.18162046689184724,
+            0.1513056613472867
+          ],
+          "pointM": [
+            0.06622653450574242,
+            -0.025657586004675947,
+            1.4339015145352174
+          ],
+          "edgeEndpointSignedPlaneDistanceM": [
+            0.0001231360619601113,
+            -0.00015440286752850454
+          ],
+          "strictEdgeAndFaceInterior": true
+        }
+      ],
+      "intersectionSpanM": 0.00020530599762398516,
+      "classification": "proper nonadjacent triangle crossing"
+    },
+    {
+      "triangles": [
+        7979,
+        243992
+      ],
+      "kinds": [
+        "outer",
+        "rim"
+      ],
+      "vertexIds": [
+        [
+          17367,
+          30313,
+          30312
+        ],
+        [
+          17508,
+          311,
+          62636
+        ]
+      ],
+      "sharedVertexIndices": [],
+      "minimumVertexDistanceM": 0.0005358588175232217,
+      "normalDot": 0.001956913761846174,
+      "firstVerticesToSecondPlaneM": [
+        0.00033857260811460634,
+        -7.691550461311696e-05,
+        -0.0013694308074228899
+      ],
+      "secondVerticesToFirstPlaneM": [
+        -0.0003920322233047829,
+        -0.00011866800827813905,
+        0.0001231360619601113
+      ],
+      "firstEdgesAgainstSecondTriangle": [],
+      "secondEdgesAgainstFirstTriangle": [
+        {
+          "edge": 1,
+          "edgeParameter": 0.4907610039864716,
+          "triangleBarycentric": [
+            0.398340569519287,
+            0.5331184494596346,
+            0.0685409810210784
+          ],
+          "pointM": [
+            0.06655339019791147,
+            -0.025942652328083432,
+            1.4338446205155804
+          ],
+          "edgeEndpointSignedPlaneDistanceM": [
+            -0.00011866800827813905,
+            0.0001231360619601113
+          ],
+          "strictEdgeAndFaceInterior": true
+        },
+        {
+          "edge": 2,
+          "edgeParameter": 0.23902104512663472,
+          "triangleBarycentric": [
+            0.5388110832647843,
+            0.3474927034912502,
+            0.11369621324396542
+          ],
+          "pointM": [
+            0.06638050983508006,
+            -0.02579119769710546,
+            1.4338772232556738
+          ],
+          "edgeEndpointSignedPlaneDistanceM": [
+            0.0001231360619601113,
+            -0.0003920322233047829
+          ],
+          "strictEdgeAndFaceInterior": true
+        }
+      ],
+      "intersectionSpanM": 0.00023214018126768013,
+      "classification": "proper nonadjacent triangle crossing"
+    },
+    {
+      "triangles": [
+        7979,
+        243983
+      ],
+      "kinds": [
+        "outer",
+        "rim"
+      ],
+      "vertexIds": [
+        [
+          17367,
+          30313,
+          30312
+        ],
+        [
+          311,
+          79802,
+          62636
+        ]
+      ],
+      "sharedVertexIndices": [],
+      "minimumVertexDistanceM": 0.0005295278011075263,
+      "normalDot": 0.004137149110028798,
+      "firstVerticesToSecondPlaneM": [
+        0.00033433399286315516,
+        -7.236162726930195e-05,
+        -0.0013802176914784368
+      ],
+      "secondVerticesToFirstPlaneM": [
+        -0.00011866800827813905,
+        0.0003611889495384934,
+        0.0001231360619601113
+      ],
+      "firstEdgesAgainstSecondTriangle": [],
+      "secondEdgesAgainstFirstTriangle": [
+        {
+          "edge": 0,
+          "edgeParameter": 0.24729871338759582,
+          "triangleBarycentric": [
+            0.24327007287898533,
+            0.7364102248180283,
+            0.020319702302986346
+          ],
+          "pointM": [
+            0.06674249543060792,
+            -0.02610774549468377,
+            1.4338110905775003
+          ],
+          "edgeEndpointSignedPlaneDistanceM": [
+            -0.00011866800827813905,
+            0.0003611889495384934
+          ],
+          "strictEdgeAndFaceInterior": true
+        },
+        {
+          "edge": 2,
+          "edgeParameter": 0.5092389960135284,
+          "triangleBarycentric": [
+            0.398340569519287,
+            0.5331184494596346,
+            0.0685409810210784
+          ],
+          "pointM": [
+            0.06655339019791147,
+            -0.025942652328083432,
+            1.4338446205155804
+          ],
+          "edgeEndpointSignedPlaneDistanceM": [
+            0.0001231360619601113,
+            -0.00011866800827813905
+          ],
+          "strictEdgeAndFaceInterior": true
+        }
+      ],
+      "intersectionSpanM": 0.00025326033925381693,
+      "classification": "proper nonadjacent triangle crossing"
+    },
+    {
+      "triangles": [
+        7979,
+        243982
+      ],
+      "kinds": [
+        "outer",
+        "rim"
+      ],
+      "vertexIds": [
+        [
+          17367,
+          30313,
+          30312
+        ],
+        [
+          311,
+          17477,
+          79802
+        ]
+      ],
+      "sharedVertexIndices": [],
+      "minimumVertexDistanceM": 0.00045680089173979577,
+      "normalDot": 0.024710637698536875,
+      "firstVerticesToSecondPlaneM": [
+        0.0003426216493902729,
+        -7.558243504227863e-05,
+        -0.001362712662933151
+      ],
+      "secondVerticesToFirstPlaneM": [
+        -0.00011866800827813905,
+        0.00011717515584911527,
+        0.0003611889495384934
+      ],
+      "firstEdgesAgainstSecondTriangle": [
+        {
+          "edge": 0,
+          "edgeParameter": 0.8192690175543499,
+          "triangleBarycentric": [
+            0.6493978413918228,
+            0.20314784752958465,
+            0.14745431107859255
+          ],
+          "pointM": [
+            0.06681969529521559,
+            -0.026175454103287008,
+            1.4337962486202032
+          ],
+          "edgeEndpointSignedPlaneDistanceM": [
+            0.0003426216493902729,
+            -7.558243504227863e-05
+          ],
+          "strictEdgeAndFaceInterior": true
+        }
+      ],
+      "secondEdgesAgainstFirstTriangle": [
+        {
+          "edge": 2,
+          "edgeParameter": 0.7527012866124042,
+          "triangleBarycentric": [
+            0.24327007287898533,
+            0.7364102248180283,
+            0.020319702302986346
+          ],
+          "pointM": [
+            0.06674249543060792,
+            -0.02610774549468377,
+            1.4338110905775003
+          ],
+          "edgeEndpointSignedPlaneDistanceM": [
+            0.0003611889495384934,
+            -0.00011866800827813905
+          ],
+          "strictEdgeAndFaceInterior": true
+        }
+      ],
+      "intersectionSpanM": 0.00010375239019337816,
+      "classification": "proper nonadjacent triangle crossing"
+    },
+    {
+      "triangles": [
+        129771,
+        243993
+      ],
+      "kinds": [
+        "inner",
+        "rim"
+      ],
+      "vertexIds": [
+        [
+          92637,
+          92638,
+          79692
+        ],
+        [
+          17508,
+          62636,
+          79833
+        ]
+      ],
+      "sharedVertexIndices": [],
+      "minimumVertexDistanceM": 0.0005116790951852018,
+      "normalDot": 0.035465208313392366,
+      "firstVerticesToSecondPlaneM": [
+        -0.0013862689963690053,
+        -6.170563845960905e-05,
+        0.00035227651873176213
+      ],
+      "secondVerticesToFirstPlaneM": [
+        0.00014261762164951674,
+        -0.0003726361349344981,
+        -9.49993388661905e-05
+      ],
+      "firstEdgesAgainstSecondTriangle": [
+        {
+          "edge": 2,
+          "edgeParameter": 0.2026271476196261,
+          "triangleBarycentric": [
+            0.6713974904706911,
+            0.23244790687416902,
+            0.09615460265513984
+          ],
+          "pointM": [
+            0.06620101784259214,
+            -0.025309848178470762,
+            1.4338880287600806
+          ],
+          "edgeEndpointSignedPlaneDistanceM": [
+            0.00035227651873176213,
+            -0.0013862689963690053
+          ],
+          "strictEdgeAndFaceInterior": true
+        }
+      ],
+      "secondEdgesAgainstFirstTriangle": [
+        {
+          "edge": 0,
+          "edgeParameter": 0.27679103709021124,
+          "triangleBarycentric": [
+            0.19425505087193873,
+            0.035159175340866704,
+            0.7705857737871946
+          ],
+          "pointM": [
+            0.06623438520542067,
+            -0.025338796117848558,
+            1.4338827643466519
+          ],
+          "edgeEndpointSignedPlaneDistanceM": [
+            0.00014261762164951674,
+            -0.0003726361349344981
+          ],
+          "strictEdgeAndFaceInterior": true
+        }
+      ],
+      "intersectionSpanM": 4.448683114249094e-05,
+      "classification": "proper nonadjacent triangle crossing"
+    },
+    {
+      "triangles": [
+        129771,
+        243992
+      ],
+      "kinds": [
+        "inner",
+        "rim"
+      ],
+      "vertexIds": [
+        [
+          92637,
+          92638,
+          79692
+        ],
+        [
+          17508,
+          311,
+          62636
+        ]
+      ],
+      "sharedVertexIndices": [],
+      "minimumVertexDistanceM": 0.0005116790951852018,
+      "normalDot": -0.0015076099964032585,
+      "firstVerticesToSecondPlaneM": [
+        -0.001372281337683248,
+        -8.896712970133544e-05,
+        0.0003499942526183919
+      ],
+      "secondVerticesToFirstPlaneM": [
+        0.00014261762164951674,
+        -0.00013083833844444384,
+        -0.0003726361349344981
+      ],
+      "firstEdgesAgainstSecondTriangle": [],
+      "secondEdgesAgainstFirstTriangle": [
+        {
+          "edge": 0,
+          "edgeParameter": 0.5215378066746569,
+          "triangleBarycentric": [
+            0.14685078676229935,
+            0.22115095102007043,
+            0.6319982622176302
+          ],
+          "pointM": [
+            0.06641142669154551,
+            -0.025493864708599094,
+            1.4338493747436614
+          ],
+          "edgeEndpointSignedPlaneDistanceM": [
+            0.00014261762164951674,
+            -0.00013083833844444384
+          ],
+          "strictEdgeAndFaceInterior": true
+        },
+        {
+          "edge": 2,
+          "edgeParameter": 0.7232089629097888,
+          "triangleBarycentric": [
+            0.19425505087193873,
+            0.035159175340866704,
+            0.7705857737871946
+          ],
+          "pointM": [
+            0.06623438520542067,
+            -0.025338796117848558,
+            1.4338827643466519
+          ],
+          "edgeEndpointSignedPlaneDistanceM": [
+            -0.0003726361349344981,
+            0.00014261762164951674
+          ],
+          "strictEdgeAndFaceInterior": true
+        }
+      ],
+      "intersectionSpanM": 0.00023770742780676986,
+      "classification": "proper nonadjacent triangle crossing"
+    },
+    {
+      "triangles": [
+        129768,
+        243994
+      ],
+      "kinds": [
+        "inner",
+        "rim"
+      ],
+      "vertexIds": [
+        [
+          92637,
+          79692,
+          62596
+        ],
+        [
+          17509,
+          17508,
+          79833
+        ]
+      ],
+      "sharedVertexIndices": [],
+      "minimumVertexDistanceM": 0.0005116790951852018,
+      "normalDot": 0.05557981022547684,
+      "firstVerticesToSecondPlaneM": [
+        -0.0013803859017546681,
+        0.0003463212926522262,
+        -0.0010406295024049438
+      ],
+      "secondVerticesToFirstPlaneM": [
+        0.0004944040737105719,
+        0.0001488788859602213,
+        -8.57862042783351e-05
+      ],
+      "firstEdgesAgainstSecondTriangle": [
+        {
+          "edge": 1,
+          "edgeParameter": 0.24969976864820997,
+          "triangleBarycentric": [
+            0.11182527716707369,
+            0.0890897986203701,
+            0.7990849242125562
+          ],
+          "pointM": [
+            0.06593709168801873,
+            -0.02509582480234209,
+            1.4339321161576337
+          ],
+          "edgeEndpointSignedPlaneDistanceM": [
+            0.0003463212926522262,
+            -0.0010406295024049438
+          ],
+          "strictEdgeAndFaceInterior": true
+        }
+      ],
+      "secondEdgesAgainstFirstTriangle": [
+        {
+          "edge": 1,
+          "edgeParameter": 0.6344313327937856,
+          "triangleBarycentric": [
+            0.062155715705505266,
+            0.7655262957820261,
+            0.1723179885124686
+          ],
+          "pointM": [
+            0.06601899045363355,
+            -0.025162546712199335,
+            1.4339173184636962
+          ],
+          "edgeEndpointSignedPlaneDistanceM": [
+            0.0001488788859602213,
+            -8.57862042783351e-05
+          ],
+          "strictEdgeAndFaceInterior": true
+        }
+      ],
+      "intersectionSpanM": 0.00010666861211292636,
+      "classification": "proper nonadjacent triangle crossing"
+    },
+    {
+      "triangles": [
+        129768,
+        243993
+      ],
+      "kinds": [
+        "inner",
+        "rim"
+      ],
+      "vertexIds": [
+        [
+          92637,
+          79692,
+          62596
+        ],
+        [
+          17508,
+          62636,
+          79833
+        ]
+      ],
+      "sharedVertexIndices": [],
+      "minimumVertexDistanceM": 0.0005116790951852018,
+      "normalDot": 0.05011442815868039,
+      "firstVerticesToSecondPlaneM": [
+        -0.0013862689963690053,
+        0.00035227651873176213,
+        -0.0010649636664762177
+      ],
+      "secondVerticesToFirstPlaneM": [
+        0.0001488788859602213,
+        -0.0003945321481502227,
+        -8.57862042783351e-05
+      ],
+      "firstEdgesAgainstSecondTriangle": [
+        {
+          "edge": 0,
+          "edgeParameter": 0.7973728523803738,
+          "triangleBarycentric": [
+            0.6713974904706911,
+            0.23244790687416902,
+            0.09615460265513984
+          ],
+          "pointM": [
+            0.06620101784259214,
+            -0.025309848178470762,
+            1.4338880287600806
+          ],
+          "edgeEndpointSignedPlaneDistanceM": [
+            -0.0013862689963690053,
+            0.00035227651873176213
+          ],
+          "strictEdgeAndFaceInterior": true
+        }
+      ],
+      "secondEdgesAgainstFirstTriangle": [
+        {
+          "edge": 2,
+          "edgeParameter": 0.3655686672062144,
+          "triangleBarycentric": [
+            0.062155715705505266,
+            0.7655262957820261,
+            0.1723179885124686
+          ],
+          "pointM": [
+            0.06601899045363355,
+            -0.025162546712199335,
+            1.4339173184636962
+          ],
+          "edgeEndpointSignedPlaneDistanceM": [
+            -8.57862042783351e-05,
+            0.0001488788859602213
+          ],
+          "strictEdgeAndFaceInterior": true
+        }
+      ],
+      "intersectionSpanM": 0.00023598639586781952,
+      "classification": "proper nonadjacent triangle crossing"
+    },
+    {
+      "triangles": [
+        129435,
+        243995
+      ],
+      "kinds": [
+        "inner",
+        "rim"
+      ],
+      "vertexIds": [
+        [
+          62596,
+          79692,
+          79691
+        ],
+        [
+          17509,
+          79833,
+          79834
+        ]
+      ],
+      "sharedVertexIndices": [],
+      "minimumVertexDistanceM": 0.0005142801785100219,
+      "normalDot": 0.21074202499988925,
+      "firstVerticesToSecondPlaneM": [
+        -0.0010900297167534612,
+        0.00036445532026673345,
+        0.0002964398582751386
+      ],
+      "secondVerticesToFirstPlaneM": [
+        0.0005390218982171606,
+        -9.036259969486834e-05,
+        0.00032521505050588746
+      ],
+      "firstEdgesAgainstSecondTriangle": [],
+      "secondEdgesAgainstFirstTriangle": [
+        {
+          "edge": 0,
+          "edgeParameter": 0.8564270330860633,
+          "triangleBarycentric": [
+            0.24948557564498205,
+            0.7272508385113626,
+            0.023263585843655326
+          ],
+          "pointM": [
+            0.06591163793225846,
+            -0.02507825790631854,
+            1.433936841503289
+          ],
+          "edgeEndpointSignedPlaneDistanceM": [
+            0.0005390218982171606,
+            -9.036259969486834e-05
+          ],
+          "strictEdgeAndFaceInterior": true
+        },
+        {
+          "edge": 1,
+          "edgeParameter": 0.21743854524230624,
+          "triangleBarycentric": [
+            0.24664446806134838,
+            0.6693359305073902,
+            0.08401960143126146
+          ],
+          "pointM": [
+            0.06584788768274749,
+            -0.025035484636718244,
+            1.4339454869740127
+          ],
+          "edgeEndpointSignedPlaneDistanceM": [
+            -9.036259969486834e-05,
+            0.00032521505050588746
+          ],
+          "strictEdgeAndFaceInterior": true
+        }
+      ],
+      "intersectionSpanM": 7.72553627203052e-05,
+      "classification": "proper nonadjacent triangle crossing"
+    },
+    {
+      "triangles": [
+        129435,
+        243994
+      ],
+      "kinds": [
+        "inner",
+        "rim"
+      ],
+      "vertexIds": [
+        [
+          62596,
+          79692,
+          79691
+        ],
+        [
+          17509,
+          17508,
+          79833
+        ]
+      ],
+      "sharedVertexIndices": [],
+      "minimumVertexDistanceM": 0.0005116790951852018,
+      "normalDot": 0.1674788322729267,
+      "firstVerticesToSecondPlaneM": [
+        -0.0010406295024049438,
+        0.0003463212926522262,
+        0.000333551328549561
+      ],
+      "secondVerticesToFirstPlaneM": [
+        0.0005390218982171606,
+        0.00013392238108437236,
+        -9.036259969486834e-05
+      ],
+      "firstEdgesAgainstSecondTriangle": [
+        {
+          "edge": 0,
+          "edgeParameter": 0.75030023135179,
+          "triangleBarycentric": [
+            0.11182527716707369,
+            0.0890897986203701,
+            0.7990849242125562
+          ],
+          "pointM": [
+            0.06593709168801873,
+            -0.02509582480234209,
+            1.4339321161576337
+          ],
+          "edgeEndpointSignedPlaneDistanceM": [
+            -0.0010406295024049438,
+            0.0003463212926522262
+          ],
+          "strictEdgeAndFaceInterior": true
+        }
+      ],
+      "secondEdgesAgainstFirstTriangle": [
+        {
+          "edge": 2,
+          "edgeParameter": 0.14357296691393664,
+          "triangleBarycentric": [
+            0.24948557564498205,
+            0.7272508385113626,
+            0.023263585843655326
+          ],
+          "pointM": [
+            0.06591163793225846,
+            -0.02507825790631854,
+            1.433936841503289
+          ],
+          "edgeEndpointSignedPlaneDistanceM": [
+            -9.036259969486834e-05,
+            0.0005390218982171606
+          ],
+          "strictEdgeAndFaceInterior": true
+        }
+      ],
+      "intersectionSpanM": 3.128607373523965e-05,
+      "classification": "proper nonadjacent triangle crossing"
+    }
+  ],
+  "properCrossings": 10,
+  "otherContacts": 0
+}

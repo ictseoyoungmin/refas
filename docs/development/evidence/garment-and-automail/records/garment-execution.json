@@ -1,0 +1,356 @@
+{
+  "started_at": "2026-11-21T21:38:41.535124+00:00",
+  "ended_at": "2026-11-21T21:39:00.461741+00:00",
+  "mode": "informed existing-asset refinement and edit/restore exercise",
+  "resume_selected": true,
+  "source_hashes": {
+    "/workspace/scratch/2eb72029c71e/refas-jacket-dogfood/jacket.blend": "59c9f99f6bebea0d3666a8979e8837dab8e6bfd6b4dbd1aff79ab6eb62108b8f",
+    "/workspace/scratch/2eb72029c71e/refas-v2/examples/uniform-jacket/source/reference.png": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5",
+    "/workspace/scratch/2eb72029c71e/refas-v2/examples/uniform-jacket/review.json": "be6e20645867d04c6c07536ddc1a3cf2736d2111e0d3739628063ee989b134c1"
+  },
+  "original_bytes_preserved": true,
+  "blender_probe": {
+    "ok": true,
+    "entry": "RefAs 2.0 production development",
+    "python": "3.12.14",
+    "blender": {
+      "path": "/usr/bin/blender",
+      "version": "Blender 4.3.2"
+    },
+    "scope": "executable probe; render device availability is checked during execution"
+  },
+  "baseline_revision": null,
+  "selected_revision": "9fe00caf1e1649a58554b3a761ee7bbb",
+  "edited_revision": "939cbce741ea4707b211092b42cdde7d",
+  "restored_revision": "f84f840b4d604957b7717b95e8fb873c",
+  "bundle_exact_restore": true,
+  "selected_bundle_hashes": {
+    "artifacts/collar-checks.json": {
+      "sha256": "7d776777a31ed429bb523a251695c30598f7d871e910296a66a948e89263388b",
+      "bytes": 804
+    },
+    "artifacts/scene.blend": {
+      "sha256": "ab7a3b93b40b431f820dc7cdc96c711005c185096fa3038d93405dceb7a84dbb",
+      "bytes": 5828572
+    },
+    "artifacts/asset.glb": {
+      "sha256": "30e2557a727e61a6e3e3a929522aa8a650e0cfff3e8e3d80f1dd3e6c45fae42f",
+      "bytes": 5857472
+    },
+    "artifacts/scene.json": {
+      "sha256": "20af57ae3734a2435a416b642aec07d764591f8a1e76add9521ec0d316beea62",
+      "bytes": 3431328
+    },
+    "artifacts/view-front.png": {
+      "sha256": "0fe8f4ae4ef9b7e5b2e71202b3f920ddcc8c4686f09224279b734e459c3daf3c",
+      "bytes": 273172
+    },
+    "artifacts/view-front-three-quarter.png": {
+      "sha256": "12b2eb2c2cdcd89b4872efad271bd0e1181e8732174ba2eaf6f20a96d460c3fc",
+      "bytes": 264989
+    },
+    "artifacts/view-left.png": {
+      "sha256": "763d3848152289f3d208842361988cc0954a2951cf16bf6cf7855abda94ab64f",
+      "bytes": 206278
+    },
+    "artifacts/view-back.png": {
+      "sha256": "212d78ee2868a17aee01076953afe019f8b614f868be05df8d6f78d30d0269b2",
+      "bytes": 252788
+    },
+    "artifacts/view-right.png": {
+      "sha256": "1b43bd00485a423885a71fbb0d7f2166a72b34b0471ff7168506906879927c3c",
+      "bytes": 199588
+    },
+    "artifacts/view-rear-three-quarter.png": {
+      "sha256": "8af9bd1b6244fb0ca59dc46e20b73178ba1349824478206d72c13b11bedbdfad",
+      "bytes": 241500
+    },
+    "artifacts/result.json": {
+      "sha256": "43805234b0ac86cc943a964c57dcbf233e9673cd98279266d78c2e116d7e4aec",
+      "bytes": 13614
+    },
+    "inputs/base.blend": {
+      "sha256": "cbabe08c2ba11965d3d0dc9bbdc934d5468f1edae653d3a83558b7f6daaa2982",
+      "bytes": 5828572
+    },
+    "inputs/edit.py": {
+      "sha256": "9785d14a3b4253fa50e574e2893e46b469dff6b489412acd0366d5481b50ada8",
+      "bytes": 10941
+    },
+    "inputs/review.json": {
+      "sha256": "be6e20645867d04c6c07536ddc1a3cf2736d2111e0d3739628063ee989b134c1",
+      "bytes": 2727
+    }
+  },
+  "restored_bundle_hashes": {
+    "artifacts/result.json": {
+      "sha256": "43805234b0ac86cc943a964c57dcbf233e9673cd98279266d78c2e116d7e4aec",
+      "bytes": 13614
+    },
+    "artifacts/view-rear-three-quarter.png": {
+      "sha256": "8af9bd1b6244fb0ca59dc46e20b73178ba1349824478206d72c13b11bedbdfad",
+      "bytes": 241500
+    },
+    "artifacts/view-right.png": {
+      "sha256": "1b43bd00485a423885a71fbb0d7f2166a72b34b0471ff7168506906879927c3c",
+      "bytes": 199588
+    },
+    "artifacts/view-back.png": {
+      "sha256": "212d78ee2868a17aee01076953afe019f8b614f868be05df8d6f78d30d0269b2",
+      "bytes": 252788
+    },
+    "artifacts/view-left.png": {
+      "sha256": "763d3848152289f3d208842361988cc0954a2951cf16bf6cf7855abda94ab64f",
+      "bytes": 206278
+    },
+    "artifacts/view-front-three-quarter.png": {
+      "sha256": "12b2eb2c2cdcd89b4872efad271bd0e1181e8732174ba2eaf6f20a96d460c3fc",
+      "bytes": 264989
+    },
+    "artifacts/view-front.png": {
+      "sha256": "0fe8f4ae4ef9b7e5b2e71202b3f920ddcc8c4686f09224279b734e459c3daf3c",
+      "bytes": 273172
+    },
+    "artifacts/scene.json": {
+      "sha256": "20af57ae3734a2435a416b642aec07d764591f8a1e76add9521ec0d316beea62",
+      "bytes": 3431328
+    },
+    "artifacts/asset.glb": {
+      "sha256": "30e2557a727e61a6e3e3a929522aa8a650e0cfff3e8e3d80f1dd3e6c45fae42f",
+      "bytes": 5857472
+    },
+    "artifacts/scene.blend": {
+      "sha256": "ab7a3b93b40b431f820dc7cdc96c711005c185096fa3038d93405dceb7a84dbb",
+      "bytes": 5828572
+    },
+    "artifacts/collar-checks.json": {
+      "sha256": "7d776777a31ed429bb523a251695c30598f7d871e910296a66a948e89263388b",
+      "bytes": 804
+    },
+    "inputs/base.blend": {
+      "sha256": "cbabe08c2ba11965d3d0dc9bbdc934d5468f1edae653d3a83558b7f6daaa2982",
+      "bytes": 5828572
+    },
+    "inputs/edit.py": {
+      "sha256": "9785d14a3b4253fa50e574e2893e46b469dff6b489412acd0366d5481b50ada8",
+      "bytes": 10941
+    },
+    "inputs/review.json": {
+      "sha256": "be6e20645867d04c6c07536ddc1a3cf2736d2111e0d3739628063ee989b134c1",
+      "bytes": 2727
+    }
+  },
+  "fixed_review_metadata_match": null,
+  "native_and_glb_reopen": {
+    "glb": {
+      "boundsTolerance": 7.6687968e-05,
+      "checks": {
+        "boundsMatchNative": true,
+        "noDiagnosticCamerasOrLights": true,
+        "nonEmpty": true,
+        "trianglesMatchEncoded": true,
+        "trianglesMatchNative": true
+      },
+      "encoded": {
+        "animations": 0,
+        "cameras": 0,
+        "lights": 0,
+        "materials": 6,
+        "meshes": 271,
+        "morphMeshes": 0,
+        "nodes": 271,
+        "skins": 0,
+        "triangles": 302196
+      },
+      "reimportedBounds": {
+        "dimensions": [
+          0.76687968,
+          0.23093899,
+          0.63312572
+        ],
+        "max": [
+          0.38343984,
+          0.1104271,
+          0.45036963
+        ],
+        "min": [
+          -0.38343984,
+          -0.12051189,
+          -0.1827561
+        ]
+      },
+      "reimportedStatistics": {
+        "armatures": 0,
+        "materialSlots": 286,
+        "meshes": 271,
+        "objects": 271,
+        "shapeKeyObjects": 0,
+        "triangles": 302196,
+        "uvObjects": 256,
+        "vertices": 161192
+      },
+      "scope": "geometry counts, bounds and basic feature presence only",
+      "status": "passed"
+    },
+    "native": {
+      "fingerprintMatches": true,
+      "reopened": true,
+      "statistics": {
+        "armatures": 0,
+        "materialSlots": 286,
+        "meshes": 271,
+        "objects": 271,
+        "shapeKeyObjects": 0,
+        "triangles": 302196,
+        "uvObjects": 256,
+        "vertices": 151350
+      },
+      "status": "passed"
+    }
+  },
+  "cuff_edit": {
+    "local_edit": "Wearer-left cuff band increased by 0.01 m along sleeve axis, keeping distal rim fixed",
+    "axis": [
+      0.257994294,
+      -0.017999602,
+      -0.965978742
+    ],
+    "nominal_before_m": 0.06,
+    "nominal_after_m": 0.07,
+    "native_band_axial_extent_before_m": 0.059987178043229505,
+    "native_band_axial_extent_after_m": 0.0699871884426102,
+    "native_band_delta_m": 0.010000010399380699,
+    "changed_objects": [
+      "L_Cuff_Band",
+      "L_Cuff_Buckle frame",
+      "L_Cuff_Buckle tongue",
+      "L_Cuff_Piping_Proximal",
+      "L_Cuff_Rivet_-0.022",
+      "L_Cuff_Rivet_0.022",
+      "L_Cuff_Strap"
+    ],
+    "protected_object_count": 263,
+    "protected_changed": [],
+    "material_hash_before": "eef5b8a1134a55b3a2909c44a91f6f5b3d0b7accdfb38effb4ee54f733e5ed26",
+    "material_hash_after": "eef5b8a1134a55b3a2909c44a91f6f5b3d0b7accdfb38effb4ee54f733e5ed26",
+    "materials_unchanged": true,
+    "opposite_cuff_unchanged": true,
+    "distal_piping_unchanged": true
+  },
+  "integrity_verify": {
+    "ok": true,
+    "scope": "recorded-file-integrity",
+    "head": "f84f840b4d604957b7717b95e8fb873c",
+    "artifactCount": 11,
+    "referenceResemblance": "not-evaluated",
+    "gameReadiness": "not-evaluated"
+  },
+  "commands": [
+    {
+      "label": "doctor",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/tmp/refas-dual-asset-20261122/skill-snapshot/scripts/produce.py",
+        "doctor"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.498
+    },
+    {
+      "label": "preexisting-verify",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/tmp/refas-dual-asset-20261122/skill-snapshot/scripts/produce.py",
+        "verify",
+        "--root",
+        "/tmp/refas-dual-asset-20261122/garment/project"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.109
+    },
+    {
+      "label": "selected-status",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/tmp/refas-dual-asset-20261122/skill-snapshot/scripts/produce.py",
+        "status",
+        "--root",
+        "/tmp/refas-dual-asset-20261122/garment/project"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.105
+    },
+    {
+      "label": "cuff-edit",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/tmp/refas-dual-asset-20261122/skill-snapshot/scripts/produce.py",
+        "run",
+        "--root",
+        "/tmp/refas-dual-asset-20261122/garment/project",
+        "--script",
+        "/workspace/scratch/2eb72029c71e/refas-v2/examples/uniform-jacket/edit_cuff.py",
+        "--intent",
+        "Only wearer-left cuff assembly: extend band 0.01 m proximally; keep distal rim and other asset objects",
+        "--review-spec",
+        "/workspace/scratch/2eb72029c71e/refas-v2/examples/uniform-jacket/review.json",
+        "--size",
+        "512",
+        "--samples",
+        "16",
+        "--timeout",
+        "240",
+        "--expected-revision",
+        "9fe00caf1e1649a58554b3a761ee7bbb"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 17.731
+    },
+    {
+      "label": "restore",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/tmp/refas-dual-asset-20261122/skill-snapshot/scripts/produce.py",
+        "restore",
+        "--root",
+        "/tmp/refas-dual-asset-20261122/garment/project",
+        "--revision",
+        "9fe00caf1e1649a58554b3a761ee7bbb",
+        "--expected-revision",
+        "939cbce741ea4707b211092b42cdde7d"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.206
+    },
+    {
+      "label": "restored-status",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/tmp/refas-dual-asset-20261122/skill-snapshot/scripts/produce.py",
+        "status",
+        "--root",
+        "/tmp/refas-dual-asset-20261122/garment/project"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.094
+    },
+    {
+      "label": "final-verify",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/tmp/refas-dual-asset-20261122/skill-snapshot/scripts/produce.py",
+        "verify",
+        "--root",
+        "/tmp/refas-dual-asset-20261122/garment/project"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.098
+    }
+  ],
+  "claim_limits": [
+    "Successful execution does not select a visually accepted asset.",
+    "Native/GLB reopening checks recorded fingerprints, geometry counts, bounds and basic presence.",
+    "Exact restore compares every selected artifact and input file by bytes and SHA-256.",
+    "This runner does not grade resemblance, cloth simulation, skinning, UV quality or engine readiness."
+  ]
+}

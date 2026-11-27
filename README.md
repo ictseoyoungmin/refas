@@ -1,184 +1,351 @@
-<div align="center">
-  <img src="skills/refas/assets/icon.svg" width="180" alt="RefAs robotic arm icon">
-  <h1>RefAs</h1>
-  <p>
-    <a href="https://github.com/ictseoyoungmin/refas/releases/tag/v1.4.2"><img src="https://img.shields.io/badge/version-v1.4.2-6f5a46" alt="Version v1.4.2"></a>
-    <a href="https://github.com/ictseoyoungmin/refas/actions/workflows/ci.yml"><img src="https://github.com/ictseoyoungmin/refas/actions/workflows/ci.yml/badge.svg" alt="CI status"></a>
-    <img src="https://img.shields.io/badge/node-20%2B-339933" alt="Node.js 20+">
-    <img src="https://img.shields.io/badge/Agent%20Skill-Vision--first%203D-b06f47" alt="Agent Skill: Vision-first 3D">
-    <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-59636e" alt="MIT License"></a>
-  </p>
-</div>
+# RefAs — Reference Asset Foundry
 
-**Reference Asset Foundry** is a vision-first reconstruction system for AI agents that turn reference images into traceable, editable, evidence-bound 3D assets and, when justified, explicit physical construction semantics.
+RefAs helps agents build and revise editable 3D assets from visual references.
+The production workflow connects ordinary Blender scripts, a native scene,
+GLB export, actual renders and recoverable revisions.
 
-RefAs is designed for work where a quick image-to-mesh approximation is not enough. The raw reference remains authoritative, whole-object context survives part inspection, observation stays distinct from inference and engineering choice, actual renders are compared, risky edits remain recoverable, and certification fails when the exact evidence chain cannot be reproduced.
+**Development version: 2.0.0-alpha.1.** This checkout is the 2.0 rewrite on
+`rewrite/v2`. The package, Python entry and plugin metadata share that development
+identity; it is not a published stable 2.0 release. Follow the
+[implementation plan](docs/development/refas-2-plan.md),
+[verified progress](docs/development/refas-2-progress.md) and
+[work status](docs/WORK_STATUS.md) for the demonstrated scope.
 
-## What RefAs does
+## Build, inspect, improve
 
-RefAs helps an AI agent **build, edit, inspect and export** reference-driven 3D assets. It records what is visible in the original image, proposes plausible 3D form where a view is ambiguous, constructs actual geometry, captures multiple views, and routes concrete problems back to the part that needs repair. Work products include editable construction state, GLB assets, rendered evidence and recoverable checkpoints. An external 3D authoring tool or worker may be used; installing the skill does not make every photograph an automatically generated model.
+The agent reads the original reference, constructs a coherent whole, inspects
+real output and makes a focused correction. RefAs records the native `.blend`,
+requested observations, executed script and source identities together. Normal
+CLI iterations save native scenes with one hero preview; GLB export and reimport
+are reserved for explicit delivery or an export-specific check. Successful
+execution and file integrity remain separate from visual
+acceptance or target-engine readiness.
 
-The main workflow is **observe → construct → render → compare → locally revise**. Validation exists to support asset quality rather than replace modeling.
+For game or cinematic garments and articulated mechanisms, 2.0 now targets
+actual character wearing and useful motion. Review the source likeness,
+unintended holes/winding/intersections and attachment gaps, then exercise
+skinning or connected mechanisms in the exported consumer. Retopology and
+mesh optimization are part of this production route; a static figure or a
+lower triangle count alone does not establish that intended use. Follow the
+[topology guide](skills/refas/references/production-topology.md) and the
+[expanded acceptance protocol](docs/development/evidence/usable-assets/PROTOCOL.md).
 
-The bundled [demo](demo/index.html) illustrates the tooling. For reproducible examples see [examples](examples/) and [the construction guide](skills/refas/references/construction.md).
+The installed skill contains the production path only. The old JavaScript
+capability runtime, certification graph, schemas, templates, host facade and
+CPU renderers are retained in the repository for explicit compatibility and
+comparative work; they are not installed with 2.0.
 
-### Release stabilization in 1.4.1
+## Install the development checkout
 
-The 1.4.1 patch improves Visibility Buffer cache invalidation when the GLB parser or material feature-policy code changes, adds sampled Linux Blender subprocess-tree RSS and timeout supervision, and corrects historical release and installed-skill documentation. The portable v1 renderer's near-plane clipping behavior remains unchanged for digest compatibility. These changes do not confer independent reference-photo likeness or generalized PBR equivalence; see [known limitations](docs/known-limitations.md). Full 1.4.0/1.4.1 same-host CPU comparison and exact pixel/depth parity are recorded in [paired benchmark evidence](docs/development/v1.4.1-r14-p03-paired-measured-2026-10-16.md).
+The production runner needs Python 3.9 or newer and Blender. It uses Python's standard
+library; Blender provides `bpy` and `mathutils`. The npm launcher additionally
+uses Node.js 20 or newer. Current execution evidence records Python 3.12 and
+Blender 4.3.2; `doctor` reports the actual available executables. Use
+`doctor --check-export` to probe required exporter capabilities and the guarded
+skin-weight preservation path before delivery. A different Blender exporter's
+unsupported structure fails explicitly; a version report alone is not an export
+compatibility or asset-readiness test.
 
-### Renderer architecture and diagnostic previews in 1.4.0
-
-- Shared visibility-buffer and bounded CPU rasterization paths reduce repeated geometry work across normal, object-ID, albedo and appearance previews; deterministic original-source provenance remains part of the render report.
-- The opt-in PBR v2 material preview supports scoped glTF `COLOR_0` and supported texture/sampler/mip behavior. It is not a complete physically based renderer or a photo-fidelity certificate. Unsupported appearance attributes must fail closed or remain explicitly excluded.
-- The optional external Blender Cycles adapter provides independent, SHA-bound offline renders. The original Monster Bed was independently rendered at 160/384px and accepted under an **unregistered diagnostic camera**, not a source-photo camera or trusted resemblance gate. Blender is **not** a mandatory bundled runtime dependency.
-- Source-photo-registered canonical views, generalized cross-engine PBR equivalence, and source-to-asset identity certification remain separate future acceptance gates.
-
-### Production-oriented updates in 1.3.0
-
-- Build the complete major volume, paired/repeated parts and connected surfaces before fine detailing; review real registered and orthogonal renders.
-- Request only useful source-derived image analyses using `refas evidence --spec` and record their contribution with `--assess`. Old `--image` calls retain the published v1.2.1 compatibility output format.
-- Use selective PBR previews and a digest-verified visual review board while retaining full canonical evidence requirements.
-- Preserve old observation snapshot files when a derivative is retired, so prior references remain resolvable; physical garbage collection requires a separate reference-aware procedure.
-
-The workflow improvements are agent guidance and utilities, not an independent guarantee of reference resemblance, geometric manifoldness for every output, or game-engine readiness.
-
-### Core capabilities
-
-- **Observation grounded in real images:** preserve whole-image context, semantic regions, visible facts, depth uncertainty and the difference between observation, inference and engineering.
-- **Geometry construction and local editing:** build major masses and structural relationships first, then surfaces, parts, material appearance and reusable assemblies; parameter-fit only within the responsible editing scope.
-- **Real 3D feedback:** record canonical cameras, render hero/oblique/side/top/grazing and diagnostic views, and compare source evidence to exact current GLB bytes.
-- **Recoverable agent workflow:** use typed findings, checkpoint lineage, `next`, `diagnose` and `validate` to inspect what changed and reopen only the responsible work.
-- **Optional physical and export semantics:** express attachment, articulation, contact/support, dynamics and backend mapping when the asset requires them, without treating an unobserved mechanism as source truth.
-
-### Known quality boundary
-
-A valid GLB, a completed rendering, a generic RefAs certificate or a draft transfer **does not prove that the 3D object resembles the supplied photo**. RefAs can detect supported physical/source contradictions, but independent positive recognition of original-photo part identities and roles is not a completed universal fidelity evaluator. Strict source-bound final handoff remains `BLOCKED` when required independent evidence is `INSUFFICIENT`. Single-view IoU is never positive resemblance authority; multiview IoU is correspondence-only.
-
-Typed physical readiness (`articulated-ready`, `simulation-ready`, `control-ready`, `runtime-ready`) describes validated obligations for *declared* semantics, not independently measured real-world properties. For the optional physical construction details see [architecture](docs/architecture.md), [known limitations](docs/known-limitations.md) and [an integrated physical example](docs/integrated-physical-fixture.md).
-
-## Install
-
-**With the Skills CLI (recommended):**
+For an agent that loads skill folders, copy **this branch's** canonical folder
+into its skill location:
 
 ```bash
-npx skills add ictseoyoungmin/refas --skill refas --agent claude-code
-npx skills add ictseoyoungmin/refas --skill refas --agent codex
+git clone --branch rewrite/v2 --single-branch https://github.com/ictseoyoungmin/refas.git
+cd refas
+cp -R skills/refas /absolute/path/to/your/skills/
 ```
 
-Use the matching `--agent` value for another supported agent. RefAs also ships thin discovery manifests for Claude, Codex, and generic agent marketplaces under `.claude-plugin/`, `.codex-plugin/`, and `.agents/plugins/`. Every adapter routes to the same canonical `./skills/` tree; there is no plugin-specific copy of the instructions or runtime.
+The Claude, Codex and generic-agent plugin manifests all discover the same
+`./skills/` folder. There is no second plugin-specific runtime. Instructions
+for published 1.x versions are in the [legacy guide](docs/legacy-1x.md).
 
-**Manual skill install** — copy the canonical skill folder into wherever your agent loads skills from:
+To exercise the actual development npm artifact:
 
 ```bash
-cp -r skills/refas /path/to/your/skills/
+npm pack
+npm install --prefix /absolute/new/refas-install ./refas-2.0.0-alpha.1.tgz
+/absolute/new/refas-install/node_modules/.bin/refas --version
+/absolute/new/refas-install/node_modules/.bin/refas doctor
 ```
 
-## Quick start
+The `refas` command invokes the same production Python CLI. Set `REFAS_PYTHON`
+to a Python executable path when it is not available as `python3`.
 
-Requirements:
+## Production quick start
 
-- Node.js 20 or newer
-- Python 3 with Pillow and NumPy for evidence views, portable integrity rendering, and the independent PBR fallback
+From a repository checkout:
 
 ```bash
-python -m pip install --requirement requirements.txt
-node skills/refas/scripts/refas.mjs --help
-node skills/refas/scripts/refas.mjs source-manifest --root project --image project/source/reference.png --id primary --out project/source/source-manifest.json
-node skills/refas/scripts/refas.mjs init --root project --project my-reference-model --source project/source/source-manifest.json
-node skills/refas/scripts/refas.mjs next --root project
+python3 skills/refas/scripts/produce.py doctor
+python3 skills/refas/scripts/produce.py init --root work/headset --name headset-demo
+python3 skills/refas/scripts/produce.py run --root work/headset --script examples/production-workflow/create_headset.py --intent "build the complete headset" --size 384 --samples 8
+python3 skills/refas/scripts/produce.py status --root work/headset
 ```
 
-Place the original image at `project/source/reference.png` first. The commands initialize a source-bound project and report the next work; they do not by themselves generate a finished GLB. Follow the agent's current construction capability and use your modeling backend to create actual geometry.
+For a copied skill, invoke its absolute `scripts/produce.py` path. Keep projects
+outside the installed skill. Add repeated `--reference` flags to `init` for
+actual source images or briefs. The headset example demonstrates execution;
+it is not a source-photo likeness benchmark.
 
-The executable runtime lives inside the distributable skill. Tests and examples import that same code; there is no second runtime implementation to drift.
-
-## Agent workflow interface
-
-The installed skill defaults to a short routing path
-(`SKILL.md` → `references/INDEX.md` → `references/workflow.md`);
-checkpoint/recovery guides are loaded when a corresponding operation is
-actually needed. Choose static, organic, mechanically articulated or physical
-runtime guides according to the work, rather than loading the entire
-assembly/physical stack for a simple object.
-For a runnable, explicitly non-authoritative geometry example use
-`node skills/refas/scripts/subdivision-cage-demo.mjs`.
-
-Strict source-bound verification and artifact transfer remain separate:
-`refas-host handoff` defaults to `draft-transfer`, whereas
-`refas-host handoff --profile source-bound-object` demands independent
-source-bound evidence and may refuse even a valid generically certified GLB.
-
-
-The CLI helps an agent discover its next modeling step, inspect failures and reuse installed validators. These three commands are read-only and return JSON:
+A later run opens the saved native scene before applying an ordinary `bpy`
+edit. Use meaningful object names and modify the requested part:
 
 ```bash
-node skills/refas/scripts/refas.mjs next --root project
-node skills/refas/scripts/refas.mjs diagnose --root project --asset project/candidate.glb
-node skills/refas/scripts/refas.mjs diagnose --root project --finding project/finding.json
-node skills/refas/scripts/refas.mjs validate --root project --asset project/candidate.glb
+python3 skills/refas/scripts/produce.py run --root work/headset --script examples/production-workflow/revise_headset.py --intent "adjust the comfort pad while preserving the earcups" --views side
+python3 skills/refas/scripts/produce.py verify --root work/headset
+python3 skills/refas/scripts/produce.py restore --root work/headset --revision REVISION_ID
 ```
 
-The installed canonical instruction graph registers these as
-`workflow/agent-next`, `failure-routing/agent-diagnose`, and
-`validation/agent-validate-source-bound` (use `refas describe node workflow`,
-`refas describe node failure-routing`, or `refas describe node validation`
-to discover public contracts). For the detailed agent execution order see
-`skills/refas/references/INDEX.md` and `skills/refas/references/workflow.md`.
+Use a revision returned by `status`. Add `--expected-revision` and
+`--expected-sequence` to require the state you inspected. Scripts are trusted
+local code, not sandboxed. Failed or stale work retains the prior successful
+revision and diagnostic candidate files.
 
-`next` is derived from trusted checkpoint/recovery guidance; `diagnose` shows exact existing blocker statuses, responsible capability, provenance and an advisory next action; `validate` reuses the same strict `source-bound-object` coverage as `refas verify` (exit code **2** if blocked). No wrapper creates new visual judgments, changes project state, certifies models or grants draft output positive source-fidelity authority. `refas-host handoff` defaults to `draft-transfer`; explicit `--profile source-bound-object` remains separately fail-closed and must not be confused with generic certification.
+Open the actual renders and editable native scene to judge the result. For
+manual editing, use Blender Save As to a separate file, then pass
+`--input-blend FILE` to `run`. The files returned by `status` belong to immutable
+revision history.
 
-**Known limitation:** independent original-photo part/role recognition is not yet a trusted positive evaluator. Even a structurally valid GLB may therefore remain `INSUFFICIENT` and source-bound final Handoff remains `BLOCKED`. The interface release does **not** promise automatic image-to-3D accuracy or game-ready assets. [Foundry production roadmap](docs/development/foundry-production-roadmap.md).
+To improve an existing GLB, pass it directly to an ordinary edit script:
 
-## Reconstruction, physical closure, and certification flow
-
-1. Bind the primary source to immutable digest identity.
-2. Observe the whole frame and build a context-preserving hierarchy.
-3. Record visible facts separately from hypotheses, ambiguities, inferences, and engineered choices.
-4. Maintain camera/depth/orientation alternatives where one image cannot decide the hidden state.
-5. Close whole-system relational obligations and semantic authority before lower-scope hardening.
-6. Reconstruct shape, surface topology, parent-local assembly, and appearance from current evidence.
-7. Produce actual multiview and independent rendering evidence and route visible failures to their owner.
-8. When physical semantics are required, construct stable identities and only the applicable dynamics/collision/articulation/mechanism/transmission/actuation/control/runtime contracts.
-9. Seal physical components into a reusable bundle and derive backend representation obligations before export.
-10. Export each backend independently from canonical semantics, normalize it, and compare it back to canonical meaning.
-11. Resolve representable drift by fixing construction/export or, only when justified, by exact live declared divergence.
-12. Create the selected physical-readiness evidence and run typed live preflight.
-13. Seal candidate provenance and all evidence required by the active claim policy.
-14. Issue whole-object or physical claim authorization only when the exact current evidence chain reproduces.
-
-## Repository layout
-
-```text
-refas/
-├── AGENTS.md                    stable repository instructions for coding agents
-├── CHANGELOG.md                 release history
-├── .agents/plugins/             generic agent marketplace adapter
-├── .claude-plugin/              Claude plugin metadata and marketplace adapter
-├── .codex-plugin/               Codex plugin metadata and product interface
-├── .github/                     issue forms, PR contract, CI, and release workflow
-├── demo/                        dependency-free release showcase
-├── skills/refas/                distributable skill and canonical runtime
-├── schemas/                     public JSON Schemas
-├── tests/                       unit, integration, adversarial, and regression tests
-├── examples/                    reproducible reconstruction/render/assembly dogfoods
-├── tools/                       repository, plugin, and release audits
-└── docs/                        architecture, physical closure, quality, recovery, and claim contracts
+```bash
+python3 skills/refas/scripts/produce.py run --root PROJECT --input-glb EXISTING.glb --script EDIT_SCRIPT --intent "refine the requested part while preserving the assembly" --views hero
 ```
 
-## Development and verification
+Initialize the project first if needed. Choose either `--input-glb` or
+`--input-blend`; an explicit input supplies the complete starting scene and does
+not append to the previous model. Omit both on later runs to continue the saved
+native. GLB buffers and images must be embedded. The original GLB is captured
+as `inputs/base.glb`, and the edit keeps the normal native-output default.
+GLB cannot recover absent original modifiers, sculpt history or construction
+scripts. See the [existing-asset guide](skills/refas/references/production-import.md)
+for preservation, protection and recovery.
 
-Contributors can run the repository's existing regression, installed-skill and release audits:
+Batch related modeling changes in one native edit. Add repeated
+`--protect-object NAME` for exact existing objects whose recorded native and
+material state must remain unchanged. The guard rejects an unexpected edit
+before publishing the revision. It compares at the starting frame; drivers and
+node-group internals are not exhaustive, and this is not an all-frame or visual
+quality guarantee. The baseline is the selected starting scene. Explicit GLB
+protection begins after import and before the script; explicit native input
+uses that saved scene rather than the earlier project head.
+
+Use temporary observations and export only when needed:
+
+```bash
+python3 skills/refas/scripts/produce.py inspect --root PROJECT --object OBJECT_NAME --frame 1 --frame 24 --topology
+python3 skills/refas/scripts/produce.py inspect --input-blend EXISTING.blend --object OBJECT_NAME
+python3 skills/refas/scripts/produce.py deliver --root PROJECT
+```
+
+`inspect` returns compact object/frame JSON without a revision, permanent report
+or render. With no object selection it gives a scene overview; with no frames
+it reads the saved current frame. Choose either `--root` for the selected project
+revision or `--input-blend` to read a standalone native without adopting or
+copying it. Standalone results identify the original path/hash, set `revision`
+to `null` and make no project reference-freshness claim; revision/sequence guards
+require `--root`. `--topology` returns complete counts with empty detail samples;
+`--topology-details` implies topology and returns the existing bounded samples.
+Each category retains its count and truncation marker, and `detailsIncluded`
+identifies the output mode. Topology observations do not establish scene-wide
+collision clearance or engine readiness. `deliver` exports
+the current native without reapplying an earlier edit script. Use
+`run --outputs delivery` when finishing and export belong in one edit.
+
+Existing Python `inspect_native(..., topology=True)` calls and older worker jobs
+retain detailed output by default. The new keyword-only `topology_details=False`
+requests summaries; `True` requests topology with details. Existing positional
+arguments and the `audit_mesh` helper's defaults are unchanged.
+
+| CLI output mode | Retained model | Default requested views |
+| --- | --- | --- |
+| `run --outputs native` (default) | Editable `.blend` | `hero` |
+| `deliver` or `run --outputs delivery` | `.blend` and reopened GLB | `hero,side` |
+
+Explicit `--views` selects the necessary views, including `--views ''` for none.
+A supplied review specification requests its views unless narrowed by `--views`.
+The internal Python `run_edit` API retains its delivery default for existing
+scripted callers and accepts the new keyword-only `input_glb` without shifting
+existing positional arguments. The CLI is the documented native iteration entry.
+
+For trim or hardware on a deforming surface, ordinary edit scripts can use the
+installed `surface_binding` Python helper. Bind points to an explicit outer
+triangle and barycentric anchor, then transport a whole section while preserving
+its dimensions. No automatic surface selection, scene handler or extra report
+is created. See the [surface attachment guide](skills/refas/references/production-assemblies.md#follow-a-deforming-surface-with-an-attached-section)
+for evaluated-coordinate handling and the remaining seam/clearance checks.
+
+## References, observations and recovery
+
+Adopt the complete desired reference set explicitly:
+
+```bash
+python3 skills/refas/scripts/produce.py references --root PROJECT --reference ORIGINAL_IMAGE --reference UPDATED_BRIEF --expected-sequence SEQUENCE
+```
+
+Use the `sequence` returned by `status`; use `--clear` for an empty set.
+Equivalent content is an exact no-op regardless of file names, order or
+duplicates. Reference changes preserve the model head and archived sources.
+
+`status` and `verify` report `current`, `stale` or `no-revision` under
+`evidenceFreshness`. This field compares the active reference content set with
+the current bundle's captured set. Historical file integrity can still pass
+when evidence is stale. Restore preserves current references, so the restored
+bundle may also be stale.
+
+Each run captures its starting asset, script and review inputs and regenerates
+the requested outputs together. Pass the desired view and render settings each
+time. External originals are independent of their frozen historical copies.
+
+Use `--review-spec REVIEW_JSON` for fixed orthographic cameras and lighting;
+see the [review format](skills/refas/references/production-review.md). Default
+views follow current bounds. Neither route establishes source-camera calibration.
+
+Keep one working project and retain only useful diagnostic material. Inspect
+storage and safely remove redundant committed-run copies when needed:
+
+```bash
+python3 skills/refas/scripts/produce.py storage --root PROJECT
+python3 skills/refas/scripts/produce.py compact --root PROJECT
+python3 skills/refas/scripts/produce.py compact --root PROJECT --apply
+```
+
+The default compact command previews only; `--apply` removes payload copies that
+match retained revisions exactly. Checkpoints, source and failed runs remain.
+New successful runs move payload into revision storage instead of retaining a
+second full copy. Deliver one selected native/export pair and necessary scripts
+and resources. Avoid a new recovery archive, video or exhaustive report for
+each iteration; summarize changes and unresolved findings once.
+Use `--keep-diagnostics` on a run or delivery when successful raw job/Blender
+logs are needed for debugging. Failed-run diagnostics remain available.
+
+## Adopt selected assets from a saved 1.x project
+
+Use this route only for an asset recorded in a saved RefAs 1.x project. Import
+an explicitly selected archived asset into a new production project:
+
+```bash
+python3 skills/refas/scripts/produce.py import-v1 --root NEW_PROJECT --source-project OLD_PROJECT --checkpoint CHECKPOINT_ID --artifact assets/selected.glb --name imported-asset --views front,side
+```
+
+Choose the checkpoint and artifact path recorded in the original `.refas`
+project. The importer reads verified archived bytes rather than an uncommitted
+live file. It preserves the selected asset, original source and import provenance,
+creates fresh native/GLB/render output, and leaves the old project unchanged.
+No old JavaScript runtime is required in the installed skill.
+
+An imported GLB supplies supported glTF data, not the original modifiers,
+construction scripts or authoring history. Recorded native input retains its
+original bytes and uses the production worker's declared scene scope. Legacy
+certificates and review decisions do not approve the new revision. Read the
+[import scope](skills/refas/references/production-import.md) before migration.
+
+## Folder responsibilities
+
+| Path | Responsibility | Included in the 2.0 package |
+| --- | --- | --- |
+| `skills/refas/SKILL.md` | Short production instructions | Yes |
+| `skills/refas/scripts/produce.py` and `production/` | Project, Blender, review and explicit import implementation | Yes |
+| `skills/refas/references/production-*.md` | Focused garment, assembly, review, topology and import guidance | Yes |
+| `skills/refas/agents/`, `assets/icon.svg` | Agent metadata and icon | Yes |
+| `bin/refas.mjs` | npm-to-Python CLI adapter | Yes |
+| `legacy/v1/` | Retained 1.x code for explicit repository compatibility and renderer evaluation | No |
+| `schemas/` | Retained 1.x test/contracts catalog | No |
+| `examples/`, `tests/`, `tools/`, `docs/` | Reproduction, development checks and evidence | No |
+
+There are no old CLI forwarding modules, host facade, certification templates,
+legacy graph or CPU renderers in the installed production skill. The explicit
+importer understands the saved 1.x data format without bundling its execution
+and approval system.
+
+## Verified scope and limitations
+
+Native submissions support visible meshes and classic Blender `CURVE` objects
+with Bezier, POLY or NURBS splines. Native save/reopen, rendering, protection and
+temporary inspection retain recorded curve controls, settings, shape keys and
+materials; topology observations use the evaluated surface. Match curve
+`render_resolution_u` to the non-POLY splines' `resolution_u`, or use `0`
+to reuse their viewport resolution.
+
+Native iterations also retain editable `LATTICE` deformation cages: grid,
+interpolation, controls, group weights, shape keys and recorded animation.
+Use ordinary `bpy` to change the cage; observations and renders use the affected
+host's evaluated surface. Cage points do not count as surface geometry or enlarge
+asset bounds. Keep cages linked to the scene and visible/enabled in the active
+view layer; `hide_render` is allowed for these non-renderable controls. See the
+[lattice authoring guide](skills/refas/references/production-assemblies.md#shape-a-region-with-an-editable-lattice).
+
+Delivery remains mesh-only and refuses unconverted curves. Explicitly convert
+the selected final curves through ordinary Blender scripting in a recoverable
+`run --outputs delivery`. A current-frame conversion does not preserve curve
+shape-key or geometry animation; deliberately bake or rebuild required motion
+and verify exported playback. See the [curve delivery guide](skills/refas/references/production-topology.md#keep-curve-controls-until-mesh-delivery).
+
+Delivery also refuses every remaining scene lattice. Apply the intended static
+deformation at the selected frame and remove its cage in a recoverable edit;
+earlier native revisions keep the controls. This does not automatically bake
+lattice or shape-key animation.
+
+Scenes still require packed still-image textures. Hidden/excluded mesh or curve geometry,
+text (`FONT`), `SURFACE`, modern hair `CURVES` and instances remain unsupported;
+convert or realize them before submission. Match viewport/render modifier
+visibility and subdivision levels. Temporary `inspect` can describe other
+object types without approving them for submission. Delivery additionally
+requires applying non-armature modifiers on skinned or shape-key meshes.
+Procedural appearances may need baking for GLB. Native source retention alone
+does not prove animation, simulation, skin deformation or target-engine acceptance.
+
+The [uniform-jacket](examples/uniform-jacket/) and
+[automail](examples/automail-arm/) cases retain real source images, scripts,
+renders, local edits and negative as well as positive review findings. Both
+cases began as prototypes. The later arm is accepted for its declared rigid
+reach/partial-grip range; the full-character jacket remains unaccepted. See the
+[current progress](docs/development/refas-2-progress.md) for exact scope. Smaller
+instructions and successful execution do not by themselves prove better
+modeling quality or lower cost.
+
+Local atomic storage and exact historical restoration are tested. Power-loss
+durability, network filesystems and automatic abandoned-lock recovery remain
+outside the current guarantee.
+
+Diagnostic previews currently use Cycles CPU with two threads. They are bounded
+review images, not an automatically accelerated final-render pipeline.
+
+## Development
+
+Read [CONTRIBUTING.md](CONTRIBUTING.md) and the
+[GitHub governance contract](docs/github-governance.md). Use the
+[documentation index](docs/README.md) for current 2.0 guidance and the separate
+1.x archive. The
+[skill component map](docs/development/refas-2-skill-map.md) explains actual
+calls, guidance links, optional authoring APIs and change/removal checks.
+Required closing checks:
 
 ```bash
 npm test
 npm run test:python
 npm run check
-npm run dogfood:fresh-worker
+npm run dogfood
 npm run release:audit
 ```
 
-See [architecture](docs/architecture.md), [known limitations](docs/known-limitations.md), [release criteria](docs/release-criteria.md) and [contributing governance](docs/github-governance.md). Historical implementation notes, slice plans and future production work live under `docs/development/` and are not instructions for an installed modeling agent.
+Keep source PRs to implementation, small synthetic regressions and concise
+documentation. Generate test assets in temporary directories. Keep user models,
+renders, raw logs and recovery archives outside Git; link only needed evidence
+and state the result and limitations. Run `npm run check:artifacts` before
+staging. Historical tracked evidence is retained rather than purged.
+
+Run actual Blender integration explicitly:
+
+```bash
+REFAS_BLENDER_TESTS=1 PYTHONDONTWRITEBYTECODE=1 npm run test:production
+```
+
+Ordinary production CI can skip those Blender tests; report local execution
+separately. Package tests must inspect the real archive and run its entry outside
+the repository. Retained legacy tests exercise their explicit `legacy/v1` paths;
+they do not define the 2.0 installation surface.
 
 ## License
 
-MIT
+MIT — see [LICENSE](LICENSE).

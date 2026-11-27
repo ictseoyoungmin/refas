@@ -1,0 +1,304 @@
+{
+  "recordedUtc": "2026-11-22T21:36:32.433657+00:00",
+  "scope": "Exact rest-cloth handoff inputs, frozen model bytes, compact observations, source-repair provenance, selected images and scripts. Complete failed-iteration arrays remain in the work history.",
+  "files": [
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/handoff-44/README.md",
+      "sha256": "1033ad023e80edf6fbaf83c405d943a58dc225be3fdfcd08e83c90a97a618d23",
+      "bytes": 8141
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/handoff-44/summary.json",
+      "sha256": "2e19c4d75721db8e8eb0d217f9d7041a275ab7d6e523dea4f5b0bce71701da0b",
+      "bytes": 6581
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/lining-42/repaired-detailed.blend",
+      "sha256": "d390171806d787c21f98ca5a398117526d7cfc1f302c34bd46ea992ae28fcf0d",
+      "bytes": 24374932
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/paired-low-44/optimized-cloth.blend",
+      "sha256": "2abed15053c1521bb2ad103d19c9d715b488e7cfcb7b5f2f15c8dea79f61b803",
+      "bytes": 3959508
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/body-low-41/body.blend",
+      "sha256": "6baae323b761025f62b0426b21bc37f4689bcb933d0486a8064af301542bd66b",
+      "bytes": 2442680
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/CONTACT_REVIEW_UPDATE.md",
+      "sha256": "38d15a26b29f5fc21d063c5a31736202742bba1b4326bd2bc5a34f592e96cbce",
+      "bytes": 2147
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/source-bottom-profile.json",
+      "sha256": "2a892c56fe211e75e32fa1544803b7b0e0661f22d0cfb18d62fd1f9073fe3d12",
+      "bytes": 14397
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/sections-32-front-endpoints/report.json",
+      "sha256": "b8c977e71fbd16787f8c52677d218c81e0613baa6fb44ff701f1dd2088503dd4",
+      "bytes": 20411
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/sections-38-profile-clearance/report.json",
+      "sha256": "24f4f9a27bb6d71fe391b74c6014a91c2ef83b5f01ddf3ac0a15c856542874fa",
+      "bytes": 796
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/lining-42/report.json",
+      "sha256": "f6379b7912e642d58b7795f37a91a1a6709211950c75d24615f9aeabe8a7f37b",
+      "bytes": 2014
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/paired-low-44/report.json",
+      "sha256": "951e7954e448a0ad526db818b69ec2097a7aafe969e612154da7713a94414165",
+      "bytes": 12820
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/collar-grid.npz",
+      "sha256": "759350d9d8e52529c9afb7b847862e43b596e1d1b1aa89b16f5f9a1400087763",
+      "bytes": 818416
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/prefit-full/prefit-all-coat.blend",
+      "sha256": "4c5b1a18aa50f29ad776fe58e94e83bd9bb8be788547e4a6f809f48dc0dcdd77",
+      "bytes": 6369156
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/lining-42/robust-audit/report.json",
+      "sha256": "2af765bc088f529e90b52ac37b96702c24b28270c62d994fcdc7c2527a941dbb",
+      "bytes": 1549
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/lining-42/native-topology/report.json",
+      "sha256": "4824721470d894690732f221cd2da2dbc495f8325410b26698c8bf248db2b964",
+      "bytes": 11203
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/paired-low-44/robust-audit/report.json",
+      "sha256": "82800eddf173482ca2dc12f42a94686f376443b71cbf1b8cacbae376ac12a266",
+      "bytes": 1547
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/paired-low-44/native-topology/report.json",
+      "sha256": "bf8f3ba4889aed39341dd2738c798c59d7c9aaac0cce1932111ef769d5f8c3a8",
+      "bytes": 11181
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/paired-low-44/saved-verification/report.json",
+      "sha256": "942753fb6bdcb60a5bb45c62a612742154c903b61df506a3a0cd4500d0e18bde",
+      "bytes": 11953
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/lining-42/source-repair-views/render-observation.json",
+      "sha256": "ad9f1eeb4723558133be7ed3f178ef6ba5c9475cec6e0f80eb4fed149d565c82",
+      "bytes": 4218
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/lining-42/source-repair-views/after-collar-front.png",
+      "sha256": "db30b501d64b43190b7d1a76afa6954807fe5e05e598ec796550e6b7d56b1b6c",
+      "bytes": 515309
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/lining-42/source-repair-views/after-lapel-waist-front.png",
+      "sha256": "0855b2de8f2e39b433cbbf468ef9994da5da665592dfbd18b26eafd4e912f3ca",
+      "bytes": 479447
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/lining-42/source-repair-views/after-lapel-waist-side.png",
+      "sha256": "f04f0af345db6078f71ec770d61c4aa5f7179bc5ba811064c7d4217f8908e9ae",
+      "bytes": 430841
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/lining-42/source-repair-views/after-nape.png",
+      "sha256": "4e06e92fbc3bf33c4f8c726f512745bf055bec26c1a4f8037d14ce44214185ed",
+      "bytes": 378912
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/lining-42/source-repair-views/after-whole-front.png",
+      "sha256": "7b18fb37a14844f8392770f395f3700c8d01467e3672613c468870d3dc47ae01",
+      "bytes": 364135
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/lining-42/source-repair-views/before-collar-front.png",
+      "sha256": "52478ba20f8ff93eb70419dc85beb7008bc894d466da8e99ee8122713c219155",
+      "bytes": 515958
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/lining-42/source-repair-views/before-lapel-waist-front.png",
+      "sha256": "08ce87fd19d524b65f599ae9a6f372f7c2764a3162017089af92f9be26b96fb5",
+      "bytes": 480070
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/lining-42/source-repair-views/before-lapel-waist-side.png",
+      "sha256": "1d9c63796b374edaae15bead895830be5a6502adaf3421bd211a1f9604f99f93",
+      "bytes": 432315
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/lining-42/source-repair-views/before-nape.png",
+      "sha256": "d1a10960ec82600641ad611901dbf879651b76b2b955bccf2555de3c1fe4c11c",
+      "bytes": 378935
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/lining-42/source-repair-views/before-whole-front.png",
+      "sha256": "7a4fa42d21e298f2d16eaf0c3ec90a6cb4619d6bc773a458ef7b86515bd2ffa6",
+      "bytes": 363911
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/lining-42/endpoint-isolated-views/render-observation.json",
+      "sha256": "6a8433a39145eaac33659561e483f6378ddf09c2916a5e5403c88cc4c5b4ec6c",
+      "bytes": 2324
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/lining-42/endpoint-isolated-views/after-lapel-end-front.png",
+      "sha256": "249f1dfe7c145accb1024230fa77f0d506ef9d045595dd04916a43ea3a07e5d4",
+      "bytes": 299546
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/lining-42/endpoint-isolated-views/after-lapel-end-side.png",
+      "sha256": "5112683cb40f2d2f41cf6ee0cca855bcce4c103243e3e811947bf134ab6a4c50",
+      "bytes": 306231
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/lining-42/endpoint-isolated-views/before-lapel-end-front.png",
+      "sha256": "15cf2f2299d424812c0b6d65bc7964893b5f9c6dd6dc92c7c1c45e93f40e9d98",
+      "bytes": 303902
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/lining-42/endpoint-isolated-views/before-lapel-end-side.png",
+      "sha256": "66dbf85258b03efb76cb4f78344d51b2e0449b90a51d417c3c75cf303f67f494",
+      "bytes": 327136
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/paired-low-44/views/render-observation.json",
+      "sha256": "4d98929d6aa0872de6c8483a9ceaa203b4ee51efb012a555ffde2b1669f19958",
+      "bytes": 2779
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/paired-low-44/views/high-collar-front.png",
+      "sha256": "0954355fa614eebc5f6655a30dcb529811211471c488969629928e64ba6a8c98",
+      "bytes": 515309
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/paired-low-44/views/high-nape.png",
+      "sha256": "981c93f611bf7c910d7d6a476033e1f4349eafaf317774fe8066b7752b537419",
+      "bytes": 378912
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/paired-low-44/views/high-whole-front.png",
+      "sha256": "27fde427d3d168c6088866de0843d1bab0cd187e56858c5459186726b0ebc047",
+      "bytes": 364135
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/paired-low-44/views/low-collar-front.png",
+      "sha256": "bc165ddc7b9bd061a689ac0434b6874aee8058eb805a5ad43a4256fc4183905c",
+      "bytes": 515123
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/paired-low-44/views/low-nape.png",
+      "sha256": "f8032e94cb951c1678ab4e172535ac54cef58d8197efe76ea64b5f4c60e2076e",
+      "bytes": 378782
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/paired-low-44/views/low-whole-front.png",
+      "sha256": "f811e7aec8fdc447432c558a89999e17198aea0ed63f6ff8ed3374b1dd86c42d",
+      "bytes": 363632
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/robust_cloth_contact.py",
+      "sha256": "fa0e97d1fe0632fc18a867fcb965fed09f8340ed1937376a9e74ffe3bceed476",
+      "bytes": 3368
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/paired_cloth_native.py",
+      "sha256": "7ad70508b0b4054b2eb6aa40ab12e4beb4114163ee259a004fbb623f998d2468",
+      "bytes": 3124
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/audit_cloth_robust.py",
+      "sha256": "17be707be8531455db9447b5d72fe98d6a172a5aadfb1c57f863aba168da38bf",
+      "bytes": 3792
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/audit_saved_topology.py",
+      "sha256": "2f2b8d092fcd37e4d7e46880d086daba2490624bbcaf4d34f8dccae8a1683da3",
+      "bytes": 1557
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/verify_cloth_saved.py",
+      "sha256": "f27dd558b430944885198d4c04c1884d5809984181eed3ae7bac642b25273742",
+      "bytes": 7144
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/repair_outer_robust30.py",
+      "sha256": "f3536af72a85626c5349dd12f2de09d791998f8e4f542f202e99616a096cc28b",
+      "bytes": 5172
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/repair_bottom_profile32.py",
+      "sha256": "25dc039d7b05b9e1f565c91154e4ea532d2d9e27575b5b990ee69b0ec9efc246",
+      "bytes": 4287
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/relieve_profile_robust35.py",
+      "sha256": "1db269d14929f7d74bb2b9ed30c77eba6639f4866da5dde5837558ab51fa769f",
+      "bytes": 3808
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/relieve_profile_robust38.py",
+      "sha256": "3cca8245e0403222608b62b2d2e47c192f5ecd52cd48ff6acbae6b28dee6e9b8",
+      "bytes": 3814
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/repair_lining_robust31.py",
+      "sha256": "e05b582488151cf85fe39fd3da9ed351a90b8fb641596ee019c7218243243b75",
+      "bytes": 7638
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/repair_collar_lining_robust.py",
+      "sha256": "0a7d6db596eb438d6e521fbf5295bbda62118271daa1976881fd8f26367fd143",
+      "bytes": 8497
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/repair_return_offsets42.py",
+      "sha256": "b8207a95fe18622e4efcc7ac6985fd020918337b6dbfc438d97296cdef28b35b",
+      "bytes": 4315
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/optimize_body_protected37.py",
+      "sha256": "19576ab4251a6020edaf2ba949fb1978d623eba35bcfd664884efd6648656305",
+      "bytes": 6353
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/optimize_body_linear41.py",
+      "sha256": "bc65e1761c53044cab1ec4f8c44c2d83000d158f594e1ee3606eb178e1b55e61",
+      "bytes": 4904
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/adapt_collar_robust44.py",
+      "sha256": "c2e6f5d79de28af295c3e7bce75f99f346c7b40cea904e7d585e57c65c79b2b8",
+      "bytes": 8261
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/render_cloth.py",
+      "sha256": "13bef5f3f427bb4fd398cdf2a034e28d3329fbf91367e21058475b071da39c47",
+      "bytes": 5114
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/render_source_repair42.py",
+      "sha256": "afd0a6b6adc2ecf00a22adbb31ae105567a2b7ef22e6250ad948ccac09c699a3",
+      "bytes": 5260
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/render_endpoint_repair42.py",
+      "sha256": "546debb0eeb5a1e67b04be2d4a9baf302faf94614d370ab6b511b1787be02014",
+      "bytes": 5157
+    }
+  ],
+  "fileCount": 59,
+  "tokens": null,
+  "cost": null
+}

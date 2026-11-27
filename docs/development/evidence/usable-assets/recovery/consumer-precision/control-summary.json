@@ -1,0 +1,54 @@
+{
+  "positive-100um": {
+    "ok": true,
+    "skinPositionToleranceM": 0.0001,
+    "probes": 15,
+    "failedChecks": 0,
+    "nativeSkinFailures": 0,
+    "maxDistanceM": 1.77811507455772e-05,
+    "minimumFailedSkinDistanceM": null,
+    "assetSha256": "849952f583ba1bd18ede293c0c05fbfd6ecb78b2bf74b5514d4916729b5a868b",
+    "command": {
+      "argv": [
+        "/usr/local/bin/godot",
+        "--headless",
+        "--path",
+        "/workspace/scratch/61afcdd4e3c6/refas/examples/engine-playback",
+        "--script",
+        "/workspace/scratch/61afcdd4e3c6/refas/examples/engine-playback/verify_godot.gd",
+        "--",
+        "/workspace/scratch/61afcdd4e3c6/work/garment/root-precision-control/positive-100um/configuration.json"
+      ],
+      "startedUtc": "2026-11-22T20:11:35.780892+00:00",
+      "endedUtc": "2026-11-22T20:11:35.941651+00:00",
+      "elapsedSeconds": 0.16076263999912044,
+      "returncode": 0
+    }
+  },
+  "negative-100um": {
+    "ok": false,
+    "skinPositionToleranceM": 0.0001,
+    "probes": 15,
+    "failedChecks": 9,
+    "nativeSkinFailures": 9,
+    "maxDistanceM": 0.0467854924499989,
+    "minimumFailedSkinDistanceM": 0.019775589928031,
+    "assetSha256": "d173dc6dcecfa833cdd5ef27c69770cf62714b1a863b79a09031d4a8b54c189a",
+    "command": {
+      "argv": [
+        "/usr/local/bin/godot",
+        "--headless",
+        "--path",
+        "/workspace/scratch/61afcdd4e3c6/refas/examples/engine-playback",
+        "--script",
+        "/workspace/scratch/61afcdd4e3c6/refas/examples/engine-playback/verify_godot.gd",
+        "--",
+        "/workspace/scratch/61afcdd4e3c6/work/garment/root-precision-control/negative-100um/configuration.json"
+      ],
+      "startedUtc": "2026-11-22T20:11:35.764474+00:00",
+      "endedUtc": "2026-11-22T20:11:36.022054+00:00",
+      "elapsedSeconds": 0.25758647400016343,
+      "returncode": 1
+    }
+  }
+}

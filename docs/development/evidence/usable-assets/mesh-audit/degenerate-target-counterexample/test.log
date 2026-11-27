@@ -1,0 +1,23 @@
+test_closed_cube_has_positive_volume_and_no_topology_findings (test_production_mesh_audit.ProductionMeshAuditTests.test_closed_cube_has_positive_volume_and_no_topology_findings) ... ok
+test_details_are_bounded_and_collapsed_transform_not_approved (test_production_mesh_audit.ProductionMeshAuditTests.test_details_are_bounded_and_collapsed_transform_not_approved) ... ok
+test_evaluated_modifier_and_units_are_observed_without_source_mutation (test_production_mesh_audit.ProductionMeshAuditTests.test_evaluated_modifier_and_units_are_observed_without_source_mutation) ... ok
+test_invalid_parameters_and_unsupported_geometry_raise (test_production_mesh_audit.ProductionMeshAuditTests.test_invalid_parameters_and_unsupported_geometry_raise) ... FAIL
+test_loose_wire_degenerate_and_nonmanifold_geometry_are_observed (test_production_mesh_audit.ProductionMeshAuditTests.test_loose_wire_degenerate_and_nonmanifold_geometry_are_observed) ... ok
+test_missing_face_exposes_located_boundary_loop (test_production_mesh_audit.ProductionMeshAuditTests.test_missing_face_exposes_located_boundary_loop) ... ok
+test_negative_scale_is_explicit_without_masking_inward_mesh (test_production_mesh_audit.ProductionMeshAuditTests.test_negative_scale_is_explicit_without_masking_inward_mesh) ... ok
+test_open_cloth_is_described_without_automatic_defect_verdict (test_production_mesh_audit.ProductionMeshAuditTests.test_open_cloth_is_described_without_automatic_defect_verdict) ... ok
+test_parented_floating_anchor_exceeds_explicit_gap (test_production_mesh_audit.ProductionMeshAuditTests.test_parented_floating_anchor_exceeds_explicit_gap) ... ok
+test_single_flipped_face_and_disconnected_inward_shell_are_distinct (test_production_mesh_audit.ProductionMeshAuditTests.test_single_flipped_face_and_disconnected_inward_shell_are_distinct) ... ok
+
+======================================================================
+FAIL: test_invalid_parameters_and_unsupported_geometry_raise (test_production_mesh_audit.ProductionMeshAuditTests.test_invalid_parameters_and_unsupported_geometry_raise)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/5765cde18054/refas/tests/test_production_mesh_audit.py", line 227, in test_invalid_parameters_and_unsupported_geometry_raise
+    self.assertTrue(all(self.result["errors"].values()), self.result["errors"])
+AssertionError: False is not true : {'zeroScale': 'ValueError: meters_per_unit is outside its supported range', 'unknownUnit': "TypeError: audit_mesh() missing 1 required keyword-only argument: 'meters_per_unit'", 'negativeTolerance': 'ValueError: length_tolerance_m is outside its supported range', 'nanTolerance': 'ValueError: relative_tolerance is outside its supported range', 'badDetailCount': 'ValueError: max_details must be an integer from 1 to 1000', 'curve': 'TypeError: mesh audit requires a Blender MESH object', 'badAnchor': 'ValueError: anchor_local must contain three finite local coordinates', 'nanAnchor': 'ValueError: anchor_local is outside its supported range', 'negativeGap': 'ValueError: max_gap_m is outside its supported range', 'noTargetSurface': 'ValueError: attachment target has no evaluated surface triangles', 'noUsableTargetSurface': None}
+
+----------------------------------------------------------------------
+Ran 10 tests in 1.536s
+
+FAILED (failures=1)

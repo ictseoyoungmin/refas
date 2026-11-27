@@ -1,0 +1,63 @@
+{
+  "schema": "refas.geometry-experiment/v1",
+  "date": "2026-11-23",
+  "source": {
+    "path": "work/garment/candidate-08/fitted-detailed.blend",
+    "bytes": 141929700,
+    "sha256": "34a7c27eb08c0acd9e6071cab1821230b6e47012fb346c9ae638b41c967dfcc1"
+  },
+  "output": {
+    "path": "work/garment/root-transferred-lining-bounded-08/optimized-cloth.blend",
+    "bytes": 3535624,
+    "sha256": "8a5d5daf9159d8e0035576b17c2e0cd5eae708127714bbe5e0bac501ea12c90f"
+  },
+  "gate": "Full vertices in both directions to opposite surface;1.5mm original cloth threshold. These distances are not a continuous Hausdorff certificate.",
+  "bodyTriangles": 31536,
+  "collarTriangles": 33272,
+  "clothTriangles": 64808,
+  "otherCandidate08GarmentTriangles": 58400,
+  "predictedWholeGarmentTriangles": 123208,
+  "wholeAssetAcceptance": "not granted by this experiment; integrated topology, actual wearing, hardware attachment, export and consumer checks remain required",
+  "files": {
+    "sheet-probe.py": {
+      "bytes": 2420,
+      "sha256": "1928e83730c698073bb8964cae4e9349bdcbd2d3f4a883eef4f09d347a3edd71"
+    },
+    "sheet-probe.json": {
+      "bytes": 42754,
+      "sha256": "65ed35176baafd7b65633ffaba1008cfd5cdbe14ad2fd7f723dfa6e23d668339"
+    },
+    "protected-reduction.py": {
+      "bytes": 3944,
+      "sha256": "92c640504e629b7fcf789e294b6ba6b5e19f84816f833a11ada928e0d767ab1e"
+    },
+    "protected-reduction.json": {
+      "bytes": 3812,
+      "sha256": "37d9c49626f68011150eb205cca84a2b565e665adea22283a68a5c12c0073497"
+    },
+    "transferred-lining.py": {
+      "bytes": 5051,
+      "sha256": "c2e3fbe5c906568fbd4434535a39d7d9416315948d4d3be255db56e7f359b565"
+    },
+    "transferred-lining.json": {
+      "bytes": 3907,
+      "sha256": "825b62973ab3e75b5b8ba8544cd94ce079d8ad547644168860ca9ee393e7e933"
+    },
+    "spaced-lining.py": {
+      "bytes": 5676,
+      "sha256": "415e881808cc22c47e0b6fadf970aa5877b9accb6ceae3c5305d415b36015a3e"
+    },
+    "spaced-lining.json": {
+      "bytes": 6844,
+      "sha256": "4033176488a193fef49b28ba70d277e6ffa4ec26ad9d95dd0208537c13e16b48"
+    },
+    "bounded-lining.py": {
+      "bytes": 6835,
+      "sha256": "21b18b56cd398b8aa087d0c700dc9b151ba9c3de7f9578de055e830d6f758670"
+    },
+    "bounded-lining.json": {
+      "bytes": 7497,
+      "sha256": "5cc076ccebbcdba272a593578524a27e1d7923cbb1a6c909b4ed28c428b89933"
+    }
+  }
+}

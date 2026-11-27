@@ -1,0 +1,125 @@
+{
+  "status": "experiment, not selected",
+  "objects": {
+    "Body | continuous open front and shoulder yoke": {
+      "iterations": [
+        {
+          "iteration": 0,
+          "protectedOuterVertices": 4930,
+          "triangles": 39760,
+          "highToLowMaxM": 0.0028413746040314436,
+          "lowToHighMaxM": 0.0003842162259388715,
+          "highVerticesOver1_5mm": 123,
+          "featureSeeds": 68,
+          "seconds": 1.4270776950002073
+        },
+        {
+          "iteration": 1,
+          "protectedOuterVertices": 5201,
+          "triangles": 39760,
+          "highToLowMaxM": 0.0018162042833864689,
+          "lowToHighMaxM": 0.0003842162259388715,
+          "highVerticesOver1_5mm": 7,
+          "featureSeeds": 12,
+          "seconds": 1.3811101310002414
+        },
+        {
+          "iteration": 2,
+          "protectedOuterVertices": 5242,
+          "triangles": 39760,
+          "highToLowMaxM": 0.0015306442510336637,
+          "lowToHighMaxM": 0.0003842162259388715,
+          "highVerticesOver1_5mm": 1,
+          "featureSeeds": 4,
+          "seconds": 1.4904240460000437
+        },
+        {
+          "iteration": 3,
+          "protectedOuterVertices": 5257,
+          "triangles": 39760,
+          "highToLowMaxM": 0.0012378469109535217,
+          "lowToHighMaxM": 0.0003842162259388715,
+          "highVerticesOver1_5mm": 0,
+          "featureSeeds": 0,
+          "seconds": 1.4058760610000718
+        }
+      ]
+    },
+    "Collar | standing back and neck facing": {
+      "iterations": [
+        {
+          "iteration": 0,
+          "protectedOuterVertices": 5704,
+          "triangles": 25196,
+          "highToLowMaxM": 0.010467499494552612,
+          "lowToHighMaxM": 0.00027154345298185945,
+          "highVerticesOver1_5mm": 11080,
+          "featureSeeds": 1419,
+          "seconds": 1.8333307959997
+        },
+        {
+          "iteration": 1,
+          "protectedOuterVertices": 11263,
+          "triangles": 50816,
+          "highToLowMaxM": 0.005994728766381741,
+          "lowToHighMaxM": 0.0005658950540237129,
+          "highVerticesOver1_5mm": 3413,
+          "featureSeeds": 837,
+          "seconds": 2.5113535099999353
+        },
+        {
+          "iteration": 2,
+          "protectedOuterVertices": 14596,
+          "triangles": 67148,
+          "highToLowMaxM": 0.0027086979243904352,
+          "lowToHighMaxM": 0.0005658950540237129,
+          "highVerticesOver1_5mm": 400,
+          "featureSeeds": 230,
+          "seconds": 2.754390016999878
+        },
+        {
+          "iteration": 3,
+          "protectedOuterVertices": 15510,
+          "triangles": 71492,
+          "highToLowMaxM": 0.0022334628738462925,
+          "lowToHighMaxM": 0.0005658950540237129,
+          "highVerticesOver1_5mm": 164,
+          "featureSeeds": 79,
+          "seconds": 2.7428687469996476
+        },
+        {
+          "iteration": 4,
+          "protectedOuterVertices": 15847,
+          "triangles": 73164,
+          "highToLowMaxM": 0.0018893275409936905,
+          "lowToHighMaxM": 0.0005658950540237129,
+          "highVerticesOver1_5mm": 38,
+          "featureSeeds": 27,
+          "seconds": 2.8892557170001965
+        },
+        {
+          "iteration": 5,
+          "protectedOuterVertices": 15955,
+          "triangles": 73692,
+          "highToLowMaxM": 0.001564946142025292,
+          "lowToHighMaxM": 0.0005658950540237129,
+          "highVerticesOver1_5mm": 2,
+          "featureSeeds": 5,
+          "seconds": 3.053745345000152
+        },
+        {
+          "iteration": 6,
+          "protectedOuterVertices": 15978,
+          "triangles": 73800,
+          "highToLowMaxM": 0.0012772055342793465,
+          "lowToHighMaxM": 0.0005658950540237129,
+          "highVerticesOver1_5mm": 0,
+          "featureSeeds": 1,
+          "seconds": 2.933550040999762
+        }
+      ]
+    }
+  },
+  "bothWithin1_5mm": true,
+  "totalClothTriangles": 113560
+}

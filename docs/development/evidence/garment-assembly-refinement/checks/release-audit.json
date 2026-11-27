@@ -1,0 +1,10 @@
+{
+  "command": [
+    "npm",
+    "run",
+    "release:audit"
+  ],
+  "started_at": "2026-11-22T09:19:35.679988+00:00",
+  "returncode": 0,
+  "seconds": 31.266
+}

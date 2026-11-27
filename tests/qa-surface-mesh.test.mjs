@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {test} from 'node:test';
 import {
   parseGlb, verifyRealizedSurfaceDescriptors,
-} from '../skills/refas/scripts/lib/index.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
 
 function pack(json, binary) {
   const raw = Buffer.from(JSON.stringify(json));

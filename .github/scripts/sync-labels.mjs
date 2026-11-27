@@ -4,7 +4,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 
-import {CAPABILITY_ORDER, FINDING_OWNERS} from '../../skills/refas/scripts/lib/ownership.mjs';
+import {CAPABILITY_ORDER, FINDING_OWNERS} from '../../legacy/v1/scripts/lib/ownership.mjs';
 
 const SCRIPT_PATH = fileURLToPath(import.meta.url);
 const ROOT = path.resolve(path.dirname(SCRIPT_PATH), '../..');

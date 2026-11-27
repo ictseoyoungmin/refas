@@ -1,0 +1,20 @@
+{
+  "ok": true,
+  "scope": "recorded-file-integrity",
+  "head": "fb6c1245a385462a89de1c791e511caa",
+  "artifactCount": 6,
+  "evidenceFreshness": {
+    "status": "current",
+    "scope": "active-reference-content-set",
+    "revision": "fb6c1245a385462a89de1c791e511caa",
+    "activeSourceSha256": [
+      "6076b27fadfcb1a929b306ce74d6b7ef22d1d8996102065df6a74012e3466148"
+    ],
+    "revisionSourceSha256": [
+      "6076b27fadfcb1a929b306ce74d6b7ef22d1d8996102065df6a74012e3466148"
+    ],
+    "visualAcceptance": "not-evaluated"
+  },
+  "referenceResemblance": "not-evaluated",
+  "gameReadiness": "not-evaluated"
+}

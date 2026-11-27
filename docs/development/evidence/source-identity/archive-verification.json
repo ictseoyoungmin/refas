@@ -1,0 +1,30 @@
+{
+  "archive": "/workspace/scratch/5765cde18054/delivery/refas-source-identity.tar.gz",
+  "bytes": 246316495,
+  "sha256": "8c5b7833a97d41e8d2088d38f34de0253d4c4cf07d5d079c8d162a9006b08721",
+  "verified_manifest_entries": 1761,
+  "unique_stored_payloads": 637,
+  "internal_hardlink_aliases": 1125,
+  "gzip_stream": "passed",
+  "every_payload_or_internal_link_sha256": "passed",
+  "relocated_main_projects_verified": [
+    "garment",
+    "automail"
+  ],
+  "superseded_zip": {
+    "archive": "/workspace/scratch/5765cde18054/delivery/refas-source-identity.zip",
+    "bytes": 822786873,
+    "sha256": "0691f93cd8b144c7b79a94ab9500e550c624eefc26a234148c2ad64983ff87cb",
+    "verified_manifest_entries": 1761,
+    "uncompressed_manifest_bytes": 2326283007,
+    "zip_crc": "passed",
+    "every_entry_sha256": "passed",
+    "relocated_main_projects_verified": [
+      "garment",
+      "automail"
+    ],
+    "created_utc": "2026-11-22T12:42:10.640885+00:00"
+  },
+  "note": "The original helper batch failed during prepare_uploads. No finalization occurred. A lossless smaller archive replaces repeated identical payloads with internal hardlinks; no original work files were modified.",
+  "created_utc": "2026-11-22T12:48:44.452872+00:00"
+}

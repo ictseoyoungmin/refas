@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RefAs · 의상과 오토메일 검증</title>
+<style>
+:root{color-scheme:light;--ink:#172c36;--muted:#5c6d77;--line:#dbe3e6;--paper:#fff;--accent:#215d66;--soft:#edf4f3;--warm:#fff7e8;--warning:#976321}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:20px}body{margin:0;background:#f3f5f5;color:var(--ink);font:16px/1.65 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}a{color:var(--accent);text-underline-offset:4px}button,select{font:inherit}a:focus-visible,button:focus-visible,select:focus-visible{outline:3px solid #438c9a;outline-offset:4px}main{max-width:1480px;margin:auto;padding:52px 32px 60px}h1,h2,h3,p{margin-top:0}h1{font-size:clamp(2.1rem,4.3vw,3.75rem);line-height:1.15;letter-spacing:-.05em;margin-bottom:23px}h2{font-size:clamp(1.5rem,2.5vw,2rem);line-height:1.25;letter-spacing:-.035em;margin-bottom:12px}h3{font-size:1.1rem;line-height:1.35;margin-bottom:5px}.eyebrow{font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;font-weight:750;color:var(--accent);margin-bottom:12px}.lede{max-width:910px;font-size:1.13rem;line-height:1.8;margin-bottom:20px}.muted,.meta{color:var(--muted)}.meta{font-size:.84rem}.links{display:flex;flex-wrap:wrap;gap:10px 22px;font-size:.92rem}.jump{display:flex;flex-wrap:wrap;gap:10px;margin:27px 0 0;padding-top:24px;border-top:1px solid var(--line)}.jump a{text-decoration:none;padding:8px 15px;border-radius:25px;background:var(--paper);border:1px solid var(--line);font-size:.88rem}.jump a:hover{background:var(--soft)}section{margin-top:50px}.section-top{display:flex;align-items:end;justify-content:space-between;gap:24px;flex-wrap:wrap}.section-top>div{max-width:850px}.section-top p:last-child{margin-bottom:0}.grid{display:grid;gap:20px;margin-top:24px;grid-template-columns:repeat(2,minmax(0,1fr))}.triple{grid-template-columns:repeat(3,minmax(0,1fr))}.card{margin:0;min-width:0;background:var(--paper);border:1px solid var(--line);border-radius:15px;overflow:hidden}.card-head{padding:19px 22px 15px;border-bottom:1px solid var(--line)}.tag{display:inline-block;margin-bottom:7px;font-size:.72rem;font-weight:760;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}.tag.selected{background:var(--soft);padding:3px 9px;border-radius:4px}.frame{display:block;position:relative;background:#eaf0f2;aspect-ratio:1;overflow:hidden;text-decoration:none;color:var(--muted)}.frame img{display:block;object-fit:contain;width:100%;height:100%}.frame::after{content:"원본 PNG 열기 ↗";position:absolute;right:12px;bottom:10px;background:rgba(255,255,255,.86);border:1px solid rgba(255,255,255,.8);border-radius:4px;padding:4px 8px;font-size:.68rem;opacity:0;transition:opacity .15s}.frame:hover::after,.frame:focus-visible::after{opacity:1}.frame.missing{display:flex;align-items:center;justify-content:center;padding:30px;text-align:center}.frame.missing img{display:none}.frame.missing::before{content:attr(data-missing-label);max-width:320px;font-size:.87rem}.frame.missing::after{display:none}figcaption{padding:18px 22px;font-size:.9rem;color:var(--muted)}figcaption p:last-child{margin-bottom:0}.source .frame{background:#fff;aspect-ratio:1.65;padding:12px}.source figcaption{border-top:1px solid var(--line)}.controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px;background:var(--paper);border:1px solid var(--line);border-radius:10px}.controls label{font-size:.8rem;font-weight:750;margin-left:4px;color:var(--muted)}select{border:1px solid #aebfc6;border-radius:6px;background:#fff;color:var(--ink);padding:8px 30px 8px 10px;max-width:100%}.step{cursor:pointer;border:1px solid var(--line);color:var(--accent);background:#f8fafb;min-width:36px;min-height:40px;border-radius:6px}.step:hover{background:var(--soft)}.view-readout{font-size:.77rem;color:var(--muted);min-width:40px;text-align:center}.notice{margin-top:20px;padding:18px 22px;border-left:3px solid var(--warning);background:var(--warm);border-radius:0 8px 8px 0;font-size:.94rem}.notice p:last-child{margin-bottom:0}.note{font-size:.86rem;color:var(--muted);margin-top:15px}.notes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;padding:24px;margin-top:24px;border:1px solid var(--line);border-radius:12px;background:var(--paper)}.notes h3{font-size:.96rem}.notes p{font-size:.88rem;margin-bottom:0;color:var(--muted)}.boundary{background:var(--soft);border:1px solid #d6e4df;border-radius:12px;padding:24px 26px}.boundary p:last-child{margin-bottom:0}.boundary strong{color:var(--accent)}footer{border-top:1px solid var(--line);margin-top:48px;padding-top:25px;color:var(--muted);font-size:.83rem}code{font-size:.9em;overflow-wrap:anywhere}noscript{display:block;background:var(--warm);border-left:3px solid var(--warning);padding:16px;margin-top:24px}.small-links{margin-top:20px}.visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+@media(max-width:1000px){main{padding:32px 22px 45px}.triple{gap:12px}.card-head,figcaption{padding:15px}.notes{gap:18px}.source .frame{aspect-ratio:1.4}}
+@media(max-width:760px){main{padding:26px 16px 40px}.grid,.triple,.notes{grid-template-columns:1fr}.card{max-width:620px;width:100%;margin:auto}.section-top{gap:18px}.controls{width:100%}.controls select{flex:1;min-width:0}.frame{max-height:620px}.source .frame{aspect-ratio:auto;padding:8px;min-height:180px}.source .frame img{height:auto}.source .frame.missing{aspect-ratio:1.4}.notes{padding:20px}.lede{font-size:1rem}.jump{gap:8px}.jump a{padding:7px 12px}section{margin-top:38px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.frame::after{transition:none}}
+@media print{body{background:#fff}main{padding:0}.controls,.jump,.frame::after{display:none}.card{break-inside:avoid}section{margin-top:25px}.grid{gap:12px}.notice{background:#fff}.source{break-inside:avoid}a{color:inherit}}
+</style>
+</head>
+<body>
+<main>
+<header>
+<p class="eyebrow">RefAs 2.0 development · two-asset dogfood</p>
+<h1>의상과 오토메일.<br>형상, 편집, 복원을 따로 확인합니다.</h1>
+<p class="lede">자켓은 기존 후보를 이어서 개선한 작업입니다. 오토메일은 같은 원본을 사용하는 일반 제작·고정 1.x·2.0의 새 제작 비교입니다. 실제 렌더와 원본을 함께 보고, 기술 검증과 외형 완성도를 구분합니다.</p>
+<nav class="links" aria-label="검증 문서"><a href="README.md">전체 검증 기록</a><a href="evaluation.json">구조화된 실행 기록</a><a href="records/blind-garment-review.md">의상 독립 시각 리뷰</a><a href="records/blind-automail-review.md">오토메일 독립 시각 리뷰</a></nav>
+<nav class="jump" aria-label="페이지 바로 가기"><a href="#delivery">선택한 후보</a><a href="#sources">원본 시트</a><a href="#garment">의상 전후 비교</a><a href="#automail">오토메일 세 조건</a><a href="#poses">관절 포즈</a><a href="#limits">판정 범위</a></nav>
+</header>
+<noscript>JavaScript가 꺼져 있어 첫 번째로 지정한 뷰만 보입니다. 이미지를 누르면 해당 PNG를 열 수 있으며, 전체 파일 목록은 evaluation.json에 있습니다.</noscript>
+
+<section id="delivery" aria-labelledby="delivery-title">
+<div class="section-top"><div><p class="eyebrow">Current delivery candidates</p><h2 id="delivery-title">현재 선택한 두 후보</h2><p class="muted">이 패널은 전달 대상 모델의 개요입니다. 조건별 비교와 수정 전후 판단은 아래의 고정된 진단 뷰에서 확인하세요.</p></div></div>
+<div class="grid">
+<figure class="card"><div class="card-head"><span class="tag selected">현재 선택 · 의상</span><h3>제복 자켓</h3><div class="meta">기존 native를 이어서 개선한 후보</div></div><a class="frame" href="renders/delivery/garment/view-front-three-quarter.png"><img src="renders/delivery/garment/view-front-three-quarter.png" width="512" height="512" alt="현재 선택한 제복 자켓의 앞 사선 렌더"></a><figcaption>연속적인 의상 곡면, 접힌 칼라·라펠과 원단 표현을 검토합니다. 선택한 후보라는 표시는 완성품 승인을 뜻하지 않습니다.</figcaption></figure>
+<figure class="card"><div class="card-head"><span class="tag selected">현재 선택 · 오토메일</span><h3>AURIX MK-IV 오토메일</h3><div class="meta">원본 시트에서 새로 제작한 2.0 후보</div></div><a class="frame" href="renders/delivery/automail/view-front-three-quarter.png"><img src="renders/delivery/automail/view-front-three-quarter.png" width="512" height="512" alt="현재 선택한 오토메일 팔의 앞 사선 렌더"></a><figcaption>장갑 분할, 노출된 구조, 관절과 손의 관계를 검토합니다. 이 선택 자체를 세 제작 조건의 우승 판정으로 해석하지 않습니다.</figcaption></figure>
+</div>
+</section>
+
+<section id="sources" aria-labelledby="sources-title">
+<p class="eyebrow">Unaltered source context</p><h2 id="sources-title">사용자가 제공한 원본 시트</h2><p class="muted">시트 전체를 유지했습니다. 이미지를 열어 확대하고, 관찰한 디자인과 보이지 않는 부분의 추정을 구분하세요. 그림의 뷰 라벨은 보정된 카메라 데이터가 아닙니다.</p>
+<div class="grid">
+<figure class="card source"><div class="card-head"><span class="tag">Original reference</span><h3>제복 자켓 · 전체 시트</h3></div><a class="frame" href="references/garment.png"><img src="references/garment.png" data-fallback="../../../../examples/uniform-jacket/source/reference.png" alt="제복 자켓의 원본 멀티뷰, 장식 상세와 치수 도면 전체" loading="lazy"></a><figcaption>원본을 클릭해 크게 볼 수 있습니다. 둘레와 평면 폭 등 상충하는 치수는 실행 기록의 해석을 확인하세요.</figcaption></figure>
+<figure class="card source"><div class="card-head"><span class="tag">Original reference</span><h3>오토메일 · 전체 시트</h3></div><a class="frame" href="references/automail.png"><img src="references/automail.png" data-fallback="../../../../examples/automail-arm/source/reference.png" alt="AURIX MK-IV 오토메일의 원본 멀티뷰, 분해도, 손과 관절 상세 전체" loading="lazy"></a><figcaption>팔의 앞·뒤, 손바닥 방향, 관절 중심과 분할 부품을 함께 보세요. 시트의 출력·중량·신경 제어 문구는 물리 성능 검증 결과가 아닙니다.</figcaption></figure>
+</div>
+</section>
+
+<section id="garment" aria-labelledby="garment-title">
+<div class="section-top"><div><p class="eyebrow">Informed continuation · matched before / after</p><h2 id="garment-title">의상: 같은 뷰에서 수정 효과 확인</h2><p class="muted">기존 후보와 문제를 알고 진행한 후속 개선입니다. 아래 두 이미지는 같은 진단 조건으로 비교하며, 최초 독립 제작 실험과 구분합니다.</p></div><div class="controls"><label for="garment-view">방향</label><button class="step" type="button" data-step="-1" data-for="garment-view" aria-label="이전 의상 방향">←</button><select id="garment-view" data-view-control="garment"><option value="front">정면</option><option value="front-three-quarter" selected>앞 사선</option><option value="left">왼쪽</option><option value="back">후면</option><option value="right">오른쪽</option><option value="rear-three-quarter">뒤 사선</option></select><button class="step" type="button" data-step="1" data-for="garment-view" aria-label="다음 의상 방향">→</button><span class="view-readout" data-readout="garment" aria-live="polite">2 / 6</span></div></div>
+<div class="grid">
+<figure class="card"><div class="card-head"><span class="tag">Before · 보존된 기준 후보</span><h3>개선 전</h3></div><a class="frame" data-group="garment" data-series="garment/before" data-name="개선 전 자켓" href="renders/garment/before/view-front-three-quarter.png"><img src="renders/garment/before/view-front-three-quarter.png" width="512" height="512" alt="개선 전 자켓의 앞 사선 진단 렌더" loading="lazy"></a><figcaption>후속 수정의 출발점입니다. 기존 후보를 보존하여 새로운 형상·재질 변경의 영향을 확인합니다.</figcaption></figure>
+<figure class="card"><div class="card-head"><span class="tag selected">After · 후속 개선 후보</span><h3>개선 후</h3></div><a class="frame" data-group="garment" data-series="garment/after" data-name="개선 후 자켓" href="renders/garment/after/view-front-three-quarter.png"><img src="renders/garment/after/view-front-three-quarter.png" width="512" height="512" alt="개선 후 자켓의 앞 사선 진단 렌더" loading="lazy"></a><figcaption>독립 시각 리뷰가 후속 개발용으로 선호한 후보입니다. 모든 방향의 원본 충실도와 완성도를 통과한 상태는 아닙니다.</figcaption></figure>
+</div>
+<div class="notice"><p><strong>의상 시각 판정:</strong> 원본을 먼저 본 독립 리뷰는 개선 후 후보를 선호했습니다. <strong>두 후보 모두 미완성</strong>으로 남았습니다. 자세한 장단점은 <a href="records/blind-garment-review.md">원본 리뷰</a>에 보존합니다.</p></div>
+<p class="note">실제 Blender Cycles CPU 직교 렌더입니다. 원본 시트와 카메라가 등록된 상태는 아닙니다. 이미지에서 보이는 개선과 객체·재질 보존, 정확한 복원은 각각 별도의 기록으로 확인합니다.</p>
+</section>
+
+<section id="automail" aria-labelledby="automail-title">
+<div class="section-top"><div><p class="eyebrow">New construction · same-camera comparison</p><h2 id="automail-title">오토메일: 세 제작 조건의 공통 뷰</h2><p class="muted">같은 원본으로 만든 일반 제작, 고정된 1.x, 2.0 후보입니다. 선택한 방향이 세 후보에 함께 적용됩니다. 자세·비율·연결 구조를 먼저 비교한 뒤 작은 하드웨어를 보세요.</p></div><div class="controls"><label for="automail-view">방향</label><button class="step" type="button" data-step="-1" data-for="automail-view" aria-label="이전 오토메일 방향">←</button><select id="automail-view" data-view-control="automail"><option value="front">정면</option><option value="left">왼쪽</option><option value="back">후면</option><option value="front-three-quarter" selected>앞 사선</option><option value="rear-three-quarter">뒤 사선</option></select><button class="step" type="button" data-step="1" data-for="automail-view" aria-label="다음 오토메일 방향">→</button><span class="view-readout" data-readout="automail" aria-live="polite">4 / 5</span></div></div>
+<div class="grid triple">
+<figure class="card"><div class="card-head"><span class="tag">Plain Blender</span><h3>일반 제작</h3><div class="meta">RefAs 지침 없이 제작</div></div><a class="frame" data-group="automail" data-series="automail/plain" data-name="일반 제작 오토메일" href="renders/automail/plain/view-front-three-quarter.png"><img src="renders/automail/plain/view-front-three-quarter.png" width="512" height="512" alt="일반 제작 오토메일의 앞 사선 진단 렌더" loading="lazy"></a><figcaption>비교 기준 후보입니다. 세 조건의 결과를 실제 형상과 원본의 대응 관계로 판단합니다.</figcaption></figure>
+<figure class="card"><div class="card-head"><span class="tag">Frozen RefAs 1.x</span><h3>고정 1.x</h3><div class="meta">이전 지침 snapshot 사용</div></div><a class="frame" data-group="automail" data-series="automail/legacy" data-name="고정 1.x 오토메일" href="renders/automail/legacy/view-front-three-quarter.png"><img src="renders/automail/legacy/view-front-three-quarter.png" width="512" height="512" alt="고정 1.x 오토메일의 앞 사선 진단 렌더" loading="lazy"></a><figcaption>기존 방식의 독립 제작 후보입니다. 지침의 양이나 객체 수 자체는 품질 점수가 아닙니다.</figcaption></figure>
+<figure class="card"><div class="card-head"><span class="tag">RefAs 2.0 development</span><h3>2.0 제작 경로</h3><div class="meta">선택적 제작 가이드 사용</div></div><a class="frame" data-group="automail" data-series="automail/production" data-name="2.0 오토메일" href="renders/automail/production/view-front-three-quarter.png"><img src="renders/automail/production/view-front-three-quarter.png" width="512" height="512" alt="2.0 오토메일의 앞 사선 진단 렌더" loading="lazy"></a><figcaption>새 제작·관찰·수정 경로의 후보입니다. 실행 성공과 복원 검사는 원본 닮음의 승인과 구분합니다.</figcaption></figure>
+</div>
+<div class="notice" id="automail-verdict"><p id="automail-verdict-text"><strong>독립 시각 리뷰: 일반 제작이 근소하게 앞서고, 고정 1.x, 2.0 순입니다. 세 후보 모두 완성품 기준 미달입니다.</strong> 2.0은 큰 장갑 패널이 단순하고 뒤쪽 기계 구조가 성깁니다. 일반 제작과 1.x의 순위 차이보다 세 후보의 공통 결함에 대한 확신이 높습니다. 조건별 한 번의 탐색 비교이며 모델·스킬의 일반적 우위를 뜻하지 않습니다. <a href="records/blind-automail-review.md">리뷰 원문</a>과 <a href="README.md">검증 기록</a>에 근거와 한계를 보존했습니다.</p></div>
+<p class="note">공통 비교는 실제 Blender Cycles CPU 직교 렌더를 사용합니다. 동일 카메라·조명은 후보 간 관찰 조건을 맞추며, 원본 카메라 보정이나 픽셀 기반 정답을 제공하지 않습니다.</p>
+</section>
+
+<section id="poses" aria-labelledby="poses-title">
+<div class="section-top"><div><p class="eyebrow">Declared pose samples · separate from neutral comparison</p><h2 id="poses-title">관절과 부속품의 움직임 확인</h2><p class="muted">중립 상태와 선언한 시험 각도에서 관절 중심, 따라 움직이는 부품과 주변 간섭을 관찰합니다. 한정된 포즈 검사는 전체 가동 범위나 물리 성능을 증명하지 않습니다.</p></div><div class="controls"><label for="pose-view">포즈</label><select id="pose-view" data-pose-control><option value="elbow-0">팔꿈치 0° · 중립</option><option value="elbow-45" selected>팔꿈치 45°</option><option value="elbow-90">팔꿈치 90°</option><option value="wrist-20-index-35">손목 20° / 검지 35°</option></select></div></div>
+<div class="grid">
+<figure class="card"><div class="card-head"><span class="tag">Pose · side</span><h3>측면</h3></div><a class="frame" data-pose="side" href="renders/poses/automail/elbow-45-side.png"><img src="renders/poses/automail/elbow-45-side.png" width="512" height="512" alt="팔꿈치 45도 포즈의 측면 렌더" loading="lazy"></a><figcaption>회전축과 전완·손의 이동, 관절 주변의 패널 겹침을 확인합니다.</figcaption></figure>
+<figure class="card"><div class="card-head"><span class="tag">Pose · oblique</span><h3>사선</h3></div><a class="frame" data-pose="hero" href="renders/poses/automail/elbow-45-hero.png"><img src="renders/poses/automail/elbow-45-hero.png" width="512" height="512" alt="팔꿈치 45도 포즈의 사선 렌더" loading="lazy"></a><figcaption>한 시점에서 가려진 구조와 연결을 다른 시점에서 확인합니다. 정적 외형 비교와 별도 관찰입니다.</figcaption></figure>
+</div>
+<div class="notes"><div><h3>관찰한 범위</h3><p>이 페이지에 있는 실제 포즈와 방향만 확인한 것입니다. 중간 각도 전체의 충돌, 작동 하중이나 인간 장착 안전성을 보증하지 않습니다.</p></div><div><h3>편집 가능한 관계</h3><p>native의 부모·자식 관계, pivot, GLB 재개방 결과는 실행 기록에서 확인합니다. 렌더만 보고 rig나 animation 전달을 추정하지 않습니다.</p></div><div><h3>복원</h3><p>원래 transform과 선택한 revision의 파일 복원은 기록된 검사 범위로 판단합니다. 모양이 비슷해 보인다는 것과 정확한 복원은 다른 결과입니다.</p></div></div>
+</section>
+
+<section id="limits" aria-labelledby="limits-title" class="boundary">
+<p class="eyebrow">Read the claim with its evidence</p><h2 id="limits-title">각 결과가 말해 주는 범위</h2>
+<p><strong>원본 충실도:</strong> 전체 실루엣, 주요 비율, 고유한 형태와 재질을 원본에 대조합니다. 보이지 않는 구조와 모순된 치수의 해석은 가정으로 남습니다.</p>
+<p><strong>기술적 동작:</strong> native 재개방, GLB 출력·재수입, 부분 수정 보존, revision 복원은 실행 기록이 뒷받침하는 범위입니다. 테스트 통과가 완성품·게임 엔진 적합성 승인을 대신하지 않습니다.</p>
+<p><strong>일반화:</strong> 자켓의 후속 개선과 새로운 오토메일 제작은 출발 조건이 다릅니다. 두 결과나 한 번의 조건별 비교로 모델·릴리즈의 보편적인 우위를 선언하지 않습니다.</p>
+<div class="links small-links"><a href="README.md">전체 결과와 남은 문제</a><a href="evaluation.json">revision·파일·검사 기록</a><a href="records/blind-garment-review.md">의상 리뷰 원문</a><a href="records/blind-automail-review.md">오토메일 리뷰 원문</a></div>
+</section>
+<footer><p>RefAs 2.0 개발 체크포인트 · 실제 Blender Cycles CPU 렌더 · 직교 진단 뷰 · 원본 시트에 미등록(unregistered). 표시용 이미지를 다시 그리거나 AI로 보정하지 않습니다. 이미지가 아직 없는 경로는 빈 상태로 표시하며 대체 모델 이미지를 만들지 않습니다.</p><p>이 페이지는 네트워크·서버·외부 라이브러리 없이 동작합니다. 원본 이미지는 다운로드 묶음의 <code>references/</code>를 먼저 사용하고, 저장소에서는 해당 예제의 원본 경로를 사용합니다.</p></footer>
+</main>
+<script>
+'use strict';
+function setImage(link,path,label){
+  link.href=path;
+  link.classList.remove('missing');
+  const img=link.querySelector('img');
+  img.alt=label;
+  img.src=path;
+}
+function imageFailure(img){
+  const link=img.closest('.frame');
+  if(img.dataset.fallback&&!img.dataset.fallbackTried){
+    img.dataset.fallbackTried='true';
+    link.href=img.dataset.fallback;
+    img.src=img.dataset.fallback;
+    return;
+  }
+  link.classList.add('missing');
+  link.dataset.missingLabel='이 이미지 파일이 아직 없습니다. 검증 기록과 파일 구성을 확인하세요.';
+}
+for(const img of document.querySelectorAll('.frame img')){
+  img.addEventListener('error',()=>imageFailure(img));
+  img.addEventListener('load',()=>img.closest('.frame').classList.remove('missing'));
+  if(img.complete&&img.naturalWidth===0) imageFailure(img);
+}
+function updateGroup(control){
+  const group=control.dataset.viewControl;
+  const view=control.value;
+  const label=control.options[control.selectedIndex].text;
+  for(const link of document.querySelectorAll('[data-group="'+group+'"]')){
+    setImage(link,'renders/'+link.dataset.series+'/view-'+view+'.png',link.dataset.name+' · '+label+' 진단 렌더');
+  }
+  document.querySelector('[data-readout="'+group+'"]').textContent=(control.selectedIndex+1)+' / '+control.options.length;
+}
+for(const control of document.querySelectorAll('[data-view-control]')) control.addEventListener('change',()=>updateGroup(control));
+for(const button of document.querySelectorAll('[data-step]')) button.addEventListener('click',()=>{
+  const control=document.getElementById(button.dataset.for);
+  control.selectedIndex=(control.selectedIndex+Number(button.dataset.step)+control.options.length)%control.options.length;
+  updateGroup(control);
+});
+document.querySelector('[data-pose-control]').addEventListener('change',event=>{
+  const control=event.target;
+  const label=control.options[control.selectedIndex].text;
+  for(const link of document.querySelectorAll('[data-pose]')){
+    setImage(link,'renders/poses/automail/'+control.value+'-'+link.dataset.pose+'.png',label+' · '+(link.dataset.pose==='side'?'측면':'사선')+' 렌더');
+  }
+});
+</script>
+</body>
+</html>

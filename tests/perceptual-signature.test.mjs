@@ -7,11 +7,11 @@ import {
   createVisualHierarchy,
   validatePerceptualSignatureEvidence,
   validatePerceptualSignatureSet,
-} from '../skills/refas/scripts/lib/index.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
 import {
   assertMetricUseAllowed,
   metricAuthority,
-} from '../skills/refas/scripts/lib/metric-authority.mjs';
+} from '../legacy/v1/scripts/lib/metric-authority.mjs';
 
 const D = (ch) => ch.repeat(64);
 const SOURCE = D('a');

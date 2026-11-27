@@ -1,0 +1,409 @@
+{
+  "coatMeshes": 100,
+  "coatTriangles": 1200,
+  "fps": 30,
+  "clip": "Correspondence_Phase_Fixture",
+  "meshes": [
+    {
+      "name": "Phase fixture 000",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 001",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 002",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 003",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 004",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 005",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 006",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 007",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 008",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 009",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 010",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 011",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 012",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 013",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 014",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 015",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 016",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 017",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 018",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 019",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 020",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 021",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 022",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 023",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 024",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 025",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 026",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 027",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 028",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 029",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 030",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 031",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 032",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 033",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 034",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 035",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 036",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 037",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 038",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 039",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 040",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 041",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 042",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 043",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 044",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 045",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 046",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 047",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 048",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 049",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 050",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 051",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 052",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 053",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 054",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 055",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 056",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 057",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 058",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 059",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 060",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 061",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 062",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 063",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 064",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 065",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 066",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 067",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 068",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 069",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 070",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 071",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 072",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 073",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 074",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 075",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 076",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 077",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 078",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 079",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 080",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 081",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 082",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 083",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 084",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 085",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 086",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 087",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 088",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 089",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 090",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 091",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 092",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 093",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 094",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 095",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 096",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 097",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 098",
+      "triangles": 12
+    },
+    {
+      "name": "Phase fixture 099",
+      "triangles": 12
+    }
+  ],
+  "scope": "Checker fixture only. One real intermediate morph, two materials, display vertex splits, no garment acceptance."
+}

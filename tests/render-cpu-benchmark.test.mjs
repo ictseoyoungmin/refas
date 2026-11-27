@@ -5,7 +5,7 @@ import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {test} from 'node:test';
 
-const script=path.resolve('skills/refas/scripts/benchmark_render_cpu.py');
+const script=path.resolve('legacy/v1/scripts/benchmark_render_cpu.py');
 const python=process.env.CODEX_PRIMARY_RUNTIME_PYTHON||'python3';
 
 function measured(args,timeout=90_000){

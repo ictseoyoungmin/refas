@@ -1,4 +1,4 @@
-import {createCylinder} from '../../skills/refas/scripts/lib/index.mjs';
+import {createCylinder} from '../../legacy/v1/scripts/lib/index.mjs';
 
 export const CORVID_LEG_OVERFIT = Object.freeze({
   sourceNote:'post-1.1.0 single-side mechanical corvid regression reported in issue #251',

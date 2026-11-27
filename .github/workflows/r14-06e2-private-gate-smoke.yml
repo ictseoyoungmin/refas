@@ -32,7 +32,7 @@ jobs:
       - name: Make indexed source (synthetic only)
         run: |
           mkdir -p temp/r14-06e2
-          python skills/refas/scripts/create_blender_color0_texture_fixture.py \
+          python legacy/v1/scripts/create_blender_color0_texture_fixture.py \
             --glb temp/r14-06e2/synthetic.glb \
             --frame temp/r14-06e2/camera.json \
             --side 256 --triangles 120 \
@@ -42,7 +42,7 @@ jobs:
           python - <<'PY'
           import json,sys
           from pathlib import Path
-          sys.path.insert(0, 'skills/refas/scripts')
+          sys.path.insert(0, 'legacy/v1/scripts')
           from verify_blender_private_source_e2 import run_private_session
           root=Path('temp/r14-06e2')
           fixture=json.loads((root/'source.json').read_text())

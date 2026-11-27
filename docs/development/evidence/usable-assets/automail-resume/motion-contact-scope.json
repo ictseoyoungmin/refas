@@ -1,0 +1,942 @@
+{
+  "recordedUtc": "2026-11-22T19:12:20.009581+00:00",
+  "frozenBeforeFurtherGeometryChanges": true,
+  "candidateObserved": "candidate-05",
+  "frames": [
+    1,
+    121
+  ],
+  "fps": 30,
+  "testedPairs": [
+    [
+      "Delivery_SHOULDER_PIVOT_Ivory",
+      "Delivery_ELBOW_PIVOT_Ivory"
+    ],
+    [
+      "Delivery_ELBOW_PIVOT_Ivory",
+      "Delivery_WRIST_PIVOT_Ivory"
+    ],
+    [
+      "Palm_graphite_body",
+      "Delivery_WRIST_PIVOT_Ivory"
+    ],
+    [
+      "Delivery_WRIST_PIVOT_Ivory",
+      "INDEX_S0_ivory_phalanx"
+    ],
+    [
+      "INDEX_S0_ivory_phalanx",
+      "INDEX_S1_ivory_phalanx"
+    ],
+    [
+      "INDEX_S1_ivory_phalanx",
+      "INDEX_S2_ivory_phalanx"
+    ],
+    [
+      "Delivery_WRIST_PIVOT_Ivory",
+      "MIDDLE_S0_ivory_phalanx"
+    ],
+    [
+      "MIDDLE_S0_ivory_phalanx",
+      "MIDDLE_S1_ivory_phalanx"
+    ],
+    [
+      "MIDDLE_S1_ivory_phalanx",
+      "MIDDLE_S2_ivory_phalanx"
+    ],
+    [
+      "Delivery_WRIST_PIVOT_Ivory",
+      "RING_S0_ivory_phalanx"
+    ],
+    [
+      "RING_S0_ivory_phalanx",
+      "RING_S1_ivory_phalanx"
+    ],
+    [
+      "RING_S1_ivory_phalanx",
+      "RING_S2_ivory_phalanx"
+    ],
+    [
+      "Delivery_WRIST_PIVOT_Ivory",
+      "LITTLE_S0_ivory_phalanx"
+    ],
+    [
+      "LITTLE_S0_ivory_phalanx",
+      "LITTLE_S1_ivory_phalanx"
+    ],
+    [
+      "LITTLE_S1_ivory_phalanx",
+      "LITTLE_S2_ivory_phalanx"
+    ],
+    [
+      "Delivery_WRIST_PIVOT_Ivory",
+      "THUMB_S0_ivory_phalanx"
+    ],
+    [
+      "THUMB_S0_ivory_phalanx",
+      "THUMB_S1_ivory_phalanx"
+    ],
+    [
+      "THUMB_S1_ivory_phalanx",
+      "THUMB_S2_ivory_phalanx"
+    ],
+    [
+      "Palm_graphite_body",
+      "INDEX_S0_ivory_phalanx"
+    ],
+    [
+      "INDEX_S0_ivory_phalanx",
+      "MIDDLE_S0_ivory_phalanx"
+    ],
+    [
+      "INDEX_S0_ivory_phalanx",
+      "MIDDLE_S1_ivory_phalanx"
+    ],
+    [
+      "INDEX_S0_ivory_phalanx",
+      "MIDDLE_S2_ivory_phalanx"
+    ],
+    [
+      "INDEX_S0_ivory_phalanx",
+      "RING_S0_ivory_phalanx"
+    ],
+    [
+      "INDEX_S0_ivory_phalanx",
+      "RING_S1_ivory_phalanx"
+    ],
+    [
+      "INDEX_S0_ivory_phalanx",
+      "RING_S2_ivory_phalanx"
+    ],
+    [
+      "INDEX_S0_ivory_phalanx",
+      "LITTLE_S0_ivory_phalanx"
+    ],
+    [
+      "INDEX_S0_ivory_phalanx",
+      "LITTLE_S1_ivory_phalanx"
+    ],
+    [
+      "INDEX_S0_ivory_phalanx",
+      "LITTLE_S2_ivory_phalanx"
+    ],
+    [
+      "INDEX_S0_ivory_phalanx",
+      "THUMB_S0_ivory_phalanx"
+    ],
+    [
+      "INDEX_S0_ivory_phalanx",
+      "THUMB_S1_ivory_phalanx"
+    ],
+    [
+      "INDEX_S0_ivory_phalanx",
+      "THUMB_S2_ivory_phalanx"
+    ],
+    [
+      "Palm_graphite_body",
+      "INDEX_S1_ivory_phalanx"
+    ],
+    [
+      "Delivery_WRIST_PIVOT_Ivory",
+      "INDEX_S1_ivory_phalanx"
+    ],
+    [
+      "INDEX_S1_ivory_phalanx",
+      "MIDDLE_S0_ivory_phalanx"
+    ],
+    [
+      "INDEX_S1_ivory_phalanx",
+      "MIDDLE_S1_ivory_phalanx"
+    ],
+    [
+      "INDEX_S1_ivory_phalanx",
+      "MIDDLE_S2_ivory_phalanx"
+    ],
+    [
+      "INDEX_S1_ivory_phalanx",
+      "RING_S0_ivory_phalanx"
+    ],
+    [
+      "INDEX_S1_ivory_phalanx",
+      "RING_S1_ivory_phalanx"
+    ],
+    [
+      "INDEX_S1_ivory_phalanx",
+      "RING_S2_ivory_phalanx"
+    ],
+    [
+      "INDEX_S1_ivory_phalanx",
+      "LITTLE_S0_ivory_phalanx"
+    ],
+    [
+      "INDEX_S1_ivory_phalanx",
+      "LITTLE_S1_ivory_phalanx"
+    ],
+    [
+      "INDEX_S1_ivory_phalanx",
+      "LITTLE_S2_ivory_phalanx"
+    ],
+    [
+      "INDEX_S1_ivory_phalanx",
+      "THUMB_S0_ivory_phalanx"
+    ],
+    [
+      "INDEX_S1_ivory_phalanx",
+      "THUMB_S1_ivory_phalanx"
+    ],
+    [
+      "INDEX_S1_ivory_phalanx",
+      "THUMB_S2_ivory_phalanx"
+    ],
+    [
+      "Palm_graphite_body",
+      "INDEX_S2_ivory_phalanx"
+    ],
+    [
+      "Delivery_WRIST_PIVOT_Ivory",
+      "INDEX_S2_ivory_phalanx"
+    ],
+    [
+      "INDEX_S2_ivory_phalanx",
+      "MIDDLE_S0_ivory_phalanx"
+    ],
+    [
+      "INDEX_S2_ivory_phalanx",
+      "MIDDLE_S1_ivory_phalanx"
+    ],
+    [
+      "INDEX_S2_ivory_phalanx",
+      "MIDDLE_S2_ivory_phalanx"
+    ],
+    [
+      "INDEX_S2_ivory_phalanx",
+      "RING_S0_ivory_phalanx"
+    ],
+    [
+      "INDEX_S2_ivory_phalanx",
+      "RING_S1_ivory_phalanx"
+    ],
+    [
+      "INDEX_S2_ivory_phalanx",
+      "RING_S2_ivory_phalanx"
+    ],
+    [
+      "INDEX_S2_ivory_phalanx",
+      "LITTLE_S0_ivory_phalanx"
+    ],
+    [
+      "INDEX_S2_ivory_phalanx",
+      "LITTLE_S1_ivory_phalanx"
+    ],
+    [
+      "INDEX_S2_ivory_phalanx",
+      "LITTLE_S2_ivory_phalanx"
+    ],
+    [
+      "INDEX_S2_ivory_phalanx",
+      "THUMB_S0_ivory_phalanx"
+    ],
+    [
+      "INDEX_S2_ivory_phalanx",
+      "THUMB_S1_ivory_phalanx"
+    ],
+    [
+      "INDEX_S2_ivory_phalanx",
+      "THUMB_S2_ivory_phalanx"
+    ],
+    [
+      "Palm_graphite_body",
+      "MIDDLE_S0_ivory_phalanx"
+    ],
+    [
+      "MIDDLE_S0_ivory_phalanx",
+      "RING_S0_ivory_phalanx"
+    ],
+    [
+      "MIDDLE_S0_ivory_phalanx",
+      "RING_S1_ivory_phalanx"
+    ],
+    [
+      "MIDDLE_S0_ivory_phalanx",
+      "RING_S2_ivory_phalanx"
+    ],
+    [
+      "MIDDLE_S0_ivory_phalanx",
+      "LITTLE_S0_ivory_phalanx"
+    ],
+    [
+      "MIDDLE_S0_ivory_phalanx",
+      "LITTLE_S1_ivory_phalanx"
+    ],
+    [
+      "MIDDLE_S0_ivory_phalanx",
+      "LITTLE_S2_ivory_phalanx"
+    ],
+    [
+      "MIDDLE_S0_ivory_phalanx",
+      "THUMB_S0_ivory_phalanx"
+    ],
+    [
+      "MIDDLE_S0_ivory_phalanx",
+      "THUMB_S1_ivory_phalanx"
+    ],
+    [
+      "MIDDLE_S0_ivory_phalanx",
+      "THUMB_S2_ivory_phalanx"
+    ],
+    [
+      "Palm_graphite_body",
+      "MIDDLE_S1_ivory_phalanx"
+    ],
+    [
+      "Delivery_WRIST_PIVOT_Ivory",
+      "MIDDLE_S1_ivory_phalanx"
+    ],
+    [
+      "MIDDLE_S1_ivory_phalanx",
+      "RING_S0_ivory_phalanx"
+    ],
+    [
+      "MIDDLE_S1_ivory_phalanx",
+      "RING_S1_ivory_phalanx"
+    ],
+    [
+      "MIDDLE_S1_ivory_phalanx",
+      "RING_S2_ivory_phalanx"
+    ],
+    [
+      "MIDDLE_S1_ivory_phalanx",
+      "LITTLE_S0_ivory_phalanx"
+    ],
+    [
+      "MIDDLE_S1_ivory_phalanx",
+      "LITTLE_S1_ivory_phalanx"
+    ],
+    [
+      "MIDDLE_S1_ivory_phalanx",
+      "LITTLE_S2_ivory_phalanx"
+    ],
+    [
+      "MIDDLE_S1_ivory_phalanx",
+      "THUMB_S0_ivory_phalanx"
+    ],
+    [
+      "MIDDLE_S1_ivory_phalanx",
+      "THUMB_S1_ivory_phalanx"
+    ],
+    [
+      "MIDDLE_S1_ivory_phalanx",
+      "THUMB_S2_ivory_phalanx"
+    ],
+    [
+      "Palm_graphite_body",
+      "MIDDLE_S2_ivory_phalanx"
+    ],
+    [
+      "Delivery_WRIST_PIVOT_Ivory",
+      "MIDDLE_S2_ivory_phalanx"
+    ],
+    [
+      "MIDDLE_S2_ivory_phalanx",
+      "RING_S0_ivory_phalanx"
+    ],
+    [
+      "MIDDLE_S2_ivory_phalanx",
+      "RING_S1_ivory_phalanx"
+    ],
+    [
+      "MIDDLE_S2_ivory_phalanx",
+      "RING_S2_ivory_phalanx"
+    ],
+    [
+      "MIDDLE_S2_ivory_phalanx",
+      "LITTLE_S0_ivory_phalanx"
+    ],
+    [
+      "MIDDLE_S2_ivory_phalanx",
+      "LITTLE_S1_ivory_phalanx"
+    ],
+    [
+      "MIDDLE_S2_ivory_phalanx",
+      "LITTLE_S2_ivory_phalanx"
+    ],
+    [
+      "MIDDLE_S2_ivory_phalanx",
+      "THUMB_S0_ivory_phalanx"
+    ],
+    [
+      "MIDDLE_S2_ivory_phalanx",
+      "THUMB_S1_ivory_phalanx"
+    ],
+    [
+      "MIDDLE_S2_ivory_phalanx",
+      "THUMB_S2_ivory_phalanx"
+    ],
+    [
+      "Palm_graphite_body",
+      "RING_S0_ivory_phalanx"
+    ],
+    [
+      "RING_S0_ivory_phalanx",
+      "LITTLE_S0_ivory_phalanx"
+    ],
+    [
+      "RING_S0_ivory_phalanx",
+      "LITTLE_S1_ivory_phalanx"
+    ],
+    [
+      "RING_S0_ivory_phalanx",
+      "LITTLE_S2_ivory_phalanx"
+    ],
+    [
+      "RING_S0_ivory_phalanx",
+      "THUMB_S0_ivory_phalanx"
+    ],
+    [
+      "RING_S0_ivory_phalanx",
+      "THUMB_S1_ivory_phalanx"
+    ],
+    [
+      "RING_S0_ivory_phalanx",
+      "THUMB_S2_ivory_phalanx"
+    ],
+    [
+      "Palm_graphite_body",
+      "RING_S1_ivory_phalanx"
+    ],
+    [
+      "Delivery_WRIST_PIVOT_Ivory",
+      "RING_S1_ivory_phalanx"
+    ],
+    [
+      "RING_S1_ivory_phalanx",
+      "LITTLE_S0_ivory_phalanx"
+    ],
+    [
+      "RING_S1_ivory_phalanx",
+      "LITTLE_S1_ivory_phalanx"
+    ],
+    [
+      "RING_S1_ivory_phalanx",
+      "LITTLE_S2_ivory_phalanx"
+    ],
+    [
+      "RING_S1_ivory_phalanx",
+      "THUMB_S0_ivory_phalanx"
+    ],
+    [
+      "RING_S1_ivory_phalanx",
+      "THUMB_S1_ivory_phalanx"
+    ],
+    [
+      "RING_S1_ivory_phalanx",
+      "THUMB_S2_ivory_phalanx"
+    ],
+    [
+      "Palm_graphite_body",
+      "RING_S2_ivory_phalanx"
+    ],
+    [
+      "Delivery_WRIST_PIVOT_Ivory",
+      "RING_S2_ivory_phalanx"
+    ],
+    [
+      "RING_S2_ivory_phalanx",
+      "LITTLE_S0_ivory_phalanx"
+    ],
+    [
+      "RING_S2_ivory_phalanx",
+      "LITTLE_S1_ivory_phalanx"
+    ],
+    [
+      "RING_S2_ivory_phalanx",
+      "LITTLE_S2_ivory_phalanx"
+    ],
+    [
+      "RING_S2_ivory_phalanx",
+      "THUMB_S0_ivory_phalanx"
+    ],
+    [
+      "RING_S2_ivory_phalanx",
+      "THUMB_S1_ivory_phalanx"
+    ],
+    [
+      "RING_S2_ivory_phalanx",
+      "THUMB_S2_ivory_phalanx"
+    ],
+    [
+      "Palm_graphite_body",
+      "LITTLE_S0_ivory_phalanx"
+    ],
+    [
+      "LITTLE_S0_ivory_phalanx",
+      "THUMB_S0_ivory_phalanx"
+    ],
+    [
+      "LITTLE_S0_ivory_phalanx",
+      "THUMB_S1_ivory_phalanx"
+    ],
+    [
+      "LITTLE_S0_ivory_phalanx",
+      "THUMB_S2_ivory_phalanx"
+    ],
+    [
+      "Palm_graphite_body",
+      "LITTLE_S1_ivory_phalanx"
+    ],
+    [
+      "Delivery_WRIST_PIVOT_Ivory",
+      "LITTLE_S1_ivory_phalanx"
+    ],
+    [
+      "LITTLE_S1_ivory_phalanx",
+      "THUMB_S0_ivory_phalanx"
+    ],
+    [
+      "LITTLE_S1_ivory_phalanx",
+      "THUMB_S1_ivory_phalanx"
+    ],
+    [
+      "LITTLE_S1_ivory_phalanx",
+      "THUMB_S2_ivory_phalanx"
+    ],
+    [
+      "Palm_graphite_body",
+      "LITTLE_S2_ivory_phalanx"
+    ],
+    [
+      "Delivery_WRIST_PIVOT_Ivory",
+      "LITTLE_S2_ivory_phalanx"
+    ],
+    [
+      "LITTLE_S2_ivory_phalanx",
+      "THUMB_S0_ivory_phalanx"
+    ],
+    [
+      "LITTLE_S2_ivory_phalanx",
+      "THUMB_S1_ivory_phalanx"
+    ],
+    [
+      "LITTLE_S2_ivory_phalanx",
+      "THUMB_S2_ivory_phalanx"
+    ],
+    [
+      "Palm_graphite_body",
+      "THUMB_S0_ivory_phalanx"
+    ],
+    [
+      "Palm_graphite_body",
+      "THUMB_S1_ivory_phalanx"
+    ],
+    [
+      "Delivery_WRIST_PIVOT_Ivory",
+      "THUMB_S1_ivory_phalanx"
+    ],
+    [
+      "Palm_graphite_body",
+      "THUMB_S2_ivory_phalanx"
+    ],
+    [
+      "Delivery_WRIST_PIVOT_Ivory",
+      "THUMB_S2_ivory_phalanx"
+    ]
+  ],
+  "pairCount": 133,
+  "evaluation": "Evaluated triangle-surface intersection at every authored integer frame; no claim between frames or for all object pairs.",
+  "criteria": "External moving armor must clear other external armor. Core/armor contact at original joint support requires geometric classification against actual pivot/bearing location before judging repair. Coaxial axle/bearing overlap and seating are intentional connections, not blanket clearance exceptions.",
+  "observedNeedsClassification": [
+    {
+      "frame": 37,
+      "objects": [
+        "Palm_graphite_body",
+        "THUMB_S0_ivory_phalanx"
+      ],
+      "trianglePairs": 7
+    },
+    {
+      "frame": 38,
+      "objects": [
+        "Palm_graphite_body",
+        "THUMB_S0_ivory_phalanx"
+      ],
+      "trianglePairs": 11
+    },
+    {
+      "frame": 39,
+      "objects": [
+        "Palm_graphite_body",
+        "THUMB_S0_ivory_phalanx"
+      ],
+      "trianglePairs": 11
+    },
+    {
+      "frame": 40,
+      "objects": [
+        "Palm_graphite_body",
+        "THUMB_S0_ivory_phalanx"
+      ],
+      "trianglePairs": 11
+    },
+    {
+      "frame": 41,
+      "objects": [
+        "Palm_graphite_body",
+        "THUMB_S0_ivory_phalanx"
+      ],
+      "trianglePairs": 11
+    },
+    {
+      "frame": 42,
+      "objects": [
+        "Palm_graphite_body",
+        "THUMB_S0_ivory_phalanx"
+      ],
+      "trianglePairs": 11
+    },
+    {
+      "frame": 43,
+      "objects": [
+        "Palm_graphite_body",
+        "THUMB_S0_ivory_phalanx"
+      ],
+      "trianglePairs": 13
+    },
+    {
+      "frame": 44,
+      "objects": [
+        "Palm_graphite_body",
+        "THUMB_S0_ivory_phalanx"
+      ],
+      "trianglePairs": 13
+    },
+    {
+      "frame": 45,
+      "objects": [
+        "Palm_graphite_body",
+        "THUMB_S0_ivory_phalanx"
+      ],
+      "trianglePairs": 13
+    },
+    {
+      "frame": 46,
+      "objects": [
+        "Palm_graphite_body",
+        "THUMB_S0_ivory_phalanx"
+      ],
+      "trianglePairs": 13
+    },
+    {
+      "frame": 47,
+      "objects": [
+        "Palm_graphite_body",
+        "THUMB_S0_ivory_phalanx"
+      ],
+      "trianglePairs": 13
+    },
+    {
+      "frame": 48,
+      "objects": [
+        "Palm_graphite_body",
+        "THUMB_S0_ivory_phalanx"
+      ],
+      "trianglePairs": 17
+    },
+    {
+      "frame": 49,
+      "objects": [
+        "Palm_graphite_body",
+        "THUMB_S0_ivory_phalanx"
+      ],
+      "trianglePairs": 17
+    },
+    {
+      "frame": 50,
+      "objects": [
+        "Palm_graphite_body",
+        "THUMB_S0_ivory_phalanx"
+      ],
+      "trianglePairs": 17
+    },
+    {
+      "frame": 51,
+      "objects": [
+        "Palm_graphite_body",
+        "THUMB_S0_ivory_phalanx"
+      ],
+      "trianglePairs": 17
+    },
+    {
+      "frame": 52,
+      "objects": [
+        "Palm_graphite_body",
+        "THUMB_S0_ivory_phalanx"
+      ],
+      "trianglePairs": 19
+    },
+    {
+      "frame": 53,
+      "objects": [
+        "Palm_graphite_body",
+        "THUMB_S0_ivory_phalanx"
+      ],
+      "trianglePairs": 19
+    },
+    {
+      "frame": 54,
+      "objects": [
+        "Palm_graphite_body",
+        "THUMB_S0_ivory_phalanx"
+      ],
+      "trianglePairs": 19
+    },
+    {
+      "frame": 55,
+      "objects": [
+        "Palm_graphite_body",
+        "THUMB_S0_ivory_phalanx"
+      ],
+      "trianglePairs": 19
+    },
+    {
+      "frame": 56,
+      "objects": [
+        "Palm_graphite_body",
+        "THUMB_S0_ivory_phalanx"
+      ],
+      "trianglePairs": 19
+    },
+    {
+      "frame": 57,
+      "objects": [
+        "Palm_graphite_body",
+        "THUMB_S0_ivory_phalanx"
+      ],
+      "trianglePairs": 21
+    },
+    {
+      "frame": 58,
+      "objects": [
+        "Palm_graphite_body",
+        "THUMB_S0_ivory_phalanx"
+      ],
+      "trianglePairs": 21
+    },
+    {
+      "frame": 59,
+      "objects": [
+        "Palm_graphite_body",
+        "THUMB_S0_ivory_phalanx"
+      ],
+      "trianglePairs": 21
+    },
+    {
+      "frame": 60,
+      "objects": [
+        "Palm_graphite_body",
+        "THUMB_S0_ivory_phalanx"
+      ],
+      "trianglePairs": 21
+    },
+    {
+      "frame": 61,
+      "objects": [
+        "Palm_graphite_body",
+        "THUMB_S0_ivory_phalanx"
+      ],
+      "trianglePairs": 21
+    },
+    {
+      "frame": 62,
+      "objects": [
+        "Palm_graphite_body",
+        "THUMB_S0_ivory_phalanx"
+      ],
+      "trianglePairs": 21
+    },
+    {
+      "frame": 63,
+      "objects": [
+        "Palm_graphite_body",
+        "THUMB_S0_ivory_phalanx"
+      ],
+      "trianglePairs": 21
+    },
+    {
+      "frame": 64,
+      "objects": [
+        "Palm_graphite_body",
+        "THUMB_S0_ivory_phalanx"
+      ],
+      "trianglePairs": 21
+    },
+    {
+      "frame": 65,
+      "objects": [
+        "Palm_graphite_body",
+        "THUMB_S0_ivory_phalanx"
+      ],
+      "trianglePairs": 21
+    },
+    {
+      "frame": 66,
+      "objects": [
+        "Palm_graphite_body",
+        "THUMB_S0_ivory_phalanx"
+      ],
+      "trianglePairs": 19
+    },
+    {
+      "frame": 67,
+      "objects": [
+        "Palm_graphite_body",
+        "THUMB_S0_ivory_phalanx"
+      ],
+      "trianglePairs": 19
+    },
+    {
+      "frame": 68,
+      "objects": [
+        "Palm_graphite_body",
+        "THUMB_S0_ivory_phalanx"
+      ],
+      "trianglePairs": 19
+    },
+    {
+      "frame": 69,
+      "objects": [
+        "Palm_graphite_body",
+        "THUMB_S0_ivory_phalanx"
+      ],
+      "trianglePairs": 19
+    },
+    {
+      "frame": 70,
+      "objects": [
+        "Palm_graphite_body",
+        "THUMB_S0_ivory_phalanx"
+      ],
+      "trianglePairs": 19
+    },
+    {
+      "frame": 71,
+      "objects": [
+        "Palm_graphite_body",
+        "THUMB_S0_ivory_phalanx"
+      ],
+      "trianglePairs": 17
+    },
+    {
+      "frame": 72,
+      "objects": [
+        "Palm_graphite_body",
+        "THUMB_S0_ivory_phalanx"
+      ],
+      "trianglePairs": 17
+    },
+    {
+      "frame": 73,
+      "objects": [
+        "Palm_graphite_body",
+        "THUMB_S0_ivory_phalanx"
+      ],
+      "trianglePairs": 17
+    },
+    {
+      "frame": 74,
+      "objects": [
+        "Palm_graphite_body",
+        "THUMB_S0_ivory_phalanx"
+      ],
+      "trianglePairs": 17
+    },
+    {
+      "frame": 75,
+      "objects": [
+        "Palm_graphite_body",
+        "THUMB_S0_ivory_phalanx"
+      ],
+      "trianglePairs": 13
+    },
+    {
+      "frame": 76,
+      "objects": [
+        "Palm_graphite_body",
+        "THUMB_S0_ivory_phalanx"
+      ],
+      "trianglePairs": 13
+    },
+    {
+      "frame": 77,
+      "objects": [
+        "Palm_graphite_body",
+        "THUMB_S0_ivory_phalanx"
+      ],
+      "trianglePairs": 13
+    },
+    {
+      "frame": 78,
+      "objects": [
+        "Palm_graphite_body",
+        "THUMB_S0_ivory_phalanx"
+      ],
+      "trianglePairs": 13
+    },
+    {
+      "frame": 79,
+      "objects": [
+        "Palm_graphite_body",
+        "THUMB_S0_ivory_phalanx"
+      ],
+      "trianglePairs": 13
+    },
+    {
+      "frame": 80,
+      "objects": [
+        "Palm_graphite_body",
+        "THUMB_S0_ivory_phalanx"
+      ],
+      "trianglePairs": 11
+    },
+    {
+      "frame": 81,
+      "objects": [
+        "Palm_graphite_body",
+        "THUMB_S0_ivory_phalanx"
+      ],
+      "trianglePairs": 11
+    },
+    {
+      "frame": 82,
+      "objects": [
+        "Palm_graphite_body",
+        "THUMB_S0_ivory_phalanx"
+      ],
+      "trianglePairs": 11
+    },
+    {
+      "frame": 83,
+      "objects": [
+        "Palm_graphite_body",
+        "THUMB_S0_ivory_phalanx"
+      ],
+      "trianglePairs": 11
+    },
+    {
+      "frame": 84,
+      "objects": [
+        "Palm_graphite_body",
+        "THUMB_S0_ivory_phalanx"
+      ],
+      "trianglePairs": 11
+    },
+    {
+      "frame": 85,
+      "objects": [
+        "Palm_graphite_body",
+        "THUMB_S0_ivory_phalanx"
+      ],
+      "trianglePairs": 7
+    }
+  ],
+  "exclusions": "Bearings and fasteners are separately reviewed as intentional support; no blanket all-object collision or physical load/dynamics claim."
+}

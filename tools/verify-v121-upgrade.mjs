@@ -6,7 +6,7 @@ import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
 import {fileURLToPath} from 'node:url';
-import {REFAS_VERSION} from '../skills/refas/scripts/lib/canonical.mjs';
+import {REFAS_VERSION} from '../legacy/v1/scripts/lib/canonical.mjs';
 
 const ROOT=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const OLD=process.env.REFAS_V121_ROOT;
@@ -35,7 +35,7 @@ async function main(){
   const tmp=await fs.mkdtemp(path.join(os.tmpdir(),`refas-121-to-${REFAS_VERSION.replaceAll('.','')}-`));
   try{
     const original=path.join(OLD,'skills/refas/scripts/refas.mjs');
-    const next=path.join(ROOT,'skills/refas/scripts/refas.mjs');
+    const next=path.join(ROOT,'legacy/v1/scripts/refas.mjs');
     assert.equal(run(process.execPath,[original,'--version'],tmp),BASELINE_VERSION);
     assert.equal(run(process.execPath,[next,'--version'],tmp),REFAS_VERSION);
     const project=path.join(tmp,'saved-v121');

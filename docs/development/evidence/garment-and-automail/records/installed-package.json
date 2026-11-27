@@ -1,0 +1,838 @@
+{
+  "scope": "Informed final full replay from actual extracted npm package outside repository; original author trial and first replay retained separately",
+  "package": {
+    "filename": "refas-1.4.2.tgz",
+    "files": 399,
+    "sha256": "502b55b6dff82c69807e725cd6463356593092e8c04caa1f1e090bf54782103a"
+  },
+  "commands": [
+    {
+      "label": "doctor",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/tmp/refas-dual-asset-20261122/installed-package/package/skills/refas/scripts/produce.py",
+        "doctor",
+        "--blender",
+        "/tmp/refas-dual-asset-20261122/installed-package/configured-blender"
+      ],
+      "started_utc": "2026-11-21T21:46:39.627603+00:00",
+      "ended_utc": "2026-11-21T21:46:40.169806+00:00",
+      "returncode": 0,
+      "stdout": "/tmp/refas-dual-asset-20261122/installed-package/replay-final/logs/doctor.stdout.txt",
+      "stderr": "/tmp/refas-dual-asset-20261122/installed-package/replay-final/logs/doctor.stderr.txt"
+    },
+    {
+      "label": "init",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/tmp/refas-dual-asset-20261122/installed-package/package/skills/refas/scripts/produce.py",
+        "init",
+        "--root",
+        "/tmp/refas-dual-asset-20261122/installed-package/replay-final/project",
+        "--name",
+        "aurix-mkiv-arm",
+        "--reference",
+        "/tmp/refas-dual-asset-20261122/installed-package/automail-example-final/source/reference.png"
+      ],
+      "started_utc": "2026-11-21T21:46:40.170029+00:00",
+      "ended_utc": "2026-11-21T21:46:40.241114+00:00",
+      "returncode": 0,
+      "stdout": "/tmp/refas-dual-asset-20261122/installed-package/replay-final/logs/init.stdout.txt",
+      "stderr": "/tmp/refas-dual-asset-20261122/installed-package/replay-final/logs/init.stderr.txt"
+    },
+    {
+      "label": "create-complete-candidate",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/tmp/refas-dual-asset-20261122/installed-package/package/skills/refas/scripts/produce.py",
+        "run",
+        "--root",
+        "/tmp/refas-dual-asset-20261122/installed-package/replay-final/project",
+        "--blender",
+        "/tmp/refas-dual-asset-20261122/installed-package/configured-blender",
+        "--script",
+        "/tmp/refas-dual-asset-20261122/installed-package/automail-example-final/create.py",
+        "--intent",
+        "create-complete-candidate",
+        "--expected-revision",
+        "none",
+        "--review-spec",
+        "/tmp/refas-dual-asset-20261122/installed-package/automail-example-final/review.json",
+        "--size",
+        "512",
+        "--samples",
+        "16",
+        "--timeout",
+        "600"
+      ],
+      "started_utc": "2026-11-21T21:46:40.241254+00:00",
+      "ended_utc": "2026-11-21T21:46:55.035834+00:00",
+      "returncode": 0,
+      "stdout": "/tmp/refas-dual-asset-20261122/installed-package/replay-final/logs/create-complete-candidate.stdout.txt",
+      "stderr": "/tmp/refas-dual-asset-20261122/installed-package/replay-final/logs/create-complete-candidate.stderr.txt"
+    },
+    {
+      "label": "correct-shell-openings",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/tmp/refas-dual-asset-20261122/installed-package/package/skills/refas/scripts/produce.py",
+        "run",
+        "--root",
+        "/tmp/refas-dual-asset-20261122/installed-package/replay-final/project",
+        "--blender",
+        "/tmp/refas-dual-asset-20261122/installed-package/configured-blender",
+        "--script",
+        "/tmp/refas-dual-asset-20261122/installed-package/automail-example-final/correct_shells.py",
+        "--intent",
+        "correct-shell-openings",
+        "--expected-revision",
+        "376a991813ba4e4d97469959946e5fdf",
+        "--review-spec",
+        "/tmp/refas-dual-asset-20261122/installed-package/automail-example-final/review.json",
+        "--size",
+        "512",
+        "--samples",
+        "16",
+        "--timeout",
+        "600"
+      ],
+      "started_utc": "2026-11-21T21:46:55.079445+00:00",
+      "ended_utc": "2026-11-21T21:47:07.927444+00:00",
+      "returncode": 0,
+      "stdout": "/tmp/refas-dual-asset-20261122/installed-package/replay-final/logs/correct-shell-openings.stdout.txt",
+      "stderr": "/tmp/refas-dual-asset-20261122/installed-package/replay-final/logs/correct-shell-openings.stderr.txt"
+    },
+    {
+      "label": "correct-shoulder-elbow-proportions",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/tmp/refas-dual-asset-20261122/installed-package/package/skills/refas/scripts/produce.py",
+        "run",
+        "--root",
+        "/tmp/refas-dual-asset-20261122/installed-package/replay-final/project",
+        "--blender",
+        "/tmp/refas-dual-asset-20261122/installed-package/configured-blender",
+        "--script",
+        "/tmp/refas-dual-asset-20261122/installed-package/automail-example-final/correct_proportions.py",
+        "--intent",
+        "correct-shoulder-elbow-proportions",
+        "--expected-revision",
+        "5245baacb8b442008c438ceb9c54d8d6",
+        "--review-spec",
+        "/tmp/refas-dual-asset-20261122/installed-package/automail-example-final/review.json",
+        "--size",
+        "512",
+        "--samples",
+        "16",
+        "--timeout",
+        "600"
+      ],
+      "started_utc": "2026-11-21T21:47:07.927708+00:00",
+      "ended_utc": "2026-11-21T21:47:20.108862+00:00",
+      "returncode": 0,
+      "stdout": "/tmp/refas-dual-asset-20261122/installed-package/replay-final/logs/correct-shoulder-elbow-proportions.stdout.txt",
+      "stderr": "/tmp/refas-dual-asset-20261122/installed-package/replay-final/logs/correct-shoulder-elbow-proportions.stderr.txt"
+    },
+    {
+      "label": "service-cover-outward-3mm",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/tmp/refas-dual-asset-20261122/installed-package/package/skills/refas/scripts/produce.py",
+        "run",
+        "--root",
+        "/tmp/refas-dual-asset-20261122/installed-package/replay-final/project",
+        "--blender",
+        "/tmp/refas-dual-asset-20261122/installed-package/configured-blender",
+        "--script",
+        "/tmp/refas-dual-asset-20261122/installed-package/automail-example-final/edit_panel.py",
+        "--intent",
+        "service-cover-outward-3mm",
+        "--expected-revision",
+        "d756ac7fb1d9448e83b1363c8fe73c70",
+        "--review-spec",
+        "/tmp/refas-dual-asset-20261122/installed-package/automail-example-final/review.json",
+        "--size",
+        "512",
+        "--samples",
+        "16",
+        "--timeout",
+        "600"
+      ],
+      "started_utc": "2026-11-21T21:47:20.145793+00:00",
+      "ended_utc": "2026-11-21T21:47:33.104214+00:00",
+      "returncode": 0,
+      "stdout": "/tmp/refas-dual-asset-20261122/installed-package/replay-final/logs/service-cover-outward-3mm.stdout.txt",
+      "stderr": "/tmp/refas-dual-asset-20261122/installed-package/replay-final/logs/service-cover-outward-3mm.stderr.txt"
+    },
+    {
+      "label": "restore-after-panel",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/tmp/refas-dual-asset-20261122/installed-package/package/skills/refas/scripts/produce.py",
+        "restore",
+        "--root",
+        "/tmp/refas-dual-asset-20261122/installed-package/replay-final/project",
+        "--revision",
+        "d756ac7fb1d9448e83b1363c8fe73c70"
+      ],
+      "started_utc": "2026-11-21T21:47:33.114468+00:00",
+      "ended_utc": "2026-11-21T21:47:33.368335+00:00",
+      "returncode": 0,
+      "stdout": "/tmp/refas-dual-asset-20261122/installed-package/replay-final/logs/restore-after-panel.stdout.txt",
+      "stderr": "/tmp/refas-dual-asset-20261122/installed-package/replay-final/logs/restore-after-panel.stderr.txt"
+    },
+    {
+      "label": "sample-elbow-0",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/tmp/refas-dual-asset-20261122/installed-package/package/skills/refas/scripts/produce.py",
+        "run",
+        "--root",
+        "/tmp/refas-dual-asset-20261122/installed-package/replay-final/project",
+        "--blender",
+        "/tmp/refas-dual-asset-20261122/installed-package/configured-blender",
+        "--script",
+        "/tmp/refas-dual-asset-20261122/installed-package/replay-final/scripts/elbow-0.py",
+        "--intent",
+        "sample-elbow-0",
+        "--expected-revision",
+        "47fe43a9e0e74c1da3fc576e672c6264",
+        "--review-spec",
+        "/tmp/refas-dual-asset-20261122/installed-package/replay-final/pose-review.json",
+        "--size",
+        "512",
+        "--samples",
+        "16",
+        "--timeout",
+        "600"
+      ],
+      "started_utc": "2026-11-21T21:47:33.396273+00:00",
+      "ended_utc": "2026-11-21T21:47:40.876129+00:00",
+      "returncode": 0,
+      "stdout": "/tmp/refas-dual-asset-20261122/installed-package/replay-final/logs/sample-elbow-0.stdout.txt",
+      "stderr": "/tmp/refas-dual-asset-20261122/installed-package/replay-final/logs/sample-elbow-0.stderr.txt"
+    },
+    {
+      "label": "sample-elbow-45",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/tmp/refas-dual-asset-20261122/installed-package/package/skills/refas/scripts/produce.py",
+        "run",
+        "--root",
+        "/tmp/refas-dual-asset-20261122/installed-package/replay-final/project",
+        "--blender",
+        "/tmp/refas-dual-asset-20261122/installed-package/configured-blender",
+        "--script",
+        "/tmp/refas-dual-asset-20261122/installed-package/replay-final/scripts/elbow-45.py",
+        "--intent",
+        "sample-elbow-45",
+        "--expected-revision",
+        "8f8d6b9b5f37413fa13ef2613632e6e9",
+        "--review-spec",
+        "/tmp/refas-dual-asset-20261122/installed-package/replay-final/pose-review.json",
+        "--size",
+        "512",
+        "--samples",
+        "16",
+        "--timeout",
+        "600"
+      ],
+      "started_utc": "2026-11-21T21:47:40.880360+00:00",
+      "ended_utc": "2026-11-21T21:47:48.562959+00:00",
+      "returncode": 0,
+      "stdout": "/tmp/refas-dual-asset-20261122/installed-package/replay-final/logs/sample-elbow-45.stdout.txt",
+      "stderr": "/tmp/refas-dual-asset-20261122/installed-package/replay-final/logs/sample-elbow-45.stderr.txt"
+    },
+    {
+      "label": "sample-elbow-90",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/tmp/refas-dual-asset-20261122/installed-package/package/skills/refas/scripts/produce.py",
+        "run",
+        "--root",
+        "/tmp/refas-dual-asset-20261122/installed-package/replay-final/project",
+        "--blender",
+        "/tmp/refas-dual-asset-20261122/installed-package/configured-blender",
+        "--script",
+        "/tmp/refas-dual-asset-20261122/installed-package/replay-final/scripts/elbow-90.py",
+        "--intent",
+        "sample-elbow-90",
+        "--expected-revision",
+        "dbfb11bed1b94621b2040fa55ae7abd8",
+        "--review-spec",
+        "/tmp/refas-dual-asset-20261122/installed-package/replay-final/pose-review.json",
+        "--size",
+        "512",
+        "--samples",
+        "16",
+        "--timeout",
+        "600"
+      ],
+      "started_utc": "2026-11-21T21:47:48.567499+00:00",
+      "ended_utc": "2026-11-21T21:47:56.362659+00:00",
+      "returncode": 0,
+      "stdout": "/tmp/refas-dual-asset-20261122/installed-package/replay-final/logs/sample-elbow-90.stdout.txt",
+      "stderr": "/tmp/refas-dual-asset-20261122/installed-package/replay-final/logs/sample-elbow-90.stderr.txt"
+    },
+    {
+      "label": "sample-wrist-20-index-35",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/tmp/refas-dual-asset-20261122/installed-package/package/skills/refas/scripts/produce.py",
+        "run",
+        "--root",
+        "/tmp/refas-dual-asset-20261122/installed-package/replay-final/project",
+        "--blender",
+        "/tmp/refas-dual-asset-20261122/installed-package/configured-blender",
+        "--script",
+        "/tmp/refas-dual-asset-20261122/installed-package/replay-final/scripts/wrist-20-index-35.py",
+        "--intent",
+        "sample-wrist-20-index-35",
+        "--expected-revision",
+        "3d17eceda4ed45a5906a8adc0e2eb963",
+        "--review-spec",
+        "/tmp/refas-dual-asset-20261122/installed-package/replay-final/pose-review.json",
+        "--size",
+        "512",
+        "--samples",
+        "16",
+        "--timeout",
+        "600"
+      ],
+      "started_utc": "2026-11-21T21:47:56.368539+00:00",
+      "ended_utc": "2026-11-21T21:48:03.887175+00:00",
+      "returncode": 0,
+      "stdout": "/tmp/refas-dual-asset-20261122/installed-package/replay-final/logs/sample-wrist-20-index-35.stdout.txt",
+      "stderr": "/tmp/refas-dual-asset-20261122/installed-package/replay-final/logs/sample-wrist-20-index-35.stderr.txt"
+    },
+    {
+      "label": "restore-neutral-final",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/tmp/refas-dual-asset-20261122/installed-package/package/skills/refas/scripts/produce.py",
+        "restore",
+        "--root",
+        "/tmp/refas-dual-asset-20261122/installed-package/replay-final/project",
+        "--revision",
+        "d756ac7fb1d9448e83b1363c8fe73c70"
+      ],
+      "started_utc": "2026-11-21T21:48:03.891365+00:00",
+      "ended_utc": "2026-11-21T21:48:04.255886+00:00",
+      "returncode": 0,
+      "stdout": "/tmp/refas-dual-asset-20261122/installed-package/replay-final/logs/restore-neutral-final.stdout.txt",
+      "stderr": "/tmp/refas-dual-asset-20261122/installed-package/replay-final/logs/restore-neutral-final.stderr.txt"
+    },
+    {
+      "label": "verify-final",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/tmp/refas-dual-asset-20261122/installed-package/package/skills/refas/scripts/produce.py",
+        "verify",
+        "--root",
+        "/tmp/refas-dual-asset-20261122/installed-package/replay-final/project"
+      ],
+      "started_utc": "2026-11-21T21:48:04.307847+00:00",
+      "ended_utc": "2026-11-21T21:48:04.391741+00:00",
+      "returncode": 0,
+      "stdout": "/tmp/refas-dual-asset-20261122/installed-package/replay-final/logs/verify-final.stdout.txt",
+      "stderr": "/tmp/refas-dual-asset-20261122/installed-package/replay-final/logs/verify-final.stderr.txt"
+    },
+    {
+      "label": "independent-glb-check",
+      "argv": [
+        "/tmp/refas-dual-asset-20261122/installed-package/configured-blender",
+        "--background",
+        "--factory-startup",
+        "--threads",
+        "2",
+        "--python-exit-code",
+        "1",
+        "--python",
+        "/tmp/refas-dual-asset-20261122/installed-package/replay-final/scripts/verify_export.py",
+        "--",
+        "/tmp/refas-dual-asset-20261122/installed-package/replay-final/candidate.glb",
+        "/tmp/refas-dual-asset-20261122/installed-package/replay-final/candidate.scene.json",
+        "/tmp/refas-dual-asset-20261122/installed-package/replay-final/export-check.json"
+      ],
+      "started_utc": "2026-11-21T21:48:04.392056+00:00",
+      "ended_utc": "2026-11-21T21:48:06.378674+00:00",
+      "returncode": 0,
+      "stdout": "/tmp/refas-dual-asset-20261122/installed-package/replay-final/logs/independent-glb-check.stdout.txt",
+      "stderr": "/tmp/refas-dual-asset-20261122/installed-package/replay-final/logs/independent-glb-check.stderr.txt"
+    }
+  ],
+  "commandCount": 14,
+  "productionCliCommands": 13,
+  "summary": {
+    "selected_neutral_revision": "d756ac7fb1d9448e83b1363c8fe73c70",
+    "final_restored_revision": "2d2898a0818543f897ae4b5090762f00",
+    "panel_revision": "24e8cf0531444ab2bbab44ac53704d87",
+    "restore_after_panel_artifact_byte_equality": {
+      "blend": true,
+      "glb": true,
+      "scene": true
+    },
+    "restore_final_artifact_byte_equality": {
+      "blend": true,
+      "glb": true,
+      "scene": true
+    },
+    "pose_samples": [
+      {
+        "label": "elbow-0",
+        "revision": "8f8d6b9b5f37413fa13ef2613632e6e9",
+        "directory": "/tmp/refas-dual-asset-20261122/installed-package/replay-final/poses/elbow-0",
+        "check": {
+          "pose": {
+            "elbow_deg": 0,
+            "wrist_deg": 0,
+            "index_deg": [
+              0,
+              0,
+              0
+            ]
+          },
+          "upper_objects_checked": 96,
+          "unexpected_upper_changes": [],
+          "named_shell_intersections": [],
+          "shell_pairs_tested": 30,
+          "digit_world_origins": {
+            "WRIST_PIVOT": [
+              0.0,
+              0.0,
+              0.18400000035762787
+            ],
+            "INDEX_J0": [
+              -0.029999999329447746,
+              0.0,
+              0.10599999874830246
+            ],
+            "INDEX_J1": [
+              -0.03200000151991844,
+              0.0010000000474974513,
+              0.06800000369548798
+            ],
+            "INDEX_J2": [
+              -0.03400000184774399,
+              0.004000000189989805,
+              0.03999999910593033
+            ]
+          },
+          "parent_relations": {
+            "SHOULDER_PIVOT": "AURIX_ROOT",
+            "ELBOW_PIVOT": "SHOULDER_PIVOT",
+            "WRIST_PIVOT": "ELBOW_PIVOT",
+            "SERVICE_COVER": "ELBOW_PIVOT",
+            "INDEX_J0": "WRIST_PIVOT",
+            "INDEX_J1": "INDEX_J0",
+            "INDEX_J2": "INDEX_J1"
+          },
+          "static_spanning_links": "No authored cable or hydraulic mesh crosses the elbow; all such parts are local to upper or forearm. There is no dynamic tendon or telescoping linkage simulation.",
+          "limits": "Named-shell triangle-surface BVH checks and inspected renders at sampled poses only; no all-object collision test, containment test, continuous collision clearance, load or physical-performance validation."
+        }
+      },
+      {
+        "label": "elbow-45",
+        "revision": "dbfb11bed1b94621b2040fa55ae7abd8",
+        "directory": "/tmp/refas-dual-asset-20261122/installed-package/replay-final/poses/elbow-45",
+        "check": {
+          "pose": {
+            "elbow_deg": 45,
+            "wrist_deg": 0,
+            "index_deg": [
+              0,
+              0,
+              0
+            ]
+          },
+          "upper_objects_checked": 96,
+          "unexpected_upper_changes": [],
+          "named_shell_intersections": [],
+          "shell_pairs_tested": 30,
+          "digit_world_origins": {
+            "WRIST_PIVOT": [
+              0.0,
+              0.1711198389530182,
+              0.2548801600933075
+            ],
+            "INDEX_J0": [
+              -0.029999999329447746,
+              0.22627416253089905,
+              0.19972583651542664
+            ],
+            "INDEX_J1": [
+              -0.03200000151991844,
+              0.2538513243198395,
+              0.1735628843307495
+            ],
+            "INDEX_J2": [
+              -0.03400000184774399,
+              0.2757716178894043,
+              0.1558852195739746
+            ]
+          },
+          "parent_relations": {
+            "SHOULDER_PIVOT": "AURIX_ROOT",
+            "ELBOW_PIVOT": "SHOULDER_PIVOT",
+            "WRIST_PIVOT": "ELBOW_PIVOT",
+            "SERVICE_COVER": "ELBOW_PIVOT",
+            "INDEX_J0": "WRIST_PIVOT",
+            "INDEX_J1": "INDEX_J0",
+            "INDEX_J2": "INDEX_J1"
+          },
+          "static_spanning_links": "No authored cable or hydraulic mesh crosses the elbow; all such parts are local to upper or forearm. There is no dynamic tendon or telescoping linkage simulation.",
+          "limits": "Named-shell triangle-surface BVH checks and inspected renders at sampled poses only; no all-object collision test, containment test, continuous collision clearance, load or physical-performance validation."
+        }
+      },
+      {
+        "label": "elbow-90",
+        "revision": "3d17eceda4ed45a5906a8adc0e2eb963",
+        "directory": "/tmp/refas-dual-asset-20261122/installed-package/replay-final/poses/elbow-90",
+        "check": {
+          "pose": {
+            "elbow_deg": 90,
+            "wrist_deg": 0,
+            "index_deg": [
+              0,
+              0,
+              0
+            ]
+          },
+          "upper_objects_checked": 96,
+          "unexpected_upper_changes": [],
+          "named_shell_intersections": [],
+          "shell_pairs_tested": 30,
+          "digit_world_origins": {
+            "WRIST_PIVOT": [
+              0.0,
+              0.24199999868869781,
+              0.42600002884864807
+            ],
+            "INDEX_J0": [
+              -0.029999999329447746,
+              0.3199999928474426,
+              0.42600002884864807
+            ],
+            "INDEX_J1": [
+              -0.03200000151991844,
+              0.3579999804496765,
+              0.4270000159740448
+            ],
+            "INDEX_J2": [
+              -0.03400000184774399,
+              0.38600000739097595,
+              0.43000003695487976
+            ]
+          },
+          "parent_relations": {
+            "SHOULDER_PIVOT": "AURIX_ROOT",
+            "ELBOW_PIVOT": "SHOULDER_PIVOT",
+            "WRIST_PIVOT": "ELBOW_PIVOT",
+            "SERVICE_COVER": "ELBOW_PIVOT",
+            "INDEX_J0": "WRIST_PIVOT",
+            "INDEX_J1": "INDEX_J0",
+            "INDEX_J2": "INDEX_J1"
+          },
+          "static_spanning_links": "No authored cable or hydraulic mesh crosses the elbow; all such parts are local to upper or forearm. There is no dynamic tendon or telescoping linkage simulation.",
+          "limits": "Named-shell triangle-surface BVH checks and inspected renders at sampled poses only; no all-object collision test, containment test, continuous collision clearance, load or physical-performance validation."
+        }
+      },
+      {
+        "label": "wrist-20-index-35",
+        "revision": "66ff2a5676ea4d36a2fe3aa52c500f9b",
+        "directory": "/tmp/refas-dual-asset-20261122/installed-package/replay-final/poses/wrist-20-index-35",
+        "check": {
+          "pose": {
+            "elbow_deg": 45,
+            "wrist_deg": 20,
+            "index_deg": [
+              35,
+              20,
+              10
+            ]
+          },
+          "upper_objects_checked": 96,
+          "unexpected_upper_changes": [],
+          "named_shell_intersections": [],
+          "shell_pairs_tested": 30,
+          "digit_world_origins": {
+            "WRIST_PIVOT": [
+              0.0,
+              0.1711198389530182,
+              0.2548801600933075
+            ],
+            "INDEX_J0": [
+              -0.029999999329447746,
+              0.2418118417263031,
+              0.22191593050956726
+            ],
+            "INDEX_J1": [
+              -0.03200000151991844,
+              0.27906087040901184,
+              0.22949936985969543
+            ],
+            "INDEX_J2": [
+              -0.03400000184774399,
+              0.3018095791339874,
+              0.24609746038913727
+            ]
+          },
+          "parent_relations": {
+            "SHOULDER_PIVOT": "AURIX_ROOT",
+            "ELBOW_PIVOT": "SHOULDER_PIVOT",
+            "WRIST_PIVOT": "ELBOW_PIVOT",
+            "SERVICE_COVER": "ELBOW_PIVOT",
+            "INDEX_J0": "WRIST_PIVOT",
+            "INDEX_J1": "INDEX_J0",
+            "INDEX_J2": "INDEX_J1"
+          },
+          "static_spanning_links": "No authored cable or hydraulic mesh crosses the elbow; all such parts are local to upper or forearm. There is no dynamic tendon or telescoping linkage simulation.",
+          "limits": "Named-shell triangle-surface BVH checks and inspected renders at sampled poses only; no all-object collision test, containment test, continuous collision clearance, load or physical-performance validation."
+        }
+      }
+    ],
+    "restore_after_panel_full_bundle_equality": true,
+    "restore_final_full_bundle_equality": true,
+    "selected_bundle_file_hashes": {
+      "artifacts/asset.glb": "351de7e9491dcb8bb75bb59178522cb6f374a30c1d3fc4d237e1a6b776b4a79d",
+      "artifacts/proportion-correction.json": "f47a5140b8b28e15a458033bd95f125095aad23d0aa0bca06918c77b30846c07",
+      "artifacts/result.json": "2c93be822a60c38ad0b62928a63ada4c3be3fe6bbf6fad29c32560bb3979c627",
+      "artifacts/scene.blend": "54cc4c1481e34a0148bc1fd1294b8a175935971359c6ebadd4e01789c12e1c11",
+      "artifacts/scene.json": "6062d5ac9e821028708a6bef33f377e977bea57a14f048f2118aec024d16035e",
+      "artifacts/view-back.png": "98f232e387ef4574be650cbfe9ca47a72c34aeff923d271683a73e3cefc735a1",
+      "artifacts/view-front.png": "0c6ac8ed30efcde5b162b6fcbca04ce15718444c5f9edad3a21ff91fa6e4a1ea",
+      "artifacts/view-hero.png": "59aa17c65be78e673ee93bfaea98e86d39b55931272facb76a2570940371fa00",
+      "artifacts/view-service-detail.png": "267a890bf47892338b3fa16a51138fd9db400780a29f72d779f9bf287ed5a8d9",
+      "artifacts/view-side.png": "1d054e9e82b3cb2af7b8adb3b97ea598cd866fbc6bc8c51c44fba250e5e3d253",
+      "inputs/base.blend": "80c208791800b19b6dccd93aa588e7b66ad8900f5b67620551a416dc14ebcd41",
+      "inputs/edit.py": "fba65df4b7f7e1280ba2e8e97c0d0b8e9bb044d8bb8076938c68e88eda795395",
+      "inputs/review.json": "4b66534dffb3b10217090f577d6eca4bba6c551a95d792547cabbe708be1a10b"
+    },
+    "export_passed": true,
+    "integrity": {
+      "ok": true,
+      "scope": "recorded-file-integrity",
+      "head": "2d2898a0818543f897ae4b5090762f00",
+      "artifactCount": 10,
+      "referenceResemblance": "not-evaluated",
+      "gameReadiness": "not-evaluated"
+    },
+    "finished_utc": "2026-11-21T21:48:06.382484+00:00"
+  },
+  "runnerChangesAfterIndependentTrial": [
+    "Independent Blender subprocess now uses --python-exit-code 1 and parsed passed flag is asserted.",
+    "Restoration now compares every recorded artifact and captured input, not just three primary outputs."
+  ],
+  "runnerSha256": "0234969924766b6b82b9b3a6075254b0d1acaca63893282b55295415b6df6d42",
+  "runnerPath": "/tmp/refas-dual-asset-20261122/installed-package/automail-example-final/run.py",
+  "exportCheck": {
+    "mode": "independent Blender factory-startup GLB reimport",
+    "native_object_count": 300,
+    "imported_object_count": 300,
+    "imported_mesh_count": 280,
+    "missing": [],
+    "extra": [],
+    "parent_mismatches": [],
+    "matrix_errors_over_1e_5": {},
+    "required_parent_relationships": {
+      "SHOULDER_PIVOT": "AURIX_ROOT",
+      "ELBOW_PIVOT": "SHOULDER_PIVOT",
+      "WRIST_PIVOT": "ELBOW_PIVOT",
+      "SERVICE_COVER": "ELBOW_PIVOT",
+      "THUMB_J0": "WRIST_PIVOT",
+      "THUMB_J1": "THUMB_J0",
+      "THUMB_J2": "THUMB_J1",
+      "INDEX_J0": "WRIST_PIVOT",
+      "INDEX_J1": "INDEX_J0",
+      "INDEX_J2": "INDEX_J1",
+      "MIDDLE_J0": "WRIST_PIVOT",
+      "MIDDLE_J1": "MIDDLE_J0",
+      "MIDDLE_J2": "MIDDLE_J1",
+      "RING_J0": "WRIST_PIVOT",
+      "RING_J1": "RING_J0",
+      "RING_J2": "RING_J1",
+      "LITTLE_J0": "WRIST_PIVOT",
+      "LITTLE_J1": "LITTLE_J0",
+      "LITTLE_J2": "LITTLE_J1"
+    },
+    "required_parent_relationships_pass": true,
+    "bounds_min_m": [
+      -0.08262000232934952,
+      -0.06202999874949455,
+      0.009898493066430092
+    ],
+    "bounds_max_m": [
+      0.08262000232934952,
+      0.05861147120594978,
+      0.7529931664466858
+    ],
+    "bounds_max_error_m": 3.5533141984345207e-09,
+    "exported_panel_edit": {
+      "selected_count": 26,
+      "unrelated_changed": [],
+      "displacements_m": {
+        "SERVICE_COVER": [
+          0.0,
+          0.00299999862909317,
+          0.0
+        ],
+        "Service_cover_center_inset": [
+          0.0,
+          0.00299999862909317,
+          0.0
+        ],
+        "Service_cover_graphite": [
+          0.0,
+          0.00299999862909317,
+          0.0
+        ],
+        "Service_cover_screw_-1_249": [
+          0.0,
+          0.00299999862909317,
+          0.0
+        ],
+        "Service_cover_screw_-1_249_hex_socket": [
+          0.0,
+          0.00299999862909317,
+          0.0
+        ],
+        "Service_cover_screw_-1_305": [
+          0.0,
+          0.00299999862909317,
+          0.0
+        ],
+        "Service_cover_screw_-1_305_hex_socket": [
+          0.0,
+          0.00299999862909317,
+          0.0
+        ],
+        "Service_cover_screw_-1_351": [
+          0.0,
+          0.00299999862909317,
+          0.0
+        ],
+        "Service_cover_screw_-1_351_hex_socket": [
+          0.0,
+          0.00299999862909317,
+          0.0
+        ],
+        "Service_cover_screw_1_249": [
+          0.0,
+          0.00299999862909317,
+          0.0
+        ],
+        "Service_cover_screw_1_249_hex_socket": [
+          0.0,
+          0.00299999862909317,
+          0.0
+        ],
+        "Service_cover_screw_1_305": [
+          0.0,
+          0.00299999862909317,
+          0.0
+        ],
+        "Service_cover_screw_1_305_hex_socket": [
+          0.0,
+          0.00299999862909317,
+          0.0
+        ],
+        "Service_cover_screw_1_351": [
+          0.0,
+          0.00299999862909317,
+          0.0
+        ],
+        "Service_cover_screw_1_351_hex_socket": [
+          0.0,
+          0.00299999862909317,
+          0.0
+        ],
+        "Service_cover_status_light": [
+          0.0,
+          0.00299999862909317,
+          0.0
+        ],
+        "Service_cover_vent_00": [
+          0.0,
+          0.00299999862909317,
+          0.0
+        ],
+        "Service_cover_vent_01": [
+          0.0,
+          0.00299999862909317,
+          0.0
+        ],
+        "Service_cover_vent_02": [
+          0.0,
+          0.00299999862909317,
+          0.0
+        ],
+        "Service_cover_vent_03": [
+          0.0,
+          0.00299999862909317,
+          0.0
+        ],
+        "Service_cover_vent_04": [
+          0.0,
+          0.00299999862909317,
+          0.0
+        ],
+        "Service_cover_vent_05": [
+          0.0,
+          0.00299999862909317,
+          0.0
+        ],
+        "Service_cover_vent_06": [
+          0.0,
+          0.00299999862909317,
+          0.0
+        ],
+        "Service_cover_vent_07": [
+          0.0,
+          0.00299999862909317,
+          0.0
+        ],
+        "Service_cover_vent_08": [
+          0.0,
+          0.00299999862909317,
+          0.0
+        ],
+        "Service_cover_vent_09": [
+          0.0,
+          0.00299999862909317,
+          0.0
+        ]
+      },
+      "passed": true
+    },
+    "exported_articulation_samples": [
+      {
+        "pivot": "ELBOW_PIVOT",
+        "descendant": "WRIST_PIVOT",
+        "degrees": 45,
+        "orbit_error_m": 3.332000937312528e-08,
+        "passed": true,
+        "moved_m": 0.18521878070864833
+      },
+      {
+        "pivot": "WRIST_PIVOT",
+        "descendant": "INDEX_J0",
+        "degrees": 20,
+        "orbit_error_m": 1.862645149230957e-09,
+        "passed": true,
+        "moved_m": 0.027089107256918543
+      },
+      {
+        "pivot": "INDEX_J0",
+        "descendant": "INDEX_J1",
+        "degrees": 35,
+        "orbit_error_m": 3.332000937312528e-08,
+        "passed": true,
+        "moved_m": 0.022861536259617916
+      }
+    ],
+    "limits": "GLB rigid node hierarchy and numeric orbit checks only. No engine, material visual-equivalence, continuous-collision or physical-linkage claim.",
+    "passed": true
+  },
+  "configuredBlender": "/tmp/refas-dual-asset-20261122/installed-package/configured-blender",
+  "postReviewFixes": "Removed stale historical revision ID; resolved one configured Blender executable through doctor for all production and independent export commands. Geometry unchanged by these fixes."
+}

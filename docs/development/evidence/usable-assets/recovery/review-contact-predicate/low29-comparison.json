@@ -1,0 +1,53 @@
+{
+  "negativeInputSha256": "6afdd36a0c9a1c1dcfb22252aa87d33b7c4c7554f63264ca3a0cf65cc8d3db29",
+  "independentInputSha256": "6afdd36a0c9a1c1dcfb22252aa87d33b7c4c7554f63264ca3a0cf65cc8d3db29",
+  "primaryHelperSha256": "f3ebefdb756cc7d24d314901580d587536244df7b8a84f3cfaaf1fbf5825b738",
+  "currentHelperSha256": "f3ebefdb756cc7d24d314901580d587536244df7b8a84f3cfaaf1fbf5825b738",
+  "negativeObservationSha256": "cec7e211027430bf789c5ec51776ed047428ec99e04d1a755bc9affc2aa0a6d0",
+  "negativeSavedHashMatchesCommand": true,
+  "frames": [
+    1
+  ],
+  "rows": [
+    {
+      "object": "Body | continuous open front and shoulder yoke",
+      "primaryPairs": 5,
+      "independentPairs": 5,
+      "primaryTypes": {
+        "inner/outer": 4,
+        "inner/inner": 1
+      },
+      "independentTypes": {
+        "inner/outer": 4,
+        "inner/inner": 1
+      },
+      "examplesBelongToIndependentPairs": true,
+      "degenerateTriangles": 0,
+      "countsMatch": true
+    },
+    {
+      "object": "Collar | standing back and neck facing",
+      "primaryPairs": 1224,
+      "independentPairs": 1224,
+      "primaryTypes": {
+        "inner/inner": 314,
+        "inner/outer": 554,
+        "inner/rim": 130,
+        "outer/outer": 134,
+        "outer/rim": 92
+      },
+      "independentTypes": {
+        "inner/inner": 314,
+        "inner/outer": 554,
+        "inner/rim": 130,
+        "outer/outer": 134,
+        "outer/rim": 92
+      },
+      "examplesBelongToIndependentPairs": true,
+      "degenerateTriangles": 0,
+      "countsMatch": true
+    }
+  ],
+  "bodyCollarPairsObservedSeparately": 3116,
+  "scope": "Read-only identity/count/type/example comparison with independent full-pair report, not a rerun or final candidate acceptance."
+}

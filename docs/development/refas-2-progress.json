@@ -1,0 +1,1333 @@
+{
+  "schema": "refas.plan-progress/v1",
+  "checklistVersion": 2,
+  "definition": "Binary coverage of demonstrated acceptance criteria from the explicitly expanded 2.0 plan: original first-application criteria plus real use, retopology and optimization; not effort, visual-quality percentage, time remaining or Notion CLOSED status.",
+  "denominator": 37,
+  "denominatorPolicy": [
+    "The 31 IDs and their acceptance meanings are fixed for checklist version 1; each item is either demonstrated or open, with no partial or effort-weighted credit.",
+    "A new checkpoint lists the complete demonstrated ID set and cites evidence for changed decisions. Stronger counterevidence can reopen an item.",
+    "Preserve prior checkpoints and baselineEvidence/baselineNote. Criteria are not split, removed, or reworded to make progress rise.",
+    "A material scope change requires a new checklistVersion, an explicit mapping/reason, and preserved previous counts.",
+    "Optional broader character, UV, physics and engine profiles are outside this first-application denominator unless explicitly added by a recorded scope change.",
+    "Checklist version 2, explicitly authorized by the user on 2026-11-22, preserves all 31 original meanings and adds U1-U6; its fixed denominator is 37. Earlier 31-item checkpoints remain historical and are not recomputed."
+  ],
+  "sources": {
+    "notionPlan": "https://app.notion.com/p/41fc6a3b5bf181c2b2cdfac4605ef7d7",
+    "notionTasks": {
+      "R2-01": "https://app.notion.com/p/41fc6a3b5bf1811d9a2df89722fde724",
+      "R2-02": "https://app.notion.com/p/41fc6a3b5bf181e0bcc1cdc55fc1d036",
+      "R2-03": "https://app.notion.com/p/41fc6a3b5bf1814fb380f3d649a3fc10",
+      "R2-04": "https://app.notion.com/p/41fc6a3b5bf181cd946ff7cd70581fb7",
+      "R2-05": "https://app.notion.com/p/41fc6a3b5bf181999d88cac97f324601",
+      "R2-06": "https://app.notion.com/p/41fc6a3b5bf1813191c0c59b6fff1aa8",
+      "R2-07": "https://app.notion.com/p/420c6a3b5bf181cd8228ce6ff6174c5a"
+    },
+    "repositoryPlan": "docs/development/refas-2-plan.md",
+    "workStatus": "docs/WORK_STATUS.md"
+  },
+  "baselineCommit": "3217b46ee3670f2bc8acc1eff320981a539ce70c",
+  "evidenceConvention": "baselineEvidence paths are repository-relative at baselineCommit; URLs are fetched plan sources. Checkpoint evidenceUpdates maps criterion IDs to {evidence: [repository-relative paths or URLs], note: declared scope and result}; sourceCommit identifies the tested code. Documentation of a requirement is not evidence of execution.",
+  "criteria": [
+    {
+      "id": "B1",
+      "slice": "R2-01",
+      "acceptance": "Fixed 1.x baseline and unchanged source identities are recorded.",
+      "baselineEvidence": [
+        "examples/uniform-jacket/reference.json",
+        "docs/development/evidence/uniform-jacket/evaluation.json",
+        "docs/development/refas-2-plan.md"
+      ]
+    },
+    {
+      "id": "B2",
+      "slice": "R2-01",
+      "acceptance": "Reproducible new-build and existing-local-edit briefs state input, preservation constraints, budget, and deliverables.",
+      "baselineEvidence": [
+        "examples/uniform-jacket/TASK.md",
+        "examples/automail-arm/TASK.md",
+        "docs/development/evidence/garment-and-automail/PROTOCOL.md"
+      ]
+    },
+    {
+      "id": "B3",
+      "slice": "R2-01",
+      "acceptance": "The measurement protocol defines source-feature/editability checks, timing start/end, guidance/tool records, and explicit unavailable resource/cost fields.",
+      "baselineEvidence": [
+        "examples/uniform-jacket/TASK.md",
+        "docs/development/evidence/garment-and-automail/PROTOCOL.md",
+        "https://app.notion.com/p/41fc6a3b5bf1811d9a2df89722fde724",
+        "https://app.notion.com/p/41fc6a3b5bf181c2b2cdfac4605ef7d7"
+      ],
+      "baselineNote": "Definition is credited independently of execution. Missing actual complete time/model/token/cost telemetry is charged only to E2; no numeric cost advantage is claimed."
+    },
+    {
+      "id": "B4",
+      "slice": "R2-01",
+      "acceptance": "Renderer causality is defined as a separate same-GLB/same-camera/known-material comparison.",
+      "baselineEvidence": [
+        "https://app.notion.com/p/41fc6a3b5bf181c2b2cdfac4605ef7d7",
+        "docs/development/refas-2-plan.md"
+      ],
+      "baselineNote": "This credits the defined experimental requirement only. E3 remains open for actual execution."
+    },
+    {
+      "id": "W1",
+      "slice": "R2-02",
+      "acceptance": "The short entry leads to ordinary Blender scripting without the full 1.x document/ledger loop.",
+      "baselineEvidence": [
+        "skills/refas/SKILL.md",
+        "docs/development/evidence/refas-2-mug/report.md"
+      ]
+    },
+    {
+      "id": "W2",
+      "slice": "R2-02",
+      "acceptance": "Real Blender new-native creation and local edits have been executed.",
+      "baselineEvidence": [
+        "docs/development/evidence/refas-2-native/README.md",
+        "docs/development/evidence/uniform-jacket/README.md",
+        "docs/development/evidence/garment-assembly-refinement/README.md"
+      ]
+    },
+    {
+      "id": "W3",
+      "slice": "R2-02",
+      "acceptance": "Script, captured input, output, and current revision are identified through the public workflow.",
+      "baselineEvidence": [
+        "skills/refas/scripts/production/project.py",
+        "docs/development/evidence/refas-2-native/demo-evidence.json"
+      ]
+    },
+    {
+      "id": "W4",
+      "slice": "R2-02",
+      "acceptance": "Only a completed successful candidate can become current; execution is not represented as visual approval.",
+      "baselineEvidence": [
+        "skills/refas/scripts/production/project.py",
+        "docs/development/evidence/refas-2-native/README.md"
+      ]
+    },
+    {
+      "id": "S1",
+      "slice": "R2-03",
+      "acceptance": "Snapshot hashes of actual captured files are checked.",
+      "baselineEvidence": [
+        "skills/refas/scripts/production/project.py",
+        "tests/test_production_project.py",
+        "docs/development/evidence/refas-2-native/demo-evidence.json"
+      ]
+    },
+    {
+      "id": "S2",
+      "slice": "R2-03",
+      "acceptance": "Failure and partial outputs leave the last successful state intact and preserve failure records.",
+      "baselineEvidence": [
+        "docs/development/evidence/refas-2-native/README.md",
+        "tests/test_production_project.py"
+      ]
+    },
+    {
+      "id": "S3",
+      "slice": "R2-03",
+      "acceptance": "Atomic local publication and concurrent changes preserve a coherent revision identity for both writes and returned status/verification.",
+      "baselineEvidence": [
+        "skills/refas/scripts/production/project.py",
+        "tests/test_production_project.py",
+        "docs/development/refas-2-progress.md#baseline-counterevidence"
+      ],
+      "baselineNote": "A deterministic baseline probe commits a new revision after status captures old state. Status returns ok:true with the old head plus nonexistent new-view/base-input paths under the old directory. Write-side protection passes, but this concrete read-side counterexample leaves the whole concurrency criterion open. Local process/IO scope only."
+    },
+    {
+      "id": "S4",
+      "slice": "R2-03",
+      "acceptance": "Saved native state reopens and selected successful revisions can be recovered with verified inventories.",
+      "baselineEvidence": [
+        "docs/development/evidence/refas-2-native/README.md",
+        "docs/development/evidence/garment-assembly-refinement/README.md",
+        "tests/test_production_project.py"
+      ]
+    },
+    {
+      "id": "S5",
+      "slice": "R2-03",
+      "acceptance": "Explicitly adopting changed reference/native/script/render conditions exposes dependent-evidence freshness relative to the adopted context while retaining historical evidence.",
+      "baselineEvidence": [
+        "skills/refas/scripts/production/project.py",
+        "tests/test_production_project.py",
+        "https://app.notion.com/p/41fc6a3b5bf1814fb380f3d649a3fc10",
+        "https://app.notion.com/p/41fc6a3b5bf181c2b2cdfac4605ef7d7"
+      ],
+      "baselineNote": "At baseline an existing project cannot explicitly replace its references and has no dependent-evidence freshness report. Frozen-file integrity and stale write rejection are different checks. Native/script/review/render may use existing run/import entry points; automatic monitoring of arbitrary external originals, mutable native editing, and inherited render defaults are not additional mandatory gates."
+    },
+    {
+      "id": "S6",
+      "slice": "R2-03",
+      "acceptance": "Successful production edits do not inherit earlier visual or target-readiness approval.",
+      "baselineEvidence": [
+        "skills/refas/scripts/production/project.py",
+        "docs/development/evidence/refas-2-native/README.md"
+      ],
+      "baselineNote": "Current production assessment fields remain not-evaluated. This is not full legacy migration acceptance; E5 is open."
+    },
+    {
+      "id": "O1",
+      "slice": "R2-04",
+      "acceptance": "Native reopening, actual rendering, and export/reimport execute for the declared scope.",
+      "baselineEvidence": [
+        "docs/development/evidence/refas-2-native/README.md",
+        "docs/development/evidence/garment-assembly-refinement/README.md",
+        "tests/test_production_blender.py"
+      ]
+    },
+    {
+      "id": "O2",
+      "slice": "R2-04",
+      "acceptance": "Input revision, camera/render conditions, and output hashes are linked.",
+      "baselineEvidence": [
+        "skills/refas/scripts/production/project.py",
+        "skills/refas/references/production-review.md",
+        "docs/development/evidence/uniform-jacket/evaluation.json",
+        "docs/development/evidence/refas-2-native/observations.json"
+      ],
+      "baselineNote": "Fixed diagnostic views remain unregistered to the source."
+    },
+    {
+      "id": "O3",
+      "slice": "R2-04",
+      "acceptance": "Failures, unsupported scope, and unverified claims are distinguished from successful execution.",
+      "baselineEvidence": [
+        "docs/development/evidence/garment-assembly-refinement/runtime/README.md",
+        "tests/test_production_blender.py",
+        "skills/refas/SKILL.md"
+      ],
+      "baselineNote": "Unsupported cases are refused; this does not imply universal scene support."
+    },
+    {
+      "id": "O4",
+      "slice": "R2-04",
+      "acceptance": "Technical integrity, source comparison, and purpose/engine readiness are separate states.",
+      "baselineEvidence": [
+        "skills/refas/scripts/production/project.py",
+        "skills/refas/SKILL.md",
+        "docs/development/evidence/garment-assembly-refinement/review/joined-fold-review.md"
+      ]
+    },
+    {
+      "id": "K1",
+      "slice": "R2-05",
+      "acceptance": "Task-relevant optional recipes can be found and applied in new creation and local correction.",
+      "baselineEvidence": [
+        "skills/refas/SKILL.md",
+        "skills/refas/references/production-garments.md",
+        "skills/refas/references/production-assemblies.md",
+        "docs/development/evidence/garment-and-automail/PROTOCOL.md"
+      ]
+    },
+    {
+      "id": "K2",
+      "slice": "R2-05",
+      "acceptance": "The basic path avoids mandatory loading of all leaves/templates and is usable with bounded task-specific reading.",
+      "baselineEvidence": [
+        "skills/refas/SKILL.md",
+        "docs/development/evidence/refas-2-mug/report.md",
+        "docs/development/evidence/uniform-jacket/README.md"
+      ],
+      "baselineNote": "This is a demonstrated loading/usability claim; no token reduction or model advantage is inferred."
+    },
+    {
+      "id": "K3",
+      "slice": "R2-05",
+      "acceptance": "Local-edit preservation and camera-versus-geometry separation are demonstrated.",
+      "baselineEvidence": [
+        "docs/development/evidence/garment-assembly-refinement/README.md",
+        "skills/refas/references/production-review.md",
+        "tests/test_production_blender.py"
+      ]
+    },
+    {
+      "id": "K4",
+      "slice": "R2-05",
+      "acceptance": "Recipe application preserves the source-specific identity and major construction requirements declared by the task brief.",
+      "baselineEvidence": [
+        "docs/development/evidence/garment-assembly-refinement/review/joined-fold-review.md",
+        "docs/development/evidence/garment-assembly-refinement/review/initial-review.md",
+        "https://app.notion.com/p/41fc6a3b5bf181999d88cac97f324601"
+      ],
+      "baselineNote": "Open for concrete named identity/construction gaps in the latest source reviews, including jacket collar/cloth/ceremonial ornament/strap distinctions and arm layered armor/mechanical density/hand structure. This interprets the stated 원본 정체성 requirement; it does not add a universal finished-art, character, or engine-quality gate. The separate final-visual decisions are also still rejected."
+    },
+    {
+      "id": "E1",
+      "slice": "R2-06",
+      "acceptance": "Source features, protected state, editability, and delivered outputs have been compared across no-skill/fixed-1.x/2.0 for creation and local edits.",
+      "baselineEvidence": [
+        "docs/development/evidence/uniform-jacket/README.md",
+        "docs/development/evidence/garment-and-automail/README.md"
+      ],
+      "baselineNote": "Credits the existing exploratory qualitative/output comparisons, including negative results, not full fair timing/cost control or general superiority."
+    },
+    {
+      "id": "E2",
+      "slice": "R2-06",
+      "acceptance": "First-useful-edit, full elapsed time, and model/tool cost are comparably measured under declared matched resources.",
+      "baselineEvidence": [
+        "docs/development/evidence/uniform-jacket/README.md",
+        "docs/development/evidence/garment-and-automail/PROTOCOL.md"
+      ],
+      "baselineNote": "Missing pre-read timestamps, unknown provider/model identity and tokens/cost, staggered starts, concurrent render contention. Existing results cannot be retrospectively made fully measured."
+    },
+    {
+      "id": "E3",
+      "slice": "R2-06",
+      "acceptance": "Renderer contribution is tested using the identical GLB, identical camera, and known material conditions.",
+      "baselineEvidence": [
+        "https://app.notion.com/p/41fc6a3b5bf181c2b2cdfac4605ef7d7",
+        "https://app.notion.com/p/41fc6a3b5bf1813191c0c59b6fff1aa8",
+        "docs/development/evidence/uniform-jacket/README.md"
+      ],
+      "baselineNote": "Cross-candidate fixed-view renders use different geometry. GLB reimport checks prove output, not a separate renderer-causality experiment."
+    },
+    {
+      "id": "E4",
+      "slice": "R2-06",
+      "acceptance": "An actual extracted/installed package executes the supported workflow outside the repository.",
+      "baselineEvidence": [
+        "docs/development/evidence/garment-assembly-refinement/checks/package.json",
+        "docs/development/evidence/garment-assembly-refinement/README.md",
+        "docs/development/evidence/uniform-jacket/records/installed-package.json"
+      ],
+      "baselineNote": "This is the 1.4.2 development package carrying the 2.0 path, not coordinated 2.0 publication."
+    },
+    {
+      "id": "E5",
+      "slice": "R2-06",
+      "acceptance": "Explicit 1.x project/artifact import declares preserved/lost data, preserves legacy bytes, and does not transfer certifications.",
+      "baselineEvidence": [
+        "https://app.notion.com/p/41fc6a3b5bf181c2b2cdfac4605ef7d7",
+        "https://app.notion.com/p/41fc6a3b5bf1813191c0c59b6fff1aa8",
+        "docs/development/refas-2-plan.md"
+      ],
+      "baselineNote": "Manual --input-blend import and retained 1.x commands are insufficient to establish the explicit legacy conversion contract."
+    },
+    {
+      "id": "E6",
+      "slice": "R2-06",
+      "acceptance": "Evaluation reports actual limitations, negative outcomes, unsupported scope, and separate execution versus visual claims.",
+      "baselineEvidence": [
+        "docs/development/evidence/uniform-jacket/README.md",
+        "docs/development/evidence/garment-and-automail/README.md",
+        "docs/development/evidence/garment-assembly-refinement/README.md"
+      ]
+    },
+    {
+      "id": "D1",
+      "slice": "Delivery",
+      "acceptance": "Coordinated 2.0 package/version/runtime/plugin/documentation cutover and supported-distribution acceptance are complete.",
+      "baselineEvidence": [
+        "docs/development/refas-2-plan.md",
+        "https://app.notion.com/p/41fc6a3b5bf181c2b2cdfac4605ef7d7"
+      ],
+      "baselineNote": "Current metadata is 1.4.2; installation forms and retained legacy packaging boundary need a coordinated decision and validation."
+    },
+    {
+      "id": "D2",
+      "slice": "Delivery",
+      "acceptance": "Main merge is accepted and completed after required review/checks for the declared scope.",
+      "baselineEvidence": [
+        "https://app.notion.com/p/41fc6a3b5bf181c2b2cdfac4605ef7d7",
+        "docs/WORK_STATUS.md",
+        "AGENTS.md"
+      ],
+      "baselineNote": "PR #399 remains Draft. Required checks alone do not satisfy unfinished task or reviewer acceptance."
+    },
+    {
+      "id": "D3",
+      "slice": "Delivery",
+      "acceptance": "Formal 2.0 release and package publication are accepted and completed for the declared scope.",
+      "baselineEvidence": [
+        "https://app.notion.com/p/41fc6a3b5bf181c2b2cdfac4605ef7d7",
+        "docs/development/refas-2-plan.md",
+        "docs/WORK_STATUS.md",
+        "AGENTS.md"
+      ],
+      "baselineNote": "The published baseline remains v1.4.1. Tag/Release/registry publication requires applicable explicit authorization and remains separate from implementation."
+    },
+    {
+      "id": "U1",
+      "slice": "R2-06",
+      "acceptance": "For both task types, the matched no-skill/fixed-1.x/2.0 comparison evaluates original-reference visual similarity, unintended mesh defects and floating attachments, actual wearing or mechanical motion, retopology and delivery optimization under the same declared inputs and resources. Later informed repairs do not replace an independent comparison.",
+      "baselineEvidence": [
+        "docs/development/evidence/usable-assets/PROTOCOL.md"
+      ],
+      "baselineNote": "Added by the user's explicit 2026-11-22 scope expansion; no credit at the scope-change baseline."
+    },
+    {
+      "id": "U2",
+      "slice": "R2-07",
+      "acceptance": "Actual selected native and reimported delivery meshes are checked for unintended holes, nonmanifold/degenerate geometry, inconsistent or inward winding, intersections and floating attachments. Intentional openings and connections are explicitly classified; major unintended defects in the declared use are repaired. Seeded counterexamples demonstrate the observation tools detect their stated defects.",
+      "baselineEvidence": [
+        "docs/development/evidence/usable-assets/PROTOCOL.md"
+      ],
+      "baselineNote": "Added by the user's explicit 2026-11-22 scope expansion; no credit at the scope-change baseline."
+    },
+    {
+      "id": "U3",
+      "slice": "R2-07",
+      "acceptance": "The reference-derived garment fits an identified real 3D character without concealing or shrinking the body to manufacture clearance, has usable skinning/deformation, and passes documented rest, useful motion and intermediate-frame checks. Native/exported animation and skinning are exercised in an identified consumer; tested fit and motion scope remain explicit.",
+      "baselineEvidence": [
+        "docs/development/evidence/usable-assets/PROTOCOL.md"
+      ],
+      "baselineNote": "Added by the user's explicit 2026-11-22 scope expansion; no credit at the scope-change baseline."
+    },
+    {
+      "id": "U4",
+      "slice": "R2-07",
+      "acceptance": "The reference-derived articulated arm performs a declared useful action with correct joint centers and attached moving parts; any spanning actuators or cables remain connected through sampled intermediate motion. Native and exported synchronized animation are exercised in an identified consumer, with collision/kinematic scope and limitations explicit.",
+      "baselineEvidence": [
+        "docs/development/evidence/usable-assets/PROTOCOL.md"
+      ],
+      "baselineNote": "Added by the user's explicit 2026-11-22 scope expansion; no credit at the scope-change baseline."
+    },
+    {
+      "id": "U5",
+      "slice": "R2-07",
+      "acceptance": "RefAs 2.0 executes deliberate retopology on a real asset for its intended deformation or construction, with inspectable edge flow, source-shape comparison and exercised use. Required materials, UVs, weights and semantic attachments are preserved or explicitly transferred; polygon reduction alone is not credited as retopology.",
+      "baselineEvidence": [
+        "docs/development/evidence/usable-assets/PROTOCOL.md"
+      ],
+      "baselineNote": "Added by the user's explicit 2026-11-22 scope expansion; no credit at the scope-change baseline."
+    },
+    {
+      "id": "U6",
+      "slice": "R2-07",
+      "acceptance": "Both assets have optimized delivery candidates against budgets fixed before selection, with measured base/evaluated/export geometry, material primitives and file size, stated surface-error sampling, fixed-view likeness and required motion checks. Editable detailed sources and mappings are retained; actual consumer use is exercised without inferring a frame-time benefit from triangle count alone.",
+      "baselineEvidence": [
+        "docs/development/evidence/usable-assets/PROTOCOL.md"
+      ],
+      "baselineNote": "Added by the user's explicit 2026-11-22 scope expansion; no credit at the scope-change baseline."
+    }
+  ],
+  "currentCheckpointId": "r2-07-automail-recovery-bb8e8aff",
+  "checkpoints": [
+    {
+      "id": "baseline-3217b46e",
+      "date": "2026-11-22",
+      "kind": "audited-baseline",
+      "sourceCommit": "3217b46ee3670f2bc8acc1eff320981a539ce70c",
+      "demonstratedCriteria": [
+        "B1",
+        "B2",
+        "B3",
+        "B4",
+        "W1",
+        "W2",
+        "W3",
+        "W4",
+        "S1",
+        "S2",
+        "S4",
+        "S6",
+        "O1",
+        "O2",
+        "O3",
+        "O4",
+        "K1",
+        "K2",
+        "K3",
+        "E1",
+        "E4",
+        "E6"
+      ],
+      "counts": {
+        "demonstrated": 22,
+        "total": 31,
+        "percentRounded": 71,
+        "bySlice": {
+          "R2-01": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-02": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-03": {
+            "demonstrated": 4,
+            "total": 6
+          },
+          "R2-04": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-05": {
+            "demonstrated": 3,
+            "total": 4
+          },
+          "R2-06": {
+            "demonstrated": 3,
+            "total": 6
+          },
+          "Delivery": {
+            "demonstrated": 0,
+            "total": 3
+          }
+        }
+      },
+      "notionTaskStatuses": {
+        "R2-01": "REVIEW",
+        "R2-02": "REVIEW",
+        "R2-03": "WIP",
+        "R2-04": "REVIEW",
+        "R2-05": "WIP",
+        "R2-06": "WIP"
+      },
+      "evidenceUpdates": {},
+      "boundaries": {
+        "closedTasks": 0,
+        "totalTasks": 6,
+        "finishedVisualAcceptance": {
+          "jacket": "rejected",
+          "automail": "rejected"
+        },
+        "developmentMetadata": "1.4.2",
+        "publishedRelease": "v1.4.1",
+        "pullRequest": "https://github.com/ictseoyoungmin/refas/pull/399",
+        "pullRequestState": "Draft"
+      },
+      "note": "R2-01 receives credit for measurement definitions; missing actual metrics are open only in E2. S3 is open because a deterministic read-consistency counterexample invalidates the broader concurrency criterion despite passing write-side tests."
+    },
+    {
+      "id": "r2-03-reference-freshness-d36a461e",
+      "date": "2026-11-22",
+      "kind": "verified-implementation",
+      "sourceCommit": "d36a461e08a9c905792d045a3eb26ad53778635c",
+      "demonstratedCriteria": [
+        "B1",
+        "B2",
+        "B3",
+        "B4",
+        "W1",
+        "W2",
+        "W3",
+        "W4",
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "O1",
+        "O2",
+        "O3",
+        "O4",
+        "K1",
+        "K2",
+        "K3",
+        "E1",
+        "E4",
+        "E6"
+      ],
+      "counts": {
+        "demonstrated": 24,
+        "total": 31,
+        "percentRounded": 77,
+        "bySlice": {
+          "R2-01": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-02": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-03": {
+            "demonstrated": 6,
+            "total": 6
+          },
+          "R2-04": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-05": {
+            "demonstrated": 3,
+            "total": 4
+          },
+          "R2-06": {
+            "demonstrated": 3,
+            "total": 6
+          },
+          "Delivery": {
+            "demonstrated": 0,
+            "total": 3
+          }
+        }
+      },
+      "notionTaskStatuses": {
+        "R2-01": "REVIEW",
+        "R2-02": "REVIEW",
+        "R2-03": "REVIEW",
+        "R2-04": "REVIEW",
+        "R2-05": "WIP",
+        "R2-06": "WIP"
+      },
+      "evidenceUpdates": {
+        "S3": {
+          "evidence": [
+            "tests/test_production_project.py",
+            "docs/development/evidence/reference-freshness/probes/baseline-restart-results.json",
+            "docs/development/evidence/reference-freshness/probes/independent-review-after-fix.json",
+            "docs/development/evidence/reference-freshness/checks/verification.json"
+          ],
+          "note": "Both status and verify retain one declared state across concurrent publication, with and without an existing head. Edit setup uses the declared native base. Reference A-to-B-to-A changes invalidate an in-flight lease. Copy/publication and response-preparation failures preserve the authoritative state."
+        },
+        "S5": {
+          "evidence": [
+            "docs/development/evidence/reference-freshness/installed-jacket/result.json",
+            "docs/development/evidence/reference-freshness/installed-jacket/commands.json",
+            "docs/development/evidence/reference-freshness/installed-jacket/cuff-edit-checks.json",
+            "docs/development/evidence/reference-freshness/checks/package-parity.json",
+            "tests/test_production_blender.py"
+          ],
+          "note": "Actual extracted-package replay passes 22 checks across 12 commands (11 public CLI plus one Blender Save As). Explicit reference-set adoption marks intact prior evidence stale. Native, script, review and render changes are captured by successful regeneration; exact restore retains active references. The freshness field is scoped to the active reference content set; no external-file watcher or universal dependency graph is implied."
+        }
+      },
+      "boundaries": {
+        "closedTasks": 0,
+        "totalTasks": 6,
+        "finishedVisualAcceptance": {
+          "jacket": "rejected",
+          "automail": "rejected"
+        },
+        "developmentMetadata": "1.4.2",
+        "publishedRelease": "v1.4.1",
+        "pullRequest": "https://github.com/ictseoyoungmin/refas/pull/399",
+        "pullRequestState": "Draft"
+      },
+      "note": "S3 and S5 independently reviewed and demonstrated. Local gates: 931 JavaScript tests, 49 production tests (34 project/CLI and 15 actual Blender), repository/skill checks, 11-checkpoint retained dogfood and package audit. All 399 extracted files match tested repository bytes. R2-03 is ready for review; no task is CLOSED and no visual/release credit is added."
+    },
+    {
+      "id": "r2-06-distribution-import-renderer-d8bb5dc7",
+      "date": "2026-11-22",
+      "kind": "verified-implementation",
+      "sourceCommit": "d8bb5dc71a86fe1b5012735c89aca3fb32f8006e",
+      "demonstratedCriteria": [
+        "B1",
+        "B2",
+        "B3",
+        "B4",
+        "W1",
+        "W2",
+        "W3",
+        "W4",
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "O1",
+        "O2",
+        "O3",
+        "O4",
+        "K1",
+        "K2",
+        "K3",
+        "E1",
+        "E3",
+        "E4",
+        "E5",
+        "E6",
+        "D1"
+      ],
+      "counts": {
+        "demonstrated": 27,
+        "total": 31,
+        "percentRounded": 87,
+        "bySlice": {
+          "R2-01": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-02": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-03": {
+            "demonstrated": 6,
+            "total": 6
+          },
+          "R2-04": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-05": {
+            "demonstrated": 3,
+            "total": 4
+          },
+          "R2-06": {
+            "demonstrated": 5,
+            "total": 6
+          },
+          "Delivery": {
+            "demonstrated": 1,
+            "total": 3
+          }
+        }
+      },
+      "notionTaskStatuses": {
+        "R2-01": "REVIEW",
+        "R2-02": "REVIEW",
+        "R2-03": "REVIEW",
+        "R2-04": "REVIEW",
+        "R2-05": "WIP",
+        "R2-06": "WIP"
+      },
+      "evidenceUpdates": {
+        "E3": {
+          "evidence": [
+            "docs/development/evidence/v2-distribution-and-import/renderer/run-02/result.json",
+            "docs/development/evidence/v2-distribution-and-import/renderer/run-02/README.md",
+            "docs/development/evidence/v2-distribution-and-import/renderer/run-01/result.json",
+            "docs/development/evidence/v2-distribution-and-import/renderer/normal-roundtrip/result.json",
+            "examples/renderer-isolation/README.md",
+            "docs/development/evidence/v2-distribution-and-import/checks/cutover-scope-review.md"
+          ],
+          "note": "One unchanged 27,120-byte GLB, actual imported triangle/material/camera observations and independent projected coordinates pass 11 scoped checks. CPU surface-to-light L requires external SUN propagation -L. Initial normal-check failure and separate Blender custom-normal round-trip remain recorded; final normal direction tolerance is declared. Beauty differences retain lighting, ambient, shader and output-transfer limitations. No image equivalence, asset-quality or performance superiority is inferred."
+        },
+        "E5": {
+          "evidence": [
+            "skills/refas/scripts/production/asset_import.py",
+            "skills/refas/references/production-import.md",
+            "tests/test_production_import.py",
+            "tests/test_production_blender.py",
+            "docs/development/evidence/v2-distribution-and-import/installed-import/result.json",
+            "docs/development/evidence/v2-distribution-and-import/installed-import/commands.json",
+            "docs/development/evidence/v2-distribution-and-import/checks/final-production.log",
+            "docs/development/evidence/v2-distribution-and-import/checks/cutover-scope-review.md"
+          ],
+          "note": "Explicit checkpoint/artifact import verifies archived bytes, captures source/manifests/provenance and uses normal production transactions. Actual npm-installed replay passes 18 checks over eight CLI commands: 247 old files unchanged, one edited mesh and 65 preserved, all 11 selected artifact/input files restored exactly. Actual old certificate is null; synthetic claimed-certificate tests demonstrate no inheritance. Actual Blender proves native/GLB import and unsupported resource/required-extension refusal. Scope is selected supported asset adoption, not whole history or universal rig/extension fidelity."
+        },
+        "D1": {
+          "evidence": [
+            "package.json",
+            "bin/refas.mjs",
+            ".claude-plugin/plugin.json",
+            ".codex-plugin/plugin.json",
+            "skills/refas/scripts/production/__init__.py",
+            "README.md",
+            "docs/legacy-1x.md",
+            "tools/verify-production-distribution.mjs",
+            "tests/production-distribution.test.mjs",
+            "docs/development/evidence/v2-distribution-and-import/package/parity.json",
+            "docs/development/evidence/v2-distribution-and-import/checks/distribution-summary.json",
+            "docs/development/evidence/v2-distribution-and-import/checks/verification.json",
+            "docs/development/evidence/v2-distribution-and-import/checks/cutover-scope-review.md"
+          ],
+          "note": "Coordinated unpublished 2.0.0-alpha.1 package/runtime/plugin/docs cutover. Move 264 old files to one repository-only legacy/v1; active skill is 15 files including two ignores, actual npm payload 17 files with exact installed/source parity. Both copied skill and actual npm launcher execute outside the repository; injected legacy-file tarball is rejected. Plugin routing is structurally validated; host-specific marketplace installation is unexecuted. Existing legacy regression assertions remain. Main merge and formal publication remain separate open criteria."
+        }
+      },
+      "boundaries": {
+        "closedTasks": 0,
+        "totalTasks": 6,
+        "finishedVisualAcceptance": {
+          "jacket": "rejected",
+          "automail": "rejected"
+        },
+        "developmentMetadata": "2.0.0-alpha.1",
+        "retainedLegacyRuntime": "1.4.2",
+        "publishedRelease": "v1.4.1",
+        "pullRequest": "https://github.com/ictseoyoungmin/refas/pull/399",
+        "pullRequestState": "Draft"
+      },
+      "note": "E3, E5 and D1 independently reviewed and demonstrated. Local gates: 935 JavaScript tests, 65 production tests (47 unit/CLI and 18 actual Blender, no skips), repository/plugin/skill checks, 11-checkpoint retained dogfood and actual package audit. R2-06 is 5/6 and remains WIP; delivery 1/3. K4, E2, D2 and D3 remain open. No task is CLOSED and no finished visual or release credit is added."
+    },
+    {
+      "id": "r2-05-source-identity-815e9f76",
+      "date": "2026-11-22",
+      "kind": "verified-implementation",
+      "sourceCommit": "815e9f76f36ee294ae3cb554215116a08adb168e",
+      "demonstratedCriteria": [
+        "B1",
+        "B2",
+        "B3",
+        "B4",
+        "W1",
+        "W2",
+        "W3",
+        "W4",
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "O1",
+        "O2",
+        "O3",
+        "O4",
+        "K1",
+        "K2",
+        "K3",
+        "K4",
+        "E1",
+        "E3",
+        "E4",
+        "E5",
+        "E6",
+        "D1"
+      ],
+      "counts": {
+        "demonstrated": 28,
+        "total": 31,
+        "percentRounded": 90,
+        "bySlice": {
+          "R2-01": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-02": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-03": {
+            "demonstrated": 6,
+            "total": 6
+          },
+          "R2-04": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-05": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-06": {
+            "demonstrated": 5,
+            "total": 6
+          },
+          "Delivery": {
+            "demonstrated": 1,
+            "total": 3
+          }
+        }
+      },
+      "notionTaskStatuses": {
+        "R2-01": "REVIEW",
+        "R2-02": "REVIEW",
+        "R2-03": "REVIEW",
+        "R2-04": "REVIEW",
+        "R2-05": "REVIEW",
+        "R2-06": "WIP"
+      },
+      "evidenceUpdates": {
+        "K4": {
+          "evidence": [
+            "docs/development/evidence/source-identity/assessment.json",
+            "docs/development/evidence/source-identity/review/isolated-visual-review.md",
+            "docs/development/evidence/source-identity/review/anonymous-mapping.json",
+            "docs/development/evidence/source-identity/garment/independent-check.json",
+            "docs/development/evidence/source-identity/garment/execution.json",
+            "docs/development/evidence/source-identity/automail/independent-inspection.json",
+            "docs/development/evidence/source-identity/automail/exercise-summary.json",
+            "docs/development/evidence/source-identity/code-review-addendum.md"
+          ],
+          "note": "Fresh source/task/anonymous-render review inspected both complete sheets and all 44 candidate images. Jacket identity-04 (anonymous A) and arm candidate-05 (anonymous B) each meet the declared source-specific prototype identity/major-construction scope; the prior candidates do not. Named repairs include coherent crest/chain/pendant attachment and collar roll, exposed actuator core and an actual recessed service bay. Both remain rejected as finished art. Actual original-source preservation, local edits, 18/19-file exact recovery, native/GLB readback and bounded articulation checks pass for the selected revisions. No calibrated likeness, universal character/art/UV/physics/engine-readiness criterion is introduced."
+        },
+        "E2": {
+          "evidence": [
+            "docs/development/evidence/source-identity/PROTOCOL.md",
+            "docs/development/evidence/source-identity/garment/execution.json",
+            "docs/development/evidence/source-identity/automail/construction-commands.json",
+            "docs/development/evidence/source-identity/automail/author-session-observations.json"
+          ],
+          "note": "Still open. Timed subprocesses, first observed author clocks, first render file/bundle times and completion events are retained, including failures and corrections. These are informed concurrent continuations, without complete pre-read clocks, matched no-skill/1.x/2.0 resources or exposed model/token/tool monetary costs. Missing first-useful-decision and billing telemetry is not reconstructed or inferred."
+        }
+      },
+      "boundaries": {
+        "closedTasks": 0,
+        "totalTasks": 6,
+        "finishedVisualAcceptance": {
+          "jacket": "rejected",
+          "automail": "rejected"
+        },
+        "developmentMetadata": "2.0.0-alpha.1",
+        "retainedLegacyRuntime": "1.4.2",
+        "publishedRelease": "v1.4.1",
+        "pullRequest": "https://github.com/ictseoyoungmin/refas/pull/399",
+        "pullRequestState": "Draft",
+        "prototypeSourceAcceptance": {
+          "jacket": "demonstrated within original task scope",
+          "automail": "demonstrated within original task scope"
+        }
+      },
+      "note": "K4 is demonstrated within the unchanged prototype criterion; R2-05 is 4/4 and REVIEW. Current gates: 935 JavaScript tests, existing Python/repository/plugin/skill checks, 11-checkpoint retained dogfood and 17-file package audit. New nine example scripts execute in actual authoring/inspection/packaging workflows; isolated visual and final code reviews retained. The previous 65 production tests are historical, not reported as rerun here. Active skill/runtime/distribution bytes remain unchanged. E2, D2 and D3 remain open; 0/6 tasks CLOSED, Draft PR #399, no finished-art or release approval."
+    },
+    {
+      "id": "scope-v2-usable-assets",
+      "date": "2026-11-22",
+      "kind": "scope-change",
+      "checklistVersion": 2,
+      "sourceCommit": "5fd694ade366bba9f1a977df7ebcae67625e1b9c",
+      "demonstratedCriteria": [
+        "B1",
+        "B2",
+        "B3",
+        "B4",
+        "W1",
+        "W2",
+        "W3",
+        "W4",
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "O1",
+        "O2",
+        "O3",
+        "O4",
+        "K1",
+        "K2",
+        "K3",
+        "K4",
+        "E1",
+        "E3",
+        "E4",
+        "E5",
+        "E6",
+        "D1"
+      ],
+      "counts": {
+        "demonstrated": 28,
+        "total": 37,
+        "percentRounded": 76,
+        "bySlice": {
+          "R2-01": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-02": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-03": {
+            "demonstrated": 6,
+            "total": 6
+          },
+          "R2-04": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-05": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-06": {
+            "demonstrated": 5,
+            "total": 7
+          },
+          "Delivery": {
+            "demonstrated": 1,
+            "total": 3
+          },
+          "R2-07": {
+            "demonstrated": 0,
+            "total": 5
+          }
+        }
+      },
+      "notionTaskStatuses": {
+        "R2-01": "REVIEW",
+        "R2-02": "REVIEW",
+        "R2-03": "REVIEW",
+        "R2-04": "REVIEW",
+        "R2-05": "REVIEW",
+        "R2-06": "WIP",
+        "R2-07": "WIP"
+      },
+      "evidenceUpdates": {
+        "U1": {
+          "evidence": [
+            "docs/development/evidence/usable-assets/PROTOCOL.md"
+          ],
+          "note": "New explicit requirement; implementation started, not yet demonstrated."
+        },
+        "U2": {
+          "evidence": [
+            "docs/development/evidence/usable-assets/PROTOCOL.md"
+          ],
+          "note": "New explicit requirement; implementation started, not yet demonstrated."
+        },
+        "U3": {
+          "evidence": [
+            "docs/development/evidence/usable-assets/PROTOCOL.md"
+          ],
+          "note": "New explicit requirement; implementation started, not yet demonstrated."
+        },
+        "U4": {
+          "evidence": [
+            "docs/development/evidence/usable-assets/PROTOCOL.md"
+          ],
+          "note": "New explicit requirement; implementation started, not yet demonstrated."
+        },
+        "U5": {
+          "evidence": [
+            "docs/development/evidence/usable-assets/PROTOCOL.md"
+          ],
+          "note": "New explicit requirement; implementation started, not yet demonstrated."
+        },
+        "U6": {
+          "evidence": [
+            "docs/development/evidence/usable-assets/PROTOCOL.md"
+          ],
+          "note": "New explicit requirement; implementation started, not yet demonstrated."
+        }
+      },
+      "boundaries": {
+        "closedTasks": 0,
+        "totalTasks": 6,
+        "finishedVisualAcceptance": {
+          "jacket": "rejected",
+          "automail": "rejected"
+        },
+        "developmentMetadata": "2.0.0-alpha.1",
+        "retainedLegacyRuntime": "1.4.2",
+        "publishedRelease": "v1.4.1",
+        "pullRequest": "https://github.com/ictseoyoungmin/refas/pull/399",
+        "pullRequestState": "Draft",
+        "prototypeSourceAcceptance": {
+          "jacket": "demonstrated within original task scope",
+          "automail": "demonstrated within original task scope"
+        }
+      },
+      "note": "Original criteria/checkpoints preserved. New user-authorized scope increases the denominator; no new execution credit. 28/31=90% remains the prior prototype milestone."
+    },
+    {
+      "id": "r2-07-automail-recovery-bb8e8aff",
+      "date": "2026-11-23",
+      "kind": "verified-implementation",
+      "checklistVersion": 2,
+      "sourceCommit": "bb8e8affbbb6b5cf53dcb637114710511d354913",
+      "runtimeCommit": "5f2f39c6e9f1e4bbdef6dfd463e84991daa73e57",
+      "demonstratedCriteria": [
+        "B1",
+        "B2",
+        "B3",
+        "B4",
+        "W1",
+        "W2",
+        "W3",
+        "W4",
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "O1",
+        "O2",
+        "O3",
+        "O4",
+        "K1",
+        "K2",
+        "K3",
+        "K4",
+        "E1",
+        "E3",
+        "E4",
+        "E5",
+        "E6",
+        "D1",
+        "U4",
+        "U5"
+      ],
+      "counts": {
+        "demonstrated": 30,
+        "total": 37,
+        "percentRounded": 81,
+        "bySlice": {
+          "R2-01": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-02": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-03": {
+            "demonstrated": 6,
+            "total": 6
+          },
+          "R2-04": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-05": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-06": {
+            "demonstrated": 5,
+            "total": 7
+          },
+          "Delivery": {
+            "demonstrated": 1,
+            "total": 3
+          },
+          "R2-07": {
+            "demonstrated": 2,
+            "total": 5
+          }
+        }
+      },
+      "notionTaskStatuses": {
+        "R2-01": "REVIEW",
+        "R2-02": "REVIEW",
+        "R2-03": "REVIEW",
+        "R2-04": "REVIEW",
+        "R2-05": "REVIEW",
+        "R2-06": "WIP",
+        "R2-07": "WIP"
+      },
+      "evidenceUpdates": {
+        "U4": {
+          "evidence": [
+            "docs/development/evidence/usable-assets/automail-resume/README.md",
+            "docs/development/evidence/usable-assets/automail-resume/godot-summary.json",
+            "docs/development/evidence/usable-assets/recovery/review-automail-candidate08.md"
+          ],
+          "note": "New continuation from the saved source checkpoint. Original rotary mechanisms retained, with correct elbow/wrist centers. The declared reach/partial-grip clip, 133 surface pairs at 121 frames, and 119 nodes at 121 actual Godot times pass; external thumb-cover penetration is repaired. No arbitrary-pose, physical-grasp or FPS claim."
+        },
+        "U5": {
+          "evidence": [
+            "docs/development/evidence/usable-assets/automail-resume/README.md",
+            "docs/development/evidence/usable-assets/automail-resume/source-part-correspondence.json",
+            "docs/development/evidence/usable-assets/recovery/review-automail-candidate08-attributes.json",
+            "docs/development/evidence/usable-assets/recovery/review-automail-candidate08.md"
+          ],
+          "note": "Deliberate connected palm section topology and periodic wrist annuli, source comparison and exercised grip support this criterion. Reduction is separately measured. Original materials and parent assignments remain; no source image textures or skin groups. Exactly Crown_A_mark loses an unused generated UVMap during cap repair; this is explicitly recorded and the untouched original retains it."
+        },
+        "U2": {
+          "evidence": [
+            "docs/development/evidence/usable-assets/automail-resume/topology-summary.json",
+            "docs/development/evidence/usable-assets/automail-resume/flipped-glb-control.json",
+            "docs/development/evidence/usable-assets/recovery/review-jacket-transferred-lining.md"
+          ],
+          "note": "The selected arm native/export/attachments and actual flipped-GLB control pass. The whole criterion remains open: the jacket intermediate has nonmanifold rim junctions and visible lining crossings and remains rejected."
+        },
+        "U3": {
+          "evidence": [
+            "docs/development/evidence/usable-assets/recovery/garment-geometry/README.md"
+          ],
+          "note": "Actual-avatar garment fit, motion andhardware work continues. No selected clean garment or final consumer proof yet; no credit."
+        },
+        "U6": {
+          "evidence": [
+            "docs/development/evidence/usable-assets/automail-resume/summary.json",
+            "docs/development/evidence/usable-assets/recovery/garment-geometry/summary.json",
+            "docs/development/evidence/usable-assets/recovery/review-jacket-transferred-lining.md"
+          ],
+          "note": "Arm 86,564 triangles, 99 primitives and 0.423727 mm sampled optimization error satisfy its frozen budget, with actual consumer playback. The jacket distance/budget-only intermediate is rejected for topology and visual defects. The criterion requires both assets and remains open."
+        }
+      },
+      "boundaries": {
+        "closedTasks": 0,
+        "totalTasks": 7,
+        "finishedVisualAcceptance": {
+          "jacket": "rejected",
+          "automail": "rejected"
+        },
+        "developmentMetadata": "2.0.0-alpha.1",
+        "retainedLegacyRuntime": "1.4.2",
+        "publishedRelease": "v1.4.1",
+        "pullRequest": "https://github.com/ictseoyoungmin/refas/pull/399",
+        "pullRequestState": "Draft",
+        "prototypeSourceAcceptance": {
+          "jacket": "demonstrated within original task scope",
+          "automail": "demonstrated within original task scope"
+        },
+        "usableAssetAcceptance": {
+          "automail": "accepted only for declared rigid reach/partial grip and documented untextured scope",
+          "jacket": "rejected intermediate; active repair"
+        },
+        "standaloneAutomailLibraryId": "libfile_469aa206ad3c819180cbc2007000a572"
+      },
+      "note": "Interruption recovery retained core f236477f and exactly verified 96 source-model files; no later 78,998-triangle arm or 97-frame jacket was recovered. The missing vertex-tolerance option was completed at 5f2f39c6 with 935 JavaScript and 92 Production tests passing. The newly authored selected arm is separately hash-verified and durably delivered. Prior counts and criteria remain unchanged."
+    }
+  ],
+  "projections": [
+    {
+      "id": "r2-03-freshness",
+      "status": "fulfilled",
+      "basedOn": "baseline-3217b46e",
+      "criteriaToDemonstrate": [
+        "S3",
+        "S5"
+      ],
+      "expectedCounts": {
+        "demonstrated": 24,
+        "total": 31,
+        "percentRounded": 77,
+        "bySlice": {
+          "R2-01": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-02": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-03": {
+            "demonstrated": 6,
+            "total": 6
+          },
+          "R2-04": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-05": {
+            "demonstrated": 3,
+            "total": 4
+          },
+          "R2-06": {
+            "demonstrated": 3,
+            "total": 6
+          },
+          "Delivery": {
+            "demonstrated": 0,
+            "total": 3
+          }
+        }
+      },
+      "requiredEvidence": [
+        "S3: deterministic tests demonstrate coherent returned head, paths, views and inputs for a concurrent commit, including an initially empty project; verify checks the revision it reports.",
+        "S5: explicitly adopted reference/native/script/review/render changes produce correctly bound freshness and history states, with safe failure/concurrency and truthful restore behavior.",
+        "Record actual execution and declared scope. Fake-worker transaction tests do not substitute for actual Blender output claims."
+      ],
+      "resolvedBy": "r2-03-reference-freshness-d36a461e",
+      "note": "Validated by the referenced implementation checkpoint: coherent reads and the full agreed explicit-adoption workflow are demonstrated. Historical projection and baseline counts are retained."
+    }
+  ],
+  "checklistVersions": [
+    {
+      "version": 1,
+      "denominator": 31,
+      "criterionIds": [
+        "B1",
+        "B2",
+        "B3",
+        "B4",
+        "W1",
+        "W2",
+        "W3",
+        "W4",
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "O1",
+        "O2",
+        "O3",
+        "O4",
+        "K1",
+        "K2",
+        "K3",
+        "K4",
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6",
+        "D1",
+        "D2",
+        "D3"
+      ],
+      "finalCheckpointId": "r2-05-source-identity-815e9f76",
+      "finalCounts": {
+        "demonstrated": 28,
+        "total": 31,
+        "percentRounded": 90,
+        "bySlice": {
+          "R2-01": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-02": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-03": {
+            "demonstrated": 6,
+            "total": 6
+          },
+          "R2-04": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-05": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-06": {
+            "demonstrated": 5,
+            "total": 6
+          },
+          "Delivery": {
+            "demonstrated": 1,
+            "total": 3
+          }
+        }
+      }
+    },
+    {
+      "version": 2,
+      "denominator": 37,
+      "preservedIds": [
+        "B1",
+        "B2",
+        "B3",
+        "B4",
+        "W1",
+        "W2",
+        "W3",
+        "W4",
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "O1",
+        "O2",
+        "O3",
+        "O4",
+        "K1",
+        "K2",
+        "K3",
+        "K4",
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6",
+        "D1",
+        "D2",
+        "D3"
+      ],
+      "addedIds": [
+        "U1",
+        "U2",
+        "U3",
+        "U4",
+        "U5",
+        "U6"
+      ],
+      "reason": "Explicit user requirement for source similarity, mesh defects/attachments, actual character wearing/mechanical use, retopology and optimization.",
+      "source": "docs/development/evidence/usable-assets/prompts/user-scope.txt"
+    }
+  ]
+}

@@ -1,0 +1,148 @@
+{
+  "schema": "refas.usable-assets.checks/v1",
+  "scope": "Executed commands. Earlier production is retained history; production-final-runtime covers the final runtime, mesh helper and Godot observer. Asset candidate acceptance is separate.",
+  "executions": [
+    {
+      "label": "javascript",
+      "argv": [
+        "npm",
+        "test"
+      ],
+      "startedUtc": "2026-11-22T14:00:43.354164+00:00",
+      "endedUtc": "2026-11-22T14:02:55.511754+00:00",
+      "elapsedSeconds": 132.15759292099756,
+      "returncode": 0,
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "REFAS_BLENDER_TESTS": "1",
+        "REFAS_GODOT_TESTS": "1"
+      }
+    },
+    {
+      "label": "python-syntax",
+      "argv": [
+        "npm",
+        "run",
+        "test:python"
+      ],
+      "startedUtc": "2026-11-22T14:00:43.384478+00:00",
+      "endedUtc": "2026-11-22T14:00:43.866618+00:00",
+      "elapsedSeconds": 0.4821481710023363,
+      "returncode": 0,
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "REFAS_BLENDER_TESTS": "1",
+        "REFAS_GODOT_TESTS": "1"
+      }
+    },
+    {
+      "label": "repository",
+      "argv": [
+        "npm",
+        "run",
+        "check"
+      ],
+      "startedUtc": "2026-11-22T14:00:43.354213+00:00",
+      "endedUtc": "2026-11-22T14:01:10.689275+00:00",
+      "elapsedSeconds": 27.335069798002223,
+      "returncode": 0,
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "REFAS_BLENDER_TESTS": "1",
+        "REFAS_GODOT_TESTS": "1"
+      }
+    },
+    {
+      "label": "legacy-dogfood",
+      "argv": [
+        "npm",
+        "run",
+        "dogfood"
+      ],
+      "startedUtc": "2026-11-22T14:00:43.382012+00:00",
+      "endedUtc": "2026-11-22T14:03:30.962772+00:00",
+      "elapsedSeconds": 167.58089115799885,
+      "returncode": 0,
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "REFAS_BLENDER_TESTS": "1",
+        "REFAS_GODOT_TESTS": "1"
+      }
+    },
+    {
+      "label": "release-audit",
+      "argv": [
+        "npm",
+        "run",
+        "release:audit"
+      ],
+      "startedUtc": "2026-11-22T14:00:43.358740+00:00",
+      "endedUtc": "2026-11-22T14:00:44.964758+00:00",
+      "elapsedSeconds": 1.6060185089991137,
+      "returncode": 0,
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "REFAS_BLENDER_TESTS": "1",
+        "REFAS_GODOT_TESTS": "1"
+      }
+    },
+    {
+      "label": "production",
+      "argv": [
+        "npm",
+        "run",
+        "test:production"
+      ],
+      "startedUtc": "2026-11-22T14:00:43.360686+00:00",
+      "endedUtc": "2026-11-22T14:02:42.609645+00:00",
+      "elapsedSeconds": 119.24893974000224,
+      "returncode": 0,
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "REFAS_BLENDER_TESTS": "1",
+        "REFAS_GODOT_TESTS": "1"
+      }
+    },
+    {
+      "label": "production-final-runtime",
+      "argv": [
+        "npm",
+        "run",
+        "test:production"
+      ],
+      "startedUtc": "2026-11-22T14:21:34.934813+00:00",
+      "endedUtc": "2026-11-22T14:23:00.838481+00:00",
+      "elapsedSeconds": 85.9036711689987,
+      "returncode": 0,
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "REFAS_BLENDER_TESTS": "1",
+        "REFAS_GODOT_TESTS": "1"
+      }
+    },
+    {
+      "label": "distribution-final",
+      "argv": [
+        "node",
+        "--test",
+        "tests/production-distribution.test.mjs"
+      ],
+      "startedUtc": "2026-11-22T14:21:34.911847+00:00",
+      "endedUtc": "2026-11-22T14:21:38.170502+00:00",
+      "elapsedSeconds": 3.258658253998874,
+      "returncode": 0,
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "REFAS_BLENDER_TESTS": "1",
+        "REFAS_GODOT_TESTS": "1"
+      }
+    }
+  ],
+  "counts": {
+    "javascript": 935,
+    "productionFinal": 90,
+    "productionFinalSkipped": 0,
+    "legacyCheckpoints": 11,
+    "distributionTests": 4
+  }
+}

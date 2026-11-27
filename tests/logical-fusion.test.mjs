@@ -8,7 +8,7 @@ import {
   logicalFusionGroupForEntity,
   validateLogicalFusion,
   validateLogicalFusionInvalidation,
-} from '../skills/refas/scripts/lib/index.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
 
 const D = (value = 'a') => value.repeat(64);
 const E = (id) => ({id, scopeId: id, evidenceRefs: [`model/${id}.json`]});

@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "/usr/local/bin/godot",
+    "--headless",
+    "--path",
+    "/workspace/scratch/61afcdd4e3c6/refas/examples/engine-playback",
+    "--script",
+    "/workspace/scratch/61afcdd4e3c6/refas/examples/engine-playback/verify_godot.gd",
+    "--",
+    "/workspace/scratch/61afcdd4e3c6/work/garment/review-consumer-qualified-cache/configuration.json"
+  ],
+  "startedUtc": "2026-11-22T20:02:59.824686+00:00",
+  "endedUtc": "2026-11-22T20:03:24.178330+00:00",
+  "elapsedSeconds": 24.353654186999847,
+  "returncode": 1
+}

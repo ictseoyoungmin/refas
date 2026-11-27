@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "npm",
+    "run",
+    "dogfood"
+  ],
+  "startedUtc": "2026-11-22T14:00:43.382012+00:00",
+  "endedUtc": "2026-11-22T14:03:30.962772+00:00",
+  "elapsedSeconds": 167.58089115799885,
+  "returncode": 0,
+  "environment": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "REFAS_BLENDER_TESTS": "1",
+    "REFAS_GODOT_TESTS": "1"
+  }
+}

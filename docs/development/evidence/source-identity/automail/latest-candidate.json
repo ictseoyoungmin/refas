@@ -1,0 +1,991 @@
+{
+  "label": "candidate-05",
+  "directory": "/workspace/scratch/5765cde18054/work/automail/candidates/candidate-05",
+  "state": {
+    "ok": true,
+    "schema": "refas.production.project/v2",
+    "name": "aurix-source-construction",
+    "projectId": "ed206366d0b94824b6423056cda4bb86",
+    "head": "e661b5fd53e447879bd4baff5f4bbb9f",
+    "sequence": 12,
+    "sources": [
+      {
+        "path": "sources/001-reference.png",
+        "name": "reference.png",
+        "role": "user-reference",
+        "sha256": "3c7856dd632f8a1cde8036078573f569db55b6af97fae853237d8a9356f3c872",
+        "bytes": 3215297
+      }
+    ],
+    "outputs": {
+      "blend": "/workspace/scratch/5765cde18054/work/automail/project/.refas2/revisions/e661b5fd53e447879bd4baff5f4bbb9f/artifacts/scene.blend",
+      "glb": "/workspace/scratch/5765cde18054/work/automail/project/.refas2/revisions/e661b5fd53e447879bd4baff5f4bbb9f/artifacts/asset.glb",
+      "scene": "/workspace/scratch/5765cde18054/work/automail/project/.refas2/revisions/e661b5fd53e447879bd4baff5f4bbb9f/artifacts/scene.json"
+    },
+    "observations": [
+      {
+        "camera": {
+          "matrixWorld": [
+            [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -1.6e-07,
+              -1.0,
+              -1.79999995
+            ],
+            [
+              0.0,
+              1.0,
+              -1.6e-07,
+              0.38
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "orthoScale": 0.82999998,
+          "position": [
+            0.0,
+            -1.79999995,
+            0.38
+          ],
+          "projection": "orthographic",
+          "target": [
+            0.0,
+            0.0,
+            0.38
+          ]
+        },
+        "framing": "fixed-review-spec",
+        "lighting": {
+          "center": [
+            0.0,
+            0.0,
+            0.38
+          ],
+          "radius": 0.5,
+          "rig": "three-area-lights/v1"
+        },
+        "path": "/workspace/scratch/5765cde18054/work/automail/project/.refas2/revisions/e661b5fd53e447879bd4baff5f4bbb9f/artifacts/view-front.png",
+        "referenceRegion": {
+          "regionPixels": [
+            125,
+            116,
+            266,
+            692
+          ],
+          "sourceSha256": "3c7856dd632f8a1cde8036078573f569db55b6af97fae853237d8a9356f3c872"
+        },
+        "registration": "unregistered",
+        "renderer": {
+          "denoising": false,
+          "device": "CPU",
+          "engine": "CYCLES",
+          "samples": 16,
+          "size": [
+            512,
+            512
+          ],
+          "transparent": false,
+          "viewTransform": "AgX",
+          "worldColor": [
+            0.16,
+            0.18000001,
+            0.20999999
+          ],
+          "worldStrength": 0.45
+        },
+        "sha256": "f4d7fdc8f65f91fa10ea4b831622e713f8c0caa40ce1721f5d57ebe73d21cd0f",
+        "sourceSceneFingerprint": "a68f8d4e0c51857a665eeac08ca7606de95d776b430bda19370d5c80f8c66600",
+        "view": "front"
+      },
+      {
+        "camera": {
+          "matrixWorld": [
+            [
+              -4e-08,
+              4e-08,
+              1.0,
+              1.79999995
+            ],
+            [
+              1.0,
+              0.0,
+              4e-08,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              -4e-08,
+              0.38
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "orthoScale": 0.82999998,
+          "position": [
+            1.79999995,
+            0.0,
+            0.38
+          ],
+          "projection": "orthographic",
+          "target": [
+            0.0,
+            0.0,
+            0.38
+          ]
+        },
+        "framing": "fixed-review-spec",
+        "lighting": {
+          "center": [
+            0.0,
+            0.0,
+            0.38
+          ],
+          "radius": 0.5,
+          "rig": "three-area-lights/v1"
+        },
+        "path": "/workspace/scratch/5765cde18054/work/automail/project/.refas2/revisions/e661b5fd53e447879bd4baff5f4bbb9f/artifacts/view-side.png",
+        "referenceRegion": {
+          "regionPixels": [
+            278,
+            116,
+            421,
+            692
+          ],
+          "sourceSha256": "3c7856dd632f8a1cde8036078573f569db55b6af97fae853237d8a9356f3c872"
+        },
+        "registration": "unregistered",
+        "renderer": {
+          "denoising": false,
+          "device": "CPU",
+          "engine": "CYCLES",
+          "samples": 16,
+          "size": [
+            512,
+            512
+          ],
+          "transparent": false,
+          "viewTransform": "AgX",
+          "worldColor": [
+            0.16,
+            0.18000001,
+            0.20999999
+          ],
+          "worldStrength": 0.45
+        },
+        "sha256": "909da609d494d99607c4df02d7933dace557bdc6c97aa84806d62926304dca13",
+        "sourceSceneFingerprint": "a68f8d4e0c51857a665eeac08ca7606de95d776b430bda19370d5c80f8c66600",
+        "view": "side"
+      },
+      {
+        "camera": {
+          "matrixWorld": [
+            [
+              -1.0,
+              -1.5e-07,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              8e-08,
+              1.0,
+              1.79999995
+            ],
+            [
+              -1.5e-07,
+              1.0,
+              -8e-08,
+              0.38
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "orthoScale": 0.82999998,
+          "position": [
+            0.0,
+            1.79999995,
+            0.38
+          ],
+          "projection": "orthographic",
+          "target": [
+            0.0,
+            0.0,
+            0.38
+          ]
+        },
+        "framing": "fixed-review-spec",
+        "lighting": {
+          "center": [
+            0.0,
+            0.0,
+            0.38
+          ],
+          "radius": 0.5,
+          "rig": "three-area-lights/v1"
+        },
+        "path": "/workspace/scratch/5765cde18054/work/automail/project/.refas2/revisions/e661b5fd53e447879bd4baff5f4bbb9f/artifacts/view-back.png",
+        "referenceRegion": {
+          "regionPixels": [
+            441,
+            116,
+            588,
+            692
+          ],
+          "sourceSha256": "3c7856dd632f8a1cde8036078573f569db55b6af97fae853237d8a9356f3c872"
+        },
+        "registration": "unregistered",
+        "renderer": {
+          "denoising": false,
+          "device": "CPU",
+          "engine": "CYCLES",
+          "samples": 16,
+          "size": [
+            512,
+            512
+          ],
+          "transparent": false,
+          "viewTransform": "AgX",
+          "worldColor": [
+            0.16,
+            0.18000001,
+            0.20999999
+          ],
+          "worldStrength": 0.45
+        },
+        "sha256": "bad58f6a9d7a15f3aaeac7790bfeb7305d50fce4891fdaf42ee63c46abbc8cd9",
+        "sourceSceneFingerprint": "a68f8d4e0c51857a665eeac08ca7606de95d776b430bda19370d5c80f8c66600",
+        "view": "back"
+      },
+      {
+        "camera": {
+          "matrixWorld": [
+            [
+              0.84269625,
+              -0.06258653,
+              0.5347392,
+              1.14999998
+            ],
+            [
+              0.53838933,
+              0.09796156,
+              -0.83698297,
+              -1.79999995
+            ],
+            [
+              -3e-08,
+              0.99322027,
+              0.11624776,
+              0.63
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "orthoScale": 0.82999998,
+          "position": [
+            1.14999998,
+            -1.79999995,
+            0.63
+          ],
+          "projection": "orthographic",
+          "target": [
+            0.0,
+            0.0,
+            0.38
+          ]
+        },
+        "framing": "fixed-review-spec",
+        "lighting": {
+          "center": [
+            0.0,
+            0.0,
+            0.38
+          ],
+          "radius": 0.5,
+          "rig": "three-area-lights/v1"
+        },
+        "path": "/workspace/scratch/5765cde18054/work/automail/project/.refas2/revisions/e661b5fd53e447879bd4baff5f4bbb9f/artifacts/view-hero.png",
+        "referenceRegion": null,
+        "registration": "unregistered",
+        "renderer": {
+          "denoising": false,
+          "device": "CPU",
+          "engine": "CYCLES",
+          "samples": 16,
+          "size": [
+            512,
+            512
+          ],
+          "transparent": false,
+          "viewTransform": "AgX",
+          "worldColor": [
+            0.16,
+            0.18000001,
+            0.20999999
+          ],
+          "worldStrength": 0.45
+        },
+        "sha256": "54e49f26249d5d210f138637c76e41ffed6cdf6dbc5b21f031d466a98969a94a",
+        "sourceSceneFingerprint": "a68f8d4e0c51857a665eeac08ca7606de95d776b430bda19370d5c80f8c66600",
+        "view": "hero"
+      },
+      {
+        "camera": {
+          "matrixWorld": [
+            [
+              -0.95635152,
+              -0.01240939,
+              0.29195502,
+              0.55000001
+            ],
+            [
+              0.29221863,
+              -0.0406124,
+              0.95548886,
+              1.79999995
+            ],
+            [
+              -4e-08,
+              0.99909788,
+              0.04246598,
+              0.38
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "orthoScale": 0.30000001,
+          "position": [
+            0.55000001,
+            1.79999995,
+            0.38
+          ],
+          "projection": "orthographic",
+          "target": [
+            0.0,
+            0.0,
+            0.30000001
+          ]
+        },
+        "framing": "fixed-review-spec",
+        "lighting": {
+          "center": [
+            0.0,
+            0.0,
+            0.38
+          ],
+          "radius": 0.5,
+          "rig": "three-area-lights/v1"
+        },
+        "path": "/workspace/scratch/5765cde18054/work/automail/project/.refas2/revisions/e661b5fd53e447879bd4baff5f4bbb9f/artifacts/view-service-detail.png",
+        "referenceRegion": null,
+        "registration": "unregistered",
+        "renderer": {
+          "denoising": false,
+          "device": "CPU",
+          "engine": "CYCLES",
+          "samples": 16,
+          "size": [
+            512,
+            512
+          ],
+          "transparent": false,
+          "viewTransform": "AgX",
+          "worldColor": [
+            0.16,
+            0.18000001,
+            0.20999999
+          ],
+          "worldStrength": 0.45
+        },
+        "sha256": "38e8fe0a58743c13019f48cde44c54ee493e67b3aa15ad538c71bb24a5ee641a",
+        "sourceSceneFingerprint": "a68f8d4e0c51857a665eeac08ca7606de95d776b430bda19370d5c80f8c66600",
+        "view": "service-detail"
+      },
+      {
+        "camera": {
+          "matrixWorld": [
+            [
+              0.40613842,
+              -0.02782207,
+              0.91338795,
+              1.79999995
+            ],
+            [
+              0.91381156,
+              0.0123654,
+              -0.40595016,
+              -0.80000001
+            ],
+            [
+              -3e-08,
+              0.9995364,
+              0.03044619,
+              0.36000001
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "orthoScale": 0.28,
+          "position": [
+            1.79999995,
+            -0.80000001,
+            0.36000001
+          ],
+          "projection": "orthographic",
+          "target": [
+            0.0,
+            0.0,
+            0.30000001
+          ]
+        },
+        "framing": "fixed-review-spec",
+        "lighting": {
+          "center": [
+            0.0,
+            0.0,
+            0.38
+          ],
+          "radius": 0.5,
+          "rig": "three-area-lights/v1"
+        },
+        "path": "/workspace/scratch/5765cde18054/work/automail/project/.refas2/revisions/e661b5fd53e447879bd4baff5f4bbb9f/artifacts/view-armor-depth.png",
+        "referenceRegion": null,
+        "registration": "unregistered",
+        "renderer": {
+          "denoising": false,
+          "device": "CPU",
+          "engine": "CYCLES",
+          "samples": 16,
+          "size": [
+            512,
+            512
+          ],
+          "transparent": false,
+          "viewTransform": "AgX",
+          "worldColor": [
+            0.16,
+            0.18000001,
+            0.20999999
+          ],
+          "worldStrength": 0.45
+        },
+        "sha256": "f7dc69ceb1f2907c1f38d4381af33698d179da6fd54341fb46580cdb88901523",
+        "sourceSceneFingerprint": "a68f8d4e0c51857a665eeac08ca7606de95d776b430bda19370d5c80f8c66600",
+        "view": "armor-depth"
+      },
+      {
+        "camera": {
+          "matrixWorld": [
+            [
+              0.77611393,
+              -0.04029395,
+              0.62930405,
+              1.29999995
+            ],
+            [
+              0.6305927,
+              0.04959246,
+              -0.77452785,
+              -1.60000002
+            ],
+            [
+              5e-08,
+              0.9979564,
+              0.06389847,
+              0.81999999
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "orthoScale": 0.22,
+          "position": [
+            1.29999995,
+            -1.60000002,
+            0.81999999
+          ],
+          "projection": "orthographic",
+          "target": [
+            0.0,
+            0.0,
+            0.68800002
+          ]
+        },
+        "framing": "fixed-review-spec",
+        "lighting": {
+          "center": [
+            0.0,
+            0.0,
+            0.38
+          ],
+          "radius": 0.5,
+          "rig": "three-area-lights/v1"
+        },
+        "path": "/workspace/scratch/5765cde18054/work/automail/project/.refas2/revisions/e661b5fd53e447879bd4baff5f4bbb9f/artifacts/view-socket-depth.png",
+        "referenceRegion": null,
+        "registration": "unregistered",
+        "renderer": {
+          "denoising": false,
+          "device": "CPU",
+          "engine": "CYCLES",
+          "samples": 16,
+          "size": [
+            512,
+            512
+          ],
+          "transparent": false,
+          "viewTransform": "AgX",
+          "worldColor": [
+            0.16,
+            0.18000001,
+            0.20999999
+          ],
+          "worldStrength": 0.45
+        },
+        "sha256": "80c7d2ff2ea511e1a7a2379a85485e55d2a9e713c555b8f059639f7001035263",
+        "sourceSceneFingerprint": "a68f8d4e0c51857a665eeac08ca7606de95d776b430bda19370d5c80f8c66600",
+        "view": "socket-depth"
+      },
+      {
+        "camera": {
+          "matrixWorld": [
+            [
+              -0.87415737,
+              -0.01532262,
+              0.485401,
+              1.0
+            ],
+            [
+              0.48564279,
+              -0.02758058,
+              0.87372214,
+              1.79999995
+            ],
+            [
+              -8e-08,
+              0.99950212,
+              0.03155109,
+              0.19
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "orthoScale": 0.18000001,
+          "position": [
+            1.0,
+            1.79999995,
+            0.19
+          ],
+          "projection": "orthographic",
+          "target": [
+            0.0,
+            0.0,
+            0.125
+          ]
+        },
+        "framing": "fixed-review-spec",
+        "lighting": {
+          "center": [
+            0.0,
+            0.0,
+            0.38
+          ],
+          "radius": 0.5,
+          "rig": "three-area-lights/v1"
+        },
+        "path": "/workspace/scratch/5765cde18054/work/automail/project/.refas2/revisions/e661b5fd53e447879bd4baff5f4bbb9f/artifacts/view-palm-depth.png",
+        "referenceRegion": null,
+        "registration": "unregistered",
+        "renderer": {
+          "denoising": false,
+          "device": "CPU",
+          "engine": "CYCLES",
+          "samples": 16,
+          "size": [
+            512,
+            512
+          ],
+          "transparent": false,
+          "viewTransform": "AgX",
+          "worldColor": [
+            0.16,
+            0.18000001,
+            0.20999999
+          ],
+          "worldStrength": 0.45
+        },
+        "sha256": "3027c58bf31e79d942fb863b015e770d93e779ab7e21297203c48cccf2df8602",
+        "sourceSceneFingerprint": "a68f8d4e0c51857a665eeac08ca7606de95d776b430bda19370d5c80f8c66600",
+        "view": "palm-depth"
+      },
+      {
+        "camera": {
+          "matrixWorld": [
+            [
+              -0.90314043,
+              -0.0166862,
+              0.42902088,
+              0.85000002
+            ],
+            [
+              0.42934528,
+              -0.03509994,
+              0.90245813,
+              1.79999995
+            ],
+            [
+              1e-08,
+              0.99924451,
+              0.03886431,
+              0.63
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "orthoScale": 0.23,
+          "position": [
+            0.85000002,
+            1.79999995,
+            0.63
+          ],
+          "projection": "orthographic",
+          "target": [
+            0.0,
+            0.012,
+            0.55299997
+          ]
+        },
+        "framing": "fixed-review-spec",
+        "lighting": {
+          "center": [
+            0.0,
+            0.0,
+            0.38
+          ],
+          "radius": 0.5,
+          "rig": "three-area-lights/v1"
+        },
+        "path": "/workspace/scratch/5765cde18054/work/automail/project/.refas2/revisions/e661b5fd53e447879bd4baff5f4bbb9f/artifacts/view-mechanism-detail.png",
+        "referenceRegion": null,
+        "registration": "unregistered",
+        "renderer": {
+          "denoising": false,
+          "device": "CPU",
+          "engine": "CYCLES",
+          "samples": 16,
+          "size": [
+            512,
+            512
+          ],
+          "transparent": false,
+          "viewTransform": "AgX",
+          "worldColor": [
+            0.16,
+            0.18000001,
+            0.20999999
+          ],
+          "worldStrength": 0.45
+        },
+        "sha256": "af16c9aed834d191ea6d4bf230440e934a5b19b8d17fb5ef6f2b250c64aab04d",
+        "sourceSceneFingerprint": "a68f8d4e0c51857a665eeac08ca7606de95d776b430bda19370d5c80f8c66600",
+        "view": "mechanism-detail"
+      },
+      {
+        "camera": {
+          "matrixWorld": [
+            [
+              0.94677275,
+              -0.01454626,
+              0.32157394,
+              0.60000002
+            ],
+            [
+              0.32190278,
+              0.04278324,
+              -0.94580561,
+              -1.79999995
+            ],
+            [
+              -4e-08,
+              0.9989785,
+              0.04518849,
+              0.18000001
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "orthoScale": 0.215,
+          "position": [
+            0.60000002,
+            -1.79999995,
+            0.18000001
+          ],
+          "projection": "orthographic",
+          "target": [
+            -0.012,
+            0.0,
+            0.094
+          ]
+        },
+        "framing": "fixed-review-spec",
+        "lighting": {
+          "center": [
+            0.0,
+            0.0,
+            0.38
+          ],
+          "radius": 0.5,
+          "rig": "three-area-lights/v1"
+        },
+        "path": "/workspace/scratch/5765cde18054/work/automail/project/.refas2/revisions/e661b5fd53e447879bd4baff5f4bbb9f/artifacts/view-hand-front.png",
+        "referenceRegion": null,
+        "registration": "unregistered",
+        "renderer": {
+          "denoising": false,
+          "device": "CPU",
+          "engine": "CYCLES",
+          "samples": 16,
+          "size": [
+            512,
+            512
+          ],
+          "transparent": false,
+          "viewTransform": "AgX",
+          "worldColor": [
+            0.16,
+            0.18000001,
+            0.20999999
+          ],
+          "worldStrength": 0.45
+        },
+        "sha256": "2df7bdeb7671303f8c257ded615d9e196add009198ff1b76eaaea0bb12676352",
+        "sourceSceneFingerprint": "a68f8d4e0c51857a665eeac08ca7606de95d776b430bda19370d5c80f8c66600",
+        "view": "hand-front"
+      },
+      {
+        "camera": {
+          "matrixWorld": [
+            [
+              -0.94677275,
+              -0.01454617,
+              0.32157385,
+              0.60000002
+            ],
+            [
+              0.32190266,
+              -0.04278327,
+              0.94580561,
+              1.79999995
+            ],
+            [
+              1.3e-07,
+              0.9989785,
+              0.04518849,
+              0.18000001
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "orthoScale": 0.215,
+          "position": [
+            0.60000002,
+            1.79999995,
+            0.18000001
+          ],
+          "projection": "orthographic",
+          "target": [
+            -0.012,
+            0.0,
+            0.094
+          ]
+        },
+        "framing": "fixed-review-spec",
+        "lighting": {
+          "center": [
+            0.0,
+            0.0,
+            0.38
+          ],
+          "radius": 0.5,
+          "rig": "three-area-lights/v1"
+        },
+        "path": "/workspace/scratch/5765cde18054/work/automail/project/.refas2/revisions/e661b5fd53e447879bd4baff5f4bbb9f/artifacts/view-hand-palm.png",
+        "referenceRegion": null,
+        "registration": "unregistered",
+        "renderer": {
+          "denoising": false,
+          "device": "CPU",
+          "engine": "CYCLES",
+          "samples": 16,
+          "size": [
+            512,
+            512
+          ],
+          "transparent": false,
+          "viewTransform": "AgX",
+          "worldColor": [
+            0.16,
+            0.18000001,
+            0.20999999
+          ],
+          "worldStrength": 0.45
+        },
+        "sha256": "d5a376f045857fefa17fb1814b28bb1a1cead2f2c8bdab7dcdad2d5788753858",
+        "sourceSceneFingerprint": "a68f8d4e0c51857a665eeac08ca7606de95d776b430bda19370d5c80f8c66600",
+        "view": "hand-palm"
+      }
+    ],
+    "inputs": {
+      "base.blend": "/workspace/scratch/5765cde18054/work/automail/project/.refas2/revisions/e661b5fd53e447879bd4baff5f4bbb9f/inputs/base.blend",
+      "edit.py": "/workspace/scratch/5765cde18054/work/automail/project/.refas2/revisions/e661b5fd53e447879bd4baff5f4bbb9f/inputs/edit.py",
+      "review.json": "/workspace/scratch/5765cde18054/work/automail/project/.refas2/revisions/e661b5fd53e447879bd4baff5f4bbb9f/inputs/review.json"
+    },
+    "revisions": [
+      {
+        "id": "5e1ea9de4c2c484bb7b8acb419753a6c",
+        "intent": "import-unchanged-baseline",
+        "createdAt": "2026-11-22T12:15:28.401572+00:00",
+        "parent": null
+      },
+      {
+        "id": "6f49348976b748c6873b5a20f8d2ca49",
+        "intent": "author-candidate-02",
+        "createdAt": "2026-11-22T12:19:50.269752+00:00",
+        "parent": "5e1ea9de4c2c484bb7b8acb419753a6c"
+      },
+      {
+        "id": "12c1dd93d9d3494a8d5ed25e7634c460",
+        "intent": "author-candidate-03",
+        "createdAt": "2026-11-22T12:22:26.425808+00:00",
+        "parent": "6f49348976b748c6873b5a20f8d2ca49"
+      },
+      {
+        "id": "ed2d5712e5ce43a986beffdfd6520a27",
+        "intent": "author-candidate-04",
+        "createdAt": "2026-11-22T12:25:23.958489+00:00",
+        "parent": "12c1dd93d9d3494a8d5ed25e7634c460"
+      },
+      {
+        "id": "1e3feb08f4054c81b2f795b2c57f7939",
+        "intent": "service-cover-outward-3mm",
+        "createdAt": "2026-11-22T12:27:28.535260+00:00",
+        "parent": "ed2d5712e5ce43a986beffdfd6520a27"
+      },
+      {
+        "id": "cd6ffb7f3c784b9bb7c854962b22c8eb",
+        "intent": "Restore revision ed2d5712e5ce43a986beffdfd6520a27",
+        "createdAt": "2026-11-22T12:27:28.783037+00:00",
+        "parent": "1e3feb08f4054c81b2f795b2c57f7939"
+      },
+      {
+        "id": "ae8536d99d2b4f92b3034b3b55e353d1",
+        "intent": "pose-elbow-0",
+        "createdAt": "2026-11-22T12:27:38.259062+00:00",
+        "parent": "cd6ffb7f3c784b9bb7c854962b22c8eb"
+      },
+      {
+        "id": "665fcb281e5d4076a3d42e78df470976",
+        "intent": "pose-elbow-45",
+        "createdAt": "2026-11-22T12:27:47.236384+00:00",
+        "parent": "ae8536d99d2b4f92b3034b3b55e353d1"
+      },
+      {
+        "id": "3663f19f91dd462c830a3196006686a7",
+        "intent": "pose-elbow-90",
+        "createdAt": "2026-11-22T12:27:55.894367+00:00",
+        "parent": "665fcb281e5d4076a3d42e78df470976"
+      },
+      {
+        "id": "a4b55fc062694baf9a4efda66d809eb8",
+        "intent": "pose-wrist-20-index-35",
+        "createdAt": "2026-11-22T12:28:05.108891+00:00",
+        "parent": "3663f19f91dd462c830a3196006686a7"
+      },
+      {
+        "id": "649930e59c154bca96d9c858c4b5e483",
+        "intent": "Restore revision ed2d5712e5ce43a986beffdfd6520a27",
+        "createdAt": "2026-11-22T12:28:05.578063+00:00",
+        "parent": "a4b55fc062694baf9a4efda66d809eb8"
+      },
+      {
+        "id": "e661b5fd53e447879bd4baff5f4bbb9f",
+        "intent": "author-candidate-05",
+        "createdAt": "2026-11-22T12:29:44.888261+00:00",
+        "parent": "649930e59c154bca96d9c858c4b5e483"
+      }
+    ],
+    "incompleteRuns": [
+      {
+        "id": "dd7c723ed06c496eac2be593f72ede72",
+        "status": "failed",
+        "error": "Blender failed with exit 1; inspect /workspace/scratch/5765cde18054/work/automail/project/.refas2/runs/dd7c723ed06c496eac2be593f72ede72/blender.log"
+      }
+    ],
+    "evidenceFreshness": {
+      "status": "current",
+      "scope": "active-reference-content-set",
+      "revision": "e661b5fd53e447879bd4baff5f4bbb9f",
+      "activeSourceSha256": [
+        "3c7856dd632f8a1cde8036078573f569db55b6af97fae853237d8a9356f3c872"
+      ],
+      "revisionSourceSha256": [
+        "3c7856dd632f8a1cde8036078573f569db55b6af97fae853237d8a9356f3c872"
+      ],
+      "visualAcceptance": "not-evaluated"
+    },
+    "referenceResemblance": "not-evaluated",
+    "gameReadiness": "not-evaluated",
+    "runId": "d04cfbb0283442e8b9600327f265b15c",
+    "publishedRevision": "e661b5fd53e447879bd4baff5f4bbb9f",
+    "elapsedSeconds": 30.557
+  }
+}

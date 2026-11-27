@@ -1,0 +1,16 @@
+{
+  "baseline_commit": "94930b3d3dade455336ce6240805ea96d7a13e53",
+  "baseline_worker": "frozen-refas/scripts/production/blender_worker.py",
+  "environment": "Blender 4.3.2; Python 3.12.14",
+  "baseline_expected": "two test methods fail because eight edit/inspect rejection subcases incorrectly succeed",
+  "candidate_files": [
+    {
+      "path": "skills/refas/scripts/production/blender_worker.py",
+      "sha256": "50541ecf88c0e931999d88fc8241238d6e8f10500b15735e2d5831ce6acc1614"
+    },
+    {
+      "path": "tests/test_production_blender.py",
+      "sha256": "450eebbff2d3ece6cc071c67dede06e6419e5f320291d27c182b7b025f3a900e"
+    }
+  ]
+}

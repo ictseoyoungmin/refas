@@ -1,0 +1,125 @@
+{
+  "ok": true,
+  "schema": "refas.production.project/v2",
+  "name": "aurix-package-compatibility",
+  "projectId": "efe5c0abcbd1433cadfa0ab107f6f0cd",
+  "head": "658cbacb5b074a7bace0d7664aab57ab",
+  "sequence": 2,
+  "sources": [
+    {
+      "path": "sources/001-reference.png",
+      "name": "reference.png",
+      "role": "user-reference",
+      "sha256": "3c7856dd632f8a1cde8036078573f569db55b6af97fae853237d8a9356f3c872",
+      "bytes": 3215297
+    }
+  ],
+  "outputs": {
+    "blend": "/workspace/scratch/c52cb753f160/work/automail-package/project/.refas2/revisions/658cbacb5b074a7bace0d7664aab57ab/artifacts/scene.blend",
+    "glb": "/workspace/scratch/c52cb753f160/work/automail-package/project/.refas2/revisions/658cbacb5b074a7bace0d7664aab57ab/artifacts/asset.glb",
+    "scene": "/workspace/scratch/c52cb753f160/work/automail-package/project/.refas2/revisions/658cbacb5b074a7bace0d7664aab57ab/artifacts/scene.json"
+  },
+  "observations": [
+    {
+      "camera": {
+        "matrixWorld": [
+          [
+            -0.95635152,
+            -0.01240939,
+            0.29195502,
+            0.55000001
+          ],
+          [
+            0.29221863,
+            -0.0406124,
+            0.95548886,
+            1.79999995
+          ],
+          [
+            -4e-08,
+            0.99909788,
+            0.04246598,
+            0.38
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "orthoScale": 0.30000001,
+        "position": [
+          0.55000001,
+          1.79999995,
+          0.38
+        ],
+        "projection": "orthographic",
+        "target": [
+          0.0,
+          0.0,
+          0.30000001
+        ]
+      },
+      "framing": "fixed-review-spec",
+      "lighting": {
+        "center": [
+          0.0,
+          0.0,
+          0.38
+        ],
+        "radius": 0.5,
+        "rig": "three-area-lights/v1"
+      },
+      "path": "/workspace/scratch/c52cb753f160/work/automail-package/project/.refas2/revisions/658cbacb5b074a7bace0d7664aab57ab/artifacts/view-service-detail.png",
+      "referenceRegion": null,
+      "registration": "unregistered",
+      "renderer": {
+        "denoising": false,
+        "device": "CPU",
+        "engine": "CYCLES",
+        "samples": 16,
+        "size": [
+          512,
+          512
+        ],
+        "transparent": false,
+        "viewTransform": "AgX",
+        "worldColor": [
+          0.16,
+          0.18000001,
+          0.20999999
+        ],
+        "worldStrength": 0.45
+      },
+      "sha256": "5ea9310154ce2772bd17a7edcde5ef1b1a24f0a7b43e763056212c5742bbbd1f",
+      "sourceSceneFingerprint": "5d26dc454d7b0a8b460d19d7fa7a26f7f6b12da655893a5659e4b853927908c0",
+      "view": "service-detail"
+    }
+  ],
+  "inputs": {
+    "base.blend": "/workspace/scratch/c52cb753f160/work/automail-package/project/.refas2/revisions/658cbacb5b074a7bace0d7664aab57ab/inputs/base.blend",
+    "edit.py": "/workspace/scratch/c52cb753f160/work/automail-package/project/.refas2/revisions/658cbacb5b074a7bace0d7664aab57ab/inputs/edit.py",
+    "review.json": "/workspace/scratch/c52cb753f160/work/automail-package/project/.refas2/revisions/658cbacb5b074a7bace0d7664aab57ab/inputs/review.json"
+  },
+  "revisions": [
+    {
+      "id": "9b74eb85fb5f47a1a9f394fcc8d50244",
+      "intent": "installed package import of selected refined arm",
+      "createdAt": "2026-11-22T09:24:58.993993+00:00",
+      "parent": null
+    },
+    {
+      "id": "658cbacb5b074a7bace0d7664aab57ab",
+      "intent": "installed package 3mm service-cover edit",
+      "createdAt": "2026-11-22T09:25:08.304766+00:00",
+      "parent": "9b74eb85fb5f47a1a9f394fcc8d50244"
+    }
+  ],
+  "incompleteRuns": [],
+  "referenceResemblance": "not-evaluated",
+  "gameReadiness": "not-evaluated",
+  "runId": "36647a9cb69e4793a810555c33c40173",
+  "publishedRevision": "658cbacb5b074a7bace0d7664aab57ab",
+  "elapsedSeconds": 8.962
+}

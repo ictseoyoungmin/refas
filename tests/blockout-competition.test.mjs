@@ -5,8 +5,8 @@ import {
   validateBlockoutCompetitionPolicy,
   createVisualHierarchy,
   digestJson,
-} from '../skills/refas/scripts/lib/index.mjs';
-import {runBlockoutCompetitionFreshWorkerDogfood} from '../skills/refas/scripts/verify_blockout_competition_dogfood.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
+import {runBlockoutCompetitionFreshWorkerDogfood} from '../legacy/v1/scripts/verify_blockout_competition_dogfood.mjs';
 
 const D=(ch)=>ch.repeat(64);
 

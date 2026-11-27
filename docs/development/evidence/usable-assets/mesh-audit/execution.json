@@ -1,0 +1,45 @@
+{
+  "first_observed_utc": "2026-11-22T13:28:43Z",
+  "review_repair_started_observed_utc": "2026-11-22T13:42:21Z",
+  "command": [
+    "python3",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-p",
+    "test_production_mesh_audit.py",
+    "-v"
+  ],
+  "startedUtc": "2026-11-22T13:51:10.859102+00:00",
+  "endedUtc": "2026-11-22T13:51:12.538231+00:00",
+  "elapsedSeconds": 1.6791298309981357,
+  "exitCode": 0,
+  "tests": 14,
+  "passed": 14,
+  "failed": 0,
+  "skipped": 0,
+  "blenderVersion": "4.3.2",
+  "caseCount": 23,
+  "rejectedInvalidCalls": 12,
+  "moduleSha256": "5a095e8aef190a731f9ae785d0dbd25ac7604e73aef92df192922c75013c3257",
+  "testSha256": "05ab90b4578d64860ad360b79612b216380f0596eb0387f0eca5fb7285bf9e4e",
+  "observationsSha256": "76f6f9c3273c06dec50347e55ab77daaa3ee491864609c57f4e6bcac54a8897d",
+  "providerModel": null,
+  "tokens": null,
+  "modelCost": null,
+  "toolCost": null,
+  "measurementLimits": "Pre-reading clock and provider/model token/billing data are unavailable. This is a local regression run, not a controlled modeling-speed/cost comparison.",
+  "retainedPriorRuns": [
+    "initial/execution.json",
+    "degenerate-target-counterexample/execution.json",
+    "pre-review-fix/execution.json",
+    "review-counterexamples/execution.json"
+  ],
+  "repairedReviewFindings": [
+    "R1: surface components and disconnected vertex fans",
+    "R2: common-frame double calculations and translation invariance"
+  ]
+}

@@ -7,7 +7,7 @@ import {
   createPhysicalIdentityGraph,
   createTransmissionModel,
   validateControlProfileBindings,
-} from '../skills/refas/scripts/lib/index.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
 
 const D = (value = 'a') => value.repeat(64);
 

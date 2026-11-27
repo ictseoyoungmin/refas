@@ -1,0 +1,22 @@
+{
+  "schema": "refas.remote-ci-checkpoint/v1",
+  "repository": "ictseoyoungmin/refas",
+  "commit": "1435ce1a2c90f32c5315fdcbd9eafa1d7966b900",
+  "recordedAt": "2026-11-22 20:31:21 UTC",
+  "workflows": [
+    {
+      "id": 45065905769,
+      "name": "RefAs production alpha",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/ictseoyoungmin/refas/actions/runs/45065905769"
+    },
+    {
+      "id": 45065905806,
+      "name": "RefAs CI",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/ictseoyoungmin/refas/actions/runs/45065905806"
+    }
+  ]
+}

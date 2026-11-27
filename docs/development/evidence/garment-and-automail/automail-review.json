@@ -1,0 +1,134 @@
+{
+  "schema": "refas.production.review/v2",
+  "views": [
+    {
+      "name": "front",
+      "position": [
+        0.0,
+        -2.0,
+        0.38
+      ],
+      "target": [
+        0,
+        0,
+        0.38
+      ],
+      "orthoScale": 0.9,
+      "reference": {
+        "sourceSha256": "3c7856dd632f8a1cde8036078573f569db55b6af97fae853237d8a9356f3c872",
+        "regionPixels": [
+          125,
+          116,
+          266,
+          692
+        ]
+      }
+    },
+    {
+      "name": "left",
+      "position": [
+        2.0,
+        -0.0,
+        0.38
+      ],
+      "target": [
+        0,
+        0,
+        0.38
+      ],
+      "orthoScale": 0.9,
+      "reference": {
+        "sourceSha256": "3c7856dd632f8a1cde8036078573f569db55b6af97fae853237d8a9356f3c872",
+        "regionPixels": [
+          278,
+          116,
+          421,
+          692
+        ]
+      }
+    },
+    {
+      "name": "back",
+      "position": [
+        0.0,
+        2.0,
+        0.38
+      ],
+      "target": [
+        0,
+        0,
+        0.38
+      ],
+      "orthoScale": 0.9,
+      "reference": {
+        "sourceSha256": "3c7856dd632f8a1cde8036078573f569db55b6af97fae853237d8a9356f3c872",
+        "regionPixels": [
+          441,
+          116,
+          588,
+          692
+        ]
+      }
+    },
+    {
+      "name": "front-three-quarter",
+      "position": [
+        1.41421356,
+        -1.41421356,
+        0.38
+      ],
+      "target": [
+        0,
+        0,
+        0.38
+      ],
+      "orthoScale": 0.9,
+      "reference": {
+        "sourceSha256": "3c7856dd632f8a1cde8036078573f569db55b6af97fae853237d8a9356f3c872",
+        "regionPixels": [
+          602,
+          116,
+          804,
+          692
+        ]
+      }
+    },
+    {
+      "name": "rear-three-quarter",
+      "position": [
+        -1.41421356,
+        1.41421356,
+        0.38
+      ],
+      "target": [
+        0,
+        0,
+        0.38
+      ],
+      "orthoScale": 0.9,
+      "reference": {
+        "sourceSha256": "3c7856dd632f8a1cde8036078573f569db55b6af97fae853237d8a9356f3c872",
+        "regionPixels": [
+          811,
+          116,
+          1002,
+          692
+        ]
+      }
+    }
+  ],
+  "lighting": {
+    "center": [
+      0,
+      0,
+      0.38
+    ],
+    "radius": 0.48
+  },
+  "background": [
+    0.8,
+    0.83,
+    0.88
+  ],
+  "transparent": true
+}

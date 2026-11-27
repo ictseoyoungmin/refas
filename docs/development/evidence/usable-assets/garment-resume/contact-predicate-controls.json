@@ -1,0 +1,229 @@
+{
+  "createdUtc": "2026-11-22T21:06:50.091792+00:00",
+  "tokens": null,
+  "cost": null,
+  "fixtures": "docs/development/evidence/usable-assets/garment-resume/contact-predicate-fixtures.json",
+  "fixturesSha256": "ec13c102c68198d32dd86c35778be9c0563d17688e2155c44c94a48345913cfb",
+  "predicateSha256": "f3ebefdb756cc7d24d314901580d587536244df7b8a84f3cfaaf1fbf5825b738",
+  "controls": [
+    {
+      "name": "Collar | standing back and neck facing",
+      "faces": [
+        15033,
+        15037
+      ],
+      "independentActualIntersectionSpanM": 0.0011285326980787142,
+      "scale": 0.001,
+      "translation": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "expected": true,
+      "observed": true
+    },
+    {
+      "name": "Collar | standing back and neck facing",
+      "faces": [
+        15033,
+        15037
+      ],
+      "independentActualIntersectionSpanM": 0.0011285326980787142,
+      "scale": 0.001,
+      "translation": [
+        13.0,
+        -7.0,
+        200.0
+      ],
+      "expected": true,
+      "observed": true
+    },
+    {
+      "name": "Collar | standing back and neck facing",
+      "faces": [
+        15033,
+        15037
+      ],
+      "independentActualIntersectionSpanM": 0.0011285326980787142,
+      "scale": 1,
+      "translation": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "expected": true,
+      "observed": true
+    },
+    {
+      "name": "Collar | standing back and neck facing",
+      "faces": [
+        15033,
+        15037
+      ],
+      "independentActualIntersectionSpanM": 0.0011285326980787142,
+      "scale": 1,
+      "translation": [
+        13.0,
+        -7.0,
+        200.0
+      ],
+      "expected": true,
+      "observed": true
+    },
+    {
+      "name": "Collar | standing back and neck facing",
+      "faces": [
+        15033,
+        15037
+      ],
+      "independentActualIntersectionSpanM": 0.0011285326980787142,
+      "scale": 1000,
+      "translation": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "expected": true,
+      "observed": true
+    },
+    {
+      "name": "Collar | standing back and neck facing",
+      "faces": [
+        15033,
+        15037
+      ],
+      "independentActualIntersectionSpanM": 0.0011285326980787142,
+      "scale": 1000,
+      "translation": [
+        13.0,
+        -7.0,
+        200.0
+      ],
+      "expected": true,
+      "observed": true
+    },
+    {
+      "name": "Body | continuous open front and shoulder yoke",
+      "faces": [
+        4481,
+        22202
+      ],
+      "independentActualIntersectionSpanM": 0.0013877948304812971,
+      "scale": 0.001,
+      "translation": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "expected": true,
+      "observed": true
+    },
+    {
+      "name": "Body | continuous open front and shoulder yoke",
+      "faces": [
+        4481,
+        22202
+      ],
+      "independentActualIntersectionSpanM": 0.0013877948304812971,
+      "scale": 0.001,
+      "translation": [
+        13.0,
+        -7.0,
+        200.0
+      ],
+      "expected": true,
+      "observed": true
+    },
+    {
+      "name": "Body | continuous open front and shoulder yoke",
+      "faces": [
+        4481,
+        22202
+      ],
+      "independentActualIntersectionSpanM": 0.0013877948304812971,
+      "scale": 1,
+      "translation": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "expected": true,
+      "observed": true
+    },
+    {
+      "name": "Body | continuous open front and shoulder yoke",
+      "faces": [
+        4481,
+        22202
+      ],
+      "independentActualIntersectionSpanM": 0.0013877948304812971,
+      "scale": 1,
+      "translation": [
+        13.0,
+        -7.0,
+        200.0
+      ],
+      "expected": true,
+      "observed": true
+    },
+    {
+      "name": "Body | continuous open front and shoulder yoke",
+      "faces": [
+        4481,
+        22202
+      ],
+      "independentActualIntersectionSpanM": 0.0013877948304812971,
+      "scale": 1000,
+      "translation": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "expected": true,
+      "observed": true
+    },
+    {
+      "name": "Body | continuous open front and shoulder yoke",
+      "faces": [
+        4481,
+        22202
+      ],
+      "independentActualIntersectionSpanM": 0.0013877948304812971,
+      "scale": 1000,
+      "translation": [
+        13.0,
+        -7.0,
+        200.0
+      ],
+      "expected": true,
+      "observed": true
+    },
+    {
+      "name": "parallel separated",
+      "expected": false,
+      "observed": false
+    },
+    {
+      "name": "coplanar interior overlap",
+      "expected": true,
+      "observed": true
+    },
+    {
+      "name": "coplanar disjoint",
+      "expected": false,
+      "observed": false
+    },
+    {
+      "name": "shared corner contact",
+      "expected": true,
+      "observed": true
+    },
+    {
+      "name": "transverse interior crossing",
+      "expected": true,
+      "observed": true
+    }
+  ],
+  "pass": true,
+  "scope": "Actual independently solved strict-interior counterexamples across scale and translation, plus coplanar/separated/boundary controls. This verifies the predicate controls, not any garment candidate."
+}

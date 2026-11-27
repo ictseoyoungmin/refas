@@ -1,0 +1,26 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> refas@1.4.2 release:audit
+> node tools/verify-plugin-distribution.mjs && node tools/release-audit.mjs
+
+{
+  "status": "PASS",
+  "version": "1.4.2",
+  "skillSource": "./skills/",
+  "icon": "./skills/refas/assets/icon.svg",
+  "adapters": [
+    "claude",
+    "codex",
+    "agents"
+  ]
+}
+{
+  "status": "PASS",
+  "version": "1.4.2",
+  "packagedFiles": 399,
+  "unpackedBytes": 4016807,
+  "skillBytes": 3508145,
+  "instructionReferenceLeaves": 43,
+  "semanticInstructionNodes": 43,
+  "routedInstructionTargets": 68
+}

@@ -1,0 +1,106 @@
+[
+  {
+    "label": "init",
+    "argv": [
+      "/workspace/scratch/5765cde18054/work/usability/installed/npm/node_modules/.bin/refas",
+      "init",
+      "--root",
+      "/workspace/scratch/5765cde18054/work/usability/installed/project",
+      "--name",
+      "installed-topology-and-animation",
+      "--reference",
+      "/workspace/scratch/5765cde18054/refas/examples/automail-arm/source/reference.png"
+    ],
+    "startedUtc": "2026-11-22T14:10:15.842062+00:00",
+    "elapsedSeconds": 0.1793644840035995,
+    "returncode": 0
+  },
+  {
+    "label": "observe",
+    "argv": [
+      "/workspace/scratch/5765cde18054/work/usability/installed/npm/node_modules/.bin/refas",
+      "run",
+      "--root",
+      "/workspace/scratch/5765cde18054/work/usability/installed/project",
+      "--script",
+      "/workspace/scratch/5765cde18054/work/usability/installed/observe-cover.py",
+      "--input-blend",
+      "/workspace/scratch/5765cde18054/work/usability/automail/candidates/candidate-04/native.blend",
+      "--intent",
+      "observe actual cover through the installed mesh helper",
+      "--views",
+      "front",
+      "--size",
+      "128",
+      "--samples",
+      "2",
+      "--timeout",
+      "150",
+      "--expected-revision",
+      "none",
+      "--expected-sequence",
+      "0"
+    ],
+    "startedUtc": "2026-11-22T14:10:16.021857+00:00",
+    "elapsedSeconds": 6.654224689002149,
+    "returncode": 0
+  },
+  {
+    "label": "edit",
+    "argv": [
+      "/workspace/scratch/5765cde18054/work/usability/installed/npm/node_modules/.bin/refas",
+      "run",
+      "--root",
+      "/workspace/scratch/5765cde18054/work/usability/installed/project",
+      "--script",
+      "/workspace/scratch/5765cde18054/work/usability/installed/edit-cover.py",
+      "--intent",
+      "move service cover outward 3mm",
+      "--views",
+      "front",
+      "--size",
+      "128",
+      "--samples",
+      "2",
+      "--timeout",
+      "150",
+      "--expected-revision",
+      "6de54501c2864a1cadc5c92d0281c97b",
+      "--expected-sequence",
+      "1"
+    ],
+    "startedUtc": "2026-11-22T14:10:22.696081+00:00",
+    "elapsedSeconds": 6.373392118999618,
+    "returncode": 0
+  },
+  {
+    "label": "restore",
+    "argv": [
+      "/workspace/scratch/5765cde18054/work/usability/installed/npm/node_modules/.bin/refas",
+      "restore",
+      "--root",
+      "/workspace/scratch/5765cde18054/work/usability/installed/project",
+      "--revision",
+      "6de54501c2864a1cadc5c92d0281c97b",
+      "--expected-revision",
+      "d01979eda5f2437994c1828e12961687",
+      "--expected-sequence",
+      "2"
+    ],
+    "startedUtc": "2026-11-22T14:10:29.069816+00:00",
+    "elapsedSeconds": 0.3203937610014691,
+    "returncode": 0
+  },
+  {
+    "label": "verify",
+    "argv": [
+      "/workspace/scratch/5765cde18054/work/usability/installed/npm/node_modules/.bin/refas",
+      "verify",
+      "--root",
+      "/workspace/scratch/5765cde18054/work/usability/installed/project"
+    ],
+    "startedUtc": "2026-11-22T14:10:29.406123+00:00",
+    "elapsedSeconds": 0.1698306809994392,
+    "returncode": 0
+  }
+]

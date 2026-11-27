@@ -1,0 +1,13 @@
+{
+  "schema": "refas.production.review/v2",
+  "views": [
+    {"name":"front","position":[0,-1.8,0.38],"target":[0,0,0.38],"orthoScale":0.83,"reference":{"sourceSha256":"3c7856dd632f8a1cde8036078573f569db55b6af97fae853237d8a9356f3c872","regionPixels":[125,116,266,692]}},
+    {"name":"side","position":[1.8,0,0.38],"target":[0,0,0.38],"orthoScale":0.83,"reference":{"sourceSha256":"3c7856dd632f8a1cde8036078573f569db55b6af97fae853237d8a9356f3c872","regionPixels":[278,116,421,692]}},
+    {"name":"back","position":[0,1.8,0.38],"target":[0,0,0.38],"orthoScale":0.83,"reference":{"sourceSha256":"3c7856dd632f8a1cde8036078573f569db55b6af97fae853237d8a9356f3c872","regionPixels":[441,116,588,692]}},
+    {"name":"hero","position":[1.15,-1.8,0.63],"target":[0,0,0.38],"orthoScale":0.83},
+    {"name":"service-detail","position":[0.55,1.8,0.38],"target":[0,0,0.30],"orthoScale":0.30}
+  ],
+  "lighting":{"center":[0,0,0.38],"radius":0.5},
+  "background":[0.16,0.18,0.21],
+  "transparent":false
+}

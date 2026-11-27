@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "/usr/local/bin/godot",
+    "--headless",
+    "--path",
+    "/workspace/scratch/5765cde18054/refas/examples/engine-playback",
+    "--script",
+    "/workspace/scratch/5765cde18054/refas/examples/engine-playback/verify_godot.gd",
+    "--",
+    "/workspace/scratch/5765cde18054/refas/docs/development/evidence/usable-assets/consumer/reviewer-multi-influence-repaired/wrong-weights/configuration.json"
+  ],
+  "startedUtc": "2026-11-22T14:19:08.833431+00:00",
+  "endedUtc": "2026-11-22T14:19:09.155886+00:00",
+  "elapsedSeconds": 0.3224627080016944,
+  "returncode": 1
+}

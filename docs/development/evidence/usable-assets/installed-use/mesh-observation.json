@@ -1,0 +1,915 @@
+{
+  "moduleSha256": "5a095e8aef190a731f9ae785d0dbd25ac7604e73aef92df192922c75013c3257",
+  "coverMeshes": {
+    "SERVICE_COVER__Cool_status_glass": {
+      "schema": "refas.mesh-observations/v1",
+      "object": "SERVICE_COVER__Cool_status_glass",
+      "scope": "current evaluated mesh; index and face-edge connectivity; no self-intersection or semantic readiness verdict",
+      "metersPerUnit": 1.0,
+      "lengthToleranceM": 4.117011908306216e-09,
+      "areaToleranceM2": 1.6949787053135194e-17,
+      "matrixDeterminant": 1.0,
+      "reflectedTransform": false,
+      "singularTransform": false,
+      "boundsM": {
+        "min": [
+          -0.0012000000569969416,
+          0.03317014500498772,
+          0.2678390145301819
+        ],
+        "max": [
+          0.0012000000569969416,
+          0.04112985357642174,
+          0.3081609904766083
+        ]
+      },
+      "calculationFrameOriginM": [
+        0.0,
+        0.03714999929070473,
+        0.2880000025033951
+      ],
+      "boundsDiagonalM": 0.041170119083062166,
+      "calculationErrorBoundM": 7.162621775056691e-17,
+      "calculation": "Python float64 affine offsets before world translation; world coordinates are reporting values",
+      "statistics": {
+        "vertices": 50,
+        "edges": 90,
+        "polygons": 42,
+        "triangles": 96,
+        "components": 1,
+        "surfaceComponents": 1,
+        "nonManifoldVertices": 0,
+        "boundaryEdges": 0,
+        "boundaryGroups": 0,
+        "closedBoundaryLoops": 0,
+        "wireEdges": 0,
+        "looseVertices": 0,
+        "nonManifoldEdges": 0,
+        "inconsistentWindingEdges": 0,
+        "degenerateTriangles": 0,
+        "negativeClosedComponents": 0,
+        "nearZeroClosedComponents": 0
+      },
+      "boundaryEdges": {
+        "count": 0,
+        "items": [],
+        "truncated": false
+      },
+      "boundaryGroups": {
+        "count": 0,
+        "items": [],
+        "truncated": false
+      },
+      "wireEdges": {
+        "count": 0,
+        "items": [],
+        "truncated": false
+      },
+      "looseVertices": {
+        "count": 0,
+        "items": [],
+        "truncated": false
+      },
+      "nonManifoldEdges": {
+        "count": 0,
+        "items": [],
+        "truncated": false
+      },
+      "nonManifoldVertices": {
+        "count": 0,
+        "items": [],
+        "truncated": false
+      },
+      "inconsistentWindingEdges": {
+        "count": 0,
+        "items": [],
+        "truncated": false
+      },
+      "degenerateTriangles": {
+        "count": 0,
+        "items": [],
+        "truncated": false
+      },
+      "components": {
+        "count": 1,
+        "items": [
+          {
+            "index": 0,
+            "connectivity": "vertex-and-edge-index",
+            "firstVertex": 0,
+            "vertices": 50,
+            "edges": 90,
+            "faces": 42,
+            "triangles": 96,
+            "boundaryEdges": 0,
+            "wireEdges": 0,
+            "nonManifoldEdges": 0,
+            "nonManifoldVertices": 0,
+            "sharedSingularVertices": 0,
+            "inconsistentWindingEdges": 0,
+            "degenerateTriangles": 0,
+            "boundsM": {
+              "min": [
+                -0.0012000000569969416,
+                0.03317014500498772,
+                0.2678390145301819
+              ],
+              "max": [
+                0.0012000000569969416,
+                0.04112985357642174,
+                0.3081609904766083
+              ]
+            },
+            "volumeToleranceM3": 6.978247514101214e-17,
+            "worldSignedVolumeM3": 1.7099207344303315e-07,
+            "closedSurface": true,
+            "orientationAdjustedVolumeM3": 1.7099207344303315e-07,
+            "orientation": "positive"
+          }
+        ],
+        "truncated": false
+      },
+      "surfaceComponents": {
+        "count": 1,
+        "items": [
+          {
+            "index": 0,
+            "connectivity": "faces-through-shared-edges",
+            "firstVertex": 0,
+            "vertices": 50,
+            "edges": 90,
+            "faces": 42,
+            "triangles": 96,
+            "boundaryEdges": 0,
+            "wireEdges": 0,
+            "nonManifoldEdges": 0,
+            "nonManifoldVertices": 0,
+            "sharedSingularVertices": 0,
+            "inconsistentWindingEdges": 0,
+            "degenerateTriangles": 0,
+            "boundsM": {
+              "min": [
+                -0.0012000000569969416,
+                0.03317014500498772,
+                0.2678390145301819
+              ],
+              "max": [
+                0.0012000000569969416,
+                0.04112985357642174,
+                0.3081609904766083
+              ]
+            },
+            "volumeToleranceM3": 6.978247514101214e-17,
+            "worldSignedVolumeM3": 1.7099207344303315e-07,
+            "closedSurface": true,
+            "orientationAdjustedVolumeM3": 1.7099207344303315e-07,
+            "orientation": "positive"
+          }
+        ],
+        "truncated": false
+      },
+      "negativeClosedComponents": {
+        "count": 0,
+        "items": [],
+        "truncated": false
+      },
+      "limitations": [
+        "Boundary and disconnected-component observations require intended-opening and attachment context.",
+        "Negative component orientation may be intentional for a cavity; no automatic repair is applied.",
+        "No self-intersection, body penetration, animation-range, visual-likeness or game-readiness decision is made."
+      ]
+    },
+    "SERVICE_COVER__Graphite_structural_composite": {
+      "schema": "refas.mesh-observations/v1",
+      "object": "SERVICE_COVER__Graphite_structural_composite",
+      "scope": "current evaluated mesh; index and face-edge connectivity; no self-intersection or semantic readiness verdict",
+      "metersPerUnit": 1.0,
+      "lengthToleranceM": 1.3476151492471534e-08,
+      "areaToleranceM2": 1.8160665904804276e-16,
+      "matrixDeterminant": 1.0,
+      "reflectedTransform": false,
+      "singularTransform": false,
+      "boundsM": {
+        "min": [
+          -0.0265337061136961,
+          0.024221714586019516,
+          0.2396913766860962
+        ],
+        "max": [
+          0.0265337061136961,
+          0.04275132715702057,
+          0.36217063665390015
+        ]
+      },
+      "calculationFrameOriginM": [
+        0.0,
+        0.03348652087152004,
+        0.30093100666999817
+      ],
+      "boundsDiagonalM": 0.13476151492471536,
+      "calculationErrorBoundM": 2.1756687112848986e-16,
+      "calculation": "Python float64 affine offsets before world translation; world coordinates are reporting values",
+      "statistics": {
+        "vertices": 996,
+        "edges": 2922,
+        "polygons": 1948,
+        "triangles": 1948,
+        "components": 11,
+        "surfaceComponents": 11,
+        "nonManifoldVertices": 0,
+        "boundaryEdges": 0,
+        "boundaryGroups": 0,
+        "closedBoundaryLoops": 0,
+        "wireEdges": 0,
+        "looseVertices": 0,
+        "nonManifoldEdges": 0,
+        "inconsistentWindingEdges": 0,
+        "degenerateTriangles": 0,
+        "negativeClosedComponents": 0,
+        "nearZeroClosedComponents": 0
+      },
+      "boundaryEdges": {
+        "count": 0,
+        "items": [],
+        "truncated": false
+      },
+      "boundaryGroups": {
+        "count": 0,
+        "items": [],
+        "truncated": false
+      },
+      "wireEdges": {
+        "count": 0,
+        "items": [],
+        "truncated": false
+      },
+      "looseVertices": {
+        "count": 0,
+        "items": [],
+        "truncated": false
+      },
+      "nonManifoldEdges": {
+        "count": 0,
+        "items": [],
+        "truncated": false
+      },
+      "nonManifoldVertices": {
+        "count": 0,
+        "items": [],
+        "truncated": false
+      },
+      "inconsistentWindingEdges": {
+        "count": 0,
+        "items": [],
+        "truncated": false
+      },
+      "degenerateTriangles": {
+        "count": 0,
+        "items": [],
+        "truncated": false
+      },
+      "components": {
+        "count": 11,
+        "items": [
+          {
+            "index": 0,
+            "connectivity": "vertex-and-edge-index",
+            "firstVertex": 0,
+            "vertices": 236,
+            "edges": 702,
+            "faces": 468,
+            "triangles": 468,
+            "boundaryEdges": 0,
+            "wireEdges": 0,
+            "nonManifoldEdges": 0,
+            "nonManifoldVertices": 0,
+            "sharedSingularVertices": 0,
+            "inconsistentWindingEdges": 0,
+            "degenerateTriangles": 0,
+            "boundsM": {
+              "min": [
+                -0.0265337061136961,
+                0.024221714586019516,
+                0.2396913766860962
+              ],
+              "max": [
+                0.0265337061136961,
+                0.04275132715702057,
+                0.36217063665390015
+              ]
+            },
+            "volumeToleranceM3": 2.447358849373051e-15,
+            "worldSignedVolumeM3": 1.2554851122181323e-05,
+            "closedSurface": true,
+            "orientationAdjustedVolumeM3": 1.2554851122181323e-05,
+            "orientation": "positive"
+          },
+          {
+            "index": 1,
+            "connectivity": "vertex-and-edge-index",
+            "firstVertex": 236,
+            "vertices": 76,
+            "edges": 222,
+            "faces": 148,
+            "triangles": 148,
+            "boundaryEdges": 0,
+            "wireEdges": 0,
+            "nonManifoldEdges": 0,
+            "nonManifoldVertices": 0,
+            "sharedSingularVertices": 0,
+            "inconsistentWindingEdges": 0,
+            "degenerateTriangles": 0,
+            "boundsM": {
+              "min": [
+                -0.011888851411640644,
+                0.028950458392500877,
+                0.2583383321762085
+              ],
+              "max": [
+                0.01188884861767292,
+                0.03124927170574665,
+                0.2607001066207886
+              ]
+            },
+            "volumeToleranceM3": 1.3832696346491153e-17,
+            "worldSignedVolumeM3": 3.420342069896517e-08,
+            "closedSurface": true,
+            "orientationAdjustedVolumeM3": 3.420342069896517e-08,
+            "orientation": "positive"
+          }
+        ],
+        "truncated": true
+      },
+      "surfaceComponents": {
+        "count": 11,
+        "items": [
+          {
+            "index": 0,
+            "connectivity": "faces-through-shared-edges",
+            "firstVertex": 0,
+            "vertices": 236,
+            "edges": 702,
+            "faces": 468,
+            "triangles": 468,
+            "boundaryEdges": 0,
+            "wireEdges": 0,
+            "nonManifoldEdges": 0,
+            "nonManifoldVertices": 0,
+            "sharedSingularVertices": 0,
+            "inconsistentWindingEdges": 0,
+            "degenerateTriangles": 0,
+            "boundsM": {
+              "min": [
+                -0.0265337061136961,
+                0.024221714586019516,
+                0.2396913766860962
+              ],
+              "max": [
+                0.0265337061136961,
+                0.04275132715702057,
+                0.36217063665390015
+              ]
+            },
+            "volumeToleranceM3": 2.447358849373051e-15,
+            "worldSignedVolumeM3": 1.2554851122181323e-05,
+            "closedSurface": true,
+            "orientationAdjustedVolumeM3": 1.2554851122181323e-05,
+            "orientation": "positive"
+          },
+          {
+            "index": 1,
+            "connectivity": "faces-through-shared-edges",
+            "firstVertex": 236,
+            "vertices": 76,
+            "edges": 222,
+            "faces": 148,
+            "triangles": 148,
+            "boundaryEdges": 0,
+            "wireEdges": 0,
+            "nonManifoldEdges": 0,
+            "nonManifoldVertices": 0,
+            "sharedSingularVertices": 0,
+            "inconsistentWindingEdges": 0,
+            "degenerateTriangles": 0,
+            "boundsM": {
+              "min": [
+                -0.011888851411640644,
+                0.028950458392500877,
+                0.2583383321762085
+              ],
+              "max": [
+                0.01188884861767292,
+                0.03124927170574665,
+                0.2607001066207886
+              ]
+            },
+            "volumeToleranceM3": 1.3832696346491153e-17,
+            "worldSignedVolumeM3": 3.420342069896517e-08,
+            "closedSurface": true,
+            "orientationAdjustedVolumeM3": 3.420342069896517e-08,
+            "orientation": "positive"
+          }
+        ],
+        "truncated": true
+      },
+      "negativeClosedComponents": {
+        "count": 0,
+        "items": [],
+        "truncated": false
+      },
+      "limitations": [
+        "Boundary and disconnected-component observations require intended-opening and attachment context.",
+        "Negative component orientation may be intentional for a cavity; no automatic repair is applied.",
+        "No self-intersection, body penetration, animation-range, visual-likeness or game-readiness decision is made."
+      ]
+    },
+    "SERVICE_COVER__Piston_chrome": {
+      "schema": "refas.mesh-observations/v1",
+      "object": "SERVICE_COVER__Piston_chrome",
+      "scope": "current evaluated mesh; index and face-edge connectivity; no self-intersection or semantic readiness verdict",
+      "metersPerUnit": 1.0,
+      "lengthToleranceM": 1.1326001459241855e-08,
+      "areaToleranceM2": 1.2827830905474865e-16,
+      "matrixDeterminant": 1.0000004768372188,
+      "reflectedTransform": false,
+      "singularTransform": false,
+      "boundsM": {
+        "min": [
+          -0.02049460006715611,
+          0.029001191652872252,
+          0.24750664395418354
+        ],
+        "max": [
+          0.020495809717971512,
+          0.040198647609584526,
+          0.3524934726100662
+        ]
+      },
+      "calculationFrameOriginM": [
+        6.00367145438957e-07,
+        0.03459991966735948,
+        0.30000005874781194
+      ],
+      "boundsDiagonalM": 0.11326001459241856,
+      "calculationErrorBoundM": 1.8649408656963431e-16,
+      "calculation": "Python float64 affine offsets before world translation; world coordinates are reporting values",
+      "statistics": {
+        "vertices": 558,
+        "edges": 1638,
+        "polygons": 1092,
+        "triangles": 1092,
+        "components": 6,
+        "surfaceComponents": 6,
+        "nonManifoldVertices": 0,
+        "boundaryEdges": 0,
+        "boundaryGroups": 0,
+        "closedBoundaryLoops": 0,
+        "wireEdges": 0,
+        "looseVertices": 0,
+        "nonManifoldEdges": 0,
+        "inconsistentWindingEdges": 0,
+        "degenerateTriangles": 0,
+        "negativeClosedComponents": 0,
+        "nearZeroClosedComponents": 0
+      },
+      "boundaryEdges": {
+        "count": 0,
+        "items": [],
+        "truncated": false
+      },
+      "boundaryGroups": {
+        "count": 0,
+        "items": [],
+        "truncated": false
+      },
+      "wireEdges": {
+        "count": 0,
+        "items": [],
+        "truncated": false
+      },
+      "looseVertices": {
+        "count": 0,
+        "items": [],
+        "truncated": false
+      },
+      "nonManifoldEdges": {
+        "count": 0,
+        "items": [],
+        "truncated": false
+      },
+      "nonManifoldVertices": {
+        "count": 0,
+        "items": [],
+        "truncated": false
+      },
+      "inconsistentWindingEdges": {
+        "count": 0,
+        "items": [],
+        "truncated": false
+      },
+      "degenerateTriangles": {
+        "count": 0,
+        "items": [],
+        "truncated": false
+      },
+      "components": {
+        "count": 6,
+        "items": [
+          {
+            "index": 0,
+            "connectivity": "vertex-and-edge-index",
+            "firstVertex": 0,
+            "vertices": 93,
+            "edges": 273,
+            "faces": 182,
+            "triangles": 182,
+            "boundaryEdges": 0,
+            "wireEdges": 0,
+            "nonManifoldEdges": 0,
+            "nonManifoldVertices": 0,
+            "sharedSingularVertices": 0,
+            "inconsistentWindingEdges": 0,
+            "degenerateTriangles": 0,
+            "boundsM": {
+              "min": [
+                -0.02049460006715611,
+                0.03900194367583913,
+                0.34950665330015224
+              ],
+              "max": [
+                -0.017504187526245683,
+                0.040198647609584526,
+                0.35249343591487853
+              ]
+            },
+            "volumeToleranceM3": 8.475890420699371e-20,
+            "worldSignedVolumeM3": 8.272544206570709e-09,
+            "closedSurface": true,
+            "orientationAdjustedVolumeM3": 8.272544206570709e-09,
+            "orientation": "positive"
+          },
+          {
+            "index": 1,
+            "connectivity": "vertex-and-edge-index",
+            "firstVertex": 93,
+            "vertices": 93,
+            "edges": 273,
+            "faces": 182,
+            "triangles": 182,
+            "boundaryEdges": 0,
+            "wireEdges": 0,
+            "nonManifoldEdges": 0,
+            "nonManifoldVertices": 0,
+            "sharedSingularVertices": 0,
+            "inconsistentWindingEdges": 0,
+            "degenerateTriangles": 0,
+            "boundsM": {
+              "min": [
+                -0.01749460253236161,
+                0.03700194672896075,
+                0.3035066778851394
+              ],
+              "max": [
+                -0.01450418696465217,
+                0.038198650677258236,
+                0.3064934596849584
+              ]
+            },
+            "volumeToleranceM3": 8.475899164105146e-20,
+            "worldSignedVolumeM3": 8.272540623555566e-09,
+            "closedSurface": true,
+            "orientationAdjustedVolumeM3": 8.272540623555566e-09,
+            "orientation": "positive"
+          }
+        ],
+        "truncated": true
+      },
+      "surfaceComponents": {
+        "count": 6,
+        "items": [
+          {
+            "index": 0,
+            "connectivity": "faces-through-shared-edges",
+            "firstVertex": 0,
+            "vertices": 93,
+            "edges": 273,
+            "faces": 182,
+            "triangles": 182,
+            "boundaryEdges": 0,
+            "wireEdges": 0,
+            "nonManifoldEdges": 0,
+            "nonManifoldVertices": 0,
+            "sharedSingularVertices": 0,
+            "inconsistentWindingEdges": 0,
+            "degenerateTriangles": 0,
+            "boundsM": {
+              "min": [
+                -0.02049460006715611,
+                0.03900194367583913,
+                0.34950665330015224
+              ],
+              "max": [
+                -0.017504187526245683,
+                0.040198647609584526,
+                0.35249343591487853
+              ]
+            },
+            "volumeToleranceM3": 8.475890420699371e-20,
+            "worldSignedVolumeM3": 8.272544206570709e-09,
+            "closedSurface": true,
+            "orientationAdjustedVolumeM3": 8.272544206570709e-09,
+            "orientation": "positive"
+          },
+          {
+            "index": 1,
+            "connectivity": "faces-through-shared-edges",
+            "firstVertex": 93,
+            "vertices": 93,
+            "edges": 273,
+            "faces": 182,
+            "triangles": 182,
+            "boundaryEdges": 0,
+            "wireEdges": 0,
+            "nonManifoldEdges": 0,
+            "nonManifoldVertices": 0,
+            "sharedSingularVertices": 0,
+            "inconsistentWindingEdges": 0,
+            "degenerateTriangles": 0,
+            "boundsM": {
+              "min": [
+                -0.01749460253236161,
+                0.03700194672896075,
+                0.3035066778851394
+              ],
+              "max": [
+                -0.01450418696465217,
+                0.038198650677258236,
+                0.3064934596849584
+              ]
+            },
+            "volumeToleranceM3": 8.475899164105146e-20,
+            "worldSignedVolumeM3": 8.272540623555566e-09,
+            "closedSurface": true,
+            "orientationAdjustedVolumeM3": 8.272540623555566e-09,
+            "orientation": "positive"
+          }
+        ],
+        "truncated": true
+      },
+      "negativeClosedComponents": {
+        "count": 0,
+        "items": [],
+        "truncated": false
+      },
+      "limitations": [
+        "Boundary and disconnected-component observations require intended-opening and attachment context.",
+        "Negative component orientation may be intentional for a cavity; no automatic repair is applied.",
+        "No self-intersection, body penetration, animation-range, visual-likeness or game-readiness decision is made."
+      ]
+    },
+    "SERVICE_COVER__Recess_interiors": {
+      "schema": "refas.mesh-observations/v1",
+      "object": "SERVICE_COVER__Recess_interiors",
+      "scope": "current evaluated mesh; index and face-edge connectivity; no self-intersection or semantic readiness verdict",
+      "metersPerUnit": 1.0,
+      "lengthToleranceM": 1.1130967449435556e-08,
+      "areaToleranceM2": 1.238984363603939e-16,
+      "matrixDeterminant": 1.0,
+      "reflectedTransform": false,
+      "singularTransform": false,
+      "boundsM": {
+        "min": [
+          -0.019648632034659386,
+          0.030249862000346184,
+          0.24835136532783508
+        ],
+        "max": [
+          0.01964891515672207,
+          0.04348676651716232,
+          0.3516486585140228
+        ]
+      },
+      "calculationFrameOriginM": [
+        1.4156103134155273e-07,
+        0.03686831425875425,
+        0.30000001192092896
+      ],
+      "boundsDiagonalM": 0.11130967449435557,
+      "calculationErrorBoundM": 1.834928532428175e-16,
+      "calculation": "Python float64 affine offsets before world translation; world coordinates are reporting values",
+      "statistics": {
+        "vertices": 572,
+        "edges": 1674,
+        "polygons": 1116,
+        "triangles": 1116,
+        "components": 7,
+        "surfaceComponents": 7,
+        "nonManifoldVertices": 0,
+        "boundaryEdges": 0,
+        "boundaryGroups": 0,
+        "closedBoundaryLoops": 0,
+        "wireEdges": 0,
+        "looseVertices": 0,
+        "nonManifoldEdges": 0,
+        "inconsistentWindingEdges": 0,
+        "degenerateTriangles": 0,
+        "negativeClosedComponents": 0,
+        "nearZeroClosedComponents": 0
+      },
+      "boundaryEdges": {
+        "count": 0,
+        "items": [],
+        "truncated": false
+      },
+      "boundaryGroups": {
+        "count": 0,
+        "items": [],
+        "truncated": false
+      },
+      "wireEdges": {
+        "count": 0,
+        "items": [],
+        "truncated": false
+      },
+      "looseVertices": {
+        "count": 0,
+        "items": [],
+        "truncated": false
+      },
+      "nonManifoldEdges": {
+        "count": 0,
+        "items": [],
+        "truncated": false
+      },
+      "nonManifoldVertices": {
+        "count": 0,
+        "items": [],
+        "truncated": false
+      },
+      "inconsistentWindingEdges": {
+        "count": 0,
+        "items": [],
+        "truncated": false
+      },
+      "degenerateTriangles": {
+        "count": 0,
+        "items": [],
+        "truncated": false
+      },
+      "components": {
+        "count": 7,
+        "items": [
+          {
+            "index": 0,
+            "connectivity": "vertex-and-edge-index",
+            "firstVertex": 0,
+            "vertices": 152,
+            "edges": 450,
+            "faces": 300,
+            "triangles": 300,
+            "boundaryEdges": 0,
+            "wireEdges": 0,
+            "nonManifoldEdges": 0,
+            "nonManifoldVertices": 0,
+            "sharedSingularVertices": 0,
+            "inconsistentWindingEdges": 0,
+            "degenerateTriangles": 0,
+            "boundsM": {
+              "min": [
+                -0.01501427497714758,
+                0.031046252697706223,
+                0.25597429275512695
+              ],
+              "max": [
+                0.015014344826340675,
+                0.04348676651716232,
+                0.348005473613739
+              ]
+            },
+            "volumeToleranceM3": 9.297819075562828e-16,
+            "worldSignedVolumeM3": 2.5400161031952164e-06,
+            "closedSurface": true,
+            "orientationAdjustedVolumeM3": 2.5400161031952164e-06,
+            "orientation": "positive"
+          },
+          {
+            "index": 1,
+            "connectivity": "vertex-and-edge-index",
+            "firstVertex": 152,
+            "vertices": 70,
+            "edges": 204,
+            "faces": 136,
+            "triangles": 136,
+            "boundaryEdges": 0,
+            "wireEdges": 0,
+            "nonManifoldEdges": 0,
+            "nonManifoldVertices": 0,
+            "sharedSingularVertices": 0,
+            "inconsistentWindingEdges": 0,
+            "degenerateTriangles": 0,
+            "boundsM": {
+              "min": [
+                -0.019648632034659386,
+                0.04024990275502205,
+                0.3503514230251312
+              ],
+              "max": [
+                -0.018351370468735695,
+                0.040450096130371094,
+                0.3516486585140228
+              ]
+            },
+            "volumeToleranceM3": 6.285297199090057e-21,
+            "worldSignedVolumeM3": 2.5291247211749686e-10,
+            "closedSurface": true,
+            "orientationAdjustedVolumeM3": 2.5291247211749686e-10,
+            "orientation": "positive"
+          }
+        ],
+        "truncated": true
+      },
+      "surfaceComponents": {
+        "count": 7,
+        "items": [
+          {
+            "index": 0,
+            "connectivity": "faces-through-shared-edges",
+            "firstVertex": 0,
+            "vertices": 152,
+            "edges": 450,
+            "faces": 300,
+            "triangles": 300,
+            "boundaryEdges": 0,
+            "wireEdges": 0,
+            "nonManifoldEdges": 0,
+            "nonManifoldVertices": 0,
+            "sharedSingularVertices": 0,
+            "inconsistentWindingEdges": 0,
+            "degenerateTriangles": 0,
+            "boundsM": {
+              "min": [
+                -0.01501427497714758,
+                0.031046252697706223,
+                0.25597429275512695
+              ],
+              "max": [
+                0.015014344826340675,
+                0.04348676651716232,
+                0.348005473613739
+              ]
+            },
+            "volumeToleranceM3": 9.297819075562828e-16,
+            "worldSignedVolumeM3": 2.5400161031952164e-06,
+            "closedSurface": true,
+            "orientationAdjustedVolumeM3": 2.5400161031952164e-06,
+            "orientation": "positive"
+          },
+          {
+            "index": 1,
+            "connectivity": "faces-through-shared-edges",
+            "firstVertex": 152,
+            "vertices": 70,
+            "edges": 204,
+            "faces": 136,
+            "triangles": 136,
+            "boundaryEdges": 0,
+            "wireEdges": 0,
+            "nonManifoldEdges": 0,
+            "nonManifoldVertices": 0,
+            "sharedSingularVertices": 0,
+            "inconsistentWindingEdges": 0,
+            "degenerateTriangles": 0,
+            "boundsM": {
+              "min": [
+                -0.019648632034659386,
+                0.04024990275502205,
+                0.3503514230251312
+              ],
+              "max": [
+                -0.018351370468735695,
+                0.040450096130371094,
+                0.3516486585140228
+              ]
+            },
+            "volumeToleranceM3": 6.285297199090057e-21,
+            "worldSignedVolumeM3": 2.5291247211749686e-10,
+            "closedSurface": true,
+            "orientationAdjustedVolumeM3": 2.5291247211749686e-10,
+            "orientation": "positive"
+          }
+        ],
+        "truncated": true
+      },
+      "negativeClosedComponents": {
+        "count": 0,
+        "items": [],
+        "truncated": false
+      },
+      "limitations": [
+        "Boundary and disconnected-component observations require intended-opening and attachment context.",
+        "Negative component orientation may be intentional for a cavity; no automatic repair is applied.",
+        "No self-intersection, body penetration, animation-range, visual-likeness or game-readiness decision is made."
+      ]
+    }
+  }
+}

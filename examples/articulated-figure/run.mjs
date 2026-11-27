@@ -33,12 +33,12 @@ import {
   sha256File,
   validateRealizedProjection,
   validateConstructionQuality,
-} from '../../skills/refas/scripts/lib/index.mjs';
+} from '../../legacy/v1/scripts/lib/index.mjs';
 import {buildArticulatedFigure} from './model.mjs';
 
 const EXAMPLE = path.dirname(fileURLToPath(import.meta.url));
 const REPOSITORY = path.resolve(EXAMPLE, '../..');
-const SCRIPTS = path.join(REPOSITORY, 'skills/refas/scripts');
+const SCRIPTS = path.join(REPOSITORY, 'legacy/v1/scripts');
 const OUTPUT = path.join(EXAMPLE, 'output');
 const PROJECT = path.join(OUTPUT, 'project');
 const PYTHON = process.env.CODEX_PRIMARY_RUNTIME_PYTHON || 'python3';

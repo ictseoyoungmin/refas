@@ -1,0 +1,48 @@
+{
+  "pose": {
+    "elbow_deg": 90,
+    "wrist_deg": 0,
+    "index_deg": [
+      0,
+      0,
+      0
+    ]
+  },
+  "upper_objects_checked": 96,
+  "unexpected_upper_changes": [],
+  "named_shell_intersections": [],
+  "shell_pairs_tested": 30,
+  "digit_world_origins": {
+    "WRIST_PIVOT": [
+      0.0,
+      0.24199999868869781,
+      0.42600002884864807
+    ],
+    "INDEX_J0": [
+      -0.029999999329447746,
+      0.3199999928474426,
+      0.42600002884864807
+    ],
+    "INDEX_J1": [
+      -0.03200000151991844,
+      0.3579999804496765,
+      0.4270000159740448
+    ],
+    "INDEX_J2": [
+      -0.03400000184774399,
+      0.38600000739097595,
+      0.43000003695487976
+    ]
+  },
+  "parent_relations": {
+    "SHOULDER_PIVOT": "AURIX_ROOT",
+    "ELBOW_PIVOT": "SHOULDER_PIVOT",
+    "WRIST_PIVOT": "ELBOW_PIVOT",
+    "SERVICE_COVER": "ELBOW_PIVOT",
+    "INDEX_J0": "WRIST_PIVOT",
+    "INDEX_J1": "INDEX_J0",
+    "INDEX_J2": "INDEX_J1"
+  },
+  "static_spanning_links": "No authored cable or hydraulic mesh crosses the elbow; all such parts are local to upper or forearm. There is no dynamic tendon or telescoping linkage simulation.",
+  "limits": "Named-shell triangle-surface BVH checks and inspected renders at sampled poses only; no all-object collision test, containment test, continuous collision clearance, load or physical-performance validation."
+}

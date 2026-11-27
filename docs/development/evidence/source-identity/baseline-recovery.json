@@ -1,0 +1,13 @@
+{
+  "checked_utc": "2026-11-22T12:10:58.064613+00:00",
+  "archive": "refas-jacket-automail-refinement.zip",
+  "archive_sha256": "0db501f9307b8775d63604636f4de9d091e0f81bd7b00a51bfc3c718c139b5b5",
+  "manifest_entries": 547,
+  "mismatches": [],
+  "crc_failure": null,
+  "source_commit": "1280b74d7da56ca6541246d4e8ca16c99f4f43e2",
+  "selected_blend_hashes": {
+    "garment/selected/jacket.blend": "03de5a60b31bf32bae05cec46eeb4fe6220089c1043f274c772a4383cb9a1268",
+    "automail/arm.blend": "ff8010b6e25efec357b469121c905f9db8f717a8b9e5a07cbc78986ff12924b5"
+  }
+}

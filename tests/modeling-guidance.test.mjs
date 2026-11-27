@@ -5,25 +5,27 @@ import test from 'node:test';
 const skillRoot = new URL('../skills/refas/', import.meta.url);
 const read = (path) => fs.readFile(new URL(path, skillRoot), 'utf8');
 
-test('agent entry prioritizes whole-object construction and repeated geometry', async () => {
+test('production entry teaches direct authoring without legacy runtime routes', async () => {
   const skill = await read('SKILL.md');
-  const priorities = skill.indexOf('## Modeling priorities');
-  const certification = skill.indexOf('Source-bound approval', priorities);
-  assert.ok(priorities >= 0 && certification > priorities);
-  assert.match(skill, /Build a coherent whole with continuous side\/back geometry/);
-  assert.match(skill, /Reuse shared profiles and mirrored\/repeated geometry/);
+  const production = skill;
+  assert.match(production, /scripts\/produce\.py run/);
+  assert.match(production, /scripts\/produce\.py restore/);
+  assert.match(production, /`bpy`/);
+  assert.match(production, /inferred depth and engineered choices/);
+  assert.doesNotMatch(production, /node scripts\/refas\.mjs|references\/INDEX\.md/);
+  assert.doesNotMatch(skill, /Optional 1\.x project compatibility|scripts\/refas-host\.mjs/);
 });
 
 test('single-view worked example demonstrates complete surfaces and functional continuity', async () => {
-  const example = await read('references/single-view-volumetric-reasoning-example.md');
+  const example = await fs.readFile(new URL('../legacy/v1/'+'references/single-view-volumetric-reasoning-example.md', import.meta.url), 'utf8');
   assert.match(example, /continuous front, side, rear, top, and bottom geometry/);
   assert.match(example, /measured shared profiles/);
   assert.match(example, /mesh integrity, per-component closure, and assembly separately/);
 });
 
 test('claim provenance stays scoped to explicit semantic propositions', async () => {
-  const authority = await read('references/inference-authority.md');
-  const workflow = await read('references/workflow.md');
+  const authority = await fs.readFile(new URL('../legacy/v1/references/inference-authority.md', import.meta.url), 'utf8');
+  const workflow = await fs.readFile(new URL('../legacy/v1/references/workflow.md', import.meta.url), 'utf8');
   assert.match(authority, /For an explicitly governed semantic proposition/);
   assert.match(workflow, /Routine surface completion follows the shape hypothesis/);
   assert.match(authority, /\`forbidden\` records contradiction or a hard constraint/);

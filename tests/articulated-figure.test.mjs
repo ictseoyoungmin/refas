@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {test} from 'node:test';
-import {inspectGlb, parseGlb} from '../skills/refas/scripts/lib/index.mjs';
+import {inspectGlb, parseGlb} from '../legacy/v1/scripts/lib/index.mjs';
 import {buildArticulatedFigure, materials} from '../examples/articulated-figure/model.mjs';
 
 test('articulated figure is a portable identity-bearing GLB', () => {

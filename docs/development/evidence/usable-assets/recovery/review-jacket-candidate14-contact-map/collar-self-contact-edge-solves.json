@@ -1,0 +1,43 @@
+{
+  "faces": [
+    17661,
+    22302
+  ],
+  "inputCandidateSha256": "bc5adc12543fa04843785ea519fe91d3b3ced5c23be0f0cebcd6b343c4c60cae",
+  "method": "Independent float64 finite edge/triangle linear solves with literal [0,1] and barycentric interior tests; no ray API.",
+  "hits": [
+    {
+      "edgeOwner": 0,
+      "edgeIndex": 1,
+      "segmentT": 0.9096774498392628,
+      "triangleBarycentric": [
+        0.4848704932383108,
+        0.04667644565040535,
+        0.4684530611112838
+      ],
+      "strictInterior": true,
+      "pointM": [
+        -0.08844605199037732,
+        -0.04090729337956516,
+        1.420398416943258
+      ]
+    },
+    {
+      "edgeOwner": 1,
+      "edgeIndex": 2,
+      "segmentT": 0.4937970250668664,
+      "triangleBarycentric": [
+        0.07987693194125522,
+        0.03218301591127112,
+        0.8879400521474736
+      ],
+      "strictInterior": true,
+      "pointM": [
+        -0.08846160810428737,
+        -0.04095046284648011,
+        1.420332668235245
+      ]
+    }
+  ],
+  "maximumContactSegmentSpanM": 8.017785329546437e-05
+}

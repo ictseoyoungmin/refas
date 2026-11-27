@@ -1,0 +1,8 @@
+{
+  "ok": true,
+  "scope": "recorded-file-integrity",
+  "head": "2e7d98257b6e46e3a5d1cfa0b66c8214",
+  "artifactCount": 7,
+  "referenceResemblance": "not-evaluated",
+  "gameReadiness": "not-evaluated"
+}

@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/workspace/scratch/2eb72029c71e/refas-v2/examples/uniform-jacket/prepare_observation.py", line 35, in <module>
+    raise ValueError("Unreviewed observation types: " + ", ".join(unsupported))
+ValueError: Unreviewed observation types: AURIX emblem:FONT, AURIX shoulder lettering:FONT, Shoulder serial:FONT, Service serial:FONT
+
+Error: script failed, file: '/workspace/scratch/2eb72029c71e/refas-v2/examples/uniform-jacket/prepare_observation.py', exiting.
+Blender 4.3.2
+Read blend: "/tmp/refas-dual-asset-20261122/automail-plain/candidate.blend"
+
+Blender quit

@@ -5,11 +5,11 @@ import os from 'node:os';
 import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {test} from 'node:test';
-import {createSegmentPrism,partsToGlb} from '../skills/refas/scripts/lib/index.mjs';
+import {createSegmentPrism,partsToGlb} from '../legacy/v1/scripts/lib/index.mjs';
 import {
   CPU_RENDER_BACKENDS, getTrustedRenderBackend, normalizeCpuRenderJob,
   renderDiagnosticHero, RENDER_EXECUTION_SCHEMA,
-} from '../skills/refas/scripts/lib/render-backend.mjs';
+} from '../legacy/v1/scripts/lib/render-backend.mjs';
 
 const digest=b=>createHash('sha256').update(b).digest('hex');
 async function fixture(t) {

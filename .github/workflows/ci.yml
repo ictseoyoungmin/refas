@@ -2,11 +2,12 @@ name: RefAs CI
 
 on:
   push:
-    branches: [main, rc/post-1.1, develop/v1.2.0, develop/v1.2.1, develop/v1.3.0, develop/v1.4.0, develop/v1.4.1, develop/v1.4.2]
+    branches: [main, rewrite/v2, rc/post-1.1, develop/v1.2.0, develop/v1.2.1, develop/v1.3.0, develop/v1.4.0, develop/v1.4.1, develop/v1.4.2]
   pull_request:
-    branches: [main, rc/post-1.1, develop/v1.2.0, develop/v1.2.1, develop/v1.3.0, develop/v1.4.0, develop/v1.4.1, develop/v1.4.2]
+    branches: [main, rewrite/v2, rc/post-1.1, develop/v1.2.0, develop/v1.2.1, develop/v1.3.0, develop/v1.4.0, develop/v1.4.1, develop/v1.4.2]
 
 # Tier 1: full regression and critical source-bound defenses on every PR/develop push.
+# Legacy JIT runs on main push or an explicit [full-qa] push, and in Deep QA.
 # Tier 2: expensive complete dogfood on main push or an explicit [full-qa] develop push.
 # A standalone manual/periodic deep workflow is also provided (ci-deep.yml).
 concurrency:
@@ -17,15 +18,85 @@ permissions:
   contents: read
 
 jobs:
+  artifact-budget:
+    name: Source artifact budget
+    if: ${{ github.event_name != 'push' || !github.event.deleted }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+          # Sparse checkout also enables blob:none fetching. Old model/render
+          # payloads are neither checked out nor fetched by this source gate.
+          sparse-checkout: |
+            /package.json
+            /tools/check-artifact-budget.mjs
+          sparse-checkout-cone-mode: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          package-manager-cache: false
+      - name: Resolve the proposed range and inspect source payloads
+        env:
+          REFAS_PR_BASE: ${{ github.event.pull_request.base.sha }}
+          REFAS_PUSH_BEFORE: ${{ github.event.before }}
+        run: |
+          set -euo pipefail
+          # The same immutable policy boundary is enforced by the checker.
+          anchor=ea64de8adfa787537bee2b86a05ac0f4ec08dd5c
+          target=$(git rev-parse HEAD)
+          base=${REFAS_PR_BASE:-$REFAS_PUSH_BEFORE}
+          if [[ -z "$base" || "$base" =~ ^0+$ ]]; then
+            # A newly created v2 branch must still pass the complete policy era.
+            base=$anchor
+          fi
+          for revision in "$base" "$anchor"; do
+            if ! git cat-file -e "$revision^{commit}" 2>/dev/null; then
+              git fetch --no-tags --filter=blob:none --depth=1 origin "$revision"
+            fi
+          done
+          history_ready() {
+            local common
+            common=$(git merge-base "$base" "$target") || return 1
+            # Later feature branches can use the ordinary strict diff without
+            # fetching the entire history back to the original policy boundary.
+            # The checker still requires ancestry proof for any legacy exemption.
+            if git cat-file -e "$common:tools/check-artifact-budget.mjs" 2>/dev/null; then
+              return 0
+            fi
+            if git merge-base --is-ancestor "$anchor" "$common"; then
+              return 0
+            fi
+            if git merge-base --is-ancestor "$common" "$anchor" &&
+               git merge-base --is-ancestor "$anchor" "$target"; then
+              return 0
+            fi
+            [[ $(git rev-parse --is-shallow-repository) == false ]]
+          }
+          # Ordinary PRs/pushes already have the base parent at depth 2. The old
+          # v2→main PR needs a short ancestry path through the legacy boundary.
+          for depth in 16 64 256; do
+            if history_ready; then break; fi
+            git fetch --no-tags --filter=blob:none --depth="$depth" origin "$target" "$base" "$anchor"
+          done
+          if ! history_ready; then
+            echo 'Cannot prove the artifact review range with the fetched history; inspection has not been bypassed.' >&2
+            exit 1
+          fi
+          npm run check:artifacts -- --base "$base" --head "$target"
+
   validate:
     name: Node ${{ matrix.node }}
+    needs: artifact-budget
     runs-on: ubuntu-latest
     env:
       PYTHONDONTWRITEBYTECODE: '1'
     strategy:
       fail-fast: false
       matrix:
-        node: [20, 22, 24]
+        node: [22, 24]
     steps:
       - uses: actions/checkout@v7
         with:
@@ -44,15 +115,13 @@ jobs:
         run: npm test
       - name: Python syntax gate
         run: npm run test:python
-      - name: Instruction graph audit
-        run: npm run check:instructions
       - name: Product-boundary audit
         run: npm run check
       - name: Install optional Numba CPU prototype (Node 24 only)
-        if: matrix.node == 24
+        if: matrix.node == 24 && github.event_name == 'push' && (github.ref == 'refs/heads/main' || contains(github.event.head_commit.message, '[full-qa]'))
         run: python -m pip install --no-cache-dir numba==0.65.1
       - name: Compiled CPU kernel tests
-        if: matrix.node == 24
+        if: matrix.node == 24 && github.event_name == 'push' && (github.ref == 'refs/heads/main' || contains(github.event.head_commit.message, '[full-qa]'))
         run: |
           npm run test:cpu-jit
           node --test tests/render-backend.test.mjs

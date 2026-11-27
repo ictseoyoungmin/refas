@@ -1,0 +1,112 @@
+[
+  {
+    "label": "baseline-gn-bevel",
+    "baselineCommit": "94930b3d3dade455336ce6240805ea96d7a13e53",
+    "command": [
+      "/usr/bin/blender",
+      "-b",
+      "--factory-startup",
+      "--threads",
+      "1",
+      "--python-exit-code",
+      "1",
+      "--python-expr",
+      "import sys, runpy; sys.dont_write_bytecode=True; sys.path.insert(0, '/workspace/scratch/c52cb753f160/audit-worker-scope/baseline-94930b3d/production'); import blender_worker; runpy.run_path('/workspace/scratch/c52cb753f160/audit-worker-scope/probe_worker_scope.py', run_name=\"__main__\")"
+    ],
+    "startedAt": "2026-11-22T09:12:41.936734+00:00",
+    "elapsedSeconds": 1.605,
+    "returncode": 0,
+    "script": "/workspace/scratch/c52cb753f160/audit-worker-scope/probe_worker_scope.py",
+    "scriptSha256": "e1cf9dca0f22fbe305425088516b6734d9048d11c91fa4915b733afbcb5acd1b",
+    "worker": "/workspace/scratch/c52cb753f160/audit-worker-scope/baseline-94930b3d/production/blender_worker.py",
+    "workerSha256": "a3d0c85e8a733487605c20bac5f41d1b06a15ead07dda4c7bca12caa231f3e1a",
+    "stdout": "/workspace/scratch/c52cb753f160/audit-worker-scope/baseline-gn-bevel.stdout.log",
+    "stderr": "/workspace/scratch/c52cb753f160/audit-worker-scope/baseline-gn-bevel.stderr.log",
+    "observations": {
+      "REPRO_GN": {
+        "guardAccepted": true,
+        "sceneObjectCount": 1,
+        "objectInstanceType": "NONE",
+        "inventoryMeshVertices": 8,
+        "inventoryTriangles": 12,
+        "depsgraphInstances": 8
+      },
+      "REPRO_MODIFIER": {
+        "guardAccepted": true,
+        "viewportEnabled": false,
+        "renderEnabled": true,
+        "inventoryTriangles": 12
+      }
+    }
+  },
+  {
+    "label": "baseline-subdivision",
+    "baselineCommit": "94930b3d3dade455336ce6240805ea96d7a13e53",
+    "command": [
+      "/usr/bin/blender",
+      "-b",
+      "--factory-startup",
+      "--threads",
+      "1",
+      "--python-exit-code",
+      "1",
+      "--python-expr",
+      "import sys, runpy; sys.dont_write_bytecode=True; sys.path.insert(0, '/workspace/scratch/c52cb753f160/audit-worker-scope/baseline-94930b3d/production'); import blender_worker; runpy.run_path('/workspace/scratch/c52cb753f160/audit-worker-scope/probe_subdivision_levels.py', run_name=\"__main__\")"
+    ],
+    "startedAt": "2026-11-22T09:12:43.541829+00:00",
+    "elapsedSeconds": 1.253,
+    "returncode": 0,
+    "script": "/workspace/scratch/c52cb753f160/audit-worker-scope/probe_subdivision_levels.py",
+    "scriptSha256": "bd7116fe9a94c538335db1f3e738cd6f7dffc8fbeb7a9379c03cca47e1441005",
+    "worker": "/workspace/scratch/c52cb753f160/audit-worker-scope/baseline-94930b3d/production/blender_worker.py",
+    "workerSha256": "a3d0c85e8a733487605c20bac5f41d1b06a15ead07dda4c7bca12caa231f3e1a",
+    "stdout": "/workspace/scratch/c52cb753f160/audit-worker-scope/baseline-subdivision.stdout.log",
+    "stderr": "/workspace/scratch/c52cb753f160/audit-worker-scope/baseline-subdivision.stderr.log",
+    "observations": {
+      "REPRO_SUBDIVISION": {
+        "guardAccepted": true,
+        "viewportEnabled": true,
+        "renderEnabled": true,
+        "levels": 1,
+        "renderLevels": 2,
+        "inventoryTriangles": 48,
+        "inventoryBounds": {
+          "min": [
+            -0.83950627,
+            -0.83950627,
+            -0.83950627
+          ],
+          "max": [
+            0.83950627,
+            0.83950627,
+            0.83950627
+          ],
+          "dimensions": [
+            1.67901254,
+            1.67901254,
+            1.67901254
+          ]
+        },
+        "trianglesAtRenderSubdivisionLevel": 192,
+        "boundsAtRenderSubdivisionLevel": {
+          "min": [
+            -0.83950627,
+            -0.83950627,
+            -0.83950627
+          ],
+          "max": [
+            0.83950627,
+            0.83950627,
+            0.83950627
+          ],
+          "dimensions": [
+            1.67901254,
+            1.67901254,
+            1.67901254
+          ]
+        },
+        "probeScope": "In-memory geometry only; no images, native saves or GLB export"
+      }
+    }
+  }
+]

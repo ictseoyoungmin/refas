@@ -1,0 +1,6 @@
+CUFF_EDIT_CHECKS {"local_edit": "Wearer-left cuff band increased by 0.01 m along sleeve axis, keeping distal rim fixed", "axis": [0.257994294, -0.017999602, -0.965978742], "nominal_before_m": 0.06, "nominal_after_m": 0.07, "native_band_axial_extent_before_m": 0.059987178043229505, "native_band_axial_extent_after_m": 0.0699871884426102, "native_band_delta_m": 0.010000010399380699, "changed_objects": ["L_Cuff_Band", "L_Cuff_Buckle frame", "L_Cuff_Buckle tongue", "L_Cuff_Piping_Proximal", "L_Cuff_Rivet_-0.022", "L_Cuff_Rivet_0.022", "L_Cuff_Strap"], "protected_object_count": 259, "protected_changed": [], "material_hash_before": "eef5b8a1134a55b3a2909c44a91f6f5b3d0b7accdfb38effb4ee54f733e5ed26", "material_hash_after": "eef5b8a1134a55b3a2909c44a91f6f5b3d0b7accdfb38effb4ee54f733e5ed26", "materials_unchanged": true, "opposite_cuff_unchanged": true, "distal_piping_unchanged": true}
+Info: Saved "edited.blend"
+Blender 4.3.2
+Read blend: "/workspace/scratch/c52cb753f160/next-jacket-refresh/project/.refas2/revisions/964c33e53195403cb5c89b09fa699312/artifacts/scene.blend"
+
+Blender quit

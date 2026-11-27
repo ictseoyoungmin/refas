@@ -1,0 +1,9 @@
+{
+  "file": "forward-use.txt",
+  "sha256": "ff4fec22a6e16010bb9bbf43e5a0210f339b6ebc096c8c596cd46fa294a97788",
+  "savedBeforeDispatchAt": "2026-11-22T11:43:03.189912+00:00",
+  "context": "fresh thread; raw task and installed skill only",
+  "status": "sent",
+  "agent": "/root/installed_skill_user",
+  "dispatchConfirmedAt": "2026-11-22T11:43:49.469337+00:00"
+}

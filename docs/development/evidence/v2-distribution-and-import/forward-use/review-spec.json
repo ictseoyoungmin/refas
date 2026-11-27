@@ -1,0 +1,62 @@
+{
+  "schema": "refas.production.review/v2",
+  "views": [
+    {
+      "name": "hero",
+      "position": [
+        3.48310137,
+        -5.35757208,
+        2.76545572
+      ],
+      "target": [
+        0.01181483,
+        -0.09079336,
+        0.01236677
+      ],
+      "orthoScale": 3.25
+    },
+    {
+      "name": "detail",
+      "position": [
+        -0.25,
+        -2,
+        1.85
+      ],
+      "target": [
+        0.08612458,
+        -0.07873785,
+        1.19934177
+      ],
+      "orthoScale": 0.58
+    },
+    {
+      "name": "grazing",
+      "position": [
+        2,
+        -1.3,
+        1.75
+      ],
+      "target": [
+        0.08612458,
+        -0.07873785,
+        1.19934177
+      ],
+      "orthoScale": 0.6
+    }
+  ],
+  "lighting": {
+    "center": [
+      0.01181483,
+      -0.09079336,
+      0.01236677
+    ],
+    "radius": 1.72061566
+  },
+  "background": [
+    0.065,
+    0.08,
+    0.115
+  ],
+  "transparent": false
+}
+

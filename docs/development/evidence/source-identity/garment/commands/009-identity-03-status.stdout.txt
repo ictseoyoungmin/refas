@@ -1,0 +1,888 @@
+{
+  "ok": true,
+  "schema": "refas.production.project/v2",
+  "name": "uniform-jacket-source-identity",
+  "projectId": "9f847c335caa459585eade27981b1075",
+  "head": "a8fb6667eccf46ea907c9daf6f2ee0fe",
+  "sequence": 3,
+  "sources": [
+    {
+      "path": "sources/001-reference.png",
+      "name": "reference.png",
+      "role": "user-reference",
+      "sha256": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5",
+      "bytes": 2666378
+    }
+  ],
+  "outputs": {
+    "blend": "/workspace/scratch/5765cde18054/work/garment/project/.refas2/revisions/a8fb6667eccf46ea907c9daf6f2ee0fe/artifacts/scene.blend",
+    "glb": "/workspace/scratch/5765cde18054/work/garment/project/.refas2/revisions/a8fb6667eccf46ea907c9daf6f2ee0fe/artifacts/asset.glb",
+    "scene": "/workspace/scratch/5765cde18054/work/garment/project/.refas2/revisions/a8fb6667eccf46ea907c9daf6f2ee0fe/artifacts/scene.json"
+  },
+  "observations": [
+    {
+      "camera": {
+        "matrixWorld": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            -1.6e-07,
+            -1.0,
+            -2.0
+          ],
+          [
+            0.0,
+            1.0,
+            -1.6e-07,
+            0.15000001
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "orthoScale": 0.83999997,
+        "position": [
+          0.0,
+          -2.0,
+          0.15000001
+        ],
+        "projection": "orthographic",
+        "target": [
+          0.0,
+          0.0,
+          0.15000001
+        ]
+      },
+      "framing": "fixed-review-spec",
+      "lighting": {
+        "center": [
+          0.0,
+          0.0,
+          0.18000001
+        ],
+        "radius": 0.48,
+        "rig": "three-area-lights/v1"
+      },
+      "path": "/workspace/scratch/5765cde18054/work/garment/project/.refas2/revisions/a8fb6667eccf46ea907c9daf6f2ee0fe/artifacts/view-front.png",
+      "referenceRegion": {
+        "regionPixels": [
+          6,
+          47,
+          380,
+          399
+        ],
+        "sourceSha256": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5"
+      },
+      "registration": "unregistered",
+      "renderer": {
+        "denoising": false,
+        "device": "CPU",
+        "engine": "CYCLES",
+        "samples": 32,
+        "size": [
+          640,
+          640
+        ],
+        "transparent": true,
+        "viewTransform": "AgX",
+        "worldColor": [
+          0.80000001,
+          0.82999998,
+          0.88
+        ],
+        "worldStrength": 0.45
+      },
+      "sha256": "7192b627804ceb5a64e4c61d736b1bff562bf2916e1e5878b81d6c2c56e127b0",
+      "sourceSceneFingerprint": "0b3b816548276bd00d743dc47ec89eb59b2aa4af70c6682467739c96669a28f1",
+      "view": "front"
+    },
+    {
+      "camera": {
+        "matrixWorld": [
+          [
+            0.70710683,
+            -7e-08,
+            0.70710677,
+            1.41421366
+          ],
+          [
+            0.70710677,
+            -1.4e-07,
+            -0.70710683,
+            -1.41421366
+          ],
+          [
+            1.5e-07,
+            1.0,
+            -4e-08,
+            0.15000001
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "orthoScale": 0.83999997,
+        "position": [
+          1.41421366,
+          -1.41421366,
+          0.15000001
+        ],
+        "projection": "orthographic",
+        "target": [
+          0.0,
+          0.0,
+          0.15000001
+        ]
+      },
+      "framing": "fixed-review-spec",
+      "lighting": {
+        "center": [
+          0.0,
+          0.0,
+          0.18000001
+        ],
+        "radius": 0.48,
+        "rig": "three-area-lights/v1"
+      },
+      "path": "/workspace/scratch/5765cde18054/work/garment/project/.refas2/revisions/a8fb6667eccf46ea907c9daf6f2ee0fe/artifacts/view-front-three-quarter.png",
+      "referenceRegion": {
+        "regionPixels": [
+          383,
+          47,
+          655,
+          399
+        ],
+        "sourceSha256": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5"
+      },
+      "registration": "unregistered",
+      "renderer": {
+        "denoising": false,
+        "device": "CPU",
+        "engine": "CYCLES",
+        "samples": 32,
+        "size": [
+          640,
+          640
+        ],
+        "transparent": true,
+        "viewTransform": "AgX",
+        "worldColor": [
+          0.80000001,
+          0.82999998,
+          0.88
+        ],
+        "worldStrength": 0.45
+      },
+      "sha256": "27a7e8a720cfc2526d461f2d5bfceacb38d28979785f3ebf8d98754d884f782a",
+      "sourceSceneFingerprint": "0b3b816548276bd00d743dc47ec89eb59b2aa4af70c6682467739c96669a28f1",
+      "view": "front-three-quarter"
+    },
+    {
+      "camera": {
+        "matrixWorld": [
+          [
+            -4e-08,
+            4e-08,
+            1.0,
+            2.0
+          ],
+          [
+            1.0,
+            0.0,
+            4e-08,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            -4e-08,
+            0.15000001
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "orthoScale": 0.83999997,
+        "position": [
+          2.0,
+          -0.0,
+          0.15000001
+        ],
+        "projection": "orthographic",
+        "target": [
+          0.0,
+          0.0,
+          0.15000001
+        ]
+      },
+      "framing": "fixed-review-spec",
+      "lighting": {
+        "center": [
+          0.0,
+          0.0,
+          0.18000001
+        ],
+        "radius": 0.48,
+        "rig": "three-area-lights/v1"
+      },
+      "path": "/workspace/scratch/5765cde18054/work/garment/project/.refas2/revisions/a8fb6667eccf46ea907c9daf6f2ee0fe/artifacts/view-left.png",
+      "referenceRegion": {
+        "regionPixels": [
+          658,
+          47,
+          867,
+          399
+        ],
+        "sourceSha256": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5"
+      },
+      "registration": "unregistered",
+      "renderer": {
+        "denoising": false,
+        "device": "CPU",
+        "engine": "CYCLES",
+        "samples": 32,
+        "size": [
+          640,
+          640
+        ],
+        "transparent": true,
+        "viewTransform": "AgX",
+        "worldColor": [
+          0.80000001,
+          0.82999998,
+          0.88
+        ],
+        "worldStrength": 0.45
+      },
+      "sha256": "2467b9c7ab7917ed886f8a8ab60cffb44736042779dd2edc04a57fb4474e9751",
+      "sourceSceneFingerprint": "0b3b816548276bd00d743dc47ec89eb59b2aa4af70c6682467739c96669a28f1",
+      "view": "left"
+    },
+    {
+      "camera": {
+        "matrixWorld": [
+          [
+            -1.0,
+            -1.5e-07,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            8e-08,
+            1.0,
+            2.0
+          ],
+          [
+            -1.5e-07,
+            1.0,
+            -8e-08,
+            0.15000001
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "orthoScale": 0.83999997,
+        "position": [
+          0.0,
+          2.0,
+          0.15000001
+        ],
+        "projection": "orthographic",
+        "target": [
+          0.0,
+          0.0,
+          0.15000001
+        ]
+      },
+      "framing": "fixed-review-spec",
+      "lighting": {
+        "center": [
+          0.0,
+          0.0,
+          0.18000001
+        ],
+        "radius": 0.48,
+        "rig": "three-area-lights/v1"
+      },
+      "path": "/workspace/scratch/5765cde18054/work/garment/project/.refas2/revisions/a8fb6667eccf46ea907c9daf6f2ee0fe/artifacts/view-back.png",
+      "referenceRegion": {
+        "regionPixels": [
+          871,
+          47,
+          1201,
+          399
+        ],
+        "sourceSha256": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5"
+      },
+      "registration": "unregistered",
+      "renderer": {
+        "denoising": false,
+        "device": "CPU",
+        "engine": "CYCLES",
+        "samples": 32,
+        "size": [
+          640,
+          640
+        ],
+        "transparent": true,
+        "viewTransform": "AgX",
+        "worldColor": [
+          0.80000001,
+          0.82999998,
+          0.88
+        ],
+        "worldStrength": 0.45
+      },
+      "sha256": "120a31532b4ad6fd9ef526a1fc2b652f76dd0da7e890f44c096b2a1248f173c8",
+      "sourceSceneFingerprint": "0b3b816548276bd00d743dc47ec89eb59b2aa4af70c6682467739c96669a28f1",
+      "view": "back"
+    },
+    {
+      "camera": {
+        "matrixWorld": [
+          [
+            -4e-08,
+            -4e-08,
+            -1.0,
+            -2.0
+          ],
+          [
+            -1.0,
+            0.0,
+            4e-08,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            -4e-08,
+            0.15000001
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "orthoScale": 0.83999997,
+        "position": [
+          -2.0,
+          0.0,
+          0.15000001
+        ],
+        "projection": "orthographic",
+        "target": [
+          0.0,
+          0.0,
+          0.15000001
+        ]
+      },
+      "framing": "fixed-review-spec",
+      "lighting": {
+        "center": [
+          0.0,
+          0.0,
+          0.18000001
+        ],
+        "radius": 0.48,
+        "rig": "three-area-lights/v1"
+      },
+      "path": "/workspace/scratch/5765cde18054/work/garment/project/.refas2/revisions/a8fb6667eccf46ea907c9daf6f2ee0fe/artifacts/view-right.png",
+      "referenceRegion": {
+        "regionPixels": [
+          1205,
+          47,
+          1400,
+          399
+        ],
+        "sourceSha256": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5"
+      },
+      "registration": "unregistered",
+      "renderer": {
+        "denoising": false,
+        "device": "CPU",
+        "engine": "CYCLES",
+        "samples": 32,
+        "size": [
+          640,
+          640
+        ],
+        "transparent": true,
+        "viewTransform": "AgX",
+        "worldColor": [
+          0.80000001,
+          0.82999998,
+          0.88
+        ],
+        "worldStrength": 0.45
+      },
+      "sha256": "5933bb5715f60e156f708caad2aac2c5edbd1c8aa0f00bf9f035f9d7bd6fad73",
+      "sourceSceneFingerprint": "0b3b816548276bd00d743dc47ec89eb59b2aa4af70c6682467739c96669a28f1",
+      "view": "right"
+    },
+    {
+      "camera": {
+        "matrixWorld": [
+          [
+            -0.70710695,
+            -6e-08,
+            -0.70710659,
+            -1.41421366
+          ],
+          [
+            -0.70710659,
+            0.0,
+            0.70710695,
+            1.41421366
+          ],
+          [
+            -4e-08,
+            1.0,
+            -4e-08,
+            0.15000001
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "orthoScale": 0.83999997,
+        "position": [
+          -1.41421366,
+          1.41421366,
+          0.15000001
+        ],
+        "projection": "orthographic",
+        "target": [
+          0.0,
+          0.0,
+          0.15000001
+        ]
+      },
+      "framing": "fixed-review-spec",
+      "lighting": {
+        "center": [
+          0.0,
+          0.0,
+          0.18000001
+        ],
+        "radius": 0.48,
+        "rig": "three-area-lights/v1"
+      },
+      "path": "/workspace/scratch/5765cde18054/work/garment/project/.refas2/revisions/a8fb6667eccf46ea907c9daf6f2ee0fe/artifacts/view-rear-three-quarter.png",
+      "referenceRegion": {
+        "regionPixels": [
+          1404,
+          47,
+          1667,
+          399
+        ],
+        "sourceSha256": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5"
+      },
+      "registration": "unregistered",
+      "renderer": {
+        "denoising": false,
+        "device": "CPU",
+        "engine": "CYCLES",
+        "samples": 32,
+        "size": [
+          640,
+          640
+        ],
+        "transparent": true,
+        "viewTransform": "AgX",
+        "worldColor": [
+          0.80000001,
+          0.82999998,
+          0.88
+        ],
+        "worldStrength": 0.45
+      },
+      "sha256": "ee3d0aa61c97205260ff1668656f2c061ad46105d07f90c76c77de15540715b6",
+      "sourceSceneFingerprint": "0b3b816548276bd00d743dc47ec89eb59b2aa4af70c6682467739c96669a28f1",
+      "view": "rear-three-quarter"
+    },
+    {
+      "camera": {
+        "matrixWorld": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            -1.6e-07,
+            -1.0,
+            -2.0
+          ],
+          [
+            0.0,
+            1.0,
+            -1.6e-07,
+            0.354
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "orthoScale": 0.36000001,
+        "position": [
+          0.0,
+          -2.0,
+          0.354
+        ],
+        "projection": "orthographic",
+        "target": [
+          0.0,
+          0.0,
+          0.354
+        ]
+      },
+      "framing": "fixed-review-spec",
+      "lighting": {
+        "center": [
+          0.0,
+          0.0,
+          0.18000001
+        ],
+        "radius": 0.48,
+        "rig": "three-area-lights/v1"
+      },
+      "path": "/workspace/scratch/5765cde18054/work/garment/project/.refas2/revisions/a8fb6667eccf46ea907c9daf6f2ee0fe/artifacts/view-fold-front.png",
+      "referenceRegion": {
+        "regionPixels": [
+          7,
+          443,
+          224,
+          584
+        ],
+        "sourceSha256": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5"
+      },
+      "registration": "unregistered",
+      "renderer": {
+        "denoising": false,
+        "device": "CPU",
+        "engine": "CYCLES",
+        "samples": 32,
+        "size": [
+          640,
+          640
+        ],
+        "transparent": true,
+        "viewTransform": "AgX",
+        "worldColor": [
+          0.80000001,
+          0.82999998,
+          0.88
+        ],
+        "worldStrength": 0.45
+      },
+      "sha256": "5173174ada3ee47862c643f6d3a88cf8e6e6eb72a5f121bed20e25695b660dd9",
+      "sourceSceneFingerprint": "0b3b816548276bd00d743dc47ec89eb59b2aa4af70c6682467739c96669a28f1",
+      "view": "fold-front"
+    },
+    {
+      "camera": {
+        "matrixWorld": [
+          [
+            0.71603727,
+            -0.03401785,
+            0.69723266,
+            1.41421366
+          ],
+          [
+            0.698062,
+            0.03489387,
+            -0.7151866,
+            -1.41421366
+          ],
+          [
+            -3e-08,
+            0.9988119,
+            0.04873188,
+            0.47
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "orthoScale": 0.27000001,
+        "position": [
+          1.41421366,
+          -1.41421366,
+          0.47
+        ],
+        "projection": "orthographic",
+        "target": [
+          0.055,
+          -0.02,
+          0.375
+        ]
+      },
+      "framing": "fixed-review-spec",
+      "lighting": {
+        "center": [
+          0.0,
+          0.0,
+          0.18000001
+        ],
+        "radius": 0.48,
+        "rig": "three-area-lights/v1"
+      },
+      "path": "/workspace/scratch/5765cde18054/work/garment/project/.refas2/revisions/a8fb6667eccf46ea907c9daf6f2ee0fe/artifacts/view-fold-oblique.png",
+      "referenceRegion": null,
+      "registration": "unregistered",
+      "renderer": {
+        "denoising": false,
+        "device": "CPU",
+        "engine": "CYCLES",
+        "samples": 32,
+        "size": [
+          640,
+          640
+        ],
+        "transparent": true,
+        "viewTransform": "AgX",
+        "worldColor": [
+          0.80000001,
+          0.82999998,
+          0.88
+        ],
+        "worldStrength": 0.45
+      },
+      "sha256": "66c4c997b95065d00e17925e5f473e762e09159b1c88226d7a0889db58fb715c",
+      "sourceSceneFingerprint": "0b3b816548276bd00d743dc47ec89eb59b2aa4af70c6682467739c96669a28f1",
+      "view": "fold-oblique"
+    },
+    {
+      "camera": {
+        "matrixWorld": [
+          [
+            -4e-08,
+            4e-08,
+            1.0,
+            2.0
+          ],
+          [
+            1.0,
+            0.0,
+            4e-08,
+            -0.05
+          ],
+          [
+            0.0,
+            1.0,
+            -4e-08,
+            0.40000001
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "orthoScale": 0.25,
+        "position": [
+          2.0,
+          -0.05,
+          0.40000001
+        ],
+        "projection": "orthographic",
+        "target": [
+          0.055,
+          -0.05,
+          0.40000001
+        ]
+      },
+      "framing": "fixed-review-spec",
+      "lighting": {
+        "center": [
+          0.0,
+          0.0,
+          0.18000001
+        ],
+        "radius": 0.48,
+        "rig": "three-area-lights/v1"
+      },
+      "path": "/workspace/scratch/5765cde18054/work/garment/project/.refas2/revisions/a8fb6667eccf46ea907c9daf6f2ee0fe/artifacts/view-fold-side.png",
+      "referenceRegion": null,
+      "registration": "unregistered",
+      "renderer": {
+        "denoising": false,
+        "device": "CPU",
+        "engine": "CYCLES",
+        "samples": 32,
+        "size": [
+          640,
+          640
+        ],
+        "transparent": true,
+        "viewTransform": "AgX",
+        "worldColor": [
+          0.80000001,
+          0.82999998,
+          0.88
+        ],
+        "worldStrength": 0.45
+      },
+      "sha256": "f76b5ca22f4cccf16d692e3b35ea17b9e39a9ca70eb1c358d437c19845b9f98a",
+      "sourceSceneFingerprint": "0b3b816548276bd00d743dc47ec89eb59b2aa4af70c6682467739c96669a28f1",
+      "view": "fold-side"
+    },
+    {
+      "camera": {
+        "matrixWorld": [
+          [
+            0.82732815,
+            -0.01213284,
+            0.56158787,
+            1.5
+          ],
+          [
+            0.56171894,
+            0.01786985,
+            -0.82713515,
+            -2.0
+          ],
+          [
+            1e-08,
+            0.99976671,
+            0.02159948,
+            0.31999999
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "orthoScale": 0.245,
+        "position": [
+          1.5,
+          -2.0,
+          0.31999999
+        ],
+        "projection": "orthographic",
+        "target": [
+          0.17399999,
+          -0.047,
+          0.26899999
+        ]
+      },
+      "framing": "fixed-review-spec",
+      "lighting": {
+        "center": [
+          0.0,
+          0.0,
+          0.18000001
+        ],
+        "radius": 0.48,
+        "rig": "three-area-lights/v1"
+      },
+      "path": "/workspace/scratch/5765cde18054/work/garment/project/.refas2/revisions/a8fb6667eccf46ea907c9daf6f2ee0fe/artifacts/view-ornament.png",
+      "referenceRegion": {
+        "regionPixels": [
+          414,
+          444,
+          582,
+          580
+        ],
+        "sourceSha256": "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5"
+      },
+      "registration": "unregistered",
+      "renderer": {
+        "denoising": false,
+        "device": "CPU",
+        "engine": "CYCLES",
+        "samples": 32,
+        "size": [
+          640,
+          640
+        ],
+        "transparent": true,
+        "viewTransform": "AgX",
+        "worldColor": [
+          0.80000001,
+          0.82999998,
+          0.88
+        ],
+        "worldStrength": 0.45
+      },
+      "sha256": "78421e4a416602267ecdf23aced508dc2ec21fafbe28b49bff15c972d4007641",
+      "sourceSceneFingerprint": "0b3b816548276bd00d743dc47ec89eb59b2aa4af70c6682467739c96669a28f1",
+      "view": "ornament"
+    }
+  ],
+  "inputs": {
+    "base.blend": "/workspace/scratch/5765cde18054/work/garment/project/.refas2/revisions/a8fb6667eccf46ea907c9daf6f2ee0fe/inputs/base.blend",
+    "edit.py": "/workspace/scratch/5765cde18054/work/garment/project/.refas2/revisions/a8fb6667eccf46ea907c9daf6f2ee0fe/inputs/edit.py",
+    "review.json": "/workspace/scratch/5765cde18054/work/garment/project/.refas2/revisions/a8fb6667eccf46ea907c9daf6f2ee0fe/inputs/review.json"
+  },
+  "revisions": [
+    {
+      "id": "803de3e78a494bbc9cddb499c7de36de",
+      "intent": "Immutable selected baseline under fixed source-identity review",
+      "createdAt": "2026-11-22T12:15:17.181817+00:00",
+      "parent": null
+    },
+    {
+      "id": "59a42f0458544897a025246f53b2796d",
+      "intent": "Refine source-visible collar roll, tailored cloth, black straps and left shield-chain assembly",
+      "createdAt": "2026-11-22T12:18:17.577396+00:00",
+      "parent": "803de3e78a494bbc9cddb499c7de36de"
+    },
+    {
+      "id": "a8fb6667eccf46ea907c9daf6f2ee0fe",
+      "intent": "Refine source-visible collar roll, tailored cloth, black straps and left shield-chain assembly",
+      "createdAt": "2026-11-22T12:21:41.527422+00:00",
+      "parent": "59a42f0458544897a025246f53b2796d"
+    }
+  ],
+  "incompleteRuns": [],
+  "evidenceFreshness": {
+    "status": "current",
+    "scope": "active-reference-content-set",
+    "revision": "a8fb6667eccf46ea907c9daf6f2ee0fe",
+    "activeSourceSha256": [
+      "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5"
+    ],
+    "revisionSourceSha256": [
+      "d8b85deb544c58009823ed8ed1478f20389c7a57cedc40870f64046cce76c7c5"
+    ],
+    "visualAcceptance": "not-evaluated"
+  },
+  "referenceResemblance": "not-evaluated",
+  "gameReadiness": "not-evaluated"
+}

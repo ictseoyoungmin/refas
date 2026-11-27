@@ -1,0 +1,1392 @@
+{
+  "sourceBaseCommit": "0064129159b722e43b87b43c85f72d3831d795c0",
+  "snapshotUtc": "2026-11-21T21:18:41.489856+00:00",
+  "scope": "Candidate short skill and optional garment/assembly guides frozen before task-local authoring. Runtime matches base; final guide registry is included.",
+  "files": [
+    {
+      "path": ".npmignore",
+      "bytes": 108,
+      "sha256": "58229a12fb9726be69c01178475fcb1c347a12a463f74970710316dee340fd97"
+    },
+    {
+      "path": "SKILL.md",
+      "bytes": 10350,
+      "sha256": "94bc317ac22c88a38fc33a52427d9fa41aca8a47917f994c2648b787107dadb0"
+    },
+    {
+      "path": "agents/openai.yaml",
+      "bytes": 438,
+      "sha256": "515a8e2695fef55f2c8ab66a6720083394590d6cc8141f206d90f7d0f6e80cb7"
+    },
+    {
+      "path": "assets/examples/subdivision-cage-demo.md",
+      "bytes": 642,
+      "sha256": "b70ef8bd37c0c3735f7b6aee6c931a88b40574c27538fcca5fda5b43b2992fc2"
+    },
+    {
+      "path": "assets/icon.svg",
+      "bytes": 7749,
+      "sha256": "ee5477b3f387cbf783f09abaa0463a7395ee61d1d3f2e10b33b0e5a3146beb31"
+    },
+    {
+      "path": "assets/templates/assembly-contract.json",
+      "bytes": 1384,
+      "sha256": "6d703d2b5024eff889aad7ecdb37645d6065bc6c6f8b34bfd5ea7c9b6347588e"
+    },
+    {
+      "path": "assets/templates/canonical-object-frame.json",
+      "bytes": 415,
+      "sha256": "58d31d78dbd2cc52efdd3726949b2204110cdd850eb04be6deffd7ea3e5d7ce8"
+    },
+    {
+      "path": "assets/templates/capability-interface-inputs.json",
+      "bytes": 82000,
+      "sha256": "d577473782b79c949b4b2b6f26acc455e565f59859f534ee1770e1264505c1e5"
+    },
+    {
+      "path": "assets/templates/closure-gates.json",
+      "bytes": 719,
+      "sha256": "5a6103526cce276e7ad1955282e8c3b165806dd2f23e202f7f1ffe15561140b6"
+    },
+    {
+      "path": "assets/templates/construction-quality.json",
+      "bytes": 1387,
+      "sha256": "f28f35710c67272812420f64f3ac74aa83939b76e4bb5581527fab7b32c638f0"
+    },
+    {
+      "path": "assets/templates/evaluation.json",
+      "bytes": 285,
+      "sha256": "c8f719a6c0b935e977aacb1782ed5c275d9b742c7a167d32aef3eb3a563f6513"
+    },
+    {
+      "path": "assets/templates/evidence-request.json",
+      "bytes": 1479,
+      "sha256": "45ab50faa9cef8af45646b8748b4f664fea24af77d1fc982e21468e86b40f9c1"
+    },
+    {
+      "path": "assets/templates/evidence-utility-decisions.json",
+      "bytes": 1728,
+      "sha256": "e003bcc25355691b07bd60302f8933c401541a7b1ba7e426ab7c75b88b2312d5"
+    },
+    {
+      "path": "assets/templates/finding.json",
+      "bytes": 238,
+      "sha256": "952d8499de727fe91c2d448c951ac6cff3311a8b9e6472aa257a0c0a77db6448"
+    },
+    {
+      "path": "assets/templates/handoff-capsule.json",
+      "bytes": 374,
+      "sha256": "a60a8bece817561c30bf83a80d11b3f3fc72a4988a2de6457d16efadba1c0f0a"
+    },
+    {
+      "path": "assets/templates/hard-surface-spec.json",
+      "bytes": 442,
+      "sha256": "0009819ec01e8f24d4629b5b7fae83f6cfe567127f70609c5d70fb54083f9d22"
+    },
+    {
+      "path": "assets/templates/parameter-fit-plan.json",
+      "bytes": 1156,
+      "sha256": "e50b1d3c1318e8bd18d969324d09e773e320910d9b1af92f0d24b6c35b7edf47"
+    },
+    {
+      "path": "assets/templates/pbr-render-report.json",
+      "bytes": 884,
+      "sha256": "099b00f1deec52f8d3dc3fd1e971c5af8139558a379f9a39c9f95f165af92eee"
+    },
+    {
+      "path": "assets/templates/projection-fit.json",
+      "bytes": 577,
+      "sha256": "ca1215b808dade5a475f536db0a528478f7f9dc3a1fd1aed0c8f231404b787d7"
+    },
+    {
+      "path": "assets/templates/realized-assembly-input.json",
+      "bytes": 557,
+      "sha256": "35aa566f1fcfc54701573f7904710436a9e9ab2aec9b04be90c289a28a9a3a8e"
+    },
+    {
+      "path": "assets/templates/realized-projection-input.json",
+      "bytes": 402,
+      "sha256": "7cd6f7ab49cf40b0a4a0f5acf8d28bd36c7123d4b9a0525d007b8ea62d475b95"
+    },
+    {
+      "path": "assets/templates/reference-geometry.json",
+      "bytes": 1995,
+      "sha256": "8d5b9cef64192c3950ace5e9de194ce795219e5ed97b3842216427beeb7b8792"
+    },
+    {
+      "path": "assets/templates/registered-comparison-input.json",
+      "bytes": 558,
+      "sha256": "a42c821357c6d3357e3122d1818d6ba29686f441a3954ddbd2c039f33c187167"
+    },
+    {
+      "path": "assets/templates/registration-input.json",
+      "bytes": 964,
+      "sha256": "7a1720192d77a6599f590c3ff53070055ea6c38f69a242cd85716216b6ad41ee"
+    },
+    {
+      "path": "assets/templates/relational-structure.json",
+      "bytes": 1326,
+      "sha256": "b67884057e053c520ac6cab0752a0d1daaa3bb362291e475bc331cd14f6a688c"
+    },
+    {
+      "path": "assets/templates/semantic-authority.json",
+      "bytes": 1352,
+      "sha256": "03699bca7c6087c67b4e5dc8b9c354c556470dd7579902f7643d24d12405e6cb"
+    },
+    {
+      "path": "assets/templates/source-manifest.json",
+      "bytes": 361,
+      "sha256": "9144e4ec0f8702fc108e88aab442de7b09dc6cc38672756cd71ad54d8b010737"
+    },
+    {
+      "path": "assets/templates/spatial-hypotheses.json",
+      "bytes": 1814,
+      "sha256": "028ddbbe33c05eb814d5ad894eda62ab8752b440cd61a3be9b2741a03dec4599"
+    },
+    {
+      "path": "assets/templates/surface-network.json",
+      "bytes": 747,
+      "sha256": "f8375ec2cacf1faeff5d1210bcace2537990ca039d220f2e418f5865729198a1"
+    },
+    {
+      "path": "assets/templates/visual-hierarchy.json",
+      "bytes": 615,
+      "sha256": "163d9a8a7b193c00f9d040a42ca8a210bc221b2b16584cd03e884fc97ecdee8e"
+    },
+    {
+      "path": "assets/templates/visual-observation.json",
+      "bytes": 739,
+      "sha256": "811fd3da8f619c48a8e9ef222b7b082ba75666c4a74e7f597cdf5ae6df6c9b93"
+    },
+    {
+      "path": "assets/templates/visual-review.json",
+      "bytes": 2355,
+      "sha256": "a2dc446851329fbb86a51a3b0ec5ecd80a7ce3a814d072d28dae3bae39d249a9"
+    },
+    {
+      "path": "references/GRAPH.json",
+      "bytes": 194272,
+      "sha256": "b151dd935e642ee78744a1024cf2f83b4022ebdb804dcc8a8cc1485e82f49e69"
+    },
+    {
+      "path": "references/INDEX.md",
+      "bytes": 14995,
+      "sha256": "61c817a07c46bc6691200386a97747c2f603f410dd3aa805214121eb91aa1497"
+    },
+    {
+      "path": "references/appearance.md",
+      "bytes": 8238,
+      "sha256": "1075f58898a211b8278fb0181caaf4f87a35ced619b82674c416fc4e6ece0ef1"
+    },
+    {
+      "path": "references/assembly.md",
+      "bytes": 27914,
+      "sha256": "6319810e19ffb2fbeec52795108dab7aa5348fa85e47a2f67f1c81aa4240b60d"
+    },
+    {
+      "path": "references/candidate-transactions.md",
+      "bytes": 4632,
+      "sha256": "153d3387b34a364754946187d0b231eee5ea1a52f551b4999b3dc49adf8ac821"
+    },
+    {
+      "path": "references/checkpointing.md",
+      "bytes": 8849,
+      "sha256": "9bd5a75161a272d52cfa017f8bf3ef3a4b35b548cb678f025065f0ff1fb25dd3"
+    },
+    {
+      "path": "references/claim-certification.md",
+      "bytes": 5011,
+      "sha256": "207b8eff27523facf951c936964ce906bc65e8fc1946b69e44b8d3a0e158cfc4"
+    },
+    {
+      "path": "references/construction.md",
+      "bytes": 19245,
+      "sha256": "bc21e3cf72639464b5bf69ffbade0ecf0590c3da6437143897c8056c08dc74be"
+    },
+    {
+      "path": "references/contracts/actuation-model.md",
+      "bytes": 10227,
+      "sha256": "b758d2b00ac5047a5fbce57501fac379d5dca9254c71c0ccf323c4dfe3ee915c"
+    },
+    {
+      "path": "references/contracts/articulation-clearance.md",
+      "bytes": 3389,
+      "sha256": "27d5ae0105f547fa172c4c9975c6bd109e1419e9b1405a38614605272536d46d"
+    },
+    {
+      "path": "references/contracts/attachment-follow.md",
+      "bytes": 2379,
+      "sha256": "999e23036228181a3148bebd2964b664fb4a48d43b1f1e1001506f2f1be5cf49"
+    },
+    {
+      "path": "references/contracts/attachment-propagation.md",
+      "bytes": 2962,
+      "sha256": "7322b7aeb3cb9e7123172e339ed5a9b0b3b40c7de34890e3404d048960c139ff"
+    },
+    {
+      "path": "references/contracts/attachment-semantics.md",
+      "bytes": 5290,
+      "sha256": "99198f5f5fb57cf5e245bc3c2ab8661b61cb31acd3c00a765bb80e1ed557fc08"
+    },
+    {
+      "path": "references/contracts/backend-export.md",
+      "bytes": 10489,
+      "sha256": "dc94f70f0d950e82a249b47789c3aa8624dd1651436504a3e55e4caa2af18a60"
+    },
+    {
+      "path": "references/contracts/canonical-edit-boundary.md",
+      "bytes": 4023,
+      "sha256": "d73d84296c0773ee37b6f7bc372deb9ec62a3a06be8ea16eff83ac414eb3b9e3"
+    },
+    {
+      "path": "references/contracts/control-profile.md",
+      "bytes": 3957,
+      "sha256": "fe646779cf9e7a741dbb0b2151d4a9563e089ac91d8897940126bf5d77098a67"
+    },
+    {
+      "path": "references/contracts/cross-representation-validation.md",
+      "bytes": 4811,
+      "sha256": "30c30642d739da6fcf88cada8650ec40fe8b2dbe5285804214e37d066b820075"
+    },
+    {
+      "path": "references/contracts/divergence-authorization.md",
+      "bytes": 7299,
+      "sha256": "f45727138dc268b8656034ccdb42219a8f3a36a66c182651d6d368b2593e153a"
+    },
+    {
+      "path": "references/contracts/logical-fusion.md",
+      "bytes": 2920,
+      "sha256": "751a3f7900b777b2a927bd1dbd7917442d62d1e6c09539f68ec94c4959f9174b"
+    },
+    {
+      "path": "references/contracts/multi-anchor-solver.md",
+      "bytes": 3103,
+      "sha256": "0b04e6912f74c4763541d1da72c199efa020739d8eeba62a36b3b03799f6f51c"
+    },
+    {
+      "path": "references/contracts/physical-asset-bundle.md",
+      "bytes": 6740,
+      "sha256": "864a4facedaf961360a4f08285bbc2b5a79411b87bd0578d980bab3d0fd35b06"
+    },
+    {
+      "path": "references/contracts/physical-claims.md",
+      "bytes": 7236,
+      "sha256": "190d9348327ef30b2ac825fdda73975040e336e67c2f8bb08a5f0f197c7d05e3"
+    },
+    {
+      "path": "references/contracts/representation-capacity.md",
+      "bytes": 5889,
+      "sha256": "23b1d7ecf5857a165f740ec0dcca73e2c1e44bc9cf45a70183f770a234065c9d"
+    },
+    {
+      "path": "references/contracts/representation-normalizer.md",
+      "bytes": 9415,
+      "sha256": "a330eb2e2ab15a0fc9f82037db2ba6519037e4cd82e8a6a11a7fcf428d5da108"
+    },
+    {
+      "path": "references/contracts/runtime-binding.md",
+      "bytes": 7112,
+      "sha256": "b6c30be61e06f0b250c04adbd31c61103fb9cbaa658c5d0ed5e7bc06c429987f"
+    },
+    {
+      "path": "references/contracts/surface-anchor-frames.md",
+      "bytes": 2592,
+      "sha256": "f99dd0535d4b24a89930754a552fa9a81adb8cff19e2b2faba7b18815338a939"
+    },
+    {
+      "path": "references/contracts/transmission-model.md",
+      "bytes": 8241,
+      "sha256": "035bbdc3d37d99c2eb582317874c68a1ddf484245a676d3535c020b5429b625e"
+    },
+    {
+      "path": "references/failure-routing.md",
+      "bytes": 5608,
+      "sha256": "ad4bf1e98137bb44fc7968474cd0807c523bafdf57adaecc7a3e826a6207d8bc"
+    },
+    {
+      "path": "references/host-integration.md",
+      "bytes": 9069,
+      "sha256": "2665b31776a319dda35ac7463e99a39001c307856ff51f7ff52839c93c7d4ed4"
+    },
+    {
+      "path": "references/inference-authority.md",
+      "bytes": 5860,
+      "sha256": "e82d1e4f2d0a2ccac8acad79c5962d734c39df7d09b4a507d403e6a423624383"
+    },
+    {
+      "path": "references/observation.md",
+      "bytes": 12654,
+      "sha256": "365882eb898351762e90c5a1c827e4affac0eff9982f61419bb214e702eb6c0a"
+    },
+    {
+      "path": "references/organic-articulated-construction.md",
+      "bytes": 4211,
+      "sha256": "37a9d65d48366616f19c2d4536fbce9c8139bebc24c4d402f3bbbed270be2330"
+    },
+    {
+      "path": "references/parameter-fitting.md",
+      "bytes": 12311,
+      "sha256": "d37f0edb04564ea67ef067d6525bfc24aa964093fbceb9d53a0d1c7221a73b43"
+    },
+    {
+      "path": "references/physical-fusion.md",
+      "bytes": 1566,
+      "sha256": "433a79c37eb87aac0d52d372a169bb59f43c90a571e6d12b14003fd4f7f0515d"
+    },
+    {
+      "path": "references/production-assemblies.md",
+      "bytes": 3595,
+      "sha256": "33606e47875ff4bc8607c4b4fecaf81fc762dac47ccd0630d43b60a9620676bf"
+    },
+    {
+      "path": "references/production-garments.md",
+      "bytes": 3308,
+      "sha256": "cd3aa6efa7cac68b36fcbfeded324b49fa89c32adcf4ef40d52ead7e4f38a903"
+    },
+    {
+      "path": "references/production-review.md",
+      "bytes": 2240,
+      "sha256": "18df5b68cf20d3277f8a64bb01d0c15ffd1e58c7e030de4e04a91820f491c1fa"
+    },
+    {
+      "path": "references/provenance.md",
+      "bytes": 2091,
+      "sha256": "98d1753a7eaa8f981322322f827bd7d5f0361f8b696acf16e29b6a93a2a44c9b"
+    },
+    {
+      "path": "references/realized-contact-support.md",
+      "bytes": 3136,
+      "sha256": "3752d94f4a383849264c0b425152eed8c58e6cd99a1d6ddb573837ae2e9967f4"
+    },
+    {
+      "path": "references/relational-structure.md",
+      "bytes": 9240,
+      "sha256": "86c0e06ed41092d57c0c73aed0f31ee01388776487a0d677ef11034f128ff806"
+    },
+    {
+      "path": "references/single-view-volumetric-reasoning-example.md",
+      "bytes": 2441,
+      "sha256": "c2e7429d44879a3b100618dbf03823f1391dc7d60be0a6235026fa9f6298e032"
+    },
+    {
+      "path": "references/spatial-reasoning.md",
+      "bytes": 30732,
+      "sha256": "994cff34a2b9f51a47d6965695603a049f458a9d0f95025c1edc226c79d08919"
+    },
+    {
+      "path": "references/validation.md",
+      "bytes": 24678,
+      "sha256": "a7c2e8db4866e6ee1d388ed2bd35e76af251a9b7ec985345f6d9103bd8eed86d"
+    },
+    {
+      "path": "references/whole-system-relational-barrier.md",
+      "bytes": 4857,
+      "sha256": "a82bdc24fd7b8073e9708a3c9004c380e629857378a798479cf461926e88ca57"
+    },
+    {
+      "path": "references/workflow.md",
+      "bytes": 15470,
+      "sha256": "1c3660b004abcaae3683a9b2446d3ad93f616ba39ef1d3a3396756022b98c6ce"
+    },
+    {
+      "path": "requirements.txt",
+      "bytes": 28,
+      "sha256": "e32056a5263b5972e789540468f3d3e1e8e2d1649d21ef65e814317727be4897"
+    },
+    {
+      "path": "scripts/.npmignore",
+      "bytes": 127,
+      "sha256": "277e9173a81244d3087523626a9a33ea3c7602bc1860afeca9e045bcde3359bf"
+    },
+    {
+      "path": "scripts/benchmark_pbr_v2_full.py",
+      "bytes": 11259,
+      "sha256": "3b2a878da15be7ee48eed672a5f2b3c1998f2c8140ab18842d7c9344d803d8f8"
+    },
+    {
+      "path": "scripts/benchmark_render_cpu.py",
+      "bytes": 18618,
+      "sha256": "eefdf0f0eb7223e09660d030c6c069f80d876d3c5c06572454c961765c792b43"
+    },
+    {
+      "path": "scripts/benchmark_render_cpu_dense.py",
+      "bytes": 9659,
+      "sha256": "1d44cbe5fcf94cc33bc76bfa1872d9527f057abec359d949f0aae44fe897e2a1"
+    },
+    {
+      "path": "scripts/benchmark_render_cpu_warm.py",
+      "bytes": 12487,
+      "sha256": "336fcd65d92ca5d3a728f303845d8095c54c52e16865327d9f99b432c0a728f3"
+    },
+    {
+      "path": "scripts/bilateral_pair_fresh_worker.mjs",
+      "bytes": 5651,
+      "sha256": "df57b0dc88c42a31b3d1014769f11d3e23532d2d68cf1e85ddd4b642a910167a"
+    },
+    {
+      "path": "scripts/blockout_competition_fresh_worker.mjs",
+      "bytes": 15353,
+      "sha256": "65985ec64d34db637132a17fe1ed885920739f019838aaf28f0d48ff78e26074"
+    },
+    {
+      "path": "scripts/capability_interface_fixtures.mjs",
+      "bytes": 41631,
+      "sha256": "bfdc0fbfc1707b6388dcd4af8b3d83decc1dc1e5285de74c88020c000e23f923"
+    },
+    {
+      "path": "scripts/compare_registered.py",
+      "bytes": 32263,
+      "sha256": "be3acf97118eacfd6a65e94edd550407454bc6aaee880c924edeb1c656f9053c"
+    },
+    {
+      "path": "scripts/compose_review_board.py",
+      "bytes": 9375,
+      "sha256": "3b84b7ba4a053e8b49ce6c27a583bc0e8f72103a211989beac58a48a878c81c4"
+    },
+    {
+      "path": "scripts/create_blender_color0_texture_fixture.py",
+      "bytes": 2388,
+      "sha256": "f9e4fe6ee6ffadede11b0ab993e1fd80156b2ff350ad85c1417aee1a62c1e574"
+    },
+    {
+      "path": "scripts/create_blender_no_color_control.py",
+      "bytes": 1750,
+      "sha256": "b5e8a9559736c434ee242017044aa83cbd8f78f3c05077aabd62c3b164988d51"
+    },
+    {
+      "path": "scripts/create_pbr_v2_texture_benchmark_fixture.py",
+      "bytes": 3705,
+      "sha256": "30a2a46813c71e8ed59250831487d104ab77827f8cc53485b9971d3e664a393c"
+    },
+    {
+      "path": "scripts/evidence_compat.py",
+      "bytes": 6789,
+      "sha256": "c5cc3a05dffb786196c53078dda7d7e98490938d2292451338529fe50645bd43"
+    },
+    {
+      "path": "scripts/evidence_request.py",
+      "bytes": 22806,
+      "sha256": "d3f5eea5ba0c461fcc0754d20c7eff7ee5999901e08719a5c96ce7eb34fbded5"
+    },
+    {
+      "path": "scripts/evidence_utility.py",
+      "bytes": 14229,
+      "sha256": "98acff1ac71dcec8fa73f6bbb223f022a7212628c18a09db9f349c30075eaa7f"
+    },
+    {
+      "path": "scripts/external_construction_fresh_worker.mjs",
+      "bytes": 7291,
+      "sha256": "2f38b586e6702ed732996c3733a77c06f404a3dce0390a83f0e7c411b868fcd5"
+    },
+    {
+      "path": "scripts/fresh_worker_access_loader.mjs",
+      "bytes": 3425,
+      "sha256": "b52fa6f8e8e24715e9667146d01dbc44e7d3d44ee556eb1d86a19aa0138accec"
+    },
+    {
+      "path": "scripts/fresh_worker_access_policy.mjs",
+      "bytes": 2669,
+      "sha256": "82726dd706df470f8c2a1cccce1b0badd8361c7f914a966141376a837de06650"
+    },
+    {
+      "path": "scripts/fresh_worker_access_preload.mjs",
+      "bytes": 1565,
+      "sha256": "295e42951c4c5fa928c9e9b7370f7748f2a807f9ac728e98e5b2cc533c6ec0b3"
+    },
+    {
+      "path": "scripts/fresh_worker_dogfood_worker.mjs",
+      "bytes": 37418,
+      "sha256": "2d64cb5c062a7ec169519c74472bad371b4994bb5a6edb3b8bac637126ea7370"
+    },
+    {
+      "path": "scripts/fresh_worker_guarded_child_process.mjs",
+      "bytes": 1244,
+      "sha256": "c91dc341a50188408382d6f2dd46db732207e95325184781447338fc61aa6865"
+    },
+    {
+      "path": "scripts/fresh_worker_guarded_fs.mjs",
+      "bytes": 4977,
+      "sha256": "9d3b77372cd1b229267059ee843f58f3d16c67712450ebc4f14a1f0664b54bac"
+    },
+    {
+      "path": "scripts/fresh_worker_guarded_fs_promises.mjs",
+      "bytes": 3260,
+      "sha256": "0effa1abcc41b89a36d2543f01827f26362c215c0e4455437389ad5d4c50df83"
+    },
+    {
+      "path": "scripts/lib/actuation-model.mjs",
+      "bytes": 32734,
+      "sha256": "302bf1b92b10b0e1e0328a4cb2f93c44805b11f9e24887e5b116fe4ba72b9637"
+    },
+    {
+      "path": "scripts/lib/agent-workflow.mjs",
+      "bytes": 8085,
+      "sha256": "15a4ebb47374d55d97307c15fc0ed3ccfda4e81c1eafaa663366a57cc7c0a12c"
+    },
+    {
+      "path": "scripts/lib/appearance-fit.mjs",
+      "bytes": 12136,
+      "sha256": "d8789712c4c5266bac2e7e1cdf14b5e74ff63d85f11db85047a6916d9a1f7aaa"
+    },
+    {
+      "path": "scripts/lib/articulation-clearance.mjs",
+      "bytes": 17016,
+      "sha256": "976d815ebedb83319582d9cf976cf8c3f1110499da0b7f31eddb5a3616875e76"
+    },
+    {
+      "path": "scripts/lib/articulation-graph.mjs",
+      "bytes": 30235,
+      "sha256": "f3dc44a662091c6f7e4a61ee26599ac5110e01181a8d2fb0d28fc8f4f1026c9a"
+    },
+    {
+      "path": "scripts/lib/assembly.mjs",
+      "bytes": 14069,
+      "sha256": "3444727f1b56c20e0914d200aa3046c7742bf70354ede0dd299273aa986882ee"
+    },
+    {
+      "path": "scripts/lib/attachment-follow.mjs",
+      "bytes": 13411,
+      "sha256": "2d61d26db8bc30330b06613e07ba2c164b40cb4c5ae0ea8a382ab2f7365f3b05"
+    },
+    {
+      "path": "scripts/lib/attachment-propagation.mjs",
+      "bytes": 24280,
+      "sha256": "3ff82832971d2367e0caa53fd93d3383df810ab22deca9372f6217a212e1bc15"
+    },
+    {
+      "path": "scripts/lib/attachment-semantics.mjs",
+      "bytes": 11346,
+      "sha256": "3d8e43b4fbb3bae9ada832bda6acc0ce494a50783df51e8b60b430d08c653701"
+    },
+    {
+      "path": "scripts/lib/backend-export-core.mjs",
+      "bytes": 41872,
+      "sha256": "43394f61552b9c7d3ddc3b960c6f0963b8cd1bb45176071c9a224713cba19812"
+    },
+    {
+      "path": "scripts/lib/backend-export.mjs",
+      "bytes": 21486,
+      "sha256": "e09da8e710e125e6cb8258432b0e0189166e56292adecbd59bac7a90488bca49"
+    },
+    {
+      "path": "scripts/lib/benchmark.mjs",
+      "bytes": 10867,
+      "sha256": "917dd56579a57afa6765aacfc328883623d314907fc69c47b81f9c9e51616379"
+    },
+    {
+      "path": "scripts/lib/bilateral-pair.mjs",
+      "bytes": 27736,
+      "sha256": "31edb075926e2131a7ee889524da765c103ef1643617c10e9f92ddbeb826f8ba"
+    },
+    {
+      "path": "scripts/lib/blockout-competition.mjs",
+      "bytes": 20038,
+      "sha256": "622951ce9bffc0d395befe3d44eeccf4eca4eb3d49658656408c3f391bbcd85e"
+    },
+    {
+      "path": "scripts/lib/camera-fit.mjs",
+      "bytes": 15881,
+      "sha256": "5f6b30857fe64a714692de356b1dcce661cbe95fbda58bd6a1ad461676398328"
+    },
+    {
+      "path": "scripts/lib/candidate-authority.mjs",
+      "bytes": 6836,
+      "sha256": "9bf5028408fa864b146897985d4be3241f2775aec0f3d439dad7ce1da6774a15"
+    },
+    {
+      "path": "scripts/lib/candidate-transaction.mjs",
+      "bytes": 22383,
+      "sha256": "abd7c89ab14318f72465dec7f920e6344b88ec2d682dbb1793aed4fc44c6e099"
+    },
+    {
+      "path": "scripts/lib/canonical-edit.mjs",
+      "bytes": 6592,
+      "sha256": "a0ba0db5f6681adaa29f1c5115a0e99384e30fcec73b6ec10952422750596ce9"
+    },
+    {
+      "path": "scripts/lib/canonical.mjs",
+      "bytes": 2485,
+      "sha256": "bc534b191c79f03f67606626452aca9e231705e15bc46ca14d45f5f025e328e3"
+    },
+    {
+      "path": "scripts/lib/certification-authority.mjs",
+      "bytes": 2533,
+      "sha256": "ec0f4591c24cc87dbbc339af927b1a47bf2b0d2767f5ca8f15f0be2297a534b9"
+    },
+    {
+      "path": "scripts/lib/certification-gate.mjs",
+      "bytes": 35252,
+      "sha256": "382d4907d0b1012f88022ab599f94b917dd445c75c439f264594fdac3f31ce1a"
+    },
+    {
+      "path": "scripts/lib/certification-policy.mjs",
+      "bytes": 12610,
+      "sha256": "7a2ed0e22c16d820298201c642f5f1e1b72cdbdbd8bf2ae1912d092771b16ebd"
+    },
+    {
+      "path": "scripts/lib/certification-projection-evidence.mjs",
+      "bytes": 4791,
+      "sha256": "71383b325849895160292bb80f1445a305c898d7604d5b02c749ac8ce5447c39"
+    },
+    {
+      "path": "scripts/lib/certification-relational-evidence.mjs",
+      "bytes": 8924,
+      "sha256": "299c38956e54fa1298a79dcc03c7dad0661f8585451b9a55aa17190c28475429"
+    },
+    {
+      "path": "scripts/lib/checkpoint-gates.mjs",
+      "bytes": 8844,
+      "sha256": "f95720b3ff09f5907dad8d0dc42e617412185347cc7520e6f390e87a6f79d14a"
+    },
+    {
+      "path": "scripts/lib/checkpoint-store.mjs",
+      "bytes": 194807,
+      "sha256": "85d46cefc1dea35c8910ab0c712d07f17a88fd4462f25fcc5c78384a9533bd96"
+    },
+    {
+      "path": "scripts/lib/collision-model.mjs",
+      "bytes": 29386,
+      "sha256": "941ac4410cf343d4b9cf238a3895c9df3b5f5e8be1d8f903666f6c539e8663de"
+    },
+    {
+      "path": "scripts/lib/construction-quality.mjs",
+      "bytes": 10989,
+      "sha256": "7da953eb7082380ccdb7686194dbd1c2cc425289192392281d94b5647fe78dfc"
+    },
+    {
+      "path": "scripts/lib/construction-vocabulary.mjs",
+      "bytes": 45221,
+      "sha256": "536c519a260b57799150f7cac9c9feb873f76457a46e26855149c715c822dd2a"
+    },
+    {
+      "path": "scripts/lib/contract-fixture-authority.mjs",
+      "bytes": 2342,
+      "sha256": "a6b84aebabfe7eb615237bfb0dcccace89cd0767dafd95b4641ad6d7175796ee"
+    },
+    {
+      "path": "scripts/lib/contract-fixture-project.mjs",
+      "bytes": 1517,
+      "sha256": "a148f36dd1ab54bf9179fdb011238d4d02c88da3e280274e9df430b0e829d024"
+    },
+    {
+      "path": "scripts/lib/control-profile.mjs",
+      "bytes": 28216,
+      "sha256": "23609e3b7889c10ba8f59f2239496194d6c946dcf5f6fcc6f1746e995c8fc9cb"
+    },
+    {
+      "path": "scripts/lib/cross-representation-validator.mjs",
+      "bytes": 32762,
+      "sha256": "f14497c8573a6c842452f49b33f88d035d3d9ffe806a05cf56fc25aa9e164591"
+    },
+    {
+      "path": "scripts/lib/divergence-authorization.mjs",
+      "bytes": 30285,
+      "sha256": "ab32f56f82153aecca33f02836e033bb4df3a554daa0456bfff82e7fe7e62493"
+    },
+    {
+      "path": "scripts/lib/early-resemblance-barrier.mjs",
+      "bytes": 7779,
+      "sha256": "24a8387552dc5180072b67948b2bf41d491232d60953554fb75dfde051fc03a0"
+    },
+    {
+      "path": "scripts/lib/failure-router.mjs",
+      "bytes": 7620,
+      "sha256": "e2d8e449b46be5c6592d38b007d42654ab41ee4be47a6b9e346a72d90a847d0f"
+    },
+    {
+      "path": "scripts/lib/final-resemblance-closure.mjs",
+      "bytes": 6448,
+      "sha256": "fed53fcd8e1e419111c4490f3ec7374ad7c415fa4ba764f50e4ffb6af8981bc7"
+    },
+    {
+      "path": "scripts/lib/final-spatial-continuity.mjs",
+      "bytes": 13121,
+      "sha256": "df8c53576c9ace31f047eb64b8eba1d01d5fe855c8402c1d02020d448c3862a4"
+    },
+    {
+      "path": "scripts/lib/fit-structural-eligibility.mjs",
+      "bytes": 12157,
+      "sha256": "7d72ab6dc165e7d9ffece209e5687d39e134a5f55d7e25bf43645ce2afcfdcc6"
+    },
+    {
+      "path": "scripts/lib/geometry-backend.mjs",
+      "bytes": 14625,
+      "sha256": "1b8e8c4c334140c7bc809cbad6aa2f1cc486b7ce441e00bdbf37b0f8131880b1"
+    },
+    {
+      "path": "scripts/lib/glb.mjs",
+      "bytes": 29153,
+      "sha256": "b297300be167d5d6868adde84bc0a37a057d93ea4e19a253310549788e600c6a"
+    },
+    {
+      "path": "scripts/lib/hard-surface.mjs",
+      "bytes": 17458,
+      "sha256": "ffe1aad3e9f206cb920b9fc340241bf892b16ac13de11749fe7a255a737dd001"
+    },
+    {
+      "path": "scripts/lib/hierarchy.mjs",
+      "bytes": 9437,
+      "sha256": "55952640bec84d0a7b5463ace5e3e6ed5690f39524fae0dd8428de971663fd58"
+    },
+    {
+      "path": "scripts/lib/host-artifact-handoff.mjs",
+      "bytes": 16161,
+      "sha256": "fc4b2a8ef53bbc65954c18fdfb47eb31b9405623aa4dd892859e0de7cfc7a140"
+    },
+    {
+      "path": "scripts/lib/host-event.mjs",
+      "bytes": 8810,
+      "sha256": "62c92c871b08eba435f4b0a8a068aad06ad65f84b1c342ab8f3662cc80bfae42"
+    },
+    {
+      "path": "scripts/lib/host-operation.mjs",
+      "bytes": 16464,
+      "sha256": "62bf4cfe916485a099faa567e664ff98d0222b8de0a5ef221fde3d2921b46011"
+    },
+    {
+      "path": "scripts/lib/host-review-bundle.mjs",
+      "bytes": 13936,
+      "sha256": "69735db598e8d8c386b970901044b401d8e738f39dae090297355735d694f779"
+    },
+    {
+      "path": "scripts/lib/host-session.mjs",
+      "bytes": 6123,
+      "sha256": "9f44dbe4c5f596c9bf43000e20c741b9aeb4601414ca8815a807a573f18441d2"
+    },
+    {
+      "path": "scripts/lib/host-state.mjs",
+      "bytes": 4299,
+      "sha256": "a01e08ca5bc5ca76f83df61ad19b7361ee3a1fee48c2c4e18b05904349080964"
+    },
+    {
+      "path": "scripts/lib/host-worker.mjs",
+      "bytes": 23546,
+      "sha256": "4a3e526e2f0bc7527344182d4133a17913ea21d6384e844277425d26f7bef034"
+    },
+    {
+      "path": "scripts/lib/independent-source-render-pixels.mjs",
+      "bytes": 4987,
+      "sha256": "4791532adc049cf3b0f62d846686e31fb1ddf9215df40fc092467f70b33c5190"
+    },
+    {
+      "path": "scripts/lib/index.mjs",
+      "bytes": 6198,
+      "sha256": "e6466c04d479f2ca3c341df37415d9772e3ccd3611cff4a7ff39e0904fe4e8a6"
+    },
+    {
+      "path": "scripts/lib/interface-contracts.mjs",
+      "bytes": 4479,
+      "sha256": "b3acb0720a4f3820c7fa31345868ed4e0da344ef3d2bf0aa0b841320c7c48207"
+    },
+    {
+      "path": "scripts/lib/logical-fusion.mjs",
+      "bytes": 7246,
+      "sha256": "91335b91536f338703215d42a4c93d53c5308fb7782338105579b1044e65e6d5"
+    },
+    {
+      "path": "scripts/lib/macro-fit.mjs",
+      "bytes": 5697,
+      "sha256": "1297cbc05b0ecc6b4057fbf8066f3c987ca20c91ff054d39784db67faf6ff1b8"
+    },
+    {
+      "path": "scripts/lib/mechanism-graph.mjs",
+      "bytes": 32577,
+      "sha256": "c8b865c8724c69901c9c4b30d0cfe87b4fd843773586cbf88235b0c2294a68df"
+    },
+    {
+      "path": "scripts/lib/mesh.mjs",
+      "bytes": 33871,
+      "sha256": "13af8c8957a2af545e7772bb46045cdafdc733c11b002310748e4aa9c990ef4f"
+    },
+    {
+      "path": "scripts/lib/metric-authority.mjs",
+      "bytes": 8614,
+      "sha256": "d0ca1eb5480e59a76691c4fe956b6686dc822472e11322ea68596b64565e035f"
+    },
+    {
+      "path": "scripts/lib/multi-anchor.mjs",
+      "bytes": 18308,
+      "sha256": "1ab3d9409bee8f6cc179652e7a8aaecf31f6b7f7399a6a6b719cbc924f67b1d8"
+    },
+    {
+      "path": "scripts/lib/orientation-discrepancy.mjs",
+      "bytes": 4917,
+      "sha256": "977d35c61a26b9834054e6f9f37373e4edaaa0c62980f209c50e02872decc2c5"
+    },
+    {
+      "path": "scripts/lib/orientation-evidence.mjs",
+      "bytes": 4493,
+      "sha256": "daf6b70e3a01f6ddc8dcd174a1a9e3946d9cd361567c047688ceda7a8da7a4d8"
+    },
+    {
+      "path": "scripts/lib/orientation-frame.mjs",
+      "bytes": 6620,
+      "sha256": "56da633cc5c8f4ce59c295b64fd346b9389610ce6c0c40d6dfbeb1f91aeab59f"
+    },
+    {
+      "path": "scripts/lib/orientation-pose-fit.mjs",
+      "bytes": 20600,
+      "sha256": "bf4878372cfa7b3f9fce27aa2dba025e456827cc0da9a68b847dd80257be0f0e"
+    },
+    {
+      "path": "scripts/lib/ownership.mjs",
+      "bytes": 3233,
+      "sha256": "80163ecd2e2ba36c60ed7ddaacce8acc5f082615b9721ac519a6e3764ed77bd6"
+    },
+    {
+      "path": "scripts/lib/parameter-fit.mjs",
+      "bytes": 34159,
+      "sha256": "8a5cebec5197dde277a701d895b9ab9b563eaadb20e2d2d955a3295e59b208bf"
+    },
+    {
+      "path": "scripts/lib/pbr-render-report.mjs",
+      "bytes": 9219,
+      "sha256": "5b220c2474bbd6ae8e8175e1094f82bba858b99fbbf4640a7dee808f67d0c65d"
+    },
+    {
+      "path": "scripts/lib/perceptual-discrepancy.mjs",
+      "bytes": 11649,
+      "sha256": "b85bb5fb241060b74ad3bbf3910f720d211fa03ab30ccc3cd4e4bd300b49cf8d"
+    },
+    {
+      "path": "scripts/lib/perceptual-signature.mjs",
+      "bytes": 13036,
+      "sha256": "b4bac3ec544b3ff681aaca8f27993d2fef3ab2082a00674d0c5f7dbf520a212d"
+    },
+    {
+      "path": "scripts/lib/physical-asset-bundle.mjs",
+      "bytes": 24147,
+      "sha256": "26343b3de3e121e800ccf8b516b99e717864e56dcdacdc97044b74dfe14a9409"
+    },
+    {
+      "path": "scripts/lib/physical-claim-certification-gate.mjs",
+      "bytes": 2936,
+      "sha256": "edaca94d25678a26f646b79135e2003bb5deedadb97285c649f1ed57a89a8a10"
+    },
+    {
+      "path": "scripts/lib/physical-claim-certification.mjs",
+      "bytes": 5091,
+      "sha256": "5a41c02a5896104b8b7901f3d1830bdc50bf4df2b2648c4a706fec30a72a3fda"
+    },
+    {
+      "path": "scripts/lib/physical-claims.mjs",
+      "bytes": 36402,
+      "sha256": "a8bb7133cb69523782ab10f5a1dfe1bc013ac16e20cb6e1065d3da3efa8e1016"
+    },
+    {
+      "path": "scripts/lib/physical-fusion.mjs",
+      "bytes": 25131,
+      "sha256": "4d7eba6f8405e3fd801e73467a55f9fe28d28f4111e92413cadce852fccf3d4a"
+    },
+    {
+      "path": "scripts/lib/physical-identity-graph.mjs",
+      "bytes": 25968,
+      "sha256": "9ffb67b5d7ff53b9dc5540502d822e36cb4b055d47d090f3379c8e91d63c3d05"
+    },
+    {
+      "path": "scripts/lib/pose-fit.mjs",
+      "bytes": 21669,
+      "sha256": "3b41849f56df25dba777aad0f819b464ebdccb774a4c70c651a47380437cc14d"
+    },
+    {
+      "path": "scripts/lib/prior-quarantine.mjs",
+      "bytes": 15617,
+      "sha256": "0cc36d3bd5ba40cbfbf14b9b0d597ec475f8375b3601bf43ebb0f951bebbdda3"
+    },
+    {
+      "path": "scripts/lib/projection-findings.mjs",
+      "bytes": 5088,
+      "sha256": "a30ea5eb035ba658dbbb19fde20b23811cb79f5dce0d88e86629f235c054cca4"
+    },
+    {
+      "path": "scripts/lib/projection-fit.mjs",
+      "bytes": 12956,
+      "sha256": "8212424375546cb5510f40e8662a9ad6373ba915b597f4f81dcea423a18152ea"
+    },
+    {
+      "path": "scripts/lib/qa-component-support.mjs",
+      "bytes": 12760,
+      "sha256": "82ca4d2970ce043bbd07a9e273c4bf30842f232d82052ed39c807d905ab6b34d"
+    },
+    {
+      "path": "scripts/lib/qa-contact-replay.mjs",
+      "bytes": 12341,
+      "sha256": "65ebf2e662e141eeb0ec28a6435017e38755caf3b76e953d45844376d49a4cbb"
+    },
+    {
+      "path": "scripts/lib/qa-coverage.mjs",
+      "bytes": 25495,
+      "sha256": "95a6204f72630cbf409f583b0e971f4c567bd007b85143d142a1d4868d4f58f8"
+    },
+    {
+      "path": "scripts/lib/qa-fusion-replay.mjs",
+      "bytes": 7451,
+      "sha256": "f1f3c35bcd4319ab1208b81b2a29832dc68e566d559b5158c5e7d424c7c7c0e2"
+    },
+    {
+      "path": "scripts/lib/qa-glb-geometry-accessors.mjs",
+      "bytes": 4840,
+      "sha256": "a8529eb6c5f42af58ea8b5512d13c3c82fce48b9ac9b4f03aeafb3576011715c"
+    },
+    {
+      "path": "scripts/lib/qa-glb-rigid-frames.mjs",
+      "bytes": 4015,
+      "sha256": "26df10a3bd2dadcd970a2d63533fd383581e67d19686e4dad7bad9aaebc682b0"
+    },
+    {
+      "path": "scripts/lib/qa-propagation-dependencies.mjs",
+      "bytes": 3201,
+      "sha256": "904ab6554fcc50d9cd527fd88d405a1f335855d603318981de7cedcf5c515870"
+    },
+    {
+      "path": "scripts/lib/qa-propagation-world-frames.mjs",
+      "bytes": 6639,
+      "sha256": "998311a8e5e68b98d0c90df3bc96675130b64e9082347fac6d1838e09199e0e2"
+    },
+    {
+      "path": "scripts/lib/qa-source-semantic-replay.mjs",
+      "bytes": 6133,
+      "sha256": "9bc2c596873f6bde30e2a52821bb06fb38f9d5ec6fc59a0e9e652be9d6e12cf2"
+    },
+    {
+      "path": "scripts/lib/qa-surface-mesh.mjs",
+      "bytes": 7090,
+      "sha256": "7501802a61b681e0c20fd9c470f6d7460e959e30dc0faa667f1ae5e8c03e127f"
+    },
+    {
+      "path": "scripts/lib/qa-triangle-components.mjs",
+      "bytes": 9110,
+      "sha256": "fb5f87c5d0924dd47519bd069bba58c7ac41a285d13a6a9d23e8a998ddab6fbc"
+    },
+    {
+      "path": "scripts/lib/realized-assembly.mjs",
+      "bytes": 10835,
+      "sha256": "ef5dcbd519e957072854287faefcfe5c56e462fd5c413d5a3354fba4739e6dfa"
+    },
+    {
+      "path": "scripts/lib/realized-contact.mjs",
+      "bytes": 34315,
+      "sha256": "0b98099891d3aa8e0d7e19ac74fc4c0185a388f882a369648ca7d12ee72dcb74"
+    },
+    {
+      "path": "scripts/lib/realized-projection-verification.mjs",
+      "bytes": 1574,
+      "sha256": "5aedd624bede588c6094a7f2284961b121fd1ee9e3f95971b229358469d7c102"
+    },
+    {
+      "path": "scripts/lib/realized-projection.mjs",
+      "bytes": 18240,
+      "sha256": "4e7cd769ea220e4c94e4323db12ad6fcf332fc47a8e143f96b72d7d335594974"
+    },
+    {
+      "path": "scripts/lib/realized-segmentation.mjs",
+      "bytes": 10136,
+      "sha256": "9f7e133f0544562ecc14de2e24f8dbfd56997270fbc7519a5ee43981fa2bf281"
+    },
+    {
+      "path": "scripts/lib/reference-geometry.mjs",
+      "bytes": 14886,
+      "sha256": "e92526b1a5fa776179ea213ecf97dfd4b9de7cb4660f875e474427f7c1d677e7"
+    },
+    {
+      "path": "scripts/lib/registered-comparison.mjs",
+      "bytes": 16215,
+      "sha256": "8e7a44404098c3a408f0349da1a85437cfb11dd48e17531f5053bab3cc3043e6"
+    },
+    {
+      "path": "scripts/lib/registered-render-replay.mjs",
+      "bytes": 8075,
+      "sha256": "61fca85db7bb39a9fa844fe980c7cade774e891345eb02482f2684b42a59d88a"
+    },
+    {
+      "path": "scripts/lib/registration.mjs",
+      "bytes": 9922,
+      "sha256": "4393e4f6bbe22c214d98403c2121832ebb2c004da291f94fda026ee553ddbcd4"
+    },
+    {
+      "path": "scripts/lib/relational-discrepancy.mjs",
+      "bytes": 10371,
+      "sha256": "71953a1ded61f8552cb7aa30e83532f3befaab7a00d936050a161f25d44369c3"
+    },
+    {
+      "path": "scripts/lib/relational-structure.mjs",
+      "bytes": 15174,
+      "sha256": "d78a67e6572a1488f31025dbd4eee4dcd8590bd617ed37cef60b88386ab85c38"
+    },
+    {
+      "path": "scripts/lib/render-backend.mjs",
+      "bytes": 12526,
+      "sha256": "e46d68b7db1c7d7ba3fd015ab90c1503769efa311f8217fe9f34657785e3fceb"
+    },
+    {
+      "path": "scripts/lib/representation-capacity.mjs",
+      "bytes": 26183,
+      "sha256": "6876b8d07e8f4ba9fa6c6dead9f51899bc35602dbb75d1474703524b72572a48"
+    },
+    {
+      "path": "scripts/lib/representation-normalizer.mjs",
+      "bytes": 34107,
+      "sha256": "1cfd3bb3948b1dba3460bb0efd44e25a23b77914347875b6f50b9aca1aecd1b7"
+    },
+    {
+      "path": "scripts/lib/rigid-body-dynamics.mjs",
+      "bytes": 24239,
+      "sha256": "e38bbd0ee5fafe261627d17e25847031e6cfe027809a4fba8de7e49c7e4223cc"
+    },
+    {
+      "path": "scripts/lib/runtime-binding.mjs",
+      "bytes": 34165,
+      "sha256": "a9fe5262c665bb21770573df114fcb42b17bd03848611fe6093faeeeecdbca70"
+    },
+    {
+      "path": "scripts/lib/semantic-authority.mjs",
+      "bytes": 9909,
+      "sha256": "84a1fe13c4813503a979909e1ffb2a4311836ef5c77baa96d2fbd17d2b1fad5e"
+    },
+    {
+      "path": "scripts/lib/shape-repair.mjs",
+      "bytes": 16482,
+      "sha256": "63ae1e13a1ce4180ff3316041705fef3f3e71673b3442f6d7cfe83402f85dd5a"
+    },
+    {
+      "path": "scripts/lib/source-interface-gap-screen.mjs",
+      "bytes": 5787,
+      "sha256": "5cd617e660c68169bd52f9260c2b1d3963dcef60a35aa576474a595c4676e7e5"
+    },
+    {
+      "path": "scripts/lib/source-macro-orientation-screen.mjs",
+      "bytes": 4671,
+      "sha256": "6e168bb8a95a0d32900e0bbbd3a2a38c0d6bf8df61b32db7449813d2d6aecf04"
+    },
+    {
+      "path": "scripts/lib/source-macro-section-screen.mjs",
+      "bytes": 4129,
+      "sha256": "be6f6d7ff2ebdcbca649356342e21f42dc674350f55281db459613fe38195323"
+    },
+    {
+      "path": "scripts/lib/source-negative-space-screen.mjs",
+      "bytes": 9412,
+      "sha256": "4259b4850769f1e9cfbdcfbbdf534e23f6271e32ba5456f37cd73589d901e636"
+    },
+    {
+      "path": "scripts/lib/source-occlusion-screen.mjs",
+      "bytes": 5715,
+      "sha256": "cf342a36766075a5d1e70622dd2b9ed5be032c0fcc67a5a85b765f00f5f31baf"
+    },
+    {
+      "path": "scripts/lib/source-pixel-frame.mjs",
+      "bytes": 3038,
+      "sha256": "c0bf7a034dbdf675f7ba5669a4ef519f781f7bdc5251932cbb1f283396e82215"
+    },
+    {
+      "path": "scripts/lib/source-profile-vector-screen.mjs",
+      "bytes": 6156,
+      "sha256": "02f3b1bd872d4b876b2e0beb817cabca7cf1e2749e7d331e0bca3d1cd7123618"
+    },
+    {
+      "path": "scripts/lib/source-role-relations-screen.mjs",
+      "bytes": 6381,
+      "sha256": "692db18989c810e8b7544c40088f223e2481c89478aae8737daea4c6f1e56362"
+    },
+    {
+      "path": "scripts/lib/source-visible-part-loss-screen.mjs",
+      "bytes": 5449,
+      "sha256": "1029d70c997ef8c4f96b39f2c24a65349026d12867f1d57259a58042282700a6"
+    },
+    {
+      "path": "scripts/lib/spatial-closure-evidence.mjs",
+      "bytes": 26165,
+      "sha256": "fd862d65269d10c9c4b90583bec8bba0a32d7c75c0e6f3d163f92c8a915082bb"
+    },
+    {
+      "path": "scripts/lib/spatial-collapse-classifier.mjs",
+      "bytes": 2003,
+      "sha256": "a44dac323a10bb24496181f69dd720797cba8124b0a7c8caaf4c5232b3ad3068"
+    },
+    {
+      "path": "scripts/lib/spatial-collapse-core.mjs",
+      "bytes": 11677,
+      "sha256": "bce2a2e0b7bce2499e66368522bf0d748414571ff40f09a340a5010e62016674"
+    },
+    {
+      "path": "scripts/lib/spatial-gate-authority.mjs",
+      "bytes": 8051,
+      "sha256": "95551774b936ca5cbee1930d6fc6f474346e2ceb2ff449f9415449f309dc7ab6"
+    },
+    {
+      "path": "scripts/lib/spatial-hypotheses.mjs",
+      "bytes": 4653,
+      "sha256": "bcb503744e1d77fad95ab7cb7e940f389fadcad5c3c3790816a2924b959a4fe1"
+    },
+    {
+      "path": "scripts/lib/spatial-role-expectation.mjs",
+      "bytes": 5254,
+      "sha256": "e6e7bd56d42cfce99abbff74946273d24dfbd5c5673f0f0532b92fa899809eae"
+    },
+    {
+      "path": "scripts/lib/structural-plausibility.mjs",
+      "bytes": 18059,
+      "sha256": "86ddfa5487964ee962453f93bd8ac8386075406d165822882594cd80e637ca69"
+    },
+    {
+      "path": "scripts/lib/subdivision-cage.mjs",
+      "bytes": 19841,
+      "sha256": "a2e5b389badd8afcd38277d18a4fdbf3899e64277d30c6a75f04862aa6b68567"
+    },
+    {
+      "path": "scripts/lib/surface-anchor.mjs",
+      "bytes": 17831,
+      "sha256": "972462e53a4307d200c91d0faa9eb2af604aca6a617c29d61e0a9a46640e8960"
+    },
+    {
+      "path": "scripts/lib/surface-network.mjs",
+      "bytes": 10514,
+      "sha256": "35f7263048b66589b8a54bf58f2ce98f6ccba9c0504c10568e34d57c24c8b08f"
+    },
+    {
+      "path": "scripts/lib/transmission-model.mjs",
+      "bytes": 39901,
+      "sha256": "e92d8b610859ea37fe68111132fbe356c3ad018f069e74243234fd1c6d70e61c"
+    },
+    {
+      "path": "scripts/lib/uv.mjs",
+      "bytes": 3793,
+      "sha256": "2686e9f868d85a13ff804c38297fab04cab5ee4e23bddd953bff06618ab74312"
+    },
+    {
+      "path": "scripts/lib/visual-review.mjs",
+      "bytes": 14687,
+      "sha256": "01e3b49d655308cab01a34938b4f3b2891c7891f76f7c3b689a74351dafc206a"
+    },
+    {
+      "path": "scripts/lib/volume-barrier.mjs",
+      "bytes": 8064,
+      "sha256": "68ad98e0799d1d60d991422a1e309c7f857b32356a7298c7a00e56523d41dd08"
+    },
+    {
+      "path": "scripts/lib/whole-system-relational-barrier.mjs",
+      "bytes": 10224,
+      "sha256": "149d2aaaa19d4c8f2d812289a5f12720319284bc9355f8db9c49ce35e98dab10"
+    },
+    {
+      "path": "scripts/measure_first_multiview_baseline.mjs",
+      "bytes": 11757,
+      "sha256": "6655bd3eff590c45abfdb40ddd122528d2db19b953dd5055e02ca0d9a2422013"
+    },
+    {
+      "path": "scripts/measure_render_pbr.mjs",
+      "bytes": 7895,
+      "sha256": "3c8045aa23dbdf3ee4dccac3fb380cfb830c7f4d50f627a81a73af12c6f2ddfa"
+    },
+    {
+      "path": "scripts/observation_image.py",
+      "bytes": 2158,
+      "sha256": "7f3b7a89bc5b17805fe09e6734a79a501220ff3e40f5d93fde68c4314838be8c"
+    },
+    {
+      "path": "scripts/prior_quarantine_fresh_worker.mjs",
+      "bytes": 9934,
+      "sha256": "ddc61e07216d90aa57dddd7d3369276b71787bd32944a9af6a74182eb408e596"
+    },
+    {
+      "path": "scripts/produce.py",
+      "bytes": 3975,
+      "sha256": "2ac9d0bf58d7a44aa8003f599a4389a4cee56f5b22fa8efa79edc3344d23b43c"
+    },
+    {
+      "path": "scripts/production/__init__.py",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "scripts/production/blender_worker.py",
+      "bytes": 32612,
+      "sha256": "a3d0c85e8a733487605c20bac5f41d1b06a15ead07dda4c7bca12caa231f3e1a"
+    },
+    {
+      "path": "scripts/production/project.py",
+      "bytes": 24465,
+      "sha256": "37b202d4fa4af3e2b06ceed5839545dd9da02354557307c9cfc73d451ab04462"
+    },
+    {
+      "path": "scripts/production/review.py",
+      "bytes": 3638,
+      "sha256": "0d4a3cfea62d7140ad923c18ece4cdd2728e90d2b056a4cad80c4dd42282265a"
+    },
+    {
+      "path": "scripts/refas-host.mjs",
+      "bytes": 6092,
+      "sha256": "51cd578108f2906cd32a538e53c5aed1b398589066e3f4ef52e801aed4219061"
+    },
+    {
+      "path": "scripts/refas.mjs",
+      "bytes": 24181,
+      "sha256": "3906750230a0a0c4f6cf548f0e149b28f17f17c1ee6fb4c1347aec78dc51e0cc"
+    },
+    {
+      "path": "scripts/render_cpu_opt.py",
+      "bytes": 13242,
+      "sha256": "87f04dc5eef83c11cbb8fa37736783ae849d967e843e17e97df193cd0d2e562d"
+    },
+    {
+      "path": "scripts/render_cpu_tiled.py",
+      "bytes": 19470,
+      "sha256": "2a2f7fb6c2681b3bb8de5d31a443d5e00385a445a6a52ee1a410469e86742e66"
+    },
+    {
+      "path": "scripts/render_cpu_visibility.py",
+      "bytes": 15484,
+      "sha256": "66264ebcb36333d95d5947e14a2c8f22313f0a5eeab188b7004bd02d0bb0965b"
+    },
+    {
+      "path": "scripts/render_external_blender.py",
+      "bytes": 12707,
+      "sha256": "6b939983bb6bdd559d268ca6b1a5c574ef29da438a54cd847c56d935021db330"
+    },
+    {
+      "path": "scripts/render_external_blender_guard.py",
+      "bytes": 4450,
+      "sha256": "a65f5c54d596ec3d8bdab0d761eb58c00b2eecdbc46b43091ccd6919fa44c99e"
+    },
+    {
+      "path": "scripts/render_external_blender_worker.py",
+      "bytes": 8937,
+      "sha256": "c30cdd32dd5913a797535ff17aa1d572fc93a53674e4dcc2b28e5915817876ce"
+    },
+    {
+      "path": "scripts/render_glb.py",
+      "bytes": 37801,
+      "sha256": "dea99e1d01f78a58c24401112df9b2b9c7a5cfe6dcf72ad3dcf2b35ecee9e4c1"
+    },
+    {
+      "path": "scripts/render_pbr.py",
+      "bytes": 25440,
+      "sha256": "8a84a65da9e29815304c1de3288a8566c39002c14de76e1bd19ecae80765ef8b"
+    },
+    {
+      "path": "scripts/render_pbr_v2_material.py",
+      "bytes": 18358,
+      "sha256": "05b65b4ee90d8b14407fa143b59310fb19d65c1d0e15c451a238ae96d54cc522"
+    },
+    {
+      "path": "scripts/render_pbr_v2_mip.py",
+      "bytes": 3722,
+      "sha256": "44d8e6cb5c9bb3c69937b07ddbe1e029583ef6f6c462a1009e134c4df072930a"
+    },
+    {
+      "path": "scripts/render_pbr_v2_texture.py",
+      "bytes": 9018,
+      "sha256": "a6e5d1311680134a0e506ce4d27c9c61e67f238e1f133be7f0b84d2de51176e8"
+    },
+    {
+      "path": "scripts/render_pbr_v2_visibility.py",
+      "bytes": 19144,
+      "sha256": "94858d6b642c72dc9198307707d2b5ec2b1009daea0c4e5078bb5784df96b7b8"
+    },
+    {
+      "path": "scripts/source_manifest.py",
+      "bytes": 4975,
+      "sha256": "e1031e7227a77b23fc30206d08923df8bda606e950a774e898629528251e2196"
+    },
+    {
+      "path": "scripts/source_pixel_frame.py",
+      "bytes": 1058,
+      "sha256": "db709c71a124c24b139beaf1f773dc2866a836f9e6ad399ecfffd2e7b2d98d38"
+    },
+    {
+      "path": "scripts/source_render_pixel_screen.py",
+      "bytes": 2713,
+      "sha256": "a84e5451209af92d2733a4dee14bb35ff79ad157378d8e281b0ae72db5f043dd"
+    },
+    {
+      "path": "scripts/structural_plausibility_fresh_worker.mjs",
+      "bytes": 5760,
+      "sha256": "66e0deb11639d7deff4b52bbac36413a5c59a942863cb83ea462e0ed5c3ec6c3"
+    },
+    {
+      "path": "scripts/subdivision-cage-demo.mjs",
+      "bytes": 1704,
+      "sha256": "7b9028425e6a99c34cec2980dd5fe469a699c1b7a28f9b6f8495ed62bc7a636c"
+    },
+    {
+      "path": "scripts/vc08_adversarial_worker.mjs",
+      "bytes": 27841,
+      "sha256": "ace7f8f128652a7d7b76dee4e7ac84928afb28e0b6bd4b4634885c4252b34943"
+    },
+    {
+      "path": "scripts/verify_bilateral_pair_dogfood.mjs",
+      "bytes": 4115,
+      "sha256": "6649cea4b424fe4c3cffea27237342fe687fda59e607eb4be69cfd5e77e89320"
+    },
+    {
+      "path": "scripts/verify_blender_private_source_e2.py",
+      "bytes": 11715,
+      "sha256": "b3e98edef677a6242f800efe36457866b83aa3bb3505aecd02a72d5381022761"
+    },
+    {
+      "path": "scripts/verify_blender_private_source_e2_review_v2.py",
+      "bytes": 10770,
+      "sha256": "6c344be526d1f0420d73284d38f7a30e7a22486c2c7b0b66543d69caca73cfaf"
+    },
+    {
+      "path": "scripts/verify_blockout_competition_dogfood.mjs",
+      "bytes": 3798,
+      "sha256": "6d7675fba65d4a625ff7e9ac31b24a1ac61f1c8ce7bd3b1f232bf28a1bdb6483"
+    },
+    {
+      "path": "scripts/verify_capability_interfaces.mjs",
+      "bytes": 11292,
+      "sha256": "f888ac93615719213cff1bb31a143686a2b6009d58fc5e9fcdf30c8bb07e1450"
+    },
+    {
+      "path": "scripts/verify_discovery_closure.mjs",
+      "bytes": 22092,
+      "sha256": "7c8dca104fb8fdf081bf6911ce98593f93b8dd1e42f95682dbc23233a380af3a"
+    },
+    {
+      "path": "scripts/verify_external_construction_dogfood.mjs",
+      "bytes": 4488,
+      "sha256": "4556f6d9c4078094dd4da3fb6877c8df70756d37ad6e3f1b4900c907672168a4"
+    },
+    {
+      "path": "scripts/verify_fresh_worker_dogfood.mjs",
+      "bytes": 16407,
+      "sha256": "331c3ef3ef9e8e94ba99767ae32f1257f1c77e3f8337b551fa18770612715cfe"
+    },
+    {
+      "path": "scripts/verify_installation_boundary.mjs",
+      "bytes": 10675,
+      "sha256": "fcd27d894974a50e0fc16d8d6a42dccae08604b33518aa3a3b6b64e560432e60"
+    },
+    {
+      "path": "scripts/verify_prior_quarantine_dogfood.mjs",
+      "bytes": 3283,
+      "sha256": "96e40db8c8a7efa4adb50173f7cd93a26c778040993a6b03eae40bcf914caf58"
+    },
+    {
+      "path": "scripts/verify_semantic_instruction_graph.mjs",
+      "bytes": 20817,
+      "sha256": "ee7e2b05163c90b83af955dd70d6abbd28c0c345397755868bab11030cbd1d8a"
+    },
+    {
+      "path": "scripts/verify_structural_plausibility_dogfood.mjs",
+      "bytes": 3808,
+      "sha256": "f07cbb1847ba2bd67c39a660b62c592add516dfa8de33e889523e6dea682de3e"
+    },
+    {
+      "path": "scripts/verify_subdivision_cage_dogfood.mjs",
+      "bytes": 11380,
+      "sha256": "c44e448b33eb042012c15ff78723bfaae4294c0894b2fae8b588099a457e34fa"
+    },
+    {
+      "path": "scripts/verify_textured_material_dogfood.mjs",
+      "bytes": 4935,
+      "sha256": "9ac8a95296b329d06f4b1a6c4f330f314492228fb750e86f5262755d41a277a2"
+    },
+    {
+      "path": "scripts/verify_vc08_adversarial_dogfood.mjs",
+      "bytes": 8331,
+      "sha256": "22353faaae18425f49ea92779eb2feaa511f5424703ca6bb0baee18af40218e8"
+    }
+  ]
+}

@@ -1,0 +1,118 @@
+{
+  "ok": true,
+  "scope": "selected-asset import/edit/restore with real installed CLI",
+  "checks": {
+    "archived_asset_bytes_preserved": true,
+    "project_manifest_bytes_preserved": true,
+    "checkpoint_manifest_bytes_preserved": true,
+    "source_bytes_preserved": true,
+    "legacy_project_unchanged": true,
+    "source_provenance_retained": true,
+    "legacy_certification_not_inherited": true,
+    "all_assessments_unevaluated": true,
+    "mesh_count_preserved_by_edit": true,
+    "only_selected_object_changed": true,
+    "real_requested_pngs": true,
+    "edited_revision_intact": true,
+    "original_revision_unchanged": true,
+    "restore_exact_artifacts_and_inputs": true,
+    "restore_provenance_retained": true,
+    "restored_revision_intact": true,
+    "restart_coherent": true,
+    "current_reference_evidence": true
+  },
+  "version": "RefAs 2.0.0-alpha.1",
+  "environment": {
+    "ok": true,
+    "entry": "RefAs production",
+    "version": "2.0.0-alpha.1",
+    "python": "3.12.14",
+    "blender": {
+      "path": "/usr/bin/blender",
+      "version": "Blender 4.3.2"
+    },
+    "scope": "executable probe; render device availability is checked during execution"
+  },
+  "oldFiles": 247,
+  "oldBytes": 17427862,
+  "legacyCheckpoint": "cp_a744fb4e4fae0cd60712",
+  "selectedArtifact": {
+    "kind": "artifact",
+    "path": "assets/wing-cover.glb",
+    "sha256": "3fcf70e36a0b42723c3abed6ebc60cdfea0143e19c047ba802258753ee41fdec",
+    "sizeBytes": 746976
+  },
+  "legacyCertification": null,
+  "sourceAcquisition": {
+    "kind": "generated-contract-reference",
+    "origin": "RefAs trusted contract harness"
+  },
+  "sceneStatistics": {
+    "armatures": 0,
+    "materialSlots": 66,
+    "meshes": 66,
+    "objects": 66,
+    "shapeKeyObjects": 0,
+    "triangles": 38354,
+    "uvObjects": 0,
+    "vertices": 19307
+  },
+  "changedObjects": [
+    "panel:cell-00"
+  ],
+  "preservedObjectCount": 65,
+  "restoredFileCount": 11,
+  "originalBundle": {
+    "artifacts/asset.glb": {
+      "sha256": "63b75d461420f748fd85e4769cf8439e1f2b8ce867cc04d1f178737b2d2389a1",
+      "bytes": 728900
+    },
+    "artifacts/result.json": {
+      "sha256": "4a6aa656f2a8c09596099072689a1454032416fb7d3f66bdc6bcd88295cd1426",
+      "bytes": 6375
+    },
+    "artifacts/scene.blend": {
+      "sha256": "7fd32d37e82c68939d3aee3249cf0ac71ff3d413b402dfe6a89b31385f227fca",
+      "bytes": 3716432
+    },
+    "artifacts/scene.json": {
+      "sha256": "d16c58ac858cbc11061d7756615042e52d0b3c63387ba36747c25d49ce0666a8",
+      "bytes": 766254
+    },
+    "artifacts/view-hero.png": {
+      "sha256": "fbd29769943a3e9c2c2e6adea609c931e606cdc6679cde6b68a1c994836d8134",
+      "bytes": 52411
+    },
+    "artifacts/view-side.png": {
+      "sha256": "3bb9c9fe4d02f6196b31af521b5f8cd3f915edc6cf424e2e651cdfce3ab58be0",
+      "bytes": 42144
+    },
+    "inputs/edit.py": {
+      "sha256": "8ad6932b1d92f7ae362ee0f1795ec42f1b04e75f5e595c73cd0a4cef431c806f",
+      "bytes": 82
+    },
+    "inputs/import/asset.glb": {
+      "sha256": "3fcf70e36a0b42723c3abed6ebc60cdfea0143e19c047ba802258753ee41fdec",
+      "bytes": 746976
+    },
+    "inputs/import/legacy-checkpoint.json": {
+      "sha256": "363545c0579a7b63a789fe7fd8456436c6868034d4d9871f780fb251a630e7f9",
+      "bytes": 3398
+    },
+    "inputs/import/legacy-project.json": {
+      "sha256": "ade7d6bfe6f96d8b6ab9fd972e2b9d8c9d31eb24f8a220f66a1d92edc593fe47",
+      "bytes": 5175
+    },
+    "inputs/import/migration.json": {
+      "sha256": "84c64a3aad9ecf5f18402aa0fa2027f178357df2b682956f1ad870cfaee01880",
+      "bytes": 2189
+    }
+  },
+  "commandCount": 8,
+  "revisions": {
+    "imported": "da41ee883cde4066b42f1594522cdf2c",
+    "edited": "8de2559bfda54c4fa2364f83f9754f8b",
+    "restored": "fb6c1245a385462a89de1c791e511caa"
+  },
+  "visualAcceptance": "not-evaluated"
+}

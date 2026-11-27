@@ -1,0 +1,27 @@
+{
+  "camera": {
+    "position": [
+      0,
+      0.55,
+      8
+    ],
+    "target": [
+      0,
+      0.55,
+      0
+    ],
+    "up": [
+      0,
+      1,
+      0
+    ],
+    "fovY": 31
+  },
+  "aspect": 1,
+  "resolution": [
+    384,
+    384
+  ],
+  "authority": "synthetic-unregistered-diagnostic",
+  "gltfToBlender": "(x,y,z) -> (x,-z,y)"
+}

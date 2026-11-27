@@ -1,0 +1,7 @@
+{
+  "delivery_preparation_complete_utc": "2026-11-22T12:33:47.362607+00:00",
+  "author_report": "/workspace/scratch/5765cde18054/work/garment/AUTHOR_REPORT.md",
+  "author_report_sha256": "490b43280c56f3645f53596d7da5243bf6e8f45e1b9123d4e713b3b88becc605",
+  "artifact_status": "selected native, GLB, exact restored files, cuff edit, captured scripts, original inputs, matching raw renders, comparison boards and independent checks complete",
+  "original_source_and_baseline_unchanged": true
+}

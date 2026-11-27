@@ -13,7 +13,7 @@ import unittest
 
 import numpy as np
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "skills/refas/scripts"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "legacy/v1/scripts"))
 import render_cpu_tiled as tiled
 
 POSITIONS = np.array([

@@ -2,6 +2,112 @@
 
 All notable RefAs changes are documented here. RefAs follows semantic versioning.
 
+## 2.0.0-alpha.1 — Unreleased
+
+### Direct GLB authoring input
+
+- Accept a self-contained GLB through `run --input-glb` as the complete starting scene for an ordinary Blender edit. Preserve its captured bytes, protect selected imported objects before applying the script, and keep native iteration as the CLI default.
+- Make explicit native and GLB inputs mutually exclusive; omit both to continue the saved native. Retain existing Python positional/default behavior, explicit delivery and revision recovery without a new module or report format.
+- Lead existing-asset guidance with direct GLB/native editing and keep saved 1.x adoption conditional. Document embedded-resource requirements and the authoring data a GLB cannot recover; update the skill relationship and removal map for the shared input check.
+
+### Current skill and documentation navigation
+
+- Rename the current asset-capture adapter to `asset_import.py` and remove general 1.x implementation history from the installed entry. Keep the explicit `import-v1` command and stored provenance contracts unchanged.
+- Move earlier architecture, capability and release documents to the [1.x archive](docs/archive/v1/README.md), with a [current documentation index](docs/README.md) and separate release criteria. Preserve existing 2.0 evidence and recovery records.
+- Report exact one-for-one Markdown documentation relocations separately in source-budget checks. Keep byte/file limits and all payload, binary and path checks; modified documents and copies retain their full charge.
+
+### Summary-first topology queries
+
+- Return complete topology counts without detail samples from CLI `inspect --topology`. Use `--topology-details` to request the previous bounded samples; omitted locations retain honest counts/truncation and an explicit output-mode marker.
+- Preserve existing Python and worker detail defaults, positional calls, source integrity and temporary-query cleanup. Keep the observation helper's public behavior unchanged.
+- Document the active skill's actual calls, guidance links, optional authoring APIs and removal impact in a repository-only component map, maintained with feature changes and included in development reports.
+
+### Focused continuous integration
+
+- Validate regular changes on Node 22 and 24, keeping release preflight aligned with those job names. Retain the existing runtime compatibility declaration and explicit release authorization.
+- Run archived renderer Numba/JIT checks on main or explicitly requested full-QA pushes and in the manual/weekly deep workflow. Keep complete JavaScript, Production, source-artifact and product-boundary checks in regular CI, and remove the instruction audit already included by the product-boundary audit.
+
+### Editable native curves
+
+- Keep classic Blender Bezier, POLY and NURBS curves editable through native save/reopen, rendering and object protection. Record curve controls, settings, shape keys and materials; temporary inspection observes their evaluated surface without converting the source.
+- Require matching viewport/render curve resolution. Retain the existing exclusions for hidden geometry, text, surfaces, modern hair curves and instances.
+- Keep delivery mesh-only with an explicit refusal for unconverted curves. Document recoverable, author-selected conversion and deliberate baking or reconstruction of required motion; current-frame conversion does not preserve curve geometry animation.
+
+### Standalone native inspection
+
+- Let public `inspect` read either the selected project revision or an explicit `--input-blend` without creating a project or copying the model. Reuse temporary object/frame/topology queries and unchanged-source hash checks; standalone reads have no revision or reference-freshness claim.
+- Reject ambiguous source selection and project-only guards on standalone files. Exercise the copied installed skill outside the repository, including actual animated readback, exact-name failure and temporary-file cleanup.
+
+### Explicit surface attachments
+
+- Add an opt-in Python authoring helper that follows an explicitly selected triangle and barycentric anchor with a rigid section frame. It preserves section dimensions during nonlinear host deformation without a new CLI, scene handler or report format.
+- Reject changed oriented topology, invalid anchors and nonfinite or degenerate geometry. Keep surface choice, skin-space conversion, neighboring-section continuity and actual clearance in the authoring/review workflow; the helper does not grant whole-asset acceptance.
+
+### Native iteration and bounded artifacts
+
+- Default public `run` to a native save/reopen with one hero preview; `--outputs delivery` and the new `deliver` command explicitly produce GLB. Existing Python callers and old worker jobs retain their delivery default.
+- Add temporary object/frame `inspect` queries, optional bounded topology observations, exporter capability preflight, and exact-name protection for recorded object/material state at the starting frame. These observations do not grant visual or game-readiness acceptance.
+- Move successful staged inputs and outputs into their revision once, retain only compact run metadata by default, and make raw success diagnostics opt-in. Add storage accounting and preview-first compaction of byte-identical historical run copies while preserving checkpoints, sources and failed runs.
+- Keep agent output focused on the selected deliverable and necessary views. Enforce a source-only change budget in Git and CI; unchanged historical evidence remains preserved, while new models, media, raw arrays/logs and recovery archives stay outside commits.
+
+### Actual-use scope, topology and animated delivery
+
+- Preserve sub-0.1 mm animation channels and all positive skin influences in GLB. Guard the installed exporter cutoff structurally, scope the temporary change to one export, and restore on exceptions. Actual 80 µm motion and tiny fifth-influence controls retain the original failures and verify the correction.
+- Replace task-observer BVH overlap candidate filtering with conservative float64 AABB enumeration and batched SAT. Add coplanar, randomized scalar parity and exhaustive candidate-recall controls; retain final garment acceptance as open while remaining inter-part contacts are repaired.
+
+- Add the task-local evaluated-triangle freeze and exact native/corner/edge preservation checks. Repair five source-derived trim connections without changing vertex, shape-key or skin data; record full 97-frame intermediate verification while leaving final garment acceptance open.
+
+- Expand the user-authorized plan with six fixed criteria for comparable source/mesh/use evaluations, real character wearing, connected mechanical motion, deliberate retopology and budgeted optimization. Preserve the original 31-item meanings and all historical checkpoints; checklist v2 begins at 28/37 (76%).
+- Add focused topology guidance and a read-only Blender mesh/anchor observation helper. Keep intention, whole-scene intersections, visual likeness and use acceptance separate from raw topology counts.
+- Bound dense object/bone and shape-key animation inventory by hashing every recorded key, handle, easing value, sample and modifier per curve, retaining counts and playback properties. Native and exported files keep the actual animation. Preserve the existing manifest-size limit and detect interior key and NLA playback changes.
+- Disable importer-created bone display shapes instead of counting them as delivered geometry. Preserve real meshes with the same names, and match native frame rate and subframe during GLB verification.
+- Add source-derived garment/arm authoring examples and a separate Godot GLB playback observer. Actual candidate findings, failed attempts and acceptance decisions are recorded in the [usable-assets protocol and evidence](docs/development/evidence/usable-assets/PROTOCOL.md).
+
+### Production-only distribution and explicit legacy import
+
+- Move the retained 1.x runtime, contract graph, templates and historical guides to repository-only `legacy/v1/`. The active skill contains the production entry, directly used Python modules and focused guides; old schemas and comparison tooling are not installed.
+- Coordinate package, production runtime and plugin metadata at the development identity `2.0.0-alpha.1`. Point the npm `refas` command to the same Python CLI as the copied skill. Check the actual archive against an exact file list and reject undeclared legacy additions. No tag, package or stable release is published by this change.
+- Add explicit selected-asset `import-v1` from an archived 1.x checkpoint. Preserve exact asset/source/provenance inputs, leave the old project untouched, create fresh native/GLB/render output and start with unevaluated visual and target readiness. Legacy certificates and full project history are not imported as production approval.
+- Add a repository-only same-GLB renderer experiment with recorded cameras, materials, normal precision and light-direction controls. Keep renderer differences separate from modeling or source-likeness judgments.
+
+### Native production workflow
+
+- Rewrite the installed skill's default route around normal Blender Python authoring, actual render review, focused edits, and recoverable native projects.
+- Add the Python production CLI with environment checks, reference capture, current-scene edits, integrity verification, and restore. Each committed revision retains the native scene, GLB, script inputs, rendered views, and file identities.
+- Publish revisions only after execution and artifact checks. Preserve failed runs, reject stale edits, and restore a known intact bundle without requiring a damaged current payload to pass verification.
+- Add an original headset creation/local-edit example, actual Blender integration checks, and independent production CI. See [the implementation plan](docs/development/refas-2-plan.md) and [verification status](docs/WORK_STATUS.md).
+
+### First original-reference pilot and review controls
+
+- Add the user-supplied uniform-jacket sheet, explicit dimension ambiguities, a common construction/local-edit task, fixed-snapshot no-skill/1.x/2.0 trial records, and independent anonymous visual review. The initial review favors the no-skill prototype; all three remain visually unaccepted.
+- Preserve a separate informed 2.0 follow-up that joins actual body/sleeve boundaries and seats shoulder tabs. Add portable construction scripts and a public-CLI reproduction with a 6-to-7 cm cuff edit and exact restore.
+- Add `--review-spec` for captured orthographic cameras, fixed lighting and optional source-region provenance. Fixed observations remain explicitly unregistered.
+- Reject unsupported geometry during native inspection and reject object instances that could render outside the inventoried scope. Retain the initial incomplete curve-omitting observations as rejected evidence; use complete realized observation copies for the actual comparison.
+
+### Explicit reference adoption and coherent recovery
+
+- Add `references` with a required sequence lease, immutable source copies and exact no-op handling for identical content sets. Retain all model history and report reference evidence as current, stale or absent separately from recorded-file integrity.
+- Pin status, verification, edit inputs and restore targets to one project snapshot. Fix a concurrent-read bug that could combine an older head with newer observation/input paths, including first-publication races.
+- Verify historical source copies, retain active references during exact restore, and allow `run`/`restore` to guard the expected project sequence. A reference change invalidates an in-flight candidate even when the native head does not change.
+- Add a public-CLI input-adoption example and actual Blender regression, and track Notion design progress with a fixed 31-criterion acceptance checklist. Progress is independent of visual acceptance, CLOSED tasks and release status.
+
+### Source identity and major prototype construction
+
+- Continue the selected uniform jacket with chest-seated lapels, collar roll, cloth shaping, dark straps and a coherent shield/linked-chain/pendant assembly. Preserve the continuous body cage and shared armholes; exercise the 1 cm cuff change and exact 18-file selected payload recovery.
+- Continue the selected AURIX arm with nested armor, exposed actuators, a recessed service compartment and differentiated palm/finger shells. Retain original pivots and hierarchy; exercise the 3 mm cover change, sampled articulation and exact 19-file selected payload recovery.
+- Add timed example runners, independent baseline/native/GLB inspectors and packaging guards. Retain failed attempts, rejected candidates, actual fixed-condition comparisons, literal prompts and isolated visual review. Both selected results meet the declared source-specific prototype criterion; finished-art and engine readiness remain unapproved.
+- Advance the unchanged 31-item plan from 27/31 (87%) to 28/31 (90%) by demonstrating K4. Comparable time/cost, main merge and formal publication remain open. Active production runtime, skill and package bytes are unchanged by these example refinements.
+
+### Compatibility and scope
+
+- Reject evaluated Geometry Nodes instances until they are realized, and reject mesh modifiers whose viewport/render visibility or subdivision levels differ. Inspect and edit now fail before publishing incomplete native/GLB/render bundles; actual Blender regressions retain the failing-before and passing-after cases.
+- Add informed jacket collar/lapel and AURIX socket/forearm/palm refinements, fixed native/GLB observations, local cuff/cover edits, exact restoration and portable replay examples. Retain rejected intermediates, literal dispatched prompts and separate anonymous visual judgments.
+- Make repeated example readbacks use revision-scoped observation projects, preserving previous observations when a selected revision is revisited.
+
+- Keep the 1.x runtime, project formats and source-bound certification behavior in the repository-only legacy implementation. The production integrity command does not issue a 1.x certificate.
+- Retain the preserved 1.4.2 development rollback branch and historical release evidence. The 2.0 alpha metadata cutover is separate from main merge and publication.
+- Demonstration assets establish execution and local-edit behavior. Reference-image reconstruction quality, complete rig behavior, and target-engine readiness remain separate acceptance work.
+
 ## 1.4.2 — 2026-10-16
 
 ### Agent-guidance economy
@@ -69,7 +175,7 @@ An agent workflow interface release for the existing reference-driven 3D constru
 - Existing construction, camera, registered render, GLB and source-region contradiction validators remain unchanged.
 - Strict source-bound release handoff still refuses to authorize likeness when independent original-photo semantic provenance is absent. A general checkpoint/certificate or a `draft-transfer` receipt is **not** a positive source-fidelity authorization.
 - #271, #272 and #265 remain open as deferred source-fidelity work. Their absence is disclosed, not silently marked as PASS; full real-photo success/negative benchmark remains future work.
-- Production-oriented follow-up (flagship geometry construction, editable agent geometry kit, character/mechanical/material tracks) is recorded in `docs/development/foundry-production-roadmap.md`.
+- Production-oriented follow-up (flagship geometry construction, editable agent geometry kit, character/mechanical/material tracks) is recorded in the [archived roadmap](docs/archive/v1/development/foundry-production-roadmap.md).
 
 ## 1.2.0 — 2026-10-09
 
@@ -222,7 +328,7 @@ Promotes the post-1.1 hardening line (`rc/post-1.1`) to stable `main`. Public `.
 
 ### Known limits
 
-RefAs 1.0.2 can justify hidden construction as `inferred` or `engineered` when typed evidence, priors, specifications, or functional/downstream requirements support it. That permission does not identify unseen manufacturer truth. Ambiguous single-view orientation, absolute scale, material composition, and simulation-ready physical calibration still require additional evidence. See `docs/known-limitations.md`.
+RefAs 1.0.2 can justify hidden construction as `inferred` or `engineered` when typed evidence, priors, specifications, or functional/downstream requirements support it. That permission does not identify unseen manufacturer truth. Ambiguous single-view orientation, absolute scale, material composition, and simulation-ready physical calibration still require additional evidence. See [the archived limitations](docs/archive/v1/known-limitations.md).
 
 ## 1.0.1 — 2026-09-06
 
@@ -250,7 +356,7 @@ RefAs 1.0.2 can justify hidden construction as `inferred` or `engineered` when t
 
 ### Known limits
 
-RefAs 1.0.1 can preserve and fit full orientation only when evidence or an explicit parent-frame relation constrains it. Genuinely ambiguous single-view roll remains ambiguous. Engineering authority for unseen mechanisms and calibrated simulation-ready physical truth remain outside this patch release. See `docs/known-limitations.md`.
+RefAs 1.0.1 can preserve and fit full orientation only when evidence or an explicit parent-frame relation constrains it. Genuinely ambiguous single-view roll remains ambiguous. Engineering authority for unseen mechanisms and calibrated simulation-ready physical truth remain outside this patch release. See [the archived limitations](docs/archive/v1/known-limitations.md).
 
 ## 1.0.0 — 2026-09-05
 
@@ -284,6 +390,6 @@ RefAs 1.0.1 can preserve and fit full orientation only when evidence or an expli
 
 ### Known limits
 
-RefAs 1.0 does not claim fully resolved terminal 3D orientation from ambiguous single views, unseen manufacturer-internal mechanisms, or calibrated simulation-ready mass/collider/actuator truth without additional evidence. See `docs/known-limitations.md`.
+RefAs 1.0 does not claim fully resolved terminal 3D orientation from ambiguous single views, unseen manufacturer-internal mechanisms, or calibrated simulation-ready mass/collider/actuator truth without additional evidence. See [the archived limitations](docs/archive/v1/known-limitations.md).
 
 This release intentionally contains no development-iteration identity in public schemas, runtime APIs, or deployable skill instructions.

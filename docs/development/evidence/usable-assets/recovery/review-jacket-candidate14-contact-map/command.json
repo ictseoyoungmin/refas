@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "/usr/bin/blender",
+    "-b",
+    "--factory-startup",
+    "--threads",
+    "2",
+    "--python",
+    "/workspace/scratch/61afcdd4e3c6/work/garment/export-review/classify_candidate14_body_collar_contacts.py"
+  ],
+  "cwd": "/workspace/scratch/61afcdd4e3c6",
+  "startedUtc": "2026-11-22T21:46:04.566949+00:00",
+  "completedUtc": "2026-11-22T21:46:13.824639+00:00",
+  "elapsedSeconds": 9.257825925000361,
+  "exitCode": 0,
+  "helperSha256": "28d5f8bb0a4d0a08b4cd95c473e063fe7f13e0c1d591f59b68d5bfd7d9a21ba0"
+}

@@ -3,7 +3,7 @@ import {test} from 'node:test';
 import {
   createReferenceGeometry,createRealizedProjection,verifyRealizedProjection,
   createSegmentPrism,partsToGlb,screenSourcePartRoleRelations,
-} from '../skills/refas/scripts/lib/index.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
 
 const SHA='a'.repeat(64),SOURCE='source/original-bicycle.png';
 const camera={projection:'orthographic',position:[0,0,5],target:[0,0,0],up:[0,1,0],

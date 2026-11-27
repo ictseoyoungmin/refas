@@ -1,0 +1,203 @@
+{"stage": "native captured", "frame": 1, "meshes": 100}
+{"stage": "native captured", "frame": 2, "meshes": 100}
+{"stage": "native captured", "frame": 3, "meshes": 100}
+{"stage": "native captured", "frame": 4, "meshes": 100}
+{"stage": "native captured", "frame": 5, "meshes": 100}
+{"stage": "native captured", "frame": 6, "meshes": 100}
+{"stage": "native captured", "frame": 7, "meshes": 100}
+{"stage": "native captured", "frame": 8, "meshes": 100}
+{"stage": "native captured", "frame": 9, "meshes": 100}
+{"stage": "native captured", "frame": 10, "meshes": 100}
+{"stage": "native captured", "frame": 11, "meshes": 100}
+{"stage": "native captured", "frame": 12, "meshes": 100}
+{"stage": "native captured", "frame": 13, "meshes": 100}
+{"stage": "native captured", "frame": 14, "meshes": 100}
+{"stage": "native captured", "frame": 15, "meshes": 100}
+{"stage": "native captured", "frame": 16, "meshes": 100}
+{"stage": "native captured", "frame": 17, "meshes": 100}
+{"stage": "native captured", "frame": 18, "meshes": 100}
+{"stage": "native captured", "frame": 19, "meshes": 100}
+{"stage": "native captured", "frame": 20, "meshes": 100}
+{"stage": "native captured", "frame": 21, "meshes": 100}
+{"stage": "native captured", "frame": 22, "meshes": 100}
+{"stage": "native captured", "frame": 23, "meshes": 100}
+{"stage": "native captured", "frame": 24, "meshes": 100}
+{"stage": "native captured", "frame": 25, "meshes": 100}
+{"stage": "native captured", "frame": 26, "meshes": 100}
+{"stage": "native captured", "frame": 27, "meshes": 100}
+{"stage": "native captured", "frame": 28, "meshes": 100}
+{"stage": "native captured", "frame": 29, "meshes": 100}
+{"stage": "native captured", "frame": 30, "meshes": 100}
+{"stage": "native captured", "frame": 31, "meshes": 100}
+{"stage": "native captured", "frame": 32, "meshes": 100}
+{"stage": "native captured", "frame": 33, "meshes": 100}
+{"stage": "native captured", "frame": 34, "meshes": 100}
+{"stage": "native captured", "frame": 35, "meshes": 100}
+{"stage": "native captured", "frame": 36, "meshes": 100}
+{"stage": "native captured", "frame": 37, "meshes": 100}
+{"stage": "native captured", "frame": 38, "meshes": 100}
+{"stage": "native captured", "frame": 39, "meshes": 100}
+{"stage": "native captured", "frame": 40, "meshes": 100}
+{"stage": "native captured", "frame": 41, "meshes": 100}
+{"stage": "native captured", "frame": 42, "meshes": 100}
+{"stage": "native captured", "frame": 43, "meshes": 100}
+{"stage": "native captured", "frame": 44, "meshes": 100}
+{"stage": "native captured", "frame": 45, "meshes": 100}
+{"stage": "native captured", "frame": 46, "meshes": 100}
+{"stage": "native captured", "frame": 47, "meshes": 100}
+{"stage": "native captured", "frame": 48, "meshes": 100}
+{"stage": "native captured", "frame": 49, "meshes": 100}
+{"stage": "native captured", "frame": 50, "meshes": 100}
+{"stage": "native captured", "frame": 51, "meshes": 100}
+{"stage": "native captured", "frame": 52, "meshes": 100}
+{"stage": "native captured", "frame": 53, "meshes": 100}
+{"stage": "native captured", "frame": 54, "meshes": 100}
+{"stage": "native captured", "frame": 55, "meshes": 100}
+{"stage": "native captured", "frame": 56, "meshes": 100}
+{"stage": "native captured", "frame": 57, "meshes": 100}
+{"stage": "native captured", "frame": 58, "meshes": 100}
+{"stage": "native captured", "frame": 59, "meshes": 100}
+{"stage": "native captured", "frame": 60, "meshes": 100}
+{"stage": "native captured", "frame": 61, "meshes": 100}
+{"stage": "native captured", "frame": 62, "meshes": 100}
+{"stage": "native captured", "frame": 63, "meshes": 100}
+{"stage": "native captured", "frame": 64, "meshes": 100}
+{"stage": "native captured", "frame": 65, "meshes": 100}
+{"stage": "native captured", "frame": 66, "meshes": 100}
+{"stage": "native captured", "frame": 67, "meshes": 100}
+{"stage": "native captured", "frame": 68, "meshes": 100}
+{"stage": "native captured", "frame": 69, "meshes": 100}
+{"stage": "native captured", "frame": 70, "meshes": 100}
+{"stage": "native captured", "frame": 71, "meshes": 100}
+{"stage": "native captured", "frame": 72, "meshes": 100}
+{"stage": "native captured", "frame": 73, "meshes": 100}
+{"stage": "native captured", "frame": 74, "meshes": 100}
+{"stage": "native captured", "frame": 75, "meshes": 100}
+{"stage": "native captured", "frame": 76, "meshes": 100}
+{"stage": "native captured", "frame": 77, "meshes": 100}
+{"stage": "native captured", "frame": 78, "meshes": 100}
+{"stage": "native captured", "frame": 79, "meshes": 100}
+{"stage": "native captured", "frame": 80, "meshes": 100}
+{"stage": "native captured", "frame": 81, "meshes": 100}
+{"stage": "native captured", "frame": 82, "meshes": 100}
+{"stage": "native captured", "frame": 83, "meshes": 100}
+{"stage": "native captured", "frame": 84, "meshes": 100}
+{"stage": "native captured", "frame": 85, "meshes": 100}
+{"stage": "native captured", "frame": 86, "meshes": 100}
+{"stage": "native captured", "frame": 87, "meshes": 100}
+{"stage": "native captured", "frame": 88, "meshes": 100}
+{"stage": "native captured", "frame": 89, "meshes": 100}
+{"stage": "native captured", "frame": 90, "meshes": 100}
+{"stage": "native captured", "frame": 91, "meshes": 100}
+{"stage": "native captured", "frame": 92, "meshes": 100}
+{"stage": "native captured", "frame": 93, "meshes": 100}
+{"stage": "native captured", "frame": 94, "meshes": 100}
+{"stage": "native captured", "frame": 95, "meshes": 100}
+{"stage": "native captured", "frame": 96, "meshes": 100}
+{"stage": "native captured", "frame": 97, "meshes": 100}
+06:34:07 | INFO: Data are loaded, start creating Blender stuff
+06:34:07 | INFO: Blender create Mesh node Fixture morph mesh
+06:34:07 | INFO: Blender create Mesh node Fixture static mesh
+06:34:07 | INFO: glTF import finished in 0.01s
+{"stage": "actual GLB compared", "frame": 1, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 2, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 3, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 4, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 5, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 6, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 7, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 8, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 9, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 10, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 11, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 12, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 13, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 14, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 15, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 16, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 17, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 18, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 19, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 20, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 21, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 22, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 23, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 24, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 25, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 26, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 27, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 28, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 29, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 30, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 31, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 32, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 33, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 34, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 35, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 36, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 37, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 38, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 39, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 40, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 41, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 42, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 43, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 44, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 45, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 46, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 47, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 48, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 49, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 50, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 51, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 52, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 53, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 54, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 55, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 56, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 57, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 58, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 59, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 60, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 61, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 62, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 63, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 64, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 65, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 66, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 67, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 68, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 69, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 70, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 71, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 72, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 73, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 74, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 75, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 76, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 77, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 78, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 79, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 80, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 81, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 82, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 83, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 84, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 85, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 86, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 87, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 88, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 89, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 90, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 91, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 92, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 93, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 94, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 95, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 96, "passedMeshes": 100, "failed": []}
+{"stage": "actual GLB compared", "frame": 97, "passedMeshes": 100, "failed": []}
+{"passed": true, "garmentMeshes": 100, "encodedDuplicateFaces": 0, "frames": [{"frame": 1, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 2, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 3, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 4, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 5, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 6, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 7, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 8, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 9, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 10, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 11, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 12, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 13, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 14, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 15, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 16, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 17, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 18, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 19, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 20, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 21, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 22, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 23, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 24, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 25, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 26, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 27, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 28, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 29, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 30, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 31, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 32, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 33, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 34, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 35, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 36, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 37, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 38, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 39, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 40, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 41, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 42, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 43, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 44, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 45, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 46, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 47, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 48, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 49, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 50, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 51, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 52, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 53, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 54, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 55, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 56, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 57, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 58, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 59, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 60, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 61, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 62, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 63, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 64, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 65, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 66, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 67, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 68, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 69, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 70, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 71, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 72, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 73, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 74, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 75, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 76, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 77, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 78, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 79, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 80, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 81, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 82, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 83, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 84, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 85, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 86, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 87, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 88, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 89, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 90, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 91, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 92, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 93, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 94, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 95, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 96, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}, {"frame": 97, "passedMeshes": 100, "nativeTriangles": 1200, "importedTriangles": 1200}]}
+Blender 4.3.2
+Read blend: "/workspace/scratch/61afcdd4e3c6/work/garment/export-review/phase-fixture/native.blend"
+
+Blender quit

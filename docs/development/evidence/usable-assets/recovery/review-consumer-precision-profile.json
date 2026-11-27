@@ -1,0 +1,48 @@
+{
+  "schema": "refas.independent-consumer-precision-review/v1",
+  "scope": "Five-pose retained negative diagnostic; 100 micrometre final consumer profile justified provisionally, not a final acceptance result.",
+  "sourceSha256": {
+    "work/garment/root_analyze_quantization.py": "076b556971e46b495c0f0ca12d7e6c6e761434fccf36ed5646a551003dc14d61",
+    "work/garment/root_quantization_dump.gd": "90e69646b925ef252735d13d528335937133f51501ac1c2d3ab56384ede6321d",
+    "work/garment/root-quantization-analysis.json": "8696258d85c715399ffd25e93dfd93596360d39d9d3e7cc70cc739ed5ee866b8",
+    "work/garment/root-quantization-summary.json": "c16a95b4a0fed4cfbcf0ffc0ef706aa22f688e867b82266897ea5906552e98ad",
+    "work/garment/root-quantization-raw.json": "68ff84f997c22deec1b9270b14aff9f8b5d7f3ae52feb95161b55bc69e5c80f0",
+    "work/garment/review-consumer-qualified-cache/configuration.json": "b244b320c2873b633650a130fbcf4ac463ed9155a4d4c5a8965bcdc4b0d272d7",
+    "work/garment/review-consumer-qualified-cache/result.json": "cf82ea975ebf38ed157c9b31f6b304cc9fc3cbad23cc82f27d46f36983ab5eb0"
+  },
+  "engine": {
+    "build": "official",
+    "hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+    "hex": 263938,
+    "major": 4,
+    "minor": 7,
+    "patch": 2,
+    "status": "stable",
+    "string": "4.7.2-stable (official)",
+    "timestamp": 0
+  },
+  "independentChecks": {
+    "rawConfigurationAndObservationHashesMatch": true,
+    "all150DumpedActualCoordinatesExactlyEqualStrictObserverOutput": true,
+    "maxDumpExpectedDifferenceFromConfigurationM": 5.108246967847693e-15,
+    "maximumRecomputedDistanceDifferenceM": 3.1970459401587173e-12,
+    "all150InfluenceCounts": [
+      4
+    ],
+    "maxSourcePositionMappingDifferenceM": 5.117876442503136e-15,
+    "sourceWeightSumRange": [
+      0.999999973224476,
+      1.0000000670552254
+    ],
+    "allCoefficientDeltasWithinOneUnorm16Step": true,
+    "allPredictedDisplacementsWithinExactCoefficientTriangleInequalityBound": true,
+    "sampledCoefficientEnvelopePlusMeasuredNonweightResidualsM": 9.185999879818555e-05
+  },
+  "conditionsForFinalProfile": [
+    "Freeze 0.0001 m explicitly before final candidate selection; keep observer default 0.00002 m, matrix 0.00002 and rest match 0.00001 unchanged.",
+    "Re-evaluate actual final exported weights, four-slot constraint and transformed-point coefficient bound over all 97-frame vertex probes.",
+    "Preserve the strict failure and actual-weight corruption control with error beyond 0.0001 m.",
+    "State sampled point and pose scope; do not claim a whole-mesh or arbitrary-motion precision guarantee.",
+    "Use actual unnormalized consumer weights for delivered playback; source-weight substitution remains diagnostic only."
+  ]
+}

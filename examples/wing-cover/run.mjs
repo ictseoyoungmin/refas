@@ -5,7 +5,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 
-import {initTrustedContractFixtureProject} from '../../skills/refas/scripts/lib/contract-fixture-project.mjs';
+import {initTrustedContractFixtureProject} from '../../legacy/v1/scripts/lib/contract-fixture-project.mjs';
 
 import {
   CAPABILITY_ORDER,
@@ -47,11 +47,11 @@ import {
   validateSpatialHypothesisSet,
   validateSurfaceNetwork,
   validateVisualHierarchy,
-} from '../../skills/refas/scripts/lib/index.mjs';
+} from '../../legacy/v1/scripts/lib/index.mjs';
 
 const EXAMPLE = path.dirname(fileURLToPath(import.meta.url));
 const REPOSITORY = path.resolve(EXAMPLE, '../..');
-const SKILL_SCRIPTS = path.join(REPOSITORY, 'skills/refas/scripts');
+const SKILL_SCRIPTS = path.join(REPOSITORY, 'legacy/v1/scripts');
 const OUTPUT = path.join(EXAMPLE, 'output');
 const PROJECT = path.join(OUTPUT, 'project');
 const PYTHON = process.env.CODEX_PRIMARY_RUNTIME_PYTHON || 'python3';

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
 
-import {createProjectionFit, createReferenceGeometry, validateProjectionFit} from '../skills/refas/scripts/lib/index.mjs';
+import {createProjectionFit, createReferenceGeometry, validateProjectionFit} from '../legacy/v1/scripts/lib/index.mjs';
 
 const D = (char) => char.repeat(64);
 function geometry() {

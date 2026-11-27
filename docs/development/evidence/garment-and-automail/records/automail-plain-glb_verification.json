@@ -1,0 +1,77 @@
+{
+  "Blender_version": "4.3.2",
+  "imported_object_count": 311,
+  "imported_meshes": 291,
+  "native_asset_object_count": 311,
+  "missing_native_object_names": [],
+  "named_parent_mismatches": [],
+  "world_matrix_mismatches_over_1e_5": [],
+  "bounds_m": {
+    "x": [
+      -0.0806114673614502,
+      0.0722000002861023
+    ],
+    "y": [
+      -0.05995597690343857,
+      0.05349999666213989
+    ],
+    "z": [
+      -0.0005000047385692596,
+      0.7586215138435364
+    ]
+  },
+  "required_joint_names_present": {
+    "AURIX_ROOT": true,
+    "ELBOW_JOINT": true,
+    "WRIST_JOINT": true,
+    "SERVICE_COVER_ROOT": true,
+    "DIGIT_INDEX_J2": true
+  },
+  "movement_tests": {
+    "elbow45": {
+      "rotation_mode": "QUATERNION",
+      "method": "postmultiply local matrix_basis by X rotation",
+      "before_wrist_world": [
+        0.0,
+        0.0,
+        0.18700000643730164
+      ],
+      "after_wrist_world": [
+        0.0,
+        0.1753624975681305,
+        0.2596375346183777
+      ],
+      "wrist_moved_m": 0.18981099984364694,
+      "descendants": 194
+    },
+    "wrist25": {
+      "before_finger_world": [
+        -0.031333331018686295,
+        -0.0020000000949949026,
+        0.07000000774860382
+      ],
+      "after_finger_world": [
+        -0.031333331018686295,
+        0.04763370752334595,
+        0.08011674880981445
+      ],
+      "finger_moved_m": 0.05065425308814729
+    },
+    "index_second_joint45": {
+      "before_distal_world": [
+        -0.03266666457056999,
+        -0.0020000000949949026,
+        0.040000006556510925
+      ],
+      "after_distal_world": [
+        -0.03266666457056999,
+        0.019213205203413963,
+        0.04878680408000946
+      ],
+      "distal_moved_m": 0.022961008088633935
+    }
+  },
+  "restore_exact_transform_match": true,
+  "restore_transform_difference_names": [],
+  "validation_scope": "Independent Blender import of candidate GLB, named-parent comparison, current-world-matrix comparison at 1e-5 tolerance, actual neutral and elbow45 renders, elbow/wrist/finger rigid descendants movement. No third-party DCC/runtime test."
+}

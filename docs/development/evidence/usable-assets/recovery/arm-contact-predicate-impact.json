@@ -1,0 +1,15 @@
+{
+  "createdUtc": "2026-11-22T21:07:25.125621+00:00",
+  "scope": "Source-path impact review of the garment task ray-predicate defect against the frozen selected arm acceptance checks; not an expanded all-object collision test.",
+  "armInspectorSha256": "9767f0f9569032ba79e7867ace5edfb1773a720413b8945d5941d8e8a94f6d7e",
+  "deliveredInspectorMatchesCurrentSource": true,
+  "armNativeInspectionCompressedSha256": "524570b4524c6483956aecd46b418cb99eeca488bf0bfcdf84335e8f678157ca",
+  "selectedNativeSha256": "badf3fd5134ea44c77bef19890cf0f3157c8e2dbe622484eba7df713791d36f1",
+  "collisionPairs": 133,
+  "frames": 121,
+  "recordedIntersections": 0,
+  "contactPredicate": "Direct BVHTree.overlap result; no metre-scale mathutils ray filter or garment triangle_contact import.",
+  "garmentRayBugUsedBySelectedArmContactGate": false,
+  "armGateScope": "Named arm armor transitions, hand-core/armor against all digit armor, and all cross-digit armor pairs; bearing, fastener, other intra-segment contact and exhaustive all-object collision are outside this surface-pair test.",
+  "conclusion": "The identified garment ray-filter false-negative mechanism does not alter the recorded arm 133-pair/121-frame result. The original declared pair scope remains unchanged."
+}

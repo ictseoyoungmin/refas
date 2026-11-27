@@ -1,0 +1,218 @@
+{
+  "ok": true,
+  "schema": "refas.production.project/v2",
+  "name": "legacy-import-proof",
+  "projectId": "d104c37898a24292802c5b2a422f77be",
+  "head": "fb6c1245a385462a89de1c791e511caa",
+  "sequence": 3,
+  "sources": [
+    {
+      "path": "sources/001-reference.png",
+      "name": "reference.png",
+      "role": "user-reference",
+      "sha256": "6076b27fadfcb1a929b306ce74d6b7ef22d1d8996102065df6a74012e3466148",
+      "bytes": 41281
+    }
+  ],
+  "outputs": {
+    "blend": "/workspace/scratch/c52cb753f160/v2-import-proof/installed-run/project/.refas2/revisions/fb6c1245a385462a89de1c791e511caa/artifacts/scene.blend",
+    "glb": "/workspace/scratch/c52cb753f160/v2-import-proof/installed-run/project/.refas2/revisions/fb6c1245a385462a89de1c791e511caa/artifacts/asset.glb",
+    "scene": "/workspace/scratch/c52cb753f160/v2-import-proof/installed-run/project/.refas2/revisions/fb6c1245a385462a89de1c791e511caa/artifacts/scene.json"
+  },
+  "observations": [
+    {
+      "camera": {
+        "matrixWorld": [
+          [
+            0.8349582,
+            -0.22013363,
+            0.50436693,
+            3.48310137
+          ],
+          [
+            0.55031341,
+            0.33399591,
+            -0.76524633,
+            -5.35757208
+          ],
+          [
+            -5e-08,
+            0.91650856,
+            0.40001509,
+            2.76545572
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "orthoScale": 4.04344702,
+        "position": [
+          3.48310137,
+          -5.35757208,
+          2.76545572
+        ],
+        "projection": "orthographic",
+        "target": [
+          0.01181483,
+          -0.09079336,
+          0.01236677
+        ]
+      },
+      "framing": "automatic-bounds",
+      "lighting": {
+        "center": [
+          0.01181483,
+          -0.09079336,
+          0.01236677
+        ],
+        "radius": 1.72061566,
+        "rig": "three-area-lights/v1"
+      },
+      "path": "/workspace/scratch/c52cb753f160/v2-import-proof/installed-run/project/.refas2/revisions/fb6c1245a385462a89de1c791e511caa/artifacts/view-hero.png",
+      "referenceRegion": null,
+      "registration": "unregistered",
+      "renderer": {
+        "denoising": false,
+        "device": "CPU",
+        "engine": "CYCLES",
+        "samples": 4,
+        "size": [
+          192,
+          192
+        ],
+        "transparent": false,
+        "viewTransform": "AgX",
+        "worldColor": [
+          0.065,
+          0.08,
+          0.115
+        ],
+        "worldStrength": 0.45
+      },
+      "sha256": "fbd29769943a3e9c2c2e6adea609c931e606cdc6679cde6b68a1c994836d8134",
+      "sourceSceneFingerprint": "6950b1f78841a0724860033fbf492dca93df347f1fc8227492a8aa1279a2f54f",
+      "view": "hero"
+    },
+    {
+      "camera": {
+        "matrixWorld": [
+          [
+            -4e-08,
+            4e-08,
+            1.0,
+            6.89427757
+          ],
+          [
+            1.0,
+            0.0,
+            4e-08,
+            -0.09079336
+          ],
+          [
+            0.0,
+            1.0,
+            -4e-08,
+            0.01236677
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "orthoScale": 4.04344702,
+        "position": [
+          6.89427757,
+          -0.09079336,
+          0.01236677
+        ],
+        "projection": "orthographic",
+        "target": [
+          0.01181483,
+          -0.09079336,
+          0.01236677
+        ]
+      },
+      "framing": "automatic-bounds",
+      "lighting": {
+        "center": [
+          0.01181483,
+          -0.09079336,
+          0.01236677
+        ],
+        "radius": 1.72061566,
+        "rig": "three-area-lights/v1"
+      },
+      "path": "/workspace/scratch/c52cb753f160/v2-import-proof/installed-run/project/.refas2/revisions/fb6c1245a385462a89de1c791e511caa/artifacts/view-side.png",
+      "referenceRegion": null,
+      "registration": "unregistered",
+      "renderer": {
+        "denoising": false,
+        "device": "CPU",
+        "engine": "CYCLES",
+        "samples": 4,
+        "size": [
+          192,
+          192
+        ],
+        "transparent": false,
+        "viewTransform": "AgX",
+        "worldColor": [
+          0.065,
+          0.08,
+          0.115
+        ],
+        "worldStrength": 0.45
+      },
+      "sha256": "3bb9c9fe4d02f6196b31af521b5f8cd3f915edc6cf424e2e651cdfce3ab58be0",
+      "sourceSceneFingerprint": "6950b1f78841a0724860033fbf492dca93df347f1fc8227492a8aa1279a2f54f",
+      "view": "side"
+    }
+  ],
+  "inputs": {
+    "edit.py": "/workspace/scratch/c52cb753f160/v2-import-proof/installed-run/project/.refas2/revisions/fb6c1245a385462a89de1c791e511caa/inputs/edit.py",
+    "import/asset.glb": "/workspace/scratch/c52cb753f160/v2-import-proof/installed-run/project/.refas2/revisions/fb6c1245a385462a89de1c791e511caa/inputs/import/asset.glb",
+    "import/legacy-checkpoint.json": "/workspace/scratch/c52cb753f160/v2-import-proof/installed-run/project/.refas2/revisions/fb6c1245a385462a89de1c791e511caa/inputs/import/legacy-checkpoint.json",
+    "import/legacy-project.json": "/workspace/scratch/c52cb753f160/v2-import-proof/installed-run/project/.refas2/revisions/fb6c1245a385462a89de1c791e511caa/inputs/import/legacy-project.json",
+    "import/migration.json": "/workspace/scratch/c52cb753f160/v2-import-proof/installed-run/project/.refas2/revisions/fb6c1245a385462a89de1c791e511caa/inputs/import/migration.json"
+  },
+  "revisions": [
+    {
+      "id": "da41ee883cde4066b42f1594522cdf2c",
+      "intent": "Import RefAs 1.x cp_a744fb4e4fae0cd60712: assets/wing-cover.glb",
+      "createdAt": "2026-11-22T11:42:16.833214+00:00",
+      "parent": null
+    },
+    {
+      "id": "8de2559bfda54c4fa2364f83f9754f8b",
+      "intent": "Move only panel:cell-00 by 0.005 along Blender Z; retain all other objects",
+      "createdAt": "2026-11-22T11:42:19.539804+00:00",
+      "parent": "da41ee883cde4066b42f1594522cdf2c"
+    },
+    {
+      "id": "fb6c1245a385462a89de1c791e511caa",
+      "intent": "Restore revision da41ee883cde4066b42f1594522cdf2c",
+      "createdAt": "2026-11-22T11:42:19.887536+00:00",
+      "parent": "8de2559bfda54c4fa2364f83f9754f8b"
+    }
+  ],
+  "incompleteRuns": [],
+  "evidenceFreshness": {
+    "status": "current",
+    "scope": "active-reference-content-set",
+    "revision": "fb6c1245a385462a89de1c791e511caa",
+    "activeSourceSha256": [
+      "6076b27fadfcb1a929b306ce74d6b7ef22d1d8996102065df6a74012e3466148"
+    ],
+    "revisionSourceSha256": [
+      "6076b27fadfcb1a929b306ce74d6b7ef22d1d8996102065df6a74012e3466148"
+    ],
+    "visualAcceptance": "not-evaluated"
+  },
+  "referenceResemblance": "not-evaluated",
+  "gameReadiness": "not-evaluated"
+}

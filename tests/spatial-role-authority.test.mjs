@@ -12,8 +12,8 @@ import {
   createVisualHierarchy,
   digestBytes,
   resolveSpatialRoleAuthority,
-} from '../skills/refas/scripts/lib/index.mjs';
-import {initTrustedContractFixtureProject} from '../skills/refas/scripts/lib/contract-fixture-project.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
+import {initTrustedContractFixtureProject} from '../legacy/v1/scripts/lib/contract-fixture-project.mjs';
 
 async function writeRef(root, relative, bytes, kind) {
   const absolute=path.join(root,relative);

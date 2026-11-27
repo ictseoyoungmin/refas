@@ -1,0 +1,13 @@
+{
+  "label": "final-repository-check",
+  "argv": [
+    "npm",
+    "run",
+    "check"
+  ],
+  "started_utc": "2026-11-22T12:41:40.281648+00:00",
+  "ended_utc": "2026-11-22T12:41:53.911399+00:00",
+  "elapsed_seconds": 13.629770587000166,
+  "returncode": 0,
+  "scope": "Completed asset scripts and evidence; unchanged production runtime and active distribution."
+}

@@ -8,8 +8,8 @@ import test from 'node:test';
 import {
   createCylinder, digestBytes, initProject, partsToGlb,
   inspectSourcePixelFrameBytes,
-} from '../skills/refas/scripts/lib/index.mjs';
-import {verifySourceBoundObject} from '../skills/refas/scripts/lib/qa-coverage.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
+import {verifySourceBoundObject} from '../legacy/v1/scripts/lib/qa-coverage.mjs';
 
 const PYTHON=process.env.CODEX_PRIMARY_RUNTIME_PYTHON || 'python3';
 const materials={panel:{baseColor:[0.5,0.5,0.5,1],metallic:0,roughness:1}};

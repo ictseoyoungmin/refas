@@ -5,7 +5,7 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 
-import {readQaGeometryAccessor} from '../skills/refas/scripts/lib/qa-glb-geometry-accessors.mjs';
+import {readQaGeometryAccessor} from '../legacy/v1/scripts/lib/qa-glb-geometry-accessors.mjs';
 
 import {
   bakePhysicalFusion,
@@ -33,7 +33,7 @@ import {
   propagateAttachmentGraph,
   rigidFrameDigest,
   verifyRealizedPropagationWorldFrames,
-} from '../skills/refas/scripts/lib/index.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
 
 const D = (value = 'a') => value.repeat(64);
 const sha = (bytes) => createHash('sha256').update(Buffer.from(bytes)).digest('hex');

@@ -1,0 +1,69 @@
+{
+  "beganUtc": "2026-11-22T21:34:42.450339+00:00",
+  "inputs": {
+    "before": {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/lining-16/repaired-detailed.blend",
+      "sha256": "9eb977d1a3c8bd7ff1e565e2640fa03cd3c0e507ccc5ba290e9b9ed4662994fc"
+    },
+    "after": {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/lining-42/repaired-detailed.blend",
+      "sha256": "d390171806d787c21f98ca5a398117526d7cfc1f302c34bd46ea992ae28fcf0d"
+    }
+  },
+  "scope": "Author saved-file comparison of the collar mesh only. The body cloth is hidden to expose the erroneous source-end strip. Avatar and secondary decoration are not loaded. Blue outer/rust lining material overrides reveal shell structure; these are diagnostic colors.",
+  "fixedViews": [
+    {
+      "name": "lapel-end-front",
+      "position": [
+        0.2,
+        -0.8,
+        1.13
+      ],
+      "target": [
+        0.065,
+        -0.005,
+        1.08
+      ],
+      "orthographicScale": 0.22
+    },
+    {
+      "name": "lapel-end-side",
+      "position": [
+        0.6,
+        -0.005,
+        1.1
+      ],
+      "target": [
+        0.065,
+        -0.005,
+        1.08
+      ],
+      "orthographicScale": 0.22
+    }
+  ],
+  "resolution": [
+    640,
+    480
+  ],
+  "samples": 16,
+  "threads": 2,
+  "outputs": [
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/lining-42/endpoint-isolated-views/before-lapel-end-front.png",
+      "sha256": "15cf2f2299d424812c0b6d65bc7964893b5f9c6dd6dc92c7c1c45e93f40e9d98"
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/lining-42/endpoint-isolated-views/before-lapel-end-side.png",
+      "sha256": "66dbf85258b03efb76cb4f78344d51b2e0449b90a51d417c3c75cf303f67f494"
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/lining-42/endpoint-isolated-views/after-lapel-end-front.png",
+      "sha256": "249f1dfe7c145accb1024230fa77f0d506ef9d045595dd04916a43ea3a07e5d4"
+    },
+    {
+      "path": "/workspace/scratch/61afcdd4e3c6/work/garment/geometry-repair/lining-42/endpoint-isolated-views/after-lapel-end-side.png",
+      "sha256": "5112683cb40f2d2f41cf6ee0cca855bcce4c103243e3e811947bf134ab6a4c50"
+    }
+  ],
+  "completedUtc": "2026-11-22T21:34:45.418587+00:00"
+}

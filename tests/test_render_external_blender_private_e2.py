@@ -13,7 +13,7 @@ import unittest
 
 from PIL import Image
 
-sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"skills/refas/scripts"))
+sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"legacy/v1/scripts"))
 from create_blender_color0_texture_fixture import generate
 from render_external_blender import preflight, sha
 from verify_blender_private_source_e2 import (run_private_session,validate_capture,

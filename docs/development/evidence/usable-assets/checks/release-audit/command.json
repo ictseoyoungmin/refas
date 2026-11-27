@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "npm",
+    "run",
+    "release:audit"
+  ],
+  "startedUtc": "2026-11-22T14:00:43.358740+00:00",
+  "endedUtc": "2026-11-22T14:00:44.964758+00:00",
+  "elapsedSeconds": 1.6060185089991137,
+  "returncode": 0,
+  "environment": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "REFAS_BLENDER_TESTS": "1",
+    "REFAS_GODOT_TESTS": "1"
+  }
+}

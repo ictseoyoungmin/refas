@@ -1,0 +1,94 @@
+{
+  "relative_preference": "B",
+  "confidence": "moderate_to_high",
+  "preference_scope": "Clear collar/lapel readability preference; moderate overall visual preference because most whole-garment features are shared.",
+  "finished_visual_acceptance": {
+    "A": "reject",
+    "B": "reject"
+  },
+  "whole_garment_assessment": {
+    "relative_shape_difference": "No substantial body, sleeve, waist or ornament-placement advantage is visible between A and B.",
+    "recognized_identity": [
+      "Black cropped uniform jacket",
+      "Long outward-falling sleeves and open front",
+      "Pale piping, waist and cuff buckles, shoulder tabs",
+      "Asymmetric shield emblems and two draped chains"
+    ],
+    "shared_deviations": [
+      "Smoother, more schematic torso and sleeve shaping than the tailored source",
+      "Simplified shield emblems instead of the ornate fleur-de-lis-like source marks",
+      "Missing or not visibly represented hanging pendant cluster and prominent rear shoulder ornament",
+      "Bright silver-gray waist and cuff bands obscure dark-strap versus silver-hardware separation",
+      "Uniform cylindrical cuffs and limited pale inner/under-cuff strip",
+      "Limited local cloth folds, compression and construction depth"
+    ]
+  },
+  "preference_reasons": [
+    "B has a coherent outer trim path through collar point, notch and long lapel.",
+    "A shows separated, doubled-looking diagonal trim fragments and small ambiguous pointed layers in front, oblique and side views.",
+    "B's simpler neck-to-lapel silhouette more clearly communicates the source's collar-and-revers organization."
+  ],
+  "candidate_specific_limitations": {
+    "A": [
+      "Fragmented collar piping and competing small diagonal trim paths",
+      "Ambiguous collar/lapel layering and connection",
+      "All shared substantial fidelity limitations remain"
+    ],
+    "B": [
+      "Broad planar upper lapels and abrupt upper tonal transition",
+      "Shelf-like outward rear collar lip with a visible dark interval below its edge",
+      "Neck-to-lapel roll and connection remain insufficiently persuasive",
+      "All shared substantial fidelity limitations remain"
+    ]
+  },
+  "shared_visible_artifacts": [
+    "Bright crescent/slit near the upper sleeve behind the lapel and pinched-looking side marks; underlying cause uncertain",
+    "A few tiny shoulder/upper-sleeve bright specks; not treated as proven holes or intersections"
+  ],
+  "tradeoff_that_could_reverse_preference": "B improves outline continuity but replaces A's more upright nape band and small pointed layers with broader, flatter planes and an outward collar lip. Prioritizing the upright nape and separated layers could reverse a local collar preference; it does not reverse the overall preference against the complete supplied source.",
+  "uncertainties": [
+    "Concept-sheet cameras and lighting are unregistered with the candidate renders.",
+    "Proportional and material observations are visual impressions, not calibrated errors.",
+    "Small slits and separations cannot be diagnosed as specific construction defects from these images alone.",
+    "Render grain is not treated as garment texture or mesh damage."
+  ],
+  "excluded_inferences": [
+    "editability",
+    "topology",
+    "articulation",
+    "UV readiness",
+    "rig readiness",
+    "engine readiness",
+    "authorship",
+    "chronology",
+    "general modeling or workflow superiority"
+  ],
+  "inspected_input_root": "/workspace/scratch/c52cb753f160/blind-review-joined-fold/garment",
+  "initial_inspection_order": [
+    "source.png",
+    "A-whole.png",
+    "B-whole.png",
+    "A-details.png",
+    "B-details.png"
+  ],
+  "individual_views_inspected": [
+    "A/view-front.png",
+    "A/view-front-three-quarter.png",
+    "A/view-left.png",
+    "A/view-back.png",
+    "A/view-right.png",
+    "A/view-rear-three-quarter.png",
+    "A/view-fold-front.png",
+    "A/view-fold-oblique.png",
+    "A/view-fold-side.png",
+    "B/view-front.png",
+    "B/view-front-three-quarter.png",
+    "B/view-left.png",
+    "B/view-back.png",
+    "B/view-right.png",
+    "B/view-rear-three-quarter.png",
+    "B/view-fold-front.png",
+    "B/view-fold-oblique.png",
+    "B/view-fold-side.png"
+  ]
+}

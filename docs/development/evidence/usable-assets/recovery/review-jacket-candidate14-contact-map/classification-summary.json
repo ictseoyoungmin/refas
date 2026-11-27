@@ -1,0 +1,520 @@
+{
+  "column0": {
+    "pairs": 466,
+    "sourceBounds": [
+      [
+        98.93670109161016,
+        0.0
+      ],
+      [
+        1283.4226168769667,
+        0.0
+      ]
+    ],
+    "physicalBoundsM": [
+      [
+        -0.1136286736599428,
+        -0.10822833598439814,
+        1.1639509803348878
+      ],
+      [
+        0.11185090860336751,
+        0.09410472534495803,
+        1.4399252659618293
+      ]
+    ],
+    "hingeDistanceM": [
+      0.0,
+      0.0017997393186426095
+    ],
+    "shellTypes": {
+      "outer/rim": 129,
+      "inner/rim": 108,
+      "rim/rim": 229
+    },
+    "freeColumn44": 0
+  },
+  "firstCell": {
+    "pairs": 1245,
+    "sourceBounds": [
+      [
+        98.93670109161016,
+        0.0
+      ],
+      [
+        1283.4226168769667,
+        4.0
+      ]
+    ],
+    "physicalBoundsM": [
+      [
+        -0.11424192027833618,
+        -0.10822833598439814,
+        1.1639509803348878
+      ],
+      [
+        0.11230498378902794,
+        0.11348584378040671,
+        1.4420648389951134
+      ]
+    ],
+    "hingeDistanceM": [
+      0.0,
+      0.004333914076669481
+    ],
+    "shellTypes": {
+      "outer/inner": 573,
+      "inner/inner": 326,
+      "outer/outer": 100,
+      "inner/outer": 147,
+      "rim/outer": 99
+    },
+    "freeColumn44": 0
+  },
+  "intermediate4to16": {
+    "pairs": 1059,
+    "sourceBounds": [
+      [
+        100.00994506912559,
+        4.0
+      ],
+      [
+        1282.7628309012212,
+        15.585189867256135
+      ]
+    ],
+    "physicalBoundsM": [
+      [
+        -0.11657435752731388,
+        -0.1079843472647589,
+        1.1650876601818934
+      ],
+      [
+        0.11507001043031628,
+        -0.015851778046112153,
+        1.4307503022066703
+      ]
+    ],
+    "hingeDistanceM": [
+      0.00043082073697892493,
+      0.007506507043039847
+    ],
+    "shellTypes": {
+      "outer/inner": 349,
+      "inner/outer": 196,
+      "inner/inner": 205,
+      "outer/outer": 304,
+      "rim/outer": 5
+    },
+    "freeColumn44": 0
+  },
+  "beyond16": {
+    "pairs": 247,
+    "sourceBounds": [
+      [
+        455.87671989251993,
+        23.688722238766484
+      ],
+      [
+        934.1162879187548,
+        44.00000000000001
+      ]
+    ],
+    "physicalBoundsM": [
+      [
+        -0.0922407303708,
+        -0.047956654022382174,
+        1.4107506669993741
+      ],
+      [
+        0.08144969032441911,
+        -0.034021650402349175,
+        1.4262724500035031
+      ]
+    ],
+    "hingeDistanceM": [
+      0.01695133858623183,
+      0.03302639361556701
+    ],
+    "shellTypes": {
+      "outer/inner": 74,
+      "outer/rim": 6,
+      "outer/outer": 57,
+      "inner/inner": 59,
+      "inner/rim": 10,
+      "inner/outer": 41
+    },
+    "freeColumn44": 24
+  },
+  "gorgePatch": {
+    "pairs": 5,
+    "sourceBounds": [
+      [
+        929.9999999999999,
+        25.342539334092113
+      ],
+      [
+        934.0276180022763,
+        29.377386578931755
+      ]
+    ],
+    "physicalBoundsM": [
+      [
+        -0.08696911910300814,
+        -0.04781711974781434,
+        1.4111319497541546
+      ],
+      [
+        -0.08026672886576229,
+        -0.046509319031991465,
+        1.4144767358560553
+      ]
+    ],
+    "hingeDistanceM": [
+      0.021099884175176654,
+      0.02775557155071579
+    ],
+    "shellTypes": {
+      "outer/inner": 5
+    },
+    "freeColumn44": 0
+  },
+  "freeColumn44": {
+    "pairs": 24,
+    "sourceBounds": [
+      [
+        902.2618981917641,
+        43.143213127412906
+      ],
+      [
+        916.9193686031153,
+        44.00000000000001
+      ]
+    ],
+    "physicalBoundsM": [
+      [
+        -0.0922407303708,
+        -0.047784412124253085,
+        1.4111452649010137
+      ],
+      [
+        -0.08662203552915784,
+        -0.0344315174615733,
+        1.4262724500035031
+      ]
+    ],
+    "hingeDistanceM": [
+      0.028373509870229668,
+      0.03302639361556701
+    ],
+    "shellTypes": {
+      "outer/inner": 2,
+      "outer/rim": 6,
+      "outer/outer": 2,
+      "inner/rim": 10,
+      "inner/inner": 2,
+      "inner/outer": 2
+    },
+    "freeColumn44": 24
+  },
+  "beyond16 Collar stand and turned leaves": {
+    "pairs": 247,
+    "sourceBounds": [
+      [
+        455.87671989251993,
+        23.688722238766484
+      ],
+      [
+        934.1162879187548,
+        44.00000000000001
+      ]
+    ],
+    "physicalBoundsM": [
+      [
+        -0.0922407303708,
+        -0.047956654022382174,
+        1.4107506669993741
+      ],
+      [
+        0.08144969032441911,
+        -0.034021650402349175,
+        1.4262724500035031
+      ]
+    ],
+    "hingeDistanceM": [
+      0.01695133858623183,
+      0.03302639361556701
+    ],
+    "shellTypes": {
+      "outer/inner": 74,
+      "outer/rim": 6,
+      "outer/outer": 57,
+      "inner/inner": 59,
+      "inner/rim": 10,
+      "inner/outer": 41
+    },
+    "freeColumn44": 24
+  },
+  "beyond16 L Lapel | rolled facing": {
+    "pairs": 0
+  },
+  "beyond16 R Lapel | rolled facing": {
+    "pairs": 0
+  },
+  "positiveXReturn": {
+    "pairs": 4,
+    "sourceBounds": [
+      [
+        455.87671989251993,
+        26.844606033338128
+      ],
+      [
+        457.65888311776297,
+        27.929290160021964
+      ]
+    ],
+    "physicalBoundsM": [
+      [
+        0.07944380765267323,
+        -0.042697555590026706,
+        1.4168721297877889
+      ],
+      [
+        0.08144969032441911,
+        -0.04254190000118762,
+        1.4170617280462066
+      ]
+    ],
+    "hingeDistanceM": [
+      0.025063873957708847,
+      0.027064933261581797
+    ],
+    "shellTypes": {
+      "outer/inner": 4
+    },
+    "freeColumn44": 0
+  },
+  "negativeXReturn": {
+    "pairs": 243,
+    "sourceBounds": [
+      [
+        902.2618981917641,
+        23.688722238766484
+      ],
+      [
+        934.1162879187548,
+        44.00000000000001
+      ]
+    ],
+    "physicalBoundsM": [
+      [
+        -0.0922407303708,
+        -0.047956654022382174,
+        1.4107506669993741
+      ],
+      [
+        -0.0759333219351209,
+        -0.034021650402349175,
+        1.4262724500035031
+      ]
+    ],
+    "hingeDistanceM": [
+      0.01695133858623183,
+      0.03302639361556701
+    ],
+    "shellTypes": {
+      "outer/inner": 70,
+      "outer/rim": 6,
+      "outer/outer": 57,
+      "inner/inner": 59,
+      "inner/rim": 10,
+      "inner/outer": 41
+    },
+    "freeColumn44": 24
+  },
+  "collarSelfContact": {
+    "nonadjacentCandidates": 1,
+    "confirmed": 1,
+    "records": [
+      {
+        "faces": [
+          17661,
+          22302
+        ],
+        "shellTypes": [
+          "inner",
+          "rim"
+        ],
+        "triangleVerticesM": [
+          [
+            [
+              -0.08959447592496872,
+              -0.04317142814397812,
+              1.4171397686004639
+            ],
+            [
+              -0.08980680257081985,
+              -0.04336673766374588,
+              1.4169232845306396
+            ],
+            [
+              -0.08831094205379486,
+              -0.04066309332847595,
+              1.420743465423584
+            ]
+          ],
+          [
+            [
+              -0.08936478197574615,
+              -0.044068772345781326,
+              1.4171273708343506
+            ],
+            [
+              -0.08758851140737534,
+              -0.03816180303692818,
+              1.4236570596694946
+            ],
+            [
+              -0.08758056908845901,
+              -0.03790857642889023,
+              1.4234594106674194
+            ]
+          ]
+        ],
+        "sourceParameters": [
+          [
+            [
+              912.0,
+              43.0
+            ],
+            [
+              912.0,
+              44.0
+            ],
+            [
+              909.0,
+              43.0
+            ]
+          ],
+          [
+            [
+              912.0,
+              44.0
+            ],
+            [
+              906.0,
+              44.0
+            ],
+            [
+              906.0,
+              44.0
+            ]
+          ]
+        ],
+        "predicate": {
+          "assessed": true,
+          "intersects": true,
+          "coplanar": false,
+          "contactScope": "Boundary touch or interior overlap; no contact is waived",
+          "maximumSeparatingGapM": 0.0,
+          "numericalEpsilonM": 1e-12
+        }
+      }
+    ]
+  },
+  "fittedState": [
+    {
+      "name": "Body | continuous open front and shoulder yoke",
+      "frame": 1,
+      "nativeVertices": 18732,
+      "evaluatedVertices": 18732,
+      "shapeKeyBlocks": 0,
+      "vertexGroups": 0,
+      "maxEvaluatedVsDirectPositionErrorM": 0.0,
+      "matrixWorld": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "name": "Collar | standing back and neck facing",
+      "frame": 1,
+      "nativeVertices": 11356,
+      "evaluatedVertices": 11356,
+      "shapeKeyBlocks": 0,
+      "vertexGroups": 0,
+      "maxEvaluatedVsDirectPositionErrorM": 0.0,
+      "matrixWorld": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    }
+  ],
+  "gorgePairIds": [
+    [
+      4783,
+      17866
+    ],
+    [
+      3838,
+      17866
+    ],
+    [
+      3838,
+      17868
+    ],
+    [
+      3838,
+      17869
+    ],
+    [
+      3838,
+      17870
+    ]
+  ],
+  "interpretation": "All categories remain observed contacts. Parameter proximity is not a stitched allowance. Bounds include the full observed contact segment, even when only part meets a highlighted parameter rectangle."
+}

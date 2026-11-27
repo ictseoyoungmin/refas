@@ -1,0 +1,4 @@
+
+> refas@2.0.0-alpha.1 test:production
+> python3 -B -m unittest discover -s tests -p "test_production*.py"
+

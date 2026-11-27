@@ -1,0 +1,1135 @@
+{
+	"animations": [
+		"ReviewBlend"
+	],
+	"assetSha256": "849952f583ba1bd18ede293c0c05fbfd6ecb78b2bf74b5514d4916729b5a868b",
+	"checks": [
+		{
+			"details": null,
+			"name": "requiredConfiguration",
+			"ok": true
+		},
+		{
+			"details": 0,
+			"name": "import",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "sceneGenerated",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "nonemptyMeshes",
+			"ok": true
+		},
+		{
+			"details": 12,
+			"name": "triangleCount",
+			"ok": true
+		},
+		{
+			"details": 1,
+			"name": "skinBindings",
+			"ok": true
+		},
+		{
+			"details": "ReviewBlend",
+			"name": "namedAnimation",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "animatedTracks",
+			"ok": true
+		},
+		{
+			"details": 0.0333333333333333,
+			"name": "sampleRange",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "nonemptySampleProbes",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "probeNode:Skeleton3D:Base",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "probeSkeleton:Skeleton3D:Base",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "probeBone:Skeleton3D:Base",
+			"ok": true
+		},
+		{
+			"details": 0.0000000596046447753906,
+			"name": "nativeMatrix:Skeleton3D:Base",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "probeNode:Skeleton3D:Tip",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "probeSkeleton:Skeleton3D:Tip",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "probeBone:Skeleton3D:Tip",
+			"ok": true
+		},
+		{
+			"details": 0.0000000596046447753906,
+			"name": "nativeMatrix:Skeleton3D:Tip",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "restVertexMatch:WeightedPanel:corner-0",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "skinVertexData:WeightedPanel:corner-0",
+			"ok": true
+		},
+		{
+			"details": 0.0000151902122524916,
+			"name": "nativeSkinVertex:WeightedPanel:corner-0",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "restVertexMatch:WeightedPanel:corner-2",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "skinVertexData:WeightedPanel:corner-2",
+			"ok": true
+		},
+		{
+			"details": 0.0000153928413055837,
+			"name": "nativeSkinVertex:WeightedPanel:corner-2",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "restVertexMatch:WeightedPanel:corner-6",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "skinVertexData:WeightedPanel:corner-6",
+			"ok": true
+		},
+		{
+			"details": 0.0000163658060046146,
+			"name": "nativeSkinVertex:WeightedPanel:corner-6",
+			"ok": true
+		},
+		{
+			"details": 0.266666666666667,
+			"name": "sampleRange",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "nonemptySampleProbes",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "probeNode:Skeleton3D:Base",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "probeSkeleton:Skeleton3D:Base",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "probeBone:Skeleton3D:Base",
+			"ok": true
+		},
+		{
+			"details": 0.0000000596046447753906,
+			"name": "nativeMatrix:Skeleton3D:Base",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "probeNode:Skeleton3D:Tip",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "probeSkeleton:Skeleton3D:Tip",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "probeBone:Skeleton3D:Tip",
+			"ok": true
+		},
+		{
+			"details": 0.0000000596046447753906,
+			"name": "nativeMatrix:Skeleton3D:Tip",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "restVertexMatch:WeightedPanel:corner-0",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "skinVertexData:WeightedPanel:corner-0",
+			"ok": true
+		},
+		{
+			"details": 0.0000150578134707757,
+			"name": "nativeSkinVertex:WeightedPanel:corner-0",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "restVertexMatch:WeightedPanel:corner-2",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "skinVertexData:WeightedPanel:corner-2",
+			"ok": true
+		},
+		{
+			"details": 0.0000160208492161473,
+			"name": "nativeSkinVertex:WeightedPanel:corner-2",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "restVertexMatch:WeightedPanel:corner-6",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "skinVertexData:WeightedPanel:corner-6",
+			"ok": true
+		},
+		{
+			"details": 0.000016994525140035,
+			"name": "nativeSkinVertex:WeightedPanel:corner-6",
+			"ok": true
+		},
+		{
+			"details": 0.533333333333333,
+			"name": "sampleRange",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "nonemptySampleProbes",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "probeNode:Skeleton3D:Base",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "probeSkeleton:Skeleton3D:Base",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "probeBone:Skeleton3D:Base",
+			"ok": true
+		},
+		{
+			"details": 0.0000000596046447753906,
+			"name": "nativeMatrix:Skeleton3D:Base",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "probeNode:Skeleton3D:Tip",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "probeSkeleton:Skeleton3D:Tip",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "probeBone:Skeleton3D:Tip",
+			"ok": true
+		},
+		{
+			"details": 0.000000238418579101562,
+			"name": "nativeMatrix:Skeleton3D:Tip",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "restVertexMatch:WeightedPanel:corner-0",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "skinVertexData:WeightedPanel:corner-0",
+			"ok": true
+		},
+		{
+			"details": 0.0000151278418343281,
+			"name": "nativeSkinVertex:WeightedPanel:corner-0",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "restVertexMatch:WeightedPanel:corner-2",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "skinVertexData:WeightedPanel:corner-2",
+			"ok": true
+		},
+		{
+			"details": 0.0000169385311892256,
+			"name": "nativeSkinVertex:WeightedPanel:corner-2",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "restVertexMatch:WeightedPanel:corner-6",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "skinVertexData:WeightedPanel:corner-6",
+			"ok": true
+		},
+		{
+			"details": 0.0000177811507455772,
+			"name": "nativeSkinVertex:WeightedPanel:corner-6",
+			"ok": true
+		},
+		{
+			"details": 0.8,
+			"name": "sampleRange",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "nonemptySampleProbes",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "probeNode:Skeleton3D:Base",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "probeSkeleton:Skeleton3D:Base",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "probeBone:Skeleton3D:Base",
+			"ok": true
+		},
+		{
+			"details": 0.0000000596046447753906,
+			"name": "nativeMatrix:Skeleton3D:Base",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "probeNode:Skeleton3D:Tip",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "probeSkeleton:Skeleton3D:Tip",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "probeBone:Skeleton3D:Tip",
+			"ok": true
+		},
+		{
+			"details": 0.0000000596046447753906,
+			"name": "nativeMatrix:Skeleton3D:Tip",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "restVertexMatch:WeightedPanel:corner-0",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "skinVertexData:WeightedPanel:corner-0",
+			"ok": true
+		},
+		{
+			"details": 0.0000150610276250518,
+			"name": "nativeSkinVertex:WeightedPanel:corner-0",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "restVertexMatch:WeightedPanel:corner-2",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "skinVertexData:WeightedPanel:corner-2",
+			"ok": true
+		},
+		{
+			"details": 0.0000160227482410846,
+			"name": "nativeSkinVertex:WeightedPanel:corner-2",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "restVertexMatch:WeightedPanel:corner-6",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "skinVertexData:WeightedPanel:corner-6",
+			"ok": true
+		},
+		{
+			"details": 0.0000169076902238885,
+			"name": "nativeSkinVertex:WeightedPanel:corner-6",
+			"ok": true
+		},
+		{
+			"details": 1.03333333333333,
+			"name": "sampleRange",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "nonemptySampleProbes",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "probeNode:Skeleton3D:Base",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "probeSkeleton:Skeleton3D:Base",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "probeBone:Skeleton3D:Base",
+			"ok": true
+		},
+		{
+			"details": 0.0000000596046447753906,
+			"name": "nativeMatrix:Skeleton3D:Base",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "probeNode:Skeleton3D:Tip",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "probeSkeleton:Skeleton3D:Tip",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "probeBone:Skeleton3D:Tip",
+			"ok": true
+		},
+		{
+			"details": 0.0000000596046447753906,
+			"name": "nativeMatrix:Skeleton3D:Tip",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "restVertexMatch:WeightedPanel:corner-0",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "skinVertexData:WeightedPanel:corner-0",
+			"ok": true
+		},
+		{
+			"details": 0.0000151902122524916,
+			"name": "nativeSkinVertex:WeightedPanel:corner-0",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "restVertexMatch:WeightedPanel:corner-2",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "skinVertexData:WeightedPanel:corner-2",
+			"ok": true
+		},
+		{
+			"details": 0.0000153928413055837,
+			"name": "nativeSkinVertex:WeightedPanel:corner-2",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "restVertexMatch:WeightedPanel:corner-6",
+			"ok": true
+		},
+		{
+			"details": null,
+			"name": "skinVertexData:WeightedPanel:corner-6",
+			"ok": true
+		},
+		{
+			"details": 0.0000163658060046146,
+			"name": "nativeSkinVertex:WeightedPanel:corner-6",
+			"ok": true
+		},
+		{
+			"details": 0.704265862703323,
+			"name": "actualMovement",
+			"ok": true
+		}
+	],
+	"clip": {
+		"lengthSeconds": 1.03333330154419,
+		"name": "ReviewBlend",
+		"tracks": 7
+	},
+	"engine": {
+		"build": "official",
+		"hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+		"hex": 263938,
+		"major": 4,
+		"minor": 7,
+		"patch": 2,
+		"status": "stable",
+		"string": "4.7.2-stable (official)",
+		"timestamp": 0
+	},
+	"geometry": {
+		"meshes": 1,
+		"skeletons": [
+			{
+				"bones": 2,
+				"name": "Skeleton3D",
+				"path": "./ReviewRig/Skeleton3D"
+			}
+		],
+		"skinnedMeshes": 1,
+		"surfaces": 1,
+		"triangles": 12
+	},
+	"maximumObservedMatrixChange": 0.704265862703323,
+	"mode": "headless GLTFDocument import and AnimationPlayer evaluation; no GPU or FPS claim",
+	"ok": true,
+	"restAssociation": "Normalize weight sum only to associate the rest vertex; actual deformation retains imported raw quantized weights",
+	"samples": [
+		{
+			"maxMatrixError": 0.0000000596046447753906,
+			"probes": [
+				{
+					"actual": [
+						[
+							1.02992272377014,
+							0.240185767412186,
+							0.302605509757996,
+							0.400000005960464
+						],
+						[
+							-0.218536302447319,
+							1.07268738746643,
+							-0.107627756893635,
+							0.600000023841858
+						],
+						[
+							-0.318592518568039,
+							0.040652722120285,
+							1.05206763744354,
+							0.200000002980232
+						],
+						[
+							0,
+							0,
+							0,
+							1
+						]
+					],
+					"maxError": 0.0000000596046447753906,
+					"name": "Skeleton3D:Base"
+				},
+				{
+					"actual": [
+						[
+							1.02992272377014,
+							0.240185767412186,
+							0.302605509757996,
+							0.64018577337265
+						],
+						[
+							-0.218536302447319,
+							1.07268738746643,
+							-0.107627756893635,
+							1.67268741130829
+						],
+						[
+							-0.318592518568039,
+							0.040652722120285,
+							1.05206763744354,
+							0.240652725100517
+						],
+						[
+							0,
+							0,
+							0,
+							1
+						]
+					],
+					"maxError": 0.0000000596046447753906,
+					"name": "Skeleton3D:Tip"
+				}
+			],
+			"time": 0.0333333333333333,
+			"vertexProbes": [
+				{
+					"actual": [
+						0.810936689376831,
+						1.49075162410736,
+						0.307023823261261
+					],
+					"blendShapeWeights": {
+						"Fit": -0.000000002781549879316
+					},
+					"distanceM": 0.0000151902122524916,
+					"name": "WeightedPanel:corner-0",
+					"restMatchDistanceM": 0.000000133280039449346,
+					"surface": 0,
+					"vertex": 0
+				},
+				{
+					"actual": [
+						0.703741431236267,
+						1.55010378360748,
+						0.073185533285141
+					],
+					"blendShapeWeights": {
+						"Fit": -0.000000002781549879316
+					},
+					"distanceM": 0.0000153928413055837,
+					"name": "WeightedPanel:corner-2",
+					"restMatchDistanceM": 0.00000012287812012346,
+					"surface": 0,
+					"vertex": 6
+				},
+				{
+					"actual": [
+						0.863972067832947,
+						1.55283963680267,
+						0.000427529215812683
+					],
+					"blendShapeWeights": {
+						"Fit": -0.000000002781549879316
+					},
+					"distanceM": 0.0000163658060046146,
+					"name": "WeightedPanel:corner-6",
+					"restMatchDistanceM": 0.0000000372529029846191,
+					"surface": 0,
+					"vertex": 18
+				}
+			]
+		},
+		{
+			"maxMatrixError": 0.0000000596046447753906,
+			"probes": [
+				{
+					"actual": [
+						[
+							1.04419982433319,
+							0.167561829090118,
+							0.302605509757996,
+							0.400000005960464
+						],
+						[
+							-0.1429742872715,
+							1.0853453874588,
+							-0.107627756893635,
+							0.600000023841858
+						],
+						[
+							-0.314968913793564,
+							0.0628364384174347,
+							1.05206763744354,
+							0.200000002980232
+						],
+						[
+							0,
+							0,
+							0,
+							1
+						]
+					],
+					"maxError": 0.0000000596046447753906,
+					"name": "Skeleton3D:Base"
+				},
+				{
+					"actual": [
+						[
+							1.04419982433319,
+							0.255803108215332,
+							0.232834339141846,
+							0.567561864852905
+						],
+						[
+							-0.1429742872715,
+							0.993413031101227,
+							-0.450210213661194,
+							1.68534541130066
+						],
+						[
+							-0.314968913793564,
+							0.397109150886536,
+							0.97626793384552,
+							0.262836456298828
+						],
+						[
+							0,
+							0,
+							0,
+							1
+						]
+					],
+					"maxError": 0.0000000596046447753906,
+					"name": "Skeleton3D:Tip"
+				}
+			],
+			"time": 0.266666666666667,
+			"vertexProbes": [
+				{
+					"actual": [
+						0.738660931587219,
+						1.51751720905304,
+						0.304349809885025
+					],
+					"blendShapeWeights": {
+						"Fit": 0.373333305120468
+					},
+					"distanceM": 0.0000150578134707757,
+					"name": "WeightedPanel:corner-0",
+					"restMatchDistanceM": 0.000000133280039449346,
+					"surface": 0,
+					"vertex": 0
+				},
+				{
+					"actual": [
+						0.634319543838501,
+						1.60912537574768,
+						0.065174475312233
+					],
+					"blendShapeWeights": {
+						"Fit": 0.373333305120468
+					},
+					"distanceM": 0.0000160208492161473,
+					"name": "WeightedPanel:corner-2",
+					"restMatchDistanceM": 0.00000012287812012346,
+					"surface": 0,
+					"vertex": 6
+				},
+				{
+					"actual": [
+						0.802798688411713,
+						1.62127149105072,
+						0.0138832479715347
+					],
+					"blendShapeWeights": {
+						"Fit": 0.373333305120468
+					},
+					"distanceM": 0.000016994525140035,
+					"name": "WeightedPanel:corner-6",
+					"restMatchDistanceM": 0.0000000372529029846191,
+					"surface": 0,
+					"vertex": 18
+				}
+			]
+		},
+		{
+			"maxMatrixError": 0.000000238418579101562,
+			"probes": [
+				{
+					"actual": [
+						[
+							1.05425071716309,
+							0.083579033613205,
+							0.302605509757996,
+							0.400000005960464
+						],
+						[
+							-0.0557820051908493,
+							1.09329986572266,
+							-0.107627756893635,
+							0.600000023841858
+						],
+						[
+							-0.308940023183823,
+							0.0878061056137085,
+							1.05206763744354,
+							0.200000002980232
+						],
+						[
+							0,
+							0,
+							0,
+							1
+						]
+					],
+					"maxError": 0.0000000596046447753906,
+					"name": "Skeleton3D:Base"
+				},
+				{
+					"actual": [
+						[
+							1.05425071716309,
+							0.258868634700775,
+							0.177602335810661,
+							0.483579039573669
+						],
+						[
+							-0.0557820051908493,
+							0.766866028308868,
+							-0.786641597747803,
+							1.69329988956451
+						],
+						[
+							-0.308940023183823,
+							0.744918584823608,
+							0.748099386692047,
+							0.28780609369278
+						],
+						[
+							0,
+							0,
+							0,
+							1
+						]
+					],
+					"maxError": 0.000000238418579101562,
+					"name": "Skeleton3D:Tip"
+				}
+			],
+			"time": 0.533333333333333,
+			"vertexProbes": [
+				{
+					"actual": [
+						0.655581116676331,
+						1.54838418960571,
+						0.305375695228577
+					],
+					"blendShapeWeights": {
+						"Fit": 0.800000071525574
+					},
+					"distanceM": 0.0000151278418343281,
+					"name": "WeightedPanel:corner-0",
+					"restMatchDistanceM": 0.000000133280039449346,
+					"surface": 0,
+					"vertex": 0
+				},
+				{
+					"actual": [
+						0.553249835968018,
+						1.68047618865967,
+						0.0755658149719238
+					],
+					"blendShapeWeights": {
+						"Fit": 0.800000071525574
+					},
+					"distanceM": 0.0000169385311892256,
+					"name": "WeightedPanel:corner-2",
+					"restMatchDistanceM": 0.00000012287812012346,
+					"surface": 0,
+					"vertex": 6
+				},
+				{
+					"actual": [
+						0.728606462478638,
+						1.69443833827972,
+						0.0451996326446533
+					],
+					"blendShapeWeights": {
+						"Fit": 0.800000071525574
+					},
+					"distanceM": 0.0000177811507455772,
+					"name": "WeightedPanel:corner-6",
+					"restMatchDistanceM": 0.0000000372529029846191,
+					"surface": 0,
+					"vertex": 18
+				}
+			]
+		},
+		{
+			"maxMatrixError": 0.0000000596046447753906,
+			"probes": [
+				{
+					"actual": [
+						[
+							1.04419982433319,
+							0.167561829090118,
+							0.302605509757996,
+							0.400000005960464
+						],
+						[
+							-0.142974302172661,
+							1.0853453874588,
+							-0.107627756893635,
+							0.600000023841858
+						],
+						[
+							-0.314968913793564,
+							0.0628364309668541,
+							1.05206763744354,
+							0.200000002980232
+						],
+						[
+							0,
+							0,
+							0,
+							1
+						]
+					],
+					"maxError": 0.0000000596046447753906,
+					"name": "Skeleton3D:Base"
+				},
+				{
+					"actual": [
+						[
+							1.04419982433319,
+							0.25580307841301,
+							0.232834339141846,
+							0.567561864852905
+						],
+						[
+							-0.142974302172661,
+							0.993413031101227,
+							-0.450210124254227,
+							1.68534541130066
+						],
+						[
+							-0.314968913793564,
+							0.397109091281891,
+							0.97626793384552,
+							0.262836426496506
+						],
+						[
+							0,
+							0,
+							0,
+							1
+						]
+					],
+					"maxError": 0.0000000596046447753906,
+					"name": "Skeleton3D:Tip"
+				}
+			],
+			"time": 0.8,
+			"vertexProbes": [
+				{
+					"actual": [
+						0.738660931587219,
+						1.51751720905304,
+						0.304349809885025
+					],
+					"blendShapeWeights": {
+						"Fit": 0.373333364725113
+					},
+					"distanceM": 0.0000150610276250518,
+					"name": "WeightedPanel:corner-0",
+					"restMatchDistanceM": 0.000000133280039449346,
+					"surface": 0,
+					"vertex": 0
+				},
+				{
+					"actual": [
+						0.634319543838501,
+						1.60912537574768,
+						0.065174475312233
+					],
+					"blendShapeWeights": {
+						"Fit": 0.373333364725113
+					},
+					"distanceM": 0.0000160227482410846,
+					"name": "WeightedPanel:corner-2",
+					"restMatchDistanceM": 0.00000012287812012346,
+					"surface": 0,
+					"vertex": 6
+				},
+				{
+					"actual": [
+						0.802798688411713,
+						1.62127149105072,
+						0.0138832479715347
+					],
+					"blendShapeWeights": {
+						"Fit": 0.373333364725113
+					},
+					"distanceM": 0.0000169076902238885,
+					"name": "WeightedPanel:corner-6",
+					"restMatchDistanceM": 0.0000000372529029846191,
+					"surface": 0,
+					"vertex": 18
+				}
+			]
+		},
+		{
+			"maxMatrixError": 0.0000000596046447753906,
+			"probes": [
+				{
+					"actual": [
+						[
+							1.02992272377014,
+							0.240185767412186,
+							0.302605509757996,
+							0.400000005960464
+						],
+						[
+							-0.218536302447319,
+							1.07268738746643,
+							-0.107627756893635,
+							0.600000023841858
+						],
+						[
+							-0.318592518568039,
+							0.040652722120285,
+							1.05206763744354,
+							0.200000002980232
+						],
+						[
+							0,
+							0,
+							0,
+							1
+						]
+					],
+					"maxError": 0.0000000596046447753906,
+					"name": "Skeleton3D:Base"
+				},
+				{
+					"actual": [
+						[
+							1.02992272377014,
+							0.240185767412186,
+							0.302605509757996,
+							0.64018577337265
+						],
+						[
+							-0.218536302447319,
+							1.07268738746643,
+							-0.107627756893635,
+							1.67268741130829
+						],
+						[
+							-0.318592518568039,
+							0.040652722120285,
+							1.05206763744354,
+							0.240652725100517
+						],
+						[
+							0,
+							0,
+							0,
+							1
+						]
+					],
+					"maxError": 0.0000000596046447753906,
+					"name": "Skeleton3D:Tip"
+				}
+			],
+			"time": 1.03333333333333,
+			"vertexProbes": [
+				{
+					"actual": [
+						0.810936689376831,
+						1.49075162410736,
+						0.307023823261261
+					],
+					"blendShapeWeights": {
+						"Fit": 0.0
+					},
+					"distanceM": 0.0000151902122524916,
+					"name": "WeightedPanel:corner-0",
+					"restMatchDistanceM": 0.000000133280039449346,
+					"surface": 0,
+					"vertex": 0
+				},
+				{
+					"actual": [
+						0.703741431236267,
+						1.55010378360748,
+						0.073185533285141
+					],
+					"blendShapeWeights": {
+						"Fit": 0.0
+					},
+					"distanceM": 0.0000153928413055837,
+					"name": "WeightedPanel:corner-2",
+					"restMatchDistanceM": 0.00000012287812012346,
+					"surface": 0,
+					"vertex": 6
+				},
+				{
+					"actual": [
+						0.863972067832947,
+						1.55283963680267,
+						0.000427529215812683
+					],
+					"blendShapeWeights": {
+						"Fit": 0.0
+					},
+					"distanceM": 0.0000163658060046146,
+					"name": "WeightedPanel:corner-6",
+					"restMatchDistanceM": 0.0000000372529029846191,
+					"surface": 0,
+					"vertex": 18
+				}
+			]
+		}
+	],
+	"schema": "refas.godot.playback/v1",
+	"tolerances": {
+		"matrix": 0.00002,
+		"restVertexMatchM": 0.00001,
+		"skinVertexM": 0.0001
+	},
+	"vertexEvaluation": "Godot bake_mesh_from_current_blend_shape_mix, then imported Skin binds/weights and evaluated Skeleton3D poses"
+}

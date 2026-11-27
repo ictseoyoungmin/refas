@@ -16,7 +16,7 @@ import {
   validateBackendExportResult,
   validateCanonicalExportView,
   validateCanonicalExportViewBindings,
-} from '../skills/refas/scripts/lib/index.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
 
 const D = (character = 'a') => character.repeat(64);
 const frame = (parentId) => ({parentId, translation_m: [0, 0, 0], rotation_quat_xyzw: [0, 0, 0, 1]});

@@ -11,7 +11,7 @@ import {
   validateBilateralPairRealization,
   validateRelationalDiscrepancy,
   validateRelationalStructure,
-} from '../skills/refas/scripts/lib/index.mjs';
+} from '../legacy/v1/scripts/lib/index.mjs';
 import {
   CORVID_LEG_OVERFIT,
   legacyIndependentCorvidLegMeshes,
