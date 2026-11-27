@@ -406,7 +406,7 @@
       "baselineNote": "Added by the user's explicit 2026-11-22 scope expansion; no credit at the scope-change baseline."
     }
   ],
-  "currentCheckpointId": "r2-06-matched-comparison-d02f6188",
+  "currentCheckpointId": "delivery-main-integration-fbe4821f",
   "checkpoints": [
     {
       "id": "baseline-3217b46e",
@@ -1495,6 +1495,261 @@
         }
       },
       "note": "Append-only comparison acceptance adds U1 alone after the wearable checkpoint at f3c44c1fea7f099bd50db1fa36c407ead2239d6e, in separate Issue #432. The seven earlier checkpoints and all fixed root definitions remain unchanged. Coverage is 34/37 = 92% rounded: R2-06 6/7 WIP, R2-07 5/5 REVIEW, 0/7 CLOSED. E2, D2 and D3 remain open. d02f6188 identifies the tested shared observer; product comparison snapshots remain none/a29bcc42/f174f6b1. Selected wearable acceptance and all retained default20, avatar strict/reimport, static direct-equality and contact-binder failures remain separate and unchanged. No runtime change, final-art approval, cumulative-main 1MiB waiver, rewrite/main merge or formal publication follows from this comparison."
+    },
+    {
+      "id": "delivery-main-integration-fbe4821f",
+      "date": "2026-11-27",
+      "kind": "verified-implementation",
+      "checklistVersion": 2,
+      "sourceCommit": "fbe4821fb04ff72f44a69761dd5ddfc22cdbc3dd",
+      "runtimeCommit": "f174f6b1cf9ce19ce905b58490d117aca01cea4b",
+      "demonstratedCriteria": [
+        "B1",
+        "B2",
+        "B3",
+        "B4",
+        "W1",
+        "W2",
+        "W3",
+        "W4",
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "O1",
+        "O2",
+        "O3",
+        "O4",
+        "K1",
+        "K2",
+        "K3",
+        "K4",
+        "E1",
+        "E3",
+        "E4",
+        "E5",
+        "E6",
+        "D1",
+        "D2",
+        "U1",
+        "U2",
+        "U3",
+        "U4",
+        "U5",
+        "U6"
+      ],
+      "counts": {
+        "demonstrated": 35,
+        "total": 37,
+        "percentRounded": 95,
+        "bySlice": {
+          "R2-01": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-02": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-03": {
+            "demonstrated": 6,
+            "total": 6
+          },
+          "R2-04": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-05": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-06": {
+            "demonstrated": 6,
+            "total": 7
+          },
+          "Delivery": {
+            "demonstrated": 2,
+            "total": 3
+          },
+          "R2-07": {
+            "demonstrated": 5,
+            "total": 5
+          }
+        }
+      },
+      "notionTaskStatuses": {
+        "R2-01": "REVIEW",
+        "R2-02": "REVIEW",
+        "R2-03": "REVIEW",
+        "R2-04": "REVIEW",
+        "R2-05": "REVIEW",
+        "R2-06": "WIP",
+        "R2-07": "REVIEW"
+      },
+      "evidenceUpdates": {
+        "D2": {
+          "evidence": [
+            "https://github.com/ictseoyoungmin/refas/pull/435",
+            "https://github.com/ictseoyoungmin/refas/pull/399",
+            "https://github.com/ictseoyoungmin/refas/commit/fbe4821fb04ff72f44a69761dd5ddfc22cdbc3dd",
+            "https://github.com/ictseoyoungmin/refas/actions/runs/45946321807",
+            "https://github.com/ictseoyoungmin/refas/actions/runs/45946321772",
+            "docs/WORK_STATUS.md"
+          ],
+          "note": "Declared source integration is accepted and complete. PR435 merged the independently reviewed native-production foundation into main at c2831abb; PR399 then merged the reviewed remainder at fbe4821f. The synchronized dc7f37e9 head and final main merge retain the previously reviewed bafa777e tree. Both source scopes pass the unchanged artifact budget, fresh required repository checks and current remote CI. This records D2 only, without promoting E2, D3, task closure, asset quality or optional PR425."
+        }
+      },
+      "mainIntegration": {
+        "foundationPullRequest": 435,
+        "foundationMergeCommit": "c2831abb5b089baf9436e786047c8b73dff38fee",
+        "foundationSourceCommit": "e6cecf2da7d4ed3de8b05236451ded351068bad9",
+        "foundationTree": "36dcc6ba3ed17055356506333a867aaa3186500d",
+        "remainderPullRequest": 399,
+        "reviewedSourceCommit": "16198720df3bbfa42e9bf547199598a3dd5b3710",
+        "synchronizedHead": "dc7f37e986589fdf98015f307ff1ac6de673d83e",
+        "mainMergeCommit": "fbe4821fb04ff72f44a69761dd5ddfc22cdbc3dd",
+        "reviewedAndMergedTree": "bafa777e2d3f97c8a898b8922eaa913b07e0bdff",
+        "primaryIssue398": "closed after accepted source integration; remaining evidence and publication tracked separately",
+        "freshRepositoryChecks": {
+          "foundation": {
+            "source": "e6cecf2da7d4ed3de8b05236451ded351068bad9",
+            "javascriptPassed": 948,
+            "javascriptFailed": 0,
+            "javascriptSkipped": 0,
+            "requiredGateCount": 5,
+            "allRequiredGatesPassed": true,
+            "dogfoodCheckpoints": 11,
+            "skillFiles": 16,
+            "packageFiles": 20,
+            "packageBytes": 258556
+          },
+          "remainder": {
+            "source": "16198720df3bbfa42e9bf547199598a3dd5b3710",
+            "javascriptPassed": 948,
+            "javascriptFailed": 0,
+            "javascriptSkipped": 0,
+            "requiredGateCount": 5,
+            "allRequiredGatesPassed": true,
+            "dogfoodCheckpoints": 11,
+            "skillFiles": 19,
+            "packageFiles": 23,
+            "packageBytes": 301916
+          },
+          "requiredCommands": [
+            "npm test",
+            "npm run test:python",
+            "npm run check",
+            "npm run dogfood",
+            "npm run release:audit"
+          ],
+          "actualBlenderGodot": "Existing exact-source capability evidence is reused with its original scope; no new real-asset or 187-test execution is claimed by this integration."
+        },
+        "exactHeadCi": {
+          "head": "dc7f37e986589fdf98015f307ff1ac6de673d83e",
+          "ciRun": 45946321807,
+          "productionRun": 45946321772,
+          "conclusion": "success"
+        },
+        "recovery": "Normal merge reverts preserve a29bcc42, c2831abb and all reviewed feature commits; accepted/rejected private asset archives and frozen comparisons remain separate."
+      },
+      "timingCostEvidence": {
+        "criterion": "E2",
+        "status": "blocked",
+        "issue": "https://github.com/ictseoyoungmin/refas/issues/436",
+        "providerModelSnapshot": null,
+        "requestUsage": null,
+        "billedCost": null,
+        "reason": "Actual matched provider/model/usage and attributable billed-cost telemetry remain unavailable. Existing Blender time, subscription prices, turns and file bytes cannot fill these observations. No new model run or cost claim is credited."
+      },
+      "boundaries": {
+        "closedTasks": 0,
+        "totalTasks": 7,
+        "finishedVisualAcceptance": {
+          "jacket": "rejected",
+          "automail": "rejected"
+        },
+        "developmentMetadata": "2.0.0-alpha.1",
+        "retainedLegacyRuntime": "1.4.2",
+        "publishedRelease": "v1.4.1",
+        "pullRequest": "https://github.com/ictseoyoungmin/refas/pull/399",
+        "pullRequestState": "Merged",
+        "prototypeSourceAcceptance": {
+          "jacket": "demonstrated within original task scope",
+          "automail": "demonstrated within original task scope"
+        },
+        "usableAssetAcceptance": {
+          "automail": "accepted only for declared rigid reach/partial grip and documented untextured scope",
+          "jacket": "accepted only for the identified original26-mesh avatar, frames1-97 at30fps, frozen source contact policies and predeclared100-micrometre consumer profile"
+        },
+        "standaloneAutomailLibraryId": "libfile_469aa206ad3c819180cbc2007000a572",
+        "authoringCandidatePullRequest": "https://github.com/ictseoyoungmin/refas/pull/425",
+        "authoringCandidatePullRequestState": "Draft",
+        "checkpointIssue": "https://github.com/ictseoyoungmin/refas/issues/437",
+        "openCriteria": [
+          "E2",
+          "D3"
+        ],
+        "retainedDiagnosticFailures": {
+          "consumerDefault20um": "FAIL: 5,883 point checks; predeclared100um profile separately PASS without a physical-contact allowance",
+          "originalAvatarStrictGeometry": "FAIL: first-frame strict geometric orientation; remaining96 frames unassessed by that route",
+          "avatarBlenderReimport2um": "FAIL: Body.001 at frames28/70, maximum2.017388303um; raw GLB replay of all26 meshes over97 frames separately PASS within unchanged2um",
+          "directRawLiveStaticHairEquality": "FAIL: lossy engine static-position representation; exact source-derived uint16 AABB forward mapping separately PASS with zero fitted parameters and one-ULP negative control",
+          "originalExactContactPairAndRestBinder": "FAIL retained; independently reviewed unchanged oriented/material/sheet/source lineage and original finite construction domains provide separate scoped evidence"
+        },
+        "priorWearableMergeCommit": "f3c44c1fea7f099bd50db1fa36c407ead2239d6e",
+        "comparisonAcceptance": {
+          "criterion": "U1",
+          "scope": "Independent prospective continuation comparison of both existing task types under frozen common inputs and resource caps; positive, failed and missing results retained.",
+          "assetUsabilityGranted": false,
+          "productSuperiorityClaimed": false,
+          "speedOrCostAdvantageClaimed": false,
+          "reconstructionFromScratchClaimed": false,
+          "retainedResults": {
+            "blindVisualRanking": "Tie for both tasks across all three conditions and all 54 reviewed output images.",
+            "garmentConsumerDefault20um": "FAIL for no-skill, fixed-1.x and 2.0.",
+            "garmentConsumerPredeclared100um": "FAIL for all three at the unchanged matrix threshold; 2.0 still has 388 original unused-hair-bone matrix failures, with no all-bone exemption.",
+            "armActualConsumer121": "PASS for each condition within the recorded matrix/geometry scope; not mechanical-contact or overall asset acceptance.",
+            "currentV2ArmExportGeometryDiagnostic": "FAIL/unresolved: exact-coincident-position diagnostic reports 35 nonmanifold edges and 60 inconsistent-winding edges.",
+            "fixedV1SelectedCandidateEditRestore": "NOT_EVALUATED: the executed edit/restore used the exact supplied baseline before retopology.",
+            "garmentHairContacts": "Each condition retains 10,765 opacity-confirmed hair/cloth contact pairs at each of the three common sampled poses.",
+            "providerModelTokenAndBilledCost": "Unavailable; one run per condition and interrupted plain telemetry prevent E2 credit."
+          }
+        },
+        "historicalCumulativeMainArtifactBudget": {
+          "limitBytes": 1048576,
+          "status": "FAIL",
+          "note": "The original cumulative-main result remains FAIL: 1,150,150 bytes against the unchanged 1,048,576-byte limit. Normal sequential integration of two independently reviewed source scopes resolved integration; the grandfather anchor, limits and historical verdict were not changed.",
+          "historical": true,
+          "changedBytes": 1150150,
+          "requestedBase": "a29bcc42f4da666c812462eb130836f2d766b0a1",
+          "effectiveBase": "ea64de8adfa787537bee2b86a05ac0f4ec08dd5c",
+          "head": "16198720df3bbfa42e9bf547199598a3dd5b3710"
+        },
+        "sourceIntegrationArtifactBudget": {
+          "status": "PASS",
+          "limitBytes": 1048576,
+          "foundation": {
+            "pullRequest": 435,
+            "chargedBytes": 976655,
+            "requestedBase": "a29bcc42f4da666c812462eb130836f2d766b0a1",
+            "effectiveBase": "ea64de8adfa787537bee2b86a05ac0f4ec08dd5c",
+            "head": "e6cecf2da7d4ed3de8b05236451ded351068bad9"
+          },
+          "remainder": {
+            "pullRequest": 399,
+            "chargedBytes": 590356,
+            "requestedBase": "c2831abb5b089baf9436e786047c8b73dff38fee",
+            "effectiveBase": "c2831abb5b089baf9436e786047c8b73dff38fee",
+            "head": "dc7f37e986589fdf98015f307ff1ac6de673d83e"
+          },
+          "policyChanged": false
+        },
+        "blockedEvidenceIssue": "https://github.com/ictseoyoungmin/refas/issues/436",
+        "releasePreparationIssue": "https://github.com/ictseoyoungmin/refas/issues/437"
+      },
+      "note": "Append-only D2 acceptance after the actual main merge at fbe4821f. The eight prior checkpoints, all 37 criterion meanings, checklist versions and projections remain unchanged. Coverage is 35/37 = 95% rounded, Delivery 2/3; R2-06 remains 6/7 WIP, R2-07 5/5 REVIEW and 0/7 tasks CLOSED. This is the historical 2.0.0-alpha.1 main-integration snapshot, not a 2.0.0 publication record. Current release preparation is tracked separately in Issue437. E2 and D3 remain open; all existing visual/consumer failures, scoped asset acceptance, frozen comparison outcomes and PR425 exclusion remain unchanged."
     }
   ],
   "projections": [

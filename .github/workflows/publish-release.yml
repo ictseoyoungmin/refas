@@ -33,11 +33,21 @@ jobs:
       github.event_name == 'workflow_dispatch' &&
       github.ref == 'refs/heads/main' && inputs.confirmation == 'PUBLISH'
     runs-on: ubuntu-latest
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
     steps:
       - uses: actions/checkout@v7
         with:
           ref: ${{ inputs.release_sha }}
           persist-credentials: false
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
 
       - name: Verify exact main SHA and post-merge full CI
         env:
@@ -113,6 +123,11 @@ jobs:
           console.log(`version=${pkg.version}`);
           console.log(`tag=v${pkg.version}`);
           NODE
+
+      - name: Prepare and install the exact release package
+        env:
+          RELEASE_SHA: ${{ inputs.release_sha }}
+        run: node tools/release-package.mjs prepare "$RUNNER_TEMP/refas-release-package"
 
       - name: Publish or verify GitHub Release
         env:
@@ -210,6 +225,9 @@ jobs:
             }
 
             const releaseSha = existingRef.object.sha;
+            if (releaseSha !== sha) {
+              throw new Error(`${tag} belongs to another commit; immutable tags cannot publish a different SHA`);
+            }
             const taggedPackage = JSON.parse(await readTextFileAtRef('package.json', releaseSha));
             if (taggedPackage.version !== version) {
               throw new Error(`${tag} points to package version ${taggedPackage.version}, expected ${version}`);
@@ -243,6 +261,10 @@ jobs:
 
           const notes = extractReleaseNotes(fs.readFileSync('CHANGELOG.md', 'utf8'));
           const desired = desiredRelease(notes);
+          const {response: mainResponse, body: currentMain} = await request('/git/ref/heads/main');
+          if (!mainResponse.ok || currentMain.object?.type !== 'commit' || currentMain.object?.sha !== sha) {
+            throw new Error('release_sha is not the current main HEAD before publication');
+          }
           const {response, body} = await request('/releases', {
             method: 'POST',
             body: JSON.stringify({
@@ -265,3 +287,9 @@ jobs:
           verifyReleaseMetadata(verifiedRelease, sha, desired);
           console.log(`published ${tag} at ${sha}: ${body.html_url}`);
           NODE
+
+      - name: Publish or verify the immutable package assets
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_SHA: ${{ inputs.release_sha }}
+        run: node tools/release-package.mjs publish "$RUNNER_TEMP/refas-release-package"

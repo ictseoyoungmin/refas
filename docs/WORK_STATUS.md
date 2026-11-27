@@ -2,20 +2,24 @@
 
 ## Current resumption point
 
-Status: **2026-11-27**. The fixed checklist is **34/37 = 92% rounded** after
-independent acceptance of the prospectively matched comparison, **U1 only**.
-The earlier U2/U3/U6 declared-use acceptance remains separate. R2-06 is **6/7,
-WIP**; R2-07 remains **5/5, REVIEW**; **0/7 tasks are CLOSED**. **E2, D2 and D3
-remain open.** This is binary criterion coverage, not finished-art quality,
-effort completed, a product-superiority score or release readiness.
+Status: **2026-11-27**. The fixed checklist is **35/37 = 95% rounded** after
+accepted main integration, **D2 only**. The eight prior checkpoints and all
+criterion meanings remain unchanged. R2-06 is **6/7, WIP**; R2-07 is **5/5,
+REVIEW**; **0/7 tasks are CLOSED**. **E2 and D3 remain open.** This is binary
+criterion coverage, not finished-art quality, effort completed or publication.
 
-The current documentation checkpoint is
-[Issue #432](https://github.com/ictseoyoungmin/refas/issues/432),
-following the [wearable checkpoint merge](https://github.com/ictseoyoungmin/refas/commit/f3c44c1fea7f099bd50db1fa36c407ead2239d6e).
-Overall rewrite and
-delivery tracking remains [Issue #398](https://github.com/ictseoyoungmin/refas/issues/398)
-and [Draft PR #399](https://github.com/ictseoyoungmin/refas/pull/399). Read the
-[fixed progress ledger](development/refas-2-progress.md),
+[PR #435](https://github.com/ictseoyoungmin/refas/pull/435) merged the reviewed
+foundation at `c2831abb…`; [PR #399](https://github.com/ictseoyoungmin/refas/pull/399)
+merged the reviewed remainder at
+[`fbe4821f`](https://github.com/ictseoyoungmin/refas/commit/fbe4821fb04ff72f44a69761dd5ddfc22cdbc3dd).
+The final main tree is `bafa777e…`, exactly equal to reviewed source `16198720…`
+and synchronized CI head `dc7f37e9…`. [Issue #398](https://github.com/ictseoyoungmin/refas/issues/398)
+is closed for source integration. [Issue #437](https://github.com/ictseoyoungmin/refas/issues/437)
+owns current **2.0.0 release preparation**, while
+[E2 follow-up #436](https://github.com/ictseoyoungmin/refas/issues/436) remains
+blocked on actual prospective timing/model-usage/billing evidence.
+
+Read the [fixed progress ledger](development/refas-2-progress.md),
 [canonical JSON](development/refas-2-progress.json),
 [matched comparison report](development/evidence/usable-assets/matched-comparison.md),
 [wearable delivery report](development/evidence/usable-assets/wearable-delivery.md),
@@ -23,11 +27,29 @@ and [Draft PR #399](https://github.com/ictseoyoungmin/refas/pull/399). Read the
 [Work OS](https://app.notion.com/p/41fc6a3b5bf181c2b2cdfac4605ef7d7) and
 [skill relationship map](development/refas-2-skill-map.md).
 
-This file is a current resumption index. Its previous complete contents are
-retained at the [immutable wearable-delivery work-status checkpoint](https://github.com/ictseoyoungmin/refas/blob/f3c44c1fea7f099bd50db1fa36c407ead2239d6e/docs/WORK_STATUS.md),
-which preserves links to the earlier f174f6b1 and 28541316 history. This update
-changes the resumption index, not the seven historical progress checkpoints, retained evidence,
-rejected models or earlier decisions.
+This current resumption index replaces the [complete pre-integration status](https://github.com/ictseoyoungmin/refas/blob/fbe4821fb04ff72f44a69761dd5ddfc22cdbc3dd/docs/WORK_STATUS.md),
+which retains the prior wearable/comparison and earlier runtime history. No
+historical checkpoint, retained evidence, rejected model or earlier verdict is
+rewritten by this update.
+
+## Accepted source integration
+
+Both foundation and remainder passed fresh `npm test`, `test:python`, `check`,
+`dogfood` and `release:audit`: **948 JavaScript tests each**, zero failures or
+skips, and **11 dogfood checkpoints each**. The foundation package is 20 files /
+258,556 bytes; the remainder is 23 files / 301,916 bytes. These checks cover
+their exact 2.0.0-alpha.1 source trees. The final
+[CI](https://github.com/ictseoyoungmin/refas/actions/runs/45946321807) and
+[production CI](https://github.com/ictseoyoungmin/refas/actions/runs/45946321772)
+passed at dc7f37e9 before the tree-identical main merge. Historical actual
+Blender/Godot capability evidence is reused with its original scope; this does
+not claim another real-asset review or 187-test execution.
+
+The original cumulative-main **1,150,150 / 1,048,576-byte FAIL** is retained.
+Integration was resolved by the independently reviewed foundation and remainder
+PRs, with **976,655** and **590,356 charged bytes** against their actual
+sequential bases. No budget limit or fixed grandfather anchor changed, and no
+private model, media, raw log, numerical array or recovery archive was added.
 
 ## Independently matched comparison
 
@@ -105,50 +127,35 @@ Both final visual-art decisions stay unapproved.
 - **Original exact contact-pair/rest binder: FAIL retained.** The accepted
   supplemental route uses unchanged oriented/material/sheet/source lineage
   and original finite construction domains, with no added policy exemption.
-- **Cumulative-main 1 MiB source-artifact budget: FAIL.** This checkpoint
-  neither waives that budget nor makes the entire rewrite ready for main.
+- **Historical cumulative-main source-artifact budget: FAIL**, 1,150,150 /
+  1,048,576 bytes. Its verdict is retained; the separate accepted integration
+  PRs above resolved main integration under the unchanged limits.
 
 ## Runtime and pending work
 
-The source checkpoint is
-[`d02f6188`](https://github.com/ictseoyoungmin/refas/commit/d02f618801167040145087812abfaa3ff5e69dcc),
-whose [PR #431](https://github.com/ictseoyoungmin/refas/pull/431) repairs live
-engine attachment observation. Actual installed production/save/export and
-edit/restore use
-[`f174f6b1`](https://github.com/ictseoyoungmin/refas/commit/f174f6b1cf9ce19ce905b58490d117aca01cea4b),
-with 19 installed skill files / 23 package files. That runtime includes
-[selective authoring discovery and thickness fields, #429](https://github.com/ictseoyoungmin/refas/pull/429).
-This documentation change adds no runtime code, installed helper or new test
-execution claim.
-
-Active development identity remains **2.0.0-alpha.1**, retained repository-only
-1.x is **1.4.2**, and the recorded published release remains **v1.4.1**. Main
-merge D2 and formal release/publication D3 remain unfinished. PR #399 remains
-Draft. The optional section-sweep [Issue #424](https://github.com/ictseoyoungmin/refas/issues/424)
-and [Draft PR #425](https://github.com/ictseoyoungmin/refas/pull/425) retain their
-own installed-use, matched-trial, source/visual and budget gates; this wearable
-acceptance does not accept that helper.
+The accepted main-integration snapshot is `fbe4821f…`, with development identity
+**2.0.0-alpha.1**. Its installed production implementation remains the exact
+[`f174f6b1`](https://github.com/ictseoyoungmin/refas/commit/f174f6b1cf9ce19ce905b58490d117aca01cea4b)
+19-file skill / 23-file package used for selected-asset delivery and edit/restore.
+The repository-only consumer correction remains
+[`d02f6188`](https://github.com/ictseoyoungmin/refas/commit/d02f618801167040145087812abfaa3ff5e69dcc).
+Retained 1.x runtime identity stays **1.4.2**. The active release-preparation
+branch coordinates **2.0.0** metadata; the recorded publication baseline is
+still **v1.4.1** until actual publication is verified. Metadata preparation is
+not D3 completion.
 
 Resume in this order:
 
-1. Review the comparison documentation/evidence for Issue #432
-   and the required source checks. Keep user models, render media, arrays, raw logs and recovery
-   archives outside Git; preserve all historical tracked evidence.
-2. **E2** remains open for prospective comparable useful-edit/full elapsed
-   time and model/tool cost. Missing provider/model/token/billing observations
-   and interrupted telemetry cannot be reconstructed from continuation times
-   or later informed repair. Retain U1's single-run limitations.
-3. Continue optional authoring work only under its own declared scope and
-   active-work ownership. Consult native revision state and the corresponding
-   source-bound report before using or reopening a model.
-4. Resolve cumulative source-budget and other outstanding review/release
-   requirements independently. Do not close tasks, merge the rewrite, publish
-   a tag/package or claim finished art from this criterion update.
+1. Complete the bounded package/publication work in [#437](https://github.com/ictseoyoungmin/refas/issues/437), with current release checks and an exact-main source binding. Append D3 only after the formal release and package are actually published; keep raw package/recovery evidence outside Git.
+2. Keep [E2 #436](https://github.com/ictseoyoungmin/refas/issues/436) blocked until an execution route provides actual provider/model/usage and attributable billed-cost data with a declared matched resource and spending limit. Preserve missing values as null, all U1 failures and its single-run limits. The existing protocol is sufficient; no general billing framework or production-runtime change is needed.
+3. Keep optional section-sweep [#424](https://github.com/ictseoyoungmin/refas/issues/424) / [Draft #425](https://github.com/ictseoyoungmin/refas/pull/425) outside the accepted distribution until its separate installed-use, matched-trial, source/visual and budget gates pass. Source integration does not accept that helper.
+4. Retain the selected asset resources and source-bound recovery histories. New source or visual evidence may reopen their owning finding; package publication cannot clear an existing model failure or close the seven Notion tasks automatically.
 
 ## Retained history and recovery index
 
 | Earlier work | Evidence retained for its exact scope |
 | --- | --- |
+| Accepted main integration | [Foundation #435](https://github.com/ictseoyoungmin/refas/pull/435), [remainder #399](https://github.com/ictseoyoungmin/refas/pull/399), exact main fbe4821f and [pre-integration status](https://github.com/ictseoyoungmin/refas/blob/fbe4821fb04ff72f44a69761dd5ddfc22cdbc3dd/docs/WORK_STATUS.md); D2 only, E2/D3 still open. |
 | Matched continuation comparison | [U1 report and durable evidence](development/evidence/usable-assets/matched-comparison.md); frozen none/a29/f174 conditions, failed and missing outcomes, no superiority or E2 credit. |
 | Selected wearable acceptance | [U2/U3/U6 report](development/evidence/usable-assets/wearable-delivery.md), [immutable preceding status](https://github.com/ictseoyoungmin/refas/blob/f3c44c1fea7f099bd50db1fa36c407ead2239d6e/docs/WORK_STATUS.md). |
 | Initial rewrite, reference adoption, distribution/import and source identity | [Progress history](development/refas-2-progress.md), [reference freshness](development/evidence/reference-freshness/README.md), [distribution/import](development/evidence/v2-distribution-and-import/README.md), [source identity](development/evidence/source-identity/README.md). |

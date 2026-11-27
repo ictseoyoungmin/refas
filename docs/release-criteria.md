@@ -1,8 +1,8 @@
 # RefAs release criteria
 
-## Production 2.0 development boundary
+## Production 2.0 release boundary
 
-The active development package is `2.0.0-alpha.1`. Its installed skill contains
+The prepared package is `2.0.0`. Its installed skill contains
 only the production workflow, directly used guidance, metadata and resources.
 Required distribution evidence includes the real npm archive's intended file
 set, matching package/runtime/plugin versions, the isolated npm entry and copied
@@ -19,7 +19,22 @@ Broader rig, physics and engine profiles require evidence when promised.
 A development metadata cutover or successful package audit does not publish
 a release. The existing explicit manual publication authorization, exact current
 main SHA, immutable tag rules and required current CI remain in force. Main
-merge and formal publication are separate unfinished delivery criteria.
+merge and formal publication are separate delivery criteria. Main integration
+was completed through #435 and #399; preparation alone does not complete
+formal publication.
+
+The publication artifact is the verified production npm archive attached to
+the matching GitHub Release with its SHA-256 file. It is not the full repository
+source archive and does not imply npm registry publication. The upload must
+match the reviewed main commit, package allowlist and actual tested archive.
+An existing asset must match exactly; conflicting assets are not overwritten.
+
+Comparable first-useful-edit time and actual model/tool cost remain open in
+[Issue #436](https://github.com/ictseoyoungmin/refas/issues/436). This bounded
+production release makes no speed/cost superiority claim. The selected assets'
+declared use and retained failures remain as recorded in their acceptance
+reports; neither release identity nor package integrity grants final-art,
+universal fitting, continuous-motion collision or physical-retention approval.
 
 ## Earlier release contracts
 

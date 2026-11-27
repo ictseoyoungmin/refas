@@ -1,6 +1,9 @@
 # RefAs 2.0 production rewrite
 
-Status: development alpha. This document describes the accepted direction and the first implementation slice; it is not a release announcement.
+Status: main integration completed; 2.0.0 publication preparation. This document
+preserves the accepted design and earlier implementation scope. The
+[current work status](../WORK_STATUS.md) distinguishes a prepared package from
+an actually published release.
 
 Work OS plan: <https://app.notion.com/p/41fc6a3b5bf181c2b2cdfac4605ef7d7>.
 
@@ -29,8 +32,9 @@ The rewrite tests a concrete hypothesis: a shorter, production-oriented skill an
 
 ## Current baseline and version boundary
 
-- Published release baseline: `v1.4.1`.
-- Active package/Python runtime/plugin metadata: `2.0.0-alpha.1`, a coordinated development identity. It is not a published stable 2.0 release.
+- Previous published release baseline: `v1.4.1`.
+- Prepared package/Python runtime/plugin metadata: `2.0.0`. Main integration is accepted at `fbe4821fb04ff72f44a69761dd5ddfc22cdbc3dd`; metadata alone does not publish a release.
+- Public installation delivery is the verified production npm archive and SHA-256 file on the matching GitHub Release. This does not imply npm registry publication. E2 timing and actual model/tool cost remain open in [Issue #436](https://github.com/ictseoyoungmin/refas/issues/436), with no speed/cost advantage claimed.
 - Starting main: `a29bcc42f4da666c812462eb130836f2d766b0a1`.
 - Preserved 1.4.2 rollback branch: `develop/v1.4.2` at `67143f45bf6f5152c404caa2d643109881bfeca2`.
 - The installed skill and npm artifact contain only the 2.0 production path. The retained 1.x runtime keeps its own `1.4.2` identity under repository-only `legacy/v1/`.

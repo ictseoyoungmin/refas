@@ -464,7 +464,7 @@ def require_visible_geometry():
               and (obj.hide_render or obj.name not in render_visible
                    or not obj.visible_get(view_layer=bpy.context.view_layer))]
     if hidden:
-        raise ValueError("Hidden or excluded meshes or curves are unsupported by the production alpha; "
+        raise ValueError("Hidden or excluded meshes or curves are unsupported by the production workflow; "
                          "unhide them or remove helper geometry from the asset scene: "
                          + ", ".join(sorted(hidden)))
 
@@ -473,7 +473,7 @@ def require_supported_objects():
     """Do not silently omit native renderable types from export or observation."""
     instanced = [obj.name for obj in bpy.context.scene.objects if obj.instance_type != "NONE"]
     if instanced:
-        raise ValueError("Object instancing is unsupported by the production alpha; realize instances "
+        raise ValueError("Object instancing is unsupported by the production workflow; realize instances "
                          "into explicit scene objects first: " + ", ".join(sorted(instanced)))
     unsupported = [obj.name + ":" + obj.type for obj in bpy.context.scene.objects
                    if obj.type not in ASSET_TYPES | {"CAMERA", "LIGHT"}]
@@ -486,7 +486,7 @@ def require_supported_objects():
                   for instance in depsgraph.object_instances
                   if instance.is_instance and not _is_curve_tessellation(instance)}
     if instancers:
-        raise ValueError("Evaluated geometry instances are unsupported by the production alpha; "
+        raise ValueError("Evaluated geometry instances are unsupported by the production workflow; "
                          "use Realize Instances or convert them to explicit mesh objects first: "
                          + ", ".join(sorted(instancers)))
 

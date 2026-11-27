@@ -2,6 +2,27 @@
 
 All notable RefAs changes are documented here. RefAs follows semantic versioning.
 
+## 2.0.0 — 2026-11-27
+
+### Native production workflow
+
+- Make the standard-library Python production entry the installed workflow. Build and revise ordinary Blender scenes, preserve references and editable native sources, inspect useful views, and restore exact recorded revisions. The npm launcher and copied skill use the same implementation.
+- Keep native iteration separate from explicit GLB delivery. Support existing native/GLB inputs, selected-object protection, classic curves, lattice cages and retained Boolean/Shrinkwrap construction meshes within their documented preservation and export limits.
+- Provide fixed-view coverage observations and optional surface binding, thickness grading and focused authoring discovery. These helpers remain optional; they do not grant visual, physical or game-readiness approval.
+- Keep the 1.x runtime and its certification contracts available only in the repository. Explicit import preserves selected source bytes and reports lost scope without inheriting old certificates or rebuilding absent authoring history.
+
+### Verified distribution and publication
+
+- Align package, Python and both plugin identities at 2.0.0. Ship only the existing 19 skill files and 23 total package files; exclude user models, rendered media, raw logs, recovery archives and legacy runtime code.
+- Publish the tested installation `.tgz` and SHA-256 file as GitHub Release assets after exact-current-main, manual `PUBLISH` and the required full CI checks. Verify matching existing assets without replacing them; conflicting content or source identity fails. This does not publish to the npm registry.
+- Integrate the previously reviewed production foundation and later improvements through separate source-budget-compliant PRs #435 and #399, preserving the existing limits, historical evidence and recovery points.
+
+### Evidence and limits
+
+- Selected garment use is accepted only on the identified original character and declared 97-frame clip with the predeclared consumer profile. The separate articulated arm retains its declared 121-frame reach/partial-grip scope. Native/export identity, local editing and exact recovery remain distinct from finished-art approval.
+- The frozen no-skill/1.x/2.0 continuation comparison remains visually tied, with its failed garment checks, arm diagnostic failure and missing evaluation retained. Later asset repairs do not replace those results.
+- Comparable first-useful-edit time and actual model/tool billing remain open in #436. No general quality, speed, cost, GPU-performance, universal fitting, continuous collision or physical-retention claim follows from this release.
+
 ## 2.0.0-alpha.1 — Unreleased
 
 ### Direct GLB authoring input
