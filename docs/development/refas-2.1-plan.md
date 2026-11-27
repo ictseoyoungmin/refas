@@ -32,15 +32,15 @@ intended form; do not ban them or infer quality from polygon/part counts.
 
 ## Fixed functional acceptance
 
-Current count: **4/20 demonstrated (M1–M4)**. Each item below is one criterion; changing
+Current count: **8/20 demonstrated (M1–M4, R1–R4)**. Each item below is one criterion; changing
 scope requires an explicit revision rather than silently changing the count.
 Whole-asset visual acceptance, performance/cost evidence and release status
 are separate outcomes. Writing this plan does not complete a criterion.
 
 | Family | Four independently tracked criteria | Current work |
 |---|---|---|
-| Surface mounting | **M1:** evaluated host frame from a bounded ray and explicit tangent; **M2:** multipoint gap bounds, preserved rigid shape/scale and failure nonmutation; **M3:** copied-skill actual Blender edit/save/reopen/re-edit with unrelated preservation; **M4:** useful source-bound garment/car feature studies, observed in actual renders. | [#441](https://github.com/ictseoyoungmin/refas/issues/441), M1–M4 demonstrated |
-| Recesses and openings | **R1:** actual declared depth/walls/floor or through opening; **R2:** wall/input limits and failure recovery; **R3:** editable cutter/outline/depth/edge controls; **R4:** installed car-feature construction and visual comparison, with cloth-shell openings distinguished. | [#442](https://github.com/ictseoyoungmin/refas/issues/442), queued |
+| Surface mounting | **M1:** evaluated host frame from a bounded ray and explicit tangent; **M2:** multipoint gap bounds, preserved rigid shape/scale and failure nonmutation; **M3:** copied-skill actual Blender edit/save/reopen/re-edit with unrelated preservation; **M4:** useful source-bound garment/car feature studies, observed in actual renders. | [PR #443](https://github.com/ictseoyoungmin/refas/pull/443), M1–M4 demonstrated and merged |
+| Recesses and openings | **R1:** actual declared depth/walls/floor or through opening; **R2:** wall/input limits and failure recovery; **R3:** editable cutter/outline/depth/edge controls; **R4:** installed car-feature construction and visual comparison, with cloth-shell openings distinguished. | [#442](https://github.com/ictseoyoungmin/refas/issues/442), R1–R4 demonstrated |
 | Sweep and loft | **S1:** controlled straight/curved intent and section changes; **S2:** editable guide/section scene generation and re-edit; **S3:** explicit handling of twist, degeneration and folded connections; **S4:** installed garment and hard-surface source-bound trials. | [#424](https://github.com/ictseoyoungmin/refas/issues/424), [draft #425](https://github.com/ictseoyoungmin/refas/pull/425) |
 | Boundary transitions | **J1:** actual join from explicit boundary correspondence; **J2:** position/tangent direction/transition width with intended creases retained; **J3:** invalid-input handling and preserved surrounding controls; **J4:** demonstrated garment junction and housing transition improvement. | queued |
 | Local constrained edits | **D1:** handles and fixed boundary limit the edited region; **D2:** supported size/thickness/obstacle-gap constraints are met or conflicts returned; **D3:** existing anchors/sections and unrelated required data retained; **D4:** useful garment/car local edits and re-edit with bounded claims. | queued |
@@ -108,6 +108,27 @@ is still unresolved. The accepted garment example is buckle construction and
 mounting; the mirror provides a controlled same-geometry before/after. Neither
 local study establishes a finished whole garment/car or superiority over an
 independent matched 2.0 workflow.
+
+### Demonstrated recess scope
+
+The copied skill constructed a source-derived central car intake study from a
+closed faceted nose. Actual same-camera before/after and a cavity close view
+show formed walls and a floor, with no cover sheet replacing the opening. The
+native was reopened and the same cutter/Boolean revised from 180 to 200 mm
+absolute depth. Final sampled depth was 199.999956–200.000015 mm; remaining
+floor and side-wall minima were 159.139 and 59.849 mm against 60/40 mm bounds.
+These dimensions and hidden depth are inferred study inputs. Thirteen floor
+and twelve wall probes do not establish global thickness.
+
+The host base mesh and five surrounding objects remained unchanged. The
+delivered GLB retained the cavity (reopened center depth 199.999992 mm) and six
+asset meshes, with no cutter surface; the native retained the editable source.
+Nine actual Blender regressions and independent counterexamples cover
+absolute re-edit, transformed hosts, thin first solid intervals, side breaches,
+ownership, static state and failure recovery. Native cutter outline/edges are
+editable, but the helper has no radius/bevel parameter and regenerates its
+cutter mesh on re-edit. This is a blind prismatic feature study, not an airflow
+duct, thin cloth pocket, complete car or whole-asset quality acceptance.
 
 ### Integration and release
 

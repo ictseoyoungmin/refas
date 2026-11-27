@@ -5,10 +5,10 @@ and what a change or removal affects. It is a repository maintenance document;
 agents making assets start with the installed `SKILL.md`, not this map.
 
 The [distribution allowlist](../../tools/verify-production-distribution.mjs)
-declares **20 installed skill files**: twelve Python files, five guides, the
+declares **21 installed skill files**: thirteen Python files, five guides, the
 skill entry, discovery metadata and one icon. Two `.npmignore` files also live
 in the source folder but are excluded from the package. The complete npm
-package has 24 files: those 20 plus the root README, LICENSE, package metadata
+package has 25 files: those 21 plus the root README, LICENSE, package metadata
 and [Node launcher](../../bin/refas.mjs). The launcher delegates to Python;
 the copied Python skill can run without Node.
 
@@ -46,6 +46,9 @@ flowchart TD
     Script -- "optional import" --> Audit
     Script -- "optional import" --> Mount["production/surface_mount.py"]
     Mount -- "evaluated host and rigid placement" --> Blender["Blender bpy and mathutils"]
+    Script -- "optional import" --> Recess["production/recess.py"]
+    Recess -- "shared internal surface frame and BVH" --> Mount
+    Recess -- "editable cutter and Boolean" --> Blender
     Script -- "optional import" --> Binding["production/surface_binding.py"]
     Script -- "optional import" --> Thickness["production/thickness_field.py"]
 ```
@@ -89,7 +92,8 @@ Paths in the first column are relative to `skills/refas/`.
 | [scripts/production/review.py](../../skills/refas/scripts/production/review.py) | Validates fixed camera/light specifications in both the host project code and Blender worker. | Both callers and the review guide must agree. Preserve captured settings through save/restore and test actual views where relevant. |
 | [scripts/production/image_compare.py](../../skills/refas/scripts/production/image_compare.py) | Optional alpha coverage comparison. Project validates regions; the temporary Blender worker decodes captured PNGs. | Removal requires retiring `compare`, both callers, review guidance, package allowlist and comparison tests. It does not own edits or baseline approval. |
 | [scripts/production/mesh_audit.py](../../skills/refas/scripts/production/mesh_audit.py) | Observes evaluated topology and anchor gaps. The worker imports its curve-tessellation discriminator at startup and calls `audit_mesh` for topology queries. Authoring scripts can also import it. | It is not optional as a whole: deleting it also breaks normal worker startup and curve instance checks. Follow worker imports, query output, topology guidance and author scripts. |
-| [scripts/production/surface_mount.py](../../skills/refas/scripts/production/surface_mount.py) | Optional Blender authoring: select an evaluated surface frame and rigidly place a detail with explicit contact samples. Author scripts call it through the catalogue/assembly guide. | Keep discovery, assembly example, package allowlist and actual Blender tests aligned. Removal affects saved author-script imports; the core worker never invokes it automatically. It does not replace deforming surface binding or collision QA. |
+| [scripts/production/surface_mount.py](../../skills/refas/scripts/production/surface_mount.py) | Optional Blender authoring: select an evaluated surface frame and rigidly place a detail with explicit contact samples. Author scripts call it through the catalogue/assembly guide; recess construction reuses its internal evaluated BVH/frame functions. | Keep discovery, assembly example, package allowlist and actual Blender tests aligned. Removal also breaks recess construction and saved author-script imports; the core worker never invokes it automatically. It does not replace deforming surface binding or collision QA. |
+| [scripts/production/recess.py](../../skills/refas/scripts/production/recess.py) | Optional Blender authoring: construct/revise one named convex blind recess with an editable construction cutter and Boolean. Uses shared surface selection and verifies sampled floor/wall geometry. | Removal affects catalogue/guide imports, package allowlist and native recess tests; existing ordinary cutter/Boolean scenes remain editable. Keep static solid and sampled-thickness limits separate from cloth openings and global wall certification. |
 | [scripts/production/surface_binding.py](../../skills/refas/scripts/production/surface_binding.py) | Optional numeric authoring API for binding and transporting a section on an explicitly chosen host triangle. No core module automatically calls it. | Search documented and retained author-script imports, not only core imports. Removing it retires the supported surface-attachment recipe and its tests. |
 | [scripts/production/thickness_field.py](../../skills/refas/scripts/production/thickness_field.py) | Optional stdlib graph operation approximating the greatest permitted thickness field under explicit upper, lower, pin and edge-gradient bounds. Author scripts choose whether and how to apply it. | Keep the assembly recipe, catalogue, package allowlist and numeric/native tests consistent. A field PASS does not certify evaluated shell clearance or wearing. Removing it affects retained author-script imports, not normal worker startup. |
 | [scripts/production/capabilities.py](../../skills/refas/scripts/production/capabilities.py) | Read-only `authoring-capabilities` catalogue; CLI calls it, AST reads current helper signatures, and records guide paths and native author imports. | Update route names, source callables and guide paths together. Removal also retires the CLI route, SKILL discovery instruction and installed discovery checks; ordinary modeling does not depend on it. |
@@ -151,6 +155,7 @@ or render merely to update this map.
 | Animation and consumer execution | [Animation tests](../../tests/test_production_animation.py), [engine playback tests](../../tests/test_production_engine_playback.py) |
 | Mesh observations | [Mesh-audit tests](../../tests/test_production_mesh_audit.py), native and curve query tests above |
 | Optional rigid mounting and evaluated surface frames | [Blender and installed-native tests](../../tests/test_production_surface_mount.py), source-bound garment/car feature studies outside Git |
+| Optional blind recess construction | [Blender and installed-native tests](../../tests/test_production_recess.py), source-bound car intake study outside Git |
 | Optional surface-binding API | [Numeric tests](../../tests/test_production_surface_binding.py), [installed Blender tests](../../tests/test_production_surface_blender.py) |
 | Optional thickness field and native application | [Independent graph-oracle tests](../../tests/test_production_thickness_field.py), [copied-skill Blender/restore test](../../tests/test_production_thickness_blender.py) |
 | Installed authoring discovery | [AST and copied-CLI tests](../../tests/test_production_capabilities.py), packed-install check above |

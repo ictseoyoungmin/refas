@@ -6,6 +6,10 @@ import re
 
 ROOT = Path(__file__).resolve().parents[2]
 ROUTES = (
+    ("blind-recess", "Cut and revise an actual blind recess from a selected surface and convex outline.",
+     "recess cavity intake socket cut depth floor wall groove 홈 매입 흡기구 절삭 깊이 벽 바닥",
+     "Blender Python", "production-assemblies.md", ("recess.cut_recess",),
+     "Static solid host and convex prismatic cut; sampled floor/wall limits, not cloth pockets or global minimum thickness."),
     ("surface-mount", "Place a rigid detail on an evaluated surface using its contact footprint.",
      "mount badge buckle bracket mirror stud rigid surface placement 부착 배치 배지 버클 장식",
      "Blender Python", "production-assemblies.md",
