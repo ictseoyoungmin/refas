@@ -21,7 +21,7 @@ Resolve primary volume, proportions and negative spaces first; then shape transi
 
 For surfaces that should form one continuous shell, derive adjoining regions from a shared boundary and give neighboring rows room to turn gradually. Separately subdivided edges can open a crack even when their control points meet. Inspect the actual evaluated connection, thickness and nearby curvature from both sides before adding small detail; preserve intentional openings. Change the cage or construction method when the evaluated form remains poor.
 
-For two existing open cage boundaries, `bridge_boundaries` from `scripts/production/boundary_bridge.py` makes a connected native transition with explicit vertex correspondence and preserved surrounding cage data. Choose native surface blending or a deliberate linear join; the assembly guide explains the supported edits and limits.
+For two existing open cage chains or closed loops, `bridge_boundaries` from `scripts/production/boundary_bridge.py` makes a connected native transition with explicit vertex correspondence and preserved surrounding cage data. Set `closed=True` for loops such as an armhole; choose native surface blending or a deliberate linear join. The assembly guide explains source winding, supported edits and limits.
 
 Load a construction guide only when its problem is present: `references/production-garments.md` for cloth transitions and folded collars, or `references/production-assemblies.md` for segmented hard surfaces, joint pivots and local pose checks.
 

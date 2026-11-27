@@ -74,9 +74,9 @@ between source vertices; verify the resulting shell in required poses.
 ## Join existing cage boundaries
 
 Use `bridge_boundaries` from `boundary_bridge.py` to connect two existing open
-edge chains in one ordinary mesh. Choose equal-length ordered vertex indices
+edge chains or two closed loops in one ordinary mesh. Choose equal-length ordered vertex indices
 with explicit `boundary_a[i]` to `boundary_b[i]` correspondence. Each selected
-edge must have exactly one adjacent face; the chains must be disjoint.
+edge must have exactly one adjacent face; the boundaries must be disjoint.
 Boundary positions set the transition span. Place them where the source's
 fold or panel transition begins and ends before joining.
 
@@ -92,10 +92,19 @@ patch_group = cage.vertex_groups.new(name="TransitionInterior")
 patch_group.add(joined["newVertices"], 1.0, "REPLACE")
 ```
 
+For a complete armhole, collar or other loop, also pass `closed=True`. List at
+least three distinct vertices per loop without repeating the first at the end;
+the helper includes each last-to-first edge. The chosen starting vertices and
+order define the cyclic correspondence, without a nearest-point or twist
+guess. Prepare compatible source-face winding before joining; the helper will
+not flip existing faces to make an incompatible request pass.
+
 `cuts` sets the number of interior rows. `SURFACE` uses Blender's native
 interpolation from adjacent faces in cage-local coordinates. `smoothness`
 controls that native blend; it is not a physical radius or prescribed tangent.
-Use `LINEAR` for an intentional straight connection. `max_bulge`, when given,
+Use `LINEAR` for an intentional straight connection. Adjacent faces can make
+SURFACE overshoot or fold; revise the source transition or deliberately choose
+LINEAR instead of assuming the smoother option is better. `max_bulge`, when given,
 limits each new vertex's world distance from its corresponding boundary-to-
 boundary segment. It does not certify the entire patch or surrounding scene.
 
@@ -106,6 +115,10 @@ ordered rows, span range and observed vertex bulge without writing a file.
 The original object survives; its mesh datablock is replaced. Keep its previous
 native revision for recovery. A failed call retains the original mesh and the
 caller's selection/context.
+
+Open chains use the native bridge operator. Closed loops first create the
+declared cyclic faces, then use native edge-ring subdivision for interior rows.
+Both paths retain the same geometry and preservation checks.
 
 The result is an ordinary connected cage: reopen it and edit its new rows using
 native Blender tools. This is a one-time topology edit, with no live rebuild

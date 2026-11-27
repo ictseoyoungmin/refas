@@ -18,6 +18,7 @@ class CapabilityTests(unittest.TestCase):
         for query, expected in (("thickness", "thickness-field"), ("두께", "thickness-field"),
                                 ("surface binding", "surface-binding"), ("lattice", "native-lattice"),
                                 ("joint handles", "local-edit"), ("국소", "local-edit"),
+                                ("closed loop", "boundary-bridge"), ("암홀", "boundary-bridge"),
                                 ("compare", "fixed-view-comparison")):
             self.assertEqual([row["id"] for row in search(query=query)["matches"]], [expected])
         self.assertEqual(search(query="unknown modeling tool")["matches"], [])

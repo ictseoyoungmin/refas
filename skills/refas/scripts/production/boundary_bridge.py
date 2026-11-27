@@ -1,4 +1,4 @@
-"""Join two explicit open cage boundaries using Blender's native bridge.
+"""Join two explicit cage boundaries using Blender's native interpolation.
 
 This is one topology edit of an ordinary static mesh, not a live loft. Native
 SURFACE interpolation uses adjacent source faces in mesh-local coordinates.
@@ -56,15 +56,15 @@ def _static(obj):
         raise ValueError('mesh has an unsupported attribute type')
 
 
-def _chain(values, count):
+def _chain(values, count, closed):
     try:
         values = tuple(values)
     except TypeError as exc:
         raise ValueError('boundary must contain ordered existing vertex indices') from exc
-    if (len(values) < 2 or any(isinstance(i, bool) or not isinstance(i, Integral)
+    if (len(values) < (3 if closed else 2) or any(isinstance(i, bool) or not isinstance(i, Integral)
                               or not 0 <= i < count for i in values)
             or len(set(values)) != len(values)):
-        raise ValueError('boundary must be an open chain of distinct existing vertices')
+        raise ValueError('boundary must contain distinct existing vertices; closed loops need at least three without a repeated endpoint')
     return tuple(int(i) for i in values)
 
 
@@ -76,8 +76,9 @@ def _face_edges(face):
     return list(zip(face, face[1:] + face[:1]))
 
 
-def _boundaries(mesh, a, b):
-    selected = {_edge(x, y) for chain in (a, b) for x, y in zip(chain, chain[1:])}
+def _boundaries(mesh, a, b, closed):
+    selected = {_edge(x, y) for chain in (a, b)
+                for x, y in (_face_edges(chain) if closed else zip(chain, chain[1:]))}
     edges = {_edge(*e.vertices): e for e in mesh.edges}
     uses = {key: [] for key in selected}
     for face in mesh.polygons:
@@ -87,10 +88,15 @@ def _boundaries(mesh, a, b):
     if (len(a) != len(b) or set(a) & set(b) or any(key not in edges or len(uses[key]) != 1 for key in selected)
             or any(mesh.vertices[i].hide for i in a + b)
             or any(edges[key].hide for key in selected)):
-        raise ValueError('bridge needs disjoint equal open boundary chains, each edge with one adjacent face')
+        raise ValueError('bridge needs disjoint equal boundaries, each edge with one adjacent face')
     if (any(not math.isfinite(x) for i in a + b for x in mesh.vertices[i].co)
             or any(math.dist(mesh.vertices[x].co, mesh.vertices[y].co) == 0 for x, y in selected)):
         raise ValueError('boundary coordinates and edge lengths must be finite and nondegenerate')
+    if closed:
+        forward = uses[_edge(a[0], a[1])][0] == (a[0], a[1])
+        if any((uses[_edge(x, y)][0] == (x, y)) != direction
+               for chain, direction in ((a, forward), (b, not forward)) for x, y in _face_edges(chain)):
+            raise ValueError('bridge winding does not continue the existing boundary faces')
     return selected, uses
 
 
@@ -131,10 +137,11 @@ def _preserved(mesh, before):
             raise ValueError('native bridge changed existing attribute ' + name)
 
 
-def _patch(mesh, before, a, b, cuts, original_uses):
+def _patch(mesh, before, a, b, cuts, original_uses, closed):
     n, old_v, old_e, old_f = len(a), len(before['vertices']), len(before['edges']), len(before['faces'])
-    if (len(mesh.vertices) != old_v + cuts*n or len(mesh.polygons) != old_f + (cuts+1)*(n-1)
-            or len(mesh.edges) != old_e + cuts*(n-1) + (cuts+1)*n):
+    segments = n if closed else n-1
+    if (len(mesh.vertices) != old_v + cuts*n or len(mesh.polygons) != old_f + (cuts+1)*segments
+            or len(mesh.edges) != old_e + cuts*segments + (cuts+1)*n):
         raise ValueError('native bridge did not produce the requested single quad strip')
     faces = [tuple(p.vertices) for p in mesh.polygons[old_f:]]
     neighbors, uses = {}, {key: list(value) for key, value in original_uses.items()}
@@ -166,11 +173,11 @@ def _patch(mesh, before, a, b, cuts, original_uses):
         if len(set(row)) != n:
             raise ValueError('native bridge merged section correspondence')
         rows.append(tuple(row))
-    expected = {frozenset((row[i], row[i+1], next_row[i+1], next_row[i]))
-                for row, next_row in zip(rows, rows[1:]) for i in range(n-1)}
+    expected = {frozenset((row[i], row[(i+1)%n], next_row[(i+1)%n], next_row[i]))
+                for row, next_row in zip(rows, rows[1:]) for i in range(segments)}
     if (rows[-1] != b or {frozenset(face) for face in faces} != expected
             or {i for row in rows[1:-1] for i in row} != set(range(old_v, len(mesh.vertices)))):
-        raise ValueError('native auto-pairing differs from explicit A[i] to B[i] correspondence')
+        raise ValueError('bridge differs from explicit A[i] to B[i] correspondence')
     return rows, faces
 
 
@@ -230,8 +237,13 @@ def _postcheck(obj, mesh):
 
 
 def bridge_boundaries(obj, boundary_a, boundary_b, *, cuts, interpolation='SURFACE',
-                      smoothness=1.0, max_bulge=None, material_index=None):
-    """Join equal disjoint open chains with explicit A[i] -> B[i] correspondence.
+                      smoothness=1.0, max_bulge=None, material_index=None, closed=False):
+    """Join equal disjoint boundaries with explicit A[i] -> B[i] correspondence.
+
+    Open chains are the default. ``closed=True`` requires cyclic loops of at
+    least three distinct vertices without a repeated endpoint, and includes
+    each last-to-first edge. Caller order fixes the cyclic phase; no automatic
+    twist or winding repair is attempted. New patch UVs remain caller-authored.
 
     ``cuts`` is the number of interior rows (0..1000). SURFACE uses the source
     cage's adjacent faces in local coordinates; LINEAR retains a straight join.
@@ -252,6 +264,8 @@ def bridge_boundaries(obj, boundary_a, boundary_b, *, cuts, interpolation='SURFA
     import bmesh
     bpy.context.view_layer.update()
     _static(obj)
+    if type(closed) is not bool:
+        raise ValueError('closed must be boolean')
     if isinstance(cuts, bool) or not isinstance(cuts, Integral) or not 0 <= cuts <= 1000:
         raise ValueError('cuts must be an integer from 0 to 1000')
     if interpolation not in {'LINEAR', 'SURFACE'}:
@@ -267,11 +281,19 @@ def bridge_boundaries(obj, boundary_a, boundary_b, *, cuts, interpolation='SURFA
     if material_index is not None and (isinstance(material_index, bool) or not isinstance(material_index, Integral)
                                       or not 0 <= material_index < len(original.materials)):
         raise ValueError('material_index must name an existing material slot')
-    a, b = (_chain(values, len(original.vertices)) for values in (boundary_a, boundary_b))
-    selected_edges, original_uses = _boundaries(original, a, b)
+    a, b = (_chain(values, len(original.vertices), closed) for values in (boundary_a, boundary_b))
+    selected_edges, original_uses = _boundaries(original, a, b, closed)
     before = _record(original)
     active, selected = bpy.context.view_layer.objects.active, list(bpy.context.selected_objects)
     selection_mode = tuple(bpy.context.tool_settings.mesh_select_mode)
+    def restore_context():
+        for item in bpy.context.selected_objects:
+            item.select_set(False)
+        for item in selected:
+            item.select_set(True)
+        bpy.context.view_layer.objects.active = active
+        bpy.context.tool_settings.mesh_select_mode = selection_mode
+        bpy.context.view_layer.update()
     temporary, candidate, committed = None, None, False
     try:
         candidate = original.copy()
@@ -283,32 +305,53 @@ def bridge_boundaries(obj, boundary_a, boundary_b, *, cuts, interpolation='SURFA
         temporary.select_set(True)
         bpy.context.view_layer.objects.active = temporary
         bpy.context.tool_settings.mesh_select_mode = (False, True, False)
-        bpy.ops.object.mode_set(mode='EDIT')
-        bm = bmesh.from_edit_mesh(candidate)
-        bm.verts.ensure_lookup_table()
-        for face in bm.faces:
-            face.select_set(False)
-        for edge in bm.edges:
-            edge.select_set(False)
-        for vertex in bm.verts:
-            vertex.select_set(False)
-        for edge in bm.edges:
-            if _edge(*(vertex.index for vertex in edge.verts)) in selected_edges:
-                edge.select_set(True)
-        bmesh.update_edit_mesh(candidate)
-        result = bpy.ops.mesh.bridge_edge_loops(type='SINGLE', use_merge=False, twist_offset=0,
-                                               number_cuts=int(cuts), interpolation=interpolation,
-                                               smoothness=smoothness, profile_shape_factor=0.)
-        bpy.ops.object.mode_set(mode='OBJECT')
-        if result != {'FINISHED'}:
-            raise ValueError('native bridge did not finish')
+        if closed:
+            bm = bmesh.new()
+            try:
+                bm.from_mesh(candidate)
+                bm.verts.ensure_lookup_table()
+                reverse = original_uses[_edge(a[0], a[1])][0] == (a[0], a[1])
+                for i in range(len(a)):
+                    ids = (a[i], a[(i+1)%len(a)], b[(i+1)%len(a)], b[i])
+                    adjacent = bm.edges.get((bm.verts[ids[0]], bm.verts[ids[1]])).link_faces[0]
+                    face = bm.faces.new([bm.verts[v] for v in (reversed(ids) if reverse else ids)])
+                    face.smooth, face.material_index = adjacent.smooth, adjacent.material_index
+                bm.normal_update()
+                if cuts:
+                    bmesh.ops.subdivide_edgering(bm, edges=[bm.edges.get((bm.verts[x], bm.verts[y])) for x, y in zip(a, b)],
+                                                cuts=int(cuts), interp_mode=interpolation, smooth=smoothness,
+                                                profile_shape='SMOOTH', profile_shape_factor=0.)
+                bm.to_mesh(candidate)
+            finally:
+                bm.free()
+            candidate.update()
+        else:
+            bpy.ops.object.mode_set(mode='EDIT')
+            bm = bmesh.from_edit_mesh(candidate)
+            bm.verts.ensure_lookup_table()
+            for face in bm.faces:
+                face.select_set(False)
+            for edge in bm.edges:
+                edge.select_set(False)
+            for vertex in bm.verts:
+                vertex.select_set(False)
+            for edge in bm.edges:
+                if _edge(*(vertex.index for vertex in edge.verts)) in selected_edges:
+                    edge.select_set(True)
+            bmesh.update_edit_mesh(candidate)
+            result = bpy.ops.mesh.bridge_edge_loops(type='SINGLE', use_merge=False, twist_offset=0,
+                                                   number_cuts=int(cuts), interpolation=interpolation,
+                                                   smoothness=smoothness, profile_shape_factor=0.)
+            bpy.ops.object.mode_set(mode='OBJECT')
+            if result != {'FINISHED'}:
+                raise ValueError('native bridge did not finish')
         # Selection flushing belongs to the temporary operator context, not to
         # the user's retained cage. Restore those old element flags explicitly.
         for domain, elements in (('vertices', candidate.vertices), ('edges', candidate.edges), ('faces', candidate.polygons)):
             for element, state in zip(elements, before[domain]):
                 element.select, element.hide = state[-2:]
         _preserved(candidate, before)
-        rows, faces = _patch(candidate, before, a, b, cuts, original_uses)
+        rows, faces = _patch(candidate, before, a, b, cuts, original_uses, closed)
         minimum, maximum, bulge = _geometry(candidate, obj.matrix_world, rows, faces, max_bulge)
         new_faces = list(range(len(before['faces']), len(candidate.polygons)))
         if material_index is not None:
@@ -319,11 +362,12 @@ def bridge_boundaries(obj, boundary_a, boundary_b, *, cuts, interpolation='SURFA
         obj.data = candidate
         bpy.context.view_layer.update()
         _postcheck(obj, candidate)
+        restore_context()
         committed = True
         return {'object': obj.name, 'newVertices': list(range(len(before['vertices']), len(candidate.vertices))),
                 'newFaces': new_faces, 'rows': [list(row) for row in rows],
                 'spanRange': [minimum, maximum], 'maxBulge': bulge,
-                'scope': 'one native open-boundary cage join; local interpolation, world lengths; no global collision or G1 guarantee'}
+                'scope': 'one native ' + ('closed' if closed else 'open') + '-boundary cage join; local interpolation, world lengths; no global collision or G1 guarantee'}
     finally:
         if temporary is not None:
             if temporary.mode == 'EDIT':
@@ -335,10 +379,5 @@ def bridge_boundaries(obj, boundary_a, boundary_b, *, cuts, interpolation='SURFA
             bpy.data.meshes.remove(candidate)
         if committed and original.users == 0:
             bpy.data.meshes.remove(original)
-        for item in bpy.context.selected_objects:
-            item.select_set(False)
-        for item in selected:
-            item.select_set(True)
-        bpy.context.view_layer.objects.active = active
-        bpy.context.tool_settings.mesh_select_mode = selection_mode
-        bpy.context.view_layer.update()
+        if not committed:
+            restore_context()
