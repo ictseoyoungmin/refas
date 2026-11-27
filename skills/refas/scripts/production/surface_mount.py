@@ -12,6 +12,9 @@ import math
 from numbers import Real
 
 
+MOUNT_PROPERTY = "refas_surface_mount"
+
+
 def _number(value, label):
     if isinstance(value, bool) or not isinstance(value, Real) or not math.isfinite(value):
         raise ValueError(label + " must be finite")
@@ -262,3 +265,269 @@ def place_on_surface(part, host, *, ray_origin, ray_direction, tangent,
             "sampleCount": len(gaps), "minGap": min(gaps), "maxGap": max(gaps),
             "tolerance": precision, "clearance": clearance,
             "scope": "static rigid placement; explicit contact samples plus centroid; no whole-part collision or animation guarantee"}
+
+
+def _topology(host):
+    """Fingerprint the polygon identities used by native Surface Deform."""
+    from array import array
+    import bpy
+    import hashlib
+    import struct
+    import sys
+    evaluated = host.evaluated_get(bpy.context.evaluated_depsgraph_get())
+    mesh = evaluated.to_mesh()
+    try:
+        sizes = array('I', [0]) * len(mesh.polygons)
+        indices = array('I', [0]) * len(mesh.loops)
+        mesh.polygons.foreach_get('loop_total', sizes)
+        mesh.loops.foreach_get('vertex_index', indices)
+        if sys.byteorder != 'little':
+            sizes.byteswap()
+            indices.byteswap()
+        result = hashlib.sha256(struct.pack('<QQQ', len(mesh.vertices), len(sizes), len(indices)))
+        result.update(sizes.tobytes())
+        result.update(indices.tobytes())
+        return result.hexdigest()
+    finally:
+        evaluated.to_mesh_clear()
+
+
+def _independent_host(host, part, carrier=None):
+    """Reject an attachment dependency cycle before invoking the native bind."""
+    import bpy
+    pending, seen = [host], set()
+    while pending:
+        obj = pending.pop()
+        if obj is part or obj is carrier:
+            raise ValueError('mount host must not depend on the attached part or its carrier')
+        if obj in seen:
+            continue
+        seen.add(obj)
+        if obj.parent:
+            pending.append(obj.parent)
+        owners = [*obj.modifiers, *obj.constraints]
+        if obj.pose:
+            owners.extend(constraint for bone in obj.pose.bones for constraint in bone.constraints)
+        for datablock in (obj, obj.data, getattr(obj.data, 'shape_keys', None)):
+            animation = getattr(datablock, 'animation_data', None)
+            if animation:
+                for curve in animation.drivers:
+                    pending.extend(target.id for variable in curve.driver.variables for target in variable.targets
+                                   if isinstance(target.id, bpy.types.Object))
+        for owner in owners:
+            if owner.type == 'NODES':
+                raise ValueError('surface mounting does not inspect node-tree dependencies')
+            for prop in owner.bl_rna.properties:
+                if prop.type == 'POINTER' and prop.identifier != 'rna_type':
+                    value = getattr(owner, prop.identifier)
+                    if isinstance(value, bpy.types.Object):
+                        pending.append(value)
+                    elif isinstance(value, bpy.types.Collection):
+                        pending.extend(value.all_objects)
+
+
+def check_surface_mount(part):
+    """Check a saved native mount after an ordinary host edit, without rebinding.
+
+    Native Surface Deform and vertex parenting provide the live relationship.
+    This bounded check rejects changed target topology or an infeasible rigid
+    contact footprint. It does not update a scene or certify whole-part contact.
+    """
+    import bpy
+    import json
+    from mathutils import Vector
+    _mesh_object(part, 'part')
+    carrier = part.parent
+    if (carrier is None or carrier.type != 'MESH'
+            or carrier.name not in bpy.context.scene.objects
+            or part.parent_type != 'VERTEX_3' or tuple(part.parent_vertices) != (0, 1, 2)
+            or carrier.get('refas_role') != 'construction' or not carrier.hide_render
+            or not carrier.visible_get() or len(carrier.data.vertices) != 3
+            or len(carrier.data.polygons) != 1 or tuple(carrier.data.polygons[0].vertices) != (0, 1, 2)
+            or len(carrier.modifiers) != 1 or carrier.constraints
+            or carrier.data.shape_keys or carrier.animation_data or carrier.data.animation_data
+            or part.constraints or part.animation_data or part.data.animation_data
+            or part.data.shape_keys or part.rigid_body
+            or set(carrier.children) != {part}):
+        raise ValueError('part requires its ordinary three-vertex construction mount and unchanged rigid relationship')
+    if any(modifier.show_viewport and modifier.type not in
+           {'BEVEL', 'SUBSURF', 'SOLIDIFY', 'TRIANGULATE', 'WEIGHTED_NORMAL'} for modifier in part.modifiers):
+        raise ValueError('mounted part has an unsupported position-dependent modifier')
+    modifier = carrier.modifiers[0]
+    if (modifier.type != 'SURFACE_DEFORM' or not modifier.is_bound or modifier.target is None
+            or not modifier.show_viewport or not modifier.show_render or modifier.strength != 1
+            or modifier.vertex_group or modifier.use_sparse_bind):
+        raise ValueError('mount requires one enabled, fully bound Surface Deform modifier')
+    host = modifier.target
+    if carrier.parent is not host or carrier.parent_type != 'OBJECT':
+        raise ValueError('mount carrier must retain its object parent to the supporting host')
+    _mesh_object(host, 'host')
+    if host.hide_render or not host.visible_get() or host.get('refas_role', 'asset') != 'asset':
+        raise ValueError('mount host must remain an enabled visible asset surface')
+    _independent_host(host, part, carrier)
+    try:
+        metadata = json.loads(carrier[MOUNT_PROPERTY])
+        if metadata['version'] != 1:
+            raise ValueError('unknown surface mount version')
+        points = [_vector(point, 'contact point') for point in metadata['contactPoints']]
+        clearance = _number(metadata['clearance'], 'clearance')
+        maximum_gap = _number(metadata['maxGap'], 'max_gap')
+        distance = _number(metadata['maxDistance'], 'max_distance')
+        topology = metadata['hostTopology']
+        saved_scales = tuple(_number(value, 'part scale') for value in metadata['partScale'])
+    except (KeyError, TypeError, json.JSONDecodeError) as exc:
+        raise ValueError('surface mount metadata is missing or invalid') from exc
+    if len(points) < 3 or clearance < 0 or maximum_gap < clearance or distance <= 0:
+        raise ValueError('surface mount contact bounds are invalid')
+    bpy.context.view_layer.update()
+    if _topology(host) != topology:
+        raise ValueError('surface mount host topology changed; deliberately unbind and mount again')
+    surface = _surface(host)
+    tree, offset, _, precision = surface
+    precision = max(precision, distance * 2 ** -20)
+    evaluated_carrier = carrier.evaluated_get(bpy.context.evaluated_depsgraph_get())
+    carrier_mesh = evaluated_carrier.to_mesh()
+    try:
+        controls = [evaluated_carrier.matrix_world @ vertex.co for vertex in carrier_mesh.vertices]
+        ab, ac = controls[1] - controls[0], controls[2] - controls[0]
+        if (any(not math.isfinite(value) for point in controls for value in point)
+                or min(ab.length, ac.length) <= 8 * precision
+                or ab.cross(ac).length <= ab.length * ac.length * 1e-6):
+            raise ValueError('native surface mount frame became degenerate; revise its supporting surface')
+    finally:
+        evaluated_carrier.to_mesh_clear()
+    matrix = part.evaluated_get(bpy.context.evaluated_depsgraph_get()).matrix_world.copy()
+    linear = matrix.to_3x3()
+    scales = [linear.col[i].length for i in range(3)]
+    if (len(saved_scales) != 3 or not all(math.isfinite(value) and value > 0 for value in saved_scales)
+            or not all(math.isfinite(value) for row in matrix for value in row)
+            or linear.determinant() <= 0 or min(scales) <= 0
+            or any(abs(a - b) > b * 1e-5 for a, b in zip(scales, saved_scales))
+            or any(abs(linear.col[i].dot(linear.col[j])) > scales[i] * scales[j] * 1e-5
+                   for i in range(3) for j in range(i))):
+        raise ValueError('mounted part lost its rigid scale or acquired shear; apply intended host scale before binding')
+    normal = linear.col[2].normalized()
+    center = sum(points, Vector()) / len(points)
+    gaps = []
+    for point in [*points, center]:
+        actual = matrix @ point - offset
+        hit, hit_normal, _, _ = tree.ray_cast(actual + normal * distance, -normal, 2 * distance)
+        if hit is None or hit_normal.dot(normal) < .5:
+            raise ValueError('mounted contact footprint lost its front-facing support')
+        gap = (actual - hit).dot(normal)
+        if not math.isfinite(gap) or gap < clearance - precision or gap > maximum_gap + precision:
+            raise ValueError('mounted contact footprint exceeds its saved gap bounds; revise the host or mount')
+        gaps.append(gap)
+    return {'object': part.name, 'host': host.name, 'carrier': carrier.name,
+            'sampleCount': len(gaps), 'minGap': min(gaps), 'maxGap': max(gaps),
+            'clearance': clearance, 'tolerance': precision,
+            'scope': 'native same-topology rigid attachment; sampled support only; no automatic topology rebind or animation baking'}
+
+
+def bind_on_surface(part, host, *, ray_origin, ray_direction, tangent,
+                    contact_points, clearance, max_distance, max_gap):
+    """Mount a detail and retain an ordinary Blender deformation relationship.
+
+    Uses the same local XY contact plane and sampled bounds as place_on_surface.
+    A three-vertex construction mesh follows the evaluated host through native
+    Surface Deform; native vertex parenting moves the detail rigidly. The saved
+    blend needs no Python handler. Same-topology cage, modifier and transform
+    edits follow automatically; check_surface_mount checks the resulting fit.
+    Native target topology changes need a deliberate new mount. Motion export
+    needs deliberate baking; this helper does not create an animation bake.
+
+    On failure the part's original transform, scene objects and caller context
+    remain. The explicit construction carrier is omitted from static delivery.
+    """
+    import bpy
+    import json
+    from mathutils import Matrix, Vector
+    bpy.context.view_layer.update()
+    _part_scale(part)
+    _mesh_object(host, 'host')
+    if host.hide_render or not host.visible_get() or host.get('refas_role', 'asset') != 'asset':
+        raise ValueError('mount host must be an enabled visible asset surface')
+    _independent_host(host, part)
+    points = tuple(tuple(point) for point in contact_points)
+    previous_channels = {key: getattr(part, key).copy() if hasattr(getattr(part, key), 'copy')
+                         else tuple(getattr(part, key))
+                         for key in ('location', 'rotation_euler', 'rotation_quaternion', 'rotation_axis_angle', 'scale')}
+    previous_parent = (part.parent_type, tuple(part.parent_vertices), part.matrix_parent_inverse.copy())
+    carrier = data = None
+    try:
+        placement = place_on_surface(part, host, ray_origin=ray_origin,
+            ray_direction=ray_direction, tangent=tangent, contact_points=points,
+            clearance=clearance, max_distance=max_distance, max_gap=max_gap)
+        initial = part.matrix_world.copy()
+        frame = placement['frame']
+        rotation = Matrix((frame['tangent'], frame['bitangent'], frame['normal'])).transposed()
+        anchor, normal = Vector(frame['position']), Vector(frame['normal'])
+        local_points = [Vector(point) for point in points]
+        center = sum(local_points, Vector()) / len(local_points)
+        a = max(local_points, key=lambda point: (point - center).length)
+        b = max(local_points, key=lambda point: (point - a).length)
+        c = max(local_points, key=lambda point: (b - a).cross(point - a).length)
+        offsets = [initial.to_3x3() @ (point - center) * .25 for point in (a, b, c)]
+        tree, offset, _, precision = _surface(host)
+        if min((offsets[i] - offsets[j]).length for i in range(3) for j in range(i)) <= 8 * precision:
+            raise ValueError('contact footprint is too small for a stable native mount frame')
+        controls = []
+        for local_offset in offsets:
+            expected = anchor + local_offset
+            hit, hit_normal, _, _ = tree.ray_cast(expected - offset + normal * max_distance,
+                                                 -normal, 2 * max_distance)
+            if hit is None or hit_normal.dot(normal) < .5:
+                raise ValueError('mount frame has no compatible front-facing support')
+            controls.append(rotation.transposed() @ (hit + offset - anchor))
+        data = bpy.data.meshes.new(part.name + ' surface mount')
+        data.from_pydata(controls, [], [(0, 1, 2)])
+        data.update()
+        carrier = bpy.data.objects.new(part.name + ' surface mount', data)
+        bpy.context.scene.collection.objects.link(carrier)
+        carrier.matrix_world = rotation.to_4x4()
+        carrier.matrix_world.translation = anchor
+        carrier.parent = host
+        carrier.matrix_parent_inverse = host.matrix_world.inverted()
+        carrier['refas_role'] = 'construction'
+        carrier.hide_render = True
+        carrier.display_type = 'WIRE'
+        modifier = carrier.modifiers.new('Follow supporting surface', 'SURFACE_DEFORM')
+        modifier.target = host
+        bpy.context.view_layer.update()
+        with bpy.context.temp_override(object=carrier, active_object=carrier,
+                                       selected_objects=[carrier], selected_editable_objects=[carrier]):
+            try:
+                result = bpy.ops.object.surfacedeform_bind(modifier=modifier.name)
+            except RuntimeError as exc:
+                raise ValueError('native Surface Deform could not bind the mount to this host: ' + str(exc)) from exc
+        if 'FINISHED' not in result or not modifier.is_bound:
+            raise ValueError('native Surface Deform could not bind the mount to this host')
+        carrier[MOUNT_PROPERTY] = json.dumps({'version': 1, 'hostTopology': _topology(host),
+            'contactPoints': points, 'clearance': clearance,
+            'maxGap': max_gap, 'maxDistance': max_distance,
+            'partScale': [initial.to_3x3().col[i].length for i in range(3)]}, separators=(',', ':'))
+        part.parent = carrier
+        part.parent_type = 'VERTEX_3'
+        part.parent_vertices = (0, 1, 2)
+        part.matrix_parent_inverse = Matrix.Identity(4)
+        part.matrix_basis = Matrix.Identity(4)
+        bpy.context.view_layer.update()
+        part.matrix_parent_inverse = part.matrix_world.inverted()
+        part.matrix_basis = initial
+        bpy.context.view_layer.update()
+        if max(abs(a - b) for old, new in zip(initial, part.matrix_world)
+               for a, b in zip(old, new)) > placement['tolerance']:
+            raise ValueError('native mount could not retain the fitted part transform')
+        return {**placement, **check_surface_mount(part)}
+    except Exception:
+        if carrier is not None and part.parent is carrier:
+            part.parent = None
+        part.parent_type, part.parent_vertices, part.matrix_parent_inverse = previous_parent
+        for key, value in previous_channels.items():
+            setattr(part, key, value)
+        if carrier is not None:
+            bpy.data.objects.remove(carrier, do_unlink=True)
+        if data is not None and data.users == 0:
+            bpy.data.meshes.remove(data)
+        bpy.context.view_layer.update()
+        raise
