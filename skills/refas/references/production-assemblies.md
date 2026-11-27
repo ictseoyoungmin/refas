@@ -3,7 +3,7 @@
 Use this guide for segmented mechanisms, armor and manufactured parts with
 visible joints. Begin with the reference's complete assembly and proportions.
 
-Sections: scale and hierarchy; rigid surface mounting; editable cutters; editable cables and trim; lattice deformation;
+Sections: scale and hierarchy; connected boundary transitions; rigid surface mounting; editable cutters; editable cables and trim; lattice deformation;
 motion hierarchy; surface attachments; useful poses; delivered animation;
 local component revisions.
 
@@ -70,6 +70,58 @@ For outward normals and an exterior to preserve, use `solidify.offset = -1`.
 Reuse the intended modifier and inspect its actual evaluated interior, rims,
 openings and neighboring parts. Subdivision or deformation can change the field
 between source vertices; verify the resulting shell in required poses.
+
+## Join existing cage boundaries
+
+Use `bridge_boundaries` from `boundary_bridge.py` to connect two existing open
+edge chains in one ordinary mesh. Choose equal-length ordered vertex indices
+with explicit `boundary_a[i]` to `boundary_b[i]` correspondence. Each selected
+edge must have exactly one adjacent face; the chains must be disjoint.
+Boundary positions set the transition span. Place them where the source's
+fold or panel transition begins and ends before joining.
+
+```python
+from boundary_bridge import bridge_boundaries
+
+joined = bridge_boundaries(
+    cage, boundary_a, boundary_b,
+    cuts=6, interpolation="SURFACE", smoothness=1.0,
+    max_bulge=allowed_world_bulge, material_index=patch_material_slot,
+)
+patch_group = cage.vertex_groups.new(name="TransitionInterior")
+patch_group.add(joined["newVertices"], 1.0, "REPLACE")
+```
+
+`cuts` sets the number of interior rows. `SURFACE` uses Blender's native
+interpolation from adjacent faces in cage-local coordinates. `smoothness`
+controls that native blend; it is not a physical radius or prescribed tangent.
+Use `LINEAR` for an intentional straight connection. `max_bulge`, when given,
+limits each new vertex's world distance from its corresponding boundary-to-
+boundary segment. It does not certify the entire patch or surrounding scene.
+
+The helper stages the operation on a copy, verifies actual correspondence and
+shared-edge winding, rejects degenerate/folded patches and preserves original
+cage elements and supported layers. It returns the inserted vertex/face indices,
+ordered rows, span range and observed vertex bulge without writing a file.
+The original object survives; its mesh datablock is replaced. Keep its previous
+native revision for recovery. A failed call retains the original mesh and the
+caller's selection/context.
+
+The result is an ordinary connected cage: reopen it and edit its new rows using
+native Blender tools. This is a one-time topology edit, with no live rebuild
+handler. Supported original UV/color/weight/material/crease data stay intact;
+inspect and author the new patch's UVs as required. Use a visible, unparented,
+static, unshared mesh with supported local modifiers. Shape keys, animation,
+custom normals, construction roles and managed fixed-topology sweep outputs
+are refused. Explicitly prepare a separate ordinary cage when baking a source
+whose topology contract must remain intact.
+
+Changing connectivity can affect existing Solidify/Subdivision normals and the
+evaluated neighborhood even when source vertices are unchanged. Inspect actual
+thickness, nearby clearance and both sides of the connection. Native blending
+does not promise exact G1/G2 continuity or global intersection freedom. Very
+distant coordinates or extreme feature-scale differences can fail float checks;
+recenter or revise the representation when needed.
 
 ## Mount rigid details on the actual surface
 
