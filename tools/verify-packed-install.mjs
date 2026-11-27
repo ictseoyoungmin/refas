@@ -18,16 +18,18 @@ function run(command, args, {cwd = ROOT, env = {}, status = 0} = {}) {
   return result;
 }
 
-export async function verifyPackedInstall() {
+export async function verifyPackedInstall({root = ROOT, tarball = null, packed = null} = {}) {
+  assert.equal(Boolean(tarball), Boolean(packed), 'an existing archive needs its npm pack metadata');
   const tmp = await fs.mkdtemp(path.join(os.tmpdir(), 'refas-installed-tarball-'));
   try {
-    const packed = packProduction({destination: tmp});
-    const distribution = await verifyProductionDistribution({pack: packed});
+    packed ||= packProduction({root, destination: tmp});
+    const distribution = await verifyProductionDistribution({root, pack: packed});
     const version = distribution.version;
     assert.equal(packed.name, 'refas');
     assert.equal(packed.version, version);
-    const tarball = path.join(tmp, packed.filename);
+    tarball = tarball ? path.resolve(tarball) : path.join(tmp, packed.filename);
     const tarFiles = run('tar', ['-tzf', tarball]).stdout.trim().split('\n').filter(name => !name.endsWith('/'));
+    assert.equal(new Set(tarFiles).size, tarFiles.length, 'archive contains duplicate entries');
     verifyProductionPack({...packed, files: tarFiles.map(name => {
       assert.ok(name.startsWith('package/'), `unexpected tarball root: ${name}`);
       return {path: name.slice('package/'.length), size: 0};
@@ -35,6 +37,12 @@ export async function verifyPackedInstall() {
     const prefix = path.join(tmp, 'installed');
     run('npm', ['install', '--prefix', prefix, '--ignore-scripts', '--no-audit', '--no-fund', '--offline', tarball]);
     const mod = path.join(prefix, 'node_modules/refas');
+    for (const {path: relative} of packed.files) {
+      const installed = path.join(mod, relative);
+      assert.ok((await fs.lstat(installed)).isFile(), `installed entry is not a regular file: ${relative}`);
+      assert.deepEqual(await fs.readFile(installed), await fs.readFile(path.join(root, relative)),
+        `installed archive differs from source: ${relative}`);
+    }
     const pkg = JSON.parse(await fs.readFile(path.join(mod, 'package.json'), 'utf8'));
     assert.equal(pkg.version, version);
     assert.deepEqual(pkg.bin, {refas: 'bin/refas.mjs'});
@@ -70,7 +78,7 @@ export async function verifyPackedInstall() {
     assert.match(capabilities.matches[0].callables[0].signature, /minimum.*max_gradient/u);
     const standalone = JSON.parse(run(python, ['-B', '-S', cli, 'init', '--root', path.join(tmp, 'standalone-project'), '--name', 'Copied skill'], {cwd: tmp, env: standaloneEnv}).stdout);
     assert.equal(standalone.name, 'Copied skill');
-    return {...distribution, tarball: packed.filename, installedCli: true,
+    return {...distribution, tarball: packed.filename, installedCli: true, sourceFilesIdentical: true,
       exitStatuses: [0, 1, 2, 127], plainSkillWithoutNodeOrSitePackages: true};
   } finally {
     await fs.rm(tmp, {recursive: true, force: true});

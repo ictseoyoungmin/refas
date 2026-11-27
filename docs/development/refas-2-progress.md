@@ -1,6 +1,59 @@
 # RefAs 2.0 plan progress
 
-## Current recorded checkpoint
+## Current recorded checkpoint — accepted main integration
+
+**95% — 35 of 37 fixed checklist-v2 criteria demonstrated.** The completed
+main integration adds **D2 only**. R2-06 remains **6/7, WIP**; R2-07 remains
+**5/5, REVIEW**; **0/7 tasks are CLOSED**. All eight previous checkpoints,
+criterion definitions, checklist versions and projections remain unchanged.
+**E2 and D3 remain open.** This percentage records demonstrated criteria,
+not final-art quality, effort completed or a published release.
+
+[PR #435](https://github.com/ictseoyoungmin/refas/pull/435) first integrated the
+reviewed native-production foundation at `c2831abb…`.
+[PR #399](https://github.com/ictseoyoungmin/refas/pull/399) then integrated the
+reviewed remainder into main at
+[`fbe4821f`](https://github.com/ictseoyoungmin/refas/commit/fbe4821fb04ff72f44a69761dd5ddfc22cdbc3dd).
+The synchronized `dc7f37e9…` head and the final merge preserve the exact reviewed
+`bafa777e…` tree. Issue #398 closes the accepted source-integration scope;
+remaining measurement and publication work have their own records.
+
+| Verification | Accepted result and boundary |
+| --- | --- |
+| Foundation and remainder | Each passed fresh `npm test`, `test:python`, `check`, `dogfood` and `release:audit`; each JavaScript run passed 948 tests with zero failures/skips and completed 11 dogfood checkpoints. |
+| Distribution at integration | Foundation: 16 skill / 20 package files, 258,556 unpacked bytes. Remainder: 19 skill / 23 package files, 301,916 bytes. Both retain the 2.0.0-alpha.1 identity at their recorded source snapshots. |
+| Current-head CI before final merge | [RefAs CI](https://github.com/ictseoyoungmin/refas/actions/runs/45946321807) and [production CI](https://github.com/ictseoyoungmin/refas/actions/runs/45946321772) pass at dc7f37e9. Existing actual Blender/Godot capability evidence is reused; these source gates do not claim a new real-asset or 187-test run. |
+| Source budget | The original 1,150,150 / 1,048,576-byte cumulative-main **FAIL remains historical evidence**. The independently reviewed integration PRs pass at 976,655 bytes (#435) and 590,356 bytes (#399), against their actual sequential bases. The fixed grandfather anchor and limits are unchanged. |
+
+| Slice | Current coverage | Status |
+| --- | --- | --- |
+| R2-01 / R2-02 / R2-04 / R2-05 | 4/4 each | REVIEW |
+| R2-03 | 6/6 | REVIEW |
+| R2-06 | 6/7 | WIP |
+| R2-07 | 5/5 | REVIEW |
+| Coordinated delivery | 2/3 | Main integration accepted; publication unfinished |
+| **Total** | **35/37 = 95% rounded** | **0/7 tasks CLOSED** |
+
+[E2 follow-up #436](https://github.com/ictseoyoungmin/refas/issues/436) is blocked
+on actual prospective provider/model/usage, useful-edit/full-time and attributable
+billed-cost evidence under matched resources. Missing observations remain null
+with reasons. No new model run, speed or cost advantage is credited.
+[Release preparation #437](https://github.com/ictseoyoungmin/refas/issues/437)
+prepares coordinated **2.0.0** metadata and publication checks; **D3 remains
+uncompleted until formal release and package publication actually succeed**.
+The checkpoint above records the merged alpha.1 source, not that future release.
+
+The U1 ties, failed and missing comparison results, separate U2/U3/U6 asset
+acceptance, all diagnostic failures, recovery resources and unfinished-art
+boundaries retain their original scope. Optional [PR #425](https://github.com/ictseoyoungmin/refas/pull/425)
+remains Draft and excluded. Source integration does not accept that helper or
+reassess any model.
+
+## Historical checkpoint — matched continuation comparison, 2026-11-27
+
+The complete previous checkpoint below records the 34/37 state before main
+integration. Its then-open D2 and cumulative-budget FAIL remain historical;
+the new integration decision above does not rewrite its evidence or verdicts.
 
 **92% — 34 of 37 fixed checklist-v2 criteria demonstrated.** The independently
 reviewed matched continuation comparison adds **U1 only**. R2-06 advances to

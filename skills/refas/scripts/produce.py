@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""RefAs 2.0 development production entry; JSON on stdout, errors on stderr."""
+"""RefAs production entry; JSON on stdout, errors on stderr."""
 import argparse
 import json
 import shutil

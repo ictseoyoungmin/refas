@@ -1,4 +1,4 @@
-name: RefAs production alpha
+name: RefAs production
 
 on:
   pull_request:
