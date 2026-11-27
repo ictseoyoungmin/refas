@@ -775,7 +775,9 @@ def render_views(out, views, config, source, specification=None):
     for obj in original.objects:
         if obj.type in ASSET_TYPES:
             review.collection.objects.link(obj)
+    print("REFAS_RENDER scene-switch diagnostic start", flush=True)
     bpy.context.window.scene = review
+    print("REFAS_RENDER scene-switch diagnostic return", flush=True)
     review.render.fps = original.render.fps
     review.render.fps_base = original.render.fps_base
     review.frame_set(original.frame_current, subframe=original.frame_subframe)
@@ -840,7 +842,9 @@ def render_views(out, views, config, source, specification=None):
         bpy.context.view_layer.update()
         filename = "view-" + name + ".png"
         review.render.filepath = str(out / filename)
+        print("REFAS_RENDER view " + name + " start", flush=True)
         bpy.ops.render.render(write_still=True, scene=review.name)
+        print("REFAS_RENDER view " + name + " return", flush=True)
         if not (out / filename).is_file() or (out / filename).stat().st_size == 0:
             raise RuntimeError("Render produced no PNG: " + name)
         observed.append({"view": name, "path": filename, "sha256": file_hash(out / filename),
@@ -857,7 +861,9 @@ def render_views(out, views, config, source, specification=None):
                          "camera": {"projection": "orthographic", "position": vector(camera.location),
                                     "target": vector(target), "orthoScale": number(data.ortho_scale),
                                     "matrixWorld": [vector(row) for row in camera.matrix_world]}})
+    print("REFAS_RENDER scene-switch original start", flush=True)
     bpy.context.window.scene = original
+    print("REFAS_RENDER scene-switch original return", flush=True)
     return observed
 
 

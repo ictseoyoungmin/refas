@@ -134,7 +134,7 @@ Use `verify` to check the recorded project artifacts, and inspect `status` after
 
 Do not hide an unavailable Blender backend by generating a substitute preview and calling the run successful. Explain the concrete execution failure, retain the prior usable revision, and repair the toolchain or script.
 
-Successful runs retain compact execution metadata. Add `--keep-diagnostics` to a run or delivery only when its raw job and Blender log are needed for debugging; failed-run diagnostics remain available.
+Successful runs retain compact execution metadata. Add `--keep-diagnostics` to a run or delivery only when its raw job and Blender log are needed for debugging. Failed runs retain their log and run-local `blender-tmp/` directory, including native crash files when Blender writes them. Render log markers distinguish entering and returning from rendering and scene switches; a missing completion marker narrows the last operation but does not establish its failure cause. Temporary `inspect` observations do not retain these files.
 
 Keep one working project and measure its storage before making copies:
 

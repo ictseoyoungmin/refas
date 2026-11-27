@@ -1011,5 +1011,57 @@ collection.hide_render = True
         self.assertEqual(sha(self.source), self.source_sha)
 
 
+@unittest.skipUnless(os.environ.get("REFAS_BLENDER_TESTS") == "1" and BLENDER,
+                     "Set REFAS_BLENDER_TESTS=1 with Blender installed for real integration checks")
+class ProductionRenderDiagnosticsTests(unittest.TestCase):
+    def test_canonical_worker_routes_blender_temporary_files_and_logs_render_boundaries(self):
+        with tempfile.TemporaryDirectory(prefix="refas-render-diagnostics-") as directory:
+            folder = Path(directory)
+            target = folder / "project"
+            script = folder / "model.py"
+            script.write_text("""import bpy, json, os, tempfile
+bpy.ops.object.select_all(action='SELECT')
+bpy.ops.object.delete(use_global=False)
+bpy.ops.mesh.primitive_cube_add()
+bpy.context.object.scale = (1.2, 0.45, 0.8)
+print('REFAS_TEST_TEMP ' + json.dumps({
+    'blender': bpy.app.tempdir, 'python': tempfile.gettempdir(),
+    'environment': {key: os.environ[key] for key in ('TMPDIR', 'TMP', 'TEMP')},
+}), flush=True)
+""")
+            entry = WORKER.parent.parent / "produce.py"
+            def cli(*arguments):
+                run = subprocess.run([sys.executable, "-B", str(entry), *map(str, arguments)],
+                                     capture_output=True, text=True, timeout=90)
+                self.assertEqual(run.returncode, 0, run.stderr[-4000:] + run.stdout[-4000:])
+                return json.loads(run.stdout)
+            cli("init", "--root", target, "--name", "native crash evidence routing")
+            result = cli("run", "--root", target, "--script", script, "--intent", "small diagnostic scene",
+                         "--blender", BLENDER, "--outputs", "native", "--views", "front,side",
+                         "--size", "96", "--samples", "2", "--keep-diagnostics")
+            run = target / ".refas2/runs" / result["runId"]
+            lines = (run / "blender.log").read_text().splitlines()
+            observed = [json.loads(line.removeprefix("REFAS_TEST_TEMP "))
+                        for line in lines if line.startswith("REFAS_TEST_TEMP ")]
+            self.assertEqual(len(observed), 1)
+            temporary = run / "blender-tmp"
+            self.assertTrue(temporary.is_dir())
+            self.assertTrue(Path(observed[0]["blender"]).is_relative_to(temporary))
+            self.assertEqual(Path(observed[0]["python"]), temporary)
+            self.assertEqual(set(observed[0]["environment"].values()), {str(temporary)})
+            stages = [line.removeprefix("REFAS_RENDER ") for line in lines if line.startswith("REFAS_RENDER ")]
+            self.assertEqual(stages, ["scene-switch diagnostic start", "scene-switch diagnostic return",
+                                      "view front start", "view front return", "view side start", "view side return",
+                                      "scene-switch original start", "scene-switch original return"])
+            self.assertEqual([item["view"] for item in result["observations"]], ["front", "side"])
+            for item in result["observations"]:
+                image = Path(item["path"])
+                png = image.read_bytes()
+                self.assertEqual(png[:8], b"\x89PNG\r\n\x1a\n")
+                self.assertEqual(struct.unpack(">II", png[16:24]), (96, 96))
+                self.assertEqual(sha(image), item["sha256"])
+                self.assertFalse(temporary.is_relative_to(image.parent))
+
+
 if __name__ == "__main__":
     unittest.main()
