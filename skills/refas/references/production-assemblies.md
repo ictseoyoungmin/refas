@@ -191,6 +191,52 @@ future animation; use the surface-binding recipe below for deforming trim.
 `surface_frame` accepts the same host/ray/tangent selection arguments without
 moving anything. Its returned frame is a snapshot; recompute after host edits.
 
+### Keep rigid hardware attached during later edits
+
+Use `bind_on_surface` with the same arguments when the host will change. It
+first fits the contact footprint, then creates a three-vertex construction
+mesh with native Surface Deform and vertex-parents the part to that frame.
+For an open buckle or ring, sample an actual solid mounting bar or foot and
+keep the sample centroid on that support; the empty aperture is not a contact.
+The frame follows the evaluated host, including Subdivision followed by
+Solidify; the part retains its own rigid shape. The frame is object-parented
+to the host so ordinary host translation and rotation follow as well. There
+is no Python scene handler, external cache or rebuild step after reopening.
+
+```python
+from surface_mount import bind_on_surface, check_surface_mount
+
+mount = bind_on_surface(
+    button, collar, ray_origin=outside_point, ray_direction=toward_collar,
+    tangent=along_collar, contact_points=button_contact_points,
+    clearance=minimum_gap, max_distance=search_distance, max_gap=maximum_gap,
+)
+# Later: edit the collar cage or its thickness using ordinary bpy.
+check_surface_mount(button)
+```
+
+Production checks the saved relationship and footprint before saving/output.
+An infeasible gap or changed evaluated polygon topology fails; it never picks
+a new nearest layer or silently rebinds. Keep the carrier enabled, with its
+construction role and `hide_render=True`; do not repurpose or edit its triangle.
+This explicit mount is the supported construction-parent exception. Static
+delivery captures the evaluated part transform and omits the carrier. Native
+source keeps the relationship. Apply intended object scale before binding:
+subsequent host scale changes or shear that stretch the rigid part are refused.
+Changing subdivision levels, connectivity or topology-producing settings needs
+a deliberate new mount. Detach the part with its evaluated world transform,
+remove that part's obsolete carrier, and call `bind_on_surface` again.
+
+Surface Deform has native target restrictions, so a failed bind restores the
+part and removes the failed carrier. Its target must be independent of the
+part; node-tree dependencies are not supported here. A large rigid footprint
+still cannot follow arbitrary cloth curvature. Reinspect support after major
+edits and provide a fitting base when needed. These are finite contact samples,
+not a guarantee of full-part collision clearance. Animated target deformation
+requires deliberate baking and playback checks for delivery; this operation
+does not bake it. Flexible piping needs deformation of its own sections or
+mesh, rather than one rigid parent frame for an entire long trim.
+
 ## Fit prepared flexible surface layers
 
 Use `project_region` from `surface_project.py` for a thin surface cage whose
@@ -378,8 +424,8 @@ linked to the current scene and enabled in its active view layer; do not disable
 or exclude their collection. Each source needs its own `hide_render` flag, even
 inside a hidden collection, so diagnostic views preserve the same separation.
 Only meshes can carry the construction role. Unmarked hidden asset geometry
-still fails rather than disappearing from delivery. Do not use a construction
-mesh as the parent of deliverable objects.
+still fails rather than disappearing from delivery. A construction mesh may
+parent a deliverable only through the explicit native surface mount above.
 
 Protect neighboring components and unchanged sources by exact name. A host's
 evaluated shape changes when its cutter changes, so do not protect the intended
