@@ -6,6 +6,10 @@ import re
 
 ROOT = Path(__file__).resolve().parents[2]
 ROUTES = (
+    ("boundary-bridge", "Join explicit existing cage boundaries with native surface transitions.",
+     "bridge boundary join transition roll lapel fender curvature 경계 접합 전이 라펠 곡률",
+     "Blender Python", "production-assemblies.md", ("boundary_bridge.bridge_boundaries",),
+     "One static open-chain topology edit; preserves the source cage, not evaluated margins or exact G1 continuity."),
     ("blind-recess", "Cut and revise an actual blind recess from a selected surface and convex outline.",
      "recess cavity intake socket cut depth floor wall groove 홈 매입 흡기구 절삭 깊이 벽 바닥",
      "Blender Python", "production-assemblies.md", ("recess.cut_recess",),

@@ -6,6 +6,7 @@ All notable RefAs changes are documented here. RefAs follows semantic versioning
 
 - Add optional rigid surface mounting from evaluated host geometry, an explicit selection ray/tangent and a planar contact footprint. Preserve the part shape/scale and reject infeasible sampled support gaps before moving it.
 - Add editable blind recess construction from an explicit convex outline, surface frame and depth. Retain the native cutter and Boolean, observe actual walls/floor and reject infeasible sampled remaining thickness without losing the accepted feature.
+- Add an optional native boundary bridge for two explicit open cage chains, with verified correspondence, source-data preservation and staged failure recovery. Surface blending follows adjacent cage faces; linear joining retains deliberate creases.
 - Expose the helper through installed discovery and focused assembly guidance. Retain the normal Blender authoring, native revision and delivery path.
 - Begin 2.1.0 on `develop/v2.1.0` with garment/car feature studies. This development version is not a published release or a completed whole-asset quality claim.
 
