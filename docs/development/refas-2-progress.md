@@ -1,6 +1,252 @@
 # RefAs 2.0 plan progress
 
-## Current recorded checkpoint
+## Current recorded checkpoint — published v2.0.0 installation package
+
+**97% — 36 of 37 fixed checklist-v2 criteria demonstrated.** Actual release
+and package publication add **D3 only**, completing **Delivery 3/3**. R2-06
+remains **6/7, WIP**; R2-07 remains **5/5, REVIEW**; **0/7 tasks are CLOSED**.
+All nine previous JSON checkpoints retain their exact text; criterion
+meanings, checklist versions and projections are unchanged. **E2 remains
+open.** This percentage measures demonstrated criteria, not finished-art
+quality or effort completed.
+
+The [v2.0.0 Release](https://github.com/ictseoyoungmin/refas/releases/tag/v2.0.0)
+was published on **2026-11-27 at 08:02:42 UTC** from exact main
+[`d48ef51a`](https://github.com/ictseoyoungmin/refas/commit/d48ef51ad213ce2d7df3664965fc9dc283783737),
+after [release preparation #438](https://github.com/ictseoyoungmin/refas/pull/438).
+The successful [publication workflow](https://github.com/ictseoyoungmin/refas/actions/runs/45962623370)
+binds that source to the recorded tag and Release assets under the publisher's
+conflict-rejection policy. `sourceCommit`
+identifies this published runtime/source snapshot, not the later documentation
+commit. [Issue #439](https://github.com/ictseoyoungmin/refas/issues/439) records
+this D3 decision under [milestone 2.0.0](https://github.com/ictseoyoungmin/refas/milestone/4).
+
+| Actual receipt | Verified result |
+| --- | --- |
+| Release and exact source | Release **460308601**, tag/target `d48ef51ad213ce2d7df3664965fc9dc283783737`; published, not draft or prerelease. |
+| Installation archive | [refas-2.0.0.tgz](https://github.com/ictseoyoungmin/refas/releases/download/v2.0.0/refas-2.0.0.tgz), asset **799547991**, **87,637 bytes**, SHA-256 `9be599330e8be6fb01180d1c6deec3bc27ab4b24c6ad8b9396a32011018b1581`. |
+| Checksum file | [refas-2.0.0.tgz.sha256](https://github.com/ictseoyoungmin/refas/releases/download/v2.0.0/refas-2.0.0.tgz.sha256), asset **799548095**, **82 bytes**, SHA-256 `e6bfec65c832bb29fb2d3acc3bee3fc5f857c2ed84fad1d8b870353960c42544`. |
+| Public download and installation | Both unauthenticated downloads match the prepared bytes/digests and GitHub asset digests; checksum content is exact. Installation of that downloaded archive passes the isolated CLI and copied-skill checks with identical source files: **19 skill / 23 package files**, **302,654 unpacked bytes**. |
+| Exact-main prerequisites | [Full CI](https://github.com/ictseoyoungmin/refas/actions/runs/45948863434) and [production CI](https://github.com/ictseoyoungmin/refas/actions/runs/45948863322) pass at d48: Node 22/24 and all 17 full-QA gates. Release preparation also passed all five required local gates and 967 JavaScript tests. Existing source-bound Blender/Godot evidence is retained without claiming a new asset or 187-test execution. |
+
+The published installation channel is the production npm-format archive and
+its checksum on GitHub Release. **No npm registry publication is claimed.**
+The release identity and package checks do not reassess models or establish
+visual-quality, speed or cost superiority.
+
+| Slice | Current coverage | Status |
+| --- | --- | --- |
+| R2-01 / R2-02 / R2-04 / R2-05 | 4/4 each | REVIEW |
+| R2-03 | 6/6 | REVIEW |
+| R2-06 | 6/7 | WIP |
+| R2-07 | 5/5 | REVIEW |
+| Coordinated delivery | 3/3 | Main integration and GitHub package publication accepted |
+| **Total** | **36/37 = 97% rounded** | **0/7 tasks CLOSED** |
+
+[E2 follow-up #436](https://github.com/ictseoyoungmin/refas/issues/436) remains
+blocked under [milestone 2.0.1](https://github.com/ictseoyoungmin/refas/milestone/5).
+Actual prospective timing, provider/model/usage and attributable billed-cost
+evidence under matched resources is still missing; its telemetry/cost fields
+remain null. The U1 visual ties and failed/missing comparisons, separate
+U2/U3/U6 acceptance, all diagnostic failures and recovery resources retain
+their scope. Optional [PR #425](https://github.com/ictseoyoungmin/refas/pull/425)
+remains Draft and excluded.
+
+## Historical checkpoint — accepted main integration, 2026-11-27
+
+The complete previous summary below records the 35/37 state before publication.
+Its then-open D3, alpha.1 source identity and integration receipts remain
+historical; actual publication adds no retrospective asset or E2 credit.
+
+**95% — 35 of 37 fixed checklist-v2 criteria demonstrated.** The completed
+main integration adds **D2 only**. R2-06 remains **6/7, WIP**; R2-07 remains
+**5/5, REVIEW**; **0/7 tasks are CLOSED**. All eight previous checkpoints,
+criterion definitions, checklist versions and projections remain unchanged.
+**E2 and D3 remain open.** This percentage records demonstrated criteria,
+not final-art quality, effort completed or a published release.
+
+[PR #435](https://github.com/ictseoyoungmin/refas/pull/435) first integrated the
+reviewed native-production foundation at `c2831abb…`.
+[PR #399](https://github.com/ictseoyoungmin/refas/pull/399) then integrated the
+reviewed remainder into main at
+[`fbe4821f`](https://github.com/ictseoyoungmin/refas/commit/fbe4821fb04ff72f44a69761dd5ddfc22cdbc3dd).
+The synchronized `dc7f37e9…` head and the final merge preserve the exact reviewed
+`bafa777e…` tree. Issue #398 closes the accepted source-integration scope;
+remaining measurement and publication work have their own records.
+
+| Verification | Accepted result and boundary |
+| --- | --- |
+| Foundation and remainder | Each passed fresh `npm test`, `test:python`, `check`, `dogfood` and `release:audit`; each JavaScript run passed 948 tests with zero failures/skips and completed 11 dogfood checkpoints. |
+| Distribution at integration | Foundation: 16 skill / 20 package files, 258,556 unpacked bytes. Remainder: 19 skill / 23 package files, 301,916 bytes. Both retain the 2.0.0-alpha.1 identity at their recorded source snapshots. |
+| Current-head CI before final merge | [RefAs CI](https://github.com/ictseoyoungmin/refas/actions/runs/45946321807) and [production CI](https://github.com/ictseoyoungmin/refas/actions/runs/45946321772) pass at dc7f37e9. Existing actual Blender/Godot capability evidence is reused; these source gates do not claim a new real-asset or 187-test run. |
+| Source budget | The original 1,150,150 / 1,048,576-byte cumulative-main **FAIL remains historical evidence**. The independently reviewed integration PRs pass at 976,655 bytes (#435) and 590,356 bytes (#399), against their actual sequential bases. The fixed grandfather anchor and limits are unchanged. |
+
+| Slice | Current coverage | Status |
+| --- | --- | --- |
+| R2-01 / R2-02 / R2-04 / R2-05 | 4/4 each | REVIEW |
+| R2-03 | 6/6 | REVIEW |
+| R2-06 | 6/7 | WIP |
+| R2-07 | 5/5 | REVIEW |
+| Coordinated delivery | 2/3 | Main integration accepted; publication unfinished |
+| **Total** | **35/37 = 95% rounded** | **0/7 tasks CLOSED** |
+
+[E2 follow-up #436](https://github.com/ictseoyoungmin/refas/issues/436) is blocked
+on actual prospective provider/model/usage, useful-edit/full-time and attributable
+billed-cost evidence under matched resources. Missing observations remain null
+with reasons. No new model run, speed or cost advantage is credited.
+[Release preparation #437](https://github.com/ictseoyoungmin/refas/issues/437)
+prepares coordinated **2.0.0** metadata and publication checks; **D3 remains
+uncompleted until formal release and package publication actually succeed**.
+The checkpoint above records the merged alpha.1 source, not that future release.
+
+The U1 ties, failed and missing comparison results, separate U2/U3/U6 asset
+acceptance, all diagnostic failures, recovery resources and unfinished-art
+boundaries retain their original scope. Optional [PR #425](https://github.com/ictseoyoungmin/refas/pull/425)
+remains Draft and excluded. Source integration does not accept that helper or
+reassess any model.
+
+## Historical checkpoint — matched continuation comparison, 2026-11-27
+
+The complete previous checkpoint below records the 34/37 state before main
+integration. Its then-open D2 and cumulative-budget FAIL remain historical;
+the new integration decision above does not rewrite its evidence or verdicts.
+
+**92% — 34 of 37 fixed checklist-v2 criteria demonstrated.** The independently
+reviewed matched continuation comparison adds **U1 only**. R2-06 advances to
+**6/7, WIP**; R2-07 remains **5/5, REVIEW**; **0/7 tasks are CLOSED**. All seven
+previous checkpoints, criterion meanings, checklist versions and projections
+remain unchanged. **E2, D2 and D3 remain open.**
+
+The [matched comparison report](evidence/usable-assets/matched-comparison.md)
+records the frozen task, common inputs/resources, independent review and
+durable evidence. It is recorded in [Issue #432](https://github.com/ictseoyoungmin/refas/issues/432)
+after the [wearable checkpoint merge](https://github.com/ictseoyoungmin/refas/commit/f3c44c1fea7f099bd50db1fa36c407ead2239d6e).
+U1 credits evaluating both tasks across source likeness, mesh/attachment
+condition, useful motion, functional retopology and optimization. Its acceptance
+does not require a winning condition or accept the comparison models for use.
+The later repaired wearable delivery remains a separately reviewed artifact.
+
+All authors received the same garment `c67633a2…`, arm `badf3fd5…`, complete
+original reference images and continuation task. The product snapshots remain
+**no skill**, **fixed 1.x `a29bcc42…`** and **2.0 `f174f6b1…`**. Each condition
+had the same 24-process / 1,800-active-Blender-second cap, Blender 4.3.2 with two
+CPU threads, Cycles 512px/16 samples and Godot 4.7.2. Independent observation was
+outside author budgets. The tested shared observer source `d02f6188…` does not
+replace the frozen product snapshots.
+
+| Comparison result | No skill | Fixed 1.x | 2.0 |
+| --- | --- | --- | --- |
+| Blinded source/visual review, both tasks | Tie | Tie | Tie |
+| Garment consumer, default 20µm profile | FAIL | FAIL | FAIL |
+| Garment consumer, predeclared 100µm profile with unchanged matrix limit | FAIL | FAIL | FAIL |
+| Arm actual-consumer motion, 121 frames | PASS within observed scope | PASS within observed scope | PASS within observed scope |
+| Selected-candidate local-edit evidence | Scoped exercise retained | **NOT_EVALUATED**; executed exercise used supplied baseline | Scoped exercise retained |
+
+All six outputs meet their fixed polygon/material and finite sampled-error
+budgets; both supplied models already met the polygon caps. Both tasks remain
+visually tied after independent inspection of both full references and all 54
+output images. Each garment retains 10,765 opacity-confirmed hair/cloth contacts
+at each common sampled pose. The 2.0 arm's exact-coincident-position diagnostic
+remains **FAIL/unresolved**, with 35 nonmanifold and 60 inconsistent-winding
+edges; its consumer PASS does not clear geometry or mechanical contact gates.
+The 2.0 garment still has 388 original unused-hair-bone matrix failures at
+100µm; no all-bone exemption is applied to the comparison. Earlier observer
+failures and uniformly corrected observations are both retained.
+
+This is one continuation run per condition using existing geometry and useful
+motion. Provider/model snapshots, tokens and billed cost are unavailable;
+interrupted plain telemetry is conservatively bounded, not invented exact
+timing. **E2 stays open.** No speed, cost, GPU frame-time, reconstruction-from-
+scratch or general product-superiority result is claimed. Later informed
+repairs do not replace failed frozen comparison outputs.
+
+| Slice | Current coverage | Status |
+| --- | --- | --- |
+| R2-01 / R2-02 / R2-04 / R2-05 | 4/4 each | REVIEW |
+| R2-03 | 6/6 | REVIEW |
+| R2-06 | 6/7 | WIP |
+| R2-07 | 5/5 | REVIEW |
+| Coordinated delivery | 1/3 | Main merge and release unfinished |
+| **Total** | **34/37 = 92% rounded** | **0/7 tasks CLOSED** |
+
+The earlier selected wearable's 100µm use-profile acceptance remains separate
+from the comparison's all-profile FAIL results. Its default20, strict avatar/
+Blender reimport, direct raw/live static equality and original contact-binder
+failures remain recorded with their separately bounded supplemental routes.
+The selected asset budgets, detailed BODY/COLLAR mappings, arm branding/UV
+exceptions and unfinished-art boundaries are unchanged. PRs #425 and #399
+remain Draft; **the cumulative-main 1 MiB source-artifact budget remains FAIL**.
+No rewrite/main merge, formal release, task closure or new runtime behavior is
+granted by this comparison checkpoint.
+
+## Historical checkpoint — declared-use wearable delivery, 2026-11-27
+
+The complete prior summary below records the separate U2/U3/U6 acceptance and
+the criteria that were still open then. Its scope, limitations and evidence
+remain unchanged by the later U1 comparison decision.
+
+**89% — 33 of 37 fixed checklist-v2 criteria demonstrated.** The declared-use
+wearable delivery adds **U2, U3 and U6** after independent review of the exact
+selected native `624a1a90…` and GLB `af91555a…`. R2-07 is **5/5, REVIEW**;
+R2-06 remains **5/7, WIP**. **0/7 tasks are CLOSED.** The six previous
+checkpoints, all criterion definitions and checklist versions remain unchanged.
+
+Read the [wearable delivery and acceptance report](evidence/usable-assets/wearable-delivery.md)
+for exact artifact hashes, independent decisions, selected views, recoverable
+sources and durable downloads. The tested source is
+[`d02f6188`](https://github.com/ictseoyoungmin/refas/commit/d02f618801167040145087812abfaa3ff5e69dcc);
+the installed production/save/export/edit-restore runtime is
+[`f174f6b1`](https://github.com/ictseoyoungmin/refas/commit/f174f6b1cf9ce19ce905b58490d117aca01cea4b).
+The observer fix and the selected asset acceptance have separate scopes.
+
+| Newly demonstrated criterion | Accepted evidence and boundary |
+| --- | --- |
+| U2: mesh condition and attachments | Actual native/GLB correspondence and source-bound physical checks over all 97 recorded poses, repaired major cloth and rigid-mount defects, exact consumer face/point identity and counterexamples, and actual whole/detail material review. Original contact policies and classified source exceptions remain unchanged. |
+| U3: identified-character wearing and motion | Original 26-mesh avatar preserved; 30 cloth meshes retain Basis plus 49 unique phase keys; 446 hardware bones and 389 chain links remain. Native, raw export and actual Godot 4.7.2 exercise the declared 97-frame, 30fps clip and original 5-avatar-bone plus 446-hardware-bone profile. |
+| U6: optimized delivery of both assets | Garment 122,898 triangles / 111 material primitives against fixed 125,000 / 150 budgets. Saved detailed BODY/COLLAR errors are 1.400601468 / 1.477630925 mm within 1.5 mm. Editable detailed sources and mappings are retained. All 92 manifest entries of the already accepted arm are reverified unchanged, preserving its 86,564 triangles, 99 primitives, 0.423727 mm sampled error and 121-frame use evidence. |
+
+The detailed error check samples all saved vertices and triangle centroids in
+both directions by outer/inner/rim/full surface; it is not a continuous
+Hausdorff bound. The combined original-avatar and garment scene has 812,985
+triangles, separate from the garment-only budget. The arm's **796 inherited
+AURIX contour boundary edges** and **`Crown_A_mark` unused UVMap omission** remain
+explicit exceptions, with the untouched original retained. No new arm execution
+or GPU/frame-time benefit is claimed by this checkpoint.
+
+**Retained failures are part of this acceptance record.** Default 20µm engine
+playback still fails 5,883 checks; the predeclared 100µm profile separately
+passes, without allowing unlisted physical intersections. Strict original-avatar
+geometry and the 2µm Blender reimport route remain FAIL; raw source-index/weight
+preservation and all-26-mesh raw GLB replay separately pass within the unchanged
+2µm budget. Direct raw/live static-hair array equality remains FAIL. The exact
+source-derived uint16 AABB compression route separately passes with no fitted
+parameters, exact live equality and a one-ULP negative control. Original exact
+contact-pair/rest-binding failures also remain; reviewed source lineage and
+original finite construction domains do not introduce new contact exemptions.
+
+| Slice | Current coverage | Status |
+| --- | --- | --- |
+| R2-01 / R2-02 / R2-04 / R2-05 | 4/4 each | REVIEW |
+| R2-03 | 6/6 | REVIEW |
+| R2-06 | 5/7 | WIP |
+| R2-07 | 5/5 | REVIEW |
+| Coordinated delivery | 1/3 | Main merge and release unfinished |
+| **Total** | **33/37 = 89% rounded** | **0/7 tasks CLOSED** |
+
+**U1, E2, D2 and D3 remain open.** The separately reviewed U1 comparison will
+be handled in a separate Issue/PR after [#431](https://github.com/ictseoyoungmin/refas/pull/431)
+merges; this checkpoint gives it no credit. Complete comparable timing/cost,
+main merge and formal publication remain separate unfinished requirements.
+Both final-art decisions remain unapproved. [#425](https://github.com/ictseoyoungmin/refas/pull/425)
+and [#399](https://github.com/ictseoyoungmin/refas/pull/399) remain Draft, and the
+**cumulative-main 1 MiB source-artifact budget remains FAIL**. There is no
+runtime change, budget waiver, merge or release authorization here.
+
+## Historical checkpoint — recovered articulated arm, 2026-11-23
+
+The following checkpoint text retains the state and unresolved findings at
+that earlier review. Its later garment continuation is assessed only by the
+new checkpoint above; the historical evidence is not rewritten.
 
 **81% — 30 of 37 fixed checklist-v2 criteria demonstrated.** The recovery
 continuation at [`bb8e8aff`](https://github.com/ictseoyoungmin/refas/commit/bb8e8affbbb6b5cf53dcb637114710511d354913)

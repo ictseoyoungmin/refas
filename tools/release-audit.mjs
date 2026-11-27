@@ -14,9 +14,10 @@ async function main() {
   const changelog = await fs.readFile(path.join(ROOT, 'CHANGELOG.md'), 'utf8');
   assert.ok(changelog.includes(`## ${result.version} —`), `CHANGELOG.md omits current version ${result.version}`);
   const readme = await fs.readFile(path.join(ROOT, 'README.md'), 'utf8');
-  assert.ok(readme.includes(`**Development version: ${result.version}.**`), `README.md omits development package version ${result.version}`);
-  assert.match(readme, /not a published stable 2\.0 release/u, 'README.md must identify the development status');
-  assert.ok(!readme.includes(`releases/tag/v${result.version}`), 'an unpublished development version cannot be presented as a published release');
+  assert.ok(readme.includes(`**Package version: ${result.version}.**`), `README.md omits package version ${result.version}`);
+  assert.match(readme, /Publication is a separate verified action/u, 'README.md must separate source identity from actual publication');
+  assert.ok(readme.includes(`refas-${result.version}.tgz.sha256`), 'README.md must identify the matching archive checksum');
+  assert.match(readme, /not an assertion.*npm registry/su, 'GitHub package publication must not imply npm registry publication');
   console.log(JSON.stringify(result, null, 2));
 }
 

@@ -1,6 +1,6 @@
 {
   "name": "refas",
-  "version": "2.0.0-alpha.1",
+  "version": "2.1.0-alpha.1",
   "description": "Build editable Blender assets from visual references with multiview review and recoverable revisions.",
   "author": {
     "name": "ictseoyoungmin",

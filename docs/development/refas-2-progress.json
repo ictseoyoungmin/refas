@@ -406,7 +406,7 @@
       "baselineNote": "Added by the user's explicit 2026-11-22 scope expansion; no credit at the scope-change baseline."
     }
   ],
-  "currentCheckpointId": "r2-07-automail-recovery-bb8e8aff",
+  "currentCheckpointId": "delivery-published-v2.0.0-d48ef51a",
   "checkpoints": [
     {
       "id": "baseline-3217b46e",
@@ -1153,6 +1153,941 @@
         "standaloneAutomailLibraryId": "libfile_469aa206ad3c819180cbc2007000a572"
       },
       "note": "Interruption recovery retained core f236477f and exactly verified 96 source-model files; no later 78,998-triangle arm or 97-frame jacket was recovered. The missing vertex-tolerance option was completed at 5f2f39c6 with 935 JavaScript and 92 Production tests passing. The newly authored selected arm is separately hash-verified and durably delivered. Prior counts and criteria remain unchanged."
+    },
+    {
+      "id": "r2-07-wearable-delivery-d02f6188",
+      "date": "2026-11-27",
+      "kind": "verified-implementation",
+      "checklistVersion": 2,
+      "sourceCommit": "d02f618801167040145087812abfaa3ff5e69dcc",
+      "runtimeCommit": "f174f6b1cf9ce19ce905b58490d117aca01cea4b",
+      "demonstratedCriteria": [
+        "B1",
+        "B2",
+        "B3",
+        "B4",
+        "W1",
+        "W2",
+        "W3",
+        "W4",
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "O1",
+        "O2",
+        "O3",
+        "O4",
+        "K1",
+        "K2",
+        "K3",
+        "K4",
+        "E1",
+        "E3",
+        "E4",
+        "E5",
+        "E6",
+        "D1",
+        "U2",
+        "U3",
+        "U4",
+        "U5",
+        "U6"
+      ],
+      "counts": {
+        "demonstrated": 33,
+        "total": 37,
+        "percentRounded": 89,
+        "bySlice": {
+          "R2-01": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-02": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-03": {
+            "demonstrated": 6,
+            "total": 6
+          },
+          "R2-04": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-05": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-06": {
+            "demonstrated": 5,
+            "total": 7
+          },
+          "Delivery": {
+            "demonstrated": 1,
+            "total": 3
+          },
+          "R2-07": {
+            "demonstrated": 5,
+            "total": 5
+          }
+        }
+      },
+      "notionTaskStatuses": {
+        "R2-01": "REVIEW",
+        "R2-02": "REVIEW",
+        "R2-03": "REVIEW",
+        "R2-04": "REVIEW",
+        "R2-05": "REVIEW",
+        "R2-06": "WIP",
+        "R2-07": "REVIEW"
+      },
+      "evidenceUpdates": {
+        "U2": {
+          "evidence": [
+            "docs/development/evidence/usable-assets/wearable-delivery.md",
+            "docs/development/evidence/usable-assets/automail-resume/topology-summary.json",
+            "docs/development/evidence/usable-assets/automail-resume/flipped-glb-control.json",
+            "docs/development/evidence/usable-assets/recovery/review-automail-candidate08.md"
+          ],
+          "note": "Independent final review accepts the selected wearable native624a1a90 and GLBaf91555a for repaired major unintended mesh/contact/floating defects in the declared use. Exact produced-native97 preservation,100-mesh native/actual-GLB97 correspondence, source-bound physical97,72 actual consumer critical pairs with exact458 selected point identities, seeded/copied counterexamples and actual whole/detail material review support this scope. Original23 hardware and37 hardware-cloth policy rows are unchanged. Strict avatar geometry/reimport, original contact-pair/rest-binder and direct raw/live static-hair equality failures remain retained; separately proved source-lineage, raw replay and exact compression routes do not relabel them. All92 manifest entries of the previously accepted arm were reverified unchanged; its796 inherited AURIX contour boundary edges and Crown_A_mark unused UVMap exception remain explicit."
+        },
+        "U3": {
+          "evidence": [
+            "docs/development/evidence/usable-assets/wearable-delivery.md"
+          ],
+          "note": "The exact selected garment preserves the original26-mesh character and is exercised at all97 recorded frames at30fps. Saved30 cloth meshes keep Basis plus49 unique phase keys; hardware retains446 bones,389 adjacent links and four ring interlocks. Produced native/GLB and actual Godot4.7.2 playback use the original5-avatar-bone plus446-hardware-bone profile. The predeclared100um point profile passes; default20um still fails5,883 checks. Consumer critical contacts use zero unlisted physical allowance; static hair source/importer identity and exact uint16 forward/live equality pass separately from retained direct equality FAIL, including a one-ULP copied-array rejection. No universal fitting, arbitrary-pose, continuous-time, cloth-simulation, unused-hair-bone or finished-art approval."
+        },
+        "U6": {
+          "evidence": [
+            "docs/development/evidence/usable-assets/wearable-delivery.md",
+            "docs/development/evidence/usable-assets/garment-resume/preselection-budget.json",
+            "docs/development/evidence/usable-assets/automail-resume/README.md",
+            "docs/development/evidence/usable-assets/automail-resume/summary.json"
+          ],
+          "note": "Both selected assets satisfy their frozen scoped budgets. Garment:122,898 triangles against125,000,111 material primitives against150, maximum3 positive influences against4; complete avatar-plus-garment scene812,985 triangles is reported separately. Reloaded detailed/reduced BODY and COLLAR bidirectional saved-vertex/triangle-centroid maxima are1.400601468mm and1.477630925mm within1.5mm, by outer/inner/rim/full surfaces; this is not a continuous Hausdorff bound. Editable detailed natives, mappings, measured file sizes and fixed material views remain available through the delivery report. Unchanged arm:86,564 triangles,99 primitives,0.423727mm against0.6mm, retained121-frame consumer evidence; no new arm execution is claimed. Installed cuff edit and exact8-artifact plus2-input restore pass as a bounded frame1 native exercise. No GPU/FPS or finished-art benefit is inferred."
+        }
+      },
+      "selectedArtifactSha256": {
+        "garmentNative": "624a1a90ec3dfb38f65ddd2631a4d25c7a7525dbb3464891a2c7375f151720d7",
+        "garmentGlb": "af91555ab7654bc0107c5afefc2bed3c3772b93ac62a971030cfd4e467cd70ff",
+        "unchangedArmNative": "badf3fd5134ea44c77bef19890cf0f3157c8e2dbe622484eba7df713791d36f1",
+        "unchangedArmGlb": "08c4f510e903891eab2c0eee276b55de71abf6f1cda3d584a880ee508e3e63f5",
+        "independentWearableDecision": "e3acb432ad48f51235c91af789b4b7063685697036403f560ebbe6a27cae62a9"
+      },
+      "boundaries": {
+        "closedTasks": 0,
+        "totalTasks": 7,
+        "finishedVisualAcceptance": {
+          "jacket": "rejected",
+          "automail": "rejected"
+        },
+        "developmentMetadata": "2.0.0-alpha.1",
+        "retainedLegacyRuntime": "1.4.2",
+        "publishedRelease": "v1.4.1",
+        "pullRequest": "https://github.com/ictseoyoungmin/refas/pull/399",
+        "pullRequestState": "Draft",
+        "prototypeSourceAcceptance": {
+          "jacket": "demonstrated within original task scope",
+          "automail": "demonstrated within original task scope"
+        },
+        "usableAssetAcceptance": {
+          "automail": "accepted only for declared rigid reach/partial grip and documented untextured scope",
+          "jacket": "accepted only for the identified original26-mesh avatar, frames1-97 at30fps, frozen source contact policies and predeclared100-micrometre consumer profile"
+        },
+        "standaloneAutomailLibraryId": "libfile_469aa206ad3c819180cbc2007000a572",
+        "authoringCandidatePullRequest": "https://github.com/ictseoyoungmin/refas/pull/425",
+        "authoringCandidatePullRequestState": "Draft",
+        "checkpointPullRequest": "https://github.com/ictseoyoungmin/refas/pull/431",
+        "openCriteria": [
+          "E2",
+          "D2",
+          "D3",
+          "U1"
+        ],
+        "cumulativeMainArtifactBudget": {
+          "limitBytes": 1048576,
+          "status": "FAIL",
+          "note": "The cumulative change against main remains over the source-artifact budget. This documentation checkpoint grants no waiver, main-merge or release credit."
+        },
+        "retainedDiagnosticFailures": {
+          "consumerDefault20um": "FAIL: 5,883 point checks; predeclared100um profile separately PASS without a physical-contact allowance",
+          "originalAvatarStrictGeometry": "FAIL: first-frame strict geometric orientation; remaining96 frames unassessed by that route",
+          "avatarBlenderReimport2um": "FAIL: Body.001 at frames28/70, maximum2.017388303um; raw GLB replay of all26 meshes over97 frames separately PASS within unchanged2um",
+          "directRawLiveStaticHairEquality": "FAIL: lossy engine static-position representation; exact source-derived uint16 AABB forward mapping separately PASS with zero fitted parameters and one-ULP negative control",
+          "originalExactContactPairAndRestBinder": "FAIL retained; independently reviewed unchanged oriented/material/sheet/source lineage and original finite construction domains provide separate scoped evidence"
+        }
+      },
+      "note": "Append-only declared-use acceptance: adds exactly U2/U3/U6 to the six retained checkpoints, giving33/37=89% rounded, R2-07 REVIEW5/5 and R2-06 WIP5/7, with0/7 CLOSED. Source d02f6188 identifies the live engine-observation fix; actual installed production/save/export/edit-restore uses f174f6b1. U1 remains open for its separately reviewed comparison and separate Issue/PR after #431; E2/D2/D3 remain open. No runtime change, optional helper #425 acceptance, main merge, formal publication, finished-art approval or cumulative-main1MiB budget waiver is granted."
+    },
+    {
+      "id": "r2-06-matched-comparison-d02f6188",
+      "date": "2026-11-27",
+      "kind": "verified-implementation",
+      "checklistVersion": 2,
+      "sourceCommit": "d02f618801167040145087812abfaa3ff5e69dcc",
+      "runtimeCommit": "f174f6b1cf9ce19ce905b58490d117aca01cea4b",
+      "comparisonProductSnapshots": {
+        "noSkill": null,
+        "fixed1x": "a29bcc42f4da666c812462eb130836f2d766b0a1",
+        "refas2": "f174f6b1cf9ce19ce905b58490d117aca01cea4b"
+      },
+      "demonstratedCriteria": [
+        "B1",
+        "B2",
+        "B3",
+        "B4",
+        "W1",
+        "W2",
+        "W3",
+        "W4",
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "O1",
+        "O2",
+        "O3",
+        "O4",
+        "K1",
+        "K2",
+        "K3",
+        "K4",
+        "E1",
+        "E3",
+        "E4",
+        "E5",
+        "E6",
+        "D1",
+        "U1",
+        "U2",
+        "U3",
+        "U4",
+        "U5",
+        "U6"
+      ],
+      "counts": {
+        "demonstrated": 34,
+        "total": 37,
+        "percentRounded": 92,
+        "bySlice": {
+          "R2-01": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-02": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-03": {
+            "demonstrated": 6,
+            "total": 6
+          },
+          "R2-04": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-05": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-06": {
+            "demonstrated": 6,
+            "total": 7
+          },
+          "Delivery": {
+            "demonstrated": 1,
+            "total": 3
+          },
+          "R2-07": {
+            "demonstrated": 5,
+            "total": 5
+          }
+        }
+      },
+      "notionTaskStatuses": {
+        "R2-01": "REVIEW",
+        "R2-02": "REVIEW",
+        "R2-03": "REVIEW",
+        "R2-04": "REVIEW",
+        "R2-05": "REVIEW",
+        "R2-06": "WIP",
+        "R2-07": "REVIEW"
+      },
+      "evidenceUpdates": {
+        "U1": {
+          "evidence": [
+            "docs/development/evidence/usable-assets/matched-comparison.md",
+            "docs/development/evidence/usable-assets/PROTOCOL.md"
+          ],
+          "note": "Independent review accepts U1 only for the prospectively frozen continuation comparison of both real task types. The same garment c67633a2, arm badf3fd5, full original references and task were supplied to isolated no-skill, fixed-1.x a29bcc42 and 2.0 f174f6b1 conditions, each capped at 24 Blender processes / 1,800 active seconds in the same declared Blender 4.3.2 two-thread / Cycles 512px 16-sample / Godot 4.7.2 environment. Common geometry, finite source error, sampled contacts, actual motion, local retopology, edit/restore and blinded review evaluate every original U1 axis; all 12 selected native/GLB files, six retained detailed inputs and fixed product manifests were independently re-hashed. Both tasks are visually tied. All three garment consumer profiles remain FAIL at both default 20um and predeclared 100um with the matrix threshold unchanged. Current-v2 arm export-geometry diagnostic FAIL and fixed-v1 selected-candidate edit/restore NOT_EVALUATED remain explicit; all-arm consumer PASS is not mechanical-contact acceptance. One run per condition, absent provider/model/token/billed-cost data and incomplete plain timing leave E2 open. Existing useful models/motions were supplied; no from-scratch, speed, cost, GPU or general-superiority claim. Later informed wearable repairs do not replace the frozen comparison outputs."
+        }
+      },
+      "comparisonEvidenceSha256": {
+        "commonTask": "1174c31e9b609725fd1157bc5d564a6c909ced4fa049993552f505b32c46a691",
+        "frozenProtocol": "e965ac2434f1bc6c2b9c61d9256b8c65f4dffcf29a880f365b5791b5dd4fbb70",
+        "independentReview": "9efdffa1e0b0b42a0fbfab0f821ddf94b24fdcab2ea0acfd082d36c686ce28ad",
+        "independentNumericRecord": "f8a14ead29cbaa611df27465b48e4959826d0a0db52f99f44aecdf509e515ce2"
+      },
+      "boundaries": {
+        "closedTasks": 0,
+        "totalTasks": 7,
+        "finishedVisualAcceptance": {
+          "jacket": "rejected",
+          "automail": "rejected"
+        },
+        "developmentMetadata": "2.0.0-alpha.1",
+        "retainedLegacyRuntime": "1.4.2",
+        "publishedRelease": "v1.4.1",
+        "pullRequest": "https://github.com/ictseoyoungmin/refas/pull/399",
+        "pullRequestState": "Draft",
+        "prototypeSourceAcceptance": {
+          "jacket": "demonstrated within original task scope",
+          "automail": "demonstrated within original task scope"
+        },
+        "usableAssetAcceptance": {
+          "automail": "accepted only for declared rigid reach/partial grip and documented untextured scope",
+          "jacket": "accepted only for the identified original26-mesh avatar, frames1-97 at30fps, frozen source contact policies and predeclared100-micrometre consumer profile"
+        },
+        "standaloneAutomailLibraryId": "libfile_469aa206ad3c819180cbc2007000a572",
+        "authoringCandidatePullRequest": "https://github.com/ictseoyoungmin/refas/pull/425",
+        "authoringCandidatePullRequestState": "Draft",
+        "checkpointIssue": "https://github.com/ictseoyoungmin/refas/issues/432",
+        "openCriteria": [
+          "E2",
+          "D2",
+          "D3"
+        ],
+        "cumulativeMainArtifactBudget": {
+          "limitBytes": 1048576,
+          "status": "FAIL",
+          "note": "The cumulative change against main remains over the source-artifact budget. This documentation checkpoint grants no waiver, main-merge or release credit."
+        },
+        "retainedDiagnosticFailures": {
+          "consumerDefault20um": "FAIL: 5,883 point checks; predeclared100um profile separately PASS without a physical-contact allowance",
+          "originalAvatarStrictGeometry": "FAIL: first-frame strict geometric orientation; remaining96 frames unassessed by that route",
+          "avatarBlenderReimport2um": "FAIL: Body.001 at frames28/70, maximum2.017388303um; raw GLB replay of all26 meshes over97 frames separately PASS within unchanged2um",
+          "directRawLiveStaticHairEquality": "FAIL: lossy engine static-position representation; exact source-derived uint16 AABB forward mapping separately PASS with zero fitted parameters and one-ULP negative control",
+          "originalExactContactPairAndRestBinder": "FAIL retained; independently reviewed unchanged oriented/material/sheet/source lineage and original finite construction domains provide separate scoped evidence"
+        },
+        "priorWearableMergeCommit": "f3c44c1fea7f099bd50db1fa36c407ead2239d6e",
+        "comparisonAcceptance": {
+          "criterion": "U1",
+          "scope": "Independent prospective continuation comparison of both existing task types under frozen common inputs and resource caps; positive, failed and missing results retained.",
+          "assetUsabilityGranted": false,
+          "productSuperiorityClaimed": false,
+          "speedOrCostAdvantageClaimed": false,
+          "reconstructionFromScratchClaimed": false,
+          "retainedResults": {
+            "blindVisualRanking": "Tie for both tasks across all three conditions and all 54 reviewed output images.",
+            "garmentConsumerDefault20um": "FAIL for no-skill, fixed-1.x and 2.0.",
+            "garmentConsumerPredeclared100um": "FAIL for all three at the unchanged matrix threshold; 2.0 still has 388 original unused-hair-bone matrix failures, with no all-bone exemption.",
+            "armActualConsumer121": "PASS for each condition within the recorded matrix/geometry scope; not mechanical-contact or overall asset acceptance.",
+            "currentV2ArmExportGeometryDiagnostic": "FAIL/unresolved: exact-coincident-position diagnostic reports 35 nonmanifold edges and 60 inconsistent-winding edges.",
+            "fixedV1SelectedCandidateEditRestore": "NOT_EVALUATED: the executed edit/restore used the exact supplied baseline before retopology.",
+            "garmentHairContacts": "Each condition retains 10,765 opacity-confirmed hair/cloth contact pairs at each of the three common sampled poses.",
+            "providerModelTokenAndBilledCost": "Unavailable; one run per condition and interrupted plain telemetry prevent E2 credit."
+          }
+        }
+      },
+      "note": "Append-only comparison acceptance adds U1 alone after the wearable checkpoint at f3c44c1fea7f099bd50db1fa36c407ead2239d6e, in separate Issue #432. The seven earlier checkpoints and all fixed root definitions remain unchanged. Coverage is 34/37 = 92% rounded: R2-06 6/7 WIP, R2-07 5/5 REVIEW, 0/7 CLOSED. E2, D2 and D3 remain open. d02f6188 identifies the tested shared observer; product comparison snapshots remain none/a29bcc42/f174f6b1. Selected wearable acceptance and all retained default20, avatar strict/reimport, static direct-equality and contact-binder failures remain separate and unchanged. No runtime change, final-art approval, cumulative-main 1MiB waiver, rewrite/main merge or formal publication follows from this comparison."
+    },
+    {
+      "id": "delivery-main-integration-fbe4821f",
+      "date": "2026-11-27",
+      "kind": "verified-implementation",
+      "checklistVersion": 2,
+      "sourceCommit": "fbe4821fb04ff72f44a69761dd5ddfc22cdbc3dd",
+      "runtimeCommit": "f174f6b1cf9ce19ce905b58490d117aca01cea4b",
+      "demonstratedCriteria": [
+        "B1",
+        "B2",
+        "B3",
+        "B4",
+        "W1",
+        "W2",
+        "W3",
+        "W4",
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "O1",
+        "O2",
+        "O3",
+        "O4",
+        "K1",
+        "K2",
+        "K3",
+        "K4",
+        "E1",
+        "E3",
+        "E4",
+        "E5",
+        "E6",
+        "D1",
+        "D2",
+        "U1",
+        "U2",
+        "U3",
+        "U4",
+        "U5",
+        "U6"
+      ],
+      "counts": {
+        "demonstrated": 35,
+        "total": 37,
+        "percentRounded": 95,
+        "bySlice": {
+          "R2-01": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-02": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-03": {
+            "demonstrated": 6,
+            "total": 6
+          },
+          "R2-04": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-05": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-06": {
+            "demonstrated": 6,
+            "total": 7
+          },
+          "Delivery": {
+            "demonstrated": 2,
+            "total": 3
+          },
+          "R2-07": {
+            "demonstrated": 5,
+            "total": 5
+          }
+        }
+      },
+      "notionTaskStatuses": {
+        "R2-01": "REVIEW",
+        "R2-02": "REVIEW",
+        "R2-03": "REVIEW",
+        "R2-04": "REVIEW",
+        "R2-05": "REVIEW",
+        "R2-06": "WIP",
+        "R2-07": "REVIEW"
+      },
+      "evidenceUpdates": {
+        "D2": {
+          "evidence": [
+            "https://github.com/ictseoyoungmin/refas/pull/435",
+            "https://github.com/ictseoyoungmin/refas/pull/399",
+            "https://github.com/ictseoyoungmin/refas/commit/fbe4821fb04ff72f44a69761dd5ddfc22cdbc3dd",
+            "https://github.com/ictseoyoungmin/refas/actions/runs/45946321807",
+            "https://github.com/ictseoyoungmin/refas/actions/runs/45946321772",
+            "docs/WORK_STATUS.md"
+          ],
+          "note": "Declared source integration is accepted and complete. PR435 merged the independently reviewed native-production foundation into main at c2831abb; PR399 then merged the reviewed remainder at fbe4821f. The synchronized dc7f37e9 head and final main merge retain the previously reviewed bafa777e tree. Both source scopes pass the unchanged artifact budget, fresh required repository checks and current remote CI. This records D2 only, without promoting E2, D3, task closure, asset quality or optional PR425."
+        }
+      },
+      "mainIntegration": {
+        "foundationPullRequest": 435,
+        "foundationMergeCommit": "c2831abb5b089baf9436e786047c8b73dff38fee",
+        "foundationSourceCommit": "e6cecf2da7d4ed3de8b05236451ded351068bad9",
+        "foundationTree": "36dcc6ba3ed17055356506333a867aaa3186500d",
+        "remainderPullRequest": 399,
+        "reviewedSourceCommit": "16198720df3bbfa42e9bf547199598a3dd5b3710",
+        "synchronizedHead": "dc7f37e986589fdf98015f307ff1ac6de673d83e",
+        "mainMergeCommit": "fbe4821fb04ff72f44a69761dd5ddfc22cdbc3dd",
+        "reviewedAndMergedTree": "bafa777e2d3f97c8a898b8922eaa913b07e0bdff",
+        "primaryIssue398": "closed after accepted source integration; remaining evidence and publication tracked separately",
+        "freshRepositoryChecks": {
+          "foundation": {
+            "source": "e6cecf2da7d4ed3de8b05236451ded351068bad9",
+            "javascriptPassed": 948,
+            "javascriptFailed": 0,
+            "javascriptSkipped": 0,
+            "requiredGateCount": 5,
+            "allRequiredGatesPassed": true,
+            "dogfoodCheckpoints": 11,
+            "skillFiles": 16,
+            "packageFiles": 20,
+            "packageBytes": 258556
+          },
+          "remainder": {
+            "source": "16198720df3bbfa42e9bf547199598a3dd5b3710",
+            "javascriptPassed": 948,
+            "javascriptFailed": 0,
+            "javascriptSkipped": 0,
+            "requiredGateCount": 5,
+            "allRequiredGatesPassed": true,
+            "dogfoodCheckpoints": 11,
+            "skillFiles": 19,
+            "packageFiles": 23,
+            "packageBytes": 301916
+          },
+          "requiredCommands": [
+            "npm test",
+            "npm run test:python",
+            "npm run check",
+            "npm run dogfood",
+            "npm run release:audit"
+          ],
+          "actualBlenderGodot": "Existing exact-source capability evidence is reused with its original scope; no new real-asset or 187-test execution is claimed by this integration."
+        },
+        "exactHeadCi": {
+          "head": "dc7f37e986589fdf98015f307ff1ac6de673d83e",
+          "ciRun": 45946321807,
+          "productionRun": 45946321772,
+          "conclusion": "success"
+        },
+        "recovery": "Normal merge reverts preserve a29bcc42, c2831abb and all reviewed feature commits; accepted/rejected private asset archives and frozen comparisons remain separate."
+      },
+      "timingCostEvidence": {
+        "criterion": "E2",
+        "status": "blocked",
+        "issue": "https://github.com/ictseoyoungmin/refas/issues/436",
+        "providerModelSnapshot": null,
+        "requestUsage": null,
+        "billedCost": null,
+        "reason": "Actual matched provider/model/usage and attributable billed-cost telemetry remain unavailable. Existing Blender time, subscription prices, turns and file bytes cannot fill these observations. No new model run or cost claim is credited."
+      },
+      "boundaries": {
+        "closedTasks": 0,
+        "totalTasks": 7,
+        "finishedVisualAcceptance": {
+          "jacket": "rejected",
+          "automail": "rejected"
+        },
+        "developmentMetadata": "2.0.0-alpha.1",
+        "retainedLegacyRuntime": "1.4.2",
+        "publishedRelease": "v1.4.1",
+        "pullRequest": "https://github.com/ictseoyoungmin/refas/pull/399",
+        "pullRequestState": "Merged",
+        "prototypeSourceAcceptance": {
+          "jacket": "demonstrated within original task scope",
+          "automail": "demonstrated within original task scope"
+        },
+        "usableAssetAcceptance": {
+          "automail": "accepted only for declared rigid reach/partial grip and documented untextured scope",
+          "jacket": "accepted only for the identified original26-mesh avatar, frames1-97 at30fps, frozen source contact policies and predeclared100-micrometre consumer profile"
+        },
+        "standaloneAutomailLibraryId": "libfile_469aa206ad3c819180cbc2007000a572",
+        "authoringCandidatePullRequest": "https://github.com/ictseoyoungmin/refas/pull/425",
+        "authoringCandidatePullRequestState": "Draft",
+        "checkpointIssue": "https://github.com/ictseoyoungmin/refas/issues/437",
+        "openCriteria": [
+          "E2",
+          "D3"
+        ],
+        "retainedDiagnosticFailures": {
+          "consumerDefault20um": "FAIL: 5,883 point checks; predeclared100um profile separately PASS without a physical-contact allowance",
+          "originalAvatarStrictGeometry": "FAIL: first-frame strict geometric orientation; remaining96 frames unassessed by that route",
+          "avatarBlenderReimport2um": "FAIL: Body.001 at frames28/70, maximum2.017388303um; raw GLB replay of all26 meshes over97 frames separately PASS within unchanged2um",
+          "directRawLiveStaticHairEquality": "FAIL: lossy engine static-position representation; exact source-derived uint16 AABB forward mapping separately PASS with zero fitted parameters and one-ULP negative control",
+          "originalExactContactPairAndRestBinder": "FAIL retained; independently reviewed unchanged oriented/material/sheet/source lineage and original finite construction domains provide separate scoped evidence"
+        },
+        "priorWearableMergeCommit": "f3c44c1fea7f099bd50db1fa36c407ead2239d6e",
+        "comparisonAcceptance": {
+          "criterion": "U1",
+          "scope": "Independent prospective continuation comparison of both existing task types under frozen common inputs and resource caps; positive, failed and missing results retained.",
+          "assetUsabilityGranted": false,
+          "productSuperiorityClaimed": false,
+          "speedOrCostAdvantageClaimed": false,
+          "reconstructionFromScratchClaimed": false,
+          "retainedResults": {
+            "blindVisualRanking": "Tie for both tasks across all three conditions and all 54 reviewed output images.",
+            "garmentConsumerDefault20um": "FAIL for no-skill, fixed-1.x and 2.0.",
+            "garmentConsumerPredeclared100um": "FAIL for all three at the unchanged matrix threshold; 2.0 still has 388 original unused-hair-bone matrix failures, with no all-bone exemption.",
+            "armActualConsumer121": "PASS for each condition within the recorded matrix/geometry scope; not mechanical-contact or overall asset acceptance.",
+            "currentV2ArmExportGeometryDiagnostic": "FAIL/unresolved: exact-coincident-position diagnostic reports 35 nonmanifold edges and 60 inconsistent-winding edges.",
+            "fixedV1SelectedCandidateEditRestore": "NOT_EVALUATED: the executed edit/restore used the exact supplied baseline before retopology.",
+            "garmentHairContacts": "Each condition retains 10,765 opacity-confirmed hair/cloth contact pairs at each of the three common sampled poses.",
+            "providerModelTokenAndBilledCost": "Unavailable; one run per condition and interrupted plain telemetry prevent E2 credit."
+          }
+        },
+        "historicalCumulativeMainArtifactBudget": {
+          "limitBytes": 1048576,
+          "status": "FAIL",
+          "note": "The original cumulative-main result remains FAIL: 1,150,150 bytes against the unchanged 1,048,576-byte limit. Normal sequential integration of two independently reviewed source scopes resolved integration; the grandfather anchor, limits and historical verdict were not changed.",
+          "historical": true,
+          "changedBytes": 1150150,
+          "requestedBase": "a29bcc42f4da666c812462eb130836f2d766b0a1",
+          "effectiveBase": "ea64de8adfa787537bee2b86a05ac0f4ec08dd5c",
+          "head": "16198720df3bbfa42e9bf547199598a3dd5b3710"
+        },
+        "sourceIntegrationArtifactBudget": {
+          "status": "PASS",
+          "limitBytes": 1048576,
+          "foundation": {
+            "pullRequest": 435,
+            "chargedBytes": 976655,
+            "requestedBase": "a29bcc42f4da666c812462eb130836f2d766b0a1",
+            "effectiveBase": "ea64de8adfa787537bee2b86a05ac0f4ec08dd5c",
+            "head": "e6cecf2da7d4ed3de8b05236451ded351068bad9"
+          },
+          "remainder": {
+            "pullRequest": 399,
+            "chargedBytes": 590356,
+            "requestedBase": "c2831abb5b089baf9436e786047c8b73dff38fee",
+            "effectiveBase": "c2831abb5b089baf9436e786047c8b73dff38fee",
+            "head": "dc7f37e986589fdf98015f307ff1ac6de673d83e"
+          },
+          "policyChanged": false
+        },
+        "blockedEvidenceIssue": "https://github.com/ictseoyoungmin/refas/issues/436",
+        "releasePreparationIssue": "https://github.com/ictseoyoungmin/refas/issues/437"
+      },
+      "note": "Append-only D2 acceptance after the actual main merge at fbe4821f. The eight prior checkpoints, all 37 criterion meanings, checklist versions and projections remain unchanged. Coverage is 35/37 = 95% rounded, Delivery 2/3; R2-06 remains 6/7 WIP, R2-07 5/5 REVIEW and 0/7 tasks CLOSED. This is the historical 2.0.0-alpha.1 main-integration snapshot, not a 2.0.0 publication record. Current release preparation is tracked separately in Issue437. E2 and D3 remain open; all existing visual/consumer failures, scoped asset acceptance, frozen comparison outcomes and PR425 exclusion remain unchanged."
+    },
+    {
+      "id": "delivery-published-v2.0.0-d48ef51a",
+      "date": "2026-11-27",
+      "kind": "verified-implementation",
+      "checklistVersion": 2,
+      "sourceCommit": "d48ef51ad213ce2d7df3664965fc9dc283783737",
+      "runtimeCommit": "d48ef51ad213ce2d7df3664965fc9dc283783737",
+      "demonstratedCriteria": [
+        "B1",
+        "B2",
+        "B3",
+        "B4",
+        "W1",
+        "W2",
+        "W3",
+        "W4",
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "O1",
+        "O2",
+        "O3",
+        "O4",
+        "K1",
+        "K2",
+        "K3",
+        "K4",
+        "E1",
+        "E3",
+        "E4",
+        "E5",
+        "E6",
+        "D1",
+        "D2",
+        "D3",
+        "U1",
+        "U2",
+        "U3",
+        "U4",
+        "U5",
+        "U6"
+      ],
+      "counts": {
+        "demonstrated": 36,
+        "total": 37,
+        "percentRounded": 97,
+        "bySlice": {
+          "R2-01": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-02": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-03": {
+            "demonstrated": 6,
+            "total": 6
+          },
+          "R2-04": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-05": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-06": {
+            "demonstrated": 6,
+            "total": 7
+          },
+          "Delivery": {
+            "demonstrated": 3,
+            "total": 3
+          },
+          "R2-07": {
+            "demonstrated": 5,
+            "total": 5
+          }
+        }
+      },
+      "notionTaskStatuses": {
+        "R2-01": "REVIEW",
+        "R2-02": "REVIEW",
+        "R2-03": "REVIEW",
+        "R2-04": "REVIEW",
+        "R2-05": "REVIEW",
+        "R2-06": "WIP",
+        "R2-07": "REVIEW"
+      },
+      "evidenceUpdates": {
+        "D3": {
+          "evidence": [
+            "https://github.com/ictseoyoungmin/refas/issues/439",
+            "https://github.com/ictseoyoungmin/refas/pull/438",
+            "https://github.com/ictseoyoungmin/refas/commit/d48ef51ad213ce2d7df3664965fc9dc283783737",
+            "https://github.com/ictseoyoungmin/refas/actions/runs/45962623370",
+            "https://github.com/ictseoyoungmin/refas/releases/tag/v2.0.0",
+            "https://github.com/ictseoyoungmin/refas/releases/download/v2.0.0/refas-2.0.0.tgz",
+            "https://github.com/ictseoyoungmin/refas/releases/download/v2.0.0/refas-2.0.0.tgz.sha256",
+            "docs/release-criteria.md",
+            "docs/WORK_STATUS.md"
+          ],
+          "note": "Formal v2.0.0 GitHub Release and its production installation package were actually published from exact main d48ef51a. The successful manual workflow binds the recorded tag, Release and two assets to that source under the publisher conflict-rejection policy. Both unauthenticated public downloads match the prepared archive/checksum bytes and GitHub digests; installation of that downloaded archive passes the isolated CLI and copied-skill checks with all source files identical. This completes D3 only. It does not claim npm registry publication, E2 measurement, task closure, improved asset quality or optional PR425 acceptance."
+        }
+      },
+      "mainIntegration": {
+        "foundationPullRequest": 435,
+        "foundationMergeCommit": "c2831abb5b089baf9436e786047c8b73dff38fee",
+        "foundationSourceCommit": "e6cecf2da7d4ed3de8b05236451ded351068bad9",
+        "foundationTree": "36dcc6ba3ed17055356506333a867aaa3186500d",
+        "remainderPullRequest": 399,
+        "reviewedSourceCommit": "16198720df3bbfa42e9bf547199598a3dd5b3710",
+        "synchronizedHead": "dc7f37e986589fdf98015f307ff1ac6de673d83e",
+        "mainMergeCommit": "fbe4821fb04ff72f44a69761dd5ddfc22cdbc3dd",
+        "reviewedAndMergedTree": "bafa777e2d3f97c8a898b8922eaa913b07e0bdff",
+        "primaryIssue398": "closed after accepted source integration; remaining evidence and publication tracked separately",
+        "freshRepositoryChecks": {
+          "foundation": {
+            "source": "e6cecf2da7d4ed3de8b05236451ded351068bad9",
+            "javascriptPassed": 948,
+            "javascriptFailed": 0,
+            "javascriptSkipped": 0,
+            "requiredGateCount": 5,
+            "allRequiredGatesPassed": true,
+            "dogfoodCheckpoints": 11,
+            "skillFiles": 16,
+            "packageFiles": 20,
+            "packageBytes": 258556
+          },
+          "remainder": {
+            "source": "16198720df3bbfa42e9bf547199598a3dd5b3710",
+            "javascriptPassed": 948,
+            "javascriptFailed": 0,
+            "javascriptSkipped": 0,
+            "requiredGateCount": 5,
+            "allRequiredGatesPassed": true,
+            "dogfoodCheckpoints": 11,
+            "skillFiles": 19,
+            "packageFiles": 23,
+            "packageBytes": 301916
+          },
+          "requiredCommands": [
+            "npm test",
+            "npm run test:python",
+            "npm run check",
+            "npm run dogfood",
+            "npm run release:audit"
+          ],
+          "actualBlenderGodot": "Existing exact-source capability evidence is reused with its original scope; no new real-asset or 187-test execution is claimed by this integration."
+        },
+        "exactHeadCi": {
+          "head": "dc7f37e986589fdf98015f307ff1ac6de673d83e",
+          "ciRun": 45946321807,
+          "productionRun": 45946321772,
+          "conclusion": "success"
+        },
+        "recovery": "Normal merge reverts preserve a29bcc42, c2831abb and all reviewed feature commits; accepted/rejected private asset archives and frozen comparisons remain separate."
+      },
+      "timingCostEvidence": {
+        "criterion": "E2",
+        "status": "blocked",
+        "issue": "https://github.com/ictseoyoungmin/refas/issues/436",
+        "providerModelSnapshot": null,
+        "requestUsage": null,
+        "billedCost": null,
+        "reason": "Actual matched provider/model/usage and attributable billed-cost telemetry remain unavailable. Existing Blender time, subscription prices, turns and file bytes cannot fill these observations. No new model run or cost claim is credited."
+      },
+      "boundaries": {
+        "closedTasks": 0,
+        "totalTasks": 7,
+        "finishedVisualAcceptance": {
+          "jacket": "rejected",
+          "automail": "rejected"
+        },
+        "developmentMetadata": "2.0.0",
+        "retainedLegacyRuntime": "1.4.2",
+        "publishedRelease": "v2.0.0",
+        "pullRequest": "https://github.com/ictseoyoungmin/refas/pull/438",
+        "pullRequestState": "Merged",
+        "prototypeSourceAcceptance": {
+          "jacket": "demonstrated within original task scope",
+          "automail": "demonstrated within original task scope"
+        },
+        "usableAssetAcceptance": {
+          "automail": "accepted only for declared rigid reach/partial grip and documented untextured scope",
+          "jacket": "accepted only for the identified original26-mesh avatar, frames1-97 at30fps, frozen source contact policies and predeclared100-micrometre consumer profile"
+        },
+        "standaloneAutomailLibraryId": "libfile_469aa206ad3c819180cbc2007000a572",
+        "authoringCandidatePullRequest": "https://github.com/ictseoyoungmin/refas/pull/425",
+        "authoringCandidatePullRequestState": "Draft",
+        "checkpointIssue": "https://github.com/ictseoyoungmin/refas/issues/439",
+        "openCriteria": [
+          "E2"
+        ],
+        "retainedDiagnosticFailures": {
+          "consumerDefault20um": "FAIL: 5,883 point checks; predeclared100um profile separately PASS without a physical-contact allowance",
+          "originalAvatarStrictGeometry": "FAIL: first-frame strict geometric orientation; remaining96 frames unassessed by that route",
+          "avatarBlenderReimport2um": "FAIL: Body.001 at frames28/70, maximum2.017388303um; raw GLB replay of all26 meshes over97 frames separately PASS within unchanged2um",
+          "directRawLiveStaticHairEquality": "FAIL: lossy engine static-position representation; exact source-derived uint16 AABB forward mapping separately PASS with zero fitted parameters and one-ULP negative control",
+          "originalExactContactPairAndRestBinder": "FAIL retained; independently reviewed unchanged oriented/material/sheet/source lineage and original finite construction domains provide separate scoped evidence"
+        },
+        "priorWearableMergeCommit": "f3c44c1fea7f099bd50db1fa36c407ead2239d6e",
+        "comparisonAcceptance": {
+          "criterion": "U1",
+          "scope": "Independent prospective continuation comparison of both existing task types under frozen common inputs and resource caps; positive, failed and missing results retained.",
+          "assetUsabilityGranted": false,
+          "productSuperiorityClaimed": false,
+          "speedOrCostAdvantageClaimed": false,
+          "reconstructionFromScratchClaimed": false,
+          "retainedResults": {
+            "blindVisualRanking": "Tie for both tasks across all three conditions and all 54 reviewed output images.",
+            "garmentConsumerDefault20um": "FAIL for no-skill, fixed-1.x and 2.0.",
+            "garmentConsumerPredeclared100um": "FAIL for all three at the unchanged matrix threshold; 2.0 still has 388 original unused-hair-bone matrix failures, with no all-bone exemption.",
+            "armActualConsumer121": "PASS for each condition within the recorded matrix/geometry scope; not mechanical-contact or overall asset acceptance.",
+            "currentV2ArmExportGeometryDiagnostic": "FAIL/unresolved: exact-coincident-position diagnostic reports 35 nonmanifold edges and 60 inconsistent-winding edges.",
+            "fixedV1SelectedCandidateEditRestore": "NOT_EVALUATED: the executed edit/restore used the exact supplied baseline before retopology.",
+            "garmentHairContacts": "Each condition retains 10,765 opacity-confirmed hair/cloth contact pairs at each of the three common sampled poses.",
+            "providerModelTokenAndBilledCost": "Unavailable; one run per condition and interrupted plain telemetry prevent E2 credit."
+          }
+        },
+        "historicalCumulativeMainArtifactBudget": {
+          "limitBytes": 1048576,
+          "status": "FAIL",
+          "note": "The original cumulative-main result remains FAIL: 1,150,150 bytes against the unchanged 1,048,576-byte limit. Normal sequential integration of two independently reviewed source scopes resolved integration; the grandfather anchor, limits and historical verdict were not changed.",
+          "historical": true,
+          "changedBytes": 1150150,
+          "requestedBase": "a29bcc42f4da666c812462eb130836f2d766b0a1",
+          "effectiveBase": "ea64de8adfa787537bee2b86a05ac0f4ec08dd5c",
+          "head": "16198720df3bbfa42e9bf547199598a3dd5b3710"
+        },
+        "sourceIntegrationArtifactBudget": {
+          "status": "PASS",
+          "limitBytes": 1048576,
+          "foundation": {
+            "pullRequest": 435,
+            "chargedBytes": 976655,
+            "requestedBase": "a29bcc42f4da666c812462eb130836f2d766b0a1",
+            "effectiveBase": "ea64de8adfa787537bee2b86a05ac0f4ec08dd5c",
+            "head": "e6cecf2da7d4ed3de8b05236451ded351068bad9"
+          },
+          "remainder": {
+            "pullRequest": 399,
+            "chargedBytes": 590356,
+            "requestedBase": "c2831abb5b089baf9436e786047c8b73dff38fee",
+            "effectiveBase": "c2831abb5b089baf9436e786047c8b73dff38fee",
+            "head": "dc7f37e986589fdf98015f307ff1ac6de673d83e"
+          },
+          "policyChanged": false
+        },
+        "blockedEvidenceIssue": "https://github.com/ictseoyoungmin/refas/issues/436",
+        "releasePreparationIssue": "https://github.com/ictseoyoungmin/refas/issues/437",
+        "blockedEvidenceMilestone": "https://github.com/ictseoyoungmin/refas/milestone/5"
+      },
+      "note": "Append-only D3 acceptance after actual GitHub Release and installation-package publication from d48ef51a. All nine prior checkpoints retain their exact text; all 37 criterion meanings, checklist versions and projections remain unchanged. Coverage is 36/37 = 97% rounded, Delivery 3/3; R2-06 remains 6/7 WIP, R2-07 5/5 REVIEW and 0/7 tasks CLOSED. sourceCommit and runtimeCommit identify the published source, not this later documentation commit. E2 remains blocked in Issue436 under milestone2.0.1 with provider/model/usage and billed-cost values null. Existing visual/consumer failures, scoped asset acceptance, U1 ties and missing results, the historical cumulative-main budget FAIL and PR425 exclusion remain unchanged. No npm registry publication, speed/cost advantage or general quality superiority is claimed.",
+      "publication": {
+        "version": "2.0.0",
+        "channel": "GitHub Release installation package",
+        "npmRegistryPublicationClaimed": false,
+        "releaseId": 460308601,
+        "releaseUrl": "https://github.com/ictseoyoungmin/refas/releases/tag/v2.0.0",
+        "publishedAt": "2026-11-27T08:02:42Z",
+        "verifiedAt": "2026-11-27T08:04:35.006579+00:00",
+        "tag": "v2.0.0",
+        "tagCommit": "d48ef51ad213ce2d7df3664965fc9dc283783737",
+        "releaseTargetCommit": "d48ef51ad213ce2d7df3664965fc9dc283783737",
+        "draft": false,
+        "prerelease": false,
+        "githubReleaseImmutable": false,
+        "workflow": {
+          "id": 45962623370,
+          "url": "https://github.com/ictseoyoungmin/refas/actions/runs/45962623370",
+          "event": "workflow_dispatch",
+          "sourceCommit": "d48ef51ad213ce2d7df3664965fc9dc283783737",
+          "conclusion": "success"
+        },
+        "exactMainChecks": {
+          "sourceCommit": "d48ef51ad213ce2d7df3664965fc9dc283783737",
+          "reviewedAndMergedTree": "d541839ab1c39bd64f829d68563c5139742d3744",
+          "ciRun": "https://github.com/ictseoyoungmin/refas/actions/runs/45948863434",
+          "productionRun": "https://github.com/ictseoyoungmin/refas/actions/runs/45948863322",
+          "conclusion": "success",
+          "nodeVersions": [
+            22,
+            24
+          ],
+          "fullQaGateCount": 17,
+          "localRequiredGateCount": 5,
+          "javascriptPassed": 967,
+          "actualBlenderGodot": "Existing exact-source evidence of 187 tests with zero failures/skips and 32 bound source hashes is retained; publication does not claim another model or 187-test execution."
+        },
+        "publicDownload": {
+          "withoutCredentials": true,
+          "checksumContentVerified": true,
+          "preparedArchiveSha256": "9be599330e8be6fb01180d1c6deec3bc27ab4b24c6ad8b9396a32011018b1581",
+          "assets": [
+            {
+              "name": "refas-2.0.0.tgz",
+              "id": 799547991,
+              "url": "https://github.com/ictseoyoungmin/refas/releases/download/v2.0.0/refas-2.0.0.tgz",
+              "bytes": 87637,
+              "sha256": "9be599330e8be6fb01180d1c6deec3bc27ab4b24c6ad8b9396a32011018b1581",
+              "downloadMatchesGithubDigest": true,
+              "matchesPreparedArtifact": true
+            },
+            {
+              "name": "refas-2.0.0.tgz.sha256",
+              "id": 799548095,
+              "url": "https://github.com/ictseoyoungmin/refas/releases/download/v2.0.0/refas-2.0.0.tgz.sha256",
+              "bytes": 82,
+              "sha256": "e6bfec65c832bb29fb2d3acc3bee3fc5f857c2ed84fad1d8b870353960c42544",
+              "downloadMatchesGithubDigest": true,
+              "matchesPreparedArtifact": true
+            }
+          ]
+        },
+        "downloadedArchiveInstallation": {
+          "sourceCommit": "d48ef51ad213ce2d7df3664965fc9dc283783737",
+          "status": "PASS",
+          "version": "2.0.0",
+          "skillFiles": 19,
+          "packagedFiles": 23,
+          "unpackedBytes": 302654,
+          "skillBytes": 274866,
+          "installedCli": true,
+          "sourceFilesIdentical": true,
+          "plainSkillWithoutNodeOrSitePackages": true
+        },
+        "milestone": {
+          "title": "2.0.0",
+          "url": "https://github.com/ictseoyoungmin/refas/milestone/4"
+        },
+        "recovery": "The recorded v2.0.0 tag, Release assets and exact-source receipt identify the published installation bytes. The publisher rejects conflicting existing tags/assets; GitHub server-side release immutability is not enabled. Later documentation commits do not move the release source or replace conflicting assets."
+      }
     }
   ],
   "projections": [

@@ -1,4 +1,4 @@
-name: RefAs production alpha
+name: RefAs production
 
 on:
   pull_request:
@@ -21,7 +21,7 @@ on:
       - '.claude-plugin/plugin.json'
       - '.github/workflows/production.yml'
   push:
-    branches: [main, rewrite/v2]
+    branches: [main, rewrite/v2, develop/v2.1.0]
     paths:
       - 'skills/refas/**'
       - 'skills/refas/scripts/produce.py'

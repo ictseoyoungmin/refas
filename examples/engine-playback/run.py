@@ -53,6 +53,8 @@ def main():
     parser.add_argument("--clip", required=True)
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--godot", default="godot")
+    parser.add_argument("--timeout", type=positive_finite, default=120,
+                        help="Godot process timeout in seconds (default: 120)")
     parser.add_argument("--tolerance", type=positive_finite, default=2e-5,
                         help="Maximum sampled matrix-element error (default: 2e-5)")
     parser.add_argument("--vertex-tolerance", type=positive_finite, default=2e-5,
@@ -90,15 +92,24 @@ def main():
     config.write_text(json.dumps(configuration, indent=2, allow_nan=False) + "\n")
     command = [shutil.which(args.godot) or args.godot, "--headless", "--path", str(HERE),
                "--script", str(HERE / "verify_godot.gd"), "--", str(config)]
-    started = dt.datetime.now(dt.timezone.utc).isoformat()
+    started = dt.datetime.now(dt.timezone.utc)
     timer = time.monotonic()
-    result = subprocess.run(command, capture_output=True, text=True, timeout=120)
+    timed_out = False
+    try:
+        result = subprocess.run(command, capture_output=True, text=True, timeout=args.timeout)
+    except subprocess.TimeoutExpired as error:
+        timed_out = True
+        stdout = error.stdout.decode(errors="replace") if isinstance(error.stdout, bytes) else error.stdout or ""
+        stderr = error.stderr.decode(errors="replace") if isinstance(error.stderr, bytes) else error.stderr or ""
+        result = subprocess.CompletedProcess(command, 124, stdout, stderr)
     (out / "stdout.txt").write_text(result.stdout)
     (out / "stderr.txt").write_text(result.stderr)
-    (out / "command.json").write_text(json.dumps({"argv": command, "startedUtc": started,
+    (out / "command.json").write_text(json.dumps({"argv": command, "startedUtc": started.isoformat(),
+        "timeoutSeconds": args.timeout, "deadlineUtc": (started + dt.timedelta(seconds=args.timeout)).isoformat(),
+        "timedOut": timed_out,
         "endedUtc": dt.datetime.now(dt.timezone.utc).isoformat(), "elapsedSeconds": time.monotonic() - timer,
         "returncode": result.returncode}, indent=2) + "\n")
-    print(json.dumps({"returncode": result.returncode, "out": str(out)}))
+    print(json.dumps({"returncode": result.returncode, "timedOut": timed_out, "out": str(out)}))
     return result.returncode
 
 

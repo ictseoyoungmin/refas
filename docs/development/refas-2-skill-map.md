@@ -5,10 +5,10 @@ and what a change or removal affects. It is a repository maintenance document;
 agents making assets start with the installed `SKILL.md`, not this map.
 
 The [distribution allowlist](../../tools/verify-production-distribution.mjs)
-declares **18 installed skill files**: ten Python files, five guides, the
+declares **23 installed skill files**: fifteen Python files, five guides, the
 skill entry, discovery metadata and one icon. Two `.npmignore` files also live
 in the source folder but are excluded from the package. The complete npm
-package has 22 files: those 18 plus the root README, LICENSE, package metadata
+package has 27 files: those 23 plus the root README, LICENSE, package metadata
 and [Node launcher](../../bin/refas.mjs). The launcher delegates to Python;
 the copied Python skill can run without Node.
 
@@ -28,6 +28,8 @@ flowchart TD
     Guides -. "command options" .-> CLI
 
     CLI -- "version" --> Identity["production/__init__.py"]
+    CLI -- "authoring-capabilities" --> Catalogue["production/capabilities.py"]
+    Catalogue -. "AST signatures and guide paths" .-> Helpers["Installed authoring helpers and guides"]
     CLI -- "commands" --> Project["production/project.py"]
     CLI -- "import-v1 only" --> Import["production/asset_import.py"]
     Project -- "GLB format check, lazy import" --> Import
@@ -42,14 +44,33 @@ flowchart TD
     Worker -- "runpy inside Blender" --> Script["Project bpy authoring script"]
     Guides -. "authoring guidance" .-> Script
     Script -- "optional import" --> Audit
-    Script -- "optional import" --> Binding["production/surface_binding.py"]
-    Script -- "optional import" --> Sweep["production/section_sweep.py"]
 ```
+
+Optional authoring imports and their shared geometry dependencies:
+
+```mermaid
+flowchart TD
+    Script["Project authoring script"] --> Mount["surface_mount.py"]
+    Script --> Recess["recess.py"]
+    Script --> Scene["sweep_scene.py"]
+    Script --> Binding["surface_binding.py"]
+    Script --> Thickness["thickness_field.py"]
+    Recess -- "evaluated BVH and frame" --> Mount
+    Scene -- "numerical sections and frames" --> Sweep["section_sweep.py"]
+    Mount --> Blender["Blender bpy and mathutils"]
+    Recess --> Blender
+    Scene --> Blender
+```
+
+Author scripts may also call `section_sweep.sweep_sections` directly when only
+numeric vertices/faces are needed; that path does not create native controls.
 
 The guides influence the agent's commands and scripts; Python does not execute
 Markdown. The worker adds its module directory to the import path before
 running the author's ordinary `bpy` script. This makes documented helper
 imports available without requiring repository-only code.
+The catalogue reads installed helper signatures without importing Blender or
+running a project; it reports the bare imports used by native author scripts.
 
 The two arrows between project and asset import serve distinct paths: ordinary
 GLB editing loads the shared format check when needed, while saved-project
@@ -83,8 +104,13 @@ Paths in the first column are relative to `skills/refas/`.
 | [scripts/production/review.py](../../skills/refas/scripts/production/review.py) | Validates fixed camera/light specifications in both the host project code and Blender worker. | Both callers and the review guide must agree. Preserve captured settings through save/restore and test actual views where relevant. |
 | [scripts/production/image_compare.py](../../skills/refas/scripts/production/image_compare.py) | Optional alpha coverage comparison. Project validates regions; the temporary Blender worker decodes captured PNGs. | Removal requires retiring `compare`, both callers, review guidance, package allowlist and comparison tests. It does not own edits or baseline approval. |
 | [scripts/production/mesh_audit.py](../../skills/refas/scripts/production/mesh_audit.py) | Observes evaluated topology and anchor gaps. The worker imports its curve-tessellation discriminator at startup and calls `audit_mesh` for topology queries. Authoring scripts can also import it. | It is not optional as a whole: deleting it also breaks normal worker startup and curve instance checks. Follow worker imports, query output, topology guidance and author scripts. |
+| [scripts/production/surface_mount.py](../../skills/refas/scripts/production/surface_mount.py) | Optional Blender authoring: select an evaluated surface frame and rigidly place a detail with explicit contact samples. Author scripts call it through the catalogue/assembly guide; recess construction reuses its internal evaluated BVH/frame functions. | Keep discovery, assembly example, package allowlist and actual Blender tests aligned. Removal also breaks recess construction and saved author-script imports; the core worker never invokes it automatically. It does not replace deforming surface binding or collision QA. |
+| [scripts/production/recess.py](../../skills/refas/scripts/production/recess.py) | Optional Blender authoring: construct/revise one named convex blind recess with an editable construction cutter and Boolean. Uses shared surface selection and verifies sampled floor/wall geometry. | Removal affects catalogue/guide imports, package allowlist and native recess tests; existing ordinary cutter/Boolean scenes remain editable. Keep static solid and sampled-thickness limits separate from cloth openings and global wall certification. |
 | [scripts/production/surface_binding.py](../../skills/refas/scripts/production/surface_binding.py) | Optional numeric authoring API for binding and transporting a section on an explicitly chosen host triangle. No core module automatically calls it. | Search documented and retained author-script imports, not only core imports. Removing it retires the supported surface-attachment recipe and its tests. |
-| [scripts/production/section_sweep.py](../../skills/refas/scripts/production/section_sweep.py) | Optional authoring math for explicitly corresponding profiles on sampled open guides; returns vertices, faces and frames. | Remove the author-script import and recipe, package allowlist entry and numeric tests together. No automatic core caller. |
+| [scripts/production/section_sweep.py](../../skills/refas/scripts/production/section_sweep.py) | Pure authoring math for corresponding profiles on sampled open guides; returns vertices, faces and transported frames. Called directly by author scripts and by the native sweep adapter. | Removal also breaks native create/rebuild. Keep numeric tests, native adapter, catalogue, guide and package entry aligned. No automatic core caller or global intersection guarantee. |
+| [scripts/production/sweep_scene.py](../../skills/refas/scripts/production/sweep_scene.py) | Optional native create/rebuild adapter. Ordinary guide/profile/start-axis construction meshes are retained controls; output vertices update with fixed topology. | Keep catalogue, guide, package entry and actual Blender preservation/delivery tests aligned. Saved display-frame bookkeeping needs direct reopen checks; generic worker fingerprints do not cover arbitrary custom properties. |
+| [scripts/production/thickness_field.py](../../skills/refas/scripts/production/thickness_field.py) | Optional stdlib graph operation approximating the greatest permitted thickness field under explicit upper, lower, pin and edge-gradient bounds. Author scripts choose whether and how to apply it. | Keep the assembly recipe, catalogue, package allowlist and numeric/native tests consistent. A field PASS does not certify evaluated shell clearance or wearing. Removing it affects retained author-script imports, not normal worker startup. |
+| [scripts/production/capabilities.py](../../skills/refas/scripts/production/capabilities.py) | Read-only `authoring-capabilities` catalogue; CLI calls it, AST reads current helper signatures, and records guide paths and native author imports. | Update route names, source callables and guide paths together. Removal also retires the CLI route, SKILL discovery instruction and installed discovery checks; ordinary modeling does not depend on it. |
 | [scripts/production/asset_import.py](../../skills/refas/scripts/production/asset_import.py) | Shares the GLB container/resource check with `run --input-glb` through a lazy project import. The `import-v1` command also uses it to capture archived bytes and call the current project path. | Both ordinary GLB editing and saved-project adoption depend on this file. Coordinate their commands, input capture, guide and tests; keep stored migration formats compatible. It is not removable solely because no 1.x migration is planned. |
 
 ## Guidance and discovery
@@ -92,7 +118,7 @@ Paths in the first column are relative to `skills/refas/`.
 | File | Why it exists and what it connects | Change or removal impact |
 |---|---|---|
 | [SKILL.md](../../skills/refas/SKILL.md) | Agent entry: asset intent, useful authoring/review loops, public commands and five on-demand guides. | Update affected command examples and guide routes. Keep development status and CI procedures in repository docs. |
-| [references/production-assemblies.md](../../skills/refas/references/production-assemblies.md) | Segmented forms, editable Boolean openings, pivots, local curve/lattice edits and the optional surface-binding API; links to topology guidance. | Check SKILL routing, construction-source and native control-cage delivery scope, the garment guide's attachment reference and helper examples. |
+| [references/production-assemblies.md](../../skills/refas/references/production-assemblies.md) | Segmented forms, editable Boolean openings, pivots, local curve/lattice edits and optional rigid-mount/surface-binding/thickness-field APIs; links to topology guidance. | Check SKILL routing, construction-source and native control-cage delivery scope, the garment guide's references and helper examples. |
 | [references/production-garments.md](../../skills/refas/references/production-garments.md) | Shared cloth boundaries, sleeves, folded collars and wearing/deformation; refers to assemblies and topology. | Keep construction advice consistent with those guides and the intended character/motion scope. |
 | [references/production-topology.md](../../skills/refas/references/production-topology.md) | Mesh observations, curve-to-mesh delivery, retained Shrinkwrap sources, retopology and optimization; demonstrates `inspect` and `mesh_audit`. | Follow CLI/query changes, source/output scope, helper APIs and incoming links from SKILL, garments and assemblies. |
 | [references/production-review.md](../../skills/refas/references/production-review.md) | Fixed views and optional region coverage comparison. | Match `review.py`, `image_compare.py`, CLI options and actual render behavior. |
@@ -108,6 +134,9 @@ ledger of test totals or asset approval.
 
 | Feature or maintenance change | Related elements | Why the relationship is needed | What to revisit if replaced or removed |
 |---|---|---|---|
+| Verified release package | Package/plugin identities and `production/__init__.py`; repository publication workflow → `tools/release-package.mjs` → actual archive installation and GitHub Release assets | Publish the reviewed production-only bytes with a checksum, while keeping version preparation separate from public availability. | Coordinate versions, README installation examples, release audit, package allowlist, exact-main/manual authorization and immutable asset checks. Removing the publication helper affects release delivery, not native authoring. No new installed skill file or project schema is added. |
+| External animation observations | Repository-only `examples/engine-playback/run.py` → `verify_godot.gd` → Godot GLTFDocument/AnimationPlayer; engine playback tests and synthetic GLB fixtures | Compare named live nodes, skin/morph vertices and static attachments with independent native samples; retain process-timeout evidence. | Original-to-imported name association, explicit paths, SceneTree attachment updates, raw skin arithmetic, declared tolerances, runner options and README. No installed skill file or production command depends on this optional observer. |
+| Selective authoring support | CLI → catalogue → source signatures; author script → optional thickness field → ordinary Solidify; SKILL and garment/assembly guides | Make existing tools discoverable and permit bounded local thickness changes across garment and panel surfaces while prioritizing whole form. | Native script import paths, graph constraints and impossible-bound rejection, evaluated surface preservation, copied install/restore, guide routes and package membership. No stage lock, new project schema or collision-repair claim is introduced. |
 | Native construction meshes | Existing project/worker → ordinary `bpy`; SKILL, assemblies and topology guides | Keep Boolean cutters and projection sources editable in the native while final surface counts, framing and GLB omit the source surfaces. Retain dependencies for render/export evaluation and protection. | Explicit role and modifier target fingerprints, scene/view-layer scope, helper ancestry, selected-source queries, native restore, final-geometry counts and installed static export. Removing the role requires resolving saved helper-dependent projects and both authoring recipes; hiding arbitrary meshes is not an equivalent replacement. |
 | Editable native lattices | Existing CLI/project → worker → ordinary `bpy` script; SKILL and assembly guide | Retain a Blender deformation cage and modifier for continued local shape edits. Record its control data while rendering and inspecting the evaluated host geometry; no new command, module or deformation algorithm. | Grid/interpolation/controls/group weights/shape keys/animation fingerprints, protected state, in-scene and active-view-layer dependencies, compact queries and exact restore. Delivery rejects every remaining scene lattice and does not auto-bake animation. Removing support would retire continued native cage editing and its installed-use tests. |
 | Direct GLB authoring input | CLI → project → worker; project → `asset_import` format check; SKILL and import guide | Start a useful `bpy` edit from an ordinary self-contained GLB without a manual native conversion or saved-project format. The original input is captured and subsequent edits continue the native revision. | Mutually exclusive complete-scene inputs, captured GLB identity, embedded-resource requirements, imported-object protection, native/delivery defaults, restore and existing Python positional calls. Reuses the existing modules and adds no report format. |
@@ -129,6 +158,7 @@ or render merely to update this map.
 | Relationship | Existing verification |
 |---|---|
 | Installed file set and allowed internal links | [Distribution allowlist](../../tools/verify-production-distribution.mjs), [distribution tests](../../tests/production-distribution.test.mjs) |
+| Exact release archive and immutable public assets | [Release package helper](../../tools/release-package.mjs), [publication tests](../../tests/release-package.test.mjs), [manual publisher](../../.github/workflows/publish-release.yml); existing archive-install check below |
 | npm launcher and independent Python copy | [Packed-install check](../../tools/verify-packed-install.mjs), distribution tests above |
 | Discovery, icons and plugin identity | [Plugin checker](../../tools/verify-plugin-distribution.mjs), [plugin tests](../../tests/plugin-distribution.test.mjs) |
 | CLI/project, queries, integrity and recovery | [Project tests](../../tests/test_production_project.py), [resource tests](../../tests/test_production_resources.py), [native tests](../../tests/test_production_native.py) |
@@ -138,8 +168,12 @@ or render merely to update this map.
 | Fixed review specification | Project capture/restore and validation tests; actual fixed-view Blender tests above |
 | Animation and consumer execution | [Animation tests](../../tests/test_production_animation.py), [engine playback tests](../../tests/test_production_engine_playback.py) |
 | Mesh observations | [Mesh-audit tests](../../tests/test_production_mesh_audit.py), native and curve query tests above |
+| Optional rigid mounting and evaluated surface frames | [Blender and installed-native tests](../../tests/test_production_surface_mount.py), source-bound garment/car feature studies outside Git |
+| Optional blind recess construction | [Blender and installed-native tests](../../tests/test_production_recess.py), source-bound car intake study outside Git |
 | Optional surface-binding API | [Numeric tests](../../tests/test_production_surface_binding.py), [installed Blender tests](../../tests/test_production_surface_blender.py) |
-| Optional section sweep candidate | [Numeric controls](../../tests/test_production_section_sweep.py); actual installed Blender and matched real-use acceptance remain pending. |
+| Section sweep math and retained native controls | [Numeric tests](../../tests/test_production_section_sweep.py), [actual copied-skill native tests](../../tests/test_production_sweep_scene.py); matched source-bound acceptance recorded in the 2.1 plan. |
+| Optional thickness field and native application | [Independent graph-oracle tests](../../tests/test_production_thickness_field.py), [copied-skill Blender/restore test](../../tests/test_production_thickness_blender.py) |
+| Installed authoring discovery | [AST and copied-CLI tests](../../tests/test_production_capabilities.py), packed-install check above |
 | Direct GLB input selection, capture and continued editing | [Resource tests](../../tests/test_production_resources.py), actual Blender/installed-input checks above |
 | 1.x asset adoption | [Import tests](../../tests/test_production_import.py), Blender import tests above |
 | Repository CI execution | [Normal CI](../../.github/workflows/ci.yml), [production CI](../../.github/workflows/production.yml), [Deep QA](../../.github/workflows/ci-deep.yml) |

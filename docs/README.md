@@ -25,7 +25,8 @@ the necessary result and evidence references.
 ## Retained 1.x history
 
 Read the [1.x guide](legacy-1x.md) only when working with that project format or
-its retained comparison runtime. Earlier architecture, capability contracts,
-development plans and release reports are in the
-[1.x documentation archive](archive/v1/README.md). They describe that version's
-implementation and do not define the current 2.0 modeling workflow.
+its retained comparison runtime. The [historical index](archive/v1/README.md) links the complete, immutable
+[1.x documentation snapshot](https://github.com/ictseoyoungmin/refas/tree/285413169bf8fd5aeb666061ff6a113ef364f6f3/docs/archive/v1).
+Superseded plans, reports and duplicate contract notes are no longer copied into
+the current tree. The four retained Markdown test inputs are historical, not
+2.0 instructions.

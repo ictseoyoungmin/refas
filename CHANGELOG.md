@@ -2,6 +2,35 @@
 
 All notable RefAs changes are documented here. RefAs follows semantic versioning.
 
+## 2.1.0-alpha.1 — Development
+
+- Add optional rigid surface mounting from evaluated host geometry, an explicit selection ray/tangent and a planar contact footprint. Preserve the part shape/scale and reject infeasible sampled support gaps before moving it.
+- Add editable blind recess construction from an explicit convex outline, surface frame and depth. Retain the native cutter and Boolean, observe actual walls/floor and reject infeasible sampled remaining thickness without losing the accepted feature.
+- Add sampled section sweeps with stable transported frames and retained native guide/profile controls. Rebuild fixed topology from edited controls while preserving output identity, materials and supported mesh layers.
+- Expose the helper through installed discovery and focused assembly guidance. Retain the normal Blender authoring, native revision and delivery path.
+- Begin 2.1.0 on `develop/v2.1.0` with garment/car feature studies. This development version is not a published release or a completed whole-asset quality claim.
+
+## 2.0.0 — 2026-11-27
+
+### Native production workflow
+
+- Make the standard-library Python production entry the installed workflow. Build and revise ordinary Blender scenes, preserve references and editable native sources, inspect useful views, and restore exact recorded revisions. The npm launcher and copied skill use the same implementation.
+- Keep native iteration separate from explicit GLB delivery. Support existing native/GLB inputs, selected-object protection, classic curves, lattice cages and retained Boolean/Shrinkwrap construction meshes within their documented preservation and export limits.
+- Provide fixed-view coverage observations and optional surface binding, thickness grading and focused authoring discovery. These helpers remain optional; they do not grant visual, physical or game-readiness approval.
+- Keep the 1.x runtime and its certification contracts available only in the repository. Explicit import preserves selected source bytes and reports lost scope without inheriting old certificates or rebuilding absent authoring history.
+
+### Verified distribution and publication
+
+- Align package, Python and both plugin identities at 2.0.0. Ship only the existing 19 skill files and 23 total package files; exclude user models, rendered media, raw logs, recovery archives and legacy runtime code.
+- Publish the tested installation `.tgz` and SHA-256 file as GitHub Release assets after exact-current-main, manual `PUBLISH` and the required full CI checks. Verify matching existing assets without replacing them; conflicting content or source identity fails. This does not publish to the npm registry.
+- Integrate the previously reviewed production foundation and later improvements through separate source-budget-compliant PRs #435 and #399, preserving the existing limits, historical evidence and recovery points.
+
+### Evidence and limits
+
+- Selected garment use is accepted only on the identified original character and declared 97-frame clip with the predeclared consumer profile. The separate articulated arm retains its declared 121-frame reach/partial-grip scope. Native/export identity, local editing and exact recovery remain distinct from finished-art approval.
+- The frozen no-skill/1.x/2.0 continuation comparison remains visually tied, with its failed garment checks, arm diagnostic failure and missing evaluation retained. Later asset repairs do not replace those results.
+- Comparable first-useful-edit time and actual model/tool billing remain open in #436. No general quality, speed, cost, GPU-performance, universal fitting, continuous collision or physical-retention claim follows from this release.
+
 ## 2.0.0-alpha.1 — Unreleased
 
 ### Direct GLB authoring input
@@ -175,7 +204,7 @@ An agent workflow interface release for the existing reference-driven 3D constru
 - Existing construction, camera, registered render, GLB and source-region contradiction validators remain unchanged.
 - Strict source-bound release handoff still refuses to authorize likeness when independent original-photo semantic provenance is absent. A general checkpoint/certificate or a `draft-transfer` receipt is **not** a positive source-fidelity authorization.
 - #271, #272 and #265 remain open as deferred source-fidelity work. Their absence is disclosed, not silently marked as PASS; full real-photo success/negative benchmark remains future work.
-- Production-oriented follow-up (flagship geometry construction, editable agent geometry kit, character/mechanical/material tracks) is recorded in the [archived roadmap](docs/archive/v1/development/foundry-production-roadmap.md).
+- Production-oriented follow-up (flagship geometry construction, editable agent geometry kit, character/mechanical/material tracks) is recorded in the [archived roadmap](https://github.com/ictseoyoungmin/refas/blob/285413169bf8fd5aeb666061ff6a113ef364f6f3/docs/archive/v1/development/foundry-production-roadmap.md).
 
 ## 1.2.0 — 2026-10-09
 

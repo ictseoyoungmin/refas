@@ -4,11 +4,11 @@ import test from 'node:test';
 import {spawnSync} from 'node:child_process';
 import {REFAS_VERSION as LEGACY_VERSION} from '../legacy/v1/scripts/lib/canonical.mjs';
 
-test('package identities align while the unpublished alpha status stays explicit',async()=>{
+test('release package identities align while actual publication remains explicit',async()=>{
   const read=async p=>fs.readFile(new URL('../'+p,import.meta.url),'utf8');
   const packageJson=JSON.parse(await read('package.json'));
   const version = packageJson.version;
-  assert.equal(version,'2.0.0-alpha.1');
+  assert.equal(version,'2.1.0-alpha.1');
   assert.equal(LEGACY_VERSION,'1.4.2');
   const current = spawnSync(process.execPath, [new URL('../bin/refas.mjs', import.meta.url).pathname, '--version'], {encoding:'utf8'});
   assert.equal(current.status, 0, current.stderr);
@@ -20,9 +20,10 @@ test('package identities align while the unpublished alpha status stays explicit
   }
   const readme=await read('README.md');
   const changelog=await read('CHANGELOG.md');
-  assert.ok(readme.includes(`**Development version: ${version}.**`));
-  assert.doesNotMatch(readme,new RegExp('releases/tag/v'+version.replaceAll('.','\\.')));
-  assert.match(readme,/not a published stable 2\.0 release/u);
+  assert.ok(readme.includes(`**Package version: ${version}.**`));
+  assert.ok(readme.includes(`refas-${version}.tgz.sha256`));
+  assert.match(readme,/Publication is a separate verified action/u);
+  assert.match(readme,/not an assertion.*npm registry/su);
   assert.ok(changelog.includes('## '+version+' —'));
 });
 
