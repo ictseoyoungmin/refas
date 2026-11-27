@@ -42,7 +42,7 @@ are separate outcomes. Writing this plan does not complete a criterion.
 | Surface mounting | **M1:** evaluated host frame from a bounded ray and explicit tangent; **M2:** multipoint gap bounds, preserved rigid shape/scale and failure nonmutation; **M3:** copied-skill actual Blender edit/save/reopen/re-edit with unrelated preservation; **M4:** useful source-bound garment/car feature studies, observed in actual renders. | [PR #443](https://github.com/ictseoyoungmin/refas/pull/443), M1–M4 demonstrated and merged |
 | Recesses and openings | **R1:** actual declared depth/walls/floor or through opening; **R2:** wall/input limits and failure recovery; **R3:** editable cutter/outline/depth/edge controls; **R4:** installed car-feature construction and visual comparison, with cloth-shell openings distinguished. | [PR #444](https://github.com/ictseoyoungmin/refas/pull/444), R1–R4 demonstrated and merged |
 | Sweep and loft | **S1:** controlled straight/curved intent and section changes; **S2:** editable guide/section scene generation and re-edit; **S3:** explicit handling of twist, degeneration and folded connections; **S4:** installed garment and hard-surface source-bound trials. | [#424](https://github.com/ictseoyoungmin/refas/issues/424), [draft #425](https://github.com/ictseoyoungmin/refas/pull/425): technically working candidate; admission deferred after matched trial found no demonstrated net benefit |
-| Boundary transitions | **J1:** actual join from explicit boundary correspondence; **J2:** position/tangent direction/transition width with intended creases retained; **J3:** invalid-input handling and preserved surrounding controls; **J4:** demonstrated garment junction and housing transition improvement. | [PR #446](https://github.com/ictseoyoungmin/refas/pull/446), J1–J4 demonstrated; selected for integration |
+| Boundary transitions | **J1:** actual join from explicit boundary correspondence; **J2:** position/tangent direction/transition width with intended creases retained; **J3:** invalid-input handling and preserved surrounding controls; **J4:** demonstrated garment junction and housing transition improvement. | [PR #446](https://github.com/ictseoyoungmin/refas/pull/446), J1–J4 demonstrated and merged |
 | Local constrained edits | **D1:** handles and fixed boundary limit the edited region; **D2:** supported size/thickness/obstacle-gap constraints are met or conflicts returned; **D3:** existing anchors/sections and unrelated required data retained; **D4:** useful garment/car local edits and re-edit with bounded claims. | queued |
 
 ## Implementation sequence and interfaces
@@ -226,10 +226,12 @@ a construction interpretation, not preservation of the original thick topology
 or proof of embroidery/whole-garment fidelity.
 
 An insufficient Project limit silently left all 7,190 input vertices unmoved.
-[#447](https://github.com/ictseoyoungmin/refas/issues/447) therefore proposes a
+[#447](https://github.com/ictseoyoungmin/refas/issues/447) therefore implements a
 small native projection adapter with hit/residual/displacement observations and
-exact rollback, keeping ordinary modifier controls. It is queued after boundary
-integration. It adds no solver and does not complete or replace D1–D4. The fixed
+exact rollback, keeping ordinary modifier controls. It is the sole active
+implementation after boundary integration. The first scope uses binary masks
+on complete surface components, a compatible native Project prefix and a
+supported Solidify/Bevel suffix. It adds no solver and does not complete or replace D1–D4. The fixed
 20-criterion count remains separate from useful narrower follow-ups.
 
 ### Integration and release
