@@ -32,7 +32,7 @@ intended form; do not ban them or infer quality from polygon/part counts.
 
 ## Fixed functional acceptance
 
-Current count: **8/20 demonstrated (M1–M4, R1–R4)**. Each item below is one criterion; changing
+Current count: **12/20 demonstrated (M1–M4, R1–R4, J1–J4)**. Each item below is one criterion; changing
 scope requires an explicit revision rather than silently changing the count.
 Whole-asset visual acceptance, performance/cost evidence and release status
 are separate outcomes. Writing this plan does not complete a criterion.
@@ -42,7 +42,7 @@ are separate outcomes. Writing this plan does not complete a criterion.
 | Surface mounting | **M1:** evaluated host frame from a bounded ray and explicit tangent; **M2:** multipoint gap bounds, preserved rigid shape/scale and failure nonmutation; **M3:** copied-skill actual Blender edit/save/reopen/re-edit with unrelated preservation; **M4:** useful source-bound garment/car feature studies, observed in actual renders. | [PR #443](https://github.com/ictseoyoungmin/refas/pull/443), M1–M4 demonstrated and merged |
 | Recesses and openings | **R1:** actual declared depth/walls/floor or through opening; **R2:** wall/input limits and failure recovery; **R3:** editable cutter/outline/depth/edge controls; **R4:** installed car-feature construction and visual comparison, with cloth-shell openings distinguished. | [PR #444](https://github.com/ictseoyoungmin/refas/pull/444), R1–R4 demonstrated and merged |
 | Sweep and loft | **S1:** controlled straight/curved intent and section changes; **S2:** editable guide/section scene generation and re-edit; **S3:** explicit handling of twist, degeneration and folded connections; **S4:** installed garment and hard-surface source-bound trials. | [#424](https://github.com/ictseoyoungmin/refas/issues/424), [draft #425](https://github.com/ictseoyoungmin/refas/pull/425): technically working candidate; admission deferred after matched trial found no demonstrated net benefit |
-| Boundary transitions | **J1:** actual join from explicit boundary correspondence; **J2:** position/tangent direction/transition width with intended creases retained; **J3:** invalid-input handling and preserved surrounding controls; **J4:** demonstrated garment junction and housing transition improvement. | [#445](https://github.com/ictseoyoungmin/refas/issues/445), native boundary bridge in progress |
+| Boundary transitions | **J1:** actual join from explicit boundary correspondence; **J2:** position/tangent direction/transition width with intended creases retained; **J3:** invalid-input handling and preserved surrounding controls; **J4:** demonstrated garment junction and housing transition improvement. | [PR #446](https://github.com/ictseoyoungmin/refas/pull/446), J1–J4 demonstrated; selected for integration |
 | Local constrained edits | **D1:** handles and fixed boundary limit the edited region; **D2:** supported size/thickness/obstacle-gap constraints are met or conflicts returned; **D3:** existing anchors/sections and unrelated required data retained; **D4:** useful garment/car local edits and re-edit with bounded claims. | queued |
 
 ## Implementation sequence and interfaces
@@ -161,9 +161,76 @@ guide or unplanned section-edit advantage was not exercised.
 Keep PR #425 as a candidate rather than admitting it because its checks pass.
 Useful net benefit remains unproven; source fidelity and reduced editing burden
 must be demonstrated before reopening admission. Preserve the frozen trials
-outside Git and do not revise their geometry after comparison. S1-S4 do not
-increase the accepted 8/20 count. This does not establish that sweep math is
+outside Git and do not revise their geometry after comparison. S1-S4 add no
+accepted criteria. This does not establish that sweep math is
 useless; it limits what this implementation and this trial justify.
+
+### Demonstrated boundary transition scope
+
+`bridge_boundaries` uses Blender's native bridge on explicit existing open
+cage chains. Eight copied-skill actual Blender regressions and independent
+counterexamples cover correspondence, winding, source layers, world bulge,
+numeric limits, failure nonmutation and native edit/save/reopen/delivery/recovery.
+The object remains editable; the helper replaces its unshared mesh datablock.
+It adds no interpolation engine or live rebuild handler.
+
+The corrected garment study selects SURFACE for a thin collar-to-triangular-
+lapel return. The same-source LINEAR comparison had a sharper planar crease.
+The car selects LINEAR to connect its fender to the angular shoulder: SURFACE
+introduced a wavy highlight band that weakened the source's planar intent.
+Actual prejoin and final renders show the opened car boundary becoming a
+connected surface. Lower tangent mismatch alone did not determine this choice.
+
+An earlier front-only garment construction left its lower lapel about 80 mm
+from the chest and exposed/intersected the shoulder context. These candidates
+were rejected and the common source corrected before the final comparison.
+The final inner attachment's eight axial samples are 4.91–6.65 mm from the
+constructed torso; eight free-leaf samples are 22.32–33.19 mm. These are inferred
+study dimensions and finite directional observations, not whole-garment fit.
+
+Reopening the selected native and editing 80 newly inserted garment vertices
+moved them by at most 1.949612 mm. Original cage vertices and 33 unrelated
+evaluated meshes stayed exact; the car also stayed exact during that edit.
+Independent checks of both Solidify sides found expected original-boundary
+movement after joining (up to 0.04097 mm garment / 0.36918 mm car), and up to
+0.08798 mm at the garment boundary after the local edit. Cage preservation does
+not imply unchanged evaluated boundary normals or margins.
+
+Actual GLB import verified 35 meshes, 24,078 triangles and matching bounds.
+The baseline and final native/scene files, and final GLB, restored byte-for-byte.
+Final source SHA256 is `0569714294585ae8cc12350ea300686361debc66c5284b56c7729dcdfeff74ca`;
+GLB SHA256 is `801f12f006573e53ed926400dfa9f7826e08371572493e2d908559f0cca96693`.
+This supports local connected features and native editing, not complete assets,
+exact G1/G2, global collision/thickness or a workflow speed/cost advantage.
+
+Two earlier diagnostic-render runs exited with SIGSEGV and preserved the
+existing head. Exact-source/settings/helper retries later completed, with the
+same scene fingerprint and pixel-identical available images. No deterministic
+cause or source fix is established. [#448](https://github.com/ictseoyoungmin/refas/issues/448)
+tracks this runtime observation separately; save without views followed by
+fresh-process native rendering worked for these studies. It is not a general
+stability guarantee or a resolved release-readiness claim.
+
+### Bounded fitting follow-up
+
+A native Laplacian probe retained binding through reopening, but one 25 mm
+handle move missed its target by 19.553 mm and moved the intended fixed region
+up to 0.923 mm. That configuration does not establish the general D contract.
+
+The previously rejected sleeve shield was separately prepared as a flexible
+surface cage while retaining its traced outline and layered motif. Ordinary
+native Project Shrinkwrap reduced sampled backing gaps from 1.168–11.545 mm to
+0.245–0.303 mm; three existing offset edits moved it another 0.35 mm after
+reopening, with source data and 15 other objects preserved. This conversion is
+a construction interpretation, not preservation of the original thick topology
+or proof of embroidery/whole-garment fidelity.
+
+An insufficient Project limit silently left all 7,190 input vertices unmoved.
+[#447](https://github.com/ictseoyoungmin/refas/issues/447) therefore proposes a
+small native projection adapter with hit/residual/displacement observations and
+exact rollback, keeping ordinary modifier controls. It is queued after boundary
+integration. It adds no solver and does not complete or replace D1–D4. The fixed
+20-criterion count remains separate from useful narrower follow-ups.
 
 ### Integration and release
 
