@@ -2,6 +2,80 @@
 
 ## Current recorded checkpoint
 
+**92% — 34 of 37 fixed checklist-v2 criteria demonstrated.** The independently
+reviewed matched continuation comparison adds **U1 only**. R2-06 advances to
+**6/7, WIP**; R2-07 remains **5/5, REVIEW**; **0/7 tasks are CLOSED**. All seven
+previous checkpoints, criterion meanings, checklist versions and projections
+remain unchanged. **E2, D2 and D3 remain open.**
+
+The [matched comparison report](evidence/usable-assets/matched-comparison.md)
+records the frozen task, common inputs/resources, independent review and
+durable evidence. It is recorded in [Issue #432](https://github.com/ictseoyoungmin/refas/issues/432)
+after the [wearable checkpoint merge](https://github.com/ictseoyoungmin/refas/commit/f3c44c1fea7f099bd50db1fa36c407ead2239d6e).
+U1 credits evaluating both tasks across source likeness, mesh/attachment
+condition, useful motion, functional retopology and optimization. Its acceptance
+does not require a winning condition or accept the comparison models for use.
+The later repaired wearable delivery remains a separately reviewed artifact.
+
+All authors received the same garment `c67633a2…`, arm `badf3fd5…`, complete
+original reference images and continuation task. The product snapshots remain
+**no skill**, **fixed 1.x `a29bcc42…`** and **2.0 `f174f6b1…`**. Each condition
+had the same 24-process / 1,800-active-Blender-second cap, Blender 4.3.2 with two
+CPU threads, Cycles 512px/16 samples and Godot 4.7.2. Independent observation was
+outside author budgets. The tested shared observer source `d02f6188…` does not
+replace the frozen product snapshots.
+
+| Comparison result | No skill | Fixed 1.x | 2.0 |
+| --- | --- | --- | --- |
+| Blinded source/visual review, both tasks | Tie | Tie | Tie |
+| Garment consumer, default 20µm profile | FAIL | FAIL | FAIL |
+| Garment consumer, predeclared 100µm profile with unchanged matrix limit | FAIL | FAIL | FAIL |
+| Arm actual-consumer motion, 121 frames | PASS within observed scope | PASS within observed scope | PASS within observed scope |
+| Selected-candidate local-edit evidence | Scoped exercise retained | **NOT_EVALUATED**; executed exercise used supplied baseline | Scoped exercise retained |
+
+All six outputs meet their fixed polygon/material and finite sampled-error
+budgets; both supplied models already met the polygon caps. Both tasks remain
+visually tied after independent inspection of both full references and all 54
+output images. Each garment retains 10,765 opacity-confirmed hair/cloth contacts
+at each common sampled pose. The 2.0 arm's exact-coincident-position diagnostic
+remains **FAIL/unresolved**, with 35 nonmanifold and 60 inconsistent-winding
+edges; its consumer PASS does not clear geometry or mechanical contact gates.
+The 2.0 garment still has 388 original unused-hair-bone matrix failures at
+100µm; no all-bone exemption is applied to the comparison. Earlier observer
+failures and uniformly corrected observations are both retained.
+
+This is one continuation run per condition using existing geometry and useful
+motion. Provider/model snapshots, tokens and billed cost are unavailable;
+interrupted plain telemetry is conservatively bounded, not invented exact
+timing. **E2 stays open.** No speed, cost, GPU frame-time, reconstruction-from-
+scratch or general product-superiority result is claimed. Later informed
+repairs do not replace failed frozen comparison outputs.
+
+| Slice | Current coverage | Status |
+| --- | --- | --- |
+| R2-01 / R2-02 / R2-04 / R2-05 | 4/4 each | REVIEW |
+| R2-03 | 6/6 | REVIEW |
+| R2-06 | 6/7 | WIP |
+| R2-07 | 5/5 | REVIEW |
+| Coordinated delivery | 1/3 | Main merge and release unfinished |
+| **Total** | **34/37 = 92% rounded** | **0/7 tasks CLOSED** |
+
+The earlier selected wearable's 100µm use-profile acceptance remains separate
+from the comparison's all-profile FAIL results. Its default20, strict avatar/
+Blender reimport, direct raw/live static equality and original contact-binder
+failures remain recorded with their separately bounded supplemental routes.
+The selected asset budgets, detailed BODY/COLLAR mappings, arm branding/UV
+exceptions and unfinished-art boundaries are unchanged. PRs #425 and #399
+remain Draft; **the cumulative-main 1 MiB source-artifact budget remains FAIL**.
+No rewrite/main merge, formal release, task closure or new runtime behavior is
+granted by this comparison checkpoint.
+
+## Historical checkpoint — declared-use wearable delivery, 2026-11-27
+
+The complete prior summary below records the separate U2/U3/U6 acceptance and
+the criteria that were still open then. Its scope, limitations and evidence
+remain unchanged by the later U1 comparison decision.
+
 **89% — 33 of 37 fixed checklist-v2 criteria demonstrated.** The declared-use
 wearable delivery adds **U2, U3 and U6** after independent review of the exact
 selected native `624a1a90…` and GLB `af91555a…`. R2-07 is **5/5, REVIEW**;
