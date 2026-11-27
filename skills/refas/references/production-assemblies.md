@@ -582,6 +582,36 @@ that pivot; downstream joints follow their upstream segment. Keep the neutral
 world-space placement when assigning parents and verify it afterward. A name
 such as `elbow` does not create a joint or establish its axis.
 
+### Keep the neutral world pose when parenting
+
+After creating and placing a pivot and its ancestors, refresh the dependency
+graph before reading their world matrices. Use rotation/translation transforms
+with unit scale and no transform constraints. This initial parenting example
+uses an unanimated part, the authored neutral frame (frame 1 here), and the actual
+part/pivot names:
+
+```python
+import bpy
+
+part = bpy.data.objects["MovingPanel"]
+pivot = bpy.data.objects["HingePivot"]
+bpy.context.scene.frame_set(1)
+bpy.context.view_layer.update()
+neutral_world = part.matrix_world.copy()
+part.parent = pivot
+part.matrix_parent_inverse = pivot.matrix_world.inverted()
+part.matrix_world = neutral_world
+bpy.context.view_layer.update()
+world_error = max(abs(part.matrix_world[r][c] - neutral_world[r][c])
+                  for r in range(4) for c in range(4))
+if world_error > 1e-6:
+    raise ValueError("Parenting changed the neutral world pose")
+```
+
+The initial refresh matters for newly placed nested pivots whose cached matrices
+may not yet include the authored transforms. After parenting, rotate the pivot
+through useful intermediate poses and inspect the part and its attachments.
+
 Rigid plates normally follow one segment. A bridge, actuator or cable spanning
 two segments needs a separate choice: telescoping parts, an explicit linkage,
 deformation, or a clearly declared static approximation. Do not parent both

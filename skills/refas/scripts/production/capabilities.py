@@ -86,7 +86,7 @@ ROUTES = (
      "Ordinary bpy recipe", "production-assemblies.md", (),
      "Explicit authoring recipe; no automatic hinge placement, collision clearance or animation bake.",
      "make-the-motion-hierarchy-explicit",
-     "Named joint center/axis and explicit moving-part/attachment parenting; preserve neutral world transforms."),
+     "Named joint center/axis and explicit moving-part/attachment parenting; evaluate newly positioned pivots before preserving neutral world transforms."),
 )
 
 
