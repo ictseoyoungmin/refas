@@ -1,9 +1,12 @@
 # RefAs 2.0 production rewrite
 
-Status: main integration completed; 2.0.0 publication preparation. This document
-preserves the accepted design and earlier implementation scope. The
-[current work status](../WORK_STATUS.md) distinguishes a prepared package from
-an actually published release.
+Status: **v2.0.0 GitHub Release and installation package published** from
+[`d48ef51a`](https://github.com/ictseoyoungmin/refas/commit/d48ef51ad213ce2d7df3664965fc9dc283783737)
+on 2026-11-27. D3 is complete: **36/37 = 97% rounded**, Delivery **3/3**.
+E2 remains open and **0/7 tasks are CLOSED**. This document preserves the
+accepted design and earlier implementation scope; the
+[current work status](../WORK_STATUS.md) records the actual publication receipt
+and unchanged asset/evaluation boundaries.
 
 Work OS plan: <https://app.notion.com/p/41fc6a3b5bf181c2b2cdfac4605ef7d7>.
 
@@ -32,9 +35,10 @@ The rewrite tests a concrete hypothesis: a shorter, production-oriented skill an
 
 ## Current baseline and version boundary
 
-- Previous published release baseline: `v1.4.1`.
-- Prepared package/Python runtime/plugin metadata: `2.0.0`. Main integration is accepted at `fbe4821fb04ff72f44a69761dd5ddfc22cdbc3dd`; metadata alone does not publish a release.
-- Public installation delivery is the verified production npm archive and SHA-256 file on the matching GitHub Release. This does not imply npm registry publication. E2 timing and actual model/tool cost remain open in [Issue #436](https://github.com/ictseoyoungmin/refas/issues/436), with no speed/cost advantage claimed.
+- Current published release: [v2.0.0](https://github.com/ictseoyoungmin/refas/releases/tag/v2.0.0), Release 460308601, published at `2026-11-27T08:02:42Z`; tag/target source `d48ef51ad213ce2d7df3664965fc9dc283783737`. Package/Python runtime/plugin metadata are coordinated at `2.0.0`.
+- Public installation delivery is the verified production npm-format archive and SHA-256 file on that GitHub Release. Both public downloads match the prepared bytes and digests; the downloaded archive passes isolated CLI and copied-skill installation checks with identical source files (19 skill / 23 package files). The [canonical D3 receipt](refas-2-progress.json) records asset IDs, hashes and successful [publication workflow](https://github.com/ictseoyoungmin/refas/actions/runs/45962623370). No npm registry publication is claimed.
+- [Milestone 2.0.0](https://github.com/ictseoyoungmin/refas/milestone/4) records the accepted integration/publication scope. E2 timing and actual model/tool cost remain blocked in [Issue #436](https://github.com/ictseoyoungmin/refas/issues/436), assigned to [milestone 2.0.1](https://github.com/ictseoyoungmin/refas/milestone/5); missing observations remain null and no speed/cost advantage is claimed.
+- Previous published release baseline: `v1.4.1`. The historical alpha.1 main integration remains accepted at `fbe4821fb04ff72f44a69761dd5ddfc22cdbc3dd`; its original checkpoint is unchanged.
 - Starting main: `a29bcc42f4da666c812462eb130836f2d766b0a1`.
 - Preserved 1.4.2 rollback branch: `develop/v1.4.2` at `67143f45bf6f5152c404caa2d643109881bfeca2`.
 - The installed skill and npm artifact contain only the 2.0 production path. The retained 1.x runtime keeps its own `1.4.2` identity under repository-only `legacy/v1/`.
