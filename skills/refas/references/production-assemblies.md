@@ -128,6 +128,51 @@ moving anything. Its returned frame is a snapshot; recompute after host edits.
 
 ## Keep openings editable with construction meshes
 
+### Cut a blind recess from a surface outline
+
+Use `cut_recess` from `recess.py` for a static solid with a convex pocket or
+socket. It constructs and aligns the cutter, keeps an Exact Difference Boolean
+and checks actual evaluated floor/wall geometry. The outline is an ordered,
+strictly convex polygon in the selected tangent/bitangent plane; it closes
+implicitly and must enclose the selected origin `(0, 0)`. Supply its coordinates
+and all distances in Blender world units.
+The floor is at `-depth` from the selected tangent plane, not at a constant
+distance below every point of a curved exterior.
+
+```python
+from recess import cut_recess
+
+recess = cut_recess(
+    housing, "IntakeRecess",
+    ray_origin=outside_point, ray_direction=toward_housing,
+    tangent=along_intake,
+    outline=opening_outline, depth=recess_depth,
+    min_floor=remaining_floor, min_wall=remaining_side_wall,
+    max_distance=search_distance,
+)
+```
+
+Use the same host/name with revised outline or depth to edit that feature.
+Selection excludes only its own previous Boolean, so repeated edits measure
+from the original opening surface and do not accumulate depth. Keep the managed
+Boolean last in the supported modifier stack. The ordinary cutter remains in
+the native scene; its mesh outline and the Boolean stay editable. The helper
+rebuilds its mesh from the explicit arguments, so reapply cutter-specific face
+materials or manual edge edits afterward. It has no radius/bevel parameter and
+does not infer changed parameters from arbitrary manual cutter edits.
+
+The host must be an enabled static closed mesh with consistent winding. The
+operation rejects invalid outlines, an unsupported scene state, a missed
+surface, or insufficient sampled floor/wall material. A failed operation keeps
+the accepted cutter and host state. The remaining-material limits describe the
+declared axial and side probes; they do not certify a global minimum thickness
+between samples. The origin, centroid and rim-derived samples are automatic;
+`floor_samples` can add important interior UV points. Inspect the actual opening, side wall and floor from an
+oblique or section view. Thin cloth pockets and folded openings need their
+own shell construction rather than this solid subtraction.
+
+### Use a native cutter for other Boolean constructions
+
 Use Blender's Boolean modifier for a real socket, service recess or through-hole
 when moving the cutter will make subsequent revisions easier. Keep a clear
 wall thickness and inspect the opening from an oblique view; a dark mark on a
