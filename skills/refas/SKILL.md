@@ -29,6 +29,8 @@ For a blind recess in a solid, `cut_recess` from `scripts/production/recess.py` 
 
 For a rigid badge, buckle or bracket, use `place_on_surface` from `scripts/production/surface_mount.py` to select an evaluated host with a bounded ray, align to its surface and fit explicit contact samples within a declared gap. The assembly guide gives the local mounting-plane convention and re-edit example. For trim or hardware that must follow deformation, use the separate `scripts/production/surface_binding.py` helper: bind to an explicitly selected outer triangle and move a section together; inspect neighboring sections and clearance after authoring the result.
 
+For a prepared flexible surface layer, `project_region` from `scripts/production/surface_project.py` fits an existing mask with native Shrinkwrap, checks bounded hits and actual residuals, and restores a failed edit. The assembly guide describes layer preparation, supported stacks and retained native controls.
+
 Read `references/production-topology.md` when checking mesh defects, rebuilding topology, or optimizing an asset for delivery. Choose topology for the actual deformation and use; reducing polygon count alone does not establish useful retopology.
 
 Find an installed helper or focused guide with `python3 scripts/produce.py authoring-capabilities --query "thickness"`. The optional catalogue reports available paths and their scope; ordinary `bpy` authoring remains available.

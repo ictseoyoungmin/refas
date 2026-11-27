@@ -6,6 +6,10 @@ import re
 
 ROOT = Path(__file__).resolve().parents[2]
 ROUTES = (
+    ("surface-projection", "Fit a prepared surface layer with bounded native projection and rollback.",
+     "projection shrinkwrap conform flexible patch layer fit gap miss 투영 곡면 피팅 패치 맞춤 간격",
+     "Blender Python", "production-assemblies.md", ("surface_project.project_region",),
+     "Static complete-component binary masks and supported native stacks; finite fit observations, not a general constraint solver."),
     ("boundary-bridge", "Join explicit existing cage boundaries with native surface transitions.",
      "bridge boundary join transition roll lapel fender curvature 경계 접합 전이 라펠 곡률",
      "Blender Python", "production-assemblies.md", ("boundary_bridge.bridge_boundaries",),

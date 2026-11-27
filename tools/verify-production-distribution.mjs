@@ -30,6 +30,7 @@ export const PRODUCTION_SKILL_FILES = Object.freeze([
   'scripts/production/surface_mount.py',
   'scripts/production/recess.py',
   'scripts/production/boundary_bridge.py',
+  'scripts/production/surface_project.py',
   'scripts/production/thickness_field.py',
   'scripts/production/capabilities.py',
 ]);

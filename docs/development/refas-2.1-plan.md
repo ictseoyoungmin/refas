@@ -42,7 +42,7 @@ are separate outcomes. Writing this plan does not complete a criterion.
 | Surface mounting | **M1:** evaluated host frame from a bounded ray and explicit tangent; **M2:** multipoint gap bounds, preserved rigid shape/scale and failure nonmutation; **M3:** copied-skill actual Blender edit/save/reopen/re-edit with unrelated preservation; **M4:** useful source-bound garment/car feature studies, observed in actual renders. | [PR #443](https://github.com/ictseoyoungmin/refas/pull/443), M1–M4 demonstrated and merged |
 | Recesses and openings | **R1:** actual declared depth/walls/floor or through opening; **R2:** wall/input limits and failure recovery; **R3:** editable cutter/outline/depth/edge controls; **R4:** installed car-feature construction and visual comparison, with cloth-shell openings distinguished. | [PR #444](https://github.com/ictseoyoungmin/refas/pull/444), R1–R4 demonstrated and merged |
 | Sweep and loft | **S1:** controlled straight/curved intent and section changes; **S2:** editable guide/section scene generation and re-edit; **S3:** explicit handling of twist, degeneration and folded connections; **S4:** installed garment and hard-surface source-bound trials. | [#424](https://github.com/ictseoyoungmin/refas/issues/424), [draft #425](https://github.com/ictseoyoungmin/refas/pull/425): technically working candidate; admission deferred after matched trial found no demonstrated net benefit |
-| Boundary transitions | **J1:** actual join from explicit boundary correspondence; **J2:** position/tangent direction/transition width with intended creases retained; **J3:** invalid-input handling and preserved surrounding controls; **J4:** demonstrated garment junction and housing transition improvement. | [PR #446](https://github.com/ictseoyoungmin/refas/pull/446), J1–J4 demonstrated; selected for integration |
+| Boundary transitions | **J1:** actual join from explicit boundary correspondence; **J2:** position/tangent direction/transition width with intended creases retained; **J3:** invalid-input handling and preserved surrounding controls; **J4:** demonstrated garment junction and housing transition improvement. | [PR #446](https://github.com/ictseoyoungmin/refas/pull/446), J1–J4 demonstrated and merged |
 | Local constrained edits | **D1:** handles and fixed boundary limit the edited region; **D2:** supported size/thickness/obstacle-gap constraints are met or conflicts returned; **D3:** existing anchors/sections and unrelated required data retained; **D4:** useful garment/car local edits and re-edit with bounded claims. | queued |
 
 ## Implementation sequence and interfaces
@@ -105,7 +105,8 @@ regressions cover placement, re-edit, numeric failures and native recovery.
 A wide flat shield on the curved sleeve remained visibly raised despite
 correct orientation (up to 11.545 mm sampled gap). That candidate is retained
 privately and excluded from accepted garment fit. Flexible-patch conformation
-is still unresolved. The accepted garment example is buckle construction and
+is addressed separately by the bounded fitting follow-up below. The accepted
+rigid garment example is buckle construction and
 mounting; the mirror provides a controlled same-geometry before/after. Neither
 local study establishes a finished whole garment/car or superiority over an
 independent matched 2.0 workflow.
@@ -211,7 +212,7 @@ tracks this runtime observation separately; save without views followed by
 fresh-process native rendering worked for these studies. It is not a general
 stability guarantee or a resolved release-readiness claim.
 
-### Bounded fitting follow-up
+### Demonstrated bounded fitting follow-up
 
 A native Laplacian probe retained binding through reopening, but one 25 mm
 handle move missed its target by 19.553 mm and moved the intended fixed region
@@ -226,11 +227,41 @@ a construction interpretation, not preservation of the original thick topology
 or proof of embroidery/whole-garment fidelity.
 
 An insufficient Project limit silently left all 7,190 input vertices unmoved.
-[#447](https://github.com/ictseoyoungmin/refas/issues/447) therefore proposes a
-small native projection adapter with hit/residual/displacement observations and
-exact rollback, keeping ordinary modifier controls. It is queued after boundary
-integration. It adds no solver and does not complete or replace D1–D4. The fixed
-20-criterion count remains separate from useful narrower follow-ups.
+[#447](https://github.com/ictseoyoungmin/refas/issues/447) /
+[PR #449](https://github.com/ictseoyoungmin/refas/pull/449) adds `project_region`,
+a small native projection adapter with bounded first hits, actual vertex and
+triangle-interior residual/displacement observations and exact rollback. It
+keeps the source cage and ordinary modifier controls. Binary masks must cover
+complete components; the supported source has a disjoint Project prefix and
+optional Solidify/Bevel suffix. The target transform is rigid and the source
+projection axis has unit world scale. Unsupported precision, masks, dependencies
+and stacks fail rather than silently rebuilding the source or widening limits.
+
+Seven copied-skill actual Blender regressions and eleven independent scenarios
+covered silent misses, first-backface obstruction, coarse faces, near-hit drift,
+absolute input displacement, RNA re-edit, local/world float limits and exact
+failure restoration, including attributes and active modifier context.
+
+The frozen copied adapter repeated the same prepared source fit: backing gaps
+were 0.245–0.303 mm, the 131.4545 mm transverse trace width remained fixed while
+its depth span became 8.7317 mm, and five layer thicknesses were retained. Source
+cage, Solidify/Bevel settings and 15 other objects stayed unchanged. A deliberate
+short-limit failure left source, evaluated cage, native bytes and project head
+unchanged. Reopening and calling the helper on the same three modifiers for a
+new +0.35 mm offset produced the requested movement. This guarded re-edit is
+distinct from the earlier feasibility's direct native field edits.
+
+Delivery used that later 0.65 mm offset state. Seven curves were explicitly
+converted in a separate delivery preparation while retaining their evaluated
+geometry; actual fresh-process GLB import verified 16 meshes. Final beveled
+backing samples were 0.592–0.755 mm, distinct from the pre-shell cage samples
+0.595–0.653 mm. The editable re-edit native restored byte-for-byte. The accepted
+0.3 mm fit images and later delivery state are retained separately.
+
+This is useful fitting and failure handling for prepared static layers, not a
+new solver, embroidery reconstruction, continuous shell/collision certification
+or completed whole garment. It does not complete or replace D1–D4. The fixed
+20-criterion count remains 12 demonstrated criteria.
 
 ### Integration and release
 
