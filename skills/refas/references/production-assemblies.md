@@ -3,7 +3,7 @@
 Use this guide for segmented mechanisms, armor and manufactured parts with
 visible joints. Begin with the reference's complete assembly and proportions.
 
-Sections: scale and hierarchy; connected boundary transitions; rigid surface mounting; editable cutters; editable cables and trim; lattice deformation;
+Sections: scale and hierarchy; connected boundary transitions; rigid surface mounting; flexible surface projection; editable cutters; editable cables and trim; lattice deformation;
 motion hierarchy; surface attachments; useful poses; delivered animation;
 local component revisions.
 
@@ -177,6 +177,61 @@ future animation; use the surface-binding recipe below for deforming trim.
 
 `surface_frame` accepts the same host/ray/tangent selection arguments without
 moving anything. Its returned frame is a snapshot; recompute after host edits.
+
+## Fit prepared flexible surface layers
+
+Use `project_region` from `surface_project.py` for a thin surface cage whose
+existing mask identifies complete connected components. Prepare its outline,
+sampling density and layer relief first. A cloth badge backing, raised border
+and emblem can use separate disjoint masks and offsets, with Solidify after
+projection. Preserve the intended thickness and visible design while preparing
+these layers; the helper changes only the native projection modifier.
+
+```python
+from surface_project import project_region
+
+fitted = project_region(
+    patch, sleeve,
+    name="Backing fit", group="Backing",
+    axis="Z", direction=-1,
+    offset=surface_clearance, max_distance=search_distance,
+    max_displacement=allowed_movement, tolerance=fit_tolerance,
+)
+```
+
+Choose one local axis and direction (`-1` or `1`). Distance inputs use world
+units. The source needs a positive, unsheared transform with unit world length
+along that axis. The static target needs a rigid transform (rotation and
+translation, with unit scale). Use an existing binary mask: zero-weight
+vertices stay outside the edit, and a face cannot straddle the
+selected and fixed regions. The supported source stack is compatible native
+Project modifiers on disjoint masks followed by the supported Solidify/Bevel
+suffix. The function refuses unsupported dependencies, transforms and stacks
+instead of applying transforms or rebuilding the cage. Requested distances
+and tolerances must remain representable at the source and world coordinates.
+
+Each selected input ray must reach its first geometric intersection within
+`max_distance`, and that face must face the ray. A nearer backface cannot be
+skipped for a farther front surface. The actual evaluated projection is checked
+against the expected offset, including transverse drift. `max_displacement`
+bounds movement from the cage entering that modifier; later edit-to-edit
+movement is a separate observation. Native Project can silently leave a missed
+vertex in place, so a successful modifier creation alone is insufficient.
+
+The result reports vertex and triangle-interior observations with sample
+coverage. `tolerance` is the requested residual bound. Coarse faces that bridge
+too far from the target fail; refine the source deliberately when needed.
+Finite samples do not certify every surface point or global collision freedom.
+Projection-axis clearance differs from shortest or normal distance on a
+sloping target. Check the final layered shell and its visible support too.
+
+The existing source mesh, masks and other layers remain available. A matching
+named modifier is revised in place and must keep its target, mask, axis and
+direction. A failed call restores its prior settings, order and active modifier,
+or removes only a newly created failed modifier. Ordinary native offset/mask/cage
+edits remain possible after reopening. Recheck after such edits
+or target changes. This fits static surface layers; the separate surface-binding
+recipe handles authored sections following a deforming triangle.
 
 ## Keep openings editable with construction meshes
 
