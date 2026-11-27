@@ -1,14 +1,14 @@
-# RefAs 2.0 skill relationships
+# RefAs 2 skill relationships
 
 This map explains what the installed skill contains, who uses each element,
 and what a change or removal affects. It is a repository maintenance document;
 agents making assets start with the installed `SKILL.md`, not this map.
 
 The [distribution allowlist](../../tools/verify-production-distribution.mjs)
-declares **23 installed skill files**: fifteen Python files, five guides, the
+declares **24 installed skill files**: sixteen Python files, five guides, the
 skill entry, discovery metadata and one icon. Two `.npmignore` files also live
 in the source folder but are excluded from the package. The complete npm
-package has 27 files: those 23 plus the root README, LICENSE, package metadata
+package has 28 files: those 24 plus the root README, LICENSE, package metadata
 and [Node launcher](../../bin/refas.mjs). The launcher delegates to Python;
 the copied Python skill can run without Node.
 
@@ -54,11 +54,13 @@ flowchart TD
     Script --> Recess["recess.py"]
     Script --> Bridge["boundary_bridge.py"]
     Script --> Projection["surface_project.py"]
+    Script --> Local["local_edit.py"]
     Recess -- "evaluated BVH and frame" --> Mount
     Mount --> Blender["Blender bpy and mathutils"]
     Recess --> Blender
     Bridge -- "native bridge on a staged mesh" --> Blender
     Projection -- "native Project and bounded observations" --> Blender
+    Local -- "joint displacement and native coordinate edit" --> Blender
 ```
 
 The independent numeric surface-binding and thickness-field imports are
@@ -107,6 +109,7 @@ Paths in the first column are relative to `skills/refas/`.
 | [scripts/production/recess.py](../../skills/refas/scripts/production/recess.py) | Optional Blender authoring: construct/revise one named convex blind recess with an editable construction cutter and Boolean. Uses shared surface selection and verifies sampled floor/wall geometry. | Removal affects catalogue/guide imports, package allowlist and native recess tests; existing ordinary cutter/Boolean scenes remain editable. Keep static solid and sampled-thickness limits separate from cloth openings and global wall certification. |
 | [scripts/production/boundary_bridge.py](../../skills/refas/scripts/production/boundary_bridge.py) | Optional native topology edit between explicit existing open cage chains. Stages Blender's LINEAR/SURFACE bridge and verifies correspondence, shared edges and source-data preservation. | Keep catalogue, assembly usage, package entry and actual Blender tests aligned. Removing it breaks author-script imports; accepted results remain ordinary editable cages. Object identity survives, mesh datablock replacement is explicit, and evaluated margins can change through retained modifiers. |
 | [scripts/production/surface_project.py](../../skills/refas/scripts/production/surface_project.py) | Optional native Project fitting of prepared component masks, with first-hit, actual residual/displacement and failure recovery observations. Author scripts discover it through the catalogue and assembly guide. | Keep discovery, native layer examples, package allowlist and actual Blender tests aligned. Removal breaks author-script imports; saved mesh/masks and ordinary Shrinkwrap remain editable. It does not prepare geometry or replace a general constrained deformer. |
+| [scripts/production/local_edit.py](../../skills/refas/scripts/production/local_edit.py) | Optional joint displacement edit with explicit region/absolute targets and frozen outside cage. Author scripts choose finite distance, paired-shell and first-hit ray bounds; conflicting candidates restore coordinates. | Keep discovery, assembly usage, package allowlist and copied-skill/native tests aligned. Removing it breaks author-script imports but leaves saved ordinary meshes editable. It creates no persistent controls or project schema; bounded displacement is not a general nonlinear solver or global thickness/collision proof. |
 | [scripts/production/surface_binding.py](../../skills/refas/scripts/production/surface_binding.py) | Optional numeric authoring API for binding and transporting a section on an explicitly chosen host triangle. No core module automatically calls it. | Search documented and retained author-script imports, not only core imports. Removing it retires the supported surface-attachment recipe and its tests. |
 | [scripts/production/thickness_field.py](../../skills/refas/scripts/production/thickness_field.py) | Optional stdlib graph operation approximating the greatest permitted thickness field under explicit upper, lower, pin and edge-gradient bounds. Author scripts choose whether and how to apply it. | Keep the assembly recipe, catalogue, package allowlist and numeric/native tests consistent. A field PASS does not certify evaluated shell clearance or wearing. Removing it affects retained author-script imports, not normal worker startup. |
 | [scripts/production/capabilities.py](../../skills/refas/scripts/production/capabilities.py) | Read-only `authoring-capabilities` catalogue; CLI calls it, AST reads current helper signatures, and records guide paths and native author imports. | Update route names, source callables and guide paths together. Removal also retires the CLI route, SKILL discovery instruction and installed discovery checks; ordinary modeling does not depend on it. |
@@ -117,7 +120,7 @@ Paths in the first column are relative to `skills/refas/`.
 | File | Why it exists and what it connects | Change or removal impact |
 |---|---|---|
 | [SKILL.md](../../skills/refas/SKILL.md) | Agent entry: asset intent, useful authoring/review loops, public commands and five on-demand guides. | Update affected command examples and guide routes. Keep development status and CI procedures in repository docs. |
-| [references/production-assemblies.md](../../skills/refas/references/production-assemblies.md) | Segmented forms, connected boundary transitions, rigid mounting, flexible-layer projection, editable Boolean openings, pivots, local curve/lattice edits and optional surface-binding/thickness-field APIs; links to topology guidance. | Check SKILL routing, construction-source and native control-cage delivery scope, the garment guide's references and helper examples. |
+| [references/production-assemblies.md](../../skills/refas/references/production-assemblies.md) | Segmented forms, connected boundary transitions, rigid mounting, flexible-layer projection, joint local edits, editable Boolean openings, pivots, local curve/lattice edits and optional surface-binding/thickness-field APIs; links to topology guidance. | Check SKILL routing, construction-source and native control-cage delivery scope, the garment guide's references and helper examples. |
 | [references/production-garments.md](../../skills/refas/references/production-garments.md) | Shared cloth boundaries, sleeves, folded collars and wearing/deformation; refers to assemblies and topology. | Keep construction advice consistent with those guides and the intended character/motion scope. |
 | [references/production-topology.md](../../skills/refas/references/production-topology.md) | Mesh observations, curve-to-mesh delivery, retained Shrinkwrap sources, retopology and optimization; demonstrates `inspect` and `mesh_audit`. | Follow CLI/query changes, source/output scope, helper APIs and incoming links from SKILL, garments and assemblies. |
 | [references/production-review.md](../../skills/refas/references/production-review.md) | Fixed views and optional region coverage comparison. | Match `review.py`, `image_compare.py`, CLI options and actual render behavior. |
@@ -171,6 +174,7 @@ or render merely to update this map.
 | Optional blind recess construction | [Blender and installed-native tests](../../tests/test_production_recess.py), source-bound car intake study outside Git |
 | Native connected boundary transitions | [Copied-skill Blender tests](../../tests/test_production_boundary_bridge.py), actual source-bound collar/lapel and fender/body comparisons outside Git |
 | Bounded native surface projection | [Copied-skill Blender tests](../../tests/test_production_surface_project.py), actual prepared sleeve-layer fitting and failed-projection recovery outside Git |
+| Joint local displacement with hard handles and bounded observations | [Copied-skill Blender tests](../../tests/test_production_local_edit.py), garment/car local edits, failed-bound recovery and native continuation outside Git |
 | Optional surface-binding API | [Numeric tests](../../tests/test_production_surface_binding.py), [installed Blender tests](../../tests/test_production_surface_blender.py) |
 | Optional thickness field and native application | [Independent graph-oracle tests](../../tests/test_production_thickness_field.py), [copied-skill Blender/restore test](../../tests/test_production_thickness_blender.py) |
 | Installed authoring discovery | [AST and copied-CLI tests](../../tests/test_production_capabilities.py), packed-install check above |

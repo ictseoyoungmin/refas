@@ -3,7 +3,7 @@
 Use this guide for segmented mechanisms, armor and manufactured parts with
 visible joints. Begin with the reference's complete assembly and proportions.
 
-Sections: scale and hierarchy; connected boundary transitions; rigid surface mounting; flexible surface projection; editable cutters; editable cables and trim; lattice deformation;
+Sections: scale and hierarchy; connected boundary transitions; rigid surface mounting; flexible surface projection; joint local edits; editable cutters; editable cables and trim; lattice deformation;
 motion hierarchy; surface attachments; useful poses; delivered animation;
 local component revisions.
 
@@ -232,6 +232,66 @@ or removes only a newly created failed modifier. Ordinary native offset/mask/cag
 edits remain possible after reopening. Recheck after such edits
 or target changes. This fits static surface layers; the separate surface-binding
 recipe handles authored sections following a deforming triangle.
+
+## Edit several local targets with a fixed surrounding cage
+
+Use `edit_region` from `local_edit.py` when several different target positions
+must shape one local region together. Supply existing vertex indices or a binary
+vertex group, and absolute world-space target positions for the handle vertices.
+Keep attachment rows, intended crease lines and protected outline vertices out
+of the region. Every outside coordinate stays unchanged; this does not freeze
+the evaluated shell normals or margins at its boundary.
+
+```python
+from local_edit import edit_region
+
+result = edit_region(
+    panel, region="LocalFold", handles=world_targets,
+    max_displacement=0.008, tolerance=0.00005,
+    distances=[{"name": "opening_width", "vertices": (left, right),
+                "min": 0.098, "max": 0.104}],
+    shell_pairs=[{"name": "fold_shell", "vertex": fold_vertex,
+                  "min": 0.0025, "max": 0.0035}],
+    obstacles=[{"name": "inner_layer", "object": inner_layer,
+                "vertices": [contact_vertex], "direction": inward,
+                "min": 0.029, "max": 0.040}],
+)
+```
+
+The example uses metre world units. Choose the region, handle mapping, sample
+indices, directions and bounds from the actual feature. Omit optional bounds
+that do not express a requirement; the returned record identifies what was
+observed. A directional ray must hit the first front-facing surface within its
+declared range; a miss or back-facing first hit is a conflict, not a skipped
+sample. Ray distance is not shortest clearance, and these cage-origin samples
+do not measure the entire final shell against the obstacle.
+
+The helper fairs the **displacement**, keeping a zero-move rest pose unchanged,
+and applies all handles as hard targets. It has no per-handle falloff radius or
+persistent control objects. It checks both hard targets and the realized free
+displacement after native float storage. An unresolved coordinate precision or
+near-grazing ray is rejected instead of reporting a precise fit.
+Size bounds measure declared cage vertex pairs. Shell-pair bounds measure the
+distance between verified corresponding sides of one supported simple Solidify
+at the selected source vertices; they are not normal thickness or a global
+minimum wall guarantee. The source may have no modifiers or that supported
+Solidify alone. Shape keys, shared mesh data, animation, parent/constraint
+dependencies and other modifier stacks are outside this operation.
+
+If a bound, target, numerical solve or supported-state check fails, the call
+raises `ValueError` and retains its input coordinates and native data. A conflict
+means this proposed displacement failed; it does not prove no other shape can
+satisfy the requirements. The operation does not trade away a handle target to
+make another bound pass. Change the target, region or construction deliberately
+and try again from the retained source.
+
+On success, the same ordinary mesh and its per-element data remain. Reopen the
+native and call with new absolute targets, or use ordinary mesh editing without
+this module. Later edits need fresh observations. Inspect garment layers from
+the side and the hard-surface crease in context: smoother displacement is not
+automatically better source geometry. Use native proportional editing or a
+lattice directly when those controls suit the correction. Large rotations,
+rigid-detail preservation and continuous collision avoidance are not promised.
 
 ## Keep openings editable with construction meshes
 

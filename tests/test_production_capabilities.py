@@ -17,6 +17,7 @@ class CapabilityTests(unittest.TestCase):
     def test_short_tasks_find_existing_contracts(self):
         for query, expected in (("thickness", "thickness-field"), ("두께", "thickness-field"),
                                 ("surface binding", "surface-binding"), ("lattice", "native-lattice"),
+                                ("joint handles", "local-edit"), ("국소", "local-edit"),
                                 ("compare", "fixed-view-comparison")):
             self.assertEqual([row["id"] for row in search(query=query)["matches"]], [expected])
         self.assertEqual(search(query="unknown modeling tool")["matches"], [])
