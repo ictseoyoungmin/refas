@@ -6,6 +6,11 @@ import re
 
 ROOT = Path(__file__).resolve().parents[2]
 ROUTES = (
+    ("surface-mount", "Place a rigid detail on an evaluated surface using its contact footprint.",
+     "mount badge buckle bracket mirror stud rigid surface placement 부착 배치 배지 버클 장식",
+     "Blender Python", "production-assemblies.md",
+     ("surface_mount.surface_frame", "surface_mount.place_on_surface"),
+     "Static rigid placement with explicit planar samples; not whole-part collision or deforming attachment."),
     ("thickness-field", "Limit an explicit thickness field along mesh edges.",
      "thickness taper gradient minimum cap shell 두께 변화율", "Python standard library",
      "production-assemblies.md", ("thickness_field.grade_thickness",),

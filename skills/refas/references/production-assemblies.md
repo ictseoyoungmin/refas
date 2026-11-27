@@ -3,7 +3,7 @@
 Use this guide for segmented mechanisms, armor and manufactured parts with
 visible joints. Begin with the reference's complete assembly and proportions.
 
-Sections: scale and hierarchy; editable cutters; editable cables and trim; lattice deformation;
+Sections: scale and hierarchy; rigid surface mounting; editable cutters; editable cables and trim; lattice deformation;
 motion hierarchy; surface attachments; useful poses; delivered animation;
 local component revisions.
 
@@ -70,6 +70,61 @@ For outward normals and an exterior to preserve, use `solidify.offset = -1`.
 Reuse the intended modifier and inspect its actual evaluated interior, rims,
 openings and neighboring parts. Subdivision or deformation can change the field
 between source vertices; verify the resulting shell in required poses.
+
+## Mount rigid details on the actual surface
+
+Use `place_on_surface` from `surface_mount.py` for a rigid badge, buckle,
+bracket or mirror base. Choose the host and a bounded world-space ray from its
+intended outside. Supply a world tangent for the part's forward direction.
+Keep the host enabled in the active view layer. The first ray hit must face
+the approaching ray; the helper does not skip a backface to find another layer.
+Use a short search range near the intended feature so a long ray does not
+consume the precision needed for a small gap. The helper samples the evaluated
+host, aligns the part and applies a rigid transform only when the declared
+contact samples meet the gap bounds.
+
+Author the part with local +Z away from its mounting surface and local +X
+forward. Select at least three noncollinear contact points in one local XY
+plane (constant Z). Include edge and interior samples where the support varies;
+the centroid is sampled too. Their centroid maps to the selected host point.
+All ray positions and distance parameters use Blender world length units;
+convert metres with `metres / scene.unit_settings.scale_length` when needed.
+
+```python
+from surface_mount import place_on_surface
+
+# These are task-selected inputs, not camera coordinates or inferred defaults.
+placement = place_on_surface(
+    badge, shoulder_panel,
+    ray_origin=outside_point, ray_direction=toward_shoulder,
+    tangent=along_sleeve,
+    contact_points=badge_contact_points,
+    clearance=minimum_gap, max_distance=search_distance,
+    max_gap=largest_acceptable_gap,
+)
+```
+
+`max_gap` includes the clearance. Gaps are measured along the selected anchor
+normal, not as shortest distances to the whole host. The result gives the chosen frame, sample
+count, minimum/maximum gap and numeric tolerance. Too much host curvature for
+the rigid footprint, no surface hit, reversed support or invalid inputs raises
+`ValueError` before moving the part. Change the mount location or construct a
+fitting base when needed; do not enlarge the acceptable gap to conceal a visibly
+floating attachment. A flexible sewn patch needs a shape that conforms to the
+cloth; rotating a flat patch cannot provide that fit. Re-run the same operation after editing the host or mount
+parameters. It reads a fresh host each time and does not create a report file.
+
+The part must be an unparented static mesh with positive orientation and no
+shear, delta transforms, shape keys, constraints or rigid-body motion. Local
+Bevel, Subdivision, Solidify, Triangulate and Weighted Normal modifiers are
+supported; position-dependent modifiers are not. Keep the host independent of
+the moved part. Mesh coordinates and scale are retained. The samples describe
+the chosen support plane, not every point on the part: inspect its side and
+contact area for overhang or nearby collisions. This operation does not bind
+future animation; use the surface-binding recipe below for deforming trim.
+
+`surface_frame` accepts the same host/ray/tangent selection arguments without
+moving anything. Its returned frame is a snapshot; recompute after host edits.
 
 ## Keep openings editable with construction meshes
 

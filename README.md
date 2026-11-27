@@ -4,7 +4,7 @@ RefAs helps agents build and revise editable 3D assets from visual references.
 The production workflow connects ordinary Blender scripts, a native scene,
 GLB export, actual renders and recoverable revisions.
 
-**Package version: 2.0.0.** The package, Python entry and plugin metadata share
+**Package version: 2.1.0-alpha.1.** The package, Python entry and plugin metadata share
 this version. Publication is a separate verified action: a source checkout or
 locally packed archive does not establish that a release is available. The
 [GitHub Releases](https://github.com/ictseoyoungmin/refas/releases) page identifies
@@ -12,6 +12,8 @@ published versions and their verified installation archives. Follow the
 [implementation plan](docs/development/refas-2-plan.md),
 [verified progress](docs/development/refas-2-progress.md) and
 [work status](docs/WORK_STATUS.md) for the demonstrated scope.
+
+The development branch targets [2.1.0 precision authoring](docs/development/refas-2.1-plan.md); the published stable release remains 2.0.0. A local development package would be `refas-2.1.0-alpha.1.tgz` with `refas-2.1.0-alpha.1.tgz.sha256`; these names do not imply public availability.
 
 ## Build, inspect, improve
 

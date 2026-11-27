@@ -27,6 +27,7 @@ export const PRODUCTION_SKILL_FILES = Object.freeze([
   'scripts/production/asset_import.py',
   'scripts/production/mesh_audit.py',
   'scripts/production/surface_binding.py',
+  'scripts/production/surface_mount.py',
   'scripts/production/thickness_field.py',
   'scripts/production/capabilities.py',
 ]);
