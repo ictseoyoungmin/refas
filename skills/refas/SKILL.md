@@ -31,6 +31,8 @@ For a rigid badge, buckle or bracket, use `place_on_surface` from `scripts/produ
 
 For a prepared flexible surface layer, `project_region` from `scripts/production/surface_project.py` fits an existing mask with native Shrinkwrap, checks bounded hits and actual residuals, and restores a failed edit. The assembly guide describes layer preparation, supported stacks and retained native controls.
 
+For several local target positions, `edit_region` from `scripts/production/local_edit.py` moves handles jointly inside an explicit region while retaining the outside cage. The assembly guide describes supported size, shell-pair and directional gap bounds, failed-edit recovery and ordinary native continuation.
+
 Read `references/production-topology.md` when checking mesh defects, rebuilding topology, or optimizing an asset for delivery. Choose topology for the actual deformation and use; reducing polygon count alone does not establish useful retopology.
 
 Find an installed helper or focused guide with `python3 scripts/produce.py authoring-capabilities --query "thickness"`. The optional catalogue reports available paths and their scope; ordinary `bpy` authoring remains available.

@@ -8,6 +8,8 @@ All notable RefAs changes are documented here. RefAs follows semantic versioning
 - Add editable blind recess construction from an explicit convex outline, surface frame and depth. Retain the native cutter and Boolean, observe actual walls/floor and reject infeasible sampled remaining thickness without losing the accepted feature.
 - Add an optional native boundary bridge for two explicit open cage chains, with verified correspondence, source-data preservation and staged failure recovery. Surface blending follows adjacent cage faces; linear joining retains deliberate creases.
 - Add bounded native surface projection for prepared flexible cage layers, with first-hit, residual and displacement observations and exact modifier rollback. Retain ordinary mesh/mask and Shrinkwrap controls for later native edits.
+- Add optional joint local mesh edits with hard target handles, unchanged outside cage coordinates and bounded size, shell-pair and directional obstacle observations. Conflicting proposals restore native coordinates; successful results remain ordinary editable meshes.
+- Retire the unadmitted managed Sweep proposal after its comparison showed no useful net benefit. Preserve its branch and frozen observations; no installed helper is removed and retired criteria are not counted as completed.
 - Expose the helper through installed discovery and focused assembly guidance. Retain the normal Blender authoring, native revision and delivery path.
 - Begin 2.1.0 on `develop/v2.1.0` with garment/car feature studies. This development version is not a published release or a completed whole-asset quality claim.
 
