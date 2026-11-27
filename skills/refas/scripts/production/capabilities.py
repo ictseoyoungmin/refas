@@ -6,6 +6,11 @@ import re
 
 ROOT = Path(__file__).resolve().parents[2]
 ROUTES = (
+    ("surface-patch", "Create native surfaces from explicit outlines and sections with shared boundary vertices.",
+     "create build initial surface patch profile section coons linear bezier boundary shape 생성 제작 초기 면 단면 윤곽 경계 직선 곡선",
+     "Blender Python", "production-assemblies.md",
+     ("surface_patch.sample_profile", "surface_patch.build_surface"),
+     "Four corresponding boundaries per patch; explicit straight/Bezier intent and shared cage vertices, not automatic reference interpretation, G1 continuity or collision-free surfaces."),
     ("local-edit", "Move several local handles jointly while freezing the outside cage.",
      "local edit handle fixed deformation dimension shell pair obstacle ray gap 국소 편집 핸들 고정 변형 치수 간격",
      "Blender Python", "production-assemblies.md", ("local_edit.edit_region",),

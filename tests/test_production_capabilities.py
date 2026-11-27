@@ -16,6 +16,7 @@ from production.capabilities import search
 class CapabilityTests(unittest.TestCase):
     def test_short_tasks_find_existing_contracts(self):
         for query, expected in (("thickness", "thickness-field"), ("두께", "thickness-field"),
+                                ("create", "surface-patch"), ("단면", "surface-patch"),
                                 ("surface binding", "surface-binding"), ("lattice", "native-lattice"),
                                 ("joint handles", "local-edit"), ("국소", "local-edit"),
                                 ("closed loop", "boundary-bridge"), ("암홀", "boundary-bridge"),
