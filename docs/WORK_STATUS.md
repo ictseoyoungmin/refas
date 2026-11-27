@@ -2,28 +2,68 @@
 
 ## Current resumption point
 
-Status: **2026-11-27**. The fixed checklist is **33/37 = 89% rounded** after
-independent declared-use acceptance of **U2, U3 and U6**. R2-07 is **5/5,
-REVIEW**; R2-06 remains **5/7, WIP**; **0/7 tasks are CLOSED**. U1, E2, D2 and D3
-remain open. This is binary criterion coverage, not finished-art quality,
-effort completed or release readiness.
+Status: **2026-11-27**. The fixed checklist is **34/37 = 92% rounded** after
+independent acceptance of the prospectively matched comparison, **U1 only**.
+The earlier U2/U3/U6 declared-use acceptance remains separate. R2-06 is **6/7,
+WIP**; R2-07 remains **5/5, REVIEW**; **0/7 tasks are CLOSED**. **E2, D2 and D3
+remain open.** This is binary criterion coverage, not finished-art quality,
+effort completed, a product-superiority score or release readiness.
 
 The current documentation checkpoint is
-[PR #431](https://github.com/ictseoyoungmin/refas/pull/431). Overall rewrite and
+[Issue #432](https://github.com/ictseoyoungmin/refas/issues/432),
+following the [wearable checkpoint merge](https://github.com/ictseoyoungmin/refas/commit/f3c44c1fea7f099bd50db1fa36c407ead2239d6e).
+Overall rewrite and
 delivery tracking remains [Issue #398](https://github.com/ictseoyoungmin/refas/issues/398)
 and [Draft PR #399](https://github.com/ictseoyoungmin/refas/pull/399). Read the
 [fixed progress ledger](development/refas-2-progress.md),
 [canonical JSON](development/refas-2-progress.json),
+[matched comparison report](development/evidence/usable-assets/matched-comparison.md),
 [wearable delivery report](development/evidence/usable-assets/wearable-delivery.md),
 [implementation plan](development/refas-2-plan.md),
 [Work OS](https://app.notion.com/p/41fc6a3b5bf181c2b2cdfac4605ef7d7) and
 [skill relationship map](development/refas-2-skill-map.md).
 
 This file is a current resumption index. Its previous complete contents are
-retained at the [immutable f174f6b1 work-status checkpoint](https://github.com/ictseoyoungmin/refas/blob/f174f6b1cf9ce19ce905b58490d117aca01cea4b/docs/WORK_STATUS.md),
-which also links the earlier 28541316 history. Consolidation changes this
-index, not the six historical progress checkpoints, retained evidence,
+retained at the [immutable wearable-delivery work-status checkpoint](https://github.com/ictseoyoungmin/refas/blob/f3c44c1fea7f099bd50db1fa36c407ead2239d6e/docs/WORK_STATUS.md),
+which preserves links to the earlier f174f6b1 and 28541316 history. This update
+changes the resumption index, not the seven historical progress checkpoints, retained evidence,
 rejected models or earlier decisions.
+
+## Independently matched comparison
+
+The [comparison report](development/evidence/usable-assets/matched-comparison.md)
+credits evaluating both existing task types across all five original U1 axes:
+source likeness, mesh/attachment condition, actual use, functional retopology
+and optimization. All three isolated authors received the same garment
+`c67633a2…`, arm `badf3fd5…`, full references and task. Product snapshots remain
+**none / fixed 1.x a29bcc42 / 2.0 f174f6b1**. Caps were 24 Blender processes and
+1,800 active Blender seconds per condition with the same declared environment;
+the independent observer was outside author budgets.
+
+The retained outcomes are part of the accepted comparison:
+
+- **Visual ties on both tasks**, after all 54 output images and both full
+  references were independently reviewed. No visible quality winner is claimed.
+- **Every garment consumer profile is FAIL**: all three conditions fail both
+  default 20µm and predeclared 100µm at the unchanged matrix threshold. The 2.0
+  all-bone verdict retains 388 original unused-hair-bone failures. Each condition
+  also retains 10,765 opacity-confirmed hair/cloth contacts at each common pose.
+- **The 2.0 arm export-geometry diagnostic remains FAIL/unresolved**, with 35
+  exact-coincident nonmanifold edges and 60 inconsistent-winding edges. All
+  three arms' 121-frame consumer PASS does not clear mechanical or overall
+  asset acceptance.
+- **Fixed 1.x selected-candidate edit/restore is NOT_EVALUATED**. Its executed
+  edit/restore used the supplied baseline before retopology; the other two
+  selected-candidate exercises retain their bounded evidence.
+- **E2 remains open**: one run per condition, absent provider/model snapshots,
+  tokens and billed cost, plus incomplete interrupted plain telemetry. No
+  speed, cost, GPU or general product-superiority claim follows.
+
+The experiment measures continuation from supplied useful models and motion.
+It does not measure reconstruction or animation creation from scratch. Later
+informed wearable repairs do not replace these frozen comparison outputs or
+clear their failures. Conversely, comparison failures do not describe the
+separately selected and reviewed final wearable below.
 
 ## Selected use and recoverable evidence
 
@@ -91,13 +131,13 @@ acceptance does not accept that helper.
 
 Resume in this order:
 
-1. Review the exact #431 documentation/evidence head and required source
-   checks. Keep user models, render media, arrays, raw logs and recovery
+1. Review the comparison documentation/evidence for Issue #432
+   and the required source checks. Keep user models, render media, arrays, raw logs and recovery
    archives outside Git; preserve all historical tracked evidence.
-2. After #431 merges, record the separately reviewed **U1** prospective
-   comparison in its own Issue/PR and append-only checkpoint. U1 receives no
-   credit in this stage. **E2** remains open for comparable useful-edit/full
-   elapsed time and model/tool cost; later informed repair is not a substitute.
+2. **E2** remains open for prospective comparable useful-edit/full elapsed
+   time and model/tool cost. Missing provider/model/token/billing observations
+   and interrupted telemetry cannot be reconstructed from continuation times
+   or later informed repair. Retain U1's single-run limitations.
 3. Continue optional authoring work only under its own declared scope and
    active-work ownership. Consult native revision state and the corresponding
    source-bound report before using or reopening a model.
@@ -109,12 +149,14 @@ Resume in this order:
 
 | Earlier work | Evidence retained for its exact scope |
 | --- | --- |
+| Matched continuation comparison | [U1 report and durable evidence](development/evidence/usable-assets/matched-comparison.md); frozen none/a29/f174 conditions, failed and missing outcomes, no superiority or E2 credit. |
+| Selected wearable acceptance | [U2/U3/U6 report](development/evidence/usable-assets/wearable-delivery.md), [immutable preceding status](https://github.com/ictseoyoungmin/refas/blob/f3c44c1fea7f099bd50db1fa36c407ead2239d6e/docs/WORK_STATUS.md). |
 | Initial rewrite, reference adoption, distribution/import and source identity | [Progress history](development/refas-2-progress.md), [reference freshness](development/evidence/reference-freshness/README.md), [distribution/import](development/evidence/v2-distribution-and-import/README.md), [source identity](development/evidence/source-identity/README.md). |
 | Accepted arm continuation | [Asset report](development/evidence/usable-assets/automail-resume/README.md), [independent review](development/evidence/usable-assets/recovery/review-automail-candidate08.md), [durable delivery record](development/evidence/usable-assets/automail-resume/delivery-archive.json). |
 | Rejected garment and contact observer | [High16/low29 rejection](development/evidence/usable-assets/recovery/review-jacket-high16-low29.md), [predicate review](development/evidence/usable-assets/recovery/review-contact-predicate.md), [retained arm impact](development/evidence/usable-assets/recovery/arm-contact-predicate-impact.json). |
 | Rest shells and correspondence controls | [High42/low44 rest review](development/evidence/usable-assets/recovery/review-jacket-high42-low44.md), [candidate14 interfaces](development/evidence/usable-assets/recovery/review-jacket-candidate14-contact-map.md), [all-phase actual-GLB control](development/evidence/usable-assets/recovery/review-all-phase-correspondence.md). |
 | Fixed-triangle recovery and old alpha checkpoint | [Topology continuation](development/evidence/usable-assets/recovery/topology-continuation/README.md), [2026-11-23 development report](development/refas-2-development-report-2026-11-23.md). |
-| Native iteration, attachment, inspection, curves, CI, import, lattices, construction sources and fixed views | [Skill relationship map](development/refas-2-skill-map.md) and [immutable previous status and PR index](https://github.com/ictseoyoungmin/refas/blob/f174f6b1cf9ce19ce905b58490d117aca01cea4b/docs/WORK_STATUS.md). |
+| Native iteration, attachment, inspection, curves, CI, import, lattices, construction sources and fixed views | [Skill relationship map](development/refas-2-skill-map.md) and [immutable f174 status and PR index](https://github.com/ictseoyoungmin/refas/blob/f174f6b1cf9ce19ce905b58490d117aca01cea4b/docs/WORK_STATUS.md). |
 
 The current ledger names accepted scope; the linked immutable histories explain
 why prior candidates or observations failed. Removing a current index entry
