@@ -245,6 +245,7 @@ sampling density and layer relief first. A cloth badge backing, raised border
 and emblem can use separate disjoint masks and offsets, with Solidify after
 projection. Preserve the intended thickness and visible design while preparing
 these layers; the helper changes only the native projection modifier.
+For a complete starting script, see the [static panel decal example](#example-static-panel-decal).
 
 ```python
 from surface_project import project_region
@@ -291,6 +292,55 @@ or removes only a newly created failed modifier. Ordinary native offset/mask/cag
 edits remain possible after reopening. Recheck after such edits
 or target changes. This fits static surface layers; the separate surface-binding
 recipe handles authored sections following a deforming triangle.
+
+### Example: static panel decal
+
+Run this complete script in a new empty production project with `--outputs native --views ''`.
+It prepares a curved panel, a thin surface layer and its whole-component mask.
+World units are metres; the projection offset changes from 5 to 6 mm along Z,
+before thickness. The same native modifier and source cage remain available.
+
+```python
+import bpy
+from surface_project import project_region
+
+bpy.context.scene.unit_settings.scale_length = 1.0
+
+def grid(name, n, extent, height):
+    vertices = [
+        (extent * (2*i/n - 1), extent * (2*j/n - 1),
+         height(extent * (2*i/n - 1)))
+        for j in range(n + 1) for i in range(n + 1)
+    ]
+    faces = [
+        (j*(n+1)+i, j*(n+1)+i+1, (j+1)*(n+1)+i+1, (j+1)*(n+1)+i)
+        for j in range(n) for i in range(n)
+    ]
+    data = bpy.data.meshes.new(name + "Mesh")
+    data.from_pydata(vertices, [], faces)
+    data.update()
+    obj = bpy.data.objects.new(name, data)
+    bpy.context.collection.objects.link(obj)
+    return obj
+
+panel = grid("ExamplePanel", 48, 0.6, lambda x: 0.2 - 0.5*x*x)
+decal = grid("ExampleDecal", 16, 0.4, lambda x: 0.4)
+source_mesh = decal.data
+mask = decal.vertex_groups.new(name="Decal")
+mask.add(list(range(len(source_mesh.vertices))), 1.0, "REPLACE")
+decal.modifiers.new("Thickness", "SOLIDIFY").thickness = 0.001
+decal.modifiers.new("Edges", "BEVEL").width = 0.0001
+options = dict(name="Decal fit", group="Decal", axis="Z", direction=-1,
+               offset=0.005, max_distance=0.5,
+               max_displacement=0.4, tolerance=0.001)
+first = project_region(decal, panel, **options)
+projection = decal.modifiers["Decal fit"]
+revised = project_region(decal, panel, **{**options, "offset": 0.006})
+```
+
+Choose the outline, density and bounds for the actual feature. This static example
+does not accept parented or animated panels; retain the supported projection stack
+and recheck after later host or layer edits.
 
 ## Edit several local targets with a fixed surrounding cage
 

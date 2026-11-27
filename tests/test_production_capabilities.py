@@ -2,6 +2,7 @@
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import sys
@@ -19,7 +20,10 @@ class CapabilityTests(unittest.TestCase):
                                 ("surface binding", "surface-binding"), ("lattice", "native-lattice"),
                                 ("joint handles", "local-edit"), ("국소", "local-edit"),
                                 ("closed loop", "boundary-bridge"), ("암홀", "boundary-bridge"),
-                                ("compare", "fixed-view-comparison")):
+                                ("compare", "fixed-view-comparison"),
+                                ("attach badge", "surface-mount"), ("decal", "surface-projection"),
+                                ("hinge", "native-motion"), ("힌지", "native-motion"),
+                                ("wheel arch", "boundary-bridge")):
             self.assertEqual([row["id"] for row in search(query=query)["matches"]], [expected])
         self.assertEqual(search(query="unknown modeling tool")["matches"], [])
         rows = search()["matches"]
@@ -33,6 +37,31 @@ class CapabilityTests(unittest.TestCase):
                      {"query": "curve", "route_id": "native-curve"}):
             with self.assertRaises(ValueError):
                 search(**args)
+
+    def test_guides_point_to_real_sections_and_keep_file_paths(self):
+        for row in search()["matches"]:
+            guide = SKILL / row["guide"]
+            self.assertTrue(guide.is_file(), row["id"])
+            prose = re.sub(r"^```[^\n]*\n.*?^```[^\n]*$", "", guide.read_text(), flags=re.M | re.S)
+            headings = re.findall(r"^#{1,6} (.+)$", prose, flags=re.M)
+            anchors = {re.sub(r"[^\w -]", "", title.lower()).replace(" ", "-")
+                       for title in headings}
+            self.assertIn(row["guideAnchor"], anchors, row["id"])
+            self.assertTrue(row["prerequisites"].strip(), row["id"])
+        motion = search(route_id="native-motion")["matches"][0]
+        self.assertEqual(motion["environment"], "Ordinary bpy recipe")
+        self.assertEqual(motion["callables"], [])
+        bridge = search(query="wheel arch")["matches"][0]
+        self.assertIn("existing", bridge["prerequisites"])
+        self.assertIn("Does not generate wheel openings", bridge["limitations"])
+
+    def test_no_match_hint_preserves_strict_search(self):
+        for query in ("unknown modeling tool", "attach badge unknown", "decall", "car generation"):
+            result = search(query=query)
+            self.assertEqual(result["matches"], [])
+            self.assertIn("omit --query", result["hint"])
+        self.assertNotIn("hint", search())
+        self.assertNotIn("hint", search(query="decal"))
 
     def test_copied_cli_reads_current_signature_without_site_packages(self):
         with tempfile.TemporaryDirectory() as folder:
@@ -51,6 +80,13 @@ class CapabilityTests(unittest.TestCase):
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertEqual(len(json.loads(result.stdout)["matches"]), len(search()["matches"]))
             self.assertEqual(before, sorted(str(p.relative_to(root)) for p in root.rglob("*")))
+            result = run("--query", "decal")
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual(json.loads(result.stdout)["matches"][0]["id"], "surface-projection")
+            result = run("--query", "unknown modeling tool")
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual(json.loads(result.stdout)["matches"], [])
+            self.assertIn("omit --query", json.loads(result.stdout)["hint"])
             # A harmless extra argument in the copy must be discovered from AST.
             helper = copied / "scripts/production/thickness_field.py"
             text = helper.read_text()

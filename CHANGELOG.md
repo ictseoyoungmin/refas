@@ -4,6 +4,7 @@ All notable RefAs changes are documented here. RefAs follows semantic versioning
 
 ## 2.1.0-alpha.1 — Development
 
+- Connect authoring task words to exact guide sections and concise input prerequisites, add native hinge guidance and useful empty-search help, and include an executable static decal fitting/revision example. Keep existing guide paths, source-derived signatures and geometry support limits.
 - Preserve optional native Bevel and Weighted Normal finishes during bounded local cage edits. Keep shell-pair observations at the verified Solidify prefix, restore finish visibility on failure, and include a complete panel example; final finish thickness and arbitrary modifier stacks remain outside this operation.
 - Isolate Blender temporary/crash output per production run and retain failed-run evidence. Add flushed render and scene-switch boundaries to existing logs without changing rendering or revision publication; the intermittent native crash remains unresolved.
 - Add optional rigid surface mounting from evaluated host geometry, an explicit selection ray/tangent and a planar contact footprint. Preserve the part shape/scale and reject infeasible sampled support gaps before moving it.
