@@ -40,16 +40,17 @@ are separate outcomes. Writing this plan does not complete a criterion.
 | Family | Four independently tracked criteria | Current work |
 |---|---|---|
 | Surface mounting | **M1:** evaluated host frame from a bounded ray and explicit tangent; **M2:** multipoint gap bounds, preserved rigid shape/scale and failure nonmutation; **M3:** copied-skill actual Blender edit/save/reopen/re-edit with unrelated preservation; **M4:** useful source-bound garment/car feature studies, observed in actual renders. | [PR #443](https://github.com/ictseoyoungmin/refas/pull/443), M1–M4 demonstrated and merged |
-| Recesses and openings | **R1:** actual declared depth/walls/floor or through opening; **R2:** wall/input limits and failure recovery; **R3:** editable cutter/outline/depth/edge controls; **R4:** installed car-feature construction and visual comparison, with cloth-shell openings distinguished. | [#442](https://github.com/ictseoyoungmin/refas/issues/442), R1–R4 demonstrated |
-| Sweep and loft | **S1:** controlled straight/curved intent and section changes; **S2:** editable guide/section scene generation and re-edit; **S3:** explicit handling of twist, degeneration and folded connections; **S4:** installed garment and hard-surface source-bound trials. | [#424](https://github.com/ictseoyoungmin/refas/issues/424), [draft #425](https://github.com/ictseoyoungmin/refas/pull/425) |
-| Boundary transitions | **J1:** actual join from explicit boundary correspondence; **J2:** position/tangent direction/transition width with intended creases retained; **J3:** invalid-input handling and preserved surrounding controls; **J4:** demonstrated garment junction and housing transition improvement. | queued |
+| Recesses and openings | **R1:** actual declared depth/walls/floor or through opening; **R2:** wall/input limits and failure recovery; **R3:** editable cutter/outline/depth/edge controls; **R4:** installed car-feature construction and visual comparison, with cloth-shell openings distinguished. | [PR #444](https://github.com/ictseoyoungmin/refas/pull/444), R1–R4 demonstrated and merged |
+| Sweep and loft | **S1:** controlled straight/curved intent and section changes; **S2:** editable guide/section scene generation and re-edit; **S3:** explicit handling of twist, degeneration and folded connections; **S4:** installed garment and hard-surface source-bound trials. | [#424](https://github.com/ictseoyoungmin/refas/issues/424), [draft #425](https://github.com/ictseoyoungmin/refas/pull/425): technically working candidate; admission deferred after matched trial found no demonstrated net benefit |
+| Boundary transitions | **J1:** actual join from explicit boundary correspondence; **J2:** position/tangent direction/transition width with intended creases retained; **J3:** invalid-input handling and preserved surrounding controls; **J4:** demonstrated garment junction and housing transition improvement. | [#445](https://github.com/ictseoyoungmin/refas/issues/445), native boundary bridge in progress |
 | Local constrained edits | **D1:** handles and fixed boundary limit the edited region; **D2:** supported size/thickness/obstacle-gap constraints are met or conflicts returned; **D3:** existing anchors/sections and unrelated required data retained; **D4:** useful garment/car local edits and re-edit with bounded claims. | queued |
 
 ## Implementation sequence and interfaces
 
 First integrate surface mounting, then actual recess construction using the
-same surface-selection conventions. Complete the existing sweep candidate's
-usable scene path before adding boundary transitions and bounded local fitting.
+same surface-selection conventions. The sweep candidate's native path and
+matched comparison are complete, but its admission is deferred; preserve the
+candidate and proceed to boundary transitions and bounded local fitting.
 Use one active implementation issue/PR at a time and merge feature branches
 into the development integration branch after their evidence passes.
 
@@ -129,6 +130,40 @@ ownership, static state and failure recovery. Native cutter outline/edges are
 editable, but the helper has no radius/bevel parameter and regenerates its
 cutter mesh on re-edit. This is a blind prismatic feature study, not an airflow
 duct, thin cloth pocket, complete car or whole-asset quality acceptance.
+
+### Deferred sweep candidate
+
+The native candidate completed actual copied-skill save/reopen/re-edit with
+editable guide, start-axis and corresponding profile meshes. Twelve numerical
+tests and nine actual Blender regressions passed, including fixed-topology
+layer preservation, float failures and transactional recovery. This establishes
+the bounded implementation contract, not admission into the development line.
+
+Three fresh independent agents used the same garment/car sheets, Blender 4.3.2,
+720-second budget and frozen observation rig: unrestricted plain bpy, published
+2.0.0, and the candidate. Each constructed a returned standing collar and a
+changing wheel-arch section, reopened the native, and moved one collar tip
+outward by approximately 8 mm while preserving the car, proxies, lower
+attachment and opposite half. Native observations independently confirmed this.
+The tool arm's controls reproduce its saved outputs exactly.
+
+Blind visual review found no overall source-fidelity winner. The frozen 2.0
+collar had a slightly less bulky rim; tool/plain arches showed clearer section
+bands. All remained generic, stiff local studies. The tool arm reached its final
+save earlier in this single observation (about 232 seconds versus 272/317), but
+different authoring, refinement and review choices prevent a causal speed or
+cost claim. The specified edit needed 17 profile changes plus rebuild; both
+comparators exposed the same edit as one reversible native shape-key value.
+The candidate retained 150 wire-control objects, including unit-length axes
+oversized for these features, and an external rebuild dependency. A nonplanar
+guide or unplanned section-edit advantage was not exercised.
+
+Keep PR #425 as a candidate rather than admitting it because its checks pass.
+Useful net benefit remains unproven; source fidelity and reduced editing burden
+must be demonstrated before reopening admission. Preserve the frozen trials
+outside Git and do not revise their geometry after comparison. S1-S4 do not
+increase the accepted 8/20 count. This does not establish that sweep math is
+useless; it limits what this implementation and this trial justify.
 
 ### Integration and release
 
