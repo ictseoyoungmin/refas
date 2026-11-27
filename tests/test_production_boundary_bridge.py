@@ -33,6 +33,22 @@ def sheets(name='Cage'):
 
 A,B=(4,5,6,7),(8,9,10,11)
 
+def rings(name='Rings', count=16, reverse=False, phase=.13, closing=True):
+    vertices=[]
+    for z,turn,radius in ((0,0,1),(.4,0,1),(.8,phase,.91),(1.2,phase,.8)):
+        for i in range(count):
+            angle=2*math.pi*i/count+turn
+            vertices.append((radius*math.cos(angle),.7*radius*math.sin(angle),z))
+    faces=[]
+    for row in (0,2):
+        for i in range(count):
+            if not closing and row==0 and i==count-1: continue
+            face=(row*count+i,row*count+(i+1)%count,(row+1)*count+(i+1)%count,(row+1)*count+i)
+            faces.append(tuple(reversed(face)) if reverse else face)
+    mesh=bpy.data.meshes.new(name+'Mesh');mesh.from_pydata(vertices,[],faces);mesh.update()
+    obj=bpy.data.objects.new(name,mesh);bpy.context.collection.objects.link(obj)
+    return obj,tuple(range(count,2*count)),tuple(range(2*count,3*count))
+
 def context():
     active=bpy.context.view_layer.objects.active
     return (active.name if active else None, sorted(o.name for o in bpy.context.selected_objects),
@@ -137,54 +153,126 @@ assert sum(e.is_boundary for e in bm.edges)==16
 bm.free()
 ''')
 
+    def test_closed_phase_winding_counts_and_closing_seam(self):
+        self.probe('''
+for cuts in (0,1,4):
+    for reverse in (False,True):
+        obj,a,b=rings(reverse=reverse)
+        n=len(a);old_vertices=len(obj.data.vertices);old_edges=len(obj.data.edges);old_faces=len(obj.data.polygons)
+        a=a[3:]+a[:3];b=b[4:]+b[:4]
+        if reverse: a=tuple(reversed(a));b=tuple(reversed(b))
+        source=[tuple(v.co) for v in obj.data.vertices]
+        result=bridge_boundaries(obj,a,b,cuts=cuts,closed=True)
+        assert result['rows'][0]==list(a) and result['rows'][-1]==list(b)
+        assert len(result['rows'])==cuts+2 and all(len(row)==n for row in result['rows'])
+        assert [tuple(v.co) for v in obj.data.vertices[:old_vertices]]==source
+        assert len(result['newVertices'])==cuts*n and len(result['newFaces'])==(cuts+1)*n
+        assert len(obj.data.edges)==old_edges+cuts*n+(cuts+1)*n
+        bm=bmesh.new();bm.from_mesh(obj.data);bm.verts.ensure_lookup_table()
+        assert sum(e.is_boundary for e in bm.edges)==2*n
+        for chain in result['rows']:
+            for x,y in zip(chain,chain[1:]+chain[:1]):
+                edge=bm.edges.get((bm.verts[x],bm.verts[y]))
+                assert edge is not None and edge.is_manifold and edge.is_contiguous
+        for row,next_row in zip(result['rows'],result['rows'][1:]):
+            closing={row[-1],row[0],next_row[0],next_row[-1]}
+            assert any(set(p.vertices)==closing for p in obj.data.polygons[old_faces:])
+        bm.free()
+obj,a,b=rings(count=3,phase=0)
+assert len(bridge_boundaries(obj,a,b,cuts=0,closed=True,interpolation='LINEAR')['newFaces'])==3
+''')
+
+    def test_closed_geometry_matches_native_interpolation_for_natural_pairing(self):
+        self.probe('''
+def style(obj):
+    for name in ('Base','Boundary'):
+        obj.data.materials.append(bpy.data.materials.get(name) or bpy.data.materials.new(name))
+    for face in obj.data.polygons:face.use_smooth=True;face.material_index=1
+for method in ('LINEAR','SURFACE'):
+    for cuts in (0,1,4):
+        for reverse in (False,True):
+            native,a,b=rings('Native',reverse=reverse)
+            style(native)
+            for item in bpy.context.selected_objects: item.select_set(False)
+            native.select_set(True);bpy.context.view_layer.objects.active=native
+            bpy.ops.object.mode_set(mode='EDIT');bm=bmesh.from_edit_mesh(native.data)
+            for f in bm.faces:f.select_set(False)
+            for e in bm.edges:e.select_set(False)
+            for v in bm.verts:v.select_set(False)
+            selected={frozenset((chain[i],chain[(i+1)%len(chain)])) for chain in (a,b) for i in range(len(chain))}
+            for e in bm.edges:
+                if frozenset(v.index for v in e.verts) in selected:e.select_set(True)
+            bmesh.update_edit_mesh(native.data)
+            assert bpy.ops.mesh.bridge_edge_loops(type='SINGLE',use_merge=False,twist_offset=0,
+                number_cuts=cuts,interpolation=method,smoothness=1.,profile_shape_factor=0.)=={'FINISHED'}
+            bpy.ops.object.mode_set(mode='OBJECT')
+            expected=sorted(tuple(v.co) for v in native.data.vertices)
+            expected_style=[(f.use_smooth,f.material_index) for f in native.data.polygons[2*len(a):]]
+            actual,a,b=rings('Explicit',reverse=reverse)
+            style(actual)
+            result=bridge_boundaries(actual,a,b,cuts=cuts,closed=True,interpolation=method)
+            observed=[tuple(v.co) for v in actual.data.vertices]
+            assert len(expected)==len(observed)
+            maximum=0.
+            for point in expected:
+                distance,index=min((math.dist(point,p),i) for i,p in enumerate(observed))
+                maximum=max(maximum,distance);observed.pop(index)
+            # Reversing the native edge direction changes float32 rounding.
+            assert maximum < 2e-7,(method,cuts,reverse,maximum)
+            assert [(actual.data.polygons[i].use_smooth,actual.data.polygons[i].material_index)
+                    for i in result['newFaces']]==expected_style
+''')
+
     def test_existing_layers_modifiers_and_context_are_retained(self):
         self.probe('''
-obj=sheets()
-for name in ('Cloth','Trim'):
-    obj.data.materials.append(bpy.data.materials.new(name))
-for face in obj.data.polygons:
-    face.material_index=face.index%2
-    face.use_smooth=True
-uv=obj.data.uv_layers.new(name='ExistingUV')
-for loop in obj.data.loops:
-    uv.data[loop.index].uv=(loop.index*.02,loop.vertex_index*.03)
-color=obj.data.color_attributes.new(name='ExistingColor',type='FLOAT_COLOR',domain='CORNER')
-for i,element in enumerate(color.data): element.color=(i*.01,.25,.5,1)
-attribute=obj.data.attributes.new(name='ExistingPoint',type='FLOAT',domain='POINT')
-for i,element in enumerate(attribute.data): element.value=i*.13
-crease=obj.data.attributes.new(name='crease_edge',type='FLOAT',domain='EDGE')
-for i,element in enumerate(crease.data): element.value=.6
-group=obj.vertex_groups.new(name='Weights')
-for i in range(16): group.add([i],.1+i*.01,'REPLACE')
-for v in obj.data.vertices: v.select=bool(v.index%2)
-for e in obj.data.edges: e.use_seam=bool(e.index%2)
-solid=obj.modifiers.new('Thickness','SOLIDIFY');solid.thickness=.03
-bevel=obj.modifiers.new('Edge','BEVEL');bevel.width=.005
-old_mesh=obj.data
-old_coords=[tuple(v.co) for v in old_mesh.vertices]
-old_faces=[(tuple(f.vertices),f.material_index,f.use_smooth) for f in old_mesh.polygons]
-old_uv=[tuple(v.uv) for v in old_mesh.uv_layers['ExistingUV'].data]
-old_color=[tuple(v.color) for v in old_mesh.color_attributes['ExistingColor'].data]
-old_point=[v.value for v in old_mesh.attributes['ExistingPoint'].data]
-old_crease=[v.value for v in old_mesh.attributes['crease_edge'].data]
-old_weights=[v.groups[0].weight for v in old_mesh.vertices]
-other=sheets('Neighbor');other.location=(5,0,0)
-obj.select_set(True);other.select_set(True);bpy.context.view_layer.objects.active=other
-bpy.context.view_layer.update()
-before_context=context();before_other=state(other)[:5]
-report=bridge_boundaries(obj,A,B,cuts=4,material_index=1)
-assert bpy.data.objects['Cage'] is obj and context()==before_context
-assert state(other)[:5]==before_other
-assert [tuple(v.co) for v in obj.data.vertices[:16]]==old_coords
-assert [(tuple(f.vertices),f.material_index,f.use_smooth) for f in obj.data.polygons[:6]]==old_faces
-assert [tuple(v.uv) for v in obj.data.uv_layers['ExistingUV'].data[:24]]==old_uv
-assert [tuple(v.color) for v in obj.data.color_attributes['ExistingColor'].data[:24]]==old_color
-assert [v.value for v in obj.data.attributes['ExistingPoint'].data[:16]]==old_point
-assert [v.value for v in obj.data.attributes['crease_edge'].data[:len(old_crease)]]==old_crease
-assert [v.groups[0].weight for v in obj.data.vertices[:16]]==old_weights
-assert all(obj.data.polygons[i].material_index==1 for i in report['newFaces'])
-assert obj.modifiers[0] == solid and obj.modifiers[1] == bevel
-assert solid.thickness==.03 or abs(solid.thickness-.03)<1e-8
+for closed in (False,True):
+    obj,a,b=rings('Cage') if closed else (sheets(),A,B)
+    vertex_count=len(obj.data.vertices)
+    for name in ('Cloth','Trim'):
+        obj.data.materials.append(bpy.data.materials.new(name))
+    for face in obj.data.polygons:
+        face.material_index=face.index%2
+        face.use_smooth=True
+    uv=obj.data.uv_layers.new(name='ExistingUV')
+    for loop in obj.data.loops:
+        uv.data[loop.index].uv=(loop.index*.02,loop.vertex_index*.03)
+    color=obj.data.color_attributes.new(name='ExistingColor',type='FLOAT_COLOR',domain='CORNER')
+    for i,element in enumerate(color.data): element.color=(i*.01,.25,.5,1)
+    attribute=obj.data.attributes.new(name='ExistingPoint',type='FLOAT',domain='POINT')
+    for i,element in enumerate(attribute.data): element.value=i*.13
+    crease=obj.data.attributes.new(name='crease_edge',type='FLOAT',domain='EDGE')
+    for i,element in enumerate(crease.data): element.value=.6
+    group=obj.vertex_groups.new(name='Weights')
+    for i in range(vertex_count): group.add([i],.1+i*.01,'REPLACE')
+    for v in obj.data.vertices: v.select=bool(v.index%2)
+    for e in obj.data.edges: e.use_seam=bool(e.index%2)
+    solid=obj.modifiers.new('Thickness','SOLIDIFY');solid.thickness=.03
+    bevel=obj.modifiers.new('Edge','BEVEL');bevel.width=.005
+    old_mesh=obj.data
+    old_coords=[tuple(v.co) for v in old_mesh.vertices]
+    old_faces=[(tuple(f.vertices),f.material_index,f.use_smooth) for f in old_mesh.polygons]
+    old_uv=[tuple(v.uv) for v in old_mesh.uv_layers['ExistingUV'].data]
+    old_color=[tuple(v.color) for v in old_mesh.color_attributes['ExistingColor'].data]
+    old_point=[v.value for v in old_mesh.attributes['ExistingPoint'].data]
+    old_crease=[v.value for v in old_mesh.attributes['crease_edge'].data]
+    old_weights=[v.groups[0].weight for v in old_mesh.vertices]
+    other=sheets('Neighbor');other.location=(5,0,0)
+    obj.select_set(True);other.select_set(True);bpy.context.view_layer.objects.active=other
+    bpy.context.view_layer.update()
+    before_context=context();before_other=state(other)[:5]
+    report=bridge_boundaries(obj,a,b,cuts=4,material_index=1,closed=closed)
+    assert bpy.data.objects[obj.name] is obj and context()==before_context
+    assert state(other)[:5]==before_other
+    assert [tuple(v.co) for v in obj.data.vertices[:vertex_count]]==old_coords
+    assert [(tuple(f.vertices),f.material_index,f.use_smooth) for f in obj.data.polygons[:len(old_faces)]]==old_faces
+    assert [tuple(v.uv) for v in obj.data.uv_layers['ExistingUV'].data[:len(old_uv)]]==old_uv
+    assert [tuple(v.color) for v in obj.data.color_attributes['ExistingColor'].data[:len(old_color)]]==old_color
+    assert [v.value for v in obj.data.attributes['ExistingPoint'].data[:vertex_count]]==old_point
+    assert [v.value for v in obj.data.attributes['crease_edge'].data[:len(old_crease)]]==old_crease
+    assert [v.groups[0].weight for v in obj.data.vertices[:vertex_count]]==old_weights
+    assert all(obj.data.polygons[i].material_index==1 for i in report['newFaces'])
+    assert obj.modifiers[0] == solid and obj.modifiers[1] == bevel
+    assert solid.thickness==.03 or abs(solid.thickness-.03)<1e-8
 ''')
 
     def test_bulge_uses_world_units_under_nonuniform_transform(self):
@@ -221,6 +309,37 @@ fold.data.vertices[10].co.y=1/3
 reject(fold,cuts=0,interpolation='LINEAR')
 ''')
 
+    def test_closed_invalid_order_winding_closing_edge_bulge_and_fold_are_atomic(self):
+        self.probe('''
+obj,a,b=rings()
+for bad in [dict(closed=value) for value in (0,1,None,'true')]+[
+        dict(boundary_a=a[:2],boundary_b=b[:2]),dict(boundary_a=a+a[:1]),
+        dict(boundary_b=tuple(reversed(b))),dict(boundary_a=(a[0],a[2],a[1])+a[3:]),
+        dict(boundary_b=b[:-1]),dict(boundary_b=a),dict(max_bulge=0.)]:
+    args=dict(boundary_a=a,boundary_b=b,closed=True,cuts=3);args.update(bad)
+    reject(obj,**args)
+missing,a,b=rings('MissingClosingEdge',closing=False)
+reject(missing,boundary_a=a,boundary_b=b,closed=True)
+fold,a,b=rings('FoldedLoop')
+first,second=fold.data.vertices[b[0]],fold.data.vertices[b[1]]
+first.co,second.co=second.co.copy(),first.co.copy()
+reject(fold,boundary_a=a,boundary_b=b,closed=True,cuts=0,interpolation='LINEAR')
+''')
+
+    def test_closed_new_faces_inherit_a_boundary_style_by_column(self):
+        self.probe('''
+obj,a,b=rings()
+for name in ('First','Second'):obj.data.materials.append(bpy.data.materials.new(name))
+for i,face in enumerate(obj.data.polygons):
+    face.use_smooth=bool(i%2);face.material_index=i%2
+report=bridge_boundaries(obj,a,b,cuts=3,closed=True)
+faces={frozenset(p.vertices):p for p in obj.data.polygons}
+for row,next_row in zip(report['rows'],report['rows'][1:]):
+    for i in range(len(a)):
+        face=faces[frozenset((row[i],row[(i+1)%len(a)],next_row[(i+1)%len(a)],next_row[i]))]
+        assert face.use_smooth==bool(i%2) and face.material_index==i%2
+''')
+
     def test_unsupported_control_or_dynamic_states_and_modifiers_reject(self):
         self.probe('''
 obj=sheets()
@@ -243,16 +362,53 @@ bpy.ops.object.mode_set(mode='OBJECT')
 
     def test_failed_commit_restores_mesh_and_context_without_orphans(self):
         self.probe('''
-obj=sheets();other=sheets('Neighbor')
-obj.select_set(True);other.select_set(True);bpy.context.view_layer.objects.active=other
-mesh=obj.data
-before=state(obj)
-original=boundary_bridge._postcheck
-def fail(obj,mesh): raise ValueError('synthetic commit failure')
-boundary_bridge._postcheck=fail
-reject(obj)
-boundary_bridge._postcheck=original
-assert obj.data is mesh and state(obj)==before
+for closed in (False,True):
+    obj,a,b=rings() if closed else (sheets(),A,B)
+    other=sheets('Neighbor')
+    obj.select_set(True);other.select_set(True);bpy.context.view_layer.objects.active=other
+    mesh=obj.data
+    before=state(obj)
+    original=boundary_bridge._postcheck
+    def fail(obj,mesh): raise ValueError('synthetic commit failure')
+    boundary_bridge._postcheck=fail
+    reject(obj,boundary_a=a,boundary_b=b,closed=closed)
+    boundary_bridge._postcheck=original
+    assert obj.data is mesh and state(obj)==before
+''')
+
+    def test_final_context_update_failure_rolls_back_original_mesh_and_selection(self):
+        self.probe('''
+import sys
+class Proxy:
+    def __init__(self,real,**overrides):self.real=real;self.__dict__.update(overrides)
+    def __getattr__(self,name):return getattr(self.real,name)
+real_bpy=sys.modules['bpy']
+for closed in (False,True):
+    obj,a,b=rings() if closed else (sheets(),A,B)
+    neighbor=sheets('Neighbor');neighbor.select_set(True);obj.select_set(True)
+    bpy.context.view_layer.objects.active=neighbor
+    bpy.context.tool_settings.mesh_select_mode=(False,False,True)
+    bpy.context.view_layer.update()
+    mesh=obj.data;before=state(obj);other=state(neighbor);before_context=context()
+    postcheck=boundary_bridge._postcheck;reached=[];failed=[]
+    def checked(*args):postcheck(*args);reached.append(True)
+    def late_update():
+        if reached and not failed:
+            assert obj.data is not mesh and context()==before_context
+            failed.append(True)
+            raise RuntimeError('injected final context update failure')
+        real_bpy.context.view_layer.update()
+    boundary_bridge._postcheck=checked
+    sys.modules['bpy']=Proxy(real_bpy,context=Proxy(real_bpy.context,
+        view_layer=Proxy(real_bpy.context.view_layer,update=late_update)))
+    try:
+        try:bridge_boundaries(obj,a,b,cuts=3,closed=closed)
+        except RuntimeError as error:assert 'final context update' in str(error)
+        else:raise AssertionError('final native update failure ignored')
+    finally:
+        sys.modules['bpy']=real_bpy;boundary_bridge._postcheck=postcheck
+    assert reached and failed and obj.data is mesh
+    assert state(obj)==before and state(neighbor)==other
 ''')
 
     def test_installed_native_reopen_edit_delivery_and_exact_restore(self):
@@ -265,6 +421,11 @@ obj.modifiers.new('Thickness','SOLIDIFY').thickness=.03
 result=bridge_boundaries(obj,A,B,cuts=4)
 group=obj.vertex_groups.new(name='TransitionInterior')
 group.add(result['newVertices'],1.,'REPLACE')
+closed,a,b=rings('ClosedCage');closed.location=(0,3,0)
+closed.modifiers.new('Thickness','SOLIDIFY').thickness=.02
+result=bridge_boundaries(closed,a,b,cuts=3,closed=True)
+group=closed.vertex_groups.new(name='TransitionInterior')
+group.add(result['newVertices'],1.,'REPLACE')
 neighbor=sheets('Neighbor');neighbor.location=(4,0,0)
 ''')
         flags = ['--root',project,'--outputs','native','--views','','--blender',BLENDER]
@@ -273,19 +434,21 @@ neighbor=sheets('Neighbor');neighbor.location=(4,0,0)
         before = {o['name']:o for o in json.loads(Path(initial['outputs']['scene']).read_text())['objects']}
         edit = self.root / 'edit-bridge.py'
         edit.write_text('''import bpy
-obj=bpy.data.objects['Cage']
-group=obj.vertex_groups['TransitionInterior'].index
-old=[tuple(v.co) for v in obj.data.vertices[:16]]
-for vertex in obj.data.vertices:
-    if any(g.group==group and g.weight>0 for g in vertex.groups): vertex.co.z-=.015
-obj.data.update()
-assert [tuple(v.co) for v in obj.data.vertices[:16]]==old
+for name,count in (('Cage',16),('ClosedCage',64)):
+    obj=bpy.data.objects[name]
+    group=obj.vertex_groups['TransitionInterior'].index
+    old=[tuple(v.co) for v in obj.data.vertices[:count]]
+    for vertex in obj.data.vertices:
+        if any(g.group==group and g.weight>0 for g in vertex.groups): vertex.co.z-=.015
+    obj.data.update()
+    assert [tuple(v.co) for v in obj.data.vertices[:count]]==old
 ''')
         revised = self.cli('run',*flags,'--script',edit,'--intent','revise saved transition interior',
                            '--protect-object','Neighbor')
         after = {o['name']:o for o in json.loads(Path(revised['outputs']['scene']).read_text())['objects']}
         self.assertEqual(before['Neighbor'],after['Neighbor'])
         self.assertNotEqual(before['Cage']['mesh'],after['Cage']['mesh'])
+        self.assertNotEqual(before['ClosedCage']['mesh'],after['ClosedCage']['mesh'])
         delivered = self.cli('deliver','--root',project,'--views','','--blender',BLENDER)
         self.probe('''
 for path,native in '''+repr([(revised['outputs']['blend'],True),(delivered['outputs']['glb'],False)])+''':
@@ -294,13 +457,14 @@ for path,native in '''+repr([(revised['outputs']['blend'],True),(delivered['outp
     else:
         bpy.ops.wm.read_factory_settings(use_empty=True)
         bpy.ops.import_scene.gltf(filepath=path)
-    obj=bpy.data.objects['Cage']
-    if native:
-        assert obj.vertex_groups.get('TransitionInterior') and len(obj.modifiers)==1
-        assert len(obj.data.vertices)==32
-    else:
-        assert not obj.modifiers and len(obj.data.vertices)>32
-        assert sorted(o.name for o in bpy.context.scene.objects)==['Cage','Neighbor']
+    for name,count in (('Cage',32),('ClosedCage',112)):
+        obj=bpy.data.objects[name]
+        if native:
+            assert obj.vertex_groups.get('TransitionInterior') and len(obj.modifiers)==1
+            assert len(obj.data.vertices)==count
+        else:
+            assert not obj.modifiers and len(obj.data.vertices)>count
+    assert sorted(o.name for o in bpy.context.scene.objects)==['Cage','ClosedCage','Neighbor']
 ''')
         restored = self.cli('restore','--root',project,'--revision',initial['head'])
         self.assertEqual(Path(restored['outputs']['blend']).read_bytes(),initial_bytes)

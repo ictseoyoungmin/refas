@@ -36,6 +36,12 @@ underarm from front and rear oblique views. Avoid concentrating many edges at
 the deepest concavity. Preserve sleeve length and wrist placement while
 adjusting the transition.
 
+For two prepared disjoint loops with equal vertex counts in the same cage,
+`bridge_boundaries(..., closed=True)` can join the armhole to the sleeve with
+explicit correspondence and staged recovery. Align the seam phase and source
+winding first. See the assembly guide for inputs and native interpolation;
+the operation does not design the sleeve cap or establish wearing clearance.
+
 Review the evaluated subdivision and thickness result, not only the cage.
 Separately subdivided boundaries can pull apart; tight support loops can pinch
 even a welded seam. Change the cage or representation before increasing
