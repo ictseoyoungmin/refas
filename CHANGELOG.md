@@ -4,6 +4,7 @@ All notable RefAs changes are documented here. RefAs follows semantic versioning
 
 ## 2.1.0-alpha.1 — Development
 
+- Isolate Blender temporary/crash output per production run and retain failed-run evidence. Add flushed render and scene-switch boundaries to existing logs without changing rendering or revision publication; the intermittent native crash remains unresolved.
 - Add optional rigid surface mounting from evaluated host geometry, an explicit selection ray/tangent and a planar contact footprint. Preserve the part shape/scale and reject infeasible sampled support gaps before moving it.
 - Add editable blind recess construction from an explicit convex outline, surface frame and depth. Retain the native cutter and Boolean, observe actual walls/floor and reject infeasible sampled remaining thickness without losing the accepted feature.
 - Add an optional native boundary bridge for two explicit open cage chains, with verified correspondence, source-data preservation and staged failure recovery. Surface blending follows adjacent cage faces; linear joining retains deliberate creases.
