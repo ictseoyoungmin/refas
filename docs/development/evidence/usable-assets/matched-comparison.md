@@ -51,6 +51,8 @@ intentional seams/hardware and are not defect counts. The 2.0 cuff support was
 unresolved. Native garment incidence checks pass, but export index splits and
 the 2.0 arm's coincident-position diagnostic remain explicitly classified or
 unresolved rather than silently accepted.
+The 2.0 arm’s author export-geometry verdict remains **FAIL**, with 35 nonmanifold
+and 60 inconsistent-winding edges in the exact-coincident-position diagnostic.
 
 The corrected Godot garment observations still fail at the unchanged 2e-5
 maximum matrix-element threshold. The 2.0 remaining 388 failures at 100µm are four
