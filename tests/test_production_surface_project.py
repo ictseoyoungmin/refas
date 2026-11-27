@@ -288,6 +288,28 @@ reject(obj,target);target.modifiers.remove(dependency)
 obj['refas_sweep_version']=1;reject(obj,target);del obj['refas_sweep_version']
 ''')
 
+    def test_documented_decal_preparation_and_revision(self):
+        guide = (self.skill / 'references/production-assemblies.md').read_text()
+        section = guide.split('### Example: static panel decal\n', 1)[1].split('\n## ', 1)[0]
+        code = section.split('```python\n', 1)[1].split('\n```', 1)[0]
+        script = self.root / 'documented_decal.py'
+        script.write_text(code + '''
+assert first['created'] and not revised['created']
+assert abs(first['realizedOffset']-.005)<1e-7
+assert abs(revised['realizedOffset']-.006)<1e-7
+assert abs(revised['maxEditMovement']-.001)<1e-7
+assert decal.data.as_pointer()==source_mesh.as_pointer()
+assert decal.modifiers['Decal fit'].as_pointer()==projection.as_pointer()
+assert [m.type for m in decal.modifiers]==['SHRINKWRAP','SOLIDIFY','BEVEL']
+assert len(source_mesh.vertices)==289 and all(abs(v.co.z-.4)<1e-7 for v in source_mesh.vertices)
+assert all(mask.weight(v.index)==1 for v in source_mesh.vertices)
+assert sorted(o.name for o in bpy.context.scene.objects)==['ExampleDecal','ExamplePanel']
+''')
+        project = self.root / 'documented-decal-project'
+        self.cli('init', '--root', project, '--name', 'documented-static-decal')
+        self.cli('run', '--root', project, '--script', script, '--outputs', 'native',
+                 '--views', '', '--blender', BLENDER, '--intent', 'prepare and revise the documented static decal')
+
     def test_installed_native_reopen_unplanned_offset_edit_export_and_restore(self):
         project = self.root / 'project'
         self.cli('init', '--root', project, '--name', 'native-surface-projection')

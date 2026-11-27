@@ -217,6 +217,56 @@ class ProductionAnimationTests(unittest.TestCase):
         self.assertTrue(check["checks"]["boundsMatchNative"])
         self.assertEqual(scene["timing"]["subframe"], .5)
 
+    def test_documented_parenting_preserves_world_pose_with_fresh_nested_pivot(self):
+        guide = (ROOT / "skills/refas/references/production-assemblies.md").read_text()
+        section = guide.split("### Keep the neutral world pose when parenting\n", 1)[1]
+        recipe = section.split("```python\n", 1)[1].split("\n```", 1)[0]
+        script = self.root / "documented_parenting.py"
+        script.write_text('''import bpy, math
+bpy.ops.wm.read_factory_settings(use_empty=True)
+scene = bpy.context.scene
+data = bpy.data.meshes.new('PanelCage')
+data.from_pydata([(0,0,0),(.4,0,0),(.4,0,.2),(0,0,.2)], [], [(0,1,2,3)])
+part = bpy.data.objects.new('MovingPanel', data)
+scene.collection.objects.link(part)
+part.location, part.rotation_euler = (1.4,-.2,.8), (.12,-.2,.3)
+bpy.context.view_layer.update()
+expected = part.matrix_world.copy()
+cage = tuple(tuple(v.co) for v in data.vertices)
+mesh_id = data.as_pointer()
+root = bpy.data.objects.new('Assembly', None)
+scene.collection.objects.link(root)
+root.location, root.rotation_euler = (.4,.1,.2), (.1,0,.3)
+pivot = bpy.data.objects.new('HingePivot', None)
+scene.collection.objects.link(pivot)
+pivot.parent = root
+pivot.location, pivot.rotation_euler = (.7,-.2,.3), (0,.2,-.1)
+# Reproduce a stale inverse read before evaluating the newly authored hierarchy.
+stale = part.copy()
+scene.collection.objects.link(stale)
+stale.matrix_parent_inverse = pivot.matrix_world.inverted()
+stale.parent = pivot
+''' + recipe + '''
+def matrix_error(a, b):
+    return max(abs(a[r][c]-b[r][c]) for r in range(4) for c in range(4))
+assert matrix_error(stale.matrix_world, expected) > .01, 'fixture must expose the stale inverse'
+assert matrix_error(part.matrix_world, expected) < 1e-6
+assert part.parent == pivot
+rest_pivot = pivot.matrix_world.copy()
+for degrees in (17.5, 35, 0):
+    pivot.rotation_euler.x = math.radians(degrees)
+    bpy.context.view_layer.update()
+    wanted = pivot.matrix_world @ rest_pivot.inverted() @ expected
+    assert matrix_error(part.matrix_world, wanted) < 1e-6
+    if degrees:
+        assert (part.matrix_world.translation-expected.translation).length > .01
+    assert part.data.as_pointer() == mesh_id
+    assert tuple(tuple(v.co) for v in part.data.vertices) == cage
+assert matrix_error(part.matrix_world, expected) < 1e-6
+''')
+        self.call([BLENDER, "-b", "--factory-startup", "--threads", "2", "--python-exit-code", "1",
+                   "--python", script])
+
     def test_full_key_sample_modifier_and_playback_changes_are_observed(self):
         script = self.root / "probe.py"
         script.write_text(PROBE)

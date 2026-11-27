@@ -245,6 +245,7 @@ sampling density and layer relief first. A cloth badge backing, raised border
 and emblem can use separate disjoint masks and offsets, with Solidify after
 projection. Preserve the intended thickness and visible design while preparing
 these layers; the helper changes only the native projection modifier.
+For a complete starting script, see the [static panel decal example](#example-static-panel-decal).
 
 ```python
 from surface_project import project_region
@@ -291,6 +292,55 @@ or removes only a newly created failed modifier. Ordinary native offset/mask/cag
 edits remain possible after reopening. Recheck after such edits
 or target changes. This fits static surface layers; the separate surface-binding
 recipe handles authored sections following a deforming triangle.
+
+### Example: static panel decal
+
+Run this complete script in a new empty production project with `--outputs native --views ''`.
+It prepares a curved panel, a thin surface layer and its whole-component mask.
+World units are metres; the projection offset changes from 5 to 6 mm along Z,
+before thickness. The same native modifier and source cage remain available.
+
+```python
+import bpy
+from surface_project import project_region
+
+bpy.context.scene.unit_settings.scale_length = 1.0
+
+def grid(name, n, extent, height):
+    vertices = [
+        (extent * (2*i/n - 1), extent * (2*j/n - 1),
+         height(extent * (2*i/n - 1)))
+        for j in range(n + 1) for i in range(n + 1)
+    ]
+    faces = [
+        (j*(n+1)+i, j*(n+1)+i+1, (j+1)*(n+1)+i+1, (j+1)*(n+1)+i)
+        for j in range(n) for i in range(n)
+    ]
+    data = bpy.data.meshes.new(name + "Mesh")
+    data.from_pydata(vertices, [], faces)
+    data.update()
+    obj = bpy.data.objects.new(name, data)
+    bpy.context.collection.objects.link(obj)
+    return obj
+
+panel = grid("ExamplePanel", 48, 0.6, lambda x: 0.2 - 0.5*x*x)
+decal = grid("ExampleDecal", 16, 0.4, lambda x: 0.4)
+source_mesh = decal.data
+mask = decal.vertex_groups.new(name="Decal")
+mask.add(list(range(len(source_mesh.vertices))), 1.0, "REPLACE")
+decal.modifiers.new("Thickness", "SOLIDIFY").thickness = 0.001
+decal.modifiers.new("Edges", "BEVEL").width = 0.0001
+options = dict(name="Decal fit", group="Decal", axis="Z", direction=-1,
+               offset=0.005, max_distance=0.5,
+               max_displacement=0.4, tolerance=0.001)
+first = project_region(decal, panel, **options)
+projection = decal.modifiers["Decal fit"]
+revised = project_region(decal, panel, **{**options, "offset": 0.006})
+```
+
+Choose the outline, density and bounds for the actual feature. This static example
+does not accept parented or animated panels; retain the supported projection stack
+and recheck after later host or layer edits.
 
 ## Edit several local targets with a fixed surrounding cage
 
@@ -531,6 +581,36 @@ to the intended motion. Parent the moving segment and its attachments under
 that pivot; downstream joints follow their upstream segment. Keep the neutral
 world-space placement when assigning parents and verify it afterward. A name
 such as `elbow` does not create a joint or establish its axis.
+
+### Keep the neutral world pose when parenting
+
+After creating and placing a pivot and its ancestors, refresh the dependency
+graph before reading their world matrices. Use rotation/translation transforms
+with unit scale and no transform constraints. This initial parenting example
+uses an unanimated part, the authored neutral frame (frame 1 here), and the actual
+part/pivot names:
+
+```python
+import bpy
+
+part = bpy.data.objects["MovingPanel"]
+pivot = bpy.data.objects["HingePivot"]
+bpy.context.scene.frame_set(1)
+bpy.context.view_layer.update()
+neutral_world = part.matrix_world.copy()
+part.parent = pivot
+part.matrix_parent_inverse = pivot.matrix_world.inverted()
+part.matrix_world = neutral_world
+bpy.context.view_layer.update()
+world_error = max(abs(part.matrix_world[r][c] - neutral_world[r][c])
+                  for r in range(4) for c in range(4))
+if world_error > 1e-6:
+    raise ValueError("Parenting changed the neutral world pose")
+```
+
+The initial refresh matters for newly placed nested pivots whose cached matrices
+may not yet include the authored transforms. After parenting, rotate the pivot
+through useful intermediate poses and inspect the part and its attachments.
 
 Rigid plates normally follow one segment. A bridge, actuator or cable spanning
 two segments needs a separate choice: telescoping parts, an explicit linkage,

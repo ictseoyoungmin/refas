@@ -25,6 +25,8 @@ For two existing open cage chains or closed loops, `bridge_boundaries` from `scr
 
 Load a construction guide only when its problem is present: `references/production-garments.md` for cloth transitions and folded collars, or `references/production-assemblies.md` for segmented hard surfaces, joint pivots and local pose checks.
 
+Find a relevant helper or native recipe with `python3 scripts/produce.py authoring-capabilities --query "attach badge"`; other useful task terms include `decal`, `hinge`, `joint handles` and `thickness`. Each result gives the inputs to prepare, its scope and the exact guide section. Read that section when the task fits; an empty result suggests shorter search terms or the full catalogue. Ordinary `bpy` authoring remains available.
+
 For a blind recess in a solid, `cut_recess` from `scripts/production/recess.py` constructs and revises a real cavity from a selected surface, convex outline, depth and sampled remaining-material limits. The assembly guide gives its scope and the general Boolean recipe. Keep cutters and surface-fitting sources editable when later corrections depend on them. Explicitly mark only a construction **mesh** with `obj["refas_role"] = "construction"` and `obj.hide_render = True`; keep it enabled in the current scene and active view layer. Native revisions preserve these meshes while asset surface counts, framing and GLB exclude them. Ordinary hidden objects are not inferred to be construction sources.
 
 Create a rigid badge, button, buckle or bracket in its local mounting frame, then use `bind_on_surface` from `scripts/production/surface_mount.py` when it must follow later host edits. It fits the actual evaluated surface and retains native Surface Deform plus rigid vertex parenting; saved contact bounds are checked before production output. Apply intended host scale before binding. A changed host topology needs a deliberate new mount, and motion delivery needs baking. Use `place_on_surface` for a one-time placement, or `surface_binding.py` for explicitly authored section transport. The assembly guide gives the mounting-plane convention and native dependency; guessed XYZ or a world-front normal cannot replace the actual supporting surface. Inspect neighboring sections and clearance after editing.
@@ -34,8 +36,6 @@ For a prepared flexible surface layer, `project_region` from `scripts/production
 For several local target positions, `edit_region` from `scripts/production/local_edit.py` moves handles jointly inside an explicit region while retaining the outside cage and supported native Solidify → Bevel → Weighted Normal finishes. Use it on a static unparented cage; the assembly guide gives a complete panel example, sampled bounds and failed-edit recovery.
 
 Read `references/production-topology.md` when checking mesh defects, rebuilding topology, or optimizing an asset for delivery. Choose topology for the actual deformation and use; reducing polygon count alone does not establish useful retopology.
-
-Find an installed helper or focused guide with `python3 scripts/produce.py authoring-capabilities --query "thickness"`. The optional catalogue reports available paths and their scope; ordinary `bpy` authoring remains available.
 
 ## Start or resume a production project
 
