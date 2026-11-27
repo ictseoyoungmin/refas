@@ -406,7 +406,7 @@
       "baselineNote": "Added by the user's explicit 2026-11-22 scope expansion; no credit at the scope-change baseline."
     }
   ],
-  "currentCheckpointId": "delivery-main-integration-fbe4821f",
+  "currentCheckpointId": "delivery-published-v2.0.0-d48ef51a",
   "checkpoints": [
     {
       "id": "baseline-3217b46e",
@@ -1750,6 +1750,344 @@
         "releasePreparationIssue": "https://github.com/ictseoyoungmin/refas/issues/437"
       },
       "note": "Append-only D2 acceptance after the actual main merge at fbe4821f. The eight prior checkpoints, all 37 criterion meanings, checklist versions and projections remain unchanged. Coverage is 35/37 = 95% rounded, Delivery 2/3; R2-06 remains 6/7 WIP, R2-07 5/5 REVIEW and 0/7 tasks CLOSED. This is the historical 2.0.0-alpha.1 main-integration snapshot, not a 2.0.0 publication record. Current release preparation is tracked separately in Issue437. E2 and D3 remain open; all existing visual/consumer failures, scoped asset acceptance, frozen comparison outcomes and PR425 exclusion remain unchanged."
+    },
+    {
+      "id": "delivery-published-v2.0.0-d48ef51a",
+      "date": "2026-11-27",
+      "kind": "verified-implementation",
+      "checklistVersion": 2,
+      "sourceCommit": "d48ef51ad213ce2d7df3664965fc9dc283783737",
+      "runtimeCommit": "d48ef51ad213ce2d7df3664965fc9dc283783737",
+      "demonstratedCriteria": [
+        "B1",
+        "B2",
+        "B3",
+        "B4",
+        "W1",
+        "W2",
+        "W3",
+        "W4",
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "O1",
+        "O2",
+        "O3",
+        "O4",
+        "K1",
+        "K2",
+        "K3",
+        "K4",
+        "E1",
+        "E3",
+        "E4",
+        "E5",
+        "E6",
+        "D1",
+        "D2",
+        "D3",
+        "U1",
+        "U2",
+        "U3",
+        "U4",
+        "U5",
+        "U6"
+      ],
+      "counts": {
+        "demonstrated": 36,
+        "total": 37,
+        "percentRounded": 97,
+        "bySlice": {
+          "R2-01": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-02": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-03": {
+            "demonstrated": 6,
+            "total": 6
+          },
+          "R2-04": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-05": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-06": {
+            "demonstrated": 6,
+            "total": 7
+          },
+          "Delivery": {
+            "demonstrated": 3,
+            "total": 3
+          },
+          "R2-07": {
+            "demonstrated": 5,
+            "total": 5
+          }
+        }
+      },
+      "notionTaskStatuses": {
+        "R2-01": "REVIEW",
+        "R2-02": "REVIEW",
+        "R2-03": "REVIEW",
+        "R2-04": "REVIEW",
+        "R2-05": "REVIEW",
+        "R2-06": "WIP",
+        "R2-07": "REVIEW"
+      },
+      "evidenceUpdates": {
+        "D3": {
+          "evidence": [
+            "https://github.com/ictseoyoungmin/refas/issues/439",
+            "https://github.com/ictseoyoungmin/refas/pull/438",
+            "https://github.com/ictseoyoungmin/refas/commit/d48ef51ad213ce2d7df3664965fc9dc283783737",
+            "https://github.com/ictseoyoungmin/refas/actions/runs/45962623370",
+            "https://github.com/ictseoyoungmin/refas/releases/tag/v2.0.0",
+            "https://github.com/ictseoyoungmin/refas/releases/download/v2.0.0/refas-2.0.0.tgz",
+            "https://github.com/ictseoyoungmin/refas/releases/download/v2.0.0/refas-2.0.0.tgz.sha256",
+            "docs/release-criteria.md",
+            "docs/WORK_STATUS.md"
+          ],
+          "note": "Formal v2.0.0 GitHub Release and its production installation package were actually published from exact main d48ef51a. The successful manual workflow binds the recorded tag, Release and two assets to that source under the publisher conflict-rejection policy. Both unauthenticated public downloads match the prepared archive/checksum bytes and GitHub digests; installation of that downloaded archive passes the isolated CLI and copied-skill checks with all source files identical. This completes D3 only. It does not claim npm registry publication, E2 measurement, task closure, improved asset quality or optional PR425 acceptance."
+        }
+      },
+      "mainIntegration": {
+        "foundationPullRequest": 435,
+        "foundationMergeCommit": "c2831abb5b089baf9436e786047c8b73dff38fee",
+        "foundationSourceCommit": "e6cecf2da7d4ed3de8b05236451ded351068bad9",
+        "foundationTree": "36dcc6ba3ed17055356506333a867aaa3186500d",
+        "remainderPullRequest": 399,
+        "reviewedSourceCommit": "16198720df3bbfa42e9bf547199598a3dd5b3710",
+        "synchronizedHead": "dc7f37e986589fdf98015f307ff1ac6de673d83e",
+        "mainMergeCommit": "fbe4821fb04ff72f44a69761dd5ddfc22cdbc3dd",
+        "reviewedAndMergedTree": "bafa777e2d3f97c8a898b8922eaa913b07e0bdff",
+        "primaryIssue398": "closed after accepted source integration; remaining evidence and publication tracked separately",
+        "freshRepositoryChecks": {
+          "foundation": {
+            "source": "e6cecf2da7d4ed3de8b05236451ded351068bad9",
+            "javascriptPassed": 948,
+            "javascriptFailed": 0,
+            "javascriptSkipped": 0,
+            "requiredGateCount": 5,
+            "allRequiredGatesPassed": true,
+            "dogfoodCheckpoints": 11,
+            "skillFiles": 16,
+            "packageFiles": 20,
+            "packageBytes": 258556
+          },
+          "remainder": {
+            "source": "16198720df3bbfa42e9bf547199598a3dd5b3710",
+            "javascriptPassed": 948,
+            "javascriptFailed": 0,
+            "javascriptSkipped": 0,
+            "requiredGateCount": 5,
+            "allRequiredGatesPassed": true,
+            "dogfoodCheckpoints": 11,
+            "skillFiles": 19,
+            "packageFiles": 23,
+            "packageBytes": 301916
+          },
+          "requiredCommands": [
+            "npm test",
+            "npm run test:python",
+            "npm run check",
+            "npm run dogfood",
+            "npm run release:audit"
+          ],
+          "actualBlenderGodot": "Existing exact-source capability evidence is reused with its original scope; no new real-asset or 187-test execution is claimed by this integration."
+        },
+        "exactHeadCi": {
+          "head": "dc7f37e986589fdf98015f307ff1ac6de673d83e",
+          "ciRun": 45946321807,
+          "productionRun": 45946321772,
+          "conclusion": "success"
+        },
+        "recovery": "Normal merge reverts preserve a29bcc42, c2831abb and all reviewed feature commits; accepted/rejected private asset archives and frozen comparisons remain separate."
+      },
+      "timingCostEvidence": {
+        "criterion": "E2",
+        "status": "blocked",
+        "issue": "https://github.com/ictseoyoungmin/refas/issues/436",
+        "providerModelSnapshot": null,
+        "requestUsage": null,
+        "billedCost": null,
+        "reason": "Actual matched provider/model/usage and attributable billed-cost telemetry remain unavailable. Existing Blender time, subscription prices, turns and file bytes cannot fill these observations. No new model run or cost claim is credited."
+      },
+      "boundaries": {
+        "closedTasks": 0,
+        "totalTasks": 7,
+        "finishedVisualAcceptance": {
+          "jacket": "rejected",
+          "automail": "rejected"
+        },
+        "developmentMetadata": "2.0.0",
+        "retainedLegacyRuntime": "1.4.2",
+        "publishedRelease": "v2.0.0",
+        "pullRequest": "https://github.com/ictseoyoungmin/refas/pull/438",
+        "pullRequestState": "Merged",
+        "prototypeSourceAcceptance": {
+          "jacket": "demonstrated within original task scope",
+          "automail": "demonstrated within original task scope"
+        },
+        "usableAssetAcceptance": {
+          "automail": "accepted only for declared rigid reach/partial grip and documented untextured scope",
+          "jacket": "accepted only for the identified original26-mesh avatar, frames1-97 at30fps, frozen source contact policies and predeclared100-micrometre consumer profile"
+        },
+        "standaloneAutomailLibraryId": "libfile_469aa206ad3c819180cbc2007000a572",
+        "authoringCandidatePullRequest": "https://github.com/ictseoyoungmin/refas/pull/425",
+        "authoringCandidatePullRequestState": "Draft",
+        "checkpointIssue": "https://github.com/ictseoyoungmin/refas/issues/439",
+        "openCriteria": [
+          "E2"
+        ],
+        "retainedDiagnosticFailures": {
+          "consumerDefault20um": "FAIL: 5,883 point checks; predeclared100um profile separately PASS without a physical-contact allowance",
+          "originalAvatarStrictGeometry": "FAIL: first-frame strict geometric orientation; remaining96 frames unassessed by that route",
+          "avatarBlenderReimport2um": "FAIL: Body.001 at frames28/70, maximum2.017388303um; raw GLB replay of all26 meshes over97 frames separately PASS within unchanged2um",
+          "directRawLiveStaticHairEquality": "FAIL: lossy engine static-position representation; exact source-derived uint16 AABB forward mapping separately PASS with zero fitted parameters and one-ULP negative control",
+          "originalExactContactPairAndRestBinder": "FAIL retained; independently reviewed unchanged oriented/material/sheet/source lineage and original finite construction domains provide separate scoped evidence"
+        },
+        "priorWearableMergeCommit": "f3c44c1fea7f099bd50db1fa36c407ead2239d6e",
+        "comparisonAcceptance": {
+          "criterion": "U1",
+          "scope": "Independent prospective continuation comparison of both existing task types under frozen common inputs and resource caps; positive, failed and missing results retained.",
+          "assetUsabilityGranted": false,
+          "productSuperiorityClaimed": false,
+          "speedOrCostAdvantageClaimed": false,
+          "reconstructionFromScratchClaimed": false,
+          "retainedResults": {
+            "blindVisualRanking": "Tie for both tasks across all three conditions and all 54 reviewed output images.",
+            "garmentConsumerDefault20um": "FAIL for no-skill, fixed-1.x and 2.0.",
+            "garmentConsumerPredeclared100um": "FAIL for all three at the unchanged matrix threshold; 2.0 still has 388 original unused-hair-bone matrix failures, with no all-bone exemption.",
+            "armActualConsumer121": "PASS for each condition within the recorded matrix/geometry scope; not mechanical-contact or overall asset acceptance.",
+            "currentV2ArmExportGeometryDiagnostic": "FAIL/unresolved: exact-coincident-position diagnostic reports 35 nonmanifold edges and 60 inconsistent-winding edges.",
+            "fixedV1SelectedCandidateEditRestore": "NOT_EVALUATED: the executed edit/restore used the exact supplied baseline before retopology.",
+            "garmentHairContacts": "Each condition retains 10,765 opacity-confirmed hair/cloth contact pairs at each of the three common sampled poses.",
+            "providerModelTokenAndBilledCost": "Unavailable; one run per condition and interrupted plain telemetry prevent E2 credit."
+          }
+        },
+        "historicalCumulativeMainArtifactBudget": {
+          "limitBytes": 1048576,
+          "status": "FAIL",
+          "note": "The original cumulative-main result remains FAIL: 1,150,150 bytes against the unchanged 1,048,576-byte limit. Normal sequential integration of two independently reviewed source scopes resolved integration; the grandfather anchor, limits and historical verdict were not changed.",
+          "historical": true,
+          "changedBytes": 1150150,
+          "requestedBase": "a29bcc42f4da666c812462eb130836f2d766b0a1",
+          "effectiveBase": "ea64de8adfa787537bee2b86a05ac0f4ec08dd5c",
+          "head": "16198720df3bbfa42e9bf547199598a3dd5b3710"
+        },
+        "sourceIntegrationArtifactBudget": {
+          "status": "PASS",
+          "limitBytes": 1048576,
+          "foundation": {
+            "pullRequest": 435,
+            "chargedBytes": 976655,
+            "requestedBase": "a29bcc42f4da666c812462eb130836f2d766b0a1",
+            "effectiveBase": "ea64de8adfa787537bee2b86a05ac0f4ec08dd5c",
+            "head": "e6cecf2da7d4ed3de8b05236451ded351068bad9"
+          },
+          "remainder": {
+            "pullRequest": 399,
+            "chargedBytes": 590356,
+            "requestedBase": "c2831abb5b089baf9436e786047c8b73dff38fee",
+            "effectiveBase": "c2831abb5b089baf9436e786047c8b73dff38fee",
+            "head": "dc7f37e986589fdf98015f307ff1ac6de673d83e"
+          },
+          "policyChanged": false
+        },
+        "blockedEvidenceIssue": "https://github.com/ictseoyoungmin/refas/issues/436",
+        "releasePreparationIssue": "https://github.com/ictseoyoungmin/refas/issues/437",
+        "blockedEvidenceMilestone": "https://github.com/ictseoyoungmin/refas/milestone/5"
+      },
+      "note": "Append-only D3 acceptance after actual GitHub Release and installation-package publication from d48ef51a. All nine prior checkpoints retain their exact text; all 37 criterion meanings, checklist versions and projections remain unchanged. Coverage is 36/37 = 97% rounded, Delivery 3/3; R2-06 remains 6/7 WIP, R2-07 5/5 REVIEW and 0/7 tasks CLOSED. sourceCommit and runtimeCommit identify the published source, not this later documentation commit. E2 remains blocked in Issue436 under milestone2.0.1 with provider/model/usage and billed-cost values null. Existing visual/consumer failures, scoped asset acceptance, U1 ties and missing results, the historical cumulative-main budget FAIL and PR425 exclusion remain unchanged. No npm registry publication, speed/cost advantage or general quality superiority is claimed.",
+      "publication": {
+        "version": "2.0.0",
+        "channel": "GitHub Release installation package",
+        "npmRegistryPublicationClaimed": false,
+        "releaseId": 460308601,
+        "releaseUrl": "https://github.com/ictseoyoungmin/refas/releases/tag/v2.0.0",
+        "publishedAt": "2026-11-27T08:02:42Z",
+        "verifiedAt": "2026-11-27T08:04:35.006579+00:00",
+        "tag": "v2.0.0",
+        "tagCommit": "d48ef51ad213ce2d7df3664965fc9dc283783737",
+        "releaseTargetCommit": "d48ef51ad213ce2d7df3664965fc9dc283783737",
+        "draft": false,
+        "prerelease": false,
+        "githubReleaseImmutable": false,
+        "workflow": {
+          "id": 45962623370,
+          "url": "https://github.com/ictseoyoungmin/refas/actions/runs/45962623370",
+          "event": "workflow_dispatch",
+          "sourceCommit": "d48ef51ad213ce2d7df3664965fc9dc283783737",
+          "conclusion": "success"
+        },
+        "exactMainChecks": {
+          "sourceCommit": "d48ef51ad213ce2d7df3664965fc9dc283783737",
+          "reviewedAndMergedTree": "d541839ab1c39bd64f829d68563c5139742d3744",
+          "ciRun": "https://github.com/ictseoyoungmin/refas/actions/runs/45948863434",
+          "productionRun": "https://github.com/ictseoyoungmin/refas/actions/runs/45948863322",
+          "conclusion": "success",
+          "nodeVersions": [
+            22,
+            24
+          ],
+          "fullQaGateCount": 17,
+          "localRequiredGateCount": 5,
+          "javascriptPassed": 967,
+          "actualBlenderGodot": "Existing exact-source evidence of 187 tests with zero failures/skips and 32 bound source hashes is retained; publication does not claim another model or 187-test execution."
+        },
+        "publicDownload": {
+          "withoutCredentials": true,
+          "checksumContentVerified": true,
+          "preparedArchiveSha256": "9be599330e8be6fb01180d1c6deec3bc27ab4b24c6ad8b9396a32011018b1581",
+          "assets": [
+            {
+              "name": "refas-2.0.0.tgz",
+              "id": 799547991,
+              "url": "https://github.com/ictseoyoungmin/refas/releases/download/v2.0.0/refas-2.0.0.tgz",
+              "bytes": 87637,
+              "sha256": "9be599330e8be6fb01180d1c6deec3bc27ab4b24c6ad8b9396a32011018b1581",
+              "downloadMatchesGithubDigest": true,
+              "matchesPreparedArtifact": true
+            },
+            {
+              "name": "refas-2.0.0.tgz.sha256",
+              "id": 799548095,
+              "url": "https://github.com/ictseoyoungmin/refas/releases/download/v2.0.0/refas-2.0.0.tgz.sha256",
+              "bytes": 82,
+              "sha256": "e6bfec65c832bb29fb2d3acc3bee3fc5f857c2ed84fad1d8b870353960c42544",
+              "downloadMatchesGithubDigest": true,
+              "matchesPreparedArtifact": true
+            }
+          ]
+        },
+        "downloadedArchiveInstallation": {
+          "sourceCommit": "d48ef51ad213ce2d7df3664965fc9dc283783737",
+          "status": "PASS",
+          "version": "2.0.0",
+          "skillFiles": 19,
+          "packagedFiles": 23,
+          "unpackedBytes": 302654,
+          "skillBytes": 274866,
+          "installedCli": true,
+          "sourceFilesIdentical": true,
+          "plainSkillWithoutNodeOrSitePackages": true
+        },
+        "milestone": {
+          "title": "2.0.0",
+          "url": "https://github.com/ictseoyoungmin/refas/milestone/4"
+        },
+        "recovery": "The recorded v2.0.0 tag, Release assets and exact-source receipt identify the published installation bytes. The publisher rejects conflicting existing tags/assets; GitHub server-side release immutability is not enabled. Later documentation commits do not move the release source or replace conflicting assets."
+      }
     }
   ],
   "projections": [

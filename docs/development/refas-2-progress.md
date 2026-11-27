@@ -1,6 +1,62 @@
 # RefAs 2.0 plan progress
 
-## Current recorded checkpoint — accepted main integration
+## Current recorded checkpoint — published v2.0.0 installation package
+
+**97% — 36 of 37 fixed checklist-v2 criteria demonstrated.** Actual release
+and package publication add **D3 only**, completing **Delivery 3/3**. R2-06
+remains **6/7, WIP**; R2-07 remains **5/5, REVIEW**; **0/7 tasks are CLOSED**.
+All nine previous JSON checkpoints retain their exact text; criterion
+meanings, checklist versions and projections are unchanged. **E2 remains
+open.** This percentage measures demonstrated criteria, not finished-art
+quality or effort completed.
+
+The [v2.0.0 Release](https://github.com/ictseoyoungmin/refas/releases/tag/v2.0.0)
+was published on **2026-11-27 at 08:02:42 UTC** from exact main
+[`d48ef51a`](https://github.com/ictseoyoungmin/refas/commit/d48ef51ad213ce2d7df3664965fc9dc283783737),
+after [release preparation #438](https://github.com/ictseoyoungmin/refas/pull/438).
+The successful [publication workflow](https://github.com/ictseoyoungmin/refas/actions/runs/45962623370)
+binds that source to the recorded tag and Release assets under the publisher's
+conflict-rejection policy. `sourceCommit`
+identifies this published runtime/source snapshot, not the later documentation
+commit. [Issue #439](https://github.com/ictseoyoungmin/refas/issues/439) records
+this D3 decision under [milestone 2.0.0](https://github.com/ictseoyoungmin/refas/milestone/4).
+
+| Actual receipt | Verified result |
+| --- | --- |
+| Release and exact source | Release **460308601**, tag/target `d48ef51ad213ce2d7df3664965fc9dc283783737`; published, not draft or prerelease. |
+| Installation archive | [refas-2.0.0.tgz](https://github.com/ictseoyoungmin/refas/releases/download/v2.0.0/refas-2.0.0.tgz), asset **799547991**, **87,637 bytes**, SHA-256 `9be599330e8be6fb01180d1c6deec3bc27ab4b24c6ad8b9396a32011018b1581`. |
+| Checksum file | [refas-2.0.0.tgz.sha256](https://github.com/ictseoyoungmin/refas/releases/download/v2.0.0/refas-2.0.0.tgz.sha256), asset **799548095**, **82 bytes**, SHA-256 `e6bfec65c832bb29fb2d3acc3bee3fc5f857c2ed84fad1d8b870353960c42544`. |
+| Public download and installation | Both unauthenticated downloads match the prepared bytes/digests and GitHub asset digests; checksum content is exact. Installation of that downloaded archive passes the isolated CLI and copied-skill checks with identical source files: **19 skill / 23 package files**, **302,654 unpacked bytes**. |
+| Exact-main prerequisites | [Full CI](https://github.com/ictseoyoungmin/refas/actions/runs/45948863434) and [production CI](https://github.com/ictseoyoungmin/refas/actions/runs/45948863322) pass at d48: Node 22/24 and all 17 full-QA gates. Release preparation also passed all five required local gates and 967 JavaScript tests. Existing source-bound Blender/Godot evidence is retained without claiming a new asset or 187-test execution. |
+
+The published installation channel is the production npm-format archive and
+its checksum on GitHub Release. **No npm registry publication is claimed.**
+The release identity and package checks do not reassess models or establish
+visual-quality, speed or cost superiority.
+
+| Slice | Current coverage | Status |
+| --- | --- | --- |
+| R2-01 / R2-02 / R2-04 / R2-05 | 4/4 each | REVIEW |
+| R2-03 | 6/6 | REVIEW |
+| R2-06 | 6/7 | WIP |
+| R2-07 | 5/5 | REVIEW |
+| Coordinated delivery | 3/3 | Main integration and GitHub package publication accepted |
+| **Total** | **36/37 = 97% rounded** | **0/7 tasks CLOSED** |
+
+[E2 follow-up #436](https://github.com/ictseoyoungmin/refas/issues/436) remains
+blocked under [milestone 2.0.1](https://github.com/ictseoyoungmin/refas/milestone/5).
+Actual prospective timing, provider/model/usage and attributable billed-cost
+evidence under matched resources is still missing; its telemetry/cost fields
+remain null. The U1 visual ties and failed/missing comparisons, separate
+U2/U3/U6 acceptance, all diagnostic failures and recovery resources retain
+their scope. Optional [PR #425](https://github.com/ictseoyoungmin/refas/pull/425)
+remains Draft and excluded.
+
+## Historical checkpoint — accepted main integration, 2026-11-27
+
+The complete previous summary below records the 35/37 state before publication.
+Its then-open D3, alpha.1 source identity and integration receipts remain
+historical; actual publication adds no retrospective asset or E2 credit.
 
 **95% — 35 of 37 fixed checklist-v2 criteria demonstrated.** The completed
 main integration adds **D2 only**. R2-06 remains **6/7, WIP**; R2-07 remains
