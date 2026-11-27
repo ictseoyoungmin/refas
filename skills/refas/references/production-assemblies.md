@@ -301,26 +301,48 @@ Keep attachment rows, intended crease lines and protected outline vertices out
 of the region. Every outside coordinate stays unchanged; this does not freeze
 the evaluated shell normals or margins at its boundary.
 
+This complete metre-scale example creates a small panel and edits two handles
+without applying or removing its native finish modifiers. Run it as an ordinary
+production authoring script, then choose the region and targets from your own
+feature rather than copying this synthetic shape.
+
 ```python
+import bpy
+from mathutils import Vector
 from local_edit import edit_region
 
+data = bpy.data.meshes.new("Panel cage")
+data.from_pydata(
+    [((x-2)*0.1, (y-2)*0.1, 0.0) for y in range(5) for x in range(5)], [],
+    [(y*5+x, y*5+x+1, (y+1)*5+x+1, (y+1)*5+x)
+     for y in range(4) for x in range(4)],
+)
+panel = bpy.data.objects.new("Panel", data)
+bpy.context.scene.collection.objects.link(panel)
+shell = panel.modifiers.new("Thickness", "SOLIDIFY")
+shell.thickness, shell.offset = 0.003, -1.0
+bevel = panel.modifiers.new("Edge finish", "BEVEL")
+bevel.width, bevel.segments = 0.001, 2
+panel.modifiers.new("Shading", "WEIGHTED_NORMAL")
+region = [y*5+x for y in range(1, 4) for x in range(1, 4)]
+targets = {i: panel.matrix_world @ data.vertices[i].co + Vector((0, 0, dz))
+           for i, dz in ((12, 0.008), (17, 0.004))}
 result = edit_region(
-    panel, region="LocalFold", handles=world_targets,
-    max_displacement=0.008, tolerance=0.00005,
-    distances=[{"name": "opening_width", "vertices": (left, right),
-                "min": 0.098, "max": 0.104}],
-    shell_pairs=[{"name": "fold_shell", "vertex": fold_vertex,
+    panel, region=region, handles=targets,
+    max_displacement=0.012, tolerance=0.00005,
+    shell_pairs=[{"name": "panel_shell", "vertex": 12,
                   "min": 0.0025, "max": 0.0035}],
-    obstacles=[{"name": "inner_layer", "object": inner_layer,
-                "vertices": [contact_vertex], "direction": inward,
-                "min": 0.029, "max": 0.040}],
 )
 ```
 
-The example uses metre world units. Choose the region, handle mapping, sample
-indices, directions and bounds from the actual feature. Omit optional bounds
-that do not express a requirement; the returned record identifies what was
-observed. A directional ray must hit the first front-facing surface within its
+For a second edit, pass new **absolute world targets** to the same ordinary
+panel and region. Optional `distances` entries use
+`{"name": "width", "vertices": (a, b), "min": low, "max": high}`.
+Optional `obstacles` entries use `{"name": "backing", "object": backing,
+"vertices": sample_indices, "direction": inward, "min": low, "max": high}`.
+Choose sample indices, directions and bounds from the actual feature; omit
+bounds that do not express a requirement. The returned record identifies what
+was observed. A directional ray must hit the first front-facing surface within its
 declared range; a miss or back-facing first hit is a conflict, not a skipped
 sample. Ray distance is not shortest clearance, and these cage-origin samples
 do not measure the entire final shell against the obstacle.
@@ -332,10 +354,15 @@ displacement after native float storage. An unresolved coordinate precision or
 near-grazing ray is rejected instead of reporting a precise fit.
 Size bounds measure declared cage vertex pairs. Shell-pair bounds measure the
 distance between verified corresponding sides of one supported simple Solidify
-at the selected source vertices; they are not normal thickness or a global
-minimum wall guarantee. The source may have no modifiers or that supported
-Solidify alone. Shape keys, shared mesh data, animation, parent/constraint
-dependencies and other modifier stacks are outside this operation.
+at the selected source vertices. They measure the **Solidify prefix**, before
+Bevel and Weighted Normal; they are not final finish thickness, normal thickness
+or a global minimum wall guarantee. The source may have optional supported plain
+Solidify, optional Bevel, then optional Weighted Normal, each at most once and
+in that order. Finishes retain their identities, settings and matching
+viewport/render visibility; shell-pair observations temporarily exclude them
+and restore their visibility even on failure. Solidify must remain enabled.
+Shape keys, shared mesh data, animation, parent/constraint dependencies,
+Subdivision and other modifier stacks are outside this operation.
 
 If a bound, target, numerical solve or supported-state check fails, the call
 raises `ValueError` and retains its input coordinates and native data. A conflict
@@ -344,7 +371,7 @@ satisfy the requirements. The operation does not trade away a handle target to
 make another bound pass. Change the target, region or construction deliberately
 and try again from the retained source.
 
-On success, the same ordinary mesh and its per-element data remain. Reopen the
+On success, the same ordinary mesh, finish modifiers and per-element data remain. Reopen the
 native and call with new absolute targets, or use ordinary mesh editing without
 this module. Later edits need fresh observations. Inspect garment layers from
 the side and the hard-surface crease in context: smoother displacement is not
