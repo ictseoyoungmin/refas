@@ -406,7 +406,7 @@
       "baselineNote": "Added by the user's explicit 2026-11-22 scope expansion; no credit at the scope-change baseline."
     }
   ],
-  "currentCheckpointId": "r2-07-automail-recovery-bb8e8aff",
+  "currentCheckpointId": "r2-07-wearable-delivery-d02f6188",
   "checkpoints": [
     {
       "id": "baseline-3217b46e",
@@ -1153,6 +1153,174 @@
         "standaloneAutomailLibraryId": "libfile_469aa206ad3c819180cbc2007000a572"
       },
       "note": "Interruption recovery retained core f236477f and exactly verified 96 source-model files; no later 78,998-triangle arm or 97-frame jacket was recovered. The missing vertex-tolerance option was completed at 5f2f39c6 with 935 JavaScript and 92 Production tests passing. The newly authored selected arm is separately hash-verified and durably delivered. Prior counts and criteria remain unchanged."
+    },
+    {
+      "id": "r2-07-wearable-delivery-d02f6188",
+      "date": "2026-11-27",
+      "kind": "verified-implementation",
+      "checklistVersion": 2,
+      "sourceCommit": "d02f618801167040145087812abfaa3ff5e69dcc",
+      "runtimeCommit": "f174f6b1cf9ce19ce905b58490d117aca01cea4b",
+      "demonstratedCriteria": [
+        "B1",
+        "B2",
+        "B3",
+        "B4",
+        "W1",
+        "W2",
+        "W3",
+        "W4",
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "O1",
+        "O2",
+        "O3",
+        "O4",
+        "K1",
+        "K2",
+        "K3",
+        "K4",
+        "E1",
+        "E3",
+        "E4",
+        "E5",
+        "E6",
+        "D1",
+        "U2",
+        "U3",
+        "U4",
+        "U5",
+        "U6"
+      ],
+      "counts": {
+        "demonstrated": 33,
+        "total": 37,
+        "percentRounded": 89,
+        "bySlice": {
+          "R2-01": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-02": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-03": {
+            "demonstrated": 6,
+            "total": 6
+          },
+          "R2-04": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-05": {
+            "demonstrated": 4,
+            "total": 4
+          },
+          "R2-06": {
+            "demonstrated": 5,
+            "total": 7
+          },
+          "Delivery": {
+            "demonstrated": 1,
+            "total": 3
+          },
+          "R2-07": {
+            "demonstrated": 5,
+            "total": 5
+          }
+        }
+      },
+      "notionTaskStatuses": {
+        "R2-01": "REVIEW",
+        "R2-02": "REVIEW",
+        "R2-03": "REVIEW",
+        "R2-04": "REVIEW",
+        "R2-05": "REVIEW",
+        "R2-06": "WIP",
+        "R2-07": "REVIEW"
+      },
+      "evidenceUpdates": {
+        "U2": {
+          "evidence": [
+            "docs/development/evidence/usable-assets/wearable-delivery.md",
+            "docs/development/evidence/usable-assets/automail-resume/topology-summary.json",
+            "docs/development/evidence/usable-assets/automail-resume/flipped-glb-control.json",
+            "docs/development/evidence/usable-assets/recovery/review-automail-candidate08.md"
+          ],
+          "note": "Independent final review accepts the selected wearable native624a1a90 and GLBaf91555a for repaired major unintended mesh/contact/floating defects in the declared use. Exact produced-native97 preservation,100-mesh native/actual-GLB97 correspondence, source-bound physical97,72 actual consumer critical pairs with exact458 selected point identities, seeded/copied counterexamples and actual whole/detail material review support this scope. Original23 hardware and37 hardware-cloth policy rows are unchanged. Strict avatar geometry/reimport, original contact-pair/rest-binder and direct raw/live static-hair equality failures remain retained; separately proved source-lineage, raw replay and exact compression routes do not relabel them. All92 manifest entries of the previously accepted arm were reverified unchanged; its796 inherited AURIX contour boundary edges and Crown_A_mark unused UVMap exception remain explicit."
+        },
+        "U3": {
+          "evidence": [
+            "docs/development/evidence/usable-assets/wearable-delivery.md"
+          ],
+          "note": "The exact selected garment preserves the original26-mesh character and is exercised at all97 recorded frames at30fps. Saved30 cloth meshes keep Basis plus49 unique phase keys; hardware retains446 bones,389 adjacent links and four ring interlocks. Produced native/GLB and actual Godot4.7.2 playback use the original5-avatar-bone plus446-hardware-bone profile. The predeclared100um point profile passes; default20um still fails5,883 checks. Consumer critical contacts use zero unlisted physical allowance; static hair source/importer identity and exact uint16 forward/live equality pass separately from retained direct equality FAIL, including a one-ULP copied-array rejection. No universal fitting, arbitrary-pose, continuous-time, cloth-simulation, unused-hair-bone or finished-art approval."
+        },
+        "U6": {
+          "evidence": [
+            "docs/development/evidence/usable-assets/wearable-delivery.md",
+            "docs/development/evidence/usable-assets/garment-resume/preselection-budget.json",
+            "docs/development/evidence/usable-assets/automail-resume/README.md",
+            "docs/development/evidence/usable-assets/automail-resume/summary.json"
+          ],
+          "note": "Both selected assets satisfy their frozen scoped budgets. Garment:122,898 triangles against125,000,111 material primitives against150, maximum3 positive influences against4; complete avatar-plus-garment scene812,985 triangles is reported separately. Reloaded detailed/reduced BODY and COLLAR bidirectional saved-vertex/triangle-centroid maxima are1.400601468mm and1.477630925mm within1.5mm, by outer/inner/rim/full surfaces; this is not a continuous Hausdorff bound. Editable detailed natives, mappings, measured file sizes and fixed material views remain available through the delivery report. Unchanged arm:86,564 triangles,99 primitives,0.423727mm against0.6mm, retained121-frame consumer evidence; no new arm execution is claimed. Installed cuff edit and exact8-artifact plus2-input restore pass as a bounded frame1 native exercise. No GPU/FPS or finished-art benefit is inferred."
+        }
+      },
+      "selectedArtifactSha256": {
+        "garmentNative": "624a1a90ec3dfb38f65ddd2631a4d25c7a7525dbb3464891a2c7375f151720d7",
+        "garmentGlb": "af91555ab7654bc0107c5afefc2bed3c3772b93ac62a971030cfd4e467cd70ff",
+        "unchangedArmNative": "badf3fd5134ea44c77bef19890cf0f3157c8e2dbe622484eba7df713791d36f1",
+        "unchangedArmGlb": "08c4f510e903891eab2c0eee276b55de71abf6f1cda3d584a880ee508e3e63f5",
+        "independentWearableDecision": "e3acb432ad48f51235c91af789b4b7063685697036403f560ebbe6a27cae62a9"
+      },
+      "boundaries": {
+        "closedTasks": 0,
+        "totalTasks": 7,
+        "finishedVisualAcceptance": {
+          "jacket": "rejected",
+          "automail": "rejected"
+        },
+        "developmentMetadata": "2.0.0-alpha.1",
+        "retainedLegacyRuntime": "1.4.2",
+        "publishedRelease": "v1.4.1",
+        "pullRequest": "https://github.com/ictseoyoungmin/refas/pull/399",
+        "pullRequestState": "Draft",
+        "prototypeSourceAcceptance": {
+          "jacket": "demonstrated within original task scope",
+          "automail": "demonstrated within original task scope"
+        },
+        "usableAssetAcceptance": {
+          "automail": "accepted only for declared rigid reach/partial grip and documented untextured scope",
+          "jacket": "accepted only for the identified original26-mesh avatar, frames1-97 at30fps, frozen source contact policies and predeclared100-micrometre consumer profile"
+        },
+        "standaloneAutomailLibraryId": "libfile_469aa206ad3c819180cbc2007000a572",
+        "authoringCandidatePullRequest": "https://github.com/ictseoyoungmin/refas/pull/425",
+        "authoringCandidatePullRequestState": "Draft",
+        "checkpointPullRequest": "https://github.com/ictseoyoungmin/refas/pull/431",
+        "openCriteria": [
+          "E2",
+          "D2",
+          "D3",
+          "U1"
+        ],
+        "cumulativeMainArtifactBudget": {
+          "limitBytes": 1048576,
+          "status": "FAIL",
+          "note": "The cumulative change against main remains over the source-artifact budget. This documentation checkpoint grants no waiver, main-merge or release credit."
+        },
+        "retainedDiagnosticFailures": {
+          "consumerDefault20um": "FAIL: 5,883 point checks; predeclared100um profile separately PASS without a physical-contact allowance",
+          "originalAvatarStrictGeometry": "FAIL: first-frame strict geometric orientation; remaining96 frames unassessed by that route",
+          "avatarBlenderReimport2um": "FAIL: Body.001 at frames28/70, maximum2.017388303um; raw GLB replay of all26 meshes over97 frames separately PASS within unchanged2um",
+          "directRawLiveStaticHairEquality": "FAIL: lossy engine static-position representation; exact source-derived uint16 AABB forward mapping separately PASS with zero fitted parameters and one-ULP negative control",
+          "originalExactContactPairAndRestBinder": "FAIL retained; independently reviewed unchanged oriented/material/sheet/source lineage and original finite construction domains provide separate scoped evidence"
+        }
+      },
+      "note": "Append-only declared-use acceptance: adds exactly U2/U3/U6 to the six retained checkpoints, giving33/37=89% rounded, R2-07 REVIEW5/5 and R2-06 WIP5/7, with0/7 CLOSED. Source d02f6188 identifies the live engine-observation fix; actual installed production/save/export/edit-restore uses f174f6b1. U1 remains open for its separately reviewed comparison and separate Issue/PR after #431; E2/D2/D3 remain open. No runtime change, optional helper #425 acceptance, main merge, formal publication, finished-art approval or cumulative-main1MiB budget waiver is granted."
     }
   ],
   "projections": [

@@ -2,6 +2,69 @@
 
 ## Current recorded checkpoint
 
+**89% — 33 of 37 fixed checklist-v2 criteria demonstrated.** The declared-use
+wearable delivery adds **U2, U3 and U6** after independent review of the exact
+selected native `624a1a90…` and GLB `af91555a…`. R2-07 is **5/5, REVIEW**;
+R2-06 remains **5/7, WIP**. **0/7 tasks are CLOSED.** The six previous
+checkpoints, all criterion definitions and checklist versions remain unchanged.
+
+Read the [wearable delivery and acceptance report](evidence/usable-assets/wearable-delivery.md)
+for exact artifact hashes, independent decisions, selected views, recoverable
+sources and durable downloads. The tested source is
+[`d02f6188`](https://github.com/ictseoyoungmin/refas/commit/d02f618801167040145087812abfaa3ff5e69dcc);
+the installed production/save/export/edit-restore runtime is
+[`f174f6b1`](https://github.com/ictseoyoungmin/refas/commit/f174f6b1cf9ce19ce905b58490d117aca01cea4b).
+The observer fix and the selected asset acceptance have separate scopes.
+
+| Newly demonstrated criterion | Accepted evidence and boundary |
+| --- | --- |
+| U2: mesh condition and attachments | Actual native/GLB correspondence and source-bound physical checks over all 97 recorded poses, repaired major cloth and rigid-mount defects, exact consumer face/point identity and counterexamples, and actual whole/detail material review. Original contact policies and classified source exceptions remain unchanged. |
+| U3: identified-character wearing and motion | Original 26-mesh avatar preserved; 30 cloth meshes retain Basis plus 49 unique phase keys; 446 hardware bones and 389 chain links remain. Native, raw export and actual Godot 4.7.2 exercise the declared 97-frame, 30fps clip and original 5-avatar-bone plus 446-hardware-bone profile. |
+| U6: optimized delivery of both assets | Garment 122,898 triangles / 111 material primitives against fixed 125,000 / 150 budgets. Saved detailed BODY/COLLAR errors are 1.400601468 / 1.477630925 mm within 1.5 mm. Editable detailed sources and mappings are retained. All 92 manifest entries of the already accepted arm are reverified unchanged, preserving its 86,564 triangles, 99 primitives, 0.423727 mm sampled error and 121-frame use evidence. |
+
+The detailed error check samples all saved vertices and triangle centroids in
+both directions by outer/inner/rim/full surface; it is not a continuous
+Hausdorff bound. The combined original-avatar and garment scene has 812,985
+triangles, separate from the garment-only budget. The arm's **796 inherited
+AURIX contour boundary edges** and **`Crown_A_mark` unused UVMap omission** remain
+explicit exceptions, with the untouched original retained. No new arm execution
+or GPU/frame-time benefit is claimed by this checkpoint.
+
+**Retained failures are part of this acceptance record.** Default 20µm engine
+playback still fails 5,883 checks; the predeclared 100µm profile separately
+passes, without allowing unlisted physical intersections. Strict original-avatar
+geometry and the 2µm Blender reimport route remain FAIL; raw source-index/weight
+preservation and all-26-mesh raw GLB replay separately pass within the unchanged
+2µm budget. Direct raw/live static-hair array equality remains FAIL. The exact
+source-derived uint16 AABB compression route separately passes with no fitted
+parameters, exact live equality and a one-ULP negative control. Original exact
+contact-pair/rest-binding failures also remain; reviewed source lineage and
+original finite construction domains do not introduce new contact exemptions.
+
+| Slice | Current coverage | Status |
+| --- | --- | --- |
+| R2-01 / R2-02 / R2-04 / R2-05 | 4/4 each | REVIEW |
+| R2-03 | 6/6 | REVIEW |
+| R2-06 | 5/7 | WIP |
+| R2-07 | 5/5 | REVIEW |
+| Coordinated delivery | 1/3 | Main merge and release unfinished |
+| **Total** | **33/37 = 89% rounded** | **0/7 tasks CLOSED** |
+
+**U1, E2, D2 and D3 remain open.** The separately reviewed U1 comparison will
+be handled in a separate Issue/PR after [#431](https://github.com/ictseoyoungmin/refas/pull/431)
+merges; this checkpoint gives it no credit. Complete comparable timing/cost,
+main merge and formal publication remain separate unfinished requirements.
+Both final-art decisions remain unapproved. [#425](https://github.com/ictseoyoungmin/refas/pull/425)
+and [#399](https://github.com/ictseoyoungmin/refas/pull/399) remain Draft, and the
+**cumulative-main 1 MiB source-artifact budget remains FAIL**. There is no
+runtime change, budget waiver, merge or release authorization here.
+
+## Historical checkpoint — recovered articulated arm, 2026-11-23
+
+The following checkpoint text retains the state and unresolved findings at
+that earlier review. Its later garment continuation is assessed only by the
+new checkpoint above; the historical evidence is not rewritten.
+
 **81% — 30 of 37 fixed checklist-v2 criteria demonstrated.** The recovery
 continuation at [`bb8e8aff`](https://github.com/ictseoyoungmin/refas/commit/bb8e8affbbb6b5cf53dcb637114710511d354913)
 adds **U4 and U5** after independent review of the new articulated arm. It is

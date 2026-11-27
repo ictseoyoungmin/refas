@@ -1,283 +1,123 @@
 # RefAs work status
 
-## Active work
+## Current resumption point
 
-RefAs 2.0 production rewrite: [Issue #398](https://github.com/ictseoyoungmin/refas/issues/398),
-[rewrite/v2](https://github.com/ictseoyoungmin/refas/tree/rewrite/v2),
-[Draft PR #399](https://github.com/ictseoyoungmin/refas/pull/399).
-See the [implementation plan](development/refas-2-plan.md),
-[Work OS](https://app.notion.com/p/41fc6a3b5bf181c2b2cdfac4605ef7d7),
-[fixed progress ledger](development/refas-2-progress.md) and
+Status: **2026-11-27**. The fixed checklist is **33/37 = 89% rounded** after
+independent declared-use acceptance of **U2, U3 and U6**. R2-07 is **5/5,
+REVIEW**; R2-06 remains **5/7, WIP**; **0/7 tasks are CLOSED**. U1, E2, D2 and D3
+remain open. This is binary criterion coverage, not finished-art quality,
+effort completed or release readiness.
+
+The current documentation checkpoint is
+[PR #431](https://github.com/ictseoyoungmin/refas/pull/431). Overall rewrite and
+delivery tracking remains [Issue #398](https://github.com/ictseoyoungmin/refas/issues/398)
+and [Draft PR #399](https://github.com/ictseoyoungmin/refas/pull/399). Read the
+[fixed progress ledger](development/refas-2-progress.md),
+[canonical JSON](development/refas-2-progress.json),
+[wearable delivery report](development/evidence/usable-assets/wearable-delivery.md),
+[implementation plan](development/refas-2-plan.md),
+[Work OS](https://app.notion.com/p/41fc6a3b5bf181c2b2cdfac4605ef7d7) and
 [skill relationship map](development/refas-2-skill-map.md).
-Status: 2026-11-25, Asia/Seoul. Active installed identity remains unpublished
-2.0.0-alpha.1; repository-only 1.x remains 1.4.2; published release is v1.4.1.
-No main merge, release or change in acceptance: **30/37 = 81%**, open
-U1/U2/U3/U6/E2/D2/D3; both final visual decisions remain unapproved.
 
-This is a current resumption index, not a second append-only evidence ledger.
-All previous detailed status text is retained at the
-[immutable 28541316 work-status checkpoint](https://github.com/ictseoyoungmin/refas/blob/285413169bf8fd5aeb666061ff6a113ef364f6f3/docs/WORK_STATUS.md).
-No underlying evidence, rejected candidates or tracked historical payloads
-are deleted by this consolidation. Read the linked reports for exact scope,
-source identities, recovery instructions and negative results.
+This file is a current resumption index. Its previous complete contents are
+retained at the [immutable f174f6b1 work-status checkpoint](https://github.com/ictseoyoungmin/refas/blob/f174f6b1cf9ce19ce905b58490d117aca01cea4b/docs/WORK_STATUS.md),
+which also links the earlier 28541316 history. Consolidation changes this
+index, not the six historical progress checkpoints, retained evidence,
+rejected models or earlier decisions.
 
-## Current runtime and next authoring work
+## Selected use and recoverable evidence
 
-Latest verified runtime as of this documentation candidate: rewrite/v2
-[`28541316`](https://github.com/ictseoyoungmin/refas/commit/285413169bf8fd5aeb666061ff6a113ef364f6f3).
-[PR #421](https://github.com/ictseoyoungmin/refas/pull/421) adds the optional
-read-only fixed transparent-view coverage comparison. On an older static
-jacket, normal +10 mm cuff correction preserves the opposite cuff in both
-views; a 6 mm adverse opposite-cuff displacement changes 255/214 protected
-pixels despite global IoU above 99.66%. No source camera registration,
-target-improvement judgment, automatic acceptance or garment fit claim.
-Recorded verification: 948 JS, 172 local Production with actual Blender/Godot,
-11 dogfood checkpoints and remote merge CI pass; 17 installed skill / 21
-package files (286,138 bytes). These are #421's historical execution receipts,
-not new executions by this documentation change.
+The [wearable delivery report](development/evidence/usable-assets/wearable-delivery.md)
+is the entry point for exact artifacts, the independent decision, selected
+whole/detail material views, detailed source/mapping resources and durable
+recovery/download links. Selected native SHA starts `624a1a90`; selected GLB
+starts `af91555a`. The installed cuff edit exercise restored the exact selected
+eight artifact files and two captured inputs; the temporary 10 mm cuff edit
+has only its stated native frame-1 evidence, not a new full-clip approval.
 
-User-approved shift: prioritize optional reusable geometry authoring operations
-that materially improve shape or effort over more workflow gates. First:
-explicit section-profile sweep, then shared boundaries, constrained deformation
-and attachment/clearance. Reference fitting, retopology/attribute transfer and
-LOD follow only when justified. Keep ordinary bpy, native revisions, existing
-observations, no mandatory inference/DSL, and external specialist boundaries.
-
-- [Design PR #423](https://github.com/ictseoyoungmin/refas/pull/423): plan and
-  current status documentation. Original one-file head passed artifact/Node
-  22/24 CI; the updated documentation head must pass its own checks.
-- [Issue #424](https://github.com/ictseoyoungmin/refas/issues/424) /
-  [Draft PR #425](https://github.com/ictseoyoungmin/refas/pull/425): first sampled
-  section-sweep candidate. At e3bc39c6, 12 local numeric tests pass with exact
-  source/test Git blob identity. An 81-sample rectangular-profile axis-switch
-  control reproduces the old v1 formula's 180-degree change and four folded
-  quads; minimum-rotation candidate has zero in this case. This is not a
-  complete v1 or Blender benchmark. Actual installed Blender use, matched
-  garment/hard-surface trials, source/visual review, full gates and cumulative
-  budget verification are required before merging. No installed helper credit.
-- Garment correction remains a real-use task: lower-left piping centerline and
-  section orientation, belt control sections, upper collar construction.
-  Protect the actual avatar and fixed contact/shape budgets; use the sweep
-  only if its measured effect is better than native alternatives. Final
-  native/GLB/Godot and independent fit review remain unaccepted.
-- The current session lacks a full Git checkout, Blender and Godot. Do not
-  count historical full tests or synthetic numeric controls as a fresh
-  integration/asset pass.
-
-## Runtime history index
-
-| Change | Exact evidence and removal impact |
+| Accepted scope | Fixed limits and retained boundary |
 | --- | --- |
-| Fixed-view comparison | [#421](https://github.com/ictseoyoungmin/refas/pull/421): optional coverage checks, no geometry or acceptance mutation. |
-| Construction source meshes | [#419](https://github.com/ictseoyoungmin/refas/pull/419): native Boolean/Shrinkwrap source dependencies and protection; 14 final meshes, 4,416 triangles in the synthetic housing exercise. |
-| Lattice | [#417](https://github.com/ictseoyoungmin/refas/pull/417): native cage controls and evaluated geometry; explicit conversion/removal for delivery. |
-| Ordinary GLB input | [#415](https://github.com/ictseoyoungmin/refas/pull/415): explicit self-contained starting scene; native follow-up and restore. |
-| Current docs and adapter name | [#413](https://github.com/ictseoyoungmin/refas/pull/413): repository-only archive and asset_import.py; historical files preserved. |
-| Topology summaries | [#411](https://github.com/ictseoyoungmin/refas/pull/411): counts by default, bounded details on request. |
-| Focused CI | [#409](https://github.com/ictseoyoungmin/refas/pull/409): Node 22/24, costly legacy JIT separated. |
-| Native Curve | [#407](https://github.com/ictseoyoungmin/refas/pull/407): native control data and evaluated surface; explicit mesh conversion for delivery. |
-| Standalone native inspection | [#405](https://github.com/ictseoyoungmin/refas/pull/405): read-only input query. |
-| Surface attachment | [#403](https://github.com/ictseoyoungmin/refas/pull/403): explicit triangle-bound local section transport, not collision solver. |
-| Native iteration and bounded outputs | [#401](https://github.com/ictseoyoungmin/refas/pull/401): native default, explicit delivery, object protection and redundant staging cleanup. |
-| Initial rewrite, pilot, cutover, reference adoption | [#399](https://github.com/ictseoyoungmin/refas/pull/399), [plan](development/refas-2-plan.md), [ledger](development/refas-2-progress.md), [full historical status](https://github.com/ictseoyoungmin/refas/blob/285413169bf8fd5aeb666061ff6a113ef364f6f3/docs/WORK_STATUS.md). |
+| Garment mesh and mounting | 100 garment meshes; 30 cloth meshes with Basis plus 49 unique phase keys; 446 hardware bones and 389 chain links. Major unintended defects repaired under unchanged 23 hardware / 37 hardware-cloth policy rows; actual native/export and physical checks cover 97 recorded poses. |
+| Identified-character use | Original 26-mesh avatar preserved. Frames 1–97 at 30fps, actual Godot 4.7.2 with the original 5-avatar-bone plus 446-hardware-bone profile. Exact source identity covers 72 critical pairs and 458 selected point labels; consumer contacts retain zero unlisted physical allowance. |
+| Garment optimization | 122,898 triangles / 111 primitives against fixed 125,000 / 150, maximum 3 positive skin influences against 4. BODY/COLLAR finite sampled errors 1.400601468 / 1.477630925 mm against 1.5 mm. All saved vertices and triangle centroids, both directions, outer/inner/rim/full; no continuous Hausdorff claim. Avatar-plus-garment total 812,985 triangles is separate. |
+| Unchanged articulated arm | All 92 accepted manifest entries reverified; no new arm run. 86,564 triangles / 99 primitives, sampled error 0.423727 mm against 0.6 mm, retained 121-frame action and consumer evidence. The 796 inherited AURIX contour boundary edges and unused `Crown_A_mark` UVMap omission remain scoped exceptions with the original retained. |
 
-## Preserved detailed asset and recovery checkpoints
+The wearing decision does not grant finished-art approval, universal sizing,
+arbitrary-pose or continuous-time collision coverage, physical cloth/chain or
+fastener simulation, all unused hair-bone/facial-target coverage, or GPU/FPS
+benefits. Variable rigid-mount clearance over curved cloth remains reported.
+Both final visual-art decisions stay unapproved.
 
-The following original checkpoint text is retained verbatim as historical
-evidence, not current execution or approval. Remote ea64de8a and subsequent
-runtime merges did succeed as recorded in PR399; the earlier pending wording
-below records that earlier point in time.
+### Retained failed diagnostics
 
-## Previous: development checkpoint frozen; alpha runtime verified, garment unaccepted
+- **Default 20µm consumer playback: FAIL**, 5,883 point checks. The original
+  predeclared 100µm profile separately passes; neither profile changes contact
+  policy or creates an allowed intersection width.
+- **Strict original-avatar geometry and Blender reimport: FAIL.** The strict
+  geometric route stops at frame 1; `Body.001` reimport reaches 2.017388303µm
+  at frames 28/70 against the unchanged 2µm limit. Exact source-index/positive
+  weight preservation and all-26-mesh raw GLB replay separately pass within
+  2µm, without modifying the avatar or relabelling the strict results.
+- **Direct raw/live static-hair equality: FAIL.** The independently verified
+  source-derived uint16 AABB compression route separately passes exact live
+  equality with zero fitted parameters; a one-ULP copied-array corruption is
+  detected. This does not turn lossy direct equality into a pass.
+- **Original exact contact-pair/rest binder: FAIL retained.** The accepted
+  supplemental route uses unchanged oriented/material/sheet/source lineage
+  and original finite construction domains, with no added policy exemption.
+- **Cumulative-main 1 MiB source-artifact budget: FAIL.** This checkpoint
+  neither waives that budget nor makes the entire rewrite ready for main.
 
-At the user's request, this session closes at the current development checkpoint.
-Further model authoring, fitting and export experiments are paused. Completed
-observations and failed candidates are retained without new acceptance credit.
-Read the [Korean development report and next-work plan](development/refas-2-development-report-2026-11-23.md)
-for the implementation boundary, fixed checklist, unresolved geometry and next
-approval conditions.
+## Runtime and pending work
 
-Actual export exposed two independent data-loss paths in Blender 4.3.2. The
-production worker now retains every sampled animation channel and every positive
-skin influence. The skin cutoff has no public setting: a structurally guarded,
-export-call-only replacement changes its isolated 1e-4 constant to zero and
-restores the original function in finally. Installed Blender source and saved
-native data are unchanged; unknown cutoff structures fail for explicit review.
-All positive joint sets are exported.
+The source checkpoint is
+[`d02f6188`](https://github.com/ictseoyoungmin/refas/commit/d02f618801167040145087812abfaa3ff5e69dcc),
+whose [PR #431](https://github.com/ictseoyoungmin/refas/pull/431) repairs live
+engine attachment observation. Actual installed production/save/export and
+edit/restore use
+[`f174f6b1`](https://github.com/ictseoyoungmin/refas/commit/f174f6b1cf9ce19ce905b58490d117aca01cea4b),
+with 19 installed skill files / 23 package files. That runtime includes
+[selective authoring discovery and thickness fields, #429](https://github.com/ictseoyoungmin/refas/pull/429).
+This documentation change adds no runtime code, installed helper or new test
+execution claim.
 
-Actual regressions retain the old failures and verify an 80-micrometre middle-pose
-excursion, a 50-micrometre excursion driven by a tiny fifth influence, and cleanup
-after an exception. The complete Production suite passed 98 tests with actual
-Blender/Godot and zero skips; 935 JavaScript tests and all five required repository
-gates passed. The extracted production package remains 19 files. An actual-asset
-export-only preflight preserves 22,034 formerly dropped influences exactly and
-passes raw original-avatar 26-mesh replay at all 97 frames under 2 micrometres.
+Active development identity remains **2.0.0-alpha.1**, retained repository-only
+1.x is **1.4.2**, and the recorded published release remains **v1.4.1**. Main
+merge D2 and formal release/publication D3 remain unfinished. PR #399 remains
+Draft. The optional section-sweep [Issue #424](https://github.com/ictseoyoungmin/refas/issues/424)
+and [Draft PR #425](https://github.com/ictseoyoungmin/refas/pull/425) retain their
+own installed-use, matched-trial, source/visual and budget gates; this wearable
+acceptance does not accept that helper.
 
-The task contact observer now uses conservative float64 AABB candidates and the
-reviewed SAT predicate. Blender BVHTree.overlap omits the retained small-coplanar
-counterexample; older BVH-filtered zero-contact claims are superseded. Named
-fixtures, 2,000 scalar parity cases and 30 brute-force candidate recall cases pass.
-The declared accepted-arm 133 pairs over 121 frames also pass this corrected check.
+Resume in this order:
 
-The retained garment has 100 meshes and 122,898 triangles. A later native candidate
-repairs the internal hardware contacts across all 97 frames and preserves all
-389 chain links; local shoulder and short-belt corrections also have independent
-phase observations. These are bounded component results, not whole-character
-wearing acceptance. The earlier wearing observer covered only three original
-avatar meshes. Checking the other 23 exposed real trousers/belt intersections
-at the coat hem and opaque hair intersections at the neck. Original avatar
-geometry, materials and visibility remain unchanged. The combined native c67633a
-is unaccepted; ac419cd is a separate hardware-only lower-follow candidate, with
-no completed matching lower-cloth correction. Neither has a matching final
-GLB/consumer delivery pair. Final native/export/consumer verification must use
-newly selected geometry after the remaining fit problems are repaired.
-The avatar's inherited zero-area faces and numerically sensitive reimport
-results stay explicitly recorded.
+1. Review the exact #431 documentation/evidence head and required source
+   checks. Keep user models, render media, arrays, raw logs and recovery
+   archives outside Git; preserve all historical tracked evidence.
+2. After #431 merges, record the separately reviewed **U1** prospective
+   comparison in its own Issue/PR and append-only checkpoint. U1 receives no
+   credit in this stage. **E2** remains open for comparable useful-edit/full
+   elapsed time and model/tool cost; later informed repair is not a substitute.
+3. Continue optional authoring work only under its own declared scope and
+   active-work ownership. Consult native revision state and the corresponding
+   source-bound report before using or reopening a model.
+4. Resolve cumulative source-budget and other outstanding review/release
+   requirements independently. Do not close tasks, merge the rewrite, publish
+   a tag/package or claim finished art from this criterion update.
 
-The latest lower v4 support review found new inner-sheet and rim contacts, so its
-passing partial scopes do not accept that fit. The already-running v5 affine
-alternative finished with BODY sampled reduction error 1.669290 mm, exceeding
-the unchanged 1.5 mm budget. It is also unselected. Actual original-alpha testing
-confirms 9,661 opaque hair contact pairs at rest; the separate hair proposals
-remain failed and unadopted. No new lower-cloth native, independent 49-phase
-target patch or final detailed-reference pair was completed before this pause.
+## Retained history and recovery index
 
-The fixed checklist remains **30/37 = 81%**. U2/U3/U6, U1/E2, main merge and formal
-publication remain open. Read the [bounded continuation report](development/evidence/usable-assets/recovery/topology-continuation/README.md).
-The pre-update public baseline is 12076a3e; the verified local runtime core is
-03b4a5c. Earlier automatic approval review rejected public uploads; that history
-is retained. The user has now explicitly requested the PR update, so the prepared
-executable source, synthetic controls and aggregate records are being readied for
-PR #399. Actual remote success, the updated remote SHA and its CI results have
-not yet been observed here. PR #399 remains Draft; merge and formal publication
-remain separate. Private asset payloads are excluded, and the rejected broad
-recovery commit is not an ancestor of this review tree.
+| Earlier work | Evidence retained for its exact scope |
+| --- | --- |
+| Initial rewrite, reference adoption, distribution/import and source identity | [Progress history](development/refas-2-progress.md), [reference freshness](development/evidence/reference-freshness/README.md), [distribution/import](development/evidence/v2-distribution-and-import/README.md), [source identity](development/evidence/source-identity/README.md). |
+| Accepted arm continuation | [Asset report](development/evidence/usable-assets/automail-resume/README.md), [independent review](development/evidence/usable-assets/recovery/review-automail-candidate08.md), [durable delivery record](development/evidence/usable-assets/automail-resume/delivery-archive.json). |
+| Rejected garment and contact observer | [High16/low29 rejection](development/evidence/usable-assets/recovery/review-jacket-high16-low29.md), [predicate review](development/evidence/usable-assets/recovery/review-contact-predicate.md), [retained arm impact](development/evidence/usable-assets/recovery/arm-contact-predicate-impact.json). |
+| Rest shells and correspondence controls | [High42/low44 rest review](development/evidence/usable-assets/recovery/review-jacket-high42-low44.md), [candidate14 interfaces](development/evidence/usable-assets/recovery/review-jacket-candidate14-contact-map.md), [all-phase actual-GLB control](development/evidence/usable-assets/recovery/review-all-phase-correspondence.md). |
+| Fixed-triangle recovery and old alpha checkpoint | [Topology continuation](development/evidence/usable-assets/recovery/topology-continuation/README.md), [2026-11-23 development report](development/refas-2-development-report-2026-11-23.md). |
+| Native iteration, attachment, inspection, curves, CI, import, lattices, construction sources and fixed views | [Skill relationship map](development/refas-2-skill-map.md) and [immutable previous status and PR index](https://github.com/ictseoyoungmin/refas/blob/f174f6b1cf9ce19ce905b58490d117aca01cea4b/docs/WORK_STATUS.md). |
 
-## Previous: fixed triangles and recovery continuation
-
-The recovered v5 chain was freshly reconstructed and all 4,177 recorded files
-match their hashes and sizes. New source-bound work repairs five twisted trim
-strips and freezes actual evaluated rest triangles for 100 garment meshes.
-Independent native checks cover 97 frames; all 28 trim meshes have zero
-self-contacts, degeneracy, orientation reversals or protected coordinate changes
-over 2,716 object-frames. Read the [bounded topology checkpoint](development/evidence/usable-assets/recovery/topology-continuation/README.md).
-
-The intermediate garment has 122,898 triangles. Chain assembly, final complete
-wearing/GLB/consumer observations and installed-copy edit/restore remain open.
-The fixed checklist is **30/37 = 81%**, with no new criterion credit. The original
-avatar, accepted arm and rejected models remain preserved. All five required
-repository gates passed again (935 JavaScript tests, 19 packaged files).
-
-This public change contains source and aggregate summaries only, not the
-previously rejected broad recovery payload. Runtime/distribution are unchanged.
-
-## Previous: garment contact-observer correction; wearable gates remain open
-
-The garment's earlier high16/low29 zero-contact claims are withdrawn. An
-independent float64 SAT check and separate strict edge/triangle solves
-corroborated all 7,559 crossing pairs missed by the metre-scale Blender ray
-filter. The task-local contact helper now passes 17 retained scale,
-translation, coplanar, separated and boundary controls. Degenerate geometry
-remains a separate rejection gate. Read the
-[rejected-candidate review](development/evidence/usable-assets/recovery/review-jacket-high16-low29.md)
-and [predicate review](development/evidence/usable-assets/recovery/review-contact-predicate.md).
-This correction does not expand the production topology observer into a
-self-intersection checker.
-
-The accepted arm used direct BVH overlap for its declared pairs, not the
-faulty garment ray filter. Its exact delivered inspection bytes and scope
-were checked in the
-[impact review](development/evidence/usable-assets/recovery/arm-contact-predicate-impact.json).
-Its existing acceptance is unchanged. The garment is still under repair:
-valid individual rest shells, source-bound assembly, actual avatar fit,
-all 97 poses and final consumer/export acceptance remain distinct gates.
-The fixed checklist stays **30/37 = 81%**, with U2/U3/U6 open.
-
-The frozen high42/low44 files now pass an independent review of each
-individual closed rest shell. Their main-cloth subtotal is 60,176 triangles;
-the sampled corresponding body/collar errors are at most 0.319266/0.954472 mm.
-The source's erroneous rear-reaching lapel endpoints are separately repaired
-and documented. This [bounded rest review](development/evidence/usable-assets/recovery/review-jacket-high42-low44.md)
-does not accept the separate fitted candidate14, whose
-[remaining interface contacts](development/evidence/usable-assets/recovery/review-jacket-candidate14-contact-map.md)
-were independently localized without a blanket seam allowance.
-
-The prepared [all-phase native/GLB checker](development/evidence/usable-assets/recovery/review-all-phase-correspondence.md)
-now pins every oriented/material triangle corner at rest and evaluates all
-97 frames at the unchanged 2 micrometre tolerance. An actual one-byte
-intermediate morph corruption passes three-pose sampling but fails the new
-check at precisely the changed frame. This is a fixture/control result;
-final garment execution is still pending.
-
-Runtime commit `1435ce1a` adds qualified two-rig scene paths and caches
-per-sample rest associations without changing raw skin evaluation. Actual
-Blender/Godot verification has 95 Production passes, zero failures/skips;
-935 JavaScript tests and all five repository gates passed at that runtime
-checkpoint. Both exact-head remote workflows succeeded. The
-[CI receipt](development/evidence/usable-assets/recovery/remote-ci-observer-checkpoint.json)
-and [19-file installed package identity](development/evidence/usable-assets/recovery/final-installed-package.json)
-are retained. These runtime results do not accept unfinished garment
-geometry, and the final installed-package garment edit remains pending.
-
-## Accepted asset checkpoint: recovered articulated-arm delivery
-
-The continuation at [`bb8e8aff`](https://github.com/ictseoyoungmin/refas/commit/bb8e8affbbb6b5cf53dcb637114710511d354913)
-advances the fixed [plan ledger](development/refas-2-progress.md) to
-**30/37 = 81%**, adding U4 and U5. R2-07 remains WIP at 2/5; the garment is still
-being repaired. The old 78,998-triangle arm and later 97-frame jacket were not
-found in the retained files. New work explicitly starts from the hash-verified
-source-identity models. Earlier failed candidates and judgments remain.
-
-The new arm has 86,564 triangles, 99 meshes/primitives and 20 controls. All 321 source
-parts are accounted for; 289 detailed parts remain exact and 32 repairs are
-identified. Declared133 surface pairs across 121 frames are clear. Actual Godot
-playback verifies 119 nodes at 121 times. Native/export topology, a deliberately
-flipped actual GLB triangle, fixed-camera visual review, and a cover edit that
-preserves 114 unrelated objects and restores 16 files pass. Its connected palm and
-periodic wrist annuli demonstrate deliberate construction retopology separately
-from reduction. The one unused generated glyph UV omission is explicit.
-
-Read the [asset report](development/evidence/usable-assets/automail-resume/README.md),
-[independent review](development/evidence/usable-assets/recovery/review-automail-candidate08.md)
-and [download record](development/evidence/usable-assets/automail-resume/delivery-archive.json).
-The standalone ZIP has 93 verified entries and retains the untouched original,
-detailed version, native/GLB, images, scripts and complete compressed observations.
-
-The missing finite-positive vertex-tolerance option was restored at 5f2f39c6.
-Its unchanged strictdefault and actualnegative controls pass in 92 Production
-tests with Blender/Godot; 935 JavaScript tests and the required repository gates
-pass. Production and Node 20/22/24 remote CI succeeded. The active 19-file package
-is unchanged by the later repository-only asset scripts.
-
-The jacket's distance-budget experiment remains rejected after independent
-inspection found four-wall rim junctions and visible nape lining crossings.
-The actual avatar remains present while geometry, motion and hardware are
-repaired. U2/U3/U6 remain open; U1/E2 comparisons, main merge D2 and publication D3
-also remain open. This checkpoint is not a release or whole-project completion.
-
-## Current limits and resume order
-
-1. Read current HEAD, active issue/PR, Work OS, status, skill relationship map
-   and the smallest necessary current source/evidence. Preserve dirty state and
-   verified rejected candidates. Consult the immutable historical status only
-   for the corresponding historical question.
-2. Continue actual source-specific broad-form/compound-surface and use-profile
-   work under fixed budgets. Native supports visible meshes, classic curves,
-   lattices, explicitly marked construction meshes, supported armatures and
-   non-instancing empties, packed still textures; follow current SKILL and
-   topology/assembly guides for restrictions. Delivery is mesh-only with
-   explicit conversion and no automatic cage/curve motion bake. Unmarked
-   hidden/excluded geometry, instances, linked/external dependencies and live
-   non-armature modifiers on deformable meshes remain restricted. Do not infer
-   exhaustive rig/driver/node/simulation support.
-3. Prioritize actual garment repair and matched trials of direct authoring
-   helpers. Preserve earlier no-skill/1.x/2.0 negative comparisons; test
-   U1/E2 with matched resources. No general likeness, arbitrary motion,
-   physics/engineering strength or FPS claim. Final delivery/approval and
-   publication are separate.
-4. Keep source-only PRs small. The 1 MiB cumulative budget continues to
-   inspect every charged source file; generated models, renders, arrays,
-   logs and archives remain prohibited. This status compaction removes
-   repeated narrative, not evidence files or the policy. Local full-file
-   revision recovery remains scoped to tested process/IO failures, stale edits,
-   tampering and explicit restore; no power-loss/network-filesystem guarantee.
+The current ledger names accepted scope; the linked immutable histories explain
+why prior candidates or observations failed. Removing a current index entry
+would affect discovery of that evidence, not runtime behavior or its recorded
+acceptance. Source rules remain in [AGENTS.md](../AGENTS.md) and
+[GitHub governance](github-governance.md).
