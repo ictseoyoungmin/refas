@@ -17,7 +17,7 @@ from production.capabilities import search
 class CapabilityTests(unittest.TestCase):
     def test_short_tasks_find_existing_contracts(self):
         for query, expected in (("thickness", "thickness-field"), ("두께", "thickness-field"),
-                                ("create", "surface-patch"), ("단면", "surface-patch"),
+                                ("create", "surface-patch"), ("loft", "section-surface"),
                                 ("surface binding", "surface-binding"), ("lattice", "native-lattice"),
                                 ("joint handles", "local-edit"), ("국소", "local-edit"),
                                 ("closed loop", "boundary-bridge"), ("암홀", "boundary-bridge"),
@@ -67,7 +67,14 @@ class CapabilityTests(unittest.TestCase):
     def test_whole_form_tasks_expose_preparation_and_native_limits(self):
         for query in ("car body", "차체 윤곽"):
             self.assertEqual({row["id"] for row in search(query=query)["matches"]},
-                             {"surface-patch", "sculpt-brush"})
+                             {"surface-patch", "section-surface", "sculpt-brush"})
+        self.assertEqual({row["id"] for row in search(query="단면")["matches"]},
+                         {"surface-patch", "section-surface"})
+        sections = search(query="feature rails")["matches"][0]
+        self.assertEqual(sections["id"], "section-surface")
+        self.assertIn("parameters", sections["callables"][0]["signature"])
+        self.assertIn("feature_names", sections["callables"][0]["signature"])
+        self.assertIn("overshoot", sections["limitations"])
         for query, expected in (("blockout", "sculpt-brush"), ("음각", "engrave-path"),
                                 ("union", "boolean-form"), ("메시 통합", "boolean-form"),
                                 ("곡면에 배지를 붙이기", "surface-mount")):

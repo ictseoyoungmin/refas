@@ -11,8 +11,9 @@ the source view and a useful side or rear view before investing in decoration.
 Start with a blockout whose topology allows the intended next edit. An outline
 and section cage may describe a vehicle or folded shell better than assembled
 primitives; an evenly sampled volume may suit broad sculpting. Use
-`surface_patch.sample_profile` and `surface_patch.build_surface` for explicitly
-connected outlines/sections; see `production-assemblies.md`. Ordinary mesh
+`surface_patch.build_sections` when corresponding cross-sections define the
+volume and its feature rails; use `sample_profile` and `build_surface` for a
+shared boundary network. See the examples in `production-assemblies.md`. Ordinary mesh
 modeling, sculpt, curves and lattice can be combined with those surfaces.
 
 Inspect a neutral material to judge the whole volume. If proportions are wrong,
@@ -25,7 +26,8 @@ construction nor part-first assembly is compulsory.
 | --- | --- | --- |
 | Whole silhouette or broad proportion | Cage edit, `sculpt_brush` GRAB, native lattice | Combined silhouette and depth |
 | Rounded transition, raised mass or flattened area | SMOOTH, DRAW, INFLATE, FLATTEN | Evaluated curvature and nearby surfaces |
-| Explicit outline or controlled section | Shared `build_surface` boundaries | Continuity, corners and thickness |
+| Corresponding sections and moving ridges/channels | `build_sections`, then native feature-group edits | Section shape, rail curvature and overshoot |
+| Explicit outline or shared boundary network | `build_surface` boundaries | Continuity, corners and thickness |
 | Through-opening or arbitrary prepared cut | `boolean_form` DIFFERENCE | Actual walls, openings and manifoldness |
 | Union of intersecting volumes | `boolean_form` UNION | Combined volume, seams and remeshing needs |
 | Incised line or pattern | `engrave_path` | Groove depth, intersection and remaining wall |

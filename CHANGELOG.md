@@ -2,6 +2,22 @@
 
 All notable RefAs changes are documented here. RefAs follows semantic versioning.
 
+## 2.2.0 — 2026-11-29
+
+Prepared under [#475](https://github.com/ictseoyoungmin/refas/issues/475).
+Source validation and actual publication remain separately recorded.
+
+### Corresponding sections and native form controls
+
+- Add `surface_patch.build_sections` for authored LINEAR/BEZIER cross-sections with explicit station parameters and corresponding feature junctions ([#474](https://github.com/ictseoyoungmin/refas/issues/474)). Shared per-span and per-interval sampling replaces repeated rail interpolation and mesh indexing in author scripts. CUBIC uses shared Hermite derivatives along sampled rails; LINEAR retains deliberate straight spans. The original Coons patch API remains available.
+- Preserve authored section rows and segment junctions as ordinary vertex selections (`section:n`, `feature:name`). The result is a connected editable mesh with no controller objects, handlers or required rebuild lifecycle. Native sculpting, mesh edits, cuts, thickness and modifiers remain available. CUBIC may overshoot; the operation does not infer reference shape, cap or weld seams, impose creases, prevent every intersection or certify resemblance.
+- Add focused discovery and one construction/edit example. Retain the shorter reference-first entry from [#473](https://github.com/ictseoyoungmin/refas/pull/473), with detailed project/recovery contracts in the optional project guide. No mandatory helper sequence or new modeling-report artifact is introduced.
+
+### Distribution and claim boundary
+
+- Align package, Python and plugin identities at **2.2.0**, retaining **28 installed skill files / 32 package files** and the established GitHub Release TGZ/checksum channel. Existing projects require no migration; legacy runtime identity remains 1.4.2. Publication requires exact-main CI and the existing authorized manual workflow, followed by actual public-download installation verification.
+- Preserve earlier rejected source-form evidence and the open original-reference acceptance in [#456](https://github.com/ictseoyoungmin/refas/issues/456). An additive construction operation and useful native editing do not establish general reconstruction quality, speed/cost superiority or final target-engine readiness. The intermittent native crash investigation [#448](https://github.com/ictseoyoungmin/refas/issues/448) and matched timing/billing evidence [#436](https://github.com/ictseoyoungmin/refas/issues/436) remain separate.
+
 ## 2.1.0 — 2026-11-28
 
 Prepared under [#468](https://github.com/ictseoyoungmin/refas/issues/468).

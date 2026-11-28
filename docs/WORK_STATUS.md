@@ -2,6 +2,44 @@
 
 ## Current resumption point
 
+Status: **2026-11-29 — 2.2.0 corresponding-section source validation; publication pending**.
+The additive operation is tracked in [#474](https://github.com/ictseoyoungmin/refas/issues/474);
+[release #475](https://github.com/ictseoyoungmin/refas/issues/475) owns exact-main
+CI, publication and downloaded-archive verification under
+[2.2.0](https://github.com/ictseoyoungmin/refas/milestone/8).
+Source/package identity is **2.2.0**. The previous published stable package is
+**2.1.0**, with its unchanged receipt below. Local tests or packing do not
+establish a new public release.
+
+`build_sections` replaces repeated longitudinal interpolation and feature-column
+indexing with explicit corresponding LINEAR/BEZIER profiles. Authored station
+rows and moving ridge/channel junctions become ordinary native selections;
+continued mesh edits require no controller or generator rebuild. Existing
+Coons patches, sculpting and native cuts remain available. The
+[relationship map](development/refas-2-skill-map.md) records affected consumers,
+guides, tests and removal consequences. The installed file set remains **28 skill
+/ 32 package files**.
+
+Five numeric/profile and six actual copied-skill Blender tests pass, including
+the earlier patch contract, uneven sampling, nonuniform CUBIC/LINEAR behavior,
+native context/failure cleanup and feature editing after helper-free reopen.
+Independent review also executed the exact guide example and checked preserved
+unrelated vertices. Required repository gates pass: 967 JavaScript tests with
+zero skips, Python syntax, repository checks, dogfood, release audit and artifact
+budget. The separate production unit suite passes 122 cases with 159 opt-in
+native/engine cases skipped; it is not the actual Blender execution evidence.
+
+Fresh original-reference construction and composability/delivery inspection are
+in progress outside Git. The first two full-car revisions retain visible front,
+canopy and side-form differences and are not accepted as faithful reconstruction.
+Original source-fidelity [#456](https://github.com/ictseoyoungmin/refas/issues/456)
+and unresolved native-crash [#448](https://github.com/ictseoyoungmin/refas/issues/448)
+remain open under [2.2.1](https://github.com/ictseoyoungmin/refas/milestone/9),
+preserving their criteria and rejected evidence. Timing/billing #436 remains
+separate under 2.0.1.
+
+## Published 2.1.0 checkpoint — 2026-11-28
+
 Status: **2026-11-28 — v2.1.0 published; public download and installation verified**.
 Release preparation [#468](https://github.com/ictseoyoungmin/refas/issues/468)
 merged through [#469](https://github.com/ictseoyoungmin/refas/pull/469).

@@ -71,6 +71,65 @@ Reuse the intended modifier and inspect its actual evaluated interior, rims,
 openings and neighboring parts. Subdivision or deformation can change the field
 between source vertices; verify the resulting shell in required poses.
 
+## Interpolate corresponding sections
+
+Use `surface_patch.build_sections` when the form is controlled by successive
+cross-sections and corresponding features such as a crest, a hollow or an edge.
+Author each section with the existing `LINEAR` (two points) or `BEZIER` (four
+points) segments. Every section must have the same segment count and order;
+put the same feature at the same segment junction even when its position moves.
+Do not flatten a defining ridge into a generic smooth cross-section.
+
+`parameters` gives one strictly increasing station value per section; it need
+not be a coordinate axis. `profile_divisions` gives one positive interval count
+per segment, shared by all sections. `section_divisions` gives one count per
+adjacent station pair. This retains every authored section and segment junction
+without arc-length resampling or a separate grid/indexing implementation.
+
+```python
+from surface_patch import build_sections
+
+# Synthetic open panel: center, crest, channel, outer edge. Choose these
+# controls from the actual source when constructing an asset.
+def profile(y, crest_x, crest_z, channel_z):
+    points = [(0, y, .20), (crest_x, y, crest_z),
+              (.40, y, channel_z), (.60, y, .24)]
+    return [('LINEAR', (a, b)) for a, b in zip(points, points[1:])]
+
+panel = build_sections('Shaped panel',
+    sections=[profile(0, .18, .30, .18),
+              profile(.35, .24, .38, .16),
+              profile(1, .28, .28, .20)],
+    parameters=[0, .35, 1], profile_divisions=[3, 2, 3],
+    section_divisions=[4, 6],
+    feature_names=['center', 'crest', 'channel', 'edge'])
+
+# Continue editing the saved ordinary mesh; no generator rebuild is needed.
+crest = panel.vertex_groups['feature:crest'].index
+for vertex in panel.data.vertices:
+    if any(g.group == crest for g in vertex.groups):
+        vertex.co.z += .015
+panel.data.update()
+```
+
+The default `CUBIC` uses cubic Hermite interpolation with one shared derivative
+per station along each sampled rail: centered spanning secants inside, one-sided
+secants at the ends. The mathematical rails have continuous first derivatives;
+the output is their sampled mesh, not an exact continuous CAD surface. CUBIC
+can overshoot and does not guarantee smoothness across profile junctions or
+prevent intersections. Use `interpolation='LINEAR'` for deliberate straight
+longitudinal spans. Inspect ridges, hollows and end transitions in the render.
+
+The result has `section:0`, `section:1`, … groups for the authored rows and
+`feature:<name>` groups along segment junctions. Omitted feature names default
+to `0`, `1`, … . Groups are ordinary selections, not live profile controls.
+Choose enough samples for the needed curvature while keeping later edits
+manageable. A division count of one creates a coarse cage; native Subdivision
+can then change its shape and move it away from the authored sections. Add
+thickness, crease weights, shading or shape keys deliberately. No caps, seam
+weld, modifiers, control objects or handler are added. For branching boundary
+networks or explicit end-boundary control, use the patch operation below.
+
 ## Create surfaces from outlines and sections
 
 Use `surface_patch.py` when the initial shape is defined by a small set of
