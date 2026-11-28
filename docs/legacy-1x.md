@@ -28,7 +28,7 @@ automatic fallback when production Blender fails.
 
 Use the production `import-v1` command with an explicit recorded checkpoint and
 artifact path. It reads the selected archived native/GLB bytes and starts a new
-production history. Read the [supported import scope](../skills/refas/references/production-import.md).
+production history. Read the [supported import scope](../skills/refas/references/production-project.md).
 
 The original 1.x project remains unchanged. Its other checkpoints, journals,
 candidate decisions, rendered evidence and certificates continue to belong to

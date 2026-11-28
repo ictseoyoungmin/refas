@@ -16,7 +16,7 @@ export const PRODUCTION_SKILL_FILES = Object.freeze([
   'references/production-assemblies.md',
   'references/production-form.md',
   'references/production-garments.md',
-  'references/production-import.md',
+  'references/production-project.md',
   'references/production-review.md',
   'references/production-topology.md',
   'scripts/produce.py',
