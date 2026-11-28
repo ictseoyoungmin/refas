@@ -108,6 +108,9 @@ The operand becomes an enabled construction mesh with `hide_render=True`.
 It remains in the native scene and drives the Boolean; production framing and
 GLB omit its own surface. Do not disable or unlink it. A prepared part is still
 an ordinary asset until you explicitly use it as this operation's operand.
+To reuse a cutter for a different feature, create a new object from a copied
+mesh datablock and set its intended transform. A whole-object copy also copies
+the existing feature ownership and is rejected; it is not an independent cutter.
 
 By default, a new operation is placed before trailing Bevel/Weighted Normal/
 Triangulate finishes; an existing operation keeps its position. Use
