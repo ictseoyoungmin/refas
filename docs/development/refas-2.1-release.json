@@ -1,0 +1,200 @@
+{
+  "version": "2.1.0",
+  "sourceCommit": "37564be1bb58c2462020b5dfcc5fe97b627e66e1",
+  "tag": "v2.1.0",
+  "release": {
+    "id": 461510302,
+    "url": "https://github.com/ictseoyoungmin/refas/releases/tag/v2.1.0",
+    "publishedAt": "2026-11-28T11:31:15Z",
+    "draft": false,
+    "prerelease": false
+  },
+  "publisher": {
+    "id": 46140239756,
+    "url": "https://github.com/ictseoyoungmin/refas/actions/runs/46140239756",
+    "event": "workflow_dispatch",
+    "conclusion": "success"
+  },
+  "fullQa": {
+    "sourceCommit": "37564be1bb58c2462020b5dfcc5fe97b627e66e1",
+    "runId": 46139735130,
+    "url": "https://github.com/ictseoyoungmin/refas/actions/runs/46139735130",
+    "event": "push",
+    "branch": "main",
+    "nodeJobs": [
+      {
+        "name": "Node 22",
+        "conclusion": "success"
+      },
+      {
+        "name": "Node 24",
+        "conclusion": "success"
+      }
+    ],
+    "requiredSteps": [
+      {
+        "name": "First neutral-clay multiview operational baseline",
+        "conclusion": "success"
+      },
+      {
+        "name": "External construction fresh-worker dogfood",
+        "conclusion": "success"
+      },
+      {
+        "name": "Subdivision cage organic dogfood",
+        "conclusion": "success"
+      },
+      {
+        "name": "Bilateral pair fresh-worker dogfood",
+        "conclusion": "success"
+      },
+      {
+        "name": "Structural plausibility fresh-worker dogfood",
+        "conclusion": "success"
+      },
+      {
+        "name": "Competing blockout fresh-worker dogfood",
+        "conclusion": "success"
+      },
+      {
+        "name": "Prior quarantine fresh-worker dogfood",
+        "conclusion": "success"
+      },
+      {
+        "name": "Discovery closure verifier",
+        "conclusion": "success"
+      },
+      {
+        "name": "VC00 volume-closure regression fixtures",
+        "conclusion": "success"
+      },
+      {
+        "name": "Joint parameter-fit dogfood",
+        "conclusion": "success"
+      },
+      {
+        "name": "Independent PBR material dogfood",
+        "conclusion": "success"
+      },
+      {
+        "name": "Textured material dogfood",
+        "conclusion": "success"
+      },
+      {
+        "name": "Hard-surface topology dogfood",
+        "conclusion": "success"
+      },
+      {
+        "name": "Modular assembly contact dogfood",
+        "conclusion": "success"
+      },
+      {
+        "name": "Release audit",
+        "conclusion": "success"
+      },
+      {
+        "name": "Verify actual npm package installation",
+        "conclusion": "success"
+      },
+      {
+        "name": "Verify saved v1.2.1 project upgrade",
+        "conclusion": "success"
+      }
+    ],
+    "production": {
+      "runId": 46139735126,
+      "url": "https://github.com/ictseoyoungmin/refas/actions/runs/46139735126",
+      "conclusion": "success"
+    }
+  },
+  "assets": [
+    {
+      "id": 804326240,
+      "name": "refas-2.1.0.tgz",
+      "url": "https://github.com/ictseoyoungmin/refas/releases/download/v2.1.0/refas-2.1.0.tgz",
+      "size": 152283,
+      "sha256": "c4dff416b2100fcfee222adbacb3469091f1bb757a845330efad134e2cd78dec",
+      "publicBytesMatchPrepared": true
+    },
+    {
+      "id": 804326298,
+      "name": "refas-2.1.0.tgz.sha256",
+      "url": "https://github.com/ictseoyoungmin/refas/releases/download/v2.1.0/refas-2.1.0.tgz.sha256",
+      "size": 82,
+      "sha256": "d9b8a93bf7860565a2586587f863fcd631d796fd39c64dd3251fd70038b5c6fc",
+      "publicBytesMatchPrepared": true
+    }
+  ],
+  "installation": {
+    "status": "PASS",
+    "version": "2.1.0",
+    "skillFiles": 28,
+    "packagedFiles": 32,
+    "unpackedBytes": 524737,
+    "skillBytes": 495430,
+    "tarball": "refas-2.1.0.tgz",
+    "installedCli": true,
+    "sourceFilesIdentical": true,
+    "exitStatuses": [
+      0,
+      1,
+      2,
+      127
+    ],
+    "plainSkillWithoutNodeOrSitePackages": true
+  },
+  "verifiedAt": "2026-11-28T11:32:21.768Z",
+  "scope": "GitHub Release TGZ and SHA256 publication and unauthenticated downloaded-package installation; does not accept final-art fidelity or close unresolved native-crash/E2 findings.",
+  "acceptanceBoundary": {
+    "original20Ledger": {
+      "demonstrated": 36,
+      "total": 37,
+      "tasksClosed": 0,
+      "tasksTotal": 7,
+      "delivery": "3/3",
+      "E2": "open; actual matched timing and billing evidence absent"
+    },
+    "original21Ledger": {
+      "demonstrated": 16,
+      "retiredProposalCriteria": 4,
+      "total": 20,
+      "qualityPercentage": false
+    },
+    "deferred": [
+      {
+        "issue": 456,
+        "milestone": "2.1.1",
+        "status": "open",
+        "scope": "Original source-fidelity acceptance remains unapproved."
+      },
+      {
+        "issue": 448,
+        "milestone": "2.1.1",
+        "status": "open",
+        "scope": "Intermittent native C-crash root cause remains unresolved; #466 fixes only the separately reproduced diagnostic context leak."
+      },
+      {
+        "issue": 436,
+        "milestone": "2.0.1",
+        "status": "blocked",
+        "scope": "Actual matched provider/model/usage/billed-cost observations remain missing, represented as null."
+      }
+    ],
+    "nativeFeatureEvidence": {
+      "issue": 465,
+      "pullRequest": 464,
+      "sourceCommit": "c66f1ec3adfdc580bec640169de0ee6458479b2e",
+      "actualBlenderOperationTests": 14,
+      "discoveryTests": 5,
+      "fullSourceFidelityAccepted": false
+    },
+    "renderContextEvidence": {
+      "issue": 466,
+      "pullRequest": 467,
+      "sourceCommit": "2e193b61f26ac2fae5fbd1d94bf36d9c6dbc3c9c",
+      "actualBlenderTests": 5,
+      "matchedCarRgba": true,
+      "nativeCrashCommonCauseEstablished": false
+    }
+  }
+}

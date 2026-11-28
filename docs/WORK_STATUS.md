@@ -2,13 +2,14 @@
 
 ## Current resumption point
 
-Status: **2026-11-28 — validated 2.1.0 release candidate; PUBLICATION PENDING**.
+Status: **2026-11-28 — v2.1.0 published; public download and installation verified**.
 Release preparation [#468](https://github.com/ictseoyoungmin/refas/issues/468)
-uses `release/native-authoring-2.1.0` from integrated source
-[`8adfc0ff`](https://github.com/ictseoyoungmin/refas/commit/8adfc0ff220bd44f2c48959f88aad3053c8082eb).
-Package identity is **2.1.0**; the published stable version remains **v2.0.0**.
+merged through [#469](https://github.com/ictseoyoungmin/refas/pull/469).
+The immutable release/tag source is
+[`37564be1bb58c2462020b5dfcc5fe97b627e66e1`](https://github.com/ictseoyoungmin/refas/commit/37564be1bb58c2462020b5dfcc5fe97b627e66e1).
+Package identity and the published stable version are **2.1.0**.
 
-The candidate combines broad native shaping and editable cuts/engraving/unions
+The release combines broad native shaping and editable cuts/engraving/unions
 with existing patches, mounting, recesses, bridges, projection and local edits.
 Authors choose methods for the shape and can return to the main forms. See the
 [2.1 plan](development/refas-2.1-plan.md) and
@@ -18,9 +19,24 @@ Authors choose methods for the shape and can return to the main forms. See the
 |---|---|
 | Native form contract [#465](https://github.com/ictseoyoungmin/refas/issues/465) | [PR #464](https://github.com/ictseoyoungmin/refas/pull/464) merged as `c03763749ba25f07bde99a7df684135c85ca7209`; 14 actual Blender/copied-skill operation tests and 5 discovery tests passed. |
 | Diagnostic context fix [#466](https://github.com/ictseoyoungmin/refas/issues/466) | [PR #467](https://github.com/ictseoyoungmin/refas/pull/467) merged as `8adfc0ff220bd44f2c48959f88aad3053c8082eb`; deterministic baseline FAIL/candidate PASS and five actual Blender tests. The prior C-crash cause remains unknown. |
-| Reviewed source and distribution | Feature/render required repository, exact CI and source-budget gates passed; 967 JavaScript tests, zero skips, and the exact 28 skill / 32 package file set. Final version/docs preparation checks and exact-main CI remain separate. |
+| Reviewed source and distribution | Feature/render and final preparation passed the required repository, exact CI and source-budget gates; 967 JavaScript tests, zero skips, and the exact 28 skill / 32 package file set. Exact-main Node 22/24, all 17 full-QA steps and production CI passed. |
 | Fresh reference-based car and garment | Native authoring, continued editing and explicit delivery demonstrated; actual image review leaves source fidelity unapproved. Asset evidence is identified below. |
-| Main integration and public v2.1.0 package | Pending. #468 owns preparation/main integration; a separate post-merge issue must record the actual publisher, public download and installation receipt. |
+| Main integration and public v2.1.0 package | Complete. #469 integrated main; [#470](https://github.com/ictseoyoungmin/refas/issues/470) records the actual publisher, public download and installation. The [canonical receipt](development/refas-2.1-release.json) fixes the release source even when later documentation advances main. |
+
+Release **461510302** was published at **2026-11-28T11:31:15Z (20:31:15 KST)**
+by [manual workflow 46140239756](https://github.com/ictseoyoungmin/refas/actions/runs/46140239756),
+after [full CI 46139735130](https://github.com/ictseoyoungmin/refas/actions/runs/46139735130)
+and [production CI 46139735126](https://github.com/ictseoyoungmin/refas/actions/runs/46139735126).
+The [public TGZ](https://github.com/ictseoyoungmin/refas/releases/download/v2.1.0/refas-2.1.0.tgz)
+is **152,283 bytes**, SHA-256
+`c4dff416b2100fcfee222adbacb3469091f1bb757a845330efad134e2cd78dec`.
+Both unauthenticated public downloads match the prepared bytes and GitHub
+digests, including the exact 82-byte checksum file. Installing the downloaded
+archive passed isolated npm CLI and plain copied Python without Node or site
+packages, with all 32 files identical to the tagged source: **524,737 unpacked
+bytes**. This is the GitHub Release package channel; no npm registry publication
+is claimed. The tagged pre-publication docs remain part of that immutable
+archive; this later receipt records the completed action without replacing it.
 
 Fresh authoring evidence is bound to feature source `c66f1ec3adfdc580bec640169de0ee6458479b2e`
 and retained in the [car/garment evidence archive](https://chatgpt.com/library?file_id=libfile_c96a07773eac8191b2586d649ec60758&account_id=personal):

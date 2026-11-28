@@ -1,16 +1,28 @@
 # RefAs release criteria
 
-## 2.1.0 release candidate boundary
+## Published 2.1.0 release boundary
 
-The candidate extends native whole-form authoring with spatial cage brushes
+The release extends native whole-form authoring with spatial cage brushes
 and editable mesh/path Boolean operations, alongside the existing surface,
 mounting, recess, projection and local-edit tools. Methods remain optional and
 can be combined or revisited as the shape requires. Metadata is **2.1.0**;
-reviewed feature and renderer sources are validated, while release preparation,
-main integration and exact-main publication checks remain separate.
-**PUBLICATION PENDING:** [#468](https://github.com/ictseoyoungmin/refas/issues/468)
-owns preparation/main integration; the actual public receipt belongs to a
-separate post-merge issue.
+reviewed feature and renderer sources are validated. Preparation
+[#468](https://github.com/ictseoyoungmin/refas/issues/468) and main integration
+[#469](https://github.com/ictseoyoungmin/refas/pull/469) are complete.
+The [actual publication #470](https://github.com/ictseoyoungmin/refas/issues/470)
+and [canonical receipt](development/refas-2.1-release.json) record the separate
+successful exact-main publisher and actual public-download installation.
+
+### Actual v2.1.0 publication receipt
+
+- Release [v2.1.0](https://github.com/ictseoyoungmin/refas/releases/tag/v2.1.0), ID **461510302**, was published at **2026-11-28T11:31:15Z (20:31:15 KST)**. The lightweight tag and release target both equal `37564be1bb58c2462020b5dfcc5fe97b627e66e1`; the tagged changelog matches release metadata.
+- [Exact-main CI](https://github.com/ictseoyoungmin/refas/actions/runs/46139735130) passed Node 22/24 and all 17 named full-QA gates, and [production CI](https://github.com/ictseoyoungmin/refas/actions/runs/46139735126) passed. The existing [manual publisher](https://github.com/ictseoyoungmin/refas/actions/runs/46140239756) succeeded with that unchanged main SHA and `PUBLISH`.
+- [refas-2.1.0.tgz](https://github.com/ictseoyoungmin/refas/releases/download/v2.1.0/refas-2.1.0.tgz), asset **804326240**, is **152,283 bytes**, SHA-256 `c4dff416b2100fcfee222adbacb3469091f1bb757a845330efad134e2cd78dec`. The [checksum](https://github.com/ictseoyoungmin/refas/releases/download/v2.1.0/refas-2.1.0.tgz.sha256), asset **804326298**, is **82 bytes**; both full hashes are in the canonical receipt.
+- Both unauthenticated downloads match the prepared exact-main bytes and GitHub asset digests, with exact checksum content. Installing the actual downloaded archive passes isolated npm CLI and copied Python without Node/site packages; all **32 package / 28 skill files** match the tagged source, **524,737 unpacked bytes**. The receipt was verified at **2026-11-28T11:32:21.768Z**.
+
+This receipt does not change the immutable tag or archive, whose documentation
+is the pre-publication source snapshot. It does not upgrade any model, native
+crash or measured-cost finding to accepted.
 
 The admitted [#465](https://github.com/ictseoyoungmin/refas/issues/465) native
 authoring contract has 14 actual Blender/copied-skill operation tests, five

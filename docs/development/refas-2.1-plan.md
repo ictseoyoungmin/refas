@@ -1,12 +1,14 @@
 # RefAs 2.1.0 — native form and detail authoring
 
-Target: [milestone 2.1.0](https://github.com/ictseoyoungmin/refas/milestone/6).
-Release preparation: [#468](https://github.com/ictseoyoungmin/refas/issues/468),
-`release/native-authoring-2.1.0` from integrated source `8adfc0ff`; package
-identity: **2.1.0**. Reviewed feature/render evidence is complete within the
-scope below. **PUBLICATION PENDING:** final preparation, main integration and
-exact-main publication checks remain separate; published stable is `2.0.0`.
-This plan is not a publication receipt or a completed quality claim.
+Published: **[v2.1.0](https://github.com/ictseoyoungmin/refas/releases/tag/v2.1.0)**
+on **2026-11-28**, under [milestone 2.1.0](https://github.com/ictseoyoungmin/refas/milestone/6).
+Preparation [#468](https://github.com/ictseoyoungmin/refas/issues/468) merged
+through [#469](https://github.com/ictseoyoungmin/refas/pull/469); immutable
+release/tag source: `37564be1bb58c2462020b5dfcc5fe97b627e66e1`.
+The [actual public receipt](refas-2.1-release.json), tracked in
+[#470](https://github.com/ictseoyoungmin/refas/issues/470), verifies the publisher,
+downloaded archive and installation. Reviewed feature/render evidence is
+complete within the scope below; publication does not accept final-art fidelity.
 
 [Work OS plan](https://app.notion.com/p/425c6a3b5bf181979c7feb3706c4ba0a)
 owns the private reference links and current evaluation context. The original
@@ -391,10 +393,14 @@ map synchronized. Test the actual copied/packed skill, not repository-only
 imports. Run capability-local checks and required repository gates. Source
 integration, whole-asset acceptance, main merge and publication are distinct.
 Feature #465 / PR #464 and render #466 / PR #467 passed their source-bound
-checks and exact CI. Release preparation #468 aligns 2.1.0 identities and docs
-before main integration; final preparation checks, exact-main CI, the existing
-manual publisher and downloaded-package verification remain pending. A separate
-post-merge issue must record the actual public receipt. [Release criteria](../release-criteria.md)
-owns that boundary. E2's missing actual time/billing evidence remains separate
+checks and exact CI. Release preparation #468 aligned 2.1.0 identities and docs,
+and #469 integrated main at `37564be1bb58c2462020b5dfcc5fe97b627e66e1`.
+Final preparation gates, exact-main Node 22/24 and all 17 full-QA steps passed.
+The existing manual publisher succeeded as
+[46140239756](https://github.com/ictseoyoungmin/refas/actions/runs/46140239756).
+[#470](https://github.com/ictseoyoungmin/refas/issues/470) and the
+[canonical receipt](refas-2.1-release.json) record the actual public archive,
+checksum and downloaded-package installation, without moving the tagged source.
+[Release criteria](../release-criteria.md) owns that boundary. E2's missing actual time/billing evidence remains separate
 from this release, and prior art/comparison verdicts remain intact.
 Retain completed task branches for the user to delete.
