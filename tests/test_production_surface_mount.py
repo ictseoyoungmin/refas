@@ -17,7 +17,7 @@ BLENDER = os.environ.get("BLENDER_EXE") or shutil.which("blender")
 SETUP = '''
 import bpy, math
 from mathutils import Matrix, Vector, Euler
-from surface_mount import surface_frame, place_on_surface
+from surface_mount import surface_frame, place_on_surface, bind_on_surface, check_surface_mount
 bpy.ops.wm.read_factory_settings(use_empty=True)
 
 def mesh(name, vertices, faces):
@@ -325,6 +325,130 @@ place_on_surface(bpy.data.objects['Detail'],host,ray_origin=normal*2,
         restored = self.cli("restore", "--root", project, "--revision", initial["head"])
         self.assertEqual(Path(restored["outputs"]["blend"]).read_bytes(), initial_native)
         self.assertTrue(self.cli("verify", "--root", project)["ok"])
+
+    def test_native_mount_follows_evaluated_cage_thickness_and_rigid_host_transform(self):
+        self.probe('''
+host = plane()
+host.scale=(1.2,.8,1.1)
+sub=host.modifiers.new('Tailoring','SUBSURF')
+sub.subdivision_type='SIMPLE'
+sub.levels=sub.render_levels=2
+solid=host.modifiers.new('Cloth','SOLIDIFY')
+solid.thickness=.02
+solid.offset=1
+detail=part()
+detail.scale=(.3,.4,.2)
+bpy.context.view_layer.update()
+coordinates=[tuple(v.co) for v in detail.data.vertices]
+handlers={name:tuple(getattr(bpy.app.handlers,name)) for name in ('depsgraph_update_post','frame_change_post','load_post')}
+report=bind_on_surface(detail,host,**arguments)
+carrier=detail.parent
+assert carrier.name==report['carrier'] and carrier.parent is host
+assert carrier.modifiers[0].type=='SURFACE_DEFORM' and carrier.modifiers[0].is_bound
+assert carrier.get('refas_role')=='construction' and carrier.hide_render
+for vertex in host.data.vertices:
+    x,y,z=vertex.co
+    vertex.co.z=.15*x-.1*y+.12
+host.data.update()
+solid.thickness=.035
+host.location=(1,-.7,.2)
+host.rotation_euler=(.2,-.3,.7)
+bpy.context.view_layer.update()
+after=check_surface_mount(detail)
+assert .002-2e-5<=after['minGap']<=after['maxGap']<=.01+2e-5
+close([detail.matrix_world.to_3x3().col[i].length for i in range(3)],(.3,.4,.2))
+assert [tuple(v.co) for v in detail.data.vertices]==coordinates
+# Independent plane geometry, not the helper's own sampled gap report.
+normal=(host.matrix_world.inverted().transposed().to_3x3() @ Vector((-.15,.1,1))).normalized()
+point=host.matrix_world @ Vector((0,0,.12))
+shell_offset=.035*Vector((-.15,.1,1)).length/Vector((-.15/1.2,.1/.8,1/1.1)).length
+for local in footprint:
+    gap=(detail.matrix_world@Vector(local)-point).dot(normal)-shell_offset
+    assert .002-2e-5<=gap<=.01+2e-5, gap
+close(detail.matrix_world.to_3x3().col[2].normalized(),normal,5e-5)
+saved=detail.matrix_world.copy()
+bpy.ops.wm.save_as_mainfile(filepath='native-rigid-mount.blend')
+bpy.ops.wm.open_mainfile(filepath='native-rigid-mount.blend')
+detail=bpy.data.objects['Detail']
+check_surface_mount(detail)
+assert detail.matrix_world==saved
+for name,values in handlers.items():
+    assert tuple(getattr(bpy.app.handlers,name))==values
+''')
+
+    def test_mount_rejects_topology_change_scale_change_and_lost_support(self):
+        self.probe('''
+host=plane()
+sub=host.modifiers.new('Tailoring','SUBSURF')
+sub.subdivision_type='SIMPLE'
+sub.levels=sub.render_levels=1
+detail=part()
+bind_on_surface(detail,host,**arguments)
+sub.levels=sub.render_levels=2
+bpy.context.view_layer.update()
+try:
+    check_surface_mount(detail)
+except ValueError as error:
+    assert 'topology changed' in str(error)
+else:
+    raise AssertionError('changed target topology was silently rebound')
+sub.levels=sub.render_levels=1
+host.scale.x=1.2
+bpy.context.view_layer.update()
+try:
+    check_surface_mount(detail)
+except ValueError as error:
+    assert 'rigid scale' in str(error)
+else:
+    raise AssertionError('scaled hardware retained rigid acceptance')
+host.scale.x=1
+bpy.context.view_layer.update()
+detail.location.z+=.04
+bpy.context.view_layer.update()
+try:
+    check_surface_mount(detail)
+except ValueError as error:
+    assert 'gap bounds' in str(error)
+else:
+    raise AssertionError('floating hardware accepted')
+''')
+
+    def test_failed_native_bind_restores_scene_geometry_and_caller_context(self):
+        self.probe('''
+# Three coincident faces have a nonmanifold edge but valid ray intersections.
+# Selection/placement succeeds before native Surface Deform refuses to bind.
+host=mesh('InvalidHost',[(-1,-1,0),(1,-1,0),(1,1,0),(-1,1,0)],[(0,1,2,3)]*3)
+detail=part()
+detail.location=(2,3,4)
+detail.rotation_euler=(.2,-.4,.1)
+detail.scale=(.4,.3,.2)
+detail.parent_vertices=(2,1,3)
+detail.matrix_parent_inverse=Matrix.Translation((.1,.2,.3))
+neighbor=part('Neighbor')
+neighbor.select_set(True)
+bpy.context.view_layer.objects.active=neighbor
+bpy.context.view_layer.update()
+before=detail.matrix_world.copy()
+channels={key:tuple(getattr(detail,key)) for key in ('location','rotation_euler','rotation_quaternion','rotation_axis_angle','scale')}
+coordinates=[tuple(v.co) for v in detail.data.vertices]
+objects=set(bpy.data.objects)
+meshes=set(bpy.data.meshes)
+selected=set(bpy.context.selected_objects)
+inverse=detail.matrix_parent_inverse.copy()
+try:
+    bind_on_surface(detail,host,**arguments)
+except ValueError as error:
+    assert 'could not bind' in str(error), str(error)
+else:
+    raise AssertionError('nonmanifold target binding accepted')
+unchanged(detail,before,coordinates)
+assert detail.parent is None and tuple(detail.parent_vertices)==(2,1,3)
+assert detail.matrix_parent_inverse==inverse
+assert {key:tuple(getattr(detail,key)) for key in channels}==channels
+assert set(bpy.data.objects)==objects and set(bpy.data.meshes)==meshes
+assert set(bpy.context.selected_objects)==selected
+assert bpy.context.view_layer.objects.active is neighbor
+''')
 
 
 if __name__ == '__main__':

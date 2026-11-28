@@ -86,6 +86,9 @@ left/right run bottom-to-top, not around the perimeter. Each use is
 `(boundary_name, reverse)`; opposite sides need equal sample counts. Reusing
 the same name shares actual vertex IDs. Equal coordinates under different
 names do not request a global weld. Corners must meet consistently.
+Samples correspond by index, not arc length: align feature junctions on opposite
+profiles, or split the patch at a shoulder, fold or opening corner. Equal counts
+alone do not align those features.
 
 This complete example starts a rolled section and its adjoining leaf together:
 
@@ -134,7 +137,8 @@ section. Derive removable panels or moving glazing from the same design
 curves with deliberate inset/clearance, while retaining separate objects for
 their motion. Use linear boundaries for planar features instead of smoothing
 every edge. Add hardware in its local mounting frame and use the evaluated
-host with `place_on_surface` below at initial placement.
+host with `place_on_surface` below at initial placement, or `bind_on_surface`
+when the rigid detail must follow later host edits.
 
 ## Join existing cage boundaries
 
@@ -256,6 +260,52 @@ future animation; use the surface-binding recipe below for deforming trim.
 `surface_frame` accepts the same host/ray/tangent selection arguments without
 moving anything. Its returned frame is a snapshot; recompute after host edits.
 
+### Keep rigid hardware attached during later edits
+
+Use `bind_on_surface` with the same arguments when the host will change. It
+first fits the contact footprint, then creates a three-vertex construction
+mesh with native Surface Deform and vertex-parents the part to that frame.
+For an open buckle or ring, sample an actual solid mounting bar or foot and
+keep the sample centroid on that support; the empty aperture is not a contact.
+The frame follows the evaluated host, including Subdivision followed by
+Solidify; the part retains its own rigid shape. The frame is object-parented
+to the host so ordinary host translation and rotation follow as well. There
+is no Python scene handler, external cache or rebuild step after reopening.
+
+```python
+from surface_mount import bind_on_surface, check_surface_mount
+
+mount = bind_on_surface(
+    button, collar, ray_origin=outside_point, ray_direction=toward_collar,
+    tangent=along_collar, contact_points=button_contact_points,
+    clearance=minimum_gap, max_distance=search_distance, max_gap=maximum_gap,
+)
+# Later: edit the collar cage or its thickness using ordinary bpy.
+check_surface_mount(button)
+```
+
+Production checks the saved relationship and footprint before saving/output.
+An infeasible gap or changed evaluated polygon topology fails; it never picks
+a new nearest layer or silently rebinds. Keep the carrier enabled, with its
+construction role and `hide_render=True`; do not repurpose or edit its triangle.
+This explicit mount is the supported construction-parent exception. Static
+delivery captures the evaluated part transform and omits the carrier. Native
+source keeps the relationship. Apply intended object scale before binding:
+subsequent host scale changes or shear that stretch the rigid part are refused.
+Changing subdivision levels, connectivity or topology-producing settings needs
+a deliberate new mount. Detach the part with its evaluated world transform,
+remove that part's obsolete carrier, and call `bind_on_surface` again.
+
+Surface Deform has native target restrictions, so a failed bind restores the
+part and removes the failed carrier. Its target must be independent of the
+part; node-tree dependencies are not supported here. A large rigid footprint
+still cannot follow arbitrary cloth curvature. Reinspect support after major
+edits and provide a fitting base when needed. These are finite contact samples,
+not a guarantee of full-part collision clearance. Animated target deformation
+requires deliberate baking and playback checks for delivery; this operation
+does not bake it. Flexible piping needs deformation of its own sections or
+mesh, rather than one rigid parent frame for an entire long trim.
+
 ## Fit prepared flexible surface layers
 
 Use `project_region` from `surface_project.py` for a thin surface cage whose
@@ -264,6 +314,7 @@ sampling density and layer relief first. A cloth badge backing, raised border
 and emblem can use separate disjoint masks and offsets, with Solidify after
 projection. Preserve the intended thickness and visible design while preparing
 these layers; the helper changes only the native projection modifier.
+For a complete starting script, see the [static panel decal example](#example-static-panel-decal).
 
 ```python
 from surface_project import project_region
@@ -311,6 +362,55 @@ edits remain possible after reopening. Recheck after such edits
 or target changes. This fits static surface layers; the separate surface-binding
 recipe handles authored sections following a deforming triangle.
 
+### Example: static panel decal
+
+Run this complete script in a new empty production project with `--outputs native --views ''`.
+It prepares a curved panel, a thin surface layer and its whole-component mask.
+World units are metres; the projection offset changes from 5 to 6 mm along Z,
+before thickness. The same native modifier and source cage remain available.
+
+```python
+import bpy
+from surface_project import project_region
+
+bpy.context.scene.unit_settings.scale_length = 1.0
+
+def grid(name, n, extent, height):
+    vertices = [
+        (extent * (2*i/n - 1), extent * (2*j/n - 1),
+         height(extent * (2*i/n - 1)))
+        for j in range(n + 1) for i in range(n + 1)
+    ]
+    faces = [
+        (j*(n+1)+i, j*(n+1)+i+1, (j+1)*(n+1)+i+1, (j+1)*(n+1)+i)
+        for j in range(n) for i in range(n)
+    ]
+    data = bpy.data.meshes.new(name + "Mesh")
+    data.from_pydata(vertices, [], faces)
+    data.update()
+    obj = bpy.data.objects.new(name, data)
+    bpy.context.collection.objects.link(obj)
+    return obj
+
+panel = grid("ExamplePanel", 48, 0.6, lambda x: 0.2 - 0.5*x*x)
+decal = grid("ExampleDecal", 16, 0.4, lambda x: 0.4)
+source_mesh = decal.data
+mask = decal.vertex_groups.new(name="Decal")
+mask.add(list(range(len(source_mesh.vertices))), 1.0, "REPLACE")
+decal.modifiers.new("Thickness", "SOLIDIFY").thickness = 0.001
+decal.modifiers.new("Edges", "BEVEL").width = 0.0001
+options = dict(name="Decal fit", group="Decal", axis="Z", direction=-1,
+               offset=0.005, max_distance=0.5,
+               max_displacement=0.4, tolerance=0.001)
+first = project_region(decal, panel, **options)
+projection = decal.modifiers["Decal fit"]
+revised = project_region(decal, panel, **{**options, "offset": 0.006})
+```
+
+Choose the outline, density and bounds for the actual feature. This static example
+does not accept parented or animated panels; retain the supported projection stack
+and recheck after later host or layer edits.
+
 ## Edit several local targets with a fixed surrounding cage
 
 Use `edit_region` from `local_edit.py` when several different target positions
@@ -320,26 +420,48 @@ Keep attachment rows, intended crease lines and protected outline vertices out
 of the region. Every outside coordinate stays unchanged; this does not freeze
 the evaluated shell normals or margins at its boundary.
 
+This complete metre-scale example creates a small panel and edits two handles
+without applying or removing its native finish modifiers. Run it as an ordinary
+production authoring script, then choose the region and targets from your own
+feature rather than copying this synthetic shape.
+
 ```python
+import bpy
+from mathutils import Vector
 from local_edit import edit_region
 
+data = bpy.data.meshes.new("Panel cage")
+data.from_pydata(
+    [((x-2)*0.1, (y-2)*0.1, 0.0) for y in range(5) for x in range(5)], [],
+    [(y*5+x, y*5+x+1, (y+1)*5+x+1, (y+1)*5+x)
+     for y in range(4) for x in range(4)],
+)
+panel = bpy.data.objects.new("Panel", data)
+bpy.context.scene.collection.objects.link(panel)
+shell = panel.modifiers.new("Thickness", "SOLIDIFY")
+shell.thickness, shell.offset = 0.003, -1.0
+bevel = panel.modifiers.new("Edge finish", "BEVEL")
+bevel.width, bevel.segments = 0.001, 2
+panel.modifiers.new("Shading", "WEIGHTED_NORMAL")
+region = [y*5+x for y in range(1, 4) for x in range(1, 4)]
+targets = {i: panel.matrix_world @ data.vertices[i].co + Vector((0, 0, dz))
+           for i, dz in ((12, 0.008), (17, 0.004))}
 result = edit_region(
-    panel, region="LocalFold", handles=world_targets,
-    max_displacement=0.008, tolerance=0.00005,
-    distances=[{"name": "opening_width", "vertices": (left, right),
-                "min": 0.098, "max": 0.104}],
-    shell_pairs=[{"name": "fold_shell", "vertex": fold_vertex,
+    panel, region=region, handles=targets,
+    max_displacement=0.012, tolerance=0.00005,
+    shell_pairs=[{"name": "panel_shell", "vertex": 12,
                   "min": 0.0025, "max": 0.0035}],
-    obstacles=[{"name": "inner_layer", "object": inner_layer,
-                "vertices": [contact_vertex], "direction": inward,
-                "min": 0.029, "max": 0.040}],
 )
 ```
 
-The example uses metre world units. Choose the region, handle mapping, sample
-indices, directions and bounds from the actual feature. Omit optional bounds
-that do not express a requirement; the returned record identifies what was
-observed. A directional ray must hit the first front-facing surface within its
+For a second edit, pass new **absolute world targets** to the same ordinary
+panel and region. Optional `distances` entries use
+`{"name": "width", "vertices": (a, b), "min": low, "max": high}`.
+Optional `obstacles` entries use `{"name": "backing", "object": backing,
+"vertices": sample_indices, "direction": inward, "min": low, "max": high}`.
+Choose sample indices, directions and bounds from the actual feature; omit
+bounds that do not express a requirement. The returned record identifies what
+was observed. A directional ray must hit the first front-facing surface within its
 declared range; a miss or back-facing first hit is a conflict, not a skipped
 sample. Ray distance is not shortest clearance, and these cage-origin samples
 do not measure the entire final shell against the obstacle.
@@ -351,10 +473,15 @@ displacement after native float storage. An unresolved coordinate precision or
 near-grazing ray is rejected instead of reporting a precise fit.
 Size bounds measure declared cage vertex pairs. Shell-pair bounds measure the
 distance between verified corresponding sides of one supported simple Solidify
-at the selected source vertices; they are not normal thickness or a global
-minimum wall guarantee. The source may have no modifiers or that supported
-Solidify alone. Shape keys, shared mesh data, animation, parent/constraint
-dependencies and other modifier stacks are outside this operation.
+at the selected source vertices. They measure the **Solidify prefix**, before
+Bevel and Weighted Normal; they are not final finish thickness, normal thickness
+or a global minimum wall guarantee. The source may have optional supported plain
+Solidify, optional Bevel, then optional Weighted Normal, each at most once and
+in that order. Finishes retain their identities, settings and matching
+viewport/render visibility; shell-pair observations temporarily exclude them
+and restore their visibility even on failure. Solidify must remain enabled.
+Shape keys, shared mesh data, animation, parent/constraint dependencies,
+Subdivision and other modifier stacks are outside this operation.
 
 If a bound, target, numerical solve or supported-state check fails, the call
 raises `ValueError` and retains its input coordinates and native data. A conflict
@@ -363,7 +490,7 @@ satisfy the requirements. The operation does not trade away a handle target to
 make another bound pass. Change the target, region or construction deliberately
 and try again from the retained source.
 
-On success, the same ordinary mesh and its per-element data remain. Reopen the
+On success, the same ordinary mesh, finish modifiers and per-element data remain. Reopen the
 native and call with new absolute targets, or use ordinary mesh editing without
 this module. Later edits need fresh observations. Inspect garment layers from
 the side and the hard-surface crease in context: smoother displacement is not
@@ -443,8 +570,8 @@ linked to the current scene and enabled in its active view layer; do not disable
 or exclude their collection. Each source needs its own `hide_render` flag, even
 inside a hidden collection, so diagnostic views preserve the same separation.
 Only meshes can carry the construction role. Unmarked hidden asset geometry
-still fails rather than disappearing from delivery. Do not use a construction
-mesh as the parent of deliverable objects.
+still fails rather than disappearing from delivery. A construction mesh may
+parent a deliverable only through the explicit native surface mount above.
 
 Protect neighboring components and unchanged sources by exact name. A host's
 evaluated shape changes when its cutter changes, so do not protect the intended
@@ -523,6 +650,36 @@ to the intended motion. Parent the moving segment and its attachments under
 that pivot; downstream joints follow their upstream segment. Keep the neutral
 world-space placement when assigning parents and verify it afterward. A name
 such as `elbow` does not create a joint or establish its axis.
+
+### Keep the neutral world pose when parenting
+
+After creating and placing a pivot and its ancestors, refresh the dependency
+graph before reading their world matrices. Use rotation/translation transforms
+with unit scale and no transform constraints. This initial parenting example
+uses an unanimated part, the authored neutral frame (frame 1 here), and the actual
+part/pivot names:
+
+```python
+import bpy
+
+part = bpy.data.objects["MovingPanel"]
+pivot = bpy.data.objects["HingePivot"]
+bpy.context.scene.frame_set(1)
+bpy.context.view_layer.update()
+neutral_world = part.matrix_world.copy()
+part.parent = pivot
+part.matrix_parent_inverse = pivot.matrix_world.inverted()
+part.matrix_world = neutral_world
+bpy.context.view_layer.update()
+world_error = max(abs(part.matrix_world[r][c] - neutral_world[r][c])
+                  for r in range(4) for c in range(4))
+if world_error > 1e-6:
+    raise ValueError("Parenting changed the neutral world pose")
+```
+
+The initial refresh matters for newly placed nested pivots whose cached matrices
+may not yet include the authored transforms. After parenting, rotate the pivot
+through useful intermediate poses and inspect the part and its attachments.
 
 Rigid plates normally follow one segment. A bridge, actuator or cable spanning
 two segments needs a separate choice: telescoping parts, an explicit linkage,

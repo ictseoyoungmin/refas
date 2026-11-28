@@ -114,9 +114,9 @@ def _surface(boundaries, patches):
         try:
             points = tuple(_point(point) for point in values)
         except TypeError as exc:
-            raise ValueError('a boundary must contain sampled points') from exc
+            raise ValueError(f'boundary {name!r} must contain sampled points') from exc
         if len(points) < 2 or any(a == b for a, b in zip(points, points[1:])):
-            raise ValueError('boundaries need at least two points and no zero-length spans')
+            raise ValueError(f'boundary {name!r} needs at least two points and no zero-length spans')
         profiles[name] = points
 
     uses, used = {}, set()
@@ -125,25 +125,26 @@ def _surface(boundaries, patches):
         try:
             values = tuple(values)
         except TypeError as exc:
-            raise ValueError('each patch needs bottom, right, top and left boundaries') from exc
+            raise ValueError(f'patch {name!r} needs bottom, right, top and left boundaries') from exc
         if len(values) != 4:
-            raise ValueError('each patch needs bottom, right, top and left boundaries')
+            raise ValueError(f'patch {name!r} needs bottom, right, top and left boundaries')
         sides = []
         for value in values:
             try:
                 key, reverse = value
             except (TypeError, ValueError) as exc:
-                raise ValueError('a boundary use is (name, reverse_boolean)') from exc
+                raise ValueError(f'patch {name!r}: a boundary use is (name, reverse_boolean)') from exc
             if not isinstance(key, str) or key not in profiles or type(reverse) is not bool:
-                raise ValueError('a boundary use needs an existing name and boolean direction')
+                raise ValueError(f'patch {name!r}: boundary {key!r} needs an existing name and boolean direction')
             ids = tuple((key, i) for i in range(len(profiles[key])))
             sides.append(ids[::-1] if reverse else ids)
             used.add(key)
         if len({side[0][0] for side in sides}) != 4:
-            raise ValueError('a patch must use four distinct named boundaries')
+            raise ValueError(f'patch {name!r} must use four distinct named boundaries')
         bottom, right, top, left = sides
         if len(bottom) != len(top) or len(left) != len(right):
-            raise ValueError('opposite patch boundaries need equal sample counts')
+            counts = {side[0][0]: len(side) for side in sides}
+            raise ValueError(f'patch {name!r}: opposite boundaries need equal sample counts; got {counts}')
         uses[name] = sides
 
     # Union only the corners explicitly connected by a patch. Equal spatial
@@ -160,11 +161,11 @@ def _surface(boundaries, patches):
     def position(key):
         return profiles[key[0]][key[1]]
 
-    for bottom, right, top, left in uses.values():
+    for name, (bottom, right, top, left) in uses.items():
         for a, b in ((bottom[0], left[0]), (bottom[-1], right[0]),
                      (top[0], left[-1]), (top[-1], right[-1])):
             if position(a) != position(b):
-                raise ValueError('patch corner coordinates must match exactly')
+                raise ValueError(f'patch {name!r}: corner {a} and {b} coordinates must match exactly')
             parents[root(b)] = root(a)
 
     vertices, indices, boundary_groups = [], {}, {}
@@ -217,16 +218,21 @@ def _surface(boundaries, patches):
     if any(not all(math.isfinite(x) for x in point) for point in stored):
         raise ValueError('surface coordinates exceed Blender mesh precision')
     edges, seen_faces = {}, set()
-    for face in faces:
+    patch_names = tuple(uses)
+    for face_index, (face, patch_index) in enumerate(zip(faces, patch_ids)):
+        context = f'patch {patch_names[patch_index]!r}, face {face_index}'
         if len(set(face)) != 4 or frozenset(face) in seen_faces:
-            raise ValueError('patches produce a collapsed or duplicate face')
+            raise ValueError(f'{context}: collapsed or duplicate face')
         seen_faces.add(frozenset(face))
-        _quad_geometry(stored, face)
+        try:
+            _quad_geometry(stored, face)
+        except ValueError as exc:
+            raise ValueError(f'{context}: {exc}') from exc
         for a, b in zip(face, face[1:]+face[:1]):
             key = tuple(sorted((a, b)))
             prior = edges.setdefault(key, [])
             if len(prior) == 2 or prior == [(a, b)]:
-                raise ValueError('shared edges need at most two oppositely wound faces')
+                raise ValueError(f'{context}: shared edge {key} needs at most two oppositely wound faces')
             prior.append((a, b))
     return vertices, faces, boundary_groups, patch_groups, patch_ids
 

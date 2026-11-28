@@ -71,6 +71,13 @@ def grid(name='Patch',n=12):
 def obstacle():
     return mesh('Obstacle',[(-.5,-.5,.1),(.5,-.5,.1),(.5,.5,.1),(-.5,.5,.1)],[(0,1,2,3)])
 
+def finish(obj):
+    solid=obj.modifiers.new('Thickness','SOLIDIFY');solid.thickness=.003;solid.offset=0
+    bevel=obj.modifiers.new('Panel edge','BEVEL');bevel.width=.0005;bevel.segments=2;bevel.angle_limit=.4
+    normal=obj.modifiers.new('Panel normals','WEIGHTED_NORMAL');normal.keep_sharp=True;normal.weight=30
+    obj.modifiers.active=bevel
+    return solid,bevel,normal
+
 def world(obj):
     matrix=tuple(tuple(r) for r in obj.matrix_world)
     return [tuple(math.fsum((matrix[i][3],*(matrix[i][j]*v.co[j] for j in range(3)))) for i in range(3))
@@ -185,13 +192,18 @@ for i,item in enumerate(attr.data):item.value=i*.003
 crease=obj.data.attributes.new(name='crease_edge',type='FLOAT',domain='EDGE')
 for item in crease.data:item.value=.6
 obj.data.vertices[7].hide=True;obj.data.edges[4].use_seam=True
+finish(obj)
 obj.select_set(True);neighbor.select_set(True);bpy.context.view_layer.objects.active=neighbor
 bpy.context.view_layer.update()
 before=[tuple(v.co) for v in obj.data.vertices];metadata=data_state(obj,False);other=state(neighbor)
-requested=targets(obj);result=edit_region(obj,**arguments(obj))
+native=state(obj);assert len(native[2][0])>2*len(obj.data.vertices)
+requested=targets(obj);result=edit_region(obj,**arguments(obj),
+    shell_pairs=[dict(name='Prefix thickness',vertex=56,min=.0029,max=.0031)])
 assert result['regionVertices']==121 and result['handleCount']==2
 assert result['maxHandleError']<1e-7 and result['outsideCageChange']==0
 assert .006<result['maxDisplacement']<.007 and max(result['trueResiduals'])<1e-7
+assert abs(result['observations'][0]['actual']-.003)<1e-7
+after=state(obj);assert after[1]==native[1] and after[3:]==native[3:]
 selected={v.index for v in obj.data.vertices if any(g.group==obj.vertex_groups['Region'].index for g in v.groups)}
 assert all(tuple(v.co)==before[v.index] for v in obj.data.vertices if v.index not in selected)
 assert data_state(obj,False)==metadata and state(neighbor)==other
@@ -205,7 +217,7 @@ assert state(obj)==original
 
     def test_finite_pair_shell_and_first_hit_obstacle_constraints_and_rollback(self):
         self.probe('''
-obj=grid();target=obstacle();solid=obj.modifiers.new('Thickness','SOLIDIFY');solid.thickness=.003;solid.offset=0
+obj=grid();target=obstacle();solid,bevel,normal=finish(obj)
 solid.use_even_offset=True
 distance=math.dist(*targets(obj).values())
 bounds=[dict(name='Size',vertices=(56,112),min=distance-1e-5,max=distance+1e-5)]
@@ -221,14 +233,77 @@ back=mesh('Backface',[(-.5,-.5,.15),(.5,-.5,.15),(.5,.5,.15),(-.5,.5,.15),
                       (-.5,-.5,.1),(.5,-.5,.1),(.5,.5,.1),(-.5,.5,.1)],[(3,2,1,0),(4,5,6,7)])
 reject(obj,'back-facing',obstacles=[dict(name='First backface',object=back,vertices=[56],direction=(0,0,-1),min=0,max=.2)])
 original=local_edit._evaluate
-def corrupt_pairing(o):
-    points,faces,triangles=original(o)
+def corrupt_pairing(o,disabled=()):
+    points,faces,triangles=original(o,disabled)
     if o==obj:
         first=list(faces[0]);first[0]=(first[0]+2)%len(obj.data.vertices);faces[0]=tuple(first)
     return points,faces,triangles
 local_edit._evaluate=corrupt_pairing
 try:reject(obj,'correspondence',shell_pairs=shell)
 finally:local_edit._evaluate=original
+''')
+
+    def test_optional_finishes_and_disabled_suffixes_preserve_native_state(self):
+        self.probe('''
+for index,kinds in enumerate((('BEVEL',),('WEIGHTED_NORMAL',),('BEVEL','WEIGHTED_NORMAL'),
+                             ('SOLIDIFY','BEVEL'),('SOLIDIFY','WEIGHTED_NORMAL'))):
+    obj=grid('Variant'+str(index));finish(obj)
+    for modifier in list(obj.modifiers):
+        if modifier.type not in kinds:obj.modifiers.remove(modifier)
+    for modifier in obj.modifiers:
+        if modifier.type=='WEIGHTED_NORMAL':modifier.show_viewport=modifier.show_render=False
+    before=state(obj);metadata=data_state(obj,False);requested=targets(obj)
+    shell=[dict(name='Prefix',vertex=56,min=.0029,max=.0031)] if 'SOLIDIFY' in kinds else []
+    report=edit_region(obj,**arguments(obj),shell_pairs=shell)
+    after=state(obj)
+    assert report['maxHandleError']<1e-7 and report['outsideCageChange']==0
+    assert max(math.dist(world(obj)[i],p) for i,p in requested.items())<1e-7
+    assert after[1]==before[1] and after[3:]==before[3:] and data_state(obj,False)==metadata
+    if not shell:reject(obj,'require the supported Solidify',shell_pairs=[dict(name='Missing',vertex=56,min=0,max=.01)])
+''')
+
+    def test_invalid_finish_order_visibility_and_shell_settings_are_rejected(self):
+        self.probe('''
+for index,kinds in enumerate((('BEVEL','SOLIDIFY'),('WEIGHTED_NORMAL','BEVEL'),('SOLIDIFY','SOLIDIFY'),
+                             ('BEVEL','BEVEL'),('WEIGHTED_NORMAL','WEIGHTED_NORMAL'),
+                             ('SOLIDIFY','SUBSURF'),('MIRROR',))):
+    obj=grid('Invalid'+str(index))
+    for kind in kinds:obj.modifiers.new(kind,kind)
+    reject(obj,'order without duplicates')
+obj=grid('Finished');solid,bevel,normal=finish(obj)
+for modifier in (bevel,normal):
+    modifier.show_render=False;reject(obj,'viewport/render');modifier.show_render=True
+for key,value in (('solidify_mode','NON_MANIFOLD'),('use_rim',False),('use_rim_only',True),
+                  ('vertex_group','Region'),('thickness_clamp',.1),('thickness',0.)):
+    old=getattr(solid,key);setattr(solid,key,value);reject(obj,'enabled plain EXTRUDE');setattr(solid,key,old)
+solid.show_viewport=solid.show_render=False;reject(obj,'enabled plain EXTRUDE')
+''')
+
+    def test_prefix_evaluation_failures_restore_suffix_flags_and_candidate_cage(self):
+        self.probe('''
+import sys,types
+obj=grid();solid,bevel,normal=finish(obj)
+normal.show_viewport=normal.show_render=False
+neighbor=grid('Neighbor');neighbor.select_set(True);bpy.context.view_layer.objects.active=neighbor
+before=state(obj);other=state(neighbor);real_bpy=sys.modules['bpy']
+for failure_at in (1,2):
+    calls=[]
+    def fail_evaluation():
+        calls.append(1)
+        assert not bevel.show_viewport and not bevel.show_render
+        assert not normal.show_viewport and not normal.show_render
+        if len(calls)==failure_at:raise RuntimeError('forced prefix evaluation failure')
+        return real_bpy.context.evaluated_depsgraph_get()
+    proxy=types.SimpleNamespace(types=real_bpy.types,context=types.SimpleNamespace(
+        mode=real_bpy.context.mode,scene=real_bpy.context.scene,view_layer=real_bpy.context.view_layer,
+        evaluated_depsgraph_get=fail_evaluation))
+    sys.modules['bpy']=proxy
+    try:
+        try:edit_region(obj,**arguments(obj),shell_pairs=[dict(name='Prefix',vertex=56,min=.0029,max=.0031)])
+        except RuntimeError as error:assert 'forced prefix evaluation' in str(error)
+        else:raise AssertionError('prefix failure ignored')
+    finally:sys.modules['bpy']=real_bpy
+    assert len(calls)==failure_at and state(obj)==before and state(neighbor)==other
 ''')
 
     def test_late_failure_deformation_flip_and_movement_limit_restore_everything(self):
@@ -337,8 +412,8 @@ finally:local_edit._storage_precision=precision
         self.cli('init', '--root', project, '--name', 'bounded-local-edit')
         create = self.root / 'create.py'
         create.write_text(SETUP + '''
-obj=grid();obj.modifiers.new('Thickness','SOLIDIFY').thickness=.003
-edit_region(obj,**arguments(obj))
+obj=grid();finish(obj)
+edit_region(obj,**arguments(obj),shell_pairs=[dict(name='Prefix',vertex=56,min=.0029,max=.0031)])
 neighbor=grid('Neighbor');neighbor.location.x=2
 ''')
         flags = ['--root', project, '--outputs', 'native', '--views', '', '--blender', BLENDER]
@@ -351,9 +426,14 @@ obj=bpy.data.objects['Patch'];before=[tuple(v.co) for v in obj.data.vertices]
 targets={56:tuple(obj.matrix_world@obj.data.vertices[56].co),112:tuple(obj.matrix_world@obj.data.vertices[112].co)}
 targets[56]=(targets[56][0],targets[56][1],targets[56][2]-.002)
 targets[112]=(targets[112][0]+.001,targets[112][1],targets[112][2])
-report=edit_region(obj,region='Region',handles=targets,max_displacement=.01)
+modifiers=list(obj.modifiers)
+report=edit_region(obj,region='Region',handles=targets,max_displacement=.01,
+    shell_pairs=[dict(name='Reopened prefix',vertex=56,min=.0029,max=.0031)])
 assert report['maxHandleError']<1e-6 and report['outsideCageChange']==0
-assert len(obj.data.vertices)==169 and len(obj.modifiers)==1
+assert len(obj.data.vertices)==169 and list(obj.modifiers)==modifiers
+assert [m.type for m in modifiers]==['SOLIDIFY','BEVEL','WEIGHTED_NORMAL']
+assert abs(modifiers[1].width-.0005)<1e-9 and modifiers[1].segments==2
+assert modifiers[2].keep_sharp and modifiers[2].weight==30
 # Ordinary native mesh edit remains possible without constructing helper controls.
 obj.data.vertices[84].co.z+=.0001
 obj.data.update()
@@ -368,7 +448,8 @@ for path,native_file in ''' + repr([(revised['outputs']['blend'], True), (delive
         bpy.ops.wm.read_factory_settings(use_empty=True);bpy.ops.import_scene.gltf(filepath=path)
     obj=bpy.data.objects['Patch']
     if native_file:
-        assert len(obj.data.vertices)==169 and len(obj.modifiers)==1 and obj.vertex_groups.get('Region')
+        assert len(obj.data.vertices)==169 and obj.vertex_groups.get('Region')
+        assert [m.type for m in obj.modifiers]==['SOLIDIFY','BEVEL','WEIGHTED_NORMAL']
     else:assert not obj.modifiers and len(obj.data.vertices)>169
     assert sorted(o.name for o in bpy.context.scene.objects)==['Neighbor','Patch']
 ''')
