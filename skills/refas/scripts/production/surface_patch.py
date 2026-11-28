@@ -1,10 +1,14 @@
-"""Construct ordinary mesh surfaces from explicit straight and curved boundaries.
+"""Construct ordinary meshes from explicit boundaries or corresponding sections.
 
 Sample named profiles once and reuse their names in adjoining four-sided patches.
 The patches share actual boundary vertex IDs; unrelated coincident coordinates
 are never welded. Interior points use a Coons blend of all four boundaries.
 The author chooses the reference-derived boundaries, profile handles and density.
 This does not infer a shape, guarantee tangent continuity or test self-intersection.
+
+Through-section construction samples the same profile spans at each authored
+station and interpolates corresponding points. Named feature junctions remain
+mesh columns, including when adjacent spans have different sample counts.
 
 No managed controls, handlers or rebuild dependency remain in the result. Continue
 with ordinary mesh edits and native modifiers. Coordinates undergo Blender's
@@ -237,6 +241,29 @@ def _surface(boundaries, patches):
     return vertices, faces, boundary_groups, patch_groups, patch_ids
 
 
+def _create_mesh(name, vertices, faces, groups, patch_ids=None):
+    import bpy
+    mesh = obj = None
+    try:
+        mesh = bpy.data.meshes.new(name)
+        mesh.from_pydata(vertices, [], faces)
+        mesh.update()
+        obj = bpy.data.objects.new(name, mesh)
+        for key, group in groups.items():
+            obj.vertex_groups.new(name=key).add(group, 1.0, 'REPLACE')
+        if patch_ids is not None:
+            attribute = mesh.attributes.new('refas_patch', 'INT', 'FACE')
+            attribute.data.foreach_set('value', patch_ids)
+        bpy.context.scene.collection.objects.link(obj)
+        return obj
+    except Exception:
+        if obj is not None:
+            bpy.data.objects.remove(obj, do_unlink=True)
+        if mesh is not None:
+            bpy.data.meshes.remove(mesh)
+        raise
+
+
 def build_surface(name, *, boundaries, patches):
     """Create and link one ordinary quad Mesh from named four-boundary patches.
 
@@ -263,23 +290,135 @@ def build_surface(name, *, boundaries, patches):
         vertices, faces, boundary_groups, patch_groups, patch_ids = _surface(boundaries, patches)
     except (OverflowError, ZeroDivisionError) as exc:
         raise ValueError('surface interpolation exceeds the supported numeric range') from exc
-    import bpy
-    mesh = obj = None
+    groups = {prefix+key: group
+              for prefix, source in (('boundary:', boundary_groups), ('patch:', patch_groups))
+              for key, group in source.items()}
+    return _create_mesh(name, vertices, faces, groups, patch_ids)
+
+
+def _section_rows(sections, parameters, profile_divisions, section_divisions,
+                  feature_names, interpolation):
     try:
-        mesh = bpy.data.meshes.new(name)
-        mesh.from_pydata(vertices, [], faces)
-        mesh.update()
-        obj = bpy.data.objects.new(name, mesh)
-        for prefix, groups in (('boundary:', boundary_groups), ('patch:', patch_groups)):
-            for key, group in groups.items():
-                obj.vertex_groups.new(name=prefix+key).add(group, 1.0, 'REPLACE')
-        attribute = mesh.attributes.new('refas_patch', 'INT', 'FACE')
-        attribute.data.foreach_set('value', patch_ids)
-        bpy.context.scene.collection.objects.link(obj)
-        return obj
-    except Exception:
-        if obj is not None:
-            bpy.data.objects.remove(obj, do_unlink=True)
-        if mesh is not None:
-            bpy.data.meshes.remove(mesh)
-        raise
+        sections, parameters = tuple(sections), tuple(parameters)
+        profile_divisions, section_divisions = tuple(profile_divisions), tuple(section_divisions)
+        feature_names = tuple(feature_names)
+    except TypeError as exc:
+        raise ValueError('sections, parameters, divisions and feature names must be sequences') from exc
+    if len(sections) < 2 or len(parameters) != len(sections):
+        raise ValueError('at least two sections and one parameter per section are required')
+    if interpolation not in ('LINEAR', 'CUBIC'):
+        raise ValueError('section interpolation must be LINEAR or CUBIC')
+    if any(isinstance(t, bool) or not isinstance(t, Real) for t in parameters):
+        raise ValueError('section parameters must be finite and strictly increasing')
+    try:
+        parameters = tuple(float(t) for t in parameters)
+    except (OverflowError, ValueError) as exc:
+        raise ValueError('section parameters exceed the supported numeric range') from exc
+    if (not all(math.isfinite(t) for t in parameters)
+            or any(a >= b or not math.isfinite(b-a) for a, b in zip(parameters, parameters[1:]))):
+        raise ValueError('section parameters must be finite and strictly increasing')
+    if (len(section_divisions) != len(sections)-1
+            or any(isinstance(n, bool) or not isinstance(n, Integral) or n < 1
+                   for n in section_divisions)):
+        raise ValueError('one positive section division count is required per section interval')
+    profiles = tuple(sample_profile(section, divisions=profile_divisions) for section in sections)
+    if not feature_names:
+        feature_names = tuple(str(i) for i in range(len(profile_divisions)+1))
+    if len(feature_names) != len(profile_divisions)+1:
+        raise ValueError('feature names must name every profile junction, including both ends')
+    for feature in feature_names:
+        _label(feature, 'feature:')
+    if len(set(feature_names)) != len(feature_names):
+        raise ValueError('feature names must be unique')
+
+    slopes = []
+    if interpolation == 'CUBIC':
+        for i in range(len(profiles)):
+            lo, hi = max(0, i-1), min(len(profiles)-1, i+1)
+            dt = parameters[hi]-parameters[lo]
+            if not math.isfinite(dt):
+                raise ValueError('section parameter span exceeds the supported numeric range')
+            slopes.append(tuple(_point(tuple((q-p)/dt for p, q in zip(a, b)))
+                                for a, b in zip(profiles[lo], profiles[hi])))
+
+    rows, authored_rows = [profiles[0]], [0]
+    for i, count in enumerate(section_divisions):
+        a, b = profiles[i], profiles[i+1]
+        dt = parameters[i+1]-parameters[i]
+        for j in range(1, int(count)):
+            u = j/count
+            if interpolation == 'LINEAR':
+                row = tuple(_point(_blend(p, q, u)) for p, q in zip(a, b))
+            else:
+                # Relative coordinates retain translation invariance without
+                # cancelling large origins in the absolute Hermite basis.
+                h = u*u*(3-2*u)
+                h0, h1 = u*(u-1)*(u-1), u*u*(u-1)
+                row = tuple(_point(tuple(math.fsum((p[k], h*(q[k]-p[k]),
+                                  h0*dt*m0[k], h1*dt*m1[k])) for k in range(3)))
+                            for p, q, m0, m1 in zip(a, b, slopes[i], slopes[i+1]))
+            rows.append(row)
+        rows.append(b)
+        authored_rows.append(len(rows)-1)
+    junctions = [0]
+    for count in profile_divisions:
+        junctions.append(junctions[-1]+int(count))
+    return rows, authored_rows, dict(zip(feature_names, junctions))
+
+
+def build_sections(name, *, sections, parameters, profile_divisions,
+                   section_divisions, feature_names=(), interpolation='CUBIC'):
+    """Create one ordinary quad Mesh through corresponding open profiles.
+
+    ``sections`` is a sequence of the LINEAR/BEZIER segment sequences accepted
+    by ``sample_profile``. Every section needs the same segment count and order;
+    each segment junction must mean the same feature. ``profile_divisions``
+    supplies shared per-segment interval counts, preserving junction columns
+    even when counts differ between segments. There is no arc-length resampling.
+
+    ``parameters`` supplies one finite strictly increasing station per section,
+    independent of world axes. ``section_divisions`` gives one interval count
+    between each adjacent section pair. Every authored section is retained.
+    LINEAR joins corresponding samples directly. CUBIC is through-knot Hermite:
+    endpoint derivatives use the adjacent secant; each internal derivative is
+    (P[i+1]-P[i-1])/(t[i+1]-t[i-1]). One shared derivative gives longitudinal C1
+    interpolation, not a monotone fit, exact surface continuity or a sparse cage.
+    CUBIC may overshoot; divisions=1 retains only authored section rows.
+
+    Groups ``section:0``, ``section:1``, ... select authored rows. Groups
+    ``feature:<name>`` select full junction columns; optional ``feature_names``
+    has segment-count + 1 unique names, otherwise names are 0, 1, ... . Cross-
+    profile creases come from authored segment directions/handles. No smoothing,
+    crease weights, Subdivision, caps, closed-seam welding or controls are added.
+
+    Native float32 storage, local quad validation, caller-context preservation
+    and failed-creation cleanup match ``build_surface``. This initial constructor
+    does not replace an existing mesh or preserve layers across a rerun. The
+    result needs no helper or rebuild to reopen, edit or add native modifiers.
+    Reference interpretation, global intersections and tangent compatibility
+    between arbitrary transverse spans remain the author's responsibility.
+    """
+    _label(name)
+    try:
+        rows, authored_rows, junctions = _section_rows(
+            sections, parameters, profile_divisions, section_divisions,
+            feature_names, interpolation)
+        # Each pair of sampled rows is a patch with no interior row. This reuses
+        # exact boundary sharing, deterministic indices and native-precision
+        # validation; no second mesh writer or topology checker is needed.
+        boundaries = {f'row:{i}': row for i, row in enumerate(rows)}
+        patches = {}
+        for i, (a, b) in enumerate(zip(rows, rows[1:])):
+            boundaries[f'left:{i}'] = (a[0], b[0])
+            boundaries[f'right:{i}'] = (a[-1], b[-1])
+            patches[str(i)] = ((f'row:{i}', False), (f'right:{i}', False),
+                               (f'row:{i+1}', False), (f'left:{i}', False))
+        vertices, faces, boundary_groups, _, _ = _surface(boundaries, patches)
+        groups = {f'section:{i}': boundary_groups[f'row:{row}']
+                  for i, row in enumerate(authored_rows)}
+        groups.update({f'feature:{key}': [boundary_groups[f'row:{i}'][column]
+                                        for i in range(len(rows))]
+                       for key, column in junctions.items()})
+    except (OverflowError, ZeroDivisionError) as exc:
+        raise ValueError('section interpolation exceeds the supported numeric range') from exc
+    return _create_mesh(name, vertices, faces, groups)

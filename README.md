@@ -4,7 +4,7 @@ RefAs helps agents build and revise editable 3D assets from visual references.
 The production workflow connects ordinary Blender scripts, a native scene,
 GLB export, actual renders and recoverable revisions.
 
-**Package version: 2.1.0.** The package, Python entry and plugin metadata share
+**Package version: 2.2.0.** The package, Python entry and plugin metadata share
 this version. Publication is a separate verified action: a source checkout or
 locally packed archive does not establish that a release is available. The
 [GitHub Releases](https://github.com/ictseoyoungmin/refas/releases) page identifies
@@ -13,7 +13,14 @@ published versions and their verified installation archives. Follow the
 [2.0 evidence ledger](docs/development/refas-2-progress.md) and
 [work status](docs/WORK_STATUS.md) for the demonstrated scope.
 
-The published **[v2.1.0 release](https://github.com/ictseoyoungmin/refas/releases/tag/v2.1.0)** adds native form authoring to the existing
+The 2.2.0 source adds `surface_patch.build_sections`: interpolate corresponding
+line/Bezier sections through explicit stations, retain ridge/channel junctions,
+and continue editing the ordinary mesh through native section/feature selections.
+It replaces repeated interpolation and grid indexing in author scripts; it does
+not infer shape from an image. See [#474](https://github.com/ictseoyoungmin/refas/issues/474)
+and the [section example](skills/refas/references/production-assemblies.md#interpolate-corresponding-sections).
+
+The previous **[v2.1.0 release](https://github.com/ictseoyoungmin/refas/releases/tag/v2.1.0)** added native form authoring to the existing
 editing tools. Actual copied-skill tests and fresh reference-based car/garment
 authoring demonstrate native revision and delivery; source likeness remains
 unapproved. The release was published on **2026-11-28** from
@@ -71,18 +78,18 @@ skin-weight preservation path before delivery. A different Blender exporter's
 unsupported structure fails explicitly; a version report alone is not an export
 compatibility or asset-readiness test.
 
-Download [refas-2.1.0.tgz](https://github.com/ictseoyoungmin/refas/releases/download/v2.1.0/refas-2.1.0.tgz)
-and its [SHA-256 file](https://github.com/ictseoyoungmin/refas/releases/download/v2.1.0/refas-2.1.0.tgz.sha256)
+Download [refas-2.2.0.tgz](https://github.com/ictseoyoungmin/refas/releases/download/v2.2.0/refas-2.2.0.tgz)
+and its [SHA-256 file](https://github.com/ictseoyoungmin/refas/releases/download/v2.2.0/refas-2.2.0.tgz.sha256)
 from the matching GitHub Release. Verify the archive before installing it:
 
 ```bash
-sha256sum --check refas-2.1.0.tgz.sha256
-npm install --prefix /absolute/new/refas-install ./refas-2.1.0.tgz
+sha256sum --check refas-2.2.0.tgz.sha256
+npm install --prefix /absolute/new/refas-install ./refas-2.2.0.tgz
 /absolute/new/refas-install/node_modules/.bin/refas --version
 /absolute/new/refas-install/node_modules/.bin/refas doctor
 ```
 
-These are GitHub Release assets, not an assertion that version 2.1.0 is present
+These are GitHub Release assets, not an assertion that version 2.2.0 is present
 in the npm registry. The archive contains the production launcher and skill;
 user models, renders, recovery archives and the retained 1.x runtime are excluded.
 
@@ -103,7 +110,7 @@ To build the same installation format from a source checkout:
 
 ```bash
 npm pack
-npm install --prefix /absolute/new/refas-install ./refas-2.1.0.tgz
+npm install --prefix /absolute/new/refas-install ./refas-2.2.0.tgz
 /absolute/new/refas-install/node_modules/.bin/refas --version
 /absolute/new/refas-install/node_modules/.bin/refas doctor
 ```

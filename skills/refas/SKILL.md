@@ -71,7 +71,7 @@ Read the matching section, not every guide. Ordinary `bpy` remains available whe
 | Current need | Guide |
 | --- | --- |
 | Whole volume, sculpting, cuts, grooves and unions | `references/production-form.md` |
-| Shared profiles, surface transitions, attachment, curves, lattice or rigid joints | `references/production-assemblies.md` |
+| Corresponding sections, shared boundaries, attachment, curves, lattice or rigid joints | `references/production-assemblies.md` |
 | Cloth transitions, folds and garment construction | `references/production-garments.md` |
 | Fixed comparison views and source-view interpretation | `references/production-review.md` |
 | Mesh defects, retopology, optimization and output compatibility | `references/production-topology.md` |
