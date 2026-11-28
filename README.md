@@ -13,14 +13,15 @@ published versions and their verified installation archives. Follow the
 [2.0 evidence ledger](docs/development/refas-2-progress.md) and
 [work status](docs/WORK_STATUS.md) for the demonstrated scope.
 
-The **2.1.0 release candidate** adds native form authoring to the existing
+The published **[v2.1.0 release](https://github.com/ictseoyoungmin/refas/releases/tag/v2.1.0)** adds native form authoring to the existing
 editing tools. Actual copied-skill tests and fresh reference-based car/garment
 authoring demonstrate native revision and delivery; source likeness remains
-unapproved. **PUBLICATION PENDING:** release preparation and main integration
-are tracked in [#468](https://github.com/ictseoyoungmin/refas/issues/468), with
-the public-download receipt to follow. The published stable release remains
-2.0.0. Candidate archives are `refas-2.1.0.tgz` and
-`refas-2.1.0.tgz.sha256`; these names do not imply public availability.
+unapproved. The release was published on **2026-11-28** from
+[`37564be1`](https://github.com/ictseoyoungmin/refas/commit/37564be1bb58c2462020b5dfcc5fe97b627e66e1),
+after main integration [#469](https://github.com/ictseoyoungmin/refas/pull/469).
+The [verified public receipt](docs/development/refas-2.1-release.json) records
+the actual downloaded `refas-2.1.0.tgz` and `refas-2.1.0.tgz.sha256`, source
+equality and successful isolated installation under [#470](https://github.com/ictseoyoungmin/refas/issues/470).
 
 ## Build, inspect, improve
 
@@ -70,9 +71,9 @@ skin-weight preservation path before delivery. A different Blender exporter's
 unsupported structure fails explicitly; a version report alone is not an export
 compatibility or asset-readiness test.
 
-Once v2.1.0 is published, download `refas-2.1.0.tgz` and its `.sha256` file from
-the matching GitHub Release. Until then, use the source-build route below or
-the published 2.0.0 release. Verify the archive before installing it:
+Download [refas-2.1.0.tgz](https://github.com/ictseoyoungmin/refas/releases/download/v2.1.0/refas-2.1.0.tgz)
+and its [SHA-256 file](https://github.com/ictseoyoungmin/refas/releases/download/v2.1.0/refas-2.1.0.tgz.sha256)
+from the matching GitHub Release. Verify the archive before installing it:
 
 ```bash
 sha256sum --check refas-2.1.0.tgz.sha256
