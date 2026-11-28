@@ -2,35 +2,57 @@
 
 ## Current resumption point
 
-Status: **2026-11-28 — proposed 2.1.0, implementation and evidence pending**.
-Work continues on `feat/native-form-authoring` from the integrated
-`develop/v2.1.0` source `d6401525`. Package identity remains
-`2.1.0-alpha.1`; the published stable version remains **v2.0.0**.
+Status: **2026-11-28 — validated 2.1.0 release candidate; PUBLICATION PENDING**.
+Release preparation [#468](https://github.com/ictseoyoungmin/refas/issues/468)
+uses `release/native-authoring-2.1.0` from integrated source
+[`8adfc0ff`](https://github.com/ictseoyoungmin/refas/commit/8adfc0ff220bd44f2c48959f88aad3053c8082eb).
+Package identity is **2.1.0**; the published stable version remains **v2.0.0**.
 
-The current objective is to construct and revise the whole form with flexible
-native modeling choices, then cut, engrave, combine and refine necessary
-details. Spatial cage brushes and editable mesh/path Boolean operations are
-being connected to the existing patch, mount, recess, bridge, projection and
-local-edit tools. No single modeling method or mandatory call sequence is
-introduced. See the [2.1 plan](development/refas-2.1-plan.md) and
+The candidate combines broad native shaping and editable cuts/engraving/unions
+with existing patches, mounting, recesses, bridges, projection and local edits.
+Authors choose methods for the shape and can return to the main forms. See the
+[2.1 plan](development/refas-2.1-plan.md) and
 [relationship map](development/refas-2-skill-map.md).
 
-| Current outcome | Status |
+| Current outcome | Source-bound evidence and remaining step |
 |---|---|
-| New form operations and installed discovery | Implementation and capability-local verification pending |
-| Fresh whole-form dogfood from original references | Pending; retain previous #456 rejections and assess likeness directly |
-| Renderer scene-switch follow-up #448 | Investigation/fix verification pending; prior native-crash cause remains unproven |
-| Final source, copied/packed skill and required repository checks | Pending; earlier test totals do not certify this candidate |
-| Main integration and public v2.1.0 package | Pending; no new tag, asset or publication receipt claimed |
+| Native form contract [#465](https://github.com/ictseoyoungmin/refas/issues/465) | [PR #464](https://github.com/ictseoyoungmin/refas/pull/464) merged as `c03763749ba25f07bde99a7df684135c85ca7209`; 14 actual Blender/copied-skill operation tests and 5 discovery tests passed. |
+| Diagnostic context fix [#466](https://github.com/ictseoyoungmin/refas/issues/466) | [PR #467](https://github.com/ictseoyoungmin/refas/pull/467) merged as `8adfc0ff220bd44f2c48959f88aad3053c8082eb`; deterministic baseline FAIL/candidate PASS and five actual Blender tests. The prior C-crash cause remains unknown. |
+| Reviewed source and distribution | Feature/render required repository, exact CI and source-budget gates passed; 967 JavaScript tests, zero skips, and the exact 28 skill / 32 package file set. Final version/docs preparation checks and exact-main CI remain separate. |
+| Fresh reference-based car and garment | Native authoring, continued editing and explicit delivery demonstrated; actual image review leaves source fidelity unapproved. Asset evidence is identified below. |
+| Main integration and public v2.1.0 package | Pending. #468 owns preparation/main integration; a separate post-merge issue must record the actual publisher, public download and installation receipt. |
+
+Fresh authoring evidence is bound to feature source `c66f1ec3adfdc580bec640169de0ee6458479b2e`
+and retained in the [car/garment evidence archive](https://chatgpt.com/library?file_id=libfile_c96a07773eac8191b2586d649ec60758&account_id=personal):
+**85,207,125 bytes**, SHA-256
+`990f2dc483678a5d0d65a4ff51adb3983e9415d209d899e703339fb8022bce93`.
+
+| Fresh asset | Selected native and delivered scope |
+|---|---|
+| Car | Revision `459b9076c54f42c196348ea7d1e42e56`; 291 asset meshes / 40,278 triangles, with 11 retained native Boolean operands excluded from GLB. |
+| Garment | Editable revision `b2b7f9287a384b7c869351d19667c92f`: 92 asset meshes, 128 curves and 8 construction mount carriers. Restored delivery `a9016974ffb44ec5b042b848a78c6908`: 220 meshes / 490,998 triangles. |
+
+Both assets reopened as native and GLB with actual renders. The garment also
+restored exact native bytes and re-exported identical GLB bytes. Car curvature
+and fascia, and garment tails/layering, remain simplified. These are bounded
+static authoring/delivery results, not finished-art, wearing/motion or target-engine
+acceptance. Raw assets and observations remain outside Git.
+
+A separate corrected-worker copied-skill render used the selected car native
+at **896 px / 48 samples**: RGBA pixels, camera/light metadata and native SHA-256
+matched; PNG container bytes differed. This verifies the scoped context fix
+without attributing every intermittent crash to the removed scene setter.
 
 The original 2.1 ledger remains **16 demonstrated + 4 retired proposal
 criteria / 20**. The original 2.0 ledger below remains **36/37**; neither is
-an artistic completion percentage. [E2 #436](https://github.com/ictseoyoungmin/refas/issues/436)
-still lacks matched actual provider/model/usage/billed-cost evidence. Keep
-missing observations null and preserve frozen comparison results, scoped use
-acceptances and final-art rejections. [#456](https://github.com/ictseoyoungmin/refas/issues/456)
-remains the reference-shape finding; [#448](https://github.com/ictseoyoungmin/refas/issues/448)
-remains separate from form-authoring acceptance.
+an artistic completion percentage. [#456](https://github.com/ictseoyoungmin/refas/issues/456)
+and [#448](https://github.com/ictseoyoungmin/refas/issues/448) remain open under
+[milestone 2.1.1](https://github.com/ictseoyoungmin/refas/milestone/7), retaining
+the original source-fidelity criteria and unresolved C-crash investigation.
+[E2 #436](https://github.com/ictseoyoungmin/refas/issues/436) remains blocked under
+[2.0.1](https://github.com/ictseoyoungmin/refas/milestone/5) on actual matched
+provider/model/usage/billed-cost evidence. Missing observations stay null;
+frozen comparisons, scoped use acceptances and final-art rejections remain intact.
 
 ## Published 2.0 checkpoint — 2026-11-27
 

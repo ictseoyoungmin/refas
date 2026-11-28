@@ -1,21 +1,26 @@
 # RefAs release criteria
 
-## Proposed 2.1.0 release boundary
+## 2.1.0 release candidate boundary
 
 The candidate extends native whole-form authoring with spatial cage brushes
 and editable mesh/path Boolean operations, alongside the existing surface,
 mounting, recess, projection and local-edit tools. Methods remain optional and
-can be combined or revisited as the shape requires. Current metadata remains
-`2.1.0-alpha.1`; implementation, final evidence, main integration and public
-v2.1.0 publication are **pending**.
+can be combined or revisited as the shape requires. Metadata is **2.1.0**;
+reviewed feature and renderer sources are validated, while release preparation,
+main integration and exact-main publication checks remain separate.
+**PUBLICATION PENDING:** [#468](https://github.com/ictseoyoungmin/refas/issues/468)
+owns preparation/main integration; the actual public receipt belongs to a
+separate post-merge issue.
 
-Admission requires actual copied-skill native execution, saved editable
-controls, useful re-edit after reopening, defined failure restoration and the
-declared delivery behavior. Inspect fresh reference-based whole-asset renders
-as well as local operation results. Preserve the rejected #456 candidates and
-report remaining likeness gaps; passing a Boolean or brush test cannot accept
-the whole asset. Follow the [2.1 plan](development/refas-2.1-plan.md) for the
-new scope and [work status](WORK_STATUS.md) for its current evidence.
+The admitted [#465](https://github.com/ictseoyoungmin/refas/issues/465) native
+authoring contract has 14 actual Blender/copied-skill operation tests, five
+discovery tests and fresh car/garment native continuation and delivery evidence.
+Native and GLB reopened with actual renders; the garment demonstrated exact
+native restore and identical GLB re-export. Source fidelity remains unapproved
+under the original [#456](https://github.com/ictseoyoungmin/refas/issues/456)
+criteria. Passing local operations and useful editing does not accept the
+whole asset. Follow the [2.1 plan](development/refas-2.1-plan.md) and
+[work status](WORK_STATUS.md) for source identities, asset evidence and limits.
 
 Complete the required repository checks and exact package allowlist/identity
 verification before main integration. The existing manual publisher requires
@@ -28,10 +33,15 @@ installation result before calling publication complete. Local packing and a
 version change alone do not publish a release; npm registry publication is
 outside this channel.
 
-The renderer follow-up #448 needs its own actual render/state evidence; the
-candidate does not yet claim that crash is fixed. E2 #436 remains blocked on
-actual matched timing and billing evidence and is independent of this bounded
-release. Keep both previous visual comparisons and final-art decisions intact.
+The narrower [#466 / PR #467](https://github.com/ictseoyoungmin/refas/pull/467)
+fix restores diagnostic render context after Python failure, with a reproduced
+baseline failure, five actual Blender tests and one unchanged-pixel copied-skill
+car render. It does not establish the C-level cause of the intermittent crash.
+#456 and [#448](https://github.com/ictseoyoungmin/refas/issues/448) remain open in
+[2.1.1](https://github.com/ictseoyoungmin/refas/milestone/7).
+[E2 #436](https://github.com/ictseoyoungmin/refas/issues/436) remains blocked on
+actual matched timing and billing evidence under 2.0.1, independently of this
+bounded release. Keep previous visual comparisons and final-art decisions intact.
 The 2.0 and original 2.1 ledgers retain their meanings; they do not turn into
 a whole-asset quality percentage at release.
 

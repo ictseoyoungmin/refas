@@ -1,10 +1,12 @@
 # RefAs 2.1.0 — native form and detail authoring
 
 Target: [milestone 2.1.0](https://github.com/ictseoyoungmin/refas/milestone/6).
-Integration: `develop/v2.1.0`; current source identity: `2.1.0-alpha.1`.
-The published stable release remains `2.0.0`. The proposed `2.1.0` scope is
-under implementation; final copied-skill, whole-asset and release evidence is
-pending. This plan is not a publication receipt or a completed quality claim.
+Release preparation: [#468](https://github.com/ictseoyoungmin/refas/issues/468),
+`release/native-authoring-2.1.0` from integrated source `8adfc0ff`; package
+identity: **2.1.0**. Reviewed feature/render evidence is complete within the
+scope below. **PUBLICATION PENDING:** final preparation, main integration and
+exact-main publication checks remain separate; published stable is `2.0.0`.
+This plan is not a publication receipt or a completed quality claim.
 
 [Work OS plan](https://app.notion.com/p/425c6a3b5bf181979c7feb3706c4ba0a)
 owns the private reference links and current evaluation context. The original
@@ -48,20 +50,28 @@ that distinction. New whole-form work starts from the original reference in
 an empty scene, with methods chosen for the object and ordinary native
 continuation. A later repair of an old candidate is separate evidence.
 
-The proposed extension has three optional authoring entry points. Their
-implementation and acceptance evidence are pending; they add no completed
-items to the fixed ledger below.
+The three optional authoring entry points are admitted under the distinct
+native authoring contract [#465](https://github.com/ictseoyoungmin/refas/issues/465),
+merged by [PR #464](https://github.com/ictseoyoungmin/refas/pull/464) as
+`c03763749ba25f07bde99a7df684135c85ca7209`. Fourteen actual Blender/copied-skill
+operation tests and five discovery tests passed. They add no completed items
+to the fixed ledger below and do not close #456.
 
-| Entry | Intended construction/editing role | Evidence required before admission |
+| Entry | Construction/editing role | Demonstrated scope and limits |
 |---|---|---|
-| `sculpt.sculpt_brush` | GRAB, DRAW, INFLATE, SMOOTH or FLATTEN on an ordinary basis cage using world-space center/radius, the operation's displacement/direction/strength, mask/selection and optional symmetry. | Actual influence and outside preservation, transforms, failure restoration, retained native data, and a useful whole-form edit after reopening. An evaluated posed surface is not the brush's input coordinate domain. |
-| `mesh_form.boolean_form` | Named native DIFFERENCE, UNION or INTERSECT between target and mesh operand, with explicit modifier placement through `before`. | Actual cut/join/intersection, editable operand and feature revision, preserved surrounding state, native reopen and evaluated delivery. It does not replace the more specific sampled wall/floor contract of `cut_recess`. |
-| `mesh_form.engrave_path` | Editable path cutter from explicit points, radius, cyclic state and resolution, using the same native Boolean path. | Useful open/closed path engraving, cutter re-edit, modifier order, failure behavior and saved controls. Geometry alone does not decide the reference's intended groove depth or wall structure. |
+| `sculpt.sculpt_brush` | GRAB, DRAW, INFLATE, SMOOTH or FLATTEN on an ordinary basis cage using world-space center/radius, the operation's displacement/direction/strength, mask/selection and optional symmetry. | Actual influence, outside preservation, transforms, failure restoration and retained native data checked; fresh saved-native shaping exercised. An evaluated posed surface is not the brush's input coordinate domain. |
+| `mesh_form.boolean_form` | Named native DIFFERENCE, UNION or INTERSECT between target and mesh operand, with explicit modifier placement through `before`. | Actual cut/join/intersection, operand ownership and feature revision, preserved surrounding state, native reopen and evaluated delivery checked. It does not replace the sampled wall/floor contract of `cut_recess`. |
+| `mesh_form.engrave_path` | Editable path cutter from explicit points, radius, cyclic state and resolution, using the same native Boolean path. | Open/closed path engraving, cutter re-edit, modifier order, failure behavior and saved controls checked. Geometry alone does not decide the reference's intended groove depth or wall structure. |
 
-Review real whole-asset views before accepting these operations as a useful
-workflow. Record visible mismatches as well as edits that improve them; neither
-test counts nor more tool calls establish source likeness. This does not reopen
-the retired managed Sweep implementation.
+Fresh car and garment trials began from the original references and exercised
+native continuation, actual native/GLB reopen and rendered delivery. The
+garment also restored exact native bytes and reproduced its GLB. Independent
+image review still leaves source fidelity unapproved: #456 retains the original
+criteria under [2.1.1](https://github.com/ictseoyoungmin/refas/milestone/7).
+The [work status](../WORK_STATUS.md) identifies the durable archive, source and
+asset revisions. These results demonstrate useful native authoring, not final
+art, wearer/motion or target-engine readiness. The retired managed Sweep
+implementation remains retired.
 
 Original ledger: **16 demonstrated and 4 retired proposal criteria out of
 20**. M1–M4, R1–R4, J1–J4 and bounded D1–D4 are demonstrated. The user-authorized scope revision
@@ -83,7 +93,7 @@ are separate outcomes. Writing this plan does not complete a criterion.
 
 Surface patches, rigid mounting, recess construction, boundary transitions,
 bounded native projection and joint local edits form the integrated toolset.
-The proposed brushes and mesh/path operations extend that same author-script
+The brushes and mesh/path operations extend that same author-script
 path. Existing helpers remain available before and after them; the operation
 is chosen for the current geometric need, not for a mandatory call sequence.
 The managed Sweep proposal is retired after its native path and matched
@@ -106,11 +116,13 @@ Do not add a scene DSL, global approval state machine or mandatory report pack.
 Tool results should expose the edited objects/controls and concrete unresolved
 conditions; the agent retains source interpretation and visual judgment.
 
-The renderer follow-up in [#448](https://github.com/ictseoyoungmin/refas/issues/448)
-is pending. Review the risky scene-switch path separately from the geometry
-operations and verify any replacement with actual render/state tests. Removing
-an observed failure path must not be reported as proof of every prior native
-crash's cause.
+The separate [#466 / PR #467](https://github.com/ictseoyoungmin/refas/pull/467)
+fix removes the active-window scene setter from diagnostic rendering and uses
+a scoped scene/view-layer context. A deterministic exception leak reproduced
+on the baseline and passed on the candidate; five actual Blender tests and a
+copied-skill selected-car render passed, with unchanged RGBA and camera/light
+metadata. [#448](https://github.com/ictseoyoungmin/refas/issues/448) remains open
+under 2.1.1 because the intermittent C-crash root cause is still unknown.
 
 ## Dogfood and comparison
 
@@ -378,9 +390,11 @@ Keep discovery, the exact package allowlist, optional guides and relationship
 map synchronized. Test the actual copied/packed skill, not repository-only
 imports. Run capability-local checks and required repository gates. Source
 integration, whole-asset acceptance, main merge and publication are distinct.
-The proposed release needs the tested source on main, exact-main CI, the
-existing manual publisher and downloaded package verification. These are
-currently pending; [release criteria](../release-criteria.md) owns the
-publication boundary. E2's missing actual time/billing evidence remains
-separate from this release, and prior art/comparison verdicts remain intact.
+Feature #465 / PR #464 and render #466 / PR #467 passed their source-bound
+checks and exact CI. Release preparation #468 aligns 2.1.0 identities and docs
+before main integration; final preparation checks, exact-main CI, the existing
+manual publisher and downloaded-package verification remain pending. A separate
+post-merge issue must record the actual public receipt. [Release criteria](../release-criteria.md)
+owns that boundary. E2's missing actual time/billing evidence remains separate
+from this release, and prior art/comparison verdicts remain intact.
 Retain completed task branches for the user to delete.
