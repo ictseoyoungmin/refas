@@ -64,6 +64,22 @@ class CapabilityTests(unittest.TestCase):
         self.assertNotIn("hint", search())
         self.assertNotIn("hint", search(query="decal"))
 
+    def test_whole_form_tasks_expose_preparation_and_native_limits(self):
+        for query in ("car body", "차체 윤곽"):
+            self.assertEqual({row["id"] for row in search(query=query)["matches"]},
+                             {"surface-patch", "sculpt-brush"})
+        for query, expected in (("blockout", "sculpt-brush"), ("음각", "engrave-path"),
+                                ("union", "boolean-form"), ("메시 통합", "boolean-form"),
+                                ("곡면에 배지를 붙이기", "surface-mount")):
+            self.assertEqual([row["id"] for row in search(query=query)["matches"]], [expected])
+        sculpt = search(route_id="sculpt-brush")["matches"][0]
+        self.assertIn("world-space", sculpt["prerequisites"])
+        self.assertIn("not evaluated", sculpt["limitations"])
+        self.assertIn("mask", sculpt["callables"][0]["signature"])
+        groove = search(route_id="engrave-path")["matches"][0]
+        self.assertIn("intersect", groove["limitations"])
+        self.assertIn("radius", groove["callables"][0]["signature"])
+
     def test_copied_cli_reads_current_signature_without_site_packages(self):
         with tempfile.TemporaryDirectory() as folder:
             root = Path(folder)

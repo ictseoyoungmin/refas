@@ -2,6 +2,18 @@
 
 All notable RefAs changes are documented here. RefAs follows semantic versioning.
 
+## 2.1.0 — Proposed
+
+Implementation and verification are in progress. The source version remains
+`2.1.0-alpha.1`; v2.1.0 has not been published. Final release notes will record
+the tested source and actual admitted scope.
+
+- Put whole-form construction and multiview correction before detail work, with native meshes, sculpting, curves, modifiers and shared-boundary surfaces available as complementary choices. Return to the larger forms when needed; no fixed modeling technique or mandatory tool chain is introduced.
+- Add optional spatial `sculpt_brush` operations on the world-space basis cage: GRAB, DRAW, INFLATE, SMOOTH and FLATTEN with bounded influence, masks and symmetry. The author chooses the shape; these operations do not infer reference geometry or certify volume, thickness or collisions.
+- Add editable native mesh Boolean difference, union and intersection, plus path-based engraving with retained cutter controls. Keep named feature revision and modifier ordering explicit, and continue using the existing native/recovery/delivery path.
+- Connect the new form operations with the existing surface patches, mounting, recess, boundary, projection and local-edit tools through focused discovery and guides. Actual copied-skill execution, whole-asset results, repository checks and package verification remain pending for this candidate.
+- Retain the rejected reference-shape candidates in #456, the retired Sweep proposal and the original 2.0 evidence ledger. Actual timing/billing evidence in #436 and the unresolved renderer investigation #448 remain separate; this proposal makes no general resemblance, speed or cost claim.
+
 ## 2.1.0-alpha.1 — Development
 
 - Connect authoring task words to exact guide sections and concise input prerequisites, add native hinge guidance and useful empty-search help, and include executable decal revision and neutral-pose parenting examples. Keep existing guide paths, source-derived signatures and geometry support limits.
