@@ -3,7 +3,7 @@
 Use this guide for segmented mechanisms, armor and manufactured parts with
 visible joints. Begin with the reference's complete assembly and proportions.
 
-Sections: scale and hierarchy; connected boundary transitions; rigid surface mounting; flexible surface projection; joint local edits; editable cutters; editable cables and trim; lattice deformation;
+Sections: scale and hierarchy; initial surfaces from boundaries; connected boundary transitions; rigid surface mounting; flexible surface projection; joint local edits; editable cutters; editable cables and trim; lattice deformation;
 motion hierarchy; surface attachments; useful poses; delivered animation;
 local component revisions.
 
@@ -70,6 +70,75 @@ For outward normals and an exterior to preserve, use `solidify.offset = -1`.
 Reuse the intended modifier and inspect its actual evaluated interior, rims,
 openings and neighboring parts. Subdivision or deformation can change the field
 between source vertices; verify the resulting shell in required poses.
+
+## Create surfaces from outlines and sections
+
+Use `surface_patch.py` when the initial shape is defined by a small set of
+outlines and cross-sections. `sample_profile` samples explicit `LINEAR`
+segments (two control points) or cubic `BEZIER` segments (four control points).
+Give one positive division count per segment; each junction and endpoint is
+retained. Choose the controls from the reference before sampling: smooth
+interpolation cannot supply a missing fold, panel break or proportion.
+
+`build_surface` creates ordinary mesh patches from named boundaries. Each
+patch lists **bottom, right, top, left**; bottom/top run left-to-right and
+left/right run bottom-to-top, not around the perimeter. Each use is
+`(boundary_name, reverse)`; opposite sides need equal sample counts. Reusing
+the same name shares actual vertex IDs. Equal coordinates under different
+names do not request a global weld. Corners must meet consistently.
+Samples correspond by index, not arc length: align feature junctions on opposite
+profiles, or split the patch at a shoulder, fold or opening corner. Equal counts
+alone do not align those features.
+
+This complete example starts a rolled section and its adjoining leaf together:
+
+```python
+import bpy
+from surface_patch import sample_profile, build_surface
+
+def line(a, b, divisions):
+    return sample_profile([('LINEAR', (a, b))], divisions=[divisions])
+
+a, b = (-.12, 0, 0), (.12, 0, 0)
+c, d = (-.14, .04, .03), (.14, .04, .03)
+e, f = (-.18, .10, .018), (.18, .10, .018)
+edges = {
+    'root': line(a, b, 6), 'turn': line(c, d, 6), 'free': line(e, f, 6),
+    'roll-left': sample_profile([
+        ('BEZIER', (a, (-.12, .02, 0), (-.14, .02, .03), c))], divisions=[4]),
+    'roll-right': sample_profile([
+        ('BEZIER', (b, (.12, .02, 0), (.14, .02, .03), d))], divisions=[4]),
+    'leaf-left': line(c, e, 2), 'leaf-right': line(d, f, 2),
+}
+surface = build_surface('Turned panel', boundaries=edges, patches={
+    'roll': (('root', False), ('roll-right', False),
+             ('turn', False), ('roll-left', False)),
+    'leaf': (('turn', False), ('leaf-right', False),
+             ('free', False), ('leaf-left', False)),
+})
+shell = surface.modifiers.new('Thickness', 'SOLIDIFY')
+shell.thickness, shell.offset = .002, -1
+```
+
+The four boundaries determine the interior with Coons interpolation; their
+samples are not resampled, apart from Blender's native float32 mesh storage.
+The joined patches have one cage boundary at
+`turn`, not two separately generated edges. Boundary and patch vertex groups
+support later ordinary mesh edits. Native Solidify, Bevel, Subdivision or Shape
+Keys can be added deliberately; no control objects, handler or rebuild are
+required to edit the saved mesh. Use a modest cage density and inspect the
+evaluated form. The operation does not guarantee tangent continuity, prevent
+all interior intersections or judge reference resemblance.
+
+For a window surround, define the opening and the surrounding frame's width,
+depth and inward return together. A pillar has a section between different
+glass boundaries; collapsing both glass edges onto one line removes that
+section. Derive removable panels or moving glazing from the same design
+curves with deliberate inset/clearance, while retaining separate objects for
+their motion. Use linear boundaries for planar features instead of smoothing
+every edge. Add hardware in its local mounting frame and use the evaluated
+host with `place_on_surface` below at initial placement, or `bind_on_surface`
+when the rigid detail must follow later host edits.
 
 ## Join existing cage boundaries
 

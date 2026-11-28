@@ -16,6 +16,13 @@ and wrist openings. Match its negative spaces as well as its outer silhouette.
 Keep intentional openings open. Treat the unseen body or lining as an inferred
 fit aid, not additional reference evidence.
 
+For initial cloth surfaces, `sample_profile` and `build_surface` from
+`surface_patch.py` turn explicit outline/section curves into an ordinary mesh.
+Define the torso support, collar root, fold and free edge as related boundaries;
+share a named boundary when panels form one shell. See the assembly guide's
+complete rolled-section example. Use extra patches only where a meaningful
+section changes, rather than replacing the garment with dense ellipse rows.
+
 For oversized or boxy garments, shape the torso and sleeves as one envelope.
 Compare shoulder slope, the arm-body gap, hem width, neckline opening and sleeve
 volume in a neutral material. Retain the source's ease instead of defaulting to
@@ -67,6 +74,13 @@ Use controlled thickness and softened fold curvature. Check the neckline,
 inside face, lapel-to-body distance and collar-to-shoulder clearance from side
 and rear views. Place piping on the final cloth surface after these forms are
 stable. Decorative strips must not conceal a structural gap.
+
+Create buttons and buckles in a local mounting frame and use `place_on_surface`
+on the actual evaluated cloth at first placement. Choose a ray toward the
+intended outer layer and a tangent along it; do not use the camera-facing world
+direction as the cloth normal. If a later initial-build adjustment changes that
+host, regenerate its dependent mounts before saving the assembly. The assembly
+guide describes the existing mounting and stable-topology binding helpers.
 
 Decide whether thickness itself is editable. If its approved value causes an
 intersection, revise the source curvature, spacing or fold while retaining that

@@ -32,6 +32,16 @@ intended form; do not ban them or infer quality from polygon/part counts.
 
 ## Fixed functional acceptance
 
+The user's latest correction makes **initial construction** the next priority:
+avoid independent approximate surfaces and guessed attachment positions at
+creation, rather than treating later repairs as the primary product outcome.
+[#456](https://github.com/ictseoyoungmin/refas/issues/456) evaluates explicit
+straight/Bezier profiles and shared-boundary native surface construction,
+using existing evaluated-host mounting for initial hardware placement. This
+does not reopen the retired managed Sweep implementation or add completed
+items to the ledger below. Admission requires fresh reference-based builds
+from empty scenes and ordinary native continuation, not repaired old models.
+
 Original ledger: **16 demonstrated and 4 retired proposal criteria out of
 20**. M1–M4, R1–R4, J1–J4 and bounded D1–D4 are demonstrated. The user-authorized scope revision
 retires the present Sweep proposal, S1–S4, after its practical benefit was not
@@ -80,10 +90,13 @@ conditions; the agent retains source interpretation and visual judgment.
 | Car | Body proportions and round wheels; wheel arches; actual intakes/recesses; deliberate straight and curved panels; mirror/spoiler mounting; doors and visible interior. Sheet dimensions are design inputs, not proof that generated pixels agree across views. |
 | Mascot failure case | Broad feather groups and tip/section variation; beak/head transition; leg/foot proportions; support of studs, harness and bag. Keep the original GLB immutable and distinguish image judgments from measured geometry. |
 
-Start with source-bound local feature studies and integrate useful operations
-back into the two whole main assets. A successful local study is not a
-finished coat/car. Use selected views or a section that answers the current
-feature question; review both the affected feature and whole-form context.
+For initial-construction changes, start fresh from the original reference and
+updated skill in an empty scene. Do not supply old failure geometry, defect
+coordinates or repair instructions to the author. Judge the first useful
+assembly in its whole-form context as well as the relevant section. A later
+repair can improve an asset, but cannot substitute for this initial-generation
+evidence. Source-bound local studies still help develop bounded operations;
+their success is not a finished coat/car or a whole-toolkit quality claim.
 
 Distinguish controlled before/after edits from independent matched workflow
 trials. The former tests a correction; the latter compares the same task,
