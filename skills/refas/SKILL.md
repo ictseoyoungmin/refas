@@ -7,43 +7,21 @@ description: Build and revise reference-driven 3D assets with Blender, preserve 
 
 Create an editable 3D asset that answers the user's visual and practical requirements. Work from the original references, build a coherent whole, inspect actual renders, and improve the largest visible defect. Keep the successful model available for further edits and its intended use.
 
-Use the Python production commands below to create and continue assets.
+## Turn the reference into editable form
 
-## Start with the asset
+Inspect the complete original reference before modeling. Establish the intended use and any required movement from the user's request. Use existing decisions; ask only for missing information that would materially change the asset. Separate source-visible shape from inferred depth and engineered choices. Generated views and model renders are working aids, not new observations of the original.
 
-Inspect the supplied references before modeling. Establish the intended use, major proportions, distinctive shapes, important openings, materials, and any required movement. Use the user's existing decisions; ask only for missing information that would materially change the asset.
+Translate visible features into geometry you can actually edit: primary landmark positions, changes of section, opening boundaries and relations between parts. Use a common scene frame. Put those choices into the points, profiles or cage vertices that control the form, then render the combined result. Correct a visible discrepancy through its responsible controls; let that need determine the technique. This does not require a separate landmark report or parameter framework.
 
-For clothing or articulated subjects intended for games or animation, make wearing or movement part of construction from the start. Use the actual target character or mechanism when available. A static figure is an intermediate result unless that is the requested deliverable. Declare the supported character, motion range, export consumer and asset budget; do useful work without inventing a universal game-ready profile.
+Resolve primary volume, proportions and negative spaces before small decoration. Inspect a neutral material from source-relevant angles. A smooth envelope needs additional sections or a different cage when it cannot express a defining ridge, hollow or return; more polygons or smoothing cannot supply that missing design. Keep defining surface transitions visible in the geometry. Return to broad proportions whenever the assembled result loses the reference's shape or appeal.
 
-Separate what the image shows from inferred depth and engineered choices. Complete plausible side and rear surfaces, while keeping hidden details identifiable as assumptions. Generated reference views, depth maps, and model renders are working aids rather than new observations of the original subject.
+Construct adjoining surfaces from shared design boundaries and inspect their evaluated connection. Separate parts when motion, a real seam or construction requires it; inspect their combined form throughout. Choose a blockout, connected patches, sculpt, curves, lattice or ordinary mesh edits for the shape they allow you to control. No technique or helper-call sequence is compulsory.
 
-Resolve primary volume, proportions and negative spaces first; then shape transitions, folds and thickness before adding small decoration. Use these as modeling priorities, not mandatory stages or report bundles. Compare the whole form in a neutral material from useful angles. A blockout can become a sculpted cage, a set of connected patches, or a combination of techniques. Return to broad proportions whenever the assembled result loses the reference's shape or appeal. Separate parts early when motion, material boundaries or construction require them; inspect their combined form throughout.
+For clothing or articulated subjects, use the actual target character or mechanism when available. Build wearing and movement into the construction when required, and preserve source-visible asymmetry. A static figure is an intermediate result unless it is the requested deliverable.
 
-Read `references/production-form.md` when developing whole-form blockout/sculpt or cutting, engraving and joining forms. `sculpt_brush` from `scripts/production/sculpt.py` moves or smooths the existing base cage in world space, including an optional weighted mask. `boolean_form` and `engrave_path` from `scripts/production/mesh_form.py` retain editable native operands for openings, grooves, incised patterns and solid unions. Choose a technique for the shape it gives, not to satisfy a mandatory tool sequence. Inspect the evaluated surface and negative space after each meaningful change.
+## Build and continue the native asset
 
-For forms defined by outlines and sections, `sample_profile` and `build_surface` from `scripts/production/surface_patch.py` generate native mesh patches from explicit straight/Bezier boundaries; a reused boundary shares actual cage vertices. The assembly guide gives a complete initial-construction example. Direct sculpt, curves, lattice and ordinary Blender modeling remain useful alternatives. Preserve visible asymmetry. A large number of primitives or polygons does not establish shape quality.
-
-Define connected surfaces together at creation. Give each boundary its source-derived outline and each fold or return its actual section; share boundary names within `build_surface` instead of copying coordinates into separate pieces. Give neighboring rows room to turn gradually. For separate moving parts, derive the mating outlines and deliberate clearance from the same design boundaries without welding them. Separately subdivided edges can open a crack even when their control points meet. Inspect the evaluated connection, thickness and nearby curvature from both sides; preserve intentional openings. Change the cage or construction method when the evaluated form remains poor.
-
-For two existing open cage chains or closed loops, `bridge_boundaries` from `scripts/production/boundary_bridge.py` makes a connected native transition with explicit vertex correspondence and preserved surrounding cage data. Set `closed=True` for loops such as an armhole; choose native surface blending or a deliberate linear join. The assembly guide explains source winding, supported edits and limits.
-
-Load a construction guide only when its problem is present: `references/production-garments.md` for cloth transitions and folded collars, or `references/production-assemblies.md` for segmented hard surfaces, joint pivots and local pose checks.
-
-Find a relevant helper or native recipe with `python3 scripts/produce.py authoring-capabilities --query "car body"`; other useful task terms include `sculpt`, `engrave`, `union`, `attach badge`, `decal`, `hinge`, `joint handles` and `thickness`. Each result gives the inputs to prepare, its scope and the exact guide section. Read that section when the task fits; an empty result suggests shorter search terms or the full catalogue. Ordinary `bpy` authoring remains available.
-
-For a blind recess in a solid, `cut_recess` from `scripts/production/recess.py` constructs and revises a real cavity from a selected surface, convex outline, depth and sampled remaining-material limits. The assembly guide gives its scope and the general Boolean recipe. Keep cutters and surface-fitting sources editable when later corrections depend on them. Explicitly mark only a construction **mesh** with `obj["refas_role"] = "construction"` and `obj.hide_render = True`; keep it enabled in the current scene and active view layer. Native revisions preserve these meshes while asset surface counts, framing and GLB exclude them. Ordinary hidden objects are not inferred to be construction sources.
-
-Create a rigid badge, button, buckle or bracket in its local mounting frame, then use `bind_on_surface` from `scripts/production/surface_mount.py` when it must follow later host edits. It fits the actual evaluated surface and retains native Surface Deform plus rigid vertex parenting; saved contact bounds are checked before production output. Apply intended host scale before binding. A changed host topology needs a deliberate new mount, and motion delivery needs baking. Use `place_on_surface` for a one-time placement, or `surface_binding.py` for explicitly authored section transport. The assembly guide gives the mounting-plane convention and native dependency; guessed XYZ or a world-front normal cannot replace the actual supporting surface. Inspect neighboring sections and clearance after editing.
-
-For a prepared flexible surface layer, `project_region` from `scripts/production/surface_project.py` fits an existing mask with native Shrinkwrap, checks bounded hits and actual residuals, and restores a failed edit. The assembly guide describes layer preparation, supported stacks and retained native controls.
-
-For several local target positions, `edit_region` from `scripts/production/local_edit.py` moves handles jointly inside an explicit region while retaining the outside cage and supported native Solidify → Bevel → Weighted Normal finishes. Use it on a static unparented cage; the assembly guide gives a complete panel example, sampled bounds and failed-edit recovery.
-
-Read `references/production-topology.md` when checking mesh defects, rebuilding topology, or optimizing an asset for delivery. Choose topology for the actual deformation and use; reducing polygon count alone does not establish useful retopology.
-
-## Start or resume a production project
-
-Paths below are relative to the installed skill root. Run the entry script by its absolute path if the working directory differs. Store the project outside the installed skill directory.
+Paths are relative to the installed skill root. Use the entry script's absolute path from another directory. Store the project outside the skill.
 
 ```bash
 python3 scripts/produce.py doctor
@@ -51,127 +29,62 @@ python3 scripts/produce.py init --root PROJECT --name asset-name --reference ORI
 python3 scripts/produce.py status --root PROJECT
 ```
 
-Repeat `--reference` for multiple original files. A design brief without an image can start without that flag. Initialization copies the supplied references into the project; preserve those copies. `doctor` reports the available Python/Blender environment and `status` identifies the current revision and its files.
+Repeat `--reference` for multiple original files; a text-only brief can omit it. For existing work, inspect the current native, renders and retained intent from `status` before editing.
 
-For existing work, inspect `status`, the current native scene, and its renders before editing. Read any retained intent and findings so that a new agent continues the same asset.
+Write ordinary Blender Python using `bpy`, meaningful object names and a scene organization that makes the next edit clear. Without an explicit input asset, the first run starts from an empty scene, including no World datablock; create needed scene resources. Later runs without an explicit input open the current saved native before executing the edit script. Batch related corrections into one useful edit. The worker provides `bpy`, importable helper modules and `REFAS_OUTPUT_DIR`.
 
-To adopt changed references, pass the complete desired set and the `sequence` returned by `status`:
-
-```bash
-python3 scripts/produce.py references --root PROJECT --reference ORIGINAL_IMAGE --reference UPDATED_BRIEF --expected-sequence SEQUENCE
-```
-
-This preserves the model and its history. Use `--clear` instead of reference flags to explicitly remove all active references. Identical file contents are a no-op regardless of paths or order. `status` and `verify` report `evidenceFreshness.status`: `current`, `stale`, or `no-revision`. `stale` means the current bundle used a different reference content set; its files can still have valid integrity. New references require a new edit/review before deciding visual acceptance.
-
-## Build, inspect, revise
-
-Write a normal Blender Python script using `bpy`. The worker executes it inside Blender; no RefAs geometry DSL, capability graph, or manually authored evidence JSON is required. Use meaningful object names and a scene organization that makes the next local edit clear. Batch related corrections into one useful edit rather than saving a new revision for every small operation.
+Choose views that expose the current source-shape question. For repeatable framing, define a small fixed view specification with `references/production-review.md` and reuse it on compared runs:
 
 ```bash
-python3 scripts/produce.py run --root PROJECT --script BUILD_SCRIPT --intent "build the complete primary form" --outputs native --views hero --size 384 --samples 8 --timeout 120
+python3 scripts/produce.py run --root PROJECT --script BUILD_SCRIPT \
+  --intent "build the complete primary form" --review-spec REVIEW_JSON
 ```
 
-The CLI defaults to `--outputs native`: save the editable scene and requested views without GLB export or reimport. Its default view is `hero`; add a side or detail view only when it answers the current modeling question. Use `--views ''` when no render is needed. Without an explicit input, the first run starts from an empty scene, including no World datablock; create any scene resources your script needs. A subsequent run opens the current saved native scene before applying the script:
+A view specification is optional; `--views front,side` selects built-in views when useful. Those views reframe to current bounds, so do not treat them as a fixed comparison or source-camera registration. Pass the desired review/view settings each run. Native output is the default; use `--views ''` when no image is needed.
 
-```bash
-python3 scripts/produce.py run --root PROJECT --script EDIT_SCRIPT --intent "adjust the headband pad while preserving the earcups" --protect-object EarcupLeft --protect-object EarcupRight --views side
-```
+To start from an existing asset, use `--input-blend EXISTING.blend` or `--input-glb EXISTING.glb` once, then omit it to continue the saved native. Read `references/production-project.md` for input selection, supported scene data, changed references, exact object protection and recovery. Preserve required UVs, materials, rigs, weights, shape keys and object identity during local edits. Use a separate Save As file for manual edits; recorded revisions remain immutable.
 
-Use exact existing object names with repeated `--protect-object` flags to reject changes to their recorded native state and materials. Choose those names from the starting scene; the earcup names above are examples. The baseline is that scene at its starting frame, including objects imported from an explicit asset before the script runs. An edit script should modify the existing scene rather than recreate unrelated objects. Drivers and node-group internals are not exhaustive, and the guard does not approve all animation frames or visual quality.
-
-To edit an existing asset, select either `--input-glb ASSET.glb` for a self-contained GLB or `--input-blend ASSET.blend` for a separately saved native. Each flag chooses the complete starting scene; it does not append objects to the current revision. Read `references/production-import.md` for this workflow and its preservation limits. Omit both flags on later edits to continue the saved native. Use Blender's Save As for manual edits; files returned by `status` are immutable revision files. The worker provides `bpy` and the absolute `REFAS_OUTPUT_DIR` to scripts; the production runner manages the native scene, selected outputs and revision metadata. Use `--expected-revision REVISION_ID --expected-sequence SEQUENCE` to require the revision and reference state you inspected.
+## Revise from visible differences
 
 1. **Construct the whole.** Resolve silhouette, proportions, thickness, negative space, and component relationships. For a character, establish face and body identity before clothing detail or accessories.
-2. **Inspect real output.** Open the rendered images and compare them with the original reference. Choose a small number of views that reveal the current question: a side view for depth, a close view for a face, or a material-aware view for appearance. Request further views only for unresolved defects; do not generate a default pack of crops, videos, full arrays or reports.
+2. **Inspect real output.** Open the rendered images and compare them with the original reference. Choose views for the current question and inspect the affected detail in its whole-object context.
 3. **Make a focused correction.** State the visible problem and the parts to preserve. Change the responsible objects or parameters, then compare the new render with both the source and the prior revision.
 4. **Keep or restore.** A successful command records an output revision; it does not decide whether the shape is better. Restore the earlier revision if the change damages accepted work or fails to improve the target defect.
-5. **Continue only where useful.** Fix unresolved major defects before polish. If repeated edits do not help, reconsider camera, representation, or construction method instead of generating more reports.
-
-Preserve UVs, materials, rigs, weights, shape keys, and object identity during local edits when the asset contains them. Inspect affected geometry and deformation, not only object counts. Saved fingerprints are change observations and can help locate unexpected edits; they do not prove deformation quality or game readiness.
-
-Keep classic Blender `CURVE` objects editable during native iterations when their Bezier, POLY or NURBS controls express piping, cables or profiles well. Native save/reopen, renders and object protection retain their recorded controls, settings, shape keys and materials. Inspect the evaluated surface while editing the controls; tessellated mesh counts do not describe the control cage. Read the assembly guide for local curve edits and the topology guide before converting for delivery.
-
-Use an editable Blender `LATTICE` cage for a broad local deformation when moving a few controls is useful. Ordinary `bpy` edits the cage and its Lattice modifier; native revisions retain the recorded grid, interpolation, controls, groups, shape keys and animation. Inspect the cage's compact summary and the affected host's evaluated surface separately. Read the assembly guide for cage placement, protection and delivery.
-
-Before delivery, inspect unintended openings, winding, intersections and unsupported attachments on evaluated geometry and on the reopened export. Classify intentional neck/cuff openings and separate moving parts explicitly. Exercise wearing or motion through useful intermediate states, then retopologize or reduce excessive geometry while retaining the source design and protected data. Keep the detailed source and compare the optimized candidate under fixed views and the same poses.
-
-Use a temporary native observation to answer a specific geometry question without making another revision or render:
+5. **Reconsider an unproductive approach.** If repeated edits do not improve the visible difference, change the controls, camera or construction method. Fix unresolved major shape defects before polish; more reports are not a modeling correction.
 
 ```bash
-python3 scripts/produce.py inspect --root PROJECT --object SleeveLeft --frame 1 --frame 24 --topology
-```
-
-To inspect a standalone native before adopting it into a project, replace
-`--root PROJECT` with `--input-blend EXISTING.blend`. The same read-only query
-uses the original file directly and verifies its unchanged hash; it does not
-create a project or copy the model. Its result has `revision: null` and no
-project reference-freshness claim. Revision/sequence guards require `--root`.
-
-The compact JSON describes the requested objects and frames; omit object selection for a scene overview and omit frames for the saved current frame. `--topology` adds complete mesh-condition counts, including the evaluated tessellation of supported classic curves, without location samples. Use `--topology-details` instead when you need bounded locations for selected objects and frames. This read creates no project revision or permanent diagnostic files. It does not establish full-scene collision clearance, continuous animation quality or engine readiness. Retain detailed diagnostics only when needed to resolve a defect.
-
-For before/after comparison, keep the camera and lighting fixed. Pass `--review-spec REVIEW_JSON` to capture explicit orthographic views and a fixed light rig with the revision; omit `--views` to render all views in that file. Read `references/production-review.md` when defining those views. The default views frame the current bounding box and can move when geometry changes. Neither route establishes registration to the source image.
-
-Optional `compare` measures coverage changes in fixed transparent views and explicit regions. Read the review guide for limits; it never approves target improvement or promotes a baseline.
-
-Each `run` captures its starting asset, script and supplied render/review options and records fresh outputs together. Pass the desired options on each run; prior options are not implicit defaults. External originals can change without altering their captured historical copies.
-
-Native `run` submissions accept portable scenes with visible meshes and classic `CURVE` objects, explicitly marked construction meshes, editable `LATTICE` control cages and packed still-image textures. Link cages to the scene and keep them enabled and visible in the active view layer; a cage may have `hide_render` set because it is not a renderable surface. Unmarked hidden mesh/curve geometry, disabled or excluded construction sources, text (`FONT`), `SURFACE`, modern hair `CURVES` and object instances remain unsupported; convert or realize them explicitly before submission. Temporary `inspect` queries can describe other object types without approving them for submission.
-
-Delivery remains mesh-only and refuses unconverted curves. Choose the final curves and convert them through ordinary `bpy` in a recoverable `run --outputs delivery`; earlier native revisions keep their editable controls. Conversion at one frame does not preserve curve shape-key or geometry animation. Intentionally bake or rebuild required motion in a supported mesh representation and verify the exported playback before delivery.
-
-Delivery also rejects every remaining scene `LATTICE`. For a static result, apply the intended deformation at the selected frame and remove the cage in a recoverable edit before delivery. Keep the editable cage in the earlier native revision. This does not automatically bake cage or shape-key animation; resolve required motion deliberately before removing its controls.
-
-Other supported static mesh modifiers stay editable in the native scene and are evaluated for GLB export. Match each modifier's viewport/render visibility and enabled subdivision levels, or apply the intended geometry: inventory and export use the viewport dependency graph, while Cycles uses render settings. For curves, set `render_resolution_u` to `0` (reuse viewport resolution) or match every non-POLY spline's `resolution_u`. Delivery additionally rejects unapplied non-armature modifiers on skinned or shape-key meshes; resolve those before export. Dirty packed textures are refreshed before the native save.
-
-Construction meshes remain in the delivered `.blend`; the GLB contains the evaluated asset without those source surfaces. Static modifier evaluation uses the selected frame and does not bake source-driven animation. A deliverable may have a construction parent only through the explicit `bind_on_surface` relationship; static delivery realizes its evaluated rigid transform. Select construction sources explicitly with `inspect --object` or `--protect-object` when inspecting or preserving them; protecting a host also protects its recorded evaluated shape and modifier target identity.
-
-## Keep source, review, and recovery connected
-
-Each successful production revision retains the editable `.blend`, actual requested renders, script and machine-recorded metadata; delivery revisions also retain GLB. The runner verifies recorded file integrity and prevents a failed or stale run from silently replacing the current revision. Blender scripts execute as trusted local code; the runner is not a security sandbox.
-
-```bash
-python3 scripts/produce.py verify --root PROJECT
 python3 scripts/produce.py restore --root PROJECT --revision REVISION_ID
 ```
 
-Use `verify` to check the recorded project artifacts, and inspect `status` after recovery. Restore publishes the selected prior bundle as a new revision and retains history and the currently active references. A restored bundle can therefore be `stale`; restore does not silently re-adopt its old references. Add `--expected-revision` and `--expected-sequence` to protect a planned restore from concurrent changes. File hashes show which bytes were saved; they do not judge resemblance, topology quality, or usability in a game engine. If the project reports missing or changed artifacts, resolve that condition before building on them.
+Use temporary `inspect --root PROJECT --object NAME` queries for a bounded scene question. Add topology details or motion frames only when needed. Use `verify` when checking recorded artifact integrity; hashes and topology counts do not judge resemblance or usability.
 
-Do not hide an unavailable Blender backend by generating a substitute preview and calling the run successful. Explain the concrete execution failure, retain the prior usable revision, and repair the toolchain or script.
+## Use an operation guide when the geometry needs it
 
-Successful runs retain compact execution metadata. Add `--keep-diagnostics` to a run or delivery only when its raw job and Blender log are needed for debugging. Failed runs retain their log and run-local `blender-tmp/` directory, including native crash files when Blender writes them. Render log markers distinguish entering and returning from rendering and scene switches; a missing completion marker narrows the last operation but does not establish its failure cause. Temporary `inspect` observations do not retain these files.
-
-Keep one working project and measure its storage before making copies:
+Choose the intended geometry edit before looking up a helper. The catalogue returns exact callable signatures, prerequisites and guide sections:
 
 ```bash
-python3 scripts/produce.py storage --root PROJECT
-python3 scripts/produce.py compact --root PROJECT
-python3 scripts/produce.py compact --root PROJECT --apply
+python3 scripts/produce.py authoring-capabilities --query "bridge"
 ```
 
-`compact` previews redundant payload copies in committed run directories; `--apply` removes only copies that exactly match retained revisions. It preserves checkpoints, source files and failed runs. New successful runs move their payload into revision storage. Do not replace this bounded cleanup with deletion of old assets or history.
+Read the matching section, not every guide. Ordinary `bpy` remains available when no helper fits.
 
-## Review and deliver
+| Current need | Guide |
+| --- | --- |
+| Whole volume, sculpting, cuts, grooves and unions | `references/production-form.md` |
+| Shared profiles, surface transitions, attachment, curves, lattice or rigid joints | `references/production-assemblies.md` |
+| Cloth transitions, folds and garment construction | `references/production-garments.md` |
+| Fixed comparison views and source-view interpretation | `references/production-review.md` |
+| Mesh defects, retopology, optimization and output compatibility | `references/production-topology.md` |
+| Project/input lifecycle, scene support, preservation, recovery or execution failure | `references/production-project.md` |
 
-Export when the selected native is ready for a handoff or when a specific export question needs testing:
+## Deliver the selected result
+
+Export for the requested handoff or a specific export investigation:
 
 ```bash
-python3 scripts/produce.py doctor --check-export
 python3 scripts/produce.py deliver --root PROJECT
 ```
 
-`deliver` exports the current native without rerunning an edit script. Use `run --outputs delivery` when a final edit and export belong together. Delivery saves native and GLB and defaults to `hero,side`; explicit `--views` or a review specification controls requested renders. `doctor --check-export` checks exporter capabilities and its guarded skin-weight path, not asset quality or engine readiness.
+`deliver` exports the current native without rerunning its script. Use `run --outputs delivery` when a final edit and export belong together. Read the topology/project guide for explicit curve or lattice conversion, modifiers and animation limits. Keep an editable source and inspect the reopened export, affected connections and any required movement in the intended consumer.
 
-Hand off one selected native/export pair and the necessary scripts, textures and source resources, with only useful review images. Keep recovery history in the working project rather than creating checkpoint archives for each turn. Report the selected revision, useful changes and remaining findings concisely in chat or one summary; keep large logs and full diagnostic arrays for a concrete debugging need. Preserve existing assets and history.
-
-Review three separate questions:
-
-- **Reference fit:** Do silhouette, proportions, distinctive parts, and appearance match the source-visible design? Mark uncertain or invented details as such.
-- **Asset condition:** Are unintended holes, reversed faces, intersections and floating attachments resolved? Are topology, materials, UVs and required deformations suitable for the intended use? Report the tested surfaces and intentional exceptions.
-- **Target readiness:** Can the actual character wear the garment, or can the assembly perform its declared motion with connected parts? Has the engine/export consumer exercised skinning or animation and the chosen geometry/material budget? An exported GLB alone is not an engine test.
-
-A render or technical check can support only the claim it actually demonstrates. Report a prototype as a prototype. Human visual acceptance, technical verification, and a future automated resemblance evaluator are separate evidence.
-
-For an existing production project, inspect `status` and continue its revisions.
-If the source is specifically a saved RefAs 1.x project, the import guide also
-describes selecting an archived asset with `import-v1`; previous approvals do
-not approve the new output.
+Hand off one selected native/export pair, necessary source resources and useful review images. Keep recovery history in the working project. Report reference fit, asset condition and actual target use separately, with remaining visible defects and untested behavior. A prototype should remain described as a prototype; a relative improvement over a poor candidate does not establish source fidelity.

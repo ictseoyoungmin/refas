@@ -158,7 +158,7 @@ not append to the previous model. Omit both on later runs to continue the saved
 native. GLB buffers and images must be embedded. The original GLB is captured
 as `inputs/base.glb`, and the edit keeps the normal native-output default.
 GLB cannot recover absent original modifiers, sculpt history or construction
-scripts. See the [existing-asset guide](skills/refas/references/production-import.md)
+scripts. See the [existing-asset guide](skills/refas/references/production-project.md)
 for preservation, protection and recovery.
 
 Batch related modeling changes in one native edit. Add repeated
@@ -278,7 +278,7 @@ An imported GLB supplies supported glTF data, not the original modifiers,
 construction scripts or authoring history. Recorded native input retains its
 original bytes and uses the production worker's declared scene scope. Legacy
 certificates and review decisions do not approve the new revision. Read the
-[import scope](skills/refas/references/production-import.md) before migration.
+[import scope](skills/refas/references/production-project.md) before migration.
 
 ## Folder responsibilities
 
