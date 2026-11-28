@@ -8,7 +8,7 @@ test('release package identities align while actual publication remains explicit
   const read=async p=>fs.readFile(new URL('../'+p,import.meta.url),'utf8');
   const packageJson=JSON.parse(await read('package.json'));
   const version = packageJson.version;
-  assert.equal(version,'2.0.0');
+  assert.equal(version,'2.1.0');
   assert.equal(LEGACY_VERSION,'1.4.2');
   const current = spawnSync(process.execPath, [new URL('../bin/refas.mjs', import.meta.url).pathname, '--version'], {encoding:'utf8'});
   assert.equal(current.status, 0, current.stderr);

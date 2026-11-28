@@ -1,5 +1,6 @@
 """Production storage/transaction tests; fake worker output is not visual proof."""
 import json
+import os
 from pathlib import Path
 import shutil
 import subprocess
@@ -412,6 +413,110 @@ class ProductionProjectTests(unittest.TestCase):
         latest = project.status(self.root)
         self.assertEqual(latest["head"], first["head"])
         self.assertEqual(latest["incompleteRuns"][0]["status"], "failed")
+
+    def test_failed_subprocess_runs_keep_distinct_crash_files_and_parent_environment(self):
+        self.run_edit()
+        before = project.load_project(self.root)
+        meta = self.root / project.STATE_DIR
+        revisions = project.inventory(meta / "revisions")
+        program = """
+import json, os, sys, tempfile
+from pathlib import Path
+temporary = Path(tempfile.gettempdir())
+(temporary / 'scene.crash.txt').write_text(json.dumps({
+    'run': Path.cwd().name,
+    'temporary': {key: os.environ[key] for key in ('TMPDIR', 'TMP', 'TEMP')},
+}))
+sys.exit(23)
+"""
+        def crash(command, cwd, log_file, timeout):
+            return project._execute([sys.executable, "-c", program], cwd, log_file, timeout)
+
+        inherited = {}
+        for key in ("TMPDIR", "TMP", "TEMP"):
+            folder = self.folder / ("parent-" + key)
+            folder.mkdir()
+            (folder / "scene.crash.txt").write_text("parent evidence")
+            inherited[key] = str(folder)
+        captured = {}
+        with mock.patch.dict(os.environ, inherited):
+            environment = dict(os.environ)
+            for _ in range(2):
+                previous_runs = set((meta / "runs").iterdir())
+                with self.assertRaisesRegex(project.ProductionError, "Blender failed with exit 23"):
+                    project.run_edit(self.root, self.script, "preserve native crash evidence",
+                                     executor=crash, output_profile="native", views=[])
+                added = set((meta / "runs").iterdir()) - previous_runs
+                self.assertEqual(len(added), 1)
+                run = added.pop()
+                files = list(run.rglob("scene.crash.txt"))
+                self.assertEqual(len(files), 1)
+                dump = files[0]
+                self.assertFalse(dump.is_relative_to(run / "artifacts"))
+                self.assertFalse(dump.is_relative_to(run / "inputs"))
+                recorded = json.loads(dump.read_text())
+                self.assertEqual(recorded["run"], run.name)
+                self.assertEqual(set(recorded["temporary"].values()), {str(dump.parent)})
+                self.assertEqual(project.read_json(run / "run.json")["status"], "failed")
+                captured[dump] = dump.read_bytes()
+                self.assertEqual(dict(os.environ), environment)
+                self.assertEqual(project.load_project(self.root), before)
+            for folder in inherited.values():
+                self.assertEqual((Path(folder) / "scene.crash.txt").read_text(), "parent evidence")
+        self.assertEqual(len(set(captured.values())), 2)
+        for path, contents in captured.items():
+            self.assertEqual(path.read_bytes(), contents)
+        self.assertEqual(project.inventory(meta / "revisions"), revisions)
+
+    def test_timed_out_subprocess_is_reaped_and_keeps_its_diagnostics(self):
+        self.run_edit()
+        before = project.load_project(self.root)
+        meta = self.root / project.STATE_DIR
+        previous_runs = set((meta / "runs").iterdir())
+        program = """
+import tempfile, time
+from pathlib import Path
+(Path(tempfile.gettempdir()) / 'scene.crash.txt').write_text('started before timeout')
+print('worker reached native operation', flush=True)
+time.sleep(20)
+"""
+        def timeout_worker(command, cwd, log_file, timeout):
+            return project._execute([sys.executable, "-c", program], cwd, log_file, timeout)
+        popen = subprocess.Popen
+        launched = []
+        def launch(*args, **kwargs):
+            process = popen(*args, **kwargs)
+            launched.append(process)
+            return process
+        with mock.patch.object(project.subprocess, "Popen", side_effect=launch):
+            with self.assertRaisesRegex(project.ProductionError, "exceeded its timeout"):
+                project.run_edit(self.root, self.script, "timeout evidence", executor=timeout_worker,
+                                 output_profile="native", views=[], timeout=1)
+        self.assertEqual(len(launched), 1)
+        self.assertIsNotNone(launched[0].poll())
+        self.assertNotEqual(launched[0].returncode, 0)
+        added = set((meta / "runs").iterdir()) - previous_runs
+        self.assertEqual(len(added), 1)
+        run = added.pop()
+        self.assertEqual(project.read_json(run / "run.json")["status"], "failed")
+        self.assertEqual([p.read_text() for p in run.rglob("scene.crash.txt")], ["started before timeout"])
+        self.assertIn("worker reached native operation", (run / "blender.log").read_text())
+        self.assertEqual(project.load_project(self.root), before)
+
+    def test_successful_temporary_files_follow_diagnostic_retention(self):
+        def worker(command, cwd, log_file, timeout):
+            temporary = Path(log_file).parent / "blender-tmp"
+            temporary.mkdir()
+            (temporary / "worker-cache").write_text("temporary data")
+            return fake_worker(command, cwd, log_file, timeout)
+        for keep in (False, True):
+            result = project.run_edit(self.root, self.script, "temporary cleanup", executor=worker,
+                                      output_profile="native", views=[], keep_diagnostics=keep)
+            run = self.root / project.STATE_DIR / "runs" / result["runId"]
+            self.assertEqual((run / "blender-tmp/worker-cache").exists(), keep)
+            self.assertEqual((run / "blender.log").exists(), keep)
+            revision = self.root / project.STATE_DIR / "revisions" / result["head"]
+            self.assertFalse(any(revision.rglob("worker-cache")))
 
     def test_concurrent_edit_does_not_overwrite_newer_revision(self):
         first = self.run_edit()

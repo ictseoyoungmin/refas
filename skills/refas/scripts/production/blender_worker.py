@@ -45,6 +45,7 @@ LIMITATIONS = [
     "Static mesh modifiers are evaluated for GLB export; unapplied non-armature modifiers on skinned or shape-key meshes are unsupported.",
     "Hidden or excluded asset meshes and curves are rejected. Explicit refas_role=construction meshes stay in native source, remain enabled in the scene/view layer, and require object-level hide_render; they are omitted from asset surface counts, bounds and delivery.",
     "Construction geometry is evaluated for static modifier delivery at the selected frame; its geometry animation is not automatically baked.",
+    "Native surface mounts retain their bound carrier in source. Static delivery realizes the evaluated rigid transform and omits the carrier; animated mounting dependencies require an explicit bake.",
     "Classic curves retain their editable controls in native output; convert selected final curves explicitly to meshes before delivery. Curve deformation is not automatically baked for export.",
     "Lattices retain editable deformation controls in native output, not render geometry. Keep cages enabled in the scene/view layer; apply the intended deformation and remove cages explicitly before delivery. Lattice animation is not automatically baked.",
     "Object instances must be realized into explicit scene objects; text, surfaces and other unsupported geometry must be converted before production submission.",
@@ -319,6 +320,10 @@ def object_record(obj, depsgraph):
                             "object": getattr(getattr(m, "object", None), "name", None)} for m in obj.modifiers],
              "constraints": [{"type": c.type, "properties": properties(c), "dependencies": references_record(c),
                               "target": getattr(getattr(c, "target", None), "name", None)} for c in obj.constraints]}
+    if obj.parent_type in {"VERTEX", "VERTEX_3"}:
+        state["parentVertices"] = list(obj.parent_vertices)
+    if "refas_surface_mount" in obj:
+        state["surfaceMount"] = obj["refas_surface_mount"]
     if obj.type == "MESH":
         state["mesh"] = mesh_record(obj.data)
     elif obj.type == "CURVE":
@@ -435,6 +440,7 @@ def inventory():
 def require_visible_geometry():
     """Require a visible asset and explicitly hidden, enabled construction meshes."""
     enabled, _ = enabled_layer_members()
+    checked_mounts = set()
     for obj in bpy.context.scene.objects:
         role = object_role(obj)
         if role == "construction":
@@ -443,11 +449,18 @@ def require_visible_geometry():
             if obj not in enabled:
                 raise ValueError("Construction meshes must be enabled in the scene and active view layer: " + obj.name)
         elif obj.type in ASSET_TYPES:
+            child = obj
             parent = obj.parent
             while parent:
                 if object_role(parent) == "construction":
-                    raise ValueError("Construction meshes cannot be ancestors of delivered objects: "
-                                     + parent.name + " -> " + obj.name)
+                    if "refas_surface_mount" not in parent:
+                        raise ValueError("Construction meshes cannot be ancestors of delivered objects: "
+                                         + parent.name + " -> " + obj.name)
+                    if child not in checked_mounts:
+                        from surface_mount import check_surface_mount
+                        check_surface_mount(child)
+                        checked_mounts.add(child)
+                child = parent
                 parent = parent.parent
     render_visible = set()
 
@@ -721,11 +734,51 @@ def require_delivery_geometry():
                          + ", ".join(lattices))
 
 
+def require_static_mount(part):
+    """Do not flatten native surface-driven motion into a frozen GLB transform."""
+    pending, seen = [part], set()
+    time_dependent = {"ARMATURE", "CLOTH", "SOFT_BODY", "MESH_CACHE", "MESH_SEQUENCE_CACHE",
+                      "OCEAN", "PARTICLE_SYSTEM", "PARTICLE_INSTANCE", "FLUID", "NODES",
+                      "WAVE", "BUILD", "DYNAMIC_PAINT", "EXPLODE"}
+    while pending:
+        obj = pending.pop()
+        if obj in seen:
+            continue
+        seen.add(obj)
+        data = getattr(obj, "data", None)
+        for owner in (obj, data, getattr(data, "shape_keys", None)):
+            animation = getattr(owner, "animation_data", None)
+            if animation and (animation.action or animation.nla_tracks or animation.drivers):
+                raise ValueError("Surface mount delivery requires static dependencies; bake the intended "
+                                 "motion explicitly before delivery: " + part.name + " -> " + obj.name)
+        if obj.rigid_body or any(not c.mute and c.influence != 0 for c in obj.constraints):
+            raise ValueError("Surface mount delivery requires static unconstrained dependencies: "
+                             + part.name + " -> " + obj.name)
+        if obj.parent:
+            pending.append(obj.parent)
+        for modifier in obj.modifiers:
+            if not (modifier.show_viewport or modifier.show_render):
+                continue
+            if modifier.type in time_dependent:
+                raise ValueError("Surface mount delivery cannot bake this deformation automatically: "
+                                 + obj.name + " (" + modifier.type + ")")
+            for dependency in object_references(modifier).values():
+                pending.extend(dependency.all_objects if isinstance(dependency, bpy.types.Collection)
+                               else [dependency])
+
+
 def export_scene(out):
     require_delivery_geometry()
     scene = bpy.context.scene
     objects = list(scene.objects)
     depsgraph = bpy.context.evaluated_depsgraph_get()
+    mounted = []
+    for obj in objects:
+        if obj.parent and object_role(obj.parent) == "construction" and object_role(obj) == "asset":
+            from surface_mount import check_surface_mount
+            check_surface_mount(obj)
+            require_static_mount(obj)
+            mounted.append((obj, obj.evaluated_get(depsgraph).matrix_world.copy()))
     realized = []
     for obj in objects:
         if obj.type != "MESH" or object_role(obj) == "construction" or not obj.modifiers:
@@ -745,6 +798,10 @@ def export_scene(out):
     # Only this disposable in-memory export state is changed. The native scene
     # was saved first and is reopened after export. Gather meshes before changing
     # any objects so dependent modifiers see the same original dependency graph.
+    for obj, matrix in mounted:
+        obj.parent = None
+        obj.parent_type = "OBJECT"
+        obj.matrix_world = matrix
     for obj, mesh in realized:
         obj.data = mesh
         obj.modifiers.clear()
@@ -770,12 +827,13 @@ def export_scene(out):
 def render_views(out, views, config, source, specification=None):
     if not views:
         return []
+    print("REFAS_RENDER diagnostic setup start", flush=True)
     original = bpy.context.scene
     review = bpy.data.scenes.new("__RefAsDiagnosticScene")
     for obj in original.objects:
         if obj.type in ASSET_TYPES:
             review.collection.objects.link(obj)
-    bpy.context.window.scene = review
+    review_layer = review.view_layers[0]
     review.render.fps = original.render.fps
     review.render.fps_base = original.render.fps_base
     review.frame_set(original.frame_current, subframe=original.frame_subframe)
@@ -824,6 +882,7 @@ def render_views(out, views, config, source, specification=None):
     camera = bpy.data.objects.new("__RefAsCamera", data)
     review.collection.objects.link(camera)
     review.camera = camera
+    print("REFAS_RENDER diagnostic setup return", flush=True)
     observed = []
     for name in views:
         selected = fixed_views.get(name)
@@ -837,10 +896,13 @@ def render_views(out, views, config, source, specification=None):
         else:
             camera.location = center + Vector(VIEWS[name]).normalized() * radius * 4
         camera.rotation_euler = (target - camera.location).to_track_quat("-Z", "Y").to_euler()
-        bpy.context.view_layer.update()
+        review_layer.update()
         filename = "view-" + name + ".png"
         review.render.filepath = str(out / filename)
-        bpy.ops.render.render(write_still=True, scene=review.name)
+        print("REFAS_RENDER view " + name + " start", flush=True)
+        with bpy.context.temp_override(scene=review, view_layer=review_layer):
+            bpy.ops.render.render(write_still=True, scene=review.name)
+        print("REFAS_RENDER view " + name + " return", flush=True)
         if not (out / filename).is_file() or (out / filename).stat().st_size == 0:
             raise RuntimeError("Render produced no PNG: " + name)
         observed.append({"view": name, "path": filename, "sha256": file_hash(out / filename),
@@ -857,7 +919,6 @@ def render_views(out, views, config, source, specification=None):
                          "camera": {"projection": "orthographic", "position": vector(camera.location),
                                     "target": vector(target), "orthoScale": number(data.ortho_scale),
                                     "matrixWorld": [vector(row) for row in camera.matrix_world]}})
-    bpy.context.window.scene = original
     return observed
 
 

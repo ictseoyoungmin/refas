@@ -406,9 +406,14 @@ def replace_references(root, references=None, clear=False, expected_revision=Non
 
 def _execute(command, cwd, log_file, timeout):
     started = time.monotonic()
+    # Blender names native crash dumps after the opened file (often scene.blend).
+    # Keep them with their run so a later worker cannot replace the evidence.
+    temporary = Path(log_file).resolve().parent / "blender-tmp"
+    temporary.mkdir()
     with Path(log_file).open("wb") as log:
         process = subprocess.Popen(command, cwd=cwd, stdout=log, stderr=subprocess.STDOUT,
-                                   env={**os.environ, "PYTHONDONTWRITEBYTECODE": "1"},
+                                   env={**os.environ, "PYTHONDONTWRITEBYTECODE": "1",
+                                        "TMPDIR": str(temporary), "TMP": str(temporary), "TEMP": str(temporary)},
                                    start_new_session=(os.name != "nt"))
         try:
             returncode = process.wait(timeout=timeout)
@@ -635,6 +640,8 @@ def run_edit(root, script, intent, blender="blender", input_blend=None, views=No
         if not keep_diagnostics:
             for name in ("job.json", "blender.log"):
                 (run_dir / name).unlink(missing_ok=True)
+            if (run_dir / "blender-tmp").is_dir():
+                shutil.rmtree(run_dir / "blender-tmp")
         return {**status(root), "runId": run_id, "publishedRevision": revision_id, "elapsedSeconds": elapsed}
     except BaseException as exc:
         # Do not convert a post-publication logging error into a failed edit.

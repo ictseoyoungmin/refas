@@ -2,6 +2,46 @@
 
 All notable RefAs changes are documented here. RefAs follows semantic versioning.
 
+## 2.1.0 — 2026-11-28
+
+Prepared under [#468](https://github.com/ictseoyoungmin/refas/issues/468).
+Exact-main publication and public-download verification are recorded separately
+from source validation.
+
+### Native form and detail authoring
+
+- Put whole-form construction and multiview correction before detail work. Combine native meshes, sculpting, curves, modifiers and shared boundaries as needed, and return to the larger forms when useful; no mandatory modeling method or tool sequence is introduced.
+- Add optional world-space basis-cage GRAB, DRAW, INFLATE, SMOOTH and FLATTEN through `sculpt_brush`, with masks and symmetry. Add editable native Boolean difference, union and intersection through `boolean_form`, and retained path cutters through `engrave_path` ([#465](https://github.com/ictseoyoungmin/refas/issues/465), [PR #464](https://github.com/ictseoyoungmin/refas/pull/464)). These operations do not infer source geometry or certify global thickness, collisions or evaluated topology quality.
+- Construct ordinary native patches from explicit straight/Bezier profiles and shared boundary vertices (#457). Join existing open chains or closed loops with verified correspondence and preserved surrounding cage data (#446, #455).
+- Mount rigid details on evaluated surfaces and optionally retain native Surface Deform carriers and triangle parenting through later same-topology host edits (#443, #459). Static delivery realizes the supported rigid transform and excludes construction carriers.
+- Construct editable blind recesses with sampled walls/floors (#444), fit prepared flexible layers with bounded native projection (#449), and edit local cage handles jointly with failure restoration (#451). Preserve supported Solidify → Bevel → Weighted Normal finishes during these bounded local edits (#461).
+- Route task words to exact guide sections, prerequisites and source-derived signatures (#463). Six focused guides connect the optional helpers to ordinary native authoring, recovery and delivery; the new form guide covers broad shaping, cuts, engraving and unions.
+
+### Diagnostic rendering and distribution
+
+- Isolate per-run Blender temporary/crash output and retain failed-run evidence (#453). Render diagnostics in a scoped scene/view-layer context without changing the active window scene; restore authoring context after Python render failure ([#466](https://github.com/ictseoyoungmin/refas/issues/466), [PR #467](https://github.com/ictseoyoungmin/refas/pull/467)). The deterministic context leak is fixed; the C-level cause of the intermittent crash in #448 remains unknown.
+- Align package, Python and plugin identities at **2.1.0**, with **28 installed skill files / 32 package files**. The release artifacts are `refas-2.1.0.tgz` and `refas-2.1.0.tgz.sha256`; raw user assets, renders, logs and recovery archives remain outside Git and the package. Public availability requires the existing exact-main manual publisher and downloaded-archive verification; no npm registry publication is claimed.
+
+### Evidence and remaining limits
+
+- Reviewed feature/render sources passed required repository and CI gates, including **967 JavaScript tests with zero skips**. The new operations passed **14 actual Blender/copied-skill tests** and **5 discovery tests**. Five actual renderer tests passed; one copied-skill selected-car render matched RGBA pixels, camera/light metadata and native source identity, while PNG container bytes differed. These source-bound results do not replace final release-preparation and exact-main publication checks.
+- Fresh car and garment authoring from original references exercised native continuation, actual native/GLB reopen and renders; the garment also restored exact native bytes and reproduced identical GLB bytes. The [work status](docs/WORK_STATUS.md) records the durable evidence and asset identities. This supports the distinct #465 authoring contract, not final-art or target-engine acceptance: source fidelity remains unapproved in [#456](https://github.com/ictseoyoungmin/refas/issues/456).
+- Keep #456 and the unresolved crash investigation [#448](https://github.com/ictseoyoungmin/refas/issues/448) open under [2.1.1](https://github.com/ictseoyoungmin/refas/milestone/7). Retain the original 2.1 ledger's **16 demonstrated + 4 retired / 20**, the retired Sweep proposal, all previous visual/comparison verdicts and the 2.0 ledger. [E2 #436](https://github.com/ictseoyoungmin/refas/issues/436) still lacks actual matched timing/billing evidence under 2.0.1; no general likeness, speed or cost superiority follows.
+
+## 2.1.0-alpha.1 — Development
+
+- Connect authoring task words to exact guide sections and concise input prerequisites, add native hinge guidance and useful empty-search help, and include executable decal revision and neutral-pose parenting examples. Keep existing guide paths, source-derived signatures and geometry support limits.
+- Preserve optional native Bevel and Weighted Normal finishes during bounded local cage edits. Keep shell-pair observations at the verified Solidify prefix, restore finish visibility on failure, and include a complete panel example; final finish thickness and arbitrary modifier stacks remain outside this operation.
+- Isolate Blender temporary/crash output per production run and retain failed-run evidence. Add flushed render and scene-switch boundaries to existing logs without changing rendering or revision publication; the intermittent native crash remains unresolved.
+- Add optional rigid surface mounting from evaluated host geometry, an explicit selection ray/tangent and a planar contact footprint. Preserve the part shape/scale and reject infeasible sampled support gaps before moving it.
+- Add editable blind recess construction from an explicit convex outline, surface frame and depth. Retain the native cutter and Boolean, observe actual walls/floor and reject infeasible sampled remaining thickness without losing the accepted feature.
+- Add an optional native boundary bridge for two explicit open cage chains or closed loops, with verified correspondence, source-data preservation and staged failure recovery. Closed loops keep the declared seam phase through native edge-ring subdivision. Surface blending follows adjacent cage faces; linear joining retains deliberate creases.
+- Add bounded native surface projection for prepared flexible cage layers, with first-hit, residual and displacement observations and exact modifier rollback. Retain ordinary mesh/mask and Shrinkwrap controls for later native edits.
+- Add optional joint local mesh edits with hard target handles, unchanged outside cage coordinates and bounded size, shell-pair and directional obstacle observations. Conflicting proposals restore native coordinates; successful results remain ordinary editable meshes.
+- Retire the unadmitted managed Sweep proposal after its comparison showed no useful net benefit. Preserve its branch and frozen observations; no installed helper is removed and retired criteria are not counted as completed.
+- Expose the helper through installed discovery and focused assembly guidance. Retain the normal Blender authoring, native revision and delivery path.
+- Begin 2.1.0 on `develop/v2.1.0` with garment/car feature studies. This development version is not a published release or a completed whole-asset quality claim.
+
 ## 2.0.0 — 2026-11-27
 
 ### Native production workflow

@@ -4,26 +4,48 @@ RefAs helps agents build and revise editable 3D assets from visual references.
 The production workflow connects ordinary Blender scripts, a native scene,
 GLB export, actual renders and recoverable revisions.
 
-**Package version: 2.0.0.** The package, Python entry and plugin metadata share
+**Package version: 2.1.0.** The package, Python entry and plugin metadata share
 this version. Publication is a separate verified action: a source checkout or
 locally packed archive does not establish that a release is available. The
 [GitHub Releases](https://github.com/ictseoyoungmin/refas/releases) page identifies
 published versions and their verified installation archives. Follow the
-[implementation plan](docs/development/refas-2-plan.md),
-[verified progress](docs/development/refas-2-progress.md) and
+[authoring plan](docs/development/refas-2.1-plan.md),
+[2.0 evidence ledger](docs/development/refas-2-progress.md) and
 [work status](docs/WORK_STATUS.md) for the demonstrated scope.
+
+The **2.1.0 release candidate** adds native form authoring to the existing
+editing tools. Actual copied-skill tests and fresh reference-based car/garment
+authoring demonstrate native revision and delivery; source likeness remains
+unapproved. **PUBLICATION PENDING:** release preparation and main integration
+are tracked in [#468](https://github.com/ictseoyoungmin/refas/issues/468), with
+the public-download receipt to follow. The published stable release remains
+2.0.0. Candidate archives are `refas-2.1.0.tgz` and
+`refas-2.1.0.tgz.sha256`; these names do not imply public availability.
 
 ## Build, inspect, improve
 
-The agent reads the original reference, constructs a coherent whole, inspects
-real output and makes a focused correction. RefAs records the native `.blend`,
+The agent reads the original reference, establishes the whole silhouette,
+proportions and main volumes, then refines the necessary openings, edges and
+details. Inspect real output from useful angles and return to the main forms
+whenever they need correction. Native meshes, sculpting, curves, modifiers and
+shared-boundary surfaces can be combined according to the shape; no single
+modeling method or mandatory tool sequence is required.
+
+The native form operations provide spatial cage brushes, editable
+mesh difference/union/intersection, and path-based engraving. They complement
+the existing recess, mounting, boundary, projection and local-edit tools.
+Choose operations for a visible construction need; using more helpers is not
+a quality criterion. Their current implementation and verification status is
+recorded in the authoring plan above.
+
+RefAs records the native `.blend`,
 requested observations, executed script and source identities together. Normal
 CLI iterations save native scenes with one hero preview; GLB export and reimport
 are reserved for explicit delivery or an export-specific check. Successful
 execution and file integrity remain separate from visual
 acceptance or target-engine readiness.
 
-For game or cinematic garments and articulated mechanisms, 2.0 now targets
+For game or cinematic garments and articulated mechanisms, the workflow targets
 actual character wearing and useful motion. Review the source likeness,
 unintended holes/winding/intersections and attachment gaps, then exercise
 skinning or connected mechanisms in the exported consumer. Retopology and
@@ -35,7 +57,7 @@ lower triangle count alone does not establish that intended use. Follow the
 The installed skill contains the production path only. The old JavaScript
 capability runtime, certification graph, schemas, templates, host facade and
 CPU renderers are retained in the repository for explicit compatibility and
-comparative work; they are not installed with 2.0.
+comparative work; they are outside the production package.
 
 ## Install
 
@@ -48,17 +70,18 @@ skin-weight preservation path before delivery. A different Blender exporter's
 unsupported structure fails explicitly; a version report alone is not an export
 compatibility or asset-readiness test.
 
-For a published version, download `refas-2.0.0.tgz` and its `.sha256` file from
-the matching GitHub Release. Verify the archive before installing it:
+Once v2.1.0 is published, download `refas-2.1.0.tgz` and its `.sha256` file from
+the matching GitHub Release. Until then, use the source-build route below or
+the published 2.0.0 release. Verify the archive before installing it:
 
 ```bash
-sha256sum --check refas-2.0.0.tgz.sha256
-npm install --prefix /absolute/new/refas-install ./refas-2.0.0.tgz
+sha256sum --check refas-2.1.0.tgz.sha256
+npm install --prefix /absolute/new/refas-install ./refas-2.1.0.tgz
 /absolute/new/refas-install/node_modules/.bin/refas --version
 /absolute/new/refas-install/node_modules/.bin/refas doctor
 ```
 
-These are GitHub Release assets, not an assertion that version 2.0.0 is present
+These are GitHub Release assets, not an assertion that version 2.1.0 is present
 in the npm registry. The archive contains the production launcher and skill;
 user models, renders, recovery archives and the retained 1.x runtime are excluded.
 
@@ -79,7 +102,7 @@ To build the same installation format from a source checkout:
 
 ```bash
 npm pack
-npm install --prefix /absolute/new/refas-install ./refas-2.0.0.tgz
+npm install --prefix /absolute/new/refas-install ./refas-2.1.0.tgz
 /absolute/new/refas-install/node_modules/.bin/refas --version
 /absolute/new/refas-install/node_modules/.bin/refas doctor
 ```
@@ -314,8 +337,10 @@ does not prove animation, simulation, skin deformation or target-engine acceptan
 The [uniform-jacket](examples/uniform-jacket/) and
 [automail](examples/automail-arm/) cases retain real source images, scripts,
 renders, local edits and negative as well as positive review findings. Both
-cases began as prototypes. The later arm is accepted for its declared rigid
-reach/partial-grip range; the full-character jacket remains unaccepted. See the
+cases began as prototypes. Later arm and jacket results have separate,
+limited use acceptances for the declared motion and character. Their finished
+visual quality and the frozen independent comparison retain their recorded
+negative and inconclusive findings. See the
 [current progress](docs/development/refas-2-progress.md) for exact scope. Smaller
 instructions and successful execution do not by themselves prove better
 modeling quality or lower cost.

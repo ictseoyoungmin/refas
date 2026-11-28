@@ -3,7 +3,7 @@
 Use this guide for segmented mechanisms, armor and manufactured parts with
 visible joints. Begin with the reference's complete assembly and proportions.
 
-Sections: scale and hierarchy; editable cutters; editable cables and trim; lattice deformation;
+Sections: scale and hierarchy; initial surfaces from boundaries; connected boundary transitions; rigid surface mounting; flexible surface projection; joint local edits; editable cutters; editable cables and trim; lattice deformation;
 motion hierarchy; surface attachments; useful poses; delivered animation;
 local component revisions.
 
@@ -71,7 +71,479 @@ Reuse the intended modifier and inspect its actual evaluated interior, rims,
 openings and neighboring parts. Subdivision or deformation can change the field
 between source vertices; verify the resulting shell in required poses.
 
+## Create surfaces from outlines and sections
+
+Use `surface_patch.py` when the initial shape is defined by a small set of
+outlines and cross-sections. `sample_profile` samples explicit `LINEAR`
+segments (two control points) or cubic `BEZIER` segments (four control points).
+Give one positive division count per segment; each junction and endpoint is
+retained. Choose the controls from the reference before sampling: smooth
+interpolation cannot supply a missing fold, panel break or proportion.
+
+`build_surface` creates ordinary mesh patches from named boundaries. Each
+patch lists **bottom, right, top, left**; bottom/top run left-to-right and
+left/right run bottom-to-top, not around the perimeter. Each use is
+`(boundary_name, reverse)`; opposite sides need equal sample counts. Reusing
+the same name shares actual vertex IDs. Equal coordinates under different
+names do not request a global weld. Corners must meet consistently.
+Samples correspond by index, not arc length: align feature junctions on opposite
+profiles, or split the patch at a shoulder, fold or opening corner. Equal counts
+alone do not align those features.
+
+This complete example starts a rolled section and its adjoining leaf together:
+
+```python
+import bpy
+from surface_patch import sample_profile, build_surface
+
+def line(a, b, divisions):
+    return sample_profile([('LINEAR', (a, b))], divisions=[divisions])
+
+a, b = (-.12, 0, 0), (.12, 0, 0)
+c, d = (-.14, .04, .03), (.14, .04, .03)
+e, f = (-.18, .10, .018), (.18, .10, .018)
+edges = {
+    'root': line(a, b, 6), 'turn': line(c, d, 6), 'free': line(e, f, 6),
+    'roll-left': sample_profile([
+        ('BEZIER', (a, (-.12, .02, 0), (-.14, .02, .03), c))], divisions=[4]),
+    'roll-right': sample_profile([
+        ('BEZIER', (b, (.12, .02, 0), (.14, .02, .03), d))], divisions=[4]),
+    'leaf-left': line(c, e, 2), 'leaf-right': line(d, f, 2),
+}
+surface = build_surface('Turned panel', boundaries=edges, patches={
+    'roll': (('root', False), ('roll-right', False),
+             ('turn', False), ('roll-left', False)),
+    'leaf': (('turn', False), ('leaf-right', False),
+             ('free', False), ('leaf-left', False)),
+})
+shell = surface.modifiers.new('Thickness', 'SOLIDIFY')
+shell.thickness, shell.offset = .002, -1
+```
+
+The four boundaries determine the interior with Coons interpolation; their
+samples are not resampled, apart from Blender's native float32 mesh storage.
+The joined patches have one cage boundary at
+`turn`, not two separately generated edges. Boundary and patch vertex groups
+support later ordinary mesh edits. Native Solidify, Bevel, Subdivision or Shape
+Keys can be added deliberately; no control objects, handler or rebuild are
+required to edit the saved mesh. Use a modest cage density and inspect the
+evaluated form. The operation does not guarantee tangent continuity, prevent
+all interior intersections or judge reference resemblance.
+
+For a window surround, define the opening and the surrounding frame's width,
+depth and inward return together. A pillar has a section between different
+glass boundaries; collapsing both glass edges onto one line removes that
+section. Derive removable panels or moving glazing from the same design
+curves with deliberate inset/clearance, while retaining separate objects for
+their motion. Use linear boundaries for planar features instead of smoothing
+every edge. Add hardware in its local mounting frame and use the evaluated
+host with `place_on_surface` below at initial placement, or `bind_on_surface`
+when the rigid detail must follow later host edits.
+
+## Join existing cage boundaries
+
+Use `bridge_boundaries` from `boundary_bridge.py` to connect two existing open
+edge chains or two closed loops in one ordinary mesh. Choose equal-length ordered vertex indices
+with explicit `boundary_a[i]` to `boundary_b[i]` correspondence. Each selected
+edge must have exactly one adjacent face; the boundaries must be disjoint.
+Boundary positions set the transition span. Place them where the source's
+fold or panel transition begins and ends before joining.
+
+```python
+from boundary_bridge import bridge_boundaries
+
+joined = bridge_boundaries(
+    cage, boundary_a, boundary_b,
+    cuts=6, interpolation="SURFACE", smoothness=1.0,
+    max_bulge=allowed_world_bulge, material_index=patch_material_slot,
+)
+patch_group = cage.vertex_groups.new(name="TransitionInterior")
+patch_group.add(joined["newVertices"], 1.0, "REPLACE")
+```
+
+For a complete armhole, collar or other loop, also pass `closed=True`. List at
+least three distinct vertices per loop without repeating the first at the end;
+the helper includes each last-to-first edge. The chosen starting vertices and
+order define the cyclic correspondence, without a nearest-point or twist
+guess. Prepare compatible source-face winding before joining; the helper will
+not flip existing faces to make an incompatible request pass.
+
+`cuts` sets the number of interior rows. `SURFACE` uses Blender's native
+interpolation from adjacent faces in cage-local coordinates. `smoothness`
+controls that native blend; it is not a physical radius or prescribed tangent.
+Use `LINEAR` for an intentional straight connection. Adjacent faces can make
+SURFACE overshoot or fold; revise the source transition or deliberately choose
+LINEAR instead of assuming the smoother option is better. `max_bulge`, when given,
+limits each new vertex's world distance from its corresponding boundary-to-
+boundary segment. It does not certify the entire patch or surrounding scene.
+
+The helper stages the operation on a copy, verifies actual correspondence and
+shared-edge winding, rejects degenerate/folded patches and preserves original
+cage elements and supported layers. It returns the inserted vertex/face indices,
+ordered rows, span range and observed vertex bulge without writing a file.
+The original object survives; its mesh datablock is replaced. Keep its previous
+native revision for recovery. A failed call retains the original mesh and the
+caller's selection/context.
+
+Open chains use the native bridge operator. Closed loops first create the
+declared cyclic faces, then use native edge-ring subdivision for interior rows.
+Both paths retain the same geometry and preservation checks.
+
+The result is an ordinary connected cage: reopen it and edit its new rows using
+native Blender tools. This is a one-time topology edit, with no live rebuild
+handler. Supported original UV/color/weight/material/crease data stay intact;
+inspect and author the new patch's UVs as required. Use a visible, unparented,
+static, unshared mesh with supported local modifiers. Shape keys, animation,
+custom normals, construction roles and managed fixed-topology sweep outputs
+are refused. Explicitly prepare a separate ordinary cage when baking a source
+whose topology contract must remain intact.
+
+Changing connectivity can affect existing Solidify/Subdivision normals and the
+evaluated neighborhood even when source vertices are unchanged. Inspect actual
+thickness, nearby clearance and both sides of the connection. Native blending
+does not promise exact G1/G2 continuity or global intersection freedom. Very
+distant coordinates or extreme feature-scale differences can fail float checks;
+recenter or revise the representation when needed.
+
+## Mount rigid details on the actual surface
+
+Use `place_on_surface` from `surface_mount.py` for a rigid badge, buckle,
+bracket or mirror base. Choose the host and a bounded world-space ray from its
+intended outside. Supply a world tangent for the part's forward direction.
+Keep the host enabled in the active view layer. The first ray hit must face
+the approaching ray; the helper does not skip a backface to find another layer.
+Use a short search range near the intended feature so a long ray does not
+consume the precision needed for a small gap. The helper samples the evaluated
+host, aligns the part and applies a rigid transform only when the declared
+contact samples meet the gap bounds.
+
+Author the part with local +Z away from its mounting surface and local +X
+forward. Select at least three noncollinear contact points in one local XY
+plane (constant Z). Include edge and interior samples where the support varies;
+the centroid is sampled too. Their centroid maps to the selected host point.
+All ray positions and distance parameters use Blender world length units;
+convert metres with `metres / scene.unit_settings.scale_length` when needed.
+
+```python
+from surface_mount import place_on_surface
+
+# These are task-selected inputs, not camera coordinates or inferred defaults.
+placement = place_on_surface(
+    badge, shoulder_panel,
+    ray_origin=outside_point, ray_direction=toward_shoulder,
+    tangent=along_sleeve,
+    contact_points=badge_contact_points,
+    clearance=minimum_gap, max_distance=search_distance,
+    max_gap=largest_acceptable_gap,
+)
+```
+
+`max_gap` includes the clearance. Gaps are measured along the selected anchor
+normal, not as shortest distances to the whole host. The result gives the chosen frame, sample
+count, minimum/maximum gap and numeric tolerance. Too much host curvature for
+the rigid footprint, no surface hit, reversed support or invalid inputs raises
+`ValueError` before moving the part. Change the mount location or construct a
+fitting base when needed; do not enlarge the acceptable gap to conceal a visibly
+floating attachment. A flexible sewn patch needs a shape that conforms to the
+cloth; rotating a flat patch cannot provide that fit. Re-run the same operation after editing the host or mount
+parameters. It reads a fresh host each time and does not create a report file.
+
+The part must be an unparented static mesh with positive orientation and no
+shear, delta transforms, shape keys, constraints or rigid-body motion. Local
+Bevel, Subdivision, Solidify, Triangulate and Weighted Normal modifiers are
+supported; position-dependent modifiers are not. Keep the host independent of
+the moved part. Mesh coordinates and scale are retained. The samples describe
+the chosen support plane, not every point on the part: inspect its side and
+contact area for overhang or nearby collisions. This operation does not bind
+future animation; use the surface-binding recipe below for deforming trim.
+
+`surface_frame` accepts the same host/ray/tangent selection arguments without
+moving anything. Its returned frame is a snapshot; recompute after host edits.
+
+### Keep rigid hardware attached during later edits
+
+Use `bind_on_surface` with the same arguments when the host will change. It
+first fits the contact footprint, then creates a three-vertex construction
+mesh with native Surface Deform and vertex-parents the part to that frame.
+For an open buckle or ring, sample an actual solid mounting bar or foot and
+keep the sample centroid on that support; the empty aperture is not a contact.
+The frame follows the evaluated host, including Subdivision followed by
+Solidify; the part retains its own rigid shape. The frame is object-parented
+to the host so ordinary host translation and rotation follow as well. There
+is no Python scene handler, external cache or rebuild step after reopening.
+
+```python
+from surface_mount import bind_on_surface, check_surface_mount
+
+mount = bind_on_surface(
+    button, collar, ray_origin=outside_point, ray_direction=toward_collar,
+    tangent=along_collar, contact_points=button_contact_points,
+    clearance=minimum_gap, max_distance=search_distance, max_gap=maximum_gap,
+)
+# Later: edit the collar cage or its thickness using ordinary bpy.
+check_surface_mount(button)
+```
+
+Production checks the saved relationship and footprint before saving/output.
+An infeasible gap or changed evaluated polygon topology fails; it never picks
+a new nearest layer or silently rebinds. Keep the carrier enabled, with its
+construction role and `hide_render=True`; do not repurpose or edit its triangle.
+This explicit mount is the supported construction-parent exception. Static
+delivery captures the evaluated part transform and omits the carrier. Native
+source keeps the relationship. Apply intended object scale before binding:
+subsequent host scale changes or shear that stretch the rigid part are refused.
+Changing subdivision levels, connectivity or topology-producing settings needs
+a deliberate new mount. Detach the part with its evaluated world transform,
+remove that part's obsolete carrier, and call `bind_on_surface` again.
+
+Surface Deform has native target restrictions, so a failed bind restores the
+part and removes the failed carrier. Its target must be independent of the
+part; node-tree dependencies are not supported here. A large rigid footprint
+still cannot follow arbitrary cloth curvature. Reinspect support after major
+edits and provide a fitting base when needed. These are finite contact samples,
+not a guarantee of full-part collision clearance. Animated target deformation
+requires deliberate baking and playback checks for delivery; this operation
+does not bake it. Flexible piping needs deformation of its own sections or
+mesh, rather than one rigid parent frame for an entire long trim.
+
+## Fit prepared flexible surface layers
+
+Use `project_region` from `surface_project.py` for a thin surface cage whose
+existing mask identifies complete connected components. Prepare its outline,
+sampling density and layer relief first. A cloth badge backing, raised border
+and emblem can use separate disjoint masks and offsets, with Solidify after
+projection. Preserve the intended thickness and visible design while preparing
+these layers; the helper changes only the native projection modifier.
+For a complete starting script, see the [static panel decal example](#example-static-panel-decal).
+
+```python
+from surface_project import project_region
+
+fitted = project_region(
+    patch, sleeve,
+    name="Backing fit", group="Backing",
+    axis="Z", direction=-1,
+    offset=surface_clearance, max_distance=search_distance,
+    max_displacement=allowed_movement, tolerance=fit_tolerance,
+)
+```
+
+Choose one local axis and direction (`-1` or `1`). Distance inputs use world
+units. The source needs a positive, unsheared transform with unit world length
+along that axis. The static target needs a rigid transform (rotation and
+translation, with unit scale). Use an existing binary mask: zero-weight
+vertices stay outside the edit, and a face cannot straddle the
+selected and fixed regions. The supported source stack is compatible native
+Project modifiers on disjoint masks followed by the supported Solidify/Bevel
+suffix. The function refuses unsupported dependencies, transforms and stacks
+instead of applying transforms or rebuilding the cage. Requested distances
+and tolerances must remain representable at the source and world coordinates.
+
+Each selected input ray must reach its first geometric intersection within
+`max_distance`, and that face must face the ray. A nearer backface cannot be
+skipped for a farther front surface. The actual evaluated projection is checked
+against the expected offset, including transverse drift. `max_displacement`
+bounds movement from the cage entering that modifier; later edit-to-edit
+movement is a separate observation. Native Project can silently leave a missed
+vertex in place, so a successful modifier creation alone is insufficient.
+
+The result reports vertex and triangle-interior observations with sample
+coverage. `tolerance` is the requested residual bound. Coarse faces that bridge
+too far from the target fail; refine the source deliberately when needed.
+Finite samples do not certify every surface point or global collision freedom.
+Projection-axis clearance differs from shortest or normal distance on a
+sloping target. Check the final layered shell and its visible support too.
+
+The existing source mesh, masks and other layers remain available. A matching
+named modifier is revised in place and must keep its target, mask, axis and
+direction. A failed call restores its prior settings, order and active modifier,
+or removes only a newly created failed modifier. Ordinary native offset/mask/cage
+edits remain possible after reopening. Recheck after such edits
+or target changes. This fits static surface layers; the separate surface-binding
+recipe handles authored sections following a deforming triangle.
+
+### Example: static panel decal
+
+Run this complete script in a new empty production project with `--outputs native --views ''`.
+It prepares a curved panel, a thin surface layer and its whole-component mask.
+World units are metres; the projection offset changes from 5 to 6 mm along Z,
+before thickness. The same native modifier and source cage remain available.
+
+```python
+import bpy
+from surface_project import project_region
+
+bpy.context.scene.unit_settings.scale_length = 1.0
+
+def grid(name, n, extent, height):
+    vertices = [
+        (extent * (2*i/n - 1), extent * (2*j/n - 1),
+         height(extent * (2*i/n - 1)))
+        for j in range(n + 1) for i in range(n + 1)
+    ]
+    faces = [
+        (j*(n+1)+i, j*(n+1)+i+1, (j+1)*(n+1)+i+1, (j+1)*(n+1)+i)
+        for j in range(n) for i in range(n)
+    ]
+    data = bpy.data.meshes.new(name + "Mesh")
+    data.from_pydata(vertices, [], faces)
+    data.update()
+    obj = bpy.data.objects.new(name, data)
+    bpy.context.collection.objects.link(obj)
+    return obj
+
+panel = grid("ExamplePanel", 48, 0.6, lambda x: 0.2 - 0.5*x*x)
+decal = grid("ExampleDecal", 16, 0.4, lambda x: 0.4)
+source_mesh = decal.data
+mask = decal.vertex_groups.new(name="Decal")
+mask.add(list(range(len(source_mesh.vertices))), 1.0, "REPLACE")
+decal.modifiers.new("Thickness", "SOLIDIFY").thickness = 0.001
+decal.modifiers.new("Edges", "BEVEL").width = 0.0001
+options = dict(name="Decal fit", group="Decal", axis="Z", direction=-1,
+               offset=0.005, max_distance=0.5,
+               max_displacement=0.4, tolerance=0.001)
+first = project_region(decal, panel, **options)
+projection = decal.modifiers["Decal fit"]
+revised = project_region(decal, panel, **{**options, "offset": 0.006})
+```
+
+Choose the outline, density and bounds for the actual feature. This static example
+does not accept parented or animated panels; retain the supported projection stack
+and recheck after later host or layer edits.
+
+## Edit several local targets with a fixed surrounding cage
+
+Use `edit_region` from `local_edit.py` when several different target positions
+must shape one local region together. Supply existing vertex indices or a binary
+vertex group, and absolute world-space target positions for the handle vertices.
+Keep attachment rows, intended crease lines and protected outline vertices out
+of the region. Every outside coordinate stays unchanged; this does not freeze
+the evaluated shell normals or margins at its boundary.
+
+This complete metre-scale example creates a small panel and edits two handles
+without applying or removing its native finish modifiers. Run it as an ordinary
+production authoring script, then choose the region and targets from your own
+feature rather than copying this synthetic shape.
+
+```python
+import bpy
+from mathutils import Vector
+from local_edit import edit_region
+
+data = bpy.data.meshes.new("Panel cage")
+data.from_pydata(
+    [((x-2)*0.1, (y-2)*0.1, 0.0) for y in range(5) for x in range(5)], [],
+    [(y*5+x, y*5+x+1, (y+1)*5+x+1, (y+1)*5+x)
+     for y in range(4) for x in range(4)],
+)
+panel = bpy.data.objects.new("Panel", data)
+bpy.context.scene.collection.objects.link(panel)
+shell = panel.modifiers.new("Thickness", "SOLIDIFY")
+shell.thickness, shell.offset = 0.003, -1.0
+bevel = panel.modifiers.new("Edge finish", "BEVEL")
+bevel.width, bevel.segments = 0.001, 2
+panel.modifiers.new("Shading", "WEIGHTED_NORMAL")
+region = [y*5+x for y in range(1, 4) for x in range(1, 4)]
+targets = {i: panel.matrix_world @ data.vertices[i].co + Vector((0, 0, dz))
+           for i, dz in ((12, 0.008), (17, 0.004))}
+result = edit_region(
+    panel, region=region, handles=targets,
+    max_displacement=0.012, tolerance=0.00005,
+    shell_pairs=[{"name": "panel_shell", "vertex": 12,
+                  "min": 0.0025, "max": 0.0035}],
+)
+```
+
+For a second edit, pass new **absolute world targets** to the same ordinary
+panel and region. Optional `distances` entries use
+`{"name": "width", "vertices": (a, b), "min": low, "max": high}`.
+Optional `obstacles` entries use `{"name": "backing", "object": backing,
+"vertices": sample_indices, "direction": inward, "min": low, "max": high}`.
+Choose sample indices, directions and bounds from the actual feature; omit
+bounds that do not express a requirement. The returned record identifies what
+was observed. A directional ray must hit the first front-facing surface within its
+declared range; a miss or back-facing first hit is a conflict, not a skipped
+sample. Ray distance is not shortest clearance, and these cage-origin samples
+do not measure the entire final shell against the obstacle.
+
+The helper fairs the **displacement**, keeping a zero-move rest pose unchanged,
+and applies all handles as hard targets. It has no per-handle falloff radius or
+persistent control objects. It checks both hard targets and the realized free
+displacement after native float storage. An unresolved coordinate precision or
+near-grazing ray is rejected instead of reporting a precise fit.
+Size bounds measure declared cage vertex pairs. Shell-pair bounds measure the
+distance between verified corresponding sides of one supported simple Solidify
+at the selected source vertices. They measure the **Solidify prefix**, before
+Bevel and Weighted Normal; they are not final finish thickness, normal thickness
+or a global minimum wall guarantee. The source may have optional supported plain
+Solidify, optional Bevel, then optional Weighted Normal, each at most once and
+in that order. Finishes retain their identities, settings and matching
+viewport/render visibility; shell-pair observations temporarily exclude them
+and restore their visibility even on failure. Solidify must remain enabled.
+Shape keys, shared mesh data, animation, parent/constraint dependencies,
+Subdivision and other modifier stacks are outside this operation.
+
+If a bound, target, numerical solve or supported-state check fails, the call
+raises `ValueError` and retains its input coordinates and native data. A conflict
+means this proposed displacement failed; it does not prove no other shape can
+satisfy the requirements. The operation does not trade away a handle target to
+make another bound pass. Change the target, region or construction deliberately
+and try again from the retained source.
+
+On success, the same ordinary mesh, finish modifiers and per-element data remain. Reopen the
+native and call with new absolute targets, or use ordinary mesh editing without
+this module. Later edits need fresh observations. Inspect garment layers from
+the side and the hard-surface crease in context: smoother displacement is not
+automatically better source geometry. Use native proportional editing or a
+lattice directly when those controls suit the correction. Large rotations,
+rigid-detail preservation and continuous collision avoidance are not promised.
+
 ## Keep openings editable with construction meshes
+
+### Cut a blind recess from a surface outline
+
+Use `cut_recess` from `recess.py` for a static solid with a convex pocket or
+socket. It constructs and aligns the cutter, keeps an Exact Difference Boolean
+and checks actual evaluated floor/wall geometry. The outline is an ordered,
+strictly convex polygon in the selected tangent/bitangent plane; it closes
+implicitly and must enclose the selected origin `(0, 0)`. Supply its coordinates
+and all distances in Blender world units.
+The floor is at `-depth` from the selected tangent plane, not at a constant
+distance below every point of a curved exterior.
+
+```python
+from recess import cut_recess
+
+recess = cut_recess(
+    housing, "IntakeRecess",
+    ray_origin=outside_point, ray_direction=toward_housing,
+    tangent=along_intake,
+    outline=opening_outline, depth=recess_depth,
+    min_floor=remaining_floor, min_wall=remaining_side_wall,
+    max_distance=search_distance,
+)
+```
+
+Use the same host/name with revised outline or depth to edit that feature.
+Selection excludes only its own previous Boolean, so repeated edits measure
+from the original opening surface and do not accumulate depth. Keep the managed
+Boolean last in the supported modifier stack. The ordinary cutter remains in
+the native scene; its mesh outline and the Boolean stay editable. The helper
+rebuilds its mesh from the explicit arguments, so reapply cutter-specific face
+materials or manual edge edits afterward. It has no radius/bevel parameter and
+does not infer changed parameters from arbitrary manual cutter edits.
+
+The host must be an enabled static closed mesh with consistent winding. The
+operation rejects invalid outlines, an unsupported scene state, a missed
+surface, or insufficient sampled floor/wall material. A failed operation keeps
+the accepted cutter and host state. The remaining-material limits describe the
+declared axial and side probes; they do not certify a global minimum thickness
+between samples. The origin, centroid and rim-derived samples are automatic;
+`floor_samples` can add important interior UV points. Inspect the actual opening, side wall and floor from an
+oblique or section view. Thin cloth pockets and folded openings need their
+own shell construction rather than this solid subtraction.
+
+### Use a native cutter for other Boolean constructions
 
 Use Blender's Boolean modifier for a real socket, service recess or through-hole
 when moving the cutter will make subsequent revisions easier. Keep a clear
@@ -98,8 +570,8 @@ linked to the current scene and enabled in its active view layer; do not disable
 or exclude their collection. Each source needs its own `hide_render` flag, even
 inside a hidden collection, so diagnostic views preserve the same separation.
 Only meshes can carry the construction role. Unmarked hidden asset geometry
-still fails rather than disappearing from delivery. Do not use a construction
-mesh as the parent of deliverable objects.
+still fails rather than disappearing from delivery. A construction mesh may
+parent a deliverable only through the explicit native surface mount above.
 
 Protect neighboring components and unchanged sources by exact name. A host's
 evaluated shape changes when its cutter changes, so do not protect the intended
@@ -178,6 +650,36 @@ to the intended motion. Parent the moving segment and its attachments under
 that pivot; downstream joints follow their upstream segment. Keep the neutral
 world-space placement when assigning parents and verify it afterward. A name
 such as `elbow` does not create a joint or establish its axis.
+
+### Keep the neutral world pose when parenting
+
+After creating and placing a pivot and its ancestors, refresh the dependency
+graph before reading their world matrices. Use rotation/translation transforms
+with unit scale and no transform constraints. This initial parenting example
+uses an unanimated part, the authored neutral frame (frame 1 here), and the actual
+part/pivot names:
+
+```python
+import bpy
+
+part = bpy.data.objects["MovingPanel"]
+pivot = bpy.data.objects["HingePivot"]
+bpy.context.scene.frame_set(1)
+bpy.context.view_layer.update()
+neutral_world = part.matrix_world.copy()
+part.parent = pivot
+part.matrix_parent_inverse = pivot.matrix_world.inverted()
+part.matrix_world = neutral_world
+bpy.context.view_layer.update()
+world_error = max(abs(part.matrix_world[r][c] - neutral_world[r][c])
+                  for r in range(4) for c in range(4))
+if world_error > 1e-6:
+    raise ValueError("Parenting changed the neutral world pose")
+```
+
+The initial refresh matters for newly placed nested pivots whose cached matrices
+may not yet include the authored transforms. After parenting, rotate the pivot
+through useful intermediate poses and inspect the part and its attachments.
 
 Rigid plates normally follow one segment. A bridge, actuator or cable spanning
 two segments needs a separate choice: telescoping parts, an explicit linkage,

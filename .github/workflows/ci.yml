@@ -2,9 +2,9 @@ name: RefAs CI
 
 on:
   push:
-    branches: [main, rewrite/v2, rc/post-1.1, develop/v1.2.0, develop/v1.2.1, develop/v1.3.0, develop/v1.4.0, develop/v1.4.1, develop/v1.4.2]
+    branches: [main, rewrite/v2, develop/v2.1.0, rc/post-1.1, develop/v1.2.0, develop/v1.2.1, develop/v1.3.0, develop/v1.4.0, develop/v1.4.1, develop/v1.4.2]
   pull_request:
-    branches: [main, rewrite/v2, rc/post-1.1, develop/v1.2.0, develop/v1.2.1, develop/v1.3.0, develop/v1.4.0, develop/v1.4.1, develop/v1.4.2]
+    branches: [main, rewrite/v2, develop/v2.1.0, rc/post-1.1, develop/v1.2.0, develop/v1.2.1, develop/v1.3.0, develop/v1.4.0, develop/v1.4.1, develop/v1.4.2]
 
 # Tier 1: full regression and critical source-bound defenses on every PR/develop push.
 # Legacy JIT runs on main push or an explicit [full-qa] push, and in Deep QA.

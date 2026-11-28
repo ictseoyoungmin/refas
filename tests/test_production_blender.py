@@ -1011,5 +1011,210 @@ collection.hide_render = True
         self.assertEqual(sha(self.source), self.source_sha)
 
 
+@unittest.skipUnless(os.environ.get("REFAS_BLENDER_TESTS") == "1" and BLENDER,
+                     "Set REFAS_BLENDER_TESTS=1 with Blender installed for real integration checks")
+class ProductionRenderDiagnosticsTests(unittest.TestCase):
+    def test_canonical_worker_routes_blender_temporary_files_and_logs_render_boundaries(self):
+        with tempfile.TemporaryDirectory(prefix="refas-render-diagnostics-") as directory:
+            folder = Path(directory)
+            target = folder / "project"
+            script = folder / "model.py"
+            script.write_text("""import bpy, json, os, tempfile
+bpy.ops.object.select_all(action='SELECT')
+bpy.ops.object.delete(use_global=False)
+bpy.ops.mesh.primitive_cube_add()
+bpy.context.object.scale = (1.2, 0.45, 0.8)
+print('REFAS_TEST_TEMP ' + json.dumps({
+    'blender': bpy.app.tempdir, 'python': tempfile.gettempdir(),
+    'environment': {key: os.environ[key] for key in ('TMPDIR', 'TMP', 'TEMP')},
+}), flush=True)
+""")
+            entry = WORKER.parent.parent / "produce.py"
+            def cli(*arguments):
+                run = subprocess.run([sys.executable, "-B", str(entry), *map(str, arguments)],
+                                     capture_output=True, text=True, timeout=90)
+                self.assertEqual(run.returncode, 0, run.stderr[-4000:] + run.stdout[-4000:])
+                return json.loads(run.stdout)
+            cli("init", "--root", target, "--name", "native crash evidence routing")
+            result = cli("run", "--root", target, "--script", script, "--intent", "small diagnostic scene",
+                         "--blender", BLENDER, "--outputs", "native", "--views", "front,side",
+                         "--size", "96", "--samples", "2", "--keep-diagnostics")
+            run = target / ".refas2/runs" / result["runId"]
+            lines = (run / "blender.log").read_text().splitlines()
+            observed = [json.loads(line.removeprefix("REFAS_TEST_TEMP "))
+                        for line in lines if line.startswith("REFAS_TEST_TEMP ")]
+            self.assertEqual(len(observed), 1)
+            temporary = run / "blender-tmp"
+            self.assertTrue(temporary.is_dir())
+            self.assertTrue(Path(observed[0]["blender"]).is_relative_to(temporary))
+            self.assertEqual(Path(observed[0]["python"]), temporary)
+            self.assertEqual(set(observed[0]["environment"].values()), {str(temporary)})
+            stages = [line.removeprefix("REFAS_RENDER ") for line in lines if line.startswith("REFAS_RENDER ")]
+            self.assertEqual(stages, ["diagnostic setup start", "diagnostic setup return",
+                                      "view front start", "view front return", "view side start", "view side return"])
+            self.assertEqual([item["view"] for item in result["observations"]], ["front", "side"])
+            for item in result["observations"]:
+                image = Path(item["path"])
+                png = image.read_bytes()
+                self.assertEqual(png[:8], b"\x89PNG\r\n\x1a\n")
+                self.assertEqual(struct.unpack(">II", png[16:24]), (96, 96))
+                self.assertEqual(sha(image), item["sha256"])
+                self.assertFalse(temporary.is_relative_to(image.parent))
+
+    def render_context_probe(self, fail_second_view):
+        with tempfile.TemporaryDirectory(prefix="refas-review-context-") as directory:
+            folder = Path(directory)
+            script = folder / "probe.py"
+            script.write_text('''import importlib.util, math, sys
+from pathlib import Path
+import bpy as real
+from mathutils import Vector
+worker_path, output, fail = sys.argv[sys.argv.index('--')+1:]
+output, fail = Path(output), fail == '1'
+spec = importlib.util.spec_from_file_location('worker', worker_path)
+worker = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(worker)
+real.ops.wm.read_factory_settings(use_empty=True)
+real.ops.mesh.primitive_cube_add(size=2)
+housing = real.context.object
+housing.name = 'Housing'
+housing.scale = (1.5, .55, 1)
+real.ops.object.transform_apply(location=False, rotation=False, scale=True)
+real.ops.mesh.primitive_cube_add(size=2, location=(-.55, 0, 0))
+cutter = real.context.object
+cutter.name = 'ApertureTool'
+cutter.scale = (.35, 4, .25)
+real.ops.object.transform_apply(location=False, rotation=False, scale=True)
+cutter['refas_role'] = 'construction'
+cutter.hide_render = True
+modifier = housing.modifiers.new('Opening', 'BOOLEAN')
+modifier.operation, modifier.solver, modifier.object = 'DIFFERENCE', 'EXACT', cutter
+real.ops.mesh.primitive_cube_add(size=.25)
+moving = real.context.object
+moving.name = 'MovingPart'
+for frame in (1, 20):
+    moving.location.x = 2 + frame / 20
+    moving.keyframe_insert('location', frame=frame)
+for curve in moving.animation_data.action.fcurves:
+    for key in curve.keyframe_points:
+        key.interpolation = 'LINEAR'
+original = real.context.scene
+original.render.fps, original.render.fps_base = 30, 1.001
+original.render.resolution_x, original.render.resolution_y = 187, 139
+original.render.filepath = '//authoring-preview.png'
+original.frame_set(10, subframe=.5)
+camera = real.data.objects.new('AuthoringCamera', real.data.cameras.new('AuthoringCamera'))
+original.collection.objects.link(camera)
+camera.location = (4, -8, 5)
+original.camera = camera
+original.world = real.data.worlds.new('AuthoringWorld')
+real.context.view_layer.update()
+
+def snapshot():
+    scene = real.context.scene
+    return (scene.as_pointer(), real.context.window.scene.as_pointer(), real.context.view_layer.as_pointer(),
+        real.context.view_layer.objects.active.as_pointer(),
+        tuple(sorted(o.name for o in real.context.selected_objects)), real.context.mode,
+        scene.frame_current, scene.frame_subframe, scene.render.fps, scene.render.fps_base,
+        scene.camera.as_pointer(), scene.world.as_pointer(), scene.render.engine,
+        scene.render.resolution_x, scene.render.resolution_y, scene.render.filepath,
+        worker.inventory()['fingerprint'])
+
+source = worker.inventory()
+before = snapshot()
+fps_base = original.render.fps_base
+calls, callbacks, window_writes = [], [], []
+
+class Proxy:
+    def __init__(self, target):
+        self.target = target
+    def __getattr__(self, name):
+        return getattr(self.target, name)
+
+class GuardedWindow(Proxy):
+    @property
+    def scene(self):
+        return self.target.scene
+    @scene.setter
+    def scene(self, value):
+        window_writes.append(value.name)
+        raise AssertionError('diagnostic rendering must not assign window.scene')
+
+def render(*args, **kwargs):
+    review = real.context.scene
+    assert review != original and real.context.window.scene == original
+    assert real.context.view_layer.id_data == review and kwargs['scene'] == review.name
+    camera = review.camera
+    assert (camera.matrix_world.translation - camera.location).length < 1e-6
+    forward = camera.matrix_world.to_quaternion() @ Vector((0, 0, -1))
+    assert forward.dot((Vector((.3, 0, 0)) - camera.location).normalized()) > .999999
+    calls.append(review.name)
+    if fail and len(calls) == 2:
+        raise RuntimeError('deliberate second-view render failure')
+    return real.ops.render.render(*args, **kwargs)
+
+def on_render(scene):
+    assert scene != original and real.context.window.scene == original
+    assert (scene.frame_current, scene.frame_subframe, scene.render.fps, scene.render.fps_base) == (10, .5, 30, fps_base)
+    assert abs(scene.objects['MovingPart'].location.x - 2.525) < 1e-6
+    assert cutter.name in scene.objects and cutter.hide_render
+    evaluated = housing.evaluated_get(real.context.evaluated_depsgraph_get())
+    inverse = evaluated.matrix_world.inverted()
+    direction = inverse.to_3x3() @ Vector((0, 1, 0))
+    assert not evaluated.ray_cast(inverse @ Vector((-.55, -3, 0)), direction)[0]
+    assert evaluated.ray_cast(inverse @ Vector((.6, -3, 0)), direction)[0]
+    callbacks.append(scene.name)
+
+proxy = Proxy(real)
+proxy.context = Proxy(real.context)
+proxy.context.window = GuardedWindow(real.context.window)
+proxy.ops = Proxy(real.ops)
+proxy.ops.render = Proxy(real.ops.render)
+proxy.ops.render.render = render
+worker.bpy = proxy
+review = {'transparent': True, 'background': [.3, .35, .4],
+    'lighting': {'center': [.3, 0, 0], 'radius': 2},
+    'views': [{'name': 'front', 'position': [.3, -7, 0], 'target': [.3, 0, 0], 'orthoScale': 4.2},
+              {'name': 'side', 'position': [7, 0, 0], 'target': [.3, 0, 0], 'orthoScale': 4.2}]}
+real.app.handlers.render_pre.append(on_render)
+error = None
+observations = []
+try:
+    observations = worker.render_views(output, ['front', 'side'], {'samples': 1, 'size': 64}, source, review)
+except RuntimeError as exc:
+    error = str(exc)
+finally:
+    real.app.handlers.render_pre.remove(on_render)
+assert snapshot() == before
+assert not window_writes and len(calls) == 2
+assert (output / 'view-front.png').is_file()
+if fail:
+    assert error == 'deliberate second-view render failure'
+    assert len(callbacks) == 1 and not (output / 'view-side.png').exists()
+else:
+    assert error is None and len(callbacks) == 2
+    assert [item['view'] for item in observations] == ['front', 'side']
+    for item, expected in zip(observations, review['views']):
+        assert item['sourceSceneFingerprint'] == source['fingerprint']
+        assert item['framing'] == 'fixed-review-spec'
+        assert math.dist(item['camera']['position'], expected['position']) < 1e-6
+        assert math.dist([row[3] for row in item['camera']['matrixWorld'][:3]], expected['position']) < 1e-6
+        assert abs(item['camera']['orthoScale'] - 4.2) < 1e-6
+        assert worker.file_hash(output / item['path']) == item['sha256']
+''')
+            result = subprocess.run([str(BLENDER), "-b", "--factory-startup", "--threads", "2",
+                                     "--python-exit-code", "1", "--python", str(script), "--",
+                                     str(WORKER), str(folder), "1" if fail_second_view else "0"],
+                                    capture_output=True, text=True, timeout=90,
+                                    env={**os.environ, "PYTHONDONTWRITEBYTECODE": "1"})
+            self.assertEqual(result.returncode, 0, result.stdout[-5000:] + result.stderr[-5000:])
+
+    def test_review_render_uses_scoped_context_without_window_scene_changes(self):
+        self.render_context_probe(False)
+
+    def test_failed_review_retains_original_context_after_an_earlier_view(self):
+        self.render_context_probe(True)
+
+
 if __name__ == "__main__":
     unittest.main()

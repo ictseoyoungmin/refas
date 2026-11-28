@@ -1,6 +1,6 @@
 {
   "name": "refas",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Build editable 3D assets from references with Blender, multiview review, and recoverable revisions",
   "type": "module",
   "license": "MIT",

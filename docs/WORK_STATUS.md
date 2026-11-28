@@ -2,6 +2,60 @@
 
 ## Current resumption point
 
+Status: **2026-11-28 — validated 2.1.0 release candidate; PUBLICATION PENDING**.
+Release preparation [#468](https://github.com/ictseoyoungmin/refas/issues/468)
+uses `release/native-authoring-2.1.0` from integrated source
+[`8adfc0ff`](https://github.com/ictseoyoungmin/refas/commit/8adfc0ff220bd44f2c48959f88aad3053c8082eb).
+Package identity is **2.1.0**; the published stable version remains **v2.0.0**.
+
+The candidate combines broad native shaping and editable cuts/engraving/unions
+with existing patches, mounting, recesses, bridges, projection and local edits.
+Authors choose methods for the shape and can return to the main forms. See the
+[2.1 plan](development/refas-2.1-plan.md) and
+[relationship map](development/refas-2-skill-map.md).
+
+| Current outcome | Source-bound evidence and remaining step |
+|---|---|
+| Native form contract [#465](https://github.com/ictseoyoungmin/refas/issues/465) | [PR #464](https://github.com/ictseoyoungmin/refas/pull/464) merged as `c03763749ba25f07bde99a7df684135c85ca7209`; 14 actual Blender/copied-skill operation tests and 5 discovery tests passed. |
+| Diagnostic context fix [#466](https://github.com/ictseoyoungmin/refas/issues/466) | [PR #467](https://github.com/ictseoyoungmin/refas/pull/467) merged as `8adfc0ff220bd44f2c48959f88aad3053c8082eb`; deterministic baseline FAIL/candidate PASS and five actual Blender tests. The prior C-crash cause remains unknown. |
+| Reviewed source and distribution | Feature/render required repository, exact CI and source-budget gates passed; 967 JavaScript tests, zero skips, and the exact 28 skill / 32 package file set. Final version/docs preparation checks and exact-main CI remain separate. |
+| Fresh reference-based car and garment | Native authoring, continued editing and explicit delivery demonstrated; actual image review leaves source fidelity unapproved. Asset evidence is identified below. |
+| Main integration and public v2.1.0 package | Pending. #468 owns preparation/main integration; a separate post-merge issue must record the actual publisher, public download and installation receipt. |
+
+Fresh authoring evidence is bound to feature source `c66f1ec3adfdc580bec640169de0ee6458479b2e`
+and retained in the [car/garment evidence archive](https://chatgpt.com/library?file_id=libfile_c96a07773eac8191b2586d649ec60758&account_id=personal):
+**85,207,125 bytes**, SHA-256
+`990f2dc483678a5d0d65a4ff51adb3983e9415d209d899e703339fb8022bce93`.
+
+| Fresh asset | Selected native and delivered scope |
+|---|---|
+| Car | Revision `459b9076c54f42c196348ea7d1e42e56`; 291 asset meshes / 40,278 triangles, with 11 retained native Boolean operands excluded from GLB. |
+| Garment | Editable revision `b2b7f9287a384b7c869351d19667c92f`: 92 asset meshes, 128 curves and 8 construction mount carriers. Restored delivery `a9016974ffb44ec5b042b848a78c6908`: 220 meshes / 490,998 triangles. |
+
+Both assets reopened as native and GLB with actual renders. The garment also
+restored exact native bytes and re-exported identical GLB bytes. Car curvature
+and fascia, and garment tails/layering, remain simplified. These are bounded
+static authoring/delivery results, not finished-art, wearing/motion or target-engine
+acceptance. Raw assets and observations remain outside Git.
+
+A separate corrected-worker copied-skill render used the selected car native
+at **896 px / 48 samples**: RGBA pixels, camera/light metadata and native SHA-256
+matched; PNG container bytes differed. This verifies the scoped context fix
+without attributing every intermittent crash to the removed scene setter.
+
+The original 2.1 ledger remains **16 demonstrated + 4 retired proposal
+criteria / 20**. The original 2.0 ledger below remains **36/37**; neither is
+an artistic completion percentage. [#456](https://github.com/ictseoyoungmin/refas/issues/456)
+and [#448](https://github.com/ictseoyoungmin/refas/issues/448) remain open under
+[milestone 2.1.1](https://github.com/ictseoyoungmin/refas/milestone/7), retaining
+the original source-fidelity criteria and unresolved C-crash investigation.
+[E2 #436](https://github.com/ictseoyoungmin/refas/issues/436) remains blocked under
+[2.0.1](https://github.com/ictseoyoungmin/refas/milestone/5) on actual matched
+provider/model/usage/billed-cost evidence. Missing observations stay null;
+frozen comparisons, scoped use acceptances and final-art rejections remain intact.
+
+## Published 2.0 checkpoint — 2026-11-27
+
 Status: **2026-11-27**. The fixed checklist is **36/37 = 97% rounded** after
 actual v2.0.0 GitHub Release and installation-package publication, **D3 only**.
 Delivery is **3/3**. All nine prior checkpoints and criterion meanings remain
@@ -35,7 +89,7 @@ retain the preceding delivery decisions, wearable/comparison evidence and
 earlier runtime history. No historical checkpoint, retained evidence, rejected
 model or earlier verdict is rewritten by this update.
 
-## Accepted publication
+## Accepted 2.0 publication
 
 The [manual publication workflow](https://github.com/ictseoyoungmin/refas/actions/runs/45962623370)
 succeeded at exact main **d48ef51ad213ce2d7df3664965fc9dc283783737**.
@@ -63,7 +117,7 @@ no npm registry publication is claimed. The [canonical D3 receipt](development/r
 retains source identity, asset hashes and acceptance boundaries without adding
 raw package bytes or logs to Git.
 
-## Accepted source integration
+## Accepted 2.0 source integration
 
 Both foundation and remainder passed fresh `npm test`, `test:python`, `check`,
 `dogfood` and `release:audit`: **948 JavaScript tests each**, zero failures or
@@ -82,7 +136,7 @@ PRs, with **976,655** and **590,356 charged bytes** against their actual
 sequential bases. No budget limit or fixed grandfather anchor changed, and no
 private model, media, raw log, numerical array or recovery archive was added.
 
-## Independently matched comparison
+## Frozen 2.0 matched comparison
 
 The [comparison report](development/evidence/usable-assets/matched-comparison.md)
 credits evaluating both existing task types across all five original U1 axes:
@@ -118,7 +172,7 @@ informed wearable repairs do not replace these frozen comparison outputs or
 clear their failures. Conversely, comparison failures do not describe the
 separately selected and reviewed final wearable below.
 
-## Selected use and recoverable evidence
+## Selected 2.0 use and recoverable evidence
 
 The [wearable delivery report](development/evidence/usable-assets/wearable-delivery.md)
 is the entry point for exact artifacts, the independent decision, selected
@@ -162,7 +216,7 @@ Both final visual-art decisions stay unapproved.
   1,048,576 bytes. Its verdict is retained; the separate accepted integration
   PRs above resolved main integration under the unchanged limits.
 
-## Runtime and pending work
+## Published 2.0 runtime and retained follow-ups
 
 The published production source is
 [`d48ef51a`](https://github.com/ictseoyoungmin/refas/commit/d48ef51ad213ce2d7df3664965fc9dc283783737),
@@ -182,7 +236,7 @@ baseline stays **v1.4.1**. Publication grants no new model acceptance.
 Remaining work:
 
 1. Keep [E2 #436](https://github.com/ictseoyoungmin/refas/issues/436) blocked in [milestone 2.0.1](https://github.com/ictseoyoungmin/refas/milestone/5) until an execution route provides actual provider/model/usage and attributable billed-cost data with a declared matched resource and spending limit. Preserve missing values as null, all U1 failures and its single-run limits. The existing protocol is sufficient; no general billing framework or production-runtime change is needed.
-2. Keep optional section-sweep [#424](https://github.com/ictseoyoungmin/refas/issues/424) / [Draft #425](https://github.com/ictseoyoungmin/refas/pull/425) outside the accepted distribution until its separate installed-use, matched-trial, source/visual and budget gates pass. Publication does not accept that helper.
+2. Keep the retired section-sweep [#424](https://github.com/ictseoyoungmin/refas/issues/424) / [#425](https://github.com/ictseoyoungmin/refas/pull/425) outside the distribution. The issue is closed as not planned and the PR closed without merge after the separate trial found no useful net benefit. Preserve its branch and frozen observations; retirement is not completion or release acceptance.
 3. Retain the selected asset resources and source-bound recovery histories. New source or visual evidence may reopen their owning finding; package publication cannot clear an existing model failure or close the seven Notion tasks automatically.
 
 ## Retained history and recovery index
