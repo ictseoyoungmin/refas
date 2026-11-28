@@ -4,8 +4,8 @@ All notable RefAs changes are documented here. RefAs follows semantic versioning
 
 ## 2.2.0 — 2026-11-29
 
-Prepared under [#475](https://github.com/ictseoyoungmin/refas/issues/475).
-Source validation and actual publication remain separately recorded.
+Release record: [#475](https://github.com/ictseoyoungmin/refas/issues/475).
+Source validation, visual findings and public-archive verification are recorded separately.
 
 ### Corresponding sections and native form controls
 
