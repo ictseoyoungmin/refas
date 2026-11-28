@@ -2,6 +2,38 @@
 
 ## Current resumption point
 
+Status: **2026-11-28 — proposed 2.1.0, implementation and evidence pending**.
+Work continues on `feat/native-form-authoring` from the integrated
+`develop/v2.1.0` source `d6401525`. Package identity remains
+`2.1.0-alpha.1`; the published stable version remains **v2.0.0**.
+
+The current objective is to construct and revise the whole form with flexible
+native modeling choices, then cut, engrave, combine and refine necessary
+details. Spatial cage brushes and editable mesh/path Boolean operations are
+being connected to the existing patch, mount, recess, bridge, projection and
+local-edit tools. No single modeling method or mandatory call sequence is
+introduced. See the [2.1 plan](development/refas-2.1-plan.md) and
+[relationship map](development/refas-2-skill-map.md).
+
+| Current outcome | Status |
+|---|---|
+| New form operations and installed discovery | Implementation and capability-local verification pending |
+| Fresh whole-form dogfood from original references | Pending; retain previous #456 rejections and assess likeness directly |
+| Renderer scene-switch follow-up #448 | Investigation/fix verification pending; prior native-crash cause remains unproven |
+| Final source, copied/packed skill and required repository checks | Pending; earlier test totals do not certify this candidate |
+| Main integration and public v2.1.0 package | Pending; no new tag, asset or publication receipt claimed |
+
+The original 2.1 ledger remains **16 demonstrated + 4 retired proposal
+criteria / 20**. The original 2.0 ledger below remains **36/37**; neither is
+an artistic completion percentage. [E2 #436](https://github.com/ictseoyoungmin/refas/issues/436)
+still lacks matched actual provider/model/usage/billed-cost evidence. Keep
+missing observations null and preserve frozen comparison results, scoped use
+acceptances and final-art rejections. [#456](https://github.com/ictseoyoungmin/refas/issues/456)
+remains the reference-shape finding; [#448](https://github.com/ictseoyoungmin/refas/issues/448)
+remains separate from form-authoring acceptance.
+
+## Published 2.0 checkpoint — 2026-11-27
+
 Status: **2026-11-27**. The fixed checklist is **36/37 = 97% rounded** after
 actual v2.0.0 GitHub Release and installation-package publication, **D3 only**.
 Delivery is **3/3**. All nine prior checkpoints and criterion meanings remain
@@ -35,7 +67,7 @@ retain the preceding delivery decisions, wearable/comparison evidence and
 earlier runtime history. No historical checkpoint, retained evidence, rejected
 model or earlier verdict is rewritten by this update.
 
-## Accepted publication
+## Accepted 2.0 publication
 
 The [manual publication workflow](https://github.com/ictseoyoungmin/refas/actions/runs/45962623370)
 succeeded at exact main **d48ef51ad213ce2d7df3664965fc9dc283783737**.
@@ -63,7 +95,7 @@ no npm registry publication is claimed. The [canonical D3 receipt](development/r
 retains source identity, asset hashes and acceptance boundaries without adding
 raw package bytes or logs to Git.
 
-## Accepted source integration
+## Accepted 2.0 source integration
 
 Both foundation and remainder passed fresh `npm test`, `test:python`, `check`,
 `dogfood` and `release:audit`: **948 JavaScript tests each**, zero failures or
@@ -82,7 +114,7 @@ PRs, with **976,655** and **590,356 charged bytes** against their actual
 sequential bases. No budget limit or fixed grandfather anchor changed, and no
 private model, media, raw log, numerical array or recovery archive was added.
 
-## Independently matched comparison
+## Frozen 2.0 matched comparison
 
 The [comparison report](development/evidence/usable-assets/matched-comparison.md)
 credits evaluating both existing task types across all five original U1 axes:
@@ -118,7 +150,7 @@ informed wearable repairs do not replace these frozen comparison outputs or
 clear their failures. Conversely, comparison failures do not describe the
 separately selected and reviewed final wearable below.
 
-## Selected use and recoverable evidence
+## Selected 2.0 use and recoverable evidence
 
 The [wearable delivery report](development/evidence/usable-assets/wearable-delivery.md)
 is the entry point for exact artifacts, the independent decision, selected
@@ -162,7 +194,7 @@ Both final visual-art decisions stay unapproved.
   1,048,576 bytes. Its verdict is retained; the separate accepted integration
   PRs above resolved main integration under the unchanged limits.
 
-## Runtime and pending work
+## Published 2.0 runtime and retained follow-ups
 
 The published production source is
 [`d48ef51a`](https://github.com/ictseoyoungmin/refas/commit/d48ef51ad213ce2d7df3664965fc9dc283783737),
@@ -182,7 +214,7 @@ baseline stays **v1.4.1**. Publication grants no new model acceptance.
 Remaining work:
 
 1. Keep [E2 #436](https://github.com/ictseoyoungmin/refas/issues/436) blocked in [milestone 2.0.1](https://github.com/ictseoyoungmin/refas/milestone/5) until an execution route provides actual provider/model/usage and attributable billed-cost data with a declared matched resource and spending limit. Preserve missing values as null, all U1 failures and its single-run limits. The existing protocol is sufficient; no general billing framework or production-runtime change is needed.
-2. Keep optional section-sweep [#424](https://github.com/ictseoyoungmin/refas/issues/424) / [Draft #425](https://github.com/ictseoyoungmin/refas/pull/425) outside the accepted distribution until its separate installed-use, matched-trial, source/visual and budget gates pass. Publication does not accept that helper.
+2. Keep the retired section-sweep [#424](https://github.com/ictseoyoungmin/refas/issues/424) / [#425](https://github.com/ictseoyoungmin/refas/pull/425) outside the distribution. The issue is closed as not planned and the PR closed without merge after the separate trial found no useful net benefit. Preserve its branch and frozen observations; retirement is not completion or release acceptance.
 3. Retain the selected asset resources and source-bound recovery histories. New source or visual evidence may reopen their owning finding; package publication cannot clear an existing model failure or close the seven Notion tasks automatically.
 
 ## Retained history and recovery index

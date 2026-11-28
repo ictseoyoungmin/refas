@@ -1,5 +1,40 @@
 # RefAs release criteria
 
+## Proposed 2.1.0 release boundary
+
+The candidate extends native whole-form authoring with spatial cage brushes
+and editable mesh/path Boolean operations, alongside the existing surface,
+mounting, recess, projection and local-edit tools. Methods remain optional and
+can be combined or revisited as the shape requires. Current metadata remains
+`2.1.0-alpha.1`; implementation, final evidence, main integration and public
+v2.1.0 publication are **pending**.
+
+Admission requires actual copied-skill native execution, saved editable
+controls, useful re-edit after reopening, defined failure restoration and the
+declared delivery behavior. Inspect fresh reference-based whole-asset renders
+as well as local operation results. Preserve the rejected #456 candidates and
+report remaining likeness gaps; passing a Boolean or brush test cannot accept
+the whole asset. Follow the [2.1 plan](development/refas-2.1-plan.md) for the
+new scope and [work status](WORK_STATUS.md) for its current evidence.
+
+Complete the required repository checks and exact package allowlist/identity
+verification before main integration. The existing manual publisher requires
+the exact current main SHA, `PUBLISH`, successful Node 22/24 main-push CI and
+all seventeen named full-QA gates. It prepares and installs the archive from
+that exact source, then publishes or verifies the GitHub Release and matching
+TGZ/SHA-256 assets. Conflicting existing tags or assets are not overwritten.
+Record the actual source, release/workflow identity, public-download bytes and
+installation result before calling publication complete. Local packing and a
+version change alone do not publish a release; npm registry publication is
+outside this channel.
+
+The renderer follow-up #448 needs its own actual render/state evidence; the
+candidate does not yet claim that crash is fixed. E2 #436 remains blocked on
+actual matched timing and billing evidence and is independent of this bounded
+release. Keep both previous visual comparisons and final-art decisions intact.
+The 2.0 and original 2.1 ledgers retain their meanings; they do not turn into
+a whole-asset quality percentage at release.
+
 ## Production 2.0 release boundary
 
 The [v2.0.0 GitHub Release](https://github.com/ictseoyoungmin/refas/releases/tag/v2.0.0)

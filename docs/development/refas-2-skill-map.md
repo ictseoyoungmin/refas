@@ -5,12 +5,14 @@ and what a change or removal affects. It is a repository maintenance document;
 agents making assets start with the installed `SKILL.md`, not this map.
 
 The [distribution allowlist](../../tools/verify-production-distribution.mjs)
-declares **25 installed skill files**: seventeen Python files, five guides, the
+declares the exact installed file set: Python entry/modules, five guides, the
 skill entry, discovery metadata and one icon. Two `.npmignore` files also live
 in the source folder but are excluded from the package. The complete npm
-package has 29 files: those 25 plus the root README, LICENSE, package metadata
-and [Node launcher](../../bin/refas.mjs). The launcher delegates to Python;
-the copied Python skill can run without Node.
+package adds the root README, LICENSE, package metadata and
+[Node launcher](../../bin/refas.mjs). The launcher delegates to Python; the
+copied Python skill can run without Node. Final package membership and copied
+execution of the proposed `sculpt.py` / `mesh_form.py` extension are pending;
+the current release/evidence state is in [work status](../WORK_STATUS.md).
 
 ## Relationship map
 
@@ -44,7 +46,7 @@ flowchart TD
     Worker -- "runpy inside Blender" --> Script["Project bpy authoring script"]
     Guides -. "authoring guidance" .-> Script
     Script -- "optional import" --> Audit
-    Script -- "initial surface construction" --> Patch["production/surface_patch.py"]
+    Script -- "optional boundary construction" --> Patch["production/surface_patch.py"]
     Patch -- "shared boundaries and native Mesh" --> Geometry["Blender geometry"]
 ```
 
@@ -67,6 +69,24 @@ flowchart TD
 
 The independent numeric surface-binding and thickness-field imports are
 described in the table below; they do not call these native construction tools.
+
+The proposed form operations use the same authoring script and ordinary native
+data. This diagram describes their relationships, not a required modeling
+sequence or a completed validation result:
+
+```mermaid
+flowchart TD
+    Script["Project authoring script"] --> Sculpt["sculpt.py"]
+    Script --> Form["mesh_form.py"]
+    Sculpt -- "world-space brush" --> Cage["Basis cage"]
+    Form -- "shared input checks" --> Mount["surface_mount.py"]
+    Form -- "create or revise" --> Cutter["Construction operand"]
+    Form -- "create or revise" --> Boolean["Native Boolean"]
+    Cage --> Boolean
+    Cutter --> Boolean
+    Boolean --> Surface["Evaluated surface"]
+    Surface -. "visual correction" .-> Script
+```
 
 The guides influence the agent's commands and scripts; Python does not execute
 Markdown. The worker adds its module directory to the import path before
@@ -107,8 +127,10 @@ Paths in the first column are relative to `skills/refas/`.
 | [scripts/production/review.py](../../skills/refas/scripts/production/review.py) | Validates fixed camera/light specifications in both the host project code and Blender worker. | Both callers and the review guide must agree. Preserve captured settings through save/restore and test actual views where relevant. |
 | [scripts/production/image_compare.py](../../skills/refas/scripts/production/image_compare.py) | Optional alpha coverage comparison. Project validates regions; the temporary Blender worker decodes captured PNGs. | Removal requires retiring `compare`, both callers, review guidance, package allowlist and comparison tests. It does not own edits or baseline approval. |
 | [scripts/production/mesh_audit.py](../../skills/refas/scripts/production/mesh_audit.py) | Observes evaluated topology and anchor gaps. The worker imports its curve-tessellation discriminator at startup and calls `audit_mesh` for topology queries. Authoring scripts can also import it. | It is not optional as a whole: deleting it also breaks normal worker startup and curve instance checks. Follow worker imports, query output, topology guidance and author scripts. |
-| [scripts/production/surface_mount.py](../../skills/refas/scripts/production/surface_mount.py) | Select an evaluated surface frame and rigidly place or bind a detail with explicit contact samples. Optional binding retains native Surface Deform on a three-vertex construction carrier and triangle parenting. Author scripts use the catalogue/assembly guide; recess construction reuses evaluated BVH/frame functions. The worker validates saved mount relationships when present. | Keep discovery, guide, package membership, native mounting and static-delivery tests aligned. Removal breaks recess construction, author imports and continuation of native projects containing checked mounts; saved Blender relationships themselves still evaluate without Python. Static export captures the rigid evaluated transform before excluding the carrier. This does not bind arbitrary flexible layers or bake animation. |
-| [scripts/production/surface_patch.py](../../skills/refas/scripts/production/surface_patch.py) | Initial shape authoring: sample explicit straight/Bezier profiles and create four-boundary Coons patches with shared cage vertex identities. The initial skill path, catalogue and garment/assembly guides route author scripts here. Outputs are ordinary Mesh with boundary/patch selections. | Removal affects initial-authoring imports, discovery, guide examples, package membership and numeric/native tests. Saved meshes remain editable without this helper. It does not replace source interpretation, native modifiers, rigid mounting, existing-boundary bridge or whole-asset visual review. |
+| [scripts/production/surface_mount.py](../../skills/refas/scripts/production/surface_mount.py) | Select an evaluated surface frame and rigidly place or bind a detail with explicit contact samples. Optional binding retains native Surface Deform on a three-vertex construction carrier and triangle parenting. Recess construction reuses evaluated BVH/frame functions; `mesh_form.py` reuses its mesh/numeric input checks. The worker validates saved mount relationships when present. | Keep discovery, guide, package membership, native mounting and static-delivery tests aligned. Removal breaks recess/form imports, author scripts and continuation of native projects containing checked mounts; saved Blender relationships themselves still evaluate without Python. Static export captures the rigid evaluated transform before excluding the carrier. This does not bind arbitrary flexible layers or bake animation. |
+| [scripts/production/surface_patch.py](../../skills/refas/scripts/production/surface_patch.py) | One optional form method: sample explicit straight/Bezier profiles and create four-boundary Coons patches with shared cage vertex identities. The catalogue and garment/assembly guides route author scripts here when explicit boundary construction fits the shape. Outputs are ordinary Mesh with boundary/patch selections. | Removal affects initial-authoring imports, discovery, guide examples, package membership and numeric/native tests. Saved meshes remain editable without this helper. It does not replace source interpretation, native modifiers, rigid mounting, existing-boundary bridge or whole-asset visual review. |
+| [scripts/production/sculpt.py](../../skills/refas/scripts/production/sculpt.py) | Proposed optional `sculpt_brush`: edits an ordinary basis cage in world space with GRAB/DRAW/INFLATE/SMOOTH/FLATTEN, selected influence and symmetry. Author scripts choose brush intent and inputs; it does not sample an inverse posed/evaluated surface or enter an interactive sculpt-mode session. | Keep operation signatures, mask/symmetry semantics, native data and outside-region preservation, failure recovery, guide/discovery routes and package membership aligned. Removal breaks author imports; saved cage edits remain ordinary Blender geometry. Final copied/native evidence is pending. |
+| [scripts/production/mesh_form.py](../../skills/refas/scripts/production/mesh_form.py) | Proposed optional `boolean_form` and `engrave_path`: create/revise a named native Boolean and explicit construction operand while retaining the target cage. Shares mesh/numeric input checks with `surface_mount.py`; worker construction handling retains controls and exports the evaluated asset. | Keep operand ownership, same-feature re-edit, modifier order, failure cleanup, native continuation, final-output exclusion, guide/discovery and package checks aligned. Removing `surface_mount.py` also breaks this import. Saved native modifiers remain editable, but new-face UVs/deformation topology and global thickness are not guaranteed. Final copied/native evidence is pending. |
 | [scripts/production/recess.py](../../skills/refas/scripts/production/recess.py) | Optional Blender authoring: construct/revise one named convex blind recess with an editable construction cutter and Boolean. Uses shared surface selection and verifies sampled floor/wall geometry. | Removal affects catalogue/guide imports, package allowlist and native recess tests; existing ordinary cutter/Boolean scenes remain editable. Keep static solid and sampled-thickness limits separate from cloth openings and global wall certification. |
 | [scripts/production/boundary_bridge.py](../../skills/refas/scripts/production/boundary_bridge.py) | Optional native topology edit between explicit existing open chains or closed loops. Stages Blender's bridge or explicit cyclic faces with native LINEAR/SURFACE edge-ring subdivision; verifies correspondence, shared edges and source-data preservation. | Keep catalogue, assembly/garment usage, package entry and actual Blender tests aligned. Removing it breaks author-script imports, including the closed-loop keyword; accepted results remain ordinary editable cages. Object identity survives, mesh datablock replacement is explicit, and evaluated margins can change through retained modifiers. |
 | [scripts/production/surface_project.py](../../skills/refas/scripts/production/surface_project.py) | Optional native Project fitting of prepared component masks, with first-hit, actual residual/displacement and failure recovery observations. Author scripts discover it through the catalogue and assembly guide. | Keep discovery, native layer examples, package allowlist and actual Blender tests aligned. Removal breaks author-script imports; saved mesh/masks and ordinary Shrinkwrap remain editable. It does not prepare geometry or replace a general constrained deformer. |
@@ -123,7 +145,7 @@ Paths in the first column are relative to `skills/refas/`.
 | File | Why it exists and what it connects | Change or removal impact |
 |---|---|---|
 | [SKILL.md](../../skills/refas/SKILL.md) | Agent entry: asset intent, useful authoring/review loops, public commands and five on-demand guides. | Update affected command examples and guide routes. Keep development status and CI procedures in repository docs. |
-| [references/production-assemblies.md](../../skills/refas/references/production-assemblies.md) | Initial shared-boundary surfaces, segmented forms, boundary transitions, mounting/projection, local edits, editable openings, pivots, curves/lattices and surface-binding/thickness APIs. Catalogue anchors select sections; actual Blender tests execute its synthetic decal revision and keep-world parenting examples. | Check SKILL/catalogue routing, construction-source and native control-cage delivery scope, garment references and helper examples. Renaming a section requires updating its catalogue anchor; changing the decal or parenting example requires its projection or animation execution check. |
+| [references/production-assemblies.md](../../skills/refas/references/production-assemblies.md) | Flexible form/detail methods: native meshes and curves, proposed spatial brushes and Boolean/path cuts, optional shared boundaries, mounting/projection, local edits, editable recesses, pivots/lattices and surface-binding/thickness APIs. Catalogue anchors select relevant sections; existing Blender tests execute the decal revision and keep-world parenting examples. | Check SKILL/catalogue routing, construction-source and native control-cage delivery scope, garment references and helper examples. New brush/form examples need actual copied-skill execution before acceptance. Renaming a section requires updating its catalogue anchor; changing the decal or parenting example requires its projection or animation execution check. |
 | [references/production-garments.md](../../skills/refas/references/production-garments.md) | Shared cloth boundaries, sleeves, folded collars and wearing/deformation; refers to assemblies and topology. | Keep construction advice consistent with those guides and the intended character/motion scope. |
 | [references/production-topology.md](../../skills/refas/references/production-topology.md) | Mesh observations, curve-to-mesh delivery, retained Shrinkwrap sources, retopology and optimization; demonstrates `inspect` and `mesh_audit`. | Follow CLI/query changes, source/output scope, helper APIs and incoming links from SKILL, garments and assemblies. |
 | [references/production-review.md](../../skills/refas/references/production-review.md) | Fixed views and optional region coverage comparison. | Match `review.py`, `image_compare.py`, CLI options and actual render behavior. |
@@ -139,6 +161,7 @@ ledger of test totals or asset approval.
 
 | Feature or maintenance change | Related elements | Why the relationship is needed | What to revisit if replaced or removed |
 |---|---|---|---|
+| Whole-form brushes and editable cuts — proposed | Catalogue/guides → author script → `sculpt.py` / `mesh_form.py` → ordinary cage and native Boolean controls; existing worker construction/delivery path | Let the author adjust the main volume and then cut, engrave or combine needed features without rebuilding unrelated tools or adopting a fixed patch-only method. | Actual brush influence/data preservation, operand ownership, feature re-edit and modifier order, native reopen/delivery/failure recovery, package membership and fresh whole-form visual evidence. New operation tests and release evidence remain pending; helper use does not clear #456. |
 | Local edits with native finishes | Catalogue/assembly example → author script → `local_edit.py` → native cage and retained finish stack | Let a static finished panel receive bounded multi-handle edits without removing and rebuilding Bevel/Weighted Normal. Temporary prefix evaluation retains verified Solidify pairing. | Validate modifier identity, settings, flags and order, failure restoration, cage/data preservation and a second edit after native reopen. Final Bevel surface clearance is still a separate observation; no broader modifier support or new installed file is implied. |
 | Persistent rigid surface attachment | Author script → existing contact placement → native Surface Deform carrier → triangle-parented part; worker → relationship/contact validation and static delivery realization | Keep buttons, badges and brackets attached during same-topology host edits without a handler or repeated guessed coordinates. The carrier is explicit construction geometry in native source and is excluded from GLB. | Recheck evaluated host topology, rigid scale, sampled contact, failed-bind cleanup, save/reopen, host transforms and source-driven animation rejection. Preserve existing one-shot mounting and exclude unsupported construction ancestors. Removal loses automatic continuation checks and supported export for mounted projects. |
 | Initial surface construction | Author script → explicit profiles/shared boundaries → `surface_patch.py` → ordinary Mesh; existing mount places hardware on its evaluated host | Replace repeated interior-coordinate generation and independently copied adjoining boundaries during initial modeling. Keep source-specific profiles outside the installed helper. | Preserve straight/curved intent, exact boundary samples, shared indices/winding, native editability, failed-call cleanup, installed discovery and fresh initial-construction evidence. No workflow gate or live rebuild engine is introduced. |
@@ -179,6 +202,7 @@ or render merely to update this map.
 | Mesh observations | [Mesh-audit tests](../../tests/test_production_mesh_audit.py), native and curve query tests above |
 | Rigid mounting and native surface attachment | [Blender mounting tests](../../tests/test_production_surface_mount.py), [copied-skill native/static-delivery tests](../../tests/test_production_surface_mount_delivery.py), actual corrected garment and host-edit observations outside Git |
 | Initial shared-boundary surfaces | [Profile and actual native construction tests](../../tests/test_production_surface_patch.py), fresh garment/car construction from original references outside Git |
+| Spatial brushes and editable mesh/path operations — proposed | Capability-local numeric/native checks, copied-skill reopen/re-edit/failure/delivery and fresh whole-form renders; final evidence is pending for this candidate |
 | Optional blind recess construction | [Blender and installed-native tests](../../tests/test_production_recess.py), source-bound car intake study outside Git |
 | Native connected boundary transitions | [Copied-skill Blender tests](../../tests/test_production_boundary_bridge.py), source-bound collar/lapel and fender/body comparisons plus whole-coat closed armholes outside Git |
 | Bounded native surface projection | [Copied-skill Blender tests](../../tests/test_production_surface_project.py), actual prepared sleeve-layer fitting and failed-projection recovery outside Git |

@@ -1,9 +1,10 @@
-# RefAs 2.1.0 — precision authoring
+# RefAs 2.1.0 — native form and detail authoring
 
 Target: [milestone 2.1.0](https://github.com/ictseoyoungmin/refas/milestone/6).
 Integration: `develop/v2.1.0`; current source identity: `2.1.0-alpha.1`.
-The published stable release remains `2.0.0`. This is development, not a
-release or a claim that the new authoring toolkit is complete.
+The published stable release remains `2.0.0`. The proposed `2.1.0` scope is
+under implementation; final copied-skill, whole-asset and release evidence is
+pending. This plan is not a publication receipt or a completed quality claim.
 
 [Work OS plan](https://app.notion.com/p/425c6a3b5bf181979c7feb3706c4ba0a)
 owns the private reference links and current evaluation context. The original
@@ -23,7 +24,14 @@ references. A supplied mascot reference, 2.0 render and GLB form a secondary
 failure case. Large-form fidelity remains essential: adding repeated details
 does not fix an incorrect silhouette, feature hierarchy or proportions.
 
-Use a small set of completed authoring operations on ordinary Blender data.
+Establish the whole silhouette, proportions and main volumes before spending
+effort on small features. Use ordinary mesh modeling, spatial sculpt brushes,
+curves, modifiers or shared-boundary surfaces where they fit the shape. Then
+cut, engrave, combine, mount or refine the required details, returning to the
+larger forms whenever needed. This is a modeling priority, not a locked stage
+sequence or a requirement to use every helper.
+
+Use a small set of authoring operations on ordinary Blender data.
 Share units, surface frames, profiles and boundary calculations internally.
 Keep editable controls and local corrections available in the native source.
 Metal cavities and cloth pockets share geometric concepts but require
@@ -32,15 +40,28 @@ intended form; do not ban them or infer quality from polygon/part counts.
 
 ## Fixed functional acceptance
 
-The user's latest correction makes **initial construction** the next priority:
-avoid independent approximate surfaces and guessed attachment positions at
-creation, rather than treating later repairs as the primary product outcome.
-[#456](https://github.com/ictseoyoungmin/refas/issues/456) evaluates explicit
-straight/Bezier profiles and shared-boundary native surface construction,
-using existing evaluated-host mounting for initial hardware placement. This
-does not reopen the retired managed Sweep implementation or add completed
-items to the ledger below. Admission requires fresh reference-based builds
-from empty scenes and ordinary native continuation, not repaired old models.
+The current correction broadens **initial construction** beyond one patch
+method. Shared-boundary construction is available, but it does not establish
+that the chosen profiles reproduce the reference. The rejected car candidates
+and reopened [#456](https://github.com/ictseoyoungmin/refas/issues/456) retain
+that distinction. New whole-form work starts from the original reference in
+an empty scene, with methods chosen for the object and ordinary native
+continuation. A later repair of an old candidate is separate evidence.
+
+The proposed extension has three optional authoring entry points. Their
+implementation and acceptance evidence are pending; they add no completed
+items to the fixed ledger below.
+
+| Entry | Intended construction/editing role | Evidence required before admission |
+|---|---|---|
+| `sculpt.sculpt_brush` | GRAB, DRAW, INFLATE, SMOOTH or FLATTEN on an ordinary basis cage using world-space center/radius, the operation's displacement/direction/strength, mask/selection and optional symmetry. | Actual influence and outside preservation, transforms, failure restoration, retained native data, and a useful whole-form edit after reopening. An evaluated posed surface is not the brush's input coordinate domain. |
+| `mesh_form.boolean_form` | Named native DIFFERENCE, UNION or INTERSECT between target and mesh operand, with explicit modifier placement through `before`. | Actual cut/join/intersection, editable operand and feature revision, preserved surrounding state, native reopen and evaluated delivery. It does not replace the more specific sampled wall/floor contract of `cut_recess`. |
+| `mesh_form.engrave_path` | Editable path cutter from explicit points, radius, cyclic state and resolution, using the same native Boolean path. | Useful open/closed path engraving, cutter re-edit, modifier order, failure behavior and saved controls. Geometry alone does not decide the reference's intended groove depth or wall structure. |
+
+Review real whole-asset views before accepting these operations as a useful
+workflow. Record visible mismatches as well as edits that improve them; neither
+test counts nor more tool calls establish source likeness. This does not reopen
+the retired managed Sweep implementation.
 
 Original ledger: **16 demonstrated and 4 retired proposal criteria out of
 20**. M1–M4, R1–R4, J1–J4 and bounded D1–D4 are demonstrated. The user-authorized scope revision
@@ -60,8 +81,11 @@ are separate outcomes. Writing this plan does not complete a criterion.
 
 ## Implementation sequence and interfaces
 
-Surface mounting, actual recess construction, boundary transitions and bounded
-native projection and bounded joint local edits form the reviewed toolset.
+Surface patches, rigid mounting, recess construction, boundary transitions,
+bounded native projection and joint local edits form the integrated toolset.
+The proposed brushes and mesh/path operations extend that same author-script
+path. Existing helpers remain available before and after them; the operation
+is chosen for the current geometric need, not for a mandatory call sequence.
 The managed Sweep proposal is retired after its native path and matched
 comparison failed to demonstrate net benefit; preserve its branch and frozen
 evidence. Whole-asset integration and visual acceptance remain separate work.
@@ -81,6 +105,12 @@ Keep the existing `run`, `inspect`, `deliver`, preservation and recovery path.
 Do not add a scene DSL, global approval state machine or mandatory report pack.
 Tool results should expose the edited objects/controls and concrete unresolved
 conditions; the agent retains source interpretation and visual judgment.
+
+The renderer follow-up in [#448](https://github.com/ictseoyoungmin/refas/issues/448)
+is pending. Review the risky scene-switch path separately from the geometry
+operations and verify any replacement with actual render/state tests. Removing
+an observed failure path must not be reported as proof of every prior native
+crash's cause.
 
 ## Dogfood and comparison
 
@@ -348,4 +378,9 @@ Keep discovery, the exact package allowlist, optional guides and relationship
 map synchronized. Test the actual copied/packed skill, not repository-only
 imports. Run capability-local checks and required repository gates. Source
 integration, whole-asset acceptance, main merge and publication are distinct.
+The proposed release needs the tested source on main, exact-main CI, the
+existing manual publisher and downloaded package verification. These are
+currently pending; [release criteria](../release-criteria.md) owns the
+publication boundary. E2's missing actual time/billing evidence remains
+separate from this release, and prior art/comparison verdicts remain intact.
 Retain completed task branches for the user to delete.
